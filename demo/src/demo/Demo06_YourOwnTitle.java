@@ -10,7 +10,6 @@ import javax.swing.WindowConstants;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
-import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockTitleManager;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.DockStation;
@@ -48,7 +47,7 @@ public class Demo06_YourOwnTitle {
         // the frontend provides additional methods. If a ScreenDockStation is
         // used, then the frontend needs to know the owner of the station.
         DockFrontend frontend = new DockFrontend( frame );
-        frontend.getController().setTheme( setupTheme( new DefaultTheme() ) );
+        frontend.getController().setTheme( new DefaultTheme() );
         
         // let the controller handle sub-stations with only one child
         frontend.getController().setSingleParentRemove( true );
@@ -102,20 +101,15 @@ public class Demo06_YourOwnTitle {
 	
 	public static JMenu createThemeMenu( DockController controller ){
 		JMenu menu = new JMenu( "Theme" );
-		menu.add( Demo03_Theme.createItem( "Default", setupTheme( new DefaultTheme() ), controller ));
-		menu.add( Demo03_Theme.createItem( "small Default", new NoStackTheme( setupTheme( new DefaultTheme() ) ), controller ));
-		menu.add( Demo03_Theme.createItem( "Smooth", setupTheme( new SmoothTheme() ), controller ));
-		menu.add( Demo03_Theme.createItem( "small Smooth", new NoStackTheme( setupTheme( new SmoothTheme() ) ), controller ));
-		menu.add( Demo03_Theme.createItem( "Flat", setupTheme( new FlatTheme() ), controller ));
-		menu.add( Demo03_Theme.createItem( "small Flat", new NoStackTheme( setupTheme( new FlatTheme() ) ), controller ));
+		menu.add( Demo03_Theme.createItem( "Default", new DefaultTheme(), controller ));
+		menu.add( Demo03_Theme.createItem( "small Default", new NoStackTheme( new DefaultTheme() ), controller ));
+		menu.add( Demo03_Theme.createItem( "Smooth", new SmoothTheme(), controller ));
+		menu.add( Demo03_Theme.createItem( "small Smooth", new NoStackTheme( new SmoothTheme() ), controller ));
+		menu.add( Demo03_Theme.createItem( "Flat", new FlatTheme(), controller ));
+		menu.add( Demo03_Theme.createItem( "small Flat", new NoStackTheme( new FlatTheme() ), controller ));
 		return menu;
 	}
 	
-	public static DockTheme setupTheme( DefaultTheme theme ){
-		theme.setTitleFactory( new DemoFactory() );
-		return theme;
-	}
-    
     public static void registerSpecialTitles( DockFrontend frontend ){
         DockTitleManager manager = frontend.getController().getDockTitleManager();
         DemoFactory factory = new DemoFactory();
