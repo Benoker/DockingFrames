@@ -1,0 +1,82 @@
+/**
+ * Bibliothek - DockingFrames
+ * Library built on Java/Swing, allows the user to "drag and drop"
+ * panels containing any Swing-Component the developer likes to add.
+ * 
+ * Copyright (C) 2007 Benjamin Sigg
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * Benjamin Sigg
+ * benjamin_sigg@gmx.ch
+ * 
+ * Wunderklingerstr. 59
+ * 8215 Hallau
+ * CH - Switzerland
+ */
+
+
+package bibliothek.gui.dock;
+
+import java.awt.AWTEvent;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
+
+import bibliothek.gui.DockController;
+
+/**
+ * A focus controller which adds an {@link AWTEventListener} to the 
+ * {@link Toolkit} to receive events which may change the focus. 
+ * @author Benjamin Sigg
+ */
+public class DefaultFocusController extends FocusController{
+    /** The listener to all AWT events*/
+    private AWTEventListener listener;
+    
+    /**
+     * Creates a new focus controller
+     * @param controller the owner of this controller
+     */
+    public DefaultFocusController( DockController controller ){
+        super( controller );
+        
+        listener = createListener();
+        
+        try{
+            Toolkit.getDefaultToolkit().addAWTEventListener( listener,
+                    AWTEvent.MOUSE_EVENT_MASK | 
+                    AWTEvent.MOUSE_WHEEL_EVENT_MASK );
+        }
+        catch( SecurityException ex ){
+            throw new SecurityException( "Can't setup the focus controller properly, please have a look at SecureDockController", ex );
+        }
+    }
+    
+    @Override
+    public void kill(){
+        Toolkit.getDefaultToolkit().removeAWTEventListener( listener );
+        getController().removeDockControllerListener( this );
+    }
+    
+    /**
+     * Creates a listener which will receive mouse-events.
+     * @return the listener
+     */
+    protected AWTEventListener createListener(){
+        return new AWTEventListener(){
+            public void eventDispatched( AWTEvent event ){
+                if( interact( event )){
+                    check( event );
+                }
+            }
+        };
+    }
+}

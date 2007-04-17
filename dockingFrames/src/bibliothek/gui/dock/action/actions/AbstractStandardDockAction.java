@@ -1,0 +1,183 @@
+/**
+ * Bibliothek - DockingFrames
+ * Library built on Java/Swing, allows the user to "drag and drop"
+ * panels containing any Swing-Component the developer likes to add.
+ * 
+ * Copyright (C) 2007 Benjamin Sigg
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * Benjamin Sigg
+ * benjamin_sigg@gmx.ch
+ * 
+ * Wunderklingerstr. 59
+ * 8215 Hallau
+ * CH - Switzerland
+ */
+
+
+package bibliothek.gui.dock.action.actions;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.action.StandardDockAction;
+import bibliothek.gui.dock.event.StandardDockActionListener;
+
+/**
+ * An abstract implementation of the {@link DockAction}-interface. 
+ * This implementation allows to {@link #addDockActionListener(StandardDockActionListener) register}
+ * some {@link StandardDockActionListener}, and stores the {@link Dockable Dockables}
+ * which are using this action.  
+ * @author Benjamin Sigg
+ */
+public abstract class AbstractStandardDockAction implements StandardDockAction {
+    /** The listeners that are registered by this action */
+    protected List<StandardDockActionListener> listeners = new ArrayList<StandardDockActionListener>();
+    
+    /** All {@link Dockable Dockables} which can be used by this action */
+    private Map<Dockable, Integer> binded = new HashMap<Dockable, Integer>();
+
+    public void addDockActionListener( StandardDockActionListener listener ) {
+        listeners.add( listener );
+    }
+
+    public void removeDockActionListener( StandardDockActionListener listener ) {
+        listeners.remove( listener );
+    }
+
+    /**
+     * Invoked by this {@link AbstractStandardDockAction} when a {@link Dockable}
+     * was binded to this action the first time.
+     * @param dockable The Dockable that was not known to this action
+     * before the method was invoked
+     */
+    protected void binded( Dockable dockable ) {
+    	// do nothing
+    }
+    
+    /**
+     * Called by this {@link AbstractStandardDockAction} when the {@link Dockable}
+     * <code>dockable</code> will not be used in any means by this
+     * action. Note that the {@link #binded(Dockable)}-method can be
+     * invoked again with the <code>dockable</code>.
+     * @param dockable The Dockable which will not by used in any way.
+     */
+    protected void unbinded( Dockable dockable ) {
+    	// do nothing
+    }
+
+    /**
+     * Tells whether the <code>dockable</code> is binded with this
+     * action, or not.
+     * @param dockable The {@link Dockable} to test
+     * @return <code>true</code> if it is binded, <code>false</code>
+     * otherwise
+     */
+    public boolean isBinded( Dockable dockable ){
+        return binded.containsKey( dockable );
+    }
+    
+    /**
+     * Gets a set of all {@link Dockable Dockables} which are currently
+     * binded to this {@link DockAction}.
+     * @return The binded Dockables
+     */
+    public Set<Dockable> getBindeds(){
+        return Collections.unmodifiableSet( binded.keySet() );
+    }
+    
+    public void bind( Dockable dockable ) {
+        Integer old = binded.get( dockable );
+        if( old == null ){
+            binded.put( dockable, 1 );
+            binded( dockable );
+        }
+        else
+            binded.put( dockable, old+1 );
+    }
+    
+    public void unbind( Dockable dockable ) {
+        Integer old = binded.get( dockable );
+        if( old == 1 ){
+            binded.remove( dockable );
+            unbinded( dockable );
+        }
+        else
+            binded.put( dockable, old-1 );
+    }
+    
+    /**
+     * Invokes the 
+     * {@link StandardDockActionListener#actionTextChanged(StandardDockAction, Set) actionTextChanged}-
+     * method of all currently registered {@link StandardDockActionListener}
+     * @param dockables The set of dockables for which the text has been
+     * changed.
+     */
+    protected void fireActionTextChanged( Set<Dockable> dockables ){
+        for( StandardDockActionListener listener : listeners.toArray( new StandardDockActionListener[ listeners.size() ] ))
+            listener.actionTextChanged( this, dockables );
+    }
+
+    /**
+     * Invokes the 
+     * {@link StandardDockActionListener#actionTooltipTextChanged(StandardDockAction, Set) actionTooltipTextChanged}-
+     * method of all currently registered {@link StandardDockActionListener}
+     * @param dockables The set of dockables for which the tooltip has been
+     * changed.
+     */
+    protected void fireActionTooltipTextChanged( Set<Dockable> dockables ){
+        for( StandardDockActionListener listener : listeners.toArray( new StandardDockActionListener[ listeners.size() ] ))
+            listener.actionTooltipTextChanged( this, dockables );
+    }
+    
+    /**
+     * Invokes the 
+     * {@link StandardDockActionListener#actionIconChanged(StandardDockAction, Set) actionIconChanged}-
+     * method of all currently registered {@link StandardDockActionListener}
+     * @param dockables The set of dockables for which the icon has been
+     * changed.
+     */
+    protected void fireActionIconChanged( Set<Dockable> dockables ){
+        for( StandardDockActionListener listener : listeners.toArray( new StandardDockActionListener[ listeners.size() ] ))
+            listener.actionIconChanged( this, dockables );
+    }
+    
+    /**
+     * Invokes the 
+     * {@link StandardDockActionListener#actionDisabledIconChanged(StandardDockAction, Set) actionIconChanged}-
+     * method of all currently registered {@link StandardDockActionListener}
+     * @param dockables The set of dockables for which the icon has been
+     * changed.
+     */
+    protected void fireActionDisabledIconChanged( Set<Dockable> dockables ){
+        for( StandardDockActionListener listener : listeners.toArray( new StandardDockActionListener[ listeners.size() ] ))
+            listener.actionDisabledIconChanged( this, dockables );
+    }
+     
+    /**
+     * Invokes the 
+     * {@link StandardDockActionListener#actionEnabledChanged(StandardDockAction, Set) actionEnabledChanged}-
+     * method of all currently registered {@link StandardDockActionListener}
+     * @param dockables The set of dockables for which the enabled-state has been
+     * changed.
+     */
+    protected void fireActionEnabledChanged( Set<Dockable> dockables ){
+        for( StandardDockActionListener listener : listeners.toArray( new StandardDockActionListener[ listeners.size() ] ))
+            listener.actionEnabledChanged( this, dockables );
+    }
+}

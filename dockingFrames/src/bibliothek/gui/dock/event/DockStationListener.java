@@ -1,0 +1,78 @@
+/**
+ * Bibliothek - DockingFrames
+ * Library built on Java/Swing, allows the user to "drag and drop"
+ * panels containing any Swing-Component the developer likes to add.
+ * 
+ * Copyright (C) 2007 Benjamin Sigg
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * Benjamin Sigg
+ * benjamin_sigg@gmx.ch
+ * 
+ * Wunderklingerstr. 59
+ * 8215 Hallau
+ * CH - Switzerland
+ */
+
+
+package bibliothek.gui.dock.event;
+
+import bibliothek.gui.dock.DockStation;
+import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.dock.station.support.DockableVisibilityManager;
+
+/**
+ * This listener is added to a {@link DockStation}. It receives events on adding
+ * or removing children of the station, or if the visibility of a child has
+ * changed.
+ * @author Benjamin Sigg
+ */
+public interface DockStationListener {    
+    /**
+     * Invoked before <code>dockable</code> is added to <code>station</code>.
+     * @param station the station where the new child will be added
+     * @param dockable the new child
+     */
+    public void dockableAdding( DockStation station, Dockable dockable );
+    
+    /**
+     * Invoked before <code>dockable</code> is removed from <code>station</code>.
+     * @param station the station where the old child will be removed
+     * @param dockable the old child
+     */
+    public void dockableRemoving( DockStation station, Dockable dockable );
+    
+    /**
+     * Invoked after <code>dockable</code> has been added to <code>station</code>.
+     * @param station the station where the new child was added
+     * @param dockable the new child
+     */
+    public void dockableAdded( DockStation station, Dockable dockable );
+    
+    /**
+     * Invoked after <code>dockable</code> has been removed from
+     * <code>station</code>.
+     * @param station the station where the old child was removed
+     * @param dockable the old child
+     */
+    public void dockableRemoved( DockStation station, Dockable dockable );
+    
+    /**
+     * Invoked if the visibility of a child has been changed. The visibility
+     * has to be implemented in a global scale. Callers may use the class
+     * {@link DockableVisibilityManager} to organize the calls in an easy way.
+     * @param station the station whose children have changed their visibility
+     * @param dockable the {@link Dockable} whose visibility has changed
+     * @param visible the new visibility-state
+     */
+    public void dockableVisibiltySet( DockStation station, Dockable dockable, boolean visible );    
+}

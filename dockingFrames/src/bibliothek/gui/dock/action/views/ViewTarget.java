@@ -1,0 +1,75 @@
+package bibliothek.gui.dock.action.views;
+
+import javax.swing.JComponent;
+
+import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.action.DropDownAction;
+import bibliothek.gui.dock.action.views.buttons.TitleViewItem;
+import bibliothek.gui.dock.action.views.dropdown.DropDownViewItem;
+import bibliothek.gui.dock.action.views.menu.MenuViewItem;
+import bibliothek.gui.dock.title.DockTitle;
+
+/**
+ * Defines for which platform a {@link DockAction} is transformed to by
+ * a {@link ActionViewConverter}. Clients may define their own ViewTargets, but
+ * they must ensure, that the {@link ActionViewConverter} knows these new targets. 
+ * @param <A> the resulting type of a transformation
+ * @author Benjamin Sigg
+ */
+public class ViewTarget<A> {
+	/**
+	 * A target for a JMenu
+	 */
+	public static final ViewTarget<MenuViewItem<JComponent>> MENU = 
+		new ViewTarget<MenuViewItem<JComponent>>( "target MENU" );
+	
+	/**
+	 * A target for an item shown on a {@link DockTitle}
+	 */
+	public static final ViewTarget<TitleViewItem<JComponent>> TITLE = 
+		new ViewTarget<TitleViewItem<JComponent>>( "target TITLE" );
+	
+	/**
+	 * A target aiming to a {@link DropDownAction}
+	 */
+	public static final ViewTarget<DropDownViewItem> DROP_DOWN =
+		new ViewTarget<DropDownViewItem>( "target DROP DOWN" );
+	
+	/**
+	 * A unique id.
+	 */
+	private String id;
+	
+	/**
+	 * Creates a new ViewTarget.
+	 * @param id the unique id of this target
+	 */
+	public ViewTarget( String id ){
+		if( id == null )
+			throw new IllegalArgumentException( "id must not be null" );
+		
+		this.id = id;
+	}
+	
+	@Override
+	public String toString(){
+		return id;
+	}
+	
+	@Override
+	public int hashCode(){
+		return id.hashCode();
+	}
+
+	@Override
+	public boolean equals( Object obj ){
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if( !(obj instanceof ViewTarget))
+			return false;
+		
+		return ((ViewTarget)obj).id.equals( id );
+	}
+}
