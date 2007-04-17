@@ -1,0 +1,157 @@
+\documentclass{article}
+\usepackage{listings}
+\usepackage{supertabular}
+\usepackage{color}
+
+\definecolor{Commentgreen}{rgb}{0,0.5,0}
+
+\lstset{numbers=left, numberstyle=\tiny, numbersep=5pt}
+\lstset{commentstyle=\color{Commentgreen}}
+\lstset{language=Java}
+
+\begin{document}
+
+\section{Docking Frames}
+
+\section{Overview}
+\subsection{Controller}
+The class named \verb|bibliothek.gui.DockController| is the most important class of all. The Controller has many purposes: he ensures that one can drag a \\\verb!Dockable! from one \verb!DockStation! to another. He is also responsible for the title, and the actions. You will see more of this class in the other sections of this document.
+
+What you must remember: whenever you use the docking frames, create a \verb!DockController!, and call the \verb!add!-method with the root-stations. If you don't do that, no titles will be visible, and no darg'n'drop will be available.
+
+\begin{lstlisting}
+  // a root-station
+  DockStation root = new SplitDockStation();
+  
+  // a controller
+  DockController controller = new DockController();
+  
+  // register the station.
+  controller.add( root );
+  
+  // Another station
+  DockStation second = new SplitDockStation();
+  
+  // register the second station
+  controller.add( second );
+  
+  // now Dockables can be dragged from root
+  // to second, and vice versa.
+\end{lstlisting}
+
+\paragraph{Note} Until you want to customize some behaviours, you don't have to care any more about the controller after you registered the roots.
+\paragraph{Note} Its unimportant if you first register a station and then add some \\\verb!Dockables! to it, or the other way around. You can even remove a station from a controller and add it to another.
+
+\subsection{Dockable}
+\verb!Dockables! are the \verb!Components! which can be dragged. They have a name and an icon, they also have some controll how their titles are displayed, and the can offer some actions. More about titles and actions will be shown in the "Customizing"-section.
+
+There is an easy to use defaultimplementation: \verb!DefaultDockable!
+
+\subsection{DockStation}
+\verb!DockStation!s are areas where \verb!Dockables! can be dropped. The \verb!Dockables! will have some special behaviour recording to the station on which they are. Many stations are \verb!Dockables! themselfe, so they can be combined in a tree.
+
+Don't forget to register the root-station in a \verb!DockController!. If stations are combinded in a tree, the controller will automatically register the child-stations.
+
+\subsubsection{SplitDockStation}
+This stations behaves like some \verb!JSplitPane!s set into each other. The user can drag the \verb!Dockables! around, and he can also maximze one of the \verb!Dockables!.
+
+\subsubsection{StackDockStation}
+This station is nothing more than an \verb!JTabbedPane!.
+
+\subsubsection{ScreenDockStation}
+This station allows to drag \verb!Dockables! outside a \verb!Window!. They will be displayed on an \verb!JDialog! which has no border.
+
+\subsubsection{FlapDockStation}
+Its children are displayed as buttons. When the user presses one of the buttons, a \verb!Window! will open, and one of the children will be shown.
+
+\section{Customizing the docking frames}
+The docking-frames are designed to be easely modified.
+
+
+\subsection{Titles}
+Titles are small \verb!Components! used to display the name, the icon and some actions of a \verb!Dockable!.
+
+You can implement an own title by implementing the interface \verb!DockTitle!. Normally a title is his whole lifetime bound to one \verb!Dockable!. However, if you are interested in some cache-mechanisms...\\
+There are two very important methods: \verb!bind! and \verb!undind!. \verb!bind! is invoked befor a title is displayed. In this method you should add your \verb!WhatEverListeners!, and ensure your title displays the current name/icon of the dockable. \\
+You should also have this line of code in the \verb!bind!-method:
+\begin{lstlisting}
+DockActionSource source = 
+    dockable.getController().listOffers( dockable );
+\end{lstlisting}
+The source is a list of all actions available to the \verb!Dockable!. These actions should be displayed in some way. For example, make a drop-down-menu, or add buttons. You must also invoke the \verb!bind! method of the actions, to ensure they can influence the \verb!Dockable!.
+
+The second method, \verb!unbind! is the opposite of \verb!bind!. Remove all your \verb!WhatEverListeners!, and undind the actions too.
+
+\begin{itemize}
+\item If you yust want to replace the default-titles, use the \verb!DockController.setTitleFactory!-method. The factory given to this method will be used to create most of the titles.
+\item How can you ensure that a title is used by a \verb!Dockable!? The story starts in that moment, the parent-\verb!DockStation! of the \verb!Dockable! is registered by the \verb!DockController!. In this moment, the station tries to create a new \\\verb!DockController.DockTitleVersion! by invoking \verb!DockController.getVersion! (this sets a \verb!DockTitleFactory!). When a version was created, nothing can change its identifier (a string), or replace its \verb!DockTitleFactory!. So the easiest way to use your own titles is to create the version befor a station does. The station will then use your own title-factory.
+\item If the \verb!DockTitleFactory! is not enough for you, you can override the \\\verb!getDockTitle!-method of \verb!Dockable!. Doing so, and you have the complet control of every titel for the given \verb!Dockable!. This method is invoked by stations when they have to find a title.
+\end{itemize}
+\paragraph{Note} It's possible to use \verb!null!-titles. But using no titles will result in a loss of features, there are some stations that may not be able to show a \verb!Dockable! anymore (because one has to click of the title...).
+\paragraph{Note} Since titles can rapidly be created and destroyed, it's also a good idea to implement a cache-mechanism in the \verb!Dockable!.
+
+\subsection{Actions}
+\verb!DockAction!s are the logic behind buttons and drop-down-menus of the titles. Every action has its own icon, text and its tooltip. Whenever a title for a dockable is binded, the \verb!DockController! will be asked (or at least, should be asked), which actions are available for a the titles's \verb!Dockable!. \\
+You can add a \verb!DockActionListener! to an action, and if the action is invoked, the \verb!actionPerformed!-method is invoked.
+
+There are many sources for actions, and you can change all of them.
+\begin{itemize}
+	\item The \verb!Dockable! itself, the method \verb!getActionOffers! returns a list of the own actions.
+	\item The station on which the \verb!Dockable! lies, the method \verb!getDirectActionOffers!
+	\item all stations which are parents of the \verb!Dockable! (this can be a lot, if the \verb!Dockables! themself are stations). The method \verb!getIndirectActionOffers! is important for this.
+	\item By \verb!ActionGuard!s. The guards are registered by an \verb!DockController!. Whenever their \verb!react!-method returns \verb!true!, they will be asked to deliver some actions.\\
+	\verb!ActionGuard!s are the preferred way to add new actions, since you don't have to change the source of \verb!Dockables! or Stations.
+	\item If you want to rearange, or to remove actions, you need more controll. All actions are collected by \verb!ActionOffer!s. You can register your own \verb!ActionOffer! by a \verb!DockController!, and whenever the actions for a \verb!Dockable! are searched, your \verb!ActionOffer! will be asked if he can create the list (the \verb!interested!-method is invoked). If he answers positivly, the \verb!getSource!-method is invoked, and the \verb!ActionOffer! is complitely free how to combine the actions.
+\end{itemize}
+
+\subsection{DockableDisplayer}
+
+\section{Hints, tipps and tricks}
+There are some tipps that may help customizing and understand the system:
+\subsection{GlassController}
+Instances of this class changes the visible-flag of the GlassPane's. The use of this class results in less created objects, and smaller stacks. But the \verb!mouseClicked! event will sometimes be forgotten.
+\subsection{StationPaint}
+The StationPaints are used by all default-stations to paint the areas where a \verb!Dockable! will be added. Instances of this interface can be set by the method \verb!DockController.setPaint!, or directly to the stations with a method called \verb!setPaint!.
+\subsection{onMove()}
+If you have added some listeners to the controller, or another object used in this system, you may get strange events while a \verb!Dockable! is moved. If you want to know, it the source of the event is a move-operation, call the \verb!onMove()!-method of the \verb!DockController!. It returns \verb!true! only if currently a move-operation is in progress.
+\subsection{Order matters}
+The order, when the stations are added to the controller, may become important when a \verb!Dockable! can be dropped on more than one station. Normally, the station added last, has the greatest priority. However, stations can implement the method \verb!compare! and \verb!canCompare! to ensure that they are more/less important than another station.
+
+\section{X and Un-X}
+There are some methods that build pairs which have to be called befor, and after an object is used. These methods are often responsible to register some listener, to make some connections. This list shows some of these pairs, and gives a short explonation:
+
+\begin{itemize}
+	\item \verb!Dockable.bind! This tells a \verb!Dockable!, that a title is shown for it. The title was created by the \verb!Dockable! itself, over the \verb!getDockTitle!-method, which is not allowed to return this instance of a title again until the \verb!unbind! method is called. The \verb!bind!-method has to invoke the \verb!DockableListener.titleBinded!-method. The method is invoked by a \verb!DockStation! which will show the title. The method may be called at any time.
+	\item \verb!Dockable.unbind! The exact opposite of \verb!bind!. Called by a \verb!DockStation!. Can be called at any time.
+	\item \verb!DockTitle.bind! Tells the \verb!DockTitle! that it will be shown as the title of the \verb!Dockable! that has created this instance of the title. The method should setup the title, for the default-implementations this means: using the \verb!DockController! to get the \verb!DockActions!, create and add some \verb!TitleMiniButtons!. The method is called directly from the \verb!DockController!. The method is called if a \verb!Dockable! is registered, or if the \verb!DockableListener.titleBinded!-method of the listener that is added to all \verb!Dockables! is invoked.
+	\item \verb!DockTitle.unbind! The direct opposite of \verb!bind!. Called when a \verb!Dockable! is deregistered of the \verb!DockController! or if the \verb!DockableListener! was notified.
+	\item \verb!DockAction.bind! Tells a \verb!DockAction! that it is shown on a title that refers to a particular \verb!Dockable!. Normally, the method will be called from inside \verb!DockTitle.bind!-method. However, there is no rule that does forbid to call \verb!bind! at any other time.
+	\item \verb!DockAction.unbind! That the direct opposite of \verb!DockAction.bind!.
+\end{itemize}
+
+
+\section{Examples}
+\subsection{No titles for Stations}
+Normally, every station who is a \verb!Dockable! and sits on another station gets a title. For some applications, the stations don't have to be draggable, and so no titles are needed. This behaviour is simple to implement, just use this code:
+\begin{lstlisting}
+DockController controller = ...
+
+// The stations have to be removed anyway, but
+// without title, the user is not able to
+// remove them
+controller.setSingleParentRemove( true );
+
+// Set a new title-factory, that just returns 
+// null for titles of stations
+controller.setTitleFactory( 
+	new DefaultDockTitleFactory(){
+		public <D extends Dockable & DockStation> 
+			DockTitle createStationTitle( 
+			D dockable, DockTitleVersion version ) {
+			
+			return null;
+		}
+});
+\end{lstlisting}
+
+\end{document}
