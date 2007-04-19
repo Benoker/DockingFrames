@@ -37,7 +37,7 @@
  * 
  */
  
-package bibliothek.data;
+package bibliothek.util.data;
 
 import java.awt.Image;
 import java.io.BufferedInputStream;
@@ -52,7 +52,6 @@ import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import bibliothek.io.IniReader;
 
 /**
  * A class used to load resources (Icons...) in the whole bibliothek.

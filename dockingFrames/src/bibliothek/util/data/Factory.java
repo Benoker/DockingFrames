@@ -37,14 +37,16 @@
  * 
  */
  
-package bibliothek.data;
+package bibliothek.util.data;
+
+import java.io.IOException;
+import java.net.URL;
 
 /**
- * An object representing a resource loadable by the resource-manager
+ * Used to create load new Resources.
  * @author Benjamin Sigg
  *
- * @param <T> The type of resource
  */
-public interface Resource<T> {
-    public T get();
+public interface Factory<T> {
+    public T load( URL url ) throws IOException;
 }

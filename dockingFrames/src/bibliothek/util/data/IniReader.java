@@ -40,7 +40,7 @@
 /*
  * Created on 13.05.2004
  */
-package bibliothek.io;
+package bibliothek.util.data;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -52,7 +52,7 @@ import java.util.Properties;
 
 /**
  * Liest eine INI-Datei aus. Eine INI-Datei besteht aus einer Folge von
- * <code>key = value</code> Paaren. Dazwischen können einzeilige Kommentare
+ * <code>key = value</code> Paaren. Dazwischen kï¿½nnen einzeilige Kommentare
  * mit "//" oder mehrzeilige Kommentare mit "/*" und "*\/" stehen
  * 
  * @author Benjamin Sigg
@@ -75,7 +75,7 @@ public class IniReader {
 	
 	/**
 	 * Liest eine INI-Datei aus, aber schliesst den Stream nicht. Es wird
-	 * solange gelesen, bis der Stream -1 zurückgibt.
+	 * solange gelesen, bis der Stream -1 zurï¿½ckgibt.
 	 * @param in Der Stream mit den Informationen
 	 * @return Die gelesenen Informationen
 	 * @throws IOException Bei Problemen

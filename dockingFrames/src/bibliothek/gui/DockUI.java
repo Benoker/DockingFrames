@@ -40,7 +40,6 @@ import java.util.ResourceBundle;
 
 import javax.swing.Icon;
 
-import bibliothek.data.ResourceManager;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.DockStation;
 import bibliothek.gui.dock.Dockable;
@@ -50,6 +49,7 @@ import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.support.DefaultCombiner;
 import bibliothek.gui.dock.station.support.DefaultDisplayerFactory;
 import bibliothek.gui.dock.station.support.DefaultStationPaint;
+import bibliothek.util.data.ResourceManager;
 
 /**
  * A list of icons, text and methods used by the framework.<br>
