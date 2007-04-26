@@ -2,11 +2,7 @@ package bibliothek.gui.dock.action.views.buttons;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -25,7 +21,6 @@ import bibliothek.gui.dock.action.views.dropdown.DropDownViewItem;
 import bibliothek.gui.dock.event.DockActionSourceListener;
 import bibliothek.gui.dock.event.DropDownActionListener;
 import bibliothek.gui.dock.event.StandardDockActionListener;
-import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
 
 /**
@@ -192,7 +187,7 @@ public class DropDownMiniButtonHandler<
 	 * Shows the popup menu
 	 */
 	public void popupTriggered(){
-		if( button.getOrientation() == DockTitle.Orientation.HORIZONTAL ){
+		if( button.getOrientation().isHorizontal() ){
 			menu.show( button, 0, button.getHeight() );
 		}
 		else{

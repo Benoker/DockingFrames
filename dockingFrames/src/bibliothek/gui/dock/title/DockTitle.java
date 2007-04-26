@@ -46,16 +46,60 @@ import bibliothek.gui.dock.event.DockTitleEvent;
 public interface DockTitle {
     /** How to layout a {@link DockTitle} */
     public static enum Orientation{
-        /** 
-         * Tells a DockTitle that its preferred width should be smaller
-         * than its preferred height 
+        /**
+         * The title is at the north side of some panel.
          */
-        VERTICAL, 
+        NORTH_SIDED( true ),
+        
+        /**
+         * The title is at the south side of some panel.
+         */
+        SOUTH_SIDED( true ),
+        
+        /**
+         * The title is at the east side of some panel.
+         */
+        EAST_SIDED( false ),
+        
+        /**
+         * The title is at the west side of some panel.
+         */
+        WEST_SIDED( false ),
+        
+        /**
+         * The title is somehow vertical oriented.
+         */
+        FREE_VERTICAL( false ), 
+        
+        /**
+         * The title is somehow horizontal oriented.
+         */
+        FREE_HORIZONTAL( true );
+    
+        private boolean horizontal;
+        
+        private Orientation( boolean horizontal ){
+            this.horizontal = horizontal;
+        }
+        
         /**
          * Tells a DockTitle that its preferred height should be smaller
          * than its preferred width
+         * @return <code>true</code> if the title lays horizontal
          */
-        HORIZONTAL };
+        public boolean isHorizontal() {
+            return horizontal;
+        }
+        
+        /** 
+         * Tells a DockTitle that its preferred width should be smaller
+         * than its preferred height 
+         * @return <code>true</code> if the title lays vertical
+         */
+        public boolean isVertical(){
+            return !isHorizontal();
+        }
+    };
     
     /**
      * Gets a Component which represents the {@link DockTitle}. 

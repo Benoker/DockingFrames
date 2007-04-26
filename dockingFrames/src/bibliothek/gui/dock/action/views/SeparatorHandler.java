@@ -47,14 +47,10 @@ public class SeparatorHandler implements TitleViewItem<JComponent>, MenuViewItem
 	}
 	
 	public void setOrientation( Orientation orientation ){
-		switch( orientation ){
-			case HORIZONTAL:
-				separator.setOrientation( SwingConstants.VERTICAL );
-				break;
-			case VERTICAL:
-				separator.setOrientation( SwingConstants.HORIZONTAL );
-				break;
-		}
+		if( orientation.isHorizontal() )
+			separator.setOrientation( SwingConstants.VERTICAL );
+        else
+            separator.setOrientation( SwingConstants.HORIZONTAL );
 	}
 
 	public DockAction getAction(){

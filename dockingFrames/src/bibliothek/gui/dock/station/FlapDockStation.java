@@ -332,18 +332,35 @@ public class FlapDockStation extends AbstractDockableStation {
             throw new IllegalArgumentException();
              
         this.direction = direction;
-        DockTitle.Orientation orientation;
+        DockTitle.Orientation orientation = orientation( direction );
         
-        if( direction == Direction.NORTH || direction == Direction.SOUTH )
-            orientation = DockTitle.Orientation.HORIZONTAL;
-        else
-            orientation = DockTitle.Orientation.VERTICAL;
         
         for( DockTitle title : buttonTitles.values() )
             title.setOrientation( orientation );
         
         buttonPane.resetTitles();
         updateWindowBounds();
+    }
+    
+    /**
+     * Determines the orientation of the {@link DockTitle DockTitles} on this
+     * station.
+     * @param direction the direction in which the flap opens
+     * @return the orientation of the titles
+     */
+    protected DockTitle.Orientation orientation( Direction direction ){
+        switch( direction ){
+            case NORTH:
+                return DockTitle.Orientation.SOUTH_SIDED;
+            case SOUTH:
+                return DockTitle.Orientation.NORTH_SIDED;
+            case EAST:
+                return DockTitle.Orientation.WEST_SIDED;
+            case WEST:
+                return DockTitle.Orientation.EAST_SIDED;
+        }
+        
+        return null;
     }
     
     /**
@@ -1086,11 +1103,8 @@ public class FlapDockStation extends AbstractDockableStation {
         title.addMouseInputListener( listener );
         buttonListeners.put( title, listener );
         
-        if( direction == Direction.NORTH || direction == Direction.SOUTH )
-            title.setOrientation( DockTitle.Orientation.HORIZONTAL );
-        else
-            title.setOrientation( DockTitle.Orientation.VERTICAL  );
-
+        title.setOrientation( orientation( direction ) );
+        
         if( title != null )
             dockable.bind( title );
     }

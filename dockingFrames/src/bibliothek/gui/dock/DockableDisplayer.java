@@ -134,16 +134,29 @@ public class DockableDisplayer extends JPanel{
         
         this.location = location;
         
-        if( title != null ){
-            if( location == Location.TOP || location == Location.BOTTOM )
-                title.setOrientation( DockTitle.Orientation.HORIZONTAL );
-            else
-                title.setOrientation( DockTitle.Orientation.VERTICAL );
-        }
+        if( title != null )
+            title.setOrientation( orientation( location ));
         
         invalidate();
     }
 
+    /**
+     * Determines the orientation of a {@link DockTitle} according to its
+     * location on this displayer.
+     * @param location the location on this displayer
+     * @return the orientation
+     */
+    protected DockTitle.Orientation orientation( Location location ){
+        switch( location ){
+            case TOP: return DockTitle.Orientation.NORTH_SIDED;
+            case BOTTOM: return DockTitle.Orientation.SOUTH_SIDED;
+            case LEFT: return DockTitle.Orientation.WEST_SIDED;
+            case RIGHT: return DockTitle.Orientation.EAST_SIDED;
+        }
+        
+        return null;
+    }
+    
     /**
      * Gets the title which is shown on this displayer.
      * @return the title, can be <code>null</code>
@@ -165,11 +178,7 @@ public class DockableDisplayer extends JPanel{
         
         this.title = title;
         if( title != null ){
-            if( location == Location.TOP || location == Location.BOTTOM )
-                title.setOrientation( DockTitle.Orientation.HORIZONTAL );
-            else
-                title.setOrientation( DockTitle.Orientation.VERTICAL );
-            
+            title.setOrientation( orientation( location ));
             add( title.getComponent() );
         }
         

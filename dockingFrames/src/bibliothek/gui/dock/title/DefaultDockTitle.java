@@ -146,7 +146,7 @@ public class DefaultDockTitle extends AbstractDockTitle {
     protected GradientPaint getGradient( Color left, Color right, Component component ){
         GradientPaint gradient;
         
-        if( getOrientation() == Orientation.HORIZONTAL ){
+        if( getOrientation().isHorizontal() ){
             float h = component.getHeight() / 2.0f;
             gradient = new GradientPaint( 0, h, 
                 left, component.getWidth(), h,

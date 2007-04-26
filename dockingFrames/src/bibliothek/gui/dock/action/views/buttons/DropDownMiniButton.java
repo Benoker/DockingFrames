@@ -33,7 +33,7 @@ public class DropDownMiniButton extends MiniButton {
 	private boolean mouseOverDropIcon = false;
 	
 	/** The orientation, whether the buttons should be aligned horizontal or vertical */
-	private DockTitle.Orientation orientation = DockTitle.Orientation.HORIZONTAL;
+	private DockTitle.Orientation orientation = DockTitle.Orientation.FREE_HORIZONTAL;
 	
 	/** A handler that manages this button */
 	private DropDownMiniButtonHandler<?, ?> handler;
@@ -142,7 +142,7 @@ public class DropDownMiniButton extends MiniButton {
 		Insets insets = getMaxBorderInsets();
 		Icon icon = getIcon();
 		
-		if( orientation == DockTitle.Orientation.HORIZONTAL ){
+		if( orientation.isHorizontal() ){
 			int width = insets.left + 2*insets.right;
 			if( icon == null )
 				width += 16;
@@ -200,7 +200,7 @@ public class DropDownMiniButton extends MiniButton {
 			drop = disabledDropIcon;
 		}
 		
-		if( orientation == DockTitle.Orientation.HORIZONTAL ){
+		if( orientation.isHorizontal() ){
 			int iconWidth = icon == null ? 16 : icon.getIconWidth();
 			int dropWidth = dropIcon.getIconWidth();
 			
@@ -285,7 +285,7 @@ public class DropDownMiniButton extends MiniButton {
 		Icon icon = getPaintIcon( true );
 		Insets insets = getMaxBorderInsets();
 		
-		if( orientation == DockTitle.Orientation.HORIZONTAL ){
+		if( orientation.isHorizontal() ){
 			int iconWidth = icon == null ? 16 : icon.getIconWidth();
 			int dropWidth = dropIcon.getIconWidth();
 			

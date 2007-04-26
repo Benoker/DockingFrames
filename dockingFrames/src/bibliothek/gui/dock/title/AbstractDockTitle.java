@@ -26,25 +26,14 @@
 
 package bibliothek.gui.dock.title;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.DockController;
@@ -64,7 +53,7 @@ import bibliothek.gui.dock.event.DockableListener;
  * an icon, a title-text and some small buttons to display {@link DockAction actions}.
  * The icon is at the top or left edge, the text in the middle, and the actions
  * at the lower or the right edge of the title. If the orientation of the
- * title is set to {@link Orientation#VERTICAL vertical}, the text will be rotated
+ * title is set to {@link Orientation vertical}, the text will be rotated
  * by 90 degrees.<br>
  * This title has also an {@link ActionPopup} which will appear when the user
  * presses the right mouse-button. The popup shows a list of all actions known
@@ -109,7 +98,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     private boolean showMiniButtons = true;
     
     /** Whether the layout should be horizontal or vertical */
-    private Orientation orientation = Orientation.HORIZONTAL;
+    private Orientation orientation = Orientation.FREE_HORIZONTAL;
     /** The icon which is shown on this title */
     private Icon icon;
     
@@ -195,7 +184,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         
         if( icon != null ){
             Insets insets = getInsets();
-            if( orientation == Orientation.VERTICAL ){
+            if( orientation.isVertical() ){
                 int width = getWidth() - insets.left - insets.right;
                 icon.paintIcon( this, g, insets.left + (width - icon.getIconWidth())/2, insets.top );
             }
@@ -216,7 +205,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
             return null;
         
         Insets insets = getInsets();
-        if( orientation == Orientation.VERTICAL ){
+        if( orientation.isVertical() ){
             int width = getWidth() - insets.left - insets.right;
             return new Rectangle( insets.left + (width - icon.getIconWidth())/2, insets.top, icon.getIconWidth(), icon.getIconHeight() );
         }
@@ -352,7 +341,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         
         Dimension labelPreferred = label.getPreferredSize();
         
-        if( orientation == Orientation.HORIZONTAL ){
+        if( orientation.isHorizontal() ){
             if( icon != null ){
                 x += icon.getIconWidth();
                 width -= icon.getIconWidth();
@@ -436,7 +425,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         
         Insets insets = getInsets();
 
-        if( orientation == Orientation.HORIZONTAL ){
+        if( orientation.isHorizontal() ){
             int width = 0;
             int height = 0;
             if( icon != null ){
@@ -630,7 +619,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         @Override
         public Dimension getPreferredSize() {
             Dimension size = label.getPreferredSize();
-            if( orientation == Orientation.HORIZONTAL )
+            if( orientation.isHorizontal() )
                 return new Dimension( size.width, size.height );
             else
                 return new Dimension( size.height, size.width );
@@ -638,7 +627,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         
         @Override
         public void paint( Graphics g ) {
-            if( orientation == Orientation.HORIZONTAL )
+            if( orientation.isHorizontal() )
                 label.paint( g );
             else{
                 Graphics2D g2 = (Graphics2D)g.create();
@@ -657,7 +646,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         public void setBounds( int x, int y, int w, int h ) {
             super.setBounds(x, y, w, h);
             
-            if( orientation == Orientation.HORIZONTAL )
+            if( orientation.isHorizontal() )
                 label.setBounds( 0, 0, w, h );
             else
                 label.setBounds( 0, 0, h, w );
@@ -762,7 +751,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     		int width = 0;
     		int height = 0;
     		
-    		if( orientation == Orientation.HORIZONTAL ){
+    		if( orientation.isHorizontal() ){
     			for( int i = 0, n = getComponentCount(); i<n; i++ ){
     				Dimension preferred = getComponent( i ).getPreferredSize();
     				width += preferred.width;
@@ -784,7 +773,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     	public void doLayout(){
     		Dimension current = getPreferredSize();
     		
-    		if( orientation == Orientation.HORIZONTAL ){
+    		if( orientation.isHorizontal() ){
     			if( current.width <= 0 )
     				return;
     			
