@@ -26,19 +26,12 @@
 
 package bibliothek.gui;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.ResourceBundle;
+import java.io.*;
+import java.util.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.DockStation;
@@ -49,13 +42,9 @@ import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.support.DefaultCombiner;
 import bibliothek.gui.dock.station.support.DefaultDisplayerFactory;
 import bibliothek.gui.dock.station.support.DefaultStationPaint;
-import bibliothek.util.data.ResourceManager;
 
 /**
- * A list of icons, text and methods used by the framework.<br>
- * The icons are read through the default {@link ResourceManager}. Clients
- * can change some icons by calling {@link ResourceManager#putValue(String, Object)}.
- * Icons which are already read will not be affected by such a call. 
+ * A list of icons, text and methods used by the framework. 
  * @author Benjamin Sigg
  */
 public class DockUI {
@@ -65,6 +54,9 @@ public class DockUI {
 	/** The resource bundle for some text shown in this framework */
 	private ResourceBundle bundle;
 	
+    /** The icons used in this framework */
+    private Map<String, Icon> icons;
+    
     /**
      * Gets the default instance of DockUI.
      * @return the instance
@@ -78,9 +70,16 @@ public class DockUI {
      */
     protected DockUI(){
         Map<String, String> map = loadKeyPathMapping();
+        ClassLoader loader = DockUI.class.getClassLoader();
+        icons = new HashMap<String, Icon>();
         for( Map.Entry<String, String> entry : map.entrySet() ){
-            if( !ResourceManager.getDefault().exists( entry.getKey() ))
-                ResourceManager.getDefault().icon( entry.getKey(), entry.getValue(), getClass().getClassLoader() );
+            try{
+                ImageIcon icon = new ImageIcon( ImageIO.read( loader.getResource( entry.getValue()) ));
+                icons.put( entry.getKey(), icon );
+            }
+            catch( IOException ex ){
+                ex.printStackTrace();
+            }
         }
         setBundle( ResourceBundle.getBundle( "data.locale.text", Locale.getDefault(), this.getClass().getClassLoader() ));
     }
@@ -117,7 +116,7 @@ public class DockUI {
      * @return the icon or <code>null</code>
      */
     public Icon getIcon( String key ){
-        return ResourceManager.getDefault().icon( key );
+        return icons.get( key );
     }
     
     /**
@@ -126,14 +125,25 @@ public class DockUI {
      */
     @SuppressWarnings("unchecked")
     protected Map<String, String> loadKeyPathMapping(){
-        Properties properties = ResourceManager.getDefault().ini( "DockUI.mapping", "data/icons.ini", getClass().getClassLoader() ).get();
-        Map<String, String> result = new HashMap<String, String>();
-        Enumeration e = properties.keys();
-        while( e.hasMoreElements() ){
-            String key = (String)e.nextElement();
-            result.put( key, properties.getProperty( key ));
+        try{
+            Properties properties = new Properties();
+            InputStream in = DockUI.class.getResourceAsStream( "/data/icons.ini" );
+            properties.load( in );
+            in.close();
+            
+            //Properties properties = ResourceManager.getDefault().ini( "DockUI.mapping", "data/icons.ini", getClass().getClassLoader() ).get();
+            Map<String, String> result = new HashMap<String, String>();
+            Enumeration e = properties.keys();
+            while( e.hasMoreElements() ){
+                String key = (String)e.nextElement();
+                result.put( key, properties.getProperty( key ));
+            }
+            return result;
         }
-        return result;
+        catch( IOException ex ){
+            ex.printStackTrace();
+            return new HashMap<String, String>();
+        }
     }
     
     /**
