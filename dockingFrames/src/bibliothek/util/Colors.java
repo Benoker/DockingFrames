@@ -37,7 +37,7 @@
  * 
  */
  
-package bibliothek.gui;
+package bibliothek.util;
 
 import java.awt.Color;
 import java.lang.reflect.Field;
@@ -46,10 +46,8 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 /**
- * ColorMethodes entählt einige Methoden, welche das Arbeiten mit Farben
- * erleichtert.
- * <p>
- * Zusätzlich ist eine Bibliothek von verschiedensten Farben gegeben.
+ * Some fields and methods that make life easier when dealing 
+ * with Colors.
  * @author Benjamin Sigg
  * @version 1.0
  */
@@ -170,8 +168,8 @@ public final class Colors {
   public static final Color YELLOWGREEN 	= new Color ( 10145074 );
 
   /**
-   * Kreiert eine Liste aller public static Color, die diese Klasse enthält.
-   * @return Ein Hashtable, Schlüssel sind die Namen der Farben.
+   * Kreiert eine Liste aller public static Color, die diese Klasse enthï¿½lt.
+   * @return Ein Hashtable, Schlï¿½ssel sind die Namen der Farben.
    */
   public static Hashtable<String, Color> createColorList (){
     Field [] field = Colors.class.getFields();
@@ -256,7 +254,7 @@ public final class Colors {
       return new Color ( 0x00FFFFFF - c.getRGB());
   }
   /**
-   * Erhöht die Helligkeit von c.
+   * Erhï¿½ht die Helligkeit von c.
    * <p>
    * @param c Die Grundfarbe.
    * @param value Ein Wert zwischen 0 und 1, er gibt an, wiefest die Farbe
@@ -288,7 +286,7 @@ public final class Colors {
    * Verringert die Helligkeit von c.
    * @param c Die Grundfarbe.
    * @param value Ein Wert zwischen 0 und 1, 1 bedeutet schwarz, 0 bedeutet, dass
-   * die Grundfarbe zurückgegeben wird.
+   * die Grundfarbe zurï¿½ckgegeben wird.
    */
   public static Color darker ( Color c, double value ){
     if ( c == null )
@@ -311,10 +309,10 @@ public final class Colors {
   }
   
   /**
-   * Verringert oder erhöht die Helligkeit der Farbe.
+   * Verringert oder erhï¿½ht die Helligkeit der Farbe.
    * @param c Die Grundfarbe.
    * @param value Ein Wert zwischen 0 und 1, 0 bedeutet schwarz, 1 weiss und
-   * 0.5 dass die Grundfarbe zurückgegeben wird.
+   * 0.5 dass die Grundfarbe zurï¿½ckgegeben wird.
    */
   public static Color brightness ( Color c, double value ){
     if ( c == null )
@@ -332,14 +330,14 @@ public final class Colors {
       return darker ( c, -value );
   }
   /**
-   * Verändert die Helligkeit so, dass die neue Farbe ein sichtbarer
+   * Verï¿½ndert die Helligkeit so, dass die neue Farbe ein sichtbarer
    * Unterschied zur Grundfarbe aufweist.
    * <p>
-   * Die Methode entscheidet selbst, ob die Helligkeit erhöht oder
+   * Die Methode entscheidet selbst, ob die Helligkeit erhï¿½ht oder
    * verringert werden muss.
    * @param c Die Grundfarbe
-   * @param value Die Veränderung, ein Wert zwischen 0 und 1, bei 0 kommt
-   * immer die Grundfarbe zurück, bei 1 immer schwarz oder weiss.
+   * @param value Die Verï¿½nderung, ein Wert zwischen 0 und 1, bei 0 kommt
+   * immer die Grundfarbe zurï¿½ck, bei 1 immer schwarz oder weiss.
    */
   public static Color autoColor (Color c, double value){
     if ( c == null )
@@ -353,10 +351,10 @@ public final class Colors {
   /**
    * Berechnet, ob diese Farbe dunkel oder hell ist.
    * <p>
-   * Dazu werden die einzelnen Farbkomponenten (rot, grün, blau) mit
+   * Dazu werden die einzelnen Farbkomponenten (rot, grï¿½n, blau) mit
    * dem Maximalen Wert 255 verglichen.
-   * Ist der durchschnittliche Wert kleiner als die Hälfte des Maximums, wird
-   * true zurückgegeben.
+   * Ist der durchschnittliche Wert kleiner als die Hï¿½lfte des Maximums, wird
+   * true zurï¿½ckgegeben.
    */
   public static boolean isDark ( Color c ){
     double summe = c.getRed() + c.getGreen() + c.getBlue();

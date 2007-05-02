@@ -26,10 +26,10 @@
 
 package bibliothek.gui.dock.themes.smooth;
 
-import bibliothek.gui.Colors;
 import bibliothek.gui.dock.Dockable;
 import bibliothek.gui.dock.title.DefaultStationTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.util.Colors;
 
 /**
  * A station-title which smoothly changes its color from active to passive.

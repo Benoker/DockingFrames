@@ -33,10 +33,10 @@ import java.awt.Graphics2D;
 
 import javax.swing.JComponent;
 
-import bibliothek.gui.Colors;
 import bibliothek.gui.dock.Dockable;
 import bibliothek.gui.dock.title.DefaultDockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.util.Colors;
 
 /**
  * A title which changes its colors smoothly when selected or deselected.

@@ -120,6 +120,15 @@ public class DockUI {
     }
     
     /**
+     * Sets the icon that is used for a certain key.
+     * @param key the key 
+     * @param icon the icon to return if {@link #getIcon(String)} is invoked
+     */
+    public void setIcon( String key, Icon icon ){
+        icons.put( key, icon );
+    }
+    
+    /**
      * Gets a map containing keys and path for icon.
      * @return the icons
      */

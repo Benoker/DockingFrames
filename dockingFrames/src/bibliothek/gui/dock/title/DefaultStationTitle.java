@@ -36,9 +36,9 @@ import javax.swing.JComponent;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 
-import bibliothek.gui.Colors;
 import bibliothek.gui.dock.DockStation;
 import bibliothek.gui.dock.Dockable;
+import bibliothek.util.Colors;
 
 /**
  * This title is used for {@link DockStation DockStations} which are also
