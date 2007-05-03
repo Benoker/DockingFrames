@@ -1,42 +1,29 @@
-/*
- * Bibliothek License
- * ==================
+/**
+ * Bibliothek - DockingFrames
+ * Library built on Java/Swing, allows the user to "drag and drop"
+ * panels containing any Swing-Component the developer likes to add.
  * 
- * Except where otherwise noted, all of the documentation and software included
- * in the bibliothek package is copyrighted by Benjamin Sigg.
+ * Copyright (C) 2007 Benjamin Sigg
  * 
- * Copyright (C) 2001-2005 Benjamin Sigg. All rights reserved.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  * 
- * This software is provided "as-is," without any express or implied warranty.
- * In no event shall the author be held liable for any damages arising from the
- * use of this software.
- * 
- * Permission is granted to anyone to use this software for any purpose,
- * including commercial applications, and to alter and redistribute it,
- * provided that the following conditions are met:
- * 
- * 1. All redistributions of source code files must retain all copyright
- *    notices that are currently in place, and this list of conditions without
- *    modification.
- * 
- * 2. All redistributions in binary form must retain all occurrences of the
- *    above copyright notice and web site addresses that are currently in
- *    place (for example, in the About boxes).
- * 
- * 3. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software to
- *    distribute a product, an acknowledgment in the product documentation
- *    would be appreciated but is not required.
- * 
- * 4. Modified versions in source or binary form must be plainly marked as
- *    such, and must not be misrepresented as being the original software.
- * 
- * 
- * Benjamin sigg
+ * Benjamin Sigg
  * benjamin_sigg@gmx.ch
- * 
+ * CH - Switzerland
  */
- 
+
 /*
  * Created on 07.12.2004
  */
