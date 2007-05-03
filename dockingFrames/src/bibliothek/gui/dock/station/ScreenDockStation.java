@@ -99,6 +99,9 @@ public class ScreenDockStation extends AbstractDockStation {
     /** A factory to create new {@link DockableDisplayer}*/
     private DisplayerFactoryWrapper displayerFactory = new DisplayerFactoryWrapper();
     
+    /** The set of {@link DockableDisplayer} used on this station */
+    private DisplayerCollection displayers;
+    
     /** The dialog which has currently the focus */
     private ScreenDockDialog frontDialog;
     
@@ -118,6 +121,8 @@ public class ScreenDockStation extends AbstractDockStation {
             throw new IllegalArgumentException( "Owner must not be null" );
         visibility = new DockableVisibilityManager( listeners );
         this.owner = owner;
+        
+        displayers = new DisplayerCollection( this, displayerFactory );
     }
     
     /**
@@ -128,6 +133,15 @@ public class ScreenDockStation extends AbstractDockStation {
      */
     public DisplayerFactoryWrapper getDisplayerFactory() {
         return displayerFactory;
+    }
+    
+    /**
+     * Gets the current set of {@link DockableDisplayer displayers} used
+     * on this station.
+     * @return the set of displayers
+     */
+    public DisplayerCollection getDisplayers() {
+        return displayers;
     }
     
     /**
@@ -173,7 +187,7 @@ public class ScreenDockStation extends AbstractDockStation {
         }
         
         super.setController(controller);
-        
+        displayers.setController( controller );
         
         if( controller != null ){
             version = controller.getDockTitleManager().registerDefault( TITLE_ID, ControllerTitleFactory.INSTANCE );
@@ -470,7 +484,7 @@ public class ScreenDockStation extends AbstractDockStation {
                 dockable.bind( title );
         }
         
-        DockableDisplayer displayer = getDisplayerFactory().create( this, dockable, title );
+        DockableDisplayer displayer = getDisplayers().fetch( dockable, title );
         
         register( dialog );
         dialog.setDisplayer( displayer );
@@ -624,8 +638,7 @@ public class ScreenDockStation extends AbstractDockStation {
         DockTitle title = displayer.getTitle();
         if( title != null )
             displayer.getDockable().unbind( title );
-        displayer.setTitle( null );
-        displayer.setDockable( null );
+        getDisplayers().release( displayer );
         lower.setDockParent( null );
         listeners.fireDockableRemoved( lower );
         
@@ -639,7 +652,7 @@ public class ScreenDockStation extends AbstractDockStation {
                 valid.bind( title );
         }
         
-        displayer = getDisplayerFactory().create( this, valid, title );
+        displayer = getDisplayers().fetch( valid, title );
         dialog.setDisplayer( displayer );
         valid.setDockParent( this );
         listeners.fireDockableAdded( valid );
@@ -659,8 +672,7 @@ public class ScreenDockStation extends AbstractDockStation {
         DockTitle title = displayer.getTitle();
         if( title != null )
             displayer.getDockable().unbind( title );
-        displayer.setTitle( null );
-        displayer.setDockable( null );
+        getDisplayers().release( displayer );
         current.setDockParent( null );
         listeners.fireDockableRemoved( current );
         
@@ -673,7 +685,7 @@ public class ScreenDockStation extends AbstractDockStation {
         else
             title = null;
         
-        displayer = getDisplayerFactory().create( this, other, title );
+        displayer = getDisplayers().fetch( other, title );
         dialog.setDisplayer( displayer );
         other.setDockParent( this );
         listeners.fireDockableAdded( other );
@@ -704,9 +716,9 @@ public class ScreenDockStation extends AbstractDockStation {
         dockables.remove( index );
         dialog.dispose();
         
-        DockTitle title = dialog.getDisplayer().getTitle();
-        dialog.getDisplayer().setTitle( null );
-        dialog.getDisplayer().setDockable( null );
+        DockableDisplayer displayer = dialog.getDisplayer();
+        DockTitle title = displayer.getTitle();
+        getDisplayers().release( displayer );
         dialog.setDisplayer( null );
         
         if( title != null )

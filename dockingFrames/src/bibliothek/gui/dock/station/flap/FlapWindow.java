@@ -207,6 +207,14 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
     }
     
     /**
+     * Gets the displayer used to show a {@link Dockable}.
+     * @return the displayer, might be <code>null</code>
+     */
+    public DockableDisplayer getDisplayer() {
+        return displayer;
+    }
+    
+    /**
      * Sets the {@link Dockable} which will be shown on this window.
      * @param dockable The <code>Dockable</code> or <code>null</code>
      */
@@ -217,10 +225,10 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
             Dockable old = displayer.getDockable();
             DockTitle oldTitle = displayer.getTitle();
         
-            displayer.setDockable( null );
-            displayer.setTitle( null );
+            station.getDisplayers().release( displayer );
             
             content.remove( displayer );
+            
             displayer = null;
             
             if( oldTitle != null && old != null )
@@ -236,7 +244,7 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
                     dockable.bind( title );
             }
             
-            displayer = station.getDisplayerFactory().create( station, dockable, title );
+            displayer = station.getDisplayers().fetch( dockable, title );
             content.add( displayer );
         }
     }

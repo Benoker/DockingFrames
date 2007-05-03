@@ -173,13 +173,15 @@ public class ScreenDockDialog extends JDialog {
      */
     public void setDisplayer( DockableDisplayer displayer ) {
         if( this.displayer != displayer ){
-            if( this.displayer != null )
+            if( this.displayer != null ){
                 getDisplayerParent().remove( this.displayer );
+            }
             
             this.displayer = displayer;
             
-            if( displayer != null )
+            if( displayer != null ){
                 getDisplayerParent().add( displayer );
+            }
         }
         
         validate();

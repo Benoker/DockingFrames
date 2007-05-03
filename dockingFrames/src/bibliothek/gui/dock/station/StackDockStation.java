@@ -101,6 +101,9 @@ public class StackDockStation extends AbstractDockableStation {
     /** A factory to create {@link DockableDisplayer} */
     private DisplayerFactoryWrapper displayerFactory = new DisplayerFactoryWrapper();
     
+    /** The set of displayers shown on this station */
+    private DisplayerCollection displayers;
+    
     /** The {@link Dockable} which is currently moved or dropped */
     private Dockable dropping;
     
@@ -146,6 +149,8 @@ public class StackDockStation extends AbstractDockableStation {
     	super( theme );
         visibleListener = new VisibleListener();
         visibility = new DockableVisibilityManager( listeners );
+        
+        displayers = new DisplayerCollection( this, displayerFactory );
         
         panel = new Background();
         stackComponent = createStackDockComponent();
@@ -271,6 +276,7 @@ public class StackDockStation extends AbstractDockableStation {
                 if( this.title != null ){
                     DockTitle title = displayer.getDockable().getDockTitle( this.title );
                     displayer.setTitle( title );
+                    displayer.setController( controller );
                     if( title != null )
                         displayer.getDockable().bind( title );
                 }
@@ -297,6 +303,14 @@ public class StackDockStation extends AbstractDockableStation {
      */
     public DisplayerFactoryWrapper getDisplayerFactory() {
         return displayerFactory;
+    }
+    
+    /**
+     * Gets the set of {@link DockableDisplayer displayers} used on this station.
+     * @return the set of displayers
+     */
+    public DisplayerCollection getDisplayers() {
+        return displayers;
     }
     
     @Override
@@ -626,7 +640,7 @@ public class StackDockStation extends AbstractDockableStation {
                 dockable.bind( title );
         }
         
-        DockableDisplayer displayer = createDockableDisplayer( dockable, title );
+        DockableDisplayer displayer = getDisplayers().fetch( dockable, title );
         
         if( dockables.size() == 0 ){
             dockables.add( displayer );
@@ -654,17 +668,6 @@ public class StackDockStation extends AbstractDockableStation {
     }
     
     /**
-     * Creates a new {@link DockableDisplayer} for <code>dockable</code> with
-     * the {@link DockTitle} <code>title</code>.
-     * @param dockable the Dockable which should be child of the displayer
-     * @param title the title of the displayer
-     * @return the newly created displayer
-     */
-    protected DockableDisplayer createDockableDisplayer( Dockable dockable, DockTitle title ){
-        return getDisplayerFactory().create( this, dockable, title );
-    }
-    
-    /**
      * Removes the child of location <code>index</code>.
      * @param index the location of the child which will be removed
      */
@@ -682,14 +685,18 @@ public class StackDockStation extends AbstractDockableStation {
         if( index < 0 || index >= dockables.size() )
             throw new IllegalArgumentException( "Index out of bounds" );
         
-        Dockable dockable = dockables.get( index ).getDockable();
+        DockableDisplayer displayer = dockables.get( index );
+        Dockable dockable = displayer.getDockable();
+        DockTitle title = displayer.getTitle();
+        
         if( fire )
         	listeners.fireDockableRemoving( dockable );
         
-        DockTitle title = dockables.get( index ).getTitle();
+        getDisplayers().release( displayer );
+        
         if( title != null ){
             dockable.unbind( title );
-            dockables.get( index ).setTitle( null );
+            displayer.setTitle( null );
         }
         
         if( dockables.size() == 1 ){

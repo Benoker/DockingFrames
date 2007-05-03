@@ -238,7 +238,7 @@ public class Leaf extends SplitNode{
         if( dockable == null )
             return null;
         
-        setDisplayer( getAccess().createDockableDisplayer( dockable, null ));
+        setDisplayer( getAccess().getOwner().getDisplayers().fetch( dockable, null ));
         getAccess().add( displayer );
         
         return this;

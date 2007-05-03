@@ -29,7 +29,6 @@ package bibliothek.gui.dock.station.split;
 import bibliothek.gui.dock.Dockable;
 import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.station.SplitDockStation;
-import bibliothek.gui.dock.title.DockTitle;
 
 /**
  * Provides access to some internal methods and attributes of a {@link SplitDockStation}. An access
@@ -56,15 +55,6 @@ public interface SplitDockAccess {
      * @return a legal value, as near as possible to <code>divider</code>.
      */
     public double validateDivider( double divider, Node node );
-    
-    /**
-     * Creates a new {@link DockableDisplayer} for the <code>dockable</code> with a preset
-     * <code>title</code>.
-     * @param dockable the {@link DockableDisplayer} which will be child of the displayer
-     * @param title the title of the dockable, might be <code>null</code>
-     * @return the newly created displayer
-     */
-    public DockableDisplayer createDockableDisplayer( Dockable dockable, DockTitle title );
     
     /**
      * Adds a displayer to the list of all known displayers.

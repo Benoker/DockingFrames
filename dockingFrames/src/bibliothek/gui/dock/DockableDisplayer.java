@@ -31,13 +31,20 @@ import java.awt.Insets;
 
 import javax.swing.JPanel;
 
+import bibliothek.gui.DockController;
+import bibliothek.gui.dock.station.DisplayerCollection;
+import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
  * A panel which shows one {@link Dockable} and one {@link DockTitle}. The location
  * of the {@link DockTitle} is always at one of the four borders (left,
  * right, top, bottom). The title may be <code>null</code>, in this case only
- * the Dockable is shown.
+ * the Dockable is shown.<br>
+ * Clients using a displayer should try to set the {@link #setController(DockController) controller}
+ * and the {@link #setStation(DockStation) station} property.
+ * @see DisplayerCollection
+ * @see DisplayerFactory 
  * @author Benjamin Sigg
  */
 public class DockableDisplayer extends JPanel{
@@ -58,6 +65,10 @@ public class DockableDisplayer extends JPanel{
     private DockTitle title;
     /** the location of the title */
     private Location location;
+    /** the station on which this displayer might be shown */
+    private DockStation station;
+    /** the controller for which this displayer might be used */
+    private DockController controller;
     
     /**
      * Creates a new displayer
@@ -89,6 +100,44 @@ public class DockableDisplayer extends JPanel{
         setTitle( title );
         setFocusable( true );
         setFocusCycleRoot( true );
+    }
+   
+    /**
+     * Sets the controller for which this displayer is used. That property
+     * must be set by the client. Note that there is no guarantee, that a
+     * client sets this property.
+     * @param controller the controller, can be <code>null</code>
+     */
+    public void setController( DockController controller ) {
+        this.controller = controller;
+    }
+    
+    /**
+     * Gets the controller for which this displayer is used. Note that
+     * there is no guarantee, that this property is set.
+     * @return the controller or <code>null</code>
+     */
+    public DockController getController() {
+        return controller;
+    }
+    
+    /**
+     * Sets the station on which this displayer is shown. That property
+     * must be set by the station itself. Note that there is no guarantee,
+     * that a station sets this property.
+     * @param station the station or <code>null</code>
+     */
+    public void setStation( DockStation station ) {
+        this.station = station;
+    }
+    
+    /**
+     * Gets the station on which this displayer might be shown. Note that
+     * there is no guarantee, that a parent-station sets this property.
+     * @return the station or <code>null</code>
+     */
+    public DockStation getStation() {
+        return station;
     }
     
     /**

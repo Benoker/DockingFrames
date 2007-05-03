@@ -154,6 +154,8 @@ public class FlapDockStation extends AbstractDockableStation {
     private CombinerWrapper combiner = new CombinerWrapper();
     /** The {@link DisplayerFactory} used to create displayers*/
     private DisplayerFactoryWrapper displayerFactory = new DisplayerFactoryWrapper();
+    /** Collection used to handle the {@link DockableDisplayer} */
+    private DisplayerCollection displayers;
     
     /** 
      * Temporary information needed when a {@link Dockable} is moved
@@ -197,6 +199,8 @@ public class FlapDockStation extends AbstractDockableStation {
         visibility = new DockableVisibilityManager( listeners );
         buttonPane = new ButtonPane( this, buttonTitles );
         setDirection( Direction.SOUTH );
+        
+        displayers = new DisplayerCollection( this, displayerFactory );
         
         buttonPane.addComponentListener( new ComponentAdapter(){
             @Override
@@ -276,7 +280,8 @@ public class FlapDockStation extends AbstractDockableStation {
             }
     
             super.setController(controller);
-            
+            displayers.setController( controller );
+
             if( controller != null ){
                 titleVersion = controller.getDockTitleManager().registerDefault( WINDOW_TITLE_ID, ControllerTitleFactory.INSTANCE );
                 buttonVersion = controller.getDockTitleManager().registerDefault( BUTTON_TITLE_ID, ButtonTitleFactory.FACTORY );
@@ -378,6 +383,14 @@ public class FlapDockStation extends AbstractDockableStation {
      */
     public DisplayerFactoryWrapper getDisplayerFactory() {
         return displayerFactory;
+    }
+    
+    /**
+     * Gets the set of displayers currently used on this station.
+     * @return the set of displayers
+     */
+    public DisplayerCollection getDisplayers() {
+        return displayers;
     }
     
     /**

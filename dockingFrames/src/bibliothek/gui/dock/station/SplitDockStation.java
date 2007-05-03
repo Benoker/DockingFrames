@@ -185,10 +185,8 @@ public class SplitDockStation extends JPanel implements Dockable, DockStation {
     private SplitDockAccess access = new SplitDockAccess(){
         public void add( DockableDisplayer displayer ) {
             dockables.add( displayer );
-        }
-
-        public DockableDisplayer createDockableDisplayer( Dockable dockable, DockTitle title ) {
-            return SplitDockStation.this.createDockableDisplayer( dockable, title );
+            displayer.setStation( SplitDockStation.this );
+            displayer.setController( getController() );
         }
 
         public DockableDisplayer getFullScreenDockable() {
@@ -223,6 +221,9 @@ public class SplitDockStation extends JPanel implements Dockable, DockStation {
     /** A {@link DisplayerFactory} used to create {@link DockableDisplayer} for the children of this station */
     private DisplayerFactoryWrapper displayerFactory = new DisplayerFactoryWrapper();
     
+    /** The set of displayers currently used by this station */
+    private DisplayerCollection displayers;
+    
     /**
      * A listener to the mouse. If triggered, the listener moves the dividers
      * between the children around.
@@ -236,6 +237,8 @@ public class SplitDockStation extends JPanel implements Dockable, DockStation {
      * Constructs a new {@link SplitDockStation}. 
      */
     public SplitDockStation(){
+        displayers = new DisplayerCollection( this, displayerFactory );
+        
         dividerListener = new DividerListener();
         fullScreenAction = createFullScreenAction();
         visibility = new DockableVisibilityManager( dockStationListeners );
@@ -392,6 +395,8 @@ public class SplitDockStation extends JPanel implements Dockable, DockStation {
             }
             
             this.controller = controller;
+            getDisplayers().setController( controller );
+            
             if( controller != null ){
                 title = controller.getDockTitleManager().registerDefault( TITLE_ID, ControllerTitleFactory.INSTANCE );
                 
@@ -1476,6 +1481,15 @@ public class SplitDockStation extends JPanel implements Dockable, DockStation {
     }
     
     /**
+     * Gets the set of {@link DockableDisplayer displayers} that are currently
+     * used by this station.
+     * @return the set of displayers
+     */
+    public DisplayerCollection getDisplayers() {
+        return displayers;
+    }
+    
+    /**
      * Gets a {@link Combiner} to combine {@link Dockable Dockables} on
      * this station.
      * @return the combiner
@@ -1621,23 +1635,12 @@ public class SplitDockStation extends JPanel implements Dockable, DockStation {
                 dockable.bind( title );
         }
         
-        DockableDisplayer displayer = createDockableDisplayer( dockable, title );
+        DockableDisplayer displayer = getDisplayers().fetch( dockable, title );
         add( displayer );
         displayer.setVisible( !isFullScreen() );
         dockables.add( displayer );
         
         return new Leaf( access, displayer );
-    }
-    
-    /**
-     * Creates a new {@link DockableDisplayer} for <code>dockable</code>
-     * with the title <code>title</code>.
-     * @param dockable the component for which a displayer is needed
-     * @param title the title which should be on the displayer
-     * @return the new displayer
-     */
-    protected DockableDisplayer createDockableDisplayer( Dockable dockable, DockTitle title ){
-        return getDisplayerFactory().create( this, dockable, title );
     }
     
     /**
@@ -1729,9 +1732,11 @@ public class SplitDockStation extends JPanel implements Dockable, DockStation {
     private void removeFromList( int index ){
         DockableDisplayer display = dockables.remove( index );
         Dockable dockable = display.getDockable();
+        DockTitle title = display.getTitle();
+        
         display.setVisible( true );
         remove( display );
-        DockTitle title = display.getTitle();
+        getDisplayers().release( display );
         
         if( display == fullScreenDockable ){
             setNextFullScreen();
