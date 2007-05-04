@@ -45,8 +45,6 @@ import bibliothek.gui.dock.station.FlapDockStation.Direction;
  * @author Benjamin Sigg
  */
 public class FlapDockDirection extends SimpleMenuAction {
-    private FlapDockStation station;
-    
     private DirectedArrow north, south, east, west, center;
 
     /**
@@ -180,7 +178,7 @@ public class FlapDockDirection extends SimpleMenuAction {
     	}
     	
     	@Override
-    	protected void fireSelectedChanged(){
+    	public void fireSelectedChanged(){
     		super.fireSelectedChanged();
     	}
     }

@@ -59,8 +59,7 @@ public class DefaultDockableFactory implements DockFactory<DefaultDockable> {
             boolean ignore,
             DataInputStream in ) throws IOException {
         
-        DefaultDockable element = new DefaultDockable();
-        return element;
+        return new DefaultDockable();
     }
     
     public void read(Map<Integer, Dockable> children, boolean ignore, DefaultDockable preloaded, DataInputStream in) throws IOException {

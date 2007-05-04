@@ -46,8 +46,8 @@ public class PredefinedDockSituation extends DockSituation {
 	/** A mapping from a list of elements to their ids */
 	private Map<DockElement, String> elementToString = new HashMap<DockElement, String>();
 	
-	private final String KNOWN = "known - ";
-	private final String UNKNOWN = "unknown - ";
+	private static final String KNOWN = "known - ";
+	private static final String UNKNOWN = "unknown - ";
 	
 	private final PreloadFactory factory = new PreloadFactory();
 	
