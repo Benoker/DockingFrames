@@ -26,6 +26,8 @@
 
 package bibliothek.gui.dock;
 
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Insets;
 
@@ -42,7 +44,11 @@ import bibliothek.gui.dock.title.DockTitle;
  * right, top, bottom). The title may be <code>null</code>, in this case only
  * the Dockable is shown.<br>
  * Clients using a displayer should try to set the {@link #setController(DockController) controller}
- * and the {@link #setStation(DockStation) station} property.
+ * and the {@link #setStation(DockStation) station} property.<br>
+ * Subclasses may override {@link #getComponent(Dockable)}, {@link #addDockable(Component)},
+ * {@link #removeDockable(Component)}, {@link #getComponent(DockTitle)}, {@link #addTitle(Component)}
+ * and/or {@link #removeTitle(Component)} if they want to introduce a completely
+ * new layout needing more {@link Container Containers}.
  * @see DisplayerCollection
  * @see DisplayerFactory 
  * @author Benjamin Sigg
@@ -155,11 +161,11 @@ public class DockableDisplayer extends JPanel{
      */
     public void setDockable( Dockable dockable ) {
         if( this.dockable != null )
-            remove( this.dockable.getComponent() );
+            removeDockable( this.dockable.getComponent() );
         
         this.dockable = dockable;
         if( dockable != null )
-            add( dockable.getComponent() );
+            addDockable( dockable.getComponent() );
         
         invalidate();
     }
@@ -223,15 +229,75 @@ public class DockableDisplayer extends JPanel{
      */
     public void setTitle( DockTitle title ) {
         if( this.title != null )
-            remove( this.title.getComponent() );
+            removeTitle( this.title.getComponent() );
         
         this.title = title;
         if( title != null ){
             title.setOrientation( orientation( location ));
-            add( title.getComponent() );
+            addTitle( title.getComponent() );
         }
         
         invalidate();
+    }
+    
+    /**
+     * Inserts a component representing the current {@link #getDockable() dockable}
+     * into the layout. This method is never called twice unless 
+     * {@link #removeDockable(Component)} is called before. Note that
+     * the name "add" is inspired by the method {@link Container#add(Component) add}
+     * of <code>Container</code>.
+     * @param component the new Component
+     */
+    protected void addDockable( Component component ){
+        add( component );
+    }
+    
+    /**
+     * Removes the Component which represents the current {@link #getDockable() dockable}.
+     * @param component the component
+     */
+    protected void removeDockable( Component component ){
+        remove( component );
+    }
+    
+    /**
+     * Gets the Component which should be used to layout the current
+     * Dockable.
+     * @param dockable the current Dockable, never <code>null</code>
+     * @return the component representing <code>dockable</code>
+     */
+    protected Component getComponent( Dockable dockable ){
+        return dockable.getComponent();
+    }
+    
+    /**
+     * Inserts a component representing the current {@link #getTitle() title}
+     * into the layout. This method is never called twice unless 
+     * {@link #removeTitle(Component)} is called before. Note that
+     * the name "add" is inspired by the method {@link Container#add(Component) add}
+     * of <code>Container</code>.
+     * @param component the new Component
+     */
+    protected void addTitle( Component component ){
+        add( component );
+    }
+    
+    /**
+     * Removes the Component which represents the current {@link #getTitle() title}.
+     * @param component the component
+     */
+    protected void removeTitle( Component component ){
+        remove( component );
+    }
+    
+    /**
+     * Gets the Component which should be used to layout the current
+     * DockTitle.
+     * @param title the current DockTitle, never <code>null</code>
+     * @return the component representing <code>title</code>
+     */
+    protected Component getComponent( DockTitle title ){
+        return title.getComponent();
     }
     
     @Override
@@ -239,20 +305,20 @@ public class DockableDisplayer extends JPanel{
     	Dimension base;
     	
     	if( title == null && dockable != null )
-    		base = dockable.getComponent().getMinimumSize();
+    		base = getComponent( dockable ).getMinimumSize();
     	else if( dockable == null && title != null )
-    		base = title.getComponent().getMinimumSize();
+    		base = getComponent( title ).getMinimumSize();
     	else if( dockable == null && title == null )
     		base = new Dimension( 0, 0 );
     	else if( location == Location.LEFT || location == Location.RIGHT ){
-    		Dimension titleSize = title.getComponent().getMinimumSize();
-    		base = dockable.getComponent().getMinimumSize();
+    		Dimension titleSize = getComponent( title ).getMinimumSize();
+    		base = getComponent( dockable ).getMinimumSize();
     		base = new Dimension( base.width + titleSize.width, 
     				Math.max( base.height, titleSize.height ));
     	}
     	else{
-    		Dimension titleSize = title.getComponent().getMinimumSize();
-    		base = dockable.getComponent().getMinimumSize();
+    		Dimension titleSize = getComponent( title ).getMinimumSize();
+    		base = getComponent( dockable ).getMinimumSize();
     		base = new Dimension( Math.max( titleSize.width, base.width ),
     				titleSize.height + base.height );
     	}
@@ -283,13 +349,13 @@ public class DockableDisplayer extends JPanel{
         height = Math.max( 0, height );
         
         if( title == null )
-            dockable.getComponent().setBounds( x, y, width, height );
+            getComponent( dockable ).setBounds( x, y, width, height );
 
         else if( dockable == null )
-            title.getComponent().setBounds( x, y, width, height );
+            getComponent( title ).setBounds( x, y, width, height );
         
         else{
-            Dimension preferred = title.getComponent().getPreferredSize();
+            Dimension preferred = getComponent( title ).getPreferredSize();
             
             int preferredWidth = preferred.width;
             int preferredHeight = preferred.height;
@@ -304,20 +370,20 @@ public class DockableDisplayer extends JPanel{
             }
             
             if( location == Location.LEFT ){
-                title.getComponent().setBounds( x, y, preferredWidth, preferredHeight );
-                dockable.getComponent().setBounds( x+preferredWidth, y, width - preferredWidth, height );
+                getComponent( title ).setBounds( x, y, preferredWidth, preferredHeight );
+                getComponent( dockable ).setBounds( x+preferredWidth, y, width - preferredWidth, height );
             }
             else if( location == Location.RIGHT ){
-                title.getComponent().setBounds( x+width-preferredWidth, y, preferredWidth, preferredHeight );
-                dockable.getComponent().setBounds( x, y, width - preferredWidth, preferredHeight );
+                getComponent( title ).setBounds( x+width-preferredWidth, y, preferredWidth, preferredHeight );
+                getComponent( dockable ).setBounds( x, y, width - preferredWidth, preferredHeight );
             }
             else if( location == Location.BOTTOM ){
-                title.getComponent().setBounds( x, y+height - preferredHeight, preferredWidth, preferredHeight );
-                dockable.getComponent().setBounds( x, y, preferredWidth, height - preferredHeight );
+                getComponent( title ).setBounds( x, y+height - preferredHeight, preferredWidth, preferredHeight );
+                getComponent( dockable ).setBounds( x, y, preferredWidth, height - preferredHeight );
             }
             else{
-                title.getComponent().setBounds( x, y, preferredWidth, preferredHeight );
-                dockable.getComponent().setBounds( x, y+preferredHeight, preferredWidth, height - preferredHeight );
+                getComponent( title ).setBounds( x, y, preferredWidth, preferredHeight );
+                getComponent( dockable ).setBounds( x, y+preferredHeight, preferredWidth, height - preferredHeight );
             }
         }
     }
