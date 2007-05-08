@@ -14,14 +14,12 @@ import javax.swing.WindowConstants;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockTheme;
+import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.ScreenDockStation;
 import bibliothek.gui.dock.station.SplitDockStation;
-import bibliothek.gui.dock.themes.DefaultTheme;
-import bibliothek.gui.dock.themes.FlatTheme;
-import bibliothek.gui.dock.themes.NoStackTheme;
-import bibliothek.gui.dock.themes.SmoothTheme;
+import bibliothek.gui.dock.themes.*;
 
 /*
  * There are various themes which can be used. This demo shows
@@ -94,17 +92,23 @@ public class Demo03_Theme {
 	
 	public static JMenu createThemeMenu( DockController controller ){
 		JMenu menu = new JMenu( "Theme" );
-		menu.add( createItem( "Default", new DefaultTheme(), controller ));
-		menu.add( createItem( "small Default", new NoStackTheme( new DefaultTheme() ), controller ));
-		menu.add( createItem( "Smooth", new SmoothTheme(), controller ));
-		menu.add( createItem( "small Smooth", new NoStackTheme( new SmoothTheme() ), controller ));
-		menu.add( createItem( "Flat", new FlatTheme(), controller ));
-		menu.add( createItem( "small Flat", new NoStackTheme( new FlatTheme() ), controller ));
+		/*menu.add( createItem( "Default", "Default", new DefaultTheme(), controller ));
+		menu.add( createItem( "small Default", "small Default", new NoStackTheme( new DefaultTheme() ), controller ));
+		menu.add( createItem( "Smooth", "Smooth", new SmoothTheme(), controller ));
+		menu.add( createItem( "small Smooth", "small Smooth", new NoStackTheme( new SmoothTheme() ), controller ));
+		menu.add( createItem( "Flat", "Flat", new FlatTheme(), controller ));
+		menu.add( createItem( "small Flat", "small Flat", new NoStackTheme( new FlatTheme() ), controller ));*/
+        
+        for( ThemeFactory factory : DockUI.getDefaultDockUI().getThemes() ){
+            menu.add( createItem( factory.getName(), factory.getDescription(), factory.create(), controller));
+        }
+        
 		return menu;
 	}
 	
-	public static JMenuItem createItem( String text, final DockTheme theme, final DockController controller ){
+	public static JMenuItem createItem( String text, String tooltip, final DockTheme theme, final DockController controller ){
 		JMenuItem item = new JMenuItem( text );
+        item.setToolTipText( tooltip );
 		item.addActionListener( new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				controller.setTheme( theme );

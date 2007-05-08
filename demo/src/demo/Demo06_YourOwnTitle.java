@@ -101,13 +101,15 @@ public class Demo06_YourOwnTitle {
 	
 	public static JMenu createThemeMenu( DockController controller ){
 		JMenu menu = new JMenu( "Theme" );
-		menu.add( Demo03_Theme.createItem( "Default", new DefaultTheme(), controller ));
-		menu.add( Demo03_Theme.createItem( "small Default", new NoStackTheme( new DefaultTheme() ), controller ));
-		menu.add( Demo03_Theme.createItem( "Smooth", new SmoothTheme(), controller ));
-		menu.add( Demo03_Theme.createItem( "small Smooth", new NoStackTheme( new SmoothTheme() ), controller ));
-		menu.add( Demo03_Theme.createItem( "Flat", new FlatTheme(), controller ));
-		menu.add( Demo03_Theme.createItem( "small Flat", new NoStackTheme( new FlatTheme() ), controller ));
-		return menu;
+        
+        menu.add( Demo03_Theme.createItem( "Default", "Default", new DefaultTheme(), controller ));
+        menu.add( Demo03_Theme.createItem( "small Default", "small Default", new NoStackTheme( new DefaultTheme() ), controller ));
+        menu.add( Demo03_Theme.createItem( "Smooth", "Smooth", new SmoothTheme(), controller ));
+        menu.add( Demo03_Theme.createItem( "small Smooth", "small Smooth", new NoStackTheme( new SmoothTheme() ), controller ));
+        menu.add( Demo03_Theme.createItem( "Flat", "Flat", new FlatTheme(), controller ));
+        menu.add( Demo03_Theme.createItem( "small Flat", "small Flat", new NoStackTheme( new FlatTheme() ), controller ));
+        
+        return menu;
 	}
 	
     public static void registerSpecialTitles( DockFrontend frontend ){
