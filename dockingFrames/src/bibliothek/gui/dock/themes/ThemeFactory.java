@@ -1,6 +1,6 @@
 package bibliothek.gui.dock.themes;
 
-import java.net.URL;
+import java.net.URI;
 
 import bibliothek.gui.DockTheme;
 
@@ -38,5 +38,5 @@ public interface ThemeFactory {
      * show the user.
      * @return the pages, might be <code>null</code>
      */
-    public URL[] getWebpages();
+    public URI[] getWebpages();
 }

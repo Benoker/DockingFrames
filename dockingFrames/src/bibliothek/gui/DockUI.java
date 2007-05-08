@@ -119,64 +119,8 @@ public class DockUI {
      * name and description. This argument can be <code>null</code>, in that
      * case the bundle of this DockUI will be used.
      */
-    public void registerTheme( Class<? extends DockTheme> theme, final ResourceBundle bundle ){
-        final ThemeProperties properties = theme.getAnnotation( ThemeProperties.class );
-        if( properties == null )
-            throw new IllegalArgumentException( "Class " + theme.getName() + " must have the annotation ThemeProperties" );
-        
-        try{
-            final Constructor<? extends DockTheme> constructor = theme.getConstructor( new Class[0] );
-
-            registerTheme( new ThemeFactory(){
-                public DockTheme create() {
-                    try {
-                        return constructor.newInstance( new Object[0] );
-                    }
-                    catch( Exception e ){
-                        System.err.println( "Can't create theme due an unknown reason" );
-                        e.printStackTrace();
-                        return null;
-                    }
-                }
-
-                public String[] getAuthors() {
-                    return properties.authors();
-                }
-
-                public String getDescription() {
-                    if( bundle == null )
-                        return getString( properties.descriptionBundle() );
-                    else
-                        return bundle.getString( properties.descriptionBundle() );
-                }
-
-                public String getName() {
-                    if( bundle == null )
-                        return getString( properties.nameBundle() );
-                    else
-                        return bundle.getString( properties.nameBundle() );
-                }
-
-                public URL[] getWebpages() {
-                    try{
-                        String[] urls = properties.webpages();
-                        URL[] result = new URL[ urls.length ];
-                        for( int i = 0; i < result.length; i++ )
-                            result[i] = new URL( urls[i] );
-                    
-                        return result;
-                    }
-                    catch( MalformedURLException ex ){
-                        System.err.print( "Can't create urls due an unknown reason" );
-                        ex.printStackTrace();
-                        return null;
-                    }
-                }
-            });
-        }
-        catch( NoSuchMethodException ex ){
-            throw new IllegalArgumentException( "Missing default constructor for theme", ex );
-        }
+    public void registerTheme( Class<? extends DockTheme> theme, ResourceBundle bundle ){
+        registerTheme( new ThemePropertyFactory( theme, bundle, this ));
     }
     
     /**

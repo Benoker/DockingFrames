@@ -26,9 +26,7 @@
 
 package bibliothek.gui.dock.themes;
 
-import java.lang.reflect.Constructor;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -65,87 +63,53 @@ public class NoStackTheme implements DockTheme {
      * @return the new factory
      */
     public static ThemeFactory getFactory( final Class<? extends DockTheme> theme, final ResourceBundle bundle, final DockUI ui ){
-        final ThemeProperties properties = theme.getAnnotation( ThemeProperties.class );
-        if( properties == null )
-            throw new IllegalArgumentException( "Class " + theme.getName() + " must have the annotation ThemeProperties" );
+        final ThemeFactory factory = new ThemePropertyFactory( theme, bundle, ui );
         
-        try{
-            final Constructor<? extends DockTheme> constructor = theme.getConstructor( new Class[0] );
-
-            return new ThemeFactory(){
-                public DockTheme create() {
-                    try {
-                        return new NoStackTheme( constructor.newInstance( new Object[0] ) );
-                    }
-                    catch( Exception e ){
-                        System.err.println( "Can't create theme due an unknown reason" );
-                        e.printStackTrace();
-                        return null;
-                    }
+        return new ThemeFactory(){
+            public DockTheme create() {
+                return new NoStackTheme( factory.create() );
+            }
+            
+            public URI[] getWebpages() {
+                return factory.getWebpages();
+            }
+            
+            public String[] getAuthors() {
+                String[] authors = factory.getAuthors();
+                final String BENI = "Benjamin Sigg";
+                for( String author : authors ){
+                    if( author.equals( BENI ))
+                        return authors;
                 }
+                
+                String[] result = new String[ authors.length + 1 ];
+                System.arraycopy( authors, 0, result, 0, authors.length );
+                result[ authors.length ] = BENI;
+                return result;
+            }
+            
+            public String getDescription() {
+                if( ui == null )
+                    return DockUI.getDefaultDockUI().getString( "theme.small.description" );
+                else
+                    return ui.getString( "theme.small.description" );
+            }
 
-                public String[] getAuthors() {
-                    String[] authors = properties.authors();
-                    final String BENI = "Benjamin Sigg";
-                    for( String author : authors ){
-                        if( author.equals( BENI ))
-                            return authors;
-                    }
-                    
-                    String[] result = new String[ authors.length + 1 ];
-                    System.arraycopy( authors, 0, result, 0, authors.length );
-                    result[ authors.length ] = BENI;
-                    return result;
-                }
-
-                public String getDescription() {
-                    if( ui == null )
-                        return DockUI.getDefaultDockUI().getString( "theme.small.description" );
-                    else
-                        return ui.getString( "theme.small.description" );
-                }
-
-                public String getName() {
-                    String name = null;
-                    if( bundle != null )
-                        name = bundle.getString( properties.nameBundle() );
-                    else if( ui != null )
-                        name = ui.getString( properties.nameBundle() );
-                    else
-                        name = DockUI.getDefaultDockUI().getString( properties.nameBundle() );
-                    
-                    String small = null;
-                    if( ui != null )
-                        small = ui.getString( "theme.small" );
-                    else
-                        small = DockUI.getDefaultDockUI().getString( "theme.small" );
-                    
-                    if( name == null )
-                        return small;
-                    else
-                        return small + " \"" + name + "\"";
-                }
-
-                public URL[] getWebpages() {
-                    try{
-                        String[] urls = properties.webpages();
-                        URL[] result = new URL[ urls.length ];
-                        for( int i = 0; i < result.length; i++ )
-                            result[i] = new URL( urls[i] );
-                    
-                        return result;
-                    }
-                    catch( MalformedURLException ex ){
-                        System.err.print( "Can't create urls due an unknown reason" );
-                        ex.printStackTrace();
-                        return null;
-                    }
-                }
-            };
-        }
-        catch( NoSuchMethodException ex ){
-            throw new IllegalArgumentException( "Missing default constructor for theme", ex );
-        }        
+            public String getName() {
+                String name = factory.getName();
+                
+                String small = null;
+                if( ui != null )
+                    small = ui.getString( "theme.small" );
+                else
+                    small = DockUI.getDefaultDockUI().getString( "theme.small" );
+                
+                if( name == null )
+                    return small;
+                else
+                    return small + " \"" + name + "\"";
+            }
+        };
     }
     
     /** The delegate theme to get the basic factories */
