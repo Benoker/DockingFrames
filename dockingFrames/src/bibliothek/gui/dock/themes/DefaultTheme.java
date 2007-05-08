@@ -48,6 +48,11 @@ import bibliothek.gui.dock.title.MovingTitleGetter;
  * any of the factories.
  * @author Benjamin Sigg
  */
+@ThemeProperties(
+        nameBundle="theme.default", 
+        descriptionBundle="theme.default.description",
+        authors={"Benjamin Sigg"},
+        webpages={})
 public class DefaultTheme implements DockTheme{
     /** combines several Dockables */
     private Combiner combiner;

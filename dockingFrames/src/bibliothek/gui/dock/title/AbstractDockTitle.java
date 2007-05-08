@@ -188,7 +188,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         paintBackground( g, this );
         
         if( icon != null ){
-            Insets insets = getInnerInsets();
+            Insets insets = titleInsets();
             if( orientation.isVertical() ){
                 int width = getWidth() - insets.left - insets.right;
                 icon.paintIcon( this, g, insets.left + (width - icon.getIconWidth())/2, insets.top );

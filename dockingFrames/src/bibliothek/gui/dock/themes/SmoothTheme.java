@@ -34,6 +34,11 @@ import bibliothek.gui.dock.themes.smooth.SmoothDefaultTitleFactory;
  * @author Benjamin Sigg
  *
  */
+@ThemeProperties(
+        nameBundle="theme.smooth", 
+        descriptionBundle="theme.smooth.description",
+        authors={"Benjamin Sigg"},
+        webpages={})
 public class SmoothTheme extends DefaultTheme {
     /**
      * Constructor, sets the special title-factory of this theme

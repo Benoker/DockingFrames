@@ -68,6 +68,11 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  * A {@link DockTheme theme} that uses very few borders.
  * @author Benjamin Sigg
  */
+@ThemeProperties(
+        nameBundle="theme.flat", 
+        descriptionBundle="theme.flat.description",
+        authors={"Benjamin Sigg"},
+        webpages={})
 public class FlatTheme extends DefaultTheme{
     
     /** A special factory for the {@link SplitDockStation} */
