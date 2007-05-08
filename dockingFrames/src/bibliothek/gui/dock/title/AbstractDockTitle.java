@@ -60,12 +60,17 @@ import bibliothek.gui.dock.event.DockableListener;
  * to this title.<br>
  * The whole logic a {@link DockTitle} needs is implemented in this class,
  * but subclasses may add graphical features - like a border or another
- * background.
+ * background.<br>
+ * Subclasses may override {@link #getInnerInsets()} to add a space between
+ * border and contents of this title.
  * 
  * @author Benjamin Sigg
  *
  */
 public class AbstractDockTitle extends JPanel implements DockTitle {
+    /** Insets of the size 0,0,0,0 */
+    private static final Insets NULL_INSETS = new Insets( 0, 0, 0, 0 );
+    
     /** The {@link Dockable} for which this title is shown */
     private Dockable dockable;
     
@@ -183,7 +188,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         paintBackground( g, this );
         
         if( icon != null ){
-            Insets insets = getInsets();
+            Insets insets = getInnerInsets();
             if( orientation.isVertical() ){
                 int width = getWidth() - insets.left - insets.right;
                 icon.paintIcon( this, g, insets.left + (width - icon.getIconWidth())/2, insets.top );
@@ -320,24 +325,44 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     	return new Dimension( min, min );
     }
     
+    /**
+     * Gets the insets that have to be applied between the border and the 
+     * content of this title.
+     * @return the insets, not <code>null</code>
+     */
+    protected Insets getInnerInsets(){
+        return NULL_INSETS;
+    }
+    
+    private Insets titleInsets(){
+        Insets insets = getInsets();
+        
+        if( insets == null ){
+            return getInnerInsets();
+        }
+        else{
+            insets = new Insets( insets.top, insets.left, insets.bottom, insets.right );
+        }
+        
+        Insets inner = getInnerInsets();
+        insets.top += inner.top;
+        insets.bottom += inner.bottom;
+        insets.left += inner.left;
+        insets.right += inner.right;
+        
+        return insets;
+    }
+    
     @Override
     public void doLayout(){
         super.doLayout();
         
-        Insets insets = getInsets();
-        int x, y, width, height;
-        if( insets == null ){
-            x = 0;
-            y = 0;
-            width = getWidth();
-            height = getHeight();
-        }
-        else{
-            x = insets.left;
-            y = insets.top;
-            width = getWidth() - insets.left - insets.right;
-            height = getHeight() - insets.top - insets.bottom;
-        }
+        Insets insets = titleInsets();
+        int x = insets.left;
+        int y = insets.top;
+        int width = getWidth() - insets.left - insets.right;
+        int height = getHeight() - insets.top - insets.bottom;
+        
         
         Dimension labelPreferred = label.getPreferredSize();
         
@@ -423,7 +448,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     public Dimension getPreferredSize() {
         Dimension preferred = label.getPreferredSize();
         
-        Insets insets = getInsets();
+        Insets insets = titleInsets();
 
         if( orientation.isHorizontal() ){
             int width = 0;
