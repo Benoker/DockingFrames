@@ -26,11 +26,7 @@
 
 package bibliothek.gui.dock;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.LayoutManager;
+import java.awt.*;
 
 import javax.swing.Icon;
 import javax.swing.JPanel;

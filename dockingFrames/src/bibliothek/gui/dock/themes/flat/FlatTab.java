@@ -26,18 +26,7 @@
 
 package bibliothek.gui.dock.themes.flat;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.Paint;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;

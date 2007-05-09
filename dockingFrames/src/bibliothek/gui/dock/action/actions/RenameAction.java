@@ -25,21 +25,13 @@
  */
 package bibliothek.gui.dock.action.actions;
 
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 

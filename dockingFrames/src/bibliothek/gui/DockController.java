@@ -26,26 +26,12 @@
 
 package bibliothek.gui;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.KeyboardFocusManager;
-import java.awt.Point;
-import java.awt.Window;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
 
 import javax.swing.FocusManager;
 import javax.swing.JComponent;
@@ -54,19 +40,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.MouseInputListener;
 
-import bibliothek.gui.dock.DefaultFocusController;
-import bibliothek.gui.dock.DockAcceptance;
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.Dockable;
-import bibliothek.gui.dock.FocusController;
-import bibliothek.gui.dock.SingleParentRemover;
-import bibliothek.gui.dock.action.ActionGuard;
-import bibliothek.gui.dock.action.ActionOffer;
-import bibliothek.gui.dock.action.ActionPopup;
-import bibliothek.gui.dock.action.ActionPopupSuppressor;
-import bibliothek.gui.dock.action.DefaultActionOffer;
-import bibliothek.gui.dock.action.DockAction;
-import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.*;
+import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.action.views.ActionViewConverter;
 import bibliothek.gui.dock.event.DockAdapter;
 import bibliothek.gui.dock.event.DockControllerListener;

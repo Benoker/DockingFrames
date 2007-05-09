@@ -33,11 +33,7 @@ import javax.swing.JComponent;
 
 import bibliothek.gui.dock.DockStation;
 import bibliothek.gui.dock.Dockable;
-import bibliothek.gui.dock.title.AbstractDockTitle;
-import bibliothek.gui.dock.title.DefaultDockTitle;
-import bibliothek.gui.dock.title.DockTitle;
-import bibliothek.gui.dock.title.DockTitleFactory;
-import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.title.*;
 
 /**
  * A factory that creates instances of {@link DefaultDockTitle}, but

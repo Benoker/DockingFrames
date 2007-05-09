@@ -26,12 +26,7 @@
 
 package bibliothek.gui.dock.action.actions;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import bibliothek.gui.dock.Dockable;
 import bibliothek.gui.dock.action.DockAction;

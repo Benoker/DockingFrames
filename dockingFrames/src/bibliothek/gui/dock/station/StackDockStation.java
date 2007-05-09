@@ -26,11 +26,7 @@
 
 package bibliothek.gui.dock.station;
 
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;

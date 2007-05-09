@@ -27,9 +27,6 @@
 package bibliothek.gui;
 
 import java.io.*;
-import java.lang.reflect.Constructor;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
 
 import javax.imageio.ImageIO;

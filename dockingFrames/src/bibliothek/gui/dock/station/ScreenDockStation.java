@@ -26,15 +26,7 @@
 
 package bibliothek.gui.dock.station;
 
-import java.awt.Component;
-import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.Window;
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,11 +36,7 @@ import javax.swing.SwingUtilities;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockUI;
-import bibliothek.gui.dock.DockAcceptance;
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.Dockable;
-import bibliothek.gui.dock.DockableDisplayer;
-import bibliothek.gui.dock.DockableProperty;
+import bibliothek.gui.dock.*;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.station.screen.ScreenDockDialog;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
