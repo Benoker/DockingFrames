@@ -36,7 +36,7 @@ public class Triple<A, B, C> extends Tuple<A, B>{
 	private C c;
 	
 	public Triple(){
-		
+        // nothing to do
 	}
 	
 	public Triple( A a, B b, C c ){

@@ -36,7 +36,7 @@ public class Single<A>{
 	private A a;
 	
 	public Single(){
-		
+        // nothing to do
 	}
 	public Single( A a ){
 		this.a = a;

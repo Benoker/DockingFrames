@@ -36,6 +36,7 @@ public class Quartuple<A,B,C,D> extends Triple<A,B,C>{
 	private D d;
 	
 	public Quartuple(){
+        // nothing to do
 	}
 	
 	public Quartuple( A a, B b, C c, D d ){

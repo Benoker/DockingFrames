@@ -218,7 +218,7 @@ public class LocationHint {
 	 * Base-class for Enumerations (sets of uniquely identified objects).
 	 * @author Benjamin Sigg
 	 */
-	public static abstract class Enumeration{
+	public static class Enumeration{
 		/** The unique id of this enumeration */
 		private String id;
 		

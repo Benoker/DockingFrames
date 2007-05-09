@@ -36,7 +36,7 @@ public class Tuple<A, B> extends Single<A>{
 	private B b;
 	
 	public Tuple(){
-		
+		// nothing to do
 	}
 	public Tuple( A a, B b ){
 		super( a );

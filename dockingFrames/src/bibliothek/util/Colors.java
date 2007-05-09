@@ -39,6 +39,10 @@ import java.util.Vector;
  * @version 1.0
  */
 public final class Colors {
+    private Colors(){
+        // do not create any instances of this class
+    }
+    
   public static final Color ALICEBLUE		= new Color ( 15792383 );
   public static final Color ANTIQUEWHITE 	= new Color ( 16444375 );
   public static final Color AQUAMARINE 		= new Color ( 8388564 );
