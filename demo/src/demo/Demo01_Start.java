@@ -29,7 +29,7 @@ public class Demo01_Start {
 		
 		// Add an action "replace station by child" to the controller.
 		// This action allows to remove unnecessary stations by the user.
-		controller.addActionGuard( new ReplaceActionGuard() );
+		controller.addActionGuard( new ReplaceActionGuard( controller ) );
 		
 		// a station that shows some panels
 		SplitDockStation station = new SplitDockStation();

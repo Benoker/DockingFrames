@@ -22,10 +22,8 @@ import bibliothek.gui.dock.themes.DefaultTheme;
 import bibliothek.gui.dock.themes.FlatTheme;
 import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.gui.dock.themes.SmoothTheme;
-import bibliothek.gui.dock.title.DefaultDockTitle;
-import bibliothek.gui.dock.title.DockTitle;
-import bibliothek.gui.dock.title.DockTitleFactory;
-import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.title.*;
+import bibliothek.gui.dock.util.Priority;
 
 /*
  * Sometimes you might like to exchange the titles that are shown
@@ -152,9 +150,9 @@ public class Demo06_YourOwnTitle {
 
         public <D extends Dockable & DockStation> DockTitle createStationTitle( D dockable, DockTitleVersion version ) {
             // let's use the default factory
-            DockTitleFactory factory = version.getFactory( DockTitleVersion.Priority.THEME );
+            DockTitleFactory factory = version.getFactory( Priority.THEME );
             if( factory == null )
-                factory = version.getFactory( DockTitleVersion.Priority.DEFAULT );
+                factory = version.getFactory( Priority.DEFAULT );
             
             return factory.createStationTitle( dockable, version );
         }
