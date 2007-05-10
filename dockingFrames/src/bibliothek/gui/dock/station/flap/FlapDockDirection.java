@@ -28,12 +28,16 @@ package bibliothek.gui.dock.station.flap;
 
 import javax.swing.Icon;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.dock.IconManager;
+import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.actions.SimpleMenuAction;
 import bibliothek.gui.dock.action.actions.SimpleSelectableAction;
+import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.FlapDockStation.Direction;
 
@@ -44,15 +48,17 @@ import bibliothek.gui.dock.station.FlapDockStation.Direction;
  * and the {@link FlapDockStation#setDirection(Direction)}-methods.  
  * @author Benjamin Sigg
  */
-public class FlapDockDirection extends SimpleMenuAction {
+public class FlapDockDirection extends SimpleMenuAction implements ListeningDockAction{
     private DirectedArrow north, south, east, west, center;
-
+    private DockController controller;
+    private Listener listener = new Listener();
+    
     /**
      * Creates the icon of the action, and sets the text and tooltip of the action.
+     * @param controller The controller for which this action will be used. The
+     * controller is needed to retrieve the icons for this action.
      */
-    public FlapDockDirection(){
-        Icon icon = createIcon();
-        setIcon( icon );
+    public FlapDockDirection( DockController controller ){
         setText( DockUI.getDefaultDockUI().getString( "flap.direction" ) );
         setTooltipText( DockUI.getDefaultDockUI().getString( "flap.direction.tooltip" ) );
         
@@ -62,12 +68,6 @@ public class FlapDockDirection extends SimpleMenuAction {
         east = new DirectedArrow( Direction.EAST );
         west = new DirectedArrow( Direction.WEST );
         
-        north.setIcon( createSideIcon( Direction.NORTH ));
-        south.setIcon( createSideIcon( Direction.SOUTH ));
-        east.setIcon( createSideIcon( Direction.EAST ));
-        west.setIcon( createSideIcon( Direction.WEST ));
-        center.setIcon( createCenterIcon() );
-     
         north.setText( DockUI.getDefaultDockUI().getString( "flap.direction.north" ));
         north.setTooltipText( DockUI.getDefaultDockUI().getString( "flap.direction.north.tooltip" ));
         south.setText( DockUI.getDefaultDockUI().getString( "flap.direction.south" ));
@@ -84,31 +84,39 @@ public class FlapDockDirection extends SimpleMenuAction {
         source.addSeparator();
         source.add( north, south, east, west );
         setMenu( source );
-    }
-     
-    /**
-     * Creates the icon that is shown as the icon of the action.
-     * @return The icon of the action
-     */
-    protected Icon createIcon(){
-        return DockUI.getDefaultDockUI().getIcon( "flap.direction" );
+        
+        setController( controller );
     }
     
-    /**
-     * Creates an icon that represents a direction.
-     * @param direction The direction in which the icon should point
-     * @return The icon
-     */
-    protected Icon createSideIcon( Direction direction ){
-        return DockUI.getDefaultDockUI().getIcon( "flap." + direction.name().toLowerCase() );
-    }
-    
-    /**
-     * Creates an icon that represents the automatic direction.
-     * @return The center icon
-     */
-    protected Icon createCenterIcon(){
-        return DockUI.getDefaultDockUI().getIcon( "flap.auto" );
+    public void setController( DockController controller ) {
+        if( this.controller != controller ){
+            if( this.controller != null ){
+                IconManager icons = this.controller.getIcons();
+                icons.remove( "flap.direction", listener );
+                icons.remove( "flap.south", listener );
+                icons.remove( "flap.east", listener );
+                icons.remove( "flap.west", listener );
+                icons.remove( "flap.north", listener );
+                icons.remove( "flap.auto", listener );
+            }
+            
+            this.controller = controller;
+            if( controller != null ){
+                IconManager icons = controller.getIcons();
+                icons.add( "flap.direction", listener );
+                icons.add( "flap.south", listener );
+                icons.add( "flap.east", listener );
+                icons.add( "flap.west", listener );
+                icons.add( "flap.north", listener );
+                icons.add( "flap.auto", listener );
+                setIcon( icons.getIcon( "flap.direction" ));
+                north.setIcon( icons.getIcon( "flap.north" ));
+                south.setIcon( icons.getIcon( "flap.south" ));
+                east.setIcon( icons.getIcon( "flap.east" ));
+                west.setIcon( icons.getIcon( "flap.west" ));
+                center.setIcon( icons.getIcon( "flap.auto" ));
+            }
+        }
     }
     
     /**
@@ -135,6 +143,27 @@ public class FlapDockDirection extends SimpleMenuAction {
     		return getStation( dockable.getDockParent().asDockable() );
     	else
     		throw new IllegalArgumentException( "Dockable or parent is not a FlapDockStation" );
+    }
+    
+    /**
+     * A listener that can exchange the icons of this action
+     * @author Benjamin Sigg
+     */
+    private class Listener implements IconManagerListener{
+        public void iconChanged( String key, Icon icon ) {
+            if( key.equals( "flap.direction" ))
+                setIcon( icon );
+            else if( key.equals( "flap.north" ))
+                north.setIcon( icon );
+            else if( key.equals( "flap.south" ))
+                south.setIcon( icon );
+            else if( key.equals( "flap.east" ))
+                east.setIcon( icon );
+            else if( key.equals( "flap.west" ))
+                west.setIcon( icon );
+            else if( key.equals( "flap.auto" ))
+                center.setIcon( icon );
+        }
     }
     
     /**

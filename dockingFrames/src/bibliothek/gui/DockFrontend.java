@@ -30,6 +30,8 @@ import java.awt.Window;
 import java.io.*;
 import java.util.*;
 
+import javax.swing.Icon;
+
 import bibliothek.gui.dock.*;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
@@ -37,6 +39,7 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.event.DockFrontendListener;
+import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.station.ScreenDockStation;
 import bibliothek.gui.dock.station.flap.FlapDockPropertyFactory;
 import bibliothek.gui.dock.station.flap.FlapDockStationFactory;
@@ -1178,14 +1181,20 @@ public class DockFrontend {
      * {@link Dockable Dockables} which are known to the enclosing frontend.
      * @author Benjamin Sigg
      */
-    public class Hider extends SimpleButtonAction implements ActionGuard{
+    public class Hider extends SimpleButtonAction implements ActionGuard, IconManagerListener{
     	/**
     	 * Creates a new action/guard.
     	 */
         public Hider(){
             setText( DockUI.getDefaultDockUI().getString( "close" ));
-            setIcon( DockUI.getDefaultDockUI().getIcon( "close" ));
             setTooltipText( DockUI.getDefaultDockUI().getString( "close.tooltip" ));
+            
+            controller.getIcons().add( "close", this );
+            setIcon( controller.getIcons().getIcon( "close" ));
+        }
+        
+        public void iconChanged( String key, Icon icon ) {
+            setIcon( icon );
         }
         
         public DockActionSource getSource( Dockable dockable ) {

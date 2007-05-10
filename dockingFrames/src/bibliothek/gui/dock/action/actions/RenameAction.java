@@ -28,27 +28,27 @@ package bibliothek.gui.dock.action.actions;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.DockUtilities;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.Dockable;
 import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.SplitDockStation;
 import bibliothek.gui.dock.station.StackDockStation;
-import bibliothek.util.container.Tuple;
 
 /**
  * This {@link DockAction} can change the {@link Dockable#getTitleText() title-text}
  * of a {@link Dockable}. When this action is triggered, a popupmenu will appear,
- * where the user can enter the new title of the {@link Dockable}.
+ * where the user can enter the new title of the {@link Dockable}.<br>
+ * RenameActions can be easely created by a {@link RenameActionFactory}
  * @author Benjamin Sigg
  */
 public abstract class RenameAction extends SimpleButtonAction {
@@ -63,26 +63,20 @@ public abstract class RenameAction extends SimpleButtonAction {
     
     /** the dockable whose title is currently changed */
     private Dockable current;
-    
-    /**
-     * A set of RenameActions for known types.
-     */
-    private static final List<Tuple<Class<?>, RenameAction>> SPECIAL = 
-    	new ArrayList<Tuple<Class<?>, RenameAction>>();
-    
-    static{
-    	SPECIAL.add( new Tuple<Class<?>, RenameAction>( DefaultDockable.class, new RenameDefaultDockable() ));
-    	SPECIAL.add( new Tuple<Class<?>, RenameAction>( SplitDockStation.class, new RenameSplitDockStation() ));
-    	SPECIAL.add( new Tuple<Class<?>, RenameAction>( StackDockStation.class, new RenameStackDockStation() ));
-    	SPECIAL.add( new Tuple<Class<?>, RenameAction>( FlapDockStation.class, new RenameFlapDockStation() ));
-    }
-    
+        
     /**
      * Constructs a new action
+     * @param controller The controller to which a listener will be added to 
+     * get the Icon for this action
      */
-    public RenameAction(){
-        Icon icon = createIcon();
-        setIcon( icon );
+    public RenameAction( DockController controller ){
+        controller.getIcons().add( "rename", new IconManagerListener(){
+            public void iconChanged( String key, Icon icon ) {
+                setIcon( icon );
+            }
+        });
+        setIcon( controller.getIcons().getIcon( "rename" ));
+        
         setText( DockUI.getDefaultDockUI().getString( "rename" ) );
         setTooltipText( DockUI.getDefaultDockUI().getString( "rename.tooltip" ) );
         
@@ -158,15 +152,6 @@ public abstract class RenameAction extends SimpleButtonAction {
     }
     
     /**
-     * Creates an icon that is shown for this action. This method
-     * is invoked directly by the constructor.
-     * @return The new icon
-     */
-    protected Icon createIcon(){
-        return DockUI.getDefaultDockUI().getIcon( "rename" );
-    }
-    
-    /**
      * Invoked when the action was triggered, and the user tipped in
      * the new title for <code>dockable</code>.
      * @param dockable The {@link Dockable} whose title should be changed
@@ -175,29 +160,19 @@ public abstract class RenameAction extends SimpleButtonAction {
     protected abstract void rename( Dockable dockable, String text );
 
     /**
-     * Searches for a subtype of {@link RenameAction} who can handle
-     * the <code>dockable</code>.
-     * @param dockable The {@link Dockable} for whom an action is searched
-     * @return The instance of a RenameAction, or <code>null</code> if no
-     * fitting sub type was found.
-     */
-    public static RenameAction actionFor( Dockable dockable ){
-    	Class<?> clazz = dockable.getClass();
-    	
-    	for( Tuple<Class<?>, RenameAction> action : SPECIAL ){
-    		if( action.getA().isAssignableFrom( clazz ))
-    			return action.getB();
-    	}
-    	
-    	return null;
-    }
-    
-    /**
      * An implementation of {@link RenameAction} that can handle
      * {@link StackDockStation StackDockStations}.
      * @author Benjamin Sigg
      */
     public static class RenameStackDockStation extends RenameAction{
+        /**
+         * Creates a new action
+         * @param controller the controller to which a listener will be added
+         */
+        public RenameStackDockStation( DockController controller ) {
+            super( controller );
+        }
+
         @Override
         protected void rename( Dockable dock, String text ){ 
             ((StackDockStation)dock).setTitleText( text );
@@ -210,6 +185,14 @@ public abstract class RenameAction extends SimpleButtonAction {
      * @author Benjamin Sigg
      */
     public static class RenameSplitDockStation extends RenameAction{
+        /**
+         * Creates a new action
+         * @param controller the controller to which a listener will be added
+         */
+        public RenameSplitDockStation( DockController controller ) {
+            super( controller );
+        }
+        
         @Override
         protected void rename( Dockable dock, String text ){
             ((SplitDockStation)dock).setTitleText( text );
@@ -222,6 +205,14 @@ public abstract class RenameAction extends SimpleButtonAction {
      * @author Benjamin Sigg
      */
     public static class RenameFlapDockStation extends RenameAction{
+        /**
+         * Creates a new action
+         * @param controller the controller to which a listener will be added
+         */
+        public RenameFlapDockStation( DockController controller ) {
+            super( controller );
+        }
+        
         @Override
         protected void rename( Dockable dock, String text ){
             ((FlapDockStation)dock).setTitleText( text );
@@ -233,7 +224,14 @@ public abstract class RenameAction extends SimpleButtonAction {
      * {@link DefaultDockable DefaultDockables}.
      * @author Benjamin Sigg
      */
-    public static class RenameDefaultDockable extends RenameAction{
+    public static class RenameDefaultDockable extends RenameAction{        /**
+         * Creates a new action
+         * @param controller the controller to which a listener will be added
+         */
+        public RenameDefaultDockable( DockController controller ) {
+            super( controller );
+        }
+        
         @Override
         protected void rename( Dockable dock, String text ){
             ((DefaultDockable)dock).setTitleText( text );

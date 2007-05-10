@@ -45,10 +45,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.*;
-import bibliothek.gui.dock.action.DefaultDockActionSource;
-import bibliothek.gui.dock.action.DockAction;
-import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.action.LocationHint;
+import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.event.*;
 import bibliothek.gui.dock.station.split.*;
 import bibliothek.gui.dock.station.split.SplitDockTree.Key;
@@ -156,7 +153,7 @@ public class SplitDockStation extends JPanel implements Dockable, DockStation {
     private DockableDisplayer fullScreenDockable;
     
     /** An action that is added to all children. The action changes the fullscreen-mode of the child. Can be <code>null</code> */
-    private DockAction fullScreenAction;
+    private ListeningDockAction fullScreenAction;
     
     /** Size of the gap between two children in pixel */
     private int dividerSize = 4;
@@ -307,9 +304,9 @@ public class SplitDockStation extends JPanel implements Dockable, DockStation {
      * fullscreen. The action is also added to subchildren, but the effect
      * does only affect direct children of this station.
      * @return the action or <code>null</code> if this feature should be
-     * disabled, or the action is {@link #setFullScreenAction(DockAction) set later}
+     * disabled, or the action is {@link #setFullScreenAction(ListeningDockAction) set later}
      */
-    protected DockAction createFullScreenAction(){
+    protected ListeningDockAction createFullScreenAction(){
         return new SplitFullScreenAction( this );
     }
     
@@ -320,7 +317,7 @@ public class SplitDockStation extends JPanel implements Dockable, DockStation {
      * @param fullScreenAction the new action
      * @throws IllegalStateException if there is already an action present
      */
-    public void setFullScreenAction( DockAction fullScreenAction ) {
+    public void setFullScreenAction( ListeningDockAction fullScreenAction ) {
         if( this.fullScreenAction != null )
             throw new IllegalStateException( "The fullScreenAction can only be set once" );
         this.fullScreenAction = fullScreenAction;
@@ -396,6 +393,8 @@ public class SplitDockStation extends JPanel implements Dockable, DockStation {
             
             this.controller = controller;
             getDisplayers().setController( controller );
+            if( fullScreenAction != null )
+                fullScreenAction.setController( controller );
             
             if( controller != null ){
                 title = controller.getDockTitleManager().registerDefault( TITLE_ID, ControllerTitleFactory.INSTANCE );

@@ -26,6 +26,7 @@
 
 package bibliothek.gui.dock.action.actions;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.dock.Dockable;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
@@ -46,9 +47,13 @@ public class ReplaceActionGuard implements ActionGuard {
 	
 	/**
 	 * Creates a new guard
+     * @param controller The controller for which actions are created.
 	 */
-	public ReplaceActionGuard(){
-		action = new ReplaceAction();
+	public ReplaceActionGuard( DockController controller ){
+        if( controller == null )
+            throw new IllegalArgumentException( "Controller should not be null" );
+        
+		action = new ReplaceAction( controller );
 		source = new DefaultDockActionSource();
 		
 		source.setHint( new LocationHint( LocationHint.ACTION_GUARD, LocationHint.LEFT ));

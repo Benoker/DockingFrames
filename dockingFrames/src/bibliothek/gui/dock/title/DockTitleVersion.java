@@ -27,10 +27,10 @@
 package bibliothek.gui.dock.title;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockTitleManager;
 import bibliothek.gui.dock.DockStation;
 import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.dock.util.Priority;
 
 /**
  * A DockTitleVersion is a hint which {@link DockTitleFactory} has to
@@ -43,16 +43,7 @@ import bibliothek.gui.dock.Dockable;
  * @author Benjamin Sigg
  */
 public class DockTitleVersion{
-    /** The priorities of the factories */
-	public static enum Priority{
-        /** highest priority, for factories directly set by the client */
-        CLIENT, 
-        /** for factories set by a {@link DockTheme} */
-        THEME,
-        /** lowest priority, the default-values set by the stations */
-        DEFAULT };
-        
-	/** the three slots for the factories */
+    /** the three slots for the factories */
     private DockTitleFactory[] factories = new DockTitleFactory[3];
     /** the name of this version */
     private String id;

@@ -103,7 +103,9 @@ public class DockController {
     private Map<DockTitle, Dockable> activeTitles = new HashMap<DockTitle, Dockable>();
     /** a source for {@link DockTitle} */
     private DockTitleManager dockTitles = new DockTitleManager( this );
-   
+    /** the set of icons used with this controller */
+    private IconManager icons = new IconManager();
+    
     /** A list of sources for a {@link DockActionSource} */
     private List<ActionOffer> actionOffers = new ArrayList<ActionOffer>();
     /** A  list of sources for {@link DockActionSource DockActionSources} */
@@ -139,6 +141,8 @@ public class DockController {
         defaultActionOffer = createDefaultActionOffer();
         focusController = createFocusController();
         actionViewConverter = createActionViewConverter();
+        
+        DockUI.getDefaultDockUI().fillIcons( icons );
         
         setTheme( new DefaultTheme() );
     }
@@ -929,6 +933,14 @@ public class DockController {
     public DockTitleManager getDockTitleManager() {
 		return dockTitles;
 	}
+    
+    /**
+     * Gets the set of icons which are used by this controller.
+     * @return the set of icons
+     */
+    public IconManager getIcons() {
+        return icons;
+    }
     
     /**
      * Gest the number of stations registered at this controller.

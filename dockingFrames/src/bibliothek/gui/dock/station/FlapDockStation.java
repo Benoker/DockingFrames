@@ -41,6 +41,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.DockUtilities;
 import bibliothek.gui.dock.*;
+import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.LocationHint;
@@ -157,7 +158,7 @@ public class FlapDockStation extends AbstractDockableStation {
      * An action that will be added to all children of this station. The
      * user can change the {@link #hold}-property with this action. 
      */
-    private DockAction holdAction;
+    private ListeningDockAction holdAction;
     
     /** A listener that is added to the parent of this dockable station. */
     private VisibleListener visibleListener = new VisibleListener();
@@ -213,7 +214,7 @@ public class FlapDockStation extends AbstractDockableStation {
      * @return The action, or <code>null</code> if no action should
      * be added to the children
      */
-    protected DockAction createHoldAction(){
+    protected ListeningDockAction createHoldAction(){
         return new FlapDockHoldToggle( this );
     }
     
@@ -256,6 +257,9 @@ public class FlapDockStation extends AbstractDockableStation {
     
             super.setController(controller);
             displayers.setController( controller );
+            
+            if( holdAction != null )
+                holdAction.setController( controller );
 
             if( controller != null ){
                 titleVersion = controller.getDockTitleManager().registerDefault( WINDOW_TITLE_ID, ControllerTitleFactory.INSTANCE );

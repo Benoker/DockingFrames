@@ -28,9 +28,13 @@ package bibliothek.gui.dock.action.actions;
 
 import javax.swing.Icon;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.DockStation;
 import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.dock.IconManager;
+import bibliothek.gui.dock.action.ListeningDockAction;
+import bibliothek.gui.dock.event.IconManagerListener;
 
 /**
  * This action shows an icon for "close". When the action is trigged, 
@@ -39,15 +43,35 @@ import bibliothek.gui.dock.Dockable;
  * from it's parent.
  * @author Benjamin Sigg
  */
-public class CloseAction extends SimpleButtonAction {
+public class CloseAction extends SimpleButtonAction implements ListeningDockAction{
+    private DockController controller;
+    private Listener listener = new Listener();
+    
     /**
-     * Defaultconstructor, sets the icon and the text of this action.
+     * Sets the icon and the text of this action.
+     * @param controller The controller from which this action should read
+     * properties, might be <code>null</code> and can be changed by the
+     * method {@link #setController(DockController) setController}
      */
-    public CloseAction(){
-        Icon icon = createIcon();
-        setIcon( icon );
+    public CloseAction( DockController controller ){
         setText( DockUI.getDefaultDockUI().getString( "close" ));
         setTooltipText( DockUI.getDefaultDockUI().getString( "close.tooltip" ));
+        setController( controller );
+    }
+    
+    public void setController( DockController controller ) {
+        if( controller != this.controller ){
+            if( this.controller != null )
+                this.controller.getIcons().remove( "close", listener );
+            
+            this.controller = controller;
+            
+            if( controller != null ){
+                IconManager icons = controller.getIcons();
+                icons.add( "close", listener );
+                setIcon( icons.getIcon( "close" ));
+            }
+        }
     }
     
     @Override
@@ -68,10 +92,12 @@ public class CloseAction extends SimpleButtonAction {
     }
     
     /**
-     * Creates the {@link Icon} that will be used for this action.
-     * @return The Icon to display, may be <code>null</code>
+     * A listener changing the icon of this action
+     * @author Benjamin Sigg
      */
-    protected Icon createIcon(){
-        return DockUI.getDefaultDockUI().getIcon( "close" );
+    private class Listener implements IconManagerListener{
+        public void iconChanged( String key, Icon icon ) {
+            setIcon( icon );
+        }
     }
 }

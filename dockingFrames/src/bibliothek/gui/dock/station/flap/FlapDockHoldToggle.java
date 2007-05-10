@@ -28,11 +28,15 @@ package bibliothek.gui.dock.station.flap;
 
 import javax.swing.Icon;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.dock.IconManager;
+import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.actions.GroupedSelectableDockAction;
 import bibliothek.gui.dock.event.FlapDockListener;
+import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.station.FlapDockStation;
 
 /**
@@ -44,8 +48,10 @@ import bibliothek.gui.dock.station.FlapDockStation;
  * of the station.
  * @author Benjamin Sigg
  */
-public class FlapDockHoldToggle extends GroupedSelectableDockAction.Check<Boolean> {
+public class FlapDockHoldToggle extends GroupedSelectableDockAction.Check<Boolean> implements ListeningDockAction {
     private FlapDockStation flap;
+    private DockController controller;
+    private Listener listener = new Listener();
     
     /**
      * Constructor, sets the icons and makes the action ready to be shown.
@@ -63,9 +69,6 @@ public class FlapDockHoldToggle extends GroupedSelectableDockAction.Check<Boolea
                     setGroup( hold, dockable );
             }
         });
-        
-        setIcon( Boolean.FALSE, createUpIcon() );
-        setSelectedIcon( Boolean.TRUE, createDownIcon() );
         
         setSelected( Boolean.FALSE, false );
         setSelected( Boolean.TRUE, true );
@@ -88,21 +91,36 @@ public class FlapDockHoldToggle extends GroupedSelectableDockAction.Check<Boolea
         return flap.isHold( dockable );
     }
     
-    /**
-     * Creates an icon that is shown for {@link Dockable Dockables} 
-     * which are sticked.
-     * @return The icon for sticked children
-     */
-    protected Icon createDownIcon(){
-        return DockUI.getDefaultDockUI().getIcon( "flap.hold" );
+    public void setController( DockController controller ) {
+        if( this.controller != controller ){
+            if( this.controller != null ){
+                this.controller.getIcons().remove( "flap.hold", listener );
+                this.controller.getIcons().remove( "flap.free", listener );
+            }
+            
+            this.controller = controller;
+            
+            if( controller != null ){
+                IconManager icons = controller.getIcons();
+                icons.add( "flap.hold", listener );
+                icons.add( "flap.free", listener );
+                setIcon( false, icons.getIcon( "flap.free" ));
+                setSelectedIcon( true, icons.getIcon( "flap.hold" ));
+            }
+        }
     }
     
     /**
-     * Creates an icon that is shown for {@link Dockable Dockables}
-     * which are not sticked.
-     * @return The icon for non-sticked children
+     * A listener changing the icon of this action when necessary
+     * @author Benjamin Sigg
+     *
      */
-    protected Icon createUpIcon(){
-        return DockUI.getDefaultDockUI().getIcon( "flap.free" );
+    private class Listener implements IconManagerListener{
+        public void iconChanged( String key, Icon icon ) {
+            if( key.equals( "flap.free" ))
+                setIcon( false, icon );
+            else
+                setSelectedIcon( true, icon );
+        }
     }
 }

@@ -32,6 +32,7 @@ import java.util.Map;
 import bibliothek.gui.dock.DockStation;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.Priority;
 
 /**
  * The manager of the {@link DockTitleFactory DockTitleFactories}. Every 
@@ -82,7 +83,7 @@ public class DockTitleManager {
      * @return a handle of the factories of this id
      */
     public DockTitleVersion registerClient( String id, DockTitleFactory factory ){
-    	return register( id, factory, DockTitleVersion.Priority.CLIENT );
+    	return register( id, factory, Priority.CLIENT );
     }
 
     /**
@@ -92,7 +93,7 @@ public class DockTitleManager {
      * @return a handle of the factories of this id
      */
     public DockTitleVersion registerTheme( String id, DockTitleFactory factory ){
-    	return register( id, factory, DockTitleVersion.Priority.THEME );
+    	return register( id, factory, Priority.THEME );
     }
     
     /**
@@ -102,7 +103,7 @@ public class DockTitleManager {
      * @return a handle of the factories of this id
      */
     public DockTitleVersion registerDefault( String id, DockTitleFactory factory ){
-    	return register( id, factory, DockTitleVersion.Priority.DEFAULT );
+    	return register( id, factory, Priority.DEFAULT );
     }
     
     /**
@@ -112,7 +113,7 @@ public class DockTitleManager {
      * @param priority the priority of this registration
      * @return the handle to the factory or a factory with higher priority
      */
-    public DockTitleVersion register( String id, DockTitleFactory factory, DockTitleVersion.Priority priority ){
+    public DockTitleVersion register( String id, DockTitleFactory factory, Priority priority ){
         DockTitleVersion version = titleVersions.get( id );
         if( version == null ){
             version = new DockTitleVersion( controller, id );
@@ -129,6 +130,6 @@ public class DockTitleManager {
      */
     public void clearThemeFactories(){
     	for( DockTitleVersion version : titleVersions.values() )
-    		version.setFactory( null, DockTitleVersion.Priority.THEME );
+    		version.setFactory( null, Priority.THEME );
     }
 }

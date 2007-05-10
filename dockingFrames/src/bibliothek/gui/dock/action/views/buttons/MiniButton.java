@@ -249,6 +249,7 @@ public class MiniButton extends JComponent {
         this.icon = icon;
         this.autoDisabledIcon = null;
         
+        revalidate();
         repaint();
     }
     

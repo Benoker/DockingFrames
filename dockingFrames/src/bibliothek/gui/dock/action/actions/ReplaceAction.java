@@ -28,12 +28,15 @@ package bibliothek.gui.dock.action.actions;
 
 import javax.swing.Icon;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.DockStation;
 import bibliothek.gui.dock.Dockable;
 import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockStationListener;
+import bibliothek.gui.dock.event.IconManagerListener;
 
 /**
  * A {@link DockAction} that can replace a {@link DockStation} by it's only
@@ -42,14 +45,21 @@ import bibliothek.gui.dock.event.DockStationListener;
  * station that was provided through the constructor.
  * @author Benjamin Sigg
  */
-public class ReplaceAction extends GroupedButtonDockAction<Boolean> {
+public class ReplaceAction extends GroupedButtonDockAction<Boolean> implements ListeningDockAction{
 	/** A listener to the stations known to this action */
     private DockStationListener dockStationListener;
     
+    private DockController controller;
+    private Listener listener = new Listener();
+    
     /**
      * Sets up this action.
+     * @param controller The controller for which this action is used. This
+     * action will add some listeners to the controller. To remove those
+     * listeners, call {@link #setController(DockController)} with a
+     * <code>null</code> argument.
      */
-    public ReplaceAction(){
+    public ReplaceAction( DockController controller ){
         super( null );
         
         dockStationListener = new DockStationAdapter(){
@@ -67,15 +77,13 @@ public class ReplaceAction extends GroupedButtonDockAction<Boolean> {
         
         setEnabled( true, true );
         setEnabled( false, false );
-
-        Icon icon = createIcon();
-        setIcon( true, icon );
-        setIcon( false, icon );
         
         setText( true, DockUI.getDefaultDockUI().getString( "replace" ) );
         setText( false, DockUI.getDefaultDockUI().getString( "replace" ) );
         setTooltipText( true, DockUI.getDefaultDockUI().getString( "replace.tooltip" ));
         setTooltipText( false, DockUI.getDefaultDockUI().getString( "replace.tooltip" ));
+        
+        setController( controller );
     }
     
     @Override
@@ -145,11 +153,30 @@ public class ReplaceAction extends GroupedButtonDockAction<Boolean> {
         super.unbinded( dockable );
     }
     
+    public void setController( DockController controller ) {
+        if( this.controller != controller ){
+            if( this.controller != null )
+                this.controller.getIcons().remove( "replace", listener );
+            
+            this.controller = controller;
+            
+            if( controller != null ){
+                controller.getIcons().add( "replace" , listener );
+                Icon icon = controller.getIcons().getIcon( "replace" );
+                setIcon( true, icon );
+                setIcon( false, icon );
+            }
+        }
+    }
+    
     /**
-     * Creates the icon that is shown for this action.
-     * @return The icon of this action
+     * A listener changing the icon of this action
+     * @author Benjamin Sigg
      */
-    protected Icon createIcon(){
-        return DockUI.getDefaultDockUI().getIcon( "replace" );
+    private class Listener implements IconManagerListener{
+        public void iconChanged( String key, Icon icon ) {
+            setIcon( true, icon );
+            setIcon( false, icon );
+        }
     }
 }

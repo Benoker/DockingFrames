@@ -36,6 +36,7 @@ import javax.swing.ImageIcon;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.DockStation;
 import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.dock.IconManager;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StationPaint;
@@ -43,6 +44,7 @@ import bibliothek.gui.dock.station.support.DefaultCombiner;
 import bibliothek.gui.dock.station.support.DefaultDisplayerFactory;
 import bibliothek.gui.dock.station.support.DefaultStationPaint;
 import bibliothek.gui.dock.themes.*;
+import bibliothek.gui.dock.util.Priority;
 
 /**
  * A list of icons, text and methods used by the framework. 
@@ -208,6 +210,15 @@ public class DockUI {
             ex.printStackTrace();
             return new HashMap<String, String>();
         }
+    }
+    
+    /**
+     * Fills all known icons as default-icons into the given manager.
+     * @param manager the manager to fill
+     */
+    public void fillIcons( IconManager manager ){
+        for( Map.Entry<String, Icon> icon : icons.entrySet() )
+            manager.setIcon( icon.getKey(), Priority.DEFAULT, icon.getValue() );
     }
     
     /**

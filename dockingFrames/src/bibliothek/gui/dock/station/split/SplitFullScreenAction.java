@@ -28,11 +28,15 @@ package bibliothek.gui.dock.station.split;
 
 import javax.swing.Icon;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.DockStation;
 import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.dock.IconManager;
+import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.actions.GroupedButtonDockAction;
+import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.event.SplitDockListener;
 import bibliothek.gui.dock.station.SplitDockStation;
 
@@ -41,8 +45,10 @@ import bibliothek.gui.dock.station.SplitDockStation;
  * to allow it's children to get in fullscreen-mode.
  * @author Benjamin Sigg
  */
-public class SplitFullScreenAction extends GroupedButtonDockAction<Boolean> {
+public class SplitFullScreenAction extends GroupedButtonDockAction<Boolean> implements ListeningDockAction {
     private SplitDockStation split;
+    private DockController controller;
+    private Listener listener = new Listener();
     
     /**
      * Constructs the action and sets the <code>station</code> on
@@ -67,14 +73,30 @@ public class SplitFullScreenAction extends GroupedButtonDockAction<Boolean> {
             }
         });
         
-        setIcon( Boolean.TRUE, createNormalizeIcon() );
-        setIcon( Boolean.FALSE, createMaximizeIcon() );
-        
         setText( Boolean.TRUE, DockUI.getDefaultDockUI().getString( "split.normalize" ) );
         setText( Boolean.FALSE, DockUI.getDefaultDockUI().getString( "split.maximize" ) );
         
         setTooltipText( Boolean.TRUE, DockUI.getDefaultDockUI().getString( "split.normalize.tooltip" ));
         setTooltipText( Boolean.FALSE, DockUI.getDefaultDockUI().getString( "split.maximize.tooltip" ));
+    }
+    
+    public void setController( DockController controller ) {
+        if( this.controller != controller ){
+            if( this.controller != null ){
+                this.controller.getIcons().remove( "split.normalize", listener );
+                this.controller.getIcons().remove( "split.maximize", listener );
+            }
+            
+            this.controller = controller;
+            
+            if( controller != null ){
+                IconManager icons = controller.getIcons();
+                icons.add( "split.normalize", listener );
+                icons.add( "split.maximize", listener );
+                setIcon( true, icons.getIcon( "split.normalize" ));
+                setIcon( false, icons.getIcon( "split.maximize" ));
+            }
+        }
     }
     
     public void action( Dockable dockable ) {
@@ -124,22 +146,17 @@ public class SplitFullScreenAction extends GroupedButtonDockAction<Boolean> {
         else
             return Boolean.FALSE;
     }
-
-    /**
-     * Creates the icon that is shown on {@link Dockable Dockables} which
-     * are in fullscreen-mode.
-     * @return the icon
-     */
-    protected Icon createNormalizeIcon(){
-        return DockUI.getDefaultDockUI().getIcon( "split.normalize" );
-    }
     
     /**
-     * Creates the icon that is shown on {@link Dockable Dockables} which
-     * are not in fullscreen-mode.
-     * @return the icon
+     * A listener to the set of icons
+     * @author Benjamin Sigg
      */
-    protected Icon createMaximizeIcon(){
-        return DockUI.getDefaultDockUI().getIcon( "split.maximize" );
+    private class Listener implements IconManagerListener{
+        public void iconChanged( String key, Icon icon ) {
+            if( key.equals( "split.normalize" ))
+                setIcon( true, icon );
+            else
+                setIcon( false, icon );
+        }
     }
 }
