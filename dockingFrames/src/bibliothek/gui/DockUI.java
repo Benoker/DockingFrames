@@ -33,6 +33,7 @@ import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.DockStation;
 import bibliothek.gui.dock.Dockable;
@@ -97,6 +98,7 @@ public class DockUI {
         registerTheme( DefaultTheme.class, null );
         registerTheme( FlatTheme.class, null );
         registerTheme( SmoothTheme.class, null );
+        registerTheme( BubbleTheme.class, null );
         registerTheme( NoStackTheme.getFactory( DefaultTheme.class, null, this ));
         registerTheme( NoStackTheme.getFactory( FlatTheme.class, null, this ));
         registerTheme( NoStackTheme.getFactory( SmoothTheme.class, null, this ));

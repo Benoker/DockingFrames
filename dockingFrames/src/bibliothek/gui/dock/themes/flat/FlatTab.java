@@ -26,21 +26,23 @@
 
 package bibliothek.gui.dock.themes.flat;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.Paint;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import javax.swing.border.Border;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
-import bibliothek.gui.dock.station.stack.StackDockComponent;
+import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
+import bibliothek.gui.dock.station.stack.CombinedTab;
 
 /**
  * A panel that works like a {@link JTabbedPane}, but the buttons to
@@ -48,261 +50,29 @@ import bibliothek.gui.dock.station.stack.StackDockComponent;
  * buttons of the <code>JTabbedPane</code>.
  * @author Benjamin Sigg
  */
-public class FlatTab implements StackDockComponent{
-    /** The panel which shows the children */
-    private JPanel panel;
+public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
     
-    /** A list of all buttons of this FlatTab */
-    private List<FlatButton> buttons = new ArrayList<FlatButton>();
-    
-    /** A panel which displaies the buttons of this FlatTab */
-    private JPanel buttonPanel = new JPanel( new FlowLayout( FlowLayout.LEADING, 0, 0 ){
-        @Override
-        public Dimension minimumLayoutSize( Container target ){
-            return preferredLayoutSize( target );
-        }
-        
-        @Override
-        public Dimension preferredLayoutSize( Container target ){
-            if( target.getParent() == null )
-                return super.preferredLayoutSize( target );
-            
-            int width = target.getParent().getWidth();
-            
-            int maxWidth = 0;
-            int currentWidth = 0;
-            int currentHeight = 0;
-            int left = 0;
-            int height = 0;
-            
-            for( int i = 0, n = target.getComponentCount(); i<n; i++ ){
-                Dimension preferred = target.getComponent(i).getPreferredSize();
-                
-                if( left == 0 || currentWidth + preferred.width <= width ){
-                    currentWidth += preferred.width;
-                    currentHeight = Math.max( currentHeight, preferred.height );
-                    left++;
-                }
-                else{
-                    height += currentHeight;
-                    maxWidth = Math.max( maxWidth, currentWidth );
-                    left = 0;
-                    
-                    currentWidth = preferred.width;    
-                    currentHeight = preferred.height;
-                    left++;
-                }
-            }
-            
-            
-            height += currentHeight;
-            maxWidth = Math.max( maxWidth, currentWidth );
-        
-            return new Dimension( maxWidth, height );
-        }
-    });
-    
-    /** A list of all {@link Component Components} which are shown on this panel */
-    private List<Component> components = new ArrayList<Component>();
-    
-    /** The panel which displays one of the children of this FlatTab */
-    private JPanel componentPanel = new JPanel(){
-    	@Override
-    	public void doLayout(){
-    		int w = getWidth();
-    		int h = getHeight();
-    		
-    		for( int i = 0, n = getComponentCount(); i<n; i++ ){
-    			getComponent(i).setBounds( 0, 0, w, h );
-    		}
-    	}
-    	
-    	@Override
-    	public Dimension getMinimumSize() {
-    		Dimension base = new Dimension( 0, 0 );
-    		for( int i = 0, n = getComponentCount(); i<n; i++ ){
-    			Dimension next = getComponent(i).getMinimumSize();
-    			base.width = Math.max( base.width, next.width );
-    			base.height = Math.max( base.height, next.height );
-    		}
-    		return base;
-    	}
-    };
-    
-    /** The index of the currently visible child */
-    private int selectedIndex = -1;
-    
-    /** A list of listeners which have to informed when the selection changes */
-    private List<ChangeListener> listeners = new ArrayList<ChangeListener>();
-    
-    /**
-     * Constructs a new FlatTab
-     */
-    public FlatTab(){
-        panel = new JPanel( null ){
-            @Override
-            @Deprecated
-            public void reshape( int x, int y, int w, int h ){
-                super.reshape( x, y, w, h );
-                doLayout();
-            }
-            
-            @Override
-            public void doLayout() {
-                Dimension preferred = buttonPanel.getPreferredSize();
-                
-                int height = Math.min( preferred.height, getHeight()-1 );
-                
-                componentPanel.setBounds( 0, 0, getWidth(), getHeight()-height );
-                buttonPanel.setBounds( 0, getHeight()-height, getWidth(), height );
-            }
-            
-            @Override
-            public Dimension getMinimumSize() {
-            	Dimension components = componentPanel.getMinimumSize();
-            	Dimension buttons = buttonPanel.getMinimumSize();
-            	
-            	return new Dimension( components.width, components.height + buttons.height );
-            }
-        };
-        panel.add( buttonPanel );
-        panel.add( componentPanel );
-    }
-    
-    public void addChangeListener( ChangeListener listener ) {
-        listeners.add( listener );
-    }
-
-    public void removeChangeListener( ChangeListener listener ) {
-        listeners.remove( listener );
-    }
-
-    /**
-     * Sends a {@link ChangeEvent} to all {@link #addChangeListener(ChangeListener) registered}
-     * {@link ChangeListener ChangeListeners}
-     */
-    protected void fireStateChange(){
-        ChangeEvent event = new ChangeEvent( this );
-        for( ChangeListener listener : listeners )
-            listener.stateChanged( event );
-    }
-    
-    public int getSelectedIndex() {
-        return selectedIndex;
-    }
-
-    public void setSelectedIndex( int index ) {
-        if( selectedIndex != index ){
-            if( selectedIndex >= 0 && selectedIndex < buttons.size() )
-                buttons.get( selectedIndex ).repaint();
-            selectedIndex = index;
-            
-            for( int i = 0, n = components.size(); i<n; i++ )
-            	components.get( i ).setVisible( i == index );
-            
-            if( index >= 0 && index < buttons.size() ){
-                buttons.get( index ).repaint();
-                componentPanel.validate();
-                componentPanel.repaint();
-            }
-            fireStateChange();
-        }
-    }
-
-    public Rectangle getBoundsAt( int index ) {
-        Rectangle bounds = buttons.get(index).getBounds();
-        bounds.x += buttonPanel.getX();
-        bounds.y += buttonPanel.getY();
-        return bounds;
-    }
-    
-    public void addTab( String title, Icon icon, Component comp ) {
-        insertTab( title, icon, comp, getTabCount() );
-    }
-
-    public void insertTab( String title, Icon icon, Component comp, int index ) {
-        FlatButton button = new FlatButton();
-        button.setText( title );
-        button.setIcon( icon );
-        buttons.add( index, button );
-        
-        JPanel between = new JPanel( new GridLayout( 1, 1 ));
-        between.add( comp );
-        components.add( index, between );
-        componentPanel.add( between );
-        
-        buttonPanel.removeAll();
-        int count = 0;
-        for( FlatButton b : buttons  ){
-            buttonPanel.add( b );
-            b.setIndex( count++ );
-        }
-        
-        if( selectedIndex >= index )
-            selectedIndex++;
-        
-        setSelectedIndex( index );
-        fireStateChange();
-    }
-
-    public int getTabCount() {
-        return buttons.size();
-    }
-
-    public void removeAll() {
-        buttons.clear();
-        components.clear();
-        buttonPanel.removeAll();
-        componentPanel.removeAll();
-        selectedIndex = -1;
-        fireStateChange();
-    }
-
-    public void remove( int index ) {
-        if( index == selectedIndex ){
-            if( index == 0 ){
-                if( getTabCount() == 1 )
-                    setSelectedIndex( -1 );
-                else
-                    setSelectedIndex( 1 );
-            }
-            else
-                setSelectedIndex( 0 );
-        }
-        
-        buttonPanel.remove( buttons.remove( index ));
-        componentPanel.remove( components.remove( index ) );
-        
-        int count = 0;
-        for( FlatButton b : buttons  ){
-            b.setIndex( count++ );
-        }
-        
-        if( selectedIndex >= index )
-            selectedIndex--;
-        
-        fireStateChange();
-    }
-
-    public void setTitleAt( int index, String newTitle ) {
-        buttons.get(index).setText( newTitle );
-    }
-
-    public void setIconAt( int index, Icon newIcon ) {
-        buttons.get(index).setIcon( newIcon );
-    }
-
-    public Component getComponent() {
-        return panel;
-    }
-    
+	@Override
+	protected FlatButton createTab(){
+		return new FlatButton();
+	}
+	
+	@Override
+	protected void destroy( FlatButton tab ){
+		// nothing to do
+	}
+	
     /**
      * A small button which can be clicked by the user.
      * @author Benjamin Sigg
      */
-    private class FlatButton extends JLabel{
+    private class FlatButton extends JLabel implements CombinedTab{
         /** The location of this button */
         private int index;
+        
+        public JComponent getComponent(){
+        	return this;
+        }
         
         @Override
         public Dimension getPreferredSize() {
@@ -378,8 +148,8 @@ public class FlatTab implements StackDockComponent{
         
         /**
          * Sets the location of this button. The buttons knows
-         * through the {@link FlatTab#selectedIndex selectedIndex}-property wether
-         * it is slected or not.
+         * through the {@link FlatTab#selectedIndex selectedIndex}-property whether
+         * it is selected or not.
          * @param index the location
          */
         public void setIndex( int index ) {
@@ -388,7 +158,7 @@ public class FlatTab implements StackDockComponent{
         }
         
         /**
-         * Determins wether this button is selected or not.
+         * Determines whether this button is selected or not.
          * @return <code>true</code> if the button is selected
          */
         public boolean isSelected() {
