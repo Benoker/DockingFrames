@@ -1,6 +1,8 @@
 package bibliothek.extension.gui.dock.theme;
 
 import java.awt.Color;
+import java.util.HashMap;
+import java.util.Map;
 
 import bibliothek.extension.gui.dock.theme.bubble.BubbleStackDockComponent;
 import bibliothek.gui.DockController;
@@ -18,43 +20,25 @@ import bibliothek.gui.dock.themes.ThemeProperties;
 		nameBundle = "theme.bubble", 
 		webpages = { "" }  )
 public class BubbleTheme extends DefaultTheme {
-	private Color activeBorderColor = new Color( 150, 0, 0 );
-	private Color activeDarkColor = new Color( 200, 0, 0 );
-	private Color activeBrightColor = new Color( 255, 100, 100 );
-	private Color activeTextColor = new Color( 0, 0, 0 );
-	
-	private Color inactiveBorderColor = new Color( 100, 100, 100 );
-	private Color inactiveDarkColor = new Color( 150, 150, 150 );
-	private Color inactiveBrightColor = new Color( 200, 200, 200 );
-	private Color inactiveTextColor = new Color( 100, 100, 100 );
-	
+    private Map<String, Color> colors = new HashMap<String, Color>();
+    
 	private Listener listener = new Listener();
 	
-	public Color getActiveBorderColor(){
-		return activeBorderColor;
-	}
-	public Color getActiveBrightColor(){
-		return activeBrightColor;
-	}
-	public Color getActiveDarkColor(){
-		return activeDarkColor;
-	}
-	public Color getActiveTextColor(){
-		return activeTextColor;
-	}
-	public Color getInactiveBorderColor(){
-		return inactiveBorderColor;
-	}
-	public Color getInactiveBrightColor(){
-		return inactiveBrightColor;
-	}
-	public Color getInactiveDarkColor(){
-		return inactiveDarkColor;
-	}
-	public Color getInactiveTextColor(){
-		return inactiveTextColor;
-	}
-	
+    public BubbleTheme(){
+        colors.put( "tab.border.active", new Color( 150, 0, 0 ) );
+        colors.put( "tab.border.inactive", new Color( 100, 100, 100 ) );
+        colors.put( "tab.top.active", new Color( 200, 0, 0 ) );
+        colors.put( "tab.top.inactive", new Color( 150, 150, 150 ) );
+        colors.put( "tab.bottom.active", new Color( 255, 100, 100 ) );
+        colors.put( "tab.bottom.inactive", new Color( 200, 200, 200 ) );
+        colors.put( "tab.text.active", new Color( 0, 0, 0 ));
+        colors.put( "tab.text.active", new Color( 100, 100, 100 ));
+    }
+    
+    public Color getColor( String key ){
+        return colors.get( key );
+    }
+    
 	@Override
 	public void install( DockController controller ){
 		super.install( controller );

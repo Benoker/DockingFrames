@@ -92,16 +92,16 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 		
 		@Override
 		public void paintComponent( Graphics g ){
-			Color dark, bright, border;
+			Color bottom, top, border;
 			if( getSelectedIndex() == index ){
-				dark = theme.getActiveDarkColor();
-				bright = theme.getActiveBrightColor();
-				border = theme.getActiveBorderColor();
+				bottom = theme.getColor( "tab.bottom.active" );
+				top = theme.getColor( "tab.top.active" );
+				border = theme.getColor( "tab.border.active" );
 			}
 			else{
-				dark = theme.getInactiveDarkColor();
-				bright = theme.getInactiveBrightColor();
-				border = theme.getInactiveBorderColor();
+                bottom = theme.getColor( "tab.bottom.inactive" );
+                top = theme.getColor( "tab.top.inactive" );
+                border = theme.getColor( "tab.border.inactive" );
 			}
 			
 			int w = getWidth();
@@ -114,7 +114,7 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 			g2.fillRect( 0, 0, w, h );
 			
 			g2.setClip( new RoundRectangle2D.Double( borderSize, -arc, w-2*borderSize, h+arc-borderSize, 2*arc, 2*arc ));
-			g2.setPaint( new GradientPaint( 0, 0, bright, 0, h-borderSize, dark ) );
+			g2.setPaint( new GradientPaint( 0, 0, top, 0, h-borderSize, bottom ) );
 			g2.fillRect( 0, 0, w, h );
 			
 			Graphics child = g.create( label.getX(), label.getY(), label.getWidth(), label.getHeight() );
@@ -140,17 +140,17 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 
 		public void stateChanged( ChangeEvent e ){
 			if( getSelectedIndex() == index )
-				label.setForeground( theme.getActiveTextColor() );
+				label.setForeground( theme.getColor( "tab.text.active" ) );
 			else
-				label.setForeground( theme.getInactiveTextColor() );
+				label.setForeground( theme.getColor( "tab.text.inactive" ) );
 		}
 		
 		public void setIndex( int index ){
 			this.index = index;
-			if( getSelectedIndex() == index )
-				label.setForeground( theme.getActiveTextColor() );
-			else
-				label.setForeground( theme.getInactiveTextColor() );
+            if( getSelectedIndex() == index )
+                label.setForeground( theme.getColor( "tab.text.active" ) );
+            else
+                label.setForeground( theme.getColor( "tab.text.inactive" ) );
 		}
 		
 		public void setIcon( Icon icon ){
