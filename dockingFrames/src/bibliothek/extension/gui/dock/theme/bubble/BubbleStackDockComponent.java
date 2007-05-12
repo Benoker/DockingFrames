@@ -1,3 +1,29 @@
+/**
+ * Bibliothek - DockingFrames
+ * Library built on Java/Swing, allows the user to "drag and drop"
+ * panels containing any Swing-Component the developer likes to add.
+ * 
+ * Copyright (C) 2007 Benjamin Sigg
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ * Benjamin Sigg
+ * benjamin_sigg@gmx.ch
+ * CH - Switzerland
+ */
+
 package bibliothek.extension.gui.dock.theme.bubble;
 
 import java.awt.AlphaComposite;
@@ -23,12 +49,25 @@ import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
 import bibliothek.gui.dock.station.stack.CombinedTab;
 
+/**
+ * A {@link bibliothek.gui.dock.station.stack.StackDockComponent StackDockComponent} 
+ * used by a {@link BubbleTheme}. This component can animate its tabs.
+ * @author Benjamin Sigg
+ */
 public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleStackDockComponent.Tab> {
+	/** the theme which uses this component */
 	private BubbleTheme theme;
+	/** the size of the arc of the round tabs */
 	private int arc = 6;
+	/** the size of the border of the tabs */
 	private int borderSize = 3;
+	/** the free space around text and icon of the tabs */
 	private Insets insets = new Insets( borderSize, borderSize, 0, borderSize );
 	
+	/**
+	 * Creates a new component.
+	 * @param theme the theme which uses this component
+	 */
 	public BubbleStackDockComponent( BubbleTheme theme ){
 		if( theme == null )
 			throw new IllegalArgumentException( "Theme must not be null" );
@@ -49,12 +88,23 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
         tab.animation.stop();
 	}
 
+	/**
+	 * A tab of the StackDockComponent
+	 * @author Benjamin Sigg
+	 */
 	private class Tab extends JPanel implements CombinedTab, ChangeListener, Runnable{
+		/** the location of this tab */
 		private int index = 0;
+		/** a label showing text and icon for this tab */
 		private JLabel label = new JLabel();
+		/** an animation used when the mouse enters or leaves this tab */
 		private BubbleColorAnimation animation;
+		/** whether the mouse is inside this tab or not */
         private boolean mouse = false;
         
+        /**
+         * Creates a new tab
+         */
 		public Tab(){
             animation = new BubbleColorAnimation( theme );
             animation.addTask( this );
@@ -187,6 +237,9 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
             label.setForeground( animation.getColor( "text" ));
 		}
         
+		/**
+		 * Ensures that {@link #animation} uses the correct set of color pairs.
+		 */
         private void checkAnimation(){
             String source, destination;
             

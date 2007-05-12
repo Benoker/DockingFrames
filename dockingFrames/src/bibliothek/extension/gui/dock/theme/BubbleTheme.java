@@ -1,3 +1,29 @@
+/**
+ * Bibliothek - DockingFrames
+ * Library built on Java/Swing, allows the user to "drag and drop"
+ * panels containing any Swing-Component the developer likes to add.
+ * 
+ * Copyright (C) 2007 Benjamin Sigg
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ * Benjamin Sigg
+ * benjamin_sigg@gmx.ch
+ * CH - Switzerland
+ */
+
 package bibliothek.extension.gui.dock.theme;
 
 import java.awt.Color;
@@ -14,14 +40,20 @@ import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;
 import bibliothek.gui.dock.themes.DefaultTheme;
 import bibliothek.gui.dock.themes.ThemeProperties;
 
+/**
+ * A theme using a lot of eye-candy.
+ * @author Benjamin Sigg
+ */
 @ThemeProperties(
 		authors = { "Ivan Seidl", "Benjamin Sigg" }, 
 		descriptionBundle = "theme.bubble.description", 
 		nameBundle = "theme.bubble", 
 		webpages = { "" }  )
 public class BubbleTheme extends DefaultTheme {
+	/** The colors used by this theme */
     private Map<String, Color> colors = new HashMap<String, Color>();
     
+    /** A listener to the {@link DockController} */
 	private Listener listener = new Listener();
 	
     public BubbleTheme(){
@@ -43,8 +75,22 @@ public class BubbleTheme extends DefaultTheme {
         colors.put( "tab.text.inactive.mouse",      new Color( 25, 25, 25 ));
     }
     
+    /**
+     * Gets a color for a specified key.
+     * @param key the key of the color
+     * @return the color or <code>null</code>
+     */
     public Color getColor( String key ){
         return colors.get( key );
+    }
+    
+    /**
+     * Stores a color which will be used in the theme.
+     * @param key the key of the color
+     * @param color the color to store
+     */
+    public void setColor( String key, Color color ){
+    	colors.put( key, color );
     }
     
 	@Override
