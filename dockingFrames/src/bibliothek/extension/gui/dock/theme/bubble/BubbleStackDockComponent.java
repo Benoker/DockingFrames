@@ -46,13 +46,20 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 	@Override
 	protected void destroy( Tab tab ){
 		removeChangeListener( tab );
+        tab.animation.stop();
 	}
 
-	private class Tab extends JPanel implements CombinedTab, ChangeListener{
+	private class Tab extends JPanel implements CombinedTab, ChangeListener, Runnable{
 		private int index = 0;
 		private JLabel label = new JLabel();
-		
+		private BubbleColorAnimation animation;
+        private boolean mouse = false;
+        
 		public Tab(){
+            animation = new BubbleColorAnimation( theme );
+            animation.addTask( this );
+            checkAnimation();
+            
 			setOpaque( false );
 			add( label );
 			setLayout( null );
@@ -62,12 +69,51 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 				public void mouseClicked( MouseEvent e ){
 					setSelectedIndex( index );
 				}
+                
+                @Override
+                public void mouseEntered( MouseEvent e ) {
+                    mouse = true;
+                    if( getSelectedIndex() == index ){
+                        animation.putColor( "top", "tab.top.active.mouse" );
+                        animation.putColor( "bottom", "tab.bottom.active.mouse" );
+                        animation.putColor( "border", "tab.border.active.mouse" );
+                        animation.putColor( "text", "tab.text.active.mouse" );
+                    }
+                    else{
+                        animation.putColor( "top", "tab.top.inactive.mouse" );
+                        animation.putColor( "bottom", "tab.bottom.inactive.mouse" );
+                        animation.putColor( "border", "tab.border.inactive.mouse" );
+                        animation.putColor( "text", "tab.text.inactive.mouse" );
+                    }
+                }
+                
+                @Override
+                public void mouseExited( MouseEvent e ) {
+                    mouse = false;
+                    if( getSelectedIndex() == index ){
+                        animation.putColor( "top", "tab.top.active" );
+                        animation.putColor( "bottom", "tab.bottom.active" );
+                        animation.putColor( "border", "tab.border.active" );
+                        animation.putColor( "text", "tab.text.active" );
+                    }
+                    else{
+                        animation.putColor( "top", "tab.top.inactive" );
+                        animation.putColor( "bottom", "tab.bottom.inactive" );
+                        animation.putColor( "border", "tab.border.inactive" );
+                        animation.putColor( "text", "tab.text.inactive" );
+                    }
+                }
 			};
 			
 			addMouseListener( listener );
 			label.addMouseListener( listener );
 		}
 		
+        public void run() {
+            label.setForeground( animation.getColor( "text" ));
+            repaint();
+        }
+        
 		@Override
 		public Dimension getPreferredSize(){
 			Dimension size = label.getPreferredSize();
@@ -92,17 +138,9 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 		
 		@Override
 		public void paintComponent( Graphics g ){
-			Color bottom, top, border;
-			if( getSelectedIndex() == index ){
-				bottom = theme.getColor( "tab.bottom.active" );
-				top = theme.getColor( "tab.top.active" );
-				border = theme.getColor( "tab.border.active" );
-			}
-			else{
-                bottom = theme.getColor( "tab.bottom.inactive" );
-                top = theme.getColor( "tab.top.inactive" );
-                border = theme.getColor( "tab.border.inactive" );
-			}
+			Color bottom = animation.getColor( "bottom" );
+            Color top = animation.getColor( "top" );
+            Color border = animation.getColor( "border" );
 			
 			int w = getWidth();
 			int h = getHeight();
@@ -139,19 +177,45 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 		}
 
 		public void stateChanged( ChangeEvent e ){
-			if( getSelectedIndex() == index )
-				label.setForeground( theme.getColor( "tab.text.active" ) );
-			else
-				label.setForeground( theme.getColor( "tab.text.inactive" ) );
+            checkAnimation();
+            label.setForeground( animation.getColor( "text" ));
 		}
 		
 		public void setIndex( int index ){
 			this.index = index;
-            if( getSelectedIndex() == index )
-                label.setForeground( theme.getColor( "tab.text.active" ) );
-            else
-                label.setForeground( theme.getColor( "tab.text.inactive" ) );
+            checkAnimation();
+            label.setForeground( animation.getColor( "text" ));
 		}
+        
+        private void checkAnimation(){
+            String source, destination;
+            
+            if( getSelectedIndex() == index ){
+                if( mouse ){
+                    source = "active";
+                    destination = "active.mouse";
+                }
+                else{
+                    source = "active.mouse";
+                    destination = "active";
+                }
+            }
+            else{
+                if( mouse ){
+                    source = "inactive";
+                    destination = "inactive.mouse";
+                }
+                else{
+                    source = "inactive.mouse";
+                    destination = "inactive";
+                }
+            }
+            
+            animation.putColors( "top", "tab.top." + source, "tab.top." + destination );
+            animation.putColors( "bottom", "tab.bottom." + source, "tab.bottom." + destination );
+            animation.putColors( "border", "tab.border." + source, "tab.border." + destination );
+            animation.putColors( "text", "tab.text." + source, "tab.text." + destination );
+        }
 		
 		public void setIcon( Icon icon ){
 			label.setIcon( icon );

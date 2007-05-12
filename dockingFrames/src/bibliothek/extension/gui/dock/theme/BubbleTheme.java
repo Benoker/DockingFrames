@@ -25,14 +25,22 @@ public class BubbleTheme extends DefaultTheme {
 	private Listener listener = new Listener();
 	
     public BubbleTheme(){
-        colors.put( "tab.border.active", new Color( 150, 0, 0 ) );
-        colors.put( "tab.border.inactive", new Color( 100, 100, 100 ) );
-        colors.put( "tab.top.active", new Color( 200, 0, 0 ) );
-        colors.put( "tab.top.inactive", new Color( 150, 150, 150 ) );
-        colors.put( "tab.bottom.active", new Color( 255, 100, 100 ) );
-        colors.put( "tab.bottom.inactive", new Color( 200, 200, 200 ) );
-        colors.put( "tab.text.active", new Color( 0, 0, 0 ));
-        colors.put( "tab.text.active", new Color( 100, 100, 100 ));
+        colors.put( "tab.border.active",            new Color( 150, 0, 0 ) );
+        colors.put( "tab.border.active.mouse",      new Color( 200, 100, 100 ) );
+        colors.put( "tab.border.inactive",          new Color( 100, 100, 100 ) );
+        colors.put( "tab.border.inactive.mouse",    new Color( 100, 175, 100 ) );
+        colors.put( "tab.top.active",               new Color( 200, 0, 0 ) );
+        colors.put( "tab.top.active.mouse",         new Color( 255, 100, 100 ) );
+        colors.put( "tab.top.inactive",             new Color( 150, 150, 150 ) );
+        colors.put( "tab.top.inactive.mouse",       new Color( 150, 255, 150 ) );
+        colors.put( "tab.bottom.active",            new Color( 255, 100, 100 ) );
+        colors.put( "tab.bottom.active.mouse",      new Color( 255, 200, 200 ) );
+        colors.put( "tab.bottom.inactive",          new Color( 200, 200, 200 ) );
+        colors.put( "tab.bottom.inactive.mouse",    new Color( 220, 255, 220 ) );
+        colors.put( "tab.text.active",              new Color( 0, 0, 0 ));
+        colors.put( "tab.text.active.mouse",        new Color( 0, 0, 0 ));
+        colors.put( "tab.text.inactive",            new Color( 100, 100, 100 ));
+        colors.put( "tab.text.inactive.mouse",      new Color( 25, 25, 25 ));
     }
     
     public Color getColor( String key ){
