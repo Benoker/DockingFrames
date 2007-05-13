@@ -26,13 +26,7 @@
 
 package bibliothek.extension.gui.dock.theme.bubble;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -192,27 +186,42 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
             Color top = animation.getColor( "top" );
             Color border = animation.getColor( "border" );
 			
+            int x = 0;
+            int y = 0;
 			int w = getWidth();
 			int h = getHeight();
+            int width = w;
+            int height = h;
 			
 			// Border
 			Graphics2D g2 = (Graphics2D)g.create();
+            Rectangle clip = g.getClipBounds();
+            if( clip != null ){
+                x = Math.max( x, clip.x );
+                y = Math.max( y, clip.y );
+                width = Math.min( w-x, clip.width );
+                height = Math.min( h-y, clip.height );
+            }
+
 			g2.setColor( border );
 			g2.setClip( new RoundRectangle2D.Double( 0, -arc, w, h+arc, 2*arc, 2*arc ));
-			g2.fillRect( 0, 0, w, h );
+			g2.fillRect( x, y, width, height );
 			
 			g2.setClip( new RoundRectangle2D.Double( borderSize, -arc, w-2*borderSize, h+arc-borderSize, 2*arc, 2*arc ));
 			g2.setPaint( new GradientPaint( 0, 0, top, 0, h-borderSize, bottom ) );
-			g2.fillRect( 0, 0, w, h );
+			g2.fillRect( x, y, width, height );
 			
 			Graphics child = g.create( label.getX(), label.getY(), label.getWidth(), label.getHeight() );
-			label.paint( child );
+			label.update( child );
 			child.dispose();
 			
-			g2.setClip( 0, 0, w, h );
-			g2.setPaint( new GradientPaint( 0, 0, new Color( 150, 150, 150 ), 0, h/2, Color.WHITE ));
-			g2.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_ATOP, 0.4f ) );
-			g2.fillRect( 0, 0, w, h/2 );
+			g2.setClip( x, y, w, h );
+            
+            if( y < h/2 ){
+    			g2.setPaint( new GradientPaint( 0, 0, new Color( 150, 150, 150 ), 0, h/2, Color.WHITE ));
+    			g2.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_ATOP, 0.4f ) );
+    			g2.fillRect( x, y, width, Math.min( height, h/2 - y ));
+            }
 			
 			g2.dispose();
 		}

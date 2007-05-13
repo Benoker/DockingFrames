@@ -296,9 +296,9 @@ public class DockController {
     
     /**
      * Tells whether dockables can only be dragged through their title or not. 
-     * @param dragOnlyTitel <code>true</code> if a Dockable must be dragged through their
-     * titles, <code>false</code> if every part of the dockable can be
-     * catched by the mouse.
+     * @param dragOnlyTitel <code>true</code> if a Dockable must be dragged through its
+     * title, <code>false</code> if every part of the dockable can be
+     * grabbed by the mouse.
      */
     public void setDragOnlyTitel( boolean dragOnlyTitel ){
 		this.dragOnlyTitel = dragOnlyTitel;
