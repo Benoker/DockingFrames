@@ -34,7 +34,7 @@ import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.StackDockStation;
 
 /**
- * A {@link Combiner} normally used by the {@link FlatTheme} to replace the
+ * A {@link Combiner} normally used by the {@link BubbleTheme} to replace the
  * default combiner.
  * @author Benjamin Sigg
  */

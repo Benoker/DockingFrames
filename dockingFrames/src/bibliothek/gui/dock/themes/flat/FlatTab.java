@@ -66,7 +66,7 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
      * A small button which can be clicked by the user.
      * @author Benjamin Sigg
      */
-    private class FlatButton extends JLabel implements CombinedTab{
+	protected class FlatButton extends JLabel implements CombinedTab{
         /** The location of this button */
         private int index;
         

@@ -92,7 +92,7 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 	 * A tab of the StackDockComponent
 	 * @author Benjamin Sigg
 	 */
-	private class Tab extends JPanel implements CombinedTab, ChangeListener, Runnable{
+	protected class Tab extends JPanel implements CombinedTab, ChangeListener, Runnable{
 		/** the location of this tab */
 		private int index = 0;
 		/** a label showing text and icon for this tab */
