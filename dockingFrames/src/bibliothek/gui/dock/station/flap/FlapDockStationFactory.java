@@ -31,8 +31,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Map;
 
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
-import bibliothek.gui.dock.Dockable;
 import bibliothek.gui.dock.station.FlapDockStation;
 
 /**

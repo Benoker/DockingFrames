@@ -35,9 +35,9 @@ import java.io.IOException;
 import java.util.Map;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockAcceptance;
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.Dockable;
 import bibliothek.gui.dock.station.SplitDockStation;
 
 /**

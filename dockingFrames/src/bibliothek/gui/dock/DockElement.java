@@ -26,6 +26,9 @@
 
 package bibliothek.gui.dock;
 
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
+
 
 /**
  * An element in the hierarchy of dockables and stations.

@@ -32,7 +32,7 @@ import java.util.Set;
 
 import javax.swing.JMenuItem;
 
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.SelectableDockAction;
 import bibliothek.gui.dock.action.dropdown.DropDownView;
 import bibliothek.gui.dock.event.SelectableDockActionListener;

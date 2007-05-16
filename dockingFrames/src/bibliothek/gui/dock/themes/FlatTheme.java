@@ -30,9 +30,9 @@ import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.action.views.ActionViewConverter;
 import bibliothek.gui.dock.action.views.ViewGenerator;

@@ -26,7 +26,7 @@
 
 package bibliothek.gui.dock.action;
 
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 
 /**
  * Represents a menu. If the user triggers this action, a menu with more

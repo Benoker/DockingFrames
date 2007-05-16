@@ -27,6 +27,8 @@
 package bibliothek.gui.dock;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 
 /**
  * Used by a {@link DockController} to decide globally which 

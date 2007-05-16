@@ -26,7 +26,7 @@
 
 package bibliothek.gui.dock.action;
 
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 
 /**
  * An action that can be pressed like a button.

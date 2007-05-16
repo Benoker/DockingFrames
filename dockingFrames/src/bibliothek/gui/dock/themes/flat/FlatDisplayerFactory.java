@@ -26,8 +26,8 @@
 
 package bibliothek.gui.dock.themes.flat;
 
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.title.DockTitle;

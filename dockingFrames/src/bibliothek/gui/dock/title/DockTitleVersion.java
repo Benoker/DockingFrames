@@ -27,9 +27,8 @@
 package bibliothek.gui.dock.title;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockTitleManager;
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.util.Priority;
 
 /**

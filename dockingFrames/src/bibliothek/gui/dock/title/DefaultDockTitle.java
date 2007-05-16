@@ -31,8 +31,8 @@ import java.awt.*;
 import javax.swing.JComponent;
 import javax.swing.UIManager;
 
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 
 /**
  * The default-title that is used most times in the framework. This title

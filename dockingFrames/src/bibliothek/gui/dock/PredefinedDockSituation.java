@@ -32,6 +32,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import bibliothek.gui.Dockable;
+
 /**
  * A {@link DockSituation} that does not load or store all {@link DockElement DockElements}.
  * All elements which are registered by {@link #put(DockElement)} are stored in an

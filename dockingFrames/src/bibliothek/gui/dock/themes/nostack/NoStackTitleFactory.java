@@ -26,8 +26,8 @@
 
 package bibliothek.gui.dock.themes.nostack;
 
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.ScreenDockStation;
 import bibliothek.gui.dock.station.SplitDockStation;

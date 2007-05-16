@@ -31,7 +31,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
 
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ButtonDockAction;
 
 /**

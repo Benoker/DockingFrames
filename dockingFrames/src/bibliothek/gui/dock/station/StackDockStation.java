@@ -42,11 +42,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputListener;
 
-import bibliothek.gui.DockController;
-import bibliothek.gui.DockTheme;
-import bibliothek.gui.DockUI;
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.*;
 import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.DockableProperty;
 import bibliothek.gui.dock.action.DockAction;

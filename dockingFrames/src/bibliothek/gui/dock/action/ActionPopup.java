@@ -34,7 +34,7 @@ import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.views.menu.MenuMenuHandler;
 
 /**

@@ -24,7 +24,7 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui;
+package bibliothek.gui.dock.util;
 
 import java.awt.Component;
 import java.awt.Graphics;
@@ -35,9 +35,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.UIManager;
 
+import bibliothek.gui.DockStation;
+import bibliothek.gui.DockTheme;
+import bibliothek.gui.DockUI;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.Dockable;
 import bibliothek.gui.dock.DockableProperty;
 import bibliothek.gui.dock.title.DockTitle;
 

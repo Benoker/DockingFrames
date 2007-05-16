@@ -37,7 +37,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.FlapDockStation.Direction;

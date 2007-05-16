@@ -26,13 +26,13 @@
 
 package bibliothek.gui;
 
-import bibliothek.gui.dock.DockStation;
 import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
+import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.title.MovingTitleGetter;
 
 /**

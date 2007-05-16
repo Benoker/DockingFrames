@@ -29,7 +29,7 @@ package bibliothek.gui.dock.title;
 import javax.swing.BorderFactory;
 import javax.swing.border.BevelBorder;
 
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.event.DockTitleEvent;
 
 /**

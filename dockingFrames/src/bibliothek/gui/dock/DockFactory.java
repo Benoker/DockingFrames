@@ -31,6 +31,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Map;
 
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
+
 /**
  * A DockFactory has the ability to store and load instances of one
  * subtype of {@link DockElement}.

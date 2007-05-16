@@ -31,7 +31,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 
 /**
  * An ActionOffer that collects some {@link DockActionSource DockActionSources}.

@@ -32,7 +32,7 @@ import java.util.Set;
 
 import javax.swing.Icon;
 
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionType;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.SelectableDockAction;

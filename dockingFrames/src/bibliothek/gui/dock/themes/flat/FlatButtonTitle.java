@@ -37,7 +37,7 @@ import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.MouseInputAdapter;
 
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.station.FlapDockStation;

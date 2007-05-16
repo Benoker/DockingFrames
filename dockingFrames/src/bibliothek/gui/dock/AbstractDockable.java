@@ -33,7 +33,9 @@ import javax.swing.Icon;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.event.DockableListener;

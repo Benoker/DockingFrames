@@ -30,7 +30,7 @@ import java.util.Set;
 
 import javax.swing.JComponent;
 
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.StandardDockAction;
 import bibliothek.gui.dock.event.StandardDockActionListener;
 import bibliothek.gui.dock.title.DockTitle.Orientation;

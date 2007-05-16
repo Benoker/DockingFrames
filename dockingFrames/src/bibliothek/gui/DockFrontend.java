@@ -50,6 +50,7 @@ import bibliothek.gui.dock.station.split.SplitDockStationFactory;
 import bibliothek.gui.dock.station.stack.StackDockPropertyFactory;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
 import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.gui.dock.util.DockUtilities;
 
 /**
  * A DockFrontend provides some methods to handle the storage of various layouts.

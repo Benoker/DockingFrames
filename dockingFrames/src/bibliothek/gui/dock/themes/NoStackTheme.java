@@ -32,10 +32,10 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.DockAcceptance;
-import bibliothek.gui.dock.DockStation;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StackDockStation;

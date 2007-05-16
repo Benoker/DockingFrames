@@ -30,8 +30,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.AbstractDockableProperty;
-import bibliothek.gui.dock.Dockable;
 import bibliothek.gui.dock.station.FlapDockStation;
 
 /**

@@ -31,7 +31,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionType;
 import bibliothek.gui.dock.action.ButtonDockAction;
 import bibliothek.gui.dock.action.views.ActionViewConverter;

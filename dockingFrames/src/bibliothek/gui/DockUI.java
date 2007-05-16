@@ -35,8 +35,6 @@ import javax.swing.ImageIcon;
 
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.dock.DockFactory;
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.Dockable;
 import bibliothek.gui.dock.IconManager;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;

@@ -26,9 +26,9 @@
 
 package bibliothek.gui.dock.themes.flat;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.StackDockStation;
 import bibliothek.gui.dock.themes.FlatTheme;

@@ -26,8 +26,8 @@
 
 package bibliothek.gui.dock.event;
 
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 
 /**
  * An abstract implementation of {@link DockStationListener}.

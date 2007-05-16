@@ -28,8 +28,8 @@ package bibliothek.gui.dock.util;
 
 import javax.swing.Icon;
 
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 
 /**
  * The key for an entry of {@link DockProperties}.

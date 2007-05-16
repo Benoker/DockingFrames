@@ -24,14 +24,14 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock;
+package bibliothek.gui;
 
 import java.awt.Component;
 
 import javax.swing.Icon;
 import javax.swing.event.MouseInputListener;
 
-import bibliothek.gui.DockController;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.event.DockActionSourceListener;

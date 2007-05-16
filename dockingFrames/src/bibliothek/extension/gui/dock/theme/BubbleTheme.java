@@ -32,8 +32,8 @@ import java.util.Map;
 
 import bibliothek.extension.gui.dock.theme.bubble.BubbleStackDockComponent;
 import bibliothek.gui.DockController;
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.event.DockControllerAdapter;
 import bibliothek.gui.dock.station.StackDockStation;
 import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;

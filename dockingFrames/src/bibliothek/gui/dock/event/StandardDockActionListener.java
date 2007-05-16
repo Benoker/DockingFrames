@@ -28,7 +28,7 @@ package bibliothek.gui.dock.event;
 
 import java.util.Set;
 
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.StandardDockAction;
 
 /**

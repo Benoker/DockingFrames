@@ -26,6 +26,8 @@
 
 package bibliothek.gui.dock;
 
+import bibliothek.gui.DockStation;
+
 /**
  * A DockSituationIgnore is used in a {@link DockSituation} to decide, which
  * elements (stations and dockables) should be written into a stream. Elements

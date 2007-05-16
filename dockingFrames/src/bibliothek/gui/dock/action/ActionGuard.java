@@ -27,7 +27,7 @@
 package bibliothek.gui.dock.action;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 
 /**
  * An ActionGuard is {@link DockController#addActionGuard(ActionGuard) added}

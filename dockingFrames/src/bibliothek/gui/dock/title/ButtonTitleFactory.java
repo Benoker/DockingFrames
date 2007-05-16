@@ -26,8 +26,8 @@
 
 package bibliothek.gui.dock.title;
 
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 
 /**
  * A {@link DockTitleFactory factory} for the {@link ButtonDockTitle}

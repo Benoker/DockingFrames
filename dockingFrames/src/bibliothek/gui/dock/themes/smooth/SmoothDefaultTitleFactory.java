@@ -26,8 +26,8 @@
 
 package bibliothek.gui.dock.themes.smooth;
 
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;

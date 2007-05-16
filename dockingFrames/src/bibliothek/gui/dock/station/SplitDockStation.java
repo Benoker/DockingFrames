@@ -41,9 +41,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.MouseInputListener;
 
-import bibliothek.gui.DockController;
-import bibliothek.gui.DockTheme;
-import bibliothek.gui.DockUI;
+import bibliothek.gui.*;
 import bibliothek.gui.dock.*;
 import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.event.*;

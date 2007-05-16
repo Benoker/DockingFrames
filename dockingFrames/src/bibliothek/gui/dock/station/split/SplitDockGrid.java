@@ -29,7 +29,7 @@ package bibliothek.gui.dock.station.split;
 import java.util.ArrayList;
 import java.util.List;
 
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.SplitDockStation;
 
 /**

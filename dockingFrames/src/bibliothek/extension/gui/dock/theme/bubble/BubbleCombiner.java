@@ -27,9 +27,9 @@
 package bibliothek.extension.gui.dock.theme.bubble;
 
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.StackDockStation;
 

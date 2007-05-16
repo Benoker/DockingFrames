@@ -24,14 +24,14 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui;
+package bibliothek.gui.dock.title;
 
 import java.util.Hashtable;
 import java.util.Map;
 
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.title.DockTitleFactory;
-import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.util.Priority;
 
 /**

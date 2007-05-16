@@ -26,7 +26,7 @@
 
 package bibliothek.gui.dock.action;
 
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.views.ActionViewConverter;
 import bibliothek.gui.dock.action.views.ViewTarget;
 import bibliothek.gui.dock.title.DockTitle;

@@ -27,7 +27,7 @@
 package bibliothek.gui.dock.title;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 
 /**
  * The MovingTitleGetter decides which {@link DockTitle} should be shown

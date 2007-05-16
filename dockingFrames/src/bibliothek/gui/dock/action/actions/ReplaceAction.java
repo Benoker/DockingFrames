@@ -29,9 +29,9 @@ package bibliothek.gui.dock.action.actions;
 import javax.swing.Icon;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.DockUI;
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.event.DockStationAdapter;

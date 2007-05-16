@@ -38,8 +38,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.DockUI;
-import bibliothek.gui.DockUtilities;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.*;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
@@ -55,6 +56,7 @@ import bibliothek.gui.dock.title.ButtonTitleFactory;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.DockUtilities;
 
 /**
  * This {@link DockStation} shows only a title for each of it's children.<br>

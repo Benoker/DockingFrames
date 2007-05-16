@@ -31,7 +31,7 @@ import java.util.Set;
 
 import javax.swing.JComponent;
 
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.DropDownAction;

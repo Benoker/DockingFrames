@@ -29,8 +29,8 @@ package bibliothek.gui.dock.station.support;
 import java.util.ArrayList;
 import java.util.List;
 
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.event.DockStationListener;
 
 /**

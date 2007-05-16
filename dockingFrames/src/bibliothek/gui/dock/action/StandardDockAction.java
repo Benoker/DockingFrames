@@ -28,7 +28,7 @@ package bibliothek.gui.dock.action;
 
 import javax.swing.Icon;
 
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.event.StandardDockActionListener;
 
 /**

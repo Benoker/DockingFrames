@@ -31,7 +31,7 @@ import java.awt.Component;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.event.DockTitleEvent;
 

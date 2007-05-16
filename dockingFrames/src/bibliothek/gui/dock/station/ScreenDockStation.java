@@ -35,7 +35,9 @@ import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.DockUI;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.*;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.station.screen.ScreenDockDialog;

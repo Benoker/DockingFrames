@@ -32,7 +32,7 @@ import java.util.Map;
 import javax.swing.*;
 
 import bibliothek.gui.DockTheme;
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.action.actions.SeparatorAction;
 import bibliothek.gui.dock.action.views.buttons.*;

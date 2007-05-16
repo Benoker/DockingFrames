@@ -31,8 +31,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
 

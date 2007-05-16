@@ -27,9 +27,9 @@
 package bibliothek.gui.dock.themes;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;

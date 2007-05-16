@@ -31,6 +31,8 @@ import java.awt.*;
 import javax.swing.Icon;
 import javax.swing.JPanel;
 
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.util.PropertyKey;
 
 /**

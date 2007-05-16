@@ -24,21 +24,22 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock;
+package bibliothek.gui;
 
 import java.awt.Rectangle;
 
 import javax.swing.JFrame;
 
-import bibliothek.gui.DockController;
-import bibliothek.gui.DockTheme;
-import bibliothek.gui.DockTitleManager;
-import bibliothek.gui.DockUI;
+import bibliothek.gui.dock.DockAcceptance;
+import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.dock.DockableProperty;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
+import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
@@ -229,7 +230,7 @@ public interface DockStation extends DockElement{
      * {@link #drop(Dockable, DockableProperty)}.
      * @param dockable the child whose location is demanded
      * @return the location
-     * @see bibliothek.gui.DockUtilities#getPropertyChain(DockStation, Dockable)
+     * @see bibliothek.gui.dock.util.DockUtilities#getPropertyChain(DockStation, Dockable)
      */
     public DockableProperty getDockableProperty( Dockable dockable );
     

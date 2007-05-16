@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.action.dropdown.DefaultDropDownFilter;
 import bibliothek.gui.dock.action.dropdown.DropDownFilterFactory;

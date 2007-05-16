@@ -29,7 +29,7 @@ package bibliothek.gui.dock.action.actions;
 import java.util.HashSet;
 import java.util.Set;
 
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionType;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.views.ActionViewConverter;

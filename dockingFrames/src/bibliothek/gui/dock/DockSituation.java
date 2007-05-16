@@ -30,6 +30,8 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.security.SecureFlapDockStationFactory;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.SplitDockStation;

@@ -32,9 +32,9 @@ import java.awt.event.MouseEvent;
 import javax.swing.Icon;
 import javax.swing.border.Border;
 
-import bibliothek.gui.DockUtilities;
 import bibliothek.gui.dock.action.DropDownAction;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.util.DockUtilities;
 
 /**
  * A {@link MiniButton} that shows a {@link DropDownAction}. The button is

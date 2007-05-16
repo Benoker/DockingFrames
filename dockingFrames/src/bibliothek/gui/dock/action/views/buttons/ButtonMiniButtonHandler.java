@@ -26,7 +26,7 @@
 
 package bibliothek.gui.dock.action.views.buttons;
 
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ButtonDockAction;
 
 /**

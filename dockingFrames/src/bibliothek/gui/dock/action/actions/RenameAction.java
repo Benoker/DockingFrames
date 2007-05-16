@@ -35,14 +35,14 @@ import javax.swing.event.PopupMenuListener;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockUI;
-import bibliothek.gui.DockUtilities;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
-import bibliothek.gui.dock.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.SplitDockStation;
 import bibliothek.gui.dock.station.StackDockStation;
+import bibliothek.gui.dock.util.DockUtilities;
 
 /**
  * This {@link DockAction} can change the {@link Dockable#getTitleText() title-text}

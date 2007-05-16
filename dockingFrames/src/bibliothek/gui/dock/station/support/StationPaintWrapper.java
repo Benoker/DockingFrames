@@ -29,9 +29,9 @@ package bibliothek.gui.dock.station.support;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
-import bibliothek.gui.dock.DockStation;
 import bibliothek.gui.dock.station.StationPaint;
 
 /**

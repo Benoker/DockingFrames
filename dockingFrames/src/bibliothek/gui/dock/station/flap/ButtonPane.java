@@ -34,7 +34,7 @@ import java.util.Map;
 
 import javax.swing.JPanel;
 
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.FlapDockStation.Direction;
 import bibliothek.gui.dock.title.DockTitle;

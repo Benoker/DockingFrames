@@ -27,6 +27,8 @@
 package bibliothek.gui.dock;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.event.DockControllerAdapter;
 
 /**

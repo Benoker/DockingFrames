@@ -26,7 +26,7 @@
 
 package bibliothek.gui.dock.action.actions;
 
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 
 /**
  * This class can create keys for Dockables.

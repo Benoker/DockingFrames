@@ -36,10 +36,12 @@ import java.util.List;
 import java.util.Map;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockUtilities;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.event.DockControllerListener;
 import bibliothek.gui.dock.event.FocusVetoListener;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.util.DockUtilities;
 
 /**
  * A FocusController listens to all AWT-events. As soon as the mouse is pressed

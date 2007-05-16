@@ -27,7 +27,7 @@
 package bibliothek.gui.dock.event;
 
 import bibliothek.gui.DockFrontend;
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 
 /**
  * A listener to a {@link DockFrontend}. The listener is informed about the

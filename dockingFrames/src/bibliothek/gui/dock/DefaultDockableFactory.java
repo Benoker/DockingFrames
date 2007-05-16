@@ -31,6 +31,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Map;
 
+import bibliothek.gui.Dockable;
+
 /**
  * A factory which can read and write the properties of a 
  * {@link DefaultDockable}. Note that this factory does not store any

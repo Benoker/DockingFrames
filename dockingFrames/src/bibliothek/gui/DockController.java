@@ -48,9 +48,11 @@ import bibliothek.gui.dock.event.DockControllerListener;
 import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.themes.DefaultTheme;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.title.MovingTitleGetter;
 import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.gui.dock.util.DockUtilities;
 
 /**
  * A controller is needed to drag and drop {@link Dockable dockables} from

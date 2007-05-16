@@ -26,9 +26,9 @@
 
 package bibliothek.gui.dock.accept;
 
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockAcceptance;
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.Dockable;
 
 /**
  * A DockAcceptance that is a combination out of two other acceptances.

@@ -40,9 +40,9 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.event.MouseInputAdapter;
 
-import bibliothek.gui.DockUtilities;
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.util.DockUtilities;
 
 /**
  * A small {@link Component} which has the behavior of a button. The 

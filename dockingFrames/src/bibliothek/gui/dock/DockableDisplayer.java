@@ -34,6 +34,8 @@ import java.awt.Insets;
 import javax.swing.JPanel;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.title.DockTitle;

@@ -28,7 +28,7 @@ package bibliothek.gui.dock.action.views.buttons;
 
 import java.util.Set;
 
-import bibliothek.gui.dock.Dockable;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionType;
 import bibliothek.gui.dock.action.SelectableDockAction;
 import bibliothek.gui.dock.event.SelectableDockActionListener;
