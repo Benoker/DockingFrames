@@ -10,10 +10,9 @@ import javax.swing.WindowConstants;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
-import bibliothek.gui.DockTitleManager;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
-import bibliothek.gui.dock.DockStation;
-import bibliothek.gui.dock.Dockable;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.ScreenDockStation;
 import bibliothek.gui.dock.station.SplitDockStation;

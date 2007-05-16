@@ -8,8 +8,8 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
-import bibliothek.gui.dock.Dockable;
 import bibliothek.gui.dock.station.SplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockTree;
 
