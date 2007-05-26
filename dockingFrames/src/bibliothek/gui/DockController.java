@@ -41,6 +41,7 @@ import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.dock.*;
+import bibliothek.gui.dock.accept.MultiDockAcceptance;
 import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.action.views.ActionViewConverter;
 import bibliothek.gui.dock.event.DockAdapter;
@@ -118,7 +119,7 @@ public class DockController {
     private ActionViewConverter actionViewConverter;
     
     /** behavior which dockable can be dropped over which station */
-    private DockAcceptance acceptance;
+    private MultiDockAcceptance acceptance = new MultiDockAcceptance();
     /** tells which popups are to be shown */
     private ActionPopupSuppressor popupSuppressor = ActionPopupSuppressor.ALLOW_ALWAYS;
    
@@ -247,22 +248,31 @@ public class DockController {
             
     /**
      * Gets the behavior that tells which stations can have which children.
-     * @return the behavior, may be <code>null</code>
-     * @see #setAcceptance(DockAcceptance)
+     * @return the behavior
+     * @see #addAcceptance(DockAcceptance)
+     * @see #removeAcceptance(DockAcceptance)
      */
-    public DockAcceptance getAcceptance() {
+    public MultiDockAcceptance getAcceptance() {
         return acceptance;
     }
     
     /**
-     * Sets the behavior that decides which station can have which children. 
+     * Adds a rule that decides which station can have which children. 
      * The <code>acceptance</code> does not override the
      * <code>accept</code>-methods of {@link Dockable#accept(DockStation) Dockable}
      * and {@link DockStation#accept(Dockable) DockStation}.
-     * @param acceptance the behavior or <code>null</code>
+     * @param acceptance the additional rule
      */
-    public void setAcceptance( DockAcceptance acceptance ) {
-        this.acceptance = acceptance;
+    public void addAcceptance( DockAcceptance acceptance ) {
+        this.acceptance.add( acceptance );
+    }
+    
+    /**
+     * Removes a that decided which station could have which children.
+     * @param acceptance the rule to remove
+     */
+    public void removeAcceptance( DockAcceptance acceptance ){
+        this.acceptance.remove( acceptance );
     }
 
     /**

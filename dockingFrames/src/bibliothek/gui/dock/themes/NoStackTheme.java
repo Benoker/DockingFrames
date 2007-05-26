@@ -27,8 +27,6 @@
 package bibliothek.gui.dock.themes;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 import bibliothek.gui.DockController;
@@ -115,8 +113,8 @@ public class NoStackTheme implements DockTheme {
     /** The delegate theme to get the basic factories */
     private DockTheme base;
     
-    /** the acceptances which were used before this theme was installed to a controller */
-    private Map<DockController, DockAcceptance> acceptances = new HashMap<DockController, DockAcceptance>();
+    /** {@link DockAcceptance} ensuring no nested stacks */
+    private NoStackAcceptance acceptance = new NoStackAcceptance();
     
     /**
      * Creates a new theme
@@ -152,17 +150,11 @@ public class NoStackTheme implements DockTheme {
     
     public void install( DockController controller ) {
         base.install( controller );
-        DockAcceptance acceptance = controller.getAcceptance();
-        acceptances.put( controller, acceptance );
-        NoStackAcceptance noStack = new NoStackAcceptance();
-        if( acceptance == null )
-            controller.setAcceptance( noStack );
-        else
-            controller.setAcceptance( noStack.andAccept( acceptance ));
+        controller.addAcceptance( acceptance );
     }
     
     public void uninstall(DockController controller) {
     	base.uninstall( controller );
-    	controller.setAcceptance( acceptances.remove( controller ));
+        controller.removeAcceptance( acceptance );
     }
 }
