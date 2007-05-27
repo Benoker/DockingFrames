@@ -506,12 +506,14 @@ public class StackDockStation extends AbstractDockableStation {
 
     public void move() {
         int index = indexOf( dropping );
-        int drop = insert.tab + (insert.right ? 1 : 0 );
-        if( index < drop )
-            drop--;
-        
-        remove( index, false );
-        add( dropping, drop );
+        if( index >= 0 ){
+            int drop = insert.tab + (insert.right ? 1 : 0 );
+            if( index < drop )
+                drop--;
+            
+            remove( index, false );
+            add( dropping, drop );
+        }
     }
         
     /**

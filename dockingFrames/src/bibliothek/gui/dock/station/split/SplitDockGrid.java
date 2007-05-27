@@ -26,8 +26,7 @@
 
 package bibliothek.gui.dock.station.split;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.SplitDockStation;
@@ -49,6 +48,57 @@ public class SplitDockGrid {
 	/** The dividing lines which should appear */
 	private List<Line> lines = new ArrayList<Line>();
 	
+    /**
+     * Creates a new, empty grid.
+     */
+    public SplitDockGrid(){
+        // do nothing
+    }
+    
+    /**
+     * Creates a grid by reading a string which represents a grid.<br>
+     * The argument <code>layout</code> is a string divided by newline
+     * <code>"\n"</code>. Every line represents a y-coordinate, the position
+     * of a character in a line represents a x-coordinate. The minimal and 
+     * the maximal x- and y-coordinates for a character is searched, and
+     * used to call {@link #addDockable(double, double, double, double, Dockable[]) addDockable},
+     * where the <code>Dockable</code>-array is taken from the {@link Map} 
+     * <code>dockables</code>.
+     * @param layout the layout, a string divided by newlines
+     * @param dockables the Dockables to add, only entries whose character is
+     * in the String <code>layout</code>.
+     */
+    public SplitDockGrid( String layout, Map<Character, Dockable[]> dockables ){
+        String[] lines = layout.split( "\n" );
+        Set<Character> chars = new HashSet<Character>();
+        
+        for( int i = 0, n = layout.length(); i<n; i++ )
+            chars.add( layout.charAt( i ));
+                
+        for( Character c : chars ){
+            Dockable[] list = dockables.get( c );
+            if( list != null ){
+                int minx = Integer.MAX_VALUE;
+                int miny = Integer.MAX_VALUE;
+                int maxx = Integer.MIN_VALUE;
+                int maxy = Integer.MIN_VALUE;
+            
+                for( int y = 0; y < lines.length; y++ ){
+                    for( int x = 0, n = lines[y].length(); x<n; x++ ){
+                        if( lines[y].charAt( x ) == c.charValue() ){
+                            minx = Math.min( minx, x );
+                            maxx = Math.max( maxx, x );
+                            miny = Math.min( miny, y );
+                            maxy = Math.max( maxy, y );
+                        }
+                    }
+                }
+                
+                addDockable( minx, miny, maxx-minx, maxy-miny, list );
+            }
+        }
+    }
+    
 	/**
 	 * Adds <code>dockable</code> to the grid. The coordinates are not absolute,
 	 * only the relative location and size matters.
@@ -68,6 +118,12 @@ public class SplitDockGrid {
         for( Dockable dockable : dockables )
             if( dockable == null )
                 throw new IllegalArgumentException( "Entry of dockables-array is null" );
+        
+        if( width < 0 )
+            throw new IllegalArgumentException( "width < 0" );
+        
+        if( height < 0 )
+            throw new IllegalArgumentException( "height < 0" );
         
 		Node node = new Node();
 		node.dockables = new Dockable[ dockables.length ];
@@ -145,7 +201,7 @@ public class SplitDockGrid {
 	 * @return the root, can be <code>null</code>
 	 */
 	protected Node tree(){
-		 List<Node> nodes = new ArrayList<Node>( this.nodes );
+		List<Node> nodes = new ArrayList<Node>( this.nodes );
 		
 		if( nodes.isEmpty() )
 			return null;
