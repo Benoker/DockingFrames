@@ -2,6 +2,8 @@ package demo;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -11,6 +13,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.station.split.SplitDockGrid;
 import bibliothek.gui.dock.station.split.SplitDockTree;
 
 /*
@@ -51,6 +54,7 @@ public class Demo_SplitDockStation {
 	 * Creates the tree of the station
 	 */
 	public static SplitDockTree createTree(){
+        /*
 		SplitDockTree tree = new SplitDockTree();
 		return tree.root( tree.horizontal( 
 				tree.vertical( 
@@ -65,6 +69,27 @@ public class Demo_SplitDockStation {
 								createDockable( "Blue", Color.BLUE ), 
 								createDockable( "Yellow", Color.YELLOW )), 
 							0.333 )) );
+                            */
+        
+        Map<Character, Dockable[]> map = new HashMap<Character, Dockable[]>();
+        map.put( 'a', new Dockable[]{ createDockable( "White", Color.WHITE )});
+        map.put( 'b', new Dockable[]{ createDockable( "Green", Color.GREEN )});
+        map.put( 'c', new Dockable[]{ createDockable( "Red", Color.RED )});
+        map.put( 'd', new Dockable[]{ createDockable( "Black", Color.BLACK )});
+        map.put( 'e', new Dockable[]{ createDockable( "Blue", Color.BLUE )});
+        map.put( 'f', new Dockable[]{ createDockable( "Yellow", Color.YELLOW )});
+        
+        String layout =
+            "aaabbcccc \n"+
+            "aaabbcccc \n"+
+            "aaabbcccc \n"+
+            "ddeeeeeff \n"+
+            "ddeeeeeff \n"+
+            "ddeeeeeff ";
+        
+        SplitDockGrid grid = new SplitDockGrid( layout, map );
+        
+        return grid.toTree();
 	}
 	
 	/*
