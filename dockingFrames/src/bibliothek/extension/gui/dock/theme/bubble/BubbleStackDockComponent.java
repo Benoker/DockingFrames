@@ -30,7 +30,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -189,24 +188,18 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 			int w = getWidth();
 			int h = getHeight();
 
-            Rectangle clip = g.getClipBounds();
+            // Rectangle clip = g.getClipBounds();
             
             Graphics2D g2 = (Graphics2D)g.create();
+            g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
                         
-            if( clip == null )
-                clip = new Rectangle( 0, 0, w, h );
-
             // draw border
 			g2.setColor( border );
-			g2.setClip( new RoundRectangle2D.Double( 0, -arc, w, h+arc, 2*arc, 2*arc ));
-            g2.clipRect( clip.x, clip.y, clip.width, clip.height );
-			g2.fillRect( 0, 0, w, h );
+            g2.fillRoundRect( 0, -arc, w, h+arc, 2*arc, 2*arc );
             
             // draw background
-			g2.setClip( new RoundRectangle2D.Double( borderSize, -arc, w-2*borderSize, h+arc-borderSize, 2*arc, 2*arc ));
-            g2.clipRect( clip.x, clip.y, clip.width, clip.height );
             g2.setPaint( new GradientPaint( 0, 0, top, 0, h-borderSize, bottom ) );
-			g2.fillRect( 0, 0, w, h );
+            g2.fillRoundRect( borderSize, -arc, w-2*borderSize, h+arc-borderSize, 2*arc, 2*arc );
 			
             // draw text and icon
 			Graphics child = g.create( label.getX(), label.getY(), label.getWidth(), label.getHeight() );
@@ -214,7 +207,6 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 			child.dispose();
 			
             // draw horizon
-            g2.setClip( clip.x, clip.y, clip.width, clip.height );
 			g2.setPaint( new GradientPaint( 0, 0, new Color( 150, 150, 150 ), 0, h/2, Color.WHITE ));
 			g2.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_ATOP, 0.4f ) );
 			g2.fillRect( 0, 0, w, h/2 );

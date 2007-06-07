@@ -2,7 +2,6 @@ package bibliothek.extension.gui.dock.theme.bubble;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.JComponent;
 import javax.swing.event.MouseInputAdapter;
@@ -138,22 +137,23 @@ public class BubbleDockTitle extends AbstractDockTitle {
             clip = new Rectangle( x, y, w, h );
         }
         
-        // set clipping area
-        setRoundRectClip( g2, x, y, w, h );
-        
-        g2.clipRect( clip.x, clip.y, clip.width, clip.height );
-        
+        // set clipping area and colors
         if( getOrientation().isHorizontal() ){
             g2.setPaint( new GradientPaint( 0, 0, new Color( 150, 150, 150 ), 0, h/2, Color.WHITE ));
             g2.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_ATOP, 0.4f ) );
-            g2.fillRect( 0, 0, w, h/2 );
+            
+            g2.setClip( 0, 0, w, h/2 );
+            g2.clipRect( clip.x, clip.y, clip.width, clip.height );
         }
         else{
             g2.setPaint( new GradientPaint( 0, 0, new Color( 150, 150, 150 ), w/2, 0, Color.WHITE ));
             g2.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_ATOP, 0.4f ) );
-            g2.fillRect( 0, 0, w/2, h );
+            
+            g2.setClip( 0, 0, w/2, h );
+            g2.clipRect( clip.x, clip.y, clip.width, clip.height );
         }
         
+        drawRoundRect( g2, x, y, w, h );
         g2.dispose();
     }
 
@@ -173,16 +173,6 @@ public class BubbleDockTitle extends AbstractDockTitle {
             h -= insets.top + insets.bottom;
         }
         
-        Rectangle clipRect = g.getClipBounds();
-        if( clipRect == null ){
-            clipRect = new Rectangle( x, y, w, h );
-        }
-        
-        // set clipping area
-        setRoundRectClip( g2, x, y, w, h );
-        
-        g2.clipRect( clipRect.x, clipRect.y, clipRect.width, clipRect.height );
-        
         // set color
         Color top = animation.getColor( "top" );
         Color bottom = animation.getColor( "bottom" );
@@ -193,28 +183,28 @@ public class BubbleDockTitle extends AbstractDockTitle {
             g2.setPaint( new GradientPaint( 0, 0, top, w, 0, bottom ));
         
         // draw
-        g2.fillRect( clipRect.x, clipRect.y, clipRect.width, clipRect.height );
+        drawRoundRect( g2, x, y, w, h );
         
         g2.dispose();
     }
     
-    private void setRoundRectClip( Graphics2D g2, int x, int y, int w, int h ){
+    private void drawRoundRect( Graphics2D g2, int x, int y, int w, int h ){
         switch( getOrientation() ){
             case FREE_HORIZONTAL:
             case FREE_VERTICAL:
-                g2.setClip( new RoundRectangle2D.Double( x, y, w, h, arc, arc ));
+                g2.fillRoundRect( x, y, w, h, arc, arc );
                 break;
             case EAST_SIDED:
-                g2.setClip( new RoundRectangle2D.Double( x-arc, y, w+arc, h, arc, arc ) );
+                g2.fillRoundRect( x-arc, y, w+arc, h, arc, arc );
                 break;
             case NORTH_SIDED:
-                g2.setClip( new RoundRectangle2D.Double( x, y, w, h+arc, arc, arc ) );
+                g2.fillRoundRect( x, y, w, h+arc, arc, arc );
                 break;
             case SOUTH_SIDED:
-                g2.setClip( new RoundRectangle2D.Double( x, y-arc, w, h+arc, arc, arc ) );
+                g2.fillRoundRect( x, y-arc, w, h+arc, arc, arc );
                 break;
             case WEST_SIDED:
-                g2.setClip( new RoundRectangle2D.Double( x, y, w+arc, h, arc, arc ) );
+                g2.fillRoundRect( x, y, w+arc, h, arc, arc );
                 break;
         }
     }

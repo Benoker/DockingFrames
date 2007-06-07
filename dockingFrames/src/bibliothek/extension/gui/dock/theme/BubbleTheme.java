@@ -93,10 +93,10 @@ public class BubbleTheme extends DefaultTheme {
         colors.put( "title.text.inactive",            new Color( 100, 100, 100 ));
         colors.put( "title.text.inactive.mouse",      new Color( 25, 25, 25 ));
         
-        colors.put( "border.high.active",           new Color( 200, 0, 0 ));
-        colors.put( "border.high.inactive",         new Color( 100, 100, 100 ));
-        colors.put( "border.low.active",            new Color( 150, 0, 0 ));
-        colors.put( "border.low.inactive",          new Color( 75, 75, 75 ));
+        colors.put( "border.high.active",           new Color( 255, 100, 100 ));
+        colors.put( "border.high.inactive",         new Color( 200, 200, 200 ));
+        colors.put( "border.low.active",            new Color( 200, 100, 100 ));
+        colors.put( "border.low.inactive",          new Color( 100, 100, 100 ));
         
         setDisplayerFactory( new BubbleDisplayerFactory( this ));
         setTitleFactory( new BubbleDockTitleFactory( this ));

@@ -6,8 +6,10 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableDisplayer;
+import bibliothek.gui.dock.event.DockControllerAdapter;
 import bibliothek.gui.dock.title.DockTitle;
 
 public class BubbleDisplayer extends DockableDisplayer {
@@ -15,14 +17,51 @@ public class BubbleDisplayer extends DockableDisplayer {
     private JPanel dockable;
     private BubbleColorAnimation animation;
     
+    private Listener listener = new Listener();
+    
     public BubbleDisplayer( BubbleTheme theme, Dockable dockable, DockTitle title ){
         super( dockable, title );
         
         animation = new BubbleColorAnimation( theme );
         animation.putColor( "high", "border.high.inactive" );
         animation.putColor( "low", "border.low.inactive" );
+        animation.addTask( new Runnable(){
+            public void run() {
+                pulse();
+            }
+        });
         
         setBorder( null );
+    }
+    
+    protected void updateAnimation(){
+        DockController controller = getController();
+        if( controller != null && controller.getFocusedDockable() == getDockable() ){
+            animation.putColor( "high", "border.high.active" );
+            animation.putColor( "low", "border.low.active" );
+        }
+        else{
+            animation.putColor( "high", "border.high.inactive" );
+            animation.putColor( "low", "border.low.inactive" );
+        }
+    }
+    
+    protected void pulse(){
+        dockable.repaint();
+    }
+    
+    @Override
+    public void setController( DockController controller ) {
+        DockController old = getController();
+        if( old != controller ){
+            if( old != null )
+                old.removeDockControllerListener( listener );
+            
+            if( controller != null )
+                controller.addDockControllerListener( listener );
+            
+            super.setController( controller );
+        }
     }
     
     @Override
@@ -48,6 +87,13 @@ public class BubbleDisplayer extends DockableDisplayer {
             dockable = new JPanel( new GridLayout( 1, 1 ));
             dockable.setBorder(  new OpenBorder() );
             add( dockable );
+        }
+    }
+    
+    private class Listener extends DockControllerAdapter{
+        @Override
+        public void dockableFocused( DockController controller, Dockable dockable ) {
+            updateAnimation();
         }
     }
     
