@@ -27,18 +27,33 @@
 package bibliothek.extension.gui.dock.theme;
 
 import java.awt.Color;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
+import javax.imageio.ImageIO;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 
 import bibliothek.extension.gui.dock.theme.bubble.BubbleDisplayerFactory;
 import bibliothek.extension.gui.dock.theme.bubble.BubbleDockTitleFactory;
 import bibliothek.extension.gui.dock.theme.bubble.BubbleFlapDockButtonTitleFactory;
 import bibliothek.extension.gui.dock.theme.bubble.BubbleStackDockComponent;
+import bibliothek.extension.gui.dock.theme.bubble.view.BubbleButtonView;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
+import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ActionType;
+import bibliothek.gui.dock.action.ButtonDockAction;
+import bibliothek.gui.dock.action.views.ActionViewConverter;
+import bibliothek.gui.dock.action.views.ViewGenerator;
+import bibliothek.gui.dock.action.views.ViewTarget;
+import bibliothek.gui.dock.action.views.buttons.TitleViewItem;
 import bibliothek.gui.dock.event.DockControllerAdapter;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.StackDockStation;
@@ -98,6 +113,11 @@ public class BubbleTheme extends DefaultTheme {
         colors.put( "border.low.active",            new Color( 200, 100, 100 ));
         colors.put( "border.low.inactive",          new Color( 100, 100, 100 ));
         
+        // RoundButton
+        colors.put( "button.mouse",                 new Color( 0, 0, 255 ));
+        colors.put( "button",                       new Color( 255, 255, 255 ));
+
+        
         setDisplayerFactory( new BubbleDisplayerFactory( this ));
         setTitleFactory( new BubbleDockTitleFactory( this ));
     }
@@ -123,7 +143,8 @@ public class BubbleTheme extends DefaultTheme {
 	@Override
 	public void install( DockController controller ){
 		super.install( controller );
-        
+		
+		       
 		// Exchange the DockComponents
 		for( int i = 0, n = controller.getStationCount(); i<n; i++ ){
         	DockStation station = controller.getStation(i);
@@ -145,11 +166,41 @@ public class BubbleTheme extends DefaultTheme {
         for( Map.Entry<String, Icon> icon : icons.entrySet() ){
             controller.getIcons().setIconTheme( icon.getKey(), icon.getValue() );
         }
+        
+        ActionViewConverter converter = controller.getActionViewConverter();
+        
+        converter.putTheme( 
+                ActionType.BUTTON, 
+                ViewTarget.TITLE, 
+                new ButtonGenerator() );
 	}
     
     protected Map<String, Icon> loadIcons(){
-        return new HashMap<String, Icon>();
-    }
+    	
+      	        try{
+    	            Properties properties = new Properties();
+    	            InputStream in = DockUI.class.getResourceAsStream( "/data/bubble/icons.ini" );
+    	            properties.load( in );
+    	            in.close();
+    	            ClassLoader loader=BubbleTheme.class.getClassLoader();
+    	            
+    	            //Properties properties = ResourceManager.getDefault().ini( "DockUI.mapping", "data/bubble/icons.ini", getClass().getClassLoader() ).get();
+    	            Map<String, Icon> result = new HashMap<String, Icon>();
+    	            Enumeration e = properties.keys();
+    	            while( e.hasMoreElements() ){
+    	                String key = (String)e.nextElement();
+    	                ImageIcon icon = new ImageIcon( ImageIO.read( loader.getResource( properties.getProperty(key)) ));
+    	                result.put( key, icon);
+    	            }
+    	            return result;
+    	        }
+    	        catch( IOException ex ){
+    	            ex.printStackTrace();
+    	            return new HashMap<String, Icon>();
+    	      
+    	    }
+    	
+          }
 	
 	@Override
 	public void uninstall( DockController controller ){
@@ -168,6 +219,13 @@ public class BubbleTheme extends DefaultTheme {
         }
         
         controller.getDockTitleManager().clearThemeFactories();
+        
+        ActionViewConverter converter = controller.getActionViewConverter();
+        
+        converter.putTheme(
+                ActionType.BUTTON, 
+                ViewTarget.TITLE,
+                null );
 	}
 	
     /**
@@ -185,4 +243,11 @@ public class BubbleTheme extends DefaultTheme {
 			}
 		}
     }
-}
+
+    private class ButtonGenerator implements ViewGenerator<ButtonDockAction, TitleViewItem<JComponent>>{
+        public TitleViewItem<JComponent> create( ActionViewConverter converter, ButtonDockAction action, Dockable dockable ) {
+            return new BubbleButtonView( BubbleTheme.this, action, dockable );
+        }
+    }
+    
+  }
