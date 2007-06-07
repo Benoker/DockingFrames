@@ -246,33 +246,41 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 		 * Ensures that {@link #animation} uses the correct set of color pairs.
 		 */
         private void checkAnimation(){
-            String source, destination;
+            // String source, destination;
+            String destination;
             
             if( getSelectedIndex() == index ){
                 if( mouse ){
-                    source = "active";
+                 //   source = "active";
                     destination = "active.mouse";
                 }
                 else{
-                    source = "active.mouse";
+                 //   source = "active.mouse";
                     destination = "active";
                 }
             }
             else{
                 if( mouse ){
-                    source = "inactive";
+                //    source = "inactive";
                     destination = "inactive.mouse";
                 }
                 else{
-                    source = "inactive.mouse";
+                //    source = "inactive.mouse";
                     destination = "inactive";
                 }
             }
             
+            /*
             animation.putColors( "top", "tab.top." + source, "tab.top." + destination );
             animation.putColors( "bottom", "tab.bottom." + source, "tab.bottom." + destination );
             animation.putColors( "border", "tab.border." + source, "tab.border." + destination );
             animation.putColors( "text", "tab.text." + source, "tab.text." + destination );
+            */
+            
+            animation.putColor( "top", "tab.top." + destination );
+            animation.putColor( "bottom", "tab.bottom." + destination );
+            animation.putColor( "border", "tab.border." + destination );
+            animation.putColor( "text", "tab.text." + destination );
         }
 		
 		public void setIcon( Icon icon ){

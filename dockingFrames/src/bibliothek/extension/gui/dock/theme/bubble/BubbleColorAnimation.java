@@ -297,7 +297,7 @@ public class BubbleColorAnimation {
             else{
                 intermediate = getColor();
                 destination = color;
-                age = 0;
+                age = 1;
             }
         }
     }

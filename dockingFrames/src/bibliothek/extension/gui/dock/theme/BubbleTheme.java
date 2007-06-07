@@ -30,11 +30,17 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.Icon;
+
+import bibliothek.extension.gui.dock.theme.bubble.BubbleDisplayerFactory;
+import bibliothek.extension.gui.dock.theme.bubble.BubbleDockTitleFactory;
+import bibliothek.extension.gui.dock.theme.bubble.BubbleFlapDockButtonTitleFactory;
 import bibliothek.extension.gui.dock.theme.bubble.BubbleStackDockComponent;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.event.DockControllerAdapter;
+import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.StackDockStation;
 import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;
 import bibliothek.gui.dock.themes.DefaultTheme;
@@ -73,6 +79,27 @@ public class BubbleTheme extends DefaultTheme {
         colors.put( "tab.text.active.mouse",        new Color( 0, 0, 0 ));
         colors.put( "tab.text.inactive",            new Color( 100, 100, 100 ));
         colors.put( "tab.text.inactive.mouse",      new Color( 25, 25, 25 ));
+        
+        colors.put( "title.top.active",               new Color( 200, 0, 0 ) );
+        colors.put( "title.top.active.mouse",         new Color( 255, 100, 100 ) );
+        colors.put( "title.top.inactive",             new Color( 150, 150, 150 ) );
+        colors.put( "title.top.inactive.mouse",       new Color( 150, 255, 150 ) );
+        colors.put( "title.bottom.active",            new Color( 255, 100, 100 ) );
+        colors.put( "title.bottom.active.mouse",      new Color( 255, 200, 200 ) );
+        colors.put( "title.bottom.inactive",          new Color( 200, 200, 200 ) );
+        colors.put( "title.bottom.inactive.mouse",    new Color( 220, 255, 220 ) );
+        colors.put( "title.text.active",              new Color( 0, 0, 0 ));
+        colors.put( "title.text.active.mouse",        new Color( 0, 0, 0 ));
+        colors.put( "title.text.inactive",            new Color( 100, 100, 100 ));
+        colors.put( "title.text.inactive.mouse",      new Color( 25, 25, 25 ));
+        
+        colors.put( "border.high.active",           new Color( 200, 0, 0 ));
+        colors.put( "border.high.inactive",         new Color( 100, 100, 100 ));
+        colors.put( "border.low.active",            new Color( 150, 0, 0 ));
+        colors.put( "border.low.inactive",          new Color( 75, 75, 75 ));
+        
+        setDisplayerFactory( new BubbleDisplayerFactory( this ));
+        setTitleFactory( new BubbleDockTitleFactory( this ));
     }
     
     /**
@@ -107,8 +134,22 @@ public class BubbleTheme extends DefaultTheme {
         	}
         }
 		
+        // set new titles
+        controller.getDockTitleManager().registerTheme( 
+                FlapDockStation.BUTTON_TITLE_ID, 
+                new BubbleFlapDockButtonTitleFactory( this ));
+        
 		controller.addDockControllerListener( listener );
+        
+        Map<String,Icon> icons = loadIcons();
+        for( Map.Entry<String, Icon> icon : icons.entrySet() ){
+            controller.getIcons().setIconTheme( icon.getKey(), icon.getValue() );
+        }
 	}
+    
+    protected Map<String, Icon> loadIcons(){
+        return new HashMap<String, Icon>();
+    }
 	
 	@Override
 	public void uninstall( DockController controller ){
@@ -125,6 +166,8 @@ public class BubbleTheme extends DefaultTheme {
         			stack.setStackComponent( new DefaultStackDockComponent() );
         	}
         }
+        
+        controller.getDockTitleManager().clearThemeFactories();
 	}
 	
     /**

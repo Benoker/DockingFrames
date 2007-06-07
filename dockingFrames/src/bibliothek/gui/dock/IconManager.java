@@ -198,7 +198,7 @@ public class IconManager {
         
         /**
          * Removes a listener from this entry
-         * @param listener the listner to remove
+         * @param listener the listener to remove
          */
         public void remove( IconManagerListener listener ){
             listeners.remove( listener );
