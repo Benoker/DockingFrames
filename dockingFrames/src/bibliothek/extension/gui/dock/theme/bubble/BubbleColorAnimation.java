@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -284,21 +284,24 @@ public class BubbleColorAnimation {
          * @param color the new destination
          */
         public void setDestination( String color ){
-            if( age == 0 ){
-                destination = color;
-                intermediate = null;
-            }
-            else if( source.equals( color ) ){
-                source = destination;
-                destination = color;
-                age = duration - age;
-                intermediate = null;
-            }
-            else{
-                intermediate = getColor();
-                destination = color;
-                age = 1;
-            }
+        	if( destination == null || !destination.equals( color )){
+        		if( age == 0 ){
+	                destination = color;
+	                intermediate = null;
+	            }
+	            else if( source != null && source.equals( color ) ){
+	                intermediate = getColor();
+	            	source = destination;
+	                destination = color;
+	                age = 1;
+	            }
+	            else{
+	                intermediate = getColor();
+	                source = null;
+	                destination = color;
+	                age = 1;
+	            }
+        	}
         }
     }
 }

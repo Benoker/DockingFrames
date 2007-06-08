@@ -79,6 +79,9 @@ public class BubbleTheme extends DefaultTheme {
     /** A listener to the {@link DockController} */
 	private Listener listener = new Listener();
 	
+	/**
+	 * Creates a new theme
+	 */
     public BubbleTheme(){
         colors.put( "tab.border.active",            new Color( 150, 0, 0 ) );
         colors.put( "tab.border.active.mouse",      new Color( 200, 100, 100 ) );
@@ -125,8 +128,14 @@ public class BubbleTheme extends DefaultTheme {
         colors.put( "dropdown.mouse.selected",      new Color( 100, 100, 255 ));
         colors.put( "dropdown.pressed",             new Color( 255, 0, 0 ));
         colors.put( "dropdown.pressed.selected",    new Color( 0, 0, 255 ));
-
         
+        colors.put( "dropdown.line",                new Color( 150, 75, 75 ));
+        colors.put( "dropdown.line.selected",       new Color( 75, 75, 75 ));
+        colors.put( "dropdown.line.mouse",          new Color( 150, 50, 50 ));
+        colors.put( "dropdown.line.mouse.selected", new Color( 50, 50, 150 ));
+        colors.put( "dropdown.line.pressed",        new Color( 150, 0, 0 ));
+        colors.put( "dropdown.line.pressed.selected", new Color( 0, 0, 150 ));
+
         setDisplayerFactory( new BubbleDisplayerFactory( this ));
         setTitleFactory( new BubbleDockTitleFactory( this ));
     }
@@ -189,9 +198,17 @@ public class BubbleTheme extends DefaultTheme {
                 new DropDownGenerator() );
 	}
 
+	/**
+	 * Reads a set of icons which will replace the ordinary icons.
+	 * @return the new set of icons
+	 */
 	protected Map<String, Icon> loadIcons(){
 	    try{
-	        Properties properties = new Properties();
+	    	/*
+	    	 * @Todo reading all icons? Is there a way to do this using less resources?
+	    	 */
+	    	
+	    	Properties properties = new Properties();
 	        InputStream in = DockUI.class.getResourceAsStream( "/data/bubble/icons.ini" );
 	        properties.load( in );
 	        in.close();
@@ -255,12 +272,20 @@ public class BubbleTheme extends DefaultTheme {
 		}
     }
 
+    /**
+     * Generator to create views for {@link ButtonDockAction button-actions}.
+     * @author Benjamin Sigg
+     */
     private class ButtonGenerator implements ViewGenerator<ButtonDockAction, TitleViewItem<JComponent>>{
         public TitleViewItem<JComponent> create( ActionViewConverter converter, ButtonDockAction action, Dockable dockable ) {
             return new BubbleButtonView( BubbleTheme.this, action, dockable );
         }
     }
     
+    /**
+     * Generator to create views for {@link DropDownAction dropdown-actions}.
+     * @author Benjamin Sigg
+     */
     private class DropDownGenerator implements ViewGenerator<DropDownAction, TitleViewItem<JComponent>>{
         public TitleViewItem<JComponent> create( ActionViewConverter converter, DropDownAction action, Dockable dockable ) {
             return new BubbleDropDownView( BubbleTheme.this, action, dockable );

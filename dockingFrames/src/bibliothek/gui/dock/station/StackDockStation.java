@@ -264,11 +264,12 @@ public class StackDockStation extends AbstractDockableStation {
             else
                 title = null;
             
+            displayers.setController( controller );
+            
             for( DockableDisplayer displayer : dockables ){
                 if( this.title != null ){
                     DockTitle title = displayer.getDockable().getDockTitle( this.title );
                     displayer.setTitle( title );
-                    displayer.setController( controller );
                     if( title != null )
                         displayer.getDockable().bind( title );
                 }
