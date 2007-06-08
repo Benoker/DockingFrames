@@ -26,8 +26,6 @@
 
 package bibliothek.gui.dock.action.views.buttons;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.*;
 
 import javax.swing.Icon;
@@ -73,11 +71,11 @@ public class DropDownMiniButtonHandler<
 	private Listener listener = new Listener();
 	
 	/** the currently selected item, can be <code>null</code> */
-	private Item selection;
+	private DropDownItemHandle selection;
 	/** the currently known actions */
 	private List<DockAction> actions = new ArrayList<DockAction>();
 	/** the views for the items of {@link #actions}. Not all actions have a view. */
-	private Map<DockAction, Item> items = new HashMap<DockAction, Item>();
+	private Map<DockAction, DropDownItemHandle> items = new HashMap<DockAction, DropDownItemHandle>();
 	
 	/** the menu to show when the button is clicked */
 	private JPopupMenu menu = new JPopupMenu();
@@ -122,7 +120,7 @@ public class DropDownMiniButtonHandler<
 		reset();
 		selection = items.get( action.getSelection( dockable ) );
 		if( selection != null )
-			selection.view.setView( selectionView );
+			selection.getView().setView( selectionView );
 		
 		action.addDropDownActionListener( listener );
 		action.addDockActionListener( listener );
@@ -141,8 +139,9 @@ public class DropDownMiniButtonHandler<
 		
 		menu.removeAll();
 		
-		if( selection != null )
-			selection.view.setView( null );
+		if( selection != null ){
+			selection.getView().setView( null );
+        }
 		
 		filter.unbind();
 		filter = null;
@@ -163,7 +162,7 @@ public class DropDownMiniButtonHandler<
 		actions.add( action );
 		DropDownViewItem item = action.createView( ViewTarget.DROP_DOWN, dockable.getController().getActionViewConverter(), dockable );
 		if( item != null ){
-			Item entry = new Item( action, item );
+			DropDownItemHandle entry = new DropDownItemHandle( action, item, dockable, this.action );
 			entry.bind();
 			items.put( action, entry );
 			menu.add( item.getItem() );
@@ -176,10 +175,10 @@ public class DropDownMiniButtonHandler<
 	 */
 	private void remove( int index ){
 		DockAction action = actions.remove( index );
-		Item item = items.remove( action );
+		DropDownItemHandle item = items.remove( action );
 		if( item != null ){
 			item.unbind();
-			menu.remove( item.view.getItem() );
+			menu.remove( item.getView().getItem() );
 		}
 	}
 	
@@ -200,11 +199,11 @@ public class DropDownMiniButtonHandler<
 	}
 	
 	public void triggered(){
-		if( selection == null || !button.isSelectionEnabled() || !selection.view.isTriggerable(  true ) )
+		if( selection == null || !button.isSelectionEnabled() || !selection.getView().isTriggerable(  true ) )
 			popupTriggered();
 		else{
-			if( selection.view.isTriggerable( true ) ){
-				selection.view.triggered();
+			if( selection.getView().isTriggerable( true ) ){
+				selection.getView().triggered();
 			}
 		}
 	}
@@ -259,51 +258,9 @@ public class DropDownMiniButtonHandler<
 	 */
 	protected void update(){
 		if( filter != null )
-			filter.update( selection == null ? null : selection.view );
+			filter.update( selection == null ? null : selection.getView() );
 	}
     
-	/**
-	 * Represents an action and its view.
-	 * @author Benjamin Sigg
-	 */
-	private class Item implements ActionListener{
-		/** the action */
-		private DockAction item;
-		/** the view of {@link #item} */
-		private DropDownViewItem view;
-		
-		/**
-		 * Creates a new item.
-		 * @param item the action
-		 * @param view the view of <code>item</code>
-		 */
-		public Item( DockAction item, DropDownViewItem view ){
-			this.item = item;
-			this.view = view;
-		}
-		
-		/**
-		 * Connects the view.
-		 */
-		public void bind(){
-			view.bind();
-			view.addActionListener( this );
-		}
-		
-		/**
-		 * Disconnects the view
-		 */
-		public void unbind(){
-			view.removeActionListener( this );
-			view.unbind();
-		}
-		
-		public void actionPerformed( ActionEvent e ){
-			if( view.isSelectable() )
-				action.setSelection( dockable, item );
-		}
-	}
-	
 	/**
 	 * A set of properties which can be set by the selected action.
 	 * @author Benjamin Sigg
@@ -403,13 +360,13 @@ public class DropDownMiniButtonHandler<
 		
 		public void selectionChanged( DropDownAction action, Set<Dockable> dockables, DockAction newSelection ){
 			if( selection != null )
-				selection.view.setView( null );
+				selection.getView().setView( null );
 			
 			reset();
 			selection = items.get( newSelection );
 			
 			if( selection != null )
-				selection.view.setView( selectionView );
+				selection.getView().setView( selectionView );
 			
 			button.repaint();
 		}

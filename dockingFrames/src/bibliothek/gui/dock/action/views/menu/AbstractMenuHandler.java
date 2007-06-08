@@ -38,7 +38,7 @@ import bibliothek.gui.dock.event.StandardDockActionListener;
 
 /**
  * A handler that connects a {@link JMenuItem} with a {@link DockAction}.
- * @param <I> Item used by this handler
+ * @param <I> DropDownItemHandle used by this handler
  * @param <D> Action used by this handler
  * @author Benjamin Sigg
  */

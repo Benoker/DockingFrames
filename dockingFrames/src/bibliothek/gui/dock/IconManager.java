@@ -132,6 +132,14 @@ public class IconManager {
     }
     
     /**
+     * Removes all icons which have the priority {@link Priority#THEME THEME}.
+     */
+    public void clearThemeIcons(){
+        for( Entry entry : icons.values())
+            entry.set( Priority.THEME, null );
+    }
+    
+    /**
      * A set of icons with different priority and a set of listeners.
      * @author Benjamin Sigg
      */

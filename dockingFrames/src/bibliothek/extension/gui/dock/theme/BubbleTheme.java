@@ -44,12 +44,14 @@ import bibliothek.extension.gui.dock.theme.bubble.BubbleDockTitleFactory;
 import bibliothek.extension.gui.dock.theme.bubble.BubbleFlapDockButtonTitleFactory;
 import bibliothek.extension.gui.dock.theme.bubble.BubbleStackDockComponent;
 import bibliothek.extension.gui.dock.theme.bubble.view.BubbleButtonView;
+import bibliothek.extension.gui.dock.theme.bubble.view.BubbleDropDownView;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionType;
 import bibliothek.gui.dock.action.ButtonDockAction;
+import bibliothek.gui.dock.action.DropDownAction;
 import bibliothek.gui.dock.action.views.ActionViewConverter;
 import bibliothek.gui.dock.action.views.ViewGenerator;
 import bibliothek.gui.dock.action.views.ViewTarget;
@@ -116,6 +118,13 @@ public class BubbleTheme extends DefaultTheme {
         // RoundButton
         colors.put( "button.mouse",                 new Color( 0, 0, 255 ));
         colors.put( "button",                       new Color( 255, 255, 255 ));
+        
+        colors.put( "dropdown",                     new Color( 255, 200, 200 ));
+        colors.put( "dropdown.selected",            new Color( 200, 200, 255 ));
+        colors.put( "dropdown.mouse",               new Color( 255, 100, 100 ));
+        colors.put( "dropdown.mouse.selected",      new Color( 100, 100, 255 ));
+        colors.put( "dropdown.pressed",             new Color( 255, 0, 0 ));
+        colors.put( "dropdown.pressed.selected",    new Color( 0, 0, 255 ));
 
         
         setDisplayerFactory( new BubbleDisplayerFactory( this ));
@@ -173,35 +182,37 @@ public class BubbleTheme extends DefaultTheme {
                 ActionType.BUTTON, 
                 ViewTarget.TITLE, 
                 new ButtonGenerator() );
+        
+        converter.putTheme(
+                ActionType.DROP_DOWN,
+                ViewTarget.TITLE,
+                new DropDownGenerator() );
 	}
-    
-    protected Map<String, Icon> loadIcons(){
-    	
-      	        try{
-    	            Properties properties = new Properties();
-    	            InputStream in = DockUI.class.getResourceAsStream( "/data/bubble/icons.ini" );
-    	            properties.load( in );
-    	            in.close();
-    	            ClassLoader loader=BubbleTheme.class.getClassLoader();
-    	            
-    	            //Properties properties = ResourceManager.getDefault().ini( "DockUI.mapping", "data/bubble/icons.ini", getClass().getClassLoader() ).get();
-    	            Map<String, Icon> result = new HashMap<String, Icon>();
-    	            Enumeration e = properties.keys();
-    	            while( e.hasMoreElements() ){
-    	                String key = (String)e.nextElement();
-    	                ImageIcon icon = new ImageIcon( ImageIO.read( loader.getResource( properties.getProperty(key)) ));
-    	                result.put( key, icon);
-    	            }
-    	            return result;
-    	        }
-    	        catch( IOException ex ){
-    	            ex.printStackTrace();
-    	            return new HashMap<String, Icon>();
-    	      
-    	    }
-    	
-          }
-	
+
+	protected Map<String, Icon> loadIcons(){
+	    try{
+	        Properties properties = new Properties();
+	        InputStream in = DockUI.class.getResourceAsStream( "/data/bubble/icons.ini" );
+	        properties.load( in );
+	        in.close();
+	        ClassLoader loader=BubbleTheme.class.getClassLoader();
+
+	        //Properties properties = ResourceManager.getDefault().ini( "DockUI.mapping", "data/bubble/icons.ini", getClass().getClassLoader() ).get();
+	        Map<String, Icon> result = new HashMap<String, Icon>();
+	        Enumeration e = properties.keys();
+	        while( e.hasMoreElements() ){
+	            String key = (String)e.nextElement();
+	            ImageIcon icon = new ImageIcon( ImageIO.read( loader.getResource( properties.getProperty(key)) ));
+	            result.put( key, icon);
+	        }
+	        return result;
+	    }
+	    catch( IOException ex ){
+	        ex.printStackTrace();
+	        return new HashMap<String, Icon>();
+	    }
+	}
+
 	@Override
 	public void uninstall( DockController controller ){
 		super.uninstall( controller );
@@ -220,12 +231,12 @@ public class BubbleTheme extends DefaultTheme {
         
         controller.getDockTitleManager().clearThemeFactories();
         
+        controller.getIcons().clearThemeIcons();
+        
         ActionViewConverter converter = controller.getActionViewConverter();
         
-        converter.putTheme(
-                ActionType.BUTTON, 
-                ViewTarget.TITLE,
-                null );
+        converter.putTheme( ActionType.BUTTON,  ViewTarget.TITLE, null );
+        converter.putTheme( ActionType.DROP_DOWN, ViewTarget.TITLE, null );
 	}
 	
     /**
@@ -250,4 +261,9 @@ public class BubbleTheme extends DefaultTheme {
         }
     }
     
-  }
+    private class DropDownGenerator implements ViewGenerator<DropDownAction, TitleViewItem<JComponent>>{
+        public TitleViewItem<JComponent> create( ActionViewConverter converter, DropDownAction action, Dockable dockable ) {
+            return new BubbleDropDownView( BubbleTheme.this, action, dockable );
+        }
+    }
+}
