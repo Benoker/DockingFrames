@@ -28,12 +28,9 @@ package bibliothek.gui.dock.action.views;
 
 import javax.swing.JComponent;
 
-import bibliothek.gui.dock.action.DockAction;
-import bibliothek.gui.dock.action.DropDownAction;
 import bibliothek.gui.dock.action.views.buttons.TitleViewItem;
 import bibliothek.gui.dock.action.views.dropdown.DropDownViewItem;
 import bibliothek.gui.dock.action.views.menu.MenuViewItem;
-import bibliothek.gui.dock.title.DockTitle;
 
 /**
  * Defines for which platform a {@link DockAction} is transformed to by

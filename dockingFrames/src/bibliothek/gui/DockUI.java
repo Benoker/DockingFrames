@@ -26,8 +26,20 @@
 
 package bibliothek.gui;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.ResourceBundle;
 
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
@@ -42,7 +54,12 @@ import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.support.DefaultCombiner;
 import bibliothek.gui.dock.station.support.DefaultDisplayerFactory;
 import bibliothek.gui.dock.station.support.DefaultStationPaint;
-import bibliothek.gui.dock.themes.*;
+import bibliothek.gui.dock.themes.DefaultTheme;
+import bibliothek.gui.dock.themes.FlatTheme;
+import bibliothek.gui.dock.themes.NoStackTheme;
+import bibliothek.gui.dock.themes.SmoothTheme;
+import bibliothek.gui.dock.themes.ThemeFactory;
+import bibliothek.gui.dock.themes.ThemePropertyFactory;
 import bibliothek.gui.dock.util.Priority;
 
 /**

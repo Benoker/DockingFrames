@@ -26,7 +26,15 @@
 
 package bibliothek.gui.dock.station.support;
 
-import java.awt.*;
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Stroke;
+import java.awt.SystemColor;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.dock.station.StationPaint;

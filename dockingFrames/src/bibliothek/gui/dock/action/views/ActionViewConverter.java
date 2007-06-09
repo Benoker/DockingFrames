@@ -29,19 +29,37 @@ package bibliothek.gui.dock.action.views;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.*;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JSeparator;
 
-import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.*;
+import bibliothek.gui.dock.action.ActionType;
+import bibliothek.gui.dock.action.ButtonDockAction;
+import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.action.DropDownAction;
+import bibliothek.gui.dock.action.MenuDockAction;
+import bibliothek.gui.dock.action.SelectableDockAction;
 import bibliothek.gui.dock.action.actions.SeparatorAction;
-import bibliothek.gui.dock.action.views.buttons.*;
+import bibliothek.gui.dock.action.views.buttons.ButtonMiniButtonHandler;
+import bibliothek.gui.dock.action.views.buttons.DropDownMiniButton;
+import bibliothek.gui.dock.action.views.buttons.DropDownMiniButtonHandler;
+import bibliothek.gui.dock.action.views.buttons.MenuMiniButtonHandler;
+import bibliothek.gui.dock.action.views.buttons.MiniButton;
+import bibliothek.gui.dock.action.views.buttons.SelectableMiniButtonHandler;
+import bibliothek.gui.dock.action.views.buttons.TitleViewItem;
 import bibliothek.gui.dock.action.views.dropdown.ButtonDropDownHandler;
 import bibliothek.gui.dock.action.views.dropdown.DropDownViewItem;
 import bibliothek.gui.dock.action.views.dropdown.SelectableDropDownHandler;
 import bibliothek.gui.dock.action.views.dropdown.SubDropDownHandler;
-import bibliothek.gui.dock.action.views.menu.*;
-import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.action.views.menu.ButtonMenuHandler;
+import bibliothek.gui.dock.action.views.menu.DropDownMenuHandler;
+import bibliothek.gui.dock.action.views.menu.MenuMenuHandler;
+import bibliothek.gui.dock.action.views.menu.MenuViewItem;
+import bibliothek.gui.dock.action.views.menu.SelectableMenuHandler;
 import bibliothek.util.container.Tuple;
 
 /**

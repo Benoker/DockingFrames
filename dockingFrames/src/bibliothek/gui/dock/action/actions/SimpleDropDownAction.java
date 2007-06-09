@@ -31,7 +31,11 @@ import java.util.List;
 import java.util.Set;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.*;
+import bibliothek.gui.dock.action.ActionType;
+import bibliothek.gui.dock.action.DefaultDockActionSource;
+import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.action.DropDownAction;
+import bibliothek.gui.dock.action.StandardDockAction;
 import bibliothek.gui.dock.action.dropdown.DefaultDropDownFilter;
 import bibliothek.gui.dock.action.dropdown.DropDownFilterFactory;
 import bibliothek.gui.dock.action.views.ActionViewConverter;

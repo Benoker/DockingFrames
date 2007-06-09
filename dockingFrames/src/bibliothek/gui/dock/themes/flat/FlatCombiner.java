@@ -31,7 +31,6 @@ import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.StackDockStation;
-import bibliothek.gui.dock.themes.FlatTheme;
 
 /**
  * A {@link Combiner} normally used by the {@link FlatTheme} to replace the

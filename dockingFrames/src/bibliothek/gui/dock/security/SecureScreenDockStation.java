@@ -31,7 +31,6 @@ import java.awt.Frame;
 import java.awt.Window;
 
 import bibliothek.gui.dock.station.ScreenDockStation;
-import bibliothek.gui.dock.station.screen.ScreenDockDialog;
 
 /**
  * A {@link ScreenDockStation} that uses {@link SecureScreenDockDialog} 

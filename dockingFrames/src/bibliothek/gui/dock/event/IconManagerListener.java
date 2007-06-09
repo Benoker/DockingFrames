@@ -28,8 +28,6 @@ package bibliothek.gui.dock.event;
 
 import javax.swing.Icon;
 
-import bibliothek.gui.dock.IconManager;
-
 /**
  * A listener added to a {@link IconManager}. This listener will receive an
  * event when an icon of the manager changes.

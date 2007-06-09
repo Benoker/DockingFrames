@@ -35,7 +35,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.ActionType;
 import bibliothek.gui.dock.action.SelectableDockAction;
 import bibliothek.gui.dock.event.SelectableDockActionListener;
 

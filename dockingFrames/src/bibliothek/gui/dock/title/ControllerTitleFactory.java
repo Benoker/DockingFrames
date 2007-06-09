@@ -26,9 +26,7 @@
 
 package bibliothek.gui.dock.title;
 
-import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
-import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
 
 /**

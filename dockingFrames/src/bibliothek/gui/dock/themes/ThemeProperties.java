@@ -31,8 +31,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import bibliothek.gui.DockUI;
-
 /**
  * A small description of a DockTheme, used in
  * {@link DockUI} to create a factory for a theme.

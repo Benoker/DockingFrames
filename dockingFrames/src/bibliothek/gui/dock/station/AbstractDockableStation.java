@@ -33,9 +33,11 @@ import java.io.IOException;
 
 import javax.swing.SwingUtilities;
 
-import bibliothek.gui.*;
+import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.DockTheme;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.AbstractDockable;
-import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.event.DockTitleEvent;

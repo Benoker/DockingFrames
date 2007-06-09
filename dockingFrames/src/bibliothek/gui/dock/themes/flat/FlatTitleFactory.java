@@ -29,11 +29,14 @@ package bibliothek.gui.dock.themes.flat;
 import java.awt.Color;
 
 import javax.swing.BorderFactory;
-import javax.swing.JComponent;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.title.*;
+import bibliothek.gui.dock.title.AbstractDockTitle;
+import bibliothek.gui.dock.title.DefaultDockTitle;
+import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.title.DockTitleFactory;
+import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
  * A factory that creates instances of {@link DefaultDockTitle}, but

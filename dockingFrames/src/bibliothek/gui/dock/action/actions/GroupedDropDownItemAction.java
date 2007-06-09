@@ -27,7 +27,6 @@
 package bibliothek.gui.dock.action.actions;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.DropDownAction;
 import bibliothek.gui.dock.action.StandardDropDownItemAction;
 
 /**

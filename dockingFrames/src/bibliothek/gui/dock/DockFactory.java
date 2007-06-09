@@ -31,7 +31,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Map;
 
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 
 /**

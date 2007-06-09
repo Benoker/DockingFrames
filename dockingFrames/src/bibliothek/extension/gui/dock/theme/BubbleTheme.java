@@ -45,6 +45,9 @@ import bibliothek.extension.gui.dock.theme.bubble.BubbleFlapDockButtonTitleFacto
 import bibliothek.extension.gui.dock.theme.bubble.BubbleStackDockComponent;
 import bibliothek.extension.gui.dock.theme.bubble.view.BubbleButtonView;
 import bibliothek.extension.gui.dock.theme.bubble.view.BubbleDropDownView;
+import bibliothek.extension.gui.dock.theme.bubble.view.BubbleMenuView;
+import bibliothek.extension.gui.dock.theme.bubble.view.BubbleSelectableView;
+import bibliothek.extension.gui.dock.theme.bubble.view.BubbleSeparator;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockUI;
@@ -52,6 +55,9 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionType;
 import bibliothek.gui.dock.action.ButtonDockAction;
 import bibliothek.gui.dock.action.DropDownAction;
+import bibliothek.gui.dock.action.MenuDockAction;
+import bibliothek.gui.dock.action.SelectableDockAction;
+import bibliothek.gui.dock.action.actions.SeparatorAction;
 import bibliothek.gui.dock.action.views.ActionViewConverter;
 import bibliothek.gui.dock.action.views.ViewGenerator;
 import bibliothek.gui.dock.action.views.ViewTarget;
@@ -191,11 +197,31 @@ public class BubbleTheme extends DefaultTheme {
                 ActionType.BUTTON, 
                 ViewTarget.TITLE, 
                 new ButtonGenerator() );
+
+        converter.putTheme( 
+                ActionType.CHECK, 
+                ViewTarget.TITLE, 
+                new CheckGenerator() );
+        
+        converter.putTheme( 
+                ActionType.RADIO, 
+                ViewTarget.TITLE, 
+                new RadioGenerator() );
         
         converter.putTheme(
                 ActionType.DROP_DOWN,
                 ViewTarget.TITLE,
                 new DropDownGenerator() );
+        
+        converter.putTheme(
+        		ActionType.MENU,
+        		ViewTarget.TITLE,
+        		new MenuGenerator() );
+        
+        converter.putTheme(
+        		ActionType.SEPARATOR,
+        		ViewTarget.TITLE,
+        		new SeparatorGenerator() );
 	}
 
 	/**
@@ -253,7 +279,11 @@ public class BubbleTheme extends DefaultTheme {
         ActionViewConverter converter = controller.getActionViewConverter();
         
         converter.putTheme( ActionType.BUTTON,  ViewTarget.TITLE, null );
+        converter.putTheme( ActionType.CHECK,  ViewTarget.TITLE, null );
+        converter.putTheme( ActionType.RADIO,  ViewTarget.TITLE, null );
         converter.putTheme( ActionType.DROP_DOWN, ViewTarget.TITLE, null );
+        converter.putTheme( ActionType.MENU, ViewTarget.TITLE, null );
+        converter.putTheme( ActionType.SEPARATOR, ViewTarget.TITLE, null );
 	}
 	
     /**
@@ -283,6 +313,26 @@ public class BubbleTheme extends DefaultTheme {
     }
     
     /**
+     * Generator to create views for {@link SelectableDockAction check-actions}.
+     * @author Benjamin Sigg
+     */
+    private class CheckGenerator implements ViewGenerator<SelectableDockAction, TitleViewItem<JComponent>>{
+        public TitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ) {
+            return new BubbleSelectableView.Check( BubbleTheme.this, action, dockable );
+        }
+    }
+    
+    /**
+     * Generator to create views for {@link SelectableDockAction radio-actions}.
+     * @author Benjamin Sigg
+     */
+    private class RadioGenerator implements ViewGenerator<SelectableDockAction, TitleViewItem<JComponent>>{
+        public TitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ) {
+            return new BubbleSelectableView.Radio( BubbleTheme.this, action, dockable );
+        }
+    }
+    
+    /**
      * Generator to create views for {@link DropDownAction dropdown-actions}.
      * @author Benjamin Sigg
      */
@@ -290,5 +340,28 @@ public class BubbleTheme extends DefaultTheme {
         public TitleViewItem<JComponent> create( ActionViewConverter converter, DropDownAction action, Dockable dockable ) {
             return new BubbleDropDownView( BubbleTheme.this, action, dockable );
         }
+    }
+    
+    /**
+     * Generator to create views for {@link MenuDockAction menus}.
+     * @author Benjamin Sigg
+     */
+    private class MenuGenerator implements ViewGenerator<MenuDockAction, TitleViewItem<JComponent>>{
+    	public TitleViewItem<JComponent> create( ActionViewConverter converter, MenuDockAction action, Dockable dockable ){
+    		return new BubbleMenuView( BubbleTheme.this, action, dockable );
+    	}
+    }
+ 
+    /**
+     * Generator to create views for {@link SeparatorAction separators}.
+     * @author Benjamin Sigg
+     */
+    private class SeparatorGenerator implements ViewGenerator<SeparatorAction, TitleViewItem<JComponent>>{
+    	public TitleViewItem<JComponent> create( ActionViewConverter converter, SeparatorAction action, Dockable dockable ){
+    		if( action.shouldDisplay( ViewTarget.TITLE ))
+    			return new BubbleSeparator( action );
+    		
+    		return null;
+    	}
     }
 }

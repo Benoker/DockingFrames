@@ -27,7 +27,6 @@
 package bibliothek.gui.dock.action;
 
 import bibliothek.gui.dock.event.DockActionSourceListener;
-import bibliothek.gui.dock.event.StandardDockActionListener;
 
 /**
  * A list of {@link DockAction DockActions} which may change its size

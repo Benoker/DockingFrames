@@ -26,13 +26,16 @@
 
 package bibliothek.gui.dock.action.views.buttons;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Insets;
 import java.awt.event.MouseEvent;
 
 import javax.swing.Icon;
 import javax.swing.border.Border;
 
-import bibliothek.gui.dock.action.DropDownAction;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.DockUtilities;
 

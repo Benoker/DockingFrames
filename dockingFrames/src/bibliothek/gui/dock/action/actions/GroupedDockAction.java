@@ -34,8 +34,6 @@ import java.util.Set;
 import javax.swing.Icon;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.ActionType;
-import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.StandardDockAction;
 import bibliothek.gui.dock.event.StandardDockActionListener;
 import bibliothek.util.container.Tuple;

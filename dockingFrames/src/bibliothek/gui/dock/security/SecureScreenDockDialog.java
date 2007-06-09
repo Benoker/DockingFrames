@@ -34,8 +34,6 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JComponent;
 
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.station.ScreenDockStation;
 import bibliothek.gui.dock.station.screen.ScreenDockDialog;
 

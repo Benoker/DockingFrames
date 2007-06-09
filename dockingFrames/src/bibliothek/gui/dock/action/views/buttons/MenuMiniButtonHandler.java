@@ -69,7 +69,10 @@ public class MenuMiniButtonHandler extends AbstractMiniButtonHandler<MenuDockAct
             };
             
             MiniButton button = getButton();
-            popup.popup( button, 0, button.getHeight() );
+            if( getOrientation().isHorizontal() )
+            	popup.popup( button, 0, button.getHeight() );
+            else
+            	popup.popup( button, button.getWidth(), 0 );
         }
 	}
 }

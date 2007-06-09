@@ -25,7 +25,11 @@
  */
 package bibliothek.extension.gui.dock.theme.bubble.view;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -53,7 +57,6 @@ import bibliothek.gui.dock.title.DockTitle.Orientation;
  * A {@link TitleViewItem} that uses a {@link RoundDropDownButton} to
  * show the contents of a {@link DropDownAction}.
  * @author Benjamin Sigg
- *
  */
 public class BubbleDropDownView implements TitleViewItem<JComponent> {
 	/** the dockable for which the action is shown */
@@ -124,6 +127,7 @@ public class BubbleDropDownView implements TitleViewItem<JComponent> {
 
     public void unbind() {
         action.removeDockActionListener( listener );
+        action.removeDropDownActionListener( listener );
         filter.unbind();
         filter = null;
         
@@ -320,6 +324,8 @@ public class BubbleDropDownView implements TitleViewItem<JComponent> {
                 
                 if( selectedAction != null )
                     selection = items.get( selectedAction );
+
+                reset();
                 
                 if( selection != null )
                     selection.getView().setView( selectionView );

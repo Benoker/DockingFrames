@@ -28,8 +28,10 @@ package bibliothek.gui.dock.station;
 
 import java.io.IOException;
 
-import bibliothek.gui.*;
-import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.DockTheme;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.station.support.DockStationListenerManager;

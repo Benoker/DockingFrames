@@ -30,7 +30,6 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 
 import bibliothek.gui.DockStation;
-import bibliothek.gui.Dockable;
 
 /**
  * A StationPaint draws some parts of {@link DockStation}. All the default-stations

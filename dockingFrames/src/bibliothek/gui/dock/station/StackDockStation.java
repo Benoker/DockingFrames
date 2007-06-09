@@ -26,7 +26,11 @@
 
 package bibliothek.gui.dock.station;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -36,16 +40,18 @@ import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputListener;
 
-import bibliothek.gui.*;
+import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.DockTheme;
+import bibliothek.gui.DockUI;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.DockableProperty;
-import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.action.MultiDockActionSource;
 import bibliothek.gui.dock.event.DockStationAdapter;
@@ -59,7 +65,6 @@ import bibliothek.gui.dock.station.support.DockableVisibilityManager;
 import bibliothek.gui.dock.station.support.StationPaintWrapper;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
-import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**

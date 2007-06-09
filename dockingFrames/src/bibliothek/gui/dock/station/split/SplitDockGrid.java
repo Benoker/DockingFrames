@@ -26,10 +26,13 @@
 
 package bibliothek.gui.dock.station.split;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.SplitDockStation;
 
 /**
  * A class that provides a grid for {@link Dockable Dockables}. The grid can

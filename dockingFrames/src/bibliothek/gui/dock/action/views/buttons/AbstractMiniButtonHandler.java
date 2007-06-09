@@ -56,6 +56,9 @@ public abstract class AbstractMiniButtonHandler<D extends StandardDockAction, T 
 	/** a listener to <code>action</code> */
 	private Listener listener;
 	
+	/** the location of the title on which this button is */
+	private Orientation orientation = Orientation.FREE_HORIZONTAL;
+	
 	/**
 	 * Creates a new model and sets the model at <code>button</code>.
 	 * @param action the action which is observed
@@ -107,7 +110,11 @@ public abstract class AbstractMiniButtonHandler<D extends StandardDockAction, T 
 	}
 	
 	public void setOrientation( Orientation orientation ){
-		// ignore
+		this.orientation = orientation;
+	}
+	
+	public Orientation getOrientation(){
+		return orientation;
 	}
 
 	/**

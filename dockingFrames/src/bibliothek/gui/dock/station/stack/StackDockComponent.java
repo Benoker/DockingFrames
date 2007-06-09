@@ -32,8 +32,6 @@ import java.awt.Rectangle;
 import javax.swing.Icon;
 import javax.swing.event.ChangeListener;
 
-import bibliothek.gui.dock.station.StackDockStation;
-
 /**
  * A StackDockComponent is a Component that can show other {@link Component Components}.
  * StackDockComponents are used by {@link StackDockStation StackDockStations}
