@@ -34,6 +34,9 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JComponent;
 
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockableDisplayer;
+import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.ScreenDockStation;
 import bibliothek.gui.dock.station.screen.ScreenDockDialog;
 
@@ -72,11 +75,14 @@ public class SecureScreenDockDialog extends ScreenDockDialog {
     }
     
     @Override
-    protected JComponent createContent() {
+    protected OverpaintablePanel createContent() {
+        OverpaintablePanel overpaint = super.createContent();
+        
         pane = new GlassedPane();
-        content = super.createContent();
-        pane.setContentPane( content );
-        return pane;
+        overpaint.setContentPane( pane );
+        content = pane.getContentPane();
+        
+        return overpaint;
     }
     
     @Override

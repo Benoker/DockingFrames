@@ -36,13 +36,14 @@ import javax.swing.JPanel;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.FlapDockStation;
+import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.FlapDockStation.Direction;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
  * This panel is used by the {@link FlapDockStation} to display some button-titles.
  */
-public class ButtonPane extends JPanel{
+public class ButtonPane extends OverpaintablePanel{
     /** The owner of this panel */
     private FlapDockStation station;
     
@@ -58,7 +59,10 @@ public class ButtonPane extends JPanel{
      * @param titles The titles (this map is modified by the station)
      */
     public ButtonPane( FlapDockStation station, Map<Dockable, DockTitle> titles ){
-        super( null );
+        super();
+        
+        setContentPane( new Content() );
+        
         this.station = station;
         this.buttonTitles = titles;
     }
@@ -95,107 +99,25 @@ public class ButtonPane extends JPanel{
         return false;
     }
     
-    @Override
-    public void doLayout() {
-        Insets insets = getInsets();
-        
-        int x = insets.left;
-        int y = insets.top;
-        int width = getWidth() - insets.left - insets.right;
-        int height = getHeight() - insets.top - insets.bottom;
-        
-        if( station.getDirection() == Direction.NORTH || station.getDirection() == Direction.SOUTH ){
-            int count = getComponentCount();
-            int[] widths = new int[ count ];
-            int preferredHeight = 0;
-            int sum = 0;
-            
-            for( int i = 0; i < count; i++ ){
-                Dimension size = getComponent( i ).getPreferredSize();
-                widths[i] = size.width;
-                preferredHeight = Math.max( preferredHeight, size.height );
-                sum += widths[i];
-            }
-            
-            if( station.isSmallButtons() && preferredHeight < height ){
-                int delta = height - preferredHeight;
-                y += delta/2;
-                height = preferredHeight;
-            }
-            
-            if( sum > width ){
-                double ratio = ((double)width) / sum;
-                for( int i = 0; i < count; i++ ){
-                    int temp = (int)(widths[i]*ratio);
-                    getComponent( i ).setBounds( x, y, temp, height );
-                    x += temp;
-                }
-            }
-            else{
-                for( int i = 0; i < count; i++ ){
-                    getComponent( i ).setBounds( x, y, widths[i], height );
-                    x += widths[i];
-                }
-            }
-        }
-        else{
-            int count = getComponentCount();
-            int[] heights = new int[ count ];
-            int preferredWidth = 0;
-            int sum = 0;
-            
-            for( int i = 0; i < count; i++ ){
-                Dimension size = getComponent( i ).getPreferredSize();
-                heights[i] = size.height;
-                preferredWidth = Math.max( preferredWidth, size.width );
-                sum += heights[i];
-            }
-            
-            if( station.isSmallButtons() && preferredWidth < width ){
-                int delta = width - preferredWidth;
-                x += delta/2;
-                width = preferredWidth;
-            }                
-            
-            if( sum > height ){
-                double ratio = ((double)height) / sum;
-                for( int i = 0; i < count; i++ ){
-                    int temp = (int)(heights[i]*ratio);
-                    getComponent( i ).setBounds( x, y, width, temp );
-                    y += temp;
-                }
-            }
-            else{
-                for( int i = 0; i < count; i++ ){
-                    getComponent( i ).setBounds( x, y, width, heights[i] );
-                    y += heights[i];
-                }
-            }
-        }
-        
-        repaint();
-    }
-    
     /**
      * Ensures that all titles of the title-map, which was given to the
      * constructor, are shown on this panel.
      */
     public void resetTitles(){
-        removeAll();
+        getContentPane().removeAll();
         for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
             Dockable dockable = station.getDockable( i );
             DockTitle title = buttonTitles.get( dockable );
             if( title != null ){
-                add( title.getComponent() );
+                getContentPane().add( title.getComponent() );
             }
         }
         revalidate();
     }
     
     @Override
-    public void paint( Graphics g ) {
-        super.paint(g);
-        if( dropInfo != null && dropInfo.isDraw() && !dropInfo.isCombine() ){
+    protected void paintOverlay( Graphics g ) {
+       if( dropInfo != null && dropInfo.isDraw() && !dropInfo.isCombine() ){
             int left = dropInfo.getIndex()-1;
             int right = left+1;
             
@@ -353,5 +275,99 @@ public class ButtonPane extends JPanel{
         }
         
         return new Dimension( Math.max( 10, width ), Math.max( 10, height ));
+    }
+    
+    /**
+     * The direct parent of the buttons-titles. 
+     * @author Benjamin Sigg
+     */
+    private class Content extends JPanel{
+        /**
+         * Creates a new panel
+         */
+        public Content(){
+            super( null );
+        }
+        
+        @Override
+        public void doLayout() {
+            Insets insets = getInsets();
+            
+            int x = insets.left;
+            int y = insets.top;
+            int width = getWidth() - insets.left - insets.right;
+            int height = getHeight() - insets.top - insets.bottom;
+            
+            if( station.getDirection() == Direction.NORTH || station.getDirection() == Direction.SOUTH ){
+                int count = getComponentCount();
+                int[] widths = new int[ count ];
+                int preferredHeight = 0;
+                int sum = 0;
+                
+                for( int i = 0; i < count; i++ ){
+                    Dimension size = getComponent( i ).getPreferredSize();
+                    widths[i] = size.width;
+                    preferredHeight = Math.max( preferredHeight, size.height );
+                    sum += widths[i];
+                }
+                
+                if( station.isSmallButtons() && preferredHeight < height ){
+                    int delta = height - preferredHeight;
+                    y += delta/2;
+                    height = preferredHeight;
+                }
+                
+                if( sum > width ){
+                    double ratio = ((double)width) / sum;
+                    for( int i = 0; i < count; i++ ){
+                        int temp = (int)(widths[i]*ratio);
+                        getComponent( i ).setBounds( x, y, temp, height );
+                        x += temp;
+                    }
+                }
+                else{
+                    for( int i = 0; i < count; i++ ){
+                        getComponent( i ).setBounds( x, y, widths[i], height );
+                        x += widths[i];
+                    }
+                }
+            }
+            else{
+                int count = getComponentCount();
+                int[] heights = new int[ count ];
+                int preferredWidth = 0;
+                int sum = 0;
+                
+                for( int i = 0; i < count; i++ ){
+                    Dimension size = getComponent( i ).getPreferredSize();
+                    heights[i] = size.height;
+                    preferredWidth = Math.max( preferredWidth, size.width );
+                    sum += heights[i];
+                }
+                
+                if( station.isSmallButtons() && preferredWidth < width ){
+                    int delta = width - preferredWidth;
+                    x += delta/2;
+                    width = preferredWidth;
+                }                
+                
+                if( sum > height ){
+                    double ratio = ((double)height) / sum;
+                    for( int i = 0; i < count; i++ ){
+                        int temp = (int)(heights[i]*ratio);
+                        getComponent( i ).setBounds( x, y, width, temp );
+                        y += temp;
+                    }
+                }
+                else{
+                    for( int i = 0; i < count; i++ ){
+                        getComponent( i ).setBounds( x, y, width, heights[i] );
+                        y += heights[i];
+                    }
+                }
+            }
+            
+            repaint();
+        }
     }
 }

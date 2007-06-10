@@ -39,10 +39,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
-import bibliothek.extension.gui.dock.theme.bubble.BubbleDisplayerFactory;
-import bibliothek.extension.gui.dock.theme.bubble.BubbleDockTitleFactory;
-import bibliothek.extension.gui.dock.theme.bubble.BubbleFlapDockButtonTitleFactory;
-import bibliothek.extension.gui.dock.theme.bubble.BubbleStackDockComponent;
+import bibliothek.extension.gui.dock.theme.bubble.*;
 import bibliothek.extension.gui.dock.theme.bubble.view.BubbleButtonView;
 import bibliothek.extension.gui.dock.theme.bubble.view.BubbleDropDownView;
 import bibliothek.extension.gui.dock.theme.bubble.view.BubbleMenuView;
@@ -141,9 +138,13 @@ public class BubbleTheme extends DefaultTheme {
         colors.put( "dropdown.line.mouse.selected", new Color( 50, 50, 150 ));
         colors.put( "dropdown.line.pressed",        new Color( 150, 0, 0 ));
         colors.put( "dropdown.line.pressed.selected", new Color( 0, 0, 150 ));
+        
+        colors.put( "paint",                        new Color( 0, 0, 0 ));
 
         setDisplayerFactory( new BubbleDisplayerFactory( this ));
         setTitleFactory( new BubbleDockTitleFactory( this ));
+        setPaint( new BubbleStationPaint( this ) );
+        setMovingTitleGetter( new BubbleMovingTitleGetter( this ) );
     }
     
     /**
@@ -182,7 +183,7 @@ public class BubbleTheme extends DefaultTheme {
         // set new titles
         controller.getDockTitleManager().registerTheme( 
                 FlapDockStation.BUTTON_TITLE_ID, 
-                new BubbleFlapDockButtonTitleFactory( this ));
+                new ReducedBubbleTitleFactory( this ));
         
 		controller.addDockControllerListener( listener );
         

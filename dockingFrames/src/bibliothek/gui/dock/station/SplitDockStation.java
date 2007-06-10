@@ -104,7 +104,7 @@ import bibliothek.gui.dock.util.PropertyValue;
  * ID {@link #TITLE_ID}.
  * @author Benjamin Sigg
  */
-public class SplitDockStation extends JPanel implements Dockable, DockStation {
+public class SplitDockStation extends OverpaintablePanel implements Dockable, DockStation {
     /** The ID under which this station tries to register a {@link DockTitleFactory} */
     public static final String TITLE_ID = "split";
     
@@ -264,6 +264,8 @@ public class SplitDockStation extends JPanel implements Dockable, DockStation {
      * Constructs a new {@link SplitDockStation}. 
      */
     public SplitDockStation(){
+        setContentPane( new Content() );
+        
         displayers = new DisplayerCollection( this, displayerFactory );
         
         dividerListener = new DividerListener();
@@ -283,19 +285,6 @@ public class SplitDockStation extends JPanel implements Dockable, DockStation {
     			base.height + insets.top + insets.bottom );
     	}
     	return base;
-    }
-    
-    @Override
-    public void doLayout() {
-        root.updateBounds();
-        
-        Insets insets = getRoot().getInsets();
-        
-        if( fullScreenDockable != null ){
-            fullScreenDockable.setBounds( insets.left, insets.top, 
-                    getWidth() - insets.left - insets.right,
-                    getHeight() - insets.bottom - insets.top );
-        }
     }
     
     public DockTheme getTheme() {
@@ -1528,9 +1517,7 @@ public class SplitDockStation extends JPanel implements Dockable, DockStation {
     }
     
     @Override
-    public void paint( Graphics g ) {
-        super.paint(g);
-        
+    protected void paintOverlay( Graphics g ) {   
         if( putInfo != null && putInfo.isDraw() ){
             StationPaint paint = getPaint();
             if( putInfo.getNode() == null ){
@@ -1665,7 +1652,7 @@ public class SplitDockStation extends JPanel implements Dockable, DockStation {
         }
         
         DockableDisplayer displayer = getDisplayers().fetch( dockable, title );
-        add( displayer );
+        getContentPane().add( displayer );
         displayer.setVisible( !isFullScreen() );
         dockables.add( displayer );
         
@@ -1764,7 +1751,7 @@ public class SplitDockStation extends JPanel implements Dockable, DockStation {
         DockTitle title = display.getTitle();
         
         display.setVisible( true );
-        remove( display );
+        getContentPane().remove( display );
         getDisplayers().release( display );
         
         if( display == fullScreenDockable ){
@@ -1940,17 +1927,36 @@ public class SplitDockStation extends JPanel implements Dockable, DockStation {
                 }
                 
                 displayer.getDockable().setDockParent( this );
-                add( displayer );
+                getContentPane().add( displayer );
                 dockStationListeners.fireDockableAdded( displayer.getDockable() );
             }
             
             if( in.readBoolean() )
                 setFullScreen( children.get( in.readInt() ) );
             
-            invalidate();
+            revalidate();
         }
     }
+         
+    /**
+     * The panel which will be the parent of all {@link DockableDisplayer displayers}
+     * @author Benjamin Sigg
+     */
+    private class Content extends JPanel{
+        @Override
+        public void doLayout() {
+            root.updateBounds();
             
+            Insets insets = getRoot().getInsets();
+            
+            if( fullScreenDockable != null ){
+                fullScreenDockable.setBounds( insets.left, insets.top, 
+                        getWidth() - insets.left - insets.right,
+                        getHeight() - insets.bottom - insets.top );
+            }
+        }
+    }
+    
     /**
      * Orientation how two {@link Dockable Dockables} are aligned.
      */

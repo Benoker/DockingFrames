@@ -38,7 +38,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  * @author Benjamin Sigg
  *
  */
-public class BubbleFlapDockButtonTitleFactory implements DockTitleFactory {
+public class ReducedBubbleTitleFactory implements DockTitleFactory {
 	/** the theme from which colors can be read */
     private BubbleTheme theme;
     
@@ -46,7 +46,7 @@ public class BubbleFlapDockButtonTitleFactory implements DockTitleFactory {
      * Creates a new factory.
      * @param theme a theme from which colors will be read
      */
-    public BubbleFlapDockButtonTitleFactory( BubbleTheme theme ){
+    public ReducedBubbleTitleFactory( BubbleTheme theme ){
         this.theme = theme;
     }
 

@@ -26,16 +26,12 @@
 
 package bibliothek.gui.dock.station.stack;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -309,7 +305,7 @@ public abstract class CombinedStackDockComponent<C extends CombinedTab> implemen
         buttons.get(index).setIcon( newIcon );
     }
 
-    public Component getComponent() {
+    public JComponent getComponent() {
         return panel;
     }
 

@@ -38,6 +38,7 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.nio.channels.OverlappingFileLockException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -46,6 +47,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
 import bibliothek.gui.dock.DockableDisplayer;
+import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.ScreenDockStation;
 import bibliothek.gui.dock.station.StationPaint;
 
@@ -60,6 +62,8 @@ import bibliothek.gui.dock.station.StationPaint;
 public class ScreenDockDialog extends JDialog {
     private ScreenDockStation station;
     private DockableDisplayer displayer;
+    
+    private OverpaintablePanel content;
     
     /**
      * Creates a new dialog.
@@ -93,7 +97,7 @@ public class ScreenDockDialog extends JDialog {
         setUndecorated( true );
         setDefaultCloseOperation( DO_NOTHING_ON_CLOSE );
         
-        JComponent content = createContent();
+        content = createContent();
         setContentPane( content );
         
         Container parent = getDisplayerParent();
@@ -144,12 +148,10 @@ public class ScreenDockDialog extends JDialog {
      * This method is invoked by the constructor.
      * @return the new content pane
      */
-    protected JComponent createContent(){
-        return new JComponent(){
+    protected OverpaintablePanel createContent(){
+        OverpaintablePanel panel = new OverpaintablePanel(){
             @Override
-            public void paint( Graphics g ) {
-                super.paint(g);
-                
+            protected void paintOverlay( Graphics g ) {
                 if( station != null && station.shouldDraw( ScreenDockDialog.this )){
                     StationPaint paint = station.getPaint();
                     Insets insets = getInsets();
@@ -164,6 +166,8 @@ public class ScreenDockDialog extends JDialog {
                 }
             }
         };
+        
+        return panel;
     }
     
     /**
@@ -192,7 +196,7 @@ public class ScreenDockDialog extends JDialog {
      * @return the parent of the displayer
      */
     protected Container getDisplayerParent(){
-        return getContentPane();
+        return content.getContentPane();
     }
     
     /**

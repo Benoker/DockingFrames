@@ -26,11 +26,7 @@
 
 package bibliothek.gui.dock.station;
 
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -39,19 +35,17 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.Icon;
-import javax.swing.JPanel;
+import javax.swing.JComponent;
+import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputListener;
 
-import bibliothek.gui.DockController;
-import bibliothek.gui.DockStation;
-import bibliothek.gui.DockTheme;
-import bibliothek.gui.DockUI;
-import bibliothek.gui.Dockable;
+import bibliothek.gui.*;
 import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.DockableProperty;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.action.MultiDockActionSource;
 import bibliothek.gui.dock.event.DockStationAdapter;
@@ -65,6 +59,7 @@ import bibliothek.gui.dock.station.support.DockableVisibilityManager;
 import bibliothek.gui.dock.station.support.StationPaintWrapper;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
@@ -111,7 +106,10 @@ public class StackDockStation extends AbstractDockableStation {
     private Insert insert;
     
      /** The graphical representation of this station */
-    private Background panel;
+    private Background background;
+    
+    /** The panel where components are added */
+    private JComponent panel;
     
     /** A Component which shows two or more children of this station */
     private StackDockComponent stackComponent;
@@ -149,7 +147,9 @@ public class StackDockStation extends AbstractDockableStation {
         
         displayers = new DisplayerCollection( this, displayerFactory );
         
-        panel = new Background();
+        background = new Background();
+        panel = background.getContentPane();
+        
         stackComponent = createStackDockComponent();
         stackComponent.addChangeListener( visibleListener );
     }
@@ -724,7 +724,7 @@ public class StackDockStation extends AbstractDockableStation {
     }
 
     public Component getComponent() {
-        return panel;
+        return background;
     }
     
     @Override
@@ -872,17 +872,16 @@ public class StackDockStation extends AbstractDockableStation {
      * have this panel as parent too.
      * @author Benjamin Sigg
      */
-    private class Background extends JPanel{
+    private class Background extends OverpaintablePanel{
     	/**
     	 * Creates a new panel
     	 */
         public Background(){
-            super( new GridLayout( 1, 1 ));
+            getContentPane().setLayout( new GridLayout( 1, 1 ));
         }
         
         @Override
-        public void paint( Graphics g ) {
-            super.paint(g);
+        protected void paintOverlay( Graphics g ) {
             StationPaint paint = getPaint();
             
             if( draw && dockables.size() > 1 && insert != null ){
