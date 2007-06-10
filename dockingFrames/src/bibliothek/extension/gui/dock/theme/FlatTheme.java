@@ -24,11 +24,12 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock.themes;
+package bibliothek.extension.gui.dock.theme;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 
+import bibliothek.extension.gui.dock.theme.flat.*;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -53,12 +54,8 @@ import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.SplitDockStation;
 import bibliothek.gui.dock.station.StackDockStation;
 import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;
-import bibliothek.gui.dock.themes.flat.FlatButtonTitle;
-import bibliothek.gui.dock.themes.flat.FlatCombiner;
-import bibliothek.gui.dock.themes.flat.FlatDisplayerFactory;
-import bibliothek.gui.dock.themes.flat.FlatStationPaint;
-import bibliothek.gui.dock.themes.flat.FlatTab;
-import bibliothek.gui.dock.themes.flat.FlatTitleFactory;
+import bibliothek.gui.dock.themes.DefaultTheme;
+import bibliothek.gui.dock.themes.ThemeProperties;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;

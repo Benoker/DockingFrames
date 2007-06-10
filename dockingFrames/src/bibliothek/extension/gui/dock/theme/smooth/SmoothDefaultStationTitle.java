@@ -24,67 +24,37 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock.themes.smooth;
-
-import java.awt.Color;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-
-import javax.swing.JComponent;
+package bibliothek.extension.gui.dock.theme.smooth;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.title.DefaultDockTitle;
+import bibliothek.gui.dock.title.DefaultStationTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.util.Colors;
 
 /**
- * A title which changes its colors smoothly when selected or deselected.
+ * A station-title which smoothly changes its color from active to passive.
  * @author Benjamin Sigg
+ *
  */
-public class SmoothDefaultTitle extends DefaultDockTitle{
-    /** The current state of the transition */
+public class SmoothDefaultStationTitle extends DefaultStationTitle{
+    /** the counter, tells where transition between active and passive stands. */
     private int current = 0;
     
-    /** a trigger for the animation */
+    /**
+     * Source for pulses for this title.
+     */
     private SmoothChanger changer = new SmoothChanger(){
         @Override
         protected boolean isActive() {
-            return SmoothDefaultTitle.this.isActive();
+            return SmoothDefaultStationTitle.this.isActive();
         }
         
         @Override
         protected void repaint( int current ) {
-            SmoothDefaultTitle.this.current = current;
-            SmoothDefaultTitle.this.repaint();
+            SmoothDefaultStationTitle.this.current = current;
+            SmoothDefaultStationTitle.this.updateColors();
         }
     };
-    
-    /**
-     * Constructs a new title
-     * @param dockable the owner of this title
-     * @param origin the version which was used to create this title
-     */
-    public SmoothDefaultTitle( Dockable dockable, DockTitleVersion origin ) {
-        super(dockable, origin);
-    }
-    
-    /**
-     * Gets the number of milliseconds needed for one transition from
-     * active to passive.
-     * @return the duration in milliseconds
-     */
-    public int getDuration() {
-        return changer.getDuration();
-    }
-    
-    /**
-     * Sets the duration of the animation in milliseconds.
-     * @param duration the duration
-     */
-    public void setDuration( int duration ) {
-        changer.setDuration( duration );
-    }
     
     @Override
     public void setActive( boolean active ) {
@@ -94,10 +64,36 @@ public class SmoothDefaultTitle extends DefaultDockTitle{
             changer.trigger();
     }
     
+    /**
+     * Constructs a new station title
+     * @param dockable the owner of this title
+     * @param origin the version which was used to create this title
+     */
+    public SmoothDefaultStationTitle( Dockable dockable, DockTitleVersion origin ) {
+        super(dockable, origin);
+    }
+    
+    /**
+     * Gets the duration of one transition from active to passive
+     * @return the duration
+     */
+    public int getDuration(){
+        return changer.getDuration();
+    }
+    
+    /**
+     * Sets the duration of one transition from active to passive, or
+     * in the other direction.
+     * @param duration the duration
+     */
+    public void setDuration( int duration ){
+        changer.setDuration( duration );
+    }
+        
     @Override
     protected void updateColors() {
-    	super.updateColors();
-    	
+        super.updateColors();
+        
         if( changer != null ){
             int duration = getDuration();
             
@@ -107,28 +103,8 @@ public class SmoothDefaultTitle extends DefaultDockTitle{
                 double ratio = current / (double)duration;
                 
                 setForeground( Colors.between( getInactiveTextColor(), getActiveTextColor(), ratio ));
+                setBackground( Colors.between( getInactiveColor(), getActiveColor(), ratio ) );
             }
         }
-    }
-    
-    @Override
-    protected void paintBackground( Graphics g, JComponent component ) {
-        int duration = getDuration();
-        
-        if( (isActive() && current != duration) ||
-            (!isActive() && current != 0 )){
-            double ratio = current / (double)duration;
-            
-            Color left = Colors.between( getInactiveLeftColor(), getActiveLeftColor(), ratio );
-            Color right = Colors.between( getInactiveRightColor(), getActiveRightColor(), ratio );
-            
-            GradientPaint gradient = getGradient( left, right, component );
-            Graphics2D g2 = (Graphics2D)g;
-            
-            g2.setPaint( gradient );
-            g2.fillRect( 0, 0, component.getWidth(), component.getHeight() );
-        }
-        else
-            super.paintBackground( g, component );
     }
 }

@@ -24,53 +24,30 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock.themes.flat;
-
-import java.awt.Color;
-
-import javax.swing.BorderFactory;
+package bibliothek.extension.gui.dock.theme.smooth;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.title.AbstractDockTitle;
-import bibliothek.gui.dock.title.DefaultDockTitle;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
- * A factory that creates instances of {@link DefaultDockTitle}, but
- * changes their active and inactive right color to the Dockables background.
- * If {@link JComponent#updateUI() updateUI} is called, the colors will be 
- * updated as well.
+ * A {@link DockTitleFactory} which creates instances of {@link SmoothDefaultTitle}
+ * and {@link SmoothDefaultStationTitle}.
  * @author Benjamin Sigg
+ *
  */
-public class FlatTitleFactory implements DockTitleFactory{
-    public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
-        DefaultDockTitle title = new DefaultDockTitle( dockable, version ){
-            @Override
-            public void updateUI() {
-                super.updateUI();
-                if( getDockable() != null ){
-                    Color background = getDockable().getComponent().getBackground();
-                    setInactiveRightColor( background );
-                    setActiveRightColor( background );
-                }
-            }
-        };
-        
-        Color background = dockable.getComponent().getBackground();
-        title.setInactiveRightColor( background );
-        title.setActiveRightColor( background );
-        
-        return title;
-    }
+public class SmoothDefaultTitleFactory implements DockTitleFactory {
+    /** An instance of this factory which can be used at any place */
+    public static final SmoothDefaultTitleFactory FACTORY = new SmoothDefaultTitleFactory();
     
+    public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
+        return new SmoothDefaultTitle( dockable, version );
+    }
+
     public <D extends Dockable & DockStation> DockTitle createStationTitle( 
             D dockable, DockTitleVersion version ){
-        
-        AbstractDockTitle title = new AbstractDockTitle( dockable, version );
-        title.setBorder( BorderFactory.createLineBorder( title.getBackground().darker() ));
-        return title;
+        return new SmoothDefaultStationTitle( dockable, version );
     }
 }

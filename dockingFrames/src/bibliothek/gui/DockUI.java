@@ -46,6 +46,8 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
+import bibliothek.extension.gui.dock.theme.FlatTheme;
+import bibliothek.extension.gui.dock.theme.SmoothTheme;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.IconManager;
 import bibliothek.gui.dock.station.Combiner;
@@ -55,9 +57,7 @@ import bibliothek.gui.dock.station.support.DefaultCombiner;
 import bibliothek.gui.dock.station.support.DefaultDisplayerFactory;
 import bibliothek.gui.dock.station.support.DefaultStationPaint;
 import bibliothek.gui.dock.themes.DefaultTheme;
-import bibliothek.gui.dock.themes.FlatTheme;
 import bibliothek.gui.dock.themes.NoStackTheme;
-import bibliothek.gui.dock.themes.SmoothTheme;
 import bibliothek.gui.dock.themes.ThemeFactory;
 import bibliothek.gui.dock.themes.ThemePropertyFactory;
 import bibliothek.gui.dock.util.Priority;

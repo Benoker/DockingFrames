@@ -24,26 +24,37 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock.themes;
+package bibliothek.extension.gui.dock.theme.flat;
 
-import bibliothek.gui.dock.themes.smooth.SmoothDefaultTitleFactory;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.DockTheme;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.station.Combiner;
+import bibliothek.gui.dock.station.StackDockStation;
 
 /**
- * This theme uses the {@link SmoothDefaultTitleFactory} to create some
- * titles which smoothly changes their color.
+ * A {@link Combiner} normally used by the {@link FlatTheme} to replace the
+ * default combiner.
  * @author Benjamin Sigg
- *
  */
-@ThemeProperties(
-        nameBundle="theme.smooth", 
-        descriptionBundle="theme.smooth.description",
-        authors={"Benjamin Sigg"},
-        webpages={})
-public class SmoothTheme extends DefaultTheme {
+public class FlatCombiner implements Combiner{
+    public Dockable combine( Dockable old, Dockable drop, DockStation parent ) {
+        StackDockStation stack = createStackDockStation( parent.getTheme() );
+        
+        stack.setStackComponent( new FlatTab());
+        stack.drop( old );
+        stack.drop( drop );
+        
+        return stack;
+    }
+    
     /**
-     * Constructor, sets the special title-factory of this theme
+     * Creates a new {@link StackDockStation} which will be populated
+     * with two {@link Dockable Dockables}.
+     * @param theme The theme that the station will have, might be <code>null</code>
+     * @return the new station
      */
-    public SmoothTheme(){
-        setTitleFactory( new SmoothDefaultTitleFactory() );
+    protected StackDockStation createStackDockStation( DockTheme theme ){
+        return new StackDockStation( theme );
     }
 }

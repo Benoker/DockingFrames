@@ -24,7 +24,7 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock.themes.smooth;
+package bibliothek.extension.gui.dock.theme.smooth;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

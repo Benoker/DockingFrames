@@ -24,7 +24,7 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock.themes.flat;
+package bibliothek.extension.gui.dock.theme.flat;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
