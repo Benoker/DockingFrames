@@ -26,18 +26,16 @@
 
 package bibliothek.gui.dock;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.EOFException;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.security.SecureFlapDockStationFactory;
+import bibliothek.gui.dock.station.FlapDockStation;
+import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.station.StackDockStation;
 import bibliothek.gui.dock.station.flap.FlapDockStationFactory;
 import bibliothek.gui.dock.station.split.SplitDockStationFactory;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;

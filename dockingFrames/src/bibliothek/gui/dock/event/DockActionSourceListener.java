@@ -26,6 +26,7 @@
 
 package bibliothek.gui.dock.event;
 
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 
 /**

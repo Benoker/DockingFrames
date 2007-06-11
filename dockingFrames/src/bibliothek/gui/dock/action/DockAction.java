@@ -29,6 +29,7 @@ package bibliothek.gui.dock.action;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.views.ActionViewConverter;
 import bibliothek.gui.dock.action.views.ViewTarget;
+import bibliothek.gui.dock.title.DockTitle;
 
 /**
  * A DockAction is an object that represents an action which can be triggered by the user. Every

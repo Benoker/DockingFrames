@@ -27,6 +27,8 @@
 package bibliothek.gui.dock.station.split;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.title.DockTitle;
 
 /**
  * Carries information where to put a {@link Dockable} onto a {@link SplitDockStation}.

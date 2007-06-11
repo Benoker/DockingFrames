@@ -25,6 +25,8 @@
  */
 package bibliothek.gui.dock.util;
 
+import bibliothek.gui.DockTheme;
+
 /**
  * Often resources are divided into three kinds with different
  * priorities. <code>Priority</code> gives a name to these

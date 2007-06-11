@@ -26,6 +26,7 @@
 
 package bibliothek.gui.dock.action;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 
 /**

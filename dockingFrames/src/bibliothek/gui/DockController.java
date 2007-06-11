@@ -26,25 +26,12 @@
 
 package bibliothek.gui;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.KeyboardFocusManager;
-import java.awt.Point;
-import java.awt.Window;
+import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
 
 import javax.swing.FocusManager;
 import javax.swing.JComponent;
@@ -53,18 +40,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.MouseInputListener;
 
-import bibliothek.gui.dock.DefaultFocusController;
-import bibliothek.gui.dock.DockAcceptance;
-import bibliothek.gui.dock.FocusController;
-import bibliothek.gui.dock.IconManager;
-import bibliothek.gui.dock.SingleParentRemover;
+import bibliothek.gui.dock.*;
 import bibliothek.gui.dock.accept.MultiDockAcceptance;
-import bibliothek.gui.dock.action.ActionGuard;
-import bibliothek.gui.dock.action.ActionOffer;
-import bibliothek.gui.dock.action.ActionPopup;
-import bibliothek.gui.dock.action.ActionPopupSuppressor;
-import bibliothek.gui.dock.action.DefaultActionOffer;
-import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.action.views.ActionViewConverter;
 import bibliothek.gui.dock.event.DockAdapter;
 import bibliothek.gui.dock.event.DockControllerListener;
@@ -1072,17 +1050,23 @@ public class DockController {
      */
     private TitleWindow getTitleWindow( Dockable dockable, DockTitle title ){
         MovingTitleGetter movingTitleGetter = getTheme().getMovingTitleGetter( this );
+        DockTitle windowTitle = title;
         
-        if( title == null )
-            title = movingTitleGetter.get( this, dockable );
+        if( windowTitle == null )
+            windowTitle = movingTitleGetter.get( this, dockable );
         else
-            title = movingTitleGetter.get( this, title );
+            windowTitle = movingTitleGetter.get( this, title );
         
-        if( title == null )
+        if( windowTitle == null )
             return null;
         
-    	Window parent = SwingUtilities.getWindowAncestor( dockable.getComponent() );
-        TitleWindow window = new TitleWindow( parent, title );
+    	Window parent;
+        if( title == null )
+            parent = SwingUtilities.getWindowAncestor( dockable.getComponent() );
+        else
+            parent = SwingUtilities.getWindowAncestor( title.getComponent() );
+        
+        TitleWindow window = new TitleWindow( parent, windowTitle );
         window.pack();
         return window;
     }
@@ -1273,6 +1257,11 @@ public class DockController {
             
             int distance = Math.abs( e.getX() - pressPoint.x ) + Math.abs( e.getY() - pressPoint.y );
             if( distance >= dragDistance ){
+                if( movingTitleWindow != null ){
+                    // That means, that an old window was not closed correctly
+                    movingTitleWindow.close();
+                    movingTitleWindow = null;
+                }
                 
                 movingTitleWindow = getTitleWindow( dockable, title );
                 if( movingTitleWindow != null ){
@@ -1359,6 +1348,7 @@ public class DockController {
         
         if( movingTitleWindow != null )
             movingTitleWindow.close();
+        
         movingTitleWindow = null;
         pressPoint = null;
         onMove = false;
@@ -1374,7 +1364,8 @@ public class DockController {
         }
         
         if( movingTitleWindow != null )
-            movingTitleWindow.dispose();
+            movingTitleWindow.close();
+        
         movingTitleWindow = null;
         pressPoint = null;
         onMove = false;

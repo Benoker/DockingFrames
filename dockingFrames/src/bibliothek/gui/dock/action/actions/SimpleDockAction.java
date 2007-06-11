@@ -29,6 +29,7 @@ package bibliothek.gui.dock.action.actions;
 import javax.swing.Icon;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.DockAction;
 
 /**
  * A simple implementation of {@link DockAction}. This action uses for

@@ -34,6 +34,7 @@ import javax.swing.Icon;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionType;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.SelectableDockAction;
 import bibliothek.gui.dock.action.views.ActionViewConverter;
 import bibliothek.gui.dock.action.views.ViewTarget;

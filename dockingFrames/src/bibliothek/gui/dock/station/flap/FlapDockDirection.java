@@ -33,6 +33,7 @@ import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.IconManager;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.actions.SimpleMenuAction;
 import bibliothek.gui.dock.action.actions.SimpleSelectableAction;

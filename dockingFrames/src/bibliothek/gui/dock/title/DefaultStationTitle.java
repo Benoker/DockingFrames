@@ -36,6 +36,7 @@ import javax.swing.JComponent;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.util.Colors;
 

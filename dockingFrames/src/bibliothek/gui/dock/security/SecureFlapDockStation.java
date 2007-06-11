@@ -32,6 +32,7 @@ import java.awt.Window;
 
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.flap.ButtonPane;
+import bibliothek.gui.dock.station.flap.FlapWindow;
 
 /**
  * A {@link FlapDockStation} that uses {@link SecureFlapWindow} instead

@@ -26,15 +26,13 @@
 
 package bibliothek.gui.dock;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.GridLayout;
-import java.awt.LayoutManager;
+import java.awt.*;
 
 import javax.swing.Icon;
 import javax.swing.JPanel;
 
 import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.util.PropertyKey;
 
 /**

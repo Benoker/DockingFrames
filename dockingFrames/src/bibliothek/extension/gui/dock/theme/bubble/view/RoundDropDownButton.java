@@ -25,12 +25,7 @@
  */
 package bibliothek.extension.gui.dock.theme.bubble.view;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
 

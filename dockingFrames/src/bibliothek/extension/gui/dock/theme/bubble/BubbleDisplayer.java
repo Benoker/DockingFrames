@@ -25,11 +25,7 @@
  */
 package bibliothek.extension.gui.dock.theme.bubble;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.Insets;
+import java.awt.*;
 
 import javax.swing.JPanel;
 import javax.swing.border.Border;

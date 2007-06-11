@@ -27,6 +27,7 @@
 package bibliothek.gui.dock.station.flap;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.station.FlapDockStation;
 
 /**
  * Information where to insert a {@link Dockable} into a {@link FlapDockStation}.

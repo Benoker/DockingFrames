@@ -30,6 +30,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
+
 /**
  * Describes the location of a {@link Dockable} on a {@link DockStation}. 
  * The properties can be nested, that describes the fact that DockStations 

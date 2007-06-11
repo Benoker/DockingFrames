@@ -28,6 +28,7 @@ package bibliothek.gui.dock.themes.nostack;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockAcceptance;
 import bibliothek.gui.dock.accept.AbstractAcceptance;
 import bibliothek.gui.dock.station.StackDockStation;
 

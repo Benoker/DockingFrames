@@ -30,6 +30,8 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.util.Priority;
 
 /**

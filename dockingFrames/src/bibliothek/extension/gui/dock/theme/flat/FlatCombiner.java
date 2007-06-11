@@ -26,6 +26,7 @@
 
 package bibliothek.extension.gui.dock.theme.flat;
 
+import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;

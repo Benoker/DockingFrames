@@ -30,6 +30,7 @@ import javax.swing.JComponent;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.action.StandardDockAction;
 
 /**
  * A connection between a {@link StandardDockAction} and a {@link MiniButton}.

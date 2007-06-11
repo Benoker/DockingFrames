@@ -31,6 +31,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import bibliothek.gui.dock.AbstractDockableProperty;
+import bibliothek.gui.dock.station.ScreenDockStation;
 
 /**
  * This property is used on {@link ScreenDockStation ScreenDockStations}

@@ -32,7 +32,9 @@ import javax.swing.Icon;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.event.DockActionSourceListener;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;

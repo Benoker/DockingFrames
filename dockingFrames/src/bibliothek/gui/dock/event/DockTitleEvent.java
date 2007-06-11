@@ -28,6 +28,7 @@ package bibliothek.gui.dock.event;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.title.DockTitle;
 
 /**
  * These events are used for {@link DockTitle DockTitles}, to transfer information

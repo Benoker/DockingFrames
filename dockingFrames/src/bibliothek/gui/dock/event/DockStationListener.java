@@ -28,6 +28,7 @@ package bibliothek.gui.dock.event;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.station.support.DockableVisibilityManager;
 
 /**
  * This listener is added to a {@link DockStation}. It receives events on adding

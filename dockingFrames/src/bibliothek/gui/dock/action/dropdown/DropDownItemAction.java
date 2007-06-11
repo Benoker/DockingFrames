@@ -27,6 +27,8 @@
 package bibliothek.gui.dock.action.dropdown;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.DropDownAction;
+import bibliothek.gui.dock.action.views.dropdown.DropDownViewItem;
 
 /**
  * An action that can be child of a {@link DropDownAction}. The properties

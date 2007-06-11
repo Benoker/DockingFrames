@@ -27,6 +27,7 @@
 package bibliothek.gui.dock.action;
 
 import bibliothek.gui.dock.action.actions.SeparatorAction;
+import bibliothek.gui.dock.action.views.ActionViewConverter;
 
 /**
  * The ActionType manly defines, how a {@link DockAction} is to be used. The

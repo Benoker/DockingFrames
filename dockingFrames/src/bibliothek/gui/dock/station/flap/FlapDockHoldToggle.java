@@ -32,6 +32,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.IconManager;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.actions.GroupedSelectableDockAction;
 import bibliothek.gui.dock.event.FlapDockListener;

@@ -27,6 +27,7 @@
 package bibliothek.gui.dock.station.support;
 
 import bibliothek.gui.DockStation;
+import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.Combiner;

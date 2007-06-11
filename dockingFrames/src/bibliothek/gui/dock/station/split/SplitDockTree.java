@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.station.SplitDockStation;
 
 /**
  * Represents the internal tree of a {@link SplitDockStation}. Can be used

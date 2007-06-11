@@ -32,6 +32,7 @@ import java.util.List;
 
 import sun.security.util.SecurityConstants;
 import bibliothek.gui.DockController;
+import bibliothek.gui.dock.DefaultFocusController;
 import bibliothek.gui.dock.FocusController;
 
 /**

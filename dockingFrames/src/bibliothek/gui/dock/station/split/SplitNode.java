@@ -26,6 +26,7 @@
 
 package bibliothek.gui.dock.station.split;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.DataInputStream;

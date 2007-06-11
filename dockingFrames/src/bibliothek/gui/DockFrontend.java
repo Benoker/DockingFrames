@@ -27,33 +27,12 @@
 package bibliothek.gui;
 
 import java.awt.Window;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.EOFException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 
 import javax.swing.Icon;
 
-import bibliothek.gui.dock.DefaultDockableFactory;
-import bibliothek.gui.dock.DockElement;
-import bibliothek.gui.dock.DockFactory;
-import bibliothek.gui.dock.DockSituation;
-import bibliothek.gui.dock.DockSituationIgnore;
-import bibliothek.gui.dock.DockableProperty;
-import bibliothek.gui.dock.DockablePropertyFactory;
-import bibliothek.gui.dock.PredefinedDockSituation;
-import bibliothek.gui.dock.PropertyTransformer;
+import bibliothek.gui.dock.*;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockActionSource;
@@ -61,6 +40,7 @@ import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.event.DockFrontendListener;
 import bibliothek.gui.dock.event.IconManagerListener;
+import bibliothek.gui.dock.station.ScreenDockStation;
 import bibliothek.gui.dock.station.flap.FlapDockPropertyFactory;
 import bibliothek.gui.dock.station.flap.FlapDockStationFactory;
 import bibliothek.gui.dock.station.screen.ScreenDockPropertyFactory;

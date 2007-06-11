@@ -36,6 +36,8 @@ import javax.swing.JComponent;
 import javax.swing.UIManager;
 
 import bibliothek.gui.DockStation;
+import bibliothek.gui.DockTheme;
+import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.DockableProperty;
