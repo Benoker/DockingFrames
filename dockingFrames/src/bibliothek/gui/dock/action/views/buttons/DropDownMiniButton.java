@@ -212,7 +212,7 @@ public class DropDownMiniButton extends MiniButton {
 	@Override
 	public void paint( Graphics g ){
 		Border border = getBorder();
-		Icon icon = getPaintIcon( isSelectionEnabled() );
+		Icon icon = getPaintIcon( isSelectionEnabled() && isEnabled() );
 		Insets insets = getMaxBorderInsets();
 		
 		Icon drop = dropIcon;

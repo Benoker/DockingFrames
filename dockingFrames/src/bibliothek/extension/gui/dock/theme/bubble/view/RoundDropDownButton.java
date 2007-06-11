@@ -156,6 +156,12 @@ public class RoundDropDownButton extends JComponent{
         listener.updateColors();
     }
     
+    @Override
+    public void setEnabled( boolean enabled ) {
+        super.setEnabled( enabled );
+        listener.updateColors();
+    }
+    
     /**
      * Sets whether the layout should be horizontally or vertically.
      * @param orientation the orientation of the layout
@@ -373,20 +379,25 @@ public class RoundDropDownButton extends JComponent{
          */
         public void updateColors(){
             String postfix = "";
+            boolean enabled = isEnabled();
+            
             if( selected )
                 postfix = ".selected";
             
+            if( enabled )
+                postfix += ".enabled";
+            
             String mouse;
-            if( mouseOverDrop )
+            if( mouseOverDrop && enabled )
             	mouse = "dropdown.line";
             else
             	mouse = "dropdown";
             
-            if( pressed ){
+            if( pressed && enabled ){
                 animation.putColor( "background", "dropdown.pressed" + postfix );
                 animation.putColor( "mouse", mouse + ".pressed" + postfix );
             }
-            else if( entered ){
+            else if( entered && enabled ){
                 animation.putColor( "background", "dropdown.mouse" + postfix );
                 animation.putColor( "mouse", mouse + ".mouse" + postfix );
             }
@@ -438,7 +449,9 @@ public class RoundDropDownButton extends JComponent{
                 pressed = false;
                 Point mouse = e.getPoint();
                 if( contains( mouse )){
-                	view.trigger( overDropIcon( mouse.x, mouse.y ) );
+                    if( isEnabled() ){
+                        view.trigger( overDropIcon( mouse.x, mouse.y ) );
+                    }
                     entered = true;
                 }
                 else{

@@ -174,12 +174,19 @@ public class BubbleDropDownView implements TitleViewItem<JComponent> {
      */
     public void trigger( boolean dropdown ){
         if( !dropdown ){
-            if( selection == null || !selection.getView().isTriggerable( true ) || !button.isSelectionEnabled() )
+            if( selection == null )
                 dropdown = true;
         }
         
         if( !dropdown ){
-            selection.getView().triggered();
+            if( !selection.getView().isTriggerable( true ))
+                dropdown = true;
+        }
+        
+        if( !dropdown ){
+            if( button.isSelectionEnabled() ){
+                selection.getView().triggered();
+            }
         }
         else{
             if( button.getOrientation().isHorizontal() ){
@@ -247,7 +254,7 @@ public class BubbleDropDownView implements TitleViewItem<JComponent> {
         }
 
         public void setEnabled( boolean enabled ) {
-            button.setEnabled( enabled );
+            button.setSelectionEnabled( enabled );
         }
 
         public void setIcon( Icon icon ) {

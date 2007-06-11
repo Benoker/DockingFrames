@@ -147,6 +147,7 @@ public class MiniButton extends JComponent {
     @Override
     public void setEnabled( boolean enabled ){
     	super.setEnabled( enabled );
+        listener.updateBorder();
     	repaint();
     }
     
@@ -398,7 +399,9 @@ public class MiniButton extends JComponent {
                 int y = e.getY();
                 
                 if( x >= 0 && y >= 0 && x <= getWidth() && y <= getHeight() ){
-                    action();
+                    if( isEnabled() ){
+                        action();
+                    }
                     over = true;
                 }
                 else{

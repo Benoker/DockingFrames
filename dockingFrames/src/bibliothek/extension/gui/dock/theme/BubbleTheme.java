@@ -117,19 +117,23 @@ public class BubbleTheme extends DefaultTheme {
         colors.put( "button.mouse",                 new Color( 0, 0, 255 ));
         colors.put( "button",                       new Color( 255, 255, 255 ));
         
-        colors.put( "dropdown",                     new Color( 255, 200, 200 ));
-        colors.put( "dropdown.selected",            new Color( 200, 200, 255 ));
-        colors.put( "dropdown.mouse",               new Color( 255, 100, 100 ));
-        colors.put( "dropdown.mouse.selected",      new Color( 100, 100, 255 ));
-        colors.put( "dropdown.pressed",             new Color( 255, 0, 0 ));
-        colors.put( "dropdown.pressed.selected",    new Color( 0, 0, 255 ));
-        
-        colors.put( "dropdown.line",                new Color( 150, 75, 75 ));
-        colors.put( "dropdown.line.selected",       new Color( 75, 75, 75 ));
-        colors.put( "dropdown.line.mouse",          new Color( 150, 50, 50 ));
-        colors.put( "dropdown.line.mouse.selected", new Color( 50, 50, 150 ));
-        colors.put( "dropdown.line.pressed",        new Color( 150, 0, 0 ));
-        colors.put( "dropdown.line.pressed.selected", new Color( 0, 0, 150 ));
+        // Round drop down button
+        colors.put( "dropdown",                                 new Color( 175, 150, 150 ));
+        colors.put( "dropdown.enabled",                         new Color( 255, 200, 200 ));
+        colors.put( "dropdown.selected",                        new Color( 150, 150, 175 ));
+        colors.put( "dropdown.selected.enabled",                new Color( 200, 200, 255 ));
+        colors.put( "dropdown.mouse.enabled",                   new Color( 255, 100, 100 ));
+        colors.put( "dropdown.mouse.selected.enabled",          new Color( 100, 100, 255 ));
+        colors.put( "dropdown.pressed.enabled",                 new Color( 255, 0, 0 ));
+        colors.put( "dropdown.pressed.selected.enabled",        new Color( 0, 0, 255 ));
+        colors.put( "dropdown.line",                            new Color( 100, 75, 75 ));
+        colors.put( "dropdown.line.enabled",                    new Color( 150, 75, 75 ));
+        colors.put( "dropdown.line.selected",                   new Color( 75, 75, 100 ));
+        colors.put( "dropdown.line.selected.enabled",           new Color( 75, 75, 75 ));
+        colors.put( "dropdown.line.mouse.enabled",              new Color( 150, 50, 50 ));
+        colors.put( "dropdown.line.mouse.selected.enabled",     new Color( 50, 50, 150 ));
+        colors.put( "dropdown.line.pressed.enabled",            new Color( 150, 0, 0 ));
+        colors.put( "dropdown.line.pressed.selected.enabled",   new Color( 0, 0, 150 ));
         
         colors.put( "paint",                        new Color( 0, 0, 0 ));
 
@@ -137,6 +141,108 @@ public class BubbleTheme extends DefaultTheme {
         setTitleFactory( new BubbleDockTitleFactory( this ));
         setPaint( new BubbleStationPaint( this ) );
         setMovingTitleGetter( new BubbleMovingTitleGetter( this ) );
+    }
+    
+    /**
+     * Derives all colors needed in this theme.
+     * @param active the base color for active titles
+     * @param inactive the base color for inactive titles
+     * @param text the base color for text
+     * @param button the base color for buttons
+     * @param buttonSelected the base color for selected buttons
+     * @param disabled the base color for disabled elementss
+     */
+    public void deriveColors( 
+            Color active, Color inactive, Color text,
+            Color button, Color buttonSelected, Color disabled ){
+        
+        float dh = 1f / 12f;
+        float ds = 1f / 3f;
+        float db = 1f / 3f;
+        
+        colors.put( "tab.border.active",             delta( active, 0, 0, -db ));
+        colors.put( "tab.border.active.mouse",       delta( active, 0, ds, -db ));
+        colors.put( "tab.border.inactive",           delta( inactive, 0, 0, -db ));
+        colors.put( "tab.border.inactive.mouse",     delta( inactive, 0, ds, -db ));
+        colors.put( "tab.top.active",                delta( active, dh, 0, 0 ));
+        colors.put( "tab.top.active.mouse",          delta( active, dh, ds, 0 ));
+        colors.put( "tab.top.inactive",              delta( inactive, dh, 0, 0 ));
+        colors.put( "tab.top.inactive.mouse",        delta( inactive, dh, ds, 0 ));
+        colors.put( "tab.bottom.active",             delta( active, -dh, 0, 0 ));
+        colors.put( "tab.bottom.active.mouse",       delta( active, -dh, ds, 0 ));
+        colors.put( "tab.bottom.inactive",           delta( inactive, -dh, 0, 0 ));
+        colors.put( "tab.bottom.inactive.mouse",     delta( inactive, -dh, ds, 0 ));
+        colors.put( "tab.text.active",               text );
+        colors.put( "tab.text.active.mouse",         delta( text, 0, ds, 0 ));
+        colors.put( "tab.text.inactive",             delta( text, -dh, 0, db ));
+        colors.put( "tab.text.inactive.mouse",       delta( text, -dh, ds, db ));
+        
+        colors.put( "title.top.active",              delta( active, dh, 0, 0 ));
+        colors.put( "title.top.active.mouse",        delta( active, dh, ds, 0 ));
+        colors.put( "title.top.inactive",            delta( inactive, dh, 0, 0 ));
+        colors.put( "title.top.inactive.mouse",      delta( inactive, dh, ds, 0 ));
+        colors.put( "title.bottom.active",           delta( active, -dh, 0, 0 ));
+        colors.put( "title.bottom.active.mouse",     delta( active, -dh, ds, 0 ));
+        colors.put( "title.bottom.inactive",         delta( inactive, -dh, 0, 0 ));
+        colors.put( "title.bottom.inactive.mouse",   delta( inactive, -dh, ds, 0 ));
+        colors.put( "title.text.active",             text );
+        colors.put( "title.text.active.mouse",       delta( text, 0, ds, 0 ));
+        colors.put( "title.text.inactive",           delta( text, 0, 0, db ));
+        colors.put( "title.text.inactive.mouse",     delta( text, 0, ds, db ));
+        
+        colors.put( "border.high.active",            delta( active, -dh, 0, 0 ));
+        colors.put( "border.high.inactive",          delta( inactive, -dh, 0, 0 ));
+        colors.put( "border.low.active",             delta( active, -dh, -ds, 0 ));
+        colors.put( "border.low.inactive",           delta( inactive, -dh, -ds, 0 ));
+        
+        // RoundButton
+        colors.put( "button.mouse",                  delta( button, 0, ds, 0 ));
+        colors.put( "button",                        button );
+        
+        // Round drop down button
+        colors.put( "dropdown",                                  disabled );
+        colors.put( "dropdown.enabled",                          button );
+        colors.put( "dropdown.selected",                         disabled );
+        colors.put( "dropdown.selected.enabled",                 buttonSelected );
+        colors.put( "dropdown.mouse.enabled",                    delta( button, 0, ds, 0 ));
+        colors.put( "dropdown.mouse.selected.enabled",           delta( buttonSelected, 0, ds, 0 ));
+        colors.put( "dropdown.pressed.enabled",                  delta( button, 0, -ds, 0 ));
+        colors.put( "dropdown.pressed.selected.enabled",         delta( buttonSelected, 0, -ds, 0 ));
+        colors.put( "dropdown.line",                             disabled );
+        colors.put( "dropdown.line.enabled",                     delta( button, 0, 0, -db ));
+        colors.put( "dropdown.line.selected",                    disabled );
+        colors.put( "dropdown.line.selected.enabled",            delta( buttonSelected, 0, 0, -db ));
+        colors.put( "dropdown.line.mouse.enabled",               delta( button, 0, ds, -db ));
+        colors.put( "dropdown.line.mouse.selected.enabled",      delta( buttonSelected, 0, ds, -db ));
+        colors.put( "dropdown.line.pressed.enabled",             delta( button, 0, -ds, -db ));
+        colors.put( "dropdown.line.pressed.selected.enabled",    delta( buttonSelected, 0, -ds, -db ));
+        
+        colors.put( "paint",                         text );
+    }
+    
+    /**
+     * Moves the hsb-representation of <code>color</code> a little.
+     * @param color the color to change
+     * @param dh the delta in hue
+     * @param ds the delta in saturisation
+     * @param db the delta in brightness
+     * @return the new color
+     */
+    private Color delta( Color color, float dh, float ds, float db ){
+        float[] hsb = new float[3];
+        Color.RGBtoHSB( color.getRed(), color.getGreen(), color.getBlue(), hsb );
+        hsb[0] += dh;
+        hsb[1] += ds;
+        hsb[2] += db;
+        
+        if( hsb[0] > 1 )
+            hsb[0] -= (int)hsb[0];
+        if( hsb[0] < 0 )
+            hsb[0] += (int)( -hsb[0] ) + 1;
+        
+        hsb[1] = Math.min( 1, Math.max( hsb[1], 0 ));
+        hsb[2] = Math.min( 1, Math.max( hsb[2], 0 ));
+        return Color.getHSBColor( hsb[0], hsb[1], hsb[2] );
     }
     
     /**
