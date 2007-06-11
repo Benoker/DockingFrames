@@ -47,33 +47,74 @@ public class RoundButton extends JComponent{
 	private Icon icon;
 	private List<ActionListener> actions = new ArrayList<ActionListener>();
 	
+	private boolean mouseEntered=false;
 	private boolean selected = false;
-
+    private boolean mousePressed=false;
+	
 	public RoundButton(BubbleTheme theme)
 	{
 		animation=new BubbleColorAnimation(theme);
-		animation.putColor("button", "button");
+		updateColors();
 
 		addMouseListener(new MouseAdapter()
 		{
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				
+				
+				if(!mousePressed)
+				{
+					if (e.getButton()==MouseEvent.BUTTON1)
+					{
+						mousePressed=true;
+						updateColors();
+					}
+				}
+				
+			}
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				
+				if (mousePressed && (e.getButton()==MouseEvent.BUTTON1))
+				{
+					mousePressed=false;
+					
+					if (contains(e.getPoint()))
+					{
+						if (isEnabled())
+						{
+							ActionEvent event=new ActionEvent(RoundButton.this,Event.ACTION_EVENT,null);
+
+							for(ActionListener action : actions)
+							{
+								action.actionPerformed(event);
+							}
+						}
+						mouseEntered=true;
+					}
+					else
+					{
+						mouseEntered=false;
+					}
+				}
+				
+				updateColors();
+			}
+			
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				animation.putColor("button", "button.mouse");
+				mouseEntered=true;
+				updateColors();
+				
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
-				animation.putColor("button", "button");
+				mouseEntered=false;
+				updateColors();
 			}
-			@Override
-			public void mouseClicked(MouseEvent e) {
-
-				ActionEvent event=new ActionEvent(RoundButton.this,Event.ACTION_EVENT,null);
-
-				for(ActionListener action : actions)
-				{
-					action.actionPerformed(event);
-				}
-			}
+			
 		});
 
 		animation.addTask(new Runnable() {
@@ -93,7 +134,17 @@ public class RoundButton extends JComponent{
 
 	public void setSelected( boolean selected ){
 		this.selected = selected;
+		updateColors();
 	}
+	
+	@Override
+	public void setEnabled(boolean enabled) {
+		
+		super.setEnabled(enabled);
+		updateColors();		
+	}
+		
+	
 	
 	public void setIcon(Icon icon)
 	{
@@ -135,5 +186,30 @@ public class RoundButton extends JComponent{
 
 	}
 
-
+    private void updateColors() {
+    	
+    	String postfix="";
+    	
+    	if (isEnabled()&&mousePressed)
+    		postfix=".pressed";
+    	
+    	if (isEnabled()&&mouseEntered&&!mousePressed)
+    		postfix=".mouse";
+    	
+    	if (selected)
+    		postfix+=".selected";
+    	
+    	if (isEnabled())
+    		postfix+=".enabled";
+    	
+    	
+    	
+    	animation.putColor("button", "button"+ postfix);
+    	
+    	
+    	
+    	
+    }
+	
+	
 }

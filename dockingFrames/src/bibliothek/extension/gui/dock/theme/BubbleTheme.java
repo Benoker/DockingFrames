@@ -114,8 +114,16 @@ public class BubbleTheme extends DefaultTheme {
         colors.put( "border.low.inactive",          new Color( 100, 100, 100 ));
         
         // RoundButton
-        colors.put( "button.mouse",                 new Color( 0, 0, 255 ));
-        colors.put( "button",                       new Color( 255, 255, 255 ));
+       
+        colors.put( "button",                                 new Color( 255, 255, 255 ));
+        colors.put( "button.enabled",                         new Color( 255, 200, 200 ));
+        colors.put( "button.selected",                        new Color( 150, 150, 175 ));
+        colors.put( "button.selected.enabled",                new Color( 200, 200, 255 ));
+        colors.put( "button.mouse.enabled",                   new Color( 255, 100, 100 ));
+        colors.put( "button.mouse.selected.enabled",          new Color( 100, 100, 255 ));
+        colors.put( "button.pressed.enabled",                 new Color( 255, 0, 0 ));
+        colors.put( "button.pressed.selected.enabled",        new Color( 0, 0, 255 ));
+              
         
         // Round drop down button
         colors.put( "dropdown",                                 new Color( 175, 150, 150 ));
