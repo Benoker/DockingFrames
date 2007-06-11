@@ -116,32 +116,33 @@ public class BubbleTheme extends DefaultTheme {
         // RoundButton
        
         colors.put( "button",                                 new Color( 255, 255, 255 ));
-        colors.put( "button.enabled",                         new Color( 255, 200, 200 ));
-        colors.put( "button.selected",                        new Color( 150, 150, 175 ));
-        colors.put( "button.selected.enabled",                new Color( 200, 200, 255 ));
-        colors.put( "button.mouse.enabled",                   new Color( 255, 100, 100 ));
+        colors.put( "button.enabled",                         new Color( 215, 215, 215 ));
+        colors.put( "button.selected",                        new Color( 200, 200, 255 ));
+        colors.put( "button.selected.enabled",                new Color( 150, 150, 210 ));
+        colors.put( "button.mouse.enabled",                   new Color( 255, 255, 100 ));
         colors.put( "button.mouse.selected.enabled",          new Color( 100, 100, 255 ));
-        colors.put( "button.pressed.enabled",                 new Color( 255, 0, 0 ));
+        colors.put( "button.pressed.enabled",                 new Color( 255, 255, 0 ));
         colors.put( "button.pressed.selected.enabled",        new Color( 0, 0, 255 ));
               
         
         // Round drop down button
-        colors.put( "dropdown",                                 new Color( 175, 150, 150 ));
-        colors.put( "dropdown.enabled",                         new Color( 255, 200, 200 ));
-        colors.put( "dropdown.selected",                        new Color( 150, 150, 175 ));
-        colors.put( "dropdown.selected.enabled",                new Color( 200, 200, 255 ));
-        colors.put( "dropdown.mouse.enabled",                   new Color( 255, 100, 100 ));
+        colors.put( "dropdown",                                 new Color( 255, 255, 255 ));
+        colors.put( "dropdown.enabled",                         new Color( 215, 215, 215 ));
+        colors.put( "dropdown.selected",                        new Color( 200, 200, 255 ));
+        colors.put( "dropdown.selected.enabled",                new Color( 150, 150, 210 ));
+        colors.put( "dropdown.mouse.enabled",                   new Color( 255, 255, 100 ));
         colors.put( "dropdown.mouse.selected.enabled",          new Color( 100, 100, 255 ));
-        colors.put( "dropdown.pressed.enabled",                 new Color( 255, 0, 0 ));
+        colors.put( "dropdown.pressed.enabled",                 new Color( 255, 255, 0 ));
         colors.put( "dropdown.pressed.selected.enabled",        new Color( 0, 0, 255 ));
-        colors.put( "dropdown.line",                            new Color( 100, 75, 75 ));
-        colors.put( "dropdown.line.enabled",                    new Color( 150, 75, 75 ));
-        colors.put( "dropdown.line.selected",                   new Color( 75, 75, 100 ));
-        colors.put( "dropdown.line.selected.enabled",           new Color( 75, 75, 75 ));
-        colors.put( "dropdown.line.mouse.enabled",              new Color( 150, 50, 50 ));
+        
+        colors.put( "dropdown.line",                            new Color( 150, 150, 150 ));
+        colors.put( "dropdown.line.enabled",                    new Color( 150, 150, 150 ));
+        colors.put( "dropdown.line.selected",                   new Color( 150, 150, 200 ));
+        colors.put( "dropdown.line.selected.enabled",           new Color( 120, 120, 175 ));
+        colors.put( "dropdown.line.mouse.enabled",              new Color( 200, 200, 100 ));
         colors.put( "dropdown.line.mouse.selected.enabled",     new Color( 50, 50, 150 ));
-        colors.put( "dropdown.line.pressed.enabled",            new Color( 150, 0, 0 ));
-        colors.put( "dropdown.line.pressed.selected.enabled",   new Color( 0, 0, 150 ));
+        colors.put( "dropdown.line.pressed.enabled",            new Color( 200, 200, 0 ));
+        colors.put( "dropdown.line.pressed.selected.enabled",   new Color( 0, 0, 200 ));
         
         colors.put( "paint",                        new Color( 0, 0, 0 ));
 

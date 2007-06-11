@@ -152,6 +152,36 @@ public class RoundButton extends JComponent{
 		repaint();
 	}
 
+    @Override
+    public boolean contains( int x, int y ) {
+        if( !super.contains( x, y ))
+            return false;
+        
+        double w = getWidth();
+        double h = getHeight();
+        
+        double dx, dy;
+        
+        if( w > h ){
+            double delta = h / w;
+            dx = x;
+            dy = delta * y;
+            h = w;
+        }
+        else{
+            double delta = w / h;
+            dx = delta * x;
+            dy = y;
+            w = h;
+        }
+        
+        dx -= w/2;
+        dy -= h/2;
+        
+        double dist = dx*dx + dy*dy;
+        return dist <= w*w/4;
+    }
+    
 	@Override
 	public Dimension getPreferredSize() {
 
@@ -201,8 +231,6 @@ public class RoundButton extends JComponent{
     	
     	if (isEnabled())
     		postfix+=".enabled";
-    	
-    	
     	
     	animation.putColor("button", "button"+ postfix);
     	
