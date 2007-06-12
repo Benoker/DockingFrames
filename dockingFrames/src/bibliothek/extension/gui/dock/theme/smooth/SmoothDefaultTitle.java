@@ -34,7 +34,7 @@ import java.awt.Graphics2D;
 import javax.swing.JComponent;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.title.DefaultDockTitle;
+import bibliothek.gui.dock.themes.basic.BasicDockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.util.Colors;
 
@@ -42,7 +42,7 @@ import bibliothek.util.Colors;
  * A title which changes its colors smoothly when selected or deselected.
  * @author Benjamin Sigg
  */
-public class SmoothDefaultTitle extends DefaultDockTitle{
+public class SmoothDefaultTitle extends BasicDockTitle{
     /** The current state of the transition */
     private int current = 0;
     

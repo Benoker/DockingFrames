@@ -41,12 +41,12 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionPopup;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.action.views.ViewItem;
-import bibliothek.gui.dock.action.views.ViewTarget;
-import bibliothek.gui.dock.action.views.buttons.TitleViewItem;
+import bibliothek.gui.dock.action.view.ViewItem;
+import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.event.DockActionSourceListener;
 import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.event.DockableListener;
+import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
 
 /**
  * An abstract implementation of {@link DockTitle}. This title can have
@@ -80,7 +80,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     private JPanel itemPanel;
     
     /** The buttons of this title, each of them represents one action */
-    private Map<DockAction, TitleViewItem<JComponent>> items = new HashMap<DockAction, TitleViewItem<JComponent>>();
+    private Map<DockAction, BasicTitleViewItem<JComponent>> items = new HashMap<DockAction, BasicTitleViewItem<JComponent>>();
     
     /** A list of all actions that are on this title */
     private List<DockAction> actions = new ArrayList<DockAction>();
@@ -272,7 +272,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     public void setOrientation( Orientation orientation ) {
         this.orientation = orientation;
         if( items != null )
-        	for( TitleViewItem<JComponent> item : items.values() )
+        	for( BasicTitleViewItem<JComponent> item : items.values() )
         		item.setOrientation( orientation );
         
         
@@ -505,7 +505,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
      * @param dockable The {@link Dockable} which will be affected by the action
      * @return the new graphical representation of the action 
      */
-    protected TitleViewItem<JComponent> createItemFor( DockAction action, Dockable dockable ){
+    protected BasicTitleViewItem<JComponent> createItemFor( DockAction action, Dockable dockable ){
     	return dockable.getController().getActionViewConverter().createView( 
     			action, ViewTarget.TITLE, dockable );
     }
@@ -526,7 +526,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
             action.bind( dockable );
             this.actions.add( action );
             if( showMiniButtons ){
-                TitleViewItem<JComponent> item = createItemFor( action, dockable );
+                BasicTitleViewItem<JComponent> item = createItemFor( action, dockable );
                 if( item != null ){
 	                item.bind();
 	                item.setOrientation( getOrientation() );
@@ -705,7 +705,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
                 DockAction action = source.getDockAction( i );
                 action.bind( dockable );
                 if( showMiniButtons ){
-                    TitleViewItem<JComponent> item = createItemFor( action, getDockable() );
+                    BasicTitleViewItem<JComponent> item = createItemFor( action, getDockable() );
                     if( item != null ){
 	                    item.bind();
 	                    item.setOrientation( getOrientation() );
@@ -723,7 +723,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
             	DockAction action = actions.remove( i );
                 
                 if( showMiniButtons ){
-                	TitleViewItem<JComponent> item = items.remove( action );
+                	BasicTitleViewItem<JComponent> item = items.remove( action );
                     if( item != null )
                     	item.unbind();
                 }
@@ -743,7 +743,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
                 itemPanel.removeAll();
                 
                 for( DockAction action : actions ){
-                	TitleViewItem<JComponent> item = items.get( action );
+                	BasicTitleViewItem<JComponent> item = items.get( action );
                 	if( item != null ){
                 		itemPanel.add( item.getItem() );
                 	}

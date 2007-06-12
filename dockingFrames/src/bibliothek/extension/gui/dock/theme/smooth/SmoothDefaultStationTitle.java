@@ -27,7 +27,7 @@
 package bibliothek.extension.gui.dock.theme.smooth;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.title.DefaultStationTitle;
+import bibliothek.gui.dock.themes.basic.BasicStationTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.util.Colors;
 
@@ -36,7 +36,7 @@ import bibliothek.util.Colors;
  * @author Benjamin Sigg
  *
  */
-public class SmoothDefaultStationTitle extends DefaultStationTitle{
+public class SmoothDefaultStationTitle extends BasicStationTitle{
     /** the counter, tells where transition between active and passive stands. */
     private int current = 0;
     

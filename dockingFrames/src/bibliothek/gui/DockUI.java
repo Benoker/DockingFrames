@@ -41,10 +41,10 @@ import bibliothek.gui.dock.IconManager;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StationPaint;
-import bibliothek.gui.dock.station.support.DefaultCombiner;
-import bibliothek.gui.dock.station.support.DefaultDisplayerFactory;
-import bibliothek.gui.dock.station.support.DefaultStationPaint;
 import bibliothek.gui.dock.themes.*;
+import bibliothek.gui.dock.themes.basic.BasicCombiner;
+import bibliothek.gui.dock.themes.basic.BasicDisplayerFactory;
+import bibliothek.gui.dock.themes.basic.BasicStationPaint;
 import bibliothek.gui.dock.util.Priority;
 
 /**
@@ -95,11 +95,11 @@ public class DockUI {
     }
     
     private void registerThemes(){
-        registerTheme( DefaultTheme.class, null );
+        registerTheme( BasicTheme.class, null );
         registerTheme( FlatTheme.class, null );
         registerTheme( SmoothTheme.class, null );
         registerTheme( BubbleTheme.class, null );
-        registerTheme( NoStackTheme.getFactory( DefaultTheme.class, null, this ));
+        registerTheme( NoStackTheme.getFactory( BasicTheme.class, null, this ));
         registerTheme( NoStackTheme.getFactory( FlatTheme.class, null, this ));
         registerTheme( NoStackTheme.getFactory( SmoothTheme.class, null, this ));
     }
@@ -235,7 +235,7 @@ public class DockUI {
         
         DockTheme theme = station.getTheme();
         if( theme == null )
-        	return new DefaultStationPaint();
+        	return new BasicStationPaint();
         
         return theme.getPaint(station);
     }
@@ -252,7 +252,7 @@ public class DockUI {
     	
     	DockTheme theme = station.getTheme();
         if( theme == null )
-        	return new DefaultDisplayerFactory();
+        	return new BasicDisplayerFactory();
         
         return theme.getDisplayFactory(station);
     }
@@ -269,7 +269,7 @@ public class DockUI {
         
         DockTheme theme = station.getTheme();
         if( theme == null )
-        	return new DefaultCombiner();
+        	return new BasicCombiner();
         
         return theme.getCombiner(station);
     }

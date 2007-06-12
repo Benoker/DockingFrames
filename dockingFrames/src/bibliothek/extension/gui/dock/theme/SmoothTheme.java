@@ -27,7 +27,7 @@
 package bibliothek.extension.gui.dock.theme;
 
 import bibliothek.extension.gui.dock.theme.smooth.SmoothDefaultTitleFactory;
-import bibliothek.gui.dock.themes.DefaultTheme;
+import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.ThemeProperties;
 
 /**
@@ -41,7 +41,7 @@ import bibliothek.gui.dock.themes.ThemeProperties;
         descriptionBundle="theme.smooth.description",
         authors={"Benjamin Sigg"},
         webpages={})
-public class SmoothTheme extends DefaultTheme {
+public class SmoothTheme extends BasicTheme {
     /**
      * Constructor, sets the special title-factory of this theme
      */

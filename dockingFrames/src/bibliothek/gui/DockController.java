@@ -43,11 +43,11 @@ import javax.swing.event.MouseInputListener;
 import bibliothek.gui.dock.*;
 import bibliothek.gui.dock.accept.MultiDockAcceptance;
 import bibliothek.gui.dock.action.*;
-import bibliothek.gui.dock.action.views.ActionViewConverter;
+import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.event.DockAdapter;
 import bibliothek.gui.dock.event.DockControllerListener;
 import bibliothek.gui.dock.event.DockTitleEvent;
-import bibliothek.gui.dock.themes.DefaultTheme;
+import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.title.DockTitleVersion;
@@ -147,7 +147,7 @@ public class DockController {
         
         DockUI.getDefaultDockUI().fillIcons( icons );
         
-        setTheme( new DefaultTheme() );
+        setTheme( new BasicTheme() );
     }
     
     /**

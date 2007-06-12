@@ -30,8 +30,8 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionType;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.MenuDockAction;
-import bibliothek.gui.dock.action.views.ActionViewConverter;
-import bibliothek.gui.dock.action.views.ViewTarget;
+import bibliothek.gui.dock.action.view.ActionViewConverter;
+import bibliothek.gui.dock.action.view.ViewTarget;
 
 /**
  * An action that provides a menu which contains other actions.

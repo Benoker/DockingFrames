@@ -35,9 +35,9 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.*;
-import bibliothek.gui.dock.action.views.ActionViewConverter;
-import bibliothek.gui.dock.action.views.ViewGenerator;
-import bibliothek.gui.dock.action.views.ViewTarget;
+import bibliothek.gui.dock.action.view.ActionViewConverter;
+import bibliothek.gui.dock.action.view.ViewGenerator;
+import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.action.views.buttons.*;
 import bibliothek.gui.dock.event.DockControllerAdapter;
 import bibliothek.gui.dock.station.DisplayerFactory;
@@ -45,8 +45,12 @@ import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.SplitDockStation;
 import bibliothek.gui.dock.station.StackDockStation;
 import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;
-import bibliothek.gui.dock.themes.DefaultTheme;
+import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.ThemeProperties;
+import bibliothek.gui.dock.themes.basic.action.*;
+import bibliothek.gui.dock.themes.basic.action.buttons.BasicMiniButton;
+import bibliothek.gui.dock.themes.basic.action.buttons.DropDownMiniButton;
+import bibliothek.gui.dock.themes.basic.action.buttons.MiniButton;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
@@ -60,7 +64,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
         descriptionBundle="theme.flat.description",
         authors={"Benjamin Sigg"},
         webpages={})
-public class FlatTheme extends DefaultTheme{
+public class FlatTheme extends BasicTheme{
     
     /** A special factory for the {@link SplitDockStation} */
     protected DisplayerFactory splitDisplayFactory = new FlatDisplayerFactory( true );
@@ -103,49 +107,64 @@ public class FlatTheme extends DefaultTheme{
         }
         
         controller.getActionViewConverter().putTheme( ActionType.BUTTON, ViewTarget.TITLE, 
-        		new ViewGenerator<ButtonDockAction, TitleViewItem<JComponent>>(){
-        	public TitleViewItem<JComponent> create( ActionViewConverter converter, ButtonDockAction action, Dockable dockable ){
-        		return new ButtonMiniButtonHandler( action, dockable, createTitleMiniButton() );
+        		new ViewGenerator<ButtonDockAction, BasicTitleViewItem<JComponent>>(){
+        	public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, ButtonDockAction action, Dockable dockable ){
+                BasicButtonHandler handler = new BasicButtonHandler( action, dockable );
+                MiniButton<BasicButtonModel> button = createTitleMiniButton( handler );
+                handler.setModel( button.getModel() );
+                return handler;
         	}
         });
         
         controller.getActionViewConverter().putTheme( ActionType.CHECK, ViewTarget.TITLE, 
-        		new ViewGenerator<SelectableDockAction, TitleViewItem<JComponent>>(){
-        	public TitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
-        		return new SelectableMiniButtonHandler.Check( action, dockable, createTitleMiniButton() );
+        		new ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>(){
+        	public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
+                BasicSelectableHandler.Check handler = new BasicSelectableHandler.Check( action, dockable );
+                MiniButton<BasicButtonModel> button = createTitleMiniButton( handler );
+                handler.setModel( button.getModel() );
+                return handler;
         	}
         });
         
         controller.getActionViewConverter().putTheme( ActionType.MENU, ViewTarget.TITLE, 
-        		new ViewGenerator<MenuDockAction, TitleViewItem<JComponent>>(){
-        	public TitleViewItem<JComponent> create( ActionViewConverter converter, MenuDockAction action, Dockable dockable ){
-        		return new MenuMiniButtonHandler( action, dockable, createTitleMiniButton() );
+        		new ViewGenerator<MenuDockAction, BasicTitleViewItem<JComponent>>(){
+        	public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, MenuDockAction action, Dockable dockable ){
+                BasicMenuHandler handler = new BasicMenuHandler( action, dockable );
+                MiniButton<BasicButtonModel> button = createTitleMiniButton( handler );
+                handler.setModel( button.getModel() );
+                return handler;
         	}
         });
         
         controller.getActionViewConverter().putTheme( ActionType.RADIO, ViewTarget.TITLE, 
-        		new ViewGenerator<SelectableDockAction, TitleViewItem<JComponent>>(){
-        	public TitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
-        		return new SelectableMiniButtonHandler.Radio( action, dockable, createTitleMiniButton() );
+        		new ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>(){
+        	public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
+                BasicSelectableHandler.Radio handler = new BasicSelectableHandler.Radio( action, dockable );
+                MiniButton<BasicButtonModel> button = createTitleMiniButton( handler );
+                handler.setModel( button.getModel() );
+                return handler;
         	}
         });
         
         controller.getActionViewConverter().putTheme( ActionType.DROP_DOWN, ViewTarget.TITLE,
-        		new ViewGenerator<DropDownAction, TitleViewItem<JComponent>>(){
-        	public TitleViewItem<JComponent> create( ActionViewConverter converter, DropDownAction action, Dockable dockable ){
-        		DropDownMiniButton button = new DropDownMiniButton();
+        		new ViewGenerator<DropDownAction, BasicTitleViewItem<JComponent>>(){
+        	public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, DropDownAction action, Dockable dockable ){
+                BasicDropDownButtonHandler handler = new BasicDropDownButtonHandler( action, dockable );
+        		DropDownMiniButton button = new DropDownMiniButton( handler );
+                handler.setModel( button.getModel() );
         		button.setMouseOverBorder( BorderFactory.createEtchedBorder() );
-        		return new DropDownMiniButtonHandler<DropDownAction, DropDownMiniButton>( action, button, dockable );
+        		return handler;
         	}
         });
     }
     
     /**
      * Creates a {@link MiniButton} in a flat look.
+     * @param trigger the trigger to invoke when the button has been clicked
      * @return the new button
      */
-    private MiniButton createTitleMiniButton(){
-    	MiniButton button = new MiniButton();
+    private MiniButton<BasicButtonModel> createTitleMiniButton( BasicTrigger trigger ){
+    	BasicMiniButton button = new BasicMiniButton( trigger );
     	button.setMouseOverBorder( BorderFactory.createEtchedBorder() );
     	return button;
     }

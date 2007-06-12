@@ -35,7 +35,7 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.views.menu.MenuMenuHandler;
+import bibliothek.gui.dock.themes.basic.action.menu.MenuMenuHandler;
 
 /**
  * A mouse-listener that may be added to any component. When

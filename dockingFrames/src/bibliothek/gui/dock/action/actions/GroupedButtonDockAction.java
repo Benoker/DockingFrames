@@ -29,8 +29,8 @@ package bibliothek.gui.dock.action.actions;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionType;
 import bibliothek.gui.dock.action.ButtonDockAction;
-import bibliothek.gui.dock.action.views.ActionViewConverter;
-import bibliothek.gui.dock.action.views.ViewTarget;
+import bibliothek.gui.dock.action.view.ActionViewConverter;
+import bibliothek.gui.dock.action.view.ViewTarget;
 
 /**
  * A {@link GroupedDockAction} that provides the functionality of

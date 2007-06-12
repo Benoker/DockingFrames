@@ -55,7 +55,7 @@ import bibliothek.gui.dock.station.support.CombinerWrapper;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
 import bibliothek.gui.dock.station.support.StationPaintWrapper;
-import bibliothek.gui.dock.title.ButtonTitleFactory;
+import bibliothek.gui.dock.themes.basic.BasicButtonTitleFactory;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
@@ -268,7 +268,7 @@ public class FlapDockStation extends AbstractDockableStation {
 
             if( controller != null ){
                 titleVersion = controller.getDockTitleManager().registerDefault( WINDOW_TITLE_ID, ControllerTitleFactory.INSTANCE );
-                buttonVersion = controller.getDockTitleManager().registerDefault( BUTTON_TITLE_ID, ButtonTitleFactory.FACTORY );
+                buttonVersion = controller.getDockTitleManager().registerDefault( BUTTON_TITLE_ID, BasicButtonTitleFactory.FACTORY );
                 
                 for( Dockable dockable : dockables ){
                     DockTitle title = dockable.getDockTitle( buttonVersion );

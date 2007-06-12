@@ -33,10 +33,11 @@ import javax.swing.JComponent;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.themes.basic.BasicDockTitle;
 import bibliothek.gui.dock.title.*;
 
 /**
- * A factory that creates instances of {@link DefaultDockTitle}, but
+ * A factory that creates instances of {@link BasicDockTitle}, but
  * changes their active and inactive right color to the Dockables background.
  * If {@link JComponent#updateUI() updateUI} is called, the colors will be 
  * updated as well.
@@ -44,7 +45,7 @@ import bibliothek.gui.dock.title.*;
  */
 public class FlatTitleFactory implements DockTitleFactory{
     public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
-        DefaultDockTitle title = new DefaultDockTitle( dockable, version ){
+        BasicDockTitle title = new BasicDockTitle( dockable, version ){
             @Override
             public void updateUI() {
                 super.updateUI();

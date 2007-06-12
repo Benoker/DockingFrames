@@ -28,13 +28,13 @@ package bibliothek.gui.dock.action.dropdown;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DropDownAction;
-import bibliothek.gui.dock.action.views.dropdown.DropDownViewItem;
+import bibliothek.gui.dock.themes.basic.action.dropdown.DropDownViewItem;
 
 /**
  * An implementation of {@link DropDownFilter}. This filter uses the contents
  * of the selected element whenever possible. The tooltip either consists of
- * the drop-down-action if the selected action is not trigerable, or of
- * the action itself if it is trigerable.
+ * the drop-down-action if the selected action is not triggerable, or of
+ * the action itself if it is triggerable.
  * @author Benjamin Sigg
  */
 public class DefaultDropDownFilter extends AbstractDropDownFilter {

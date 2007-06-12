@@ -28,7 +28,7 @@ package bibliothek.gui.dock.action.dropdown;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DropDownAction;
-import bibliothek.gui.dock.action.views.dropdown.DropDownViewItem;
+import bibliothek.gui.dock.themes.basic.action.dropdown.DropDownViewItem;
 
 /**
  * A filter is used by views which want to display a {@link DropDownAction}, but

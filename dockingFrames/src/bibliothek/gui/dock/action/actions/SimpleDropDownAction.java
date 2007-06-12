@@ -34,8 +34,8 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.action.dropdown.DefaultDropDownFilter;
 import bibliothek.gui.dock.action.dropdown.DropDownFilterFactory;
-import bibliothek.gui.dock.action.views.ActionViewConverter;
-import bibliothek.gui.dock.action.views.ViewTarget;
+import bibliothek.gui.dock.action.view.ActionViewConverter;
+import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.event.DropDownActionListener;
 
 /**
