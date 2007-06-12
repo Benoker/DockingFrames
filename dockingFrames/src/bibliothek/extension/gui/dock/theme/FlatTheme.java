@@ -38,7 +38,6 @@ import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.action.view.ViewGenerator;
 import bibliothek.gui.dock.action.view.ViewTarget;
-import bibliothek.gui.dock.action.views.buttons.*;
 import bibliothek.gui.dock.event.DockControllerAdapter;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.FlapDockStation;

@@ -35,8 +35,6 @@ import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.action.actions.SeparatorAction;
-import bibliothek.gui.dock.action.views.buttons.*;
-import bibliothek.gui.dock.action.views.menu.*;
 import bibliothek.gui.dock.themes.basic.action.*;
 import bibliothek.gui.dock.themes.basic.action.buttons.BasicMiniButton;
 import bibliothek.gui.dock.themes.basic.action.buttons.DropDownMiniButton;
