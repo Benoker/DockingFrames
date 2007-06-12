@@ -102,6 +102,7 @@ public class DockUI {
         registerTheme( NoStackTheme.getFactory( BasicTheme.class, null, this ));
         registerTheme( NoStackTheme.getFactory( FlatTheme.class, null, this ));
         registerTheme( NoStackTheme.getFactory( SmoothTheme.class, null, this ));
+        registerTheme( NoStackTheme.getFactory( BubbleTheme.class, null, this ));
     }
     
     /**
