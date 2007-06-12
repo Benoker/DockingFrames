@@ -92,8 +92,8 @@ public class Demo03_Theme {
 	
 	public static JMenu createThemeMenu( DockController controller ){
 		JMenu menu = new JMenu( "Theme" );
-		/*menu.add( createItem( "Default", "Default", new DefaultTheme(), controller ));
-		menu.add( createItem( "small Default", "small Default", new NoStackTheme( new DefaultTheme() ), controller ));
+		/*menu.add( createItem( "Default", "Default", new BasicTheme(), controller ));
+		menu.add( createItem( "small Default", "small Default", new NoStackTheme( new BasicTheme() ), controller ));
 		menu.add( createItem( "Smooth", "Smooth", new SmoothTheme(), controller ));
 		menu.add( createItem( "small Smooth", "small Smooth", new NoStackTheme( new SmoothTheme() ), controller ));
 		menu.add( createItem( "Flat", "Flat", new FlatTheme(), controller ));

@@ -8,20 +8,19 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.WindowConstants;
 
-import bibliothek.gui.DockController;
-import bibliothek.gui.DockFrontend;
-import bibliothek.gui.DockStation;
-import bibliothek.gui.Dockable;
+import bibliothek.gui.*;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.ScreenDockStation;
 import bibliothek.gui.dock.station.SplitDockStation;
 import bibliothek.gui.dock.station.StackDockStation;
-import bibliothek.gui.dock.themes.DefaultTheme;
-import bibliothek.gui.dock.themes.FlatTheme;
-import bibliothek.gui.dock.themes.NoStackTheme;
-import bibliothek.gui.dock.themes.SmoothTheme;
-import bibliothek.gui.dock.title.*;
+import bibliothek.gui.dock.themes.BasicTheme;
+import bibliothek.gui.dock.themes.ThemeFactory;
+import bibliothek.gui.dock.themes.basic.BasicDockTitle;
+import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.title.DockTitleFactory;
+import bibliothek.gui.dock.title.DockTitleManager;
+import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.Priority;
 
 /*
@@ -44,7 +43,7 @@ public class Demo06_YourOwnTitle {
         // the frontend provides additional methods. If a ScreenDockStation is
         // used, then the frontend needs to know the owner of the station.
         DockFrontend frontend = new DockFrontend( frame );
-        frontend.getController().setTheme( new DefaultTheme() );
+        frontend.getController().setTheme( new BasicTheme() );
         
         // let the controller handle sub-stations with only one child
         frontend.getController().setSingleParentRemove( true );
@@ -99,13 +98,17 @@ public class Demo06_YourOwnTitle {
 	public static JMenu createThemeMenu( DockController controller ){
 		JMenu menu = new JMenu( "Theme" );
         
+        for( ThemeFactory factory : DockUI.getDefaultDockUI().getThemes() ){
+            menu.add( Demo03_Theme.createItem( factory.getName(), factory.getDescription(), factory.create(), controller));
+        }
+        /*
         menu.add( Demo03_Theme.createItem( "Default", "Default", new DefaultTheme(), controller ));
         menu.add( Demo03_Theme.createItem( "small Default", "small Default", new NoStackTheme( new DefaultTheme() ), controller ));
         menu.add( Demo03_Theme.createItem( "Smooth", "Smooth", new SmoothTheme(), controller ));
         menu.add( Demo03_Theme.createItem( "small Smooth", "small Smooth", new NoStackTheme( new SmoothTheme() ), controller ));
         menu.add( Demo03_Theme.createItem( "Flat", "Flat", new FlatTheme(), controller ));
         menu.add( Demo03_Theme.createItem( "small Flat", "small Flat", new NoStackTheme( new FlatTheme() ), controller ));
-        
+        */
         return menu;
 	}
 	
@@ -128,7 +131,7 @@ public class Demo06_YourOwnTitle {
             Color dark = change( background, -35 );
             Color bright = change( background, 35 );
             
-            DefaultDockTitle title = new DefaultDockTitle( dockable, version );
+            BasicDockTitle title = new BasicDockTitle( dockable, version );
             title.setActiveLeftColor( dark );
             title.setActiveRightColor( bright );
             title.setActiveTextColor( Color.BLACK );
