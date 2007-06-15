@@ -1,14 +1,8 @@
 package bibliothek.gui.dock.control;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Window;
+import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -24,8 +18,6 @@ import javax.swing.event.MouseInputListener;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.ActionPopup;
-import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.event.DockAdapter;
 import bibliothek.gui.dock.event.DockControllerAdapter;
 import bibliothek.gui.dock.event.DockTitleEvent;
@@ -251,7 +243,11 @@ public class DefaultDockRelocator extends DockRelocator{
         if( dockable.getDockParent() == null )
             return;
         
-        if( pressPoint == null && e.getButton() == MouseEvent.BUTTON1){
+        int ex = e.getModifiersEx();
+        int onmask = MouseEvent.BUTTON1_DOWN_MASK;
+        int offmask = MouseEvent.BUTTON2_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK;
+        
+        if( pressPoint == null && ((ex & (onmask | offmask)) == onmask ) ){
             pressPoint = e.getPoint();
             e.consume();
         }
@@ -354,6 +350,18 @@ public class DefaultDockRelocator extends DockRelocator{
      * if <code>title</code> is not <code>null</code> 
      */
     protected void dragMouseReleased( MouseEvent e, DockTitle title, Dockable dockable ) {
+        int offmask = MouseEvent.BUTTON1_DOWN_MASK |
+            MouseEvent.BUTTON2_DOWN_MASK |
+            MouseEvent.BUTTON3_DOWN_MASK;
+        
+        if( (e.getModifiersEx() & offmask) == 0 ){
+            EventQueue.invokeLater( new Runnable(){
+                public void run() {
+                    onMove = false;
+                }
+            });
+        }
+        
         if( !onMove ){
             titleDragCancel();
             return;
@@ -383,7 +391,6 @@ public class DefaultDockRelocator extends DockRelocator{
         
         movingTitleWindow = null;
         pressPoint = null;
-        onMove = false;
     }
     
     /**
@@ -400,7 +407,6 @@ public class DefaultDockRelocator extends DockRelocator{
         
         movingTitleWindow = null;
         pressPoint = null;
-        onMove = false;
     }
     
     
@@ -445,6 +451,7 @@ public class DefaultDockRelocator extends DockRelocator{
         private Map<Dockable, SingleMouseDockableListener> listeners =
             new HashMap<Dockable, SingleMouseDockableListener>();
         
+        @Override
         public void dockableRegistered( DockController controller, Dockable dockable ) {
             if( !listeners.containsKey( dockable )){
                 SingleMouseDockableListener listener = new SingleMouseDockableListener( dockable );
@@ -453,6 +460,7 @@ public class DefaultDockRelocator extends DockRelocator{
             }
         }
         
+        @Override
         public void dockableUnregistered( DockController controller, Dockable dockable ) {
             SingleMouseDockableListener listener = listeners.remove( dockable );
             if( listener != null ){

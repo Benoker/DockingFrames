@@ -174,7 +174,7 @@ public class PopupController implements DockRegisterListener{
 
         @Override
         protected boolean isEnabled() {
-            return !controller.getRelocator().isOnMove();
+            return true;
         }
     }
 }

@@ -106,7 +106,7 @@ public abstract class MouseFocusObserver implements DockControllerListener {
     
     /**
      * Asks all {@link FocusVetoListener} through their method
-     * {@link FocusVetoListener#vetoFocus(FocusController, DockTitle)}
+     * {@link FocusVetoListener#vetoFocus(MouseFocusObserver, DockTitle)}
      * whether they want cancel a call to the {@link DockController}.
      * @param title the title which was hit by the mouse
      * @return <code>true</code> if at least one veto was made,
@@ -122,7 +122,7 @@ public abstract class MouseFocusObserver implements DockControllerListener {
     
     /**
      * Asks all {@link FocusVetoListener} through their method
-     * {@link FocusVetoListener#vetoFocus(FocusController, Dockable)}
+     * {@link FocusVetoListener#vetoFocus(MouseFocusObserver, Dockable)}
      * whether they want cancel a call to the {@link DockController}.
      * @param dockable the Dockable which was hit by the mouse
      * @return <code>true</code> if at least one veto was made,
