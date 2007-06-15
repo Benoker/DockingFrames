@@ -4,10 +4,8 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.JComponent;
 import javax.swing.JWindow;
@@ -38,7 +36,7 @@ public class DefaultDockRelocator extends DockRelocator{
     private TitleWindow movingTitleWindow;
     /** the point where the mouse was pressed on the currently dragged title */
     private Point pressPoint;
-	
+    
 	/**
 	 * Creates a new manager.
 	 * @param controller the controller whose dockables are moved
@@ -70,6 +68,20 @@ public class DefaultDockRelocator extends DockRelocator{
      */
     protected void executePut( Dockable dockable, DockStation station ){
         onPut = true;
+        final Set<DockTitle> oldTitles = new HashSet<DockTitle>();
+        
+        DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
+            private DockTitle exclude = movingTitleWindow == null ? null : movingTitleWindow.title;
+            
+            @Override
+            public void handleDockable( Dockable dockable ) {
+                for( DockTitle title : dockable.listBindedTitles() ){
+                    if( title != exclude )
+                        oldTitles.add( title );
+                }
+            }
+        });
+        
         DockController controller = getController();
         controller.getRegister().setStalled( true );
         try{
@@ -81,7 +93,7 @@ public class DefaultDockRelocator extends DockRelocator{
                 fireDockableDrag( dockable, station );
                 parent.drag( dockable );
                 station.drop();
-                controller.updateChildrenTitle( dockable );
+                controller.rebindTitles( dockable, oldTitles );
                 fireDockablePut( dockable, station );
             }
             else{

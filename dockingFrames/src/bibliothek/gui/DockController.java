@@ -43,11 +43,7 @@ import bibliothek.gui.dock.DockAcceptance;
 import bibliothek.gui.dock.IconManager;
 import bibliothek.gui.dock.SingleParentRemover;
 import bibliothek.gui.dock.accept.MultiDockAcceptance;
-import bibliothek.gui.dock.action.ActionGuard;
-import bibliothek.gui.dock.action.ActionOffer;
-import bibliothek.gui.dock.action.ActionPopupSuppressor;
-import bibliothek.gui.dock.action.DefaultActionOffer;
-import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.control.DefaultDockRelocator;
 import bibliothek.gui.dock.control.DefaultMouseFocusObserver;
@@ -502,30 +498,30 @@ public class DockController {
     }
         
     /**
-     * Rebinds all titles of the children of <code>dockable</code>. This action
-     * ensures that the titles have the correct {@link DockActionSource}. This
-     * method must only be called if the normal register/unregister mechanism is
+     * Checks all titles of <code>dockable</code> and its children. If a title
+     * is also in the set <code>check</code>, than its {@link DockTitle#unbind() unbind}
+     * and {@link DockTitle#bind() bind}-methods are called.<br>
+     * This action ensures that the titles have the correct {@link DockActionSource}.
+     * This method must only be called if the normal register/unregister mechanism is
      * disabled. This case happens only if a Dockable is dragged.
-     * @param dockable a DockStation whose children will be updated
+     * @param dockable the Dockable whose titles and whose children's titles will be rebinded
+     * @param check the set of titles which might be rebinded
      */
-    public void updateChildrenTitle( Dockable dockable ){
-    	DockStation station = dockable.asDockStation();
-    	if( station != null ){
-    		for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
-    			DockUtilities.visit( station.getDockable(i), new DockUtilities.DockVisitor(){
-    				@Override
-    				public void handleDockable(Dockable dockable) {
-    					DockTitle[] titles = dockable.listBindedTitles();
-    					if( titles != null ){
-    						for( DockTitle title : titles ){
-    							dockable.unbind( title );
-    							dockable.bind( title );
-    						}
-    					}
+    public void rebindTitles( Dockable dockable, final Set<DockTitle> check ){
+    	DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
+    		@Override
+    		public void handleDockable(Dockable dockable) {
+    			DockTitle[] titles = dockable.listBindedTitles();
+    			if( titles != null ){
+    				for( DockTitle title : titles ){
+                        if( check.contains( title )){
+                            dockable.unbind( title );
+                            dockable.bind( title );
+                        }
     				}
-    			});
+    			}
     		}
-    	}
+    	});
     }
         
     /**
