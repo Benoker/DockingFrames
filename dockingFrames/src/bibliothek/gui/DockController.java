@@ -26,32 +26,43 @@
 
 package bibliothek.gui;
 
-import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
-import java.util.*;
+import java.awt.Component;
+import java.awt.KeyboardFocusManager;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 
 import javax.swing.FocusManager;
-import javax.swing.JComponent;
-import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
-import javax.swing.event.MouseInputAdapter;
-import javax.swing.event.MouseInputListener;
 
-import bibliothek.gui.dock.*;
+import bibliothek.gui.dock.DockAcceptance;
+import bibliothek.gui.dock.IconManager;
+import bibliothek.gui.dock.SingleParentRemover;
 import bibliothek.gui.dock.accept.MultiDockAcceptance;
-import bibliothek.gui.dock.action.*;
+import bibliothek.gui.dock.action.ActionGuard;
+import bibliothek.gui.dock.action.ActionOffer;
+import bibliothek.gui.dock.action.ActionPopupSuppressor;
+import bibliothek.gui.dock.action.DefaultActionOffer;
+import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
+import bibliothek.gui.dock.control.DefaultDockRelocator;
+import bibliothek.gui.dock.control.DefaultMouseFocusObserver;
+import bibliothek.gui.dock.control.DockRegister;
+import bibliothek.gui.dock.control.DockRelocator;
+import bibliothek.gui.dock.control.FocusController;
+import bibliothek.gui.dock.control.MouseFocusObserver;
+import bibliothek.gui.dock.control.PopupController;
 import bibliothek.gui.dock.event.DockAdapter;
 import bibliothek.gui.dock.event.DockControllerListener;
+import bibliothek.gui.dock.event.DockRegisterListener;
 import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleManager;
-import bibliothek.gui.dock.title.DockTitleVersion;
-import bibliothek.gui.dock.title.MovingTitleGetter;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
 
@@ -67,38 +78,22 @@ import bibliothek.gui.dock.util.DockUtilities;
  * @author Benjamin Sigg
  */
 public class DockController {
-	/** the known stations */
-    private List<DockStation> stations = new ArrayList<DockStation>();
-    /** the known dockables */
-    private List<Dockable> dockables = new ArrayList<Dockable>();
-
+	/** the known dockables and DockStations */
+	private DockRegister register;
+	
+	/** a manager handling drag and drop */
+	private DockRelocator relocator;
+	
     /** the Dockable which has currently the focus, can be <code>null</code> */
     private Dockable focusedDockable = null;
     
-    /** an observer of the stations */
-    private StationListener stationListener = new StationListener();
     /** observer of this controller */
     private List<DockControllerListener> listeners = new ArrayList<DockControllerListener>();
-    
-    /** <code>true</code> as long as the user drags a title or a Dockable */
-    private boolean onMove = false;
-    /** <code>true</code> while a drag and drop-operation is performed */
-    private boolean onPut = false;
-    /** how many pixels the mouse must be moved until a title is dragged */
-    private int dragDistance = 10;
-    /** Whether a drag event can only be initialiced by dragging a title or not */
-    private boolean dragOnlyTitel = false;
-    /** the current destination of a dragged dockable */
-    private DockStation dragStation;
-    /** a window painting a title onto the screen */
-    private TitleWindow movingTitleWindow;
-    /** the point where the mouse was pressed on the currently dragged title */
-    private Point pressPoint;
-    
+        
     /** <code>true</code> while the controller actively changes the focus */
     private boolean onFocusing = false;
     /** a special controller listening to AWT-events and changing the focused dockable */
-    private FocusController focusController;
+    private MouseFocusObserver focusObserver;
     
     /** an observer of the {@link DockTitle} */
     private TitleListener titleListener = new TitleListener();
@@ -106,6 +101,7 @@ public class DockController {
     private Map<DockTitle, Dockable> activeTitles = new HashMap<DockTitle, Dockable>();
     /** a source for {@link DockTitle} */
     private DockTitleManager dockTitles = new DockTitleManager( this );
+    
     /** the set of icons used with this controller */
     private IconManager icons = new IconManager();
     
@@ -137,12 +133,49 @@ public class DockController {
      * Creates a new controller. 
      */
     public DockController(){
-    	addDockControllerListener( titleListener );
-        addDockControllerListener( new MouseDockableListener() );
-        addDockControllerListener( stationListener );
-
+    	this( true );
+    }
+    
+    /**
+     * Creates a new controller but does not initiate the properties of this
+     * controller if not wished. Clients should call the method 
+     * {@link #initiate()} if the pass <code>false</code> to this constructor.
+     * Otherwise the behavior of this controller is unspecified.
+     * @param initiate <code>true</code> if all properties should be initiated
+     */
+    protected DockController( boolean initiate ){
+    	if( initiate ){
+    		initiate();
+    	}
+    }
+    
+    /**
+     * Initializes all properties of this controller. This method should be
+     * called only once. This method can be called by a subclass if the 
+     * subclass used {@link #DockController(boolean)} with an argument <code>false</code>.
+     * @see #createRegister()
+     * @see #createRelocator()
+     * @see #createDefaultActionOffer()
+     * @see #createMouseFocusObserver()
+     * @see #createActionViewConverter()
+     * @see #createFocusController()
+     * @see #createPopupController()
+     */
+    protected final void initiate(){
+    	register = createRegister();
+    	DockRegisterListener focus = createFocusController();
+    	if( focus != null )
+    		register.addDockRegisterListener( focus );
+    	
+    	DockRegisterListener popup = createPopupController();
+    	if( popup != null )
+    		register.addDockRegisterListener( popup );
+    	
+		register.addDockRegisterListener( titleListener );
+    	
+    	relocator = createRelocator();
         defaultActionOffer = createDefaultActionOffer();
-        focusController = createFocusController();
+        focusObserver = createMouseFocusObserver();
         actionViewConverter = createActionViewConverter();
         
         DockUI.getDefaultDockUI().fillIcons( icons );
@@ -155,28 +188,76 @@ public class DockController {
      * if this controller is no longer needed.
      */
     public void kill(){
-	    focusController.kill();
-        
-        List<DockStation> stations = new ArrayList<DockStation>( this.stations );
-        for( DockStation station : stations )
-            remove( station );
+	    focusObserver.kill();
+	    register.kill();
+    }
+    
+    /**
+     * Creates a new register for this controller.
+     * @return the new register
+     */
+    protected DockRegister createRegister(){
+    	return new DockRegister( this );
+    }
+    
+    /**
+     * Creates a new relocator for this controller.
+     * @return the relocator
+     */
+    protected DockRelocator createRelocator(){
+    	return new DefaultDockRelocator( this );
+    }
+    
+    /**
+     * Creates a listener which will observe all stations to ensure that
+     * the focused {@link Dockable} is always visible.
+     * @return the listener or <code>null</code>
+     */
+    protected DockRegisterListener createFocusController(){
+    	return new FocusController( this );
+    }
+    
+    /**
+     * Creates a listener which will open a popup-menu for each title
+     * or dockable known to this controller.
+     * @return the new listener or <code>null</code>
+     */
+    protected DockRegisterListener createPopupController(){
+    	return new PopupController( this );
     }
     
     /**
      * Creates the focus-controller of this controller.
      * @return the controller, not <code>null</code>
      */
-    protected FocusController createFocusController(){
-        return new DefaultFocusController( this );
+    protected MouseFocusObserver createMouseFocusObserver(){
+        return new DefaultMouseFocusObserver( this );
     }
     
     /**
      * Gets the current focus-controller
      * @return the controller
      */
-    public FocusController getFocusController() {
-        return focusController;
+    public MouseFocusObserver getFocusObserver() {
+        return focusObserver;
     }
+    
+    /**
+     * Gets the set of {@link Dockable Dockables} and {@link DockStation DockStations}
+     * known to this controller.
+     * @return the set of elements
+     */
+    public DockRegister getRegister(){
+		return register;
+	}
+    
+    /**
+     * Gets the manager for handling drag and drop operations.
+     * @return the manager
+     */
+    public DockRelocator getRelocator(){
+		return relocator;
+	}
     
     /**
      * Creates the converter that will transform actions into views.
@@ -296,27 +377,6 @@ public class DockController {
     }
     
     /**
-     * Tells whether dockables can only be dragged through their title or not.
-     * @return <code>true</code> if a Dockable must be dragged through their
-     * titles, <code>false</code> if every part of the dockable can be
-     * catched by the mouse.
-     * @see #setDragOnlyTitel(boolean)
-     */
-    public boolean isDragOnlyTitel(){
-		return dragOnlyTitel;
-	}
-    
-    /**
-     * Tells whether dockables can only be dragged through their title or not. 
-     * @param dragOnlyTitel <code>true</code> if a Dockable must be dragged through its
-     * title, <code>false</code> if every part of the dockable can be
-     * grabbed by the mouse.
-     */
-    public void setDragOnlyTitel( boolean dragOnlyTitel ){
-		this.dragOnlyTitel = dragOnlyTitel;
-	}
-    
-    /**
      * Gets the factory for a {@link DockActionSource} which is used
      * if no other offer was {@link ActionOffer#interested(Dockable) interested}
      * in a {@link Dockable}. 
@@ -378,8 +438,7 @@ public class DockController {
     		theme.install( this );
     		
     		// update only those station which are registered to this controller
-    		List<DockStation> currentStations = new ArrayList<DockStation>( stations );
-    		for( DockStation station : currentStations ){
+    		for( DockStation station : register.listDockStations() ){
     			if( station.getController() == this ){
     				station.updateTheme();
     			}
@@ -406,91 +465,42 @@ public class DockController {
 	}
     
     /**
-     * Tells whether the user has currently grabbed a dockable and moves
-     * the dockable around.
-     * @return <code>true</code> if a Dockable is currently dragged
+     * Adds a station to this controller. The controller allows the user to
+     * drag and drop children from and to <code>station</code>. If
+     * the children of <code>station</code> are stations itself, then
+     * they will be added automatically
+     * @param station the new station
      */
-    public boolean isOnMove(){
-        return onMove;
+    public void add( DockStation station ){
+    	register.add( station );
     }
     
     /**
-     * Tells whether this controller currently puts a Dockable. A Dockable
-     * is put as soon as the user releases the mouse.
-     * @return <code>true</code> if a Dockable is moved
+     * Removes a station which was managed by this controller.
+     * @param station the station to remove
      */
-    public boolean isOnPut() {
-        return onPut;
+    public void remove( DockStation station ){
+        register.remove( station );
     }
     
     /**
-     * Searches a station which can become the parent of <code>dockable</code> 
-     * if the mouse is released at <code>mouseX/mouseY</code>.
-     * @param mouseX x-coordinate of the mouse on the screen
-     * @param mouseY y-coordinate of the mouse on the screen
-     * @param titleX x-coordinate of the dragged title or mouseX
-     * @param titleY y-coordinate of the dragged title or mouseY
-     * @param dockable a Dockable which is dragged
-     * @return the new parent of <code>dockable</code> or <code>null</code>
+     * Gest the number of stations registered at this controller.
+     * @return the number of stations
+     * @see #add(DockStation)
      */
-    protected DockStation preparePut( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ){
-        List<DockStation> list = listStationsOrdered( mouseX, mouseY, dockable );
+    public int getStationCount(){
+        return register.getStationCount();
+    }
+    
+    /**
+     * Gets the station at the specified position.
+     * @param index the location
+     * @return the station
+     */
+    public DockStation getStation( int index ){
+        return register.getStation( index );
+    }
         
-        for( DockStation station : list ){   
-            if( dockable.getDockParent() == station ){
-                // just a move
-                if( station.prepareMove( mouseX, mouseY, titleX, titleY, dockable ) ){
-                    return station;
-                }
-            }
-            else{
-                // perhaps a drop
-                if( acceptance == null || acceptance.accept( station, dockable )){
-                    if( station.accept( dockable ) && dockable.accept( station ) ){
-                        if( station.prepareDrop( mouseX, mouseY, titleX, titleY, dockable )){
-                            return station;
-                        }
-                    }
-                }
-            }
-        }
-        
-        return null;
-    }
-    
-    /**
-     * Executes a drag and drop event. <code>dockable</code> is removed
-     * from its parent (if the parent is not <code>station</code>) and
-     * dropped to <code>station</code>. The new location of
-     * <code>dockable</code> has to be precomputed by <code>station</code>.
-     * @param dockable a {@link Dockable} which is moved
-     * @param station the new parent of <code>dockable</code>
-     */
-    protected void executePut( Dockable dockable, DockStation station ){
-        onPut = true;
-        try{
-            if( station == null )
-                throw new IllegalStateException( "There is no station to put the dockable." );
-            
-            DockStation parent = dockable.getDockParent();
-            if( parent != station){
-                fireDockableDrag( dockable, station );
-                parent.drag( dockable );
-                station.drop();
-                updateChildrenTitle( dockable );
-                fireDockablePut( dockable, station );
-            }
-            else{
-                fireDockableDrag( dockable, parent );
-                parent.move();
-                fireDockablePut( dockable, parent );
-            }
-        }
-        finally{
-            onPut = false;
-        }
-    }
-    
     /**
      * Rebinds all titles of the children of <code>dockable</code>. This action
      * ensures that the titles have the correct {@link DockActionSource}. This
@@ -498,15 +508,14 @@ public class DockController {
      * disabled. This case happens only if a Dockable is dragged.
      * @param dockable a DockStation whose children will be updated
      */
-    protected void updateChildrenTitle( Dockable dockable ){
+    public void updateChildrenTitle( Dockable dockable ){
     	DockStation station = dockable.asDockStation();
     	if( station != null ){
     		for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
     			DockUtilities.visit( station.getDockable(i), new DockUtilities.DockVisitor(){
     				@Override
     				public void handleDockable(Dockable dockable) {
-    					DockStation parent = dockable.getDockParent();
-    					DockTitle[] titles = parent.getDockTitles( dockable );
+    					DockTitle[] titles = dockable.listBindedTitles();
     					if( titles != null ){
     						for( DockTitle title : titles ){
     							dockable.unbind( title );
@@ -518,245 +527,7 @@ public class DockController {
     		}
     	}
     }
-    
-    /**
-     * Makes a list of all stations which are visible and contain the point
-     * <code>x/y</code>. The stations are ordered by their visibility.
-     * @param x x-coordinate on the screen
-     * @param y y-coordinate on the screen
-     * @param moved a Dockable which is dragged. If this is a 
-     * station, then no child of the station will be in the resulting list.
-     * @return a list of stations
-     */
-    protected List<DockStation> listStationsOrdered( int x, int y, Dockable moved ){
-        List<DockStation> result = new LinkedList<DockStation>();
-        DockStation movedStation = moved.asDockStation();
-                
-        for( DockStation station : stations ){   
-            if( movedStation == null || (!DockUtilities.isAnchestor( movedStation, station ) && movedStation != station )){
-                if( station.isStationVisible() && station.getStationBounds().contains( x, y )){
-                    int index = 0;
-                    
-                    // insertion sort
-                    for( DockStation resultStation : result ){
-                        int compare = compare( resultStation, station );
-                        if( compare < 0 )
-                            break;
-                        else
-                            index++;
-                    }
-                    
-                    result.add( index, station );
-                }
-            }
-        }        
-        return result;
-    }    
-    
-    /**
-     * Tries to decide which station is over the other stations.
-     * @param a the first station
-     * @param b the second station
-     * @return a number less/equal/greater than zero if
-     * a is less/equal/more visible than b. 
-     */
-    protected int compare( DockStation a, DockStation b ){
-        if( DockUtilities.isAnchestor( a, b ))
-            return -1;
         
-        if( DockUtilities.isAnchestor( b, a ))
-            return 1;
-        
-        if( a.canCompare( b ))
-            return a.compare( b );
-        
-        if( b.canCompare( a ))
-            return -b.compare( a );
-        
-        Dockable dockA = a.asDockable();
-        Dockable dockB = b.asDockable();
-        
-        if( dockA != null && dockB != null ){
-            Component compA = dockA.getComponent();
-            Component compB = dockB.getComponent();
-            
-            Window windowA = SwingUtilities.getWindowAncestor( compA );
-            Window windowB = SwingUtilities.getWindowAncestor( compB );
-            
-            if( windowA != null && windowB != null ){
-                if( isParent( windowA, windowB ))
-                    return -1;
-                
-                if( isParent( windowB, windowA ))
-                    return 1;
-            }
-        }
-        return 0;
-    }
-        
-    /**
-     * Tells whether <code>parent</code> is really a parent of <code>child</code>
-     * or not.
-     * @param parent a window which may be an anchestor  of <code>child</code>
-     * @param child a window which may be child of <code>parent</code>
-     * @return <code>true</code> if <code>parent</code> is an
-     * anchestor of <code>child</code>
-     */
-    private boolean isParent( Window parent, Window child ){
-        Window temp = child.getOwner();
-        while( temp != null ){
-            if( temp == parent )
-                return true;
-            
-            temp = temp.getOwner();
-        }
-        
-        return false;
-    }
-    
-    /**
-     * Adds a station to this controller. The controller allows the user to
-     * drag and drop children from and to <code>station</code>. If
-     * the children of <code>station</code> are stations itself, then
-     * they will be added automatically
-     * @param station the new station
-     */
-    public void add( DockStation station ){
-    	if( station == null )
-            throw new NullPointerException( "Station must not be null" );
-    	
-        if( !stations.contains( station )){
-            DockController other = station.getController();
-            if( other != null && other != this ){
-                other.remove( station );
-            }
-            
-            DockUtilities.visit( station, new DockUtilities.DockVisitor(){
-                @Override
-                public void handleDockable( Dockable dockable ) {
-                    register( dockable );
-                }
-                @Override
-                public void handleDockStation( DockStation station ) {
-                    register( station );
-                }
-            });
-        }
-    }
-    
-    /**
-     * Removes a station which was managed by this controller.
-     * @param station the station to remove
-     */
-    public void remove( DockStation station ){
-        if( stations.contains( station )){
-            Dockable dock = station.asDockable();
-            if( dock != null ){
-                DockStation parent = dock.getDockParent();
-                if( parent != null )
-                    parent.drag( dock );
-            }
-            
-            DockUtilities.visit( station, new DockUtilities.DockVisitor(){
-                @Override
-                public void handleDockable( Dockable dockable ) {
-                    unregister( dockable );
-                }
-                @Override
-                public void handleDockStation( DockStation station ) {
-                    unregister( station );
-                }
-            });
-        }
-    }
-    
-    /**
-     * Gets a list of stations which have no parent and are therefore
-     * the roots of the dock-trees.
-     * @return the roots
-     */
-    public DockStation[] listRoots(){
-        List<DockStation> list = new LinkedList<DockStation>();
-        for( DockStation station : stations ){
-            Dockable dockable = station.asDockable();
-            if( dockable == null || dockable.getDockParent() == null )
-                list.add( station );
-        }
-        
-        return list.toArray( new DockStation[ list.size() ] );
-    }
-    
-    /**
-     * Registers <code>dockable</code>, the controller will know the titles
-     * of <code>dockable</code> to allow drag and drop operations.<br>
-     * Clients and subclasses should not call this method.
-     * @param dockable a new Dockable
-     */
-    protected void register( Dockable dockable ){
-        if( !dockables.contains( dockable )){
-            fireDockableRegistering( dockable );
-            
-            dockables.add( dockable );
-            dockable.addDockableListener( titleListener );
-            dockable.setController( this );
-            
-            fireDockableRegistered( dockable );
-        }
-    }
-    
-    /**
-     * Unregisters <code>dockable</code>, the controller will no longer 
-     * support drag and drop for <code>dockable</code>.<br>
-     * Clients and subclasses should not call this method.
-     * @param dockable the element to remove
-     */
-    protected void unregister( Dockable dockable ){
-        if( dockables.remove( dockable ) ){
-            dockable.setController( null );
-            dockable.removeDockableListener( titleListener );
-            
-            fireDockableUnregistered( dockable );
-            
-            if( focusedDockable == dockable )
-                setFocusedDockable( null, false );
-        }
-    }
-    
-    /**
-     * Registers <code>station</code>, this controller will support
-     * drag and drop for <code>station</code>.<br>
-     * Clients and subclasses should not call this method.
-     * @param station the station to add
-     */
-    protected void register( DockStation station ){
-        if( !stations.contains( station )){
-        	fireDockStationRegistering( station );
-            
-            stations.add( station );
-            station.addDockStationListener( stationListener );
-            station.setController( this );
-            station.updateTheme();
-            
-            fireDockStationRegistered( station );
-        }
-    }
-    
-    /**
-     * Unregisters <code>station</code>, this controller will no longer
-     * support drag and drop operations for <code>station</code>.<br>
-     * Clients and subclasses should not call this method.
-     * @param station the station to remove
-     */
-    protected void unregister( DockStation station ){
-        if( stations.remove( station ) ){
-            station.setController( null );
-            station.removeDockStationListener( stationListener );
-            
-            fireDockStationUnregistered( station );
-        }
-    }
-
-    
     /**
      * Tells whether one of the methods which change the focus is currently
      * running, or not. If the result is <code>true</code>, none should
@@ -829,13 +600,14 @@ public class DockController {
 	            while( dockable != null ){
 	                DockStation station = dockable.getDockParent();
 	                if( station != null ){
-	                    DockTitle[] titles = station.getDockTitles( dockable );
+	                    DockTitle[] titles = dockable.listBindedTitles();
 	                    
 	                    for( DockTitle title : titles ){
 	                        station.changed( dockable, title, true );
 	                        activeTitles.put( title, dockable );
 	                    }
 	                    
+	                    station.setFrontDockable( dockable );
 	                    dockable = station.asDockable();
 	                }
 	                else
@@ -873,6 +645,17 @@ public class DockController {
     }
     
     /**
+     * Tells whether <code>title</code> is binded to its dockable or not. The
+     * behavior is unspecified if the dockable of <code>title</code> is
+     * unknown to this controller.
+     * @param title the title which might be binded
+     * @return <code>true</code> if the title is binded
+     */
+    public boolean isBinded( DockTitle title ){
+    	return titleListener.isBinded( title );
+    }
+    
+    /**
      * Ensures that a title or a {@link Component} of the currently
      * {@link #getFocusedDockable() focused Dockable} really
      * has the focus.
@@ -896,7 +679,7 @@ public class DockController {
                 element.getDockParent().setFrontDockable( element );
             }
         
-            DockTitle[] titles = getBindedTitlesOf( focusedDockable );
+            DockTitle[] titles = focusedDockable.listBindedTitles();
             Component focused = FocusManager.getCurrentManager().getFocusOwner();
             if( focused != null ){
                 if( SwingUtilities.isDescendingFrom( focused, focusedDockable.getComponent() ) )
@@ -926,19 +709,6 @@ public class DockController {
     }
     
     /**
-     * Gets a list of titles which are binded to <code>dockable</code>. Note
-     * that this method only returns the titles managed by this controller.
-     * @param dockable the owner of some titles
-     * @return a list of titles
-     */
-    public DockTitle[] getBindedTitlesOf( Dockable dockable ){
-        if( dockable.getDockParent() == null )
-            return new DockTitle[0];
-        else
-            return dockable.getDockParent().getDockTitles( dockable );
-    }
-    
-    /**
      * Gets the manager of all titles on this controller
      * @return the manager
      */
@@ -952,24 +722,6 @@ public class DockController {
      */
     public IconManager getIcons() {
         return icons;
-    }
-    
-    /**
-     * Gest the number of stations registered at this controller.
-     * @return the number of stations
-     * @see #add(DockStation)
-     */
-    public int getStationCount(){
-        return stations.size();
-    }
-    
-    /**
-     * Gets the station at the specified position.
-     * @param index the location
-     * @return the station
-     */
-    public DockStation getStation( int index ){
-        return stations.get( index );
     }
     
     /**
@@ -1040,36 +792,6 @@ public class DockController {
         return offer.getSource( dockable, dockable.getActionOffers(), guards.toArray( new DockActionSource[guards.size()] ),
         		parentSource, parents.toArray( new DockActionSource[ parents.size() ] ));
     }
-        
-    /**
-     * Gets a window which shows a title of <code>dockable</code>. The
-     * title on the window will be binded to <code>dockable</code>.
-     * @param dockable the Dockable for which a title should be shown
-     * @param title a title which is grabbed by the mouse, can be <code>null</code>
-     * @return a window or <code>null</code>
-     */
-    private TitleWindow getTitleWindow( Dockable dockable, DockTitle title ){
-        MovingTitleGetter movingTitleGetter = getTheme().getMovingTitleGetter( this );
-        DockTitle windowTitle = title;
-        
-        if( windowTitle == null )
-            windowTitle = movingTitleGetter.get( this, dockable );
-        else
-            windowTitle = movingTitleGetter.get( this, title );
-        
-        if( windowTitle == null )
-            return null;
-        
-    	Window parent;
-        if( title == null )
-            parent = SwingUtilities.getWindowAncestor( dockable.getComponent() );
-        else
-            parent = SwingUtilities.getWindowAncestor( title.getComponent() );
-        
-        TitleWindow window = new TitleWindow( parent, windowTitle );
-        window.pack();
-        return window;
-    }
     
     /**
      * Adds an observer to this controller.
@@ -1077,6 +799,8 @@ public class DockController {
      */
     public void addDockControllerListener( DockControllerListener listener ){
         listeners.add( listener );
+        register.addDockRegisterListener( listener );
+        relocator.addDockRelocationManagerListener( listener );
     }
     
     /**
@@ -1085,6 +809,8 @@ public class DockController {
      */
     public void removeDockControllerListener( DockControllerListener listener ){
         listeners.remove( listener );
+        register.removeDockRegisterListener( listener );
+        relocator.removeDockRelocationManagerListener( listener );
     }
     
     /**
@@ -1096,60 +822,6 @@ public class DockController {
         return listeners.toArray( new DockControllerListener[ listeners.size() ]);
     }
 
-    /**
-     * Informs all listeners that a {@link Dockable} will be registered.
-     * @param dockable the Dockable which will be registered
-     */
-    protected void fireDockableRegistering( Dockable dockable ){
-        for( DockControllerListener listener : listDockControllerListener() )
-            listener.dockableRegistering( this, dockable );
-    }
-    
-    /**
-     * Informs all listeners that a {@link Dockable} has been registered.
-     * @param dockable the registered Dockable
-     */
-    protected void fireDockableRegistered( Dockable dockable ){
-        for( DockControllerListener listener : listDockControllerListener() )
-            listener.dockableRegistered( this, dockable );
-    }
-
-    /**
-     * Informs all listeners that a {@link Dockable} has been
-     * unregistered.
-     * @param dockable the unregistered Dockable
-     */
-    protected void fireDockableUnregistered( Dockable dockable ){
-        for( DockControllerListener listener : listDockControllerListener() )
-            listener.dockableUnregistered( this, dockable );
-    }
-
-    /**
-     * Informs all listeners that <code>station</code> will be registered.
-     * @param station the new station
-     */
-    protected void fireDockStationRegistering( DockStation station ){
-        for( DockControllerListener listener : listDockControllerListener() )
-            listener.dockStationRegistering( this, station );
-    }
-    
-    /**
-     * Informs all listeners that <code>station</code> has been registered.
-     * @param station the new station
-     */
-    protected void fireDockStationRegistered( DockStation station ){
-        for( DockControllerListener listener : listDockControllerListener() )
-            listener.dockStationRegistered( this, station );
-    }
-    
-    /**
-     * Informs all listeners that <code>station</code> has been unregistered.
-     * @param station the unregistered station
-     */
-    protected void fireDockStationUnregistered( DockStation station ){
-        for( DockControllerListener listener : listDockControllerListener() )
-            listener.dockStationUnregistered( this, station );
-    }
     
     /**
      * Informs all listeners that <code>title</code> has been binded
@@ -1174,27 +846,6 @@ public class DockController {
     }
     
     /**
-     * Informs all listeners that <code>dockable</code> will be dragged.
-     * @param dockable the dragged Dockable
-     * @param station the parent of <code>dockable</code>
-     */
-    protected void fireDockableDrag( Dockable dockable, DockStation station ){
-        for( DockControllerListener listener : listDockControllerListener() )
-            listener.dockableDrag( this, dockable, station );
-    }
-    
-    /**
-     * Informs all listeners that <code>dockable</code> was dropped on
-     * <code>station</code>.
-     * @param dockable the dropped Dockable
-     * @param station the new owner of <code>dockable</code>
-     */
-    protected void fireDockablePut( Dockable dockable, DockStation station ){
-        for( DockControllerListener listener : listDockControllerListener() )
-            listener.dockablePut( this, dockable, station );
-    }
-    
-    /**
      * Informs all listeners that <code>dockable</code> has gained
      * the focus.
      * @param dockable the owner of the focus, may be <code>null</code>
@@ -1204,206 +855,27 @@ public class DockController {
             listener.dockableFocused( this, dockable );
     }
     
-    /**
-     * Invoked by the listeners of a title to start a drag and drop operation.
-     * @param e the initializing event
-     * @param title the grabbed title, can be <code>null</code> if
-     * <code>dockable</code> is not <code>null</code>
-     * @param dockable the grabbed Dockable, can be <code>null</code>
-     * if <code>title</code> is not <code>null</code>
-     */
-    protected void dragMousePressed( MouseEvent e, DockTitle title, Dockable dockable ) {
-        if( dockable == null )
-            dockable = title.getDockable();
-        
-        if( dockable.getDockParent() == null )
-            return;
-        
-        if( pressPoint == null && e.getButton() == MouseEvent.BUTTON1){
-            pressPoint = e.getPoint();
-        }
-        else if( pressPoint != null ){
-            titleDragCancel();
-        }
-        e.consume();
-    }
-    
-    /**
-     * Invoked while the user drags a title or Dockable.
-     * @param e the initializing event
-     * @param title the grabbed title, can be <code>null</code> if
-     * <code>dockable</code> is not <code>null</code>
-     * @param dockable the grabbed Dockable, can be <code>null</code>
-     * if <code>title</code> is not <code>null</code>
-     */
-    protected void dragMouseDragged( MouseEvent e, DockTitle title, Dockable dockable ) {
-        if( pressPoint == null )
-            return;
-        
-        if( dockable == null )
-            dockable = title.getDockable();
-        
-        if( dockable.getDockParent() == null )
-            return;
-        
-        e.consume();
-        Point mouse = e.getPoint();
-        SwingUtilities.convertPointToScreen( mouse, e.getComponent() );
-        
-        if( !onMove ){
-            // not yet free
-            if( !dockable.getDockParent().canDrag( dockable ))
-                return;
-            
-            int distance = Math.abs( e.getX() - pressPoint.x ) + Math.abs( e.getY() - pressPoint.y );
-            if( distance >= dragDistance ){
-                if( movingTitleWindow != null ){
-                    // That means, that an old window was not closed correctly
-                    movingTitleWindow.close();
-                    movingTitleWindow = null;
-                }
-                
-                movingTitleWindow = getTitleWindow( dockable, title );
-                if( movingTitleWindow != null ){
-                    updateTitleWindowPosition( mouse );
-                    movingTitleWindow.setVisible( true );
-                }
-                
-                onMove = true;
-            }
-        }
-        else{
-            if( movingTitleWindow != null )
-                updateTitleWindowPosition( mouse );
-            
-            DockStation next = preparePut( 
-                    mouse.x, mouse.y,
-                    mouse.x - pressPoint.x, mouse.y - pressPoint.y,
-                    dockable );
-            
-            if( next != null ){
-                next.draw();
-            }
-            
-            if( next != dragStation ){
-                if( dragStation != null ){
-                    dragStation.forget();
-                }
-                dragStation = next;
-            }
-        }
-    }
-    
-    /**
-     * Updates the location of the {@link #movingTitleWindow} according
-     * to the current location of the mouse.
-     * @param mouse the location of the mouse
-     */
-    private void updateTitleWindowPosition( Point mouse ){
-        int width = movingTitleWindow.getWidth();
-        int height = movingTitleWindow.getHeight();
-        
-        int delta = Math.min( width, height ) + 1;
-        
-        int px = Math.min( pressPoint.x, width );
-        int py = Math.min( pressPoint.y, height );
-        
-        movingTitleWindow.setLocation( mouse.x - px + delta, mouse.y - py + delta );
-    }
-    
-    /**
-     * Invoked while the user drags a title or Dockable and releases a mouse
-     * button.
-     * @param e the initializing event
-     * @param title the grabbed title, can be <code>null</code> if
-     * <code>dockable</code> is not <code>null</code>
-     * @param dockable the grabbed Dockable, can be <code>null</code>
-     * if <code>title</code> is not <code>null</code> 
-     */
-    protected void dragMouseReleased( MouseEvent e, DockTitle title, Dockable dockable ) {
-        if( !onMove ){
-            titleDragCancel();
-            return;
-        }
-        
-        if( dockable == null )
-            dockable = title.getDockable();
-        
-        if( dockable.getDockParent() == null )
-            return;
-        
-        e.consume();
-        
-        if( dockable == null )
-            dockable = title.getDockable();
-        
-        if( dragStation != null ){
-            Point mouse = e.getPoint();
-            SwingUtilities.convertPointToScreen( mouse, e.getComponent() );
-            
-            executePut( dockable, dragStation );
-            dragStation.forget();
-            dragStation = null;
-        }
-        
-        if( movingTitleWindow != null )
-            movingTitleWindow.close();
-        
-        movingTitleWindow = null;
-        pressPoint = null;
-        onMove = false;
-    }
-    
-    /**
-     * Cancels a drag and drop operation.
-     */
-    private void titleDragCancel(){
-        if( dragStation != null ){
-            dragStation.forget();
-            dragStation = null;
-        }
-        
-        if( movingTitleWindow != null )
-            movingTitleWindow.close();
-        
-        movingTitleWindow = null;
-        pressPoint = null;
-        onMove = false;
-    }
-    
+
     /**
      * Observers this controller and registers listeners to all new titles.
      */
     private class TitleListener extends DockAdapter{
-        /** a map telling which listener was added to which title */
-        private Map<DockTitle, MouseTitleListener> listeners =
-            new HashMap<DockTitle, MouseTitleListener>();
-        
-        /**
-         * Constructs a new listener
-         */
-        public TitleListener(){
-        	// do nothing
-        }
-        
+    	/** a set of all known titles */
+    	private Set<DockTitle> titles = new HashSet<DockTitle>();
+
         /**
          * Tells whether title is binded to its {@link Dockable} or not.
          * @param title the title whose state is searched
          * @return the state
          */
         public boolean isBinded( DockTitle title ){
-            return listeners.containsKey( title );
+            return titles.contains( title );
         }
         
         @Override
         public void titleBinded( Dockable dockable, DockTitle title ) {
-            if( !listeners.containsKey( title )){
-                MouseTitleListener listener = new MouseTitleListener( title );
-                listeners.put( title, listener );
-            
-                title.addMouseInputListener( listener );
-            }
-            
+        	titles.add( title );
+        	
             title.bind();
             fireTitleBinded( title, dockable );
             
@@ -1437,407 +909,37 @@ public class DockController {
         
         @Override
         public void titleUnbinded( Dockable dockable, DockTitle title ) {
-            MouseTitleListener listener = listeners.remove( title );
-            if( listener != null ){
-                title.removeMouseInputListener( listener );
-            }
-            
+            titles.remove( title );
             title.unbind();
             fireTitleUnbinded( title, dockable );
         }
 
+        @Override
+        public void dockableRegistering( DockController controller, Dockable dockable ){
+        	dockable.addDockableListener( this );
+        }
         
         @Override
         public void dockableRegistered( DockController controller, Dockable dockable ) {
-            DockStation parent = dockable.getDockParent();
-            if( parent != null ){
-                DockTitle[] titles = parent.getDockTitles( dockable );
-                for( DockTitle title : titles ){
-                    if( !listeners.containsKey( title )){
-                        MouseTitleListener listener = new MouseTitleListener( title );
-                        listeners.put( title, listener );
-                    
-                        title.addMouseInputListener( listener );
-                        title.bind();
-                        fireTitleBinded( title, dockable );
-                    }
+            DockTitle[] titles = dockable.listBindedTitles();
+            for( DockTitle title : titles ){
+                if( this.titles.add( title )){
+                    title.bind();
+                    fireTitleBinded( title, dockable );
                 }
             }
         }
 
         @Override
         public void dockableUnregistered( DockController controller, Dockable dockable ) {
-            // The station itself should unbind the titles, however, ensure
-            // that there are no listeners remaining
-            DockStation parent = dockable.getDockParent();
-            if( parent != null ){
-                DockTitle[] titles = parent.getDockTitles( dockable );
-                for( DockTitle title : titles ){
-                    if( listeners.containsKey( title )){
-                        MouseInputListener listener = listeners.remove( title );
-                        title.removeMouseInputListener( listener );
-                        
-                        title.unbind();
-                        fireTitleUnbinded( title, dockable );
-                    }
+            dockable.removeDockableListener( this );
+        	
+            DockTitle[] titles = dockable.listBindedTitles();
+            for( DockTitle title : titles ){
+                if( this.titles.remove( title ) ){
+                    title.unbind();
+                    fireTitleUnbinded( title, dockable );
                 }
-            }
-        }
-        
-        /**
-         * A {@link MouseListener} which is added to a {@link DockTitle}. This
-         * listener informs a controller as soon as the mouse grabs the
-         * title.
-         * @author Benjamin Sigg
-         */
-        private class MouseTitleListener extends MouseInputAdapter{
-            /** the observed title */
-            private DockTitle title;
-            
-            /**
-             * Creates a new listener
-             * @param title the title to observe
-             */
-            public MouseTitleListener( DockTitle title ){
-                this.title = title;
-            }
-            
-            @Override
-            public void mousePressed( MouseEvent e ){
-                if( e.isConsumed() )
-                    return;
-                dragMousePressed( e, title, null );
-            }
-            @Override
-            public void mouseReleased( MouseEvent e ) {
-                if( e.isConsumed() )
-                    return;
-                dragMouseReleased( e, title, null );
-            }
-            @Override
-            public void mouseDragged( MouseEvent e ) {
-                if( e.isConsumed() )
-                    return;
-                dragMouseDragged( e, title, null );
-            }
-        }
-    }
-    
-    /**
-     * A window which shows a single {@link DockTitle}.
-     * @author Benjamin Sigg
-     */
-    private class TitleWindow extends JWindow{
-        /** the title to display */
-        private DockTitle title;
-        /** whether the title was already binded when this window was constructed */
-        private boolean binded;
-        
-        /**
-         * Constructs a new window
-         * @param parent the parent of the window
-         * @param title the title to show, may be binded
-         */
-        public TitleWindow( Window parent, DockTitle title ){
-            super( parent );
-            
-            Container content = getContentPane();
-            content.setLayout( new GridLayout( 1, 1 ));
-            setFocusableWindowState( false );
-            
-            try{
-                setAlwaysOnTop( true );
-            }
-            catch( SecurityException ex ){
-                // ignore
-            }
-            
-            binded = titleListener.isBinded( title );
-
-            if( binded && title.getOrigin() != null ){
-                DockTitleVersion origin = title.getOrigin();
-                DockTitle replacement = title.getDockable().getDockTitle( origin );
-                if( replacement != null ){
-                    replacement.setOrientation( title.getOrientation() );
-                    title = replacement;
-                    binded = false;
-                }
-            }
-            
-            if( !binded ){
-                title.getDockable().bind( title );
-                title.changed( new DockTitleEvent( title.getDockable(), true ));
-                content.add( title.getComponent() );
-            }
-            else{
-                /* TODO find a way to use the preferred size */
-                Component c = title.getComponent();
-                final Dimension size = c.getSize();
-                final Image image = new BufferedImage( size.width, size.height, BufferedImage.TYPE_INT_ARGB );
-                Graphics graphics = image.getGraphics();
-                c.paint( graphics );
-                graphics.dispose();
-                
-                JComponent ground = new JComponent(){
-                    @Override
-                    public void paint( Graphics g ){
-                        g.drawImage( image, 0, 0, this );
-                        /*Component c = TitleWindow.this.title.getComponent();
-                        Dimension size = c.getSize();
-                        c.setSize( getWidth(), getHeight() );
-                        c.validate();
-                        c.paint( g );
-                        c.setSize( size );
-                        c.validate();*/
-                    }
-                    
-                    @Override
-                    public Dimension getPreferredSize() {
-                        return size;
-                        //return TitleWindow.this.title.getComponent().getPreferredSize();
-                    }
-                };
-                
-                content.add( ground );
-            }
-            
-            this.title = title;
-        }
-        
-        /**
-         * Gets the title which is painted on this window
-         * @return the title
-         */
-        public DockTitle getTitle() {
-            return title;
-        }
-        
-        /**
-         * Closes this window and ensures that the title has the same
-         * binding-state as it had at the time when this window was
-         * constructed. 
-         */
-        public void close(){
-            dispose();
-            
-            if( !binded ){
-                Dockable dockable = title.getDockable();
-                dockable.unbind(title);
-            }
-        }
-    }
-    
-    /**
-     * A listener to this controller. Adds a {@link MouseListener} to all
-     * {@link Dockable Dockables}. This second listener allows a popup-menu
-     * and connects the Dockables to the drag and drop mechanism.
-     */
-    private class MouseDockableListener extends DockAdapter{
-        /** tells which Dockable has which listener */
-        private Map<Dockable, SingleMouseDockableListener> listeners =
-            new HashMap<Dockable, SingleMouseDockableListener>();
-        
-        @Override
-        public void dockableRegistered( DockController controller, Dockable dockable ) {
-            if( !listeners.containsKey( dockable )){
-                SingleMouseDockableListener listener = new SingleMouseDockableListener( dockable );
-                dockable.addMouseInputListener( listener );
-                listeners.put( dockable, listener );
-            }
-        }
-        
-        @Override
-        public void dockableUnregistered( DockController controller, Dockable dockable ) {
-            SingleMouseDockableListener listener = listeners.remove( dockable );
-            if( listener != null ){
-                dockable.removeMouseInputListener( listener );
-            }
-        }
-        
-        /**
-         * A listener to a Dockable, shows a popup menu or lets the user
-         * drag and drop a Dockable.
-         * @author Benjamin Sigg
-         */
-        private class SingleMouseDockableListener extends ActionPopup{
-            /** the observed element */
-            private Dockable dockable;
-            
-            /**
-             * Constructs a new listener
-             * @param dockable the Dockable to observe
-             */
-            public SingleMouseDockableListener( Dockable dockable ){
-                super( true );
-                this.dockable = dockable;
-            }
-            
-            @Override
-            protected Dockable getDockable() {
-                return dockable;
-            }
-
-            @Override
-            protected DockActionSource getSource() {
-                return listOffers( dockable );
-            }
-
-            @Override
-            protected boolean isEnabled() {
-                return true;
-            }
-            
-            @Override
-            public void mousePressed( MouseEvent e ) {
-                if( !onMove )
-                    super.mousePressed(e);
-                
-                if( !e.isConsumed() ){
-                	if( !dragOnlyTitel )
-                		dragMousePressed( e, null, dockable );
-                }
-            }
-            @Override
-            public void mouseDragged( MouseEvent e ) {
-                if( !e.isConsumed() ){
-                	if( !dragOnlyTitel )
-                		dragMouseDragged( e, null, dockable );
-                }
-            }
-            @Override
-            public void mouseReleased( MouseEvent e ) {
-                if( !onMove )    
-                    super.mouseReleased(e);
-                
-                if( !e.isConsumed() ){
-                	if( !dragOnlyTitel )
-                		dragMouseReleased( e, null, dockable );
-                }
-            }
-        }
-    }
-    
-    /**
-     * A listener of this controller. Ensures that stations and
-     * dockables are known to the controller even if the tree of elements
-     * is changed.
-     * @author Benjamin Sigg
-     */
-    private class StationListener extends DockAdapter{
-        /** a set of Dockables which were removed during a drag and drop operation */
-        private Set<Dockable> removedOnPut = new HashSet<Dockable>();
-        /** a set of Dockable which were added during a drag and drop operation */
-        private Set<Dockable> addedOnPut = new HashSet<Dockable>();
-        
-        @Override
-        public void dockablePut( DockController controller, Dockable dockable, DockStation station ) {
-            for( Dockable d : removedOnPut )
-                removeDockable( d );
-            
-            for( Dockable d : addedOnPut )
-                addDockable( d );
-            
-            removedOnPut.clear();
-            addedOnPut.clear();
-        }
-        
-        @Override
-        public void dockableAdding( DockStation station, Dockable dockable ) {
-            dockable.setDockParent( station );
-            
-            if( isOnPut() ){
-                DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
-                    @Override
-                    public void handleDockable( Dockable dockable ) {
-                        addedOnPut.add( dockable );
-                        removedOnPut.remove( dockable );
-                    }
-                });
-            }
-            else{
-                addDockable( dockable );
-            }
-        }
-        
-        /**
-         * Adds a Dockable either as station or as pure Dockable to this
-         * controller.
-         * @param dockable the Dockable to register
-         */
-        private void addDockable( Dockable dockable ){
-            DockStation asStation = dockable.asDockStation();
-            
-            if( asStation != null )
-                add( asStation );
-            else
-                register( dockable );
-        }
-
-        @Override
-        public void dockableAdded( DockStation station, Dockable dockable ){
-            if( !isOnPut() ){
-                if( dockable == focusedDockable || focusedDockable == null )
-                    if( station.isVisible( dockable ))
-                        setFocusedDockable( dockable, true );
-            }
-        }
-        
-        @Override
-        public void dockableRemoving( DockStation station, Dockable dockable ) {
-            if( isOnPut() ){
-                DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
-                    @Override
-                    public void handleDockable( Dockable dockable ) {
-                        addedOnPut.remove( dockable );
-                        removedOnPut.add( dockable );
-                    }
-                });
-            }
-        }
-        
-        @Override
-        public void dockableRemoved( DockStation station, Dockable dockable ) {
-            dockable.setDockParent( null );
-            
-            if( !isOnPut() ){
-                removeDockable( dockable );
-            }
-        }
-        
-        /**
-         * Removes a Dockable either as station or as pure Dockable from
-         * this controller.
-         * @param dockable the Dockable to unregister
-         */
-        private void removeDockable( Dockable dockable ){
-            DockStation asStation = dockable.asDockStation();
-            
-            if( asStation != null )
-                remove( asStation );
-            else
-                unregister( dockable );
-        }
-        
-        @Override
-        public void dockableVisibiltySet( DockStation station, Dockable dockable, boolean visible ){
-            if( !onFocusing && !visible && isFocused( dockable ) ){
-            	DockStation parent = dockable.getDockParent();
-            	while( parent != null ){
-            		dockable = parent.asDockable();
-            		if( dockable != null ){
-            			parent = dockable.getDockParent();
-            			if( parent != null ){
-            				if( parent.isVisible( dockable )){
-            					setFocusedDockable( dockable, false );
-            					return;
-            				}
-            			}
-            		}
-            		else
-            			break;
-            	}
-            	
-                setFocusedDockable( null, false );
             }
         }
     }

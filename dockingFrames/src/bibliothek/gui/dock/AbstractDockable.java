@@ -27,7 +27,9 @@
 package bibliothek.gui.dock;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.event.MouseInputListener;
@@ -68,6 +70,9 @@ public abstract class AbstractDockable implements Dockable {
     private PropertyValue<String> titleText;
     /** the icon of this dockable */
     private PropertyValue<Icon> titleIcon;
+    
+    /** the DockTitles which are bound to this dockable */
+    private List<DockTitle> titles = new LinkedList<DockTitle>();
     
     /**
      * A modifiable list of {@link DockAction} which can be triggered and 
@@ -192,11 +197,21 @@ public abstract class AbstractDockable implements Dockable {
     }
 
     public void bind( DockTitle title ) {
-        fireTitleBinded( title );
+    	if( titles.contains( title ))
+    		throw new IllegalArgumentException( "Title is already binded" );
+    	titles.add( title );
+    	fireTitleBinded( title );
     }
 
     public void unbind( DockTitle title ) {
-        fireTitleUnbinded( title );
+    	if( !titles.contains( title ))
+    		throw new IllegalArgumentException( "Title is unknown" );
+    	titles.remove( title );
+    	fireTitleUnbinded( title );
+    }
+    
+    public DockTitle[] listBindedTitles(){
+    	return titles.toArray( new DockTitle[ titles.size() ] );
     }
 
     public DockActionSource getActionOffers() {

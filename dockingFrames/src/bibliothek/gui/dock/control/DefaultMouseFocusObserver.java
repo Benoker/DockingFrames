@@ -24,7 +24,7 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock;
+package bibliothek.gui.dock.control;
 
 import java.awt.AWTEvent;
 import java.awt.Toolkit;
@@ -37,7 +37,7 @@ import bibliothek.gui.DockController;
  * {@link Toolkit} to receive events which may change the focus. 
  * @author Benjamin Sigg
  */
-public class DefaultFocusController extends FocusController{
+public class DefaultMouseFocusObserver extends MouseFocusObserver{
     /** The listener to all AWT events*/
     private AWTEventListener listener;
     
@@ -45,7 +45,7 @@ public class DefaultFocusController extends FocusController{
      * Creates a new focus controller
      * @param controller the owner of this controller
      */
-    public DefaultFocusController( DockController controller ){
+    public DefaultMouseFocusObserver( DockController controller ){
         super( controller );
         
         listener = createListener();

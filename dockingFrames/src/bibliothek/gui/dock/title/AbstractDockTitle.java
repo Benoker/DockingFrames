@@ -140,47 +140,6 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         }
         
         setOpaque( false );
-        
-        addMouseInputListener( new ActionPopup( true ){
-            @Override
-            protected Dockable getDockable() {
-                return AbstractDockTitle.this.dockable;
-            }
-
-            @Override
-            protected DockActionSource getSource() {
-                return source;
-            }
-            
-            @Override
-            public void mouseClicked( MouseEvent e ) {
-                if( getText() == null || getText().length() == 0 )
-                    return;
-                
-                Point location = SwingUtilities.convertPoint(
-                        e.getComponent(), e.getX(), e.getY(), AbstractDockTitle.this );
-                
-                Rectangle icon = getIconBounds();
-                if( icon != null ){
-                    if( icon.contains( location ))
-                        popup( AbstractDockTitle.this, icon.x, icon.y + icon.height );
-                    else
-                        super.mouseClicked(e);
-                }
-            }
-
-            @Override
-            protected boolean isEnabled() {
-                if( !isBinded() )
-                    return false;
-                
-                DockController controller = AbstractDockTitle.this.dockable.getController();
-                if( controller == null )
-                    return false;
-                
-                return !controller.isOnMove();
-            }
-        });
     }
     
     @Override
@@ -423,6 +382,19 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         label.removeMouseMotionListener( listener );
     }
 
+    public Point getPopupLocation( Point click ){
+        if( getText() == null || getText().length() == 0 )
+            return null;
+        
+        Rectangle icon = getIconBounds();
+        if( icon != null ){
+            if( icon.contains( click ))
+                return new Point( icon.x, icon.y + icon.height );
+        }
+        
+        return null;
+    }
+    
     public Dockable getDockable() {
         return dockable;
     }

@@ -27,7 +27,7 @@
 package bibliothek.gui.dock.event;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.FocusController;
+import bibliothek.gui.dock.control.MouseFocusObserver;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
@@ -44,7 +44,7 @@ public interface FocusVetoListener {
      * @return <code>true</code> if the change should be canceled, <code>false</code>
      * if the focus can be changed
      */
-    public boolean vetoFocus( FocusController controller, DockTitle title );
+    public boolean vetoFocus( MouseFocusObserver controller, DockTitle title );
     
     /**
      * Invoked when the focus should change because the user did something
@@ -54,5 +54,5 @@ public interface FocusVetoListener {
      * @return <code>true</code> if the change should be canceled, <code>false</code>
      * if the focus can be changed
      */
-    public boolean vetoFocus( FocusController controller, Dockable dockable );
+    public boolean vetoFocus( MouseFocusObserver controller, Dockable dockable );
 }

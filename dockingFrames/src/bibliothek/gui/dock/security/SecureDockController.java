@@ -27,7 +27,7 @@
 package bibliothek.gui.dock.security;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.dock.FocusController;
+import bibliothek.gui.dock.control.MouseFocusObserver;
 
 /**
  * The DockingFrames normally uses some system-resources to handle the focus.
@@ -47,12 +47,12 @@ import bibliothek.gui.dock.FocusController;
  */
 public class SecureDockController extends DockController {
     @Override
-    protected FocusController createFocusController() {
-        return new SecureFocusController( this );
+    protected MouseFocusObserver createMouseFocusObserver() {
+        return new SecureMouseFocusObserver( this );
     }
     
     @Override
-    public SecureFocusController getFocusController() {
-        return (SecureFocusController)super.getFocusController();
+    public SecureMouseFocusObserver getFocusObserver() {
+        return (SecureMouseFocusObserver)super.getFocusObserver();
     }
 }

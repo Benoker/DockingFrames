@@ -61,7 +61,7 @@ public interface ActionPopupSuppressor {
             if( source.getDockActionCount() > 1 )
                 return false;
             
-            DockTitle[] titles = dockable.getController().getBindedTitlesOf( dockable );
+            DockTitle[] titles = dockable.listBindedTitles();
             if( titles == null || titles.length == 0 )
                 return false;
             

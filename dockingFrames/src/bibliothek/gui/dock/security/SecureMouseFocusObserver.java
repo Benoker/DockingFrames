@@ -32,17 +32,17 @@ import java.util.List;
 
 import sun.security.util.SecurityConstants;
 import bibliothek.gui.DockController;
-import bibliothek.gui.dock.DefaultFocusController;
-import bibliothek.gui.dock.FocusController;
+import bibliothek.gui.dock.control.DefaultMouseFocusObserver;
+import bibliothek.gui.dock.control.MouseFocusObserver;
 
 /**
  * A {@link FocusController} which relies on {@link GlassedPane GlassedPanes}.
  * @author Benjamin Sigg
  */
-public class SecureFocusController extends FocusController{
+public class SecureMouseFocusObserver extends MouseFocusObserver{
     /**
      * Tells whether {@link SecureFocusController} is preferred over a 
-     * {@link DefaultFocusController} or not. The result is determined by
+     * {@link FocusController} or not. The result is determined by
      * a call to the SecurityManager.
      * @return <code>true</code> if a {@link SecureFocusController} should be
      * used.
@@ -68,7 +68,7 @@ public class SecureFocusController extends FocusController{
      * Creates a new FocusController for <code>controller</code>.
      * @param controller the owner of this FocusController
      */
-    public SecureFocusController( DockController controller ) {
+    public SecureMouseFocusObserver( DockController controller ) {
         super(controller);
     }
 

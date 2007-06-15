@@ -193,15 +193,7 @@ public interface DockStation extends DockElement{
      * @see #getFrontDockable()
      */
     public void setFrontDockable( Dockable dockable );
-    
-    /**
-     * Gets a list of all titles that are shown on this station for 
-     * the child <code>dockable</code>. 
-     * @param dockable a child of this station
-     * @return a list containing {@link DockTitle DockTitles}
-     */
-    public DockTitle[] getDockTitles( Dockable dockable );
-    
+
     /**
      * Called by the {@link DockController} of this station to indicate that
      * the active-state of <code>title</code> has been changed. This station

@@ -251,6 +251,19 @@ public class DockFrontend {
     }
     
     /**
+     * Gets an independent map containing all Dockables registered to this
+     * frontend.
+     * @return the map of Dockables
+     */
+    public Map<String, Dockable> getNamedDockables(){
+    	Map<String, Dockable> result = new HashMap<String, Dockable>();
+    	for( Map.Entry<String, DockInfo> entry : dockables.entrySet() ){
+    		result.put( entry.getKey(), entry.getValue().getDockable() );
+    	}
+    	return result;
+    }
+    
+    /**
      * Adds a root to this frontend. Only {@link Dockable Dockables} which are
      * children of a root can be stored. The frontend forwards the roots to
      * its {@link #getController() controller} 
@@ -273,7 +286,7 @@ public class DockFrontend {
         if( roots.containsKey( name ))
         	throw new IllegalArgumentException( "There is already a station registered with name " + name );
         
-        controller.add( station );
+        controller.getRegister().add( station );
         roots.put( name, new RootInfo( station, name ));
     }
     
@@ -345,6 +358,7 @@ public class DockFrontend {
         		defaultStation = null;
         	
             roots.remove( info.getName() );
+            controller.getRegister().remove( station );
         }
     }
     

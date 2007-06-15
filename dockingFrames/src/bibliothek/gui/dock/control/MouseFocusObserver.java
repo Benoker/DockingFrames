@@ -24,7 +24,7 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock;
+package bibliothek.gui.dock.control;
 
 import java.awt.AWTEvent;
 import java.awt.Component;
@@ -49,7 +49,7 @@ import bibliothek.gui.dock.util.DockUtilities;
  * about a new {@link DockController#setFocusedDockable(Dockable, boolean) front-dockable}.
  * @author Benjamin Sigg
  */
-public abstract class FocusController implements DockControllerListener {
+public abstract class MouseFocusObserver implements DockControllerListener {
     /** a list of all Dockables and their base-component */
     private Map<Component, Dockable> dockables = new HashMap<Component, Dockable>();
     /** a list of all DockTitles and their base-component */
@@ -66,7 +66,7 @@ public abstract class FocusController implements DockControllerListener {
      * @param controller the controller which will be informed about
      * focus-changes
      */
-    public FocusController( DockController controller ){
+    public MouseFocusObserver( DockController controller ){
         this.controller = controller;
         controller.addDockControllerListener( this );
     }
@@ -145,7 +145,7 @@ public abstract class FocusController implements DockControllerListener {
      * @see #interact(AWTEvent)
      */
     protected void check( AWTEvent event ){
-        if( controller.isOnPut() || controller.isOnFocusing() )
+        if( controller.getRelocator().isOnPut() || controller.isOnFocusing() )
             return;
         
         Object source = event.getSource();

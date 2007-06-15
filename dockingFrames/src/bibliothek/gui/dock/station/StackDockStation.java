@@ -355,19 +355,6 @@ public class StackDockStation extends AbstractDockableStation {
             stackComponent.setSelectedIndex( indexOf( dockable ));
     }
     
-    public DockTitle[] getDockTitles( Dockable dockable ) {
-        int index = indexOf( dockable );
-        if( index < 0 )
-            return new DockTitle[0];
-        else{
-            DockTitle title = dockables.get( index ).getTitle();
-            if( title == null )
-                return new DockTitle[0];
-            else
-                return new DockTitle[]{ title };
-        }
-    }
-    
     /**
      * Gets a list of actions which are added to all children of this station.
      * The station never changes this source, so it's possible to add some

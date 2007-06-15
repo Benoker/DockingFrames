@@ -212,11 +212,8 @@ public class DockUtilities {
     public static Component getShowingComponent( Dockable dockable ){
         Component component = dockable.getComponent();
         if( !component.isShowing() ){
-            DockStation station = dockable.getDockParent();
-            if( station == null )
-                return null;
             
-            for( DockTitle title : station.getDockTitles( dockable )){
+            for( DockTitle title : dockable.listBindedTitles() ){
                 component = title.getComponent();
                 if( component.isShowing() )
                     break;

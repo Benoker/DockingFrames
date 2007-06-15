@@ -120,7 +120,10 @@ public abstract class ActionPopup extends MouseInputAdapter{
             return;
         
         if( isEnabled() ){
-            popup( e.getComponent(), e.getX(), e.getY() );
+            boolean shown = popup( e.getComponent(), e.getX(), e.getY() );
+            if( shown ){
+            	e.consume();
+            }
         }
     }
     
@@ -129,22 +132,23 @@ public abstract class ActionPopup extends MouseInputAdapter{
      * @param owner the owner of the menu
      * @param x x-coordinate
      * @param y y-coordinate
+     * @return <code>true</code> if the menu is shown
      */
-    public void popup( Component owner, int x, int y ){
+    public boolean popup( Component owner, int x, int y ){
         final Dockable dockable = getDockable();
         if( dockable.getController() == null )
-            return;
+            return false;
         
-        if( dockable.getController().isOnMove() )
-            return;
+        if( dockable.getController().getRelocator().isOnMove() )
+            return false;
                     
         DockActionSource source = getSource();
         
         if( source.getDockActionCount() == 0 )
-            return;
+            return false;
         
         if( isSuppressable() && dockable.getController().getPopupSuppressor().suppress( dockable, source ))
-            return;
+            return false;
         
         JPopupMenu menu = new JPopupMenu();
         final MenuMenuHandler handler = new MenuMenuHandler( source, dockable, menu );
@@ -163,5 +167,6 @@ public abstract class ActionPopup extends MouseInputAdapter{
         });
         
         menu.show( owner, x, y );
+        return true;
     }
 }

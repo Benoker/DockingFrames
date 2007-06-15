@@ -27,6 +27,7 @@
 package bibliothek.gui.dock.title;
 
 import java.awt.Component;
+import java.awt.Point;
 
 import javax.swing.event.MouseInputListener;
 
@@ -40,7 +41,12 @@ import bibliothek.gui.dock.event.DockTitleEvent;
  * displays some information about its <code>Dockable</code>, for
  * example a title-text.<br>
  * Every DockTitle is owned by exactly one Dockable. The owner can't
- * be changed.
+ * be changed.<br>
+ * Every title is either in the state {@link #bind() binded} or {@link #unbind() unbinded}.
+ * As long as a title is unbinded, it has not to do anything. As soon as it is
+ * binded, it has to ensure that it shows the correct properties. A title 
+ * can assume that it is only binded when its <code>Dockable</code> knows
+ * the {@link DockController}.
  * @author Benjamin Sigg
  */
 public interface DockTitle {
@@ -121,6 +127,17 @@ public interface DockTitle {
      * @param listener the listener to remove
      */
     public void removeMouseInputListener( MouseInputListener listener );
+    
+    /**
+     * Tells whether a popup menu should be opened when the user clicks
+     * at <code>click</code> with the mouse. If yes, then the top left edge
+     * of the popup should be returned, otherwise <code>null</code> should be
+     * returned.
+     * @param click the location where the user clicked with the mouse
+     * @return the preferred location of a popup or <code>null</code> if no
+     * popup-menu should be opened
+     */
+    public Point getPopupLocation( Point click );
     
     /**
      * Gets the owner of this title.

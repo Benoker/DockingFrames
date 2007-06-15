@@ -74,8 +74,8 @@ public class SingleParentRemover{
             onTest = true;
             
             int index = 0;
-            while( index < controller.getStationCount() ){
-                if( test( controller.getStation( index ))){
+            while( index < controller.getRegister().getStationCount() ){
+                if( test( controller.getRegister().getStation( index ))){
                     index = 0;
                 }
                 else
@@ -170,7 +170,7 @@ public class SingleParentRemover{
         
         @Override
         public void dockableUnregistered( DockController controller, Dockable dockable ) {
-            if( !controller.isOnPut() ){
+            if( !controller.getRelocator().isOnPut() ){
                 testAll( controller );
             }
         }

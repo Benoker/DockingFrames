@@ -44,11 +44,11 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockAcceptance;
 import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.DockableProperty;
-import bibliothek.gui.dock.FocusController;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.LocationHint;
+import bibliothek.gui.dock.control.MouseFocusObserver;
 import bibliothek.gui.dock.event.*;
 import bibliothek.gui.dock.station.flap.*;
 import bibliothek.gui.dock.station.support.CombinerWrapper;
@@ -243,7 +243,7 @@ public class FlapDockStation extends AbstractDockableStation {
             
             if( remove ){
                 getController().removeDockControllerListener( controllerListener );
-                getController().getFocusController().removeVetoListener( controllerListener );
+                getController().getFocusObserver().removeVetoListener( controllerListener );
                 
                 oldFrontDockable = getFrontDockable();
                 setFrontDockable( null );
@@ -287,7 +287,7 @@ public class FlapDockStation extends AbstractDockableStation {
                 }
                 
                 controller.addDockControllerListener( controllerListener );
-                controller.getFocusController().addVetoListener( controllerListener );
+                controller.getFocusObserver().addVetoListener( controllerListener );
                 
                 if( isStationVisible() )
                     setFrontDockable( oldFrontDockable );
@@ -506,7 +506,7 @@ public class FlapDockStation extends AbstractDockableStation {
         
         if( oldFrontDockable != null ){
             if( getController() != null ){
-                DockTitle[] titles = getDockTitles( oldFrontDockable );
+                DockTitle[] titles = oldFrontDockable.listBindedTitles();
                 boolean active = getController().isFocused( oldFrontDockable );
                 for( DockTitle title : titles )
                     changed( oldFrontDockable, title, active );
@@ -700,22 +700,6 @@ public class FlapDockStation extends AbstractDockableStation {
             source.add( holdAction );
             return source;
     	}
-    }
-    
-    public DockTitle[] getDockTitles( Dockable dockable ) {
-        DockTitle alpha = buttonTitles.get( dockable );
-        DockTitle beta = getFrontDockable() == dockable ? window.getDockTitle() : null;
-        
-        if( alpha == null && beta == null )
-            return new DockTitle[0];
-        
-        if( alpha == null )
-            return new DockTitle[]{ beta };
-        
-        if( beta == null )
-            return new DockTitle[]{ alpha };
-        
-        return new DockTitle[]{ alpha, beta };
     }
     
     @Override
@@ -1157,11 +1141,11 @@ public class FlapDockStation extends AbstractDockableStation {
     }
     
     private class ControllerListener extends DockControllerAdapter implements FocusVetoListener{
-        public boolean vetoFocus( FocusController controller, Dockable dockable ) {
+        public boolean vetoFocus( MouseFocusObserver controller, Dockable dockable ) {
             return false;
         }
         
-        public boolean vetoFocus( FocusController controller, DockTitle title ) {
+        public boolean vetoFocus( MouseFocusObserver controller, DockTitle title ) {
             return buttonTitles.containsValue( title );
         }
         

@@ -99,13 +99,13 @@ public class SecureScreenDockDialog extends ScreenDockDialog {
     private class Listener extends WindowAdapter{
         @Override
         public void windowOpened( WindowEvent e ) {
-            SecureFocusController controller = (SecureFocusController)getStation().getController().getFocusController();
+            SecureMouseFocusObserver controller = (SecureMouseFocusObserver)getStation().getController().getFocusObserver();
             controller.addGlassPane( pane );
         }
         
         @Override
         public void windowClosed( WindowEvent e ) {
-            SecureFocusController controller = (SecureFocusController)getStation().getController().getFocusController();
+            SecureMouseFocusObserver controller = (SecureMouseFocusObserver)getStation().getController().getFocusObserver();
             controller.removeGlassPane( pane );
         }
     }

@@ -32,6 +32,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -104,6 +105,9 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     
     /** The handler for events and listeners concerning the visibility of children */
     private DockableVisibilityManager visibility;
+    
+    /** the DockTitles which are binded to this dockable */
+    private List<DockTitle> titles = new LinkedList<DockTitle>();
     
     /**
      * The list of all registered {@link DockStationListener DockStationListeners}. 
@@ -589,13 +593,23 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     }
 
     public void bind( DockTitle title ) {
+    	if( titles.contains( title ))
+    		throw new IllegalArgumentException( "Title is already binded" );
+    	titles.add( title );
         for( DockableListener listener : dockableListeners.toArray( new DockableListener[ dockableListeners.size() ] ))
             listener.titleBinded( this, title );
     }
 
     public void unbind( DockTitle title ) {
+    	if( !titles.contains( title ))
+    		throw new IllegalArgumentException( "Title is unknown" );
+    	titles.remove( title );
         for( DockableListener listener : dockableListeners.toArray( new DockableListener[ dockableListeners.size() ] ))
             listener.titleUnbinded( this, title );
+    }
+    
+    public DockTitle[] listBindedTitles(){
+    	return titles.toArray( new DockTitle[ titles.size() ]);
     }
 
     public DockActionSource getActionOffers() {
@@ -779,20 +793,6 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         }
     }
     
-    public DockTitle[] getDockTitles( Dockable dockable ) {
-        int index = indexOfDockable( dockable );
-        
-        if( index < 0 )
-            return new DockTitle[0];
-        else{
-            DockTitle title = dockables.get( index ).getTitle();
-            if( title == null )
-                return new DockTitle[0];
-            else
-                return new DockTitle[]{ title };
-        }
-    }
-
     public boolean accept( Dockable child ) {
         return true;
     }

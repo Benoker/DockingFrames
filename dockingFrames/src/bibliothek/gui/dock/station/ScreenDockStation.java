@@ -247,18 +247,6 @@ public class ScreenDockStation extends AbstractDockStation {
         }
     }
 
-    public DockTitle[] getDockTitles( Dockable dockable ) {
-        ScreenDockDialog dialog = getDialog( dockable );
-        if( dialog == null )
-            return new DockTitle[0];
-        
-        DockTitle title = dialog.getDisplayer().getTitle();
-        if( title == null )
-            return new DockTitle[0];
-        else
-            return new DockTitle[]{ title };
-    }
-
     public boolean prepareDrop( int x, int y, int titleX, int titleY, Dockable dockable ) {
         return prepare( x, y, titleX, titleY, dockable, true );
     }

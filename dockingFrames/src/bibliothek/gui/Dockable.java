@@ -182,31 +182,42 @@ public interface Dockable extends DockElement{
     public DockTitle getDockTitle( DockTitleVersion version );
     
     /**
-     * Called by clients which want to show a title of this Dockable. If the
-     * client is a DockStation, {@link DockTitle#bind()} will be called
-     * automatically by the controller, other clients have to call
-     * {@link DockTitle#bind()} manually.<br>
+     * Called by clients which want to show a title of this Dockable. The
+     * method {@link DockTitle#bind()} will be called automatically by the 
+     * controller.<br>
      * This method must at least inform all listeners, that <code>title</code>
      * was binded. However, the method {@link DockTitle#bind()} must not
-     * be invoked by this method.
+     * be invoked by this method.<br>
+     * <code>title</code> must be returned by {@link #listBindedTitles()}
+     * unless {@link #unbind(DockTitle)} is called.<br>
      * @param title the title which will be show some things of this Dockable
      * @see #unbind(DockTitle)
+     * @throws IllegalArgumentException if the title is already binded
      */
     public void bind( DockTitle title );
     
     /**
      * Clients should call this method if a {@link DockTitle} is no longer
-     * needed. In case that the client is a {@link DockStation}, then the
-     * controller will call {@link DockTitle#unbind()} at an appropriate
-     * time. Other clients must call {@link DockTitle#unbind()} itself.<br>
+     * needed. The controller will call {@link DockTitle#unbind()} at an appropriate
+     * time.<br>
      * This method must inform all listeners that <code>title</code>
      * is no longer binded. However, this method must not call
-     * {@link DockTitle#unbind()}.
+     * {@link DockTitle#unbind()}.<br>
+     * <code>title</code> must no longer be returned when calling {@link #listBindedTitles()}
      * @param title the title which will be no longer connected to this
      * Dockable
      * @see #bind(DockTitle)
+     * @throws IllegalArgumentException if the title is not known to this dockable
      */
     public void unbind( DockTitle title );
+    
+    /**
+     * Gets a list of all {@link DockTitle DockTitles} which are currently
+     * binded to this Dockable. That are titles for which {@link #bind(DockTitle)}
+     * was called, but not yet {@link #unbind(DockTitle)}.
+     * @return the list of titles
+     */
+    public DockTitle[] listBindedTitles();
     
     /**
      * Gets a list of {@link DockAction} which should be triggerable if

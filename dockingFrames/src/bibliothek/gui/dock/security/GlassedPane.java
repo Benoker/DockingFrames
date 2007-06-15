@@ -50,7 +50,7 @@ public class GlassedPane extends JPanel{
     /** A component lying over all other components. Catches every MouseEvent */
     private JComponent glassPane = new GlassPane();
     /** A controller which will be informed about every click of the mouse */
-    private SecureFocusController focusController;
+    private SecureMouseFocusObserver focusController;
     
     /**
      * Creates a new pane
@@ -67,7 +67,7 @@ public class GlassedPane extends JPanel{
      * or the mouse wheel is moved.
      * @param focusController the controller, may be <code>null</code>
      */
-    public void setFocusController( SecureFocusController focusController ) {
+    public void setFocusController( SecureMouseFocusObserver focusController ) {
         this.focusController = focusController;
     }
 
