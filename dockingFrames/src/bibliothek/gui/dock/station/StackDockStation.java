@@ -399,14 +399,17 @@ public class StackDockStation extends AbstractDockableStation {
                     }
                 }
                 else if( dockables.size() == 1 ){
-                    Component title = dockables.get( 0 ).getTitle().getComponent();
-                    Point p = new Point( x, y );
-                    SwingUtilities.convertPointFromScreen( p, title );
-                            
-                    if( title.getBounds().contains( p )){
-                        insert = new Insert( 0, true );
-                        this.dropping = dockable;
-                        return true;
+                    DockTitle title = dockables.get( 0 ).getTitle();
+                    if( title != null ){
+                        Component component = title.getComponent();
+                        Point p = new Point( x, y );
+                        SwingUtilities.convertPointFromScreen( p, component );
+
+                        if( component.getBounds().contains( p )){
+                            insert = new Insert( 0, true );
+                            this.dropping = dockable;
+                            return true;
+                        }
                     }
                 }
                 return false;
