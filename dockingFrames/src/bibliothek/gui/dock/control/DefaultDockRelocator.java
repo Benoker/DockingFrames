@@ -93,6 +93,13 @@ public class DefaultDockRelocator extends DockRelocator{
     }    
     
     @Override
+    public DirectRemoteRelocator createDirectRemote( Dockable dockable ){
+        if( dockable == null )
+            throw new IllegalArgumentException( "dockable must not be null" );
+        return new DefaultRemoteRelocator( dockable );        
+    }
+    
+    @Override
     public RemoteRelocator createRemote( Dockable dockable ) {
         if( dockable == null )
             throw new IllegalArgumentException( "dockable must not be null" );
@@ -567,7 +574,7 @@ public class DefaultDockRelocator extends DockRelocator{
      * enclosing {@link DefaultDockRelocator}.
      * @author Benjamin Sigg
      */
-    private class DefaultRemoteRelocator implements RemoteRelocator{
+    private class DefaultRemoteRelocator implements RemoteRelocator, DirectRemoteRelocator{
         /** the Dockable which might be moved by this relocator */
         private Dockable dockable;
         
@@ -584,14 +591,26 @@ public class DefaultDockRelocator extends DockRelocator{
             onMove = false;
         }
 
+        public void drag( int x, int y ) {
+            drag( x, y, InputEvent.BUTTON1_DOWN_MASK );
+        }
+        
         public Reaction drag( int x, int y, int modifiers ) {
             return dragMouseDragged( x, y, modifiers, null, dockable );
         }
 
+        public void drop( int x, int y ) {
+            drop( x, y, 0 );
+        }
+        
         public Reaction drop( int x, int y, int modifiers ) {
             return dragMouseReleased( x, y, modifiers, dockable );
         }
 
+        public void init( int x, int y, int dx, int dy ) {
+            init( x, y, dx, dy, InputEvent.BUTTON1_DOWN_MASK );
+        }
+        
         public Reaction init( int x, int y, int dx, int dy, int modifiers ) {
             return dragMousePressed( x, y, dx, dy, modifiers, dockable );
         }
