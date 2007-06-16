@@ -144,7 +144,7 @@ public class FlapDockStation extends AbstractDockableStation {
      */
     private FlapDropInfo dropInfo;
     
-    /** A listener added to the {@link FocusController} */
+    /** A listener added to the {@link MouseFocusObserver} */
     private ControllerListener controllerListener = new ControllerListener();
     
     /** 

@@ -1,3 +1,28 @@
+/*
+ * Bibliothek - DockingFrames
+ * Library built on Java/Swing, allows the user to "drag and drop"
+ * panels containing any Swing-Component the developer likes to add.
+ * 
+ * Copyright (C) 2007 Benjamin Sigg
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ * Benjamin Sigg
+ * benjamin_sigg@gmx.ch
+ * CH - Switzerland
+ */
 package bibliothek.gui.dock.control;
 
 import java.awt.*;
@@ -16,6 +41,7 @@ import javax.swing.event.MouseInputListener;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
 import bibliothek.gui.dock.event.DockAdapter;
 import bibliothek.gui.dock.event.DockControllerAdapter;
 import bibliothek.gui.dock.event.DockTitleEvent;
@@ -24,6 +50,11 @@ import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.title.MovingTitleGetter;
 import bibliothek.gui.dock.util.DockUtilities;
 
+/**
+ * Default implementation of a handler that performs the drag & drop operations
+ * for a {@link DockController}.
+ * @author Benjamin Sigg
+ */
 public class DefaultDockRelocator extends DockRelocator{
 	/** <code>true</code> as long as the user drags a title or a Dockable */
     private boolean onMove = false;
@@ -35,7 +66,9 @@ public class DefaultDockRelocator extends DockRelocator{
     /** a window painting a title onto the screen */
     private TitleWindow movingTitleWindow;
     /** the point where the mouse was pressed on the currently dragged title */
-    private Point pressPoint;
+    private Point pressPointScreen;
+    /** the point where the mouse was pressed on the currently dragged title */
+    private Point pressPointLocal;
     
 	/**
 	 * Creates a new manager.
@@ -57,6 +90,13 @@ public class DefaultDockRelocator extends DockRelocator{
     public boolean isOnPut() {
         return onPut;
     }    
+    
+    @Override
+    public RemoteRelocator createRemote( Dockable dockable ) {
+        if( dockable == null )
+            throw new IllegalArgumentException( "dockable must not be null" );
+        return new DefaultRemoteRelocator( dockable );
+    }
     
     /**
      * Executes a drag and drop event. <code>dockable</code> is removed
@@ -89,9 +129,10 @@ public class DefaultDockRelocator extends DockRelocator{
                 throw new IllegalStateException( "There is no station to put the dockable." );
             
             DockStation parent = dockable.getDockParent();
-            if( parent != station){
+            if( parent != station || parent == null ){
                 fireDockableDrag( dockable, station );
-                parent.drag( dockable );
+                if( parent != null )
+                    parent.drag( dockable );
                 station.drop();
                 controller.rebindTitles( dockable, oldTitles );
                 fireDockablePut( dockable, station );
@@ -252,21 +293,46 @@ public class DefaultDockRelocator extends DockRelocator{
         if( dockable == null )
             dockable = title.getDockable();
         
+        Point point = e.getPoint();
+        SwingUtilities.convertPointToScreen( point, e.getComponent() );
+        Reaction reaction = dragMousePressed( point.x, point.y, e.getX(), e.getY(), e.getModifiersEx(), dockable );
+        if( reaction == Reaction.BREAK_CONSUMED || reaction == Reaction.CONTINUE_CONSUMED )
+            e.consume();
+    }
+    
+    /**
+     * Handles a mouse-pressed event.
+     * @param x the x-coordinate of the mouse
+     * @param y the y-coordinate of the mouse
+     * @param dx the x-coordinate of the mouse on its component
+     * @param dy the y-coordinate of the mouse on its component
+     * @param modifiers the state of the mouse, see {@link MouseEvent#getModifiersEx()}
+     * @param dockable the dockable which is moved around
+     * @return how this relocator reacts on the event
+     */
+    protected Reaction dragMousePressed( int x, int y, int dx, int dy, int modifiers, Dockable dockable ){
         if( dockable.getDockParent() == null )
-            return;
+            return Reaction.BREAK;
         
-        int ex = e.getModifiersEx();
         int onmask = MouseEvent.BUTTON1_DOWN_MASK;
         int offmask = MouseEvent.BUTTON2_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK;
         
-        if( pressPoint == null && ((ex & (onmask | offmask)) == onmask ) ){
-            pressPoint = e.getPoint();
-            e.consume();
-        }
-        else if( pressPoint != null ){
+        if( ((modifiers & (onmask | offmask)) == onmask ) ){
+            // cancel all pending operations
+            // (should not be necessary, but there is no guarantee that no event gets lost)
             titleDragCancel();
-            e.consume();
+            onMove = false;
+            
+            // initiate new operation
+            pressPointScreen = new Point( x, y );
+            pressPointLocal = new Point( dx, dy );
+            return Reaction.CONTINUE_CONSUMED;
         }
+        else if( pressPointScreen != null ){
+            titleDragCancel();
+            return Reaction.BREAK_CONSUMED;
+        }
+        return Reaction.BREAK;
     }
     
     /**
@@ -278,25 +344,39 @@ public class DefaultDockRelocator extends DockRelocator{
      * if <code>title</code> is not <code>null</code>
      */
     protected void dragMouseDragged( MouseEvent e, DockTitle title, Dockable dockable ) {
-        if( pressPoint == null )
-            return;
+        Point point = e.getPoint();
+        SwingUtilities.convertPointToScreen( point, e.getComponent() );
+        Reaction reaction = dragMouseDragged( point.x, point.y, e.getModifiersEx(), title, dockable );
+        if( reaction == Reaction.BREAK_CONSUMED || reaction == Reaction.CONTINUE_CONSUMED )
+            e.consume();
+    }
+    
+    /**
+     * Handles a mouse-pressed event.
+     * @param x the x-coordinate of the mouse
+     * @param y the y-coordinate of the mouse
+     * @param modifiers the state of the mouse, see {@link MouseEvent#getModifiersEx()}
+     * @param title the title which might be grabbed by the mouse
+     * @param dockable the dockable which is moved around
+     * @return how this relocator reacts on the event
+     */
+    protected Reaction dragMouseDragged( int x, int y, int modifiers, DockTitle title, Dockable dockable ){
+        if( pressPointScreen == null )
+            return Reaction.BREAK;
         
         if( dockable == null )
             dockable = title.getDockable();
         
-        if( dockable.getDockParent() == null )
-            return;
-        
-        e.consume();
-        Point mouse = e.getPoint();
-        SwingUtilities.convertPointToScreen( mouse, e.getComponent() );
+        Point mouse = new Point( x, y );
         
         if( !onMove ){
             // not yet free
-            if( !dockable.getDockParent().canDrag( dockable ))
-                return;
+            if( !dockable.getDockParent().canDrag( dockable )){
+                titleDragCancel();
+                return Reaction.BREAK_CONSUMED;
+            }
             
-            int distance = Math.abs( e.getX() - pressPoint.x ) + Math.abs( e.getY() - pressPoint.y );
+            int distance = Math.abs( x - pressPointScreen.x ) + Math.abs( y - pressPointScreen.y );
             if( distance >= getDragDistance() ){
                 if( movingTitleWindow != null ){
                     // That means, that an old window was not closed correctly
@@ -319,7 +399,7 @@ public class DefaultDockRelocator extends DockRelocator{
             
             DockStation next = preparePut( 
                     mouse.x, mouse.y,
-                    mouse.x - pressPoint.x, mouse.y - pressPoint.y,
+                    mouse.x - pressPointLocal.x, mouse.y - pressPointLocal.y,
                     dockable );
             
             if( next != null ){
@@ -333,6 +413,8 @@ public class DefaultDockRelocator extends DockRelocator{
                 dragStation = next;
             }
         }
+        
+        return Reaction.CONTINUE_CONSUMED;
     }
     
     /**
@@ -346,10 +428,10 @@ public class DefaultDockRelocator extends DockRelocator{
         
         int delta = Math.min( width, height ) + 1;
         
-        int px = Math.min( pressPoint.x, width );
-        int py = Math.min( pressPoint.y, height );
+        int dx = Math.min( width, pressPointLocal.x );
+        int dy = Math.min( height, pressPointLocal.y );
         
-        movingTitleWindow.setLocation( mouse.x - px + delta, mouse.y - py + delta );
+        movingTitleWindow.setLocation( mouse.x - dx + delta, mouse.y - dy + delta );
     }
     
     /**
@@ -362,11 +444,32 @@ public class DefaultDockRelocator extends DockRelocator{
      * if <code>title</code> is not <code>null</code> 
      */
     protected void dragMouseReleased( MouseEvent e, DockTitle title, Dockable dockable ) {
+        if( dockable == null )
+            dockable = title.getDockable();
+        
+        Point point = e.getPoint();
+        SwingUtilities.convertPointToScreen( point, e.getComponent() );
+        Reaction reaction = dragMouseReleased( point.x, point.y, e.getModifiersEx(), dockable );
+        if( reaction == Reaction.BREAK_CONSUMED || reaction == Reaction.CONTINUE_CONSUMED )
+            e.consume();
+    }
+    
+    /**
+     * Handles a mouse-released event.
+     * @param x the x-coordinate of the mouse
+     * @param y the y-coordinate of the mouse
+     * @param modifiers the state of the mouse, see {@link MouseEvent#getModifiersEx()}
+     * @param dockable the dockable which is moved around
+     * @return how this relocator reacts on the event
+     */
+    protected Reaction dragMouseReleased( int x, int y, int modifiers, Dockable dockable ){
         int offmask = MouseEvent.BUTTON1_DOWN_MASK |
             MouseEvent.BUTTON2_DOWN_MASK |
             MouseEvent.BUTTON3_DOWN_MASK;
         
-        if( (e.getModifiersEx() & offmask) == 0 ){
+        boolean stop = !onMove || ((modifiers & offmask) == 0);
+        
+        if( stop ){
             EventQueue.invokeLater( new Runnable(){
                 public void run() {
                     onMove = false;
@@ -376,23 +479,14 @@ public class DefaultDockRelocator extends DockRelocator{
         
         if( !onMove ){
             titleDragCancel();
-            return;
+            if( stop )
+                return Reaction.BREAK_CONSUMED;
+            else
+                return Reaction.CONTINUE_CONSUMED;
         }
-        
-        if( dockable == null )
-            dockable = title.getDockable();
-        
-        if( dockable.getDockParent() == null )
-            return;
-        
-        if( dockable == null )
-            dockable = title.getDockable();
-        
+        boolean consume = false;
         if( dragStation != null ){
-            Point mouse = e.getPoint();
-            SwingUtilities.convertPointToScreen( mouse, e.getComponent() );
-        
-            e.consume();
+            consume = true;
             executePut( dockable, dragStation );
             dragStation.forget();
             dragStation = null;
@@ -402,7 +496,13 @@ public class DefaultDockRelocator extends DockRelocator{
             movingTitleWindow.close();
         
         movingTitleWindow = null;
-        pressPoint = null;
+        pressPointScreen = null;
+        pressPointLocal = null;
+        
+        if( stop )
+            return consume ? Reaction.BREAK_CONSUMED : Reaction.BREAK;
+        else
+            return consume ? Reaction.CONTINUE_CONSUMED : Reaction.CONTINUE;
     }
     
     /**
@@ -418,7 +518,8 @@ public class DefaultDockRelocator extends DockRelocator{
             movingTitleWindow.close();
         
         movingTitleWindow = null;
-        pressPoint = null;
+        pressPointScreen = null;
+        pressPointLocal = null;
     }
     
     
@@ -451,6 +552,41 @@ public class DefaultDockRelocator extends DockRelocator{
         TitleWindow window = new TitleWindow( parent, windowTitle );
         window.pack();
         return window;
+    }
+    
+    /**
+     * An implementation connecting a {@link RemoteRelocator} to the
+     * enclosing {@link DefaultDockRelocator}.
+     * @author Benjamin Sigg
+     */
+    private class DefaultRemoteRelocator implements RemoteRelocator{
+        /** the Dockable which might be moved by this relocator */
+        private Dockable dockable;
+        
+        /**
+         * Creates a new remote
+         * @param dockable the dockable which might be moved
+         */
+        public DefaultRemoteRelocator( Dockable dockable ){
+            this.dockable = dockable;
+        }
+        
+        public void cancel() {
+            titleDragCancel();
+            onMove = false;
+        }
+
+        public Reaction drag( int x, int y, int modifiers ) {
+            return dragMouseDragged( x, y, modifiers, null, dockable );
+        }
+
+        public Reaction drop( int x, int y, int modifiers ) {
+            return dragMouseReleased( x, y, modifiers, dockable );
+        }
+
+        public Reaction init( int x, int y, int dx, int dy, int modifiers ) {
+            return dragMousePressed( x, y, dx, dy, modifiers, dockable );
+        }
     }
     
     /**

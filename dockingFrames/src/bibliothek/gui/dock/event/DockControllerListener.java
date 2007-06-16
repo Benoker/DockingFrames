@@ -39,7 +39,7 @@ import bibliothek.gui.dock.title.DockTitle;
  * {@link Dockable} is moved.
  * @author Benjamin Sigg
  */
-public interface DockControllerListener extends DockRegisterListener, DockRelocationManagerListener{
+public interface DockControllerListener extends DockRegisterListener, DockRelocatorListener{
     /**
      * Called when <code>title</code> was {@link Dockable#bind(DockTitle) binded}
      * to <code>dockable</code>.

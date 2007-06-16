@@ -1,3 +1,28 @@
+/*
+ * Bibliothek - DockingFrames
+ * Library built on Java/Swing, allows the user to "drag and drop"
+ * panels containing any Swing-Component the developer likes to add.
+ * 
+ * Copyright (C) 2007 Benjamin Sigg
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ * Benjamin Sigg
+ * benjamin_sigg@gmx.ch
+ * CH - Switzerland
+ */
 package bibliothek.gui.dock.control;
 
 import java.util.ArrayList;
@@ -6,7 +31,7 @@ import java.util.List;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.event.DockRelocationManagerListener;
+import bibliothek.gui.dock.event.DockRelocatorListener;
 
 /**
  * A manager adding {@link java.awt.event.MouseListener} and
@@ -17,7 +42,7 @@ import bibliothek.gui.dock.event.DockRelocationManagerListener;
  */
 public abstract class DockRelocator {
 	/** a set of listeners informed whenever a dockable is moved */
-	private List<DockRelocationManagerListener> listeners = new ArrayList<DockRelocationManagerListener>();
+	private List<DockRelocatorListener> listeners = new ArrayList<DockRelocatorListener>();
 	/** the controller whose dockables are moved */
 	private DockController controller;
 	
@@ -50,7 +75,7 @@ public abstract class DockRelocator {
 	 * a {@link Dockable} is moved.
 	 * @param listener the new listener
 	 */
-	public void addDockRelocationManagerListener( DockRelocationManagerListener listener ){
+	public void addDockRelocatorListener( DockRelocatorListener listener ){
 		listeners.add( listener );
 	}
 	
@@ -58,7 +83,7 @@ public abstract class DockRelocator {
 	 * Removes a listener from this manager.
 	 * @param listener the listener to remove
 	 */
-	public void removeDockRelocationManagerListener( DockRelocationManagerListener listener ){
+	public void removeDockRelocatorListener( DockRelocatorListener listener ){
 		listeners.remove( listener );
 	}
 	
@@ -66,8 +91,8 @@ public abstract class DockRelocator {
 	 * Gets a list of all currently registered listeners.
 	 * @return the list of listeners
 	 */
-	protected DockRelocationManagerListener[] listListeners(){
-		return listeners.toArray( new DockRelocationManagerListener[ listeners.size() ] );
+	protected DockRelocatorListener[] listListeners(){
+		return listeners.toArray( new DockRelocatorListener[ listeners.size() ] );
 	}
 	
     /**
@@ -76,7 +101,7 @@ public abstract class DockRelocator {
      * @param station the parent of <code>dockable</code>
      */
     protected void fireDockableDrag( Dockable dockable, DockStation station ){
-        for( DockRelocationManagerListener listener : listListeners() )
+        for( DockRelocatorListener listener : listListeners() )
             listener.dockableDrag( controller, dockable, station );
     }
     
@@ -87,7 +112,7 @@ public abstract class DockRelocator {
      * @param station the new owner of <code>dockable</code>
      */
     protected void fireDockablePut( Dockable dockable, DockStation station ){
-        for( DockRelocationManagerListener listener : listListeners() )
+        for( DockRelocatorListener listener : listListeners() )
             listener.dockablePut( controller, dockable, station );
     }
     
@@ -143,4 +168,12 @@ public abstract class DockRelocator {
      * @return <code>true</code> if a Dockable is moved
      */
     public abstract boolean isOnPut();    
+    
+    /**
+     * Creates a device with which drag&drop operations concerning
+     * <code>dockable</code> can be initiated and executed.
+     * @param dockable the dockable which might be moved
+     * @return the new remote
+     */
+    public abstract RemoteRelocator createRemote( Dockable dockable );
 }

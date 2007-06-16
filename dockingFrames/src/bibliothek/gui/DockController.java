@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -796,7 +796,7 @@ public class DockController {
     public void addDockControllerListener( DockControllerListener listener ){
         listeners.add( listener );
         register.addDockRegisterListener( listener );
-        relocator.addDockRelocationManagerListener( listener );
+        relocator.addDockRelocatorListener( listener );
     }
     
     /**
@@ -806,7 +806,7 @@ public class DockController {
     public void removeDockControllerListener( DockControllerListener listener ){
         listeners.remove( listener );
         register.removeDockRegisterListener( listener );
-        relocator.removeDockRelocationManagerListener( listener );
+        relocator.removeDockRelocatorListener( listener );
     }
     
     /**
