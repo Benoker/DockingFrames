@@ -62,7 +62,8 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
 		// nothing to do
 	}
 	
-	public void setController( DockController controller ){
+	@Override
+    public void setController( DockController controller ){
 		super.setController( controller );
 		for( int i = 0, n = getTabCount(); i<n; i++ ){
 			getTab( i ).setController( controller );
