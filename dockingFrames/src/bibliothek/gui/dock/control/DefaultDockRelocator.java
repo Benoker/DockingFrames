@@ -354,7 +354,7 @@ public class DefaultDockRelocator extends DockRelocator{
     protected void dragMouseDragged( MouseEvent e, DockTitle title, Dockable dockable ) {
         Point point = e.getPoint();
         SwingUtilities.convertPointToScreen( point, e.getComponent() );
-        Reaction reaction = dragMouseDragged( point.x, point.y, e.getModifiersEx(), title, dockable );
+        Reaction reaction = dragMouseDragged( point.x, point.y, e.getModifiersEx(), title, dockable, false );
         if( reaction == Reaction.BREAK_CONSUMED || reaction == Reaction.CONTINUE_CONSUMED )
             e.consume();
     }
@@ -366,9 +366,11 @@ public class DefaultDockRelocator extends DockRelocator{
      * @param modifiers the state of the mouse, see {@link MouseEvent#getModifiersEx()}
      * @param title the title which might be grabbed by the mouse
      * @param dockable the dockable which is moved around
+     * @param always <code>true</code> if the drag event should be executed and
+     * restrictions to this relocator ignored.
      * @return how this relocator reacts on the event
      */
-    protected Reaction dragMouseDragged( int x, int y, int modifiers, DockTitle title, Dockable dockable ){
+    protected Reaction dragMouseDragged( int x, int y, int modifiers, DockTitle title, Dockable dockable, boolean always ){
         if( pressPointScreen == null )
             return Reaction.BREAK;
         
@@ -385,7 +387,7 @@ public class DefaultDockRelocator extends DockRelocator{
             }
             
             int distance = Math.abs( x - pressPointScreen.x ) + Math.abs( y - pressPointScreen.y );
-            if( distance >= getDragDistance() ){
+            if( always || distance >= getDragDistance() ){
                 if( movingTitleWindow != null ){
                     // That means, that an old window was not closed correctly
                     movingTitleWindow.close();
@@ -497,11 +499,24 @@ public class DefaultDockRelocator extends DockRelocator{
         // local copy, some objects using the remote are invoking cancel
         // after the put has finished
         DockStation dragStation = this.dragStation;
+        
+        DockStation next = preparePut( 
+                x, y,
+                x - pressPointLocal.x, y - pressPointLocal.y,
+                dockable );
+        
+        if( next != dragStation ){
+            if( dragStation != null ){
+                dragStation.forget();
+            }
+            dragStation = next;
+        }
+        
         if( dragStation != null ){
             consume = true;
             executePut( dockable, dragStation );
             dragStation.forget();
-            dragStation = null;
+            this.dragStation = null;
         }
         
         if( movingTitleWindow != null )
@@ -591,12 +606,12 @@ public class DefaultDockRelocator extends DockRelocator{
             onMove = false;
         }
 
-        public void drag( int x, int y ) {
-            drag( x, y, InputEvent.BUTTON1_DOWN_MASK );
+        public void drag( int x, int y, boolean always ) {
+            dragMouseDragged( x, y, InputEvent.BUTTON1_DOWN_MASK, null, dockable, always );
         }
         
         public Reaction drag( int x, int y, int modifiers ) {
-            return dragMouseDragged( x, y, modifiers, null, dockable );
+            return dragMouseDragged( x, y, modifiers, null, dockable, false );
         }
 
         public void drop( int x, int y ) {

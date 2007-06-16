@@ -403,10 +403,12 @@ public class ScreenDockStation extends AbstractDockStation {
     }
 
     public void forget() {
-        dropInfo.draw = false;
-        if( dropInfo.combine != null )
-            dropInfo.combine.repaint();
-        dropInfo = null;
+        if( dropInfo != null ){
+            dropInfo.draw = false;
+            if( dropInfo.combine != null )
+                dropInfo.combine.repaint();
+            dropInfo = null;
+        }
     }
 
     public <D extends Dockable & DockStation> boolean isInOverrideZone( int x,

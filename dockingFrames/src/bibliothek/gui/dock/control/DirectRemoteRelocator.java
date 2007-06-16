@@ -26,13 +26,12 @@
 package bibliothek.gui.dock.control;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
 
 /**
  * A simplified version of {@link RemoteRelocator}. This direct remote relocator
  * assumes that the correct mouse buttons are always pressed. A client
  * can initiate a drag & drop operation by calling {@link #init(int, int, int, int) init}.
- * Then the client has to call at least one time {@link #drag(int, int) drag}, before
+ * Then the client has to call at least one time {@link #drag(int, int, boolean) drag}, before
  * he can invoke {@link #drop(int, int) drop} to let the dragged {@link Dockable}
  * fall down. A client can {@link #cancel() cancel} the operation at any time.<br>
  * Note that only one operation is supported at once. Note also that there is 
@@ -42,7 +41,7 @@ import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
  */
 public interface DirectRemoteRelocator {
     /**
-     * This method starts or cancels a drag & drop operation. This method simulates
+     * This method starts a drag & drop operation. This method simulates
      * a mouse-pressed event.
      * @param x the x-coordinate on the screen, where the (simulated) event occurred
      * @param y the y-coordinate on the screen, where the (simulated) event occurred
@@ -52,18 +51,22 @@ public interface DirectRemoteRelocator {
     public void init( int x, int y, int dx, int dy );
     
     /**
-     * This method works on the drag-part of a drag & drop operation.
-     * This method simulates a mouse-dragged event.
+     * Gives a feedback to the user, that a {@link Dockable} is moved around.<br>
+     * Prepares for a drop-event.
      * @param x the x-coordinate on the screen, where the (simulated) event occurred
      * @param y the y-coordinate on the screen, where the (simulated) event occurred
+     * @param always <code>true</code> if a call to this method should always
+     * result in a drag-event, <code>false</code> if the restrictions of the
+     * {@link DockRelocator} should be respected. A restriction might be, that
+     * the location of the mouse must have a minimal distance to the initial
+     * location of the mouse.
+     * @see DockRelocator#getDragDistance()
      */
-    public void drag( int x, int y );
+    public void drag( int x, int y, boolean always );
     
     /**
-     * This method works on the drop-part of a drag & drop operation.
-     * This method simulates a mouse-released event.<br>
-     * The drag & drop operation may not be finished after an invocation of this
-     * method, clients should carefully analyze the resulting {@link Reaction} 
+     * Stops a dnd-operation either by dropping the {@link Dockable} 
+     * (if possible) or by cancling the operation.     
      * @param x the x-coordinate on the screen, where the (simulated) event occurred
      * @param y the y-coordinate on the screen, where the (simulated) event occurred
      */
