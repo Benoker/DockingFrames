@@ -30,15 +30,22 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
+import bibliothek.gui.DockController;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.control.RemoteRelocator;
+import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
 import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
 import bibliothek.gui.dock.station.stack.CombinedTab;
 
@@ -69,8 +76,8 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 	}
 	
 	@Override
-	protected Tab createTab(){
-		Tab tab = new Tab();
+	protected Tab createTab( Dockable dockable ){
+		Tab tab = new Tab( dockable );
 		addChangeListener( tab );
 		return tab;
 	}
@@ -79,6 +86,13 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 	protected void destroy( Tab tab ){
 		removeChangeListener( tab );
         tab.animation.stop();
+	}
+	
+	@Override
+	public void setController( DockController controller ){
+		super.setController( controller );
+		for( int i = 0, n = getTabCount(); i<n; i++ )
+			getTab( i ).setController( controller );
 	}
 
 	/**
@@ -94,11 +108,18 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 		private BubbleColorAnimation animation;
 		/** whether the mouse is inside this tab or not */
         private boolean mouse = false;
+        /** the Dockable for which this tab is used */
+        private Dockable dockable;
+        
+        /** the remote device to do drag & drop */
+        private RemoteRelocator relocator;
         
         /**
          * Creates a new tab
          */
-		public Tab(){
+		public Tab( Dockable dockable ){
+			this.dockable = dockable;
+			setController( getController() );
             animation = new BubbleColorAnimation( theme );
             animation.addTask( this );
             checkAnimation();
@@ -146,10 +167,66 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
                         animation.putColor( "text", "tab.text.inactive" );
                     }
                 }
+                
+                @Override
+                public void mousePressed( MouseEvent e ){
+                	if( !e.isConsumed() && relocator != null ){
+                		Point mouse = e.getPoint();
+                		SwingUtilities.convertPointToScreen( mouse, e.getComponent() );
+                		Reaction reaction = relocator.init( mouse.x, mouse.y, 0, 0, e.getModifiersEx() );
+                		switch( reaction ){
+                			case BREAK_CONSUMED:
+                			case CONTINUE_CONSUMED:
+                				e.consume();
+                				break;
+                		}
+                	}
+                }
+                
+                @Override
+                public void mouseReleased( MouseEvent e ){
+                	if( !e.isConsumed() && relocator != null ){
+                		Point mouse = e.getPoint();
+                		SwingUtilities.convertPointToScreen( mouse, e.getComponent() );
+                		Reaction reaction = relocator.drop( mouse.x, mouse.y, e.getModifiersEx() );
+                		switch( reaction ){
+                			case BREAK_CONSUMED:
+                			case CONTINUE_CONSUMED:
+                				e.consume();
+                				break;
+                		}
+                	}
+                }
+			};
+			
+			MouseMotionListener motion = new MouseMotionAdapter(){
+				@Override
+				public void mouseDragged( MouseEvent e ){
+                	if( !e.isConsumed() && relocator != null ){
+                		Point mouse = e.getPoint();
+                		SwingUtilities.convertPointToScreen( mouse, e.getComponent() );
+                		Reaction reaction = relocator.drag( mouse.x, mouse.y, e.getModifiersEx() );
+                		switch( reaction ){
+                			case BREAK_CONSUMED:
+                			case CONTINUE_CONSUMED:
+                				e.consume();
+                				break;
+                		}
+                	}
+				}
 			};
 			
 			addMouseListener( listener );
+			addMouseMotionListener( motion );
 			label.addMouseListener( listener );
+			label.addMouseMotionListener( motion );
+		}
+		
+		public void setController( DockController controller ){
+			if( controller == null )
+				relocator = null;
+			else
+				relocator = controller.getRelocator().createRemote( dockable );
 		}
 		
         public void run() {

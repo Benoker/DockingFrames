@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.control;
 
 import java.awt.*;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -314,8 +315,8 @@ public class DefaultDockRelocator extends DockRelocator{
         if( dockable.getDockParent() == null )
             return Reaction.BREAK;
         
-        int onmask = MouseEvent.BUTTON1_DOWN_MASK;
-        int offmask = MouseEvent.BUTTON2_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK;
+        int onmask = InputEvent.BUTTON1_DOWN_MASK;
+        int offmask = InputEvent.BUTTON2_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK;
         
         if( ((modifiers & (onmask | offmask)) == onmask ) ){
             // cancel all pending operations
@@ -463,9 +464,9 @@ public class DefaultDockRelocator extends DockRelocator{
      * @return how this relocator reacts on the event
      */
     protected Reaction dragMouseReleased( int x, int y, int modifiers, Dockable dockable ){
-        int offmask = MouseEvent.BUTTON1_DOWN_MASK |
-            MouseEvent.BUTTON2_DOWN_MASK |
-            MouseEvent.BUTTON3_DOWN_MASK;
+        int offmask = InputEvent.BUTTON1_DOWN_MASK |
+            InputEvent.BUTTON2_DOWN_MASK |
+            InputEvent.BUTTON3_DOWN_MASK;
         
         boolean stop = !onMove || ((modifiers & offmask) == 0);
         
@@ -485,6 +486,10 @@ public class DefaultDockRelocator extends DockRelocator{
                 return Reaction.CONTINUE_CONSUMED;
         }
         boolean consume = false;
+
+        // local copy, some objects using the remote are invoking cancel
+        // after the put has finished
+        DockStation dragStation = this.dragStation;
         if( dragStation != null ){
             consume = true;
             executePut( dockable, dragStation );
@@ -509,17 +514,20 @@ public class DefaultDockRelocator extends DockRelocator{
      * Cancels a drag and drop operation.
      */
     private void titleDragCancel(){
-        if( dragStation != null ){
-            dragStation.forget();
-            dragStation = null;
-        }
-        
-        if( movingTitleWindow != null )
-            movingTitleWindow.close();
-        
-        movingTitleWindow = null;
-        pressPointScreen = null;
-        pressPointLocal = null;
+    	if( !isOnPut() ){
+    		// if it is on but, than it is too late to stop
+	        if( dragStation != null ){
+	            dragStation.forget();
+	            dragStation = null;
+	        }
+	        
+	        if( movingTitleWindow != null )
+	            movingTitleWindow.close();
+	        
+	        movingTitleWindow = null;
+	        pressPointScreen = null;
+	        pressPointLocal = null;
+    	}
     }
     
     

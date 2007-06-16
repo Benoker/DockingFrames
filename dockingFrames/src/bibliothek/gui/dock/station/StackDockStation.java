@@ -177,6 +177,7 @@ public class StackDockStation extends AbstractDockableStation {
         
         if( stackComponent != this.stackComponent ){
             if( this.stackComponent != null ){
+            	this.stackComponent.setController( null );
                 Component component = this.stackComponent.getComponent();
                 for( MouseInputListener listener : mouseInputListeners ){
                     component.removeMouseListener( listener );
@@ -203,6 +204,7 @@ public class StackDockStation extends AbstractDockableStation {
                             dockable.getTitleText(), 
                             dockable.getTitleIcon(), 
                             displayer, 
+                            dockable,
                             stackComponent.getTabCount() );
                 }
                 
@@ -215,6 +217,7 @@ public class StackDockStation extends AbstractDockableStation {
             
             if( stackComponent != null ){
                 Component component = stackComponent.getComponent();
+                stackComponent.setController( getController() );
                 for( MouseInputListener listener : mouseInputListeners ){
                     component.addMouseListener( listener );
                     component.addMouseMotionListener( listener );
@@ -263,6 +266,7 @@ public class StackDockStation extends AbstractDockableStation {
             }
             
             super.setController(controller);
+            stackComponent.setController( controller );
             
             if( controller != null )
                 title = controller.getDockTitleManager().registerDefault( TITLE_ID, ControllerTitleFactory.INSTANCE );
@@ -637,12 +641,12 @@ public class StackDockStation extends AbstractDockableStation {
             if( dockables.size() == 1 ){
                 panel.removeAll();
                 DockableDisplayer child = dockables.get( 0 );
-                stackComponent.addTab( child.getDockable().getTitleText(), child.getDockable().getTitleIcon(), child );
+                stackComponent.addTab( child.getDockable().getTitleText(), child.getDockable().getTitleIcon(), child, child.getDockable() );
                 panel.add( stackComponent.getComponent() );
             }
             
             dockables.add( index, displayer );
-            stackComponent.insertTab( dockable.getTitleText(), dockable.getTitleIcon(), displayer, index );
+            stackComponent.insertTab( dockable.getTitleText(), dockable.getTitleIcon(), displayer, dockable, index );
             stackComponent.setSelectedIndex( index );
         }
         

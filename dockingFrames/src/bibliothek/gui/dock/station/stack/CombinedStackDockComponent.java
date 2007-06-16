@@ -36,6 +36,9 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import bibliothek.gui.DockController;
+import bibliothek.gui.Dockable;
+
 /**
  * A {@link StackDockComponent} which is a combination of other components.
  * @author Benjamin Sigg
@@ -48,6 +51,9 @@ public abstract class CombinedStackDockComponent<C extends CombinedTab> implemen
     
     /** A list of all buttons of this FlatTab */
     private List<C> buttons = new ArrayList<C>();
+    
+    /** The controller for which this component renders its content */
+    private DockController controller;
     
     /** A panel which displays the buttons of this FlatTab */
     private JPanel buttonPanel = new JPanel( new FlowLayout( FlowLayout.LEADING, 0, 0 ){
@@ -163,11 +169,33 @@ public abstract class CombinedStackDockComponent<C extends CombinedTab> implemen
         panel.add( componentPanel );
     }
     
+    public void setController( DockController controller ){
+    	this.controller = controller;
+    }
+    
+    /**
+     * Gets the controller for which this component renders its content.
+     * @return the indirect owner of this component
+     */
+    public DockController getController(){
+		return controller;
+	}
+    
+    /**
+     * Gets the index'th tab of this component.
+     * @param index the index of the tab
+     * @return the tab
+     */
+    public C getTab( int index ){
+    	return buttons.get( index );
+    }
+    
     /**
      * Creates a new tab which will be shown on this component.
+     * @param dockable the Dockable for which the tab will be used
      * @return the new tab
      */
-    protected abstract C createTab();
+    protected abstract C createTab( Dockable dockable );
     
     /**
      * Deletes a tab that was earlier created by {@link #createTab()}.
@@ -222,12 +250,12 @@ public abstract class CombinedStackDockComponent<C extends CombinedTab> implemen
         return bounds;
     }
     
-    public void addTab( String title, Icon icon, Component comp ) {
-        insertTab( title, icon, comp, getTabCount() );
+    public void addTab( String title, Icon icon, Component comp, Dockable dockable ) {
+        insertTab( title, icon, comp, dockable, getTabCount() );
     }
 
-    public void insertTab( String title, Icon icon, Component comp, int index ) {
-        C button = createTab();
+    public void insertTab( String title, Icon icon, Component comp, Dockable dockable, int index ) {
+        C button = createTab( dockable );
         button.setText( title );
         button.setIcon( icon );
         buttons.add( index, button );

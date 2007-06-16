@@ -32,6 +32,8 @@ import java.awt.Rectangle;
 import javax.swing.Icon;
 import javax.swing.event.ChangeListener;
 
+import bibliothek.gui.DockController;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.StackDockStation;
 
 /**
@@ -88,17 +90,19 @@ public interface StackDockComponent {
      * @param title the title of the child
      * @param icon an icon to display for the child or <code>null</code> 
      * @param comp the new child to display
+     * @param dockable the Dockable for which the tab is used
      */
-    public void addTab(String title, Icon icon, Component comp);
+    public void addTab(String title, Icon icon, Component comp, Dockable dockable );
 
     /**
      * Adds a new child at the location <code>index</code>.
      * @param title the title of the child
      * @param icon an icon to display for the child or <code>null</code> 
      * @param comp the new child to display
+     * @param dockable the Dockable for which the tab is used
      * @param index the index that the new child should have
      */
-    public void insertTab(String title, Icon icon, Component comp, int index);
+    public void insertTab(String title, Icon icon, Component comp, Dockable dockable, int index);
     
     /**
      * Gets the number of children that are added to this StackDockComponent.
@@ -138,4 +142,10 @@ public interface StackDockComponent {
      * @return the {@link Component}
      */
     public Component getComponent();
+    
+    /**
+     * Sets the controller for which this component manages its children.
+     * @param controller the controller or <code>null</code>
+     */
+    public void setController( DockController controller );
 }

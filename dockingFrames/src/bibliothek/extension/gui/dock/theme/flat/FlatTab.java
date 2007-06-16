@@ -29,12 +29,19 @@ package bibliothek.extension.gui.dock.theme.flat;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 
+import bibliothek.gui.DockController;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.control.RemoteRelocator;
+import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
+import bibliothek.gui.dock.station.StackDockStation;
 import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
 import bibliothek.gui.dock.station.stack.CombinedTab;
 
@@ -45,10 +52,9 @@ import bibliothek.gui.dock.station.stack.CombinedTab;
  * @author Benjamin Sigg
  */
 public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
-    
 	@Override
-	protected FlatButton createTab(){
-		return new FlatButton();
+	protected FlatButton createTab( Dockable dockable ){
+		return new FlatButton( dockable );
 	}
 	
 	@Override
@@ -56,44 +62,35 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
 		// nothing to do
 	}
 	
+	public void setController( DockController controller ){
+		super.setController( controller );
+		for( int i = 0, n = getTabCount(); i<n; i++ ){
+			getTab( i ).setController( controller );
+		}
+			
+	}
+	
     /**
      * A small button which can be clicked by the user.
      * @author Benjamin Sigg
      */
 	protected class FlatButton extends JLabel implements CombinedTab{
+		/** the currently used remote to do drag&drop operations */
+	    private RemoteRelocator relocator;
+		
+	    /** the dockable for which this button is shown */
+	    private Dockable dockable;
+	    
         /** The location of this button */
         private int index;
-        
-        public JComponent getComponent(){
-        	return this;
-        }
-        
-        @Override
-        public Dimension getPreferredSize() {
-            Dimension preferred = super.getPreferredSize();
-            if( preferred.width < 10 || preferred.height < 10 ){
-                preferred = new Dimension( preferred );
-                preferred.width = Math.max( preferred.width, 10 );
-                preferred.height = Math.max( preferred.height, 10 );
-            }
-            return preferred;
-        }
-        
-        @Override
-        public Dimension getMinimumSize() {
-            Dimension min = super.getMinimumSize();
-            if( min.width < 10 || min.height < 10 ){
-                min = new Dimension( min );
-                min.width = Math.max( min.width, 10 );
-                min.height = Math.max( min.height, 10 );
-            }
-            return min;
-        }
-        
+       
         /**
          * Constructs a new button
+         * @param dockable the Dockable for which this tab is displayed
          */
-        public FlatButton(){
+        public FlatButton( Dockable dockable ){
+        	this.dockable = dockable;
+        	setController( getController() );
             setOpaque( false );
             setFocusable( true );
             
@@ -102,7 +99,51 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
                 public void mousePressed( MouseEvent e ){
                     setSelectedIndex( index );
                     repaint();
+                    
+                    if( relocator != null && !e.isConsumed()){
+                    	Point mouse = e.getPoint();
+                    	SwingUtilities.convertPointToScreen( mouse, e.getComponent() );
+                    	Reaction reaction = relocator.init( mouse.x, mouse.y, 0, 0, e.getModifiersEx() );
+                    	switch( reaction ){
+                    		case BREAK_CONSUMED:
+                    		case CONTINUE_CONSUMED:
+                    			e.consume();
+                    			break;
+                    	}
+                    }
                 }
+                
+                @Override
+                public void mouseReleased( MouseEvent e ){
+                	if( relocator != null && !e.isConsumed()){
+                    	Point mouse = e.getPoint();
+                    	SwingUtilities.convertPointToScreen( mouse, e.getComponent() );
+                    	Reaction reaction =relocator.drop( mouse.x, mouse.y, e.getModifiersEx() );
+                    	switch( reaction ){
+                			case BREAK_CONSUMED:
+                			case CONTINUE_CONSUMED:
+                				e.consume();
+                				break;
+                    	}
+                    }
+                }
+            });
+            
+            addMouseMotionListener( new MouseMotionAdapter(){
+            	@Override
+            	public void mouseDragged( MouseEvent e ){
+            		if( relocator != null && !e.isConsumed()){
+                    	Point mouse = e.getPoint();
+                    	SwingUtilities.convertPointToScreen( mouse, e.getComponent() );
+                    	Reaction reaction =relocator.drag( mouse.x, mouse.y, e.getModifiersEx() );
+                    	switch( reaction ){
+                			case BREAK_CONSUMED:
+                			case CONTINUE_CONSUMED:
+                				e.consume();
+                				break;
+                    	}
+                    }
+            	}
             });
             
             setBorder( new Border(){
@@ -140,6 +181,39 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
             });
         }
         
+        public void setController( DockController controller ){
+        	if( controller == null )
+        		relocator = null;
+        	else
+        		relocator = controller.getRelocator().createRemote( dockable );
+        }
+        
+        public JComponent getComponent(){
+        	return this;
+        }
+        
+        @Override
+        public Dimension getPreferredSize() {
+            Dimension preferred = super.getPreferredSize();
+            if( preferred.width < 10 || preferred.height < 10 ){
+                preferred = new Dimension( preferred );
+                preferred.width = Math.max( preferred.width, 10 );
+                preferred.height = Math.max( preferred.height, 10 );
+            }
+            return preferred;
+        }
+        
+        @Override
+        public Dimension getMinimumSize() {
+            Dimension min = super.getMinimumSize();
+            if( min.width < 10 || min.height < 10 ){
+                min = new Dimension( min );
+                min.width = Math.max( min.width, 10 );
+                min.height = Math.max( min.height, 10 );
+            }
+            return min;
+        }
+       
         /**
          * Sets the location of this button. The buttons knows
          * through the {@link FlatTab#selectedIndex selectedIndex}-property whether
