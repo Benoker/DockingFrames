@@ -496,27 +496,29 @@ public class DefaultDockRelocator extends DockRelocator{
         }
         boolean consume = false;
 
-        // local copy, some objects using the remote are invoking cancel
-        // after the put has finished
-        DockStation dragStation = this.dragStation;
-        
-        DockStation next = preparePut( 
-                x, y,
-                x - pressPointLocal.x, y - pressPointLocal.y,
-                dockable );
-        
-        if( next != dragStation ){
-            if( dragStation != null ){
-                dragStation.forget();
+        if( pressPointScreen != null ){
+            // local copy, some objects using the remote are invoking cancel
+            // after the put has finished
+            DockStation dragStation = this.dragStation;
+            
+            DockStation next = preparePut( 
+                    x, y,
+                    x - pressPointLocal.x, y - pressPointLocal.y,
+                    dockable );
+            
+            if( next != dragStation ){
+                if( dragStation != null ){
+                    dragStation.forget();
+                }
+                dragStation = next;
             }
-            dragStation = next;
-        }
-        
-        if( dragStation != null ){
-            consume = true;
-            executePut( dockable, dragStation );
-            dragStation.forget();
-            this.dragStation = null;
+            
+            if( dragStation != null ){
+                consume = true;
+                executePut( dockable, dragStation );
+                dragStation.forget();
+                this.dragStation = null;
+            }
         }
         
         if( movingTitleWindow != null )
