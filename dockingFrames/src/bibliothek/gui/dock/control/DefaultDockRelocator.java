@@ -394,7 +394,7 @@ public class DefaultDockRelocator extends DockRelocator{
                 onMove = true;
             }
         }
-        else{
+        if( onMove ){
             if( movingTitleWindow != null )
                 updateTitleWindowPosition( mouse );
             
