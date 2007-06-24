@@ -66,7 +66,7 @@ public interface DirectRemoteRelocator {
     
     /**
      * Stops a dnd-operation either by dropping the {@link Dockable} 
-     * (if possible) or by cancling the operation.     
+     * (if possible) or by canceling the operation.     
      * @param x the x-coordinate on the screen, where the (simulated) event occurred
      * @param y the y-coordinate on the screen, where the (simulated) event occurred
      */

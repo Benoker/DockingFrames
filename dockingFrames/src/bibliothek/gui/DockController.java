@@ -168,8 +168,13 @@ public class DockController {
     		register.addDockRegisterListener( popup );
     	
 		register.addDockRegisterListener( titleListener );
+        relocator = createRelocator();
+        
+        for( DockControllerListener listener : listeners ){
+            register.addDockRegisterListener( listener );
+            relocator.addDockRelocatorListener( listener );
+        }
     	
-    	relocator = createRelocator();
         defaultActionOffer = createDefaultActionOffer();
         focusObserver = createMouseFocusObserver();
         actionViewConverter = createActionViewConverter();
@@ -795,8 +800,10 @@ public class DockController {
      */
     public void addDockControllerListener( DockControllerListener listener ){
         listeners.add( listener );
-        register.addDockRegisterListener( listener );
-        relocator.addDockRelocatorListener( listener );
+        if( register != null )
+            register.addDockRegisterListener( listener );
+        if( relocator != null )
+            relocator.addDockRelocatorListener( listener );
     }
     
     /**
@@ -805,8 +812,10 @@ public class DockController {
      */
     public void removeDockControllerListener( DockControllerListener listener ){
         listeners.remove( listener );
-        register.removeDockRegisterListener( listener );
-        relocator.removeDockRelocatorListener( listener );
+        if( register != null )
+            register.removeDockRegisterListener( listener );
+        if( relocator != null )
+            relocator.removeDockRelocatorListener( listener );
     }
     
     /**
