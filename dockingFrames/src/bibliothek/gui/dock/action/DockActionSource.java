@@ -56,7 +56,7 @@ public interface DockActionSource{
      * @return The DockAction
      */
     public DockAction getDockAction( int index );
-    
+        
     /**
      * Adds a listener to this source. The {@link StandardDockActionListener} should
      * be informed whenever some {@link DockAction DockActions} are added or

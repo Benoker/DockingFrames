@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -116,6 +116,7 @@ public class DockFrontend {
      */
     public DockFrontend(){
         this( new DockController(), null );
+        getController().setSingleParentRemove( true );
     }
     
     /**
@@ -127,6 +128,7 @@ public class DockFrontend {
      */
     public DockFrontend( Window owner ){
         this( new DockController(), owner );
+        getController().setSingleParentRemove( true );
     }
     
     /**

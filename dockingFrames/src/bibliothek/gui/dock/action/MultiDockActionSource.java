@@ -70,6 +70,27 @@ public class MultiDockActionSource extends AbstractDockActionSource {
         setHint( hint );
     }
     
+    @Override
+    public void addDockActionSourceListener( DockActionSourceListener listener ){
+    	boolean empty = listeners.isEmpty();
+    	super.addDockActionSourceListener( listener );
+    	if( empty && !listeners.isEmpty() ){
+    		for( DockActionSource source : sources )
+    			source.addDockActionSourceListener( listener );
+    		updateSeparators();
+    	}
+    }
+    
+    @Override
+    public void removeDockActionSourceListener( DockActionSourceListener listener ){
+    	boolean empty = listeners.isEmpty();
+    	super.removeDockActionSourceListener( listener );
+    	if( !empty && listeners.isEmpty() ){
+    		for( DockActionSource source : sources )
+    			source.removeDockActionSourceListener( listener );
+    	}
+    }
+    
     public LocationHint getLocationHint(){
     	return hint;
     }
@@ -85,15 +106,6 @@ public class MultiDockActionSource extends AbstractDockActionSource {
     	
 		this.hint = hint;
 	}
-    
-    @Override
-    public void addDockActionSourceListener( DockActionSourceListener listener ) {
-        super.addDockActionSourceListener(listener);
-    }
-    @Override
-    public void removeDockActionSourceListener( DockActionSourceListener listener ) {
-        super.removeDockActionSourceListener(listener);
-    }
     
     /**
      * Adds a separator at the end of the current list of actions
@@ -136,10 +148,12 @@ public class MultiDockActionSource extends AbstractDockActionSource {
         sources.add( separator );
         separators.add( separator );
         
-        source.addDockActionSourceListener( listener );
-        separator.addDockActionSourceListener( listener );
+        if( !listeners.isEmpty() ){
+        	source.addDockActionSourceListener( listener );
+        	separator.addDockActionSourceListener( listener );
+        }
         
-        int index = getDockActionCountUntil( sources.size()-1 );
+        int index = getDockActionCountUntil( sources.size()-1, false );
         int length = source.getDockActionCount();
         if( length > 0 )
             fireAdded( index, index+length-1 );
@@ -156,7 +170,7 @@ public class MultiDockActionSource extends AbstractDockActionSource {
     }
     
     public int getDockActionCount(){
-        return getDockActionCountUntil( sources.size() );
+        return getDockActionCountUntil( sources.size(), true );
     }
     
     /**
@@ -180,10 +194,15 @@ public class MultiDockActionSource extends AbstractDockActionSource {
      * Counts how many {@link DockAction DockActions} are provided by the
      * source-children with index 0 (incl) to <code>index</code> (excl).
      * @param index the index of the first source that should not be counted
+     * @param allowUpdate whether the {@link #updateSeparators()} can be called
+     * by this method or not
      * @return the number of actions of the first <code>index</code>
      * child-sources.
      */
-    protected int getDockActionCountUntil( int index ){
+    protected int getDockActionCountUntil( int index, boolean allowUpdate ){
+    	if( allowUpdate && listeners.isEmpty() )
+    		updateSeparators();
+    	
         int sum = 0;
         
         for( int i = 0; i < index; i++ )
@@ -193,7 +212,10 @@ public class MultiDockActionSource extends AbstractDockActionSource {
     }
 
     public DockAction getDockAction( int index ) {
-        int sum = 0;
+    	if( listeners.isEmpty() )
+    		updateSeparators();
+    	
+    	int sum = 0;
         for( int i = 0, n = sources.size(); i<n; i++ ){
             int length = sources.get( i ).getDockActionCount();
             if( sum <= index && index < sum + length )
@@ -206,7 +228,7 @@ public class MultiDockActionSource extends AbstractDockActionSource {
     }
     
     /**
-     * Ensures that all separators which must be visible are realy visible.
+     * Ensures that all separators which must be visible are really visible.
      */
     private void updateSeparators(){
     	int size = separators.size();
@@ -223,13 +245,13 @@ public class MultiDockActionSource extends AbstractDockActionSource {
      */
     private class Listener implements DockActionSourceListener{
         public void actionsAdded( DockActionSource source, int firstIndex, int lastIndex ) {
-            int index = getDockActionCountUntil( sources.indexOf( source ));
+            int index = getDockActionCountUntil( sources.indexOf( source ), false );
             fireAdded( firstIndex + index, lastIndex + index );
             updateSeparators();
         }
 
         public void actionsRemoved( DockActionSource source, int firstIndex, int lastIndex ) {
-            int index = getDockActionCountUntil( sources.indexOf( source ));
+            int index = getDockActionCountUntil( sources.indexOf( source ), false );
             fireRemoved( firstIndex + index, lastIndex + index );
             updateSeparators();
         }

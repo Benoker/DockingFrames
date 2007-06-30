@@ -45,6 +45,9 @@ public class DefaultDockable extends AbstractDockable {
     /** the content pane */
     private JPanel pane = new JPanel();
     
+    /** the id used to identify the factory of this dockable */
+    private String factoryId = DefaultDockableFactory.ID;
+    
     /**
      * Constructs a new DefaultDockable
      */
@@ -117,8 +120,19 @@ public class DefaultDockable extends AbstractDockable {
     }
     
     public String getFactoryID() {
-        return DefaultDockableFactory.ID;
+        return factoryId;
     }
+    
+    /**
+     * Sets the id for the {@link DockFactory} which will be used to store
+     * and load this dockable.
+     * @param factoryId the id of the factory
+     */
+    public void setFactoryID( String factoryId ){
+    	if( factoryId == null )
+    		throw new IllegalArgumentException( "FactoryID must not be null" );
+		this.factoryId = factoryId;
+	}
     
     public Component getComponent() {
         return pane;
