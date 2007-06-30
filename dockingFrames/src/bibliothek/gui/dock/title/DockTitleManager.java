@@ -107,7 +107,7 @@ public class DockTitleManager {
     }
     
     /**
-     * Registers a factory at the given key
+     * Registers a factory for the given key
      * @param id the key of the factory
      * @param factory the factory
      * @param priority the priority of this registration
