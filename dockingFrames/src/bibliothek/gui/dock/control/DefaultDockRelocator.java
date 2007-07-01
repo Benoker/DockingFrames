@@ -479,7 +479,7 @@ public class DefaultDockRelocator extends DockRelocator{
         
         boolean stop = !onMove || ((modifiers & offmask) == 0);
         
-        if( stop ){
+        if( stop && onMove ){
             EventQueue.invokeLater( new Runnable(){
                 public void run() {
                     onMove = false;
@@ -488,9 +488,15 @@ public class DefaultDockRelocator extends DockRelocator{
         }
         
         if( !onMove ){
+            boolean wasDragging = pressPointScreen != null;
             titleDragCancel();
-            if( stop )
-                return Reaction.BREAK_CONSUMED;
+            
+            if( stop ){
+                if( wasDragging )
+                    return Reaction.BREAK_CONSUMED;
+                else
+                    return Reaction.BREAK;
+            }
             else
                 return Reaction.CONTINUE_CONSUMED;
         }
@@ -539,7 +545,7 @@ public class DefaultDockRelocator extends DockRelocator{
      */
     private void titleDragCancel(){
     	if( !isOnPut() ){
-    		// if it is on but, than it is too late to stop
+    		// if it is on put, than it is too late to stop
 	        if( dragStation != null ){
 	            dragStation.forget();
 	            dragStation = null;

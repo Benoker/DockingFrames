@@ -94,23 +94,19 @@ public class PopupController implements DockRegisterListener{
     }
     
 	public void dockStationRegistered( DockController controller, DockStation station ){
-		// TODO Auto-generated method stub
-		
+	    // ignore
 	}
 
 	public void dockStationRegistering( DockController controller, DockStation station ){
-		// TODO Auto-generated method stub
-		
+		// ignore
 	}
 
 	public void dockStationUnregistered( DockController controller, DockStation station ){
-		// TODO Auto-generated method stub
-		
+		// ignore
 	}
 
 	public void dockableRegistering( DockController controller, Dockable dockable ){
-		// TODO Auto-generated method stub
-		
+		// ignore
 	}
 
 	/**
