@@ -105,6 +105,7 @@ public class DisplayerCollection implements Iterable<DockableDisplayer>{
     public void release( DockableDisplayer displayer ){
         displayers.remove( displayer );
         displayer.setTitle( null );
+        displayer.setDockable( null );
         displayer.setStation( null );
         displayer.setController( null );
     }

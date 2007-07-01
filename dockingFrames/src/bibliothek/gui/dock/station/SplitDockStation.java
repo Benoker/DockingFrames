@@ -1732,8 +1732,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         }
         
         if( title != null ){
-            display.getDockable().unbind( title );
-            display.setTitle( null );
+            dockable.unbind( title );
         }
         
         if( display.getDockable() == frontDockable )
