@@ -7,7 +7,7 @@ import javax.swing.JComponent;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.StandardDockAction;
-import bibliothek.gui.dock.action.view.ActionViewConverter;
+import bibliothek.gui.dock.action.view.ViewGenerator;
 import bibliothek.gui.dock.event.StandardDockActionListener;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
 
@@ -17,7 +17,7 @@ import bibliothek.gui.dock.title.DockTitle.Orientation;
  * Clients should call the method {@link #setModel(BasicButtonModel)} to connect
  * the handler with a model.<br>
  * This class implements {@link BasicTitleViewItem} in order to allow clients
- * to use instances as arguments for the put-methods of {@link ActionViewConverter}.
+ * to use instances as results of some {@link ViewGenerator ViewGenerators}.
  * @author Benjamin Sigg
  *
  * @param <D> The type of action observed by this model
