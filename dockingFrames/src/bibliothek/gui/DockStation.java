@@ -176,7 +176,7 @@ public interface DockStation extends DockElement{
      * A result of <code>null</code> indicates that there are no children
      * at all, or that there is no favorite child (all children are equal important).<br>
      * Stations should not change this property directly, they should call
-     * {@link DockController}.{@link DockController#setFocusedDockable(Dockable, boolean)}
+     * {@link DockController#setFocusedDockable(Dockable, boolean)}
      * which will then call {@link #setFrontDockable(Dockable)}. Note that the
      * DockController itself listens to the DockTitles, and maybe the station
      * doesn't need a logic to decide which child is important.

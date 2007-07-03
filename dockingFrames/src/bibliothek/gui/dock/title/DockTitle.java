@@ -181,7 +181,7 @@ public interface DockTitle {
      * {@link DockController#listOffers(Dockable)}), then this method
      * should {@link DockAction#bind(Dockable) bind} them too.<br>
      * Clients should never call this method directly, they should call
-     * {@link Dockable}.{@link Dockable#bind(DockTitle)}. The {@link DockController}
+     * {@link Dockable#bind(DockTitle)}. The {@link DockController}
      * will call the bind-method, as soon as the Dockable knows the controller.
      */
     public void bind();
@@ -191,7 +191,7 @@ public interface DockTitle {
      * to other objects and {@link DockAction#unbind(Dockable) unbind} its
      * DockActions.<br>
      * Clients should never call this method directly, they should call
-     * {@link Dockable}.{@link Dockable#unbind(DockTitle)}. The {@link DockController}
+     * {@link Dockable#unbind(DockTitle)}. The {@link DockController}
      * will call the unbind-method before the Dockable looses the controller.
      */
     public void unbind();

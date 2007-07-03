@@ -282,7 +282,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     }
     
     /**
-     * Calls the method {@link DockUI}.{@link DockUI#updateTheme(DockStation, DockFactory)}
+     * Calls the method {@link DockUI#updateTheme(DockStation, DockFactory)}
      * with <code>this</code> as the first argument, and an appropriate factory
      * as the second argument.
      * @throws IOException if the DockUI throws an exception

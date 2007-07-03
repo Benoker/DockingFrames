@@ -1,5 +1,6 @@
 [Beta v1.0.0]
 
 [Beta v1.0.01]
-- Bugfix: popup menu of a DockTitle did not open on right click under windows
+- Bugfix: popup menu of a DockTitle did not open on right click under Windows
 - Bugfix: Connection between DockableDisplayer and Dockable was not broken automatically (memory leak)
+- Bugfix: Connection between MultiDockActionSource and its children was not broken automatically (memory leak)
