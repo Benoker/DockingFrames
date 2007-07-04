@@ -38,12 +38,13 @@ import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.action.view.ViewGenerator;
 import bibliothek.gui.dock.action.view.ViewTarget;
-import bibliothek.gui.dock.event.DockControllerAdapter;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.SplitDockStation;
 import bibliothek.gui.dock.station.StackDockStation;
 import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;
+import bibliothek.gui.dock.station.stack.StackDockComponent;
+import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.ThemeProperties;
 import bibliothek.gui.dock.themes.basic.action.*;
@@ -68,9 +69,6 @@ public class FlatTheme extends BasicTheme{
     /** A special factory for the {@link SplitDockStation} */
     protected DisplayerFactory splitDisplayFactory = new FlatDisplayerFactory( true );
     
-    /** A listener to a controller */
-    private Listener listener = new Listener();
-    
     /**
      * Creates a new theme
      */
@@ -79,6 +77,11 @@ public class FlatTheme extends BasicTheme{
         setCombiner( new FlatCombiner());
         setTitleFactory( new FlatTitleFactory() );
         setDisplayerFactory( new FlatDisplayerFactory( false ));
+        setStackDockComponentFactory( new StackDockComponentFactory(){
+            public StackDockComponent create( StackDockStation station ) {
+                return new FlatTab();
+            }
+        });
     }
     
     @Override
@@ -93,17 +96,6 @@ public class FlatTheme extends BasicTheme{
                 return new FlatButtonTitle( dockable, version );
             }
         });
-        
-    	controller.addDockControllerListener( listener );
-    	
-        for( int i = 0, n = controller.getStationCount(); i<n; i++ ){
-        	DockStation station = controller.getStation(i);
-        	if( station instanceof StackDockStation ){
-        		StackDockStation stack = (StackDockStation)station;
-        		if( !(stack.getStackComponent() instanceof FlatTab) )
-        			stack.setStackComponent( new FlatTab() );
-        	}
-        }
         
         controller.getActionViewConverter().putTheme( ActionType.BUTTON, ViewTarget.TITLE, 
         		new ViewGenerator<ButtonDockAction, BasicTitleViewItem<JComponent>>(){
@@ -171,7 +163,6 @@ public class FlatTheme extends BasicTheme{
     @Override
     public void uninstall(DockController controller) {
     	super.uninstall(controller);
-    	controller.removeDockControllerListener(listener);
     	controller.getDockTitleManager().clearThemeFactories();
     	
     	controller.getActionViewConverter().putTheme( ActionType.BUTTON, ViewTarget.TITLE, null );
@@ -215,21 +206,5 @@ public class FlatTheme extends BasicTheme{
             return splitDisplayFactory;
         
         return super.getDisplayFactory( station );
-    }
-    
-    /**
-     * A listener to the Controller
-     * @author Benjamin Sigg
-     */
-    private class Listener extends DockControllerAdapter{
-		@Override
-		public void dockableRegistered(DockController controller, Dockable dockable) {
-			if( dockable instanceof StackDockStation ){
-				StackDockStation stack = (StackDockStation)dockable;
-				if( !(stack.getStackComponent() instanceof FlatTab) ){
-					stack.setStackComponent( new FlatTab() );
-				}
-			}
-		}
     }
 }

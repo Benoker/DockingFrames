@@ -33,11 +33,12 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
+import bibliothek.gui.dock.station.StackDockStation;
 import bibliothek.gui.dock.station.StationPaint;
-import bibliothek.gui.dock.themes.basic.BasicCombiner;
-import bibliothek.gui.dock.themes.basic.BasicDisplayerFactory;
-import bibliothek.gui.dock.themes.basic.BasicDockTitleFactory;
-import bibliothek.gui.dock.themes.basic.BasicStationPaint;
+import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;
+import bibliothek.gui.dock.station.stack.StackDockComponent;
+import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
+import bibliothek.gui.dock.themes.basic.*;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.MovingTitleGetter;
@@ -69,6 +70,9 @@ public class BasicTheme implements DockTheme{
     /** selects the title which should be displayed when moving a dockable*/
     private MovingTitleGetter titleGetter;
     
+    /** the factory used to create components for {@link StackDockStation} */
+    private StackDockComponentFactory stackDockComponentFactory;
+    
     /**
      * Creates a new <code>BasicTheme</code>.
      */
@@ -85,14 +89,30 @@ public class BasicTheme implements DockTheme{
                 return snapped;
             }
         });
+        setStackDockComponentFactory( new StackDockComponentFactory(){
+            public StackDockComponent create( StackDockStation station ) {
+                return new DefaultStackDockComponent();
+            }
+        });
     }
     
     public void install( DockController controller ) {
-    	// do nothing
+        controller.getProperties().set( StackDockStation.COMPONENT_FACTORY, stackDockComponentFactory );
     }
     
     public void uninstall(DockController controller) {
-    	// do nothing
+        controller.getProperties().set( StackDockStation.COMPONENT_FACTORY, null );
+    }
+    
+    /**
+     * Sets the factory which will be used to create components for 
+     * {@link StackDockStation}. Note that this property has to be set
+     * before the theme is installed. Otherwise it will take no effect.
+     * @param stackDockComponentFactory the factory or <code>null</code>
+     */
+    public void setStackDockComponentFactory(
+            StackDockComponentFactory stackDockComponentFactory ) {
+        this.stackDockComponentFactory = stackDockComponentFactory;
     }
     
     /**

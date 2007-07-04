@@ -50,10 +50,7 @@ import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.action.MultiDockActionSource;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockableListener;
-import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;
-import bibliothek.gui.dock.station.stack.StackDockComponent;
-import bibliothek.gui.dock.station.stack.StackDockProperty;
-import bibliothek.gui.dock.station.stack.StackDockStationFactory;
+import bibliothek.gui.dock.station.stack.*;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
 import bibliothek.gui.dock.station.support.StationPaintWrapper;
@@ -61,6 +58,9 @@ import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.gui.dock.util.DockPropertyListener;
+import bibliothek.gui.dock.util.PropertyKey;
 
 /**
  * On this station, only one of many children is visible. The other children
@@ -74,6 +74,10 @@ import bibliothek.gui.dock.title.DockTitleVersion;
 public class StackDockStation extends AbstractDockableStation {
     /** The id of the titlefactory which is used by this station */
     public static final String TITLE_ID = "stack";
+    
+    /** Key used to read the current {@link StackDockComponentFactory} */
+    public static final PropertyKey<StackDockComponentFactory> COMPONENT_FACTORY =
+        new PropertyKey<StackDockComponentFactory>( "stack dock component factory" );
     
     /** A list of all children */
     private List<DockableDisplayer> dockables = new ArrayList<DockableDisplayer>();
@@ -113,6 +117,9 @@ public class StackDockStation extends AbstractDockableStation {
     
     /** A Component which shows two or more children of this station */
     private StackDockComponent stackComponent;
+    
+    /** The current component factory */
+    private StackDockComponentFactory stackComponentFactory;
     
     /** The version of titles which should be used for this station */
     private DockTitleVersion title;
@@ -265,11 +272,18 @@ public class StackDockStation extends AbstractDockableStation {
                 }
             }
             
+            if( getController() != null ){
+                getController().getProperties().removeListener( COMPONENT_FACTORY, listener );
+            }
+            
             super.setController(controller);
             stackComponent.setController( controller );
             
-            if( controller != null )
+            if( controller != null ){
                 title = controller.getDockTitleManager().registerDefault( TITLE_ID, ControllerTitleFactory.INSTANCE );
+                controller.getProperties().addListener( COMPONENT_FACTORY, listener );
+                listener.updateFactory( controller.getProperties().get( COMPONENT_FACTORY ) );
+            }
             else
                 title = null;
             
@@ -834,10 +848,11 @@ public class StackDockStation extends AbstractDockableStation {
      * This listener is added to the children of the station. Whenever the
      * icon or the title-text of a child changes, the listener will inform
      * the {@link StackDockStation#getStackComponent() stack-component} about
-     * the change
+     * the change.<br>
+     * This listener also observes the {@link DockProperties} for changes.
      * @author Benjamin Sigg
      */
-    private class Listener implements DockableListener{
+    private class Listener implements DockableListener, DockPropertyListener<StackDockComponentFactory>{
         public void titleBinded( Dockable dockable, DockTitle title ) {
             // do nothing
         }
@@ -858,6 +873,29 @@ public class StackDockStation extends AbstractDockableStation {
                 int index = indexOf( dockable );
                 stackComponent.setIconAt( index, newIcon );
             }            
+        }
+
+        public void propertyChanged( DockProperties properties,
+                PropertyKey<StackDockComponentFactory> property,
+                StackDockComponentFactory oldValue,
+                StackDockComponentFactory newValue ) {
+         
+            updateFactory( newValue );
+        }
+        
+        /**
+         * Exchanges the currently used {@link StackDockComponentFactory}
+         * and also the {@link StackDockComponent}.
+         * @param newValue the new factory
+         */
+        public void updateFactory( StackDockComponentFactory newValue ){
+            if( stackComponentFactory != newValue ){
+                stackComponentFactory = newValue;
+                if( newValue == null )
+                    setStackComponent( createStackDockComponent() );
+                else
+                    setStackComponent( newValue.create( StackDockStation.this ) );
+            }
         }
     }
     

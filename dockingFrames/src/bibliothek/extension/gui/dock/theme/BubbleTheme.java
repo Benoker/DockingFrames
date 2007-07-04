@@ -41,7 +41,6 @@ import javax.swing.JComponent;
 
 import bibliothek.extension.gui.dock.theme.bubble.*;
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockStation;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.*;
@@ -49,10 +48,10 @@ import bibliothek.gui.dock.action.actions.SeparatorAction;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.action.view.ViewGenerator;
 import bibliothek.gui.dock.action.view.ViewTarget;
-import bibliothek.gui.dock.event.DockControllerAdapter;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.StackDockStation;
-import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;
+import bibliothek.gui.dock.station.stack.StackDockComponent;
+import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.ThemeProperties;
 import bibliothek.gui.dock.themes.basic.action.*;
@@ -70,9 +69,6 @@ public class BubbleTheme extends BasicTheme {
 	/** The colors used by this theme */
     private Map<String, Color> colors = new HashMap<String, Color>();
     
-    /** A listener to the {@link DockController} */
-	private Listener listener = new Listener();
-	
 	/**
 	 * Creates a new theme
 	 */
@@ -149,6 +145,11 @@ public class BubbleTheme extends BasicTheme {
         setTitleFactory( new BubbleDockTitleFactory( this ));
         setPaint( new BubbleStationPaint( this ) );
         setMovingTitleGetter( new BubbleMovingTitleGetter( this ) );
+        setStackDockComponentFactory( new StackDockComponentFactory(){
+            public StackDockComponent create( StackDockStation station ) {
+                return new BubbleStackDockComponent( BubbleTheme.this );
+            }
+        });
     }
     
     /**
@@ -275,23 +276,10 @@ public class BubbleTheme extends BasicTheme {
 	public void install( DockController controller ){
 		super.install( controller );
 		
-		       
-		// Exchange the DockComponents
-		for( int i = 0, n = controller.getStationCount(); i<n; i++ ){
-        	DockStation station = controller.getStation(i);
-        	if( station instanceof StackDockStation ){
-        		StackDockStation stack = (StackDockStation)station;
-        		if( !(stack.getStackComponent() instanceof BubbleStackDockComponent) )
-        			stack.setStackComponent( new BubbleStackDockComponent( this ) );
-        	}
-        }
-		
         // set new titles
         controller.getDockTitleManager().registerTheme( 
                 FlapDockStation.BUTTON_TITLE_ID, 
                 new ReducedBubbleTitleFactory( this ));
-        
-		controller.addDockControllerListener( listener );
         
         Map<String,Icon> icons = loadIcons();
         for( Map.Entry<String, Icon> icon : icons.entrySet() ){
@@ -367,18 +355,6 @@ public class BubbleTheme extends BasicTheme {
 	public void uninstall( DockController controller ){
 		super.uninstall( controller );
 		
-		controller.removeDockControllerListener( listener );
-		
-    	// Exchange the DockComponents
-        for( int i = 0, n = controller.getStationCount(); i<n; i++ ){
-        	DockStation station = controller.getStation(i);
-        	if( station instanceof StackDockStation ){
-        		StackDockStation stack = (StackDockStation)station;
-        		if( stack.getStackComponent() instanceof BubbleStackDockComponent )
-        			stack.setStackComponent( new DefaultStackDockComponent() );
-        	}
-        }
-        
         controller.getDockTitleManager().clearThemeFactories();
         
         controller.getIcons().clearThemeIcons();
@@ -392,22 +368,6 @@ public class BubbleTheme extends BasicTheme {
         converter.putTheme( ActionType.MENU, ViewTarget.TITLE, null );
         converter.putTheme( ActionType.SEPARATOR, ViewTarget.TITLE, null );
 	}
-	
-    /**
-     * A listener to the Controller
-     * @author Benjamin Sigg
-     */
-    private class Listener extends DockControllerAdapter{
-		@Override
-		public void dockableRegistered(DockController controller, Dockable dockable) {
-			if( dockable instanceof StackDockStation ){
-				StackDockStation stack = (StackDockStation)dockable;
-				if( !(stack.getStackComponent() instanceof BubbleStackDockComponent) ){
-					stack.setStackComponent( new BubbleStackDockComponent( BubbleTheme.this ) );
-				}
-			}
-		}
-    }
 
     /**
      * Generator to create views for {@link ButtonDockAction button-actions}.

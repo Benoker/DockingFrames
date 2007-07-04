@@ -5,3 +5,4 @@
 - Bugfix: Connection between DockableDisplayer and Dockable was not broken automatically (memory leak)
 - Bugfix: Connection between MultiDockActionSource and its children was not broken automatically (memory leak)
 - Bugfix: FullScreenListener was not removed from Map (memory leak)
+- API: StackDockStation now reads a StackDockComponentFactory out of the DockProperties, and changes its StackDockComponent according to the factory. DockThemes no longer have to exchange the components manually.
