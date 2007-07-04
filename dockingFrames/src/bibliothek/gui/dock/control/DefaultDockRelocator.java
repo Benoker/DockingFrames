@@ -907,6 +907,8 @@ public class DefaultDockRelocator extends DockRelocator{
                 Dockable dockable = title.getDockable();
                 dockable.unbind(title);
             }
+            
+            getContentPane().removeAll();
         }
     }
 }
