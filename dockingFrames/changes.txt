@@ -4,3 +4,4 @@
 - Bugfix: popup menu of a DockTitle did not open on right click under Windows
 - Bugfix: Connection between DockableDisplayer and Dockable was not broken automatically (memory leak)
 - Bugfix: Connection between MultiDockActionSource and its children was not broken automatically (memory leak)
+- Bugfix: FullScreenListener was not removed from Map (memory leak)
