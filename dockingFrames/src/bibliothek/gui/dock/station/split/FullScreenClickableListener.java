@@ -186,7 +186,7 @@ public class FullScreenClickableListener extends DockAdapter{
     
     @Override
     public void titleUnbinded( DockController controller, DockTitle title, Dockable dockable ) {
-        FullScreenListener listener = titleListeners.get( title );
+        FullScreenListener listener = titleListeners.remove( title );
         if( listener != null )
             title.removeMouseInputListener( listener );
     }
