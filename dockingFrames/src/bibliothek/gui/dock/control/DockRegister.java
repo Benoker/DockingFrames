@@ -210,6 +210,13 @@ public class DockRegister {
         return list.toArray( new DockStation[ list.size() ] );
     }
     
+    /**
+     * Gets a list of all Dockables.
+     * @return the list of Dockables
+     */
+    public Dockable[] listDockables(){
+    	return dockables.toArray( new Dockable[ dockables.size() ] );
+    }
     
     /**
      * Registers <code>dockable</code>, the associated controller will know the titles
