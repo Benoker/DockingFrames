@@ -246,8 +246,8 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         fullScreenAction = createFullScreenAction();
         visibility = new DockableVisibilityManager( dockStationListeners );
         
-        addMouseListener( dividerListener );
-        addMouseMotionListener( dividerListener );
+        getContentPane().addMouseListener( dividerListener );
+        getContentPane().addMouseMotionListener( dividerListener );
     }
     
     @Override
