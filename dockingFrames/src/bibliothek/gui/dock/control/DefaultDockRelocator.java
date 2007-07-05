@@ -334,7 +334,7 @@ public class DefaultDockRelocator extends DockRelocator{
             // initiate new operation
             pressPointScreen = new Point( x, y );
             pressPointLocal = new Point( dx, dy );
-            return Reaction.CONTINUE_CONSUMED;
+            return Reaction.CONTINUE;
         }
         else if( pressPointScreen != null ){
             titleDragCancel();

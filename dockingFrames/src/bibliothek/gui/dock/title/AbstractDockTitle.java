@@ -383,13 +383,23 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     }
 
     public Point getPopupLocation( Point click ){
-        if( getText() == null || getText().length() == 0 )
-            return null;
+        boolean restrained = getText() == null || getText().length() == 0;
         
         Rectangle icon = getIconBounds();
         if( icon != null ){
-            if( icon.contains( click ))
+            if( icon.contains( click )){
+            	if( restrained ){
+            		// icon must not be the whole title
+            		int size = getWidth() * getHeight();
+            		if( itemPanel != null && showMiniButtons )
+            			size -= itemPanel.getWidth() * itemPanel.getHeight();
+            		
+            		if( size <= 2 * icon.width * icon.height )
+            			return null;
+            	}
+            	
                 return new Point( icon.x, icon.y + icon.height );
+            }
         }
         
         return null;
