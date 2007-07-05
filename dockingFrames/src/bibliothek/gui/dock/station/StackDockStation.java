@@ -58,9 +58,8 @@ import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
-import bibliothek.gui.dock.util.DockProperties;
-import bibliothek.gui.dock.util.DockPropertyListener;
 import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.PropertyValue;
 
 /**
  * On this station, only one of many children is visible. The other children
@@ -119,7 +118,7 @@ public class StackDockStation extends AbstractDockableStation {
     private StackDockComponent stackComponent;
     
     /** The current component factory */
-    private StackDockComponentFactory stackComponentFactory;
+    private PropertyValue<StackDockComponentFactory> stackComponentFactory;
     
     /** The version of titles which should be used for this station */
     private DockTitleVersion title;
@@ -157,6 +156,16 @@ public class StackDockStation extends AbstractDockableStation {
         background = new Background();
         panel = background.getContentPane();
         
+        stackComponentFactory = new PropertyValue<StackDockComponentFactory>( COMPONENT_FACTORY ){
+            @Override
+            protected void valueChanged( StackDockComponentFactory oldValue, StackDockComponentFactory newValue ) {
+                if( newValue == null )
+                    setStackComponent( createStackDockComponent() );
+                else
+                    setStackComponent( newValue.create( StackDockStation.this ) );
+            }
+        };
+        
         stackComponent = createStackDockComponent();
         stackComponent.addChangeListener( visibleListener );
     }
@@ -174,7 +183,11 @@ public class StackDockStation extends AbstractDockableStation {
     /**
      * Sets the {@link StackDockComponent} which should be used by this 
      * station. The component is shown when this station has more then 
-     * one child.
+     * one child. Note that the <code>stackComponent</code> depends also
+     * on the property {@link #COMPONENT_FACTORY}, and will be automatically
+     * exchanged if that property changes. Clients should use
+     * {@link #setStackComponentFactory(StackDockComponentFactory)} if they
+     * want to exchange the component permanently. 
      * @param stackComponent the new component
      * @throws IllegalArgumentException if <code>stackComponent</code> is <code>null</code>
      */
@@ -242,6 +255,26 @@ public class StackDockStation extends AbstractDockableStation {
 		return stackComponent;
 	}
    
+    /**
+     * Sets the factory which will be used to create a {@link StackDockComponent}
+     * for this station.
+     * @param factory the new factory, can be <code>null</code> if the default-factory
+     * should be used
+     */
+    public void setStackComponentFactory( StackDockComponentFactory factory ){
+        stackComponentFactory.setValue( factory );
+    }
+    
+    /**
+     * Gets the factory which is used to create a {@link StackDockComponent}.
+     * This method returns <code>null</code> if no factory was set through
+     * {@link #setStackComponentFactory(StackDockComponentFactory)}.
+     * @return the factory or <code>null</code>
+     */
+    public StackDockComponentFactory getStackComponentFactory(){
+        return stackComponentFactory.getOwnValue();
+    }
+    
     @Override
     protected void callDockUiUpdateTheme() throws IOException {
     	DockUI.updateTheme( this, new StackDockStationFactory());
@@ -273,7 +306,10 @@ public class StackDockStation extends AbstractDockableStation {
             }
             
             if( getController() != null ){
-                getController().getProperties().removeListener( COMPONENT_FACTORY, listener );
+                if( controller == null )
+                    stackComponentFactory.setProperties( null );
+                else
+                    stackComponentFactory.setProperties( controller.getProperties() );
             }
             
             super.setController(controller);
@@ -281,8 +317,6 @@ public class StackDockStation extends AbstractDockableStation {
             
             if( controller != null ){
                 title = controller.getDockTitleManager().registerDefault( TITLE_ID, ControllerTitleFactory.INSTANCE );
-                controller.getProperties().addListener( COMPONENT_FACTORY, listener );
-                listener.updateFactory( controller.getProperties().get( COMPONENT_FACTORY ) );
             }
             else
                 title = null;
@@ -848,11 +882,10 @@ public class StackDockStation extends AbstractDockableStation {
      * This listener is added to the children of the station. Whenever the
      * icon or the title-text of a child changes, the listener will inform
      * the {@link StackDockStation#getStackComponent() stack-component} about
-     * the change.<br>
-     * This listener also observes the {@link DockProperties} for changes.
+     * the change.
      * @author Benjamin Sigg
      */
-    private class Listener implements DockableListener, DockPropertyListener<StackDockComponentFactory>{
+    private class Listener implements DockableListener{
         public void titleBinded( Dockable dockable, DockTitle title ) {
             // do nothing
         }
@@ -873,29 +906,6 @@ public class StackDockStation extends AbstractDockableStation {
                 int index = indexOf( dockable );
                 stackComponent.setIconAt( index, newIcon );
             }            
-        }
-
-        public void propertyChanged( DockProperties properties,
-                PropertyKey<StackDockComponentFactory> property,
-                StackDockComponentFactory oldValue,
-                StackDockComponentFactory newValue ) {
-         
-            updateFactory( newValue );
-        }
-        
-        /**
-         * Exchanges the currently used {@link StackDockComponentFactory}
-         * and also the {@link StackDockComponent}.
-         * @param newValue the new factory
-         */
-        public void updateFactory( StackDockComponentFactory newValue ){
-            if( stackComponentFactory != newValue ){
-                stackComponentFactory = newValue;
-                if( newValue == null )
-                    setStackComponent( createStackDockComponent() );
-                else
-                    setStackComponent( newValue.create( StackDockStation.this ) );
-            }
         }
     }
     

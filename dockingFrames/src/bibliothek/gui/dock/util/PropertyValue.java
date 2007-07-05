@@ -121,6 +121,14 @@ public abstract class PropertyValue<A> {
 	}
 	
 	/**
+	 * Gets the value that was set through {@link #setValue(Object)}.
+	 * @return the value, might be <code>null</code>
+	 */
+	public A getOwnValue(){
+	    return value;
+	}
+	
+	/**
 	 * Sets the current value.
 	 * @param value the value, <code>null</code> if the value should be read
 	 * from the {@link #setProperties(DockProperties) properties}
