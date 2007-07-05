@@ -7,3 +7,4 @@
 - Bugfix: FullScreenListener was not removed from Map (memory leak)
 - API: StackDockStation now reads a StackDockComponentFactory out of the DockProperties, and changes its StackDockComponent according to the factory. DockThemes no longer have to exchange the components manually.
 - Layout: Left-click on AbstractDockTitle will open a popup menu more often
+- Bugfix: SplitDockStation did not properly remove the front-dockable when requested
