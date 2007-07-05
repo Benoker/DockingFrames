@@ -305,12 +305,10 @@ public class StackDockStation extends AbstractDockableStation {
                 }
             }
             
-            if( getController() != null ){
-                if( controller == null )
-                    stackComponentFactory.setProperties( null );
-                else
-                    stackComponentFactory.setProperties( controller.getProperties() );
-            }
+            if( controller == null )
+                stackComponentFactory.setProperties( null );
+            else
+                stackComponentFactory.setProperties( controller.getProperties() );
             
             super.setController(controller);
             stackComponent.setController( controller );
