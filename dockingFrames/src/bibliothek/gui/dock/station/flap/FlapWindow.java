@@ -27,6 +27,8 @@
 package bibliothek.gui.dock.station.flap;
 
 import java.awt.*;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -91,7 +93,7 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
             @Override
             public void paint( Graphics g ) {
                 super.paint(g);
-                if( dropInfo != null && dropInfo.isCombine() && dropInfo.isDraw() ){
+                if( dropInfo != null && dropInfo.getCombine() != null && dropInfo.isDraw() ){
                     Rectangle bounds = new Rectangle( 0, 0, getWidth(), getHeight() );
                     FlapWindow.this.station.getPaint().drawInsertion( g, FlapWindow.this.station, bounds, bounds );
                 }
@@ -146,6 +148,32 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
                             parent.getHeight()-insets.top-insets.bottom );
                 }
             }
+        });
+        
+        addComponentListener( new ComponentListener(){
+			public void componentHidden( ComponentEvent e ){
+				// ignore
+			}
+
+			public void componentMoved( ComponentEvent e ){
+				// ignore				
+			}
+
+			public void componentResized( ComponentEvent e ){
+				// ignore
+			}
+
+			public void componentShown( ComponentEvent e ){
+				if( !station.isFlapWindow( FlapWindow.this ) || getDockable() == null ){
+					// This window should not be visible if it is not used
+					// by its former owner
+					SwingUtilities.invokeLater( new Runnable(){
+						public void run(){
+							dispose();
+						}
+					});
+				}
+			}
         });
     }
     

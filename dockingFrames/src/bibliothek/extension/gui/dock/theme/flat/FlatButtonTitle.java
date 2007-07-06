@@ -28,6 +28,8 @@ package bibliothek.extension.gui.dock.theme.flat;
 
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.Point;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
@@ -61,6 +63,10 @@ public class FlatButtonTitle extends AbstractDockTitle {
      * mouse is over this title 
      */
     private boolean mouseover = false;
+    
+    /** Whether the mouse is currently pressed or not */
+    private boolean mousePressed = false;
+    
     /**
      * Selected state of this title. Another border will be painted
      * if this title is selected.
@@ -95,15 +101,20 @@ public class FlatButtonTitle extends AbstractDockTitle {
         this.selected = selected;
         this.mouseover = mouseover;
         
-        if( selected ){
+        if( selected ^ mousePressed ){
             setBorder( BorderFactory.createBevelBorder( BevelBorder.LOWERED ));
         }
         else{
-            if( mouseover )
+            if( mouseover || mousePressed )
                 setBorder( BorderFactory.createEtchedBorder( EtchedBorder.LOWERED ));
             else
                 setBorder( BorderFactory.createEmptyBorder( 2, 2, 2, 2 ));
         }
+    }
+    
+    @Override
+    public Point getPopupLocation( Point click ){
+    	return null;
     }
     
     @Override
@@ -158,5 +169,17 @@ public class FlatButtonTitle extends AbstractDockTitle {
         public void mouseExited( MouseEvent e ) {
             changeBorder( selected, false );
         }
+        
+    	@Override
+    	public void mousePressed( MouseEvent e ){
+    		mousePressed = (e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK ) != 0;
+    		changeBorder( selected, mouseover );
+    	}
+    	
+    	@Override
+    	public void mouseReleased( MouseEvent e ){
+    		mousePressed = (e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK ) != 0;
+    		changeBorder( selected, mouseover );
+    	}
     }
 }

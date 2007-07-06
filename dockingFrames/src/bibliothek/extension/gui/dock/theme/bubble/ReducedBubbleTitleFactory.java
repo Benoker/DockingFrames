@@ -25,6 +25,8 @@
  */
 package bibliothek.extension.gui.dock.theme.bubble;
 
+import java.awt.Point;
+
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -71,6 +73,11 @@ public class ReducedBubbleTitleFactory implements DockTitleFactory {
     	 */
         public Title( BubbleTheme theme, Dockable dockable, DockTitleVersion origin ) {
             super( theme, dockable, origin, false );
+        }
+        
+        @Override
+        public Point getPopupLocation( Point click ){
+        	return null;
         }
         
         @Override

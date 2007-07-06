@@ -117,7 +117,7 @@ public class ButtonPane extends OverpaintablePanel{
     
     @Override
     protected void paintOverlay( Graphics g ) {
-       if( dropInfo != null && dropInfo.isDraw() && !dropInfo.isCombine() ){
+       if( dropInfo != null && dropInfo.isDraw() && dropInfo.getCombine() == null ){
             int left = dropInfo.getIndex()-1;
             int right = left+1;
             

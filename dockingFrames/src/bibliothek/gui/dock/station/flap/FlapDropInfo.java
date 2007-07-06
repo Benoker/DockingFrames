@@ -37,8 +37,8 @@ public class FlapDropInfo {
     /** location between buttons */
     private int index;
     
-    /** <code>true</code> if a combination with the current popup should be made */
-    private boolean combine = false;
+    /** the {@link Dockable} with which <code>dockable</code> should be cominbed */
+    private Dockable combine = null;
     
     /** <code>true</code> if information should be painted */
     private boolean draw = false;
@@ -59,19 +59,19 @@ public class FlapDropInfo {
      * @return the property
      * @see #setCombine(boolean)
      */
-    public boolean isCombine() {
-        return combine;
-    }
+    public Dockable getCombine(){
+		return combine;
+	}
 
     /**
-     * Sets the <code>combine</code> property. If this property is <code>true</code>,
-     * the station will combine the new {@link Dockable} with the current 
-     * front-dockable.
-     * @param combine <code>true</code> if a combination should be made
+     * Sets the <code>combine</code> property. If this property is not <code>null</code>,
+     * then the station will combine the new {@link Dockable} with the 
+     * <code>combine</code>.
+     * @param combine the Dockable with which the dragged Dockable should be combined
      */
-    public void setCombine( boolean combine ) {
-        this.combine = combine;
-    }
+    public void setCombine( Dockable combine ){
+		this.combine = combine;
+	}
 
     /**
      * Gets the {@link Dockable} which will be dropped or moved on the station.

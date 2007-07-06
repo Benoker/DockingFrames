@@ -26,8 +26,20 @@
 
 package bibliothek.gui.dock.station;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.HierarchyBoundsListener;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,15 +54,22 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockAcceptance;
-import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.DockableProperty;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
-import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.control.MouseFocusObserver;
-import bibliothek.gui.dock.event.*;
-import bibliothek.gui.dock.station.flap.*;
+import bibliothek.gui.dock.event.DockControllerAdapter;
+import bibliothek.gui.dock.event.DockStationAdapter;
+import bibliothek.gui.dock.event.DockTitleEvent;
+import bibliothek.gui.dock.event.FlapDockListener;
+import bibliothek.gui.dock.event.FocusVetoListener;
+import bibliothek.gui.dock.station.flap.ButtonPane;
+import bibliothek.gui.dock.station.flap.FlapDockHoldToggle;
+import bibliothek.gui.dock.station.flap.FlapDockProperty;
+import bibliothek.gui.dock.station.flap.FlapDockStationFactory;
+import bibliothek.gui.dock.station.flap.FlapDropInfo;
+import bibliothek.gui.dock.station.flap.FlapWindow;
 import bibliothek.gui.dock.station.support.CombinerWrapper;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
@@ -474,21 +493,22 @@ public class FlapDockStation extends AbstractDockableStation {
 
     public void setFrontDockable( Dockable dockable ) {
         Dockable oldFrontDockable = getFrontDockable();
-        
-        if( oldFrontDockable == dockable )
+
+        if( oldFrontDockable == dockable ){
             return;
+        }
         
         if( dockable == null ){
             if( window != null ){
                 window.setDockable( null );
-                window.setVisible( false );
             }
         }
-        else{
+        else {
             Window owner = SwingUtilities.getWindowAncestor( getComponent() );
             if( window == null || window.getOwner() != owner ){
-                if( window != null )
+                if( window != null ){
                     window.setDockable( null );
+                }
                 
                 FlapWindow window = createFlapWindow( owner, buttonPane );
                 if( window != null )
@@ -511,6 +531,13 @@ public class FlapDockStation extends AbstractDockableStation {
                 for( DockTitle title : titles )
                     changed( oldFrontDockable, title, active );
             }
+        }
+        
+        if( window != null ){
+        	if( window.getDockable() == null )
+        		window.setVisible( false );
+        	else
+        		window.repaint();
         }
         
         visibility.fire();
@@ -743,11 +770,25 @@ public class FlapDockStation extends AbstractDockableStation {
      * @param window the new window, can be <code>null</code>
      */
     private void setFlapWindow( FlapWindow window ){
+    	if( this.window != null )
+    		this.window.dispose();
+    	
         this.window = window;
         if( window != null )
             window.setDropInfo( dropInfo );
     }
     
+    /**
+     * Checks whether the currently used {@link FlapWindow} equals
+     * <code>window</code>.
+     * @param window a window
+     * @return <code>true</code> if <code>window</code> is currently used
+     * by this station
+     */
+    public boolean isFlapWindow( FlapWindow window ){
+    	return this.window == window;
+    }
+
     public boolean prepareDrop( int mouseX, int mouseY, int titleX, int titleY,
             Dockable dockable ) {
         
@@ -799,20 +840,18 @@ public class FlapDockStation extends AbstractDockableStation {
             return false;
         
         FlapDropInfo dropInfo = new FlapDropInfo( dockable );
-        dropInfo.setCombine( combine );
-        if( !combine ){
+        if( combine )
+        	dropInfo.setCombine( getFrontDockable() );
+        else
             dropInfo.setIndex( buttonPane.indexAt( mouse.x, mouse.y ) );
-        }
+        
         setDropInfo( dropInfo );
         return true;
     }
 
     public void drop(){
-        if( dropInfo.isCombine() ){
-            Dockable front = getFrontDockable();
-            if( front != null ){
-                combine( front, dropInfo.getDockable());
-            }
+        if( dropInfo.getCombine() != null ){
+        	combine( dropInfo.getCombine(), dropInfo.getDockable());
         }
         else{
             add( dropInfo.getDockable(), dropInfo.getIndex() );
@@ -875,12 +914,18 @@ public class FlapDockStation extends AbstractDockableStation {
     }
 
     public void move() {
-        int index = indexOf( dropInfo.getDockable() );
-        dockables.remove( index );
-        if( index < dropInfo.getIndex() )
-            dropInfo.setIndex( dropInfo.getIndex()-1 );
-        dockables.add( dropInfo.getIndex(), dropInfo.getDockable() );
-        buttonPane.resetTitles();
+    	if( dropInfo.getCombine() != null ){
+            remove( dropInfo.getDockable() );
+            combine( dropInfo.getCombine(), dropInfo.getDockable());
+        }
+    	else{
+	    	int index = indexOf( dropInfo.getDockable() );
+	        dockables.remove( index );
+	        if( index < dropInfo.getIndex() )
+	            dropInfo.setIndex( dropInfo.getIndex()-1 );
+	        dockables.add( dropInfo.getIndex(), dropInfo.getDockable() );
+	        buttonPane.resetTitles();
+    	}
     }
 
     public void draw() {
@@ -1187,16 +1232,21 @@ public class FlapDockStation extends AbstractDockableStation {
         }
         
         @Override
-        public void mousePressed( MouseEvent e ) {
-            DockTitle title = buttonTitles.get( dockable );
-            
-            if( getFrontDockable() == dockable && title.isActive() ){
-                getController().setFocusedDockable( FlapDockStation.this, true );
-                setFrontDockable( null );
-            }
-            else
-                getController().setFocusedDockable( dockable, true );
+        public void mouseReleased( MouseEvent e ){
+        	if( dockable.getDockParent() == FlapDockStation.this ){
+        		final int MASK = InputEvent.BUTTON1_DOWN_MASK | InputEvent.BUTTON2_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK;
+        		
+        		if( e.getButton() == MouseEvent.BUTTON1 && (e.getModifiersEx() & MASK ) == 0 ){
+        			DockTitle title = buttonTitles.get( dockable );
+	        		
+		            if( getFrontDockable() == dockable && title.isActive() ){
+		                getController().setFocusedDockable( FlapDockStation.this, true );
+		                setFrontDockable( null );
+		            }
+		            else
+		                getController().setFocusedDockable( dockable, true );
+        		}
+        	}
         }
-        
     }
 }

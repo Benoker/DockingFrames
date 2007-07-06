@@ -26,8 +26,14 @@
 
 package bibliothek.gui.dock.themes.basic;
 
+import java.awt.Point;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import javax.swing.BorderFactory;
 import javax.swing.border.BevelBorder;
+import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.event.DockTitleEvent;
@@ -39,6 +45,12 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  * @author Benjamin Sigg
  */
 public class BasicButtonDockTitle extends AbstractDockTitle {
+	/** whether the mouse is currently pressed or not */
+	private boolean mousePressed = false;
+	
+	/** the argument of the last call of {@link #changeBorder(boolean)} */
+	private boolean selected = false;
+	
     /**
      * Constructs a new title
      * @param dockable the {@link Dockable} for which this title is created
@@ -47,6 +59,20 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
     public BasicButtonDockTitle( Dockable dockable, DockTitleVersion origin ) {
         super(dockable, origin);
         setBorder( BorderFactory.createBevelBorder( BevelBorder.RAISED ));
+        
+        addMouseInputListener( new MouseInputAdapter(){
+        	@Override
+        	public void mousePressed( MouseEvent e ){
+        		mousePressed = (e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK ) != 0;
+        		changeBorder( selected );
+        	}
+        	
+        	@Override
+        	public void mouseReleased( MouseEvent e ){
+        		mousePressed = (e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK ) != 0;
+        		changeBorder( selected );
+        	}
+        });
     }
     
     @Override
@@ -63,12 +89,27 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
         changeBorder( event.isActive() || event.isPreferred() );
     }
     
+    @Override
+    public Point getPopupLocation( Point click ){
+    	return null;
+    }
+    
+    /**
+     * Tells whether the mouse is currently pressed or not.
+     * @return <code>true</code> if the mouse is pressed
+     */
+    protected boolean isMousePressed(){
+		return mousePressed;
+	}
+    
     /**
      * Exchanges the current border.
      * @param selected whether the title is selected (active) or not
      */
     protected void changeBorder( boolean selected ){
-        if( selected )
+    	this.selected = selected;
+    	
+        if( selected ^ mousePressed )
             setBorder( BorderFactory.createBevelBorder( BevelBorder.LOWERED ));
         else
             setBorder( BorderFactory.createBevelBorder( BevelBorder.RAISED ));

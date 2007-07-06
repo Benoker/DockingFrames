@@ -26,9 +26,13 @@
 package bibliothek.gui.dock.control;
 
 import java.awt.*;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
@@ -70,6 +74,8 @@ public class DefaultDockRelocator extends DockRelocator{
     private Point pressPointScreen;
     /** the point where the mouse was pressed on the currently dragged title */
     private Point pressPointLocal;
+    /** the location of the last mouse event */
+    private Point lastPoint;
     
 	/**
 	 * Creates a new manager.
@@ -322,6 +328,8 @@ public class DefaultDockRelocator extends DockRelocator{
         if( dockable.getDockParent() == null )
             return Reaction.BREAK;
         
+        lastPoint = new Point( x, y );
+        
         int onmask = InputEvent.BUTTON1_DOWN_MASK;
         int offmask = InputEvent.BUTTON2_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK;
         
@@ -378,6 +386,7 @@ public class DefaultDockRelocator extends DockRelocator{
             dockable = title.getDockable();
         
         Point mouse = new Point( x, y );
+        lastPoint = new Point( x, y );
         
         if( !onMove ){
             // not yet free
@@ -507,16 +516,18 @@ public class DefaultDockRelocator extends DockRelocator{
             // after the put has finished
             DockStation dragStation = this.dragStation;
             
-            DockStation next = preparePut( 
-                    x, y,
-                    x - pressPointLocal.x, y - pressPointLocal.y,
-                    dockable );
-            
-            if( next != dragStation ){
-                if( dragStation != null ){
-                    dragStation.forget();
-                }
-                dragStation = next;
+            if( x != lastPoint.x || y != lastPoint.y ){
+	            DockStation next = preparePut( 
+	                    x, y,
+	                    x - pressPointLocal.x, y - pressPointLocal.y,
+	                    dockable );
+	            
+	            if( next != dragStation ){
+	                if( dragStation != null ){
+	                    dragStation.forget();
+	                }
+	                dragStation = next;
+	            }
             }
             
             if( dragStation != null ){
@@ -821,6 +832,32 @@ public class DefaultDockRelocator extends DockRelocator{
         public TitleWindow( Window parent, DockTitle title ){
             super( parent );
             
+            addComponentListener( new ComponentListener(){
+				public void componentHidden( ComponentEvent e ){
+					// ignore
+				}
+
+				public void componentMoved( ComponentEvent e ){
+					// ignore
+				}
+
+				public void componentResized( ComponentEvent e ){
+					// ignore
+				}
+
+				public void componentShown( ComponentEvent e ){
+            		if( TitleWindow.this != movingTitleWindow ){
+            			// that should really not be possible...
+            			SwingUtilities.invokeLater( new Runnable(){
+            				public void run(){
+            					close();
+            				}
+            			});
+            		}					
+				}
+            	
+            });
+            
             Container content = getContentPane();
             content.setLayout( new GridLayout( 1, 1 ));
             setFocusableWindowState( false );
@@ -903,9 +940,10 @@ public class DefaultDockRelocator extends DockRelocator{
         public void close(){
             dispose();
             
-            if( !binded ){
+            if( !binded && title != null ){
                 Dockable dockable = title.getDockable();
                 dockable.unbind(title);
+                title = null;
             }
             
             getContentPane().removeAll();
