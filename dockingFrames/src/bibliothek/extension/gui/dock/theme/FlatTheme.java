@@ -154,7 +154,7 @@ public class FlatTheme extends BasicTheme{
      * @param trigger the trigger to invoke when the button has been clicked
      * @return the new button
      */
-    private MiniButton<BasicButtonModel> createTitleMiniButton( BasicTrigger trigger ){
+    protected MiniButton<BasicButtonModel> createTitleMiniButton( BasicTrigger trigger ){
     	BasicMiniButton button = new BasicMiniButton( trigger );
     	button.setMouseOverBorder( BorderFactory.createEtchedBorder() );
     	return button;
