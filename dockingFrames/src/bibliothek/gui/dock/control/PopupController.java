@@ -175,7 +175,7 @@ public class PopupController implements DockRegisterListener{
     	public void mouseClicked( MouseEvent e ){
     		if( title != null && isEnabled() ){
     			Point click = e.getPoint();
-    			SwingUtilities.convertPoint( e.getComponent(), click, title.getComponent() );
+    			click = SwingUtilities.convertPoint( e.getComponent(), click, title.getComponent() );
     			Point popup = title.getPopupLocation( click );
     			if( popup != null ){
     				popup( title.getComponent(), popup.x, popup.y );

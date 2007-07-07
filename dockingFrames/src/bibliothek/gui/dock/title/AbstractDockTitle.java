@@ -27,16 +27,17 @@
 package bibliothek.gui.dock.title;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
 
-import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionPopup;
 import bibliothek.gui.dock.action.DockAction;
@@ -168,7 +169,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         if( icon == null )
             return null;
         
-        Insets insets = getInsets();
+        Insets insets = titleInsets();
         if( orientation.isVertical() ){
             int width = getWidth() - insets.left - insets.right;
             return new Rectangle( insets.left + (width - icon.getIconWidth())/2, insets.top, icon.getIconWidth(), icon.getIconHeight() );
@@ -398,7 +399,10 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
             			return null;
             	}
             	
-                return new Point( icon.x, icon.y + icon.height );
+                if( getOrientation().isHorizontal() )
+                    return new Point( icon.x, icon.y + icon.height );
+                else
+                    return new Point( icon.x + icon.width, icon.y );
             }
         }
         

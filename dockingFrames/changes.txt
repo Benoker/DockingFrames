@@ -1,7 +1,7 @@
 [Beta v1.0.0]
 
 [Beta v1.0.01]
-- Bugfix: popup menu of a DockTitle did not open on right click under Windows
+- Bugfix: popup menu of a DockTitle did not open on right click under Windows XP
 - Bugfix: Connection between DockableDisplayer and Dockable was not broken automatically (memory leak)
 - Bugfix: Connection between MultiDockActionSource and its children was not broken automatically (memory leak)
 - Bugfix: FullScreenListener was not removed from Map (memory leak)
@@ -11,3 +11,5 @@
 - Layout: FlapDockStation now changes the selected child when the mouse is released, not when the mouse is pressed.
 - Layout: The DockTitles shown as Buttons for FlapDockStation have additional behavior when the mouse is pressed.
 - Bugfix: added some dirty hacks to ensure that the title-drag-window will close itself when the first event was ignored. That happend when the Window was not visible when dispose was called.
+- Bugfix: PopupController did not calculate the correct position of the mouse
+- Bugfix: AbstractDockTitle did not calculate the correct position and size of its icon when explicitly asked
