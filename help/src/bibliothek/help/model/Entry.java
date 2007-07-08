@@ -2,13 +2,14 @@ package bibliothek.help.model;
 
 import java.util.*;
 
-import bibliothek.help.gui.text.HelpDocument;
+import bibliothek.help.view.text.HelpDocument;
 
 public class Entry {
     private static final String[] EMPTY = new String[0];
     
     private String type;
     private String id;
+    private String title;
     private String content;
     private String[] details;
     
@@ -16,14 +17,16 @@ public class Entry {
      * Creates a new entry
      * @param type the type of the entry
      * @param id the id of the entry
+     * @param title the title of this entry
      * @param content the text for the entry
      * @param details links to other entries which should be shown when
      * this entry is shown
      */
-    public Entry( String type, String id, String content, String...details ) {
+    public Entry( String type, String id, String title, String content, String...details ) {
         super();
         this.type = type;
         this.id = id;
+        this.title = title;
         this.content = content;
         this.details = details;
         
@@ -38,6 +41,10 @@ public class Entry {
     public String getId() {
         return id;
     }
+    
+    public String getTitle(){
+		return title;
+	}
     
     public String getContent() {
         return content;
@@ -93,6 +100,9 @@ public class Entry {
                 }
             }
         }
+        
+        if( classes.isEmpty() )
+        	return null;
         
         return classes.getLast().toNode();
     }

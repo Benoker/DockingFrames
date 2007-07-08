@@ -29,7 +29,7 @@ public class EntryableConstructorList extends AbstractEntryable {
     }
     
     public Entry toEntry() {
-        return new Entry( "constructor-list", doc.qualifiedName(), content(), 
+        return new Entry( "constructor-list", doc.qualifiedName(), "Constructors of " + doc.qualifiedName(), content(), 
                 "class:" + doc.qualifiedName() );
     }
 

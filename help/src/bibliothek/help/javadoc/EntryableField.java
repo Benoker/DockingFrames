@@ -34,7 +34,7 @@ public class EntryableField extends AbstractEntryable {
     }
     
     public Entry toEntry() {
-        return new Entry( "field", doc.qualifiedName(), content(),
+        return new Entry( "field", doc.qualifiedName(), "Field " + doc.qualifiedName(), content(),
                 "class:"+doc.containingClass().qualifiedName() );
     }
 

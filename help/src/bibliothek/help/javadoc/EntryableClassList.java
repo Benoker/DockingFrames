@@ -26,8 +26,8 @@ public class EntryableClassList extends AbstractEntryable{
 
     public Entry toEntry() {
         if( doc == null )
-            return new Entry( "class-list", ".all", content());
+            return new Entry( "class-list", ".all", "All classes", content());
         else
-            return new Entry( "class-list", doc.name(), content());
+            return new Entry( "class-list", doc.name(), "Classes of " + doc.name(), content());
     }
 }

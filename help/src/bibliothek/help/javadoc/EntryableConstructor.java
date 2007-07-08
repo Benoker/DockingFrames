@@ -55,7 +55,8 @@ public class EntryableConstructor extends AbstractEntryable {
     }
 
     public Entry toEntry() {
-        return new Entry( "constructor", doc.qualifiedName() + doc.signature(), content(), 
+        return new Entry( "constructor", doc.qualifiedName() + doc.signature(),
+        		"Constructor " + doc.qualifiedName() + doc.signature(), content(), 
                 "class:" + doc.containingClass().qualifiedName() );
     }
 }

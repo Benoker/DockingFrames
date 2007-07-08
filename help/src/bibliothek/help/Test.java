@@ -6,13 +6,20 @@ import javax.swing.JFrame;
 
 import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.gui.DockFrontend;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ActionGuard;
+import bibliothek.gui.dock.action.DefaultDockActionSource;
+import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.station.SplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
 import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.help.control.LinkManager;
-import bibliothek.help.gui.SelectingView;
-import bibliothek.help.gui.TypeHierarchyView;
+import bibliothek.help.control.URManager;
+import bibliothek.help.control.actions.RedoDockAction;
+import bibliothek.help.control.actions.UndoDockAction;
 import bibliothek.help.model.HelpModel;
+import bibliothek.help.view.SelectingView;
+import bibliothek.help.view.TypeHierarchyView;
 
 public class Test {
     public static void main( String[] args ) throws Exception {
@@ -22,21 +29,36 @@ public class Test {
         frontend.getController().setTheme( new NoStackTheme( new FlatTheme() ) );
         
         HelpModel model = new HelpModel( new File( "help/help.data" ) );
-        LinkManager views = new LinkManager();
-        views.setModel( model );
+        LinkManager links = new LinkManager();
+        links.setModel( model );
         
-        SelectingView viewPackage = new SelectingView( views, "Packages", "package-list" );
-        SelectingView viewClasses = new SelectingView( views, "Classes", "class-list" );
-        SelectingView viewFields = new SelectingView( views, "Fields", "field-list" );
-        SelectingView viewConstructors = new SelectingView( views, "Constructors", "constructor-list" );
-        SelectingView viewMethods = new SelectingView( views, "Methods", "method-list" );
-        SelectingView viewContent = new SelectingView( views, "Content", "class",
+        URManager ur = links.getUR();
+        UndoDockAction actionUndo = new UndoDockAction( ur );
+        RedoDockAction actionRedo = new RedoDockAction( ur );
+        
+        final DefaultDockActionSource actions = new DefaultDockActionSource( actionUndo, actionRedo );
+        frontend.getController().addActionGuard( new ActionGuard(){
+        	public boolean react( Dockable dockable ){
+        		return dockable.asDockStation() == null;
+        	}
+        	
+        	public DockActionSource getSource( Dockable dockable ){
+        		return actions;
+        	}
+        });
+        
+        SelectingView viewPackage = new SelectingView( links, "Packages", "package-list" );
+        SelectingView viewClasses = new SelectingView( links, "Classes", "class-list" );
+        SelectingView viewFields = new SelectingView( links, "Fields", "field-list" );
+        SelectingView viewConstructors = new SelectingView( links, "Constructors", "constructor-list" );
+        SelectingView viewMethods = new SelectingView( links, "Methods", "method-list" );
+        SelectingView viewContent = new SelectingView( links, "Content", "class",
                 "constructor-list", "constructor",
                 "field-list", "field",
                 "method-list", "method" );
-        TypeHierarchyView viewHierarchy = new TypeHierarchyView( views );
+        TypeHierarchyView viewHierarchy = new TypeHierarchyView( links );
         
-        views.select( "package-list:root" );
+        links.select( "package-list:root" );
         
         SplitDockGrid grid = new SplitDockGrid(  );
         grid.addDockable( 0, 0, 1, 1, viewPackage );
@@ -45,7 +67,7 @@ public class Test {
         grid.addDockable( 1, 3, 1, 1, viewFields );
         grid.addDockable( 2, 3, 1, 1, viewMethods );
         grid.addDockable( 1, 0, 2, 3, viewContent );
-        grid.addDockable( 3, 0, 1, 4, viewHierarchy );
+        grid.addDockable( 3, 0, 1, 3, viewHierarchy );
         
         station.dropTree( grid.toTree() );
         

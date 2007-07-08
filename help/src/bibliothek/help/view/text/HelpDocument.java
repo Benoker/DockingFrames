@@ -1,4 +1,4 @@
-package bibliothek.help.gui.text;
+package bibliothek.help.view.text;
 
 import java.awt.Color;
 import java.util.Set;

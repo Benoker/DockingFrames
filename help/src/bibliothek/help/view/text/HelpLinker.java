@@ -1,4 +1,4 @@
-package bibliothek.help.gui.text;
+package bibliothek.help.view.text;
 
 import javax.swing.JTextPane;
 import javax.swing.text.Element;

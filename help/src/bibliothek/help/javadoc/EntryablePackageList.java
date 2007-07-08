@@ -18,7 +18,7 @@ public class EntryablePackageList extends AbstractEntryable {
     }
     
     public Entry toEntry() {
-        return new Entry( "package-list", "root", content(), "class-list:.all" );
+        return new Entry( "package-list", "root", "All packages", content(), "class-list:.all", "empty:" );
     }
 
 }

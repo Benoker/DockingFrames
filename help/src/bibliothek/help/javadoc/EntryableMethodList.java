@@ -32,6 +32,6 @@ public class EntryableMethodList extends AbstractEntryable{
     }
     
     public Entry toEntry() {
-        return new Entry( "method-list", doc.qualifiedName(), content(), "class:" + doc.qualifiedName() );
+        return new Entry( "method-list", doc.qualifiedName(), "Methods of " + doc.qualifiedName(), content(), "class:" + doc.qualifiedName() );
     }
 }

@@ -53,7 +53,7 @@ public class EntryableHierarchyClass extends AbstractEntryable{
     }
     
     public Entry toEntry() {
-        return new Entry( "hierarchy-class", doc.qualifiedName(), content(), 
+        return new Entry( "hierarchy-class", doc.qualifiedName(), "Hierarchy of " + doc.qualifiedName(), content(), 
                 "class:" + doc.qualifiedName() );
     }
 }

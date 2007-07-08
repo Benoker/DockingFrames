@@ -13,6 +13,7 @@ public class EntryIO {
     public static void write( Entry entry, DataOutputStream out ) throws IOException{
         out.writeUTF( entry.getType() );
         out.writeUTF( entry.getId() );
+        out.writeUTF( entry.getTitle() );
         out.writeUTF( entry.getContent() );
         out.writeInt( entry.getDetails().length );
         for( String link : entry.getDetails() )
@@ -44,11 +45,12 @@ public class EntryIO {
     public static Entry read( DataInputStream in ) throws IOException{
         String type = in.readUTF();
         String id = in.readUTF();
+        String title = in.readUTF();
         String content = in.readUTF();
         int count = in.readInt();
         String[] details = new String[ count ];
         for( int i = 0; i < count; i++ )
             details[i] = in.readUTF();
-        return new Entry( type, id, content, details );
+        return new Entry( type, id, title, content, details );
     }
 }

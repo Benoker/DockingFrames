@@ -1,4 +1,4 @@
-package bibliothek.help.gui;
+package bibliothek.help.view;
 
 import java.awt.GridLayout;
 import java.util.HashSet;
@@ -14,22 +14,27 @@ import javax.swing.event.HyperlinkEvent.EventType;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.help.control.LinkManager;
 import bibliothek.help.control.Linking;
-import bibliothek.help.gui.text.HelpDocument;
-import bibliothek.help.gui.text.HelpLinker;
+import bibliothek.help.control.Undoable;
 import bibliothek.help.model.Entry;
+import bibliothek.help.view.text.HelpDocument;
+import bibliothek.help.view.text.HelpLinker;
 
-public class SelectingView extends DefaultDockable implements HyperlinkListener, Linking{
+public class SelectingView extends DefaultDockable implements HyperlinkListener, Linking, Undoable{
     private JTextPane pane;
     private Set<String> types = new HashSet<String>();
     private LinkManager manager;
+    private Entry entry;
     
     public SelectingView( LinkManager manager, String title, String...types ){
         this.manager = manager;
         manager.add( this );
+        manager.getUR().register( this );
         setTitleText( title );
         
         for( String type : types )
             this.types.add( type );
+        
+        this.types.add( "empty" );
         
         pane = new JTextPane();
         pane.setEditable( false );
@@ -41,11 +46,22 @@ public class SelectingView extends DefaultDockable implements HyperlinkListener,
         pane.addHyperlinkListener( this );
     }
     
+    public Entry getCurrent(){
+    	return entry;
+    }
+    
+    public void setCurrent( Entry entry ){
+    	if( this.entry != entry ){
+    		this.entry = entry;
+    		HelpDocument help = entry.toDocument( null );
+        	pane.setDocument( help );
+    	}
+    }
+    
     public void selected( List<Entry> list ){
         for( Entry entry : list ){
             if( types.contains( entry.getType() )){
-                HelpDocument help = entry.toDocument( null );
-                pane.setDocument( help );
+                setCurrent( entry );
                 break;
             }
         }

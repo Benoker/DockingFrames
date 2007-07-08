@@ -57,7 +57,8 @@ public class EntryableMethod extends AbstractEntryable {
     }
     
     public Entry toEntry() {
-        return new Entry( "method", doc.qualifiedName() + doc.signature(), content(), 
+        return new Entry( "method", doc.qualifiedName() + doc.signature(), 
+        		"Method " + doc.qualifiedName() + doc.signature(), content(), 
                 "class:" + doc.containingClass().qualifiedName());
     }
 }

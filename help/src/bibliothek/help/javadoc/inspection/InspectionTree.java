@@ -75,7 +75,7 @@ public class InspectionTree extends JTree{
     }
     
     public InspectionTree( Entryable entryable ){
-        panel = new InspectionPanel( this );
+        panel = new InspectionPanel();
         panel.inspect( null );
         
         DefaultTreeModel model = new DefaultTreeModel( new Node( entryable ));

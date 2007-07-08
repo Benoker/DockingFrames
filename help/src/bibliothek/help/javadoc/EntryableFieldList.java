@@ -22,6 +22,6 @@ public class EntryableFieldList extends AbstractEntryable {
     }
     
     public Entry toEntry() {
-        return new Entry( "field-list", doc.qualifiedName(), content());
+        return new Entry( "field-list", doc.qualifiedName(), "Fields of " + doc.qualifiedName(), content());
     }
 }

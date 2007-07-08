@@ -12,7 +12,8 @@ import com.sun.javadoc.RootDoc;
 public class JavaDoc {
     public static void main( String[] args ) {
         // File directory = new File( "./src" );
-        File directory = new File( "C:/Dateien/Java/ProjekteLongterm/dockingFrames/src" );
+        // File directory = new File( "C:/Dateien/Java/ProjekteLongterm/dockingFrames/src" );
+    	File directory = new File( args[0] );
         
         List<String> docargs = new ArrayList<String>();
         
@@ -34,20 +35,22 @@ public class JavaDoc {
 
     private static boolean collect( File directory, String name, List<String> list ){
         boolean java = false;
-        
-        for( File child : directory.listFiles() ){
-            if( child.isDirectory() ){
-                String next = name;
-                if( next.length() > 0 )
-                    next += "." + child.getName();
-                else
-                    next = child.getName();
-                
-                if( collect( child, next, list ) )
-                    list.add( next );
-            }
-            else if( child.getName().endsWith( ".java" ))
-                java = true;
+        File[] children = directory.listFiles();
+        if( children != null ){
+	        for( File child : children ){
+	            if( child.isDirectory() ){
+	                String next = name;
+	                if( next.length() > 0 )
+	                    next += "." + child.getName();
+	                else
+	                    next = child.getName();
+	                
+	                if( collect( child, next, list ) )
+	                    list.add( next );
+	            }
+	            else if( child.getName().endsWith( ".java" ))
+	                java = true;
+	        }
         }
         return java;
     }
@@ -56,18 +59,18 @@ public class JavaDoc {
         File directory = new File( "help" );
         directory.mkdir();
         
-        EntryablePackageList list = new EntryablePackageList( root );
+        Entryable entryable = new EntryableRoot( root );
         File file = new File( directory, "help.data" );
         try{
             DataOutputStream out = new DataOutputStream( new BufferedOutputStream( new FileOutputStream( file )));
-            EntryIO.writeList( list, out );
+            EntryIO.writeList( entryable, out );
             out.close();
         }
         catch( IOException ex ){
             ex.printStackTrace();
         }
         
-        InspectionTree.inspect( list );
+        InspectionTree.inspect( entryable );
         
         return true;
     }
