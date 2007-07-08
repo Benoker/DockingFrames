@@ -134,6 +134,14 @@ public class SimpleDropDownAction extends SimpleDockAction implements DropDownAc
 	}
 	
 	/**
+	 * Gets the number of actions shown in the menu.
+	 * @return the number of actions
+	 */
+	public int size(){
+		return actions.getDockActionCount();
+	}
+	
+	/**
 	 * Removes <code>action</code> from the menu.
 	 * @param action the action to remove
 	 */
