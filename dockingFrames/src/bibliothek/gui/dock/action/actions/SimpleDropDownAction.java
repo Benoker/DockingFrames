@@ -65,6 +65,14 @@ public class SimpleDropDownAction extends SimpleDockAction implements DropDownAc
 	}
 	
 	public void setSelection( Dockable dockable, DockAction selection ){
+		setSelection( selection );
+	}
+	
+	/**
+	 * Changes the selection of this drop-down-action.
+	 * @param selection the newly selected action
+	 */
+	public void setSelection( DockAction selection ){
 		if( this.selection != selection ){
 			this.selection = selection;
 			fireSelectionChanged();
