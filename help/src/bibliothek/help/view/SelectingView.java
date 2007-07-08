@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.Icon;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.event.HyperlinkEvent;
@@ -25,11 +26,12 @@ public class SelectingView extends DefaultDockable implements HyperlinkListener,
     private LinkManager manager;
     private Entry entry;
     
-    public SelectingView( LinkManager manager, String title, String...types ){
+    public SelectingView( LinkManager manager, String title, Icon icon, String...types ){
         this.manager = manager;
         manager.add( this );
         manager.getUR().register( this );
         setTitleText( title );
+        setTitleIcon( icon );
         
         for( String type : types )
             this.types.add( type );

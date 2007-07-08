@@ -3,6 +3,7 @@ package bibliothek.help;
 import java.io.File;
 
 import javax.swing.JFrame;
+import javax.swing.UIManager;
 
 import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.gui.DockFrontend;
@@ -18,11 +19,14 @@ import bibliothek.help.control.URManager;
 import bibliothek.help.control.actions.RedoDockAction;
 import bibliothek.help.control.actions.UndoDockAction;
 import bibliothek.help.model.HelpModel;
+import bibliothek.help.util.ResourceSet;
 import bibliothek.help.view.SelectingView;
 import bibliothek.help.view.TypeHierarchyView;
 
 public class Test {
     public static void main( String[] args ) throws Exception {
+        UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName() );
+        
         DockFrontend frontend = new DockFrontend();
         SplitDockStation station = new SplitDockStation();
         frontend.addRoot( station, "root" );
@@ -47,12 +51,12 @@ public class Test {
         	}
         });
         
-        SelectingView viewPackage = new SelectingView( links, "Packages", "package-list" );
-        SelectingView viewClasses = new SelectingView( links, "Classes", "class-list" );
-        SelectingView viewFields = new SelectingView( links, "Fields", "field-list" );
-        SelectingView viewConstructors = new SelectingView( links, "Constructors", "constructor-list" );
-        SelectingView viewMethods = new SelectingView( links, "Methods", "method-list" );
-        SelectingView viewContent = new SelectingView( links, "Content", "class",
+        SelectingView viewPackage = new SelectingView( links, "Packages", ResourceSet.ICONS.get( "package" ), "package-list" );
+        SelectingView viewClasses = new SelectingView( links, "Classes", ResourceSet.ICONS.get( "class" ), "class-list" );
+        SelectingView viewFields = new SelectingView( links, "Fields", ResourceSet.ICONS.get( "field" ), "field-list" );
+        SelectingView viewConstructors = new SelectingView( links, "Constructors", ResourceSet.ICONS.get( "constructor" ), "constructor-list" );
+        SelectingView viewMethods = new SelectingView( links, "Methods", ResourceSet.ICONS.get( "method" ), "method-list" );
+        SelectingView viewContent = new SelectingView( links, "Content", ResourceSet.ICONS.get( "content" ), "class",
                 "constructor-list", "constructor",
                 "field-list", "field",
                 "method-list", "method" );

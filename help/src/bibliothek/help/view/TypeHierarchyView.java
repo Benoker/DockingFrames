@@ -1,6 +1,7 @@
 package bibliothek.help.view;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.util.List;
 
 import javax.swing.JScrollPane;
@@ -13,6 +14,7 @@ import bibliothek.help.control.Linking;
 import bibliothek.help.control.Undoable;
 import bibliothek.help.model.Entry;
 import bibliothek.help.model.HierarchyNode;
+import bibliothek.help.util.ResourceSet;
 
 public class TypeHierarchyView extends DefaultDockable implements Linking, Undoable{
     private JTree tree;
@@ -20,6 +22,7 @@ public class TypeHierarchyView extends DefaultDockable implements Linking, Undoa
     
     public TypeHierarchyView( LinkManager manager ){
         setTitleText( "Hierarchy" );
+        setTitleIcon( ResourceSet.ICONS.get( "hierarchy" ) );
         
         manager.add( this );
         manager.getUR().register( this );
@@ -29,6 +32,7 @@ public class TypeHierarchyView extends DefaultDockable implements Linking, Undoa
         add( new JScrollPane( tree ), BorderLayout.CENTER );
         
         tree.setModel( new DefaultTreeModel( new DefaultMutableTreeNode()) );
+        tree.setCellRenderer( new Renderer() );
     }
     
     public Entry getCurrent(){
@@ -60,7 +64,7 @@ public class TypeHierarchyView extends DefaultDockable implements Linking, Undoa
     }
     
     private MutableTreeNode toModel( HierarchyNode node ){
-        DefaultMutableTreeNode model = new DefaultMutableTreeNode( "(" + node.getType() + ") " + node.getName() );
+        DefaultMutableTreeNode model = new DefaultMutableTreeNode( node );
         for( int i = 0, n = node.getChildrenCount(); i<n; i++ )
             model.add( toModel( node.getChild( i )) );
         
@@ -73,6 +77,30 @@ public class TypeHierarchyView extends DefaultDockable implements Linking, Undoa
             TreeNode child = node.getChildAt( i );
             TreePath next = path.pathByAddingChild( child );
             expandAll( child, next );
+        }
+    }
+    
+    private class Renderer extends DefaultTreeCellRenderer{
+        @Override
+        public Component getTreeCellRendererComponent( JTree tree,
+                Object value, boolean sel, boolean expanded, boolean leaf,
+                int row, boolean hasFocus ) {
+            
+            Object user = ((DefaultMutableTreeNode)value).getUserObject();
+            if( user instanceof HierarchyNode ){
+                HierarchyNode node = (HierarchyNode)user;
+                super.getTreeCellRendererComponent( tree, node.getName(), sel, expanded, leaf, row, hasFocus );
+                if( node.getType().equals( "c" ))
+                    setIcon( ResourceSet.ICONS.get( "class" ) );
+                else if( node.getType().equals( "i" ))
+                    setIcon( ResourceSet.ICONS.get( "interface" ) );
+                else
+                    setIcon( null );
+            }
+            else
+                super.getTreeCellRendererComponent( tree, value, sel, expanded, leaf, row, hasFocus );
+            
+            return this;
         }
     }
 }

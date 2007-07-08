@@ -9,6 +9,7 @@ import bibliothek.gui.dock.action.actions.SimpleDropDownAction;
 import bibliothek.help.control.URListener;
 import bibliothek.help.control.URManager;
 import bibliothek.help.control.URManager.Step;
+import bibliothek.help.util.ResourceSet;
 
 public class UndoDockAction extends SimpleDropDownAction implements URListener{
 	private URManager manager;
@@ -17,7 +18,8 @@ public class UndoDockAction extends SimpleDropDownAction implements URListener{
 	public UndoDockAction( URManager manager ){
 		this.manager = manager;
 		setText( "Undo" );
-		
+		setIcon( ResourceSet.ICONS.get( "undo" ) );
+				
 		undo = new SimpleUndo();
 		add( undo );
 		setSelection( undo );

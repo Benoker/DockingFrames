@@ -9,6 +9,7 @@ import bibliothek.gui.dock.action.actions.SimpleDropDownAction;
 import bibliothek.help.control.URListener;
 import bibliothek.help.control.URManager;
 import bibliothek.help.control.URManager.Step;
+import bibliothek.help.util.ResourceSet;
 
 public class RedoDockAction extends SimpleDropDownAction implements URListener{
 	private URManager manager;
@@ -17,6 +18,7 @@ public class RedoDockAction extends SimpleDropDownAction implements URListener{
 	public RedoDockAction( URManager manager ){
 		this.manager = manager;
 		setText( "Redo" );
+		setIcon( ResourceSet.ICONS.get( "redo" ) );
 		
 		redo = new SimpleRedo();
 		add( redo );
