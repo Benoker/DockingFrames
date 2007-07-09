@@ -34,6 +34,8 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JComponent;
 
+import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.station.FlapDockStation;
@@ -99,8 +101,14 @@ public class SecureFlapWindow extends FlapWindow {
         
         @Override
         public void windowClosed( WindowEvent e ) {
-            SecureMouseFocusObserver controller = (SecureMouseFocusObserver)getStation().getController().getFocusObserver();
-            controller.removeGlassPane( pane );
+            DockStation station = getStation();
+            if( station != null ){
+                DockController controller = station.getController();
+                if( controller != null ){
+                    SecureMouseFocusObserver observer = (SecureMouseFocusObserver)controller.getFocusObserver();
+                    observer.removeGlassPane( pane );
+                }
+            }
         }
     }
 }

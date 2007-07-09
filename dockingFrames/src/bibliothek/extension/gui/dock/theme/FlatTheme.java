@@ -74,7 +74,7 @@ public class FlatTheme extends BasicTheme{
      */
     public FlatTheme() {
         setPaint( new FlatStationPaint() );
-        setCombiner( new FlatCombiner());
+        // setCombiner( new FlatCombiner());
         setTitleFactory( new FlatTitleFactory() );
         setDisplayerFactory( new FlatDisplayerFactory( false ));
         setStackDockComponentFactory( new StackDockComponentFactory(){

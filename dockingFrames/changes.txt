@@ -13,3 +13,5 @@
 - Bugfix: added some dirty hacks to ensure that the title-drag-window will close itself when the first event was ignored. That happend when the Window was not visible when dispose was called.
 - Bugfix: PopupController did not calculate the correct position of the mouse
 - Bugfix: AbstractDockTitle did not calculate the correct position and size of its icon when explicitly asked
+- Bugfix: NPE thrown by SecureFlapWindow when closing the window a second time
+- API: delete some subclasses of Combiner which are no longer needed (Bubble/FlatCombiner)
