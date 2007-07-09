@@ -980,18 +980,17 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
                 return false;
             
             double divider = 0.5;
-            double min = Math.min( property.getWidth(), property.getHeight() );
             if( info.bestNodePut == PutInfo.Put.LEFT ){
-                divider = min / info.bestNode.getWidth();
+                divider = property.getWidth() / info.bestNode.getWidth();
             }
             else if( info.bestNodePut == PutInfo.Put.RIGHT ){
-                divider = 1 - min / info.bestNode.getWidth();
+                divider = 1 - property.getWidth() / info.bestNode.getWidth();
             }
             else if( info.bestNodePut == PutInfo.Put.TOP ){
-                divider = min / info.bestNode.getHeight();
+                divider = property.getHeight() / info.bestNode.getHeight();
             }
             else if( info.bestNodePut == PutInfo.Put.BOTTOM ){
-                divider = 1 - min / info.bestNode.getHeight();
+                divider = 1 - property.getHeight() / info.bestNode.getHeight();
             }
             
             divider = Math.max( 0, Math.min( 1, divider ));
