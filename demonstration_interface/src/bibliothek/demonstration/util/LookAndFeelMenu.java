@@ -53,7 +53,7 @@ public class LookAndFeelMenu extends JMenu{
         
         owner.addWindowListener( new WindowAdapter(){
         	@Override
-        	public void windowClosed( WindowEvent e ){
+        	public void windowClosing( WindowEvent e ){
         		LookAndFeelMenu.this.list.removeChangeListener( changeListener );
         	}
         });
