@@ -27,7 +27,7 @@ public class EntryableHierarchyClass extends AbstractEntryable{
     }
     
     private void putInterface( ClassDoc doc, Set<String> done, Set<String> collecting ){
-        if( !done.contains( doc.qualifiedName() )){
+        if( done == null || !done.contains( doc.qualifiedName() )){
             if( collecting != null )
                 collecting.add( doc.qualifiedName() );
             
@@ -36,7 +36,7 @@ public class EntryableHierarchyClass extends AbstractEntryable{
             if( subs.length > 0 ){
                 mode( "tree", "+" );
                 for( ClassDoc sub : subs )
-                    putInterface( sub, done, collecting );
+                    putInterface( sub, null, collecting );
                 mode( "tree", "-" );
             }
         }

@@ -142,7 +142,9 @@ public class Core implements ComponentCollector{
 	
 	public void shutdown(){
 		frame.setVisible( false );
+		frame.dispose();
 		screen.setShowing( false );
+		frontend.getController().kill();
 		if( monitor == null )
 			System.exit( 0 );
 		else
