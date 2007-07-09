@@ -8,8 +8,8 @@ import java.util.Map;
 public class HelpModel {
     private Map<String, Entry> entries = new HashMap<String, Entry>();
     
-    public HelpModel( File file ) throws IOException{
-        DataInputStream in = new DataInputStream( new BufferedInputStream( new FileInputStream( file )));
+    public HelpModel( String path ) throws IOException{
+        DataInputStream in = new DataInputStream( HelpModel.class.getResourceAsStream( path ) );
         List<Entry> list = EntryIO.readList( in );
         in.close();
         for( Entry entry : list )

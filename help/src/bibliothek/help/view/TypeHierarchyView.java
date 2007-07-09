@@ -27,12 +27,17 @@ public class TypeHierarchyView extends DefaultDockable implements Linking, Undoa
         manager.add( this );
         manager.getUR().register( this );
         
-        tree = new JTree();
+        tree = new JTree(){
+        	@Override
+        	public void updateUI(){
+        		super.updateUI();
+        		setCellRenderer( new Renderer() );
+        	}
+        };
         setLayout( new BorderLayout() );
         add( new JScrollPane( tree ), BorderLayout.CENTER );
         
         tree.setModel( new DefaultTreeModel( new DefaultMutableTreeNode()) );
-        tree.setCellRenderer( new Renderer() );
     }
     
     public Entry getCurrent(){

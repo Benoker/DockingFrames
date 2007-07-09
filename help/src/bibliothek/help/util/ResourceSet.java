@@ -25,12 +25,12 @@ public class ResourceSet {
 		
 		try{
 			Properties properties = new Properties();
-			InputStream in = openStream( "/data/icons/icons.ini" );
+			InputStream in = openStream( "/data/bibliothek/help/icons/icons.ini" );
 			properties.load( in );
 			in.close();
 			
 			for( Map.Entry<Object, Object> entry : properties.entrySet() ){
-				in = openStream( "/data/icons/" + entry.getValue() );
+				in = openStream( "/data/bibliothek/help/icons/" + entry.getValue() );
 				icons.put( entry.getKey().toString(), new ImageIcon( ImageIO.read( in )) );
 				in.close();
 			}

@@ -1,5 +1,9 @@
 package bibliothek.help.javadoc;
 
+import java.text.Collator;
+import java.util.Arrays;
+import java.util.Comparator;
+
 import bibliothek.help.model.Entry;
 
 import com.sun.javadoc.PackageDoc;
@@ -11,7 +15,16 @@ public class EntryablePackageList extends AbstractEntryable {
         add( new EntryableClassList( root ) );
         println();
         
-        for( PackageDoc child : root.specifiedPackages() ){
+        PackageDoc[] docs = root.specifiedPackages();
+        Arrays.sort( docs, new Comparator<PackageDoc>(){
+        	private Collator collator = Collator.getInstance();
+        	
+        	public int compare( PackageDoc o1, PackageDoc o2 ){
+        		return collator.compare( o1.name(), o2.name() );
+        	}
+        });
+        
+        for( PackageDoc child : docs ){
             linkln( child.name(), "class-list", child.name() );
             add( new EntryableClassList( child ));
         }
