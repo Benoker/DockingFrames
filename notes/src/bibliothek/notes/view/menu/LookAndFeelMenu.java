@@ -8,7 +8,8 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import bibliothek.notes.view.menu.LookAndFeelList.Info;
+import bibliothek.demonstration.util.LookAndFeelList;
+import bibliothek.demonstration.util.LookAndFeelList.Info;
 
 public class LookAndFeelMenu extends JMenu{
     private JRadioButtonMenuItem defaultButton, systemButton;

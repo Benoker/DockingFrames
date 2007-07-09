@@ -29,10 +29,10 @@ public class ResourceSet {
 		List<Icon> icons = new ArrayList<Icon>();
 		
 		try{
-			Scanner list = new Scanner( openStream( "/data/icons/choices/list.txt" ));
+			Scanner list = new Scanner( openStream( "/data/bibliothek/notes/icons/choices/list.txt" ));
 			
 			while( list.hasNext() ){
-				InputStream in = openStream( "/data/icons/choices/" + list.next() );
+				InputStream in = openStream( "/data/bibliothek/notes/icons/choices/" + list.next() );
 				icons.add( new ImageIcon( ImageIO.read( in )));
 				in.close();
 			}
@@ -51,12 +51,12 @@ public class ResourceSet {
 		
 		try{
 			Properties properties = new Properties();
-			InputStream in = openStream( "/data/icons/icons.ini" );
+			InputStream in = openStream( "/data/bibliothek/notes/icons/icons.ini" );
 			properties.load( in );
 			in.close();
 			
 			for( Map.Entry<Object, Object> entry : properties.entrySet() ){
-				in = openStream( "/data/icons/" + entry.getValue() );
+				in = openStream( "/data/bibliothek/notes/icons/" + entry.getValue() );
 				icons.put( entry.getKey().toString(), new ImageIcon( ImageIO.read( in )) );
 				in.close();
 			}

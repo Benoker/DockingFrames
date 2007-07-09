@@ -9,7 +9,9 @@ import bibliothek.gui.dock.security.SecureScreenDockStation;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.ScreenDockStation;
 import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.notes.model.NoteModel;
+import bibliothek.notes.util.ResourceSet;
 import bibliothek.notes.view.actions.Hide;
 import bibliothek.notes.view.actions.NoteDeleteAction;
 import bibliothek.notes.view.panels.ListView;
@@ -32,6 +34,9 @@ public class ViewManager {
 		
 		frontend.getController().addActionGuard( new NoteDeleteAction( model ));
 		frontend.getController().addActionGuard( new Hide( frontend, notes ));
+		
+		frontend.getController().getProperties().set( PropertyKey.DOCK_STATION_TITLE, "Notes" );
+		frontend.getController().getProperties().set( PropertyKey.DOCK_STATION_ICON, ResourceSet.APPLICATION_ICONS.get( "application" ) );
 		
 		frontend.add( list, "list" );
 		

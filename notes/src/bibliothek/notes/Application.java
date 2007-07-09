@@ -2,7 +2,7 @@ package bibliothek.notes;
 
 public class Application {
 	public static void main( String[] args ){
-		Core core = new Core( false );
+		Core core = new Core( false, null );
 		core.startup();
 	}
 }

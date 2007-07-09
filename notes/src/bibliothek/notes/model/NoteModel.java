@@ -5,15 +5,15 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import bibliothek.notes.util.ResourceSet;
 
 public class NoteModel implements Iterable<Note>{
-	private Map<String, Note> notes = new HashMap<String, Note>();
+	private Map<String, Note> notes = new LinkedHashMap<String, Note>();
 	private List<NoteModelListener> listeners = new ArrayList<NoteModelListener>();
 	
 	private long nextId = 0;
