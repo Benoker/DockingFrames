@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 
 import bibliothek.demonstration.util.ComponentCollector;
@@ -49,6 +50,8 @@ public class Core {
 	
 	public void startup(){
 		frame = new JFrame();
+		frame.setTitle( "DockingFrames" );
+		
 		frame.setDefaultCloseOperation( WindowConstants.DO_NOTHING_ON_CLOSE );
 		frame.addWindowListener( new WindowAdapter(){
 			@Override
@@ -63,7 +66,7 @@ public class Core {
 		frame.add( main );
 		frame.getRootPane().setGlassPane( startup );
 		
-		frame.pack();
+		frame.setSize( 800, 600 );
 		frame.setLocationRelativeTo( null );
 		
 		windowCount++;
@@ -82,10 +85,21 @@ public class Core {
 			@Override
 			public void run(){
 				CoreMonitor monitor = new CoreMonitor( demonstration );
-				demonstration.show( monitor );
+				
+				try{
+					demonstration.show( monitor );
+				}
+				catch( Throwable t ){
+					JOptionPane.showMessageDialog( frame, "Error on startup:\n" + t.getMessage(), "Error", JOptionPane.ERROR_MESSAGE );
+					t.printStackTrace();
+					
+					monitor.running();
+					monitor.shutdown();
+				}
 			}
 		};
 		
+		thread.setPriority( Thread.MIN_PRIORITY );
 		thread.start();
 	}
 	

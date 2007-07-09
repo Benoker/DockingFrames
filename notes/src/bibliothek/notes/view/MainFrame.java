@@ -13,12 +13,12 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
+import bibliothek.demonstration.util.LookAndFeelMenu;
 import bibliothek.gui.dock.security.GlassedPane;
 import bibliothek.gui.dock.security.SecureDockController;
 import bibliothek.notes.Core;
 import bibliothek.notes.util.ResourceSet;
 import bibliothek.notes.view.menu.HelpMenu;
-import bibliothek.notes.view.menu.LookAndFeelMenu;
 import bibliothek.notes.view.menu.PanelList;
 import bibliothek.notes.view.menu.ThemeMenu;
 
@@ -28,7 +28,7 @@ public class MainFrame extends JFrame{
 	private About about;
 	
 	public MainFrame(){
-		setTitle( "Notes - Demo for DockingFrames" );
+		setTitle( "Notes - Demonstration of DockingFrames" );
 		setDefaultCloseOperation( DO_NOTHING_ON_CLOSE );
 		setIconImage( ResourceSet.toImage( ResourceSet.APPLICATION_ICONS.get( "application" )));
 	}
@@ -78,7 +78,7 @@ public class MainFrame extends JFrame{
 		
 		JMenu theme = new JMenu( "Themes" );
 		themes = new ThemeMenu( core.getViews().getFrontend() );
-		theme.add( new LookAndFeelMenu( core.getLookAndFeels() ) );
+		theme.add( new LookAndFeelMenu( this, core.getLookAndFeels() ) );
 		theme.add( themes );
 		menubar.add( theme );
 		menubar.add( new HelpMenu( this ) );

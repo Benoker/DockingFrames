@@ -1,0 +1,15 @@
+<html>
+This client shows a set of pages, created by JavaDoc.<br>
+Some noteworthy features:
+<ul>
+	<li>The posibility to show and hide panels, is implemented in the DockFrontend.
+	Exactly one line per panel is needed to activate the feature.</li>
+	<li>The posibility to store and load the location and size of all panels, is
+	also implemented in the DockFrontend.</li>
+	<li>Minimizing/Normalizing a panel is not part of DockingFrames. This
+	functionality was newly written, and needs about 200 lines of code.</li>
+	<li>The drop-down-menus are part of DockingFrames. They consist of a list
+	of actions, and they can copy the icons/tooltip/behavior of the last
+	selected action.</li>
+</ul>
+</html>

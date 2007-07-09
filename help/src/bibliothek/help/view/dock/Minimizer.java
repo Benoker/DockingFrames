@@ -23,6 +23,7 @@ import bibliothek.gui.dock.event.DockControllerAdapter;
 import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.help.Core;
 import bibliothek.help.util.ResourceSet;
 import bibliothek.util.container.Tuple;
 
@@ -36,9 +37,11 @@ public class Minimizer {
     private Map<Dockable, Tuple<DockStation, DockableProperty>> locations =
         new HashMap<Dockable, Tuple<DockStation,DockableProperty>>();
     
+    private Core core;
     private DockController controller;
     
-    public Minimizer( DockController controller ){
+    public Minimizer( Core core, DockController controller ){
+    	this.core = core;
         this.controller = controller;
         
         controller.addActionGuard( new Minimize() );
@@ -134,7 +137,8 @@ public class Minimizer {
     private class Listener extends DockControllerAdapter{
         @Override
         public void dockableUnregistered( DockController controller, Dockable dockable ) {
-            locations.remove( dockable );
+        	if( !core.isOnThemeUpdate() )
+        		locations.remove( dockable );
         }
     }
     

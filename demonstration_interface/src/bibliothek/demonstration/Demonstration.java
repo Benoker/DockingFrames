@@ -1,6 +1,7 @@
 package bibliothek.demonstration;
 
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 
 import javax.swing.Icon;
 
@@ -26,7 +27,7 @@ public interface Demonstration {
 	 * Gets a screencapture of this demonstration
 	 * @return the image
 	 */
-	public Image getImage();
+	public BufferedImage getImage();
 	
 	/**
 	 * Gets a description of this application formated in HTML.

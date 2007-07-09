@@ -22,10 +22,10 @@ import javax.swing.Timer;
 public class StartupPanel extends JPanel{
 	private Timer timer;
 	
-	private JLabel text = new JLabel();
+	private JLabel text;
 	
 	public StartupPanel(){
-		timer = new Timer( 250, new ActionListener(){
+		timer = new Timer( 30, new ActionListener(){
 			public void actionPerformed( ActionEvent e ){
 				repaint();
 			}
@@ -34,7 +34,15 @@ public class StartupPanel extends JPanel{
 		setVisible( false );
 		setOpaque( false );
 		
-		text.setFont( text.getFont().deriveFont( 32f ) );
+		text = new JLabel(){
+			@Override
+			public void updateUI(){
+				setFont( null );
+				super.updateUI();
+				setFont( getFont().deriveFont( 32f ) );
+			}
+		};
+		
 		text.setOpaque( false );
 		
 		setLayout( new GridBagLayout() );
@@ -124,9 +132,11 @@ public class StartupPanel extends JPanel{
 			g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
 			
 			long time = System.currentTimeMillis();
-			time %= 5000;
+			time %= 2000;
 			
-			double angle = time / 5000.0 * Math.PI * 2.0;
+			double angle = time / 2000.0 * (POINTS+1);
+			angle = (int)angle;
+			angle = angle / (POINTS+1) * Math.PI * 2.0;
 			
 			double w = getWidth();
 			double h = getHeight();

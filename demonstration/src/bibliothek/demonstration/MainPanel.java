@@ -15,13 +15,38 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-public class MainPanel extends JPanel {
+import bibliothek.extension.gui.dock.theme.FlatTheme;
+import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DefaultDockable;
+import bibliothek.gui.dock.DockAcceptance;
+import bibliothek.gui.dock.action.ActionPopupSuppressor;
+import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.station.split.SplitDockTree;
+
+public class MainPanel extends SplitDockStation {
 	private JList list = new JList();
 	private CardLayout layout = new CardLayout();
 	private JPanel panel;
 	
 	public MainPanel( Core core, List<Demonstration> demos ){
-		super( new GridBagLayout() );
+		DockController controller = new DockController();
+		controller.addAcceptance( new DockAcceptance(){
+			public boolean accept( DockStation parent, Dockable child ){
+				return true;
+			}
+
+			public boolean accept( DockStation parent, Dockable child, Dockable next ){
+				return false;
+			}			
+		});
+		controller.setSingleParentRemove( true );
+		controller.setTheme( new FlatTheme() );
+		controller.setPopupSuppressor( ActionPopupSuppressor.SUPPRESS_ALWAYS );
+		controller.add( this );
+		
+		setContinousDisplay( true );
 		
 		DefaultListModel model = new DefaultListModel();
 		panel = new JPanel( layout );
@@ -36,12 +61,19 @@ public class MainPanel extends JPanel {
 			index++;
 		}
 		
-		add( new JScrollPane( list ), new GridBagConstraints( 0, 0, 1, 1, 1.0, 1.0, 
+		/*add( new JScrollPane( list ), new GridBagConstraints( 0, 0, 1, 1, 1.0, 1.0, 
 				GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, 
 				new Insets( 2, 2, 2, 2 ), 0, 0 ));
 		add( panel, new GridBagConstraints( 1, 0, 1, 1, 100.0, 1.0, 
 				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-				new Insets( 2, 2, 2, 2 ), 0, 0 ));
+				new Insets( 2, 2, 2, 2 ), 0, 0 ));*/
+		
+		SplitDockTree tree = new SplitDockTree();
+		tree.root( tree.horizontal( 
+				new DefaultDockable( new JScrollPane( list ), "Demonstrations" ),
+				new DefaultDockable( panel, "Selection" ),
+				0.25 ));
+		dropTree( tree );
 		
 		list.addListSelectionListener( new ListSelectionListener(){
 			public void valueChanged( ListSelectionEvent e ){

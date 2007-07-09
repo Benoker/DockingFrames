@@ -1,0 +1,12 @@
+<html>
+This application consists of some panels which show different notes. The user
+can add or remove notes at any time. Every note has an icon, a title and a color
+which can also be changed.<br>
+Noteworthy features:
+<ul>
+	<li>The icon-selection is implemented as a new DockAction. Different views
+	had to be written for the different themes.</li>
+	<li>Themes can be exchanged on runtime, all user interfaces
+	are automatically updated.</li>
+</ul>
+</html>

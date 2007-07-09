@@ -1,15 +1,18 @@
-package bibliothek.notes.view.menu;
+package bibliothek.demonstration.util;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import bibliothek.demonstration.util.LookAndFeelList;
 import bibliothek.demonstration.util.LookAndFeelList.Info;
+
 
 public class LookAndFeelMenu extends JMenu{
     private JRadioButtonMenuItem defaultButton, systemButton;
@@ -18,7 +21,7 @@ public class LookAndFeelMenu extends JMenu{
     private LookAndFeelList list;
     private boolean onChange = false;
     
-    public LookAndFeelMenu( LookAndFeelList list ){
+    public LookAndFeelMenu( JFrame owner, LookAndFeelList list ){
         this.list = list;
         setText( "Look and Feel" );
         
@@ -40,10 +43,19 @@ public class LookAndFeelMenu extends JMenu{
             add( buttons[i] );
         }
         
-        list.addChangeListener( new ChangeListener(){
+        final ChangeListener changeListener = new ChangeListener(){
             public void stateChanged( ChangeEvent e ) {
                 changed();
             }
+        };
+        
+        list.addChangeListener( changeListener );
+        
+        owner.addWindowListener( new WindowAdapter(){
+        	@Override
+        	public void windowClosed( WindowEvent e ){
+        		LookAndFeelMenu.this.list.removeChangeListener( changeListener );
+        	}
         });
         
         changed();
