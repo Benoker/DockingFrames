@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.5.0_07"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]DockingFrames"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]DemonstrationInterface"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]Help"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]Notes"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
