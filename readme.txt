@@ -21,6 +21,7 @@ The projects have these dependencies:
 
 	demonstration
 	+ demonstration_interface
+	+ dockingFrame
 	+ help
 	+ notes
 
