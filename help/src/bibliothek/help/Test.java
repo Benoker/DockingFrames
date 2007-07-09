@@ -1,5 +1,6 @@
 package bibliothek.help;
 
+import java.awt.BorderLayout;
 import java.io.File;
 
 import javax.swing.JFrame;
@@ -11,8 +12,10 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.SplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
+import bibliothek.gui.dock.station.split.SplitDockProperty;
 import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.help.control.LinkManager;
 import bibliothek.help.control.URManager;
@@ -22,6 +25,7 @@ import bibliothek.help.model.HelpModel;
 import bibliothek.help.util.ResourceSet;
 import bibliothek.help.view.SelectingView;
 import bibliothek.help.view.TypeHierarchyView;
+import bibliothek.help.view.dock.Minimizer;
 
 public class Test {
     public static void main( String[] args ) throws Exception {
@@ -29,8 +33,16 @@ public class Test {
         
         DockFrontend frontend = new DockFrontend();
         SplitDockStation station = new SplitDockStation();
+        FlapDockStation south = new FlapDockStation();
+        frontend.addRoot( south, "south" );
         frontend.addRoot( station, "root" );
         frontend.getController().setTheme( new NoStackTheme( new FlatTheme() ) );
+        
+        Minimizer minimizer = new Minimizer( frontend.getController() );
+        minimizer.addAreaMaximized( station );
+        minimizer.setDefaultStation( station );
+        
+        minimizer.addAreaMinimized( south, SplitDockProperty.SOUTH );
         
         HelpModel model = new HelpModel( new File( "help/help.data" ) );
         LinkManager links = new LinkManager();
@@ -76,7 +88,8 @@ public class Test {
         station.dropTree( grid.toTree() );
         
         JFrame frame = new JFrame();
-        frame.add( station );
+        frame.add( station, BorderLayout.CENTER );
+        frame.add( south.getComponent(), BorderLayout.SOUTH );
         frame.setBounds( 20, 20, 800, 600 );
         frame.setTitle( "Help - Demonstration of DockingFrames" );
         frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
