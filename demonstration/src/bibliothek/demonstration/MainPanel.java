@@ -2,36 +2,31 @@ package bibliothek.demonstration;
 
 import java.awt.CardLayout;
 import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.util.List;
 
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import bibliothek.extension.gui.dock.theme.FlatTheme;
-import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.DockAcceptance;
 import bibliothek.gui.dock.action.ActionPopupSuppressor;
+import bibliothek.gui.dock.security.GlassedPane;
+import bibliothek.gui.dock.security.SecureDockController;
 import bibliothek.gui.dock.station.SplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockTree;
 
-public class MainPanel extends SplitDockStation {
+public class MainPanel extends GlassedPane {
 	private JList list = new JList();
 	private CardLayout layout = new CardLayout();
 	private JPanel panel;
 	
 	public MainPanel( Core core, List<Demonstration> demos ){
-		DockController controller = new DockController();
+		SecureDockController controller = new SecureDockController();
+		controller.getFocusObserver().addGlassPane( this );
 		controller.addAcceptance( new DockAcceptance(){
 			public boolean accept( DockStation parent, Dockable child ){
 				return true;
@@ -44,9 +39,12 @@ public class MainPanel extends SplitDockStation {
 		controller.setSingleParentRemove( true );
 		controller.setTheme( new FlatTheme() );
 		controller.setPopupSuppressor( ActionPopupSuppressor.SUPPRESS_ALWAYS );
-		controller.add( this );
 		
-		setContinousDisplay( true );
+		SplitDockStation station = new SplitDockStation();
+		setContentPane( station );
+		
+		controller.add( station );
+		station.setContinousDisplay( true );
 		
 		DefaultListModel model = new DefaultListModel();
 		panel = new JPanel( layout );
@@ -73,7 +71,7 @@ public class MainPanel extends SplitDockStation {
 				new DefaultDockable( new JScrollPane( list ), "Demonstrations" ),
 				new DefaultDockable( panel, "Selection" ),
 				0.25 ));
-		dropTree( tree );
+		station.dropTree( tree );
 		
 		list.addListSelectionListener( new ListSelectionListener(){
 			public void valueChanged( ListSelectionEvent e ){

@@ -25,7 +25,7 @@ public class StartupPanel extends JPanel{
 	private JLabel text;
 	
 	public StartupPanel(){
-		timer = new Timer( 30, new ActionListener(){
+		timer = new Timer( 45, new ActionListener(){
 			public void actionPerformed( ActionEvent e ){
 				repaint();
 			}
