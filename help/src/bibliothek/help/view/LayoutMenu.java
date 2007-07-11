@@ -7,7 +7,6 @@ import java.util.Set;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JRadioButtonMenuItem;
 
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
