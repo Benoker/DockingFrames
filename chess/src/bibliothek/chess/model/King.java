@@ -76,7 +76,7 @@ public class King extends Behavior{
             
             if(  board.isEmpty( r, c-1 ) && !board.isAttacked( r, c-1 ) && 
                     board.isEmpty( r, c-2 ) && !board.isAttacked( r, c-2 ) && 
-                    board.isEmpty( r, c-3 ) && !board.isAttacked( r, c-3 ) ){
+                    board.isEmpty( r, c-3 ) ){
                 Figure rock = board.getFigure( r, c-4 );
                 if( rock != null && rock.getType() == Figure.Type.ROCK ){
                     if( rock.getPlayer() == figure.getPlayer() && !rock.isMoved())
