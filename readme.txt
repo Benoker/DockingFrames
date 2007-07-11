@@ -8,6 +8,7 @@ Each directory represents an own project:
 	demonstration - demonstration framework
 	help - a client of the demonstration-framework, shows JavaDoc.
 	notes - a client of the demonstration-framework, shows some notes
+	chess - a client of the demonstration-framework, creates a new type of DockStation
 
 The projects have these dependencies:
 	dockingFrame:
@@ -24,6 +25,7 @@ The projects have these dependencies:
 	+ dockingFrame
 	+ help
 	+ notes
+	+ chess
 
 	help
 	+ demonstration_interface
@@ -31,5 +33,9 @@ The projects have these dependencies:
 	+ lib/tools.jar, can be found in the JDK
 	
 	notes
+	+ demonstration_interface
+	+ dockingFrames
+
+	chess
 	+ demonstration_interface
 	+ dockingFrames

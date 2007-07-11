@@ -27,7 +27,26 @@ public class ChessFigure extends JLabel implements Dockable {
 	public ChessFigure( Figure figure ){
 		this.figure = figure;
 		setIcon( figure.getBigIcon() );
+		setHorizontalAlignment( CENTER );
+		setVerticalAlignment( CENTER );
 	}
+	
+	public Figure getFigure() {
+        return figure;
+    }
+	
+	public void setFigure( Figure figure ) {
+        Icon oldIcon = this.figure.getSmallIcon();
+        String oldTitle = this.figure.getName();
+        
+        this.figure = figure;
+        setIcon( figure.getBigIcon() );
+        
+        for( DockableListener listener : listeners ){
+            listener.titleIconChanged( this, oldIcon, figure.getSmallIcon() );
+            listener.titleTextChanged( this, oldTitle, figure.getName() );
+        }
+    }
 	
 	public boolean accept( DockStation station ){
 		return station instanceof ChessBoard;

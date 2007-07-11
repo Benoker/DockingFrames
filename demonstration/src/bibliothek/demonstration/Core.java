@@ -76,7 +76,8 @@ public class Core {
 	private List<Demonstration> listDemonstrations(){
 		return Arrays.asList( new Demonstration[]{
 				new bibliothek.notes.Webstart(),
-				new bibliothek.help.Webstart()
+				new bibliothek.help.Webstart(),
+				new bibliothek.chess.Main()
 		});
 	}
 	

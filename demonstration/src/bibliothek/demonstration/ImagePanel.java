@@ -22,9 +22,7 @@ public class ImagePanel extends JLabel{
 		if( image != null ){
 			this.image = image;
 			
-			int max = Math.max( image.getWidth(), image.getHeight() );
-			
-			double factor = 300.0 / max;
+			double factor = Math.min( 300.0 / image.getWidth(), 200.0 / image.getHeight() );
 			
 			thumbnail = image.getScaledInstance( 
 					(int)(image.getWidth()*factor),

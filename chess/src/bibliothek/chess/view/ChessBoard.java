@@ -1,19 +1,18 @@
 package bibliothek.chess.view;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import bibliothek.chess.model.Board;
+import bibliothek.chess.model.ChessListener;
+import bibliothek.chess.model.Figure;
+import bibliothek.chess.model.Player;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
@@ -26,11 +25,10 @@ import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.OverpaintablePanel;
-import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
-public class ChessBoard extends OverpaintablePanel implements DockStation {
+public class ChessBoard extends OverpaintablePanel implements DockStation, ChessListener {
 	private List<DockStationListener> listeners = new ArrayList<DockStationListener>();
 	
 	private DisplayerFactory displayerFactory = new ChessDisplayerFactory();
@@ -44,7 +42,11 @@ public class ChessBoard extends OverpaintablePanel implements DockStation {
 	
 	private DropInfo drop;
 	
-	public ChessBoard(){
+	private Board board;
+	private PawnReplaceDialog pawnReplaceDialog;
+	
+	public ChessBoard( PawnReplaceDialog pawnReplaceDialog ){
+	    this.pawnReplaceDialog = pawnReplaceDialog;
 		setLayout( null );
 		
 		displayerCollection = new DisplayerCollection( this, displayerFactory );
@@ -56,6 +58,27 @@ public class ChessBoard extends OverpaintablePanel implements DockStation {
 		
 		setContentPane( new ContentPane() );
 		setPreferredSize( new Dimension( 8*64, 8*64 ) );
+	}
+	
+	public void setBoard( Board board ){
+	    if( this.board != null )
+	        this.board.removeListener( this );
+	    
+	    this.board = board;
+	    
+		for( int r = 0; r < 8; r++ ){
+		    for( int c = 0; c < 8; c++ ){
+		        Figure figure = board.getFigure( r, c );
+		        if( figure != null )
+		            put( r, c, new ChessFigure( figure ) );
+		        else
+		            put( r, c, null );
+		    }
+		}
+		
+		board.addListener( this );
+		revalidate();
+		repaint();
 	}
 	
 	public boolean accept( Dockable child ){
@@ -75,7 +98,8 @@ public class ChessBoard extends OverpaintablePanel implements DockStation {
 	}
 
 	public boolean canDrag( Dockable dockable ){
-		return true;
+	    ChessFigure figure = (ChessFigure)dockable;
+		return figure.getFigure().getPlayer() == board.getPlayer();
 	}
 
 	public boolean canReplace( Dockable old, Dockable next ){
@@ -105,7 +129,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation {
 	}
 
 	public void drop(){
-		if( drop != null ){
+		if( drop != null && drop.valid ){
 			put( drop.row, drop.column, drop.figure );
 		}
 	}
@@ -133,6 +157,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation {
 				listener.dockableRemoving( this, old );
 			
 			field.set( null );
+			old.setDockParent( null );
 			
 			for( DockStationListener listener : listListeners() )
 				listener.dockableRemoved( this, old );
@@ -145,12 +170,24 @@ public class ChessBoard extends OverpaintablePanel implements DockStation {
 					listener.dockableAdding( this, figure );
 				
 				field.set( figure );
+				figure.setDockParent( this );
 				
 				for( DockStationListener listener : listListeners() )
 					listener.dockableAdded( this, figure );
 			}
 			else{
 				field.transfer( oldField );
+				if( !board.isEmpty( oldField.getRow(), oldField.getColumn() )){
+				    board.move( oldField.getRow(), oldField.getColumn(), row, column );
+				    Figure pawn = board.pawnReplacement();
+				    if( pawn != null ){
+				        pawn = pawnReplaceDialog.replace( pawn );
+				        board.put( pawn );
+				        figure.setFigure( pawn );
+				    }
+				    
+				    board.switchPlayer();
+				}
 			}
 		}
 	}
@@ -222,7 +259,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation {
 	}
 
 	public void move(){
-		if( drop != null ){
+		if( drop != null && drop.valid ){
 			put( drop.row, drop.column, drop.figure );
 		}
 	}
@@ -262,6 +299,15 @@ public class ChessBoard extends OverpaintablePanel implements DockStation {
 		drop.row = r;
 		drop.column = c;
 		
+		figure.getFigure().reachable( new Board.CellVisitor(){
+		    public boolean visit( int r, int c, Figure figure ) {
+		        drop.targets[r][c] = true;
+		        return true;
+		    }
+		});
+		
+		drop.valid = drop.targets[drop.row][drop.column];
+		
 		return true;
 	}
 
@@ -277,15 +323,12 @@ public class ChessBoard extends OverpaintablePanel implements DockStation {
 	}
 
 	public void setController( DockController controller ){
-		if( controller != null )
-			controller.getDockTitleManager().registerDefault( "chess-board", ControllerTitleFactory.INSTANCE );
-		
 		this.controller = controller;
+		controller.getDockTitleManager().registerDefault( "chess-board", ChessDockTitle.FACTORY );
 		displayerCollection.setController( controller );
 		
-		for( Field[] sub : fields )
-			for( Field field : sub )
-				field.updateTitle();
+		for( Field field : usedFieldList )
+		    field.updateTitle();
 	}
 
 	public void setFrontDockable( Dockable dockable ){
@@ -293,8 +336,14 @@ public class ChessBoard extends OverpaintablePanel implements DockStation {
 	}
 
 	public void updateTheme(){
-		if( controller != null )
+		if( controller != null ){
 			this.theme = controller.getTheme();
+			
+			for( Field field : usedFieldList )
+			    field.updateTitle();
+			
+			revalidate();
+		}
 	}
 
 	public DockStation asDockStation(){
@@ -309,59 +358,100 @@ public class ChessBoard extends OverpaintablePanel implements DockStation {
 		return "chess-board";
 	}
 	
+	public void killed( int r, int c, Figure figure ) {
+	    // ensure removed
+	    ChessFigure view = fields[r][c].getFigure();
+	    if( view != null && view.getFigure() == figure )
+	        put( r, c, null );
+	}
+	
+	public void moved( int sr, int sc, int dr, int dc, Figure figure ) {
+	    ChessFigure view = fields[sr][sc].getFigure();
+	    if( view != null && view.getFigure() == figure )
+	        put( dr, dc, view );
+	}
+	
+	public void playerSwitched( Player player ) {
+	    // ignore
+	}
+	
 	private class DropInfo{
 		public boolean drawing = false;
 		public ChessFigure figure = null;
 		public int row;
 		public int column;
+		public boolean valid;
+		public boolean[][] targets = new boolean[8][8];
+	}
+	
+	private int x( int c ){
+	    return c*getWidth()/8;
+	}
+	
+	private int y( int r ){
+	    return (7-r)*getHeight()/8;
+	}
+	
+	private int w( int c ){
+	    return x( c+1 ) - x( c );
+	}
+	
+	private int h( int r ){
+	    return y( r-1 ) - y( r );
 	}
 	
 	@Override
 	protected void paintOverlay( Graphics g ){
 		if( drop != null ){
-			int r = drop.row;
-			int c = drop.column;
-			if( r >= 0 && c >= 0 ){
-				Graphics2D g2 = (Graphics2D)g.create();
-				int w = getWidth();
-				int h = getHeight();
-				g2.setColor( Color.GREEN );
-				g2.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 0.5f ) );
-				g2.fillRect( c*w/8, (7-r)*h/8, w/8, h/8 );
-				g2.dispose();
+		    final Graphics2D g2 = (Graphics2D)g.create();
+		    g2.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 0.5f ) );
+			g2.setColor( Color.GREEN );
+			
+			for( int r = 0; r < 8; r++ ){
+			    for( int c = 0; c < 8; c++ ){
+			        if( drop.targets[r][c] ){
+			            g2.fillRect( x( c ), y( r ), w( c ), h( r ) );
+			        }
+			    }
 			}
+			
+			int r = drop.row;
+            int c = drop.column;
+            
+			if( !drop.valid ){
+				g2.setColor( Color.RED );
+				g2.fillRect( x( c ), y( r ), w( c ), h( r ) );
+			}
+			
+			Icon icon = drop.figure.getFigure().getBigIcon();
+			icon.paintIcon( this, g2, x(c)+(w(c)-icon.getIconWidth())/2, y(r) + (h(r)-icon.getIconHeight())/2 );
+			
+			g2.dispose();
 		}
 	}
 	
 	private class ContentPane extends JPanel{
 		@Override
 		protected void paintComponent( Graphics g ){
-			int w = getWidth();
-			int h = getHeight();
-			
-			g.setColor( Color.LIGHT_GRAY );
-			g.fillRect( 0, 0, w, h );
-			
-			g.setColor( Color.GRAY );
-			
 			for( int r = 0; r < 8; r++ ){
 				for( int c = 0; c < 8; c++ ){
 					if( (r+c) % 2 == 0 )
-						g.fillRect( c*w/8, (7-r)*h/8, w/8, h/8 );
+					    g.setColor( Color.GRAY );
+		            else
+					    g.setColor( Color.LIGHT_GRAY );
+					    
+					g.fillRect( x( c ), y( r ), w( c ), h( r ) );
 				}
 			}
 		}
 		
 		@Override
 		public void doLayout(){
-			int w = getWidth();
-			int h = getHeight();
-			
 			for( Field field : usedFieldList ){
 				JComponent component = field.getDisplayer();
 				int r = field.getRow();
 				int c = field.getColumn();
-				component.setBounds( c*w/8, (7-r)*h/8, w/8, h/8 );
+				component.setBounds( x(c), y(r), w(c), h(r) );
 			}
 		}
 	}
@@ -413,13 +503,8 @@ public class ChessBoard extends OverpaintablePanel implements DockStation {
 			ChessFigure old = this.figure;
 			
 			if( this.figure != null ){
-				DockTitle title = displayer.getTitle();
-				
 				getContentPane().remove( displayer );
 				displayerCollection.release( displayer );
-				
-				if( this.figure != null )
-					this.figure.unbind( title );
 				
 				this.figure = null;
 				this.displayer = null;
@@ -428,16 +513,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation {
 			this.figure = figure;
 			
 			if( this.figure != null ){
-				DockTitle title = null;
-				if( controller != null ){
-					DockTitleVersion version = controller.getDockTitleManager().getVersion( "chess-board" );
-					if( version != null ){
-						title = figure.getDockTitle( version );
-						figure.bind( title );
-					}
-				}
-				
-				displayer = displayerCollection.fetch( figure, title );
+				displayer = displayerCollection.fetch( figure, null );
 				getContentPane().add( displayer );
 			}
 			
@@ -446,26 +522,28 @@ public class ChessBoard extends OverpaintablePanel implements DockStation {
 			else if( old != null && figure == null )
 				usedFieldList.remove( this );
 			
+			updateTitle();
 			getContentPane().revalidate();
 		}
-		
+	
 		public void updateTitle(){
-			if( displayer != null ){
-				DockTitle title = displayer.getTitle();
-				if( title != null ){
-					figure.unbind( title );
-					title = null;
-				}
-				
-				if( controller != null ){
-					DockTitleVersion version = controller.getDockTitleManager().getVersion( "chess-board" );
-					if( version != null ){
-						title = figure.getDockTitle( version );
-						figure.bind( title );
-					}
-				}
-				displayer.setTitle( title );
-			}
-		}
+            if( displayer != null ){
+                DockTitle title = displayer.getTitle();
+                if( title != null ){
+                    figure.unbind( title );
+                    title = null;
+                }
+                
+                if( controller != null ){
+                    DockTitleVersion version = controller.getDockTitleManager().getVersion( "chess-board" );
+                    if( version != null ){
+                        title = figure.getDockTitle( version );
+                        if( title != null )
+                            figure.bind( title );
+                    }
+                }
+                displayer.setTitle( title );
+            }
+        }
 	}
 }

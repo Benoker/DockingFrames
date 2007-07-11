@@ -46,6 +46,24 @@ import bibliothek.gui.dock.control.MouseFocusObserver;
  * @author Benjamin Sigg
  */
 public class SecureDockController extends DockController {
+    /**
+     * Creates a new controller
+     */
+    public SecureDockController() {
+        super();
+    }
+    
+    /**
+     * Creates a new controller, but does not initiate the properties
+     * if <code>initiate</code> is <code>false</code>.
+     * @param initiate <code>true</code> if all properties should
+     * be initiated
+     * @see #initiate()   
+     */
+    protected SecureDockController( boolean initiate ) {
+        super( initiate );
+    }
+    
     @Override
     protected MouseFocusObserver createMouseFocusObserver() {
         return new SecureMouseFocusObserver( this );
