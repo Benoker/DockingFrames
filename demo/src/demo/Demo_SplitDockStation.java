@@ -54,23 +54,6 @@ public class Demo_SplitDockStation {
 	 * Creates the tree of the station
 	 */
 	public static SplitDockTree createTree(){
-        /*
-		SplitDockTree tree = new SplitDockTree();
-		return tree.root( tree.horizontal( 
-				tree.vertical( 
-						tree.put( createDockable( "White", Color.WHITE ) ), 
-						tree.vertical( 
-								createDockable( "Green", Color.GREEN ), 
-								createDockable( "Red", Color.RED ) ), 
-							0.333 ),
-				tree.vertical( 
-						tree.put( createDockable( "Black", Color.BLACK ) ), 
-						tree.vertical( 
-								createDockable( "Blue", Color.BLUE ), 
-								createDockable( "Yellow", Color.YELLOW )), 
-							0.333 )) );
-                            */
-        
         Map<Character, Dockable[]> map = new HashMap<Character, Dockable[]>();
         map.put( 'a', new Dockable[]{ createDockable( "White", Color.WHITE )});
         map.put( 'b', new Dockable[]{ createDockable( "Green", Color.GREEN )});
