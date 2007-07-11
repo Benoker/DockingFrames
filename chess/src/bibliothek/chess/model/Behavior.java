@@ -18,7 +18,7 @@ public abstract class Behavior {
             public boolean visit( int r, int c, Figure f ) {
                 Board copy = board.copy();
                 copy.move( figure.getRow(), figure.getColumn(), r, c );
-                copy.builtAttackMatrix();
+                copy.buildAttackMatrix();
                 if( !copy.isKingAttacked() )
                     return original.visit( r, c, figure );
                 else

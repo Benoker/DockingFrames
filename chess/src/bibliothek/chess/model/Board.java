@@ -90,13 +90,13 @@ public class Board {
     
     public void switchPlayer(){
         player = player.opponent();
-        builtAttackMatrix();
+        buildAttackMatrix();
         
         for( ChessListener listener : listeners )
             listener.playerSwitched( player );
     }
     
-    public void builtAttackMatrix(){
+    public void buildAttackMatrix(){
         for( int r = 0; r < 8; r++ )
             for( int c = 0; c < 8; c++ )
                 attacked[r][c] = false;
