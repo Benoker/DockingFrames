@@ -2,6 +2,7 @@ package bibliothek.chess.view;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.EventListener;
 import java.util.List;
 
 import javax.swing.Icon;
@@ -45,6 +46,9 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 	private Board board;
 	private PawnReplaceDialog pawnReplaceDialog;
 	
+	private Color dark = new Color( 209, 139, 71 );
+	private Color light = new Color( 255, 206, 158 );
+	
 	public ChessBoard( PawnReplaceDialog pawnReplaceDialog ){
 	    this.pawnReplaceDialog = pawnReplaceDialog;
 		setLayout( null );
@@ -78,6 +82,24 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 		
 		board.addListener( this );
 		revalidate();
+		repaint();
+	}
+	
+	public Color getDark(){
+		return dark;
+	}
+	
+	public void setDark( Color dark ){
+		this.dark = dark;
+		repaint();
+	}
+	
+	public Color getLight(){
+		return light;
+	}
+	
+	public void setLight( Color light ){
+		this.light = light;
 		repaint();
 	}
 	
@@ -439,9 +461,9 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 			for( int r = 0; r < 8; r++ ){
 				for( int c = 0; c < 8; c++ ){
 					if( (r+c) % 2 == 0 )
-					    g.setColor( Color.GRAY );
+					    g.setColor( dark );
 		            else
-					    g.setColor( Color.LIGHT_GRAY );
+					    g.setColor( light );
 					    
 					g.fillRect( x( c ), y( r ), w( c ), h( r ) );
 				}

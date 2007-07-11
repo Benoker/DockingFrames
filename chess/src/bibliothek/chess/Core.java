@@ -1,6 +1,10 @@
 package bibliothek.chess;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -9,14 +13,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JColorChooser;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JToggleButton;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.WindowConstants;
 
 import bibliothek.chess.model.Board;
 import bibliothek.chess.util.Utils;
-import bibliothek.chess.view.*;
+import bibliothek.chess.view.ChessBoard;
+import bibliothek.chess.view.ChessDockController;
+import bibliothek.chess.view.HidingTheme;
+import bibliothek.chess.view.PawnReplaceDialog;
+import bibliothek.chess.view.StateLabel;
 import bibliothek.demonstration.Monitor;
 import bibliothek.demonstration.util.ComponentCollector;
 import bibliothek.gui.dock.security.GlassedPane;
@@ -47,7 +58,7 @@ public class Core implements ComponentCollector{
     public void startup(){
         frame = new JFrame( "Chess - Demonstration of DockingFrames" );
         frame.setIconImage( Utils.APPLICATION );
-        frame.setDefaultCloseOperation( JFrame.DO_NOTHING_ON_CLOSE );
+        frame.setDefaultCloseOperation( WindowConstants.DO_NOTHING_ON_CLOSE );
         frame.addWindowListener( new WindowAdapter(){
             @Override
             public void windowClosing( WindowEvent e ) {
@@ -70,33 +81,25 @@ public class Core implements ComponentCollector{
         chessBoard.setBoard( board );
         stateLabel.setBoard( board );
         
-        JButton newGame = new JButton( "New game" );
-        newGame.addActionListener( new ActionListener(){
-            public void actionPerformed( ActionEvent e ) {
-                Board board = new Board();
-                chessBoard.setBoard( board );
-                stateLabel.setBoard( board );
-            }
-        });
-        final JToggleButton theme = new JToggleButton( "Show DockTitles" );
-        theme.addActionListener( new ActionListener(){
-            public void actionPerformed( ActionEvent e ) {
-                changeTheme( theme.isSelected() );
-            }
-        });
+
+
+        JMenu menu = new JMenu( "Options" );
+        menu.add( createNewGameItem() );
+        menu.addSeparator();
+        menu.add( createThemeItem() );
+        menu.add( createDarkColorItem() );
+        menu.add( createLightColorItem() );
+        JMenuBar menubar = new JMenuBar();
+        menubar.add( menu );
+        frame.setJMenuBar( menubar );
         
         controller.add( chessBoard );
-        JPanel panel = new JPanel( new GridLayout( 1, 2 ));
-        panel.add( theme );
-        panel.add( newGame );
         
         content.getContentPane().setLayout( new GridBagLayout() );
         content.getContentPane().add( chessBoard, new GridBagConstraints( 0, 0, 2, 1, 100.0, 100.0, 
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets( 0, 0, 0, 0 ), 0, 0 ));
         content.getContentPane().add( stateLabel, new GridBagConstraints( 0, 1, 1, 1, 1.0, 1.0, 
                 GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets( 0, 0, 0, 0 ), 0, 0 ));
-        content.getContentPane().add( panel, new GridBagConstraints( 1, 1, 1, 1, 1.0, 1.0, 
-                GridBagConstraints.LAST_LINE_END, GridBagConstraints.NONE, new Insets( 0, 0, 0, 0 ), 0, 0 ));
         
         frame.setLocation( 20, 20 );
         frame.pack();
@@ -106,6 +109,53 @@ public class Core implements ComponentCollector{
             monitor.publish( this );
             monitor.running();
         }
+    }
+    
+    private JMenuItem createNewGameItem(){
+        JMenuItem newGame = new JMenuItem( "New game" );
+        newGame.addActionListener( new ActionListener(){
+            public void actionPerformed( ActionEvent e ) {
+                Board board = new Board();
+                chessBoard.setBoard( board );
+                stateLabel.setBoard( board );
+            }
+        });
+        return newGame;
+    }
+    
+    private JMenuItem createThemeItem(){
+        final JCheckBoxMenuItem theme = new JCheckBoxMenuItem( "Show DockTitles" );
+        theme.addActionListener( new ActionListener(){
+            public void actionPerformed( ActionEvent e ) {
+                changeTheme( theme.isSelected() );
+            }
+        });
+        
+        return theme;
+    }
+    
+    private JMenuItem createDarkColorItem(){
+    	JMenuItem item = new JMenuItem( "Dark color" );
+    	item.addActionListener( new ActionListener(){
+    		public void actionPerformed( ActionEvent e ){
+    			Color dark = JColorChooser.showDialog( frame, "Dark", chessBoard.getDark() );
+    			if( dark != null )
+    				chessBoard.setDark( dark );
+    		}
+    	});
+    	return item;
+    }
+    
+    private JMenuItem createLightColorItem(){
+    	JMenuItem item = new JMenuItem( "Light color" );
+    	item.addActionListener( new ActionListener(){
+    		public void actionPerformed( ActionEvent e ){
+    			Color light = JColorChooser.showDialog( frame, "Light", chessBoard.getLight() );
+    			if( light != null )
+    				chessBoard.setLight( light );
+    		}
+    	});
+    	return item;
     }
     
     private void changeTheme( boolean show ){

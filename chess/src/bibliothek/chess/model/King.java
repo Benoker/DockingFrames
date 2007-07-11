@@ -7,8 +7,8 @@ public class King extends Behavior{
     public void moving( Board board, Figure figure, int r, int c ) {
         if( Math.abs( figure.getColumn()-c ) > 1 ){
             // Rochade
-            if( c == 1 )
-                board.move( r, 0, r, 2 );
+            if( c == 2 )
+                board.move( r, 0, r, 3 );
             else
                 board.move( r, 7, r, 5 );
         }
@@ -80,7 +80,7 @@ public class King extends Behavior{
                 Figure rock = board.getFigure( r, c-4 );
                 if( rock != null && rock.getType() == Figure.Type.ROCK ){
                     if( rock.getPlayer() == figure.getPlayer() && !rock.isMoved())
-                        if( !board.visit( r, c-3, visitor ))
+                        if( !board.visit( r, c-2, visitor ))
                             return;
                 }
             }
