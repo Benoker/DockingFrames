@@ -18,7 +18,9 @@ import bibliothek.gui.dock.station.split.SplitDockTree;
 
 /*
  * Shows how easy the contents of a SplitDockStation can be created, if a
- * SplitDockTree is used.
+ * SplitDockTree is used.  
+ * 
+ * Just a small test
  */
 
 public class Demo_SplitDockStation {
