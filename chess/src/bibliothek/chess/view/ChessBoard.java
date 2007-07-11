@@ -283,9 +283,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 			return false;
 		}
 		
-		drop = new DropInfo();
-		drop.figure = figure;
-		
+
 		int r = -1;
 		int c = 7;
 		
@@ -295,16 +293,21 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 		while( (7-r)*h/8 > location.y )
 			r++;
 		
+		if( drop == null || drop.figure != figure ){
+			drop = new DropInfo();
+			
+			figure.getFigure().reachable( new Board.CellVisitor(){
+			    public boolean visit( int r, int c, Figure figure ) {
+			        drop.targets[r][c] = true;
+			        return true;
+			    }
+			});
+		}
+		
+		drop.figure = figure;
 		
 		drop.row = r;
 		drop.column = c;
-		
-		figure.getFigure().reachable( new Board.CellVisitor(){
-		    public boolean visit( int r, int c, Figure figure ) {
-		        drop.targets[r][c] = true;
-		        return true;
-		    }
-		});
 		
 		drop.valid = drop.targets[drop.row][drop.column];
 		
