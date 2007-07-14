@@ -28,6 +28,8 @@ package bibliothek.gui.dock.themes.basic;
 
 import java.awt.*;
 
+import javax.swing.UIManager;
+
 import bibliothek.gui.DockStation;
 import bibliothek.gui.dock.station.StationPaint;
 
@@ -38,7 +40,7 @@ import bibliothek.gui.dock.station.StationPaint;
  *
  */
 public class BasicStationPaint implements StationPaint {
-    private Color color = SystemColor.textHighlight;
+    private Color color = null;
     
     /**
      * Gets the color that is used in this paint.
@@ -50,21 +52,35 @@ public class BasicStationPaint implements StationPaint {
     
     /**
      * Sets the color which is used in this paint.
-     * @param color the color
+     * @param color the color or <code>null</code> to use the default-color
      */
     public void setColor( Color color ) {
-        if( color == null )
-            throw new IllegalArgumentException( "Color must not be null" );
         this.color = color;
     }
     
+    /**
+     * Gets the color which should be used to paint things.
+     * @return the color
+     */
+    protected Color color(){
+        if( color == null ){
+            Color result = UIManager.getColor( "TextField.selectionBackground" );
+            if( result != null )
+                return result;
+            
+            return SystemColor.textHighlight;
+        }
+        
+        return color;
+    }
+    
     public void drawDivider( Graphics g, DockStation station, Rectangle bounds ) {
-        g.setColor( color );
+        g.setColor( color() );
         g.fillRect( bounds.x, bounds.y, bounds.width, bounds.height );
     }
     
     public void drawInsertion( Graphics g, DockStation station, Rectangle stationBounds, Rectangle dockableBounds ) {
-        Color color = new Color( this.color.getRGB() );
+        Color color = new Color( color().getRGB() );
         
         g.setColor( color );
         Graphics2D g2 = (Graphics2D)g;
@@ -91,7 +107,7 @@ public class BasicStationPaint implements StationPaint {
     public void drawInsertionLine( Graphics g, DockStation station, int x1,
             int x2, int y1, int y2 ) {
         
-        g.setColor( color );
+        g.setColor( color() );
         Graphics2D g2 = (Graphics2D)g;
         
         Stroke old = g2.getStroke();
