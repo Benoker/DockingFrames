@@ -1431,7 +1431,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     public Rectangle getStationBounds() {
         Point location = new Point(0, 0);
         SwingUtilities.convertPointToScreen( location, this );
-        if( allowSideSnap )
+        if( isAllowSideSnap() )
             return new Rectangle( location.x - borderSideSnapSize, location.y - borderSideSnapSize,
                     getWidth() + 2*borderSideSnapSize, getHeight() + 2*borderSideSnapSize );
         else
@@ -1439,10 +1439,37 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     }
 
     public boolean canCompare( DockStation station ) {
+        if( !isAllowSideSnap() )
+            return false;
+        
+        if( station.asDockable() != null ){
+            Component component = station.asDockable().getComponent();
+            Component root = SwingUtilities.getRoot( getComponent() );
+            if( root != null && root == SwingUtilities.getRoot( component )){
+                return true;
+            }
+        }
         return false;
     }
 
     public int compare( DockStation station ) {
+        if( !isAllowSideSnap() )
+            return 0;
+        
+        if( station.asDockable() != null ){
+            Component component = station.asDockable().getComponent();
+            Component root = SwingUtilities.getRoot( getComponent() );
+            if( root != null && root == SwingUtilities.getRoot( component )){
+                Rectangle sizeThis = getStationBounds();
+                Rectangle sizeOther = station.getStationBounds();
+                
+                if( sizeThis.width * sizeThis.height > sizeOther.width * sizeOther.height )
+                    return -1;
+                if( sizeThis.width * sizeThis.height < sizeOther.width * sizeOther.height )
+                    return 1;
+            }
+        }
+        
         return 0;
     }
 
