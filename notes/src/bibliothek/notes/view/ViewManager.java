@@ -56,13 +56,14 @@ public class ViewManager {
 			north = new FlapDockStation();
 			screen = new ScreenDockStation( owner );
 		}
-		
+
+		frontend.addRoot( screen, "screen" );
+		frontend.addRoot( split, "split" );
 		frontend.addRoot( east, "east" );
 		frontend.addRoot( west, "west" );
 		frontend.addRoot( south, "south" );
 		frontend.addRoot( north, "north" );
-		frontend.addRoot( split, "split" );
-		frontend.addRoot( screen, "screen" );
+
 		frontend.setDefaultStation( split );
 	}
 	
