@@ -2,6 +2,10 @@ package bibliothek.chess.model;
 
 import bibliothek.chess.model.Board.CellVisitor;
 
+/**
+ * A {@link Behavior} describing what a pawn can do on a chess-board.
+ * @author Benjamin Sigg
+ */
 public class Pawn extends Behavior{
     
     @Override

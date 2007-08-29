@@ -2,6 +2,10 @@ package bibliothek.chess.model;
 
 import bibliothek.chess.model.Board.CellVisitor;
 
+/**
+ * A {@link Behavior} describing what a bishop can do on a chess-board.
+ * @author Benjamin Sigg
+ */
 public class Bishop extends Behavior{
     @Override
     public void moving( Board board, Figure figure, int r, int c ) {
