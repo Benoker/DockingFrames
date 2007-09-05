@@ -103,13 +103,41 @@ public class DockableDisplayer extends JPanel{
      */
     public DockableDisplayer( Dockable dockable, DockTitle title, Location location ){
         super( null );
+        init( dockable, title, location );
+    }
+   
+    /**
+     * Creates a new displayer but does not set the properties of the
+     * displayer. Subclasses may call {@link #init(Dockable, DockTitle, bibliothek.gui.dock.DockableDisplayer.Location) init}
+     * to initialize all variables of the new displayer.
+     * @param initialize <code>true</code> if all properties should be set
+     * to default, <code>false</code> if nothing should happen, and 
+     * {@link #init(Dockable, DockTitle, bibliothek.gui.dock.DockableDisplayer.Location) init}
+     * will be called.
+     */
+    protected DockableDisplayer( boolean initialize ){
+    	super( null );
+    	if( initialize ){
+    		init( null, null, Location.TOP );
+    	}
+    }
+    
+    /**
+     * Initialises all properties of this DockableDisplayer. This method should
+     * only be called once, by a constructor of a subclass which invoked
+     * <code>{@link #DockableDisplayer(boolean) DockableDisplayer( false )}</code>. 
+     * @param dockable the content, may be <code>null</code>
+     * @param title the title of <code>dockable</code>, can be <code>null</code>
+     * @param location the location of the title, can be <code>null</code>
+     */
+    protected void init( Dockable dockable, DockTitle title, Location location ){
         setTitleLocation( location );
         setDockable( dockable );
         setTitle( title );
         setFocusable( true );
         setFocusCycleRoot( true );
     }
-   
+    
     /**
      * Sets the controller for which this displayer is used. That property
      * must be set by the client. Note that there is no guarantee, that a
