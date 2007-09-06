@@ -34,6 +34,8 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JComponent;
 
+import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.station.OverpaintablePanel;
@@ -51,6 +53,8 @@ public class SecureScreenDockDialog extends ScreenDockDialog {
     private JComponent content;
     /** The panel used to catch MouseEvents */
     private GlassedPane pane;
+    /** The observer to which the {@link #pane} of this dialog has been added */
+    private SecureMouseFocusObserver observer;
     
     /**
      * Creates a new dialog.
@@ -99,14 +103,20 @@ public class SecureScreenDockDialog extends ScreenDockDialog {
     private class Listener extends WindowAdapter{
         @Override
         public void windowOpened( WindowEvent e ) {
-            SecureMouseFocusObserver controller = (SecureMouseFocusObserver)getStation().getController().getFocusObserver();
-            controller.addGlassPane( pane );
+            if( observer != null ){
+                observer.removeGlassPane( pane );
+            }
+            
+            observer = (SecureMouseFocusObserver)getStation().getController().getFocusObserver();
+            observer.addGlassPane( pane );
         }
         
         @Override
         public void windowClosed( WindowEvent e ) {
-            SecureMouseFocusObserver controller = (SecureMouseFocusObserver)getStation().getController().getFocusObserver();
-            controller.removeGlassPane( pane );
+            if( observer != null ){
+                observer.removeGlassPane( pane );
+                observer = null;
+            }
         }
     }
 }

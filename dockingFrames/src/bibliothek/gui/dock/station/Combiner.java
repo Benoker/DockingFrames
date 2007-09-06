@@ -39,11 +39,12 @@ public interface Combiner {
     /**
      * Merges the Dockable <code>old</code> and <code>drop</code> into 
      * a new Dockable.
-     * @param old a Dockable which sits on the DockStation <code>parent</code>
+     * @param old a Dockable which was sitting on the DockStation <code>parent</code>.
+     * The parent of <code>old</code> is currently set to <code>null</code>.
      * @param drop a Dockable that has currently no parent, and that was
      * dragged over <code>old</code>
      * @param parent a DockStation which will become the parent of the
-     * returnvalue of this method
+     * result of this method
      * @return The combination of <code>old</code> and <code>drop</code>
      */
     public Dockable combine( Dockable old, Dockable drop, DockStation parent );
