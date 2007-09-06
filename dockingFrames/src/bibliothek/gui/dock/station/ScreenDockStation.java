@@ -290,20 +290,18 @@ public class ScreenDockStation extends AbstractDockStation {
         DockAcceptance acceptance = getController() == null ? null : getController().getAcceptance();
         
         for( ScreenDockDialog dialog : dockables ){
-            DockTitle title = dialog.getDisplayer().getTitle();
-            if( title != null ){
-                Point point = new Point( x, y );
-                SwingUtilities.convertPointFromScreen( point, title.getComponent() );
-                if( title.getComponent().contains( point )){
-                    Dockable child = dialog.getDisplayer().getDockable();
-                    
-                    if( acceptance == null || 
-                            acceptance.accept( this, child, drop )){
-                    
-                        if( drop.accept( this, child ) &&
-                                child.accept( this, drop )){
-                            return dialog;
-                        }
+        	DockableDisplayer displayer = dialog.getDisplayer();
+            Point point = new Point( x, y );
+            SwingUtilities.convertPointFromScreen( point, displayer );
+            if( displayer.titleContains( point.x, point.y ) ){
+                Dockable child = dialog.getDisplayer().getDockable();
+                
+                if( acceptance == null || 
+                        acceptance.accept( this, child, drop )){
+                
+                    if( drop.accept( this, child ) &&
+                            child.accept( this, drop )){
+                        return dialog;
                     }
                 }
             }

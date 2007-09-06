@@ -19,4 +19,5 @@
 - Layout: BasicStationPaint now uses the highlight-background color of TextField to paint. That should look better with different look and feels.
 - Bugfix: SplitDockStation's compare-method now ensures that the station does not overlap other, smaller stations
 - Layout: New "Eclipse Theme", written by Janni Kovacs
+- API: DockableDisplayer now tells whether a point lies inside its title or not. The drag n drop gets more flexibel this way
 - Bugfix: SecureScreenDockDialog throw NPE when closing

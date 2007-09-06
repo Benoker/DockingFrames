@@ -30,8 +30,10 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.Point;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -328,6 +330,26 @@ public class DockableDisplayer extends JPanel{
      */
     protected Component getComponent( DockTitle title ){
         return title.getComponent();
+    }
+    
+    /**
+     * Tells whether the point <code>x/y</code> is inside the title of this 
+     * displayer or not.
+     * @param x the x-coordinate, relatively to this component
+     * @param y the y-coordinate, relatively to this component
+     * @return <code>true</code> if the title contains the point
+     */
+    public boolean titleContains( int x, int y ){
+    	DockTitle title = getTitle();
+    	if( title == null )
+    		return false;
+    	
+    	Component component = getComponent( title );
+    	Point point = new Point( x, y );
+    	point = SwingUtilities.convertPoint( this, point, component );
+    	point.x -= component.getX();
+    	point.y -= component.getY();
+    	return component.contains( point );
     }
     
     @Override
