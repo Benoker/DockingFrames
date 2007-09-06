@@ -34,6 +34,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
+import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.extension.gui.dock.theme.SmoothTheme;
 import bibliothek.gui.dock.DockFactory;
@@ -99,6 +100,7 @@ public class DockUI {
         registerTheme( FlatTheme.class, null );
         registerTheme( SmoothTheme.class, null );
         registerTheme( BubbleTheme.class, null );
+        registerTheme( EclipseTheme.class, null );
         registerTheme( NoStackTheme.getFactory( BasicTheme.class, null, this ));
         registerTheme( NoStackTheme.getFactory( FlatTheme.class, null, this ));
         registerTheme( NoStackTheme.getFactory( SmoothTheme.class, null, this ));
