@@ -33,17 +33,33 @@ import bibliothek.demonstration.util.ComponentCollector;
 import bibliothek.gui.dock.security.GlassedPane;
 import bibliothek.gui.dock.themes.BasicTheme;
 
+/**
+ * The center of the application. Responsible for creating the graphical
+ * user interface and connecting the GUI with the model.
+ * @author Benjamin Sigg
+ */
 public class Core implements ComponentCollector{
+	/** the frame on which the board is displayed */
     private JFrame frame;
+    /** a dialog used when a pawn has to be replaced by a stronger figure */
     private PawnReplaceDialog pawn;
     
+    /** the board shown on {@link #frame} */
     private ChessBoard chessBoard;
+    /** a label displaying information about the state of the game */
     private StateLabel stateLabel;
     
+    /** a controller used to manage the DockingFrames */
     private ChessDockController controller;
     
+    /** used to distribute information about the state of this application */
     private Monitor monitor;
     
+    /**
+     * Creates a new Core.
+     * @param monitor used to distribute information about the state of this
+     * application, might be <code>null</code>
+     */
     public Core( Monitor monitor ){
         this.monitor = monitor;
     }
@@ -55,6 +71,9 @@ public class Core implements ComponentCollector{
         return list;
     }
     
+    /**
+     * Creates and shows the graphical user interface
+     */
     public void startup(){
         frame = new JFrame( "Chess - Demonstration of DockingFrames" );
         frame.setIconImage( Utils.APPLICATION );
@@ -111,6 +130,10 @@ public class Core implements ComponentCollector{
         }
     }
     
+    /**
+     * Creates an item which allows to start a new game.
+     * @return the item
+     */
     private JMenuItem createNewGameItem(){
         JMenuItem newGame = new JMenuItem( "New game" );
         newGame.addActionListener( new ActionListener(){
@@ -123,6 +146,11 @@ public class Core implements ComponentCollector{
         return newGame;
     }
     
+    /**
+     * Creates an item which allows to put the titles of the 
+     * {@link bibliothek.chess.view.ChessFigure ChessFigures} on and off.
+     * @return the item
+     */
     private JMenuItem createThemeItem(){
         final JCheckBoxMenuItem theme = new JCheckBoxMenuItem( "Show DockTitles" );
         theme.addActionListener( new ActionListener(){
@@ -134,6 +162,10 @@ public class Core implements ComponentCollector{
         return theme;
     }
     
+    /**
+     * Creates an item allowing to change the color of the black fields.
+     * @return the item
+     */
     private JMenuItem createDarkColorItem(){
     	JMenuItem item = new JMenuItem( "Dark color" );
     	item.addActionListener( new ActionListener(){
@@ -146,6 +178,10 @@ public class Core implements ComponentCollector{
     	return item;
     }
     
+    /**
+     * Creates an item allowing to change the color of the white fields.
+     * @return the item
+     */
     private JMenuItem createLightColorItem(){
     	JMenuItem item = new JMenuItem( "Light color" );
     	item.addActionListener( new ActionListener(){
@@ -158,6 +194,11 @@ public class Core implements ComponentCollector{
     	return item;
     }
     
+    /**
+     * Changes the {@link bibliothek.gui.DockTheme}.
+     * @param show whether titles for {@link bibliothek.chess.view.ChessFigure}
+     * should be shown or not.
+     */
     private void changeTheme( boolean show ){
         if( show ){
             controller.setTheme( new BasicTheme() );
@@ -167,8 +208,12 @@ public class Core implements ComponentCollector{
         }
     }
     
+    /**
+     * Stops this application.
+     */
     private void shutdown(){
         frame.setVisible( false );
+        frame.getContentPane().removeAll();
         if( monitor == null )
             System.exit( 0 );
         else

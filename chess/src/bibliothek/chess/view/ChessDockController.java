@@ -6,8 +6,17 @@ import bibliothek.gui.dock.control.DockRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
 import bibliothek.gui.dock.security.SecureDockController;
 
+/**
+ * A controller which replaces its {@link DockRelocator} in order to start
+ * the drag &amp; drop operation as soon as the mouse is pressed. The mouse
+ * does not have to be dragged like the in the original controller.
+ * @author Benjamin Sigg
+ *
+ */
 public class ChessDockController extends SecureDockController {
-    
+    /**
+     * Creates a new controller
+     */
     public ChessDockController() {
         super( false );
         initiate();

@@ -17,13 +17,28 @@ import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
+/**
+ * A label showing an icon to represent a figure of chess. This label implements
+ * {@link Dockable} in order to be shown on a {@link ChessBoard}.
+ * @author Benjamin Sigg
+ */
 public class ChessFigure extends JLabel implements Dockable {
+	/** list of listeners which will be informed when a property of this Dockable changes */
 	private List<DockableListener> listeners = new ArrayList<DockableListener>();
+	/** list of titles binded to this Dockable */
 	private List<DockTitle> titles = new ArrayList<DockTitle>();
+	/** the controller which is responsible for this Dockable */
 	private DockController controller;
+	/** the station on which this Dockable lies */
 	private DockStation parent;
 	
+	/** the figure which is represented by this label */
 	private Figure figure;
+	
+	/**
+	 * Creates a new {@link ChessFigure}
+	 * @param figure the figure which is represented by this label
+	 */
 	public ChessFigure( Figure figure ){
 		this.figure = figure;
 		setIcon( figure.getBigIcon() );
@@ -31,10 +46,18 @@ public class ChessFigure extends JLabel implements Dockable {
 		setVerticalAlignment( CENTER );
 	}
 	
+	/**
+	 * Gets the figure which is represented by this label.
+	 * @return the figure
+	 */
 	public Figure getFigure() {
         return figure;
     }
 	
+	/**
+	 * Sets the figure for which this label shown an icon.
+	 * @param figure the figure
+	 */
 	public void setFigure( Figure figure ) {
         Icon oldIcon = this.figure.getSmallIcon();
         String oldTitle = this.figure.getName();
@@ -65,6 +88,10 @@ public class ChessFigure extends JLabel implements Dockable {
 		addMouseListener( listener );
 	}
 
+	/**
+	 * Gets an independent list of all registered {@link DockableListener}.
+	 * @return the listeners
+	 */
 	protected DockableListener[] listListeners(){
 		return listeners.toArray( new DockableListener[ listeners.size() ]);
 	}

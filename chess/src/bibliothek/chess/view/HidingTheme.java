@@ -9,7 +9,15 @@ import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.title.MovingTitleGetter;
 
+/**
+ * A theme that hides all {@link DockTitle} when used together with a 
+ * {@link ChessBoard}.
+ * @author Benjamin Sigg
+ */
 public class HidingTheme extends BasicTheme {
+	/**
+	 * Creates a new theme
+	 */
     public HidingTheme(){
         setMovingTitleGetter( new MovingTitleGetter(){
             public DockTitle get( DockController controller, DockTitle snatched ) {

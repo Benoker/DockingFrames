@@ -15,14 +15,29 @@ import javax.swing.JPanel;
 import bibliothek.chess.model.Figure;
 import bibliothek.chess.util.Utils;
 
+/**
+ * A dialog offering four buttons. The buttons tell into which figure a 
+ * pawn is transformed.
+ * @author Benjamin Sigg
+ *
+ */
 public class PawnReplaceDialog extends JDialog{
+	/** button for a transformation of a pawn into a queen */
     private JButton queen = new JButton();
+    /** button for a transformation of a pawn into a rock */
     private JButton rock = new JButton();
+    /** button for a transformation of a pawn into a bishop */
     private JButton bishop = new JButton();
+    /** button for a transformation of a pawn into a knight */
     private JButton knight = new JButton();
     
+    /** the pawn which will be transformed */
     private Figure current;
     
+    /**
+     * Creates a new dialog.
+     * @param owner the frame over which the dialog has to appear
+     */
     public PawnReplaceDialog( JFrame owner ){
         super( owner, "Replace", true );
         setDefaultCloseOperation( DO_NOTHING_ON_CLOSE );
@@ -44,6 +59,12 @@ public class PawnReplaceDialog extends JDialog{
         knight.addActionListener( new Listener( Figure.Type.KNIGHT ) );
     }
     
+    /**
+     * Pops up the dialog and waits until the user has chosen a figure into
+     * which <code>pawn</code> will be transformed.
+     * @param pawn the pawn which will be transformed
+     * @return the replacement for <code>pawn</code>
+     */
     public Figure replace( Figure pawn ){
         current = pawn;
         
@@ -62,9 +83,18 @@ public class PawnReplaceDialog extends JDialog{
         return selection;
     }
     
+    /**
+     * A listener used for one of the four buttons of the {@link PawnReplaceDialog}.
+     * @author Benjamin Sigg
+     */
     private class Listener implements ActionListener{
+    	/** the figure for which the button stands */
         private Figure.Type type;
         
+        /**
+         * Creates a new listener.
+         * @param type the figure for which the observed button stands
+         */
         public Listener( Figure.Type type ){
             this.type = type;
         }

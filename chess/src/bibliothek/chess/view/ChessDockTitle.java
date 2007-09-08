@@ -11,9 +11,17 @@ import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
+/**
+ * A {@link DockTitle} sometimes shown atop of a {@link ChessFigure}. This title
+ * can either be "white" or "black", the color depends on the owner of the
+ * figure for which this title is shown.
+ * @author Benjamin Sigg
+ */
 public class ChessDockTitle extends BasicDockTitle {
+	/**
+	 * A factory creating instances of {@link ChessDockTitle}
+	 */
     public static final DockTitleFactory FACTORY = new DockTitleFactory(){
-
         public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
             if( dockable instanceof ChessFigure )
                 return new ChessDockTitle( dockable, version );
@@ -26,6 +34,11 @@ public class ChessDockTitle extends BasicDockTitle {
         }
     };
     
+    /**
+     * Creates a new title.
+     * @param dockable the element for which this title is shown
+     * @param origin for what purpose this title was created
+     */
     public ChessDockTitle( Dockable dockable, DockTitleVersion origin ) {
         super( dockable, origin );
         updateUIColors();
@@ -37,6 +50,9 @@ public class ChessDockTitle extends BasicDockTitle {
         updateUIColors();
     }
     
+    /**
+     * Ensures that the colors of this title are set correctly.
+     */
     private void updateUIColors(){
         Dockable dockable = getDockable();
         if( dockable != null ){

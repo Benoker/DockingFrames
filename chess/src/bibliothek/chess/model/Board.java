@@ -27,7 +27,7 @@ public class Board {
     
     /** The cells which might be covered by one figure */
     private Figure[][] figures = new Figure[8][8];
-    /** Tells for every cell whether it is attacked or not */
+    /** Tells for every cell whether it is attacked by the opponent or not */
     private boolean[][] attacked = new boolean[8][8];
     /** The player which can do the next move */
     private Player player = Player.WHITE;
@@ -156,7 +156,7 @@ public class Board {
     
     /**
      * Builds the attack-matrix. The attack-matrix tells for every cell
-     * whether it is attacked by a figure of the current player, or not.
+     * whether it is attacked by a figure of the opponent, or not.
      */
     public void buildAttackMatrix(){
         for( int r = 0; r < 8; r++ )
