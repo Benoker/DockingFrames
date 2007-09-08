@@ -26,11 +26,14 @@
 
 package bibliothek.gui.dock.title;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -39,15 +42,12 @@ import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.ActionPopup;
 import bibliothek.gui.dock.action.DockAction;
-import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.action.view.ViewItem;
 import bibliothek.gui.dock.action.view.ViewTarget;
-import bibliothek.gui.dock.event.DockActionSourceListener;
 import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
+import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 
 /**
  * An abstract implementation of {@link DockTitle}. This title can have
@@ -78,21 +78,13 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     /** A label for the title-text */
     private OrientedLabel label = new OrientedLabel();
     /** A panel that displays the action-buttons of this title */
-    private JPanel itemPanel;
-    
-    /** The buttons of this title, each of them represents one action */
-    private Map<DockAction, BasicTitleViewItem<JComponent>> items = new HashMap<DockAction, BasicTitleViewItem<JComponent>>();
-    
-    /** A list of all actions that are on this title */
-    private List<DockAction> actions = new ArrayList<DockAction>();
+    private ButtonPanel itemPanel;
     
     /** 
      * A listener added to the owned {@link Dockable}. The listener changes the
      * title-text and the icon of this title. 
      */
     private Listener listener = new Listener();
-    /** A list of actions that should be shown on this title */
-    private DockActionSource source;
     /** The creator of this title */
     private DockTitleVersion origin;
     
@@ -134,8 +126,12 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         setActive( false );
         
         if( showMiniButtons ){
-            //itemPanel = new JPanel();
-        	itemPanel = new ItemPanel();
+        	itemPanel = new ButtonPanel(){
+        		@Override
+        		protected BasicTitleViewItem<JComponent> createItemFor( DockAction action, Dockable dockable ){
+        			return AbstractDockTitle.this.createItemFor( action, dockable );
+        		}
+        	};
             itemPanel.setOpaque( false );
             add( itemPanel );
         }
@@ -231,12 +227,9 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     
     public void setOrientation( Orientation orientation ) {
         this.orientation = orientation;
-        if( items != null )
-        	for( BasicTitleViewItem<JComponent> item : items.values() )
-        		item.setOrientation( orientation );
-        
-        
-        invalidate();
+        if( showMiniButtons )
+        	itemPanel.setOrientation( orientation );
+        revalidate();
     }
     
     /**
@@ -257,10 +250,6 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         super.setForeground( fg );
         if( label != null )
             label.setForeground( fg );
-        
-        if( items != null )
-            for( ViewItem<JComponent> item : items.values() )
-                item.getItem().setForeground( fg );
     }
     
     @Override
@@ -269,10 +258,6 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         
         if( label != null )
             label.setBackground( fg );
-        
-        if( items != null )
-            for( ViewItem<JComponent> item : items.values() )
-                item.getItem().setBackground( fg );
     }
     
     @Override
@@ -332,7 +317,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
                 width -= icon.getIconWidth();
             }
             
-            if( items.size() > 0 && showMiniButtons ){
+            if( showMiniButtons && itemPanel.getItemCount() > 0 ){
             	Dimension buttonPreferred = itemPanel.getPreferredSize();
             	
                 int buttonWidth = Math.min( buttonPreferred.width, 
@@ -351,7 +336,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
                 height -= icon.getIconWidth();
             }
             
-            if( items.size() > 0 && showMiniButtons ){
+            if( showMiniButtons && itemPanel.getItemCount() > 0 ){
             	Dimension buttonPreferred = itemPanel.getPreferredSize();
                 int buttonHeight = Math.min( buttonPreferred.height, 
                 		(int)(height * buttonPreferred.height / (double)(buttonPreferred.height + labelPreferred.height) ));
@@ -501,28 +486,10 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
             throw new IllegalArgumentException( "Do not call bind twice!" );
         bind = true;
         
-        source = dockable.getController().listOffers( dockable );
+        if( showMiniButtons )
+        	itemPanel.set( dockable );
+        
         dockable.addDockableListener( listener );
-        source.addDockActionSourceListener( listener );
-        
-        int length = source.getDockActionCount();
-        
-        for( int i = 0; i<length; i++ ){
-            DockAction action = source.getDockAction( i );
-            action.bind( dockable );
-            this.actions.add( action );
-            if( showMiniButtons ){
-                BasicTitleViewItem<JComponent> item = createItemFor( action, dockable );
-                if( item != null ){
-	                item.bind();
-	                item.setOrientation( getOrientation() );
-	                itemPanel.add( item.getItem() );
-	                items.put( action, item );
-	                item.getItem().setForeground( getForeground() );
-	                item.getItem().setBackground( getBackground() );
-                }
-            }
-        }
         
         setText( dockable.getTitleText() );
         setIcon( dockable.getTitleIcon() );
@@ -534,23 +501,14 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         if( !bind )
             throw new IllegalArgumentException( "Do not call unbind twice" );
         bind = false;
+        
         dockable.removeDockableListener( listener );
         
-        if( showMiniButtons ){
-            for( ViewItem<JComponent> item : items.values() ){
-                itemPanel.remove( item.getItem() );
-                item.unbind();
-            }
-        }
-        for( DockAction action : actions )
-            action.unbind( dockable );
+        if( showMiniButtons )
+        	itemPanel.set( null );
         
+        setText( "" );
         setIcon( null );
-        
-        items.clear();
-        actions.clear();
-        source.removeDockActionSourceListener( listener );
-        source = null;
     }
     
     /**
@@ -665,12 +623,10 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     }
     
     /**
-     * A listener to the {@link Dockable} and the {@link DockActionSource}
-     * of this title.
+     * A listener to the {@link Dockable} of this title.
      * @author Benjamin Sigg
-     *
      */
-    private class Listener implements DockActionSourceListener, DockableListener{
+    private class Listener implements DockableListener{
         public void titleIconChanged( Dockable dockable, Icon oldIcon, Icon newIcon ) {
             setIcon( newIcon );
         }
@@ -686,176 +642,5 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
             // do nothing
         }
         
-        public void actionsAdded( DockActionSource source, int firstIndex, int lastIndex ) {
-            for( int i = firstIndex; i <= lastIndex; i++ ){
-                DockAction action = source.getDockAction( i );
-                action.bind( dockable );
-                if( showMiniButtons ){
-                    BasicTitleViewItem<JComponent> item = createItemFor( action, getDockable() );
-                    if( item != null ){
-	                    item.bind();
-	                    item.setOrientation( getOrientation() );
-	                    item.getItem().setForeground( getForeground() );
-		                item.getItem().setBackground( getBackground() );
-	                    items.put( action, item );
-                    }
-                }
-                actions.add( i, action );
-            }
-            update();
-        }
-        public void actionsRemoved( DockActionSource source, int firstIndex, int lastIndex ) {
-            for( int i = lastIndex; i >= firstIndex; i-- ){
-            	DockAction action = actions.remove( i );
-                
-                if( showMiniButtons ){
-                	BasicTitleViewItem<JComponent> item = items.remove( action );
-                    if( item != null )
-                    	item.unbind();
-                }
-                
-                action.unbind( dockable );
-            }
-            
-            update();
-        }
-        
-        /**
-         * Ensures that all mini buttons are visible, and the layout
-         * is up to date.
-         */
-        private void update(){
-            if( showMiniButtons ){
-                itemPanel.removeAll();
-                
-                for( DockAction action : actions ){
-                	BasicTitleViewItem<JComponent> item = items.get( action );
-                	if( item != null ){
-                		itemPanel.add( item.getItem() );
-                	}
-                }
-                            
-                revalidate();
-            }
-        }
-    }
-    
-    /**
-     * Panel that shows the items.
-     * @author Benjamin Sigg
-     */
-    private class ItemPanel extends JPanel{
-    	/**
-    	 * Creates a new panel
-    	 */
-    	public ItemPanel(){
-    		setLayout( null );
-    	}
-    	
-    	@Override
-    	public Dimension getMinimumSize(){
-    		return getPreferredSize();
-    	}
-    	
-    	@Override
-    	public Dimension getPreferredSize(){
-    		int width = 0;
-    		int height = 0;
-    		
-    		if( orientation.isHorizontal() ){
-    			for( int i = 0, n = getComponentCount(); i<n; i++ ){
-    				Dimension preferred = getComponent( i ).getPreferredSize();
-    				width += preferred.width;
-    				height = Math.max( height, preferred.height );
-    			}
-    		}
-    		else{
-    			for( int i = 0, n = getComponentCount(); i<n; i++ ){
-    				Dimension preferred = getComponent( i ).getPreferredSize();
-    				width = Math.max( width, preferred.width );
-    				height += preferred.height;
-    			}
-    		}
-    		
-    		return new Dimension( width, height );
-    	}
-    	
-    	@Override
-    	public void doLayout(){
-    		Dimension current = getPreferredSize();
-    		
-    		if( orientation.isHorizontal() ){
-    			if( current.width <= 0 )
-    				return;
-    			
-    			int x = 0;
-    			int height = getHeight();
-    			int width = getWidth();
-    			
-    			if( width > current.width ){
-    				x += width - current.width;
-    				width = current.width;
-    			}
-    			
-    			for( int i = 0, n = getComponentCount(); i<n; i++ ){
-    				Component c = getComponent( i );
-    				Dimension preferred = c.getPreferredSize();
-    				if( current.width <= 0 ){
-    					if( width <= 0 )
-    						width = 1;
-    					
-    					current.width = width;
-    				}
-    				
-    				if( width == current.width ){
-    					c.setBounds( x, 0, preferred.width, height );
-    				}
-    				else{
-    					double factor = width / (double)current.width;
-    					c.setBounds( x, 0, (int)(factor * preferred.width), height );
-    				}
-    				
-    				current.width -= preferred.width;
-    				width -= c.getWidth();
-    				x += c.getWidth();
-    				
-    			}
-    		}
-    		else{
-    			if( current.width <= 0 )
-    				return;
-    			
-    			int y = 0;
-    			int height = getHeight();
-    			int width = getWidth();
-    			
-    			if( height > current.height ){
-    				y += height - current.height;
-    				height = current.height;
-    			}
-    			
-    			for( int i = 0, n = getComponentCount(); i<n; i++ ){
-    				Component c = getComponent( i );
-    				Dimension preferred = c.getPreferredSize();
-    				if( current.height <= 0 ){
-    					if( height <= 0 )
-    						height = 1;
-    					current.height = height;
-    				}
-    				
-    				if( height == current.height ){
-    					c.setBounds( 0, y, width, preferred.height );
-    				}
-    				else{
-    					double factor = height / (double)current.height;
-    					c.setBounds( 0, y, width, (int)(factor * preferred.height) );
-    				}
-    				
-    				current.height -= preferred.height;
-    				height -= c.getHeight();
-    				y += c.getHeight();
-    			}
-    		}
-    	}
     }
 }

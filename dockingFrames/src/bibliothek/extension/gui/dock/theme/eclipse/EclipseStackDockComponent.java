@@ -36,6 +36,10 @@ import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
 import bibliothek.gui.dock.event.DockActionSourceListener;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
+import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
+import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.title.DockTitleFactory;
+import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
 import bibliothek.util.container.Tuple;
 
@@ -47,8 +51,7 @@ import bibliothek.util.container.Tuple;
  * @author Janni Kovacs
  * @author Benjamin Sigg
  */
-public class EclipseStackDockComponent extends JPanel implements StackDockComponent, DockActionSourceListener,
-		TabListener {
+public class EclipseStackDockComponent extends JPanel implements StackDockComponent, TabListener {
 
 	/**
 	 * A listener to the enclosing component, using some {@link bibliothek.gui.dock.control.RemoteRelocator}
@@ -162,7 +165,9 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 	private EclipseTabbedComponent tabs;
 	private JPanel actionPanel;
 	private Map<Tab, Dockable> dockableMap = new LinkedHashMap<Tab, Dockable>();
-
+	
+	private Dockable selectedDockable;
+	private ActionDockTitle itemPanel;
 
 	public EclipseStackDockComponent(EclipseTheme theme, DockStation station) {
 		this.theme = theme;
@@ -200,25 +205,10 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 		tabs.getTabStrip().addMouseMotionListener(listener);
 	}
 
-	public void actionsAdded(DockActionSource source, int firstIndex, int lastIndex) {
-//		System.out.println("EclipseStackDockComponent.actionsAdded");
-		updateActions();
-	}
-
-	public void actionsRemoved(DockActionSource source, int firstIndex, int lastIndex) {
-//		System.out.println("EclipseStackDockComponent.actionsRemoved");
-		updateActions();
-	}
-
 	@Override
 	public void removeAll() {
 		tabs.removeAllTabs();
 		dockables.clear();
-		for (Dockable dockable : dockableMap.values()) {
-			DockActionSource source = dockable.getActionOffers();
-			if (source != null)
-				source.removeDockActionSourceListener(this);
-		}
 		dockableMap.clear();
 	}
 
@@ -227,16 +217,7 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 		Tab tab = tabs.getTabAt(index);
 		tabs.removeTab(tab);
 		dockables.remove(index);
-		for (Iterator<Entry<Tab, Dockable>> it = dockableMap.entrySet().iterator(); it.hasNext();) {
-			Entry<Tab, Dockable> entry = it.next();
-			if (entry.getKey() == tab) {
-				DockActionSource actionSource = entry.getValue().getActionOffers();
-				if (actionSource != null)
-					actionSource.removeDockActionSourceListener(this);
-				it.remove();
-				break;
-			}
-		}
+		dockableMap.remove( tab );
 	}
 
 	public void tabRemoved(Tab t) {
@@ -254,9 +235,7 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 		for (ChangeListener listener : listenerList.getListeners(ChangeListener.class)) {
 			listener.stateChanged(event);
 		}
-		Dockable d = dockableMap.get(t);
-		if (d != null)
-			updateActions(d);
+		updateActions();
 	}
 
 	public void tabCloseIconClicked(Tab t) {
@@ -265,30 +244,27 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 	}
 
 	private void updateActions() {
-		updateActions(dockableMap.get(tabs.getSelectedTab()));
-	}
-
-	private void updateActions(Dockable d) {
-		if (d == null) {
-			return;
-		}
-		actionPanel.removeAll();
-		DockActionSource actionOffers;// = d.getActionOffers();
-//		actionOffers = d.getDockParent().getDirectActionOffers(d);
-		if (d.getController() != null) {
-			actionOffers = d.getController().listOffers(d);
-			if (actionOffers != null) {
-//				System.err.println("updateActions: " + d.getTitleText());
-				for (int i = 0; i < actionOffers.getDockActionCount(); i++) {
-					DockAction dockAction = actionOffers.getDockAction(i);
-					dockAction.bind(d);
-					BasicTitleViewItem<JComponent> view = d.getController().getActionViewConverter()
-							.createView(dockAction, ViewTarget.TITLE, d);
-					view.setOrientation(Orientation.FREE_HORIZONTAL);
-					view.bind();
-					JComponent jc = view.getItem();
-					actionPanel.add(jc);
-				}
+		Dockable dockable = dockableMap.get( tabs.getSelectedTab() );
+		
+		if( dockable != selectedDockable ){
+			if( selectedDockable != null ){
+				actionPanel.removeAll();
+				selectedDockable.unbind( itemPanel );
+				itemPanel = null;
+			}
+		
+			selectedDockable = dockable;
+			
+			if( dockable != null ){
+				itemPanel = new ActionDockTitle( dockable, null ){
+					@Override
+					protected DockActionSource createSource( Dockable dockable ){
+						return new EclipseDockActionSource( theme, super.createSource( dockable ), dockable, false );
+					}
+				};
+				
+				dockable.bind( itemPanel );
+				actionPanel.add( itemPanel.getComponent() );
 			}
 		}
 	}
@@ -321,10 +297,7 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 	public void insertTab(String title, Icon icon, Component comp, Dockable dockable, int index) {
 		Tab tab = new Tab(title, icon, dockable.getComponent(), theme.getThemeConnector().isClosable(dockable));
 		dockableMap.put(tab, dockable);
-		DockActionSource actionOffers = dockable.getActionOffers();
-		if (actionOffers != null) {
-			actionOffers.addDockActionSourceListener(this);
-		}
+		
 		tabs.insertTab(tab, index);
 		if (controller == null)
 			dockables.add(index, new Tuple<Dockable, RemoteRelocator>(dockable, null));
@@ -360,7 +333,7 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 			if (controller == null) {
 				for (Tuple<?, RemoteRelocator> tuple : dockables)
 					tuple.setB(null);
-			} else {
+			} else {				
 				for (Tuple<Dockable, RemoteRelocator> tuple : dockables)
 					tuple.setB(controller.getRelocator().createRemote(tuple.getA()));
 			}
@@ -368,7 +341,8 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 			for (Dockable dockable : dockableMap.values()) {
 				dockable.setController(controller);
 			}
+
+			updateActions();
 		}
-		updateActions();
 	}
 }

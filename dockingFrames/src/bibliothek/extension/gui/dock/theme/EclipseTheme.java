@@ -8,6 +8,7 @@ import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StackDockStation;
 import bibliothek.gui.dock.station.StationPaint;
@@ -107,6 +108,10 @@ public class EclipseTheme extends BasicTheme implements StackDockComponentFactor
 
 		public boolean isTitleBarShown(Dockable d) {
 			return true;
+		}
+		
+		public boolean isTabAction( Dockable dockable, DockAction action ){
+			return false;
 		}
 	}
 }

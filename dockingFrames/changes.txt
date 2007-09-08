@@ -20,6 +20,7 @@
 - Bugfix: SplitDockStation's compare-method now ensures that the station does not overlap other, smaller stations
 - Layout: New "Eclipse Theme", written by Janni Kovacs
 - API: DockableDisplayer now tells whether a point lies inside its title or not. The drag n drop gets more flexibel this way
-- Bugfix: SecureScreenDockDialog throw NPE when closing
+- Bugfix: SecureScreenDockDialog throws NPE when closing
 - API: DockActionSource has now to implement Iterable<DockAction>
 - API: New DockActionSource "FilteredDockActionSource"
+- Bugfix: EclipseStackDockComponent now shows all DockActions
