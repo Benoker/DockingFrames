@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -27,14 +27,13 @@
 package bibliothek.gui.dock.action;
 
 import bibliothek.gui.dock.event.DockActionSourceListener;
-import bibliothek.gui.dock.event.StandardDockActionListener;
 
 /**
  * A list of {@link DockAction DockActions} which may change its size
  * at any time.
  * @author Benjamin Sigg
  */
-public interface DockActionSource{
+public interface DockActionSource extends Iterable<DockAction>{
 	/**
 	 * Gets a hint where to put this source in relation to other sources. Note
 	 * that an {@link ActionOffer} can choose to ignore these hints, or interpret

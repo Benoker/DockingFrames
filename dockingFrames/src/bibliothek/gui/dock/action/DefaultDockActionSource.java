@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -27,6 +27,7 @@
 package bibliothek.gui.dock.action;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import bibliothek.gui.dock.action.actions.SeparatorAction;
@@ -62,6 +63,31 @@ public class DefaultDockActionSource extends AbstractDockActionSource {
             this.actions.add( action );
         
         setHint( hint );
+    }
+    
+    public Iterator<DockAction> iterator(){
+    	return new Iterator<DockAction>(){
+    		private int current = -1;
+    		private boolean removed = true;
+    		
+			public boolean hasNext(){
+				return current+1 < actions.size();
+			}
+
+			public DockAction next(){
+				current++;
+				removed = false;
+				return actions.get( current );
+			}
+
+			public void remove(){
+				if( removed )
+					throw new IllegalStateException( "Next not yet called or remove already called" );
+				
+				removed = true;
+				DefaultDockActionSource.this.remove( current-- );
+			}
+    	};
     }
     
     /**
@@ -125,11 +151,7 @@ public class DefaultDockActionSource extends AbstractDockActionSource {
         fireAdded( firstIndex, index-1 );
     }
     
-    /**
-     * Gets the index of the given {@link DockAction action}
-     * @param action The action to search in this source
-     * @return The index of the action, -1 if the action was not found
-     */
+    @Override
     public int indexOf( DockAction action ){
         return actions.indexOf( action );
     }

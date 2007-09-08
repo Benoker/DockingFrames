@@ -27,6 +27,7 @@
 package bibliothek.gui.dock.action;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import bibliothek.gui.dock.action.actions.SeparatorAction;
@@ -68,6 +69,43 @@ public class MultiDockActionSource extends AbstractDockActionSource {
         }
         
         setHint( hint );
+    }
+    
+    public Iterator<DockAction> iterator(){
+    	return new Iterator<DockAction>(){
+    		private Iterator<DockActionSource> sourceIterator = sources.iterator();
+    		private Iterator<DockAction> actionIterator;
+    		
+			public boolean hasNext(){
+				if( actionIterator == null ){
+					if( sourceIterator.hasNext() )
+						actionIterator = sourceIterator.next().iterator();
+					else
+						return false;
+				}
+				
+				while( true ){
+					if( actionIterator.hasNext() )
+						return true;
+					
+					if( sourceIterator.hasNext() )
+						actionIterator = sourceIterator.next().iterator();
+					else
+						return false;
+				}
+			}
+
+			public DockAction next(){
+				hasNext();
+				return actionIterator.next();
+			}
+
+			public void remove(){
+				hasNext();
+				actionIterator.remove();
+			}
+    		
+    	};
     }
     
     @Override

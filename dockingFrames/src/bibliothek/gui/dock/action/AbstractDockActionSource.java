@@ -71,4 +71,21 @@ public abstract class AbstractDockActionSource implements DockActionSource {
         for( DockActionSourceListener listener : listeners.toArray( new DockActionSourceListener[ listeners.size() ] ))
             listener.actionsRemoved( this, firstIndex, lastIndex );
     }
+    
+    /**
+     * Gets the index of the given {@link DockAction action}
+     * @param action The action to search in this source
+     * @return The index of the action, -1 if the action was not found
+     */
+	public int indexOf( DockAction action ){
+		int count = 0;
+		for( DockAction check : this ){
+			if( check == action )
+				return count;
+			
+			count++;
+		}
+		
+		return -1;
+	}
 }
