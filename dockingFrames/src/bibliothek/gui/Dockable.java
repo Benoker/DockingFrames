@@ -32,9 +32,9 @@ import javax.swing.Icon;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.dock.DockElement;
-import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.event.DockActionSourceListener;
+import bibliothek.gui.dock.action.HierarchyDockActionSource;
+import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
@@ -59,7 +59,12 @@ import bibliothek.gui.dock.title.DockTitleVersion;
 public interface Dockable extends DockElement{
     /**
      * Sets the parent property. This Dockable is shown as direct child of
-     * <code>station</code>.
+     * <code>station</code>.<br>
+     * Note: this method has to fire a {@link bibliothek.gui.dock.event.DockHierarchyEvent}.<br>
+     * Note: when using a {@link bibliothek.gui.dock.dockable.DockHierarchyObserver}, invoke
+     * {@link bibliothek.gui.dock.dockable.DockHierarchyObserver#update()} after the
+     * property has changed, and do not fire a {@link bibliothek.gui.dock.event.DockHierarchyEvent} 
+     * here.
      * @param station the parent, may be <code>null</code> if this 
      * Dockable is not visible at all.
      */
@@ -73,7 +78,10 @@ public interface Dockable extends DockElement{
     
     /**
      * Sets the controller in whose realm this Dockable is. A value of <code>null</code>
-     * means that this {@link Dockable} is not managed by a controller.
+     * means that this {@link Dockable} is not managed by a controller.<br>
+     * Note: this method has to inform all {@link DockHierarchyListener}s about the change.<br>
+     * Note: when using a {@link bibliothek.gui.dock.dockable.DockHierarchyObserver}, invoke
+     * {@link bibliothek.gui.dock.dockable.DockHierarchyObserver#controllerChanged(DockController)}
      * @param controller the owner, may be <code>null</code>
      */
     public void setController( DockController controller );
@@ -97,6 +105,29 @@ public interface Dockable extends DockElement{
      * @param listener the listener to remove
      */
     public void removeDockableListener( DockableListener listener );
+    
+    /**
+     * Adds a hierarchy-listener to this Dockable. The listener has to be
+     * informed whenever the path to this Dockable has been changed.<br>
+     * Subclasses might use the {@link bibliothek.gui.dock.dockable.DockHierarchyObserver}
+     * to implement this feature in an easy way. Subclasses then only have
+     * to call {@link bibliothek.gui.dock.dockable.DockHierarchyObserver#update()}
+     * whenever the {@link #setDockParent(DockStation) parent} of this Dockable
+     * changes.<br>
+     * Note: when using a {@link bibliothek.gui.dock.dockable.DockHierarchyObserver},
+     * forward the call directly to {@link bibliothek.gui.dock.dockable.DockHierarchyObserver#addDockHierarchyListener(DockHierarchyListener)}
+     * @param listener the new listener
+     */
+    public void addDockHierarchyListener( DockHierarchyListener listener );
+    
+    /**
+     * Removes a hierarchy-listener from this Dockable.<br>
+     * Note: when using a {@link bibliothek.gui.dock.dockable.DockHierarchyObserver},
+     * forward the call directly to {@link bibliothek.gui.dock.dockable.DockHierarchyObserver#removeDockHierarchyListener(DockHierarchyListener)}
+     * @param listener the listener to remove
+     * @see #addDockableListener(DockableListener)
+     */
+    public void removeDockHierarchyListener( DockHierarchyListener listener );
     
     /**
      * Adds a {@link MouseInputListener} to the component of this Dockable.
@@ -220,12 +251,25 @@ public interface Dockable extends DockElement{
     public DockTitle[] listBindedTitles();
     
     /**
-     * Gets a list of {@link DockAction} which should be triggerable if
-     * this Dockable is visible. The list can be modified by this Dockable
-     * at every time, clients have to react on these changes by adding
+     * Gets a list of {@link DockAction}s which should be triggerable if
+     * this Dockable is visible. The list contains only actions which are
+     * directly bound to this Dockable (the actions which are not changed when
+     * the parent-station of this Dockable is exchanged).
+     * The list can be modified by this Dockable at every time, clients have
+     * to react on these changes by adding
      * a {@link DockActionSourceListener} to the result.
      * @return the source of actions, can be <code>null</code> if no actions
      * are available
      */
-    public DockActionSource getActionOffers();
+    public DockActionSource getLocalActionOffers();
+    
+    /**
+     * Gets a list of all {@link bibliothek.gui.dock.action.DockAction}s which
+     * might be triggered while this Dockable is visible. The list must contain
+     * all actions which are related in any way to this Dockable. Subclasses
+     * might use a {@link HierarchyDockActionSource} or the method 
+     * {@link DockController#listOffers(Dockable)} to get this functionality
+     * @return the source containing all actions, never <code>null</code>
+     */
+    public DockActionSource getGlobalActionOffers();
 }

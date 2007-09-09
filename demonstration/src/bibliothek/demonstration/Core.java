@@ -19,14 +19,27 @@ import javax.swing.WindowConstants;
 import bibliothek.demonstration.util.ComponentCollector;
 import bibliothek.demonstration.util.LookAndFeelList;
 
+/**
+ * The center of the demonstration-application. Is responsible to create
+ * the graphical user interface, to start and stop the application.
+ * @author Benjamin Sigg
+ */
 public class Core {
+	/** the panel showing all demos */
 	private MainPanel main;
+	/** a panel shown while a demo starts up */
 	private StartupPanel startup;
+	/** the list of available look and feels */
 	private LookAndFeelList lookAndFeel;
+	/** the frame which represents the application*/
 	private JFrame frame;
 	
+	/** the number of open demonstrations */
 	private int windowCount = 0;
 	
+	/**
+	 * Creates a new core, creates the graphical user interface.
+	 */
 	public Core(){
 		main = new MainPanel( this, listDemonstrations() );
 		startup = new StartupPanel();
@@ -48,6 +61,9 @@ public class Core {
 		});
 	}
 	
+	/**
+	 * Shows the graphical user interface
+	 */
 	public void startup(){
 		frame = new JFrame();
 		frame.setTitle( "DockingFrames" );
@@ -73,6 +89,10 @@ public class Core {
 		frame.setVisible( true );
 	}
 	
+	/**
+	 * Gets a list of all demonstrations known to this Core.
+	 * @return the list of demonstrations
+	 */
 	private List<Demonstration> listDemonstrations(){
 		return Arrays.asList( new Demonstration[]{
 				new bibliothek.notes.Webstart(),
@@ -81,6 +101,11 @@ public class Core {
 		});
 	}
 	
+	/**
+	 * Starts up the given <code>demonstration</code>. The demonstration
+	 * is running in an own thread.
+	 * @param demonstration the demo to start
+	 */
 	public void start( final Demonstration demonstration ){
 		Thread thread = new Thread(){
 			@Override
@@ -104,10 +129,22 @@ public class Core {
 		thread.start();
 	}
 	
+	/**
+	 * A Monitor for {@link Demonstration Demonstrations}, used in
+	 * {@link Core#start(Demonstration)}.
+	 * @author Benjamin Sigg
+	 *
+	 */
 	private class CoreMonitor implements Monitor{
+		/** the monitored demonstration */
 		private Demonstration demonstration;
+		/** the root {@link Component Components} used in this {@link #demonstration} */
 		private ComponentCollector collector;
 		
+		/**
+		 * Creates a new Monitor
+		 * @param demonstration the demo that will be monitored
+		 */
 		public CoreMonitor( Demonstration demonstration ){
 			this.demonstration = demonstration;
 		}
@@ -135,8 +172,9 @@ public class Core {
 		}
 
 		public void shutdown(){
-			if( collector != null )
+			if( collector != null ){
 				lookAndFeel.removeComponentCollector( collector );
+			}
 			
 			windowCount--;
 			if( windowCount == 0 )

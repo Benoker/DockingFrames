@@ -167,7 +167,7 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 	private Map<Tab, Dockable> dockableMap = new LinkedHashMap<Tab, Dockable>();
 	
 	private Dockable selectedDockable;
-	private ActionDockTitle itemPanel;
+	private ButtonPanel itemPanel;
 
 	public EclipseStackDockComponent(EclipseTheme theme, DockStation station) {
 		this.theme = theme;
@@ -197,6 +197,8 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 		actionPanel.setAlignmentX(1.0f);
 		actionPanel.setAlignmentY(0f);
 		actionPanel.setOpaque(false);
+		itemPanel = new ButtonPanel();
+		actionPanel.add( itemPanel );
 		add(actionPanel);
 		setComponentZOrder(actionPanel, 0);
 		setComponentZOrder(tabs, 1);
@@ -248,23 +250,15 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 		
 		if( dockable != selectedDockable ){
 			if( selectedDockable != null ){
-				actionPanel.removeAll();
-				selectedDockable.unbind( itemPanel );
-				itemPanel = null;
+				itemPanel.set( null );
 			}
 		
 			selectedDockable = dockable;
 			
 			if( dockable != null ){
-				itemPanel = new ActionDockTitle( dockable, null ){
-					@Override
-					protected DockActionSource createSource( Dockable dockable ){
-						return new EclipseDockActionSource( theme, super.createSource( dockable ), dockable, false );
-					}
-				};
-				
-				dockable.bind( itemPanel );
-				actionPanel.add( itemPanel.getComponent() );
+				itemPanel.set( dockable,
+						new EclipseDockActionSource( theme, dockable.getGlobalActionOffers(),
+								dockable, false ) );
 			}
 		}
 	}

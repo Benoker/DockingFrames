@@ -24,3 +24,7 @@
 - API: DockActionSource has now to implement Iterable<DockAction>
 - API: New DockActionSource "FilteredDockActionSource"
 - Bugfix: EclipseStackDockComponent now shows all DockActions
+- API: New DockHierarchyListener gets informed when the path to a Dockable changes
+- API: New HierarchyDockActionSource, lists all actions of a Dockable even when the hierarchy changes
+- API: No rebind of DockTitles after a drag&drop event, the DockHierarchyListener can be used by the titles which need change
+- API: Dockable now offers a "local" and a "global" DockActionSource. The global source always contains all available actions

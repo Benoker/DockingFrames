@@ -126,7 +126,7 @@ public class ButtonPanel extends JPanel{
     	if( dockable == null )
     		set( null, null );
     	else
-    		set( dockable, dockable.getController().listOffers( dockable ));
+    		set( dockable, dockable.getGlobalActionOffers());
     }
     
     /**
@@ -352,7 +352,7 @@ public class ButtonPanel extends JPanel{
             		add( item.getItem() );
             	}
             }
-                        
+
             revalidate();
         }
 	}

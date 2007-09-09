@@ -18,6 +18,7 @@ import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.notes.view.themes.NoteBasicTheme;
 import bibliothek.notes.view.themes.NoteBubbleTheme;
+import bibliothek.notes.view.themes.NoteEclipseTheme;
 import bibliothek.notes.view.themes.NoteFlatTheme;
 import bibliothek.notes.view.themes.NoteSmoothTheme;
 
@@ -42,6 +43,7 @@ public class ThemeMenu extends JMenu{
 		add( createItem( "NoStack-FlatTheme", new NoStackTheme( new NoteFlatTheme() )));
 		add( createItem( "BubbleTheme", new NoteBubbleTheme() ));
 		add( createItem( "NoStack-BubbleTheme", new NoStackTheme( new NoteBubbleTheme() )));
+		add( createItem( "Eclipse", new NoteEclipseTheme() ));
 	}
 	
 	private JMenuItem createItem( String title, final DockTheme theme ){

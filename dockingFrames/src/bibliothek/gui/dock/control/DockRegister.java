@@ -34,6 +34,7 @@ import java.util.Set;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockRegisterListener;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.util.DockUtilities;
@@ -54,8 +55,8 @@ public class DockRegister {
     /** The controller for which the dockables and stations are stored */
     private DockController controller;
     
-    /** a list of listeners which are informed whenever the registered dockables and stations change */
-    private List<DockRegisterListener> listeners = new ArrayList<DockRegisterListener>();
+    /** a list of registerListeners which are informed whenever the registered dockables and stations change */
+    private List<DockRegisterListener> registerListeners = new ArrayList<DockRegisterListener>();
     
     /** an observer of the stations */
     private StationListener stationListener = new StationListener();
@@ -90,7 +91,7 @@ public class DockRegister {
      * @param listener the new listener
      */
     public void addDockRegisterListener( DockRegisterListener listener ){
-    	listeners.add( listener );
+    	registerListeners.add( listener );
     }
     
     /**
@@ -99,11 +100,11 @@ public class DockRegister {
      * @see #addDockRegisterListener(DockRegisterListener)
      */
     public void removeDockRegisterListener( DockRegisterListener listener ){
-    	listeners.remove( listener );
+    	registerListeners.remove( listener );
     }
     
     /**
-     * Removes all listeners and connections to the stations and dockables
+     * Removes all registerListeners and connections to the stations and dockables
      * known to this register.
      */
     public void kill(){
@@ -284,15 +285,15 @@ public class DockRegister {
     }
 
     /**
-     * Gets a list of all listeners which are registered.
-     * @return the list of listeners
+     * Gets a list of all registerListeners which are registered.
+     * @return the list of registerListeners
      */
     protected DockRegisterListener[] listDockRegisterListeners(){
-    	return listeners.toArray( new DockRegisterListener[ listeners.size() ] );
+    	return registerListeners.toArray( new DockRegisterListener[ registerListeners.size() ] );
     }
     
     /**
-     * Informs all listeners that a {@link Dockable} will be registered.
+     * Informs all registerListeners that a {@link Dockable} will be registered.
      * @param dockable the Dockable which will be registered
      */
     protected void fireDockableRegistering( Dockable dockable ){
@@ -301,7 +302,7 @@ public class DockRegister {
     }
     
     /**
-     * Informs all listeners that a {@link Dockable} has been registered.
+     * Informs all registerListeners that a {@link Dockable} has been registered.
      * @param dockable the registered Dockable
      */
     protected void fireDockableRegistered( Dockable dockable ){
@@ -310,7 +311,7 @@ public class DockRegister {
     }
 
     /**
-     * Informs all listeners that a {@link Dockable} has been
+     * Informs all registerListeners that a {@link Dockable} has been
      * unregistered.
      * @param dockable the unregistered Dockable
      */
@@ -320,7 +321,7 @@ public class DockRegister {
     }
 
     /**
-     * Informs all listeners that <code>station</code> will be registered.
+     * Informs all registerListeners that <code>station</code> will be registered.
      * @param station the new station
      */
     protected void fireDockStationRegistering( DockStation station ){
@@ -329,7 +330,7 @@ public class DockRegister {
     }
     
     /**
-     * Informs all listeners that <code>station</code> has been registered.
+     * Informs all registerListeners that <code>station</code> has been registered.
      * @param station the new station
      */
     protected void fireDockStationRegistered( DockStation station ){
@@ -338,7 +339,7 @@ public class DockRegister {
     }
     
     /**
-     * Informs all listeners that <code>station</code> has been unregistered.
+     * Informs all registerListeners that <code>station</code> has been unregistered.
      * @param station the unregistered station
      */
     protected void fireDockStationUnregistered( DockStation station ){

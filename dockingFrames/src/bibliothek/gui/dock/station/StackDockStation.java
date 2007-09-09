@@ -26,7 +26,11 @@
 
 package bibliothek.gui.dock.station;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -36,27 +40,30 @@ import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputListener;
 
-import bibliothek.gui.*;
+import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.DockTheme;
+import bibliothek.gui.DockUI;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.DockableProperty;
-import bibliothek.gui.dock.action.DockAction;
-import bibliothek.gui.dock.action.LocationHint;
-import bibliothek.gui.dock.action.MultiDockActionSource;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockableListener;
-import bibliothek.gui.dock.station.stack.*;
+import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;
+import bibliothek.gui.dock.station.stack.StackDockComponent;
+import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
+import bibliothek.gui.dock.station.stack.StackDockProperty;
+import bibliothek.gui.dock.station.stack.StackDockStationFactory;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
 import bibliothek.gui.dock.station.support.StationPaintWrapper;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
-import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
@@ -125,9 +132,6 @@ public class StackDockStation extends AbstractDockableStation {
     
     /** A listener observing the children for changes of their icon or titletext */
     private Listener listener = new Listener();
-    
-    /** The actions which are offered to the children */
-    private MultiDockActionSource source = new MultiDockActionSource( new LocationHint( LocationHint.DIRECT_ACTION, LocationHint.MIDDLE ));
     
     /**
      * A listener added to the parent of this station. The listener ensures
@@ -403,18 +407,6 @@ public class StackDockStation extends AbstractDockableStation {
     public void setFrontDockable( Dockable dockable ) {
         if( dockables.size() > 1 && dockable != null )
             stackComponent.setSelectedIndex( indexOf( dockable ));
-    }
-    
-    /**
-     * Gets a list of actions which are added to all children of this station.
-     * The station never changes this source, so it's possible to add some
-     * {@link DockAction DockActions} to the result of this method, and these
-     * actions will be added to all children.
-     * @return a source which is changeable by the client
-     */
-    @Override
-    public MultiDockActionSource getActionOffers() {
-        return source;
     }
     
     /**

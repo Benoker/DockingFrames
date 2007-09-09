@@ -30,9 +30,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
@@ -122,20 +119,6 @@ public class DefaultDockRelocator extends DockRelocator{
      */
     protected void executePut( Dockable dockable, DockStation station ){
         onPut = true;
-        final Set<DockTitle> oldTitles = new HashSet<DockTitle>();
-        
-        DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
-            private DockTitle exclude = movingTitleWindow == null ? null : movingTitleWindow.title;
-            
-            @Override
-            public void handleDockable( Dockable dockable ) {
-                for( DockTitle title : dockable.listBindedTitles() ){
-                    if( title != exclude )
-                        oldTitles.add( title );
-                }
-            }
-        });
-        
         DockController controller = getController();
         controller.getRegister().setStalled( true );
         try{
@@ -148,7 +131,6 @@ public class DefaultDockRelocator extends DockRelocator{
                 if( parent != null )
                     parent.drag( dockable );
                 station.drop();
-                controller.rebindTitles( dockable, oldTitles );
                 fireDockablePut( dockable, station );
             }
             else{

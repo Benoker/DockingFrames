@@ -12,7 +12,10 @@ import bibliothek.chess.model.Figure;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.dockable.DockHierarchyObserver;
+import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
@@ -31,6 +34,8 @@ public class ChessFigure extends JLabel implements Dockable {
 	private DockController controller;
 	/** the station on which this Dockable lies */
 	private DockStation parent;
+	/** an observer ensuring that {@link bibliothek.gui.dock.event.DockHierarchyEvent}s are send properly */
+	private DockHierarchyObserver hierarchyObserver;
 	
 	/** the figure which is represented by this label */
 	private Figure figure;
@@ -44,6 +49,7 @@ public class ChessFigure extends JLabel implements Dockable {
 		setIcon( figure.getBigIcon() );
 		setHorizontalAlignment( CENTER );
 		setVerticalAlignment( CENTER );
+		hierarchyObserver = new DockHierarchyObserver( this );
 	}
 	
 	/**
@@ -102,9 +108,14 @@ public class ChessFigure extends JLabel implements Dockable {
 			listener.titleBinded( this, title );
 	}
 
-	public DockActionSource getActionOffers(){
+	public DockActionSource getLocalActionOffers(){
 		// no actions for this figure
 		return null;
+	}
+	
+	public DockActionSource getGlobalActionOffers(){
+		// no actions for this figure
+		return new DefaultDockActionSource();
 	}
 
 	public Component getComponent(){
@@ -143,13 +154,23 @@ public class ChessFigure extends JLabel implements Dockable {
 		removeMouseListener( listener );
 		removeMouseMotionListener( listener );
 	}
+	
+	public void addDockHierarchyListener( DockHierarchyListener listener ){
+		hierarchyObserver.addDockHierarchyListener( listener );
+	}
+	
+	public void removeDockHierarchyListener( DockHierarchyListener listener ){
+		hierarchyObserver.removeDockHierarchyListener( listener );
+	}
 
 	public void setController( DockController controller ){
 		this.controller = controller;
+		hierarchyObserver.controllerChanged( controller );
 	}
 
 	public void setDockParent( DockStation station ){
 		parent = station;
+		hierarchyObserver.update();
 	}
 
 	public void unbind( DockTitle title ){

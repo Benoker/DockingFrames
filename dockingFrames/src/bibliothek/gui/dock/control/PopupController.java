@@ -190,7 +190,7 @@ public class PopupController implements DockRegisterListener{
 
         @Override
         protected DockActionSource getSource() {
-            return controller.listOffers( dockable );
+        	return dockable.getGlobalActionOffers();
         }
 
         @Override

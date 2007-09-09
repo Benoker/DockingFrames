@@ -29,21 +29,20 @@ package bibliothek.gui.dock;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
-import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.action.HierarchyDockActionSource;
+import bibliothek.gui.dock.dockable.DockHierarchyObserver;
+import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
-import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 
@@ -64,8 +63,11 @@ public abstract class AbstractDockable implements Dockable {
     /** the controller used to get information like the {@link DockTheme} */
     private DockController controller;
     
-    /** a list of listeners which will be informed when some properties changes */
-    private List<DockableListener> listeners = new ArrayList<DockableListener>();
+    /** a list of dockableListeners which will be informed when some properties changes */
+    private List<DockableListener> dockableListeners = new ArrayList<DockableListener>();
+    /** a listener to the hierarchy of the parent */
+    private DockHierarchyObserver hierarchyObserver;
+    
     /** the title of this dockable */
     private PropertyValue<String> titleText;
     /** the icon of this dockable */
@@ -79,6 +81,9 @@ public abstract class AbstractDockable implements Dockable {
      * will affect this dockable.
      */
     private DockActionSource source;
+    
+    /** an unmodifiable list of actions used for this dockable */
+    private HierarchyDockActionSource globalSource;
     
     /**
      * Creates a new dockable.
@@ -105,10 +110,17 @@ public abstract class AbstractDockable implements Dockable {
     			fireTitleTextChanged( oldValue, newValue );
     		}
     	};
+    	
+    	hierarchyObserver = new DockHierarchyObserver( this );
+    	globalSource = new HierarchyDockActionSource( this );
+    	globalSource.bind();
     }
     
     public void setDockParent( DockStation station ) {
-        parent = station;
+    	if( this.parent != station ){
+    		parent = station;
+    		hierarchyObserver.update();
+    	}
     }
 
     public DockStation getDockParent() {
@@ -129,6 +141,7 @@ public abstract class AbstractDockable implements Dockable {
         	titleIcon.setProperties( controller.getProperties() );
         	titleText.setProperties( controller.getProperties() );
         }
+        hierarchyObserver.controllerChanged( controller );
     }
 
     public DockController getController() {
@@ -136,11 +149,19 @@ public abstract class AbstractDockable implements Dockable {
     }
 
     public void addDockableListener( DockableListener listener ) {
-        listeners.add( listener );
+        dockableListeners.add( listener );
     }
 
     public void removeDockableListener( DockableListener listener ) {
-        listeners.remove( listener );
+        dockableListeners.remove( listener );
+    }
+    
+    public void addDockHierarchyListener( DockHierarchyListener listener ){
+    	hierarchyObserver.addDockHierarchyListener( listener );
+    }
+    
+    public void removeDockHierarchyListener( DockHierarchyListener listener ){
+    	hierarchyObserver.removeDockHierarchyListener( listener );
     }
     
     public void addMouseInputListener( MouseInputListener listener ) {
@@ -170,7 +191,7 @@ public abstract class AbstractDockable implements Dockable {
     }
 
     /**
-     * Sets the title of this dockable. All listeners are informed about
+     * Sets the title of this dockable. All dockableListeners are informed about
      * the change.
      * @param titleText the title, <code>null</code> is replaced by the
      * empty string
@@ -184,7 +205,7 @@ public abstract class AbstractDockable implements Dockable {
     }
 
     /**
-     * Sets the icon of this dockable. All listeners are informed about 
+     * Sets the icon of this dockable. All dockableListeners are informed about 
      * the change.
      * @param titleIcon the new icon, may be <code>null</code>
      */
@@ -214,8 +235,12 @@ public abstract class AbstractDockable implements Dockable {
     	return titles.toArray( new DockTitle[ titles.size() ] );
     }
 
-    public DockActionSource getActionOffers() {
+    public DockActionSource getLocalActionOffers() {
         return source;
+    }
+    
+    public DockActionSource getGlobalActionOffers(){
+    	return globalSource;
     }
 
     /** 
@@ -235,7 +260,7 @@ public abstract class AbstractDockable implements Dockable {
      * @param newTitle the new title
      */
     protected void fireTitleTextChanged( String oldTitle, String newTitle ){
-        for( DockableListener listener : listeners.toArray( new DockableListener[ listeners.size()] ))
+        for( DockableListener listener : dockableListeners.toArray( new DockableListener[ dockableListeners.size()] ))
             listener.titleTextChanged( this, oldTitle, newTitle );
     }
 
@@ -246,25 +271,25 @@ public abstract class AbstractDockable implements Dockable {
      * @param newIcon the new icon
      */
     protected void fireTitleIconChanged( Icon oldIcon, Icon newIcon ){
-        for( DockableListener listener : listeners.toArray( new DockableListener[ listeners.size()] ))
+        for( DockableListener listener : dockableListeners.toArray( new DockableListener[ dockableListeners.size()] ))
             listener.titleIconChanged( this, oldIcon, newIcon );
     }
     
     /**
-     * Informs all listeners that <code>title</code> was binded to this dockable.
+     * Informs all dockableListeners that <code>title</code> was binded to this dockable.
      * @param title the title which was binded
      */
     protected void fireTitleBinded( DockTitle title ){
-        for( DockableListener listener : listeners.toArray( new DockableListener[ listeners.size()] ))
+        for( DockableListener listener : dockableListeners.toArray( new DockableListener[ dockableListeners.size()] ))
             listener.titleBinded( this, title );
     }
     
     /**
-     * Informs all listeners that <code>title</code> was unbinded from this dockable.
+     * Informs all dockableListeners that <code>title</code> was unbinded from this dockable.
      * @param title the title which was unbinded
      */
     protected void fireTitleUnbinded( DockTitle title ){
-        for( DockableListener listener : listeners.toArray( new DockableListener[ listeners.size()] ))
+        for( DockableListener listener : dockableListeners.toArray( new DockableListener[ dockableListeners.size()] ))
             listener.titleUnbinded( this, title );
     }
 }

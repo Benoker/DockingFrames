@@ -501,34 +501,7 @@ public class DockController {
     public DockStation getStation( int index ){
         return register.getStation( index );
     }
-        
-    /**
-     * Checks all titles of <code>dockable</code> and its children. If a title
-     * is also in the set <code>check</code>, than its {@link DockTitle#unbind() unbind}
-     * and {@link DockTitle#bind() bind}-methods are called.<br>
-     * This action ensures that the titles have the correct {@link DockActionSource}.
-     * This method must only be called if the normal register/unregister mechanism is
-     * disabled. This case happens only if a Dockable is dragged.
-     * @param dockable the Dockable whose titles and whose children's titles will be rebinded
-     * @param check the set of titles which might be rebinded
-     */
-    public void rebindTitles( Dockable dockable, final Set<DockTitle> check ){
-    	DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
-    		@Override
-    		public void handleDockable(Dockable dockable) {
-    			DockTitle[] titles = dockable.listBindedTitles();
-    			if( titles != null ){
-    				for( DockTitle title : titles ){
-                        if( check.contains( title )){
-                            dockable.unbind( title );
-                            dockable.bind( title );
-                        }
-    				}
-    			}
-    		}
-    	});
-    }
-        
+                
     /**
      * Tells whether one of the methods which change the focus is currently
      * running, or not. If the result is <code>true</code>, none should
@@ -749,7 +722,10 @@ public class DockController {
     
     /**
      * Creates a list of {@link DockAction DockActions} which can 
-     * affect {@link Dockable}.
+     * affect {@link Dockable}.<br>
+     * Clients might rather use {@link Dockable#getGlobalActionOffers()} to
+     * get a list of actions for a specific Dockable. This method only uses
+     * the local information to compute a new source.
      * @param dockable a Dockable whose actions are demanded
      * @return a list of actions
      */
@@ -790,7 +766,7 @@ public class DockController {
         if( dockable.getDockParent() != null )
         	parentSource = dockable.getDockParent().getDirectActionOffers( dockable );
         
-        return offer.getSource( dockable, dockable.getActionOffers(), guards.toArray( new DockActionSource[guards.size()] ),
+        return offer.getSource( dockable, dockable.getLocalActionOffers(), guards.toArray( new DockActionSource[guards.size()] ),
         		parentSource, parents.toArray( new DockActionSource[ parents.size() ] ));
     }
     

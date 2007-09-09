@@ -47,6 +47,7 @@ import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.DockableProperty;
 import bibliothek.gui.dock.action.*;
+import bibliothek.gui.dock.dockable.DockHierarchyObserver;
 import bibliothek.gui.dock.event.*;
 import bibliothek.gui.dock.station.split.*;
 import bibliothek.gui.dock.station.split.SplitDockTree.Key;
@@ -100,6 +101,9 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     /** A list of {@link DockableListener} which will be invoked when something noticable happens */
     private List<DockableListener> dockableListeners = new ArrayList<DockableListener>();
     
+    /** an observer ensuring that the {@link DockHierarchyEvent}s are sent properly */
+    private DockHierarchyObserver hierarchyObserver;
+    
     /** A list of {@link SplitDockListener} which will be invoked when something noticable happens */
     private List<SplitDockListener> splitListeners = new ArrayList<SplitDockListener>();
     
@@ -108,6 +112,9 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     
     /** the DockTitles which are binded to this dockable */
     private List<DockTitle> titles = new LinkedList<DockTitle>();
+    
+    /** the list of actions offered for this Dockable */
+    private HierarchyDockActionSource globalSource;
     
     /**
      * The list of all registered {@link DockStationListener DockStationListeners}. 
@@ -248,6 +255,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         
         getContentPane().addMouseListener( dividerListener );
         getContentPane().addMouseMotionListener( dividerListener );
+        
+        hierarchyObserver = new DockHierarchyObserver( this );
+        globalSource = new HierarchyDockActionSource( this );
+        globalSource.bind();
     }
     
     @Override
@@ -410,6 +421,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
                         displayer.getDockable().bind( title );
                 }
             }
+            hierarchyObserver.controllerChanged( controller );
         }
     }
 
@@ -423,6 +435,14 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 
     public void removeDockableListener( DockableListener listener ) {
         dockableListeners.remove( listener );
+    }
+    
+    public void addDockHierarchyListener( DockHierarchyListener listener ){
+    	hierarchyObserver.addDockHierarchyListener( listener );
+    }
+    
+    public void removeDockHierarchyListener( DockHierarchyListener listener ){
+    	hierarchyObserver.removeDockHierarchyListener( listener );
     }
     
     public void addMouseInputListener( MouseInputListener listener ) {
@@ -612,8 +632,12 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     	return titles.toArray( new DockTitle[ titles.size() ]);
     }
 
-    public DockActionSource getActionOffers() {
+    public DockActionSource getLocalActionOffers() {
         return null;
+    }
+    
+    public DockActionSource getGlobalActionOffers(){
+    	return globalSource;
     }
 
     public DockStation asDockStation() {
