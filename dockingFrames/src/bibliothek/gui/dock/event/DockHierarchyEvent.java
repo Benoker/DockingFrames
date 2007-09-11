@@ -74,7 +74,8 @@ public class DockHierarchyEvent {
 		station = dockable.getDockParent();
 		for( int i = count-1; i >= 0; i-- ){
 			path[i] = station;
-			station = station.asDockable().getDockParent();
+			if( i > 0 )
+				station = station.asDockable().getDockParent();
 		}
 	}
 	

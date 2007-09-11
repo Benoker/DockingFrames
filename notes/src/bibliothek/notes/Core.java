@@ -18,6 +18,8 @@ import javax.swing.SwingUtilities;
 import bibliothek.demonstration.Monitor;
 import bibliothek.demonstration.util.ComponentCollector;
 import bibliothek.demonstration.util.LookAndFeelList;
+import bibliothek.extension.gui.dock.theme.EclipseTheme;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.RectGradientPainter;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
@@ -63,6 +65,9 @@ public class Core implements ComponentCollector{
 		
 		controller.setTheme( new NoteBasicTheme() );
 		controller.setSingleParentRemove( true );
+		controller.getProperties().set( EclipseTheme.PAINT_ICONS_WHEN_DESELECTED, true );
+		controller.getProperties().set( EclipseTheme.TAB_PAINTER, RectGradientPainter.FACTORY );
+		
 		frontend = new DockFrontend( controller, frame );
 		views = new ViewManager( frontend, frame, secure, model );
 		frontend.registerFactory( new NoteViewFactory( views.getNotes(), model ));

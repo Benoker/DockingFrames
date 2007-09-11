@@ -2,6 +2,7 @@ package bibliothek.notes.view.actions;
 
 import javax.swing.Icon;
 
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabDockAction;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionGuard;
@@ -13,6 +14,7 @@ import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.notes.view.NoteViewManager;
 import bibliothek.notes.view.panels.NoteView;
 
+@EclipseTabDockAction
 public class Hide extends SimpleButtonAction implements ActionGuard{
 	private DefaultDockActionSource source;
 	private NoteViewManager manager; 

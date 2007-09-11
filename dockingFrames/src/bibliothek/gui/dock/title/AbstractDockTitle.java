@@ -126,7 +126,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         setActive( false );
         
         if( showMiniButtons ){
-        	itemPanel = new ButtonPanel(){
+        	itemPanel = new ButtonPanel( true ){
         		@Override
         		protected BasicTitleViewItem<JComponent> createItemFor( DockAction action, Dockable dockable ){
         			return AbstractDockTitle.this.createItemFor( action, dockable );
@@ -318,12 +318,19 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
             }
             
             if( showMiniButtons && itemPanel.getItemCount() > 0 ){
-            	Dimension buttonPreferred = itemPanel.getPreferredSize();
+            	Dimension[] buttonPreferred = itemPanel.getPreferredSizes();
             	
-                int buttonWidth = Math.min( buttonPreferred.width, 
-                        (int)(width * buttonPreferred.width / (double)(buttonPreferred.width + labelPreferred.width) ));
-                int buttonX = width - buttonWidth;
-                
+            	int remaining = width - labelPreferred.width;
+            	int count = buttonPreferred.length-1;
+            	
+            	while( count > 0 && buttonPreferred[count].width > remaining )
+            		count--;
+            	
+            	itemPanel.setVisibleActions( count );
+            	
+            	int buttonWidth = buttonPreferred[count].width;
+            	int buttonX = width - buttonWidth;
+            	
                 label.setBounds( x, y, buttonX, height );
                 itemPanel.setBounds( x + buttonX, y, width - buttonX, height );
             }
@@ -337,11 +344,19 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
             }
             
             if( showMiniButtons && itemPanel.getItemCount() > 0 ){
-            	Dimension buttonPreferred = itemPanel.getPreferredSize();
-                int buttonHeight = Math.min( buttonPreferred.height, 
-                		(int)(height * buttonPreferred.height / (double)(buttonPreferred.height + labelPreferred.height) ));
-                int buttonY = height - buttonHeight;
-                
+            	Dimension[] buttonPreferred = itemPanel.getPreferredSizes();
+            	
+            	int remaining = height - labelPreferred.height;
+            	int count = buttonPreferred.length-1;
+            	
+            	while( count > 0 && buttonPreferred[count].height > remaining )
+            		count--;
+            	
+            	itemPanel.setVisibleActions( count );
+            	
+            	int buttonHeight = buttonPreferred[count].height;
+            	int buttonY = height - buttonHeight;
+            	
                 label.setBounds( x, y, width, buttonY );
                 itemPanel.setBounds( x, y + buttonY, width, height - buttonY );
             }

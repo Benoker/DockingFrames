@@ -1,6 +1,7 @@
 package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
@@ -9,6 +10,7 @@ import java.awt.KeyboardFocusManager;
 import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.SystemColor;
+import java.awt.Window;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
@@ -25,7 +27,30 @@ import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
 /**
  * @author Janni Kovacs
  */
-public class RectGradientPainter extends JComponent implements TabPainter {
+public class RectGradientPainter extends JComponent implements TabComponent {
+	public static final TabPainter FACTORY = new TabPainter(){
+		public TabComponent createTabComponent( RexTabbedComponent component, Tab tab, int index ){
+			return new RectGradientPainter( component, tab, index );
+		}
+
+		public void paintTabStrip(RexTabbedComponent component, Graphics g) {
+			Rectangle bounds = g.getClipBounds();
+			int h = bounds.height;
+			int selectedIndex = component.getSelectedIndex();
+			if (selectedIndex != -1) {
+				Rectangle selectedBounds = component.getBoundsAt(selectedIndex);
+				int to = selectedBounds.x;
+				int from = selectedBounds.x + selectedBounds.width;
+				int end = bounds.width;
+				Color lineColor = SystemColor.controlShadow;
+				g.setColor(lineColor);
+				int y = h - 1;
+				g.drawLine(-1, y, to - 1, y);
+				g.drawLine(from, y, end, y);
+			}
+		}
+	};
+	
 	private boolean paintIconWhenInactive = false;
 
 //	private EditableMatteBorder contentBorder = new EditableMatteBorder(2, 2, 2, 2);
@@ -37,16 +62,48 @@ public class RectGradientPainter extends JComponent implements TabPainter {
 	private Tab tab;
 	private int tabIndex;
 
-	public JComponent getTabComponent(RexTabbedComponent component, Tab tab, int index, boolean isSelected,
-									  boolean hasFocus) {
-		this.hasFocus = hasFocus;
-		this.isSelected = isSelected;
-		this.comp = component;
+	public RectGradientPainter( RexTabbedComponent comp, Tab tab, int index ){
+		this.comp = comp;
 		this.tab = tab;
 		this.tabIndex = index;
+		
+		setLayout( null );
+		setOpaque( false );
+		
+		if( tab.getTabComponent() != null )
+			add( tab.getTabComponent() );
+	}
+	
+	public Component getComponent(){
 		return this;
 	}
 
+	public void setFocused( boolean focused ){
+		hasFocus = focused;
+		updateBorder();
+		repaint();
+	}
+
+	public void setIndex( int index ){
+		tabIndex = index;
+	}
+
+	public void setPaintIconWhenInactive( boolean paint ){
+		paintIconWhenInactive = paint;
+		revalidate();
+	}
+
+	public void setSelected( boolean selected ){
+		isSelected = selected;
+		updateBorder();
+		revalidate();
+		repaint();
+	}
+
+	public void update(){
+		updateBorder();
+		revalidate();
+	}
 
 	@Override
 	public Dimension getPreferredSize() {
@@ -56,11 +113,62 @@ public class RectGradientPainter extends JComponent implements TabPainter {
 		int height = 23;
 		if ((paintIconWhenInactive || isSelected) && tab.getIcon() != null)
 			width += tab.getIcon().getIconWidth() + 5;
+		
+		Component tabComponent = tab.getTabComponent();
+		if( tabComponent != null ){
+			Dimension preferred = tabComponent.getPreferredSize();
+			width += preferred.width;
+			height = Math.max( height, preferred.height );
+		}
+		
 		return new Dimension(width, height);
+	}
+	
+	@Override
+	public void doLayout(){
+		if( tab.getTabComponent() != null ){
+			FontRenderContext frc = new FontRenderContext(null, false, false);
+			Rectangle2D bounds = UIManager.getFont("Label.font").getStringBounds(tab.getTitle(), frc);
+			int x = 5 + (int) bounds.getWidth() + 5;
+			if ((paintIconWhenInactive || isSelected) && tab.getIcon() != null)
+				x += tab.getIcon().getIconWidth() + 5;
+			
+			if( isSelected )
+				x += 5;
+			
+			Dimension preferred = tab.getTabComponent().getPreferredSize();
+			int width = Math.min( preferred.width, getWidth()-x );
+			
+			tab.getTabComponent().setBounds( x, 0, width, getHeight() );
+		}
 	}
 
 	public Border getContentBorder() {
 		return contentBorder;
+	}
+	
+	private void updateBorder(){
+		Color color2 = RexSystemColor.getActiveTitleColorGradient();
+		
+		Window window = SwingUtilities.getWindowAncestor(comp);
+		boolean focusTemporarilyLost = false;
+		
+		if( window != null ){
+			focusTemporarilyLost = !window.isActive();
+		}
+		
+		if (hasFocus && focusTemporarilyLost) {
+			color2 = RexSystemColor.getInactiveTitleColor();
+		} else if (!hasFocus) {
+			color2 = UIManager.getColor("Panel.background");
+		}
+		
+		// set border around tab content
+		if (!color2.equals(contentBorder.getMatteColor())) {
+			contentBorder = new MatteBorder(2, 2, 2, 2, color2);
+			if( comp != null )
+				comp.updateContentBorder();
+		}
 	}
 
 	@Override
@@ -81,10 +189,7 @@ public class RectGradientPainter extends JComponent implements TabPainter {
 			color2 = UIManager.getColor("Panel.background");
 		}
 		GradientPaint selectedGradient = new GradientPaint(0, 0, color1, 0, height, color2);
-		if (!color2.equals(contentBorder.getMatteColor())) {
-			contentBorder = new MatteBorder(2, 2, 2, 2, color2);
-		//	contentBorder.setColor(color2);
-		}
+		
 		g.setColor(lineColor);
 		if (isSelected) {
 			Paint old = g2d.getPaint();
@@ -124,22 +229,5 @@ public class RectGradientPainter extends JComponent implements TabPainter {
 		// draw text
 		g.setColor(isSelected && hasFocus ? SystemColor.activeCaptionText : SystemColor.controlText);
 		g.drawString(tab.getTitle(), 5 + iconOffset, height / 2 + g.getFontMetrics().getHeight() / 2 - 2);
-	}
-
-	public void paintTabStrip(RexTabbedComponent component, Graphics g) {
-		Rectangle bounds = g.getClipBounds();
-		int h = bounds.height;
-		int selectedIndex = component.getSelectedIndex();
-		if (selectedIndex != -1) {
-			Rectangle selectedBounds = component.getBoundsAt(selectedIndex);
-			int to = selectedBounds.x;
-			int from = selectedBounds.x + selectedBounds.width;
-			int end = bounds.width;
-			Color lineColor = SystemColor.controlShadow;
-			g.setColor(lineColor);
-			int y = h - 1;
-			g.drawLine(-1, y, to - 1, y);
-			g.drawLine(from, y, end, y);
-		}
 	}
 }

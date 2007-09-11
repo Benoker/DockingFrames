@@ -45,6 +45,7 @@ import java.util.Set;
 
 import javax.swing.Icon;
 
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabDockAction;
 import bibliothek.gui.dock.DefaultDockableFactory;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.DockFactory;
@@ -1231,6 +1232,7 @@ public class DockFrontend {
      * {@link Dockable Dockables} which are known to the enclosing frontend.
      * @author Benjamin Sigg
      */
+    @EclipseTabDockAction
     public class Hider extends SimpleButtonAction implements ActionGuard, IconManagerListener{
     	/**
     	 * Creates a new action/guard.

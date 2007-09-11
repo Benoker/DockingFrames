@@ -1,14 +1,15 @@
 package bibliothek.extension.gui.dock.theme;
 
+import bibliothek.extension.gui.dock.theme.eclipse.DefaultEclipseThemeConnector;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseDisplayerFactory;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseStackDockComponent;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseStationPaint;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseTitleFactory;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabPainter;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StackDockStation;
 import bibliothek.gui.dock.station.StationPaint;
@@ -19,6 +20,7 @@ import bibliothek.gui.dock.themes.ThemeProperties;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.MovingTitleGetter;
+import bibliothek.gui.dock.util.PropertyKey;
 
 /**
  * @author Janni Kovacs
@@ -29,6 +31,12 @@ import bibliothek.gui.dock.title.MovingTitleGetter;
 		nameBundle = "theme.eclipse",
 		webpages = {""})
 public class EclipseTheme extends BasicTheme implements StackDockComponentFactory {
+	public static final PropertyKey<Boolean> PAINT_ICONS_WHEN_DESELECTED = 
+		new PropertyKey<Boolean>( "EclipseTheme paint icons when deselected" );
+	
+	public static final PropertyKey<TabPainter> TAB_PAINTER =
+		new PropertyKey<TabPainter>( "EclipseTheme tab painter" );
+	
 	private static final EclipseThemeConnector DEFAULT_ECLIPSE_THEME_CONNECTOR = new DefaultEclipseThemeConnector();
 
 	private EclipseTitleFactory ECLIPSE_TITLE_FACTORY = new EclipseTitleFactory();
@@ -86,33 +94,6 @@ public class EclipseTheme extends BasicTheme implements StackDockComponentFactor
 
 	public EclipseThemeConnector getThemeConnector() {
 		return connector;
-	}
-
-	
-	private static class DefaultEclipseThemeConnector implements EclipseThemeConnector {
-
-		public boolean isClosable(Dockable d) {
-			return false;
-		}
-
-		public boolean isFullscreenEnabled(Dockable d) {
-			return false;
-		}
-
-		public void dockableClosing(Dockable d) {
-			DockStation station = d.getDockParent();
-			if (station != null) {
-				station.drag(d);
-			}
-		}
-
-		public boolean isTitleBarShown(Dockable d) {
-			return true;
-		}
-		
-		public boolean isTabAction( Dockable dockable, DockAction action ){
-			return false;
-		}
 	}
 }
 

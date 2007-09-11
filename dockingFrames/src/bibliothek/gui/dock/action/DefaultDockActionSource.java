@@ -175,6 +175,13 @@ public class DefaultDockActionSource extends AbstractDockActionSource {
     }
     
     /**
+     * Removes all actions stored in this source.
+     */
+    public void removeAll(){
+    	remove( 0, getDockActionCount() );
+    }
+    
+    /**
      * Removes all actions between <code>index</code> (incl.)
      * and <code>index+length</code> (excl.).
      * @param index The index of the first action to remove

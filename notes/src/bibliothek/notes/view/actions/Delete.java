@@ -2,11 +2,13 @@ package bibliothek.notes.view.actions;
 
 import javax.swing.JOptionPane;
 
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabDockAction;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.notes.model.Note;
 import bibliothek.notes.model.NoteModel;
 
+@EclipseTabDockAction
 public abstract class Delete extends SimpleButtonAction{
 	private NoteModel model;
 	

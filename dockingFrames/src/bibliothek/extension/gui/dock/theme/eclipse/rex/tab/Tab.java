@@ -7,32 +7,31 @@ import javax.swing.Icon;
  * @author Janni Kovacs
  */
 public class Tab {
-
-	private String title, tooltip;
+	private String title;
 	private Icon icon;
-	private boolean closable;
 	private Component comp;
-
+	private Component tabComponent;
+	private TabComponent painter;
+	
 	public Tab(String title, Component comp) {
-		this(title, null, null, comp, false);
+		this(title, null, comp, null );
 	}
 
 	public Tab(String title, Icon icon, Component comp) {
-		this(title, icon, null, comp, false);
+		this(title, icon, comp, null);
 	}
 
-	public Tab(String title, Icon icon, Component comp, boolean closable) {
-		this(title, icon, null, comp, closable);
-	}
-
-	public Tab(String title, Icon icon, String tooltip, Component comp, boolean closable) {
+	public Tab(String title, Icon icon, Component comp, Component tabComponent ) {
 		this.title = title;
 		this.comp = comp;
-		this.tooltip = tooltip;
+		this.tabComponent = tabComponent;
 		this.icon = icon;
-		this.closable = closable;
 	}
-
+	
+	public void setPainter( TabComponent painter ){
+		this.painter = painter;
+	}
+	
 	public String getTitle() {
 		return title;
 	}
@@ -41,27 +40,23 @@ public class Tab {
 		return icon;
 	}
 
-	public boolean isClosable() {
-		return closable;
+	public Component getTabComponent(){
+		return tabComponent;
 	}
-
+	
 	public Component getComponent() {
 		return comp;
 	}
 
 	public void setTitle(String newTitle) {
 		this.title = newTitle;
+		if( painter != null )
+			painter.update();
 	}
 
 	public void setIcon(Icon newIcon) {
 		this.icon = newIcon;
-	}
-
-	public String getTooltip() {
-		return tooltip;
-	}
-
-	public void setTooltip(String tooltip) {
-		this.tooltip = tooltip;
+		if( painter != null )
+			painter.update();
 	}
 }

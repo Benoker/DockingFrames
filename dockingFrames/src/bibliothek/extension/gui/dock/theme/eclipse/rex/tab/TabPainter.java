@@ -23,13 +23,12 @@ public interface TabPainter {
 
 	public Dimension getChevronSize(RexTabbedComponent component);
 
-	public void paintChevron(Graphics g, Rectangle bounds, RexTabbedComponent component, int state);*/
-
-	public JComponent getTabComponent(RexTabbedComponent component, Tab tab, int index, boolean isSelected,
-									  boolean hasFocus);
-
+	public void paintChevron(Graphics g, Rectangle bounds, RexTabbedComponent component, int state);
 
 	public Border getContentBorder();
-
+ 	*/
+	
 	public void paintTabStrip(RexTabbedComponent component, Graphics g);
+	
+	public TabComponent createTabComponent(RexTabbedComponent component, Tab tab, int index );
 }

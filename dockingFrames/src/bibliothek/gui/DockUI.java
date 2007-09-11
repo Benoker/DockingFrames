@@ -26,6 +26,10 @@
 
 package bibliothek.gui;
 
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.io.*;
 import java.util.*;
 
@@ -89,6 +93,28 @@ public class DockUI {
                 ex.printStackTrace();
             }
         }
+        
+        // special icons
+        icons.put( "ButtonPanel.overflow.menu", new Icon(){
+			public int getIconHeight(){
+				return 7;
+			}
+
+			public int getIconWidth(){
+				return 9;
+			}
+
+			public void paintIcon( Component c, Graphics g, int x, int y ){
+				g = g.create();
+				((Graphics2D)g).setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
+				g.setColor( c.getForeground() );
+				
+				g.fillPolygon( 
+						new int[]{ x + 1, x + 8, x + 4 },
+						new int[]{ y + 1, y + 1, y + 6 }, 3 );
+				g.dispose();
+			}
+        });
         
         setBundle( Locale.getDefault() );
         

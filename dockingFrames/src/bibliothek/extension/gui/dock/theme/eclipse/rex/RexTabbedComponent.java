@@ -4,6 +4,7 @@ import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
@@ -13,6 +14,7 @@ import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -43,8 +45,12 @@ import bibliothek.extension.gui.dock.theme.eclipse.rex.resources.Resources;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.RectGradientPainter;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.ShapedGradientPainter;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.Tab;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabComponent;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabListener;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabPainter;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ActionPopup;
+import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.util.container.Tuple;
 
 
@@ -52,237 +58,24 @@ import bibliothek.util.container.Tuple;
  * @author Janni Kovacs
  */
 public class RexTabbedComponent extends JComponent {
-	private class FocusEventListener implements AWTEventListener {
-		public void eventDispatched(AWTEvent event) {
-			FocusEvent fe = (FocusEvent) event;
-			RexTabbedComponent instance = RexTabbedComponent.this;
-			Component c1 = fe.getOppositeComponent();
-			Component c2 = fe.getComponent();
-			//	System.out.println(c2.getClass().getName() + (fe.getID() == FocusEvent.FOCUS_GAINED ? " GAINED focus" : " LOST focus"));
-			//	System.out.println("comp: "+ c2);
-			if (((c1 != null) && SwingUtilities.isDescendingFrom(c1, instance)) ||
-					((c2 != null) && SwingUtilities.isDescendingFrom(c2, instance))) {
-				//		System.out.println("Owner: "+FocusManager.getCurrentManager().getFocusOwner());
-				tabStrip.repaint();
-			}
-		}
-	}
-
-	protected class TabStrip extends JComponent implements MouseListener, MouseMotionListener {
-
-		private Map<Tab, Tuple<Dimension, Insets>> sizes = new LinkedHashMap<Tab, Tuple<Dimension, Insets>>();
-		private boolean closeIconOnHover = false;
-		private int tabOnHover = -1;
-
-		public TabStrip() {
-			setLayout(null);
-			setFocusable(true);
-			addMouseListener(this);
-			addMouseMotionListener(this);
-			ToolTipManager.sharedInstance().registerComponent(this);
-		}
-
-		@Override
-		protected void paintComponent(Graphics g) {
-			super.paintComponent(g);
-		//	Thread.dumpStack();
-			int x = 0;
-			int index = 0;
-			Insets insets = new Insets(0, 0, 0, 0);
-			sizes.clear();
-			for (Tab tab : tabs) {
-				boolean isSelected = tab == selectedTab;
-				Component focusOwner = FocusManager.getCurrentManager().getPermanentFocusOwner();
-				RexTabbedComponent comp = RexTabbedComponent.this;
-				boolean hasFocus = focusOwner != null && SwingUtilities.isDescendingFrom(focusOwner, comp);
-				JComponent c = tabPainter.getTabComponent(comp, tab, index, isSelected, hasFocus);
-				Dimension size = c.getPreferredSize();
-				insets = c.getInsets();
-				int width = size.width;
-				Icon icon = closeIcon;
-				Point pos = getMousePosition();
-				if (tabOnHover == index && closeIconOnHover) {
-					icon = hoverCloseIcon;
-				}
-				if (tab.isClosable()) {
-					width += icon.getIconWidth() + 4;
-				}
-				SwingUtilities.paintComponent(g, c, this, x, 0, width + insets.right, size.height);
-				if (tab.isClosable() && ((!showCloseIconOnHoverOnly || tabOnHover == index) || isSelected)) {
-					icon.paintIcon(this, g, x + width - icon.getIconWidth() - 4,
-							(size.height - icon.getIconHeight()) / 2);
-				}
-				width += insets.right - insets.left;
-				size.width = width;
-				Tuple<Dimension, Insets> t = new Tuple<Dimension, Insets>(size, insets);
-				sizes.put(tab, t);
-				if (size.height != getHeight()) {
-					revalidate();
-				}
-				x += width;// + insets.right - insets.left;
-				index++;
-			}
-			Border oldBorder = contentArea.getBorder();
-			Border newBorder = null;
-			if (index != 0) {
-				newBorder = tabPainter.getContentBorder();
-			}
-			if (oldBorder != newBorder) {
-				contentArea.setBorder(newBorder);
-				contentArea.repaint();
-			}
-			g.setClip(0, 0, getWidth(), getHeight());
-			tabPainter.paintTabStrip(RexTabbedComponent.this, g);
-		}
-
-		public void mouseExited(MouseEvent e) {
-			if (closeIconOnHover || tabOnHover != -1) {
-				closeIconOnHover = false;
-				tabOnHover = -1;
-				repaint();
-			}
-		}
-
-		public void mouseClicked(MouseEvent e) {
-		}
-
-		public void mousePressed(MouseEvent e) {
-			requestFocus();
-			Tab tab = getTabAt(e.getX(), e.getY());
-			if (tab != null && tab != selectedTab && !closeIconOnHover)
-				setSelectedTab(tab);
-			showPopup(e);
-		}
-
-		public void mouseReleased(MouseEvent e) {
-			requestFocus();
-			showPopup(e);
-			if (closeIconOnHover && !e.isPopupTrigger()) {
-				Tab t = RexTabbedComponent.this.getTabAt(tabOnHover);
-				// NOTE: for use in docking frames removeTab() has been replaced with  tabCloseIconClicked() call
-				for (TabListener listener : listeners) {
-					listener.tabCloseIconClicked(t);
-				}
-//				removeTab(t);
-				closeIconOnHover = false;
-			}
-		}
-
-		private void showPopup(MouseEvent e) {
-			if (e.isPopupTrigger()) {
-				Tab tab = getTabAt(e.getX(), e.getY());
-				if (tab != null) {
-					JComponent comp = tabPainter.getTabComponent(RexTabbedComponent.this, tab, indexOf(tab), true, true);
-					JPopupMenu popup = comp.getComponentPopupMenu();
-					if (popup != null) {
-						Point location = comp.getPopupLocation(e);
-						if (location == null) {
-							location = e.getPoint();
-						}
-						popup.show(this, location.x, location.y);
-					}
-				}
-			}
-		}
-
-		public void mouseEntered(MouseEvent e) {
-		}
-
-		@Override
-		public String getToolTipText(MouseEvent event) {
-			Tab tab = getTabAt(event.getX(), event.getY());
-			return tab != null ? tab.getTooltip() : super.getToolTipText(event);
-		}
-
-		public void mouseDragged(MouseEvent e) {
-		}
-
-		public void mouseMoved(MouseEvent event) {
-			int x = event.getX(), y = event.getY();
-			int width = 0, currentTab = -1;
-			Tab tab = null;
-			int i = 0;
-			for (Entry<Tab, Tuple<Dimension, Insets>> e : sizes.entrySet()) {
-				width += e.getValue().getA().width;
-				if (x <= width) {
-					tab = e.getKey();
-					currentTab = i;
-					break;
-				}
-				i++;
-			}
-			boolean shouldRepaint = false;
-			if (tabOnHover != currentTab) {
-				tabOnHover = currentTab;
-				shouldRepaint = true;
-			}
-			if (tab != null) {
-				if (tab.isClosable()) {
-					Tuple<Dimension, Insets> tuple = sizes.get(tab);
-					Dimension d = tuple.getA();
-					Insets ins = tuple.getB();
-					int closeIconY = (d.height - closeIcon.getIconHeight()) / 2;
-					int closeIconX = width - 4 - (ins.right - ins.left) - closeIcon.getIconWidth();
-					if (x > closeIconX && x < closeIconX + closeIcon.getIconWidth() &&
-							y > closeIconY && y < d.height - closeIconY) {
-						if (!closeIconOnHover || shouldRepaint) {
-							closeIconOnHover = true;
-							repaint();
-						}
-						return;
-					}
-				}
-			}
-			if (closeIconOnHover) {
-				closeIconOnHover = false;
-				shouldRepaint = true;
-			}
-			if (shouldRepaint)
-				repaint();
-		}
-
-		public Tab getTabAt(int x, int y) {
-			int width = 0;
-			for (Entry<Tab, Tuple<Dimension, Insets>> e : sizes.entrySet()) {
-				width += e.getValue().getA().width;
-				if (x <= width) {
-					return e.getKey();
-				}
-			}
-			return null;
-		}
-
-		@Override
-		public Dimension getPreferredSize() {
-			int width = 0;
-			int height = 1;
-			for (Tuple<Dimension, Insets> t : sizes.values()) {
-				Dimension dimension = t.getA();
-				width += dimension.width;
-				height = Math.max(height, dimension.height);
-			}
-			return new Dimension(width, height);
-		}
-	}
 
 	public static final String X_OVERLAY_PROPERTY = "RexTabbedComponent.xOverlay";
 
-	private RexTabbedComponent.FocusEventListener focusListener = new FocusEventListener();
 	public static final int TOP = 0;
 	public static final int BOTTOM = 1;
 	public static final int LEFT = 2;
 	public static final int RIGHT = 3;
 
 	protected int tabPlacement;
-	protected Icon closeIcon = Resources.getIcon("close-tab.png");
-	protected Icon hoverCloseIcon = Resources.getIcon("close-tab-hover.png");
-	protected boolean showCloseIconOnHoverOnly = true;
-	protected TabStrip tabStrip;
+	protected JComponent tabStrip;
 	private Tab selectedTab;
+	private Tab focusedTab;
 	private TabPainter tabPainter;
 	private List<TabListener> listeners = new LinkedList<TabListener>();
-	private List<Tab> tabs = new ArrayList<Tab>();
+	private List<TabEntry> tabs = new ArrayList<TabEntry>();
 	private JComponent contentArea;
+	
+	private boolean paintIconsWhenInactive = false;
 
 	public RexTabbedComponent() {
 		this(TOP);
@@ -296,21 +89,8 @@ public class RexTabbedComponent extends JComponent {
 		initComponent();
 	}
 
-
-	@Override
-	public void addNotify() {
-		super.addNotify();
-		Toolkit.getDefaultToolkit().addAWTEventListener(focusListener, FocusEvent.FOCUS_EVENT_MASK);
-	}
-
-	@Override
-	public void removeNotify() {
-		super.removeNotify();
-		Toolkit.getDefaultToolkit().removeAWTEventListener(focusListener);
-	}
-
 	private void initComponent() {
-		tabStrip = new TabStrip();
+		setTabStrip( new RexTabStrip( this ));
 		//	tabStrip.addTabListener(this);
 		contentArea = new JPanel(new BorderLayout());
 //		contentArea.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, SystemColor.controlShadow));
@@ -318,6 +98,17 @@ public class RexTabbedComponent extends JComponent {
 //				tabPlacement == TOP ? 1 : 0, 1, SystemColor.controlShadow));
 		setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, SystemColor.controlShadow));
 		setLayout(new BorderLayout());
+		
+		add(contentArea, BorderLayout.CENTER);
+		setTabPainter( ShapedGradientPainter.FACTORY );
+	}
+
+	public void setTabStrip( JComponent strip ){
+		if( tabStrip != null ){
+			remove( tabStrip );
+			tabStrip.removeAll();
+		}
+		
 		String constraints = BorderLayout.NORTH;
 		switch (tabPlacement) {
 			case BOTTOM:
@@ -329,15 +120,48 @@ public class RexTabbedComponent extends JComponent {
 			case RIGHT:
 				constraints = BorderLayout.EAST;
 		}
-		add(tabStrip, constraints);
-		add(contentArea, BorderLayout.CENTER);
-		setTabPainter(new ShapedGradientPainter());
+		tabStrip = strip;
+		add(strip, constraints);
+		
+		for( TabEntry entry : tabs ){
+			tabStrip.add( entry.tabComponent.getComponent() );
+		}
 	}
-
+	
 	public void setTabPainter(TabPainter painter) {
 		this.tabPainter = painter;
-		contentArea.setBorder(painter.getContentBorder());
+		
+		tabStrip.removeAll();
+		
+		int index = 0;
+		
+		for( TabEntry entry : tabs ){
+			entry.tabComponent.removeMouseListener( entry.tabMouseListener );
+			entry.tab.setPainter( null );
+			
+			entry.tabComponent = painter.createTabComponent( this, entry.tab, index );
+			entry.tabComponent.addMouseListener( entry.tabMouseListener );
+			entry.tabComponent.setPaintIconWhenInactive( paintIconsWhenInactive );
+			entry.tabComponent.setSelected( entry.tab == selectedTab );
+			entry.tabComponent.setFocused( entry.tab == focusedTab );
+			
+			entry.tab.setPainter( entry.tabComponent );
+			
+			tabStrip.add( entry.tabComponent.getComponent() );
+		}
+		
+		//contentArea.setBorder(painter.getContentBorder());
 		tabStrip.repaint();
+	}
+	
+	public TabPainter getTabPainter(){
+		return tabPainter;
+	}
+	
+	public void setPaintIconsWhenInactive( boolean paint ){
+		this.paintIconsWhenInactive = paint;
+		for( TabEntry entry : tabs )
+			entry.tabComponent.setPaintIconWhenInactive( paint );
 	}
 
 	public void addTab(Tab t) {
@@ -346,8 +170,20 @@ public class RexTabbedComponent extends JComponent {
 	}
 
 	public void insertTab(Tab tab, int index) {
-		tabs.add(index, tab);
-		tabStrip.repaint();
+		TabEntry entry = new TabEntry();
+		entry.tab = tab;
+		entry.tabComponent = tabPainter.createTabComponent( this, tab, index );
+		entry.tabMouseListener = new TabMouseListener( tab );
+
+		entry.tabComponent.addMouseListener( entry.tabMouseListener );
+		entry.tabComponent.setPaintIconWhenInactive( paintIconsWhenInactive );
+		entry.tab.setPainter( entry.tabComponent );
+		
+		tabs.add( index, entry );
+		tabStrip.add( entry.tabComponent.getComponent() );
+		
+		for( int i = index+1, n = tabs.size(); i<n; i++ )
+			tabs.get( i ).tabComponent.setIndex( i );
 	}
 
 	public int getTabCount() {
@@ -362,8 +198,17 @@ public class RexTabbedComponent extends JComponent {
 		return selectedTab;
 	}
 
+	public TabComponent getTabComponent( int index ){
+		return tabs.get( index ).tabComponent;
+	}
+	
 	public int indexOf(Tab t) {
-		return tabs.indexOf(t);
+		for( int i = 0, n = tabs.size(); i<n; i++ ){
+			if( tabs.get( i ).tab == t )
+				return i;
+		}
+		
+		return -1;
 	}
 
 	public void removeTab(Tab t) {
@@ -371,8 +216,15 @@ public class RexTabbedComponent extends JComponent {
 			listener.tabRemoved(t);
 		}
 		int index = indexOf(t);
-		tabs.remove(t);
-		tabStrip.sizes.remove(t);
+		TabEntry entry = tabs.get( index );
+		tabs.remove( index );
+		tabStrip.remove( entry.tabComponent.getComponent() );
+		entry.tabComponent.removeMouseListener( entry.tabMouseListener );
+		entry.tab.setPainter( null );
+		
+		for( int i = index, n = tabs.size(); i<n; i++ )
+			tabs.get( i ).tabComponent.setIndex( i );
+		
 		if (t == selectedTab) {
 			if (index == tabs.size()) {
 				index = tabs.size() - 1;
@@ -383,18 +235,21 @@ public class RexTabbedComponent extends JComponent {
 				setSelectedTab(null);
 			}
 		}
-		tabStrip.repaint();
+		
 	}
 
 	public void removeAllTabs() {
-		for (Tab tab : tabs) {
+		for (TabEntry tab : tabs) {
+			tab.tab.setPainter( null );
+			
 			for (TabListener listener : listeners) {
-				listener.tabRemoved(tab);
+				listener.tabRemoved( tab.tab );
+				tab.tabComponent.removeMouseListener( tab.tabMouseListener );
 			}
 		}
+		
+		tabStrip.removeAll();
 		tabs.clear();
-		tabStrip.sizes.clear();
-		tabStrip.repaint();
 		setSelectedTab(null);
 	}
 
@@ -417,13 +272,26 @@ public class RexTabbedComponent extends JComponent {
 	}
 
 	public void setSelectedTab(int i) {
-		setSelectedTab(tabs.get(i));
+		setSelectedTab(tabs.get(i).tab);
+	}
+	
+	public void setFocusedTab( Tab tab ){
+		focusedTab = tab;
+		for( TabEntry entry : tabs ){
+			entry.tabComponent.setFocused( entry.tab == tab );
+		}
 	}
 
 	public void setSelectedTab(Tab tab) {
 		if (tab != selectedTab) {
+			if( selectedTab != null ){
+				int index = indexOf( selectedTab );
+				if( index >= 0 )
+					tabs.get( index ).tabComponent.setSelected( false );
+			}
+			
 			selectedTab = tab;
-			tabStrip.repaint();
+			
 			tabChanged(tab);
 			for (TabListener listener : listeners) {
 				listener.tabChanged(tab);
@@ -432,7 +300,7 @@ public class RexTabbedComponent extends JComponent {
 	}
 
 	public Tab getTabAt(int index) {
-		return tabs.get(index);
+		return tabs.get(index).tab;
 	}
 
 	public Rectangle getBoundsAt(int index) {
@@ -440,18 +308,41 @@ public class RexTabbedComponent extends JComponent {
 	}
 
 	public Rectangle getBounds(Tab tab) {
-		Rectangle r = new Rectangle(tabStrip.sizes.get(tab).getA());
-		if (getTabPlacement() == RexTabbedComponent.BOTTOM) {
-			r.y = getHeight() - r.height;
-		}
-		for (Entry<Tab, Tuple<Dimension, Insets>> e : tabStrip.sizes.entrySet()) {
-			if (e.getKey() == tab)
-				break;
-			r.x += e.getValue().getA().width;
-		}
-		return r;
+		TabComponent component = tabs.get( indexOf( tab ) ).tabComponent;
+		Point location = new Point( 0, 0 );
+		location = SwingUtilities.convertPoint( component.getComponent(), location, this );
+		
+		return new Rectangle( location, component.getComponent().getSize() );
 	}
 
+	public void updateContentBorder(){
+		if( selectedTab != null ){
+			TabEntry entry = tabs.get( indexOf( selectedTab ) ); 
+			entry.tabComponent.setSelected( true );
+			contentArea.setBorder( entry.tabComponent.getContentBorder() );
+		}
+		else
+			contentArea.setBorder( null );
+	}
+	
+	protected void popup( Tab tab, MouseEvent e ){
+		if( !e.isConsumed() && e.isPopupTrigger() ){
+			Component comp = tab.getComponent();
+			if( comp instanceof JComponent ){
+				JComponent jcomp = (JComponent)comp;
+
+				JPopupMenu popup = jcomp.getComponentPopupMenu();
+				if (popup != null) {
+					Point location = jcomp.getPopupLocation(e);
+					if (location == null) {
+						location = e.getPoint();
+					}
+					popup.show(this, location.x, location.y);
+				}
+			}
+		}
+	}
+	
 	protected void tabChanged(Tab t) {
 		contentArea.removeAll();
 		if (t == null) {
@@ -463,37 +354,42 @@ public class RexTabbedComponent extends JComponent {
 		contentArea.repaint();
 	}
 
-	public Icon getCloseIcon() {
-		return closeIcon;
+	private class TabEntry{
+		public Tab tab;
+		public TabComponent tabComponent;
+		public TabMouseListener tabMouseListener;
 	}
-
-	public void setCloseIcon(Icon closeIcon) {
-		this.closeIcon = closeIcon;
+	
+	private class TabMouseListener extends MouseAdapter{
+		private Tab tab;
+		
+		public TabMouseListener( Tab tab ){
+			this.tab = tab;
+		}
+		
+		@Override
+		public void mouseClicked( MouseEvent e ){
+			setSelectedTab( tab );
+		}
+		
+		@Override
+		public void mousePressed( MouseEvent e ){
+			popup( tab, e );
+		}
+		
+		@Override
+		public void mouseReleased( MouseEvent e ){
+			popup( tab, e );
+		}
 	}
-
-	public Icon getHoverCloseIcon() {
-		return hoverCloseIcon;
-	}
-
-	public void setHoverCloseIcon(Icon hoverCloseIcon) {
-		this.hoverCloseIcon = hoverCloseIcon;
-	}
-
-	public boolean isShowCloseIconOnHoverOnly() {
-		return showCloseIconOnHoverOnly;
-	}
-
-	public void setShowCloseIconOnHoverOnly(boolean showCloseIconOnHoverOnly) {
-		this.showCloseIconOnHoverOnly = showCloseIconOnHoverOnly;
-	}
-
+	
 	public static void main(String[] args) throws IllegalAccessException, UnsupportedLookAndFeelException,
 			InstantiationException, ClassNotFoundException {
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		final RexTabbedComponent comp = new RexTabbedComponent(RexTabbedComponent.TOP);
 	//	comp.setTabPainter(new SmallTabPainter());
-		comp.setTabPainter(new RectGradientPainter());
-		comp.setTabPainter(new ShapedGradientPainter());
+		//comp.setTabPainter(new RectGradientPainter());
+		comp.setTabPainter( ShapedGradientPainter.FACTORY );
 //		comp.setBorder(null);
 		//	comp.addTab(new Tab("abc", new JLabel("oppa")));
 		for (int i = 0; i < 10; i++) {

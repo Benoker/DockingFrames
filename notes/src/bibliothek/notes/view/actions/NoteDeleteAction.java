@@ -1,5 +1,6 @@
 package bibliothek.notes.view.actions;
 
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabDockAction;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
@@ -10,6 +11,7 @@ import bibliothek.notes.model.NoteModel;
 import bibliothek.notes.util.ResourceSet;
 import bibliothek.notes.view.panels.NoteView;
 
+@EclipseTabDockAction
 public class NoteDeleteAction extends Delete implements ActionGuard{
 	private DockActionSource source;
 	
