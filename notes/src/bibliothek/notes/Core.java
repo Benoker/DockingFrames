@@ -66,7 +66,7 @@ public class Core implements ComponentCollector{
 		controller.setTheme( new NoteBasicTheme() );
 		controller.setSingleParentRemove( true );
 		controller.getProperties().set( EclipseTheme.PAINT_ICONS_WHEN_DESELECTED, true );
-		controller.getProperties().set( EclipseTheme.TAB_PAINTER, RectGradientPainter.FACTORY );
+		//controller.getProperties().set( EclipseTheme.TAB_PAINTER, RectGradientPainter.FACTORY );
 		
 		frontend = new DockFrontend( controller, frame );
 		views = new ViewManager( frontend, frame, secure, model );

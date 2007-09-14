@@ -44,20 +44,21 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 		}
 
 		public void paintTabStrip(RexTabbedComponent component, Graphics g) {
-			Rectangle bounds = g.getClipBounds();
-			int h = bounds.height;
 			int selectedIndex = component.getSelectedIndex();
 			if (selectedIndex != -1) {
 				Rectangle selectedBounds = component.getBoundsAt(selectedIndex);
 				int to = selectedBounds.x;
 				int from = selectedBounds.x + selectedBounds.width;
-				int end = bounds.width;
+				int end = component.getWidth();
 				Color lineColor = SystemColor.controlShadow;
 				g.setColor(lineColor);
-				int y = h - 1;
+				// int y = component.getHeight() - 1;
+				int y = selectedBounds.y + selectedBounds.height - 1;
+				
 				if (to != 0)
 					g.drawLine(0, y, to, y);
-				g.drawLine(from, y, end, y);
+				if( from != end )
+					g.drawLine(from, y, end, y);
 			}
 		}
 	};
