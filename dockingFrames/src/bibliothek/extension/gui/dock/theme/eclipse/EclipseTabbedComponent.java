@@ -99,6 +99,11 @@ public class EclipseTabbedComponent extends RexTabbedComponent {
 		public Component add( Component comp ){
 			return strip.add( comp );
 		}
+		
+		@Override
+		public void remove( Component comp ){
+			strip.remove( comp );
+		}
 
 		@Override
 		protected void paintComponent( Graphics g ){
