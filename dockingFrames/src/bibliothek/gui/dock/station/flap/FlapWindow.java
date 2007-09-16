@@ -119,14 +119,14 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
                 if( displayer == null )
                     return new Dimension( 100, 100 );
                 
-                return displayer.getPreferredSize();
+                return displayer.getComponent().getPreferredSize();
             }
 
             public Dimension minimumLayoutSize( Container parent ) {
                 if( displayer == null )
                     return new Dimension( 100, 100 );
                 
-                return displayer.getMinimumSize();
+                return displayer.getComponent().getMinimumSize();
             }
 
             public void layoutContainer( Container parent ) {
@@ -143,7 +143,7 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
                     else
                         insets.left += station.getWindowBorder();
                     
-                    displayer.setBounds( insets.left, insets.top, 
+                    displayer.getComponent().setBounds( insets.left, insets.top, 
                             parent.getWidth()-insets.left-insets.right, 
                             parent.getHeight()-insets.top-insets.bottom );
                 }
@@ -245,7 +245,7 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
         
             station.getDisplayers().release( displayer );
             
-            content.remove( displayer );
+            content.remove( displayer.getComponent() );
             
             displayer = null;
             
@@ -263,7 +263,7 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
             }
             
             displayer = station.getDisplayers().fetch( dockable, title );
-            content.add( displayer );
+            content.add( displayer.getComponent() );
         }
     }
     

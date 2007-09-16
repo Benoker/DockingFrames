@@ -74,7 +74,7 @@ public class Leaf extends SplitNode{
     public Dimension getMinimumSize() {
     	if( displayer == null )
     		return new Dimension( 0, 0 );
-    	return displayer.getMinimumSize();
+    	return displayer.getComponent().getMinimumSize();
     }
     
     /**
@@ -109,7 +109,7 @@ public class Leaf extends SplitNode{
         super.updateBounds( x, y, width, height, factorW, factorH );
         
         if( displayer != getAccess().getFullScreenDockable() )
-            displayer.setBounds( getBounds() );
+            displayer.getComponent().setBounds( getBounds() );
     }
         
     @Override

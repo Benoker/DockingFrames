@@ -1,10 +1,11 @@
 package bibliothek.extension.gui.dock.theme.eclipse;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Graphics;
+import java.awt.GridLayout;
+
 import javax.swing.JPanel;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableDisplayer;
@@ -13,62 +14,70 @@ import bibliothek.gui.dock.title.DockTitle;
 /**
  * @author Janni Kovacs
  */
-public class NoTitleDisplayer extends DockableDisplayer {
-
-	private JPanel panel;
-
-	public NoTitleDisplayer(DockStation station, Dockable dockable) {
-		super(dockable, null);
+public class NoTitleDisplayer extends JPanel implements DockableDisplayer {
+	private Dockable dockable;
+	private DockController controller;
+	private DockStation station;
+	private DockTitle title;
+	private Location location;
+	
+	public NoTitleDisplayer( DockStation station, Dockable dockable ){
+		setBorder( new EclipseBorder() );
+		setLayout( new GridLayout( 1, 1, 0, 0 ) );
+		setOpaque( false );
+		
+		setStation( station );
+		setDockable( dockable );
 	}
 
-	private void ensurePanelVisible() {
-		if (panel == null) {
-			panel = new JPanel(new BorderLayout()) {
-
-				@Override
-				public void paint(Graphics g) {
-					super.paint(g);
-					paintBorder(g);
-				}
-			};
-			panel.setOpaque(false);
-			panel.setBorder(new EclipseBorder());
-			add(panel);
-		}
+	public Component getComponent(){
+		return this;
 	}
 
-	@Override
-	protected void addDockable(Component component) {
-		ensurePanelVisible();
+	public DockController getController(){
+		return controller;
 	}
 
-	@Override
-	protected void removeDockable(Component component) {
-		ensurePanelVisible();
+	public Dockable getDockable(){
+		return dockable;
 	}
 
-	@Override
-	protected Component getComponent(DockTitle title) {
-		JPanel p = new JPanel(null);
-		p.setBounds(0, 0, 0, 0);
-		return p;
+	public DockStation getStation(){
+		return station;
 	}
 
-	@Override
-	protected Component getComponent(Dockable dockable) {
-		ensurePanelVisible();
-		return panel;
+	public DockTitle getTitle(){
+		return title;
 	}
 
-	@Override
-	public void setDockable(Dockable dockable) {
-		ensurePanelVisible();
-		if (getDockable() != null) {
-			panel.removeAll();
-		}
-		super.setDockable(dockable);
-		if (dockable != null)
-			panel.add(dockable.getComponent());
-		invalidate();
+	public Location getTitleLocation(){
+		return location;
+	}
+
+	public void setController( DockController controller ){
+		this.controller = controller;
+	}
+
+	public void setDockable( Dockable dockable ){
+		this.dockable = dockable;
+		removeAll();
+		if( dockable != null )
+			add( dockable.getComponent() );
+	}
+
+	public void setStation( DockStation station ){
+		this.station = station;
+	}
+
+	public void setTitle( DockTitle title ){
+		this.title = title;
+	}
+
+	public void setTitleLocation( Location location ){
+		this.location = location;
+	}
+
+	public boolean titleContains( int x, int y ){
+		return false;
 	}
 }

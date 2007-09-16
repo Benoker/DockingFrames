@@ -227,7 +227,7 @@ public class StackDockStation extends AbstractDockableStation {
                     stackComponent.insertTab( 
                             dockable.getTitleText(), 
                             dockable.getTitleIcon(), 
-                            displayer, 
+                            displayer.getComponent(), 
                             dockable,
                             stackComponent.getTabCount() );
                 }
@@ -676,18 +676,18 @@ public class StackDockStation extends AbstractDockableStation {
         
         if( dockables.size() == 0 ){
             dockables.add( displayer );
-            panel.add( displayer );
+            panel.add( displayer.getComponent() );
         }
         else{
             if( dockables.size() == 1 ){
                 panel.removeAll();
                 DockableDisplayer child = dockables.get( 0 );
-                stackComponent.addTab( child.getDockable().getTitleText(), child.getDockable().getTitleIcon(), child, child.getDockable() );
+                stackComponent.addTab( child.getDockable().getTitleText(), child.getDockable().getTitleIcon(), child.getComponent(), child.getDockable() );
                 panel.add( stackComponent.getComponent() );
             }
             
             dockables.add( index, displayer );
-            stackComponent.insertTab( dockable.getTitleText(), dockable.getTitleIcon(), displayer, dockable, index );
+            stackComponent.insertTab( dockable.getTitleText(), dockable.getTitleIcon(), displayer.getComponent(), dockable, index );
             stackComponent.setSelectedIndex( index );
         }
         
@@ -732,14 +732,14 @@ public class StackDockStation extends AbstractDockableStation {
         }
         
         if( dockables.size() == 1 ){
-            panel.remove( dockables.get( 0 ));
+            panel.remove( dockables.get( 0 ).getComponent() );
             dockables.clear();
         }
         else if( dockables.size() == 2 ){
             panel.remove( stackComponent.getComponent() );
             stackComponent.removeAll();
             dockables.remove( index );
-            panel.add( dockables.get( 0 ));
+            panel.add( dockables.get( 0 ).getComponent() );
         }
         else{
             stackComponent.remove( index );
@@ -942,7 +942,7 @@ public class StackDockStation extends AbstractDockableStation {
                 if( getDockableCount() < 2 )
                     insert = bounds;
                 else{
-                    Component front = dockables.get( stackComponent.getSelectedIndex() );
+                    Component front = dockables.get( stackComponent.getSelectedIndex() ).getComponent();
                     Point location = new Point( 0, 0 );
                     location = SwingUtilities.convertPoint( front, location, this );
                     insert = new Rectangle( location.x, location.y, front.getWidth(), front.getHeight() );

@@ -784,13 +784,13 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             fullScreenDockable = leaf.getDisplayer();
            
             for( DockableDisplayer displayer : dockables ){
-                displayer.setVisible( displayer == fullScreenDockable );
+                displayer.getComponent().setVisible( displayer == fullScreenDockable );
             }
         }
         else{
             fullScreenDockable = null;
             for( DockableDisplayer displayer : dockables ){
-                displayer.setVisible( true );
+                displayer.getComponent().setVisible( true );
             }
         }
         
@@ -1672,8 +1672,8 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         }
         
         DockableDisplayer displayer = getDisplayers().fetch( dockable, title );
-        getContentPane().add( displayer );
-        displayer.setVisible( !isFullScreen() );
+        getContentPane().add( displayer.getComponent() );
+        displayer.getComponent().setVisible( !isFullScreen() );
         dockables.add( displayer );
         
         return new Leaf( access, displayer );
@@ -1770,8 +1770,8 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         Dockable dockable = display.getDockable();
         DockTitle title = display.getTitle();
         
-        display.setVisible( true );
-        getContentPane().remove( display );
+        display.getComponent().setVisible( true );
+        getContentPane().remove( display.getComponent() );
         getDisplayers().release( display );
         
         if( display == fullScreenDockable ){
@@ -1946,7 +1946,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
                 }
                 
                 displayer.getDockable().setDockParent( this );
-                getContentPane().add( displayer );
+                getContentPane().add( displayer.getComponent() );
                 dockStationListeners.fireDockableAdded( displayer.getDockable() );
             }
             
@@ -1969,7 +1969,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             Insets insets = getRoot().getInsets();
             
             if( fullScreenDockable != null ){
-                fullScreenDockable.setBounds( insets.left, insets.top, 
+                fullScreenDockable.getComponent().setBounds( insets.left, insets.top, 
                         getWidth() - insets.left - insets.right,
                         getHeight() - insets.bottom - insets.top );
             }

@@ -30,6 +30,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.station.DisplayerFactory;
+import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
@@ -51,11 +52,11 @@ public class FlatDisplayerFactory implements DisplayerFactory{
     }
     
     public DockableDisplayer create( DockStation station, Dockable dockable, DockTitle title ) {
-        DockableDisplayer display;
+        BasicDockableDisplayer display;
         if( dockable.asDockStation() != null )
-            display = new DockableDisplayer( dockable, title, DockableDisplayer.Location.LEFT );
+            display = new BasicDockableDisplayer( dockable, title, DockableDisplayer.Location.LEFT );
         else
-            display = new DockableDisplayer( dockable, title, DockableDisplayer.Location.TOP );
+            display = new BasicDockableDisplayer( dockable, title, DockableDisplayer.Location.TOP );
 
         if( border )
             display.setBorder( new FlatBorder() );

@@ -265,7 +265,13 @@ public class ButtonPanel extends JPanel{
     
 	@Override
 	public Dimension getMinimumSize(){
-		return getPreferredSize();
+		if( actions.isEmpty() )
+			return new Dimension( 0, 0 );
+		
+		if( menuItem == null )
+			return getPreferredSize();
+		
+		return menuItem.getItem().getMinimumSize();
 	}
 	
 	/**

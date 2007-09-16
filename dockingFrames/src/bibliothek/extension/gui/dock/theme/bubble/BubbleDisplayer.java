@@ -25,7 +25,11 @@
  */
 package bibliothek.extension.gui.dock.theme.bubble;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.Insets;
 
 import javax.swing.JPanel;
 import javax.swing.border.Border;
@@ -33,8 +37,9 @@ import javax.swing.border.Border;
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockableDisplayer;
+import bibliothek.gui.dock.DockableDisplayer.Location;
 import bibliothek.gui.dock.event.DockControllerAdapter;
+import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
@@ -42,7 +47,7 @@ import bibliothek.gui.dock.title.DockTitle;
  * the side at which the title lies open.
  * @author Benjamin Sigg
  */
-public class BubbleDisplayer extends DockableDisplayer {
+public class BubbleDisplayer extends BasicDockableDisplayer {
 	/** the size of the border in pixel */
     private int borderSize = 2;
     /** the panel on which the {@link Dockable} of this displayer is shown */

@@ -36,6 +36,6 @@ public class EclipseDockActionSource extends FilteredDockActionSource {
 	
 	@Override
 	protected boolean include( DockAction action ){
-		return theme.getThemeConnector().isTabAction( dockable, action ) == tab;
+		return theme.getThemeConnector( dockable.getController() ).isTabAction( dockable, action ) == tab;
 	}
 }

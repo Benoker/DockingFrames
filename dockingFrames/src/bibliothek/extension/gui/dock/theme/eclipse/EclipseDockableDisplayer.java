@@ -1,10 +1,9 @@
 package bibliothek.extension.gui.dock.theme.eclipse;
 
-import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
@@ -17,77 +16,86 @@ import bibliothek.gui.dock.title.DockTitle;
 /**
  * @author Janni Kovacs
  */
-public class EclipseDockableDisplayer extends DockableDisplayer {
-
-	private EclipseStackDockComponent tabs;
-	private EclipseTheme theme;
+public class EclipseDockableDisplayer extends EclipseStackDockComponent implements DockableDisplayer {
 	private DockStation station;
-
+	
+	private Dockable dockable;
+	private DockController controller;
+	private DockTitle title;
+	private Location location;
+	
 	public EclipseDockableDisplayer(EclipseTheme theme, DockStation station, Dockable dockable) {
-		super(null, null);
-		this.theme = theme;
+		super(theme, station);
 		this.station = station;
 		setDockable(dockable);
 	}
 
 	@Override
-	protected void addDockable(Component component) {
-		ensureTabComponent();
-	}
-
-	@Override
-	protected void removeDockable(Component component) {
-		ensureTabComponent();
-	}
-
-	@Override
-	protected Component getComponent(Dockable dockable) {
-		ensureTabComponent();
-		return tabs;
-	}
-
-	private void ensureTabComponent() {
-		if (tabs == null) {
-			tabs = new EclipseStackDockComponent(theme, station);
-			add(tabs);
-		}
-	}
-
-	@Override
-	public void setController(DockController controller) {
-		super.setController(controller);
-		tabs.setController(controller);
-	}
-
-	@Override
-	protected Component getComponent(DockTitle title) {
-		JPanel p = new JPanel(null);
-		p.setBounds(0, 0, 0, 0);
-		return p;
-	}
-
-	@Override
-	public void setDockable(Dockable dockable) {
-		if (dockable != null)
-			ensureTabComponent();
-		if (getDockable() != null) {
-			tabs.removeAll();
-		}
-		super.setDockable(dockable);
-		if (dockable != null)
-			tabs.addTab(dockable.getTitleText(), dockable.getTitleIcon(), dockable.getComponent(), dockable);
-		invalidate();
+	public Dimension getMinimumSize(){
+		if( dockable == null )
+			return new Dimension( 10, 10 );
+		else
+			return dockable.getComponent().getMinimumSize();
 	}
 	
 	@Override
+	public Dimension getPreferredSize(){
+		if( dockable == null )
+			return new Dimension( 10, 10 );
+		else
+			return dockable.getComponent().getMinimumSize();
+	}
+	
+	public void setDockable(Dockable dockable) {
+		if (getDockable() != null) {
+			removeAll();
+		}
+		this.dockable = dockable;
+		if (dockable != null)
+			addTab(dockable.getTitleText(), dockable.getTitleIcon(), dockable.getComponent(), dockable);
+		revalidate();
+	}
+
 	public boolean titleContains( int x, int y ){
 		Point point = new Point( x, y );
-		point = SwingUtilities.convertPoint( this, point, tabs );
-		for( int i = 0, n = tabs.getTabCount(); i<n; i++ ){
-			Rectangle bounds = tabs.getBoundsAt( i );
+		point = SwingUtilities.convertPoint( this, point, this );
+		for( int i = 0, n = getTabCount(); i<n; i++ ){
+			Rectangle bounds = getBoundsAt( i );
 			if( bounds.contains( point ))
 				return true;
 		}
 		return false;
+	}
+	
+	public DockController getController(){
+		return controller;
+	}
+
+	public Dockable getDockable(){
+		return dockable;
+	}
+
+	public DockStation getStation(){
+		return station;
+	}
+
+	public DockTitle getTitle(){
+		return title;
+	}
+
+	public Location getTitleLocation(){
+		return location;
+	}
+
+	public void setStation( DockStation station ){
+		this.station = station;
+	}
+
+	public void setTitle( DockTitle title ){
+		this.title = title;
+	}
+
+	public void setTitleLocation( Location location ){
+		this.location = location;
 	}
 }

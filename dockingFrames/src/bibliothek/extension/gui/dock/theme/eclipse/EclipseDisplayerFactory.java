@@ -1,5 +1,7 @@
 package bibliothek.extension.gui.dock.theme.eclipse;
 
+import javax.swing.JComponent;
+
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableDisplayer;
@@ -21,7 +23,7 @@ public class EclipseDisplayerFactory extends BasicDisplayerFactory {
 	public DockableDisplayer create(DockStation station, Dockable dockable, DockTitle title) {
 		DockableDisplayer displayer;
 		if (dockable.asDockStation() == null) {
-			if (theme.getThemeConnector().isTitleBarShown(dockable)) {
+			if (theme.getThemeConnector( station.getController() ).isTitleBarShown(dockable)) {
 				displayer = new EclipseDockableDisplayer(theme, station, dockable);
 			} else {
 				displayer = new NoTitleDisplayer(station, dockable);
@@ -29,7 +31,8 @@ public class EclipseDisplayerFactory extends BasicDisplayerFactory {
 		} else {
 			displayer = super.create(station, dockable, title);
 		}
-		displayer.setBorder(null);
+		if( displayer.getComponent() instanceof JComponent )
+			((JComponent)displayer.getComponent()).setBorder(null);
 		return displayer;
 	}
 }

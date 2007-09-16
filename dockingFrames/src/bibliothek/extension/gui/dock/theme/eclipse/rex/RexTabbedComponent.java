@@ -1,34 +1,19 @@
 package bibliothek.extension.gui.dock.theme.eclipse.rex;
 
-import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.SystemColor;
-import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.FocusManager;
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -36,22 +21,14 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.border.Border;
 
-import bibliothek.extension.gui.dock.theme.eclipse.rex.resources.Resources;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.RectGradientPainter;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.ShapedGradientPainter;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.Tab;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabComponent;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabListener;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabPainter;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.ActionPopup;
-import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.util.container.Tuple;
 
 
 /**

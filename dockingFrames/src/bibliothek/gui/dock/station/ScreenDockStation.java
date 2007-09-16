@@ -292,7 +292,7 @@ public class ScreenDockStation extends AbstractDockStation {
         for( ScreenDockDialog dialog : dockables ){
         	DockableDisplayer displayer = dialog.getDisplayer();
             Point point = new Point( x, y );
-            SwingUtilities.convertPointFromScreen( point, displayer );
+            SwingUtilities.convertPointFromScreen( point, displayer.getComponent() );
             if( displayer.titleContains( point.x, point.y ) ){
                 Dockable child = dialog.getDisplayer().getDockable();
                 
@@ -488,7 +488,7 @@ public class ScreenDockStation extends AbstractDockStation {
         }
         
         if( !boundsIncludeTitle ){
-            Component component = displayer;
+            Component component = displayer == null ? null : displayer.getComponent();
             while( component != null ){
                 if( component instanceof JComponent ){
                     JComponent jcomponent = (JComponent)component;
@@ -509,7 +509,7 @@ public class ScreenDockStation extends AbstractDockStation {
         dialog.validate();
         
         Point zero = new Point( 0, 0 );
-        zero = SwingUtilities.convertPoint( displayer, zero, dialog );
+        zero = SwingUtilities.convertPoint( displayer.getComponent(), zero, dialog );
         dialog.setLocation( dialog.getX() - zero.x, dialog.getY() - zero.y );
         
         if( isShowing() )

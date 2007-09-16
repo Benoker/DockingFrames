@@ -8,10 +8,7 @@ import bibliothek.gui.dock.action.DockAction;
  */
 public interface EclipseThemeConnector {
 	public boolean isTitleBarShown(Dockable d);
-	
-	public boolean isFullscreenEnabled(Dockable d);
-
-	
+		
 	/**
 	 * Tells whether <code>action</code> should be displayed on the tab
 	 * of <code>dockable</code> or on the right side.

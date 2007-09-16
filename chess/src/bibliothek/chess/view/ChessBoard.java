@@ -1,11 +1,17 @@
 package bibliothek.chess.view;
 
-import java.awt.*;
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -584,7 +590,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 		@Override
 		public void doLayout(){
 			for( Field field : usedFieldList ){
-				JComponent component = field.getDisplayer();
+				Component component = field.getDisplayer().getComponent();
 				int r = field.getRow();
 				int c = field.getColumn();
 				component.setBounds( x(c), y(r), w(c), h(r) );
@@ -678,7 +684,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 			ChessFigure old = this.figure;
 			
 			if( this.figure != null ){
-				getContentPane().remove( displayer );
+				getContentPane().remove( displayer.getComponent() );
 				displayerCollection.release( displayer );
 				
 				this.figure = null;
@@ -689,7 +695,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 			
 			if( this.figure != null ){
 				displayer = displayerCollection.fetch( figure, null );
-				getContentPane().add( displayer );
+				getContentPane().add( displayer.getComponent() );
 			}
 			
 			if( old == null && figure != null )

@@ -19,10 +19,14 @@ import bibliothek.demonstration.Monitor;
 import bibliothek.demonstration.util.ComponentCollector;
 import bibliothek.demonstration.util.LookAndFeelList;
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
+import bibliothek.extension.gui.dock.theme.eclipse.DefaultEclipseThemeConnector;
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.RectGradientPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.SmallTabPainter;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.security.SecureDockController;
 import bibliothek.notes.model.NoteModel;
 import bibliothek.notes.util.ResourceSet;
@@ -66,7 +70,7 @@ public class Core implements ComponentCollector{
 		controller.setTheme( new NoteBasicTheme() );
 		controller.setSingleParentRemove( true );
 		controller.getProperties().set( EclipseTheme.PAINT_ICONS_WHEN_DESELECTED, true );
-		//controller.getProperties().set( EclipseTheme.TAB_PAINTER, RectGradientPainter.FACTORY );
+		//controller.getProperties().set( EclipseTheme.TAB_PAINTER, SmallTabPainter.FACTORY );
 		
 		frontend = new DockFrontend( controller, frame );
 		views = new ViewManager( frontend, frame, secure, model );

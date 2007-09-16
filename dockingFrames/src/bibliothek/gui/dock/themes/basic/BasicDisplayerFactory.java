@@ -49,11 +49,11 @@ public class BasicDisplayerFactory implements DisplayerFactory {
     public DockableDisplayer create( DockStation station, Dockable dockable,
             DockTitle title ) {
 
-        DockableDisplayer displayer;
+    	BasicDockableDisplayer displayer;
         if( dockable instanceof DockStation )
-            displayer = new DockableDisplayer( dockable, title, stationLocation );
+            displayer = new BasicDockableDisplayer( dockable, title, stationLocation );
         else
-            displayer = new DockableDisplayer( dockable, title, dockableLocation );
+            displayer = new BasicDockableDisplayer( dockable, title, dockableLocation );
         displayer.setBorder( BorderFactory.createBevelBorder( BevelBorder.RAISED ));
         return displayer;
     }

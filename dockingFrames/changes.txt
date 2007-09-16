@@ -29,3 +29,4 @@
 - API: No rebind of DockTitles after a drag&drop event, the DockHierarchyListener can be used by the titles which need change
 - API: Dockable now offers a "local" and a "global" DockActionSource. The global source always contains all available actions
 - Layout, API: MenuableButtonPanel, allows to use menus when there is no space for buttons. Automatically used by AbstractDockTitle
+- API: DockableDisplayer is now an interface

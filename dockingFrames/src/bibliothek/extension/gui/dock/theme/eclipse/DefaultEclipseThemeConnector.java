@@ -7,10 +7,6 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 
 public class DefaultEclipseThemeConnector implements EclipseThemeConnector {
-	public boolean isFullscreenEnabled(Dockable d) {
-		return false;
-	}
-
 	public boolean isTitleBarShown(Dockable d) {
 		return true;
 	}
