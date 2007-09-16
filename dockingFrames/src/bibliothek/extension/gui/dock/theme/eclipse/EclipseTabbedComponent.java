@@ -102,7 +102,7 @@ public class EclipseTabbedComponent extends RexTabbedComponent {
 		@Override
 		protected void paintComponent( Graphics g ){
 			super.paintComponent( g );
-			getTabPainter().paintTabStrip( EclipseTabbedComponent.this, g );
+			getTabPainter().paintTabStrip( EclipseTabbedComponent.this, this, g );
 		}
 		
 		@Override

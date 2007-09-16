@@ -18,6 +18,6 @@ public class RexTabStrip extends JComponent{
 		super.paintComponent( g );
 		
 		g.setClip(0, 0, getWidth(), getHeight());
-		tabbedComponent.getTabPainter().paintTabStrip( tabbedComponent, g );
+		tabbedComponent.getTabPainter().paintTabStrip( tabbedComponent, this, g );
 	}
 }

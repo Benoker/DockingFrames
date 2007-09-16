@@ -1,5 +1,6 @@
 package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
 
+import java.awt.Component;
 import java.awt.Graphics;
 
 import javax.swing.JComponent;
@@ -28,7 +29,13 @@ public interface TabPainter {
 	public Border getContentBorder();
  	*/
 	
-	public void paintTabStrip(RexTabbedComponent component, Graphics g);
+    /**
+     * Paints the background of <code>tabStrip</code>.
+     * @param tabbedComponent the {@link RexTabbedComponent} for which <code>tabStrip</code> is shown
+     * @param tabStrip the tabs of <code>tabbedComponent</code>
+     * @param g the graphics used to paint on <code>tabStrip</code> 
+     */
+	public void paintTabStrip( RexTabbedComponent tabbedComponent, Component tabStrip, Graphics g);
 	
 	public TabComponent createTabComponent(RexTabbedComponent component, Tab tab, int index );
 }
