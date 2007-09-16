@@ -16,18 +16,37 @@ import javax.swing.event.PopupMenuListener;
 import bibliothek.notes.model.Note;
 import bibliothek.notes.util.ResourceSet;
 
+/**
+ * A panel showing a set of icons in a grid. The icons are read listed
+ * in {@link ResourceSet#NOTE_ICONS}.<br>
+ * Clients might use {@link #changeIcon(Note, Component, int, int)} to change
+ * the image of a {@link Note}.
+ *  
+ * @author Benjamin Sigg
+ *
+ */
 public class IconGrid extends JPanel{
+	/** An instance of IconGrid which can be used everywhere */
 	public static IconGrid GRID = new IconGrid();
 	
+	/** the width and height of one icon */
 	private static final int ICON_SIZE = 16;
+	/** the width and height of the grid */
 	private static final int GRID_SIZE = 24;
 	
+	/** the popup on which this panel lies */
 	private JPopupMenu popup;
+	/** the Note whose image will be exchanged by this IconGrid */
 	private Note note;
+	/** the index of the currently selected icon */
 	private int selection = -1;
 	
+	/** An observer of the mouse and the {@link #popup} */
 	private Listener listener = new Listener();
 	
+	/**
+	 * Creates a new grid.
+	 */
 	public IconGrid(){
 		setBackground( Color.WHITE );
 		setForeground( new Color( 150, 150, 255 ) );
@@ -72,6 +91,12 @@ public class IconGrid extends JPanel{
 		}
 	}
 	
+	/**
+	 * Gets the index of the icon which covers the coordinate <code>x/y</code>.
+	 * @param x the x-coordinate
+	 * @param y the y-coordinate
+	 * @return the icon or <code>null</code>
+	 */
 	private int iconAt( int x, int y ){
 		int size = ResourceSet.NOTE_ICONS.size();
 		int sqrt = (int)Math.sqrt( size );
@@ -100,6 +125,14 @@ public class IconGrid extends JPanel{
 		return new Dimension( GRID_SIZE*sqrt, GRID_SIZE*(sqrt - leftover/sqrt) );
 	}
 	
+	/**
+	 * Exchanges the image of <code>note</code>. A popup-panel is opened 
+	 * above <code>owner</code> at the location <code>x/y</code>.
+	 * @param note the Note whose image will be changed
+	 * @param owner the parent of the popup-panel
+	 * @param x the x-coordinate of the popup, measured in the coordinate space of <code>owner</code>
+	 * @param y the y-coordinate of the popup, measured in the coordinate space of <code>owner</code>
+	 */
 	public void changeIcon( Note note, Component owner, int x, int y ){
 		selection = -1;
 		repaint();
@@ -107,6 +140,11 @@ public class IconGrid extends JPanel{
 		popup.show( owner, x, y );
 	}
 	
+	/**
+	 * A listener to the mouse over the grid, and to the visibility of the
+	 * popup.
+	 * @author Benjamin Sigg
+	 */
 	private class Listener extends MouseInputAdapter implements PopupMenuListener{
 		@Override
 		public void mouseMoved( MouseEvent e ){

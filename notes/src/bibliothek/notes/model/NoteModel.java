@@ -12,28 +12,54 @@ import java.util.Map;
 
 import bibliothek.notes.util.ResourceSet;
 
+/**
+ * A model managing a set of {@link Note}s. The model contains methods
+ * to create new notes, or store and load them.
+ * @author Benjamin Sigg
+ *
+ */
 public class NoteModel implements Iterable<Note>{
+	/** the set of notes */
 	private Map<String, Note> notes = new LinkedHashMap<String, Note>();
+	/** observer of this model */
 	private List<NoteModelListener> listeners = new ArrayList<NoteModelListener>();
 	
+	/** the next unique id for new notes */
 	private long nextId = 0;
 	
 	public Iterator<Note> iterator(){
 		return notes.values().iterator();
 	}
 	
+	/**
+	 * Adds an observer to this model, the observer will be notified whenever
+	 * a note is created or deleted.
+	 * @param listener the new listener
+	 */
 	public void addNoteModelListener( NoteModelListener listener ){
 		listeners.add( listener );
 	}
 	
+	/**
+	 * Removes an observer from this model.
+	 * @param listener the observer to delete
+	 */
 	public void removeNoteModelListener( NoteModelListener listener ){
 		listeners.remove( listener );
 	}
 	
+	/**
+	 * Gets an immutable list of observers of this model.
+	 * @return the list of {@link NoteModelListener}s
+	 */
 	protected NoteModelListener[] listListeners(){
 		return listeners.toArray( new NoteModelListener[ listeners.size() ] );
 	}
 	
+	/**
+	 * Creates a new {@link Note} and stores it in this model.
+	 * @return the new Note
+	 */
 	public Note addNote(){
 		Note note = new Note( String.valueOf( nextId++ ) );
 		notes.put( note.getId(), note );
@@ -44,16 +70,30 @@ public class NoteModel implements Iterable<Note>{
 		return note;
 	}
 	
+	/**
+	 * Deletes <code>note</code> from this model.
+	 * @param note the note to delete
+	 */
 	public void removeNote( Note note ){
 		notes.remove( note.getId() );
 		for( NoteModelListener listener : listeners )
 			listener.noteRemoved( this, note );
 	}
 	
+	/**
+	 * Searches a node using the unique id that every note owns.
+	 * @param id a unique id of a {@link Note}
+	 * @return the <code>Note</code> or <code>null</code>
+	 */
 	public Note getNote( String id ){
 		return notes.get( id );
 	}
 	
+	/**
+	 * Reads a set of Notes that were early written using {@link #write(DataOutputStream)}.
+	 * @param in the stream to read from
+	 * @throws IOException if the stream can't be read
+	 */
 	public void read( DataInputStream in ) throws IOException{
 		List<Note> notes = new ArrayList<Note>( this.notes.values() );
 		for( Note note : notes )
@@ -79,6 +119,12 @@ public class NoteModel implements Iterable<Note>{
 		}
 	}
 	
+	/**
+	 * Stores the current set of Notes.
+	 * @param out the stream to write into
+	 * @throws IOException if the method can't write into <code>out</code>
+	 * @see #read(DataInputStream)
+	 */
 	public void write( DataOutputStream out ) throws IOException{
 		out.writeLong( nextId );
 		out.writeInt( notes.size() );
