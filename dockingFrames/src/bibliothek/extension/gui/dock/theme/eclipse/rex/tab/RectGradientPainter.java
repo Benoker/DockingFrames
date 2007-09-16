@@ -33,20 +33,21 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 			return new RectGradientPainter( component, tab, index );
 		}
 
-		public void paintTabStrip(RexTabbedComponent component, Graphics g) {
-			Rectangle bounds = g.getClipBounds();
-			int h = bounds.height;
-			int selectedIndex = component.getSelectedIndex();
+		public void paintTabStrip( RexTabbedComponent tabbedComponent, Component tabStrip, Graphics g ){
+			int selectedIndex = tabbedComponent.getSelectedIndex();
 			if (selectedIndex != -1) {
-				Rectangle selectedBounds = component.getBoundsAt(selectedIndex);
+				Rectangle selectedBounds = tabbedComponent.getBoundsAt(selectedIndex);
 				int to = selectedBounds.x;
 				int from = selectedBounds.x + selectedBounds.width;
-				int end = bounds.width;
+				int end = tabStrip.getWidth();
 				Color lineColor = SystemColor.controlShadow;
 				g.setColor(lineColor);
-				int y = h - 1;
-				g.drawLine(-1, y, to - 1, y);
-				g.drawLine(from, y, end, y);
+				int y = tabStrip.getHeight()-1;
+				
+				if (to != 0)
+					g.drawLine(-1, y, to-1, y);
+				if( from != end )
+					g.drawLine(from, y, end, y);
 			}
 		}
 	};

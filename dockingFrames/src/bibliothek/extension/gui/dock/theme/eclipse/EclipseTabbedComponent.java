@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.ShapedGradientPainter;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.Tab;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabStripLayoutManager;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionPopup;
 import bibliothek.gui.dock.action.DockActionSource;
@@ -79,7 +80,7 @@ public class EclipseTabbedComponent extends RexTabbedComponent {
 			setFocusable(false);
 			setOpaque( false );
 			
-			strip = new JPanel( new FlowLayout( FlowLayout.LEFT, 0, 0 ));
+			strip = new JPanel( new TabStripLayoutManager() );
 			strip.setOpaque( false );
 			
 			addImpl( strip, null, -1 );

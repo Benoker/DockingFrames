@@ -182,6 +182,7 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		
 		Rectangle bounds = new Rectangle(0, 0, getWidth(), getHeight());//getBounds();
 		int x = 0, y = 0;
 		int w = bounds.width, h = bounds.height;

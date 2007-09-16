@@ -29,15 +29,15 @@ public class SmallTabPainter extends JComponent implements TabComponent {
 		public TabComponent createTabComponent( RexTabbedComponent component, Tab tab, int index ){
 			return new SmallTabPainter( component, tab, index );
 		}
-
-		public void paintTabStrip(RexTabbedComponent component, Graphics g) {
+		
+		public void paintTabStrip( RexTabbedComponent tabbedComponent, Component tabStrip, Graphics g ){	
 			int y = 0;
-			Rectangle rectangle = g.getClipBounds();
-			if (component.getTabPlacement() == RexTabbedComponent.TOP) {
-				y = rectangle.height - 1;
+			
+			if (tabbedComponent.getTabPlacement() == RexTabbedComponent.TOP) {
+				y = tabStrip.getHeight() - 1;
 			}
 			g.setColor(UIManager.getColor("Separator.foreground"));
-			g.drawLine(0, y, rectangle.width, y);
+			g.drawLine(0, y, tabStrip.getWidth(), y);
 		}
 	};
 	
