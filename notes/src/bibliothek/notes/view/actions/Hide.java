@@ -14,11 +14,24 @@ import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.notes.view.NoteViewManager;
 import bibliothek.notes.view.panels.NoteView;
 
+/**
+ * An action that removes {@link NoteView}s from the dock-tree.
+ * @author Benjamin Sigg
+ *
+ */
 @EclipseTabDockAction
 public class Hide extends SimpleButtonAction implements ActionGuard{
+    /** the result of {@link #getSource(Dockable)} */
 	private DefaultDockActionSource source;
+	/** the manager of the graphical representations of the Notes */
 	private NoteViewManager manager; 
 	
+	/**
+	 * Creates a new action and {@link ActionGuard}
+	 * @param frontend the frontend used to retreive icons
+	 * @param manager the manager of the graphical representations of the Notes,
+	 * used to hide a {@link NoteView}
+	 */
 	public Hide( DockFrontend frontend, NoteViewManager manager ){
 		this.manager = manager;
 		setText( "Hide" );

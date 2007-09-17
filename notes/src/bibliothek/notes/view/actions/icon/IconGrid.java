@@ -15,6 +15,7 @@ import javax.swing.event.PopupMenuListener;
 
 import bibliothek.notes.model.Note;
 import bibliothek.notes.util.ResourceSet;
+import bibliothek.notes.view.actions.IconAction;
 
 /**
  * A panel showing a set of icons in a grid. The icons are read listed
@@ -23,6 +24,7 @@ import bibliothek.notes.util.ResourceSet;
  * the image of a {@link Note}.
  *  
  * @author Benjamin Sigg
+ * @see IconAction
  *
  */
 public class IconGrid extends JPanel{

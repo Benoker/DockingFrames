@@ -7,6 +7,7 @@ import javax.swing.JTextPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.LocationHint;
@@ -19,16 +20,31 @@ import bibliothek.notes.view.actions.CopyAction;
 import bibliothek.notes.view.actions.IconAction;
 import bibliothek.notes.view.actions.TitleAction;
 
+/**
+ * A {@link Dockable} displaying all properties of a {@link Note}. This
+ * view can also change some of the properties of the <code>Note</code>.
+ * @author Benjamin Sigg
+ */
 public class NoteView extends DefaultDockable implements NoteListener{
+    /** the panel showing the {@link Note#getText() message} of the {@link #note} */
 	private JTextPane textPane = new JTextPane();
 	
+	/** a manager used to show other {@link NoteView}s */
 	private NoteViewManager manager;
+	/** the set of known {@link Note}s in this application */
 	private NoteModel model;
+	/** the <code>Note</code> whose properties are shown in this view */
 	private Note note;
 	
+	/** the actions that can be applied to this view */
 	private DefaultDockActionSource source = new DefaultDockActionSource(
 			new LocationHint( LocationHint.DOCKABLE, LocationHint.LEFT ));
 	
+	/**
+	 * Creates a new view
+	 * @param manager used to show other views
+	 * @param model set of known {@link Note}s
+	 */
 	public NoteView( NoteViewManager manager, NoteModel model ){
 		this.manager = manager;
 		this.model = model;
@@ -54,10 +70,18 @@ public class NoteView extends DefaultDockable implements NoteListener{
 		});
 	}
 	
+	/**
+	 * Gets the {@link Note} whose contents are shown on this view.
+	 * @return the data of this view
+	 */
 	public Note getNote(){
 		return note;
 	}
 	
+	/**
+	 * Sets the <code>Note</code> whose contents should be shown on this view.
+	 * @param note the new data for this view
+	 */
 	public void setNote( Note note ){
 		if( this.note != null ){
 			this.note.removeListener( this );
@@ -92,6 +116,10 @@ public class NoteView extends DefaultDockable implements NoteListener{
 		}
 	}
 	
+	/**
+	 * Ensures that the message of {@link #note} is equal to
+	 * the text of {@link #textPane}.
+	 */
 	private void updateText(){
 		if( note != null ){
 			Note old = note;

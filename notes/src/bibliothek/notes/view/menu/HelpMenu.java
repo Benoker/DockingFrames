@@ -8,9 +8,19 @@ import javax.swing.JMenuItem;
 
 import bibliothek.notes.view.MainFrame;
 
+/**
+ * The "about" menu, presented in the menubar of the main-frame. This menu
+ * gives access to some information about the application.
+ * @author Benjamin Sigg
+ */
 public class HelpMenu extends JMenu{
+    /** the main-frame of this application */
 	private MainFrame frame;
 	
+	/**
+	 * Creates a new menu.
+	 * @param frame the main-frame of this application
+	 */
 	public HelpMenu( MainFrame frame ){
 		this.frame = frame;
 		

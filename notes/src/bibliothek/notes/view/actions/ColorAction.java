@@ -15,9 +15,21 @@ import bibliothek.gui.dock.action.actions.SimpleMenuAction;
 import bibliothek.notes.model.Note;
 import bibliothek.notes.util.ResourceSet;
 
+/**
+ * An action used to change the {@link Note#setColor(Color) color}-property of 
+ * a {@link Note}. This action is the parent of a set of child-actions, each
+ * child represents a special color. When this action is triggered, a menu
+ * will open and present the children. 
+ * @author Benjamin Sigg
+ */
 public class ColorAction extends SimpleMenuAction{
+    /** The Note whose color might be changed by this action */
 	private Note note;
 	
+	/**
+	 * Creates a new action
+	 * @param note the Note whose color will be changed
+	 */
 	public ColorAction( Note note ){
 		this.note = note;
 		
@@ -39,6 +51,14 @@ public class ColorAction extends SimpleMenuAction{
 		setMenu( menu );
 	}
 	
+	/**
+	 * Creates a new item for the menu. The created item will change
+	 * the color of {@link #note} to <code>color</code>.
+	 * @param text the text of the item
+	 * @param icon the image of the item
+	 * @param color the color for which this item stands
+	 * @return the new item
+	 */
 	private DockAction createAction( String text, Icon icon, final Color color ){
 		SimpleButtonAction action = new SimpleButtonAction();
 		action.setText( text );
@@ -51,6 +71,11 @@ public class ColorAction extends SimpleMenuAction{
 		return action;
 	}
 	
+	/**
+	 * Creates a new item for the menu. The created item will open a
+	 * {@link JColorChooser} when triggered.
+	 * @return the new item
+	 */
 	private DockAction createColorChooser(){
 		SimpleButtonAction action = new SimpleButtonAction(){
 			@Override

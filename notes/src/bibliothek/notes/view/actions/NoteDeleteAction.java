@@ -11,10 +11,20 @@ import bibliothek.notes.model.NoteModel;
 import bibliothek.notes.util.ResourceSet;
 import bibliothek.notes.view.panels.NoteView;
 
+/**
+ * An action used to delete {@link Note}s. This action is shown above
+ * a {@link NoteView}.
+ * @author Benjamin Sigg
+ */
 @EclipseTabDockAction
 public class NoteDeleteAction extends Delete implements ActionGuard{
+    /** the result of {@link #getSource(Dockable)} */
 	private DockActionSource source;
 	
+	/**
+	 * Creates an new action
+	 * @param model the model from which a {@link Note} will be removed 
+	 */
 	public NoteDeleteAction( NoteModel model ){
 		super( model );
 		

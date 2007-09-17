@@ -7,9 +7,21 @@ import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.notes.model.Note;
 import bibliothek.notes.util.ResourceSet;
 
+/**
+ * An action that changes the {@link Note#setTitle(String) title}-property
+ * of a {@link Note}.
+ * @author Benjamin Sigg
+ *
+ */
 public class TitleAction extends SimpleButtonAction {
+    /** the Note whose title might be changed */
 	private Note note;
 	
+	/**
+	 * Creates a new action.
+	 * @param note the <code>Note</code> whose title might be changed by this
+	 * action
+	 */
 	public TitleAction( Note note ){
 		this.note = note;
 		

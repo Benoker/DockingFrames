@@ -22,13 +22,26 @@ import bibliothek.notes.view.themes.NoteEclipseTheme;
 import bibliothek.notes.view.themes.NoteFlatTheme;
 import bibliothek.notes.view.themes.NoteSmoothTheme;
 
+/**
+ * A menu that allows the selection of a new {@link DockTheme}.
+ * @author Benjamin Sigg
+ *
+ */
 public class ThemeMenu extends JMenu{
+    /** the root of the dock-tree */
 	private DockFrontend frontend;
+	/** ensures that only one of the radio-items is selected */
 	private ButtonGroup group;
 	
+	/** the children of this menu */
 	private List<JRadioButtonMenuItem> items = new ArrayList<JRadioButtonMenuItem>();
+	/** the themes available to the user */
 	private List<DockTheme> themes = new ArrayList<DockTheme>();
 	
+	/**
+	 * Creates a new menu
+	 * @param frontend the root of the dock-tree
+	 */
 	public ThemeMenu( DockFrontend frontend ){
 		this.frontend = frontend;
 		setText( "Theme" );
@@ -46,6 +59,13 @@ public class ThemeMenu extends JMenu{
 		add( createItem( "Eclipse", new NoteEclipseTheme() ));
 	}
 	
+	/**
+	 * Creates a new item of this menu. The new item allows to select
+	 * the {@link DockTheme} <code>theme</code>.
+	 * @param title the text of the item
+	 * @param theme the theme that can be selected by clicking onto the new item
+	 * @return the new item
+	 */
 	private JMenuItem createItem( String title, final DockTheme theme ){
 		JRadioButtonMenuItem item = new JRadioButtonMenuItem( title );
 		items.add( item );
@@ -60,6 +80,12 @@ public class ThemeMenu extends JMenu{
 		return item;
 	}
 	
+	/**
+	 * Reads which theme was selected when the application shut down
+	 * the last time.
+	 * @param in the stream to read from
+	 * @throws IOException if <code>in</code> can't be read
+	 */
 	public void read( DataInputStream in ) throws IOException{
 		int index = in.readInt();
 		if( index < 0 )
@@ -69,6 +95,11 @@ public class ThemeMenu extends JMenu{
 		frontend.getController().setTheme( themes.get( index ) );
 	}
 	
+	/**
+	 * Writes which theme is currently selected.
+	 * @param out the stream to write into
+	 * @throws IOException if the method can't write into <code>out</code>
+	 */
 	public void write( DataOutputStream out ) throws IOException{
 		int index = -1;
 		for( int i = 0, n = items.size(); i<n; i++ ){

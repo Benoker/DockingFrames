@@ -9,10 +9,22 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.title.DockTitle;
 
+/**
+ * An item in a menu used to display the visibility-state of a {@link Dockable}.
+ * @author Benjamin Sigg
+ *
+ */
 public class DockableItem extends UpdateableCheckBoxMenuItem implements DockableListener{
+    /** the element whose visibility-state is shown */
 	private Dockable dockable;
+	/** the manager used to show and hide {@link #dockable} */
 	private DockFrontend frontend;
 	
+	/**
+	 * Creates a new item.
+	 * @param frontend used to show and hide <code>dockable</code>
+	 * @param dockable the element whose visibility-state is shown
+	 */
 	public DockableItem( DockFrontend frontend, Dockable dockable ){
 		this.frontend = frontend;
 		this.dockable = dockable;

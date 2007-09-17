@@ -13,6 +13,7 @@ import bibliothek.notes.view.actions.IconAction;
  * representation of an {@link IconAction}, and then opens a popup-panel
  * containing an {@link IconGrid}.
  * @author Benjamin Sigg
+ * @see IconAction
  */
 public class IconButtonHandler extends BasicHandler<IconAction> {
 	/**

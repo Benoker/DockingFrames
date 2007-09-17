@@ -11,12 +11,24 @@ import bibliothek.notes.model.Note;
 import bibliothek.notes.model.NoteModel;
 import bibliothek.notes.view.NoteViewManager;
 
+/**
+ * A factory creating new {@link NoteView}s.
+ * @author Benjamin Sigg
+ */
 public class NoteViewFactory implements DockFactory<NoteView> {
+    /** the unique id for this factory */
 	public static final String FACTORY_ID = "note";
 	
+	/** a manager of all {@link NoteView}s */
 	private NoteViewManager manager;
+	/** the set of known {@link Note}s */
 	private NoteModel model;
 	
+	/**
+	 * Creates a new factory
+	 * @param manager used to store newly loaded {@link NoteView}s
+	 * @param model used to create new {@link NoteView}s
+	 */
 	public NoteViewFactory( NoteViewManager manager, NoteModel model ){
 		this.manager = manager;
 		this.model = model;
