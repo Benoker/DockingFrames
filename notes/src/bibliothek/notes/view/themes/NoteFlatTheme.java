@@ -16,6 +16,11 @@ import bibliothek.gui.dock.themes.basic.action.menu.MenuViewItem;
 import bibliothek.notes.view.actions.IconAction;
 import bibliothek.notes.view.actions.icon.IconButtonHandler;
 
+/**
+ * A theme that installs an {@link ActionViewConverter} for the {@link IconAction},
+ * using the look of the original theme.
+ * @author Benjamin Sigg
+ */
 public class NoteFlatTheme extends FlatTheme {
 	@Override
 	public void install( DockController controller ){

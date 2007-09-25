@@ -5,7 +5,17 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 
+/**
+ * A dialog that shows, which authors and libraries have contributed
+ * to this application. 
+ * @author Benjamin Sigg
+ *
+ */
 public class About extends JDialog{
+    /**
+     * Creates a new dialog
+     * @param owner the frame below this dialog
+     */
 	public About( JFrame owner ){
 		super( owner );
 		

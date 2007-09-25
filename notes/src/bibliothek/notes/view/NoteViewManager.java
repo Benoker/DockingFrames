@@ -21,17 +21,34 @@ import bibliothek.notes.model.NoteModelListener;
 import bibliothek.notes.view.panels.NoteView;
 import bibliothek.util.container.Tuple;
 
+/**
+ * Manages the connection between {@link Note}s and {@link NoteView}s. Contains
+ * various methods to show and hide views for specific <code>Note</code>s.
+ * @author Benjamin Sigg
+ */
 public class NoteViewManager{
+    /** link to the docking-frames, used to show and hide views */
 	private DockFrontend frontend;
+	/** the set of root-{@link DockStation}s */
 	private ViewManager manager;
+	/** the set of {@link Note}s */
 	private NoteModel model;
 	
+	/** a map containing views for some {@link Note}s */
 	private Map<Note, NoteView> noteViews = new HashMap<Note, NoteView>();
+	/** the history of the {@link NoteView}s that were or are focused */
 	private LinkedList<NoteView> focusedViews = new LinkedList<NoteView>();
 	
+	/** the location of various {@link Note}s when they were closed the last time */
 	private Map<Note, Tuple<DockStation, DockableProperty>> locations =
 		new HashMap<Note, Tuple<DockStation,DockableProperty>>();
 	
+	/**
+	 * Creates a new manager.
+	 * @param frontend the link to the docking-frames
+	 * @param manager the set of the root-{@link DockStation}s
+	 * @param model the mutable set of {@link Note}s
+	 */
 	public NoteViewManager( DockFrontend frontend, ViewManager manager, NoteModel model ){
 		this.frontend = frontend;
 		this.manager = manager;
@@ -60,6 +77,11 @@ public class NoteViewManager{
 		});
 	}
 	
+	/**
+	 * Closes the view that shows <code>note</code>. Stores the location
+	 * of the view in order to open the view again at the same location.
+	 * @param note the <code>Note</code> whose view should be closed
+	 */
 	public void hide( Note note ){
 		NoteView view = noteViews.remove( note );
 		if( view != null ){
@@ -74,10 +96,21 @@ public class NoteViewManager{
 		}
 	}
 	
+	/**
+	 * Adds an additional view to the set of known views.
+	 * @param view the additional view
+	 */
 	public void putExternal( NoteView view ){
 		noteViews.put( view.getNote(), view );
 	}
 	
+	/**
+	 * Shows a view for <code>note</code>. The view will be positioned at the
+	 * same location the last view for <code>note</code> was shown. If this is
+	 * the first time that the view is shown, it will be positioned at the same
+	 * location as the last focused view.
+	 * @param note the <code>Note</code> whose view should be shown
+	 */
 	public void show( Note note ){
 		Tuple<DockStation, DockableProperty> location = locations.remove( note );
 		
@@ -89,6 +122,12 @@ public class NoteViewManager{
 			show( note, focusedViews.getFirst() );
 	}
 	
+	/**
+	 * Opens a view for <code>note</code> at the same location as
+	 * <code>location</code>.
+	 * @param note the <code>Note</code> which will be shown
+	 * @param location the preferred location of the new view, might be <code>null</code>
+	 */
 	public void show( Note note, Dockable location ){
 		if( location == null )
 			show( note, null, null );
@@ -99,6 +138,14 @@ public class NoteViewManager{
 		}
 	}
 	
+	/**
+	 * Shows a view for <code>note</code> at the given location as child
+	 * of <code>root</code>.
+	 * @param note the <code>Note</code> for which a view should be opened
+	 * @param root the preferred parent, might be <code>null</code>
+	 * @param location the preferred location, relative to <code>root</code>. Might
+	 * be <code>null</code>.
+	 */
 	public void show( Note note, DockStation root, DockableProperty location ){
 		NoteView view = noteViews.get( note );
 		if( view == null ){
@@ -118,6 +165,11 @@ public class NoteViewManager{
 		frontend.getController().setFocusedDockable( view, false );
 	}
 	
+	/**
+	 * Reads the location of the views of all known <code>Note</code>s.
+	 * @param in the stream to read from
+	 * @throws IOException if <code>in</code> can't be read
+	 */
 	public void read( DataInputStream in ) throws IOException{
 		PropertyTransformer transformer = new PropertyTransformer();
 		
@@ -132,6 +184,11 @@ public class NoteViewManager{
 		}
 	}
 	
+	/**
+	 * Writes the location of the views of the known {@link Note}s.
+	 * @param out the stream to write into
+	 * @throws IOException if this method can't write into <code>out</code>
+	 */
 	public void write( DataOutputStream out ) throws IOException{
 		PropertyTransformer transformer = new PropertyTransformer();
 		

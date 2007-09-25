@@ -13,7 +13,16 @@ import bibliothek.demonstration.Demonstration;
 import bibliothek.demonstration.Monitor;
 import bibliothek.notes.util.ResourceSet;
 
+/**
+ * The startup-class used if this application should be treated
+ * as a restricted, sub-application of the demonstration-framework.
+ * @author Benjamin Sigg
+ */
 public class Webstart implements Demonstration{
+    /**
+     * Entrypoint
+     * @param args are ignored
+     */
 	public static void main( String[] args ){
 		Core core = new Core( true, null );
 		core.startup();

@@ -14,25 +14,48 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
 import bibliothek.demonstration.util.LookAndFeelMenu;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.security.GlassedPane;
 import bibliothek.gui.dock.security.SecureDockController;
 import bibliothek.notes.Core;
+import bibliothek.notes.model.Note;
 import bibliothek.notes.util.ResourceSet;
 import bibliothek.notes.view.menu.HelpMenu;
 import bibliothek.notes.view.menu.PanelList;
 import bibliothek.notes.view.menu.ThemeMenu;
 
+/**
+ * The most important frame of this application. This frame shows the
+ * menu and contains the {@link DockStation}s in which the {@link Note}s
+ * are displayed.
+ * @author Benjamin Sigg
+ *
+ */
 public class MainFrame extends JFrame{
+    /** the center of the application */
 	private Core core;
+	/** the menu for the {@link DockTheme}s */
 	private ThemeMenu themes;
+	/** the dialog that shows the authors and libraries of this application */
 	private About about;
 	
+	/**
+	 * Creates a new frame. The content of the frame is not created by
+	 * this constructor, clients must call {@link #setup(Core)}.
+	 */
 	public MainFrame(){
 		setTitle( "Notes - Demonstration of DockingFrames" );
 		setDefaultCloseOperation( DO_NOTHING_ON_CLOSE );
 		setIconImage( ResourceSet.toImage( ResourceSet.APPLICATION_ICONS.get( "application" )));
 	}
 	
+	/**
+	 * Creates the content of this frame. These are the {@link DockStation}s
+	 * and the menus. It's unspecified what happens when this method is called
+	 * twice.
+	 * @param core the center of the application, not <code>null</code>
+	 */
 	public void setup( Core core ){
 		this.core = core;
 		setupStations();
@@ -40,6 +63,10 @@ public class MainFrame extends JFrame{
 		setupMenu();
 	}
 	
+	/**
+	 * Creates and adds all {@link DockStation}s that are displayed on
+	 * this {@link MainFrame}.
+	 */
 	private void setupStations(){
 		Container content;
 		if( core.isSecure() ){
@@ -63,6 +90,9 @@ public class MainFrame extends JFrame{
 		content.add( core.getViews().getWest().getComponent(), BorderLayout.WEST );
 	}
 	
+	/**
+	 * Creates and adds all observers that are needed by this {@link MainFrame}.
+	 */
 	private void setupListeners(){
 		addWindowListener( new WindowAdapter(){
 			@Override
@@ -72,6 +102,9 @@ public class MainFrame extends JFrame{
 		});
 	}
 	
+	/**
+	 * Creates and adds all menus and the menubar.
+	 */
 	private void setupMenu(){
 		JMenuBar menubar = new JMenuBar();
 		menubar.add( new PanelList( core.getViews(), core.getModel() ));
@@ -86,6 +119,11 @@ public class MainFrame extends JFrame{
 		setJMenuBar( menubar );
 	}
 	
+	/**
+	 * Reads location, extended-state and theme of this frame.
+	 * @param in the stream to read from
+	 * @throws IOException if the stream can't be read
+	 */
 	public void read( DataInputStream in ) throws IOException{
 		int state = in.readInt();
 		setBounds( in.readInt(), in.readInt(), in.readInt(), in.readInt() );
@@ -94,6 +132,11 @@ public class MainFrame extends JFrame{
 		themes.read( in );
 	}
 	
+	/**
+	 * Writes location, extended-state and theme of this frame.
+	 * @param out the stream to write into
+	 * @throws IOException if the method can't write into <code>out</code>
+	 */
 	public void write( DataOutputStream out ) throws IOException{
 		out.writeInt( getExtendedState() );
 		setExtendedState( NORMAL );
@@ -105,6 +148,14 @@ public class MainFrame extends JFrame{
 		themes.write( out );
 	}
 	
+	/**
+	 * Gets the about-dialog of this application.
+	 * @param lazy <code>true</code> if the dialog should be newly created if
+	 * it is <code>null</code>, or <code>false</code> if the current value
+	 * of the property should be returned.
+	 * @return the dialog, maybe <code>null</code> but only if <code>lazy</code>
+	 * was <code>false</code>
+	 */
 	public About getAbout( boolean lazy ){
 		if( about == null && lazy ){
 			about = new About( this );
