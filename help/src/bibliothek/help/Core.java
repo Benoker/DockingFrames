@@ -199,8 +199,8 @@ public class Core implements ComponentCollector{
         Minimizer minimizer = new Minimizer( this, frontend.getController() );
         
         station = new SplitDockStation();
-        minimizer.addAreaMaximized( station );
-        minimizer.addAreaMaximized( screen );
+        minimizer.addAreaNormalized( station );
+        minimizer.addAreaNormalized( screen );
         minimizer.setDefaultStation( station );
         
         content.setLayout( new BorderLayout() );

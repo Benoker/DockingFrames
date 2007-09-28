@@ -9,9 +9,21 @@ import javax.swing.JTextPane;
 import bibliothek.help.model.Entry;
 import bibliothek.help.view.text.HelpDocument;
 
+/**
+ * A panel showing all contents of an {@link Entry}. That means
+ * type, id, title, details and content of the <code>Entry</code>.
+ * @author Benjamin Sigg
+ *
+ */
 public class InspectionPanel extends JTextPane{
+    /** the object whose content is shown on this panel */
     private Entry entry;
     
+    /**
+     * Shows the content of <code>entry</code>, deletes any information
+     * that was shown before.
+     * @param entry the element whose contents will be shown
+     */
     public void inspect( Entry entry ){
         if( this.entry != entry ){
             this.entry = entry;

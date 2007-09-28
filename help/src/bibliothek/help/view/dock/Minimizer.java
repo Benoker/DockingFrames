@@ -14,10 +14,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableProperty;
-import bibliothek.gui.dock.action.ActionGuard;
-import bibliothek.gui.dock.action.DefaultDockActionSource;
-import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.action.LocationHint;
+import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.event.DockControllerAdapter;
 import bibliothek.gui.dock.event.IconManagerListener;
@@ -27,25 +24,55 @@ import bibliothek.help.Core;
 import bibliothek.help.util.ResourceSet;
 import bibliothek.util.container.Tuple;
 
+/**
+ * The minimizer adds two new {@link DockAction actions} to the DockingFrames.
+ * These actions can be used to <i>minimize</i> and <i>normalize</i> any
+ * {@link Dockable}.<br>
+ * Minimizing a <code>Dockable</code> means to store the location of the
+ * <code>Dockable</code> and then move the <code>Dockable</code> into a
+ * {@link FlapDockStation} that sits at the edge of the applications main frame.<br>
+ * Normalizing a <code>Dockable</code> means to move a minimized <code>Dockable</code>
+ * from a <code>FlapDockStation</code> back to its original position.<br>
+ * Clients can define which {@link DockStation}s are used for the "normal"
+ * and the "minimized" <code>Dockable</code>s by registering them through
+ * {@link #addAreaMinimized(FlapDockStation, DockableProperty) addAreaMinimized}
+ * and {@link #addAreaNormalized(DockStation) addAreaNormalized}. 
+ * @author Benjamin Sigg
+ *
+ */
 public class Minimizer {
-    private List<DockStation> areaMaximized = new ArrayList<DockStation>();
+    /** the areas which contain the normalized {@link Dockable}s */
+    private List<DockStation> areaNormalized = new ArrayList<DockStation>();
+    /** the areas which contain the minimized {@link Dockable}s */
     private List<FlapDockStation> areaMinimized = new ArrayList<FlapDockStation>();
     
+    /** the station used to normalize a {@link Dockable} when its original position is unknown */
     private DockStation defaultStation;
+    /** the preferred location where to add a minimized {@link Dockable} to a station from {@link #areaMinimized} */
     private Map<FlapDockStation, DockableProperty> defaultDrops = new HashMap<FlapDockStation, DockableProperty>();
     
+    /** the preferred locations where a {@link Dockable} should be normalized again */
     private Map<Dockable, Tuple<DockStation, DockableProperty>> locations =
         new HashMap<Dockable, Tuple<DockStation,DockableProperty>>();
     
+    /** the core of this application */
     private Core core;
+    /** the controller for which this {@link Minimizer} works */
     private DockController controller;
     
+    /**
+     * Creates a new <code>Minimizer</code>, adds all listeners and actions
+     * to <code>controller</code>.
+     * @param core the center of this application
+     * @param controller the controller to which the actions and listeners are
+     * added.
+     */
     public Minimizer( Core core, DockController controller ){
     	this.core = core;
         this.controller = controller;
         
         controller.addActionGuard( new Minimize() );
-        controller.addActionGuard( new Maximize() );
+        controller.addActionGuard( new Normalize() );
         
         controller.getRegister().addDockRegisterListener( new Listener() );
     }
@@ -54,8 +81,8 @@ public class Minimizer {
         this.defaultStation = defaultStation;
     }
     
-    public void addAreaMaximized( DockStation station ){
-        areaMaximized.add( station );
+    public void addAreaNormalized( DockStation station ){
+        areaNormalized.add( station );
     }
     
     public void addAreaMinimized( FlapDockStation station, DockableProperty defaultDrop ){
@@ -63,7 +90,7 @@ public class Minimizer {
         defaultDrops.put( station, defaultDrop );
     }
     
-    public void maximize( Dockable dockable ){
+    public void normalize( Dockable dockable ){
         Tuple<DockStation, DockableProperty> location = locations.remove( dockable );
         if( location == null ){
             // add it somewhere...
@@ -164,7 +191,7 @@ public class Minimizer {
             DockStation parent = dockable.getDockParent();
             
             while( parent != null ){
-                if( areaMaximized.contains( parent ))
+                if( areaNormalized.contains( parent ))
                     return true;
                 
                 Dockable parentDockable = parent.asDockable();
@@ -181,12 +208,12 @@ public class Minimizer {
         }
     }
     
-    private class Maximize extends SimpleButtonAction implements ActionGuard {
+    private class Normalize extends SimpleButtonAction implements ActionGuard {
         private DefaultDockActionSource source;
         
-        public Maximize(){
+        public Normalize(){
             source = new DefaultDockActionSource( new LocationHint( LocationHint.ACTION_GUARD, LocationHint.RIGHT ), this );
-            setText( "Maximize" );
+            setText( "Normalize" );
             
             controller.getIcons().add( "split.normalize", new IconManagerListener(){
                 public void iconChanged( String key, Icon icon ) {
@@ -199,7 +226,7 @@ public class Minimizer {
         
         @Override
         public void action( Dockable dockable ) {
-            maximize( dockable );
+            normalize( dockable );
         }
         
         public boolean react( Dockable dockable ) {

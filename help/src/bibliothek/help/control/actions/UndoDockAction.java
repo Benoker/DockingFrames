@@ -3,6 +3,7 @@ package bibliothek.help.control.actions;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.actions.SeparatorAction;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.action.actions.SimpleDropDownAction;
@@ -11,10 +12,22 @@ import bibliothek.help.control.URManager;
 import bibliothek.help.control.URManager.Step;
 import bibliothek.help.util.ResourceSet;
 
+/**
+ * A {@link DockAction} that undoes a click of the user (like the "return"
+ * button in a browser), or presents a list of pages which were visited earlier.
+ * @author Benjamin Sigg
+ *
+ */
 public class UndoDockAction extends SimpleDropDownAction implements URListener{
+    /** the set of available undo/redo-steps */
 	private URManager manager;
+	/** the action responsible for the simple undo (the "return") */
 	private SimpleUndo undo;
 	
+	/**
+	 * Creates a new action
+	 * @param manager set of available undo/redo-steps
+	 */
 	public UndoDockAction( URManager manager ){
 		this.manager = manager;
 		setText( "Undo" );
@@ -45,7 +58,15 @@ public class UndoDockAction extends SimpleDropDownAction implements URListener{
 		}
 	}
 	
+	/**
+	 * An action that calls {@link URManager#undo()} when triggered.
+	 * @author Benjamin Sigg
+	 *
+	 */
 	private class SimpleUndo extends SimpleButtonAction implements ActionListener{
+	    /**
+	     * Creates a new action
+	     */
 		public SimpleUndo(){
 			addActionListener( this );
 			setText( "Undo" );
@@ -56,9 +77,21 @@ public class UndoDockAction extends SimpleDropDownAction implements URListener{
 		}
 	}
 	
+	/**
+	 * An action that calls {@link URManager#moveTo(int)} when triggered.
+	 * @author Benjamin Sigg
+	 *
+	 */
 	private class EntryUndo extends SimpleButtonAction implements ActionListener{
+	    /** the argument for <code>moveTo</code> */
 		private int index;
 		
+		/**
+		 * Creates a new action
+		 * @param entry the step whose successors that will be undone by this action.
+		 * @param index the index of <code>entry</code>, that's also the argument
+		 * for {@link URManager#moveTo(int)}
+		 */
 		public EntryUndo( Step entry, int index ){
 			this.index = index;
 			setText( entry.getTitle() );

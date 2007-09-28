@@ -6,9 +6,20 @@ import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Parameter;
 import com.sun.javadoc.Type;
 
+/**
+ * An {@link Entryable} that collects detailed information about a method.
+ * @author Benjamin Sigg
+ *
+ */
+@Content(type="method",encoding=Content.Encoding.DOCUMENT)
 public class EntryableMethod extends AbstractEntryable {
+    /** The method that is analyzed */
     private MethodDoc doc;
     
+    /**
+     * Collects detailed information about the method <code>doc</code>.
+     * @param doc the method to analyze
+     */
     public EntryableMethod( MethodDoc doc ){
         this.doc = doc;
         

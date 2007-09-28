@@ -9,7 +9,17 @@ import bibliothek.help.model.Entry;
 import com.sun.javadoc.PackageDoc;
 import com.sun.javadoc.RootDoc;
 
+/**
+ * An {@link Entryable} that creates a list of all packages.
+ * @author Benjamin Sigg
+ *
+ */
+@Content(type="package-list",encoding=Content.Encoding.DOCUMENT)
 public class EntryablePackageList extends AbstractEntryable {
+    /**
+     * Creates a new list of packages.
+     * @param root the whole documentation of a java-project.
+     */
     public EntryablePackageList( RootDoc root ){
         linkln( "All", "class-list", ".all" );
         add( new EntryableClassList( root ) );

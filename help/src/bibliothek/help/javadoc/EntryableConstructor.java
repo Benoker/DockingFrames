@@ -6,9 +6,21 @@ import com.sun.javadoc.Type;
 
 import bibliothek.help.model.Entry;
 
+/**
+ * An {@link Entryable} collecting detailed information about
+ * a constructor.
+ * @author Benjamin Sigg
+ *
+ */
+@Content(type="constructor",encoding=Content.Encoding.DOCUMENT)
 public class EntryableConstructor extends AbstractEntryable {
+    /** the full documentation of a constructor */
     private ConstructorDoc doc;
     
+    /**
+     * Creates a new collection of data.
+     * @param doc a constructor
+     */
     public EntryableConstructor( ConstructorDoc doc ){
         this.doc = doc;
         

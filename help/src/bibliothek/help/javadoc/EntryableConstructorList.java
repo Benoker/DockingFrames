@@ -6,8 +6,21 @@ import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.ConstructorDoc;
 import com.sun.javadoc.Parameter;
 
+/**
+ * An {@link Entryable} which creates a list of all constructors
+ * of some class.
+ * @author Benjamin Sigg
+ *
+ */
+@Content(type="constructor-list", encoding=Content.Encoding.DOCUMENT)
 public class EntryableConstructorList extends AbstractEntryable {
+    /** the class whose constructors are listed up */
     private ClassDoc doc;
+    
+    /**
+     * Creates a new list of constructors
+     * @param doc the class who owns the constructors
+     */
     public EntryableConstructorList( ClassDoc doc ){
         this.doc = doc;
         

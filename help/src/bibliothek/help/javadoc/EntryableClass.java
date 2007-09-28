@@ -5,9 +5,19 @@ import bibliothek.help.model.Entry;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.Type;
 
+/**
+ * Reads the documentation of a class.
+ * @author Benjamin Sigg
+ */
+@Content(type="class", encoding=Content.Encoding.DOCUMENT)
 public class EntryableClass extends AbstractEntryable {
+    /** the documentation of the class */
     private ClassDoc doc;
     
+    /**
+     * Creates a new <code>Entryable</code>
+     * @param doc the documentation to transform
+     */
     public EntryableClass( ClassDoc doc ){
         this.doc = doc;
         bold( true );

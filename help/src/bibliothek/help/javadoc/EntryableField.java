@@ -4,9 +4,21 @@ import com.sun.javadoc.FieldDoc;
 
 import bibliothek.help.model.Entry;
 
+/**
+ * An {@link Entryable} that collects detailed information about a
+ * field.
+ * @author Benjamin Sigg
+ *
+ */
+@Content(type="field", encoding=Content.Encoding.DOCUMENT)
 public class EntryableField extends AbstractEntryable {
+    /** the field */
     private FieldDoc doc;
     
+    /**
+     * Collects detailed information about the field <code>doc</code>.
+     * @param doc the field whose content will be presented
+     */
     public EntryableField( FieldDoc doc ){
         this.doc = doc;
         

@@ -6,9 +6,21 @@ import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Parameter;
 
+/**
+ * An {@link Entryable} that creates a list of methods. All methods
+ * are owned by the same class or interface.
+ * @author Benjamin Sigg
+ *
+ */
+@Content(type="method-list",encoding=Content.Encoding.DOCUMENT)
 public class EntryableMethodList extends AbstractEntryable{
+    /** the class whose methods are collected */
     private ClassDoc doc;
     
+    /**
+     * Creates a new list of methods.
+     * @param doc the owner of the methods
+     */
     public EntryableMethodList( ClassDoc doc ){
         this.doc = doc;
         

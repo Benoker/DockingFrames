@@ -4,13 +4,31 @@ import java.util.*;
 
 import bibliothek.help.view.text.HelpDocument;
 
+/**
+ * An <code>Entry</code> is some content that will be presented to the user.
+ * Every <code>Entry</code> has fields for identification, a small
+ * description (the title) and a set of links to other <code>Entries</code>
+ * which contain more detailed or additional information to the content
+ * of this <code>Entry</code>. 
+ * @author Benjamin Sigg
+ *
+ */
 public class Entry {
+    /** an array of length 0 */
     private static final String[] EMPTY = new String[0];
     
+    /**
+     * The general type, tells who and how this {@link Entry} can be shown.
+     * The exact meaning depends on the client.
+     */
     private String type;
+    /** an identifier, unique for all <code>Entries</code> with the same {@link #type} */
     private String id;
+    /** a small description */
     private String title;
+    /** the data that will be processed and presented to the user */
     private String content;
+    /** links to other <code>Entries</code> */
     private String[] details;
     
     /**
@@ -19,8 +37,8 @@ public class Entry {
      * @param id the id of the entry
      * @param title the title of this entry
      * @param content the text for the entry
-     * @param details links to other entries which should be shown when
-     * this entry is shown
+     * @param details Links to other entries which should be shown when
+     * this entry is shown. Each link should have the form <code>type:id</code>.
      */
     public Entry( String type, String id, String title, String content, String...details ) {
         super();
@@ -34,28 +52,53 @@ public class Entry {
             details = EMPTY;
     }
     
+    /**
+     * Tells who and how this <code>Entry</code> will be presented to the
+     * user. The exact meaning of this property depends on the client.
+     * @return the general type
+     */
     public String getType() {
         return type;
     }
     
+    /**
+     * Gets an identifier which is unique for all <code>Entries</code>
+     * with the same {@link #getType() type}.
+     * @return the unique id
+     */
     public String getId() {
         return id;
     }
     
+    /**
+     * Gets a small description of this <code>Entry</code>.
+     * @return a small text
+     */
     public String getTitle(){
 		return title;
 	}
     
+    /**
+     * Gets the data that will be presented to the user. Some content
+     * is encoded and must be processed further before presenting.
+     * @return the content
+     */
     public String getContent() {
         return content;
     }
     
+    /**
+     * Gets a set of links to other <code>Entries</code>. The other
+     * <code>Entries</code> contain more information related to the
+     * content of this <code>Entry</code>.
+     * @return links of the form <code>type:id</code>
+     */
     public String[] getDetails() {
         return details;
     }
     
     /**
-     * Creates the leading to this class/interface/enum-entry.
+     * Decodes the content of this <code>Entry</code> and produces a tree.
      * @return the tree
      */
     public HierarchyNode toSubHierarchy(){
@@ -107,10 +150,23 @@ public class Entry {
         return classes.getLast().toNode();
     }
     
+    /**
+     * A class used to create the resulting tree of {@link Entry#toSubHierarchy()}.
+     * @author Benjamin Sigg
+     */
     private static class Intermediate{
+        /** children of this node */
         public List<Intermediate> children = new ArrayList<Intermediate>();
-        public String type, name;
+        /** the nodes type (interface, class, ...) */
+        public String type;
+        /** the text of the node */
+        public String name;
         
+        /**
+         * Transforms this <code>Intermediate</code> in an {@link HierarchyNode},
+         * transforms also the children of this node.
+         * @return a tree with the content of this <code>Intermediate</code> as root
+         */
         public HierarchyNode toNode(){
             HierarchyNode[] subs = new HierarchyNode[ children.size() ];
             for( int i = 0; i < subs.length; i++ )
@@ -153,17 +209,39 @@ public class Entry {
         return destination;
     }
     
+    /**
+     * A token is some text or tag that is read from the encoded 
+     * {@link Entry#content} of the enclosing {@link Entry}.
+     * @author Benjamin Sigg
+     */
     private class Token{
+        /** whether this <code>Token</code> is a tag or just simple text */
         public boolean mode;
+        /** the entries of a tag or if {@link #mode} is <code>false</code> the text between tags */
         public String[] content;
     }
     
+    /**
+     * A <code>Reader</code> decodes the {@link Entry#content} of an {@link Entry}
+     * and produces a stream of {@link Entry.Token}s. 
+     * @author Benjamin Sigg
+     *
+     */
     private class Reader{
+        /** the next char to read from the {@link Entry#content} */
         private int offset = 0;
+        /** buffer used to collect single chars */
         private StringBuilder builder = new StringBuilder();
         
+        /** whether the next {@link Entry.Token} is expected to be a tag or not */
         private boolean mode = false;
         
+        /**
+         * Reads the next {@link Token} from the {@link Entry#content}. The 
+         * <code>Token</code> is either a tag or a text.
+         * @return the token or <code>null</code> if the end of the stream
+         * is reached
+         */
         public Token next(){
             while( offset < content.length() ){
                 Token t;
@@ -180,6 +258,10 @@ public class Entry {
             return null;
         }
         
+        /**
+         * Decodes the text between two tags.
+         * @return the text or <code>null</code> if there is nothing to read
+         */
         private Token nextText(){
             offset = next( offset );
             if( builder.length() == 0 )
@@ -191,6 +273,10 @@ public class Entry {
             return t;
         }
         
+        /**
+         * Decodes the next tag.
+         * @return the tag
+         */
         private Token nextMode(){
             List<String> list = new ArrayList<String>();
             while( offset < content.length() && 
@@ -204,6 +290,13 @@ public class Entry {
             return t;
         }
         
+        /**
+         * Reads char from the {@link Entry#content} until the end
+         * is reached, or a single character '[', '|' or ']' is found.<br>
+         * The result is stored in the {@link #builder}.
+         * @param offset the first char to read
+         * @return <code>offset + buffer.getLength()</code>
+         */
         private int next( int offset ){
             builder.setLength( 0 );
             int n = content.length();
