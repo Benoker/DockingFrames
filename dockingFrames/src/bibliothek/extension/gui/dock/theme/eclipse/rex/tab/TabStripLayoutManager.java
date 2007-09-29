@@ -34,9 +34,8 @@ public class TabStripLayoutManager implements LayoutManager {
 				Component child = parent.getComponent( i );
 				
 				int width = (int)Math.round( ratio * preferreds[i].width );
-				int height = Math.min( parentHeight, preferreds[i].height );
 				
-				child.setBounds( x, parentHeight-height, width, height );
+				child.setBounds( x, 0, width, parentHeight );
 				x += width;
 			}
 		}

@@ -249,6 +249,7 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 			shape[index++] = y + height + 1;
 			shape[index++] = rightEdge + curveWidth - curveIndent;
 			shape[index++] = y + height + 1;
+			stretch( shape, h / 23f );
 			Polygon inner = makePolygon(shape);
 			Polygon outer = copyPolygon(inner);
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -291,6 +292,12 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 		g.drawString(tab.getTitle(), x + 5 + iconOffset, h / 2 + g.getFontMetrics().getHeight() / 2 - 2);
 	}
 
+	private void stretch(int[] shape, float ratio ){
+		for( int i = 1; i < shape.length; i+=2 ){
+			shape[i] = (int)Math.round( shape[i] * ratio );
+		}
+	}
+	
 	private Polygon copyPolygon(Polygon p) {
 		int[] xpoints = new int[p.npoints];
 		int[] ypoints = new int[p.npoints];
