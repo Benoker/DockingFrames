@@ -26,6 +26,7 @@
 package bibliothek.extension.gui.dock.theme.eclipse;
 
 import java.awt.Component;
+import java.awt.Graphics;
 import java.awt.GridLayout;
 
 import javax.swing.JPanel;
@@ -55,6 +56,12 @@ public class NoTitleDisplayer extends JPanel implements DockableDisplayer {
 		setDockable( dockable );
 	}
 
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+        paintBorder(g);
+    }
+	
 	public Component getComponent(){
 		return this;
 	}
