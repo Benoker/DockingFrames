@@ -55,9 +55,11 @@ public class EclipseDisplayerFactory extends BasicDisplayerFactory {
 			}
 		} else {
 			displayer = super.create(station, dockable, title);
+			
+			if( displayer.getComponent() instanceof JComponent )
+	            ((JComponent)displayer.getComponent()).setBorder(null);
 		}
-		if( displayer.getComponent() instanceof JComponent )
-			((JComponent)displayer.getComponent()).setBorder(null);
+		
 		return displayer;
 	}
 }
