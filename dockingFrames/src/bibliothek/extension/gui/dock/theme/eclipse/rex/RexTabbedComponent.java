@@ -25,35 +25,16 @@
  */
 package bibliothek.extension.gui.dock.theme.eclipse.rex;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.SystemColor;
-import java.awt.event.ActionEvent;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JSplitPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.*;
 
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.ShapedGradientPainter;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.Tab;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabComponent;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabListener;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.*;
 
 
 /**
@@ -182,10 +163,14 @@ public class RexTabbedComponent extends JComponent {
 		entry.tab.setPainter( entry.tabComponent );
 		
 		tabs.add( index, entry );
-		tabStrip.add( entry.tabComponent.getComponent() );
 		
-		for( int i = index+1, n = tabs.size(); i<n; i++ )
-			tabs.get( i ).tabComponent.setIndex( i );
+		tabStrip.removeAll();
+		
+		for( int i = 0, n = tabs.size(); i<n; i++ ){
+		    TabComponent tabComponent = tabs.get( i ).tabComponent;
+			tabComponent.setIndex( i );
+			tabStrip.add( tabComponent.getComponent() );
+		}
 	}
 
 	public int getTabCount() {
@@ -383,36 +368,5 @@ public class RexTabbedComponent extends JComponent {
 		public void mouseReleased( MouseEvent e ){
 			popup( tab, e );
 		}
-	}
-	
-	public static void main(String[] args) throws IllegalAccessException, UnsupportedLookAndFeelException,
-			InstantiationException, ClassNotFoundException {
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		final RexTabbedComponent comp = new RexTabbedComponent(RexTabbedComponent.TOP);
-	//	comp.setTabPainter(new SmallTabPainter());
-		//comp.setTabPainter(new RectGradientPainter());
-		comp.setTabPainter( ShapedGradientPainter.FACTORY );
-//		comp.setBorder(null);
-		//	comp.addTab(new Tab("abc", new JLabel("oppa")));
-		for (int i = 0; i < 10; i++) {
-//			comp.addTab(new Tab(StringUtils.compose('x', i), null, "tooltip uscha: " + i, new JLabel("uscha " + i), true));
-		}
-		JFrame f = new JFrame("RexTabbedComponent Test");
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.setSize(300, 300);
-		f.setLocationRelativeTo(null);
-		JSplitPane sp = new JSplitPane();
-		JPanel p = new JPanel(new BorderLayout());
-		p.add(comp);
-		p.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
-		sp.setLeftComponent(new JButton(new AbstractAction("sizes") {
-
-			public void actionPerformed(ActionEvent e) {
-			}
-		}));
-		sp.setRightComponent(p);
-		f.add(sp);
-		//	f.add(new JTextArea("ugga"), BorderLayout.SOUTH);
-		f.setVisible(true);
 	}
 }
