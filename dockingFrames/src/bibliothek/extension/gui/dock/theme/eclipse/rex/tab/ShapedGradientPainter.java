@@ -25,28 +25,13 @@
  */
 package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.KeyboardFocusManager;
-import java.awt.Paint;
-import java.awt.Polygon;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.SystemColor;
-import java.awt.Window;
+import java.awt.*;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -319,7 +304,7 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 
 	private void stretch(int[] shape, float ratio ){
 		for( int i = 1; i < shape.length; i+=2 ){
-			shape[i] = (int)Math.round( shape[i] * ratio );
+			shape[i] = Math.round( shape[i] * ratio );
 		}
 	}
 	
