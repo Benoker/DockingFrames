@@ -10,9 +10,24 @@ import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.event.DockFrontendListener;
 
+/**
+ * A menu that contains a {@link JCheckBoxMenuItem} for every
+ * {@link Dockable} known to the {@link DockFrontend}. The user
+ * can show and hide <code>Dockable</code>s by clicking on these
+ * items.
+ * @author Benjamin Sigg
+ *
+ */
 public class PanelMenu extends JMenu{
+    /** the frontend which is used to show or hide <code>Dockable</code>s */
 	private DockFrontend frontend;
 	
+	/**
+	 * Creates a new menu that observes <code>frontend</code>. The items
+	 * of the menu are read once from <code>frontend</code>, and will not
+	 * change when new <code>Dockable</code>s are registered to <code>frontend</code>.
+	 * @param frontend the list of <code>Dockable</code>s
+	 */
 	public PanelMenu( DockFrontend frontend ){
 		this.frontend = frontend;
 		setText( "Panels" );
@@ -21,10 +36,20 @@ public class PanelMenu extends JMenu{
 			add( new Item( dockable ));
 	}
 	
+	/**
+	 * A menu item showing the visibility-state of one {@link Dockable}.
+	 * @author Benjamin Sigg
+	 */
 	private class Item extends JCheckBoxMenuItem implements ActionListener, DockFrontendListener{
-		private boolean onChange = false;
+		/** whether the state currently is changing or not */
+	    private boolean onChange = false;
+	    /** the <code>Dockable</code> whose visibility-state is represented by this item */
 		private Dockable dockable;
-		
+
+		/**
+		 * Creates a new item.
+		 * @param dockable the element whose visibility-state is represented by this item.
+		 */
 		public Item( Dockable dockable ){
 			this.dockable = dockable;
 			frontend.addFrontendListener( this );

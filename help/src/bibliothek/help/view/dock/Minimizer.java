@@ -16,6 +16,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableProperty;
 import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
+import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.event.DockControllerAdapter;
 import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.station.FlapDockStation;
@@ -77,19 +78,38 @@ public class Minimizer {
         controller.getRegister().addDockRegisterListener( new Listener() );
     }
     
+    /**
+     * Sets the station to which {@link Dockable}s are "normalized" when
+     * their old location is not known or invalid.
+     * @param defaultStation the backup
+     */
     public void setDefaultStation( DockStation defaultStation ) {
         this.defaultStation = defaultStation;
     }
     
+    /**
+     * Stores a new station whose children will have the "minimize"-action.
+     * @param station a station whose children can be minimized
+     */
     public void addAreaNormalized( DockStation station ){
         areaNormalized.add( station );
     }
     
+    /**
+     * Stores a new station whose children are minimized {@link Dockable}s.
+     * @param station the new station
+     * @param defaultDrop the location where normally children will be inserted
+     */
     public void addAreaMinimized( FlapDockStation station, DockableProperty defaultDrop ){
         areaMinimized.add( station );
         defaultDrops.put( station, defaultDrop );
     }
     
+    /**
+     * Ensures that <code>dockable</code> is no longer minimized.
+     * @param dockable the <code>Dockable</code> that will be shown on
+     * one of the {@link #addAreaNormalized(DockStation) normalized stations}.
+     */
     public void normalize( Dockable dockable ){
         Tuple<DockStation, DockableProperty> location = locations.remove( dockable );
         if( location == null ){
@@ -114,6 +134,12 @@ public class Minimizer {
         }
     }
     
+    /**
+     * Searches the first parent of <code>dockable</code> that was 
+     * registered through {@link #addAreaMinimized(FlapDockStation, DockableProperty)}.
+     * @param dockable the element whose parent is searched
+     * @return one of the stations for minimized {@link Dockable}s or <code>null</code>
+     */
     private DockStation stationOf( Dockable dockable ){
         DockStation parent = dockable.getDockParent();
         while( parent != null ){
@@ -130,6 +156,12 @@ public class Minimizer {
         return null;
     }
     
+    /**
+     * Ensures that <code>dockable</code> is no longer "normalized". The
+     * old location of <code>dockable</code> is stored, so it can be
+     * {@link #normalize(Dockable) normalized} again.
+     * @param dockable the element to minimize
+     */
     public void minimize( Dockable dockable ){        
         Component component = dockable.getComponent();
         Point center = new Point( component.getWidth()/2, component.getHeight()/2);
@@ -161,6 +193,12 @@ public class Minimizer {
         }
     }
     
+    /**
+     * A listener added to the {@link DockRegister}, this listener is responsible
+     * to remove data about {@link Dockable}s that are no longer registered.
+     * @author Benjamin Sigg
+     *
+     */
     private class Listener extends DockControllerAdapter{
         @Override
         public void dockableUnregistered( DockController controller, Dockable dockable ) {
@@ -169,9 +207,19 @@ public class Minimizer {
         }
     }
     
+    /**
+     * An action and action-guard that allows the user to minimize a {@link Dockable}.
+     * The action is only added to children of the "normalized stations".
+     * @author Benjamin Sigg
+     *
+     */
     private class Minimize extends SimpleButtonAction implements ActionGuard {
+        /** the result of {@link #getSource(Dockable)} */
         private DefaultDockActionSource source;
-        
+       
+        /**
+         * Creates a new action and action-guard
+         */
         public Minimize(){
             source = new DefaultDockActionSource( new LocationHint( LocationHint.ACTION_GUARD, LocationHint.RIGHT ), this );
             setText( "Minimize" );
@@ -208,9 +256,19 @@ public class Minimizer {
         }
     }
     
+    /**
+     * An action that allows the user to normalize a {@link Dockable}.
+     * The action is only added to the children of the "minimized stations".
+     * @author Benjamin Sigg
+     *
+     */
     private class Normalize extends SimpleButtonAction implements ActionGuard {
+        /** the result of {@link #getSource(Dockable)} */
         private DefaultDockActionSource source;
         
+        /**
+         * Creates a new action
+         */
         public Normalize(){
             source = new DefaultDockActionSource( new LocationHint( LocationHint.ACTION_GUARD, LocationHint.RIGHT ), this );
             setText( "Normalize" );

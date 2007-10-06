@@ -12,6 +12,12 @@ import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.event.DockFrontendListener;
 
+/**
+ * A menu that creates an entry for every layout that a {@link DockFrontend}
+ * provides. There is also an entry to save the current layout.
+ * @author Benjamin Sigg
+ *
+ */
 public class LayoutMenu extends JMenu implements DockFrontendListener{
 	private DockFrontend frontend;
 	private Set<String> settings = new HashSet<String>();

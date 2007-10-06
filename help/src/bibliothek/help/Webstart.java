@@ -13,7 +13,19 @@ import bibliothek.demonstration.Demonstration;
 import bibliothek.demonstration.Monitor;
 import bibliothek.help.util.ResourceSet;
 
+/**
+ * A class that can start this application in a restricted environment
+ * (that means the {@link SecurityManager} restricts this application like
+ * an applet).<br>
+ * Instances of this class can also be used as entries in the demonstration-framework.
+ * @author Benjamin Sigg
+ *
+ */
 public class Webstart implements Demonstration{
+    /**
+     * Starts the application.
+     * @param args are ignored
+     */
 	public static void main( String[] args ){
 		new Core( true, null ).startup();
 	}

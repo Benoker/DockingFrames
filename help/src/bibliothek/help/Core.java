@@ -23,9 +23,7 @@ import bibliothek.demonstration.Monitor;
 import bibliothek.demonstration.util.ComponentCollector;
 import bibliothek.demonstration.util.LookAndFeelList;
 import bibliothek.demonstration.util.LookAndFeelMenu;
-import bibliothek.gui.DockFrontend;
-import bibliothek.gui.DockUI;
-import bibliothek.gui.Dockable;
+import bibliothek.gui.*;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockActionSource;
@@ -53,23 +51,47 @@ import bibliothek.help.view.SelectingView;
 import bibliothek.help.view.TypeHierarchyView;
 import bibliothek.help.view.dock.Minimizer;
 
+/**
+ * This is the central point of the application. The core is responsible to
+ * startup and to shutdown the application. The core puts all elements
+ * together on startup, and frees resources on shutdown.
+ * @author Benjamin Sigg
+ *
+ */
 public class Core implements ComponentCollector{
+    /** whether this application runs in an secure environment or not */
 	private boolean secure;
+	/** monitor to inform when the state of this application changes */
 	private Monitor monitor;
 	
+	/** main access to the docking framework */
 	private DockFrontend frontend;
 	
+	/** dockable screen */
 	private ScreenDockStation screen;
+	/** central docking station */
 	private SplitDockStation station;
+	/** the applications main frame */
 	private JFrame frame;
 	
+	/** whether the {@link DockTheme} currently is changing */
 	private boolean onThemeUpdate = false;
 	
+	/**
+	 * Creates a new core.
+	 * @param secure whether the application should run in a restricted
+	 * environment
+	 * @param monitor observer to be informed when the application starts
+	 * or shuts down, can be <code>null</code>
+	 */
 	public Core( boolean secure, Monitor monitor ){
 		this.secure = secure;
 		this.monitor = monitor;
 	}
 	
+	/**
+	 * Loads the model, creates the graphical user interface and shows it.
+	 */
 	public void startup(){
 		try{
 	        buildContent();
@@ -140,6 +162,10 @@ public class Core implements ComponentCollector{
 		}
 	}
 	
+	/**
+	 * Closes the graphical user interface and frees resources. Exits the 
+	 * application if no {@link Monitor} was provided through the constructor.
+	 */
 	public void shutdown(){
 		frame.setVisible( false );
 		frame.dispose();
@@ -159,6 +185,9 @@ public class Core implements ComponentCollector{
 		return list;
 	}
 	
+	/**
+	 * Creates the main frame and all {@link DockStation}s.
+	 */
 	private void buildContent(){
 		FlapDockStation north, south, east, west;
         frame = new JFrame();
@@ -233,6 +262,9 @@ public class Core implements ComponentCollector{
         frontend.addRoot( screen, "screen" );
 	}
 	
+	/**
+	 * Builds the menubar and adds it to {@link #frame}
+	 */
 	private void buildMenu(){
 		JMenuBar menubar = new JMenuBar();
 		menubar.add( new PanelMenu( frontend ) );
@@ -256,6 +288,10 @@ public class Core implements ComponentCollector{
 		frame.setJMenuBar( menubar );
 	}
 	
+	/**
+	 * Creates a menu that contains items to change the {@link DockTheme}.
+	 * @return the newly created menu
+	 */
 	private JMenu createThemeMenu(){
 		JMenu dockTheme = new JMenu( "Theme" );
 		ButtonGroup group = new ButtonGroup();
@@ -283,6 +319,11 @@ public class Core implements ComponentCollector{
 		return dockTheme;
 	}
 	
+	/**
+	 * Tells whether the {@link DockTheme} is currently exchanging or not.
+	 * @return <code>true</code> if the application currently changes the
+	 * theme
+	 */
 	public boolean isOnThemeUpdate(){
 		return onThemeUpdate;
 	}

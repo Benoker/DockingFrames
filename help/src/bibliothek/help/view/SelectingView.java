@@ -12,6 +12,7 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.HyperlinkEvent.EventType;
 
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.help.control.LinkManager;
 import bibliothek.help.control.Linking;
@@ -20,12 +21,35 @@ import bibliothek.help.model.Entry;
 import bibliothek.help.view.text.HelpDocument;
 import bibliothek.help.view.text.HelpLinker;
 
+/**
+ * A {@link Dockable} that shows the content of one {@link Entry} translated
+ * into a {@link HelpDocument}. This view implements {@link Linking} in
+ * order to listen to a {@link LinkManager} and update its content automatically.
+ * @author Benjamin Sigg
+ */
 public class SelectingView extends DefaultDockable implements HyperlinkListener, Linking, Undoable{
+    /** the component showing the text of this view */
     private JTextPane pane;
+    /** the types of <code>Entry</code>s shown by thiw view */
     private Set<String> types = new HashSet<String>();
+    /** the set of all <code>Entry</code>s */
     private LinkManager manager;
+    /** the current content */
     private Entry entry;
     
+    /**
+     * Creates a new view.
+     * @param manager The set of all {@link Entry}s, this view will listen to
+     * <code>manager</code> in order to update its content automatically. This
+     * view will also use <code>manager</code> to change the content of other
+     * views when the user clicks onto a link in this view.
+     * @param title the title of this view
+     * @param icon the icon of this view
+     * @param types The types of {@link Entry}s that will be shown in this view.
+     * When {@link #selected(List)} is called, then the first <code>Entry</code>
+     * whose {@link Entry#getType() type} is contained in <code>types</code> will
+     * be shown.
+     */
     public SelectingView( LinkManager manager, String title, Icon icon, String...types ){
         this.manager = manager;
         manager.add( this );

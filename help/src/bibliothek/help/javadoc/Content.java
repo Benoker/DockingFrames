@@ -1,9 +1,6 @@
 package bibliothek.help.javadoc;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 import bibliothek.help.model.Entry;
 
@@ -14,6 +11,7 @@ import bibliothek.help.model.Entry;
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target({ElementType.TYPE})
+@Documented
 public @interface Content {
     /**
      * Describes in which way a String is encoded.

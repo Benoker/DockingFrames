@@ -8,6 +8,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.*;
 
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.help.control.LinkManager;
 import bibliothek.help.control.Linking;
@@ -16,10 +17,26 @@ import bibliothek.help.model.Entry;
 import bibliothek.help.model.HierarchyNode;
 import bibliothek.help.util.ResourceSet;
 
+/**
+ * A {@link Dockable} that shows the type-hierarchy of a class or interface. The
+ * hierarchy is encoded in an {@link Entry} and the method {@link Entry#toSubHierarchy()}
+ * is used to decode it.<br>
+ * This class implements {@link Linking} and can update its content automatically
+ * using a {@link LinkManager}.
+ * @author Benjamin Sigg
+ *
+ */
 public class TypeHierarchyView extends DefaultDockable implements Linking, Undoable{
+    /** the visual representation of the hierarchy-tree */
     private JTree tree;
+    /** the tree */
     private Entry entry;
     
+    /**
+     * Creates a new view.
+     * @param manager A manager to which this view will add a listener. This
+     * view will update its content whenever that listener is called.
+     */
     public TypeHierarchyView( LinkManager manager ){
         setTitleText( "Hierarchy" );
         setTitleIcon( ResourceSet.ICONS.get( "hierarchy" ) );
@@ -68,6 +85,12 @@ public class TypeHierarchyView extends DefaultDockable implements Linking, Undoa
         }
     }
     
+    /**
+     * Wraps <code>node</code> into a {@link TreeNode} such that it can
+     * be shown in a {@link JTree}.
+     * @param node a node in a tree
+     * @return a wrapper around <code>node</code> and all its children
+     */
     private MutableTreeNode toModel( HierarchyNode node ){
         DefaultMutableTreeNode model = new DefaultMutableTreeNode( node );
         for( int i = 0, n = node.getChildrenCount(); i<n; i++ )
@@ -76,6 +99,12 @@ public class TypeHierarchyView extends DefaultDockable implements Linking, Undoa
         return model;
     }
     
+    /**
+     * Ensures that <code>node</code> and all children of <code>node</code>
+     * are expanded.
+     * @param node a node
+     * @param path the path to <code>node</code>
+     */
     private void expandAll( TreeNode node, TreePath path ){
         tree.expandPath( path );
         for( int i = 0, n = node.getChildCount(); i<n; i++ ){
@@ -85,6 +114,12 @@ public class TypeHierarchyView extends DefaultDockable implements Linking, Undoa
         }
     }
     
+    /**
+     * A {@link TreeCellRenderer} that shows an icon for nodes which
+     * represent classes or interfaces.
+     * @author Benjamin Sigg
+     *
+     */
     private class Renderer extends DefaultTreeCellRenderer{
         @Override
         public Component getTreeCellRendererComponent( JTree tree,
