@@ -8,9 +8,13 @@ import java.util.Set;
 
 import javax.swing.SwingUtilities;
 
+/**
+ * A set of methods that are used through the demonstration-framework.
+ * @author Benjamin Sigg
+ */
 public class DemoUtilities {
 	/**
-	 * Updates the look and feel for all frames that can be found through
+	 * Updates the look and feel for all windows that can be found through
 	 * the collection of components.
 	 * @param components a set of known components
 	 */
@@ -26,6 +30,16 @@ public class DemoUtilities {
 		}
 	}
 	
+	/**
+	 * Updates the look and feel of <code>base</code> and all its
+	 * children. Recursively goes through all {@link Window}s that
+	 * are owned by <code>base</code> (assuming <code>base</code>
+	 * is itself a <code>Window</code>).<br>
+	 * @param base the root of a component-tree
+	 * @param visit the set of roots that were already visited, <code>base</code>
+	 * is added to this set and if <code>base</code> was already in the set,
+	 * then this method returns immediately
+	 */
     private static void change( Component base, Set<Component> visit ){
         if( visit.add( base )){
             SwingUtilities.updateComponentTreeUI( base );
