@@ -51,11 +51,11 @@ public class DockableItem extends UpdateableCheckBoxMenuItem implements Dockable
 		setText( newTitle );
 	}
 
-	public void titleBinded( Dockable dockable, DockTitle title ){
+	public void titleBound( Dockable dockable, DockTitle title ){
 		// ignore
 	}
 	
-	public void titleUnbinded( Dockable dockable, DockTitle title ){
+	public void titleUnbound( Dockable dockable, DockTitle title ){
 		// ignore
 	}
 
