@@ -28,7 +28,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
 public class ChessFigure extends JLabel implements Dockable {
 	/** list of listeners which will be informed when a property of this Dockable changes */
 	private List<DockableListener> listeners = new ArrayList<DockableListener>();
-	/** list of titles binded to this Dockable */
+	/** list of titles bound to this Dockable */
 	private List<DockTitle> titles = new ArrayList<DockTitle>();
 	/** the controller which is responsible for this Dockable */
 	private DockController controller;
@@ -105,7 +105,7 @@ public class ChessFigure extends JLabel implements Dockable {
 	public void bind( DockTitle title ){
 		titles.add( title );
 		for( DockableListener listener : listListeners() )
-			listener.titleBinded( this, title );
+			listener.titleBound( this, title );
 	}
 
 	public DockActionSource getLocalActionOffers(){
@@ -142,7 +142,7 @@ public class ChessFigure extends JLabel implements Dockable {
 		return figure.getName();
 	}
 
-	public DockTitle[] listBindedTitles(){
+	public DockTitle[] listBoundTitles(){
 		return titles.toArray( new DockTitle[ titles.size() ] );
 	}
 
@@ -176,7 +176,7 @@ public class ChessFigure extends JLabel implements Dockable {
 	public void unbind( DockTitle title ){
 		titles.remove( title );
 		for( DockableListener listener : listListeners() )
-			listener.titleUnbinded( this, title );
+			listener.titleUnbound( this, title );
 	}
 
 	public DockStation asDockStation(){
