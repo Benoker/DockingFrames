@@ -12,12 +12,25 @@ import javax.swing.Popup;
 import javax.swing.PopupFactory;
 import javax.swing.SwingUtilities;
 
+/**
+ * A panel that shows a thumbnail of an image. When the user presses the mouse
+ * on this panel, a popup will appear showing the full sized image.
+ * @author Benjamin Sigg
+ *
+ */
 public class ImagePanel extends JLabel{
+    /** the full sized image */
 	private BufferedImage image;
+	/** the thumbnail of {@link #image} */
 	private Image thumbnail;
 	
+	/** the label showing {@link #image} */
 	private JLabel label;
 	
+	/**
+	 * Creates a new panel.
+	 * @param image the image from which a thumbnail will be fetched
+	 */
 	public ImagePanel( BufferedImage image ){
 		if( image != null ){
 			this.image = image;
@@ -39,7 +52,14 @@ public class ImagePanel extends JLabel{
 		}
 	}
 
+	/**
+	 * A listener to an {@link ImagePanel}, this listener opens a
+	 * popup showing the full sized image of the enclosing <code>ImagePanel</code>.
+	 * @author Benjamin Sigg
+	 *
+	 */
 	private class Listener extends MouseAdapter{
+	    /** the window that shows the full sized image */
 		private Popup popup;
 		
 		@Override

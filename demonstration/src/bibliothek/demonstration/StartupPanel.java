@@ -19,11 +19,22 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+/**
+ * A panel that is shown above the whole main-frame, this panel
+ * contains nothing more than an animation. It is used to lock the
+ * graphical user interface while a {@link Demonstration} is starting up.
+ * @author Benjamin Sigg
+ */
 public class StartupPanel extends JPanel{
+    /** clock ensuring repaint */
 	private Timer timer;
 	
+	/** information about the {@link Demonstration} that is starting up */
 	private JLabel text;
 	
+	/**
+	 * Creates a new panel
+	 */
 	public StartupPanel(){
 		timer = new Timer( 45, new ActionListener(){
 			public void actionPerformed( ActionEvent e ){
@@ -103,6 +114,10 @@ public class StartupPanel extends JPanel{
 		g2.dispose();
 	}
 	
+	/**
+	 * Starts the animation and shows <code>text</code>.
+	 * @param text detailed information about the current operation
+	 */
 	public void showAnimation( String text ){
 		this.text.setText( text );
 		setVisible( true );
@@ -110,12 +125,22 @@ public class StartupPanel extends JPanel{
 			timer.start();
 	}
 	
+	/**
+	 * Stops the animation.
+	 */
 	public void hideAnimation(){
 		setVisible( false );
 		timer.stop();
 	}
 	
+	/**
+	 * A panel painting a rotating circle of circles.
+	 * @author Benjamin Sigg
+	 */
 	private class Animation extends JPanel{
+	    /**
+	     * Creates a new panel
+	     */
 		public Animation(){
 			setOpaque( false );
 			

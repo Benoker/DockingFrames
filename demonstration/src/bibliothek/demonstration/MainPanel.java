@@ -19,11 +19,28 @@ import bibliothek.gui.dock.security.SecureDockController;
 import bibliothek.gui.dock.station.SplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockTree;
 
+/**
+ * A panel that can show a list of {@link Demonstration}s. The panel is
+ * divided in a {@link JList} showing all <code>Demonstration</code>s, and
+ * a detailed view of the current selection.
+ * @author Benjamin Sigg
+ *
+ */
 public class MainPanel extends GlassedPane {
+    /** the list of all {@link Demonstration}s */
 	private JList list = new JList();
+	/** the layout of {@link #panel} */
 	private CardLayout layout = new CardLayout();
+	/** contains the detailed views for each {@link Demonstration} */
 	private JPanel panel;
 	
+	/**
+	 * Creates a new panel.
+	 * @param core the center of the application, used to startup some
+	 * {@link Demonstration}
+	 * @param demos list of <code>Demonstration</code>s which should
+	 * be available to the user
+	 */
 	public MainPanel( Core core, List<Demonstration> demos ){
 		SecureDockController controller = new SecureDockController();
 		controller.getFocusObserver().addGlassPane( this );
@@ -59,13 +76,6 @@ public class MainPanel extends GlassedPane {
 			index++;
 		}
 		
-		/*add( new JScrollPane( list ), new GridBagConstraints( 0, 0, 1, 1, 1.0, 1.0, 
-				GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, 
-				new Insets( 2, 2, 2, 2 ), 0, 0 ));
-		add( panel, new GridBagConstraints( 1, 0, 1, 1, 100.0, 1.0, 
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-				new Insets( 2, 2, 2, 2 ), 0, 0 ));*/
-		
 		SplitDockTree tree = new SplitDockTree();
 		tree.root( tree.horizontal( 
 				new DefaultDockable( new JScrollPane( list ), "Demonstrations" ),
@@ -86,6 +96,11 @@ public class MainPanel extends GlassedPane {
 			list.setSelectedIndex( 0 );
 	}
 	
+	/**
+	 * A {@link ListCellRenderer} used in {@link MainPanel#list} to show
+	 * a {@link Demonstration}.
+	 * @author Benjamin Sigg
+	 */
 	private class Renderer extends DefaultListCellRenderer{
 		@Override
 		public Component getListCellRendererComponent( JList list, Object value, int index, boolean isSelected, boolean cellHasFocus ){

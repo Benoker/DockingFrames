@@ -41,8 +41,6 @@ public class Core {
 	 * Creates a new core, creates the graphical user interface.
 	 */
 	public Core(){
-		main = new MainPanel( this, listDemonstrations() );
-		startup = new StartupPanel();
 		lookAndFeel = new LookAndFeelList(){
 			@Override
 			public void read( DataInputStream in ) throws IOException{
@@ -50,6 +48,10 @@ public class Core {
 				in.readInt();
 			}
 		};
+		lookAndFeel.setLookAndFeel( lookAndFeel.getSystem() );
+		
+		main = new MainPanel( this, listDemonstrations() );
+        startup = new StartupPanel();
 		
 		lookAndFeel.addComponentCollector( new ComponentCollector(){
 			public Collection<Component> listComponents(){

@@ -12,10 +12,25 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 
+/**
+ * A panel that shows the contents of a {@link Demonstration}, there is also
+ * a button for the user such that he can start the <code>Demonstration</code>.
+ * @author Benjamin Sigg
+ *
+ */
 public class DemoPanel extends JPanel implements ActionListener{
+    /** the <code>Demonstration</code> which is shown on this panel */
 	private Demonstration demonstration;
+	/** the center of the application */
 	private Core core;
 	
+	/**
+	 * Creates a new panel.
+	 * @param core the center of this application, used to startup
+	 * <code>demonstration</code>.
+	 * @param demonstration the <code>Demonstration</code> whose content
+	 * is shown on this panel
+	 */
 	public DemoPanel( Core core, Demonstration demonstration ){
 		super( new GridBagLayout() );
 		this.core = core;
