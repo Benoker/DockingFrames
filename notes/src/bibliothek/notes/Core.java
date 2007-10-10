@@ -13,6 +13,7 @@ import bibliothek.demonstration.Monitor;
 import bibliothek.demonstration.util.ComponentCollector;
 import bibliothek.demonstration.util.LookAndFeelList;
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.SmallTabPainter;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.DockStation;
