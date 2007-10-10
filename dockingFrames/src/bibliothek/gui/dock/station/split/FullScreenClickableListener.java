@@ -173,7 +173,7 @@ public class FullScreenClickableListener extends DockAdapter{
     }
     
     @Override
-    public void titleBinded( DockController controller, DockTitle title, Dockable dockable ) {
+    public void titleBound( DockController controller, DockTitle title, Dockable dockable ) {
         if( shouldCollect( dockable, title )){
             Dockable screened = unwrap( dockable );
             if( screened != null ){
@@ -185,7 +185,7 @@ public class FullScreenClickableListener extends DockAdapter{
     }
     
     @Override
-    public void titleUnbinded( DockController controller, DockTitle title, Dockable dockable ) {
+    public void titleUnbound( DockController controller, DockTitle title, Dockable dockable ) {
         FullScreenListener listener = titleListeners.remove( title );
         if( listener != null )
             title.removeMouseInputListener( listener );

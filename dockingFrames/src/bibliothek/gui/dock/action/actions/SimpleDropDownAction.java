@@ -177,7 +177,7 @@ public class SimpleDropDownAction extends SimpleDockAction implements DropDownAc
 	 * Informs all listeners that the selection has changed.
 	 */
 	protected void fireSelectionChanged(){
-		Set<Dockable> dockables = getBindeds();
+		Set<Dockable> dockables = getBoundDockables();
 		for( DropDownActionListener listener : getListeners() )
 			listener.selectionChanged( this, dockables, selection );
 	}

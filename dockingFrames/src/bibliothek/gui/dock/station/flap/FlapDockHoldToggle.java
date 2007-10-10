@@ -65,7 +65,7 @@ public class FlapDockHoldToggle extends GroupedSelectableDockAction.Check<Boolea
         
         station.addFlapDockStationListener( new FlapDockListener(){
             public void holdChanged( FlapDockStation station, Dockable dockable, boolean hold ) {
-                if( isBinded( dockable ))
+                if( isBound( dockable ))
                     setGroup( hold, dockable );
             }
         });

@@ -32,8 +32,10 @@ import javax.swing.Icon;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.HierarchyDockActionSource;
+import bibliothek.gui.dock.event.DockActionSourceListener;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.title.DockTitle;
@@ -193,7 +195,7 @@ public interface Dockable extends DockElement{
      * <ul>
      *  <li>The {@link DockTitle#getDockable() owner} of the title must be this Dockable.</li>
      *  <li>The {@link DockTitle#getOrigin() origin} of the title must be <code>version</code>.</li>
-     *  <li>The title must <b>not</b> be binded</li>
+     *  <li>The title must <b>not</b> be bound</li>
      *  <li>The result should be independent of the current state of this Dockable.</li>
      *  <li>The method should not change any attribute of this Dockable</li>
      *  <li>The client must call the {@link #bind(DockTitle)}-method of this Dockable
@@ -217,13 +219,13 @@ public interface Dockable extends DockElement{
      * method {@link DockTitle#bind()} will be called automatically by the 
      * controller.<br>
      * This method must at least inform all listeners, that <code>title</code>
-     * was binded. However, the method {@link DockTitle#bind()} must not
+     * was bound. However, the method {@link DockTitle#bind()} must not
      * be invoked by this method.<br>
-     * <code>title</code> must be returned by {@link #listBindedTitles()}
+     * <code>title</code> must be returned by {@link #listBoundTitles()}
      * unless {@link #unbind(DockTitle)} is called.<br>
      * @param title the title which will be show some things of this Dockable
      * @see #unbind(DockTitle)
-     * @throws IllegalArgumentException if the title is already binded
+     * @throws IllegalArgumentException if the title is already bound
      */
     public void bind( DockTitle title );
     
@@ -232,9 +234,9 @@ public interface Dockable extends DockElement{
      * needed. The controller will call {@link DockTitle#unbind()} at an appropriate
      * time.<br>
      * This method must inform all listeners that <code>title</code>
-     * is no longer binded. However, this method must not call
+     * is no longer bound. However, this method must not call
      * {@link DockTitle#unbind()}.<br>
-     * <code>title</code> must no longer be returned when calling {@link #listBindedTitles()}
+     * <code>title</code> must no longer be returned when calling {@link #listBoundTitles()}
      * @param title the title which will be no longer connected to this
      * Dockable
      * @see #bind(DockTitle)
@@ -244,11 +246,11 @@ public interface Dockable extends DockElement{
     
     /**
      * Gets a list of all {@link DockTitle DockTitles} which are currently
-     * binded to this Dockable. That are titles for which {@link #bind(DockTitle)}
+     * bound to this Dockable. That are titles for which {@link #bind(DockTitle)}
      * was called, but not yet {@link #unbind(DockTitle)}.
      * @return the list of titles
      */
-    public DockTitle[] listBindedTitles();
+    public DockTitle[] listBoundTitles();
     
     /**
      * Gets a list of {@link DockAction}s which should be triggerable if

@@ -114,7 +114,7 @@ public class SimpleSelectableAction extends SimpleDropDownItemAction implements 
 	 * Fires an event to all observers of type {@link SelectableDockActionListener}.
 	 */
 	protected void fireSelectedChanged(){
-		Set<Dockable> dockables = getBindeds();
+		Set<Dockable> dockables = getBoundDockables();
 		for( SelectableDockActionListener listener : listeners.toArray( new SelectableDockActionListener[ listeners.size() ] ))
 			listener.selectedChanged( this, dockables );
 	}
@@ -145,8 +145,8 @@ public class SimpleSelectableAction extends SimpleDropDownItemAction implements 
 		if( selected != this.selected ){
 			this.selected = selected;
 			fireSelectedChanged();
-			fireActionIconChanged( getBindeds() );
-			fireActionDisabledIconChanged( getBindeds() );
+			fireActionIconChanged( getBoundDockables() );
+			fireActionDisabledIconChanged( getBoundDockables() );
 		}
 	}
 	
@@ -188,7 +188,7 @@ public class SimpleSelectableAction extends SimpleDropDownItemAction implements 
      */
     public void setSelectedIcon( Icon selectedIcon ) {
         this.selectedIcon = selectedIcon;
-        fireActionIconChanged( getBindeds() );
+        fireActionIconChanged( getBoundDockables() );
     }
     
     /**
@@ -220,6 +220,6 @@ public class SimpleSelectableAction extends SimpleDropDownItemAction implements 
      */
     public void setDisabledSelectedIcon( Icon disabledSelectedIcon ) {
         this.disabledSelectedIcon = disabledSelectedIcon;
-        fireActionDisabledIconChanged( getBindeds() );
+        fireActionDisabledIconChanged( getBoundDockables() );
     }
 }

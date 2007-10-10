@@ -172,11 +172,11 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 			entry.tab.setIcon( newIcon );
 		}
 		
-		public void titleBinded( Dockable dockable, DockTitle title ){
+		public void titleBound( Dockable dockable, DockTitle title ){
 			// ignore
 		}
 		
-		public void titleUnbinded( Dockable dockable, DockTitle title ){
+		public void titleUnbound( Dockable dockable, DockTitle title ){
 			// ignore
 		}
 	}

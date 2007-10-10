@@ -75,7 +75,7 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
      */
     public void setText( String text ) {
         this.text = text;
-        fireActionTextChanged( getBindeds() );
+        fireActionTextChanged( getBoundDockables() );
     }
 
     public String getTooltipText( Dockable dockable ) {
@@ -97,7 +97,7 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
      */
     public void setTooltipText( String tooltip ) {
         this.tooltip = tooltip;
-        fireActionTooltipTextChanged( getBindeds() );
+        fireActionTooltipTextChanged( getBoundDockables() );
     }
     
     public boolean isEnabled( Dockable dockable ) {
@@ -123,7 +123,7 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
     public void setEnabled( boolean enabled ) {
         if( this.enabled != enabled ){
             this.enabled = enabled;
-            fireActionEnabledChanged( getBindeds() );
+            fireActionEnabledChanged( getBoundDockables() );
         }
     }
     
@@ -144,7 +144,7 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
      */
     public void setIcon( Icon icon ) {
         this.icon = icon;
-        fireActionIconChanged( getBindeds() );
+        fireActionIconChanged( getBoundDockables() );
     }
     
     /**
@@ -168,6 +168,6 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
      */
     public void setDisabledIcon( Icon disabledIcon ) {
 		this.disabledIcon = disabledIcon;
-    	fireActionDisabledIconChanged( getBindeds() );	
+    	fireActionDisabledIconChanged( getBoundDockables() );	
     }
 }

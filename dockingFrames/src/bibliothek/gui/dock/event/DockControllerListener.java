@@ -41,26 +41,26 @@ import bibliothek.gui.dock.title.DockTitle;
  */
 public interface DockControllerListener extends DockRegisterListener, DockRelocatorListener{
     /**
-     * Called when <code>title</code> was {@link Dockable#bind(DockTitle) binded}
+     * Called when <code>title</code> was {@link Dockable#bind(DockTitle) bound}
      * to <code>dockable</code>.
      * This method is called after the {@link DockTitle#bind()}-method
      * was invoked.
      * @param controller the origin of the event
-     * @param title the {@link DockTitle} that was binded
+     * @param title the {@link DockTitle} that was bound
      * @param dockable the owner of <code>title</code>
      */
-    public void titleBinded( DockController controller, DockTitle title, Dockable dockable );
+    public void titleBound( DockController controller, DockTitle title, Dockable dockable );
     
     /**
-     * Called when <code>title</code> was {@link Dockable#unbind(DockTitle) unbinded}
+     * Called when <code>title</code> was {@link Dockable#unbind(DockTitle) unbound}
      * from <code>dockable</code>.
      * This method is called after the {@link DockTitle#bind()}-method
      * was invoked.
      * @param controller the origin of the event
-     * @param title the {@link DockTitle} which was unbinded
+     * @param title the {@link DockTitle} which was unbound
      * @param dockable the old owner of <code>title</code>
      */
-    public void titleUnbinded( DockController controller, DockTitle title, Dockable dockable );
+    public void titleUnbound( DockController controller, DockTitle title, Dockable dockable );
     
     /**
      * Invoked when <code>dockable</code> has gained the focus. 

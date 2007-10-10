@@ -41,12 +41,12 @@ public interface MovingTitleGetter {
      * user clicked on the title <code>snatched</code>.
      * @param controller The controller which will be responsible for the title
      * @param snatched The title which is grabbed by the user
-     * @return A {@link DockTitle}. The title must not be {@link DockTitle#bind() binded}
+     * @return A {@link DockTitle}. The title must not be {@link DockTitle#bind() bound}
      * to any {@link Dockable} except the owner of <code>snatched</code>. The title
      * may be <code>snatched</code> itself, a new instance, an existing title of
      * somewhere else, or <code>null</code>. Note that clients may use the 
      * {@link DockTitle#getOrigin() origin} of the result to create a new,
-     * unbinded and independent title.
+     * unbound and independent title.
      */
     public DockTitle get( DockController controller, DockTitle snatched );
 
@@ -55,7 +55,7 @@ public interface MovingTitleGetter {
      * that the user clicked on <code>dockable</code>.
      * @param controller The controller which will be responsible for the title
      * @param dockable The Dockable which is snatched
-     * @return  A {@link DockTitle}. The title must not be {@link DockTitle#bind() binded}
+     * @return  A {@link DockTitle}. The title must not be {@link DockTitle#bind() unbound}
      * to any {@link Dockable} except <code>dockable</code>. The title
      * may be a new instance, an existing title of somewhere else, or <code>null</code>
      */

@@ -526,7 +526,7 @@ public class FlapDockStation extends AbstractDockableStation {
         
         if( oldFrontDockable != null ){
             if( getController() != null ){
-                DockTitle[] titles = oldFrontDockable.listBindedTitles();
+                DockTitle[] titles = oldFrontDockable.listBoundTitles();
                 boolean active = getController().isFocused( oldFrontDockable );
                 for( DockTitle title : titles )
                     changed( oldFrontDockable, title, active );
@@ -1117,7 +1117,7 @@ public class FlapDockStation extends AbstractDockableStation {
     
     /**
      * Binds the <code>title</code> to <code>dockable</code>. This method
-     * is invoked only if the two arguments are not yet binded.
+     * is invoked only if the two arguments are not yet bound.
      * @param dockable the {@link Dockable}
      * @param title the {@link DockTitle}
      * @see Dockable#bind(DockTitle)
@@ -1137,7 +1137,7 @@ public class FlapDockStation extends AbstractDockableStation {
     
     /**
      * Unbinds the <code>title</code> from <code>dockable</code>. This
-     * method is only called if the two arguments are binded.
+     * method is only called if the two arguments are bound.
      * @param dockable the {@link Dockable}
      * @param title the {@link DockTitle}
      * @see Dockable#unbind(DockTitle)

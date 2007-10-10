@@ -135,22 +135,22 @@ public class ReplaceAction extends GroupedButtonDockAction<Boolean> implements L
     }
     
     @Override
-    public void binded( Dockable dockable ) {
+    public void bound( Dockable dockable ) {
     	DockStation station = dockable.asDockStation();
     	if( station == null )
     		throw new IllegalArgumentException( "dockable is not a station" );
 
     	station.addDockStationListener( dockStationListener );
-    	super.binded( dockable );
+    	super.bound( dockable );
     }
     @Override
-    public void unbinded( Dockable dockable ) {
+    public void unbound( Dockable dockable ) {
     	DockStation station = dockable.asDockStation();
     	if( station == null )
     		throw new IllegalArgumentException( "dockable is not a station" );
 
     	station.removeDockStationListener( dockStationListener );
-        super.unbinded( dockable );
+        super.unbound( dockable );
     }
     
     public void setController( DockController controller ) {

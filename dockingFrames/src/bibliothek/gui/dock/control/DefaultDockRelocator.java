@@ -556,7 +556,7 @@ public class DefaultDockRelocator extends DockRelocator{
     
     /**
      * Gets a window which shows a title of <code>dockable</code>. The
-     * title on the window will be binded to <code>dockable</code>.
+     * title on the window will be bound to <code>dockable</code>.
      * @param dockable the Dockable for which a title should be shown
      * @param title a title which is grabbed by the mouse, can be <code>null</code>
      * @return a window or <code>null</code>
@@ -710,7 +710,7 @@ public class DefaultDockRelocator extends DockRelocator{
             new HashMap<DockTitle, MouseTitleListener>();
 
         @Override
-        public void titleBinded( Dockable dockable, DockTitle title ) {
+        public void titleBound( Dockable dockable, DockTitle title ) {
             if( !listeners.containsKey( title )){
                 MouseTitleListener listener = new MouseTitleListener( title );
                 listeners.put( title, listener );
@@ -720,7 +720,7 @@ public class DefaultDockRelocator extends DockRelocator{
         }
         
         @Override
-        public void titleUnbinded( Dockable dockable, DockTitle title ) {
+        public void titleUnbound( Dockable dockable, DockTitle title ) {
             MouseTitleListener listener = listeners.remove( title );
             if( listener != null ){
                 title.removeMouseInputListener( listener );
@@ -734,7 +734,7 @@ public class DefaultDockRelocator extends DockRelocator{
         
         @Override
         public void dockableRegistered( DockController controller, Dockable dockable ) {
-            DockTitle[] titles = dockable.listBindedTitles();
+            DockTitle[] titles = dockable.listBoundTitles();
             for( DockTitle title : titles ){
                 if( !listeners.containsKey( title )){
                     MouseTitleListener listener = new MouseTitleListener( title );
@@ -748,7 +748,7 @@ public class DefaultDockRelocator extends DockRelocator{
         public void dockableUnregistered( DockController controller, Dockable dockable ) {
             dockable.removeDockableListener( this );
         	
-            DockTitle[] titles = dockable.listBindedTitles();
+            DockTitle[] titles = dockable.listBoundTitles();
             for( DockTitle title : titles ){
                 if( listeners.containsKey( title )){
                     MouseInputListener listener = listeners.remove( title );
@@ -803,13 +803,13 @@ public class DefaultDockRelocator extends DockRelocator{
     private class TitleWindow extends JWindow{
         /** the title to display */
         private DockTitle title;
-        /** whether the title was already binded when this window was constructed */
-        private boolean binded;
+        /** whether the title was already bound when this window was constructed */
+        private boolean bound;
         
         /**
          * Constructs a new window
          * @param parent the parent of the window
-         * @param title the title to show, may be binded
+         * @param title the title to show, may be bound
          */
         public TitleWindow( Window parent, DockTitle title ){
             super( parent );
@@ -851,19 +851,19 @@ public class DefaultDockRelocator extends DockRelocator{
                 // ignore
             }
             
-            binded = getController().isBinded( title );
+            bound = getController().isBound( title );
 
-            if( binded && title.getOrigin() != null ){
+            if( bound && title.getOrigin() != null ){
                 DockTitleVersion origin = title.getOrigin();
                 DockTitle replacement = title.getDockable().getDockTitle( origin );
                 if( replacement != null ){
                     replacement.setOrientation( title.getOrientation() );
                     title = replacement;
-                    binded = false;
+                    bound = false;
                 }
             }
             
-            if( !binded ){
+            if( !bound ){
                 title.getDockable().bind( title );
                 title.changed( new DockTitleEvent( title.getDockable(), true ));
                 content.add( title.getComponent() );
@@ -922,7 +922,7 @@ public class DefaultDockRelocator extends DockRelocator{
         public void close(){
             dispose();
             
-            if( !binded && title != null ){
+            if( !bound && title != null ){
                 Dockable dockable = title.getDockable();
                 dockable.unbind(title);
                 title = null;

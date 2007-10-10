@@ -42,10 +42,10 @@ import bibliothek.gui.dock.event.DockTitleEvent;
  * example a title-text.<br>
  * Every DockTitle is owned by exactly one Dockable. The owner can't
  * be changed.<br>
- * Every title is either in the state {@link #bind() binded} or {@link #unbind() unbinded}.
- * As long as a title is unbinded, it has not to do anything. As soon as it is
- * binded, it has to ensure that it shows the correct properties. A title 
- * can assume that it is only binded when its <code>Dockable</code> knows
+ * Every title is either in the state {@link #bind() bound} or {@link #unbind() unbound}.
+ * As long as a title is unbound, it has not to do anything. As soon as it is
+ * bound, it has to ensure that it shows the correct properties. A title 
+ * can assume that it is only bound when its <code>Dockable</code> knows
  * the {@link DockController}.
  * @author Benjamin Sigg
  */

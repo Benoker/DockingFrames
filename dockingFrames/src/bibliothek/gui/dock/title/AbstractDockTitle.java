@@ -90,7 +90,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     
     /** <code>true</code> if this title is currently selected, <code>false</code> otherwise */
     private boolean active = false;
-    /** <code>true</code> if this title is currently binded to a {@link Dockable} */
+    /** <code>true</code> if this title is currently bound to a {@link Dockable} */
     private boolean bind = false;
     /** Tells whether small buttons for each action should be created and shown, or not */
     private boolean showMiniButtons = true;
@@ -527,11 +527,11 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     }
     
     /**
-     * Tells whether this title is binded to a {@link Dockable} or not.
-     * @return true if the title is {@link #bind() binded}, <code>false</code>
+     * Tells whether this title is bound to a {@link Dockable} or not.
+     * @return true if the title is {@link #bind() bound}, <code>false</code>
      * {@link #unbind() otherwise}
      */
-    public boolean isBinded(){
+    public boolean isBound(){
         return bind;
     }
     
@@ -649,11 +649,11 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
             setText( newTitle );
         }
         
-        public void titleUnbinded( Dockable dockable, DockTitle title ) {
+        public void titleUnbound( Dockable dockable, DockTitle title ) {
             // do nothing
         }
         
-        public void titleBinded( Dockable dockable, DockTitle title ) {
+        public void titleBound( Dockable dockable, DockTitle title ) {
             // do nothing
         }
         

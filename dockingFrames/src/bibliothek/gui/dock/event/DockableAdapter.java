@@ -40,11 +40,11 @@ import bibliothek.gui.dock.title.DockTitle;
  *
  */
 public abstract class DockableAdapter implements DockableListener {
-    public void titleBinded( Dockable dockable, DockTitle title ) {
+    public void titleBound( Dockable dockable, DockTitle title ) {
         // do nothing
     }
 
-    public void titleUnbinded( Dockable dockable, DockTitle title ) {
+    public void titleUnbound( Dockable dockable, DockTitle title ) {
         // do nothing
     }
 

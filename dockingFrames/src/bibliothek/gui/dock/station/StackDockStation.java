@@ -876,11 +876,11 @@ public class StackDockStation extends AbstractDockableStation {
      * @author Benjamin Sigg
      */
     private class Listener implements DockableListener{
-        public void titleBinded( Dockable dockable, DockTitle title ) {
+        public void titleBound( Dockable dockable, DockTitle title ) {
             // do nothing
         }
 
-        public void titleUnbinded( Dockable dockable, DockTitle title ) {
+        public void titleUnbound( Dockable dockable, DockTitle title ) {
             // do nothing
         }
 

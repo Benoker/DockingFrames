@@ -73,9 +73,9 @@ public class PopupController implements DockRegisterListener{
             dockable.addDockableListener( listener );
             listeners.put( dockable, listener );
             
-            DockTitle[] titles = dockable.listBindedTitles();
+            DockTitle[] titles = dockable.listBoundTitles();
             for( DockTitle title : titles ){
-            	listener.titleBinded( dockable, title );
+            	listener.titleBound( dockable, title );
             }
         }
     }
@@ -86,9 +86,9 @@ public class PopupController implements DockRegisterListener{
             dockable.removeMouseInputListener( listener );
             dockable.removeDockableListener( listener );
             
-            DockTitle[] titles = dockable.listBindedTitles();
+            DockTitle[] titles = dockable.listBoundTitles();
             for( DockTitle title : titles ){
-            	listener.titleUnbinded( dockable, title );
+            	listener.titleUnbound( dockable, title );
             }
         }
     }
@@ -126,7 +126,7 @@ public class PopupController implements DockRegisterListener{
         }
         
 
-		public void titleBinded( Dockable dockable, DockTitle title ){
+		public void titleBound( Dockable dockable, DockTitle title ){
 			if( !listeners.containsKey( title )){
 				ComponentObserver listener = new ComponentObserver( dockable, title );
 				title.addMouseInputListener( listener );
@@ -134,7 +134,7 @@ public class PopupController implements DockRegisterListener{
 			}
 		}
 		
-		public void titleUnbinded( Dockable dockable, DockTitle title ){
+		public void titleUnbound( Dockable dockable, DockTitle title ){
 			ComponentObserver listener = listeners.remove( title );
 			if( listener != null ){
 				title.removeMouseInputListener( listener );

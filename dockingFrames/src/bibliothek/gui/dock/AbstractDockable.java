@@ -219,19 +219,19 @@ public abstract class AbstractDockable implements Dockable {
 
     public void bind( DockTitle title ) {
     	if( titles.contains( title ))
-    		throw new IllegalArgumentException( "Title is already binded" );
+    		throw new IllegalArgumentException( "Title is already bound" );
     	titles.add( title );
-    	fireTitleBinded( title );
+    	fireTitleBound( title );
     }
 
     public void unbind( DockTitle title ) {
     	if( !titles.contains( title ))
     		throw new IllegalArgumentException( "Title is unknown" );
     	titles.remove( title );
-    	fireTitleUnbinded( title );
+    	fireTitleUnbound( title );
     }
     
-    public DockTitle[] listBindedTitles(){
+    public DockTitle[] listBoundTitles(){
     	return titles.toArray( new DockTitle[ titles.size() ] );
     }
 
@@ -276,20 +276,20 @@ public abstract class AbstractDockable implements Dockable {
     }
     
     /**
-     * Informs all dockableListeners that <code>title</code> was binded to this dockable.
-     * @param title the title which was binded
+     * Informs all dockableListeners that <code>title</code> was bound to this dockable.
+     * @param title the title which was bound
      */
-    protected void fireTitleBinded( DockTitle title ){
+    protected void fireTitleBound( DockTitle title ){
         for( DockableListener listener : dockableListeners.toArray( new DockableListener[ dockableListeners.size()] ))
-            listener.titleBinded( this, title );
+            listener.titleBound( this, title );
     }
     
     /**
-     * Informs all dockableListeners that <code>title</code> was unbinded from this dockable.
-     * @param title the title which was unbinded
+     * Informs all dockableListeners that <code>title</code> was unbound from this dockable.
+     * @param title the title which was unbound
      */
-    protected void fireTitleUnbinded( DockTitle title ){
+    protected void fireTitleUnbound( DockTitle title ){
         for( DockableListener listener : dockableListeners.toArray( new DockableListener[ dockableListeners.size()] ))
-            listener.titleUnbinded( this, title );
+            listener.titleUnbound( this, title );
     }
 }

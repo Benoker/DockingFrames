@@ -43,7 +43,7 @@ import bibliothek.gui.dock.title.DockTitle;
  */
 public abstract class DockAdapter implements DockableListener, DockControllerListener, DockStationListener{
 
-    public void titleBinded( Dockable dockable, DockTitle title ) {
+    public void titleBound( Dockable dockable, DockTitle title ) {
         // do nothing
     }
 
@@ -55,7 +55,7 @@ public abstract class DockAdapter implements DockableListener, DockControllerLis
         // do nothing        
     }
 
-    public void titleUnbinded( Dockable dockable, DockTitle title ) {
+    public void titleUnbound( Dockable dockable, DockTitle title ) {
         // do nothing
     }
 
@@ -95,11 +95,11 @@ public abstract class DockAdapter implements DockableListener, DockControllerLis
         // do nothing   
     }
 
-    public void titleBinded( DockController controller, DockTitle title, Dockable dockable ) {
+    public void titleBound( DockController controller, DockTitle title, Dockable dockable ) {
         // do nothing
     }
 
-    public void titleUnbinded( DockController controller, DockTitle title, Dockable dockable ) {
+    public void titleUnbound( DockController controller, DockTitle title, Dockable dockable ) {
         // do nothing
     }
 

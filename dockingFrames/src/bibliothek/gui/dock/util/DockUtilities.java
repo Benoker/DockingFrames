@@ -213,7 +213,7 @@ public class DockUtilities {
         Component component = dockable.getComponent();
         if( !component.isShowing() ){
             
-            for( DockTitle title : dockable.listBindedTitles() ){
+            for( DockTitle title : dockable.listBoundTitles() ){
                 component = title.getComponent();
                 if( component.isShowing() )
                     break;

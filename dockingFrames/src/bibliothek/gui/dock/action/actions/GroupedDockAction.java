@@ -47,7 +47,7 @@ import bibliothek.util.container.Tuple;
  * the same {@link ActionType}.<br>
  * A {@link Dockable} may change its group at any time. 
  * The method {@link #setGroup(Object, Dockable) setGroup} is used for that.<br>
- * If a new {@link Dockable} is {@link #bind(Dockable) binded} to this
+ * If a new {@link Dockable} is {@link #bind(Dockable) bound} to this
  * action, the {@link #createGroupKey(Dockable) createGroupKey}-method
  * determines the group where the {@link Dockable} will be added.<br>
  * When a group is completely empty, it is removed. This behavior can
@@ -114,7 +114,7 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
      * Sets whether empty groups should be removed automatically.<br>
      * A group is a set of {@link Dockable Dockables}. A group can become
      * empty if all it's <code>Dockables</code> are {@link #setGroup(Object, Dockable) transfered}
-     * to another group, or removed through an {@link #unbinded(Dockable) unbinded}.
+     * to another group, or removed through an {@link #unbound(Dockable) unbound}.
      * @param removeEmptyGroups <code>true</code> if empty groups should
      * be deleted, <code>false</code> if the should remain in memory and 
      * be used again.
@@ -140,12 +140,12 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
     }
     
     @Override
-    public void binded( Dockable dockable ) {
+    public void bound( Dockable dockable ) {
         K key = createGroupKey( dockable );
         if( key == null )
             throw new IllegalStateException( "null-key generated, a null-key is not allowed" );
         
-        super.binded(dockable);
+        super.bound(dockable);
         
         D action = ensureGroup( key );
         action.bind( dockable );
@@ -153,13 +153,13 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
     }
     
     @Override
-    public void unbinded( Dockable dockable ) {
-        super.unbinded(dockable);
+    public void unbound( Dockable dockable ) {
+        super.unbound(dockable);
         
         Tuple<K, D> action = dockActions.remove( dockable );
         action.getB().unbind( dockable );
         
-        if( removeEmptyGroups && action.getB().getBindeds().isEmpty() ){
+        if( removeEmptyGroups && action.getB().getBoundDockables().isEmpty() ){
             groups.remove( action.getA() );
             action.getB().removeDockActionListener( listener );
         }
@@ -363,7 +363,7 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
         if( group == null )
             return true;
         
-        if( group.getBindeds().isEmpty() ){
+        if( group.getBoundDockables().isEmpty() ){
             group.removeDockActionListener( listener );
             groups.remove( key );
             return true;
@@ -377,7 +377,7 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
      * should be added.<br>
      * Every {@link Dockable} is member of one group. The membership
      * determines text, icon, etc. for the dockable. Whenever a 
-     * dockable is {@link #binded(Dockable) binded} to this action,
+     * dockable is {@link #bound(Dockable) bound} to this action,
      * the group will be determined by this method. Later on, the group
      * can be changed by the method {@link #setGroup(Object, Dockable) setGroup}.<br>
      * The default implementation uses the {@link #getGenerator() generator} of
@@ -421,11 +421,11 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
     }
     
     /**
-     * Tells whether the <code>dockable</code> is {@link #binded(Dockable) binded}
-     * to this action, or not. If the <code>dockable</code> was {@link #unbind(Dockable) unbinded},
+     * Tells whether the <code>dockable</code> is {@link #bound(Dockable) bound}
+     * to this action, or not. If the <code>dockable</code> was {@link #unbind(Dockable) unbound},
      * then this method will return <code>false</code>.
      * @param dockable the {@link Dockable} to search
-     * @return <code>true</code> if the {@link Dockable} is binded
+     * @return <code>true</code> if the {@link Dockable} is bound
      */
     public boolean isKnown( Dockable dockable ){
         return dockActions.containsKey( dockable );

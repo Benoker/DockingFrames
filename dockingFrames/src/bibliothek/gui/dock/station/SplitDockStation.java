@@ -110,7 +110,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     /** The handler for events and listeners concerning the visibility of children */
     private DockableVisibilityManager visibility;
     
-    /** the DockTitles which are binded to this dockable */
+    /** the DockTitles which are bound to this dockable */
     private List<DockTitle> titles = new LinkedList<DockTitle>();
     
     /** the list of actions offered for this Dockable */
@@ -614,10 +614,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 
     public void bind( DockTitle title ) {
     	if( titles.contains( title ))
-    		throw new IllegalArgumentException( "Title is already binded" );
+    		throw new IllegalArgumentException( "Title is already bound" );
     	titles.add( title );
         for( DockableListener listener : dockableListeners.toArray( new DockableListener[ dockableListeners.size() ] ))
-            listener.titleBinded( this, title );
+            listener.titleBound( this, title );
     }
 
     public void unbind( DockTitle title ) {
@@ -625,10 +625,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     		throw new IllegalArgumentException( "Title is unknown" );
     	titles.remove( title );
         for( DockableListener listener : dockableListeners.toArray( new DockableListener[ dockableListeners.size() ] ))
-            listener.titleUnbinded( this, title );
+            listener.titleUnbound( this, title );
     }
     
-    public DockTitle[] listBindedTitles(){
+    public DockTitle[] listBoundTitles(){
     	return titles.toArray( new DockTitle[ titles.size() ]);
     }
 

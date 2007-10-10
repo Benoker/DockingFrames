@@ -38,20 +38,20 @@ import bibliothek.gui.dock.title.DockTitle;
  */
 public interface DockableListener {
     /**
-     * Will be invoked when a {@link DockTitle} was {@link Dockable#bind(DockTitle) binded}
+     * Will be invoked when a {@link DockTitle} was {@link Dockable#bind(DockTitle) bound}
      * to a {@link Dockable}.
      * @param dockable the <code>Dockable</code> whose title is set
      * @param title the new title
      */
-    public void titleBinded( Dockable dockable, DockTitle title );
+    public void titleBound( Dockable dockable, DockTitle title );
     
     /**
-     * Will be invoked when a {@link DockTitle} was {@link Dockable#unbind(DockTitle) unbinded}
+     * Will be invoked when a {@link DockTitle} was {@link Dockable#unbind(DockTitle) unbound}
      * from a {@link Dockable}.
      * @param dockable the <code>Dockable</code> whose title was removed
      * @param title the remove title
      */
-    public void titleUnbinded( Dockable dockable, DockTitle title );
+    public void titleUnbound( Dockable dockable, DockTitle title );
     
     /**
      * Invoked when the title of a {@link Dockable} has changed.

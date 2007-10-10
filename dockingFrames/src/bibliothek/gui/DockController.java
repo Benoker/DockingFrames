@@ -574,7 +574,7 @@ public class DockController {
 	            while( dockable != null ){
 	                DockStation station = dockable.getDockParent();
 	                if( station != null ){
-	                    DockTitle[] titles = dockable.listBindedTitles();
+	                    DockTitle[] titles = dockable.listBoundTitles();
 	                    
 	                    for( DockTitle title : titles ){
 	                        station.changed( dockable, title, true );
@@ -619,14 +619,14 @@ public class DockController {
     }
     
     /**
-     * Tells whether <code>title</code> is binded to its dockable or not. The
+     * Tells whether <code>title</code> is bound to its dockable or not. The
      * behavior is unspecified if the dockable of <code>title</code> is
      * unknown to this controller.
-     * @param title the title which might be binded
-     * @return <code>true</code> if the title is binded
+     * @param title the title which might be bound
+     * @return <code>true</code> if the title is bound
      */
-    public boolean isBinded( DockTitle title ){
-    	return titleListener.isBinded( title );
+    public boolean isBound( DockTitle title ){
+    	return titleListener.isBound( title );
     }
     
     /**
@@ -653,7 +653,7 @@ public class DockController {
                 element.getDockParent().setFrontDockable( element );
             }
         
-            DockTitle[] titles = focusedDockable.listBindedTitles();
+            DockTitle[] titles = focusedDockable.listBoundTitles();
             Component focused = FocusManager.getCurrentManager().getFocusOwner();
             if( focused != null ){
                 if( SwingUtilities.isDescendingFrom( focused, focusedDockable.getComponent() ) )
@@ -805,25 +805,25 @@ public class DockController {
 
     
     /**
-     * Informs all listeners that <code>title</code> has been binded
+     * Informs all listeners that <code>title</code> has been bound
      * to <code>dockable</code>.
-     * @param title the binded title
+     * @param title the bound title
      * @param dockable the owner of <code>title</code>
      */
-    protected void fireTitleBinded( DockTitle title, Dockable dockable ){
+    protected void fireTitleBound( DockTitle title, Dockable dockable ){
         for( DockControllerListener listener : listDockControllerListener() )
-            listener.titleBinded( this, title, dockable );
+            listener.titleBound( this, title, dockable );
     }
     
     /**
-     * Informs all listeners that <code>title</code> is no longer binded
+     * Informs all listeners that <code>title</code> is no longer bound
      * to <code>dockable</code>.
-     * @param title the unbinded title
+     * @param title the unbound title
      * @param dockable the former owner of <code>title</code>
      */
-    protected void fireTitleUnbinded( DockTitle title, Dockable dockable ){
+    protected void fireTitleUnbound( DockTitle title, Dockable dockable ){
         for( DockControllerListener listener : listDockControllerListener() )
-            listener.titleUnbinded( this, title, dockable );
+            listener.titleUnbound( this, title, dockable );
     }
     
     /**
@@ -845,20 +845,20 @@ public class DockController {
     	private Set<DockTitle> titles = new HashSet<DockTitle>();
 
         /**
-         * Tells whether title is binded to its {@link Dockable} or not.
+         * Tells whether title is bound to its {@link Dockable} or not.
          * @param title the title whose state is searched
          * @return the state
          */
-        public boolean isBinded( DockTitle title ){
+        public boolean isBound( DockTitle title ){
             return titles.contains( title );
         }
         
         @Override
-        public void titleBinded( Dockable dockable, DockTitle title ) {
+        public void titleBound( Dockable dockable, DockTitle title ) {
         	titles.add( title );
         	
             title.bind();
-            fireTitleBinded( title, dockable );
+            fireTitleBound( title, dockable );
             
             DockStation station = dockable.getDockParent();
             boolean focused = false;
@@ -879,7 +879,7 @@ public class DockController {
         }
         
         @Override
-        public void titleUnbinded( DockController controller, DockTitle title, Dockable dockable ) {
+        public void titleUnbound( DockController controller, DockTitle title, Dockable dockable ) {
             activeTitles.remove( title );
             DockStation parent = dockable.getDockParent();
             if( parent != null )
@@ -889,10 +889,10 @@ public class DockController {
         }
         
         @Override
-        public void titleUnbinded( Dockable dockable, DockTitle title ) {
+        public void titleUnbound( Dockable dockable, DockTitle title ) {
             titles.remove( title );
             title.unbind();
-            fireTitleUnbinded( title, dockable );
+            fireTitleUnbound( title, dockable );
         }
 
         @Override
@@ -902,11 +902,11 @@ public class DockController {
         
         @Override
         public void dockableRegistered( DockController controller, Dockable dockable ) {
-            DockTitle[] titles = dockable.listBindedTitles();
+            DockTitle[] titles = dockable.listBoundTitles();
             for( DockTitle title : titles ){
                 if( this.titles.add( title )){
                     title.bind();
-                    fireTitleBinded( title, dockable );
+                    fireTitleBound( title, dockable );
                 }
             }
         }
@@ -915,11 +915,11 @@ public class DockController {
         public void dockableUnregistered( DockController controller, Dockable dockable ) {
             dockable.removeDockableListener( this );
         	
-            DockTitle[] titles = dockable.listBindedTitles();
+            DockTitle[] titles = dockable.listBoundTitles();
             for( DockTitle title : titles ){
                 if( this.titles.remove( title ) ){
                     title.unbind();
-                    fireTitleUnbinded( title, dockable );
+                    fireTitleUnbound( title, dockable );
                 }
             }
         }

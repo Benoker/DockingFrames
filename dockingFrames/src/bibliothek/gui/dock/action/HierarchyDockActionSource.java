@@ -19,8 +19,8 @@ public class HierarchyDockActionSource extends AbstractDockActionSource {
 	/** The observed Dockable */
 	private Dockable dockable;
 	
-	/** The number of times this source was binded */
-	private int binded = 0;
+	/** The number of times this source was bound */
+	private int bound = 0;
 	
 	/** A listener to the hierarchy of {@link #dockable} and the source fetched from the controller */
 	private Listener listener = new Listener();
@@ -41,19 +41,19 @@ public class HierarchyDockActionSource extends AbstractDockActionSource {
 	 * Ensures that this source observes its Dockable.
 	 */
 	public void bind(){
-		if( binded == 0 ){
+		if( bound == 0 ){
 			dockable.addDockHierarchyListener( listener );
 			update();
 		}
-		binded++;
+		bound++;
 	}
 	
 	/**
 	 * Ensures that this source frees resources.
 	 */
 	public void unbind(){
-		binded--;
-		if( binded == 0 ){
+		bound--;
+		if( bound == 0 ){
 			dockable.removeDockHierarchyListener( listener );
 		}
 	}

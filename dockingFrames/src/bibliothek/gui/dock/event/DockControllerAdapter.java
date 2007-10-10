@@ -79,12 +79,12 @@ public abstract class DockControllerAdapter implements DockControllerListener {
         // do nothing
     }
 
-    public void titleBinded( DockController controller, DockTitle title,
+    public void titleBound( DockController controller, DockTitle title,
             Dockable dockable ) {
         // do nothing
     }
 
-    public void titleUnbinded( DockController controller, DockTitle title,
+    public void titleUnbound( DockController controller, DockTitle title,
             Dockable dockable ) {
         // do nothing
     }

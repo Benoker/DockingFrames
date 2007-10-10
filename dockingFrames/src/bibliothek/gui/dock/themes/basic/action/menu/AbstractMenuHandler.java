@@ -109,7 +109,7 @@ public abstract class AbstractMenuHandler<I extends JMenuItem, D extends Standar
                 item.setToolTipText( action.getTooltipText( dockable ));
             }
             else
-                throw new IllegalStateException( "Handler is already binded" );
+                throw new IllegalStateException( "Handler is already bound" );
         }
     }
     
@@ -124,7 +124,7 @@ public abstract class AbstractMenuHandler<I extends JMenuItem, D extends Standar
                 listener = null;
             }
             else
-                throw new IllegalStateException( "Handler is already unbinded" );
+                throw new IllegalStateException( "Handler is already unbound" );
         }
     }
     

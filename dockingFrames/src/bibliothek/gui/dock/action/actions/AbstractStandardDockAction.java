@@ -45,7 +45,7 @@ public abstract class AbstractStandardDockAction implements StandardDockAction {
     protected List<StandardDockActionListener> listeners = new ArrayList<StandardDockActionListener>();
     
     /** All {@link Dockable Dockables} which can be used by this action */
-    private Map<Dockable, Integer> binded = new HashMap<Dockable, Integer>();
+    private Map<Dockable, Integer> bound = new HashMap<Dockable, Integer>();
 
     public void addDockActionListener( StandardDockActionListener listener ) {
         listeners.add( listener );
@@ -57,63 +57,63 @@ public abstract class AbstractStandardDockAction implements StandardDockAction {
 
     /**
      * Invoked by this {@link AbstractStandardDockAction} when a {@link Dockable}
-     * was binded to this action the first time.
+     * was bound to this action the first time.
      * @param dockable The Dockable that was not known to this action
      * before the method was invoked
      */
-    protected void binded( Dockable dockable ) {
+    protected void bound( Dockable dockable ) {
     	// do nothing
     }
     
     /**
      * Called by this {@link AbstractStandardDockAction} when the {@link Dockable}
      * <code>dockable</code> will not be used in any means by this
-     * action. Note that the {@link #binded(Dockable)}-method can be
+     * action. Note that the {@link #bound(Dockable)}-method can be
      * invoked again with the <code>dockable</code>.
      * @param dockable The Dockable which will not by used in any way.
      */
-    protected void unbinded( Dockable dockable ) {
+    protected void unbound( Dockable dockable ) {
     	// do nothing
     }
 
     /**
-     * Tells whether the <code>dockable</code> is binded with this
+     * Tells whether the <code>dockable</code> is bound with this
      * action, or not.
      * @param dockable The {@link Dockable} to test
-     * @return <code>true</code> if it is binded, <code>false</code>
+     * @return <code>true</code> if it is bound, <code>false</code>
      * otherwise
      */
-    public boolean isBinded( Dockable dockable ){
-        return binded.containsKey( dockable );
+    public boolean isBound( Dockable dockable ){
+        return bound.containsKey( dockable );
     }
     
     /**
      * Gets a set of all {@link Dockable Dockables} which are currently
-     * binded to this {@link DockAction}.
-     * @return The binded Dockables
+     * bound to this {@link DockAction}.
+     * @return The bound Dockables
      */
-    public Set<Dockable> getBindeds(){
-        return Collections.unmodifiableSet( binded.keySet() );
+    public Set<Dockable> getBoundDockables(){
+        return Collections.unmodifiableSet( bound.keySet() );
     }
     
     public void bind( Dockable dockable ) {
-        Integer old = binded.get( dockable );
+        Integer old = bound.get( dockable );
         if( old == null ){
-            binded.put( dockable, 1 );
-            binded( dockable );
+            bound.put( dockable, 1 );
+            bound( dockable );
         }
         else
-            binded.put( dockable, old+1 );
+            bound.put( dockable, old+1 );
     }
     
     public void unbind( Dockable dockable ) {
-        Integer old = binded.get( dockable );
+        Integer old = bound.get( dockable );
         if( old == 1 ){
-            binded.remove( dockable );
-            unbinded( dockable );
+            bound.remove( dockable );
+            unbound( dockable );
         }
         else
-            binded.put( dockable, old-1 );
+            bound.put( dockable, old-1 );
     }
     
     /**

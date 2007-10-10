@@ -54,7 +54,7 @@ public interface DockAction {
      * @param target The platform on which the view will be used
      * @param converter A set of methods that can be used to create a view
      * @param dockable The Dockable for which the view will be shown. Note that
-     * this action may not yet be {@link #bind(Dockable) binded} to this action.
+     * this action may not yet be {@link #bind(Dockable) bound} to this action.
      * @return a new view
      */
     public <V> V createView( ViewTarget<V> target, ActionViewConverter converter, Dockable dockable );
@@ -69,7 +69,7 @@ public interface DockAction {
     public void bind( Dockable dockable );
 
     /**
-     * Invoked only if the <code>dockable</code> was {@link #bind(Dockable) binded}
+     * Invoked only if the <code>dockable</code> was {@link #bind(Dockable) bound}
      * to this DockAction, and if the <code>dockable</code> will no longer be
      * used for any method calls (except {@link #bind(Dockable) bind}) on 
      * this DockAction.
