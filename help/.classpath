@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.5.0_07"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]DockingFrames"/>
-	<classpathentry kind="lib" path="/usr/share/jdk1.6.0_02/lib/tools.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/jdk1.6.0/lib/tools.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]DemonstrationInterface"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
