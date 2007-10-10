@@ -30,7 +30,15 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.LayoutManager;
 
+import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
+
 public class TabStripLayoutManager implements LayoutManager {
+    private RexTabbedComponent tabbed;
+    
+    public TabStripLayoutManager( RexTabbedComponent tabbed ){
+        this.tabbed = tabbed;
+    }
+    
 	public void addLayoutComponent( String name, Component comp ){
 		// ignore
 	}
@@ -43,6 +51,10 @@ public class TabStripLayoutManager implements LayoutManager {
 			
 			for( int i = 0; i < componentCount; i++ ){
 				preferreds[ i ] = parent.getComponent( i ).getPreferredSize();
+				
+				int overlap = tabbed.getTabComponent( i ).getOverlap();
+				preferredWidthSum = Math.max( 0, preferredWidthSum-overlap );
+				
 				preferredWidthSum += preferreds[ i ].width;
 			}
 			
@@ -58,8 +70,10 @@ public class TabStripLayoutManager implements LayoutManager {
 			for( int i = 0; i < componentCount; i++ ){
 				Component child = parent.getComponent( i );
 				
+				int overlap = (int)(Math.round( ratio * tabbed.getTabComponent( i ).getOverlap()));
 				int width = (int)Math.round( ratio * preferreds[i].width );
 				
+				x = Math.max( 0, x-overlap );
 				child.setBounds( x, 0, width, parentHeight );
 				x += width;
 			}
@@ -74,7 +88,8 @@ public class TabStripLayoutManager implements LayoutManager {
 			for( int i = 0, n = parent.getComponentCount(); i<n; i++ ){
 				Component child = parent.getComponent( i );
 				Dimension size = child.getMinimumSize();
-				
+				int overlap = tabbed.getTabComponent( i ).getOverlap();
+				width = Math.max( 0, width-overlap );
 				width += size.width;
 				height = Math.max( height, size.height );
 			}
@@ -90,7 +105,8 @@ public class TabStripLayoutManager implements LayoutManager {
 			for( int i = 0, n = parent.getComponentCount(); i<n; i++ ){
 				Component child = parent.getComponent( i );
 				Dimension size = child.getPreferredSize();
-				
+				int overlap = tabbed.getTabComponent( i ).getOverlap();
+                width = Math.max( 0, width-overlap );
 				width += size.width;
 				height = Math.max( height, size.height );
 			}

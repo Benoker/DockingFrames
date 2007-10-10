@@ -30,6 +30,8 @@ import bibliothek.extension.gui.dock.theme.eclipse.EclipseDisplayerFactory;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseStackDockComponent;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseStationPaint;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.RectGradientPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.ShapedGradientPainter;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabPainter;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
@@ -63,7 +65,11 @@ public class EclipseTheme extends BasicTheme {
 	public static final PropertyKey<Boolean> PAINT_ICONS_WHEN_DESELECTED = 
 		new PropertyKey<Boolean>( "EclipseTheme paint icons when deselected" );
 	
-	/** Tells in which way the tabs should be painted */
+	/**
+	 *  Tells in which way the tabs should be painted.
+	 *  @see ShapedGradientPainter
+	 *  @see RectGradientPainter 
+	 */
 	public static final PropertyKey<TabPainter> TAB_PAINTER =
 		new PropertyKey<TabPainter>( "EclipseTheme tab painter" );
 	
@@ -71,6 +77,7 @@ public class EclipseTheme extends BasicTheme {
 	 * Provides additional dockable-wise information used to layout components
 	 * in the EclipseTheme. Note that changing this property will show full effect
 	 * only after re-installing the EclipseTheme.
+	 * @see DefaultEclipseThemeConnector
 	 */
 	public static final PropertyKey<EclipseThemeConnector> THEME_CONNECTOR =
 		new PropertyKey<EclipseThemeConnector>( "EclipseTheme theme connector" );

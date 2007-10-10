@@ -25,19 +25,25 @@
  */
 package bibliothek.extension.gui.dock.theme.eclipse.rex;
 
-import java.awt.FlowLayout;
 import java.awt.Graphics;
 
 import javax.swing.JComponent;
+
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabStripLayoutManager;
 
 public class RexTabStrip extends JComponent{
 	private RexTabbedComponent tabbedComponent;
 	
 	public RexTabStrip( RexTabbedComponent component ) {
-		setLayout( new FlowLayout( FlowLayout.LEFT, 0, 0 ));
+		setLayout( new TabStripLayoutManager( component ) );
 		setFocusable(false);
+		this.tabbedComponent = component;
 	}
 
+	public RexTabbedComponent getTabbedComponent() {
+        return tabbedComponent;
+    }
+	
 	@Override
 	protected void paintComponent( Graphics g ){
 		super.paintComponent( g );

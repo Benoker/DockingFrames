@@ -59,6 +59,10 @@ public class RexSystemColor {
 		return decide(SystemColor.inactiveCaption.brighter(), "sysmetrics.gradientinactivecaption");
 	}
 
+	public static Color getBorderColor(){
+	    return SystemColor.controlShadow;
+	}
+	
 	private static Color decide(Color defaultColor, String propertyKey) {
 		if (isXPThemeActive()) {
 			Color c = getXPStyleColor(propertyKey);

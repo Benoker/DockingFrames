@@ -25,9 +25,7 @@
  */
 package bibliothek.extension.gui.dock.theme.eclipse;
 
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 
 import javax.swing.SwingUtilities;
 

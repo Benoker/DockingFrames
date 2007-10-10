@@ -28,19 +28,37 @@ package bibliothek.extension.gui.dock.theme.eclipse;
 import java.awt.*;
 import javax.swing.border.Border;
 
+import bibliothek.extension.gui.dock.theme.eclipse.rex.RexSystemColor;
+
 /**
  * @author Janni Kovacs
  */
 public class EclipseBorder implements Border {
-	private Color lineColor = SystemColor.controlShadow;
+	private boolean fillEdges;
+	
+	public EclipseBorder( boolean fillEdges ){
+	    this.fillEdges = fillEdges;
+	}
 	
 	public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-		Graphics2D g2d = (Graphics2D) g;
-//		Polygon corner = new Polygon(new int[]{0, 1, 1, 4, 5, 6}, new int[]{6, 5, 4, 1, 1, 0}, 6);
-		g.setColor(lineColor);
-//		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-//		g2d.setStroke(new BasicStroke(1f));
-//		g.drawPolygon(corner);
+		if( fillEdges ){
+    	    g.setColor( c.getBackground() );
+    
+    		// top left corner
+    		g.fillRect( 0, 0, 6, 1 );
+    		g.fillRect( 0, 1, 4, 1 );
+    		g.fillRect( 0, 2, 3, 1 );
+    		g.fillRect( 0, 3, 2, 1 );
+    		g.fillRect( 0, 4, 1, 2 );
+    		
+    	    g.fillRect( width-6, 0, 6, 1 );
+            g.fillRect( width-4, 1, 4, 1 );
+            g.fillRect( width-3, 2, 3, 1 );
+            g.fillRect( width-2, 3, 2, 1 );
+            g.fillRect( width-1, 4, 1, 2 );
+		}
+		
+		g.setColor( RexSystemColor.getBorderColor() );
 		// top left corner
 		g.drawLine(4, 1, 5, 1);
 		g.drawLine(3, 2, 3, 2);
@@ -51,7 +69,7 @@ public class EclipseBorder implements Border {
 		g.drawLine(width - 4, 2, width - 4, 2);
 		g.drawLine(width - 3, 3, width - 3, 3);
 		g.drawLine(width - 2, 4, width - 2, 5);
-//		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		// rest
 		g.drawLine(0, 6, 0, height - 1);
 		g.drawLine(0, height - 1, width - 1, height - 1);
 		g.drawLine(width - 1, 6, width - 1, height - 1);

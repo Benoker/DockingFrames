@@ -63,7 +63,7 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 			if (selectedIndex != -1) {
 				Rectangle selectedBounds = tabbedComponent.getBoundsAt(selectedIndex);
 				int to = selectedBounds.x;
-				int from = selectedBounds.x + selectedBounds.width;
+				int from = selectedBounds.x + selectedBounds.width-1;
 				int end = tabStrip.getWidth();
 				Color lineColor = SystemColor.controlShadow;
 				g.setColor(lineColor);
@@ -98,6 +98,10 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 		
 		if( tab.getTabComponent() != null )
 			add( tab.getTabComponent() );
+	}
+	
+	public int getOverlap() {
+	    return 0;
 	}
 	
 	public Component getComponent(){
@@ -220,7 +224,8 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 		if (isSelected) {
 			Paint old = g2d.getPaint();
 			g2d.setPaint(selectedGradient);
-			g.fillRect(0, 0, width - 1, height);
+			g.fillRect(1, 0, width - 2, height);
+			g.drawLine( 0, 1, 0, height );
 			g2d.setPaint(old);
 			// left
 			if (tabIndex != 0) {
@@ -232,8 +237,8 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 			g.drawLine(width - 1, 1, width - 1, height);
 			// overwrite gradient pixels
 			g.setColor(getBackground());
-			g.drawLine(0, 0, 0, 0);
-			g.drawLine(width, 0, width, 0);
+			//g.drawLine(0, 0, 0, 0);
+			//g.drawLine(width, 0, width, 0);
 		}
 
 		// draw icon

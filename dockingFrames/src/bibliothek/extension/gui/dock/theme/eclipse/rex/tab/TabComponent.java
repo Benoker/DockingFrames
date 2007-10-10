@@ -47,6 +47,13 @@ public interface TabComponent {
 	 * component has to reevaluate its content.
 	 */
 	public void update();
+	
+	/**
+	 * Gets the number of pixels which should be covered at the left side
+	 * of this component by its left neighbour.
+	 * @return the number of overlapped pixels
+	 */
+	public int getOverlap();
 
 	public void addMouseListener( MouseListener listener );
 	

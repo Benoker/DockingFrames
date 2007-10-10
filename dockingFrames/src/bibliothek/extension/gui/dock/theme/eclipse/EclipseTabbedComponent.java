@@ -25,10 +25,8 @@
  */
 package bibliothek.extension.gui.dock.theme.eclipse;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 
@@ -59,7 +57,7 @@ public class EclipseTabbedComponent extends RexTabbedComponent {
 		itemPanel.setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 4));
 		itemPanel.setOpaque( false );
 		
-		setBorder(new EclipseBorder());
+		setBorder(new EclipseBorder( true ));
 		setTabStrip( new EclipseTabStrip() );
 		setTabPainter( ShapedGradientPainter.FACTORY );
 	}
@@ -96,6 +94,13 @@ public class EclipseTabbedComponent extends RexTabbedComponent {
 			popup.popup( e.getComponent(), e.getX(), e.getY() );
 		}
 	}
+	
+
+    @Override
+    public void paint( Graphics g ) {
+        super.paint( g );
+        paintBorder( g );
+    }
 
 	private class EclipseTabStrip extends JPanel{
 		private JPanel strip;
@@ -105,7 +110,7 @@ public class EclipseTabbedComponent extends RexTabbedComponent {
 			setFocusable(false);
 			setOpaque( false );
 			
-			strip = new JPanel( new TabStripLayoutManager() );
+			strip = new JPanel( new TabStripLayoutManager( EclipseTabbedComponent.this ) );
 			strip.setOpaque( false );
 			
 			addImpl( strip, null, -1 );

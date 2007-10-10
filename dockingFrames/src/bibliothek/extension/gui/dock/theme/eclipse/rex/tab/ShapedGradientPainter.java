@@ -55,12 +55,12 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 
 		public void paintTabStrip( RexTabbedComponent tabbedComponent,
 		        Component tabStrip, Graphics g ) {
-		
+		    
 			int selectedIndex = tabbedComponent.getSelectedIndex();
 			if (selectedIndex != -1) {
 				Rectangle selectedBounds = tabbedComponent.getBoundsAt(selectedIndex);
 				int to = selectedBounds.x;
-				int from = selectedBounds.x + selectedBounds.width;
+				int from = selectedBounds.x + selectedBounds.width - 1;
 				int end = tabStrip.getWidth();
 				Color lineColor = SystemColor.controlShadow;
 				g.setColor(lineColor);
@@ -145,6 +145,17 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 		return contentBorder;
 	}
 
+	public int getOverlap() {
+	    if( isTabBeforeSelected() )
+	        return 10;
+	    else
+	        return 0;
+	}
+	
+	private boolean isTabBeforeSelected(){
+	    return comp.getSelectedIndex() == (tabIndex-1);
+	}
+	
 	@Override
 	public Dimension getPreferredSize() {
 		FontRenderContext frc = new FontRenderContext(null, false, false);
@@ -259,7 +270,8 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 			shape[index++] = y + height + 1;
 			shape[index++] = rightEdge + curveWidth - curveIndent;
 			shape[index++] = y + height + 1;
-			stretch( shape, h / 23f );
+			stretch( 0, 4, shape, h / 23f );
+			stretch( 4 + left.length, right.length+4, shape, h / 23f );
 			Polygon inner = makePolygon(shape);
 			Polygon outer = copyPolygon(inner);
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -284,8 +296,11 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 		if (isSelected || paintIconWhenInactive) {
 			Icon i = tab.getIcon();
 			if (i != null) {
-				i.paintIcon(comp, g, 5, 4);
-				iconOffset = i.getIconWidth() + 5;
+			    int offset = 5;
+			    int iconY = (h - i.getIconHeight())/2;
+			    
+				i.paintIcon(comp, g, offset, iconY);
+				iconOffset = i.getIconWidth() + offset;
 			}
 		}
 
@@ -302,8 +317,8 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 		g.drawString(tab.getTitle(), x + 5 + iconOffset, h / 2 + g.getFontMetrics().getHeight() / 2 - 2);
 	}
 
-	private void stretch(int[] shape, float ratio ){
-		for( int i = 1; i < shape.length; i+=2 ){
+	private void stretch( final int offset, final int length, int[] shape, float ratio ){
+		for( int i = offset+1; i < offset+length; i+=2 ){
 			shape[i] = Math.round( shape[i] * ratio );
 		}
 	}

@@ -48,7 +48,7 @@ public class NoTitleDisplayer extends JPanel implements DockableDisplayer {
 	private Location location;
 	
 	public NoTitleDisplayer( DockStation station, Dockable dockable ){
-		setBorder( new EclipseBorder() );
+		setBorder( new EclipseBorder( true ) );
 		setLayout( new GridLayout( 1, 1, 0, 0 ) );
 		setOpaque( false );
 		

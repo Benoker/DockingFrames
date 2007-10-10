@@ -48,7 +48,9 @@ import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
 
 /**
  * @author Janni Kovacs
+ * @deprecated used mainly for debugging
  */
+@Deprecated
 public class SmallTabPainter extends JComponent implements TabComponent {
 	public static final TabPainter FACTORY = new TabPainter(){
 		public TabComponent createTabComponent( RexTabbedComponent component, Tab tab, int index ){
@@ -82,6 +84,10 @@ public class SmallTabPainter extends JComponent implements TabComponent {
 		
 		if( tab.getTabComponent() != null )
 			add( tab.getTabComponent() );
+	}
+	
+	public int getOverlap() {
+	    return 0;
 	}
 	
 	public Component getComponent(){
