@@ -118,7 +118,7 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 	}
 	
 	private void updateBorder(){
-		Color color2 = RexSystemColor.getActiveTitleColorGradient();
+		Color color2;
 		
 		Window window = SwingUtilities.getWindowAncestor(comp);
 		boolean focusTemporarilyLost = false;
@@ -127,10 +127,15 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 			focusTemporarilyLost = !window.isActive();
 		}
 		
-		if (hasFocus && focusTemporarilyLost) {
-			color2 = RexSystemColor.getInactiveTitleColor();
-		} else if (!hasFocus) {
-			color2 = UIManager.getColor("Panel.background");
+		
+		if( hasFocus && !focusTemporarilyLost ){
+			color2 = RexSystemColor.getActiveColorGradient();
+		}
+		else if (hasFocus && focusTemporarilyLost) {
+			color2 = RexSystemColor.getInactiveColor();
+		}
+		else{
+			color2 = RexSystemColor.getInactiveColorGradient();
 		}
 		
 		// set border around tab content
@@ -210,8 +215,9 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 		Graphics2D g2d = (Graphics2D) g;
 		Color lineColor = SystemColor.controlShadow;
 
-		Color color1 = RexSystemColor.getActiveTitleColor();
-		Color color2 = RexSystemColor.getActiveTitleColorGradient();
+		Color color1;
+		Color color2;
+		Color colorText;
 		
 		Window window = SwingUtilities.getWindowAncestor(comp);
 		boolean focusTemporarilyLost = false;
@@ -220,12 +226,20 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 			focusTemporarilyLost = !window.isActive();
 		}
 		
-		if (hasFocus && focusTemporarilyLost) {
-			color2 = RexSystemColor.getInactiveTitleColor();
-			color1 = color2;
-		} else if (!hasFocus) {
-			color1 = Color.WHITE;
-			color2 = UIManager.getColor("Panel.background");
+		if( hasFocus && !focusTemporarilyLost ){
+			color1 = RexSystemColor.getActiveColor();
+			color2 = RexSystemColor.getActiveColorGradient();
+			colorText = RexSystemColor.getActiveTextColor(); 
+		}
+		else if (hasFocus && focusTemporarilyLost) {
+			color1 = RexSystemColor.getInactiveColor();
+			color2 = RexSystemColor.getInactiveColor();
+			colorText = RexSystemColor.getInactiveTextColor();
+		}
+		else{
+			color1 = RexSystemColor.getInactiveColor();
+			color2 = RexSystemColor.getInactiveColorGradient();
+			colorText = RexSystemColor.getInactiveTextColor();
 		}
 		GradientPaint selectedGradient = new GradientPaint(x, y, color1, x, y + h, color2);
 
@@ -309,7 +323,7 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 		}
 
 		// draw text
-		g.setColor(isSelected && hasFocus ? SystemColor.activeCaptionText : SystemColor.controlText);
+		g.setColor( colorText );
 		g.drawString(tab.getTitle(), x + 5 + iconOffset, h / 2 + g.getFontMetrics().getHeight() / 2 - 2);
 	}
 

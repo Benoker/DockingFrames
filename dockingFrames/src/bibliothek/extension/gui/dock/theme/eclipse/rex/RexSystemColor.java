@@ -37,64 +37,44 @@ import javax.swing.UIManager;
  * @author Janni Kovacs
  */
 public class RexSystemColor {
-
-    /*
-     * 
-        activeLeftColor = UIManager.getColor( "MenuItem.selectionBackground");
-        inactiveLeftColor = UIManager.getColor( "MenuItem.background");
-        
-        activeRightColor = UIManager.getColor( "MenuItem.selectionBackground");
-        inactiveRightColor = UIManager.getColor( "MenuItem.background");
-        
-        activeTextColor = UIManager.getColor( "MenuItem.selectionForeground");
-        inactiveTextColor = UIManager.getColor( "MenuItem.foreground");
-     */
-    
 	private RexSystemColor() {
 	}
 
-	public static boolean isXPThemeActive() {
-		Object prop = Toolkit.getDefaultToolkit().getDesktopProperty("win.xpstyle.themeActive");
-		return (prop != null && (Boolean) prop);
+	public static Color getActiveColor() {
+		return decide( "MenuItem.selectionBackground", SystemColor.activeCaption );
 	}
 
-	public static Color getActiveTitleColor() {
-		return decide( "MenuItem.selectionBackground", SystemColor.activeCaption, "sysmetrics.activecaption");
+	public static Color getActiveColorGradient() {
+		return decide( "MenuItem.selectionBackground.[brighter]", SystemColor.activeCaption.brighter() );
 	}
 
-	public static Color getActiveTitleColorGradient() {
-		return decide( "MenuItem.selectionBackground.[brighter]", SystemColor.activeCaption.brighter(), "sysmetrics.gradientactivecaption");
+	public static Color getInactiveColor() {
+		//return decide( "MenuItem.background", SystemColor.inactiveCaption );
+		return decide( "Panel.background.[darker]", SystemColor.inactiveCaption.darker() );
 	}
 
-	public static Color getInactiveTitleColor() {
-		return decide( "MenuItem.background", SystemColor.inactiveCaption, "sysmetrics.inactivecaption");
-	}
-
-	public static Color getInactiveTitleColorGradient() {
-		return decide( "MenuItem.background.[brighter]", SystemColor.inactiveCaption.brighter(), "sysmetrics.gradientinactivecaption");
+	public static Color getInactiveColorGradient() {
+		//return decide( "MenuItem.background.[brighter]", SystemColor.inactiveCaption.brighter() );
+		return decide( "Panel.background", SystemColor.inactiveCaption );
 	}
 	
 	public static Color getActiveTextColor(){
-	    return decide( "MenuItem.selectionForeground", SystemColor.activeCaptionText, null );
+	    return decide( "MenuItem.selectionForeground", SystemColor.activeCaptionText );
 	}
 	
 	public static Color getInactiveTextColor(){
-	    return decide( "MenuItem.foreground", SystemColor.inactiveCaptionText, null );
+	    return decide( "MenuItem.foreground", SystemColor.inactiveCaptionText );
 	}
 
 	public static Color getBorderColor(){
 	    return SystemColor.controlShadow;
 	}
 	
-	private static Color decide(String lookAndFeelKey, Color defaultColor, String propertyKey) {
-	    if (isXPThemeActive()) {
-			Color c = getXPStyleColor(propertyKey);
-			if(c != null)
-				return c;
-		}
-	    
+	private static Color decide(String lookAndFeelKey, Color defaultColor ) {
 	    boolean brighter = lookAndFeelKey.endsWith( "[brighter]" );
-	    if( brighter )
+	    boolean darker = lookAndFeelKey.endsWith( "[darker]" );
+	    
+	    if( brighter || darker )
 	        lookAndFeelKey = lookAndFeelKey.substring( 0, lookAndFeelKey.lastIndexOf( '.' ) );
 	    
 	    Color result = UIManager.getDefaults().getColor( lookAndFeelKey );
@@ -104,21 +84,9 @@ public class RexSystemColor {
 	    if( brighter )
 	        result = result.brighter();
 	    
+	    if( darker )
+	    	result = result.darker();
+	    
 	    return result;
-	}
-
-
-	public static Color getXPStyleColor(String s) {
-		if (!isXPThemeActive())
-			return null;
-		Map xpStyleResources = (Map) Toolkit.getDefaultToolkit().getDesktopProperty("win.xpstyle.resources.strings");
-		if (xpStyleResources == null)
-			return null;
-		String color = (String) xpStyleResources.get(s);
-		String[] rgb = color.split(" ");
-		int r = Integer.parseInt(rgb[0]);
-		int g = Integer.parseInt(rgb[1]);
-		int b = Integer.parseInt(rgb[2]);
-		return new Color(r, g, b);
 	}
 }

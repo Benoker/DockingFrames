@@ -36,6 +36,10 @@ import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.Window;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
@@ -98,6 +102,8 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 		
 		if( tab.getTabComponent() != null )
 			add( tab.getTabComponent() );
+		
+		addHierarchyListener( new WindowActiveObserver() );
 	}
 	
 	public int getOverlap() {
@@ -178,7 +184,7 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 	}
 	
 	private void updateBorder(){
-		Color color2 = RexSystemColor.getActiveTitleColorGradient();
+		Color color2;
 		
 		Window window = SwingUtilities.getWindowAncestor(comp);
 		boolean focusTemporarilyLost = false;
@@ -187,10 +193,14 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 			focusTemporarilyLost = !window.isActive();
 		}
 		
-		if (hasFocus && focusTemporarilyLost) {
-			color2 = RexSystemColor.getInactiveTitleColor();
-		} else if (!hasFocus) {
-			color2 = UIManager.getColor("Panel.background");
+		if( hasFocus && !focusTemporarilyLost ){
+			color2 = RexSystemColor.getActiveColorGradient();
+		}
+		else if (hasFocus && focusTemporarilyLost) {
+			color2 = RexSystemColor.getInactiveColor();
+		}
+		else{
+			color2 = RexSystemColor.getInactiveColorGradient();
 		}
 		
 		// set border around tab content
@@ -206,18 +216,27 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 		super.paintComponent(g);
 		int height = getHeight(), width = getWidth();
 		Graphics2D g2d = (Graphics2D) g;
-		Color lineColor = SystemColor.controlShadow;
-		Color color1 = RexSystemColor.getActiveTitleColor(),
-			  color2 = RexSystemColor.getActiveTitleColorGradient();
+		Color lineColor = RexSystemColor.getBorderColor();
+		Color color1, color2, colorText;
 		boolean focusTemporarilyLost = KeyboardFocusManager.getCurrentKeyboardFocusManager()
 				.getActiveWindow() != SwingUtilities.getWindowAncestor(comp);
-		if (hasFocus && focusTemporarilyLost) {
-			color2 = RexSystemColor.getInactiveTitleColor();
-			color1 = color2;
-		} else if (!hasFocus) {
-			color1 = Color.WHITE;
-			color2 = UIManager.getColor("Panel.background");
+		
+		if( hasFocus && !focusTemporarilyLost ){
+			color1 = RexSystemColor.getActiveColor();
+			color2 = RexSystemColor.getActiveColorGradient();
+			colorText = RexSystemColor.getActiveTextColor(); 
 		}
+		else if (hasFocus && focusTemporarilyLost) {
+			color1 = RexSystemColor.getInactiveColor();
+			color2 = RexSystemColor.getInactiveColor();
+			colorText = RexSystemColor.getInactiveTextColor();
+		}
+		else{
+			color1 = RexSystemColor.getInactiveColor();
+			color2 = RexSystemColor.getInactiveColorGradient();
+			colorText = RexSystemColor.getInactiveTextColor();
+		}
+		
 		GradientPaint selectedGradient = new GradientPaint(0, 0, color1, 0, height, color2);
 		
 		g.setColor(lineColor);
@@ -258,7 +277,38 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 		}
 
 		// draw text
-		g.setColor(isSelected && hasFocus ? SystemColor.activeCaptionText : SystemColor.controlText);
+		g.setColor(colorText);
 		g.drawString(tab.getTitle(), 5 + iconOffset, height / 2 + g.getFontMetrics().getHeight() / 2 - 2);
+	}
+	
+	private class WindowActiveObserver extends WindowAdapter implements HierarchyListener{
+		private Window window;
+		
+		public void hierarchyChanged( HierarchyEvent e ){
+			if( window != null ){
+				window.removeWindowListener( this );
+				window = null;
+			}
+			
+			window = SwingUtilities.getWindowAncestor( RectGradientPainter.this );
+			
+			if( window != null ){
+				window.addWindowListener( this );
+				updateBorder();
+				repaint();
+			}
+		}
+		
+		@Override
+		public void windowActivated( WindowEvent e ){
+			updateBorder();
+			repaint();
+		}
+		
+		@Override
+		public void windowDeactivated( WindowEvent e ){
+			updateBorder();
+			repaint();
+		}
 	}
 }
