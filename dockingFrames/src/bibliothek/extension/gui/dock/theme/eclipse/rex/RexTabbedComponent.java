@@ -279,6 +279,13 @@ public class RexTabbedComponent extends JComponent {
 			
 			selectedTab = tab;
 			
+			if( selectedTab != null ){
+                int index = indexOf( selectedTab );
+                if( index >= 0 )
+                    tabs.get( index ).tabComponent.setSelected( true );
+            }
+            
+			
 			tabChanged(tab);
 			for (TabListener listener : listeners) {
 				listener.tabChanged(tab);

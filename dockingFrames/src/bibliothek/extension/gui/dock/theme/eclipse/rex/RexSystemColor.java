@@ -30,11 +30,26 @@ import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.util.Map;
 
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
+
 /**
  * @author Janni Kovacs
  */
 public class RexSystemColor {
 
+    /*
+     * 
+        activeLeftColor = UIManager.getColor( "MenuItem.selectionBackground");
+        inactiveLeftColor = UIManager.getColor( "MenuItem.background");
+        
+        activeRightColor = UIManager.getColor( "MenuItem.selectionBackground");
+        inactiveRightColor = UIManager.getColor( "MenuItem.background");
+        
+        activeTextColor = UIManager.getColor( "MenuItem.selectionForeground");
+        inactiveTextColor = UIManager.getColor( "MenuItem.foreground");
+     */
+    
 	private RexSystemColor() {
 	}
 
@@ -44,32 +59,52 @@ public class RexSystemColor {
 	}
 
 	public static Color getActiveTitleColor() {
-		return decide(SystemColor.activeCaption, "sysmetrics.activecaption");
+		return decide( "MenuItem.selectionBackground", SystemColor.activeCaption, "sysmetrics.activecaption");
 	}
 
 	public static Color getActiveTitleColorGradient() {
-		return decide(SystemColor.activeCaption.brighter(), "sysmetrics.gradientactivecaption");
+		return decide( "MenuItem.selectionBackground.[brighter]", SystemColor.activeCaption.brighter(), "sysmetrics.gradientactivecaption");
 	}
 
 	public static Color getInactiveTitleColor() {
-		return decide(SystemColor.inactiveCaption, "sysmetrics.inactivecaption");
+		return decide( "MenuItem.background", SystemColor.inactiveCaption, "sysmetrics.inactivecaption");
 	}
 
 	public static Color getInactiveTitleColorGradient() {
-		return decide(SystemColor.inactiveCaption.brighter(), "sysmetrics.gradientinactivecaption");
+		return decide( "MenuItem.background.[brighter]", SystemColor.inactiveCaption.brighter(), "sysmetrics.gradientinactivecaption");
+	}
+	
+	public static Color getActiveTextColor(){
+	    return decide( "MenuItem.selectionForeground", SystemColor.activeCaptionText, null );
+	}
+	
+	public static Color getInactiveTextColor(){
+	    return decide( "MenuItem.foreground", SystemColor.inactiveCaptionText, null );
 	}
 
 	public static Color getBorderColor(){
 	    return SystemColor.controlShadow;
 	}
 	
-	private static Color decide(Color defaultColor, String propertyKey) {
-		if (isXPThemeActive()) {
+	private static Color decide(String lookAndFeelKey, Color defaultColor, String propertyKey) {
+	    if (isXPThemeActive()) {
 			Color c = getXPStyleColor(propertyKey);
 			if(c != null)
 				return c;
 		}
-		return defaultColor;
+	    
+	    boolean brighter = lookAndFeelKey.endsWith( "[brighter]" );
+	    if( brighter )
+	        lookAndFeelKey = lookAndFeelKey.substring( 0, lookAndFeelKey.lastIndexOf( '.' ) );
+	    
+	    Color result = UIManager.getDefaults().getColor( lookAndFeelKey );
+	    if( result == null )
+	        return defaultColor;
+	    
+	    if( brighter )
+	        result = result.brighter();
+	    
+	    return result;
 	}
 
 

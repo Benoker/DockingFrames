@@ -210,10 +210,8 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 		Graphics2D g2d = (Graphics2D) g;
 		Color lineColor = SystemColor.controlShadow;
 
-//		GradientPaint selectedGradient = new GradientPaint(x, y, SystemColor.activeCaption, x, y + height,
-//				SystemColor.activeCaption.darker());
-		// Gradient for selected tab
-		Color color1 = RexSystemColor.getActiveTitleColor(), color2 = RexSystemColor.getActiveTitleColorGradient();
+		Color color1 = RexSystemColor.getActiveTitleColor();
+		Color color2 = RexSystemColor.getActiveTitleColorGradient();
 		
 		Window window = SwingUtilities.getWindowAncestor(comp);
 		boolean focusTemporarilyLost = false;
@@ -303,8 +301,6 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 				iconOffset = i.getIconWidth() + offset;
 			}
 		}
-
-		// draw close label
 
 		// draw separator lines
 		if (!isSelected && tabIndex != comp.indexOf(comp.getSelectedTab()) - 1) {
