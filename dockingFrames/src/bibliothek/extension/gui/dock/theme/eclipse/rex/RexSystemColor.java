@@ -41,11 +41,11 @@ public class RexSystemColor {
 	}
 
 	public static Color getActiveColor() {
-		return decide( "MenuItem.selectionBackground", SystemColor.activeCaption );
+	    return decide( "MenuItem.selectionBackground.[brighter]", SystemColor.activeCaption.brighter() );
 	}
 
 	public static Color getActiveColorGradient() {
-		return decide( "MenuItem.selectionBackground.[brighter]", SystemColor.activeCaption.brighter() );
+		return decide( "MenuItem.selectionBackground", SystemColor.activeCaption );
 	}
 
 	public static Color getInactiveColor() {
