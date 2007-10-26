@@ -34,10 +34,11 @@ import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
+import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.ShapedGradientPainter;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.Tab;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabStripLayoutManager;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionPopup;
 import bibliothek.gui.dock.action.DockActionSource;
@@ -50,7 +51,8 @@ public class EclipseTabbedComponent extends RexTabbedComponent {
 	private EclipseStackDockComponent eclipseStackDockComponent;
 	private ButtonPanel itemPanel;
 	
-	public EclipseTabbedComponent(EclipseStackDockComponent eclipseStackDockComponent) {
+	public EclipseTabbedComponent(EclipseStackDockComponent eclipseStackDockComponent, EclipseTheme theme, DockStation station ) {
+	    super( theme, station );
 		this.eclipseStackDockComponent = eclipseStackDockComponent;
 		
 		itemPanel = new ButtonPanel( true );
@@ -71,7 +73,7 @@ public class EclipseTabbedComponent extends RexTabbedComponent {
 	}
 	
 	@Override
-	protected void popup( final Tab tab, MouseEvent e ){
+	protected void popup( final Dockable tab, MouseEvent e ){
 		if( !e.isConsumed() && e.isPopupTrigger() ){
 			ActionPopup popup = new ActionPopup( true ){
 				@Override

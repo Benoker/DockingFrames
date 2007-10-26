@@ -54,6 +54,12 @@ public interface TabComponent {
 	 * @return the number of overlapped pixels
 	 */
 	public int getOverlap();
+	
+	/** Informs this tab that it will be shown soon */
+	public void bind();
+	
+	/** Informs this tab that it is invisible and must not have any connections to other resources */
+	public void unbind();
 
 	public void addMouseListener( MouseListener listener );
 	

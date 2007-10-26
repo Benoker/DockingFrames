@@ -28,32 +28,14 @@ package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
 import java.awt.Component;
 import java.awt.Graphics;
 
-import javax.swing.JComponent;
-import javax.swing.border.Border;
-
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
+import bibliothek.gui.DockController;
+import bibliothek.gui.Dockable;
 
 /**
  * @author Janni Kovacs
  */
 public interface TabPainter {
-
-/*	public static final int NORMAL = 0;
-	public static final int SELECTED = 1;
-	public static final int HOT = 2;
-
-	public Dimension getPreferredSize(RexTabbedComponent component, Tab tab, int index, boolean isSelected);
-
-	public void paintTab(Graphics g, Rectangle bounds, RexTabbedComponent component, Tab tab, int index,
-						 boolean isSelected, boolean hasFocus, boolean focusTemporarilyLost);
-
-	public Dimension getChevronSize(RexTabbedComponent component);
-
-	public void paintChevron(Graphics g, Rectangle bounds, RexTabbedComponent component, int state);
-
-	public Border getContentBorder();
- 	*/
-	
     /**
      * Paints the background of <code>tabStrip</code>.
      * @param tabbedComponent the {@link RexTabbedComponent} for which <code>tabStrip</code> is shown
@@ -62,5 +44,14 @@ public interface TabPainter {
      */
 	public void paintTabStrip( RexTabbedComponent tabbedComponent, Component tabStrip, Graphics g);
 	
-	public TabComponent createTabComponent(RexTabbedComponent component, Tab tab, int index );
+	/**
+	 * Creates a new entry for the tab-strip above the contents of a 
+	 * {@link RexTabbedComponent}.
+	 * @param controller the current controller, never <code>null</code> 
+	 * @param component the owner of the tab
+	 * @param dockable the element for which the tab is shown
+	 * @param index the initial location of the tab
+	 * @return the new tab, never <code>null</code>
+	 */
+	public TabComponent createTabComponent( DockController controller, RexTabbedComponent component, Dockable dockable, int index );
 }

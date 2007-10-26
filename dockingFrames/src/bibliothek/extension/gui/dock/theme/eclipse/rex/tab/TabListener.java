@@ -25,12 +25,14 @@
  */
 package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
 
+import bibliothek.gui.Dockable;
+
 /**
  * @author Janni Kovacs
  */
 public interface TabListener {
 
-	public void tabRemoved(Tab t);
+	public void tabRemoved(Dockable dockable);
 
-	public void tabChanged(Tab t);
+	public void tabChanged(Dockable dockable);
 }

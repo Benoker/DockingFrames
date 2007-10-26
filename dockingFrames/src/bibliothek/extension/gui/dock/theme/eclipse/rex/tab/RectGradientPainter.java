@@ -25,17 +25,7 @@
  */
 package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.KeyboardFocusManager;
-import java.awt.Paint;
-import java.awt.Rectangle;
-import java.awt.SystemColor;
-import java.awt.Window;
+import java.awt.*;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.awt.event.WindowAdapter;
@@ -50,18 +40,26 @@ import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseDockActionSource;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexSystemColor;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
+import bibliothek.gui.DockController;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.event.DockableListener;
+import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
+import bibliothek.gui.dock.title.DockTitle;
 
 /**
  * @author Janni Kovacs
  */
 public class RectGradientPainter extends JComponent implements TabComponent {
 	public static final TabPainter FACTORY = new TabPainter(){
-		public TabComponent createTabComponent( RexTabbedComponent component, Tab tab, int index ){
-			return new RectGradientPainter( component, tab, index );
-		}
-
+	    public TabComponent createTabComponent( DockController controller,
+	            RexTabbedComponent component, Dockable dockable, int index ) {
+	        
+	        return new RectGradientPainter( component, dockable, index );
+	    }
+	    
 		public void paintTabStrip( RexTabbedComponent tabbedComponent, Component tabStrip, Graphics g ){
 			int selectedIndex = tabbedComponent.getSelectedIndex();
 			if (selectedIndex != -1) {
@@ -89,22 +87,42 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 	private boolean hasFocus;
 	private boolean isSelected;
 	private RexTabbedComponent comp;
-	private Tab tab;
+	private Dockable dockable;
 	private int tabIndex;
-
-	public RectGradientPainter( RexTabbedComponent comp, Tab tab, int index ){
+	private ButtonPanel buttons;
+    private Listener dockableListener = new Listener();
+	
+	public RectGradientPainter( RexTabbedComponent comp, Dockable dockable, int index ){
 		this.comp = comp;
-		this.tab = tab;
+		this.dockable = dockable;
 		this.tabIndex = index;
 		
 		setLayout( null );
 		setOpaque( false );
 		
-		if( tab.getTabComponent() != null )
-			add( tab.getTabComponent() );
+		buttons = new ButtonPanel( false );
+        
+        if( buttons != null )
+            add( buttons );
+
 		
 		addHierarchyListener( new WindowActiveObserver() );
 	}
+	
+	public void bind() {
+        if( buttons != null )
+            buttons.set( dockable, new EclipseDockActionSource(
+                    comp.getTheme(), dockable.getGlobalActionOffers(), dockable, true ) );
+        dockable.addDockableListener( dockableListener );
+        revalidate();
+    }
+    
+    public void unbind() {
+        if( buttons != null )
+            buttons.set( null );
+        dockable.removeDockableListener( dockableListener );
+    }
+
 	
 	public int getOverlap() {
 	    return 0;
@@ -144,15 +162,14 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 	@Override
 	public Dimension getPreferredSize() {
 		FontRenderContext frc = new FontRenderContext(null, false, false);
-		Rectangle2D bounds = UIManager.getFont("Label.font").getStringBounds(tab.getTitle(), frc);
+		Rectangle2D bounds = UIManager.getFont("Label.font").getStringBounds(dockable.getTitleText(), frc);
 		int width = 5 + (int) bounds.getWidth() + 5;
 		int height = 23;
-		if ((paintIconWhenInactive || isSelected) && tab.getIcon() != null)
-			width += tab.getIcon().getIconWidth() + 5;
+		if ((paintIconWhenInactive || isSelected) && dockable.getTitleIcon() != null)
+			width += dockable.getTitleIcon().getIconWidth() + 5;
 		
-		Component tabComponent = tab.getTabComponent();
-		if( tabComponent != null ){
-			Dimension preferred = tabComponent.getPreferredSize();
+		if( buttons != null ){
+			Dimension preferred = buttons.getPreferredSize();
 			width += preferred.width;
 			height = Math.max( height, preferred.height );
 		}
@@ -162,20 +179,20 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 	
 	@Override
 	public void doLayout(){
-		if( tab.getTabComponent() != null ){
+		if( buttons != null ){
 			FontRenderContext frc = new FontRenderContext(null, false, false);
-			Rectangle2D bounds = UIManager.getFont("Label.font").getStringBounds(tab.getTitle(), frc);
+			Rectangle2D bounds = UIManager.getFont("Label.font").getStringBounds(dockable.getTitleText(), frc);
 			int x = 5 + (int) bounds.getWidth() + 5;
-			if ((paintIconWhenInactive || isSelected) && tab.getIcon() != null)
-				x += tab.getIcon().getIconWidth() + 5;
+			if ((paintIconWhenInactive || isSelected) && dockable.getTitleIcon() != null)
+				x += dockable.getTitleIcon().getIconWidth() + 5;
 			
 			if( isSelected )
 				x += 5;
 			
-			Dimension preferred = tab.getTabComponent().getPreferredSize();
+			Dimension preferred = buttons.getPreferredSize();
 			int width = Math.min( preferred.width, getWidth()-x );
 			
-			tab.getTabComponent().setBounds( x, 0, width, getHeight() );
+			buttons.setBounds( x, 0, width, getHeight() );
 		}
 	}
 
@@ -263,7 +280,7 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 		// draw icon
 		int iconOffset = 0;
 		if (isSelected || paintIconWhenInactive) {
-			Icon i = tab.getIcon();
+			Icon i = dockable.getTitleIcon();
 			if (i != null) {
 				i.paintIcon(comp, g, 5, 4);
 				iconOffset = i.getIconWidth() + 5;
@@ -278,7 +295,7 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 
 		// draw text
 		g.setColor(colorText);
-		g.drawString(tab.getTitle(), 5 + iconOffset, height / 2 + g.getFontMetrics().getHeight() / 2 - 2);
+		g.drawString( dockable.getTitleText(), 5 + iconOffset, height / 2 + g.getFontMetrics().getHeight() / 2 - 2);
 	}
 	
 	private class WindowActiveObserver extends WindowAdapter implements HierarchyListener{
@@ -311,4 +328,25 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 			repaint();
 		}
 	}
+	
+	   
+    private class Listener implements DockableListener{
+        public void titleBound( Dockable dockable, DockTitle title ) {
+            // ignore
+        }
+
+        public void titleIconChanged( Dockable dockable, Icon oldIcon, Icon newIcon ) {
+            repaint();
+            revalidate();
+        }
+
+        public void titleTextChanged( Dockable dockable, String oldTitle, String newTitle ) {
+            repaint();
+            revalidate();
+        }
+
+        public void titleUnbound( Dockable dockable, DockTitle title ) {
+            // ignore
+        }       
+    }
 }

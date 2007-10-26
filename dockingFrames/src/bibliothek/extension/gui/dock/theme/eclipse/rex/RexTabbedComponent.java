@@ -34,7 +34,12 @@ import java.util.List;
 
 import javax.swing.*;
 
+import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.*;
+import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.title.DockTitle;
 
 
 /**
@@ -49,36 +54,35 @@ public class RexTabbedComponent extends JComponent {
 	public static final int LEFT = 2;
 	public static final int RIGHT = 3;
 
-	protected int tabPlacement;
 	protected JComponent tabStrip;
-	private Tab selectedTab;
-	private Tab focusedTab;
+	private Dockable selectedTab;
+	private Dockable focusedTab;
 	private TabPainter tabPainter;
 	private List<TabListener> listeners = new LinkedList<TabListener>();
 	private List<TabEntry> tabs = new ArrayList<TabEntry>();
 	private JComponent contentArea;
 	
 	private boolean paintIconsWhenInactive = false;
-
-	public RexTabbedComponent() {
-		this(TOP);
-	}
-
-	public RexTabbedComponent(int tabPlacement) {
-		if (!(tabPlacement == TOP || tabPlacement == BOTTOM || tabPlacement == LEFT || tabPlacement == RIGHT)) {
-			throw new IllegalArgumentException("Wrong tabPlacement Property");
-		}
-		this.tabPlacement = tabPlacement;
+	private DockController controller;
+	
+	private EclipseTheme theme;
+	private DockStation station;
+	
+	/**
+	 * Creates a new tabbed component.
+	 * @param theme the theme currently used
+	 * @param station the owner of this component, can be <code>null</code>
+	 */
+	public RexTabbedComponent( EclipseTheme theme, DockStation station ) {
+		this.theme = theme;
+		this.station = station;
 		initComponent();
 	}
 
 	private void initComponent() {
 		setTabStrip( new RexTabStrip( this ));
-		//	tabStrip.addTabListener(this);
 		contentArea = new JPanel(new BorderLayout());
-//		contentArea.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, SystemColor.controlShadow));
-//		tabStrip.setBorder(BorderFactory.createMatteBorder(tabPlacement == BOTTOM ? 1 : 0, 1,
-//				tabPlacement == TOP ? 1 : 0, 1, SystemColor.controlShadow));
+		
 		setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, SystemColor.controlShadow));
 		setLayout(new BorderLayout());
 		
@@ -86,6 +90,20 @@ public class RexTabbedComponent extends JComponent {
 		setTabPainter( ShapedGradientPainter.FACTORY );
 	}
 
+	protected void bind( TabEntry tab ){
+	    if( tab.tab != null && !tab.tabBound ){
+	        tab.tab.bind();
+	        tab.tabBound = true;
+	    }
+	}
+	
+	protected void unbind( TabEntry tab ){
+        if( tab.tab != null && tab.tabBound ){
+            tab.tab.unbind();
+            tab.tabBound = false;
+        }
+	}
+	
 	public void setTabStrip( JComponent strip ){
 		if( tabStrip != null ){
 			remove( tabStrip );
@@ -93,48 +111,67 @@ public class RexTabbedComponent extends JComponent {
 		}
 		
 		String constraints = BorderLayout.NORTH;
-		switch (tabPlacement) {
-			case BOTTOM:
-				constraints = BorderLayout.SOUTH;
-				break;
-			case LEFT:
-				constraints = BorderLayout.WEST;
-				break;
-			case RIGHT:
-				constraints = BorderLayout.EAST;
-		}
 		tabStrip = strip;
 		add(strip, constraints);
 		
 		for( TabEntry entry : tabs ){
-			tabStrip.add( entry.tabComponent.getComponent() );
+		    if( entry.tab != null )
+		        tabStrip.add( entry.tab.getComponent() );
 		}
 	}
+
+	public void setController( DockController controller ) {
+	    if( this.controller != controller ){
+            this.controller = controller;
+            reinitializeTabs();
+        }
+	}
+	
+	public DockController getController() {
+        return controller;
+    }
+	
+	public EclipseTheme getTheme() {
+        return theme;
+    }
+	
+	public DockStation getStation() {
+        return station;
+    }
 	
 	public void setTabPainter(TabPainter painter) {
-		this.tabPainter = painter;
-		
-		tabStrip.removeAll();
-		
-		int index = 0;
-		
-		for( TabEntry entry : tabs ){
-			entry.tabComponent.removeMouseListener( entry.tabMouseListener );
-			entry.tab.setPainter( null );
-			
-			entry.tabComponent = painter.createTabComponent( this, entry.tab, index );
-			entry.tabComponent.addMouseListener( entry.tabMouseListener );
-			entry.tabComponent.setPaintIconWhenInactive( paintIconsWhenInactive );
-			entry.tabComponent.setSelected( entry.tab == selectedTab );
-			entry.tabComponent.setFocused( entry.tab == focusedTab );
-			
-			entry.tab.setPainter( entry.tabComponent );
-			
-			tabStrip.add( entry.tabComponent.getComponent() );
-		}
-		
-		//contentArea.setBorder(painter.getContentBorder());
-		tabStrip.repaint();
+	    if( this.tabPainter != painter ){
+	        this.tabPainter = painter;
+		    reinitializeTabs();
+	    }
+	}
+	
+	protected void reinitializeTabs(){
+	    // remove old tabs
+	    tabStrip.removeAll();
+	    for( TabEntry entry : tabs ){
+	        TabComponent tab = entry.tab;
+	        if( tab != null ){
+	            tab.removeMouseListener( entry.tabMouseListener );
+	            unbind( entry );
+	        }
+	    }
+	    
+	    // add new tabs
+	    if( controller != null && tabPainter != null ){
+	        int index = 0;
+	        for( TabEntry entry : tabs ){
+                entry.tab = tabPainter.createTabComponent( controller, this, entry.dockable, index++ );
+                entry.tab.addMouseListener( entry.tabMouseListener );
+                entry.tab.setPaintIconWhenInactive( paintIconsWhenInactive );
+                entry.tab.setSelected( entry.dockable == selectedTab );
+                entry.tab.setFocused( entry.dockable == focusedTab );
+                bind( entry );
+                
+                tabStrip.add( entry.tab.getComponent() );
+            }
+	        tabStrip.revalidate();
+	    }
 	}
 	
 	public TabPainter getTabPainter(){
@@ -143,33 +180,37 @@ public class RexTabbedComponent extends JComponent {
 	
 	public void setPaintIconsWhenInactive( boolean paint ){
 		this.paintIconsWhenInactive = paint;
-		for( TabEntry entry : tabs )
-			entry.tabComponent.setPaintIconWhenInactive( paint );
+		for( TabEntry entry : tabs ){
+		    if( entry.tab != null )
+		        entry.tab.setPaintIconWhenInactive( paint );
+		}
 	}
 
-	public void addTab(Tab t) {
-		insertTab(t, tabs.size());
-		setSelectedTab(t);
+	public void addTab( Dockable dockable ) {
+		insertTab( dockable , tabs.size());
+		setSelectedTab( dockable );
 	}
 
-	public void insertTab(Tab tab, int index) {
+	public void insertTab( Dockable dockable, int index) {
 		TabEntry entry = new TabEntry();
-		entry.tab = tab;
-		entry.tabComponent = tabPainter.createTabComponent( this, tab, index );
-		entry.tabMouseListener = new TabMouseListener( tab );
-
-		entry.tabComponent.addMouseListener( entry.tabMouseListener );
-		entry.tabComponent.setPaintIconWhenInactive( paintIconsWhenInactive );
-		entry.tab.setPainter( entry.tabComponent );
-		
+		entry.dockable = dockable;
+		entry.tabMouseListener = new TabMouseListener( dockable );
 		tabs.add( index, entry );
-		
-		tabStrip.removeAll();
-		
-		for( int i = 0, n = tabs.size(); i<n; i++ ){
-		    TabComponent tabComponent = tabs.get( i ).tabComponent;
-			tabComponent.setIndex( i );
-			tabStrip.add( tabComponent.getComponent() );
+        
+		if( controller != null ){
+    		entry.tab = tabPainter.createTabComponent( controller, this, dockable, index );
+    		
+    		entry.tab.addMouseListener( entry.tabMouseListener );
+    		entry.tab.setPaintIconWhenInactive( paintIconsWhenInactive );
+    		bind( entry );
+    		
+    		tabStrip.removeAll();
+    		
+    		for( int i = 0, n = tabs.size(); i<n; i++ ){
+    		    TabComponent tabComponent = tabs.get( i ).tab;
+    			tabComponent.setIndex( i );
+    			tabStrip.add( tabComponent.getComponent() );
+    		}
 		}
 	}
 
@@ -177,42 +218,44 @@ public class RexTabbedComponent extends JComponent {
 		return tabs.size();
 	}
 
-	public int getTabPlacement() {
-		return tabPlacement;
-	}
-
-	public Tab getSelectedTab() {
+	public Dockable getSelectedTab() {
 		return selectedTab;
 	}
 
 	public TabComponent getTabComponent( int index ){
-		return tabs.get( index ).tabComponent;
+		return tabs.get( index ).tab;
 	}
 	
-	public int indexOf(Tab t) {
+	public int indexOf( Dockable dockable ) {
 		for( int i = 0, n = tabs.size(); i<n; i++ ){
-			if( tabs.get( i ).tab == t )
+			if( tabs.get( i ).dockable == dockable )
 				return i;
 		}
 		
 		return -1;
 	}
 
-	public void removeTab(Tab t) {
+	public void removeTab( Dockable dockable ) {
 		for (TabListener listener : listeners) {
-			listener.tabRemoved(t);
+			listener.tabRemoved( dockable );
 		}
-		int index = indexOf(t);
+		int index = indexOf( dockable );
 		TabEntry entry = tabs.get( index );
 		tabs.remove( index );
-		tabStrip.remove( entry.tabComponent.getComponent() );
-		entry.tabComponent.removeMouseListener( entry.tabMouseListener );
-		entry.tab.setPainter( null );
+		if( entry.tab != null ){
+		    tabStrip.remove( entry.tab.getComponent() );
+		    unbind( entry );
+		    entry.tab.removeMouseListener( entry.tabMouseListener );
+		}
 		
-		for( int i = index, n = tabs.size(); i<n; i++ )
-			tabs.get( i ).tabComponent.setIndex( i );
+		for( int i = index, n = tabs.size(); i<n; i++ ){
+		    TabComponent tab = tabs.get( i ).tab;
+		    if( tab != null ){
+		        tab.setIndex( i );
+		    }
+		}
 		
-		if (t == selectedTab) {
+		if (dockable == selectedTab) {
 			if (index == tabs.size()) {
 				index = tabs.size() - 1;
 			}
@@ -226,12 +269,13 @@ public class RexTabbedComponent extends JComponent {
 	}
 
 	public void removeAllTabs() {
-		for (TabEntry tab : tabs) {
-			tab.tab.setPainter( null );
-			
+		for (TabEntry tab : tabs) {			
 			for (TabListener listener : listeners) {
-				listener.tabRemoved( tab.tab );
-				tab.tabComponent.removeMouseListener( tab.tabMouseListener );
+				listener.tabRemoved( tab.dockable );
+				if( tab.tab != null ){
+				    unbind( tab );
+				    tab.tab.removeMouseListener( tab.tabMouseListener );
+				}
 			}
 		}
 		
@@ -259,50 +303,58 @@ public class RexTabbedComponent extends JComponent {
 	}
 
 	public void setSelectedTab(int i) {
-		setSelectedTab(tabs.get(i).tab);
+		setSelectedTab(tabs.get(i).dockable);
 	}
 	
-	public void setFocusedTab( Tab tab ){
-		focusedTab = tab;
+	public void setFocusedTab( Dockable dockable ){
+		focusedTab = dockable;
 		for( TabEntry entry : tabs ){
-			entry.tabComponent.setFocused( entry.tab == tab );
+		    if( entry.tab != null )
+		        entry.tab.setFocused( entry.dockable == dockable );
 		}
 	}
 
-	public void setSelectedTab(Tab tab) {
-		if (tab != selectedTab) {
+	public void setSelectedTab( Dockable dockable ) {
+		if (dockable != selectedTab) {
 			if( selectedTab != null ){
 				int index = indexOf( selectedTab );
-				if( index >= 0 )
-					tabs.get( index ).tabComponent.setSelected( false );
+				if( index >= 0 ){
+				    TabComponent tab = tabs.get( index ).tab;
+				    if( tab != null ){
+				        tab.setSelected( false );
+				    }
+				}
 			}
 			
-			selectedTab = tab;
+			selectedTab = dockable;
 			
 			if( selectedTab != null ){
                 int index = indexOf( selectedTab );
-                if( index >= 0 )
-                    tabs.get( index ).tabComponent.setSelected( true );
+                if( index >= 0 ){
+                    TabComponent tab = tabs.get( index ).tab;
+                    if( tab != null )
+                        tab.setSelected( true );
+                }
             }
             
 			
-			tabChanged(tab);
+			tabChanged(dockable);
 			for (TabListener listener : listeners) {
-				listener.tabChanged(tab);
+				listener.tabChanged(dockable);
 			}
 		}
 	}
 
-	public Tab getTabAt(int index) {
-		return tabs.get(index).tab;
+	public Dockable getTabAt(int index) {
+		return tabs.get(index).dockable;
 	}
 
 	public Rectangle getBoundsAt(int index) {
 		return getBounds(getTabAt(index));
 	}
 
-	public Rectangle getBounds(Tab tab) {
-		TabComponent component = tabs.get( indexOf( tab ) ).tabComponent;
+	public Rectangle getBounds(Dockable dockable) {
+		TabComponent component = tabs.get( indexOf( dockable ) ).tab;
 		Point location = new Point( 0, 0 );
 		location = SwingUtilities.convertPoint( component.getComponent(), location, this );
 		
@@ -311,17 +363,22 @@ public class RexTabbedComponent extends JComponent {
 
 	public void updateContentBorder(){
 		if( selectedTab != null ){
-			TabEntry entry = tabs.get( indexOf( selectedTab ) ); 
-			entry.tabComponent.setSelected( true );
-			contentArea.setBorder( entry.tabComponent.getContentBorder() );
+			TabEntry entry = tabs.get( indexOf( selectedTab ) );
+			if( entry.tab == null ){
+			    contentArea.setBorder( null );
+			}
+			else{
+			    entry.tab.setSelected( true );
+			    contentArea.setBorder( entry.tab.getContentBorder() );
+			}
 		}
 		else
 			contentArea.setBorder( null );
 	}
 	
-	protected void popup( Tab tab, MouseEvent e ){
+	protected void popup( Dockable dockable, MouseEvent e ){
 		if( !e.isConsumed() && e.isPopupTrigger() ){
-			Component comp = tab.getComponent();
+			Component comp = dockable.getComponent();
 			if( comp instanceof JComponent ){
 				JComponent jcomp = (JComponent)comp;
 
@@ -337,43 +394,45 @@ public class RexTabbedComponent extends JComponent {
 		}
 	}
 	
-	protected void tabChanged(Tab t) {
+	protected void tabChanged(Dockable dockable) {
 		contentArea.removeAll();
-		if (t == null) {
+		if (dockable == null) {
 			contentArea.removeAll();
 		} else {
-			contentArea.add(t.getComponent(), BorderLayout.CENTER);
+			contentArea.add( dockable.getComponent(), BorderLayout.CENTER);
 		}
 		contentArea.revalidate();
 		contentArea.repaint();
 	}
 
-	private class TabEntry{
-		public Tab tab;
-		public TabComponent tabComponent;
+	protected class TabEntry{
+		public Dockable dockable;
+		public DockTitle title;
+		public TabComponent tab;
+		public boolean tabBound = false;
 		public TabMouseListener tabMouseListener;
 	}
 	
 	private class TabMouseListener extends MouseAdapter{
-		private Tab tab;
+		private Dockable dockable;
 		
-		public TabMouseListener( Tab tab ){
-			this.tab = tab;
+		public TabMouseListener( Dockable dockable ){
+			this.dockable = dockable;
 		}
 		
 		@Override
 		public void mouseClicked( MouseEvent e ){
-			setSelectedTab( tab );
+			setSelectedTab( dockable );
 		}
 		
 		@Override
 		public void mousePressed( MouseEvent e ){
-			popup( tab, e );
+			popup( dockable, e );
 		}
 		
 		@Override
 		public void mouseReleased( MouseEvent e ){
-			popup( tab, e );
+			popup( dockable, e );
 		}
 	}
 }

@@ -40,8 +40,14 @@ import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseDockActionSource;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexSystemColor;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
+import bibliothek.gui.DockController;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.event.DockableListener;
+import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
+import bibliothek.gui.dock.title.DockTitle;
 
 
 /**
@@ -49,8 +55,10 @@ import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
  */
 public class ShapedGradientPainter extends JComponent implements TabComponent {
 	public static final TabPainter FACTORY = new TabPainter(){
-		public TabComponent createTabComponent( RexTabbedComponent component, Tab tab, int index ){
-			return new ShapedGradientPainter( component, tab, index );
+	    public TabComponent createTabComponent( DockController controller,
+	            RexTabbedComponent component, Dockable dockable, int index ) {
+
+			return new ShapedGradientPainter( component, dockable, index );
 		}
 
 		public void paintTabStrip( RexTabbedComponent tabbedComponent,
@@ -79,21 +87,40 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 	private boolean hasFocus;
 	private boolean isSelected;
 	private RexTabbedComponent comp;
-	private Tab tab;
+	private Dockable dockable;
+	private ButtonPanel buttons;
+	private Listener dockableListener = new Listener();
 	private int tabIndex;
 	
 	private MatteBorder contentBorder = new MatteBorder(2, 2, 2, 2, Color.BLACK);
 	
-	public ShapedGradientPainter( RexTabbedComponent component, Tab tab, int index ){
+	public ShapedGradientPainter( RexTabbedComponent component, Dockable dockable, int index ){
 		setLayout( null );
 		setOpaque( false );
 		this.comp = component;
-		this.tab = tab;
+		this.dockable = dockable;
 		this.tabIndex = index;
-		if( tab.getTabComponent() != null )
-			add( tab.getTabComponent() );
+
+        buttons = new ButtonPanel( false );
+        
+        if( buttons != null )
+            add( buttons );
 		
 		addHierarchyListener( new WindowActiveObserver() );
+	}
+	
+	public void bind() {
+	    if( buttons != null )
+	        buttons.set( dockable, new EclipseDockActionSource(
+	                comp.getTheme(), dockable.getGlobalActionOffers(), dockable, true ) );
+	    dockable.addDockableListener( dockableListener );
+	    revalidate();
+	}
+	
+	public void unbind() {
+	    if( buttons != null )
+	        buttons.set( null );
+	    dockable.removeDockableListener( dockableListener );
 	}
 	
 	public Component getComponent(){
@@ -164,16 +191,16 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 	@Override
 	public Dimension getPreferredSize() {
 		FontRenderContext frc = new FontRenderContext(null, false, false);
-		Rectangle2D bounds = UIManager.getFont("Label.font").getStringBounds(tab.getTitle(), frc);
+		Rectangle2D bounds = UIManager.getFont("Label.font").getStringBounds(dockable.getTitleText(), frc);
 		int width = 5 + (int) bounds.getWidth() + 5;
 		int height = 23;
-		if ((paintIconWhenInactive || isSelected) && tab.getIcon() != null)
-			width += tab.getIcon().getIconWidth() + 5;
+		if ((paintIconWhenInactive || isSelected) && dockable.getTitleIcon() != null)
+			width += dockable.getTitleIcon().getIconWidth() + 5;
 		if (isSelected)
 			width += 35;
 		
-		if( tab.getTabComponent() != null ){
-			Dimension tabPreferred = tab.getTabComponent().getPreferredSize();
+		if( buttons != null ){
+			Dimension tabPreferred = buttons.getPreferredSize();
 			width += tabPreferred.width;
 			height = Math.max( height, tabPreferred.height );
 		}
@@ -183,20 +210,20 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 
 	@Override
 	public void doLayout(){
-		if( tab.getTabComponent() != null ){
+		if( buttons != null ){
 			FontRenderContext frc = new FontRenderContext(null, false, false);
-			Rectangle2D bounds = UIManager.getFont("Label.font").getStringBounds(tab.getTitle(), frc);
+			Rectangle2D bounds = UIManager.getFont("Label.font").getStringBounds(dockable.getTitleText(), frc);
 			int x = 5 + (int) bounds.getWidth() + 5;
-			if ((paintIconWhenInactive || isSelected) && tab.getIcon() != null)
-				x += tab.getIcon().getIconWidth() + 5;
+			if ((paintIconWhenInactive || isSelected) && dockable.getTitleIcon() != null)
+				x += dockable.getTitleIcon().getIconWidth() + 5;
 			
 			if( isSelected )
 				x += 5;
 			
-			Dimension preferred = tab.getTabComponent().getPreferredSize();
+			Dimension preferred = buttons.getPreferredSize();
 			int width = Math.min( preferred.width, getWidth()-x );
 			
-			tab.getTabComponent().setBounds( x, 0, width, getHeight() );
+			buttons.setBounds( x, 0, width, getHeight() );
 		}
 	}
 	
@@ -306,7 +333,7 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 		// draw icon
 		int iconOffset = 0;
 		if (isSelected || paintIconWhenInactive) {
-			Icon i = tab.getIcon();
+			Icon i = dockable.getTitleIcon();
 			if (i != null) {
 			    int offset = 5;
 			    int iconY = (h - i.getIconHeight())/2;
@@ -324,7 +351,7 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 
 		// draw text
 		g.setColor( colorText );
-		g.drawString(tab.getTitle(), x + 5 + iconOffset, h / 2 + g.getFontMetrics().getHeight() / 2 - 2);
+		g.drawString( dockable.getTitleText(), x + 5 + iconOffset, h / 2 + g.getFontMetrics().getHeight() / 2 - 2);
 	}
 
 	private void stretch( final int offset, final int length, int[] shape, float ratio ){
@@ -392,5 +419,25 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 			updateBorder();
 			repaint();
 		}
+	}
+	
+	private class Listener implements DockableListener{
+        public void titleBound( Dockable dockable, DockTitle title ) {
+            // ignore
+        }
+
+        public void titleIconChanged( Dockable dockable, Icon oldIcon, Icon newIcon ) {
+            repaint();
+            revalidate();
+        }
+
+        public void titleTextChanged( Dockable dockable, String oldTitle, String newTitle ) {
+            repaint();
+            revalidate();
+        }
+
+        public void titleUnbound( Dockable dockable, DockTitle title ) {
+            // ignore
+        }	    
 	}
 }
