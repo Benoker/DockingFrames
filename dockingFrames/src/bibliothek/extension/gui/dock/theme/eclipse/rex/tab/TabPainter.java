@@ -30,6 +30,7 @@ import java.awt.Graphics;
 
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 
 /**
@@ -47,8 +48,10 @@ public interface TabPainter {
 	/**
 	 * Creates a new entry for the tab-strip above the contents of a 
 	 * {@link RexTabbedComponent}.
-	 * @param controller the current controller, never <code>null</code> 
-	 * @param component the owner of the tab
+	 * @param controller the current controller, never <code>null</code>
+	 * @param component the owner of the tab, clients might need
+	 * {@link RexTabbedComponent#getStation() component.getStation()} to get
+	 * access to the {@link DockStation} for which the tab is intended
 	 * @param dockable the element for which the tab is shown
 	 * @param index the initial location of the tab
 	 * @return the new tab, never <code>null</code>

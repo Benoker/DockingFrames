@@ -26,14 +26,7 @@
 
 package bibliothek.gui.dock.title;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -42,12 +35,15 @@ import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ActionPopup;
 import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
+import bibliothek.gui.dock.title.DockTitle.Orientation;
 
 /**
  * An abstract implementation of {@link DockTitle}. This title can have
@@ -69,8 +65,8 @@ import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
  *
  */
 public class AbstractDockTitle extends JPanel implements DockTitle {
-    /** Insets of the size 0,0,0,0 */
-    private static final Insets NULL_INSETS = new Insets( 0, 0, 0, 0 );
+    /** Insets of the size 1,3,1,1 */
+    private static final Insets DEFAULT_INSETS = new Insets( 1, 3, 1, 1 );
     
     /** The {@link Dockable} for which this title is shown */
     private Dockable dockable;
@@ -276,7 +272,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
      * @return the insets, not <code>null</code>
      */
     protected Insets getInnerInsets(){
-        return NULL_INSETS;
+        return DEFAULT_INSETS;
     }
     
     private Insets titleInsets(){
@@ -496,13 +492,22 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     			action, ViewTarget.TITLE, dockable );
     }
     
+    /**
+     * Gets a list of all actions which will be shown on this title.
+     * @param dockable the owner of the actions
+     * @return the list of actions
+     */
+    protected DockActionSource getActionSourceFor( Dockable dockable ){
+        return dockable.getGlobalActionOffers();
+    }
+    
     public void bind() {        
         if( bind )
             throw new IllegalArgumentException( "Do not call bind twice!" );
         bind = true;
         
         if( showMiniButtons )
-        	itemPanel.set( dockable );
+        	itemPanel.set( dockable, getActionSourceFor( dockable ) );
         
         dockable.addDockableListener( listener );
         

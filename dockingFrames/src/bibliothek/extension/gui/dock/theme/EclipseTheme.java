@@ -30,9 +30,7 @@ import bibliothek.extension.gui.dock.theme.eclipse.EclipseDisplayerFactory;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseStackDockComponent;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseStationPaint;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.RectGradientPainter;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.ShapedGradientPainter;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.*;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockAcceptance;
@@ -45,10 +43,8 @@ import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.ThemeProperties;
 import bibliothek.gui.dock.themes.nostack.NoStackAcceptance;
-import bibliothek.gui.dock.title.DockTitle;
-import bibliothek.gui.dock.title.DockTitleManager;
-import bibliothek.gui.dock.title.MovingTitleGetter;
-import bibliothek.gui.dock.title.NullTitleFactory;
+import bibliothek.gui.dock.title.*;
+import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyKey;
 
 /**
@@ -82,11 +78,23 @@ public class EclipseTheme extends BasicTheme {
 	public static final PropertyKey<EclipseThemeConnector> THEME_CONNECTOR =
 		new PropertyKey<EclipseThemeConnector>( "EclipseTheme theme connector" );
 	
+	/**
+	 * The id of the {@link DockTitleVersion} that is intended to create
+	 * {@link DockTitle}s used as tabs by the {@link DockTitleTab}. Clients
+	 * which want to use {@link DockTitle}s as tabs, should exchange the
+	 * {@link TabPainter} by executing this code:<br>
+	 * <code>controller.getProperties().set( EclipseTheme.TAB_PAINTER, DockTitleTab.FACTORY );</code>
+	 */
+	public static final String TAB_DOCK_TITLE = "eclipse.tab";
+	
 	private static final EclipseThemeConnector DEFAULT_ECLIPSE_THEME_CONNECTOR = new DefaultEclipseThemeConnector();
 
 	/** An acceptance that permits combinations of dockables and stations that do not look good */
 	private DockAcceptance acceptance = new NoStackAcceptance();
 	
+	/**
+	 * Creates a new theme
+	 */
 	public EclipseTheme() {
 		setStackDockComponentFactory( new StackDockComponentFactory(){
 			public StackDockComponent create( StackDockStation station ){
@@ -112,9 +120,11 @@ public class EclipseTheme extends BasicTheme {
 
 	@Override
 	public void install( DockController controller ){
+	    DockTitleManager titleManager = controller.getDockTitleManager();
+	    titleManager.registerTheme( EclipseTheme.TAB_DOCK_TITLE, BasicTabDockTitle.createFactory( this ) );
+	    
 		super.install( controller );
 		
-		DockTitleManager titleManager = controller.getDockTitleManager();
 		titleManager.registerTheme( SplitDockStation.TITLE_ID, NullTitleFactory.INSTANCE );
 		titleManager.registerTheme( FlapDockStation.WINDOW_TITLE_ID, NullTitleFactory.INSTANCE );
 		titleManager.registerTheme( ScreenDockStation.TITLE_ID, NullTitleFactory.INSTANCE );
@@ -130,6 +140,15 @@ public class EclipseTheme extends BasicTheme {
 		controller.removeAcceptance( acceptance );
 	}
 
+	/**
+	 * Gets the connector which is used for decisions which are normally
+	 * altered by the client.
+	 * @param controller the controller in whose realm the decisions will take
+	 * effect.
+	 * @return the connector, either the connector that is installed in
+	 * the {@link DockProperties} under {@link #THEME_CONNECTOR} or
+	 * a default-value.
+	 */
 	public EclipseThemeConnector getThemeConnector( DockController controller ) {
 		EclipseThemeConnector connector = null;
 		if( controller != null )
