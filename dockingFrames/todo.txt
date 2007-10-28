@@ -1,0 +1,2 @@
+- EclipseTheme: tab selection if tabs overlap
+- EclipseTheme: Border replaceable (perhaps together with the TabPainter?)

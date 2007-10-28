@@ -36,7 +36,7 @@ public class StartupPanel extends JPanel{
 	 * Creates a new panel
 	 */
 	public StartupPanel(){
-		timer = new Timer( 45, new ActionListener(){
+		timer = new Timer( 90, new ActionListener(){
 			public void actionPerformed( ActionEvent e ){
 				repaint();
 			}

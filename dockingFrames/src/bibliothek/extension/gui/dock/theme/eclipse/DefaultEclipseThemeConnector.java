@@ -29,10 +29,13 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 
 public class DefaultEclipseThemeConnector implements EclipseThemeConnector {
-	public boolean isTitleBarShown(Dockable d) {
-		return true;
-	}
-	
+    public TitleBar getTitleBarKind( Dockable dockable ) {
+        if( dockable.asDockStation() == null )
+            return TitleBar.ECLIPSE;
+        else
+            return TitleBar.NONE;
+    }
+    
 	public boolean isTabAction( Dockable dockable, DockAction action ){
 		EclipseTabDockAction tab = action.getClass().getAnnotation( EclipseTabDockAction.class );
 		return tab != null;

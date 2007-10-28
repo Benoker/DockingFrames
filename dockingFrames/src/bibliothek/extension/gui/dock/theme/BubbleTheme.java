@@ -159,7 +159,7 @@ public class BubbleTheme extends BasicTheme {
      * @param text the base color for text
      * @param button the base color for buttons
      * @param buttonSelected the base color for selected buttons
-     * @param disabled the base color for disabled elementss
+     * @param disabled the base color for disabled elements
      */
     public void deriveColors( 
             Color active, Color inactive, Color text,

@@ -65,8 +65,10 @@ import bibliothek.gui.dock.title.DockTitle.Orientation;
  *
  */
 public class AbstractDockTitle extends JPanel implements DockTitle {
-    /** Insets of the size 1,3,1,1 */
-    private static final Insets DEFAULT_INSETS = new Insets( 1, 3, 1, 1 );
+    /** Insets of the size 0,2,0,0 */
+    private static final Insets DEFAULT_INSETS_HORIZONTAL = new Insets( 0, 2, 0, 0 );
+    /** Insets of the size 2,0,0,0 */
+    private static final Insets DEFAULT_INSETS_VERTICAL = new Insets( 2, 0, 0, 0 );
     
     /** The {@link Dockable} for which this title is shown */
     private Dockable dockable;
@@ -272,7 +274,10 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
      * @return the insets, not <code>null</code>
      */
     protected Insets getInnerInsets(){
-        return DEFAULT_INSETS;
+        if( getOrientation().isHorizontal() )
+            return DEFAULT_INSETS_HORIZONTAL;
+        else
+            return DEFAULT_INSETS_VERTICAL;
     }
     
     private Insets titleInsets(){

@@ -32,6 +32,7 @@ import javax.swing.border.BevelBorder;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableDisplayer;
+import bibliothek.gui.dock.DockableDisplayer.Location;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.title.DockTitle;
 
@@ -51,11 +52,22 @@ public class BasicDisplayerFactory implements DisplayerFactory {
 
     	BasicDockableDisplayer displayer;
         if( dockable instanceof DockStation )
-            displayer = new BasicDockableDisplayer( dockable, title, stationLocation );
+            displayer = create( dockable, title, stationLocation );
         else
-            displayer = new BasicDockableDisplayer( dockable, title, dockableLocation );
+            displayer = create( dockable, title, dockableLocation );
         displayer.setBorder( BorderFactory.createBevelBorder( BevelBorder.RAISED ));
         return displayer;
+    }
+    
+    /**
+     * Creates a new displayer.
+     * @param dockable the element that is shown on the displayer
+     * @param title the title of the displayer
+     * @param location the location of <code>title</code>
+     * @return the new displayer
+     */
+    protected BasicDockableDisplayer create( Dockable dockable, DockTitle title, Location location ){
+        return new BasicDockableDisplayer( dockable, title, location );
     }
     
     /**

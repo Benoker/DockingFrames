@@ -26,13 +26,18 @@
 package bibliothek.extension.gui.dock.theme.eclipse;
 
 import javax.swing.JComponent;
+import javax.swing.border.LineBorder;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableDisplayer;
+import bibliothek.gui.dock.DockableDisplayer.Location;
 import bibliothek.gui.dock.themes.basic.BasicDisplayerFactory;
+import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector.TitleBar;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.RexSystemColor;
 
 /**
  * @author Janni Kovacs
@@ -46,20 +51,42 @@ public class EclipseDisplayerFactory extends BasicDisplayerFactory {
 
 	@Override
 	public DockableDisplayer create(DockStation station, Dockable dockable, DockTitle title) {
+		TitleBar bar = theme.getThemeConnector( station.getController() ).getTitleBarKind( dockable );
 		DockableDisplayer displayer;
-		if (dockable.asDockStation() == null) {
-			if (theme.getThemeConnector( station.getController() ).isTitleBarShown(dockable)) {
-				displayer = new EclipseDockableDisplayer(theme, station, dockable);
-			} else {
-				displayer = new NoTitleDisplayer(station, dockable);
-			}
-		} else {
-			displayer = super.create(station, dockable, title);
-			
-			if( displayer.getComponent() instanceof JComponent )
-	            ((JComponent)displayer.getComponent()).setBorder(null);
-		}
 		
-		return displayer;
+		switch( bar ){
+		    case NONE:
+		        NoTitleDisplayer noTitle = new NoTitleDisplayer( station, dockable );
+		        noTitle.setBorder( null );
+		        return noTitle;
+		    case NONE_BORDERED:
+		        return new NoTitleDisplayer(station, dockable);
+		    case ECLIPSE:
+		        return new EclipseDockableDisplayer(theme, station, dockable);
+		    case BASIC_BORDERED:
+		        displayer = super.create(station, dockable, title);
+                if( displayer.getComponent() instanceof JComponent )
+                    ((JComponent)displayer.getComponent()).setBorder( new LineBorder( RexSystemColor.getBorderColor() ) );
+                return displayer;
+		    case BASIC:
+		    default:
+		        displayer = super.create(station, dockable, title);
+		        if( displayer.getComponent() instanceof JComponent )
+                    ((JComponent)displayer.getComponent()).setBorder(null);
+		        return displayer;
+		}
+	}
+	
+	@Override
+	protected BasicDockableDisplayer create( Dockable dockable,
+	        DockTitle title, Location location ) {
+	    
+	    return new BasicDockableDisplayer( dockable, title, location ){
+	        @Override
+	        public void updateUI() {
+	            super.updateUI();
+	            setBorder( new LineBorder( RexSystemColor.getBorderColor()) );
+	        }
+	    };
 	}
 }

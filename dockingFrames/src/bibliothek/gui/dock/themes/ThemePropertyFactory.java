@@ -37,11 +37,12 @@ import bibliothek.gui.DockUI;
 /**
  * A factory using the {@link ThemeProperties} of a {@link DockTheme} to 
  * create instances of that <code>DockTheme</code>.
+ * @param <T> the type of theme created by this factory
  * @author Benjamin Sigg
  */
-public class ThemePropertyFactory implements ThemeFactory {
+public class ThemePropertyFactory<T extends DockTheme> implements ThemeFactory {
     /** Default constructor of the theme */
-    private Constructor<? extends DockTheme> constructor;
+    private Constructor<T> constructor;
     /** Information about the theme */
     private ThemeProperties properties;
     /** Bundle containing the text, may be <code>null</code> */
@@ -53,7 +54,7 @@ public class ThemePropertyFactory implements ThemeFactory {
      * Creates a new factory.
      * @param theme the class of a theme, must have the {@link ThemeProperties} annotation.
      */
-    public ThemePropertyFactory( Class<? extends DockTheme> theme ){
+    public ThemePropertyFactory( Class<T> theme ){
         this( theme, null, null );
     }
 
@@ -63,7 +64,7 @@ public class ThemePropertyFactory implements ThemeFactory {
      * @param bundle the bundle to retrieve text, might be <code>null</code> if the
      * bundle of the {@link DockUI} should be used.
      */
-    public ThemePropertyFactory( Class<? extends DockTheme> theme, ResourceBundle bundle ){
+    public ThemePropertyFactory( Class<T> theme, ResourceBundle bundle ){
         this( theme, bundle, null );
     }
 
@@ -72,7 +73,7 @@ public class ThemePropertyFactory implements ThemeFactory {
      * @param theme the class of a theme, must have the {@link ThemeProperties} annotation.
      * @param ui the DockUI to retrieve more information, might be <code>null</code>
      */
-    public ThemePropertyFactory( Class<? extends DockTheme> theme, DockUI ui ){
+    public ThemePropertyFactory( Class<T> theme, DockUI ui ){
         this( theme, null, ui );
     }
     
@@ -83,7 +84,7 @@ public class ThemePropertyFactory implements ThemeFactory {
      * bundle of the {@link DockUI} should be used.
      * @param ui the DockUI to retrieve more information, might be <code>null</code>
      */
-    public ThemePropertyFactory( Class<? extends DockTheme> theme, ResourceBundle bundle, DockUI ui ){
+    public ThemePropertyFactory( Class<T> theme, ResourceBundle bundle, DockUI ui ){
         if( theme == null )
             throw new IllegalArgumentException( "Theme must not be null" );
         
@@ -119,7 +120,7 @@ public class ThemePropertyFactory implements ThemeFactory {
         return ui;
     }
     
-    public DockTheme create() {
+    public T create() {
         try {
             return constructor.newInstance( new Object[0] );
         }

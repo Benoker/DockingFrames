@@ -1,18 +1,12 @@
 package bibliothek.notes;
 
 import java.awt.Component;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 
 import bibliothek.demonstration.Monitor;
@@ -22,8 +16,10 @@ import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.RectGradientPainter;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.security.SecureDockController;
+import bibliothek.notes.model.Note;
 import bibliothek.notes.model.NoteModel;
 import bibliothek.notes.util.ResourceSet;
 import bibliothek.notes.view.MainFrame;
@@ -106,6 +102,7 @@ public class Core implements ComponentCollector{
 		controller.setSingleParentRemove( true );
 		controller.getProperties().set( EclipseTheme.PAINT_ICONS_WHEN_DESELECTED, true );
 		controller.getProperties().set( EclipseTheme.TAB_PAINTER, RectGradientPainter.FACTORY );
+		//controller.getProperties().set( EclipseTheme.TAB_PAINTER, DockTitleTab.FACTORY );
 		
 		frontend = new DockFrontend( controller, frame );
 		views = new ViewManager( frontend, frame, secure, model );

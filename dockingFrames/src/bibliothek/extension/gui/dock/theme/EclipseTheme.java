@@ -25,13 +25,10 @@
  */
 package bibliothek.extension.gui.dock.theme;
 
-import bibliothek.extension.gui.dock.theme.eclipse.DefaultEclipseThemeConnector;
-import bibliothek.extension.gui.dock.theme.eclipse.EclipseDisplayerFactory;
-import bibliothek.extension.gui.dock.theme.eclipse.EclipseStackDockComponent;
-import bibliothek.extension.gui.dock.theme.eclipse.EclipseStationPaint;
-import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector;
+import bibliothek.extension.gui.dock.theme.eclipse.*;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.*;
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockAcceptance;
 import bibliothek.gui.dock.station.FlapDockStation;
@@ -42,6 +39,7 @@ import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.ThemeProperties;
+import bibliothek.gui.dock.themes.basic.BasicDockTitleFactory;
 import bibliothek.gui.dock.themes.nostack.NoStackAcceptance;
 import bibliothek.gui.dock.title.*;
 import bibliothek.gui.dock.util.DockProperties;
@@ -103,6 +101,14 @@ public class EclipseTheme extends BasicTheme {
 		});
 		setDisplayerFactory( new EclipseDisplayerFactory( this ) );
 		setPaint( new EclipseStationPaint() );
+		setTitleFactory( new BasicDockTitleFactory(){
+		    @Override
+		    public <D extends Dockable & DockStation> DockTitle createStationTitle(
+		            D dockable, DockTitleVersion version ) {
+		        
+		        return createDockableTitle( dockable, version );
+		    }
+		});
 	}
 
 	@Override
@@ -125,10 +131,12 @@ public class EclipseTheme extends BasicTheme {
 	    
 		super.install( controller );
 		
-		titleManager.registerTheme( SplitDockStation.TITLE_ID, NullTitleFactory.INSTANCE );
-		titleManager.registerTheme( FlapDockStation.WINDOW_TITLE_ID, NullTitleFactory.INSTANCE );
-		titleManager.registerTheme( ScreenDockStation.TITLE_ID, NullTitleFactory.INSTANCE );
-		titleManager.registerTheme( StackDockStation.TITLE_ID, NullTitleFactory.INSTANCE );
+		EclipseDockTitleFactory factory = new EclipseDockTitleFactory( this, new ControllerTitleFactory() );
+		
+		titleManager.registerTheme( SplitDockStation.TITLE_ID, factory );
+		titleManager.registerTheme( FlapDockStation.WINDOW_TITLE_ID, factory );
+		titleManager.registerTheme( ScreenDockStation.TITLE_ID, factory );
+		titleManager.registerTheme( StackDockStation.TITLE_ID, factory );
 		
 		controller.addAcceptance( acceptance );
 	}

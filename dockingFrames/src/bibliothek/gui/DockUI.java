@@ -149,8 +149,8 @@ public class DockUI {
      * name and description. This argument can be <code>null</code>, in that
      * case the bundle of this DockUI will be used.
      */
-    public void registerTheme( Class<? extends DockTheme> theme, ResourceBundle bundle ){
-        registerTheme( new ThemePropertyFactory( theme, bundle, this ));
+    public <T extends DockTheme> void registerTheme( Class<T> theme, ResourceBundle bundle ){
+        registerTheme( new ThemePropertyFactory<T>( theme, bundle, this ));
     }
     
     /**
@@ -162,6 +162,14 @@ public class DockUI {
             throw new IllegalArgumentException( "Theme must not be null" );
         
         themes.add( factory );
+    }
+    
+    /**
+     * Removes an earlier added factory from the set of theme-factories.
+     * @param factory the factory to remove
+     */
+    public void unregisterTheme( ThemeFactory factory ){
+        themes.remove( factory );
     }
     
     /**
