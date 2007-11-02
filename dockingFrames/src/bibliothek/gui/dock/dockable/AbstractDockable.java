@@ -24,7 +24,7 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock;
+package bibliothek.gui.dock.dockable;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -38,7 +38,6 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.HierarchyDockActionSource;
-import bibliothek.gui.dock.dockable.DockHierarchyObserver;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.title.DockTitle;

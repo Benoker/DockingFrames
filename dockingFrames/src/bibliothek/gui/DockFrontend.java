@@ -39,6 +39,7 @@ import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
+import bibliothek.gui.dock.dockable.DefaultDockableFactory;
 import bibliothek.gui.dock.event.DockFrontendListener;
 import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.station.ScreenDockStation;

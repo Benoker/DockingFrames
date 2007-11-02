@@ -33,16 +33,19 @@ import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.ShapedGradientPainter;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabStripLayoutManager;
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionPopup;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
+import bibliothek.gui.dock.util.PropertyValue;
 
 /**
  * @author Janni Kovacs
@@ -50,6 +53,13 @@ import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 public class EclipseTabbedComponent extends RexTabbedComponent {
 	private EclipseStackDockComponent eclipseStackDockComponent;
 	private ButtonPanel itemPanel;
+	
+	private PropertyValue<Border> border = new PropertyValue<Border>( EclipseTheme.FULL_BORDER ){
+	    @Override
+	    protected void valueChanged( Border oldValue, Border newValue ) {
+	        setBorder( newValue );
+	    }
+	};
 	
 	public EclipseTabbedComponent(EclipseStackDockComponent eclipseStackDockComponent, EclipseTheme theme, DockStation station ) {
 	    super( theme, station );
@@ -59,7 +69,7 @@ public class EclipseTabbedComponent extends RexTabbedComponent {
 		itemPanel.setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 4));
 		itemPanel.setOpaque( false );
 		
-		setBorder(new EclipseBorder( true ));
+		setBorder( null );
 		setTabStrip( new EclipseTabStrip() );
 		setTabPainter( ShapedGradientPainter.FACTORY );
 	}
@@ -70,6 +80,12 @@ public class EclipseTabbedComponent extends RexTabbedComponent {
 	
 	public void set( Dockable dockable, DockActionSource source ){
 		itemPanel.set( dockable, source );
+	}
+	
+	@Override
+	public void setController( DockController controller ) {
+	    super.setController( controller );
+	    border.setProperties( controller == null ? null : controller.getProperties() );
 	}
 	
 	@Override

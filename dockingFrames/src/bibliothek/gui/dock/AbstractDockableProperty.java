@@ -26,6 +26,7 @@
 
 package bibliothek.gui.dock;
 
+
 /**
  * A simple implementation of {@link DockableProperty} which provides
  * only the basic features.

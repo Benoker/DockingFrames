@@ -26,10 +26,7 @@
 package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
 
 import java.awt.*;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
@@ -107,6 +104,18 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 
 		
 		addHierarchyListener( new WindowActiveObserver() );
+		addMouseListener( new MouseAdapter(){
+		    @Override
+		    public void mouseClicked( MouseEvent e ) {
+		        if( e.getClickCount() == 2 ){
+		            DockController controller = RectGradientPainter.this.dockable.getController();
+		            if( controller != null ){
+		                controller.getDoubleClickController().send( 
+		                        RectGradientPainter.this.dockable, e );
+		            }
+		        }
+		    }
+		});
 	}
 	
 	public void bind() {

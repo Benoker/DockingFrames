@@ -68,6 +68,9 @@ public class DockController {
 	/** a manager handling drag and drop */
 	private DockRelocator relocator;
 	
+	/** the controller that manages global double clicks */
+	private DoubleClickController doubleClickController;
+	
     /** the Dockable which has currently the focus, can be <code>null</code> */
     private Dockable focusedDockable = null;
     
@@ -166,6 +169,7 @@ public class DockController {
         defaultActionOffer = createDefaultActionOffer();
         focusObserver = createMouseFocusObserver();
         actionViewConverter = createActionViewConverter();
+        doubleClickController = new DoubleClickController( this );
         
         DockUI.getDefaultDockUI().fillIcons( icons );
         
@@ -247,6 +251,14 @@ public class DockController {
     public DockRelocator getRelocator(){
 		return relocator;
 	}
+    
+    /**
+     * Gets the manager for handling global double clicks of the mouse.
+     * @return the manager
+     */
+    public DoubleClickController getDoubleClickController() {
+        return doubleClickController;
+    }
     
     /**
      * Creates the converter that will transform actions into views.

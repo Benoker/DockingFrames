@@ -33,6 +33,8 @@ import javax.swing.JPanel;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.dockable.AbstractDockable;
+import bibliothek.gui.dock.dockable.DefaultDockableFactory;
 import bibliothek.gui.dock.util.PropertyKey;
 
 /**

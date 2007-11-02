@@ -107,6 +107,18 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
             add( buttons );
         
 		addHierarchyListener( new WindowActiveObserver() );
+		addMouseListener( new MouseAdapter(){
+		    @Override
+		    public void mouseClicked( MouseEvent e ) {
+		        if( e.getClickCount() == 2 ){
+		            DockController controller = ShapedGradientPainter.this.dockable.getController();
+		            if( controller != null ){
+		                controller.getDoubleClickController().send( 
+		                        ShapedGradientPainter.this.dockable, e );
+		            }
+		        }
+		    }
+		});
 	}
 	
 	public void bind() {

@@ -59,6 +59,7 @@ public class DockTitleTab implements TabComponent{
                 title.setOrientation( Orientation.NORTH_SIDED );
                 return new DockTitleTab( component.getStation(), dockable, title, index );
             }
+            
             public void paintTabStrip( RexTabbedComponent tabbedComponent,
                     Component tabStrip, Graphics g ) {
                 fallback.paintTabStrip( tabbedComponent, tabStrip, g );

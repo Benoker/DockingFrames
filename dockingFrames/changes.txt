@@ -34,3 +34,8 @@
 - API: When adding a Dockable to a DockStation, the station will ensure that no cycles are built into the dock-tree, and that the Dockable is properly removed from its former parent
 - Layout: StackDockStation tries to paint the insertion-line now between its tabs
 - API: ScreenDockDialog should always stay in the screen in which it has been created, this feature is not tested
+
+[Stable v1.0]
+- API: new DoubleClickController, allows handling double clicks on a global scale. Makes the FullScreenClickableListener obsolete.
+- Layout: double click on shaped- or rect-tabs in EclipseTheme has now the same effects a double click on a title.
+- Bugfix: DockHierarchyEvents were not properly dispatched by the SplitDockStation

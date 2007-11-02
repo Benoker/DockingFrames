@@ -24,7 +24,7 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock;
+package bibliothek.gui.dock.dockable;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -32,6 +32,8 @@ import java.io.IOException;
 import java.util.Map;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DefaultDockable;
+import bibliothek.gui.dock.DockFactory;
 
 /**
  * A factory which can read and write the properties of a 

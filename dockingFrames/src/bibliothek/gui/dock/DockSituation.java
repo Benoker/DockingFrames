@@ -32,6 +32,7 @@ import java.util.Map;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.dockable.DefaultDockableFactory;
 import bibliothek.gui.dock.security.SecureFlapDockStationFactory;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.SplitDockStation;

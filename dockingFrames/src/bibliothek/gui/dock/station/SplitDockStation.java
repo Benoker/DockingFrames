@@ -43,10 +43,12 @@ import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.*;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.DockableProperty;
 import bibliothek.gui.dock.action.*;
+import bibliothek.gui.dock.control.DoubleClickObserver;
 import bibliothek.gui.dock.dockable.DockHierarchyObserver;
 import bibliothek.gui.dock.event.*;
 import bibliothek.gui.dock.station.split.*;
@@ -146,14 +148,11 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     	}
     };
     
-    /** 
-     * This listener decides on which children the user can click to set them
-     * into fullscreen-mode
-     */
-    private FullScreenClickableListener fullScreenListener;
-    
     /** Whether the user can double click on a child to expand it. Default is <code>true</code>. */
     private boolean expandOnDoubleclick = true;
+    
+    /** expands a child of this station when the user clicks twice on the child */
+    private FullScreenListener fullScreenListener = new FullScreenListener();
     
     /** The list of {@link Dockable Dockables} which are shown on this station */
     private List<DockableDisplayer> dockables = new ArrayList<DockableDisplayer>();
@@ -335,24 +334,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      * have an effect, <code>false</code> if double clicks should be ignored.
      */
     public void setExpandOnDoubleclick( boolean expandOnDoubleclick ) {
-        if( this.expandOnDoubleclick != expandOnDoubleclick ){
-            if( this.expandOnDoubleclick ){
-                if( fullScreenListener != null ){
-                    fullScreenListener.destroy();
-                    controller.removeDockControllerListener( fullScreenListener );
-                    fullScreenAction = null;
-                }
-            }
-            
-            this.expandOnDoubleclick = expandOnDoubleclick;
-            
-            if( expandOnDoubleclick ){
-                if( controller != null ){
-                    fullScreenListener = new FullScreenClickableListener( this );
-                    controller.addDockControllerListener( fullScreenListener );
-                }
-            }
-        }
+        this.expandOnDoubleclick = expandOnDoubleclick;
     }
     
     /**
@@ -373,6 +355,8 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         
         if( station != null )
             station.addDockStationListener( visibleListener );
+        
+        hierarchyObserver.update();
     }
 
     public DockStation getDockParent() {
@@ -381,12 +365,8 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 
     public void setController( DockController controller ) {
         if( this.controller != controller ){
-            if( fullScreenListener != null ){
-                fullScreenListener.destroy();
-                if( this.controller != null )
-                    this.controller.removeDockControllerListener( fullScreenListener );
-                fullScreenListener = null;
-            }
+            if( this.controller != null )
+                this.controller.getDoubleClickController().removeObserver( fullScreenListener );
             
             for( DockableDisplayer displayer : dockables ){
                 DockTitle title = displayer.getTitle();
@@ -403,11 +383,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             
             if( controller != null ){
                 title = controller.getDockTitleManager().registerDefault( TITLE_ID, ControllerTitleFactory.INSTANCE );
-                
-                if( expandOnDoubleclick ){
-                    fullScreenListener = new FullScreenClickableListener( this );
-                    controller.addDockControllerListener( fullScreenListener );
-                }
+                controller.getDoubleClickController().addObserver( fullScreenListener );
             }
             else
                 title = null;
@@ -2110,6 +2086,61 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             if( current != null && pressed ){
                 getPaint().drawDivider( g, SplitDockStation.this, bounds );
             }
+        }
+    }
+    
+    /**
+     * A listener that reacts on double clicks and can expand a child of
+     * this station to fullscreen-mode.
+     * @author Benjamin Sigg
+     */
+    private class FullScreenListener implements DoubleClickObserver{
+        public DockElement getTreeLocation() {
+            return SplitDockStation.this;
+        }
+        
+        public boolean process( Dockable dockable, MouseEvent event ) {
+            if( event.isConsumed() || !isExpandOnDoubleclick() )
+                return false;
+            else{
+                if( dockable == SplitDockStation.this )
+                    return false;
+                
+                dockable = unwrap( dockable );
+                if( dockable != null ){
+                    if( isFullScreen() ){
+                        if( getFullScreen() == dockable )
+                            setFullScreen( null );
+                    }
+                    else{
+                        setFullScreen( dockable );
+                    }
+                    
+                    return true;
+                }
+                
+                return false;
+            }
+        }
+        
+        /**
+         * Searches a parent of <code>dockable</code> which has the 
+         * enclosing {@link SplitDockStation} as its direct parent.
+         * @param dockable the root of the search
+         * @return <code>dockable</code>, a parent of <code>dockable</code>
+         * or <code>null</code>
+         */
+        private Dockable unwrap( Dockable dockable ){
+            while( dockable.getDockParent() != SplitDockStation.this ){
+                DockStation parent = dockable.getDockParent();
+                if( parent == null )
+                    return null;
+                
+                dockable = parent.asDockable();
+                if( dockable == null )
+                    return null;
+            }
+            return dockable;
         }
     }
 }

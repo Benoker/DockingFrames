@@ -30,12 +30,15 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 
 import javax.swing.JPanel;
+import javax.swing.border.Border;
 
+import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.util.PropertyValue;
 
 /**
  * @author Janni Kovacs
@@ -47,13 +50,23 @@ public class NoTitleDisplayer extends JPanel implements DockableDisplayer {
 	private DockTitle title;
 	private Location location;
 	
-	public NoTitleDisplayer( DockStation station, Dockable dockable ){
-		setBorder( new EclipseBorder( true ) );
+	private PropertyValue<Border> border;
+	
+	public NoTitleDisplayer( DockStation station, Dockable dockable, boolean bordered ){
 		setLayout( new GridLayout( 1, 1, 0, 0 ) );
 		setOpaque( false );
 		
 		setStation( station );
 		setDockable( dockable );
+		
+		if( bordered ){
+    		border = new PropertyValue<Border>( EclipseTheme.FULL_BORDER ){
+    	        @Override
+    	        protected void valueChanged( Border oldValue, Border newValue ) {
+    	            setBorder( newValue );
+    	        }
+    	    };
+		}
 	}
 
     @Override
@@ -88,6 +101,8 @@ public class NoTitleDisplayer extends JPanel implements DockableDisplayer {
 
 	public void setController( DockController controller ){
 		this.controller = controller;
+		if( border != null )
+		    border.setProperties( controller == null ? null : controller.getProperties() );
 	}
 
 	public void setDockable( Dockable dockable ){

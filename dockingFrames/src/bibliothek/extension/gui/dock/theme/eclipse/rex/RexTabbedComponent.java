@@ -360,7 +360,7 @@ public class RexTabbedComponent extends JComponent {
 		
 		return new Rectangle( location, component.getComponent().getSize() );
 	}
-
+	
 	public void updateContentBorder(){
 		if( selectedTab != null ){
 			TabEntry entry = tabs.get( indexOf( selectedTab ) );

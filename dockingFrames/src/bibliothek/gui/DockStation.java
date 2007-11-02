@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -423,7 +423,7 @@ public interface DockStation extends DockElement{
      * <code>compare</code> to do this. This method works like
      * {@link Comparable#compareTo(Object)}.
      * @param station another station
-     * @return a number less/equal/higher than zero, if this station
+     * @return a number less/equal/higher than zero, if this station has
      * higher/equal/lesser priority than <code>station</code>.
      */
     public int compare( DockStation station );
