@@ -31,9 +31,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JPanel;
@@ -43,17 +41,17 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.*;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.ShapedGradientPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabComponent;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabListener;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabPainter;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.RemoteRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
 import bibliothek.gui.dock.event.DockControllerAdapter;
-import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
-import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
-import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.PropertyValue;
 
 

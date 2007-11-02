@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -149,6 +149,15 @@ public class FullScreenClickableListener extends DockAdapter{
             FullScreenListener listener = new FullScreenListener( screened );
             dockable.addMouseInputListener( listener );
             dockableListeners.put( dockable, listener );
+            
+            for( DockTitle title : dockable.listBoundTitles() ){
+                if( shouldCollect( dockable, title )){
+                    if( !titleListeners.containsKey( title )){
+                        title.addMouseInputListener( listener );
+                        titleListeners.put( title, listener );
+                    }
+                }
+            }
         }
     }
     
@@ -160,6 +169,12 @@ public class FullScreenClickableListener extends DockAdapter{
         FullScreenListener listener = dockableListeners.remove( dockable );
         if( listener != null )
             dockable.removeMouseInputListener( listener );
+        
+        for( DockTitle title : dockable.listBoundTitles() ){
+            listener = titleListeners.remove( title );
+            if( listener != null )
+                title.removeMouseInputListener( listener );
+        }
     }
     
     @Override
@@ -176,7 +191,7 @@ public class FullScreenClickableListener extends DockAdapter{
     public void titleBound( DockController controller, DockTitle title, Dockable dockable ) {
         if( shouldCollect( dockable, title )){
             Dockable screened = unwrap( dockable );
-            if( screened != null ){
+            if( screened != null && !titleListeners.containsKey( title )){
                 FullScreenListener listener = new FullScreenListener( screened );
                 title.addMouseInputListener( listener );
                 titleListeners.put( title, listener );

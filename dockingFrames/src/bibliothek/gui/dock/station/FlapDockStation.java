@@ -1036,8 +1036,7 @@ public class FlapDockStation extends AbstractDockableStation {
      * @param index the location in the button-panel of the child
      */
     public void add( Dockable dockable, int index ){
-        if( dockable.getDockParent() != null && dockable.getDockParent() != this )
-            throw new IllegalArgumentException( "Dockable must not have another parent" );
+        DockUtilities.ensureTreeValidity( this, dockable );
         
         listeners.fireDockableAdding( dockable );
         dockables.add( index, dockable );

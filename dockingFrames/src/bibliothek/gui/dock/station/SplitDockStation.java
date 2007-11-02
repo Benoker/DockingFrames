@@ -56,6 +56,7 @@ import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 
@@ -1590,6 +1591,8 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      * some events.
      */
     private void addDockable( Dockable dockable, boolean fire ){
+        DockUtilities.ensureTreeValidity( this, dockable );
+        
         if( fire )
         	dockStationListeners.fireDockableAdding( dockable );
         Leaf leaf = addToList( dockable );
@@ -1937,6 +1940,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             for( DockableDisplayer displayer : dockables ){
                 Dockable dockable = displayer.getDockable();
                 dockStationListeners.fireDockableAdding( dockable );
+                dockable.setDockParent( this );
                 
             	if( this.title != null ){
                     DockTitle title = dockable.getDockTitle( this.title );
@@ -1945,7 +1949,6 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
                     displayer.setTitle( title );
                 }
                 
-                displayer.getDockable().setDockParent( this );
                 getContentPane().add( displayer.getComponent() );
                 dockStationListeners.fireDockableAdded( displayer.getDockable() );
             }

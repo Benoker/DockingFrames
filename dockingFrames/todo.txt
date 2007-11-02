@@ -1,2 +1,3 @@
-- EclipseTheme: tab selection if tabs overlap
+- [DONE] EclipseTheme: tab selection if tabs overlap
 - EclipseTheme: Border replaceable (perhaps together with the TabPainter?)
+- Double click on DockTitle or Dockable, use global mechanism instead of the SplitDockStation-mechanism

@@ -25,16 +25,11 @@
  */
 package bibliothek.gui.dock.control;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockRegisterListener;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.util.DockUtilities;
@@ -387,7 +382,11 @@ public class DockRegister {
         
         @Override
         public void dockableAdding( DockStation station, Dockable dockable ) {
-            dockable.setDockParent( station );
+            // there seems to be no need for this connection, why was it
+            // here in the first place?
+            
+            //DockStation oldParent = dockable.getDockParent();
+            //dockable.setDockParent( station );
             
             if( stalled ){
                 DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
@@ -401,6 +400,8 @@ public class DockRegister {
             else{
                 addDockable( dockable );
             }
+            
+            //dockable.setDockParent( oldParent );
         }
         
         /**

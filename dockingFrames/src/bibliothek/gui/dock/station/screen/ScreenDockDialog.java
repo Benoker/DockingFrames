@@ -105,25 +105,42 @@ public class ScreenDockDialog extends JDialog {
         
         setModal( false );
     }
+
+
+    /**
+     * Sets the bounds of this dialog such that the title is still visible
+     * in the screen.
+     * @param bounds the new bounds of this dialog
+     */
+    public void setBoundsInScreen( Rectangle bounds ) {
+        setBoundsInScreen( bounds.x, bounds.y, bounds.width, bounds.height );
+    }
     
-    /*
-    // ignore, multible screen devices might be available
-    // TODO find a method to be used with multible screen devices 
-    @Override
-    public void setBounds( int x, int y, int width, int height ) {
-        Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+    /**
+     * Sets the bounds of this dialog such that the title is still visible
+     * in the screen.
+     * @param x the new x-coordinate
+     * @param y the new y-coordinate
+     * @param width the new height
+     * @param height the new height
+     */
+    public void setBoundsInScreen( int x, int y, int width, int height ) {
+        GraphicsConfiguration config = getGraphicsConfiguration();
+        if( config != null ){
+            Rectangle size = config.getBounds();
+            
+            width = Math.min( size.width, width );
+            height = Math.min( size.height, height );
+            
+            x = Math.max( x, size.x );
+            y = Math.max( y, size.y );
+            
+            x = Math.min( x, size.width - width + size.x );
+            y = Math.min( y, size.height - height + size.y );
+        }
         
-        width = Math.min( size.width, width );
-        height = Math.min( size.height, height );
-        
-        x = Math.max( x, 0 );
-        y = Math.max( y, 0 );
-        
-        x = Math.min( x, size.width - width );
-        y = Math.min( y, size.height - height );
-        
-        super.setBounds( x, y, width, height );
-    }*/
+        setBounds( x, y, width, height );
+    }
     
     /**
      * Gets the station for which this dialog is shown
@@ -292,7 +309,7 @@ public class ScreenDockDialog extends JDialog {
                     bounds.y += dy;
                 }
                 
-                setBounds( bounds );
+                setBoundsInScreen( bounds );
                 invalidate();
                 validate();
             }

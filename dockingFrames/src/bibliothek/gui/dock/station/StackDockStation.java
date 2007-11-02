@@ -26,11 +26,7 @@
 
 package bibliothek.gui.dock.station;
 
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -40,31 +36,26 @@ import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
+import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputListener;
 
-import bibliothek.gui.DockController;
-import bibliothek.gui.DockStation;
-import bibliothek.gui.DockTheme;
-import bibliothek.gui.DockUI;
-import bibliothek.gui.Dockable;
+import bibliothek.gui.*;
 import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.DockableProperty;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockableListener;
-import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;
-import bibliothek.gui.dock.station.stack.StackDockComponent;
-import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
-import bibliothek.gui.dock.station.stack.StackDockProperty;
-import bibliothek.gui.dock.station.stack.StackDockStationFactory;
+import bibliothek.gui.dock.station.stack.*;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
 import bibliothek.gui.dock.station.support.StationPaintWrapper;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 
@@ -657,8 +648,7 @@ public class StackDockStation extends AbstractDockableStation {
      * otherwise the method will run silent
      */
     protected void add( Dockable dockable, int index, boolean fire ){
-        if( dockable.getDockParent() != null && dockable.getDockParent() != this )
-            throw new IllegalArgumentException( "Dockable must not have another parent" );
+        DockUtilities.ensureTreeValidity( this, dockable );
             
         if( fire )
         	listeners.fireDockableAdding( dockable );
@@ -923,16 +913,23 @@ public class StackDockStation extends AbstractDockableStation {
                     bounds = stackComponent.getBoundsAt( insert.tab );
                 
                 if( bounds != null ){
+                    Point a = new Point();
+                    Point b = new Point();
+                    
                     if( insert.right ){
-                        paint.drawInsertionLine( g, StackDockStation.this, 
-                                bounds.x + bounds.width, bounds.y, 
-                                bounds.x + bounds.width, bounds.y + bounds.height );
+                        insertionLine( 
+                                bounds, 
+                                insert.tab+1 < stackComponent.getTabCount() ? stackComponent.getBoundsAt( insert.tab+1 ) : null,
+                                a, b, true );
                     }
                     else{
-                        paint.drawInsertionLine( g, StackDockStation.this, 
-                                bounds.x, bounds.y, 
-                                bounds.x, bounds.y + bounds.height );
+                        insertionLine(  
+                                insert.tab > 0 ? stackComponent.getBoundsAt( insert.tab-1 ) : null,
+                                bounds,
+                                a, b, false );
                     }
+                    
+                    paint.drawInsertionLine( g, StackDockStation.this, a.x, a.y, b.x, b.y );
                 }
             }
             
@@ -950,6 +947,53 @@ public class StackDockStation extends AbstractDockableStation {
                 
                 paint.drawInsertion( g, StackDockStation.this, bounds, insert );
             }
+        }
+    }
+    
+    /**
+     * When dropping or moving a {@link Dockable}, a line has to be painted
+     * between two tabs. This method determines the exact location of that line.
+     * @param left the bounds of the tab left to the line, might be <code>null</code> if
+     * <code>leftImportant</code> is <code>false</code>.
+     * @param right the bounds of the tab right to the line, might be <code>null</code> if
+     * <code>leftImportant</code> is <code>true</code>.
+     * @param a the first point of the line, should be used as output of this method
+     * @param b the second point of the line, should be used as output of this method
+     * @param leftImportant <code>true</code> if the mouse is over the left tab, <code>false</code>
+     * if the mouse is over the right tab.
+     */
+    protected void insertionLine( Rectangle left, Rectangle right, Point a, Point b, boolean leftImportant ){
+        if( left != null && right != null ){
+            int top = Math.max( left.y, right.y );
+            int bottom = Math.min( left.y + left.height, right.y + right.height );
+            
+            if( bottom > top ){
+                int dif = bottom - top;
+                if( dif >= 0.8*left.height && dif >= 0.8*right.height ){
+                    a.x = (left.x+left.width+right.x) / 2;
+                    a.y = top;
+                    
+                    b.x = a.x;
+                    b.y = bottom;
+                    
+                    return;
+                }
+            }
+        }
+        
+        if( leftImportant ){
+            a.x = left.x + left.width;
+            a.y = left.y;
+            
+            b.x = a.x;
+            b.y = a.y + left.height;
+        }
+        else{
+            a.x = right.x;
+            a.y = right.y;
+            
+            b.x = a.x;
+            b.y = a.y + right.height;
         }
     }
     

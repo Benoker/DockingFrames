@@ -52,6 +52,7 @@ import bibliothek.gui.dock.station.support.StationPaintWrapper;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.DockUtilities;
 
 /**
  * A {@link DockStation} which is the whole screen. Every child of this
@@ -387,7 +388,7 @@ public class ScreenDockStation extends AbstractDockStation {
             if( title != null )
                 zero = SwingUtilities.convertPoint( title.getComponent(), zero, dialog );
             
-            dialog.setLocation( dropInfo.titleX - zero.x, dropInfo.titleY - zero.y );
+            dialog.setBoundsInScreen( dropInfo.titleX - zero.x, dropInfo.titleY - zero.y, dialog.getWidth(), dialog.getHeight() );
         }
     }
 
@@ -445,14 +446,10 @@ public class ScreenDockStation extends AbstractDockStation {
      * such that the title can be shown in the new space
      */
     public void addDockable( Dockable dockable, Rectangle bounds, boolean boundsIncludeTitle ){
-        if( dockable == null )
-            throw new IllegalArgumentException( "Dockable must not be null" );
+        DockUtilities.ensureTreeValidity( this, dockable );
         
         if( bounds == null )
             throw new IllegalArgumentException( "Bounds must not be null" );
-        
-        if( dockable.getDockParent() != null && dockable.getDockParent() != this )
-            throw new IllegalArgumentException( "Dockable must not have another parent" );
         
         listeners.fireDockableAdding( dockable );
         
@@ -505,12 +502,12 @@ public class ScreenDockStation extends AbstractDockStation {
         }
         
         
-        dialog.setBounds( bounds );
+        dialog.setBoundsInScreen( bounds );
         dialog.validate();
         
         Point zero = new Point( 0, 0 );
         zero = SwingUtilities.convertPoint( displayer.getComponent(), zero, dialog );
-        dialog.setLocation( dialog.getX() - zero.x, dialog.getY() - zero.y );
+        dialog.setBoundsInScreen( dialog.getX() - zero.x, dialog.getY() - zero.y, dialog.getWidth(), dialog.getHeight() );
         
         if( isShowing() )
             dialog.setVisible( true );

@@ -26,10 +26,7 @@
 package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
 
 import java.awt.*;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
@@ -94,6 +91,9 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 	
 	private MatteBorder contentBorder = new MatteBorder(2, 2, 2, 2, Color.BLACK);
 	
+	/** number of pixels at the left side that are empty and under the selected predecessor of this tab */
+	private final int TAB_OVERLAP = 24;
+	
 	public ShapedGradientPainter( RexTabbedComponent component, Dockable dockable, int index ){
 		setLayout( null );
 		setOpaque( false );
@@ -105,7 +105,7 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
         
         if( buttons != null )
             add( buttons );
-		
+        
 		addHierarchyListener( new WindowActiveObserver() );
 	}
 	
@@ -179,7 +179,7 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 
 	public int getOverlap() {
 	    if( isTabBeforeSelected() )
-	        return 10;
+	        return 10 + TAB_OVERLAP;
 	    else
 	        return 0;
 	}
@@ -198,6 +198,8 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 			width += dockable.getTitleIcon().getIconWidth() + 5;
 		if (isSelected)
 			width += 35;
+		if( isTabBeforeSelected() )
+		    width += TAB_OVERLAP;
 		
 		if( buttons != null ){
 			Dimension tabPreferred = buttons.getPreferredSize();
@@ -219,6 +221,9 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 			
 			if( isSelected )
 				x += 5;
+			
+			if( isTabBeforeSelected() )
+			    x += TAB_OVERLAP;
 			
 			Dimension preferred = buttons.getPreferredSize();
 			int width = Math.min( preferred.width, getWidth()-x );
@@ -277,41 +282,8 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 			g.setColor(lineColor);
 			//	Polygon outer = extendPolygon(xpoints, ypoints, 5);
 			//		Polygon inner = new Polygon(xpoints, ypoints, xpoints.length);
-			final int[] TOP_LEFT_CORNER = new int[]{0, 6, 1, 5, 1, 4, 4, 1, 5, 1, 6, 0};
-			int tabHeight = 24;
-			int d = tabHeight - 12;
-			int[] curve = new int[]{0, 0, 0, 1, 2, 1, 3, 2, 5, 2, 6, 3, 7, 3, 9, 5, 10, 5,
-					11, 6, 11 + d, 6 + d,
-					12 + d, 7 + d, 13 + d, 7 + d, 15 + d, 9 + d, 16 + d, 9 + d, 17 + d, 10 + d, 19 + d, 10 + d,
-					20 + d,
-					11 + d, 22 + d, 11 + d, 23 + d, 12 + d};
-			int rightEdge = Math.min(x + w - 20, comp.getWidth()); // can be replaced by: x + w - 20
-			int curveWidth = 26 + d;
-			int curveIndent = curveWidth / 3;
-			int[] left = TOP_LEFT_CORNER;
-			int[] right = curve;
-			int[] shape = new int[left.length + right.length + 8];
-			int index = 0;
-			int height = 23;
-			shape[index++] = x; // first point repeated here because below we reuse shape to draw outline
-			shape[index++] = y + height + 1;
-			shape[index++] = x;
-			shape[index++] = y + height + 1;
-			for (int i = 0; i < left.length / 2; i++) {
-				shape[index++] = x + left[2 * i];
-				shape[index++] = y + left[2 * i + 1];
-			}
-			for (int i = 0; i < right.length / 2; i++) {
-				shape[index++] = rightEdge - curveIndent + right[2 * i];
-				shape[index++] = y + right[2 * i + 1];
-			}
-			shape[index++] = rightEdge + curveWidth - curveIndent;
-			shape[index++] = y + height + 1;
-			shape[index++] = rightEdge + curveWidth - curveIndent;
-			shape[index++] = y + height + 1;
-			stretch( 0, 4, shape, h / 23f );
-			stretch( 4 + left.length, right.length+4, shape, h / 23f );
-			Polygon inner = makePolygon(shape);
+			
+			Polygon inner = innerPolygon( x, y, w, h );
 			Polygon outer = copyPolygon(inner);
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			// draw outline from 0/0 or -1/0 resp.
@@ -332,14 +304,19 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 
 		// draw icon
 		int iconOffset = 0;
+		
+		if( isTabBeforeSelected() )
+            iconOffset += TAB_OVERLAP;
+		
 		if (isSelected || paintIconWhenInactive) {
 			Icon i = dockable.getTitleIcon();
 			if (i != null) {
-			    int offset = 5;
+			    iconOffset += 5;
+			    
 			    int iconY = (h - i.getIconHeight())/2;
 			    
-				i.paintIcon(comp, g, offset, iconY);
-				iconOffset = i.getIconWidth() + offset;
+				i.paintIcon(comp, g, iconOffset, iconY);
+				iconOffset += i.getIconWidth();
 			}
 		}
 
@@ -352,6 +329,53 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 		// draw text
 		g.setColor( colorText );
 		g.drawString( dockable.getTitleText(), x + 5 + iconOffset, h / 2 + g.getFontMetrics().getHeight() / 2 - 2);
+	}
+	
+	@Override
+	public boolean contains( int x, int y ) {
+	    if( !super.contains( x, y ) )
+	        return false;
+	    
+	    Polygon inner = innerPolygon( 0, 0, getWidth(), getHeight() );
+	    return inner.contains( x, y );
+	}
+	
+	private Polygon innerPolygon( int x, int y, int w, int h ){
+	    final int[] TOP_LEFT_CORNER = new int[]{0, 6, 1, 5, 1, 4, 4, 1, 5, 1, 6, 0};
+        int tabHeight = 24;
+        int d = tabHeight - 12;
+        int[] curve = new int[]{0, 0, 0, 1, 2, 1, 3, 2, 5, 2, 6, 3, 7, 3, 9, 5, 10, 5,
+                11, 6, 11 + d, 6 + d,
+                12 + d, 7 + d, 13 + d, 7 + d, 15 + d, 9 + d, 16 + d, 9 + d, 17 + d, 10 + d, 19 + d, 10 + d,
+                20 + d,
+                11 + d, 22 + d, 11 + d, 23 + d, 12 + d};
+        int rightEdge = Math.min(x + w - 20, comp.getWidth()); // can be replaced by: x + w - 20
+        int curveWidth = 26 + d;
+        int curveIndent = curveWidth / 3;
+        int[] left = TOP_LEFT_CORNER;
+        int[] right = curve;
+        int[] shape = new int[left.length + right.length + 8];
+        int index = 0;
+        int height = 23;
+        shape[index++] = x; // first point repeated here because below we reuse shape to draw outline
+        shape[index++] = y + height + 1;
+        shape[index++] = x;
+        shape[index++] = y + height + 1;
+        for (int i = 0; i < left.length / 2; i++) {
+            shape[index++] = x + left[2 * i];
+            shape[index++] = y + left[2 * i + 1];
+        }
+        for (int i = 0; i < right.length / 2; i++) {
+            shape[index++] = rightEdge - curveIndent + right[2 * i];
+            shape[index++] = y + right[2 * i + 1];
+        }
+        shape[index++] = rightEdge + curveWidth - curveIndent;
+        shape[index++] = y + height + 1;
+        shape[index++] = rightEdge + curveWidth - curveIndent;
+        shape[index++] = y + height + 1;
+        stretch( 0, 4, shape, h / 23f );
+        stretch( 4 + left.length, right.length+4, shape, h / 23f );
+        return makePolygon(shape);
 	}
 
 	private void stretch( final int offset, final int length, int[] shape, float ratio ){

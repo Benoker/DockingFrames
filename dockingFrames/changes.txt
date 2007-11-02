@@ -1,7 +1,7 @@
 [Beta v1.0.0]
 -
 
-[Beta v1.0.01]
+[Beta v1.0.1]
 - Bugfix: popup menu of a DockTitle did not open on right click under Windows XP
 - Bugfix: Connection between DockableDisplayer and Dockable was not broken automatically (memory leak)
 - Bugfix: Connection between MultiDockActionSource and its children was not broken automatically (memory leak)
@@ -31,3 +31,6 @@
 - Layout, API: MenuableButtonPanel, allows to use menus when there is no space for buttons. Automatically used by AbstractDockTitle
 - API: DockableDisplayer is now an interface
 - API, Bugfix: replaced every occurence of "binded" by "bound", thanks Uwe for correcting me
+- API: When adding a Dockable to a DockStation, the station will ensure that no cycles are built into the dock-tree, and that the Dockable is properly removed from its former parent
+- Layout: StackDockStation tries to paint the insertion-line now between its tabs
+- API: ScreenDockDialog should always stay in the screen in which it has been created, this feature is not tested

@@ -32,7 +32,7 @@ import java.util.List;
 
 import sun.security.util.SecurityConstants;
 import bibliothek.gui.DockController;
-import bibliothek.gui.dock.control.DefaultMouseFocusObserver;
+import bibliothek.gui.dock.control.FocusController;
 import bibliothek.gui.dock.control.MouseFocusObserver;
 
 /**

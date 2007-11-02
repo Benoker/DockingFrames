@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -224,6 +224,42 @@ public class DockUtilities {
             return component;
         else
             return null;
+    }
+    
+    /**
+     * Ensures that <code>newChild</code> has no parent, and that there will
+     * be no cycle when <code>newChild</code> is added to <code>newParent</code>
+     * @param newParent the element that becomes parent of <code>newChild</code>
+     * @param newChild the element that becomes child of <code>newParent</code>
+     * @throws NullPointerException if either <code>newParent</code> or <code>newChild</code> is <code>null</code>
+     * @throws IllegalArgumentException if there would be a cycle introduced
+     * @throws IllegalStateException if the old parent of <code>newChild</code> does not
+     * allow to remove its child
+     */
+    public static void ensureTreeValidity( DockStation newParent, Dockable newChild ){
+        if( newParent == null )
+            throw new NullPointerException( "parent must not be null" );
+        
+        if( newChild == null )
+            throw new NullPointerException( "child must not be null" );
+        
+        DockStation oldParent = newChild.getDockParent();
+            
+        // check no self reference
+        if( newChild == newParent )
+            throw new IllegalArgumentException( "child and parent are the same" );
+        
+        // check no cycles
+        if( isAnchestor( newChild, newParent ))
+            throw new IllegalArgumentException( "can't create a cycle" );
+        
+        // remove old parent
+        if( oldParent != null ){
+            if( oldParent != newParent && !oldParent.canDrag( newChild ))
+                throw new IllegalStateException( "old parent of child does not want do release the child" );
+            
+            oldParent.drag( newChild );
+        }
     }
     
     /**
