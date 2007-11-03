@@ -43,7 +43,6 @@ import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
-import bibliothek.gui.dock.title.DockTitle.Orientation;
 
 /**
  * An abstract implementation of {@link DockTitle}. This title can have
