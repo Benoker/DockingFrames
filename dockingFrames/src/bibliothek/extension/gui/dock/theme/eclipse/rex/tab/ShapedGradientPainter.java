@@ -348,8 +348,12 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 	    if( !super.contains( x, y ) )
 	        return false;
 	    
-	    Polygon inner = innerPolygon( 0, 0, getWidth(), getHeight() );
-	    return inner.contains( x, y );
+	    if( isSelected ){
+	        Polygon inner = innerPolygon( 0, 0, getWidth(), getHeight() );
+	        return inner.contains( x, y );
+	    }
+	    else
+	        return true;
 	}
 	
 	private Polygon innerPolygon( int x, int y, int w, int h ){
