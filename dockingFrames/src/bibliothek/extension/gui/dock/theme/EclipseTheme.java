@@ -57,7 +57,7 @@ import bibliothek.gui.dock.util.PropertyKey;
 public class EclipseTheme extends BasicTheme {
 	/** Tells whether icons on tabs that are not selected should be painted or not. */
 	public static final PropertyKey<Boolean> PAINT_ICONS_WHEN_DESELECTED = 
-		new PropertyKey<Boolean>( "EclipseTheme paint icons when deselected" );
+		new PropertyKey<Boolean>( "EclipseTheme paint icons when deselected", false );
 	
 	/**
 	 *  Tells in which way the tabs should be painted.
@@ -65,7 +65,7 @@ public class EclipseTheme extends BasicTheme {
 	 *  @see RectGradientPainter 
 	 */
 	public static final PropertyKey<TabPainter> TAB_PAINTER =
-		new PropertyKey<TabPainter>( "EclipseTheme tab painter" );
+		new PropertyKey<TabPainter>( "EclipseTheme tab painter", ShapedGradientPainter.FACTORY );
 	
 	/**
 	 * Provides additional dockable-wise information used to layout components
@@ -74,7 +74,9 @@ public class EclipseTheme extends BasicTheme {
 	 * @see DefaultEclipseThemeConnector
 	 */
 	public static final PropertyKey<EclipseThemeConnector> THEME_CONNECTOR =
-		new PropertyKey<EclipseThemeConnector>( "EclipseTheme theme connector" );
+		new PropertyKey<EclipseThemeConnector>( 
+		        "EclipseTheme theme connector",
+		        new DefaultEclipseThemeConnector() );
 	
 	/**
 	 * The id of the {@link DockTitleVersion} that is intended to create
@@ -84,8 +86,6 @@ public class EclipseTheme extends BasicTheme {
 	 * <code>controller.getProperties().set( EclipseTheme.TAB_PAINTER, DockTitleTab.FACTORY );</code>
 	 */
 	public static final String TAB_DOCK_TITLE = "eclipse.tab";
-	
-	private static final EclipseThemeConnector DEFAULT_ECLIPSE_THEME_CONNECTOR = new DefaultEclipseThemeConnector();
 
 	/** An acceptance that permits combinations of dockables and stations that do not look good */
 	private DockAcceptance acceptance = new NoStackAcceptance();
@@ -163,7 +163,7 @@ public class EclipseTheme extends BasicTheme {
 			connector = controller.getProperties().get( THEME_CONNECTOR );
 		
 		if( connector == null )
-			connector = DEFAULT_ECLIPSE_THEME_CONNECTOR;
+		    connector = THEME_CONNECTOR.getDefault();
 		
 		return connector;
 	}

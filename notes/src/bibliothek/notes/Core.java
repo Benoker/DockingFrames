@@ -92,7 +92,7 @@ public class Core implements ComponentCollector{
 		model = new NoteModel();
 		frame = new MainFrame();
 		
-		DockController controller;
+		final DockController controller;
 		if( secure )
 			controller = new SecureDockController();
 		else
@@ -102,7 +102,6 @@ public class Core implements ComponentCollector{
 		controller.setSingleParentRemove( true );
 		controller.getProperties().set( EclipseTheme.PAINT_ICONS_WHEN_DESELECTED, true );
 		controller.getProperties().set( EclipseTheme.TAB_PAINTER, RectGradientPainter.FACTORY );
-		//controller.getProperties().set( EclipseTheme.TAB_PAINTER, DockTitleTab.FACTORY );
 		
 		frontend = new DockFrontend( controller, frame );
 		views = new ViewManager( frontend, frame, secure, model );

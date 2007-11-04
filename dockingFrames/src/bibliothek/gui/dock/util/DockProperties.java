@@ -54,17 +54,25 @@ public class DockProperties {
 	}
 	
 	/**
-	 * Gets the value accessed by <code>key</code>.
+	 * Gets the value accessed by <code>key</code>. If the value in the
+	 * properties is <code>null</code>, then the {@link PropertyKey#getDefault() default}
+	 * value is returned.
 	 * @param <A> the type of the value
 	 * @param key the key to search
 	 * @return the value or <code>null</code>
 	 */
 	public <A> A get( PropertyKey<A> key ){
 		Entry<A> entry = getEntry( key, false );
+		A result;
 		if( entry == null )
-			return null;
+			result = null;
 		else
-			return entry.getValue();
+			result = entry.getValue();
+		
+		if( result == null )
+		    result = key.getDefault();
+		
+		return result;
 	}
 	
 	/**

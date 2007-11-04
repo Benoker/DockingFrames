@@ -39,6 +39,7 @@ import bibliothek.gui.dock.station.SplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
 import bibliothek.gui.dock.station.split.SplitDockProperty;
 import bibliothek.gui.dock.themes.ThemeFactory;
+import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.help.control.LinkManager;
 import bibliothek.help.control.URManager;
 import bibliothek.help.control.actions.RedoDockAction;
@@ -114,6 +115,8 @@ public class Core implements ComponentCollector{
 	        		return actions;
 	        	}
 	        });
+	        frontend.getController().getProperties().set( PropertyKey.DOCK_STATION_ICON, ResourceSet.ICONS.get( "application" ) );
+	        frontend.getController().getProperties().set( PropertyKey.DOCK_STATION_TITLE, "Help" );
 	        
 	        SelectingView viewPackage = new SelectingView( links, "Packages", ResourceSet.ICONS.get( "package" ), "package-list" );
 	        SelectingView viewClasses = new SelectingView( links, "Classes", ResourceSet.ICONS.get( "class" ), "class-list" );

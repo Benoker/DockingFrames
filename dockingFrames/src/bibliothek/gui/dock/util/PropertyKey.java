@@ -56,9 +56,10 @@ public class PropertyKey<A> {
 	 */
 	public static final PropertyKey<String> DOCK_STATION_TITLE = new PropertyKey<String>( "java.lang.String_dock_station_title" );
 	
-	
 	/** a unique identifier */
 	private String id;
+	
+	private A value;
 
 	/**
 	 * Creates a new key.
@@ -66,10 +67,31 @@ public class PropertyKey<A> {
 	 * type of property, represented by this key.
 	 */
 	public PropertyKey( String id ){
+	    this( id, null );
+	}
+
+    /**
+     * Creates a new key.
+     * @param id a unique identifier, should contain the name of the
+     * type of property, represented by this key.
+     * @param value the value that will be used when no value is set
+     * in the properties
+     */
+	public PropertyKey( String id, A value ){
 		if( id == null )
 			throw new IllegalArgumentException( "id must not be null" );
 		
+		this.value = value;
 		this.id = id;
+	}
+	
+	/**
+	 * Gets a default-value that should be used when no value is set
+	 * in the {@link DockProperties}.
+	 * @return the default-value
+	 */
+	public A getDefault(){
+	    return value;
 	}
 	
 	@Override
