@@ -8,10 +8,12 @@ import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.RexSystemColor;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -48,6 +50,8 @@ public class DockTitleTab implements TabComponent{
      */
     public static final TabPainter createFactory( final TabPainter fallback ){
         return new TabPainter(){
+            private final Border border = BorderFactory.createLineBorder( RexSystemColor.getBorderColor() );
+            
             public TabComponent createTabComponent( DockController controller,
                     RexTabbedComponent component, Dockable dockable, int index ) {
                 
@@ -63,6 +67,14 @@ public class DockTitleTab implements TabComponent{
             public void paintTabStrip( RexTabbedComponent tabbedComponent,
                     Component tabStrip, Graphics g ) {
                 fallback.paintTabStrip( tabbedComponent, tabStrip, g );
+            }
+            
+            public Border getFullBorder( DockController controller, Dockable dockable ) {
+                return border;
+            }
+            
+            public Border getFullBorder( DockController controller, DockStation station, RexTabbedComponent component ) {
+                return border;
             }
         };
     }

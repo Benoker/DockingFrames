@@ -30,17 +30,22 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 
 import javax.swing.JPanel;
-import javax.swing.border.Border;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabPainter;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyValue;
 
 /**
+ * A {@link DockableDisplayer} which is not able to show the {@link DockTitle} of
+ * its {@link Dockable}. This displayer exchanges automatically its border
+ * using the global {@link TabPainter} delivered through the {@link DockProperties}
+ * and the key {@link EclipseTheme#TAB_PAINTER}.
  * @author Janni Kovacs
  */
 public class NoTitleDisplayer extends JPanel implements DockableDisplayer {
@@ -50,7 +55,7 @@ public class NoTitleDisplayer extends JPanel implements DockableDisplayer {
 	private DockTitle title;
 	private Location location;
 	
-	private PropertyValue<Border> border;
+	private PropertyValue<TabPainter> painter;
 	
 	public NoTitleDisplayer( DockStation station, Dockable dockable, boolean bordered ){
 		setLayout( new GridLayout( 1, 1, 0, 0 ) );
@@ -58,15 +63,32 @@ public class NoTitleDisplayer extends JPanel implements DockableDisplayer {
 		
 		setStation( station );
 		setDockable( dockable );
+		setBorder( null );
 		
 		if( bordered ){
-    		border = new PropertyValue<Border>( EclipseTheme.FULL_BORDER ){
+    		painter = new PropertyValue<TabPainter>( EclipseTheme.TAB_PAINTER ){
     	        @Override
-    	        protected void valueChanged( Border oldValue, Border newValue ) {
-    	            setBorder( newValue );
+    	        protected void valueChanged( TabPainter oldValue, TabPainter newValue ) {
+    	            updateFullBorder();
     	        }
     	    };
+    	    updateFullBorder();
 		}
+	}
+	
+	/**
+	 * Exchanges the border of this component, using the current
+	 * {@link EclipseTheme#TAB_PAINTER} to determine the new border.
+	 */
+	protected void updateFullBorder(){
+	    if( painter != null ){
+    	    TabPainter painter = this.painter.getValue();
+    	    
+            if( controller == null || painter == null || dockable == null )
+                setBorder( null );
+            else
+                setBorder( painter.getFullBorder( controller, dockable ) );
+	    }
 	}
 
     @Override
@@ -101,8 +123,8 @@ public class NoTitleDisplayer extends JPanel implements DockableDisplayer {
 
 	public void setController( DockController controller ){
 		this.controller = controller;
-		if( border != null )
-		    border.setProperties( controller == null ? null : controller.getProperties() );
+		if( painter != null )
+		    painter.setProperties( controller == null ? null : controller.getProperties() );
 	}
 
 	public void setDockable( Dockable dockable ){
@@ -110,6 +132,7 @@ public class NoTitleDisplayer extends JPanel implements DockableDisplayer {
 		removeAll();
 		if( dockable != null )
 			add( dockable.getComponent() );
+		updateFullBorder();
 	}
 
 	public void setStation( DockStation station ){

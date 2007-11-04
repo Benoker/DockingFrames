@@ -38,9 +38,11 @@ import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseDockActionSource;
+import bibliothek.extension.gui.dock.theme.eclipse.RectEclipseBorder;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexSystemColor;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
@@ -51,6 +53,8 @@ import bibliothek.gui.dock.title.DockTitle;
  */
 public class RectGradientPainter extends JComponent implements TabComponent {
 	public static final TabPainter FACTORY = new TabPainter(){
+	    private final Border border = new RectEclipseBorder( true );
+	    
 	    public TabComponent createTabComponent( DockController controller,
 	            RexTabbedComponent component, Dockable dockable, int index ) {
 	        
@@ -74,6 +78,14 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 					g.drawLine(from, y, end, y);
 			}
 		}
+		
+        public Border getFullBorder( DockController controller, Dockable dockable ) {
+            return border;
+        }
+        
+        public Border getFullBorder( DockController controller, DockStation station, RexTabbedComponent component ) {
+            return border;
+        }
 	};
 	
 	private boolean paintIconWhenInactive = false;

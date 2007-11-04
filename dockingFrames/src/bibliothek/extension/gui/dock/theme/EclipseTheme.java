@@ -25,15 +25,12 @@
  */
 package bibliothek.extension.gui.dock.theme;
 
-import javax.swing.border.Border;
-
 import bibliothek.extension.gui.dock.theme.eclipse.*;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.*;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockAcceptance;
-import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.ScreenDockStation;
 import bibliothek.gui.dock.station.SplitDockStation;
@@ -69,12 +66,6 @@ public class EclipseTheme extends BasicTheme {
 	 */
 	public static final PropertyKey<TabPainter> TAB_PAINTER =
 		new PropertyKey<TabPainter>( "EclipseTheme tab painter" );
-	
-	/**
-	 * The border that wraps up every {@link DockableDisplayer}
-	 */
-	public static final PropertyKey<Border> FULL_BORDER =
-	    new PropertyKey<Border>( "EclipseTheme full border" );
 	
 	/**
 	 * Provides additional dockable-wise information used to layout components
@@ -137,10 +128,6 @@ public class EclipseTheme extends BasicTheme {
 	public void install( DockController controller ){
 	    DockTitleManager titleManager = controller.getDockTitleManager();
 	    titleManager.registerTheme( EclipseTheme.TAB_DOCK_TITLE, BasicTabDockTitle.createFactory( this ) );
-	    
-	    DockProperties properties = controller.getProperties();
-	    if( properties.get( FULL_BORDER ) == null )
-	        properties.set( FULL_BORDER, new EclipseBorder( true ) );
 	    
 		super.install( controller );
 		

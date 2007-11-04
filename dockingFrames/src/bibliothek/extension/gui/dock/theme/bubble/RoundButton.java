@@ -47,8 +47,7 @@ public class RoundButton extends JComponent{
 	
     private BasicButtonModel model;
 	
-	public RoundButton(BubbleTheme theme, BasicTrigger trigger)
-	{
+	public RoundButton(BubbleTheme theme, BasicTrigger trigger){
 		animation=new BubbleColorAnimation(theme);
         model = new BasicButtonModel( this, trigger ){
             @Override
@@ -156,12 +155,6 @@ public class RoundButton extends JComponent{
     	if (enabled)
     		postfix+=".enabled";
     	
-    	animation.putColor("button", "button"+ postfix);
-    	
-    	
-    	
-    	
+    	animation.putColor("button", "button"+ postfix);    	
     }
-	
-	
 }

@@ -35,8 +35,8 @@ import bibliothek.gui.dock.title.DockTitle;
  * A DockAction is an object that represents an action which can be triggered by the user. Every
  * DockAction has a graphical representation which is shown at many places, for example
  * on a {@link DockTitle} or in a popupmenu.<br>
- * A DockAction may choose their own graphical representation, or use the 
- * {@link ActionViewConverter} to use the default-representations.<br>
+ * A DockAction may choose its own graphical representation, or use the 
+ * {@link ActionViewConverter} to get the default-representations.<br>
  * Every DockAction is associated with some Dockables. The {@link #bind(Dockable)}-method will be invoked
  * before a representation is shown, and the {@link #unbind(Dockable)} when a representation is no
  * longer shown.

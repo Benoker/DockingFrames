@@ -28,6 +28,8 @@ package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
 import java.awt.Component;
 import java.awt.Graphics;
 
+import javax.swing.border.Border;
+
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -57,4 +59,23 @@ public interface TabPainter {
 	 * @return the new tab, never <code>null</code>
 	 */
 	public TabComponent createTabComponent( DockController controller, RexTabbedComponent component, Dockable dockable, int index );
+	
+	/**
+	 * Gets the border which will be around <code>component</code>, which is
+	 * a child of <code>station</code>.
+	 * @param controller the current controller, never <code>null</code>
+	 * @param station the parent of <code>component</code>
+	 * @param component the component whose border is determined by this method
+	 * @return the new border or <code>null</code>
+	 */
+	public Border getFullBorder( DockController controller, DockStation station, RexTabbedComponent component );
+	
+	/**
+	 * Gets the border which will be around <code>dockable</code>.
+	 * @param controller the current controller, never <code>null</code>
+	 * @param dockable the element whose border is set, this element stands
+	 * alone (means: is not on a {@link RexTabbedComponent}).
+	 * @return the border of <code>dockable</code> or <code>null</code>
+	 */
+	public Border getFullBorder( DockController controller, Dockable dockable );
 }

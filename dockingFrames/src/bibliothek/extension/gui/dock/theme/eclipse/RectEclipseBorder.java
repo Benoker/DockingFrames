@@ -1,0 +1,66 @@
+package bibliothek.extension.gui.dock.theme.eclipse;
+
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Insets;
+
+import javax.swing.border.Border;
+
+import bibliothek.extension.gui.dock.theme.eclipse.rex.RexSystemColor;
+
+/**
+ * This border paints a thin line. At the bottom, two hard edges are painted,
+ * at the top the line makes a little curve.
+ * @author Benjamin Sigg
+ *
+ */
+public class RectEclipseBorder implements Border {
+    /** whether to fill the top edges */
+    private boolean fillEdges;
+    
+    /**
+     * Creates a new border.
+     * @param fillEdges whether the top edges should be filled with the
+     * background color or let empty.
+     */
+    public RectEclipseBorder( boolean fillEdges ){
+        this.fillEdges = fillEdges;
+    }
+    
+    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+        if( fillEdges ){
+            g.setColor( c.getBackground() );
+    
+            // top left corner
+            g.drawLine( 0, 0, 1, 0 );
+            g.drawLine( 0, 1, 0, 1 );
+            
+            g.drawLine( width-2, 0, width-1, 0 );
+            g.drawLine( width-1, 1, width-1, 1 );
+        }
+        
+        g.setColor( RexSystemColor.getBorderColor() );
+        // top left corner
+        g.drawLine( 1, 1, 1, 1 );
+        // top right corner
+        g.drawLine( width-2, 1, width-2, 1 );
+        
+        // rest
+        // top
+        g.drawLine( 2, 0, width-3, 0 );
+        // left
+        g.drawLine( 0, 2, 0, height - 1);
+        // right
+        g.drawLine( width-1, 2, width-1, height - 1);
+        // bottom
+        g.drawLine( 0, height-1, width-1, height-1 );
+    }
+
+    public Insets getBorderInsets(Component c) {
+        return new Insets(1, 1, 1, 1);
+    }
+
+    public boolean isBorderOpaque() {
+        return false;
+    }
+}

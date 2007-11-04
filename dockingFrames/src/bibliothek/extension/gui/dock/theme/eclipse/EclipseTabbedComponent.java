@@ -33,11 +33,11 @@ import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.ShapedGradientPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabPainter;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabStripLayoutManager;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -54,10 +54,10 @@ public class EclipseTabbedComponent extends RexTabbedComponent {
 	private EclipseStackDockComponent eclipseStackDockComponent;
 	private ButtonPanel itemPanel;
 	
-	private PropertyValue<Border> border = new PropertyValue<Border>( EclipseTheme.FULL_BORDER ){
+	private PropertyValue<TabPainter> painter = new PropertyValue<TabPainter>( EclipseTheme.TAB_PAINTER ){
 	    @Override
-	    protected void valueChanged( Border oldValue, Border newValue ) {
-	        setBorder( newValue );
+	    protected void valueChanged( TabPainter oldValue, TabPainter newValue ) {
+	         updateFullBorder();
 	    }
 	};
 	
@@ -69,9 +69,9 @@ public class EclipseTabbedComponent extends RexTabbedComponent {
 		itemPanel.setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 4));
 		itemPanel.setOpaque( false );
 		
-		setBorder( null );
 		setTabStrip( new EclipseTabStrip() );
 		setTabPainter( ShapedGradientPainter.FACTORY );
+		updateFullBorder();
 	}
 
 	public JComponent getTabStrip() {
@@ -85,8 +85,25 @@ public class EclipseTabbedComponent extends RexTabbedComponent {
 	@Override
 	public void setController( DockController controller ) {
 	    super.setController( controller );
-	    border.setProperties( controller == null ? null : controller.getProperties() );
+	    painter.setProperties( controller == null ? null : controller.getProperties() );
 	}
+	
+	   /**
+     * Exchanges the border of this component, using the current
+     * {@link EclipseTheme#TAB_PAINTER} to determine the new border.
+     */
+    protected void updateFullBorder(){
+        if( painter != null ){
+            TabPainter painter = this.painter.getValue();
+            DockController controller = getController();
+            DockStation station = getStation();
+            
+            if( controller == null || station == null || painter == null )
+                setBorder( null );
+            else
+                setBorder( painter.getFullBorder( controller, station, this ) );
+        }
+    }
 	
 	@Override
 	protected void popup( final Dockable tab, MouseEvent e ){
