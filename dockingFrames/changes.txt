@@ -40,4 +40,5 @@
 - Layout: double click on shaped- or rect-tabs in EclipseTheme has now the same effects a double click on a title.
 - Bugfix: DockHierarchyEvents were not properly dispatched by the SplitDockStation
 - Bugfix: ShapedGradientPainter did not recognize MouseEvents properly
-- Layout, API: the TabPainter of the EclipseTheme now determines the border of some components  
+- Layout, API: the TabPainter of the EclipseTheme now determines the border of some components
+- Bugfix: Some DockHierarchyEvents were lost  

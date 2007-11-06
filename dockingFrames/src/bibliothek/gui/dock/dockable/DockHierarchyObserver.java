@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 
@@ -19,7 +19,7 @@ import bibliothek.gui.dock.event.DockHierarchyListener;
  */
 public class DockHierarchyObserver implements DockHierarchyListener{
 	/** the currently observed parent */
-	private Dockable parent;
+	private DockElement parent;
     /** a list of listeners which are informed when the hierarchy changes */
     private List<DockHierarchyListener> hierarchyListeners = new ArrayList<DockHierarchyListener>();
     
@@ -96,21 +96,17 @@ public class DockHierarchyObserver implements DockHierarchyListener{
 	 * each parent.
 	 */
 	public void update(){
-		Dockable old = parent;
-		if( parent != null )
-			parent.removeDockHierarchyListener( this );
-		
-		DockStation station = owner.getDockParent();
-		
-		if( station != null && station.asDockable() != null ){
-			parent = station.asDockable();
-			parent.addDockHierarchyListener( this );
-		}
-		else
-			parent = null;
-		
-		if( old != parent ){
-			fireHierarchyChanged();
-		}
+	    DockElement old = parent;
+	    parent = owner.getDockParent();
+	    
+	    if( old != parent ){
+	        if( old != null && old.asDockable() != null )
+	            old.asDockable().removeDockHierarchyListener( this );
+	        
+	        if( parent != null && parent.asDockable() != null )
+	            parent.asDockable().addDockHierarchyListener( this );
+
+	        fireHierarchyChanged();
+	    }
 	}
 }
