@@ -26,7 +26,6 @@
 
 package bibliothek.gui.dock.action.actions;
 
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -34,7 +33,6 @@ import java.util.Set;
 import javax.swing.Icon;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.ActionType;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.SelectableDockAction;
@@ -47,7 +45,7 @@ import bibliothek.gui.dock.event.SelectableDockActionListener;
  * has always the same value for every {@link Dockable} using this action.
  * @author Benjamin Sigg
  */
-public class SimpleSelectableAction extends SimpleDropDownItemAction implements SelectableDockAction{
+public abstract class SimpleSelectableAction extends SimpleDropDownItemAction implements SelectableDockAction{
 	/** observers of this action */
 	private List<SelectableDockActionListener> listeners = new ArrayList<SelectableDockActionListener>();
 	/** whether this action is selected or not */
@@ -72,6 +70,14 @@ public class SimpleSelectableAction extends SimpleDropDownItemAction implements 
 			super( ActionType.CHECK );
 			setDropDownSelectable( false );
 		}
+		
+		public boolean trigger( Dockable dockable ) {
+		    if( !isEnabled( dockable ))
+                return false;
+            
+            setSelected( dockable, !isSelected( dockable ) );
+            return true;
+		}
 	};
 
 	/**
@@ -86,6 +92,14 @@ public class SimpleSelectableAction extends SimpleDropDownItemAction implements 
 		public Radio(){
 			super( ActionType.RADIO );
 			setDropDownTriggerableSelected( false );
+		}
+		
+		public boolean trigger( Dockable dockable ) {
+		    if( !isEnabled( dockable ) || isSelected( dockable ))
+                return false;
+            
+            setSelected( dockable, true );
+            return true;
 		}
 	}
 	
@@ -223,21 +237,5 @@ public class SimpleSelectableAction extends SimpleDropDownItemAction implements 
     public void setDisabledSelectedIcon( Icon disabledSelectedIcon ) {
         this.disabledSelectedIcon = disabledSelectedIcon;
         fireActionDisabledIconChanged( getBoundDockables() );
-    }
-    
-    @Override
-    protected boolean acceleratorTriggered( Dockable dockable, DockElement element, KeyEvent event ){
-    	if( type == ActionType.CHECK ){
-    		setSelected( !isSelected() );
-    		return true;
-    	}
-    	if( type == ActionType.RADIO ){
-    		if( !isSelected() ){
-    			setSelected( true );
-    			return true;
-    		}
-    		return false;
-    	}
-    	return false;
     }
 }

@@ -183,6 +183,8 @@ public class DockController {
         DockUI.getDefaultDockUI().fillIcons( icons );
         
         setTheme( new BasicTheme() );
+        
+        new ActionBinder( this );
     }
     
     /**

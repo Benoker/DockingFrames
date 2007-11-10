@@ -58,7 +58,7 @@ public abstract class GroupedButtonDockAction<K> extends GroupedDropDownItemActi
 			}
 		};
 	}
-
+	
 	public <V> V createView( ViewTarget<V> target, ActionViewConverter converter, Dockable dockable ){
 		return converter.createView( ActionType.BUTTON, this, target, dockable );
 	}

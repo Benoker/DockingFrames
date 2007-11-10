@@ -33,9 +33,9 @@ import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.KeyStroke;
 
-import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.KeyboardListener;
@@ -218,17 +218,6 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
 	}
     
     /**
-     * Called when the event that matches {@link #getAccelerator()} has been
-     * fired.
-     * @param dockable the element to which the event belongs
-     * @param element the source of the event
-     * @param event the event itself
-     * @return <code>true</code> if the event has been used up
-     */
-    protected abstract boolean acceleratorTriggered( Dockable dockable, DockElement element, KeyEvent event );
-   
-    
-    /**
      * Listens to all {@link KeyEvent}s concerning one {@link Dockable}.
      * @author Benjamin Sigg
      *
@@ -270,7 +259,7 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
     	}
     	
     	/**
-    	 * Calls {@link AbstractStandardDockAction#acceleratorTriggered(DockElement, KeyEvent)}
+    	 * Calls {@link DockAction#trigger(Dockable)}
     	 * if the event matches the accelerator-{@link KeyStroke}.
     	 * @param element the element on which the event occurred
     	 * @param event the event
@@ -279,8 +268,7 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
     	private boolean forward( DockElement element, KeyEvent event ){
     		if( accelerator != null ){
 				if( accelerator.equals( KeyStroke.getKeyStrokeForEvent( event ) )){
-					acceleratorTriggered( dockable, element, event );
-					return true;
+					return trigger( dockable );
 				}
 			}
 			

@@ -1,3 +1,6 @@
-- [DONE] EclipseTheme: tab selection if tabs overlap
-- EclipseTheme: Border replaceable (perhaps together with the TabPainter?)
-- Double click on DockTitle or Dockable, use global mechanism instead of the SplitDockStation-mechanism
+- [Done] EclipseTheme: tab selection if tabs overlap
+- [Done] EclipseTheme: Border replaceable (perhaps together with the TabPainter?)
+- [Done] Double click on DockTitle or Dockable, use global mechanism instead of the SplitDockStation-mechanism
+- ScreenDockStation: truly support multiple screens. Check location of dialog only after mouse has been released
+- Commons: new layer that simplifies DF. Should not contain more than 5 public interfaces
+- A global way to use the keyboard to give additional commands when moving a Dockable

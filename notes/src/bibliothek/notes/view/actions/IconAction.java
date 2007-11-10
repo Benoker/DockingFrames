@@ -53,5 +53,9 @@ public class IconAction extends SimpleDockAction {
 	
 	public <V> V createView( ViewTarget<V> target, ActionViewConverter converter, Dockable dockable ){
 		return converter.createView( ICON, this, target, dockable );
+	} 
+	
+	public boolean trigger( Dockable dockable ) {
+	    return false;
 	}
 }

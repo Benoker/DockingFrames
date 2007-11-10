@@ -456,6 +456,10 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
         return dockActions.containsKey( dockable );
     }
     
+    public boolean trigger( Dockable dockable ) {
+        return getGroup( dockable ).trigger( dockable );
+    }
+    
     /**
      * A listener to the groups.
      * @author Benjamin Sigg

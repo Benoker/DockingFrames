@@ -94,4 +94,9 @@ public class SeparatorAction implements DockAction {
 	public <V> V createView( ViewTarget<V> target, ActionViewConverter converter, Dockable dockable ){
 		return converter.createView( ActionType.SEPARATOR, this, target, dockable );
 	}
+	
+	public boolean trigger( Dockable dockable ) {
+	    // can't do anything
+	    return false;
+	}
 }
