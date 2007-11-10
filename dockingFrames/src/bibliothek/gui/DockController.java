@@ -34,6 +34,7 @@ import javax.swing.FocusManager;
 import javax.swing.SwingUtilities;
 
 import bibliothek.gui.dock.DockAcceptance;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.IconManager;
 import bibliothek.gui.dock.SingleParentRemover;
 import bibliothek.gui.dock.accept.MultiDockAcceptance;
@@ -71,6 +72,9 @@ public class DockController {
 	/** the controller that manages global double clicks */
 	private DoubleClickController doubleClickController;
 	
+	/** the controller that manages global key-events */
+	private KeyboardController keyboardController;
+	
     /** the Dockable which has currently the focus, can be <code>null</code> */
     private Dockable focusedDockable = null;
     
@@ -82,8 +86,8 @@ public class DockController {
     /** a special controller listening to AWT-events and changing the focused dockable */
     private MouseFocusObserver focusObserver;
     
-    /** an observer of the {@link DockTitle} */
-    private TitleListener titleListener = new TitleListener();
+    /** an observer of the {@link #register} */
+    private RegisterListener registerListener = new RegisterListener();
     /** mapping tells which titles are currently active */
     private Map<DockTitle, Dockable> activeTitles = new HashMap<DockTitle, Dockable>();
     /** a source for {@link DockTitle} */
@@ -115,6 +119,10 @@ public class DockController {
     private DockTheme theme;
     /** a set of properties */
     private DockProperties properties = new DockProperties();
+    
+    /** tells which {@link Component} represents which {@link DockElement} */
+    private Map<Component, DockElement> componentToDockElements = 
+    	new HashMap<Component, DockElement>();
     
     /**
      * Creates a new controller. 
@@ -158,7 +166,7 @@ public class DockController {
     	if( popup != null )
     		register.addDockRegisterListener( popup );
     	
-		register.addDockRegisterListener( titleListener );
+		register.addDockRegisterListener( registerListener );
         relocator = createRelocator();
         
         for( DockControllerListener listener : listeners ){
@@ -170,6 +178,7 @@ public class DockController {
         focusObserver = createMouseFocusObserver();
         actionViewConverter = createActionViewConverter();
         doubleClickController = new DoubleClickController( this );
+        keyboardController = createKeyboardController();
         
         DockUI.getDefaultDockUI().fillIcons( icons );
         
@@ -183,6 +192,7 @@ public class DockController {
     public void kill(){
 	    focusObserver.kill();
 	    register.kill();
+	    keyboardController.kill();
     }
     
     /**
@@ -228,6 +238,14 @@ public class DockController {
     }
     
     /**
+     * Creates a new controller for global KeyEvents.
+     * @return the new controller, not <code>null</code>
+     */
+    protected KeyboardController createKeyboardController(){
+    	return new DefaultkeyBoardController( this );
+    }
+    
+    /**
      * Gets the current focus-controller
      * @return the controller
      */
@@ -259,6 +277,14 @@ public class DockController {
     public DoubleClickController getDoubleClickController() {
         return doubleClickController;
     }
+    
+    /**
+     * Gets the manager that handles all global KeyEvents.
+     * @return the handler
+     */
+    public KeyboardController getKeyboardController(){
+		return keyboardController;
+	}
     
     /**
      * Creates the converter that will transform actions into views.
@@ -466,6 +492,39 @@ public class DockController {
 	}
     
     /**
+     * Tells this controller that <code>component</code> somehow represents
+     * <code>element</code>, and that events on <code>component</code> belong
+     * to <code>element</code>.
+     * @param component the representative
+     * @param element some element or <code>null</code>
+     */
+    public void putRepresentative( Component component, DockElement element ){
+    	if( element == null )
+    		componentToDockElements.remove( component );
+    	else
+    		componentToDockElements.put( component, element );
+    }
+    
+    /**
+     * Searches the element which is parent or equal to <code>representative</code>.
+     * This method also searches all {@link DockTitle}s and all
+     * <code>Components</code> given by {@link #putRepresentative(Component, DockElement)}.
+     * @param representative some component
+     * @return the parent or <code>null</code>
+     */
+    public DockElement searchElement( Component representative ){
+    	while( representative != null ){
+    		DockElement element = componentToDockElements.get( representative );
+    		if( element != null )
+    			return element;
+    		
+    		representative = representative.getParent();
+    	}
+    	
+    	return null;
+    }
+    
+    /**
      * Adds a station to this controller. The controller allows the user to
      * drag and drop children from and to <code>station</code>. If
      * the children of <code>station</code> are stations itself, then
@@ -626,7 +685,7 @@ public class DockController {
      * @return <code>true</code> if the title is bound
      */
     public boolean isBound( DockTitle title ){
-    	return titleListener.isBound( title );
+    	return registerListener.isBound( title );
     }
     
     /**
@@ -838,9 +897,10 @@ public class DockController {
     
 
     /**
-     * Observers this controller and registers listeners to all new titles.
+     * Observers the {@link DockRegister}, adds listeners to new {@link Dockable}s
+     * and {@link DockTitle}s, and collects the components of these elements
      */
-    private class TitleListener extends DockAdapter{
+    private class RegisterListener extends DockAdapter{
     	/** a set of all known titles */
     	private Set<DockTitle> titles = new HashSet<DockTitle>();
 
@@ -856,6 +916,7 @@ public class DockController {
         @Override
         public void titleBound( Dockable dockable, DockTitle title ) {
         	titles.add( title );
+        	putRepresentative( title.getComponent(), dockable );
         	
             title.bind();
             fireTitleBound( title, dockable );
@@ -891,6 +952,7 @@ public class DockController {
         @Override
         public void titleUnbound( Dockable dockable, DockTitle title ) {
             titles.remove( title );
+            putRepresentative( title.getComponent(), null );
             title.unbind();
             fireTitleUnbound( title, dockable );
         }
@@ -902,6 +964,7 @@ public class DockController {
         
         @Override
         public void dockableRegistered( DockController controller, Dockable dockable ) {
+        	putRepresentative( dockable.getComponent(), dockable );
             DockTitle[] titles = dockable.listBoundTitles();
             for( DockTitle title : titles ){
                 if( this.titles.add( title )){
@@ -914,6 +977,7 @@ public class DockController {
         @Override
         public void dockableUnregistered( DockController controller, Dockable dockable ) {
             dockable.removeDockableListener( this );
+            putRepresentative( dockable.getComponent(), null );
         	
             DockTitle[] titles = dockable.listBoundTitles();
             for( DockTitle title : titles ){

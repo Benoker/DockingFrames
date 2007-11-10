@@ -26,6 +26,8 @@
 
 package bibliothek.gui.dock.util;
 
+import bibliothek.gui.DockController;
+
 /**
  * A wrapper for a value which is either read from {@link DockProperties},
  * or can be set by the client directly.
@@ -58,6 +60,19 @@ public abstract class PropertyValue<A> {
 					valueChanged( oldValue, newValue );
 			}
 		};
+	}
+	
+	/**
+	 * Sets the {@link DockProperties} that are read from
+	 * <code>controller</code>.
+	 * @param controller the properties, can be <code>null</code>
+	 * @see #setProperties(DockProperties)
+	 */
+	public void setProperties( DockController controller ){
+		if( controller == null )
+			setProperties( (DockProperties)null );
+		else
+			setProperties( controller.getProperties() );
 	}
 	
 	/**

@@ -28,10 +28,12 @@ package bibliothek.gui.dock.action.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.ActionType;
 import bibliothek.gui.dock.action.ButtonDockAction;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
@@ -95,5 +97,11 @@ public class SimpleButtonAction extends SimpleDropDownItemAction implements Butt
 		
 		for( ActionListener listener : listeners.toArray( new ActionListener[ listeners.size() ]))
 			listener.actionPerformed( event );
+	}
+	
+	@Override
+	protected boolean acceleratorTriggered( Dockable dockable, DockElement element, KeyEvent event ){
+		action( dockable );
+		return true;
 	}
 }

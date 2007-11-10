@@ -2,6 +2,10 @@ package bibliothek.help.control.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+
+import javax.swing.KeyStroke;
 
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.actions.SeparatorAction;
@@ -70,6 +74,8 @@ public class UndoDockAction extends SimpleDropDownAction implements URListener{
 		public SimpleUndo(){
 			addActionListener( this );
 			setText( "Undo" );
+			setTooltipText( "Undo (ctrl+u)" );
+			setAccelerator( KeyStroke.getKeyStroke( KeyEvent.VK_U, InputEvent.CTRL_DOWN_MASK ));
 		}
 		
 		public void actionPerformed( ActionEvent e ){

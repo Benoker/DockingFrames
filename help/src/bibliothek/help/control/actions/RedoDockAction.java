@@ -2,8 +2,11 @@ package bibliothek.help.control.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 
-import bibliothek.gui.dock.action.DockAction;
+import javax.swing.KeyStroke;
+
 import bibliothek.gui.dock.action.actions.SeparatorAction;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.action.actions.SimpleDropDownAction;
@@ -71,6 +74,8 @@ public class RedoDockAction extends SimpleDropDownAction implements URListener{
 		public SimpleRedo(){
 			addActionListener( this );
 			setText( "Redo" );
+			setText( "Redo (ctrl+r)" );
+			setAccelerator( KeyStroke.getKeyStroke( KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK ));
 		}
 		
 		public void actionPerformed( ActionEvent e ){

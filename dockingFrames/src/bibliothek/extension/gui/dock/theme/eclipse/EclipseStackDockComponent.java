@@ -313,14 +313,8 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 					entry.relocator = controller.getRelocator().createRemote(entry.dockable);
 			}
 
-			if( controller == null ){
-				paintIconsWhenDeselected.setProperties( null );
-				tabPainter.setProperties( null );
-			}
-			else{
-				paintIconsWhenDeselected.setProperties( controller.getProperties() );
-				tabPainter.setProperties( controller.getProperties() );
-			}
+			paintIconsWhenDeselected.setProperties( controller );
+			tabPainter.setProperties( controller );
 
 			updateFocus();
 			updateActions();

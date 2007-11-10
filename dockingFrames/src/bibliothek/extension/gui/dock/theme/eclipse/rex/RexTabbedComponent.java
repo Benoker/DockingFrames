@@ -94,6 +94,8 @@ public class RexTabbedComponent extends JComponent {
 	    if( tab.tab != null && !tab.tabBound ){
 	        tab.tab.bind();
 	        tab.tabBound = true;
+	        if( controller != null )
+	        	controller.putRepresentative( tab.tab.getComponent(), tab.dockable );
 	    }
 	}
 	
@@ -101,6 +103,8 @@ public class RexTabbedComponent extends JComponent {
         if( tab.tab != null && tab.tabBound ){
             tab.tab.unbind();
             tab.tabBound = false;
+            if( controller != null )
+            	controller.putRepresentative( tab.tab.getComponent(), null );
         }
 	}
 	
@@ -122,6 +126,12 @@ public class RexTabbedComponent extends JComponent {
 
 	public void setController( DockController controller ) {
 	    if( this.controller != controller ){
+	    	if( this.controller != null ){
+	    		for( TabEntry tab : tabs ){
+	    			this.controller.putRepresentative( tab.tab.getComponent(), null );
+	    		}
+	    	}
+	    	
             this.controller = controller;
             reinitializeTabs();
         }

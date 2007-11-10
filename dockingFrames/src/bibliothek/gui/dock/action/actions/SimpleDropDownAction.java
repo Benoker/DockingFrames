@@ -26,11 +26,13 @@
 
 package bibliothek.gui.dock.action.actions;
 
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.action.dropdown.DefaultDropDownFilter;
 import bibliothek.gui.dock.action.dropdown.DropDownFilterFactory;
@@ -180,5 +182,11 @@ public class SimpleDropDownAction extends SimpleDockAction implements DropDownAc
 		Set<Dockable> dockables = getBoundDockables();
 		for( DropDownActionListener listener : getListeners() )
 			listener.selectionChanged( this, dockables, selection );
+	}
+	
+	@Override
+	protected boolean acceleratorTriggered( Dockable dockable, DockElement element, KeyEvent event ){
+		// can't do anything
+		return false;
 	}
 }

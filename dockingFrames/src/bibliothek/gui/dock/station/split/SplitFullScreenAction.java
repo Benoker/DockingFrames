@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -26,7 +26,10 @@
 
 package bibliothek.gui.dock.station.split;
 
+import java.awt.event.KeyEvent;
+
 import javax.swing.Icon;
+import javax.swing.KeyStroke;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -39,6 +42,7 @@ import bibliothek.gui.dock.action.actions.GroupedButtonDockAction;
 import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.event.SplitDockListener;
 import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.util.PropertyValue;
 
 /**
  * This {@link DockAction} is mainly used by the {@link SplitDockStation}
@@ -49,6 +53,14 @@ public class SplitFullScreenAction extends GroupedButtonDockAction<Boolean> impl
     private SplitDockStation split;
     private DockController controller;
     private Listener listener = new Listener();
+
+    private PropertyValue<KeyStroke> accelerator = new PropertyValue<KeyStroke>( SplitDockStation.MAXIMIZE_ACCELERATOR ){
+    	@Override
+    	protected void valueChanged( KeyStroke oldValue, KeyStroke newValue ){
+    		setAccelerator( Boolean.TRUE, newValue );
+    		setAccelerator( Boolean.FALSE, newValue );
+    	}
+    };
     
     /**
      * Constructs the action and sets the <code>station</code> on
@@ -88,6 +100,7 @@ public class SplitFullScreenAction extends GroupedButtonDockAction<Boolean> impl
             }
             
             this.controller = controller;
+            accelerator.setProperties( controller );
             
             if( controller != null ){
                 IconManager icons = controller.getIcons();

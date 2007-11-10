@@ -26,6 +26,7 @@
 
 package bibliothek.gui.dock.action.actions;
 
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -33,6 +34,7 @@ import java.util.Set;
 import javax.swing.Icon;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.ActionType;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.SelectableDockAction;
@@ -221,5 +223,21 @@ public class SimpleSelectableAction extends SimpleDropDownItemAction implements 
     public void setDisabledSelectedIcon( Icon disabledSelectedIcon ) {
         this.disabledSelectedIcon = disabledSelectedIcon;
         fireActionDisabledIconChanged( getBoundDockables() );
+    }
+    
+    @Override
+    protected boolean acceleratorTriggered( Dockable dockable, DockElement element, KeyEvent event ){
+    	if( type == ActionType.CHECK ){
+    		setSelected( !isSelected() );
+    		return true;
+    	}
+    	if( type == ActionType.RADIO ){
+    		if( !isSelected() ){
+    			setSelected( true );
+    			return true;
+    		}
+    		return false;
+    	}
+    	return false;
     }
 }

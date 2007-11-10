@@ -27,6 +27,8 @@
 package bibliothek.gui.dock.station;
 
 import java.awt.*;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -38,6 +40,7 @@ import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.MouseInputListener;
@@ -48,7 +51,6 @@ import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.DockableProperty;
 import bibliothek.gui.dock.action.*;
-import bibliothek.gui.dock.control.DoubleClickObserver;
 import bibliothek.gui.dock.dockable.DockHierarchyObserver;
 import bibliothek.gui.dock.event.*;
 import bibliothek.gui.dock.station.split.*;
@@ -82,6 +84,14 @@ import bibliothek.gui.dock.util.PropertyValue;
 public class SplitDockStation extends OverpaintablePanel implements Dockable, DockStation {
     /** The ID under which this station tries to register a {@link DockTitleFactory} */
     public static final String TITLE_ID = "split";
+    
+    /**
+     * Describes which {@link KeyEvent} will maximize/normalize the currently
+     * selected {@link Dockable}. 
+     */
+    public static final PropertyKey<KeyStroke> MAXIMIZE_ACCELERATOR =
+    	new PropertyKey<KeyStroke>( "SplitDockStation maximize accelerator", 
+    			KeyStroke.getKeyStroke( KeyEvent.VK_M, InputEvent.CTRL_DOWN_MASK ));
     
     /** The parent of this station */
     private DockStation parent;
@@ -366,7 +376,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     public void setController( DockController controller ) {
         if( this.controller != controller ){
             if( this.controller != null )
-                this.controller.getDoubleClickController().removeObserver( fullScreenListener );
+                this.controller.getDoubleClickController().removeListener( fullScreenListener );
             
             for( DockableDisplayer displayer : dockables ){
                 DockTitle title = displayer.getTitle();
@@ -383,7 +393,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             
             if( controller != null ){
                 title = controller.getDockTitleManager().registerDefault( TITLE_ID, ControllerTitleFactory.INSTANCE );
-                controller.getDoubleClickController().addObserver( fullScreenListener );
+                controller.getDoubleClickController().addListener( fullScreenListener );
             }
             else
                 title = null;
@@ -2094,7 +2104,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      * this station to fullscreen-mode.
      * @author Benjamin Sigg
      */
-    private class FullScreenListener implements DoubleClickObserver{
+    private class FullScreenListener implements DoubleClickListener{
         public DockElement getTreeLocation() {
             return SplitDockStation.this;
         }

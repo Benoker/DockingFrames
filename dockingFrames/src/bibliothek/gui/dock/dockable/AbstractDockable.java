@@ -132,14 +132,8 @@ public abstract class AbstractDockable implements Dockable {
 
     public void setController( DockController controller ) {
         this.controller = controller;
-        if( controller == null ){
-        	titleIcon.setProperties( null );
-        	titleText.setProperties( null );
-        }
-        else{
-        	titleIcon.setProperties( controller.getProperties() );
-        	titleText.setProperties( controller.getProperties() );
-        }
+        titleIcon.setProperties( controller );
+        titleText.setProperties( controller );
         hierarchyObserver.controllerChanged( controller );
     }
 

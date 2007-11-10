@@ -41,4 +41,5 @@
 - Bugfix: DockHierarchyEvents were not properly dispatched by the SplitDockStation
 - Bugfix: ShapedGradientPainter did not recognize MouseEvents properly
 - Layout, API: the TabPainter of the EclipseTheme now determines the border of some components
-- Bugfix: Some DockHierarchyEvents were lost  
+- Bugfix: Some DockHierarchyEvents were lost
+- API: KeyEvents are caught by the KeyBoardController. Some DockActions can now be triggered by a KeyEvent.

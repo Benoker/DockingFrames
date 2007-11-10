@@ -26,7 +26,10 @@
 
 package bibliothek.gui.dock.action.actions;
 
+import java.awt.event.KeyEvent;
+
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.ActionType;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.MenuDockAction;
@@ -80,5 +83,11 @@ public class SimpleMenuAction extends SimpleDockAction implements MenuDockAction
 	
 	public <V> V createView( ViewTarget<V> target, ActionViewConverter converter, Dockable dockable ){
 		return converter.createView( ActionType.MENU, this, target, dockable );
+	}
+	
+	@Override
+	protected boolean acceleratorTriggered( Dockable dockable, DockElement element, KeyEvent event ){
+		// can't do anything
+		return false;
 	}
 }

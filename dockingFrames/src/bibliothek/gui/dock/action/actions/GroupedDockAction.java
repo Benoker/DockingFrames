@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.Icon;
+import javax.swing.KeyStroke;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionType;
@@ -292,6 +293,30 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
         if( action == null )
             throw new IllegalArgumentException( "There is no such group" );
         return action.isEnabled();
+    }
+    
+    /**
+     * Set the type of {@link java.awt.event.KeyEvent} that will trigger
+     * an action.
+     * @param key the group of actions whose trigger might be affected
+     * @param accelerator the new key-trigger or <code>null</code>
+     */
+    public void setAccelerator( K key, KeyStroke accelerator ){
+    	ensureGroup( key ).setAccelerator( accelerator );
+    }
+    
+    /**
+     * Gets the type of {@link java.awt.event.KeyEvent} that will
+     * trigger an action.
+     * @param key the affected group
+     * @return the type of event or <code>null</code>
+     * @throws IllegalArgumentException if <code>key</code> is unknown
+     */
+    public KeyStroke getAccelerator( K key ){
+    	SimpleDockAction action = groups.get( key );
+    	if( action == null )
+    		throw new IllegalArgumentException( "There is no such group" );
+    	return action.getAccelerator();
     }
     
     /**

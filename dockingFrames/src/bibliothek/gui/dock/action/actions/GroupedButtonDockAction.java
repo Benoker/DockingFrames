@@ -50,7 +50,13 @@ public abstract class GroupedButtonDockAction<K> extends GroupedDropDownItemActi
 
 	@Override
 	protected SimpleButtonAction createGroup(){
-		return new SimpleButtonAction();
+		return new SimpleButtonAction(){
+			@Override
+			public void action( Dockable dockable ){
+				super.action( dockable );
+				GroupedButtonDockAction.this.action( dockable );
+			}
+		};
 	}
 
 	public <V> V createView( ViewTarget<V> target, ActionViewConverter converter, Dockable dockable ){

@@ -1,17 +1,44 @@
+/*
+ * Bibliothek - DockingFrames
+ * Library built on Java/Swing, allows the user to "drag and drop"
+ * panels containing any Swing-Component the developer likes to add.
+ * 
+ * Copyright (C) 2007 Benjamin Sigg
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ * Benjamin Sigg
+ * benjamin_sigg@gmx.ch
+ * CH - Switzerland
+ */
+
 package bibliothek.gui.dock.control;
 
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.event.DockControllerAdapter;
+import bibliothek.gui.dock.event.DoubleClickListener;
+import bibliothek.gui.dock.event.LocatedListenerList;
 import bibliothek.gui.dock.title.DockTitle;
-import bibliothek.gui.dock.util.DockUtilities;
 
 /**
  * Adds a {@link MouseListener} to all {@link Dockable}s and {@link DockTitle}s
@@ -21,11 +48,12 @@ import bibliothek.gui.dock.util.DockUtilities;
  */
 public class DoubleClickController {
     /** the list of all observers */
-    private List<DoubleClickObserver> observers = new ArrayList<DoubleClickObserver>();
+    private LocatedListenerList<DoubleClickListener> observers =
+    	new LocatedListenerList<DoubleClickListener>();
     
     /** A map that tells which listener was added to which {@link Dockable} */
-    private Map<Dockable, DoubleClickListener> listeners = 
-        new HashMap<Dockable, DoubleClickListener>();
+    private Map<Dockable, GlobalDoubleClickListener> listeners = 
+        new HashMap<Dockable, GlobalDoubleClickListener>();
     
     /**
      * Creates a new <code>DoubleClickController</code>.
@@ -36,7 +64,7 @@ public class DoubleClickController {
         controller.addDockControllerListener( new DockControllerAdapter(){
             @Override
             public void dockableRegistered( DockController controller, Dockable dockable ) {
-                DoubleClickListener listener = new DoubleClickListener( dockable );
+                GlobalDoubleClickListener listener = new GlobalDoubleClickListener( dockable );
                 dockable.addMouseInputListener( listener );
                 listeners.put( dockable, listener );
                 for( DockTitle title : dockable.listBoundTitles() )
@@ -45,7 +73,7 @@ public class DoubleClickController {
             
             @Override
             public void dockableUnregistered( DockController controller, Dockable dockable ) {
-                DoubleClickListener listener = listeners.remove( dockable );
+            	GlobalDoubleClickListener listener = listeners.remove( dockable );
                 dockable.removeMouseInputListener( listener );
                 for( DockTitle title : dockable.listBoundTitles() )
                     title.removeMouseInputListener( listener );
@@ -64,19 +92,19 @@ public class DoubleClickController {
     }
     
     /**
-     * Adds an observer to this controller.
-     * @param observer the new observer
+     * Adds a listener to this controller.
+     * @param listener the new observer
      */
-    public void addObserver( DoubleClickObserver observer ){
-        observers.add( observer );
+    public void addListener( DoubleClickListener listener ){
+        observers.addListener( listener );
     }
     
     /**
-     * Removes an observer from this controller.
-     * @param observer the controller to remove
+     * Removes a listener from this controller.
+     * @param listener the observer to remove
      */
-    public void removeObserver( DoubleClickObserver observer ){
-        observers.remove( observer );
+    public void removeListener( DoubleClickListener listener ){
+        observers.removeListener( listener );
     }
     
     /**
@@ -96,8 +124,8 @@ public class DoubleClickController {
         if( event.getClickCount() != 2 )
             throw new IllegalArgumentException( "click count must be equal to 2" );
         
-        List<DoubleClickObserver> list = affected( dockable );
-        for( DoubleClickObserver observer : list ){
+        List<DoubleClickListener> list = observers.affected( dockable );
+        for( DoubleClickListener observer : list ){
             if( observer.process( dockable, event )){
                 event.consume();
                 break;
@@ -105,52 +133,12 @@ public class DoubleClickController {
         }
     }
     
-    /**
-     * Creates a list of all {@link DoubleClickObserver} which are affected
-     * by an event which occurs on <code>dockable</code>. The list is ordered
-     * by the distance of the observers to <code>dockable</code>.
-     * @param dockable the element which is the source of an event
-     * @return the ordered list of observers
-     */
-    protected List<DoubleClickObserver> affected( Dockable dockable ){
-        List<DoubleClickObserver> list = new LinkedList<DoubleClickObserver>();
-        for( DoubleClickObserver observer : observers ){
-            DockElement element = observer.getTreeLocation();
-            if( element == null )
-                list.add( observer );
-            else if( DockUtilities.isAnchestor( element, dockable ))
-                list.add( observer );
-        }
-        
-        Collections.sort( list, new Comparator<DoubleClickObserver>(){
-            public int compare( DoubleClickObserver o1, DoubleClickObserver o2 ) {
-                DockElement a = o1.getTreeLocation();
-                DockElement b = o2.getTreeLocation();
-                
-                if( a == b )
-                    return 0;
-                
-                if( a == null )
-                    return -1;
-                
-                if( b == null )
-                    return 1;
-                
-                if( DockUtilities.isAnchestor( a, b ))
-                    return -1;
-                
-                return 1;
-            }
-        });
-        
-        return list;
-    }
-    
+
     /**
      * A listener which waits for a double-click-event.
      * @author Benjamin Sigg
      */
-    protected class DoubleClickListener extends MouseInputAdapter{
+    protected class GlobalDoubleClickListener extends MouseInputAdapter{
         /** The Dockable for which this listener is waiting */
         private Dockable dockable;
         
@@ -159,7 +147,7 @@ public class DoubleClickController {
          * @param dockable the element that will become the source
          * of the forwarded event
          */
-        public DoubleClickListener( Dockable dockable ){
+        public GlobalDoubleClickListener( Dockable dockable ){
             this.dockable = dockable;
         }
         
