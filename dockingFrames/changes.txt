@@ -43,3 +43,4 @@
 - Layout, API: the TabPainter of the EclipseTheme now determines the border of some components
 - Bugfix: Some DockHierarchyEvents were lost
 - API: KeyEvents are caught by the KeyBoardController. Some DockActions can now be triggered by a KeyEvent.
+- API: DockAction has additional method "trigger" which results in the execution of a default-action.
