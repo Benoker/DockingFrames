@@ -144,7 +144,7 @@ public class BubbleTheme extends BasicTheme {
         setDisplayerFactory( new BubbleDisplayerFactory( this ));
         setTitleFactory( new BubbleDockTitleFactory( this ));
         setPaint( new BubbleStationPaint( this ) );
-        setMovingTitleGetter( new BubbleMovingTitleGetter( this ) );
+        setMovingImageFactory( new BubbleMovingImageFactory( this ) );
         setStackDockComponentFactory( new StackDockComponentFactory(){
             public StackDockComponent create( StackDockStation station ) {
                 return new BubbleStackDockComponent( BubbleTheme.this );
@@ -337,7 +337,7 @@ public class BubbleTheme extends BasicTheme {
 
 	        //Properties properties = ResourceManager.getDefault().ini( "DockUI.mapping", "data/bubble/icons.ini", getClass().getClassLoader() ).get();
 	        Map<String, Icon> result = new HashMap<String, Icon>();
-	        Enumeration e = properties.keys();
+	        Enumeration<Object> e = properties.keys();
 	        while( e.hasMoreElements() ){
 	            String key = (String)e.nextElement();
 	            ImageIcon icon = new ImageIcon( ImageIO.read( loader.getResource( properties.getProperty(key)) ));

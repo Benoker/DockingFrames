@@ -27,13 +27,11 @@ package bibliothek.gui.dock.control;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JComponent;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
@@ -43,12 +41,11 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
+import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
+import bibliothek.gui.dock.dockable.MovingImage;
 import bibliothek.gui.dock.event.DockAdapter;
 import bibliothek.gui.dock.event.DockControllerAdapter;
-import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.title.DockTitle;
-import bibliothek.gui.dock.title.DockTitleVersion;
-import bibliothek.gui.dock.title.MovingTitleGetter;
 import bibliothek.gui.dock.util.DockUtilities;
 
 /**
@@ -65,7 +62,7 @@ public class DefaultDockRelocator extends DockRelocator{
 	/** the current destination of a dragged dockable */
     private DockStation dragStation;
     /** a window painting a title onto the screen */
-    private TitleWindow movingTitleWindow;
+    private ImageWindow movingImageWindow;
     /** the point where the mouse was pressed on the currently dragged title */
     private Point pressPointScreen;
     /** the point where the mouse was pressed on the currently dragged title */
@@ -120,6 +117,8 @@ public class DefaultDockRelocator extends DockRelocator{
         onPut = true;
         DockController controller = getController();
         controller.getRegister().setStalled( true );
+        disableAllModes();
+        
         try{
             if( station == null )
                 throw new IllegalStateException( "There is no station to put the dockable." );
@@ -141,7 +140,6 @@ public class DefaultDockRelocator extends DockRelocator{
         finally{
             onPut = false;
             controller.getRegister().setStalled( false );
-            disableAllModes();
         }
     }    
     
@@ -383,23 +381,23 @@ public class DefaultDockRelocator extends DockRelocator{
             
             int distance = Math.abs( x - pressPointScreen.x ) + Math.abs( y - pressPointScreen.y );
             if( always || distance >= getDragDistance() ){
-                if( movingTitleWindow != null ){
+                if( movingImageWindow != null ){
                     // That means, that an old window was not closed correctly
-                    movingTitleWindow.close();
-                    movingTitleWindow = null;
+                    movingImageWindow.close();
+                    movingImageWindow = null;
                 }
                 
-                movingTitleWindow = getTitleWindow( dockable, title );
-                if( movingTitleWindow != null ){
+                movingImageWindow = getTitleWindow( dockable, title );
+                if( movingImageWindow != null ){
                     updateTitleWindowPosition( mouse );
-                    movingTitleWindow.setVisible( true );
+                    movingImageWindow.setVisible( true );
                 }
                 
                 onMove = true;
             }
         }
         if( onMove ){
-            if( movingTitleWindow != null )
+            if( movingImageWindow != null )
                 updateTitleWindowPosition( mouse );
             
             DockStation next = preparePut( 
@@ -423,20 +421,20 @@ public class DefaultDockRelocator extends DockRelocator{
     }
     
     /**
-     * Updates the location of the {@link #movingTitleWindow} according
+     * Updates the location of the {@link #movingImageWindow} according
      * to the current location of the mouse.
      * @param mouse the location of the mouse
      */
     private void updateTitleWindowPosition( Point mouse ){
-        int width = movingTitleWindow.getWidth();
-        int height = movingTitleWindow.getHeight();
+        int width = Math.min( 25, movingImageWindow.getWidth());
+        int height = Math.min( 25, movingImageWindow.getHeight());
         
         int delta = Math.min( width, height ) + 1;
         
         int dx = Math.min( width, pressPointLocal.x );
         int dy = Math.min( height, pressPointLocal.y );
         
-        movingTitleWindow.setLocation( mouse.x - dx + delta, mouse.y - dy + delta );
+        movingImageWindow.setLocation( mouse.x - dx + delta, mouse.y - dy + delta );
     }
     
     /**
@@ -526,10 +524,10 @@ public class DefaultDockRelocator extends DockRelocator{
             }
         }
         
-        if( movingTitleWindow != null )
-            movingTitleWindow.close();
+        if( movingImageWindow != null )
+            movingImageWindow.close();
         
-        movingTitleWindow = null;
+        movingImageWindow = null;
         pressPointScreen = null;
         pressPointLocal = null;
         
@@ -552,10 +550,10 @@ public class DefaultDockRelocator extends DockRelocator{
 	            dragStation = null;
 	        }
 	        
-	        if( movingTitleWindow != null )
-	            movingTitleWindow.close();
+	        if( movingImageWindow != null )
+	            movingImageWindow.close();
 	        
-	        movingTitleWindow = null;
+	        movingImageWindow = null;
 	        pressPointScreen = null;
 	        pressPointLocal = null;
     	}
@@ -569,17 +567,17 @@ public class DefaultDockRelocator extends DockRelocator{
      * @param title a title which is grabbed by the mouse, can be <code>null</code>
      * @return a window or <code>null</code>
      */
-    private TitleWindow getTitleWindow( Dockable dockable, DockTitle title ){
+    private ImageWindow getTitleWindow( Dockable dockable, DockTitle title ){
     	DockController controller = getController();
-        MovingTitleGetter movingTitleGetter = controller.getTheme().getMovingTitleGetter( controller );
-        DockTitle windowTitle = title;
+        DockableMovingImageFactory factory = controller.getTheme().getMovingImageFactory( controller );
+        MovingImage image;
         
-        if( windowTitle == null )
-            windowTitle = movingTitleGetter.get( controller, dockable );
+        if( title == null )
+            image = factory.create( controller, dockable );
         else
-            windowTitle = movingTitleGetter.get( controller, title );
+            image = factory.create( controller, title );
         
-        if( windowTitle == null )
+        if( image == null )
             return null;
         
     	Window parent;
@@ -588,7 +586,7 @@ public class DefaultDockRelocator extends DockRelocator{
         else
             parent = SwingUtilities.getWindowAncestor( title.getComponent() );
         
-        TitleWindow window = new TitleWindow( parent, windowTitle );
+        ImageWindow window = new ImageWindow( parent, image );
         window.pack();
         return window;
     }
@@ -808,18 +806,16 @@ public class DefaultDockRelocator extends DockRelocator{
      * A window which shows a single {@link DockTitle}.
      * @author Benjamin Sigg
      */
-    private class TitleWindow extends JWindow{
-        /** the title to display */
-        private DockTitle title;
-        /** whether the title was already bound when this window was constructed */
-        private boolean bound;
+    private class ImageWindow extends JWindow{
+        /** the image to display */
+        private MovingImage image;
         
         /**
          * Constructs a new window
          * @param parent the parent of the window
-         * @param title the title to show, may be bound
+         * @param image the image to display
          */
-        public TitleWindow( Window parent, DockTitle title ){
+        public ImageWindow( Window parent, MovingImage image ){
             super( parent );
             
             addComponentListener( new ComponentListener(){
@@ -836,7 +832,7 @@ public class DefaultDockRelocator extends DockRelocator{
 				}
 
 				public void componentShown( ComponentEvent e ){
-            		if( TitleWindow.this != movingTitleWindow ){
+            		if( ImageWindow.this != movingImageWindow ){
             			// that should really not be possible...
             			SwingUtilities.invokeLater( new Runnable(){
             				public void run(){
@@ -859,67 +855,9 @@ public class DefaultDockRelocator extends DockRelocator{
                 // ignore
             }
             
-            bound = getController().isBound( title );
-
-            if( bound && title.getOrigin() != null ){
-                DockTitleVersion origin = title.getOrigin();
-                DockTitle replacement = title.getDockable().getDockTitle( origin );
-                if( replacement != null ){
-                    replacement.setOrientation( title.getOrientation() );
-                    title = replacement;
-                    bound = false;
-                }
-            }
-            
-            if( !bound ){
-                title.getDockable().bind( title );
-                title.changed( new DockTitleEvent( title.getDockable(), true ));
-                content.add( title.getComponent() );
-            }
-            else{
-                /* TODO find a way to use the preferred size */
-                Component c = title.getComponent();
-                final Dimension size = c.getSize();
-                final Image image = new BufferedImage(
-                		Math.max( 1, size.width),
-                		Math.max( 1, size.height),
-                		BufferedImage.TYPE_INT_ARGB );
-                Graphics graphics = image.getGraphics();
-                c.paint( graphics );
-                graphics.dispose();
-                
-                JComponent ground = new JComponent(){
-                    @Override
-                    public void paint( Graphics g ){
-                        g.drawImage( image, 0, 0, this );
-                        /*Component c = TitleWindow.this.title.getComponent();
-                        Dimension size = c.getSize();
-                        c.setSize( getWidth(), getHeight() );
-                        c.validate();
-                        c.paint( g );
-                        c.setSize( size );
-                        c.validate();*/
-                    }
-                    
-                    @Override
-                    public Dimension getPreferredSize() {
-                        return size;
-                        //return TitleWindow.this.title.getComponent().getPreferredSize();
-                    }
-                };
-                
-                content.add( ground );
-            }
-            
-            this.title = title;
-        }
-        
-        /**
-         * Gets the title which is painted on this window
-         * @return the title
-         */
-        public DockTitle getTitle() {
-            return title;
+            image.bind();
+            content.add( image.getComponent() );
+            this.image = image;
         }
         
         /**
@@ -929,13 +867,10 @@ public class DefaultDockRelocator extends DockRelocator{
          */
         public void close(){
             dispose();
-            
-            if( !bound && title != null ){
-                Dockable dockable = title.getDockable();
-                dockable.unbind(title);
-                title = null;
+            if( image != null ){
+                image.unbind();
+                image = null;
             }
-            
             getContentPane().removeAll();
         }
     }

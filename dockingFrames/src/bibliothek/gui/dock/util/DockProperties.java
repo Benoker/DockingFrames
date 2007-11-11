@@ -50,7 +50,20 @@ public class DockProperties {
 	public <A> void set( PropertyKey<A> key, A value ){
 		Entry<A> entry = getEntry( key, true );
 		entry.setValue( value );
+		entry.setHasBeenSet( true );
 		check( entry );
+	}
+	
+	/**
+	 * Tells the entry <code>key</code> that the user has never set its value.
+	 * Also removes the old value of the entry.
+	 * @param key the key to access the entry
+	 */
+	public void toDefault( PropertyKey<?> key ){
+	    Entry<?> entry = getEntry( key, true );
+        entry.setHasBeenSet( false );
+        entry.setValue( null );
+        check( entry );
 	}
 	
 	/**
@@ -65,12 +78,10 @@ public class DockProperties {
 		Entry<A> entry = getEntry( key, false );
 		A result;
 		if( entry == null )
-			result = null;
-		else
+			result = key.getDefault();
+		else{
 			result = entry.getValue();
-		
-		if( result == null )
-		    result = key.getDefault();
+		}
 		
 		return result;
 	}
@@ -115,7 +126,7 @@ public class DockProperties {
 	private <A> Entry<A> getEntry( PropertyKey<A> key, boolean secure ){
 		Entry<?> entry = map.get( key );
 		if( entry == null && secure ){
-			entry = new Entry<A>();
+			entry = new Entry<A>( key );
 			map.put( key, entry );
 		}
 		return (Entry<A>)entry;
@@ -144,22 +155,33 @@ public class DockProperties {
 		private List<DockPropertyListener<A>> listeners = new ArrayList<DockPropertyListener<A>>();
 		/** the value stored in this entry */
 		private A value;
+		/** whether the value of this entry has been set by the user */
+		private boolean hasBeenSet = false;
 
+		/**
+		 * Creates a new entry.
+		 * @param key the name of this entry
+		 */
+		public Entry( PropertyKey<A> key ){
+		    this.key = key;
+		}
+		
 		/**
 		 * Sets the new value of this entry.
 		 * @param value the new value
 		 */
 		@SuppressWarnings( "unchecked" )
 		public void setValue( A value ){
-			A oldValue = this.value;
+			A oldValue = getValue();
 			this.value = value;
+			A newValue = getValue();
 			
-			if( (oldValue == null && value != null) ||
-				(oldValue != null && value == null) ||
-				(oldValue != null && !oldValue.equals( value ))){
+			if( (oldValue == null && newValue != null) ||
+				(oldValue != null && newValue == null) ||
+				(oldValue != null && !oldValue.equals( newValue ))){
 			
 				for( DockPropertyListener<A> listener : (DockPropertyListener<A>[])listeners.toArray( new DockPropertyListener<?>[ listeners.size() ] ))
-					listener.propertyChanged( DockProperties.this, key, oldValue, this.value );
+					listener.propertyChanged( DockProperties.this, key, oldValue, newValue );
 			}
 		}
 		
@@ -168,8 +190,41 @@ public class DockProperties {
 		 * @return the value
 		 */
 		public A getValue(){
+			if( value == null ){
+			    if( hasBeenSet )
+			        return null;
+			    else
+			        return key.getDefault();
+			}
 			return value;
 		}
+		
+		/**
+		 * Tells this entry whether the user has set the value.
+		 * @param hasBeenSet <code>true</code> if the user changed the value
+		 */
+		@SuppressWarnings("unchecked")
+        public void setHasBeenSet( boolean hasBeenSet ) {
+		    A oldValue = getValue();
+		    this.hasBeenSet = hasBeenSet;
+		    A newValue = getValue();
+
+		    if( (oldValue == null && newValue != null) ||
+		            (oldValue != null && newValue == null) ||
+		            (oldValue != null && !oldValue.equals( newValue ))){
+
+		        for( DockPropertyListener<A> listener : (DockPropertyListener<A>[])listeners.toArray( new DockPropertyListener<?>[ listeners.size() ] ))
+		            listener.propertyChanged( DockProperties.this, key, oldValue, newValue );
+		    }
+        }
+		
+		/**
+		 * Whether the value of this entry has been set by the user.
+		 * @return <code>true</code> if the user changed the value
+		 */
+		public boolean hasBeenSet() {
+            return hasBeenSet;
+        }
 		
 		/**
 		 * Gets the name of this entry.
@@ -200,7 +255,7 @@ public class DockProperties {
 		 * @return <code>true</code> if this entry can be deleted safely.
 		 */
 		public boolean removeable(){
-			return value == null && listeners.isEmpty();
+			return (!hasBeenSet || key.getDefault() == null) && value == null && listeners.isEmpty();
 		}
 	}
 }

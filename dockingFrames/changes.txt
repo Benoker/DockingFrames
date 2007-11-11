@@ -48,3 +48,5 @@
 - API: new DockRelocatorMode, changes behaviour of drag&drop operations subject to the pressed keys on the keyboard.
 - API: DockController can tell which Component is child (in the logic of the dock-tree) of which Dockable. Scheme can be influenced by clients through DockController#putRepresentative.
 - Layout, API: DockStations have to decide whether a child can be accepted or not, the DockRelocator no longer does this. That gives more flexibility.
+- API: MovingTitleGetter replaced by DockableMovingImageFactory, gives more flexibility
+- Layout: FlatTheme now shows a screencapture of the Dockable that is moved by the user instead of the DockTitle

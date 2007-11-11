@@ -525,7 +525,7 @@ public class StackDockStation extends AbstractDockableStation {
      * @return <code>true</code> if the combination is valid
      */
     private boolean setInsert( Insert insert, Dockable child ){
-        if( accept( child ) && child.accept( this ) && getController().getAcceptance().accept( this, child )){
+        if( insert != null && accept( child ) && child.accept( this ) && getController().getAcceptance().accept( this, child )){
             this.insert = insert;
             this.dropping = child;
         }

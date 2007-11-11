@@ -31,6 +31,8 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockAcceptance;
+import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
+import bibliothek.gui.dock.dockable.MovingImage;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.ScreenDockStation;
 import bibliothek.gui.dock.station.SplitDockStation;
@@ -101,6 +103,15 @@ public class EclipseTheme extends BasicTheme {
 		});
 		setDisplayerFactory( new EclipseDisplayerFactory( this ) );
 		setPaint( new EclipseStationPaint() );
+		setMovingImageFactory( new DockableMovingImageFactory(){
+		    public MovingImage create( DockController controller, Dockable dockable ) {
+		        return null;
+		    }
+		    
+		    public MovingImage create( DockController controller, DockTitle snatched ) {
+		        return null;
+		    }
+		});
 		setTitleFactory( new BasicDockTitleFactory(){
 		    @Override
 		    public <D extends Dockable & DockStation> DockTitle createStationTitle(
@@ -109,19 +120,6 @@ public class EclipseTheme extends BasicTheme {
 		        return createDockableTitle( dockable, version );
 		    }
 		});
-	}
-
-	@Override
-	public MovingTitleGetter getMovingTitleGetter(DockController controller) {
-		return new MovingTitleGetter() {
-			public DockTitle get(DockController controller, DockTitle snatched) {
-				return null;
-			}
-
-			public DockTitle get(DockController controller, Dockable dockable) {
-				return null;
-			}
-		};
 	}
 
 	@Override

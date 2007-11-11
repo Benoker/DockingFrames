@@ -27,13 +27,13 @@
 package bibliothek.gui;
 
 import bibliothek.gui.dock.DockableDisplayer;
+import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleManager;
-import bibliothek.gui.dock.title.MovingTitleGetter;
 
 /**
  * A theme describes how a {@link DockStation} looks like, which
@@ -89,9 +89,9 @@ public interface DockTheme {
     public DockTitleFactory getTitleFactory( DockController controller );
     
     /**
-     * Gets a pseudo factory for titles which are moved around by the user.
+     * Gets a factory for images which are moved around by the user.
      * @param controller the controller for which the factory is needed
-     * @return a pseudo factory
+     * @return a factory
      */
-    public MovingTitleGetter getMovingTitleGetter( DockController controller );
+    public DockableMovingImageFactory getMovingImageFactory( DockController controller );
 }

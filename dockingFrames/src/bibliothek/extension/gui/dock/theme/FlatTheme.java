@@ -26,6 +26,8 @@
 
 package bibliothek.extension.gui.dock.theme;
 
+import java.awt.Dimension;
+
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 
@@ -38,6 +40,7 @@ import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.action.view.ViewGenerator;
 import bibliothek.gui.dock.action.view.ViewTarget;
+import bibliothek.gui.dock.dockable.ScreencaptureMovingImageFactory;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.SplitDockStation;
@@ -74,7 +77,6 @@ public class FlatTheme extends BasicTheme{
      */
     public FlatTheme() {
         setPaint( new FlatStationPaint() );
-        // setCombiner( new FlatCombiner());
         setTitleFactory( new FlatTitleFactory() );
         setDisplayerFactory( new FlatDisplayerFactory( false ));
         setStackDockComponentFactory( new StackDockComponentFactory(){
@@ -82,6 +84,7 @@ public class FlatTheme extends BasicTheme{
                 return new FlatTab();
             }
         });
+        setMovingImageFactory( new ScreencaptureMovingImageFactory( new Dimension( 300, 200 ) ) );
     }
     
     @Override

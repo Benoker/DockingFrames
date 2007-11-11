@@ -145,6 +145,20 @@ public class Root extends SplitNode{
     }
     
     /**
+     * Tells whether the location x/y is in the override zone.
+     * @param x the x-coordinate of the mouse
+     * @param y the y-coordinate of the mouse
+     * @return <code>true</code> if this station should have priority
+     * over all other stations when the mouse is in x/y.
+     */
+    public boolean isInOverrideZone( int x, int y ){
+        double factorW = getWidthFactor();
+        double factorH = getHeightFactor();
+        
+        return isInOverrideZone( x, y, factorW, factorH );
+    }
+    
+    /**
      * Gets the insets which will be free from any {@link Component}.
      * @return the insets
      */
@@ -188,6 +202,17 @@ public class Root extends SplitNode{
             return child.getPut( x, y, factorW, factorH, drop );
         else
             return null;
+    }
+    
+    @Override
+    public boolean isInOverrideZone( int x, int y, double factorW, double factorH ) {
+        if( !getBounds().contains( x, y ))
+            return false;
+        
+        if( child != null )
+            return child.isInOverrideZone( x, y, factorW, factorH );
+        else
+            return false;
     }
     
     @Override

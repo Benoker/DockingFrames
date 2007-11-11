@@ -3,11 +3,12 @@ package bibliothek.chess.view;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
+import bibliothek.gui.dock.dockable.MovingImage;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
-import bibliothek.gui.dock.title.MovingTitleGetter;
 
 /**
  * A theme that hides all {@link DockTitle} when used together with a 
@@ -19,15 +20,14 @@ public class HidingTheme extends BasicTheme {
 	 * Creates a new theme
 	 */
     public HidingTheme(){
-        setMovingTitleGetter( new MovingTitleGetter(){
-            public DockTitle get( DockController controller, DockTitle snatched ) {
+        setMovingImageFactory( new DockableMovingImageFactory(){
+            public MovingImage create( DockController controller, Dockable dockable ) {
                 return null;
             }
-
-            public DockTitle get( DockController controller, Dockable dockable ) {
+            public MovingImage create( DockController controller, DockTitle snatched ) {
                 return null;
             }
-        });   
+        });
     }
 
     @Override

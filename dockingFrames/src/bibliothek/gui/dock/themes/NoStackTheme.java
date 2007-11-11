@@ -34,6 +34,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.DockAcceptance;
+import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StackDockStation;
@@ -41,7 +42,6 @@ import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.themes.nostack.NoStackAcceptance;
 import bibliothek.gui.dock.themes.nostack.NoStackTitleFactory;
 import bibliothek.gui.dock.title.DockTitleFactory;
-import bibliothek.gui.dock.title.MovingTitleGetter;
 
 /**
  * A {@link DockTheme} that wraps another theme and ensures that there
@@ -60,8 +60,8 @@ public class NoStackTheme implements DockTheme {
      * if the default-DockUI should be used.
      * @return the new factory
      */
-    public static ThemeFactory getFactory( final Class<? extends DockTheme> theme, final ResourceBundle bundle, final DockUI ui ){
-        final ThemeFactory factory = new ThemePropertyFactory( theme, bundle, ui );
+    public static <T extends DockTheme> ThemeFactory getFactory( final Class<T> theme, final ResourceBundle bundle, final DockUI ui ){
+        final ThemeFactory factory = new ThemePropertyFactory<T>( theme, bundle, ui );
         
         return new ThemeFactory(){
             public DockTheme create() {
@@ -144,8 +144,8 @@ public class NoStackTheme implements DockTheme {
         return new NoStackTitleFactory( base.getTitleFactory(controller));
     }
 
-    public MovingTitleGetter getMovingTitleGetter( DockController controller ) {
-        return base.getMovingTitleGetter( controller );
+    public DockableMovingImageFactory getMovingImageFactory( DockController controller ) {
+        return base.getMovingImageFactory( controller );
     }
     
     public void install( DockController controller ) {

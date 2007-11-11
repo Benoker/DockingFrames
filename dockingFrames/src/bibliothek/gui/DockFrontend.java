@@ -27,10 +27,13 @@
 package bibliothek.gui;
 
 import java.awt.Window;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.io.*;
 import java.util.*;
 
 import javax.swing.Icon;
+import javax.swing.KeyStroke;
 
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabDockAction;
 import bibliothek.gui.dock.*;
@@ -53,6 +56,8 @@ import bibliothek.gui.dock.station.stack.StackDockPropertyFactory;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.PropertyValue;
 
 /**
  * A DockFrontend provides some methods to handle the storage of various layouts.
@@ -74,6 +79,9 @@ import bibliothek.gui.dock.util.DockUtilities;
  * @author Benjamin Sigg
  */
 public class DockFrontend {
+    public static final PropertyKey<KeyStroke> HIDE_ACCELERATOR = 
+        new PropertyKey<KeyStroke>( "frontend hide accelerator", KeyStroke.getKeyStroke( KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK ) );
+    
 	/** The controller whhere roots are added */
     private DockController controller;
     /** An action and actionguard which hides Dockables */
@@ -1224,6 +1232,15 @@ public class DockFrontend {
             
             controller.getIcons().add( "close", this );
             setIcon( controller.getIcons().getIcon( "close" ));
+            
+            PropertyValue<KeyStroke> stroke = new PropertyValue<KeyStroke>( HIDE_ACCELERATOR ){
+                @Override
+                protected void valueChanged( KeyStroke oldValue, KeyStroke newValue ) {
+                    setAccelerator( newValue );
+                }
+            };
+            stroke.setProperties( controller );
+            setAccelerator( stroke.getValue() );
         }
         
         public void iconChanged( String key, Icon icon ) {

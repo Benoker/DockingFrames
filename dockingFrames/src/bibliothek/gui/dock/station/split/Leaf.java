@@ -191,6 +191,22 @@ public class Leaf extends SplitNode{
     }
     
     @Override
+    public boolean isInOverrideZone( int x, int y, double factorW, double factorH ){
+        float sideSnapSize = getAccess().getOwner().getSideSnapSize();
+        Rectangle bounds = getBounds();
+        
+        if( x > bounds.x + sideSnapSize*bounds.width && 
+            x < bounds.x + bounds.width - sideSnapSize*bounds.width &&
+            y > bounds.y + sideSnapSize*bounds.height &&
+            y < bounds.y + bounds.height - sideSnapSize*bounds.height ){
+            
+            return false;
+        }
+        
+        return true;
+    }
+    
+    @Override
     public void evolve( Key key ){
     	// nothing to do
     }

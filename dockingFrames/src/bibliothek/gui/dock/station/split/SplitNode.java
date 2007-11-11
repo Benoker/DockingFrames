@@ -204,6 +204,22 @@ public abstract class SplitNode{
      * the dockable can't be dropped
      */
     public abstract PutInfo getPut( int x, int y, double factorW, double factorH, Dockable drop );
+
+    /**
+     * Tells whether the coordinates x/y lie inside the override-zone of
+     * the {@link SplitDockStation} or not.
+     * @param x the x-coordinate of the mouse
+     * @param y the y-coordinate of the mouse
+     * @param factorW a factor to be multiplied with the relative 
+     * {@link #getX() x} and {@link #getWidth() width} to get the 
+     * size in pixel. 
+     * @param factorH a factor to be multiplied with the relative
+     * {@link #getY() y} and {@link #getHeight() height} to get the
+     * size in pixel.
+     * @return <code>true</code> if the station should not allow child-stations
+     * to make a drop when the mouse is at x/y
+     */
+    public abstract boolean isInOverrideZone( int x, int y, double factorW, double factorH );
     
     /**
      * Gets the leaf which represents <code>dockable</code>.

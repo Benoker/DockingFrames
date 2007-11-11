@@ -302,6 +302,30 @@ public class Node extends SplitNode{
     }
     
     @Override
+    public boolean isInOverrideZone( int x, int y, double factorW, double factorH ) {
+        if( orientation == Orientation.HORIZONTAL ){
+            if( x < (this.x + divider*width)*factorW ){
+                // left
+                return left.isInOverrideZone( x, y, factorW, factorH );
+            }
+            else{
+                // right
+                return right.isInOverrideZone( x, y, factorW, factorH );
+            }
+        }
+        else{
+            if( y < (this.y + divider*height)*factorH ){
+                // top
+                return left.isInOverrideZone( x, y, factorW, factorH );
+            }
+            else{
+                // bottom
+                return right.isInOverrideZone( x, y, factorW, factorH );
+            }
+        }
+    }
+    
+    @Override
     public void evolve( Key key ){
     	SplitDockTree tree = key.getTree();
     	if( tree.isHorizontal( key )){

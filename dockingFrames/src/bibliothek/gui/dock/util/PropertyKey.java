@@ -59,6 +59,7 @@ public class PropertyKey<A> {
 	/** a unique identifier */
 	private String id;
 	
+	/** default value */
 	private A value;
 
 	/**
@@ -90,24 +91,17 @@ public class PropertyKey<A> {
 	 * in the {@link DockProperties}.
 	 * @return the default-value
 	 */
-	public A getDefault(){
+	public final A getDefault(){
 	    return value;
 	}
 	
 	@Override
-	public int hashCode(){
+	public final int hashCode(){
 		return id.hashCode();
 	}
 
 	@Override
-	public boolean equals( Object obj ){
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		final PropertyKey other = (PropertyKey) obj;
-		return other.id.equals( id );
+	public final boolean equals( Object obj ){
+		return this == obj;
 	}
 }

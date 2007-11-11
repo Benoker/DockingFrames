@@ -31,6 +31,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableDisplayer;
+import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StackDockStation;
@@ -41,7 +42,6 @@ import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.themes.basic.*;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
-import bibliothek.gui.dock.title.MovingTitleGetter;
 
 /**
  * A {@link DockTheme theme} that does not install anything and uses the
@@ -67,8 +67,8 @@ public class BasicTheme implements DockTheme{
     /** creates titles Dockables */
     private DockTitleFactory titleFactory;
     
-    /** selects the title which should be displayed when moving a dockable*/
-    private MovingTitleGetter titleGetter;
+    /** selects the image which should be displayed when moving a dockable*/
+    private DockableMovingImageFactory movingImage;
     
     /** the factory used to create components for {@link StackDockStation} */
     private StackDockComponentFactory stackDockComponentFactory;
@@ -81,14 +81,7 @@ public class BasicTheme implements DockTheme{
         setPaint( new BasicStationPaint() );
         setDisplayerFactory( new BasicDisplayerFactory() );
         setTitleFactory( new BasicDockTitleFactory() );
-        setMovingTitleGetter( new MovingTitleGetter(){
-            public DockTitle get( DockController controller, Dockable dockable ) {
-            	return getTitleFactory( controller ).createDockableTitle( dockable, null );
-            }
-            public DockTitle get( DockController controller, DockTitle snapped ) {
-                return snapped;
-            }
-        });
+        setMovingImageFactory( new BasicMovingImageFactory() );
         setStackDockComponentFactory( new StackDockComponentFactory(){
             public StackDockComponent create( StackDockStation station ) {
                 return new DefaultStackDockComponent();
@@ -116,15 +109,15 @@ public class BasicTheme implements DockTheme{
     }
     
     /**
-     * Sets the titleGetter-property. The titlegetter is needed to show a 
-     * title when the user grabs a {@link Dockable}
-     * @param titleGetter the new getter, not <code>null</code>
+     * Sets the movingImage-property. The movignImage is needed to show an
+     * image when the user grabs a {@link Dockable}
+     * @param movingImage the new factory, not <code>null</code>
      */
-    public void setMovingTitleGetter( MovingTitleGetter titleGetter ) {
-        if( titleGetter == null )
+    public void setMovingImageFactory( DockableMovingImageFactory movingImage ) {
+        if( movingImage == null )
             throw new IllegalArgumentException( "argument must not be null" );
         
-        this.titleGetter = titleGetter;
+        this.movingImage = movingImage;
     }
     
     /**
@@ -175,8 +168,8 @@ public class BasicTheme implements DockTheme{
         this.titleFactory = titleFactory;
     }
     
-    public MovingTitleGetter getMovingTitleGetter( DockController controller ) {
-        return titleGetter;
+    public DockableMovingImageFactory getMovingImageFactory( DockController controller ) {
+        return movingImage;
     }
     
     public Combiner getCombiner( DockStation station ) {

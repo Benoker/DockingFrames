@@ -851,6 +851,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             
             if( putInfo == null && allowSideSnap ){
                 putInfo = calculateSideSnap( point.x, point.y, null, dockable );
+                putInfo = access.checkPutInfo( putInfo );
             }
             
             if( putInfo != null ){
@@ -1428,11 +1429,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         Point point = new Point( x, y );
         SwingUtilities.convertPointFromScreen( point, this );
         
-        PutInfo info = root.getPut( point.x, point.y, drop );
-        if( info == null )
-            return false;
-        
-        return info.getPut() != PutInfo.Put.CENTER;
+        return root.isInOverrideZone( point.x, point.y );
     }
 
     public boolean canDrag( Dockable dockable ) {
