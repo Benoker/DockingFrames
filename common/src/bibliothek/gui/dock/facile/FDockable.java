@@ -61,8 +61,18 @@ public class FDockable {
 	/** the size and location of this dockable */
 	private ExtendedMode extendedMode = ExtendedMode.NORMALIZED;
 	
+	/** the graphical representation of this dockable */
+	private FacileDockable dockable;
+	
 	/** the control managing this dockable */
 	private FControlAccess control;
+	
+	/**
+	 * Creates a new dockable
+	 */
+	public FDockable(){
+		dockable = new FacileDockable( this );
+	}
 	
 	/**
 	 * Tells whether this dockable can be minimized by the user.
@@ -181,7 +191,7 @@ public class FDockable {
 	 * @return the intern representation.
 	 */
 	public FacileDockable getDockable(){
-		
+		return dockable;
 	}
 	
 	/**
@@ -190,5 +200,13 @@ public class FDockable {
 	 */
 	void setControl( FControlAccess control ){
 		this.control = control;
+	}
+	
+	/**
+	 * Gets the control which is responsible for this dockable.
+	 * @return the control
+	 */
+	FControlAccess getControl(){
+		return control;
 	}
 }

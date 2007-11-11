@@ -27,6 +27,7 @@ package bibliothek.gui.dock.facile.intern;
 
 import bibliothek.gui.dock.facile.FControl;
 import bibliothek.gui.dock.facile.FDockable;
+import bibliothek.gui.dock.facile.FDockableFactory;
 
 /**
  * Gives access to the internal methods of a {@link bibliothek.gui.dock.facile.FControl}
@@ -57,4 +58,11 @@ public interface FControlAccess {
 	 * @return <code>true</code> if <code>dockable</code> is visible
 	 */
 	public boolean isVisible( FDockable dockable );
+	
+	/**
+	 * Gets the id of <code>factory</code>.
+	 * @param factory the factory to search
+	 * @return the id or <code>null</code>
+	 */
+	public String getFactoryId( FDockableFactory factory );
 }

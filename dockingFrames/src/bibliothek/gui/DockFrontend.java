@@ -45,7 +45,6 @@ import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.dockable.DefaultDockableFactory;
 import bibliothek.gui.dock.event.DockFrontendListener;
 import bibliothek.gui.dock.event.IconManagerListener;
-import bibliothek.gui.dock.station.ScreenDockStation;
 import bibliothek.gui.dock.station.flap.FlapDockPropertyFactory;
 import bibliothek.gui.dock.station.flap.FlapDockStationFactory;
 import bibliothek.gui.dock.station.screen.ScreenDockPropertyFactory;
@@ -528,39 +527,44 @@ public class DockFrontend {
      * Ensures that <code>dockable</code> is child of a root known to this
      * frontend.
      * @param dockable the element which should be made visible
-     * @throws IllegalArgumentException if <code>dockable</code> is not known
      * @throws IllegalStateException if the {@link #getDefaultStation() default station} is
      * needed but can't be found 
      */
     public void show( Dockable dockable ){
         DockInfo info = getInfo( dockable );
-        if( info == null )
-            throw new IllegalArgumentException( "Dockable not registered at this frontend" );
-        
         if( isHidden( dockable )){
-            String root = info.getRoot();
-            DockableProperty location = info.getLocation();
-            
-            DockStation station;
-            if( root == null )
-                station = getDefaultStation();
-            else
-                station = getRoot( root );
-            
-            if( station == null ){
-            	station = getDefaultStation();
-            	if( station == null )
+        	if( info == null ){
+        		DockStation station = getDefaultStation();
+        		if( station == null )
             		throw new IllegalStateException( "Can't find the default station" );
-            }
-            
-            if( location == null )
-                getDefaultStation().drop( dockable );
-            else{
-                if( !station.drop( dockable, location ))
+        		station.drop( dockable );
+        		fireShowed( dockable );
+        	}
+        	else{
+        		String root = info.getRoot();
+                DockableProperty location = info.getLocation();
+                
+                DockStation station;
+                if( root == null )
+                    station = getDefaultStation();
+                else
+                    station = getRoot( root );
+                
+                if( station == null ){
+                	station = getDefaultStation();
+                	if( station == null )
+                		throw new IllegalStateException( "Can't find the default station" );
+                }
+                
+                if( location == null )
                     getDefaultStation().drop( dockable );
-            }
-            
-            fireShowed( dockable );
+                else{
+                    if( !station.drop( dockable, location ))
+                        getDefaultStation().drop( dockable );
+                }
+                
+                fireShowed( dockable );
+        	}
         }
     }
     
@@ -568,17 +572,19 @@ public class DockFrontend {
      * Makes <code>dockable</code> invisible. The location of <code>dockable</code>
      * is saved, and if made visible again, it will reappear at its old location.
      * @param dockable the element which should be hidden
-     * @throws IllegalArgumentException if <code>dockable</code> is not known
      */
     public void hide( Dockable dockable ){
-        DockInfo info = getInfo( dockable );
-        if( info == null )
-            throw new IllegalArgumentException( "Dockable not registered at this frontend" );
-        
-        if( isShown( dockable )){
-            info.updateLocation();
-            dockable.getDockParent().drag( dockable );
-            fireHidden( dockable );
+    	if( isShown( dockable )){
+    	DockInfo info = getInfo( dockable );
+    		if( info == null ){
+    			dockable.getDockParent().drag( dockable );
+    			fireHidden( dockable );
+    		}
+    		else{
+        		info.updateLocation();
+    			dockable.getDockParent().drag( dockable );
+    			fireHidden( dockable );
+    		}
         }
     }
     
@@ -1224,10 +1230,10 @@ public class DockFrontend {
     @EclipseTabDockAction
     public class Hider extends SimpleButtonAction implements ActionGuard, IconManagerListener{
     	/**
-    	 * Creates a new action/guard.
-    	 */
+         * Creates a new action/guard.
+         */
         public Hider(){
-            setText( DockUI.getDefaultDockUI().getString( "close" ));
+        	setText( DockUI.getDefaultDockUI().getString( "close" ));
             setTooltipText( DockUI.getDefaultDockUI().getString( "close.tooltip" ));
             
             controller.getIcons().add( "close", this );
@@ -1248,11 +1254,19 @@ public class DockFrontend {
         }
         
         public DockActionSource getSource( Dockable dockable ) {
-            return getInfo( dockable ).getSource();
+        	DockInfo info = getInfo( dockable );
+        	if( info == null ){
+        		return new DefaultDockActionSource( 
+        				new LocationHint( LocationHint.ACTION_GUARD, LocationHint.RIGHT_OF_ALL ),
+        				this );
+        	}
+        	else{
+        		return info.getSource();
+        	}
         }
 
         public boolean react( Dockable dockable ) {
-            DockInfo info = getInfo( dockable );
+        	DockInfo info = getInfo( dockable );
             return info != null;
         }
 
