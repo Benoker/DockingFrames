@@ -26,13 +26,12 @@
 package bibliothek.gui.dock.control;
 
 import java.awt.*;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JComponent;
 import javax.swing.JWindow;
@@ -142,6 +141,7 @@ public class DefaultDockRelocator extends DockRelocator{
         finally{
             onPut = false;
             controller.getRegister().setStalled( false );
+            disableAllModes();
         }
     }    
     
@@ -157,22 +157,21 @@ public class DefaultDockRelocator extends DockRelocator{
      */
     protected DockStation preparePut( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ){
         List<DockStation> list = listStationsOrdered( mouseX, mouseY, dockable );
-        DockController controller = getController();
         
-        for( DockStation station : list ){   
-            if( dockable.getDockParent() == station ){
-                // just a move
-                if( station.prepareMove( mouseX, mouseY, titleX, titleY, dockable ) ){
-                    return station;
+        for( int i = 0; i < 2; i++ ){
+            boolean checkOverrideZone = i == 0;
+            
+            for( DockStation station : list ){   
+                if( dockable.getDockParent() == station ){
+                    // just a move
+                    if( station.prepareMove( mouseX, mouseY, titleX, titleY, checkOverrideZone, dockable ) ){
+                        return station;
+                    }
                 }
-            }
-            else{
-                // perhaps a drop
-                if( controller.getAcceptance().accept( station, dockable )){
-                    if( station.accept( dockable ) && dockable.accept( station ) ){
-                        if( station.prepareDrop( mouseX, mouseY, titleX, titleY, dockable )){
-                            return station;
-                        }
+                else{
+                    // perhaps a drop
+                    if( station.prepareDrop( mouseX, mouseY, titleX, titleY, checkOverrideZone, dockable )){
+                        return station;
                     }
                 }
             }
@@ -324,10 +323,12 @@ public class DefaultDockRelocator extends DockRelocator{
             // initiate new operation
             pressPointScreen = new Point( x, y );
             pressPointLocal = new Point( dx, dy );
+            checkModes( modifiers );
             return Reaction.CONTINUE;
         }
         else if( pressPointScreen != null ){
             titleDragCancel();
+            disableAllModes();
             return Reaction.BREAK_CONSUMED;
         }
         return Reaction.BREAK;
@@ -364,6 +365,8 @@ public class DefaultDockRelocator extends DockRelocator{
         if( pressPointScreen == null )
             return Reaction.BREAK;
         
+        checkModes( modifiers );
+        
         if( dockable == null )
             dockable = title.getDockable();
         
@@ -374,6 +377,7 @@ public class DefaultDockRelocator extends DockRelocator{
             // not yet free
             if( !dockable.getDockParent().canDrag( dockable )){
                 titleDragCancel();
+                disableAllModes();
                 return Reaction.BREAK_CONSUMED;
             }
             
@@ -464,6 +468,7 @@ public class DefaultDockRelocator extends DockRelocator{
      * @return how this relocator reacts on the event
      */
     protected Reaction dragMouseReleased( int x, int y, int modifiers, Dockable dockable ){
+        checkModes( modifiers );
         int offmask = InputEvent.BUTTON1_DOWN_MASK |
             InputEvent.BUTTON2_DOWN_MASK |
             InputEvent.BUTTON3_DOWN_MASK;
@@ -481,6 +486,7 @@ public class DefaultDockRelocator extends DockRelocator{
         if( !onMove ){
             boolean wasDragging = pressPointScreen != null;
             titleDragCancel();
+            disableAllModes();
             
             if( stop ){
                 if( wasDragging )
@@ -527,8 +533,10 @@ public class DefaultDockRelocator extends DockRelocator{
         pressPointScreen = null;
         pressPointLocal = null;
         
-        if( stop )
+        if( stop ){
+            disableAllModes();
             return consume ? Reaction.BREAK_CONSUMED : Reaction.BREAK;
+        }
         else
             return consume ? Reaction.CONTINUE_CONSUMED : Reaction.CONTINUE;
     }

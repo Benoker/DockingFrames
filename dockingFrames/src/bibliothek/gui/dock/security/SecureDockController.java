@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -27,7 +27,6 @@
 package bibliothek.gui.dock.security;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.dock.control.MouseFocusObserver;
 
 /**
  * The DockingFrames normally uses some system-resources to handle the focus.
@@ -50,24 +49,18 @@ public class SecureDockController extends DockController {
      * Creates a new controller
      */
     public SecureDockController() {
-        super();
+        super( new SecureDockControllerFactory() );
     }
     
     /**
      * Creates a new controller, but does not initiate the properties
-     * if <code>initiate</code> is <code>false</code>.
-     * @param initiate <code>true</code> if all properties should
-     * be initiated
-     * @see #initiate()   
+     * if <code>factory</code> is <code>null</code>.
+     * @param factory the factory that will create the elements of this controller   
      */
-    protected SecureDockController( boolean initiate ) {
-        super( initiate );
+    protected SecureDockController( SecureDockControllerFactory factory ) {
+        super( factory );
     }
-    
-    @Override
-    protected MouseFocusObserver createMouseFocusObserver() {
-        return new SecureMouseFocusObserver( this );
-    }
+
     
     @Override
     public SecureMouseFocusObserver getFocusObserver() {

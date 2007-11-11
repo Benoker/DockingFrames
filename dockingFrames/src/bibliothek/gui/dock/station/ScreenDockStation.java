@@ -248,7 +248,7 @@ public class ScreenDockStation extends AbstractDockStation {
         }
     }
 
-    public boolean prepareDrop( int x, int y, int titleX, int titleY, Dockable dockable ) {
+    public boolean prepareDrop( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
         return prepare( x, y, titleX, titleY, dockable, true );
     }
     
@@ -276,9 +276,35 @@ public class ScreenDockStation extends AbstractDockStation {
                 dropInfo.combine.repaint();
         }
         
-        return true;
+        checkDropInfo();
+        return dropInfo != null;
     }
 
+    
+    /**
+     * Ensures that the desired location where to insert the next child is valid
+     * If not, then {@link #dropInfo} is set to <code>null</code>
+     */
+    private void checkDropInfo(){
+        if( dropInfo != null ){
+            if( dropInfo.combine != null ){
+                if( !accept( dropInfo.dockable ) || 
+                        !dropInfo.dockable.accept( this, dropInfo.combine.getDisplayer().getDockable() ) ||
+                        !getController().getAcceptance().accept( this, dropInfo.combine.getDisplayer().getDockable(), dropInfo.dockable )){
+                    dropInfo = null;
+                }
+            }
+            else{
+                if( !accept( dropInfo.dockable ) ||
+                        !dropInfo.dockable.accept( this ) ||
+                        !getController().getAcceptance().accept( this, dropInfo.dockable )){
+                    dropInfo = null;
+                }
+            }
+        }
+    }
+
+    
     /**
      * Searches a dialog on the coordinates x/y which can be used to create
      * a combination with <code>drop</code>.
@@ -372,7 +398,7 @@ public class ScreenDockStation extends AbstractDockStation {
         return dockables.get( index );
     }
 
-    public boolean prepareMove( int x, int y, int titleX, int titleY, Dockable dockable ) {
+    public boolean prepareMove( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
         return prepare( x, y, titleX, titleY, dockable, false );
     }
 

@@ -33,9 +33,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Map;
 
-import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockAcceptance;
 import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.station.SplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockTree.Key;
@@ -115,6 +113,7 @@ public class Leaf extends SplitNode{
     @Override
     public PutInfo getPut( int x, int y, double factorW, double factorH, Dockable drop ) {            
         Rectangle bounds = getBounds();
+        PutInfo result = null;
         
         if( displayer.getTitle() != null ){
             if( displayer.getTitleLocation() == DockableDisplayer.Location.TOP ){
@@ -123,39 +122,41 @@ public class Leaf extends SplitNode{
                 bounds.height -= height;
                 
                 if( y <= bounds.y ){
-                    return combinationalPut( PutInfo.Put.TITLE, drop );
+                    result = getAccess().checkPutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop ));
                 }
             }
             
-            if( displayer.getTitleLocation() == DockableDisplayer.Location.BOTTOM ){
+            else if( displayer.getTitleLocation() == DockableDisplayer.Location.BOTTOM ){
                 int height = displayer.getTitle().getComponent().getHeight();
                 bounds.height -= height;
                 
                 if( y >= bounds.y+bounds.height ){
-                    return combinationalPut( PutInfo.Put.TITLE, drop );
+                    result = getAccess().checkPutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop ));
                 }
             }
             
-            if( displayer.getTitleLocation() == DockableDisplayer.Location.LEFT ){
+            else if( displayer.getTitleLocation() == DockableDisplayer.Location.LEFT ){
                 int width = displayer.getTitle().getComponent().getWidth();
                 bounds.x += width;
                 bounds.width -= width;
                 
                 if( x <= bounds.x ){
-                    return combinationalPut( PutInfo.Put.TITLE, drop );
+                    result = getAccess().checkPutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop ));
                 }
             }
             
-            if( displayer.getTitleLocation() == DockableDisplayer.Location.RIGHT ){
+            else if( displayer.getTitleLocation() == DockableDisplayer.Location.RIGHT ){
                 int width = displayer.getTitle().getComponent().getWidth();
                 bounds.width -= width;
                 
                 if( x >= bounds.x + bounds.width ){
-                    return combinationalPut( PutInfo.Put.TITLE, drop );
+                    result = getAccess().checkPutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop ));
                 }
             }
         }
         
+        if( result != null )
+            return result;
         
         float sideSnapSize = getAccess().getOwner().getSideSnapSize();
         
@@ -164,44 +165,29 @@ public class Leaf extends SplitNode{
             y > bounds.y + sideSnapSize*bounds.height &&
             y < bounds.y + bounds.height - sideSnapSize*bounds.height ){
             
-            return combinationalPut( PutInfo.Put.CENTER, drop );
+            result = getAccess().checkPutInfo( new PutInfo( this, PutInfo.Put.CENTER, drop ));
         }
+        
+        if( result != null )
+            return result;
         
         if( above( bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height, x, y )){
             if( above( bounds.x, bounds.y + bounds.height, bounds.x + bounds.width, bounds.y, x, y ))
-                return new PutInfo( this, PutInfo.Put.TOP );
+                result = getAccess().checkPutInfo( new PutInfo( this, PutInfo.Put.TOP, drop ));
             else
-                return new PutInfo( this, PutInfo.Put.RIGHT );
+                result = getAccess().checkPutInfo(  new PutInfo( this, PutInfo.Put.RIGHT, drop ));
         }
         else{
             if( above( bounds.x, bounds.y + bounds.height, bounds.x + bounds.width, bounds.y, x, y ))
-                return new PutInfo( this, PutInfo.Put.LEFT );
+                result = getAccess().checkPutInfo(  new PutInfo( this, PutInfo.Put.LEFT, drop ));
             else
-                return new PutInfo( this, PutInfo.Put.BOTTOM );
+                result = getAccess().checkPutInfo(  new PutInfo( this, PutInfo.Put.BOTTOM, drop ));
         }
-    }
-    
-    /**
-     * Creates a new instance of {@link PutInfo} if <code>drop</code>
-     * no acceptance-test fails between the station an the Dockable.
-     * @param put the location where to put <code>drop</code>.
-     * @param drop the Dockable to drop
-     * @return the new PutInfo or <code>null</code> if at least one
-     * test fails.
-     */
-    private PutInfo combinationalPut( PutInfo.Put put, Dockable drop ){
-        SplitDockStation parent = getAccess().getOwner();
-        Dockable dockable = getDockable();
-        DockController controller = parent.getController();
-        DockAcceptance acceptance = controller == null ? null : controller.getAcceptance();
         
-        if( drop.accept( parent, dockable ) &&
-                dockable.accept( parent, drop ) &&
-                ( acceptance == null ||
-                        acceptance.accept( parent, dockable, drop )))
-            return new PutInfo( this, put );
-        else
-            return null;
+        if( result != null )
+            return result;
+        
+        return getAccess().checkPutInfo( new PutInfo( this, PutInfo.Put.CENTER, drop ));
     }
     
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -34,7 +34,7 @@ import bibliothek.gui.Dockable;
  * Used by a {@link DockController} to decide globally which 
  * {@link Dockable} can become child of which {@link DockStation}.<br>
  * The acceptance can be set through the method 
- * {@link DockController#setAcceptance(DockAcceptance)}
+ * {@link DockController#addAcceptance(DockAcceptance)}
  * @author Benjamin Sigg
  */
 public interface DockAcceptance {

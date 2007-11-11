@@ -72,10 +72,12 @@ public class PutInfo{
      * Creates a new PutInfo.
      * @param node the node to which <code>put</code> belongs
      * @param put where to put the {@link Dockable} in respect to <code>node</code>
+     * @param dockable the element that will be dropped
      */
-    public PutInfo( SplitNode node, Put put ){
+    public PutInfo( SplitNode node, Put put, Dockable dockable ){
         this.node = node;
         this.put = put;
+        this.dockable = dockable;
     }
     
     /**

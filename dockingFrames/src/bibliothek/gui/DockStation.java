@@ -232,16 +232,19 @@ public interface DockStation extends DockElement{
      * some indicators where the child will be put. The station can refuse
      * <code>dockable</code>, in this case nothing has to be painted, and
      * this method returns <code>false</code>.<br>
-     * This method will not be invoked if the result of {@link #accept(Dockable)}
-     * is <code>false</code>.<br>
-     * The result should be <code>false</code> if this station is dockable,
-     * and the mouse is in the {@link #isInOverrideZone(int, int, Dockable, Dockable) override-zone}
+     * There are some constraints:
+     * <ul>
+     * <li>The result should be <code>false</code> if this station is dockable,
+     * <code>checkOverrideZone</code> is <code>true</code> and the mouse is in
+     * the {@link #isInOverrideZone(int, int, Dockable, Dockable) override-zone}
      * of the parent. However, that condition is just "good manners" and may
-     * be broken.<br>
-     * If the operation introduces a new {@link DockStation} (because the
-     * child will be combined with another child), the method should use
-     * the {@link DockAcceptance} of its controller (see {@link DockController#getAcceptance()})
-     * to ensure that the combination is valid.<br>
+     * be broken.</li>
+     * <li>This method should use {@link #accept(Dockable)} and {@link Dockable#accept(DockStation)}
+     * or {@link Dockable#accept(DockStation, Dockable)} to ensure that the desired
+     * drop-location is valid.</li>
+     * <li>The method should use the {@link DockAcceptance} of its controller
+     * (see {@link DockController#getAcceptance()}) to ensure that the drop/location is valid.</li>
+     * </ul>
      * This method gets two points: <code>mouseX/mouseY</code> is the location
      * of the mouse, <code>titleX/titleY</code> is the location of the dragged
      * title. The second point may be interesting if the title of a dropped
@@ -255,11 +258,13 @@ public interface DockStation extends DockElement{
      * title is dragged
      * @param titleY the y-location of the dragged title or <code>mouseY</code> if no
      * title is dragged
+     * @param checkOverrideZone whether this station has to check if the mouse
+     * is in the override-zone of its parent
      * @param dockable the element which will be dropped
      * @return <code>true</code> if <code>dockable</code> can be added at the
      * current location, <code>false</code> otherwise.
      */
-    public boolean prepareDrop( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable );
+    public boolean prepareDrop( int mouseX, int mouseY, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable );
     
     /**
      * Adds the {@link Dockable} of the last run of
@@ -304,11 +309,13 @@ public interface DockStation extends DockElement{
      * title is dragged
      * @param titleY the y-location of the dragged title or <code>mouseY</code> if no
      * title is dragged
+     * @param checkOverrideZone whether this station has to check if the
+     * mouse is in the override-zone of its parent
      * @param dockable the element which will be moved
      * @return <code>true</code> if <code>dockable</code> can be added at the
      * current location, <code>false</code> otherwise.
      */
-    public boolean prepareMove( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable );
+    public boolean prepareMove( int mouseX, int mouseY, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable );
     
     /**
      * Moves a child of this station to a new location according to the

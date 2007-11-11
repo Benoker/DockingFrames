@@ -71,4 +71,11 @@ public interface SplitDockAccess {
      * @return the {@link Leaf} for <code>dockable</code>
      */
     public Leaf createLeaf( Dockable dockable );
+    
+    /**
+     * Checks whether <code>info</code> is valid or not.
+     * @param info the preferred drop location
+     * @return <code>info</code> if it is valid, <code>null</code> otherwise
+     */
+    public PutInfo checkPutInfo( PutInfo info );
 }

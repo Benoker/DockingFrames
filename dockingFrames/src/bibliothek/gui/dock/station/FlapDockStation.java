@@ -26,20 +26,8 @@
 
 package bibliothek.gui.dock.station;
 
-import java.awt.Component;
-import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.Window;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.HierarchyBoundsListener;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,22 +42,15 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockAcceptance;
+import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.DockableProperty;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.control.MouseFocusObserver;
-import bibliothek.gui.dock.event.DockControllerAdapter;
-import bibliothek.gui.dock.event.DockStationAdapter;
-import bibliothek.gui.dock.event.DockTitleEvent;
-import bibliothek.gui.dock.event.FlapDockListener;
-import bibliothek.gui.dock.event.FocusVetoListener;
-import bibliothek.gui.dock.station.flap.ButtonPane;
-import bibliothek.gui.dock.station.flap.FlapDockHoldToggle;
-import bibliothek.gui.dock.station.flap.FlapDockProperty;
-import bibliothek.gui.dock.station.flap.FlapDockStationFactory;
-import bibliothek.gui.dock.station.flap.FlapDropInfo;
-import bibliothek.gui.dock.station.flap.FlapWindow;
+import bibliothek.gui.dock.event.*;
+import bibliothek.gui.dock.station.flap.*;
 import bibliothek.gui.dock.station.support.CombinerWrapper;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
@@ -790,7 +771,7 @@ public class FlapDockStation extends AbstractDockableStation {
     }
 
     public boolean prepareDrop( int mouseX, int mouseY, int titleX, int titleY,
-            Dockable dockable ) {
+            boolean checkOverrideZone, Dockable dockable ) {
         
         Point mouse = new Point( mouseX, mouseY );
         SwingUtilities.convertPointFromScreen( mouse, buttonPane );
@@ -798,7 +779,7 @@ public class FlapDockStation extends AbstractDockableStation {
         boolean strong = buttonPane.titleContains( mouse.x, mouse.y );
         boolean combine = false;
         
-        DockAcceptance acceptance = getController() == null ? null : getController().getAcceptance();
+        DockAcceptance acceptance = getController().getAcceptance();
         
         if( !strong && window != null && window.isVisible() ){
             DockTitle title = window.getDockTitle();
@@ -812,15 +793,14 @@ public class FlapDockStation extends AbstractDockableStation {
                 combine = c.contains( point ) &&
                     dockable.accept( this, child ) &&
                     child.accept( this, dockable ) &&
-                    ( acceptance == null || 
-                            acceptance.accept( this, child, dockable ));
+                    acceptance.accept( this, child, dockable );
             }
         }
         
         if( !strong && !combine ){
             DockStation parent = getDockParent();
             if( parent != null ){
-                if( parent.isInOverrideZone( mouseX, mouseY, this, dockable ))
+                if( checkOverrideZone && parent.isInOverrideZone( mouseX, mouseY, this, dockable ))
                     return false;
             }
         }
@@ -832,21 +812,30 @@ public class FlapDockStation extends AbstractDockableStation {
             combine = window.contains( point ) &&
                 dockable.accept( this, child) &&
                 child.accept( this, dockable ) &&
-                (acceptance == null ||
-                        acceptance.accept( this, child, dockable ));
+                acceptance.accept( this, child, dockable );
         }
         
         if( combine && dockable == getFrontDockable() )
             return false;
         
-        FlapDropInfo dropInfo = new FlapDropInfo( dockable );
-        if( combine )
+        FlapDropInfo dropInfo = null;
+        if( combine ){
+            dropInfo = new FlapDropInfo( dockable );
         	dropInfo.setCombine( getFrontDockable() );
-        else
-            dropInfo.setIndex( buttonPane.indexAt( mouse.x, mouse.y ) );
+        }
+        else{
+            if( dockable.accept( this ) &&
+                accept( dockable ) &&
+                acceptance.accept( this, dockable )){
+                
+                dropInfo = new FlapDropInfo( dockable );
+                dropInfo.setIndex( buttonPane.indexAt( mouse.x, mouse.y ) );
+            }
+        }
         
         setDropInfo( dropInfo );
-        return true;
+        return dropInfo != null;
+        
     }
 
     public void drop(){
@@ -908,9 +897,9 @@ public class FlapDockStation extends AbstractDockableStation {
     }
 
     public boolean prepareMove( int mouseX, int mouseY, int titleX, int titleY,
-            Dockable dockable ){
+            boolean checkOverrideZone, Dockable dockable ){
         
-        return prepareDrop( mouseX, mouseY, titleX, titleY, dockable );
+        return prepareDrop( mouseX, mouseY, titleX, titleY, checkOverrideZone, dockable );
     }
 
     public void move() {

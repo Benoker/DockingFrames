@@ -225,6 +225,26 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         	dockStationListeners.fireDockableAdded( dockable );
         	return leaf;
         }
+        
+        public PutInfo checkPutInfo( PutInfo putInfo ){
+            if( putInfo != null ){
+                if( putInfo.getPut() == PutInfo.Put.CENTER || putInfo.getPut() == PutInfo.Put.TITLE ){
+                    if( !accept( putInfo.getDockable() ) || 
+                            !putInfo.getDockable().accept( SplitDockStation.this, ((Leaf)putInfo.getNode()).getDockable() ) ||
+                            !getController().getAcceptance().accept( SplitDockStation.this, ((Leaf)putInfo.getNode()).getDockable(), putInfo.getDockable() )){
+                        return null;
+                    }
+                }
+                else{
+                    if( !accept( putInfo.getDockable() ) ||
+                            !putInfo.getDockable().accept( SplitDockStation.this ) ||
+                            !getController().getAcceptance().accept( SplitDockStation.this, putInfo.getDockable() )){
+                        return null;
+                    }
+                }
+            }
+            return putInfo;
+        }
     };
     
     /** The root of the tree which determines the structure of this station */
@@ -808,19 +828,20 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         return true;
     }
 
-    public boolean prepareDrop( int x, int y, int titleX, int titleY, Dockable dockable ){
+    public boolean prepareDrop( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
         if( isFullScreen() )
             return false;
         
         if( dockables.size() == 0 ){
             if( parent != null ){
-                if( parent.isInOverrideZone( x, y, this, dockable ))
+                if( checkOverrideZone && parent.isInOverrideZone( x, y, this, dockable ))
                     return false;
             }
             
-            putInfo = new PutInfo( null, PutInfo.Put.CENTER );
+            putInfo = new PutInfo( null, PutInfo.Put.CENTER, dockable );
             putInfo.setDockable( dockable );
-            return true;
+            putInfo = access.checkPutInfo( putInfo );
+            return putInfo != null;
         }
         else{
             Point point = new Point( x, y );
@@ -829,7 +850,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             putInfo = root.getPut( point.x, point.y, dockable );
             
             if( putInfo == null && allowSideSnap ){
-                putInfo = calculateSideSnap( point.x, point.y, null );
+                putInfo = calculateSideSnap( point.x, point.y, null, dockable );
             }
             
             if( putInfo != null ){
@@ -838,7 +859,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             }
             
             if( parent != null && putInfo != null ){
-                if( parent.isInOverrideZone( x, y, this, dockable )){
+                if( checkOverrideZone && parent.isInOverrideZone( x, y, this, dockable )){
                     if( putInfo.getPut() == PutInfo.Put.CENTER ){
                         putInfo = null;
                         return false;
@@ -1158,7 +1179,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         invalidate();
     }
     
-    public boolean prepareMove( int x, int y, int titleX, int titleY, Dockable dockable ) {
+    public boolean prepareMove( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
         if( isFullScreen() )
             return false;
         
@@ -1169,7 +1190,8 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         Leaf leaf = root.getLeaf( dockable );
         
         if( putInfo == null && allowSideSnap ){
-            putInfo = calculateSideSnap( point.x, point.y, leaf );
+            putInfo = calculateSideSnap( point.x, point.y, leaf, dockable );
+            putInfo = access.checkPutInfo( putInfo );
         }
         
         if( (putInfo != null) &&
@@ -1184,15 +1206,13 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         }
         
         if( parent != null && putInfo != null ){
-            if( parent.isInOverrideZone( x, y, this, dockable )){
+            if( checkOverrideZone && parent.isInOverrideZone( x, y, this, dockable )){
                 if( putInfo.getPut() == PutInfo.Put.CENTER ){
                     putInfo = null;
                     return false;
                 }
-                return true;
             }
         }
-        
         
         return putInfo != null;
     }
@@ -1311,29 +1331,30 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      * @param y The y-coordinate of the mouse
      * @param leaf The leaf which was the old parent of the moved {@link Dockable} 
      * or <code>null</code>
+     * @param drop the element that will be dropped
      * @return The preferred location or <code>null</code>
      */
-    protected PutInfo calculateSideSnap( int x, int y, Leaf leaf ){
+    protected PutInfo calculateSideSnap( int x, int y, Leaf leaf, Dockable drop ){
         PutInfo info;
         
         if( SplitNode.above( 0, 0, getWidth(), getHeight(), x, y )){
             if( SplitNode.above( 0, getHeight(), getWidth(), 0, x, y )){
                 // top
-                info = new PutInfo( root.getChild(), PutInfo.Put.TOP );
+                info = new PutInfo( root.getChild(), PutInfo.Put.TOP, drop );
             }
             else{
                 // bottom
-                info = new PutInfo( root.getChild(), PutInfo.Put.RIGHT );
+                info = new PutInfo( root.getChild(), PutInfo.Put.RIGHT, drop );
             }
         }
         else{
             if( SplitNode.above( 0, getHeight(), getWidth(), 0, x, y )){
                 // left
-                info = new PutInfo( root.getChild(), PutInfo.Put.LEFT );
+                info = new PutInfo( root.getChild(), PutInfo.Put.LEFT, drop );
             }
             else{
                 // right
-                info = new PutInfo( root.getChild(), PutInfo.Put.BOTTOM );
+                info = new PutInfo( root.getChild(), PutInfo.Put.BOTTOM, drop );
             }            
         }
         

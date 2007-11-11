@@ -409,19 +409,16 @@ public class StackDockStation extends AbstractDockableStation {
         return -1;
     }
 
-    public boolean prepareDrop( int x, int y, int titleX, int titleY, Dockable dockable ){
+    public boolean prepareDrop( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
         DockStation parent = getDockParent();
         Point point = new Point( x, y );
         SwingUtilities.convertPointFromScreen( point, panel );
         
         if( parent != null ){
-            if( parent.isInOverrideZone( x, y, this, dockable )){
+            if( checkOverrideZone && parent.isInOverrideZone( x, y, this, dockable )){
                 if( dockables.size() > 1 ){
-                    insert = exactTabIndexAt( point.x, point.y );
-                    if( insert != null ){
-                        this.dropping = dockable;
+                    if( setInsert( exactTabIndexAt( point.x, point.y ), dockable ))
                         return true;
-                    }
                 }
                 else if( dockables.size() == 1 ){
                     DockTitle title = dockables.get( 0 ).getTitle();
@@ -431,9 +428,7 @@ public class StackDockStation extends AbstractDockableStation {
                         SwingUtilities.convertPointFromScreen( p, component );
 
                         if( component.getBounds().contains( p )){
-                            insert = new Insert( 0, true );
-                            this.dropping = dockable;
-                            return true;
+                            return setInsert( new Insert( 0, true ), dockable );
                         }
                     }
                 }
@@ -441,9 +436,7 @@ public class StackDockStation extends AbstractDockableStation {
             }
         }
         
-        this.dropping = dockable;
-        insert = tabIndexAt( point.x, point.y );
-        return true;
+        return setInsert( tabIndexAt( point.x, point.y ), dockable );
     }
 
     public void drop(){
@@ -506,27 +499,42 @@ public class StackDockStation extends AbstractDockableStation {
             return false;
     }
     
-    public boolean prepareMove( int x, int y, int titleX, int titleY, Dockable dockable ) {
+    public boolean prepareMove( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
         DockStation parent = getDockParent();
         Point point = new Point( x, y );
         SwingUtilities.convertPointFromScreen( point, panel );
         
         if( parent != null ){
-            if( parent.isInOverrideZone( x, y, this, dockable )){
+            if( checkOverrideZone && parent.isInOverrideZone( x, y, this, dockable )){
                 if( dockables.size() > 1 ){
-                    insert = exactTabIndexAt( point.x, point.y );
-                    if( insert != null ){
-                        this.dropping = dockable;
+                    if( setInsert( exactTabIndexAt( point.x, point.y ), dockable ) )
                         return true;
-                    }
                 }
                 return false;
             }
         }
         
-        this.dropping = dockable;
-        insert = tabIndexAt( point.x, point.y );
-        return true;
+        return setInsert( tabIndexAt( point.x, point.y ), dockable );
+    }
+    
+    /**
+     * Checks whether <code>child</code> can be inserted at <code>insert</code>.
+     * If so, then the field {@link #insert} and {@link #dropping} are set.
+     * @param insert the new location
+     * @param child the element to insert
+     * @return <code>true</code> if the combination is valid
+     */
+    private boolean setInsert( Insert insert, Dockable child ){
+        if( accept( child ) && child.accept( this ) && getController().getAcceptance().accept( this, child )){
+            this.insert = insert;
+            this.dropping = child;
+        }
+        else{
+            this.insert = null;
+            this.dropping = null;
+        }
+        
+        return this.insert != null;
     }
 
     public void move() {

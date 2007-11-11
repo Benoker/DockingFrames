@@ -43,26 +43,18 @@ import bibliothek.gui.dock.event.DockAdapter;
  * @author Benjamin Sigg
  *
  */
-public class ActionBinder {
+public class ActionBinder extends DockAdapter{
     /** the observers of each Dockable that is known to this manager */
     private Map<Dockable, SourceObserver> observers = new HashMap<Dockable, SourceObserver>();
     
-    /**
-     * Creates a new manager
-     * @param controller the controller in whose realm this manager works
-     */
-    public ActionBinder( DockController controller ){
-        controller.getRegister().addDockRegisterListener( new DockAdapter(){
-            @Override
-            public void dockableRegistered( DockController controller, Dockable dockable ) {
-                observers.put( dockable, new SourceObserver( dockable ) );
-            }
-            
-            @Override
-            public void dockableUnregistered( DockController controller, Dockable dockable ) {
-                observers.remove( dockable ).destroy();
-            }
-        });
+    @Override
+    public void dockableRegistered( DockController controller, Dockable dockable ) {
+        observers.put( dockable, new SourceObserver( dockable ) );
+    }
+    
+    @Override
+    public void dockableUnregistered( DockController controller, Dockable dockable ) {
+        observers.remove( dockable ).destroy();
     }
     
     /**

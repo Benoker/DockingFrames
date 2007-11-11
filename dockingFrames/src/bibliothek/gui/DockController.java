@@ -120,6 +120,9 @@ public class DockController {
     /** a set of properties */
     private DockProperties properties = new DockProperties();
     
+    /** the factory that creates new parts of this controller */
+    private DockControllerFactory factory;
+    
     /** tells which {@link Component} represents which {@link DockElement} */
     private Map<Component, DockElement> componentToDockElements = 
     	new HashMap<Component, DockElement>();
@@ -128,63 +131,71 @@ public class DockController {
      * Creates a new controller. 
      */
     public DockController(){
-    	this( true );
+    	this( new DefaultDockControllerFactory() );
     }
     
     /**
      * Creates a new controller but does not initiate the properties of this
      * controller if not wished. Clients should call the method 
-     * {@link #initiate()} if the pass <code>false</code> to this constructor.
+     * {@link #initiate(DockControllerFactory)} if the pass <code>null</code> to this constructor.
      * Otherwise the behavior of this controller is unspecified.
-     * @param initiate <code>true</code> if all properties should be initiated
+     * @param factory the factory creating elements of this controller or
+     * <code>null</code> if {@link #initiate(DockControllerFactory)} will be
+     * called later
      */
-    protected DockController( boolean initiate ){
-    	if( initiate ){
-    		initiate();
+    public DockController( DockControllerFactory factory ){
+    	if( factory != null ){
+    		initiate( factory );
     	}
     }
     
     /**
      * Initializes all properties of this controller. This method should be
      * called only once. This method can be called by a subclass if the 
-     * subclass used {@link #DockController(boolean)} with an argument <code>false</code>.
-     * @see #createRegister()
-     * @see #createRelocator()
-     * @see #createDefaultActionOffer()
-     * @see #createMouseFocusObserver()
-     * @see #createActionViewConverter()
-     * @see #createFocusController()
-     * @see #createPopupController()
+     * subclass used {@link #DockController(DockControllerFactory)} with an argument <code>null</code>.
      */
-    protected final void initiate(){
-    	register = createRegister();
-    	DockRegisterListener focus = createFocusController();
+    protected final void initiate( DockControllerFactory factory ){
+        if( this.factory != null )
+            throw new IllegalStateException( "DockController already initialized" );
+        
+        if( factory == null )
+            throw new IllegalArgumentException( "Factory must not be null" );
+        
+        this.factory = factory;
+        
+    	register = factory.createRegister( this );
+    	DockRegisterListener focus = factory.createFocusController( this );
     	if( focus != null )
     		register.addDockRegisterListener( focus );
     	
-    	DockRegisterListener popup = createPopupController();
+    	DockRegisterListener popup = factory.createPopupController( this );
     	if( popup != null )
     		register.addDockRegisterListener( popup );
     	
+    	DockRegisterListener binder = factory.createActionBinder( this );
+    	if( binder != null )
+    	    register.addDockRegisterListener( binder );
+    	
 		register.addDockRegisterListener( registerListener );
-        relocator = createRelocator();
+        relocator = factory.createRelocator( this );
         
         for( DockControllerListener listener : listeners ){
             register.addDockRegisterListener( listener );
             relocator.addDockRelocatorListener( listener );
         }
     	
-        defaultActionOffer = createDefaultActionOffer();
-        focusObserver = createMouseFocusObserver();
-        actionViewConverter = createActionViewConverter();
-        doubleClickController = new DoubleClickController( this );
-        keyboardController = createKeyboardController();
+        defaultActionOffer = factory.createDefaultActionOffer( this );
+        focusObserver = factory.createMouseFocusObserver( this );
+        actionViewConverter = factory.createActionViewConverter( this );
+        doubleClickController = factory.createDoubleClickController( this );
+        keyboardController = factory.createKeyboardController( this );
         
         DockUI.getDefaultDockUI().fillIcons( icons );
         
         setTheme( new BasicTheme() );
         
-        new ActionBinder( this );
+        relocator.addMode( DockRelocatorMode.SCREEN_ONLY );
+        relocator.addMode( DockRelocatorMode.NO_COMBINATION );
     }
     
     /**
@@ -195,56 +206,6 @@ public class DockController {
 	    focusObserver.kill();
 	    register.kill();
 	    keyboardController.kill();
-    }
-    
-    /**
-     * Creates a new register for this controller.
-     * @return the new register
-     */
-    protected DockRegister createRegister(){
-    	return new DockRegister( this );
-    }
-    
-    /**
-     * Creates a new relocator for this controller.
-     * @return the relocator
-     */
-    protected DockRelocator createRelocator(){
-    	return new DefaultDockRelocator( this );
-    }
-    
-    /**
-     * Creates a listener which will observe all stations to ensure that
-     * the focused {@link Dockable} is always visible.
-     * @return the listener or <code>null</code>
-     */
-    protected DockRegisterListener createFocusController(){
-    	return new FocusController( this );
-    }
-    
-    /**
-     * Creates a listener which will open a popup-menu for each title
-     * or dockable known to this controller.
-     * @return the new listener or <code>null</code>
-     */
-    protected DockRegisterListener createPopupController(){
-    	return new PopupController( this );
-    }
-    
-    /**
-     * Creates the focus-controller of this controller.
-     * @return the controller, not <code>null</code>
-     */
-    protected MouseFocusObserver createMouseFocusObserver(){
-        return new DefaultMouseFocusObserver( this );
-    }
-    
-    /**
-     * Creates a new controller for global KeyEvents.
-     * @return the new controller, not <code>null</code>
-     */
-    protected KeyboardController createKeyboardController(){
-    	return new DefaultkeyBoardController( this );
     }
     
     /**
@@ -289,28 +250,11 @@ public class DockController {
 	}
     
     /**
-     * Creates the converter that will transform actions into views.
-     * @return the new converter.
-     */
-    protected ActionViewConverter createActionViewConverter(){
-    	return new ActionViewConverter();
-    }
-
-    /**
      * Gets the current {@link ActionViewConverter}.
      * @return the converter
      */
     public ActionViewConverter getActionViewConverter(){
     	return actionViewConverter;
-    }
-    
-    /**
-     * Creates the default action offer. This {@link ActionOffer} will
-     * be used if no other offer was interested in a Dockable.
-     * @return the offer, must not be <code>null</code>
-     */
-    protected ActionOffer createDefaultActionOffer(){
-        return new DefaultActionOffer();
     }
     
     /**
@@ -329,13 +273,13 @@ public class DockController {
      * change the value once the first station is {@link #add(DockStation) added}.
      * @param remove <code>true</code> if stations with one or less
      * children are removed
-     * @see #createSingleParentRemover()
+     * @see DockControllerFactory#createSingleParentRemover(DockController)
      */
     public void setSingleParentRemove( boolean remove ){
         if( singleParentRemove != remove ){
             if( remove ){
                 if( remover == null )
-                    remover = createSingleParentRemover();
+                    remover = factory.createSingleParentRemover( this );
                 
                 remover.install( this );
             }
@@ -346,16 +290,6 @@ public class DockController {
         }
     }
     
-    /**
-     * Creates a {@link SingleParentRemover} that will be used to remove
-     * some stations from this controller.
-     * @return The remover
-     * @see #setSingleParentRemove(boolean)
-     */
-    protected SingleParentRemover createSingleParentRemover(){
-    	return new SingleParentRemover();
-    }
-            
     /**
      * Gets the behavior that tells which stations can have which children.
      * @return the behavior

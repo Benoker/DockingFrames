@@ -44,3 +44,7 @@
 - Bugfix: Some DockHierarchyEvents were lost
 - API: KeyEvents are caught by the KeyBoardController. Some DockActions can now be triggered by a KeyEvent.
 - API: DockAction has additional method "trigger" which results in the execution of a default-action.
+- API: all create*-methods of DockController moved into a new interface DockControllerFactory
+- API: new DockRelocatorMode, changes behaviour of drag&drop operations subject to the pressed keys on the keyboard.
+- API: DockController can tell which Component is child (in the logic of the dock-tree) of which Dockable. Scheme can be influenced by clients through DockController#putRepresentative.
+- Layout, API: DockStations have to decide whether a child can be accepted or not, the DockRelocator no longer does this. That gives more flexibility.

@@ -25,8 +25,11 @@
  */
 package bibliothek.gui.dock.control;
 
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -37,7 +40,10 @@ import bibliothek.gui.dock.event.DockRelocatorListener;
  * A manager adding {@link java.awt.event.MouseListener} and
  * {@link java.awt.event.MouseMotionListener} to every {@link bibliothek.gui.Dockable}
  * and {@link bibliothek.gui.dock.title.DockTitle} and handling the
- * drag and drop.
+ * drag and drop.<br>
+ * The behaviour of a drag and drop operation can be made dependent of the 
+ * keys that are pressed, using some {@link DockRelocatorMode}s. These modes
+ * are added through {@link #addMode(DockRelocatorMode)} 
  * @author Benjamin Sigg
  */
 public abstract class DockRelocator {
@@ -50,7 +56,12 @@ public abstract class DockRelocator {
     private int dragDistance = 10;
     /** Whether a drag event can only be initialized by dragging a title or not */
     private boolean dragOnlyTitel = false;
-	
+
+    /** the list of all known modes */
+    private List<DockRelocatorMode> modes = new ArrayList<DockRelocatorMode>();
+    /** the set of the modes that are currently active */
+    private Set<DockRelocatorMode> activeModes = new HashSet<DockRelocatorMode>();
+    
 	/**
 	 * Creates a new manager.
 	 * @param controller the controller whose dockables are moved
@@ -154,6 +165,57 @@ public abstract class DockRelocator {
     public void setDragDistance( int dragDistance ){
 		this.dragDistance = dragDistance;
 	}
+    
+    /**
+     * Adds a mode to this relocator, a mode can be activated or deactivated
+     * when the user presses a button like "ctrl" or "shift" during a 
+     * drag and drop operation.
+     * @param mode the new mode, not <code>null</code>
+     */
+    public void addMode( DockRelocatorMode mode ){
+        if( mode == null )
+            throw new IllegalArgumentException( "Mode must not be null" );
+        modes.add( mode );
+    }
+    
+    /**
+     * Removes a mode that has earlier been added to this relocator.
+     * @param mode the mode to remove
+     */
+    public void removeMode( DockRelocatorMode mode ){
+        if( activeModes.remove( mode ))
+            mode.setActive( controller, false );
+        modes.remove( mode );
+    }
+    
+    /**
+     * Sets all {@link DockRelocatorMode}s to inactive.
+     */
+    protected void disableAllModes(){
+        for( DockRelocatorMode mode : activeModes )
+            mode.setActive( controller, false );
+        activeModes.clear();
+    }
+    
+    /**
+     * Ensures that all {@link DockRelocatorMode}s are in the state that
+     * fits the current set of modifiers.
+     * @param modifiers the state of the last {@link MouseEvent}, see
+     * {@link MouseEvent#getModifiersEx()}
+     */
+    protected void checkModes( int modifiers ){
+        for( DockRelocatorMode mode : modes ){
+            boolean active = mode.shouldBeActive( controller, modifiers );
+            if( active ){
+                if( activeModes.add( mode ))
+                    mode.setActive( controller, true );
+            }
+            else{
+                if( activeModes.remove( mode ))
+                    mode.setActive( controller, false );
+            }
+        }
+    }
     
     /**
      * Tells whether the user has currently grabbed a dockable and moves
