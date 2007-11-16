@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.facile.intern;
 
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.facile.FControl;
 import bibliothek.gui.dock.facile.FDockable;
 import bibliothek.gui.dock.facile.FDockableFactory;
@@ -65,4 +66,11 @@ public interface FControlAccess {
 	 * @return the id or <code>null</code>
 	 */
 	public String getFactoryId( FDockableFactory factory );
+	
+	/**
+	 * Gets the manager that is responsible to change the states of the
+	 * {@link Dockable}s.
+	 * @return the manager
+	 */
+	public FStateManager getStateManager();
 }

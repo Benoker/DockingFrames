@@ -25,6 +25,10 @@
  */
 package bibliothek.gui.dock.facile;
 
+import java.awt.Container;
+
+import javax.swing.Icon;
+
 import bibliothek.gui.dock.facile.intern.FControlAccess;
 import bibliothek.gui.dock.facile.intern.FacileDockable;
 
@@ -58,9 +62,6 @@ public class FDockable {
 	/** whether this dockable can be closed by the user */
 	private boolean closeable;
 	
-	/** the size and location of this dockable */
-	private ExtendedMode extendedMode = ExtendedMode.NORMALIZED;
-	
 	/** the graphical representation of this dockable */
 	private FacileDockable dockable;
 	
@@ -72,6 +73,46 @@ public class FDockable {
 	 */
 	public FDockable(){
 		dockable = new FacileDockable( this );
+	}
+	
+	/**
+	 * Sets the text that is shown as title.
+	 * @param text the title
+	 */
+	public void setTitleText( String text ){
+	    dockable.setTitleText( text );
+	}
+	
+	/**
+	 * Gets the text that is shown as title.
+	 * @return the title
+	 */
+	public String getTitleText(){
+	    return dockable.getTitleText();
+	}
+	
+	/**
+	 * Sets the icon that is shown in the title of this <code>FDockable</code>.
+	 * @param icon the title-icon
+	 */
+	public void setTitleIcon( Icon icon ){
+	    dockable.setTitleIcon( icon );
+	}
+	
+	/**
+	 * Gets the icon that is shown in the title.
+	 * @return the title-icon, might be <code>null</code>
+	 */
+	public Icon getTitleIcon(){
+	    return dockable.getTitleIcon();
+	}
+	
+	/**
+	 * Gets the container on which the client can pack its components.
+	 * @return the panel showing the content
+	 */
+	public Container getContentPane(){
+	    return dockable.getContentPane();
 	}
 	
 	/**
@@ -88,6 +129,8 @@ public class FDockable {
 	 */
 	public void setMinimizable( boolean minimizable ){
 		this.minimizable = minimizable;
+		if( control != null )
+		    control.getStateManager().rebuild( dockable );
 	}
 	
 	/**
@@ -104,6 +147,8 @@ public class FDockable {
 	 */
 	public void setMaximizable( boolean maximizable ){
 		this.maximizable = maximizable;
+		if( control != null )
+            control.getStateManager().rebuild( dockable );
 	}
 	
 	
@@ -121,6 +166,8 @@ public class FDockable {
 	 */
 	public void setExternalizable( boolean externalizable ){
 		this.externalizable = externalizable;
+		if( control != null )
+            control.getStateManager().rebuild( dockable );
 	}
 	
 	
@@ -175,15 +222,20 @@ public class FDockable {
 		if( extendedMode == null )
 			throw new NullPointerException( "extendedMode must not be null" );
 		
-		this.extendedMode = extendedMode;
+		if( control != null )
+		    control.getStateManager().setMode( dockable, extendedMode );
 	}
 	
 	/**
 	 * Gets the size and location of this dockable.
-	 * @return the size and location
+	 * @return the size and location or <code>null</code> if this dockable
+	 * is not part of an {@link FControl}.
 	 */
 	public ExtendedMode getExtendedMode(){
-		return extendedMode;
+		if( control == null )
+		    return null;
+		
+		return control.getStateManager().getMode( dockable );
 	}
 
 	/**
@@ -199,7 +251,13 @@ public class FDockable {
 	 * @param control the new control
 	 */
 	void setControl( FControlAccess control ){
+	    if( this.control != null )
+	        this.control.getStateManager().remove( dockable );
+	    
 		this.control = control;
+		
+		if( control != null )
+		    control.getStateManager().add( dockable );
 	}
 	
 	/**

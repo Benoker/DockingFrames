@@ -25,27 +25,20 @@
  */
 package bibliothek.gui.dock.facile;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
+
+import javax.swing.JFrame;
 
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.facile.intern.FControlAccess;
+import bibliothek.gui.dock.facile.intern.FStateManager;
 import bibliothek.gui.dock.facile.intern.FacileDockable;
 
 public class FControl {
+    /** connection to the real DockingFrames */
 	private DockFrontend frontend;
 	
 	/** the set of known factories */
@@ -56,6 +49,12 @@ public class FControl {
 	private List<FMultipleDockable> multiDockables = 
 		new ArrayList<FMultipleDockable>();
 	
+	/** a manager allowing the user to change the extended-state of some {@link FDockable}s */
+	private FStateManager stateManager;
+	
+	/** the center component of the main-frame */
+	private FCenter center;
+	
 	/**
 	 * Access to the internal methods of this control
 	 */
@@ -63,10 +62,22 @@ public class FControl {
 	
 	/**
 	 * Creates a new control
+	 * @param frame the main frame of the application, needed to create
+	 * dialogs for externalized {@link FDockable}s
 	 */
-	public FControl(){
+	public FControl( JFrame frame ){       
 		frontend = new DockFrontend();
+		stateManager = new FStateManager( frontend.getController() );
+		center = new FCenter( access );
 	}
+	
+	/**
+	 * Gets the element that should be in the center of the mainframe.
+	 * @return the center of the mainframe of the application
+	 */
+	public FCenter getCenter() {
+        return center;
+    }
 	
 	/**
 	 * Adds a dockable to this control. The dockable can be made visible afterwards.
@@ -312,6 +323,10 @@ public class FControl {
 			}
 			
 			return null;
+		}
+		
+		public FStateManager getStateManager() {
+		    return stateManager;
 		}
 	}
 }
