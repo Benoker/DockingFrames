@@ -875,9 +875,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     }
     
     public void drop( Dockable dockable ) {
-        dockStationListeners.fireDockableAdding( dockable );
-        addDockable( dockable, false );
-        dockStationListeners.fireDockableAdded( dockable );
+        addDockable( dockable, true );
     }
 
     public boolean drop( Dockable dockable, DockableProperty property ) {
@@ -897,6 +895,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      * if no location could be found
      */
     public boolean drop( Dockable dockable, final SplitDockProperty property ){
+        DockUtilities.ensureTreeValidity( this, dockable );
         if( getDockableCount() == 0 ){
             drop( dockable );
             return true;
@@ -1059,8 +1058,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      */
     private void drop( PutInfo putInfo, boolean fire ){
         if( putInfo.getNode() == null ){
-            if( fire )
+            if( fire ){
+                DockUtilities.ensureTreeValidity( this, putInfo.getDockable() );
             	dockStationListeners.fireDockableAdding( putInfo.getDockable() );
+            }
             addDockable( putInfo.getDockable(), false );
             if( fire ){
             	dockStationListeners.fireDockableAdded( putInfo.getDockable() );
@@ -1139,8 +1140,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      * <code>false</code> otherwise
      */
     protected void dropAside( SplitNode neighbor, PutInfo.Put put, Dockable dockable, double divider, boolean fire ){
-        if( fire )
+        if( fire ){
+            DockUtilities.ensureTreeValidity( this, dockable );
         	dockStationListeners.fireDockableAdding( dockable );
+        }
         
         Leaf leaf = addToList( dockable );
         SplitNode parent = neighbor.getParent();
@@ -1595,10 +1598,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      * some events.
      */
     private void addDockable( Dockable dockable, boolean fire ){
-        DockUtilities.ensureTreeValidity( this, dockable );
-        
-        if( fire )
+        if( fire ){
+            DockUtilities.ensureTreeValidity( this, dockable );
         	dockStationListeners.fireDockableAdding( dockable );
+        }
         Leaf leaf = addToList( dockable );
         
         if( root.getChild() == null ){

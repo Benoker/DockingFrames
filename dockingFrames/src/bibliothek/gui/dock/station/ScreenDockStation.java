@@ -560,6 +560,7 @@ public class ScreenDockStation extends AbstractDockStation {
      * otherwise.
      */
     public boolean drop( Dockable dockable, ScreenDockProperty property ){
+        DockUtilities.ensureTreeValidity( this, dockable );
         ScreenDockDialog best = null;
         double bestRatio = 0;
         

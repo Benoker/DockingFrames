@@ -468,6 +468,7 @@ public class StackDockStation extends AbstractDockableStation {
      * if the child couldn't be added
      */
     public boolean drop( Dockable dockable, StackDockProperty property ){
+        DockUtilities.ensureTreeValidity( this, dockable );
         int index = property.getIndex();
         
         if( dockables.size() == 0 ){

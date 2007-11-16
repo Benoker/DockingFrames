@@ -250,8 +250,12 @@ public class DockUtilities {
             throw new IllegalArgumentException( "child and parent are the same" );
         
         // check no cycles
-        if( isAnchestor( newChild, newParent ))
-            throw new IllegalArgumentException( "can't create a cycle" );
+        if( isAnchestor( newChild, newParent )){
+            if( newChild.getDockParent() == newParent )
+                newParent.drag( newChild );
+            else
+                throw new IllegalArgumentException( "can't create a cycle" );
+        }
         
         // remove old parent
         if( oldParent != null ){

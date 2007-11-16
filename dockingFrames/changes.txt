@@ -50,3 +50,4 @@
 - Layout, API: DockStations have to decide whether a child can be accepted or not, the DockRelocator no longer does this. That gives more flexibility.
 - API: MovingTitleGetter replaced by DockableMovingImageFactory, gives more flexibility
 - Layout: FlatTheme now shows a screencapture of the Dockable that is moved by the user instead of the DockTitle
+- BugFix: The method "drop" on many DockStations did not ensure that the tree gets no cycles

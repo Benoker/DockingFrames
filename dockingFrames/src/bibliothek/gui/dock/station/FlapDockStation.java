@@ -868,6 +868,7 @@ public class FlapDockStation extends AbstractDockableStation {
      * <code>false</code> if the child has been rejected
      */
     public boolean drop( Dockable dockable, FlapDockProperty property ) {
+        DockUtilities.ensureTreeValidity( this, dockable );
         int index = property.getIndex();
         
         if( index >= getDockableCount() && this.accept( dockable ) && dockable.accept( this )){
