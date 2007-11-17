@@ -37,7 +37,7 @@ public class Resources {
             
             ClassLoader loader = Resources.class.getClassLoader();
             for( Map.Entry<Object, Object> entry : properties.entrySet() ){
-                ImageIcon icon = new ImageIcon( ImageIO.read( loader.getResource( "/data/bibliothek/gui/dock/icons/" + entry.getValue()) ));
+                ImageIcon icon = new ImageIcon( ImageIO.read( loader.getResource( "data/bibliothek/gui/dock/icons/" + entry.getValue()) ));
                 icons.put( (String)entry.getKey(), icon );
             }
         }

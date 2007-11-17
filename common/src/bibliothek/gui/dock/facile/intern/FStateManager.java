@@ -25,6 +25,9 @@
  */
 package bibliothek.gui.dock.facile.intern;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.action.StateManager;
@@ -84,6 +87,31 @@ public class FStateManager extends StateManager {
             return FDockable.ExtendedMode.NORMALIZED;
         
         return null;
+    }
+    
+    @Override
+    protected String[] availableModes( String current, Dockable dockable ){
+    	if( !(dockable instanceof FacileDockable )){
+    		return new String[0];
+    	}
+    	
+    	FDockable facile = ((FacileDockable)dockable).getDockable();
+    	
+    	List<String> modes = new ArrayList<String>( 4 );
+    	
+    	if( !MINIMIZED.equals( current ) && facile.isMinimizable() )
+    		modes.add( MINIMIZED );
+    	
+    	if( !NORMALIZED.equals( current ) )
+    		modes.add( NORMALIZED );
+    	
+    	if( !MAXIMIZED.equals( current ) && facile.isMaximizable() )
+    		modes.add( MAXIMIZED );
+    	
+    	if( !EXTERNALIZED.equals( current ) && facile.isExternalizable() )
+    		modes.add( EXTERNALIZED );
+    	
+    	return modes.toArray( new String[ modes.size() ] );
     }
     
     @Override

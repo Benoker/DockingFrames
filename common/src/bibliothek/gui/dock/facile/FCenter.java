@@ -100,8 +100,8 @@ public class FCenter extends JComponent{
         
         FStateManager state = access.getStateManager();
         state.add( "center center", center );
-        state.add( "center north", north );
         state.add( "center south", south );
+        state.add( "center north", north );
         state.add( "center east", east );
         state.add( "center west", west );
         

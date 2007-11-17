@@ -26,6 +26,10 @@ public class Test {
         a.setCloseable( true );
         a.setExternalizable( true );
         
+        b.setMinimizable( true );
+        
+        c.setMaximizable( true );
+        
         a.setTitleText( "alpha" );
         b.setTitleText( "beta" );
         c.setTitleText( "gamma" );

@@ -25,11 +25,18 @@
  */
 package bibliothek.gui.dock.common.action;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.*;
+import bibliothek.gui.dock.action.ActionGuard;
+import bibliothek.gui.dock.action.DefaultDockActionSource;
+import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.util.DockUtilities;
 
@@ -48,9 +55,6 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
     /** the set of all modes */
     private Map<String, Mode> modes = new HashMap<String, Mode>();
     
-    /** the order of the modes */
-    private String[] modeOrder;
-    
     /** the set of all dockables */
     private Map<Dockable, Entry> dockables = new HashMap<Dockable, Entry>();
     
@@ -60,7 +64,6 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
      * go into
      */
     public ModeTransitionManager( String... modes ){
-        modeOrder = modes;
         for( String mode : modes ){
             this.modes.put( mode, new Mode( mode ) );
         }
@@ -101,7 +104,10 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
      */
     public SimpleButtonAction getOutgoingAction( String mode ){
         Mode m = modes.get( mode );
-        return m == null ? null : m.outgoing;
+        if( m == null )
+        	return null;
+
+        return m.outgoing();
     }
     
     /**
@@ -112,7 +118,10 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
      */
     public SimpleButtonAction getIngoingAction( String mode ){
         Mode m = modes.get( mode );
-        return m == null ? null : m.ingoing;        
+        if( m == null )
+        	return null;
+        
+        return m.ingoing();        
     }
     
     /**
@@ -129,7 +138,7 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
      * Makes a list of all modes <code>dockable</code> can be going into.
      * @param current the mode <code>dockable</code> is currently in
      * @param dockable the element whose available modes are searched
-     * @return an unordered list of available modes. If there is a logic for
+     * @return an ordered list of available modes. If there is a logic for
      * "going of of a mode", then the current mode should be included
      */
     protected abstract String[] availableModes( String current, Dockable dockable );
@@ -219,13 +228,11 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
         Entry entry = dockables.get( dockable );
         if( entry != null ){
             String mode = currentMode( dockable );
-            Set<String> available = new HashSet<String>();
-            for( String next : availableModes( mode, dockable ))
-                available.add( next );
+            String[] available = availableModes( mode, dockable );
             
             entry.source.removeAll();
-            for( String check : modeOrder ){
-                if( available.contains( check )){
+            for( String check : available ){
+                if( modes.containsKey( check ) ){
                     if( check.equals( mode ))
                         entry.source.add( getOutgoingAction( check ));
                     else
@@ -270,6 +277,36 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
     }
     
     /**
+     * Stores <code>mode</code> as new mode of <code>dockable</code>, put
+     * does not call {@link #transition(String, String, Dockable)}.
+     * @param dockable the element whose mode changes
+     * @param mode the new mode
+     */
+    protected void putMode( Dockable dockable, String mode ){
+    	Entry entry = dockables.get( dockable );
+    	if( entry != null ){
+    		entry.putMode( mode );
+    		validate( dockable );
+    	}
+    }
+    
+    /**
+     * Gets the mode in which <code>Dockable</code> was previously
+     * @param dockable the element whose mode is searched
+     * @return the previous more or <code>null</code>
+     */
+    protected String previousMode( Dockable dockable ){
+    	Entry entry = dockables.get( dockable );
+    	if( entry == null )
+    		return null;
+    	
+    	if( entry.history.size() < 2 )
+    		return null;
+    	
+    	return entry.history.get( entry.history.size()-2 );
+    }
+    
+    /**
      * Describes all properties of a mode.
      * @author Benjamin Sigg
      */
@@ -277,9 +314,9 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
         /** the identifier of the mode */
         public String name;
         /** the action to change from another mode into this mode */
-        public SimpleButtonAction ingoing;
+        private SimpleButtonAction ingoing;
         /** the action to go out of this mode */
-        public SimpleButtonAction outgoing;
+        private SimpleButtonAction outgoing;
         
         /**
          * Creates a new mode.
@@ -287,20 +324,41 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
          */
         public Mode( String name ){
             this.name = name;
-            ingoing = new SimpleButtonAction(){
-                @Override
-                public void action( Dockable dockable ) {
-                    super.action( dockable );
-                    goIn( Mode.this.name, dockable );
-                }
-            };
-            outgoing = new SimpleButtonAction(){
-                @Override
-                public void action( Dockable dockable ) {
-                    super.action( dockable );
-                    goOut( Mode.this.name, dockable );
-                }
-            };
+        }
+        
+        /**
+         * Gets the action used to go into this mode.
+         * @return the action to go in
+         */
+        public SimpleButtonAction ingoing(){
+        	if( ingoing == null ){
+	        	ingoing = new SimpleButtonAction(){
+	                @Override
+	                public void action( Dockable dockable ) {
+	                    super.action( dockable );
+	                    goIn( Mode.this.name, dockable );
+	                }
+	            };
+        	}
+        	return ingoing;
+        }
+        
+        /**
+         * Gets the action used to go out of this mode.
+         * @return the action to go out
+         */
+        public SimpleButtonAction outgoing(){
+        	if( outgoing == null ){
+        		outgoing = new SimpleButtonAction(){
+                    @Override
+                    public void action( Dockable dockable ) {
+                        super.action( dockable );
+                        goOut( Mode.this.name, dockable );
+                    }
+                };
+        	}
+        	
+        	return outgoing;
         }
     }
     

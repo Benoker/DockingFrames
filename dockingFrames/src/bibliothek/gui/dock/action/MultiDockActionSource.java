@@ -114,7 +114,7 @@ public class MultiDockActionSource extends AbstractDockActionSource {
     	super.addDockActionSourceListener( listener );
     	if( empty && !listeners.isEmpty() ){
     		for( DockActionSource source : sources )
-    			source.addDockActionSourceListener( listener );
+    			source.addDockActionSourceListener( this.listener );
     		updateSeparators();
     	}
     }
@@ -125,7 +125,7 @@ public class MultiDockActionSource extends AbstractDockActionSource {
     	super.removeDockActionSourceListener( listener );
     	if( !empty && listeners.isEmpty() ){
     		for( DockActionSource source : sources )
-    			source.removeDockActionSourceListener( listener );
+    			source.removeDockActionSourceListener( this.listener );
     	}
     }
     

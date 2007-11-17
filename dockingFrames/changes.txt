@@ -50,4 +50,6 @@
 - Layout, API: DockStations have to decide whether a child can be accepted or not, the DockRelocator no longer does this. That gives more flexibility.
 - API: MovingTitleGetter replaced by DockableMovingImageFactory, gives more flexibility
 - Layout: FlatTheme now shows a screencapture of the Dockable that is moved by the user instead of the DockTitle
-- BugFix: The method "drop" on many DockStations did not ensure that the tree gets no cycles
+- Bugfix: The method "drop" on many DockStations did not ensure that the tree gets no cycles
+- Bugfix: MultiDockActionSource added the wrong listener to its children, the effect was that some updates were lost
+- Bugfix: SplitDockStation: full-screen elements not properly removed on drag-operation.

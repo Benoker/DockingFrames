@@ -30,12 +30,14 @@ import java.util.*;
 
 import javax.swing.JFrame;
 
+import bibliothek.extension.gui.dock.theme.SmoothTheme;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.facile.intern.FControlAccess;
 import bibliothek.gui.dock.facile.intern.FStateManager;
 import bibliothek.gui.dock.facile.intern.FacileDockable;
+import bibliothek.gui.dock.themes.NoStackTheme;
 
 public class FControl {
     /** connection to the real DockingFrames */
@@ -67,6 +69,7 @@ public class FControl {
 	 */
 	public FControl( JFrame frame ){       
 		frontend = new DockFrontend();
+		frontend.getController().setTheme( new NoStackTheme( new SmoothTheme() ) );
 		stateManager = new FStateManager( frontend.getController() );
 		center = new FCenter( access );
 	}

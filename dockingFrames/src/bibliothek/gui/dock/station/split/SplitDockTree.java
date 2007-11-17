@@ -58,6 +58,16 @@ public class SplitDockTree {
 	}
 	
 	/**
+	 * Removes the root of this tree.
+	 * @return the old root;
+	 */
+	public Key unroot(){
+		Key key = root;
+		root = null;
+		return key;
+	}
+	
+	/**
 	 * Sets <code>key</code> as the root of the tree. The root must not have
 	 * a parent. 
 	 * @param key the key which will be the root, <code>null</code> is not allowed.
@@ -213,6 +223,14 @@ public class SplitDockTree {
 	 */
 	public boolean isNode( Key key ){
 		return key.asNode() != null;
+	}
+	
+	/**
+	 * Gets a list of all {@link Dockable}s that are known to this tree.
+	 * @return the list of elements
+	 */
+	public Dockable[] getDockables(){
+		return dockables.toArray( new Dockable[ dockables.size() ] );
 	}
 	
 	/**

@@ -1,18 +1,29 @@
 package bibliothek.gui.dock.common.action;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
+
+import javax.swing.Icon;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableProperty;
-import bibliothek.gui.dock.action.ActionGuard;
+import bibliothek.gui.dock.IconManager;
+import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.common.util.Resources;
+import bibliothek.gui.dock.event.DockRegisterListener;
 import bibliothek.gui.dock.event.DockRelocatorListener;
+import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.event.SplitDockListener;
+import bibliothek.gui.dock.facile.intern.FacileDockable;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.ScreenDockStation;
 import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.station.split.SplitDockTree;
 import bibliothek.gui.dock.util.DockUtilities;
 
 /**
@@ -28,17 +39,29 @@ import bibliothek.gui.dock.util.DockUtilities;
  * @author Benjamin Sigg
  */
 public class StateManager extends ModeTransitionManager<StateManager.Location> {
+	/** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "minimize"-action */
+	public static final String ICON_MANAGER_KEY_MINIMIZE = "state manager minimize";
+	/** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "maximize"-action */
+	public static final String ICON_MANAGER_KEY_MAXIMIZE = "state manager maximize";
+	/** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "normalize"-action */
+	public static final String ICON_MANAGER_KEY_NORMALIZE = "state manager normalize";
+	/** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "externalize"-action */
+	public static final String ICON_MANAGER_KEY_EXTERNALIZE = "state manager externalize";
+	
     /** the areas used to show a maximized element */
-    private Set<SplitDockStation> maxi = new HashSet<SplitDockStation>();
+    private Set<SplitDockStation> normal = new HashSet<SplitDockStation>();
     
-    /** the default station for maximized elements */
-    private SplitDockStation defaultMaxi;
+    /** the default station for normalized elements */
+    private SplitDockStation defaultNormal;
     
     /** the areas used to show a minimized element */
     private Set<FlapDockStation> mini = new HashSet<FlapDockStation>();
     
     /** the default station for minimized elements */
     private FlapDockStation defaultMini;
+    
+    /** the station for maximized elements */
+    private SplitDockStation maxi;
     
     /** the areas used to show a externalized element */
     private Set<ScreenDockStation> external = new HashSet<ScreenDockStation>();
@@ -64,6 +87,9 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
     /** listener to some elements known to this manager, ensures that {@link Dockable}s are associated with the correct mode */
     private Listener listener = new Listener();
     
+    /** the controller of this realm */
+    private DockController controller;
+    
     /**
      * Creates a new manager. Adds listeners to the <code>controller</code>
      * and adds <code>this</code> as {@link ActionGuard} to the <code>controller</code>.
@@ -71,30 +97,52 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      */
     public StateManager( DockController controller ){
         super( MINIMIZED, NORMALIZED, MAXIMIZED, EXTERNALIZED );
+        this.controller = controller;
+        
         controller.addActionGuard( this );
         controller.getRelocator().addDockRelocatorListener( listener );
+        controller.getRegister().addDockRegisterListener( listener );
         
         ResourceBundle bundle = Resources.getBundle();
         
         getIngoingAction( MINIMIZED ).setText( bundle.getString( "minimize.in" ) );
         getIngoingAction( MINIMIZED ).setTooltipText( bundle.getString( "minimize.in.tooltip" ) );
-        //getOutgoingAction( MINIMIZED ).setText( bundle.getString( "minimize.out" ) );
-        //getOutgoingAction( MINIMIZED ).setTooltipText( bundle.getString( "minimize.out.tooltip" ) );
         
         getIngoingAction( NORMALIZED ).setText( bundle.getString( "normalize.in" ) );
         getIngoingAction( NORMALIZED ).setTooltipText( bundle.getString( "normalize.in.tooltip" ) );
-        //getOutgoingAction( NORMALIZED ).setText( bundle.getString( "normalize.out" ) );
-        //getOutgoingAction( NORMALIZED ).setTooltipText( bundle.getString( "normalize.out.tooltip" ) );
         
         getIngoingAction( MAXIMIZED ).setText( bundle.getString( "maximize.in" ) );
         getIngoingAction( MAXIMIZED ).setTooltipText( bundle.getString( "maximize.in.tooltip" ) );
-        //getOutgoingAction( MAXIMIZED ).setText( bundle.getString( "maximize.out" ) );
-        //getOutgoingAction( MAXIMIZED ).setTooltipText( bundle.getString( "maximize.out.tooltip" ) );
         
         getIngoingAction( EXTERNALIZED ).setText( bundle.getString( "externalize.in" ) );
         getIngoingAction( EXTERNALIZED ).setTooltipText( bundle.getString( "externalize.in.tooltip" ) );
-        //getOutgoingAction( EXTERNALIZED ).setText( bundle.getString( "externalize.out" ) );
-        //getOutgoingAction( EXTERNALIZED ).setTooltipText( bundle.getString( "externalize.out.tooltip" ) );
+        
+        IconManager icons = controller.getIcons();
+        icons.setIconDefault( ICON_MANAGER_KEY_MAXIMIZE, Resources.getIcon( "maximize" ) );
+        icons.setIconDefault( ICON_MANAGER_KEY_MINIMIZE, Resources.getIcon( "minimize" ) );
+        icons.setIconDefault( ICON_MANAGER_KEY_NORMALIZE, Resources.getIcon( "normalize" ) );
+        icons.setIconDefault( ICON_MANAGER_KEY_EXTERNALIZE, Resources.getIcon( "externalize" ) );
+        
+        wire( icons, ICON_MANAGER_KEY_MAXIMIZE, getIngoingAction( MAXIMIZED ));
+        wire( icons, ICON_MANAGER_KEY_MINIMIZE, getIngoingAction( MINIMIZED ));
+        wire( icons, ICON_MANAGER_KEY_NORMALIZE, getIngoingAction( NORMALIZED ));
+        wire( icons, ICON_MANAGER_KEY_EXTERNALIZE, getIngoingAction( EXTERNALIZED ));
+    }
+    
+    /**
+     * Adds a listener to <code>icons</code> which will change the icon of
+     * <code>action</code> whenever the icon <code>key</code> is changed.
+     * @param icons the set of icons
+     * @param key the name of the icon to observe
+     * @param action the action whose icon will be changed
+     */
+    private void wire( IconManager icons, String key, final SimpleButtonAction action ){
+    	icons.add( key, new IconManagerListener(){
+    		public void iconChanged( String key, Icon icon ){
+    			action.setIcon( icon );
+    		}
+    	});
+    	action.setIcon( icons.getIcon( key ) );
     }
     
     /**
@@ -116,9 +164,12 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
             throw new NullPointerException( "station must not be null" );
         
         stations.put( name, station );
-        maxi.add( station );
-        if( defaultMaxi == null )
-            defaultMaxi = station;
+        normal.add( station );
+        if( defaultNormal == null )
+            defaultNormal = station;
+        
+        if( maxi == null )
+        	maxi = station;
         
         station.addSplitDockStationListener( listener );
     }
@@ -190,7 +241,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
 
     @Override
     protected String currentMode( Dockable dockable ) {
-        if( maxi.contains( dockable ) || mini.contains( dockable ) || external.contains( dockable ))
+        if( normal.contains( dockable ) || mini.contains( dockable ) || external.contains( dockable ))
             return NORMALIZED;
         
         DockStation parent = dockable.getDockParent();
@@ -201,12 +252,15 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
             if( external.contains( parent ))
                 return EXTERNALIZED;
             
-            if( maxi.contains( parent )){
-                SplitDockStation split = (SplitDockStation)parent;
-                if( split.isFullScreen() && split.getFullScreen() == dockable )
-                    return MAXIMIZED;
-                else
-                    return NORMALIZED;
+            if( maxi == parent ){
+            	if( maxi.getFullScreen() == dockable )
+            		return MAXIMIZED;
+            	else
+            		return NORMALIZED;
+            }
+            
+            if( normal.contains( parent )){
+            	return NORMALIZED;
             }
             
             dockable = parent.asDockable();
@@ -223,42 +277,109 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
 
     @Override
     protected void transition( String oldMode, String newMode, Dockable dockable ) {
-        // store the old location
         store( oldMode, dockable );
+        if( MAXIMIZED.equals( newMode )){
+        	maximize( dockable );
+        }
+        else{
+        	changeTo( dockable, newMode, true );
+        	unmaximize();
+        }
         
-        // read last location
-        Location location = getProperties( newMode, dockable );
+        if( !MINIMIZED.equals( newMode ))
+        	controller.setFocusedDockable( dockable, true );	
+    }
+    
+    /**
+     * Ensures that <code>dockable</code> is the full-screen element of
+     * the maximized-station.
+     * @param dockable the element that should be made fullscreen
+     */
+    private void maximize( Dockable dockable ){
+    	unmaximize();
+    	
+    	if( dockable.getDockParent() == maxi )
+    		maxi.setFullScreen( dockable );
+    	else{
+    		SplitDockTree tree = maxi.createTree();
+    		if( tree.getRoot() == null )
+    			tree.root( dockable );
+    		else{
+    			tree.root( tree.horizontal( tree.put( dockable ), tree.unroot() ) );
+    		}
+    		maxi.dropTree( tree );
+    		maxi.setFullScreen( dockable );
+    	}
+    }
+    
+    /**
+     * Ensures that no {@link Dockable} is maximized
+     */
+    private void unmaximize(){
+    	Dockable dockable = maxi.getFullScreen();
+    	if( dockable != null ){
+    		String mode = previousMode( dockable );
+    		if( mode == null )
+    			mode = getDefaultMode( dockable );
+    		
+    		if( MAXIMIZED.equals( mode ))
+    			mode = NORMALIZED;
+
+    		changeTo( dockable, mode, false );
+    		putMode( dockable, mode );
+    		maxi.setFullScreen( null );
+    	}
+    }
+    
+    /**
+     * Changes the size and location of <code>dockable</code> such that its
+     * new mode is <code>mode</code>
+     * @param dockable the element whose mode will be changed
+     * @param mode the new mode, one of {@link #MINIMIZED}, {@link #NORMALIZED}
+     * or {@link #EXTERNALIZED}
+     * @param unmaximize whether this method should check that the maxi-station
+     * does not show a maximized {@link Dockable}.
+     * @throws IllegalArgumentException if <code>mode</code> is {@link #MAXIMIZED}
+     */
+    private void changeTo( Dockable dockable, String mode, boolean unmaximize ){
+    	if( MAXIMIZED.equals( mode ))
+    		throw new IllegalArgumentException( "This method can't handle mode MAXIMIZED" );
+    	
+        Location location = getProperties( mode, dockable );
+        
         boolean done = false;
         if( location != null ){
             DockStation station = stations.get( location.root );
-            if( station != null && station != dockable.getDockParent() ){
-                station.drop( dockable, location.location );
-                done = true;
+            if( station != null ){
+            	if( station == dockable.getDockParent() ){
+            		if( unmaximize && station == maxi ){
+            			maxi.setFullScreen( null );
+            			maxi.drag( dockable );
+            		}
+            		
+            		done = station.drop( dockable, location.location );
+            	}
+            	else{
+	            	if( unmaximize && station == maxi )
+	            		unmaximize();
+	            	
+	                done = station.drop( dockable, location.location );
+            	}
             }
         }
         
         if( !done ){
             // put onto default location
-            if( MINIMIZED.equals( newMode ))
+            if( MINIMIZED.equals( mode ))
                 checkedDrop( defaultMini, dockable );
-            else if( EXTERNALIZED.equals( newMode ))
+            else if( EXTERNALIZED.equals( mode ))
                 checkedDrop( defaultExternal, dockable );
-            else // normal or maximized
-                checkedDrop( defaultMaxi, dockable );
-        }
-        
-        boolean maximized = MAXIMIZED.equals( newMode );
-        // make sure a maximized element is really maximized and
-        // make sure the element is nor maximized when not needed
-        
-        DockStation parent = dockable.getDockParent();
-        while( dockable != null && parent != null ){
-            if( maxi.contains( parent ) && parent instanceof SplitDockStation ){
-                ((SplitDockStation)parent).setFullScreen( maximized ? dockable : null );
+            else{ // normal
+            	if( unmaximize && defaultNormal == maxi )
+            		unmaximize();
+            	
+                checkedDrop( defaultNormal, dockable );
             }
-            
-            dockable = parent.asDockable();
-            parent = dockable == null ? null : dockable.getDockParent();
         }
     }
     
@@ -317,7 +438,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      * its mode.
      * @author Benjamin Sigg
      */
-    private class Listener implements SplitDockListener, DockRelocatorListener{
+    private class Listener implements SplitDockListener, DockRelocatorListener, DockRegisterListener{
         public void fullScreenDockableChanged( SplitDockStation station, Dockable oldFullScreen, Dockable newFullScreen ) {
             if( oldFullScreen != null )
                 validate( oldFullScreen );
@@ -332,6 +453,31 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
 
         public void dockablePut( DockController controller, Dockable dockable, DockStation station ) {
             validate( dockable );
+            unmaximize();
         }
+
+		public void dockStationRegistered( DockController controller, DockStation station ){
+			// ignore
+		}
+
+		public void dockStationRegistering( DockController controller, DockStation station ){
+			// ignore
+		}
+
+		public void dockStationUnregistered( DockController controller, DockStation station ){
+			// ignore
+		}
+
+		public void dockableRegistered( DockController controller, Dockable dockable ){
+			validate( dockable );
+		}
+
+		public void dockableRegistering( DockController controller, Dockable dockable ){
+			// ignore
+		}
+
+		public void dockableUnregistered( DockController controller, Dockable dockable ){
+			// ignore
+		}
     }
 }
