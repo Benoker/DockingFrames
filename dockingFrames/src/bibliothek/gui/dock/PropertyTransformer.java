@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -33,6 +33,8 @@ import java.util.Map;
 import bibliothek.gui.dock.station.flap.FlapDockProperty;
 import bibliothek.gui.dock.station.flap.FlapDockPropertyFactory;
 import bibliothek.gui.dock.station.screen.ScreenDockPropertyFactory;
+import bibliothek.gui.dock.station.split.SplitDockPathProperty;
+import bibliothek.gui.dock.station.split.SplitDockPathPropertyFactory;
 import bibliothek.gui.dock.station.split.SplitDockProperty;
 import bibliothek.gui.dock.station.split.SplitDockPropertyFactory;
 import bibliothek.gui.dock.station.stack.StackDockProperty;
@@ -50,13 +52,15 @@ public class PropertyTransformer {
     
     /**
      * Creates a new transformer, the factories for {@link SplitDockProperty},
-     * {@link StackDockProperty}, {@link bibliothek.gui.dock.station.screen.ScreenDockProperty}
-     * and {@link FlapDockProperty} are
-     * installed.
+     * {@link SplitDockPathProperty},
+     * {@link StackDockProperty}, 
+     * {@link bibliothek.gui.dock.station.screen.ScreenDockProperty}
+     * and {@link FlapDockProperty} are installed.
      */
     public PropertyTransformer(){
         this(
                 SplitDockPropertyFactory.FACTORY,
+                SplitDockPathPropertyFactory.FACTORY,
                 StackDockPropertyFactory.FACTORY,
                 FlapDockPropertyFactory.FACTORY,
                 ScreenDockPropertyFactory.FACTORY );

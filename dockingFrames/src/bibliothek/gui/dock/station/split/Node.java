@@ -132,6 +132,16 @@ public class Node extends SplitNode{
         return right;
     }
     
+    @Override
+    public void replace( SplitNode old, SplitNode child ) {
+        if( old != left && old != right )
+            throw new IllegalArgumentException( "unknown child " + old );
+        if( old == left )
+            setLeft( child );
+        if( old == right )
+            setRight( child );
+    }
+    
     /**
      * Gets the orientation of this node. The orientation tells how to layout
      * the children. If the orientation is {@link Orientation#VERTICAL}, one child
@@ -343,11 +353,73 @@ public class Node extends SplitNode{
     }
     
     @Override
-    public Key submit( SplitDockTree tree ){
-    	if( orientation == SplitDockStation.Orientation.HORIZONTAL )
-    		return tree.horizontal( left.submit( tree ), right.submit( tree ), divider );
-    	else
-    		return tree.vertical( left.submit( tree ), right.submit( tree ), divider );
+    public boolean insert( SplitDockPathProperty property, int depth, Dockable dockable ) {
+        if( depth >= property.size() ){
+            // there is no description where to put the element
+            // try using the theoretical boundaries of the element
+            return getAccess().drop( dockable, property.toLocation(), this );
+        }
+        else{
+            SplitDockPathProperty.Node node = property.getNode( depth );
+
+            // if this is the last step of the path, then this node needs
+            // to be split up anyway
+            boolean expand = (depth+1 == property.size() && property.getSuccessor() == null) ||
+            // ... or if this node is horizontal, but the path is vertical
+                ( orientation == SplitDockStation.Orientation.HORIZONTAL &&
+                    (node.getLocation() == SplitDockPathProperty.Location.TOP ||
+                     node.getLocation() == SplitDockPathProperty.Location.BOTTOM )) ||
+            // ... or if this node is vertical, but the path is horizontal
+                ( orientation == SplitDockStation.Orientation.VERTICAL &&
+                    (node.getLocation() == SplitDockPathProperty.Location.LEFT ||
+                     node.getLocation() == SplitDockPathProperty.Location.RIGHT ));
+            
+            if( expand ){
+                // split up this node
+                Leaf leaf = create( dockable );
+                if( leaf == null )
+                    return false;
+            
+                SplitDockStation.Orientation orientation;
+                if( node.getLocation() == SplitDockPathProperty.Location.TOP ||
+                        node.getLocation() == SplitDockPathProperty.Location.BOTTOM )
+                    orientation = SplitDockStation.Orientation.VERTICAL;
+                else
+                    orientation = SplitDockStation.Orientation.HORIZONTAL;
+                
+                Node split;
+                SplitNode parent = getParent();
+                if( node.getLocation() == SplitDockPathProperty.Location.LEFT ||
+                        node.getLocation() == SplitDockPathProperty.Location.TOP ){
+                    split = new Node( getAccess(), leaf, this, orientation );
+                    split.setDivider( node.getSize() );
+                }
+                else{
+                    split = new Node( getAccess(), this, leaf, orientation );
+                    split.setDivider( 1-node.getSize() );
+                }
+                parent.replace( this, split );
+                return true;
+            }
+            else{
+                // forward the call to a child
+                if( node.getLocation() == SplitDockPathProperty.Location.LEFT ||
+                        node.getLocation() == SplitDockPathProperty.Location.TOP ){
+                    return left.insert( property, depth+1, dockable );
+                }
+                else{
+                    return right.insert( property, depth+1, dockable );
+                }
+            }
+        }
+    }
+    
+    @Override
+    public <N> N submit( SplitTreeFactory<N> factory ) {
+        if( orientation == SplitDockStation.Orientation.HORIZONTAL )
+            return factory.horizontal( left.submit( factory ), right.submit( factory ), divider );
+        else
+            return factory.vertical( left.submit( factory ), right.submit( factory ), divider );
     }
     
     @Override

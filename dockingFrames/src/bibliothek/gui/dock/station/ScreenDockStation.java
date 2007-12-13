@@ -560,6 +560,23 @@ public class ScreenDockStation extends AbstractDockStation {
      * otherwise.
      */
     public boolean drop( Dockable dockable, ScreenDockProperty property ){
+        return drop( dockable, property, true );
+    }
+    
+    /**
+     * Tries to add the <code>dockable</code> to this station, and uses
+     * the <code>property</code> to determine its location. If the preferred
+     * location overlaps an existing dialog, then the {@link Dockable} may be
+     * added to a child-station of this station.
+     * @param dockable the new {@link Dockable}
+     * @param property the preferred location of the dockable
+     * @param boundsIncludeTitle if <code>true</code>, the bounds describe the size
+     * of the resulting window. Otherwise the size of the window will be a bit larger
+     * such that the title can be shown in the new space
+     * @return <code>true</code> if the dockable could be added, <code>false</code>
+     * otherwise.
+     */
+    public boolean drop( Dockable dockable, ScreenDockProperty property, boolean boundsIncludeTitle ){
         DockUtilities.ensureTreeValidity( this, dockable );
         ScreenDockDialog best = null;
         double bestRatio = 0;
@@ -613,7 +630,7 @@ public class ScreenDockStation extends AbstractDockStation {
         if( !done ){
             boolean accept = accept( dockable ) && dockable.accept( this );
             if( accept ){
-                addDockable( dockable, new Rectangle( x, y, width, height ) );
+                addDockable( dockable, new Rectangle( x, y, width, height ), boundsIncludeTitle );
                 done = true;
             }
         }
@@ -811,8 +828,7 @@ public class ScreenDockStation extends AbstractDockStation {
     }
         
     public Rectangle getStationBounds() {
-        Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
-        return new Rectangle( 0, 0, size.width, size.height );
+        return null;
     }
 
     public Dockable asDockable() {

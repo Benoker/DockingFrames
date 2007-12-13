@@ -25,6 +25,8 @@
  */
 package bibliothek.gui.dock.facile;
 
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.io.*;
 import java.util.*;
 
@@ -37,8 +39,15 @@ import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.facile.intern.FControlAccess;
 import bibliothek.gui.dock.facile.intern.FStateManager;
 import bibliothek.gui.dock.facile.intern.FacileDockable;
+import bibliothek.gui.dock.station.ScreenDockStation;
 import bibliothek.gui.dock.themes.NoStackTheme;
 
+/**
+ * Manages the interaction between {@link FSingleDockable}, {@link FMultipleDockable}
+ * and the {@link FCenter}.
+ * @author Benjamin Sigg
+ *
+ */
 public class FControl {
     /** connection to the real DockingFrames */
 	private DockFrontend frontend;
@@ -72,6 +81,25 @@ public class FControl {
 		frontend.getController().setTheme( new NoStackTheme( new SmoothTheme() ) );
 		stateManager = new FStateManager( frontend.getController() );
 		center = new FCenter( access );
+		
+		final ScreenDockStation screen = new ScreenDockStation( frame );
+		stateManager.add( "screen", screen );
+		frontend.addRoot( screen, "screen" );
+		screen.setShowing( frame.isVisible() );
+		frame.addComponentListener( new ComponentListener(){
+		    public void componentShown( ComponentEvent e ) {
+		        screen.setShowing( true );
+		    }
+		    public void componentHidden( ComponentEvent e ) {
+		        screen.setShowing( false );
+		    }
+		    public void componentMoved( ComponentEvent e ) {
+		        // ignore
+		    }
+		    public void componentResized( ComponentEvent e ) {
+		        // ignore
+		    }
+		});
 	}
 	
 	/**

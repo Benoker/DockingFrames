@@ -73,6 +73,17 @@ public interface SplitDockAccess {
     public Leaf createLeaf( Dockable dockable );
     
     /**
+     * Tries to add <code>Dockable</code> such that the boundaries given
+     * by <code>property</code> are full filled.
+     * @param dockable a new child of this station
+     * @param property the preferred location of the child
+     * @param root the root of all possible parents where the child could be inserted
+     * @return <code>true</code> if the child could be added, <code>false</code>
+     * if no location could be found
+     */
+    public boolean drop( Dockable dockable, final SplitDockProperty property, SplitNode root );
+    
+    /**
      * Checks whether <code>info</code> is valid or not.
      * @param info the preferred drop location
      * @return <code>info</code> if it is valid, <code>null</code> otherwise

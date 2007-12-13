@@ -53,3 +53,5 @@
 - Bugfix: The method "drop" on many DockStations did not ensure that the tree gets no cycles
 - Bugfix: MultiDockActionSource added the wrong listener to its children, the effect was that some updates were lost
 - Bugfix: SplitDockStation: full-screen elements not properly removed on drag-operation.
+- API: new SplitDockPathProperty, allows to store the location of a child of a SplitDockStation. Replaces SplitDockProperty whenever possible, but the SplitDockProperty remains a valid way to describe the boundaries of a Dockable.
+- Bugfix: DockUtilities.isAnchestor failed when the anchestor was a ScreenDockStation

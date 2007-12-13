@@ -29,9 +29,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockAcceptance;
 import bibliothek.gui.dock.common.action.StateManager;
 import bibliothek.gui.dock.facile.FDockable;
+import bibliothek.gui.dock.station.ScreenDockStation;
+import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.util.container.Single;
 
 /**
  * A manager that can change the extended-state of {@link FDockable}s
@@ -45,6 +50,41 @@ public class FStateManager extends StateManager {
      */
     public FStateManager( DockController controller ){
         super( controller );
+
+        // ensure that non externalizable elements can't be dragged out
+        controller.addAcceptance( new DockAcceptance(){
+            public boolean accept( DockStation parent, Dockable child ) {
+                if( parent instanceof ScreenDockStation )
+                    return externalizable( child );
+                return true;
+            }
+            public boolean accept( DockStation parent, Dockable child, Dockable next ) {
+                if( parent instanceof ScreenDockStation )
+                    return externalizable( next );
+                return true;
+            }
+            
+            /**
+             * Tells whether all elements of <code>dockable</code> can be
+             * externalized.
+             * @param dockable the element to search for <code>FacileDockable</code>s
+             * @return <code>true</code> if all elements are externalizable
+             */
+            private boolean externalizable( Dockable dockable ){
+                final Single<Boolean> result = new Single<Boolean>( true );
+                DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
+                    @Override
+                    public void handleDockable( Dockable dockable ) {
+                        if( dockable instanceof FacileDockable ){
+                            if( !((FacileDockable)dockable).getDockable().isExternalizable() ){
+                                result.setA( false );
+                            }
+                        }
+                    }
+                });
+                return result.getA();
+            }
+        });
     }
     
     /**

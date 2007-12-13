@@ -226,6 +226,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         	return leaf;
         }
         
+        public boolean drop( Dockable dockable, SplitDockProperty property, SplitNode root ) {
+            return SplitDockStation.this.drop( dockable, property, root );
+        }
+        
         public PutInfo checkPutInfo( PutInfo putInfo ){
             if( putInfo != null ){
                 if( putInfo.getPut() == PutInfo.Put.CENTER || putInfo.getPut() == PutInfo.Put.TITLE ){
@@ -248,7 +252,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     };
     
     /** The root of the tree which determines the structure of this station */
-    private Root root = new Root( access );
+    private final Root root = new Root( access );
     
     /** Information about the {@link Dockable} which is currently draged onto this station. */
     private PutInfo putInfo;
@@ -731,6 +735,63 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     }
     
     public DockableProperty getDockableProperty( Dockable dockable ) {
+        return getDockablePathProperty( dockable );
+    }
+    
+    /**
+     * Creates a {@link DockableProperty} for the location of <code>dockable</code>.
+     * The location is encoded as the path through the tree to get to <code>dockable</code>.
+     * @param dockable the element whose location is searched
+     * @return the location
+     */
+    public DockableProperty getDockablePathProperty( final Dockable dockable ) {
+        final SplitDockPathProperty path = new SplitDockPathProperty();
+        root.submit( new SplitTreeFactory<Object>(){
+            public Object leaf( Dockable check ) {
+                if( dockable == check )
+                    return this;
+                return null;
+            }
+
+            public Object root( Object root ) {
+                return root;
+            }
+
+            public Object horizontal( Object left, Object right, double divider ) {
+                if( left != null ){
+                    path.insert( SplitDockPathProperty.Location.LEFT, divider, 0 );
+                    return left;
+                }
+                if( right != null ){
+                    path.insert( SplitDockPathProperty.Location.RIGHT, 1-divider, 0 );
+                    return right;
+                }
+                return null;
+            }
+
+            public Object vertical( Object top, Object bottom, double divider ) {
+                if( top != null ){
+                    path.insert( SplitDockPathProperty.Location.TOP, divider, 0 );
+                    return top;
+                }
+                if( bottom != null ){
+                    path.insert( SplitDockPathProperty.Location.BOTTOM, 1-divider, 0 );
+                    return bottom;
+                }
+                return null;
+            }            
+        });
+        return path;
+    }
+    
+    /**
+     * Creates a {@link DockableProperty} for the location of <code>dockable</code>.
+     * The location is encoded directly as the coordinates x,y,width and height
+     * of the <code>dockable</code>.
+     * @param dockable the element whose location is searched
+     * @return the location
+     */
+    public DockableProperty getDockableLocationProperty( Dockable dockable ) {
         Leaf leaf = getRoot().getLeaf( dockable );
         return new SplitDockProperty( leaf.getX(), leaf.getY(),
                 leaf.getWidth(), leaf.getHeight() );
@@ -880,9 +941,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     }
 
     public boolean drop( Dockable dockable, DockableProperty property ) {
-        if( property instanceof SplitDockProperty ){
+        if( property instanceof SplitDockProperty )
             return drop( dockable, (SplitDockProperty)property );
-        }
+        else if( property instanceof SplitDockPathProperty )
+            return drop( dockable, (SplitDockPathProperty)property );
         else
             return false;
     }
@@ -895,14 +957,27 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      * @return <code>true</code> if the child could be added, <code>false</code>
      * if no location could be found
      */
-    public boolean drop( Dockable dockable, final SplitDockProperty property ){
+    public boolean drop( Dockable dockable, SplitDockProperty property ){
+        return drop( dockable, property, root );
+    }
+
+    /**
+     * Tries to add <code>Dockable</code> such that the boundaries given
+     * by <code>property</code> are full filled.
+     * @param dockable a new child of this station
+     * @param property the preferred location of the child
+     * @param root the root of all possible parents where the child could be inserted
+     * @return <code>true</code> if the child could be added, <code>false</code>
+     * if no location could be found
+     */
+    private boolean drop( Dockable dockable, final SplitDockProperty property, SplitNode root ){
         DockUtilities.ensureTreeValidity( this, dockable );
         if( getDockableCount() == 0 ){
             drop( dockable );
             return true;
         }
         
-        root.updateBounds();
+        this.root.updateBounds();
         
         class DropInfo{
             public Leaf bestLeaf;
@@ -915,7 +990,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         
         final DropInfo info = new DropInfo();
         
-        getRoot().visit( new SplitNodeVisitor(){
+        root.visit( new SplitNodeVisitor(){
             public void handleLeaf( Leaf leaf ) {
                 double intersection = leaf.intersection( property );
                 if( intersection > info.bestLeafIntersection ){
@@ -1034,6 +1109,22 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         
         repaint();
         return false;
+    }
+    
+    /**
+     * Tries to insert <code>dockable</code> at a location such that the path
+     * to that location is the same as described in <code>property</code>.
+     * @param dockable the element to insert
+     * @param property the preferred path to the element
+     * @return <code>true</code> if the element was successfully inserted
+     */
+    public boolean drop( Dockable dockable, SplitDockPathProperty property ){
+        DockUtilities.ensureTreeValidity( this, dockable );
+        validate();
+        boolean done = root.insert( property, 0, dockable );
+        if( done )
+            revalidate();
+        return done;
     }
     
     public void drop(){
@@ -1393,13 +1484,13 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     	if( tree == null )
     		throw new IllegalArgumentException( "Tree must not be null" );
     	
+    	setFullScreen( null );
+        removeAllDockables();
+    	
     	// ensure valid tree
     	for( Dockable dockable : tree.getDockables() ){
     		DockUtilities.ensureTreeValidity( this, dockable );
     	}
-    	
-    	setFullScreen( null );
-    	removeAllDockables();
     	
     	Key rootKey = tree.getRoot();
     	if( rootKey != null ){
@@ -1414,8 +1505,16 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      */
     public SplitDockTree createTree(){
     	SplitDockTree tree = new SplitDockTree();
-    	root.submit( tree );
+    	createTree( new SplitDockTreeFactory( tree ));
     	return tree;
+    }
+    
+    /**
+     * Writes the contents of this station into <code>factory</code>.
+     * @param factory the factory to write into
+     */
+    public void createTree( SplitDockTreeFactory factory ){
+        root.submit( factory );
     }
     
     public void draw(){
@@ -1502,6 +1601,15 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             if( root != null && root == SwingUtilities.getRoot( component )){
                 Rectangle sizeThis = getStationBounds();
                 Rectangle sizeOther = station.getStationBounds();
+                
+                if( sizeThis == null && sizeOther == null )
+                    return 0;
+                
+                if( sizeThis == null )
+                    return -1;
+                
+                if( sizeOther == null )
+                    return 1;
                 
                 if( sizeThis.width * sizeThis.height > sizeOther.width * sizeOther.height )
                     return -1;

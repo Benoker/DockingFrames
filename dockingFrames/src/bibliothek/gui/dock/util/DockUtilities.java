@@ -122,16 +122,24 @@ public class DockUtilities {
      * identical with <code>child</code>. 
      */
     public static boolean isAnchestor( DockElement anchestor, DockElement child ){
+        if( anchestor == null )
+            throw new NullPointerException( "anchester must not be null" );
+        
+        if( child == null )
+            throw new NullPointerException( "child must not be null" );
+        
         Dockable dockable = child.asDockable();
+        DockStation station = null;
+        
         while( dockable != null ){
             if( anchestor == dockable )
                 return true;
             
-            DockStation station = dockable.getDockParent();
+            station = dockable.getDockParent();
             dockable = station == null ? null : station.asDockable();
         }
         
-        return false;
+        return station == anchestor;
     }
     
     /**

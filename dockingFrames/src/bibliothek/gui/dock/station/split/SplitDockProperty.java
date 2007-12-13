@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -35,7 +35,7 @@ import bibliothek.gui.dock.station.SplitDockStation;
 
 /**
  * This property stores the location and the size of each child of a 
- * {@link SplitDockStation}. The property asumes that the station itself
+ * {@link SplitDockStation}. The property assumes that the station itself
  * has a size of 1/1, and the top left edge is 0/0.
  * @author Benjamin Sigg
  */

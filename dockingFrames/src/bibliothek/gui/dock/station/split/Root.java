@@ -71,6 +71,13 @@ public class Root extends SplitNode{
             child.setParent( this );
     }
     
+    @Override
+    public void replace( SplitNode old, SplitNode child ) {
+        if( this.child != old )
+            throw new IllegalArgumentException( "unknown child " + old );
+        setChild( child );
+    }
+    
     /**
      * Gets the child of this root.
      * @return the child or <code>null</code>
@@ -179,11 +186,25 @@ public class Root extends SplitNode{
     }
     
     @Override
-    public Key submit( SplitDockTree tree ){
-    	if( child == null )
-    		return null;
-    	else
-    		return tree.root( child.submit( tree ) ).getRoot();
+    public boolean insert( SplitDockPathProperty property, int depth, Dockable dockable ) {
+        if( child == null ){
+            Leaf leaf = create( dockable );
+            if( leaf == null )
+                return false;
+            setChild( leaf );
+            return true;
+        }
+        else
+            return child.insert( property, depth, dockable );
+    }
+    
+
+    @Override
+    public <N> N submit( SplitTreeFactory<N> factory ) {
+        if( child == null )
+            return factory.root( null );
+        else
+            return factory.root( child.submit( factory ) );
     }
     
     @Override

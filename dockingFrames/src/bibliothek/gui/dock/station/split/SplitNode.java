@@ -237,6 +237,13 @@ public abstract class SplitNode{
      * <code>null</code> is returned
      */
     public abstract Node getDividerNode( int x, int y );
+    
+    /**
+     * Replaces a child of this node by <code>child</code>.
+     * @param old the old child
+     * @param child the replacement for <code>old</code>
+     */
+    public abstract void replace( SplitNode old, SplitNode child );
         
     /**
      * Invokes one of the methods of the <code>visitor</code> for every
@@ -306,11 +313,51 @@ public abstract class SplitNode{
     public abstract void evolve( SplitDockTree.Key key );
     
     /**
-     * Writes the contents of this node into <code>tree</code>.
-     * @param tree the tree to write into
-     * @return the key of this node
+     * If there are elements left in <code>property</code>, then the next node
+     * is to be read and the <code>insert</code>-method of the matching child
+     * to be called.<br>
+     * If there are no children, then <code>dockable</code> has to be inserted
+     * as new child.<br>
+     * Otherwise this element is to be replaced by a node containing
+     * <code>this</code> and the a leaf with <code>dockable</code>.<br>
+     * Subclasses may wary this scheme in order to optimize or to find a better
+     * place for the <code>dockable</code>. 
+     * @param property a list of nodes
+     * @param depth the index of the node that corresponds to this
+     * @param dockable the element to insert
+     * @return <code>true</code> if the element was inserted, <code>false</code>
+     * otherwise
      */
-    public abstract SplitDockTree.Key submit( SplitDockTree tree );
+    public abstract boolean insert( SplitDockPathProperty property, int depth, Dockable dockable );
+    
+    /**
+     * Writes the contents of this node into a new tree create by <code>factory</code>.
+     * @param factory the factory transforming the elements of the tree into a
+     * new form.
+     * @return the representation of this node
+     */
+    public abstract <N> N submit( SplitTreeFactory<N> factory );
+    
+    /**
+     * Creates a leaf for <code>dockable</code>.
+     * @param dockable the element to put into a leaf
+     * @return the new leaf or <code>null</code> if the leaf would not be valid
+     */
+    protected Leaf create( Dockable dockable ){
+        SplitDockStation split = access.getOwner();
+        DockController controller = split.getController();
+        DockAcceptance acceptance = controller == null ? null : controller.getAcceptance();
+        
+        if( !dockable.accept( split ) || !split.accept( dockable ))
+            return null;
+        
+        if( acceptance != null ){
+            if( !acceptance.accept( split, dockable ))
+                return null;
+        }
+        
+        return  access.createLeaf( dockable );
+    }
     
     /**
      * Creates a new node using the contents of <code>key</code>.

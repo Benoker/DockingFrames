@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -40,7 +40,7 @@ import bibliothek.gui.dock.station.SplitDockStation;
  * @author Benjamin Sigg
  *
  */
-public class SplitDockTree {
+public class SplitDockTree{
 	/** the root of the tree */
 	private Key root;
 	

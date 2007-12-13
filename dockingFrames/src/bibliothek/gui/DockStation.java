@@ -407,7 +407,8 @@ public interface DockStation extends DockElement{
     /**
      * Gets a rectangle in which all points of the station are. The user is
      * only able to move a {@link Dockable} into this area onto this station. 
-     * @return the bounds, relative to the screen
+     * @return the bounds, relative to the screen, <code>null</code> to indicate that
+     * this station has not any bounds
      */
     public Rectangle getStationBounds();
     

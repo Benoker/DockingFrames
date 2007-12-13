@@ -1,28 +1,27 @@
 package bibliothek.gui.dock.common.action;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.awt.Point;
+import java.util.*;
 
 import javax.swing.Icon;
+import javax.swing.SwingUtilities;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableProperty;
 import bibliothek.gui.dock.IconManager;
+import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.common.util.Resources;
 import bibliothek.gui.dock.event.DockRegisterListener;
 import bibliothek.gui.dock.event.DockRelocatorListener;
 import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.event.SplitDockListener;
-import bibliothek.gui.dock.facile.intern.FacileDockable;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.ScreenDockStation;
 import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 import bibliothek.gui.dock.station.split.SplitDockTree;
 import bibliothek.gui.dock.util.DockUtilities;
 
@@ -371,14 +370,26 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         if( !done ){
             // put onto default location
             if( MINIMIZED.equals( mode ))
-                checkedDrop( defaultMini, dockable );
-            else if( EXTERNALIZED.equals( mode ))
-                checkedDrop( defaultExternal, dockable );
+                checkedDrop( defaultMini, dockable, null );
+            else if( EXTERNALIZED.equals( mode )){
+                if( defaultExternal != dockable.getDockParent() ){
+
+                    Point corner = new Point();
+                    SwingUtilities.convertPointToScreen( corner, dockable.getComponent() );
+                    ScreenDockProperty property = new ScreenDockProperty( 
+                            corner.x, corner.y, dockable.getComponent().getWidth(), dockable.getComponent().getHeight() );
+                    
+                    boolean externDone = defaultExternal.drop( dockable, property, false );
+                    
+                    if( !externDone )
+                        defaultExternal.drop( dockable );
+                }
+            }
             else{ // normal
             	if( unmaximize && defaultNormal == maxi )
             		unmaximize();
             	
-                checkedDrop( defaultNormal, dockable );
+                checkedDrop( defaultNormal, dockable, null );
             }
         }
     }
@@ -388,10 +399,18 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      * if <code>station</code> is not the parent of <code>dockable</code>.
      * @param station the new parent of <code>dockable</code>
      * @param dockable the new child of <code>station</code>
+     * @param location the preferred location, can be <code>null</code>
      */
-    private void checkedDrop( DockStation station, Dockable dockable ){
-        if( station != dockable.getDockParent() )
-            station.drop( dockable );
+    private void checkedDrop( DockStation station, Dockable dockable, DockableProperty location ){
+        if( station != dockable.getDockParent() ){
+            boolean done = false;
+            
+            if( location != null )
+                done = station.drop( dockable, location );
+            
+            if( !done )
+                station.drop( dockable );
+        }
     }
 
     /**

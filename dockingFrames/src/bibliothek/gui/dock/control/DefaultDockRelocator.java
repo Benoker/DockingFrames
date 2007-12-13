@@ -194,19 +194,22 @@ public class DefaultDockRelocator extends DockRelocator{
                 
         for( DockStation station : controller.getRegister().listDockStations() ){   
             if( movedStation == null || (!DockUtilities.isAnchestor( movedStation, station ) && movedStation != station )){
-                if( station.isStationVisible() && station.getStationBounds().contains( x, y )){
-                    int index = 0;
-                    
-                    // insertion sort
-                    for( DockStation resultStation : result ){
-                        int compare = compare( resultStation, station );
-                        if( compare < 0 )
-                            break;
-                        else
-                            index++;
+                if( station.isStationVisible() ){
+                    Rectangle bounds = station.getStationBounds();
+                    if( bounds == null || bounds.contains( x, y )){
+                        int index = 0;
+                        
+                        // insertion sort
+                        for( DockStation resultStation : result ){
+                            int compare = compare( resultStation, station );
+                            if( compare < 0 )
+                                break;
+                            else
+                                index++;
+                        }
+                        
+                        result.add( index, station );
                     }
-                    
-                    result.add( index, station );
                 }
             }
         }        

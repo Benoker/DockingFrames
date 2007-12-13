@@ -33,8 +33,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Map;
 
+import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockAcceptance;
 import bibliothek.gui.dock.DockableDisplayer;
+import bibliothek.gui.dock.DockableProperty;
 import bibliothek.gui.dock.station.SplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockTree.Key;
 
@@ -82,6 +86,11 @@ public class Leaf extends SplitNode{
     public void setDisplayer( DockableDisplayer displayer ){
         this.displayer = displayer;
         dockable = displayer.getDockable();
+    }
+    
+    @Override
+    public void replace( SplitNode old, SplitNode child ) {
+        throw new IllegalArgumentException( "not a child " + old );
     }
     
     /**
@@ -212,10 +221,65 @@ public class Leaf extends SplitNode{
     }
     
     @Override
-    public Key submit( SplitDockTree tree ){
-    	return tree.put( getDockable() );
+    public boolean insert( SplitDockPathProperty property, int depth, Dockable dockable ) {
+        if( depth < property.size() ){
+            // split up the leaf
+            Node split;
+            SplitDockPathProperty.Node node = property.getNode( depth );
+            
+            SplitDockStation.Orientation orientation;
+            if( node.getLocation() == SplitDockPathProperty.Location.LEFT ||
+                    node.getLocation() == SplitDockPathProperty.Location.RIGHT )
+                orientation = SplitDockStation.Orientation.HORIZONTAL;
+            else
+                orientation = SplitDockStation.Orientation.VERTICAL;
+            
+            boolean reverse = node.getLocation() == SplitDockPathProperty.Location.RIGHT ||
+                node.getLocation() == SplitDockPathProperty.Location.BOTTOM;
+            
+            Leaf leaf = create( dockable );
+            if( leaf == null )
+                return false;
+            
+            SplitNode parent = getParent();
+            if( reverse ){
+                split = new Node( getAccess(), this, leaf, orientation );
+                split.setDivider( 1 - node.getSize() );
+            }
+            else{
+                split = new Node( getAccess(), leaf, this, orientation );
+                split.setDivider( node.getSize() );
+            }
+            
+            parent.replace( this, split );
+            return true;
+        }
+        else{
+            // try to melt with child
+            DockStation station = getDockable().asDockStation();
+            DockableProperty stationLocation = property.getSuccessor();
+            if( station != null && stationLocation != null ){
+                if( dockable.accept( station ) && station.accept( dockable )){
+                    DockController controller = getAccess().getOwner().getController();
+                    DockAcceptance acceptance = controller == null ? null : controller.getAcceptance();
+                    if( acceptance == null || acceptance.accept( station, dockable )){
+                        boolean done = station.drop( dockable, stationLocation );
+                        if( done )
+                            return true;
+                    }
+                }
+            }
+            
+            // try using the theoretical boundaries of the element
+            return getAccess().drop( dockable, property.toLocation(), this );
+        }
     }
-    
+
+    @Override
+    public <N> N submit( SplitTreeFactory<N> factory ){
+        return factory.leaf( getDockable() );
+    }
+        
     @Override
     public Leaf getLeaf( Dockable dockable ) {
         if( dockable == displayer.getDockable() )

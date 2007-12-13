@@ -166,8 +166,9 @@ public class FDockable {
 	 */
 	public void setExternalizable( boolean externalizable ){
 		this.externalizable = externalizable;
-		if( control != null )
+		if( control != null ){
             control.getStateManager().rebuild( dockable );
+		}
 	}
 	
 	

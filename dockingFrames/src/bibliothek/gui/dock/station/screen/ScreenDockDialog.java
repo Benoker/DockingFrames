@@ -125,18 +125,77 @@ public class ScreenDockDialog extends JDialog {
      * @param height the new height
      */
     public void setBoundsInScreen( int x, int y, int width, int height ) {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice[] screens = ge.getScreenDevices();
+        
+        double fit = -1.0;
+        GraphicsDevice best = null;
+        
+        for( GraphicsDevice screen : screens ){
+            double check = checkBounds( x, y, width, height, screen );
+            if( check > fit ){
+                fit = check;
+                best = screen;
+            }
+        }
+        
+        if( best == null )
+            setBounds( x, y, width, height );
+        else
+            setBoundsInScreen( x, y, width, height, best );
+    }
+    
+    /**
+     * Checks how good this dialog fits into the screen <code>device</code>
+     * @param x the desired x-coordinate
+     * @param y the desired y-coordinate
+     * @param width the desired width
+     * @param height the desired height
+     * @param device the targeted screen
+     * @return a value between 0 and 1, where 0 means "does not fit" and
+     * 1 means "perfect".
+     */
+    protected double checkBounds( int x, int y, int width, int height, GraphicsDevice device ){
+        GraphicsConfiguration config = getGraphicsConfiguration();
+        if( config == null )
+            return 0.0;
+        
+        Rectangle screen = config.getBounds();
+        Rectangle dialog = new Rectangle( x, y, width, height );
+        
+        Rectangle intersection = screen.intersection( dialog );
+        
+        if( intersection.width <= 0 || intersection.height <= 0 )
+            return 0.0;
+        
+        return (dialog.width * dialog.height) / (intersection.width * intersection.height);
+    }
+    
+    /**
+     * Sets the location and size of this dialog such that it is visible within
+     * the screen <code>device</code>. 
+     * @param x the desired x-coordinate
+     * @param y the desired y-coordinate
+     * @param width the desired width
+     * @param height the desired height
+     * @param device the screen in which to show this dialog
+     */
+    protected void setBoundsInScreen( int x, int y, int width, int height, GraphicsDevice device ){
         GraphicsConfiguration config = getGraphicsConfiguration();
         if( config != null ){
             Rectangle size = config.getBounds();
+            Insets insets = Toolkit.getDefaultToolkit().getScreenInsets( config );
+            if( insets == null )
+                insets = new Insets( 0,0,0,0 );
             
-            width = Math.min( size.width, width );
-            height = Math.min( size.height, height );
+            width = Math.min( size.width-insets.left-insets.right, width );
+            height = Math.min( size.height-insets.top-insets.bottom, height );
             
-            x = Math.max( x, size.x );
-            y = Math.max( y, size.y );
+            x = Math.max( x, size.x+insets.left );
+            y = Math.max( y, size.y+insets.right );
             
-            x = Math.min( x, size.width - width + size.x );
-            y = Math.min( y, size.height - height + size.y );
+            x = Math.min( x, size.width - insets.left - insets.right - width + size.x );
+            y = Math.min( y, size.height - insets.top - insets.bottom - height + size.y );
         }
         
         setBounds( x, y, width, height );
