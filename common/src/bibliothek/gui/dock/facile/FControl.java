@@ -48,11 +48,17 @@ import bibliothek.gui.dock.facile.intern.FDockableAccess;
 import bibliothek.gui.dock.facile.intern.FStateManager;
 import bibliothek.gui.dock.facile.intern.FacileDockable;
 import bibliothek.gui.dock.station.ScreenDockStation;
+import bibliothek.gui.dock.station.screen.ScreenDockStationFactory;
+import bibliothek.gui.dock.support.util.ApplicationResource;
+import bibliothek.gui.dock.support.util.ApplicationResourceManager;
 import bibliothek.gui.dock.themes.NoStackTheme;
 
 /**
  * Manages the interaction between {@link FSingleDockable}, {@link FMultipleDockable}
- * and the {@link FCenter}.
+ * and the {@link FCenter}.<br>
+ * Clients should call <code>read</code> and <code>write</code> of the
+ * {@link ApplicationResourceManager}, accessible through {@link #getResources()}, 
+ * to store or load the configuration that was used.
  * @author Benjamin Sigg
  *
  */
@@ -86,6 +92,9 @@ public class FControl {
 	 */
 	private FControlAccess access = new Access();
 	
+	/** manager used to store and read configurations */
+	private ApplicationResourceManager resources = new ApplicationResourceManager();
+	
 	/**
 	 * Creates a new control
 	 * @param frame the main frame of the application, needed to create
@@ -93,6 +102,7 @@ public class FControl {
 	 */
 	public FControl( JFrame frame ){       
 		frontend = new DockFrontend();
+		frontend.setShowHideAction( false );
 		frontend.getController().setTheme( new NoStackTheme( new SmoothTheme() ) );
 		frontend.getController().addActionGuard( new ActionGuard(){
 		    public boolean react( Dockable dockable ) {
@@ -124,8 +134,25 @@ public class FControl {
 		    }
 		});
 		
+		try{
+    		resources.put( "frontend", new ApplicationResource(){
+    		    public void write( DataOutputStream out ) throws IOException {
+    		        frontend.write( out );
+    		    }
+    		    public void read( DataInputStream in ) throws IOException {
+    		        frontend.read( in );
+    		    }
+    		});
+		}
+		catch( IOException ex ){
+		    System.err.println( "Non lethel IO-error:" );
+		    ex.printStackTrace();
+		}
+		
 		stateManager = new FStateManager( access );
 		center = new FCenter( access );
+		
+		frontend.registerFactory( new ScreenDockStationFactory( frame ) );
 		
 		final ScreenDockStation screen = new ScreenDockStation( frame );
 		stateManager.add( "screen", screen );
@@ -148,6 +175,18 @@ public class FControl {
 	}
 	
 	/**
+	 * Grants access to the manager that reads and stores configurations
+	 * of the facile-framework.<br>
+	 * Clients can add their own {@link ApplicationResource}s to this manager,
+	 * however clients are strongly discouraged from removing {@link ApplicationResource}
+	 * which they did not add by themself.
+	 * @return the persistent storage
+	 */
+	public ApplicationResourceManager getResources() {
+        return resources;
+    }
+	
+	/**
 	 * Gets the element that should be in the center of the mainframe.
 	 * @return the center of the mainframe of the application
 	 */
@@ -168,8 +207,10 @@ public class FControl {
 			throw new IllegalStateException( "dockable is already part of a control" );
 
 		dockable.setControl( access );
-		frontend.add( dockable.getDockable(), "single " + dockable.getId() );
-		frontend.setHideable( dockable.getDockable(), false );
+		String id = "single " + dockable.getId();
+		accesses.get( dockable ).setUniqueId( id );
+		frontend.add( dockable.getDockable(), id );
+		frontend.setHideable( dockable.getDockable(), true );
 		dockables.add( dockable );
 		return dockable;
 	}
@@ -191,7 +232,15 @@ public class FControl {
 			throw new IllegalStateException( "the factory for a MultipleDockable is not registered" );
 		}
 		
+		int count = 0;
+		for( FMultipleDockable multi : multiDockables ){
+		    if( factory.equals( multi.getFactory() ))
+		        count++;
+		}
+		String id = "multi " + (count+1) + " " + factory;
+		
 		dockable.setControl( access );
+		accesses.get( dockable ).setUniqueId( id );
 		multiDockables.add( dockable );
 		dockables.add( dockable );
 		return dockable;
@@ -405,8 +454,9 @@ public class FControl {
 	    public void link( FDockable dockable, FDockableAccess access ) {
 	        if( access == null )
 	            accesses.remove( dockable );
-	        else
+	        else{
 	            accesses.put( dockable, access );
+	        }
 	    }
 	    
 	    public FDockableAccess access( FDockable dockable ) {

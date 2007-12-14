@@ -25,6 +25,9 @@
  */
 package bibliothek.gui.dock.facile.menu;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.URI;
 
 import javax.swing.JMenu;
@@ -37,6 +40,7 @@ import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.common.menu.ThemeMenuPiece;
 import bibliothek.gui.dock.facile.FControl;
 import bibliothek.gui.dock.support.menu.MenuPiece;
+import bibliothek.gui.dock.support.util.ApplicationResource;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.gui.dock.themes.ThemeFactory;
@@ -55,7 +59,7 @@ public class FThemeMenuPiece extends ThemeMenuPiece{
      */
     public FThemeMenuPiece( JMenu menu, FControl control ) {
         super( menu, control.getFrontend().getController(), false );
-        init();
+        init( control );
     }
 
     /**
@@ -65,10 +69,14 @@ public class FThemeMenuPiece extends ThemeMenuPiece{
      */
     public FThemeMenuPiece( MenuPiece predecessor, FControl control ) {
         super( predecessor, control.getFrontend().getController(), false );
-        init();
+        init( control );
     }
     
-    private void init(){
+    /**
+     * Adds the factories to this piece.
+     * @param control the control whose theme might be changed
+     */
+    private void init( FControl control ){
         ThemeFactory flat = new NoStackFactory( new ThemePropertyFactory<FlatTheme>( FlatTheme.class ) );
         ThemeFactory bubble = new NoStackFactory( new ThemePropertyFactory<BubbleTheme>( BubbleTheme.class ) );
         ThemeFactory eclipse = new ThemePropertyFactory<EclipseTheme>( EclipseTheme.class );
@@ -82,6 +90,26 @@ public class FThemeMenuPiece extends ThemeMenuPiece{
         add( eclipse );
         
         setSelected( smooth );
+        
+        try {
+            control.getResources().put( "FThemeMenuPiece", new ApplicationResource(){
+                public void write( DataOutputStream out ) throws IOException {
+                    out.writeInt( 1 );
+                    out.writeInt( indexOf( getSelected() ) );
+                }
+                public void read( DataInputStream in ) throws IOException {
+                    if( in.readInt() == 1 ){
+                        int index = in.readInt();
+                        if( index >= 0 && index < getFactoryCount() )
+                            setSelected( getFactory( index ) );
+                    }
+                }
+            });
+        }
+        catch( IOException e ) {
+            System.err.println( "Non-lethal IO-error:" );
+            e.printStackTrace();
+        }
     }
     
     /**

@@ -23,32 +23,34 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.facile.intern;
+package bibliothek.gui.dock.support.util;
 
-import bibliothek.gui.dock.facile.FDockable;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 /**
- * An interface giving access to the internal methods of an {@link FDockable}. Only
- * {@link FDockable}s should create instances of this interface.
+ * A factory that can read or write elements from or to {@link DataInputStream}
+ * or {@link DataOutputStream}s.
  * @author Benjamin Sigg
  *
+ * @param <A> the type of elements written by this factory
  */
-public interface FDockableAccess {
+public interface GenericStreamTransformation<A> {
     /**
-     * Called after the visibility of the {@link FDockable} has changed.
-     * @param visible the new state
+     * Writes an element.
+     * @param out the stream to write into
+     * @param element the element to write. Whether <code>null</code> can occur
+     * depends on the environment this factory is used in.
+     * @throws IOException if the element can't be written
      */
-    public void informVisibility( boolean visible );
+    public void write( DataOutputStream out, A element ) throws IOException;
     
     /**
-     * Called after the mode of the {@link FDockable} has changed.
-     * @param mode the new mode
+     * Reads an element from a stream.
+     * @param in the stream to read from
+     * @return the new element, might be <code>null</code> in some environments.
+     * @throws IOException if the element can't be read
      */
-    public void informMode( FDockable.ExtendedMode mode );
-    
-    /**
-     * Tells which unique id the owning {@link FDockable} has.
-     * @param id the unique id
-     */
-    public void setUniqueId( String id );
+    public A read( DataInputStream in ) throws IOException;
 }

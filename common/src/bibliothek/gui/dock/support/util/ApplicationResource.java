@@ -23,32 +23,29 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.facile.intern;
+package bibliothek.gui.dock.support.util;
 
-import bibliothek.gui.dock.facile.FDockable;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 /**
- * An interface giving access to the internal methods of an {@link FDockable}. Only
- * {@link FDockable}s should create instances of this interface.
+ * A resource that is created by the application and is stored persistent
+ * by the {@link ApplicationResourceManager}.
  * @author Benjamin Sigg
- *
  */
-public interface FDockableAccess {
+public interface ApplicationResource {
     /**
-     * Called after the visibility of the {@link FDockable} has changed.
-     * @param visible the new state
+     * Transforms this resource in a stream of bytes.
+     * @param out the stream to write into
+     * @throws IOException if the operation can't be completed
      */
-    public void informVisibility( boolean visible );
+    public void write( DataOutputStream out ) throws IOException;
     
     /**
-     * Called after the mode of the {@link FDockable} has changed.
-     * @param mode the new mode
+     * Reads the content of this resource from a stream of bytes.
+     * @param in the stream to read from
+     * @throws IOException if the operation can't be finished
      */
-    public void informMode( FDockable.ExtendedMode mode );
-    
-    /**
-     * Tells which unique id the owning {@link FDockable} has.
-     * @param id the unique id
-     */
-    public void setUniqueId( String id );
+    public void read( DataInputStream in ) throws IOException;
 }

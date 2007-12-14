@@ -917,6 +917,23 @@ public class FlapDockStation extends AbstractDockableStation {
 	        buttonPane.resetTitles();
     	}
     }
+    
+    public void move( Dockable dockable, DockableProperty property ) {
+        if( property instanceof FlapDockProperty ){
+            int index = indexOf( dockable );
+            if( index < 0 )
+                throw new IllegalArgumentException( "dockable is not child of this station" );
+            
+            int destination = ((FlapDockProperty)property).getIndex();
+            destination = Math.min( destination, dockables.size() );
+            
+            if( destination != index ){
+                dockables.remove( index );
+                dockables.add( destination, dockable );
+                buttonPane.resetTitles();
+            }
+        }
+    }
 
     public void draw() {
         if( dropInfo != null )

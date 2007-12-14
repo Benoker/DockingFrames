@@ -25,15 +25,16 @@
  */
 package bibliothek.gui.dock.support.action;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.*;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
+import bibliothek.gui.dock.support.util.GenericStreamTransformation;
 import bibliothek.gui.dock.util.DockUtilities;
 
 /**
@@ -76,10 +77,22 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
     /**
      * Makes an entry for <code>dockable</code> and adds actions to its
      * global {@link DockActionSource}.
+     * @param name a unique name for <code>dockable</code>
      * @param dockable the element to add
      */
-    public void add( Dockable dockable ){
-        Entry entry = new Entry( dockable );
+    public void add( String name, Dockable dockable ){
+        if( name == null )
+            throw new NullPointerException( "name must not be null" );
+        
+        if( dockable == null )
+            throw new NullPointerException( "dockable must not be null" );
+        
+        for( Entry entry : dockables.values() ){
+            if( entry.id.equals( name ))
+                throw new IllegalArgumentException( "There is already a dockable registered with the name: " + name );
+        }
+        
+        Entry entry = new Entry( dockable, name );
         dockables.put( dockable, entry );
         entry.putMode( currentMode( dockable ) );
     }
@@ -90,6 +103,16 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
      */
     public void remove( Dockable dockable ){
         dockables.remove( dockable );
+    }
+    
+    /**
+     * Gets a list that contains all {@link Dockable}s that are currently
+     * known to this manager.
+     * @return the list of known <code>Dockable</code>s, the list can be modified
+     * without disturbing this manager.
+     */
+    public List<Dockable> getDockables(){
+        return new ArrayList<Dockable>( dockables.keySet() );
     }
     
     /**
@@ -157,6 +180,15 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
      * @param dockable the element that changes its mode
      */
     protected abstract void transition( String oldMode, String newMode, Dockable dockable );
+    
+    /**
+     * Called while reading modes in {@link #read(GenericStreamTransformation, DataInputStream)}.
+     * Subclasses might change the mode according to <code>newMode</code>.
+     * @param oldMode the mode <code>dockable</code> is currently in
+     * @param newMode the mode <code>dockable</code> is going to be
+     * @param dockable the element that changes its mode
+     */
+    protected abstract void transitionDuringRead( String oldMode, String newMode, Dockable dockable );
     
     /**
      * Called when the button to go out of <code>mode</code> is pressed.
@@ -301,6 +333,90 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
     }
     
     /**
+     * Writes the modes of this manager into <code>out</code>.
+     * @param mode a factory that can write the description of a mode
+     * @param out the stream to write into
+     * @throws IOException if the stream is not writeable
+     */
+    public void write( GenericStreamTransformation<? super A> mode, DataOutputStream out ) throws IOException{ 
+        // version
+        out.writeInt( 1 );
+        
+        // number of elements
+        out.writeInt( dockables.size() );
+        
+        for( Map.Entry<Dockable, Entry> element : dockables.entrySet() ){
+            // unique id of the element
+            out.writeUTF( element.getValue().id );
+            
+            // the current mode
+            out.writeUTF( currentMode( element.getKey() ) );
+            
+            Entry entry = element.getValue();
+            // history
+            out.writeInt( entry.history.size() );
+            for( String history : entry.history )
+                out.writeUTF( history );
+            
+            // modes
+            out.writeInt( entry.properties.size() );
+            for( Map.Entry<String, A> property : entry.properties.entrySet() ){
+                out.writeUTF( property.getKey() );
+                mode.write( out, property.getValue() );
+            }
+        }
+    }
+    
+    /**
+     * Reads modes that were stored earlier.
+     * @param mode a factory used to read modes
+     * @param in the stream to read from
+     * @throws IOException if the stream can't be read
+     */
+    public void read( GenericStreamTransformation<? extends A> mode, DataInputStream in ) throws IOException{
+        int version = in.readInt();
+        if( version != 1 )
+            throw new IOException( "unknown version: " + version );
+        
+        Map<String, Entry> entries = new HashMap<String, Entry>();
+        for( Entry entry : dockables.values() )
+            entries.put( entry.id, entry );
+        
+        for( int i = 0, n = in.readInt(); i < n; i++ ){
+            String key = in.readUTF();
+            Entry entry = entries.get( key );
+            if( entry == null ){
+                // skip entry
+                in.readUTF();
+                for( int j = 0, m = in.readInt(); j<m; j++ )
+                    in.readUTF();
+                for( int j = 0, m = in.readInt(); j<m; j++ ){
+                    in.readUTF();
+                    mode.read( in );
+                }
+            }
+            else{
+                String current = in.readUTF();
+                
+                entry.history.clear();
+                entry.properties.clear();
+                
+                // history
+                for( int j = 0, m = in.readInt(); j<m; j++ )
+                    entry.history.add( in.readUTF() );
+                // modes
+                for( int j = 0, m = in.readInt(); j<m; j++ ){
+                    entry.properties.put( in.readUTF(), mode.read( in ) );
+                }
+                
+                String old = currentMode( entry.dockable );
+                if( !old.equals( current ))
+                    transitionDuringRead( old, current, entry.dockable );
+            }
+        }
+    }
+    
+    /**
      * Describes all properties of a mode.
      * @author Benjamin Sigg
      */
@@ -363,6 +479,9 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
     private class Entry{
         /** the {@link Dockable} for which the properties are stored */
         public Dockable dockable;
+        /** a unique id associated with {@link #dockable} */
+        public String id;
+        
         /** the set of actions available for {@link #dockable} */
         public DefaultDockActionSource source;
         /** a map that stores some properties mapped to the different modes */
@@ -375,8 +494,9 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
          * Creates a new entry
          * @param dockable the element whose properties are stores in this entry
          */
-        public Entry( Dockable dockable ){
+        public Entry( Dockable dockable, String id ){
             this.dockable = dockable;
+            this.id = id;
             source = new DefaultDockActionSource( new LocationHint( LocationHint.ACTION_GUARD, LocationHint.RIGHT ) );
             properties = new HashMap<String, A>();
             history = new LinkedList<String>();

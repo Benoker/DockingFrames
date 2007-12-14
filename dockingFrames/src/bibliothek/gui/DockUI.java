@@ -134,6 +134,15 @@ public class DockUI {
     }
     
     /**
+     * Gets the default-theme to be used by all {@link DockController}s when
+     * nothing else is specified.
+     * @return the default-theme
+     */
+    public ThemeFactory getDefaultTheme(){
+        return themes.get( 0 );
+    }
+    
+    /**
      * Gets the list of all available themes.
      * @return the themes
      */

@@ -45,7 +45,6 @@ import bibliothek.gui.dock.event.DockAdapter;
 import bibliothek.gui.dock.event.DockControllerListener;
 import bibliothek.gui.dock.event.DockRegisterListener;
 import bibliothek.gui.dock.event.DockTitleEvent;
-import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.util.DockProperties;
@@ -192,7 +191,7 @@ public class DockController {
         
         DockUI.getDefaultDockUI().fillIcons( icons );
         
-        setTheme( new BasicTheme() );
+        setTheme( DockUI.getDefaultDockUI().getDefaultTheme().create() );
         
         relocator.addMode( DockRelocatorMode.SCREEN_ONLY );
         relocator.addMode( DockRelocatorMode.NO_COMBINATION );

@@ -26,6 +26,9 @@
 package bibliothek.gui.dock.common.action;
 
 import java.awt.Point;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.*;
 
 import javax.swing.Icon;
@@ -36,6 +39,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableProperty;
 import bibliothek.gui.dock.IconManager;
+import bibliothek.gui.dock.PropertyTransformer;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.event.*;
@@ -45,6 +49,7 @@ import bibliothek.gui.dock.station.SplitDockStation;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 import bibliothek.gui.dock.station.split.SplitDockTree;
 import bibliothek.gui.dock.support.action.ModeTransitionManager;
+import bibliothek.gui.dock.support.util.GenericStreamTransformation;
 import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockUtilities;
 
@@ -312,6 +317,11 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         	controller.setFocusedDockable( dockable, true );	
     }
     
+    @Override
+    protected void transitionDuringRead( String oldMode, String newMode, Dockable dockable ) {
+        // ignore
+    }
+    
     /**
      * Ensures that <code>dockable</code> is the full-screen element of
      * the maximized-station.
@@ -468,7 +478,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      * Describes the location of a {@link Dockable}.
      * @author Benjamin Sigg
      */
-    public class Location{
+    public static class Location{
         /** the name of the root station */
         private String root;
         /** the exact location */
@@ -487,6 +497,27 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
          * @return the location
          */
         public DockableProperty getLocation() {
+            return location;
+        }
+    }
+    
+    /**
+     * A transformer to read or write {@link Location}s.
+     * @author Benjamin Sigg
+     *
+     */
+    public static class LocationStreamTransformer implements GenericStreamTransformation<Location>{
+        /** transformer to read or write single {@link DockableProperty}s */
+        private PropertyTransformer transformer = new PropertyTransformer();
+
+        public void write( DataOutputStream out, Location element ) throws IOException {
+            out.writeUTF( element.root );
+            transformer.write( element.location, out );
+        }
+        public Location read( DataInputStream in ) throws IOException {
+            Location location = new Location();
+            location.root = in.readUTF();
+            location.location = transformer.read( in );
             return location;
         }
     }

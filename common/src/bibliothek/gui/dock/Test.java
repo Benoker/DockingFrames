@@ -1,5 +1,10 @@
 package bibliothek.gui.dock;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
+
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -11,15 +16,15 @@ import bibliothek.gui.dock.facile.menu.FThemeMenuPiece;
 
 public class Test {
     public static void main( String[] args ) {
-        JFrame frame = new JFrame( "Frame" );
-        frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+        final JFrame frame = new JFrame( "Frame" );
+        frame.setDefaultCloseOperation( JFrame.DO_NOTHING_ON_CLOSE );
         
         JMenu menu = new JMenu( "Test" );
         JMenuBar bar = new JMenuBar();
         bar.add( menu );
         frame.setJMenuBar( bar );
         
-        FControl control = new FControl( frame );
+        final FControl control = new FControl( frame );
         frame.setContentPane( control.getCenter() );
         
         FSingleDockableListMenuPiece dockableList = new FSingleDockableListMenuPiece( menu, control );
@@ -53,6 +58,28 @@ public class Test {
         a.setVisible( true );
         b.setVisible( true );
         c.setVisible( true );
+        
+        try {
+            control.getResources().readFile( new File( "config.data" ) );
+        } catch( IOException e ) {
+            e.printStackTrace();
+        }
+        
+        frame.addWindowListener( new WindowAdapter(){
+            @Override
+            public void windowClosing( WindowEvent e ) {
+                frame.setVisible( false );
+                try {
+                    control.getResources().writeFile( new File( "config.data" ) );
+                } 
+                catch( IOException e1 ) {
+                    e1.printStackTrace();
+                }
+                finally{
+                    System.exit( 0 );
+                }
+            }
+        });
         
         frame.setBounds( 20, 20, 400, 300 );
         frame.setVisible( true );

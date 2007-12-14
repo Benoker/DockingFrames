@@ -279,7 +279,7 @@ public class ButtonPanel extends JPanel{
 	 * <code>n</code> actions are shown, <code>result[n]</code> would tell
 	 * how big the panel liked to be.
 	 * @return An array of the size of the number of available actions +1.
-	 * @see {@link #setVisibleActions(int)}
+	 * @see #setVisibleActions(int)
 	 */
 	public Dimension[] getPreferredSizes(){
 		if( actions.isEmpty() )
@@ -566,14 +566,13 @@ public class ButtonPanel extends JPanel{
 		}
 		
 		public void controllerChanged( DockHierarchyEvent event ){
-			if( controller != null ){
+		    if( controller != null ){
 				if( menuAction != null )
 					controller.getIcons().remove( ICON_KEY, this );
 				controller = null;
 			}
 			
 			if( dockable != null ){
-				dockable.addDockHierarchyListener( this );
 				controller = dockable.getController();
 			}
 			

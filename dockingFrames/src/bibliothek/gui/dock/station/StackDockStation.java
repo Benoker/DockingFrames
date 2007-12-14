@@ -549,6 +549,34 @@ public class StackDockStation extends AbstractDockableStation {
             add( dropping, drop );
         }
     }
+    
+    public void move( Dockable dockable, DockableProperty property ) {
+        if( property instanceof StackDockProperty ){
+            int index = indexOf( dockable );
+            if( index < 0 )
+                throw new IllegalArgumentException( "dockable not child of this station" );
+            
+            int destination = ((StackDockProperty)property).getIndex();
+            destination = Math.min( destination, getDockableCount() );
+            if( destination != index ){
+                DockController controller = getController();
+                if( controller == null ){
+                    remove( index, false );
+                    add( dockable, destination );
+                }
+                else{
+                    try{
+                        controller.getRegister().setStalled( true );
+                        remove( index, false );
+                        add( dockable, destination );
+                    }
+                    finally{
+                        controller.getRegister().setStalled( false );
+                    }
+                }
+            }
+        }
+    }
         
     /**
      * Tells which gap (between tabs) is chosen if the mouse has the coordinates x/y.

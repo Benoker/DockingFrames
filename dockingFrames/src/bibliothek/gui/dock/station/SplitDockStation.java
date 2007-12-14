@@ -1076,7 +1076,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
                     return true;
                 }
                 else{
-                    boolean result = dropOver( info.bestLeaf, dockable );
+                    boolean result = dropOver( info.bestLeaf, dockable, property.getSuccessor() );
                     validate();
                     return result;
                 }
@@ -1191,6 +1191,22 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      * otherwise
      */
     protected boolean dropOver( Leaf leaf, Dockable dockable ){
+        return dropOver( leaf, dockable, null );
+    }
+    
+    /**
+     * Combines the {@link Dockable} of <code>leaf</code> and <code>dockable</code>
+     * to a new child of this station. No checks whether the two elements accepts
+     * each other nor if the station accepts the new child <code>dockable</code>
+     * are performed.
+     * @param leaf the leaf which will be combined with <code>dockable</code>
+     * @param dockable a {@link Dockable} which is dropped over <code>leaf</code>
+     * @param property a hint at which position <code>dockable</code> should be
+     * in the combination.
+     * @return <code>true</code> if the operation was successful, <code>false</code>
+     * otherwise
+     */
+    protected boolean dropOver( Leaf leaf, Dockable dockable, DockableProperty property ){
     	DockUtilities.ensureTreeValidity( this, dockable );
     	
         Dockable old = leaf.getDockable();
@@ -1199,6 +1215,12 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         dockStationListeners.fireDockableRemoved( old );
         
         Dockable combination = DockUI.getCombiner( combiner, this ).combine( old, dockable, this );
+        if( property != null ){
+            DockStation combinedStation = combination.asDockStation();
+            if( combinedStation != null && dockable.getDockParent() == combinedStation ){
+                combinedStation.move( dockable, property );
+            }
+        }
         
         dockStationListeners.fireDockableAdding( combination );
         Leaf next = addToList( combination );
@@ -1337,6 +1359,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         drop( false );
     }
 
+    public void move( Dockable dockable, DockableProperty property ) {
+        // do nothing
+    }
+    
     /**
      * Calculates the value a divider should have if the {@link Dockable}
      * of <code>putInfo</code> is added alongside of <code>origin</code>. 

@@ -189,6 +189,39 @@ public class ThemeMenuPiece extends MenuPiece {
     }
     
     /**
+     * Gets the number of factories that can be selected by the user.
+     * @return the number of factories
+     */
+    public int getFactoryCount(){
+        return items.size();
+    }
+    
+    /**
+     * Gets the index'th factory.
+     * @param index the index of the factory
+     * @return the factory
+     */
+    public ThemeFactory getFactory( int index ){
+        return items.get( index ).factory;
+    }
+    
+    /**
+     * Gets the index of <code>factory</code>.
+     * @param factory the factory to search
+     * @return the index or -1
+     */
+    public int indexOf( ThemeFactory factory ){
+        int index = 0;
+        for( Item item : items ){
+            if( item.factory == factory )
+                return index;
+            
+            index++;
+        }
+        return -1;
+    }
+    
+    /**
      * An item that changes the theme when selected.
      * @author Benjamin Sigg
      */

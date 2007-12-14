@@ -113,7 +113,9 @@ public class SplitDockPathProperty extends AbstractDockableProperty implements I
             }
         }
         
-        return new SplitDockProperty( x, y, w, h );
+        SplitDockProperty property = new SplitDockProperty( x, y, w, h );
+        property.setSuccessor( getSuccessor() );
+        return property;
     }
     
     /**

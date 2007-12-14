@@ -417,6 +417,18 @@ public class ScreenDockStation extends AbstractDockStation {
             dialog.setBoundsInScreen( dropInfo.titleX - zero.x, dropInfo.titleY - zero.y, dialog.getWidth(), dialog.getHeight() );
         }
     }
+    
+    public void move( Dockable dockable, DockableProperty property ) {
+        if( property instanceof ScreenDockProperty ){
+            ScreenDockDialog dialog = getDialog( dockable );
+            if( dialog == null )
+                throw new IllegalArgumentException( "dockable not child of this station" );
+            
+            ScreenDockProperty bounds = (ScreenDockProperty)property;
+            
+            dialog.setBoundsInScreen( bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight() );
+        }
+    }
 
     public void draw() {
         if( dropInfo == null )

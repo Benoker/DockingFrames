@@ -78,6 +78,9 @@ public class FDockable {
 	/** the control managing this dockable */
 	private FControlAccess control;
 	
+	/** unique id of this {@link FDockable} */
+	private String uniqueId;
+	
 	/** Source that contains the action that closes this dockable */
 	private DefaultDockActionSource close = new DefaultDockActionSource(
 	        new LocationHint( LocationHint.ACTION_GUARD, LocationHint.RIGHT_OF_ALL ));
@@ -337,7 +340,6 @@ public class FDockable {
 		this.control = control;
 		
 		if( control != null ){
-		    control.getStateManager().add( dockable );
 		    control.link( this, new FDockableAccess(){
 		        public void informVisibility( boolean visible ) {
 		            for( FDockableListener listener : listeners() )
@@ -362,6 +364,11 @@ public class FDockable {
                                 listener.normalized( FDockable.this );
                             break;
 		            }
+		        }
+		        public void setUniqueId( String id ) {
+		            uniqueId = id;
+		            if( FDockable.this.control != null )
+		                FDockable.this.control.getStateManager().add( uniqueId, dockable );
 		        }
 		    });
 		}

@@ -324,6 +324,18 @@ public interface DockStation extends DockElement{
     public void move();
     
     /**
+     * Tries to move the child <code>dockable</code> in such a way, that
+     * {@link DockStation#getDockableProperty(Dockable)} would return a
+     * {@link DockableProperty} that equals <code>property</code>.<br>
+     * There is no need to give a guarantee that the move successes, and clients
+     * should always be prepared for the possibility that this {@link DockStation}
+     * does nothing at all.
+     * @param dockable a child of this station
+     * @param property the preferred position of <code>dockable</code>
+     */
+    public void move( Dockable dockable, DockableProperty property );
+    
+    /**
      * Informs this station that the information gathered by 
      * {@link #prepareDrop(int, int, int, int, Dockable) prepareDrop} or
      * {@link #prepareMove(int, int, int, int, Dockable) prepareMove} should
