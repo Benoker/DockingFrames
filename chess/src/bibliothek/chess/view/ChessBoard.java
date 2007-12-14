@@ -359,6 +359,10 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 			put( drop.row, drop.column, drop.figure );
 		}
 	}
+	
+	public void move( Dockable dockable, DockableProperty property ) {
+	    // do nothing
+	}
 
 	public boolean prepareDrop( int mouseX, int mouseY, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
 		return prepare( mouseX, mouseY, (ChessFigure)dockable );

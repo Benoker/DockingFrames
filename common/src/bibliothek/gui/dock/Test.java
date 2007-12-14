@@ -7,6 +7,7 @@ import javax.swing.JMenuBar;
 import bibliothek.gui.dock.facile.FControl;
 import bibliothek.gui.dock.facile.FSingleDockable;
 import bibliothek.gui.dock.facile.menu.FSingleDockableListMenuPiece;
+import bibliothek.gui.dock.facile.menu.FThemeMenuPiece;
 
 public class Test {
     public static void main( String[] args ) {
@@ -22,8 +23,7 @@ public class Test {
         frame.setContentPane( control.getCenter() );
         
         FSingleDockableListMenuPiece dockableList = new FSingleDockableListMenuPiece( menu, control );
-        dockableList.setBottomSeparator( true );
-        dockableList.setTopSeparator( false );
+        FThemeMenuPiece themeList = new FThemeMenuPiece( dockableList, control );
         
         FSingleDockable a = new FSingleDockable( "a" );
         FSingleDockable b = new FSingleDockable( "b" );

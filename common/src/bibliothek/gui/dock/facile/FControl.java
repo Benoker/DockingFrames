@@ -33,6 +33,7 @@ import java.util.*;
 import javax.swing.JFrame;
 
 import bibliothek.extension.gui.dock.theme.SmoothTheme;
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabDockAction;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
@@ -394,6 +395,9 @@ public class FControl {
 	 * @author Benjamin Sigg
 	 */
 	private class Access implements FControlAccess{
+	    /** action used to close {@link FDockable}s  */
+	    private FCloseAction closeAction;
+	    
 	    public FControl getOwner(){
 			return FControl.this;
 		}
@@ -437,13 +441,32 @@ public class FControl {
 		}
 		
 		public DockAction createCloseAction( final FDockable fdockable ) {
-		    CloseAction close = new CloseAction( frontend.getController() ){
-                @Override
-                protected void close( Dockable dockable ) {
-                    fdockable.setVisible( false );
-                }
-            };
-            return close;
+		    if( closeAction == null )
+		        closeAction = new FCloseAction();
+		    
+		    return closeAction;
 		}
+	}
+	
+	/**
+	 * Action that can close {@link FDockable}s
+	 * @author Benjamin Sigg
+	 */
+	@EclipseTabDockAction
+	private class FCloseAction extends CloseAction{
+	    /**
+	     * Creates a new action
+	     */
+	    public FCloseAction(){
+	        super( frontend.getController() );
+	    }
+	    
+	    @Override
+        protected void close( Dockable dockable ) {
+	        FDockable fdockable = ((FacileDockable)dockable).getDockable();
+	        if( fdockable.getExtendedMode() == FDockable.ExtendedMode.MAXIMIZED )
+	            fdockable.setExtendedMode( FDockable.ExtendedMode.NORMALIZED );
+	        fdockable.setVisible( false );
+        }
 	}
 }
