@@ -68,4 +68,16 @@ public class LayoutMenu extends JMenu implements DockFrontendListener{
 	public void showed( DockFrontend frontend, Dockable dockable ){
 		// ignore
 	}
+	
+	public void added( DockFrontend frontend, Dockable dockable ) {
+	    // ignore
+	}
+	
+	public void hideable( DockFrontend frontend, Dockable dockable, boolean hideable ) {
+	    // ignore
+	}
+	
+	public void removed( DockFrontend frontend, Dockable dockable ) {
+	    // ignore
+	}
 }

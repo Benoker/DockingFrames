@@ -23,20 +23,16 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.action;
+package bibliothek.gui.dock.support.action;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.ActionGuard;
-import bibliothek.gui.dock.action.DefaultDockActionSource;
-import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.action.LocationHint;
+import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.util.DockUtilities;
 
@@ -169,7 +165,6 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
      */
     protected void goOut( String mode, Dockable dockable ){
         transition( mode, dockables.get( dockable ).popMode(), dockable );
-        rebuild( dockable );
     }
     
     /**
@@ -183,7 +178,6 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
         if( entry != null ){
             entry.putMode( mode );
         }
-        rebuild( dockable );
     }
     
     /**

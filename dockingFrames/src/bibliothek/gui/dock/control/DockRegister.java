@@ -382,12 +382,6 @@ public class DockRegister {
         
         @Override
         public void dockableAdding( DockStation station, Dockable dockable ) {
-            // there seems to be no need for this connection, why was it
-            // here in the first place?
-            
-            //DockStation oldParent = dockable.getDockParent();
-            //dockable.setDockParent( station );
-            
             if( stalled ){
                 DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
                     @Override
@@ -400,8 +394,6 @@ public class DockRegister {
             else{
                 addDockable( dockable );
             }
-            
-            //dockable.setDockParent( oldParent );
         }
         
         /**

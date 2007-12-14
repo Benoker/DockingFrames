@@ -45,7 +45,7 @@ public interface DoubleClickListener extends LocatedListener {
      * @param dockable the clicked element
      * @param event the cause of the invocation of this method
      * @return <code>true</code> if this observer processed the event (and
-     * the event must no be forwarded to any other observer), <code>false</code>
+     * the event must not be forwarded to any other observer), <code>false</code>
      * if this observer is not interested in the event
      */
     public boolean process( Dockable dockable, MouseEvent event );

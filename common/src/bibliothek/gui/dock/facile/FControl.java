@@ -33,10 +33,17 @@ import java.util.*;
 import javax.swing.JFrame;
 
 import bibliothek.extension.gui.dock.theme.SmoothTheme;
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.dock.action.ActionGuard;
+import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.action.actions.CloseAction;
+import bibliothek.gui.dock.event.DockAdapter;
 import bibliothek.gui.dock.facile.intern.FControlAccess;
+import bibliothek.gui.dock.facile.intern.FDockableAccess;
 import bibliothek.gui.dock.facile.intern.FStateManager;
 import bibliothek.gui.dock.facile.intern.FacileDockable;
 import bibliothek.gui.dock.station.ScreenDockStation;
@@ -56,9 +63,16 @@ public class FControl {
 	private Map<String, FactoryProperties> factories = 
 		new HashMap<String, FactoryProperties>();
 	
+	/** list of all dockables registered to this control */
+	private List<FDockable> dockables =
+	    new ArrayList<FDockable>();
+	
 	/** the set of {@link FMultipleDockable}s */
 	private List<FMultipleDockable> multiDockables = 
 		new ArrayList<FMultipleDockable>();
+	
+	/** access to internal methods of some {@link FDockable}s */
+	private Map<FDockable, FDockableAccess> accesses = new HashMap<FDockable, FDockableAccess>();
 	
 	/** a manager allowing the user to change the extended-state of some {@link FDockable}s */
 	private FStateManager stateManager;
@@ -79,7 +93,37 @@ public class FControl {
 	public FControl( JFrame frame ){       
 		frontend = new DockFrontend();
 		frontend.getController().setTheme( new NoStackTheme( new SmoothTheme() ) );
-		stateManager = new FStateManager( frontend.getController() );
+		frontend.getController().addActionGuard( new ActionGuard(){
+		    public boolean react( Dockable dockable ) {
+		        return dockable instanceof FacileDockable;
+		    }
+		    public DockActionSource getSource( Dockable dockable ) {
+		        return ((FacileDockable)dockable).getDockable().getClose();
+		    }
+		});
+		frontend.getController().getRegister().addDockRegisterListener( new DockAdapter(){
+		    @Override
+		    public void dockableRegistered( DockController controller, Dockable dockable ) {
+		        if( dockable instanceof FacileDockable ){
+		            FDockableAccess access = accesses.get( ((FacileDockable)dockable).getDockable() );
+		            if( access != null ){
+		                access.informVisibility( true );
+		            }
+		        }
+		    }
+		    
+		    @Override
+		    public void dockableUnregistered( DockController controller, Dockable dockable ) {
+		        if( dockable instanceof FacileDockable ){
+                    FDockableAccess access = accesses.get( ((FacileDockable)dockable).getDockable() );
+                    if( access != null ){
+                        access.informVisibility( false );
+                    }
+                }
+		    }
+		});
+		
+		stateManager = new FStateManager( access );
 		center = new FCenter( access );
 		
 		final ScreenDockStation screen = new ScreenDockStation( frame );
@@ -113,8 +157,9 @@ public class FControl {
 	/**
 	 * Adds a dockable to this control. The dockable can be made visible afterwards.
 	 * @param dockable the new element to show
+	 * @return <code>dockable</code>
 	 */
-	public void add( FSingleDockable dockable ){
+	public <F extends FSingleDockable> F add( F dockable ){
 		if( dockable == null )
 			throw new NullPointerException( "dockable must not be null" );
 		
@@ -124,13 +169,16 @@ public class FControl {
 		dockable.setControl( access );
 		frontend.add( dockable.getDockable(), "single " + dockable.getId() );
 		frontend.setHideable( dockable.getDockable(), false );
+		dockables.add( dockable );
+		return dockable;
 	}
 	
 	/**
 	 * Adds a dockable to this control. The dockable can be made visible afterwards.
 	 * @param dockable the new element to show
+	 * @return <code>dockable</code>
 	 */
-	public void add( FMultipleDockable dockable ){
+	public <F extends FMultipleDockable> F add( F dockable ){
 		if( dockable == null )
 			throw new NullPointerException( "dockable must not be null" );
 		
@@ -144,6 +192,8 @@ public class FControl {
 		
 		dockable.setControl( access );
 		multiDockables.add( dockable );
+		dockables.add( dockable );
+		return dockable;
 	}
 	
 	/**
@@ -157,6 +207,7 @@ public class FControl {
 		if( dockable.getControl() == access ){
 			dockable.setVisible( false );
 			frontend.remove( dockable.getDockable() );
+			dockables.remove( dockable );
 			dockable.setControl( null );
 		}
 	}
@@ -173,6 +224,7 @@ public class FControl {
 			dockable.setVisible( false );
 			frontend.remove( dockable.getDockable() );
 			multiDockables.remove( dockable );
+			dockables.remove( dockable );
 			String factory = access.getFactoryId( dockable.getFactory() );
 			
 			if( factory == null ){
@@ -313,6 +365,7 @@ public class FControl {
 		return settings.toArray( new String[ settings.size() ] );
 	}
 	
+	
 	/**
 	 * Properties associated with one factory.
 	 * @author Benjamin Sigg
@@ -326,21 +379,44 @@ public class FControl {
 	}
 	
 	/**
+	 * Ensures that all {@link Dockable}s are in a valid state (minimized,
+	 * maximized, normalized or externalized).
+	 */
+	protected void ensureValidModes(){
+	    for( FDockable dockable : dockables.toArray( new FDockable[ dockables.size() ] ) ){
+	        stateManager.ensureValidMode( dockable );
+	    }
+	}
+	
+	/**
 	 * A class giving access to the internal methods of the enclosing
 	 * {@link FControl}.
 	 * @author Benjamin Sigg
 	 */
 	private class Access implements FControlAccess{
-		public FControl getOwner(){
+	    public FControl getOwner(){
 			return FControl.this;
 		}
+	    
+	    public void link( FDockable dockable, FDockableAccess access ) {
+	        if( access == null )
+	            accesses.remove( dockable );
+	        else
+	            accesses.put( dockable, access );
+	    }
+	    
+	    public FDockableAccess access( FDockable dockable ) {
+	        return accesses.get( dockable );
+	    }
 		
 		public void hide( FDockable dockable ){
 			frontend.hide( dockable.getDockable() );
+			ensureValidModes();
 		}
 		
 		public void show( FDockable dockable ){
 			frontend.show( dockable.getDockable() );
+			stateManager.ensureValidMode( dockable );
 		}
 		
 		public boolean isVisible( FDockable dockable ){
@@ -358,6 +434,16 @@ public class FControl {
 		
 		public FStateManager getStateManager() {
 		    return stateManager;
+		}
+		
+		public DockAction createCloseAction( final FDockable fdockable ) {
+		    CloseAction close = new CloseAction( frontend.getController() ){
+                @Override
+                protected void close( Dockable dockable ) {
+                    fdockable.setVisible( false );
+                }
+            };
+            return close;
 		}
 	}
 }

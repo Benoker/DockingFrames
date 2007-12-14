@@ -33,7 +33,9 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockAcceptance;
 import bibliothek.gui.dock.common.action.StateManager;
+import bibliothek.gui.dock.facile.FControl;
 import bibliothek.gui.dock.facile.FDockable;
+import bibliothek.gui.dock.facile.FDockable.ExtendedMode;
 import bibliothek.gui.dock.station.ScreenDockStation;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.util.container.Single;
@@ -44,13 +46,19 @@ import bibliothek.util.container.Single;
  *
  */
 public class FStateManager extends StateManager {
+    /** access to the {@link FControl} that uses this manager */
+    private FControlAccess control;
+    
     /**
      * Creates a new manager
-     * @param controller the controller to observe
+     * @param control internal access to the {@link FControl} that uses this manager
      */
-    public FStateManager( DockController controller ){
-        super( controller );
-
+    public FStateManager( FControlAccess control ){
+        super( control.getOwner().getFrontend().getController() );
+        this.control = control;
+        
+        DockController controller = control.getOwner().getFrontend().getController();
+        
         // ensure that non externalizable elements can't be dragged out
         controller.addAcceptance( new DockAcceptance(){
             public boolean accept( DockStation parent, Dockable child ) {
@@ -152,6 +160,37 @@ public class FStateManager extends StateManager {
     		modes.add( EXTERNALIZED );
     	
     	return modes.toArray( new String[ modes.size() ] );
+    }
+    
+    /**
+     * Ensures that <code>dockable</code> is in a valid mode (a mode that
+     * is enabled by <code>dockable</code>), perhaps changes the current mode
+     * to ensure that.
+     * @param dockable the element which might not be in a valid mode
+     */
+    public void ensureValidMode( FDockable dockable ){
+        ExtendedMode mode = getMode( dockable.getDockable() );
+        boolean wrong = 
+            (mode == ExtendedMode.EXTERNALIZED && !dockable.isExternalizable() ) ||
+            (mode == ExtendedMode.MAXIMIZED && !dockable.isMaximizable() ) ||
+            (mode == ExtendedMode.MINIMIZED && !dockable.isMinimizable() );
+        
+        if( wrong ){
+            setMode( dockable.getDockable(), ExtendedMode.NORMALIZED );
+        }
+    }
+    
+    @Override
+    protected void transition( String oldMode, String newMode, Dockable dockable ) {
+        super.transition( oldMode, newMode, dockable );
+        if( dockable instanceof FacileDockable ){
+            FDockable fdockable = ((FacileDockable)dockable).getDockable();
+            FDockableAccess access = control.access( fdockable );
+            if( access != null ){
+                FDockable.ExtendedMode mode = getMode( dockable );
+                access.informMode( mode );
+            }
+        }
     }
     
     @Override

@@ -362,10 +362,8 @@ public class Node extends SplitNode{
         else{
             SplitDockPathProperty.Node node = property.getNode( depth );
 
-            // if this is the last step of the path, then this node needs
-            // to be split up anyway
-            boolean expand = (depth+1 == property.size() && property.getSuccessor() == null) ||
-            // ... or if this node is horizontal, but the path is vertical
+            boolean expand = 
+            // if this node is horizontal, but the path is vertical
                 ( orientation == SplitDockStation.Orientation.HORIZONTAL &&
                     (node.getLocation() == SplitDockPathProperty.Location.TOP ||
                      node.getLocation() == SplitDockPathProperty.Location.BOTTOM )) ||

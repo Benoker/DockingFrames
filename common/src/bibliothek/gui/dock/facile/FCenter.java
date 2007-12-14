@@ -26,14 +26,19 @@
 package bibliothek.gui.dock.facile;
 
 import java.awt.BorderLayout;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 import bibliothek.gui.DockFrontend;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.ListeningDockAction;
+import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.facile.intern.FControlAccess;
 import bibliothek.gui.dock.facile.intern.FStateManager;
+import bibliothek.gui.dock.facile.intern.FacileDockable;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.SplitDockStation;
 import bibliothek.gui.dock.station.FlapDockStation.Direction;
@@ -66,13 +71,14 @@ public class FCenter extends JComponent{
      * Creates a new center.
      * @param access connection to a {@link FControl}
      */
-    public FCenter( FControlAccess access ){
+    public FCenter( final FControlAccess access ){
         center = new SplitDockStation(){
             @Override
             protected ListeningDockAction createFullScreenAction() {
                 return null;
             }
         };
+        center.setExpandOnDoubleclick( false );
         
         north = new FlapDockStation();
         south = new FlapDockStation();
@@ -112,5 +118,33 @@ public class FCenter extends JComponent{
         frontend.addRoot( east, "center east" );
         frontend.addRoot( west, "center west" );
         frontend.setDefaultStation( center );
+        
+        frontend.getController().getDoubleClickController().addListener( new DoubleClickListener(){
+            public DockElement getTreeLocation() {
+                return center;
+            }
+            public boolean process( Dockable dockable, MouseEvent event ) {
+                if( event.isConsumed() )
+                    return false;
+                
+                if( dockable != center ){
+                    if( dockable instanceof FacileDockable ){
+                        FDockable fdockable = ((FacileDockable)dockable).getDockable();
+                        if( center.getFullScreen() != dockable && fdockable.isMaximizable() ){
+                            access.getStateManager().setMode( dockable, FStateManager.MAXIMIZED );
+                            event.consume();
+                            return true;
+                        }
+                        else if( center.getFullScreen() == dockable ){
+                            access.getStateManager().setMode( dockable, FStateManager.NORMALIZED );
+                            event.consume();
+                            return true;
+                        }
+                    }
+                }
+                
+                return false;
+            }
+        });
     }
 }

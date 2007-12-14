@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -50,6 +50,31 @@ public interface DockFrontendListener {
      * @param dockable the element which was made visible
      */
     public void showed( DockFrontend frontend, Dockable dockable );
+    
+    /**
+     * Informs this listener that an additional <code>dockable</code> has
+     * been added to the list of known {@link Dockable}s of <code>frontend</code>.
+     * @param frontend the source of this call
+     * @param dockable the new element
+     */
+    public void added( DockFrontend frontend, Dockable dockable );
+    
+    /**
+     * Informs this listener that <code>dockable</code> has been removed
+     * from the list of known {@link Dockable}s of <code>frontend</code>.
+     * @param frontend the source of this call
+     * @param dockable the element that has been removed
+     */
+    public void removed( DockFrontend frontend, Dockable dockable );
+    
+    /**
+     * Called when the {@link DockFrontend#isHideable(Dockable) hideable}-state
+     * of <code>dockable</code> changes.
+     * @param frontend the source of the event
+     * @param dockable the element whose state changed
+     * @param hideable the new state
+     */
+    public void hideable( DockFrontend frontend, Dockable dockable, boolean hideable );
     
     /**
      * Invoked if a new setting was loaded.

@@ -7,18 +7,12 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
-import bibliothek.gui.dock.event.DockFrontendListener;
+import bibliothek.gui.dock.event.DockFrontendAdapter;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.ScreenDockStation;
 import bibliothek.gui.dock.station.SplitDockStation;
@@ -130,27 +124,17 @@ public class Demo05_CloseAndOpen {
 			}
 		});
 		
-		frontend.addFrontendListener( new DockFrontendListener(){
-			public void hidden(DockFrontend fronend, Dockable affected) {
+		frontend.addFrontendListener( new DockFrontendAdapter(){
+		    @Override
+		    public void hidden(DockFrontend fronend, Dockable affected) {
 				if( affected == dockable )
 					item.setSelected( false );
 			}
 
+			@Override
 			public void showed(DockFrontend frontend, Dockable affected) {
 				if( affected == dockable )
 					item.setSelected( true );
-			}
-			
-			public void deleted(DockFrontend frontend, String name) {
-				// ignore
-			}
-
-			public void loaded(DockFrontend frontend, String name) {
-				// ignore
-			}
-
-			public void saved(DockFrontend frontend, String name) {
-				// ignore
 			}
 		});
 		

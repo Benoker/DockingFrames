@@ -26,10 +26,17 @@
 package bibliothek.gui.dock.facile;
 
 import java.awt.Container;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Icon;
 
+import bibliothek.gui.dock.action.DefaultDockActionSource;
+import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.action.LocationHint;
+import bibliothek.gui.dock.facile.event.FDockableListener;
 import bibliothek.gui.dock.facile.intern.FControlAccess;
+import bibliothek.gui.dock.facile.intern.FDockableAccess;
 import bibliothek.gui.dock.facile.intern.FacileDockable;
 
 /**
@@ -62,17 +69,49 @@ public class FDockable {
 	/** whether this dockable can be closed by the user */
 	private boolean closeable;
 	
+	/** a liste of listeners that were added to this dockable */
+	private List<FDockableListener> listeners = new ArrayList<FDockableListener>();
+	
 	/** the graphical representation of this dockable */
 	private FacileDockable dockable;
 	
 	/** the control managing this dockable */
 	private FControlAccess control;
 	
+	/** Source that contains the action that closes this dockable */
+	private DefaultDockActionSource close = new DefaultDockActionSource(
+	        new LocationHint( LocationHint.ACTION_GUARD, LocationHint.RIGHT_OF_ALL ));
+	
 	/**
 	 * Creates a new dockable
 	 */
 	public FDockable(){
 		dockable = new FacileDockable( this );
+	}
+	
+	/**
+	 * Adds a listener to this dockable, the listener will be informed of
+	 * changes of this dockable.
+	 * @param listener the new listener
+	 */
+	public void addFDockableListener( FDockableListener listener ){
+	    listeners.add( listener );
+	}
+	
+	/**
+	 * Removes a listener from this dockable.
+	 * @param listener the listener to remove
+	 */
+	public void removeFDockableListener( FDockableListener listener ){
+	    listeners.remove( listener );
+	}
+	
+	/**
+	 * Gets the list of listeners.
+	 * @return the listeners
+	 */
+	protected FDockableListener[] listeners(){
+	    return listeners.toArray( new FDockableListener[ listeners.size() ] );
 	}
 	
 	/**
@@ -128,9 +167,17 @@ public class FDockable {
 	 * @param minimizable <code>true</code> if the user can minimize this element
 	 */
 	public void setMinimizable( boolean minimizable ){
-		this.minimizable = minimizable;
-		if( control != null )
-		    control.getStateManager().rebuild( dockable );
+	    if( this.minimizable != minimizable ){
+    		this.minimizable = minimizable;
+    		
+    		for( FDockableListener listener : listeners() )
+    		    listener.minimizableChanged( this );
+    		
+    		if( control != null ){
+    		    control.getStateManager().rebuild( dockable );
+    		    control.getStateManager().ensureValidMode( this );
+    		}
+	    }
 	}
 	
 	/**
@@ -146,9 +193,17 @@ public class FDockable {
 	 * @param maximizable <code>true</code> if the user can maximize this element
 	 */
 	public void setMaximizable( boolean maximizable ){
-		this.maximizable = maximizable;
-		if( control != null )
-            control.getStateManager().rebuild( dockable );
+		if( this.maximizable != maximizable ){
+    	    this.maximizable = maximizable;
+    	    
+    	    for( FDockableListener listener : listeners() )
+    	        listener.maximizableChanged( this );
+    	    
+    		if( control != null ){
+                control.getStateManager().rebuild( dockable );
+                control.getStateManager().ensureValidMode( this );
+    		}
+		}
 	}
 	
 	
@@ -165,10 +220,17 @@ public class FDockable {
 	 * @param externalizable <code>true</code> if the user can externalize this element
 	 */
 	public void setExternalizable( boolean externalizable ){
-		this.externalizable = externalizable;
-		if( control != null ){
-            control.getStateManager().rebuild( dockable );
-		}
+	    if( this.externalizable != externalizable ){
+    		this.externalizable = externalizable;
+    		
+    		for( FDockableListener listener : listeners() )
+    		    listener.externalizableChanged( this );
+    		
+    		if( control != null ){
+                control.getStateManager().rebuild( dockable );
+                control.getStateManager().ensureValidMode( this );
+    		}
+	    }
 	}
 	
 	
@@ -185,7 +247,22 @@ public class FDockable {
 	 * @param closeable <code>true</code> if the user can close this element
 	 */
 	public void setCloseable( boolean closeable ){
-		this.closeable = closeable;
+	    if( this.closeable != closeable ){
+	        this.closeable = closeable;		
+		    updateClose();
+		    for( FDockableListener listener : listeners() )
+		        listener.closeableChanged( this );
+	    }
+	}
+	
+	/**
+	 * Ensures that {@link #close} contains an action when necessary.
+	 */
+	private void updateClose(){
+	    if( control == null || !closeable )
+	        close.removeAll();
+	    else if( control != null && closeable && close.getDockActionCount() == 0 )
+	        close.add( control.createCloseAction( this ) );
 	}
 	
 	/**
@@ -252,14 +329,54 @@ public class FDockable {
 	 * @param control the new control
 	 */
 	void setControl( FControlAccess control ){
-	    if( this.control != null )
+	    if( this.control != null ){
 	        this.control.getStateManager().remove( dockable );
+	        this.control.link( this, null );
+	    }
 	    
 		this.control = control;
 		
-		if( control != null )
+		if( control != null ){
 		    control.getStateManager().add( dockable );
+		    control.link( this, new FDockableAccess(){
+		        public void informVisibility( boolean visible ) {
+		            for( FDockableListener listener : listeners() )
+		                listener.visibilityChanged( FDockable.this );
+		        }
+		        public void informMode( ExtendedMode mode ) {
+		            switch( mode ){
+		                case EXTERNALIZED:
+		                    for( FDockableListener listener : listeners() )
+		                        listener.externalized( FDockable.this );
+		                    break;
+		                case MINIMIZED:
+                            for( FDockableListener listener : listeners() )
+                                listener.minimized( FDockable.this );
+                            break;
+		                case MAXIMIZED:
+                            for( FDockableListener listener : listeners() )
+                                listener.maximized( FDockable.this );
+                            break;
+		                case NORMALIZED:
+                            for( FDockableListener listener : listeners() )
+                                listener.normalized( FDockable.this );
+                            break;
+		            }
+		        }
+		    });
+		}
+		
+		close.removeAll();
+		updateClose();
 	}
+	
+	/**
+	 * Gets the source that contains the close-action.
+	 * @return the source
+	 */
+	DockActionSource getClose() {
+        return close;
+    }
 	
 	/**
 	 * Gets the control which is responsible for this dockable.

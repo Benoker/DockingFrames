@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.facile.intern;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.facile.FControl;
 import bibliothek.gui.dock.facile.FDockable;
 import bibliothek.gui.dock.facile.FDockableFactory;
@@ -73,4 +74,25 @@ public interface FControlAccess {
 	 * @return the manager
 	 */
 	public FStateManager getStateManager();
+	
+	/**
+	 * Gets an action that closes <code>dockable</code> when clicked.
+	 * @param dockable the element to close
+	 * @return the action
+	 */
+	public DockAction createCloseAction( FDockable dockable );
+	
+	/**
+	 * Gives or removes access to internal properties of an {@link FDockable}.
+	 * @param dockable the element which changes its access
+	 * @param access the new access, might be <code>null</code>
+	 */
+	public void link( FDockable dockable, FDockableAccess access );
+	
+	/**
+	 * Grants access to the internal methods of a {@link FDockable}.
+	 * @param dockable the element whose access is searched
+	 * @return the access or <code>null</code>
+	 */
+	public FDockableAccess access( FDockable dockable );
 }

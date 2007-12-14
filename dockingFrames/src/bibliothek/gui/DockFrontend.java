@@ -45,6 +45,7 @@ import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.dockable.DefaultDockableFactory;
 import bibliothek.gui.dock.event.DockFrontendListener;
 import bibliothek.gui.dock.event.IconManagerListener;
+import bibliothek.gui.dock.station.ScreenDockStation;
 import bibliothek.gui.dock.station.flap.FlapDockPropertyFactory;
 import bibliothek.gui.dock.station.flap.FlapDockStationFactory;
 import bibliothek.gui.dock.station.screen.ScreenDockPropertyFactory;
@@ -259,6 +260,7 @@ public class DockFrontend {
         	throw new IllegalArgumentException( "There is already a dockable registered with name " + name );
         
         dockables.put( name, new DockInfo( dockable, name ));
+        fireAdded( dockable );
     }
     
     /**
@@ -353,6 +355,7 @@ public class DockFrontend {
         if( info != null ){
         	info.setHideable( false );
             dockables.remove( info.getKey() );
+            fireRemoved( dockable );
         }
     }
     
@@ -493,7 +496,10 @@ public class DockFrontend {
         if( info == null )
             throw new IllegalArgumentException( "Dockable not registered" );
         
-        info.setHideable( hideable );
+        if( info.isHideable() != hideable ){
+            info.setHideable( hideable );
+            fireHideable( dockable, hideable );
+        }
     }
     
     /**
@@ -996,6 +1002,37 @@ public class DockFrontend {
     protected void fireHidden( Dockable dockable ){
         for( DockFrontendListener listener : listeners() )
             listener.hidden( this, dockable );
+    }
+    
+    /**
+     * Invokes the method {@link DockFrontendListener#added(DockFrontend, Dockable)}
+     * on all listeners.
+     * @param dockable the added element
+     */
+    protected void fireAdded( Dockable dockable ){
+        for( DockFrontendListener listener : listeners() )
+            listener.added( this, dockable );
+    }
+
+    /**
+     * Invokes the method {@link DockFrontendListener#hideable(DockFrontend, Dockable, boolean)}
+     * on all listeners.
+     * @param dockable the element whose state changed
+     * @param value the new state
+     */
+    protected void fireHideable( Dockable dockable, boolean value ){
+        for( DockFrontendListener listener : listeners() )
+            listener.hideable( this, dockable, value );
+    }
+    
+    /**
+     * Invokes the method {@link DockFrontendListener#removed(DockFrontend, Dockable)}
+     * on all listeners.
+     * @param dockable the removed element
+     */
+    protected void fireRemoved( Dockable dockable ){
+        for( DockFrontendListener listener : listeners() )
+            listener.removed( this, dockable );
     }
 
     /**

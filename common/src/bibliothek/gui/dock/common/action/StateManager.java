@@ -1,3 +1,28 @@
+/*
+ * Bibliothek - DockingFrames
+ * Library built on Java/Swing, allows the user to "drag and drop"
+ * panels containing any Swing-Component the developer likes to add.
+ * 
+ * Copyright (C) 2007 Benjamin Sigg
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ * Benjamin Sigg
+ * benjamin_sigg@gmx.ch
+ * CH - Switzerland
+ */
 package bibliothek.gui.dock.common.action;
 
 import java.awt.Point;
@@ -13,16 +38,14 @@ import bibliothek.gui.dock.DockableProperty;
 import bibliothek.gui.dock.IconManager;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
-import bibliothek.gui.dock.common.util.Resources;
-import bibliothek.gui.dock.event.DockRegisterListener;
-import bibliothek.gui.dock.event.DockRelocatorListener;
-import bibliothek.gui.dock.event.IconManagerListener;
-import bibliothek.gui.dock.event.SplitDockListener;
+import bibliothek.gui.dock.event.*;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.ScreenDockStation;
 import bibliothek.gui.dock.station.SplitDockStation;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 import bibliothek.gui.dock.station.split.SplitDockTree;
+import bibliothek.gui.dock.support.action.ModeTransitionManager;
+import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockUtilities;
 
 /**
@@ -445,11 +468,27 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      * Describes the location of a {@link Dockable}.
      * @author Benjamin Sigg
      */
-    private class Location{
+    public class Location{
         /** the name of the root station */
-        public String root;
+        private String root;
         /** the exact location */
-        public DockableProperty location;
+        private DockableProperty location;
+        
+        /**
+         * Gets the name of the root-station.
+         * @return the name
+         */
+        public String getRoot() {
+            return root;
+        }
+        
+        /**
+         * Gets the exact location.
+         * @return the location
+         */
+        public DockableProperty getLocation() {
+            return location;
+        }
     }
     
     /**
@@ -457,7 +496,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      * its mode.
      * @author Benjamin Sigg
      */
-    private class Listener implements SplitDockListener, DockRelocatorListener, DockRegisterListener{
+    private class Listener implements SplitDockListener, DockRelocatorListener, DockRegisterListener, DockHierarchyListener{
         public void fullScreenDockableChanged( SplitDockStation station, Dockable oldFullScreen, Dockable newFullScreen ) {
             if( oldFullScreen != null )
                 validate( oldFullScreen );
@@ -471,7 +510,6 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         }
 
         public void dockablePut( DockController controller, Dockable dockable, DockStation station ) {
-            validate( dockable );
             unmaximize();
         }
 
@@ -488,7 +526,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
 		}
 
 		public void dockableRegistered( DockController controller, Dockable dockable ){
-			validate( dockable );
+			dockable.addDockHierarchyListener( this );
 		}
 
 		public void dockableRegistering( DockController controller, Dockable dockable ){
@@ -496,7 +534,15 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
 		}
 
 		public void dockableUnregistered( DockController controller, Dockable dockable ){
-			// ignore
+		    dockable.removeDockHierarchyListener( this );
+		}
+		
+		public void controllerChanged( DockHierarchyEvent event ) {
+		    // ignore
+		}
+		
+		public void hierarchyChanged( DockHierarchyEvent event ) {
+		    rebuild( event.getDockable() );
 		}
     }
 }

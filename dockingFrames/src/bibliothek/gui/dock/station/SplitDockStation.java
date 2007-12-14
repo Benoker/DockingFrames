@@ -2258,11 +2258,14 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
                 dockable = unwrap( dockable );
                 if( dockable != null ){
                     if( isFullScreen() ){
-                        if( getFullScreen() == dockable )
+                        if( getFullScreen() == dockable ){
                             setFullScreen( null );
+                            event.consume();
+                        }
                     }
                     else{
                         setFullScreen( dockable );
+                        event.consume();
                     }
                     
                     return true;
