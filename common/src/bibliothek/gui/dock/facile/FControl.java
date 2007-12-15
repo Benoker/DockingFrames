@@ -42,6 +42,7 @@ import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.actions.CloseAction;
+import bibliothek.gui.dock.common.action.StateManager;
 import bibliothek.gui.dock.event.DockAdapter;
 import bibliothek.gui.dock.facile.intern.FControlAccess;
 import bibliothek.gui.dock.facile.intern.FDockableAccess;
@@ -101,7 +102,20 @@ public class FControl {
 	 * dialogs for externalized {@link FDockable}s
 	 */
 	public FControl( JFrame frame ){       
-		frontend = new DockFrontend();
+		frontend = new DockFrontend(){
+		    @Override
+		    protected void save( DataOutputStream out, boolean entry ) throws IOException {
+		        super.save( out, entry );
+		        if( entry )
+		            stateManager.write( new StateManager.LocationStreamTransformer(), out );
+		    }
+		    @Override
+		    protected void load( DataInputStream in, boolean entry ) throws IOException {
+		        super.load( in, entry );
+		        if( entry )
+		            stateManager.read( new StateManager.LocationStreamTransformer(), in );
+		    }
+		};
 		frontend.setShowHideAction( false );
 		frontend.getController().setTheme( new NoStackTheme( new SmoothTheme() ) );
 		frontend.getController().addActionGuard( new ActionGuard(){

@@ -149,8 +149,12 @@ public class ApplicationResourceManager {
      */
     public void writeFile( File file ) throws IOException{
         DataOutputStream out = new DataOutputStream( new BufferedOutputStream( new FileOutputStream( file )));
-        writeStream( out );
-        out.close();
+        try{
+            writeStream( out );
+        }
+        finally{
+            out.close();
+        }
     }
     
     /**
@@ -160,8 +164,12 @@ public class ApplicationResourceManager {
      */
     public void readFile( File file ) throws IOException{
         DataInputStream in = new DataInputStream( new BufferedInputStream( new FileInputStream( file )));
-        readStream( in );
-        in.close();
+        try{
+            readStream( in );
+        }
+        finally{
+            in.close();
+        }
     }
     
     /**
