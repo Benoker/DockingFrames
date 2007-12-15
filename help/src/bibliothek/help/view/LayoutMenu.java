@@ -80,4 +80,8 @@ public class LayoutMenu extends JMenu implements DockFrontendListener{
 	public void removed( DockFrontend frontend, Dockable dockable ) {
 	    // ignore
 	}
+	
+	public void read( DockFrontend frontend, String name ){
+		// ignore
+	}
 }

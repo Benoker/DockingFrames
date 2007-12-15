@@ -32,13 +32,12 @@ import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
 
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.event.DockFrontendAdapter;
 import bibliothek.gui.dock.event.DockableListener;
-import bibliothek.gui.dock.support.menu.MenuPiece;
+import bibliothek.gui.dock.support.menu.BaseMenuPiece;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
@@ -47,7 +46,7 @@ import bibliothek.gui.dock.title.DockTitle;
  * @author Benjamin Sigg
  *
  */
-public class CloseableDockableMenuPiece extends MenuPiece{
+public class CloseableDockableMenuPiece extends BaseMenuPiece{
     /** the frontend that is currently observed */
     private DockFrontend frontend;
     
@@ -59,37 +58,16 @@ public class CloseableDockableMenuPiece extends MenuPiece{
     
     /**
      * Creates a new piece
-     * @param menu the menu into which this piece will insert its items.
      */
-    public CloseableDockableMenuPiece( JMenu menu ) {
-        super( menu );
+    public CloseableDockableMenuPiece() {
+    	// do nothing
     }
     
     /**
      * Creates a new piece
-     * @param menu the menu into which this piece will insert its items.
      * @param frontend the list of {@link Dockable}s, can be <code>null</code>
      */
-    public CloseableDockableMenuPiece( JMenu menu, DockFrontend frontend ) {
-        super( menu );
-        setFrontend( frontend );
-    }
-
-    /**
-     * Creates a new piece
-     * @param predecessor the piece directly above this piece
-     */
-    public CloseableDockableMenuPiece( MenuPiece predecessor ) {
-        super( predecessor );
-    }
-    
-    /**
-     * Creates a new piece
-     * @param predecessor the piece directly above this piece
-     * @param frontend the list of {@link Dockable}s, can be <code>null</code>
-     */
-    public CloseableDockableMenuPiece( MenuPiece predecessor, DockFrontend frontend ) {
-        super( predecessor );
+    public CloseableDockableMenuPiece( DockFrontend frontend ) {
         setFrontend( frontend );
     }
     
@@ -176,7 +154,7 @@ public class CloseableDockableMenuPiece extends MenuPiece{
     }
     
     /**
-     * Ensures that <code>dockable</code> has an item if it is {@link #include(Dockable)},
+     * Ensures that <code>dockable</code> has an item if it is {@link #include(Dockable) included},
      * and does not have otherwise.
      * @param dockable the element whose item is to be checked
      */

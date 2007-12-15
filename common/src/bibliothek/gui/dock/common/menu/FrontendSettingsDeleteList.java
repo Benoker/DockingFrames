@@ -23,32 +23,28 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.facile;
+package bibliothek.gui.dock.common.menu;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import bibliothek.gui.DockFrontend;
+import bibliothek.gui.dock.support.menu.FrontendSettingsList;
 
 /**
- * A factory that can create and save {@link FMultipleDockable}s.
+ * Shows the settings of a {@link DockFrontend} and allows the user to
+ * delete some settings.
  * @author Benjamin Sigg
- *
  */
-public interface FDockableFactory {
+public class FrontendSettingsDeleteList extends FrontendSettingsList {
+
 	/**
-	 * Reads and creates the contents of a new {@link FDockable}.
-	 * @param in the stream to read from
-	 * @return the new dockable or <code>null</code>
-	 * @throws IOException if the stream can't be read
+	 * Creates a new list.
+	 * @param frontend the frontend from which settings might be deleted
 	 */
-	public FMultipleDockable read( DataInputStream in ) throws IOException;
-	
-	/**
-	 * Writes the contents of <code>dockable</code> into <code>out</code>.
-	 * @param dockable the element to store, the factory can expect that
-	 * <code>dockable.getFactory() == this</code>.
-	 * @param out the stream to write into
-	 * @throws IOException if the stream is not writable
-	 */
-	public void write( FMultipleDockable dockable, DataOutputStream out ) throws IOException;
+	public FrontendSettingsDeleteList( DockFrontend frontend ){
+		super( frontend );
+	}
+
+	@Override
+	protected void action( String name ){
+		getFrontend().delete( name );
+	}
 }

@@ -25,8 +25,6 @@
  */
 package bibliothek.gui.dock.facile.menu;
 
-import javax.swing.JMenu;
-
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.menu.CloseableDockableMenuPiece;
@@ -35,7 +33,6 @@ import bibliothek.gui.dock.facile.FControl;
 import bibliothek.gui.dock.facile.FDockable;
 import bibliothek.gui.dock.facile.event.FDockableAdapter;
 import bibliothek.gui.dock.facile.intern.FacileDockable;
-import bibliothek.gui.dock.support.menu.MenuPiece;
 
 /**
  * A piece of a menu that adds an item for each closeable {@link FDockable}
@@ -52,24 +49,12 @@ public class FSingleDockableListMenuPiece extends CloseableDockableMenuPiece {
     
     /**
      * Creates a new piece.
-     * @param menu the menu into which this piece will add its items.
      * @param control the control to observe for new {@link Dockable}s, can be <code>null</code>.
      */
-    public FSingleDockableListMenuPiece( JMenu menu, FControl control ) {
-        super( menu );
+    public FSingleDockableListMenuPiece( FControl control ) {
         setControl( control );
     }
 
-    /**
-     * Creates a new piece.
-     * @param predecessor the piece directly above this piece
-     * @param control the control to observe for new {@link Dockable}s, can be <code>null</code>.
-     */
-    public FSingleDockableListMenuPiece( MenuPiece predecessor, FControl control ) {
-        super( predecessor );
-        setControl( control );
-    }
-    
     /**
      * Exchanges the {@link FControl} whose {@link FDockable}s are observed
      * by this piece.

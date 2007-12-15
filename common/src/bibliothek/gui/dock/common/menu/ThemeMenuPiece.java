@@ -31,20 +31,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JMenu;
 import javax.swing.JRadioButtonMenuItem;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
-import bibliothek.gui.dock.support.menu.MenuPiece;
+import bibliothek.gui.dock.support.menu.BaseMenuPiece;
 import bibliothek.gui.dock.themes.ThemeFactory;
 
 /**
  * A {@link MenuPiece} that can change the {@link DockTheme}.
  * @author Benjamin Sigg
  */
-public class ThemeMenuPiece extends MenuPiece {
+public class ThemeMenuPiece extends BaseMenuPiece {
     /** the controller whose theme might be changed */
     private DockController controller;
     
@@ -59,32 +57,16 @@ public class ThemeMenuPiece extends MenuPiece {
     
     /**
      * Creates a new piece
-     * @param menu the menu into which this piece will insert its items
      * @param controller the controller whose theme might be changed, can be <code>null</code>
      * @param defaultThemes whether the piece should be filled up with the
      * factories that can be obtained through the {@link DockUI}
      */
-    public ThemeMenuPiece( JMenu menu, DockController controller, boolean defaultThemes ) {
-        super( menu );
+    public ThemeMenuPiece( DockController controller, boolean defaultThemes ) {
         setController( controller );
         if( defaultThemes )
             addDefaultThemes();
     }
 
-    /**
-     * Creates a new piece
-     * @param predecessor the piece directly above this piece
-     * @param controller the controller whose theme might be changed, can be <code>null</code>
-     * @param defaultThemes whether the piece should be filled up with the
-     * factories that can be obtained through the {@link DockUI}
-     */
-    public ThemeMenuPiece( MenuPiece predecessor, DockController controller, boolean defaultThemes ) {
-        super( predecessor );
-        setController( controller );
-        if( defaultThemes )
-            addDefaultThemes();
-    }
-    
     /**
      * Gets the controller whose theme might be changed by this piece.
      * @return the controller

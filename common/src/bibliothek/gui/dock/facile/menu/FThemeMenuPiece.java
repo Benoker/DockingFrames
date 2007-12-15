@@ -30,8 +30,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.URI;
 
-import javax.swing.JMenu;
-
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.FlatTheme;
@@ -39,7 +37,6 @@ import bibliothek.extension.gui.dock.theme.SmoothTheme;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.common.menu.ThemeMenuPiece;
 import bibliothek.gui.dock.facile.FControl;
-import bibliothek.gui.dock.support.menu.MenuPiece;
 import bibliothek.gui.dock.support.util.ApplicationResource;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.NoStackTheme;
@@ -54,21 +51,10 @@ import bibliothek.gui.dock.themes.ThemePropertyFactory;
 public class FThemeMenuPiece extends ThemeMenuPiece{
     /**
      * Creates a new piece.
-     * @param menu the menu into which this piece adds its items
      * @param control the control whose theme might be changed
      */
-    public FThemeMenuPiece( JMenu menu, FControl control ) {
-        super( menu, control.getFrontend().getController(), false );
-        init( control );
-    }
-
-    /**
-     * Creates a new piece.
-     * @param predecessor the piece directly above this piece
-     * @param control the control whose theme might be changed
-     */
-    public FThemeMenuPiece( MenuPiece predecessor, FControl control ) {
-        super( predecessor, control.getFrontend().getController(), false );
+    public FThemeMenuPiece( FControl control ) {
+        super( control.getFrontend().getController(), false );
         init( control );
     }
     

@@ -25,52 +25,44 @@
  */
 package bibliothek.gui.dock.support.menu;
 
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import java.awt.Component;
 
 /**
- * A {@link MenuPiece} that does not do anything from its own. All items
- * can be added or removed directly by the client.
+ * A {@link MenuPiece} that does not add any children by itself. All items
+ * have to be added or removed directly by the client.
  * @author Benjamin Sigg
  *
  */
-public class FreeMenuPiece extends MenuPiece{
-    /**
-     * Creates a new {@link MenuPiece} that adds its items directly at
-     * the top of <code>menu</code>.
-     * @param menu the menu into which this piece will insert its items
-     */
-    public FreeMenuPiece( JMenu menu ) {
-        super( menu );
-    }
-
-    /**
-     * Creates a new {@link MenuPiece} that will add its items directly below
-     * <code>predecessor</code>.
-     * @param predecessor the piece directly before this piece
-     */
-    public FreeMenuPiece( MenuPiece predecessor ) {
-        super( predecessor );
-    }
-
+public class FreeMenuPiece extends BaseMenuPiece{
+    
     @Override
     public int getItemCount() {
         return super.getItemCount();
     }
     
     @Override
-    public JMenuItem getItem( int index ) {
+    public Component getItem( int index ) {
         return super.getItem( index );
     }
     
     @Override
-    public void add( JMenuItem item ) {
+    public void add( Component item ) {
         super.add( item );
     }
     
     @Override
-    public void insert( int index, JMenuItem item ) {
+    protected void addSeparator(){
+    	super.addSeparator();
+    }
+    
+    @Override
+    public void insert( int index, Component item ) {
         super.insert( index, item );
+    }
+    
+    @Override
+    protected void insertSeparator( int index ){
+    	super.insertSeparator( index );
     }
     
     @Override
@@ -79,7 +71,7 @@ public class FreeMenuPiece extends MenuPiece{
     }
     
     @Override
-    public void remove( JMenuItem item ) {
+    public void remove( Component item ) {
         super.remove( item );
     }
 }

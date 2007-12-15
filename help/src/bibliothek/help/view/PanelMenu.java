@@ -113,5 +113,9 @@ public class PanelMenu extends JMenu{
 		public void hideable( DockFrontend frontend, Dockable dockable, boolean hideable ) {
 		    // ignore
 		}
+		
+		public void read( DockFrontend frontend, String name ){
+			// ignore
+		}
 	}
 }

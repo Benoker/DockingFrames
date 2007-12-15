@@ -44,14 +44,14 @@ import bibliothek.gui.dock.station.SplitDockStation;
 import bibliothek.gui.dock.station.FlapDockStation.Direction;
 
 /**
- * A component that can is normally set into the center of the
- * main- {@link JFrame} of an application. This component can display
+ * A component that is normally set into the center of the
+ * main- {@link JFrame}. This component can display
  * and manage some {@link FDockable}s.<br>
  * This component contains in the center a {@link SplitDockStation} allowing
  * to show several {@link FDockable}s at the same time. At each border a
  * {@link FlapDockStation} allows to show "minimized" {@link FDockable}s.<br>
  * Note: clients should not create {@link FCenter}s directly, they should use
- * a {@link FControl} to provide one <code>FCenter</code>. 
+ * a {@link FControl} to get a <code>FCenter</code>. 
  * @author Benjamin Sigg
  */
 public class FCenter extends JComponent{

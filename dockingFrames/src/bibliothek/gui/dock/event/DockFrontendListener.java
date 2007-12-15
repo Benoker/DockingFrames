@@ -84,6 +84,14 @@ public interface DockFrontendListener {
     public void loaded( DockFrontend frontend, String name );
     
     /**
+     * Called when a setting was read. The setting could have be known
+     * before it was read.
+     * @param frontend the invoker
+     * @param name the name of the setting which was read
+     */
+    public void read( DockFrontend frontend, String name );
+    
+    /**
      * Invoked if the current setting was saved with the name
      * <code>name</code>.
      * @param frontend the invoker

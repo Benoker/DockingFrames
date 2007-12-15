@@ -888,6 +888,7 @@ public class DockFrontend {
             }
             
             settings.put( key, value );
+            fireRead( key );
         }
         
         load( in, false );
@@ -1064,6 +1065,17 @@ public class DockFrontend {
         for( DockFrontendListener listener : listeners() )
             listener.loaded( this, name );
     }
+    
+    /**
+     * Invokes the method {@link DockFrontendListener#read(DockFrontend, String)}
+     * on all listeners.
+     * @param name the name of the read setting
+     */
+    protected void fireRead( String name ){
+        for( DockFrontendListener listener : listeners() )
+            listener.read( this, name );
+    }
+    
     
     /**
      * Invokes the method {@link DockFrontendListener#deleted(DockFrontend, String)}

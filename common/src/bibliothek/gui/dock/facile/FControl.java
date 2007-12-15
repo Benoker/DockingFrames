@@ -59,7 +59,7 @@ import bibliothek.gui.dock.themes.NoStackTheme;
  * and the {@link FCenter}.<br>
  * Clients should call <code>read</code> and <code>write</code> of the
  * {@link ApplicationResourceManager}, accessible through {@link #getResources()}, 
- * to store or load the configuration that was used.
+ * to store or load the configuration.
  * @author Benjamin Sigg
  *
  */

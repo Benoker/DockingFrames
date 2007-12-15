@@ -55,6 +55,10 @@ public abstract class DockFrontendAdapter implements DockFrontendListener {
         // empty
     }
 
+    public void read( DockFrontend frontend, String name ){
+    	// empty
+    }
+    
     public void removed( DockFrontend frontend, Dockable dockable ) {
         // empty
     }

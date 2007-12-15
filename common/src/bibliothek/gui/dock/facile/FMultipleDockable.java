@@ -34,7 +34,7 @@ import bibliothek.gui.dock.facile.intern.FControlAccess;
  * <li>If a {@link FControl} loads a layout, all {@link FMultipleDockable}s are removed and new instances
  * are created using a set of {@link FDockableFactory}s</li>
  * <li>Many copies of one {@link FMultipleDockable} can be part of a {@link FControl}</li>
- * <li>When saving a layout, the content of a {@link FMultipleDockable} are written out by a {@link FDockableFactory}</li>
+ * <li>When saving a layout, the contents of a {@link FMultipleDockable} are written out by a {@link FDockableFactory}</li>
  * </ul>
  * @author Benjamin Sigg
  */

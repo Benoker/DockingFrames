@@ -29,7 +29,7 @@ import bibliothek.gui.dock.facile.FDockable;
 
 /**
  * A class implementing all methods of {@link FDockableListener}. The methods
- * have an empty body and do not execute any commands.
+ * have an empty body and can be overriden by subclasses.
  * @author Benjamin Sigg
  *
  */

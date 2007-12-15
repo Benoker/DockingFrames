@@ -34,10 +34,10 @@ import java.util.prefs.Preferences;
  * Manages a set of {@link ApplicationResource}s, can load and store the
  * resources at any time.<br>
  * The {@link ApplicationResource}s are organized in a {@link Map}. Each
- * resource is associated with a unique key. This key is used to find out, which
+ * resource is associated with a unique key. This key is used to determine, which
  * stream of bytes belongs to which resource. If data is loaded, the byte-streams
  * for missing resources will be stored in a buffer that is read as soon as
- * the resources are registered. Additional resources are ignored.<br>
+ * a missing resource is registered. Additional resources are ignored.<br>
  * Note that there is no order how the resources are stored in the file. 
  * @author Benjamin Sigg
  *
