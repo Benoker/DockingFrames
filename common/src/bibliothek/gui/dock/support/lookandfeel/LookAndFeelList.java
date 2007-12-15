@@ -1,4 +1,29 @@
-package bibliothek.demonstration.util;
+/*
+ * Bibliothek - DockingFrames
+ * Library built on Java/Swing, allows the user to "drag and drop"
+ * panels containing any Swing-Component the developer likes to add.
+ * 
+ * Copyright (C) 2007 Benjamin Sigg
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ * Benjamin Sigg
+ * benjamin_sigg@gmx.ch
+ * CH - Switzerland
+ */
+package bibliothek.gui.dock.support.lookandfeel;
 
 import java.awt.Component;
 import java.io.DataInputStream;
@@ -8,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.swing.JComponent;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -22,10 +46,24 @@ import javax.swing.plaf.metal.MetalTheme;
 /**
  * A list of {@link LookAndFeel}s, can setup a <code>LookAndFeel</code> when
  * asked. It's possible to add a {@link ChangeListener} to this list and
- * receive events whenever the <code>LookAndFeel</code> changes.
+ * receive events whenever the <code>LookAndFeel</code> changes.<br>
+ * Clients should use {@link #getDefaultList()} to get a list of {@link LookAndFeel}s
  * @author Benjamin Sigg
  */
 public class LookAndFeelList{
+	/** global list of look and feels */
+	private static LookAndFeelList list;
+
+	/**
+	 * Gets the global list of {@link LookAndFeel}s
+	 * @return the global list
+	 */
+	public static LookAndFeelList getDefaultList(){
+		if( list == null )
+			list = new LookAndFeelList();
+		return list;
+	}
+
     /** the {@link LookAndFeel} used when no other <code>LookAndFeel</code> has been set */
     private Info defaultInfo;
     /** the {@link LookAndFeel} that imitates the system */
@@ -43,7 +81,7 @@ public class LookAndFeelList{
     /**
      * Crates a new list and collects all available {@link LookAndFeel}s.
      */
-    public LookAndFeelList(){
+    protected LookAndFeelList(){
         LookAndFeel feel = UIManager.getLookAndFeel();
         defaultInfo = new Info( -1, feel.getClass().getName(), feel.getName() );
         currentInfo = defaultInfo;
@@ -209,7 +247,7 @@ public class LookAndFeelList{
             info.setup();
             UIManager.setLookAndFeel( info.getClassName() );
 
-            DemoUtilities.updateUI( listComponents() );
+            LookAndFeelUtilities.updateUI( listComponents() );
             
             currentInfo = info;
             

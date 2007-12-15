@@ -8,11 +8,11 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JRadioButtonMenuItem;
-import javax.swing.LookAndFeel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import bibliothek.demonstration.util.LookAndFeelList.Info;
+import bibliothek.gui.dock.support.lookandfeel.LookAndFeelList;
+import bibliothek.gui.dock.support.lookandfeel.LookAndFeelList.Info;
 
 /**
  * A menu that contains an item for each available {@link LookAndFeel}. The

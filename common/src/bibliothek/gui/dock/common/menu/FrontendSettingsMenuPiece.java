@@ -35,9 +35,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 import bibliothek.gui.DockFrontend;
-import bibliothek.gui.dock.support.menu.FreeMenuPiece;
-import bibliothek.gui.dock.support.menu.NodeMenuPiece;
-import bibliothek.gui.dock.support.menu.RootMenuPiece;
 import bibliothek.gui.dock.support.menu.SeparatingMenuPiece;
 import bibliothek.gui.dock.support.util.Resources;
 

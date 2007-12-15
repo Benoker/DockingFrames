@@ -23,11 +23,14 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.support.menu;
+package bibliothek.gui.dock.common.menu;
 
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
+
+import bibliothek.gui.dock.support.menu.MenuPiece;
+import bibliothek.gui.dock.support.menu.MenuPieceListener;
 
 /**
  * A piece which uses a set of other pieces to create a composite.
@@ -37,6 +40,9 @@ import java.util.List;
 public class NodeMenuPiece extends MenuPiece{
 	/** the children of this piece */
 	private List<MenuPiece> children = new ArrayList<MenuPiece>();
+	
+	/** listener for adding or removing items */
+	private Listener listener = new Listener();
 	
 	/**
 	 * Adds a new child to the end of this piece.
@@ -58,7 +64,8 @@ public class NodeMenuPiece extends MenuPiece{
 		piece.setParent( this );
 		children.add( index, piece );
 		
-		insert( piece, 0, piece.items() );
+		piece.addListener( listener );
+		listener.insert( piece, 0, piece.items() );
 	}
 	
 	/**
@@ -67,7 +74,8 @@ public class NodeMenuPiece extends MenuPiece{
 	 */
 	public void remove( MenuPiece piece ){
 		if( children.contains( piece )){
-			remove( piece, 0, piece.getItemCount() );
+			listener.remove( piece, 0, piece.getItemCount() );
+			piece.removeListener( listener );
 			
 			piece.setParent( null );
 			children.remove( piece );
@@ -80,7 +88,8 @@ public class NodeMenuPiece extends MenuPiece{
 	 */
 	public void remove( int index ){
 		MenuPiece piece = children.get( index );
-		remove( piece, 0, piece.getItemCount() );
+		listener.remove( piece, 0, piece.getItemCount() );
+		piece.removeListener( listener );
 		
 		piece.setParent( null );
 		children.remove( index );
@@ -104,44 +113,43 @@ public class NodeMenuPiece extends MenuPiece{
 	}
 	
 	@Override
-	protected void fill( List<Component> items ){
+	public void fill( List<Component> items ){
 		for( MenuPiece piece : children )
 			piece.fill( items );
 	}
 	
 	@Override
-	protected int getItemCount(){
+	public int getItemCount(){
 		int count = 0;
 		for( MenuPiece piece : children )
 			count += piece.getItemCount();
 		return count;
 	}
 
-	@Override
-	protected void insert( MenuPiece child, int index, Component... component ){
-		MenuPiece parent = getParent();
-		if( parent != null ){
+	/**
+	 * A listener to all children, forwarding any call of inserting or removing
+	 * items.
+	 * @author Benjamin Sigg
+	 */
+	private class Listener implements MenuPieceListener{
+		public void insert( MenuPiece child, int index, Component... component ){
 			for( MenuPiece piece : children ){
 				if( piece == child )
 					break;
 				else
 					index += piece.getItemCount();
 			}
-			parent.insert( this, index, component );
+			fireInsert( index, component );
 		}
-	}
 
-	@Override
-	protected void remove( MenuPiece child, int index, int length ){
-		MenuPiece parent = getParent();
-		if( parent != null ){
+		public void remove( MenuPiece child, int index, int length ){
 			for( MenuPiece piece : children ){
 				if( piece == child )
 					break;
 				else
 					index += piece.getItemCount();
 			}
-			parent.remove( this, index, length );
-		}
+			fireRemove( index, length );
+		}		
 	}
 }

@@ -23,9 +23,11 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.support.menu;
+package bibliothek.gui.dock.common.menu;
 
 import java.awt.Component;
+
+import bibliothek.gui.dock.support.menu.BaseMenuPiece;
 
 /**
  * A {@link MenuPiece} that does not add any children by itself. All items

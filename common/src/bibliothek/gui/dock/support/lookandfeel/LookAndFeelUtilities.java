@@ -1,4 +1,4 @@
-package bibliothek.demonstration.util;
+package bibliothek.gui.dock.support.lookandfeel;
 
 import java.awt.Component;
 import java.awt.Window;
@@ -12,7 +12,7 @@ import javax.swing.SwingUtilities;
  * A set of methods that are used through the demonstration-framework.
  * @author Benjamin Sigg
  */
-public class DemoUtilities {
+public class LookAndFeelUtilities {
 	/**
 	 * Updates the look and feel for all windows that can be found through
 	 * the collection of components.

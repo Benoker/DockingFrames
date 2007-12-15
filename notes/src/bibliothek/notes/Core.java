@@ -1,25 +1,29 @@
 package bibliothek.notes;
 
 import java.awt.Component;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 
 import bibliothek.demonstration.Monitor;
-import bibliothek.demonstration.util.ComponentCollector;
-import bibliothek.demonstration.util.LookAndFeelList;
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.RectGradientPainter;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.security.SecureDockController;
-import bibliothek.notes.model.Note;
+import bibliothek.gui.dock.support.lookandfeel.ComponentCollector;
+import bibliothek.gui.dock.support.lookandfeel.LookAndFeelList;
 import bibliothek.notes.model.NoteModel;
 import bibliothek.notes.util.ResourceSet;
 import bibliothek.notes.view.MainFrame;
@@ -108,7 +112,7 @@ public class Core implements ComponentCollector{
 		frontend.registerFactory( new NoteViewFactory( views.getNotes(), model ));
 		
 		if( monitor == null ){
-			lookAndFeels = new LookAndFeelList();
+			lookAndFeels = LookAndFeelList.getDefaultList();
 			lookAndFeels.addComponentCollector( this );
 		}
 		else

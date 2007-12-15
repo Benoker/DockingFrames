@@ -20,10 +20,10 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.WindowConstants;
 
 import bibliothek.demonstration.Monitor;
-import bibliothek.demonstration.util.ComponentCollector;
-import bibliothek.demonstration.util.LookAndFeelList;
 import bibliothek.demonstration.util.LookAndFeelMenu;
-import bibliothek.gui.*;
+import bibliothek.gui.DockFrontend;
+import bibliothek.gui.DockUI;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockActionSource;
@@ -38,6 +38,8 @@ import bibliothek.gui.dock.station.ScreenDockStation;
 import bibliothek.gui.dock.station.SplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
 import bibliothek.gui.dock.station.split.SplitDockProperty;
+import bibliothek.gui.dock.support.lookandfeel.ComponentCollector;
+import bibliothek.gui.dock.support.lookandfeel.LookAndFeelList;
 import bibliothek.gui.dock.themes.ThemeFactory;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.help.control.LinkManager;
@@ -279,7 +281,7 @@ public class Core implements ComponentCollector{
 		
 		LookAndFeelList list;
 		if( monitor == null ){
-			list = new LookAndFeelList();
+			list = LookAndFeelList.getDefaultList();
 			list.addComponentCollector( this );
 		}
 		else

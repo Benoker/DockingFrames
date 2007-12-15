@@ -3,8 +3,8 @@ package bibliothek.demonstration;
 
 import java.lang.reflect.InvocationTargetException;
 
-import bibliothek.demonstration.util.ComponentCollector;
-import bibliothek.demonstration.util.LookAndFeelList;
+import bibliothek.gui.dock.support.lookandfeel.ComponentCollector;
+import bibliothek.gui.dock.support.lookandfeel.LookAndFeelList;
 
 /**
  * A monitor for a Demonstration.

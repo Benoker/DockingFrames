@@ -14,12 +14,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
 import bibliothek.demonstration.util.LookAndFeelMenu;
-import bibliothek.gui.DockStation;
-import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.security.GlassedPane;
 import bibliothek.gui.dock.security.SecureDockController;
 import bibliothek.notes.Core;
-import bibliothek.notes.model.Note;
 import bibliothek.notes.util.ResourceSet;
 import bibliothek.notes.view.menu.HelpMenu;
 import bibliothek.notes.view.menu.PanelList;

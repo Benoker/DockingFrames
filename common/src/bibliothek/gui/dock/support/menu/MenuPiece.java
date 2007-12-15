@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.support.menu;
 
 import java.awt.Component;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,9 +38,48 @@ import javax.swing.JMenu;
  * @author Benjamin Sigg
  */
 public abstract class MenuPiece {
-	
     /** the menu before this piece */
     private MenuPiece parent;
+    
+    /** the listeners of this piece */
+    private List<MenuPieceListener> listeners = new ArrayList<MenuPieceListener>();
+    
+    /**
+     * Adds a listener to this piece, the listener will get informed when this
+     * piece want's to add or remove items.
+     * @param listener the new listener
+     */
+    public void addListener( MenuPieceListener listener ){
+    	listeners.add( listener );
+    }
+    
+    /**
+     * Removes a listener to this piece.
+     * @param listener the listener to remove
+     */
+    public void removeListener( MenuPieceListener listener ){
+    	listeners.remove( listener );
+    }
+    
+    /**
+     * Informs all listeners that new items were inserted.
+     * @param index the index of the first new item
+     * @param items the new items
+     */
+    protected void fireInsert( int index, Component... items ){
+    	for( MenuPieceListener listener : listeners.toArray( new MenuPieceListener[ listeners.size() ] ) )
+    		listener.insert( this, index, items );
+    }
+    
+    /**
+     * Informs all listeners that items were deleted.
+     * @param index the index of the first deleted item
+     * @param length the number of deleted items
+     */
+    protected void fireRemove( int index, int length ){
+    	for( MenuPieceListener listener : listeners.toArray( new MenuPieceListener[ listeners.size() ] ) )
+    		listener.remove( this, index, length );
+    }
     
     /**
      * Gets the menu into which this {@link MenuPiece} adds its items.
@@ -62,10 +102,11 @@ public abstract class MenuPiece {
 	}
     
     /**
-     * Sets the parent of this piece.
+     * Sets the parent of this piece. Note that clients normally do not need
+     * to invoke this method.
      * @param parent the parent, might be <code>null</code>
      */
-    protected void setParent( MenuPiece parent ){
+    public void setParent( MenuPiece parent ){
 		this.parent = parent;
 	}
     
@@ -73,40 +114,22 @@ public abstract class MenuPiece {
      * Gets the number of items this {@link MenuPiece} added to its {@link #getMenu() menu}
      * @return the number of items
      */
-    protected abstract int getItemCount();
+    public abstract int getItemCount();
     
     /**
      * Inserts all items of this piece into <code>items</code>. 
      * @return the list which has to be filled in the same order as the items
      * will appear on the menu
      */
-    protected abstract void fill( List<Component> items );
+    public abstract void fill( List<Component> items );
     
     /**
      * Gets all items that are shown by this piece.
      * @return all items
      */
-    protected Component[] items(){
+    public Component[] items(){
     	List<Component> items = new LinkedList<Component>();
     	fill( items );
     	return items.toArray( new Component[ items.size() ] );
     }
-    
-    /**
-     * Adds an item to the menu.
-     * @param child a {@link MenuPiece} whose parent is <code>this</code> and which
-     * want's to add the item
-     * @param index the index of the item, measured relatively to all items of <code>owner</code>
-     * @param items the new items
-     */
-    protected abstract void insert( MenuPiece child, int index, Component... items );
-    
-    /**
-     * Removes an item from the menu.
-     * @param child a {@link MenuPiece} whose parent is <code>this</code> and which
-     * want's to remove the item
-     * @param index the index of the item, measured relatively to all items of <code>owner</code>
-     * @param length the number of items to remove
-     */
-    protected abstract void remove( MenuPiece child, int index, int length );
 }

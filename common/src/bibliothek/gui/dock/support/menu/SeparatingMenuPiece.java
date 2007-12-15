@@ -24,6 +24,8 @@ public class SeparatingMenuPiece extends MenuPiece{
     
     /** the source of items */
     private MenuPiece piece;
+    /** a listener used to add or remove items */
+    private Listener listener = new Listener();
     
     /**
      * Creates a new piece
@@ -81,71 +83,30 @@ public class SeparatingMenuPiece extends MenuPiece{
     public void setPiece( MenuPiece piece ){
     	if( this.piece != piece ){
     		if( this.piece != null ){
-    			remove( piece, 0, piece.getItemCount() );
+    			listener.remove( piece, 0, piece.getItemCount() );
     			this.piece.setParent( null );
+    			piece.removeListener( listener );
     		}
     		
         	this.piece = piece;
         	
         	if( this.piece != null ){
         		piece.setParent( this );
-        		insert( piece, 0, piece.items() );
+        		piece.addListener( listener );
+        		listener.insert( piece, 0, piece.items() );
         	}
     	}
 	}
     
     @Override
-    protected int getItemCount(){
+    public int getItemCount(){
     	return piece.getItemCount() + getSeparatorCount();
     }
     
-    @Override
-    protected void insert( MenuPiece child, int index, Component... component ){
-    	MenuPiece parent = getParent();
-    	if( parent != null && component.length > 0 ){
-	    	int count = piece.getItemCount() - component.length;
-	    	if( count == 0 ){
-	    		if( emptySeparator  )
-	    			parent.remove( this, 0, 1 );
-	    		
-	    		if( bottomSeparator )
-	    			parent.insert( this, 0, getBottomSeparator() );
-	    		
-	    		if( topSeparator )
-	    			parent.insert( this, 0, getTopSeparator() );
-	    	}
-	    	
-    		if( topSeparator )
-	    		index++;
-	    	
-	    	parent.insert( this, index, component );
-    	}
-    }
+
     
     @Override
-    protected void remove( MenuPiece child, int index, int length ){
-    	MenuPiece parent = getParent();
-    	if( parent != null && length > 0 ){
-    		if( topSeparator )
-    			index++;
-    	
-    		parent.remove( this, index, length );
-    		
-    		if( child.getItemCount() == 0 ){
-    			if( topSeparator && bottomSeparator )
-    				parent.remove( this, 0, 2 );
-    			
-    			if( topSeparator || bottomSeparator )
-    				parent.remove( this, 0, 1 );
-    			
-    			if( emptySeparator )
-    				parent.insert( this, 0, getEmptySeparator() );
-    		}
-    	}
-    }
-    
-    @Override
-    protected void fill( List<Component> items ){
+    public void fill( List<Component> items ){
     	if( piece == null || piece.getItemCount() == 0 ){
     		if( emptySeparator )
     			items.add( getEmptySeparator() );
@@ -207,10 +168,10 @@ public class SeparatingMenuPiece extends MenuPiece{
             if( parent != null ){
 	            if( piece != null && piece.getItemCount() > 0 ){
 	                if( bottomSeparator ){
-	                	parent.insert( this, getItemCount(), getBottomSeparator() );
+	                	fireInsert( getItemCount(), getBottomSeparator() );
 	                }
 	                else{
-	                	parent.remove( this, getItemCount()-1, 1 );
+	                	fireRemove( getItemCount()-1, 1 );
 	                }
 	            }
             }
@@ -237,16 +198,13 @@ public class SeparatingMenuPiece extends MenuPiece{
             this.emptySeparator = emptySeparator;
             putUpSeparators();
             
-            MenuPiece parent = getParent();
-            if( parent != null ){
-	            if( piece == null || piece.getItemCount() == 0 ){
-	                if( emptySeparator ){
-	                	parent.insert( this, 0, getEmptySeparator() );
-	                }
-	                else{
-	                	parent.remove( this, 0, 1 );
-	                }
-	            }
+            if( piece == null || piece.getItemCount() == 0 ){
+                if( emptySeparator ){
+                	fireInsert( 0, getEmptySeparator() );
+                }
+                else{
+                	fireRemove( 0, 1 );
+                }
             }
         }
     }
@@ -271,16 +229,13 @@ public class SeparatingMenuPiece extends MenuPiece{
             this.topSeparator = topSeparator;
             putUpSeparators();
             
-            MenuPiece parent = getParent();
-            if( parent != null ){
-	            if( piece != null && piece.getItemCount() > 0 ){
-	            	if( topSeparator ){
-	                	parent.insert( this, 0, getTopSeparator() );
-	                }
-	                else{
-	                	parent.remove( this, 0, 1 );
-	                }
-	            }
+            if( piece != null && piece.getItemCount() > 0 ){
+            	if( topSeparator ){
+                	fireInsert( 0, getTopSeparator() );
+                }
+                else{
+                	fireRemove( 0, 1 );
+                }
             }
         }
     }
@@ -334,4 +289,52 @@ public class SeparatingMenuPiece extends MenuPiece{
     	else if( !top && separatorBottom != null )
     		separatorBottom = null;
     }
+    
+	/**
+	 * A listener to all children, forwarding any call of inserting or removing
+	 * items.
+	 * @author Benjamin Sigg
+	 */
+	private class Listener implements MenuPieceListener{
+	    public void insert( MenuPiece child, int index, Component... component ){
+	    	if( component.length > 0 ){
+		    	int count = piece.getItemCount() - component.length;
+		    	if( count == 0 ){
+		    		if( emptySeparator  )
+		    			fireRemove( 0, 1 );
+		    		
+		    		if( bottomSeparator )
+		    			fireInsert( 0, getBottomSeparator() );
+		    		
+		    		if( topSeparator )
+		    			fireInsert( 0, getTopSeparator() );
+		    	}
+		    	
+	    		if( topSeparator )
+		    		index++;
+		    	
+		    	fireInsert( index, component );
+	    	}
+	    }
+	    
+	    public void remove( MenuPiece child, int index, int length ){
+	    	if( length > 0 ){
+	    		if( topSeparator )
+	    			index++;
+	    	
+	    		fireRemove( index, length );
+	    		
+	    		if( child.getItemCount() == 0 ){
+	    			if( topSeparator && bottomSeparator )
+	    				fireRemove( 0, 2 );
+	    			
+	    			if( topSeparator || bottomSeparator )
+	    				fireRemove( 0, 1 );
+	    			
+	    			if( emptySeparator )
+	    				fireInsert( 0, getEmptySeparator() );
+	    		}
+	    	}
+	    }
+	}
 }

@@ -1,4 +1,4 @@
-package bibliothek.demonstration.util;
+package bibliothek.gui.dock.support.lookandfeel;
 
 import java.awt.Component;
 import java.util.Collection;

@@ -16,8 +16,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 
-import bibliothek.demonstration.util.ComponentCollector;
-import bibliothek.demonstration.util.LookAndFeelList;
+import bibliothek.gui.dock.support.lookandfeel.ComponentCollector;
+import bibliothek.gui.dock.support.lookandfeel.LookAndFeelList;
 
 /**
  * The center of the demonstration-application. Is responsible to create

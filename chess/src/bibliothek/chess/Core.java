@@ -29,8 +29,8 @@ import bibliothek.chess.view.HidingTheme;
 import bibliothek.chess.view.PawnReplaceDialog;
 import bibliothek.chess.view.StateLabel;
 import bibliothek.demonstration.Monitor;
-import bibliothek.demonstration.util.ComponentCollector;
 import bibliothek.gui.dock.security.GlassedPane;
+import bibliothek.gui.dock.support.lookandfeel.ComponentCollector;
 import bibliothek.gui.dock.themes.BasicTheme;
 
 /**

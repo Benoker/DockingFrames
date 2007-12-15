@@ -10,11 +10,12 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
 import bibliothek.gui.dock.common.menu.FrontendSettingsMenuPiece;
+import bibliothek.gui.dock.common.menu.LookAndFeelMenuPiece;
+import bibliothek.gui.dock.common.menu.RootMenuPiece;
 import bibliothek.gui.dock.facile.FControl;
 import bibliothek.gui.dock.facile.FSingleDockable;
 import bibliothek.gui.dock.facile.menu.FSingleDockableListMenuPiece;
 import bibliothek.gui.dock.facile.menu.FThemeMenuPiece;
-import bibliothek.gui.dock.support.menu.RootMenuPiece;
 import bibliothek.gui.dock.support.menu.SeparatingMenuPiece;
 
 public class Test {
@@ -33,6 +34,7 @@ public class Test {
         menu.add( new FSingleDockableListMenuPiece( control ));
         menu.add( new SeparatingMenuPiece( new FThemeMenuPiece( control ), true, false, false ));
         menu.add( new SeparatingMenuPiece( new FrontendSettingsMenuPiece( control.getFrontend(), false ), true, false, false ));
+        menu.add( new SeparatingMenuPiece( new LookAndFeelMenuPiece( frame, null ), true, false, false ));
         
         FSingleDockable a = new FSingleDockable( "a" );
         FSingleDockable b = new FSingleDockable( "b" );

@@ -42,11 +42,11 @@ public class BaseMenuPiece extends MenuPiece{
     private List<Component> items = new ArrayList<Component>();
     
     @Override
-    protected void fill( List<Component> items ){
+    public void fill( List<Component> items ){
     	items.addAll( this.items );
     }
     @Override
-    protected int getItemCount(){
+    public int getItemCount(){
     	return items.size();
     }
     
@@ -74,15 +74,6 @@ public class BaseMenuPiece extends MenuPiece{
     	insert( index, new JPopupMenu.Separator() );
     }
     
-    @Override
-    protected void insert( MenuPiece child, int index, Component... items ){
-    	throw new IllegalStateException( "this piece has no children" );
-    }
-    @Override
-    protected void remove( MenuPiece child, int index, int length ){
-    	throw new IllegalStateException( "this piece has no children" );
-    }
-    
     /**
      * Inserts a new item into the menu.
      * @param index the location of the new item, measured in the coordinate
@@ -91,9 +82,7 @@ public class BaseMenuPiece extends MenuPiece{
      */
     protected void insert( int index, Component item ){
         items.add( index, item );
-        MenuPiece parent = getParent();
-        if( parent != null )
-        	parent.insert( this, index, item );
+        fireInsert( index, item );
     }
     
 
@@ -121,9 +110,7 @@ public class BaseMenuPiece extends MenuPiece{
      */
     protected void remove( int index ){
     	items.remove( index );
-        MenuPiece parent = getParent();
-        if( parent != null )
-        	parent.remove( this, index, 1 );
+        fireRemove( index, 1 );
     }
     
     /**
@@ -132,8 +119,6 @@ public class BaseMenuPiece extends MenuPiece{
     protected void removeAll(){
     	int count = items.size();
     	items.clear();
-    	MenuPiece parent = getParent();
-        if( parent != null )
-        	parent.remove( this, 0, count );
+    	fireRemove( 0, count );
     }
 }

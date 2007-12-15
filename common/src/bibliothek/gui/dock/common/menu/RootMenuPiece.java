@@ -23,12 +23,14 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.support.menu;
+package bibliothek.gui.dock.common.menu;
 
 import java.awt.Component;
-import java.util.List;
 
 import javax.swing.JMenu;
+
+import bibliothek.gui.dock.support.menu.MenuPiece;
+import bibliothek.gui.dock.support.menu.MenuPieceListener;
 
 /**
  * The root of a tree of {@link MenuPiece}s.
@@ -54,7 +56,20 @@ public class RootMenuPiece extends NodeMenuPiece {
 		if( menu == null )
 			throw new NullPointerException( "menu must not be null" );
 		this.menu = menu;
-		super.setParent( new Root() );
+		
+		addListener( new MenuPieceListener(){
+			public void insert( MenuPiece child, int index, Component... items ){
+				JMenu menu = getMenu();
+				for( int i = 0; i < items.length; i++ )
+					menu.add( items[i], i+index );
+			
+			}
+			public void remove( MenuPiece child, int index, int length ){
+				JMenu menu = getMenu();
+				for( int i = index+length-1; i >= index; i-- )
+					menu.remove( i );
+			}
+		});
 	}
 	
 	@Override
@@ -63,36 +78,7 @@ public class RootMenuPiece extends NodeMenuPiece {
 	}
 	
 	@Override
-	protected final void setParent( MenuPiece parent ){
+	public final void setParent( MenuPiece parent ){
 		throw new IllegalStateException( "A root can't have any parent" );
-	}
-	
-	/**
-	 * The real root, just adds or removes items to or from the
-	 * {@link RootMenuPiece#menu menu}.
-	 * @author Benjamin Sigg
-	 */
-	private class Root extends MenuPiece{
-		@Override
-		protected void fill( List<Component> items ){
-			RootMenuPiece.this.fill( items );
-		}
-
-		@Override
-		protected int getItemCount(){
-			return RootMenuPiece.this.getItemCount();
-		}
-
-		@Override
-		protected void insert( MenuPiece child, int index, Component... items ){
-			for( int i = 0; i < items.length; i++ )
-				menu.add( items[i], i+index );
-		}
-
-		@Override
-		protected void remove( MenuPiece child, int index, int length ){
-			for( int i = index+length-1; i >= index; i-- )
-				menu.remove( i );
-		}
 	}
 }
