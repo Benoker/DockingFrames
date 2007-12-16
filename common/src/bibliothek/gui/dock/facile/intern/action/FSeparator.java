@@ -23,38 +23,33 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.facile.intern;
+package bibliothek.gui.dock.facile.intern.action;
 
+import bibliothek.gui.dock.action.actions.SeparatorAction;
 import bibliothek.gui.dock.facile.FDockable;
+import bibliothek.gui.dock.facile.action.FAction;
 
 /**
- * An interface giving access to the internal methods of an {@link FDockable}. Only
- * {@link FDockable}s should create instances of this interface.
+ * Represents a line separating some groups of {@link FAction}s. Clients should
+ * use {@link #SEPARATOR}, {@link #MENU_SEPARATOR} or {@link #TITLE_SEPARATOR}
+ * instead of creating a new action.
  * @author Benjamin Sigg
- *
  */
-public interface FDockableAccess {
-    /**
-     * Called after the visibility of the {@link FDockable} has changed.
-     * @param visible the new state
-     */
-    public void informVisibility( boolean visible );
+public class FSeparator extends FAction{
+    /** the normal separator */
+    public static final FSeparator SEPARATOR = new FSeparator( SeparatorAction.SEPARATOR );
+    
+    /** a separator which is only visible in menus */
+    public static final FSeparator MENU_SEPARATOR = new FSeparator( SeparatorAction.MENU_SEPARATOR );
+    
+    /** a separator which is only visible on a title of a {@link FDockable} */
+    public static final FSeparator TITLE_SEPARATOR = new FSeparator( SeparatorAction.TITLE_SEPARATOR );
     
     /**
-     * Called after the mode of the {@link FDockable} has changed.
-     * @param mode the new mode
+     * Creates a new separator
+     * @param separator the internal representation
      */
-    public void informMode( FDockable.ExtendedMode mode );
-    
-    /**
-     * Tells which unique id the owning {@link FDockable} has.
-     * @param id the unique id
-     */
-    public void setUniqueId( String id );
-    
-    /**
-     * Gets the unique id of this dockable.
-     * @return the unique id
-     */
-    public String getUniqueId();
+    protected FSeparator( SeparatorAction separator ){
+        super( separator );
+    }
 }

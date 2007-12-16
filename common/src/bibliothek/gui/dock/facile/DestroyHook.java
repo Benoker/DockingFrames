@@ -23,38 +23,17 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.facile.intern;
-
-import bibliothek.gui.dock.facile.FDockable;
+package bibliothek.gui.dock.facile;
 
 /**
- * An interface giving access to the internal methods of an {@link FDockable}. Only
- * {@link FDockable}s should create instances of this interface.
+ * A <code>DestroyHook</code> is added to a {@link FControl}. When the {@link FControl}
+ * is destroyed, then {@link #destroy()} is invoked as well.
  * @author Benjamin Sigg
  *
  */
-public interface FDockableAccess {
+public interface DestroyHook {
     /**
-     * Called after the visibility of the {@link FDockable} has changed.
-     * @param visible the new state
+     * Informs this hook that the {@link FControl} has been destroyed.
      */
-    public void informVisibility( boolean visible );
-    
-    /**
-     * Called after the mode of the {@link FDockable} has changed.
-     * @param mode the new mode
-     */
-    public void informMode( FDockable.ExtendedMode mode );
-    
-    /**
-     * Tells which unique id the owning {@link FDockable} has.
-     * @param id the unique id
-     */
-    public void setUniqueId( String id );
-    
-    /**
-     * Gets the unique id of this dockable.
-     * @return the unique id
-     */
-    public String getUniqueId();
+    public void destroy();
 }

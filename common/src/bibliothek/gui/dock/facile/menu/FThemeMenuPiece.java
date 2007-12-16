@@ -54,7 +54,7 @@ public class FThemeMenuPiece extends ThemeMenuPiece{
      * @param control the control whose theme might be changed
      */
     public FThemeMenuPiece( FControl control ) {
-        super( control.getFrontend().getController(), false );
+        super( control.intern().getController(), false );
         init( control );
     }
     

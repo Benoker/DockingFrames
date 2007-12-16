@@ -23,38 +23,33 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.facile.intern;
+package bibliothek.gui.dock.facile.action;
 
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.facile.FDockable;
 
 /**
- * An interface giving access to the internal methods of an {@link FDockable}. Only
- * {@link FDockable}s should create instances of this interface.
+ * A {@link FAction} is associated with one {@link FDockable}, allowing the
+ * user to perform actions which are somehow connected to that <code>FDockable</code>. 
  * @author Benjamin Sigg
- *
  */
-public interface FDockableAccess {
-    /**
-     * Called after the visibility of the {@link FDockable} has changed.
-     * @param visible the new state
-     */
-    public void informVisibility( boolean visible );
+public abstract class FAction {
+    /** the internal representation of the action */
+    private DockAction action;
     
     /**
-     * Called after the mode of the {@link FDockable} has changed.
-     * @param mode the new mode
+     * Creates a new FAction
+     * @param action the internal representation of this action
      */
-    public void informMode( FDockable.ExtendedMode mode );
+    protected FAction( DockAction action ){
+        this.action = action;
+    }
     
     /**
-     * Tells which unique id the owning {@link FDockable} has.
-     * @param id the unique id
+     * Gets the internal representation of the action.
+     * @return the representation
      */
-    public void setUniqueId( String id );
-    
-    /**
-     * Gets the unique id of this dockable.
-     * @return the unique id
-     */
-    public String getUniqueId();
+    public DockAction intern(){
+        return action;
+    }
 }

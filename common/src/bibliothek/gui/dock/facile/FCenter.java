@@ -111,7 +111,7 @@ public class FCenter extends JComponent{
         state.add( "center east", east );
         state.add( "center west", west );
         
-        DockFrontend frontend = access.getOwner().getFrontend();
+        DockFrontend frontend = access.getOwner().intern();
         frontend.addRoot( center, "center center" );
         frontend.addRoot( north, "center north" );
         frontend.addRoot( south, "center south" );

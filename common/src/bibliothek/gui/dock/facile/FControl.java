@@ -59,7 +59,9 @@ import bibliothek.gui.dock.themes.NoStackTheme;
  * and the {@link FCenter}.<br>
  * Clients should call <code>read</code> and <code>write</code> of the
  * {@link ApplicationResourceManager}, accessible through {@link #getResources()}, 
- * to store or load the configuration.
+ * to store or load the configuration.<br>
+ * Clients which do no longer need a {@link FControl} can call {@link #destroy()}
+ * to free resources.
  * @author Benjamin Sigg
  *
  */
@@ -95,6 +97,9 @@ public class FControl {
 	
 	/** manager used to store and read configurations */
 	private ApplicationResourceManager resources = new ApplicationResourceManager();
+	
+	/** a list of listeners which are to be informed when this control is no longer in use */
+	private List<DestroyHook> hooks = new ArrayList<DestroyHook>();
 	
 	/**
 	 * Creates a new control
@@ -189,6 +194,35 @@ public class FControl {
 	}
 	
 	/**
+	 * Frees as much resources as possible. This {@link FControl} will no longer
+	 * work correctly after this method was called.
+	 */
+	public void destroy(){
+	    frontend.getController().kill();
+	    for( DestroyHook hook : hooks )
+	        hook.destroy();
+	}
+	
+	/**
+	 * Adds a destroy-hook. The hook is called when this {@link FControl} is
+	 * destroyed through {@link #destroy()}.
+	 * @param hook the new hook
+	 */
+	public void addDestroyHook( DestroyHook hook ){
+	    if( hook == null )
+	        throw new NullPointerException( "hook must not be null" );
+	    hooks.add( hook );
+	}
+	
+	/**
+	 * Removes a destroy-hook from this {@link FControl}.
+	 * @param hook the hook to remove
+	 */
+	public void removeDestroyHook( DestroyHook hook ){
+	    hooks.remove( hook );
+	}
+	
+	/**
 	 * Grants access to the manager that reads and stores configurations
 	 * of the facile-framework.<br>
 	 * Clients can add their own {@link ApplicationResource}s to this manager,
@@ -223,8 +257,8 @@ public class FControl {
 		dockable.setControl( access );
 		String id = "single " + dockable.getId();
 		accesses.get( dockable ).setUniqueId( id );
-		frontend.add( dockable.getDockable(), id );
-		frontend.setHideable( dockable.getDockable(), true );
+		frontend.add( dockable.intern(), id );
+		frontend.setHideable( dockable.intern(), true );
 		dockables.add( dockable );
 		return dockable;
 	}
@@ -235,26 +269,35 @@ public class FControl {
 	 * @return <code>dockable</code>
 	 */
 	public <F extends FMultipleDockable> F add( F dockable ){
+	    String factory = access.getFactoryId( dockable.getFactory() );
+        if( factory == null ){
+            throw new IllegalStateException( "the factory for a MultipleDockable is not registered" );
+        }
+        
+        int count = 0;
+        for( FMultipleDockable multi : multiDockables ){
+            if( factory.equals( multi.getFactory() ))
+                count++;
+        }
+        String id = "multi " + (count+1) + " " + factory;
+        return add( dockable, id );
+	}
+
+	/**
+     * Adds a dockable to this control. The dockable can be made visible afterwards.
+     * @param dockable the new element to show
+     * @param uniqueId id the unique id of the new element
+     * @return <code>dockable</code>
+     */
+	private <F extends FMultipleDockable> F add( F dockable, String uniqueId ){
 		if( dockable == null )
 			throw new NullPointerException( "dockable must not be null" );
 		
 		if( dockable.getControl() != null )
 			throw new IllegalStateException( "dockable is already part of a control" );
 		
-		String factory = access.getFactoryId( dockable.getFactory() );
-		if( factory == null ){
-			throw new IllegalStateException( "the factory for a MultipleDockable is not registered" );
-		}
-		
-		int count = 0;
-		for( FMultipleDockable multi : multiDockables ){
-		    if( factory.equals( multi.getFactory() ))
-		        count++;
-		}
-		String id = "multi " + (count+1) + " " + factory;
-		
 		dockable.setControl( access );
-		accesses.get( dockable ).setUniqueId( id );
+		accesses.get( dockable ).setUniqueId( uniqueId );
 		multiDockables.add( dockable );
 		dockables.add( dockable );
 		return dockable;
@@ -270,7 +313,7 @@ public class FControl {
 		
 		if( dockable.getControl() == access ){
 			dockable.setVisible( false );
-			frontend.remove( dockable.getDockable() );
+			frontend.remove( dockable.intern() );
 			dockables.remove( dockable );
 			dockable.setControl( null );
 		}
@@ -286,7 +329,7 @@ public class FControl {
 		
 		if( dockable.getControl() == access ){
 			dockable.setVisible( false );
-			frontend.remove( dockable.getDockable() );
+			frontend.remove( dockable.intern() );
 			multiDockables.remove( dockable );
 			dockables.remove( dockable );
 			String factory = access.getFactoryId( dockable.getFactory() );
@@ -306,7 +349,7 @@ public class FControl {
 	 * @param id the unique id of the factory
 	 * @param factory the new factory
 	 */
-	public void add( final String id, final FDockableFactory factory ){
+	public void add( final String id, final FMultipleDockableFactory factory ){
 		if( id == null )
 			throw new NullPointerException( "id must not be null" );
 		
@@ -328,9 +371,10 @@ public class FControl {
 			}
 
 			public FacileDockable read( Map<Integer, Dockable> children, boolean ignoreChildren, DataInputStream in ) throws IOException{
-				FMultipleDockable dockable = factory.read( in );
-				add( dockable );
-				return dockable.getDockable();
+				String id = in.readUTF();
+			    FMultipleDockable dockable = factory.read( in );
+				add( dockable, id );
+				return dockable.intern();
 			}
 
 			public void read( Map<Integer, Dockable> children, boolean ignoreChildren, FacileDockable preloaded, DataInputStream in ) throws IOException{
@@ -338,7 +382,8 @@ public class FControl {
 			}
 
 			public void write( FacileDockable element, Map<Dockable, Integer> children, DataOutputStream out ) throws IOException{
-				factory.write( (FMultipleDockable)element.getDockable(), out );
+				out.writeUTF( accesses.get( element.getDockable() ).getUniqueId() );
+			    factory.write( (FMultipleDockable)element.getDockable(), out );
 			}
 		});
 	}
@@ -347,7 +392,7 @@ public class FControl {
 	 * Gets the representation of the layer beneath the facile-layer.
 	 * @return the entry point to DockingFrames
 	 */
-	public DockFrontend getFrontend(){
+	public DockFrontend intern(){
 		return frontend;
 	}
 	
@@ -437,7 +482,7 @@ public class FControl {
 	 */
 	private class FactoryProperties{
 		/** the associated factory */
-		public FDockableFactory factory;
+		public FMultipleDockableFactory factory;
 		/** the number of {@link FMultipleDockable} that belong to {@link #factory} */
 		public int count = 0;
 	}
@@ -478,20 +523,20 @@ public class FControl {
 	    }
 		
 		public void hide( FDockable dockable ){
-			frontend.hide( dockable.getDockable() );
+			frontend.hide( dockable.intern() );
 			ensureValidModes();
 		}
 		
 		public void show( FDockable dockable ){
-			frontend.show( dockable.getDockable() );
+			frontend.show( dockable.intern() );
 			stateManager.ensureValidMode( dockable );
 		}
 		
 		public boolean isVisible( FDockable dockable ){
-			return frontend.isShown( dockable.getDockable() );
+			return frontend.isShown( dockable.intern() );
 		}
 		
-		public String getFactoryId( FDockableFactory factory ){
+		public String getFactoryId( FMultipleDockableFactory factory ){
 			for( Map.Entry<String, FactoryProperties> entry : factories.entrySet() ){
 				if( entry.getValue().factory == factory )
 					return entry.getKey();

@@ -67,7 +67,7 @@ public class FSingleDockableListMenuPiece extends CloseableDockableMenuPiece {
                 setFrontend( null );
             }
             else{
-                setFrontend( control.getFrontend() );
+                setFrontend( control.intern() );
             }
         }
     }
@@ -159,7 +159,7 @@ public class FSingleDockableListMenuPiece extends CloseableDockableMenuPiece {
     private class CloseableListener extends FDockableAdapter{
         @Override
         public void closeableChanged( FDockable dockable ) {
-            check( dockable.getDockable() );
+            check( dockable.intern() );
         }
     }
 }

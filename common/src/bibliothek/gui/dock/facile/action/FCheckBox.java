@@ -23,38 +23,35 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.facile.intern;
+package bibliothek.gui.dock.facile.action;
 
-import bibliothek.gui.dock.facile.FDockable;
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+
+import bibliothek.gui.dock.action.actions.SimpleSelectableAction;
+import bibliothek.gui.dock.facile.intern.action.FSelectableAction;
 
 /**
- * An interface giving access to the internal methods of an {@link FDockable}. Only
- * {@link FDockable}s should create instances of this interface.
+ * An action which behaves like a {@link JCheckBox}.
  * @author Benjamin Sigg
  *
  */
-public interface FDockableAccess {
+public abstract class FCheckBox extends FSelectableAction {
     /**
-     * Called after the visibility of the {@link FDockable} has changed.
-     * @param visible the new state
+     * Creates a new checkbox
      */
-    public void informVisibility( boolean visible );
+    public FCheckBox() {
+        super( new SimpleSelectableAction.Check() );
+    }
     
     /**
-     * Called after the mode of the {@link FDockable} has changed.
-     * @param mode the new mode
+     * Creates a new checkbox.
+     * @param text the text of this checkbox
+     * @param icon the icon of this checkbox
      */
-    public void informMode( FDockable.ExtendedMode mode );
-    
-    /**
-     * Tells which unique id the owning {@link FDockable} has.
-     * @param id the unique id
-     */
-    public void setUniqueId( String id );
-    
-    /**
-     * Gets the unique id of this dockable.
-     * @return the unique id
-     */
-    public String getUniqueId();
+    public FCheckBox( String text, Icon icon ){
+        this();
+        setText( text );
+        setIcon( icon );
+    }
 }

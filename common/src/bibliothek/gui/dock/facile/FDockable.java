@@ -34,10 +34,12 @@ import javax.swing.Icon;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.LocationHint;
+import bibliothek.gui.dock.facile.action.FAction;
 import bibliothek.gui.dock.facile.event.FDockableListener;
 import bibliothek.gui.dock.facile.intern.FControlAccess;
 import bibliothek.gui.dock.facile.intern.FDockableAccess;
 import bibliothek.gui.dock.facile.intern.FacileDockable;
+import bibliothek.gui.dock.facile.intern.action.FSeparator;
 
 /**
  * A frame that shows a {@link java.awt.Component}, has a title, an icon
@@ -155,6 +157,57 @@ public class FDockable {
 	 */
 	public Container getContentPane(){
 	    return dockable.getContentPane();
+	}
+	
+	/**
+	 * Adds an action to this dockable. The action will be shown in the
+	 * popup-menu which belongs to this dockable, and also as button in some titles
+	 * of this dockable.
+	 * @param action the new action
+	 */
+	public void addAction( FAction action ){
+	    dockable.getActions().add( action.intern() );
+	}
+	
+	/**
+	 * Adds a new action to this dockable.
+	 * @param index the location of the action
+	 * @param action the action
+	 * @see #addAction(FAction)
+	 */
+	public void insertAction( int index, FAction action ){
+	    dockable.getActions().add( index, action.intern() );
+	}
+	
+	/**
+	 * Adds a separator to the list of {@link FAction}s of this dockable.
+	 */
+	public void addSeparator(){
+	    addAction( FSeparator.SEPARATOR );
+	}
+	
+	/**
+	 * Adds a separator to the list of {@link FAction}s of this dockable.
+	 * @param index the location of the action
+	 */
+	public void insertSeparator( int index ){
+	    insertAction( index, FSeparator.SEPARATOR );
+	}
+	
+	/**
+	 * Removes an action from this dockable
+	 * @param index the location of the action
+	 */
+	public void removeAction( int index ){
+	    dockable.getActions().remove( index );
+	}
+	
+	/**
+	 * Removes an action from this dockable.
+	 * @param action the action to remove
+	 */
+	public void removeAction( FAction action ){
+	    dockable.getActions().remove( action.intern() );
 	}
 	
 	/**
@@ -323,7 +376,7 @@ public class FDockable {
 	 * Gets the intern representation of this dockable.
 	 * @return the intern representation.
 	 */
-	public FacileDockable getDockable(){
+	public FacileDockable intern(){
 		return dockable;
 	}
 	
@@ -369,6 +422,10 @@ public class FDockable {
 		            uniqueId = id;
 		            if( FDockable.this.control != null )
 		                FDockable.this.control.getStateManager().add( uniqueId, dockable );
+		        }
+		        
+		        public String getUniqueId() {
+		            return uniqueId;
 		        }
 		    });
 		}

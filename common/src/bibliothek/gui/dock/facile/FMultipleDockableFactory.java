@@ -34,9 +34,9 @@ import java.io.IOException;
  * @author Benjamin Sigg
  *
  */
-public interface FDockableFactory {
+public interface FMultipleDockableFactory {
 	/**
-	 * Reads and creates the contents of a new {@link FDockable}.
+	 * Reads and creates the contents of a new {@link FMultipleDockable}.
 	 * @param in the stream to read from
 	 * @return the new dockable or <code>null</code>
 	 * @throws IOException if the stream can't be read

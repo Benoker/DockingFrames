@@ -40,12 +40,25 @@ public class RootMenuPiece extends NodeMenuPiece {
 	/** the menu into which this piece will insert its content */
 	private JMenu menu;
 	
+	/** disable {@link #menu} when there are no items */
+	private boolean disableWhenEmpty;
+	
 	/**
 	 * Creates a new root-piece, using a normal {@link JMenu} to inserts
 	 * its content.
 	 */
 	public RootMenuPiece(){
 		this( new JMenu() );
+	}
+	
+	/**
+	 * Creates a new root-piece, using a normal {@link JMenu}.
+	 * @param text the text of the menu
+	 * @param disableWhenEmpty whether to disable the menu when it is empty
+	 */
+	public RootMenuPiece( String text, boolean disableWhenEmpty ){
+	    this( new JMenu( text ));
+	    setDisableWhenEmpty( disableWhenEmpty );
 	}
 	
 	/**
@@ -63,14 +76,35 @@ public class RootMenuPiece extends NodeMenuPiece {
 				for( int i = 0; i < items.length; i++ )
 					menu.add( items[i], i+index );
 			
+				menu.setEnabled( !disableWhenEmpty || getItemCount() > 0 );
 			}
 			public void remove( MenuPiece child, int index, int length ){
 				JMenu menu = getMenu();
 				for( int i = index+length-1; i >= index; i-- )
 					menu.remove( i );
+				
+				menu.setEnabled( !disableWhenEmpty || getItemCount() > 0 );
 			}
 		});
 	}
+	
+	/**
+	 * Disables the menu if there are no items in the menu.
+	 * @param disableWhenEmpty <code>true</code> if the menu should be
+	 * disabled when empty
+	 */
+	public void setDisableWhenEmpty( boolean disableWhenEmpty ) {
+        this.disableWhenEmpty = disableWhenEmpty;
+        menu.setEnabled( !disableWhenEmpty || getItemCount() > 0 );
+    }
+	
+	/**
+	 * Whether to disable the menu when it is empty or not.
+	 * @return <code>true</code> if the menu gets disabled
+	 */
+	public boolean isDisableWhenEmpty() {
+        return disableWhenEmpty;
+    }
 	
 	@Override
 	public JMenu getMenu(){

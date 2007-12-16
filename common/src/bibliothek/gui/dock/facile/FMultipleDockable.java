@@ -32,22 +32,22 @@ import bibliothek.gui.dock.facile.intern.FControlAccess;
  * be added or removed from an {@link FControl} at any time.<br>
  * <ul>
  * <li>If a {@link FControl} loads a layout, all {@link FMultipleDockable}s are removed and new instances
- * are created using a set of {@link FDockableFactory}s</li>
+ * are created using a set of {@link FMultipleDockableFactory}s</li>
  * <li>Many copies of one {@link FMultipleDockable} can be part of a {@link FControl}</li>
- * <li>When saving a layout, the contents of a {@link FMultipleDockable} are written out by a {@link FDockableFactory}</li>
+ * <li>When saving a layout, the contents of a {@link FMultipleDockable} are written out by a {@link FMultipleDockableFactory}</li>
  * </ul>
  * @author Benjamin Sigg
  */
 public class FMultipleDockable extends FDockable{
 	/** a factory needed to store or load this dockable */
-	private FDockableFactory factory;
+	private FMultipleDockableFactory factory;
 	
 	/**
 	 * Creates a new dockable.
 	 * @param factory the factory which created or could create this
 	 * kind of dockable.
 	 */
-	public FMultipleDockable( FDockableFactory factory ){
+	public FMultipleDockable( FMultipleDockableFactory factory ){
 		if( factory == null )
 			throw new NullPointerException( "factory must not be null" );
 		this.factory = factory;
@@ -58,13 +58,13 @@ public class FMultipleDockable extends FDockable{
 	 * Gets the factory that created this dockable.
 	 * @return the factory, not <code>null</code>
 	 */
-	public FDockableFactory getFactory(){
+	public FMultipleDockableFactory getFactory(){
 		return factory;
 	}
 	
 	@Override
 	void setControl( FControlAccess control ){
 		super.setControl( control );
-		getDockable().setFactoryID( control.getFactoryId( factory ));
+		intern().setFactoryID( control.getFactoryId( factory ));
 	}
 }

@@ -33,11 +33,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.swing.JComponent;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
@@ -65,15 +65,15 @@ public class LookAndFeelList{
 	}
 
     /** the {@link LookAndFeel} used when no other <code>LookAndFeel</code> has been set */
-    private Info defaultInfo;
+    private Wrapper defaultInfo;
     /** the {@link LookAndFeel} that imitates the system */
-    private Info systemInfo;
+    private Wrapper systemInfo;
     /** the {@link LookAndFeel} that is currently used */
     private Info currentInfo;
     /** a list of available {@link LookAndFeel}s */
-    private Info[] infos;
+    private List<Info> infos = new ArrayList<Info>();
     /** the list of listeners that get informed when the <code>LookAndFeel</code> changes */
-    private List<ChangeListener> listeners = new ArrayList<ChangeListener>();
+    private List<LookAndFeelListener> listeners = new ArrayList<LookAndFeelListener>();
     
     /** The roots of the {@link Component}-trees that need to be updated when the <code>LookAndFeel</code> changes */
     private List<ComponentCollector> componentCollectors = new ArrayList<ComponentCollector>();
@@ -83,19 +83,17 @@ public class LookAndFeelList{
      */
     protected LookAndFeelList(){
         LookAndFeel feel = UIManager.getLookAndFeel();
-        defaultInfo = new Info( -1, feel.getClass().getName(), feel.getName() );
+        setDefault( new Info( feel.getClass().getName(), feel.getName() ));
         currentInfo = defaultInfo;
         
-        systemInfo = new Info( -2, UIManager.getSystemLookAndFeelClassName(), "System" );
+        setSystem( new Info( UIManager.getSystemLookAndFeelClassName(), "System" ));
         
         LookAndFeelInfo[] preset = UIManager.getInstalledLookAndFeels();
-        infos = new Info[ preset.length+1 ];
         for( int i = 0; i < preset.length; i++ ){
-            infos[i] = new Info( i, preset[i].getClassName(), preset[i].getName() );
+            add( new Info( preset[i].getClassName(), preset[i].getName() ));
         }
         
-        infos[ infos.length-1 ] = new Info( infos.length-1, 
-                MetalLookAndFeel.class.getName(), "Retro" ){
+        add( new Info( MetalLookAndFeel.class.getName(), "Retro" ){
             private MetalTheme oldTheme;
             
             @Override
@@ -108,7 +106,7 @@ public class LookAndFeelList{
             protected void kill() {
                 MetalLookAndFeel.setCurrentTheme( oldTheme );
             }
-        };
+        });
     }
     
     /**
@@ -116,7 +114,9 @@ public class LookAndFeelList{
      * whenever the {@link LookAndFeel} is changed.
      * @param listener the new listener
      */
-    public void addChangeListener( ChangeListener listener ){
+    public void addLookAndFeelListener( LookAndFeelListener listener ){
+        if( listener == null )
+            throw new NullPointerException( "listener must not be null" );
         listeners.add( listener );
     }
     
@@ -124,8 +124,16 @@ public class LookAndFeelList{
      * Removes a listener from this list.
      * @param listener the listener to remove
      */
-    public void removeChangeListener( ChangeListener listener ){
+    public void removeLookAndFeelListener( LookAndFeelListener listener ){
         listeners.remove( listener );
+    }
+    
+    /**
+     * Gets all {@link LookAndFeelListener} that are known to this list.
+     * @return the list of listeners
+     */
+    protected LookAndFeelListener[] listeners(){
+        return listeners.toArray( new LookAndFeelListener[ listeners.size() ] );
     }
     
     /**
@@ -147,34 +155,154 @@ public class LookAndFeelList{
     }
     
     /**
-     * Reads which {@link LookAndFeel} was used earlier and calls 
-     * {@link #setLookAndFeel(bibliothek.demonstration.util.LookAndFeelList.Info) setLookAndFeel}
-     * to set the old <code>LookAndFeel</code>.
-     * @param in the stream to read from
-     * @throws IOException if <code>in</code> can't be read
+     * Adds a new {@link LookAndFeel} to the list.
+     * @param info the new LookAndFeel
      */
-    public void read( DataInputStream in ) throws IOException {
-        int index = in.readInt();
-        
-        if( index == defaultInfo.getIndex() ){
-            setLookAndFeel( defaultInfo );
-        }
-        else if( index == systemInfo.getIndex() ){
-            setLookAndFeel( systemInfo );
-        }
-        else if( index >= 0 && index < infos.length ){
-            setLookAndFeel( infos[ index ]);
-        }
+    public void add( Info info ){
+        insert( infos.size(), info );
     }
     
     /**
-     * Writes which {@link LookAndFeel} is currently used.
-     * @param out the stream to write into
-     * @throws IOException if the method can't write into <code>out</code>
+     * Inserts a new {@link LookAndFeel} into the list.
+     * @param index the location of the new LookAndFeel
+     * @param info the new LookAndFeel
      */
-    public void write( DataOutputStream out ) throws IOException {
-        out.writeInt( currentInfo.getIndex() );
+    public void insert( int index, Info info ){
+        if( info == null )
+            throw new NullPointerException( "Info must not be null" );
+        infos.add( index, info );
+        for( LookAndFeelListener listener : listeners() )
+            listener.lookAndFeelAdded( this, info );
     }
+    
+    /**
+     * Gets the number of {@link LookAndFeel}s that are known to this list.
+     * @return the number of LookAndFeels
+     */
+    public int size(){
+        return infos.size();
+    }
+    
+    /**
+     * Gets the index'th {@link LookAndFeel}.
+     * @param index the location of the LookAndFeel
+     * @return the LookAndFeel
+     */
+    public Info get( int index ){
+        return infos.get( index );
+    }
+    
+    /**
+     * Gets the location of <code>info</code>.
+     * @param info a {@link LookAndFeel}
+     * @return the location of <code>info</code> or -1
+     */
+    public int indexOf( Info info ){
+        return infos.indexOf( info );
+    }
+    
+    /**
+     * Gets the index'th {@link LookAndFeel}, where 0 means the
+     * {@link #getDefault() default}, 1 the {@link #getSystem() system} and
+     * anything else the {@link #get(int) normal}, moved by 2 steps, LookAndFeels.
+     * @param index the location of the LookAndFeel
+     * @return the selected LookAndFeel
+     */
+    public Info getFull( int index ){
+        if( index == 0 )
+            return getDefault();
+        
+        if( index == 1 )
+            return getSystem();
+        
+        return get( index-2 );
+    }
+    
+    /**
+     * Gets the index of <code>info</code>, where 0 means the
+     * {@link #getDefault() default}, 1 the {@link #getSystem() system} and
+     * anything else the {@link #get(int) normal}, moved by 2 steps, LookAndFeels.
+     * @param info the LookAndFeel to search
+     * @return the location of <code>info</code>
+     */
+    public int indexOfFull( Info info ){
+        if( info == defaultInfo )
+            return 0;
+        
+        if( info == systemInfo )
+            return 1;
+        
+        int index = indexOf( info );
+        if( index < 0 )
+            return -1;
+        else
+            return index+2;
+    }
+    
+    /**
+     * Removes the {@link LookAndFeel} at location <code>index</code> from 
+     * this list.
+     * @param info the LookAndFeel to remove
+     */
+    public void remove( Info info ){
+        int index = indexOf( info );
+        if( index >= 0 )
+            remove( index );
+    }
+    
+    /**
+     * Removes a {@link LookAndFeel} from this list.
+     * @param index the location of the element to remove
+     */
+    public void remove( int index ){
+        Info info = infos.remove( index );
+        for( LookAndFeelListener listener : listeners() )
+            listener.lookAndFeelRemoved( this, info );
+    }
+    
+    /**
+     * Gets the {@link LookAndFeel} which is currently used.
+     * @return the currently used LookAndFeel
+     */
+    public Info getLookAndFeel() {
+        return currentInfo;
+    }
+    
+
+    /**
+     * Exchanges the currently used {@link LookAndFeel}.
+     * @param lookAndFeel information about a {@link LookAndFeel}, not <code>null</code>
+     */
+    public void setLookAndFeel( Info lookAndFeel ){
+        if( lookAndFeel == currentInfo )
+            return;
+        
+        if( lookAndFeel == null )
+            throw new NullPointerException( "lookAndFeel must not be null" );
+        
+        try {
+            currentInfo.kill();
+            currentInfo = lookAndFeel;
+            
+            lookAndFeel.setup();
+            UIManager.setLookAndFeel( lookAndFeel.getClassName() );
+
+            LookAndFeelUtilities.updateUI( listComponents() );
+            
+            for( LookAndFeelListener listener : listeners() )
+                listener.lookAndFeelChanged( this, lookAndFeel );
+            
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
+    }
+    
     
     /**
      * Gets information about the {@link LookAndFeel} that is used when
@@ -183,6 +311,20 @@ public class LookAndFeelList{
      */
     public Info getDefault() {
         return defaultInfo;
+    }
+    
+    /**
+     * Sets the default- {@link LookAndFeel}. Please note that {@link #getDefault()}
+     * will return another {@link Info}, even if the behavior of that other
+     * info is the same as <code>defaultInfo</code>.
+     * @param defaultInfo the default LookAndFeel
+     */
+    public void setDefault( Info defaultInfo ) {
+        if( defaultInfo == null )
+            throw new NullPointerException( "argument must not be null" );
+        this.defaultInfo = new Wrapper( defaultInfo );
+        for( LookAndFeelListener listener : listeners() )
+            listener.defaultLookAndFeelChanged( this, this.defaultInfo );
     }
     
     /**
@@ -195,76 +337,41 @@ public class LookAndFeelList{
     }
     
     /**
-     * Gets information about the {@link LookAndFeel} that is
-     * currently used.
-     * @return the currently used <code>LookAndFeel</code>
+     * Sets the system- {@link LookAndFeel}. Please note that {@link #getSystem()}
+     * will return another {@link Info}, even if the behavior of that other
+     * info is the same as <code>systemInfo</code>.
+     * @param systemInfo the system LookAndFeel
      */
-    public Info getCurrent() {
-        return currentInfo;
+    public void setSystem( Info systemInfo ) {
+        if( systemInfo == null )
+            throw new NullPointerException( "argument must not be null" );
+        this.systemInfo = new Wrapper( systemInfo );
+        for( LookAndFeelListener listener : listeners() )
+            listener.systemLookAndFeelChanged( this, this.systemInfo );
     }
-    
     /**
-     * Gets the number of available {@link LookAndFeel}s.
-     * @return the number of looks
-     * @see #getInfo(int)
+     * Reads which {@link LookAndFeel} was used earlier and calls 
+     * {@link #setLookAndFeel(LookAndFeelList.Info) setLookAndFeel}
+     * to set the old <code>LookAndFeel</code>.
+     * @param in the stream to read from
+     * @throws IOException if <code>in</code> can't be read
      */
-    public int getInfoCount(){
-        return infos.length;
-    }
-    
-    /**
-     * Gets information about one {@link LookAndFeel}.
-     * @param index the index of the look, between 0 and {@link #getInfoCount()}
-     * @return information about a <code>LookAndFeel</code>
-     */
-    public Info getInfo( int index ){
-        return infos[index];
-    }
-    
-    /**
-     * Exchanges the currently used {@link LookAndFeel}. The object <code>info</code>
-     * must have been created by this <code>LookAndFeelList</code>.
-     * @param info information about a {@link LookAndFeel}, not <code>null</code>
-     */
-    public void setLookAndFeel( Info info ){
-        if( info == currentInfo )
-            return;
-        
-        if( info.getIndex() == defaultInfo.getIndex() && info != defaultInfo )
-            throw new IllegalArgumentException( "Not the info that it claims to be" );
-        
-        if( info.getIndex() == systemInfo.getIndex() && info != systemInfo )
-            throw new IllegalArgumentException( "Not the info that it claims to be" );
-        
-        if( info.getIndex() >= 0 && infos[ info.getIndex() ] != info )
-            throw new IllegalArgumentException( "Info not created by this list" );
-        
-        if( info.getIndex() < -2 )
-            throw new IllegalArgumentException( "Info not created by this list" );
-        
-        try {
-            currentInfo.kill();
-            info.setup();
-            UIManager.setLookAndFeel( info.getClassName() );
-
-            LookAndFeelUtilities.updateUI( listComponents() );
-            
-            currentInfo = info;
-            
-            ChangeEvent event = new ChangeEvent( this );
-            for( ChangeListener listener : listeners )
-                listener.stateChanged( event );
-            
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-        	e.printStackTrace();
-        } catch (IllegalAccessException e) {
-        	e.printStackTrace();
-        } catch (UnsupportedLookAndFeelException e) {
-        	e.printStackTrace();
+    public void read( DataInputStream in ) throws IOException {
+        int index = in.readInt();
+        if( index >= 0 && index < size()+2 ){
+            setLookAndFeel( getFull( index ) );
         }
     }
+    
+    /**
+     * Writes which {@link LookAndFeel} is currently used.
+     * @param out the stream to write into
+     * @throws IOException if the method can't write into <code>out</code>
+     */
+    public void write( DataOutputStream out ) throws IOException {
+        out.writeInt( indexOfFull( getLookAndFeel() ) );
+    }
+
     
     /**
      * Creates a list containing all root-{@link Component}s of this application,
@@ -279,12 +386,37 @@ public class LookAndFeelList{
     }
     
     /**
+     * A wrapper around an {@link Info}.
+     * @author Benjamin Sigg
+     */
+    private class Wrapper extends Info{
+        /** the delegate */
+        private Info info;
+        /**
+         * Creates a new wrapper
+         * @param info delegate to get information
+         */
+        public Wrapper( Info info ) {
+            super( info.getClassName(), info.getName() );
+            this.info = info;
+        }
+        
+        @Override
+        protected void setup() {
+            info.setup();
+        }
+        
+        @Override
+        protected void kill() {
+            info.kill();
+        }
+    }
+    
+    /**
      * Information about a {@link LookAndFeel}.
      * @author Benjamin Sigg
      */
     public static class Info{
-        /** the location where this information is stored, used for internal optimations only */
-        private int index;
         /** the class of the {@link LookAndFeel} that is represented by this <code>Info</code> */
         private String className;
         /** the name of the <code>LookAndFeel</code> */
@@ -292,23 +424,12 @@ public class LookAndFeelList{
         
         /**
          * Creates a new set of information
-         * @param index the location of this <code>Info</code>
          * @param className the name of the class of the {@link LookAndFeel}
          * @param name the name of the <code>LookAndFeel</code>
          */
-        public Info( int index, String className, String name ){
-            this.index = index;
+        public Info( String className, String name ){
             this.className = className;
             this.name = name;
-        }
-        
-        /**
-         * Gets the location of this <code>Info</code> in the 
-         * {@link LookAndFeelList look and feel list}.
-         * @return the location or something below 0
-         */
-        public int getIndex() {
-            return index;
         }
         
         /**

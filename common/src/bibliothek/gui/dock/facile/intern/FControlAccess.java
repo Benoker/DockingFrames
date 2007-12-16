@@ -29,7 +29,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.facile.FControl;
 import bibliothek.gui.dock.facile.FDockable;
-import bibliothek.gui.dock.facile.FDockableFactory;
+import bibliothek.gui.dock.facile.FMultipleDockableFactory;
 
 /**
  * Gives access to the internal methods of a {@link bibliothek.gui.dock.facile.FControl}
@@ -66,7 +66,7 @@ public interface FControlAccess {
 	 * @param factory the factory to search
 	 * @return the id or <code>null</code>
 	 */
-	public String getFactoryId( FDockableFactory factory );
+	public String getFactoryId( FMultipleDockableFactory factory );
 	
 	/**
 	 * Gets the manager that is responsible to change the states of the

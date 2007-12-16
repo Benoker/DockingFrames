@@ -30,7 +30,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Set;
 
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
@@ -66,22 +65,19 @@ public class FrontendSettingsMenuPiece extends NodeMenuPiece {
 		
 		JMenuItem save = new JMenuItem( Resources.getBundle().getString( "FrontendSettingsMenuPiece.save" ) );
 		JMenuItem saveAs = new JMenuItem( Resources.getBundle().getString( "FrontendSettingsMenuPiece.saveAs" ) );
-		JMenu deleteMenu = new JMenu( Resources.getBundle().getString( "FrontendSettingsMenuPiece.delete" ) );
 		
 		menu.add( save );
 		menu.add( saveAs );
 		
 		if( loadAsSubmenu ){
-			JMenu loadMenu = new JMenu( Resources.getBundle().getString( "FrontendSettingsMenuPiece.load" ) );
-			menu.add( loadMenu );
-			RootMenuPiece rootLoad = new RootMenuPiece( loadMenu );
+			RootMenuPiece rootLoad = new RootMenuPiece( Resources.getBundle().getString( "FrontendSettingsMenuPiece.load" ), true );
+			menu.add( rootLoad.getMenu() );
 			rootLoad.add( load );
 		}
 		
-		menu.add( deleteMenu );
-		
-		RootMenuPiece rootDelete = new RootMenuPiece( deleteMenu );
+		RootMenuPiece rootDelete = new RootMenuPiece( Resources.getBundle().getString( "FrontendSettingsMenuPiece.delete" ), true );
 		rootDelete.add( delete );
+		menu.add( rootDelete.getMenu() );
 		
 		add( menu );
 		if( !loadAsSubmenu ){
@@ -135,7 +131,7 @@ public class FrontendSettingsMenuPiece extends NodeMenuPiece {
 
 	/**
 	 * Saves the current setting under a new name.
-	 * @param component which should be used as owner of any
+	 * @param owner which should be used as owner of any
 	 * necessary dialog
 	 */
 	public void saveAs( Component owner ){

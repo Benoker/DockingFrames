@@ -30,17 +30,15 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import javax.swing.JFrame;
 import javax.swing.JRadioButtonMenuItem;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.LookAndFeel;
 
 import bibliothek.gui.dock.support.lookandfeel.ComponentCollector;
 import bibliothek.gui.dock.support.lookandfeel.LookAndFeelList;
+import bibliothek.gui.dock.support.lookandfeel.LookAndFeelListener;
 import bibliothek.gui.dock.support.lookandfeel.LookAndFeelList.Info;
 import bibliothek.gui.dock.support.menu.BaseMenuPiece;
 
@@ -56,10 +54,12 @@ public class LookAndFeelMenuPiece extends BaseMenuPiece{
     /** the item for the systems imitating <code>LookAndFeel</code> */
     private JRadioButtonMenuItem systemButton;
     /** a list of buttons, one for each {@link LookAndFeel} */
-    private JRadioButtonMenuItem[] buttons;
+    private Map<Info, JRadioButtonMenuItem> buttons = new HashMap<Info, JRadioButtonMenuItem>();
     
     /** the list of available <code>LookAndFeel</code>s */
     private LookAndFeelList list;
+    /** a listener to {@link #list} */
+    private ListListener listListener = new ListListener();
     /** whether the <code>LookAndFeel</code> is currently changing or not */
     private boolean onChange = false;
     
@@ -94,21 +94,16 @@ public class LookAndFeelMenuPiece extends BaseMenuPiece{
         
         addSeparator();
         
-        buttons = new JRadioButtonMenuItem[ list.getInfoCount() ];
-        for( int i = 0; i < buttons.length; i++ ){
-            buttons[i] = new JRadioButtonMenuItem( list.getInfo( i ).getName() );
-            SetListener listener = new SetListener( buttons[i], list.getInfo( i ));
-            buttons[i].addItemListener( listener );
-            add( buttons[i] );
+        for( int i = 0, n = list.size(); i < n; i++ ){
+            Info info = list.get( i );
+            JRadioButtonMenuItem item = new JRadioButtonMenuItem( info.getName() );
+            buttons.put( info, item );
+            SetListener listener = new SetListener( item, info );
+            item.addItemListener( listener );
+            add( item );
         }
         
-        final ChangeListener changeListener = new ChangeListener(){
-            public void stateChanged( ChangeEvent e ) {
-                changed();
-            }
-        };
-        
-        list.addChangeListener( changeListener );
+        list.addLookAndFeelListener( listListener );
         
         if( frame != null ){
         	final ComponentCollector frameCollector = new ComponentCollector(){
@@ -124,7 +119,7 @@ public class LookAndFeelMenuPiece extends BaseMenuPiece{
 	        frame.addWindowListener( new WindowAdapter(){
 	        	@Override
 	        	public void windowClosing( WindowEvent e ){
-	        		LookAndFeelMenuPiece.this.list.removeChangeListener( changeListener );
+	        		destroy();
 	        		LookAndFeelMenuPiece.this.list.removeComponentCollector( frameCollector );
 	        	}
 	        });
@@ -134,25 +129,71 @@ public class LookAndFeelMenuPiece extends BaseMenuPiece{
     }
     
     /**
+     * Frees resources and cuts connections to other objects such that this
+     * piece can be removed by the garbage collector.
+     */
+    public void destroy(){
+        list.removeLookAndFeelListener( listListener );
+    }
+    
+    /**
+     * Gets the list of {@link LookAndFeel}s.
+     * @return the list
+     */
+    public LookAndFeelList getList() {
+        return list;
+    }
+    
+    /**
      * Called when the {@link LookAndFeel} has been changed. Ensures
      * that the correct items in this menu are selected.
      */
     private void changed(){
         onChange = true;
         
-        Info current = list.getCurrent();
+        Info current = list.getLookAndFeel();
         defaultButton.setSelected( list.getDefault() == current );
         systemButton.setSelected( list.getSystem() == current );
         
-        for( int i = 0;  i < buttons.length; i++ ){
-            buttons[i].setSelected( current == list.getInfo( i ));
+        for( Map.Entry<Info, JRadioButtonMenuItem> entry : buttons.entrySet() ){
+            entry.getValue().setSelected( current == entry.getKey() );
         }
         
         onChange = false;
     }
     
     /**
-     * A listener to one item of a {@link LookAndFeelMenu}, this listener
+     * A listener to the {@link LookAndFeelList}, informing this piece
+     * when the LookAndFeel changes.
+     * @author Benjamin Sigg
+     *
+     */
+    private class ListListener implements LookAndFeelListener{
+        public void lookAndFeelChanged( LookAndFeelList list, Info lookAndFeel ) {
+            changed();
+        }
+        public void defaultLookAndFeelChanged( LookAndFeelList list, Info lookAndFeel ) {
+            defaultButton.setText( lookAndFeel.getName() );
+        }
+        public void systemLookAndFeelChanged( LookAndFeelList list, Info lookAndFeel ) {
+            systemButton.setText( lookAndFeel.getName() );
+        }
+        public void lookAndFeelAdded( LookAndFeelList list, Info info ) {
+            JRadioButtonMenuItem item = new JRadioButtonMenuItem( info.getName() );
+            buttons.put( info, item );
+            SetListener listener = new SetListener( item, info );
+            item.addItemListener( listener );
+            add( item );   
+        }
+        public void lookAndFeelRemoved( LookAndFeelList list, Info lookAndFeel ) {
+            JRadioButtonMenuItem item = buttons.remove( lookAndFeel );
+            if( item != null )
+                remove( item );
+        }
+    }
+    
+    /**
+     * A listener to one item of a {@link LookAndFeelMenuPiece}, this listener
      * exchanges the {@link LookAndFeel} when the observed item is clicked.
      * @author Benjamin Sigg
      *

@@ -23,38 +23,29 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.facile.intern;
+package bibliothek.gui.dock.facile.menu;
 
-import bibliothek.gui.dock.facile.FDockable;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.common.menu.FrontendSettingsMenuPiece;
+import bibliothek.gui.dock.facile.FControl;
 
 /**
- * An interface giving access to the internal methods of an {@link FDockable}. Only
- * {@link FDockable}s should create instances of this interface.
+ * A piece of a menu that allows the user to store and load the layout
+ * of a set of {@link Dockable}s and {@link DockStation}s.
  * @author Benjamin Sigg
- *
  */
-public interface FDockableAccess {
+public class FLayoutChoiceMenuPiece extends FrontendSettingsMenuPiece {
     /**
-     * Called after the visibility of the {@link FDockable} has changed.
-     * @param visible the new state
+     * Creates a new menu.
+     * @param control the control whose layout might change
+     * @param loadAsSubmenu whether the list of layouts should be added as a
+     * {@link JMenu menu} or only as a list of {@link JMenuItem items}.
      */
-    public void informVisibility( boolean visible );
-    
-    /**
-     * Called after the mode of the {@link FDockable} has changed.
-     * @param mode the new mode
-     */
-    public void informMode( FDockable.ExtendedMode mode );
-    
-    /**
-     * Tells which unique id the owning {@link FDockable} has.
-     * @param id the unique id
-     */
-    public void setUniqueId( String id );
-    
-    /**
-     * Gets the unique id of this dockable.
-     * @return the unique id
-     */
-    public String getUniqueId();
+    public FLayoutChoiceMenuPiece( FControl control, boolean loadAsSubmenu ) {
+        super( control.intern(), loadAsSubmenu );
+    }
 }

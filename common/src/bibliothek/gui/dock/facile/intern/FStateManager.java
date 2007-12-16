@@ -58,10 +58,10 @@ public class FStateManager extends StateManager {
      * @param control internal access to the {@link FControl} that uses this manager
      */
     public FStateManager( FControlAccess control ){
-        super( control.getOwner().getFrontend().getController() );
+        super( control.getOwner().intern().getController() );
         this.control = control;
         
-        DockController controller = control.getOwner().getFrontend().getController();
+        DockController controller = control.getOwner().intern().getController();
         
         // ensure that non externalizable elements can't be dragged out
         controller.addAcceptance( new DockAcceptance(){
@@ -187,14 +187,14 @@ public class FStateManager extends StateManager {
      * @param dockable the element which might not be in a valid mode
      */
     public void ensureValidMode( FDockable dockable ){
-        ExtendedMode mode = getMode( dockable.getDockable() );
+        ExtendedMode mode = getMode( dockable.intern() );
         boolean wrong = 
             (mode == ExtendedMode.EXTERNALIZED && !dockable.isExternalizable() ) ||
             (mode == ExtendedMode.MAXIMIZED && !dockable.isMaximizable() ) ||
             (mode == ExtendedMode.MINIMIZED && !dockable.isMinimizable() );
         
         if( wrong ){
-            setMode( dockable.getDockable(), ExtendedMode.NORMALIZED );
+            setMode( dockable.intern(), ExtendedMode.NORMALIZED );
         }
     }
     

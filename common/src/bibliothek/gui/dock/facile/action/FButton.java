@@ -23,38 +23,46 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.facile.intern;
+package bibliothek.gui.dock.facile.action;
 
-import bibliothek.gui.dock.facile.FDockable;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Icon;
+
+import bibliothek.gui.dock.action.actions.SimpleButtonAction;
+import bibliothek.gui.dock.facile.intern.action.FDropDownItem;
 
 /**
- * An interface giving access to the internal methods of an {@link FDockable}. Only
- * {@link FDockable}s should create instances of this interface.
+ * A simple button, the user clicks onto the button and {@link #action()} is called.
  * @author Benjamin Sigg
- *
  */
-public interface FDockableAccess {
+public abstract class FButton extends FDropDownItem {
     /**
-     * Called after the visibility of the {@link FDockable} has changed.
-     * @param visible the new state
+     * Creates the new button
      */
-    public void informVisibility( boolean visible );
+    public FButton(){
+        super( new SimpleButtonAction() );
+        ((SimpleButtonAction)intern()).addActionListener( new ActionListener(){
+            public void actionPerformed( ActionEvent e ) {
+                action();
+            }
+        });
+    }
     
     /**
-     * Called after the mode of the {@link FDockable} has changed.
-     * @param mode the new mode
+     * Creates a new button.
+     * @param text the text of this button
+     * @param icon the icon of this button
      */
-    public void informMode( FDockable.ExtendedMode mode );
+    public FButton( String text, Icon icon ){
+        this();
+        setText( text );
+        setIcon( icon );
+    }
     
     /**
-     * Tells which unique id the owning {@link FDockable} has.
-     * @param id the unique id
+     * Invoked when the user clicks onto this button.
      */
-    public void setUniqueId( String id );
-    
-    /**
-     * Gets the unique id of this dockable.
-     * @return the unique id
-     */
-    public String getUniqueId();
+    protected abstract void action();
 }
