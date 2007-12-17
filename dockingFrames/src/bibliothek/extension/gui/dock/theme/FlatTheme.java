@@ -160,6 +160,8 @@ public class FlatTheme extends BasicTheme{
     protected MiniButton<BasicButtonModel> createTitleMiniButton( BasicTrigger trigger ){
     	BasicMiniButton button = new BasicMiniButton( trigger );
     	button.setMouseOverBorder( BorderFactory.createEtchedBorder() );
+    	button.setNormalSelectedBorder( BorderFactory.createEtchedBorder() );
+    	
     	return button;
     }
 

@@ -34,8 +34,10 @@ import javax.swing.ButtonGroup;
 import javax.swing.JRadioButtonMenuItem;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.support.menu.BaseMenuPiece;
+import bibliothek.gui.dock.support.menu.MenuPiece;
 import bibliothek.gui.dock.themes.ThemeFactory;
 
 /**

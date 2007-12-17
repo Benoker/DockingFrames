@@ -52,6 +52,13 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
     /** the border if the mouse is pressed */
     private Border mousePressedBorder;
     
+    /** border used when the model is in selected state */
+    private Border normalSelectedBorder;
+    /** border used when the mouse is over this button and the button is selected */
+    private Border mouseOverSelectedBorder;
+    /** border used when the mouse is pressed and the button is selected */
+    private Border mousePressedSelectedBorder;
+    
     /** the model storing the properties for this button */
     private M model;
     
@@ -64,6 +71,10 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
         
         mousePressedBorder = BorderFactory.createBevelBorder( BevelBorder.LOWERED );
         mouseOverBorder = BorderFactory.createBevelBorder( BevelBorder.RAISED );
+        
+        normalSelectedBorder = mousePressedBorder;
+        mouseOverSelectedBorder = mousePressedBorder;
+        mousePressedSelectedBorder = mouseOverBorder;
     }
     
     /**
@@ -140,6 +151,61 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
         updateBorder();
     }
     
+    /**
+     * Gets the border which is used when this button is selected.
+     * @return the selected-border
+     */
+    public Border getNormalSelectedBorder() {
+        return normalSelectedBorder;
+    }
+    
+    /**
+     * Sets the border which is used when this button is selected.
+     * @param normalSelectedBorder the selected border
+     */
+    public void setNormalSelectedBorder( Border normalSelectedBorder ) {
+        this.normalSelectedBorder = normalSelectedBorder;
+        updateBorder();
+    }
+    
+    /**
+     * Gets the border which is used when the mouse is over this button and
+     * this button is selected.
+     * @return the mouse-over-selected-border
+     */
+    public Border getMouseOverSelectedBorder() {
+        return mouseOverSelectedBorder;
+    }
+    
+    /**
+     * Sets the border which is used when the mouse is over this button and
+     * this button is selected.
+     * @param mouseOverSelectedBorder the new border
+     */
+    public void setMouseOverSelectedBorder( Border mouseOverSelectedBorder ) {
+        this.mouseOverSelectedBorder = mouseOverSelectedBorder;
+        updateBorder();
+    }
+    
+    /**
+     * Gets the border which is used when the mouse is pressed and this button
+     * is selected.
+     * @return the border
+     */
+    public Border getMousePressedSelectedBorder() {
+        return mousePressedSelectedBorder;
+    }
+    
+    /**
+     * Sets the border which is used when the mouse is pressed and this 
+     * button is selected.
+     * @param mousePressedSelectedBorder the new border
+     */
+    public void setMousePressedSelectedBorder( Border mousePressedSelectedBorder ) {
+        this.mousePressedSelectedBorder = mousePressedSelectedBorder;
+        updateBorder();
+    }
+    
     @Override
     public void paint( Graphics g ){
         // border
@@ -188,7 +254,7 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
      */
 	protected Insets getMaxBorderInsets(){
 		Insets max = new Insets( 0, 0, 0, 0 );
-		for( int i = 0; i < 3; i++ ){
+		for( int i = 0; i < 6; i++ ){
 			Border border = null;
 			switch( i ){
 				case 0:
@@ -200,6 +266,15 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
 				case 2:
 					border = getMousePressedBorder();
 					break;
+				case 3:
+				    border = getNormalSelectedBorder();
+				    break;
+				case 4:
+				    border = getMouseOverSelectedBorder();
+				    break;
+				case 5:
+				    border = getMousePressedSelectedBorder();
+				    break;
 			}
 			
 			if( border != null ){
@@ -218,25 +293,23 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
      * correct border.
      */
     protected void updateBorder(){
-        if( !model.isEnabled() ){
-            setBorder( normalBorder );
+        if( model.isEnabled() && model.isMousePressed() ){
+            if( model.isSelected() )
+                setBorder( getMousePressedSelectedBorder() );
+            else
+                setBorder( getMousePressedBorder() );
+        }
+        else if( model.isEnabled() && model.isMouseInside() ){
+            if( model.isSelected() )
+                setBorder( getMouseOverSelectedBorder() );
+            else
+                setBorder( getMouseOverBorder() );
         }
         else{
-            if( model.isMousePressed() ){
-                if( model.isSelected() )
-                    setBorder( mouseOverBorder );
-                else
-                    setBorder( mousePressedBorder );
-            }
-            else if( model.isMouseInside() ){
-                if( model.isSelected() )
-                    setBorder( mousePressedBorder );
-                else
-                    setBorder( mouseOverBorder );
-            }
-            else{
-                setBorder( normalBorder );
-            }
+            if( model.isSelected() )
+                setBorder( getNormalSelectedBorder() );
+            else
+                setBorder( getNormalBorder() );
         }
     }
 }

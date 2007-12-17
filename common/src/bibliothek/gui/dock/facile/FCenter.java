@@ -30,6 +30,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
@@ -54,7 +55,10 @@ import bibliothek.gui.dock.station.FlapDockStation.Direction;
  * a {@link FControl} to get a <code>FCenter</code>. 
  * @author Benjamin Sigg
  */
-public class FCenter extends JComponent{
+public class FCenter {
+    /** the component which will show the elements of this center */
+    private JComponent component;
+    
     /** the child in the center */
     private SplitDockStation center;
     
@@ -80,10 +84,10 @@ public class FCenter extends JComponent{
         };
         center.setExpandOnDoubleclick( false );
         
-        north = new FlapDockStation();
-        south = new FlapDockStation();
-        east = new FlapDockStation();
-        west = new FlapDockStation();
+        north = access.getOwner().getFactory().createFlapDockStation();
+        south = access.getOwner().getFactory().createFlapDockStation();
+        east = access.getOwner().getFactory().createFlapDockStation();
+        west = access.getOwner().getFactory().createFlapDockStation();
         
         north.setAutoDirection( false );
         north.setDirection( Direction.SOUTH );
@@ -97,12 +101,13 @@ public class FCenter extends JComponent{
         west.setAutoDirection( false );
         west.setDirection( Direction.EAST );
         
-        setLayout( new BorderLayout() );
-        add( center, BorderLayout.CENTER );
-        add( north.getComponent(), BorderLayout.NORTH );
-        add( south.getComponent(), BorderLayout.SOUTH );
-        add( east.getComponent(), BorderLayout.EAST );
-        add( west.getComponent(), BorderLayout.WEST );
+        JPanel content = new JPanel( new BorderLayout() );
+        content.add( center, BorderLayout.CENTER );
+        content.add( north.getComponent(), BorderLayout.NORTH );
+        content.add( south.getComponent(), BorderLayout.SOUTH );
+        content.add( east.getComponent(), BorderLayout.EAST );
+        content.add( west.getComponent(), BorderLayout.WEST );
+        component = access.getOwner().getFactory().monitor( content, access.getOwner() );
         
         FStateManager state = access.getStateManager();
         state.add( "center center", center );
@@ -131,12 +136,12 @@ public class FCenter extends JComponent{
                     if( dockable instanceof FacileDockable ){
                         FDockable fdockable = ((FacileDockable)dockable).getDockable();
                         if( center.getFullScreen() != dockable && fdockable.isMaximizable() ){
-                            access.getStateManager().setMode( dockable, FStateManager.MAXIMIZED );
+                            fdockable.setExtendedMode( FDockable.ExtendedMode.MAXIMIZED );
                             event.consume();
                             return true;
                         }
                         else if( center.getFullScreen() == dockable ){
-                            access.getStateManager().setMode( dockable, FStateManager.NORMALIZED );
+                            fdockable.setExtendedMode( FDockable.ExtendedMode.NORMALIZED );
                             event.consume();
                             return true;
                         }
@@ -146,5 +151,13 @@ public class FCenter extends JComponent{
                 return false;
             }
         });
+    }
+    
+    /**
+     * Gets the component which contains all stations of this center.
+     * @return the component
+     */
+    public JComponent getComponent() {
+        return component;
     }
 }

@@ -28,6 +28,7 @@ package bibliothek.gui.dock.common.menu;
 import java.awt.Component;
 
 import bibliothek.gui.dock.support.menu.BaseMenuPiece;
+import bibliothek.gui.dock.support.menu.MenuPiece;
 
 /**
  * A {@link MenuPiece} that does not add any children by itself. All items

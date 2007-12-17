@@ -31,6 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 /**
  * Describes a part of a {@link JMenu}, can add or remove {@link JMenuItem}s
@@ -118,7 +119,7 @@ public abstract class MenuPiece {
     
     /**
      * Inserts all items of this piece into <code>items</code>. 
-     * @return the list which has to be filled in the same order as the items
+     * @param items the list which has to be filled in the same order as the items
      * will appear on the menu
      */
     public abstract void fill( List<Component> items );

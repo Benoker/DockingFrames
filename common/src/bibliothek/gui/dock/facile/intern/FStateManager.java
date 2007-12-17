@@ -165,17 +165,21 @@ public class FStateManager extends StateManager {
     	
     	List<String> modes = new ArrayList<String>( 4 );
     	
-    	if( !MINIMIZED.equals( current ) && facile.isMinimizable() )
-    		modes.add( MINIMIZED );
+    	if( !MINIMIZED.equals( current ) && facile.isMinimizable() ){
+    	    modes.add( MINIMIZED );
+    	}
     	
-    	if( !NORMALIZED.equals( current ) )
+    	if( !NORMALIZED.equals( current ) ){
     		modes.add( NORMALIZED );
+    	}
     	
-    	if( !MAXIMIZED.equals( current ) && facile.isMaximizable() )
+    	if( !MAXIMIZED.equals( current ) && facile.isMaximizable() ){
     		modes.add( MAXIMIZED );
+    	}
     	
-    	if( !EXTERNALIZED.equals( current ) && facile.isExternalizable() )
+    	if( !EXTERNALIZED.equals( current ) && facile.isExternalizable() ){
     		modes.add( EXTERNALIZED );
+    	}
     	
     	return modes.toArray( new String[ modes.size() ] );
     }

@@ -106,4 +106,12 @@ public class FDropDownButton extends FDecorateableAction{
     public void remove( FAction action ){
         menu.remove( action.intern() );
     }
+    
+    /**
+     * Sets the current selected action.
+     * @param action the action to select.
+     */
+    public void setSelection( FAction action ){
+        menu.setSelection( action.intern() );
+    }
 }

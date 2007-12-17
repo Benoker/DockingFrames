@@ -36,7 +36,6 @@ import bibliothek.gui.dock.support.menu.FrontendSettingsList;
 public class FrontendSettingsLoadList extends FrontendSettingsList {
 	/**
 	 * Creates a new list.
-	 * @param menu the menu into which this list will inserts its items
 	 * @param frontend the frontend from which settings might be loaded
 	 */
 	public FrontendSettingsLoadList( DockFrontend frontend ){

@@ -25,12 +25,20 @@
  */
 package bibliothek.extension.gui.dock.theme;
 
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+
 import bibliothek.extension.gui.dock.theme.eclipse.*;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.*;
+import bibliothek.extension.gui.dock.theme.flat.FlatButtonTitle;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockAcceptance;
+import bibliothek.gui.dock.action.*;
+import bibliothek.gui.dock.action.view.ActionViewConverter;
+import bibliothek.gui.dock.action.view.ViewGenerator;
+import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.dockable.MovingImage;
 import bibliothek.gui.dock.station.FlapDockStation;
@@ -42,6 +50,10 @@ import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.ThemeProperties;
 import bibliothek.gui.dock.themes.basic.BasicDockTitleFactory;
+import bibliothek.gui.dock.themes.basic.action.*;
+import bibliothek.gui.dock.themes.basic.action.buttons.BasicMiniButton;
+import bibliothek.gui.dock.themes.basic.action.buttons.DropDownMiniButton;
+import bibliothek.gui.dock.themes.basic.action.buttons.MiniButton;
 import bibliothek.gui.dock.themes.nostack.NoStackAcceptance;
 import bibliothek.gui.dock.title.*;
 import bibliothek.gui.dock.util.DockProperties;
@@ -124,6 +136,8 @@ public class EclipseTheme extends BasicTheme {
 
 	@Override
 	public void install( DockController controller ){
+	    
+	    
 	    DockTitleManager titleManager = controller.getDockTitleManager();
 	    titleManager.registerTheme( EclipseTheme.TAB_DOCK_TITLE, BasicTabDockTitle.createFactory( this ) );
 	    
@@ -137,13 +151,92 @@ public class EclipseTheme extends BasicTheme {
 		titleManager.registerTheme( StackDockStation.TITLE_ID, factory );
 		
 		controller.addAcceptance( acceptance );
+		
+        controller.getDockTitleManager().registerTheme( FlapDockStation.BUTTON_TITLE_ID, new DockTitleFactory(){
+            public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
+                return new FlatButtonTitle( dockable, version );
+            }
+
+            public <D extends Dockable & DockStation> DockTitle createStationTitle( D dockable, DockTitleVersion version ) {
+                return new FlatButtonTitle( dockable, version );
+            }
+        });
+        
+        controller.getActionViewConverter().putTheme( ActionType.BUTTON, ViewTarget.TITLE, 
+                new ViewGenerator<ButtonDockAction, BasicTitleViewItem<JComponent>>(){
+            public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, ButtonDockAction action, Dockable dockable ){
+                BasicButtonHandler handler = new BasicButtonHandler( action, dockable );
+                MiniButton<BasicButtonModel> button = createTitleMiniButton( handler );
+                handler.setModel( button.getModel() );
+                return handler;
+            }
+        });
+        
+        controller.getActionViewConverter().putTheme( ActionType.CHECK, ViewTarget.TITLE, 
+                new ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>(){
+            public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
+                BasicSelectableHandler.Check handler = new BasicSelectableHandler.Check( action, dockable );
+                MiniButton<BasicButtonModel> button = createTitleMiniButton( handler );
+                handler.setModel( button.getModel() );
+                return handler;
+            }
+        });
+        
+        controller.getActionViewConverter().putTheme( ActionType.MENU, ViewTarget.TITLE, 
+                new ViewGenerator<MenuDockAction, BasicTitleViewItem<JComponent>>(){
+            public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, MenuDockAction action, Dockable dockable ){
+                BasicMenuHandler handler = new BasicMenuHandler( action, dockable );
+                MiniButton<BasicButtonModel> button = createTitleMiniButton( handler );
+                handler.setModel( button.getModel() );
+                return handler;
+            }
+        });
+        
+        controller.getActionViewConverter().putTheme( ActionType.RADIO, ViewTarget.TITLE, 
+                new ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>(){
+            public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
+                BasicSelectableHandler.Radio handler = new BasicSelectableHandler.Radio( action, dockable );
+                MiniButton<BasicButtonModel> button = createTitleMiniButton( handler );
+                handler.setModel( button.getModel() );
+                return handler;
+            }
+        });
+        
+        controller.getActionViewConverter().putTheme( ActionType.DROP_DOWN, ViewTarget.TITLE,
+                new ViewGenerator<DropDownAction, BasicTitleViewItem<JComponent>>(){
+            public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, DropDownAction action, Dockable dockable ){
+                BasicDropDownButtonHandler handler = new BasicDropDownButtonHandler( action, dockable );
+                DropDownMiniButton button = new DropDownMiniButton( handler );
+                handler.setModel( button.getModel() );
+                button.setMouseOverBorder( BorderFactory.createEtchedBorder() );
+                return handler;
+            }
+        });
 	}
+	
+    /**
+     * Creates a {@link MiniButton} in a flat look.
+     * @param trigger the trigger to invoke when the button has been clicked
+     * @return the new button
+     */
+    protected MiniButton<BasicButtonModel> createTitleMiniButton( BasicTrigger trigger ){
+        BasicMiniButton button = new BasicMiniButton( trigger );
+        button.setMouseOverBorder( BorderFactory.createEtchedBorder() );
+        button.setNormalSelectedBorder( BorderFactory.createEtchedBorder() );
+        
+        return button;
+    }
 	
 	@Override
 	public void uninstall( DockController controller ){
 		super.uninstall( controller );
 		controller.getDockTitleManager().clearThemeFactories();
 		controller.removeAcceptance( acceptance );
+        controller.getActionViewConverter().putTheme( ActionType.BUTTON, ViewTarget.TITLE, null );
+        controller.getActionViewConverter().putTheme( ActionType.CHECK, ViewTarget.TITLE, null );
+        controller.getActionViewConverter().putTheme( ActionType.MENU, ViewTarget.TITLE, null );
+        controller.getActionViewConverter().putTheme( ActionType.RADIO, ViewTarget.TITLE, null );
+        controller.getActionViewConverter().putTheme( ActionType.DROP_DOWN, ViewTarget.TITLE, null );
 	}
 
 	/**

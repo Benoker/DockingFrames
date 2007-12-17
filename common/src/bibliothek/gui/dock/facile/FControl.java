@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.facile;
 
+import java.awt.Component;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.io.*;
@@ -44,12 +45,8 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.actions.CloseAction;
 import bibliothek.gui.dock.common.action.StateManager;
 import bibliothek.gui.dock.event.DockAdapter;
-import bibliothek.gui.dock.facile.intern.FControlAccess;
-import bibliothek.gui.dock.facile.intern.FDockableAccess;
-import bibliothek.gui.dock.facile.intern.FStateManager;
-import bibliothek.gui.dock.facile.intern.FacileDockable;
+import bibliothek.gui.dock.facile.intern.*;
 import bibliothek.gui.dock.station.ScreenDockStation;
-import bibliothek.gui.dock.station.screen.ScreenDockStationFactory;
 import bibliothek.gui.dock.support.util.ApplicationResource;
 import bibliothek.gui.dock.support.util.ApplicationResourceManager;
 import bibliothek.gui.dock.themes.NoStackTheme;
@@ -90,9 +87,7 @@ public class FControl {
 	/** the center component of the main-frame */
 	private FCenter center;
 	
-	/**
-	 * Access to the internal methods of this control
-	 */
+	/** Access to the internal methods of this control */
 	private FControlAccess access = new Access();
 	
 	/** manager used to store and read configurations */
@@ -101,13 +96,41 @@ public class FControl {
 	/** a list of listeners which are to be informed when this control is no longer in use */
 	private List<DestroyHook> hooks = new ArrayList<DestroyHook>();
 	
+	/** factory used to create new elements for this control */
+	private FControlFactory factory;
+	
+
+    /**
+     * Creates a new control
+     * @param frame the main frame of the application, needed to create
+     * dialogs for externalized {@link FDockable}s
+     */
+    public FControl( JFrame frame ){
+        this( frame, false );
+    }
+	
+	/**
+     * Creates a new control
+     * @param frame the main frame of the application, needed to create
+     * dialogs for externalized {@link FDockable}s
+     * @param restrictedEnvironment whether this application runs in a
+     * restricted environment and is not allowed to listen for global events.
+     */
+    public FControl( JFrame frame, boolean restrictedEnvironment ){
+        this( frame, restrictedEnvironment ? new SecureControlFactory() : new EfficientControlFactory() );
+    }
+	
 	/**
 	 * Creates a new control
 	 * @param frame the main frame of the application, needed to create
 	 * dialogs for externalized {@link FDockable}s
+	 * @param factory a factory which is used to create new elements for this
+	 * control.
 	 */
-	public FControl( JFrame frame ){       
-		frontend = new DockFrontend(){
+	public FControl( JFrame frame, FControlFactory factory ){
+	    this.factory = factory;
+	    
+		frontend = new DockFrontend( factory.createController(), frame ){
 		    @Override
 		    protected void save( DataOutputStream out, boolean entry ) throws IOException {
 		        super.save( out, entry );
@@ -171,9 +194,7 @@ public class FControl {
 		stateManager = new FStateManager( access );
 		center = new FCenter( access );
 		
-		frontend.registerFactory( new ScreenDockStationFactory( frame ) );
-		
-		final ScreenDockStation screen = new ScreenDockStation( frame );
+		final ScreenDockStation screen = factory.createScreenDockStation( frame );
 		stateManager.add( "screen", screen );
 		frontend.addRoot( screen, "screen" );
 		screen.setShowing( frame.isVisible() );
@@ -201,6 +222,25 @@ public class FControl {
 	    frontend.getController().kill();
 	    for( DestroyHook hook : hooks )
 	        hook.destroy();
+	}
+	
+	/**
+	 * Gets the factory which is mainly used to create new elements for this
+	 * control.
+	 * @return the factory
+	 */
+	public FControlFactory getFactory() {
+        return factory;
+    }
+	
+	/**
+	 * Monitors <code>component</code> for mouse and key-events.
+	 * @param component the component to monitor
+	 * @return either <code>component</code> or a new component replacing
+	 * <code>component</code>.
+	 */
+	public Component monitor( Component component ){
+	    return factory.monitor( component, this );
 	}
 	
 	/**
@@ -276,10 +316,10 @@ public class FControl {
         
         int count = 0;
         for( FMultipleDockable multi : multiDockables ){
-            if( factory.equals( multi.getFactory() ))
+            if( factory.equals( access.getFactoryId( multi.getFactory() )))
                 count++;
         }
-        String id = "multi " + (count+1) + " " + factory;
+        String id = "multi " + count + " " + factory;
         return add( dockable, id );
 	}
 

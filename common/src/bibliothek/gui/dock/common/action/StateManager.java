@@ -333,7 +333,8 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
     	if( dockable.getDockParent() == maxi )
     		maxi.setFullScreen( dockable );
     	else{
-    		SplitDockTree tree = maxi.createTree();
+    	    dockable.getDockParent().drag( dockable );
+    	    SplitDockTree tree = maxi.createTree();
     		if( tree.getRoot() == null )
     			tree.root( dockable );
     		else{
@@ -384,12 +385,29 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
             DockStation station = stations.get( location.root );
             if( station != null ){
             	if( station == dockable.getDockParent() ){
-            		if( unmaximize && station == maxi ){
-            			maxi.setFullScreen( null );
-            			maxi.drag( dockable );
+            	    boolean needDrop = true;
+            	    
+            	    if( unmaximize && station == maxi ){
+            	        if( location.location.getSuccessor() == null ){
+                	        String[] history = history( dockable );
+                	        if( history != null && history.length >= 2 ){
+                	            String last = history[ history.length-1 ];
+                	            String secondLast = history[ history.length-2 ];
+                	            if( NORMALIZED.equals( secondLast ) && MAXIMIZED.equals( last ))
+                	                needDrop = false;
+                	        }
+            	        }
+            	        
+                        maxi.setFullScreen( null );
+                        
+                        if( needDrop )
+                            maxi.drag( dockable );
+                        else
+                            done = true;
             		}
             		
-            		done = station.drop( dockable, location.location );
+            	    if( needDrop )
+            	        done = station.drop( dockable, location.location );
             	}
             	else{
 	            	if( unmaximize && station == maxi )

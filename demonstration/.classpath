@@ -7,5 +7,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]Help"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]Notes"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]Chess"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]Common"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

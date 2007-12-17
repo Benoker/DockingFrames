@@ -55,10 +55,13 @@ public class RootMenuPiece extends NodeMenuPiece {
 	 * Creates a new root-piece, using a normal {@link JMenu}.
 	 * @param text the text of the menu
 	 * @param disableWhenEmpty whether to disable the menu when it is empty
+	 * @param pieces the elements of this piece
 	 */
-	public RootMenuPiece( String text, boolean disableWhenEmpty ){
+	public RootMenuPiece( String text, boolean disableWhenEmpty, MenuPiece... pieces ){
 	    this( new JMenu( text ));
 	    setDisableWhenEmpty( disableWhenEmpty );
+	    for( MenuPiece piece : pieces )
+	        add( piece );
 	}
 	
 	/**

@@ -326,32 +326,37 @@ public class RexTabbedComponent extends JComponent {
 
 	public void setSelectedTab( Dockable dockable ) {
 		if (dockable != selectedTab) {
-			if( selectedTab != null ){
-				int index = indexOf( selectedTab );
-				if( index >= 0 ){
-				    TabComponent tab = tabs.get( index ).tab;
-				    if( tab != null ){
-				        tab.setSelected( false );
-				    }
-				}
-			}
-			
-			selectedTab = dockable;
-			
-			if( selectedTab != null ){
-                int index = indexOf( selectedTab );
-                if( index >= 0 ){
-                    TabComponent tab = tabs.get( index ).tab;
-                    if( tab != null )
-                        tab.setSelected( true );
+		    int newIndex = -1;
+		    if( dockable != null )
+		        newIndex = indexOf( dockable );
+		    
+		    if( dockable == null || newIndex >= 0 ){
+    			if( selectedTab != null ){
+    				int index = indexOf( selectedTab );
+    				if( index >= 0 ){
+    				    TabComponent tab = tabs.get( index ).tab;
+    				    if( tab != null ){
+    				        tab.setSelected( false );
+    				    }
+    				}
+    			}
+    			
+    			selectedTab = dockable;
+    			
+    			if( selectedTab != null ){
+                    if( newIndex >= 0 ){
+                        TabComponent tab = tabs.get( newIndex ).tab;
+                        if( tab != null )
+                            tab.setSelected( true );
+                    }
                 }
-            }
-            
-			
-			tabChanged(dockable);
-			for (TabListener listener : listeners) {
-				listener.tabChanged(dockable);
-			}
+                
+    			
+    			tabChanged(dockable);
+    			for (TabListener listener : listeners) {
+    				listener.tabChanged(dockable);
+    			}
+		    }
 		}
 	}
 

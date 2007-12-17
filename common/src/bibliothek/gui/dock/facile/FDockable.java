@@ -38,6 +38,7 @@ import bibliothek.gui.dock.facile.action.FAction;
 import bibliothek.gui.dock.facile.event.FDockableListener;
 import bibliothek.gui.dock.facile.intern.FControlAccess;
 import bibliothek.gui.dock.facile.intern.FDockableAccess;
+import bibliothek.gui.dock.facile.intern.FStateManager;
 import bibliothek.gui.dock.facile.intern.FacileDockable;
 import bibliothek.gui.dock.facile.intern.action.FSeparator;
 
@@ -92,6 +93,10 @@ public class FDockable {
 	 */
 	public FDockable(){
 		dockable = new FacileDockable( this );
+		
+		setMinimizable( true );
+		setMaximizable( true );
+		setExternalizable( true );
 	}
 	
 	/**
@@ -420,8 +425,10 @@ public class FDockable {
 		        }
 		        public void setUniqueId( String id ) {
 		            uniqueId = id;
-		            if( FDockable.this.control != null )
-		                FDockable.this.control.getStateManager().add( uniqueId, dockable );
+		            if( FDockable.this.control != null && id != null ){
+		                FStateManager state = FDockable.this.control.getStateManager();
+		                state.put( uniqueId, dockable );
+		            }
 		        }
 		        
 		        public String getUniqueId() {

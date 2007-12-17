@@ -98,6 +98,37 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
     }
     
     /**
+     * Ensures that <code>dockable</code> is registered under <code>name</code>
+     * and that <code>dockable</code> has an entry. If there is already a 
+     * {@link Dockable} known under <code>name</code>, then this other
+     * <code>Dockable</code> is replaced by <code>dockable</code>.
+     * @param name the name of <code>dockable</code>
+     * @param dockable the new {@link Dockable}
+     */
+    public void put( String name, Dockable dockable ){
+        if( name == null )
+            throw new NullPointerException( "name must not be null" );
+        
+        if( dockable == null )
+            throw new NullPointerException( "dockable must not be null" );
+        
+        // try to insert
+        for( Entry entry : dockables.values() ){
+            if( entry.id.equals( name )){
+                dockables.remove( entry.dockable );
+                entry.dockable = dockable;
+                dockables.put( dockable, entry );
+                return;
+            }
+        }
+        
+        // was not inserted
+        Entry entry = new Entry( dockable, name );
+        dockables.put( dockable, entry );
+        entry.putMode( currentMode( dockable ) );
+    }
+    
+    /**
      * Removes the properties that belong to <code>dockable</code>.
      * @param dockable the element to remove
      */
@@ -189,6 +220,20 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
      * @param dockable the element that changes its mode
      */
     protected abstract void transitionDuringRead( String oldMode, String newMode, Dockable dockable );
+    
+    /**
+     * Gets the history of modes <code>dockable</code> was into. The history
+     * contains every mode at most once, beginning with oldest mode.
+     * @param dockable the element whose history is searched
+     * @return the history or <code>null</code> if <code>dockable</code> is
+     * not known. Modifications of the array will not have any sideeffects.
+     */
+    protected String[] history( Dockable dockable ){
+        Entry entry = dockables.get( dockable );
+        if( entry == null )
+            return null;
+        return entry.history.toArray( new String[ entry.history.size() ] );
+    }
     
     /**
      * Called when the button to go out of <code>mode</code> is pressed.

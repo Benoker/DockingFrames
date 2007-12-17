@@ -28,8 +28,8 @@ public class Test {
         bar.add( menu.getMenu() );
         frame.setJMenuBar( bar );
         
-        final FControl control = new FControl( frame );
-        frame.setContentPane( control.getCenter() );
+        final FControl control = new FControl( frame, false );
+        frame.add( control.getCenter().getComponent() );
         
         menu.add( new FSingleDockableListMenuPiece( control ));
         menu.add( new SeparatingMenuPiece( new FThemeMenuPiece( control ), true, false, false ));
