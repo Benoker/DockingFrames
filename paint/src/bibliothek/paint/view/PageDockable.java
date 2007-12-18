@@ -3,16 +3,23 @@ package bibliothek.paint.view;
 import java.awt.GridLayout;
 
 import bibliothek.gui.dock.facile.FMultipleDockable;
+import bibliothek.gui.dock.facile.FMultipleDockableFactory;
 import bibliothek.gui.dock.facile.action.FRadioGroup;
+import bibliothek.paint.model.Picture;
 import bibliothek.paint.model.ShapeFactory;
 import bibliothek.paint.model.ShapeUtils;
 
 public class PageDockable extends FMultipleDockable {
     private Page page;
     
-    public PageDockable(){
-        super( PageFactory.FACTORY );
+    public PageDockable( FMultipleDockableFactory factory ){
+        super( factory );
         setTitleText( "Page" );
+        setCloseable( true );
+        setMinimizable( true );
+        setMaximizable( true );
+        setExternalizable( true );
+        
         page = new Page();
         getContentPane().setLayout( new GridLayout( 1, 1 ) );
         getContentPane().add( page );
@@ -21,8 +28,8 @@ public class PageDockable extends FMultipleDockable {
         FRadioGroup group = new FRadioGroup();
         boolean first = true;
         
-        for( ShapeFactory<?> factory : ShapeUtils.getFactories() ){
-            ShapeSelectionButton button = new ShapeSelectionButton( page, factory );
+        for( ShapeFactory shapeFactory : ShapeUtils.getFactories() ){
+            ShapeSelectionButton button = new ShapeSelectionButton( page, shapeFactory );
             group.add( button );
             addAction( button );
             
@@ -33,6 +40,15 @@ public class PageDockable extends FMultipleDockable {
             }
         }
         addSeparator();
+    }
+    
+    public void setPicture( Picture picture ){
+        page.setPicture( picture );
+        setTitleText( picture == null ? "" : picture.getName() );
+    }
+    
+    public Picture getPicture(){
+        return page.getPicture();
     }
     
     public Page getPage() {

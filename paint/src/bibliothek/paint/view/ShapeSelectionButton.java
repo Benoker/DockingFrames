@@ -10,9 +10,9 @@ import bibliothek.paint.model.ShapeFactory;
 
 public class ShapeSelectionButton extends FRadioButton {
     private Page page;
-    private ShapeFactory<? extends Shape> factory;
+    private ShapeFactory factory;
     
-    public ShapeSelectionButton( Page page, ShapeFactory<? extends Shape> factory ){
+    public ShapeSelectionButton( Page page, ShapeFactory factory ){
         this.page = page;
         this.factory = factory;
         setText( factory.getName() );

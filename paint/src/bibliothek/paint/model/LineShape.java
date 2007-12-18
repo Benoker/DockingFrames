@@ -4,9 +4,9 @@ import java.awt.Graphics;
 import java.awt.Point;
 
 public class LineShape extends Shape {
-    public static final ShapeFactory<LineShape> FACTORY = 
-        new ShapeFactory<LineShape>(){
-            public LineShape create() {
+    public static final ShapeFactory FACTORY = 
+        new ShapeFactory(){
+            public Shape create() {
                 return new LineShape();
             }
             public String getName() {

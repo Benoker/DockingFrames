@@ -469,7 +469,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      * @param mode the mode <code>dockable</code> is currently in
      * @param dockable the element whose location will be stored
      */
-    private void store( String mode, Dockable dockable ){
+    protected void store( String mode, Dockable dockable ){
         String root = null;
         DockStation rootStation = null;
         

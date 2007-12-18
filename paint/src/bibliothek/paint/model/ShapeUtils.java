@@ -14,16 +14,16 @@ import java.util.*;
  */
 public class ShapeUtils {
     /** factories for different types of shapes */
-    private static final Map<String, ShapeFactory<?>> FACTORIES;
+    private static final Map<String, ShapeFactory> FACTORIES;
     
     static{
-        FACTORIES = new HashMap<String, ShapeFactory<?>>();
+        FACTORIES = new HashMap<String, ShapeFactory>();
         FACTORIES.put( RectangleShape.class.getCanonicalName(), RectangleShape.FACTORY );
         FACTORIES.put( LineShape.class.getCanonicalName(), LineShape.FACTORY );
         FACTORIES.put( OvalShape.class.getCanonicalName(), OvalShape.FACTORY );
     }
     
-    public static Collection<ShapeFactory<?>> getFactories(){
+    public static Collection<ShapeFactory> getFactories(){
         return Collections.unmodifiableCollection( FACTORIES.values() );
     }
     

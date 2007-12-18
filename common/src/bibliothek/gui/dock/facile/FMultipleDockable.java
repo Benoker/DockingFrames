@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.facile;
 
+import bibliothek.gui.dock.dockable.DefaultDockableFactory;
 import bibliothek.gui.dock.facile.intern.FControlAccess;
 /**
  * A <code>FMultipleDockable</code> is a {@link FDockable} which can have
@@ -65,6 +66,9 @@ public class FMultipleDockable extends FDockable{
 	@Override
 	void setControl( FControlAccess control ){
 		super.setControl( control );
-		intern().setFactoryID( control.getFactoryId( factory ));
+		if( control == null )
+		    intern().setFactoryID( DefaultDockableFactory.ID );
+		else
+		    intern().setFactoryID( control.getFactoryId( factory ));
 	}
 }

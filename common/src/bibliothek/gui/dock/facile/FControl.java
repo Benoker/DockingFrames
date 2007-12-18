@@ -413,8 +413,11 @@ public class FControl {
 			public FacileDockable read( Map<Integer, Dockable> children, boolean ignoreChildren, DataInputStream in ) throws IOException{
 				String id = in.readUTF();
 			    FMultipleDockable dockable = factory.read( in );
-				add( dockable, id );
-				return dockable.intern();
+			    if( dockable != null ){
+			        add( dockable, id );
+				    return dockable.intern();
+			    }
+			    return null;
 			}
 
 			public void read( Map<Integer, Dockable> children, boolean ignoreChildren, FacileDockable preloaded, DataInputStream in ) throws IOException{

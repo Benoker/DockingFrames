@@ -9,8 +9,7 @@ import bibliothek.gui.dock.facile.FControl;
 import bibliothek.gui.dock.facile.menu.FLayoutChoiceMenuPiece;
 import bibliothek.gui.dock.facile.menu.FLookAndFeelMenuPiece;
 import bibliothek.gui.dock.facile.menu.FThemeMenuPiece;
-import bibliothek.paint.view.PageDockable;
-import bibliothek.paint.view.PageFactory;
+import bibliothek.paint.view.ViewManager;
 
 public class Core {
     private boolean secure;
@@ -38,12 +37,7 @@ public class Core {
         
         frame.getContentPane().add( control.getCenter().getComponent() );
         
-        control.add( "page", PageFactory.FACTORY );
-        for( int i = 0; i < 3; i++ ){
-            PageDockable page = new PageDockable();
-            control.add( page );
-            page.setVisible( true );
-        }
+        ViewManager manager = new ViewManager( control );
         
         frame.setBounds( 20, 20, 600, 500 );
         frame.setVisible( true );

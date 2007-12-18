@@ -213,6 +213,7 @@ public class FStateManager extends StateManager {
                 access.informMode( mode );
             }
         }
+        store( newMode, dockable );
     }
     
     @Override

@@ -4,9 +4,9 @@ import java.awt.Graphics;
 import java.awt.Point;
 
 public class RectangleShape extends Shape{
-    public static final ShapeFactory<RectangleShape> FACTORY = 
-        new ShapeFactory<RectangleShape>(){
-            public RectangleShape create() {
+    public static final ShapeFactory FACTORY = 
+        new ShapeFactory(){
+            public Shape create() {
                 return new RectangleShape();
             }
             public String getName() {
