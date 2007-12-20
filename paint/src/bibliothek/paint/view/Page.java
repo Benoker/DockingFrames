@@ -1,7 +1,9 @@
 package bibliothek.paint.view;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -19,10 +21,15 @@ import bibliothek.paint.model.ShapeFactory;
  *
  */
 public class Page extends JPanel implements PictureListener {
-    private Picture picture;
+    private static final Dimension ORIGINAL_SIZE = new Dimension( 800, 600 ); 
+	
+	private Picture picture;
     
     private ShapeFactory factory;
     private Shape current;
+    private Color color = Color.BLACK;
+    
+    private double zoom = 1.0;
     
     public Page(){
         addMouseListener( new MouseAdapter(){
@@ -30,8 +37,9 @@ public class Page extends JPanel implements PictureListener {
             public void mousePressed( MouseEvent e ) {
                 if( current == null && factory != null ){
                     current = factory.create();
-                    current.setPointA( e.getPoint() );
-                    current.setPointB( e.getPoint() );
+                    current.setColor( color );
+                    current.setPointA( unstretch( e.getPoint() ));
+                    current.setPointB( unstretch( e.getPoint() ));
                     repaint();
                 }
             }
@@ -49,11 +57,40 @@ public class Page extends JPanel implements PictureListener {
             @Override
             public void mouseDragged( MouseEvent e ) {
                 if( current != null ){
-                    current.setPointB( e.getPoint() );
+                    current.setPointB( unstretch( e.getPoint() ));
                     repaint();
                 }
             }
         });
+        
+        setZoom( 1.0 );
+    }
+    
+    public void setColor( Color color ){
+		this.color = color;
+	}
+    
+    /**
+     * Sets the zoom-factory. Each coordinate will be multiplied by this factor.
+     * @param zoom a value greater than 0
+     */
+    public void setZoom( double zoom ){
+		this.zoom = zoom;
+		setPreferredSize( new Dimension( (int)(ORIGINAL_SIZE.width * zoom), (int)(ORIGINAL_SIZE.height * zoom) ) );
+		revalidate();
+		repaint();
+	}
+    
+    /**
+     * Gets the current zoom-factor.
+     * @return the factor
+     */
+    public double getZoom(){
+		return zoom;
+	}
+    
+    private Point unstretch( Point point ){
+    	return new Point( (int)(point.x / zoom), (int)(point.y / zoom) );
     }
     
     public ShapeFactory getFactory() {
@@ -90,8 +127,8 @@ public class Page extends JPanel implements PictureListener {
         g.setColor( Color.WHITE );
         g.fillRect( 0, 0, getWidth(), getHeight() );
         if( picture != null )
-            picture.paint( g );
+            picture.paint( g, zoom );
         if( current != null )
-            current.paint( g );
+            current.paint( g, zoom );
     }
 }

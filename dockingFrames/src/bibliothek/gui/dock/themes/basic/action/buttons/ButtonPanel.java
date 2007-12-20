@@ -5,9 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -19,7 +17,6 @@ import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.actions.SimpleMenuAction;
-import bibliothek.gui.dock.action.view.ViewItem;
 import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.event.DockActionSourceListener;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
@@ -50,9 +47,7 @@ public class ButtonPanel extends JPanel{
 	private Listener listener = new Listener();
 	
 	/** The list of actions which are currently known */
-	private List<DockAction> actions = new ArrayList<DockAction>();
-	/** The buttons of this title, each of them represents one action */
-    private Map<DockAction, BasicTitleViewItem<JComponent>> items = new HashMap<DockAction, BasicTitleViewItem<JComponent>>();
+	private List<ActionItem> actions = new ArrayList<ActionItem>();
     
     /** the list of actions shown in the menu */
     private DefaultDockActionSource menuSource;
@@ -94,7 +89,12 @@ public class ButtonPanel extends JPanel{
      * @return the number of items
      */
     public int getItemCount(){
-    	return items.size();
+    	int count = 0;
+    	for( ActionItem entry : actions ){
+    		if( entry.item != null )
+    			count++;
+    	}
+    	return count;
     }
     
     /**
@@ -108,8 +108,9 @@ public class ButtonPanel extends JPanel{
     		if( menuItem != null )
     			menuItem.setOrientation( orientation );
     		
-    		for( BasicTitleViewItem<?> item : items.values() )
-    			item.setOrientation( orientation );
+    		for( ActionItem item : actions )
+    			if( item.item != null )
+    				item.item.setOrientation( orientation );
     		
     		revalidate();
     	}
@@ -171,9 +172,11 @@ public class ButtonPanel extends JPanel{
     			// remove old items
     			removeAll();
     			
-    			for( Map.Entry<DockAction, BasicTitleViewItem<JComponent>> entry : items.entrySet() ){
-    				entry.getValue().unbind();
-    				entry.getKey().unbind( this.dockable );
+    			for( ActionItem item : actions ){
+    				if( item.item != null ){
+    					item.item.unbind();
+    					item.action.unbind( this.dockable );
+    				}
     			}
     			
     			if( menuAction != null ){
@@ -187,7 +190,6 @@ public class ButtonPanel extends JPanel{
     			}
     			
     			actions.clear();
-    			items.clear();
     			this.source.removeDockActionSourceListener( listener );
     		}
     		
@@ -213,14 +215,15 @@ public class ButtonPanel extends JPanel{
     			
     			source.addDockActionSourceListener( listener );
     			for( DockAction action : source ){
-    				actions.add( action );
+    				ActionItem actionItem = new ActionItem();
+    				actionItem.action = action;
+    				actions.add( actionItem );
     				if( dockable.getController() != null ){
 	    				BasicTitleViewItem<JComponent> item = createItemFor( action, dockable );
 	    				if( item != null ){
 	    					action.bind( dockable );
 	    					item.bind();
-	    					
-	    					items.put( action, item );
+	    					actionItem.item = item;
 	    					
 	    					item.setOrientation( orientation );
 	    					item.getItem().setForeground( getForeground() );
@@ -246,9 +249,12 @@ public class ButtonPanel extends JPanel{
         if( menuItem != null )
         	menuItem.getItem().setForeground( fg );
         
-        if( items != null )
-            for( ViewItem<JComponent> item : items.values() )
-                item.getItem().setForeground( fg );
+        if( actions != null ){
+	        for( ActionItem item : actions ){
+	        	if( item.item != null )
+	        		item.item.getItem().setForeground( fg );
+	        }
+        }
     }
     
     @Override
@@ -258,9 +264,12 @@ public class ButtonPanel extends JPanel{
         if( menuItem != null )
         	menuItem.getItem().setBackground( bg );
         
-        if( items != null )
-            for( ViewItem<JComponent> item : items.values() )
-                item.getItem().setBackground( bg );
+        if( actions != null ){
+	        for( ActionItem item : actions ){
+	        	if( item.item != null )
+	        		item.item.getItem().setBackground( bg );
+	        }
+        }
     }
     
 	@Override
@@ -296,8 +305,7 @@ public class ButtonPanel extends JPanel{
 		results[0] = new Dimension( menuPreferred );
 				
 		for( int i = 0, n = actions.size(); i<n; i++ ){
-			DockAction action = actions.get( i );
-			BasicTitleViewItem<JComponent> item = items.get( action );
+			BasicTitleViewItem<JComponent> item = actions.get( i ).item;
 			if( item != null ){
 				Dimension preferred = item.getItem().getPreferredSize();
 				if( orientation.isHorizontal() ){
@@ -370,18 +378,18 @@ public class ButtonPanel extends JPanel{
 		int height = 0;
 		
 		if( orientation.isHorizontal() ){
-			for( BasicTitleViewItem<JComponent> item : items.values() ){
-				if( item != null ){
-					Dimension preferred = item.getItem().getPreferredSize();
+			for( ActionItem entry : actions ){
+				if( entry.item != null ){
+					Dimension preferred = entry.item.getItem().getPreferredSize();
 					width += preferred.width;
 					height = Math.max( height, preferred.height );	
 				}
 			}
 		}
 		else{
-			for( BasicTitleViewItem<JComponent> item : items.values() ){
-				if( item != null ){
-					Dimension preferred = item.getItem().getPreferredSize();
+			for( ActionItem entry : actions ){
+				if( entry.item != null ){
+					Dimension preferred = entry.item.getItem().getPreferredSize();
 					width = Math.max( width, preferred.width );
 					height += preferred.height;
 				}
@@ -406,10 +414,9 @@ public class ButtonPanel extends JPanel{
 			removeAll();
 			visibleActions = count;			
 			if( menuItem == null ){
-				for( DockAction action : actions ){
-					BasicTitleViewItem<JComponent> item = items.get( action );
-					if( item != null ){
-						add( item.getItem() );
+				for( ActionItem entry : actions ){
+					if( entry.item != null ){
+						add( entry.item.getItem() );
 					}
 				}
 			}
@@ -421,8 +428,7 @@ public class ButtonPanel extends JPanel{
 				int max = actions.size();
 				
 				while( set < count ){
-					DockAction action = actions.get( index++ );
-					BasicTitleViewItem<JComponent> item = items.get( action );
+					BasicTitleViewItem<JComponent> item = actions.get( index++ ).item;
 					if( item == null ){
 						max--;
 					}
@@ -434,7 +440,7 @@ public class ButtonPanel extends JPanel{
 				
 				if( set < max ){
 					for( int i = set, n = actions.size(); i<n; i++ ){
-						menuSource.add( actions.get( i ) );
+						menuSource.add( actions.get( i ).action );
 					}
 					add( menuItem.getItem() );
 				}
@@ -526,6 +532,15 @@ public class ButtonPanel extends JPanel{
 		}
 	}
 	
+	/**
+	 * One item on this panel.
+	 * @author Benjamin Sigg
+	 */
+	private class ActionItem{
+		public DockAction action;
+		public BasicTitleViewItem<JComponent> item;
+	}
+	
 	private class Listener implements DockActionSourceListener, IconManagerListener, DockHierarchyListener{
 		private Dockable dockable;
 		private DockController controller;
@@ -595,8 +610,11 @@ public class ButtonPanel extends JPanel{
         public void actionsAdded( DockActionSource source, int firstIndex, int lastIndex ) {
             for( int i = firstIndex; i <= lastIndex; i++ ){
                 DockAction action = source.getDockAction( i );
+                ActionItem entry = new ActionItem();
+                entry.action = action;
                 if( dockable.getController() != null ){
 	                BasicTitleViewItem<JComponent> item = createItemFor( action, dockable );
+	                entry.item = item;
 	                
 	                if( item != null ){
 	                	action.bind( dockable );
@@ -604,11 +622,10 @@ public class ButtonPanel extends JPanel{
 	                    item.setOrientation( orientation );
 	                    item.getItem().setForeground( getForeground() );
 		                item.getItem().setBackground( getBackground() );
-	                    items.put( action, item );
 	                }
                 }
             
-                actions.add( i, action );
+                actions.add( i, entry );
             }
             
             visibleActions = -1;
@@ -618,12 +635,11 @@ public class ButtonPanel extends JPanel{
         }
         public void actionsRemoved( DockActionSource source, int firstIndex, int lastIndex ) {
             for( int i = lastIndex; i >= firstIndex; i-- ){
-            	DockAction action = actions.remove( i );
+            	ActionItem entry = actions.remove( i );
                 
-            	BasicTitleViewItem<JComponent> item = items.remove( action );
-                if( item != null ){
-                	item.unbind();
-                	action.unbind( dockable );
+                if( entry.item != null ){
+                	entry.item.unbind();
+                	entry.action.unbind( dockable );
                 }
             }
             

@@ -87,9 +87,10 @@ public class Picture {
     /**
      * Paints all shapes of this picture.
      * @param g the graphics context
+     * @param stretch a factor each coordinate will be multiplied with
      */
-    public void paint( Graphics g ){
+    public void paint( Graphics g, double stretch ){
         for( Shape shape : shapes )
-            shape.paint( g );
+            shape.paint( g, stretch );
     }
 }

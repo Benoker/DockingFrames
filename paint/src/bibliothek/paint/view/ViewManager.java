@@ -1,5 +1,6 @@
 package bibliothek.paint.view;
 
+import java.awt.Color;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -11,31 +12,46 @@ import bibliothek.gui.dock.facile.FControl;
 import bibliothek.gui.dock.facile.FMultipleDockable;
 import bibliothek.gui.dock.facile.FMultipleDockableFactory;
 import bibliothek.paint.model.Picture;
+import bibliothek.paint.model.PictureRepository;
+import bibliothek.paint.model.PictureRepositoryListener;
 
 public class ViewManager {
     private FControl control;
     
-    private PictureListDockable list;
-    private List<PageDockable> pages = new LinkedList<PageDockable>();
+    private PictureRepositoryDockable repository;
+    private List<PictureDockable> pages = new LinkedList<PictureDockable>();
     
-    private PageFactory pageFactory;
+    private PictureFactory pageFactory;
     
-    public ViewManager( FControl control ){
+    private PictureRepository pictures;
+    
+    public ViewManager( FControl control, PictureRepository pictures ){
         this.control = control;
-        pageFactory = new PageFactory();
+        this.pictures = pictures;
+        
+        pageFactory = new PictureFactory();
         control.add( "page", pageFactory );
         
-        list = new PictureListDockable( this );
-        control.add( list );
-        list.setVisible( true );
+        repository = new PictureRepositoryDockable( this );
+        control.add( repository );
+        repository.setVisible( true );
+        
+        pictures.addListener( new PictureRepositoryListener(){
+        	public void pictureAdded( Picture picture ){
+        		open( picture );
+        	}
+        	public void pictureRemoved( Picture picture ){
+        		closeAll( picture );
+        	}
+        });
     }
     
-    public Picture getPicture( String name ){
-        return list.getPicture( name );
-    }
+    public PictureRepository getPictures(){
+		return pictures;
+	}
     
     public void open( Picture picture ){
-        PageDockable page = new PageDockable( pageFactory );
+        PictureDockable page = new PictureDockable( pageFactory );
         pages.add( page );
         page.setPicture( picture );
         control.add( page );
@@ -43,9 +59,9 @@ public class ViewManager {
     }
     
     public void closeAll( Picture picture ){
-        ListIterator<PageDockable> pageIterator = pages.listIterator();
+        ListIterator<PictureDockable> pageIterator = pages.listIterator();
         while( pageIterator.hasNext() ){
-            PageDockable page = pageIterator.next();
+            PictureDockable page = pageIterator.next();
             if( page.getPicture() == picture ){
                 page.setVisible( false );
                 control.remove( page );
@@ -54,20 +70,31 @@ public class ViewManager {
         }
     }
     
-    public class PageFactory implements FMultipleDockableFactory{
+    /**
+     * Ensures that all new {@link bibliothek.paint.model.Shape}s will be painted
+     * with the {@link Color} <code>color</code>.
+     * @param color the color of new Shapes.
+     */
+    public void setColor( Color color ){
+    	for( PictureDockable picture : pages ){
+    		picture.getPage().setColor( color );
+    	}
+    }
+    
+    public class PictureFactory implements FMultipleDockableFactory{
         public FMultipleDockable read( DataInputStream in ) throws IOException {
             String name = in.readUTF();
-            Picture picture = getPicture( name );
+            Picture picture = pictures.getPicture( name );
             if( picture == null )
                 return null;
-            PageDockable page = new PageDockable( this );
+            PictureDockable page = new PictureDockable( this );
             pages.add( page );
             page.setPicture( picture );
             return page;
         }
 
         public void write( FMultipleDockable dockable, DataOutputStream out ) throws IOException {
-            PageDockable page = (PageDockable)dockable;
+            PictureDockable page = (PictureDockable)dockable;
             out.writeUTF( page.getPicture().getName() );
         }
     }

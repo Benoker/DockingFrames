@@ -15,10 +15,14 @@ public class LineShape extends Shape {
         };
     
     @Override
-    public void paint( Graphics g ) {
+    public void paint( Graphics g, double stretch ) {
         g.setColor( getColor() );
         Point a = getPointA();
         Point b = getPointB();
-        g.drawLine( a.x, a.y, b.x, b.y );
+        g.drawLine( 
+        		stretch( a.x, stretch ),
+        		stretch( a.y, stretch ),
+        		stretch( b.x, stretch ), 
+        		stretch( b.y, stretch ) );
     }
 }

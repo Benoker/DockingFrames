@@ -27,6 +27,7 @@
 package bibliothek.gui.dock.themes.basic.action.menu;
 
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -57,12 +58,8 @@ public class MenuMenuHandler extends AbstractMenuHandler<JMenu, MenuDockAction> 
     /** the menu to add or remove children */
     private Menu menu;
     
-    /** the current handlers of the menu */
-    private Map<DockAction, ViewItem<JComponent>> handlers = 
-    	new HashMap<DockAction, ViewItem<JComponent>>();
-    
-    /** the actions currently known to this menu */
-    private List<DockAction> actions = new LinkedList<DockAction>();
+    /** the current actions of the menu */
+    private List<ActionItem> actions = new ArrayList<ActionItem>();
     
     /** a listener to the source */
     private Listener listener = new Listener();
@@ -113,10 +110,13 @@ public class MenuMenuHandler extends AbstractMenuHandler<JMenu, MenuDockAction> 
         
         for( int i = 0, n = source.getDockActionCount(); i<n; i++ ){
             DockAction action = source.getDockAction( i );
-            actions.add( action );
+            ActionItem item = new ActionItem();
+            item.action = action;
+            actions.add( item );
             ViewItem<JComponent> handler = handlerFor( action );
             if( handler != null ){
-	            handlers.put( action, handler );
+            	item.handler = handler;
+            	item.action.bind( dockable );
 	            handler.bind();
 	            menu.add( handler.getItem() );
             }
@@ -139,11 +139,12 @@ public class MenuMenuHandler extends AbstractMenuHandler<JMenu, MenuDockAction> 
         source.removeDockActionSourceListener( listener );
         menu.removeAll();
         
-        for( ViewItem handler : handlers.values() ){
-            handler.unbind();
+        for( ActionItem item : actions ){
+        	if( item.handler != null )
+        		item.handler.unbind();
+        	item.action.unbind( dockable );
         }
-    
-        handlers.clear();
+        
         actions.clear();
     }
     
@@ -159,21 +160,23 @@ public class MenuMenuHandler extends AbstractMenuHandler<JMenu, MenuDockAction> 
          */
         private void reput(){
             menu.removeAll();
-            for( DockAction action : actions ){
-            	ViewItem<JComponent> handler = handlers.get( action );
-            	if( handler != null )
-            		menu.add( handler.getItem() );
+            for( ActionItem item : actions ){
+            	if( item.handler != null )
+            		menu.add( item.handler.getItem() );
             }
         }
         
         public void actionsAdded( DockActionSource source, int firstIndex, int lastIndex ) {
             for( int i = firstIndex; i<=lastIndex; i++ ){
             	DockAction action = source.getDockAction( i );
-            	actions.add( i, action );
+            	ActionItem item = new ActionItem();
+            	item.action = action;
+            	actions.add( i, item );
             	ViewItem<JComponent> handler = handlerFor( action );
             	if( handler != null ){
+            		action.bind( dockable );
             		handler.bind();
-            		handlers.put( action, handler );
+            		item.handler = handler;
             	}
             }
             
@@ -182,13 +185,24 @@ public class MenuMenuHandler extends AbstractMenuHandler<JMenu, MenuDockAction> 
 
         public void actionsRemoved( DockActionSource source, int firstIndex, int lastIndex ) {
             for( int i = lastIndex; i >= firstIndex; i-- ){
-            	DockAction action = actions.remove( i );
-            	ViewItem<JComponent> handler = handlers.remove( action );
-            	if( handler != null ){
-            		handler.unbind();
+            	ActionItem item = actions.remove( i );
+            	if( item.handler != null ){
+            		item.handler.unbind();
+            		item.action.unbind( dockable );
             	}
             }
         }
+    }
+    
+    /**
+     * An item of the menu.
+     * @author Benjamin Sigg
+     */
+    private class ActionItem{
+    	/** the action this item represents */
+    	public DockAction action;
+    	/** the handler of the visualization, might be <code>null</code> */
+    	public ViewItem<JComponent> handler;
     }
     
     /**

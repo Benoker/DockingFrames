@@ -1,4 +1,4 @@
-package bibliothek.paint.view;
+package bibliothek.paint.view.action;
 
 import java.awt.*;
 
@@ -7,12 +7,19 @@ import javax.swing.Icon;
 import bibliothek.gui.dock.facile.action.FRadioButton;
 import bibliothek.paint.model.Shape;
 import bibliothek.paint.model.ShapeFactory;
+import bibliothek.paint.view.Page;
 
-public class ShapeSelectionButton extends FRadioButton {
+/**
+ * A button allowing to select one {@link ShapeFactory} which will forwarded
+ * to a {@link Page}.
+ * @author Benjamin Sigg
+ *
+ */
+public class ShapeSelection extends FRadioButton {
     private Page page;
     private ShapeFactory factory;
     
-    public ShapeSelectionButton( Page page, ShapeFactory factory ){
+    public ShapeSelection( Page page, ShapeFactory factory ){
         this.page = page;
         this.factory = factory;
         setText( factory.getName() );
@@ -45,7 +52,7 @@ public class ShapeSelectionButton extends FRadioButton {
         public void paintIcon( Component c, Graphics g, int x, int y ) {
             shape.setPointA( new Point( x+3, y+3 ) );
             shape.setPointB( new Point( x+13, y+13 ) );
-            shape.paint( g );
+            shape.paint( g, 1.0 );
         }
     }
 }

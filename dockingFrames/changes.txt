@@ -56,3 +56,5 @@
 - API: new SplitDockPathProperty, allows to store the location of a child of a SplitDockStation. Replaces SplitDockProperty whenever possible, but the SplitDockProperty remains a valid way to describe the boundaries of a Dockable.
 - Bugfix: DockUtilities.isAnchestor failed when the anchestor was a ScreenDockStation
 - Bugfix: Memoryleak in ButtonPanel
+- Bugfix: ButtonPanel did not show all visualisations if a DockAction occurred more than once in the DockActionSource
+- Bugfix: MenuMenuHandler could create a memoryleak by not properly unbinding the visualization of a DockAction

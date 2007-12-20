@@ -15,14 +15,14 @@ public class OvalShape extends Shape {
         };   
     
     @Override
-    public void paint( Graphics g ) {
+    public void paint( Graphics g, double stretch ) {
         g.setColor( getColor() );
         Point a = getPointA();
         Point b = getPointB();
         g.drawOval(
-                Math.min( a.x, b.x ),
-                Math.min( a.y, b.y ),
-                Math.abs( a.x - b.x ),
-                Math.abs( a.y - b.y ));
+        		stretch( Math.min( a.x, b.x ), stretch ),
+                stretch( Math.min( a.y, b.y ), stretch ),
+                stretch( Math.abs( a.x - b.x ), stretch ),
+                stretch( Math.abs( a.y - b.y ), stretch ));
     }
 }

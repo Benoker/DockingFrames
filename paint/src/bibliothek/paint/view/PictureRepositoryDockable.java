@@ -10,22 +10,40 @@ import javax.swing.event.ListSelectionListener;
 
 import bibliothek.gui.dock.facile.FSingleDockable;
 import bibliothek.paint.model.Picture;
+import bibliothek.paint.model.PictureRepository;
+import bibliothek.paint.model.PictureRepositoryListener;
 
-public class PictureListDockable extends FSingleDockable{
+/**
+ * A {@link FSingleDockable} showing the contents of a {@link PictureRepository}.
+ * @author Benjamin Sigg
+ *
+ */
+public class PictureRepositoryDockable extends FSingleDockable{
+	/** the list showing the names of the pictures */
     private JList list;
-    private DefaultListModel pictures;
+    /** a model containing all pictures */
+    private DefaultListModel pictureListModel;
     
-    public PictureListDockable( final ViewManager manager ){
+    /** the repository */
+    private PictureRepository pictures;
+    
+    /**
+     * Creates a new dockable.
+     * @param manager the manager used to handle all operations concerning
+     * dockables.
+     */
+    public PictureRepositoryDockable( final ViewManager manager ){
         super( "PictureListDockable" );
+        pictures = manager.getPictures();
         
-        setCloseable( false );
+        setCloseable( true );
         setMinimizable( true );
         setMaximizable( false );
         setExternalizable( true );
         setTitleText( "Pictures" );
         
-        pictures = new DefaultListModel();
-        list = new JList( pictures );
+        pictureListModel = new DefaultListModel();
+        list = new JList( pictureListModel );
         list.setSelectionMode( ListSelectionModel.SINGLE_SELECTION );
         
         Container content = getContentPane();
@@ -39,13 +57,12 @@ public class PictureListDockable extends FSingleDockable{
                 GridBagConstraints.LAST_LINE_END, GridBagConstraints.NONE,
                 new Insets( 1, 1, 1, 1 ), 0, 0 ));
         
+        
         createButton( buttons, "New", "Creates a new picture", new ActionListener(){
             public void actionPerformed( ActionEvent e ) {
                 String name = askForName();
                 if( name != null ){
-                    Picture picture = new Picture( name );
-                    pictures.addElement( picture );
-                    manager.open( picture );
+                    pictures.add( new Picture( name ) );
                 }
             }
         });
@@ -62,10 +79,18 @@ public class PictureListDockable extends FSingleDockable{
             public void actionPerformed( ActionEvent e ) {
                 Picture picture = (Picture)list.getSelectedValue();
                 if( picture != null ){
-                    pictures.removeElement( picture );
-                    manager.closeAll( picture );
+                	pictures.remove( picture );
                 }
             }
+        });
+        
+        pictures.addListener( new PictureRepositoryListener(){
+        	public void pictureAdded( Picture picture ){
+        		pictureListModel.addElement( picture );
+        	}
+        	public void pictureRemoved( Picture picture ){
+        		pictureListModel.removeElement( picture );
+        	}
         });
     }
     
@@ -87,15 +112,11 @@ public class PictureListDockable extends FSingleDockable{
         return button;
     }
     
-    public Picture getPicture( String name ){
-        for( int i = 0, n = pictures.getSize(); i<n; i++ ){
-            Picture picture = (Picture)pictures.getElementAt( i );
-            if( picture.getName().equals( name ))
-                return picture;
-        }
-        return null;
-    }
-    
+    /**
+     * Opens a dialog and asks the user to input a name for a new picture. The
+     * user can't choose a name of a picture that already exists.
+     * @return the name or <code>null</code>
+     */
     public String askForName(){
         String name = null;
         String message = "Please choose a name for the new picture";
@@ -111,7 +132,7 @@ public class PictureListDockable extends FSingleDockable{
             
             name = name.trim();
             
-            if( getPicture( name ) != null ){
+            if( pictures.getPicture( name ) != null ){
                 message = "There exists already a picture with the name \"" + name + "\"\n" +
                     "Please choose another name";
             }
