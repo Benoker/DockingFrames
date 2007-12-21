@@ -12,8 +12,11 @@ import bibliothek.gui.dock.facile.FMultipleDockable;
 import bibliothek.gui.dock.facile.FMultipleDockableFactory;
 import bibliothek.gui.dock.facile.action.FRadioGroup;
 import bibliothek.paint.model.Picture;
+import bibliothek.paint.model.PictureListener;
 import bibliothek.paint.model.ShapeFactory;
 import bibliothek.paint.model.ShapeUtils;
+import bibliothek.paint.util.Resources;
+import bibliothek.paint.view.action.EraseLastShape;
 import bibliothek.paint.view.action.ShapeSelection;
 import bibliothek.paint.view.action.ZoomIn;
 import bibliothek.paint.view.action.ZoomOut;
@@ -27,6 +30,18 @@ import bibliothek.paint.view.action.ZoomOut;
 public class PictureDockable extends FMultipleDockable {
 	/** the page painting the picture */
     private Page page;
+
+    /** an action erasing elements of the picture */
+    private EraseLastShape eraser;
+    
+    /**
+     * A listener to the picture, changing some properties when the picture changes.
+     */
+    private PictureListener listener = new PictureListener(){
+    	public void pictureChanged(){
+    		eraser.setEnabled( !getPicture().isEmpty() );
+    	}
+    };
     
     /**
      * Creates a new Dockable.
@@ -39,6 +54,7 @@ public class PictureDockable extends FMultipleDockable {
         setMinimizable( true );
         setMaximizable( true );
         setExternalizable( true );
+        setTitleIcon( Resources.getIcon( "dockable.picture" ) );
         
         page = new Page();
         getContentPane().setLayout( new GridLayout( 1, 1 ) );
@@ -66,6 +82,8 @@ public class PictureDockable extends FMultipleDockable {
                 button.setSelected( true );
             }
         }
+        eraser = new EraseLastShape( page );
+        addAction( eraser );
         addSeparator();
     }
     
@@ -74,8 +92,15 @@ public class PictureDockable extends FMultipleDockable {
      * @param picture the new picture
      */
     public void setPicture( Picture picture ){
+    	if( getPicture() != null )
+    		getPicture().removeListener( listener );
+    	
         page.setPicture( picture );
         setTitleText( picture == null ? "" : picture.getName() );
+        eraser.setEnabled( picture != null && !picture.isEmpty() );
+        
+        if( picture != null )
+        	picture.addListener( listener );
     }
     
     /**

@@ -1,17 +1,26 @@
 package bibliothek.paint.view;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Container;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.KeyEvent;
 
-import javax.swing.*;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import bibliothek.gui.dock.facile.FSingleDockable;
+import bibliothek.gui.dock.facile.action.FButton;
 import bibliothek.paint.model.Picture;
 import bibliothek.paint.model.PictureRepository;
 import bibliothek.paint.model.PictureRepositoryListener;
+import bibliothek.paint.util.Resources;
 
 /**
  * A {@link FSingleDockable} showing the contents of a {@link PictureRepository}.
@@ -27,6 +36,13 @@ public class PictureRepositoryDockable extends FSingleDockable{
     /** the repository */
     private PictureRepository pictures;
     
+    /** button used to show a picture */
+    private FButton pictureShow;
+    /** button used to add a new picture */
+    private FButton pictureNew;
+    /** button used to delete a picture */
+    private FButton pictureDelete;
+    
     /**
      * Creates a new dockable.
      * @param manager the manager used to handle all operations concerning
@@ -41,6 +57,7 @@ public class PictureRepositoryDockable extends FSingleDockable{
         setMaximizable( false );
         setExternalizable( true );
         setTitleText( "Pictures" );
+        setTitleIcon( Resources.getIcon( "dockable.list" ) );
         
         pictureListModel = new DefaultListModel();
         list = new JList( pictureListModel );
@@ -52,37 +69,51 @@ public class PictureRepositoryDockable extends FSingleDockable{
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                 new Insets( 1, 1, 1, 1 ), 0, 0 ) );
         
-        JPanel buttons = new JPanel( new GridLayout( 1, 3 ) );
-        content.add( buttons, new GridBagConstraints( 0, 1, 1, 1, 1.0, 1.0,
-                GridBagConstraints.LAST_LINE_END, GridBagConstraints.NONE,
-                new Insets( 1, 1, 1, 1 ), 0, 0 ));
-        
-        
-        createButton( buttons, "New", "Creates a new picture", new ActionListener(){
-            public void actionPerformed( ActionEvent e ) {
-                String name = askForName();
+        pictureNew = new FButton(){
+        	@Override
+        	protected void action(){
+        		String name = askForName();
                 if( name != null ){
                     pictures.add( new Picture( name ) );
                 }
-            }
-        });
+        	}
+        };
+        pictureNew.setText( "New picture" );
+        pictureNew.setTooltip( "Creates a new picture" );
+        pictureNew.setIcon( Resources.getIcon( "picture.add" ) );
         
-        createPictureButton( buttons, "Open", "Open a new view displaying the selected picture", new ActionListener(){
-            public void actionPerformed( ActionEvent e ) {
-                Picture picture = (Picture)list.getSelectedValue();
-                if( picture != null )
-                    manager.open( picture );
-            }
-        });
-        
-        createPictureButton( buttons, "Delete", "Delete the selected picture", new ActionListener(){
-            public void actionPerformed( ActionEvent e ) {
-                Picture picture = (Picture)list.getSelectedValue();
+        pictureDelete = new FButton(){
+        	@Override
+        	protected void action(){
+        		Picture picture = (Picture)list.getSelectedValue();
                 if( picture != null ){
                 	pictures.remove( picture );
                 }
-            }
-        });
+        	}
+        };
+        pictureDelete.setText( "Delete picture" );
+        pictureDelete.setTooltip( "Delete the selected picture" );
+        pictureDelete.setIcon( Resources.getIcon( "picture.remove" ) );
+        pictureDelete.setEnabled( false );
+        
+        pictureShow = new FButton(){
+        	@Override
+        	protected void action(){
+        		Picture picture = (Picture)list.getSelectedValue();
+                if( picture != null )
+                    manager.open( picture );
+        	}
+        };
+        pictureShow.setText( "Show picture" );
+        pictureShow.setTooltip( "Open a new view displaying the selected picture" );
+        pictureShow.setIcon( Resources.getIcon( "picture.show" ) );
+        pictureShow.setAccelerator( KeyStroke.getKeyStroke( KeyEvent.VK_ENTER, 0 ));
+        pictureShow.setEnabled( false );
+        
+        addAction( pictureNew );
+        addAction( pictureDelete );
+        addAction( pictureShow );
+        addSeparator();
         
         pictures.addListener( new PictureRepositoryListener(){
         	public void pictureAdded( Picture picture ){
@@ -92,24 +123,13 @@ public class PictureRepositoryDockable extends FSingleDockable{
         		pictureListModel.removeElement( picture );
         	}
         });
-    }
-    
-    private void createPictureButton( Container parent, String text, String tooltip, ActionListener listener ){
-        final JButton button = createButton( parent, text, tooltip, listener );
-        button.setEnabled( list.getSelectedValue() != null );
         list.addListSelectionListener( new ListSelectionListener(){
             public void valueChanged( ListSelectionEvent e ) {
-                button.setEnabled( list.getSelectedValue() != null );
+            	boolean enable = list.getSelectedValue() != null;
+                pictureDelete.setEnabled( enable );
+                pictureShow.setEnabled( enable );
             }
         });
-    }
-    
-    private JButton createButton( Container parent, String text, String tooltip, ActionListener listener ){
-        JButton button = new JButton( text );
-        button.setToolTipText( tooltip );
-        parent.add( button );
-        button.addActionListener( listener );
-        return button;
     }
     
     /**
