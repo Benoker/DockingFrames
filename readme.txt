@@ -21,6 +21,7 @@ The projects have these dependencies:
 
 	demo:
 	+ dockingFrames
+	+ common
 
 	demonstration_interface
 	+ common
