@@ -88,8 +88,8 @@ public class SplitFullScreenAction extends GroupedButtonDockAction<Boolean> impl
         setText( Boolean.TRUE, DockUI.getDefaultDockUI().getString( "split.normalize" ) );
         setText( Boolean.FALSE, DockUI.getDefaultDockUI().getString( "split.maximize" ) );
         
-        setTooltipText( Boolean.TRUE, DockUI.getDefaultDockUI().getString( "split.normalize.tooltip" ));
-        setTooltipText( Boolean.FALSE, DockUI.getDefaultDockUI().getString( "split.maximize.tooltip" ));
+        setTooltip( Boolean.TRUE, DockUI.getDefaultDockUI().getString( "split.normalize.tooltip" ));
+        setTooltip( Boolean.FALSE, DockUI.getDefaultDockUI().getString( "split.maximize.tooltip" ));
     }
     
     public void setController( DockController controller ) {

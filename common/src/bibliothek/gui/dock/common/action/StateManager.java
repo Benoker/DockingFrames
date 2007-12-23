@@ -133,16 +133,16 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         ResourceBundle bundle = Resources.getBundle();
         
         getIngoingAction( MINIMIZED ).setText( bundle.getString( "minimize.in" ) );
-        getIngoingAction( MINIMIZED ).setTooltipText( bundle.getString( "minimize.in.tooltip" ) );
+        getIngoingAction( MINIMIZED ).setTooltip( bundle.getString( "minimize.in.tooltip" ) );
         
         getIngoingAction( NORMALIZED ).setText( bundle.getString( "normalize.in" ) );
-        getIngoingAction( NORMALIZED ).setTooltipText( bundle.getString( "normalize.in.tooltip" ) );
+        getIngoingAction( NORMALIZED ).setTooltip( bundle.getString( "normalize.in.tooltip" ) );
         
         getIngoingAction( MAXIMIZED ).setText( bundle.getString( "maximize.in" ) );
-        getIngoingAction( MAXIMIZED ).setTooltipText( bundle.getString( "maximize.in.tooltip" ) );
+        getIngoingAction( MAXIMIZED ).setTooltip( bundle.getString( "maximize.in.tooltip" ) );
         
         getIngoingAction( EXTERNALIZED ).setText( bundle.getString( "externalize.in" ) );
-        getIngoingAction( EXTERNALIZED ).setTooltipText( bundle.getString( "externalize.in.tooltip" ) );
+        getIngoingAction( EXTERNALIZED ).setTooltip( bundle.getString( "externalize.in.tooltip" ) );
         
         IconManager icons = controller.getIcons();
         icons.setIconDefault( ICON_MANAGER_KEY_MAXIMIZE, Resources.getIcon( "maximize" ) );

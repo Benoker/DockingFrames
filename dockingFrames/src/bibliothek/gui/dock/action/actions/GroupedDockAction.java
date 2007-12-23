@@ -246,27 +246,46 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
     }
     
     /**
-     * Sets the tooltip text of the group <code>key</code>. If the
-     * group does not exist, it will be created
+     * Sets the tooltip of the group <code>key</code>. If the
+     * group does not exist, it will be created. The tooltip is the first
+     * part of the tooltip text. The whole tooltip text may contain additional
+     * information like the {@link #setAccelerator(Object, KeyStroke) accelerator}.
      * @param key The name of the group
      * @param text The tooltip of the group
      */
-    public void setTooltipText( K key, String text ){
-        ensureGroup( key ).setTooltipText( text );
+    public void setTooltip( K key, String text ){
+        ensureGroup( key ).setTooltip( text );
     }
     
     /**
-     * Gets the tooltip text of the group <code>key</code>.
+     * Gets the tooltip text of the group <code>key</code>. The tooltip text is
+     * the text which is really shown on the tooltip.
      * @param key The name of the group
      * @return The tooltip
      * @throws IllegalArgumentException If the group does not exist
-     * @see #setTooltipText(Object, String)
+     * @see #setTooltip(Object, String)
+     * @see #getTooltip(Object)
      */
     public String getTooltipText( Object key ){
         SimpleDockAction action = groups.get( key );
         if( action == null )
             throw new IllegalArgumentException( "There is no such group" );
         return action.getTooltipText();
+    }
+    
+    /**
+     * Gets the tooltip of the group <code>key</code>. The tooltip if the
+     * first part of the tooltip text.
+     * @param key The name of the group
+     * @return The tooltip
+     * @throws IllegalArgumentException If the group does not exist
+     * @see #setTooltipText(Object, String)
+     */
+    public String getTooltip( Object key ){
+        SimpleDockAction action = groups.get( key );
+        if( action == null )
+            throw new IllegalArgumentException( "There is no such group" );
+        return action.getTooltip();
     }
     
     /**

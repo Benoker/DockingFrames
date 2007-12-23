@@ -24,7 +24,7 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock.action.actions;
+package bibliothek.gui.dock.common.action;
 
 import javax.swing.Icon;
 
@@ -34,6 +34,7 @@ import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.IconManager;
 import bibliothek.gui.dock.action.ListeningDockAction;
+import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.event.IconManagerListener;
 
 /**
@@ -55,7 +56,7 @@ public class CloseAction extends SimpleButtonAction implements ListeningDockActi
      */
     public CloseAction( DockController controller ){
         setText( DockUI.getDefaultDockUI().getString( "close" ));
-        setTooltipText( DockUI.getDefaultDockUI().getString( "close.tooltip" ));
+        setTooltip( DockUI.getDefaultDockUI().getString( "close.tooltip" ));
         setController( controller );
     }
     

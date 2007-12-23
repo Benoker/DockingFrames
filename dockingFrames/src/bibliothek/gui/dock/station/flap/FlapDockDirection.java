@@ -60,7 +60,7 @@ public class FlapDockDirection extends SimpleMenuAction implements ListeningDock
      */
     public FlapDockDirection( DockController controller ){
         setText( DockUI.getDefaultDockUI().getString( "flap.direction" ) );
-        setTooltipText( DockUI.getDefaultDockUI().getString( "flap.direction.tooltip" ) );
+        setTooltip( DockUI.getDefaultDockUI().getString( "flap.direction.tooltip" ) );
         
         center = new DirectedArrow( null );
         north = new DirectedArrow( Direction.NORTH );
@@ -69,15 +69,15 @@ public class FlapDockDirection extends SimpleMenuAction implements ListeningDock
         west = new DirectedArrow( Direction.WEST );
         
         north.setText( DockUI.getDefaultDockUI().getString( "flap.direction.north" ));
-        north.setTooltipText( DockUI.getDefaultDockUI().getString( "flap.direction.north.tooltip" ));
+        north.setTooltip( DockUI.getDefaultDockUI().getString( "flap.direction.north.tooltip" ));
         south.setText( DockUI.getDefaultDockUI().getString( "flap.direction.south" ));
-        south.setTooltipText( DockUI.getDefaultDockUI().getString( "flap.direction.south.tooltip" ));
+        south.setTooltip( DockUI.getDefaultDockUI().getString( "flap.direction.south.tooltip" ));
         east.setText( DockUI.getDefaultDockUI().getString( "flap.direction.east" ));
-        east.setTooltipText( DockUI.getDefaultDockUI().getString( "flap.direction.east.tooltip" ));
+        east.setTooltip( DockUI.getDefaultDockUI().getString( "flap.direction.east.tooltip" ));
         west.setText( DockUI.getDefaultDockUI().getString( "flap.direction.west" ));
-        west.setTooltipText( DockUI.getDefaultDockUI().getString( "flap.direction.west.tooltip" ));
+        west.setTooltip( DockUI.getDefaultDockUI().getString( "flap.direction.west.tooltip" ));
         center.setText( DockUI.getDefaultDockUI().getString( "flap.direction.center" ));
-        center.setTooltipText( DockUI.getDefaultDockUI().getString( "flap.direction.center.tooltip" ));
+        center.setTooltip( DockUI.getDefaultDockUI().getString( "flap.direction.center.tooltip" ));
         
         DefaultDockActionSource source = new DefaultDockActionSource();
         source.add( center );

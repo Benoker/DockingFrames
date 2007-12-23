@@ -72,7 +72,7 @@ public abstract class FDecorateableAction extends FAction {
      * @param tooltip the tooltip
      */
     public void setTooltip( String tooltip ){
-        action.setTooltipText( tooltip );
+        action.setTooltip( tooltip );
     }
     
     /**

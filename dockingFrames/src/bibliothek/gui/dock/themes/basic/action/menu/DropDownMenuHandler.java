@@ -83,7 +83,7 @@ public class DropDownMenuHandler implements MenuViewItem<JComponent>{
 		handler = new MenuMenuHandler( menuAction, dockable );
 		
 		menuAction.setText( action.getText( dockable ) );
-		menuAction.setTooltipText( action.getTooltipText( dockable ) );
+		menuAction.setTooltip( action.getTooltipText( dockable ) );
 		menuAction.setEnabled( action.isEnabled( dockable ) );
 		menuAction.setIcon( action.getIcon( dockable ) );
 		
@@ -136,7 +136,7 @@ public class DropDownMenuHandler implements MenuViewItem<JComponent>{
 
 		public void actionTooltipTextChanged( StandardDockAction action, Set<Dockable> dockables ){
 			if( dockables.contains( dockable ))
-				menuAction.setTooltipText( action.getTooltipText( dockable ) );
+				menuAction.setTooltip( action.getTooltipText( dockable ) );
 		}
 	}
 }

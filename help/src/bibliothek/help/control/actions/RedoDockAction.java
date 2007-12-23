@@ -36,6 +36,7 @@ public class RedoDockAction extends SimpleDropDownAction implements URListener{
 	public RedoDockAction( URManager manager ){
 		this.manager = manager;
 		setText( "Redo" );
+		setTooltip( "Redo last undone selection" );
 		setIcon( ResourceSet.ICONS.get( "redo" ) );
 		
 		redo = new SimpleRedo();

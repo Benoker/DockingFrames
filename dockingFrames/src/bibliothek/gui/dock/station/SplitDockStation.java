@@ -232,20 +232,21 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         
         public PutInfo checkPutInfo( PutInfo putInfo ){
             if( putInfo != null ){
-                if( putInfo.getPut() == PutInfo.Put.CENTER || putInfo.getPut() == PutInfo.Put.TITLE ){
-                    if( !accept( putInfo.getDockable() ) || 
-                            !putInfo.getDockable().accept( SplitDockStation.this, ((Leaf)putInfo.getNode()).getDockable() ) ||
-                            !getController().getAcceptance().accept( SplitDockStation.this, ((Leaf)putInfo.getNode()).getDockable(), putInfo.getDockable() )){
-                        return null;
-                    }
-                }
-                else{
-                    if( !accept( putInfo.getDockable() ) ||
-                            !putInfo.getDockable().accept( SplitDockStation.this ) ||
-                            !getController().getAcceptance().accept( SplitDockStation.this, putInfo.getDockable() )){
-                        return null;
-                    }
-                }
+            	if( !accept( putInfo.getDockable() ))
+            		return null;
+            	
+            	if( putInfo.getNode() != null && (putInfo.getPut() == PutInfo.Put.CENTER || putInfo.getPut() == PutInfo.Put.TITLE )){
+            		if( !putInfo.getDockable().accept( SplitDockStation.this, ((Leaf)putInfo.getNode()).getDockable() ) ||
+            				!getController().getAcceptance().accept( SplitDockStation.this, ((Leaf)putInfo.getNode()).getDockable(), putInfo.getDockable() )){
+            			return null;
+            		}
+            	}
+            	else{
+            		if( !putInfo.getDockable().accept( SplitDockStation.this ) ||
+            				!getController().getAcceptance().accept( SplitDockStation.this, putInfo.getDockable() )){
+            			return null;
+            		}
+            	}
             }
             return putInfo;
         }

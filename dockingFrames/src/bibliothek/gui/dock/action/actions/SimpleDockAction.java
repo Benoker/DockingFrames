@@ -35,7 +35,6 @@ import javax.swing.KeyStroke;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
-import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.KeyboardListener;
@@ -108,23 +107,57 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
     }
 
     public String getTooltipText( Dockable dockable ) {
-        return tooltip;
+    	return getTooltipText();
     }
     
     /**
-     * Gets the toopltip-text that is shown for this action.
-     * @return The tooltip
+     * Gets the text that should be shown as tooltip of this action. This text
+     * contains the value of {@link #getTooltip()}, but also additional information
+     * like the {@link #getAccelerator() accelerator}
+     * @return the full tooltip text
+     */
+    public String getTooltipText(){
+    	if( accelerator == null )
+    		return tooltip;
+
+    	// source copy & pasted from BasicMenuItemUI
+    	String acceleratorText = "";
+    	if (accelerator != null) {
+    		int modifiers = accelerator.getModifiers();
+    		if (modifiers > 0) {
+    			acceleratorText = KeyEvent.getKeyModifiersText(modifiers);
+    			acceleratorText += "+";
+    		}
+
+    		int keyCode = accelerator.getKeyCode();
+    		if (keyCode != 0) {
+    			acceleratorText += KeyEvent.getKeyText(keyCode);
+    		}
+    		else {
+    			acceleratorText += accelerator.getKeyChar();
+    		}
+    	}
+
+    	if( tooltip == null )
+    		return acceleratorText;
+    	else
+    		return tooltip + " (" + acceleratorText + ")";
+    }
+    
+    /**
+     * Gets the first part of the toopltip-text that is shown for this action.
+     * @return The client defined part of the tooltip
      * @see #setTooltipText(String)
      */
-    public String getTooltipText() {
+    public String getTooltip() {
         return tooltip;
     }
     
     /**
-     * Sets the tooltip-text which is shown for this action.
-     * @param tooltip The tooltip for this action
+     * Sets the first part of the tooltip-text which is shown for this action.
+     * @param tooltip The client defined part of the tooltip for this action
      */
-    public void setTooltipText( String tooltip ) {
+    public void setTooltip( String tooltip ) {
         this.tooltip = tooltip;
         fireActionTooltipTextChanged( getBoundDockables() );
     }
@@ -215,6 +248,7 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
      */
     public void setAccelerator( KeyStroke accelerator ){
 		this.accelerator = accelerator;
+		fireActionTooltipTextChanged( getBoundDockables() );
 	}
     
     /**

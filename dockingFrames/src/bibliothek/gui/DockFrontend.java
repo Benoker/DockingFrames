@@ -1288,7 +1288,7 @@ public class DockFrontend {
          */
         public Hider(){
         	setText( DockUI.getDefaultDockUI().getString( "close" ));
-            setTooltipText( DockUI.getDefaultDockUI().getString( "close.tooltip" ));
+            setTooltip( DockUI.getDefaultDockUI().getString( "close.tooltip" ));
             
             controller.getIcons().add( "close", this );
             setIcon( controller.getIcons().getIcon( "close" ));

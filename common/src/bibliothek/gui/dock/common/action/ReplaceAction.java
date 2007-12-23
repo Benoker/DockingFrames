@@ -24,7 +24,7 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock.action.actions;
+package bibliothek.gui.dock.common.action;
 
 import javax.swing.Icon;
 
@@ -34,6 +34,7 @@ import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.ListeningDockAction;
+import bibliothek.gui.dock.action.actions.GroupedButtonDockAction;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.event.IconManagerListener;
@@ -80,8 +81,8 @@ public class ReplaceAction extends GroupedButtonDockAction<Boolean> implements L
         
         setText( true, DockUI.getDefaultDockUI().getString( "replace" ) );
         setText( false, DockUI.getDefaultDockUI().getString( "replace" ) );
-        setTooltipText( true, DockUI.getDefaultDockUI().getString( "replace.tooltip" ));
-        setTooltipText( false, DockUI.getDefaultDockUI().getString( "replace.tooltip" ));
+        setTooltip( true, DockUI.getDefaultDockUI().getString( "replace.tooltip" ));
+        setTooltip( false, DockUI.getDefaultDockUI().getString( "replace.tooltip" ));
         
         setController( controller );
     }

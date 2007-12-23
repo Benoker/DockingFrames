@@ -26,7 +26,6 @@
 
 package bibliothek.gui.dock.themes.basic.action.buttons;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
@@ -76,7 +75,7 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
         mouseOverSelectedBorder = mousePressedBorder;
         mousePressedSelectedBorder = mouseOverBorder;
     }
-    
+
     /**
      * Sets the model of this button. The model contains all properties which
      * are necessary to show this button.

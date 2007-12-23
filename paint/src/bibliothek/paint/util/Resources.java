@@ -26,9 +26,12 @@
 package bibliothek.paint.util;
 
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,6 +50,12 @@ public class Resources {
 	/** the icons used in this application */
 	private static final Map<String, Icon> ICONS = readApplicationIcons();
 	
+	/** a snapshot of the application */
+	private static BufferedImage screenshot;
+	
+	/** text describing the application */
+	private static String text;
+	
 	/**
 	 * Gets the icon which is stored under the name <code>key</code>.
 	 * @param key the name of the icon
@@ -54,6 +63,46 @@ public class Resources {
 	 */
 	public static Icon getIcon( String key ){
 		return ICONS.get( key );
+	}
+	
+	/**
+	 * Gets a screenshot of the application.
+	 * @return the screenshot
+	 */
+	public static BufferedImage getScreenshot(){
+		if( screenshot == null ){
+			try {
+				screenshot = ImageIO.read( Resources.class.getResource( "/data/bibliothek/paint/screenshot.png" ) );
+			}
+			catch( IOException e ) {
+				e.printStackTrace();
+			}
+		}
+		return screenshot;
+	}
+	
+	/**
+	 * Gets the text which describes this application.
+	 * @return the description
+	 */
+	public static String getText(){
+		if( text == null ){
+			try{
+				Reader reader = new InputStreamReader( Resources.class.getResourceAsStream( "/data/bibliothek/paint/text.txt" ) );
+				StringBuilder builder = new StringBuilder();
+				
+				int read;
+				while( (read = reader.read()) != -1 )
+					builder.append( (char)read );
+				
+				reader.close();
+				text = builder.toString();
+			}
+			catch( IOException ex ){
+				ex.printStackTrace();
+			}
+		}
+		return text;
 	}
 	
 	/**

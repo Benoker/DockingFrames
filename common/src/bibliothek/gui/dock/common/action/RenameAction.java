@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.action.actions;
+package bibliothek.gui.dock.common.action;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -38,6 +38,7 @@ import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.SplitDockStation;
@@ -78,7 +79,7 @@ public abstract class RenameAction extends SimpleButtonAction {
         setIcon( controller.getIcons().getIcon( "rename" ));
         
         setText( DockUI.getDefaultDockUI().getString( "rename" ) );
-        setTooltipText( DockUI.getDefaultDockUI().getString( "rename.tooltip" ) );
+        setTooltip( DockUI.getDefaultDockUI().getString( "rename.tooltip" ) );
         
         menu.setLayout( new GridBagLayout() );
         JPanel panel = new JPanel( new GridLayout( 1, 2 ));

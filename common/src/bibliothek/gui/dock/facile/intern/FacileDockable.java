@@ -47,7 +47,8 @@ public class FacileDockable extends DefaultDockable {
      */
     public FacileDockable( FDockable dockable ){
         this.dockable = dockable;
-        actions = new DefaultDockActionSource( new LocationHint( LocationHint.DOCKABLE, LocationHint.MIDDLE ));
+        actions = new DefaultDockActionSource(
+        		new LocationHint( LocationHint.DOCKABLE, LocationHint.LEFT ));
         setActionOffers( actions );
     }
     

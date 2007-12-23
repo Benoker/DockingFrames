@@ -59,3 +59,4 @@
 - Bugfix: ButtonPanel did not show all visualisations if a DockAction occurred more than once in the DockActionSource
 - Bugfix: MenuMenuHandler could create a memoryleak by not properly unbinding the visualization of a DockAction
 - API: ComponentHierarchyObserver collects all Components which are used in the realm of a specific DockController
+- Bugfix: empty SplitDockStation could throw NullPointerException during drag&drop operation

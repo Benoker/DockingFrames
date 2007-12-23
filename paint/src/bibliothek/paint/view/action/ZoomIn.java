@@ -51,7 +51,7 @@ public class ZoomIn extends FButton {
 		this.page = page;
 		setText( "Zoom in" );
 		setIcon( Resources.getIcon( "zoom.in" ) );
-		setAccelerator( KeyStroke.getKeyStroke( KeyEvent.VK_PLUS, InputEvent.CTRL_MASK ) );
+		setAccelerator( KeyStroke.getKeyStroke( KeyEvent.VK_ADD, InputEvent.CTRL_MASK ) );
 	}
 	
 	@Override

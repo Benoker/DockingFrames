@@ -44,7 +44,7 @@ import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.action.actions.CloseAction;
+import bibliothek.gui.dock.common.action.CloseAction;
 import bibliothek.gui.dock.common.action.StateManager;
 import bibliothek.gui.dock.event.DockAdapter;
 import bibliothek.gui.dock.facile.intern.*;

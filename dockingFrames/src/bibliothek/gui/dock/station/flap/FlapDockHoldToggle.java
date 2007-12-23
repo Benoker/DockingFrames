@@ -76,8 +76,8 @@ public class FlapDockHoldToggle extends GroupedSelectableDockAction.Check<Boolea
         setText( Boolean.FALSE, DockUI.getDefaultDockUI().getString( "flap.stick.false" ) );
         setText( Boolean.TRUE, DockUI.getDefaultDockUI().getString( "flap.stick.true" ) );
         
-        setTooltipText( Boolean.FALSE, DockUI.getDefaultDockUI().getString( "flap.stick.false.tooltip" ) );
-        setTooltipText( Boolean.TRUE, DockUI.getDefaultDockUI().getString( "flap.stick.true.tooltip" ));
+        setTooltip( Boolean.FALSE, DockUI.getDefaultDockUI().getString( "flap.stick.false.tooltip" ) );
+        setTooltip( Boolean.TRUE, DockUI.getDefaultDockUI().getString( "flap.stick.true.tooltip" ));
     }
     
     @Override

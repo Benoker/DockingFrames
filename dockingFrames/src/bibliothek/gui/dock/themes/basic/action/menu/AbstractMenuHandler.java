@@ -59,7 +59,8 @@ public abstract class AbstractMenuHandler<I extends JMenuItem, D extends Standar
      * Creates a new handler with predefined item.
      * @param action the action to observe
      * @param dockable the dockable for which actions are dispatched
-     * @param item the item whose values have to be updated
+     * @param item the item whose values have to be updated, <code>null</code> is
+     * only valid if <code>action</code> is <code>null</code> too.
      */
     public AbstractMenuHandler( D action, Dockable dockable, I item ){
         this.action = action;

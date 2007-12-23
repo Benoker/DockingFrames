@@ -24,7 +24,7 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock.action.actions;
+package bibliothek.gui.dock.common.action;
 
 import java.util.HashMap;
 import java.util.Map;

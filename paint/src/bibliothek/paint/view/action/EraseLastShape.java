@@ -46,7 +46,7 @@ public class EraseLastShape extends FButton{
 	public EraseLastShape( Page page ){
 		this.page = page;
 		
-		setText( "Erase" );
+		setText( "Undo" );
 		setTooltip( "Erases the newest shape of the picture" );
 		setIcon( Resources.getIcon( "shape.remove" ) );
 	}

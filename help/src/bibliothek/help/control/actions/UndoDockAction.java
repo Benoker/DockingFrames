@@ -74,7 +74,7 @@ public class UndoDockAction extends SimpleDropDownAction implements URListener{
 		public SimpleUndo(){
 			addActionListener( this );
 			setText( "Undo" );
-			setTooltipText( "Undo (ctrl+u)" );
+			setTooltip( "Undo last selection" );
 			setAccelerator( KeyStroke.getKeyStroke( KeyEvent.VK_U, InputEvent.CTRL_DOWN_MASK ));
 		}
 		

@@ -133,6 +133,10 @@ public class FlatButtonTitle extends AbstractDockTitle {
                 preferred.height += insets.top + insets.bottom;
             }
             
+            Insets inner = getInnerInsets();
+            preferred.width += inner.left + inner.right;
+            preferred.height += inner.top + inner.bottom;
+            
             return preferred;
         }
     }

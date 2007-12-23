@@ -31,6 +31,7 @@ import java.io.*;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
+import javax.swing.WindowConstants;
 
 import bibliothek.demonstration.Monitor;
 import bibliothek.gui.dock.common.menu.RootMenuPiece;
@@ -42,6 +43,7 @@ import bibliothek.gui.dock.facile.menu.FSingleDockableListMenuPiece;
 import bibliothek.gui.dock.facile.menu.FThemeMenuPiece;
 import bibliothek.gui.dock.support.menu.SeparatingMenuPiece;
 import bibliothek.paint.model.PictureRepository;
+import bibliothek.paint.util.Resources;
 import bibliothek.paint.view.ViewManager;
 
 /**
@@ -71,7 +73,8 @@ public class Core {
         if( monitor != null )
             monitor.startup();
         final JFrame frame = new JFrame( "Paint" );
-        frame.setDefaultCloseOperation( JFrame.DO_NOTHING_ON_CLOSE );
+        frame.setDefaultCloseOperation( WindowConstants.DO_NOTHING_ON_CLOSE );
+        frame.setIconImage( Resources.toImage( Resources.getIcon( "application" ) ) );
         
         FControl control = new FControl( frame, secure );
 

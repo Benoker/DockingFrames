@@ -51,7 +51,8 @@ public class ZoomOut extends FButton {
 		this.page = page;
 		setText( "Zoom out" );
 		setIcon( Resources.getIcon( "zoom.out" ) );
-		setAccelerator( KeyStroke.getKeyStroke( KeyEvent.VK_PLUS, InputEvent.CTRL_MASK ) );
+		setAccelerator( KeyStroke.getKeyStroke( KeyEvent.VK_SUBTRACT, InputEvent.CTRL_MASK ) );
+		
 	}
 	
 	@Override

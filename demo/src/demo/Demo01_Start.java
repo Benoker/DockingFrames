@@ -9,7 +9,7 @@ import javax.swing.WindowConstants;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.DefaultDockable;
-import bibliothek.gui.dock.action.actions.ReplaceActionGuard;
+import bibliothek.gui.dock.common.action.ReplaceActionGuard;
 import bibliothek.gui.dock.station.SplitDockStation;
 
 /*

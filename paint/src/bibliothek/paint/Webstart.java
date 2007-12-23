@@ -31,6 +31,7 @@ import javax.swing.Icon;
 
 import bibliothek.demonstration.Demonstration;
 import bibliothek.demonstration.Monitor;
+import bibliothek.paint.util.Resources;
 
 /**
  * A class allowing to startup this application in a secure
@@ -38,20 +39,16 @@ import bibliothek.demonstration.Monitor;
  * @author Benjamin Sigg
  */
 public class Webstart implements Demonstration {
-
     public String getHTML() {
-        // TODO Auto-generated method stub
-        return null;
+    	return Resources.getText();
     }
 
     public Icon getIcon() {
-        // TODO Auto-generated method stub
-        return null;
+    	return Resources.getIcon( "application" );
     }
 
     public BufferedImage getImage() {
-        // TODO Auto-generated method stub
-        return null;
+    	return Resources.getScreenshot();
     }
 
     public String getName() {
