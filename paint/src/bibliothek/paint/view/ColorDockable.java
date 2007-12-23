@@ -1,3 +1,28 @@
+/*
+ * Bibliothek - DockingFrames
+ * Library built on Java/Swing, allows the user to "drag and drop"
+ * panels containing any Swing-Component the developer likes to add.
+ * 
+ * Copyright (C) 2007 Benjamin Sigg
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ * Benjamin Sigg
+ * benjamin_sigg@gmx.ch
+ * CH - Switzerland
+ */
 package bibliothek.paint.view;
 
 import java.awt.Color;
@@ -16,6 +41,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import bibliothek.gui.dock.facile.FDockable;
 import bibliothek.gui.dock.facile.FSingleDockable;
 import bibliothek.paint.util.Resources;
 
@@ -26,9 +52,15 @@ import bibliothek.paint.util.Resources;
  *
  */
 public class ColorDockable extends FSingleDockable{
+    /** the manager of all {@link FDockable}s, used to forward a newly selected color */
 	private ViewManager manager;
+	/** the big button which will open a {@link JColorChooser} when pressed */
 	private JButton colorButton;
 	
+	/**
+	 * Creates a new dockable
+	 * @param manager the manager which is used to read and write the selected color
+	 */
 	public ColorDockable( ViewManager manager ){
 		super( "ColorDockable" );
 		this.manager = manager;
@@ -123,9 +155,17 @@ public class ColorDockable extends FSingleDockable{
 		return button;
 	}
 	
+	/**
+	 * An icon which is only filled by a rectangle of one color.
+	 * @author Benjamin Sigg
+	 *
+	 */
 	private class ColorIcon implements Icon{
+	    /** the width of this icon in pixel */
 		private int width;
+		/** the height of this icon in pixel */
 		private int height;
+		/** the color used to paint this icon */
 		private Color color;
 		
 		/**

@@ -28,10 +28,12 @@ package bibliothek.gui.dock.facile;
 import java.awt.Component;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.KeyEvent;
 import java.io.*;
 import java.util.*;
 
 import javax.swing.JFrame;
+import javax.swing.KeyStroke;
 
 import bibliothek.extension.gui.dock.theme.SmoothTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabDockAction;
@@ -50,6 +52,8 @@ import bibliothek.gui.dock.station.ScreenDockStation;
 import bibliothek.gui.dock.support.util.ApplicationResource;
 import bibliothek.gui.dock.support.util.ApplicationResourceManager;
 import bibliothek.gui.dock.themes.NoStackTheme;
+import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.PropertyValue;
 
 /**
  * Manages the interaction between {@link FSingleDockable}, {@link FMultipleDockable}
@@ -63,6 +67,47 @@ import bibliothek.gui.dock.themes.NoStackTheme;
  *
  */
 public class FControl {
+    /**
+     * {@link KeyStroke} used to change a {@link FDockable} into maximized-state,
+     * or to go out of maximized-state when needed.
+     */
+    public static final PropertyKey<KeyStroke> KEY_MAXIMIZE_CHANGE = 
+        new PropertyKey<KeyStroke>( "fcontrol.maximize_change" );
+    
+    /**
+     * {@link KeyStroke} used to change a {@link FDockable} into
+     * maximized-state.
+     */
+    public static final PropertyKey<KeyStroke> KEY_GOTO_MAXIMIZED =
+        new PropertyKey<KeyStroke>( "fcontrol.goto_maximized" );
+    
+    /**
+     * {@link KeyStroke} used to change a {@link FDockable} into
+     * normalized-state.
+     */
+    public static final PropertyKey<KeyStroke> KEY_GOTO_NORMALIZED =
+        new PropertyKey<KeyStroke>( "fcontrol.goto_normalized" );
+    
+    /**
+     * {@link KeyStroke} used to change a {@link FDockable} into
+     * minimized-state.
+     */
+    public static final PropertyKey<KeyStroke> KEY_GOTO_MINIMIZED =
+        new PropertyKey<KeyStroke>( "fcontrol.goto_minimized" );
+    
+    /**
+     * {@link KeyStroke} used to change a {@link FDockable} into
+     * externalized-state.
+     */
+    public static final PropertyKey<KeyStroke> KEY_GOTO_EXTERNALIZED =
+        new PropertyKey<KeyStroke>( "fcontrol.goto_externalized" );
+    
+    /**
+     * {@link KeyStroke} used to close a {@link FDockable}.
+     */
+    public static final PropertyKey<KeyStroke> KEY_CLOSE = 
+        new PropertyKey<KeyStroke>( "fcontrol.close" );
+    
     /** connection to the real DockingFrames */
 	private DockFrontend frontend;
 	
@@ -212,6 +257,12 @@ public class FControl {
 		        // ignore
 		    }
 		});
+		
+		// set some default values
+		putProperty( KEY_MAXIMIZE_CHANGE, KeyStroke.getKeyStroke( KeyEvent.VK_M, KeyEvent.CTRL_MASK ) );
+		putProperty( KEY_GOTO_EXTERNALIZED, KeyStroke.getKeyStroke( KeyEvent.VK_E, KeyEvent.CTRL_MASK ) );
+		putProperty( KEY_GOTO_NORMALIZED, KeyStroke.getKeyStroke( KeyEvent.VK_N, KeyEvent.CTRL_MASK ) );
+		putProperty( KEY_CLOSE, KeyStroke.getKeyStroke( KeyEvent.VK_C, KeyEvent.CTRL_MASK ) );
 	}
 	
 	/**
@@ -273,6 +324,34 @@ public class FControl {
 	public ApplicationResourceManager getResources() {
         return resources;
     }
+	
+	/**
+	 * Changes the value of a property. Some properties are:
+	 * <ul>
+	 * <li>{@link #KEY_MAXIMIZE_CHANGE}</li>
+	 * <li>{@link #KEY_GOTO_EXTERNALIZED}</li>
+	 * <li>{@link #KEY_GOTO_MAXIMIZED}</li>
+	 * <li>{@link #KEY_GOTO_MINIMIZED}</li>
+	 * <li>{@link #KEY_GOTO_NORMALIZED}</li>
+	 * <li>{@link #KEY_CLOSE}</li>
+	 * </ul>
+	 * @param <A> the type of the value
+	 * @param key the name of the property
+	 * @param value the new value, can be <code>null</code>
+	 */
+	public <A> void putProperty( PropertyKey<A> key, A value ){
+	    frontend.getController().getProperties().set( key, value );
+	}
+	
+	/**
+	 * Gets the value of a property.
+	 * @param <A> the type of the property
+	 * @param key the name of the property
+	 * @return the value or <code>null</code>
+	 */
+	public <A> A getProperty( PropertyKey<A> key ){
+	    return frontend.getController().getProperties().get( key );
+	}
 	
 	/**
 	 * Gets the element that should be in the center of the mainframe.
@@ -611,6 +690,12 @@ public class FControl {
 	     */
 	    public FCloseAction(){
 	        super( frontend.getController() );
+	        new PropertyValue<KeyStroke>( KEY_CLOSE, frontend.getController() ){
+	            @Override
+	            protected void valueChanged( KeyStroke oldValue, KeyStroke newValue ) {
+	                setAccelerator( newValue );
+	            }
+	        };
 	    }
 	    
 	    @Override

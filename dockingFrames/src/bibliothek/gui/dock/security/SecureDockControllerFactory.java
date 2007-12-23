@@ -28,6 +28,7 @@ package bibliothek.gui.dock.security;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.control.DefaultDockControllerFactory;
+import bibliothek.gui.dock.control.KeyboardController;
 import bibliothek.gui.dock.control.MouseFocusObserver;
 
 /**
@@ -38,5 +39,9 @@ public class SecureDockControllerFactory extends DefaultDockControllerFactory {
     @Override
     public MouseFocusObserver createMouseFocusObserver( DockController controller ) {
         return new SecureMouseFocusObserver( controller );
+    }
+    @Override
+    public KeyboardController createKeyboardController( DockController controller ) {
+        return new SecureKeyboardController( controller );
     }
 }

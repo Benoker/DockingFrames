@@ -1,3 +1,28 @@
+/*
+ * Bibliothek - DockingFrames
+ * Library built on Java/Swing, allows the user to "drag and drop"
+ * panels containing any Swing-Component the developer likes to add.
+ * 
+ * Copyright (C) 2007 Benjamin Sigg
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ * Benjamin Sigg
+ * benjamin_sigg@gmx.ch
+ * CH - Switzerland
+ */
 package bibliothek.paint.model;
 
 import java.awt.Color;
@@ -23,46 +48,43 @@ public class ShapeUtils {
         FACTORIES.put( OvalShape.class.getCanonicalName(), OvalShape.FACTORY );
     }
     
+    /**
+     * Gets a list of all {@link ShapeFactory}s which are used in this application.
+     * @return the collection of factories
+     */
     public static Collection<ShapeFactory> getFactories(){
         return Collections.unmodifiableCollection( FACTORIES.values() );
     }
     
     /**
-     * Writes all shapes in <code>shapes</code> to <code>out</code>.
-     * @param shapes a list of shapes
+     * Writes the contents of <code>shape</code> into <code>out</code>.
+     * @param shape the shape to write
      * @param out the stream to write into
      * @throws IOException if an I/O error occurs
      */
     @SuppressWarnings("unchecked")
-    public static void write( List<Shape> shapes, DataOutputStream out ) throws IOException{
-        out.writeInt( shapes.size() );
-        for( Shape shape : shapes ){
-            String key = shape.getClass().getCanonicalName();
-            out.writeUTF( key );
-            out.writeInt( shape.getColor().getRGB() );
-            out.writeInt( shape.getPointA().x );
-            out.writeInt( shape.getPointA().y );
-            out.writeInt( shape.getPointB().x );
-            out.writeInt( shape.getPointB().y );
-        }
+    public static void write( Shape shape, DataOutputStream out ) throws IOException{
+        String key = shape.getClass().getCanonicalName();
+        out.writeUTF( key );
+        out.writeInt( shape.getColor().getRGB() );
+        out.writeInt( shape.getPointA().x );
+        out.writeInt( shape.getPointA().y );
+        out.writeInt( shape.getPointB().x );
+        out.writeInt( shape.getPointB().y );
     }
     
     /**
-     * Reads some {@link Shape}s from the stream <code>in</code>.
+     * Reads a {@link Shape} from the stream <code>in</code>.
      * @param in the stream to read from
-     * @return the list of {@link Shape}s
+     * @return the newly read <code>Shape</code>
      * @throws IOException if an I/O error occurs
      */
-    public static List<Shape> read( DataInputStream in ) throws IOException{
-        List<Shape> shapes = new ArrayList<Shape>();
-        for( int i = 0, n = in.readInt(); i<n; i++ ){
-            String key = in.readUTF();
-            Shape shape = FACTORIES.get( key ).create();
-            shape.setColor( new Color( in.readInt() ) );
-            shape.setPointA( new Point( in.readInt(), in.readInt() ) );
-            shape.setPointB( new Point( in.readInt(), in.readInt() ) );
-            shapes.add( shape );
-        }
-        return shapes;
+    public static Shape read( DataInputStream in ) throws IOException{
+        String key = in.readUTF();
+        Shape shape = FACTORIES.get( key ).create();
+        shape.setColor( new Color( in.readInt() ) );
+        shape.setPointA( new Point( in.readInt(), in.readInt() ) );
+        shape.setPointB( new Point( in.readInt(), in.readInt() ) );
+        return shape;
     }
 }

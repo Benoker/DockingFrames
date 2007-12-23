@@ -25,23 +25,30 @@
  */
 package bibliothek.gui.dock.facile.intern;
 
+import java.awt.event.KeyEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.KeyStroke;
+
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockAcceptance;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.common.action.StateManager;
+import bibliothek.gui.dock.event.DockControllerAdapter;
+import bibliothek.gui.dock.event.KeyboardListener;
 import bibliothek.gui.dock.facile.FControl;
 import bibliothek.gui.dock.facile.FDockable;
 import bibliothek.gui.dock.facile.FDockable.ExtendedMode;
 import bibliothek.gui.dock.station.ScreenDockStation;
 import bibliothek.gui.dock.support.util.ApplicationResource;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.util.container.Single;
 
 /**
@@ -54,14 +61,62 @@ public class FStateManager extends StateManager {
     private FControlAccess control;
     
     /**
+     * {@link KeyStroke} used to go into, or go out from the maximized state.
+     */
+    private PropertyValue<KeyStroke> keyStrokeMaximizeChange = new PropertyValue<KeyStroke>( FControl.KEY_MAXIMIZE_CHANGE ){
+        @Override
+        protected void valueChanged( KeyStroke oldValue, KeyStroke newValue ) {
+            // nothing to do 
+        }
+    };
+    
+    /**
      * Creates a new manager
      * @param control internal access to the {@link FControl} that uses this manager
      */
     public FStateManager( FControlAccess control ){
         super( control.getOwner().intern().getController() );
         this.control = control;
-        
         DockController controller = control.getOwner().intern().getController();
+        
+        // add hook to get key-events for all Dockables
+        controller.getRegister().addDockRegisterListener( new DockControllerAdapter(){
+            @Override
+            public void dockableRegistered( DockController controller, Dockable dockable ) {
+                new KeyHook( dockable );
+            }
+        });
+        
+        // using keystrokes
+        keyStrokeMaximizeChange.setProperties( controller );
+        
+        new PropertyValue<KeyStroke>( FControl.KEY_GOTO_EXTERNALIZED, controller ){
+            @Override
+            protected void valueChanged( KeyStroke oldValue, KeyStroke newValue ) {
+                getIngoingAction( EXTERNALIZED ).setAccelerator( newValue );
+            }
+        };
+        
+        new PropertyValue<KeyStroke>( FControl.KEY_GOTO_MAXIMIZED, controller ){
+            @Override
+            protected void valueChanged( KeyStroke oldValue, KeyStroke newValue ) {
+                getIngoingAction( MAXIMIZED ).setAccelerator( newValue );
+            }
+        };
+        
+        new PropertyValue<KeyStroke>( FControl.KEY_GOTO_MINIMIZED, controller ){
+            @Override
+            protected void valueChanged( KeyStroke oldValue, KeyStroke newValue ) {
+                getIngoingAction( MINIMIZED ).setAccelerator( newValue );
+            }
+        };
+        
+        new PropertyValue<KeyStroke>( FControl.KEY_GOTO_NORMALIZED, controller ){
+            @Override
+            protected void valueChanged( KeyStroke oldValue, KeyStroke newValue ) {
+                getIngoingAction( NORMALIZED ).setAccelerator( newValue );
+            }
+        };
         
         // ensure that non externalizable elements can't be dragged out
         controller.addAcceptance( new DockAcceptance(){
@@ -213,11 +268,83 @@ public class FStateManager extends StateManager {
                 access.informMode( mode );
             }
         }
-        store( newMode, dockable );
     }
     
     @Override
     public void rebuild( Dockable dockable ) {
         super.rebuild( dockable );
+    }
+    
+    /**
+     * Invoked whenever a key is pressed, released or typed.
+     * @param dockable the element to which the event belongs
+     * @param event the event
+     * @return <code>true</code> if the event has been processed, <code>false</code>
+     * if the event was not used up.
+     */
+    protected boolean process( Dockable dockable, KeyEvent event ){
+        if( dockable instanceof FacileDockable ){
+            FDockable fdockable = ((FacileDockable)dockable).getDockable();
+
+            KeyStroke stroke = KeyStroke.getKeyStrokeForEvent( event );
+            if( stroke.equals( keyStrokeMaximizeChange.getValue() )){
+                if( fdockable.getExtendedMode() == FDockable.ExtendedMode.MAXIMIZED ){
+                    goOut( MAXIMIZED, dockable );
+                    return true;
+                }
+                else if( fdockable.isMaximizable() ){
+                    fdockable.setExtendedMode( FDockable.ExtendedMode.MAXIMIZED );
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+    /**
+     * A hook recording key-events for a specific {@link Dockable}.
+     * @author Benjamin Sigg
+     *
+     */
+    private class KeyHook extends DockControllerAdapter implements KeyboardListener{
+        /** the Dockable which is observed by this hook */
+        private Dockable dockable;
+        
+        /**
+         * Creates a new hook
+         * @param dockable the element which will be observed until it is removed
+         * from the {@link DockController}.
+         */
+        public KeyHook( Dockable dockable ){
+            this.dockable = dockable;
+            DockController controller = control.getOwner().intern().getController();
+            controller.getKeyboardController().addListener( this );
+            controller.getRegister().addDockRegisterListener( this );
+        }
+        
+        @Override
+        public void dockableUnregistered( DockController controller, Dockable dockable ) {
+            if( this.dockable == dockable ){
+                controller.getKeyboardController().removeListener( this );
+                controller.getRegister().removeDockRegisterListener( this );
+            }
+        }
+        
+        public DockElement getTreeLocation() {
+            return dockable;
+        }
+        
+        public boolean keyPressed( DockElement element, KeyEvent event ) {
+            return process( dockable, event );
+        }
+        
+        public boolean keyReleased( DockElement element, KeyEvent event ) {
+            return process( dockable, event );
+        }
+        
+        public boolean keyTyped( DockElement element, KeyEvent event ) {
+            return process( dockable, event );
+        }
     }
 }

@@ -40,7 +40,7 @@ import javax.swing.SwingUtilities;
  * A panel containing two children: a "ContentPane" and a "GlassPane". The 
  * ContentPane could be an arbitrary {@link JComponent}. The GlassPane is 
  * always the same panel. The GlassPane catches all MouseEvents, informs
- * sometimes a {@link SecureFocusController} about the calls, and then dispatches
+ * sometimes a {@link SecureMouseFocusObserver} about the calls, and then dispatches
  * the events to the ContentPane or one of the children of ContentPane.
  * @author Benjamin Sigg
  */

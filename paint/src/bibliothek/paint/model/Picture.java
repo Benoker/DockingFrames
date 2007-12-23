@@ -1,6 +1,34 @@
+/*
+ * Bibliothek - DockingFrames
+ * Library built on Java/Swing, allows the user to "drag and drop"
+ * panels containing any Swing-Component the developer likes to add.
+ * 
+ * Copyright (C) 2007 Benjamin Sigg
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ * Benjamin Sigg
+ * benjamin_sigg@gmx.ch
+ * CH - Switzerland
+ */
 package bibliothek.paint.model;
 
 import java.awt.Graphics;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +58,35 @@ public class Picture {
     @Override
     public String toString() {
         return name;
+    }
+    
+    /**
+     * Writes the contents of this picture.
+     * @param out the stream to write into
+     * @throws IOException if an I/O error occurs
+     */
+    public void write( DataOutputStream out ) throws IOException{
+        out.writeUTF( name );
+        out.writeInt( shapes.size() );
+        for( Shape shape : shapes ){
+            ShapeUtils.write( shape, out );
+        }
+    }
+    
+    /**
+     * Reads the contents of this picture from <code>in</code>.
+     * @param in the stream to read from
+     * @throws IOException if an I/O error occurs
+     */
+    public void read( DataInputStream in ) throws IOException{
+        name = in.readUTF();
+        shapes.clear();
+        for( int i = 0, n = in.readInt(); i<n; i++ ){
+            shapes.add( ShapeUtils.read( in ) );
+        }
+        
+        for( PictureListener listener : listeners.toArray( new PictureListener[ listeners.size() ] ))
+            listener.pictureChanged();
     }
     
     /**

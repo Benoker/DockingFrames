@@ -56,12 +56,20 @@ public class LookAndFeelList{
 
 	/**
 	 * Gets the global list of {@link LookAndFeel}s
-	 * @return the global list
+	 * @return the global list, not <code>null</code>
 	 */
 	public static LookAndFeelList getDefaultList(){
 		if( list == null )
 			list = new LookAndFeelList();
 		return list;
+	}
+	
+	/**
+	 * Sets the default {@link LookAndFeelList}.
+	 * @param list the list, can be <code>null</code>
+	 */
+	public static void setDefaultList( LookAndFeelList list ){
+	    LookAndFeelList.list = list;
 	}
 
     /** the {@link LookAndFeel} used when no other <code>LookAndFeel</code> has been set */
@@ -77,6 +85,11 @@ public class LookAndFeelList{
     
     /** The roots of the {@link Component}-trees that need to be updated when the <code>LookAndFeel</code> changes */
     private List<ComponentCollector> componentCollectors = new ArrayList<ComponentCollector>();
+    
+    /** Whether the {@link #read(DataInputStream)}-method has effect when it is called a second time */
+    private boolean allowReadOnlyOnce = false;
+    /** Whether the {@link #read(DataInputStream)}-method was called at least once */
+    private boolean hasRead = false;
     
     /**
      * Crates a new list and collects all available {@link LookAndFeel}s.
@@ -107,6 +120,26 @@ public class LookAndFeelList{
                 MetalLookAndFeel.setCurrentTheme( oldTheme );
             }
         });
+    }
+    
+    /**
+     * Whether multiple calls to {@link #read(DataInputStream)} have
+     * an effect or not.
+     * @return <code>true</code> if only the first read-call has an effect.
+     */
+    public boolean isAllowReadOnlyOnce() {
+        return allowReadOnlyOnce;
+    }
+    
+    /**
+     * Sets whether multiple calls to {@link #read(DataInputStream)} will
+     * have an effect.
+     * @param allowReadOnlyOnce <code>true</code> if only the first
+     * read will have an effect, <code>false</code> if the {@link LookAndFeel}
+     * can change every time {@link #read(DataInputStream)} is called.
+     */
+    public void setAllowReadOnlyOnce( boolean allowReadOnlyOnce ) {
+        this.allowReadOnlyOnce = allowReadOnlyOnce;
     }
     
     /**
@@ -358,9 +391,12 @@ public class LookAndFeelList{
      */
     public void read( DataInputStream in ) throws IOException {
         int index = in.readInt();
-        if( index >= 0 && index < size()+2 ){
-            setLookAndFeel( getFull( index ) );
+        if( !hasRead || !allowReadOnlyOnce ){
+            if( index >= 0 && index < size()+2 ){
+                setLookAndFeel( getFull( index ) );
+            }
         }
+        hasRead = true;
     }
     
     /**

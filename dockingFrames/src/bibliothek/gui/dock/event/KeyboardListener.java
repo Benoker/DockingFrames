@@ -31,7 +31,7 @@ import java.awt.event.KeyEvent;
 import bibliothek.gui.dock.DockElement;
 
 /**
- * A listener added to the {@link bibliothek.gui.dock.control.KeyBoardController},
+ * A listener added to the {@link bibliothek.gui.dock.control.KeyboardController},
  * this listener receives a notification whenever a keyevent is dispatched
  * in a {@link bibliothek.gui.dock.DockElement} below the location of this
  * listener.

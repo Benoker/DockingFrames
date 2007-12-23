@@ -48,6 +48,7 @@ public class Core {
 				in.readInt();
 			}
 		};
+		LookAndFeelList.setDefaultList( lookAndFeel );
 		lookAndFeel.setLookAndFeel( lookAndFeel.getSystem() );
 		
 		main = new MainPanel( this, listDemonstrations() );
@@ -99,7 +100,8 @@ public class Core {
 		return Arrays.asList( new Demonstration[]{
 				new bibliothek.notes.Webstart(),
 				new bibliothek.help.Webstart(),
-				new bibliothek.chess.Main()
+				new bibliothek.chess.Main(),
+				new bibliothek.paint.Webstart()
 		});
 	}
 	

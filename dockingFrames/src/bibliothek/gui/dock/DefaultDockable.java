@@ -111,6 +111,7 @@ public class DefaultDockable extends AbstractDockable {
      */
     public DefaultDockable( Component component, String title, Icon icon ){
     	super( PropertyKey.DOCKABLE_ICON, PropertyKey.DOCKABLE_TITLE );
+    	pane.setFocusCycleRoot( true );
     	
         if( component != null ){
             getContentPane().setLayout( new GridLayout( 1, 1 ));

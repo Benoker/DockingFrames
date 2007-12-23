@@ -314,7 +314,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         }
         
         if( !MINIMIZED.equals( newMode ))
-        	controller.setFocusedDockable( dockable, true );	
+        	controller.setFocusedDockable( dockable, true );
     }
     
     @Override

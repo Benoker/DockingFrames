@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -30,7 +30,6 @@ import java.awt.AWTEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import sun.security.util.SecurityConstants;
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.control.FocusController;
 import bibliothek.gui.dock.control.MouseFocusObserver;
@@ -40,27 +39,6 @@ import bibliothek.gui.dock.control.MouseFocusObserver;
  * @author Benjamin Sigg
  */
 public class SecureMouseFocusObserver extends MouseFocusObserver{
-    /**
-     * Tells whether {@link SecureFocusController} is preferred over a 
-     * {@link FocusController} or not. The result is determined by
-     * a call to the SecurityManager.
-     * @return <code>true</code> if a {@link SecureFocusController} should be
-     * used.
-     */
-    public static boolean isRequested(){
-        try{
-            SecurityManager security = System.getSecurityManager();
-            if( security != null ){
-                security.checkPermission(SecurityConstants.ALL_AWT_EVENTS_PERMISSION);
-            }
-        }
-        catch( SecurityException ex ){
-            return true;
-        }
-        
-        return false;
-    }
-    
     /** A list of GlassPanes which know this controller */
     private List<GlassedPane> panes = new ArrayList<GlassedPane>();
     

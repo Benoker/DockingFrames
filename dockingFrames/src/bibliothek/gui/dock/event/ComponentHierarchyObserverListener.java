@@ -23,36 +23,34 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.paint.model;
+package bibliothek.gui.dock.event;
 
-import java.awt.Graphics;
-import java.awt.Point;
+import java.awt.Component;
+import java.util.List;
+
+import bibliothek.gui.DockController;
+import bibliothek.gui.dock.control.ComponentHierarchyObserver;
 
 /**
- * A simple line between two points.
+ * A listener of a {@link ComponentHierarchyObserver}, this listener
+ * gets informed whenever some {@link Component}s enter or leave the realm
+ * of a {@link DockController}.
  * @author Benjamin Sigg
  */
-public class LineShape extends Shape {
-    /** a factory creating {@link LineShape}s */
-    public static final ShapeFactory FACTORY = 
-        new ShapeFactory(){
-            public Shape create() {
-                return new LineShape();
-            }
-            public String getName() {
-                return "Line";
-            }
-        };
+public interface ComponentHierarchyObserverListener {
+    /**
+     * Called when some {@link Component}s have entered the realm of
+     * <code>controller</code>.
+     * @param controller the source of the event
+     * @param components an unmodifiable set of new {@link Component}s.
+     */
+    public void added( DockController controller, List<Component> components );
     
-    @Override
-    public void paint( Graphics g, double stretch ) {
-        g.setColor( getColor() );
-        Point a = getPointA();
-        Point b = getPointB();
-        g.drawLine( 
-        		stretch( a.x, stretch ),
-        		stretch( a.y, stretch ),
-        		stretch( b.x, stretch ), 
-        		stretch( b.y, stretch ) );
-    }
+    /**
+     * Called when some {@link Component}s have left the realm of
+     * <code>controller</code>.
+     * @param controller the source of the event
+     * @param components an unmodifiable set of {@link Component}s
+     */
+    public void removed( DockController controller, List<Component> components );
 }

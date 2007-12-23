@@ -50,6 +50,15 @@ public abstract class PropertyValue<A> {
 	 * @param key the key used to access the value in {@link DockProperties}
 	 */
 	public PropertyValue( PropertyKey<A> key ){
+	    this( key, null );
+	}
+	
+	/**
+     * Creates a new value.
+     * @param key the key used to access the value in {@link DockProperties}
+     * @param controller the controller from which properties are to be read
+     */
+	public PropertyValue( PropertyKey<A> key, DockController controller ){
 		if( key == null )
 			throw new IllegalArgumentException( "Key must not be null" );
 		this.key = key;
@@ -60,6 +69,8 @@ public abstract class PropertyValue<A> {
 					valueChanged( oldValue, newValue );
 			}
 		};
+		
+		setProperties( controller );
 	}
 	
 	/**

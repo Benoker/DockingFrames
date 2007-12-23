@@ -151,8 +151,14 @@ public abstract class MouseFocusObserver implements DockControllerListener {
         Object source = event.getSource();
         if( source instanceof Component ){
             Component component = (Component)source;
-            if( event.getID() == MouseEvent.MOUSE_PRESSED )
-                check( component, !component.isFocusable() );
+            if( event.getID() == MouseEvent.MOUSE_PRESSED ){
+                if( component.isFocusable() ){
+                    component.requestFocusInWindow();
+                    check( component, false );
+                }
+                else
+                    check( component, true );
+            }
             else
                 check( component );
         }

@@ -26,10 +26,11 @@
 
 package bibliothek.gui.dock.security;
 
+import sun.security.util.SecurityConstants;
 import bibliothek.gui.DockController;
 
 /**
- * The DockingFrames normally uses some system-resources to handle the focus.
+ * The DockingFrames normally uses some system-resources to handle global events.
  * However, there are some environments where system-resources are not available
  * due to a SecurityManager (for example in an Applet). The Secure-X-classes
  * are designed to work in such an environment. They are not as efficient as
@@ -38,13 +39,35 @@ import bibliothek.gui.DockController;
  * Setting up the secure environment is easy: just use a SecureXZY where normally
  * a XYZ would be. Additionally clients must pack all stations into one or
  * more {@link GlassedPane GlassedPanes}. These panes must then be added to
- * the {@link SecureFocusController} of this SecureDockController. <br>
+ * the {@link SecureMouseFocusObserver} of this SecureDockController. <br>
  * Note that {@link SecureFlapDockStation} and {@link SecureScreenDockStation}
  * will add a {@link GlassedPane} to their windows and dialogs automatically.
  * 
  * @author Benjamin Sigg
  */
 public class SecureDockController extends DockController {
+    /**
+     * Tells whether {@link SecureDockController} is preferred over a 
+     * {@link DockController} or not. The result is determined by
+     * a call to the SecurityManager.
+     * @return <code>true</code> if a {@link SecureDockController} should be
+     * used.
+     */
+    public static boolean isRequested(){
+        try{
+            SecurityManager security = System.getSecurityManager();
+            if( security != null ){
+                security.checkPermission(SecurityConstants.ALL_AWT_EVENTS_PERMISSION);
+            }
+        }
+        catch( SecurityException ex ){
+            return true;
+        }
+        
+        return false;
+    }
+    
+    
     /**
      * Creates a new controller
      */
@@ -65,5 +88,10 @@ public class SecureDockController extends DockController {
     @Override
     public SecureMouseFocusObserver getFocusObserver() {
         return (SecureMouseFocusObserver)super.getFocusObserver();
+    }
+    
+    @Override
+    public SecureKeyboardController getKeyboardController(){
+        return (SecureKeyboardController)super.getKeyboardController();
     }
 }

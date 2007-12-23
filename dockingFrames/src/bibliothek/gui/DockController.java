@@ -64,6 +64,8 @@ import bibliothek.gui.dock.util.DockUtilities;
 public class DockController {
 	/** the known dockables and DockStations */
 	private DockRegister register;
+	/** the known {@link Component}s in the realm of this controller */
+	private ComponentHierarchyObserver componentHierarchyObserver;
 	
 	/** a manager handling drag and drop */
 	private DockRelocator relocator;
@@ -223,6 +225,18 @@ public class DockController {
     public DockRegister getRegister(){
 		return register;
 	}
+    
+    /**
+     * Gets a list of all {@link Component}s which are used on the {@link Dockable}s
+     * known to this controller.
+     * @return the list of <code>Component</code>s.
+     */
+    public ComponentHierarchyObserver getComponentHierarchyObserver() {
+        if( componentHierarchyObserver == null ){
+            componentHierarchyObserver = new ComponentHierarchyObserver( this );
+        }
+        return componentHierarchyObserver;
+    }
     
     /**
      * Gets the manager for handling drag and drop operations.
@@ -582,8 +596,13 @@ public class DockController {
 	                    dockable = null;
 	            }
 	            
-	            if( ensureFocusSet )
-	                ensureFocusSet();
+	            if( ensureFocusSet ){
+	                SwingUtilities.invokeLater( new Runnable(){
+	                    public void run() {
+	                        ensureFocusSet();     
+	                    }
+	                });
+	            }
 	            
 	            firedockableFocused( focusedDockable );
 	        }

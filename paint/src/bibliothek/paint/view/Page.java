@@ -1,3 +1,28 @@
+/*
+ * Bibliothek - DockingFrames
+ * Library built on Java/Swing, allows the user to "drag and drop"
+ * panels containing any Swing-Component the developer likes to add.
+ * 
+ * Copyright (C) 2007 Benjamin Sigg
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ * Benjamin Sigg
+ * benjamin_sigg@gmx.ch
+ * CH - Switzerland
+ */
 package bibliothek.paint.view;
 
 import java.awt.Color;
@@ -16,25 +41,37 @@ import bibliothek.paint.model.Shape;
 import bibliothek.paint.model.ShapeFactory;
 
 /**
- * A page paints a {@link Picture}.
+ * A page is a panel that paints a {@link Picture}.
  * @author Benjamin Sigg
  *
  */
 public class Page extends JPanel implements PictureListener {
+    /** the size a page has when its zoomfactor is set to 1.0 */
     private static final Dimension ORIGINAL_SIZE = new Dimension( 800, 600 ); 
 	
+    /** the picture which is painted on this panel */
 	private Picture picture;
     
+	/** the factory which is used to create a new {@link Shape} when the user wants to insert a new one */
     private ShapeFactory factory;
+    /** the <code>Shape</code> the user is currently inserting */
     private Shape current;
+    /** the <code>Color</code> each new <code>Shape</code> will have */
     private Color color = Color.BLACK;
     
+    /** the zoomfactor, each coordinate will be multiplied with this factor */
     private double zoom = 1.0;
     
+    /**
+     * Creates a new page.
+     */
     public Page(){
+        setFocusable( true );
+        
         addMouseListener( new MouseAdapter(){
             @Override
             public void mousePressed( MouseEvent e ) {
+                requestFocusInWindow();
                 if( current == null && factory != null ){
                     current = factory.create();
                     current.setColor( color );
@@ -66,6 +103,11 @@ public class Page extends JPanel implements PictureListener {
         setZoom( 1.0 );
     }
     
+    /**
+     * Sets the <code>Color</code> which is used to paint any new {@link Shape}
+     * the user wants to insert.
+     * @param color the new color
+     */
     public void setColor( Color color ){
 		this.color = color;
 	}
@@ -89,22 +131,46 @@ public class Page extends JPanel implements PictureListener {
 		return zoom;
 	}
     
+    /**
+     * Divides each coordinate of <code>point</code> with the zoomfactor
+     * of this <code>Page</code>.
+     * @param point the point whose coordinates will be divied
+     * @return a point with the divided coordinates
+     */
     private Point unstretch( Point point ){
     	return new Point( (int)(point.x / zoom), (int)(point.y / zoom) );
     }
     
+    /**
+     * Gets the factory which is used to fetch new {@link Shape}s when the
+     * user wants to insert a new <code>Shape</code>.
+     * @return the factory
+     */
     public ShapeFactory getFactory() {
         return factory;
     }
     
+    /**
+     * Sets the factory which is used to fetch new {@link Shape}s when the
+     * user wants to insert new ones.
+     * @param factory the factory, should not be <code>null</code>
+     */
     public void setFactory( ShapeFactory factory ) {
         this.factory = factory;
     }
 
+    /**
+     * Gets the picture which is painted on this page.
+     * @return the picture, can be <code>null</code>
+     */
     public Picture getPicture() {
         return picture;
     }
     
+    /**
+     * Sets the <code>Picture</code> which is painted on this page.
+     * @param picture the picture to paint, can be <code>null</code>
+     */
     public void setPicture( Picture picture ) {
         if( this.picture != null )
             this.picture.removeListener( this );

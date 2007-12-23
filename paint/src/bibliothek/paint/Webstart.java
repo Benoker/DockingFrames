@@ -23,36 +23,44 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.paint.model;
+package bibliothek.paint;
 
-import java.awt.Graphics;
-import java.awt.Point;
+import java.awt.image.BufferedImage;
+
+import javax.swing.Icon;
+
+import bibliothek.demonstration.Demonstration;
+import bibliothek.demonstration.Monitor;
 
 /**
- * A simple line between two points.
+ * A class allowing to startup this application in a secure
+ * environment.
  * @author Benjamin Sigg
  */
-public class LineShape extends Shape {
-    /** a factory creating {@link LineShape}s */
-    public static final ShapeFactory FACTORY = 
-        new ShapeFactory(){
-            public Shape create() {
-                return new LineShape();
-            }
-            public String getName() {
-                return "Line";
-            }
-        };
-    
-    @Override
-    public void paint( Graphics g, double stretch ) {
-        g.setColor( getColor() );
-        Point a = getPointA();
-        Point b = getPointB();
-        g.drawLine( 
-        		stretch( a.x, stretch ),
-        		stretch( a.y, stretch ),
-        		stretch( b.x, stretch ), 
-        		stretch( b.y, stretch ) );
+public class Webstart implements Demonstration {
+
+    public String getHTML() {
+        // TODO Auto-generated method stub
+        return null;
     }
+
+    public Icon getIcon() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public BufferedImage getImage() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public String getName() {
+        return "Paint";
+    }
+
+    public void show( Monitor monitor ) {
+        Core core = new Core( true );
+        core.startup( monitor );
+    }
+
 }

@@ -46,11 +46,11 @@ public abstract class KeyboardController {
 	private LocatedListenerList<KeyboardListener> listeners = 
 		new LocatedListenerList<KeyboardListener>();
 	
-	/** the controller in whose realm this {@link KeyBoardController} works */
+	/** the controller in whose realm this {@link KeyboardController} works */
 	private DockController controller;
 	
 	/**
-	 * Creates a new {@link KeyBoardController}.
+	 * Creates a new {@link KeyboardController}.
 	 * @param controller the controller in whose realm this <code>KeyBoardController</code>
 	 * will work.
 	 */
@@ -75,6 +75,14 @@ public abstract class KeyboardController {
 	public void removeListener( KeyboardListener listener ){
 		listeners.removeListener( listener );
 	}
+	
+	/**
+	 * Gets the {@link DockController} in whose realm this {@link KeyboardController} works.
+	 * @return the owner of this controller
+	 */
+	public DockController getController() {
+        return controller;
+    }
 	
 	/**
 	 * Stops this controller. This controller has to remove any resources
