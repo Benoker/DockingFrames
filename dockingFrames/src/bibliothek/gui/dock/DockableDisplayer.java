@@ -31,6 +31,8 @@ import java.awt.Component;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.station.DisplayerCollection;
+import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
@@ -41,7 +43,7 @@ import bibliothek.gui.dock.title.DockTitle;
  * Clients using a displayer should try to set the {@link #setController(DockController) controller}
  * and the {@link #setStation(DockStation) station} property.
  * @see DisplayerCollection
- * @see DisplayerFactory 
+ * @see DisplayerFactory
  * @author Benjamin Sigg
  */
 public interface DockableDisplayer {

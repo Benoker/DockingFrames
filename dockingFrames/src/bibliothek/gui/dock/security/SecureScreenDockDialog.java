@@ -34,8 +34,6 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JComponent;
 
-import bibliothek.gui.DockController;
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.station.OverpaintablePanel;
@@ -45,7 +43,7 @@ import bibliothek.gui.dock.station.screen.ScreenDockDialog;
 /**
  * A {@link ScreenDockDialog} that inserts a {@link GlassedPane} between its
  * {@link Dockable} and the outer world. The GlassPane is added and removed
- * from the {@link SecureFocusController} automatically.
+ * from the {@link SecureMouseFocusObserver} automatically.
  * @author Benjamin Sigg
  */
 public class SecureScreenDockDialog extends ScreenDockDialog {

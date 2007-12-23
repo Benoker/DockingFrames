@@ -538,6 +538,7 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
         /**
          * Creates a new entry
          * @param dockable the element whose properties are stores in this entry
+         * @param id the unique if of this entry
          */
         public Entry( Dockable dockable, String id ){
             this.dockable = dockable;

@@ -80,7 +80,7 @@ public interface DockAction {
     
     /**
      * Does the appropriate action that can be done respecting the current
-     * state of this acton.
+     * state of this action.
      * @param dockable the element for which this action is called
      * @return <code>true</code> if this action could do anything, <code>false</code>
      * if this action was not able to react in any way to the event.

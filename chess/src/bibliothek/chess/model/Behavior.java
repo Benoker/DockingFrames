@@ -22,6 +22,8 @@ public abstract class Behavior {
     /**
      * Visits all cells which are reachable within one step from this
      * figure.
+     * @param board the board on which the figure stands
+     * @param figure the figure from which the search begins
      * @param visitor the visitor to call
      */
     public abstract void reachable( Board board, Figure figure, Board.CellVisitor visitor );

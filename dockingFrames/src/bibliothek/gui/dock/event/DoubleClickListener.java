@@ -29,9 +29,10 @@ package bibliothek.gui.dock.event;
 import java.awt.event.MouseEvent;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.control.DoubleClickController;
 
 /**
- * A {@link DoubleClickObserver} is added to the {@link DoubleClickController}
+ * A {@link DoubleClickListener} is added to the {@link DoubleClickController}
  * and may receive an event if a {@link Dockable}, which is child or equal
  * to {@link #getTreeLocation()}, was clicked twice. The event is only received
  * if no other <code>DoubleClickObserver</code> processed the event.

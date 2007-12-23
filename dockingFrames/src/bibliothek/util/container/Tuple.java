@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -30,7 +30,10 @@
 package bibliothek.util.container;
 
 /**
+ * An object containing two generic fields.
  * @author Benjamin Sigg
+ * @param <A> type of the first field
+ * @param <B> type of the second field
  */
 public class Tuple<A, B> extends Single<A>{
 	private B b;
@@ -56,7 +59,8 @@ public class Tuple<A, B> extends Single<A>{
 		return new Tuple<A, B>( getA(), b );
 	}
 	
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
 	public boolean equals( Object o ){
 		if( o instanceof Tuple ){
 			Tuple s = (Tuple)o;

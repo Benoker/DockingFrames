@@ -38,7 +38,7 @@ import bibliothek.gui.dock.util.DockUtilities;
 /**
  * An object that can hold some {@link LocatedListener}s and order and filter
  * them regarding to one element of the tree.
- * 
+ * @param <L> the type of listeners in this list
  * @author Benjamin Sigg
  */
 public class LocatedListenerList<L extends LocatedListener> {

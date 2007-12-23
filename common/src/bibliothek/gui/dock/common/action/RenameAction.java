@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -28,6 +28,7 @@ package bibliothek.gui.dock.common.action;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ResourceBundle;
 
 import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
@@ -43,6 +44,7 @@ import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.station.SplitDockStation;
 import bibliothek.gui.dock.station.StackDockStation;
+import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockUtilities;
 
 /**
@@ -53,6 +55,9 @@ import bibliothek.gui.dock.util.DockUtilities;
  * @author Benjamin Sigg
  */
 public abstract class RenameAction extends SimpleButtonAction {
+	/** the key uses for the {@link bibliothek.gui.dock.IconManager} to get the {@link Icon} of this action */
+	public static final String KEY_ICON = "rename";
+	
 	/** button that is pressed if the new name should be applied */
     private JButton okButton = new JButton();
     /** button to cancel the event */
@@ -71,15 +76,17 @@ public abstract class RenameAction extends SimpleButtonAction {
      * get the Icon for this action
      */
     public RenameAction( DockController controller ){
-        controller.getIcons().add( "rename", new IconManagerListener(){
+    	controller.getIcons().setIconDefault( KEY_ICON, Resources.getIcon( KEY_ICON ) );
+        controller.getIcons().add( KEY_ICON, new IconManagerListener(){
             public void iconChanged( String key, Icon icon ) {
                 setIcon( icon );
             }
         });
-        setIcon( controller.getIcons().getIcon( "rename" ));
+        setIcon( controller.getIcons().getIcon( KEY_ICON ));
         
-        setText( DockUI.getDefaultDockUI().getString( "rename" ) );
-        setTooltip( DockUI.getDefaultDockUI().getString( "rename.tooltip" ) );
+        ResourceBundle bundle = Resources.getBundle();
+        setText( bundle.getString( "rename" ) );
+        setTooltip( bundle.getString( "rename.tooltip" ) );
         
         menu.setLayout( new GridBagLayout() );
         JPanel panel = new JPanel( new GridLayout( 1, 2 ));

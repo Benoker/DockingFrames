@@ -26,7 +26,15 @@
 
 package bibliothek.extension.gui.dock.theme.flat;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.Paint;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -41,7 +49,6 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.RemoteRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
-import bibliothek.gui.dock.station.StackDockStation;
 import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
 import bibliothek.gui.dock.station.stack.CombinedTab;
 
@@ -217,8 +224,8 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
        
         /**
          * Sets the location of this button. The buttons knows
-         * through the {@link FlatTab#selectedIndex selectedIndex}-property whether
-         * it is selected or not.
+         * through the {@link FlatTab#getSelectedIndex() selectedIndex}-property
+         * whether it is selected or not.
          * @param index the location
          */
         public void setIndex( int index ) {

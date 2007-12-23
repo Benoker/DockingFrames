@@ -116,6 +116,7 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
         
         /**
          * Creates a new tab
+         * @param dockable the element whose title will be shown on this tab
          */
 		public Tab( Dockable dockable ){
 			this.dockable = dockable;

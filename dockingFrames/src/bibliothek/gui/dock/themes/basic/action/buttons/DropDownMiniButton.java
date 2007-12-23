@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -58,6 +58,7 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
     
 	/**
 	 * Creates a new button.
+	 * @param handler handler for the internal states of this button
 	 */
 	public DropDownMiniButton( BasicDropDownButtonHandler handler ){
         super( null );

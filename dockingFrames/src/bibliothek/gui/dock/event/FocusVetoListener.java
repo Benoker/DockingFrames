@@ -31,7 +31,7 @@ import bibliothek.gui.dock.control.MouseFocusObserver;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
- * This listener is added to the {@link FocusController} and allows to
+ * This listener is added to the {@link MouseFocusObserver} and allows to
  * interrupt a change of the focus.
  * @author Benjamin Sigg
  */

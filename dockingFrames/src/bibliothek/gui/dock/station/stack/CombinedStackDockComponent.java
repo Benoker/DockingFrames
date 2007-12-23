@@ -198,7 +198,7 @@ public abstract class CombinedStackDockComponent<C extends CombinedTab> implemen
     protected abstract C createTab( Dockable dockable );
     
     /**
-     * Deletes a tab that was earlier created by {@link #createTab()}.
+     * Deletes a tab that was earlier created by {@link #createTab(Dockable)}.
      * @param tab the tab which is no longer needed
      */
     protected abstract void destroy( C tab );

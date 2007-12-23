@@ -35,13 +35,16 @@ import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
+import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.HierarchyDockActionSource;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 
@@ -238,8 +241,8 @@ public abstract class AbstractDockable implements Dockable {
 
     /** 
      * Sets the action-source of this {@link Dockable}. If some other
-     * parties have already called the {@link #getActionOffers()}-method,
-     * they will not be informed about the change in any way.
+     * parties have already called the {@link #getGlobalActionOffers()}-method,
+     * then they will not be informed about the change in any way.
      * @param source The new source, may be <code>null</code>
      */
     public void setActionOffers( DockActionSource source ){

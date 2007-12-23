@@ -40,7 +40,7 @@ import bibliothek.gui.dock.util.DockUtilities;
  * A button which can be pressed by the user either to execute 
  * a {@link bibliothek.gui.dock.action.DockAction} or to show a popup-menu
  * with a selection of <code>DockActions</code>. This button uses a 
- * {@link BubbleDropDownView} to trigger the various actions.
+ * {@link BasicDropDownButtonHandler} to manage its internal states.
  * @author Benjamin Sigg
  */
 public class RoundDropDownButton extends JComponent{

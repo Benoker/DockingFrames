@@ -279,7 +279,7 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
      * @param key The name of the group
      * @return The tooltip
      * @throws IllegalArgumentException If the group does not exist
-     * @see #setTooltipText(Object, String)
+     * @see #setTooltip(Object, String)
      */
     public String getTooltip( Object key ){
         SimpleDockAction action = groups.get( key );

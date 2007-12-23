@@ -27,6 +27,7 @@
 package bibliothek.gui.dock.control;
 
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +43,7 @@ import bibliothek.gui.dock.title.DockTitle;
 
 /**
  * Adds a {@link MouseListener} to all {@link Dockable}s and {@link DockTitle}s
- * and informs the registered {@link DoubleClickObserver}s whenever the user
+ * and informs the registered {@link DoubleClickListener}s whenever the user
  * clicks twice on such an element.
  * @author Benjamin Sigg
  */
@@ -108,7 +109,7 @@ public class DoubleClickController {
     }
     
     /**
-     * Fires an event to the {@link DoubleClickObserver}s whose location in the
+     * Fires an event to the {@link DoubleClickListener}s whose location in the
      * tree is equal or below <code>dockable</code>. The order in which the
      * observers receive the event depends on their distance to the <code>dockable</code>.
      * @param dockable the dockable which was selected by the user

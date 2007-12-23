@@ -26,8 +26,6 @@
 
 package bibliothek.gui.dock.station.split;
 
-import java.awt.event.KeyEvent;
-
 import javax.swing.Icon;
 import javax.swing.KeyStroke;
 

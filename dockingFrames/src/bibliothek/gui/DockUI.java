@@ -152,6 +152,7 @@ public class DockUI {
     
     /**
      * Registers a factory for <code>theme</code>.
+     * @param <T> the type of the {@link DockTheme}.
      * @param theme A class which must have the annotation 
      * {@link ThemeProperties}
      * @param bundle The {@link ResourceBundle} that should be used to read

@@ -93,6 +93,14 @@ public class PopupController implements DockRegisterListener{
         }
     }
     
+    /**
+     * Gets the {@link DockController} for which this {@link PopupController} works.
+     * @return the owner of this controller
+     */
+    public DockController getController(){
+		return controller;
+	}
+    
 	public void dockStationRegistered( DockController controller, DockStation station ){
 	    // ignore
 	}

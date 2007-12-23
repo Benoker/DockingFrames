@@ -28,6 +28,7 @@ package bibliothek.gui.dock.facile;
 import java.awt.Component;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.*;
 import java.util.*;
@@ -259,10 +260,10 @@ public class FControl {
 		});
 		
 		// set some default values
-		putProperty( KEY_MAXIMIZE_CHANGE, KeyStroke.getKeyStroke( KeyEvent.VK_M, KeyEvent.CTRL_MASK ) );
-		putProperty( KEY_GOTO_EXTERNALIZED, KeyStroke.getKeyStroke( KeyEvent.VK_E, KeyEvent.CTRL_MASK ) );
-		putProperty( KEY_GOTO_NORMALIZED, KeyStroke.getKeyStroke( KeyEvent.VK_N, KeyEvent.CTRL_MASK ) );
-		putProperty( KEY_CLOSE, KeyStroke.getKeyStroke( KeyEvent.VK_C, KeyEvent.CTRL_MASK ) );
+		putProperty( KEY_MAXIMIZE_CHANGE, KeyStroke.getKeyStroke( KeyEvent.VK_M, InputEvent.CTRL_MASK ) );
+		putProperty( KEY_GOTO_EXTERNALIZED, KeyStroke.getKeyStroke( KeyEvent.VK_E, InputEvent.CTRL_MASK ) );
+		putProperty( KEY_GOTO_NORMALIZED, KeyStroke.getKeyStroke( KeyEvent.VK_N, InputEvent.CTRL_MASK ) );
+		putProperty( KEY_CLOSE, KeyStroke.getKeyStroke( KeyEvent.VK_C, InputEvent.CTRL_MASK ) );
 	}
 	
 	/**
@@ -363,6 +364,7 @@ public class FControl {
 	
 	/**
 	 * Adds a dockable to this control. The dockable can be made visible afterwards.
+	 * @param <F> the type of the new element
 	 * @param dockable the new element to show
 	 * @return <code>dockable</code>
 	 */
@@ -384,6 +386,7 @@ public class FControl {
 	
 	/**
 	 * Adds a dockable to this control. The dockable can be made visible afterwards.
+	 * @param <F> the type of the new element
 	 * @param dockable the new element to show
 	 * @return <code>dockable</code>
 	 */
@@ -404,6 +407,7 @@ public class FControl {
 
 	/**
      * Adds a dockable to this control. The dockable can be made visible afterwards.
+     * @param <F> the type of the new element
      * @param dockable the new element to show
      * @param uniqueId id the unique id of the new element
      * @return <code>dockable</code>

@@ -49,7 +49,7 @@ import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
  * an icon, a title-text and some small buttons to display {@link DockAction actions}.
  * The icon is at the top or left edge, the text in the middle, and the actions
  * at the lower or the right edge of the title. If the orientation of the
- * title is set to {@link Orientation vertical}, the text will be rotated
+ * title is set to {@link DockTitle.Orientation vertical}, the text will be rotated
  * by 90 degrees.<br>
  * This title has also an {@link ActionPopup} which will appear when the user
  * presses the right mouse-button. The popup shows a list of all actions known

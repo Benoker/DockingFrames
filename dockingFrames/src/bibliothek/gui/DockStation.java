@@ -250,7 +250,7 @@ public interface DockStation extends DockElement{
      * title. The second point may be interesting if the title of a dropped
      * child should have the same coordinates as the image of the dragged title.<br>
      * This method is never called if <code>dockable</code> is a child of this
-     * station. In such a case {@link #prepareMove(int, int, int, int, Dockable) prepareMove}
+     * station. In such a case {@link #prepareMove(int, int, int, int, boolean, Dockable) prepareMove}
      * is invoked. 
      * @param mouseX the x-coordinate of the mouse on the screen
      * @param mouseY the y-coordinate of the mouse on the screen
@@ -268,7 +268,7 @@ public interface DockStation extends DockElement{
     
     /**
      * Adds the {@link Dockable} of the last run of
-     * {@link #prepareDrop(int, int, int, int, Dockable) prepareDrop} to this station.
+     * {@link #prepareDrop(int, int, int, int, boolean, Dockable) prepareDrop} to this station.
      * This method is only called if the new child and this station accepted
      * each other, <code>prepareDrop</code> returned <code>true</code> and
      * the new child is not yet a child of this station.
@@ -299,7 +299,7 @@ public interface DockStation extends DockElement{
     
     /**
      * Prepares the station that one of its children is moved from one
-     * location to another location. See {@link #prepareDrop(int, int, int, int, Dockable) prepareDrop}
+     * location to another location. See {@link #prepareDrop(int, int, int, int, boolean, Dockable) prepareDrop}
      * for detailed information about the behavior of this method. The only
      * difference between this method and <code>prepareDrop</code> is, that
      * <code>dockable</code> is a child of this station.
@@ -319,7 +319,7 @@ public interface DockStation extends DockElement{
     
     /**
      * Moves a child of this station to a new location according to the
-     * information gathered by {@link #prepareMove(int, int, int, int, Dockable) prepareMove}.
+     * information gathered by {@link #prepareMove(int, int, int, int, boolean, Dockable) prepareMove}.
      */
     public void move();
     
@@ -337,8 +337,8 @@ public interface DockStation extends DockElement{
     
     /**
      * Informs this station that the information gathered by 
-     * {@link #prepareDrop(int, int, int, int, Dockable) prepareDrop} or
-     * {@link #prepareMove(int, int, int, int, Dockable) prepareMove} should
+     * {@link #prepareDrop(int, int, int, int, boolean, Dockable) prepareDrop} or
+     * {@link #prepareMove(int, int, int, int, boolean, Dockable) prepareMove} should
      * be painted somehow onto this station.<br>
      * The station should use the {@link StationPaint} of its theme
      * to draw.
@@ -348,8 +348,8 @@ public interface DockStation extends DockElement{
     /**
      * Tells this station that a possible drop or move on this station 
      * was canceled. The station can throw away any information gathered by
-     * the last call {@link #prepareDrop(int, int, int, int, Dockable) prepareDrop} 
-     * or {@link #prepareMove(int, int, int, int, Dockable) prepareMove}<br>
+     * the last call {@link #prepareDrop(int, int, int, int, boolean, Dockable) prepareDrop} 
+     * or {@link #prepareMove(int, int, int, int, boolean, Dockable) prepareMove}<br>
      * If the station is drawing some markings because of a call to
      * {@link #draw()}, than the station can throw away these markings too.
      */

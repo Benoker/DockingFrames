@@ -57,7 +57,7 @@ public interface DockActionSource extends Iterable<DockAction>{
     public DockAction getDockAction( int index );
         
     /**
-     * Adds a listener to this source. The {@link StandardDockActionListener} should
+     * Adds a listener to this source. The {@link DockActionSourceListener} should
      * be informed whenever some {@link DockAction DockActions} are added or
      * removed from this source.
      * @param listener The listener

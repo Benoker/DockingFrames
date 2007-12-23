@@ -102,7 +102,7 @@ public interface DockControllerFactory {
     /**
      * Creates the converter that will transform actions into views.
      * @param controller the controller for which the element is created
-     * @return the new converter.
+     * @return the new converter, not <code>null</code>
      */
     public ActionViewConverter createActionViewConverter( DockController controller );
 

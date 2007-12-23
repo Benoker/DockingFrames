@@ -102,6 +102,7 @@ public class ActionType<D extends DockAction> {
 		return id.hashCode();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals( Object obj ){
 		if (this == obj)

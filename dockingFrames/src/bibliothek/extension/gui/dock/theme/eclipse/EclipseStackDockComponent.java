@@ -81,7 +81,7 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 	private RemoteRelocator relocator;
 	
 	private EclipseTheme theme;
-	private DockStation station;
+	//private DockStation station;
 	private EclipseTabbedComponent tabs;
 	
 	private Dockable selectedDockable;
@@ -131,7 +131,7 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 
 	public EclipseStackDockComponent(EclipseTheme theme, DockStation station) {
 		this.theme = theme;
-		this.station = station;
+		//this.station = station;
 		setLayout( new GridLayout( 1, 1 ) );
 		tabs = new EclipseTabbedComponent(this, theme, station);
 		tabs.addTabListener(this);

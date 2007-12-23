@@ -26,6 +26,7 @@
 
 package bibliothek.gui.dock.themes.basic.action.buttons;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
@@ -41,6 +42,7 @@ import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
 /**
  * A small {@link Component} used as view of a {@link BasicButtonModel}.
  * A MiniButton just changes its border when the states of its model changes.
+ * @param <M> the type of model used to describe the state of this button
  * @author Benjamin Sigg
  */
 public class MiniButton<M extends BasicButtonModel> extends JComponent {

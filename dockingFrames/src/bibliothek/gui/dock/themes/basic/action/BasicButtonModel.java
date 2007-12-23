@@ -200,7 +200,7 @@ public class BasicButtonModel {
      * Gets the orientation of the {@link DockTitle} on which the view of
      * this model is displayed.
      * @return the orientation
-     * @see #setOrientation(Orientation)
+     * @see #setOrientation(DockTitle.Orientation)
      */
     public Orientation getOrientation() {
         return orientation;

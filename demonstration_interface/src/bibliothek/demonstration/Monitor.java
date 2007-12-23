@@ -32,6 +32,7 @@ public interface Monitor {
 	/**
 	 * Executes a statement in the EventDispatcherThread.
 	 * @param run the statement to run
+	 * @throws InvocationTargetException if <code>run</code> throws an exception
 	 */
 	public void invokeSynchron( Runnable run ) throws InvocationTargetException;
 	

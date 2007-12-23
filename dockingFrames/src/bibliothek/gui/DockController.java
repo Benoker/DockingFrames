@@ -154,6 +154,7 @@ public class DockController {
      * Initializes all properties of this controller. This method should be
      * called only once. This method can be called by a subclass if the 
      * subclass used {@link #DockController(DockControllerFactory)} with an argument <code>null</code>.
+     * @param factory a factory used to create various sub-controls
      */
     protected final void initiate( DockControllerFactory factory ){
         if( this.factory != null )

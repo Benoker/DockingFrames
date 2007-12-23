@@ -28,10 +28,7 @@ package bibliothek.gui.dock.themes.basic.action.menu;
 
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.JComponent;
 import javax.swing.JMenu;

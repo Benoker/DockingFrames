@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.themes.basic;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
@@ -37,6 +38,8 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockableDisplayer;
+import bibliothek.gui.dock.station.DisplayerCollection;
+import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.title.DockTitle;
 
 
@@ -52,7 +55,7 @@ import bibliothek.gui.dock.title.DockTitle;
  * and/or {@link #removeTitle(Component)} if they want to introduce a completely
  * new layout needing more {@link Container Containers}.
  * @see DisplayerCollection
- * @see DisplayerFactory 
+ * @see DisplayerFactory
  * @author Benjamin Sigg
  */
 public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
@@ -115,7 +118,7 @@ public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
     /**
      * Initialises all properties of this DockableDisplayer. This method should
      * only be called once, by a constructor of a subclass which invoked
-     * <code>{@link #DockableDisplayer(boolean) DockableDisplayer( false )}</code>. 
+     * <code>{@link #BasicDockableDisplayer(boolean) DockableDisplayer( false )}</code>. 
      * @param dockable the content, may be <code>null</code>
      * @param title the title of <code>dockable</code>, can be <code>null</code>
      * @param location the location of the title, can be <code>null</code>

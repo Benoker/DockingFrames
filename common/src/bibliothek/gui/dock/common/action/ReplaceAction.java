@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -26,11 +26,12 @@
 
 package bibliothek.gui.dock.common.action;
 
+import java.util.ResourceBundle;
+
 import javax.swing.Icon;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
-import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.ListeningDockAction;
@@ -38,6 +39,7 @@ import bibliothek.gui.dock.action.actions.GroupedButtonDockAction;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.event.IconManagerListener;
+import bibliothek.gui.dock.support.util.Resources;
 
 /**
  * A {@link DockAction} that can replace a {@link DockStation} by it's only
@@ -47,6 +49,9 @@ import bibliothek.gui.dock.event.IconManagerListener;
  * @author Benjamin Sigg
  */
 public class ReplaceAction extends GroupedButtonDockAction<Boolean> implements ListeningDockAction{
+	/** the key uses for the {@link bibliothek.gui.dock.IconManager} to get the {@link Icon} of this action */
+	public static final String KEY_ICON = "replace";
+	
 	/** A listener to the stations known to this action */
     private DockStationListener dockStationListener;
     
@@ -79,10 +84,11 @@ public class ReplaceAction extends GroupedButtonDockAction<Boolean> implements L
         setEnabled( true, true );
         setEnabled( false, false );
         
-        setText( true, DockUI.getDefaultDockUI().getString( "replace" ) );
-        setText( false, DockUI.getDefaultDockUI().getString( "replace" ) );
-        setTooltip( true, DockUI.getDefaultDockUI().getString( "replace.tooltip" ));
-        setTooltip( false, DockUI.getDefaultDockUI().getString( "replace.tooltip" ));
+        ResourceBundle bundle = Resources.getBundle();
+        setText( true, bundle.getString( "replace" ) );
+        setText( false, bundle.getString( "replace" ) );
+        setTooltip( true, bundle.getString( "replace.tooltip" ));
+        setTooltip( false, bundle.getString( "replace.tooltip" ));
         
         setController( controller );
     }
@@ -162,6 +168,7 @@ public class ReplaceAction extends GroupedButtonDockAction<Boolean> implements L
             this.controller = controller;
             
             if( controller != null ){
+            	controller.getIcons().setIconDefault( KEY_ICON, Resources.getIcon( KEY_ICON ) );
                 controller.getIcons().add( "replace" , listener );
                 Icon icon = controller.getIcons().getIcon( "replace" );
                 setIcon( true, icon );

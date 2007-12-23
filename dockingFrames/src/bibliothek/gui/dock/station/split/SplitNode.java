@@ -332,6 +332,7 @@ public abstract class SplitNode{
     
     /**
      * Writes the contents of this node into a new tree create by <code>factory</code>.
+     * @param <N> the type of element the <code>factory</code> will create
      * @param factory the factory transforming the elements of the tree into a
      * new form.
      * @return the representation of this node

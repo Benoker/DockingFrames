@@ -53,6 +53,7 @@ public class NoStackTheme implements DockTheme {
     /**
      * Creates a {@link ThemeFactory} for this theme encapsulating another
      * theme.
+     * @param <T> the type of the internal {@link DockTheme}
      * @param theme the theme to encapsulate
      * @param bundle the bundle to read strings for the other theme, can be <code>null</code> 
      * if the bundle of <code>ui</code> should be used.

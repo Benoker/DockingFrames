@@ -57,7 +57,7 @@ public class FlapDropInfo {
     /**
      * Returns the <code>combine</code>  property.
      * @return the property
-     * @see #setCombine(boolean)
+     * @see #setCombine(Dockable)
      */
     public Dockable getCombine(){
 		return combine;
@@ -112,7 +112,7 @@ public class FlapDropInfo {
     /**
      * Sets the location where the {@link #getDockable() Dockable} will be
      * inserted in respect to the list of buttons. This property will
-     * be ignored if {@link #isCombine() combine} is <code>true</code>.
+     * be ignored if {@link #getCombine()} is <code>null</code>.
      * @param index the location
      */
     public void setIndex( int index ) {

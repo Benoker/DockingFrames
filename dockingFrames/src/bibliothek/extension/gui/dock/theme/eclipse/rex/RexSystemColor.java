@@ -27,10 +27,7 @@ package bibliothek.extension.gui.dock.theme.eclipse.rex;
 
 import java.awt.Color;
 import java.awt.SystemColor;
-import java.awt.Toolkit;
-import java.util.Map;
 
-import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 
 /**
@@ -38,6 +35,7 @@ import javax.swing.UIManager;
  */
 public class RexSystemColor {
 	private RexSystemColor() {
+		// nothing to do
 	}
 
 	public static Color getActiveColor() {

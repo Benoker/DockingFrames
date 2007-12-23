@@ -35,6 +35,7 @@ import javax.swing.KeyStroke;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.KeyboardListener;
@@ -147,7 +148,7 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
     /**
      * Gets the first part of the toopltip-text that is shown for this action.
      * @return The client defined part of the tooltip
-     * @see #setTooltipText(String)
+     * @see #setTooltip(String)
      */
     public String getTooltip() {
         return tooltip;

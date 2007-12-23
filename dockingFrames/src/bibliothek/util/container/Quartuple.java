@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -30,7 +30,12 @@
 package bibliothek.util.container;
 
 /**
+ * An object containing four generic fields.
  * @author Benjamin Sigg
+ * @param <A> type of the first field
+ * @param <B> type of the second field
+ * @param <C> type of the third field
+ * @param <D> type of the fourth field
  */
 public class Quartuple<A,B,C,D> extends Triple<A,B,C>{
 	private D d;
@@ -57,7 +62,8 @@ public class Quartuple<A,B,C,D> extends Triple<A,B,C>{
 		return new Quartuple<A, B, C, D>( getA(), getB(), getC(), d );
 	}
 	
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
 	public boolean equals( Object o ){
 		if( o instanceof Quartuple ){
 			Quartuple s = (Quartuple)o;
