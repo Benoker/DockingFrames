@@ -28,7 +28,6 @@ package bibliothek.gui.dock.station;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**

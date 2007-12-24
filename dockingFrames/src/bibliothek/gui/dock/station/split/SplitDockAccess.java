@@ -27,8 +27,8 @@
 package bibliothek.gui.dock.station.split;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockableDisplayer;
-import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.station.DockableDisplayer;
 
 /**
  * Provides access to some internal methods and attributes of a {@link SplitDockStation}. An access

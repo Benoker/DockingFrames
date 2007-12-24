@@ -4,8 +4,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import bibliothek.gui.dock.DockableProperty;
-import bibliothek.gui.dock.DockablePropertyFactory;
+import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.DockablePropertyFactory;
 
 /**
  * A {@link DockableProperty} that stores the field in which a {@link ChessFigure}

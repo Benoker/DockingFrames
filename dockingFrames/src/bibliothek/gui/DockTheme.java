@@ -26,10 +26,10 @@
 
 package bibliothek.gui;
 
-import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
+import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;

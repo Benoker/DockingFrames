@@ -28,7 +28,7 @@ package bibliothek.gui.dock.event;
 
 import javax.swing.Icon;
 
-import bibliothek.gui.dock.IconManager;
+import bibliothek.gui.dock.util.IconManager;
 
 /**
  * A listener added to a {@link IconManager}. This listener will receive an

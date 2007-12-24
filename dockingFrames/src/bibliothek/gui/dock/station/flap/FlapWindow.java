@@ -40,9 +40,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockableDisplayer;
-import bibliothek.gui.dock.station.FlapDockStation;
-import bibliothek.gui.dock.station.FlapDockStation.Direction;
+import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.FlapDockStation.Direction;
+import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 

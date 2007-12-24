@@ -73,6 +73,8 @@ public class Core {
     
     /**
      * Starts a new main-frame.
+     * @param monitor the callback informing the caller about the state
+     * of this application
      */
     public void startup( final Monitor monitor ){
         if( monitor != null )
@@ -95,7 +97,7 @@ public class Core {
         bar.add( layout.getMenu() );
         frame.setJMenuBar( bar );
         
-        frame.getContentPane().add( control.getCenter().getComponent() );
+        frame.getContentPane().add( control.getCenter() );
         
         PictureRepository pictures = new PictureRepository();
         view = new ViewManager( control, pictures );

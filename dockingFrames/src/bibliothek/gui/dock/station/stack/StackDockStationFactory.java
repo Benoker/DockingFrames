@@ -33,7 +33,7 @@ import java.util.Map;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
-import bibliothek.gui.dock.station.StackDockStation;
+import bibliothek.gui.dock.StackDockStation;
 
 /**
  * A {@link DockFactory} that can read and write instances of {@link StackDockStation}.

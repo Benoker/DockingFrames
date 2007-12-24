@@ -28,8 +28,8 @@ package bibliothek.extension.gui.dock.theme.eclipse;
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleManager;
 

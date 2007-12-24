@@ -27,7 +27,7 @@
 package bibliothek.gui.dock.station.split;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**

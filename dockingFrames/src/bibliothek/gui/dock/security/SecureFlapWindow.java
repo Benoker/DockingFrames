@@ -37,8 +37,8 @@ import javax.swing.JComponent;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockableDisplayer;
-import bibliothek.gui.dock.station.FlapDockStation;
+import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.flap.ButtonPane;
 import bibliothek.gui.dock.station.flap.FlapWindow;
 

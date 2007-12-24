@@ -37,8 +37,8 @@ import javax.swing.border.Border;
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.event.DockControllerAdapter;
+import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
 

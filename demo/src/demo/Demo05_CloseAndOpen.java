@@ -12,10 +12,10 @@ import javax.swing.*;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
+import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.event.DockFrontendAdapter;
-import bibliothek.gui.dock.station.FlapDockStation;
-import bibliothek.gui.dock.station.ScreenDockStation;
-import bibliothek.gui.dock.station.SplitDockStation;
 
 /*
  * Not all panels should be visible the whole time, the DockFrontend

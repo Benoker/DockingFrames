@@ -32,8 +32,8 @@ import java.awt.event.MouseEvent;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.ScreenDockStation;
-import bibliothek.gui.dock.station.StackDockStation;
+import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.StackDockStation;
 
 /**
  * A {@link DockRelocatorMode} is used by a {@link DockRelocator} to change

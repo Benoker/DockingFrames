@@ -35,9 +35,9 @@ import java.util.Map;
 import javax.swing.JPanel;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.FlapDockStation;
+import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.FlapDockStation.Direction;
 import bibliothek.gui.dock.station.OverpaintablePanel;
-import bibliothek.gui.dock.station.FlapDockStation.Direction;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
@@ -61,7 +61,7 @@ public class ButtonPane extends OverpaintablePanel{
     public ButtonPane( FlapDockStation station, Map<Dockable, DockTitle> titles ){
         super();
         
-        setContentPane( new Content() );
+        setBasePane( new Content() );
         
         this.station = station;
         this.buttonTitles = titles;

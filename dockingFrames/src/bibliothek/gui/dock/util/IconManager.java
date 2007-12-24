@@ -24,7 +24,7 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock;
+package bibliothek.gui.dock.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +34,6 @@ import java.util.Map;
 import javax.swing.Icon;
 
 import bibliothek.gui.dock.event.IconManagerListener;
-import bibliothek.gui.dock.util.Priority;
 
 /**
  * A map of icons which are used by various objects. The icon is stored

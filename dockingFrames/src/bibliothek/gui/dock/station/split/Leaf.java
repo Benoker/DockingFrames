@@ -36,10 +36,10 @@ import java.util.Map;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockAcceptance;
-import bibliothek.gui.dock.DockableDisplayer;
-import bibliothek.gui.dock.DockableProperty;
-import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.accept.DockAcceptance;
+import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.split.SplitDockTree.Key;
 
 /**

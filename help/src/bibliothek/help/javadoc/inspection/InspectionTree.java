@@ -18,7 +18,7 @@ import javax.swing.tree.TreePath;
 import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.dock.DefaultDockable;
-import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
 import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.help.javadoc.Entryable;

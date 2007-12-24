@@ -60,3 +60,6 @@
 - Bugfix: MenuMenuHandler could create a memoryleak by not properly unbinding the visualization of a DockAction
 - API: ComponentHierarchyObserver collects all Components which are used in the realm of a specific DockController
 - Bugfix: empty SplitDockStation could throw NullPointerException during drag&drop operation
+- API: removed the necessity to create GlassedPane's in a restricted environment manually
+- API: extensive reorganisation of packages in order to let the important classes/interfaces be in the top-level packages
+! API: OverpaintablePanel, using a "base" and a "content"-pane, calls to "setContentPane" now have to be replaced by "setBasePane"

@@ -40,7 +40,7 @@ import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
-import bibliothek.gui.dock.DockableProperty;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**

@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -23,23 +23,27 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
+package bibliothek.gui.dock.security;
 
-package bibliothek.gui.dock;
+import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.station.stack.StackDockStationFactory;
 
 /**
- * A factory which creates instances of {@link DockableProperty}.
+ * A factory creating instances of {@link SecureStackDockStation}.
  * @author Benjamin Sigg
+ *
  */
-public interface DockablePropertyFactory {
-    /**
-     * Gets the unique name of this factory.
-     * @return the id
-     */
-    public String getID();
+public class SecureStackDockStationFactory extends StackDockStationFactory {
+    /** The id used for this factory */
+    public static final String ID = "secure " + StackDockStationFactory.ID;
     
-    /**
-     * Creates a new empty {@link DockableProperty}.
-     * @return the new property
-     */
-    public DockableProperty createProperty();
+    @Override
+    public String getID() {
+        return ID;
+    }
+    
+    @Override
+    protected StackDockStation createStation() {
+        return new SecureStackDockStation();
+    }
 }

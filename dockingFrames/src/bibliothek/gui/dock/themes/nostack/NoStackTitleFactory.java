@@ -28,10 +28,10 @@ package bibliothek.gui.dock.themes.nostack;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.FlapDockStation;
-import bibliothek.gui.dock.station.ScreenDockStation;
-import bibliothek.gui.dock.station.SplitDockStation;
-import bibliothek.gui.dock.station.StackDockStation;
+import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;

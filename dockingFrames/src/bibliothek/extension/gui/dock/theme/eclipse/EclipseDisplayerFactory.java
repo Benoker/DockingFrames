@@ -30,8 +30,8 @@ import javax.swing.border.LineBorder;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockableDisplayer;
-import bibliothek.gui.dock.DockableDisplayer.Location;
+import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.DockableDisplayer.Location;
 import bibliothek.gui.dock.themes.basic.BasicDisplayerFactory;
 import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;

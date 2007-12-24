@@ -43,7 +43,7 @@ public class ButtonPanel extends JPanel{
 	/** the list of actions to show */
 	private DockActionSource source;
 	
-	/** a listener to {@link #source} and the {@link bibliothek.gui.dock.IconManager} */
+	/** a listener to {@link #source} and the {@link bibliothek.gui.dock.util.IconManager} */
 	private Listener listener = new Listener();
 	
 	/** The list of actions which are currently known */

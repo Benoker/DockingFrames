@@ -5,11 +5,12 @@ import java.awt.Window;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.security.SecureFlapDockStation;
 import bibliothek.gui.dock.security.SecureScreenDockStation;
-import bibliothek.gui.dock.station.FlapDockStation;
-import bibliothek.gui.dock.station.ScreenDockStation;
-import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.security.SecureSplitDockStation;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.notes.model.Note;
 import bibliothek.notes.model.NoteModel;
@@ -68,7 +69,7 @@ public class ViewManager {
 		frontend.add( list, "list" );
 		
 		if( secure ){
-			split = new SplitDockStation();
+			split = new SecureSplitDockStation();
 			east = new SecureFlapDockStation();
 			west = new SecureFlapDockStation();
 			south = new SecureFlapDockStation();

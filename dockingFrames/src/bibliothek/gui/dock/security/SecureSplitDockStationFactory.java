@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -23,24 +23,27 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
+package bibliothek.gui.dock.security;
 
-package bibliothek.gui.dock;
-
+import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.station.split.SplitDockStationFactory;
 
 /**
- * A simple implementation of {@link DockableProperty} which provides
- * only the basic features.
+ * Creates instances of {@link SecureSplitDockStation}.
  * @author Benjamin Sigg
+ *
  */
-public abstract class AbstractDockableProperty implements DockableProperty {
-    /** The successor of this property */
-    private DockableProperty successor;
+public class SecureSplitDockStationFactory extends SplitDockStationFactory {
+    /** The id used for this factory */
+    public static final String ID = "secure " + SplitDockStationFactory.ID;
     
-    public DockableProperty getSuccessor() {
-        return successor;
+    @Override
+    public String getID() {
+        return ID;
     }
-
-    public void setSuccessor( DockableProperty properties ) {
-        this.successor = properties;
+    
+    @Override
+    protected SplitDockStation createStation() {
+        return new SecureSplitDockStation();
     }
 }

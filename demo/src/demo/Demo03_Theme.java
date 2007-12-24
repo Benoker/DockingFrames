@@ -16,9 +16,9 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.DefaultDockable;
-import bibliothek.gui.dock.station.FlapDockStation;
-import bibliothek.gui.dock.station.ScreenDockStation;
-import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.themes.*;
 
 /*

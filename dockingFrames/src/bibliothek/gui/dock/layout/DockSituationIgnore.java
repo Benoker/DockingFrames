@@ -24,9 +24,10 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock;
+package bibliothek.gui.dock.layout;
 
 import bibliothek.gui.DockStation;
+import bibliothek.gui.dock.DockElement;
 
 /**
  * A DockSituationIgnore is used in a {@link DockSituation} to decide, which

@@ -34,7 +34,7 @@ import javax.swing.event.ChangeListener;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.StackDockStation;
+import bibliothek.gui.dock.StackDockStation;
 
 /**
  * A StackDockComponent is a Component that can show other {@link Component Components}.
@@ -46,7 +46,7 @@ import bibliothek.gui.dock.station.StackDockStation;
  * selection at any time.
  * 
  * @author Janni Kovacs
- * @see bibliothek.gui.dock.station.StackDockStation
+ * @see bibliothek.gui.dock.StackDockStation
  * @see DefaultStackDockComponent
  * @see javax.swing.JTabbedPane
  */

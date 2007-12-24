@@ -41,9 +41,9 @@ import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.event.DockTitleEvent;
-import bibliothek.gui.dock.station.FlapDockStation;
 import bibliothek.gui.dock.title.AbstractDockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 

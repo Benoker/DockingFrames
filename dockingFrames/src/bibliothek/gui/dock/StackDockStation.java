@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -24,7 +24,7 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock.station;
+package bibliothek.gui.dock;
 
 import java.awt.*;
 import java.io.DataInputStream;
@@ -43,10 +43,15 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.*;
-import bibliothek.gui.dock.DockableDisplayer;
-import bibliothek.gui.dock.DockableProperty;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockableListener;
+import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.station.AbstractDockableStation;
+import bibliothek.gui.dock.station.DisplayerCollection;
+import bibliothek.gui.dock.station.DisplayerFactory;
+import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.OverpaintablePanel;
+import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.stack.*;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
@@ -143,12 +148,32 @@ public class StackDockStation extends AbstractDockableStation {
      */
     public StackDockStation( DockTheme theme ){
     	super( theme );
+    	init();
+    }
+    
+    /**
+     * Creates a new station.
+     * @param theme the theme of this station, can be <code>null</code>
+     * @param init <code>true</code> if the fields of this object should
+     * be initialized, <code>false</code> otherwise. If <code>false</code>,
+     * then the subclass has to call {@link #init()} exactly once.
+     */
+    protected StackDockStation( DockTheme theme, boolean init ){
+    	super( theme );
+    	if( init )
+    		init();
+    }
+    
+    /**
+     * Initializes the fields of this object, has to be called exactly once.
+     */
+    protected void init(){
         visibleListener = new VisibleListener();
         visibility = new DockableVisibilityManager( listeners );
         
         displayers = new DisplayerCollection( this, displayerFactory );
         
-        background = new Background();
+        background = createBackground();
         panel = background.getContentPane();
         
         stackComponentFactory = new PropertyValue<StackDockComponentFactory>( COMPONENT_FACTORY ){
@@ -163,6 +188,14 @@ public class StackDockStation extends AbstractDockableStation {
         
         stackComponent = createStackDockComponent();
         stackComponent.addChangeListener( visibleListener );
+    }
+    
+    /**
+     * Creates the panel onto which this station will lay its children.
+     * @return the new background
+     */
+    protected Background createBackground(){
+    	return new Background();
     }
     
     /**
@@ -927,7 +960,7 @@ public class StackDockStation extends AbstractDockableStation {
      * have this panel as parent too.
      * @author Benjamin Sigg
      */
-    private class Background extends OverpaintablePanel{
+    protected class Background extends OverpaintablePanel{
     	/**
     	 * Creates a new panel
     	 */

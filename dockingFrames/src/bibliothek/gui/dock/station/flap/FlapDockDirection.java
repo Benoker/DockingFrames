@@ -31,15 +31,15 @@ import javax.swing.Icon;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.IconManager;
+import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.FlapDockStation.Direction;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.actions.SimpleMenuAction;
 import bibliothek.gui.dock.action.actions.SimpleSelectableAction;
 import bibliothek.gui.dock.event.IconManagerListener;
-import bibliothek.gui.dock.station.FlapDockStation;
-import bibliothek.gui.dock.station.FlapDockStation.Direction;
+import bibliothek.gui.dock.util.IconManager;
 
 /**
  * This {@link DockAction} is used as an action of a {@link FlapDockStation}.

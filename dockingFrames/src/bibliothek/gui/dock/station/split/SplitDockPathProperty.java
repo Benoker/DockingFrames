@@ -33,9 +33,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.AbstractDockableProperty;
-import bibliothek.gui.dock.DockableProperty;
-import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.layout.AbstractDockableProperty;
+import bibliothek.gui.dock.layout.DockableProperty;
 
 /**
  * A {@link DockableProperty} used by the {@link SplitDockStation} to describe

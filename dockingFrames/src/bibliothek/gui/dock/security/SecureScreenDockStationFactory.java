@@ -28,7 +28,7 @@ package bibliothek.gui.dock.security;
 
 import java.awt.Window;
 
-import bibliothek.gui.dock.station.ScreenDockStation;
+import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.station.screen.ScreenDockStationFactory;
 
 /**

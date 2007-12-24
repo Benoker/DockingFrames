@@ -4,7 +4,12 @@ import java.awt.CardLayout;
 import java.awt.Component;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListCellRenderer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -12,11 +17,10 @@ import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
-import bibliothek.gui.dock.DockAcceptance;
+import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.action.ActionPopupSuppressor;
-import bibliothek.gui.dock.security.GlassedPane;
 import bibliothek.gui.dock.security.SecureDockController;
-import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.security.SecureSplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockTree;
 
 /**
@@ -26,7 +30,7 @@ import bibliothek.gui.dock.station.split.SplitDockTree;
  * @author Benjamin Sigg
  *
  */
-public class MainPanel extends GlassedPane {
+public class MainPanel extends SecureSplitDockStation {
     /** the list of all {@link Demonstration}s */
 	private JList list = new JList();
 	/** the layout of {@link #panel} */
@@ -43,7 +47,6 @@ public class MainPanel extends GlassedPane {
 	 */
 	public MainPanel( Core core, List<Demonstration> demos ){
 		SecureDockController controller = new SecureDockController();
-		controller.getFocusObserver().addGlassPane( this );
 		controller.addAcceptance( new DockAcceptance(){
 			public boolean accept( DockStation parent, Dockable child ){
 				return true;
@@ -57,11 +60,8 @@ public class MainPanel extends GlassedPane {
 		controller.setTheme( new FlatTheme() );
 		controller.setPopupSuppressor( ActionPopupSuppressor.SUPPRESS_ALWAYS );
 		
-		SplitDockStation station = new SplitDockStation();
-		setContentPane( station );
-		
-		controller.add( station );
-		station.setContinousDisplay( true );
+		controller.add( this );
+		setContinousDisplay( true );
 		
 		DefaultListModel model = new DefaultListModel();
 		panel = new JPanel( layout );
@@ -81,7 +81,7 @@ public class MainPanel extends GlassedPane {
 				new DefaultDockable( new JScrollPane( list ), "Demonstrations" ),
 				new DefaultDockable( panel, "Selection" ),
 				0.25 ));
-		station.dropTree( tree );
+		dropTree( tree );
 		
 		list.addListSelectionListener( new ListSelectionListener(){
 			public void valueChanged( ListSelectionEvent e ){

@@ -31,8 +31,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.AbstractDockableProperty;
-import bibliothek.gui.dock.station.StackDockStation;
+import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.layout.AbstractDockableProperty;
 
 /**
  * A StackDockProperty stores the location of a {@link Dockable}

@@ -30,7 +30,7 @@ import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.Window;
 
-import bibliothek.gui.dock.station.ScreenDockStation;
+import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.station.screen.ScreenDockDialog;
 
 /**

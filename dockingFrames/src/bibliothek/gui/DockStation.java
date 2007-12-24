@@ -30,12 +30,12 @@ import java.awt.Rectangle;
 
 import javax.swing.JFrame;
 
-import bibliothek.gui.dock.DockAcceptance;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.DockFactory;
-import bibliothek.gui.dock.DockableProperty;
+import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.event.DockStationListener;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;

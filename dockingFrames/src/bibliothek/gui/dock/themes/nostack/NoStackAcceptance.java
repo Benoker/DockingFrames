@@ -28,9 +28,9 @@ package bibliothek.gui.dock.themes.nostack;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockAcceptance;
+import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.accept.AbstractAcceptance;
-import bibliothek.gui.dock.station.StackDockStation;
+import bibliothek.gui.dock.accept.DockAcceptance;
 
 /**
  * A {@link DockAcceptance} which permits the user to set a  

@@ -42,7 +42,6 @@ import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.extension.gui.dock.theme.SmoothTheme;
 import bibliothek.gui.dock.DockFactory;
-import bibliothek.gui.dock.IconManager;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StationPaint;
@@ -50,6 +49,7 @@ import bibliothek.gui.dock.themes.*;
 import bibliothek.gui.dock.themes.basic.BasicCombiner;
 import bibliothek.gui.dock.themes.basic.BasicDisplayerFactory;
 import bibliothek.gui.dock.themes.basic.BasicStationPaint;
+import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.Priority;
 
 /**

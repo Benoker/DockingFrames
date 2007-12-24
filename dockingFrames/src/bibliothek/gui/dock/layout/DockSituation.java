@@ -24,7 +24,7 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock;
+package bibliothek.gui.dock.layout;
 
 import java.io.*;
 import java.util.HashMap;
@@ -32,11 +32,16 @@ import java.util.Map;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DefaultDockable;
+import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.dockable.DefaultDockableFactory;
 import bibliothek.gui.dock.security.SecureFlapDockStationFactory;
-import bibliothek.gui.dock.station.FlapDockStation;
-import bibliothek.gui.dock.station.SplitDockStation;
-import bibliothek.gui.dock.station.StackDockStation;
+import bibliothek.gui.dock.security.SecureSplitDockStationFactory;
+import bibliothek.gui.dock.security.SecureStackDockStationFactory;
 import bibliothek.gui.dock.station.flap.FlapDockStationFactory;
 import bibliothek.gui.dock.station.split.SplitDockStationFactory;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
@@ -75,7 +80,9 @@ public class DockSituation {
         this( 
                 new DefaultDockableFactory(),
                 new SplitDockStationFactory(),
+                new SecureSplitDockStationFactory(),
                 new StackDockStationFactory(),
+                new SecureStackDockStationFactory(),
                 new FlapDockStationFactory(),
                 new SecureFlapDockStationFactory());
     }

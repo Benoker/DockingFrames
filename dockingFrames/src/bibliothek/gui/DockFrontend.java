@@ -45,9 +45,16 @@ import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.dockable.DefaultDockableFactory;
 import bibliothek.gui.dock.event.DockFrontendListener;
 import bibliothek.gui.dock.event.IconManagerListener;
+import bibliothek.gui.dock.layout.DockSituation;
+import bibliothek.gui.dock.layout.DockSituationIgnore;
+import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.DockablePropertyFactory;
+import bibliothek.gui.dock.layout.PredefinedDockSituation;
+import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.security.SecureFlapDockStationFactory;
 import bibliothek.gui.dock.security.SecureScreenDockStationFactory;
-import bibliothek.gui.dock.station.ScreenDockStation;
+import bibliothek.gui.dock.security.SecureSplitDockStationFactory;
+import bibliothek.gui.dock.security.SecureStackDockStationFactory;
 import bibliothek.gui.dock.station.flap.FlapDockPropertyFactory;
 import bibliothek.gui.dock.station.flap.FlapDockStationFactory;
 import bibliothek.gui.dock.station.screen.ScreenDockPropertyFactory;
@@ -167,7 +174,9 @@ public class DockFrontend {
         
         registerFactory( new DefaultDockableFactory() );
         registerFactory( new SplitDockStationFactory() );
+        registerFactory( new SecureSplitDockStationFactory() );
         registerFactory( new StackDockStationFactory() );
+        registerFactory( new SecureStackDockStationFactory() );
         registerFactory( new FlapDockStationFactory() );
         registerFactory( new SecureFlapDockStationFactory() );
         

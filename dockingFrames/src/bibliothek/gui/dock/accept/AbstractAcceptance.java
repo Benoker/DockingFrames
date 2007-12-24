@@ -28,7 +28,6 @@ package bibliothek.gui.dock.accept;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockAcceptance;
 import bibliothek.gui.dock.accept.CombinatoryAcceptance.Combination;
 
 /**

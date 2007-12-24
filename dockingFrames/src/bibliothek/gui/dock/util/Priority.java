@@ -28,9 +28,9 @@ package bibliothek.gui.dock.util;
 import bibliothek.gui.DockTheme;
 
 /**
- * Often resources are divided into three kinds with different
+ * Often resources are divided into three groups with different
  * priorities. <code>Priority</code> gives a name to these
- * kinds.
+ * groups.
  */
 public enum Priority{
     /** highest priority */

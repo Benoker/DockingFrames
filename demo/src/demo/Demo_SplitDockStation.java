@@ -12,7 +12,7 @@ import javax.swing.WindowConstants;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
-import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
 import bibliothek.gui.dock.station.split.SplitDockTree;
 

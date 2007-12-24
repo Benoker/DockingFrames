@@ -23,13 +23,13 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockableDisplayer;
-import bibliothek.gui.dock.DockableProperty;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.event.DockTitleEvent;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
+import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
@@ -95,7 +95,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 			for( int c = 0; c < 8; c++ )
 				fields[r][c] = new Field( r, c );
 		
-		setContentPane( new ContentPane() );
+		setBasePane( new ContentPane() );
 		setPreferredSize( new Dimension( 8*64, 8*64 ) );
 	}
 	

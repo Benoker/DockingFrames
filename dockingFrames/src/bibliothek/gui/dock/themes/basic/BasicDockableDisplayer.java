@@ -37,9 +37,9 @@ import javax.swing.SwingUtilities;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
+import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
 
 
@@ -101,11 +101,11 @@ public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
    
     /**
      * Creates a new displayer but does not set the properties of the
-     * displayer. Subclasses may call {@link #init(Dockable, DockTitle, bibliothek.gui.dock.DockableDisplayer.Location) init}
+     * displayer. Subclasses may call {@link #init(Dockable, DockTitle, bibliothek.gui.dock.station.DockableDisplayer.Location) init}
      * to initialize all variables of the new displayer.
      * @param initialize <code>true</code> if all properties should be set
      * to default, <code>false</code> if nothing should happen, and 
-     * {@link #init(Dockable, DockTitle, bibliothek.gui.dock.DockableDisplayer.Location) init}
+     * {@link #init(Dockable, DockTitle, bibliothek.gui.dock.station.DockableDisplayer.Location) init}
      * will be called.
      */
     protected BasicDockableDisplayer( boolean initialize ){

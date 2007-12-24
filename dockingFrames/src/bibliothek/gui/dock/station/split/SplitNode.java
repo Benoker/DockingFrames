@@ -37,8 +37,8 @@ import java.util.Map;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockAcceptance;
-import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.accept.DockAcceptance;
 
 /**
  * The internal representation of a {@link SplitDockStation} is a tree. The subclasses of SplitNode build this tree.

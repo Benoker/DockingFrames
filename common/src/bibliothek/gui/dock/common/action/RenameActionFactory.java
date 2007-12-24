@@ -32,9 +32,9 @@ import java.util.Map;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
-import bibliothek.gui.dock.station.FlapDockStation;
-import bibliothek.gui.dock.station.SplitDockStation;
-import bibliothek.gui.dock.station.StackDockStation;
+import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.StackDockStation;
 
 /**
  * A factory creating {@link RenameAction RenameActions} for a

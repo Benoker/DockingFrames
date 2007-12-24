@@ -38,12 +38,12 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
+import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.event.IconManagerListener;
-import bibliothek.gui.dock.station.FlapDockStation;
-import bibliothek.gui.dock.station.SplitDockStation;
-import bibliothek.gui.dock.station.StackDockStation;
 import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockUtilities;
 
@@ -55,7 +55,7 @@ import bibliothek.gui.dock.util.DockUtilities;
  * @author Benjamin Sigg
  */
 public abstract class RenameAction extends SimpleButtonAction {
-	/** the key uses for the {@link bibliothek.gui.dock.IconManager} to get the {@link Icon} of this action */
+	/** the key uses for the {@link bibliothek.gui.dock.util.IconManager} to get the {@link Icon} of this action */
 	public static final String KEY_ICON = "rename";
 	
 	/** button that is pressed if the new name should be applied */

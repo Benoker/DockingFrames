@@ -32,10 +32,10 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.IconManager;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.event.IconManagerListener;
+import bibliothek.gui.dock.util.IconManager;
 
 /**
  * This action shows an icon for "close". When the action is trigged, 

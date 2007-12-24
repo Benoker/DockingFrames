@@ -3,7 +3,7 @@ package bibliothek.gui.dock.control;
 import java.awt.event.InputEvent;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.dock.DockAcceptance;
+import bibliothek.gui.dock.accept.DockAcceptance;
 
 /**
  * A {@link DockRelocatorMode} that adds itself as a {@link DockAcceptance}

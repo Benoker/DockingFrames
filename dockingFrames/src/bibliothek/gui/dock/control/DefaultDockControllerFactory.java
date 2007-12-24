@@ -26,7 +26,6 @@
 package bibliothek.gui.dock.control;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.dock.SingleParentRemover;
 import bibliothek.gui.dock.action.ActionOffer;
 import bibliothek.gui.dock.action.DefaultActionOffer;
 import bibliothek.gui.dock.action.view.ActionViewConverter;

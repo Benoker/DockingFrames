@@ -34,7 +34,7 @@ import java.util.Map;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
-import bibliothek.gui.dock.station.ScreenDockStation;
+import bibliothek.gui.dock.ScreenDockStation;
 
 /**
  * A {@link DockFactory} which writes and reads instances 

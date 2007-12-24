@@ -26,7 +26,7 @@
 
 package bibliothek.gui.dock.station.stack;
 
-import bibliothek.gui.dock.station.StackDockStation;
+import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.util.DockProperties;
 
 /**

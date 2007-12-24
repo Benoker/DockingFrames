@@ -33,7 +33,7 @@ import java.util.Map;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
-import bibliothek.gui.dock.station.FlapDockStation;
+import bibliothek.gui.dock.FlapDockStation;
 
 /**
  * A {@link DockFactory} which can create instances of {@link FlapDockStation}.

@@ -26,7 +26,7 @@
 
 package bibliothek.gui.dock.station.split;
 
-import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.SplitDockStation;
 
 /**
  * An exception thrown if a {@link SplitDockStation} can't combine two

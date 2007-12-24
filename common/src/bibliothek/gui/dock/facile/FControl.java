@@ -25,13 +25,23 @@
  */
 package bibliothek.gui.dock.facile;
 
-import java.awt.Component;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.KeyStroke;
@@ -42,14 +52,20 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.action.CloseAction;
 import bibliothek.gui.dock.common.action.StateManager;
 import bibliothek.gui.dock.event.DockAdapter;
-import bibliothek.gui.dock.facile.intern.*;
-import bibliothek.gui.dock.station.ScreenDockStation;
+import bibliothek.gui.dock.facile.intern.EfficientControlFactory;
+import bibliothek.gui.dock.facile.intern.FControlAccess;
+import bibliothek.gui.dock.facile.intern.FControlFactory;
+import bibliothek.gui.dock.facile.intern.FDockableAccess;
+import bibliothek.gui.dock.facile.intern.FStateManager;
+import bibliothek.gui.dock.facile.intern.FacileDockable;
+import bibliothek.gui.dock.facile.intern.SecureControlFactory;
 import bibliothek.gui.dock.support.util.ApplicationResource;
 import bibliothek.gui.dock.support.util.ApplicationResourceManager;
 import bibliothek.gui.dock.themes.NoStackTheme;
@@ -284,17 +300,7 @@ public class FControl {
 	public FControlFactory getFactory() {
         return factory;
     }
-	
-	/**
-	 * Monitors <code>component</code> for mouse and key-events.
-	 * @param component the component to monitor
-	 * @return either <code>component</code> or a new component replacing
-	 * <code>component</code>.
-	 */
-	public Component monitor( Component component ){
-	    return factory.monitor( component, this );
-	}
-	
+
 	/**
 	 * Adds a destroy-hook. The hook is called when this {@link FControl} is
 	 * destroyed through {@link #destroy()}.

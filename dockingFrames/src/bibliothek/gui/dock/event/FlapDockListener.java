@@ -27,7 +27,7 @@
 package bibliothek.gui.dock.event;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.FlapDockStation;
+import bibliothek.gui.dock.FlapDockStation;
 
 /**
  * A listener that is added to a {@link FlapDockStation}.

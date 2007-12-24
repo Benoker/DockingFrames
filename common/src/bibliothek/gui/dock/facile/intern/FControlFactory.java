@@ -25,16 +25,13 @@
  */
 package bibliothek.gui.dock.facile.intern;
 
-import java.awt.Component;
-import java.awt.Container;
-
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.facile.FControl;
-import bibliothek.gui.dock.station.FlapDockStation;
-import bibliothek.gui.dock.station.ScreenDockStation;
 
 /**
  * A factory creating various elements that are needed in a {@link FControl}
@@ -62,32 +59,8 @@ public interface FControlFactory {
     public ScreenDockStation createScreenDockStation( JFrame owner );
     
     /**
-     * Makes sure that <code>component</code> is monitored for mouse- and
-     * keyevents. Might create a new {@link Component} to perform this task.
-     * @param component the component which is to be monitored
-     * @param control the environment in which <code>component</code> is used
-     * @return either <code>component</code> or a <code>Component</code> which
-     * has <code>component</code> as a child.
+     * Creates a new {@link SplitDockStation}.
+     * @return the new station
      */
-    public Component monitor( Component component, FControl control );
-    
-    /**
-     * Makes sure that <code>component</code> is monitored for mouse- and
-     * keyevents. Might create a new {@link Component} to perform this task.
-     * @param component the component which is to be monitored
-     * @param control the environment in which <code>component</code> is used
-     * @return either <code>component</code> or a <code>Component</code> which
-     * has <code>component</code> as a child.
-     */
-    public Container monitor( Container component, FControl control );
-    
-    /**
-     * Makes sure that <code>component</code> is monitored for mouse- and
-     * keyevents. Might create a new {@link Component} to perform this task.
-     * @param component the component which is to be monitored
-     * @param control the environment in which <code>component</code> is used
-     * @return either <code>component</code> or a <code>Component</code> which
-     * has <code>component</code> as a child.
-     */
-    public JComponent monitor( JComponent component, FControl control );
+    public SplitDockStation createSplitDockStation();
 }

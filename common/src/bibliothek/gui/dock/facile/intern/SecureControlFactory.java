@@ -25,21 +25,17 @@
  */
 package bibliothek.gui.dock.facile.intern;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.GridLayout;
-
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.dock.facile.FControl;
-import bibliothek.gui.dock.security.GlassedPane;
+import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.security.SecureDockController;
 import bibliothek.gui.dock.security.SecureFlapDockStation;
 import bibliothek.gui.dock.security.SecureScreenDockStation;
-import bibliothek.gui.dock.station.FlapDockStation;
-import bibliothek.gui.dock.station.ScreenDockStation;
+import bibliothek.gui.dock.security.SecureSplitDockStation;
 
 /**
  * A factory used in restricted environment, where no global events can
@@ -62,24 +58,12 @@ public class SecureControlFactory implements FControlFactory {
         return new SecureScreenDockStation( owner );
     }
 
-    public Component monitor( Component component, FControl control ) {
-        SecureDockController controller = (SecureDockController)control.intern().getController();
-        GlassedPane pane = new GlassedPane();
-        if( component instanceof JComponent )
-            pane.setContentPane( (JComponent)component );
-        else{
-            pane.getContentPane().setLayout( new GridLayout( 1, 1 ) );
-            pane.getContentPane().add( component );
-        }
-        controller.getFocusObserver().addGlassPane( pane );
-        return pane;
-    }
-    
-    public Container monitor( Container component, FControl control ) {
-        return (Container)monitor( (Component)component, control );
-    }
-    
-    public JComponent monitor( JComponent component, FControl control ) {
-        return (JComponent)monitor( (Component)component, control );
-    }
+    public SplitDockStation createSplitDockStation(){
+   	 return new SecureSplitDockStation(){
+            @Override
+            protected ListeningDockAction createFullScreenAction() {
+                return null;
+            }
+        };
+   }
 }

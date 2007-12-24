@@ -24,7 +24,7 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock.station;
+package bibliothek.gui.dock;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -41,15 +41,20 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockAcceptance;
-import bibliothek.gui.dock.DockableDisplayer;
-import bibliothek.gui.dock.DockableProperty;
+import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.control.MouseFocusObserver;
 import bibliothek.gui.dock.event.*;
+import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.station.AbstractDockableStation;
+import bibliothek.gui.dock.station.Combiner;
+import bibliothek.gui.dock.station.DisplayerCollection;
+import bibliothek.gui.dock.station.DisplayerFactory;
+import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.flap.*;
 import bibliothek.gui.dock.station.support.CombinerWrapper;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
@@ -177,8 +182,26 @@ public class FlapDockStation extends AbstractDockableStation {
      * Defaultconstructor of a {@link FlapDockStation}
      */
     public FlapDockStation(){
+    	init();
+    }
+    
+    /**
+     * Creates a new {@link FlapDockStation}.
+     * @param init <code>true</code> if the fields of this station should
+     * be initialized, <code>false</code> otherwise. If <code>false</code>, then
+     * {@link #init()} must be called by a subclass.
+     */
+    protected FlapDockStation( boolean init ){
+    	if( init )
+    		init();
+    }
+    
+    /**
+     * Initializes the fields of this station, hast to be called exactly once
+     */
+    protected void init(){
         visibility = new DockableVisibilityManager( listeners );
-        buttonPane = new ButtonPane( this, buttonTitles );
+        buttonPane = createButtonPane( buttonTitles );
         setDirection( Direction.SOUTH );
         
         displayers = new DisplayerCollection( this, displayerFactory );
@@ -209,6 +232,16 @@ public class FlapDockStation extends AbstractDockableStation {
         });
         
         holdAction = createHoldAction();
+    }
+    
+    /**
+     * Creates the panel which will show buttons for the children of this station.
+     * @param buttonTitles a map which will be modified by the station, containing
+     * all children and their buttons.
+     * @return the new panel
+     */
+    protected ButtonPane createButtonPane( Map<Dockable, DockTitle> buttonTitles ){
+    	return new ButtonPane( this, buttonTitles );
     }
     
     /**
@@ -406,7 +439,7 @@ public class FlapDockStation extends AbstractDockableStation {
     
     /**
      * Tells whether this station can change the
-     * {@link #setDirection(bibliothek.gui.dock.station.FlapDockStation.Direction) direction}
+     * {@link #setDirection(bibliothek.gui.dock.FlapDockStation.Direction) direction}
      * itself, or if only the user can change the direction. 
      * @return <code>true</code> if the station chooses the direction itself
      * @see #setAutoDirection(boolean)
@@ -417,7 +450,7 @@ public class FlapDockStation extends AbstractDockableStation {
     
     /**
      * Tells this station whether it can choose the 
-     * {@link #setDirection(bibliothek.gui.dock.station.FlapDockStation.Direction) direction}
+     * {@link #setDirection(bibliothek.gui.dock.FlapDockStation.Direction) direction}
      * of the popup-window itself, or if the direction remains always the
      * same.
      * @param autoDirection <code>true</code> if the station can choose the
@@ -431,7 +464,7 @@ public class FlapDockStation extends AbstractDockableStation {
     
     /**
      * Calculates the best 
-     * {@link #setDirection(bibliothek.gui.dock.station.FlapDockStation.Direction) direction}
+     * {@link #setDirection(bibliothek.gui.dock.FlapDockStation.Direction) direction}
      * for the popup-window of this station.
      */
     public void selfSetDirection(){

@@ -26,7 +26,7 @@
 package bibliothek.gui.dock.station.split;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.SplitDockStation;
 
 /**
  * A factory used to create trees that somehow represent the layout

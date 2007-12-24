@@ -24,7 +24,7 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock;
+package bibliothek.gui.dock.layout;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -33,6 +33,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.DockFactory;
 
 /**
  * A {@link DockSituation} that does not load or store all {@link DockElement DockElements}.

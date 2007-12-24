@@ -26,8 +26,8 @@
 
 package bibliothek.gui.dock.station.screen;
 
-import bibliothek.gui.dock.DockableProperty;
-import bibliothek.gui.dock.DockablePropertyFactory;
+import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.DockablePropertyFactory;
 
 /**
  * This {@link DockableProperty} creates instances of {@link ScreenDockProperty}.

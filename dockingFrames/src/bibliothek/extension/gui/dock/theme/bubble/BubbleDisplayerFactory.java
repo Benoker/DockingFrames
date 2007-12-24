@@ -28,9 +28,9 @@ package bibliothek.extension.gui.dock.theme.bubble;
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockableDisplayer;
-import bibliothek.gui.dock.DockableDisplayer.Location;
 import bibliothek.gui.dock.station.DisplayerFactory;
+import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.DockableDisplayer.Location;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**

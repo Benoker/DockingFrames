@@ -24,7 +24,7 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock;
+package bibliothek.gui.dock.accept;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;

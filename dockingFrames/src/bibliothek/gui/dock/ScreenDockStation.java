@@ -24,7 +24,7 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock.station;
+package bibliothek.gui.dock;
 
 import java.awt.*;
 import java.io.IOException;
@@ -38,10 +38,15 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockAcceptance;
-import bibliothek.gui.dock.DockableDisplayer;
-import bibliothek.gui.dock.DockableProperty;
+import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
+import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.station.AbstractDockStation;
+import bibliothek.gui.dock.station.Combiner;
+import bibliothek.gui.dock.station.DisplayerCollection;
+import bibliothek.gui.dock.station.DisplayerFactory;
+import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.screen.ScreenDockDialog;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 import bibliothek.gui.dock.station.screen.ScreenDockStationFactory;

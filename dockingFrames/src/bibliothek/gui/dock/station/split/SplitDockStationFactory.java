@@ -33,7 +33,7 @@ import java.util.Map;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
-import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.SplitDockStation;
 
 /**
  * A factory that creates {@link SplitDockStation SplitDockStations}.

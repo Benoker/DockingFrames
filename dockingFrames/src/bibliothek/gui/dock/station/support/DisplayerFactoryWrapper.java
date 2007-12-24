@@ -30,8 +30,8 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockableDisplayer;
 import bibliothek.gui.dock.station.DisplayerFactory;
+import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**

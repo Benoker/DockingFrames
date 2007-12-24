@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -26,7 +26,7 @@
 
 package bibliothek.gui.dock.security;
 
-import bibliothek.gui.dock.station.FlapDockStation;
+import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.station.flap.FlapDockStationFactory;
 
 /**

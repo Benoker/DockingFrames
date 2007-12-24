@@ -26,8 +26,8 @@
 
 package bibliothek.gui.dock.station.split;
 
-import bibliothek.gui.dock.DockableProperty;
-import bibliothek.gui.dock.DockablePropertyFactory;
+import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.DockablePropertyFactory;
 
 /**
  * A factory that creates instances of {@link SplitDockProperty}.

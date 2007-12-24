@@ -2,7 +2,6 @@ package bibliothek.notes.view;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.GridLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.DataInputStream;
@@ -14,9 +13,10 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
 import bibliothek.demonstration.util.LookAndFeelMenu;
-import bibliothek.gui.dock.security.GlassedPane;
-import bibliothek.gui.dock.security.SecureDockController;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.DockTheme;
 import bibliothek.notes.Core;
+import bibliothek.notes.model.Note;
 import bibliothek.notes.util.ResourceSet;
 import bibliothek.notes.view.menu.HelpMenu;
 import bibliothek.notes.view.menu.PanelList;
@@ -65,18 +65,7 @@ public class MainFrame extends JFrame{
 	 * this {@link MainFrame}.
 	 */
 	private void setupStations(){
-		Container content;
-		if( core.isSecure() ){
-			GlassedPane pane = new GlassedPane();
-			SecureDockController controller = (SecureDockController)core.getViews().getFrontend().getController();
-			controller.getFocusObserver().addGlassPane( pane );
-			content = pane.getContentPane();
-			
-			setLayout( new GridLayout( 1, 1 ) );
-			add( pane );
-		}
-		else
-			content = getContentPane();
+		Container content = getContentPane();
 		
 		content.setLayout( new BorderLayout() );
 		

@@ -31,9 +31,9 @@ import javax.swing.border.BevelBorder;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockableDisplayer;
-import bibliothek.gui.dock.DockableDisplayer.Location;
 import bibliothek.gui.dock.station.DisplayerFactory;
+import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.DockableDisplayer.Location;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
@@ -74,7 +74,7 @@ public class BasicDisplayerFactory implements DisplayerFactory {
      * Gets the location where the {@link DockTitle} will be shown on the
      * {@link DockableDisplayer}, if a {@link Dockable} is used as child.
      * @return the location
-     * @see #setDockableLocation(bibliothek.gui.dock.DockableDisplayer.Location)
+     * @see #setDockableLocation(bibliothek.gui.dock.station.DockableDisplayer.Location)
      */
     public DockableDisplayer.Location getDockableLocation() {
         return dockableLocation;
@@ -93,7 +93,7 @@ public class BasicDisplayerFactory implements DisplayerFactory {
      * Gets the location where the {@link DockTitle} will be shown on the
      * {@link DockableDisplayer}, if a {@link DockStation} is used as child.
      * @return the location
-     * @see #setDockableLocation(bibliothek.gui.dock.DockableDisplayer.Location)
+     * @see #setDockableLocation(bibliothek.gui.dock.station.DockableDisplayer.Location)
      */
     public DockableDisplayer.Location getStationLocation() {
         return stationLocation;

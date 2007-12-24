@@ -22,20 +22,22 @@ import javax.swing.WindowConstants;
 import bibliothek.demonstration.Monitor;
 import bibliothek.demonstration.util.LookAndFeelMenu;
 import bibliothek.gui.DockFrontend;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.security.GlassedPane;
 import bibliothek.gui.dock.security.SecureDockController;
 import bibliothek.gui.dock.security.SecureFlapDockStation;
 import bibliothek.gui.dock.security.SecureFlapDockStationFactory;
 import bibliothek.gui.dock.security.SecureScreenDockStation;
 import bibliothek.gui.dock.security.SecureScreenDockStationFactory;
-import bibliothek.gui.dock.station.FlapDockStation;
-import bibliothek.gui.dock.station.ScreenDockStation;
-import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.security.SecureSplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
 import bibliothek.gui.dock.station.split.SplitDockProperty;
 import bibliothek.gui.dock.support.lookandfeel.ComponentCollector;
@@ -198,7 +200,6 @@ public class Core implements ComponentCollector{
         frame = new JFrame();
         frame.setTitle( "Help - Demonstration of DockingFrames" );
         frame.setIconImage( ResourceSet.toImage( ResourceSet.ICONS.get( "application" ) ) );
-        Container content;
         
         if( secure ){
         	SecureDockController controller = new SecureDockController();
@@ -212,11 +213,7 @@ public class Core implements ComponentCollector{
         	east = new SecureFlapDockStation();
         	west = new SecureFlapDockStation();
         	screen = new SecureScreenDockStation( frame );
-        	
-        	GlassedPane glass = new GlassedPane();
-        	content = glass.getContentPane();
-        	frame.setContentPane( glass );
-        	controller.getFocusObserver().addGlassPane( glass );
+        	station = new SecureSplitDockStation();
         }
         else{
         	frontend = new DockFrontend( frame );
@@ -226,17 +223,17 @@ public class Core implements ComponentCollector{
         	east = new FlapDockStation();
         	west = new FlapDockStation();
         	screen = new ScreenDockStation( frame );
-        	
-        	content = frame.getContentPane();
+        	station = new SplitDockStation();
         }
         
         Minimizer minimizer = new Minimizer( this, frontend.getController() );
         
-        station = new SplitDockStation();
+        
         minimizer.addAreaNormalized( station );
         minimizer.addAreaNormalized( screen );
         minimizer.setDefaultStation( station );
         
+        Container content = frame.getContentPane();
         content.setLayout( new BorderLayout() );
         content.add( station, BorderLayout.CENTER );
         content.add( south.getComponent(), BorderLayout.SOUTH );

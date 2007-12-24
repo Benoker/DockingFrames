@@ -49,7 +49,7 @@ import bibliothek.gui.dock.support.util.Resources;
  * @author Benjamin Sigg
  */
 public class ReplaceAction extends GroupedButtonDockAction<Boolean> implements ListeningDockAction{
-	/** the key uses for the {@link bibliothek.gui.dock.IconManager} to get the {@link Icon} of this action */
+	/** the key uses for the {@link bibliothek.gui.dock.util.IconManager} to get the {@link Icon} of this action */
 	public static final String KEY_ICON = "replace";
 	
 	/** A listener to the stations known to this action */

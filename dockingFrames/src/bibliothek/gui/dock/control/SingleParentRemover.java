@@ -24,11 +24,12 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock;
+package bibliothek.gui.dock.control;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.event.DockControllerAdapter;
 
 /**

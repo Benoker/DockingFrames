@@ -9,9 +9,9 @@ import javax.swing.WindowConstants;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.DefaultDockable;
-import bibliothek.gui.dock.station.FlapDockStation;
-import bibliothek.gui.dock.station.ScreenDockStation;
-import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.SplitDockStation;
 
 /*
  * The same as "Start" but with more stations and additional settings

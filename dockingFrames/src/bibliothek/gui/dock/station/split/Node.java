@@ -34,8 +34,8 @@ import java.io.IOException;
 import java.util.Map;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.SplitDockStation;
-import bibliothek.gui.dock.station.SplitDockStation.Orientation;
+import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.SplitDockStation.Orientation;
 import bibliothek.gui.dock.station.split.SplitDockTree.Key;
 
 /**

@@ -31,7 +31,6 @@ import java.util.List;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockAcceptance;
 
 /**
  * A {@link DockAcceptance} which consists of other acceptances, and returns

@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -43,16 +43,21 @@ public class OverpaintablePanel extends JLayeredPane {
     private Overlay overlay = new Overlay();
     
     /** the panel on which children should be added */
-    private JComponent panel = new JPanel();
+    private JComponent content = new JPanel();
+    
+    /** the panel which is added to this {@link JLayeredPane} */
+    private JComponent base;
     
     /**
      * Creates a new panel
      */
     public OverpaintablePanel(){
-        setLayer( panel, DEFAULT_LAYER );
+    	base = content;
+    	
+        setLayer( base, DEFAULT_LAYER );
         setLayer( overlay, DRAG_LAYER );
         
-        add( panel );
+        add( base );
         add( overlay );
     }
     
@@ -64,11 +69,7 @@ public class OverpaintablePanel extends JLayeredPane {
         if( content == null )
             throw new IllegalArgumentException( "Content must not be null" );
         
-        remove( panel );
-        panel = content;
-        
-        setLayer( content, DEFAULT_LAYER );
-        add( content );
+        this.content = content;
     }
     
     /**
@@ -76,8 +77,35 @@ public class OverpaintablePanel extends JLayeredPane {
      * @return the layer
      */
     public JComponent getContentPane(){
-        return panel;
+        return content;
     }
+    
+    /**
+     * Sets the panel which is added to <code>this</code>, and which is an
+     * ancestor of the content-pane. The content-pane is replaced by
+     * <code>base</code> when this method is called.
+     * @param base the new base
+     */
+    public void setBasePane( JComponent base ){
+    	if( base == null )
+    		throw new IllegalArgumentException( "Base must not be null" );
+    	
+    	content = base;
+    	
+    	remove( this.base );
+		this.base = base;
+		
+		setLayer( base, DEFAULT_LAYER );
+		add( base );
+	}
+    
+    /**
+     * The basic panel, directly added to <code>this</code>.
+     * @return the basic panel, an ancestor of the content-pane.
+     */
+    public JComponent getBasePane(){
+		return base;
+	}
     
     /**
      * Paints the overlay over all components.
@@ -89,7 +117,7 @@ public class OverpaintablePanel extends JLayeredPane {
     
     @Override
     public void doLayout() {
-        panel.setBounds( 0, 0, getWidth(), getHeight() );
+        base.setBounds( 0, 0, getWidth(), getHeight() );
         overlay.setBounds( 0, 0, getWidth(), getHeight() );
     }
     

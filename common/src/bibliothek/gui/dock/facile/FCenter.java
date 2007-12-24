@@ -28,21 +28,19 @@ package bibliothek.gui.dock.facile;
 import java.awt.BorderLayout;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
-import bibliothek.gui.dock.action.ListeningDockAction;
+import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.FlapDockStation.Direction;
 import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.facile.intern.FControlAccess;
 import bibliothek.gui.dock.facile.intern.FStateManager;
 import bibliothek.gui.dock.facile.intern.FacileDockable;
-import bibliothek.gui.dock.station.FlapDockStation;
-import bibliothek.gui.dock.station.SplitDockStation;
-import bibliothek.gui.dock.station.FlapDockStation.Direction;
 
 /**
  * A component that is normally set into the center of the
@@ -55,9 +53,7 @@ import bibliothek.gui.dock.station.FlapDockStation.Direction;
  * a {@link FControl} to get a <code>FCenter</code>. 
  * @author Benjamin Sigg
  */
-public class FCenter {
-    /** the component which will show the elements of this center */
-    private JComponent component;
+public class FCenter extends JPanel{
     
     /** the child in the center */
     private SplitDockStation center;
@@ -76,12 +72,7 @@ public class FCenter {
      * @param access connection to a {@link FControl}
      */
     public FCenter( final FControlAccess access ){
-        center = new SplitDockStation(){
-            @Override
-            protected ListeningDockAction createFullScreenAction() {
-                return null;
-            }
-        };
+        center = access.getOwner().getFactory().createSplitDockStation();
         center.setExpandOnDoubleclick( false );
         
         north = access.getOwner().getFactory().createFlapDockStation();
@@ -101,13 +92,12 @@ public class FCenter {
         west.setAutoDirection( false );
         west.setDirection( Direction.EAST );
         
-        JPanel content = new JPanel( new BorderLayout() );
-        content.add( center, BorderLayout.CENTER );
-        content.add( north.getComponent(), BorderLayout.NORTH );
-        content.add( south.getComponent(), BorderLayout.SOUTH );
-        content.add( east.getComponent(), BorderLayout.EAST );
-        content.add( west.getComponent(), BorderLayout.WEST );
-        component = access.getOwner().getFactory().monitor( content, access.getOwner() );
+        setLayout( new BorderLayout() );
+        add( center, BorderLayout.CENTER );
+        add( north.getComponent(), BorderLayout.NORTH );
+        add( south.getComponent(), BorderLayout.SOUTH );
+        add( east.getComponent(), BorderLayout.EAST );
+        add( west.getComponent(), BorderLayout.WEST );
         
         FStateManager state = access.getStateManager();
         state.add( "center center", center );
@@ -151,13 +141,5 @@ public class FCenter {
                 return false;
             }
         });
-    }
-    
-    /**
-     * Gets the component which contains all stations of this center.
-     * @return the component
-     */
-    public JComponent getComponent() {
-        return component;
     }
 }

@@ -27,7 +27,7 @@
 package bibliothek.gui.dock.event;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.SplitDockStation;
 
 /**
  * A listener which is added to a {@link SplitDockStation}. The listener

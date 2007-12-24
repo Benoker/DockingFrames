@@ -29,7 +29,7 @@ package bibliothek.gui.dock.station.split;
 import java.util.*;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.SplitDockStation;
 
 /**
  * A class that provides a grid for {@link Dockable Dockables}. The grid can

@@ -37,9 +37,9 @@ import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
-import bibliothek.gui.dock.DockableDisplayer;
+import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.OverpaintablePanel;
-import bibliothek.gui.dock.station.ScreenDockStation;
 import bibliothek.gui.dock.station.StationPaint;
 
 

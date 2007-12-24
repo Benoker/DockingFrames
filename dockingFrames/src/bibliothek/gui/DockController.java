@@ -33,10 +33,8 @@ import java.util.*;
 import javax.swing.FocusManager;
 import javax.swing.SwingUtilities;
 
-import bibliothek.gui.dock.DockAcceptance;
 import bibliothek.gui.dock.DockElement;
-import bibliothek.gui.dock.IconManager;
-import bibliothek.gui.dock.SingleParentRemover;
+import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.accept.MultiDockAcceptance;
 import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
@@ -49,6 +47,7 @@ import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.IconManager;
 
 /**
  * A controller is needed to drag and drop {@link Dockable dockables} from

@@ -33,13 +33,13 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.IconManager;
+import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.actions.GroupedButtonDockAction;
 import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.event.SplitDockListener;
-import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.PropertyValue;
 
 /**

@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -24,7 +24,7 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock.station;
+package bibliothek.gui.dock;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
@@ -46,13 +46,16 @@ import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.*;
-import bibliothek.gui.dock.DockElement;
-import bibliothek.gui.dock.DockFactory;
-import bibliothek.gui.dock.DockableDisplayer;
-import bibliothek.gui.dock.DockableProperty;
 import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.dockable.DockHierarchyObserver;
 import bibliothek.gui.dock.event.*;
+import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.station.Combiner;
+import bibliothek.gui.dock.station.DisplayerCollection;
+import bibliothek.gui.dock.station.DisplayerFactory;
+import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.OverpaintablePanel;
+import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.split.*;
 import bibliothek.gui.dock.station.split.SplitDockTree.Key;
 import bibliothek.gui.dock.station.support.*;
@@ -280,7 +283,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      * Constructs a new {@link SplitDockStation}. 
      */
     public SplitDockStation(){
-        setContentPane( new Content() );
+        setBasePane( new Content() );
         
         displayers = new DisplayerCollection( this, displayerFactory );
         

@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -37,11 +37,14 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 /**
- * A panel containing two children: a "ContentPane" and a "GlassPane". The 
- * ContentPane could be an arbitrary {@link JComponent}. The GlassPane is 
- * always the same panel. The GlassPane catches all MouseEvents, informs
+ * A panel containing three children: a "ContentPane", a "BasePane" and a "GlassPane". 
+ * The "BasePane" is an ancestor of "ContentPane", or the same component
+ * as the "ContentPane". The Base- and ContentPane can be an arbitrary {@link JComponent}s.
+ * The GlassPane is always the same panel. The GlassPane catches all MouseEvents, informs
  * sometimes a {@link SecureMouseFocusObserver} about the calls, and then dispatches
- * the events to the ContentPane or one of the children of ContentPane.
+ * the events to the ContentPane or one of the children of ContentPane.<br>
+ * <b>Note:</b> clients can use {@link SecureDockController#wrap(JComponent)} to
+ * create and register a {@link GlassedPane} in one step.
  * @author Benjamin Sigg
  */
 public class GlassedPane extends JPanel{
@@ -63,7 +66,16 @@ public class GlassedPane extends JPanel{
     }
     
     /**
-     * Sets the focuscontroller which has to be informed when the mouse is clicked
+     * Creates a new pane and registers <code>this</code> at <code>observer</code>.
+     * @param observer the observer <code>this</code> has to be registered at
+     */
+    public GlassedPane( SecureMouseFocusObserver observer ){
+    	this();
+    	observer.addGlassPane( this );
+    }
+    
+    /**
+     * Sets the focus-observer which has to be informed when the mouse is clicked
      * or the mouse wheel is moved.
      * @param focusController the controller, may be <code>null</code>
      */

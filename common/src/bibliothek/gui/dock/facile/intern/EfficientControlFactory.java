@@ -25,16 +25,13 @@
  */
 package bibliothek.gui.dock.facile.intern;
 
-import java.awt.Component;
-import java.awt.Container;
-
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.dock.facile.FControl;
-import bibliothek.gui.dock.station.FlapDockStation;
-import bibliothek.gui.dock.station.ScreenDockStation;
+import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.action.ListeningDockAction;
 
 /**
  * A factory that uses the most efficient elements, can only be used in
@@ -55,16 +52,13 @@ public class EfficientControlFactory implements FControlFactory {
     public ScreenDockStation createScreenDockStation( JFrame owner ) {
         return new ScreenDockStation( owner );
     }
-
-    public Component monitor( Component component, FControl control ) {
-        return component;
-    }
     
-    public Container monitor( Container component, FControl control ) {
-        return component;
-    }
-    
-    public JComponent monitor( JComponent component, FControl control ) {
-        return component;
+    public SplitDockStation createSplitDockStation(){
+    	 return new SplitDockStation(){
+             @Override
+             protected ListeningDockAction createFullScreenAction() {
+                 return null;
+             }
+         };
     }
 }

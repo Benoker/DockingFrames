@@ -30,8 +30,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import bibliothek.gui.dock.AbstractDockableProperty;
-import bibliothek.gui.dock.station.ScreenDockStation;
+import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.layout.AbstractDockableProperty;
 
 /**
  * This property is used on {@link ScreenDockStation ScreenDockStations}

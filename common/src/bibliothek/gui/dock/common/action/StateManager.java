@@ -37,21 +37,21 @@ import javax.swing.SwingUtilities;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockableProperty;
-import bibliothek.gui.dock.IconManager;
-import bibliothek.gui.dock.PropertyTransformer;
+import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.event.*;
-import bibliothek.gui.dock.station.FlapDockStation;
-import bibliothek.gui.dock.station.ScreenDockStation;
-import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 import bibliothek.gui.dock.station.split.SplitDockTree;
 import bibliothek.gui.dock.support.action.ModeTransitionManager;
 import bibliothek.gui.dock.support.util.GenericStreamTransformation;
 import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.IconManager;
 
 /**
  * A manager that can minimize/normalize/maximize and externalize a

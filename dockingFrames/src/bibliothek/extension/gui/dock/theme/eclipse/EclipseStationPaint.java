@@ -30,8 +30,8 @@ import java.awt.Rectangle;
 import java.awt.Graphics2D;
 import java.awt.BasicStroke;
 
+import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.station.StationPaint;
-import bibliothek.gui.dock.station.SplitDockStation;
 import bibliothek.gui.DockStation;
 
 /**

@@ -26,6 +26,11 @@
 
 package bibliothek.gui.dock.security;
 
+import java.awt.Component;
+import java.awt.GridLayout;
+
+import javax.swing.JComponent;
+
 import sun.security.util.SecurityConstants;
 import bibliothek.gui.DockController;
 
@@ -93,5 +98,32 @@ public class SecureDockController extends DockController {
     @Override
     public SecureKeyboardController getKeyboardController(){
         return (SecureKeyboardController)super.getKeyboardController();
+    }
+    
+    /**
+     * Wraps <code>component</code> into a {@link GlassedPane} and registers
+     * the <code>GlassedPane</code>.
+     * @param component the component to envelope
+     * @return the replacement of <code>component</code>
+     */
+    public GlassedPane wrap( Component component ){
+    	GlassedPane pane = new GlassedPane();
+    	pane.getContentPane().setLayout( new GridLayout( 1, 1 ) );
+    	pane.getContentPane().add( component );
+    	getFocusObserver().addGlassPane( pane );
+    	return pane;
+    }
+
+    /**
+     * Wraps <code>component</code> into a {@link GlassedPane} and registers
+     * the <code>GlassedPane</code>.
+     * @param component the component to envelope
+     * @return the replacement of <code>component</code>
+     */
+    public GlassedPane wrap( JComponent component ){
+    	GlassedPane pane = new GlassedPane();
+    	pane.setContentPane( component );
+    	getFocusObserver().addGlassPane( pane );
+    	return pane;
     }
 }

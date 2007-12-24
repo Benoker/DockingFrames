@@ -37,7 +37,7 @@ import java.util.Map;
 import javax.swing.border.Border;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.SplitDockStation;
+import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockTree.Key;
 
 /**

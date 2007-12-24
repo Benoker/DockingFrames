@@ -28,8 +28,8 @@ package bibliothek.gui.dock.themes.basic;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.station.Combiner;
-import bibliothek.gui.dock.station.StackDockStation;
 
 /**
  * A simple implementation of {@link Combiner}, which merges two {@link Dockable Dockables}
