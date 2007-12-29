@@ -46,16 +46,6 @@ public abstract class Behavior {
      * @return the new visitor
      */
     protected Board.CellVisitor createAttackVisitor( final Board board, final Figure figure, final Board.CellVisitor original ){
-        return new Board.CellVisitor(){
-            public boolean visit( int r, int c, Figure f ) {
-                Board copy = board.copy();
-                copy.move( figure.getRow(), figure.getColumn(), r, c );
-                copy.buildAttackMatrix();
-                if( !copy.isKingAttacked() )
-                    return original.visit( r, c, figure );
-                else
-                    return true;
-            }
-        };
+        return call("new Board.CellVisitor(){\n  public boolean visit(  int r,  int c,  Figure f){\n    Board copy=board.copy();\n    copy.move(figure.getRow(),figure.getColumn(),r,c);\n    copy.buildAttackMatrix();\n    if (!copy.isKingAttacked())     return original.visit(r,c,figure);\n else     return true;\n  }\n}\n");
     }
 }

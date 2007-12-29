@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.facile.intern;
 
 import bibliothek.gui.dock.facile.FDockable;
+import bibliothek.gui.dock.facile.FLocation;
 
 /**
  * An interface giving access to the internal methods of an {@link FDockable}. Only
@@ -57,4 +58,11 @@ public interface FDockableAccess {
      * @return the unique id
      */
     public String getUniqueId();
+    
+    /**
+     * Gets the user set location of this dockable. Sets the location
+     * to <code>null</code>.
+     * @return the location
+     */
+    public FLocation internalLocation();
 }

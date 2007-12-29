@@ -200,7 +200,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         
         station.addSplitDockStationListener( listener );
     }
-    
+
     /**
      * Adds a station to which a {@link Dockable} can be <i>minimized</i>.
      * If this is the first call to this method, then
@@ -248,6 +248,34 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         if( defaultExternal == null )
             defaultExternal = station;
     }
+    
+    /**
+     * Removes the {@link DockStation} <code>name</code> from this manager. If
+     * the station is a default-station, then this property is set to <code>null</code>.
+     * @param name the name of the station to remove
+     */
+    public void remove( String name ){
+    	if( name == null )
+    		throw new NullPointerException( "name must not be null" );
+    	
+    	DockStation station = stations.remove( name );
+    	normal.remove( name );
+    	mini.remove( name );
+    	external.remove( name );
+    	
+    	if( station == defaultExternal )
+    		defaultExternal = null;
+    	
+    	if( station == defaultMini )
+    		defaultMini = null;
+    	
+    	if( station == defaultNormal )
+    		defaultNormal = null;
+    	
+    	if( station == maxi )
+    		maxi = null;
+    }
+    
     
     @Override
     protected String[] availableModes( String current, Dockable dockable ) {
@@ -304,7 +332,9 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
 
     @Override
     protected void transition( String oldMode, String newMode, Dockable dockable ) {
-        store( oldMode, dockable );
+    	if( oldMode != null ){
+    		store( oldMode, dockable );
+    	}
         if( MAXIMIZED.equals( newMode )){
         	maximize( dockable );
         }
@@ -485,11 +515,24 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
             setProperties( mode, dockable, null );
         }
         else{
-            Location location = new Location();
-            location.root = root;
-            location.location = DockUtilities.getPropertyChain( rootStation, dockable );
-            setProperties( mode, dockable, location );
+            DockableProperty location = DockUtilities.getPropertyChain( rootStation, dockable );
+            setProperties( mode, dockable, new Location( root, location ) );
         }
+    }
+    
+    /**
+     * Gets the name of the root of <code>dockable</code>.
+     * @param dockable the element whose station is searched
+     * @return the name of the root
+     */
+    protected String getRootName( Dockable dockable ){
+    	for( Map.Entry<String, DockStation> station : stations.entrySet() ){
+            if( DockUtilities.isAnchestor( station.getValue(), dockable )){
+                return station.getKey();
+            }
+        }
+        
+    	return null;
     }
     
     /**
@@ -501,6 +544,16 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         private String root;
         /** the exact location */
         private DockableProperty location;
+        
+        /**
+         * Creates a new location.
+         * @param root the name of the root station
+         * @param location the location relatively to the root station
+         */
+        public Location( String root, DockableProperty location ){
+        	this.root = root;
+        	this.location = location;
+        }
         
         /**
          * Gets the name of the root-station.
@@ -533,10 +586,9 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
             transformer.write( element.location, out );
         }
         public Location read( DataInputStream in ) throws IOException {
-            Location location = new Location();
-            location.root = in.readUTF();
-            location.location = transformer.read( in );
-            return location;
+            String root = in.readUTF();
+            DockableProperty location = transformer.read( in );
+            return new Location( root, location );
         }
     }
     

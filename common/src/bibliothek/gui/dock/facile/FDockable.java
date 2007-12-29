@@ -72,6 +72,9 @@ public class FDockable {
 	/** whether this dockable can be closed by the user */
 	private boolean closeable;
 	
+	/** the location of this dockable */
+	private FLocation location = null;
+	
 	/** a liste of listeners that were added to this dockable */
 	private List<FDockableListener> listeners = new ArrayList<FDockableListener>();
 	
@@ -334,8 +337,9 @@ public class FDockable {
 	 */
 	public void setVisible( boolean visible ){
 		if( control != null ){
-			if( visible )
+			if( visible ){
 				control.show( this );
+			}
 			else
 				control.hide( this );
 		}
@@ -377,6 +381,38 @@ public class FDockable {
 		return control.getStateManager().getMode( dockable );
 	}
 
+	/**
+	 * Sets the location of this dockable. If this dockable is visible, than
+	 * this method will take immediately effect. Otherwise the location will be
+	 * stored in a cache and read as soon as this dockable is made visible.
+	 * @param location the new location, <code>null</code> is possible, but
+	 * will not move the dockable immediately
+	 */
+	public void setLocation( FLocation location ){
+		this.location = location;
+		
+		if( location == null ){
+			if( control != null && isVisible() ){
+				control.getStateManager().setLocation( dockable, location );
+				location = null;
+			}
+		}
+	}
+	
+	/**
+	 * Gets the location of this dockable. If this dockable is visible, then
+	 * a location will always be returned. Otherwise a location will only
+	 * be returned if it just was set using {@link #setLocation(FLocation)}.
+	 * @return the location or <code>null</code>
+	 */
+	public FLocation getLocation(){
+		if( control != null && isVisible() ){
+			return control.getStateManager().getLocation( dockable );
+		}
+		
+		return location;
+	}
+	
 	/**
 	 * Gets the intern representation of this dockable.
 	 * @return the intern representation.
@@ -433,6 +469,12 @@ public class FDockable {
 		        
 		        public String getUniqueId() {
 		            return uniqueId;
+		        }
+		        
+		        public FLocation internalLocation(){
+		        	FLocation loc = location;
+		        	location = null;
+		        	return loc;
 		        }
 		    });
 		}

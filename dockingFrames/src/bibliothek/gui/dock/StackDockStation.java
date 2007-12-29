@@ -595,12 +595,16 @@ public class StackDockStation extends AbstractDockableStation {
                 DockController controller = getController();
                 if( controller == null ){
                     remove( index, false );
+                    if( destination > index )
+                    	destination--;
                     add( dockable, destination );
                 }
                 else{
                     try{
                         controller.getRegister().setStalled( true );
                         remove( index, false );
+                        if( destination > index )
+                        	destination--;
                         add( dockable, destination );
                     }
                     finally{

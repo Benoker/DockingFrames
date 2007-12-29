@@ -20,27 +20,13 @@ public class HidingTheme extends BasicTheme {
 	 * Creates a new theme
 	 */
     public HidingTheme(){
-        setMovingImageFactory( new DockableMovingImageFactory(){
-            public MovingImage create( DockController controller, Dockable dockable ) {
-                return null;
-            }
-            public MovingImage create( DockController controller, DockTitle snatched ) {
-                return null;
-            }
-        });
+        setMovingImageFactory( call("new DockableMovingImageFactory(){\n  public MovingImage create(  DockController controller,  Dockable dockable){\n    return null;\n  }\n  public MovingImage create(  DockController controller,  DockTitle snatched){\n    return null;\n  }\n}\n"));
     }
 
     @Override
     public void install( DockController controller ) {
         super.install( controller );
-        controller.getDockTitleManager().registerTheme( "chess-board", new DockTitleFactory(){
-            public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
-                return null;
-            }
-            public <D extends Dockable & DockStation> DockTitle createStationTitle( D dockable, DockTitleVersion version ) {
-                return null;
-            }
-        });
+        controller.getDockTitleManager().registerTheme( "chess-board", call("new DockTitleFactory(){\n  public DockTitle createDockableTitle(  Dockable dockable,  DockTitleVersion version){\n    return null;\n  }\n  public <D extends Dockable & DockStation>DockTitle createStationTitle(  D dockable,  DockTitleVersion version){\n    return null;\n  }\n}\n"));
     }
     
     @Override

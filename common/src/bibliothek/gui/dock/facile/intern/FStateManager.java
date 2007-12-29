@@ -43,9 +43,25 @@ import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.common.action.StateManager;
 import bibliothek.gui.dock.event.DockControllerAdapter;
 import bibliothek.gui.dock.event.KeyboardListener;
+import bibliothek.gui.dock.facile.FCenter;
 import bibliothek.gui.dock.facile.FControl;
 import bibliothek.gui.dock.facile.FDockable;
+import bibliothek.gui.dock.facile.FLocation;
 import bibliothek.gui.dock.facile.FDockable.ExtendedMode;
+import bibliothek.gui.dock.facile.location.AbstractFCenterTreeLocation;
+import bibliothek.gui.dock.facile.location.FBaseLocation;
+import bibliothek.gui.dock.facile.location.FCenterTreeLocationNode;
+import bibliothek.gui.dock.facile.location.FCenterTreeLocationRoot;
+import bibliothek.gui.dock.facile.location.FExternalizedLocation;
+import bibliothek.gui.dock.facile.location.FMaximizedLocation;
+import bibliothek.gui.dock.facile.location.FStackLocation;
+import bibliothek.gui.dock.facile.location.Side;
+import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.station.flap.FlapDockProperty;
+import bibliothek.gui.dock.station.screen.ScreenDockProperty;
+import bibliothek.gui.dock.station.split.SplitDockPathProperty;
+import bibliothek.gui.dock.station.split.SplitDockProperty;
+import bibliothek.gui.dock.station.stack.StackDockProperty;
 import bibliothek.gui.dock.support.util.ApplicationResource;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyValue;
@@ -208,6 +224,202 @@ public class FStateManager extends StateManager {
             return FDockable.ExtendedMode.NORMALIZED;
         
         return null;
+    }
+    
+    /**
+     * Tries to set the location of <code>dockable</code>.
+     * @param dockable the element to move
+     * @param location the new location of <code>dockable</code>
+     */
+    public void setLocation( Dockable dockable, FLocation location ){
+    	String root = location.findRoot();
+    	DockableProperty property = location.findProperty();
+    	ExtendedMode mode = location.findMode();
+    	String newMode = null;
+    	
+    	if( root != null && mode != null ){
+	        switch( mode ){
+		        case EXTERNALIZED:
+		            newMode = EXTERNALIZED;
+		            break;
+		        case MAXIMIZED:
+		        	newMode = MAXIMIZED;
+		            break;
+		        case MINIMIZED:
+		        	newMode = MINIMIZED;
+		            break;
+		        case NORMALIZED:
+		        	newMode = NORMALIZED;
+		            break;
+		    }
+	    	
+	        if( mode == ExtendedMode.MAXIMIZED || property != null ){
+		    	String current = currentMode( dockable );
+		    	store( current, dockable );
+		    	setProperties( newMode, dockable, new Location( root, property ) );
+		    	transition( null, newMode, dockable );
+	        }
+    	}
+    }
+    
+    /**
+     * Gets an element describing the location of <code>dockable</code> as
+     * good as possible.
+     * @param dockable the element whose location should be searched
+     * @return the location or <code>null</code> if no location was found
+     */
+    public FLocation getLocation( Dockable dockable ){
+    	if( getMode( dockable ) == ExtendedMode.MAXIMIZED )
+    		return new FMaximizedLocation();
+    	
+    	DockableProperty property = DockUtilities.getPropertyChain( dockable );
+    	return fill( null, property, dockable );
+    }
+    
+    /**
+     * Analyzes the contents of <code>property</code> and tries to create an
+     * {@link FLocation} that matches <code>property</code> as good as possible. 
+     * @param base the parent of the next location to create, can be <code>null</code>
+     * @param property the property whose location should become a child of
+     * <code>base</code>, can be <code>null</code>
+     * @param dockable the element whose location is analyzed
+     * @return either a location matching <code>property</code> and all its successors
+     * as good as possible, <code>base</code> in case <code>property</code> can't
+     * be analyzed or <code>null</code> if no analysis is possible at all
+     */
+    protected FLocation fill( FLocation base, DockableProperty property, Dockable dockable ){
+    	if( property == null )
+    		return base;
+    	
+    	if( base == null ){
+	    	if( property instanceof ScreenDockProperty ){
+	    		ScreenDockProperty screen = (ScreenDockProperty)property;
+	    		FExternalizedLocation extern = new FExternalizedLocation(
+    				screen.getX(), screen.getY(), screen.getWidth(), screen.getHeight() );
+	    		return fill( extern, screen.getSuccessor(), dockable );
+	    	}
+	    	else{
+	    		base = new FBaseLocation( getCenterOf( dockable ) );
+	    	}
+    	}
+    	
+    	if( property instanceof StackDockProperty ){
+    		int index = ((StackDockProperty)property).getIndex();
+    		return fill( new FStackLocation( base, index ), property.getSuccessor(), dockable );
+    	}
+    	
+    	if( property instanceof FlapDockProperty ){
+    		if( base instanceof FBaseLocation ){
+    			FBaseLocation location = (FBaseLocation)base;
+    			FlapDockProperty flap = (FlapDockProperty)property;
+    			
+    			FCenter center = location.getCenter();
+    			String root = getRootName( dockable );
+    			if( root == null )
+    				return base;
+    			
+    			if( center == null ){
+    				if( root.equals( FCenter.getNorthIdentifier( FControl.CENTER_STATIONS_ID ) )){
+    					return fill( location.minimalNorth( flap.getIndex() ), flap.getSuccessor(), dockable );
+    				}
+    				if( root.equals( FCenter.getSouthIdentifier( FControl.CENTER_STATIONS_ID ) )){
+    					return fill( location.minimalSouth( flap.getIndex() ), flap.getSuccessor(), dockable );
+    				}
+    				if( root.equals( FCenter.getEastIdentifier( FControl.CENTER_STATIONS_ID ) )){
+    					return fill( location.minimalEast( flap.getIndex() ), flap.getSuccessor(), dockable );
+    				}
+    				if( root.equals( FCenter.getWestIdentifier( FControl.CENTER_STATIONS_ID ) )){
+    					return fill( location.minimalWest( flap.getIndex() ), flap.getSuccessor(), dockable );
+    				}
+    			}
+    			else{
+    				if( root.equals( center.getNorthIdentifier() )){
+    					return fill( location.minimalNorth( flap.getIndex() ), flap.getSuccessor(), dockable );
+    				}
+    				if( root.equals( center.getSouthIdentifier() )){
+    					return fill( location.minimalSouth( flap.getIndex() ), flap.getSuccessor(), dockable );
+    				}
+    				if( root.equals( center.getEastIdentifier() )){
+    					return fill( location.minimalEast( flap.getIndex() ), flap.getSuccessor(), dockable );
+    				}
+    				if( root.equals( center.getWestIdentifier() )){
+    					return fill( location.minimalWest( flap.getIndex() ), flap.getSuccessor(), dockable );
+    				}    				
+    			}
+    		}
+    		
+    		return null;
+    	}
+    	
+    	if( property instanceof SplitDockProperty ){
+    		if( base instanceof FBaseLocation ){
+    			SplitDockProperty split = (SplitDockProperty)property;
+    			return fill( ((FBaseLocation)base).normalRectangle( split.getX(), split.getY(), split.getWidth(), split.getHeight() ), split.getSuccessor(), dockable );
+    		}
+    	}
+    	
+    	if( property instanceof SplitDockPathProperty ){
+    		if( base instanceof FBaseLocation ){
+    			SplitDockPathProperty path = (SplitDockPathProperty)property;
+    			AbstractFCenterTreeLocation tree = null;
+    			for( SplitDockPathProperty.Node node : path ){
+    				Side side = null;
+    				
+    				switch( node.getLocation() ){
+    					case TOP: 
+    						side = Side.NORTH;
+    						break;
+    					case BOTTOM:
+    						side = Side.SOUTH;
+    						break;
+    					case LEFT: 
+    						side = Side.WEST;
+    						break;
+    					case RIGHT:
+    						side = Side.EAST;
+    						break;
+    				}
+    				
+    				if( tree == null ){
+    					tree = new FCenterTreeLocationRoot( (FBaseLocation)base, node.getSize(), side );
+    				}
+    				else{
+    					tree = new FCenterTreeLocationNode( tree, node.getSize(), side );
+    				}
+    			}
+    			
+    			return fill( tree, path.getSuccessor(), dockable );
+    		}
+    	}
+    	
+    	return base;
+    }
+    
+    /**
+     * Searches the {@link FCenter} on which <code>dockable</code> is shown.
+     * @param dockable the element whose center is searched
+     * @return the center or <code>null</code>
+     */
+    protected FCenter getCenterOf( Dockable dockable ){
+    	DockStation station = DockUtilities.getRoot( dockable );
+    	if( station == null )
+    		return null;
+    	
+    	for( FCenter center : control.getOwner().getCenters() ){
+    		if( center.getCenter() == station )
+    			return center;
+    		
+    		if( center.getEast() == station )
+    			return center;
+    		if( center.getWest() == station )
+    			return center;
+    		if( center.getNorth() == station )
+    			return center;
+    		if( center.getSouth() == station )
+    			return center;
+    	}
+    	
+    	return null;
     }
     
     @Override

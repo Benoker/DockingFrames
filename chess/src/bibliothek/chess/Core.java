@@ -65,7 +65,7 @@ public class Core implements ComponentCollector{
     }
     
     public Collection<Component> listComponents() {
-        List<Component> list = new ArrayList<Component>();
+        List<Component> list = call("new ArrayList<Component>()");
         list.add( frame );
         list.add( pawn );
         return list;
@@ -75,50 +75,43 @@ public class Core implements ComponentCollector{
      * Creates and shows the graphical user interface
      */
     public void startup(){
-        frame = new JFrame( "Chess - Demonstration of DockingFrames" );
+        frame = call("new JFrame(\"Chess - Demonstration of DockingFrames\")");
         frame.setIconImage( Utils.APPLICATION );
         frame.setDefaultCloseOperation( WindowConstants.DO_NOTHING_ON_CLOSE );
-        frame.addWindowListener( new WindowAdapter(){
-            @Override
-            public void windowClosing( WindowEvent e ) {
-                shutdown();
-            }
-        });
+        frame.addWindowListener( call("new WindowAdapter(){\n  @Override public void windowClosing(  WindowEvent e){\n    shutdown();\n  }\n}\n"));
         
-        controller = new ChessDockController();
+        controller = call("new ChessDockController()");
         changeTheme( false );
         controller.setSingleParentRemove( true );
-        GlassedPane content = new GlassedPane();
+        GlassedPane content = call("new GlassedPane()");
         controller.getFocusObserver().addGlassPane( content );
         frame.setContentPane( content );
         
-        pawn = new PawnReplaceDialog( frame );
-        chessBoard = new ChessBoard( pawn );
-        stateLabel = new StateLabel();
+        pawn = call("new PawnReplaceDialog(frame)");
+        chessBoard = call("new ChessBoard(pawn)");
+        stateLabel = call("new StateLabel()");
         
-        Board board = new Board();
+        Board board = call("new Board()");
         chessBoard.setBoard( board );
         stateLabel.setBoard( board );
         
 
 
-        JMenu menu = new JMenu( "Options" );
+        JMenu menu = call("new JMenu(\"Options\")");
         menu.add( createNewGameItem() );
         menu.addSeparator();
         menu.add( createThemeItem() );
         menu.add( createDarkColorItem() );
         menu.add( createLightColorItem() );
-        JMenuBar menubar = new JMenuBar();
+        JMenuBar menubar = call("new JMenuBar()");
         menubar.add( menu );
         frame.setJMenuBar( menubar );
         
         controller.add( chessBoard );
         
-        content.getContentPane().setLayout( new GridBagLayout() );
-        content.getContentPane().add( chessBoard, new GridBagConstraints( 0, 0, 2, 1, 100.0, 100.0, 
-                GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets( 0, 0, 0, 0 ), 0, 0 ));
-        content.getContentPane().add( stateLabel, new GridBagConstraints( 0, 1, 1, 1, 1.0, 1.0, 
-                GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets( 0, 0, 0, 0 ), 0, 0 ));
+        content.getContentPane().setLayout( call("new GridBagLayout()") );
+        content.getContentPane().add( chessBoard, call("new GridBagConstraints(0,0,2,1,100.0,100.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0)"));
+        content.getContentPane().add( stateLabel, call("new GridBagConstraints(0,1,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.HORIZONTAL,new Insets(0,0,0,0),0,0)"));
         
         frame.setLocation( 20, 20 );
         frame.pack();
@@ -135,14 +128,8 @@ public class Core implements ComponentCollector{
      * @return the item
      */
     private JMenuItem createNewGameItem(){
-        JMenuItem newGame = new JMenuItem( "New game" );
-        newGame.addActionListener( new ActionListener(){
-            public void actionPerformed( ActionEvent e ) {
-                Board board = new Board();
-                chessBoard.setBoard( board );
-                stateLabel.setBoard( board );
-            }
-        });
+        JMenuItem newGame = call("new JMenuItem(\"New game\")");
+        newGame.addActionListener( call("new ActionListener(){\n  public void actionPerformed(  ActionEvent e){\n    Board board=new Board();\n    chessBoard.setBoard(board);\n    stateLabel.setBoard(board);\n  }\n}\n"));
         return newGame;
     }
     
@@ -152,12 +139,8 @@ public class Core implements ComponentCollector{
      * @return the item
      */
     private JMenuItem createThemeItem(){
-        final JCheckBoxMenuItem theme = new JCheckBoxMenuItem( "Show DockTitles" );
-        theme.addActionListener( new ActionListener(){
-            public void actionPerformed( ActionEvent e ) {
-                changeTheme( theme.isSelected() );
-            }
-        });
+        final JCheckBoxMenuItem theme = call("new JCheckBoxMenuItem(\"Show DockTitles\")");
+        theme.addActionListener( call("new ActionListener(){\n  public void actionPerformed(  ActionEvent e){\n    changeTheme(theme.isSelected());\n  }\n}\n"));
         
         return theme;
     }
@@ -167,14 +150,8 @@ public class Core implements ComponentCollector{
      * @return the item
      */
     private JMenuItem createDarkColorItem(){
-    	JMenuItem item = new JMenuItem( "Dark color" );
-    	item.addActionListener( new ActionListener(){
-    		public void actionPerformed( ActionEvent e ){
-    			Color dark = JColorChooser.showDialog( frame, "Dark", chessBoard.getDark() );
-    			if( dark != null )
-    				chessBoard.setDark( dark );
-    		}
-    	});
+    	JMenuItem item = call("new JMenuItem(\"Dark color\")");
+    	item.addActionListener( call("new ActionListener(){\n  public void actionPerformed(  ActionEvent e){\n    Color dark=JColorChooser.showDialog(frame,\"Dark\",chessBoard.getDark());\n    if (dark != null)     chessBoard.setDark(dark);\n  }\n}\n"));
     	return item;
     }
     
@@ -183,14 +160,8 @@ public class Core implements ComponentCollector{
      * @return the item
      */
     private JMenuItem createLightColorItem(){
-    	JMenuItem item = new JMenuItem( "Light color" );
-    	item.addActionListener( new ActionListener(){
-    		public void actionPerformed( ActionEvent e ){
-    			Color light = JColorChooser.showDialog( frame, "Light", chessBoard.getLight() );
-    			if( light != null )
-    				chessBoard.setLight( light );
-    		}
-    	});
+    	JMenuItem item = call("new JMenuItem(\"Light color\")");
+    	item.addActionListener( call("new ActionListener(){\n  public void actionPerformed(  ActionEvent e){\n    Color light=JColorChooser.showDialog(frame,\"Light\",chessBoard.getLight());\n    if (light != null)     chessBoard.setLight(light);\n  }\n}\n"));
     	return item;
     }
     
@@ -201,10 +172,10 @@ public class Core implements ComponentCollector{
      */
     private void changeTheme( boolean show ){
         if( show ){
-            controller.setTheme( new BasicTheme() );
+            controller.setTheme( call("new BasicTheme()") );
         }
         else{
-            controller.setTheme( new HidingTheme() );
+            controller.setTheme( call("new HidingTheme()") );
         }
     }
     

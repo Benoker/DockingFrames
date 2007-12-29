@@ -42,10 +42,10 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  */
 public class ChessBoard extends OverpaintablePanel implements DockStation, ChessListener {
 	/** Listener which are informed when anything on this station changes */
-	private List<DockStationListener> listeners = new ArrayList<DockStationListener>();
+	private List<DockStationListener> listeners = call("new ArrayList<DockStationListener>()");
 	
 	/** A factory creating instances of {@link DockableDisplayer} used to show instances of {@link ChessFigure}*/
-	private DisplayerFactory displayerFactory = new ChessDisplayerFactory();
+	private DisplayerFactory displayerFactory = call("new ChessDisplayerFactory()");
 	/** The set of currently used {@link DockableDisplayer} */
 	private DisplayerCollection displayerCollection;
 	
@@ -57,7 +57,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 	/** The fields of the grid */
 	private Field[][] fields;
 	/** A list of the fields which are currently occupied by a {@link ChessFigure} */
-	private List<Field> usedFieldList = new ArrayList<Field>();
+	private List<Field> usedFieldList = call("new ArrayList<Field>()");
 	
 	/** Information about the next drop-action */
 	private DropInfo drop;
@@ -75,9 +75,9 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 	private PawnReplaceDialog pawnReplaceDialog;
 	
 	/** A color used to paint the dark fields of the board */
-	private Color dark = new Color( 209, 139, 71 );
+	private Color dark = call("new Color(209,139,71)");
 	/** A color used to paint the bright fields of the board */
-	private Color light = new Color( 255, 206, 158 );
+	private Color light = call("new Color(255,206,158)");
 	
 	/**
 	 * Creates a new board, but does not add any figures to it.
@@ -88,15 +88,15 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 	    this.pawnReplaceDialog = pawnReplaceDialog;
 		setLayout( null );
 		
-		displayerCollection = new DisplayerCollection( this, displayerFactory );
+		displayerCollection = call("new DisplayerCollection(this,displayerFactory)");
 		
 		fields = new Field[8][8];
 		for( int r = 0; r < 8; r++ )
 			for( int c = 0; c < 8; c++ )
-				fields[r][c] = new Field( r, c );
+				fields[r][c] = call("new Field(r,c)");
 		
-		setBasePane( new ContentPane() );
-		setPreferredSize( new Dimension( 8*64, 8*64 ) );
+		setBasePane( call("new ContentPane()") );
+		setPreferredSize( call("new Dimension(8 * 64,8 * 64)") );
 	}
 	
 	/**
@@ -115,7 +115,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 		    for( int c = 0; c < 8; c++ ){
 		        Figure figure = board.getFigure( r, c );
 		        if( figure != null )
-		            put( r, c, new ChessFigure( figure ) );
+		            put( r, c, call("new ChessFigure(figure)") );
 		        else
 		            put( r, c, null );
 		    }
@@ -191,7 +191,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 	}
 
 	public void changed( Dockable dockable, DockTitle title, boolean active ){
-		title.changed( new DockTitleEvent( dockable, active ) );
+		title.changed( call("new DockTitleEvent(dockable,active)") );
 
 	}
 
@@ -219,7 +219,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 	}
 
 	public void drop( Dockable dockable ){
-		throw new IllegalStateException( "Can't just drop a figure on a chess board" );
+		throw call("new IllegalStateException(\"Can\'t just drop a figure on a chess board\")");
 	}
 
 	public boolean drop( Dockable dockable, DockableProperty property ){
@@ -320,7 +320,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 
 	public DockableProperty getDockableProperty( Dockable dockable ){
 		Field field = getFieldOf( dockable );
-		return new ChessBoardProperty( field.getRow(), field.getColumn() );
+		return call("new ChessBoardProperty(field.getRow(),field.getColumn())");
 	}
 
 	public Dockable getFrontDockable(){
@@ -333,9 +333,9 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 	}
 
 	public Rectangle getStationBounds(){
-		Point location = new Point( 0, 0 );
+		Point location = call("new Point(0,0)");
 		SwingUtilities.convertPointToScreen( location, this );
-		return new Rectangle( location.x, location.y, getWidth(), getHeight() );
+		return call("new Rectangle(location.x,location.y,getWidth(),getHeight())");
 	}
 
 	public DockTheme getTheme(){
@@ -381,7 +381,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 	 * was found, <code>false</code> otherwise
 	 */
 	private boolean prepare( int x, int y, ChessFigure figure ){
-		Point location = new Point( x, y );
+		Point location = call("new Point(x,y)");
 		SwingUtilities.convertPointFromScreen( location, this );
 
 		int w = getWidth();
@@ -402,14 +402,9 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 			r++;
 		
 		if( drop == null || drop.figure != figure ){
-			drop = new DropInfo();
+			drop = call("new DropInfo()");
 			
-			figure.getFigure().reachable( new Board.CellVisitor(){
-			    public boolean visit( int r, int c, Figure figure ) {
-			        drop.targets[r][c] = true;
-			        return true;
-			    }
-			});
+			figure.getFigure().reachable( call("new Board.CellVisitor(){\n  public boolean visit(  int r,  int c,  Figure figure){\n    drop.targets[r][c]=true;\n    return true;\n  }\n}\n"));
 		}
 		
 		drop.figure = figure;
@@ -429,7 +424,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 	public void replace( Dockable old, Dockable next ){
 		Field field = getFieldOf( old );
 		if( field == null )
-			throw new IllegalArgumentException( "Unknown dockable" );
+			throw call("new IllegalArgumentException(\"Unknown dockable\")");
 		put( field.getRow(), field.getColumn(), (ChessFigure)next );
 	}
 

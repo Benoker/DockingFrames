@@ -36,7 +36,7 @@ public class Board {
      *  A list of {@link ChessListener} which are informed whenever the state of
      * this board changes.
      */
-    private List<ChessListener> listeners = new ArrayList<ChessListener>();
+    private List<ChessListener> listeners = call("new ArrayList<ChessListener>()");
     
     /** the white king */
     private Figure white;
@@ -48,27 +48,27 @@ public class Board {
      */
     public Board(){
         for( int i = 0; i < 8; i++ ){
-            put( new Figure( this, Player.WHITE, Figure.Type.PAWN, 1, i ));
-            put( new Figure( this, Player.BLACK, Figure.Type.PAWN, 6, i ));
+            put( call("new Figure(this,Player.WHITE,Figure.Type.PAWN,1,i)"));
+            put( call("new Figure(this,Player.BLACK,Figure.Type.PAWN,6,i)"));
         }
         
-        put( new Figure( this, Player.WHITE, Figure.Type.ROCK, 0, 0 ));
-        put( new Figure( this, Player.WHITE, Figure.Type.KNIGHT, 0, 1 ));
-        put( new Figure( this, Player.WHITE, Figure.Type.BISHOP, 0, 2 ));
-        put( new Figure( this, Player.WHITE, Figure.Type.QUEEN, 0, 3 ));
-        put( white = new Figure( this, Player.WHITE, Figure.Type.KING, 0, 4 ));
-        put( new Figure( this, Player.WHITE, Figure.Type.BISHOP, 0, 5 ));
-        put( new Figure( this, Player.WHITE, Figure.Type.KNIGHT, 0, 6 ));
-        put( new Figure( this, Player.WHITE, Figure.Type.ROCK, 0, 7 ));
+        put( call("new Figure(this,Player.WHITE,Figure.Type.ROCK,0,0)"));
+        put( call("new Figure(this,Player.WHITE,Figure.Type.KNIGHT,0,1)"));
+        put( call("new Figure(this,Player.WHITE,Figure.Type.BISHOP,0,2)"));
+        put( call("new Figure(this,Player.WHITE,Figure.Type.QUEEN,0,3)"));
+        put( white = call("new Figure(this,Player.WHITE,Figure.Type.KING,0,4)"));
+        put( call("new Figure(this,Player.WHITE,Figure.Type.BISHOP,0,5)"));
+        put( call("new Figure(this,Player.WHITE,Figure.Type.KNIGHT,0,6)"));
+        put( call("new Figure(this,Player.WHITE,Figure.Type.ROCK,0,7)"));
         
-        put( new Figure( this, Player.BLACK, Figure.Type.ROCK, 7, 0 ));
-        put( new Figure( this, Player.BLACK, Figure.Type.KNIGHT, 7, 1 ));
-        put( new Figure( this, Player.BLACK, Figure.Type.BISHOP, 7, 2 ));
-        put( new Figure( this, Player.BLACK, Figure.Type.QUEEN, 7, 3 ));
-        put( black = new Figure( this, Player.BLACK, Figure.Type.KING, 7, 4 ));
-        put( new Figure( this, Player.BLACK, Figure.Type.BISHOP, 7, 5 ));
-        put( new Figure( this, Player.BLACK, Figure.Type.KNIGHT, 7, 6 ));
-        put( new Figure( this, Player.BLACK, Figure.Type.ROCK, 7, 7 ));
+        put( call("new Figure(this,Player.BLACK,Figure.Type.ROCK,7,0)"));
+        put( call("new Figure(this,Player.BLACK,Figure.Type.KNIGHT,7,1)"));
+        put( call("new Figure(this,Player.BLACK,Figure.Type.BISHOP,7,2)"));
+        put( call("new Figure(this,Player.BLACK,Figure.Type.QUEEN,7,3)"));
+        put( black = call("new Figure(this,Player.BLACK,Figure.Type.KING,7,4)"));
+        put( call("new Figure(this,Player.BLACK,Figure.Type.BISHOP,7,5)"));
+        put( call("new Figure(this,Player.BLACK,Figure.Type.KNIGHT,7,6)"));
+        put( call("new Figure(this,Player.BLACK,Figure.Type.ROCK,7,7)"));
     }
     
     /**
@@ -98,7 +98,7 @@ public class Board {
      * @return the copy
      */
     public Board copy(){
-        return new Board( this );
+        return call("new Board(this)");
     }
     
     /**
@@ -167,12 +167,7 @@ public class Board {
             for( int c = 0; c < 8; c++ ){
                 if( figures[r][c] != null ){
                     if( figures[r][c].getPlayer() == player.opponent() ){
-                        figures[r][c].attackable( new CellVisitor(){
-                            public boolean visit( int r, int c, Figure figure ) {
-                                attacked[r][c] = true;
-                                return true;
-                            }
-                        });
+                        figures[r][c].attackable( call("new CellVisitor(){\n  public boolean visit(  int r,  int c,  Figure figure){\n    attacked[r][c]=true;\n    return true;\n  }\n}\n"));
                     }
                 }
             }

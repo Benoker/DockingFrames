@@ -67,11 +67,16 @@ public class FCenter extends JPanel{
     /** the child at the west border */
     private FlapDockStation west;
     
+    /** an identifier for this center */
+    private String uniqueId;
+    
     /**
      * Creates a new center.
      * @param access connection to a {@link FControl}
+     * @param uniqueId a unique identifier of this center
      */
-    public FCenter( final FControlAccess access ){
+    public FCenter( final FControlAccess access, String uniqueId ){
+    	this.uniqueId = uniqueId;
         center = access.getOwner().getFactory().createSplitDockStation();
         center.setExpandOnDoubleclick( false );
         
@@ -100,18 +105,18 @@ public class FCenter extends JPanel{
         add( west.getComponent(), BorderLayout.WEST );
         
         FStateManager state = access.getStateManager();
-        state.add( "center center", center );
-        state.add( "center south", south );
-        state.add( "center north", north );
-        state.add( "center east", east );
-        state.add( "center west", west );
+        state.add( getCenterIdentifier(), center );
+        state.add( getSouthIdentifier(), south );
+        state.add( getNorthIdentifier(), north );
+        state.add( getEastIdentifier(), east );
+        state.add( getWestIdentifier(), west );
         
         DockFrontend frontend = access.getOwner().intern();
-        frontend.addRoot( center, "center center" );
-        frontend.addRoot( north, "center north" );
-        frontend.addRoot( south, "center south" );
-        frontend.addRoot( east, "center east" );
-        frontend.addRoot( west, "center west" );
+        frontend.addRoot( center, getCenterIdentifier() );
+        frontend.addRoot( north, getNorthIdentifier() );
+        frontend.addRoot( south, getSouthIdentifier() );
+        frontend.addRoot( east, getEastIdentifier() );
+        frontend.addRoot( west, getWestIdentifier() );
         frontend.setDefaultStation( center );
         
         frontend.getController().getDoubleClickController().addListener( new DoubleClickListener(){
@@ -141,5 +146,141 @@ public class FCenter extends JPanel{
                 return false;
             }
         });
+    }
+    
+    /**
+     * Gets the unique id of this center.
+     * @return the unique id
+     */
+    public String getUniqueId(){
+		return uniqueId;
+	}
+    
+    /**
+     * Gets the station in the center of this {@link FCenter}.
+     * @return the central station
+     */
+    public SplitDockStation getCenter(){
+		return center;
+	}
+    
+    /**
+     * Gets the station in the north of this {@link FCenter}
+     * @return the station in the north
+     */
+    public FlapDockStation getNorth(){
+		return north;
+	}
+
+    /**
+     * Gets the station in the south of this {@link FCenter}
+     * @return the station in the south
+     */
+    public FlapDockStation getSouth(){
+		return south;
+	}
+    
+    /**
+     * Gets the station in the east of this {@link FCenter}
+     * @return the station in the east
+     */
+    public FlapDockStation getEast(){
+		return east;
+	}
+    
+    /**
+     * Gets the station in the west of this {@link FCenter}
+     * @return the station in the west
+     */
+    public FlapDockStation getWest(){
+		return west;
+	}
+    
+    /**
+     * Gets the global identifier for the panel in the center.
+     * @return the identifier
+     */
+    public String getCenterIdentifier(){
+    	return getCenterIdentifier( uniqueId );
+    }
+    
+    /**
+     * Creates the global identifier of a panel in the center.
+     * @param uniqueCenterId the unique if of the owning {@link FCenter}.
+     * @return the global identifier
+     */
+    public static String getCenterIdentifier( String uniqueCenterId ){
+    	return uniqueCenterId + " center";
+    }
+
+    /**
+     * Gets the global identifier for the panel in the north.
+     * @return the identifier
+     */
+    public String getNorthIdentifier(){
+    	return getNorthIdentifier( uniqueId );
+    }
+    
+    
+    /**
+     * Creates the global identifier of a panel in the north.
+     * @param uniqueCenterId the unique if of the owning {@link FCenter}.
+     * @return the global identifier
+     */
+    public static String getNorthIdentifier( String uniqueCenterId ){
+    	return uniqueCenterId + " north";
+    }
+
+
+    /**
+     * Gets the global identifier for the panel in the south.
+     * @return the identifier
+     */
+    public String getSouthIdentifier(){
+    	return getSouthIdentifier( uniqueId );
+    }
+    
+    
+    /**
+     * Creates the global identifier of a panel in the south.
+     * @param uniqueCenterId the unique if of the owning {@link FCenter}.
+     * @return the global identifier
+     */
+    public static String getSouthIdentifier( String uniqueCenterId ){
+    	return uniqueCenterId + " south";
+    }
+
+    /**
+     * Gets the global identifier for the panel in the east.
+     * @return the identifier
+     */
+    public String getEastIdentifier(){
+    	return getEastIdentifier( uniqueId );
+    }
+    
+    /**
+     * Creates the global identifier of a panel in the east.
+     * @param uniqueCenterId the unique if of the owning {@link FCenter}.
+     * @return the global identifier
+     */
+    public static String getEastIdentifier( String uniqueCenterId ){
+    	return uniqueCenterId + " east";
+    }
+
+    /**
+     * Gets the global identifier for the panel in the west.
+     * @return the identifier
+     */
+    public String getWestIdentifier(){
+    	return getWestIdentifier( uniqueId );
+    }
+    
+    /**
+     * Creates the global identifier of a panel in the west.
+     * @param uniqueCenterId the unique if of the owning {@link FCenter}.
+     * @return the global identifier
+     */
+    public static String getWestIdentifier( String uniqueCenterId ){
+    	return uniqueCenterId + " west";
     }
 }

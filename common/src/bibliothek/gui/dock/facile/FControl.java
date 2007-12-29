@@ -38,6 +38,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -125,6 +126,12 @@ public class FControl {
     public static final PropertyKey<KeyStroke> KEY_CLOSE = 
         new PropertyKey<KeyStroke>( "fcontrol.close" );
     
+    /** the unique id of the station that handles the externalized dockables */
+    public static final String EXTERNALIZED_STATION_ID = "center";
+    
+    /** the unique id of the default-{@link FCenter} created by this control */
+    public static final String CENTER_STATIONS_ID = "fcontrol";
+    
     /** connection to the real DockingFrames */
 	private DockFrontend frontend;
 	
@@ -148,6 +155,9 @@ public class FControl {
 	
 	/** the center component of the main-frame */
 	private FCenter center;
+	
+	/** the whole list of centers known to this control, includes {@link #center} */
+	private List<FCenter> centers = new ArrayList<FCenter>();
 	
 	/** Access to the internal methods of this control */
 	private FControlAccess access = new Access();
@@ -254,11 +264,11 @@ public class FControl {
 		}
 		
 		stateManager = new FStateManager( access );
-		center = new FCenter( access );
+		center = createCenter( CENTER_STATIONS_ID );
 		
 		final ScreenDockStation screen = factory.createScreenDockStation( frame );
-		stateManager.add( "screen", screen );
-		frontend.addRoot( screen, "screen" );
+		stateManager.add( EXTERNALIZED_STATION_ID, screen );
+		frontend.addRoot( screen, EXTERNALIZED_STATION_ID );
 		screen.setShowing( frame.isVisible() );
 		frame.addComponentListener( new ComponentListener(){
 		    public void componentShown( ComponentEvent e ) {
@@ -290,6 +300,63 @@ public class FControl {
 	    frontend.getController().kill();
 	    for( DestroyHook hook : hooks )
 	        hook.destroy();
+	}
+	
+	/**
+	 * Creates and adds a new {@link FCenter}.
+	 * @param uniqueId the unique id of the new center, the id must be unique
+	 * in respect to all other centers which are registered at this control.
+	 * @return the new center
+	 * @throws IllegalArgumentException if the id is not unique
+	 * @throws NullPointerException if the id is <code>null</code>
+	 */
+	public FCenter createCenter( String uniqueId ){
+		if( uniqueId == null )
+			throw new NullPointerException( "uniqueId must not be null" );
+		
+		for( FCenter center : centers ){
+			if( center.getUniqueId().equals( uniqueId ))
+				throw new IllegalArgumentException( "There exists already a FCenter with the unique id " + uniqueId );
+		}
+		
+		FCenter center = new FCenter( access, uniqueId );
+		centers.add( center );
+		return center;
+	}
+	
+	/**
+	 * Removes <code>center</code> from the list of known centers. This also removes
+	 * the stations of <code>center</code> from this control. Elements aboard the
+	 * stations are made invisible, but not removed from this control.
+	 * @param center the center to remove
+	 * @throws IllegalArgumentException if the default-center equals <code>center</code>
+	 */
+	public void removeCenter( FCenter center ){
+		if( this.center == center )
+			throw new IllegalArgumentException( "The default-center can't be removed" );
+		
+		if( centers.remove( center ) ){
+			frontend.removeRoot( center.getCenter() );
+			frontend.removeRoot( center.getEast() );
+			frontend.removeRoot( center.getWest() );
+			frontend.removeRoot( center.getNorth() );
+			frontend.removeRoot( center.getSouth() );
+			
+			stateManager.remove( center.getCenterIdentifier() );
+			stateManager.remove( center.getEastIdentifier() );
+			stateManager.remove( center.getWestIdentifier() );
+			stateManager.remove( center.getNorthIdentifier() );
+			stateManager.remove( center.getSouthIdentifier() );
+		}
+	}
+	
+	/**
+	 * Gets an unmodifiable list of all {@link FCenter}s registered at
+	 * this control
+	 * @return the list of centers
+	 */
+	public List<FCenter> getCenters(){
+		return Collections.unmodifiableList( centers );
 	}
 	
 	/**
@@ -660,7 +727,16 @@ public class FControl {
 		}
 		
 		public void show( FDockable dockable ){
+			FDockableAccess access = access( dockable );
+			FLocation location = null;
+			if( access != null ){
+				location = access.internalLocation();
+			}
+			
 			frontend.show( dockable.intern() );
+			if( location != null ){
+				stateManager.setLocation( dockable.intern(), location );
+			}
 			stateManager.ensureValidMode( dockable );
 		}
 		

@@ -23,13 +23,13 @@ import bibliothek.chess.util.Utils;
  */
 public class PawnReplaceDialog extends JDialog{
 	/** button for a transformation of a pawn into a queen */
-    private JButton queen = new JButton();
+    private JButton queen = call("new JButton()");
     /** button for a transformation of a pawn into a rock */
-    private JButton rock = new JButton();
+    private JButton rock = call("new JButton()");
     /** button for a transformation of a pawn into a bishop */
-    private JButton bishop = new JButton();
+    private JButton bishop = call("new JButton()");
     /** button for a transformation of a pawn into a knight */
-    private JButton knight = new JButton();
+    private JButton knight = call("new JButton()");
     
     /** the pawn which will be transformed */
     private Figure current;
@@ -42,21 +42,19 @@ public class PawnReplaceDialog extends JDialog{
         super( owner, "Replace", true );
         setDefaultCloseOperation( DO_NOTHING_ON_CLOSE );
         
-        setLayout( new GridBagLayout() );
-        JPanel panel = new JPanel( new GridLayout( 1, 4 ));
-        add( panel, new GridBagConstraints( 0, 0, 1, 1, 1.0, 1.0,
-                GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                new Insets( 2, 2, 2, 2 ), 0, 0 ));
+        setLayout( call("new GridBagLayout()") );
+        JPanel panel = call("new JPanel(new GridLayout(1,4))");
+        add( panel, call("new GridBagConstraints(0,0,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.NONE,new Insets(2,2,2,2),0,0)"));
         
         panel.add( queen );
         panel.add( rock );
         panel.add( bishop );
         panel.add( knight );
         
-        queen.addActionListener( new Listener( Figure.Type.QUEEN ) );
-        rock.addActionListener( new Listener( Figure.Type.ROCK ) );
-        bishop.addActionListener( new Listener( Figure.Type.BISHOP ) );
-        knight.addActionListener( new Listener( Figure.Type.KNIGHT ) );
+        queen.addActionListener( call("new Listener(Figure.Type.QUEEN)") );
+        rock.addActionListener( call("new Listener(Figure.Type.ROCK)") );
+        bishop.addActionListener( call("new Listener(Figure.Type.BISHOP)") );
+        knight.addActionListener( call("new Listener(Figure.Type.KNIGHT)") );
     }
     
     /**
@@ -101,7 +99,7 @@ public class PawnReplaceDialog extends JDialog{
         
         public void actionPerformed( ActionEvent e ) {
             setVisible( false );
-            current = new Figure( current.getBoard(), current.getPlayer(), type, current.getRow(), current.getColumn());
+            current = call("new Figure(current.getBoard(),current.getPlayer(),type,current.getRow(),current.getColumn())");
         }
     }
 }

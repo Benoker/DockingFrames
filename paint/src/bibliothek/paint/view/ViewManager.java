@@ -35,9 +35,9 @@ import java.util.ListIterator;
 
 import bibliothek.gui.dock.facile.FControl;
 import bibliothek.gui.dock.facile.FDockable;
+import bibliothek.gui.dock.facile.FLocation;
 import bibliothek.gui.dock.facile.FMultipleDockable;
 import bibliothek.gui.dock.facile.FMultipleDockableFactory;
-import bibliothek.gui.dock.facile.FDockable.ExtendedMode;
 import bibliothek.paint.model.Picture;
 import bibliothek.paint.model.PictureRepository;
 import bibliothek.paint.model.PictureRepositoryListener;
@@ -83,12 +83,13 @@ public class ViewManager {
         
         repositoryDockable = new PictureRepositoryDockable( this );
         control.add( repositoryDockable );
+        repositoryDockable.setLocation( FLocation.base().normalRectangle( 0, 0, 1, 1 ) );
         repositoryDockable.setVisible( true );
         
         colorDockable = new ColorDockable( this );
         control.add( colorDockable );
+        colorDockable.setLocation( FLocation.base().normalSouth( 0.25 ) );
         colorDockable.setVisible( true );
-        colorDockable.setExtendedMode( ExtendedMode.MINIMIZED );
         
         pictures.addListener( new PictureRepositoryListener(){
         	public void pictureAdded( Picture picture ){
@@ -109,7 +110,7 @@ public class ViewManager {
 	}
     
     /**
-     * Gets the central control of the Docking-framwork.
+     * Gets the central control of the Docking-framework.
      * @return the central control mechanism
      */
     public FControl getControl() {
@@ -122,6 +123,7 @@ public class ViewManager {
      */
     public void open( Picture picture ){
         PictureDockable page = new PictureDockable( pageFactory );
+        page.setLocation( FLocation.base().normalNorth( 0.75 ).stack() );
         pages.add( page );
         page.setPicture( picture );
         page.getPage().setColor( color );
