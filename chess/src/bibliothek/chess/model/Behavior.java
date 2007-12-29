@@ -22,12 +22,10 @@ public abstract class Behavior {
     /**
      * Visits all cells which are reachable within one step from this
      * figure.
-     * @param board the board on which the figure stands
-     * @param figure the figure from which the search begins
      * @param visitor the visitor to call
      */
     public abstract void reachable( Board board, Figure figure, Board.CellVisitor visitor );
-    
+   
     /**
      * Visits all cells which are attackable by <code>figure</code>.
      * @param board the board on which <code>figure</code> stands
@@ -46,6 +44,16 @@ public abstract class Behavior {
      * @return the new visitor
      */
     protected Board.CellVisitor createAttackVisitor( final Board board, final Figure figure, final Board.CellVisitor original ){
-        return call("new Board.CellVisitor(){\n  public boolean visit(  int r,  int c,  Figure f){\n    Board copy=board.copy();\n    copy.move(figure.getRow(),figure.getColumn(),r,c);\n    copy.buildAttackMatrix();\n    if (!copy.isKingAttacked())     return original.visit(r,c,figure);\n else     return true;\n  }\n}\n");
+        return new Board.CellVisitor(){
+            public boolean visit( int r, int c, Figure f ) {
+                Board copy = board.copy();
+                copy.move( figure.getRow(), figure.getColumn(), r, c );
+                copy.buildAttackMatrix();
+                if( !copy.isKingAttacked() )
+                    return original.visit( r, c, figure );
+                else
+                    return true;
+            }
+        };
     }
 }

@@ -21,6 +21,26 @@ public class ChessDockController extends SecureDockController {
      */
     public ChessDockController() {
         super( null );
-        initiate( call("new SecureDockControllerFactory(){\n  @Override public DockRelocator createRelocator(  DockController controller){\n    return new DefaultDockRelocator(controller){\n{\n        setDragDistance(0);\n      }\n      @Override protected Reaction dragMousePressed(      int x,      int y,      int dx,      int dy,      int modifiers,      Dockable dockable){\n        Reaction reaction=super.dragMousePressed(x,y,dx,dy,modifiers,dockable);\n        if (reaction == Reaction.CONTINUE || reaction == Reaction.CONTINUE_CONSUMED) {\n          return createRemote(dockable).drag(x,y,modifiers);\n        }\n        return reaction;\n      }\n    }\n;\n  }\n}\n"));
+        initiate( new SecureDockControllerFactory(){
+            @Override
+            public DockRelocator createRelocator( DockController controller ) {
+                return new DefaultDockRelocator( controller ){
+                    {
+                        setDragDistance( 0 );
+                    }
+                    
+                    @Override
+                    protected Reaction dragMousePressed( int x, int y, int dx, int dy, int modifiers, Dockable dockable ) {
+                        Reaction reaction = super.dragMousePressed( x, y, dx, dy, modifiers, dockable );
+                        if( reaction == Reaction.CONTINUE || reaction == Reaction.CONTINUE_CONSUMED ){
+                            return createRemote( dockable ).drag( x, y, modifiers );
+                        }
+                        
+                        return reaction;
+                    }
+                };             
+            }
+        });
     }
 }
+

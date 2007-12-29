@@ -21,8 +21,19 @@ public class ChessDockTitle extends BasicDockTitle {
 	/**
 	 * A factory creating instances of {@link ChessDockTitle}
 	 */
-    public static final DockTitleFactory FACTORY = call("new DockTitleFactory(){\n  public DockTitle createDockableTitle(  Dockable dockable,  DockTitleVersion version){\n    if (dockable instanceof ChessFigure)     return new ChessDockTitle(dockable,version);\n else     return ControllerTitleFactory.INSTANCE.createDockableTitle(dockable,version);\n  }\n  public <D extends Dockable & DockStation>DockTitle createStationTitle(  D dockable,  DockTitleVersion version){\n    return ControllerTitleFactory.INSTANCE.createStationTitle(dockable,version);\n  }\n}\n");
-    
+    public static final DockTitleFactory FACTORY = new DockTitleFactory(){
+        public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
+            if( dockable instanceof ChessFigure )
+                return new ChessDockTitle( dockable, version );
+            else
+                return ControllerTitleFactory.INSTANCE.createDockableTitle( dockable, version );
+        }
+
+        public <D extends Dockable & DockStation> DockTitle createStationTitle( D dockable, DockTitleVersion version ) {
+            return ControllerTitleFactory.INSTANCE.createStationTitle( dockable, version );
+        }
+    };
+   
     /**
      * Creates a new title.
      * @param dockable the element for which this title is shown

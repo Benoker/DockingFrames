@@ -16,7 +16,15 @@ public class ChessBoardProperty implements DockableProperty {
 	/**
 	 * A factory creating new instances of {@link ChessBoardProperty}.
 	 */
-	public static final DockablePropertyFactory FACTORY = call("new DockablePropertyFactory(){\n  public String getID(){\n    return \"chess board\";\n  }\n  public DockableProperty createProperty(){\n    return new ChessBoardProperty(-1,-1);\n  }\n}\n");
+	public static final DockablePropertyFactory FACTORY = new DockablePropertyFactory(){
+		public String getID(){
+			return "chess board";
+		}
+		
+		public DockableProperty createProperty(){
+			return new ChessBoardProperty( -1, -1 );
+		}
+	};
 	
 	/** properties used if a whole path has to be described */
 	private DockableProperty successor;

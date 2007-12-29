@@ -24,20 +24,20 @@ public class Main implements Demonstration{
 	 * @param args are ignored
 	 */
 	public static void main( String[] args ){
-		Core core = call("new Core(null)");
+		Core core = new Core( null );
 		core.startup();
 	}
 
 	/** a description of this application */
 	private String description;
-	
+
 	/**
 	 * Creates a new Demonstration
 	 */
 	public Main(){
 	    try{
-	        Reader in = call("new InputStreamReader(Main.class.getResourceAsStream(\"/data/bibliothek/chess/description.txt\"))");
-	        StringBuilder builder = call("new StringBuilder()");
+	        Reader in = new InputStreamReader( Main.class.getResourceAsStream( "/data/bibliothek/chess/description.txt" ));
+	        StringBuilder builder = new StringBuilder();
 	        int c;
 	        while( (c = in.read()) != -1 ){
 	            builder.append( (char)c );
@@ -55,7 +55,7 @@ public class Main implements Demonstration{
     }
 
     public Icon getIcon() {
-        return call("new ImageIcon(Utils.APPLICATION)");
+        return new ImageIcon( Utils.APPLICATION );
     }
 
     public BufferedImage getImage() {
@@ -68,7 +68,7 @@ public class Main implements Demonstration{
 
     public void show( Monitor monitor ) {
         monitor.startup();
-        Core core = call("new Core(monitor)");
+        Core core = new Core( monitor );
         core.startup();
     }
 }

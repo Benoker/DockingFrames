@@ -18,18 +18,18 @@ public final class Figure {
 	 */
     public static enum Type{
     	/** most important figure of all */
-        KING( "King", "k", call("new King()") ), 
+        KING( "King", "k", new King() ), 
         /** most dangerous figure */
-        QUEEN( "Queen", "q", call("new Queen()") ),
+        QUEEN( "Queen", "q", new Queen() ),
         /** can move only diagonal */
-        BISHOP( "Bishop", "b", call("new Bishop()") ),
+        BISHOP( "Bishop", "b", new Bishop() ),
         /** can jump over other figures */
-        KNIGHT( "Knight", "n", call("new Knight()") ),
+        KNIGHT( "Knight", "n", new Knight() ),
         /** can move only horizontal and vertical*/
-        ROCK( "Rock", "r", call("new Rock()") ),
+        ROCK( "Rock", "r", new Rock() ),
         /** very slow figure */
-        PAWN( "Pawn", "p", call("new Pawn()") );
-        
+        PAWN( "Pawn", "p", new Pawn() );
+       
         /** The human readable name of this type */
         private String name;
         /** A small version of {@link #name} */
@@ -235,7 +235,7 @@ public final class Figure {
 	 * @return the new figure
 	 */
 	public Figure copy( Board board ){
-	    Figure figure = call("new Figure(board,player,type,row,column,false)");
+	    Figure figure = new Figure( board, player, type, row, column, false );
 	    figure.moved = moved;
 	    figure.justMoved = justMoved;
 	    return figure;
@@ -246,8 +246,13 @@ public final class Figure {
 	 * @return <code>true</code> if the figure can be moved.
 	 */
 	public boolean moveable(){
-	    final Single<Boolean> result = call("new Single<Boolean>(false)");
-	    reachable( call("new Board.CellVisitor(){\n  public boolean visit(  int r,  int c,  Figure figure){\n    result.setA(true);\n    return false;\n  }\n}\n"));
+	    final Single<Boolean> result = new Single<Boolean>( false );
+	    reachable( new Board.CellVisitor(){
+	        public boolean visit( int r, int c, Figure figure ) {
+	            result.setA( true );
+	            return false;
+	        } 
+	    });
 	    return result.getA();
 	}
 	

@@ -50,7 +50,7 @@ public class Utils {
     /**
      * A map containing all icons which are used to display figures
      */
-    private static Map<String, Icon> chessIcons = call("new HashMap<String,Icon>()");
+    private static Map<String, Icon> chessIcons = new HashMap<String, Icon>();
     
     /**
      * Gets an icon to display a figure.
@@ -63,7 +63,7 @@ public class Utils {
         String key = "/data/bibliothek/chess/icons/Chess_" + name + (player == Player.BLACK ? "d" : "l" ) + "t" + size + ".png";
         Icon icon = chessIcons.get( key );
         if( icon == null ){
-            icon = call("new ImageIcon(image(key))");
+            icon = new ImageIcon( image( key ));
             chessIcons.put( key, icon );
         }
         return icon;

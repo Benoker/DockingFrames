@@ -14,7 +14,7 @@ import bibliothek.gui.dock.title.DockTitle;
  */
 public class ChessDisplayerFactory implements DisplayerFactory{
 	public DockableDisplayer create( DockStation station, Dockable dockable, DockTitle title ){
-		BasicDockableDisplayer displayer = call("new BasicDockableDisplayer()");
+		BasicDockableDisplayer displayer = new BasicDockableDisplayer();
 		displayer.setTitle( title );
 		displayer.setDockable( dockable );
 		displayer.setOpaque( false );
