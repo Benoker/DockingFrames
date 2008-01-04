@@ -63,3 +63,5 @@
 - API: removed the necessity to create GlassedPane's in a restricted environment manually
 - API: extensive reorganisation of packages in order to let the important classes/interfaces be in the top-level packages
 ! API: OverpaintablePanel, using a "base" and a "content"-pane, calls to "setContentPane" now have to be replaced by "setBasePane"
+- Bugfix: ScreencaupterMovingImageFactory could throw IllegalArgumentException, thanks Peter for finding that bug
+- Bugfix: DockController.ensureFocusSet could throw NPE

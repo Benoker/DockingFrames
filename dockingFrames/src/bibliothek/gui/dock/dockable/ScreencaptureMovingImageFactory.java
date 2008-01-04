@@ -77,13 +77,19 @@ public class ScreencaptureMovingImageFactory implements DockableMovingImageFacto
         if( factor < 1.0 ){
             int w = (int)( factor * size.getWidth() );
             int h = (int)( factor * size.getHeight() );
-            BufferedImage small = new BufferedImage( w, h, image.getType() );
-            g = small.createGraphics();
-            g.setRenderingHint( RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC );
-            g.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
-            g.drawImage( image, 0, 0, w, h, 0, 0, size.width, size.height, null );
-            g.dispose();
-            image = small;
+            
+            w = Math.max( w, 1 );
+            h = Math.max( h, 1 );
+            
+            if( w != size.width || h != size.height ){
+                BufferedImage small = new BufferedImage( w, h, image.getType() );
+                g = small.createGraphics();
+                g.setRenderingHint( RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC );
+                g.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
+                g.drawImage( image, 0, 0, w, h, 0, 0, size.width, size.height, null );
+                g.dispose();
+                image = small;
+            }
         }
         
         TrueMovingImage moving = new TrueMovingImage();

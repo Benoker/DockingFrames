@@ -648,6 +648,7 @@ public class DockController {
      * has the focus.
      */
     public void ensureFocusSet(){
+        Dockable focusedDockable = this.focusedDockable;
         if( focusedDockable != null ){
             Stack<Dockable> front = new Stack<Dockable>();            
             
