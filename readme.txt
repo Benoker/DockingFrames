@@ -11,6 +11,7 @@ Each directory represents an own project:
 	help - a client of the demonstration-framework, shows JavaDoc.
 	notes - a client of the demonstration-framework, shows some notes
 	chess - a client of the demonstration-framework, creates a new type of DockStation
+	paint - a client using the common project
 
 The projects have these dependencies:
 	dockingFrame:
@@ -33,6 +34,7 @@ The projects have these dependencies:
 	+ help
 	+ notes
 	+ chess
+	+ paint
 
 	help
 	+ demonstration_interface
@@ -42,10 +44,15 @@ The projects have these dependencies:
 	
 	notes
 	+ demonstration_interface
-	+ dockingFrames
+	+ dockingFrame
 	+ common
 
 	chess
 	+ demonstration_interface
-	+ dockingFrames
+	+ dockingFrame
+	+ common
+
+	paint
+	+ demonstration_interface
+	+ dockingFrame
 	+ common
