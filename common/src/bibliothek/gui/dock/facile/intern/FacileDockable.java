@@ -25,46 +25,16 @@
  */
 package bibliothek.gui.dock.facile.intern;
 
-import bibliothek.gui.dock.DefaultDockable;
-import bibliothek.gui.dock.action.DefaultDockActionSource;
-import bibliothek.gui.dock.action.LocationHint;
-import bibliothek.gui.dock.facile.FDockable;
+import bibliothek.gui.Dockable;
 
 /**
- * Represents a {@link bibliothek.gui.dock.facile.FDockable}.
+ * Represents a {@link bibliothek.gui.dock.facile.intern.FDockable}.
  * @author Benjamin Sigg
  */
-public class FacileDockable extends DefaultDockable {
-	/** the model */
-	private FDockable dockable;
-	
-	/** the list of actions of this dockable */
-	private DefaultDockActionSource actions;
-    
-	/**
-     * Creates a new dockable
-     * @param dockable the model of this element
-     */
-    public FacileDockable( FDockable dockable ){
-        this.dockable = dockable;
-        actions = new DefaultDockActionSource(
-        		new LocationHint( LocationHint.DOCKABLE, LocationHint.LEFT ));
-        setActionOffers( actions );
-    }
-    
-	/**
-	 * Gets the modifiable list of actions.
-	 * @return the modifiable list of actions
-	 */
-	public DefaultDockActionSource getActions() {
-        return actions;
-    }
-	
+public interface FacileDockable extends Dockable{
 	/**
 	 * Gets the model of this dockable.
 	 * @return the model
 	 */
-	public FDockable getDockable(){
-		return dockable;
-	}
+	public FDockable getDockable();
 }

@@ -202,7 +202,7 @@ public abstract class MouseFocusObserver implements DockControllerListener {
             Dockable focused = controller.getFocusedDockable();
             boolean change = true;
             if( focused != null )
-                change = !DockUtilities.isAnchestor( dock, focused );
+                change = !DockUtilities.isAncestor( dock, focused );
             
             if( change )
                 controller.setFocusedDockable( dock, false, ensureFocus );

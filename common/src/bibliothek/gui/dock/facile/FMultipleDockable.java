@@ -25,8 +25,8 @@
  */
 package bibliothek.gui.dock.facile;
 
-import bibliothek.gui.dock.dockable.DefaultDockableFactory;
-import bibliothek.gui.dock.facile.intern.FControlAccess;
+import bibliothek.gui.dock.facile.intern.FDockable;
+
 /**
  * A <code>FMultipleDockable</code> is a {@link FDockable} which can have
  * many copies in an {@link FControl}. A {@link FMultipleDockable} can
@@ -39,36 +39,10 @@ import bibliothek.gui.dock.facile.intern.FControlAccess;
  * </ul>
  * @author Benjamin Sigg
  */
-public class FMultipleDockable extends FDockable{
-	/** a factory needed to store or load this dockable */
-	private FMultipleDockableFactory factory;
-	
-	/**
-	 * Creates a new dockable.
-	 * @param factory the factory which created or could create this
-	 * kind of dockable.
-	 */
-	public FMultipleDockable( FMultipleDockableFactory factory ){
-		if( factory == null )
-			throw new NullPointerException( "factory must not be null" );
-		this.factory = factory;
-
-	}
-	
+public interface FMultipleDockable extends FDockable{
 	/**
 	 * Gets the factory that created this dockable.
 	 * @return the factory, not <code>null</code>
 	 */
-	public FMultipleDockableFactory getFactory(){
-		return factory;
-	}
-	
-	@Override
-	void setControl( FControlAccess control ){
-		super.setControl( control );
-		if( control == null )
-		    intern().setFactoryID( DefaultDockableFactory.ID );
-		else
-		    intern().setFactoryID( control.getFactoryId( factory ));
-	}
+	public FMultipleDockableFactory getFactory();
 }

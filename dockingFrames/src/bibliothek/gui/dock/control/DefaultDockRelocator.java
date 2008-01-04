@@ -193,7 +193,7 @@ public class DefaultDockRelocator extends DockRelocator{
         DockController controller = getController();
                 
         for( DockStation station : controller.getRegister().listDockStations() ){   
-            if( movedStation == null || (!DockUtilities.isAnchestor( movedStation, station ) && movedStation != station )){
+            if( movedStation == null || (!DockUtilities.isAncestor( movedStation, station ) && movedStation != station )){
                 if( station.isStationVisible() ){
                     Rectangle bounds = station.getStationBounds();
                     if( bounds == null || bounds.contains( x, y )){
@@ -224,10 +224,10 @@ public class DefaultDockRelocator extends DockRelocator{
      * a is less/equal/more visible than b. 
      */
     protected int compare( DockStation a, DockStation b ){
-        if( DockUtilities.isAnchestor( a, b ))
+        if( DockUtilities.isAncestor( a, b ))
             return -1;
         
-        if( DockUtilities.isAnchestor( b, a ))
+        if( DockUtilities.isAncestor( b, a ))
             return 1;
         
         if( a.canCompare( b ))

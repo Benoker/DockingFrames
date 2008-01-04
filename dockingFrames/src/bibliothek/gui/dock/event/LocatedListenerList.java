@@ -74,7 +74,7 @@ public class LocatedListenerList<L extends LocatedListener> {
             DockElement location = listener.getTreeLocation();
             if( location == null )
                 list.add( listener );
-            else if( element != null && DockUtilities.isAnchestor( location, element ))
+            else if( element != null && DockUtilities.isAncestor( location, element ))
                 list.add( listener );
         }
         
@@ -92,7 +92,7 @@ public class LocatedListenerList<L extends LocatedListener> {
                 if( b == null )
                     return 1;
                 
-                if( DockUtilities.isAnchestor( a, b ))
+                if( DockUtilities.isAncestor( a, b ))
                     return -1;
                 
                 return 1;

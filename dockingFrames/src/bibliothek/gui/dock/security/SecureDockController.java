@@ -85,7 +85,7 @@ public class SecureDockController extends DockController {
      * if <code>factory</code> is <code>null</code>.
      * @param factory the factory that will create the elements of this controller   
      */
-    protected SecureDockController( SecureDockControllerFactory factory ) {
+    public SecureDockController( SecureDockControllerFactory factory ) {
         super( factory );
     }
 

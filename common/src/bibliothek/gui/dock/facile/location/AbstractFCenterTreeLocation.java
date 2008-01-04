@@ -25,7 +25,8 @@
  */
 package bibliothek.gui.dock.facile.location;
 
-import bibliothek.gui.dock.facile.FDockable.ExtendedMode;
+import bibliothek.gui.dock.facile.FLocation;
+import bibliothek.gui.dock.facile.intern.FDockable.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.split.SplitDockPathProperty;
 
@@ -134,11 +135,11 @@ public abstract class AbstractFCenterTreeLocation extends AbstractStackholdingLo
 	 * {@link DockableProperty} describing the this location.
 	 * @return the property
 	 */
-	protected abstract SplitDockPathProperty findPathProperty();
+	protected abstract SplitDockPathProperty findParentProperty();
 	
 	@Override
 	public SplitDockPathProperty findProperty( DockableProperty successor ){
-		SplitDockPathProperty property = findPathProperty();
+		SplitDockPathProperty property = findParentProperty();
 		property.setSuccessor( successor );
 		
 		switch( side ){
@@ -149,13 +150,23 @@ public abstract class AbstractFCenterTreeLocation extends AbstractStackholdingLo
 				property.add( SplitDockPathProperty.Location.BOTTOM, size );
 				break;
 			case EAST:
-				property.add( SplitDockPathProperty.Location.LEFT, size );
+				property.add( SplitDockPathProperty.Location.RIGHT, size );
 				break;
 			case WEST:
-				property.add( SplitDockPathProperty.Location.RIGHT, size );
+				property.add( SplitDockPathProperty.Location.LEFT, size );
 				break;
 		}
 		
 		return property;
+	}
+	
+	@Override
+	public FLocation aside() {
+	    return stack( 1 );
+	}
+	
+	@Override
+	public String toString() {
+	    return "[normal " + side + " " + size + "]";
 	}
 }

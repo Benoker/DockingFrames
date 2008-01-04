@@ -23,33 +23,31 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.facile.action;
+package bibliothek.gui.dock.facile.intern;
 
-import bibliothek.gui.dock.action.DockAction;
-import bibliothek.gui.dock.facile.intern.FDockable;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.control.SingleParentRemover;
+import bibliothek.gui.dock.facile.FWorkingArea;
 
 /**
- * A {@link FAction} is associated with one {@link FDockable}, allowing the
- * user to perform actions which are somehow connected to that <code>FDockable</code>. 
+ * A {@link SingleParentRemover} not removing any {@link FWorkingArea}s.
  * @author Benjamin Sigg
+ *
  */
-public abstract class FAction {
-    /** the internal representation of the action */
-    private DockAction action;
-    
-    /**
-     * Creates a new FAction
-     * @param action the internal representation of this action
-     */
-    protected FAction( DockAction action ){
-        this.action = action;
-    }
-    
-    /**
-     * Gets the internal representation of the action.
-     * @return the representation
-     */
-    public DockAction intern(){
-        return action;
+public class FSingleParentRemover extends SingleParentRemover {
+    @Override
+    protected boolean shouldTest( DockStation station ) {
+        Dockable dockable = station.asDockable();
+        if( dockable == null )
+            return true;
+        
+        if( dockable instanceof FacileDockable ){
+            FDockable fdockable = ((FacileDockable)dockable).getDockable();
+            if( fdockable instanceof FWorkingArea )
+                return false;
+        }
+        
+        return true;
     }
 }

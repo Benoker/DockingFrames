@@ -25,7 +25,7 @@
  */
 package bibliothek.gui.dock.facile.event;
 
-import bibliothek.gui.dock.facile.FDockable;
+import bibliothek.gui.dock.facile.intern.FDockable;
 
 /**
  * A listener added to a {@link FDockable}, this listener will get informed

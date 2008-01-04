@@ -25,7 +25,7 @@
  */
 package bibliothek.gui.dock.facile.event;
 
-import bibliothek.gui.dock.facile.FDockable;
+import bibliothek.gui.dock.facile.intern.FDockable;
 
 /**
  * A class implementing all methods of {@link FDockableListener}. The methods

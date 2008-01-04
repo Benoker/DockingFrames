@@ -332,19 +332,25 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
 
     @Override
     protected void transition( String oldMode, String newMode, Dockable dockable ) {
-    	if( oldMode != null ){
-    		store( oldMode, dockable );
-    	}
-        if( MAXIMIZED.equals( newMode )){
-        	maximize( dockable );
+        try{
+            controller.getRegister().setStalled( true );
+        	if( oldMode != null ){
+        		store( oldMode, dockable );
+        	}
+            if( MAXIMIZED.equals( newMode )){
+            	maximize( dockable );
+            }
+            else{
+            	changeTo( dockable, newMode, true );
+            	unmaximize();
+            }
+            
+            if( !MINIMIZED.equals( newMode ))
+            	controller.setFocusedDockable( dockable, true );
         }
-        else{
-        	changeTo( dockable, newMode, true );
-        	unmaximize();
+        finally{
+            controller.getRegister().setStalled( false );
         }
-        
-        if( !MINIMIZED.equals( newMode ))
-        	controller.setFocusedDockable( dockable, true );
     }
     
     @Override
@@ -504,14 +510,14 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         DockStation rootStation = null;
         
         for( Map.Entry<String, DockStation> station : stations.entrySet() ){
-            if( DockUtilities.isAnchestor( station.getValue(), dockable )){
+            if( DockUtilities.isAncestor( station.getValue(), dockable )){
                 root = station.getKey();
                 rootStation = station.getValue();
                 break;
             }
         }
         
-        if( root == null ){
+        if( root == null || rootStation == dockable ){
             setProperties( mode, dockable, null );
         }
         else{
@@ -527,7 +533,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      */
     protected String getRootName( Dockable dockable ){
     	for( Map.Entry<String, DockStation> station : stations.entrySet() ){
-            if( DockUtilities.isAnchestor( station.getValue(), dockable )){
+            if( DockUtilities.isAncestor( station.getValue(), dockable )){
                 return station.getKey();
             }
         }

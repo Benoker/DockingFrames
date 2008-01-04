@@ -329,7 +329,20 @@ public class DockFrontend {
         
         return info.getStation();
     }
-       
+     
+    /**
+     * Gets a modifiable array containing all {@link DockStation}s which are
+     * registered as root.
+     * @return the list of roots
+     */
+    public DockStation[] getRoots(){
+        DockStation[] stations = new DockStation[ roots.size() ];
+        int i = 0;
+        for( RootInfo info : roots.values() ){
+            stations[i++] = info.station;
+        }
+        return stations;
+    }
     
     /**
      * Sets the default station of this frontend. The default station is needed

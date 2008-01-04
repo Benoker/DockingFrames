@@ -31,15 +31,11 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import bibliothek.gui.dock.facile.DefaultFSingleDockable;
 import bibliothek.gui.dock.facile.FSingleDockable;
 import bibliothek.gui.dock.facile.action.FButton;
 import bibliothek.paint.model.Picture;
@@ -52,7 +48,7 @@ import bibliothek.paint.util.Resources;
  * @author Benjamin Sigg
  *
  */
-public class PictureRepositoryDockable extends FSingleDockable{
+public class PictureRepositoryDockable extends DefaultFSingleDockable{
 	/** the list showing the names of the pictures */
     private JList list;
     /** a model containing all pictures */

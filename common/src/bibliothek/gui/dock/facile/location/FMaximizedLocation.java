@@ -25,10 +25,10 @@
  */
 package bibliothek.gui.dock.facile.location;
 
-import bibliothek.gui.dock.facile.FCenter;
+import bibliothek.gui.dock.facile.FContentArea;
 import bibliothek.gui.dock.facile.FControl;
 import bibliothek.gui.dock.facile.FLocation;
-import bibliothek.gui.dock.facile.FDockable.ExtendedMode;
+import bibliothek.gui.dock.facile.intern.FDockable.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
 
 /**
@@ -48,6 +48,16 @@ public class FMaximizedLocation extends FLocation {
 
 	@Override
 	public String findRoot(){
-		return FCenter.getCenterIdentifier( FControl.CENTER_STATIONS_ID );
+		return FContentArea.getCenterIdentifier( FControl.CONTENT_AREA_STATIONS_ID );
 	}
+	
+	@Override
+	public FLocation aside() {
+	    return this;
+	}
+	
+	@Override
+    public String toString() {
+        return "[maximized]";
+    }
 }

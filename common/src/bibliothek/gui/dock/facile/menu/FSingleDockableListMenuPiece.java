@@ -30,8 +30,8 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.menu.CloseableDockableMenuPiece;
 import bibliothek.gui.dock.event.DockFrontendAdapter;
 import bibliothek.gui.dock.facile.FControl;
-import bibliothek.gui.dock.facile.FDockable;
 import bibliothek.gui.dock.facile.event.FDockableAdapter;
+import bibliothek.gui.dock.facile.intern.FDockable;
 import bibliothek.gui.dock.facile.intern.FacileDockable;
 
 /**

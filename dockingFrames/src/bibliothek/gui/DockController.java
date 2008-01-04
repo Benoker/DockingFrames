@@ -531,7 +531,7 @@ public class DockController {
         if( this.focusedDockable == null )
             setFocusedDockable( focusedDockable, false );
         
-        if( !DockUtilities.isAnchestor( focusedDockable, this.focusedDockable ))
+        if( !DockUtilities.isAncestor( focusedDockable, this.focusedDockable ))
             setFocusedDockable( focusedDockable, false );
     }
     

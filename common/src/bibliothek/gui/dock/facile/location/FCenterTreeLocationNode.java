@@ -50,12 +50,17 @@ public class FCenterTreeLocationNode extends AbstractFCenterTreeLocation {
 	}
 
 	@Override
-	protected SplitDockPathProperty findPathProperty(){
-		return findProperty( null );
+	protected SplitDockPathProperty findParentProperty(){
+		return parent.findProperty( null );
 	}
 
 	@Override
 	public String findRoot(){
 		return parent.findRoot();
+	}
+
+	@Override
+	public String toString() {
+	    return String.valueOf( parent ) + " " + super.toString();
 	}
 }

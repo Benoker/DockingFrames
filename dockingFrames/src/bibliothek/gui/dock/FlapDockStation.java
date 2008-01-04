@@ -1244,7 +1244,7 @@ public class FlapDockStation extends AbstractDockableStation {
                 if( controller.isFocused( FlapDockStation.this ))
                     return;
                 
-                if( dockable == null || !DockUtilities.isAnchestor( FlapDockStation.this, dockable ) ){
+                if( dockable == null || !DockUtilities.isAncestor( FlapDockStation.this, dockable ) ){
                 	setFrontDockable( null );
                 }
             }

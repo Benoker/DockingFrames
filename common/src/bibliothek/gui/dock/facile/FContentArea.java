@@ -39,6 +39,7 @@ import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
 import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.facile.intern.FControlAccess;
+import bibliothek.gui.dock.facile.intern.FDockable;
 import bibliothek.gui.dock.facile.intern.FStateManager;
 import bibliothek.gui.dock.facile.intern.FacileDockable;
 
@@ -49,11 +50,11 @@ import bibliothek.gui.dock.facile.intern.FacileDockable;
  * This component contains in the center a {@link SplitDockStation} allowing
  * to show several {@link FDockable}s at the same time. At each border a
  * {@link FlapDockStation} allows to show "minimized" {@link FDockable}s.<br>
- * Note: clients should not create {@link FCenter}s directly, they should use
+ * Note: clients should not create {@link FContentArea}s directly, they should use
  * a {@link FControl} to get a <code>FCenter</code>. 
  * @author Benjamin Sigg
  */
-public class FCenter extends JPanel{
+public class FContentArea extends JPanel{
     
     /** the child in the center */
     private SplitDockStation center;
@@ -75,7 +76,7 @@ public class FCenter extends JPanel{
      * @param access connection to a {@link FControl}
      * @param uniqueId a unique identifier of this center
      */
-    public FCenter( final FControlAccess access, String uniqueId ){
+    public FContentArea( final FControlAccess access, String uniqueId ){
     	this.uniqueId = uniqueId;
         center = access.getOwner().getFactory().createSplitDockStation();
         center.setExpandOnDoubleclick( false );
@@ -157,7 +158,7 @@ public class FCenter extends JPanel{
 	}
     
     /**
-     * Gets the station in the center of this {@link FCenter}.
+     * Gets the station in the center of this {@link FContentArea}.
      * @return the central station
      */
     public SplitDockStation getCenter(){
@@ -165,7 +166,7 @@ public class FCenter extends JPanel{
 	}
     
     /**
-     * Gets the station in the north of this {@link FCenter}
+     * Gets the station in the north of this {@link FContentArea}
      * @return the station in the north
      */
     public FlapDockStation getNorth(){
@@ -173,7 +174,7 @@ public class FCenter extends JPanel{
 	}
 
     /**
-     * Gets the station in the south of this {@link FCenter}
+     * Gets the station in the south of this {@link FContentArea}
      * @return the station in the south
      */
     public FlapDockStation getSouth(){
@@ -181,7 +182,7 @@ public class FCenter extends JPanel{
 	}
     
     /**
-     * Gets the station in the east of this {@link FCenter}
+     * Gets the station in the east of this {@link FContentArea}
      * @return the station in the east
      */
     public FlapDockStation getEast(){
@@ -189,7 +190,7 @@ public class FCenter extends JPanel{
 	}
     
     /**
-     * Gets the station in the west of this {@link FCenter}
+     * Gets the station in the west of this {@link FContentArea}
      * @return the station in the west
      */
     public FlapDockStation getWest(){
@@ -206,7 +207,7 @@ public class FCenter extends JPanel{
     
     /**
      * Creates the global identifier of a panel in the center.
-     * @param uniqueCenterId the unique if of the owning {@link FCenter}.
+     * @param uniqueCenterId the unique if of the owning {@link FContentArea}.
      * @return the global identifier
      */
     public static String getCenterIdentifier( String uniqueCenterId ){
@@ -224,7 +225,7 @@ public class FCenter extends JPanel{
     
     /**
      * Creates the global identifier of a panel in the north.
-     * @param uniqueCenterId the unique if of the owning {@link FCenter}.
+     * @param uniqueCenterId the unique if of the owning {@link FContentArea}.
      * @return the global identifier
      */
     public static String getNorthIdentifier( String uniqueCenterId ){
@@ -243,7 +244,7 @@ public class FCenter extends JPanel{
     
     /**
      * Creates the global identifier of a panel in the south.
-     * @param uniqueCenterId the unique if of the owning {@link FCenter}.
+     * @param uniqueCenterId the unique if of the owning {@link FContentArea}.
      * @return the global identifier
      */
     public static String getSouthIdentifier( String uniqueCenterId ){
@@ -260,7 +261,7 @@ public class FCenter extends JPanel{
     
     /**
      * Creates the global identifier of a panel in the east.
-     * @param uniqueCenterId the unique if of the owning {@link FCenter}.
+     * @param uniqueCenterId the unique if of the owning {@link FContentArea}.
      * @return the global identifier
      */
     public static String getEastIdentifier( String uniqueCenterId ){
@@ -277,7 +278,7 @@ public class FCenter extends JPanel{
     
     /**
      * Creates the global identifier of a panel in the west.
-     * @param uniqueCenterId the unique if of the owning {@link FCenter}.
+     * @param uniqueCenterId the unique if of the owning {@link FContentArea}.
      * @return the global identifier
      */
     public static String getWestIdentifier( String uniqueCenterId ){

@@ -57,7 +57,7 @@ public class DockRegister {
     private StationListener stationListener = new StationListener();
     
     /** tells whether register and unregister-events should be stalled or not */
-    private boolean stalled = false;
+    private int stalled = 0;
     
     /**
      * Creates a new register.
@@ -346,14 +346,21 @@ public class DockRegister {
      * Sets whether the listener to all {@link DockStation} should forward changes
      * of the tree to the <code>un-/register</code>-methods or not. If the
      * register was stalled and now the argument is <code>false</code>, then
-     * all pending events will be handled immediately.
+     * all pending events will be handled immediately.<br>
+     * Nested calls to this method are possible, if <code>setStalled</code> was
+     * called two times with <code>true</code>, then the events will be fired only
+     * after <code>setStalled</code> was called twice with <code>false</code>.
      * @param stalled <code>true</code> if events should be stalled, <code>false</code>
      * if all pending events should be handled and new events should be handled
      * immediately
      */
     public void setStalled( boolean stalled ){
-		this.stalled = stalled;
-		if( !stalled ){
+		if( stalled )
+		    this.stalled++;
+		else
+		    this.stalled--;
+		
+		if( this.stalled == 0 ){
 			stationListener.fire();
 		}
 	}
@@ -370,19 +377,21 @@ public class DockRegister {
         private Set<Dockable> addedOnPut = new HashSet<Dockable>();
         
         public void fire(){
+            List<Dockable> removedOnPut = new ArrayList<Dockable>( this.removedOnPut );
+            List<Dockable> addedOnPut = new ArrayList<Dockable>( this.addedOnPut );
+            this.removedOnPut.clear();
+            this.addedOnPut.clear();
+            
         	for( Dockable d : removedOnPut )
                 removeDockable( d );
             
             for( Dockable d : addedOnPut )
                 addDockable( d );
-            
-            removedOnPut.clear();
-            addedOnPut.clear();
         }
         
         @Override
         public void dockableAdding( DockStation station, Dockable dockable ) {
-            if( stalled ){
+            if( stalled > 0 ){
                 DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
                     @Override
                     public void handleDockable( Dockable dockable ) {
@@ -412,7 +421,7 @@ public class DockRegister {
 
         @Override
         public void dockableRemoving( DockStation station, Dockable dockable ) {
-            if( stalled ){
+            if( stalled > 0 ){
                 DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
                     @Override
                     public void handleDockable( Dockable dockable ) {
@@ -427,7 +436,7 @@ public class DockRegister {
         public void dockableRemoved( DockStation station, Dockable dockable ) {
             dockable.setDockParent( null );
             
-            if( !stalled ){
+            if( stalled == 0 ){
                 removeDockable( dockable );
             }
         }

@@ -33,6 +33,7 @@ import java.awt.Insets;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import bibliothek.gui.dock.facile.DefaultFMultipleDockable;
 import bibliothek.gui.dock.facile.FMultipleDockable;
 import bibliothek.gui.dock.facile.FMultipleDockableFactory;
 import bibliothek.gui.dock.facile.action.FRadioGroup;
@@ -52,7 +53,7 @@ import bibliothek.paint.view.action.ZoomOut;
  * @author Benjamin Sigg
  *
  */
-public class PictureDockable extends FMultipleDockable {
+public class PictureDockable extends DefaultFMultipleDockable {
 	/** the page painting the picture */
     private Page page;
 

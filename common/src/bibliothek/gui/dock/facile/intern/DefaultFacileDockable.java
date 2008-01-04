@@ -1,3 +1,4 @@
+package bibliothek.gui.dock.facile.intern;
 /*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
@@ -23,33 +24,38 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.facile.action;
-
-import bibliothek.gui.dock.action.DockAction;
-import bibliothek.gui.dock.facile.intern.FDockable;
+import bibliothek.gui.dock.DefaultDockable;
+import bibliothek.gui.dock.action.DefaultDockActionSource;
+import bibliothek.gui.dock.action.LocationHint;
 
 /**
- * A {@link FAction} is associated with one {@link FDockable}, allowing the
- * user to perform actions which are somehow connected to that <code>FDockable</code>. 
+ * A default implementation of {@link FacileDockable}, based on a {@link DefaultDockable}.
  * @author Benjamin Sigg
+ *
  */
-public abstract class FAction {
-    /** the internal representation of the action */
-    private DockAction action;
+public class DefaultFacileDockable extends DefaultDockable implements FacileDockable{
+    /** the model */
+    private FDockable dockable;
+    
+    /** the list of actions of this dockable */
+    private DefaultDockActionSource actions;
     
     /**
-     * Creates a new FAction
-     * @param action the internal representation of this action
+     * Creates a new dockable
+     * @param dockable the model of this element
      */
-    protected FAction( DockAction action ){
-        this.action = action;
+    public DefaultFacileDockable( FDockable dockable ){
+        this.dockable = dockable;
+        actions = new DefaultDockActionSource(
+                new LocationHint( LocationHint.DOCKABLE, LocationHint.LEFT ));
+        setActionOffers( actions );
     }
     
-    /**
-     * Gets the internal representation of the action.
-     * @return the representation
-     */
-    public DockAction intern(){
-        return action;
+    public DefaultDockActionSource getActions() {
+        return actions;
+    }
+    
+    public FDockable getDockable(){
+        return dockable;
     }
 }

@@ -73,6 +73,7 @@ public class SingleParentRemover{
         
         try{
             onTest = true;
+            controller.getRegister().setStalled( true );
             
             int index = 0;
             while( index < controller.getRegister().getStationCount() ){
@@ -85,6 +86,7 @@ public class SingleParentRemover{
         }
         finally{
             onTest = false;
+            controller.getRegister().setStalled( false );
         }
     }
     
@@ -109,52 +111,62 @@ public class SingleParentRemover{
      * @return whether the station was replaced or removed
      */
     private boolean test( DockStation station ){
-        if( !shouldTest( station ))
-            return false;
+        DockController controller = station.getController();
+        if( controller != null )
+            controller.getRegister().setStalled( true );
         
-        if( station.getDockableCount() > 1 )
-            return false;
-        
-        Dockable transform = station.asDockable();
-        if( transform == null )
-            return false;
-        
-        DockStation parent = transform.getDockParent();
-        
-        if( parent == null )
-            return false;
-        
-        if( parent.getController() == null )
-            return false;
-        
-        if( station.getDockableCount() == 0 ){
-            if( !parent.canDrag( transform ))
+        try{
+            if( !shouldTest( station ))
                 return false;
             
-            parent.drag( transform );
-            return true;
-        }
-        else{
-            Dockable dockable = station.getDockable( 0 );
-            if( !station.canDrag( dockable ))
+            if( station.getDockableCount() > 1 )
                 return false;
             
-            if( !parent.accept( dockable ) || !dockable.accept( parent ) )
+            Dockable transform = station.asDockable();
+            if( transform == null )
                 return false;
             
-            if( !parent.canReplace( transform, dockable ))
+            DockStation parent = transform.getDockParent();
+            
+            if( parent == null )
                 return false;
             
-            DockAcceptance acceptance = station.getController().getAcceptance();
+            if( parent.getController() == null )
+                return false;
             
-            if( acceptance != null ){
-            	if( !acceptance.accept( parent, dockable ))
-            		return false;
+            if( station.getDockableCount() == 0 ){
+                if( !parent.canDrag( transform ))
+                    return false;
+                
+                parent.drag( transform );
+                return true;
             }
-            
-            station.drag( dockable );
-            parent.replace( transform, dockable );
-            return true;
+            else{
+                Dockable dockable = station.getDockable( 0 );
+                if( !station.canDrag( dockable ))
+                    return false;
+                
+                if( !parent.accept( dockable ) || !dockable.accept( parent ) )
+                    return false;
+                
+                if( !parent.canReplace( transform, dockable ))
+                    return false;
+                
+                DockAcceptance acceptance = station.getController().getAcceptance();
+                
+                if( acceptance != null ){
+                	if( !acceptance.accept( parent, dockable ))
+                		return false;
+                }
+                
+                station.drag( dockable );
+                parent.replace( transform, dockable );
+                return true;
+            }
+        }
+        finally{
+            if( controller != null )
+                controller.getRegister().setStalled( false );
         }
     }
     

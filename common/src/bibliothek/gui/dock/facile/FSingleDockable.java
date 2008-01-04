@@ -25,6 +25,8 @@
  */
 package bibliothek.gui.dock.facile;
 
+import bibliothek.gui.dock.facile.intern.FDockable;
+
 /**
  * A <code>FSingleDockable</code> is a dockable which is added once to
  * the {@link FControl} and remains there until it is removed by the application.
@@ -38,27 +40,12 @@ package bibliothek.gui.dock.facile;
  * </ul>
  * @author Benjamin Sigg
  */
-public class FSingleDockable extends FDockable{
-	/** a unique id */
-	private String id;
-	
-	/**
-	 * Creates a new dockable
-	 * @param id a unique id, not <code>null</code>
-	 */
-	public FSingleDockable( String id ){
-		if( id == null )
-			throw new NullPointerException( "id must not be null" );
-		
-		this.id = id;
-	}
+public interface FSingleDockable extends FDockable{
 	
 	/**
 	 * Gets the id of this dockable. The id is unique if among all dockables
 	 * which are added to the same {@link FControl}.
 	 * @return the unique id
 	 */
-	public String getId(){
-		return id;
-	}
+	public String getId();
 }

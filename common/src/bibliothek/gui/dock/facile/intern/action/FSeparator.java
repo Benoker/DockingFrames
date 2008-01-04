@@ -26,8 +26,8 @@
 package bibliothek.gui.dock.facile.intern.action;
 
 import bibliothek.gui.dock.action.actions.SeparatorAction;
-import bibliothek.gui.dock.facile.FDockable;
 import bibliothek.gui.dock.facile.action.FAction;
+import bibliothek.gui.dock.facile.intern.FDockable;
 
 /**
  * Represents a line separating some groups of {@link FAction}s. Clients should

@@ -26,7 +26,7 @@
 package bibliothek.gui.dock.facile.location;
 
 import bibliothek.gui.dock.facile.FLocation;
-import bibliothek.gui.dock.facile.FDockable.ExtendedMode;
+import bibliothek.gui.dock.facile.intern.FDockable.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.stack.StackDockProperty;
 
@@ -77,5 +77,18 @@ public class FStackLocation extends AbstractStackholdingLocation{
 		StackDockProperty stack = new StackDockProperty( index );
 		stack.setSuccessor( successor );
 		return parent.findProperty( stack );
+	}
+	
+	@Override
+	public FLocation aside() {
+	    if( index == Integer.MAX_VALUE )
+	        return this;
+	    else
+	        return new FStackLocation( parent, index+1 );
+	}
+	
+	@Override
+	public String toString() {
+	    return String.valueOf( parent ) + " [stack " + index + "]";
 	}
 }

@@ -32,6 +32,7 @@ import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.facile.FControl;
+import bibliothek.gui.dock.facile.FWorkingArea;
 
 /**
  * A factory creating various elements that are needed in a {@link FControl}
@@ -63,4 +64,11 @@ public interface FControlFactory {
      * @return the new station
      */
     public SplitDockStation createSplitDockStation();
+    
+    /**
+     * Creates a new {@link FWorkingArea}.
+     * @param id the unique if of the area
+     * @return the new area
+     */
+    public FWorkingArea createWorkingArea( String id );
 }

@@ -43,19 +43,12 @@ import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.common.action.StateManager;
 import bibliothek.gui.dock.event.DockControllerAdapter;
 import bibliothek.gui.dock.event.KeyboardListener;
-import bibliothek.gui.dock.facile.FCenter;
+import bibliothek.gui.dock.facile.FContentArea;
 import bibliothek.gui.dock.facile.FControl;
-import bibliothek.gui.dock.facile.FDockable;
 import bibliothek.gui.dock.facile.FLocation;
-import bibliothek.gui.dock.facile.FDockable.ExtendedMode;
-import bibliothek.gui.dock.facile.location.AbstractFCenterTreeLocation;
-import bibliothek.gui.dock.facile.location.FBaseLocation;
-import bibliothek.gui.dock.facile.location.FCenterTreeLocationNode;
-import bibliothek.gui.dock.facile.location.FCenterTreeLocationRoot;
-import bibliothek.gui.dock.facile.location.FExternalizedLocation;
-import bibliothek.gui.dock.facile.location.FMaximizedLocation;
-import bibliothek.gui.dock.facile.location.FStackLocation;
-import bibliothek.gui.dock.facile.location.Side;
+import bibliothek.gui.dock.facile.FWorkingArea;
+import bibliothek.gui.dock.facile.intern.FDockable.ExtendedMode;
+import bibliothek.gui.dock.facile.location.*;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.flap.FlapDockProperty;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
@@ -231,7 +224,7 @@ public class FStateManager extends StateManager {
      * @param dockable the element to move
      * @param location the new location of <code>dockable</code>
      */
-    public void setLocation( Dockable dockable, FLocation location ){
+    public void setLocation( FacileDockable dockable, FLocation location ){
     	String root = location.findRoot();
     	DockableProperty property = location.findProperty();
     	ExtendedMode mode = location.findMode();
@@ -252,12 +245,32 @@ public class FStateManager extends StateManager {
 		        	newMode = NORMALIZED;
 		            break;
 		    }
+	        
+	        // ensure the correct FWorkingArea is set.
+            boolean set = false;
+            if( root != null ){
+                DockStation station = control.getOwner().intern().getRoot( root );
+                if( station != null ){
+                    Dockable stationDockable = station.asDockable();
+                    if( stationDockable instanceof FacileDockable ){
+                        FDockable fdockable = ((FacileDockable)stationDockable).getDockable();
+                        if( fdockable instanceof FWorkingArea ){
+                            dockable.getDockable().setWorkingArea( (FWorkingArea)fdockable );
+                            set = true;
+                            newMode = NORMALIZED;
+                        }
+                    }
+                }
+            }
+            if( !set ){
+                dockable.getDockable().setWorkingArea( null );
+            }
 	    	
 	        if( mode == ExtendedMode.MAXIMIZED || property != null ){
-		    	String current = currentMode( dockable );
-		    	store( current, dockable );
-		    	setProperties( newMode, dockable, new Location( root, property ) );
-		    	transition( null, newMode, dockable );
+	            String current = currentMode( dockable );
+    		    store( current, dockable );
+    		    setProperties( newMode, dockable, new Location( root, property ) );
+    		    transition( null, newMode, dockable );
 	        }
     	}
     }
@@ -299,7 +312,16 @@ public class FStateManager extends StateManager {
 	    		return fill( extern, screen.getSuccessor(), dockable );
 	    	}
 	    	else{
-	    		base = new FBaseLocation( getCenterOf( dockable ) );
+	    	    FWorkingArea workingArea = null;
+	    	    if( dockable instanceof FacileDockable ){
+	    	        workingArea = ((FacileDockable)dockable).getDockable().getWorkingArea();
+	    	    }
+	    	    if( workingArea == null ){
+	    	        base = new FBaseLocation( getCenterOf( dockable ) );
+	    	    }
+	    	    else{
+	    	        base = new FWorkingAreaLocation( workingArea );
+	    	    }
 	    	}
     	}
     	
@@ -313,22 +335,22 @@ public class FStateManager extends StateManager {
     			FBaseLocation location = (FBaseLocation)base;
     			FlapDockProperty flap = (FlapDockProperty)property;
     			
-    			FCenter center = location.getCenter();
+    			FContentArea center = location.getContentArea();
     			String root = getRootName( dockable );
     			if( root == null )
     				return base;
     			
     			if( center == null ){
-    				if( root.equals( FCenter.getNorthIdentifier( FControl.CENTER_STATIONS_ID ) )){
+    				if( root.equals( FContentArea.getNorthIdentifier( FControl.CONTENT_AREA_STATIONS_ID ) )){
     					return fill( location.minimalNorth( flap.getIndex() ), flap.getSuccessor(), dockable );
     				}
-    				if( root.equals( FCenter.getSouthIdentifier( FControl.CENTER_STATIONS_ID ) )){
+    				if( root.equals( FContentArea.getSouthIdentifier( FControl.CONTENT_AREA_STATIONS_ID ) )){
     					return fill( location.minimalSouth( flap.getIndex() ), flap.getSuccessor(), dockable );
     				}
-    				if( root.equals( FCenter.getEastIdentifier( FControl.CENTER_STATIONS_ID ) )){
+    				if( root.equals( FContentArea.getEastIdentifier( FControl.CONTENT_AREA_STATIONS_ID ) )){
     					return fill( location.minimalEast( flap.getIndex() ), flap.getSuccessor(), dockable );
     				}
-    				if( root.equals( FCenter.getWestIdentifier( FControl.CENTER_STATIONS_ID ) )){
+    				if( root.equals( FContentArea.getWestIdentifier( FControl.CONTENT_AREA_STATIONS_ID ) )){
     					return fill( location.minimalWest( flap.getIndex() ), flap.getSuccessor(), dockable );
     				}
     			}
@@ -396,16 +418,16 @@ public class FStateManager extends StateManager {
     }
     
     /**
-     * Searches the {@link FCenter} on which <code>dockable</code> is shown.
+     * Searches the {@link FContentArea} on which <code>dockable</code> is shown.
      * @param dockable the element whose center is searched
      * @return the center or <code>null</code>
      */
-    protected FCenter getCenterOf( Dockable dockable ){
+    protected FContentArea getCenterOf( Dockable dockable ){
     	DockStation station = DockUtilities.getRoot( dockable );
     	if( station == null )
     		return null;
     	
-    	for( FCenter center : control.getOwner().getCenters() ){
+    	for( FContentArea center : control.getOwner().getContentAreas() ){
     		if( center.getCenter() == station )
     			return center;
     		
@@ -429,6 +451,9 @@ public class FStateManager extends StateManager {
     	}
     	
     	FDockable facile = ((FacileDockable)dockable).getDockable();
+    	if( facile.getWorkingArea() != null ){
+    	    return new String[]{};
+    	}
     	
     	List<String> modes = new ArrayList<String>( 4 );
     	
@@ -452,12 +477,24 @@ public class FStateManager extends StateManager {
     }
     
     /**
-     * Ensures that <code>dockable</code> is in a valid mode (a mode that
-     * is enabled by <code>dockable</code>), perhaps changes the current mode
-     * to ensure that.
-     * @param dockable the element which might not be in a valid mode
+     * Ensures that <code>dockable</code> is in a valid location (a mode that
+     * is enabled by <code>dockable</code> and in the correct {@link FWorkingArea}),
+     * perhaps changes the current location to ensure that.
+     * @param dockable the element which might not be in a valid location
      */
-    public void ensureValidMode( FDockable dockable ){
+    public void ensureValidLocation( FDockable dockable ){
+        FWorkingArea preferredArea = dockable.getWorkingArea();
+        FWorkingArea currentArea = findFirstParentWorkingArea( dockable.intern() );
+        
+        if( preferredArea != currentArea ){
+            if( preferredArea == null ){
+                dockable.setLocation( FLocation.base().normalRectangle( 0.25, 0.25, 0.5, 0.5 ) );
+            }
+            else{
+                dockable.setLocation( FLocation.working( preferredArea ).rectangle( 0.25, 0.25, 0.5, 0.5 ) );
+            }
+        }
+        
         ExtendedMode mode = getMode( dockable.intern() );
         boolean wrong = 
             (mode == ExtendedMode.EXTERNALIZED && !dockable.isExternalizable() ) ||
@@ -467,6 +504,31 @@ public class FStateManager extends StateManager {
         if( wrong ){
             setMode( dockable.intern(), ExtendedMode.NORMALIZED );
         }
+    }
+    
+    /**
+     * Finds the first {@link FWorkingArea} in the path up to the root from
+     * <code>dockable</code>.
+     * @param dockable the element which might have a {@link FWorkingArea}
+     * as parent.
+     * @return the first found {@link FWorkingArea}.
+     */
+    private FWorkingArea findFirstParentWorkingArea( Dockable dockable ){
+        DockStation station = dockable.getDockParent();
+        dockable = station == null ? null : station.asDockable();
+        
+        while( dockable != null ){
+            if( dockable instanceof FacileDockable ){
+                FDockable fdock = ((FacileDockable)dockable).getDockable();
+                if( fdock instanceof FWorkingArea )
+                    return (FWorkingArea)fdock;
+            }
+            
+            station = dockable.getDockParent();
+            dockable = station == null ? null : station.asDockable();
+        }
+        
+        return null;
     }
     
     @Override

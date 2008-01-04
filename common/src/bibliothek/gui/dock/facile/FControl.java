@@ -29,20 +29,8 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 
 import javax.swing.JFrame;
 import javax.swing.KeyStroke;
@@ -51,7 +39,9 @@ import bibliothek.extension.gui.dock.theme.SmoothTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabDockAction;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.action.ActionGuard;
@@ -60,13 +50,8 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.action.CloseAction;
 import bibliothek.gui.dock.common.action.StateManager;
 import bibliothek.gui.dock.event.DockAdapter;
-import bibliothek.gui.dock.facile.intern.EfficientControlFactory;
-import bibliothek.gui.dock.facile.intern.FControlAccess;
-import bibliothek.gui.dock.facile.intern.FControlFactory;
-import bibliothek.gui.dock.facile.intern.FDockableAccess;
-import bibliothek.gui.dock.facile.intern.FStateManager;
-import bibliothek.gui.dock.facile.intern.FacileDockable;
-import bibliothek.gui.dock.facile.intern.SecureControlFactory;
+import bibliothek.gui.dock.facile.intern.*;
+import bibliothek.gui.dock.layout.DockSituationIgnore;
 import bibliothek.gui.dock.support.util.ApplicationResource;
 import bibliothek.gui.dock.support.util.ApplicationResourceManager;
 import bibliothek.gui.dock.themes.NoStackTheme;
@@ -75,7 +60,7 @@ import bibliothek.gui.dock.util.PropertyValue;
 
 /**
  * Manages the interaction between {@link FSingleDockable}, {@link FMultipleDockable}
- * and the {@link FCenter}.<br>
+ * and the {@link FContentArea}.<br>
  * Clients should call <code>read</code> and <code>write</code> of the
  * {@link ApplicationResourceManager}, accessible through {@link #getResources()}, 
  * to store or load the configuration.<br>
@@ -127,10 +112,10 @@ public class FControl {
         new PropertyKey<KeyStroke>( "fcontrol.close" );
     
     /** the unique id of the station that handles the externalized dockables */
-    public static final String EXTERNALIZED_STATION_ID = "center";
+    public static final String EXTERNALIZED_STATION_ID = "external";
     
-    /** the unique id of the default-{@link FCenter} created by this control */
-    public static final String CENTER_STATIONS_ID = "fcontrol";
+    /** the unique id of the default-{@link FContentArea} created by this control */
+    public static final String CONTENT_AREA_STATIONS_ID = "fcontrol";
     
     /** connection to the real DockingFrames */
 	private DockFrontend frontend;
@@ -154,10 +139,10 @@ public class FControl {
 	private FStateManager stateManager;
 	
 	/** the center component of the main-frame */
-	private FCenter center;
+	private FContentArea content;
 	
-	/** the whole list of centers known to this control, includes {@link #center} */
-	private List<FCenter> centers = new ArrayList<FCenter>();
+	/** the whole list of contentareas known to this control, includes {@link #content} */
+	private List<FContentArea> contents = new ArrayList<FContentArea>();
 	
 	/** Access to the internal methods of this control */
 	private FControlAccess access = new Access();
@@ -170,7 +155,6 @@ public class FControl {
 	
 	/** factory used to create new elements for this control */
 	private FControlFactory factory;
-	
 
     /**
      * Creates a new control
@@ -216,6 +200,22 @@ public class FControl {
 		            stateManager.read( new StateManager.LocationStreamTransformer(), in );
 		    }
 		};
+		frontend.setIgnoreForEntry( new DockSituationIgnore(){
+		    public boolean ignoreChildren( DockStation station ) {
+		        Dockable dockable = station.asDockable();
+		        if( dockable == null )
+		            return false;
+		        if( dockable instanceof FacileDockable ){
+		            FDockable fdockable = ((FacileDockable)dockable).getDockable();
+		            if( fdockable instanceof FWorkingArea )
+		                return true;
+		        }
+		        return false;
+		    }
+		    public boolean ignoreElement( DockElement element ) {
+		        return false;
+		    }
+		});
 		frontend.setShowHideAction( false );
 		frontend.getController().setTheme( new NoStackTheme( new SmoothTheme() ) );
 		frontend.getController().addActionGuard( new ActionGuard(){
@@ -248,6 +248,9 @@ public class FControl {
 		    }
 		});
 		
+		frontend.getController().addAcceptance( new StackableAcceptance() );
+		frontend.getController().addAcceptance( new WorkingAreaAcceptance() );
+		
 		try{
     		resources.put( "frontend", new ApplicationResource(){
     		    public void write( DataOutputStream out ) throws IOException {
@@ -255,6 +258,7 @@ public class FControl {
     		    }
     		    public void read( DataInputStream in ) throws IOException {
     		        frontend.read( in );
+    		        ensureWorkingAreaSet();
     		    }
     		});
 		}
@@ -264,7 +268,7 @@ public class FControl {
 		}
 		
 		stateManager = new FStateManager( access );
-		center = createCenter( CENTER_STATIONS_ID );
+		content = createContentArea( CONTENT_AREA_STATIONS_ID );
 		
 		final ScreenDockStation screen = factory.createScreenDockStation( frame );
 		stateManager.add( EXTERNALIZED_STATION_ID, screen );
@@ -293,6 +297,50 @@ public class FControl {
 	}
 	
 	/**
+	 * Ensures that each {@link FDockable} has the {@link FWorkingArea} set
+	 * on which it currently is.
+	 */
+	private void ensureWorkingAreaSet(){
+	    for( DockStation station : frontend.getRoots() ){
+	        if( station.asDockable() == null )
+	            setWorkingArea( station, null );
+	        else
+	            setWorkingArea( station.asDockable(), null );
+	    }
+	}
+	
+	/**
+	 * Ensures that <code>dockable</code> has its {@link FWorkingArea} set
+	 * to <code>area</code> and checks all children for the correct setting
+	 * of this property.
+	 * @param dockable the element whose area will be set
+	 * @param area the area
+	 */
+	private void setWorkingArea( Dockable dockable, FWorkingArea area ){
+	    if( dockable instanceof FacileDockable ){
+	        FDockable fdock = ((FacileDockable)dockable).getDockable();
+	        fdock.setWorkingArea( area );
+	        if( fdock instanceof FWorkingArea ){
+	            area = (FWorkingArea)fdock;
+	        }
+	    }
+	    
+	    if( dockable.asDockStation() != null )
+	        setWorkingArea( dockable.asDockStation(), area );
+	}
+	
+	/**
+	 * Ensures that all children of <code>station</code> have set their
+	 * {@link FWorkingArea} to the correct value.
+	 * @param station a station whose children should be analyzed
+	 * @param area the current area which the children should memorize
+	 */
+	private void setWorkingArea( DockStation station, FWorkingArea area ){
+	    for( int i = 0, n = station.getDockableCount(); i<n; i++ )
+	        setWorkingArea( station.getDockable( i ), area );
+	}
+	
+	/**
 	 * Frees as much resources as possible. This {@link FControl} will no longer
 	 * work correctly after this method was called.
 	 */
@@ -303,60 +351,72 @@ public class FControl {
 	}
 	
 	/**
-	 * Creates and adds a new {@link FCenter}.
-	 * @param uniqueId the unique id of the new center, the id must be unique
-	 * in respect to all other centers which are registered at this control.
-	 * @return the new center
+	 * Creates and adds a new {@link FWorkingArea} to this control. The area
+	 * is not made visible by this method.
+	 * @param uniqueId the unique id of the area
+	 * @return the new area
+	 */
+	public FWorkingArea createWorkingArea( String uniqueId ){
+	    FWorkingArea area = factory.createWorkingArea( uniqueId );
+	    add( area );
+	    return area;
+	}
+	
+	/**
+	 * Creates and adds a new {@link FContentArea}.
+	 * @param uniqueId the unique id of the new contentarea, the id must be unique
+	 * in respect to all other contentareas which are registered at this control.
+	 * @return the new contentarea
 	 * @throws IllegalArgumentException if the id is not unique
 	 * @throws NullPointerException if the id is <code>null</code>
 	 */
-	public FCenter createCenter( String uniqueId ){
+	public FContentArea createContentArea( String uniqueId ){
 		if( uniqueId == null )
 			throw new NullPointerException( "uniqueId must not be null" );
 		
-		for( FCenter center : centers ){
+		for( FContentArea center : contents ){
 			if( center.getUniqueId().equals( uniqueId ))
-				throw new IllegalArgumentException( "There exists already a FCenter with the unique id " + uniqueId );
+				throw new IllegalArgumentException( "There exists already a FContentArea with the unique id " + uniqueId );
 		}
 		
-		FCenter center = new FCenter( access, uniqueId );
-		centers.add( center );
+		FContentArea center = new FContentArea( access, uniqueId );
+		contents.add( center );
 		return center;
 	}
 	
 	/**
-	 * Removes <code>center</code> from the list of known centers. This also removes
-	 * the stations of <code>center</code> from this control. Elements aboard the
+	 * Removes <code>content</code> from the list of known contentareas. This also removes
+	 * the stations of <code>content</code> from this control. Elements aboard the
 	 * stations are made invisible, but not removed from this control.
-	 * @param center the center to remove
-	 * @throws IllegalArgumentException if the default-center equals <code>center</code>
+	 * @param content the contentarea to remove
+	 * @throws IllegalArgumentException if the default-contentarea equals <code>content</code>
 	 */
-	public void removeCenter( FCenter center ){
-		if( this.center == center )
-			throw new IllegalArgumentException( "The default-center can't be removed" );
+	public void removeContentArea( FContentArea content ){
+		if( this.content == content )
+			throw new IllegalArgumentException( "The default-contentarea can't be removed" );
 		
-		if( centers.remove( center ) ){
-			frontend.removeRoot( center.getCenter() );
-			frontend.removeRoot( center.getEast() );
-			frontend.removeRoot( center.getWest() );
-			frontend.removeRoot( center.getNorth() );
-			frontend.removeRoot( center.getSouth() );
+		if( contents.remove( content ) ){
+			frontend.removeRoot( content.getCenter() );
+			frontend.removeRoot( content.getEast() );
+			frontend.removeRoot( content.getWest() );
+			frontend.removeRoot( content.getNorth() );
+			frontend.removeRoot( content.getSouth() );
 			
-			stateManager.remove( center.getCenterIdentifier() );
-			stateManager.remove( center.getEastIdentifier() );
-			stateManager.remove( center.getWestIdentifier() );
-			stateManager.remove( center.getNorthIdentifier() );
-			stateManager.remove( center.getSouthIdentifier() );
+			stateManager.remove( content.getCenterIdentifier() );
+			stateManager.remove( content.getEastIdentifier() );
+			stateManager.remove( content.getWestIdentifier() );
+			stateManager.remove( content.getNorthIdentifier() );
+			stateManager.remove( content.getSouthIdentifier() );
 		}
 	}
 	
 	/**
-	 * Gets an unmodifiable list of all {@link FCenter}s registered at
+	 * Gets an unmodifiable list of all {@link FContentArea}s registered at
 	 * this control
-	 * @return the list of centers
+	 * @return the list of contentareas
 	 */
-	public List<FCenter> getCenters(){
-		return Collections.unmodifiableList( centers );
+	public List<FContentArea> getContentAreas(){
+		return Collections.unmodifiableList( contents );
 	}
 	
 	/**
@@ -431,8 +491,8 @@ public class FControl {
 	 * Gets the element that should be in the center of the mainframe.
 	 * @return the center of the mainframe of the application
 	 */
-	public FCenter getCenter() {
-        return center;
+	public FContentArea getContentArea() {
+        return content;
     }
 	
 	/**
@@ -692,7 +752,7 @@ public class FControl {
 	 */
 	protected void ensureValidModes(){
 	    for( FDockable dockable : dockables.toArray( new FDockable[ dockables.size() ] ) ){
-	        stateManager.ensureValidMode( dockable );
+	        stateManager.ensureValidLocation( dockable );
 	    }
 	}
 	
@@ -734,10 +794,11 @@ public class FControl {
 			}
 			
 			frontend.show( dockable.intern() );
+			
 			if( location != null ){
 				stateManager.setLocation( dockable.intern(), location );
 			}
-			stateManager.ensureValidMode( dockable );
+			stateManager.ensureValidLocation( dockable );
 		}
 		
 		public boolean isVisible( FDockable dockable ){

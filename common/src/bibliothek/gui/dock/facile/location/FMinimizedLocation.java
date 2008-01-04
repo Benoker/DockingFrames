@@ -25,9 +25,10 @@
  */
 package bibliothek.gui.dock.facile.location;
 
-import bibliothek.gui.dock.facile.FCenter;
+import bibliothek.gui.dock.facile.FContentArea;
 import bibliothek.gui.dock.facile.FControl;
-import bibliothek.gui.dock.facile.FDockable.ExtendedMode;
+import bibliothek.gui.dock.facile.FLocation;
+import bibliothek.gui.dock.facile.intern.FDockable.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.flap.FlapDockProperty;
 
@@ -64,18 +65,18 @@ public class FMinimizedLocation extends AbstractStackholdingLocation{
 	
 	@Override
 	public String findRoot(){
-		FCenter center = parent.getCenter();
+		FContentArea center = parent.getContentArea();
 		String id;
 		if( center == null )
-			id = FControl.CENTER_STATIONS_ID;
+			id = FControl.CONTENT_AREA_STATIONS_ID;
 		else
 			id = center.getUniqueId();
 		
 		switch( side ){
-			case NORTH: return FCenter.getNorthIdentifier( id );
-			case SOUTH: return FCenter.getSouthIdentifier( id );
-			case EAST: return FCenter.getEastIdentifier( id );
-			case WEST: return FCenter.getWestIdentifier( id );
+			case NORTH: return FContentArea.getNorthIdentifier( id );
+			case SOUTH: return FContentArea.getSouthIdentifier( id );
+			case EAST: return FContentArea.getEastIdentifier( id );
+			case WEST: return FContentArea.getWestIdentifier( id );
 			default: return null;
 		}
 	}
@@ -90,5 +91,18 @@ public class FMinimizedLocation extends AbstractStackholdingLocation{
 		FlapDockProperty flap = new FlapDockProperty( index );
 		flap.setSuccessor( successor );
 		return flap;
+	}
+
+	@Override
+	public FLocation aside() {
+	    if( index == Integer.MAX_VALUE )
+	        return this;
+	    else
+	        return new FMinimizedLocation( parent, side, index+1 );
+	}
+	
+	@Override
+	public String toString() {
+	    return String.valueOf( parent ) + " [minimized " + side + " " + index + "]";
 	}
 }

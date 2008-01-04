@@ -25,9 +25,8 @@
  */
 package bibliothek.gui.dock.facile.location;
 
-import bibliothek.gui.dock.facile.FCenter;
-import bibliothek.gui.dock.facile.FControl;
-import bibliothek.gui.dock.facile.FDockable.ExtendedMode;
+import bibliothek.gui.dock.facile.FLocation;
+import bibliothek.gui.dock.facile.intern.FDockable.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.split.SplitDockProperty;
 
@@ -39,7 +38,7 @@ import bibliothek.gui.dock.station.split.SplitDockProperty;
  */
 public class FCenterRectangleLocation extends AbstractStackholdingLocation{
 	/** the root element telling which area is the normalized-area */
-	private FBaseLocation base;
+	private FRootLocation root;
 	
 	/** the relative x-coordinate */
 	private double x;
@@ -52,17 +51,17 @@ public class FCenterRectangleLocation extends AbstractStackholdingLocation{
 	
 	/**
 	 * Creates a new location.
-	 * @param base the root element telling which area is the normalized-area.
+	 * @param root the root element telling which area is the normalized-area.
 	 * @param x the relative x-coordinate, a value between 0 and 1 is preferred
 	 * @param y the relative y-coordinate, a value between 0 and 1 is preferred
 	 * @param width the relative width, a value between 0 and 1 is preferred
 	 * @param height the relative height, a value between 0 and 1 is preferred
 	 */
-	public FCenterRectangleLocation( FBaseLocation base, double x, double y, double width, double height ){
-		if( base == null )
+	public FCenterRectangleLocation( FRootLocation root, double x, double y, double width, double height ){
+		if( root == null )
 			throw new NullPointerException( "base is null" );
 		
-		this.base = base;
+		this.root = root;
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -71,11 +70,7 @@ public class FCenterRectangleLocation extends AbstractStackholdingLocation{
 	
 	@Override
 	public String findRoot(){
-		FCenter center = base.getCenter();
-		if( center == null )
-			return FCenter.getCenterIdentifier( FControl.CENTER_STATIONS_ID );
-		else
-			return center.getCenterIdentifier();
+		return root.findRootNormal();
 	}
 
 	@Override
@@ -88,5 +83,15 @@ public class FCenterRectangleLocation extends AbstractStackholdingLocation{
 		SplitDockProperty split = new SplitDockProperty( x, y, width, height );
 		split.setSuccessor( successor );
 		return split;
+	}
+
+    @Override
+    public FLocation aside() {
+        return stack( 1 );
+    }
+    
+	@Override
+	public String toString() {
+	    return "[normal " + x + " " + y + " " + width + " " + height + "]";
 	}
 }

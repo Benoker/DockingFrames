@@ -114,16 +114,16 @@ public class DockUtilities {
     
     
     /**
-     * Tells whether <code>child</code> is identical with <code>anchestor</code>
-     * or a child of <code>anchestor</code>.
-     * @param anchestor an element
+     * Tells whether <code>child</code> is identical with <code>ancestor</code>
+     * or a child of <code>ancestor</code>.
+     * @param ancestor an element
      * @param child another element
-     * @return <code>true</code> if <code>anchestor</code> is a parent of or
+     * @return <code>true</code> if <code>ancestor</code> is a parent of or
      * identical with <code>child</code>. 
      */
-    public static boolean isAnchestor( DockElement anchestor, DockElement child ){
-        if( anchestor == null )
-            throw new NullPointerException( "anchester must not be null" );
+    public static boolean isAncestor( DockElement ancestor, DockElement child ){
+        if( ancestor == null )
+            throw new NullPointerException( "ancestor must not be null" );
         
         if( child == null )
             throw new NullPointerException( "child must not be null" );
@@ -132,18 +132,18 @@ public class DockUtilities {
         DockStation station = null;
         
         while( dockable != null ){
-            if( anchestor == dockable )
+            if( ancestor == dockable )
                 return true;
             
             station = dockable.getDockParent();
             dockable = station == null ? null : station.asDockable();
         }
         
-        return station == anchestor;
+        return station == ancestor;
     }
     
     /**
-     * Searches the station which is an anchestor of <code>element</code>
+     * Searches the station which is an ancestor of <code>element</code>
      * and has no parent.
      * @param element the element whose oldest parent is searched
      * @return the root, may be <code>null</code> if element has no parent
@@ -187,9 +187,12 @@ public class DockUtilities {
      * @param dockable an indirect child of <code>ground</code>
      * @return a property for the path <code>ground</code> to <code>dockable</code>.
      * @throws IllegalArgumentException if <code>ground</code> is not an
-     * anchestor of <code>dockable</code>
+     * ancestor of <code>dockable</code>
      */
     public static DockableProperty getPropertyChain( DockStation ground, Dockable dockable ){
+        if( ground == dockable )
+            throw new IllegalArgumentException( "ground and dockable are the same" );
+        
         DockStation parent = dockable.getDockParent();
         DockableProperty property = parent.getDockableProperty( dockable );
         
@@ -258,7 +261,7 @@ public class DockUtilities {
             throw new IllegalArgumentException( "child and parent are the same" );
         
         // check no cycles
-        if( isAnchestor( newChild, newParent )){
+        if( isAncestor( newChild, newParent )){
             if( newChild.getDockParent() == newParent )
                 newParent.drag( newChild );
             else

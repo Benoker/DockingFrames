@@ -25,24 +25,14 @@
  */
 package bibliothek.paint.view;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.LayoutManager;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JColorChooser;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
+import javax.swing.*;
 
-import bibliothek.gui.dock.facile.FDockable;
-import bibliothek.gui.dock.facile.FSingleDockable;
+import bibliothek.gui.dock.facile.DefaultFSingleDockable;
+import bibliothek.gui.dock.facile.intern.FDockable;
 import bibliothek.paint.util.Resources;
 
 /**
@@ -51,7 +41,7 @@ import bibliothek.paint.util.Resources;
  * @author Benjamin Sigg
  *
  */
-public class ColorDockable extends FSingleDockable{
+public class ColorDockable extends DefaultFSingleDockable{
     /** the manager of all {@link FDockable}s, used to forward a newly selected color */
 	private ViewManager manager;
 	/** the big button which will open a {@link JColorChooser} when pressed */

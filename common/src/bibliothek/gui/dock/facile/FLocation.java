@@ -25,9 +25,11 @@
  */
 package bibliothek.gui.dock.facile;
 
+import bibliothek.gui.dock.facile.intern.FDockable;
 import bibliothek.gui.dock.facile.location.FBaseLocation;
 import bibliothek.gui.dock.facile.location.FExternalizedLocation;
 import bibliothek.gui.dock.facile.location.FMaximizedLocation;
+import bibliothek.gui.dock.facile.location.FWorkingAreaLocation;
 import bibliothek.gui.dock.layout.DockableProperty;
 
 /**
@@ -57,7 +59,7 @@ public abstract class FLocation {
 	 * @param center the base of all new locations, can be <code>null</code>
 	 * @return the representation of <code>center</code>
 	 */
-	public static FBaseLocation base( FCenter center ){
+	public static FBaseLocation base( FContentArea center ){
 		return new FBaseLocation( center );
 	}
 	
@@ -68,6 +70,15 @@ public abstract class FLocation {
 	 */
 	public static FBaseLocation base(){
 		return new FBaseLocation();
+	}
+	
+	/**
+	 * Creates a new location representing the given {@link FWorkingArea}.
+	 * @param area an area
+	 * @return the representation of <code>area</code>
+	 */
+	public static FWorkingAreaLocation working( FWorkingArea area ){
+	    return new FWorkingAreaLocation( area );
 	}
 	
 	/**
@@ -119,4 +130,11 @@ public abstract class FLocation {
 	 * @return the path to this location or <code>null</code>
 	 */
 	public abstract DockableProperty findProperty( DockableProperty successor );
+	
+	/**
+	 * Returns a {@link FLocation} that describes the location of an element
+	 * that should be inserted next to this location.
+	 * @return the new location
+	 */
+	public abstract FLocation aside();
 }

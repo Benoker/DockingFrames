@@ -23,33 +23,37 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.facile.action;
+package bibliothek.gui.dock.facile;
 
-import bibliothek.gui.dock.action.DockAction;
-import bibliothek.gui.dock.facile.intern.FDockable;
+import bibliothek.gui.dock.facile.intern.DefaultFDockable;
 
 /**
- * A {@link FAction} is associated with one {@link FDockable}, allowing the
- * user to perform actions which are somehow connected to that <code>FDockable</code>. 
+ * A <code>DefaultFSingleDockable</code> is an element which has a 
+ * {@link #getContentPane() content-pane} where clients can add or remove as many
+ * {@link java.awt.Component}s as they whish.
  * @author Benjamin Sigg
  */
-public abstract class FAction {
-    /** the internal representation of the action */
-    private DockAction action;
+public class DefaultFSingleDockable extends DefaultFDockable implements FSingleDockable{
+    /** a unique id */
+    private String id;
     
     /**
-     * Creates a new FAction
-     * @param action the internal representation of this action
+     * Creates a new dockable
+     * @param id a unique id, not <code>null</code>
      */
-    protected FAction( DockAction action ){
-        this.action = action;
+    public DefaultFSingleDockable( String id ){
+        if( id == null )
+            throw new NullPointerException( "id must not be null" );
+        
+        this.id = id;
     }
     
     /**
-     * Gets the internal representation of the action.
-     * @return the representation
+     * Gets the id of this dockable. The id is unique if among all dockables
+     * which are added to the same {@link FControl}.
+     * @return the unique id
      */
-    public DockAction intern(){
-        return action;
+    public String getId(){
+        return id;
     }
 }

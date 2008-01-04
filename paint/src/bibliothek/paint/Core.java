@@ -97,7 +97,7 @@ public class Core {
         bar.add( layout.getMenu() );
         frame.setJMenuBar( bar );
         
-        frame.getContentPane().add( control.getCenter() );
+        frame.getContentPane().add( control.getContentArea() );
         
         PictureRepository pictures = new PictureRepository();
         view = new ViewManager( control, pictures );
@@ -129,12 +129,13 @@ public class Core {
             }
         }
         
+        view.getWorkingArea().setVisible( true );
+        
         frame.addWindowListener( new WindowAdapter(){
             @Override
             public void windowClosing( WindowEvent e ) {
                 try{
                     frame.setVisible( false );
-                    view.getControl().destroy();
                     
                     if( !secure ){
                         try{
@@ -146,6 +147,8 @@ public class Core {
                             ex.printStackTrace();
                         }
                     }
+                    
+                    view.getControl().destroy();
                 }
                 finally{
                     if( monitor != null ){

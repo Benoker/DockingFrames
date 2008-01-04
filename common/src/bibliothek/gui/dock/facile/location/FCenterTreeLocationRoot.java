@@ -25,8 +25,6 @@
  */
 package bibliothek.gui.dock.facile.location;
 
-import bibliothek.gui.dock.facile.FCenter;
-import bibliothek.gui.dock.facile.FControl;
 import bibliothek.gui.dock.station.split.SplitDockPathProperty;
 
 /**
@@ -36,34 +34,35 @@ import bibliothek.gui.dock.station.split.SplitDockPathProperty;
  */
 public class FCenterTreeLocationRoot extends AbstractFCenterTreeLocation{
 	/** the element describing where the "normalized-area" is */
-	private FBaseLocation parent;
+	private FRootLocation root;
 	
 	/**
 	 * Creates a new location.
-	 * @param parent the location describing where the "normalized-area" is.
+	 * @param root the location describing where the "normalized-area" is.
 	 * @param size the relative size of this location
 	 * @param side the side which is occupied by this location
 	 * @see AbstractFCenterTreeLocation#AbstractFCenterTreeLocation(double, Side)
 	 */
-	public FCenterTreeLocationRoot( FBaseLocation parent, double size, Side side ){
+	public FCenterTreeLocationRoot( FRootLocation root, double size, Side side ){
 		super( size, side );
-		if( parent == null )
+		if( root == null )
 			throw new NullPointerException( "Parent must not be null" );
 		
-		this.parent = parent;
+		this.root = root;
 	}
 	
 	@Override
 	public String findRoot(){
-		FCenter center = parent.getCenter();
-		if( center == null )
-			return FCenter.getCenterIdentifier( FControl.CENTER_STATIONS_ID );
-		else
-			return center.getCenterIdentifier();
+	    return root.findRootNormal();
 	}
 	
 	@Override
-	protected SplitDockPathProperty findPathProperty(){
+	protected SplitDockPathProperty findParentProperty(){
 		return new SplitDockPathProperty();
+	}
+	
+	@Override
+	public String toString() {
+	    return String.valueOf( root ) + " " + super.toString();
 	}
 }

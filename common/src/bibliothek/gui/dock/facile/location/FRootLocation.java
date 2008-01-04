@@ -23,33 +23,18 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.facile.action;
+package bibliothek.gui.dock.facile.location;
 
-import bibliothek.gui.dock.action.DockAction;
-import bibliothek.gui.dock.facile.intern.FDockable;
+import bibliothek.gui.dock.facile.FLocation;
 
 /**
- * A {@link FAction} is associated with one {@link FDockable}, allowing the
- * user to perform actions which are somehow connected to that <code>FDockable</code>. 
+ * A location representing some root element.
  * @author Benjamin Sigg
  */
-public abstract class FAction {
-    /** the internal representation of the action */
-    private DockAction action;
-    
+public abstract class FRootLocation extends FLocation{
     /**
-     * Creates a new FAction
-     * @param action the internal representation of this action
+     * Gets the id of the root if this root is used as normalized-area
+     * @return the id of the root
      */
-    protected FAction( DockAction action ){
-        this.action = action;
-    }
-    
-    /**
-     * Gets the internal representation of the action.
-     * @return the representation
-     */
-    public DockAction intern(){
-        return action;
-    }
+    public abstract String findRootNormal();
 }

@@ -25,21 +25,22 @@
  */
 package bibliothek.gui.dock.facile.location;
 
-import bibliothek.gui.dock.facile.FCenter;
+import bibliothek.gui.dock.facile.FContentArea;
+import bibliothek.gui.dock.facile.FControl;
 import bibliothek.gui.dock.facile.FLocation;
-import bibliothek.gui.dock.facile.FDockable.ExtendedMode;
+import bibliothek.gui.dock.facile.intern.FDockable.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
 
 /**
- * A location based on a {@link FCenter}.
+ * A location based on a {@link FContentArea}.
  * @author Benjamin Sigg
  */
-public class FBaseLocation extends FLocation{
-	/** the center to which this location relates, can be <code>null</code> */
-	private FCenter center;
+public class FBaseLocation extends FRootLocation{
+	/** the contentarea to which this location relates, can be <code>null</code> */
+	private FContentArea content;
 	
-	public FBaseLocation( FCenter center ){
-		this.center = center;
+	public FBaseLocation( FContentArea center ){
+		this.content = center;
 	}
 	
 	public FBaseLocation(){
@@ -47,11 +48,11 @@ public class FBaseLocation extends FLocation{
 	}
 	
 	/**
-	 * Gets the center to which this location relates.
+	 * Gets the contentarea to which this location relates.
 	 * @return the center or <code>null</code> if the default center is meant.
 	 */
-	public FCenter getCenter(){
-		return center;
+	public FContentArea getContentArea(){
+		return content;
 	}
 	
 	/**
@@ -190,7 +191,29 @@ public class FBaseLocation extends FLocation{
 	}
 	
 	@Override
+	public String findRootNormal() {
+	    FContentArea center = getContentArea();
+        if( center == null )
+            return FContentArea.getCenterIdentifier( FControl.CONTENT_AREA_STATIONS_ID );
+        else
+            return center.getCenterIdentifier();
+	}
+	
+	@Override
 	public String findRoot(){
 		return null;
+	}
+	
+	@Override
+	public FLocation aside() {
+	    return this;
+	}
+	
+	@Override
+	public String toString() {
+	    if( content == null )
+	        return "[base]";
+	    
+	    return "[base " + content.getUniqueId() + "]";
 	}
 }

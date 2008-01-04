@@ -25,43 +25,38 @@
  */
 package bibliothek.gui.dock.facile.intern;
 
-import bibliothek.gui.dock.facile.FLocation;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.accept.DockAcceptance;
 
 /**
- * An interface giving access to the internal methods of an {@link FDockable}. Only
- * {@link FDockable}s should create instances of this interface.
+ * A {@link DockAcceptance} ensuring that the {@link FDockable#isStackable()}
+ * property is respected.
  * @author Benjamin Sigg
- *
  */
-public interface FDockableAccess {
-    /**
-     * Called after the visibility of the {@link FDockable} has changed.
-     * @param visible the new state
-     */
-    public void informVisibility( boolean visible );
+public class StackableAcceptance implements DockAcceptance {
     
-    /**
-     * Called after the mode of the {@link FDockable} has changed.
-     * @param mode the new mode
-     */
-    public void informMode( FDockable.ExtendedMode mode );
+    public boolean accept( DockStation parent, Dockable child ) {
+        if( parent instanceof StackDockStation ){
+            if( child instanceof FacileDockable ){
+                if( !((FacileDockable)child).getDockable().isStackable() )
+                    return false;
+            }
+        }
+        
+        return true;
+    }
     
-    /**
-     * Tells which unique id the owning {@link FDockable} has.
-     * @param id the unique id
-     */
-    public void setUniqueId( String id );
-    
-    /**
-     * Gets the unique id of this dockable.
-     * @return the unique id
-     */
-    public String getUniqueId();
-    
-    /**
-     * Gets the user set location of this dockable. Sets the location
-     * to <code>null</code>.
-     * @return the location
-     */
-    public FLocation internalLocation();
+    public boolean accept( DockStation parent, Dockable child, Dockable next ) {
+        if( child instanceof FacileDockable ){
+            if( !((FacileDockable)child).getDockable().isStackable() )
+                return false;
+        }
+        if( next instanceof FacileDockable ){
+            if( !((FacileDockable)next).getDockable().isStackable() )
+                return false;
+        }
+        return true;
+    }
 }

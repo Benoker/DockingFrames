@@ -31,13 +31,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
-import bibliothek.gui.dock.facile.FControl;
-import bibliothek.gui.dock.facile.FDockable;
-import bibliothek.gui.dock.facile.FLocation;
-import bibliothek.gui.dock.facile.FMultipleDockable;
-import bibliothek.gui.dock.facile.FMultipleDockableFactory;
+import bibliothek.gui.dock.facile.*;
+import bibliothek.gui.dock.facile.event.FDockableAdapter;
+import bibliothek.gui.dock.facile.intern.FDockable;
 import bibliothek.paint.model.Picture;
 import bibliothek.paint.model.PictureRepository;
 import bibliothek.paint.model.PictureRepositoryListener;
@@ -69,6 +66,9 @@ public class ViewManager {
     /** the currently used color to paint new {@link bibliothek.paint.model.Shape}s */
     private Color color = Color.BLACK;
     
+    /** the area on which the {@link PictureDockable}s are shown */
+    private FWorkingArea workingArea;
+    
     /**
      * Creates a new manager.
      * @param control the center of the Docking-Framework
@@ -81,9 +81,13 @@ public class ViewManager {
         pageFactory = new PictureFactory();
         control.add( "page", pageFactory );
         
+        workingArea = control.createWorkingArea( "picture area" );
+        workingArea.setLocation( FLocation.base().normalRectangle( 0, 0, 1, 1 ) );
+        workingArea.setVisible( true );
+        
         repositoryDockable = new PictureRepositoryDockable( this );
         control.add( repositoryDockable );
-        repositoryDockable.setLocation( FLocation.base().normalRectangle( 0, 0, 1, 1 ) );
+        repositoryDockable.setLocation( FLocation.base().normalWest( 0.2 ) );
         repositoryDockable.setVisible( true );
         
         colorDockable = new ColorDockable( this );
@@ -118,16 +122,37 @@ public class ViewManager {
     }
     
     /**
+     * Gets the area on which the pictures are shown.
+     * @return the area
+     */
+    public FWorkingArea getWorkingArea() {
+        return workingArea;
+    }
+    
+    /**
      * Opens a view which shows <code>picture</code>.
      * @param picture the picture to show
      */
     public void open( Picture picture ){
-        PictureDockable page = new PictureDockable( pageFactory );
-        page.setLocation( FLocation.base().normalNorth( 0.75 ).stack() );
-        pages.add( page );
+        final PictureDockable page = new PictureDockable( pageFactory );
+        page.addFDockableListener( new FDockableAdapter(){
+            @Override
+            public void visibilityChanged( FDockable dockable ) {
+                if( dockable.isVisible() ){
+                    pages.add( page );
+                }
+                else{
+                    pages.remove( page );
+                    control.remove( page );
+                }
+            }
+        });
+        
         page.setPicture( picture );
         page.getPage().setColor( color );
-        control.add( page );
+        
+        page.setLocation( FLocation.working( workingArea ).rectangle( 0, 0, 1, 1 ) );
+        workingArea.add( page );
         page.setVisible( true );
     }
     
@@ -136,13 +161,10 @@ public class ViewManager {
      * @param picture the picture which should not be painted anywhere
      */
     public void closeAll( Picture picture ){
-        ListIterator<PictureDockable> pageIterator = pages.listIterator();
-        while( pageIterator.hasNext() ){
-            PictureDockable page = pageIterator.next();
-            if( page.getPicture() == picture ){
+        for( PictureDockable page : pages.toArray( new PictureDockable[ pages.size() ] )){
+            if( page.getPicture()  == picture ){
                 page.setVisible( false );
                 control.remove( page );
-                pageIterator.remove();
             }
         }
     }

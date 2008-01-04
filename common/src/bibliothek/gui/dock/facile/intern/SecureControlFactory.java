@@ -32,10 +32,9 @@ import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.ListeningDockAction;
-import bibliothek.gui.dock.security.SecureDockController;
-import bibliothek.gui.dock.security.SecureFlapDockStation;
-import bibliothek.gui.dock.security.SecureScreenDockStation;
-import bibliothek.gui.dock.security.SecureSplitDockStation;
+import bibliothek.gui.dock.control.SingleParentRemover;
+import bibliothek.gui.dock.facile.FWorkingArea;
+import bibliothek.gui.dock.security.*;
 
 /**
  * A factory used in restricted environment, where no global events can
@@ -45,7 +44,12 @@ import bibliothek.gui.dock.security.SecureSplitDockStation;
  */
 public class SecureControlFactory implements FControlFactory {
     public DockController createController() {
-        DockController controller = new SecureDockController();
+        DockController controller = new SecureDockController( new SecureDockControllerFactory(){
+            @Override
+            public SingleParentRemover createSingleParentRemover( DockController controller ) {
+                return new FSingleParentRemover();
+            }
+        });
         controller.setSingleParentRemove( true );
         return controller;
     }
@@ -59,11 +63,15 @@ public class SecureControlFactory implements FControlFactory {
     }
 
     public SplitDockStation createSplitDockStation(){
-   	 return new SecureSplitDockStation(){
+        return new SecureSplitDockStation(){
             @Override
             protected ListeningDockAction createFullScreenAction() {
                 return null;
             }
         };
-   }
+    }
+    
+    public FWorkingArea createWorkingArea( String id ) {
+        return new FWorkingArea( id, true );
+    }
 }

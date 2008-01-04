@@ -26,7 +26,8 @@
 package bibliothek.gui.dock.facile.location;
 
 import bibliothek.gui.dock.facile.FControl;
-import bibliothek.gui.dock.facile.FDockable.ExtendedMode;
+import bibliothek.gui.dock.facile.FLocation;
+import bibliothek.gui.dock.facile.intern.FDockable.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 
@@ -73,5 +74,15 @@ public class FExternalizedLocation extends AbstractStackholdingLocation{
 		ScreenDockProperty screen = new ScreenDockProperty( x, y, width, height );
 		screen.setSuccessor( successor );
 		return screen;
+	}
+	
+	@Override
+	public FLocation aside() {
+	    return stack( 1 );
+	}
+	
+	@Override
+	public String toString() {
+	    return "[externalized " + x + " " + y + " " + width + " " + height + "]";
 	}
 }
