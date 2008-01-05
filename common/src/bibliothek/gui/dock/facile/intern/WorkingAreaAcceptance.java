@@ -29,23 +29,40 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.accept.DockAcceptance;
+import bibliothek.gui.dock.facile.FControl;
 import bibliothek.gui.dock.facile.FWorkingArea;
 
 /**
  * A {@link DockAcceptance} ensuring that the {@link FDockable#getWorkingArea()}
  * property is respected.
  * @author Benjamin Sigg
- *
  */
 public class WorkingAreaAcceptance implements DockAcceptance {
+    /** access to the inner parts of the {@link FControl} */
+    private FControlAccess control;
+    
+    /**
+     * Creates a new acceptance
+     * @param control access to the {@link FControl}
+     */
+    public WorkingAreaAcceptance( FControlAccess control ){
+        this.control = control;
+    }
+    
     public boolean accept( DockStation parent, Dockable child ) {
-        FWorkingArea area = searchArea( parent );
-        return match( area, child );
+        if( control.getStateManager().childsExtendedMode( parent ) == FDockable.ExtendedMode.NORMALIZED ){
+            FWorkingArea area = searchArea( parent );
+            return match( area, child );
+        }
+        return true;
     }
 
     public boolean accept( DockStation parent, Dockable child, Dockable next ) {
-        FWorkingArea area = searchArea( parent );
-        return match( area, next );
+        if( control.getStateManager().childsExtendedMode( parent ) == FDockable.ExtendedMode.NORMALIZED ){
+            FWorkingArea area = searchArea( parent );
+            return match( area, next );
+        }
+        return true;
     }
     
     /**

@@ -46,9 +46,9 @@ import bibliothek.gui.dock.layout.DockableProperty;
  * 	// an element in the lower right corner on a stack (tapped pane):
  * 	FLocation location = FLocation.base().normalSouth( 0.5 ).east( 0.5 ).stack( 2 );
  *  
- * 	// an element in the middle on a specific FCenter
- * 	FCenter center = ...
- * 	FLocation location = FLocation.base( center ).normalRectangle( 0.25, 0.25, 0.5, 0.5 );
+ * 	// an element in the middle on a specific FContentArea
+ * 	FContentArea area = ...
+ * 	FLocation location = FLocation.base( area ).normalRectangle( 0.25, 0.25, 0.5, 0.5 );
  * </pre>
  * @author Benjamin Sigg
  */

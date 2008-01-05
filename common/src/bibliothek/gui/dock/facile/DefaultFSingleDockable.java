@@ -32,6 +32,7 @@ import bibliothek.gui.dock.facile.intern.DefaultFDockable;
  * {@link #getContentPane() content-pane} where clients can add or remove as many
  * {@link java.awt.Component}s as they whish.
  * @author Benjamin Sigg
+ * @see FSingleDockable
  */
 public class DefaultFSingleDockable extends DefaultFDockable implements FSingleDockable{
     /** a unique id */
@@ -53,7 +54,7 @@ public class DefaultFSingleDockable extends DefaultFDockable implements FSingleD
      * which are added to the same {@link FControl}.
      * @return the unique id
      */
-    public String getId(){
+    public String getUniqueId(){
         return id;
     }
 }

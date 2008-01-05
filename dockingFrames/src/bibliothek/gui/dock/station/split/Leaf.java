@@ -216,7 +216,7 @@ public class Leaf extends SplitNode{
     }
     
     @Override
-    public void evolve( Key key ){
+    public void evolve( Key key, boolean checkValidity ){
     	// nothing to do
     }
     

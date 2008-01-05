@@ -309,8 +309,10 @@ public abstract class SplitNode{
      * Creates or replaces children according to the values found in 
      * <code>key</code>.
      * @param key the key to read
+     * @param checkValidity whether to ensure that all new {@link Dockable}s are
+     * acceptable or not.
      */
-    public abstract void evolve( SplitDockTree.Key key );
+    public abstract void evolve( SplitDockTree.Key key, boolean checkValidity );
     
     /**
      * If there are elements left in <code>property</code>, then the next node
@@ -363,9 +365,11 @@ public abstract class SplitNode{
     /**
      * Creates a new node using the contents of <code>key</code>.
      * @param key the key to read
+     * @param checkValidity whether to ensure that all new {@link Dockable}s
+     * are acceptable or not.
      * @return the new node
      */
-    protected SplitNode create( SplitDockTree.Key key ){
+    protected SplitNode create( SplitDockTree.Key key, boolean checkValidity ){
     	if( key.getTree().isDockable( key )){
             SplitDockStation split = access.getOwner();
             DockController controller = split.getController();
@@ -373,27 +377,31 @@ public abstract class SplitNode{
             Dockable[] dockables = key.getTree().getDockables( key );
             Leaf leaf;
             if( dockables.length == 1 ){
-                if( !dockables[0].accept( split ) || 
-                        !split.accept( dockables[0] ))
-                    throw new SplitDropTreeException( split, "No acceptance for " + dockables[0] );
-                
-                if( acceptance != null ){
-                    if( !acceptance.accept( split, dockables[0] ))
-                        throw new SplitDropTreeException( split, "DockAcceptance does not allow child " + dockables[0] );
+                if( checkValidity ){
+                    if( !dockables[0].accept( split ) || 
+                            !split.accept( dockables[0] ))
+                        throw new SplitDropTreeException( split, "No acceptance for " + dockables[0] );
+                    
+                    if( acceptance != null ){
+                        if( !acceptance.accept( split, dockables[0] ))
+                            throw new SplitDropTreeException( split, "DockAcceptance does not allow child " + dockables[0] );
+                    }
                 }
                 
                 leaf = access.createLeaf( dockables[0] );
             }
             else{
-                if( !dockables[0].accept( split, dockables[1] ) ||
-                        !dockables[1].accept( split, dockables[1] ))
-                        throw new SplitDropTreeException( split, 
-                                "No acceptance for combination of " + dockables[0] + " and " + dockables[1] );
-                
-                if( acceptance != null ){
-                    if( !acceptance.accept( split, dockables[0], dockables[1] ))
-                        throw new SplitDropTreeException( split,
-                                "DockAcceptance does not allow to combine " + dockables[0] + " and " + dockables[1] );
+                if( checkValidity ){
+                    if( !dockables[0].accept( split, dockables[1] ) ||
+                            !dockables[1].accept( split, dockables[1] ))
+                            throw new SplitDropTreeException( split, 
+                                    "No acceptance for combination of " + dockables[0] + " and " + dockables[1] );
+                    
+                    if( acceptance != null ){
+                        if( !acceptance.accept( split, dockables[0], dockables[1] ))
+                            throw new SplitDropTreeException( split,
+                                    "DockAcceptance does not allow to combine " + dockables[0] + " and " + dockables[1] );
+                    }
                 }
                 
                 Dockable combination = access.getOwner().getCombiner().combine( dockables[0], dockables[1], access.getOwner() );
@@ -406,13 +414,15 @@ public abstract class SplitNode{
                     
                     for( int i = 2; i < dockables.length; i++ ){
                         Dockable dockable = dockables[ i ];
-                        if( !dockable.accept( station ) || !station.accept( dockable ))
-                            throw new SplitDropTreeException( access.getOwner(), "No acceptance of " + dockable + " and " + station );
-                        
-                        if( acceptance != null ){
-                            if( !acceptance.accept( station, dockable ))
-                                throw new SplitDropTreeException( split,
-                                        "DockAcceptance does not allow " + dockable + " as child of " + station );
+                        if( checkValidity ){
+                            if( !dockable.accept( station ) || !station.accept( dockable ))
+                                throw new SplitDropTreeException( access.getOwner(), "No acceptance of " + dockable + " and " + station );
+                            
+                            if( acceptance != null ){
+                                if( !acceptance.accept( station, dockable ))
+                                    throw new SplitDropTreeException( split,
+                                            "DockAcceptance does not allow " + dockable + " as child of " + station );
+                            }
                         }
                         
                         station.drop( dockable );
@@ -422,12 +432,12 @@ public abstract class SplitNode{
                 }
             }
             
-    		leaf.evolve( key );
+    		leaf.evolve( key, checkValidity );
     		return leaf;
     	}
     	else{
     		Node node = new Node( getAccess() );
-        	node.evolve( key );
+        	node.evolve( key, checkValidity );
         	return node;
     	}
     }

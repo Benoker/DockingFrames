@@ -336,18 +336,18 @@ public class Node extends SplitNode{
     }
     
     @Override
-    public void evolve( Key key ){
+    public void evolve( Key key, boolean checkValidity ){
     	SplitDockTree tree = key.getTree();
     	if( tree.isHorizontal( key )){
     		orientation = SplitDockStation.Orientation.HORIZONTAL;
-    		setLeft( create( tree.getLeft( key )));
-    		setRight( create( tree.getRight( key )));
+    		setLeft( create( tree.getLeft( key ), checkValidity ));
+    		setRight( create( tree.getRight( key ), checkValidity ));
     		setDivider( tree.getDivider( key ));
     	}
     	else{
     		orientation = SplitDockStation.Orientation.VERTICAL;
-    		setLeft( create( tree.getTop( key )));
-    		setRight( create( tree.getBottom( key )));
+    		setLeft( create( tree.getTop( key ), checkValidity ));
+    		setRight( create( tree.getBottom( key ), checkValidity ));
     		setDivider( tree.getDivider( key ));
     	}
     }

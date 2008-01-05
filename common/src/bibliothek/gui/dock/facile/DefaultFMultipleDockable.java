@@ -34,6 +34,7 @@ import bibliothek.gui.dock.facile.intern.FControlAccess;
  * where the client might add or remove as many {@link java.awt.Component}s as
  * it wishes.
  * @author Benjamin Sigg
+ * @see FMultipleDockable
  */
 public class DefaultFMultipleDockable extends DefaultFDockable implements FMultipleDockable{
     /** a factory needed to store or load this dockable */

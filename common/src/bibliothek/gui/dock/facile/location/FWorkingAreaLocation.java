@@ -117,7 +117,7 @@ public class FWorkingAreaLocation extends FRootLocation{
     
     @Override
     public String findRootNormal() {
-        return area.getId();
+        return area.getUniqueId();
     }
 
     @Override
@@ -132,6 +132,6 @@ public class FWorkingAreaLocation extends FRootLocation{
 
     @Override
     public String findRoot() {
-        return area.getId();
+        return area.getUniqueId();
     }
 }

@@ -25,10 +25,13 @@
  */
 package bibliothek.gui.dock.facile;
 
+import javax.swing.Icon;
+
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.facile.intern.AbstractFDockable;
 import bibliothek.gui.dock.facile.intern.FControlAccess;
 import bibliothek.gui.dock.facile.intern.FDockable;
@@ -40,7 +43,9 @@ import bibliothek.gui.dock.title.DockTitleVersion;
 /**
  * A working area is an element which is always visible and contains some
  * {@link FDockable}s which can't be dragged out of it. Also no {@link FDockable}
- * can be dropped in a {@link FWorkingArea}.
+ * can be dropped in a {@link FWorkingArea}.<br>
+ * There can be more than one {@link FWorkingArea}, and the working areas
+ * can be nested.
  * @author Benjamin Sigg
  */
 public class FWorkingArea extends AbstractFDockable implements FSingleDockable{
@@ -73,6 +78,57 @@ public class FWorkingArea extends AbstractFDockable implements FSingleDockable{
             this.station = station;
             init( station );
         }
+        
+        station.setExpandOnDoubleclick( false );
+    }
+    
+    /**
+     * Sets whether this working-area should suppress its title or not. 
+     * @param suppressTitle <code>true</code> if this area should try
+     * not to have a title.
+     */
+    public void setSuppressTitle( boolean suppressTitle ) {
+        this.suppressTitle = suppressTitle;
+    }
+    
+    /**
+     * Tells whether this working-area suppresses its title.
+     * @return <code>true</code> if this area normally has no title
+     */
+    public boolean isSuppressTitle() {
+        return suppressTitle;
+    }
+    
+    /**
+     * Sets the text that is shown as title.
+     * @param text the title
+     */
+    public void setTitleText( String text ){
+        station.setTitleText( text );
+    }
+    
+    /**
+     * Gets the text that is shown as title.
+     * @return the title
+     */
+    public String getTitleText(){
+        return station.getTitleText();
+    }
+    
+    /**
+     * Sets the icon that is shown in the title of this <code>FDockable</code>.
+     * @param icon the title-icon
+     */
+    public void setTitleIcon( Icon icon ){
+        station.setTitleIcon( icon );
+    }
+    
+    /**
+     * Gets the icon that is shown in the title.
+     * @return the title-icon, might be <code>null</code>
+     */
+    public Icon getTitleIcon(){
+        return station.getTitleIcon();
     }
     
     /**
@@ -130,7 +186,7 @@ public class FWorkingArea extends AbstractFDockable implements FSingleDockable{
         return false;
     }
 
-    public String getId() {
+    public String getUniqueId() {
         return uniqueId;
     }
 
@@ -170,9 +226,18 @@ public class FWorkingArea extends AbstractFDockable implements FSingleDockable{
         return false;
     }
     
+    /**
+     * A {@link SplitDockStation} representing a {@link FWorkingArea}.
+     * @author Benjamin Sigg
+     */
     private class Station extends SplitDockStation implements FacileDockable{
         public FDockable getDockable() {
             return FWorkingArea.this;
+        }
+        
+        @Override
+        protected ListeningDockAction createFullScreenAction() {
+            return null;
         }
         
         @Override
@@ -183,9 +248,19 @@ public class FWorkingArea extends AbstractFDockable implements FSingleDockable{
         }
     }
     
+    /**
+     * A {@link SecureSplitDockStation} representing a {@link FWorkingArea}.
+     * @author Benjamin Sigg
+     *
+     */
     private class SecureStation extends SecureSplitDockStation implements FacileDockable{
         public FDockable getDockable() {
             return FWorkingArea.this;
+        }
+        
+        @Override
+        protected ListeningDockAction createFullScreenAction() {
+            return null;
         }
         
         @Override

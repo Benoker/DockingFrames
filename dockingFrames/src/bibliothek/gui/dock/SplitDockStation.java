@@ -1506,11 +1506,25 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     
     /**
      * Removes all children from this station and then adds the contents
-     * that are stored in <code>tree</code>.
+     * that are stored in <code>tree</code>. Calling this method is equivalent
+     * to <code>dropTree( tree, true );</code>
      * @param tree the new set of children
      * @throws SplitDropTreeException If the tree is not acceptable.
      */
     public void dropTree( SplitDockTree tree ){
+        dropTree( tree, true );
+    }
+    
+    /**
+     * Removes all children from this station and then adds the contents
+     * that are stored in <code>tree</code>.
+     * @param tree the new set of children
+     * @param checkValidity whether to ensure that the new elements are
+     * accepted or not.
+     * @throws SplitDropTreeException if <code>checkValidity</code> is
+     * set to <code>true</code> and the tree is not acceptable
+     */
+    public void dropTree( SplitDockTree tree, boolean checkValidity ){
     	if( tree == null )
     		throw new IllegalArgumentException( "Tree must not be null" );
     	
@@ -1524,7 +1538,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     	
     	Key rootKey = tree.getRoot();
     	if( rootKey != null ){
-    		root.evolve( rootKey );
+    		root.evolve( rootKey, checkValidity );
     		root.updateBounds();
     	}
     }

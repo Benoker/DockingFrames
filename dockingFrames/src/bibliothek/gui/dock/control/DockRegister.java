@@ -372,21 +372,41 @@ public class DockRegister {
      */
     private class StationListener extends DockStationAdapter{
         /** a set of Dockables which were removed during a drag and drop operation */
-        private Set<Dockable> removedOnPut = new HashSet<Dockable>();
+        private Set<Dockable> removedStalledSet = new HashSet<Dockable>();
+        /** a list of Dockables which were removed during a drag and drop operation */
+        private LinkedList<Dockable> removedStalledQueue = new LinkedList<Dockable>();
+        
         /** a set of Dockable which were added during a drag and drop operation */
-        private Set<Dockable> addedOnPut = new HashSet<Dockable>();
+        private Set<Dockable> addedStalledSet = new HashSet<Dockable>();
+        /** a list of Dockable which were added during a drag and drop operation */
+        private LinkedList<Dockable> addedStalledQueue = new LinkedList<Dockable>();
+        
+        /** whether this listener is currently firing the stalled events */
+        private boolean firing = false;
         
         public void fire(){
-            List<Dockable> removedOnPut = new ArrayList<Dockable>( this.removedOnPut );
-            List<Dockable> addedOnPut = new ArrayList<Dockable>( this.addedOnPut );
-            this.removedOnPut.clear();
-            this.addedOnPut.clear();
-            
-        	for( Dockable d : removedOnPut )
-                removeDockable( d );
-            
-            for( Dockable d : addedOnPut )
-                addDockable( d );
+            if( !firing ){
+                try{
+                    firing = true;
+                    
+                    while( !addedStalledQueue.isEmpty() || !removedStalledQueue.isEmpty() ){
+                        while( !removedStalledQueue.isEmpty() ){
+                            Dockable head = removedStalledQueue.removeFirst();
+                            removedStalledSet.remove( head );
+                            removeDockable( head );
+                        }
+                        
+                        while( !addedStalledQueue.isEmpty() ){
+                            Dockable head = addedStalledQueue.removeFirst();
+                            addedStalledSet.remove( head );
+                            addDockable( head );
+                        }
+                    }
+                }
+                finally{
+                    firing = false;
+                }
+            }
         }
         
         @Override
@@ -395,8 +415,11 @@ public class DockRegister {
                 DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
                     @Override
                     public void handleDockable( Dockable dockable ) {
-                        addedOnPut.add( dockable );
-                        removedOnPut.remove( dockable );
+                        if( addedStalledSet.add( dockable ) )
+                            addedStalledQueue.addLast( dockable );
+                            
+                        if( removedStalledSet.remove( dockable ) )
+                            removedStalledQueue.remove( dockable );
                     }
                 });
             }
@@ -425,8 +448,11 @@ public class DockRegister {
                 DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
                     @Override
                     public void handleDockable( Dockable dockable ) {
-                        addedOnPut.remove( dockable );
-                        removedOnPut.add( dockable );
+                        if( addedStalledSet.remove( dockable ) )
+                            addedStalledQueue.remove( dockable );
+                            
+                        if( removedStalledSet.add( dockable ) )
+                            removedStalledQueue.addLast( dockable );
                     }
                 });
             }

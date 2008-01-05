@@ -79,7 +79,7 @@ public class PictureDockable extends DefaultFMultipleDockable {
         setCloseable( true );
         setMinimizable( true );
         setMaximizable( true );
-        setExternalizable( true );
+        setExternalizable( false );
         setTitleIcon( Resources.getIcon( "dockable.picture" ) );
         
         page = new Page();

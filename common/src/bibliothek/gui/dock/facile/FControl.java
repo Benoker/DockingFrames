@@ -128,6 +128,10 @@ public class FControl {
 	private List<FDockable> dockables =
 	    new ArrayList<FDockable>();
 	
+	/** list of all {@link FSingleDockable}s */
+	private List<FSingleDockable> singleDockables =
+	    new ArrayList<FSingleDockable>();
+	
 	/** the set of {@link FMultipleDockable}s */
 	private List<FMultipleDockable> multiDockables = 
 		new ArrayList<FMultipleDockable>();
@@ -190,14 +194,12 @@ public class FControl {
 		    @Override
 		    protected void save( DataOutputStream out, boolean entry ) throws IOException {
 		        super.save( out, entry );
-		        if( entry )
-		            stateManager.write( new StateManager.LocationStreamTransformer(), out );
+		        stateManager.write( new StateManager.LocationStreamTransformer(), out );
 		    }
 		    @Override
 		    protected void load( DataInputStream in, boolean entry ) throws IOException {
 		        super.load( in, entry );
-		        if( entry )
-		            stateManager.read( new StateManager.LocationStreamTransformer(), in );
+		        stateManager.read( new StateManager.LocationStreamTransformer(), in );
 		    }
 		};
 		frontend.setIgnoreForEntry( new DockSituationIgnore(){
@@ -249,21 +251,23 @@ public class FControl {
 		});
 		
 		frontend.getController().addAcceptance( new StackableAcceptance() );
-		frontend.getController().addAcceptance( new WorkingAreaAcceptance() );
+		frontend.getController().addAcceptance( new WorkingAreaAcceptance( access ) );
+		frontend.getController().addAcceptance( new ExtendedModeAcceptance( access ) );
 		
 		try{
-    		resources.put( "frontend", new ApplicationResource(){
+    		resources.put( "fcontrol.frontend", new ApplicationResource(){
     		    public void write( DataOutputStream out ) throws IOException {
+                    writeWorkingAreas( out );
     		        frontend.write( out );
     		    }
     		    public void read( DataInputStream in ) throws IOException {
+    		        readWorkingAreas( in );
     		        frontend.read( in );
-    		        ensureWorkingAreaSet();
     		    }
     		});
 		}
 		catch( IOException ex ){
-		    System.err.println( "Non lethel IO-error:" );
+		    System.err.println( "Non lethal IO-error:" );
 		    ex.printStackTrace();
 		}
 		
@@ -297,47 +301,59 @@ public class FControl {
 	}
 	
 	/**
-	 * Ensures that each {@link FDockable} has the {@link FWorkingArea} set
-	 * on which it currently is.
+	 * Writes a map using the unique identifiers of each {@link FSingleDockable} to
+	 * tell to which {@link FWorkingArea} it belongs.
+	 * @param out the stream to write into
+	 * @throws IOException if an I/O error occurs
 	 */
-	private void ensureWorkingAreaSet(){
-	    for( DockStation station : frontend.getRoots() ){
-	        if( station.asDockable() == null )
-	            setWorkingArea( station, null );
-	        else
-	            setWorkingArea( station.asDockable(), null );
-	    }
-	}
-	
-	/**
-	 * Ensures that <code>dockable</code> has its {@link FWorkingArea} set
-	 * to <code>area</code> and checks all children for the correct setting
-	 * of this property.
-	 * @param dockable the element whose area will be set
-	 * @param area the area
-	 */
-	private void setWorkingArea( Dockable dockable, FWorkingArea area ){
-	    if( dockable instanceof FacileDockable ){
-	        FDockable fdock = ((FacileDockable)dockable).getDockable();
-	        fdock.setWorkingArea( area );
-	        if( fdock instanceof FWorkingArea ){
-	            area = (FWorkingArea)fdock;
+	private void writeWorkingAreas( DataOutputStream out ) throws IOException{
+	    Map<String,String> map = new HashMap<String, String>();
+	    
+	    for( FSingleDockable dockable : singleDockables ){
+	        FWorkingArea area = dockable.getWorkingArea();
+	        if( area != null ){
+	            map.put( dockable.getUniqueId(), area.getUniqueId() );
 	        }
 	    }
 	    
-	    if( dockable.asDockStation() != null )
-	        setWorkingArea( dockable.asDockStation(), area );
+	    out.writeInt( map.size() );
+	    for( Map.Entry<String, String> entry : map.entrySet() ){
+	        out.writeUTF( entry.getKey() );
+	        out.writeUTF( entry.getValue() );
+	    }
 	}
 	
 	/**
-	 * Ensures that all children of <code>station</code> have set their
-	 * {@link FWorkingArea} to the correct value.
-	 * @param station a station whose children should be analyzed
-	 * @param area the current area which the children should memorize
+	 * Reads a map telling for each {@link FSingleDockable} to which {@link FWorkingArea}
+	 * it belongs.
+	 * @param in the stream to read from
+	 * @throws IOException if an I/O error occurs
 	 */
-	private void setWorkingArea( DockStation station, FWorkingArea area ){
-	    for( int i = 0, n = station.getDockableCount(); i<n; i++ )
-	        setWorkingArea( station.getDockable( i ), area );
+	private void readWorkingAreas( DataInputStream in ) throws IOException{
+	    Map<String, FSingleDockable> dockables = new HashMap<String, FSingleDockable>();
+	    Map<String, FWorkingArea> areas = new HashMap<String, FWorkingArea>();
+	    
+	    for( FSingleDockable dockable : this.singleDockables ){
+	        if( dockable instanceof FWorkingArea ){
+	            FWorkingArea area = (FWorkingArea)dockable;
+	            dockables.put( area.getUniqueId(), area );
+	            areas.put( area.getUniqueId(), area );
+	        }
+	        else{
+	            dockables.put( dockable.getUniqueId(), dockable );
+	        }
+	    }
+	    
+	    for( int i = 0, n = in.readInt(); i<n; i++ ){
+	        String key = in.readUTF();
+	        String value = in.readUTF();
+	        
+	        FDockable dockable = dockables.get( key );
+	        if( dockable != null ){
+	            FWorkingArea area = areas.get( value );
+	            dockable.setWorkingArea( area );
+	        }
+	    }
 	}
 	
 	/**
@@ -509,11 +525,12 @@ public class FControl {
 			throw new IllegalStateException( "dockable is already part of a control" );
 
 		dockable.setControl( access );
-		String id = "single " + dockable.getId();
+		String id = "single " + dockable.getUniqueId();
 		accesses.get( dockable ).setUniqueId( id );
 		frontend.add( dockable.intern(), id );
 		frontend.setHideable( dockable.intern(), true );
 		dockables.add( dockable );
+		singleDockables.add( dockable );
 		return dockable;
 	}
 	
@@ -571,6 +588,7 @@ public class FControl {
 			dockable.setVisible( false );
 			frontend.remove( dockable.intern() );
 			dockables.remove( dockable );
+			singleDockables.remove( dockable );
 			dockable.setControl( null );
 		}
 	}
@@ -627,13 +645,32 @@ public class FControl {
 			}
 
 			public FacileDockable read( Map<Integer, Dockable> children, boolean ignoreChildren, DataInputStream in ) throws IOException{
+			    // id
 				String id = in.readUTF();
+				
+				// content
 			    FMultipleDockable dockable = factory.read( in );
-			    if( dockable != null ){
-			        add( dockable, id );
-				    return dockable.intern();
+			    if( dockable == null )
+			        return null;
+			    
+			    add( dockable, id );
+			    
+			    // working area
+			    if( in.readBoolean() ){
+			        String areaId = in.readUTF();
+			        for( FDockable check : dockables ){
+			            if( check instanceof FWorkingArea ){
+			                FWorkingArea checkArea = (FWorkingArea)check;
+			                if( checkArea.getUniqueId().equals( areaId )){
+			                    // found
+			                    dockable.setWorkingArea( checkArea );
+			                    break;
+			                }
+			            }
+			        }
 			    }
-			    return null;
+			    
+			    return dockable.intern();
 			}
 
 			public void read( Map<Integer, Dockable> children, boolean ignoreChildren, FacileDockable preloaded, DataInputStream in ) throws IOException{
@@ -641,8 +678,22 @@ public class FControl {
 			}
 
 			public void write( FacileDockable element, Map<Dockable, Integer> children, DataOutputStream out ) throws IOException{
-				out.writeUTF( accesses.get( element.getDockable() ).getUniqueId() );
-			    factory.write( (FMultipleDockable)element.getDockable(), out );
+			    FMultipleDockable fdockable = (FMultipleDockable)element.getDockable();
+			    
+			    // unique id
+			    out.writeUTF( accesses.get( element.getDockable() ).getUniqueId() );
+
+                // content
+                factory.write( fdockable, out );
+			    
+			    // working area if present
+				if( fdockable.getWorkingArea() == null ){
+				    out.writeBoolean( false );
+				}
+				else{
+				    out.writeBoolean( true );
+				    out.writeUTF( fdockable.getWorkingArea().getUniqueId() );
+				}
 			}
 		});
 	}

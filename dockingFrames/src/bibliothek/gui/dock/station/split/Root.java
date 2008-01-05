@@ -181,8 +181,8 @@ public class Root extends SplitNode{
     }
     
     @Override
-    public void evolve( Key key ){
-    	setChild( create( key ) );
+    public void evolve( Key key, boolean checkValidity ){
+    	setChild( create( key, checkValidity ) );
     }
     
     @Override

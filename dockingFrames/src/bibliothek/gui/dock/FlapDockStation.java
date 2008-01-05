@@ -346,7 +346,7 @@ public class FlapDockStation extends AbstractDockableStation {
     /**
      * Sets the direction in which the popup-window points. The direction
      * may be overridden sone, if the property {@link #isAutoDirection() autoDirection} 
-     * is set.
+     * is set to <code>true</code>.
      * @param direction The direction of the popup-window 
      */
     public void setDirection( Direction direction ) {
