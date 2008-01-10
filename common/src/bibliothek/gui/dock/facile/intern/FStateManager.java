@@ -26,9 +26,6 @@
 package bibliothek.gui.dock.facile.intern;
 
 import java.awt.event.KeyEvent;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +52,6 @@ import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 import bibliothek.gui.dock.station.split.SplitDockPathProperty;
 import bibliothek.gui.dock.station.split.SplitDockProperty;
 import bibliothek.gui.dock.station.stack.StackDockProperty;
-import bibliothek.gui.dock.support.util.ApplicationResource;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.util.container.Single;
@@ -161,20 +157,6 @@ public class FStateManager extends StateManager {
                 return result.getA();
             }
         });
-        
-        try {
-            control.getOwner().getResources().put( "FStateManager", new ApplicationResource(){
-                public void write( DataOutputStream out ) throws IOException {
-                    FStateManager.this.write( new LocationStreamTransformer(), out );
-                }
-                public void read( DataInputStream in ) throws IOException {
-                    FStateManager.this.read( new LocationStreamTransformer(), in );
-                }
-            });
-        } catch( IOException e ) {
-            System.err.println( "Non lethal IO-error:");
-            e.printStackTrace();
-        }
     }
     
     /**
@@ -560,7 +542,6 @@ public class FStateManager extends StateManager {
                 FDockable.ExtendedMode mode = getMode( dockable );
                 access.informMode( mode );
             }
-            ensureValidLocation( fdockable );
         }
     }
     

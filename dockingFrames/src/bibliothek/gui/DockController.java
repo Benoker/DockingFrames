@@ -304,6 +304,15 @@ public class DockController {
     }
     
     /**
+     * Gets the handler used to remove stations with only one or none
+     * children.
+     * @return the handler or <code>null</code>
+     */
+    public SingleParentRemover getSingleParentRemover() {
+        return remover;
+    }
+    
+    /**
      * Gets the behavior that tells which stations can have which children.
      * @return the behavior
      * @see #addAcceptance(DockAcceptance)

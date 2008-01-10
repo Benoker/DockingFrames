@@ -58,7 +58,7 @@ public class ColorDockable extends DefaultFSingleDockable{
 		setCloseable( true );
 		setMinimizable( true );
 		setExternalizable( true );
-		setMaximizable( false );
+		setMaximizable( true );
 		setTitleText( "Color" );
 		setTitleIcon( Resources.getIcon( "dockable.color" ) );
 		

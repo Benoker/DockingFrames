@@ -75,7 +75,7 @@ public class PictureRepositoryDockable extends DefaultFSingleDockable{
         
         setCloseable( true );
         setMinimizable( true );
-        setMaximizable( false );
+        setMaximizable( true );
         setExternalizable( true );
         setTitleText( "Pictures" );
         setTitleIcon( Resources.getIcon( "dockable.list" ) );

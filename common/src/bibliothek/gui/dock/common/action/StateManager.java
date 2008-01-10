@@ -40,6 +40,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.event.*;
@@ -117,6 +118,17 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
     /** the controller of this realm */
     private DockController controller;
     
+    /** 
+     * The location of the last element which was maximized, can be <code>null</code>.
+     * Only used when an unknown element is maximized.
+     */
+    private Location lastMaximizedLocation = null;
+    /** 
+     * The mode of the last element which was maximized, can be <code>null</code>.
+     * Only used when an unknown element is maximized.
+     */
+    private String lastMaximizedMode = null;
+    
     /**
      * Creates a new manager. Adds listeners to the <code>controller</code>
      * and adds <code>this</code> as {@link ActionGuard} to the <code>controller</code>.
@@ -170,6 +182,34 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
     		}
     	});
     	action.setIcon( icons.getIcon( key ) );
+    }
+    
+    @Override
+    public void write( GenericStreamTransformation<? super Location> mode, DataOutputStream out ) throws IOException {
+        if( lastMaximizedLocation == null ){
+            out.writeBoolean( false );
+        }
+        else{
+            out.writeBoolean( true );
+            mode.write( out, lastMaximizedLocation );
+            out.writeUTF( lastMaximizedMode );
+        }
+        
+        super.write( mode, out );
+    }
+    
+    @Override
+    public void read( GenericStreamTransformation<? extends Location> mode, DataInputStream in ) throws IOException {
+        if( in.readBoolean() ){
+            lastMaximizedLocation = mode.read( in );
+            lastMaximizedMode = in.readUTF();
+        }
+        else{
+            lastMaximizedLocation = null;
+            lastMaximizedMode = null;
+        }
+        
+        super.read( mode, in );
     }
     
     /**
@@ -357,22 +397,35 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
     protected void transition( String oldMode, String newMode, Dockable dockable ) {
         try{
             controller.getRegister().setStalled( true );
-        	if( oldMode != null ){
-        		store( oldMode, dockable );
-        	}
-            if( MAXIMIZED.equals( newMode )){
-            	maximize( dockable );
+
+            if( oldMode != null ){
+                DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
+                    @Override
+                    public void handleDockable( Dockable check ) {
+                        String current = currentMode( check );
+                        if( current != null )
+                            store( currentMode( check ), check );
+                    }
+                });
             }
-            else{
-            	changeTo( dockable, oldMode, newMode, true );
-            	unmaximize();
-            }
+            
+            change( oldMode, newMode, dockable );
+            
+            DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
+                @Override
+                public void handleDockable( Dockable check ) {
+                    String current = currentMode( check );
+                    if( current != null )
+                        putMode( check, current );
+                }
+            });
             
             if( !MINIMIZED.equals( newMode ))
             	controller.setFocusedDockable( dockable, true );
         }
         finally{
             controller.getRegister().setStalled( false );
+            controller.getSingleParentRemover().testAll( controller );
         }
     }
     
@@ -382,25 +435,116 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
     }
     
     /**
-     * Ensures that <code>dockable</code> is the full-screen element of
-     * the maximized-station.
+     * Gets the element which must be maximized when the user requests that
+     * <code>dockable</code> is maximized.
+     * @param dockable some element, not <code>null</code>
+     * @return the element that must be maximized, might be <code>dockable</code>
+     * itself, not <code>null</code>
+     */
+    private Dockable getMaximizingElement( Dockable dockable ){
+        DockStation station = dockable.getDockParent();
+        if( station == null )
+            return dockable;
+        
+        if( !(station instanceof StackDockStation ))
+            return dockable;
+        
+        return station.asDockable();
+    }
+    
+    /**
+     * Gets the element which would be maximized if <code>old</code> is currently
+     * maximized, and <code>dockable</code> is or will not be maximized.
+     * @param old some element
+     * @param dockable some element, might be <code>old</code>
+     * @return the element which would be maximized if <code>dockable</code> is
+     * no longer maximized, can be <code>null</code>
+     */
+    private Dockable getMaximizingElement( Dockable old, Dockable dockable ){
+        if( old == dockable )
+            return null;
+        
+        if( old instanceof DockStation ){
+            DockStation station = (DockStation)old;
+            if( station.getDockableCount() == 2 ){
+                if( station.getDockable( 0 ) == dockable )
+                    return station.getDockable( 1 );
+                if( station.getDockable( 1 ) == dockable )
+                    return station.getDockable( 0 );
+            }
+            if( station.getDockableCount() < 2  )
+                return null;
+        }
+        
+        return old;
+    }
+
+    /**
+     * Changes the mode of <code>dockable</code>. Modes are
+     * {@link #MINIMIZED}, {@link #NORMALIZED}, {@link #MAXIMIZED} and
+     * {@link #EXTERNALIZED}.
+     * @param current the current mode, can be <code>null</code>
+     * @param destination the mode <code>dockable</code> would like to have
+     * @param dockable the element whose mode is to change
+     */
+    private void change( String current, String destination, Dockable dockable ){
+        change( current, destination, dockable, getProperties( destination, dockable ));
+    }
+    
+    /**
+     * Changes the mode of <code>dockable</code>. Modes are
+     * {@link #MINIMIZED}, {@link #NORMALIZED}, {@link #MAXIMIZED} and
+     * {@link #EXTERNALIZED}.
+     * @param current the current mode, can be <code>null</code>
+     * @param destination the mode <code>dockable</code> would like to have
+     * @param dockable the element whose mode is to change
+     * @param location the new location, can be <code>null</code>. The location
+     * should match the <code>destination</code>, otherwise the <code>dockable</code>
+     * might be placed at the wrong location.
+     */
+    private void change( String current, String destination, Dockable dockable, Location location ){
+        if( MAXIMIZED.equals( destination ))
+            maximize( current, dockable );
+        if( MINIMIZED.equals( destination ))
+            minimize( dockable, location );
+        if( NORMALIZED.equals( destination ))
+            normalize( dockable, location );
+        if( EXTERNALIZED.equals( destination ))
+            externalize( dockable, location );
+    }
+    
+    /**
+     * Ensures that <code>dockable</code> is maximized.
+     * @param current the mode <code>dockable</code> is currently in,
+     * can be <code>null</code> to indicate that <code>dockable</code>
+     * is newly added.
      * @param dockable the element that should be made fullscreen
      */
-    private void maximize( Dockable dockable ){
+    private void maximize( String current, Dockable dockable ){
     	unmaximize();
+    	Dockable maximizing = getMaximizingElement( dockable );
     	
-    	if( dockable.getDockParent() == maxi )
-    		maxi.setFullScreen( dockable );
+    	if( getName( maximizing ) == null ){
+    	    lastMaximizedLocation = currentLocation( current, dockable );
+    	    lastMaximizedMode = current;
+    	}
     	else{
-    	    dockable.getDockParent().drag( dockable );
+    	    lastMaximizedLocation = null;
+    	    lastMaximizedMode = null;
+    	}
+    	
+    	if( maximizing.getDockParent() == maxi )
+    		maxi.setFullScreen( maximizing );
+    	else{
+    	    maximizing.getDockParent().drag( maximizing );
     	    SplitDockTree tree = maxi.createTree();
     		if( tree.getRoot() == null )
-    			tree.root( dockable );
+    			tree.root( maximizing );
     		else{
-    			tree.root( tree.horizontal( tree.put( dockable ), tree.unroot() ) );
+    			tree.root( tree.horizontal( tree.put( maximizing ), tree.unroot() ) );
     		}
     		maxi.dropTree( tree, false );
-    		maxi.setFullScreen( dockable );
+    		maxi.setFullScreen( maximizing );
     	}
     }
     
@@ -410,17 +554,158 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
     private void unmaximize(){
     	Dockable dockable = maxi.getFullScreen();
     	if( dockable != null ){
-    		String mode = previousMode( dockable );
-    		if( mode == null )
-    			mode = getDefaultMode( dockable );
-    		
-    		if( MAXIMIZED.equals( mode ))
-    			mode = NORMALIZED;
-
-    		changeTo( dockable, MAXIMIZED, mode, false );
-    		putMode( dockable, mode );
-    		maxi.setFullScreen( null );
+            maxi.setFullScreen( null );
+    	    
+    	    if( lastMaximizedLocation != null ){
+    	        change( MAXIMIZED, lastMaximizedMode, dockable, lastMaximizedLocation );
+    	        lastMaximizedLocation = null;
+    	        lastMaximizedMode = null;
+    	    }
+    	    else{
+        	    String mode = previousMode( dockable );
+        		if( mode == null )
+        			mode = getDefaultMode( dockable );
+        		
+        		if( MAXIMIZED.equals( mode ))
+        			mode = NORMALIZED;
+    
+        		change( MAXIMIZED, mode, dockable );
+        		putMode( dockable, mode );
+    	    }
     	}
+    }
+    
+    /**
+     * Makes sure that <code>dockable</code> is normalized, where
+     * <code>location</code> describes the new position of <code>dockable</code>.
+     * @param dockable the element to normalize, can already be in 
+     * normalized-state.
+     * @param location a location describing the new position of <code>dockable</code>,
+     * the behavior is unspecified if <code>location</code> does not describe
+     * a normalized position. Can be <code>null</code>.
+     */
+    private void normalize( Dockable dockable, Location location ){
+        boolean done = false;
+        if( location != null ){
+            if( location.location.getSuccessor() == null ){
+                String[] history = history( dockable );
+                if( history != null && history.length >= 2 ){
+                    String last = history[ history.length-1 ];
+                    String secondLast = history[ history.length-2 ];
+                    if( NORMALIZED.equals( secondLast ) && MAXIMIZED.equals( last )){
+                        if( stations.get( location.root ) == maxi ){
+                            unmaximize();
+                            done = true;
+                        }
+                    }
+                }
+            }
+        }
+        
+        if( !done ){
+            Dockable maximized = maxi.getFullScreen();
+            boolean child = false;
+            if( maximized != null ){
+                child = DockUtilities.isAncestor( maximized, dockable );
+                if( child )
+                    maximized = null;
+            }
+            
+            unmaximize();
+            
+            if( !child && !drop( location, dockable )){
+                checkedDrop( defaultNormal, dockable, null );
+            
+                if( maximized != null ){
+                    if( !DockUtilities.isAncestor( maxi, dockable )){
+                        maximize( currentMode( maximized ), maximized );
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Makes sure that <code>dockable</code> is minimized, where
+     * <code>location</code> describes the new position of <code>dockable</code>.
+     * @param dockable the element to minimize, can already be in 
+     * minimized-state.
+     * @param location a location describing the new position of <code>dockable</code>,
+     * the behavior is unspecified if <code>location</code> does not describe
+     * a minimized position. Can be <code>null</code>.
+     */
+    private void minimize( Dockable dockable, Location location ){
+        Dockable maximized = null;
+        if( MAXIMIZED.equals( currentMode( dockable ) ) ){
+            maximized = maxi.getFullScreen();
+            if( maximized != null )
+                maximized = getMaximizingElement( maximized, dockable );
+            
+            unmaximize();
+        }
+        
+        if( !drop( location, dockable )){
+            checkedDrop( defaultMini, dockable, null );
+        }
+        
+        if( maximized != null )
+            maximize( currentMode( maximized ), maximized );
+    }
+    
+    /**
+     * Makes sure that <code>dockable</code> is externalized, where
+     * <code>location</code> describes the new position of <code>dockable</code>.
+     * @param dockable the element to externalized, can already be in 
+     * externalize-state.
+     * @param location a location describing the new position of <code>dockable</code>,
+     * the behavior is unspecified if <code>location</code> does not describe
+     * an externalized position. Can be <code>null</code>.
+     */
+    private void externalize( Dockable dockable, Location location ){
+        Dockable maximized = null;
+        if( MAXIMIZED.equals( currentMode( dockable ) ) ){
+            maximized = maxi.getFullScreen();
+            if( maximized != null )
+                maximized = getMaximizingElement( maximized, dockable );
+            
+            unmaximize();
+        }
+        
+        if( !drop( location, dockable )){
+            if( dockable.getDockParent() != defaultExternal ){
+                Point corner = new Point();
+                SwingUtilities.convertPointToScreen( corner, dockable.getComponent() );
+                ScreenDockProperty property = new ScreenDockProperty( 
+                        corner.x, corner.y, dockable.getComponent().getWidth(), dockable.getComponent().getHeight() );
+                
+                boolean externDone = defaultExternal.drop( dockable, property, false );
+                
+                if( !externDone )
+                    defaultExternal.drop( dockable );
+            }
+        }
+        
+        if( maximized != null )
+            maximize( currentMode( maximized ), maximized );
+    }
+    
+    /**
+     * Searches the station matching <code>location</code> and drops
+     * <code>dockable</code> there.
+     * @param location the new location, can be <code>null</code>
+     * @param dockable the element to drop
+     * @return <code>true</code> if the operation was successful, 
+     * <code>false</code> if not.
+     */
+    private boolean drop( Location location, Dockable dockable ){
+        if( location == null )
+            return false;
+        
+        DockStation station = stations.get( location.root );
+        if( station == null )
+            return false;
+        
+        return station.drop( dockable, location.getLocation() );
     }
     
     /**
@@ -430,21 +715,29 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      * @param current the current mode of <code>dockable</code>
      * @param mode the new mode, one of {@link #MINIMIZED}, {@link #NORMALIZED}
      * or {@link #EXTERNALIZED}
+     * @param location where to put the element, can be <code>null</code>
      * @param unmaximize whether this method should check that the maxi-station
      * does not show a maximized {@link Dockable}.
      * @throws IllegalArgumentException if <code>mode</code> is {@link #MAXIMIZED}
-     */
-    private void changeTo( Dockable dockable, String current, String mode, boolean unmaximize ){
-    	if( MAXIMIZED.equals( mode ))
-    		throw new IllegalArgumentException( "This method can't handle mode MAXIMIZED" );
-    	
-        Location location = getProperties( mode, dockable );
-        
+     * @deprecated will be replaced
+     *//*
+    @Deprecated
+    private void changeTo( Dockable dockable, String current, String mode, Location location, boolean unmaximize ){
         boolean done = false;
+        
         if( location != null ){
             DockStation station = stations.get( location.root );
             if( station != null ){
+                // target station exists
+                if( unmaximize &&
+                        NORMALIZED.equals( mode ) &&
+                        DockUtilities.isAncestor( maxi, station ) &&
+                        maxi.getFullScreen() != dockable ){
+                    unmaximize();
+                }
+                
             	if( station == dockable.getDockParent() ){
+            	    // source and target station the same
             	    boolean needDrop = true;
             	    
             	    if( unmaximize && station == maxi ){
@@ -470,6 +763,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
             	        done = station.drop( dockable, location.location );
             	}
             	else{
+            	    // source and target station not the same
 	            	if( unmaximize && MAXIMIZED.equals( current ) ){
 	            	    maxi.setFullScreen( null );
 	            	}
@@ -504,7 +798,11 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
                 checkedDrop( defaultNormal, dockable, null );
             }
         }
-    }
+
+        if( unmaximize && MAXIMIZED.equals( current )){
+            maxi.setFullScreen( null );
+        }
+    }*/
     
     /**
      * Drops <code>dockable</code> onto <code>station</code>, but only
@@ -531,6 +829,19 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      * @param dockable the element whose location will be stored
      */
     protected void store( String mode, Dockable dockable ){
+        // there is not much to store for "maximized"...
+        if( !MAXIMIZED.equals( mode )){
+            setProperties( mode, dockable, currentLocation( mode, dockable ) );
+        }
+    }
+    
+    /**
+     * Creates the {@link Location} describing the location of <code>dockable</code>.
+     * @param mode the current mode
+     * @param dockable the element whose {@link Location} is created
+     * @return the new {@link Location} or <code>null</code>
+     */
+    protected Location currentLocation( String mode, Dockable dockable ){
         String root = null;
         DockStation rootStation = null;
         
@@ -542,12 +853,13 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
             }
         }
         
+        
         if( root == null || rootStation == dockable ){
-            setProperties( mode, dockable, null );
+            return null;
         }
         else{
             DockableProperty location = DockUtilities.getPropertyChain( rootStation, dockable );
-            setProperties( mode, dockable, new Location( root, location ) );
+            return new Location( root, location );
         }
     }
     

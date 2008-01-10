@@ -147,6 +147,16 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
     }
     
     /**
+     * Searches the name of <code>dockable</code>.
+     * @param dockable an element whose name is searched
+     * @return the name or <code>null</code>
+     */
+    public String getName( Dockable dockable ){
+        Entry entry = dockables.get( dockable );
+        return entry == null ? null : entry.id;
+    }
+    
+    /**
      * Gets the action that is displayed on {@link Dockable}s which are
      * currently in the mode <code>mode</code>.
      * @param mode the mode whose outgoing action is searched
