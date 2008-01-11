@@ -43,6 +43,7 @@ import bibliothek.gui.dock.event.KeyboardListener;
 import bibliothek.gui.dock.facile.FContentArea;
 import bibliothek.gui.dock.facile.FControl;
 import bibliothek.gui.dock.facile.FLocation;
+import bibliothek.gui.dock.facile.FMaximizeBehavior;
 import bibliothek.gui.dock.facile.FWorkingArea;
 import bibliothek.gui.dock.facile.intern.FDockable.ExtendedMode;
 import bibliothek.gui.dock.facile.location.*;
@@ -64,6 +65,9 @@ import bibliothek.util.container.Single;
 public class FStateManager extends StateManager {
     /** access to the {@link FControl} that uses this manager */
     private FControlAccess control;
+    
+    /** how to maximize the elements */
+    private FMaximizeBehavior maximizeBehavior = FMaximizeBehavior.STACKED;
     
     /**
      * {@link KeyStroke} used to go into, or go out from the maximized state.
@@ -158,6 +162,37 @@ public class FStateManager extends StateManager {
             }
         });
     }
+    
+    @Override
+    protected Dockable getMaximizingElement( Dockable dockable ){
+    	return maximizeBehavior.getMaximizingElement( dockable );
+    }
+    
+    @Override
+    protected Dockable getMaximizingElement( Dockable old, Dockable dockable ){
+    	return maximizeBehavior.getMaximizingElement( old, dockable );
+    }
+    
+    /**
+     * Sets a new {@link FMaximizeBehavior}. The behavior decides what happens
+     * when the user maximizes or un-maximizes a {@link FDockable}.
+     * @param maximizeBehavior the new behavior
+     * @throws NullPointerException if <code>maximizeBehavior</code> is <code>null</code>
+     */
+    public void setMaximizeBehavior( FMaximizeBehavior maximizeBehavior ){
+    	if( maximizeBehavior == null )
+    		throw new NullPointerException( "maximizeBehavior must not be null" );
+		this.maximizeBehavior = maximizeBehavior;
+	}
+    
+    /**
+     * Gets the currently used maximize-behavior.
+     * @return the behavior
+     * @see #setMaximizeBehavior(FMaximizeBehavior)
+     */
+    public FMaximizeBehavior getMaximizeBehavior(){
+		return maximizeBehavior;
+	}
     
     /**
      * Changes the mode of <code>dockable</code>.

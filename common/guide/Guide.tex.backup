@@ -1,0 +1,97 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{listings}
+
+\lstset{language=Java}
+\lstset{breaklines=true, numbers=left}
+% \lstset{basicstyle=\ttfamily}
+
+\newcommand{\src}[1]{\lstinline[basicstyle=\ttfamily]|#1|}
+
+%opening
+\title{Guide to DockingFrames - Common}
+\author{Benjamin Sigg}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+The Common-project is a layer above DockingFrames. It allows to write applications using DF without the need to understand DF. Common does not add new features to DF, Common only combines existing code and reorganizes DF in a way that is easy to use.
+\end{abstract}
+
+\section{Introduction}
+\subsection{DockingFrames}
+What is DF? DF is an open source framework written in Java. It extends Java/Swing with the abbility of "dockable frames". Each frame contains some content, a \src{JTree} showing a directory or a \src{Table} showing the results of some game. Each frame has a title and some buttons (like a close-button). The user can move around these frames, the frames will align themself such that there is no unused space between them. There are many ways how frames can be combined to create a new layout.
+
+\section{Common}
+\subsection{Basic elements}
+In the understanding of Common, an ordinary application has one \src{JFrame}, which is called the "mainframe", showing the content of the application. The content is painted through some \src{JComponent}s called "panels". Each panel represents some view of the content, for example a texteditor might have one panel for each open document.
+
+Common stands between mainframe and the panels, separating them, and allowing the user to move then panels around.
+
+To do so, each panel gets wrapped into a \src{FDockable}, such a combination is simply called "dockable". Dockables are then put onto a \src{FContentArea} which is just a child of the mainframe.
+
+Since there is a complex mechanism between the dockables, a control unit is needed. The control unit is provided by the \src{FControl}, or just the "controller".
+
+\subsection{Creating the controller}
+The first thing that needs to be done before using Common is to set up the controller. This is done by creating a new object of type \src{FControl}:
+\begin{lstlisting}
+JFrame frame = new JFrame( "Main-Frame" );
+boolean secure = false;
+FControl control = new FControl( frame, secure );
+\end{lstlisting}
+
+Let's have a brief look at the code. Clearly in line \src{1} the mainframe of the application is created. The controller needs to know the mainframe, it is used as parent of \src{Window}s which are opened for example when dragging a dockable.
+
+In line \src{2} it is specified that the application does run in an unsecure environment. An unsecure environment is a normal application. An applet or a webstart-application runs in a secure environment. The controller needs to know that either he can use non-secure optimations (like globally observing all \src{AWT-Events}) or has to use inefficient workarounds.
+
+Finally in line \src{3} the controller is created.
+
+\subsection{Between mainframe and dockable}
+After creating mainframe and controller, the layer between mainframe and the dockables has to be set up. A \src{FContentArea} does the job. The controller grants access to a default-content-area through \src{FControl.getContentArea()}. If more than one content-area is needed use \src{FControl.createContentArea(String)} to create additional areas.
+\begin{lstlisting}
+JFrame frame = ...
+FControl control = ...	
+frame.add( control.getContentArea() );
+\end{lstlisting}
+Note line \src{3}, a content-area is just a \src{JComponent} and can be added anywhere.
+
+\subsection{Wrapping a panel}
+There are some thoughts needed to create a dockable (to wrap a panel into a \src{FDockable}). Each kind of panel can fall in one of two categories: the number of instances during the lifetime of an application remains the same, or the number changes.
+
+Those kind of panels whose number does not change, should be wrapped into \src{FSingleDockable}s, the others in \src{FMultipleDockable}s. \src{FSingleDockable} and \src{FMultipleDockable} are just interfaces, most developers can just use a \src{DefaultFSingleDockable} or a \src{DefaultFMultipleDockable}. Only developers interested in writing elements which are parents of dockables need to write new classes and implement the interfaces.
+
+Once a dockable is created, it has to be registered at the controller through the method \src{FControl.add}. Afterwards it can be made visible \src{FDockable.setVisible}. Unless otherwise instructed, the controller will then open the dockable at a default location.
+
+\subsubsection{Single dockables}
+A single dockable is an object of type \src{FSingleDockable}. These dockables are created once by the application, added to the controller and made visible. Then they remain in the memory until they are explicitly removed from the controller, or the application terminates.
+
+Every single dockable needs a unique identifier. This identifier allows the controller to persistant store information about a dockable and later to find the information again.
+
+Example: the list of documents that are currently open in a text editor.
+\begin{lstlisting}
+FControl control = ...
+FSingleDockable documents = new DocumentList( "myapp-document-id" );
+control.add( documents );
+documents.setVisible( true );
+\end{lstlisting}
+
+\subsubsection{Multiple dockables}
+A multiple dockable is an object of type \src{FMultipleDockable}. These dockables are created by the application or the controller, shown for some time and then removed from memory.
+
+Every multiple dockable needs a \src{FMultipleDockableFactory}, which must have been registered at the controller.
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+

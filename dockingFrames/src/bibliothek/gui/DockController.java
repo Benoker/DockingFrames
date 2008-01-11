@@ -414,21 +414,28 @@ public class DockController {
     		throw new IllegalArgumentException( "Theme must not be null" );
     	
     	if( this.theme != theme ){
-    		Dockable focused = getFocusedDockable();
-    		
-    		if( this.theme != null )
-    			this.theme.uninstall( this );
-    		
-    		this.theme = theme;
-    		theme.install( this );
-    		
-    		// update only those station which are registered to this controller
-    		for( DockStation station : register.listDockStations() ){
-    			if( station.getController() == this ){
-    				station.updateTheme();
-    			}
+    		Dockable focused = null;
+    		try{
+    			register.setStalled( true );
+    			focused = getFocusedDockable();
+    			
+	    		if( this.theme != null )
+	    			this.theme.uninstall( this );
+	    		
+	    		this.theme = theme;
+	    		theme.install( this );
+	    		
+	    		// update only those station which are registered to this controller
+	    		for( DockStation station : register.listDockStations() ){
+	    			if( station.getController() == this ){
+	    				station.updateTheme();
+	    			}
+	    		}
     		}
-    		
+    		finally{
+    			register.setStalled( false );
+    		}
+	    		
     		setFocusedDockable( focused, true );
     	}
 	}

@@ -404,6 +404,23 @@ public class DockFrontend {
     }
     
     /**
+     * Tells whether this {@link DockFrontend} currently knows where to
+     * put <code>dockable</code>.
+     * @param dockable the element whose location might be known
+     * @return <code>true</code> if the location of <code>dockable</code> is known
+     */
+    public boolean hasLocation( Dockable dockable ){
+    	DockInfo info = getInfo( dockable );
+    	if( info == null )
+    		return false;
+    	
+    	if( isShown( dockable ))
+    		return true;
+    	
+    	return info.root != null && info.location != null;
+    }
+    
+    /**
      * Sets a filter which is applied when saving or loading a normal entry.
      * @param ignoreForEntry the filter, can be <code>null</code>
      */

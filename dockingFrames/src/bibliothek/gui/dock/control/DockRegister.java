@@ -360,6 +360,10 @@ public class DockRegister {
 		else
 		    this.stalled--;
 		
+		// recover from too many false-stalled calls
+		if( this.stalled < 0 )
+			this.stalled = 0;
+		
 		if( this.stalled == 0 ){
 			stationListener.fire();
 		}

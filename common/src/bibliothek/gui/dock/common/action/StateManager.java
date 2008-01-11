@@ -29,7 +29,11 @@ import java.awt.Point;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.SwingUtilities;
@@ -43,7 +47,12 @@ import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
-import bibliothek.gui.dock.event.*;
+import bibliothek.gui.dock.event.DockHierarchyEvent;
+import bibliothek.gui.dock.event.DockHierarchyListener;
+import bibliothek.gui.dock.event.DockRegisterListener;
+import bibliothek.gui.dock.event.DockRelocatorListener;
+import bibliothek.gui.dock.event.IconManagerListener;
+import bibliothek.gui.dock.event.SplitDockListener;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
@@ -399,26 +408,12 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
             controller.getRegister().setStalled( true );
 
             if( oldMode != null ){
-                DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
-                    @Override
-                    public void handleDockable( Dockable check ) {
-                        String current = currentMode( check );
-                        if( current != null )
-                            store( currentMode( check ), check );
-                    }
-                });
+            	store( dockable );
             }
             
             change( oldMode, newMode, dockable );
             
-            DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
-                @Override
-                public void handleDockable( Dockable check ) {
-                    String current = currentMode( check );
-                    if( current != null )
-                        putMode( check, current );
-                }
-            });
+            putMode( dockable );
             
             if( !MINIMIZED.equals( newMode ))
             	controller.setFocusedDockable( dockable, true );
@@ -441,7 +436,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      * @return the element that must be maximized, might be <code>dockable</code>
      * itself, not <code>null</code>
      */
-    private Dockable getMaximizingElement( Dockable dockable ){
+    protected Dockable getMaximizingElement( Dockable dockable ){
         DockStation station = dockable.getDockParent();
         if( station == null )
             return dockable;
@@ -460,7 +455,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      * @return the element which would be maximized if <code>dockable</code> is
      * no longer maximized, can be <code>null</code>
      */
-    private Dockable getMaximizingElement( Dockable old, Dockable dockable ){
+    protected Dockable getMaximizingElement( Dockable old, Dockable dockable ){
         if( old == dockable )
             return null;
         
@@ -518,11 +513,19 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      * @param current the mode <code>dockable</code> is currently in,
      * can be <code>null</code> to indicate that <code>dockable</code>
      * is newly added.
-     * @param dockable the element that should be made fullscreen
+     * @param dockable the element that should be made maximized
      */
     private void maximize( String current, Dockable dockable ){
     	unmaximize();
+    	
+    	if( current != null && !NORMALIZED.equals( current )){
+    		change( current, NORMALIZED, dockable );
+    		current = NORMALIZED;
+    	}
+    	
     	Dockable maximizing = getMaximizingElement( dockable );
+    	if( maximizing != dockable )
+    		store( maximizing );
     	
     	if( getName( maximizing ) == null ){
     	    lastMaximizedLocation = currentLocation( current, dockable );
@@ -546,6 +549,9 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
     		maxi.dropTree( tree, false );
     		maxi.setFullScreen( maximizing );
     	}
+    	
+    	if( maximizing != dockable )
+    		putMode( maximizing );
     }
     
     /**
@@ -570,8 +576,11 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         			mode = NORMALIZED;
     
         		change( MAXIMIZED, mode, dockable );
-        		putMode( dockable, mode );
     	    }
+    	    
+    	    putMode( dockable );
+    	    
+    	    controller.getSingleParentRemover().testAll( controller );
     	}
     }
     
@@ -616,7 +625,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
             if( !child && !drop( location, dockable )){
                 checkedDrop( defaultNormal, dockable, null );
             
-                if( maximized != null ){
+                if( maximized != null && maximized.getDockParent() != null ){
                     if( !DockUtilities.isAncestor( maxi, dockable )){
                         maximize( currentMode( maximized ), maximized );
                     }
@@ -648,7 +657,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
             checkedDrop( defaultMini, dockable, null );
         }
         
-        if( maximized != null )
+        if( maximized != null && maximized.getDockParent() != null )
             maximize( currentMode( maximized ), maximized );
     }
     
@@ -685,7 +694,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
             }
         }
         
-        if( maximized != null )
+        if( maximized != null && maximized.getDockParent() != null )
             maximize( currentMode( maximized ), maximized );
     }
     
@@ -709,102 +718,6 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
     }
     
     /**
-     * Changes the size and location of <code>dockable</code> such that its
-     * new mode is <code>mode</code>
-     * @param dockable the element whose mode will be changed
-     * @param current the current mode of <code>dockable</code>
-     * @param mode the new mode, one of {@link #MINIMIZED}, {@link #NORMALIZED}
-     * or {@link #EXTERNALIZED}
-     * @param location where to put the element, can be <code>null</code>
-     * @param unmaximize whether this method should check that the maxi-station
-     * does not show a maximized {@link Dockable}.
-     * @throws IllegalArgumentException if <code>mode</code> is {@link #MAXIMIZED}
-     * @deprecated will be replaced
-     *//*
-    @Deprecated
-    private void changeTo( Dockable dockable, String current, String mode, Location location, boolean unmaximize ){
-        boolean done = false;
-        
-        if( location != null ){
-            DockStation station = stations.get( location.root );
-            if( station != null ){
-                // target station exists
-                if( unmaximize &&
-                        NORMALIZED.equals( mode ) &&
-                        DockUtilities.isAncestor( maxi, station ) &&
-                        maxi.getFullScreen() != dockable ){
-                    unmaximize();
-                }
-                
-            	if( station == dockable.getDockParent() ){
-            	    // source and target station the same
-            	    boolean needDrop = true;
-            	    
-            	    if( unmaximize && station == maxi ){
-            	        if( location.location.getSuccessor() == null ){
-                	        String[] history = history( dockable );
-                	        if( history != null && history.length >= 2 ){
-                	            String last = history[ history.length-1 ];
-                	            String secondLast = history[ history.length-2 ];
-                	            if( NORMALIZED.equals( secondLast ) && MAXIMIZED.equals( last ))
-                	                needDrop = false;
-                	        }
-            	        }
-            	        
-                        maxi.setFullScreen( null );
-                        
-                        if( needDrop )
-                            maxi.drag( dockable );
-                        else
-                            done = true;
-            		}
-            		
-            	    if( needDrop )
-            	        done = station.drop( dockable, location.location );
-            	}
-            	else{
-            	    // source and target station not the same
-	            	if( unmaximize && MAXIMIZED.equals( current ) ){
-	            	    maxi.setFullScreen( null );
-	            	}
-	            	
-	                done = station.drop( dockable, location.location );
-            	}
-            }
-        }
-        
-        if( !done ){
-            // put onto default location
-            if( MINIMIZED.equals( mode ))
-                checkedDrop( defaultMini, dockable, null );
-            else if( EXTERNALIZED.equals( mode )){
-                if( defaultExternal != dockable.getDockParent() ){
-
-                    Point corner = new Point();
-                    SwingUtilities.convertPointToScreen( corner, dockable.getComponent() );
-                    ScreenDockProperty property = new ScreenDockProperty( 
-                            corner.x, corner.y, dockable.getComponent().getWidth(), dockable.getComponent().getHeight() );
-                    
-                    boolean externDone = defaultExternal.drop( dockable, property, false );
-                    
-                    if( !externDone )
-                        defaultExternal.drop( dockable );
-                }
-            }
-            else{ // normal
-            	if( unmaximize && defaultNormal == maxi )
-            		unmaximize();
-            	
-                checkedDrop( defaultNormal, dockable, null );
-            }
-        }
-
-        if( unmaximize && MAXIMIZED.equals( current )){
-            maxi.setFullScreen( null );
-        }
-    }*/
-    
-    /**
      * Drops <code>dockable</code> onto <code>station</code>, but only
      * if <code>station</code> is not the parent of <code>dockable</code>.
      * @param station the new parent of <code>dockable</code>
@@ -824,6 +737,22 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
     }
 
     /**
+     * Stores for each {@link Dockable} in the tree with the root <code>dockable</code>
+     * the location associated to their current mode.
+     * @param dockable a root of a tree
+     */
+    protected void store( Dockable dockable ){
+        DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
+            @Override
+            public void handleDockable( Dockable check ) {
+                String current = currentMode( check );
+                if( current != null )
+                    store( current, check );
+            }
+        });
+    }
+    
+    /**
      * Stores the location of <code>dockable</code> under the key <code>mode</code>.
      * @param mode the mode <code>dockable</code> is currently in
      * @param dockable the element whose location will be stored
@@ -833,6 +762,22 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         if( !MAXIMIZED.equals( mode )){
             setProperties( mode, dockable, currentLocation( mode, dockable ) );
         }
+    }
+    
+    /**
+     * Stores for each {@link Dockable} of the tree with the root 
+     * <code>dockable</code> the current mode.
+     * @param dockable the element whose mode should be stored
+     */
+    protected void putMode( Dockable dockable ){
+        DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
+            @Override
+            public void handleDockable( Dockable check ) {
+                String current = currentMode( check );
+                if( current != null )
+                    putMode( check, current );
+            }
+        });
     }
     
     /**

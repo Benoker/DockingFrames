@@ -142,6 +142,9 @@ public class FControl {
 	/** a manager allowing the user to change the extended-state of some {@link FDockable}s */
 	private FStateManager stateManager;
 	
+	/** the default location of newly opened {@link FDockable}s */
+	private FLocation defaultLocation;
+	
 	/** the center component of the main-frame */
 	private FContentArea content;
 	
@@ -699,6 +702,43 @@ public class FControl {
 	}
 	
 	/**
+	 * Sets the location where {@link FDockable}s are opened when there is
+	 * nothing else specified for these <code>FDockable</code>s.
+	 * @param defaultLocation the location, can be <code>null</code>
+	 */
+	public void setDefaultLocation( FLocation defaultLocation ){
+		this.defaultLocation = defaultLocation;
+	}
+	
+	/**
+	 * Gets the location where {@link FDockable}s are opened when nothing else
+	 * is specified.
+	 * @return the location, might be <code>null</code>
+	 * @see #setDefaultLocation(FLocation)
+	 */
+	public FLocation getDefaultLocation(){
+		return defaultLocation;
+	}
+	
+	/**
+	 * Sets the {@link FMaximizeBehavior}. The behavior decides what happens
+	 * when the user want's to maximize or to un-maximize a {@link FDockable}.
+	 * @param behavior the new behavior, not <code>null</code>
+	 */
+	public void setMaximizeBehavior( FMaximizeBehavior behavior ){
+		stateManager.setMaximizeBehavior( behavior );
+	}
+	
+	/**
+	 * Gets the currently used maximize-behavior.
+	 * @return the behavior, not <code>null</code>
+	 * @see #setMaximizeBehavior(FMaximizeBehavior)
+	 */
+	public FMaximizeBehavior getMaximizeBehavior(){
+		return stateManager.getMaximizeBehavior();
+	}
+	
+	/**
 	 * Gets the representation of the layer beneath the facile-layer.
 	 * @return the entry point to DockingFrames
 	 */
@@ -842,6 +882,10 @@ public class FControl {
 			FLocation location = null;
 			if( access != null ){
 				location = access.internalLocation();
+			}
+			if( location == null ){
+				if( !frontend.hasLocation( dockable.intern() ))
+					location = defaultLocation;
 			}
 			
 			frontend.show( dockable.intern() );
