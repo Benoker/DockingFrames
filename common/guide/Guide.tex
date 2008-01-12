@@ -81,8 +81,6 @@ A multiple dockable is an object of type \src{FMultipleDockable}. These dockable
 
 Every multiple dockable needs a \src{FMultipleDockableFactory}, which must have been registered at the controller.
 
-Every time the user loads a previously stored layout, the multiple dockables will be deleted and new instances created. That can be very annoying and disturbing for user and developer. \src{FWorkingArea}s are designed to prevent such a behavior. They are single dockables, put can also be parent of other dockables.
-
 Example: the documents of a text editor
 \begin{lstlisting}
 FControl control = ...
@@ -94,6 +92,14 @@ control.add( document );
 document.setVisible( true );
 \end{lstlisting}
 
+\subsection{Grouping dockables}
+Every time the user loads a previously stored layout, the multiple dockables will be deleted and new instances created. That can be very annoying and disturbing for user and developer. \src{FWorkingArea}s are designed to prevent such a behavior. They are single dockables, put can also be parent of other dockables.
+
+\src{FWorkingArea}s can be fetched from the controller using \src{FController.createWorkingArea(String)}. After their creation they are handled like every other single dockable, except that the \src{createWorkingArea}-method already added them to the controller.
+
+Every dockable which should sit on a \src{FWorkingArea}
+
+\src{FWorinkgArea}s 
 
 \end{document}
 
