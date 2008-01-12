@@ -1,0 +1,110 @@
+/*
+ * Bibliothek - DockingFrames
+ * Library built on Java/Swing, allows the user to "drag and drop"
+ * panels containing any Swing-Component the developer likes to add.
+ * 
+ * Copyright (C) 2007 Benjamin Sigg
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ * Benjamin Sigg
+ * benjamin_sigg@gmx.ch
+ * CH - Switzerland
+ */
+package bibliothek.gui.dock.common.action;
+
+import javax.swing.Icon;
+
+import bibliothek.gui.dock.action.DefaultDockActionSource;
+import bibliothek.gui.dock.action.actions.SimpleMenuAction;
+import bibliothek.gui.dock.common.intern.FDecorateableAction;
+import bibliothek.gui.dock.common.intern.action.FSeparator;
+
+/**
+ * A collection of {@link FAction}s which are shown in a menu.
+ * @author Benjamin Sigg
+ *
+ */
+public class FMenu extends FDecorateableAction {
+    /** the internal representation */
+    private DefaultDockActionSource menu;
+    
+    /**
+     * Creates a new menu
+     */
+    public FMenu() {
+        super( new SimpleMenuAction( new DefaultDockActionSource() ) );
+        menu = (DefaultDockActionSource)((SimpleMenuAction)intern()).getMenu();
+    }
+    
+    /**
+     * Creates a new menu.
+     * @param text the text of this menu
+     * @param icon the icon of this menu
+     */
+    public FMenu( String text, Icon icon ){
+        this();
+        setText( text );
+        setIcon( icon );
+    }
+    
+    /**
+     * Adds an action to this menu.
+     * @param action the new action
+     */
+    public void add( FAction action ){
+        menu.add( action.intern() );
+    }
+
+    /**
+     * Adds an action to the menu.
+     * @param index the location of the action
+     * @param action the new action
+     */
+    public void insert( int index, FAction action ){
+        menu.add( index, action.intern() );
+    }
+    
+    /**
+     * Adds a separator at the end of this menu.
+     */
+    public void addSeparator(){
+        add( FSeparator.SEPARATOR );
+    }
+    
+    /**
+     * Adds a separator. 
+     * @param index the location of the new separator
+     */
+    public void insertSeparator( int index ){
+        insert( index, FSeparator.SEPARATOR );
+    }
+    
+    /**
+     * Removes the action at location <code>index</code>.
+     * @param index the location of the element to remove
+     */
+    public void remove( int index ){
+        menu.remove( index );
+    }
+    
+    /**
+     * Removes an action from this menu
+     * @param action the action to remove
+     */
+    public void remove( FAction action ){
+        menu.remove( action.intern() );
+    }
+}
