@@ -33,10 +33,10 @@ import java.awt.Insets;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import bibliothek.gui.dock.facile.DefaultFMultipleDockable;
-import bibliothek.gui.dock.facile.FMultipleDockable;
-import bibliothek.gui.dock.facile.FMultipleDockableFactory;
-import bibliothek.gui.dock.facile.action.FRadioGroup;
+import bibliothek.gui.dock.common.DefaultFMultipleDockable;
+import bibliothek.gui.dock.common.FMultipleDockable;
+import bibliothek.gui.dock.common.FMultipleDockableFactory;
+import bibliothek.gui.dock.common.action.FRadioGroup;
 import bibliothek.paint.model.Picture;
 import bibliothek.paint.model.PictureListener;
 import bibliothek.paint.model.ShapeFactory;

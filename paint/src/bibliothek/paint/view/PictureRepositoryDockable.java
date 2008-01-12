@@ -35,9 +35,9 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import bibliothek.gui.dock.facile.DefaultFSingleDockable;
-import bibliothek.gui.dock.facile.FSingleDockable;
-import bibliothek.gui.dock.facile.action.FButton;
+import bibliothek.gui.dock.common.DefaultFSingleDockable;
+import bibliothek.gui.dock.common.FSingleDockable;
+import bibliothek.gui.dock.common.action.FButton;
 import bibliothek.paint.model.Picture;
 import bibliothek.paint.model.PictureRepository;
 import bibliothek.paint.model.PictureRepositoryListener;

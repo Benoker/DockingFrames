@@ -25,7 +25,7 @@
  */
 package bibliothek.paint.view.action;
 
-import bibliothek.gui.dock.facile.action.FButton;
+import bibliothek.gui.dock.common.action.FButton;
 import bibliothek.paint.model.Picture;
 import bibliothek.paint.util.Resources;
 import bibliothek.paint.view.Page;

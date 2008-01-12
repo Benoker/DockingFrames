@@ -4,8 +4,8 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.LookAndFeel;
 
-import bibliothek.gui.dock.common.menu.LookAndFeelMenuPiece;
-import bibliothek.gui.dock.common.menu.RootMenuPiece;
+import bibliothek.gui.dock.facile.menu.LookAndFeelMenuPiece;
+import bibliothek.gui.dock.facile.menu.RootMenuPiece;
 import bibliothek.gui.dock.support.lookandfeel.LookAndFeelList;
 
 /**

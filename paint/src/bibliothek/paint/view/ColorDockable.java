@@ -31,8 +31,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-import bibliothek.gui.dock.facile.DefaultFSingleDockable;
-import bibliothek.gui.dock.facile.intern.FDockable;
+import bibliothek.gui.dock.common.DefaultFSingleDockable;
+import bibliothek.gui.dock.common.intern.FDockable;
 import bibliothek.paint.util.Resources;
 
 /**

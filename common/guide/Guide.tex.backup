@@ -23,7 +23,9 @@ The Common-project is a layer above DockingFrames. It allows to write applicatio
 \subsection{DockingFrames}
 What is DF? DF is an open source framework written in Java. It extends Java/Swing with the abbility of "dockable frames". Each frame contains some content, a \src{JTree} showing a directory or a \src{Table} showing the results of some game. Each frame has a title and some buttons (like a close-button). The user can move around these frames, the frames will align themself such that there is no unused space between them. There are many ways how frames can be combined to create a new layout.
 
-\section{Common}
+\section{Common basics}
+This section deals with the basic features of Common. After you've read this section, you will be able to write a first application using Common.
+
 \subsection{Basic elements}
 In the understanding of Common, an ordinary application has one \src{JFrame}, which is called the "mainframe", showing the content of the application. The content is painted through some \src{JComponent}s called "panels". Each panel represents some view of the content, for example a texteditor might have one panel for each open document.
 
@@ -80,6 +82,78 @@ documents.setVisible( true );
 A multiple dockable is an object of type \src{FMultipleDockable}. These dockables are created by the application or the controller, shown for some time and then removed from memory.
 
 Every multiple dockable needs a \src{FMultipleDockableFactory}, which must have been registered at the controller.
+
+Example: the documents of a text editor
+\begin{lstlisting}
+FControl control = ...
+FMultipleFactory factory = new DocumentDockableFactory();
+control.add( "myapp-document-factory-id", factory );
+
+FMultipleDockable document = new DocumentDockable( factory, "/home/beni/Desktop/file.txt" );
+control.add( document );
+document.setVisible( true );
+\end{lstlisting}
+
+\subsection{Grouping dockables}
+Every time the user loads a previously stored layout, the multiple dockables will be deleted and new instances created. That can be very annoying and disturbing for user and developer. \src{FWorkingArea}s are designed to prevent such a behavior. They are single dockables, put can also be parent of other dockables.
+
+\src{FWorkingArea}s can be fetched from the controller using \ \src{FController.createWorkingArea}. After their creation they are handled like every other single dockable, except that the \src{createWorkingArea}-method already added them to the controller.
+
+Every dockable which should sit on a \src{FWorkingArea} needs to be put there. The most convenient way is to use \src{FDockable.setWorkingArea}. The controller will store this property when storing the layout.
+
+\subsection{Changing the mode of a dockable}
+Every dockable needs to be in one mode: minimized, normalized, maximized or externalized. The user can change the mode of a dockable by clicking some buttons or moving the dockable around. Clients can read or change this mode as well, they just call \src{FDockable.getExtendedMode()} or \src{FDockable.setExtendedMode}.
+
+The client can also specifiy, what modes are available for a dockable. When using the default-\src{FDockable}s, then \src{setMinimizable}, \src{setMaximizable} and \src{setExternalizable} can be used.
+
+\subsection{Close a dockable}
+When a dockable is no longer of use, it needs to be removed. There are several ways to remove a dockable and they have different effects.
+
+With \src{FDockable.setVisible} the visibility of a dockable can just be changed to \src{false}. The dockable remains in the system and can be reopened at a later time.
+
+With \src{FControl.remove} the dockable is not only made invisible, it is also removed from the controller. All properties related to the dockable will be lost. Unless added to a controller again, it is no longer possible to reopen the dockable.
+
+Or give the user the possibility to close the dockable: setting the property \src{closeable} of the default-\src{FDockable}s to \src{true} will add a close-button to the title. The client can add a \src{FDockableListener} in order to get informed when the visibility state changes.
+
+After some time, the need for any elements of the framework might vanish. Using \src{FControl.destroy()} will release as many resources as possible.
+
+\section{Common features}
+There are more advanced features in Common. This section will introduce you to some methods allowing the fine-tuning of Commons.
+
+\subsection{Actions}
+Most dockables have some actions associated, for example a dockable showing some image might have the actions "zoom in" and "zoom out". Common provides a way to write such actions and attach their graphical representation (for example a button) to the titles of dockables. 
+
+Actions are modeled by \src{FAction} and various subinterfaces. 
+
+\subsection{The location of dockables}
+Naturally a dockable has some location. This location is represented through a \src{FLocation}. Calling \src{FDockable.getLocation()} gets the current location (if any) of a dockable, \src{FDockable.setLocation} immediatelly changes the location of a dockable.
+
+\src{FLocation}s should be created using some factory methods. The first \src{FLocation} is optained through the static methods of \src{FLocation}, for example \src{FLocation.base()}. Afterwards one can use the methods of the newly created object.
+\begin{lstlisting}
+FDockable dockable = ...
+FLocation location = FLocation.base().normalSouth( 0.5 ).east( 0.5 ).stack( 2 )
+dockable.setLocation( location );
+\end{lstlisting}
+Let's have a look at line \src{2}. First a base-location is created, indicating that \src{dockable} will be a child of the main content-area. Then \src{normalSouth( 0.5 )} tells us, that \src{dockable} will be normalized, and in the bottom half of the mainframe. The step \src{east( 0.5 )} puts \src{dockable} in the lower right quarter. And finally \src{stack( 2 )} allows \src{dockable} to be combined with other dockables that are already at that location. If there are already combined dockables at that location, then \src{dockable} will be inserted as the 3. element (counting starts at 0).
+
+A common task is to open a dockable at the same location where another dockable is.
+\begin{lstlisting}
+FDockable oldDockable = ...
+FDockable newDockable = ...
+FLocation location = oldDockable.getLocation();
+newDockable.setLocation( location );
+\end{lstlisting}
+This fragment will move \src{newDockable} at the location of \src{oldDockable} and put \src{oldDockable} at a new location.
+
+ It looks very strange when a dockable moves away to give space for a new dockable. Often the new dockable should just be "aside" the old one. The method \src{FLocation.aside()} provides the client with such a location.
+\begin{lstlisting}
+FDockable oldDockable = ...
+FDockable newDockable = ...
+FLocation location = oldDockable.getLocation();
+newDockable.setLocation( location.aside() );
+\end{lstlisting}
+
+\subsection{Store the layout}
 
 \end{document}
 

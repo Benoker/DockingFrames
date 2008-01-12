@@ -30,7 +30,7 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.KeyStroke;
 
-import bibliothek.gui.dock.facile.action.FButton;
+import bibliothek.gui.dock.common.action.FButton;
 import bibliothek.paint.util.Resources;
 import bibliothek.paint.view.Page;
 

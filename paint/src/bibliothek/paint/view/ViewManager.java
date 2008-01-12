@@ -32,9 +32,9 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import bibliothek.gui.dock.facile.*;
-import bibliothek.gui.dock.facile.event.FDockableAdapter;
-import bibliothek.gui.dock.facile.intern.FDockable;
+import bibliothek.gui.dock.common.*;
+import bibliothek.gui.dock.common.event.FDockableAdapter;
+import bibliothek.gui.dock.common.intern.FDockable;
 import bibliothek.paint.model.Picture;
 import bibliothek.paint.model.PictureRepository;
 import bibliothek.paint.model.PictureRepositoryListener;

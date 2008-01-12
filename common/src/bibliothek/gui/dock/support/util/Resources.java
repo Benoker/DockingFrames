@@ -33,7 +33,7 @@ import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import bibliothek.gui.dock.facile.FControl;
+import bibliothek.gui.dock.common.FControl;
 
 /**
  * A set of resources available through the whole framework

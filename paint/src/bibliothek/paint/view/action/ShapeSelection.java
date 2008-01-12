@@ -29,7 +29,7 @@ import java.awt.*;
 
 import javax.swing.Icon;
 
-import bibliothek.gui.dock.facile.action.FRadioButton;
+import bibliothek.gui.dock.common.action.FRadioButton;
 import bibliothek.paint.model.Shape;
 import bibliothek.paint.model.ShapeFactory;
 import bibliothek.paint.view.Page;
