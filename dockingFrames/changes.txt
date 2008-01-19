@@ -54,7 +54,7 @@
 - Bugfix: MultiDockActionSource added the wrong listener to its children, the effect was that some updates were lost
 - Bugfix: SplitDockStation: full-screen elements not properly removed on drag-operation.
 - API: new SplitDockPathProperty, allows to store the location of a child of a SplitDockStation. Replaces SplitDockProperty whenever possible, but the SplitDockProperty remains a valid way to describe the boundaries of a Dockable.
-- Bugfix: DockUtilities.isAnchestor failed when the anchestor was a ScreenDockStation
+- Bugfix: DockUtilities.isAnchestor failed when the ancestor was a ScreenDockStation
 - Bugfix: Memoryleak in ButtonPanel
 - Bugfix: ButtonPanel did not show all visualisations if a DockAction occurred more than once in the DockActionSource
 - Bugfix: MenuMenuHandler could create a memoryleak by not properly unbinding the visualization of a DockAction
@@ -65,3 +65,7 @@
 ! API: OverpaintablePanel, using a "base" and a "content"-pane, calls to "setContentPane" now have to be replaced by "setBasePane"
 - Bugfix: ScreencaupterMovingImageFactory could throw IllegalArgumentException, thanks Peter for finding that bug
 - Bugfix: DockController.ensureFocusSet could throw NPE
+- API, Bugfix: AbstractDockable, changing the "action-offers" through "setActionOffers" will immediately be visible anywhere.
+- Bugfix: DockFrontend.clean could be stuck in an infinite loop
+- API: DockFrontendListener.showed renamed to shown
+- API: DockFrontendListener.shown/hidden is now called for every Dockable, even if the Dockable was not shown or hidden through the methods of DockFrontend.

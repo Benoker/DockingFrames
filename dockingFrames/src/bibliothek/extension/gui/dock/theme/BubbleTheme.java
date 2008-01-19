@@ -438,7 +438,7 @@ public class BubbleTheme extends BasicTheme {
      * Generator to create views for {@link SeparatorAction separators}.
      * @author Benjamin Sigg
      */
-    private class SeparatorGenerator implements ViewGenerator<SeparatorAction, BasicTitleViewItem<JComponent>>{
+    private static class SeparatorGenerator implements ViewGenerator<SeparatorAction, BasicTitleViewItem<JComponent>>{
     	public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SeparatorAction action, Dockable dockable ){
     		if( action.shouldDisplay( ViewTarget.TITLE ))
     			return new BubbleSeparator( action );

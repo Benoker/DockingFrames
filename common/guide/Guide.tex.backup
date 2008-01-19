@@ -14,6 +14,8 @@
 \begin{document}
 
 \maketitle
+\tableofcontents
+\newpage
 
 \begin{abstract}
 The Common-project is a layer above DockingFrames. It allows to write applications using DF without the need to understand DF. Common does not add new features to DF, Common only combines existing code and reorganizes DF in a way that is easy to use.
@@ -24,7 +26,9 @@ The Common-project is a layer above DockingFrames. It allows to write applicatio
 What is DF? DF is an open source framework written in Java. It extends Java/Swing with the abbility of "dockable frames". Each frame contains some content, a \src{JTree} showing a directory or a \src{Table} showing the results of some game. Each frame has a title and some buttons (like a close-button). The user can move around these frames, the frames will align themself such that there is no unused space between them. There are many ways how frames can be combined to create a new layout.
 
 \section{Common basics}
-This section deals with the basic features of Common. After you've read this section, you will be able to write a first application using Common.
+The Common project is divided in three packages. "Facile" contains some lonly classes which can be used to create minor effects. "Support" contains elements which are not even connected to DF, but still usefull.
+
+The most interesting package however is "common". "Common" contains the layer that will enable you to rapidly write applications using DF. This first section deals with the basic features of Common.
 
 \subsection{Basic elements}
 In the understanding of Common, an ordinary application has one \src{JFrame}, which is called the "mainframe", showing the content of the application. The content is painted through some \src{JComponent}s called "panels". Each panel represents some view of the content, for example a texteditor might have one panel for each open document.
@@ -123,7 +127,65 @@ There are more advanced features in Common. This section will introduce you to s
 \subsection{Actions}
 Most dockables have some actions associated, for example a dockable showing some image might have the actions "zoom in" and "zoom out". Common provides a way to write such actions and attach their graphical representation (for example a button) to the titles of dockables. 
 
-Actions are modeled by \src{FAction} and various subinterfaces. 
+Actions are modeled by \src{FAction} and various subinterfaces. All default-\src{FDockable}s have methods to add or remove these actions.
+
+In the source, that might look like this:
+\begin{lstlisting}
+DefaultFSingleDockable image = ...
+FAction zoom = new ZoomAction();
+image.addAction( zoom );
+\end{lstlisting}
+
+\subsubsection{FButton}
+A \src{FButton} is just clicked by the user, and then executes some action. It is almost the same as an \src{JButton}. There is only one way to write a new \src{FButton}-action:
+
+\begin{lstlisting}
+public class MyActions extends FButton{
+	public MyAction(){
+		setText( "Action" );
+	}
+
+	public void action(){
+		// do something
+	}
+}
+\end{lstlisting}
+
+\subsubsection{FCheckBox}
+The \src{FCheckBox} is an action with two states: selected or not selected. The state changes every time the user triggers the action. It is almost a \src{JCheckBox}. Writing a new \src{FCheckBox} is similar to writing a new \src{FButton}, except that the method \src{changed()} instead of \src{action()} has to be overriden.
+
+\subsubsection{FRadioButton}
+A \src{FRadioButton} is the same as a \src{FCheckBox} with one big difference: several \src{FRadioButton}s can be grouped together, and only one button of the group can be selected. The currently selected button gets unselected whenever the user triggers another button. Grouping is done with the help of a \src{FRadioGroup}:
+\begin{lstlisting}
+FRadioButton buttonA = ...
+FRadioButton buttonB = ...
+
+FRadioGroup group = new FRadioGroup();
+group.add( buttonA );
+group.add( buttonB );
+\end{lstlisting}
+
+\subsubsection{FMenu}
+A \src{FMenu} is a list of actions. When the user triggers the \src{FMenu}, a popup-menu will appear and show the contents of the \src{FMenu}.
+
+\subsubsection{FDropDownButton}
+Something similar to the \src{FMenu}, but more advanced. The \src{FDropDownButton} servs two purposes. It is a menu like \src{FMenu}, and it remembers which action was triggered last. Triggering the button will trigger that last action again.
+
+An example:
+\begin{lstlisting}
+FDropDownButton dropDown = new FDropDownButton();
+
+FButton buttonA = ...
+FButton buttonB = ...
+
+dropDown.add( buttonA );
+dropDown.add( buttonB );
+
+dropDown.setSelection( buttonA );
+
+buttonB.setDropDownSelectable( false );
+\end{lstlisting}
+Let's analyze this code. In lines \src{1-4} some actions are created. In lines \src{6,7} the two \src{FButton}-actions are inserted into the menu of \src{dropDown}. Then in line \src{9} one action is marked as the last triggered action. \src{dropDown} will now show icon and text from \src{buttonA}. Something interesting happens in line \src{11}: the call to \src{setDropDownSelectable} will make sure that even when \src{buttonB} is triggered, it will not be marked as the last triggered action. Sometimes one wants to use \src{FDropDownButton} just as an ordinary drop-down-menu without more functionality.
 
 \subsection{The location of dockables}
 Naturally a dockable has some location. This location is represented through a \src{FLocation}. Calling \src{FDockable.getLocation()} gets the current location (if any) of a dockable, \src{FDockable.setLocation} immediatelly changes the location of a dockable.
@@ -154,6 +216,68 @@ newDockable.setLocation( location.aside() );
 \end{lstlisting}
 
 \subsection{Store the layout}
+With "layout" are all locations and relations of the dockables meant. It's a great help for the user if he can choose between various (predefined) layouts. For example: a \LaTeX editor might have a layout for editing the document, and a layout for looking at the compiled document.
+
+The controller allows to create the current layout, load older layouts and delete layouts during runtime. Four methods deal with the layout: \src{save}, \src{load}, \src{delete} and \src{layouts}.
+
+The method \src{FControl.save} gives the current layout some name and stores it. The method \src{FControl.load} searches a layout with a given name and changes the location of dockables. The method \src{delete} removes a layout, and \src{layouts} returns a \src{String[]} with the names of all currently known layouts.
+
+\subsection{Store the layout persistent}
+Good applications store all their properties persistent (although many developers forget the directory which the file-chooser showed last). The user should not find any changes when he closes and restarts the applications.
+
+The controller can use an \src{ApplicationResourceManager} to store its properties. However the client is responsible to tell the controller when and where to store its properties:
+\begin{lstlisting}
+FControl control = ...
+try{
+	control.getResources().readFile(
+		new File( "/home/user" ));
+	control.getResources().writeFile(
+		new File( "/home/user" ));
+}
+catch( IOException ex ){
+	ex.printStackTrace();
+}
+\end{lstlisting}
+
+\section{Menus}
+Some things, like the list of all known dockables, can be presented to the user through a menu. Common defines \src{MenuPiece}s: a set of items of a \src{JMenu}, perhaps just as child of a bigger set of items. Several \src{MenuPiece}s are put together in order to create the contents of one \src{JMenu}.
+
+A collection of \src{MenuPiece}s:
+\begin{description}
+ \item[RootMenuPiece] is the root of a tree of \src{MenuPiece}s. It represents a whole \src{JMenu}. The \src{RootMenuPiece} is also a \src{NodeMenuPiece}.
+ \item[NodeMenuPiece] is a list of \src{MenuPiece}s. Children can even be added or removed while the \src{JMenu} is visible.
+ \item[FreeMenuPiece] can be used by the client to insert its own \src{JMenuItem}s in the menu.
+ \item[SubMenuPiece] represents a whole submenu. It adds a child-\src{JMenu} into a parent-\src{JMenu}. The child menu has its own \src{RootMenuPiece}.
+ \item[SeparatingMenuPiece] is a wrapper around another \src{MenuPiece}. It can add some separators above and below its child.
+\end{description}
+
+\subsection{List of dockables}
+The \src{FSingleDockableListMenuPiece} contains a list of \src{JCheckBoxMenuItem}s. Each item represents one "single dockable" of a controller. When the user clicks onto one item, then the associated dockable is either made visible or invisible.
+
+The construction of a \src{FSingleDockableListMenuPiece}:
+\begin{lstlisting}
+FControl control = ...
+RootMenuPiece root = new RootMenuPiece( "List", false );
+root.add( new FSingleDockableListMenuPiece( control ));
+JMenu menu = root.getMenu();
+\end{lstlisting}
+
+\subsection{Layout}
+Layout refers to the positions and relations of all the dockables. A controller can store various layouts, and a \src{FLayoutChoiceMenuPiece} allows the user to load, add or remove layouts whenever he wants to.
+
+\subsection{List of themes}
+A theme is something like a \src{LookAndFeel}. It defines the look and to some degree also the behavior of DF. There are various themes available, and the user can exchange them through a \src{FThemeMenuPiece}.
+
+Creating a \src{FThemeMenuPiece} has an additional effect: the theme will be stored persistant if the client stores the layouts persistant.
+
+\subsection{LookAndFeel}
+There is a menu that exchanges the \src{LookAndFeel}, its name is \src{FLookAndFeelMenuPiece}. This \src{MenuPiece} will automatically collect all \src{Window}s which show a dockable or a content-area and update their ui (using \src{JComponent.updateUI}).
+
+Only one \src{LookAndFeel} can be set at a time, and when changing the \src{LookAndFeel} the method \src{JComponent.updateUI()} method has to be called on all \src{JComponent}s. Common uses the class \src{LookAndFeelList} to manage the \src{LookAndFeel}. This list offers a set of \src{LookAndFeel}s, and the \src{FLookAndFeelMenuPiece} is a reflection of that set. The \src{FLookAndFeelMenuPiece} will make sure, that the \src{updateUI}-method gets called on any \src{Window} showing at least one dockable of the controller the menu is associated with. However if there are other windows, for example a \src{JDialog} showing the preferences, then this dialogs user interface will not get updated automatically. Then the client has to create a new \src{ComponentCollector} and add this collector to the \src{LookAndFeelList}
+
+\begin{lstlisting}
+
+\end{lstlisting}
 
 \end{document}
 

@@ -420,7 +420,7 @@ public class RexTabbedComponent extends JComponent {
 		contentArea.repaint();
 	}
 
-	protected class TabEntry{
+	protected static class TabEntry{
 		public Dockable dockable;
 		public DockTitle title;
 		public TabComponent tab;

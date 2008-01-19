@@ -195,7 +195,7 @@ public class MenuMenuHandler extends AbstractMenuHandler<JMenu, MenuDockAction> 
      * An item of the menu.
      * @author Benjamin Sigg
      */
-    private class ActionItem{
+    private static class ActionItem{
     	/** the action this item represents */
     	public DockAction action;
     	/** the handler of the visualization, might be <code>null</code> */
@@ -229,7 +229,7 @@ public class MenuMenuHandler extends AbstractMenuHandler<JMenu, MenuDockAction> 
      * A wrapper JMenu to Menu.
      * @author Benjamin Sigg
      */
-    private class JMenuWrapper implements Menu{
+    private static class JMenuWrapper implements Menu{
     	/** the menu wrapped by this object */
         private JMenu menu;
         
@@ -258,7 +258,7 @@ public class MenuMenuHandler extends AbstractMenuHandler<JMenu, MenuDockAction> 
      * @author Benjamin Sigg
      *
      */
-    private class JPopupMenuWrapper implements Menu{
+    private static class JPopupMenuWrapper implements Menu{
     	/** the menu covered by this wrapper */
         private JPopupMenu menu;
         

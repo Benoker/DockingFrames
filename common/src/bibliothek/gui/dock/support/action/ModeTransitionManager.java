@@ -35,7 +35,6 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.support.util.GenericStreamTransformation;
-import bibliothek.gui.dock.util.DockUtilities;
 
 /**
  * A set of modes. Adds some {@link ButtonDockAction}s to {@link Dockable}s,
@@ -281,7 +280,7 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
      * @param dockable the affected element
      */
     protected void goOut( String mode, Dockable dockable ){
-        transition( mode, dockables.get( dockable ).popMode(), dockable );
+        transition( mode, dockables.get( dockable ).previousMode(), dockable );
     }
     
     /**
@@ -304,30 +303,6 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
      */
     public void setMode( Dockable dockable, String mode ){
         goIn( mode, dockable );
-    }
-    
-    /**
-     * Ensures that the mode that belongs to <code>dockable</code> and all
-     * its children is set correctly. Also {@link #rebuild(Dockable) rebuilds} 
-     * the list of actions when necessary.
-     * @param dockable the element which should be checked.
-     */
-    protected void validate( Dockable dockable ){
-        DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
-            @Override
-            public void handleDockable( Dockable dockable ) {
-                Entry entry = dockables.get( dockable );
-                if( entry != null ){
-                    String oldMode = entry.peekMode();
-                    String newMode = currentMode( dockable );
-                    
-                    if( !newMode.equals( oldMode ) ){
-                        entry.putMode( newMode );
-                        rebuild( dockable );
-                    }
-                }
-            }
-        });
     }
     
     /**
@@ -397,7 +372,6 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
     	Entry entry = dockables.get( dockable );
     	if( entry != null ){
     		entry.putMode( mode );
-    		validate( dockable );
     	}
     }
     
@@ -597,23 +571,21 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
         public void putMode( String mode ){
             history.remove( mode );
             history.add( mode );
+            rebuild( dockable );
         }
         
         /**
-         * Removes the top mode and the returns the new top of the history.
+         * Gets the mode that was used previously to the current mode.
          * If the history gets empty, then {@link ModeTransitionManager#getDefaultMode(Dockable)}
          * is returned.
          * @return the mode in which this entry was before the current mode
          * was put onto the history
          */
-        public String popMode(){
-            if( !history.isEmpty() )
-                history.remove( history.size()-1 );
-            
-            if( history.isEmpty() )
+        public String previousMode(){
+            if( history.size() < 2 )
                 return getDefaultMode( dockable );
             else
-                return history.get( history.size()-1 );
+                return history.get( history.size()-2 );
         }
         
         /**

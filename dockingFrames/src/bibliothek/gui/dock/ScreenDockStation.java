@@ -875,7 +875,7 @@ public class ScreenDockStation extends AbstractDockStation {
      * is used only while a Dockable is dragged and this station has answered
      * as possible parent.
      */
-    private class DropInfo{
+    private static class DropInfo{
         /** The Dockable which is dragged */
         public Dockable dockable;
         /** Location of the mouse */

@@ -45,4 +45,13 @@ public interface FMultipleDockable extends FDockable{
 	 * @return the factory, not <code>null</code>
 	 */
 	public FMultipleDockableFactory getFactory();
+	
+	/**
+	 * Tells whether this {@link FMultipleDockable} should be removed from the
+	 * {@link FControl} when it is made invisible. If in doubt, return
+	 * <code>true</code>.
+	 * @return <code>true</code> if this dockable should be removed from
+	 * the controller when made invisible.
+	 */
+	public boolean isRemoveOnClose();
 }

@@ -132,7 +132,7 @@ public class Demo05_CloseAndOpen {
 			}
 
 			@Override
-			public void showed(DockFrontend frontend, Dockable affected) {
+			public void shown(DockFrontend frontend, Dockable affected) {
 				if( affected == dockable )
 					item.setSelected( true );
 			}

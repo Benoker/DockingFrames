@@ -67,7 +67,7 @@ public abstract class DockFrontendAdapter implements DockFrontendListener {
         // empty
     }
 
-    public void showed( DockFrontend frontend, Dockable dockable ) {
+    public void shown( DockFrontend frontend, Dockable dockable ) {
         // empty
     }
 }

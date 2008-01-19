@@ -201,6 +201,9 @@ public class FControl {
 		    }
 		    @Override
 		    protected void load( DataInputStream in, boolean entry ) throws IOException {
+		        if( entry ){
+		            stateManager.normalizeAllWorkingAreaChildren();
+		        }
 		        super.load( in, entry );
 		        stateManager.read( new StateManager.LocationStreamTransformer(), in );
 		    }
@@ -218,6 +221,11 @@ public class FControl {
 		        return false;
 		    }
 		    public boolean ignoreElement( DockElement element ) {
+		        if( element instanceof FacileDockable ){
+		            FDockable fdockable = ((FacileDockable)element).getDockable();
+		            if( fdockable.getWorkingArea() != null )
+		                return true;
+		        }
 		        return false;
 		    }
 		});
@@ -245,9 +253,16 @@ public class FControl {
 		    @Override
 		    public void dockableUnregistered( DockController controller, Dockable dockable ) {
 		        if( dockable instanceof FacileDockable ){
-                    FDockableAccess access = accesses.get( ((FacileDockable)dockable).getDockable() );
+		            FDockable fdock = ((FacileDockable)dockable).getDockable();
+                    FDockableAccess access = accesses.get( fdock );
                     if( access != null ){
                         access.informVisibility( false );
+                    }
+                    if( fdock instanceof FMultipleDockable ){
+                        FMultipleDockable multiple = (FMultipleDockable)fdock;
+                        if( multiple.isRemoveOnClose() ){
+                            remove( multiple );
+                        }
                     }
                 }
 		    }
@@ -830,21 +845,11 @@ public class FControl {
 	 * @author Benjamin Sigg
 	 *
 	 */
-	private class FactoryProperties{
+	private static class FactoryProperties{
 		/** the associated factory */
 		public FMultipleDockableFactory factory;
 		/** the number of {@link FMultipleDockable} that belong to {@link #factory} */
 		public int count = 0;
-	}
-	
-	/**
-	 * Ensures that all {@link Dockable}s are in a valid state (minimized,
-	 * maximized, normalized or externalized).
-	 */
-	protected void ensureValidModes(){
-	    for( FDockable dockable : dockables.toArray( new FDockable[ dockables.size() ] ) ){
-	        stateManager.ensureValidLocation( dockable );
-	    }
 	}
 	
 	/**
@@ -874,7 +879,6 @@ public class FControl {
 		
 		public void hide( FDockable dockable ){
 			frontend.hide( dockable.intern() );
-			ensureValidModes();
 		}
 		
 		public void show( FDockable dockable ){
@@ -888,9 +892,10 @@ public class FControl {
 					location = defaultLocation;
 			}
 			
-			frontend.show( dockable.intern() );
-			
-			if( location != null ){
+			if( location == null ){
+			    frontend.show( dockable.intern() );
+			}
+			else{
 				stateManager.setLocation( dockable.intern(), location );
 			}
 			stateManager.ensureValidLocation( dockable );

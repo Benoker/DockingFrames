@@ -1169,9 +1169,7 @@ public class FlapDockStation extends AbstractDockableStation {
         buttonListeners.put( title, listener );
         
         title.setOrientation( orientation( direction ) );
-        
-        if( title != null )
-            dockable.bind( title );
+        dockable.bind( title );
     }
     
     /**
@@ -1186,8 +1184,7 @@ public class FlapDockStation extends AbstractDockableStation {
         title.removeMouseInputListener( listener );
         
         buttonTitles.remove( dockable );
-        if( title != null )
-            dockable.unbind( title );
+        dockable.unbind( title );
     }
     
     /**

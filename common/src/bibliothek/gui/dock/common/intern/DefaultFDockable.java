@@ -39,6 +39,138 @@ import bibliothek.gui.dock.common.intern.action.FSeparator;
  * @author Benjamin Sigg
  */
 public class DefaultFDockable extends AbstractFDockable{
+    /**
+     * Describes what the user can do with the enclosing {@link DefaultFDockable}.<br>
+     * A name like <code>X_Y</code> tells, that feature <code>X</code> and
+     * feature <code>Y</code> are available. The features are:
+     * <ul>
+     *  <li>MIN: whether the dockable can be minimized</li>
+     *  <li>MAX: whether the dockable can be maximized</li>
+     *  <li>EXT: whether the dockable can be externalized</li>
+     *  <li>STACK: whether the docakble can be combined with other dockables, this
+     *  feature normally should be allowed.</li>
+     *  <li>CLOSE: whether the dockable can be closed by the user through an action 
+     *  (normally a "x" in the right corner of the title)</li>
+     * </ul>
+     * @author Benjamin Sigg
+     */
+    public static enum Permissions{
+        /** no permissions at all */
+        NONE                    ( false, false, false, false, false ),
+        /** all permissions */
+        ALL                     ( true, true, true, true, true ),
+        /** all permissions except close */
+        DEFAULT                 ( true, true, true, true, false ),
+        
+        MIN                     ( true, false, false, false, false ),
+        MAX                     ( false, true, false, false, false ),
+        EXT                     ( false, false, true, false, false ),
+        STACK                   ( false, false, false, true, false ),
+        CLOSE                   ( false, false, false, false, true ),
+        
+        MIN_MAX                 ( true, true, false, false, false ),
+        MIN_EXT                 ( true, false, true, false, false ),
+        MIN_STACK               ( true, false, false, true, false ),
+        MIN_CLOSE               ( true, false, false, false, true ),
+        MAX_EXT                 ( false, true, true, false, false ),
+        MAX_STACK               ( false, true, false, true, false ),
+        MAX_CLOSE               ( false, true, false, false, true ),
+        EXT_STACK               ( false, false, true, true, false ),
+        EXT_CLOSE               ( false, false, true, false, true ),
+        STACK_CLOSE             ( false, false, false, true, true ),
+        
+        MIN_MAX_EXT             ( true, true, true, false, false ),
+        MIN_MAX_STACK           ( true, true, false, true, true ),
+        MIN_MAX_CLOSE           ( true, true, false, false, true ),
+        
+        MIN_EXT_STACK           ( true, false, true, true, false ),
+        MIN_EXT_CLOSE           ( true, false, true, false, true ),
+        
+        MIN_STACK_CLOSE         ( true, false, false, true, true ),
+        
+        MAX_EXT_STACK           ( false, true, true, true, false ),
+        MAX_EXT_CLOSE           ( false, true, true, false, true ),
+        
+        MAX_STACK_CLOSE         ( false, true, false, true, true ),
+        
+        MIN_MAX_EXT_STACK       ( true, true, true, true, false ),
+        MIN_MAX_EXT_CLOSE       ( true, true, true, false, true ),
+        MIN_MAX_STACK_CLOSE     ( true, true, false, true, true ),
+        MIN_EXT_STACK_CLOSE     ( true, false, true, true, true ),
+        MAX_EXT_STACK_CLOSE     ( false, true, true, true, true ),
+        
+        MIN_MAX_EXT_STACK_CLOSE ( true, true, true, true, true );
+        
+        
+        /** the user can minimize the dockable */
+        private boolean minimizable;
+        /** the user can maximize the dockable */
+        private boolean maximizable;
+        /** the user can externalize the dockable */
+        private boolean externalizable;
+        /** the user can stack the dockable */
+        private boolean stackable;
+        /** the user can close the dockable */
+        private boolean closeable;
+        
+        /**
+         * Creates a new Permissions.
+         * @param min {@link #minimizable}
+         * @param max {@link #maximizable}
+         * @param ext {@link #externalizable}
+         * @param stack {@link #stackable}
+         * @param close {@link #closeable}
+         */
+        private Permissions( boolean min, boolean max, boolean ext, boolean stack, boolean close ){
+            this.minimizable = min;
+            this.maximizable = max;
+            this.externalizable = ext;
+            this.stackable = stack;
+            this.closeable = close;
+        }
+        
+        /**
+         * Represents the property {@link DefaultFDockable#isCloseable()}.
+         * @return <code>true</code> if the user can close the dockable
+         */
+        public boolean isCloseable() {
+            return closeable;
+        }
+        
+        /**
+         * Represents the property {@link DefaultFDockable#isExternalizable()}.
+         * @return <code>true</code> if the user can externalize the dockable
+         */
+        public boolean isExternalizable() {
+            return externalizable;
+        }
+        
+        /**
+         * Represents the property {@link DefaultFDockable#isMaximizable()}.
+         * @return <code>true</code> if the user can maximize the dockable
+         */
+        public boolean isMaximizable() {
+            return maximizable;
+        }
+        
+        /**
+         * Represents the property {@link DefaultFDockable#isMinimizable()}.
+         * @return <code>true</code> if the user can minimize the dockable
+         */
+        public boolean isMinimizable() {
+            return minimizable;
+        }
+        
+        /**
+         * Represents the property {@link DefaultFDockable#isStackable()}.
+         * @return <code>true</code> if the user can combine the dockable with
+         * other dockables
+         */
+        public boolean isStackable() {
+            return stackable;
+        }
+    }
+    
     /** whether this dockable can be minimized */
     private boolean minimizable;
     /** whether this dockable can be maximized */
@@ -56,15 +188,24 @@ public class DefaultFDockable extends AbstractFDockable{
     /**
      * Creates a new dockable
      */
-    public DefaultFDockable(){
+    public DefaultFDockable(  ){
+        this( Permissions.DEFAULT );
+    }
+    
+    /**
+     * Creates a new dockable.
+     * @param permission the permissions of this dockable
+     */
+    public DefaultFDockable( Permissions permission ){
         super( null );
         dockable = new DefaultFacileDockable( this );
         init( dockable );
         
-        setMinimizable( true );
-        setMaximizable( true );
-        setExternalizable( true );
-        setStackable( true );
+        setMinimizable( permission.isMinimizable() );
+        setMaximizable( permission.isMaximizable() );
+        setExternalizable( permission.isExternalizable() );
+        setStackable( permission.isStackable() );
+        setCloseable( permission.isCloseable() );
     }
     
     

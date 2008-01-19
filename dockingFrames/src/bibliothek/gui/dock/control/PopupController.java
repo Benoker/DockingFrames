@@ -116,6 +116,10 @@ public class PopupController implements DockRegisterListener{
 	public void dockableRegistering( DockController controller, Dockable dockable ){
 		// ignore
 	}
+	
+	public void dockableCycledRegister( DockController controller, Dockable dockable ) {
+	    // ignore
+	}
 
 	/**
      * A listener to a Dockable, lets the user

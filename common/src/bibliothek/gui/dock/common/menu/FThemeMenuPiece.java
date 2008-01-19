@@ -102,7 +102,7 @@ public class FThemeMenuPiece extends ThemeMenuPiece{
      * A factory creating new {@link NoStackTheme}s.
      * @author Benjamin Sigg
      */
-    private class NoStackFactory implements ThemeFactory{
+    private static class NoStackFactory implements ThemeFactory{
         /** the creator of the base theme */
         private ThemeFactory delegate;
         

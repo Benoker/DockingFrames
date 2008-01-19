@@ -26,15 +26,10 @@
 package bibliothek.gui.dock.facile.action;
 
 import java.awt.Point;
-import java.awt.event.KeyEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 
 import javax.swing.Icon;
 import javax.swing.SwingUtilities;
@@ -49,12 +44,7 @@ import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
-import bibliothek.gui.dock.event.DockHierarchyEvent;
-import bibliothek.gui.dock.event.DockHierarchyListener;
-import bibliothek.gui.dock.event.DockRegisterListener;
-import bibliothek.gui.dock.event.DockRelocatorListener;
-import bibliothek.gui.dock.event.IconManagerListener;
-import bibliothek.gui.dock.event.SplitDockListener;
+import bibliothek.gui.dock.event.*;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
@@ -140,6 +130,8 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      */
     private String lastMaximizedMode = null;
     
+    /** Whether a transition is currently in progress or not */
+    private boolean onTransition = false;
 
     /**
      * Creates a new manager. Adds listeners to the <code>controller</code>
@@ -368,7 +360,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
 
     @Override
     protected String currentMode( Dockable dockable ) {
-        if( normal.contains( dockable ) || mini.contains( dockable ) || external.contains( dockable ))
+        if( normal.contains( dockable ) || mini.contains( dockable ) )
             return NORMALIZED;
         
         DockStation parent = dockable.getDockParent();
@@ -427,23 +419,29 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
 
     @Override
     protected void transition( String oldMode, String newMode, Dockable dockable ) {
+        AffectedSet affected = new AffectedSet();
+        onTransition = true;
         try{
-            controller.getRegister().setStalled( true );
-
-            if( oldMode != null ){
-            	store( dockable );
+            try{
+                controller.getRegister().setStalled( true );
+    
+                if( oldMode != null ){
+                	store( dockable );
+                }
+                
+                change( oldMode, newMode, dockable, affected );
+                
+                if( !MINIMIZED.equals( newMode ))
+                	controller.setFocusedDockable( dockable, true );
             }
-            
-            change( oldMode, newMode, dockable );
-            
-            putMode( dockable );
-            
-            if( !MINIMIZED.equals( newMode ))
-            	controller.setFocusedDockable( dockable, true );
+            finally{
+                controller.getRegister().setStalled( false );
+                onTransition = false;
+                affected.finish();
+            }
         }
         finally{
-            controller.getRegister().setStalled( false );
-            controller.getSingleParentRemover().testAll( controller );
+            onTransition = false;
         }
     }
     
@@ -504,9 +502,11 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      * @param current the current mode, can be <code>null</code>
      * @param destination the mode <code>dockable</code> would like to have
      * @param dockable the element whose mode is to change
+     * @param affected a set of <code>Dockable</code>s which will be filled by the
+     * elements that change their mode because of this method
      */
-    private void change( String current, String destination, Dockable dockable ){
-        change( current, destination, dockable, getProperties( destination, dockable ));
+    private void change( String current, String destination, Dockable dockable, AffectedSet affected ){
+        change( current, destination, dockable, getProperties( destination, dockable ), affected );
     }
     
     /**
@@ -519,16 +519,18 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      * @param location the new location, can be <code>null</code>. The location
      * should match the <code>destination</code>, otherwise the <code>dockable</code>
      * might be placed at the wrong location.
+     * @param affected a set of <code>Dockable</code>s which will be filled by the
+     * elements that change their mode because of this method
      */
-    private void change( String current, String destination, Dockable dockable, Location location ){
+    private void change( String current, String destination, Dockable dockable, Location location, AffectedSet affected ){
         if( MAXIMIZED.equals( destination ))
-            maximize( current, dockable );
+            maximize( current, dockable, affected );
         if( MINIMIZED.equals( destination ))
-            minimize( dockable, location );
+            minimize( dockable, location, affected );
         if( NORMALIZED.equals( destination ))
-            normalize( dockable, location );
+            normalize( dockable, location, affected );
         if( EXTERNALIZED.equals( destination ))
-            externalize( dockable, location );
+            externalize( dockable, location, affected );
     }
     
     /**
@@ -537,12 +539,14 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      * can be <code>null</code> to indicate that <code>dockable</code>
      * is newly added.
      * @param dockable the element that should be made maximized
+     * @param affected a set of <code>Dockable</code>s which will be filled by the
+     * elements that change their mode because of this method
      */
-    private void maximize( String current, Dockable dockable ){
-    	unmaximize();
+    private void maximize( String current, Dockable dockable, AffectedSet affected ){
+    	unmaximize( affected );
     	
     	if( current != null && !NORMALIZED.equals( current )){
-    		change( current, NORMALIZED, dockable );
+    		change( current, NORMALIZED, dockable, affected );
     		current = NORMALIZED;
     	}
     	
@@ -573,20 +577,23 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
     		maxi.setFullScreen( maximizing );
     	}
     	
-    	if( maximizing != dockable )
-    		putMode( maximizing );
+    	affected.add( maximizing );
     }
     
     /**
      * Ensures that no {@link Dockable} is maximized
+     * @param affected a set of <code>Dockable</code>s which will be filled by the
+     * elements that change their mode because of this method
      */
-    private void unmaximize(){
+    private void unmaximize( AffectedSet affected ){
     	Dockable dockable = maxi.getFullScreen();
     	if( dockable != null ){
+    	    affected.add( dockable );
+            
             maxi.setFullScreen( null );
     	    
     	    if( lastMaximizedLocation != null ){
-    	        change( MAXIMIZED, lastMaximizedMode, dockable, lastMaximizedLocation );
+    	        change( MAXIMIZED, lastMaximizedMode, dockable, lastMaximizedLocation, affected );
     	        lastMaximizedLocation = null;
     	        lastMaximizedMode = null;
     	    }
@@ -598,12 +605,8 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         		if( MAXIMIZED.equals( mode ))
         			mode = NORMALIZED;
     
-        		change( MAXIMIZED, mode, dockable );
+        		change( MAXIMIZED, mode, dockable, affected );
     	    }
-    	    
-    	    putMode( dockable );
-    	    
-    	    controller.getSingleParentRemover().testAll( controller );
     	}
     }
     
@@ -615,9 +618,13 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      * @param location a location describing the new position of <code>dockable</code>,
      * the behavior is unspecified if <code>location</code> does not describe
      * a normalized position. Can be <code>null</code>.
+     * @param affected a set of <code>Dockable</code>s which will be filled by the
+     * elements that change their mode because of this method
      */
-    private void normalize( Dockable dockable, Location location ){
+    private void normalize( Dockable dockable, Location location, AffectedSet affected ){
         boolean done = false;
+        affected.add( dockable );
+        
         if( location != null ){
             if( location.location.getSuccessor() == null ){
                 String[] history = history( dockable );
@@ -626,7 +633,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
                     String secondLast = history[ history.length-2 ];
                     if( NORMALIZED.equals( secondLast ) && MAXIMIZED.equals( last )){
                         if( stations.get( location.root ) == maxi ){
-                            unmaximize();
+                            unmaximize( affected );
                             done = true;
                         }
                     }
@@ -643,14 +650,14 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
                     maximized = null;
             }
             
-            unmaximize();
+            unmaximize( affected );
             
             if( !child && !drop( location, dockable )){
                 checkedDrop( defaultNormal, dockable, null );
             
                 if( maximized != null && maximized.getDockParent() != null ){
                     if( !DockUtilities.isAncestor( maxi, dockable )){
-                        maximize( currentMode( maximized ), maximized );
+                        maximize( currentMode( maximized ), maximized, affected );
                     }
                 }
             }
@@ -665,15 +672,19 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      * @param location a location describing the new position of <code>dockable</code>,
      * the behavior is unspecified if <code>location</code> does not describe
      * a minimized position. Can be <code>null</code>.
+     * @param affected a set of <code>Dockable</code>s which will be filled by the
+     * elements that change their mode because of this method
      */
-    private void minimize( Dockable dockable, Location location ){
+    private void minimize( Dockable dockable, Location location, AffectedSet affected ){
         Dockable maximized = null;
+        affected.add( dockable );
+        
         if( MAXIMIZED.equals( currentMode( dockable ) ) ){
             maximized = maxi.getFullScreen();
             if( maximized != null )
                 maximized = getMaximizingElement( maximized, dockable );
             
-            unmaximize();
+            unmaximize( affected );
         }
         
         if( !drop( location, dockable )){
@@ -681,7 +692,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         }
         
         if( maximized != null && maximized.getDockParent() != null )
-            maximize( currentMode( maximized ), maximized );
+            maximize( currentMode( maximized ), maximized, affected );
     }
     
     /**
@@ -692,16 +703,20 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      * @param location a location describing the new position of <code>dockable</code>,
      * the behavior is unspecified if <code>location</code> does not describe
      * an externalized position. Can be <code>null</code>.
+     * @param affected a set of <code>Dockable</code>s which will be filled by the
+     * elements that change their mode because of this method
      */
-    private void externalize( Dockable dockable, Location location ){
+    private void externalize( Dockable dockable, Location location, AffectedSet affected ){
         Dockable maximized = null;
         if( MAXIMIZED.equals( currentMode( dockable ) ) ){
             maximized = maxi.getFullScreen();
             if( maximized != null )
                 maximized = getMaximizingElement( maximized, dockable );
             
-            unmaximize();
+            unmaximize( affected );
         }
+        
+        affected.add( dockable );
         
         if( !drop( location, dockable )){
             if( dockable.getDockParent() != defaultExternal ){
@@ -718,7 +733,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         }
         
         if( maximized != null && maximized.getDockParent() != null )
-            maximize( currentMode( maximized ), maximized );
+            maximize( currentMode( maximized ), maximized, affected );
     }
     
     /**
@@ -904,17 +919,56 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
     }
     
     /**
+     * A set of {@link Dockable}s built while changing the mode of some
+     * <code>Dockable</code>s. This set contains all the <code>Dockable</code>
+     * which might have changed their mode.
+     * @author Benjamin Sigg
+     */
+    private class AffectedSet{
+        /** the changed elements */
+        private Set<Dockable> set = new HashSet<Dockable>();
+        
+        /**
+         * Adds <code>dockable</code> and its children to this set.
+         * @param dockable the element to add
+         */
+        public void add( Dockable dockable ){
+            set.add( dockable );
+            DockStation station = dockable.asDockStation();
+            if( station != null ){
+                for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
+                    add( station.getDockable( i ));
+                }
+            }
+        }
+        
+        /**
+         * Performs the clean up operations that are required after some
+         * <code>Dockable</code>s have changed their mode.<br>
+         * This includes calling {@link StateManager#putMode(Dockable, String)}
+         * for each element known to this set.
+         */
+        public void finish(){
+            for( Dockable dockable : set ){
+                putMode( dockable, currentMode( dockable ) );
+            }
+        }
+    }
+    
+    /**
      * A listener informing the enclosing manager when a {@link Dockable} changes
      * its mode.
      * @author Benjamin Sigg
      */
     private class Listener implements SplitDockListener, DockRelocatorListener, DockRegisterListener, DockHierarchyListener{
         public void fullScreenDockableChanged( SplitDockStation station, Dockable oldFullScreen, Dockable newFullScreen ) {
-            if( oldFullScreen != null )
-                validate( oldFullScreen );
-            
-            if( newFullScreen != null )
-                validate( newFullScreen );
+            if( !onTransition ){
+                if( oldFullScreen != null )
+                    putMode( oldFullScreen );
+                
+                if( newFullScreen != null )
+                    putMode( newFullScreen );
+            }
         }
 
         public void dockableDrag( DockController controller, Dockable dockable, DockStation station ) {
@@ -922,7 +976,9 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         }
 
         public void dockablePut( DockController controller, Dockable dockable, DockStation station ) {
-            unmaximize();
+            AffectedSet affected = new AffectedSet();
+            unmaximize( affected );
+            affected.finish();
         }
 
 		public void dockStationRegistered( DockController controller, DockStation station ){
@@ -953,8 +1009,14 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
 		    // ignore
 		}
 		
+		public void dockableCycledRegister( DockController controller, Dockable dockable ) {
+		    // ignore
+		}
+		
 		public void hierarchyChanged( DockHierarchyEvent event ) {
-		    rebuild( event.getDockable() );
+		    if( !onTransition ){
+		        rebuild( event.getDockable() );
+		    }
 		}
     }
 }

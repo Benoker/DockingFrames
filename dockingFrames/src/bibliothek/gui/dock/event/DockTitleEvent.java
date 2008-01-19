@@ -70,6 +70,7 @@ public class DockTitleEvent {
         if( dockable == null )
             throw new IllegalArgumentException( "dockable must not be null" );
         
+        this.dockable = dockable;
         this.station = station;
         this.active = active;
     }

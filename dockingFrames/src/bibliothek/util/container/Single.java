@@ -34,7 +34,7 @@ package bibliothek.util.container;
  * @author Benjamin Sigg
  * @param <A> type of the first field
  */
-public class Single<A>{
+public class Single<A> implements Cloneable{
 	private A a;
 	
 	public Single(){
@@ -52,9 +52,15 @@ public class Single<A>{
 		return a;
 	}
 	
+    @SuppressWarnings("unchecked")
     @Override
 	public Single<A> clone(){
-		return new Single<A>( a );
+        try{
+            return (Single<A>)super.clone();
+        }
+        catch( CloneNotSupportedException ex ){
+            throw new RuntimeException( ex );
+        }
 	}
 	
     @SuppressWarnings("unchecked")

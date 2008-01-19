@@ -186,7 +186,7 @@ public class CloseableDockableMenuPiece extends BaseMenuPiece{
         }
         
         @Override
-        public void showed( DockFrontend frontend, Dockable dockable ) {
+        public void shown( DockFrontend frontend, Dockable dockable ) {
             Item item = items.get( dockable );
             if( item != null ){
                 item.setDockableState( true );

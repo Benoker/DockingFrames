@@ -57,9 +57,10 @@ public class Quartuple<A,B,C,D> extends Triple<A,B,C>{
 		return d;
 	}
 	
+    @SuppressWarnings("unchecked")
     @Override
 	public Quartuple<A, B, C, D> clone(){
-		return new Quartuple<A, B, C, D>( getA(), getB(), getC(), d );
+		return (Quartuple<A, B, C, D>)super.clone();
 	}
 	
     @SuppressWarnings("unchecked")

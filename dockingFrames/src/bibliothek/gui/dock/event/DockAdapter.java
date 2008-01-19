@@ -74,6 +74,10 @@ public abstract class DockAdapter implements DockableListener, DockControllerLis
     public void dockableUnregistered( DockController controller, Dockable dockable ) {
         // do nothing
     }
+    
+    public void dockableCycledRegister( DockController controller, Dockable dockable ) {
+        // ignore 
+    }
 
     public void dockableDrag( DockController controller, Dockable dockable, DockStation station ) {
         // do nothing

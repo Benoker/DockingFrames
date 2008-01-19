@@ -26,6 +26,7 @@
 
 package bibliothek.gui.dock.event;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
 
@@ -36,20 +37,22 @@ import bibliothek.gui.Dockable;
  */
 public interface DockFrontendListener {
     /**
-     * Invoked if a {@link Dockable} was made invisible through the
-     * methods of a frontend.
-     * @param fronend the invoker
+     * Invoked if a {@link Dockable} was made invisible. This includes
+     * {@link Dockable}s which are not registered in <code>frontend</code>, but
+     * known in the {@link DockController}.
+     * @param frontend the invoker
      * @param dockable the element which is no longer visible
      */
-    public void hidden( DockFrontend fronend, Dockable dockable );
+    public void hidden( DockFrontend frontend, Dockable dockable );
     
     /**
-     * Invoked if a {@link Dockable} was made visible through the
-     * methods of a frontend.
+     * Invoked if a {@link Dockable} was made visible. This includes
+     * {@link Dockable}s which are not registered in <code>frontend</code>, but
+     * known in the {@link DockController}.
      * @param frontend the invoker
      * @param dockable the element which was made visible
      */
-    public void showed( DockFrontend frontend, Dockable dockable );
+    public void shown( DockFrontend frontend, Dockable dockable );
     
     /**
      * Informs this listener that an additional <code>dockable</code> has

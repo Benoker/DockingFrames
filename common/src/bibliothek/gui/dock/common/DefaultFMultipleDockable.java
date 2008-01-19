@@ -25,6 +25,12 @@
  */
 package bibliothek.gui.dock.common;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+
+import javax.swing.Icon;
+
+import bibliothek.gui.dock.common.action.FAction;
 import bibliothek.gui.dock.common.intern.DefaultFDockable;
 import bibliothek.gui.dock.common.intern.FControlAccess;
 import bibliothek.gui.dock.dockable.DefaultDockableFactory;
@@ -40,16 +46,150 @@ public class DefaultFMultipleDockable extends DefaultFDockable implements FMulti
     /** a factory needed to store or load this dockable */
     private FMultipleDockableFactory factory;
     
+    /** whether to remove this dockable from the controller when closing or not */
+    private boolean removeOnClose = true;
+    
+    /**
+     * Creates a new dockable
+     * @param factory the factory which created or could create this
+     * kind of dockable.
+     * @param actions the actions shown in the title, can be <code>null</code>.
+     * A separator is inserted for every entry that is <code>null</code> of this array.
+     */
+    public DefaultFMultipleDockable( FMultipleDockableFactory factory, FAction... actions ){
+        this( factory, null, null, null, null, actions );
+    }
+    
     /**
      * Creates a new dockable.
      * @param factory the factory which created or could create this
      * kind of dockable.
+     * @param content a <code>Component</code> which will be shown in the middle
+     * of this dockable, can be <code>null</code>.
+     * @param actions the actions shown in the title, can be <code>null</code>.
+     * A separator is inserted for every entry that is <code>null</code> of this array.
      */
-    public DefaultFMultipleDockable( FMultipleDockableFactory factory ){
+    public DefaultFMultipleDockable( FMultipleDockableFactory factory, Component content, FAction... actions ){
+        this( factory, null, null, content, null, actions );
+    }
+    
+    /**
+     * Creates a new dockable.
+     * @param factory the factory which created or could create this
+     * kind of dockable.
+     * @param title the text shown in the title, can be <code>null</code>
+     * @param content a <code>Component</code> which will be shown in the middle
+     * of this dockable, can be <code>null</code>.
+     * @param actions the actions shown in the title, can be <code>null</code>.
+     * A separator is inserted for every entry that is <code>null</code> of this array.
+     */
+    public DefaultFMultipleDockable( FMultipleDockableFactory factory, String title, Component content, FAction... actions ){
+        this( factory, null, title, content, null, actions );
+    }
+    
+    /**
+     * Creates a new dockable.
+     * @param factory the factory which created or could create this
+     * kind of dockable.
+     * @param icon the icon shown in the title, can be <code>null</code>
+     * @param content a <code>Component</code> which will be shown in the middle
+     * of this dockable, can be <code>null</code>.
+     * @param actions the actions shown in the title, can be <code>null</code>.
+     * A separator is inserted for every entry that is <code>null</code> of this array.
+     */
+    public DefaultFMultipleDockable( FMultipleDockableFactory factory, Icon icon, Component content, FAction... actions ){
+        this( factory, icon, null, content, null, actions );
+    }
+    
+    /**
+     * Creates a new dockable.
+     * @param factory the factory which created or could create this
+     * kind of dockable.
+     * @param icon the icon shown in the title, can be <code>null</code>
+     * @param title the text shown in the title, can be <code>null</code>
+     * @param content a <code>Component</code> which will be shown in the middle
+     * of this dockable, can be <code>null</code>.
+     * @param actions the actions shown in the title, can be <code>null</code>.
+     * A separator is inserted for every entry that is <code>null</code> of this array.
+     */
+    public DefaultFMultipleDockable( FMultipleDockableFactory factory, Icon icon, String title, Component content, FAction... actions ){
+        this( factory, icon, title, content, null, actions );
+    }
+    
+    /**
+     * Creates a new dockable.
+     * @param factory the factory which created or could create this
+     * kind of dockable.
+     * @param title the text shown in the title, can be <code>null</code>
+     * @param actions the actions shown in the title, can be <code>null</code>.
+     * A separator is inserted for every entry that is <code>null</code> of this array.
+     */
+    public DefaultFMultipleDockable( FMultipleDockableFactory factory, String title, FAction... actions ){
+        this( factory, null, title, null, null, actions );
+    }
+    
+    /**
+     * Creates a new dockable.
+     * @param factory the factory which created or could create this
+     * kind of dockable.
+     * @param icon the icon shown in the title, can be <code>null</code>
+     * @param actions the actions shown in the title, can be <code>null</code>.
+     * A separator is inserted for every entry that is <code>null</code> of this array.
+     */
+    public DefaultFMultipleDockable( FMultipleDockableFactory factory, Icon icon, FAction... actions ){
+        this( factory, icon, null, null, null, actions );
+    }
+    
+    /**
+     * Creates a new dockable.
+     * @param factory the factory which created or could create this
+     * kind of dockable.
+     * @param icon the icon shown in the title, can be <code>null</code>
+     * @param title the text shown in the title, can be <code>null</code>
+     * @param actions the actions shown in the title, can be <code>null</code>.
+     * A separator is inserted for every entry that is <code>null</code> of this array.
+     */
+    public DefaultFMultipleDockable( FMultipleDockableFactory factory, Icon icon, String title, FAction... actions ){
+        this( factory, icon, title, null, null, actions );
+    }
+    
+    /**
+     * Creates a new dockable.
+     * @param factory the factory which created or could create this
+     * kind of dockable.
+     * @param icon the icon shown in the title, can be <code>null</code>
+     * @param title the text shown in the title, can be <code>null</code>
+     * @param content a <code>Component</code> which will be shown in the middle
+     * of this dockable, can be <code>null</code>.
+     * @param permissions what actions the user is allowed to do, <code>null</code> will be
+     * replaced by {@link DefaultFDockable.Permissions#DEFAULT}.
+     * @param actions the actions shown in the title, can be <code>null</code>.
+     * A separator is inserted for every entry that is <code>null</code> of this array.
+     */
+    public DefaultFMultipleDockable( FMultipleDockableFactory factory, Icon icon, String title, Component content, Permissions permissions, FAction... actions ){
+        super( permissions == null ? Permissions.DEFAULT : permissions );
         if( factory == null )
             throw new NullPointerException( "factory must not be null" );
         this.factory = factory;
-
+        
+        if( icon != null ){
+            setTitleIcon( icon );
+        }
+        if( title != null ){
+            setTitleText( title );
+        }
+        if( content != null ){
+            getContentPane().setLayout( new BorderLayout() );
+            getContentPane().add( content, BorderLayout.CENTER );
+        }
+        if( actions != null ){
+            for( FAction action : actions ){
+                if( action != null )
+                    addAction( action );
+                else
+                    addSeparator();
+            }
+        }
     }
     
     /**
@@ -67,5 +207,19 @@ public class DefaultFMultipleDockable extends DefaultFDockable implements FMulti
             intern().setFactoryID( DefaultDockableFactory.ID );
         else
             intern().setFactoryID( control.getFactoryId( factory ));
+    }
+    
+    public boolean isRemoveOnClose() {
+        return removeOnClose;
+    }
+    
+    /**
+     * Sets whether this dockable will be removed from the {@link FControl} when
+     * made invisible.
+     * @param removeOnClose <code>true</code> if this element should be removed
+     * automatically.
+     */
+    public void setRemoveOnClose( boolean removeOnClose ) {
+        this.removeOnClose = removeOnClose;
     }
 }

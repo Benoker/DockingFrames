@@ -63,7 +63,7 @@ public class ActionBinder extends DockAdapter{
      * @author Benjamin Sigg
      *
      */
-    private class SourceObserver implements DockActionSourceListener{
+    private static class SourceObserver implements DockActionSourceListener{
         /** the set of bound actions */
         private List<DockAction> actions = new LinkedList<DockAction>();
         

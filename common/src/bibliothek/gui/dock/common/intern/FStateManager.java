@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.common.intern;
 
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +43,7 @@ import bibliothek.gui.dock.common.*;
 import bibliothek.gui.dock.common.intern.FDockable.ExtendedMode;
 import bibliothek.gui.dock.common.location.*;
 import bibliothek.gui.dock.event.DockControllerAdapter;
+import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.event.KeyboardListener;
 import bibliothek.gui.dock.facile.action.StateManager;
 import bibliothek.gui.dock.layout.DockableProperty;
@@ -193,6 +195,37 @@ public class FStateManager extends StateManager {
                 return result.getA();
             }
         });
+        
+        // react on double click
+        control.getOwner().intern().getController().getDoubleClickController().addListener( new DoubleClickListener(){
+            public DockElement getTreeLocation() {
+                return null;
+            }
+            public boolean process( Dockable dockable, MouseEvent event ) {
+                if( event.isConsumed() )
+                    return false;
+                
+                if( dockable instanceof FacileDockable ){
+                    FDockable fdockable = ((FacileDockable)dockable).getDockable();
+                    if( fdockable.getExtendedMode() != ExtendedMode.MAXIMIZED ){
+                        if( fdockable.isMaximizable() ){
+                            fdockable.setExtendedMode( FDockable.ExtendedMode.MAXIMIZED );
+                            event.consume();
+                            return true;
+                        }
+                    }
+                    else {
+                        goOut( MAXIMIZED, dockable );
+                        ensureValidLocation( fdockable );
+                        event.consume();
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        });
+        
     }
     
     @Override
@@ -597,6 +630,23 @@ public class FStateManager extends StateManager {
         }
         
         return null;
+    }
+    
+    /**
+     * Ensures that all {@link FDockable}s which have a {@link FWorkingArea} as
+     * parent, are normalized.
+     */
+    public void normalizeAllWorkingAreaChildren(){
+        for( Dockable dockable : control.getOwner().intern().getController().getRegister().listDockables() ){
+            if( dockable instanceof FacileDockable ){
+                FDockable fdockable = ((FacileDockable)dockable).getDockable();
+                if( fdockable.getWorkingArea() != null ){
+                    if( !ExtendedMode.NORMALIZED.equals( fdockable.getExtendedMode() )){
+                        fdockable.setExtendedMode( ExtendedMode.NORMALIZED );
+                    }
+                }
+            }
+        }
     }
     
     @Override

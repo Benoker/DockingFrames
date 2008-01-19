@@ -536,7 +536,7 @@ public class ButtonPanel extends JPanel{
 	 * One item on this panel.
 	 * @author Benjamin Sigg
 	 */
-	private class ActionItem{
+	private static class ActionItem{
 		public DockAction action;
 		public BasicTitleViewItem<JComponent> item;
 	}

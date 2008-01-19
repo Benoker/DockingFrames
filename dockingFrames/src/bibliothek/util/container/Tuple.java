@@ -54,9 +54,10 @@ public class Tuple<A, B> extends Single<A>{
 		return b;
 	}
 	
+    @SuppressWarnings("unchecked")
     @Override
 	public Tuple<A, B> clone(){
-		return new Tuple<A, B>( getA(), b );
+        return (Tuple<A,B>)super.clone();
 	}
 	
     @SuppressWarnings("unchecked")

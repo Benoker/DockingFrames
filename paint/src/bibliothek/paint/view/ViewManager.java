@@ -143,7 +143,6 @@ public class ViewManager {
                 }
                 else{
                     pages.remove( page );
-                    control.remove( page );
                 }
             }
         });
@@ -199,8 +198,18 @@ public class ViewManager {
             Picture picture = pictures.getPicture( name );
             if( picture == null )
                 return null;
-            PictureDockable page = new PictureDockable( this );
-            pages.add( page );
+            final PictureDockable page = new PictureDockable( this );
+            page.addFDockableListener( new FDockableAdapter(){
+                @Override
+                public void visibilityChanged( FDockable dockable ) {
+                    if( dockable.isVisible() ){
+                        pages.add( page );
+                    }
+                    else{
+                        pages.remove( page );
+                    }
+                }
+            });
             page.getPage().setColor( color );
             page.setPicture( picture );
             return page;

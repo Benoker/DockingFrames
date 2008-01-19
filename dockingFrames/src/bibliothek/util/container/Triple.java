@@ -56,9 +56,10 @@ public class Triple<A, B, C> extends Tuple<A, B>{
 		return c;
 	}
 	
+    @SuppressWarnings("unchecked")
     @Override
 	public Triple<A, B, C> clone(){
-		return new Triple<A, B, C>( getA(), getB(), getC() );
+		return (Triple<A, B, C>)super.clone();
 	}
 	
     @SuppressWarnings("unchecked")

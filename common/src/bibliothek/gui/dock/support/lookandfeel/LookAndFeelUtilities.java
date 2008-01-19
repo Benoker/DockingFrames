@@ -1,6 +1,7 @@
 package bibliothek.gui.dock.support.lookandfeel;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Window;
 import java.util.Collection;
 import java.util.HashSet;
@@ -22,12 +23,27 @@ public class LookAndFeelUtilities {
 		Set<Component> visit = new HashSet<Component>();
 		
 		for( Component component : components ){
+		    component = getAncestor( component );
 			Window window = SwingUtilities.getWindowAncestor( component );
 			if( window != null )
 				change( window, visit );
 			else
 				change( component, visit );
 		}
+	}
+	
+	/**
+	 * Gets the one parent of <code>component</code> which does not have a
+	 * parent itself.
+	 * @param component some component
+	 * @return a parent of <code>component</code> or <code>component</code> itself.
+	 */
+	private static Component getAncestor( Component component ){
+	    Container parent = component.getParent();
+	    if( parent == null )
+	        return component;
+	    
+	    return getAncestor( parent );
 	}
 	
 	/**

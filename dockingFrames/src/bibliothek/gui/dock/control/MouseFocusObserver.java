@@ -230,6 +230,10 @@ public abstract class MouseFocusObserver implements DockControllerListener {
         dockables.remove( dockable.getComponent() );
     }
     
+    public void dockableCycledRegister( DockController controller, Dockable dockable ) {
+        // ignore
+    }
+    
     public void titleBound( DockController controller, DockTitle title, Dockable dockable ) {
         titles.put( title.getComponent(), title );
     }

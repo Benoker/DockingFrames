@@ -26,22 +26,17 @@
 package bibliothek.gui.dock.common;
 
 import java.awt.BorderLayout;
-import java.awt.event.MouseEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import bibliothek.gui.DockFrontend;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
 import bibliothek.gui.dock.common.intern.FControlAccess;
 import bibliothek.gui.dock.common.intern.FDockable;
 import bibliothek.gui.dock.common.intern.FStateManager;
-import bibliothek.gui.dock.common.intern.FacileDockable;
-import bibliothek.gui.dock.event.DoubleClickListener;
 
 /**
  * A component that is normally set into the center of the
@@ -119,34 +114,6 @@ public class FContentArea extends JPanel{
         frontend.addRoot( east, getEastIdentifier() );
         frontend.addRoot( west, getWestIdentifier() );
         frontend.setDefaultStation( center );
-        
-        frontend.getController().getDoubleClickController().addListener( new DoubleClickListener(){
-            public DockElement getTreeLocation() {
-                return center;
-            }
-            public boolean process( Dockable dockable, MouseEvent event ) {
-                if( event.isConsumed() )
-                    return false;
-                
-                if( dockable != center ){
-                    if( dockable instanceof FacileDockable ){
-                        FDockable fdockable = ((FacileDockable)dockable).getDockable();
-                        if( center.getFullScreen() != dockable && fdockable.isMaximizable() ){
-                            fdockable.setExtendedMode( FDockable.ExtendedMode.MAXIMIZED );
-                            event.consume();
-                            return true;
-                        }
-                        else if( center.getFullScreen() == dockable ){
-                            fdockable.setExtendedMode( FDockable.ExtendedMode.NORMALIZED );
-                            event.consume();
-                            return true;
-                        }
-                    }
-                }
-                
-                return false;
-            }
-        });
     }
     
     /**

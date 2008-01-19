@@ -75,6 +75,7 @@ public class PictureDockable extends DefaultFMultipleDockable {
      */
     public PictureDockable( FMultipleDockableFactory factory ){
         super( factory );
+        
         setTitleText( "Page" );
         setCloseable( true );
         setMinimizable( true );

@@ -28,6 +28,7 @@ package bibliothek.gui.dock.common.intern;
 import javax.swing.JFrame;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
@@ -67,6 +68,10 @@ public class SecureControlFactory implements FControlFactory {
             @Override
             protected ListeningDockAction createFullScreenAction() {
                 return null;
+            }
+            @Override
+            public void setFrontDockable( Dockable dockable ) {
+                // ignore
             }
         };
     }

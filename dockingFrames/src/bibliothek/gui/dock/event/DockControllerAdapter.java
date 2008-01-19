@@ -69,6 +69,10 @@ public abstract class DockControllerAdapter implements DockControllerListener {
             DockStation station ) {
         // do nothing
     }
+    
+    public void dockableCycledRegister( DockController controller, Dockable dockable ) {
+        // do nothing   
+    }
 
     public void dockableDrag( DockController controller, Dockable dockable, DockStation station ) {
         // do nothing

@@ -266,6 +266,14 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 	public Component getComponent() {
 		return this;
 	}
+	
+	/**
+	 * Gets the controller that is currently used.
+	 * @return the controller or <code>null</code>
+	 */
+	public DockController getController() {
+        return controller;
+    }
 
 	public void setController(DockController controller) {
 	    if( tabs != null ){
@@ -321,7 +329,7 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 		}
 	}
 	
-	private class TabEntry{
+	private static class TabEntry{
 		public Dockable dockable;
 		public RemoteRelocator relocator;
 		public Listener listener;

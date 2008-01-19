@@ -82,7 +82,7 @@ public class PanelMenu extends JMenu{
 			}
 		}
 
-		public void showed( DockFrontend frontend, Dockable dockable ){
+		public void shown( DockFrontend frontend, Dockable dockable ){
 			if( dockable == this.dockable ){
 				onChange = true;
 				setSelected( true );

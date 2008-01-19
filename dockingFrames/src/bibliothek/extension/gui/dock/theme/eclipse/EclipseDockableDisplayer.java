@@ -25,12 +25,13 @@
  */
 package bibliothek.extension.gui.dock.theme.eclipse;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
 
 import javax.swing.SwingUtilities;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
-import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.DockableDisplayer;
@@ -43,7 +44,6 @@ public class EclipseDockableDisplayer extends EclipseStackDockComponent implemen
 	private DockStation station;
 	
 	private Dockable dockable;
-	private DockController controller;
 	private DockTitle title;
 	private Location location;
 	
@@ -88,10 +88,6 @@ public class EclipseDockableDisplayer extends EclipseStackDockComponent implemen
 				return true;
 		}
 		return false;
-	}
-	
-	public DockController getController(){
-		return controller;
 	}
 
 	public Dockable getDockable(){

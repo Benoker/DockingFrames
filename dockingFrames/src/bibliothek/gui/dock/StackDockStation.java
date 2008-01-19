@@ -1071,7 +1071,7 @@ public class StackDockStation extends AbstractDockableStation {
      * The location of a gap between to tabs.
      * @author Benjamin Sigg
      */
-    private class Insert{
+    private static class Insert{
         /** The location of a base-tab */
         public int tab;
         /** Whether the gap is left or right of {@link #tab}*/

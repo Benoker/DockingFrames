@@ -59,8 +59,13 @@ public class LookAndFeelList{
 	 * @return the global list, not <code>null</code>
 	 */
 	public static LookAndFeelList getDefaultList(){
-		if( list == null )
-			list = new LookAndFeelList();
+		if( list == null ){
+		    synchronized( LookAndFeelList.class ){
+		        if( list == null ){
+		            list = new LookAndFeelList();
+		        }
+		    }
+		}
 		return list;
 	}
 	

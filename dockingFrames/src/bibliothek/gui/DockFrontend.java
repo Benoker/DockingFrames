@@ -42,7 +42,9 @@ import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
+import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.dockable.DefaultDockableFactory;
+import bibliothek.gui.dock.event.DockAdapter;
 import bibliothek.gui.dock.event.DockFrontendListener;
 import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.layout.DockSituation;
@@ -131,6 +133,12 @@ public class DockFrontend {
     private boolean showHideAction = true;
     
     /**
+     * Whether {@link #fireShown(Dockable)} and {@link #fireHidden(Dockable)} should be called
+     * automatically when triggered by a {@link DockRegister}-event or not.
+     */
+    private int onAutoFire = 0;
+    
+    /**
      * Constructs a new frontend, creates a new controller.
      */
     public DockFrontend(){
@@ -189,6 +197,21 @@ public class DockFrontend {
         registerFactory( new StackDockPropertyFactory() );
         registerFactory( new FlapDockPropertyFactory() );
         registerFactory( new ScreenDockPropertyFactory() );
+        
+        controller.getRegister().addDockRegisterListener( new DockAdapter(){
+            @Override
+            public void dockableRegistered( DockController controller, Dockable dockable ) {
+                if( onAutoFire == 0 ){
+                    fireShown( dockable );
+                }
+            }
+            @Override
+            public void dockableUnregistered( DockController controller, Dockable dockable ) {
+                if( onAutoFire == 0 ){
+                    fireHidden( dockable );
+                }
+            }
+        });
     }
     
     /**
@@ -572,7 +595,7 @@ public class DockFrontend {
     public boolean isShowHideAction(){
     	return showHideAction;
     }
-        
+    
     /**
      * Ensures that <code>dockable</code> is child of a root known to this
      * frontend.
@@ -581,40 +604,47 @@ public class DockFrontend {
      * needed but can't be found 
      */
     public void show( Dockable dockable ){
-        DockInfo info = getInfo( dockable );
-        if( isHidden( dockable )){
-        	if( info == null ){
-        		DockStation station = getDefaultStation();
-        		if( station == null )
-            		throw new IllegalStateException( "Can't find the default station" );
-        		station.drop( dockable );
-        		fireShowed( dockable );
-        	}
-        	else{
-        		String root = info.getRoot();
-                DockableProperty location = info.getLocation();
-                
-                DockStation station;
-                if( root == null )
-                    station = getDefaultStation();
-                else
-                    station = getRoot( root );
-                
-                if( station == null ){
-                	station = getDefaultStation();
-                	if( station == null )
+        try{
+            onAutoFire++;
+        
+            if( isHidden( dockable )){
+                DockInfo info = getInfo( dockable );
+            	if( info == null ){
+            		DockStation station = getDefaultStation();
+            		if( station == null )
                 		throw new IllegalStateException( "Can't find the default station" );
-                }
-                
-                if( location == null )
-                    getDefaultStation().drop( dockable );
-                else{
-                    if( !station.drop( dockable, location ))
+            		station.drop( dockable );
+            		fireAllShown( dockable );
+            	}
+            	else{
+            		String root = info.getRoot();
+                    DockableProperty location = info.getLocation();
+                    
+                    DockStation station;
+                    if( root == null )
+                        station = getDefaultStation();
+                    else
+                        station = getRoot( root );
+                    
+                    if( station == null ){
+                    	station = getDefaultStation();
+                    	if( station == null )
+                    		throw new IllegalStateException( "Can't find the default station" );
+                    }
+                    
+                    if( location == null )
                         getDefaultStation().drop( dockable );
-                }
-                
-                fireShowed( dockable );
-        	}
+                    else{
+                        if( !station.drop( dockable, location ))
+                            getDefaultStation().drop( dockable );
+                    }
+                    
+                    fireAllShown( dockable );
+            	}
+            }
+        }
+        finally{
+            onAutoFire--;
         }
     }
     
@@ -624,17 +654,23 @@ public class DockFrontend {
      * @param dockable the element which should be hidden
      */
     public void hide( Dockable dockable ){
-    	if( isShown( dockable )){
-    	DockInfo info = getInfo( dockable );
-    		if( info == null ){
-    			dockable.getDockParent().drag( dockable );
-    			fireHidden( dockable );
-    		}
-    		else{
-        		info.updateLocation();
-    			dockable.getDockParent().drag( dockable );
-    			fireHidden( dockable );
-    		}
+        try{
+            onAutoFire++;
+        	if( isShown( dockable )){
+        	DockInfo info = getInfo( dockable );
+        		if( info == null ){
+        			dockable.getDockParent().drag( dockable );
+        			fireAllHidden( dockable );
+        		}
+        		else{
+            		info.updateLocation();
+        			dockable.getDockParent().drag( dockable );
+        			fireAllHidden( dockable );
+        		}
+            }
+        }
+        finally{
+            onAutoFire--;
         }
     }
     
@@ -770,51 +806,60 @@ public class DockFrontend {
      * @throws IOException if there are any problems
      */
     protected void load( DataInputStream in, boolean entry ) throws IOException{
-        Set<Dockable> oldVisible = listShownDockables();
-        
-        DockSituation situation = createSituation( entry );
-        PropertyTransformer properties = createTransformer();
-        
-        DockSituationIgnore ignore = situation.getIgnore();
-        if( ignore == null ){
-            ignore = new DockSituationIgnore(){
-                public boolean ignoreChildren( DockStation station ) {
-                    return false;
-                }
-                public boolean ignoreElement( DockElement element ) {
-                    return false;
-                }
-            };
-        }
-        
-        clean( ignore );
-        
-        situation.read( in );
-        
-        int count = in.readInt();
-        for( int i = 0; i < count; i++ ){
-            String key = in.readUTF();
-            String root = in.readUTF();
-            DockableProperty property = properties.read( in );
-            DockInfo info = getInfo( key );
-            if( info != null )
-            	info.setLocation( root, property );
-        }
-        
-        Set<Dockable> newVisible = listShownDockables();
-        
-        for( Dockable hide : oldVisible )
-            if( !newVisible.contains( hide ))
-                fireHidden( hide );
-        
-        for( Dockable show : newVisible )
-            if( !oldVisible.contains( show ))
-                fireShowed( show );
-        
-        for( DockInfo info : dockables.values() ){
-            if( !info.isHideable() && isHidden( info.getDockable() )){
-                show( info.getDockable() );
+        try{
+            onAutoFire++;
+            controller.getRegister().setStalled( true );
+            
+            Set<Dockable> oldVisible = listShownDockables();
+            
+            DockSituation situation = createSituation( entry );
+            PropertyTransformer properties = createTransformer();
+            
+            DockSituationIgnore ignore = situation.getIgnore();
+            if( ignore == null ){
+                ignore = new DockSituationIgnore(){
+                    public boolean ignoreChildren( DockStation station ) {
+                        return false;
+                    }
+                    public boolean ignoreElement( DockElement element ) {
+                        return false;
+                    }
+                };
             }
+            
+            clean( ignore );
+            
+            situation.read( in );
+            
+            int count = in.readInt();
+            for( int i = 0; i < count; i++ ){
+                String key = in.readUTF();
+                String root = in.readUTF();
+                DockableProperty property = properties.read( in );
+                DockInfo info = getInfo( key );
+                if( info != null )
+                	info.setLocation( root, property );
+            }
+            
+            Set<Dockable> newVisible = listShownDockables();
+            
+            for( Dockable hide : oldVisible )
+                if( !newVisible.contains( hide ))
+                    fireAllHidden( hide );
+            
+            for( Dockable show : newVisible )
+                if( !oldVisible.contains( show ))
+                    fireAllShown( show );
+            
+            for( DockInfo info : dockables.values() ){
+                if( !info.isHideable() && isHidden( info.getDockable() )){
+                    show( info.getDockable() );
+                }
+            }
+        }
+        finally{
+            controller.getRegister().setStalled( false );
+            onAutoFire--;
         }
     }
     
@@ -825,38 +870,37 @@ public class DockFrontend {
      */
     protected void clean( DockSituationIgnore ignore ){
         for( RootInfo root : roots.values() ){
-            clean( root.getStation(), ignore );
+            if( !ignore.ignoreElement( root.getStation() )){
+                clean( root.getStation(), ignore );
+            }
         }
     }
     
     /**
      * Removes all recursively all children from <code>station</code>, but only
-     * if neither the station nor its children are filtered by <code>ignore</code>.
+     * if the children are not filtered by <code>ignore</code>.
      * @param station a station to clean
      * @param ignore a filter
      */
     protected void clean( DockStation station, DockSituationIgnore ignore ){
-        if( !ignore.ignoreChildren( station ) && !ignore.ignoreElement( station ))
-            while( station.getDockableCount() > 0 )
-                clean( station.getDockable( 0 ), ignore );
-    }
-    
-    /**
-     * Removes <code>dockable</code> from its parent, but only if 
-     * it is not filtered by <code>ignore</code>. If <code>dockable</code> is
-     * a station, {@link #clean(DockStation, DockSituationIgnore)} should also
-     * be called.
-     * @param dockable the element to remove from its parent.
-     * @param ignore a filter
-     */
-    protected void clean( Dockable dockable, DockSituationIgnore ignore ){
-        if( !ignore.ignoreElement( dockable )){
-            DockStation station = dockable.asDockStation();
-            if( station != null )
-                clean( station, ignore );
-            
-            if( dockable.getDockParent() != null )
-                dockable.getDockParent().drag( dockable );
+        try{
+            controller.getRegister().setStalled( true );
+
+            if( !ignore.ignoreChildren( station ) ){
+                for( int i = station.getDockableCount()-1; i >= 0; i-- ){
+                    Dockable dockable = station.getDockable( i );
+                    if( !ignore.ignoreElement( dockable )){
+                        DockStation check = dockable.asDockStation();
+                        if( check != null )
+                            clean( check, ignore );
+                        
+                        station.drag( dockable );
+                    }
+                }
+            }
+        }
+        finally{
+            controller.getRegister().setStalled( false );
         }
     }
     
@@ -1041,6 +1085,20 @@ public class DockFrontend {
     
     /**
      * Invokes the method {@link DockFrontendListener#hidden(DockFrontend, Dockable)}
+     * on all listeners for <code>dockable</code> and all its children.
+     * @param dockable the hidden element
+     */
+    protected void fireAllHidden( Dockable dockable ){
+        DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
+            @Override
+            public void handleDockable( Dockable dockable ) {
+                fireHidden( dockable );
+            }
+        });
+    }
+    
+    /**
+     * Invokes the method {@link DockFrontendListener#hidden(DockFrontend, Dockable)}
      * on all listeners.
      * @param dockable the hidden element
      */
@@ -1081,13 +1139,27 @@ public class DockFrontend {
     }
 
     /**
-     * Invokes the method {@link DockFrontendListener#showed(DockFrontend, Dockable)}
+     * Invokes the method {@link DockFrontendListener#shown(DockFrontend, Dockable)}
+     * on all listeners for <code>dockable</code> and all its children.
+     * @param dockable the shown element
+     */
+    protected void fireAllShown( Dockable dockable ){
+        DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
+            @Override
+            public void handleDockable( Dockable dockable ) {
+                fireShown( dockable );
+            }
+        });
+    }
+    
+    /**
+     * Invokes the method {@link DockFrontendListener#shown(DockFrontend, Dockable)}
      * on all listeners.
      * @param dockable the shown element
      */
-    protected void fireShowed( Dockable dockable ){
+    protected void fireShown( Dockable dockable ){
         for( DockFrontendListener listener : listeners() )
-            listener.showed( this, dockable );
+            listener.shown( this, dockable );
     }
     
     /**
@@ -1280,7 +1352,7 @@ public class DockFrontend {
      * Stores information about a root-station.
      * @author Benjamin Sigg
      */
-    private class RootInfo{
+    private static class RootInfo{
     	/** the root */
         private DockStation station;
         /** the name of the root */

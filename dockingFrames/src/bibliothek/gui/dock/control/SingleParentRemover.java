@@ -51,6 +51,7 @@ public class SingleParentRemover{
      */
     public void install( DockController controller ){
         controller.addDockControllerListener( listener );
+        testAll( controller );
     }
     
     /**
@@ -85,8 +86,8 @@ public class SingleParentRemover{
             }
         }
         finally{
-            onTest = false;
             controller.getRegister().setStalled( false );
+            onTest = false;
         }
     }
     
@@ -178,6 +179,11 @@ public class SingleParentRemover{
     private class Listener extends DockControllerAdapter{
         @Override
         public void dockablePut( DockController controller, Dockable dockable, DockStation station ) {
+            testAll( controller );
+        }
+        
+        @Override
+        public void dockableCycledRegister( DockController controller, Dockable dockable ) {
             testAll( controller );
         }
         

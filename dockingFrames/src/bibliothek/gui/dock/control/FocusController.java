@@ -79,6 +79,10 @@ public class FocusController implements DockRegisterListener{
 		// do nothing
 	}
 	
+	public void dockableCycledRegister( DockController controller, Dockable dockable ) {
+	    // do nothing
+	}
+	
     /**
      * A listener observing all stations and changing the focused {@link Dockable}
      * when necessary.

@@ -428,6 +428,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             
             for( DockableDisplayer displayer : dockables ){
                 DockTitle title = displayer.getTitle();
+                if( title != null ){
+                    displayer.getDockable().unbind( title );
+                    displayer.setTitle( null );
+                }
                 
                 if( this.title != null ){
                     title = displayer.getDockable().getDockTitle( this.title );

@@ -423,7 +423,7 @@ public class SplitDockGrid {
 	 * Represents a dividing line in the grid.
 	 * @author Benjamin Sigg
 	 */
-	protected class Line{
+	protected static class Line{
 		/** whether this line is horizontal or not */
 		public boolean horizontal;
 		/** the coordinate which is always the same on the line */
@@ -438,7 +438,7 @@ public class SplitDockGrid {
 	 * Represents a node in the tree which will be built.
 	 * @author Benjamin Sigg
 	 */
-	protected class Node{
+	protected static class Node{
 		/** the x-coordinate */
 		public double x;
 		/** the y-coordinate */

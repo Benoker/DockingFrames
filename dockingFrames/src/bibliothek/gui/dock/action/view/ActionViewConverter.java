@@ -374,7 +374,7 @@ public class ActionViewConverter {
 	 * @param <D> the actions needed as input for the generators
 	 * @param <A> the output view of the generators
 	 */
-	private class Entry<D extends DockAction, A>{
+	private static class Entry<D extends DockAction, A>{
 		/** generator provided by the client */
 		public ViewGenerator<D, A> clientGenerator;
 		

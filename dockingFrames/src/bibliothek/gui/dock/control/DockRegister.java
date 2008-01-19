@@ -343,6 +343,16 @@ public class DockRegister {
     }
     
     /**
+     * Informs all RegisterListeners that <code>dockable</code> cycled
+     * the register.
+     * @param dockable the cycling element
+     */
+    protected void fireStalledChange( Dockable dockable ){
+        for( DockRegisterListener listener : listDockRegisterListeners() )
+            listener.dockableCycledRegister( controller, dockable );
+    }
+    
+    /**
      * Sets whether the listener to all {@link DockStation} should forward changes
      * of the tree to the <code>un-/register</code>-methods or not. If the
      * register was stalled and now the argument is <code>false</code>, then
@@ -380,10 +390,15 @@ public class DockRegister {
         /** a list of Dockables which were removed during a drag and drop operation */
         private LinkedList<Dockable> removedStalledQueue = new LinkedList<Dockable>();
         
-        /** a set of Dockable which were added during a drag and drop operation */
+        /** a set of Dockables which were added during a drag and drop operation */
         private Set<Dockable> addedStalledSet = new HashSet<Dockable>();
-        /** a list of Dockable which were added during a drag and drop operation */
+        /** a list of Dockables which were added during a drag and drop operation */
         private LinkedList<Dockable> addedStalledQueue = new LinkedList<Dockable>();
+        
+        /** a set of Dockables whose position might have changed */
+        private Set<Dockable> changedSet = new HashSet<Dockable>();
+        /** a list of Dockables whose position might have changed */
+        private LinkedList<Dockable> changedQueue = new LinkedList<Dockable>();
         
         /** whether this listener is currently firing the stalled events */
         private boolean firing = false;
@@ -393,7 +408,7 @@ public class DockRegister {
                 try{
                     firing = true;
                     
-                    while( !addedStalledQueue.isEmpty() || !removedStalledQueue.isEmpty() ){
+                    while( !changedQueue.isEmpty() || !addedStalledQueue.isEmpty() || !removedStalledQueue.isEmpty() ){
                         while( !removedStalledQueue.isEmpty() ){
                             Dockable head = removedStalledQueue.removeFirst();
                             removedStalledSet.remove( head );
@@ -404,6 +419,12 @@ public class DockRegister {
                             Dockable head = addedStalledQueue.removeFirst();
                             addedStalledSet.remove( head );
                             addDockable( head );
+                        }
+                        
+                        while( !changedQueue.isEmpty() ){
+                            Dockable head = changedQueue.removeFirst();
+                            changedSet.remove( head );
+                            fireStalledChange( head );
                         }
                     }
                 }
@@ -419,11 +440,16 @@ public class DockRegister {
                 DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
                     @Override
                     public void handleDockable( Dockable dockable ) {
-                        if( addedStalledSet.add( dockable ) )
-                            addedStalledQueue.addLast( dockable );
-                            
-                        if( removedStalledSet.remove( dockable ) )
+                        if( removedStalledSet.remove( dockable ) ){
                             removedStalledQueue.remove( dockable );
+                            if( changedSet.add( dockable ))
+                                changedQueue.add( dockable );
+                        }
+                        else if( addedStalledSet.add( dockable ) ){
+                            addedStalledQueue.addLast( dockable );
+                            if( changedSet.remove( dockable ))
+                                changedQueue.remove( dockable );
+                        }
                     }
                 });
             }
@@ -452,11 +478,16 @@ public class DockRegister {
                 DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
                     @Override
                     public void handleDockable( Dockable dockable ) {
-                        if( addedStalledSet.remove( dockable ) )
+                        if( addedStalledSet.remove( dockable ) ){
                             addedStalledQueue.remove( dockable );
-                            
-                        if( removedStalledSet.add( dockable ) )
+                            if( changedSet.add( dockable ))
+                                changedQueue.add( dockable );
+                        }
+                        else if( removedStalledSet.add( dockable ) ){
                             removedStalledQueue.addLast( dockable );
+                            if( changedSet.remove( dockable ))
+                                changedQueue.remove( dockable );
+                        }
                     }
                 });
             }

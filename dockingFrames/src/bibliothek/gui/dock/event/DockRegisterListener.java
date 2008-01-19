@@ -49,7 +49,7 @@ public interface DockRegisterListener {
      * Invoked after <code>dockable</code> has been unregistered from <code>controller</code>.
      * Note that this method can be invoked while a {@link Dockable} is dragged,
      * use the method {@link DockController}.{@link DockRelocator#isOnMove() isOnMove()}.
-     * @param controller the controller from whom <code>dockable</code> was removed 
+     * @param controller the controller from where <code>dockable</code> was removed 
      * @param dockable the removed {@link Dockable}
      */
     public void dockableUnregistered( DockController controller, Dockable dockable );
@@ -58,8 +58,19 @@ public interface DockRegisterListener {
      * Invoked after <code>station</code> has been unregistered from <code>controller</code>.
      * Note that this method can be invoked while a {@link Dockable} is dragged,
      * use the method {@link DockController}.{@link DockRelocator#isOnMove() isOnMove()}.
-     * @param controller the controller from whom <code>dockable</code> was removed 
+     * @param controller the controller from where <code>dockable</code> was removed 
      * @param station the removed {@link DockStation}
      */
     public void dockStationUnregistered( DockController controller, DockStation station );
+    
+    /**
+     * Invoked when <code>dockable</code> was added and removed from the <code>controller</code>, or
+     * was removed and added again to <code>controller</code>. This method is only
+     * invoked if a call to {@link #dockableRegistered(DockController, Dockable)} and
+     * {@link #dockableUnregistered(DockController, Dockable)} was suppressed. It
+     * is unknown whether <code>dockable</code> is now registerd ad <code>controller</code>.
+     * @param controller the controller whose register <code>dockable</code> cycled
+     * @param dockable some {@link Dockable}
+     */
+    public void dockableCycledRegister( DockController controller, Dockable dockable );
 }

@@ -27,6 +27,7 @@ package bibliothek.gui.dock.common;
 
 import javax.swing.Icon;
 
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
@@ -241,6 +242,11 @@ public class FWorkingArea extends AbstractFDockable implements FSingleDockable{
         }
         
         @Override
+        public void setFrontDockable( Dockable dockable ) {
+            // ignore
+        }
+        
+        @Override
         public DockTitle getDockTitle( DockTitleVersion version ) {
             if( suppressTitle( version ))
                 return null;
@@ -261,6 +267,11 @@ public class FWorkingArea extends AbstractFDockable implements FSingleDockable{
         @Override
         protected ListeningDockAction createFullScreenAction() {
             return null;
+        }
+        
+        @Override
+        public void setFrontDockable( Dockable dockable ) {
+            // ignore
         }
         
         @Override

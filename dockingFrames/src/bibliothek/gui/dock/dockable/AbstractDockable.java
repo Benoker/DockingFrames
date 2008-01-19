@@ -240,13 +240,13 @@ public abstract class AbstractDockable implements Dockable {
     }
 
     /** 
-     * Sets the action-source of this {@link Dockable}. If some other
-     * parties have already called the {@link #getGlobalActionOffers()}-method,
-     * then they will not be informed about the change in any way.
+     * Sets the action-source of this {@link Dockable}. Other elements which
+     * used {@link #getGlobalActionOffers()} will be informed about this change.
      * @param source The new source, may be <code>null</code>
      */
     public void setActionOffers( DockActionSource source ){
         this.source = source;
+        globalSource.update();
     }
     
     /**
