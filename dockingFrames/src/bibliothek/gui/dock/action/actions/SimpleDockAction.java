@@ -253,6 +253,19 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
 	}
     
     /**
+     * Called when the user hit the {@link #setAccelerator(KeyStroke) accelerator}.
+     * This method directly calls <code>trigger( dockable )</code>, subclasses
+     * might override this method to further analyze <code>event</code>.
+     * @param event the triggering event
+     * @param dockable the source of the event
+     * @return <code>true</code> if this action could do anything, <code>false</code>
+     * if this action was not able to react in any way to the event.
+     */
+    protected boolean trigger( KeyEvent event, Dockable dockable ){
+        return trigger( dockable );
+    }
+    
+    /**
      * Listens to all {@link KeyEvent}s concerning one {@link Dockable}.
      * @author Benjamin Sigg
      *
@@ -303,7 +316,7 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
     	private boolean forward( DockElement element, KeyEvent event ){
     		if( accelerator != null ){
 				if( accelerator.equals( KeyStroke.getKeyStrokeForEvent( event ) )){
-					return trigger( dockable );
+					return trigger( event, dockable );
 				}
 			}
 			

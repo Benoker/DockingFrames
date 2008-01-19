@@ -169,10 +169,25 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
 
         return m.outgoing();
     }
+
+    /**
+     * Sets the action that is displayed on {@link Dockable}s which might
+     * go out of the mode <code>mode</code>.
+     * @param mode some mode whose action should be exchanged
+     * @param action the new action, can be <code>null</code>
+     * @throws IllegalArgumentException if <code>mode</code> is unknown
+     */
+    protected void putOutgoingAction( String mode, SimpleButtonAction action ){
+        Mode m = modes.get( mode );
+        if( m == null )
+            throw new IllegalArgumentException( "mode unknown: " + mode );
+        
+        m.outgoing = action;
+    }    
     
     /**
      * Gets the action that is displayed on {@link Dockable}s which might
-     * to into the mode <code>mode</code>.
+     * go into the mode <code>mode</code>.
      * @param mode the mode whose ingoing action is searched
      * @return the action or <code>null</code> if <code>mode</code> is unknown
      */
@@ -182,6 +197,21 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
         	return null;
         
         return m.ingoing();        
+    }
+    
+    /**
+     * Sets the action that is displayed on {@link Dockable}s which might
+     * go into the mode <code>mode</code>.
+     * @param mode some mode whose action should be exchanged
+     * @param action the new action, can be <code>null</code>
+     * @throws IllegalArgumentException if <code>mode</code> is unknown
+     */
+    protected void putIngoingAction( String mode, SimpleButtonAction action ){
+        Mode m = modes.get( mode );
+        if( m == null )
+            throw new IllegalArgumentException( "mode unknown: " + mode );
+        
+        m.ingoing = action;
     }
     
     /**

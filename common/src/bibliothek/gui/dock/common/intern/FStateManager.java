@@ -37,6 +37,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
+import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.common.*;
 import bibliothek.gui.dock.common.intern.FDockable.ExtendedMode;
 import bibliothek.gui.dock.common.location.*;
@@ -71,7 +72,21 @@ public class FStateManager extends StateManager {
     private PropertyValue<KeyStroke> keyStrokeMaximizeChange = new PropertyValue<KeyStroke>( FControl.KEY_MAXIMIZE_CHANGE ){
         @Override
         protected void valueChanged( KeyStroke oldValue, KeyStroke newValue ) {
-            // nothing to do 
+            if( keyStrokeMaximized.getValue() == null )
+                getIngoingAction( MAXIMIZED ).setAccelerator( newValue );
+        }
+    };
+    
+    /**
+     * {@link KeyStroke} used on the maximize-action.
+     */
+    private PropertyValue<KeyStroke> keyStrokeMaximized = new PropertyValue<KeyStroke>( FControl.KEY_GOTO_MAXIMIZED ){
+        @Override
+        protected void valueChanged( KeyStroke oldValue, KeyStroke newValue ) {
+            if( newValue == null )
+                getIngoingAction( MAXIMIZED ).setAccelerator( keyStrokeMaximizeChange.getValue() );
+            else
+                getIngoingAction( MAXIMIZED ).setAccelerator( newValue );
         }
     };
     
@@ -80,7 +95,27 @@ public class FStateManager extends StateManager {
      * @param control internal access to the {@link FControl} that uses this manager
      */
     public FStateManager( FControlAccess control ){
-        super( control.getOwner().intern().getController() );
+        super( control.getOwner().intern().getController(), false );
+        
+        putIngoingAction( MAXIMIZED, new SimpleButtonAction(){
+            @Override
+            public void action( Dockable dockable ) {
+                super.action( dockable );
+                goIn( MAXIMIZED, dockable );
+            }
+            
+            @Override
+            protected boolean trigger( KeyEvent event, Dockable dockable ){
+                if( !KeyStroke.getKeyStrokeForEvent( event ).equals( keyStrokeMaximizeChange.getValue())){
+                    return super.trigger( event, dockable );
+                }
+                return false;
+            }
+        });
+        
+        // initializing method of parent class
+        init();
+        
         this.control = control;
         DockController controller = control.getOwner().intern().getController();
         
@@ -94,6 +129,7 @@ public class FStateManager extends StateManager {
         
         // using keystrokes
         keyStrokeMaximizeChange.setProperties( controller );
+        keyStrokeMaximized.setProperties( controller );
         
         new PropertyValue<KeyStroke>( FControl.KEY_GOTO_EXTERNALIZED, controller ){
             @Override

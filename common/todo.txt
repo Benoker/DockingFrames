@@ -1,2 +1,4 @@
 - Minimized, maximized and externalized elements with a FWorkingArea might get stored and recreated on layout change. That should not happen.
-- check whether multiple FContentAreas work properly or not 
+- check whether multiple FContentAreas work properly or not
+- More constructors for DefaultFSingleDockable, DefaultFMultipleDockable.
+- Closing a maximized, stacked Dockable is counterintuitive 

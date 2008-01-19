@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.facile.action;
 
 import java.awt.Point;
+import java.awt.event.KeyEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -46,6 +47,7 @@ import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.action.ActionGuard;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
@@ -138,15 +140,36 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      */
     private String lastMaximizedMode = null;
     
+
+    /**
+     * Creates a new manager. Adds listeners to the <code>controller</code>
+     * and adds <code>this</code> as {@link ActionGuard} to the <code>controller</code>.
+     * @param controller the controller which is observed by this manager. 
+     */
+    public StateManager( DockController controller ){
+        this( controller, true );
+    }
+    
     /**
      * Creates a new manager. Adds listeners to the <code>controller</code>
      * and adds <code>this</code> as {@link ActionGuard} to the <code>controller</code>.
      * @param controller the controller which is observed by this manager.
+     * @param init whether to initialize all the element of this manager or not.
+     * If <code>false</code>, then {@link #init()} has to be called. 
      */
-    public StateManager( DockController controller ){
+    protected StateManager( DockController controller, boolean init ){
         super( MINIMIZED, NORMALIZED, MAXIMIZED, EXTERNALIZED );
         this.controller = controller;
-        
+        if( init )
+            init();
+    }
+     
+    /**
+     * Initializes all the elements of this manager. That means adding
+     * listeners to the {@link DockController}, and setting text and icons of
+     * the {@link DockAction}s used by this {@link ModeTransitionManager}.
+     */
+    protected void init(){
         controller.addActionGuard( this );
         controller.getRelocator().addDockRelocatorListener( listener );
         controller.getRegister().addDockRegisterListener( listener );
@@ -158,7 +181,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         
         getIngoingAction( NORMALIZED ).setText( bundle.getString( "normalize.in" ) );
         getIngoingAction( NORMALIZED ).setTooltip( bundle.getString( "normalize.in.tooltip" ) );
-        
+
         getIngoingAction( MAXIMIZED ).setText( bundle.getString( "maximize.in" ) );
         getIngoingAction( MAXIMIZED ).setTooltip( bundle.getString( "maximize.in.tooltip" ) );
         
