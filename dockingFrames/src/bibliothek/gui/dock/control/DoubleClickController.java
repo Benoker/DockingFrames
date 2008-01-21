@@ -36,9 +36,7 @@ import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.event.DockControllerAdapter;
-import bibliothek.gui.dock.event.DoubleClickListener;
-import bibliothek.gui.dock.event.LocatedListenerList;
+import bibliothek.gui.dock.event.*;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
@@ -58,36 +56,39 @@ public class DoubleClickController {
     
     /**
      * Creates a new <code>DoubleClickController</code>.
-     * @param controller the source of all {@link Dockable}s which have
-     * to be observed.
+     * @param setup an observable that informs this object when <code>controller</code>
+     * is set up.
      */
-    public DoubleClickController( DockController controller ){
-        controller.addDockControllerListener( new DockControllerAdapter(){
-            @Override
-            public void dockableRegistered( DockController controller, Dockable dockable ) {
-                GlobalDoubleClickListener listener = new GlobalDoubleClickListener( dockable );
-                dockable.addMouseInputListener( listener );
-                listeners.put( dockable, listener );
-                for( DockTitle title : dockable.listBoundTitles() )
-                    title.addMouseInputListener( listener );
-            }
-            
-            @Override
-            public void dockableUnregistered( DockController controller, Dockable dockable ) {
-            	GlobalDoubleClickListener listener = listeners.remove( dockable );
-                dockable.removeMouseInputListener( listener );
-                for( DockTitle title : dockable.listBoundTitles() )
-                    title.removeMouseInputListener( listener );
-            }
-            
-            @Override
-            public void titleBound( DockController controller, DockTitle title, Dockable dockable ) {
-                title.addMouseInputListener( listeners.get( dockable ) );
-            }
-            
-            @Override
-            public void titleUnbound( DockController controller, DockTitle title, Dockable dockable ) {
-                title.removeMouseInputListener( listeners.get( dockable ) );
+    public DoubleClickController( ControllerSetupCollection setup ){
+        setup.add( new ControllerSetupListener(){
+            public void done( DockController controller ) {
+                controller.getRegister().addDockRegisterListener( new DockRegisterAdapter(){
+                    @Override
+                    public void dockableRegistered( DockController controller, Dockable dockable ) {
+                        GlobalDoubleClickListener listener = new GlobalDoubleClickListener( dockable );
+                        dockable.addMouseInputListener( listener );
+                        listeners.put( dockable, listener );
+                        for( DockTitle title : dockable.listBoundTitles() )
+                            title.addMouseInputListener( listener );
+                    }
+                    
+                    @Override
+                    public void dockableUnregistered( DockController controller, Dockable dockable ) {
+                        GlobalDoubleClickListener listener = listeners.remove( dockable );
+                        dockable.removeMouseInputListener( listener );
+                        for( DockTitle title : dockable.listBoundTitles() )
+                            title.removeMouseInputListener( listener );
+                    }                    
+                });
+                controller.addDockTitleBindingListener( new DockTitleBindingListener(){
+                    public void titleBound( DockController controller, DockTitle title, Dockable dockable ) {
+                        title.addMouseInputListener( listeners.get( dockable ) );
+                    }
+                    
+                    public void titleUnbound( DockController controller, DockTitle title, Dockable dockable ) {
+                        title.removeMouseInputListener( listeners.get( dockable ) );
+                    }        
+                });
             }
         });
     }

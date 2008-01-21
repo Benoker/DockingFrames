@@ -417,6 +417,16 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         return NORMALIZED;
     }
 
+    /**
+     * Tells whether this {@link StateManager} currently is executing a
+     * transition.
+     * @return <code>true</code> if currently in a transition.
+     * @see #transition(String, String, Dockable)
+     */
+    public boolean isOnTransition() {
+        return onTransition;
+    }
+    
     @Override
     protected void transition( String oldMode, String newMode, Dockable dockable ) {
         AffectedSet affected = new AffectedSet();
@@ -971,11 +981,19 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
             }
         }
 
-        public void dockableDrag( DockController controller, Dockable dockable, DockStation station ) {
+        public void init( DockController controller, Dockable dockable ) {
+            // ignore
+        }
+        
+        public void cancel( DockController controller, Dockable dockable ) {
+            // ignore
+        }
+        
+        public void drag( DockController controller, Dockable dockable, DockStation station ) {
             store( currentMode( dockable ), dockable );
         }
 
-        public void dockablePut( DockController controller, Dockable dockable, DockStation station ) {
+        public void drop( DockController controller, Dockable dockable, DockStation station ) {
             AffectedSet affected = new AffectedSet();
             unmaximize( affected );
             affected.finish();

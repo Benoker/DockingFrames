@@ -29,7 +29,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.event.DockRegisterListener;
-import bibliothek.gui.dock.event.DockStationListener;
+import bibliothek.gui.dock.event.DockStationAdapter;
 
 /**
  * A listener to the {@link DockRegister}, ensuring that always the newest or
@@ -88,7 +88,8 @@ public class FocusController implements DockRegisterListener{
      * when necessary.
      * @author Benjamin Sigg
      */
-    private class StationListener implements DockStationListener{
+    private class StationListener extends DockStationAdapter {
+        @Override
         public void dockableAdded( DockStation station, Dockable dockable ){
             if( !controller.getRelocator().isOnPut() ){
             	Dockable focusedDockable = controller.getFocusedDockable();
@@ -98,6 +99,7 @@ public class FocusController implements DockRegisterListener{
             }
         }
         
+        @Override
         public void dockableVisibiltySet( DockStation station, Dockable dockable, boolean visible ){
             if( !controller.isOnFocusing() && !visible && controller.isFocused( dockable ) ){
             	DockStation parent = dockable.getDockParent();
@@ -119,17 +121,5 @@ public class FocusController implements DockRegisterListener{
                 controller.setFocusedDockable( null, false );
             }
         }
-
-		public void dockableAdding( DockStation station, Dockable dockable ){
-			// do nothing
-		}
-
-		public void dockableRemoved( DockStation station, Dockable dockable ){
-			// do nothing
-		}
-
-		public void dockableRemoving( DockStation station, Dockable dockable ){
-			// do nothing
-		}
     }
 }

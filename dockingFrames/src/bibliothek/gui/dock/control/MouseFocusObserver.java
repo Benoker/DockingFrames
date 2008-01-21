@@ -38,8 +38,7 @@ import java.util.Map;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.event.DockControllerListener;
-import bibliothek.gui.dock.event.FocusVetoListener;
+import bibliothek.gui.dock.event.*;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.DockUtilities;
 
@@ -49,7 +48,7 @@ import bibliothek.gui.dock.util.DockUtilities;
  * about a new {@link DockController#setFocusedDockable(Dockable, boolean) front-dockable}.
  * @author Benjamin Sigg
  */
-public abstract class MouseFocusObserver implements DockControllerListener {
+public abstract class MouseFocusObserver implements DockRegisterListener, DockRelocatorListener, DockTitleBindingListener {
     /** a list of all Dockables and their base-component */
     private Map<Component, Dockable> dockables = new HashMap<Component, Dockable>();
     /** a list of all DockTitles and their base-component */
@@ -65,10 +64,18 @@ public abstract class MouseFocusObserver implements DockControllerListener {
      * Creates a new FocusController.
      * @param controller the controller which will be informed about
      * focus-changes
+     * @param setup an observable informing this object when <code>controller</code>
+     * is set up.
      */
-    public MouseFocusObserver( DockController controller ){
+    public MouseFocusObserver( DockController controller, ControllerSetupCollection setup ){
         this.controller = controller;
-        controller.addDockControllerListener( this );
+        setup.add( new ControllerSetupListener(){
+            public void done( DockController controller ) {
+                controller.getRegister().addDockRegisterListener( MouseFocusObserver.this );
+                controller.getRelocator().addDockRelocatorListener( MouseFocusObserver.this );
+                controller.addDockTitleBindingListener( MouseFocusObserver.this );
+            }
+        });
     }
     
     /**
@@ -76,7 +83,9 @@ public abstract class MouseFocusObserver implements DockControllerListener {
      * its listeners and become ready for the garbage collector. 
      */
     public void kill(){
-    	// nothing to do
+        getController().getRegister().removeDockRegisterListener( this );
+        getController().getRelocator().removeDockRelocatorListener( this );
+        getController().removeDockTitleBindingListener( this );
     }
     
     /**
@@ -213,17 +222,24 @@ public abstract class MouseFocusObserver implements DockControllerListener {
         dockables.put( dockable.getComponent(), dockable );
     }
     
-    public void dockablePut( final DockController controller, final Dockable dockable, DockStation station ) {
+    public void init( DockController controller, Dockable dockable ) {
+        // do nothing
+    }
+    
+    public void cancel( DockController controller, Dockable dockable ) {
+        // do nothing
+    }
+    
+    public void drag( DockController controller, Dockable dockable, DockStation station ) {
+        // do nothing
+    }
+    
+    public void drop( final DockController controller, final Dockable dockable, DockStation station ) {
         EventQueue.invokeLater( new Runnable(){
             public void run(){
-                //controller.setAtLeastFocusedDockable( dockable );
                 controller.setFocusedDockable( dockable, true );
             }
         });
-    }
-    
-    public void dockableDrag( DockController controller, Dockable dockable, DockStation station ) {
-        // do nothing
     }
     
     public void dockableUnregistered( DockController controller, Dockable dockable ) {

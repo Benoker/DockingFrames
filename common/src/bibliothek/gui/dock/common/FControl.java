@@ -193,7 +193,10 @@ public class FControl {
 	public FControl( JFrame frame, FControlFactory factory ){
 	    this.factory = factory;
 	    
-		frontend = new DockFrontend( factory.createController(), frame ){
+	    DockController controller = factory.createController();
+	    controller.setSingleParentRemover( new FSingleParentRemover() );
+
+		frontend = new DockFrontend( controller, frame ){
 		    @Override
 		    protected void save( DataOutputStream out, boolean entry ) throws IOException {
 		        super.save( out, entry );

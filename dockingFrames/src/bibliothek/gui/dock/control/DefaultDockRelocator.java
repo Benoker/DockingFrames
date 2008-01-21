@@ -43,8 +43,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.dockable.MovingImage;
-import bibliothek.gui.dock.event.DockAdapter;
-import bibliothek.gui.dock.event.DockControllerAdapter;
+import bibliothek.gui.dock.event.*;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.DockUtilities;
 
@@ -73,12 +72,17 @@ public class DefaultDockRelocator extends DockRelocator{
 	/**
 	 * Creates a new manager.
 	 * @param controller the controller whose dockables are moved
+	 * @param setup observable informing this object when <code>controller</code>
+	 * is set up.
 	 */
-	public DefaultDockRelocator( DockController controller ){
+	public DefaultDockRelocator( DockController controller, ControllerSetupCollection setup ){
 		super( controller );
-		
-		controller.getRegister().addDockRegisterListener( new MouseDockableListener() );
-		controller.getRegister().addDockRegisterListener( new TitleListener() );
+		setup.add( new ControllerSetupListener(){
+		    public void done( DockController controller ) {
+		        controller.getRegister().addDockRegisterListener( new MouseDockableListener() );
+	            controller.getRegister().addDockRegisterListener( new TitleListener() );
+		    }
+		});
 	}
 	
 	@Override
@@ -125,16 +129,16 @@ public class DefaultDockRelocator extends DockRelocator{
             
             DockStation parent = dockable.getDockParent();
             if( parent != station || parent == null ){
-                fireDockableDrag( dockable, station );
+                fireDrag( dockable, station );
                 if( parent != null )
                     parent.drag( dockable );
                 station.drop();
-                fireDockablePut( dockable, station );
+                fireDrop( dockable, station );
             }
             else{
-                fireDockableDrag( dockable, parent );
+                fireDrag( dockable, parent );
                 parent.move();
-                fireDockablePut( dockable, parent );
+                fireDrop( dockable, parent );
             }
         }
         finally{
@@ -330,6 +334,7 @@ public class DefaultDockRelocator extends DockRelocator{
         else if( pressPointScreen != null ){
             titleDragCancel();
             disableAllModes();
+            fireCancel( dockable );
             return Reaction.BREAK_CONSUMED;
         }
         return Reaction.BREAK;
@@ -397,6 +402,7 @@ public class DefaultDockRelocator extends DockRelocator{
                 }
                 
                 onMove = true;
+                fireInit( dockable );
             }
         }
         if( onMove ){
@@ -490,6 +496,8 @@ public class DefaultDockRelocator extends DockRelocator{
             disableAllModes();
             
             if( stop ){
+                fireCancel( dockable );
+                
                 if( wasDragging )
                     return Reaction.BREAK_CONSUMED;
                 else
@@ -500,39 +508,41 @@ public class DefaultDockRelocator extends DockRelocator{
         }
         boolean consume = false;
 
-        if( pressPointScreen != null ){
-            // local copy, some objects using the remote are invoking cancel
-            // after the put has finished
-            DockStation dragStation = this.dragStation;
-            
-            if( x != lastPoint.x || y != lastPoint.y ){
-	            DockStation next = preparePut( 
-	                    x, y,
-	                    x - pressPointLocal.x, y - pressPointLocal.y,
-	                    dockable );
-	            
-	            if( next != dragStation ){
-	                if( dragStation != null ){
-	                    dragStation.forget();
-	                }
-	                dragStation = next;
-	            }
+        if( stop ){
+            if( pressPointScreen != null ){
+                // local copy, some objects using the remote are invoking cancel
+                // after the put has finished
+                DockStation dragStation = this.dragStation;
+
+                if( x != lastPoint.x || y != lastPoint.y ){
+                    DockStation next = preparePut( 
+                            x, y,
+                            x - pressPointLocal.x, y - pressPointLocal.y,
+                            dockable );
+
+                    if( next != dragStation ){
+                        if( dragStation != null ){
+                            dragStation.forget();
+                        }
+                        dragStation = next;
+                    }
+                }
+
+                if( dragStation != null ){
+                    consume = true;
+                    executePut( dockable, dragStation );
+                    dragStation.forget();
+                    this.dragStation = null;
+                }
             }
-            
-            if( dragStation != null ){
-                consume = true;
-                executePut( dockable, dragStation );
-                dragStation.forget();
-                this.dragStation = null;
-            }
+
+            if( movingImageWindow != null )
+                movingImageWindow.close();
+
+            movingImageWindow = null;
+            pressPointScreen = null;
+            pressPointLocal = null;
         }
-        
-        if( movingImageWindow != null )
-            movingImageWindow.close();
-        
-        movingImageWindow = null;
-        pressPointScreen = null;
-        pressPointLocal = null;
         
         if( stop ){
             disableAllModes();
@@ -646,7 +656,7 @@ public class DefaultDockRelocator extends DockRelocator{
      * Adds a {@link MouseListener} to all Dockables. This second listener allows
      * a popup-menu and connects the Dockables to the drag and drop mechanism.
      */
-    private class MouseDockableListener extends DockControllerAdapter{
+    private class MouseDockableListener extends DockRegisterAdapter{
         /** tells which Dockable has which listener */
         private Map<Dockable, SingleMouseDockableListener> listeners =
             new HashMap<Dockable, SingleMouseDockableListener>();
@@ -713,32 +723,36 @@ public class DefaultDockRelocator extends DockRelocator{
     /**
      * Observers this controller and registers listeners to all new titles.
      */
-    private class TitleListener extends DockAdapter{
+    private class TitleListener extends DockRegisterAdapter{
         /** a map telling which listener was added to which title */
         private Map<DockTitle, MouseTitleListener> listeners =
             new HashMap<DockTitle, MouseTitleListener>();
 
-        @Override
-        public void titleBound( Dockable dockable, DockTitle title ) {
-            if( !listeners.containsKey( title )){
-                MouseTitleListener listener = new MouseTitleListener( title );
-                listeners.put( title, listener );
-            
-                title.addMouseInputListener( listener );
+        /** a listener added to each {@link Dockable} */
+        private DockableListener dockableListener = new DockableAdapter(){
+            @Override
+            public void titleBound( Dockable dockable, DockTitle title ) {
+                if( !listeners.containsKey( title )){
+                    MouseTitleListener listener = new MouseTitleListener( title );
+                    listeners.put( title, listener );
+                
+                    title.addMouseInputListener( listener );
+                }
             }
-        }
+            
+            @Override
+            public void titleUnbound( Dockable dockable, DockTitle title ) {
+                MouseTitleListener listener = listeners.remove( title );
+                if( listener != null ){
+                    title.removeMouseInputListener( listener );
+                }
+            }    
+        };
+        
         
         @Override
-        public void titleUnbound( Dockable dockable, DockTitle title ) {
-            MouseTitleListener listener = listeners.remove( title );
-            if( listener != null ){
-                title.removeMouseInputListener( listener );
-            }
-        }
-
-        @Override
         public void dockableRegistering( DockController controller, Dockable dockable ){
-        	dockable.addDockableListener( this );
+        	dockable.addDockableListener( dockableListener );
         }
         
         @Override
@@ -755,7 +769,7 @@ public class DefaultDockRelocator extends DockRelocator{
 
         @Override
         public void dockableUnregistered( DockController controller, Dockable dockable ) {
-            dockable.removeDockableListener( this );
+            dockable.removeDockableListener( dockableListener );
         	
             DockTitle[] titles = dockable.listBoundTitles();
             for( DockTitle title : titles ){

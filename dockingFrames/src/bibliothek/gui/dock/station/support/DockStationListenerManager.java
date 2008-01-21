@@ -128,4 +128,14 @@ public class DockStationListenerManager {
         for( DockStationListener listener : listeners.toArray( new DockStationListener[ listeners.size() ] ))
             listener.dockableRemoving( station, dockable );
     }
+    
+    /**
+     * Invokes the method {@link DockStationListener#dockableSelected(DockStation, Dockable)}
+     * on all registered {@link DockStationListener}s.
+     * @param dockable the selected {@link Dockable}
+     */
+    public void fireDockableSelected( Dockable dockable ){
+        for( DockStationListener listener : listeners.toArray( new DockStationListener[ listeners.size() ] ))
+            listener.dockableSelected( station, dockable );
+    }
 }

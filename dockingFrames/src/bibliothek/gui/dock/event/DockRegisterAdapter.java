@@ -30,37 +30,23 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 
 /**
- * An implementation of {@link DockListener}, doing nothing whenever receiving
- * an event.
+ * A {@link DockRegisterListener} that contains only empty methods.
  * @author Benjamin Sigg
  */
-public class DockAdapter implements DockListener {
-    public void dockableFocused( DockController controller, Dockable dockable ) {
+public class DockRegisterAdapter implements DockRegisterListener{
+    public void dockStationRegistered( DockController controller, DockStation station ) {
         // do nothing
     }
 
-    public void dockableSelected( DockController controller,
-            DockStation station, Dockable dockable ) {
+    public void dockStationRegistering( DockController controller, DockStation station ) {
         // do nothing
     }
 
-    public void dockStationRegistered( DockController controller,
-            DockStation station ) {
+    public void dockStationUnregistered( DockController controller, DockStation station ) {
         // do nothing
     }
 
-    public void dockStationRegistering( DockController controller,
-            DockStation station ) {
-        // do nothing
-    }
-
-    public void dockStationUnregistered( DockController controller,
-            DockStation station ) {
-        // do nothing
-    }
-
-    public void dockableCycledRegister( DockController controller,
-            Dockable dockable ) {
+    public void dockableCycledRegister( DockController controller, Dockable dockable ) {
         // do nothing
     }
 
@@ -68,31 +54,11 @@ public class DockAdapter implements DockListener {
         // do nothing
     }
 
-    public void dockableRegistering( DockController controller,
-            Dockable dockable ) {
+    public void dockableRegistering( DockController controller, Dockable dockable ) {
         // do nothing
     }
 
-    public void dockableUnregistered( DockController controller,
-            Dockable dockable ) {
-        // do nothing
-    }
-
-    public void cancel( DockController controller, Dockable dockable ) {
-        // do nothing
-    }
-
-    public void drag( DockController controller, Dockable dockable,
-            DockStation station ) {
-        // do nothing
-    }
-
-    public void drop( DockController controller, Dockable dockable,
-            DockStation station ) {
-        // do nothing
-    }
-
-    public void init( DockController controller, Dockable dockable ) {
+    public void dockableUnregistered( DockController controller, Dockable dockable ) {
         // do nothing
     }
 }

@@ -34,7 +34,7 @@ import java.util.*;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.event.ComponentHierarchyObserverListener;
-import bibliothek.gui.dock.event.DockControllerAdapter;
+import bibliothek.gui.dock.event.DockRegisterAdapter;
 
 /**
  * A class collecting all {@link Component}s which are somehow used on
@@ -63,7 +63,8 @@ public class ComponentHierarchyObserver {
      */
     public ComponentHierarchyObserver( DockController controller ){
         this.controller = controller;
-        controller.getRegister().addDockRegisterListener( new DockControllerAdapter(){
+        
+        controller.getRegister().addDockRegisterListener( new DockRegisterAdapter(){
             @Override
             public void dockableRegistered( DockController controller, Dockable dockable ) {
                 add( dockable.getComponent(), null );

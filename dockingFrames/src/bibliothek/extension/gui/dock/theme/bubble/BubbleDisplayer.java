@@ -25,11 +25,7 @@
  */
 package bibliothek.extension.gui.dock.theme.bubble;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.Insets;
+import java.awt.*;
 
 import javax.swing.JPanel;
 import javax.swing.border.Border;
@@ -37,7 +33,7 @@ import javax.swing.border.Border;
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.event.DockControllerAdapter;
+import bibliothek.gui.dock.event.DockableFocusAdapter;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
@@ -110,10 +106,10 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
         DockController old = getController();
         if( old != controller ){
             if( old != null )
-                old.removeDockControllerListener( listener );
+                old.removeDockableFocusListener( listener );
             
             if( controller != null )
-                controller.addDockControllerListener( listener );
+                controller.addDockableFocusListener( listener );
             
             super.setController( controller );
         }
@@ -153,7 +149,7 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
      * has changed.
      * @author Benjamin Sigg
      */
-    private class Listener extends DockControllerAdapter{
+    private class Listener extends DockableFocusAdapter{
         @Override
         public void dockableFocused( DockController controller, Dockable dockable ) {
             updateAnimation();

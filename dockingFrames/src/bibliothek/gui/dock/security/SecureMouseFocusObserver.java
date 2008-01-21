@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.dock.control.ControllerSetupCollection;
 import bibliothek.gui.dock.control.FocusController;
 import bibliothek.gui.dock.control.MouseFocusObserver;
 
@@ -45,9 +46,11 @@ public class SecureMouseFocusObserver extends MouseFocusObserver{
     /**
      * Creates a new FocusController for <code>controller</code>.
      * @param controller the owner of this FocusController
+     * @param setup an observable informing this object when <code>controller</code>
+     * is set up.
      */
-    public SecureMouseFocusObserver( DockController controller ) {
-        super(controller);
+    public SecureMouseFocusObserver( DockController controller, ControllerSetupCollection setup ) {
+        super(controller, setup);
     }
 
     @Override

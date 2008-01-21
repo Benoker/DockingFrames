@@ -106,14 +106,32 @@ public abstract class DockRelocator {
 		return listeners.toArray( new DockRelocatorListener[ listeners.size() ] );
 	}
 	
+	/**
+	 * Informs all listeners that the drag-gesture has been made.
+	 * @param dockable the element that will be dragged.
+	 */
+	protected void fireInit( Dockable dockable ){
+	    for( DockRelocatorListener listener : listListeners() )
+	        listener.init( controller, dockable );
+	}
+	
+	/**
+	 * Informs all listeners that a drag and drop operation has been canceled.
+	 * @param dockable the element that was grabbed
+	 */
+	protected void fireCancel( Dockable dockable ){
+	    for( DockRelocatorListener listener : listListeners() )
+	        listener.cancel( controller, dockable );
+	}
+	
     /**
      * Informs all listeners that <code>dockable</code> will be dragged.
      * @param dockable the dragged Dockable
      * @param station the parent of <code>dockable</code>
      */
-    protected void fireDockableDrag( Dockable dockable, DockStation station ){
+    protected void fireDrag( Dockable dockable, DockStation station ){
         for( DockRelocatorListener listener : listListeners() )
-            listener.dockableDrag( controller, dockable, station );
+            listener.drag( controller, dockable, station );
     }
     
     /**
@@ -122,9 +140,9 @@ public abstract class DockRelocator {
      * @param dockable the dropped Dockable
      * @param station the new owner of <code>dockable</code>
      */
-    protected void fireDockablePut( Dockable dockable, DockStation station ){
+    protected void fireDrop( Dockable dockable, DockStation station ){
         for( DockRelocatorListener listener : listListeners() )
-            listener.dockablePut( controller, dockable, station );
+            listener.drop( controller, dockable, station );
     }
     
     /**

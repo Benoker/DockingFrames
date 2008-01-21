@@ -427,6 +427,8 @@ public class StackDockStation extends AbstractDockableStation {
     public void setFrontDockable( Dockable dockable ) {
         if( dockables.size() > 1 && dockable != null )
             stackComponent.setSelectedIndex( indexOf( dockable ));
+        
+        listeners.fireDockableSelected( dockable );
     }
     
     /**
@@ -714,12 +716,12 @@ public class StackDockStation extends AbstractDockableStation {
      * Adds a child to this station at the location <code>index</code>.
      * @param dockable the new child
      * @param index the preferred location of the new child
-     * @param fire if <code>true</code> the method will fire some events,
-     * otherwise the method will run silent
+     * @param fire if <code>true</code> the method should fire events for
+     * adding a new {@link Dockable}, otherwise the method will run silently
      */
     protected void add( Dockable dockable, int index, boolean fire ){
         DockUtilities.ensureTreeValidity( this, dockable );
-            
+        
         if( fire )
         	listeners.fireDockableAdding( dockable );
         dockable.setDockParent( this );
@@ -755,8 +757,9 @@ public class StackDockStation extends AbstractDockableStation {
         panel.validate();
         panel.repaint();
         
-        if( fire )
+        if( fire ){
         	listeners.fireDockableAdded( dockable );
+        }
     }
     
     /**

@@ -27,6 +27,7 @@
 package bibliothek.gui.dock.security;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.dock.control.ControllerSetupCollection;
 import bibliothek.gui.dock.control.DefaultDockControllerFactory;
 import bibliothek.gui.dock.control.KeyboardController;
 import bibliothek.gui.dock.control.MouseFocusObserver;
@@ -37,11 +38,11 @@ import bibliothek.gui.dock.control.MouseFocusObserver;
  */
 public class SecureDockControllerFactory extends DefaultDockControllerFactory {
     @Override
-    public MouseFocusObserver createMouseFocusObserver( DockController controller ) {
-        return new SecureMouseFocusObserver( controller );
+    public MouseFocusObserver createMouseFocusObserver( DockController controller, ControllerSetupCollection setup ) {
+        return new SecureMouseFocusObserver( controller, setup );
     }
     @Override
-    public KeyboardController createKeyboardController( DockController controller ) {
-        return new SecureKeyboardController( controller );
+    public KeyboardController createKeyboardController( DockController controller, ControllerSetupCollection setup ) {
+        return new SecureKeyboardController( controller, setup );
     }
 }

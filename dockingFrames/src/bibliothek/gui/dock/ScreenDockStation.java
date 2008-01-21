@@ -250,6 +250,7 @@ public class ScreenDockStation extends AbstractDockStation {
 
         if( frontDialog != null ){
             frontDialog.toFront();
+            listeners.fireDockableSelected( dockable );
         }
     }
 

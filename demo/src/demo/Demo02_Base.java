@@ -27,9 +27,6 @@ public class Demo02_Base {
 		// the controller manages all operations
 		DockController controller = new DockController();
 		
-		// let the controller handle sub-stations with only one child
-		controller.setSingleParentRemove( true );
-		
 		// some stations
 		SplitDockStation station = new SplitDockStation();
 		ScreenDockStation screen = new ScreenDockStation( frame );

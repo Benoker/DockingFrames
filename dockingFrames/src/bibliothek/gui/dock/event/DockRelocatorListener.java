@@ -29,7 +29,6 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.DockRelocator;
-import bibliothek.gui.dock.title.DockTitle;
 
 /**
  * A listener used by a {@link DockRelocator}
@@ -39,23 +38,40 @@ import bibliothek.gui.dock.title.DockTitle;
  */
 public interface DockRelocatorListener {
     /**
-     * Invoked before a {@link Dockable} is moved around. This method is called
-     * after the user has released the mouse which was dragging a {@link DockTitle}
-     * around.
+     * Invoked when a drag and drop operation is initiated. This method is
+     * called when the user made the gesture of dragging, but not yet of dropping.
+     * @param controller the origin of the event
+     * @param dockable the element that has been grabbed
+     */
+    public void init( DockController controller, Dockable dockable );
+    
+    /**
+     * Invoked when a drag and drop operation was initiated, but canceld. This
+     * method can be called any time after {@link #init(DockController, Dockable)}.
+     * was called. 
+     * @param controller the origin of the event
+     * @param dockable the element that has been grabbed
+     */
+    public void cancel( DockController controller, Dockable dockable );
+    
+    /**
+     * Invoked when a drag and drop operation has been confirmed. This method
+     * is called after the user made a drop-gesture, but before <code>dockable</code>
+     * is dragged from its old parent.
      * @param controller the origin of the event
      * @param dockable the {@link Dockable} which was dragged
      * @param station the future parent of <code>dockable</code>
-     * @see #dockablePut(DockController, Dockable, DockStation)
+     * @see #drop(DockController, Dockable, DockStation)
      */
-    public void dockableDrag( DockController controller, Dockable dockable, DockStation station );
+    public void drag( DockController controller, Dockable dockable, DockStation station );
     
     /**
-     * Invoked after a {@link Dockable} was moved.
+     * Invoked after a {@link Dockable} was dropped.
      * @param controller the origin of the event
      * @param dockable the {@link Dockable} which was dragged
      * @param station the new parent of <code>dockable</code>
-     * @see #dockableDrag(DockController, Dockable, DockStation)
+     * @see #drag(DockController, Dockable, DockStation)
      */
-    public void dockablePut( DockController controller, Dockable dockable, DockStation station );
+    public void drop( DockController controller, Dockable dockable, DockStation station );
     
 }

@@ -62,7 +62,9 @@ public class OverpaintablePanel extends JLayeredPane {
     }
     
     /**
-     * Sets the panel on which clients should add their children.
+     * Sets the panel on which clients should add their children. Note that
+     * <code>content</code> is not added to the base-panel, that must be done
+     * by the client.
      * @param content the contents of this panel
      */
     public void setContentPane( JComponent content ){

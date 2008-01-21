@@ -275,7 +275,7 @@ public class FlapDockStation extends AbstractDockableStation {
             boolean remove = getController() != null;
             
             if( remove ){
-                getController().removeDockControllerListener( controllerListener );
+                getController().removeDockableFocusListener( controllerListener );
                 getController().getFocusObserver().removeVetoListener( controllerListener );
                 
                 oldFrontDockable = getFrontDockable();
@@ -319,7 +319,7 @@ public class FlapDockStation extends AbstractDockableStation {
                     }
                 }
                 
-                controller.addDockControllerListener( controllerListener );
+                controller.addDockableFocusListener( controllerListener );
                 controller.getFocusObserver().addVetoListener( controllerListener );
                 
                 if( isStationVisible() )
@@ -555,6 +555,7 @@ public class FlapDockStation extends AbstractDockableStation {
         }
         
         visibility.fire();
+        listeners.fireDockableSelected( dockable );
     }
     
     /**
@@ -1221,7 +1222,7 @@ public class FlapDockStation extends AbstractDockableStation {
         }
     }
     
-    private class ControllerListener extends DockControllerAdapter implements FocusVetoListener{
+    private class ControllerListener extends DockableFocusAdapter implements FocusVetoListener{
         public boolean vetoFocus( MouseFocusObserver controller, Dockable dockable ) {
             return false;
         }

@@ -50,7 +50,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.RemoteRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
-import bibliothek.gui.dock.event.DockControllerAdapter;
+import bibliothek.gui.dock.event.DockableFocusAdapter;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.util.PropertyValue;
 
@@ -307,7 +307,7 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 			}
 
 			if( this.controller != null ){
-				this.controller.removeDockControllerListener( controllerFocusListener );
+				this.controller.removeDockableFocusListener( controllerFocusListener );
 			}
 			
 			this.controller = controller;
@@ -315,7 +315,7 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 				for ( TabEntry entry : dockables)
 					entry.relocator = null;
 			} else {				
-				controller.addDockControllerListener( controllerFocusListener );
+				controller.addDockableFocusListener( controllerFocusListener );
 				
 				for ( TabEntry entry : dockables)
 					entry.relocator = controller.getRelocator().createRemote(entry.dockable);
@@ -335,7 +335,7 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 		public Listener listener;
 	}
 	
-	private class FocusListener extends DockControllerAdapter{
+	private class FocusListener extends DockableFocusAdapter{
 		@Override
 		public void dockableFocused( DockController controller, Dockable dockable ){
 			updateFocus();

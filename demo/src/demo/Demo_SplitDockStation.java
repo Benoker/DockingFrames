@@ -31,9 +31,6 @@ public class Demo_SplitDockStation {
 		// the controller manages all operations
 		DockController controller = new DockController();
 		
-		// let the controller handle sub-stations with only one child
-		controller.setSingleParentRemove( true );
-		
 		// a station
 		SplitDockStation station = new SplitDockStation();
 		

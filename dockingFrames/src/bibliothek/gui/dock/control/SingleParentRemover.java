@@ -30,7 +30,8 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.accept.DockAcceptance;
-import bibliothek.gui.dock.event.DockControllerAdapter;
+import bibliothek.gui.dock.event.DockRegisterAdapter;
+import bibliothek.gui.dock.event.DockRelocatorAdapter;
 
 /**
  * An observer of a {@link DockController}. The remover
@@ -39,8 +40,10 @@ import bibliothek.gui.dock.event.DockControllerAdapter;
  * @author Benjamin Sigg
  */
 public class SingleParentRemover{
-	/** A listener added to a controller */
-    private Listener listener = new Listener();
+    /** observers a {@link DockRelocator} and searches for changes */
+    private DockRelocatorObserver dockRelocatorObserver = new DockRelocatorObserver();
+    /** observers a {@link DockRegister} and searches for changes */
+    private DockRegisterObserver dockRegisterObserver = new DockRegisterObserver();
    
     /** state, ensures that no station is tested more than once in a run */
     private boolean onTest = false;
@@ -50,7 +53,8 @@ public class SingleParentRemover{
      * @param controller a controller to observe
      */
     public void install( DockController controller ){
-        controller.addDockControllerListener( listener );
+        controller.getRelocator().addDockRelocatorListener( dockRelocatorObserver );
+        controller.getRegister().addDockRegisterListener( dockRegisterObserver );
         testAll( controller );
     }
     
@@ -60,7 +64,8 @@ public class SingleParentRemover{
      * @param controller a controller
      */
     public void uninstall( DockController controller ){
-        controller.removeDockControllerListener( listener );
+        controller.getRelocator().removeDockRelocatorListener( dockRelocatorObserver );
+        controller.getRegister().removeDockRegisterListener( dockRegisterObserver );
     }
     
     /**
@@ -172,16 +177,11 @@ public class SingleParentRemover{
     }
     
     /**
-     * Listens to a {@link DockController} and call {@link SingleParentRemover#testAll(DockController)}
+     * Calls {@link SingleParentRemover#testAll(DockController)}
      * if the structure of the dock-tree changes.
      * @author Benjamin Sigg
      */
-    private class Listener extends DockControllerAdapter{
-        @Override
-        public void dockablePut( DockController controller, Dockable dockable, DockStation station ) {
-            testAll( controller );
-        }
-        
+    private class DockRegisterObserver extends DockRegisterAdapter{
         @Override
         public void dockableCycledRegister( DockController controller, Dockable dockable ) {
             testAll( controller );
@@ -192,6 +192,18 @@ public class SingleParentRemover{
             if( !controller.getRelocator().isOnPut() ){
                 testAll( controller );
             }
+        }
+    }
+    
+    /**
+     * Calls {@link SingleParentRemover#testAll(DockController)}
+     * if the structure of the dock-tree changes.
+     * @author Benjamin Sigg
+     */
+    private class DockRelocatorObserver extends DockRelocatorAdapter{
+        @Override
+        public void drop( DockController controller, Dockable dockable, DockStation station ) {
+            testAll( controller );
         }
     }
 }

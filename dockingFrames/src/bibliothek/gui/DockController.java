@@ -39,10 +39,7 @@ import bibliothek.gui.dock.accept.MultiDockAcceptance;
 import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.control.*;
-import bibliothek.gui.dock.event.DockAdapter;
-import bibliothek.gui.dock.event.DockControllerListener;
-import bibliothek.gui.dock.event.DockRegisterListener;
-import bibliothek.gui.dock.event.DockTitleEvent;
+import bibliothek.gui.dock.event.*;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.util.DockProperties;
@@ -78,16 +75,18 @@ public class DockController {
     /** the Dockable which has currently the focus, can be <code>null</code> */
     private Dockable focusedDockable = null;
     
-    /** observer of this controller */
-    private List<DockControllerListener> listeners = new ArrayList<DockControllerListener>();
+    /** Listeners observing the focused {@link Dockable} */
+    private List<DockableFocusListener> dockableFocusListeners = new ArrayList<DockableFocusListener>();
+    /** Listeners observing the bound-state of {@link DockTitle}s */
+    private List<DockTitleBindingListener> dockTitleBindingListeners = new ArrayList<DockTitleBindingListener>();
         
     /** <code>true</code> while the controller actively changes the focus */
     private boolean onFocusing = false;
     /** a special controller listening to AWT-events and changing the focused dockable */
     private MouseFocusObserver focusObserver;
     
-    /** an observer of the {@link #register} */
-    private RegisterListener registerListener = new RegisterListener();
+    /** an observer of the bound {@link DockTitle}s */
+    private DockTitleObserver dockTitleObserver = new DockTitleObserver();
     /** mapping tells which titles are currently active */
     private Map<DockTitle, Dockable> activeTitles = new HashMap<DockTitle, Dockable>();
     /** a source for {@link DockTitle} */
@@ -110,8 +109,6 @@ public class DockController {
     /** tells which popups are to be shown */
     private ActionPopupSuppressor popupSuppressor = ActionPopupSuppressor.ALLOW_ALWAYS;
    
-    /** whether stations with none or one child will be removed */
-    private boolean singleParentRemove = false;
     /** remover of stations with none or one child */
     private SingleParentRemover remover;
     
@@ -137,15 +134,16 @@ public class DockController {
     /**
      * Creates a new controller but does not initiate the properties of this
      * controller if not wished. Clients should call the method 
-     * {@link #initiate(DockControllerFactory)} if the pass <code>null</code> to this constructor.
+     * {@link #initiate(DockControllerFactory,ControllerSetupCollection)} 
+     * if they pass <code>null</code> to this constructor.
      * Otherwise the behavior of this controller is unspecified.
      * @param factory the factory creating elements of this controller or
-     * <code>null</code> if {@link #initiate(DockControllerFactory)} will be
+     * <code>null</code> if {@link #initiate(DockControllerFactory,ControllerSetupCollection)} will be
      * called later
      */
     public DockController( DockControllerFactory factory ){
     	if( factory != null ){
-    		initiate( factory );
+    		initiate( factory, null );
     	}
     }
     
@@ -154,42 +152,56 @@ public class DockController {
      * called only once. This method can be called by a subclass if the 
      * subclass used {@link #DockController(DockControllerFactory)} with an argument <code>null</code>.
      * @param factory a factory used to create various sub-controls
+     * @param setup the collection of {@link ControllerSetupListener}s that will be invoked
+     * when setup is finished. If this parameter is set, then all {@link ControllerSetupListener}s
+     * will be added to <code>setup</code>. If this parameter is <code>null</code>, then
+     * a new collection will be created, and the event will be fired as soon as
+     * this method is finished.
      */
-    protected final void initiate( DockControllerFactory factory ){
+    protected final void initiate( DockControllerFactory factory, ControllerSetupCollection setup ){
         if( this.factory != null )
             throw new IllegalStateException( "DockController already initialized" );
         
         if( factory == null )
             throw new IllegalArgumentException( "Factory must not be null" );
         
+        final List<ControllerSetupListener> setupListeners = new LinkedList<ControllerSetupListener>();
+        if( setup == null ){
+            setup = new ControllerSetupCollection(){
+                public void add( ControllerSetupListener listener ) {
+                    if( listener == null )
+                        throw new NullPointerException( "listener must not be null" );
+                    setupListeners.add( listener );
+                }
+            };
+        }
+        
         this.factory = factory;
         
-    	register = factory.createRegister( this );
-    	DockRegisterListener focus = factory.createFocusController( this );
+    	register = factory.createRegister( this, setup );
+    	DockRegisterListener focus = factory.createFocusController( this, setup );
     	if( focus != null )
     		register.addDockRegisterListener( focus );
     	
-    	DockRegisterListener popup = factory.createPopupController( this );
+    	DockRegisterListener popup = factory.createPopupController( this, setup );
     	if( popup != null )
     		register.addDockRegisterListener( popup );
     	
-    	DockRegisterListener binder = factory.createActionBinder( this );
+    	DockRegisterListener binder = factory.createActionBinder( this, setup );
     	if( binder != null )
     	    register.addDockRegisterListener( binder );
     	
-		register.addDockRegisterListener( registerListener );
-        relocator = factory.createRelocator( this );
+		register.addDockRegisterListener( dockTitleObserver );
+		addDockTitleBindingListener( dockTitleObserver );
+		register.addDockRegisterListener( new DockableSelectionObserver() );
+		
+        relocator = factory.createRelocator( this, setup );
         
-        for( DockControllerListener listener : listeners ){
-            register.addDockRegisterListener( listener );
-            relocator.addDockRelocatorListener( listener );
-        }
-    	
-        defaultActionOffer = factory.createDefaultActionOffer( this );
-        focusObserver = factory.createMouseFocusObserver( this );
-        actionViewConverter = factory.createActionViewConverter( this );
-        doubleClickController = factory.createDoubleClickController( this );
-        keyboardController = factory.createKeyboardController( this );
+        defaultActionOffer = factory.createDefaultActionOffer( this, setup );
+        focusObserver = factory.createMouseFocusObserver( this, setup );
+        actionViewConverter = factory.createActionViewConverter( this, setup );
+        doubleClickController = factory.createDoubleClickController( this, setup );
+        keyboardController = factory.createKeyboardController( this, setup );
         
         DockUI.getDefaultDockUI().fillIcons( icons );
         
@@ -197,6 +209,20 @@ public class DockController {
         
         relocator.addMode( DockRelocatorMode.SCREEN_ONLY );
         relocator.addMode( DockRelocatorMode.NO_COMBINATION );
+        
+        setSingleParentRemover( factory.createSingleParentRemover( this, setup ) );
+        
+        for( ControllerSetupListener listener : setupListeners )
+            listener.done( this );
+        
+        /*
+        relocator.install();
+        register.install();
+        focusObserver.install();
+        doubleClickController.install();
+        keyboardController.install();
+        componentHierarchyObserver.install();
+        */
     }
     
     /**
@@ -271,45 +297,31 @@ public class DockController {
     }
     
     /**
-     * Tells whether stations with only one child are removed or not.
-     * @return <code>true</code> if stations with one or less
-     * children are removed automatically
-     * @see #setSingleParentRemove(boolean)
-     */
-    public boolean isSingleParentRemove(){
-        return singleParentRemove;
-    }
-    
-    /**
-     * Sets whether stations with one or none child are removed automatically
-     * or not. This property has a great effect on some stations, clients shouldn't
-     * change the value once the first station is {@link #add(DockStation) added}.
-     * @param remove <code>true</code> if stations with one or less
-     * children are removed
-     * @see DockControllerFactory#createSingleParentRemover(DockController)
-     */
-    public void setSingleParentRemove( boolean remove ){
-        if( singleParentRemove != remove ){
-            if( remove ){
-                if( remover == null )
-                    remover = factory.createSingleParentRemover( this );
-                
-                remover.install( this );
-            }
-            else{
-                remover.uninstall( this );
-            }
-            singleParentRemove = remove;
-        }
-    }
-    
-    /**
      * Gets the handler used to remove stations with only one or none
      * children.
-     * @return the handler or <code>null</code>
+     * @return the handler or <code>null</code>.
+     * @see #setSingleParentRemover(SingleParentRemover)
      */
     public SingleParentRemover getSingleParentRemover() {
         return remover;
+    }
+    
+    /**
+     * Exchanges the handler that removes stations with only one or none children.
+     * @param remover the new handler, can be <code>null</code> to disable the
+     * feature.
+     */
+    public void setSingleParentRemover( SingleParentRemover remover ){
+        if( this.remover != null ){
+            this.remover.uninstall( this );
+        }
+        
+        this.remover = remover;
+        
+        if( this.remover != null ){
+            this.remover.install( this );
+            this.remover.testAll( this );
+        }
     }
     
     /**
@@ -509,7 +521,7 @@ public class DockController {
     }
     
     /**
-     * Gest the number of stations registered at this controller.
+     * Gets the number of stations registered at this controller.
      * @return the number of stations
      * @see #add(DockStation)
      */
@@ -620,7 +632,7 @@ public class DockController {
 	                });
 	            }
 	            
-	            firedockableFocused( focusedDockable );
+	            fireDockableFocused( focusedDockable );
 	        }
     	}
     	finally{
@@ -655,7 +667,7 @@ public class DockController {
      * @return <code>true</code> if the title is bound
      */
     public boolean isBound( DockTitle title ){
-    	return registerListener.isBound( title );
+    	return dockTitleObserver.isBound( title );
     }
     
     /**
@@ -801,38 +813,64 @@ public class DockController {
     }
     
     /**
-     * Adds an observer to this controller.
-     * @param listener the observer
+     * Adds a listener to this controller, the listener will receive events when
+     * a {@link DockTitle} is bound or unbound.
+     * @param listener the new listener
      */
-    public void addDockControllerListener( DockControllerListener listener ){
-        listeners.add( listener );
-        if( register != null )
-            register.addDockRegisterListener( listener );
-        if( relocator != null )
-            relocator.addDockRelocatorListener( listener );
+    public void addDockTitleBindingListener( DockTitleBindingListener listener ){
+        if( listener == null )
+            throw new NullPointerException( "listener must not be null" );
+        dockTitleBindingListeners.add( listener );
     }
     
     /**
-     * Removes an observer from this controller.
-     * @param listener the observer to remove
+     * Removes the observer <code>listener</code> from this controller.
+     * @param listener the listener to remove
      */
-    public void removeDockControllerListener( DockControllerListener listener ){
-        listeners.remove( listener );
-        if( register != null )
-            register.removeDockRegisterListener( listener );
-        if( relocator != null )
-            relocator.removeDockRelocatorListener( listener );
+    public void removeDockTitleBindingListener( DockTitleBindingListener listener ){
+        if( listener == null )
+            throw new NullPointerException( "listener must not be null" );
+        dockTitleBindingListeners.remove( listener );
     }
     
     /**
-     * Lists all {@link DockControllerListener} of this station. The list is
-     * independent from the original list.
-     * @return the list of listeners
+     * Gets an array of all {@link DockTitleBindingListener} that are currently
+     * registered at this controller.
+     * @return the modifiable array
      */
-    protected DockControllerListener[] listDockControllerListener(){
-        return listeners.toArray( new DockControllerListener[ listeners.size() ]);
+    protected DockTitleBindingListener[] dockTitleBindingListeners(){
+        return dockTitleBindingListeners.toArray(
+                new DockTitleBindingListener[ dockTitleBindingListeners.size() ] );
     }
-
+    
+    /**
+     * Adds a listener to this controller, the listener will be informed when
+     * the focused {@link Dockable} changes.
+     * @param listener the new listener
+     */
+    public void addDockableFocusListener( DockableFocusListener listener ){
+        if( listener == null )
+            throw new NullPointerException( "listener must not be null" );
+        dockableFocusListeners.add( listener );
+    }
+    
+    /**
+     * Removes a listener from this controller.
+     * @param listener the listener to remove
+     */
+    public void removeDockableFocusListener( DockableFocusListener listener ){
+        if( listener == null )
+            throw new NullPointerException( "listener must not be null" );
+        dockableFocusListeners.remove( listener );
+    }
+    
+    /**
+     * Gets an array of currently registered {@link DockableFocusListener}s.
+     * @return the modifiable array
+     */
+    protected DockableFocusListener[] dockableFocusListeners(){
+        return dockableFocusListeners.toArray( new DockableFocusListener[ dockableFocusListeners.size() ] );
+    }
     
     /**
      * Informs all listeners that <code>title</code> has been bound
@@ -841,7 +879,7 @@ public class DockController {
      * @param dockable the owner of <code>title</code>
      */
     protected void fireTitleBound( DockTitle title, Dockable dockable ){
-        for( DockControllerListener listener : listDockControllerListener() )
+        for( DockTitleBindingListener listener : dockTitleBindingListeners() )
             listener.titleBound( this, title, dockable );
     }
     
@@ -852,7 +890,7 @@ public class DockController {
      * @param dockable the former owner of <code>title</code>
      */
     protected void fireTitleUnbound( DockTitle title, Dockable dockable ){
-        for( DockControllerListener listener : listDockControllerListener() )
+        for( DockTitleBindingListener listener : dockTitleBindingListeners() )
             listener.titleUnbound( this, title, dockable );
     }
     
@@ -861,20 +899,93 @@ public class DockController {
      * the focus.
      * @param dockable the owner of the focus, may be <code>null</code>
      */
-    protected void firedockableFocused( Dockable dockable ){
-        for( DockControllerListener listener : listDockControllerListener() )
+    protected void fireDockableFocused( Dockable dockable ){
+        for( DockableFocusListener listener : dockableFocusListeners() )
             listener.dockableFocused( this, dockable );
     }
     
+    /**
+     * Informs all listeners that <code>dockable</code> has been selected
+     * by <code>station</code>.
+     * @param station some {@link DockStation}
+     * @param dockable the selected element of <code>station</code>
+     */
+    protected void fireDockableSelected( DockStation station, Dockable dockable ){
+        for( DockableFocusListener listener : dockableFocusListeners() )
+            listener.dockableSelected( this, station, dockable );
+    }
 
+    /**
+     * An observer of the register and all {@link DockStation}s, informs when
+     * a {@link DockStation} changes its selected {@link Dockable}.
+     * @author Benjamin Sigg
+     */
+    private class DockableSelectionObserver extends DockRegisterAdapter{
+        /** listener added to all {@link DockStation}s */
+        private DockStationListener listener = new DockStationAdapter(){
+            @Override
+            public void dockableSelected( DockStation station, Dockable dockable ) {
+                fireDockableSelected( station, dockable );
+            }
+        };
+        
+        @Override
+        public void dockStationRegistered( DockController controller, DockStation station ) {
+            station.addDockStationListener( listener );
+        }
+        
+        @Override
+        public void dockStationUnregistered( DockController controller, DockStation station ) {
+            station.removeDockStationListener( listener );
+        }
+    }
+    
     /**
      * Observers the {@link DockRegister}, adds listeners to new {@link Dockable}s
      * and {@link DockTitle}s, and collects the components of these elements
      */
-    private class RegisterListener extends DockAdapter{
+    private class DockTitleObserver extends DockRegisterAdapter implements DockTitleBindingListener{
     	/** a set of all known titles */
     	private Set<DockTitle> titles = new HashSet<DockTitle>();
 
+    	/** a listener added to each {@link Dockable} */
+    	private DockableListener dockableListener = new DockableAdapter(){
+            @Override
+            public void titleBound( Dockable dockable, DockTitle title ) {
+                titles.add( title );
+                putRepresentative( title.getComponent(), dockable );
+                
+                title.bind();
+                fireTitleBound( title, dockable );
+                
+                DockStation station = dockable.getDockParent();
+                boolean focused = false;
+                Dockable temp = focusedDockable;
+                while( !focused && temp != null ){
+                    focused = temp == dockable;
+                    DockStation parent = temp.getDockParent();
+                    temp = parent == null ? null : parent.asDockable();
+                }
+                
+                if( station == null )
+                    title.changed( new DockTitleEvent( dockable, focused ));
+                else
+                    station.changed( dockable, title, focused );
+                
+                if( focused )
+                    activeTitles.put( title, dockable );
+            }
+            
+            
+            @Override
+            public void titleUnbound( Dockable dockable, DockTitle title ) {
+                titles.remove( title );
+                putRepresentative( title.getComponent(), null );
+                title.unbind();
+                fireTitleUnbound( title, dockable );
+            }
+    	};
+    	
         /**
          * Tells whether title is bound to its {@link Dockable} or not.
          * @param title the title whose state is searched
@@ -883,34 +994,11 @@ public class DockController {
         public boolean isBound( DockTitle title ){
             return titles.contains( title );
         }
-        
-        @Override
-        public void titleBound( Dockable dockable, DockTitle title ) {
-        	titles.add( title );
-        	putRepresentative( title.getComponent(), dockable );
-        	
-            title.bind();
-            fireTitleBound( title, dockable );
-            
-            DockStation station = dockable.getDockParent();
-            boolean focused = false;
-            Dockable temp = focusedDockable;
-            while( !focused && temp != null ){
-                focused = temp == dockable;
-                DockStation parent = temp.getDockParent();
-                temp = parent == null ? null : parent.asDockable();
-            }
-            
-            if( station == null )
-                title.changed( new DockTitleEvent( dockable, focused ));
-            else
-                station.changed( dockable, title, focused );
-            
-            if( focused )
-                activeTitles.put( title, dockable );
+
+        public void titleBound( DockController controller, DockTitle title, Dockable dockable ) {
+            // ignore
         }
         
-        @Override
         public void titleUnbound( DockController controller, DockTitle title, Dockable dockable ) {
             activeTitles.remove( title );
             DockStation parent = dockable.getDockParent();
@@ -919,18 +1007,10 @@ public class DockController {
             else
                 title.changed( new DockTitleEvent( dockable, false ));
         }
-        
-        @Override
-        public void titleUnbound( Dockable dockable, DockTitle title ) {
-            titles.remove( title );
-            putRepresentative( title.getComponent(), null );
-            title.unbind();
-            fireTitleUnbound( title, dockable );
-        }
 
         @Override
         public void dockableRegistering( DockController controller, Dockable dockable ){
-        	dockable.addDockableListener( this );
+        	dockable.addDockableListener( dockableListener );
         }
         
         @Override
@@ -947,7 +1027,7 @@ public class DockController {
 
         @Override
         public void dockableUnregistered( DockController controller, Dockable dockable ) {
-            dockable.removeDockableListener( this );
+            dockable.removeDockableListener( dockableListener );
             putRepresentative( dockable.getComponent(), null );
         	
             DockTitle[] titles = dockable.listBoundTitles();

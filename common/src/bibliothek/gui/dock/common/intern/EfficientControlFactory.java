@@ -34,8 +34,6 @@ import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.common.FWorkingArea;
-import bibliothek.gui.dock.control.DefaultDockControllerFactory;
-import bibliothek.gui.dock.control.SingleParentRemover;
 
 /**
  * A factory that uses the most efficient elements, can only be used in
@@ -44,14 +42,7 @@ import bibliothek.gui.dock.control.SingleParentRemover;
  */
 public class EfficientControlFactory implements FControlFactory {
     public DockController createController() {
-        DockController controller = new DockController( new DefaultDockControllerFactory(){
-            @Override
-            public SingleParentRemover createSingleParentRemover( DockController controller ) {
-                return new FSingleParentRemover();
-            }
-        });
-        controller.setSingleParentRemove( true );
-        return controller;
+        return new DockController();
     }
 
     public FlapDockStation createFlapDockStation() {

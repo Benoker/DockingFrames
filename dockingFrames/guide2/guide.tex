@@ -1,0 +1,241 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{listings}
+
+\lstset{language=Java}
+\lstset{breaklines=true, numbers=left}
+% \lstset{basicstyle=\ttfamily}
+
+\newcommand{\src}[1]{\lstinline[basicstyle=\ttfamily]|#1|}
+
+\title{DockingFrames - Version 1.0.2}
+\author{Benjamin Sigg}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+
+\begin{abstract}
+\end{abstract}
+
+\section{Basics}
+DockingFrames (or just DF) contains several key elements that must be understood by any developer. This chapter will give an overview of these elements, at the end of this chapter you'll be able to write your first application with DF.
+
+\subsection{Dockable}
+A \src{Dockable} is a small graphical panel. It contains some \src{JComponent} and a set of properties like an icon or a title. A \src{Dockable} represents a "frame", a single view of the application.
+
+Clients will normally use the standard implementation \src{DefaultDockable}. \src{DefaultDockable} contains all the functions that are needed any basic scenario.
+
+Let's give an example:
+\begin{lstlisting}
+DefaultDockable dockable = new DefaultDockable();
+dockable.setTitleText( "I'm a JTree" );
+Container content = dockable.getContentPane();
+content.setLayout( new GridLayout( 1, 1 ) );
+content.add( new JScrollPane( new JTree() ) );
+\end{lstlisting}
+There is not much to say: a \src{DefaultDockable} is created in line \src{1}, it's title set in line \src{2} and in lines \src{3-5} some component is put onto \src{dockable}.
+
+\subsection{DockStation}
+A \src{DockStation}, or just "station" is a parent for a set of \src{Dockable}s. A \src{DockStation} might be a \src{Dockable} as well, but not always. Different kinds \src{DockStation}s have different behaviors.
+
+The next example shows how some \src{Dockable}s might be put onto a \src{StackDockStation}:
+\begin{lstlisting}
+StackDockStation stack = new StackDockStation();
+stack.setTitleText( "Stack" );
+stack.drop( new DefaultDockable( "One" ) );
+stack.drop( new DefaultDockable( "Two" ) );
+\end{lstlisting}
+Some observations: \src{StackDockStation} is a \src{Dockable} as well, in line \src{2} the title is set. Two \src{DefaultDockable}s are put onto the station in lines \src{3,4}, the method \src{drop} is available in all \src{DockStation}s.
+
+A list of available \src{DockStation}s:
+\begin{description}
+\item[StackDockStation] This station uses a \src{JTabbedPane} (or a component behaving like one) to show exactly one of many \src{Dockable}s.
+\item[ScreenDockStation] This station puts every \src{Dockable} onto its own \src{JDialog}. These dialogs do float around freely.
+\item[FlapDockStation] A station that presents only a list of buttons to the user. If the user presses one button, a window pops up containing exactly one \src{Dockable}.
+\item[SplitDockStation] This complex station lies its \src{Dockable}s in a grid. The user can modify the size of the cells, and a \src{Dockable} can span over multiple cells. Clients might use the class \src{SplitDockGrid} or \src{SplitDockTree} and the method \src{SplitDockStation.dropTree} to create an initial layout.
+\end{description}
+
+\subsection{DockController}
+The \src{DockController} is the heart of DF. The \src{DockController} manages all \src{Dockable}s and \src{DockStation}s, and all objects that have an influence on them. The \src{DockController} seldomly does something by itself, but it "knows" where to find an object that can handle a task that has do be done.
+
+Every \src{DockController} has its own realm. There can be many \src{DockController}s in one application, however they can't interact with each other. Normal applications will need only one \src{DockController}.
+
+Every client has to register the root-\src{DockStation}s at the \src{DockController}, otherwise the station will not be able to work.
+
+A standard use of \src{DockController} looks like this:
+\begin{lstlisting}
+public static void main( String[] args ){
+	DockController controller = new DockController();
+	
+	SplitDockStation station = new SplitDockStation();
+	controller.add( station );
+		
+	station.drop( new DefaultDockable( "One" ) );
+	station.drop( new DefaultDockable( "Two" ), SplitDockProperty.NORTH );
+	station.drop( new DefaultDockable( "Three" ), SplitDockProperty.EAST );
+
+	JFrame frame = new JFrame();
+	frame.add( station.getComponent() );
+		
+	frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+	frame.setBounds( 20, 20, 400, 400 );
+	frame.setVisible( true );
+}
+\end{lstlisting}
+What happens here? In lines \src{2}, a \src{DockController} is created. In lines \src{4,5} a root-\src{DockStation} is created and added to \src{controller}. Then in lines \src{7-9} some \src{Dockable}s are dropped onto the root-station. Afterwards in lines \src{11-16} a \src{JFrame} is made visible that shows the root-station.
+
+\subsection{DockFrontend}
+\src{DockFrontend} is a layer before \src{DockController} and brings a set of helpful methods. Clients to not need to use a  \src{DockFrontend}, but it can be a great aid. \src{DockFrontend} adds support for storing and loading the layout, and for adding a small "close"-button to each \src{Dockable}. It is used as a replacement of \src{DockController}, clients have to add the root-\src{DockStation}s directly to \src{DockFrontend} through \src{addRoot}. Clients can also add some \src{Dockable}s to the frontend using \src{add}, calling \src{setHideable} afterwards will enable the "close"-button.
+
+\section{Load and Save}
+The layout is the location and size of all \src{Dockable}s and \src{DockStation}s, including the relations between the elements. The ability to store this layout is often a requirement. 
+
+DF provides several ways to store the layout. There is a distinction between local and global storage methods. Local methods store the location of one \src{Dockable}, global methods store all locations. Local methods can never store enough information to fully restore a layout, they should only be used when hiding and restoring a single \src{Dockable}.
+
+\subsection{Local: DockableProperty}
+Every \src{DockStation} is required to create a \src{DockableProperty} for one of its children. A \src{DockableProperty} describes the location of a \src{Dockable} on its parent. \src{DockableProperties} can be be strung together to form a chain. This chain then describes a path from some \src{DockStation} through many other stations to a \src{Dockable}.
+
+Let's look at an example:
+\begin{lstlisting}
+Dockable dockable = ...
+
+DockStation root = DockUtilities.getRoot( dockable );
+DockableProperty location = DockUtilities.getPropertyChain( root, dockable );
+dockable.getDockParent().drag( dockable );
+root.drop( dockable, location );
+\end{lstlisting}
+In line \src{1} we get some unknown \src{Dockable}. In line \src{3} the \src{DockStation} which is at the top of the tree of stations and \src{Dockable}s is searched. Then in line \src{4} the location of \src{dockable} in respect to \src{root} is determined. In line \src{5} \src{dockable} is removed from its parent. And finally in line \src{6} \src{dockable} is put at its old location using the knowledge gained in lines \src{3} and \src{4}.
+
+\src{DockableProperty}s are not save to use. If the tree of stations and \src{Dockable}s is changed, then an earlier created \src{DockableProperty} might not be consistent anymore. The method \src{drop} of \src{DockStation} checks for consistency and returns \src{false} if a \src{DockableProperty} is no longer valid. The listing from above should be rewritten as:
+\begin{lstlisting}
+Dockable dockable = ...
+
+DockStation root = DockUtilities.getRoot( dockable );
+DockableProperty location = DockUtilities.getPropertyChain( root, dockable );
+dockable.getDockParent().drag( dockable );
+if( !root.drop( dockable, location )){
+  root.drop( dockable );
+}
+\end{lstlisting}
+If \src{location} is not valid in line \src{6} then \src{dockable} is just added at a random location.
+
+\src{DockableProperty}s can be stored by a \src{PropertyTransformer}. A \src{PropertyTransformer} just contains a set of \src{DockablePropertyFactory}s.
+
+\subsection{Global: DockSituation}
+A \src{DockSituation} object is a set of \src{DockFactory}s that are used to write or read a bunch of \src{DockStation}s and \src{Dockable}s. A \src{DockSituation} can handle missing \src{DockFactory}s when reading an old layout.
+
+\subsubsection{Plain DockSituation}
+Clients need first to add new \src{DockFactory}s for their new of \src{Dockable}s. Then they have to collect all root-\src{DockStation}s, put them into a \src{Map} and call \src{write} on a \src{DockSituation}. Later they can use \src{read} to get the same \src{Map} pack (with new objects).
+
+How does a \src{DockSituation} know which factory to use for which \src{Dockable}? Every \src{Dockable} has a method \src{getFactoryID}, the result of this method is a \src{String} that should match the identifier of a \src{DockFactory}. Clients using \src{DefaultDockable} can call \src{setFactoryID} to change the id.
+
+Note: clients using \src{ScreenDockStation} must add a \src{ScreenDockStationFactory} to every \src{DockSituation}.
+
+Bottomline: this is a painful solution which should only be used by very small applications.
+
+\subsubsection{Better DockSituation}
+\src{PredefinedDockSituation} is a subclass of \src{DockSituation}. It allows clients to "predefine" \src{Dockable}s, meaning that \src{DockSituation} does not need a \src{DockFactory} to create these \src{Dockable}s. Clients can predefine \src{Dockable}s using the method \src{put}. They should provide a unique identifier for each \src{Dockable} they predefine.
+
+An example:
+\begin{lstlisting}
+DockStation station = ...
+Dockable dockable = ...
+DataOutputStream out = ...
+
+PredefinedDockSituation situation = new PredefinedDockSituation();
+
+situation.put( "root", station );
+situation.put( "alpha", dockable );
+
+Map<String, DockStation> roots = 
+	new HashMap<String, DockStation>();
+roots.put( "station", station );
+
+situation.write( roots, out );
+\end{lstlisting}
+Let's analyze this code. In lines \src{1-3} some variables are defined, their value is given by some unknown code. In line \src{5} a \src{PredefinedDockSituation} is created, and in lines \src{7-8} \src{station} and \src{dockable} are predefined. Then in lines \src{10-12} the \src{Map} of root-stations is set up. Note that \src{station} can have different keys on lines \src{7} and \src{12}. Finally in line \src{13} the layout is written into \src{out}.
+
+Reading a layout would look like this:
+\begin{lstlisting}[firstnumber=15]
+DataInputStream in = ...
+situation.read( in );
+\end{lstlisting}
+We get some stream in line \src{15}, and then read the layout in line \src{16}. The method \src{read} returns a new \src{Map}, but since all root-stations are predefined, it is save to just forget about it. Note that \src{dockable} will also be in the tree. If \src{dockable} were not predefined, then a \src{DockFactory} would have created a new element and put at the place \src{dockable} was earlier.
+
+\subsubsection{Ignoring}
+Sometimes not every element has to be stored. A client can add a \src{DockSituationIgnore} to a \src{DockSituation}. The \src{DockSituation} will then simply not store any element that is not approved by the \src{DockSituationIgnore}.
+
+\subsection{Local and Global: DockFrontend}
+A \src{DockFrontend} uses both local and global methods to store the layout. Local methods are used when a \src{Dockable} is made visible or invisible through \src{show} and \src{hide}. Global methods are used by \src{write}, \src{read}, \src{save} and \src{load}. A \src{DockFrontend} behaves much like a \src{PredefinedDockSituation}, either a \src{DockFactory} has to be registered for a certain kind of \src{Dockable}s, or the \src{Dockables} have to be registered through \src{add}.
+
+\section{Drag and Drop}
+Drag and drop normally means grabbing a title of a \src{Dockable} by pressing the mouse, moving the mouse around, and somewhere dropping the \src{Dockable} by releasing the mouse.
+\subsection{Core behavior}
+The sourcecode used for drag and drop operations is located in the \src{DockRelocator}. A \src{DockController} normally uses a \src{DefaultDockRelocator} to handle all operations. Clients seldomly need to replace the \src{DockRelocator}, but if they do, then they have to implement a new \src{DockControllerFactory} and a subclass of \src{DockController}.
+\begin{lstlisting}
+public class MyDockController extends DockController{
+  public MyDockController(){	
+    super( null );
+    initiate( new DefaultDockControllerFactory(){
+      @Override
+      public DockRelocator createRelocator( DockController controller ) {
+        return new MyDockReloactor();
+      });
+    }
+  }
+}
+\end{lstlisting}
+A short review of the code: the argument \src{null} line \src{3} prevents the constructor of \src{DockController} to initialize the variables. In line \src{4} the variables are initialized using a new \src{DockControllerFactory}. This factory returns a new implementation of \src{DockRelocator} in lines \src{6-8}.
+
+\subsection{Remote control}
+Sometimes the normal mechanism for drag and drop is not enough. The drag and drop operations can be called remotely using a \src{RemoteRelocator} or a \src{DirectRemoteRelocator}. Clients can request such a remote control by the \src{DockRelocator} either using \src{createRemote} or \src{createDirectRemote}.
+
+A \src{DirectRemoteRelocator} can be used to simulate a drag and drop operation that has no real background (like a \src{MouseEvent}). A client calls \src{init} to start the operation, at least one time \src{drag} to move the grabbed \src{Dockable} around, and then \src{drop} to let the \src{Dockable} fall.
+
+A \src{RemoteRelocator} is more tricky. The methods of a \src{RemoteRelocator} match the methods \src{mousePressed}, \src{mouseDragged} and \src{mouseReleased} of a \src{MouseListener}/\src{MouseMotionListener}. The methods \src{init}, \src{drag} and \src{drop} always tell what reaction the event caused, for example whether the operation has stopped or is going on.
+
+\subsection{Merging}
+When a \src{Dockable} is dragged over an other \src{Dockable}, then they have to be merged. The default behavior is to create a new \src{StackDockStation}, put both \src{Dockable}s onto that station, and then drop the station at the same place where the \src{Dockable}s would lie.
+
+The creation of the station is handled by a \src{Combiner}, the \src{BasicCombiner} to be exact. Many \src{DockStation}s have a method that allows clients to set their own implementation of a \src{Combiner}. Clients can exchange the \src{Combiner} globally by creating a new \src{DockTheme}, overriding the method \src{getCombiner} and then registering a new instance at the \src{DockController} through \src{setTheme}. Note that all descendants of \src{BasicDockTheme} have a method called \src{setCombiner} that exchanges the \src{Combiner} directly without the need to override \src{getCombiner}.
+
+\subsection{Restrictions}
+
+
+\subsubsection{Modes}
+\src{DockRelocatorMode}
+\subsubsection{Acceptances}
+\src{DockAcceptance}
+
+
+
+
+
+
+
+
+Drag  Drop
+The default behavior
+The drag  drop operation normally is handled by the DockRelocator (which is created by the DockController).
+The DefaultDockRelocator registers Mouse- and MouseMotionListeners to several Components, most importantly to the titles of the Dockables.
+When the user initiates a mouse-drag operation, the DefaultDockRelocator first shows a window containing the title of the Dockable. Then he uses the knowledge of the DockController to find a DockStation which might become the parent of the dragged Dockable. The methods “prepareMove” or “prepareDrop” of DockStation are used for that.
+When the user releases the mouse, the methods “drop” or “move” of the next parent is called. Then the operation is finished.
+Invoking the mechanism
+There is a possibility to remotelly steer a drag  drop operation. Clients can use the methods “createRemote” or “createDirectRemote” of DockRelocator to get an object which can controll the DockRelocator.
+The RemoteRelocator (result of “createRemote”) is intended for a connection with a Mouse-/MouseMotionListener.
+On the other hand, the DirectRemoteRelocator is intended for a usage that has no connection to the (real) mouse.
+Merging two Dockables
+When the user lays two Dockables above each other, they are merged. Most DockStations will use a Combiner to create a new Dockable consisting of the old ones. If not told otherwise, the DockStation will ask the DockTheme (using “getTheme” of DockController) of its DockController to provide a Combiner (using “getCombiner” of DockTheme).
+Clients might exchange the Combiner of the DockStation itself, or of the DockTheme, in order to create new effects when merging occurs.
+Constraints for combinations
+Not every relationship is a good one. Sometimes a Dockable just should not be a child of some DockStation.
+There are several mechanism to prevent unhealthy relationships:
+Every Dockable has a methods called “accept”.
+Every DockStation has a method “accept”.
+And finally, the DockController can carry a whole set of DockAcceptances (see “addAcceptance” in DockController). Every DockAcceptance has methods called “accept”.
+Whenever a dragdrop operation is about to end, all these “accept”-methods must agree to the new relationship.
+
+\end{document}

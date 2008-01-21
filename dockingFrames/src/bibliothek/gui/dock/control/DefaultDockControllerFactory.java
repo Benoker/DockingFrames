@@ -37,56 +37,56 @@ import bibliothek.gui.dock.event.DockRegisterListener;
  * @author Benjamin Sigg
  */
 public class DefaultDockControllerFactory implements DockControllerFactory {
-    public DockRegisterListener createActionBinder( DockController controller ) {
+    public DockRegisterListener createActionBinder( DockController controller, ControllerSetupCollection setup ) {
         return new ActionBinder();
     }
 
     public ActionViewConverter createActionViewConverter(
-            DockController controller ) {
+            DockController controller, ControllerSetupCollection setup ) {
         
         return new ActionViewConverter();
     }
 
-    public ActionOffer createDefaultActionOffer( DockController controller ) {
+    public ActionOffer createDefaultActionOffer( DockController controller, ControllerSetupCollection setup ) {
         return new DefaultActionOffer();
     }
 
     public DoubleClickController createDoubleClickController(
-            DockController controller ) {
+            DockController controller, ControllerSetupCollection setup ) {
         
-        return new DoubleClickController( controller );
+        return new DoubleClickController( setup );
     }
 
-    public DockRegisterListener createFocusController( DockController controller ) {
+    public DockRegisterListener createFocusController( DockController controller, ControllerSetupCollection setup ) {
         return new FocusController( controller );
     }
 
     public KeyboardController createKeyboardController(
-            DockController controller ) {
+            DockController controller, ControllerSetupCollection setup ) {
         
         return new DefaultkeyBoardController( controller );
     }
 
     public MouseFocusObserver createMouseFocusObserver(
-            DockController controller ) {
+            DockController controller, ControllerSetupCollection setup ) {
         
-        return new DefaultMouseFocusObserver( controller );
+        return new DefaultMouseFocusObserver( controller, setup );
     }
 
-    public DockRegisterListener createPopupController( DockController controller ) {
+    public DockRegisterListener createPopupController( DockController controller, ControllerSetupCollection setup ) {
         return new PopupController( controller );
     }
 
-    public DockRegister createRegister( DockController controller ) {
+    public DockRegister createRegister( DockController controller, ControllerSetupCollection setup ) {
         return new DockRegister( controller );
     }
 
-    public DockRelocator createRelocator( DockController controller ) {
-        return new DefaultDockRelocator( controller );
+    public DockRelocator createRelocator( DockController controller, ControllerSetupCollection setup ) {
+        return new DefaultDockRelocator( controller, setup );
     }
 
     public SingleParentRemover createSingleParentRemover(
-            DockController controller ) {
+            DockController controller, ControllerSetupCollection setup ) {
         
         return new SingleParentRemover();
     }

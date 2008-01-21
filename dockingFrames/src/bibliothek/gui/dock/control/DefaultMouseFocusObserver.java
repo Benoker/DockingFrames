@@ -44,9 +44,11 @@ public class DefaultMouseFocusObserver extends MouseFocusObserver{
     /**
      * Creates a new focus controller
      * @param controller the owner of this controller
+     * @param setup an observer that informs this object when <code>controller</code>
+     * is set up.
      */
-    public DefaultMouseFocusObserver( DockController controller ){
-        super( controller );
+    public DefaultMouseFocusObserver( DockController controller, ControllerSetupCollection setup ){
+        super( controller, setup );
         
         listener = createListener();
         
@@ -62,8 +64,8 @@ public class DefaultMouseFocusObserver extends MouseFocusObserver{
     
     @Override
     public void kill(){
+        super.kill();
         Toolkit.getDefaultToolkit().removeAWTEventListener( listener );
-        getController().removeDockControllerListener( this );
     }
     
     /**

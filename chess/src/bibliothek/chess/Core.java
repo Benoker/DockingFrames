@@ -87,7 +87,6 @@ public class Core implements ComponentCollector{
         
         controller = new ChessDockController();
         changeTheme( false );
-        controller.setSingleParentRemove( true );
         GlassedPane content = new GlassedPane();
         controller.getFocusObserver().addGlassPane( content );
         frame.setContentPane( content );

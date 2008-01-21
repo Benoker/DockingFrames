@@ -11,7 +11,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.event.DockControllerAdapter;
+import bibliothek.gui.dock.event.DockableFocusAdapter;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.util.DockUtilities;
@@ -65,7 +65,7 @@ public class NoteViewManager{
 			}
 		});
 		
-		frontend.getController().addDockControllerListener( new DockControllerAdapter(){
+		frontend.getController().addDockableFocusListener( new DockableFocusAdapter(){
 			@Override
 			public void dockableFocused( DockController controller, Dockable dockable ){
 				if( dockable instanceof NoteView ){

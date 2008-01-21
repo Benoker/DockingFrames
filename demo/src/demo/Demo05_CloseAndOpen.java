@@ -32,9 +32,6 @@ public class Demo05_CloseAndOpen {
 		// used, then the frontend needs to know the owner of the station.
 		DockFrontend frontend = new DockFrontend( frame );
 		
-		// let the controller handle sub-stations with only one child
-		frontend.getController().setSingleParentRemove( true );
-		
 		// some stations
 		SplitDockStation station = new SplitDockStation();
 		ScreenDockStation screen = new ScreenDockStation( frame );

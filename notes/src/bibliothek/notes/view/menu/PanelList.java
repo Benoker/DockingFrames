@@ -8,7 +8,7 @@ import javax.swing.JMenu;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.event.DockControllerAdapter;
+import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.notes.model.Note;
 import bibliothek.notes.model.NoteModel;
 import bibliothek.notes.model.NoteModelListener;
@@ -48,7 +48,7 @@ public class PanelList extends JMenu implements NoteModelListener{
 		
 		model.addNoteModelListener( this );
 		
-		frontend.getController().getRegister().addDockRegisterListener( new DockControllerAdapter(){
+		frontend.getController().getRegister().addDockRegisterListener( new DockRegisterAdapter(){
 			@Override
 			public void dockableRegistered( DockController controller, Dockable dockable ){
 				setSilent( dockable, true );

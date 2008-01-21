@@ -17,7 +17,7 @@ import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.control.DockRegister;
-import bibliothek.gui.dock.event.DockControllerAdapter;
+import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.util.DockUtilities;
@@ -199,7 +199,7 @@ public class Minimizer {
      * @author Benjamin Sigg
      *
      */
-    private class Listener extends DockControllerAdapter{
+    private class Listener extends DockRegisterAdapter{
         @Override
         public void dockableUnregistered( DockController controller, Dockable dockable ) {
         	if( !core.isOnThemeUpdate() )

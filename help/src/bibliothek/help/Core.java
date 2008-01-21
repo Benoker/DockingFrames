@@ -203,7 +203,6 @@ public class Core implements ComponentCollector{
         
         if( secure ){
         	SecureDockController controller = new SecureDockController();
-        	controller.setSingleParentRemove( true );
         	frontend = new DockFrontend( controller, frame );
         	frontend.registerFactory( new SecureScreenDockStationFactory( frame ));
         	frontend.registerFactory( new SecureFlapDockStationFactory() );

@@ -69,3 +69,5 @@
 - Bugfix: DockFrontend.clean could be stuck in an infinite loop
 - API: DockFrontendListener.showed renamed to shown
 - API: DockFrontendListener.shown/hidden is now called for every Dockable, even if the Dockable was not shown or hidden through the methods of DockFrontend.
+- API: The SingleParentRemover of DockController can now be exchanged, the property "singleParentRemove" has been deleted: if a remover is present, it is used. Otherwise the feature is disabled.
+- API: DockControllerListener replaced by several smaller listeners that handle only one kind of events. 

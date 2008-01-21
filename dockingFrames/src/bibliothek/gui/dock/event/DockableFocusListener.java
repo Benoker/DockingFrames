@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -26,39 +26,30 @@
 
 package bibliothek.gui.dock.event;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 
 /**
- * An abstract implementation of {@link DockStationListener}.
- * All methods of this class are empty. The class can be used instead of
- * {@link DockStationListener} if only a few methods have to be implemented.
+ * A listener added to a {@link DockController}, this listener gets informed
+ * when the focused {@link Dockable} is exchanged.
  * @author Benjamin Sigg
- *
  */
-public abstract class DockStationAdapter implements DockStationListener {
-
-    public void dockableAdding( DockStation station, Dockable dockable ) {
-        // do nothing
-    }
-
-    public void dockableRemoving( DockStation station, Dockable dockable ) {
-        // do nothing
-    }
-
-    public void dockableAdded( DockStation station, Dockable dockable ) {
-        // do nothing
-    }
-
-    public void dockableRemoved( DockStation station, Dockable dockable ) {
-        // do nothing
-    }
+public interface DockableFocusListener {
+    /**
+     * Invoked when <code>dockable</code> has gained the focus. 
+     * @param controller the origin of the event
+     * @param dockable the {@link Dockable} which is now focused, can be <code>null</code>
+     */
+    public void dockableFocused( DockController controller, Dockable dockable );
     
-    public void dockableVisibiltySet( DockStation station, Dockable dockable, boolean visible ) {
-        // do nothing
-    }
-    
-    public void dockableSelected( DockStation station, Dockable dockable ) {
-        // do nothing
-    }
+    /**
+     * Called when <code>station</code> changes its selected <code>dockable</code>.
+     * @param controller the controller in whose realm the event occurred
+     * @param station some {@link DockStation}
+     * @param dockable the currently selected element on <code>station</code>,
+     * can be <code>null</code>
+     * @see DockStation#getFrontDockable()
+     */
+    public void dockableSelected( DockController controller, DockStation station, Dockable dockable );
 }

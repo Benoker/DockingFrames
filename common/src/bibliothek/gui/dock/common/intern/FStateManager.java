@@ -42,7 +42,7 @@ import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.common.*;
 import bibliothek.gui.dock.common.intern.FDockable.ExtendedMode;
 import bibliothek.gui.dock.common.location.*;
-import bibliothek.gui.dock.event.DockControllerAdapter;
+import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.event.KeyboardListener;
 import bibliothek.gui.dock.facile.action.StateManager;
@@ -122,7 +122,7 @@ public class FStateManager extends StateManager {
         DockController controller = control.getOwner().intern().getController();
         
         // add hook to get key-events for all Dockables
-        controller.getRegister().addDockRegisterListener( new DockControllerAdapter(){
+        controller.getRegister().addDockRegisterListener( new DockRegisterAdapter(){
             @Override
             public void dockableRegistered( DockController controller, Dockable dockable ) {
                 new KeyHook( dockable );
@@ -699,7 +699,7 @@ public class FStateManager extends StateManager {
      * @author Benjamin Sigg
      *
      */
-    private class KeyHook extends DockControllerAdapter implements KeyboardListener{
+    private class KeyHook extends DockRegisterAdapter implements KeyboardListener{
         /** the Dockable which is observed by this hook */
         private Dockable dockable;
         

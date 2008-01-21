@@ -95,7 +95,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 			for( int c = 0; c < 8; c++ )
 				fields[r][c] = new Field( r, c );
 		
-		setContentPane( new ContentPane() );
+		setBasePane( new ContentPane() );
 		setPreferredSize( new Dimension( 8*64, 8*64 ) );
 	}
 	

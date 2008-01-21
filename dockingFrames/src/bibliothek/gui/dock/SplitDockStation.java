@@ -819,6 +819,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         this.frontDockable = dockable;
         if( isFullScreen() && dockable != null )
             setFullScreen( dockable );
+        dockStationListeners.fireDockableSelected( dockable );
     }
 
     /**

@@ -32,8 +32,10 @@ import java.util.List;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.control.ControllerSetupCollection;
 import bibliothek.gui.dock.control.KeyboardController;
 import bibliothek.gui.dock.event.ComponentHierarchyObserverListener;
+import bibliothek.gui.dock.event.ControllerSetupListener;
 
 /**
  * A {@link KeyboardController} which adds a {@link KeyListener} to each
@@ -45,22 +47,32 @@ public class SecureKeyboardController extends KeyboardController {
     /** a listener forwarding {@link KeyEvent}s */
     private Listener listener = new Listener();
     
-    public SecureKeyboardController( DockController controller ) {
+    /**
+     * Creates a new {@link SecureKeyboardController}.
+     * @param controller the owner of this controller
+     * @param setup an observable informing this object when <code>controller</code>
+     * is set up.
+     */
+    public SecureKeyboardController( DockController controller, ControllerSetupCollection setup ) {
         super( controller );
-        controller.getComponentHierarchyObserver().addListener( new ComponentHierarchyObserverListener(){
-            public void added( DockController controller, List<Component> components ) {
-                if( listener != null ){
-                    for( Component component : components ){
-                        component.addKeyListener( listener );
+        setup.add( new ControllerSetupListener(){
+            public void done( DockController controller ) {
+                controller.getComponentHierarchyObserver().addListener( new ComponentHierarchyObserverListener(){
+                    public void added( DockController controller, List<Component> components ) {
+                        if( listener != null ){
+                            for( Component component : components ){
+                                component.addKeyListener( listener );
+                            }
+                        }
                     }
-                }
-            }
-            public void removed( DockController controller, List<Component> components ) {
-                if( listener != null ){
-                    for( Component component : components ){
-                        component.removeKeyListener( listener );
+                    public void removed( DockController controller, List<Component> components ) {
+                        if( listener != null ){
+                            for( Component component : components ){
+                                component.removeKeyListener( listener );
+                            }
+                        }
                     }
-                }
+                });
             }
         });
     }

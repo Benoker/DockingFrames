@@ -45,8 +45,6 @@ public class Demo06_YourOwnTitle {
         DockFrontend frontend = new DockFrontend( frame );
         frontend.getController().setTheme( new BasicTheme() );
         
-        // let the controller handle sub-stations with only one child
-        frontend.getController().setSingleParentRemove( true );
         registerSpecialTitles( frontend );
         
         // some stations

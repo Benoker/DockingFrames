@@ -105,7 +105,6 @@ public class Core implements ComponentCollector{
 			controller = new DockController();
 		
 		controller.setTheme( new NoteBasicTheme() );
-		controller.setSingleParentRemove( true );
 		controller.getProperties().set( EclipseTheme.PAINT_ICONS_WHEN_DESELECTED, true );
 		controller.getProperties().set( EclipseTheme.TAB_PAINTER, RectGradientPainter.FACTORY );
 		

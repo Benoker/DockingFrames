@@ -30,6 +30,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionOffer;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
+import bibliothek.gui.dock.event.ControllerSetupListener;
 import bibliothek.gui.dock.event.DockRegisterListener;
 
 /**
@@ -42,83 +43,104 @@ public interface DockControllerFactory {
     /**
      * Creates a new register for the controller.
      * @param controller the controller for which the element is created
+     * @param setup an observable where new objects can add {@link ControllerSetupListener}
+     * to be informed when the setup of <code>controller</code> is finished.
      * @return the new register
      */
-    public DockRegister createRegister( DockController controller );
+    public DockRegister createRegister( DockController controller, ControllerSetupCollection setup );
     
     /**
      * Creates a new relocator for the controller.
      * @param controller the controller for which the element is created
+     * @param setup an observable where new objects can add {@link ControllerSetupListener}
+     * to be informed when the setup of <code>controller</code> is finished.
      * @return the relocator
      */
-    public DockRelocator createRelocator( DockController controller );
+    public DockRelocator createRelocator( DockController controller, ControllerSetupCollection setup );
     
     /**
      * Creates a listener which will observe all stations to ensure that
      * the focused {@link Dockable} is always visible.
      * @param controller the controller for which the element is created
+     * @param setup an observable where new objects can add {@link ControllerSetupListener}
+     * to be informed when the setup of <code>controller</code> is finished.
      * @return the listener or <code>null</code>
      */
-    public DockRegisterListener createFocusController( DockController controller );
+    public DockRegisterListener createFocusController( DockController controller, ControllerSetupCollection setup );
     
     /**
      * Creates a listener which will open a popup-menu for each title
      * or dockable known to the controller.
      * @param controller the controller for which the element is created
+     * @param setup an observable where new objects can add {@link ControllerSetupListener}
+     * to be informed when the setup of <code>controller</code> is finished.
      * @return the new listener or <code>null</code>
      */
-    public DockRegisterListener createPopupController( DockController controller );
+    public DockRegisterListener createPopupController( DockController controller, ControllerSetupCollection setup );
     
     /**
      * Creates a listener that will ensure that every {@link DockAction} is
      * bound to its {@link Dockable}.
      * @param controller the controller for which the element is created
+     * @param setup an observable where new objects can add {@link ControllerSetupListener}
+     * to be informed when the setup of <code>controller</code> is finished.
      * @return the new listener or <code>null</code>
      */
-    public DockRegisterListener createActionBinder( DockController controller );
+    public DockRegisterListener createActionBinder( DockController controller, ControllerSetupCollection setup );
     
     /**
      * Creates the focus-controller of the controller.
      * @param controller the controller for which the element is created
+     * @param setup an observable where new objects can add {@link ControllerSetupListener}
+     * to be informed when the setup of <code>controller</code> is finished.
      * @return the controller, not <code>null</code>
      */
-    public MouseFocusObserver createMouseFocusObserver( DockController controller );
+    public MouseFocusObserver createMouseFocusObserver( DockController controller, ControllerSetupCollection setup );
     
     /**
      * Creates the controller that will forward double clicks with the mouse.
      * @param controller the controller for which the element is created
+     * @param setup an observable where new objects can add {@link ControllerSetupListener}
+     * to be informed when the setup of <code>controller</code> is finished.
      * @return the controller, not <code>null</code>
      */
-    public DoubleClickController createDoubleClickController( DockController controller );
+    public DoubleClickController createDoubleClickController( DockController controller, ControllerSetupCollection setup );
     
     /**
      * Creates a new controller for global KeyEvents.
      * @param controller the controller for which the element is created
+     * @param setup an observable where new objects can add {@link ControllerSetupListener}
+     * to be informed when the setup of <code>controller</code> is finished.
      * @return the new controller, not <code>null</code>
      */
-    public KeyboardController createKeyboardController( DockController controller );
+    public KeyboardController createKeyboardController( DockController controller, ControllerSetupCollection setup );
 
     /**
      * Creates the converter that will transform actions into views.
      * @param controller the controller for which the element is created
+     * @param setup an observable where new objects can add {@link ControllerSetupListener}
+     * to be informed when the setup of <code>controller</code> is finished.
      * @return the new converter, not <code>null</code>
      */
-    public ActionViewConverter createActionViewConverter( DockController controller );
+    public ActionViewConverter createActionViewConverter( DockController controller, ControllerSetupCollection setup );
 
     /**
      * Creates the default action offer. This {@link ActionOffer} will
      * be used if no other offer was interested in a Dockable.
      * @param controller the controller for which the element is created
+     * @param setup an observable where new objects can add {@link ControllerSetupListener}
+     * to be informed when the setup of <code>controller</code> is finished.
      * @return the offer, must not be <code>null</code>
      */
-    public ActionOffer createDefaultActionOffer( DockController controller );
+    public ActionOffer createDefaultActionOffer( DockController controller, ControllerSetupCollection setup );
 
     /**
      * Creates a {@link SingleParentRemover} that will be used to remove
      * some stations from this controller.
      * @param controller the controller for which the element is created
+     * @param setup an observable where new objects can add {@link ControllerSetupListener}
+     * to be informed when the setup of <code>controller</code> is finished.
      * @return The remover
-     * @see DockController#setSingleParentRemove(boolean)
      */
-    public SingleParentRemover createSingleParentRemover( DockController controller );
+    public SingleParentRemover createSingleParentRemover( DockController controller, ControllerSetupCollection setup );
 }

@@ -2,6 +2,7 @@ package bibliothek.chess.view;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.control.ControllerSetupCollection;
 import bibliothek.gui.dock.control.DefaultDockRelocator;
 import bibliothek.gui.dock.control.DockRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
@@ -23,8 +24,8 @@ public class ChessDockController extends SecureDockController {
         super( null );
         initiate( new SecureDockControllerFactory(){
             @Override
-            public DockRelocator createRelocator( DockController controller ) {
-                return new DefaultDockRelocator( controller ){
+            public DockRelocator createRelocator( DockController controller, ControllerSetupCollection setup ) {
+                return new DefaultDockRelocator( controller, setup ){
                     {
                         setDragDistance( 0 );
                     }
@@ -40,7 +41,7 @@ public class ChessDockController extends SecureDockController {
                     }
                 };             
             }
-        });
+        }, null );
     }
 }
 

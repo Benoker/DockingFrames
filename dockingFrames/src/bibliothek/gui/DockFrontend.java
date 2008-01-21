@@ -143,7 +143,6 @@ public class DockFrontend {
      */
     public DockFrontend(){
         this( new DockController(), null );
-        getController().setSingleParentRemove( true );
     }
     
     /**
@@ -155,7 +154,6 @@ public class DockFrontend {
      */
     public DockFrontend( Window owner ){
         this( new DockController(), owner );
-        getController().setSingleParentRemove( true );
     }
     
     /**

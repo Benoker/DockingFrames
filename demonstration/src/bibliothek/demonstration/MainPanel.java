@@ -56,7 +56,6 @@ public class MainPanel extends SecureSplitDockStation {
 				return false;
 			}			
 		});
-		controller.setSingleParentRemove( true );
 		controller.setTheme( new FlatTheme() );
 		controller.setPopupSuppressor( ActionPopupSuppressor.SUPPRESS_ALWAYS );
 		

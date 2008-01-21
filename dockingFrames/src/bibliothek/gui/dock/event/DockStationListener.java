@@ -74,5 +74,13 @@ public interface DockStationListener {
      * @param dockable the {@link Dockable} whose visibility has changed
      * @param visible the new visibility-state
      */
-    public void dockableVisibiltySet( DockStation station, Dockable dockable, boolean visible );    
+    public void dockableVisibiltySet( DockStation station, Dockable dockable, boolean visible );
+    
+    /**
+     * Called when <code>dockable</code> has been selected. The value of
+     * <code>dockable</code> should be the same as {@link DockStation#getFrontDockable()}.
+     * @param station the source of the event
+     * @param dockable the current value of {@link DockStation#getFrontDockable()}
+     */
+    public void dockableSelected( DockStation station, Dockable dockable );
 }
