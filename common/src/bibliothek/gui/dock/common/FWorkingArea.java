@@ -84,6 +84,15 @@ public class FWorkingArea extends AbstractFDockable implements FSingleDockable{
     }
     
     /**
+     * Exchanges all the {@link FDockable}s on this area with the
+     * elements of <code>grid</code>.
+     * @param grid a grid containing some new {@link Dockable}s
+     */
+    public void deploy( FGrid grid ){
+        station.dropTree( grid.toTree() );
+    }
+    
+    /**
      * Sets whether this working-area should suppress its title or not. 
      * @param suppressTitle <code>true</code> if this area should try
      * not to have a title.

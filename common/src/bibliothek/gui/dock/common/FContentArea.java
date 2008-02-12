@@ -31,6 +31,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import bibliothek.gui.DockFrontend;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
@@ -113,7 +114,6 @@ public class FContentArea extends JPanel{
         frontend.addRoot( south, getSouthIdentifier() );
         frontend.addRoot( east, getEastIdentifier() );
         frontend.addRoot( west, getWestIdentifier() );
-        frontend.setDefaultStation( center );
     }
     
     /**
@@ -123,6 +123,15 @@ public class FContentArea extends JPanel{
     public String getUniqueId(){
 		return uniqueId;
 	}
+    
+    /**
+     * Exchanges all the {@link FDockable}s on the center panel by
+     * the elements of <code>grid</code>.
+     * @param grid a grid containing some new {@link Dockable}s
+     */
+    public void deploy( FGrid grid ){
+        getCenter().dropTree( grid.toTree() );
+    }
     
     /**
      * Gets the station in the center of this {@link FContentArea}.

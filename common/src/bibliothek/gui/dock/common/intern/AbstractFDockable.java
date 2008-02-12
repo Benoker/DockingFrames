@@ -152,12 +152,14 @@ public abstract class AbstractFDockable implements FDockable {
      * @param visible the new visibility state
      */
     public void setVisible( boolean visible ){
-        if( control != null ){
-            if( visible ){
-                control.show( this );
-            }
-            else
-                control.hide( this );
+        if( control == null )
+            throw new IllegalStateException( "This FDockable does not know its FControl. Call FControl.add(...) to connect this FDockable befor calling setVisible(...)." );
+        
+        if( visible ){
+            control.show( this );
+        }
+        else{
+            control.hide( this );
         }
     }
     

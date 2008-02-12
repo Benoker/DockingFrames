@@ -181,7 +181,8 @@ public interface FDockable {
 	public DockActionSource getClose();
 	
 	/**
-	 * Gets the control which is responsible for this dockable.
+	 * Gets the control which is responsible for this dockable. Clients
+	 * should not use this method unless they know exactly what they are doing.
 	 * @return the control
 	 */
 	public FControlAccess getControl();

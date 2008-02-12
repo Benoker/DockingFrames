@@ -315,6 +315,7 @@ public class FControl {
 		
 		stateManager = new FStateManager( access );
 		content = createContentArea( CONTENT_AREA_STATIONS_ID );
+		frontend.setDefaultStation( content.getCenter() );
 		
 		final ScreenDockStation screen = factory.createScreenDockStation( frame );
 		stateManager.add( EXTERNALIZED_STATION_ID, screen );
