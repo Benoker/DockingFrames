@@ -28,10 +28,6 @@ package bibliothek.gui.dock.station.split;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.Map;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
@@ -446,33 +442,5 @@ public class Node extends SplitNode{
         visitor.handleNode( this );
         left.visit( visitor );
         right.visit( visitor );
-    }
-    
-    @Override
-    public void write( Map<Dockable, Integer> children, DataOutputStream out ) throws IOException {
-        out.writeInt( orientation.ordinal() );
-        out.writeDouble( divider );
-        writeChild( left, children, out );
-        writeChild( right, children, out );
-    }
-    
-    @Override
-    public SplitNode read( Map<Integer, Dockable> children, DataInputStream in ) throws IOException {
-        orientation = Orientation.values()[ in.readInt() ];
-        setDivider( in.readDouble() );
-        
-        SplitNode left = readChild( children, in );
-        SplitNode right = readChild( children, in );
-        
-        if( left == null && right == null )
-            return null;
-        if( left == null )
-            return right;
-        if( right == null )
-            return left;
-        
-        setLeft( left );
-        setRight( right );
-        return this;
     }
 }

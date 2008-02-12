@@ -48,6 +48,9 @@ public class ExtendedModeAcceptance implements DockAcceptance {
     }
     
     public boolean accept( DockStation parent, Dockable child ) {
+        if( control.getStateManager().isOnTransition() )
+            return true;
+        
         if( child instanceof FacileDockable ){
             FDockable fdockable = ((FacileDockable)child).getDockable();
             FDockable.ExtendedMode mode = control.getStateManager().childsExtendedMode( parent );

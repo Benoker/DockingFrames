@@ -30,13 +30,10 @@ import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JPanel;
@@ -50,12 +47,7 @@ import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.dockable.DockHierarchyObserver;
 import bibliothek.gui.dock.event.*;
 import bibliothek.gui.dock.layout.DockableProperty;
-import bibliothek.gui.dock.station.Combiner;
-import bibliothek.gui.dock.station.DisplayerCollection;
-import bibliothek.gui.dock.station.DisplayerFactory;
-import bibliothek.gui.dock.station.DockableDisplayer;
-import bibliothek.gui.dock.station.OverpaintablePanel;
-import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.*;
 import bibliothek.gui.dock.station.split.*;
 import bibliothek.gui.dock.station.split.SplitDockTree.Key;
 import bibliothek.gui.dock.station.support.*;
@@ -420,7 +412,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
                 fullScreenAction.setController( controller );
             
             if( controller != null ){
-                title = controller.getDockTitleManager().registerDefault( TITLE_ID, ControllerTitleFactory.INSTANCE );
+                title = controller.getDockTitleManager().getVersion( TITLE_ID, ControllerTitleFactory.INSTANCE );
                 controller.getDoubleClickController().addListener( fullScreenListener );
             }
             else
@@ -1566,6 +1558,16 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         root.submit( factory );
     }
     
+    /**
+     * Visits the internal structure of this station.
+     * @param <N> the type of result this method produces
+     * @param factory a factory that will collect information
+     * @return the result of <code>factory</code>
+     */
+    public <N> N visit( SplitTreeFactory<N> factory ){
+        return root.submit( factory );
+    }
+    
     public void draw(){
         putInfo.setDraw( true );
         repaint();
@@ -2074,64 +2076,6 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     
     public String getFactoryID() {
         return SplitDockStationFactory.ID;
-    }
-    
-    /**
-     * Writes the layout of this station into <code>out</code>.
-     * @param children the children of this station. Each child must have
-     * a unique id
-     * @param out the stream in which to write
-     * @throws IOException if the stream throws an exception
-     * @see #read(Map, boolean, DataInputStream)
-     */
-    public void write( Map<Dockable, Integer> children, DataOutputStream out ) throws IOException{
-        root.write( children, out );
-        out.writeBoolean( isFullScreen() );
-        if( isFullScreen() ){
-            out.writeInt( children.get( getFullScreen() ) );
-        }
-    }
-    
-    /**
-     * Reads an earlier saved layout of this station. The method assumes that
-     * the station has no children, otherwise the behavior is not specified.
-     * @param children a mapping of ids and potential children of this station
-     * @param ignoreChildren <code>true</code> if the children should not be changed
-     * @param in the source of information
-     * @throws IOException if the stream throws an exception
-     */
-    public void read( 
-            Map<Integer, Dockable> children,
-            boolean ignoreChildren,
-            DataInputStream in ) throws IOException{
-      
-        if( !ignoreChildren ){
-            while( dockables.size() > 0 )
-                drag( dockables.get( 0 ).getDockable() );
-            
-            root.read( children, in );
-            
-            for( DockableDisplayer displayer : dockables ){
-                Dockable dockable = displayer.getDockable();
-                dockStationListeners.fireDockableAdding( dockable );
-                dockable.setDockParent( this );
-                
-            	if( this.title != null ){
-                    DockTitle title = dockable.getDockTitle( this.title );
-                    if( title != null )
-                        dockable.bind( title );
-                    displayer.setTitle( title );
-                }
-                
-                getContentPane().add( displayer.getComponent() );
-                dockStationListeners.fireDockableAdded( displayer.getDockable() );
-            }
-            
-            if( in.readBoolean() )
-                setFullScreen( children.get( in.readInt() ) );
-            
-            revalidate();
-        }
     }
          
     /**

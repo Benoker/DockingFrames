@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -29,74 +29,164 @@ package bibliothek.gui.dock.station.flap;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.FlapDockStation.Direction;
+import bibliothek.util.xml.XElement;
 
 /**
- * A {@link DockFactory} which can create instances of {@link FlapDockStation}.
+ * A {@link DockFactory} which can handle {@link FlapDockStation}s.
  * @author Benjamin Sigg
  */
-public class FlapDockStationFactory implements DockFactory<FlapDockStation> {
+public class FlapDockStationFactory implements DockFactory<FlapDockStation, FlapDockStationLayout> {
 	/** The default-id of this factory */
     public static final String ID = "flap dock";
     
     public String getID() {
         return ID;
     }
-
-    public void write( 
-            FlapDockStation station,
-            Map<Dockable, Integer> children,
-            DataOutputStream out )
     
-            throws IOException {
-
-        out.writeBoolean( station.isAutoDirection() );
-        out.writeInt( station.getDirection().ordinal() );
-        out.writeInt( station.getWindowSize() );
-        int count = station.getDockableCount();
-        out.writeInt( count );
-        for( int i = 0; i < count; i++ ){
+    public FlapDockStationLayout getLayout( FlapDockStation station,
+            Map<Dockable, Integer> children ) {
+        
+        List<Integer> ids = new ArrayList<Integer>();
+        List<Boolean> holding = new ArrayList<Boolean>();
+        
+        for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
             Dockable dockable = station.getDockable( i );
-            out.writeInt( children.get( dockable ));
-            out.writeBoolean( station.isHold( dockable ));
+            Integer id = children.get( dockable );
+            if( id != null ){
+                ids.add( id );
+                holding.add( station.isHold( dockable ));
+            }
+        }
+        
+        int[] idArray = new int[ ids.size() ];
+        boolean[] holdingArray = new boolean[ ids.size() ];
+        for( int i = 0, n = ids.size(); i<n; i++ ){
+            idArray[i] = ids.get( i );
+            holdingArray[i] = holding.get( i );
+        }
+        
+        return new FlapDockStationLayout( idArray, holdingArray, 
+                station.getWindowSize(), station.isAutoDirection(),
+                station.getDirection() );
+    }
+    
+    public void setLayout( FlapDockStation station, FlapDockStationLayout layout ) {
+        station.setDirection( layout.getDirection() );
+        station.setAutoDirection( layout.isAutoDirection() );
+        station.setWindowSize( layout.getSize() );
+    }
+    
+    public void setLayout( FlapDockStation station,
+            FlapDockStationLayout layout, Map<Integer, Dockable> children ) {
+     
+        for( int i = station.getDockableCount()-1; i >= 0; i-- )
+            station.remove( i );
+        
+        station.setDirection( layout.getDirection() );
+        station.setAutoDirection( layout.isAutoDirection() );
+        station.setWindowSize( layout.getSize() );
+        
+        int[] ids = layout.getChildren();
+        boolean[] holding = layout.getHolds();
+        
+        for( int i = 0, n = ids.length; i<n; i++ ){
+            Dockable dockable = children.get( ids[i] );
+            if( dockable != null ){
+                station.add( dockable );
+                station.setHold( dockable, holding[i] );
+            }
         }
     }
-
-    public FlapDockStation read( 
-            Map<Integer, Dockable> children,
-            boolean ignore,
-            DataInputStream in )
     
-            throws IOException {
+    public FlapDockStation layout( FlapDockStationLayout layout,
+            Map<Integer, Dockable> children ) {
         
         FlapDockStation station = createStation();
-        read( children, ignore, station, in );
+        setLayout( station, layout, children );
         return station;
     }
     
-    public void read(Map<Integer, Dockable> children, boolean ignore, FlapDockStation station, DataInputStream in) throws IOException {
-        station.setAutoDirection( in.readBoolean() );
-        station.setDirection( FlapDockStation.Direction.values()[ in.readInt() ] );
-        station.setWindowSize( in.readInt() );
-        int count = in.readInt();
+    public FlapDockStation layout( FlapDockStationLayout layout ) {
+        FlapDockStation station = createStation();
+        setLayout( station, layout );
+        return station;
+    }
+    
+    public void write( FlapDockStationLayout layout, DataOutputStream out )
+            throws IOException {
+     
+        out.writeBoolean( layout.isAutoDirection() );
+        out.writeInt( layout.getDirection().ordinal() );
+        out.writeInt( layout.getSize() );
+        
+        int count = layout.getChildren().length;
+        out.writeInt( count );
         for( int i = 0; i < count; i++ ){
-            int id = in.readInt();
-            Dockable dockable = children.get( id );
-            if( dockable != null ){
-                station.add( dockable );
-                station.setHold( dockable, in.readBoolean() );
-            }
-        }    	
+            out.writeInt( layout.getChildren()[i] );
+            out.writeBoolean( layout.getHolds()[i] );
+        }
     }
 
+    public FlapDockStationLayout read( DataInputStream in ) throws IOException {
+        boolean auto = in.readBoolean();
+        Direction direction = Direction.values()[ in.readInt() ];
+        int size = in.readInt();
+        int count = in.readInt();
+        
+        int[] ids = new int[ count ];
+        boolean[] holds = new boolean[ count ];
+        
+        for( int i = 0; i < count; i++ ){
+            ids[i] = in.readInt();
+            holds[i] = in.readBoolean();
+        }
+        
+        return new FlapDockStationLayout( ids, holds, size, auto, direction );
+    }
+
+    public void write( FlapDockStationLayout layout, XElement element ) {
+        XElement window = element.addElement( "window" );
+        window.addBoolean( "auto", layout.isAutoDirection() );
+        window.addInt( "size", layout.getSize() );
+        window.addString( "direction", layout.getDirection().name() );
+        
+        XElement children = element.addElement( "children" );
+        for( int i = 0, n = layout.getChildren().length; i<n; i++ ){
+            XElement child = children.addElement( "child" );
+            child.addInt( "id", layout.getChildren()[i] );
+            child.addBoolean( "hold", layout.getHolds()[i] );
+        }
+    }
+    
+    public FlapDockStationLayout read( XElement element ) {
+        XElement window = element.getElement( "window" );
+        XElement children = element.getElement( "children" );
+        XElement[] child = children.getElements( "child" );
+        
+        int[] ids = new int[ child.length ];
+        boolean[] holds = new boolean[ child.length ];
+        
+        for( int i = 0, n = child.length; i<n; i++ ){
+            ids[i] = child[i].getInt( "id" );
+            holds[i] = child[i].getBoolean( "hold" );
+        }
+        
+        return new FlapDockStationLayout( ids, holds, 
+                window.getInt( "size" ), window.getBoolean( "auto" ),
+                Direction.valueOf( window.getString( "direction" ) ));
+    }
+    
     /**
      * Creates an instance of a {@link FlapDockStation}.
-     * @return the instance which will be returned 
-     * by {@link #read(Map, boolean, DataInputStream) read}.
+     * @return a new object 
      */
     protected FlapDockStation createStation(){
         return new FlapDockStation();

@@ -435,7 +435,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 
 	public void setController( DockController controller ){
 		this.controller = controller;
-		controller.getDockTitleManager().registerDefault( "chess-board", ChessDockTitle.FACTORY );
+		controller.getDockTitleManager().getVersion( "chess-board", ChessDockTitle.FACTORY );
 		displayerCollection.setController( controller );
 		
 		for( Field field : usedFieldList )

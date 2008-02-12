@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import bibliothek.util.xml.XElement;
+
 /**
  * A modifiable set of {@link Picture}s.
  * @author Benjamin Sigg
@@ -55,6 +57,16 @@ public class PictureRepository {
 	}
 	
 	/**
+	 * Writes the pictures of this repository into <code>element</code>.
+	 * @param element the element to write into
+	 */
+	public void writeXML( XElement element ){
+	    for( Picture picture : pictures ){
+	        picture.writeXML( element.addElement( "picture" ) );
+	    }
+	}
+	
+	/**
 	 * Reads the pictures of this repository from <code>in</code>.
 	 * @param in the stream to read from
 	 * @throws IOException if an I/O error occurs
@@ -68,6 +80,21 @@ public class PictureRepository {
 	        picture.read( in );
 	        add( picture );
 	    }
+	}
+	
+	/**
+	 * Reads the pictures of this repository from <code>element</code>.
+	 * @param element the element to read from
+	 */
+	public void readXML( XElement element ){
+	    while( !pictures.isEmpty() )
+            remove( pictures.get( pictures.size()-1 ) );
+        
+        for( XElement xpicture : element.getElements( "picture" )){
+            Picture picture = new Picture( null );
+            picture.readXML( xpicture );
+            add( picture );
+        }
 	}
 	
 	/**

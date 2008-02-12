@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -31,16 +31,20 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Map;
 
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.layout.DockLayout;
+import bibliothek.util.xml.XElement;
 
 /**
- * A DockFactory has the ability to store and load instances of one
- * subtype of {@link DockElement}.
+ * A {@link DockFactory} can convert the contents of a {@link DockElement} in
+ * a persistent form.<br>
+ * Some kind of {@link DockElement} will be converted into a {@link DockLayout}, 
+ * this layout can then be written into a stream.
  * @author Benjamin Sigg
  * @param <D> the type of element which can be written and read by this factory
+ * @param <L> the type of object that stores the contents of a <code>D</code>
  */
-public interface DockFactory<D extends DockElement> {
+public interface DockFactory<D extends DockElement, L extends DockLayout> {
 
     /**
      * Gets the unique name of this factory.
@@ -49,65 +53,83 @@ public interface DockFactory<D extends DockElement> {
     public String getID();
     
     /**
-     * Saves the properties of a DockElement. If the element is a 
-     * {@link DockStation}, then the factory has to store the location
-     * of the children. The factory can use the unique ids of the children
-     * which are stored in the map <code>children</code>. The factory
-     * don't have to store any information about the children itself.<br>
-     * If <code>element</code> is a Dockable, no information about the
-     * parent has to be stored.
-     * @param element the element to save
-     * @param children a list of unique names for each child of <code>element</code>,
-     * may be <code>null</code> if <code>element</code> is not a DockStation.
-     * @param out a stream to write information
-     * @throws IOException if the element can't be saved
+     * Gets the layout of <code>element</code>.
+     * @param element the element for which a new layout should be created
+     * @param children a map containing unique identifiers for the children
+     * of the element. Children which are not in this map should not be
+     * stored in the layout.
+     * @return the new layout
      */
-    public void write( 
-            D element, 
-            Map<Dockable, Integer> children,
-            DataOutputStream out ) throws IOException;
-
-    /**
-     * Reads a {@link DockElement} which was earlier stored by a DockFactoy
-     * of the same type.
-     * @param children the known children of the element that is read. It's
-     * possible that not all children that were stored last time could be
-     * read again. In this case the map will contain no or a <code>null</code>
-     * entry.
-     * @param ignoreChildren <code>true</code> if the layout of the current
-     * children should not be changed. The map <code>children</code> is empty
-     * if <code>ignoreChildren</code> is <code>true</code>.
-     * @param in the stream to read from. The number of bytes read don't have
-     * to be the same number as the bytes that were written.
-     * @return the element that was read, <code>null</code> is a valid
-     * result and indicates that an element is no longer available.
-     * @throws IOException if the element can't be read from the stream
-     */
-    public D read(
-            Map<Integer, Dockable> children,
-            boolean ignoreChildren,
-            DataInputStream in ) throws IOException;
+    public L getLayout( D element, Map<Dockable, Integer> children );
     
     /**
-     * Reads a {@link DockElement} which was earlier stored by a DockFactory
-     * of the same type. The contents have to be written into an already
-     * existing element.
-     * @param children the known children of the element that is read. It's
-     * possible that not all children that were stored last time could be
-     * read again. In this case the map will contain no or a <code>null</code>
-     * entry.
-     * @param ignoreChildren <code>true</code> if the layout of the current
-     * children should not be changed. The map <code>children</code> is empty
-     * if <code>ignoreChildren</code> is <code>true</code>.
-     * @param preloaded an element which was created elsewhere and now
-     * has to be set up correctly by this factory
-     * @param in the stream to read from. The number of bytes read don't have
-     * to be the same number as the bytes that were written.
-     * @throws IOException if the element can't be read from the stream
+     * Reads the contents of <code>layout</code> and changes the layout of
+     * <code>element</code> accordingly. This method should remove all
+     * children from <code>element</code> and add new children.
+     * @param element the element whose content and children will be rearranged.
+     * @param layout the new layout of <code>element</code>
+     * @param children some children, note that the map may not contain all elements
+     * which were present when the layout was created.
      */
-    public void read(
-            Map<Integer, Dockable> children,
-            boolean ignoreChildren,
-            D preloaded,
-            DataInputStream in ) throws IOException;
+    public void setLayout( D element, L layout, Map<Integer, Dockable> children );
+    
+    /**
+     * Reads the contents of <code>layout</code> and changes the layout of
+     * <code>element</code> accordingly. This method should not add or remove
+     * children to or from <code>element</code>.
+     * @param element the element whose properties will be changed
+     * @param layout the new set of properties
+     */
+    public void setLayout( D element, L layout );
+    
+    /**
+     * Creates a new {@link DockElement} and changes the layout of the new 
+     * element such that is matches <code>layout</code>.
+     * @param layout the new layout
+     * @param children some children, note that the map may not contain all elements
+     * which were present when the layout was created. 
+     * @return a new element or <code>null</code> if layout can't be used
+     */
+    public D layout( L layout, Map<Integer, Dockable> children );
+    
+    /**
+     * Creates a new {@link DockElement} and changes the layout of the new 
+     * element such that is matches <code>layout</code>. This method should
+     * not add any children to the element.
+     * @param layout the new layout
+     * @return a new element or <code>null</code> if layout can't be used
+     */
+    public D layout( L layout );
+    
+    /**
+     * Writes the contents of <code>layout</code> into <code>out</code>.
+     * @param layout the layout to store
+     * @param out the stream to write into
+     * @throws IOException if an I/O-error occurs
+     */
+    public void write( L layout, DataOutputStream out ) throws IOException;
+    
+    /**
+     * Writes the contents of <code>layout</code> into <code>element</code>.
+     * @param layout the layout to store
+     * @param element an xml-element into which this method should write, the
+     * attributes of <code>element</code> should not be changed.
+     */
+    public void write( L layout, XElement element );
+    
+    /**
+     * Reads a layout from a stream.
+     * @param in the stream to read from
+     * @return the new layout
+     * @throws IOException if an I/O-error occurs
+     */
+    public L read( DataInputStream in ) throws IOException;
+    
+    /**
+     * Reads a layout from an xml-element.
+     * @param element the element to read, should not be changed by this 
+     * method.
+     * @return the new layout
+     */
+    public L read( XElement element );
 }

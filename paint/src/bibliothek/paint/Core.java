@@ -27,12 +27,7 @@ package bibliothek.paint;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
@@ -50,6 +45,8 @@ import bibliothek.gui.dock.support.menu.SeparatingMenuPiece;
 import bibliothek.paint.model.PictureRepository;
 import bibliothek.paint.util.Resources;
 import bibliothek.paint.view.ViewManager;
+import bibliothek.util.xml.XElement;
+import bibliothek.util.xml.XIO;
 
 /**
  * Class used to startup an application.
@@ -106,12 +103,15 @@ public class Core {
         
         // read and write settings
         if( secure ){
-            InputStream in = Core.class.getResourceAsStream( "/data/bibliothek/paint/config.data" );
+            InputStream in = Core.class.getResourceAsStream( "/data/bibliothek/paint/config.xml" );
             if( in != null ){
                 try{
+                    readXML( XIO.readUTF( in ) );
+                    in.close();
+                    /*
                     DataInputStream dataIn = new DataInputStream( in );
                     read( dataIn );
-                    dataIn.close();
+                    dataIn.close();*/
                 }
                 catch( IOException ex ){
                     ex.printStackTrace();
@@ -120,9 +120,13 @@ public class Core {
         }
         else{
             try{
-                DataInputStream in = new DataInputStream( new FileInputStream( "config.data" ));
-                read( in );
+                InputStream in = new BufferedInputStream( new FileInputStream( "config.xml" ));
+                readXML( XIO.readUTF( in ) );
                 in.close();
+                
+                /*DataInputStream in = new DataInputStream( new FileInputStream( "config.xml" ));
+                read( in );
+                in.close();*/
             }
             catch( IOException ex ){
                 ex.printStackTrace();
@@ -139,9 +143,14 @@ public class Core {
                     
                     if( !secure ){
                         try{
-                            DataOutputStream out = new DataOutputStream( new FileOutputStream( "config.data" ));
+                            XElement element = new XElement( "config" );
+                            writeXML( element );
+                            OutputStream out = new BufferedOutputStream( new FileOutputStream( "config.xml" ));
+                            XIO.writeUTF( element, out );
+                            
+                            /*DataOutputStream out = new DataOutputStream( new FileOutputStream( "config.xml" ));
                             write( out );
-                            out.close();
+                            out.close();*/
                         }
                         catch( IOException ex ){
                             ex.printStackTrace();
@@ -178,6 +187,15 @@ public class Core {
     }
     
     /**
+     * Writes all the settings of this application.
+     * @param element the xml element to write into
+     */
+    public void writeXML( XElement element ){
+        view.getPictures().writeXML( element.addElement( "pictures" ) );
+        view.getControl().getResources().writeXML( element.addElement( "resources" ) );
+    }
+    
+    /**
      * Reads all the settings of this application.
      * @param in the stream to read from
      * @throws IOException if an I/O error occurs
@@ -185,5 +203,14 @@ public class Core {
     public void read( DataInputStream in ) throws IOException{
         view.getPictures().read( in );
         view.getControl().getResources().readStream( in );
+    }
+    
+    /**
+     * Reads all the settings of this application.
+     * @param element the element to read from
+     */
+    public void readXML( XElement element ){
+        view.getPictures().readXML( element.getElement( "pictures" ) );
+        view.getControl().getResources().readXML( element.getElement( "resources" ) );
     }
 }

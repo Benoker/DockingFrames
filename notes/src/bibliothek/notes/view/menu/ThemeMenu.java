@@ -16,11 +16,8 @@ import javax.swing.JRadioButtonMenuItem;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.themes.NoStackTheme;
-import bibliothek.notes.view.themes.NoteBasicTheme;
-import bibliothek.notes.view.themes.NoteBubbleTheme;
-import bibliothek.notes.view.themes.NoteEclipseTheme;
-import bibliothek.notes.view.themes.NoteFlatTheme;
-import bibliothek.notes.view.themes.NoteSmoothTheme;
+import bibliothek.notes.view.themes.*;
+import bibliothek.util.xml.XElement;
 
 /**
  * A menu that allows the selection of a new {@link DockTheme}.
@@ -81,6 +78,22 @@ public class ThemeMenu extends JMenu{
 	}
 	
 	/**
+     * Writes which theme is currently selected.
+     * @param out the stream to write into
+     * @throws IOException if the method can't write into <code>out</code>
+     */
+    public void write( DataOutputStream out ) throws IOException{
+        int index = -1;
+        for( int i = 0, n = items.size(); i<n; i++ ){
+            if( items.get( i ).isSelected() ){
+                index = i;
+                break;
+            }
+        }
+        out.writeInt( index );
+    }
+	
+	/**
 	 * Reads which theme was selected when the application shut down
 	 * the last time.
 	 * @param in the stream to read from
@@ -96,18 +109,32 @@ public class ThemeMenu extends JMenu{
 	}
 	
 	/**
-	 * Writes which theme is currently selected.
-	 * @param out the stream to write into
-	 * @throws IOException if the method can't write into <code>out</code>
-	 */
-	public void write( DataOutputStream out ) throws IOException{
-		int index = -1;
-		for( int i = 0, n = items.size(); i<n; i++ ){
-			if( items.get( i ).isSelected() ){
-				index = i;
-				break;
-			}
-		}
-		out.writeInt( index );
-	}
+     * Writes which theme is currently selected.
+     * @params element the xml-element to write into
+     */
+    public void writeXML( XElement element ){
+        int index = -1;
+        for( int i = 0, n = items.size(); i<n; i++ ){
+            if( items.get( i ).isSelected() ){
+                index = i;
+                break;
+            }
+        }
+        element.setInt( index );
+    }
+    
+    /**
+     * Reads which theme was selected when the application shut down
+     * the last time.
+     * @param element the xml-element to read from
+     */
+    public void readXML( XElement element ){
+        int index = element.getInt();
+        if( index < 0 )
+            index = 0;
+        
+        items.get( index ).setSelected( true );
+        frontend.getController().setTheme( themes.get( index ) );
+    }
+    
 }

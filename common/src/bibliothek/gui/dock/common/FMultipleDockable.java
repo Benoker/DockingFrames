@@ -44,7 +44,7 @@ public interface FMultipleDockable extends FDockable{
 	 * Gets the factory that created this dockable.
 	 * @return the factory, not <code>null</code>
 	 */
-	public FMultipleDockableFactory getFactory();
+	public FMultipleDockableFactory<?,?> getFactory();
 	
 	/**
 	 * Tells whether this {@link FMultipleDockable} should be removed from the

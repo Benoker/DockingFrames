@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -34,6 +34,8 @@ import java.util.Map;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.dock.layout.DockLayout;
+import bibliothek.util.xml.XElement;
 
 /**
  * A factory which can read and write the properties of a 
@@ -42,7 +44,7 @@ import bibliothek.gui.dock.DockFactory;
  * DefaultDockable.
  * @author Benjamin Sigg
  */
-public class DefaultDockableFactory implements DockFactory<DefaultDockable> {
+public class DefaultDockableFactory implements DockFactory<DefaultDockable, DefaultDockableFactory.DefaultDockLayout> {
     /** The unique id of this factory */
     public static final String ID = "DefaultDockableFactory";
     
@@ -50,23 +52,63 @@ public class DefaultDockableFactory implements DockFactory<DefaultDockable> {
         return ID;
     }
 
-    public void write( 
-            DefaultDockable element,
-            Map<Dockable, Integer> children,
-            DataOutputStream out )
-            throws IOException {
-    	// do nothing
+    public DefaultDockLayout getLayout( DefaultDockable element,
+            Map<Dockable, Integer> children ) {
+        
+        return new DefaultDockLayout();
+    }
+    
+    public void setLayout( DefaultDockable element, DefaultDockLayout layout,
+            Map<Integer, Dockable> children ) {
+        // nothing to do
+    }
+    
+    public void setLayout( DefaultDockable element, DefaultDockLayout layout ) {
+        // nothing to do
     }
 
-    public DefaultDockable read( 
-            Map<Integer, Dockable> children,
-            boolean ignore,
-            DataInputStream in ) throws IOException {
+    public DefaultDockable layout( DefaultDockLayout layout,
+            Map<Integer, Dockable> children ) {
         
         return new DefaultDockable();
     }
     
-    public void read(Map<Integer, Dockable> children, boolean ignore, DefaultDockable preloaded, DataInputStream in) throws IOException {
-    	// nothing to do
+    public DefaultDockable layout( DefaultDockLayout layout ) {
+        return new DefaultDockable();
+    }
+
+    public DefaultDockLayout read( DataInputStream in ) throws IOException {
+        return new DefaultDockLayout();
+    }
+
+    public DefaultDockLayout read( XElement element ) {
+        return new DefaultDockLayout();
+    }
+
+
+    public void write( DefaultDockLayout layout, DataOutputStream out )
+            throws IOException {
+        // nothing to do
+    }
+
+    public void write( DefaultDockLayout layout, XElement element ) {
+        // nothing to do
+    }
+    
+    /**
+     * A simple layout that does not store any information.
+     * @author Benjamin Sigg
+     */
+    public static class DefaultDockLayout implements DockLayout{
+        /** the id of the factory of this layout */
+        private String factory;
+        
+        public void setFactoryID( String id ) {
+            factory = id;
+        }
+        
+        public String getFactoryID() {
+            return factory;
+        }
     }
 }

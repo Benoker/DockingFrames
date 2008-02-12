@@ -32,6 +32,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import bibliothek.util.xml.XElement;
+
 /**
  * A set of {@link Shape}s forming some picture.
  * @author Benjamin Sigg
@@ -74,6 +76,18 @@ public class Picture {
     }
     
     /**
+     * Writes the contents of this picture.
+     * @param element the element to write into
+     */
+    public void writeXML( XElement element ){
+        element.addElement( "name" ).setString( name );
+        XElement xshapes = element.addElement( "shapes" );
+        for( Shape shape : shapes ){
+            ShapeUtils.writeXML( shape, xshapes.addElement( "shape" ) );
+        }
+    }
+    
+    /**
      * Reads the contents of this picture from <code>in</code>.
      * @param in the stream to read from
      * @throws IOException if an I/O error occurs
@@ -83,6 +97,21 @@ public class Picture {
         shapes.clear();
         for( int i = 0, n = in.readInt(); i<n; i++ ){
             shapes.add( ShapeUtils.read( in ) );
+        }
+        
+        for( PictureListener listener : listeners.toArray( new PictureListener[ listeners.size() ] ))
+            listener.pictureChanged();
+    }
+    
+    public void readXML( XElement element ){
+        name = element.getElement( "name" ).getString();
+        XElement xshapes = element.getElement( "shapes" );
+        shapes.clear();
+        
+        for( XElement xshape : xshapes ){
+            if( xshape.getName().equals( "shape" )){
+                shapes.add( ShapeUtils.readXML( xshape ));
+            }
         }
         
         for( PictureListener listener : listeners.toArray( new PictureListener[ listeners.size() ] ))

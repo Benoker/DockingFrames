@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -26,6 +26,7 @@
 
 package bibliothek.gui.dock.station.screen;
 
+import java.awt.Rectangle;
 import java.awt.Window;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -35,6 +36,7 @@ import java.util.Map;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.util.xml.XElement;
 
 /**
  * A {@link DockFactory} which writes and reads instances 
@@ -42,7 +44,7 @@ import bibliothek.gui.dock.ScreenDockStation;
  * dialogs are stored.
  * @author Benjamin Sigg
  */
-public class ScreenDockStationFactory implements DockFactory<ScreenDockStation> {
+public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, ScreenDockStationLayout> {
     public static final String ID = "screen dock";
 
     private Window owner;
@@ -68,63 +70,119 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation> 
     public String getID() {
         return ID;
     }
-
-    public void write( 
-            ScreenDockStation station,
-            Map<Dockable, Integer> children,
-            DataOutputStream out )
     
-            throws IOException {
+    public ScreenDockStationLayout getLayout( ScreenDockStation station,
+            Map<Dockable, Integer> children ) {
         
-        int count = station.getDockableCount();
-        out.writeInt( count );
-        
-        for( int i = 0; i < count; i++ ){
+        ScreenDockStationLayout layout = new ScreenDockStationLayout();
+        for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
             Dockable dockable = station.getDockable( i );
-            ScreenDockDialog dialog = station.getDialog( i );
-            
-            out.writeInt( dialog.getX() );
-            out.writeInt( dialog.getY() );
-            out.writeInt( dialog.getWidth() );
-            out.writeInt( dialog.getHeight() );
-            out.writeInt( children.get( dockable ) );
+            Integer id = children.get( dockable );
+            if( id != null ){
+                ScreenDockDialog dialog = station.getDialog( i );
+                
+                layout.add( 
+                        id,
+                        dialog.getX(),
+                        dialog.getY(), 
+                        dialog.getWidth(),
+                        dialog.getHeight() );
+            }
         }
-    }
-
-    public ScreenDockStation read( 
-            Map<Integer, Dockable> children,
-            boolean ignore,
-            DataInputStream in )
-            throws IOException {
         
-        ScreenDockStation station = createStation();
-        read( children, ignore, station, in );
-        return station;
+        return layout;
     }
     
-    public void read(Map<Integer, Dockable> children, boolean ignore, ScreenDockStation station, DataInputStream in) throws IOException {
-    	int count = in.readInt();
+    public void setLayout( ScreenDockStation element,
+            ScreenDockStationLayout layout ) {
+        // nothing to do
+    }
+    
+    public void setLayout( ScreenDockStation station,
+            ScreenDockStationLayout layout, Map<Integer, Dockable> children ) {
         
-        for( int i = 0; i < count; i++ ){
-            int x = in.readInt();
-            int y = in.readInt();
-            int width = in.readInt();
-            int height = in.readInt();
-            int child = in.readInt();
-            
-            Dockable dockable = children.get( child );
+        for( int i = station.getDockableCount()-1; i >= 0; i-- )
+            station.removeDockable( i );
+        
+        for( int i = 0, n = layout.size(); i<n; i++ ){
+            Dockable dockable = children.get( layout.id( i ) );
             if( dockable != null ){
-                station.drop( dockable );
-                ScreenDockDialog dialog = station.getDialog( dockable );
-                dialog.setBounds( x, y, width, height );
-                dialog.validate();
+                station.addDockable(
+                        dockable,
+                        new Rectangle( layout.x( i ), layout.y( i ), layout.width( i ), layout.height( i )), 
+                        true );
             }
         }
     }
 
+    public ScreenDockStation layout( ScreenDockStationLayout layout ) {
+        ScreenDockStation station = createStation();
+        setLayout( station, layout );
+        return station;
+    }
+    
+    public ScreenDockStation layout( ScreenDockStationLayout layout,
+            Map<Integer, Dockable> children ) {
+        ScreenDockStation station = createStation();
+        setLayout( station, layout, children );
+        return station;
+    }
+    
+    public void write( ScreenDockStationLayout layout, DataOutputStream out )
+            throws IOException {
+     
+        out.writeInt( layout.size() );
+        for( int i = 0, n = layout.size(); i<n; i++ ){
+            out.writeInt( layout.id( i ) );
+            out.writeInt( layout.x( i ) );
+            out.writeInt( layout.y( i ) );
+            out.writeInt( layout.width( i ) );
+            out.writeInt( layout.height( i ) );
+        }
+    }
+    
+    public ScreenDockStationLayout read( DataInputStream in )
+            throws IOException {
+        
+        ScreenDockStationLayout layout = new ScreenDockStationLayout();
+        int count = in.readInt();
+        for( int i = 0; i < count; i++ ){
+            int id = in.readInt();
+            int x = in.readInt();
+            int y = in.readInt();
+            int width = in.readInt();
+            int height = in.readInt();
+            layout.add( id, x, y, width, height );
+        }
+        return layout;
+    }
+
+    public void write( ScreenDockStationLayout layout, XElement element ) {
+        for( int i = 0, n = layout.size(); i<n; i++ ){
+            XElement child = element.addElement( "child" );
+            child.addInt( "id", layout.id( i ) );
+            child.addInt( "x", layout.x( i ) );
+            child.addInt( "y", layout.y( i ) );
+            child.addInt( "width", layout.width( i ) );
+            child.addInt( "height", layout.height( i ) );
+        }
+    }
+    
+    public ScreenDockStationLayout read( XElement element ) {
+        ScreenDockStationLayout layout = new ScreenDockStationLayout();
+        for( XElement child : element.getElements( "child" )){
+            layout.add( 
+                    child.getInt( "id" ),
+                    child.getInt( "x" ),
+                    child.getInt( "y" ),
+                    child.getInt( "width" ),
+                    child.getInt( "height" ));
+        }
+        return layout;
+    }
+    
     /**
-     * Creates a new {@link ScreenDockStation} which will be returned
-     * by {@link #read(Map, boolean, DataInputStream) read}.
+     * Creates a new {@link ScreenDockStation}.
      * @return the new station
      */
     protected ScreenDockStation createStation(){

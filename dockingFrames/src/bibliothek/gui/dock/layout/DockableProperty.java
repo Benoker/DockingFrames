@@ -32,6 +32,7 @@ import java.io.IOException;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.util.xml.XElement;
 
 /**
  * Describes the location of a {@link Dockable} on a {@link DockStation}. 
@@ -83,6 +84,13 @@ public interface DockableProperty {
     public void store( DataOutputStream out ) throws IOException;
     
     /**
+     * Stores the contents of this property as xml element.
+     * @param element the element into which to write, the attributes of
+     * this element should not be changed
+     */
+    public void store( XElement element );
+    
+    /**
      * Reads the contents of this DockableProperty from a stream. The
      * property can assume that a property with the same type has written
      * into the stream.
@@ -90,4 +98,11 @@ public interface DockableProperty {
      * @throws IOException if anything unexpected happens
      */
     public void load( DataInputStream in ) throws IOException;
+    
+    /**
+     * Reads the contents of this {@link DockableProperty} from an
+     * xml element.
+     * @param element the element that was written earlier by this property
+     */
+    public void load( XElement element );
 }

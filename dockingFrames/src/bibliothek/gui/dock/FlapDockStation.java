@@ -300,8 +300,8 @@ public class FlapDockStation extends AbstractDockableStation {
                 holdAction.setController( controller );
 
             if( controller != null ){
-                titleVersion = controller.getDockTitleManager().registerDefault( WINDOW_TITLE_ID, ControllerTitleFactory.INSTANCE );
-                buttonVersion = controller.getDockTitleManager().registerDefault( BUTTON_TITLE_ID, BasicButtonTitleFactory.FACTORY );
+                titleVersion = controller.getDockTitleManager().getVersion( WINDOW_TITLE_ID, ControllerTitleFactory.INSTANCE );
+                buttonVersion = controller.getDockTitleManager().getVersion( BUTTON_TITLE_ID, BasicButtonTitleFactory.FACTORY );
                 
                 for( Dockable dockable : dockables ){
                     DockTitle title = dockable.getDockTitle( buttonVersion );

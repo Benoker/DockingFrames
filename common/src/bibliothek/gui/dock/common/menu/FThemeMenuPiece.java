@@ -42,6 +42,7 @@ import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.gui.dock.themes.ThemeFactory;
 import bibliothek.gui.dock.themes.ThemePropertyFactory;
+import bibliothek.util.xml.XElement;
 
 /**
  * A {@link ThemeMenuPiece} that uses the default {@link DockTheme}s of
@@ -89,6 +90,14 @@ public class FThemeMenuPiece extends ThemeMenuPiece{
                         if( index >= 0 && index < getFactoryCount() )
                             setSelected( getFactory( index ) );
                     }
+                }
+                public void writeXML( XElement element ) {
+                    element.setInt( indexOf( getSelected() ) );
+                }
+                public void readXML( XElement element ) {
+                    int index = element.getInt();
+                    if( index >= 0 && index < getFactoryCount() )
+                        setSelected( getFactory( index ) );
                 }
             });
         }

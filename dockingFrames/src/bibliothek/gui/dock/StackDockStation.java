@@ -27,12 +27,9 @@
 package bibliothek.gui.dock;
 
 import java.awt.*;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -46,12 +43,7 @@ import bibliothek.gui.*;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.layout.DockableProperty;
-import bibliothek.gui.dock.station.AbstractDockableStation;
-import bibliothek.gui.dock.station.DisplayerCollection;
-import bibliothek.gui.dock.station.DisplayerFactory;
-import bibliothek.gui.dock.station.DockableDisplayer;
-import bibliothek.gui.dock.station.OverpaintablePanel;
-import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.*;
 import bibliothek.gui.dock.station.stack.*;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
@@ -338,7 +330,7 @@ public class StackDockStation extends AbstractDockableStation {
             stackComponent.setController( controller );
             
             if( controller != null ){
-                title = controller.getDockTitleManager().registerDefault( TITLE_ID, ControllerTitleFactory.INSTANCE );
+                title = controller.getDockTitleManager().getVersion( TITLE_ID, ControllerTitleFactory.INSTANCE );
             }
             else
                 title = null;
@@ -848,62 +840,6 @@ public class StackDockStation extends AbstractDockableStation {
     
     public String getFactoryID() {
         return StackDockStationFactory.ID;
-    }
-    
-    /**
-     * Writes the layout of this station into <code>out</code>.
-     * @param children A map that tells for every child of this station a unique
-     * id.
-     * @param out The sink of the information
-     * @throws IOException if <code>out</code> throws an exception
-     */
-    public void write( Map<Dockable, Integer> children, DataOutputStream out ) throws IOException{
-        out.writeBoolean( dockables.size() > 0 );
-        if( dockables.size() > 0 ){
-            out.writeInt( dockables.size() );
-            for( DockableDisplayer displayer : dockables ){
-                out.writeInt( children.get( displayer.getDockable() ));
-            }
-            
-            if( dockables.size() > 1 )
-                out.writeInt( getStackComponent().getSelectedIndex() );
-            else
-                out.writeInt( 0 );
-        }
-    }
-    
-    /**
-     * Removes all children from this station and then reads its new layout
-     * from <code>in</code>. 
-     * @param children A map that tells for some ids which {@link Dockable}
-     * should be added
-     * @param ignore <code>true</code> if the children on this station should
-     * not be changed
-     * @param in The source of all information
-     * @throws IOException if <code>in</code> throws an exception
-     */
-    public void read( Map<Integer, Dockable> children, boolean ignore, DataInputStream in ) throws IOException{
-        if( !ignore ){
-            while( dockables.size() > 0 )
-                drag( dockables.get( 0 ).getDockable() );
-            
-            if( in.readBoolean() ){
-                int size = in.readInt();
-                for( int i = 0; i < size; i++ ){
-                    int id = in.readInt();
-                    Dockable dockable = children.get( id );
-                    if( dockable != null )
-                        drop( dockable );
-                }
-                
-                int selected = in.readInt();
-                if( dockables.size() > 1 )
-                    if( selected >= 0 && selected < getStackComponent().getTabCount() )
-                        getStackComponent().setSelectedIndex( selected );
-            }
-            
-            getComponent().invalidate();
-        }
     }
     
     /**

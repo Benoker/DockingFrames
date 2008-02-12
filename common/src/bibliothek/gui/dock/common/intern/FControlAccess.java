@@ -28,6 +28,7 @@ package bibliothek.gui.dock.common.intern;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.common.FControl;
+import bibliothek.gui.dock.common.FMultipleDockable;
 import bibliothek.gui.dock.common.FMultipleDockableFactory;
 
 /**
@@ -40,6 +41,15 @@ public interface FControlAccess {
 	 * @return the owner
 	 */
 	public FControl getOwner();
+	
+	/**
+     * Adds a dockable to this control. The dockable can be made visible afterwards.
+     * @param <F> the type of the new element
+     * @param dockable the new element to show
+     * @param uniqueId id the unique id of the new element
+     * @return <code>dockable</code>
+     */
+	public <F extends FMultipleDockable> F add( F dockable, String uniqueId );
 	
 	/**
 	 * Makes <code>dockable</code> visible.
@@ -65,7 +75,7 @@ public interface FControlAccess {
 	 * @param factory the factory to search
 	 * @return the id or <code>null</code>
 	 */
-	public String getFactoryId( FMultipleDockableFactory factory );
+	public String getFactoryId( FMultipleDockableFactory<?,?> factory );
 	
 	/**
 	 * Gets the manager that is responsible to change the states of the

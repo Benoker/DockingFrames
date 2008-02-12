@@ -33,6 +33,7 @@ import java.io.IOException;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.layout.AbstractDockableProperty;
+import bibliothek.util.xml.XElement;
 
 /**
  * A StackDockProperty stores the location of a {@link Dockable}
@@ -91,8 +92,16 @@ public class StackDockProperty extends AbstractDockableProperty {
     public void store( DataOutputStream out ) throws IOException {
         out.writeInt( index );
     }
+    
+    public void store( XElement element ) {
+        element.setInt( index );
+    }
 
     public void load( DataInputStream in ) throws IOException {
         index = in.readInt();
+    }
+    
+    public void load( XElement element ) {
+        index = element.getInt();
     }
 }

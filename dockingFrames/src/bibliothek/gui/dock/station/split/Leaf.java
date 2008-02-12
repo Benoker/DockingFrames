@@ -28,10 +28,6 @@ package bibliothek.gui.dock.station.split;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.Map;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -296,22 +292,5 @@ public class Leaf extends SplitNode{
     @Override
     public void visit( SplitNodeVisitor visitor ) {
         visitor.handleLeaf( this );
-    }
-    
-    @Override
-    public SplitNode read( Map<Integer, Dockable> children, DataInputStream in ) throws IOException {
-        Dockable dockable = children.get( in.readInt() );
-        if( dockable == null )
-            return null;
-        
-        setDisplayer( getAccess().getOwner().getDisplayers().fetch( dockable, null ));
-        getAccess().add( displayer );
-        
-        return this;
-    }
-    
-    @Override
-    public void write( Map<Dockable, Integer> children, DataOutputStream out ) throws IOException {
-        out.writeInt( children.get( getDockable() ) );
     }
 }

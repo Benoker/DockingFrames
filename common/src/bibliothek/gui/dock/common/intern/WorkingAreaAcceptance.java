@@ -61,6 +61,9 @@ public class WorkingAreaAcceptance implements DockAcceptance {
     }
 
     public boolean accept( DockStation parent, Dockable child, Dockable next ) {
+        if( control.getStateManager().isOnTransition() )
+            return true;
+        
         if( control.getStateManager().childsExtendedMode( parent ) == FDockable.ExtendedMode.NORMALIZED ){
             FWorkingArea area = searchArea( parent );
             return match( area, next );

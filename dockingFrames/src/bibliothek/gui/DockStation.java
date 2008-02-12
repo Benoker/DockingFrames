@@ -140,7 +140,7 @@ public interface DockStation extends DockElement{
      * Tells whether the child <code>dockable</code> is visible or not. Visible
      * means that the {@link Dockable#getComponent() component} of <code>dockable</code>
      * can be seen by the user. The result must be <code>false</code> if
-     * this method is not visible.
+     * this station is not visible.
      * @param dockable the child whose visibility-state is questioned
      * @return whether <code>dockable</code> is visible or not
      * @see #isStationVisible()

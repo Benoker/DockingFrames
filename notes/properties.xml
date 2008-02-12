@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<properties>
+	<lookandfeel>
+		<index>0</index>
+	</lookandfeel>
+	<model>
+		<next>3</next>
+		<notes>
+			<note id="0">
+				<title>[Hallo]</title>
+				<text>[Hallo, das ist ein Test.]</text>
+				<color>-1</color>
+				<icon>8</icon>
+			</note>
+			<note id="1">
+				<title>[Zwei]</title>
+				<text>[Zweiter Test]</text>
+				<color>-14336</color>
+			</note>
+			<note id="2">
+				<title>[Drei]</title>
+				<text>[Dritter Test]</text>
+				<color>-1</color>
+				<icon>22</icon>
+			</note>
+		</notes>
+	</model>
+	<notes/>
+	<frontend>
+		<current>
+			<roots>
+				<root name="screen">
+					<layout factory="predefined">
+						<replacement id="rootscreen"/>
+						<delegate id="delegate_screen dock"/>
+					</layout>
+					<children ignore="false"/>
+				</root>
+				<root name="south">
+					<layout factory="predefined">
+						<replacement id="rootsouth"/>
+						<delegate id="delegate_flap dock">
+							<window auto="true" size="400" direction="SOUTH"/>
+							<children/>
+						</delegate>
+					</layout>
+					<children ignore="false"/>
+				</root>
+				<root name="split">
+					<layout factory="predefined">
+						<replacement id="rootsplit"/>
+						<delegate id="delegate_SplitDockStationFactory">
+							<node orientation="HORIZONTAL" divider="0.45143884892086333">
+								<leaf id="1"/>
+								<leaf id="0"/>
+							</node>
+						</delegate>
+					</layout>
+					<children ignore="false">
+						<child>
+							<layout factory="delegate_StackDockStationFactory">
+								<child id="0"/>
+								<child id="1"/>
+							</layout>
+							<children ignore="false">
+								<child>
+									<layout factory="delegate_note">
+										<note>[0]</note>
+									</layout>
+									<children ignore="false"/>
+								</child>
+								<child>
+									<layout factory="delegate_note">
+										<note>[1]</note>
+									</layout>
+									<children ignore="false"/>
+								</child>
+							</children>
+						</child>
+						<child>
+							<layout factory="predefined">
+								<replacement id="dockablelist"/>
+								<delegate id="delegate_DefaultDockableFactory"/>
+							</layout>
+							<children ignore="false"/>
+						</child>
+					</children>
+				</root>
+				<root name="east">
+					<layout factory="predefined">
+						<replacement id="rooteast"/>
+						<delegate id="delegate_flap dock">
+							<window auto="true" size="400" direction="WEST"/>
+							<children>
+								<child id="0" hold="true"/>
+							</children>
+						</delegate>
+					</layout>
+					<children ignore="false">
+						<child>
+							<layout factory="delegate_note">
+								<note>[2]</note>
+							</layout>
+							<children ignore="false"/>
+						</child>
+					</children>
+				</root>
+				<root name="north">
+					<layout factory="predefined">
+						<replacement id="rootnorth"/>
+						<delegate id="delegate_flap dock">
+							<window auto="true" size="400" direction="SOUTH"/>
+							<children/>
+						</delegate>
+					</layout>
+					<children ignore="false"/>
+				</root>
+				<root name="west">
+					<layout factory="predefined">
+						<replacement id="rootwest"/>
+						<delegate id="delegate_flap dock">
+							<window auto="true" size="400" direction="EAST"/>
+							<children/>
+						</delegate>
+					</layout>
+					<children ignore="false"/>
+				</root>
+			</roots>
+			<children>
+				<child key="list" root="split">
+					<property factory="SplitDockPathProperty">
+						<node location="LEFT" size="0.45143884892086333"/>
+					</property>
+				</child>
+			</children>
+		</current>
+	</frontend>
+	<frame>
+		<extended>0</extended>
+		<bounds x="165" y="0" width="600" height="400"/>
+		<theme>0</theme>
+	</frame>
+</properties>

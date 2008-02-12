@@ -1,0 +1,481 @@
+<?xml version='1.0'?>
+<config>
+	<pictures>
+		<picture>
+			<name>Apple</name>
+			<shapes>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="263" y="169"/>
+					<point x="584" y="504"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="238" y="172"/>
+					<point x="578" y="504"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="233" y="179"/>
+					<point x="571" y="515"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="244" y="164"/>
+					<point x="565" y="469"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="269" y="184"/>
+					<point x="587" y="516"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="263" y="209"/>
+					<point x="576" y="515"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="287" y="236"/>
+					<point x="437" y="376"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="342" y="218"/>
+					<point x="493" y="364"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="438" y="226"/>
+					<point x="567" y="388"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="482" y="324"/>
+					<point x="554" y="437"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="450" y="378"/>
+					<point x="526" y="475"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="334" y="329"/>
+					<point x="466" y="499"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="286" y="346"/>
+					<point x="434" y="490"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="282" y="279"/>
+					<point x="434" y="447"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="288" y="255"/>
+					<point x="460" y="395"/>
+				</shape>
+			</shapes>
+		</picture>
+	</pictures>
+	<resources>
+		<resource name="FThemeMenuPiece">2</resource>
+		<resource name="FLookAndFeelMenuPiece">
+			<index>2</index>
+		</resource>
+		<resource name="fcontrol.frontend">
+			<areas/>
+			<frontend>
+				<settings>
+					<setting name="Base">
+						<base>
+							<roots>
+								<root name="fcontrol center">
+									<layout factory="predefined">
+										<replacement id="rootfcontrol center"/>
+										<delegate id="delegate_SplitDockStationFactory">
+											<node orientation="VERTICAL" divider="0.75">
+												<node orientation="HORIZONTAL" divider="0.2">
+													<leaf id="0"/>
+													<leaf id="1"/>
+												</node>
+												<leaf id="2"/>
+											</node>
+										</delegate>
+									</layout>
+									<children ignore="false">
+										<child>
+											<layout factory="predefined">
+												<replacement id="dockablesingle PictureListDockable"/>
+												<delegate id="delegate_DefaultDockableFactory"/>
+											</layout>
+											<children ignore="false"/>
+										</child>
+										<child>
+											<layout factory="predefined">
+												<replacement id="rootpicture area"/>
+												<delegate id="delegate_SplitDockStationFactory"/>
+											</layout>
+											<children ignore="true"/>
+										</child>
+										<child>
+											<layout factory="predefined">
+												<replacement id="dockablesingle ColorDockable"/>
+												<delegate id="delegate_DefaultDockableFactory"/>
+											</layout>
+											<children ignore="false"/>
+										</child>
+									</children>
+								</root>
+								<root name="picture area">
+									<layout factory="predefined">
+										<replacement id="rootpicture area"/>
+										<delegate id="delegate_SplitDockStationFactory"/>
+									</layout>
+									<children ignore="true"/>
+								</root>
+								<root name="fcontrol west">
+									<layout factory="predefined">
+										<replacement id="rootfcontrol west"/>
+										<delegate id="delegate_flap dock">
+											<window auto="false" size="400" direction="EAST"/>
+											<children/>
+										</delegate>
+									</layout>
+									<children ignore="false"/>
+								</root>
+								<root name="external">
+									<layout factory="predefined">
+										<replacement id="rootexternal"/>
+										<delegate id="delegate_screen dock"/>
+									</layout>
+									<children ignore="false"/>
+								</root>
+								<root name="fcontrol east">
+									<layout factory="predefined">
+										<replacement id="rootfcontrol east"/>
+										<delegate id="delegate_flap dock">
+											<window auto="false" size="400" direction="WEST"/>
+											<children/>
+										</delegate>
+									</layout>
+									<children ignore="false"/>
+								</root>
+								<root name="fcontrol south">
+									<layout factory="predefined">
+										<replacement id="rootfcontrol south"/>
+										<delegate id="delegate_flap dock">
+											<window auto="false" size="400" direction="NORTH"/>
+											<children/>
+										</delegate>
+									</layout>
+									<children ignore="false"/>
+								</root>
+								<root name="fcontrol north">
+									<layout factory="predefined">
+										<replacement id="rootfcontrol north"/>
+										<delegate id="delegate_flap dock">
+											<window auto="false" size="400" direction="SOUTH"/>
+											<children/>
+										</delegate>
+									</layout>
+									<children ignore="false"/>
+								</root>
+							</roots>
+							<children/>
+						</base>
+						<modes>
+							<entry id="single ColorDockable" current="normal">
+								<history>
+									<mode>normal</mode>
+								</history>
+								<properties>
+									<property id="normal">
+										<root>fcontrol center</root>
+										<location>
+											<property factory="SplitDockPathProperty">
+												<node location="BOTTOM" size="0.25"/>
+											</property>
+										</location>
+									</property>
+								</properties>
+							</entry>
+							<entry id="single PictureListDockable" current="normal">
+								<history>
+									<mode>normal</mode>
+								</history>
+								<properties>
+									<property id="normal">
+										<root>fcontrol center</root>
+										<location>
+											<property factory="SplitDockPathProperty">
+												<node location="LEFT" size="0.2"/>
+											</property>
+										</location>
+									</property>
+								</properties>
+							</entry>
+							<entry id="single picture area" current="normal">
+								<history>
+									<mode>normal</mode>
+								</history>
+								<properties>
+									<property id="normal">
+										<root>fcontrol center</root>
+										<location>
+											<property factory="SplitDockPropertyFactory">
+												<x>0.0</x>
+												<y>0.0</y>
+												<width>1.0</width>
+												<height>1.0</height>
+											</property>
+										</location>
+									</property>
+								</properties>
+							</entry>
+							<entry id="multi 0 page" current="normal">
+								<history>
+									<mode>maxi</mode>
+									<mode>mini</mode>
+									<mode>normal</mode>
+								</history>
+								<properties>
+									<property id="normal">
+										<root>fcontrol center</root>
+										<location>
+											<property factory="SplitDockPathProperty">
+												<node location="TOP" size="0.75"/>
+												<node location="RIGHT" size="0.8"/>
+											</property>
+											<property factory="SplitDockPathProperty"/>
+										</location>
+									</property>
+									<property id="mini">
+										<root>fcontrol south</root>
+										<location>
+											<property factory="flap dock">0</property>
+										</location>
+									</property>
+								</properties>
+							</entry>
+						</modes>
+					</setting>
+				</settings>
+				<current name="Base">
+					<base>
+						<roots>
+							<root name="fcontrol center">
+								<layout factory="predefined">
+									<replacement id="rootfcontrol center"/>
+									<delegate id="delegate_SplitDockStationFactory">
+										<node orientation="VERTICAL" divider="0.75">
+											<node orientation="HORIZONTAL" divider="0.20905172413793105">
+												<leaf id="0"/>
+												<leaf id="1"/>
+											</node>
+											<leaf id="2"/>
+										</node>
+									</delegate>
+								</layout>
+								<children ignore="false">
+									<child>
+										<layout factory="predefined">
+											<replacement id="dockablesingle PictureListDockable"/>
+											<delegate id="delegate_DefaultDockableFactory"/>
+										</layout>
+										<children ignore="false"/>
+									</child>
+									<child>
+										<layout factory="predefined">
+											<replacement id="rootpicture area"/>
+											<delegate id="delegate_SplitDockStationFactory">
+												<leaf id="0"/>
+											</delegate>
+										</layout>
+										<children ignore="false">
+											<child>
+												<layout factory="delegate_page">
+													<id>multi 0 page</id>
+													<area>picture area</area>
+													<multiple>Apple</multiple>
+												</layout>
+												<children ignore="false"/>
+											</child>
+										</children>
+									</child>
+									<child>
+										<layout factory="predefined">
+											<replacement id="dockablesingle ColorDockable"/>
+											<delegate id="delegate_DefaultDockableFactory"/>
+										</layout>
+										<children ignore="false"/>
+									</child>
+								</children>
+							</root>
+							<root name="picture area">
+								<layout factory="predefined">
+									<replacement id="rootpicture area"/>
+									<delegate id="delegate_SplitDockStationFactory">
+										<leaf id="0"/>
+									</delegate>
+								</layout>
+								<children ignore="false">
+									<child>
+										<layout factory="delegate_page">
+											<id>multi 0 page</id>
+											<area>picture area</area>
+											<multiple>Apple</multiple>
+										</layout>
+										<children ignore="false"/>
+									</child>
+								</children>
+							</root>
+							<root name="fcontrol west">
+								<layout factory="predefined">
+									<replacement id="rootfcontrol west"/>
+									<delegate id="delegate_flap dock">
+										<window auto="false" size="400" direction="EAST"/>
+										<children/>
+									</delegate>
+								</layout>
+								<children ignore="false"/>
+							</root>
+							<root name="external">
+								<layout factory="predefined">
+									<replacement id="rootexternal"/>
+									<delegate id="delegate_screen dock"/>
+								</layout>
+								<children ignore="false"/>
+							</root>
+							<root name="fcontrol east">
+								<layout factory="predefined">
+									<replacement id="rootfcontrol east"/>
+									<delegate id="delegate_flap dock">
+										<window auto="false" size="400" direction="WEST"/>
+										<children/>
+									</delegate>
+								</layout>
+								<children ignore="false"/>
+							</root>
+							<root name="fcontrol south">
+								<layout factory="predefined">
+									<replacement id="rootfcontrol south"/>
+									<delegate id="delegate_flap dock">
+										<window auto="false" size="400" direction="NORTH"/>
+										<children/>
+									</delegate>
+								</layout>
+								<children ignore="false"/>
+							</root>
+							<root name="fcontrol north">
+								<layout factory="predefined">
+									<replacement id="rootfcontrol north"/>
+									<delegate id="delegate_flap dock">
+										<window auto="false" size="400" direction="SOUTH"/>
+										<children/>
+									</delegate>
+								</layout>
+								<children ignore="false"/>
+							</root>
+						</roots>
+						<children/>
+					</base>
+					<modes>
+						<entry id="single ColorDockable" current="normal">
+							<history>
+								<mode>normal</mode>
+							</history>
+							<properties>
+								<property id="normal">
+									<root>fcontrol center</root>
+									<location>
+										<property factory="SplitDockPathProperty">
+											<node location="BOTTOM" size="0.25"/>
+										</property>
+									</location>
+								</property>
+							</properties>
+						</entry>
+						<entry id="single PictureListDockable" current="normal">
+							<history>
+								<mode>normal</mode>
+							</history>
+							<properties>
+								<property id="normal">
+									<root>fcontrol center</root>
+									<location>
+										<property factory="SplitDockPathProperty">
+											<node location="LEFT" size="0.2"/>
+										</property>
+									</location>
+								</property>
+							</properties>
+						</entry>
+						<entry id="single picture area" current="normal">
+							<history>
+								<mode>normal</mode>
+							</history>
+							<properties>
+								<property id="normal">
+									<root>fcontrol center</root>
+									<location>
+										<property factory="SplitDockPropertyFactory">
+											<x>0.0</x>
+											<y>0.0</y>
+											<width>1.0</width>
+											<height>1.0</height>
+										</property>
+									</location>
+								</property>
+							</properties>
+						</entry>
+						<entry id="multi 0 page" current="normal">
+							<history>
+								<mode>maxi</mode>
+								<mode>mini</mode>
+								<mode>normal</mode>
+							</history>
+							<properties>
+								<property id="normal">
+									<root>fcontrol center</root>
+									<location>
+										<property factory="SplitDockPathProperty">
+											<node location="TOP" size="0.75"/>
+											<node location="RIGHT" size="0.8"/>
+										</property>
+										<property factory="SplitDockPathProperty"/>
+									</location>
+								</property>
+								<property id="mini">
+									<root>fcontrol south</root>
+									<location>
+										<property factory="flap dock">0</property>
+									</location>
+								</property>
+							</properties>
+						</entry>
+					</modes>
+				</current>
+			</frontend>
+		</resource>
+	</resources>
+</config>

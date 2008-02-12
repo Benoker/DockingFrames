@@ -29,10 +29,6 @@ package bibliothek.gui.dock.station.split;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.Map;
 
 import javax.swing.border.Border;
 
@@ -254,21 +250,5 @@ public class Root extends SplitNode{
         visitor.handleRoot( this );
         if( child != null )
             child.visit( visitor );
-    }
-    
-    @Override
-    public void write( Map<Dockable, Integer> children, DataOutputStream out ) throws IOException {
-        out.writeBoolean( child != null );
-        if( child != null ){
-            writeChild( child, children, out );
-        }
-    }
-    
-    @Override
-    public SplitNode read( Map<Integer, Dockable> children, DataInputStream in ) throws IOException {
-        if( in.readBoolean() ){
-            setChild( readChild( children, in ) );
-        }
-        return this;
     }
 }

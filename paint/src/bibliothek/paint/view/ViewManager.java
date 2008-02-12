@@ -39,6 +39,7 @@ import bibliothek.paint.model.Picture;
 import bibliothek.paint.model.PictureRepository;
 import bibliothek.paint.model.PictureRepositoryListener;
 import bibliothek.paint.model.Shape;
+import bibliothek.util.xml.XElement;
 
 /**
  * The <code>ViewManager</code> is responsible to connect all the {@link FDockable}s
@@ -192,9 +193,13 @@ public class ViewManager {
      * A factory which creates {@link PictureDockable}s.
      * @author Benjamin Sigg
      */
-    public class PictureFactory implements FMultipleDockableFactory{
-        public FMultipleDockable read( DataInputStream in ) throws IOException {
-            String name = in.readUTF();
+    private class PictureFactory implements FMultipleDockableFactory<PictureDockable, PictureLayout>{
+        public PictureLayout create() {
+            return new PictureLayout();
+        }
+
+        public PictureDockable read( PictureLayout layout ) {
+            String name = layout.getName();
             Picture picture = pictures.getPicture( name );
             if( picture == null )
                 return null;
@@ -212,12 +217,54 @@ public class ViewManager {
             });
             page.getPage().setColor( color );
             page.setPicture( picture );
-            return page;
+            return page;            
         }
 
-        public void write( FMultipleDockable dockable, DataOutputStream out ) throws IOException {
-            PictureDockable page = (PictureDockable)dockable;
-            out.writeUTF( page.getPicture().getName() );
+        public PictureLayout write( PictureDockable dockable ) {
+            PictureLayout layout = new PictureLayout();
+            layout.setName( dockable.getPicture().getName() );
+            return layout;
+        }
+    }
+    
+    /**
+     * Describes the layout of one {@link PictureDockable}
+     * @author Benjamin Sigg
+     */
+    private static class PictureLayout implements FMultipleDockableLayout{
+        /** the name of the picture */
+        private String name;
+        
+        /**
+         * Sets the name of the picture that is shown.
+         * @param name the name of the picture
+         */
+        public void setName( String name ) {
+            this.name = name;
+        }
+        
+        /**
+         * Gets the name of the picture that is shown.
+         * @return the name
+         */
+        public String getName() {
+            return name;
+        }
+        
+        public void readStream( DataInputStream in ) throws IOException {
+            name = in.readUTF();
+        }
+
+        public void readXML( XElement element ) {
+            name = element.getString();
+        }
+
+        public void writeStream( DataOutputStream out ) throws IOException {
+            out.writeUTF( name );
+        }
+
+        public void writeXML( XElement element ) {
+            element.setString( name );
         }
     }
 }

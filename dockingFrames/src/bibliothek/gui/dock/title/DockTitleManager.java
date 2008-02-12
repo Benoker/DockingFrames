@@ -77,6 +77,23 @@ public class DockTitleManager {
     }
     
     /**
+     * Gets the handle with the key <code>id</code>. If the key is unknown, then
+     * a new handle is created, using <code>factory</code> as default factory.
+     * @param id the key of the handle
+     * @param factory the default factory used when a new handle has to be created
+     * @return the handle
+     */
+    public DockTitleVersion getVersion( String id, DockTitleFactory factory ){
+        DockTitleVersion version = titleVersions.get( id );
+        if( version == null ){
+            version = new DockTitleVersion( controller, id );
+            version.setFactory( factory, Priority.DEFAULT );
+            titleVersions.put( id, version );
+        }
+        return version;
+    }
+    
+    /**
      * Registers a factory with client-priority
      * @param id the key of the factory
      * @param factory the factory

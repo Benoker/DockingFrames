@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -37,10 +37,12 @@ import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.util.PropertyValue;
 
 
 /**
@@ -55,6 +57,15 @@ public class ScreenDockDialog extends JDialog {
     private DockableDisplayer displayer;
     
     private OverpaintablePanel content;
+    
+    /** the restrictions of the boundaries of this dialog*/
+    private PropertyValue<BoundaryRestriction> restriction =
+        new PropertyValue<BoundaryRestriction>( ScreenDockStation.BOUNDARY_RESTRICTION ){
+            @Override
+            protected void valueChanged( BoundaryRestriction oldValue, BoundaryRestriction newValue ) {
+                checkRestrictedBounds();
+            }
+    };
     
     /**
      * Creates a new dialog.
@@ -108,97 +119,47 @@ public class ScreenDockDialog extends JDialog {
 
 
     /**
-     * Sets the bounds of this dialog such that the title is still visible
-     * in the screen.
+     * Sets the bounds of this dialog, uses the {@link #getRestriction() restrictions}
+     * to check the validity of the bounds.
      * @param bounds the new bounds of this dialog
      */
-    public void setBoundsInScreen( Rectangle bounds ) {
-        setBoundsInScreen( bounds.x, bounds.y, bounds.width, bounds.height );
+    public void setRestrictedBounds( Rectangle bounds ) {
+        Rectangle valid = restriction.getValue().check( this, bounds );
+                
+        if( valid != null )
+            setBounds( valid );
+        else
+            setBounds( bounds );
     }
     
     /**
-     * Sets the bounds of this dialog such that the title is still visible
-     * in the screen.
+     * Sets the bounds of this dialog, uses the {@link #getRestriction() restrictions}
+     * to check the validity of the bounds.
      * @param x the new x-coordinate
      * @param y the new y-coordinate
      * @param width the new height
      * @param height the new height
      */
-    public void setBoundsInScreen( int x, int y, int width, int height ) {
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice[] screens = ge.getScreenDevices();
-        
-        double fit = -1.0;
-        GraphicsDevice best = null;
-        
-        for( GraphicsDevice screen : screens ){
-            double check = checkBounds( x, y, width, height, screen );
-            if( check > fit ){
-                fit = check;
-                best = screen;
-            }
+    public void setRestrictedBounds( int x, int y, int width, int height ) {
+        setRestrictedBounds( new Rectangle( x, y, width, height ));
+    }
+
+    /**
+     * Checks the validity of the bounds of this dialog.
+     */
+    public void checkRestrictedBounds(){
+        Rectangle bounds = restriction.getValue().check( this );
+        if( bounds != null ){
+            setBounds( bounds );
         }
-        
-        if( best == null )
-            setBounds( x, y, width, height );
-        else
-            setBoundsInScreen( x, y, width, height, best );
     }
     
     /**
-     * Checks how good this dialog fits into the screen <code>device</code>
-     * @param x the desired x-coordinate
-     * @param y the desired y-coordinate
-     * @param width the desired width
-     * @param height the desired height
-     * @param device the targeted screen
-     * @return a value between 0 and 1, where 0 means "does not fit" and
-     * 1 means "perfect".
+     * Gets the restrictions of the boundaries of this dialog.
+     * @return the restrictions
      */
-    protected double checkBounds( int x, int y, int width, int height, GraphicsDevice device ){
-        GraphicsConfiguration config = getGraphicsConfiguration();
-        if( config == null )
-            return 0.0;
-        
-        Rectangle screen = config.getBounds();
-        Rectangle dialog = new Rectangle( x, y, width, height );
-        
-        Rectangle intersection = screen.intersection( dialog );
-        
-        if( intersection.width <= 0 || intersection.height <= 0 )
-            return 0.0;
-        
-        return (dialog.width * dialog.height) / (intersection.width * intersection.height);
-    }
-    
-    /**
-     * Sets the location and size of this dialog such that it is visible within
-     * the screen <code>device</code>. 
-     * @param x the desired x-coordinate
-     * @param y the desired y-coordinate
-     * @param width the desired width
-     * @param height the desired height
-     * @param device the screen in which to show this dialog
-     */
-    protected void setBoundsInScreen( int x, int y, int width, int height, GraphicsDevice device ){
-        GraphicsConfiguration config = getGraphicsConfiguration();
-        if( config != null ){
-            Rectangle size = config.getBounds();
-            Insets insets = Toolkit.getDefaultToolkit().getScreenInsets( config );
-            if( insets == null )
-                insets = new Insets( 0,0,0,0 );
-            
-            width = Math.min( size.width-insets.left-insets.right, width );
-            height = Math.min( size.height-insets.top-insets.bottom, height );
-            
-            x = Math.max( x, size.x+insets.left );
-            y = Math.max( y, size.y+insets.right );
-            
-            x = Math.min( x, size.width - insets.left - insets.right - width + size.x );
-            y = Math.min( y, size.height - insets.top - insets.bottom - height + size.y );
-        }
-        
-        setBounds( x, y, width, height );
+    public PropertyValue<BoundaryRestriction> getRestriction() {
+        return restriction;
     }
     
     /**
@@ -259,6 +220,14 @@ public class ScreenDockDialog extends JDialog {
     }
     
     /**
+     * Sets the {@link DockController} that is needed to read properties.
+     * @param controller the new controller, can be <code>null</code>
+     */
+    public void setController( DockController controller ){
+        restriction.setProperties( controller );
+    }
+    
+    /**
      * Gets the container on which the displayer is shown.
      * @return the parent of the displayer
      */
@@ -304,6 +273,7 @@ public class ScreenDockDialog extends JDialog {
             if( pressed && e.getButton() == MouseEvent.BUTTON1 ){
                 pressed = false;
                 updateCursor( e );
+                checkRestrictedBounds();
                 invalidate();
                 validate();
             }
@@ -368,7 +338,7 @@ public class ScreenDockDialog extends JDialog {
                     bounds.y += dy;
                 }
                 
-                setBoundsInScreen( bounds );
+                setRestrictedBounds( bounds );
                 invalidate();
                 validate();
             }

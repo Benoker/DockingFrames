@@ -42,7 +42,6 @@ import bibliothek.gui.DockFrontend;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
-import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DockAction;
@@ -51,12 +50,14 @@ import bibliothek.gui.dock.common.intern.*;
 import bibliothek.gui.dock.event.DockAdapter;
 import bibliothek.gui.dock.facile.action.CloseAction;
 import bibliothek.gui.dock.facile.action.StateManager;
+import bibliothek.gui.dock.frontend.Setting;
 import bibliothek.gui.dock.layout.DockSituationIgnore;
 import bibliothek.gui.dock.support.util.ApplicationResource;
 import bibliothek.gui.dock.support.util.ApplicationResourceManager;
 import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.util.xml.XElement;
 
 /**
  * Manages the interaction between {@link FSingleDockable}, {@link FMultipleDockable}
@@ -198,17 +199,29 @@ public class FControl {
 
 		frontend = new DockFrontend( controller, frame ){
 		    @Override
-		    protected void save( DataOutputStream out, boolean entry ) throws IOException {
-		        super.save( out, entry );
-		        stateManager.write( new StateManager.LocationStreamTransformer(), out );
+		    protected Setting createSetting() {
+		        FSetting setting = new FSetting();
+		        setting.setModes(
+		                new StateManager.StateManagerSetting<StateManager.Location>( 
+		                        new StateManager.LocationConverter() ) );
+		        return setting;
 		    }
+		    
 		    @Override
-		    protected void load( DataInputStream in, boolean entry ) throws IOException {
+		    public Setting getSetting( boolean entry ) {
+		        FSetting setting = (FSetting)super.getSetting( entry );
+		        setting.setModes( stateManager.getSetting( new StateManager.LocationConverter() ) );
+		        return setting;
+		    }
+		    
+		    @Override
+		    public void setSetting( Setting setting, boolean entry ) {
 		        if( entry ){
-		            stateManager.normalizeAllWorkingAreaChildren();
-		        }
-		        super.load( in, entry );
-		        stateManager.read( new StateManager.LocationStreamTransformer(), in );
+                    stateManager.normalizeAllWorkingAreaChildren();
+                }
+		        
+		        super.setSetting( setting, entry );
+		        stateManager.setSetting( ((FSetting)setting).getModes() );
 		    }
 		};
 		frontend.setIgnoreForEntry( new DockSituationIgnore(){
@@ -285,6 +298,14 @@ public class FControl {
     		        readWorkingAreas( in );
     		        frontend.read( in );
     		    }
+    		    public void writeXML( XElement element ) {
+    		        writeWorkingAreasXML( element.addElement( "areas" ) );
+    		        frontend.writeXML( element.addElement( "frontend" ) );
+    		    }
+    		    public void readXML( XElement element ) {
+    		        readWorkingAreasXML( element.getElement( "areas" ) );
+    		        frontend.readXML( element.getElement( "frontend" ) );
+    		    }
     		});
 		}
 		catch( IOException ex ){
@@ -345,6 +366,21 @@ public class FControl {
 	}
 	
 	/**
+	 * Writes a map of all {@link FSingleDockable}s and their {@link FWorkingArea}.
+	 * @param element the element to write into
+	 */
+	private void writeWorkingAreasXML( XElement element ){
+	    for( FSingleDockable dockable : singleDockables ){
+	        FWorkingArea area = dockable.getWorkingArea();
+	        if( area != null ){
+	            XElement xarea = element.addElement( "area" );
+	            xarea.addString( "id", area.getUniqueId() );
+	            xarea.addString( "child", dockable.getUniqueId() );
+	        }
+	    }
+	}
+	
+	/**
 	 * Reads a map telling for each {@link FSingleDockable} to which {@link FWorkingArea}
 	 * it belongs.
 	 * @param in the stream to read from
@@ -376,6 +412,38 @@ public class FControl {
 	        }
 	    }
 	}
+	
+	   /**
+     * Reads a map telling for each {@link FSingleDockable} to which {@link FWorkingArea}
+     * it belongs.
+     * @param element the xml element to read from
+     */
+    private void readWorkingAreasXML( XElement element ){
+        Map<String, FSingleDockable> dockables = new HashMap<String, FSingleDockable>();
+        Map<String, FWorkingArea> areas = new HashMap<String, FWorkingArea>();
+        
+        for( FSingleDockable dockable : this.singleDockables ){
+            if( dockable instanceof FWorkingArea ){
+                FWorkingArea area = (FWorkingArea)dockable;
+                dockables.put( area.getUniqueId(), area );
+                areas.put( area.getUniqueId(), area );
+            }
+            else{
+                dockables.put( dockable.getUniqueId(), dockable );
+            }
+        }
+        
+        for( XElement xarea : element.getElements( "area" )){
+            String key = xarea.getString( "child" );
+            String value = xarea.getString( "id" );
+            
+            FDockable dockable = dockables.get( key );
+            if( dockable != null ){
+                FWorkingArea area = areas.get( value );
+                dockable.setWorkingArea( area );
+            }
+        }
+    }
 	
 	/**
 	 * Frees as much resources as possible. This {@link FControl} will no longer
@@ -639,12 +707,30 @@ public class FControl {
 	}
 	
 	/**
+	 * Gets the number of {@link FDockable}s that are registered in this
+	 * {@link FControl}.
+	 * @return the number of dockables
+	 */
+	public int getFDockableCount(){
+	    return dockables.size();
+	}
+	
+	/**
+	 * Gets the index'th dockable that is registered in this control
+	 * @param index the index of the element
+	 * @return the selected dockable
+	 */
+	public FDockable getFDockable( int index ){
+	    return dockables.get( index );
+	}
+	
+	/**
 	 * Adds a factory to this control. The factory will create {@link FMultipleDockable}s
 	 * when a layout is loaded.
 	 * @param id the unique id of the factory
 	 * @param factory the new factory
 	 */
-	public void add( final String id, final FMultipleDockableFactory factory ){
+	public void add( final String id, final FMultipleDockableFactory<?,?> factory ){
 		if( id == null )
 			throw new NullPointerException( "id must not be null" );
 		
@@ -660,63 +746,7 @@ public class FControl {
 		
 		factories.put( id, properties );
 		
-		frontend.registerFactory( new DockFactory<FacileDockable>(){
-			public String getID(){
-				return id;
-			}
-
-			public FacileDockable read( Map<Integer, Dockable> children, boolean ignoreChildren, DataInputStream in ) throws IOException{
-			    // id
-				String id = in.readUTF();
-				
-				// content
-			    FMultipleDockable dockable = factory.read( in );
-			    if( dockable == null )
-			        return null;
-			    
-			    add( dockable, id );
-			    
-			    // working area
-			    if( in.readBoolean() ){
-			        String areaId = in.readUTF();
-			        for( FDockable check : dockables ){
-			            if( check instanceof FWorkingArea ){
-			                FWorkingArea checkArea = (FWorkingArea)check;
-			                if( checkArea.getUniqueId().equals( areaId )){
-			                    // found
-			                    dockable.setWorkingArea( checkArea );
-			                    break;
-			                }
-			            }
-			        }
-			    }
-			    
-			    return dockable.intern();
-			}
-
-			public void read( Map<Integer, Dockable> children, boolean ignoreChildren, FacileDockable preloaded, DataInputStream in ) throws IOException{
-				// ignore
-			}
-
-			public void write( FacileDockable element, Map<Dockable, Integer> children, DataOutputStream out ) throws IOException{
-			    FMultipleDockable fdockable = (FMultipleDockable)element.getDockable();
-			    
-			    // unique id
-			    out.writeUTF( accesses.get( element.getDockable() ).getUniqueId() );
-
-                // content
-                factory.write( fdockable, out );
-			    
-			    // working area if present
-				if( fdockable.getWorkingArea() == null ){
-				    out.writeBoolean( false );
-				}
-				else{
-				    out.writeBoolean( true );
-				    out.writeUTF( fdockable.getWorkingArea().getUniqueId() );
-				}
-			}
-		});
+		frontend.registerFactory( new FacileDockableFactory( id, factory, access ) );
 	}
 	
 	/**
@@ -850,7 +880,7 @@ public class FControl {
 	 */
 	private static class FactoryProperties{
 		/** the associated factory */
-		public FMultipleDockableFactory factory;
+		public FMultipleDockableFactory<?,?> factory;
 		/** the number of {@link FMultipleDockable} that belong to {@link #factory} */
 		public int count = 0;
 	}
@@ -867,6 +897,10 @@ public class FControl {
 	    public FControl getOwner(){
 			return FControl.this;
 		}
+	    
+	    public <F extends FMultipleDockable> F add( F dockable, String uniqueId ) {
+	        return FControl.this.add( dockable, uniqueId );
+	    }
 	    
 	    public void link( FDockable dockable, FDockableAccess access ) {
 	        if( access == null )
@@ -908,7 +942,7 @@ public class FControl {
 			return frontend.isShown( dockable.intern() );
 		}
 		
-		public String getFactoryId( FMultipleDockableFactory factory ){
+		public String getFactoryId( FMultipleDockableFactory<?,?> factory ){
 			for( Map.Entry<String, FactoryProperties> entry : factories.entrySet() ){
 				if( entry.getValue().factory == factory )
 					return entry.getKey();

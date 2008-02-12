@@ -143,7 +143,7 @@ public abstract class PropertyValue<A> {
 		if( properties != null )
 			return properties.get( key );
 		
-		return null;
+		return key.getDefault();
 	}
 	
 	/**

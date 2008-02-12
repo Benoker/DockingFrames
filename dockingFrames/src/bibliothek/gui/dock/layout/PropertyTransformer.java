@@ -39,6 +39,7 @@ import bibliothek.gui.dock.station.split.SplitDockProperty;
 import bibliothek.gui.dock.station.split.SplitDockPropertyFactory;
 import bibliothek.gui.dock.station.stack.StackDockProperty;
 import bibliothek.gui.dock.station.stack.StackDockPropertyFactory;
+import bibliothek.util.xml.XElement;
 
 /**
  * A PropertTransformer can read and write instances of {@link DockableProperty},
@@ -156,6 +157,52 @@ public class PropertyTransformer {
             else{
                 property.setSuccessor( temp );
                 property = temp;
+            }
+        }
+        
+        return base;
+    }
+    
+    /**
+     * Writes <code>property</code> and all its successors into <code>element</code>.
+     * @param property the property to write
+     * @param element an xml element to which this method will add some children
+     */
+    public void writeXML( DockableProperty property, XElement element ){
+        while( property != null ){
+            XElement xnode = element.addElement( "property" );
+            xnode.addString( "factory", property.getFactoryID() );
+            property.store( xnode );
+            property = property.getSuccessor();
+        }
+    }
+    
+    /**
+     * Reads a {@link DockableProperty} and its successors from an xml element.
+     * @param element the element to read from
+     * @return the property or <code>null</code> if <code>element</code> is empty
+     * @throws IllegalArgumentException if a {@link DockablePropertyFactory} 
+     * is missing.
+     */
+    public DockableProperty readXML( XElement element ){
+        DockableProperty base = null;
+        DockableProperty property = null;
+        
+        for( XElement xnode : element.getElements( "property" )){
+            DockablePropertyFactory factory = factories.get( xnode.getString( "factory" ) );
+            if( factory == null )
+                throw new IllegalArgumentException( "Missing factory: " + xnode.getString( "factory" ));
+            
+            DockableProperty next = factory.createProperty();
+            next.load( xnode );
+            
+            if( property == null ){
+                property = next;
+                base = next;
+            }
+            else{
+                property.setSuccessor( next );
+                property = next;
             }
         }
         

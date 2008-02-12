@@ -57,7 +57,9 @@ public class SecureDockController extends DockController {
      * a call to the SecurityManager.
      * @return <code>true</code> if a {@link SecureDockController} should be
      * used.
+     * @deprecated uses a proprietary implementation, currently no replacement available
      */
+    @Deprecated
     public static boolean isRequested(){
         try{
             SecurityManager security = System.getSecurityManager();

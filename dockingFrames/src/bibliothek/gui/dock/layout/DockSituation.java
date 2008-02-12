@@ -27,17 +27,14 @@
 package bibliothek.gui.dock.layout;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DefaultDockable;
-import bibliothek.gui.dock.DockElement;
-import bibliothek.gui.dock.DockFactory;
-import bibliothek.gui.dock.FlapDockStation;
-import bibliothek.gui.dock.SplitDockStation;
-import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.*;
 import bibliothek.gui.dock.dockable.DefaultDockableFactory;
 import bibliothek.gui.dock.security.SecureFlapDockStationFactory;
 import bibliothek.gui.dock.security.SecureSplitDockStationFactory;
@@ -45,6 +42,8 @@ import bibliothek.gui.dock.security.SecureStackDockStationFactory;
 import bibliothek.gui.dock.station.flap.FlapDockStationFactory;
 import bibliothek.gui.dock.station.split.SplitDockStationFactory;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
+import bibliothek.util.xml.XElement;
+import bibliothek.util.xml.XException;
 
 /**
  * A DockSituation is a converter: the relationship of 
@@ -56,7 +55,7 @@ import bibliothek.gui.dock.station.stack.StackDockStationFactory;
  */
 public class DockSituation {
     /** the factories used to create new {@link DockElement elements}*/
-    private Map<String, DockFactory<?>> factories = new HashMap<String, DockFactory<?>>();
+    private Map<String, DockFactory<?,?>> factories = new HashMap<String, DockFactory<?,?>>();
     
     /** a filter for elements which should be ignored */
     private DockSituationIgnore ignore;
@@ -66,8 +65,8 @@ public class DockSituation {
      * used to create new {@link DockElement DockElements}
      * @param factories the factories
      */
-    public DockSituation( DockFactory<?>...factories ){
-    	for( DockFactory<?> factory : factories )
+    public DockSituation( DockFactory<?,?>...factories ){
+    	for( DockFactory<?,?> factory : factories )
             this.factories.put( getID( factory ), factory );
     }
     
@@ -108,9 +107,196 @@ public class DockSituation {
      * Adds a factory
      * @param factory the additional factory
      */
-    public void add( DockFactory<?> factory ){
+    public void add( DockFactory<?,?> factory ){
         factories.put( getID( factory ), factory );
     }
+    
+    /**
+     * Converts the layout of <code>element</code> and all its children into a 
+     * {@link DockLayoutComposition}.
+     * @param element the element to convert
+     * @return the composition or <code>null</code> if the element is ignored
+     * @throws IllegalArgumentException if one element has an unknown id of
+     * a {@link DockFactory}.
+     * @throws ClassCastException if an element does not specify the correct
+     * {@link DockFactory}.
+     */
+    @SuppressWarnings("unchecked")
+    public DockLayoutComposition convert( DockElement element ){
+        if( ignoreElement( element ))
+            return null;
+        
+        String id = getID( element );
+        DockFactory<DockElement,DockLayout> factory = (DockFactory<DockElement, DockLayout>)getFactory( id );
+        if( factory == null )
+            throw new IllegalArgumentException( "Unknown factory-id: " + element.getFactoryID() );
+        
+        DockStation station = element.asDockStation();
+        Map<Dockable, Integer> ids = new HashMap<Dockable, Integer>();
+        List<DockLayoutComposition> children = new ArrayList<DockLayoutComposition>();
+        
+        boolean ignore = false;
+        
+        if( station != null ){
+            ignore = ignoreChildren( station );
+            if( !ignore ){
+                int index = 0;
+                for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
+                    Dockable dockable = station.getDockable( i );
+                    DockLayoutComposition composition = convert( dockable );
+                    if( composition != null ){
+                        children.add( composition );
+                        ids.put( dockable, index++ );
+                    }
+                }
+            }
+        }
+        
+        DockLayout layout = factory.getLayout( element, ids );
+        layout.setFactoryID( id );
+        return new DockLayoutComposition( layout, children, ignore );
+    }
+    
+    /**
+     * Reads the contents of <code>composition</code> and creates a {@link DockElement}
+     * that matches the composition.
+     * @param composition the composition to analyze
+     * @return the new element, can be <code>null</code> if the factory for
+     * <code>composition</code> was not found
+     */
+    @SuppressWarnings("unchecked")
+    public DockElement convert( DockLayoutComposition composition ){
+        DockLayout layout = composition.getLayout();
+        if( layout == null )
+            return null;
+        
+        DockFactory<DockElement, DockLayout> factory = (DockFactory<DockElement, DockLayout>)getFactory( layout.getFactoryID() );
+        if( factory == null )
+            return null;
+        
+        if( composition.isIgnoreChildren() ){
+            for( DockLayoutComposition childComposition : composition.getChildren() ){
+                convert( childComposition );
+            }
+            
+            return factory.layout( layout );
+        }
+        else{
+            Map<Integer, Dockable> children = new HashMap<Integer, Dockable>();
+            int index = 0;
+            
+            for( DockLayoutComposition childComposition : composition.getChildren() ){
+                DockElement child = convert( childComposition );
+                if( child != null ){
+                    Dockable dockable = child.asDockable();
+                    if( dockable != null ){
+                        children.put( index, dockable );
+                    }
+                }
+                
+                index++;
+            }
+            
+            return factory.layout( layout, children );
+        }
+        
+    }
+    
+    /**
+     * Writes the contents of <code>composition</code> and all its children
+     * to <code>out</code>.
+     * @param composition the composition to write, should be created by
+     * <code>this</code> {@link DockSituation} or a <code>DockSituation</code> with
+     * similar properties.
+     * @param out the stream to write into
+     * @throws IOException if an I/O-error occurs
+     */
+    @SuppressWarnings("unchecked")
+    public void writeComposition( DockLayoutComposition composition, DataOutputStream out ) throws IOException{
+        DockLayout layout = composition.getLayout();
+        DockFactory<DockElement, DockLayout> factory = (DockFactory<DockElement, DockLayout>)getFactory( layout.getFactoryID() );
+        if( factory == null )
+            throw new IOException( "Missing factory: " + layout.getFactoryID() );
+        
+        // factory
+        out.writeUTF( getID( factory ) );
+        
+        // contents
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        DataOutputStream dout = new DataOutputStream( bout );
+        factory.write( layout, dout );
+        dout.close();
+        
+        out.writeInt( bout.size() );
+        bout.writeTo( out );
+
+        // ignore
+        out.writeBoolean( composition.isIgnoreChildren() );
+        
+        // children
+        List<DockLayoutComposition> children = composition.getChildren();
+        out.writeInt( children.size() );
+        for( DockLayoutComposition child : children ){
+            writeComposition( child, out );
+        }
+    }
+    
+    /**
+     * Reads one {@link DockLayoutComposition} and all its children.
+     * @param in the stream to read from
+     * @return the new composition or <code>null</code> if the factory was missing
+     * @throws IOException if an I/O-error occurs
+     */
+    @SuppressWarnings("unchecked")
+    public DockLayoutComposition readComposition( DataInputStream in ) throws IOException{
+        // factory
+        String factoryId = in.readUTF();
+        DockFactory<DockElement, DockLayout> factory = (DockFactory<DockElement, DockLayout>)getFactory( factoryId );
+        
+        // contents
+        DockLayout layout;
+        int count = in.readInt();
+        
+        if( factory == null ){
+            layout = null;
+            while( count > 0 ){
+                int skipped = (int)in.skip( count );
+                if( skipped <= 0 )
+                    throw new EOFException();
+                count -= skipped;
+            }
+        }
+        else{
+            byte[] buffer = new byte[ count ];
+            int read = 0;
+            while( read < count ){
+                int input = in.read( buffer, read, count-read );
+                if( input < 0 )
+                    throw new EOFException();
+                read += input;
+            }
+            
+            ByteArrayInputStream bin = new ByteArrayInputStream( buffer );
+            DataInputStream din = new DataInputStream( bin );
+            layout = factory.read( din );
+            layout.setFactoryID( factoryId );
+            din.close();
+        }
+        
+        // ignore
+        boolean ignore = in.readBoolean();
+        
+        // children
+        List<DockLayoutComposition> children = new ArrayList<DockLayoutComposition>();
+        count = in.readInt();
+        for( int i = 0; i < count; i++ ){
+            children.add( readComposition( in ) );
+        }
+        
+        // result
+        return new DockLayoutComposition( layout, children, ignore );
+    }
+    
     
     /**
      * Writes all locations and relationships of the {@link DockStation DockStations}
@@ -138,97 +324,10 @@ public class DockSituation {
     public void write( Map<String, DockStation> stations, DataOutputStream out ) throws IOException{
         out.writeInt( stations.size() );
         for( Map.Entry<String, DockStation> entry : stations.entrySet() ){
-            out.writeUTF( entry.getKey() );
-            writeElement( entry.getValue(), out );
-        }
-    }
-    
-    /**
-     * Writes the children of <code>station</code> and returns a map which
-     * contains all children and a unique id for each child.
-     * @param station the station whose children are written
-     * @param ignoreChildren <code>true</code> if no information about the
-     * children should be saved.
-     * @param out the stream to write into
-     * @return a map containing all children of <code>station</code>
-     * @throws IOException if the stream throws an exception
-     */
-    private Map<Dockable, Integer> writeStation( DockStation station, boolean ignoreChildren, DataOutputStream out ) throws IOException{
-        Map<Dockable, Integer> result = new HashMap<Dockable, Integer>();
-        int count = station.getDockableCount();
-        
-        if( ignoreChildren ){
-            out.writeInt( 0 );
-            for( int i = 0; i < count; i++ ){
-                Dockable dockable = station.getDockable( i );
-                result.put( dockable, -1 );
-            }
-        }
-        else{
-            out.writeInt( count );
-            
-            for( int i = 0; i<count; i++ ){
-                Dockable dockable = station.getDockable( i );
-                result.put( dockable, i );
-                out.writeInt( i );
-                writeElement( dockable, out );
-            }
-        }
-        
-        return result;
-    }
-    
-    /**
-     * Writes the contents of <code>element</code> into <code>out</code>.
-     * @param element the element to store
-     * @param out the stream to write into
-     * @throws IOException if the stream throws an exception or the 
-     * <code>element</code> can't be converted
-     */
-    private void writeElement( DockElement element, DataOutputStream out ) throws IOException{
-        if( ignoreElement( element ))
-            out.writeBoolean( false );
-        else{
-            out.writeBoolean( true );
-            
-            DockStation station = element.asDockStation();
-            Map<Dockable, Integer> children = null;
-            out.writeBoolean( station != null );
-            boolean ignore = false;
-            if( station != null ){
-                ignore = ignoreChildren( station );
-                out.writeBoolean( ignore );
-                children = writeStation( station, ignore, out );
-            }
-            
-            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            DataOutputStream datas = new DataOutputStream( bytes );
-            
-            try{
-                @SuppressWarnings( "unchecked" )
-                DockFactory<DockElement> factory = (DockFactory<DockElement>)getFactory( getID( element ) );
-                
-                if( factory == null )
-                    throw new IOException( "Unknown factory-id: " + element.getFactoryID() );
-                
-                factory.write( element, children, datas );
-                
-                datas.close();
-                
-                byte[] written = bytes.toByteArray();
-                out.writeUTF( getID( factory ));
-                
-                Dockable front = station == null ? null : station.getFrontDockable();
-                out.writeBoolean( front != null );
-                if( front != null )
-                    out.writeInt( children.get( front ));
-                
-                out.writeInt( written.length );
-                out.write( written );
-            }
-            catch( ClassCastException ex ){
-                throw new IOException( "Factory " + 
-                        getFactory( getID( element )) + " does not handle " + element );
+            DockLayoutComposition composition = convert( entry.getValue() );
+            if( composition != null ){
+                out.writeUTF( entry.getKey() );
+                writeComposition( composition, out );
             }
         }
     }
@@ -259,85 +358,110 @@ public class DockSituation {
         Map<String, DockStation> result = new HashMap<String, DockStation>();
         for( int i = 0; i < count; i++ ){
             String key = in.readUTF();
-            DockElement element = readElement( in );
+            DockLayoutComposition composition = readComposition( in );
+            DockElement element = composition == null ? null : convert( composition );
             DockStation station = element == null ? null : element.asDockStation();
-            
-            if( station != null )
+            if( station != null ){
                 result.put( key, station );
+            }
         }
         return result;
     }
     
     /**
-     * Reads the contents of one {@link DockElement}. Note if there
-     * is a {@link DockFactory} missing, <code>null</code> will be returned.  
-     * @param in the stream to read
-     * @return the read element or <code>null</code>
-     * @throws IOException if the element can't be read because of a 
-     * malfunction of <code>in</code>
+     * Writes the contents of <code>composition</code> into <code>element</code> without
+     * changing the attributes of <code>element</code>.
+     * @param composition the composition to write
+     * @param element the element to write into
+     * @throws IllegalArgumentException if a factory is missing
      */
-    private DockElement readElement( DataInputStream in ) throws IOException{
-        if( !in.readBoolean() )
-            return null;
-        
-        boolean isStation = in.readBoolean();
-        boolean ignoreChildren = false;
-        Map<Integer, Dockable> children = null;
-        if( isStation ){
-            ignoreChildren = in.readBoolean();
-            children = readDockables( in );
-        }
-        
-        String id = in.readUTF();
-        Dockable front = null;
-        if( in.readBoolean() )
-            front = children.get( in.readInt() );
-            
-        int length = in.readInt();
-        byte[] written = new byte[ length ];
-        
-        int index = 0;
-        while( index < length ){
-            int read = in.read( written, index, length-index );
-            if( read == -1 )
-                throw new EOFException();
-            index += read;
-        }
-        
-        DockFactory<?> factory = getFactory( id );
+    @SuppressWarnings("unchecked")
+    public void writeCompositionXML( DockLayoutComposition composition, XElement element ){
+        DockLayout layout = composition.getLayout();
+        DockFactory<DockElement, DockLayout> factory = (DockFactory<DockElement, DockLayout>)getFactory( layout.getFactoryID() );
         if( factory == null )
-            return null;
+            throw new IllegalArgumentException( "Missing factory: " + layout.getFactoryID() );
         
-        DataInputStream datas = new DataInputStream( new ByteArrayInputStream( written ));
-        DockElement element = factory.read( children, ignoreChildren, datas );
+        XElement xfactory = element.addElement( "layout" );
+        xfactory.addString( "factory", getID( factory ) );
+        factory.write( layout, xfactory );
         
-        DockStation station = element == null ? null : element.asDockStation();
-        if( station != null )
-            station.setFrontDockable( front );
+        XElement xchildren = element.addElement( "children" );
+        xchildren.addBoolean( "ignore", composition.isIgnoreChildren() );
         
-        datas.close();
-        return element;
+        for( DockLayoutComposition child : composition.getChildren() ){
+            XElement xchild = xchildren.addElement( "child" );
+            writeCompositionXML( child, xchild );
+        }
     }
     
     /**
-     * Reads the next list of {@link Dockable Dockables}.
-     * @param in the stream to read
-     * @return a map containing some instances of {@link Dockable}
-     * @throws IOException if the stream throws an exception
+     * Reads a {@link DockLayoutComposition} from an xml element.
+     * @param element the element to read
+     * @return the composition that was read
+     * @throws XException if something is missing or malformed in <code>element</code>
      */
-    private Map<Integer, Dockable> readDockables( DataInputStream in ) throws IOException{
-        int count = in.readInt();
-        
-        Map<Integer, Dockable> result = new HashMap<Integer, Dockable>();
-        
-        for( int i = 0; i < count; i++ ){
-            int id = in.readInt();
-            DockElement element = readElement( in );
-            Dockable dockable = element == null ? null : element.asDockable();
-            if( dockable != null )
-                result.put( id, dockable );
+    @SuppressWarnings("unchecked")
+    public DockLayoutComposition readCompositionXML( XElement element ){
+        XElement xfactory = element.getElement( "layout" );
+        DockLayout layout = null;
+        if( xfactory != null ){
+            String factoryId = xfactory.getString( "factory" );
+            DockFactory<DockElement, DockLayout> factory = (DockFactory<DockElement, DockLayout>)getFactory( factoryId );
+            if( factory != null ){
+                layout = factory.read( xfactory );
+                layout.setFactoryID( factoryId );
+            }
         }
         
+        XElement xchildren = element.getElement( "children" );
+        boolean ignore = true;
+        List<DockLayoutComposition> children = new ArrayList<DockLayoutComposition>();
+        
+        if( xchildren != null ){
+            ignore = xchildren.getBoolean( "ignore" );
+            for( XElement xchild : xchildren.getElements( "child" )){
+                children.add( readCompositionXML( xchild ));
+            }
+        }
+        
+        return new DockLayoutComposition( layout, children, ignore );
+    }
+    
+    /**
+     * Writes all locations and relationships of the {@link DockStation}s
+     * <code>stations</code> and their children as xml.
+     * @param stations The stations to store, only the roots are needed.
+     * @param element the element to write into, attributes of <code>element</code> will
+     * not be changed
+     * @throws IOException if an I/O-error occurs
+     */
+    public void writeXML( Map<String, DockStation> stations, XElement element ) throws IOException{
+        for( Map.Entry<String, DockStation> entry : stations.entrySet() ){
+            DockLayoutComposition composition = convert( entry.getValue() );
+            if( composition != null ){
+                XElement xchild = element.addElement( "element" );
+                xchild.addString( "name", entry.getKey() );
+                writeCompositionXML( composition, xchild );
+            }
+        }
+    }
+    
+    /**
+     * Reads a set of {@link DockStation}s that were stored earlier.
+     * @param root the xml element from which to read
+     * @return the set of station
+     */
+    public Map<String, DockStation> readXML( XElement root ){
+        Map<String, DockStation> result = new HashMap<String, DockStation>();
+        for( XElement xelement : root.getElements( "element" )){
+            String name = xelement.getString( "name" );
+            DockLayoutComposition composition = readCompositionXML( xelement );
+            DockElement element = composition == null ? null : convert( composition );
+            DockStation station = element == null ? null : element.asDockStation();
+            if( station != null )
+                result.put( name, station );
+        }
         return result;
     }
     
@@ -388,7 +512,7 @@ public class DockSituation {
      * @param factory the factory whose id is needed
      * @return the id of the factory
      */
-    protected String getID( DockFactory<?> factory ){
+    protected String getID( DockFactory<?,?> factory ){
         return factory.getID();
     }
     
@@ -400,7 +524,7 @@ public class DockSituation {
      * @param id the name of the factory
      * @return the factory or <code>null</code> if no factory has this id
      */
-    protected DockFactory<? extends DockElement> getFactory( String id ){
+    protected DockFactory<? extends DockElement,?> getFactory( String id ){
     	return factories.get( id );
     }
 }

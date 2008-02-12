@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -29,22 +29,22 @@ package bibliothek.gui.dock.station.stack;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.util.xml.XElement;
 
 /**
  * A {@link DockFactory} that can read and write instances of {@link StackDockStation}.
- * A call to {@link #read(Map, boolean, DataInputStream) read} is forwarded
- * to the method {@link StackDockStation}.{@link StackDockStation#read(Map, boolean, DataInputStream) read},
- * and a call to {@link #write(StackDockStation, Map, DataOutputStream) write}
- * uses the method {@link StackDockStation}.{@link StackDockStation#write(Map, DataOutputStream) write}.<br>
- * New instances are created by {@link #createStation()}.
+ * This factory will create new instances of {@link StackDockStation} through
+ * the method {@link #createStation()}.
  * @author Benjamin Sigg
  */
-public class StackDockStationFactory implements DockFactory<StackDockStation> {
+public class StackDockStationFactory implements DockFactory<StackDockStation, StackDockStationLayout> {
     /** The ID which is returned by {@link #getID()}*/
     public static final String ID = "StackDockStationFactory";
     
@@ -52,29 +52,89 @@ public class StackDockStationFactory implements DockFactory<StackDockStation> {
         return ID;
     }
 
-    public void write( StackDockStation element,
-            Map<Dockable, Integer> children,
-            DataOutputStream out )
-            throws IOException {
+    public StackDockStationLayout getLayout( StackDockStation station,
+            Map<Dockable, Integer> children ) {
         
-        element.write( children, out );
+        List<Integer> list = new ArrayList<Integer>();
+        for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
+            Dockable dockable = station.getDockable( i );
+            Integer id = children.get( dockable );
+            if( id != null ){
+                list.add( id );
+            }
+        }
+        
+        int[] ids = new int[ list.size() ];
+        for( int i = 0, n = list.size(); i<n; i++ )
+            ids[i] = list.get( i ).intValue();
+        
+        return new StackDockStationLayout( ids );
     }
-
-    public StackDockStation read( Map<Integer, Dockable> children,
-            boolean ignore,
-            DataInputStream in ) throws IOException {
+    
+    public void setLayout( StackDockStation station,
+            StackDockStationLayout layout, Map<Integer, Dockable> children ) {
+        
+        for( int i = station.getDockableCount()-1; i >= 0; i-- )
+            station.remove( i );
+        
+        for( int id : layout.getChildren() ){
+            Dockable dockable = children.get( id );
+            if( dockable != null ){
+                station.drop( dockable );
+            }
+        }
+    }
+    
+    public void setLayout( StackDockStation element, StackDockStationLayout layout ) {
+        // nothing to do
+    }
+    
+    public StackDockStation layout( StackDockStationLayout layout,
+            Map<Integer, Dockable> children ) {
         
         StackDockStation station = createStation();
-        station.read( children,ignore, in );
+        setLayout( station, layout, children );
+        return station;
+    }
+    
+    public StackDockStation layout( StackDockStationLayout layout ) {
+        StackDockStation station = createStation();
+        setLayout( station, layout );
         return station;
     }
 
-    public void read(Map<Integer, Dockable> children, boolean ignore, StackDockStation station, DataInputStream in) throws IOException {
-    	station.read( children, ignore, in );
+    public void write( StackDockStationLayout layout, DataOutputStream out )
+            throws IOException {
+        
+        out.writeInt( layout.getChildren().length );
+        for( int c : layout.getChildren() )
+            out.writeInt( c );
+    }
+    
+    public StackDockStationLayout read( DataInputStream in ) throws IOException {
+        int count = in.readInt();
+        int[] ids = new int[ count ];
+        for( int i = 0; i < count; i++ )
+            ids[i] = in.readInt();
+        return new StackDockStationLayout( ids );
+    }
+    
+    public void write( StackDockStationLayout layout, XElement element ) {
+        for( int i : layout.getChildren() ){
+            element.addElement( "child" ).addInt( "id", i );
+        }
+    }
+    
+    public StackDockStationLayout read( XElement element ) {
+        XElement[] children = element.getElements( "child" );
+        int[] ids = new int[ children.length ];
+        for( int i = 0, n = children.length; i<n; i++ )
+            ids[i] = children[i].getInt( "id" );
+        return new StackDockStationLayout( ids );
     }
     
     /**
-     * Called by {@link #read(Map, boolean, DataInputStream) read} when
+     * Called when a new {@link StackDockStation} is required.
      * @return a new station
      */
     protected StackDockStation createStation(){

@@ -29,6 +29,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import bibliothek.util.xml.XElement;
+
 /**
  * A resource that is created by the application and is stored persistent
  * by the {@link ApplicationResourceManager}.
@@ -48,4 +50,17 @@ public interface ApplicationResource {
      * @throws IOException if the operation can't be finished
      */
     public void read( DataInputStream in ) throws IOException;
+    
+    /**
+     * Writes the contents of this resource in xml format.
+     * @param element the element to write into, the attributes of
+     * <code>element</code> should not be changed.
+     */
+    public void writeXML( XElement element );
+    
+    /**
+     * Reads the contents of this resource from a xml element.
+     * @param element the element to read from.
+     */
+    public void readXML( XElement element );
 }

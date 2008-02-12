@@ -32,6 +32,7 @@ import java.io.IOException;
 
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.layout.AbstractDockableProperty;
+import bibliothek.util.xml.XElement;
 
 /**
  * This property stores the location and the size of each child of a 
@@ -87,12 +88,26 @@ public class SplitDockProperty extends AbstractDockableProperty {
         out.writeDouble( width );
         out.writeDouble( height );
     }
+    
+    public void store( XElement element ) {
+        element.addElement( "x" ).setDouble( x );
+        element.addElement( "y" ).setDouble( y );
+        element.addElement( "width" ).setDouble( width );
+        element.addElement( "height" ).setDouble( height );
+    }
 
     public void load( DataInputStream in ) throws IOException {
         x = in.readDouble();
         y = in.readDouble();
         width = in.readDouble();
         height = in.readDouble();
+    }
+    
+    public void load( XElement element ) {
+        x = element.getElement( "x" ).getDouble();
+        y = element.getElement( "y" ).getDouble();
+        width = element.getElement( "width" ).getDouble();
+        height = element.getElement( "height" ).getDouble();
     }
 
     /**

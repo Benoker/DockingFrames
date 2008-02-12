@@ -21,6 +21,7 @@ import bibliothek.notes.util.ResourceSet;
 import bibliothek.notes.view.menu.HelpMenu;
 import bibliothek.notes.view.menu.PanelList;
 import bibliothek.notes.view.menu.ThemeMenu;
+import bibliothek.util.xml.XElement;
 
 /**
  * The most important frame of this application. This frame shows the
@@ -104,6 +105,22 @@ public class MainFrame extends JFrame{
 		
 		setJMenuBar( menubar );
 	}
+
+	/**
+	 * Writes location, extended-state and theme of this frame.
+	 * @param out the stream to write into
+     * @throws IOException if the method can't write into <code>out</code>
+     */
+    public void write( DataOutputStream out ) throws IOException{
+        out.writeInt( getExtendedState() );
+        setExtendedState( NORMAL );
+        out.writeInt( getX() );
+        out.writeInt( getY() );
+        out.writeInt( getWidth() );
+        out.writeInt( getHeight() );
+        
+        themes.write( out );
+    }
 	
 	/**
 	 * Reads location, extended-state and theme of this frame.
@@ -114,25 +131,38 @@ public class MainFrame extends JFrame{
 		int state = in.readInt();
 		setBounds( in.readInt(), in.readInt(), in.readInt(), in.readInt() );
 		setExtendedState( state );
-		
+
 		themes.read( in );
 	}
-	
+
 	/**
 	 * Writes location, extended-state and theme of this frame.
-	 * @param out the stream to write into
-	 * @throws IOException if the method can't write into <code>out</code>
+	 * @param element the xml-element to write into
 	 */
-	public void write( DataOutputStream out ) throws IOException{
-		out.writeInt( getExtendedState() );
-		setExtendedState( NORMAL );
-		out.writeInt( getX() );
-		out.writeInt( getY() );
-		out.writeInt( getWidth() );
-		out.writeInt( getHeight() );
-		
-		themes.write( out );
-	}
+	public void writeXML( XElement element ){
+	    element.addElement( "extended" ).setInt( getExtendedState() );
+        setExtendedState( NORMAL );
+        XElement xbounds = element.addElement( "bounds" );
+        xbounds.addInt( "x", getX() );
+        xbounds.addInt( "y", getY() );
+        xbounds.addInt( "width", getWidth() );
+        xbounds.addInt( "height", getHeight() );
+                
+        themes.writeXML( element.addElement( "theme" ) );
+    }
+	
+    /**
+     * Reads location, extended-state and theme of this frame.
+     * @param element the xml-element to read from
+     */
+    public void readXML( XElement element ){
+        int state = element.getElement( "extended" ).getInt();
+        XElement xbounds = element.getElement( "bounds" );
+        setBounds( xbounds.getInt( "x" ), xbounds.getInt( "y" ), xbounds.getInt( "width" ), xbounds.getInt( "height" ) );
+        setExtendedState( state );
+
+        themes.readXML( element.getElement( "theme" ) );
+    }
 	
 	/**
 	 * Gets the about-dialog of this application.

@@ -36,6 +36,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.layout.AbstractDockableProperty;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.util.xml.XElement;
 
 /**
  * A {@link DockableProperty} used by the {@link SplitDockStation} to describe
@@ -151,6 +152,35 @@ public class SplitDockPathProperty extends AbstractDockableProperty implements I
         return SplitDockPathPropertyFactory.ID;
     }
 
+    public void store( DataOutputStream out ) throws IOException {
+        out.writeInt( nodes.size() );
+        for( Node node : nodes ){
+            switch( node.getLocation() ){
+                case LEFT:
+                    out.writeByte( 0 );
+                    break;
+                case RIGHT:
+                    out.writeByte( 1 );
+                    break;
+                case TOP:
+                    out.writeByte( 2 );
+                    break;
+                case BOTTOM:
+                    out.writeByte( 3 );
+                    break;
+            }
+            out.writeDouble( node.getSize() );
+        }
+    }
+    
+    public void store( XElement element ) {
+        for( Node node : nodes ){
+            XElement xnode = element.addElement( "node" );
+            xnode.addString( "location", node.getLocation().name() );
+            xnode.addDouble( "size", node.getSize() );
+        }
+    }
+    
     public void load( DataInputStream in ) throws IOException {
         nodes.clear();
         int count = in.readInt();
@@ -175,25 +205,11 @@ public class SplitDockPathProperty extends AbstractDockableProperty implements I
             nodes.add( new Node( location, size ) );
         }
     }
-
-    public void store( DataOutputStream out ) throws IOException {
-        out.writeInt( nodes.size() );
-        for( Node node : nodes ){
-            switch( node.getLocation() ){
-                case LEFT:
-                    out.writeByte( 0 );
-                    break;
-                case RIGHT:
-                    out.writeByte( 1 );
-                    break;
-                case TOP:
-                    out.writeByte( 2 );
-                    break;
-                case BOTTOM:
-                    out.writeByte( 3 );
-                    break;
-            }
-            out.writeDouble( node.getSize() );
+    
+    public void load( XElement element ) {
+        nodes.clear();
+        for( XElement xnode : element.getElements( "node" )){
+            nodes.add( new Node( Location.valueOf( xnode.getString( "location" )), xnode.getDouble( "size" ) ) );
         }
     }
     

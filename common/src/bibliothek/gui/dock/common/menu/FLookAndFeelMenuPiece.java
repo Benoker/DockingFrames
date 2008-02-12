@@ -38,6 +38,7 @@ import bibliothek.gui.dock.facile.lookandfeel.DockableCollector;
 import bibliothek.gui.dock.facile.menu.LookAndFeelMenuPiece;
 import bibliothek.gui.dock.support.lookandfeel.ComponentCollector;
 import bibliothek.gui.dock.support.util.ApplicationResource;
+import bibliothek.util.xml.XElement;
 
 /**
  * A menupiece that shows an entry for each available {@link LookAndFeel}. The
@@ -64,6 +65,12 @@ public class FLookAndFeelMenuPiece extends LookAndFeelMenuPiece implements Destr
                 }
                 public void read( DataInputStream in ) throws IOException {
                     getList().read( in );
+                }
+                public void writeXML( XElement element ) {
+                    getList().writeXML( element );
+                }
+                public void readXML( XElement element ) {
+                    getList().readXML( element );
                 }
             });
         }

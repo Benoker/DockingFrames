@@ -33,6 +33,7 @@ import java.io.IOException;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.layout.AbstractDockableProperty;
+import bibliothek.util.xml.XElement;
 
 /**
  * FlapDockProperties are used on the {@link FlapDockStation} to determine
@@ -96,8 +97,16 @@ public class FlapDockProperty extends AbstractDockableProperty {
     public void store( DataOutputStream out ) throws IOException {
         out.writeInt( index );
     }
+    
+    public void store( XElement element ) {
+        element.setInt( index );
+    }
 
     public void load( DataInputStream in ) throws IOException {
         setIndex( in.readInt() );
+    }
+    
+    public void load( XElement element ) {
+        index = element.getInt();
     }
 }

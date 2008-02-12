@@ -29,10 +29,6 @@ package bibliothek.gui.dock.station.split;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.Map;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -251,59 +247,6 @@ public abstract class SplitNode{
      * @param visitor the visitor
      */
     public abstract void visit( SplitNodeVisitor visitor );
-    
-    /**
-     * Writes the structure of the subtree with this as root into <code>out</code>.
-     * @param children a map that contains for every {@link Dockable}
-     * an id. This id will be written into <code>out</code> to represent
-     * the {@link Dockable}.
-     * @param out the stream to fill
-     * @throws IOException if the stream throws an exception
-     */
-    public abstract void write( Map<Dockable, Integer> children, DataOutputStream out ) throws IOException;
-    
-    /**
-     * Writes the contents of a single child into <code>out</code>.
-     * @param element the element to store
-     * @param children the unique ids of all {@link Dockable Dockables} which
-     * may occur.
-     * @param out the stream to fill
-     * @throws IOException if the stream throws an exception
-     * @see #readChild(Map, DataInputStream)
-     */
-    protected void writeChild( SplitNode element, Map<Dockable, Integer> children, DataOutputStream out ) throws IOException{
-        out.writeBoolean( element instanceof Node );
-        element.write( children, out );
-    }
-    
-    /**
-     * Reads an earlier written node from the stream <code>in</code>.
-     * @param children a map of substitutions for ids that are found in the stream.
-     * @param in the source
-     * @return the newly created node
-     * @throws IOException if the stream throws an exception
-     * @see #write(Map, DataOutputStream)
-     */
-    public abstract SplitNode read( Map<Integer, Dockable> children, DataInputStream in ) throws IOException;
-    
-    /**
-     * Reads a single node which was earlier written.
-     * @param children a map of substitutions for ids that are found in the stream.
-     * @param in the source
-     * @return the newly read node
-     * @throws IOException if the stream throws an exception
-     * @see #writeChild(SplitNode, Map, DataOutputStream)
-     */
-    protected SplitNode readChild( Map<Integer, Dockable> children, DataInputStream in ) throws IOException {
-        if( in.readBoolean() ){
-            Node node = new Node( getAccess() );
-            return node.read( children, in );
-        }
-        else{
-            Leaf leaf = new Leaf( getAccess() );
-            return leaf.read( children, in );
-        }
-    }
     
     /**
      * Creates or replaces children according to the values found in 

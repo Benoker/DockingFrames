@@ -42,6 +42,7 @@ import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.extension.gui.dock.theme.SmoothTheme;
 import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.dock.layout.DockLayout;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StationPaint;
@@ -326,11 +327,15 @@ public class DockUI {
      * the children again. Reading the children ensures that all components are
      * build up again with the current theme of the station
      * @param <D> the type of the station
+     * @param <L> the type of the layout needed to describe the contents
+     * of the station
      * @param station the station to update
      * @param factory a factory used to remove and to add the elements
      * @throws IOException if the factory throws an exception
      */
-    public static <D extends DockStation> void updateTheme( D station, DockFactory<? super D> factory ) throws IOException{
+    public static <D extends DockStation, L extends DockLayout> void updateTheme(
+            D station, DockFactory<D,L> factory ) throws IOException{
+        
     	Map<Integer, Dockable> children = new HashMap<Integer, Dockable>();
     	Map<Dockable, Integer> ids = new HashMap<Dockable, Integer>();
     	
@@ -340,18 +345,12 @@ public class DockUI {
     		ids.put(child, i);
     	}
     	
-    	ByteArrayOutputStream bout = new ByteArrayOutputStream();
-    	DataOutputStream out = new DataOutputStream( bout );
-    	factory.write( station, ids, out );
-    	out.close();
-
+    	L layout = factory.getLayout( station, ids );
+    	
     	for( int i = station.getDockableCount()-1; i >= 0; i-- ){
     		station.drag( station.getDockable( i ));
     	}
     	
-    	ByteArrayInputStream bin = new ByteArrayInputStream( bout.toByteArray() );
-    	DataInputStream in = new DataInputStream( bin );
-    	factory.read( children, false, station, in );
-    	in.close();
+    	factory.setLayout( station, layout, children );
     }
 }

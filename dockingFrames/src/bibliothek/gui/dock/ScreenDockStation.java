@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -47,6 +47,7 @@ import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.screen.BoundaryRestriction;
 import bibliothek.gui.dock.station.screen.ScreenDockDialog;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 import bibliothek.gui.dock.station.screen.ScreenDockStationFactory;
@@ -58,6 +59,7 @@ import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.PropertyKey;
 
 /**
  * A {@link DockStation} which is the whole screen. Every child of this
@@ -72,6 +74,10 @@ import bibliothek.gui.dock.util.DockUtilities;
 public class ScreenDockStation extends AbstractDockStation {
     /** The key for the {@link DockTitleVersion} of this station */
     public static final String TITLE_ID = "screen dock";
+    
+    /** a key for a property telling which boundaries a {@link ScreenDockDialog} can have */
+    public static final PropertyKey<BoundaryRestriction> BOUNDARY_RESTRICTION = 
+        new PropertyKey<BoundaryRestriction>( "ScreenDockStation.boundary_restriction", BoundaryRestriction.FREE );
     
     /** The visibility state of the dialogs */
     private boolean showing = false;
@@ -188,7 +194,7 @@ public class ScreenDockStation extends AbstractDockStation {
         displayers.setController( controller );
         
         if( controller != null ){
-            version = controller.getDockTitleManager().registerDefault( TITLE_ID, ControllerTitleFactory.INSTANCE );
+            version = controller.getDockTitleManager().getVersion( TITLE_ID, ControllerTitleFactory.INSTANCE );
             
             for( ScreenDockDialog dialog : dockables ){
                 DockableDisplayer displayer = dialog.getDisplayer();
@@ -198,6 +204,10 @@ public class ScreenDockStation extends AbstractDockStation {
                     dockable.bind( title );
                 displayer.setTitle( title );
             }
+        }
+        
+        for( ScreenDockDialog dialog : dockables ){
+            dialog.setController( controller );
         }
     }
     
@@ -420,7 +430,7 @@ public class ScreenDockStation extends AbstractDockStation {
             if( title != null )
                 zero = SwingUtilities.convertPoint( title.getComponent(), zero, dialog );
             
-            dialog.setBoundsInScreen( dropInfo.titleX - zero.x, dropInfo.titleY - zero.y, dialog.getWidth(), dialog.getHeight() );
+            dialog.setRestrictedBounds( dropInfo.titleX - zero.x, dropInfo.titleY - zero.y, dialog.getWidth(), dialog.getHeight() );
         }
     }
     
@@ -432,7 +442,7 @@ public class ScreenDockStation extends AbstractDockStation {
             
             ScreenDockProperty bounds = (ScreenDockProperty)property;
             
-            dialog.setBoundsInScreen( bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight() );
+            dialog.setRestrictedBounds( bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight() );
         }
     }
 
@@ -546,12 +556,12 @@ public class ScreenDockStation extends AbstractDockStation {
         }
         
         
-        dialog.setBoundsInScreen( bounds );
+        dialog.setRestrictedBounds( bounds );
         dialog.validate();
         
         Point zero = new Point( 0, 0 );
         zero = SwingUtilities.convertPoint( displayer.getComponent(), zero, dialog );
-        dialog.setBoundsInScreen( dialog.getX() - zero.x, dialog.getY() - zero.y, dialog.getWidth(), dialog.getHeight() );
+        dialog.setRestrictedBounds( dialog.getX() - zero.x, dialog.getY() - zero.y, dialog.getWidth(), dialog.getHeight() );
         
         if( isShowing() )
             dialog.setVisible( true );
@@ -776,8 +786,8 @@ public class ScreenDockStation extends AbstractDockStation {
      * @param dialog the dialog which was newly created
      */
     protected void register( ScreenDockDialog dialog ){
- //       dialog.addWindowFocusListener( dialogListener );
         dockables.add( dialog );
+        dialog.setController( getController() );
     }
     
     /**
@@ -788,10 +798,10 @@ public class ScreenDockStation extends AbstractDockStation {
      * @param dialog the old dialog
      */
     protected void deregister( ScreenDockDialog dialog ){
- //       dialog.removeWindowFocusListener( dialogListener );
         if( frontDialog == dialog )
             frontDialog = null;
         dockables.remove( dialog );
+        dialog.setController( null );
     }
     
     /**
@@ -800,7 +810,7 @@ public class ScreenDockStation extends AbstractDockStation {
      * @throws IllegalStateException if the {{@link #getOwner() owner}
      * of this station is neither a {@link Dialog} nor a {@link Frame}.
      */
-    public ScreenDockDialog createDialog(){
+    protected ScreenDockDialog createDialog(){
         Window window = getOwner();
         if( window instanceof Dialog )
             return new ScreenDockDialog( this, (Dialog)window );

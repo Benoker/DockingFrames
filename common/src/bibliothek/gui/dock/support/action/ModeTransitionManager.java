@@ -34,7 +34,6 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
-import bibliothek.gui.dock.support.util.GenericStreamTransformation;
 
 /**
  * A set of modes. Adds some {@link ButtonDockAction}s to {@link Dockable}s,
@@ -252,7 +251,7 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
     protected abstract void transition( String oldMode, String newMode, Dockable dockable );
     
     /**
-     * Called while reading modes in {@link #read(GenericStreamTransformation, DataInputStream)}.
+     * Called while reading modes in {@link #setSetting(ModeTransitionSetting)}.
      * Subclasses might change the mode according to <code>newMode</code>.
      * @param oldMode the mode <code>dockable</code> is currently in
      * @param newMode the mode <code>dockable</code> is going to be
@@ -306,6 +305,16 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
     }
     
     /**
+     * Called when the list of actions has to be rebuilt for each
+     * {@link Dockable}.
+     */
+    protected void rebuildAll(){
+        for( Entry entry : dockables.values() ){
+            rebuild( entry );
+        }
+    }
+    
+    /**
      * Called when the list of actions for <code>dockable</code> has to be
      * rebuild.
      * @param dockable the element whose actions are searched
@@ -313,17 +322,25 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
     protected void rebuild( Dockable dockable ){
         Entry entry = dockables.get( dockable );
         if( entry != null ){
-            String mode = currentMode( dockable );
-            String[] available = availableModes( mode, dockable );
-            
-            entry.source.removeAll();
-            for( String check : available ){
-                if( modes.containsKey( check ) ){
-                    if( check.equals( mode ))
-                        entry.source.add( getOutgoingAction( check ));
-                    else
-                        entry.source.add( getIngoingAction( check ) );
-                }
+            rebuild( entry );
+        }
+    }
+    
+    /**
+     * Rebuilds the {@link DockActionSource} of <code>entry</code>.
+     * @param entry the entry whose {@link Entry#source} will be rebuilt.
+     */
+    private void rebuild( Entry entry ){
+        String mode = currentMode( entry.dockable );
+        String[] available = availableModes( mode, entry.dockable );
+        
+        entry.source.removeAll();
+        for( String check : available ){
+            if( modes.containsKey( check ) ){
+                if( check.equals( mode ))
+                    entry.source.add( getOutgoingAction( check ));
+                else
+                    entry.source.add( getIngoingAction( check ) );
             }
         }
     }
@@ -392,87 +409,88 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
     }
     
     /**
-     * Writes the modes of this manager into <code>out</code>.
-     * @param mode a factory that can write the description of a mode
-     * @param out the stream to write into
-     * @throws IOException if the stream is not writeable
+     * Gets the current set or properties.
+     * @param <B> the type of the internal representation of the properties
+     * @param converter converts the properties into the internal representation
+     * @return the set of properties
      */
-    public void write( GenericStreamTransformation<? super A> mode, DataOutputStream out ) throws IOException{ 
-        // version
-        out.writeInt( 1 );
-        
-        // number of elements
-        out.writeInt( dockables.size() );
+    public <B> ModeTransitionSetting<A, B> getSetting( ModeTransitionConverter<A, B> converter ){
+        ModeTransitionSetting<A, B> setting = createSetting( converter );
         
         for( Map.Entry<Dockable, Entry> element : dockables.entrySet() ){
-            // unique id of the element
-            out.writeUTF( element.getValue().id );
-            
-            // the current mode
-            out.writeUTF( currentMode( element.getKey() ) );
-            
-            Entry entry = element.getValue();
-            // history
-            out.writeInt( entry.history.size() );
-            for( String history : entry.history )
-                out.writeUTF( history );
-            
-            // modes
-            out.writeInt( entry.properties.size() );
-            for( Map.Entry<String, A> property : entry.properties.entrySet() ){
-                out.writeUTF( property.getKey() );
-                mode.write( out, property.getValue() );
+            setting.add(
+                    element.getValue().id, 
+                    currentMode( element.getKey() ),
+                    element.getValue().properties, 
+                    element.getValue().history );
+        }
+        
+        return setting;
+    }
+    
+    /**
+     * Sets all properties of this manager. Registered elements which are not
+     * present in <code>setting</code> will not be affected by this method.
+     * @param setting the set of properties
+     */
+    public void setSetting( ModeTransitionSetting<A, ?> setting ){
+        Map<String, Entry> entries = new HashMap<String, Entry>();
+        for( Entry entry : dockables.values() )
+            entries.put( entry.id, entry );
+        
+        for( int i = 0, n = setting.size(); i < n; i++ ){
+            String key = setting.getId( i );
+            Entry entry = entries.get( key );
+            if( entry != null ){
+                String current = setting.getCurrent( i );
+                String old = currentMode( entry.dockable );
+                
+                entry.history.clear();
+                for( String next : setting.getHistory( i ))
+                    entry.history.add( next );
+                
+                entry.properties = setting.getProperties( i );
+                
+                if( !old.equals( current )){
+                    transitionDuringRead( old, current, entry.dockable );
+                }
             }
         }
     }
     
     /**
-     * Reads modes that were stored earlier.
-     * @param mode a factory used to read modes
+     * Creates a new, empty setting.
+     * @param <B> the type of properties stored in the setting
+     * @param converter used to convert properties of this manager to the properties of the setting
+     * @return the new setting
+     */
+    protected <B> ModeTransitionSetting<A, B> createSetting( ModeTransitionConverter<A, B> converter ){
+        return new ModeTransitionSetting<A, B>( converter );
+    }
+    
+    /**
+     * Writes the properties of this manager into <code>out</code>.
+     * @param converter a converter that can write the properties of this manager.
+     * @param out the stream to write into
+     * @throws IOException if an I/O-error occurs
+     */
+    public <B> void write( ModeTransitionConverter<A,B> converter, DataOutputStream out ) throws IOException{
+        getSetting( converter ).write( out );
+    }
+    
+    /**
+     * Reads the properties of this manager. This is equivalent then calling:
+     * <pre>ModeTransitionSetting<A, B> setting = createSetting( converter );
+     * setting.read( in );
+     * setSetting( setting );</pre>
+     * @param converter a converter that can read the properties
      * @param in the stream to read from
      * @throws IOException if the stream can't be read
      */
-    public void read( GenericStreamTransformation<? extends A> mode, DataInputStream in ) throws IOException{
-        int version = in.readInt();
-        if( version != 1 )
-            throw new IOException( "unknown version: " + version );
-        
-        Map<String, Entry> entries = new HashMap<String, Entry>();
-        for( Entry entry : dockables.values() )
-            entries.put( entry.id, entry );
-        
-        for( int i = 0, n = in.readInt(); i < n; i++ ){
-            String key = in.readUTF();
-            Entry entry = entries.get( key );
-            if( entry == null ){
-                // skip entry
-                in.readUTF();
-                for( int j = 0, m = in.readInt(); j<m; j++ )
-                    in.readUTF();
-                for( int j = 0, m = in.readInt(); j<m; j++ ){
-                    in.readUTF();
-                    mode.read( in );
-                }
-            }
-            else{
-                String current = in.readUTF();
-                
-                entry.history.clear();
-                entry.properties.clear();
-                
-                // history
-                for( int j = 0, m = in.readInt(); j<m; j++ )
-                    entry.history.add( in.readUTF() );
-                // modes
-                for( int j = 0, m = in.readInt(); j<m; j++ ){
-                    entry.properties.put( in.readUTF(), mode.read( in ) );
-                }
-                
-                String old = currentMode( entry.dockable );
-                if( !old.equals( current ))
-                    transitionDuringRead( old, current, entry.dockable );
-            }
-        }
+    public <B> void read( ModeTransitionConverter<A, B> converter, DataInputStream in ) throws IOException{
+        ModeTransitionSetting<A, B> setting = createSetting( converter );
+        setting.read( in );
+        setSetting( setting );
     }
     
     /**

@@ -20,6 +20,7 @@ import bibliothek.notes.model.NoteModel;
 import bibliothek.notes.model.NoteModelListener;
 import bibliothek.notes.view.panels.NoteView;
 import bibliothek.util.container.Tuple;
+import bibliothek.util.xml.XElement;
 
 /**
  * Manages the connection between {@link Note}s and {@link NoteView}s. Contains
@@ -164,14 +165,30 @@ public class NoteViewManager{
 		}
 		frontend.getController().setFocusedDockable( view, false );
 	}
-	
+
+	/**
+	 * Writes the location of the views of the known {@link Note}s.
+	 * @param out the stream to write into
+	 * @throws IOException if this method can't write into <code>out</code>
+	 */
+	public void write( DataOutputStream out ) throws IOException{
+	    PropertyTransformer transformer = new PropertyTransformer();
+
+	    out.writeInt( locations.size() );
+	    for( Map.Entry<Note, Tuple<DockStation, DockableProperty>> location : locations.entrySet() ){
+	        out.writeUTF( location.getKey().getId() );
+	        out.writeUTF( manager.getName( location.getValue().getA() ) );
+	        transformer.write( location.getValue().getB(), out );
+	    }
+	}
+
 	/**
 	 * Reads the location of the views of all known <code>Note</code>s.
 	 * @param in the stream to read from
 	 * @throws IOException if <code>in</code> can't be read
 	 */
 	public void read( DataInputStream in ) throws IOException{
-		PropertyTransformer transformer = new PropertyTransformer();
+	    PropertyTransformer transformer = new PropertyTransformer();
 		
 		int count = in.readInt();
 		for( int i = 0; i < count; i++ ){
@@ -184,19 +201,37 @@ public class NoteViewManager{
 		}
 	}
 	
+
+    /**
+     * Writes the location of the views of the known {@link Note}s.
+     * @param element the xml-element to write into, the attributes of
+     * <code>element</code> will not be changed
+     */
+	public void writeXML( XElement element ) throws IOException{
+	    PropertyTransformer transformer = new PropertyTransformer();
+	    
+	    for( Map.Entry<Note, Tuple<DockStation, DockableProperty>> location : locations.entrySet() ){
+	        XElement xnote = element.addElement( "note" );
+	        xnote.addString( "id", location.getKey().getId() );
+	        xnote.addString( "station", manager.getName( location.getValue().getA() ) );
+	        transformer.writeXML( location.getValue().getB(), xnote );
+        }
+	}
+
 	/**
-	 * Writes the location of the views of the known {@link Note}s.
-	 * @param out the stream to write into
-	 * @throws IOException if this method can't write into <code>out</code>
+	 * Reads the location of the views of all known <code>Note</code>s.
+	 * @param element the xml-element to read from
 	 */
-	public void write( DataOutputStream out ) throws IOException{
-		PropertyTransformer transformer = new PropertyTransformer();
-		
-		out.writeInt( locations.size() );
-		for( Map.Entry<Note, Tuple<DockStation, DockableProperty>> location : locations.entrySet() ){
-			out.writeUTF( location.getKey().getId() );
-			out.writeUTF( manager.getName( location.getValue().getA() ) );
-			transformer.write( location.getValue().getB(), out );
-		}
+	public void readXML( XElement element ){
+	    PropertyTransformer transformer = new PropertyTransformer();
+
+	    for( XElement xnote : element.getElements( "note" )){
+	        Note note = model.getNote( xnote.getString( "id" ) );
+	        DockStation station = manager.getStation( xnote.getString( "station" ) );
+	        DockableProperty property = transformer.readXML( xnote );
+	        if( note != null ){
+	            locations.put( note, new Tuple<DockStation, DockableProperty>( station, property ) );
+	        }
+	    }
 	}
 }

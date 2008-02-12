@@ -43,6 +43,8 @@ import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.MetalTheme;
 
+import bibliothek.util.xml.XElement;
+
 /**
  * A list of {@link LookAndFeel}s, can setup a <code>LookAndFeel</code> when
  * asked. It's possible to add a {@link ChangeListener} to this list and
@@ -387,6 +389,16 @@ public class LookAndFeelList{
         for( LookAndFeelListener listener : listeners() )
             listener.systemLookAndFeelChanged( this, this.systemInfo );
     }
+    
+    /**
+     * Writes which {@link LookAndFeel} is currently used.
+     * @param out the stream to write into
+     * @throws IOException if the method can't write into <code>out</code>
+     */
+    public void write( DataOutputStream out ) throws IOException {
+        out.writeInt( indexOfFull( getLookAndFeel() ) );
+    }
+    
     /**
      * Reads which {@link LookAndFeel} was used earlier and calls 
      * {@link #setLookAndFeel(LookAndFeelList.Info) setLookAndFeel}
@@ -406,13 +418,28 @@ public class LookAndFeelList{
     
     /**
      * Writes which {@link LookAndFeel} is currently used.
-     * @param out the stream to write into
-     * @throws IOException if the method can't write into <code>out</code>
+     * @param element the element to write into, the attributes of
+     * <code>element</code> will not be changed.
      */
-    public void write( DataOutputStream out ) throws IOException {
-        out.writeInt( indexOfFull( getLookAndFeel() ) );
+    public void writeXML( XElement element ){
+        element.addElement( "index" ).setInt( indexOfFull( getLookAndFeel() ) );
     }
-
+    
+    /**
+     * Reads which {@link LookAndFeel} was used earlier and calls 
+     * {@link #setLookAndFeel(LookAndFeelList.Info) setLookAndFeel}
+     * to set the old <code>LookAndFeel</code>.
+     * @param element the element to read from
+     */
+    public void readXML( XElement element ){
+        if( !hasRead || !allowReadOnlyOnce ){
+            int index = element.getElement( "index" ).getInt();
+            if( index >= 0 && index < size()+2 ){
+                setLookAndFeel( getFull( index ) );
+            }
+        }
+        hasRead = true;
+    }
     
     /**
      * Creates a list containing all root-{@link Component}s of this application,

@@ -47,12 +47,8 @@ import bibliothek.gui.dock.dockable.DefaultDockableFactory;
 import bibliothek.gui.dock.event.DockAdapter;
 import bibliothek.gui.dock.event.DockFrontendListener;
 import bibliothek.gui.dock.event.IconManagerListener;
-import bibliothek.gui.dock.layout.DockSituation;
-import bibliothek.gui.dock.layout.DockSituationIgnore;
-import bibliothek.gui.dock.layout.DockableProperty;
-import bibliothek.gui.dock.layout.DockablePropertyFactory;
-import bibliothek.gui.dock.layout.PredefinedDockSituation;
-import bibliothek.gui.dock.layout.PropertyTransformer;
+import bibliothek.gui.dock.frontend.Setting;
+import bibliothek.gui.dock.layout.*;
 import bibliothek.gui.dock.security.SecureFlapDockStationFactory;
 import bibliothek.gui.dock.security.SecureScreenDockStationFactory;
 import bibliothek.gui.dock.security.SecureSplitDockStationFactory;
@@ -69,11 +65,24 @@ import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.util.xml.XAttribute;
+import bibliothek.util.xml.XElement;
 
 /**
  * A DockFrontend provides some methods to handle the storage of various layouts.
  * The frontend can save the current layout (the location of all Dockables) and
- * later restore it.<br>
+ * later restore it. Each set of properties is stored in a {@link Setting}. Subclasses
+ * might override the following methods to store additional information:
+ * <ul>
+ *  <li>{@link #createSetting()}</li>
+ *  <li>{@link #getSetting(boolean)} and {@link #setSetting(Setting, boolean)}</li>
+ *  <li>{@link #write(Setting, boolean, DataOutputStream)} and {@link #read(boolean, DataInputStream)} or
+ *      {@link Setting#write(DockSituation, PropertyTransformer, boolean, DataOutputStream)} and 
+ *      {@link Setting#read(DockSituation, PropertyTransformer, boolean, DataInputStream)}</li>
+ *  <li>{@link #writeXML(Setting, boolean, XElement)} and {@link #readXML(boolean, XElement)} or
+ *      {@link Setting#writeXML(DockSituation, PropertyTransformer, boolean, XElement)} and
+ *      {@link Setting#readXML(DockSituation, PropertyTransformer, boolean, XElement)} </li>
+ * </ul><br>
  * The frontend has a list of Dockables. It assumes that these Dockables never
  * changes. The frontend can add a "close"-button to these Dockables. The location
  * of these Dockables is stored as well. Dockables which are not {@link #add(Dockable, String) added}
@@ -93,7 +102,7 @@ public class DockFrontend {
     public static final PropertyKey<KeyStroke> HIDE_ACCELERATOR = 
         new PropertyKey<KeyStroke>( "frontend hide accelerator", KeyStroke.getKeyStroke( KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK ) );
     
-	/** The controller whhere roots are added */
+	/** The controller where roots are added */
     private DockController controller;
     /** An action and actionguard which hides Dockables */
     private Hider hider;
@@ -107,14 +116,15 @@ public class DockFrontend {
     private Map<String, RootInfo> roots = new HashMap<String, RootInfo>();
     
     /** A set of factories needed to store Dockables */
-    private Set<DockFactory<? extends DockElement>> dockFactories = new HashSet<DockFactory<? extends DockElement>>();
+    private Set<DockFactory<? extends DockElement, ? extends DockLayout>> dockFactories = 
+        new HashSet<DockFactory<? extends DockElement, ? extends DockLayout>>();
     /** A set of factories needed to store {@link DockableProperty properties} */
     private Set<DockablePropertyFactory> propertyFactories = new HashSet<DockablePropertyFactory>();
     
     /** The name of the setting which is currently loaded */
     private String currentSetting;
     /** A map of all known settings */
-    private Map<String, byte[]> settings = new HashMap<String, byte[]>();
+    private Map<String, Setting> settings = new HashMap<String, Setting>();
     
     /** A list of observers */
     private List<DockFrontendListener> listeners = new ArrayList<DockFrontendListener>();
@@ -253,7 +263,7 @@ public class DockFrontend {
      * {@link DockStation DockStations}
      * @param factory the new factory
      */
-    public void registerFactory( DockFactory<? extends DockElement> factory ){
+    public void registerFactory( DockFactory<? extends DockElement, ? extends DockLayout> factory ){
     	if( factory == null )
     		throw new IllegalArgumentException( "factory must not be null" );
         dockFactories.add( factory );
@@ -654,24 +664,24 @@ public class DockFrontend {
     public void hide( Dockable dockable ){
         try{
             onAutoFire++;
-        	if( isShown( dockable )){
-        	DockInfo info = getInfo( dockable );
-        		if( info == null ){
-        			dockable.getDockParent().drag( dockable );
-        			fireAllHidden( dockable );
-        		}
-        		else{
-            		info.updateLocation();
-        			dockable.getDockParent().drag( dockable );
-        			fireAllHidden( dockable );
-        		}
+            if( isShown( dockable )){
+                DockInfo info = getInfo( dockable );
+                if( info == null ){
+                    dockable.getDockParent().drag( dockable );
+                    fireAllHidden( dockable );
+                }
+                else{
+                    info.updateLocation();
+                    dockable.getDockParent().drag( dockable );
+                    fireAllHidden( dockable );
+                }
             }
         }
         finally{
             onAutoFire--;
         }
     }
-    
+
     /**
      * Saves the current layout under the name of the {@link #getCurrentSetting() current setting}.
      * @throws IllegalStateException if the name of the current setting is <code>null</code>
@@ -688,58 +698,13 @@ public class DockFrontend {
      * @param name the name for the setting
      */
     public void save( String name ){
-        try{
-        	if( name == null )
-        		throw new IllegalArgumentException( "name must not be null" );
-        	
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            DataOutputStream dout = new DataOutputStream( out );
-            
-            save( dout, true );
-            
-            dout.close();
-            settings.put( name, out.toByteArray() );
-            currentSetting = name;
-            fireSaved( name );
-        }
-        catch( IOException ex ){
-            throw new IllegalStateException( ex );
-        }
-    }
-    
-    /**
-     * Writes the current layout as byte-stream into <code>out</code>.
-     * @param out the stream to write into
-     * @param entry <code>true</code> if just an ordinary setting should be written,
-     * <code>false</code> if the final setting should be written.
-     * @throws IOException if there are any problems
-     */
-    protected void save( DataOutputStream out, boolean entry ) throws IOException{
-        DockSituation situation = createSituation( entry );
-        PropertyTransformer properties = createTransformer();
-        
-        Map<String, DockStation> stations = new HashMap<String, DockStation>();
-        for( RootInfo info : roots.values() )
-            stations.put( info.getName(), info.getStation() );
-        
-        situation.write( stations, out );
-        
-        List<DockInfo> hidden = new ArrayList<DockInfo>();
-        
-        for( DockInfo info : dockables.values() ){
-            if( info.getDockable().getController() == null ){
-                if( info.getLocation() != null ){
-                    hidden.add( info );
-                }
-            }
-        }
-        
-        out.writeInt( hidden.size() );
-        for( DockInfo info : hidden ){
-            out.writeUTF( info.getKey() );
-            out.writeUTF( info.getRoot() );
-            properties.write( info.getLocation(), out );
-        }
+    	if( name == null )
+    		throw new IllegalArgumentException( "name must not be null" );
+    	
+    	Setting setting = getSetting( true );
+    	settings.put( name, setting );
+        currentSetting = name;
+        fireSaved( name );
     }
     
     /**
@@ -748,27 +713,121 @@ public class DockFrontend {
      * @throws IllegalArgumentException if no setting <code>name</code> could be found
      */
     public void load( String name ){
-        try{
-        	if( name == null )
-        		throw new IllegalArgumentException( "name must not be null" );
-        	
-            if( !settings.containsKey( name ))
-                throw new IllegalArgumentException( "Unknown setting \""+ name +"\"");
-            
-            currentSetting = name;
-            
-            ByteArrayInputStream in = new ByteArrayInputStream( settings.get( name ));
-            DataInputStream din = new DataInputStream( in );
-            
-            load( din, true );
-            
-            din.close();
-            fireLoaded( name );
+        if( name == null )
+    		throw new IllegalArgumentException( "name must not be null" );
+    	
+    	Setting setting = settings.get( name );
+        if( setting == null )
+            throw new IllegalArgumentException( "Unknown setting \""+ name +"\"");
+        
+        currentSetting = name;
+        
+        setSetting( setting, true );
+        
+        fireLoaded( name );
+    }
+    
+    /**
+     * Creates a new {@link Setting} which describes the current set of
+     * properties of this frontend. The setting contains information about
+     * the location of each {@link Dockable}.
+     * @param entry <code>true</code> if only the information for an ordinary
+     * entry should be stored, <code>false</code> if the setting should contain
+     * as much information as possible.
+     * @return the setting
+     * @see #createSetting()
+     */
+    public Setting getSetting( boolean entry ){
+        Setting setting = createSetting();
+        
+        DockSituation situation = createSituation( entry );
+        
+        for( RootInfo info : roots.values() ){
+            DockLayoutComposition layout = situation.convert( info.getStation() );
+            setting.putRoot( info.getName(), layout );
         }
-        catch( IOException ex ){
-            throw new IllegalStateException( ex );
+        
+        for( DockInfo info : dockables.values() ){
+            if( info.getDockable().getController() == null ){
+                if( info.getLocation() != null ){
+                    setting.addInvisible( info.getKey(), info.getRoot(), info.getLocation() );
+                }
+            }
+        }
+        
+        return setting;
+    }
+    
+    /**
+     * Changes the content of all root-stations according to <code>setting</code>. 
+     * @param setting a new set of properties
+     * @param entry <code>true</code> if only information for an ordinary
+     * entry should be extracted, <code>false</code> if as much information
+     * as possible should be extracted. The value of this argument should
+     * be the same as was used when {@link #getSetting(boolean)} was called.
+     */
+    public void setSetting( Setting setting, boolean entry ){
+        try{
+            onAutoFire++;
+            controller.getRegister().setStalled( true );
+            
+            Set<Dockable> oldVisible = listShownDockables();
+            
+            DockSituation situation = createSituation( entry );
+            
+            DockSituationIgnore ignore = situation.getIgnore();
+            if( ignore == null ){
+                ignore = new DockSituationIgnore(){
+                    public boolean ignoreChildren( DockStation station ) {
+                        return false;
+                    }
+                    public boolean ignoreElement( DockElement element ) {
+                        return false;
+                    }
+                };
+            }
+            
+            clean( ignore );
+            
+            for( RootInfo info : roots.values() ){
+                DockLayoutComposition layout = setting.getRoot( info.getName() );
+                if( layout != null ){
+                    situation.convert( layout );
+                }
+            }
+            
+            for( int i = 0, n = setting.getInvisibleCount(); i<n; i++ ){
+                String key = setting.getInvisibleKey( i );
+                DockInfo info = getInfo( key );
+                if( info != null ){
+                    info.setLocation( 
+                            setting.getInvisibleRoot( i ), 
+                            setting.getInvisibleLocation( i ) );
+                }
+            }
+            
+            Set<Dockable> newVisible = listShownDockables();
+            
+            for( Dockable hide : oldVisible )
+                if( !newVisible.contains( hide ))
+                    fireAllHidden( hide );
+            
+            for( Dockable show : newVisible )
+                if( !oldVisible.contains( show ))
+                    fireAllShown( show );
+            
+            for( DockInfo info : dockables.values() ){
+                if( !info.isHideable() && isHidden( info.getDockable() )){
+                    show( info.getDockable() );
+                }
+            }
+        }
+        finally{
+            controller.getRegister().setStalled( false );
+            onAutoFire--;
         }
     }
+    
     
     /**
      * Gets a set of all {@link Dockable} which are known to this frontend
@@ -794,71 +853,6 @@ public class DockFrontend {
     		result.add( info.getDockable() );
     	
     	return result;
-    }
-    
-    /**
-     * Reads a setting that was earlier converted into a byte-stream.
-     * @param in the stream to read
-     * @param entry <code>true</code> if the setting is just an ordinary setting,
-     * <code>false</code> if a final setting is read.
-     * @throws IOException if there are any problems
-     */
-    protected void load( DataInputStream in, boolean entry ) throws IOException{
-        try{
-            onAutoFire++;
-            controller.getRegister().setStalled( true );
-            
-            Set<Dockable> oldVisible = listShownDockables();
-            
-            DockSituation situation = createSituation( entry );
-            PropertyTransformer properties = createTransformer();
-            
-            DockSituationIgnore ignore = situation.getIgnore();
-            if( ignore == null ){
-                ignore = new DockSituationIgnore(){
-                    public boolean ignoreChildren( DockStation station ) {
-                        return false;
-                    }
-                    public boolean ignoreElement( DockElement element ) {
-                        return false;
-                    }
-                };
-            }
-            
-            clean( ignore );
-            
-            situation.read( in );
-            
-            int count = in.readInt();
-            for( int i = 0; i < count; i++ ){
-                String key = in.readUTF();
-                String root = in.readUTF();
-                DockableProperty property = properties.read( in );
-                DockInfo info = getInfo( key );
-                if( info != null )
-                	info.setLocation( root, property );
-            }
-            
-            Set<Dockable> newVisible = listShownDockables();
-            
-            for( Dockable hide : oldVisible )
-                if( !newVisible.contains( hide ))
-                    fireAllHidden( hide );
-            
-            for( Dockable show : newVisible )
-                if( !oldVisible.contains( show ))
-                    fireAllShown( show );
-            
-            for( DockInfo info : dockables.values() ){
-                if( !info.isHideable() && isHidden( info.getDockable() )){
-                    show( info.getDockable() );
-                }
-            }
-        }
-        finally{
-            controller.getRegister().setStalled( false );
-            onAutoFire--;
-        }
     }
     
     /**
@@ -937,13 +931,26 @@ public class DockFrontend {
         }
         
         out.writeInt( settings.size() );
-        for( Map.Entry<String, byte[]> setting : settings.entrySet() ){
+        for( Map.Entry<String, Setting> setting : settings.entrySet() ){
             out.writeUTF( setting.getKey() );
-            out.writeInt( setting.getValue().length );
-            out.write( setting.getValue() );
+            write( setting.getValue(), true, out );
         }
         
-        save( out, false );
+        write( getSetting( false ), false, out );
+    }
+    
+    /**
+     * Calls {@link Setting#write(DockSituation, PropertyTransformer, boolean, DataOutputStream)}
+     * @param setting the setting which will be written
+     * @param entry whether <code>setting</code> is an ordinary entry, or
+     * the finall setting that contains more data. 
+     * @param out the stream to write into
+     * @throws IOException if an I/O-error occurs
+     */
+    protected void write( Setting setting, boolean entry, DataOutputStream out ) throws IOException{
+        DockSituation situation = createSituation( entry );
+        PropertyTransformer properties = createTransformer();
+        setting.write( situation, properties, entry, out );
     }
     
     /**
@@ -961,23 +968,108 @@ public class DockFrontend {
         int count = in.readInt();
         for( int i = 0; i < count; i++ ){
             String key = in.readUTF();
-            int length = in.readInt();
-            byte[] value = new byte[length];
-            
-            int read = 0;
-            while( read < length ){
-                int input = in.read( value, read, length-read );
-                if( input < 0 )
-                    throw new EOFException();
-                
-                read += input;
-            }
-            
-            settings.put( key, value );
+            Setting setting = read( true, in );
+            settings.put( key, setting );
             fireRead( key );
         }
         
-        load( in, false );
+        setSetting( read( true, in ), true );
+    }
+    
+    /**
+     * Calls first {@link #createSetting()} and then
+     * {@link Setting#read(DockSituation, PropertyTransformer, boolean, DataInputStream)}.
+     * @param entry whether the set of properties is used as ordinary entry,
+     * or contains more data than usuall.
+     * @param in the stream to read from
+     * @return the new setting
+     * @throws IOException if an I/O-error occurs
+     * @see #createSetting()
+     */
+    protected Setting read( boolean entry, DataInputStream in ) throws IOException{
+        Setting setting = createSetting();
+        DockSituation situation = createSituation( entry );
+        PropertyTransformer properties = createTransformer();
+        setting.read( situation, properties, entry, in );
+        return setting;
+    }
+    
+    /**
+     * Writes all properties of this frontend into an xml element.
+     * @param element the element to write into, this method will not
+     * change the attributes of <code>element</code>
+     */
+    public void writeXML( XElement element ){
+        if( !settings.isEmpty() ){
+            XElement xsettings = element.addElement( "settings" );
+            for( Map.Entry<String, Setting> setting : settings.entrySet() ){
+                XElement xsetting = xsettings.addElement( "setting" );
+                xsetting.addString( "name", setting.getKey() );
+                writeXML( setting.getValue(), true, xsetting );
+            }
+        }
+        
+        XElement xcurrent = element.addElement( "current" );
+        if( currentSetting != null )
+            xcurrent.addString( "name", currentSetting );
+        
+        writeXML( getSetting( false ), false, xcurrent );
+    }
+    
+    /**
+     * Calls {@link Setting#writeXML(DockSituation, PropertyTransformer, boolean, XElement)}.
+     * @param setting the setting to write
+     * @param entry whether <code>setting</code> is an ordinary entry, or
+     * the finall setting that contains more data.
+     * @param element the xml element to write into, this method does not
+     * change the attributes of the entry
+     */
+    protected void writeXML( Setting setting, boolean entry, XElement element ){
+        DockSituation situation = createSituation( entry );
+        PropertyTransformer properties = createTransformer();
+        setting.writeXML( situation, properties, entry, element );
+    }
+    
+    /**
+     * Reads the contents of this frontend from an xml element.
+     * @param element the element to read
+     */
+    public void readXML( XElement element ){
+        XElement xsettings = element.getElement( "settings" );
+        if( xsettings != null ){
+            for( XElement xsetting : xsettings.getElements( "setting" )){
+                String key = xsetting.getString( "name" );
+                Setting setting = readXML( true, xsetting );
+                settings.put( key, setting );
+                fireRead( key );
+            }
+        }
+        
+        XElement xcurrent = element.getElement( "current" );
+        if( xcurrent != null ){
+            XAttribute xname = xcurrent.getAttribute( "name" );
+            if( xname != null )
+                currentSetting = xname.getString();
+            
+            setSetting( readXML( false, xcurrent), false );
+        }
+    }
+    
+    /**
+     * Calls {@link #createSetting()} and then
+     * {@link Setting#readXML(DockSituation, PropertyTransformer, boolean, XElement)}.
+     * @param entry whether the set of properties is used as ordinary entry,
+     * or contains more data than usuall.
+     * @param element the xml element containg the data for the new setting
+     * @return the new setting
+     * @see #createSetting()
+     */
+    protected Setting readXML( boolean entry, XElement element ){
+        Setting setting = createSetting();
+        DockSituation situation = createSituation( entry );
+        PropertyTransformer properties = createTransformer();
+        setting.readXML( situation, properties, entry, element );
+        return setting;
     }
     
     /**
@@ -997,7 +1089,7 @@ public class DockFrontend {
             situation.put( "root" + info.getName(), info.getStation() );
         }
         
-        for( DockFactory<?> factory : dockFactories )
+        for( DockFactory<?,?> factory : dockFactories )
             situation.add( factory );
         
         if( entry )
@@ -1027,6 +1119,15 @@ public class DockFrontend {
     protected Hider createHider() {
 		return new Hider();
 	}
+    
+    /**
+     * Creates a bag that contains all information needed to describe the 
+     * current set of properties.
+     * @return the new bag
+     */
+    protected Setting createSetting(){
+        return new Setting();
+    }
     
     /**
      * Gets the action which is added to all known Dockables, and which is
@@ -1200,6 +1301,7 @@ public class DockFrontend {
         for( DockFrontendListener listener : listeners() )
             listener.deleted( this, name );
     }
+
     
     /**
      * Information about a {@link Dockable}.

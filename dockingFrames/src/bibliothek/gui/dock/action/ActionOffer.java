@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -35,7 +35,7 @@ import bibliothek.gui.Dockable;
  * of a {@link Dockable} have to be collected, one (and only one) 
  * <code>ActionOffer</code> can create the final {@link #getSource(Dockable, DockActionSource, DockActionSource[], DockActionSource, DockActionSource[]) source}
  * of the actions.<br>
- * ActionOffers are not {@link ActionGuard ActionGuars}. Only one ActionOffer
+ * ActionOffers are not {@link ActionGuard}s. Only one ActionOffer
  * can collect the actions of a Dockable, but this one ActionOffer will completely
  * determine, how the actions are combined.
  * @author Benjamin Sigg

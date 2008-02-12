@@ -32,6 +32,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.*;
 
+import bibliothek.util.xml.XElement;
+
 /**
  * Some methods useful to work with {@link Shape}s.
  * @author Benjamin Sigg
@@ -74,6 +76,18 @@ public class ShapeUtils {
     }
     
     /**
+     * Writes the contents of <code>shape</code> in xml format.
+     * @param shape the shape to write
+     * @param element the element to write into
+     */
+    public static void writeXML( Shape shape, XElement element ){
+        element.addElement( "class" ).setString( shape.getClass().getCanonicalName() );
+        element.addElement( "color" ).setInt( shape.getColor().getRGB() );
+        element.addElement( "point" ).addInt( "x", shape.getPointA().x ).addInt( "y", shape.getPointA().y );
+        element.addElement( "point" ).addInt( "x", shape.getPointB().x ).addInt( "y", shape.getPointB().y );
+    }
+    
+    /**
      * Reads a {@link Shape} from the stream <code>in</code>.
      * @param in the stream to read from
      * @return the newly read <code>Shape</code>
@@ -85,6 +99,20 @@ public class ShapeUtils {
         shape.setColor( new Color( in.readInt() ) );
         shape.setPointA( new Point( in.readInt(), in.readInt() ) );
         shape.setPointB( new Point( in.readInt(), in.readInt() ) );
+        return shape;
+    }
+    
+    /**
+     * Reads a {@link Shape} from <code>element</code>.
+     * @param element the element to read from
+     * @return the newly created <code>Shape</code>
+     */
+    public static Shape readXML( XElement element ){
+        Shape shape = FACTORIES.get( element.getElement( "class" ).getString() ).create();
+        shape.setColor( new Color( element.getElement( "color" ).getInt() ) );
+        XElement[] points = element.getElements( "point" );
+        shape.setPointA( new Point( points[0].getInt( "x" ), points[0].getInt( "y" ) ));
+        shape.setPointB( new Point( points[1].getInt( "x" ), points[1].getInt( "y" ) ));
         return shape;
     }
 }

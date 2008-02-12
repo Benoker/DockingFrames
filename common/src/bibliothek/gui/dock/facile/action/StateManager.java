@@ -49,11 +49,13 @@ import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 import bibliothek.gui.dock.station.split.SplitDockTree;
+import bibliothek.gui.dock.support.action.ModeTransitionConverter;
 import bibliothek.gui.dock.support.action.ModeTransitionManager;
-import bibliothek.gui.dock.support.util.GenericStreamTransformation;
+import bibliothek.gui.dock.support.action.ModeTransitionSetting;
 import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
+import bibliothek.util.xml.XElement;
 
 /**
  * A manager that can minimize/normalize/maximize and externalize a
@@ -209,31 +211,32 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
     }
     
     @Override
-    public void write( GenericStreamTransformation<? super Location> mode, DataOutputStream out ) throws IOException {
-        if( lastMaximizedLocation == null ){
-            out.writeBoolean( false );
-        }
-        else{
-            out.writeBoolean( true );
-            mode.write( out, lastMaximizedLocation );
-            out.writeUTF( lastMaximizedMode );
-        }
-        
-        super.write( mode, out );
+    public <B> ModeTransitionSetting<Location, B> getSetting( ModeTransitionConverter<Location, B> converter ) {
+        StateManagerSetting<B> setting = (StateManagerSetting<B>)super.getSetting( converter );
+        setting.setLastMaximizedLocation( lastMaximizedLocation );
+        setting.setLastMaximizedMode( lastMaximizedMode );
+        return setting;
     }
     
     @Override
-    public void read( GenericStreamTransformation<? extends Location> mode, DataInputStream in ) throws IOException {
-        if( in.readBoolean() ){
-            lastMaximizedLocation = mode.read( in );
-            lastMaximizedMode = in.readUTF();
+    public void setSetting( ModeTransitionSetting<Location, ?> setting ){
+        if( setting instanceof StateManagerSetting ){
+            StateManagerSetting<?> stateManagerSetting = (StateManagerSetting<?>)setting;
+            lastMaximizedLocation = stateManagerSetting.getLastMaximizedLocation();
+            lastMaximizedMode = stateManagerSetting.getLastMaximizedMode();
         }
         else{
             lastMaximizedLocation = null;
             lastMaximizedMode = null;
         }
-        
-        super.read( mode, in );
+        super.setSetting( setting );
+        rebuildAll();
+    }
+    
+    @Override
+    protected <B> StateManagerSetting<B> createSetting(
+            ModeTransitionConverter<Location, B> converter ) {
+        return new StateManagerSetting<B>( converter );
     }
     
     /**
@@ -913,18 +916,121 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      * @author Benjamin Sigg
      *
      */
-    public static class LocationStreamTransformer implements GenericStreamTransformation<Location>{
+    public static class LocationConverter implements ModeTransitionConverter<Location, Location>{
         /** transformer to read or write single {@link DockableProperty}s */
         private PropertyTransformer transformer = new PropertyTransformer();
 
-        public void write( DataOutputStream out, Location element ) throws IOException {
+        public Location convertToSetting( Location a ) {
+            return a;
+        }
+        public Location convertToWorld( Location b ) {
+            return b;
+        }
+        
+        public void writeProperty( Location element, DataOutputStream out ) throws IOException {
             out.writeUTF( element.root );
             transformer.write( element.location, out );
         }
-        public Location read( DataInputStream in ) throws IOException {
+        
+        public Location readProperty( DataInputStream in ) throws IOException {
             String root = in.readUTF();
             DockableProperty location = transformer.read( in );
             return new Location( root, location );
+        }
+        
+        public void writePropertyXML( Location b, XElement element ) {
+            element.addElement( "root" ).setString( b.getRoot() );
+            transformer.writeXML( b.getLocation(), element.addElement( "location" ) );
+        }
+        
+        public Location readPropertyXML( XElement element ) {
+            return new Location(
+                    element.getElement( "root" ).getString(),
+                    transformer.readXML( element.getElement( "location" ) ));
+        }
+    }
+    
+    /**
+     * A set of properties used to store the contents of a {@link StateManager}
+     * @author Benjamin Sigg
+     * @param <B> the internal representation of the properties
+     */
+    public static class StateManagerSetting<B> extends ModeTransitionSetting<Location,B>{
+        private String lastMaximizedMode;
+        private B lastMaximizedLocation;
+        
+        /**
+         * Creates a new setting.
+         * @param converter converts internal and external properties
+         */
+        public StateManagerSetting( ModeTransitionConverter<Location, B> converter ) {
+            super( converter );
+        }
+        
+        /**
+         * Sets the mode the last maximized element was in.
+         * @param lastMaximizedMode the mode or <code>null</code>
+         */
+        public void setLastMaximizedMode( String lastMaximizedMode ) {
+            this.lastMaximizedMode = lastMaximizedMode;
+        }
+
+        /**
+         * Gets the mode the last maximized element was in.
+         * @return the mode or <code>null</code>
+         */
+        public String getLastMaximizedMode() {
+            return lastMaximizedMode;
+        }
+        
+        /**
+         * Sets the location of the last element that was maximized.
+         * @param lastMaximizedLocation the location or <code>null</code>
+         */
+        public void setLastMaximizedLocation( Location lastMaximizedLocation ) {
+            this.lastMaximizedLocation = lastMaximizedLocation == null ? null : getConverter().convertToSetting( lastMaximizedLocation );
+        }
+        
+        /**
+         * Gets the location of the last element that was maximized.
+         * @return the location or <code>null</code>
+         */
+        public Location getLastMaximizedLocation() {
+            return lastMaximizedLocation == null ? null : getConverter().convertToWorld( lastMaximizedLocation );
+        }
+        
+        @Override
+        public void write( DataOutputStream out ) throws IOException {
+            super.write( out );
+            if( lastMaximizedMode == null ){
+                out.writeBoolean( false );
+            }
+            else{
+                out.writeBoolean( true );
+                out.writeUTF( lastMaximizedMode );
+            }
+            
+            if( lastMaximizedLocation == null ){
+                out.writeBoolean( false );
+            }
+            else{
+                out.writeBoolean( true );
+                getConverter().writeProperty( lastMaximizedLocation, out );
+            }
+        }
+        
+        @Override
+        public void read( DataInputStream in ) throws IOException {
+            super.read( in );
+            if( in.readBoolean() )
+                lastMaximizedMode = in.readUTF();
+            else
+                lastMaximizedMode = null;
+            
+            if( in.readBoolean() )
+                lastMaximizedLocation = getConverter().readProperty( in );
+            else
+                lastMaximizedLocation = null;
         }
     }
     

@@ -73,7 +73,7 @@ public class PictureDockable extends DefaultFMultipleDockable {
      * Creates a new Dockable.
      * @param factory the factory which creates this kind of Dockable
      */
-    public PictureDockable( FMultipleDockableFactory factory ){
+    public PictureDockable( FMultipleDockableFactory<PictureDockable,?> factory ){
         super( factory );
         
         setTitleText( "Page" );
@@ -81,6 +81,7 @@ public class PictureDockable extends DefaultFMultipleDockable {
         setMinimizable( true );
         setMaximizable( true );
         setExternalizable( false );
+        setRemoveOnClose( true );
         setTitleIcon( Resources.getIcon( "dockable.picture" ) );
         
         page = new Page();

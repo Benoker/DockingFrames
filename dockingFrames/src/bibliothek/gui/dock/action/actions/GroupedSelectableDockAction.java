@@ -141,7 +141,7 @@ public abstract class GroupedSelectableDockAction<K>
 	}
 	
 	@Override
-	protected SimpleSelectableAction createGroup(){
+	protected SimpleSelectableAction createGroup( K key ){
 		return createGroup( listener );
 	}
 	

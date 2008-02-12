@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.layout.DockablePropertyFactory;
+import bibliothek.util.xml.XElement;
 
 /**
  * A {@link DockableProperty} that stores the field in which a {@link ChessFigure}
@@ -68,17 +69,27 @@ public class ChessBoardProperty implements DockableProperty {
 		return successor;
 	}
 
+	public void store( DataOutputStream out ) throws IOException{
+        out.writeInt( row );
+        out.writeInt( column );
+    }
+	
 	public void load( DataInputStream in ) throws IOException{
 		row = in.readInt();
 		column = in.readInt();
 	}
-
+	
+	public void store( XElement element ) {
+	    element.addElement( "row" ).setInt( row );
+	    element.addElement( "column" ).setInt( column );
+	}
+	
+	public void load( XElement element ) {
+	    row = element.getElement( "row" ).getInt();
+	    column = element.getElement( "column" ).getInt();
+	}
+	
 	public void setSuccessor( DockableProperty properties ){
 		successor = properties;
-	}
-
-	public void store( DataOutputStream out ) throws IOException{
-		out.writeInt( row );
-		out.writeInt( column );
 	}
 }

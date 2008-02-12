@@ -1,18 +1,12 @@
 package bibliothek.notes;
 
 import java.awt.Component;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 
 import bibliothek.demonstration.Monitor;
@@ -33,6 +27,8 @@ import bibliothek.notes.view.ViewManager;
 import bibliothek.notes.view.actions.icon.IconGrid;
 import bibliothek.notes.view.panels.NoteViewFactory;
 import bibliothek.notes.view.themes.NoteBasicTheme;
+import bibliothek.util.xml.XElement;
+import bibliothek.util.xml.XIO;
 
 /**
  * The core is the center of this application. All objects can be
@@ -124,15 +120,26 @@ public class Core implements ComponentCollector{
 		
 		try{
 			if( !secure ){
-				File file = new File( "notes.properties" );
+				/*File file = new File( "notes.properties" );
 				DataInputStream in = new DataInputStream( new BufferedInputStream( new FileInputStream( file )));
 				read( in );
-				in.close();
+				in.close();*/
+			    
+			    File file = new File( "properties.xml" );
+			    InputStreamReader in = new InputStreamReader( new BufferedInputStream( new FileInputStream( file )), "UTF-8" );
+			    XElement element = XIO.read( in );
+			    in.close();
+			    readXML( element );
 			}
 			else{
-				DataInputStream in = new DataInputStream( ResourceSet.openStream( "/data/bibliothek/notes/backup.properties" ));
+				/*DataInputStream in = new DataInputStream( ResourceSet.openStream( "/data/bibliothek/notes/backup.properties" ));
 				read( in );
-				in.close();
+				in.close();*/
+			    
+                InputStreamReader in = new InputStreamReader( ResourceSet.openStream( "/data/bibliothek/notes/properties.xml" ), "UTF-8" );
+                XElement element = XIO.read( in );
+                in.close();
+                readXML( element );
 			}
 		}
 		catch( IOException ex ){
@@ -165,11 +172,20 @@ public class Core implements ComponentCollector{
 			
 			if( !secure ){
 				try{
-					File file = new File( "notes.properties" );
+					/*File file = new File( "notes.properties" );
 					DataOutputStream out = new DataOutputStream( new BufferedOutputStream( new FileOutputStream( file )));
 					write( out );
 					out.flush();
-					out.close();
+					out.close();*/
+				    
+				    XElement element = new XElement( "properties" );
+                    writeXML( element );
+				    
+				    File file = new File( "properties.xml" );
+                    OutputStream out = new BufferedOutputStream( new FileOutputStream( file ));
+                    OutputStreamWriter writer = new OutputStreamWriter( out, "UTF-8" );
+                    XIO.write( element, writer );
+                    writer.close();
 				}
 				catch( IOException ex ){
 					ex.printStackTrace();
@@ -245,7 +261,31 @@ public class Core implements ComponentCollector{
 		views.getFrontend().read( in );
 		frame.read( in );
 	}
-	
+
+	/**
+	 * Writes all the properties of this application into <code>out</code>.
+	 * @param element the xml-element to write into
+	 */
+	public void writeXML( XElement element ) throws IOException{
+	    lookAndFeels.writeXML( element.addElement( "lookandfeel" ) );
+	    model.writeXML( element.addElement( "model" ) );
+	    views.getNotes().writeXML( element.addElement( "notes" ) );
+	    views.getFrontend().writeXML( element.addElement( "frontend" ) );
+	    frame.writeXML( element.addElement( "frame" ) );
+	}
+
+	/**
+	 * Reads all the properties used for this application.
+	 * @param element the xml-element to read from
+	 */
+	public void readXML( XElement element ){
+	    lookAndFeels.readXML( element.getElement( "lookandfeel" ) );
+	    model.readXML( element.getElement( "model" ) );
+	    views.getNotes().readXML( element.getElement( "notes" ) );
+	    views.getFrontend().readXML( element.getElement( "frontend" ) );
+	    frame.readXML( element.getElement( "frame" ) );
+	}
+
     public Collection<Component> listComponents(){
         List<Component> components = new ArrayList<Component>();
         components.add( frame );

@@ -25,30 +25,36 @@
  */
 package bibliothek.gui.dock.common;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import bibliothek.gui.dock.common.intern.FDockable;
 
 /**
- * A factory that can create and save {@link FMultipleDockable}s.
+ * A factory that can create and store {@link FMultipleDockable}s. This factory
+ * converts a {@link FMultipleDockable} in a {@link FMultipleDockableLayout} and
+ * then writes the layout in various forms (like xml).
  * @author Benjamin Sigg
  *
  */
-public interface FMultipleDockableFactory {
-	/**
-	 * Reads and creates the contents of a new {@link FMultipleDockable}.
-	 * @param in the stream to read from
-	 * @return the new dockable or <code>null</code>
-	 * @throws IOException if the stream can't be read
-	 */
-	public FMultipleDockable read( DataInputStream in ) throws IOException;
-	
-	/**
-	 * Writes the contents of <code>dockable</code> into <code>out</code>.
-	 * @param dockable the element to store, the factory can expect that
-	 * <code>dockable.getFactory() == this</code>.
-	 * @param out the stream to write into
-	 * @throws IOException if the stream is not writable
-	 */
-	public void write( FMultipleDockable dockable, DataOutputStream out ) throws IOException;
+public interface FMultipleDockableFactory<F extends FMultipleDockable, L extends FMultipleDockableLayout> {
+    /**
+     * Collects all the properties of <code>dockable</code> and writes them
+     * into a new {@link FMultipleDockableLayout}.
+     * @param dockable the element whose properties should be collected
+     * @return the layout that has been written
+     */
+    public L write( F dockable );
+    
+    /**
+     * Creates a {@link FMultipleDockable} that gets its layout from <code>layout</code>.
+     * @param layout the set of properties that can be used to create the new
+     * {@link FDockable}.
+     * @return the new dockable or <code>null</code> if the layout can't be read
+     */
+    public F read( L layout );
+    
+    /**
+     * Creates a new, empty layout. The contents of the layout will be set
+     * using one of the <code>read</code>-methods of {@link FMultipleDockableLayout}.
+     * @return the new empty layout
+     */
+    public L create();
 }

@@ -350,7 +350,7 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
         
         D action = groups.get( key );
         if( action == null ){
-        	action = createGroup();
+        	action = createGroup( key );
             action.addDockActionListener( listener );
             groups.put( key, action );
         }
@@ -378,9 +378,10 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
     
     /**
      * Creates a new group.
+     * @param key the key of the new group
      * @return the new group
      */
-    protected abstract D createGroup();
+    protected abstract D createGroup( K key );
     
     /**
      * Returns <code>true</code> if a group with the name of <code>key</code>

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import bibliothek.notes.util.ResourceSet;
+import bibliothek.util.xml.XElement;
 
 /**
  * A model managing a set of {@link Note}s. The model contains methods
@@ -90,7 +91,25 @@ public class NoteModel implements Iterable<Note>{
 	}
 	
 	/**
-	 * Reads a set of Notes that were early written using {@link #write(DataOutputStream)}.
+     * Stores the current set of Notes.
+     * @param out the stream to write into
+     * @throws IOException if the method can't write into <code>out</code>
+     * @see #read(DataInputStream)
+     */
+    public void write( DataOutputStream out ) throws IOException{
+        out.writeLong( nextId );
+        out.writeInt( notes.size() );
+        for( Note note : this ){
+            out.writeUTF( note.getId() );
+            out.writeUTF( note.getTitle() );
+            out.writeUTF( note.getText() );
+            out.writeInt( note.getColor().getRGB() );
+            out.writeInt( ResourceSet.NOTE_ICONS.indexOf( note.getIcon() ));
+        }
+    }
+	
+	/**
+	 * Reads a set of notes that were early written using {@link #write(DataOutputStream)}.
 	 * @param in the stream to read from
 	 * @throws IOException if the stream can't be read
 	 */
@@ -120,20 +139,50 @@ public class NoteModel implements Iterable<Note>{
 	}
 	
 	/**
-	 * Stores the current set of Notes.
-	 * @param out the stream to write into
-	 * @throws IOException if the method can't write into <code>out</code>
-	 * @see #read(DataInputStream)
-	 */
-	public void write( DataOutputStream out ) throws IOException{
-		out.writeLong( nextId );
-		out.writeInt( notes.size() );
-		for( Note note : this ){
-			out.writeUTF( note.getId() );
-			out.writeUTF( note.getTitle() );
-			out.writeUTF( note.getText() );
-			out.writeInt( note.getColor().getRGB() );
-			out.writeInt( ResourceSet.NOTE_ICONS.indexOf( note.getIcon() ));
-		}
-	}
+     * Stores the current set of Notes.
+     * @param element the xml element to write into
+     */
+    public void writeXML( XElement element ){
+        element.addElement( "next" ).setLong( nextId );
+        XElement xnotes = element.addElement( "notes" );
+        
+        for( Note note : this ){
+            XElement xnote = xnotes.addElement( "note" );
+            xnote.addString( "id", note.getId() );
+            xnote.addElement( "title" ).setString( note.getTitle() );
+            xnote.addElement( "text" ).setString( note.getText() );
+            xnote.addElement( "color" ).setInt( note.getColor().getRGB() );
+            if( note.getIcon() != null ){
+                xnote.addElement( "icon" ).setInt( ResourceSet.NOTE_ICONS.indexOf( note.getIcon() ) );
+            }
+        }
+    }
+    
+    /**
+     * Reads a set of Notes that were early written using {@link #writeXML(XElement)}.
+     * @param element the xml element to read from
+     */
+    public void readXML( XElement element ) {
+        List<Note> notes = new ArrayList<Note>( this.notes.values() );
+        for( Note note : notes )
+            removeNote( note );
+        
+        nextId = element.getElement( "next" ).getLong();
+        
+        for( XElement xnote : element.getElement( "notes" ).getElements( "note" )){
+            Note note = new Note( xnote.getString( "id" ));
+            note.setTitle( xnote.getElement( "title" ).getString() );
+            note.setText( xnote.getElement( "text" ).getString() );
+            note.setColor( new Color( xnote.getElement( "color" ).getInt() ));
+            XElement xicon = xnote.getElement( "icon" );
+            if( xicon != null ){
+                note.setIcon( ResourceSet.NOTE_ICONS.get( xicon.getInt() ));
+            }
+            
+            this.notes.put( note.getId(), note );
+            
+            for( NoteModelListener listener : listeners )
+                listener.noteAdded( this, note );
+        }
+    }
 }

@@ -32,6 +32,7 @@ import java.io.IOException;
 
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.layout.AbstractDockableProperty;
+import bibliothek.util.xml.XElement;
 
 /**
  * This property is used on {@link ScreenDockStation ScreenDockStations}
@@ -72,6 +73,13 @@ public class ScreenDockProperty extends AbstractDockableProperty {
         out.writeInt( width );
         out.writeInt( height );
     }
+    
+    public void store( XElement element ) {
+        element.addElement( "x" ).setInt( x );
+        element.addElement( "y" ).setInt( y );
+        element.addElement( "width" ).setInt( width );
+        element.addElement( "height" ).setInt( height );
+    }
 
     public void load( DataInputStream in ) throws IOException {
         x = in.readInt();
@@ -80,6 +88,13 @@ public class ScreenDockProperty extends AbstractDockableProperty {
         height = in.readInt();
     }
 
+    public void load( XElement element ) {
+        x = element.getElement( "x" ).getInt();
+        y = element.getElement( "y" ).getInt();
+        width = element.getElement( "width" ).getInt();
+        height = element.getElement( "height" ).getInt();
+    }
+    
     /**
      * Gets the height of the dialog.
      * @return the height

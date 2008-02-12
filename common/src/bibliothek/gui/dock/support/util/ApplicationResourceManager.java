@@ -30,6 +30,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.prefs.Preferences;
 
+import bibliothek.util.xml.XElement;
+
 /**
  * Manages a set of {@link ApplicationResource}s, can load and store the
  * resources at any time.<br>
@@ -47,7 +49,7 @@ public class ApplicationResourceManager {
     private Map<String, ApplicationResource> resources = new HashMap<String, ApplicationResource>();
     
     /** buffer for streams which are not yet read */
-    private Map<String, byte[]> buffer = new HashMap<String, byte[]>();
+    private Map<String, Object> buffer = new HashMap<String, Object>();
     
     /**
      * Stores a resource that might be read or written at any time. If a stream
@@ -68,12 +70,17 @@ public class ApplicationResourceManager {
             throw new NullPointerException( "resource must not be null" );
         
         resources.put( name, resource );
-        byte[] array = buffer.get( name );
-        if( array != null ){
-            ByteArrayInputStream in = new ByteArrayInputStream( array );
-            DataInputStream data = new DataInputStream( in );
-            resource.read( data );
-            data.close();
+        Object buffered = buffer.get( name );
+        if( buffered != null ){
+            if( buffered instanceof byte[] ){
+                ByteArrayInputStream in = new ByteArrayInputStream( (byte[])buffered );
+                DataInputStream data = new DataInputStream( in );
+                resource.read( data );
+                data.close();
+            }
+            if( buffered instanceof XElement ){
+                resource.readXML( (XElement)buffered );
+            }
         }
     }
     
@@ -139,6 +146,35 @@ public class ApplicationResourceManager {
             }
             else
                 buffer.put( key, input );
+        }
+    }
+    
+    /**
+     * Writes the content of this manager in xml format.
+     * @param element the element to write into, the attributes of this
+     * element will not be changed.
+     */
+    public void writeXML( XElement element ){
+        for( Map.Entry<String, ApplicationResource> resource : resources.entrySet() ){
+            XElement xresource = element.addElement( "resource" );
+            xresource.addString( "name", resource.getKey() );
+            resource.getValue().writeXML( xresource );
+        }
+    }
+    
+    /**
+     * Reads the contents of this manager from a xml element.
+     * @param element the element to read
+     */
+    public void readXML( XElement element ){
+        for( XElement xresource : element.getElements( "resource" )){
+            String name = xresource.getString( "name" );
+            ApplicationResource resource = resources.get( name );
+            if( resource != null ){
+                resource.readXML( xresource );
+            }
+            else
+                buffer.put( name, xresource );
         }
     }
     

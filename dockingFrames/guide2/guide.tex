@@ -1,13 +1,25 @@
 \documentclass[a4paper,10pt]{article}
 \usepackage{listings}
+\usepackage{color}
 
 \lstset{language=Java}
 \lstset{breaklines=true, numbers=left}
+\lstset{tabsize=4}
+
+\definecolor{CommentColor}{rgb}{0,0.5,0} 
+\definecolor{KeywordColor}{rgb}{0,0,0.5}
+
+\lstset{commentstyle=\scriptsize\color{CommentColor}\itshape}
+\lstset{keywordstyle=\scriptsize\color{KeywordColor}\bfseries}
+\lstset{basicstyle=\scriptsize}
+\lstset{identifierstyle=\scriptsize}
+\lstset{stringstyle=\scriptsize}
+
 % \lstset{basicstyle=\ttfamily}
 
-\newcommand{\src}[1]{\lstinline[basicstyle=\ttfamily]|#1|}
+\newcommand{\src}[1]{\lstinline[basicstyle=\normalsize\ttfamily,keywordstyle=\normalsize\ttfamily,identifierstyle=\normalsize\ttfamily]|#1|}
 
-\title{DockingFrames - Version 1.0.2}
+\title{DockingFrames 1.0.2 - Core}
 \author{Benjamin Sigg}
 
 \begin{document}
@@ -202,40 +214,353 @@ When a \src{Dockable} is dragged over an other \src{Dockable}, then they have to
 
 The creation of the station is handled by a \src{Combiner}, the \src{BasicCombiner} to be exact. Many \src{DockStation}s have a method that allows clients to set their own implementation of a \src{Combiner}. Clients can exchange the \src{Combiner} globally by creating a new \src{DockTheme}, overriding the method \src{getCombiner} and then registering a new instance at the \src{DockController} through \src{setTheme}. Note that all descendants of \src{BasicDockTheme} have a method called \src{setCombiner} that exchanges the \src{Combiner} directly without the need to override \src{getCombiner}.
 
+\subsection{Modes}
+A \src{DockRelocator} can have "modes". A mode is some kind of behavior that is activated when the user presses a certain combination of keys. Modes are modeled by the class \src{DockRelocatorMode}. It is not specified what effect a mode really has, but normally a mode would add some restrictions where to put a \src{Dockable} during drag and drop. \src{DockRelocatorMode}s can be added or removed to a \src{DockRelocator} by the methods \src{addMode} and \src{removeMode}.
+
+Currently two modes are installed:
+\begin{description}
+\item[DockRelocatorMode.SCREEN\_ONLY] (press key \textit{shift}) ensures that a \src{Dockable} can only be put on a \src{ScreenDockStation}. That means that a \src{Dockable} can be directly above a \src{DockStation} like a \src{SplitDockStation}, but can't be dropped there.
+\item[DockRelocatorMode.NO\_COMBINATION] (press key \textit{alt}) ensures that a \src{Dockable} can't be put over another \src{Dockable}. That means, every operation that would result in a merge is forbidden. Also dropping a \src{Dockable} on already merged \src{Dockable}s will not be allowed.
+\end{description}
+
 \subsection{Restrictions}
+Sometimes a developer wishes to restrict the set of possible targets for a drop-operation. There are multiple reasons why someone would like to do that:
+\begin{itemize}
+ \item Some \src{Dockable} must always be visible
+ \item Some \src{DockStation}s represent a special area that can only be used by some \src{Dockable}s
+ \item Some \src{Dockable}s can only be presented on a given \src{DockStation}
+\end{itemize}
 
+There are also a lot of ways how to achieve this goal.
+\begin{itemize}
+ \item Every \src{Dockable} has two methods called \src{accept}. One of them tells the system, whether a \src{Dockable} accepts some \src{DockStation} as parent or not. The other tells whether the \src{Dockable} can be merged with another \src{Dockable}.
+ \item Each \src{DockStation} has a method \src{accept}. This method tells whether some \src{Dockable} can become a child of the \src{DockStation}.
+ \item And then there are \src{DockAcceptances}. A \src{DockAcceptance} has \src{accept}-methods too. These methods get a \src{DockStation} and some \src{Dockable}s, and then have to decide whether the elements can be put together. Each \src{DockAcceptance} works on a global scale, and thus they are registered at the \src{DockController} through \src{addAcceptance}.
+\end{itemize}
 
-\subsubsection{Modes}
-\src{DockRelocatorMode}
-\subsubsection{Acceptances}
-\src{DockAcceptance}
+\section{Themes}
+A \src{DockTheme} is nothing else than a \src{LookAndFeel} for DockingFrames. Each \src{DockController} can have exactly one \src{DockTheme} at any given time. The \src{DockTheme} contains a set of icons, painting code, behaviors and other stuff, that changes the way a user handles DF.
 
+\begin{lstlisting}
+DockController controller = ...
+DockTheme theme = new EclipseTheme();
+controller.setTheme( theme );
+\end{lstlisting}
+The previous listing shows how easy it is to set the theme. All that needs to be done is to create the desired theme (line \src{2}) and set it (line \src{3}).
 
+Several \src{DockTheme}s are already part of DF. An easy way to access all of them is the method \src{getThemes} of \src{DockUI}. This method returns a set of \src{ThemeFactory}s which then can create some \src{DockTheme}s.
 
+\subsection{Themes of DF}
+This section lists all \src{DockTheme}s that are in DF, and mention their specialities, if there are any.
+\subsubsection{BasicTheme}
+The \src{BasicTheme} is a very simple implementation. Its strength is, that it shows as much features as possible. If there is the possibility to show some button, then some button is shown. If there is the possibility to add a border to a \src{Component}, then a border is added. While \src{BasicTheme} does not look very nice to the user, it does make debugging a lot easier.
+\subsubsection{SmoothTheme}
+\src{SmoothTheme} is almost the same as \src{BasicTheme}, but the titles that are shown for each \src{Dockable} have been replaced. They have now a smooth animation that is triggered whenever the focused \src{Dockable} changes.
+\subsubsection{FlatTheme}
+The reverse of \src{BasicTheme}, this theme does not add any borders, buttons or other decorations until necessary. It's not a very complex theme, and easy to understand by a user.
+\subsubsection{BubbleTheme}
+A more experimental theme. It uses animations and graphical gimmicks wherever possible. This theme has some issues with performance, but it is certainly a good demonstration of the potential of the theming-mechanism.
+\subsubsection{EclipseTheme}
+The \src{EclipseTheme} tries to imitate the behavior of the famous Eclipse platform. It changes the behavior of DF massivly. Some properties of \src{EclipseTheme} can be set through the \src{DockProperties} as in the following example.
+\begin{lstlisting}
+DockController controller = ...
+DockProperties properties = controller.getProperties();
+properties.set(
+	EclipseTheme.PAINT_ICONS_WHEN_DESELECTED,
+	true );
+\end{lstlisting}
+Let's have quick look: in line \src{1} we get some \src{DockController}. In line \src{2} we get access to the set of properties. In line \src{3-5} the property \src{PAINT_ICONS_WHEN_DESELECTED} is set to \src{true}.
 
+There are more properties for \src{EclipseTheme}:
+\begin{description}
+ \item[TAB\_PAINTER] tells how to paint tabs on the \src{StockDockStation}. Possible values are \src{ShapedGradientPainter.FACTORY}, \src{RectGradientPainter.FACTORY}, \src{DockTitleTab.FACTORY} or any other \src{TabPainter}.
+ \item[THEME\_CONNECTOR] tells which kind of title and border should be used for \src{Dockable}s, and which actions should be displayed on the tabs (actions on the tabs are always visible, other actions are only visible when a \src{Dockable} is selected). The value can be any \src{EclipseThemeConnector}.
+ \end{description}
 
+A note: any action that is marked with the annotation \src{EclipseTabDockAction} will be shown on the tabs.
 
+\subsubsection{NoStackTheme}
+This \src{DockTheme} takes another theme and changes its behavior. In particular it removes some titles and ensures, that no \src{StackDockStation}s are put in another. That ensures that merged \src{Dockable}s are not merged again. A behavior that a user might like better then the original behavior, because it is harder to loose a \src{Dockable}.
 
+The use of \src{NoStackTheme} is simple:
+\begin{lstlisting}
+DockController controller = ...
+DockTheme theme = ...
+conroller.setTheme( new NoStackTheme( theme ));
+\end{lstlisting}
 
-Drag  Drop
-The default behavior
-The drag  drop operation normally is handled by the DockRelocator (which is created by the DockController).
-The DefaultDockRelocator registers Mouse- and MouseMotionListeners to several Components, most importantly to the titles of the Dockables.
-When the user initiates a mouse-drag operation, the DefaultDockRelocator first shows a window containing the title of the Dockable. Then he uses the knowledge of the DockController to find a DockStation which might become the parent of the dragged Dockable. The methods “prepareMove” or “prepareDrop” of DockStation are used for that.
-When the user releases the mouse, the methods “drop” or “move” of the next parent is called. Then the operation is finished.
-Invoking the mechanism
-There is a possibility to remotelly steer a drag  drop operation. Clients can use the methods “createRemote” or “createDirectRemote” of DockRelocator to get an object which can controll the DockRelocator.
-The RemoteRelocator (result of “createRemote”) is intended for a connection with a Mouse-/MouseMotionListener.
-On the other hand, the DirectRemoteRelocator is intended for a usage that has no connection to the (real) mouse.
-Merging two Dockables
-When the user lays two Dockables above each other, they are merged. Most DockStations will use a Combiner to create a new Dockable consisting of the old ones. If not told otherwise, the DockStation will ask the DockTheme (using “getTheme” of DockController) of its DockController to provide a Combiner (using “getCombiner” of DockTheme).
-Clients might exchange the Combiner of the DockStation itself, or of the DockTheme, in order to create new effects when merging occurs.
-Constraints for combinations
-Not every relationship is a good one. Sometimes a Dockable just should not be a child of some DockStation.
-There are several mechanism to prevent unhealthy relationships:
-Every Dockable has a methods called “accept”.
-Every DockStation has a method “accept”.
-And finally, the DockController can carry a whole set of DockAcceptances (see “addAcceptance” in DockController). Every DockAcceptance has methods called “accept”.
-Whenever a dragdrop operation is about to end, all these “accept”-methods must agree to the new relationship.
+\subsection{How to write your own DockTheme}
+Writing a \src{DockTheme} is a complex matter. If you'd like to write a theme then you should make some preparations:
+\begin{enumerate}
+ \item Write at least one application using DF
+ \item Read this document, twice
+ \item Download the source of DF, download the API-documentation
+ \item Have a look how other themes are made, \src{FlatTheme} is a good mix of simplicity and small features. You can learn a lot just analyzing \src{FlatTheme}
+ \item Look up any unknown interface in the API-documentation or in the source
+\end{enumerate}
 
+The best way is to write a subclass of \src{BasicTheme}. \src{BasicTheme} will ensure that you have someting that works and that you can modifie step by step. As you will see, \src{BasicTheme} has many \src{setXYZ}-methods, refer to step 5 of your preparations and look at the API-documentation to find out, what these methods do.
+
+There is method called \src{install}. This method can be overriden (don't forget to call \src{super.install}) and changes any property of \src{DockController}. The most often used objects by \src{install} are:
+\begin{description}
+ \item[IconManager] contains all \src{Icon}s that are used, the \src{Icon}s can be exchanged.
+ \item[DockTitleManager] contains factories which will create the titles for some \src{Dockable}s.
+ \item[ActionViewConverter] contains factories which create views for actions (for example a \src{JButton} for a \src{ButtonDockAction})
+ \item[DockProperties] is a map for all sorts of properties, can be used as cheap distribution system for values that must be known globally
+\end{description}
+
+Don't forget to undo the changes in the method \src{uninstall}.
+
+\section{Actions}
+A \src{DockAction} is an object which is related to one or many \src{Dockable}s, they describe some action like "close a \src{Dockable}". Every \src{DockAction} has the ability to create one or many views of itself. A view might be a \src{JButton}, a \src{JCheckBox}, a \src{JMenuItem} or other objects.
+
+Every \src{Dockable} has a list of associated \src{DockAction}s. This list is modeled by a \src{DockActionSource}. 
+
+If some module wants to show the actions of a \src{Dockable}, it asks for the \src{Dockable}s global \src{DockActionSource}, then it commands each \src{DockAction} to create a view that can be somehow be displayed by the module. A \src{JMenu} will ask for another type of view than a \src{DockTitle} would. So the menu might get a \src{JMenuItem}, the title a \src{JButton}.
+
+Let's write a simple action.
+\begin{lstlisting}
+public class CloseAction extends SimpleButtonAction{
+	public CloseAction(){
+		setText( "Close" );
+		setTooltip( "Removes this panel from the view" );
+		setIcon( new ImageIcon( "close.png" ));
+		setAccelerator(
+			 KeyStroke.getKeyStroke(
+				KeyEvent.VK_C,
+				KeyEvent.CTRL_DOWN_MASK ) );
+	}
+
+	@Override
+	public void action( Dockable dockable ){
+		super.action( dockable );
+		DockStation parent = dockable.getDockParent();
+		if( parent != null )
+			parent.drag( dockable );
+	}
+}
+\end{lstlisting}
+One of the predefined \src{DockAction}s is used to implement the new kind of action. The \src{SimpleButtonAction} is an action that behaves like a push-down-button. In lines \src{3-9} some properties are set that help the user to understand and access \src{CloseAction}. The logic of the action is written down in lines \src{14-17}. In this case, a \src{Dockable} is removed from its parent.
+
+And now let's \src{CloseAction} add to the list of action some \src{Dockable} offers. Since \src{DefaultDockable} will be the most often used implementation of \src{Dockable}, the example uses a \src{DefaultDockable} as well.
+\begin{lstlisting}
+DefaultDockable dockable = ...
+CloseAction action = new CloseAction();
+
+DefaultDockActionSource source = new DefaultDockActionSource(
+	new LocationHint(
+		LocationHint.DOCKABLE, 
+		LocationHint.RIGHT_OF_ALL ));
+source.add( action );
+dockable.setActionOffers( source );
+\end{lstlisting}
+In line \src{4} a new \src{DockActionSource} is created. The \src{LocationHint} in lines \src{5-7} tells everyone, that the origin of \src{source} is a \src{Dockable}, and that \src{source} should be on the right side if the content of many \src{DockActionSource}s are displayed in a row. The new \src{CloseAction} is inserted into \src{source} at line \src{8}. Then the list of actions of \src{dockable}s is changed to \src{source} in line \src{9}. Note that lines \src{8} and \src{9} could be exchanged without any effect to the rest of the program.
+
+\subsection{Sources of DockActions}
+So how exactly does a module find out, which \src{DockAction}s to show for a \src{Dockable}? The module uses the method \src{Dockable.getGlobalActionOffers} to optain a \src{DockActionSource}. The result of \src{getGlobalActionOffers} is a composite of \src{DockActionSource}s. The children of the result come from different sources.
+
+\begin{description}
+ \item[Local DockActionSource] Every \src{Dockable} should have a local list of actions, this list can be accessed through \src{getLocalActionOffers}. Some implementations of \src{Dockable} have a method that allows clients to exchange that local list. For example \src{setActionOffers} in \src{DefaultDockable}.
+ \item[Through the parents] Most \src{Dockable}s have one or more \src{DockStation}s as parents. Each \src{DockStation} can offer \src{direct} (if direct parent) or \src{indirect} (if grandparent) \src{DockActionSource}s for each child. Clients rarely interfere in that mechanism.
+ \item[Guards] \src{ActionGuard}s observe all \src{Dockable}s of a \src{DockController}. They can react to a \src{Dockable} and add additional \src{DockActionSource}s. An \src{ActionGuard} has to be made known by calling \src{addActionGuard} to \src{DockController}.
+ \item[Alternative sources] The \src{ActionOffer} normally is the authority that creates the content of the global \src{DockActionSource}. A \src{Dockable} will call one \src{ActionOffer} and give that offer all \src{DockActionSource}s that were gathered. Then the \src{ActionOffer} will determine in which order the \src{DockActionSource}s appear and create a new composite of the sources. Clients can add new \src{ActionOffer}s by calling \src{addActionOffer} of \src{DockController}.
+ \end{description}
+
+\subsection{Kinds of DockActions}
+There are different kinds of \src{DockAction}, all with different behavior. 
+
+There is a list of concepts that describe the most often used kinds of actions:
+\begin{description}
+ \item[Button-DockAction] This kind of action react like a button. They can be triggered over and over again, always calling the same piece of code.
+ \item[CheckBox-DockAction] This kind has two states: selected and not-selected. Every time the action is triggered, the state changes.
+ \item[RadioButton-DockAction] Like the \src{CheckBox}-kind, but many \src{RadioButton}s are grouped together, and only one of them can be selected. Triggering a not-selected button will deselect the currently selected button.
+ \item[Menu-DockAction] These actions just open some pop-up menu that contains another set of actions.
+ \item[DropDown-DockAction] Like the \src{Menu}-kind, but this action also remembers which child was triggered earlier. This last triggered child can be called again without the need to open the pop-up menu.
+\end{description}
+
+All these concepts are implemented by the "simple" \src{DockAction}s:
+\begin{center}
+% use packages: array
+\begin{tabular}{ll}
+\textbf{Kind} & \textbf{Action} \\
+Button & \src{SimpleButtonAction} \\
+CheckBox & \src{SimpleSelectableAction.Check} \\ 
+RadioButton & \src{SimpleSelectableAction.Radio} \\ 
+Menu & \src{SimpleMenuAction} \\
+DropDown & \src{SimpleDropDownAction}
+\end{tabular}
+\end{center}
+
+There is also a more complex series of actions, called the "grouped" \src{DockAction}s. The grouped actions do not store single properties like the simple actions, they store maps of properties. Each \src{Dockable} that is bound to a grouped action is then associated with one key, and that key is used to read the maps.
+
+As an example: a grouped action that counts for each \src{Dockable} how many times the action was triggered. When testing this action you will note that certain events (like changing the \src{DockTheme}) set the counter back to 0. It is never save to store information in a grouped action.
+\begin{lstlisting}
+public class CountingAction extends GroupedButtonDockAction<Integer>{
+	public CountingAction() {
+		super( null );
+		setGenerator( new GroupKeyGenerator<Integer>(){
+			public Integer generateKey( Dockable dockable ) {
+				return 0;
+			}
+		});
+		setRemoveEmptyGroups( true );
+	}
+
+	@Override
+	protected SimpleButtonAction createGroup( Integer key ) {
+		SimpleButtonAction group = super.createGroup( key );
+		group.setText( String.valueOf( key ) );
+		return group;
+	}
+
+	public void action( Dockable dockable ) {
+		String text = getText( dockable );
+		int count = Integer.valueOf( text );
+		count++;
+		setGroup( count, dockable );
+	}
+}
+\end{lstlisting}
+In lines \src{4-8} a \src{GroupKeyGenerator} is set. This generator will determin the initial group of each new \src{Dockable}. In line \src{9} the fate of empty groups is defined. Empty groups are to be deleted. That is a good behavior if groups are generated automatically and the number of groups is unknown. The code in lines \src{13-17} defines how a new group is created. And finally in lines \src{20-23} the count-event is handled. The action will be triggered for \src{dockable}, and putting \src{dockable} in a new group changes the text on each view that shows the action for \src{dockable}.
+
+There are a few grouped actions defined in DF:
+\begin{center}
+% use packages: array
+\begin{tabular}{ll}
+\textbf{Kind} & \textbf{Action} \\
+Button & \src{GroupedButtonDockAction} \\
+CheckBox & \src{GroupedSelectableDockAction.Check} \\ 
+RadioButton & \src{GroupedSelectableDockAction.Radio} \\ 
+Menu & - \\
+DropDown & -
+\end{tabular}
+\end{center}
+
+Finally there is a very small action called \src{SeparatorAction}. This action just adds a line or space in the view, acting as a separator between other actions.
+
+\subsection{Lifecycle}
+Eventually each \src{DockAction} is instantiated and stored at a place where it can be found. While a \src{DockAction} enters and leaves the realm of a \src{DockController}, these things might happen.
+\begin{enumerate}
+ \item Every time some module is going to use an action, it connects the \src{DockAction} with one or many \src{Dockable}s (the method \src{bind} is called). This call informs the \src{DockAction} that it is related to the \src{Dockable}s.
+ \item A module normally wants to show some view for an action. Therefore it calls \src{DockAction.createView}. It gives \src{createView} a \src{ViewTarget}. A \src{ViewTarget} tells what kind of view is requested, one for a menu, one for a title or even something that is defined by the client. The module also gives an \src{ActionViewConverter} to \src{createView}. The \src{ActionViewConverter} is a set of factories which can create the views that are often needed. Most \src{DockAction}s will tell the converter what type of action they are (with an argument of type \src{ActionType}) and what \src{ViewTarget} the module requests. Then the converter will create a view matching the parameters.
+ \item Most views have some binding mechanism that has to be used by the module. This binding mechanism will install or uninstall some listeners when needed.
+ \item When a module no longer uses an action, it disconnects the \src{DockAction} from one or many \src{Dockable}s (the method \src{unbind} is called). That informs the \src{DockAction} to remove all ties to these \src{Dockable}s, releasing as many resources as possible.
+\end{enumerate}
+Clients might be interested to introduce new kinds of views or new types of actions.
+\begin{itemize}
+ \item When a client adds a new kind of view, it has to define a new \src{ViewTarget}. The client then has to register a new \src{ViewGenerator} for each type of action at the \src{ActionViewConverter}.
+ \item When a client adds a new type of action, it has to define a new \src{ActionType}. The client then has to register a new \src{ViewGenerator} for each kind of view at the \src{ActionViewConverter}.
+\end{itemize}
+
+Let's have a look at an example. In the example a new kind of view and a new kind of action will be introduced.
+\begin{lstlisting}
+    ViewTarget<JButton> TOOLBAR = 
+        new ViewTarget<JButton>( "toolbar" );
+    
+    ActionType<TextAction> TEXT_ACTION =
+        new ActionType<TextAction>( "text_action" );
+\end{lstlisting}
+First the new kind of view \src{TOOLBAR} and the new type of action \src{TEXT_ACTION} is defined. Lines \src{1,2} say that the view will only consist of \src{JButton}s. Lines \src{4,5} define that the new type of action is always a \src{TextAction}. So the next step is to define \src{TextAction}.
+\begin{lstlisting}
+    public class TextAction implements DockAction{
+        public void bind( Dockable dockable ) {
+            // ignore
+        }
+        
+        public String getContent(){
+            return "text";
+        }
+
+        public <V> V createView( ViewTarget<V> target, 
+                ActionViewConverter converter, Dockable dockable ) {
+            
+            return converter.createView( TEXT_ACTION, this, target, dockable ); 
+        }
+
+        public boolean trigger( Dockable dockable ) {
+            // ignore
+            return false;
+        }
+
+        public void unbind( Dockable dockable ) {
+            // ignore
+        }    
+    }
+\end{lstlisting}
+As can be seen in line \src{1}, \src{TextAction} is an implemtation of \src{DockAction}. Since this action is rather stupid, we can ignore most input. Line \src{13} is the most important line, here an \src{ActionViewConverter} is used to create a view for the \src{TextAction}. Note that the action has to pass \src{TEXT_ACTION}, the type of action it is.
+
+Since the \src{ActionViewConverter} does not know \src{TOOLBAR} or \src{TEXT_ACTION}, a \src{ViewGenerator} has to be defined. In fact there are several \src{ViewGenerator}s necessary, one for each combination of \src{ViewTarget} and \src{ActionType}. But in this example only one new generator is written.
+\begin{lstlisting}
+public class ToolbarTextAction implements ViewGenerator<TextAction, JButton>{
+	public JButton create(
+		ActionViewConverter converter,
+		final TextAction action,
+		final Dockable dockable ) {
+
+		String content = action.getContent();
+		JButton button = new JButton( content );
+		button.addActionListener( new ActionListener(){
+			public void actionPerformed( ActionEvent e ) {
+				action.trigger( dockable );
+			}
+		});
+		return button;
+	}
+}
+\end{lstlisting}
+Note how the generator can make use of the knowledge, that it receives a \src{TextAction}. In line \src{7} it asks for the content of the action, a method only available for \src{TextAction}s. The generator also connects view and action, in this case by adding a \src{ActionListener} to \src{button}.
+
+Finally the new generator has to be made public:
+\begin{lstlisting}
+DockController controller = ...
+ActionViewConverter converter = controller.getActionViewConverter();
+
+converter.putDefault( 
+	TEXT_ACTION,
+	TOOLBAR,
+	new ToolbarTextAction() );
+\end{lstlisting}
+There are several methods called \src{putX} in \src{ActionViewConverter}. \src{putDefault} should be used for new generators, \src{putTheme} is only used by \src{DockTheme}s, and \src{putClient} can be used by any client to override values that were set by \src{putDefault} or \src{putTheme}.
+
+A module that needs a view for \src{TOOLBAR} would later call code that looks like this:
+\begin{lstlisting}
+ActionViewConverter converter = ...
+TextAction action = ...
+Dockable dockable = ...
+
+JButton button = converter.createView( action, TOOLBAR, dockable )
+\end{lstlisting}
+
+\section{Titles}
+A \src{DockTitle} is a \src{Component} that shows the icon, title-text, actions and/or other information related to a \src{Dockable}. A drag and drop operation is most often initiated by the mouse grabbing a \src{DockTitle}.
+
+\subsection{New titles}
+There is not much help to offer for developers which want to write a new kind of title. However there are some classes which might help:
+\begin{description}
+ \item[AbstractDockTitle] offers all the features a \src{DockTitle} should have, subclasses can override \src{paintBackground} to add their own painting code.
+ \item[BasicDockTitle] paints some gradient as background. Clients can change these colors.
+ \item[ButtonPanel] a \src{Component} that can display a set of \src{DockAction}s. Clients just invoke \src{set(Dockable)} to show the actions of a particular \src{Dockable}. If there is not enough space for all \src{DockAction}s, then \src{ButtonPanel} can use an additional pop-up for the abundant actions.
+\end{description}
+
+\subsection{Lifecycle}
+If a module wants to show a \src{DockTitle} for a \src{Dockable}, what has it to do? First a module needs to define what kind of \src{DockTitle} it wants to show. For that it needs the \src{DockTitleManager} which is available through a \src{DockController}. The module then calls \src{getVersion(String,DockTitleFactory)} to optain a \src{DockTitleVersion}. A \src{DockTitleVersion} describes the kind of a \src{DockTitle}.
+
+Later when the module gets a \src{Dockable}, it invokes \src{Dockable.getDockTitle} with its \src{DockTitleVersion}. A \src{Dockable} can decide on its own how to create the title, but most \src{Dockable}s will simply call \src{DockTitleVersion.createDockable}.
+
+If the module got a title (and not \src{null}), it binds the title to its \src{Dockable} calling \src{Dockable.bind(DockTitle)}. The \src{DockController} will handle any other binding operations that need to be done.
+
+When a module no longer needs a \src{DockTitle}, it unbinds the title through \src{Dockable.unbind(DockTitle)}.
+
+Clients can influence the \src{DockTitle} that is used for a \src{Dockable} in two ways:
+\begin{itemize}
+ \item They override \src{Dockable.getDockTitle} and return any title they like.
+ \item They install a new \src{DockTitleFactory} at the \src{DockTitleManager}. Clients can do this by invoking \src{registerClient(String,DockTitleFactory)}.
+\end{itemize}
 \end{document}
+
+
+
+
+
+
+
