@@ -5,3 +5,5 @@
 - Commons: new layer that simplifies DF. Should not contain more than 5 public interfaces
 - A global way to use the keyboard to give additional commands when moving a Dockable
 - All DockStations: make sure the children do not get too small, for example use "getPreferredSize" or a similar mechanism.
+- ShapedGradientPainter & others: exchangeable colors
+- Store and load DockSituation from XML?

@@ -622,7 +622,7 @@ public class DockFrontend {
             		if( station == null )
                 		throw new IllegalStateException( "Can't find the default station" );
             		station.drop( dockable );
-            		fireAllShown( dockable );
+            		fireAllShown( dockable, null );
             	}
             	else{
             		String root = info.getRoot();
@@ -647,7 +647,7 @@ public class DockFrontend {
                             getDefaultStation().drop( dockable );
                     }
                     
-                    fireAllShown( dockable );
+                    fireAllShown( dockable, null );
             	}
             }
         }
@@ -668,12 +668,12 @@ public class DockFrontend {
                 DockInfo info = getInfo( dockable );
                 if( info == null ){
                     dockable.getDockParent().drag( dockable );
-                    fireAllHidden( dockable );
+                    fireAllHidden( dockable, null );
                 }
                 else{
                     info.updateLocation();
                     dockable.getDockParent().drag( dockable );
-                    fireAllHidden( dockable );
+                    fireAllHidden( dockable, null );
                 }
             }
         }
@@ -808,13 +808,15 @@ public class DockFrontend {
             
             Set<Dockable> newVisible = listShownDockables();
             
+            Set<Dockable> processed = new HashSet<Dockable>();
             for( Dockable hide : oldVisible )
                 if( !newVisible.contains( hide ))
-                    fireAllHidden( hide );
+                    fireAllHidden( hide, processed );
             
+            processed.clear();
             for( Dockable show : newVisible )
                 if( !oldVisible.contains( show ))
-                    fireAllShown( show );
+                    fireAllShown( show, processed );
             
             for( DockInfo info : dockables.values() ){
                 if( !info.isHideable() && isHidden( info.getDockable() )){
@@ -1186,12 +1188,15 @@ public class DockFrontend {
      * Invokes the method {@link DockFrontendListener#hidden(DockFrontend, Dockable)}
      * on all listeners for <code>dockable</code> and all its children.
      * @param dockable the hidden element
+     * @param processed Set of {@link Dockable}s for which the event is already fired,
+     * will be modified by this method, can be <code>null</code>
      */
-    protected void fireAllHidden( Dockable dockable ){
+    protected void fireAllHidden( Dockable dockable, final Set<Dockable> processed ){
         DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
             @Override
             public void handleDockable( Dockable dockable ) {
-                fireHidden( dockable );
+                if( processed == null || processed.add( dockable ))
+                    fireHidden( dockable );
             }
         });
     }
@@ -1241,12 +1246,15 @@ public class DockFrontend {
      * Invokes the method {@link DockFrontendListener#shown(DockFrontend, Dockable)}
      * on all listeners for <code>dockable</code> and all its children.
      * @param dockable the shown element
+     * @param processed Set of {@link Dockable}s whose event is already fired,
+     * will be modified by this method, can be <code>null</code>
      */
-    protected void fireAllShown( Dockable dockable ){
+    protected void fireAllShown( Dockable dockable, final Set<Dockable> processed ){
         DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
             @Override
             public void handleDockable( Dockable dockable ) {
-                fireShown( dockable );
+                if( processed == null || processed.add( dockable ))
+                    fireShown( dockable );
             }
         });
     }
