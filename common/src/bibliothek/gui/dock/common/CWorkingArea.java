@@ -39,7 +39,6 @@ import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.security.SecureSplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockTree;
-import bibliothek.gui.dock.station.split.SplitDockTree.Key;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 

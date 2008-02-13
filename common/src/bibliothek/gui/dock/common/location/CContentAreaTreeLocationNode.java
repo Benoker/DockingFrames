@@ -40,7 +40,7 @@ public class CContentAreaTreeLocationNode extends AbstractCContentAreaTreeLocati
 	 * @param parent the turn above this location
 	 * @param size the relative size of this location
 	 * @param side the side which is occupied by this location
-	 * @see AbstractCContentAreaTreeLocation#AbstractFCenterTreeLocation(double, Side)
+	 * @see AbstractCContentAreaTreeLocation#AbstractCContentAreaTreeLocation(double, Side)
 	 */
 	public CContentAreaTreeLocationNode( AbstractCContentAreaTreeLocation parent, double size, Side side ){
 		super( size, side );

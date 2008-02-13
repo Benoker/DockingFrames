@@ -144,8 +144,8 @@ public class Core implements ComponentCollector{
 	        frontend.add( viewHierarchy, "hierarchy" );
 	        
 	        SplitDockGrid grid = new SplitDockGrid(  );
-	        grid.addDockable( 0, 0, 1, 1, viewPackage );
-	        grid.addDockable( 0, 1, 1, 2, viewClasses );
+	        grid.addDockable( 0, 0, 1.5, 1, viewPackage );
+	        grid.addDockable( 0, 1, 1.5, 2, viewClasses );
 	        grid.addDockable( 0, 3, 1, 1, viewConstructors );
 	        grid.addDockable( 1, 3, 1, 1, viewFields );
 	        grid.addDockable( 2, 3, 1, 1, viewMethods );

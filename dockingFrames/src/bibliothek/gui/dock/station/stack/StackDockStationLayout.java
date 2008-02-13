@@ -39,16 +39,21 @@ public class StackDockStationLayout implements DockLayout {
     /** the order of the chilren */
     private int[] children;
     
+    /** the name of the selected child */
+    private int selected;
+    
     /** the id of the factory of this layout */
     private String factory;
     
     /**
      * Creates a new layout.
+     * @param selected the name of the selected child
      * @param children the order of the children. The entries of the array
      * are the identifiers that a {@link DockFactory} gets in its method
      * {@link DockFactory#getLayout(bibliothek.gui.dock.DockElement, java.util.Map)}
      */
-    public StackDockStationLayout( int[] children ){
+    public StackDockStationLayout( int selected, int[] children ){
+        this.selected = selected;
         this.children = children;
     }
     
@@ -66,5 +71,13 @@ public class StackDockStationLayout implements DockLayout {
      */
     public int[] getChildren() {
         return children;
+    }
+    
+    /**
+     * Gets the name of the selected child.
+     * @return the selected child
+     */
+    public int getSelected() {
+        return selected;
     }
 }

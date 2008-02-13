@@ -56,11 +56,17 @@ public class StackDockStationFactory implements DockFactory<StackDockStation, St
             Map<Dockable, Integer> children ) {
         
         List<Integer> list = new ArrayList<Integer>();
+        Dockable selectedDockable = station.getFrontDockable();
+        int selected = -1;
+        
         for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
             Dockable dockable = station.getDockable( i );
             Integer id = children.get( dockable );
             if( id != null ){
                 list.add( id );
+                if( selectedDockable == dockable ){
+                    selected = id;
+                }
             }
         }
         
@@ -68,7 +74,7 @@ public class StackDockStationFactory implements DockFactory<StackDockStation, St
         for( int i = 0, n = list.size(); i<n; i++ )
             ids[i] = list.get( i ).intValue();
         
-        return new StackDockStationLayout( ids );
+        return new StackDockStationLayout( selected, ids );
     }
     
     public void setLayout( StackDockStation station,
@@ -83,6 +89,10 @@ public class StackDockStationFactory implements DockFactory<StackDockStation, St
                 station.drop( dockable );
             }
         }
+        
+        Dockable selected = children.get( layout.getSelected() );
+        if( selected != null )
+            station.setFrontDockable( selected );
     }
     
     public void setLayout( StackDockStation element, StackDockStationLayout layout ) {
@@ -106,31 +116,51 @@ public class StackDockStationFactory implements DockFactory<StackDockStation, St
     public void write( StackDockStationLayout layout, DataOutputStream out )
             throws IOException {
         
+        out.writeInt( layout.getSelected() );
         out.writeInt( layout.getChildren().length );
         for( int c : layout.getChildren() )
             out.writeInt( c );
     }
     
     public StackDockStationLayout read( DataInputStream in ) throws IOException {
+        int selected = in.readInt();
         int count = in.readInt();
         int[] ids = new int[ count ];
         for( int i = 0; i < count; i++ )
             ids[i] = in.readInt();
-        return new StackDockStationLayout( ids );
+        return new StackDockStationLayout( selected, ids );
     }
     
     public void write( StackDockStationLayout layout, XElement element ) {
+        if( layout.getSelected() >= 0 )
+            element.addElement( "selected" ).setInt( layout.getSelected() );
+        
+        XElement xchildren = element.addElement( "children" );
         for( int i : layout.getChildren() ){
-            element.addElement( "child" ).addInt( "id", i );
+            xchildren.addElement( "child" ).addInt( "id", i );
         }
     }
     
     public StackDockStationLayout read( XElement element ) {
-        XElement[] children = element.getElements( "child" );
-        int[] ids = new int[ children.length ];
-        for( int i = 0, n = children.length; i<n; i++ )
-            ids[i] = children[i].getInt( "id" );
-        return new StackDockStationLayout( ids );
+        XElement xselected = element.getElement( "selected" );
+        int selected = -1;
+        if( xselected != null )
+            selected = xselected.getInt();
+        
+        XElement xchildren = element.getElement( "children" );
+        int[] ids;
+        
+        if( xchildren != null ){
+            XElement[] children = xchildren.getElements( "child" );
+            ids = new int[ children.length ];
+            for( int i = 0, n = children.length; i<n; i++ )
+                ids[i] = children[i].getInt( "id" );
+        }
+        else{
+            ids = new int[]{};
+        }
+        
+        return new StackDockStationLayout( selected, ids );
     }
     
     /**

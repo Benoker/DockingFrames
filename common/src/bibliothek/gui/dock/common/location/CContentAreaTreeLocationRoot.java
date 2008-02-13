@@ -41,7 +41,7 @@ public class CContentAreaTreeLocationRoot extends AbstractCContentAreaTreeLocati
 	 * @param root the location describing where the "normalized-area" is.
 	 * @param size the relative size of this location
 	 * @param side the side which is occupied by this location
-	 * @see AbstractCContentAreaTreeLocation#AbstractFCenterTreeLocation(double, Side)
+	 * @see AbstractCContentAreaTreeLocation#AbstractCContentAreaTreeLocation(double, Side)
 	 */
 	public CContentAreaTreeLocationRoot( CRootLocation root, double size, Side side ){
 		super( size, side );

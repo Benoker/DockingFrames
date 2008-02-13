@@ -23,15 +23,16 @@ import javax.swing.WindowConstants;
 
 import bibliothek.chess.model.Board;
 import bibliothek.chess.util.Utils;
-import bibliothek.chess.view.ChessBoard;
-import bibliothek.chess.view.ChessDockController;
-import bibliothek.chess.view.HidingTheme;
-import bibliothek.chess.view.PawnReplaceDialog;
-import bibliothek.chess.view.StateLabel;
+import bibliothek.chess.view.*;
 import bibliothek.demonstration.Monitor;
+import bibliothek.gui.DockController;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.dockable.MovingImage;
 import bibliothek.gui.dock.security.GlassedPane;
 import bibliothek.gui.dock.support.lookandfeel.ComponentCollector;
 import bibliothek.gui.dock.themes.BasicTheme;
+import bibliothek.gui.dock.themes.basic.BasicMovingImageFactory;
+import bibliothek.gui.dock.title.TitleMovingImage;
 
 /**
  * The center of the application. Responsible for creating the graphical
@@ -200,7 +201,21 @@ public class Core implements ComponentCollector{
      */
     private void changeTheme( boolean show ){
         if( show ){
-            controller.setTheme( new BasicTheme() );
+            BasicTheme theme = new BasicTheme();
+            theme.setMovingImageFactory( new BasicMovingImageFactory(){
+                @Override
+                public MovingImage create( DockController controller,
+                        Dockable dockable ) {
+                    
+                    if( dockable instanceof ChessFigure ){
+                        return new TitleMovingImage( dockable, new ChessDockTitle( dockable, null ) );
+                    }
+                    else{
+                        return super.create( controller, dockable );
+                    }
+                }
+            });
+            controller.setTheme( theme );
         }
         else{
             controller.setTheme( new HidingTheme() );

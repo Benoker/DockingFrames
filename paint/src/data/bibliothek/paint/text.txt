@@ -4,11 +4,11 @@ set of functionality most applications need. In this case "common" was used
 as follows:<br>
 <ul>
 	<li>The "list of pictures" and "color choice"-panels are subclasses of
-	FSingleDockable - they exist only once in the application.</li>
-	<li>The panel showing a picture is a subclass of FMultipleDockable -
+	SingleCDockable - they exist only once in the application.</li>
+	<li>The panel showing a picture is a subclass of MultipleCDockable -
 	many of these panels can exist at the same time.</li>
 	<li>The actions like "select a shape" or "erase a shape" are subclasses of
-	FButton and FRadioButton. The similarity with JButton or JRadioButton
+	CButton and CRadioButton. The similarity with JButton or JRadioButton
 	is not happenstance.</li>
 	<li>Other actions like "maximize" or "minimize" are automatically added by
 	the "common"-project.</li>
