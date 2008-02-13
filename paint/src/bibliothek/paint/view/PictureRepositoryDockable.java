@@ -35,20 +35,20 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import bibliothek.gui.dock.common.DefaultFSingleDockable;
-import bibliothek.gui.dock.common.FSingleDockable;
-import bibliothek.gui.dock.common.action.FButton;
+import bibliothek.gui.dock.common.DefaultSingleCDockable;
+import bibliothek.gui.dock.common.SingleCDockable;
+import bibliothek.gui.dock.common.action.CButton;
 import bibliothek.paint.model.Picture;
 import bibliothek.paint.model.PictureRepository;
 import bibliothek.paint.model.PictureRepositoryListener;
 import bibliothek.paint.util.Resources;
 
 /**
- * A {@link FSingleDockable} showing the contents of a {@link PictureRepository}.
+ * A {@link SingleCDockable} showing the contents of a {@link PictureRepository}.
  * @author Benjamin Sigg
  *
  */
-public class PictureRepositoryDockable extends DefaultFSingleDockable{
+public class PictureRepositoryDockable extends DefaultSingleCDockable{
 	/** the list showing the names of the pictures */
     private JList list;
     /** a model containing all pictures */
@@ -58,11 +58,11 @@ public class PictureRepositoryDockable extends DefaultFSingleDockable{
     private PictureRepository pictures;
     
     /** button used to show a picture */
-    private FButton pictureShow;
+    private CButton pictureShow;
     /** button used to add a new picture */
-    private FButton pictureNew;
+    private CButton pictureNew;
     /** button used to delete a picture */
-    private FButton pictureDelete;
+    private CButton pictureDelete;
     
     /**
      * Creates a new dockable.
@@ -90,7 +90,7 @@ public class PictureRepositoryDockable extends DefaultFSingleDockable{
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                 new Insets( 1, 1, 1, 1 ), 0, 0 ) );
         
-        pictureNew = new FButton(){
+        pictureNew = new CButton(){
         	@Override
         	protected void action(){
         		String name = askForName();
@@ -103,7 +103,7 @@ public class PictureRepositoryDockable extends DefaultFSingleDockable{
         pictureNew.setTooltip( "Creates a new picture" );
         pictureNew.setIcon( Resources.getIcon( "picture.add" ) );
         
-        pictureDelete = new FButton(){
+        pictureDelete = new CButton(){
         	@Override
         	protected void action(){
         		Picture picture = (Picture)list.getSelectedValue();
@@ -117,7 +117,7 @@ public class PictureRepositoryDockable extends DefaultFSingleDockable{
         pictureDelete.setIcon( Resources.getIcon( "picture.remove" ) );
         pictureDelete.setEnabled( false );
         
-        pictureShow = new FButton(){
+        pictureShow = new CButton(){
         	@Override
         	protected void action(){
         		Picture picture = (Picture)list.getSelectedValue();

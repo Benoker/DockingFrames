@@ -31,36 +31,36 @@ import java.util.List;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.LocationHint;
-import bibliothek.gui.dock.common.FControl;
-import bibliothek.gui.dock.common.FLocation;
-import bibliothek.gui.dock.common.FWorkingArea;
-import bibliothek.gui.dock.common.action.FAction;
-import bibliothek.gui.dock.common.event.FDockableListener;
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.CLocation;
+import bibliothek.gui.dock.common.CWorkingArea;
+import bibliothek.gui.dock.common.action.CAction;
+import bibliothek.gui.dock.common.event.CDockableListener;
 
 
 /**
- * An abstract implementation of {@link FDockable}. Contains methods to 
- * work with listeners and with {@link FAction}s.
+ * An abstract implementation of {@link CDockable}. Contains methods to 
+ * work with listeners and with {@link CAction}s.
  * @author Benjamin Sigg
  */
-public abstract class AbstractFDockable implements FDockable {
+public abstract class AbstractFDockable implements CDockable {
     
     /** the location of this dockable */
-    private FLocation location = null;
+    private CLocation location = null;
     
     /** a liste of listeners that were added to this dockable */
-    private List<FDockableListener> listeners = new ArrayList<FDockableListener>();
+    private List<CDockableListener> listeners = new ArrayList<CDockableListener>();
     
     /** the graphical representation of this dockable */
-    private FacileDockable dockable;
+    private CommonDockable dockable;
 
     /** the preferred parent of this dockable */
-    private FWorkingArea workingArea;
+    private CWorkingArea workingArea;
     
     /** the control managing this dockable */
-    private FControlAccess control;
+    private CControlAccess control;
     
-    /** unique id of this {@link FDockable} */
+    /** unique id of this {@link CDockable} */
     private String uniqueId;
     
     /** Source that contains the action that closes this dockable */
@@ -69,19 +69,19 @@ public abstract class AbstractFDockable implements FDockable {
     
     /**
      * Creates a new dockable
-     * @param dockable the internal representation of this {@link FDockable},
-     * can be <code>null</code> but then {@link #init(FacileDockable)} should
+     * @param dockable the internal representation of this {@link CDockable},
+     * can be <code>null</code> but then {@link #init(CommonDockable)} should
      * be called.
      */
-    protected AbstractFDockable( FacileDockable dockable ){
+    protected AbstractFDockable( CommonDockable dockable ){
         this.dockable = dockable;
     }
     
     /**
-     * Initializes this FDockable.
-     * @param dockable the representation of this <code>FDockable</code>, not <code>null</code>
+     * Initializes this CDockable.
+     * @param dockable the representation of this <code>CDockable</code>, not <code>null</code>
      */
-    protected void init( FacileDockable dockable ){
+    protected void init( CommonDockable dockable ){
         if( this.dockable != null )
             throw new IllegalStateException( "dockable already set" );
         if( dockable == null )
@@ -94,7 +94,7 @@ public abstract class AbstractFDockable implements FDockable {
      * Gets access to the controller.
      * @return access or <code>null</code>
      */
-    protected FControlAccess control(){
+    protected CControlAccess control(){
         return control;
     }
     
@@ -103,7 +103,7 @@ public abstract class AbstractFDockable implements FDockable {
      * changes of this dockable.
      * @param listener the new listener
      */
-    public void addFDockableListener( FDockableListener listener ){
+    public void addFDockableListener( CDockableListener listener ){
         listeners.add( listener );
     }
     
@@ -111,7 +111,7 @@ public abstract class AbstractFDockable implements FDockable {
      * Removes a listener from this dockable.
      * @param listener the listener to remove
      */
-    public void removeFDockableListener( FDockableListener listener ){
+    public void removeFDockableListener( CDockableListener listener ){
         listeners.remove( listener );
     }
     
@@ -119,15 +119,15 @@ public abstract class AbstractFDockable implements FDockable {
      * Gets the list of listeners.
      * @return the listeners
      */
-    protected FDockableListener[] listeners(){
-        return listeners.toArray( new FDockableListener[ listeners.size() ] );
+    protected CDockableListener[] listeners(){
+        return listeners.toArray( new CDockableListener[ listeners.size() ] );
     }
     
     /**
      * Tells whether this dockable can be closed by the user. Clients which
      * have a method like "setCloseable" can use {@link #updateClose()}
      * to ensure that an action is shown/hidden that allows the user to
-     * close this <code>FDockable</code>.
+     * close this <code>CDockable</code>.
      * @return <code>true</code> if this element can be closed
      */
     public abstract boolean isCloseable();
@@ -153,7 +153,7 @@ public abstract class AbstractFDockable implements FDockable {
      */
     public void setVisible( boolean visible ){
         if( control == null )
-            throw new IllegalStateException( "This FDockable does not know its FControl. Call FControl.add(...) to connect this FDockable befor calling setVisible(...)." );
+            throw new IllegalStateException( "This CDockable does not know its CControl. Call CControl.add(...) to connect this CDockable befor calling setVisible(...)." );
         
         if( visible ){
             control.show( this );
@@ -184,7 +184,7 @@ public abstract class AbstractFDockable implements FDockable {
      * @param location the new location, <code>null</code> is possible, but
      * will not move the dockable immediately
      */
-    public void setLocation( FLocation location ){
+    public void setLocation( CLocation location ){
         this.location = location;
         
         if( location != null ){
@@ -198,10 +198,10 @@ public abstract class AbstractFDockable implements FDockable {
     /**
      * Gets the location of this dockable. If this dockable is visible, then
      * a location will always be returned. Otherwise a location will only
-     * be returned if it just was set using {@link #setLocation(FLocation)}.
+     * be returned if it just was set using {@link #setLocation(CLocation)}.
      * @return the location or <code>null</code>
      */
-    public FLocation getLocation(){
+    public CLocation getLocation(){
         if( control != null && isVisible() ){
             return control.getStateManager().getLocation( dockable );
         }
@@ -233,7 +233,7 @@ public abstract class AbstractFDockable implements FDockable {
                     return;
         }
         
-        FControlAccess control = control();
+        CControlAccess control = control();
         if( control != null )
             control.getStateManager().setMode( dockable, extendedMode );
     }
@@ -241,21 +241,21 @@ public abstract class AbstractFDockable implements FDockable {
     /**
      * Gets the size and location of this dockable.
      * @return the size and location or <code>null</code> if this dockable
-     * is not part of an {@link FControl}.
+     * is not part of an {@link CControl}.
      */
     public ExtendedMode getExtendedMode(){
-        FControlAccess control = control();
+        CControlAccess control = control();
         if( control == null )
             return null;
         
         return control.getStateManager().getMode( dockable );
     }
     
-    public void setWorkingArea( FWorkingArea area ) {
+    public void setWorkingArea( CWorkingArea area ) {
         this.workingArea = area;
     }
     
-    public FWorkingArea getWorkingArea() {
+    public CWorkingArea getWorkingArea() {
         return workingArea;
     }
     
@@ -263,15 +263,15 @@ public abstract class AbstractFDockable implements FDockable {
      * Gets the intern representation of this dockable.
      * @return the intern representation.
      */
-    public FacileDockable intern(){
+    public CommonDockable intern(){
         return dockable;
     }
     
     /**
-     * Sets the {@link FControl} which is responsible for this dockable.
+     * Sets the {@link CControl} which is responsible for this dockable.
      * @param control the new control
      */
-    public void setControl( FControlAccess control ){
+    public void setControl( CControlAccess control ){
         if( this.control != null ){
             this.control.getStateManager().remove( dockable );
             this.control.link( this, null );
@@ -280,27 +280,27 @@ public abstract class AbstractFDockable implements FDockable {
         this.control = control;
         
         if( control != null ){
-            control.link( this, new FDockableAccess(){
+            control.link( this, new CDockableAccess(){
                 public void informVisibility( boolean visible ) {
-                    for( FDockableListener listener : listeners() )
+                    for( CDockableListener listener : listeners() )
                         listener.visibilityChanged( AbstractFDockable.this );
                 }
                 public void informMode( ExtendedMode mode ) {
                     switch( mode ){
                         case EXTERNALIZED:
-                            for( FDockableListener listener : listeners() )
+                            for( CDockableListener listener : listeners() )
                                 listener.externalized( AbstractFDockable.this );
                             break;
                         case MINIMIZED:
-                            for( FDockableListener listener : listeners() )
+                            for( CDockableListener listener : listeners() )
                                 listener.minimized( AbstractFDockable.this );
                             break;
                         case MAXIMIZED:
-                            for( FDockableListener listener : listeners() )
+                            for( CDockableListener listener : listeners() )
                                 listener.maximized( AbstractFDockable.this );
                             break;
                         case NORMALIZED:
-                            for( FDockableListener listener : listeners() )
+                            for( CDockableListener listener : listeners() )
                                 listener.normalized( AbstractFDockable.this );
                             break;
                     }
@@ -308,7 +308,7 @@ public abstract class AbstractFDockable implements FDockable {
                 public void setUniqueId( String id ) {
                     uniqueId = id;
                     if( AbstractFDockable.this.control != null && id != null ){
-                        FStateManager state = AbstractFDockable.this.control.getStateManager();
+                        CStateManager state = AbstractFDockable.this.control.getStateManager();
                         state.put( uniqueId, dockable );
                     }
                 }
@@ -317,8 +317,8 @@ public abstract class AbstractFDockable implements FDockable {
                     return uniqueId;
                 }
                 
-                public FLocation internalLocation(){
-                    FLocation loc = location;
+                public CLocation internalLocation(){
+                    CLocation loc = location;
                     location = null;
                     return loc;
                 }
@@ -341,7 +341,7 @@ public abstract class AbstractFDockable implements FDockable {
      * Gets the control which is responsible for this dockable.
      * @return the control
      */
-    public FControlAccess getControl(){
+    public CControlAccess getControl(){
         return control;
     }
 }

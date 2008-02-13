@@ -31,7 +31,7 @@ import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
 
 /**
- * A {@link DockAcceptance} ensuring that the {@link FDockable#isStackable()}
+ * A {@link DockAcceptance} ensuring that the {@link CDockable#isStackable()}
  * property is respected.
  * @author Benjamin Sigg
  */
@@ -39,8 +39,8 @@ public class StackableAcceptance implements DockAcceptance {
     
     public boolean accept( DockStation parent, Dockable child ) {
         if( parent instanceof StackDockStation ){
-            if( child instanceof FacileDockable ){
-                if( !((FacileDockable)child).getDockable().isStackable() )
+            if( child instanceof CommonDockable ){
+                if( !((CommonDockable)child).getDockable().isStackable() )
                     return false;
             }
         }
@@ -49,12 +49,12 @@ public class StackableAcceptance implements DockAcceptance {
     }
     
     public boolean accept( DockStation parent, Dockable child, Dockable next ) {
-        if( child instanceof FacileDockable ){
-            if( !((FacileDockable)child).getDockable().isStackable() )
+        if( child instanceof CommonDockable ){
+            if( !((CommonDockable)child).getDockable().isStackable() )
                 return false;
         }
-        if( next instanceof FacileDockable ){
-            if( !((FacileDockable)next).getDockable().isStackable() )
+        if( next instanceof CommonDockable ){
+            if( !((CommonDockable)next).getDockable().isStackable() )
                 return false;
         }
         return true;

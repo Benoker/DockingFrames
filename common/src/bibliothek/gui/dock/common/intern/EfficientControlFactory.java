@@ -33,14 +33,14 @@ import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.ListeningDockAction;
-import bibliothek.gui.dock.common.FWorkingArea;
+import bibliothek.gui.dock.common.CWorkingArea;
 
 /**
  * A factory that uses the most efficient elements, can only be used in
  * environments where global events can be observed.
  * @author Benjamin Sigg
  */
-public class EfficientControlFactory implements FControlFactory {
+public class EfficientControlFactory implements CControlFactory {
     public DockController createController() {
         return new DockController();
     }
@@ -66,7 +66,7 @@ public class EfficientControlFactory implements FControlFactory {
          };
     }
     
-    public FWorkingArea createWorkingArea( String id ) {
-        return new FWorkingArea( id, false );
+    public CWorkingArea createWorkingArea( String id ) {
+        return new CWorkingArea( id, false );
     }
 }

@@ -30,7 +30,7 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.KeyStroke;
 
-import bibliothek.gui.dock.common.action.FButton;
+import bibliothek.gui.dock.common.action.CButton;
 import bibliothek.paint.util.Resources;
 import bibliothek.paint.view.Page;
 
@@ -39,7 +39,7 @@ import bibliothek.paint.view.Page;
  * @author Benjamin Sigg
  *
  */
-public class ZoomIn extends FButton {
+public class ZoomIn extends CButton {
 	/** the page whose zoomfactor will be changed */
 	private Page page;
 	

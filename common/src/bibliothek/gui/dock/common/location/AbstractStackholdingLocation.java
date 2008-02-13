@@ -25,28 +25,28 @@
  */
 package bibliothek.gui.dock.common.location;
 
-import bibliothek.gui.dock.common.FLocation;
+import bibliothek.gui.dock.common.CLocation;
 
 /**
  * A location which can be parent of a stack (stack is also known as tabbed-pane).
  * @author Benjamin Sigg
  *
  */
-public abstract class AbstractStackholdingLocation extends FLocation{
+public abstract class AbstractStackholdingLocation extends CLocation{
 	/**
 	 * Creates a new stack inside this location.
 	 * @param index the tab the new location represents
 	 * @return a tab on a stack
 	 */
-	public FStackLocation stack( int index ){
-		return new FStackLocation( this, index );
+	public CStackLocation stack( int index ){
+		return new CStackLocation( this, index );
 	}
 	
 	/**
 	 * Creates a new stack inside this location.
 	 * @return the tab at the very end of a stack
 	 */
-	public FStackLocation stack(){
-		return new FStackLocation( this );
+	public CStackLocation stack(){
+		return new CStackLocation( this );
 	}
 }

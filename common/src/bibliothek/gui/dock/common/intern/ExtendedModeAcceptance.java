@@ -28,22 +28,22 @@ package bibliothek.gui.dock.common.intern;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.accept.DockAcceptance;
-import bibliothek.gui.dock.common.FControl;
+import bibliothek.gui.dock.common.CControl;
 
 /**
- * A {@link DockAcceptance} ensuring that the {@link FDockable#getExtendedMode() extended mode} property
- * of {@link FDockable} is respected on drag and drop operations.
+ * A {@link DockAcceptance} ensuring that the {@link CDockable#getExtendedMode() extended mode} property
+ * of {@link CDockable} is respected on drag and drop operations.
  * @author Benjamin Sigg
  */
 public class ExtendedModeAcceptance implements DockAcceptance {
-    /** access to the {@link FControl} */
-    private FControlAccess control;
+    /** access to the {@link CControl} */
+    private CControlAccess control;
     
     /**
      * Creates a new acceptance.
-     * @param control access to the {@link FControl}
+     * @param control access to the {@link CControl}
      */
-    public ExtendedModeAcceptance( FControlAccess control ){
+    public ExtendedModeAcceptance( CControlAccess control ){
         this.control = control;
     }
     
@@ -51,9 +51,9 @@ public class ExtendedModeAcceptance implements DockAcceptance {
         if( control.getStateManager().isOnTransition() )
             return true;
         
-        if( child instanceof FacileDockable ){
-            FDockable fdockable = ((FacileDockable)child).getDockable();
-            FDockable.ExtendedMode mode = control.getStateManager().childsExtendedMode( parent );
+        if( child instanceof CommonDockable ){
+            CDockable fdockable = ((CommonDockable)child).getDockable();
+            CDockable.ExtendedMode mode = control.getStateManager().childsExtendedMode( parent );
             
             if( mode == null )
                 return false;

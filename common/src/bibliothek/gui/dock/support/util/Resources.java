@@ -33,7 +33,7 @@ import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import bibliothek.gui.dock.common.FControl;
+import bibliothek.gui.dock.common.CControl;
 
 /**
  * A set of resources available through the whole framework
@@ -50,7 +50,7 @@ public class Resources {
         // read the localized text
         bundle = ResourceBundle.getBundle( 
                 "data.bibliothek.gui.dock.locale.common", 
-                Locale.getDefault(), FControl.class.getClassLoader() );
+                Locale.getDefault(), CControl.class.getClassLoader() );
         
         // read the icons
         try{

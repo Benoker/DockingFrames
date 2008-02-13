@@ -25,7 +25,7 @@
  */
 package bibliothek.paint.view.action;
 
-import bibliothek.gui.dock.common.action.FButton;
+import bibliothek.gui.dock.common.action.CButton;
 import bibliothek.paint.model.Picture;
 import bibliothek.paint.util.Resources;
 import bibliothek.paint.view.Page;
@@ -35,7 +35,7 @@ import bibliothek.paint.view.Page;
  * @author Benjamin Sigg
  *
  */
-public class EraseLastShape extends FButton{
+public class EraseLastShape extends CButton{
 	/** the page this actions belongs to */
 	private Page page;
 	

@@ -33,8 +33,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import bibliothek.gui.dock.common.*;
-import bibliothek.gui.dock.common.event.FDockableAdapter;
-import bibliothek.gui.dock.common.intern.FDockable;
+import bibliothek.gui.dock.common.event.CDockableAdapter;
+import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.paint.model.Picture;
 import bibliothek.paint.model.PictureRepository;
 import bibliothek.paint.model.PictureRepositoryListener;
@@ -42,21 +42,21 @@ import bibliothek.paint.model.Shape;
 import bibliothek.util.xml.XElement;
 
 /**
- * The <code>ViewManager</code> is responsible to connect all the {@link FDockable}s
+ * The <code>ViewManager</code> is responsible to connect all the {@link CDockable}s
  * used in this application. The <code>ViewManager</code> also provides 
- * methods to transfer data from one <code>FDockable</code> to another.
+ * methods to transfer data from one <code>CDockable</code> to another.
  * @author Benjamin Sigg
  *
  */
 public class ViewManager {
     /** the controller of the whole framework */
-    private FControl control;
+    private CControl control;
     
     /** shows a list of all available {@link Picture}s */
     private PictureRepositoryDockable repositoryDockable;
     /** shows a selection of {@link Color}s, the <code>Color</code>s are used when adding a new {@link Shape} */
     private ColorDockable colorDockable;
-    /** the {@link FDockable}s showing some {@link Picture}s */
+    /** the {@link CDockable}s showing some {@link Picture}s */
     private List<PictureDockable> pages = new LinkedList<PictureDockable>();
     
     /** the factory which creates new {@link PictureDockable}s */
@@ -68,14 +68,14 @@ public class ViewManager {
     private Color color = Color.BLACK;
     
     /** the area on which the {@link PictureDockable}s are shown */
-    private FWorkingArea workingArea;
+    private CWorkingArea workingArea;
     
     /**
      * Creates a new manager.
      * @param control the center of the Docking-Framework
      * @param pictures a set of pictures which might be shown
      */
-    public ViewManager( FControl control, PictureRepository pictures ){
+    public ViewManager( CControl control, PictureRepository pictures ){
         this.control = control;
         this.pictures = pictures;
         
@@ -83,17 +83,17 @@ public class ViewManager {
         control.add( "page", pageFactory );
         
         workingArea = control.createWorkingArea( "picture area" );
-        workingArea.setLocation( FLocation.base().normalRectangle( 0, 0, 1, 1 ) );
+        workingArea.setLocation( CLocation.base().normalRectangle( 0, 0, 1, 1 ) );
         workingArea.setVisible( true );
         
         repositoryDockable = new PictureRepositoryDockable( this );
         control.add( repositoryDockable );
-        repositoryDockable.setLocation( FLocation.base().normalWest( 0.2 ) );
+        repositoryDockable.setLocation( CLocation.base().normalWest( 0.2 ) );
         repositoryDockable.setVisible( true );
         
         colorDockable = new ColorDockable( this );
         control.add( colorDockable );
-        colorDockable.setLocation( FLocation.base().normalSouth( 0.25 ) );
+        colorDockable.setLocation( CLocation.base().normalSouth( 0.25 ) );
         colorDockable.setVisible( true );
         
         pictures.addListener( new PictureRepositoryListener(){
@@ -118,7 +118,7 @@ public class ViewManager {
      * Gets the central control of the Docking-framework.
      * @return the central control mechanism
      */
-    public FControl getControl() {
+    public CControl getControl() {
         return control;
     }
     
@@ -126,7 +126,7 @@ public class ViewManager {
      * Gets the area on which the pictures are shown.
      * @return the area
      */
-    public FWorkingArea getWorkingArea() {
+    public CWorkingArea getWorkingArea() {
         return workingArea;
     }
     
@@ -136,9 +136,9 @@ public class ViewManager {
      */
     public void open( Picture picture ){
         final PictureDockable page = new PictureDockable( pageFactory );
-        page.addFDockableListener( new FDockableAdapter(){
+        page.addFDockableListener( new CDockableAdapter(){
             @Override
-            public void visibilityChanged( FDockable dockable ) {
+            public void visibilityChanged( CDockable dockable ) {
                 if( dockable.isVisible() ){
                     pages.add( page );
                 }
@@ -151,7 +151,7 @@ public class ViewManager {
         page.setPicture( picture );
         page.getPage().setColor( color );
         
-        page.setLocation( FLocation.working( workingArea ).rectangle( 0, 0, 1, 1 ) );
+        page.setLocation( CLocation.working( workingArea ).rectangle( 0, 0, 1, 1 ) );
         workingArea.add( page );
         page.setVisible( true );
     }
@@ -193,7 +193,7 @@ public class ViewManager {
      * A factory which creates {@link PictureDockable}s.
      * @author Benjamin Sigg
      */
-    private class PictureFactory implements FMultipleDockableFactory<PictureDockable, PictureLayout>{
+    private class PictureFactory implements MultipleCDockableFactory<PictureDockable, PictureLayout>{
         public PictureLayout create() {
             return new PictureLayout();
         }
@@ -204,9 +204,9 @@ public class ViewManager {
             if( picture == null )
                 return null;
             final PictureDockable page = new PictureDockable( this );
-            page.addFDockableListener( new FDockableAdapter(){
+            page.addFDockableListener( new CDockableAdapter(){
                 @Override
-                public void visibilityChanged( FDockable dockable ) {
+                public void visibilityChanged( CDockable dockable ) {
                     if( dockable.isVisible() ){
                         pages.add( page );
                     }
@@ -231,7 +231,7 @@ public class ViewManager {
      * Describes the layout of one {@link PictureDockable}
      * @author Benjamin Sigg
      */
-    private static class PictureLayout implements FMultipleDockableLayout{
+    private static class PictureLayout implements MultipleCDockableLayout{
         /** the name of the picture */
         private String name;
         

@@ -34,11 +34,11 @@ import javax.swing.JMenuBar;
 import javax.swing.WindowConstants;
 
 import bibliothek.demonstration.Monitor;
-import bibliothek.gui.dock.common.FControl;
-import bibliothek.gui.dock.common.menu.FLayoutChoiceMenuPiece;
-import bibliothek.gui.dock.common.menu.FLookAndFeelMenuPiece;
-import bibliothek.gui.dock.common.menu.FSingleDockableListMenuPiece;
-import bibliothek.gui.dock.common.menu.FThemeMenuPiece;
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.menu.CLayoutChoiceMenuPiece;
+import bibliothek.gui.dock.common.menu.CLookAndFeelMenuPiece;
+import bibliothek.gui.dock.common.menu.CSingleDockableListMenuPiece;
+import bibliothek.gui.dock.common.menu.CThemeMenuPiece;
 import bibliothek.gui.dock.facile.menu.RootMenuPiece;
 import bibliothek.gui.dock.facile.menu.SubmenuPiece;
 import bibliothek.gui.dock.support.menu.SeparatingMenuPiece;
@@ -80,15 +80,15 @@ public class Core {
         frame.setDefaultCloseOperation( WindowConstants.DO_NOTHING_ON_CLOSE );
         frame.setIconImage( Resources.toImage( Resources.getIcon( "application" ) ) );
         
-        FControl control = new FControl( frame, secure );
+        CControl control = new CControl( frame, secure );
 
         RootMenuPiece settings = new RootMenuPiece( "View", false );
-        settings.add( new FSingleDockableListMenuPiece( control ));
-        settings.add( new SeparatingMenuPiece( new FLayoutChoiceMenuPiece( control, false ), true, false, false ));
+        settings.add( new CSingleDockableListMenuPiece( control ));
+        settings.add( new SeparatingMenuPiece( new CLayoutChoiceMenuPiece( control, false ), true, false, false ));
         
         RootMenuPiece layout = new RootMenuPiece( "Layout", false );
-        layout.add( new SubmenuPiece( "LookAndFeel", true, new FLookAndFeelMenuPiece( control )));
-        layout.add( new SubmenuPiece( "Layout", true, new FThemeMenuPiece( control )));
+        layout.add( new SubmenuPiece( "LookAndFeel", true, new CLookAndFeelMenuPiece( control )));
+        layout.add( new SubmenuPiece( "Layout", true, new CThemeMenuPiece( control )));
         JMenuBar bar = new JMenuBar();
         bar.add( settings.getMenu() );
         bar.add( layout.getMenu() );

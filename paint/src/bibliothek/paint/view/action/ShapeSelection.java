@@ -29,7 +29,7 @@ import java.awt.*;
 
 import javax.swing.Icon;
 
-import bibliothek.gui.dock.common.action.FRadioButton;
+import bibliothek.gui.dock.common.action.CRadioButton;
 import bibliothek.paint.model.Shape;
 import bibliothek.paint.model.ShapeFactory;
 import bibliothek.paint.view.Page;
@@ -40,7 +40,7 @@ import bibliothek.paint.view.Page;
  * @author Benjamin Sigg
  *
  */
-public class ShapeSelection extends FRadioButton {
+public class ShapeSelection extends CRadioButton {
     /** the page whose factory might be changed by this button */
     private Page page;
     /** the factory this button represents */

@@ -31,8 +31,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-import bibliothek.gui.dock.common.DefaultFSingleDockable;
-import bibliothek.gui.dock.common.intern.FDockable;
+import bibliothek.gui.dock.common.DefaultSingleCDockable;
+import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.paint.util.Resources;
 
 /**
@@ -41,8 +41,8 @@ import bibliothek.paint.util.Resources;
  * @author Benjamin Sigg
  *
  */
-public class ColorDockable extends DefaultFSingleDockable{
-    /** the manager of all {@link FDockable}s, used to forward a newly selected color */
+public class ColorDockable extends DefaultSingleCDockable{
+    /** the manager of all {@link CDockable}s, used to forward a newly selected color */
 	private ViewManager manager;
 	/** the big button which will open a {@link JColorChooser} when pressed */
 	private JButton colorButton;

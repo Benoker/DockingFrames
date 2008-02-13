@@ -33,7 +33,7 @@ import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.ListeningDockAction;
-import bibliothek.gui.dock.common.FWorkingArea;
+import bibliothek.gui.dock.common.CWorkingArea;
 import bibliothek.gui.dock.security.SecureDockController;
 import bibliothek.gui.dock.security.SecureFlapDockStation;
 import bibliothek.gui.dock.security.SecureScreenDockStation;
@@ -45,7 +45,7 @@ import bibliothek.gui.dock.security.SecureSplitDockStation;
  * @author Benjamin Sigg
  *
  */
-public class SecureControlFactory implements FControlFactory {
+public class SecureControlFactory implements CControlFactory {
     public DockController createController() {
         return new SecureDockController();
     }
@@ -71,7 +71,7 @@ public class SecureControlFactory implements FControlFactory {
         };
     }
     
-    public FWorkingArea createWorkingArea( String id ) {
-        return new FWorkingArea( id, true );
+    public CWorkingArea createWorkingArea( String id ) {
+        return new CWorkingArea( id, true );
     }
 }

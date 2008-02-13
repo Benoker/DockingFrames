@@ -33,10 +33,10 @@ import java.awt.Insets;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import bibliothek.gui.dock.common.DefaultFMultipleDockable;
-import bibliothek.gui.dock.common.FMultipleDockable;
-import bibliothek.gui.dock.common.FMultipleDockableFactory;
-import bibliothek.gui.dock.common.action.FRadioGroup;
+import bibliothek.gui.dock.common.DefaultMultipleCDockable;
+import bibliothek.gui.dock.common.MultipleCDockable;
+import bibliothek.gui.dock.common.MultipleCDockableFactory;
+import bibliothek.gui.dock.common.action.CRadioGroup;
 import bibliothek.paint.model.Picture;
 import bibliothek.paint.model.PictureListener;
 import bibliothek.paint.model.ShapeFactory;
@@ -48,12 +48,12 @@ import bibliothek.paint.view.action.ZoomIn;
 import bibliothek.paint.view.action.ZoomOut;
 
 /**
- * A {@link FMultipleDockable} showing one {@link Picture}, using a 
+ * A {@link MultipleCDockable} showing one {@link Picture}, using a 
  * {@link Page} to do so.
  * @author Benjamin Sigg
  *
  */
-public class PictureDockable extends DefaultFMultipleDockable {
+public class PictureDockable extends DefaultMultipleCDockable {
 	/** the page painting the picture */
     private Page page;
 
@@ -73,7 +73,7 @@ public class PictureDockable extends DefaultFMultipleDockable {
      * Creates a new Dockable.
      * @param factory the factory which creates this kind of Dockable
      */
-    public PictureDockable( FMultipleDockableFactory<PictureDockable,?> factory ){
+    public PictureDockable( MultipleCDockableFactory<PictureDockable,?> factory ){
         super( factory );
         
         setTitleText( "Page" );
@@ -96,7 +96,7 @@ public class PictureDockable extends DefaultFMultipleDockable {
         addAction( new ZoomOut( page ) );
         addSeparator();
         
-        FRadioGroup group = new FRadioGroup();
+        CRadioGroup group = new CRadioGroup();
         boolean first = true;
         
         for( ShapeFactory shapeFactory : ShapeUtils.getFactories() ){
