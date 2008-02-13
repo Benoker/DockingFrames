@@ -62,8 +62,8 @@ public class CWorkingAreaLocation extends CRootLocation{
      * @param height the height, <code>y + height</code> should be less or equal to 1
      * @return the new location
      */
-    public CContentAreaRectangleLocation rectangle( double x, double y, double width, double height ){
-        return new CContentAreaRectangleLocation( this, x, y, width, height );
+    public CRectangleLocation rectangle( double x, double y, double width, double height ){
+        return new CRectangleLocation( this, x, y, width, height );
     }
     
     /**
@@ -73,8 +73,8 @@ public class CWorkingAreaLocation extends CRootLocation{
      * and 1 (all space).
      * @return the new location
      */
-    public CContentAreaTreeLocationRoot north( double size ){
-        return new CContentAreaTreeLocationRoot( this, size, Side.NORTH );
+    public TreeLocationRoot north( double size ){
+        return new TreeLocationRoot( this, size, Side.NORTH );
     }   
 
     /**
@@ -84,8 +84,8 @@ public class CWorkingAreaLocation extends CRootLocation{
      * and 1 (all space).
      * @return the new location
      */
-    public CContentAreaTreeLocationRoot south( double size ){
-        return new CContentAreaTreeLocationRoot( this, size, Side.SOUTH );
+    public TreeLocationRoot south( double size ){
+        return new TreeLocationRoot( this, size, Side.SOUTH );
     }
     
     /**
@@ -95,8 +95,8 @@ public class CWorkingAreaLocation extends CRootLocation{
      * and 1 (all space).
      * @return the new location
      */
-    public CContentAreaTreeLocationRoot east( double size ){
-        return new CContentAreaTreeLocationRoot( this, size, Side.EAST );
+    public TreeLocationRoot east( double size ){
+        return new TreeLocationRoot( this, size, Side.EAST );
     }
 
     /**
@@ -106,8 +106,8 @@ public class CWorkingAreaLocation extends CRootLocation{
      * and 1 (all space).
      * @return the new location
      */
-    public CContentAreaTreeLocationRoot west( double size ){
-        return new CContentAreaTreeLocationRoot( this, size, Side.WEST );
+    public TreeLocationRoot west( double size ){
+        return new TreeLocationRoot( this, size, Side.WEST );
     }
 
     @Override

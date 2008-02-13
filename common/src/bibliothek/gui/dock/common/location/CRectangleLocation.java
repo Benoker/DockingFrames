@@ -36,7 +36,7 @@ import bibliothek.gui.dock.station.split.SplitDockProperty;
  * size 1/1).
  * @author Benjamin Sigg
  */
-public class CContentAreaRectangleLocation extends AbstractStackholdingLocation{
+public class CRectangleLocation extends AbstractStackholdingLocation{
 	/** the root element telling which area is the normalized-area */
 	private CRootLocation root;
 	
@@ -57,7 +57,7 @@ public class CContentAreaRectangleLocation extends AbstractStackholdingLocation{
 	 * @param width the relative width, a value between 0 and 1 is preferred
 	 * @param height the relative height, a value between 0 and 1 is preferred
 	 */
-	public CContentAreaRectangleLocation( CRootLocation root, double x, double y, double width, double height ){
+	public CRectangleLocation( CRootLocation root, double x, double y, double width, double height ){
 		if( root == null )
 			throw new NullPointerException( "base is null" );
 		

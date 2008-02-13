@@ -191,13 +191,11 @@ public class CWorkingArea extends AbstractFDockable implements SingleCDockable{
     public void setControl( CControlAccess control ) {
         CControlAccess old = control();
         if( old != null ){
-            old.getOwner().intern().removeRoot( station );
             old.getStateManager().remove( uniqueId );
         }
         super.setControl( control );
         if( control != null ){
             control.getStateManager().add( uniqueId, station );
-            control.getOwner().intern().addRoot( station, uniqueId );
         }
     }
     

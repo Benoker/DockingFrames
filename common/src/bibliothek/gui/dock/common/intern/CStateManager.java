@@ -349,7 +349,7 @@ public class CStateManager extends StateManager {
 	        // ensure the correct CWorkingArea is set.
             boolean set = false;
             if( root != null ){
-                DockStation station = control.getOwner().intern().getRoot( root );
+                DockStation station = getStation( root );
                 if( station != null ){
                     Dockable stationDockable = station.asDockable();
                     if( stationDockable instanceof CommonDockable ){
@@ -483,7 +483,7 @@ public class CStateManager extends StateManager {
     	if( property instanceof SplitDockPathProperty ){
     		if( base instanceof CBaseLocation ){
     			SplitDockPathProperty path = (SplitDockPathProperty)property;
-    			AbstractCContentAreaTreeLocation tree = null;
+    			AbstractTreeLocation tree = null;
     			for( SplitDockPathProperty.Node node : path ){
     				Side side = null;
     				
@@ -503,10 +503,10 @@ public class CStateManager extends StateManager {
     				}
     				
     				if( tree == null ){
-    					tree = new CContentAreaTreeLocationRoot( (CBaseLocation)base, node.getSize(), side );
+    					tree = new TreeLocationRoot( (CBaseLocation)base, node.getSize(), side );
     				}
     				else{
-    					tree = new CContentAreaTreeLocationNode( tree, node.getSize(), side );
+    					tree = new TreeLocationNode( tree, node.getSize(), side );
     				}
     			}
     			

@@ -76,47 +76,47 @@ public class CControl {
      * or to go out of maximized-state when needed.
      */
     public static final PropertyKey<KeyStroke> KEY_MAXIMIZE_CHANGE = 
-        new PropertyKey<KeyStroke>( "fcontrol.maximize_change" );
+        new PropertyKey<KeyStroke>( "ccontrol.maximize_change" );
     
     /**
      * {@link KeyStroke} used to change a {@link CDockable} into
      * maximized-state.
      */
     public static final PropertyKey<KeyStroke> KEY_GOTO_MAXIMIZED =
-        new PropertyKey<KeyStroke>( "fcontrol.goto_maximized" );
+        new PropertyKey<KeyStroke>( "ccontrol.goto_maximized" );
     
     /**
      * {@link KeyStroke} used to change a {@link CDockable} into
      * normalized-state.
      */
     public static final PropertyKey<KeyStroke> KEY_GOTO_NORMALIZED =
-        new PropertyKey<KeyStroke>( "fcontrol.goto_normalized" );
+        new PropertyKey<KeyStroke>( "ccontrol.goto_normalized" );
     
     /**
      * {@link KeyStroke} used to change a {@link CDockable} into
      * minimized-state.
      */
     public static final PropertyKey<KeyStroke> KEY_GOTO_MINIMIZED =
-        new PropertyKey<KeyStroke>( "fcontrol.goto_minimized" );
+        new PropertyKey<KeyStroke>( "ccontrol.goto_minimized" );
     
     /**
      * {@link KeyStroke} used to change a {@link CDockable} into
      * externalized-state.
      */
     public static final PropertyKey<KeyStroke> KEY_GOTO_EXTERNALIZED =
-        new PropertyKey<KeyStroke>( "fcontrol.goto_externalized" );
+        new PropertyKey<KeyStroke>( "ccontrol.goto_externalized" );
     
     /**
      * {@link KeyStroke} used to close a {@link CDockable}.
      */
     public static final PropertyKey<KeyStroke> KEY_CLOSE = 
-        new PropertyKey<KeyStroke>( "fcontrol.close" );
+        new PropertyKey<KeyStroke>( "ccontrol.close" );
     
     /** the unique id of the station that handles the externalized dockables */
     public static final String EXTERNALIZED_STATION_ID = "external";
     
     /** the unique id of the default-{@link CContentArea} created by this control */
-    public static final String CONTENT_AREA_STATIONS_ID = "fcontrol";
+    public static final String CONTENT_AREA_STATIONS_ID = "ccontrol";
     
     /** connection to the real DockingFrames */
 	private DockFrontend frontend;
@@ -269,13 +269,13 @@ public class CControl {
 		    @Override
 		    public void dockableUnregistered( DockController controller, Dockable dockable ) {
 		        if( dockable instanceof CommonDockable ){
-		            CDockable fdock = ((CommonDockable)dockable).getDockable();
-                    CDockableAccess access = accesses.get( fdock );
+		            CDockable cdock = ((CommonDockable)dockable).getDockable();
+                    CDockableAccess access = accesses.get( cdock );
                     if( access != null ){
                         access.informVisibility( false );
                     }
-                    if( fdock instanceof MultipleCDockable ){
-                        MultipleCDockable multiple = (MultipleCDockable)fdock;
+                    if( cdock instanceof MultipleCDockable ){
+                        MultipleCDockable multiple = (MultipleCDockable)cdock;
                         if( multiple.isRemoveOnClose() ){
                             remove( multiple );
                         }
@@ -289,7 +289,7 @@ public class CControl {
 		frontend.getController().addAcceptance( new ExtendedModeAcceptance( access ) );
 		
 		try{
-    		resources.put( "fcontrol.frontend", new ApplicationResource(){
+    		resources.put( "ccontrol.frontend", new ApplicationResource(){
     		    public void write( DataOutputStream out ) throws IOException {
                     writeWorkingAreas( out );
     		        frontend.write( out );
@@ -894,7 +894,7 @@ public class CControl {
 	private class Access implements CControlAccess{
 	    /** action used to close {@link CDockable}s  */
 	    private CCloseAction closeAction;
-	    
+
 	    public CControl getOwner(){
 			return CControl.this;
 		}
@@ -992,10 +992,10 @@ public class CControl {
 	    
 	    @Override
         protected void close( Dockable dockable ) {
-	        CDockable fdockable = ((CommonDockable)dockable).getDockable();
-	        if( fdockable.getExtendedMode() == CDockable.ExtendedMode.MAXIMIZED )
-	            fdockable.setExtendedMode( CDockable.ExtendedMode.NORMALIZED );
-	        fdockable.setVisible( false );
+	        CDockable cdockable = ((CommonDockable)dockable).getDockable();
+	        if( cdockable.getExtendedMode() == CDockable.ExtendedMode.MAXIMIZED )
+	            cdockable.setExtendedMode( CDockable.ExtendedMode.NORMALIZED );
+	        cdockable.setVisible( false );
         }
 	}
 }

@@ -103,7 +103,7 @@ public abstract class AbstractFDockable implements CDockable {
      * changes of this dockable.
      * @param listener the new listener
      */
-    public void addFDockableListener( CDockableListener listener ){
+    public void addCDockableListener( CDockableListener listener ){
         listeners.add( listener );
     }
     
@@ -111,7 +111,7 @@ public abstract class AbstractFDockable implements CDockable {
      * Removes a listener from this dockable.
      * @param listener the listener to remove
      */
-    public void removeFDockableListener( CDockableListener listener ){
+    public void removeCDockableListener( CDockableListener listener ){
         listeners.remove( listener );
     }
     

@@ -875,6 +875,15 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
     }
     
     /**
+     * Gets the station that is registered under <code>name</code>.
+     * @param name the name of the station
+     * @return the station or <code>null</code>
+     */
+    protected DockStation getStation( String name ){
+        return stations.get( name );
+    }
+    
+    /**
      * Describes the location of a {@link Dockable}.
      * @author Benjamin Sigg
      */

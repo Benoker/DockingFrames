@@ -1,0 +1,12 @@
+\contentsline {section}{\numberline {1}Writing applications}{2}
+\contentsline {subsection}{\numberline {1.1}How to write a close-button?}{2}
+\contentsline {subsubsection}{\numberline {1.1.1}Solution 1: FDockable}{2}
+\contentsline {subsubsection}{\numberline {1.1.2}Solution 2: DockFrontend}{2}
+\contentsline {subsubsection}{\numberline {1.1.3}Solution 3: CloseAction}{2}
+\contentsline {subsubsection}{\numberline {1.1.4}Solution 4: New DockAction}{3}
+\contentsline {subsection}{\numberline {1.2}How do I layout the contents of a SplitDockStation?}{3}
+\contentsline {subsubsection}{\numberline {1.2.1}Solution 1: SplitDockProperty}{3}
+\contentsline {subsubsection}{\numberline {1.2.2}Solution 2: SplitDockPathProperty}{4}
+\contentsline {subsubsection}{\numberline {1.2.3}Solution 3: SplitDockTree}{4}
+\contentsline {subsubsection}{\numberline {1.2.4}Solution 4: SplitDockGrid}{4}
+\contentsline {subsubsection}{\numberline {1.2.5}Solution 5: Start and store}{5}

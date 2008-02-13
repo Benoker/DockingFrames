@@ -1211,9 +1211,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     	DockUtilities.ensureTreeValidity( this, dockable );
     	
         Dockable old = leaf.getDockable();
-        dockStationListeners.fireDockableRemoving( old );
         removeFromList( old );
-        dockStationListeners.fireDockableRemoved( old );
         
         Dockable combination = DockUI.getCombiner( combiner, this ).combine( old, dockable, this );
         if( property != null ){
@@ -1802,9 +1800,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         boolean wasFullScreen = isFullScreen() && getFullScreen() == previous;
         
         // remove
-        dockStationListeners.fireDockableRemoving( previous );
         removeFromList( previous );
-        dockStationListeners.fireDockableRemoved( previous );
         
         // add
         dockStationListeners.fireDockableAdding( next );

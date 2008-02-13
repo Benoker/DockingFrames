@@ -31,18 +31,18 @@ import bibliothek.gui.dock.station.split.SplitDockPathProperty;
  * A turn in a path to an element, beginning at the "normalized-area".
  * @author Benjamin Sigg
  */
-public class CContentAreaTreeLocationNode extends AbstractCContentAreaTreeLocation {
+public class TreeLocationNode extends AbstractTreeLocation {
 	/** the turn above this location */
-	private AbstractCContentAreaTreeLocation parent;
+	private AbstractTreeLocation parent;
 	
 	/**
 	 * Creates a new node.
 	 * @param parent the turn above this location
 	 * @param size the relative size of this location
 	 * @param side the side which is occupied by this location
-	 * @see AbstractCContentAreaTreeLocation#AbstractCContentAreaTreeLocation(double, Side)
+	 * @see AbstractTreeLocation#AbstractTreeLocation(double, Side)
 	 */
-	public CContentAreaTreeLocationNode( AbstractCContentAreaTreeLocation parent, double size, Side side ){
+	public TreeLocationNode( AbstractTreeLocation parent, double size, Side side ){
 		super( size, side );
 		if( parent == null )
 			throw new NullPointerException( "parent must not be null" );

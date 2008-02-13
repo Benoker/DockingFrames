@@ -32,7 +32,7 @@ import bibliothek.gui.dock.station.split.SplitDockPathProperty;
  * at the "normalized-area".
  * @author Benjamin Sigg
  */
-public class CContentAreaTreeLocationRoot extends AbstractCContentAreaTreeLocation{
+public class TreeLocationRoot extends AbstractTreeLocation{
 	/** the element describing where the "normalized-area" is */
 	private CRootLocation root;
 	
@@ -41,9 +41,9 @@ public class CContentAreaTreeLocationRoot extends AbstractCContentAreaTreeLocati
 	 * @param root the location describing where the "normalized-area" is.
 	 * @param size the relative size of this location
 	 * @param side the side which is occupied by this location
-	 * @see AbstractCContentAreaTreeLocation#AbstractCContentAreaTreeLocation(double, Side)
+	 * @see AbstractTreeLocation#AbstractTreeLocation(double, Side)
 	 */
-	public CContentAreaTreeLocationRoot( CRootLocation root, double size, Side side ){
+	public TreeLocationRoot( CRootLocation root, double size, Side side ){
 		super( size, side );
 		if( root == null )
 			throw new NullPointerException( "Parent must not be null" );

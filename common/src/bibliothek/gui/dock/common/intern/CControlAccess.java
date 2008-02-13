@@ -41,7 +41,7 @@ public interface CControlAccess {
 	 * @return the owner
 	 */
 	public CControl getOwner();
-	
+    
 	/**
      * Adds a dockable to this control. The dockable can be made visible afterwards.
      * @param <F> the type of the new element

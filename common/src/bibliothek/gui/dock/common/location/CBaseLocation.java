@@ -64,8 +64,8 @@ public class CBaseLocation extends CRootLocation{
 	 * @param height the height, <code>y + height</code> should be less or equal to 1
 	 * @return the new location
 	 */
-	public CContentAreaRectangleLocation normalRectangle( double x, double y, double width, double height ){
-		return new CContentAreaRectangleLocation( this, x, y, width, height );
+	public CRectangleLocation normalRectangle( double x, double y, double width, double height ){
+		return new CRectangleLocation( this, x, y, width, height );
 	}
 	
 	/**
@@ -75,8 +75,8 @@ public class CBaseLocation extends CRootLocation{
 	 * and 1 (all space).
 	 * @return the new location
 	 */
-	public CContentAreaTreeLocationRoot normalNorth( double size ){
-		return new CContentAreaTreeLocationRoot( this, size, Side.NORTH );
+	public TreeLocationRoot normalNorth( double size ){
+		return new TreeLocationRoot( this, size, Side.NORTH );
 	}	
 
 	/**
@@ -86,8 +86,8 @@ public class CBaseLocation extends CRootLocation{
 	 * and 1 (all space).
 	 * @return the new location
 	 */
-	public CContentAreaTreeLocationRoot normalSouth( double size ){
-		return new CContentAreaTreeLocationRoot( this, size, Side.SOUTH );
+	public TreeLocationRoot normalSouth( double size ){
+		return new TreeLocationRoot( this, size, Side.SOUTH );
 	}
 	
 	/**
@@ -97,8 +97,8 @@ public class CBaseLocation extends CRootLocation{
 	 * and 1 (all space).
 	 * @return the new location
 	 */
-	public CContentAreaTreeLocationRoot normalEast( double size ){
-		return new CContentAreaTreeLocationRoot( this, size, Side.EAST );
+	public TreeLocationRoot normalEast( double size ){
+		return new TreeLocationRoot( this, size, Side.EAST );
 	}
 
 	/**
@@ -108,8 +108,8 @@ public class CBaseLocation extends CRootLocation{
 	 * and 1 (all space).
 	 * @return the new location
 	 */
-	public CContentAreaTreeLocationRoot normalWest( double size ){
-		return new CContentAreaTreeLocationRoot( this, size, Side.WEST );
+	public TreeLocationRoot normalWest( double size ){
+		return new TreeLocationRoot( this, size, Side.WEST );
 	}
 	
 	/**

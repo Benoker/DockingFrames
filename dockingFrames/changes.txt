@@ -74,4 +74,5 @@
 - API: New property ScreenDockStation.BOUNDARY_RESTRICTION: allows to put restrictions on size and location of children of a ScreenDockStation.
 - Bugfix: FlapDockStationFactory did not read layout correctly when Dockables were missing
 - API: Many factories divided in two parts. Part 1 is the factory, part 2 is the "layout". A layout is snapshot of some data. Factories can read and write layouts from/to streams and xml files. Factories can convert layouts into the original data.
-- API: Support for xml, intended for debugging purposes.   
+- API: Support for xml, intended for debugging purposes.
+- Bugfix: SplitDockStation fired dockableAdding/Added-Event to often.   

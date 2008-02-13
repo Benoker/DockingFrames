@@ -18,6 +18,7 @@ import javax.swing.WindowConstants;
 
 import bibliothek.gui.dock.support.lookandfeel.ComponentCollector;
 import bibliothek.gui.dock.support.lookandfeel.LookAndFeelList;
+import bibliothek.util.xml.XElement;
 
 /**
  * The center of the demonstration-application. Is responsible to create
@@ -47,7 +48,12 @@ public class Core {
 				// just skip
 				in.readInt();
 			}
+			@Override
+			public void readXML( XElement element ) {
+			    // skip
+			}
 		};
+		
 		LookAndFeelList.setDefaultList( lookAndFeel );
 		lookAndFeel.setLookAndFeel( lookAndFeel.getSystem() );
 		

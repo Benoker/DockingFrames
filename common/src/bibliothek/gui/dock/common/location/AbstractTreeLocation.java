@@ -37,7 +37,7 @@ import bibliothek.gui.dock.station.split.SplitDockPathProperty;
  * newly created, smaller rectangles.
  * @author Benjamin Sigg
  */
-public abstract class AbstractCContentAreaTreeLocation extends AbstractStackholdingLocation{
+public abstract class AbstractTreeLocation extends AbstractStackholdingLocation{
 	/** the relative size of this location, a value between 0 and 1 */
 	private double size;
 	/** in which rectangle the children of this location lie */
@@ -51,7 +51,7 @@ public abstract class AbstractCContentAreaTreeLocation extends AbstractStackhold
 	 * @param side given the rectangle yield by the parent-location, this 
 	 * parameters tells which part the rectangle yield by this location occupies.
 	 */
-	public AbstractCContentAreaTreeLocation( double size, Side side ){
+	public AbstractTreeLocation( double size, Side side ){
 		if( size < 0 )
 			throw new IllegalArgumentException( "Size must be at least 0" );
 		if( size > 1 )
@@ -91,8 +91,8 @@ public abstract class AbstractCContentAreaTreeLocation extends AbstractStackhold
 	 * @param size the relative size, a number between 0 and 1
 	 * @return the new location
 	 */
-	public CContentAreaTreeLocationNode north( double size ){
-		return new CContentAreaTreeLocationNode( this, size, Side.NORTH );
+	public TreeLocationNode north( double size ){
+		return new TreeLocationNode( this, size, Side.NORTH );
 	}
 
 	/**
@@ -101,8 +101,8 @@ public abstract class AbstractCContentAreaTreeLocation extends AbstractStackhold
 	 * @param size the relative size, a number between 0 and 1
 	 * @return the new location
 	 */
-	public CContentAreaTreeLocationNode south( double size ){
-		return new CContentAreaTreeLocationNode( this, size, Side.SOUTH );
+	public TreeLocationNode south( double size ){
+		return new TreeLocationNode( this, size, Side.SOUTH );
 	}
 	
 	/**
@@ -111,8 +111,8 @@ public abstract class AbstractCContentAreaTreeLocation extends AbstractStackhold
 	 * @param size the relative size, a number between 0 and 1
 	 * @return the new location
 	 */
-	public CContentAreaTreeLocationNode east( double size ){
-		return new CContentAreaTreeLocationNode( this, size, Side.EAST );
+	public TreeLocationNode east( double size ){
+		return new TreeLocationNode( this, size, Side.EAST );
 	}
 	
 	/**
@@ -121,8 +121,8 @@ public abstract class AbstractCContentAreaTreeLocation extends AbstractStackhold
 	 * @param size the relative size, a number between 0 and 1
 	 * @return the new location
 	 */
-	public CContentAreaTreeLocationNode west( double size ){
-		return new CContentAreaTreeLocationNode( this, size, Side.WEST );
+	public TreeLocationNode west( double size ){
+		return new TreeLocationNode( this, size, Side.WEST );
 	}
 	
 	@Override

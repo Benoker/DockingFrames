@@ -2386,16 +2386,25 @@
 		<resource name="CLookAndFeelMenuPiece">
 			<index>0</index>
 		</resource>
-		<resource name="CThemeMenuPiece">1</resource>
-		<resource name="fcontrol.frontend">
+		<resource name="ccontrol.frontend">
 			<areas/>
 			<frontend>
 				<current>
 					<base>
 						<roots>
-							<root name="fcontrol center">
+							<root name="ccontrol south">
 								<layout factory="predefined">
-									<replacement id="rootfcontrol center"/>
+									<replacement id="rootccontrol south"/>
+									<delegate id="delegate_flap dock">
+										<window auto="false" size="400" direction="NORTH"/>
+										<children/>
+									</delegate>
+								</layout>
+								<children ignore="false"/>
+							</root>
+							<root name="ccontrol center">
+								<layout factory="predefined">
+									<replacement id="rootccontrol center"/>
 									<delegate id="delegate_SplitDockStationFactory">
 										<leaf id="0"/>
 									</delegate>
@@ -2403,7 +2412,7 @@
 								<children ignore="false">
 									<child>
 										<layout factory="predefined">
-											<replacement id="rootpicture area"/>
+											<replacement id="dockablesingle picture area"/>
 											<delegate id="delegate_SplitDockStationFactory">
 												<leaf id="0"/>
 											</delegate>
@@ -2420,7 +2429,7 @@
 												<children ignore="false">
 													<child>
 														<layout factory="delegate_page">
-															<id>multi 1 page</id>
+															<id>multi 2 page</id>
 															<area>picture area</area>
 															<multiple>Apple</multiple>
 														</layout>
@@ -2428,7 +2437,7 @@
 													</child>
 													<child>
 														<layout factory="delegate_page">
-															<id>multi 1 page</id>
+															<id>multi 3 page</id>
 															<area>picture area</area>
 															<multiple>Face</multiple>
 														</layout>
@@ -2440,46 +2449,39 @@
 									</child>
 								</children>
 							</root>
-							<root name="picture area">
+							<root name="ccontrol north">
 								<layout factory="predefined">
-									<replacement id="rootpicture area"/>
-									<delegate id="delegate_SplitDockStationFactory">
-										<leaf id="0"/>
+									<replacement id="rootccontrol north"/>
+									<delegate id="delegate_flap dock">
+										<window auto="false" size="400" direction="SOUTH"/>
+										<children>
+											<child id="0" hold="false"/>
+										</children>
 									</delegate>
 								</layout>
 								<children ignore="false">
 									<child>
-										<layout factory="delegate_StackDockStationFactory">
-											<selected>0</selected>
-											<children>
-												<child id="0"/>
-												<child id="1"/>
-											</children>
+										<layout factory="predefined">
+											<replacement id="dockablesingle ColorDockable"/>
+											<delegate id="delegate_DefaultDockableFactory"/>
 										</layout>
-										<children ignore="false">
-											<child>
-												<layout factory="delegate_page">
-													<id>multi 1 page</id>
-													<area>picture area</area>
-													<multiple>Apple</multiple>
-												</layout>
-												<children ignore="false"/>
-											</child>
-											<child>
-												<layout factory="delegate_page">
-													<id>multi 1 page</id>
-													<area>picture area</area>
-													<multiple>Face</multiple>
-												</layout>
-												<children ignore="false"/>
-											</child>
-										</children>
+										<children ignore="false"/>
 									</child>
 								</children>
 							</root>
-							<root name="fcontrol west">
+							<root name="ccontrol east">
 								<layout factory="predefined">
-									<replacement id="rootfcontrol west"/>
+									<replacement id="rootccontrol east"/>
+									<delegate id="delegate_flap dock">
+										<window auto="false" size="400" direction="WEST"/>
+										<children/>
+									</delegate>
+								</layout>
+								<children ignore="false"/>
+							</root>
+							<root name="ccontrol west">
+								<layout factory="predefined">
+									<replacement id="rootccontrol west"/>
 									<delegate id="delegate_flap dock">
 										<window auto="false" size="400" direction="EAST"/>
 										<children>
@@ -2504,76 +2506,37 @@
 								</layout>
 								<children ignore="false"/>
 							</root>
-							<root name="fcontrol east">
-								<layout factory="predefined">
-									<replacement id="rootfcontrol east"/>
-									<delegate id="delegate_flap dock">
-										<window auto="false" size="400" direction="WEST"/>
-										<children/>
-									</delegate>
-								</layout>
-								<children ignore="false"/>
-							</root>
-							<root name="fcontrol south">
-								<layout factory="predefined">
-									<replacement id="rootfcontrol south"/>
-									<delegate id="delegate_flap dock">
-										<window auto="false" size="400" direction="NORTH"/>
-										<children/>
-									</delegate>
-								</layout>
-								<children ignore="false"/>
-							</root>
-							<root name="fcontrol north">
-								<layout factory="predefined">
-									<replacement id="rootfcontrol north"/>
-									<delegate id="delegate_flap dock">
-										<window auto="false" size="400" direction="SOUTH"/>
-										<children>
-											<child id="0" hold="false"/>
-										</children>
-									</delegate>
-								</layout>
-								<children ignore="false">
-									<child>
-										<layout factory="predefined">
-											<replacement id="dockablesingle ColorDockable"/>
-											<delegate id="delegate_DefaultDockableFactory"/>
-										</layout>
-										<children ignore="false"/>
-									</child>
-								</children>
-							</root>
 						</roots>
 						<children/>
 					</base>
 					<modes>
-						<entry id="multi 1 page" current="normal">
+						<entry id="single ColorDockable" current="mini">
 							<history>
 								<mode>normal</mode>
 							</history>
 							<properties>
 								<property id="normal">
-									<root>fcontrol center</root>
+									<root>ccontrol center</root>
 									<location>
-										<property factory="SplitDockPathProperty"/>
-										<property factory="SplitDockPathProperty"/>
-										<property factory="StackDockPropertyFactory">1</property>
+										<property factory="SplitDockPathProperty">
+											<node location="BOTTOM" size="0.25"/>
+										</property>
 									</location>
 								</property>
 							</properties>
 						</entry>
-						<entry id="single PictureListDockable" current="mini">
+						<entry id="multi 3 page" current="normal">
 							<history>
+								<mode>maxi</mode>
 								<mode>normal</mode>
 							</history>
 							<properties>
 								<property id="normal">
-									<root>fcontrol center</root>
+									<root>ccontrol center</root>
 									<location>
-										<property factory="SplitDockPathProperty">
-											<node location="LEFT" size="0.2"/>
-										</property>
+										<property factory="SplitDockPathProperty"/>
+										<property factory="SplitDockPathProperty"/>
+										<property factory="StackDockPropertyFactory">1</property>
 									</location>
 								</property>
 							</properties>
@@ -2584,7 +2547,7 @@
 							</history>
 							<properties>
 								<property id="normal">
-									<root>fcontrol center</root>
+									<root>ccontrol center</root>
 									<location>
 										<property factory="SplitDockPropertyFactory">
 											<x>0.0</x>
@@ -2596,17 +2559,33 @@
 								</property>
 							</properties>
 						</entry>
-						<entry id="single ColorDockable" current="mini">
+						<entry id="single PictureListDockable" current="mini">
 							<history>
 								<mode>normal</mode>
 							</history>
 							<properties>
 								<property id="normal">
-									<root>fcontrol center</root>
+									<root>ccontrol center</root>
 									<location>
 										<property factory="SplitDockPathProperty">
-											<node location="BOTTOM" size="0.25"/>
+											<node location="LEFT" size="0.2"/>
 										</property>
+									</location>
+								</property>
+							</properties>
+						</entry>
+						<entry id="multi 2 page" current="normal">
+							<history>
+								<mode>maxi</mode>
+								<mode>normal</mode>
+							</history>
+							<properties>
+								<property id="normal">
+									<root>ccontrol center</root>
+									<location>
+										<property factory="SplitDockPathProperty"/>
+										<property factory="SplitDockPathProperty"/>
+										<property factory="StackDockPropertyFactory">0</property>
 									</location>
 								</property>
 							</properties>
@@ -2615,5 +2594,6 @@
 				</current>
 			</frontend>
 		</resource>
+		<resource name="CThemeMenuPiece">1</resource>
 	</resources>
 </config>
