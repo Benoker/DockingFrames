@@ -360,7 +360,7 @@ In line \src{4} a new \src{DockActionSource} is created. The \src{LocationHint} 
 So how exactly does a module find out, which \src{DockAction}s to show for a \src{Dockable}? The module uses the method \src{Dockable.getGlobalActionOffers} to optain a \src{DockActionSource}. The result of \src{getGlobalActionOffers} is a composite of \src{DockActionSource}s. The children of the result come from different sources:
 \begin{description}
  \item[Local DockActionSource] Every \src{Dockable} should have a local list of actions, this list can be accessed through \src{getLocalActionOffers}. Some implementations of \src{Dockable} have a method that allows clients to exchange that local list. For example \src{setActionOffers} in \src{DefaultDockable}.
- \item[Through the parents] Most \src{Dockable}s have one or more \src{DockStation}s as parents. Each \src{DockStation} can offer \src{direct} (if direct parent) or \\\src{indirect} (if grandparent) \src{DockActionSource}s for each child. Clients rarely interfere in that mechanism.
+ \item[Through the parents] Most \src{Dockable}s have one or more \src{DockStation}s as parents. Each \src{DockStation} can offer \src{direct} (if direct parent) or \src{indirect} (if grandparent) \src{DockActionSource}s for each child. Clients rarely interfere in that mechanism.
  \item[Guards] \src{ActionGuard}s observe all \src{Dockable}s of a \src{DockController}. They can react to a \src{Dockable} and add additional \src{DockActionSource}s. An \src{ActionGuard} has to be made registered by calling \src{addActionGuard} of \\\src{DockController}.
  \item[Alternative sources] The \src{ActionOffer} normally is the authority that creates the content of the global \src{DockActionSource}. A \src{Dockable} will get one \src{ActionOffer} and give that offer all \src{DockActionSource}s that were gathered. Then the \src{ActionOffer} will determine in which order the \\\src{DockActionSource}s appear and create a new composite of the sources. Clients can add new \src{ActionOffer}s by calling \src{addActionOffer} of \\\src{DockController}.
  \end{description}
@@ -448,7 +448,7 @@ Eventually each \src{DockAction} is instantiated and stored at a place where it 
 Clients might be interested to introduce new kinds of views or new types of actions.
 \begin{itemize}
  \item When a client adds a new kind of view, it has to define a new \\\src{ViewTarget}. The client then has to register a new \src{ViewGenerator} for each type of action at the \src{ActionViewConverter}.
- \item When a client adds a new type of action, it has to define a new \\\src{ActionType}. The client then has to register a new \src{ViewGenerator} for each kind of view at the \src{ActionViewConverter}.
+ \item When a client adds a new type of action, it has to define a new \src{ActionType}. The client then has to register a new \src{ViewGenerator} for each kind of view at the \src{ActionViewConverter}.
 \end{itemize}
 
 Let's have a look at an example. In the example a new kind of view and a new kind of action will be introduced.
