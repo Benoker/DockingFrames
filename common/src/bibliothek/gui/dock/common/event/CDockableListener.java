@@ -64,7 +64,9 @@ public interface CDockableListener {
     
     /**
      * Called when the {@link CDockable#isVisible() visibility}-property
-     * has changed.
+     * has changed. Please read the notes of {@link CDockable#isVisible()} to
+     * learn more about the exact meaning of visibility in the context of a 
+     * {@link CDockable}.
      * @param dockable the source of the event
      */
     public void visibilityChanged( CDockable dockable );

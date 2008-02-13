@@ -37,7 +37,7 @@ import bibliothek.demonstration.Monitor;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.menu.CLayoutChoiceMenuPiece;
 import bibliothek.gui.dock.common.menu.CLookAndFeelMenuPiece;
-import bibliothek.gui.dock.common.menu.CSingleDockableListMenuPiece;
+import bibliothek.gui.dock.common.menu.SingleCDockableListMenuPiece;
 import bibliothek.gui.dock.common.menu.CThemeMenuPiece;
 import bibliothek.gui.dock.facile.menu.RootMenuPiece;
 import bibliothek.gui.dock.facile.menu.SubmenuPiece;
@@ -83,7 +83,7 @@ public class Core {
         CControl control = new CControl( frame, secure );
 
         RootMenuPiece settings = new RootMenuPiece( "View", false );
-        settings.add( new CSingleDockableListMenuPiece( control ));
+        settings.add( new SingleCDockableListMenuPiece( control ));
         settings.add( new SeparatingMenuPiece( new CLayoutChoiceMenuPiece( control, false ), true, false, false ));
         
         RootMenuPiece layout = new RootMenuPiece( "Layout", false );

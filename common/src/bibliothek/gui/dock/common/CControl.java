@@ -920,6 +920,13 @@ public class CControl {
 		}
 		
 		public void show( CDockable dockable ){
+		    CWorkingArea area = dockable.getWorkingArea();
+		    if( area != null ){
+		        if( !area.isVisible() ){
+		            throw new IllegalStateException( "A dockable that wants to be on a CWorkingArea can't be made visible unless the CWorkingArea is visible." );
+		        }
+		    }
+		    
 			CDockableAccess access = access( dockable );
 			CLocation location = null;
 			if( access != null ){

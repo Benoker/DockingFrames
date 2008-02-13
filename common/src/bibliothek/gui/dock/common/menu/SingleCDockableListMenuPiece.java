@@ -40,7 +40,7 @@ import bibliothek.gui.dock.facile.menu.CloseableDockableMenuPiece;
  * {@link CDockable}s by clicking onto these items.
  * @author Benjamin Sigg
  */
-public class CSingleDockableListMenuPiece extends CloseableDockableMenuPiece {
+public class SingleCDockableListMenuPiece extends CloseableDockableMenuPiece {
     /** the list of all {@link CDockable}s */
     private CControl control;
     
@@ -51,7 +51,7 @@ public class CSingleDockableListMenuPiece extends CloseableDockableMenuPiece {
      * Creates a new piece.
      * @param control the control to observe for new {@link Dockable}s, can be <code>null</code>.
      */
-    public CSingleDockableListMenuPiece( CControl control ) {
+    public SingleCDockableListMenuPiece( CControl control ) {
         setControl( control );
     }
 
@@ -153,7 +153,7 @@ public class CSingleDockableListMenuPiece extends CloseableDockableMenuPiece {
     
     /**
      * A listener waiting for the closeable-property to change, and then
-     * calling {@link CSingleDockableListMenuPiece#check(Dockable)}.
+     * calling {@link SingleCDockableListMenuPiece#check(Dockable)}.
      * @author Benjamin Sigg
      */
     private class CloseableListener extends CDockableAdapter{

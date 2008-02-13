@@ -99,13 +99,22 @@ public interface CDockable {
 	/**
 	 * Shows or hides this dockable. If this dockable is not visible and
 	 * is made visible, then the framework tries to set its location at
-	 * the last known position.
+	 * the last known position.<br>
+	 * Subclasses should call {@link CControlAccess#show(CDockable)} or
+	 * {@link CControlAccess#hide(CDockable)}.
 	 * @param visible the new visibility state
+	 * @see #isVisible()
 	 */
 	public void setVisible( boolean visible );
 	
 	/**
-	 * Tells whether this dockable is currently visible or not.
+	 * Tells whether this dockable is currently visible or not. Visibility
+	 * means that this dockable is in the tree structure of DockingFrames. Being
+	 * in the structure does not imply being visible on the screen. If some
+	 * <code>JFrame</code> is not shown, or some <code>DockStation</code> not
+	 * properly added to a parent component, then a visible dockable can
+	 * be invisible for the user.<br>
+	 * Subclasses should return the result of {@link CControlAccess#isVisible(CDockable)}.
 	 * @return <code>true</code> if this dockable can be accessed by the user
 	 * through a graphical user interface.
 	 */
