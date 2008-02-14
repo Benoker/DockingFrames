@@ -64,7 +64,7 @@ public class DefaultDockControllerFactory implements DockControllerFactory {
     public KeyboardController createKeyboardController(
             DockController controller, ControllerSetupCollection setup ) {
         
-        return new DefaultkeyBoardController( controller );
+        return new DefaultKeyboardController( controller );
     }
 
     public MouseFocusObserver createMouseFocusObserver(
