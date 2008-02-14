@@ -28,6 +28,7 @@ package bibliothek.extension.gui.dock.theme.eclipse;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.Insets;
 
 import javax.swing.JPanel;
 
@@ -91,6 +92,13 @@ public class NoTitleDisplayer extends JPanel implements DockableDisplayer {
 	    }
 	}
 
+	public Insets getDockableInsets() {
+	    Insets insets = getInsets();
+	    if( insets == null )
+	        return new Insets( 0,0,0,0 );
+	    return insets;
+	}
+	
     @Override
     public void paint(Graphics g) {
         super.paint(g);

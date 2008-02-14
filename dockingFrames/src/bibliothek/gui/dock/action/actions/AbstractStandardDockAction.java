@@ -108,12 +108,23 @@ public abstract class AbstractStandardDockAction implements StandardDockAction {
     
     public void unbind( Dockable dockable ) {
         Integer old = bound.get( dockable );
-        if( old == 1 ){
-            bound.remove( dockable );
-            unbound( dockable );
+        if( old == null ){
+            // that should not happen...
+            try{
+                throw new NullPointerException( "Unbind called too often, omit unbind and continue" );
+            }
+            catch( NullPointerException ex ){
+                ex.printStackTrace();
+            }
         }
-        else
-            bound.put( dockable, old-1 );
+        else{
+            if( old == 1 ){
+                bound.remove( dockable );
+                unbound( dockable );
+            }
+            else
+                bound.put( dockable, old-1 );
+        }
     }
     
     /**

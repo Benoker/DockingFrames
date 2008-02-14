@@ -26,6 +26,7 @@
 package bibliothek.extension.gui.dock.theme.eclipse;
 
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 
@@ -88,6 +89,10 @@ public class EclipseDockableDisplayer extends EclipseStackDockComponent implemen
 				return true;
 		}
 		return false;
+	}
+	
+	public Insets getDockableInsets() {
+	    return getTabs().getContentInsets();
 	}
 
 	public Dockable getDockable(){

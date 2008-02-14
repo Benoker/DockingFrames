@@ -35,7 +35,10 @@ import java.util.List;
 import javax.swing.*;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.*;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.ShapedGradientPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabComponent;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabListener;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabPainter;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -294,12 +297,40 @@ public class RexTabbedComponent extends JComponent {
 		setSelectedTab(null);
 	}
 
-	public Component getContentArea() {
-		if (getSelectedTab() == null)
-			return null;
-		return contentArea.getComponent(0);
+	public JComponent getContentArea() {
+		return contentArea;
 	}
 
+	/**
+	 * Gets an estimate of the insets around the elements that are shown on the content-area.
+	 * @return an estimate of the insets between one element and this component.
+	 */
+	public Insets getContentInsets(){
+	    Insets insets = new Insets( 0,0,0,0 );
+	    Dimension size = tabStrip.getPreferredSize();
+	    if( size != null ){
+	        insets.top += size.height;
+	    }
+	    
+	    Insets temp = contentArea.getInsets();
+	    if( temp != null ){
+	        insets.left += temp.left;
+	        insets.right += temp.right;
+	        insets.top += temp.top;
+	        insets.bottom += temp.bottom;
+	    }
+	    
+	    temp = getInsets();
+	    if( temp != null ){
+            insets.left += temp.left;
+            insets.right += temp.right;
+            insets.top += temp.top;
+            insets.bottom += temp.bottom;
+        }
+        
+	    return insets;
+	}
+	
 	public void addTabListener(TabListener listener) {
 		listeners.add(listener);
 	}

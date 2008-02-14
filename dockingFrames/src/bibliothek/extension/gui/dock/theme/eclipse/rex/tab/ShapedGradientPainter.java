@@ -30,10 +30,7 @@ import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 
@@ -114,9 +111,7 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 		this.tabIndex = index;
 
         buttons = new ButtonPanel( false );
-        
-        if( buttons != null )
-            add( buttons );
+        add( buttons );
         
 		addHierarchyListener( new WindowActiveObserver() );
 		addMouseListener( new MouseAdapter(){
@@ -215,7 +210,7 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 	@Override
 	public Dimension getPreferredSize() {
 		FontRenderContext frc = new FontRenderContext(null, false, false);
-		Rectangle2D bounds = UIManager.getFont("Label.font").getStringBounds(dockable.getTitleText(), frc);
+		Rectangle2D bounds = getFont().getStringBounds(dockable.getTitleText(), frc);
 		int width = 5 + (int) bounds.getWidth() + 5;
 		int height = 23;
 		if ((paintIconWhenInactive || isSelected) && dockable.getTitleIcon() != null)
@@ -238,7 +233,7 @@ public class ShapedGradientPainter extends JComponent implements TabComponent {
 	public void doLayout(){
 		if( buttons != null ){
 			FontRenderContext frc = new FontRenderContext(null, false, false);
-			Rectangle2D bounds = UIManager.getFont("Label.font").getStringBounds(dockable.getTitleText(), frc);
+			Rectangle2D bounds =  UIManager.getFont("Label.font").getStringBounds(dockable.getTitleText(), frc);
 			int x = 5 + (int) bounds.getWidth() + 5;
 			if ((paintIconWhenInactive || isSelected) && dockable.getTitleIcon() != null)
 				x += dockable.getTitleIcon().getIconWidth() + 5;

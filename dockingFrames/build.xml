@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="dock" default="default" basedir="../">
+	<target name="default" depends="text, source, bin, doc">
+		<delete>
+			<fileset dir="${temp}"/>
+		</delete>
+	</target>
+
+	<target name="paths">
+		<property name="base" value="dock"/>
+		<property name="source" value="${base}/src"/>
+		<property name="bin" value="${base}/bin"/>
+		<property name="temp" value="${base}/temp"/>
+		<property name="doc" value="${base}/doc"/>
+
+		<property name="name.chess" value="chess"/>
+		<property name="name.common" value="dockingFramesCommon"/>
+		<property name="name.demo" value="tutorial"/>
+		<property name="name.demonstration" value="demonstration"/>
+		<property name="name.demonstrationInterface" value="interfaces"/>
+		<property name="name.dockingFrames" value="dockingFramesCore"/>
+		<property name="name.help" value="help"/>
+		<property name="name.notes" value="notes"/>
+		<property name="name.paint" value="paint"/>
+
+		<property name="location.chess" value="[JavaForge]Chess"/>
+		<property name="location.common" value="[JavaForge]Common"/>
+		<property name="location.demo" value="[JavaForge]Demo"/>
+		<property name="location.demonstration" value="[JavaForge]Demonstration"/>
+		<property name="location.demonstrationInterface" value="[JavaForge]DemonstrationInterface"/>
+		<property name="location.dockingFrames" value="[JavaForge]DockingFrames"/>
+		<property name="location.help" value="[JavaForge]Help"/>
+		<property name="location.notes" value="[JavaForge]Notes"/>
+		<property name="location.paint" value="[JavaForge]Paint"/>
+	</target>
+	
+	<target name="doc" depends="source, paths">
+		<mkdir dir="${doc}/${name.dockingFrames}"/>
+		<javadoc destdir="${doc}/${name.dockingFrames}">
+			<fileset dir="${source}/${name.dockingFrames}">
+				<include name="**/*.java"/>
+			</fileset>
+			<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+		</javadoc>
+		
+		<mkdir dir="${doc}/${name.common}"/>
+		<javadoc destdir="${doc}/${name.common}">
+			<fileset dir="${source}/${name.dockingFrames}">
+				<include name="**/*.java"/>
+			</fileset>
+			<fileset dir="${source}/${name.common}">
+				<include name="**/*.java"/>
+			</fileset>
+			<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+		</javadoc>
+	</target>
+	
+	<target name="text" depends="source, paths">
+		<copy tofile="${base}/common.pdf" file="${location.common}/guide/Guide.pdf"/>
+		<copy tofile="${base}/core.pdf" file="${location.dockingFrames}/guide/guide.pdf"/>
+		<copy tofile="${base}/faq.pdf" file="${location.dockingFrames}/guide/faq.pdf"/>
+		<copy todir="${base}" file="${location.dockingFrames}/license.txt"/>
+		<copy todir="${base}" file="${location.dockingFrames}/changes.txt"/>
+		<copy tofile="${base}/readme.txt" file="${location.dockingFrames}/readme_full.txt"/>
+	</target>
+
+	<target name="bin" depends="source, bin dir, bin.chess, bin.common, bin.demo, bin.demonstration, bin.demonstrationInterface, bin.dockingFrames, bin.help, bin.notes, bin.paint">
+		<jar destfile="${bin}/${name.chess}.jar">
+			<fileset dir="${temp}/${name.chess}"/>
+			<manifest>
+				<attribute name="Main-Class" value="bibliothek.chess.Main"/>
+				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.dockingFrames}.jar"/>
+			</manifest>
+		</jar>
+		<jar destfile="${bin}/${name.common}.jar">
+			<fileset dir="${temp}/${name.common}"/>
+			<manifest>
+				<attribute name="Class-Path" value="${name.dockingFrames}.jar"/>
+			</manifest>
+		</jar>
+		<jar destfile="${bin}/${name.demo}.jar">
+			<fileset dir="${temp}/${name.demo}"/>
+		</jar>
+		<jar destfile="${bin}/${name.demonstration}.jar">
+			<fileset dir="${temp}/${name.demonstration}"/>
+			<manifest>
+				<attribute name="Main-Class" value="bibliothek.demonstration.Main"/>
+				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.dockingFrames}.jar ${name.chess}.jar ${name.help}.jar ${name.notes}.jar ${name.paint}.jar"/>
+			</manifest>
+		</jar>
+		<jar destfile="${bin}/${name.demonstrationInterface}.jar">
+			<fileset dir="${temp}/${name.demonstrationInterface}"/>
+			<manifest>
+				<attribute name="Class-Path" value="${name.common}.jar"/>
+			</manifest>
+		</jar>
+		<jar destfile="${bin}/${name.dockingFrames}.jar">
+			<fileset dir="${temp}/${name.dockingFrames}"/>
+		</jar>
+		<jar destfile="${bin}/${name.help}.jar">
+			<fileset dir="${temp}/${name.help}"/>
+			<manifest>
+				<attribute name="Main-Class" value="bibliothek.help.Application"/>
+				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.dockingFrames}.jar"/>
+			</manifest>
+		</jar>
+		<jar destfile="${bin}/${name.notes}.jar">
+			<fileset dir="${temp}/${name.notes}"/>
+			<manifest>
+				<attribute name="Main-Class" value="bibliothek.notes.Application"/>
+				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.dockingFrames}.jar"/>
+			</manifest>
+		</jar>
+		<jar destfile="${bin}/${name.paint}.jar">
+			<fileset dir="${temp}/${name.paint}"/>
+			<manifest>
+				<attribute name="Main-Class" value="bibliothek.paint.Application"/>
+				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.dockingFrames}.jar"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<!-- Compiling -->
+	<target name="bin.chess" depends="source, bin dir, bin.common, bin.demonstrationInterface, bin.dockingFrames">
+		<javac srcdir="${source}/${name.chess}" destdir="${temp}/${name.chess}">
+			<classpath path="${temp}/${name.common}"/>
+			<classpath path="${temp}/${name.demonstrationInterface}"/>
+			<classpath path="${temp}/${name.dockingFrames}"/>
+		</javac>
+		<copy todir="${temp}/${name.chess}">
+			<fileset dir="${source}/${name.chess}">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="bin.common" depends="source, bin dir, bin.dockingFrames">
+		<javac srcdir="${source}/${name.common}" destdir="${temp}/${name.common}">
+			<classpath path="${temp}/${name.dockingFrames}"/>
+		</javac>
+		<copy todir="${temp}/${name.common}">
+			<fileset dir="${source}/${name.common}">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+
+
+	<target name="bin.demo" depends="source, bin dir, bin.dockingFrames, bin.common">
+		<javac srcdir="${source}/${name.demo}" destdir="${temp}/${name.demo}">
+			<classpath path="${temp}/${name.dockingFrames}"/>
+			<classpath path="${temp}/${name.common}"/>
+		</javac>
+		<copy todir="${temp}/${name.demo}">
+			<fileset dir="${source}/${name.demo}">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="bin.demonstration" depends="source, bin dir, bin.chess, bin.common, bin.demonstrationInterface, bin.dockingFrames, bin.help, bin.notes, bin.paint">
+		<javac srcdir="${source}/${name.demonstration}" destdir="${temp}/${name.demonstration}">
+			<classpath path="${temp}/${name.chess}"/>
+			<classpath path="${temp}/${name.common}"/>
+			<classpath path="${temp}/${name.demonstrationInterface}"/>
+			<classpath path="${temp}/${name.dockingFrames}"/>
+			<classpath path="${temp}/${name.help}"/>
+			<classpath path="${temp}/${name.notes}"/>
+			<classpath path="${temp}/${name.paint}"/>
+		</javac>
+		<copy todir="${temp}/${name.demonstration}">
+			<fileset dir="${source}/${name.demonstration}">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="bin.demonstrationInterface" depends="source, bin dir, bin.common">
+		<javac srcdir="${source}/${name.demonstrationInterface}" destdir="${temp}/${name.demonstrationInterface}">
+			<classpath path="${temp}/${name.common}"/>
+		</javac>
+		<copy todir="${temp}/${name.demonstrationInterface}">
+			<fileset dir="${source}/${name.demonstrationInterface}">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="bin.dockingFrames" depends="source, bin dir">
+		<javac srcdir="${source}/${name.dockingFrames}"
+         destdir="${temp}/${name.dockingFrames}"/>
+		<copy todir="${temp}/${name.dockingFrames}">
+			<fileset dir="${source}/${name.dockingFrames}">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="bin.help" depends="source, bin dir, bin.common, bin.demonstrationInterface, bin.dockingFrames">
+		<javac srcdir="${source}/${name.help}" destdir="${temp}/${name.help}">
+			<classpath path="${temp}/${name.common}"/>
+			<classpath path="${temp}/${name.demonstrationInterface}"/>
+			<classpath path="${temp}/${name.dockingFrames}"/>
+			<classpath path="${java.home}/lib/tools.jar"/>
+		</javac>
+		<copy todir="${temp}/${name.help}">
+			<fileset dir="${source}/${name.help}">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="bin.notes" depends="source, bin dir, bin.common, bin.demonstrationInterface, bin.dockingFrames">
+		<javac srcdir="${source}/${name.notes}" destdir="${temp}/${name.notes}">
+			<classpath path="${temp}/${name.common}"/>
+			<classpath path="${temp}/${name.demonstrationInterface}"/>
+			<classpath path="${temp}/${name.dockingFrames}"/>
+		</javac>
+		<copy todir="${temp}/${name.notes}">
+			<fileset dir="${source}/${name.notes}">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="bin.paint" depends="source, bin dir, bin.common, bin.demonstrationInterface, bin.dockingFrames">
+		<javac srcdir="${source}/${name.paint}" destdir="${temp}/${name.paint}">
+			<classpath path="${temp}/${name.common}"/>
+			<classpath path="${temp}/${name.demonstrationInterface}"/>
+			<classpath path="${temp}/${name.dockingFrames}"/>
+		</javac>
+		<copy todir="${temp}/${name.paint}">
+			<fileset dir="${source}/${name.paint}">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+	
+
+	<!-- Paths -->
+	<target name="bin dir" depends="clean, paths">
+		<mkdir dir="${base}"/>
+		<mkdir dir="${bin}"/>
+		<mkdir dir="${temp}"/>
+		<mkdir dir="${temp}/${name.chess}"/>
+		<mkdir dir="${temp}/${name.common}"/>
+		<mkdir dir="${temp}/${name.demo}"/>
+		<mkdir dir="${temp}/${name.demonstration}"/>
+		<mkdir dir="${temp}/${name.demonstrationInterface}"/>
+		<mkdir dir="${temp}/${name.dockingFrames}"/>
+		<mkdir dir="${temp}/${name.help}"/>
+		<mkdir dir="${temp}/${name.notes}"/>
+		<mkdir dir="${temp}/${name.paint}"/>
+	</target>
+
+	<!-- copy source -->
+	<target name="source" depends="source dir, clean, paths">
+		<copy todir="${source}/${name.chess}">
+			<fileset dir="${location.chess}/src">
+				<exclude name="*.svn/*"/>
+			</fileset>
+		</copy>
+		<copy todir="${source}/${name.common}">
+			<fileset dir="${location.common}/src">
+				<exclude name="*.svn/*"/>
+			</fileset>
+		</copy>
+		<copy todir="${source}/${name.demo}">
+			<fileset dir="${location.demo}/src">
+				<exclude name="*.svn/*"/>
+			</fileset>
+		</copy>
+		<copy todir="${source}/${name.demonstration}">
+			<fileset dir="${location.demonstration}/src">
+				<exclude name="*.svn/*"/>
+			</fileset>
+		</copy>
+		<copy todir="${source}/${name.demonstrationInterface}">
+			<fileset dir="${location.demonstrationInterface}/src">
+				<exclude name="*.svn/*"/>
+			</fileset>
+		</copy>
+		<copy todir="${source}/${name.dockingFrames}">
+			<fileset dir="${location.dockingFrames}/src">
+				<exclude name="*.svn/*"/>
+			</fileset>
+		</copy>
+		<copy todir="${source}/${name.help}">
+			<fileset dir="${location.help}/src">
+				<exclude name="*.svn/*"/>
+			</fileset>
+		</copy>
+		<copy todir="${source}/${name.notes}">
+			<fileset dir="${location.notes}/src">
+				<exclude name="*.svn/*"/>
+			</fileset>
+		</copy>
+		<copy todir="${source}/${name.paint}">
+			<fileset dir="${location.paint}/src">
+				<exclude name="*.svn/*"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- paths source -->
+	<target name="source dir" depends="clean, paths">
+		<mkdir dir="${base}"/>
+		<mkdir dir="${source}"/>
+		<mkdir dir="${source}/${name.chess}"/>
+		<mkdir dir="${source}/${name.common}"/>
+		<mkdir dir="${source}/${name.demo}"/>
+		<mkdir dir="${source}/${name.demonstration}"/>
+		<mkdir dir="${source}/${name.demonstrationInterface}"/>
+		<mkdir dir="${source}/${name.dockingFrames}"/>
+		<mkdir dir="${source}/${name.help}"/>
+		<mkdir dir="${source}/${name.notes}"/>
+		<mkdir dir="${source}/${name.paint}"/>
+	</target>
+
+
+	<target name="clean" depends="paths">
+		<delete dir="${base}"/>
+	</target>
+</project>

@@ -110,10 +110,7 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 		setOpaque( false );
 		
 		buttons = new ButtonPanel( false );
-        
-        if( buttons != null )
-            add( buttons );
-
+        add( buttons );
 		
 		addHierarchyListener( new WindowActiveObserver() );
 		addMouseListener( new MouseAdapter(){
@@ -183,7 +180,7 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 	@Override
 	public Dimension getPreferredSize() {
 		FontRenderContext frc = new FontRenderContext(null, false, false);
-		Rectangle2D bounds = UIManager.getFont("Label.font").getStringBounds(dockable.getTitleText(), frc);
+		Rectangle2D bounds = getFont().getStringBounds(dockable.getTitleText(), frc);
 		int width = 5 + (int) bounds.getWidth() + 5;
 		int height = 23;
 		if ((paintIconWhenInactive || isSelected) && dockable.getTitleIcon() != null)

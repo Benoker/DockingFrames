@@ -27,6 +27,7 @@
 package bibliothek.gui.dock.station;
 
 import java.awt.Component;
+import java.awt.Insets;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -135,6 +136,13 @@ public interface DockableDisplayer {
      * @return <code>true</code> if the title contains the point
      */
     public boolean titleContains( int x, int y );
+    
+    /**
+     * Gets an estimate of the insets around the {@link Dockable} of this 
+     * displayer compared to the whole size of this displayer.
+     * @return the estimate of the insets
+     */
+    public Insets getDockableInsets();
     
     /**
      * Gets the Component which represents this displayer.

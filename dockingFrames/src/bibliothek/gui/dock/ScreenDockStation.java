@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 import bibliothek.gui.DockController;
@@ -41,12 +40,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.layout.DockableProperty;
-import bibliothek.gui.dock.station.AbstractDockStation;
-import bibliothek.gui.dock.station.Combiner;
-import bibliothek.gui.dock.station.DisplayerCollection;
-import bibliothek.gui.dock.station.DisplayerFactory;
-import bibliothek.gui.dock.station.DockableDisplayer;
-import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.*;
 import bibliothek.gui.dock.station.screen.BoundaryRestriction;
 import bibliothek.gui.dock.station.screen.ScreenDockDialog;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
@@ -495,11 +489,11 @@ public class ScreenDockStation extends AbstractDockStation {
      * will be made visible too.
      * @param dockable the {@link Dockable} to show
      * @param bounds the bounds that the dialog will have
-     * @param boundsIncludeTitle if <code>true</code>, the bounds describe the size
+     * @param boundsIncludeDialog if <code>true</code>, the bounds describe the size
      * of the resulting window. Otherwise the size of the window will be a bit larger
      * such that the title can be shown in the new space
      */
-    public void addDockable( Dockable dockable, Rectangle bounds, boolean boundsIncludeTitle ){
+    public void addDockable( Dockable dockable, Rectangle bounds, boolean boundsIncludeDialog ){
         DockUtilities.ensureTreeValidity( this, dockable );
         
         if( bounds == null )
@@ -521,40 +515,15 @@ public class ScreenDockStation extends AbstractDockStation {
         dialog.setDisplayer( displayer );
         
         bounds = new Rectangle( bounds );
-        if( !boundsIncludeTitle && title != null ){
-            Dimension titleSize = title.getComponent().getPreferredSize();
-            
-            switch( displayer.getTitleLocation() ){
-                case TOP:
-                    bounds.y -= titleSize.height;
-                case BOTTOM:
-                    bounds.height += titleSize.height;
-                    break;
-                case LEFT:
-                    bounds.x -= titleSize.width;
-                case RIGHT:
-                    bounds.width += titleSize.width;
-                    break;
+        if( !boundsIncludeDialog && displayer != null ){
+            Insets estimate = displayer.getDockableInsets();
+            if( estimate != null ){
+                bounds.x -= estimate.left;
+                bounds.y -= estimate.top;
+                bounds.width += estimate.left + estimate.right;
+                bounds.height += estimate.top + estimate.bottom;
             }
         }
-        
-        if( !boundsIncludeTitle ){
-            Component component = displayer == null ? null : displayer.getComponent();
-            while( component != null ){
-                if( component instanceof JComponent ){
-                    JComponent jcomponent = (JComponent)component;
-                    Insets insets = jcomponent.getInsets();
-                    if( insets != null ){
-                        bounds.x -= insets.left;
-                        bounds.y -= insets.top;
-                        bounds.width += insets.left + insets.right;
-                        bounds.height += insets.top + insets.bottom;
-                    }
-                }
-                component = component.getParent();
-            }
-        }
-        
         
         dialog.setRestrictedBounds( bounds );
         dialog.validate();
@@ -598,13 +567,13 @@ public class ScreenDockStation extends AbstractDockStation {
      * added to a child-station of this station.
      * @param dockable the new {@link Dockable}
      * @param property the preferred location of the dockable
-     * @param boundsIncludeTitle if <code>true</code>, the bounds describe the size
+     * @param boundsIncludeDialog if <code>true</code>, the bounds describe the size
      * of the resulting window. Otherwise the size of the window will be a bit larger
      * such that the title can be shown in the new space
      * @return <code>true</code> if the dockable could be added, <code>false</code>
      * otherwise.
      */
-    public boolean drop( Dockable dockable, ScreenDockProperty property, boolean boundsIncludeTitle ){
+    public boolean drop( Dockable dockable, ScreenDockProperty property, boolean boundsIncludeDialog ){
         DockUtilities.ensureTreeValidity( this, dockable );
         ScreenDockDialog best = null;
         double bestRatio = 0;
@@ -658,7 +627,7 @@ public class ScreenDockStation extends AbstractDockStation {
         if( !done ){
             boolean accept = accept( dockable ) && dockable.accept( this );
             if( accept ){
-                addDockable( dockable, new Rectangle( x, y, width, height ), boundsIncludeTitle );
+                addDockable( dockable, new Rectangle( x, y, width, height ), boundsIncludeDialog );
                 done = true;
             }
         }

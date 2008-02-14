@@ -140,6 +140,15 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 		add(tabs);
 	}
 	
+	/**
+	 * Gets the component onto which this {@link StackDockComponent}
+	 * puts its children.
+	 * @return the tab-component, should not be modified by subclasses
+	 */
+	protected EclipseTabbedComponent getTabs(){
+	    return tabs;
+	}
+	
 	@Override
 	public void removeAll() {
 		for( int i = 0, n = dockables.size(); i<n; i++ ){

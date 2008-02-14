@@ -86,6 +86,7 @@ public class EclipseTabbedComponent extends RexTabbedComponent {
 	public void setController( DockController controller ) {
 	    super.setController( controller );
 	    painter.setProperties( controller == null ? null : controller.getProperties() );
+	    updateFullBorder();
 	}
 	
 	   /**
