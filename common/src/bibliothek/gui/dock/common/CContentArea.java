@@ -46,8 +46,9 @@ import bibliothek.gui.dock.common.intern.CStateManager;
  * This component contains in the center a {@link SplitDockStation} allowing
  * to show several {@link CDockable}s at the same time. At each border a
  * {@link FlapDockStation} allows to show "minimized" {@link CDockable}s.<br>
- * Note: clients should not create {@link CContentArea}s directly, they should use
- * a {@link CControl} to get a <code>FCenter</code>. 
+ * Note: clients should not create {@link CContentArea}s directly, they should 
+ * use {@link CControl#getContentArea()} to get the default content area, or
+ * {@link CControl#createContentArea(String)} to create a new content area. 
  * @author Benjamin Sigg
  */
 public class CContentArea extends JPanel{

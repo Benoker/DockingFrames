@@ -104,6 +104,7 @@ public interface CDockable {
 	 * {@link CControlAccess#hide(CDockable)}.
 	 * @param visible the new visibility state
 	 * @see #isVisible()
+	 * @throws IllegalStateException if this dockable can't be made visible
 	 */
 	public void setVisible( boolean visible );
 	

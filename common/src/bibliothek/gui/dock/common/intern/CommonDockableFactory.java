@@ -88,8 +88,8 @@ public class CommonDockableFactory implements DockFactory<CommonDockable, Common
         // working area
         String areaId = layout.getArea();
         if( areaId != null ){
-            for( int i = 0, n = access.getOwner().getFDockableCount(); i<n; i++ ){
-                CDockable check = access.getOwner().getFDockable( i );
+            for( int i = 0, n = access.getOwner().getCDockableCount(); i<n; i++ ){
+                CDockable check = access.getOwner().getCDockable( i );
                 if( check instanceof CWorkingArea ){
                     CWorkingArea checkArea = (CWorkingArea)check;
                     if( checkArea.getUniqueId().equals( areaId )){

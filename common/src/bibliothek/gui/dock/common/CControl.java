@@ -37,10 +37,7 @@ import javax.swing.KeyStroke;
 
 import bibliothek.extension.gui.dock.theme.SmoothTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabDockAction;
-import bibliothek.gui.DockController;
-import bibliothek.gui.DockFrontend;
-import bibliothek.gui.DockStation;
-import bibliothek.gui.Dockable;
+import bibliothek.gui.*;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.action.ActionGuard;
@@ -712,7 +709,7 @@ public class CControl {
 	 * {@link CControl}.
 	 * @return the number of dockables
 	 */
-	public int getFDockableCount(){
+	public int getCDockableCount(){
 	    return dockables.size();
 	}
 	
@@ -721,7 +718,7 @@ public class CControl {
 	 * @param index the index of the element
 	 * @return the selected dockable
 	 */
-	public CDockable getFDockable( int index ){
+	public CDockable getCDockable( int index ){
 	    return dockables.get( index );
 	}
 	
@@ -785,6 +782,14 @@ public class CControl {
 	 */
 	public CMaximizeBehavior getMaximizeBehavior(){
 		return stateManager.getMaximizeBehavior();
+	}
+	
+	/**
+	 * Sets the theme of the elements in the realm of this control.
+	 * @param theme the new theme
+	 */
+	public void setTheme( DockTheme  theme ){
+	    frontend.getController().setTheme( theme );
 	}
 	
 	/**
