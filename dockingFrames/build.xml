@@ -37,7 +37,7 @@
 	
 	<target name="doc" depends="source, paths">
 		<mkdir dir="${doc}/${name.dockingFrames}"/>
-		<javadoc destdir="${doc}/${name.dockingFrames}">
+		<javadoc destdir="${doc}/${name.dockingFrames}" use="true" splitindex="true">
 			<fileset dir="${source}/${name.dockingFrames}">
 				<include name="**/*.java"/>
 			</fileset>
@@ -45,7 +45,7 @@
 		</javadoc>
 		
 		<mkdir dir="${doc}/${name.common}"/>
-		<javadoc destdir="${doc}/${name.common}">
+		<javadoc destdir="${doc}/${name.common}" use="true" splitindex="true">
 			<fileset dir="${source}/${name.dockingFrames}">
 				<include name="**/*.java"/>
 			</fileset>

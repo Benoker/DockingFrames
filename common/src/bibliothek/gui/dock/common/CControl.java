@@ -552,7 +552,7 @@ public class CControl {
 	
 	/**
 	 * Grants access to the manager that reads and stores configurations
-	 * of the facile-framework.<br>
+	 * of the common-project.<br>
 	 * Clients can add their own {@link ApplicationResource}s to this manager,
 	 * however clients are strongly discouraged from removing {@link ApplicationResource}
 	 * which they did not add by themself.
@@ -801,48 +801,43 @@ public class CControl {
 	}
 	
 	/**
-	 * Writes the current and all known layouts into <code>file</code>.
+	 * Writes the current and all known layouts into <code>file</code>.<br>
+     * This is the same as calling <code>getResources().writeFile( file )</code>.
 	 * @param file the file to override
 	 * @throws IOException if the file can't be written
-	 */
+     */
 	public void write( File file ) throws IOException{
-		DataOutputStream out = new DataOutputStream( new BufferedOutputStream( new FileOutputStream( file )));
-		write( out );
-		out.close();
+        getResources().writeFile( file );
 	}
 	
 	/**
-	 * Writes the current and all known layouts into <code>out</code>.
+	 * Writes the current and all known layouts into <code>out</code>.<br>
+	 * This is the same as calling <code>getResources().writeStream( out )</code>.
 	 * @param out the stream to write into
 	 * @throws IOException if the stream is not writable
-	 */
+     */
 	public void write( DataOutputStream out ) throws IOException{
-		out.writeInt( 1 );
-		frontend.write( out );
+		getResources().writeStream( out );
 	}
 	
 	/**
-	 * Reads the current and other known layouts from <code>file</code>.
+	 * Reads the current and other known layouts from <code>file</code>.<br>
+     * This is the same as calling <code>getResources().readFile( file )</code>.
 	 * @param file the file to read from
 	 * @throws IOException if the file can't be read
 	 */
 	public void read( File file ) throws IOException{
-		DataInputStream in = new DataInputStream( new BufferedInputStream( new FileInputStream( file )));
-		read( in );
-		in.close();
+		getResources().readFile( file );
 	}
 	
 	/**
-	 * Reads the current and other known layouts from <code>in</code>.
+	 * Reads the current and other known layouts from <code>in</code>.<br>
+     * This is the same as calling <code>getResources().readStream( out )</code>.
 	 * @param in the stream to read from
 	 * @throws IOException if the stream can't be read
-	 */
+     */
 	public void read( DataInputStream in ) throws IOException{
-		int version = in.readInt();
-		if( version != 1 )
-			throw new IOException( "Version of stream unknown, expected 1 but found: " + version );
-		
-		frontend.read( in );
+		getResources().readStream( in );
 	}
 	
 	/**
