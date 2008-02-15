@@ -37,12 +37,11 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 /**
- * A panel containing three children: a "ContentPane", a "BasePane" and a "GlassPane". 
- * The "BasePane" is an ancestor of "ContentPane", or the same component
- * as the "ContentPane". The Base- and ContentPane can be an arbitrary {@link JComponent}s.
- * The GlassPane is always the same panel. The GlassPane catches all MouseEvents, informs
- * sometimes a {@link SecureMouseFocusObserver} about the calls, and then dispatches
- * the events to the ContentPane or one of the children of ContentPane.<br>
+ * A panel containing two children: a "content pane" and a "glass pane". The
+ * "content pane" can be replaced by the client and can be any {@link JComponent}.
+ * The "glassed pane" is an invisible panel above the "content pane". It will
+ * catch all {@link MouseEvent}s, inform a {@link SecureMouseFocusObserver} about
+ * them, and then forward the events to the "content pane".
  * <b>Note:</b> clients can use {@link SecureDockController#wrap(JComponent)} to
  * create and register a {@link GlassedPane} in one step.
  * @author Benjamin Sigg

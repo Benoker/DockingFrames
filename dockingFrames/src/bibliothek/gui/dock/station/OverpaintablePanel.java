@@ -25,6 +25,8 @@
  */
 package bibliothek.gui.dock.station;
 
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Graphics;
 
 import javax.swing.JComponent;
@@ -32,9 +34,15 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
 /**
- * A panel which contains two children: one child is used to add other
- * children, the other child is used to paint over all children. Subclasses
- * can change the painting routine by overriding {@link #paintOverlay(Graphics)}.
+ * A panel which contains two children, the "base pane" and the "overlay pane".<br>
+ * The "overlay pane" is painted above the "base pane" and all its children. It
+ * can be used to paint arbitrary figures. Clients can change the painting
+ * code by overriding {@link #paintOverlay(Graphics)}.<br>
+ * Clients will add new {@link Component}s to the "content pane". Normally the
+ * "content pane" is the same as the "base pane", but it is possible to use two
+ * different {@link JComponent}s for them. The client that replaces a 
+ * "content pane" has to add the new panel to the "base pane". It is possible
+ * to put some {@link Container}s between "base pane" and "content pane".
  * @author Benjamin Sigg
  *
  */
