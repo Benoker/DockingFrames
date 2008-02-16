@@ -353,16 +353,16 @@ public class CStateManager extends StateManager {
                 if( station != null ){
                     Dockable stationDockable = station.asDockable();
                     if( stationDockable instanceof CommonDockable ){
-                        CDockable fdockable = ((CommonDockable)stationDockable).getDockable();
-                        if( fdockable instanceof CWorkingArea ){
-                            dockable.getDockable().setWorkingArea( (CWorkingArea)fdockable );
+                        CDockable cdockable = ((CommonDockable)stationDockable).getDockable();
+                        if( cdockable instanceof CWorkingArea ){
+                            dockable.getDockable().setWorkingArea( (CWorkingArea)cdockable );
                             set = true;
                             newMode = NORMALIZED;
                         }
                     }
                 }
             }
-            if( !set ){
+            if( !set && NORMALIZED.equals( newMode ) ){
                 dockable.getDockable().setWorkingArea( null );
             }
 	    	
@@ -385,8 +385,41 @@ public class CStateManager extends StateManager {
     	if( getMode( dockable ) == ExtendedMode.MAXIMIZED )
     		return new CMaximizedLocation();
     	
-    	DockableProperty property = DockUtilities.getPropertyChain( dockable );
-    	return fill( null, property, dockable );
+    	CWorkingArea area = getAreaOf( dockable );
+    	DockableProperty property;
+    	if( area == null ){
+    	    property = DockUtilities.getPropertyChain( dockable );
+    	    return fill( null, property, dockable );    
+    	}
+    	else{
+    	    property = DockUtilities.getPropertyChain( area.intern().asDockStation(), dockable );
+    	    return fill( new CWorkingAreaLocation( area ), property, dockable );
+    	}
+    }
+    
+    /**
+     * Searches <code>dockable</code> and its parent for the first {@link CWorkingArea}.
+     * @param dockable the element whose working area is searched
+     * @return the first working area or <code>null</code>
+     */
+    protected CWorkingArea getAreaOf( Dockable dockable ){
+        Dockable check = dockable;
+        while( check != null ){
+            if( check instanceof CommonDockable ){
+                CDockable cdock = ((CommonDockable)check).getDockable();
+                if( cdock instanceof CWorkingArea ){
+                    return (CWorkingArea)cdock;
+                }
+            }
+            
+            DockStation parent = check.getDockParent();
+            if( parent == null )
+                check = null;
+            else
+                check = parent.asDockable();
+        }
+        
+        return null;
     }
     
     /**
@@ -400,7 +433,7 @@ public class CStateManager extends StateManager {
      * as good as possible, <code>base</code> in case <code>property</code> can't
      * be analyzed or <code>null</code> if no analysis is possible at all
      */
-    protected CLocation fill( CLocation base, DockableProperty property, Dockable dockable ){
+    private CLocation fill( CLocation base, DockableProperty property, Dockable dockable ){
     	if( property == null )
     		return base;
     	
@@ -412,10 +445,7 @@ public class CStateManager extends StateManager {
 	    		return fill( extern, screen.getSuccessor(), dockable );
 	    	}
 	    	else{
-	    	    CWorkingArea workingArea = null;
-	    	    if( dockable instanceof CommonDockable ){
-	    	        workingArea = ((CommonDockable)dockable).getDockable().getWorkingArea();
-	    	    }
+	    	    CWorkingArea workingArea = getAreaOf( dockable );
 	    	    if( workingArea == null ){
 	    	        base = new CBaseLocation( getCenterOf( dockable ) );
 	    	    }
@@ -481,7 +511,7 @@ public class CStateManager extends StateManager {
     	}
     	
     	if( property instanceof SplitDockPathProperty ){
-    		if( base instanceof CBaseLocation ){
+    		if( base instanceof CRootLocation ){
     			SplitDockPathProperty path = (SplitDockPathProperty)property;
     			AbstractTreeLocation tree = null;
     			for( SplitDockPathProperty.Node node : path ){
@@ -503,14 +533,17 @@ public class CStateManager extends StateManager {
     				}
     				
     				if( tree == null ){
-    					tree = new TreeLocationRoot( (CBaseLocation)base, node.getSize(), side );
+    					tree = new TreeLocationRoot( (CRootLocation)base, node.getSize(), side );
     				}
     				else{
     					tree = new TreeLocationNode( tree, node.getSize(), side );
     				}
     			}
     			
-    			return fill( tree, path.getSuccessor(), dockable );
+    			if( tree == null )
+    			    return fill( base, path.getSuccessor(), dockable );
+    			else
+    			    return fill( tree, path.getSuccessor(), dockable );
     		}
     	}
     	
@@ -663,6 +696,17 @@ public class CStateManager extends StateManager {
     }
     
     @Override
+    protected DockStation getDefaultNormal( Dockable dockable ) {
+        if( dockable instanceof CommonDockable ){
+            CDockable cdockable = ((CommonDockable)dockable).getDockable();
+            if( cdockable.getWorkingArea() != null )
+                return cdockable.getWorkingArea().intern().asDockStation();
+        }
+        
+        return super.getDefaultNormal( dockable );
+    }
+    
+    @Override
     public void rebuild( Dockable dockable ) {
         super.rebuild( dockable );
     }
@@ -676,16 +720,16 @@ public class CStateManager extends StateManager {
      */
     protected boolean process( Dockable dockable, KeyEvent event ){
         if( dockable instanceof CommonDockable ){
-            CDockable fdockable = ((CommonDockable)dockable).getDockable();
+            CDockable cdockable = ((CommonDockable)dockable).getDockable();
 
             KeyStroke stroke = KeyStroke.getKeyStrokeForEvent( event );
             if( stroke.equals( keyStrokeMaximizeChange.getValue() )){
-                if( fdockable.getExtendedMode() == CDockable.ExtendedMode.MAXIMIZED ){
+                if( cdockable.getExtendedMode() == CDockable.ExtendedMode.MAXIMIZED ){
                     goOut( MAXIMIZED, dockable );
                     return true;
                 }
-                else if( fdockable.isMaximizable() ){
-                    fdockable.setExtendedMode( CDockable.ExtendedMode.MAXIMIZED );
+                else if( cdockable.isMaximizable() ){
+                    cdockable.setExtendedMode( CDockable.ExtendedMode.MAXIMIZED );
                     return true;
                 }
             }

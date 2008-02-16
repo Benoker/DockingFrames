@@ -366,6 +366,20 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         if( normal.contains( dockable ) || mini.contains( dockable ) )
             return NORMALIZED;
         
+        String sharp = currentModeSharp( dockable );
+        if( sharp != null )
+            return sharp;
+        
+        return NORMALIZED;
+    }
+    
+    /**
+     * Searches the current mode of <code>dockable</code> and returns
+     * the mode.
+     * @param dockable the element whose mode is searched
+     * @return the mode or <code>null</code> if the mode could not be found
+     */
+    protected String currentModeSharp( Dockable dockable ) {
         DockStation parent = dockable.getDockParent();
         while( parent != null ){
             if( mini.contains( parent ))
@@ -375,21 +389,21 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
                 return EXTERNALIZED;
             
             if( maxi == parent ){
-            	if( maxi.getFullScreen() == dockable )
-            		return MAXIMIZED;
-            	else
-            		return NORMALIZED;
+                if( maxi.getFullScreen() == dockable )
+                    return MAXIMIZED;
+                else
+                    return NORMALIZED;
             }
             
             if( normal.contains( parent )){
-            	return NORMALIZED;
+                return NORMALIZED;
             }
             
             dockable = parent.asDockable();
             parent = dockable == null ? null : dockable.getDockParent();
         }
         
-        return NORMALIZED;
+        return null;
     }
     
     /**
@@ -664,17 +678,27 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
             }
             
             unmaximize( affected );
-            
-            if( !child && !drop( location, dockable )){
-                checkedDrop( defaultNormal, dockable, null );
-            
-                if( maximized != null && maximized.getDockParent() != null ){
+
+            if( !drop( location, dockable )){
+                checkedDrop( getDefaultNormal( dockable ), dockable, null );
+
+                if( !child && maximized != null && maximized.getDockParent() != null ){
                     if( !DockUtilities.isAncestor( maxi, dockable )){
                         maximize( currentMode( maximized ), maximized, affected );
                     }
                 }
             }
         }
+    }
+    
+    /**
+     * Gets the {@link DockStation} which should be used as default normal
+     * parent for <code>dockable</code>.
+     * @param dockable some {@link Dockable}
+     * @return the preferred normal parent for <code>dockable</code>
+     */
+    protected DockStation getDefaultNormal( Dockable dockable ){
+        return defaultNormal;
     }
     
     /**

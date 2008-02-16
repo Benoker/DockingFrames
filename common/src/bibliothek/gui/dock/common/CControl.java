@@ -227,16 +227,16 @@ public class CControl {
 		        if( dockable == null )
 		            return false;
 		        if( dockable instanceof CommonDockable ){
-		            CDockable fdockable = ((CommonDockable)dockable).getDockable();
-		            if( fdockable instanceof CWorkingArea )
+		            CDockable cdockable = ((CommonDockable)dockable).getDockable();
+		            if( cdockable instanceof CWorkingArea )
 		                return true;
 		        }
 		        return false;
 		    }
 		    public boolean ignoreElement( DockElement element ) {
 		        if( element instanceof CommonDockable ){
-		            CDockable fdockable = ((CommonDockable)element).getDockable();
-		            if( fdockable.getWorkingArea() != null )
+		            CDockable cdockable = ((CommonDockable)element).getDockable();
+		            if( cdockable.getWorkingArea() != null )
 		                return true;
 		        }
 		        return false;
@@ -630,15 +630,23 @@ public class CControl {
 	public <F extends MultipleCDockable> F add( F dockable ){
 	    String factory = access.getFactoryId( dockable.getFactory() );
         if( factory == null ){
-            throw new IllegalStateException( "the factory for a MultipleDockable is not registered" );
+            throw new IllegalStateException( "the factory for a MultipleCDockable is not registered: " + dockable.getFactory() );
+        }
+        
+        Set<String> ids = new HashSet<String>();
+        for( MultipleCDockable multi : multiDockables ){
+            if( factory.equals( access.getFactoryId( multi.getFactory() ))){
+                ids.add( accesses.get( multi ).getUniqueId() );
+            }
         }
         
         int count = 0;
-        for( MultipleCDockable multi : multiDockables ){
-            if( factory.equals( access.getFactoryId( multi.getFactory() )))
-                count++;
-        }
         String id = "multi " + count + " " + factory;
+        while( ids.contains( id )){
+            count++;
+            id = "multi " + count + " " + factory;
+        }
+        
         return add( dockable, id );
 	}
 

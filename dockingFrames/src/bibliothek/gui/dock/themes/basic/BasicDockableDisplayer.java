@@ -378,53 +378,29 @@ public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
         if( insets == null )
             insets = new Insets(0,0,0,0);
         
-        int x = insets.left;
-        int y = insets.top;
-        int width = getWidth() - insets.left - insets.right;
-        int height = getHeight() - insets.top - insets.bottom;
-        
         if( title == null && dockable == null )
-            return new Insets( 0,0,0,0 );
-        
-        width = Math.max( 0, width );
-        height = Math.max( 0, height );
-        
-        Rectangle bounds;
+            return insets;
         
         if( title == null ){
-            bounds = new Rectangle( x, y, width, height );
+            return insets;
         }
         else if( dockable != null ){
             Dimension preferred = getComponent( title ).getPreferredSize();
             
-            int preferredWidth = preferred.width;
-            int preferredHeight = preferred.height;
-            
-            if( location == Location.LEFT || location == Location.RIGHT ){
-                preferredWidth = Math.min( preferredWidth, width );
-                preferredHeight = height;
-            }
-            else{
-                preferredWidth = width;
-                preferredHeight = Math.min( preferredHeight, height );
-            }
-            
             if( location == Location.LEFT ){
-                bounds = new Rectangle( x+preferredWidth, y, width - preferredWidth, height );
+                insets.left += preferred.width;
             }
             else if( location == Location.RIGHT ){
-                bounds = new Rectangle( x, y, width - preferredWidth, preferredHeight );
+                insets.right += preferred.width;
             }
             else if( location == Location.BOTTOM ){
-                bounds = new Rectangle( x, y, preferredWidth, height - preferredHeight );
+                insets.bottom += preferred.height;
             }
             else{
-                bounds = new Rectangle( x, y+preferredHeight, preferredWidth, height - preferredHeight );
+                insets.top += preferred.height;
             }
         }
-        else
-            return new Insets( 0,0,0,0 );
         
-        return new Insets( bounds.x, bounds.y, getWidth() - bounds.width - bounds.x, getHeight() - bounds.height - bounds.y );
+        return insets;
     }
 }

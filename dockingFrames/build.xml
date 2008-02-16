@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project name="dock" default="default" basedir="../">
-	<target name="default" depends="text, source, bin, doc">
+	<target name="default" depends="text, source, bin, doc, webstart">
 		<delete>
 			<fileset dir="${temp}"/>
 		</delete>
@@ -13,6 +13,7 @@
 		<property name="bin" value="${base}/bin"/>
 		<property name="temp" value="${base}/temp"/>
 		<property name="doc" value="${base}/doc"/>
+		<property name="web" value="${base}/web"/>
 
 		<property name="name.chess" value="chess"/>
 		<property name="name.common" value="dockingFramesCommon"/>
@@ -65,6 +66,40 @@
 		<copy tofile="${base}/readme.txt" file="${location.dockingFrames}/readme_full.txt"/>
 	</target>
 
+	<target name="webstart" depends="bin, paths">
+		<mkdir dir="${web}"/>
+		<mkdir dir="${web}/lib"/>
+		
+		<jar destfile="${web}/lib/${name.chess}.jar">
+			<fileset dir="${temp}/${name.chess}"/>
+		</jar>
+		<jar destfile="${web}/lib/${name.common}.jar">
+			<fileset dir="${temp}/${name.common}"/>
+		</jar>
+		<jar destfile="${web}/${name.demonstration}.jar">
+			<fileset dir="${temp}/${name.demonstration}"/>
+			<manifest>
+				<attribute name="Main-Class" value="bibliothek.demonstration.Main"/>
+				<attribute name="Class-Path" value="lib/${name.common}.jar lib/${name.demonstrationInterface}.jar lib/${name.dockingFrames}.jar lib/${name.chess}.jar lib/${name.help}.jar lib/${name.notes}.jar lib/${name.paint}.jar"/>
+			</manifest>
+		</jar>
+		<jar destfile="${web}/lib/${name.demonstrationInterface}.jar">
+			<fileset dir="${temp}/${name.demonstrationInterface}"/>
+		</jar>
+		<jar destfile="${web}/lib/${name.dockingFrames}.jar">
+			<fileset dir="${temp}/${name.dockingFrames}"/>
+		</jar>
+		<jar destfile="${web}/lib/${name.help}.jar">
+			<fileset dir="${temp}/${name.help}"/>
+		</jar>
+		<jar destfile="${web}/lib/${name.notes}.jar">
+			<fileset dir="${temp}/${name.notes}"/>
+		</jar>
+		<jar destfile="${web}/lib/${name.paint}.jar">
+			<fileset dir="${temp}/${name.paint}"/>
+		</jar>
+	</target>
+	
 	<target name="bin" depends="source, bin dir, bin.chess, bin.common, bin.demo, bin.demonstration, bin.demonstrationInterface, bin.dockingFrames, bin.help, bin.notes, bin.paint">
 		<jar destfile="${bin}/${name.chess}.jar">
 			<fileset dir="${temp}/${name.chess}"/>

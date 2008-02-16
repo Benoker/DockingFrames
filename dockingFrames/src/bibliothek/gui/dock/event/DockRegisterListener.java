@@ -93,7 +93,7 @@ public interface DockRegisterListener {
      * was removed and added again to <code>controller</code>. This method is only
      * invoked if a call to {@link #dockableRegistered(DockController, Dockable)} and
      * {@link #dockableUnregistered(DockController, Dockable)} was suppressed. It
-     * is unknown whether <code>dockable</code> is now registerd ad <code>controller</code>.
+     * is unknown whether <code>dockable</code> is now registered at <code>controller</code>.
      * @param controller the controller whose register <code>dockable</code> cycled
      * @param dockable some {@link Dockable}
      */

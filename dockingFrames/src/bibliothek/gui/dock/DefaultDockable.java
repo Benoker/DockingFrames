@@ -45,7 +45,7 @@ import bibliothek.gui.dock.util.PropertyKey;
  */
 public class DefaultDockable extends AbstractDockable {
     /** the content pane */
-    private JPanel pane = new JPanel();
+    private JPanel pane = new JPanel( new BorderLayout() );
     
     /** the id used to identify the factory of this dockable */
     private String factoryId = DefaultDockableFactory.ID;

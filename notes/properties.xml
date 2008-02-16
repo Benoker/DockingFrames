@@ -107,7 +107,7 @@ A FlapDockStation shows one of its children in a window that is above all other 
 									</node>
 								</node>
 								<node orientation="HORIZONTAL" divider="0.7044585987261146">
-									<node orientation="HORIZONTAL" divider="0.5168539325842697">
+									<node orientation="HORIZONTAL" divider="0.6660649819494584">
 										<leaf id="3"/>
 										<leaf id="4"/>
 									</node>
@@ -150,7 +150,7 @@ A FlapDockStation shows one of its children in a window that is above all other 
 						</child>
 						<child>
 							<layout factory="delegate_StackDockStationFactory">
-								<selected>0</selected>
+								<selected>1</selected>
 								<children>
 									<child id="0"/>
 									<child id="1"/>
@@ -219,6 +219,6 @@ A FlapDockStation shows one of its children in a window that is above all other 
 	<frame>
 		<extended>0</extended>
 		<bounds x="0" y="0" width="829" height="501"/>
-		<theme>1</theme>
+		<theme>6</theme>
 	</frame>
 </properties>
