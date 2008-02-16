@@ -33,7 +33,7 @@ import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.action.ListeningDockAction;
-import bibliothek.gui.dock.common.intern.AbstractFDockable;
+import bibliothek.gui.dock.common.intern.AbstractCDockable;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
@@ -50,7 +50,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  * can be nested.
  * @author Benjamin Sigg
  */
-public class CWorkingArea extends AbstractFDockable implements SingleCDockable{
+public class CWorkingArea extends AbstractCDockable implements SingleCDockable{
     /** the unique identifier of this area */
     private String uniqueId;
     /** the station representing this area */

@@ -43,7 +43,7 @@ import bibliothek.gui.dock.common.event.CDockableListener;
  * work with listeners and with {@link CAction}s.
  * @author Benjamin Sigg
  */
-public abstract class AbstractFDockable implements CDockable {
+public abstract class AbstractCDockable implements CDockable {
     
     /** the location of this dockable */
     private CLocation location = null;
@@ -73,7 +73,7 @@ public abstract class AbstractFDockable implements CDockable {
      * can be <code>null</code> but then {@link #init(CommonDockable)} should
      * be called.
      */
-    protected AbstractFDockable( CommonDockable dockable ){
+    protected AbstractCDockable( CommonDockable dockable ){
         this.dockable = dockable;
     }
     
@@ -283,32 +283,32 @@ public abstract class AbstractFDockable implements CDockable {
             control.link( this, new CDockableAccess(){
                 public void informVisibility( boolean visible ) {
                     for( CDockableListener listener : listeners() )
-                        listener.visibilityChanged( AbstractFDockable.this );
+                        listener.visibilityChanged( AbstractCDockable.this );
                 }
                 public void informMode( ExtendedMode mode ) {
                     switch( mode ){
                         case EXTERNALIZED:
                             for( CDockableListener listener : listeners() )
-                                listener.externalized( AbstractFDockable.this );
+                                listener.externalized( AbstractCDockable.this );
                             break;
                         case MINIMIZED:
                             for( CDockableListener listener : listeners() )
-                                listener.minimized( AbstractFDockable.this );
+                                listener.minimized( AbstractCDockable.this );
                             break;
                         case MAXIMIZED:
                             for( CDockableListener listener : listeners() )
-                                listener.maximized( AbstractFDockable.this );
+                                listener.maximized( AbstractCDockable.this );
                             break;
                         case NORMALIZED:
                             for( CDockableListener listener : listeners() )
-                                listener.normalized( AbstractFDockable.this );
+                                listener.normalized( AbstractCDockable.this );
                             break;
                     }
                 }
                 public void setUniqueId( String id ) {
                     uniqueId = id;
-                    if( AbstractFDockable.this.control != null && id != null ){
-                        CStateManager state = AbstractFDockable.this.control.getStateManager();
+                    if( AbstractCDockable.this.control != null && id != null ){
+                        CStateManager state = AbstractCDockable.this.control.getStateManager();
                         state.put( uniqueId, dockable );
                     }
                 }

@@ -38,7 +38,7 @@ import bibliothek.gui.dock.common.intern.action.CSeparator;
  * its content.
  * @author Benjamin Sigg
  */
-public class DefaultCDockable extends AbstractFDockable{
+public class DefaultCDockable extends AbstractCDockable{
     /**
      * Describes what the user can do with the enclosing {@link DefaultCDockable}.<br>
      * A name like <code>X_Y</code> tells, that feature <code>X</code> and
