@@ -26,7 +26,9 @@
 package bibliothek.gui.dock.common;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -52,6 +54,20 @@ import bibliothek.gui.dock.common.intern.CStateManager;
  * @author Benjamin Sigg
  */
 public class CContentArea extends JPanel{
+    /**
+     * References a corner of a panel.
+     * @author Benjamin Sigg
+     */
+    public static enum Corner{
+        /** the lower right corner */
+        SOUTH_EAST,
+        /** the lower left corner */
+        SOUTH_WEST,
+        /** the higher right corner */
+        NORTH_EAST,
+        /** the higher left corner */
+        NORTH_WEST;
+    }
     
     /** the child in the center */
     private SplitDockStation center;
@@ -64,6 +80,18 @@ public class CContentArea extends JPanel{
     private FlapDockStation east;
     /** the child at the west border */
     private FlapDockStation west;
+    
+    /** the component at the north side */
+    private JComponent northComponent;
+    /** the component at the south side */
+    private JComponent southComponent;
+    /** the component at the east side */
+    private JComponent eastComponent;
+    /** the component at the west side */
+    private JComponent westComponent;
+    
+    /** the components in the corners */
+    private Component[] cornerComponents = new Component[8];
     
     /** an identifier for this center */
     private String uniqueId;
@@ -78,10 +106,15 @@ public class CContentArea extends JPanel{
         center = access.getOwner().getFactory().createSplitDockStation();
         center.setExpandOnDoubleclick( false );
         
-        north = access.getOwner().getFactory().createFlapDockStation();
-        south = access.getOwner().getFactory().createFlapDockStation();
-        east = access.getOwner().getFactory().createFlapDockStation();
-        west = access.getOwner().getFactory().createFlapDockStation();
+        northComponent = new JPanel( new BorderLayout() );
+        southComponent = new JPanel( new BorderLayout() );
+        eastComponent = new JPanel( new BorderLayout() );
+        westComponent = new JPanel( new BorderLayout() );
+        
+        north = access.getOwner().getFactory().createFlapDockStation( northComponent );
+        south = access.getOwner().getFactory().createFlapDockStation( southComponent );
+        east = access.getOwner().getFactory().createFlapDockStation( eastComponent );
+        west = access.getOwner().getFactory().createFlapDockStation( westComponent );
         
         north.setAutoDirection( false );
         north.setDirection( Direction.SOUTH );
@@ -96,11 +129,15 @@ public class CContentArea extends JPanel{
         west.setDirection( Direction.EAST );
         
         setLayout( new BorderLayout() );
+        northComponent.add( north.getComponent(), BorderLayout.CENTER );
+        southComponent.add( south.getComponent(), BorderLayout.CENTER );
+        eastComponent.add( east.getComponent(), BorderLayout.CENTER );
+        westComponent.add( west.getComponent(), BorderLayout.CENTER );
         add( center, BorderLayout.CENTER );
-        add( north.getComponent(), BorderLayout.NORTH );
-        add( south.getComponent(), BorderLayout.SOUTH );
-        add( east.getComponent(), BorderLayout.EAST );
-        add( west.getComponent(), BorderLayout.WEST );
+        add( northComponent, BorderLayout.NORTH );
+        add( southComponent, BorderLayout.SOUTH );
+        add( eastComponent, BorderLayout.EAST );
+        add( westComponent, BorderLayout.WEST );
         
         CStateManager state = access.getStateManager();
         state.add( getCenterIdentifier(), center );
@@ -132,6 +169,107 @@ public class CContentArea extends JPanel{
      */
     public void deploy( CGrid grid ){
         getCenter().dropTree( grid.toTree() );
+    }
+    
+    /**
+     * Puts <code>component</code> in one corner of this area.
+     * @param component the component, can be <code>null</code>
+     * @param corner the corner into which to put <code>component</code>
+     * @param horizontal whether <code>component</code> should be horizontally
+     * or vertically.
+     */
+    public void setCornerComponent( Component component, Corner corner, boolean horizontal ){
+        int index = corner.ordinal() * 2;
+        if( horizontal )
+            index++;
+        
+        if( cornerComponents[ index ] != null ){
+            switch( corner ){
+                case NORTH_WEST:
+                    if( horizontal ){
+                        northComponent.remove( cornerComponents[ index ] );
+                    }
+                    else{
+                        westComponent.remove( cornerComponents[ index ] );
+                    }
+                    break;
+                case NORTH_EAST:
+                    if( horizontal ){
+                        northComponent.remove( cornerComponents[ index ] );
+                    }
+                    else{
+                        eastComponent.remove( cornerComponents[ index ] );
+                    }
+                    break;
+                case SOUTH_WEST:
+                    if( horizontal ){
+                        southComponent.remove( cornerComponents[ index ] );
+                    }
+                    else{
+                        westComponent.remove( cornerComponents[ index ] );
+                    }
+                    break;
+                case SOUTH_EAST:
+                    if( horizontal ){
+                        southComponent.remove( cornerComponents[ index ] );
+                    }
+                    else{
+                        eastComponent.remove( cornerComponents[ index ] );
+                    }
+                    break;
+            }
+        }
+        
+        cornerComponents[ index ] = component;
+        if( component != null ){
+            switch( corner ){
+                case NORTH_WEST:
+                    if( horizontal ){
+                        northComponent.add( component, BorderLayout.WEST );
+                    }
+                    else{
+                        westComponent.add( component, BorderLayout.NORTH );
+                    }
+                    break;
+                case NORTH_EAST:
+                    if( horizontal ){
+                        northComponent.add( component, BorderLayout.EAST );
+                    }
+                    else{
+                        eastComponent.add( component, BorderLayout.NORTH );
+                    }
+                    break;
+                case SOUTH_WEST:
+                    if( horizontal ){
+                        southComponent.add( component, BorderLayout.WEST );
+                    }
+                    else{
+                        westComponent.add( component, BorderLayout.SOUTH );
+                    }
+                    break;
+                case SOUTH_EAST:
+                    if( horizontal ){
+                        southComponent.add( component, BorderLayout.EAST );
+                    }
+                    else{
+                        eastComponent.add( component, BorderLayout.SOUTH );
+                    }
+                    break;
+            }
+        }
+    }
+    
+    /**
+     * Gets the component of a corner.
+     * @param corner the corner in which to search
+     * @param horizontal whether the component is horizontally or vertically
+     * @return the component or <code>null</code>
+     */
+    public Component getCornerComponent( Corner corner, boolean horizontal ){
+        int index = corner.ordinal() * 2;
+        if( horizontal )
+            index++;
+        return cornerComponents[ index ];
     }
     
     /**

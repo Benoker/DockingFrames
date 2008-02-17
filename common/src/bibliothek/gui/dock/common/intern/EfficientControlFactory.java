@@ -25,7 +25,12 @@
  */
 package bibliothek.gui.dock.common.intern;
 
+import java.awt.Component;
+import java.awt.Point;
+import java.awt.Rectangle;
+
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
@@ -45,8 +50,15 @@ public class EfficientControlFactory implements CControlFactory {
         return new DockController();
     }
 
-    public FlapDockStation createFlapDockStation() {
-        return new FlapDockStation();
+    public FlapDockStation createFlapDockStation( final Component expansion ) {
+        return new FlapDockStation(){
+            @Override
+            public Rectangle getExpansionBounds() {
+                Point point = new Point( 0, 0 );
+                SwingUtilities.convertPoint( this.getComponent(), point, expansion );
+                return new Rectangle( -point.x, -point.y, expansion.getWidth(), expansion.getHeight() );
+            }
+        };
     }
 
     public ScreenDockStation createScreenDockStation( JFrame owner ) {

@@ -91,7 +91,7 @@ public class SingleCDockableListMenuPiece extends CloseableDockableMenuPiece {
         if( dockable instanceof CommonDockable )
             ((CommonDockable)dockable).getDockable().setVisible( false );
         else
-            super.show( dockable );
+            super.hide( dockable );
     }
     
     @Override

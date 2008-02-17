@@ -25,6 +25,8 @@
  */
 package bibliothek.gui.dock.common.intern;
 
+import java.awt.Component;
+
 import javax.swing.JFrame;
 
 import bibliothek.gui.DockController;
@@ -48,9 +50,12 @@ public interface CControlFactory {
     
     /**
      * Creates a new {@link FlapDockStation}.
+     * @param expansion a {@link Component} which will be some parent of
+     * the result, the {@link FlapDockStation#getExpansionBounds()} should 
+     * act as if <code>expansion</code> were the whole station
      * @return the new station
      */
-    public FlapDockStation createFlapDockStation();
+    public FlapDockStation createFlapDockStation( Component expansion );
     
     /**
      * Creates a new {@link ScreenDockStation}.

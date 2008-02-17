@@ -29,14 +29,18 @@ package bibliothek.gui;
 import java.awt.Window;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.*;
 
 import javax.swing.Icon;
 import javax.swing.KeyStroke;
 
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabDockAction;
-import bibliothek.gui.dock.*;
+import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockActionSource;
@@ -771,8 +775,6 @@ public class DockFrontend {
             onAutoFire++;
             controller.getRegister().setStalled( true );
             
-            Set<Dockable> oldVisible = listShownDockables();
-            
             DockSituation situation = createSituation( entry );
             
             DockSituationIgnore ignore = situation.getIgnore();
@@ -805,28 +807,16 @@ public class DockFrontend {
                             setting.getInvisibleLocation( i ) );
                 }
             }
-            
-            Set<Dockable> newVisible = listShownDockables();
-            
-            Set<Dockable> processed = new HashSet<Dockable>();
-            for( Dockable hide : oldVisible )
-                if( !newVisible.contains( hide ))
-                    fireAllHidden( hide, processed );
-            
-            processed.clear();
-            for( Dockable show : newVisible )
-                if( !oldVisible.contains( show ))
-                    fireAllShown( show, processed );
-            
-            for( DockInfo info : dockables.values() ){
-                if( !info.isHideable() && isHidden( info.getDockable() )){
-                    show( info.getDockable() );
-                }
-            }
         }
         finally{
-            controller.getRegister().setStalled( false );
             onAutoFire--;
+            controller.getRegister().setStalled( false );
+        }
+        
+        for( DockInfo info : dockables.values() ){
+            if( !info.isHideable() && isHidden( info.getDockable() )){
+                show( info.getDockable() );
+            }
         }
     }
     

@@ -80,6 +80,8 @@
 [Beta v1.1]
 - API: DefaultkeyBoardController renamed to DefaultKeyboardController
 - Doc: Correction for GlassedPane and OverpaintablePanel
+- Bugfix: SingleCDockableListMenuPiece did not hide non-CommonDockables
+- Bugfix: DockFrontend did not fire show/hide events properly when loading a new set of properties.    
 - API: DefaultDockable and DefaultCDockable now have BorderLayout set as default LayoutManager
 - Bugfix: unique id of MultipleCDockables was not always created correctly, so unique ids were not always unique
 - Bugfix: Several bugs in the Common project concerning the transition of modes of children of CWorkingAreas.    

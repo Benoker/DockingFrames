@@ -176,6 +176,16 @@ public abstract class AbstractCDockable implements CDockable {
     }
     
     /**
+     * Tries to focus this dockable. There are no guarantees that this dockabe
+     * really gets focused.
+     */
+    public void toFront(){
+        if( isVisible() ){
+            control.getOwner().intern().getController().setFocusedDockable( intern(), false );
+        }
+    }
+    
+    /**
      * Sets the location of this dockable. If this dockable is visible, than
      * this method will take immediately effect. Otherwise the location will be
      * stored in a cache and read as soon as this dockable is made visible.<br>
