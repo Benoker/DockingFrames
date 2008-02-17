@@ -42,6 +42,7 @@ import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.extension.gui.dock.theme.SmoothTheme;
 import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.dock.control.SingleParentRemover;
 import bibliothek.gui.dock.layout.DockLayout;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
@@ -346,11 +347,19 @@ public class DockUI {
     	}
     	
     	L layout = factory.getLayout( station, ids );
+    	DockController controller = station.getController();
+    	SingleParentRemover remover = null;
+    	if( controller != null ){
+    	    remover = controller.getSingleParentRemover();
+    	    controller.setSingleParentRemover( null );
+    	}
     	
     	for( int i = station.getDockableCount()-1; i >= 0; i-- ){
     		station.drag( station.getDockable( i ));
     	}
     	
     	factory.setLayout( station, layout, children );
+    	if( controller != null && remover != null )
+    	    controller.setSingleParentRemover( remover );
     }
 }
