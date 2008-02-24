@@ -1002,6 +1002,9 @@ public class FlapDockStation extends AbstractDockableStation {
     }
 
     public void drag( Dockable dockable ) {
+        if( dockable.getDockParent() != this )
+            throw new IllegalArgumentException( "The dockable can't be dragged, it is not child of this station" );
+        
         remove( dockable );
     }
 

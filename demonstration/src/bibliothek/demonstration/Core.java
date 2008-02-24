@@ -81,7 +81,7 @@ public class Core {
 		frame.addWindowListener( new WindowAdapter(){
 			@Override
 			public void windowClosing( WindowEvent e ){
-				frame.setVisible( false );
+				frame.dispose();
 				windowCount--;
 				if( windowCount == 0 )
 					System.exit( 0 );

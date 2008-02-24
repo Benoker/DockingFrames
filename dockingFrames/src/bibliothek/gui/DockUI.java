@@ -353,13 +353,16 @@ public class DockUI {
     	    remover = controller.getSingleParentRemover();
     	    controller.setSingleParentRemover( null );
     	}
+    	try{
+    	    for( int i = station.getDockableCount()-1; i >= 0; i-- ){
+    		    station.drag( station.getDockable( i ));
+    	    }
     	
-    	for( int i = station.getDockableCount()-1; i >= 0; i-- ){
-    		station.drag( station.getDockable( i ));
+    	    factory.setLayout( station, layout, children );
     	}
-    	
-    	factory.setLayout( station, layout, children );
-    	if( controller != null && remover != null )
-    	    controller.setSingleParentRemover( remover );
+    	finally{
+    	    if( controller != null && remover != null )
+    	        controller.setSingleParentRemover( remover );
+    	}
     }
 }

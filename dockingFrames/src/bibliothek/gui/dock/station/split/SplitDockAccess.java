@@ -28,6 +28,7 @@ package bibliothek.gui.dock.station.split;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.station.DockableDisplayer;
 
 /**
@@ -57,20 +58,23 @@ public interface SplitDockAccess {
     public double validateDivider( double divider, Node node );
     
     /**
-     * Adds a displayer to the list of all known displayers.
-     * @param displayer the new displayer
+     * Creates a {@link DockableDisplayer} for <code>dockable</code> and adds
+     * the displayer to the station. Binds <code>dockable</code>.
+     * @param dockable the new {@link Dockable}
+     * @param fire whether to inform {@link DockStationListener}s about
+     * the new element
+     * @return the created displayer
      */
-    public void add( DockableDisplayer displayer );
+    public DockableDisplayer addDisplayer( Dockable dockable, boolean fire );
     
     /**
-     * Adds <code>dockable</code> to the list of children, generates a 
-     * title and a {@link Leaf} for <code>dockable</code>, but does not
-     * add the leaf to this station. The location of the leaf has be set by
-     * the caller. 
-     * @param dockable the new child of this station.
-     * @return the {@link Leaf} for <code>dockable</code>
+     * Removes a {@link DockableDisplayer} from the station. The {@link Dockable}
+     * of <code>displayer</code> will be unbound.
+     * @param displayer the element to remove
+     * @param fire whether to inform {@link DockStationListener}s about
+     * the change
      */
-    public Leaf createLeaf( Dockable dockable );
+    public void removeDisplayer( DockableDisplayer displayer, boolean fire );
     
     /**
      * Tries to add <code>Dockable</code> such that the boundaries given

@@ -139,7 +139,7 @@ public class Core {
             @Override
             public void windowClosing( WindowEvent e ) {
                 try{
-                    frame.setVisible( false );
+                    frame.dispose();
                     
                     if( !secure ){
                         try{

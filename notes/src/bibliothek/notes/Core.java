@@ -166,7 +166,7 @@ public class Core implements ComponentCollector{
 	 */
 	public void shutdown(){
 		try{
-			frame.setVisible( false );
+			frame.dispose();
 			views.getScreen().setShowing( false );
 			frontend.getController().kill();
 			

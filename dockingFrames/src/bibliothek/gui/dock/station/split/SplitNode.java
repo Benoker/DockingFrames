@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -35,6 +35,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
+import bibliothek.gui.dock.event.DockStationListener;
 
 /**
  * The internal representation of a {@link SplitDockStation} is a tree. The subclasses of SplitNode build this tree.
@@ -56,6 +57,53 @@ public abstract class SplitNode{
         if( access == null )
             throw new IllegalArgumentException( "Access must not be null" );
         this.access = access;
+    }
+    
+    /**
+     * Removes this node from its parent, if there is a parent. The subtree
+     * remains intact and no {@link Dockable}s are removed from the station.
+     * @param shrink whether this node should attempt to shrink the tree such
+     * that no holes are left after this node was deleted
+     */
+    public void delete( boolean shrink ){
+        SplitNode parent = getParent();
+        if( parent != null ){
+            if( shrink ){
+                if( parent instanceof Root ){
+                    ((Root)parent).setChild( null );
+                }
+                else{
+                    Node node = (Node)parent;
+                    SplitNode other = node.getLeft() == this ? node.getRight() : node.getLeft();
+                    
+                    parent = node.getParent();
+                    if( parent != null ){
+                        int location = parent.getChildLocation( node );
+                        parent.setChild( other, location );
+                    }
+                }
+            }
+            else{
+                int location = parent.getChildLocation( this );
+                parent.setChild( null, location );
+            }
+        }
+    }
+    
+    /**
+     * Creates a new {@link Leaf}
+     * @return the new leaf
+     */
+    public Leaf createLeaf(){
+        return new Leaf( access );
+    }
+    
+    /**
+     * Creates a new {@link Node}.
+     * @return the new node
+     */
+    public Node createNode(){
+        return new Node( access );
     }
     
     /**
@@ -141,6 +189,7 @@ public abstract class SplitNode{
         this.y = y;
         this.width = width;
         this.height = height;
+        access.getOwner().revalidate();
     }
     
     /**
@@ -178,9 +227,11 @@ public abstract class SplitNode{
     
     /**
      * Gets the root of the tree in which this node is
-     * @return the root
+     * @return the root or <code>null</code>
      */
     protected Root getRoot(){
+        if( parent == null )
+            return null;
         return parent.getRoot();
     }
     
@@ -235,12 +286,19 @@ public abstract class SplitNode{
     public abstract Node getDividerNode( int x, int y );
     
     /**
-     * Replaces a child of this node by <code>child</code>.
-     * @param old the old child
-     * @param child the replacement for <code>old</code>
+     * Gets the location of a child.
+     * @param child a child of this node
+     * @return the location of <code>child</code> or -1 if the child is unknown
      */
-    public abstract void replace( SplitNode old, SplitNode child );
-        
+    public abstract int getChildLocation( SplitNode child );
+    
+    /**
+     * Adds a child to this node at a given location.
+     * @param child the new child
+     * @param location the location of the child
+     */
+    public abstract void setChild( SplitNode child, int location );
+    
     /**
      * Invokes one of the methods of the <code>visitor</code> for every
      * child in the subtree with this as root.
@@ -250,7 +308,8 @@ public abstract class SplitNode{
     
     /**
      * Creates or replaces children according to the values found in 
-     * <code>key</code>.
+     * <code>key</code>. Note that this method does not remove and {@link Dockable}s
+     * from the station. They must be removed explicitly using {@link Leaf#setDockable(Dockable, boolean)}
      * @param key the key to read
      * @param checkValidity whether to ensure that all new {@link Dockable}s are
      * acceptable or not.
@@ -283,13 +342,31 @@ public abstract class SplitNode{
      * @return the representation of this node
      */
     public abstract <N> N submit( SplitTreeFactory<N> factory );
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        toString( 0, builder );
+        return builder.toString();
+    }
     
     /**
-     * Creates a leaf for <code>dockable</code>.
+     * Writes some contents of this node into <code>out</code>.
+     * @param tabs the number of tabs that should be added before the text if
+     * a new line is necessary.
+     * @param out the container to write into
+     */
+    public abstract void toString( int tabs, StringBuilder out );
+    
+    /**
+     * Creates a leaf for <code>dockable</code>. Does not inform any
+     * {@link DockStationListener} about the change.
      * @param dockable the element to put into a leaf
+     * @param fire whether to inform any {@link DockStationListener}s about
+     * the new element
      * @return the new leaf or <code>null</code> if the leaf would not be valid
      */
-    protected Leaf create( Dockable dockable ){
+    protected Leaf create( Dockable dockable, boolean fire ){
         SplitDockStation split = access.getOwner();
         DockController controller = split.getController();
         DockAcceptance acceptance = controller == null ? null : controller.getAcceptance();
@@ -302,7 +379,9 @@ public abstract class SplitNode{
                 return null;
         }
         
-        return  access.createLeaf( dockable );
+        Leaf leaf = createLeaf();
+        leaf.setDockable( dockable, fire );
+        return leaf;
     }
     
     /**
@@ -331,7 +410,8 @@ public abstract class SplitNode{
                     }
                 }
                 
-                leaf = access.createLeaf( dockables[0] );
+                leaf = createLeaf();
+                leaf.setDockable( dockables[0], true );
             }
             else{
                 if( checkValidity ){
@@ -348,8 +428,10 @@ public abstract class SplitNode{
                 }
                 
                 Dockable combination = access.getOwner().getCombiner().combine( dockables[0], dockables[1], access.getOwner() );
-                if( dockables.length == 2 )
-                    leaf = access.createLeaf( combination );
+                if( dockables.length == 2 ){
+                    leaf = createLeaf();
+                    leaf.setDockable( combination, true );
+                }
                 else{
                     DockStation station = combination.asDockStation();
                     if( station == null )
@@ -371,7 +453,8 @@ public abstract class SplitNode{
                         station.drop( dockable );
                     }
                     
-                    leaf = access.createLeaf( combination );
+                    leaf = createLeaf();
+                    leaf.setDockable( combination, true );
                 }
             }
             

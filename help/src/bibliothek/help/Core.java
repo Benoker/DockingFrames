@@ -174,7 +174,6 @@ public class Core implements ComponentCollector{
 	 * application if no {@link Monitor} was provided through the constructor.
 	 */
 	public void shutdown(){
-		frame.setVisible( false );
 		frame.dispose();
 		screen.setShowing( false );
 		frontend.getController().kill();

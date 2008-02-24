@@ -676,6 +676,9 @@ public class StackDockStation extends AbstractDockableStation {
     }
     
     public void drag( Dockable dockable ) {
+        if( dockable.getDockParent() != this )
+            throw new IllegalArgumentException( "The dockable can't be dragged, it is not child of this station" );
+        
         int index = indexOf( dockable );
         if( index < 0 )
             throw new IllegalArgumentException( "The dockable is not part of this station." );

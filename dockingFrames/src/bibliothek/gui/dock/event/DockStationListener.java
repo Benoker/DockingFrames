@@ -26,8 +26,11 @@
 
 package bibliothek.gui.dock.event;
 
+import java.awt.Component;
+
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
 
 /**
@@ -52,7 +55,10 @@ public interface DockStationListener {
     public void dockableRemoving( DockStation station, Dockable dockable );
     
     /**
-     * Invoked after <code>dockable</code> has been added to <code>station</code>.
+     * Invoked after <code>dockable</code> has been added to <code>station</code>.<br>
+     * Note: this method is called when the tree of {@link DockElement}s contains
+     * the new element, other properties - like the bounds of the
+     * {@link Component} of <code>dockable</code> - might not yet be set.
      * @param station the station where the new child was added
      * @param dockable the new child
      */

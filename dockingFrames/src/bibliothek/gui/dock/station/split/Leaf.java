@@ -34,6 +34,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
+import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.split.SplitDockTree.Key;
@@ -58,16 +59,6 @@ public class Leaf extends SplitNode{
         super(access);
     }
     
-    /**
-     * Creates a new leaf.
-     * @param access the access to the private functions of the owning {@link SplitDockStation}
-     * @param displayer the displayer whose size and location will be determined by this leaf.
-     */
-    public Leaf( SplitDockAccess access, DockableDisplayer displayer ){
-        super(access);
-        setDisplayer( displayer );
-    }
-    
     @Override
     public Dimension getMinimumSize() {
     	if( displayer == null )
@@ -75,27 +66,35 @@ public class Leaf extends SplitNode{
     	return displayer.getComponent().getMinimumSize();
     }
     
-    /**
-     * Sets the displayer whose size and location will be determined by this leaf.
-     * @param displayer the displayer, must not be <code>null</code>
-     */
-    public void setDisplayer( DockableDisplayer displayer ){
-        this.displayer = displayer;
-        dockable = displayer.getDockable();
+    @Override
+    public int getChildLocation( SplitNode child ) {
+        return -1;
     }
     
     @Override
-    public void replace( SplitNode old, SplitNode child ) {
-        throw new IllegalArgumentException( "not a child " + old );
+    public void setChild( SplitNode child, int location ) {
+        throw new IllegalStateException( "can't add children to a leaf" );
     }
     
     /**
-     * Gets the displayer of this leaf.
-     * @return the displayer
-     * @see #setDisplayer(DockableDisplayer)
+     * Sets the element of this leaf. This method ensures that <code>dockable</code>
+     * is registered in the {@link DockStation}
+     * @param dockable the new element or <code>null</code> to remove the
+     * old {@link Dockable}
+     * @param fire whether to inform {@link DockStationListener}s about the
+     * change or not. Clients should set fire = <code>true</code>.
      */
-    public DockableDisplayer getDisplayer(){
-        return displayer;
+    public void setDockable( Dockable dockable, boolean fire ){
+        if( displayer != null ){
+            getAccess().removeDisplayer( displayer, fire );
+            displayer = null;
+        }
+        
+        if( dockable != null ){
+            displayer = getAccess().addDisplayer( dockable, fire );
+        }
+        
+        this.dockable = dockable;
     }
     
     /**
@@ -107,16 +106,28 @@ public class Leaf extends SplitNode{
         return dockable;
     }
     
+    
+    /**
+     * Gets the displayer of this leaf.
+     * @return the displayer
+     */
+    public DockableDisplayer getDisplayer(){
+        return displayer;
+    }
+    
     @Override
     public void updateBounds( double x, double y, double width, double height, double factorW, double factorH ) {
         super.updateBounds( x, y, width, height, factorW, factorH );
         
-        if( displayer != getAccess().getFullScreenDockable() )
+        if( displayer != null && displayer != getAccess().getFullScreenDockable() )
             displayer.getComponent().setBounds( getBounds() );
     }
         
     @Override
     public PutInfo getPut( int x, int y, double factorW, double factorH, Dockable drop ) {            
+        if( displayer == null )
+            return null;
+        
         Rectangle bounds = getBounds();
         PutInfo result = null;
         
@@ -233,11 +244,12 @@ public class Leaf extends SplitNode{
             boolean reverse = node.getLocation() == SplitDockPathProperty.Location.RIGHT ||
                 node.getLocation() == SplitDockPathProperty.Location.BOTTOM;
             
-            Leaf leaf = create( dockable );
+            Leaf leaf = create( dockable, true );
             if( leaf == null )
                 return false;
             
             SplitNode parent = getParent();
+            int location = parent.getChildLocation( this );
             if( reverse ){
                 split = new Node( getAccess(), this, leaf, orientation );
                 split.setDivider( 1 - node.getSize() );
@@ -247,7 +259,7 @@ public class Leaf extends SplitNode{
                 split.setDivider( node.getSize() );
             }
             
-            parent.replace( this, split );
+            parent.setChild( split, location );
             return true;
         }
         else{
@@ -278,6 +290,9 @@ public class Leaf extends SplitNode{
         
     @Override
     public Leaf getLeaf( Dockable dockable ) {
+        if( displayer == null )
+            return null;
+        
         if( dockable == displayer.getDockable() )
             return this;
         else
@@ -292,5 +307,13 @@ public class Leaf extends SplitNode{
     @Override
     public void visit( SplitNodeVisitor visitor ) {
         visitor.handleLeaf( this );
+    }
+    
+    @Override
+    public void toString( int tabs, StringBuilder out ) {
+        out.append( "Leaf[ " );
+        if( dockable != null )
+            out.append( dockable.getTitleText() );
+        out.append( " ]" );
     }
 }

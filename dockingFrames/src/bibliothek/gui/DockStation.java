@@ -378,7 +378,9 @@ public interface DockStation extends DockElement{
     public <D extends Dockable & DockStation> boolean isInOverrideZone( int x, int y, D invoker, Dockable drop );
     
     /**
-     * Tells whether <code>dockable</code> can be removed from this station or not.<br>
+     * Tells whether <code>dockable</code> can be removed from this station or not.
+     * This method assumes that <code>dockable</code> is a child of
+     * this station, if not, then the behavior of this method is unspecified.<br>
      * Note that the result of this method may not be respected every time,
      * it's more a hint for the controller how to act.
      * @param dockable a child of this station

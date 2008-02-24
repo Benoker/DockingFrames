@@ -72,11 +72,8 @@ public class Node extends SplitNode{
      */
     public Node( SplitDockAccess access, SplitNode left, SplitNode right ){
         super( access );
-        this.left = left;
-        this.right = right;
-        
-        left.setParent( this );
-        right.setParent( this );
+        setRight( right );
+        setLeft( left );
     }
     
     /**
@@ -89,13 +86,23 @@ public class Node extends SplitNode{
     
     /**
      * Sets the left child of  this node. The area of this child
-     * will be in the left or the upper half of the area of this node.
+     * will be in the left or the upper half of the area of this node.<br>
+     * Note that setting the child to <code>null</code> does not delete
+     * the child from the system, only a call to {@link SplitNode#delete(boolean)}
+     * does that.
      * @param left the left child or <code>null</code>
      */
     public void setLeft( SplitNode left ){
+        if( this.left != null )
+            this.left.setParent( null );
         this.left = left;
-        if( left != null )
+        if( left != null ){
+            left.delete( false );
             left.setParent( this );
+        }
+        
+        getAccess().getOwner().revalidate();
+        getAccess().getOwner().repaint();
     }
     
     /**
@@ -110,13 +117,23 @@ public class Node extends SplitNode{
     /**
      * Sets the right child of this node. The area of this child
      * will be in the right or the bottom half of the area of this
-     * node.
+     * node.<br>
+     * Note that setting the child to <code>null</code> does not delete
+     * the child from the system, only a call to {@link SplitNode#delete(boolean)}
+     * does that.
      * @param right the right child
      */
     public void setRight( SplitNode right ){
+        if( this.right != null )
+            this.right.setParent( null );
         this.right = right;
-        if( right != null )
+        if( right != null ){
+            right.delete( false );
             right.setParent( this );
+        }
+        
+        getAccess().getOwner().revalidate();
+        getAccess().getOwner().repaint();
     }
 
     /**
@@ -129,13 +146,23 @@ public class Node extends SplitNode{
     }
     
     @Override
-    public void replace( SplitNode old, SplitNode child ) {
-        if( old != left && old != right )
-            throw new IllegalArgumentException( "unknown child " + old );
-        if( old == left )
+    public int getChildLocation( SplitNode child ) {
+        if( left == child )
+            return 0;
+        if( right == child )
+            return 1;
+        
+        return -1;
+    }
+    
+    @Override
+    public void setChild( SplitNode child, int location ) {
+        if( location == 0 )
             setLeft( child );
-        if( old == right )
+        else if( location == 1 )
             setRight( child );
+        else
+            throw new IllegalArgumentException( "Location not valid " + location );
     }
     
     /**
@@ -148,10 +175,21 @@ public class Node extends SplitNode{
         return orientation;
     }
     
+    /**
+     * Changes the orientation of this node.
+     * @param orientation the new orientation
+     */
+    public void setOrientation( Orientation orientation ) {
+        if( orientation == null )
+            throw new NullPointerException( "orientation must not be null" );
+        this.orientation = orientation;
+        getAccess().getOwner().revalidate();
+    }
+    
     @Override
     public Dimension getMinimumSize() {
-    	Dimension minLeft = left.getMinimumSize();
-    	Dimension minRight = right.getMinimumSize();
+    	Dimension minLeft = left == null ? new Dimension() : left.getMinimumSize();
+    	Dimension minRight = right == null ? new Dimension() : right.getMinimumSize();
     	int divider = getAccess().getOwner().getDividerSize();
     	
     	if( orientation == Orientation.HORIZONTAL ){
@@ -172,6 +210,7 @@ public class Node extends SplitNode{
     public void setDivider( double divider ){
         this.divider = divider;
         getAccess().getOwner().revalidate();
+        getAccess().getOwner().repaint();
     }
     
     /**
@@ -195,8 +234,11 @@ public class Node extends SplitNode{
             double dividerWidth = Math.max( 0, dividerSize / factorW);
             double dividerLocation = width * divider;
             
-            left.updateBounds( x, y, dividerLocation - dividerWidth/2, height, factorW, factorH );
-            right.updateBounds( x + dividerLocation + dividerWidth/2, y, 
+            if( left != null )
+                left.updateBounds( x, y, dividerLocation - dividerWidth/2, height, factorW, factorH );
+            
+            if( right != null )
+                right.updateBounds( x + dividerLocation + dividerWidth/2, y, 
                     width - dividerLocation - dividerWidth/2, height, factorW, factorH );
             
             dividerBounds.setBounds(
@@ -209,8 +251,11 @@ public class Node extends SplitNode{
             double dividerHeight = Math.max( 0, dividerSize / factorH );
             double dividerLocation = height * divider;
             
-            left.updateBounds( x, y, width, dividerLocation - dividerHeight / 2, factorW, factorH );
-            right.updateBounds( x, y + dividerLocation + dividerHeight / 2,
+            if( left != null)
+                left.updateBounds( x, y, width, dividerLocation - dividerHeight / 2, factorW, factorH );
+            
+            if( right != null)
+                right.updateBounds( x, y + dividerLocation + dividerHeight / 2,
                     width, height - dividerLocation - dividerHeight/2, factorW, factorH );
             
             dividerBounds.setBounds(
@@ -288,21 +333,21 @@ public class Node extends SplitNode{
         if( orientation == Orientation.HORIZONTAL ){
             if( x < (this.x + divider*width)*factorW ){
                 // left
-                return left.getPut( x, y, factorW, factorH, drop );
+                return left == null ? null : left.getPut( x, y, factorW, factorH, drop );
             }
             else{
                 // right
-                return right.getPut( x, y, factorW, factorH, drop );
+                return right == null ? null : right.getPut( x, y, factorW, factorH, drop );
             }
         }
         else{
             if( y < (this.y + divider*height)*factorH ){
                 // top
-                return left.getPut( x, y, factorW, factorH, drop );
+                return left == null ? null : left.getPut( x, y, factorW, factorH, drop );
             }
             else{
                 // bottom
-                return right.getPut( x, y, factorW, factorH, drop );
+                return right == null ? null : right.getPut( x, y, factorW, factorH, drop );
             }
         }
     }
@@ -334,6 +379,7 @@ public class Node extends SplitNode{
     @Override
     public void evolve( Key key, boolean checkValidity ){
     	SplitDockTree tree = key.getTree();
+    	
     	if( tree.isHorizontal( key )){
     		orientation = SplitDockStation.Orientation.HORIZONTAL;
     		setLeft( create( tree.getLeft( key ), checkValidity ));
@@ -370,7 +416,7 @@ public class Node extends SplitNode{
             
             if( expand ){
                 // split up this node
-                Leaf leaf = create( dockable );
+                Leaf leaf = create( dockable, true );
                 if( leaf == null )
                     return false;
             
@@ -383,6 +429,7 @@ public class Node extends SplitNode{
                 
                 Node split;
                 SplitNode parent = getParent();
+                int location = parent.getChildLocation( this );
                 if( node.getLocation() == SplitDockPathProperty.Location.LEFT ||
                         node.getLocation() == SplitDockPathProperty.Location.TOP ){
                     split = new Node( getAccess(), leaf, this, orientation );
@@ -392,7 +439,7 @@ public class Node extends SplitNode{
                     split = new Node( getAccess(), this, leaf, orientation );
                     split.setDivider( 1-node.getSize() );
                 }
-                parent.replace( this, split );
+                parent.setChild( split, location );
                 return true;
             }
             else{
@@ -418,11 +465,16 @@ public class Node extends SplitNode{
     
     @Override
     public Leaf getLeaf( Dockable dockable ) {
-        Leaf leaf = left.getLeaf( dockable );
-        if( leaf == null )
+        if( left != null ){
+            Leaf leaf = left.getLeaf( dockable );
+            if( leaf != null )
+                return leaf;
+        }
+        
+        if( right != null )
             return right.getLeaf( dockable );
         else
-            return leaf;
+            return null;
     }
     
     @Override
@@ -430,11 +482,18 @@ public class Node extends SplitNode{
         if( dividerBounds.contains( x, y ))
             return this;
         
-        Node node = left.getDividerNode( x, y );
-        if( node != null )
-            return node;
+        if( left != null ){
+            Node node = left.getDividerNode( x, y );
+            if( node != null )
+                return node;
+        }
         
-        return right.getDividerNode( x, y );
+        if( right != null ){
+            return right.getDividerNode( x, y );
+        }
+        else{
+            return null;
+        }
     }
     
     @Override
@@ -442,5 +501,28 @@ public class Node extends SplitNode{
         visitor.handleNode( this );
         left.visit( visitor );
         right.visit( visitor );
+    }
+    
+    @Override
+    public void toString( int tabs, StringBuilder out ) {
+        out.append( "Node[ ");
+        out.append( orientation );
+        out.append( " ]" );
+        
+        out.append( '\n' );
+        for( int i = 0; i < tabs+1; i++ )
+            out.append( '\t' );
+        if( left == null )
+            out.append( "<null>" );
+        else
+            left.toString( tabs+1, out );
+        
+        out.append( '\n' );
+        for( int i = 0; i < tabs+1; i++ )
+            out.append( '\t' );
+        if( right == null )
+            out.append( "<null>" );
+        else
+            right.toString( tabs+1, out );
     }
 }

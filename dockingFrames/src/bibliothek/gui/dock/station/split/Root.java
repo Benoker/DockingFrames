@@ -58,20 +58,22 @@ public class Root extends SplitNode{
     }
     
     /**
-     * Sets the child of this root. Every root has only one child.
+     * Sets the child of this root. Every root has only one child.<br>
+     * Note that setting the child to <code>null</code> does not delete
+     * the child from the system, only a call to {@link SplitNode#delete(boolean)}
+     * does that.
      * @param child the child of the root, can be <code>null</code>
      */
     public void setChild( SplitNode child ){
+        if( this.child != null )
+            this.child.setParent( null );
         this.child = child;
-        if( child != null )
+        if( child != null ){
+            child.delete( false );
             child.setParent( this );
-    }
-    
-    @Override
-    public void replace( SplitNode old, SplitNode child ) {
-        if( this.child != old )
-            throw new IllegalArgumentException( "unknown child " + old );
-        setChild( child );
+        }
+        
+        getAccess().getOwner().revalidate();
     }
     
     /**
@@ -81,6 +83,22 @@ public class Root extends SplitNode{
      */
     public SplitNode getChild() {
         return child;
+    }
+    
+    @Override
+    public int getChildLocation( SplitNode child ) {
+        if( child == this.child )
+            return 0;
+        
+        return -1;
+    }
+    
+    @Override
+    public void setChild( SplitNode child, int location ) {
+        if( location == 0 )
+            setChild( child );
+        else
+            throw new IllegalArgumentException( "Location invalid: " + location );
     }
     
     @Override
@@ -94,26 +112,7 @@ public class Root extends SplitNode{
     		return new Dimension( 0, 0 );
     	return child.getMinimumSize();
     }
-    
-    /**
-     * Updates all locations and sizes of the {@link Component Components}
-     * which are in the structure of this tree.
-     */
-    public void updateBounds(){
-        Insets insets = getInsets();
-        SplitDockStation station = getAccess().getOwner();
-        double factorW = station.getWidth() - insets.left - insets.right;
-        double factorH = station.getHeight() - insets.top - insets.bottom;
         
-        if( factorW < 0 || factorH < 0 ){
-            updateBounds( 0, 0, 1.0, 1.0, factorW, factorH );
-        }
-        else{
-            updateBounds( insets.left / factorW, insets.top / factorH, 
-                1.0, 1.0, factorW, factorH );
-        }
-    }
-    
     /**
      * Gets the factor which has to be multiplied with relative x coordinates
      * and widths to get their size in pixel.
@@ -184,7 +183,7 @@ public class Root extends SplitNode{
     @Override
     public boolean insert( SplitDockPathProperty property, int depth, Dockable dockable ) {
         if( child == null ){
-            Leaf leaf = create( dockable );
+            Leaf leaf = create( dockable, true );
             if( leaf == null )
                 return false;
             setChild( leaf );
@@ -250,5 +249,18 @@ public class Root extends SplitNode{
         visitor.handleRoot( this );
         if( child != null )
             child.visit( visitor );
+    }
+    
+    @Override
+    public void toString( int tabs, StringBuilder out ) {
+        out.append( "Root" );
+        out.append( '\n' );
+        for( int i = 0; i < tabs+1; i++ )
+            out.append( '\t' );
+        
+        if( child != null )
+            child.toString( tabs+1, out );
+        else
+            out.append( "<null>" );
     }
 }

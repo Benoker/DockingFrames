@@ -55,6 +55,7 @@ import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
@@ -87,6 +88,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     public static final PropertyKey<KeyStroke> MAXIMIZE_ACCELERATOR =
     	new PropertyKey<KeyStroke>( "SplitDockStation maximize accelerator", 
     			KeyStroke.getKeyStroke( KeyEvent.VK_M, InputEvent.CTRL_DOWN_MASK ));
+    
+    public static final PropertyKey<SplitLayoutManager> LAYOUT_MANAGER =
+        new PropertyKey<SplitLayoutManager>( "SplitDockStation layout manager",
+                new DefaultSplitLayoutManager() );
     
     /** The parent of this station */
     private DockStation parent;
@@ -153,6 +158,19 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     	}
     };
     
+    /** the manager for detailed control of the behavior of this station */
+    private PropertyValue<SplitLayoutManager> layoutManager = new PropertyValue<SplitLayoutManager>( LAYOUT_MANAGER ){
+        @Override
+        protected void valueChanged( SplitLayoutManager oldValue, SplitLayoutManager newValue ) {
+            if( oldValue != null )
+                oldValue.uninstall( SplitDockStation.this );
+            
+            if( newValue != null )
+                newValue.install( SplitDockStation.this );
+        }
+        
+    };
+    
     /** Whether the user can double click on a child to expand it. Default is <code>true</code>. */
     private boolean expandOnDoubleclick = true;
     
@@ -196,12 +214,6 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         
     /** Access to the private and protected methods for some friends of this station */
     private SplitDockAccess access = new SplitDockAccess(){
-        public void add( DockableDisplayer displayer ) {
-            dockables.add( displayer );
-            displayer.setStation( SplitDockStation.this );
-            displayer.setController( getController() );
-        }
-
         public DockableDisplayer getFullScreenDockable() {
             return fullScreenDockable;
         }
@@ -214,11 +226,11 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             return SplitDockStation.this.validateDivider( divider, node );
         }            
         
-        public Leaf createLeaf( Dockable dockable ){
-        	dockStationListeners.fireDockableAdding( dockable );
-        	Leaf leaf = addToList( dockable );
-        	dockStationListeners.fireDockableAdded( dockable );
-        	return leaf;
+        public DockableDisplayer addDisplayer( Dockable dockable, boolean fire ) {
+            return SplitDockStation.this.addDisplayer( dockable, fire );
+        }
+        public void removeDisplayer( DockableDisplayer displayer, boolean fire ) {
+            SplitDockStation.this.removeDisplayer( displayer, fire );
         }
         
         public boolean drop( Dockable dockable, SplitDockProperty property, SplitNode root ) {
@@ -408,8 +420,13 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             
             this.controller = controller;
             getDisplayers().setController( controller );
+            
             if( fullScreenAction != null )
                 fullScreenAction.setController( controller );
+            
+            titleIcon.setProperties( controller );
+            titleText.setProperties( controller );
+            layoutManager.setProperties( controller );
             
             if( controller != null ){
                 title = controller.getDockTitleManager().getVersion( TITLE_ID, ControllerTitleFactory.INSTANCE );
@@ -502,6 +519,25 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      */
     public void setTitleIcon( Icon titleIcon ) {
     	this.titleIcon.setValue( titleIcon );
+    }
+    
+    /**
+     * Sets a special {@link SplitLayoutManager} which this station has to use.
+     * @param manager the manager or <code>null</code> to return to the 
+     * manager that is specified in the {@link DockProperties} by the key
+     * {@link #LAYOUT_MANAGER}.
+     */
+    public void setSplitLayoutManager( SplitLayoutManager manager ){
+        layoutManager.setValue( manager );
+    }
+    
+    /**
+     * Gets the layout manager which was explicitly set.
+     * @return the manager or <code>null</code>
+     * @see #setSplitLayoutManager(SplitLayoutManager)
+     */
+    public SplitLayoutManager getSplitLayoutManager(){
+        return layoutManager.getOwnValue();
     }
 
     /**
@@ -843,6 +879,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      * @see #isFullScreen()
      */
     public void setFullScreen( Dockable dockable ){
+        dockable = layoutManager.getValue().willMakeFullscreen( this, dockable );
         Dockable oldFullScreen = getFullScreen();
         if( oldFullScreen != dockable ){
 	        if( dockable != null ){
@@ -978,7 +1015,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             return true;
         }
         
-        this.root.updateBounds();
+        updateBounds();
         
         class DropInfo{
             public Leaf bestLeaf;
@@ -1103,7 +1140,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             }
             
             divider = Math.max( 0, Math.min( 1, divider ));
-            dropAside( info.bestNode, info.bestNodePut, dockable, divider, true );
+            dropAside( info.bestNode, info.bestNodePut, dockable, null, divider, true );
             validate();
             return true;
         }
@@ -1164,17 +1201,25 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             boolean finish = false;
             
             if( putInfo.getPut() == PutInfo.Put.CENTER || putInfo.getPut() == PutInfo.Put.TITLE ){
-                if( putInfo.getNode() instanceof Leaf &&
-                        dropOver( (Leaf)putInfo.getNode(), putInfo.getDockable() ) )
-                    finish = true;
-                else
+                if( putInfo.getNode() instanceof Leaf ){
+                    if( putInfo.getLeaf() != null ){
+                        putInfo.getLeaf().setDockable( null, fire );
+                        putInfo.setLeaf( null );
+                    }
+                
+                    if( dropOver( (Leaf)putInfo.getNode(), putInfo.getDockable() ) ){
+                        finish = true;
+                    }
+                }
+                else{
                     putInfo.setPut( PutInfo.Put.TOP );
+                }
             }
             
             if( !finish ){
-                root.updateBounds();
+                updateBounds();
                 calculateDivider( putInfo, root.getLeaf( putInfo.getDockable() ));
-                dropAside( putInfo.getNode(), putInfo.getPut(), putInfo.getDockable(), putInfo.getDivider(), fire );
+                dropAside( putInfo.getNode(), putInfo.getPut(), putInfo.getDockable(), putInfo.getLeaf(), putInfo.getDivider(), fire );
             }
         }
         
@@ -1211,7 +1256,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     	DockUtilities.ensureTreeValidity( this, dockable );
     	
         Dockable old = leaf.getDockable();
-        removeFromList( old );
+        leaf.setDockable( null, true );
         
         Dockable combination = DockUI.getCombiner( combiner, this ).combine( old, dockable, this );
         if( property != null ){
@@ -1222,7 +1267,8 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         }
         
         dockStationListeners.fireDockableAdding( combination );
-        Leaf next = addToList( combination );
+        Leaf next = new Leaf( access );
+        next.setDockable( combination, false );
         
         SplitNode parent = leaf.getParent();
         if( parent == root )
@@ -1250,22 +1296,28 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      * @param put The side on which <code>dockable</code> should be added in 
      * respect to <code>neighbor</code>.
      * @param dockable the new child of this station
+     * @param leaf the leaf which contains <code>dockable</code>, can be <code>null</code>
      * @param divider the divider-location, a value between 0 and 1
      * @param fire <code>true</code> if the method is allowed to fire events,
      * <code>false</code> otherwise
      */
-    protected void dropAside( SplitNode neighbor, PutInfo.Put put, Dockable dockable, double divider, boolean fire ){
+    protected void dropAside( SplitNode neighbor, PutInfo.Put put, Dockable dockable, Leaf leaf, double divider, boolean fire ){
         if( fire ){
             DockUtilities.ensureTreeValidity( this, dockable );
         	dockStationListeners.fireDockableAdding( dockable );
         }
         
-        Leaf leaf = addToList( dockable );
+        if( leaf == null ){
+            leaf = new Leaf( access );
+            leaf.setDockable( dockable, false );    
+        }
+        
         SplitNode parent = neighbor.getParent();
         
         // Node herstellen
         Node node = null;
-        root.updateBounds();
+        updateBounds();
+        int location = parent.getChildLocation( neighbor );
         
         if( put == PutInfo.Put.TOP ){
             node = new Node( access, leaf, neighbor, Orientation.VERTICAL );
@@ -1281,16 +1333,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         }
         
         node.setDivider( divider );
-        
-        if( parent == root )
-            root.setChild( node );
-        else{
-            Node n = (Node)parent;
-            if( n.getLeft() == neighbor )
-                n.setLeft( node );
-            else
-                n.setRight( node );
-        }
+        parent.setChild( node, location );
         
         if( fire ){
         	dockStationListeners.fireDockableAdded( dockable );
@@ -1338,6 +1381,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 
     public void move() {
         Leaf leaf = root.getLeaf( putInfo.getDockable() );
+        
         if( leaf.getParent() == putInfo.getNode() ){
             if( putInfo.getNode() == root ){
                 // no movement possible
@@ -1352,9 +1396,8 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             }
         }
         
-	    
-        removeDockable( indexOfDockable( putInfo.getDockable() ), false );
-        putInfo.getDockable().setDockParent( null );
+        putInfo.setLeaf( leaf );
+	    leaf.delete( true );
         drop( false );
     }
 
@@ -1534,7 +1577,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     	Key rootKey = tree.getRoot();
     	if( rootKey != null ){
     		root.evolve( rootKey, checkValidity );
-    		root.updateBounds();
+    		updateBounds();
     	}
     }
     
@@ -1596,13 +1639,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     }
 
     public void drag( Dockable dockable ) {
-        int index = indexOfDockable( dockable );
-        if( index < 0 )
-            throw new IllegalArgumentException( "This dockable cannot be dragged, its not child of the station." );
+        if( dockable.getDockParent() != this )
+            throw new IllegalArgumentException( "The dockable cannot be dragged, it is not child of this station." );
         
-        dockStationListeners.fireDockableRemoving( dockable );
-        removeDockable( index, false );
-        dockStationListeners.fireDockableRemoved( dockable );
+        removeDockable( dockable );
     }
     
     /**
@@ -1767,7 +1807,8 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             DockUtilities.ensureTreeValidity( this, dockable );
         	dockStationListeners.fireDockableAdding( dockable );
         }
-        Leaf leaf = addToList( dockable );
+        Leaf leaf = new Leaf( access );
+        leaf.setDockable( dockable, false );
         
         if( root.getChild() == null ){
             root.setChild( leaf );
@@ -1790,50 +1831,41 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     }
     
     public void replace( Dockable previous, Dockable next ){
-        Leaf leaf = root.getLeaf( previous );
-        if( leaf == null )
-            throw new IllegalArgumentException( "Previous is not child of this station" );
-        
-        if( next.getDockParent() != null )
-            throw new IllegalArgumentException( "Next must not be a child of another station" );
-        
-        boolean wasFullScreen = isFullScreen() && getFullScreen() == previous;
-        
-        // remove
-        removeFromList( previous );
-        
-        // add
-        dockStationListeners.fireDockableAdding( next );
-        SplitNode parent = leaf.getParent();
-        if( parent == root )
-            root.setChild( addToList( next ));
-        else{
-            Node node = (Node)parent;
-            if( node.getLeft() == leaf )
-                node.setLeft( addToList( next ));
-            else
-                node.setRight( addToList( next ));
+        if( previous == null )
+            throw new NullPointerException( "previous must not be null" );
+        if( next == null )
+            throw new NullPointerException( "next must not be null" );
+        if( previous != next ){
+            Leaf leaf = root.getLeaf( previous );
+
+            if( leaf == null )
+                throw new IllegalArgumentException( "Previous is not child of this station" );
+
+            DockUtilities.ensureTreeValidity( this, next );
+            
+            boolean wasFullScreen = isFullScreen() && getFullScreen() == previous;
+
+            leaf.setDockable( next, true );
+            
+            if( wasFullScreen )
+                setFullScreen( next );
+            
+            revalidate();
+            repaint();
         }
-        
-        if( wasFullScreen )
-            setFullScreen( next );
-        
-        dockStationListeners.fireDockableAdded( next );
-        revalidate();
-        repaint();
     }
     
     /**
-     * Adds <code>dockable</code> to the list of children, generates a 
-     * title and a {@link Leaf} for <code>dockable</code>, but does not
-     * add the leaf to this station. The location of the leaf has be set by
-     * the caller. 
-     * @param dockable the new child of this station.
-     * @return the {@link Leaf} for <code>dockable</code>
+     * Creates and adds a new {@link DockableDisplayer} for <code>dockable</code>.
+     * @param dockable the element to add
+     * @param fire whether to fire events when adding <code>dockable</code> or not
+     * @return the new displayer
      */
-    protected Leaf addToList( Dockable dockable ){
-        if( dockable.getDockParent() != null && dockable.getDockParent() != this )
-            throw new IllegalArgumentException( "Dockable must not have another parent" );
+    private DockableDisplayer addDisplayer( Dockable dockable, boolean fire ){
+        DockUtilities.ensureTreeValidity( this, dockable );
+        
+        if( fire )
+            dockStationListeners.fireDockableAdding( dockable );
         
         DockTitle title = null;
         dockable.setDockParent( this );
@@ -1849,7 +1881,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         displayer.getComponent().setVisible( !isFullScreen() );
         dockables.add( displayer );
         
-        return new Leaf( access, displayer );
+        if( fire )
+            dockStationListeners.fireDockableAdded( dockable );
+        
+        return displayer;
     }
     
     /**
@@ -1870,7 +1905,9 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      */
     public void removeAllDockables(){
         for( int i = getDockableCount()-1; i >= 0; i-- )
-            removeDockable( i );
+            removeDisplayer( i, true );
+        
+        root.delete( false );
     }
     
     /**
@@ -1879,66 +1916,33 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      * @param dockable the child to remove
      */
     public void removeDockable( Dockable dockable ){
-        int index = indexOfDockable( dockable );
-        if( index >= 0 )
-            removeDockable( index );
-    }
-    
-    /**
-     * Removes the child with the specified <code>index</code> from this 
-     * station.
-     * @param index the index of the child to remove
-     */
-    private void removeDockable( int index ){
-        removeDockable( index, true );
-    }
-    
-    /**
-     * Removes the child with the specified <code>index</code> from this
-     * station. Fires events if <code>fire</code> is <code>true</code>.
-     * @param index the index of the child to remove
-     * @param fire if <code>true</code>, the method will fire some events.
-     * Otherwise the method will run silent.
-     */
-    private void removeDockable( int index, boolean fire ){
-        Dockable dockable = getDockable( index );
         Leaf leaf = root.getLeaf( dockable );
-        
-        if( fire )
-        	dockStationListeners.fireDockableRemoving( dockable );
-        
-        removeFromList( index );
-        
         if( leaf != null ){
-            removeLeaf( leaf );
+            leaf.delete( true );
+            leaf.setDockable( null, true );
         }
-        if( fire )
-        	dockStationListeners.fireDockableRemoved( dockable );
-        
-        revalidate();
-        repaint();
     }
     
     /**
-     * Removes <code>dockable</code> from the list of children of this station,
-     * but does nothing more.
-     * @param dockable the child to remove
+     * Removes <code>displayer</code> from this station. Unbinds its
+     * {@link Dockable}.
+     * @param displayer the displayer to remove
+     * @param fire whether to inform {@link DockStationListener}s
+     * about the change or not
      */
-    protected void removeFromList( Dockable dockable ){
-        int index = indexOfDockable( dockable );
+    private void removeDisplayer( DockableDisplayer displayer, boolean fire ){
+        int index = dockables.indexOf( displayer );
         if( index >= 0 ){
-        	dockStationListeners.fireDockableRemoving( dockable );
-            removeFromList( index );
-            dockStationListeners.fireDockableRemoved( dockable );
+            removeDisplayer( index, fire );
         }
     }
     
     /**
-     * Removes the child at <code>index</code> from this station, does
-     * not fire any events.
-     * @param index the index of the child to remove
+     * Removes the index'th displayer from this station
+     * @param index the index of the displayer to remove
+     * @param fire whether to fire events or not
      */
-    private void removeFromList( int index ){
+    private void removeDisplayer( int index, boolean fire ){
         DockableDisplayer display = dockables.get( index );
         
         if( display == fullScreenDockable ){
@@ -1948,8 +1952,12 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
                 setFullScreen( null );
         }
         
-        dockables.remove( index );
         Dockable dockable = display.getDockable();
+        if( fire )
+            dockStationListeners.fireDockableRemoving( dockable );
+        
+        dockables.remove( index );
+        
         DockTitle title = display.getTitle();
         
         display.getComponent().setVisible( true );
@@ -1960,39 +1968,13 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             dockable.unbind( title );
         }
         
-        if( dockable == frontDockable )
+        if( dockable == frontDockable ){
             setFrontDockable( null );
+        }
         
         dockable.setDockParent( null );
-        //dockable.removeMouseInputListener( dockableFullScreenListeners.remove( dockable ));
-    }
-    
-    /**
-     * Removes the specified <code>leaf</code> from the tree of this station,
-     * but does not remove the associated {@link DockableDisplayer}.
-     * @param leaf the {@link Leaf} to remove
-     */
-    protected void removeLeaf( Leaf leaf ){
-        SplitNode parent = leaf.getParent();
-        if( parent == root ){
-            root.setChild( null );
-        }
-        else{
-            Node node = (Node)parent;
-            SplitNode other = node.getLeft() == leaf ? node.getRight() : node.getLeft();
-            
-            parent = node.getParent();
-            if( parent == root ){
-                root.setChild( other );
-            }
-            else{
-                Node next = (Node)parent;
-                if( next.getLeft() == node )
-                    next.setLeft( other );
-                else
-                    next.setRight( other );
-            }
-        }
+        if( fire )
+            dockStationListeners.fireDockableRemoved( dockable );
     }
     
     /**
@@ -2004,8 +1986,20 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     private double validateDivider( double divider, Node node ){
         divider = Math.min( 1, Math.max( 0, divider ));
         
-        return validateDivider( divider, node.getLeft().getMinimumSize(), 
-        		node.getRight().getMinimumSize(), node.getOrientation(), node.getWidth(), node.getHeight() );
+        Dimension leftMin;
+        Dimension rightMin;
+        
+        if( node.getLeft() == null )
+            leftMin = new Dimension();
+        else
+            leftMin = node.getLeft().getMinimumSize();
+        
+        if( node.getRight() == null )
+            rightMin = new Dimension();
+        else
+            rightMin = node.getRight().getMinimumSize();
+        
+        return validateDivider( divider, leftMin, rightMin, node.getOrientation(), node.getWidth(), node.getHeight() );
     }
         
     /**
@@ -2063,17 +2057,46 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         
     /**
      * Gets the {@link Root} of the tree which stores all locations and sizes
-     * of the children of this station.
+     * of the children of this station. Clients can modifie the contents of this
+     * station directly by accessing this tree.<br>
+     * <b>Note</b>
+     * <ul><li>that removing or adding children to the tree does not automatically
+     * remove or add new {@link Dockable}s, that has to be explicitly done through
+     * {@link Leaf#setDockable(Dockable, boolean)}.</li>
+     * <li>The tree should never be invalid. That means that each {@link Node}
+     * should have two children, and each {@link Leaf} should have 
+     * a {@link Dockable}.</li>
+     * </ul>
      * @return the root
      */
-    protected Root getRoot(){
+    public Root getRoot(){
         return root;
     }
     
     public String getFactoryID() {
         return SplitDockStationFactory.ID;
     }
-         
+
+    /**
+     * Updates all locations and sizes of the {@link Component Components}
+     * which are in the structure of this tree.
+     */
+    protected void updateBounds(){
+        Insets insets = getInsets();
+        double factorW = getWidth() - insets.left - insets.right;
+        double factorH = getHeight() - insets.top - insets.bottom;
+        
+        SplitLayoutManager manager = layoutManager.getValue();
+        
+        if( factorW < 0 || factorH < 0 ){
+            manager.updateBounds( root, 0, 0, 1.0, 1.0, 1.0, 1.0 );
+        }
+        else{
+            manager.updateBounds( root, insets.left / factorW, insets.top / factorH, 
+                1.0, 1.0, factorW, factorH );
+        }
+    }
+    
     /**
      * The panel which will be the parent of all {@link DockableDisplayer displayers}
      * @author Benjamin Sigg
@@ -2081,7 +2104,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     private class Content extends JPanel{
         @Override
         public void doLayout() {
-            root.updateBounds();
+            updateBounds();
             
             Insets insets = getRoot().getInsets();
             
@@ -2172,7 +2195,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
                 
                 if( continousDisplay && current != null ){
                     current.setDivider( divider );
-                    root.updateBounds();
+                    updateBounds();
                 }
             }
         }
@@ -2184,7 +2207,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
                 if( current != null ){
                     current.setDivider( divider );
                     repaint( bounds.x, bounds.y, bounds.width, bounds.height );
-                    root.updateBounds();
+                    updateBounds();
                 }
                 mouseMoved( e );
             }

@@ -68,6 +68,9 @@ public class PutInfo{
     /** The old size of {@link #dockable} */
     private int oldSize;
     
+    /** the leaf that was moved */
+    private Leaf leaf;
+    
     /**
      * Creates a new PutInfo.
      * @param node the node to which <code>put</code> belongs
@@ -180,5 +183,21 @@ public class PutInfo{
      */
     public int getOldSize() {
         return oldSize;
+    }
+    
+    /**
+     * Sets the leaf which contains {@link #getDockable() dockable}
+     * @param leaf the leaf
+     */
+    public void setLeaf( Leaf leaf ) {
+        this.leaf = leaf;
+    }
+
+    /**
+     * Gets the leaf which contains {@link #getDockable() dockable}
+     * @return the leaf or <code>null</code>
+     */
+    public Leaf getLeaf() {
+        return leaf;
     }
 }

@@ -88,7 +88,7 @@ A FlapDockStation shows one of its children in a window that is above all other 
 					<layout factory="predefined">
 						<replacement id="rootsouth"/>
 						<delegate id="delegate_flap dock">
-							<window auto="true" size="400" direction="SOUTH"/>
+							<window auto="true" size="400" direction="NORTH"/>
 							<children/>
 						</delegate>
 					</layout>
@@ -99,19 +99,19 @@ A FlapDockStation shows one of its children in a window that is above all other 
 						<replacement id="rootsplit"/>
 						<delegate id="delegate_SplitDockStationFactory">
 							<node orientation="VERTICAL" divider="0.5">
-								<node orientation="HORIZONTAL" divider="0.4662420382165605">
-									<leaf id="0"/>
-									<node orientation="VERTICAL" divider="0.45176470588235296">
+								<node orientation="HORIZONTAL" divider="0.7936305732484077">
+									<node orientation="HORIZONTAL" divider="0.4718196457326892">
 										<leaf id="1"/>
-										<leaf id="2"/>
+										<leaf id="4"/>
 									</node>
+									<leaf id="0"/>
 								</node>
 								<node orientation="HORIZONTAL" divider="0.7044585987261146">
 									<node orientation="HORIZONTAL" divider="0.6660649819494584">
-										<leaf id="3"/>
-										<leaf id="4"/>
+										<leaf id="5"/>
+										<leaf id="2"/>
 									</node>
-									<leaf id="5"/>
+									<leaf id="3"/>
 								</node>
 							</node>
 						</delegate>
@@ -119,13 +119,13 @@ A FlapDockStation shows one of its children in a window that is above all other 
 					<children ignore="false">
 						<child>
 							<layout factory="delegate_note">
-								<note>0</note>
+								<note>1</note>
 							</layout>
 							<children ignore="false"/>
 						</child>
 						<child>
 							<layout factory="delegate_note">
-								<note>1</note>
+								<note>0</note>
 							</layout>
 							<children ignore="false"/>
 						</child>
@@ -136,15 +136,8 @@ A FlapDockStation shows one of its children in a window that is above all other 
 							<children ignore="false"/>
 						</child>
 						<child>
-							<layout factory="predefined">
-								<replacement id="dockablelist"/>
-								<delegate id="delegate_DefaultDockableFactory"/>
-							</layout>
-							<children ignore="false"/>
-						</child>
-						<child>
 							<layout factory="delegate_note">
-								<note>3</note>
+								<note>5</note>
 							</layout>
 							<children ignore="false"/>
 						</child>
@@ -165,11 +158,18 @@ A FlapDockStation shows one of its children in a window that is above all other 
 								</child>
 								<child>
 									<layout factory="delegate_note">
-										<note>5</note>
+										<note>3</note>
 									</layout>
 									<children ignore="false"/>
 								</child>
 							</children>
+						</child>
+						<child>
+							<layout factory="predefined">
+								<replacement id="dockablelist"/>
+								<delegate id="delegate_DefaultDockableFactory"/>
+							</layout>
+							<children ignore="false"/>
 						</child>
 					</children>
 				</root>
@@ -218,7 +218,7 @@ A FlapDockStation shows one of its children in a window that is above all other 
 	</frontend>
 	<frame>
 		<extended>0</extended>
-		<bounds x="0" y="0" width="829" height="501"/>
-		<theme>6</theme>
+		<bounds x="162" y="110" width="829" height="501"/>
+		<theme>0</theme>
 	</frame>
 </properties>

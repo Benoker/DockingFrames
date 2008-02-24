@@ -226,7 +226,7 @@ public class Core implements ComponentCollector{
      * Stops this application.
      */
     private void shutdown(){
-        frame.setVisible( false );
+        frame.dispose();
         frame.getContentPane().removeAll();
         if( monitor == null )
             System.exit( 0 );
