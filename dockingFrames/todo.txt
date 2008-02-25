@@ -8,3 +8,4 @@
 - ShapedGradientPainter & others: exchangeable colors
 - [Done] Store and load DockSituation from XML?
 - Allow StackDockStations to have different colors on the tab.
+- Possibility to fix size of Dockables on SplitDockStations

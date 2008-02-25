@@ -25,11 +25,18 @@
  */
 package bibliothek.gui.dock.station.split;
 
+import java.awt.Dimension;
+import java.awt.Point;
+
+import javax.swing.SwingUtilities;
+
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.SplitDockStation.Orientation;
 
 /**
- * The default implementation of {@link SplitLayoutManager}
+ * The default implementation of {@link SplitLayoutManager}.
  * @author Benjamin Sigg
  */
 public class DefaultSplitLayoutManager implements SplitLayoutManager{
@@ -42,6 +49,326 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
     
     public Dockable willMakeFullscreen( SplitDockStation station, Dockable dockable ) {
         return dockable;
+    }
+    
+    public PutInfo prepareDrop( SplitDockStation station, int x, int y,
+            int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
+        
+        if( station.isFullScreen() )
+            return null;
+        
+        if( station.getDockableCount() == 0 ){
+            DockStation parent = station.getDockParent();
+            if( parent != null ){
+                if( checkOverrideZone && parent.isInOverrideZone( x, y, station, dockable ))
+                    return null;
+            }
+            
+            PutInfo putInfo = new PutInfo( null, PutInfo.Put.CENTER, dockable );
+            putInfo.setDockable( dockable );
+            putInfo = validatePutInfo( station, putInfo );
+            return putInfo;
+        }
+        else{
+            Point point = new Point( x, y );
+            SwingUtilities.convertPointFromScreen( point, station );
+            
+            PutInfo putInfo = station.getRoot().getPut( point.x, point.y, dockable );
+            
+            if( putInfo == null && station.isAllowSideSnap() ){
+                putInfo = calculateSideSnap( station, point.x, point.y, null, dockable );
+                putInfo = validatePutInfo( station, putInfo );
+            }
+            
+            if( putInfo != null ){
+                putInfo.setDockable( dockable );
+                calculateDivider( station, putInfo, null );
+            }
+            
+            DockStation parent = station.getDockParent();
+            if( parent != null && putInfo != null ){
+                if( checkOverrideZone && parent.isInOverrideZone( x, y, station, dockable )){
+                    if( putInfo.getPut() == PutInfo.Put.CENTER ){
+                        return null;
+                    }
+                    
+                    return putInfo;
+                }
+            }
+            
+            return putInfo;
+        }
+    }
+    
+    public PutInfo prepareMove( SplitDockStation station, int x, int y,
+            int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
+        
+        if( station.isFullScreen() )
+            return null;
+        
+        Point point = new Point( x, y );
+        SwingUtilities.convertPointFromScreen( point, station );
+        
+        Root root = station.getRoot();
+        PutInfo putInfo = root.getPut( point.x, point.y, dockable );
+        Leaf leaf = root.getLeaf( dockable );
+        
+        if( putInfo == null && station.isAllowSideSnap() ){
+            putInfo = calculateSideSnap( station, point.x, point.y, leaf, dockable );
+            putInfo = validatePutInfo( station, putInfo );
+        }
+        
+        if( (putInfo != null) &&
+            (putInfo.getNode() instanceof Leaf) &&
+            (((Leaf)putInfo.getNode())).getDockable() == dockable){
+                putInfo = null;
+        }
+        
+        if( putInfo != null ){
+            putInfo.setDockable( dockable );
+            calculateDivider( station, putInfo, leaf );
+        }
+        
+        DockStation parent = station.getDockParent();
+        if( parent != null && putInfo != null ){
+            if( checkOverrideZone && parent.isInOverrideZone( x, y, station, dockable )){
+                if( putInfo.getPut() == PutInfo.Put.CENTER ){
+                    return null;
+                }
+            }
+        }
+        
+        return putInfo;
+    }
+    
+    
+    /**
+     * Calculates where to add a {@link Dockable} if the mouse is outside
+     * this station.
+     * @param station the station onto which <code>drop</code> might be dropped
+     * @param x The x-coordinate of the mouse
+     * @param y The y-coordinate of the mouse
+     * @param leaf The leaf which was the old parent of the moved {@link Dockable} 
+     * or <code>null</code>
+     * @param drop the element that will be dropped
+     * @return The preferred location or <code>null</code>
+     */
+    protected PutInfo calculateSideSnap( SplitDockStation station, int x, int y, Leaf leaf, Dockable drop ){
+        if( station.getDockableCount() == 0 )
+            return null;
+        
+        PutInfo info;
+        
+        if( SplitNode.above( 0, 0, station.getWidth(), station.getHeight(), x, y )){
+            if( SplitNode.above( 0, station.getHeight(), station.getWidth(), 0, x, y )){
+                // top
+                info = new PutInfo( station.getRoot().getChild(), PutInfo.Put.TOP, drop );
+            }
+            else{
+                // bottom
+                info = new PutInfo( station.getRoot().getChild(), PutInfo.Put.RIGHT, drop );
+            }
+        }
+        else{
+            if( SplitNode.above( 0, station.getHeight(), station.getWidth(), 0, x, y )){
+                // left
+                info = new PutInfo( station.getRoot().getChild(), PutInfo.Put.LEFT, drop );
+            }
+            else{
+                // right
+                info = new PutInfo( station.getRoot().getChild(), PutInfo.Put.BOTTOM, drop );
+            }            
+        }
+        
+        if( leaf != null && station.getRoot().getChild() instanceof Node){
+            Node node = (Node)station.getRoot().getChild();
+            if( info.getPut() == PutInfo.Put.TOP && node.getOrientation() == Orientation.VERTICAL && node.getLeft() == leaf )
+                return null;
+            
+            if( info.getPut() == PutInfo.Put.BOTTOM && node.getOrientation() == Orientation.VERTICAL && node.getLeft() == leaf )
+                return null;
+            
+            if( info.getPut() == PutInfo.Put.LEFT && node.getOrientation() == Orientation.HORIZONTAL && node.getLeft() == leaf )
+                return null;
+            
+            if( info.getPut() == PutInfo.Put.RIGHT && node.getOrientation() == Orientation.HORIZONTAL && node.getLeft() == leaf )
+                return null;
+        }
+        
+        return info;
+    }
+    
+    public void calculateDivider( SplitDockStation station, PutInfo putInfo, Leaf origin ){
+        SplitNode other = putInfo.getNode();
+        
+        Dimension oldSize = origin == null ? 
+                putInfo.getDockable().getComponent().getSize() :
+                origin.getSize();
+                
+        Dimension nodeSize = other.getSize();
+        
+        int size = Math.min( oldSize.width, oldSize.height );
+
+        if( origin != null ){
+            if( origin.getParent() instanceof Node ){
+                Node originParent = (Node)origin.getParent();
+                
+                if( (putInfo.getPut() == PutInfo.Put.LEFT || putInfo.getPut() == PutInfo.Put.RIGHT) && 
+                        originParent.getOrientation() == Orientation.HORIZONTAL ){
+                    size = oldSize.width;
+                }
+                else if( (putInfo.getPut() == PutInfo.Put.TOP || putInfo.getPut() == PutInfo.Put.BOTTOM) && 
+                        originParent.getOrientation() == Orientation.VERTICAL){
+                    size = oldSize.height;
+                }
+            }
+        }
+        else{
+            if( putInfo.getOldSize() != 0 ){
+                size = putInfo.getOldSize();
+            }
+        }
+        
+        double divider = 0.5;
+        int dividerSize = station.getDividerSize();
+        
+        if( putInfo.getPut() == PutInfo.Put.TOP ){
+            if( size != 0 )
+                divider = (size + dividerSize/2.0) / nodeSize.height;
+            
+            divider = validateDivider( station, divider, 
+                    putInfo.getDockable().getComponent().getMinimumSize(),
+                    other.getMinimumSize(), 
+                    Orientation.VERTICAL, 
+                    other.getWidth(), other.getHeight() );
+        }
+        else if( putInfo.getPut() == PutInfo.Put.BOTTOM ){
+            if( size != 0 )
+                divider = 1.0 - (size + dividerSize/2.0) / nodeSize.height;
+            
+            divider = validateDivider( station, divider, 
+                    other.getMinimumSize(),
+                    putInfo.getDockable().getComponent().getMinimumSize(),
+                    Orientation.VERTICAL, 
+                    other.getWidth(), other.getHeight() );
+        }
+        else if( putInfo.getPut() == PutInfo.Put.LEFT ){
+            if( size != 0 )
+                divider = (size + dividerSize/2.0) / nodeSize.width;
+            
+            divider = validateDivider( station, divider, 
+                    putInfo.getDockable().getComponent().getMinimumSize(),
+                    other.getMinimumSize(), 
+                    Orientation.HORIZONTAL, 
+                    other.getWidth(), other.getHeight() );
+        }
+        else if( putInfo.getPut() == PutInfo.Put.RIGHT ){
+            if( size != 0 )
+                divider = 1.0 - (size + dividerSize/2.0) / nodeSize.width;
+            
+            divider = validateDivider( station, divider, 
+                    other.getMinimumSize(), 
+                    putInfo.getDockable().getComponent().getMinimumSize(), 
+                    Orientation.HORIZONTAL, 
+                    other.getWidth(), other.getHeight() );
+        }
+
+        putInfo.setDivider( divider );
+        putInfo.setOldSize( size );
+    }
+    
+    public double validateDivider( SplitDockStation station, double divider, Node node ){
+        divider = Math.min( 1, Math.max( 0, divider ));
+        
+        Dimension leftMin;
+        Dimension rightMin;
+        
+        if( node.getLeft() == null )
+            leftMin = new Dimension();
+        else
+            leftMin = node.getLeft().getMinimumSize();
+        
+        if( node.getRight() == null )
+            rightMin = new Dimension();
+        else
+            rightMin = node.getRight().getMinimumSize();
+        
+        return validateDivider( station, divider, leftMin, rightMin, node.getOrientation(), node.getWidth(), node.getHeight() );
+    }
+    
+    /**
+     * Tests whether the specified <code>divider</code>-value is legal or not.
+     * @param station the station for which the divider is intended
+     * @param divider the value of a divider on a {@link Node}
+     * @param minimumLeft the minimal number of pixels on the left or top
+     * side of the divider
+     * @param minimumRight the minimal number of pixels on the right or bottom
+     * side of the divider
+     * @param orientation the orientation of the divider
+     * @param width the relative width of the base (in respect to the size of
+     * this station)
+     * @param height the relative height of the base (in respect to the size of
+     * this station)
+     * @return a legal value as near as possible to <code>divider</code>
+     */
+    protected double validateDivider( SplitDockStation station, double divider,
+            Dimension minimumLeft, Dimension minimumRight,
+            Orientation orientation, double width, double height ){
+        
+        double factor;
+        double size;
+        
+        int left, right;
+        
+        if( orientation == Orientation.HORIZONTAL ){
+            factor = station.getRoot().getWidthFactor();
+            size = width;
+            left = minimumLeft.width;
+            right = minimumRight.width;
+        }
+        else{
+            factor = station.getRoot().getHeightFactor();
+            size = height;
+            left = minimumLeft.height;
+            right = minimumRight.height;
+        }
+        
+        if( factor <= 0 || Double.isNaN( factor ))
+            return divider;
+        
+        double leftNeed = left / factor;
+        double rightNeed = right / factor;
+        double dividerNeed = station.getDividerSize() / factor;
+        
+        if( leftNeed + rightNeed + dividerNeed >= size )
+            divider = (leftNeed + dividerNeed / 2) / ( leftNeed + rightNeed + dividerNeed );
+        else if( divider * size < leftNeed + dividerNeed / 2 )
+            divider = (leftNeed + dividerNeed / 2) / size;
+        else if( divider*size > size - rightNeed - dividerNeed / 2 )
+            divider = (size - rightNeed - dividerNeed / 2) / size;
+        
+        return divider;
+    }
+    
+    public PutInfo validatePutInfo( SplitDockStation station, PutInfo putInfo ){
+        if( putInfo != null ){
+            if( !station.accept( putInfo.getDockable() ))
+                return null;
+            
+            if( putInfo.getNode() != null && (putInfo.getPut() == PutInfo.Put.CENTER || putInfo.getPut() == PutInfo.Put.TITLE )){
+                if( !putInfo.getDockable().accept( station, ((Leaf)putInfo.getNode()).getDockable() ) ||
+                        !station.getController().getAcceptance().accept( station, ((Leaf)putInfo.getNode()).getDockable(), putInfo.getDockable() )){
+                    return null;
+                }
+            }
+            else{
+                if( !putInfo.getDockable().accept( station ) ||
+                        !station.getController().getAcceptance().accept( station, putInfo.getDockable() )){
+                    return null;
+                }
+            }
+        }
+        return putInfo;
     }
     
     public void updateBounds( Root root, double x, double y, double width,

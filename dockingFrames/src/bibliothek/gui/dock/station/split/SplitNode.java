@@ -60,6 +60,14 @@ public abstract class SplitNode{
     }
     
     /**
+     * Gets the station this node belongs to.
+     * @return the station
+     */
+    public SplitDockStation getStation(){
+        return access.getOwner();
+    }
+    
+    /**
      * Removes this node from its parent, if there is a parent. The subtree
      * remains intact and no {@link Dockable}s are removed from the station.
      * @param shrink whether this node should attempt to shrink the tree such

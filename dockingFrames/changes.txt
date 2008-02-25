@@ -87,4 +87,6 @@
 - Bugfix: Several bugs in the Common project concerning the transition of modes of children of CWorkingAreas.
 - Bugfix: SingleParentRemover removed DockStations when DockUI updated DockTheme
 - API: The tree of a SplitDockStation is now accessible and modifiable from outside
-- API: New SplitLayoutManager can change the behavior of a SplitDockStation
+- API: New SplitLayoutManager calculates where to drop, and how to divide, elements of a SplitDockStation
+
+

@@ -138,7 +138,7 @@ public class Leaf extends SplitNode{
                 bounds.height -= height;
                 
                 if( y <= bounds.y ){
-                    result = getAccess().checkPutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop ));
+                    result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop ));
                 }
             }
             
@@ -147,7 +147,7 @@ public class Leaf extends SplitNode{
                 bounds.height -= height;
                 
                 if( y >= bounds.y+bounds.height ){
-                    result = getAccess().checkPutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop ));
+                    result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop ));
                 }
             }
             
@@ -157,7 +157,7 @@ public class Leaf extends SplitNode{
                 bounds.width -= width;
                 
                 if( x <= bounds.x ){
-                    result = getAccess().checkPutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop ));
+                    result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop ));
                 }
             }
             
@@ -166,7 +166,7 @@ public class Leaf extends SplitNode{
                 bounds.width -= width;
                 
                 if( x >= bounds.x + bounds.width ){
-                    result = getAccess().checkPutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop ));
+                    result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop ));
                 }
             }
         }
@@ -181,7 +181,7 @@ public class Leaf extends SplitNode{
             y > bounds.y + sideSnapSize*bounds.height &&
             y < bounds.y + bounds.height - sideSnapSize*bounds.height ){
             
-            result = getAccess().checkPutInfo( new PutInfo( this, PutInfo.Put.CENTER, drop ));
+            result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.CENTER, drop ));
         }
         
         if( result != null )
@@ -189,21 +189,21 @@ public class Leaf extends SplitNode{
         
         if( above( bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height, x, y )){
             if( above( bounds.x, bounds.y + bounds.height, bounds.x + bounds.width, bounds.y, x, y ))
-                result = getAccess().checkPutInfo( new PutInfo( this, PutInfo.Put.TOP, drop ));
+                result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.TOP, drop ));
             else
-                result = getAccess().checkPutInfo(  new PutInfo( this, PutInfo.Put.RIGHT, drop ));
+                result = getAccess().validatePutInfo(  new PutInfo( this, PutInfo.Put.RIGHT, drop ));
         }
         else{
             if( above( bounds.x, bounds.y + bounds.height, bounds.x + bounds.width, bounds.y, x, y ))
-                result = getAccess().checkPutInfo(  new PutInfo( this, PutInfo.Put.LEFT, drop ));
+                result = getAccess().validatePutInfo(  new PutInfo( this, PutInfo.Put.LEFT, drop ));
             else
-                result = getAccess().checkPutInfo(  new PutInfo( this, PutInfo.Put.BOTTOM, drop ));
+                result = getAccess().validatePutInfo(  new PutInfo( this, PutInfo.Put.BOTTOM, drop ));
         }
         
         if( result != null )
             return result;
         
-        return getAccess().checkPutInfo( new PutInfo( this, PutInfo.Put.CENTER, drop ));
+        return getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.CENTER, drop ));
     }
     
     @Override

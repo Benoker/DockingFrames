@@ -92,5 +92,5 @@ public interface SplitDockAccess {
      * @param info the preferred drop location
      * @return <code>info</code> if it is valid, <code>null</code> otherwise
      */
-    public PutInfo checkPutInfo( PutInfo info );
+    public PutInfo validatePutInfo( PutInfo info );
 }
