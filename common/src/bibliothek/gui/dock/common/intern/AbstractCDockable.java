@@ -35,7 +35,8 @@ import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CWorkingArea;
 import bibliothek.gui.dock.common.action.CAction;
-import bibliothek.gui.dock.common.event.CDockableListener;
+import bibliothek.gui.dock.common.event.CDockablePropertyListener;
+import bibliothek.gui.dock.common.event.CDockableStateListener;
 
 
 /**
@@ -48,8 +49,11 @@ public abstract class AbstractCDockable implements CDockable {
     /** the location of this dockable */
     private CLocation location = null;
     
-    /** a liste of listeners that were added to this dockable */
-    private List<CDockableListener> listeners = new ArrayList<CDockableListener>();
+    /** a list of state listeners that were added to this dockable */
+    private List<CDockableStateListener> stateListeners = new ArrayList<CDockableStateListener>();
+    
+    /** a list of property listeners that were added to this dockable */
+    private List<CDockablePropertyListener> propertyListeners = new ArrayList<CDockablePropertyListener>();
     
     /** the graphical representation of this dockable */
     private CommonDockable dockable;
@@ -62,6 +66,9 @@ public abstract class AbstractCDockable implements CDockable {
     
     /** unique id of this {@link CDockable} */
     private String uniqueId;
+    
+    /** whether this element likes to have the same size all the time */
+    private boolean resizeLocked = false;
     
     /** Source that contains the action that closes this dockable */
     private DefaultDockActionSource close = new DefaultDockActionSource(
@@ -98,40 +105,37 @@ public abstract class AbstractCDockable implements CDockable {
         return control;
     }
     
-    /**
-     * Adds a listener to this dockable, the listener will be informed of
-     * changes of this dockable.
-     * @param listener the new listener
-     */
-    public void addCDockableListener( CDockableListener listener ){
-        listeners.add( listener );
+    public void addCDockableStateListener( CDockableStateListener listener ){
+        stateListeners.add( listener );
+    }
+    
+    public void addCDockablePropertyListener( CDockablePropertyListener listener ) {
+        propertyListeners.add( listener );
+    }
+    
+    public void removeCDockableStateListener( CDockableStateListener listener ){
+        stateListeners.remove( listener );
+    }
+    
+    public void removeCDockablePropertyListener( CDockablePropertyListener listener ) {
+        propertyListeners.remove( listener );
     }
     
     /**
-     * Removes a listener from this dockable.
-     * @param listener the listener to remove
+     * Gets the list of state listeners.
+     * @return the stateListeners
      */
-    public void removeCDockableListener( CDockableListener listener ){
-        listeners.remove( listener );
+    protected CDockableStateListener[] stateListeners(){
+        return stateListeners.toArray( new CDockableStateListener[ stateListeners.size() ] );
     }
     
     /**
-     * Gets the list of listeners.
-     * @return the listeners
+     * Gets the list of property listeners.
+     * @return the stateListeners
      */
-    protected CDockableListener[] listeners(){
-        return listeners.toArray( new CDockableListener[ listeners.size() ] );
+    protected CDockablePropertyListener[] propertyListeners(){
+        return propertyListeners.toArray( new CDockablePropertyListener[ propertyListeners.size() ] );
     }
-    
-    /**
-     * Tells whether this dockable can be closed by the user. Clients which
-     * have a method like "setCloseable" can use {@link #updateClose()}
-     * to ensure that an action is shown/hidden that allows the user to
-     * close this <code>CDockable</code>.
-     * @return <code>true</code> if this element can be closed
-     */
-    public abstract boolean isCloseable();
-    
     
     /**
      * Ensures that {@link #close} contains an action when necessary.
@@ -145,12 +149,6 @@ public abstract class AbstractCDockable implements CDockable {
             close.add( control.createCloseAction( this ) );
     }
     
-    /**
-     * Shows or hides this dockable. If this dockable is not visible and
-     * is made visible, then the framework tries to set its location at
-     * the last known position.
-     * @param visible the new visibility state
-     */
     public void setVisible( boolean visible ){
         if( control == null )
             throw new IllegalStateException( "This CDockable does not know its CControl. Call CControl.add(...) to connect this CDockable befor calling setVisible(...)." );
@@ -163,11 +161,6 @@ public abstract class AbstractCDockable implements CDockable {
         }
     }
     
-    /**
-     * Tells whether this dockable is currently visible or not.
-     * @return <code>true</code> if this dockable can be accessed by the user
-     * through a graphical user interface.
-     */
     public boolean isVisible(){
         if( control == null )
             return false;
@@ -185,15 +178,6 @@ public abstract class AbstractCDockable implements CDockable {
         }
     }
     
-    /**
-     * Sets the location of this dockable. If this dockable is visible, than
-     * this method will take immediately effect. Otherwise the location will be
-     * stored in a cache and read as soon as this dockable is made visible.<br>
-     * Note that the location can only be seen as a hint, the framework tries
-     * to fit the location as good as possible, but there are no guarantees.
-     * @param location the new location, <code>null</code> is possible, but
-     * will not move the dockable immediately
-     */
     public void setLocation( CLocation location ){
         this.location = location;
         
@@ -205,12 +189,6 @@ public abstract class AbstractCDockable implements CDockable {
         }
     }
     
-    /**
-     * Gets the location of this dockable. If this dockable is visible, then
-     * a location will always be returned. Otherwise a location will only
-     * be returned if it just was set using {@link #setLocation(CLocation)}.
-     * @return the location or <code>null</code>
-     */
     public CLocation getLocation(){
         if( control != null && isVisible() ){
             return control.getStateManager().getLocation( dockable );
@@ -219,12 +197,6 @@ public abstract class AbstractCDockable implements CDockable {
         return location;
     }
     
-    /**
-     * Sets how and where this dockable should be shown. Conflicts with
-     * {@link #isExternalizable()}, {@link #isMaximizable()} and {@link #isMinimizable()}
-     * will just be ignored.
-     * @param extendedMode the size and location
-     */
     public void setExtendedMode( ExtendedMode extendedMode ){
         if( extendedMode == null )
             throw new NullPointerException( "extendedMode must not be null" );
@@ -248,11 +220,6 @@ public abstract class AbstractCDockable implements CDockable {
             control.getStateManager().setMode( dockable, extendedMode );
     }
     
-    /**
-     * Gets the size and location of this dockable.
-     * @return the size and location or <code>null</code> if this dockable
-     * is not part of an {@link CControl}.
-     */
     public ExtendedMode getExtendedMode(){
         CControlAccess control = control();
         if( control == null )
@@ -267,6 +234,24 @@ public abstract class AbstractCDockable implements CDockable {
     
     public CWorkingArea getWorkingArea() {
         return workingArea;
+    }
+    
+    public boolean isResizeLocked() {
+        return resizeLocked;
+    }
+    
+    /**
+     * Sets whether this dockable likes to remain with the same size all the time.
+     * @param resizeLocked <code>true</code> if the size of this dockable should
+     * be kept as long as possible.
+     */
+    public void setResizeLocked( boolean resizeLocked ) {
+        if( this.resizeLocked != resizeLocked ){
+            this.resizeLocked = resizeLocked;
+            
+            for( CDockablePropertyListener listener : propertyListeners() )
+                listener.resizeLockedChanged( this );
+        }
     }
     
     /**
@@ -292,25 +277,25 @@ public abstract class AbstractCDockable implements CDockable {
         if( control != null ){
             control.link( this, new CDockableAccess(){
                 public void informVisibility( boolean visible ) {
-                    for( CDockableListener listener : listeners() )
+                    for( CDockableStateListener listener : stateListeners() )
                         listener.visibilityChanged( AbstractCDockable.this );
                 }
                 public void informMode( ExtendedMode mode ) {
                     switch( mode ){
                         case EXTERNALIZED:
-                            for( CDockableListener listener : listeners() )
+                            for( CDockableStateListener listener : stateListeners() )
                                 listener.externalized( AbstractCDockable.this );
                             break;
                         case MINIMIZED:
-                            for( CDockableListener listener : listeners() )
+                            for( CDockableStateListener listener : stateListeners() )
                                 listener.minimized( AbstractCDockable.this );
                             break;
                         case MAXIMIZED:
-                            for( CDockableListener listener : listeners() )
+                            for( CDockableStateListener listener : stateListeners() )
                                 listener.maximized( AbstractCDockable.this );
                             break;
                         case NORMALIZED:
-                            for( CDockableListener listener : listeners() )
+                            for( CDockableStateListener listener : stateListeners() )
                                 listener.normalized( AbstractCDockable.this );
                             break;
                     }

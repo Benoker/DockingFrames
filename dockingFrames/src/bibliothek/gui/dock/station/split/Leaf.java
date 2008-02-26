@@ -116,10 +116,10 @@ public class Leaf extends SplitNode{
     }
     
     @Override
-    public void updateBounds( double x, double y, double width, double height, double factorW, double factorH ) {
-        super.updateBounds( x, y, width, height, factorW, factorH );
+    public void updateBounds( double x, double y, double width, double height, double factorW, double factorH, boolean components ) {
+        super.updateBounds( x, y, width, height, factorW, factorH, components );
         
-        if( displayer != null && displayer != getAccess().getFullScreenDockable() )
+        if( components && displayer != null && displayer != getAccess().getFullScreenDockable() )
             displayer.getComponent().setBounds( getBounds() );
     }
         

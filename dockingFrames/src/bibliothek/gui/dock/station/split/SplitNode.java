@@ -48,6 +48,9 @@ public abstract class SplitNode{
     private SplitNode parent;
     /** Bounds of this node on the station */
     protected double x, y, width, height;
+
+    /** the current bounds of this root */
+    private Rectangle currentBounds = new Rectangle();
     
     /**
      * Creates a new SplitNode.
@@ -189,20 +192,28 @@ public abstract class SplitNode{
      * to get the size of the node in pixel
      * @param factorH a factor to be multiplied with <code>y</code> and <code>height</code>
      * to get the size of the node in pixel 
+     * @param updateComponentBounds whether to update the bounds of {@link Component}s
+     * that are in the tree. If set to <code>false</code>, then all updates stay within
+     * the tree and the graphical user interface is not changed. That can be useful
+     * if more than one round of updates is necessary. If in doubt, set this parameter
+     * to <code>true</code>.
      */
     public void updateBounds( double x, double y, double width, 
-            double height, double factorW, double factorH ){
+            double height, double factorW, double factorH, boolean updateComponentBounds ){
         
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         access.getOwner().revalidate();
+        currentBounds = getBounds();
     }
     
     /**
      * Gets the size and location of this node in pixel where the point
-     * 0/0 is equal to the point 0/0 on the owner-station.
+     * 0/0 is equal to the point 0/0 on the owner-station. This method calculates
+     * these values anew, clients interested in the current bounds should
+     * use {@link #getCurrentBounds()}.
      * @return the size and location
      */
     public Rectangle getBounds(){
@@ -218,6 +229,18 @@ public abstract class SplitNode{
         rec.width = Math.max( 0, rec.width );
         rec.height = Math.max( 0, rec.height );
         return rec;
+    }
+    
+    /**
+     * Gets the current bounds of this root. The difference between the current
+     * bounds and the value {@link #getBounds()} is, that the current bounds are
+     * cached. The current bounds are calculated every time when 
+     * {@link #updateBounds(double, double, double, double, double, double) updateBounds} 
+     * is called, and then remain until the bounds are updated again.
+     * @return the current bounds
+     */
+    public Rectangle getCurrentBounds() {
+        return currentBounds;
     }
     
     /**
@@ -237,7 +260,7 @@ public abstract class SplitNode{
      * Gets the root of the tree in which this node is
      * @return the root or <code>null</code>
      */
-    protected Root getRoot(){
+    public Root getRoot(){
         if( parent == null )
             return null;
         return parent.getRoot();

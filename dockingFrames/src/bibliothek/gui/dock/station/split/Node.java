@@ -223,8 +223,8 @@ public class Node extends SplitNode{
     }
     
     @Override
-    public void updateBounds( double x, double y, double width, double height, double factorW, double factorH ) {
-        super.updateBounds( x, y, width, height, factorW, factorH );
+    public void updateBounds( double x, double y, double width, double height, double factorW, double factorH, boolean components ) {
+        super.updateBounds( x, y, width, height, factorW, factorH, components );
         
         divider = getAccess().validateDivider( divider, this );
         int dividerSize = getAccess().getOwner().getDividerSize();
@@ -235,11 +235,11 @@ public class Node extends SplitNode{
             double dividerLocation = width * divider;
             
             if( left != null )
-                left.updateBounds( x, y, dividerLocation - dividerWidth/2, height, factorW, factorH );
+                left.updateBounds( x, y, dividerLocation - dividerWidth/2, height, factorW, factorH, components );
             
             if( right != null )
                 right.updateBounds( x + dividerLocation + dividerWidth/2, y, 
-                    width - dividerLocation - dividerWidth/2, height, factorW, factorH );
+                    width - dividerLocation - dividerWidth/2, height, factorW, factorH, components );
             
             dividerBounds.setBounds(
                     (int)(( x+dividerLocation-dividerWidth/2 )*factorW + 0.5 ),
@@ -252,11 +252,11 @@ public class Node extends SplitNode{
             double dividerLocation = height * divider;
             
             if( left != null)
-                left.updateBounds( x, y, width, dividerLocation - dividerHeight / 2, factorW, factorH );
+                left.updateBounds( x, y, width, dividerLocation - dividerHeight / 2, factorW, factorH, components );
             
             if( right != null)
                 right.updateBounds( x, y + dividerLocation + dividerHeight / 2,
-                    width, height - dividerLocation - dividerHeight/2, factorW, factorH );
+                    width, height - dividerLocation - dividerHeight/2, factorW, factorH, components );
             
             dividerBounds.setBounds(
                     (int)(x*factorW + 0.5),

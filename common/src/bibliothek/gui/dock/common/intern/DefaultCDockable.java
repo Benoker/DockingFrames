@@ -30,7 +30,7 @@ import java.awt.Container;
 import javax.swing.Icon;
 
 import bibliothek.gui.dock.common.action.CAction;
-import bibliothek.gui.dock.common.event.CDockableListener;
+import bibliothek.gui.dock.common.event.CDockablePropertyListener;
 import bibliothek.gui.dock.common.intern.action.CSeparator;
 
 /**
@@ -261,7 +261,7 @@ public class DefaultCDockable extends AbstractCDockable{
         if( this.minimizable != minimizable ){
             this.minimizable = minimizable;
             
-            for( CDockableListener listener : listeners() )
+            for( CDockablePropertyListener listener : propertyListeners() )
                 listener.minimizableChanged( this );
             
             CControlAccess control = control();
@@ -284,7 +284,7 @@ public class DefaultCDockable extends AbstractCDockable{
         if( this.maximizable != maximizable ){
             this.maximizable = maximizable;
             
-            for( CDockableListener listener : listeners() )
+            for( CDockablePropertyListener listener : propertyListeners() )
                 listener.maximizableChanged( this );
             
             CControlAccess control = control();
@@ -307,7 +307,7 @@ public class DefaultCDockable extends AbstractCDockable{
         if( this.externalizable != externalizable ){
             this.externalizable = externalizable;
             
-            for( CDockableListener listener : listeners() )
+            for( CDockablePropertyListener listener : propertyListeners() )
                 listener.externalizableChanged( this );
             
             CControlAccess control = control();
@@ -318,7 +318,6 @@ public class DefaultCDockable extends AbstractCDockable{
         }
     }
     
-    @Override
     public boolean isCloseable(){
         return closeable;
     }
@@ -345,7 +344,7 @@ public class DefaultCDockable extends AbstractCDockable{
         if( this.closeable != closeable ){
             this.closeable = closeable;     
             updateClose();
-            for( CDockableListener listener : listeners() )
+            for( CDockablePropertyListener listener : propertyListeners() )
                 listener.closeableChanged( this );
         }
     }

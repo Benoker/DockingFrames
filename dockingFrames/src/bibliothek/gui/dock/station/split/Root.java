@@ -102,7 +102,7 @@ public class Root extends SplitNode{
     }
     
     @Override
-    protected Root getRoot() {
+    public Root getRoot() {
         return this;
     }
     
@@ -203,10 +203,10 @@ public class Root extends SplitNode{
     }
     
     @Override
-    public void updateBounds( double x, double y, double width, double height, double factorW, double factorH ) {
-        super.updateBounds( x, y, width, height, factorW, factorH );
+    public void updateBounds( double x, double y, double width, double height, double factorW, double factorH, boolean components ) {
+        super.updateBounds( x, y, width, height, factorW, factorH, components );
         if( child != null )
-            child.updateBounds( x, y, width, height, factorW, factorH );
+            child.updateBounds( x, y, width, height, factorW, factorH, components );
     }
 
     @Override

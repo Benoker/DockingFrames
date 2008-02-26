@@ -199,7 +199,6 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable{
         }
     }
     
-    @Override
     public boolean isCloseable() {
         return false;
     }

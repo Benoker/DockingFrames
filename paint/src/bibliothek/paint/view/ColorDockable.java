@@ -61,6 +61,7 @@ public class ColorDockable extends DefaultSingleCDockable{
 		setMaximizable( true );
 		setTitleText( "Color" );
 		setTitleIcon( Resources.getIcon( "dockable.color" ) );
+		setResizeLocked( true );
 		
 		colorButton = new JButton( new ColorIcon( 48, 48, manager.getColor() ));
 		colorButton.addActionListener( new ActionListener(){

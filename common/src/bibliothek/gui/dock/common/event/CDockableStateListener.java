@@ -29,39 +29,11 @@ import bibliothek.gui.dock.common.intern.CDockable;
 
 /**
  * A listener added to a {@link CDockable}, this listener will get informed
- * about changes of {@link CDockable}.
+ * about state changes of {@link CDockable}.
  * @author Benjamin Sigg
- *
  */
-public interface CDockableListener {
-    /**
-     * Called when the {@link CDockable#isCloseable() closeable}-property has 
-     * changed.
-     * @param dockable the source of the event
-     */
-    public void closeableChanged( CDockable dockable );
-    
-    /**
-     * Called when the {@link CDockable#isMinimizable() minimizable}-property
-     * has changed.
-     * @param dockable the source of the event
-     */
-    public void minimizableChanged( CDockable dockable );
-    
-    /**
-     * Called when the {@link CDockable#isMaximizable() maximizable}-property
-     * has changed.
-     * @param dockable the source of the event
-     */
-    public void maximizableChanged( CDockable dockable );
-    
-    /**
-     * Called when the {@link CDockable#isExternalizable() externalizable}-property
-     * has changed.
-     * @param dockable the source of the event
-     */
-    public void externalizableChanged( CDockable dockable );
-    
+public interface CDockableStateListener {
+
     /**
      * Called when the {@link CDockable#isVisible() visibility}-property
      * has changed. Please read the notes of {@link CDockable#isVisible()} to

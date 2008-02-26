@@ -136,7 +136,7 @@ public class ViewManager {
      */
     public void open( Picture picture ){
         final PictureDockable page = new PictureDockable( pageFactory );
-        page.addCDockableListener( new CDockableAdapter(){
+        page.addCDockableStateListener( new CDockableAdapter(){
             @Override
             public void visibilityChanged( CDockable dockable ) {
                 if( dockable.isVisible() ){
@@ -204,7 +204,7 @@ public class ViewManager {
             if( picture == null )
                 return null;
             final PictureDockable page = new PictureDockable( this );
-            page.addCDockableListener( new CDockableAdapter(){
+            page.addCDockableStateListener( new CDockableAdapter(){
                 @Override
                 public void visibilityChanged( CDockable dockable ) {
                     if( dockable.isVisible() ){

@@ -88,5 +88,6 @@
 - Bugfix: SingleParentRemover removed DockStations when DockUI updated DockTheme
 - API: The tree of a SplitDockStation is now accessible and modifiable from outside
 - API: New SplitLayoutManager calculates where to drop, and how to divide, elements of a SplitDockStation
-
+- API: CDockables can now try to lock their size during resize
+- API: CDockableListener divided into CDockableStateListener and CDockablePropertyListener
 

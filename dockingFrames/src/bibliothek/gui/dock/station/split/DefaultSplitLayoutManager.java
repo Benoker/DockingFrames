@@ -373,6 +373,6 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
     
     public void updateBounds( Root root, double x, double y, double width,
             double height, double factorW, double factorH ) {
-        root.updateBounds( x, y, width, height, factorW, factorH );
+        root.updateBounds( x, y, width, height, factorW, factorH, true );
     }
 }

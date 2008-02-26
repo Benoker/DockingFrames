@@ -29,7 +29,8 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CWorkingArea;
-import bibliothek.gui.dock.common.event.CDockableListener;
+import bibliothek.gui.dock.common.event.CDockablePropertyListener;
+import bibliothek.gui.dock.common.event.CDockableStateListener;
 
 /**
  * A basic element representing some {@link java.awt.Component}.
@@ -52,35 +53,48 @@ public interface CDockable {
 	}
 	
 	/**
-	 * Adds a listener to this dockable, the listener will be informed of
+	 * Adds a state listener to this dockable, the listener will be informed of
 	 * changes of this dockable.
 	 * @param listener the new listener
 	 */
-	public void addCDockableListener( CDockableListener listener );
+	public void addCDockableStateListener( CDockableStateListener listener );
+	
+    /**
+     * Adds a property listener to this dockable, the listener will be informed of
+     * changes of this dockable.
+     * @param listener the new listener
+     */
+	public void addCDockablePropertyListener( CDockablePropertyListener listener );
 	
 	/**
-	 * Removes a listener from this dockable.
+	 * Removes a state listener from this dockable.
 	 * @param listener the listener to remove
 	 */
-	public void removeCDockableListener( CDockableListener listener );
+	public void removeCDockableStateListener( CDockableStateListener listener );
+
+	/**
+     * Removes a property listener from this dockable.
+     * @param listener the listener to remove
+     */
+	public void removeCDockablePropertyListener( CDockablePropertyListener listener );
 	
 	/**
 	 * Tells whether this dockable can be minimized by the user.
 	 * @return <code>true</code> if this element can be minimized
 	 */
-	public abstract boolean isMinimizable();
+	public boolean isMinimizable();
 	
 	/**
 	 * Tells whether this dockable can be maximized by the user.
 	 * @return <code>true</code> if this element can be maximized
 	 */
-	public abstract boolean isMaximizable();
+	public boolean isMaximizable();
 	
 	/**
 	 * Tells whether this dockable can be externalized by the user.
 	 * @return <code>true</code> if this element can be externalized
 	 */
-	public abstract boolean isExternalizable();
+	public boolean isExternalizable();
 	
 	/**
 	 * Tells whether this dockable can be combined with another
@@ -88,13 +102,23 @@ public interface CDockable {
 	 * @return <code>true</code> if this element can be combined with
 	 * another dockable, normally <code>true</code> should be the answer.
 	 */
-	public abstract boolean isStackable();
+	public boolean isStackable();
 	
 	/**
 	 * Tells whether this dockable can be closed by the user.
 	 * @return <code>true</code> if this element can be closed
 	 */
-	public abstract boolean isCloseable();
+	public boolean isCloseable();
+	
+	/**
+	 * Tells whether the size of this dockable should remain the same when
+	 * its parent changes the size. This has only effect if the parent can
+	 * choose the size of its children. A lock is no guarantee for staying
+	 * with the same size, the user still can resize this dockable.
+	 * @return <code>true</code> if the size of this dockable should remain
+	 * the same during resize events of the parent.
+	 */
+	public boolean isResizeLocked();
 	
 	/**
 	 * Shows or hides this dockable. If this dockable is not visible and

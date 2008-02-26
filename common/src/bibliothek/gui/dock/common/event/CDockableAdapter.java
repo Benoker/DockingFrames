@@ -28,13 +28,17 @@ package bibliothek.gui.dock.common.event;
 import bibliothek.gui.dock.common.intern.CDockable;
 
 /**
- * A class implementing all methods of {@link CDockableListener}. The methods
- * have an empty body and can be overriden by subclasses.
+ * A class implementing all methods of {@link CDockableStateListener}
+ * and {@link CDockablePropertyListener}.
+ * The methods have an empty body and can be overridden by subclasses.
  * @author Benjamin Sigg
- *
  */
-public class CDockableAdapter implements CDockableListener {
+public class CDockableAdapter implements CDockableStateListener, CDockablePropertyListener {
     public void closeableChanged( CDockable dockable ) {
+        // empty
+    }
+    
+    public void resizeLockedChanged( CDockable dockable ) {
         // empty
     }
 

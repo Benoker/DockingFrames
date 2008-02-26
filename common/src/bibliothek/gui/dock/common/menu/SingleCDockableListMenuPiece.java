@@ -140,13 +140,13 @@ public class SingleCDockableListMenuPiece extends CloseableDockableMenuPiece {
         @Override
         public void added( DockFrontend frontend, Dockable dockable ) {
             if( dockable instanceof CommonDockable ){
-                ((CommonDockable)dockable).getDockable().addCDockableListener( listener );
+                ((CommonDockable)dockable).getDockable().addCDockablePropertyListener( listener );
             }
         }
         @Override
         public void removed( DockFrontend frontend, Dockable dockable ) {
             if( dockable instanceof CommonDockable ){
-                ((CommonDockable)dockable).getDockable().removeCDockableListener( listener );
+                ((CommonDockable)dockable).getDockable().removeCDockablePropertyListener( listener );
             }
         }
     }
