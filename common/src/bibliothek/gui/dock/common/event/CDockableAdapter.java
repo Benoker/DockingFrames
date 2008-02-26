@@ -65,6 +65,14 @@ public class CDockableAdapter implements CDockableStateListener, CDockableProper
     public void minimized( CDockable dockable ) {
         // empty
     }
+    
+    public void minimizedHoldChanged( CDockable dockable ) {
+        // empty
+    }
+    
+    public void minimizeSizeChanged( CDockable dockable ) {
+        // empty
+    }
 
     public void normalized( CDockable dockable ) {
         // empty

@@ -41,7 +41,7 @@ public class FlapDockStationLayout implements DockLayout {
     private boolean[] holds;
     
     /** the size of the window */
-    private int size;
+    private int[] sizes;
     
     /** whether the direction of the window is chosen automatically or not */
     private boolean autoDirection;
@@ -56,18 +56,18 @@ public class FlapDockStationLayout implements DockLayout {
      * Creates a new layout
      * @param children the ids of the children of the station
      * @param holds the holding state of the children
-     * @param size the size of the window
+     * @param sizes the sizes of the window
      * @param autoDirection whether the direction of the window is chosen
      * automatically
      * @param direction the direction into which the window opens
      */
     public FlapDockStationLayout(
-            int[] children, boolean[] holds, int size,
+            int[] children, boolean[] holds, int[] sizes,
             boolean autoDirection, Direction direction ) {
         
         this.children = children;
         this.holds = holds;
-        this.size = size;
+        this.sizes = sizes;
         this.autoDirection = autoDirection;
         this.direction = direction;
     }
@@ -97,11 +97,11 @@ public class FlapDockStationLayout implements DockLayout {
     }
     
     /**
-     * Gets the size of the window
+     * Gets the sizes of the window
      * @return the size in pixel
      */
-    public int getSize() {
-        return size;
+    public int[] getSizes() {
+        return sizes;
     }
     
     /**

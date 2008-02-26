@@ -37,6 +37,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
+import bibliothek.util.xml.XAttribute;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -55,7 +56,9 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
             Map<Dockable, Integer> children ) {
         
         List<Integer> ids = new ArrayList<Integer>();
+        
         List<Boolean> holding = new ArrayList<Boolean>();
+        List<Integer> sizes = new ArrayList<Integer>();
         
         for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
             Dockable dockable = station.getDockable( i );
@@ -63,25 +66,27 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
             if( id != null ){
                 ids.add( id );
                 holding.add( station.isHold( dockable ));
+                sizes.add( station.getWindowSize( dockable ));
             }
         }
         
         int[] idArray = new int[ ids.size() ];
         boolean[] holdingArray = new boolean[ ids.size() ];
+        int[] sizeArray = new int[ ids.size() ];
         for( int i = 0, n = ids.size(); i<n; i++ ){
             idArray[i] = ids.get( i );
             holdingArray[i] = holding.get( i );
+            sizeArray[i] = sizes.get( i );
         }
         
         return new FlapDockStationLayout( idArray, holdingArray, 
-                station.getWindowSize(), station.isAutoDirection(),
+                sizeArray, station.isAutoDirection(),
                 station.getDirection() );
     }
     
     public void setLayout( FlapDockStation station, FlapDockStationLayout layout ) {
         station.setDirection( layout.getDirection() );
         station.setAutoDirection( layout.isAutoDirection() );
-        station.setWindowSize( layout.getSize() );
     }
     
     public void setLayout( FlapDockStation station,
@@ -92,16 +97,17 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
         
         station.setDirection( layout.getDirection() );
         station.setAutoDirection( layout.isAutoDirection() );
-        station.setWindowSize( layout.getSize() );
         
         int[] ids = layout.getChildren();
         boolean[] holding = layout.getHolds();
+        int[] sizes = layout.getSizes();
         
         for( int i = 0, n = ids.length; i<n; i++ ){
             Dockable dockable = children.get( ids[i] );
             if( dockable != null ){
                 station.add( dockable );
                 station.setHold( dockable, holding[i] );
+                station.setWindowSize( dockable, sizes[i] );
             }
         }
     }
@@ -125,37 +131,37 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
      
         out.writeBoolean( layout.isAutoDirection() );
         out.writeInt( layout.getDirection().ordinal() );
-        out.writeInt( layout.getSize() );
         
         int count = layout.getChildren().length;
         out.writeInt( count );
         for( int i = 0; i < count; i++ ){
             out.writeInt( layout.getChildren()[i] );
             out.writeBoolean( layout.getHolds()[i] );
+            out.writeInt( layout.getSizes()[i] );
         }
     }
 
     public FlapDockStationLayout read( DataInputStream in ) throws IOException {
         boolean auto = in.readBoolean();
         Direction direction = Direction.values()[ in.readInt() ];
-        int size = in.readInt();
         int count = in.readInt();
         
         int[] ids = new int[ count ];
         boolean[] holds = new boolean[ count ];
+        int[] sizes = new int[ count ];
         
         for( int i = 0; i < count; i++ ){
             ids[i] = in.readInt();
             holds[i] = in.readBoolean();
+            sizes[i] = in.readInt();
         }
         
-        return new FlapDockStationLayout( ids, holds, size, auto, direction );
+        return new FlapDockStationLayout( ids, holds, sizes, auto, direction );
     }
 
     public void write( FlapDockStationLayout layout, XElement element ) {
         XElement window = element.addElement( "window" );
         window.addBoolean( "auto", layout.isAutoDirection() );
-        window.addInt( "size", layout.getSize() );
         window.addString( "direction", layout.getDirection().name() );
         
         XElement children = element.addElement( "children" );
@@ -163,6 +169,7 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
             XElement child = children.addElement( "child" );
             child.addInt( "id", layout.getChildren()[i] );
             child.addBoolean( "hold", layout.getHolds()[i] );
+            child.addInt( "size", layout.getSizes()[i] );
         }
     }
     
@@ -173,6 +180,19 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
         
         int[] ids = new int[ child.length ];
         boolean[] holds = new boolean[ child.length ];
+        int[] sizes = new int[ child.length ];
+        
+        XAttribute sizeAttribute = window.getAttribute( "size" );
+        if( sizeAttribute != null ){
+            int size = sizeAttribute.getInt();
+            for( int i = 0; i < sizes.length; i++ )
+                sizes[i] = size;
+        }
+        else{
+            for( int i = 0, n = child.length; i<n; i++ ){
+                sizes[i] = child[i].getInt( "size" );
+            }
+        }
         
         for( int i = 0, n = child.length; i<n; i++ ){
             ids[i] = child[i].getInt( "id" );
@@ -180,7 +200,7 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
         }
         
         return new FlapDockStationLayout( ids, holds, 
-                window.getInt( "size" ), window.getBoolean( "auto" ),
+                sizes, window.getBoolean( "auto" ),
                 Direction.valueOf( window.getString( "direction" ) ));
     }
     

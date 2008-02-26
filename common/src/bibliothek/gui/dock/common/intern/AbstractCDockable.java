@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.common.intern;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,6 +70,12 @@ public abstract class AbstractCDockable implements CDockable {
     
     /** whether this element likes to have the same size all the time */
     private boolean resizeLocked = false;
+    
+    /** whether to remain visible when minimized and unfocused or not */
+    private boolean minimizeHold = false;
+    
+    /** the preferred size when minimized */
+    private Dimension minimizeSize = new Dimension( -1, -1 );
     
     /** Source that contains the action that closes this dockable */
     private DefaultDockActionSource close = new DefaultDockActionSource(
@@ -252,6 +259,28 @@ public abstract class AbstractCDockable implements CDockable {
             for( CDockablePropertyListener listener : propertyListeners() )
                 listener.resizeLockedChanged( this );
         }
+    }
+    
+    public void setMinimizedHold( boolean hold ) {
+        if( this.minimizeHold != hold ){
+            this.minimizeHold = hold;
+            for( CDockablePropertyListener listener : propertyListeners() )
+                listener.minimizedHoldChanged( this );
+        }
+    }
+    
+    public boolean isMinimizedHold() {
+        return minimizeHold;
+    }
+    
+    public void setMinimizedSize( Dimension size ) {
+        minimizeSize = new Dimension( size.width, size.height );
+        for( CDockablePropertyListener listener : propertyListeners() )
+            listener.minimizeSizeChanged( this );
+    }
+    
+    public Dimension getMinimizedSize() {
+        return new Dimension( minimizeSize.width, minimizeSize.height );
     }
     
     /**

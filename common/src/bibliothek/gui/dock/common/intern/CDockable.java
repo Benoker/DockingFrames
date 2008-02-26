@@ -25,6 +25,8 @@
  */
 package bibliothek.gui.dock.common.intern;
 
+import java.awt.Dimension;
+
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
@@ -192,6 +194,36 @@ public interface CDockable {
      * @return the parent or <code>null</code>
      */
     public CWorkingArea getWorkingArea();
+    
+    /**
+     * Sets the size of this dockable when this dockable is minimized and
+     * on a popup window.
+     * @param size the size
+     */
+    public void setMinimizedSize( Dimension size );
+    
+    /**
+     * Gets the size which is used when this dockable is minimzed and
+     * on a popup window. If a value below 0 is set, then the default size
+     * is used.
+     * @return the size
+     */
+    public Dimension getMinimizedSize();
+    
+    /**
+     * Sets whether this dockable should remain visible when minimized
+     * and without focus.
+     * @param hold whether to remain visible
+     */
+    public void setMinimizedHold( boolean hold );
+    
+    /**
+     * Tells whether this dockable remains visible when minimized and 
+     * without focus.
+     * @return <code>true</code> if this remains visible, <code>false</code>
+     * otherwise 
+     */
+    public boolean isMinimizedHold();
     
 	/**
 	 * Gets the intern representation of this dockable.

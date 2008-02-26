@@ -48,7 +48,7 @@ public interface CDockableStateListener {
      * @param dockable the source of the event
      */
     public void minimized( CDockable dockable );
-    
+ 
     /**
      * Called when the <code>dockable</code> has been maximized.
      * @param dockable the source of the event

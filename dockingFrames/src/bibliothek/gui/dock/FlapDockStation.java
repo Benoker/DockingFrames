@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -65,6 +65,8 @@ import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.PropertyValue;
 
 /**
  * This {@link DockStation} shows only a title for each of it's children.<br>
@@ -93,6 +95,26 @@ public class FlapDockStation extends AbstractDockableStation {
      */
     public static final String BUTTON_TITLE_ID = "flap button";
     
+    /**
+     * Key for the {@link FlapLayoutManager} that is used by all {@link FlapDockStation}s.
+     */
+    public static final PropertyKey<FlapLayoutManager> LAYOUT_MANAGER = new PropertyKey<FlapLayoutManager>(
+            "flap dock station layout manager", new DefaultFlapLayoutManager() );
+    
+    /**
+     * The layoutManager which is responsible to layout this station
+     */
+    private PropertyValue<FlapLayoutManager> layoutManager = new PropertyValue<FlapLayoutManager>( LAYOUT_MANAGER ){
+        @Override
+        protected void valueChanged( FlapLayoutManager oldValue, FlapLayoutManager newValue ) {
+            if( oldValue != null )
+                oldValue.uninstall( FlapDockStation.this );
+            
+            if( newValue != null )
+                newValue.install( FlapDockStation.this );
+        }
+    };
+    
     /** The direction in which the popup-window is, in respect to this station */
     private Direction direction = Direction.SOUTH;
     /** 
@@ -103,12 +125,12 @@ public class FlapDockStation extends AbstractDockableStation {
     
     /** The popup-window */
     private FlapWindow window;
-    /** The size of the popup-window */
-    private int windowSize = 400;
     /** The size of the border, which can be grabbed by ther user, of the popup-window */
     private int windowBorder = 3;
     /** The minimal size of the popup-window */
     private int windowMinSize = 25;
+    /** The initial size of windows, can be overridden by the layout manager */
+    private int defaultWindowSize = 400;
     
     /** 
      * This variable is set when the front-dockable is removed, because
@@ -158,15 +180,8 @@ public class FlapDockStation extends AbstractDockableStation {
      */
     private boolean smallButtons = true;
     
-    /**
-     * A map that tells for every {@link Dockable} whether it should remain
-     * on the popup-window even if it has lost the focus, or if it should
-     * not remain on the window.
-     */
-    private Map<Dockable, Boolean> hold = new HashMap<Dockable, Boolean>();
     /** 
-     * An action that will be added to all children of this station. The
-     * user can change the {@link #hold}-property with this action. 
+     * An action that will be added to all children of this station.
      */
     private ListeningDockAction holdAction;
     
@@ -177,6 +192,8 @@ public class FlapDockStation extends AbstractDockableStation {
     
     /** Manager for the visibility of the children of this station */
     private DockableVisibilityManager visibility;
+    
+    
     
     /**
      * Defaultconstructor of a {@link FlapDockStation}
@@ -295,6 +312,7 @@ public class FlapDockStation extends AbstractDockableStation {
     
             super.setController(controller);
             displayers.setController( controller );
+            layoutManager.setProperties( controller );
             
             if( holdAction != null )
                 holdAction.setController( controller );
@@ -579,23 +597,33 @@ public class FlapDockStation extends AbstractDockableStation {
      * @see #setHold(Dockable, boolean)
      */
     public boolean isHold( Dockable dockable ) {
-        Boolean value = hold.get( dockable );
-        if( value == null )
-            return false;
-        else
-            return value;
+        return layoutManager.getValue().isHold( this, dockable );
     }
     
     /**
      * Tells whether the station should close the popup when the 
      * {@link Dockable} looses the focus, or if the popup should
-     * remain open until the user closes the popup.
+     * remain open until the user closes the popup. The value is forwarded
+     * to the {@link FlapLayoutManager layout manager} of this station, the
+     * layout manager can then decide if and how it would like to react. 
      * @param dockable the {@link Dockable} whose settings should change
      * @param hold <code>true</code> if the popup should remain open,
      * <code>false</code> if it should close
      */
     public void setHold( Dockable dockable, boolean hold ) {
-        this.hold.put( dockable, hold );
+        boolean old = layoutManager.getValue().isHold( this, dockable );
+        layoutManager.getValue().setHold( this, dockable, hold );
+        hold = layoutManager.getValue().isHold( this, dockable );
+        if( old != hold )
+            updateHold( dockable );
+    }
+    
+    /**
+     * Updates the hold property of <code>dockable</code>.
+     * The new valie is provided by the {@link FlapLayoutManager layout manager}.
+     */
+    public void updateHold( Dockable dockable ){
+        boolean hold = layoutManager.getValue().isHold( this, dockable );
         fireHoldChanged( dockable, hold );
         
         if( !hold && getController() != null && getFrontDockable() == dockable ){
@@ -687,22 +715,73 @@ public class FlapDockStation extends AbstractDockableStation {
     
     /**
      * Gets the current size of the popup-window
+     * @param dockable the element for which the size should be returned
      * @return the current size
      */
-    public int getWindowSize(){
-        return windowSize;
+    public int getWindowSize( Dockable dockable ){
+        return layoutManager.getValue().getSize( this, dockable );
     }
     
     /**
-     * Sets the size of the popup-window.
+     * Sets the size of the popup-window for <code>dockable</code>. The
+     * value will be forwarded to the {@link FlapLayoutManager layout manager}
+     * of this station, the layout manager can decide if and how the new size
+     * is to be stored.
+     * @param dockable the element for which the size should be set
      * @param size the size, at least 0
      */
-    public void setWindowSize( int size ){
+    public void setWindowSize( Dockable dockable, int size ){
         if( size < 0 )
             throw new IllegalArgumentException( "Size must at least be 0" );
         
-        windowSize = size;
-        updateWindowBounds();
+        layoutManager.getValue().setSize( this, dockable, size );
+        updateWindowSize( dockable );
+    }
+    
+    /**
+     * Updates the size of the window if <code>dockable</code> is currently
+     * shown. The new size is provided by the {@link FlapLayoutManager layout manager}.
+     * @param dockable the element whose size should be updated
+     */
+    public void updateWindowSize( Dockable dockable ){
+        if( getFrontDockable() == dockable ){
+            updateWindowBounds();
+        }
+    }
+    
+    /**
+     * Sets the default size a window should have. This property might be
+     * overridden by the {@link FlapLayoutManager layout manager}.
+     * @param defaultWindowSize the default size of windows
+     */
+    public void setDefaultWindowSize( int defaultWindowSize ) {
+        this.defaultWindowSize = defaultWindowSize;
+    }
+    
+    /**
+     * Gets the default size of a new window.
+     * @return the default size
+     */
+    public int getDefaultWindowSize() {
+        return defaultWindowSize;
+    }
+    
+    /**
+     * Sets the layout manager which should be used by this station. The
+     * manager can be changed on a global level using {@link #LAYOUT_MANAGER}.
+     * @param manager the manager or <code>null</code> when a default
+     * manager should be used
+     */
+    public void setFlapLayoutManager( FlapLayoutManager manager ){
+        layoutManager.setValue( manager );
+    }
+    
+    /**
+     * Gets the layout manager which was explicitly set by {@link #setFlapLayoutManager(FlapLayoutManager)}.
+     * @return the manager or <code>null</code>
+     */
+    public FlapLayoutManager getFlapLayoutManager(){
+        return layoutManager.getOwnValue();
     }
     
     /**
@@ -1054,7 +1133,6 @@ public class FlapDockStation extends AbstractDockableStation {
         listeners.fireDockableRemoving( dockable );
         dockable.setDockParent( null );
         dockables.remove( index );
-        hold.remove( dockable );
         
         DockTitle title = buttonTitles.get( dockable );
         if( title != null )

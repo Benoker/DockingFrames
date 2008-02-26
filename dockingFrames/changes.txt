@@ -90,4 +90,6 @@
 - API: New SplitLayoutManager calculates where to drop, and how to divide, elements of a SplitDockStation
 - API: CDockables can now try to lock their size during resize
 - API: CDockableListener divided into CDockableStateListener and CDockablePropertyListener
-
+- API: FlapDockStation uses now a FlapLayoutManager to arrange its children
+! API: Streamed FlapDockLayout broken compared to previous version.
+- API: The size and hold-property of a minimized CDockable are now stored and remain on different FlapDockStations  

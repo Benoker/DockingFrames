@@ -279,33 +279,36 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
      * Recalculates the size and the location of this window.
      */
     public void updateBounds(){
-        Point location;
-        Dimension size;
-        FlapDockStation.Direction direction = station.getDirection();
-        int windowSize = station.getWindowSize();
-        Rectangle bounds = station.getExpansionBounds();
-        
-        if( direction == Direction.SOUTH ){
-            location = new Point( bounds.x, bounds.height );
-            size = new Dimension( bounds.width, windowSize );
+        Dockable dockable = displayer == null ? null : displayer.getDockable();
+        if( dockable != null ){
+            Point location;
+            Dimension size;
+            FlapDockStation.Direction direction = station.getDirection();
+            int windowSize = station.getWindowSize( dockable );
+            Rectangle bounds = station.getExpansionBounds();
+            
+            if( direction == Direction.SOUTH ){
+                location = new Point( bounds.x, bounds.height );
+                size = new Dimension( bounds.width, windowSize );
+            }
+            else if( direction == Direction.NORTH ){
+                location = new Point( bounds.x, -windowSize );
+                size = new Dimension( bounds.width, windowSize );
+            }
+            else if( direction == Direction.WEST ){
+                location = new Point( -windowSize, bounds.y );
+                size = new Dimension( windowSize, bounds.height );
+            }
+            else{
+                location = new Point( bounds.width, bounds.y );
+                size = new Dimension( windowSize, bounds.height );
+            }
+            
+            SwingUtilities.convertPointToScreen( location, buttonPane );
+            setLocation( location );
+            setSize( size );
+            validate();
         }
-        else if( direction == Direction.NORTH ){
-            location = new Point( bounds.x, -windowSize );
-            size = new Dimension( bounds.width, windowSize );
-        }
-        else if( direction == Direction.WEST ){
-            location = new Point( -windowSize, bounds.y );
-            size = new Dimension( windowSize, bounds.height );
-        }
-        else{
-            location = new Point( bounds.width, bounds.y );
-            size = new Dimension( windowSize, bounds.height );
-        }
-        
-        SwingUtilities.convertPointToScreen( location, buttonPane );
-        setLocation( location );
-        setSize( size );
-        validate();
     }
     
     public void mouseExited( MouseEvent e ) {
@@ -334,27 +337,30 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
     
     public void mouseDragged( MouseEvent e ) {
         if( pressed ){
-            Point mouse = new Point( e.getX(), e.getY() );
-            SwingUtilities.convertPointToScreen( mouse, e.getComponent() );
-            
-            Component flap = station.getComponent();
-            
-            Point zero = new Point( 0, 0 );
-            SwingUtilities.convertPointToScreen( zero, flap );
-            
-            int size = 0;
-            
-            if( station.getDirection() == Direction.SOUTH )
-                size = mouse.y - zero.y - flap.getHeight();
-            else if( station.getDirection() == Direction.NORTH )
-                size = zero.y - mouse.y;
-            else if( station.getDirection() == Direction.EAST )
-                size = mouse.x - zero.x - flap.getWidth();
-            else
-                size = zero.x - mouse.x;
-            
-            size = Math.max( size, station.getWindowMinSize() );
-            station.setWindowSize( size );
+            Dockable dockable = displayer == null ? null : displayer.getDockable();
+            if( dockable != null ){
+                Point mouse = new Point( e.getX(), e.getY() );
+                SwingUtilities.convertPointToScreen( mouse, e.getComponent() );
+                
+                Component flap = station.getComponent();
+                
+                Point zero = new Point( 0, 0 );
+                SwingUtilities.convertPointToScreen( zero, flap );
+                
+                int size = 0;
+                
+                if( station.getDirection() == Direction.SOUTH )
+                    size = mouse.y - zero.y - flap.getHeight();
+                else if( station.getDirection() == Direction.NORTH )
+                    size = zero.y - mouse.y;
+                else if( station.getDirection() == Direction.EAST )
+                    size = mouse.x - zero.x - flap.getWidth();
+                else
+                    size = zero.x - mouse.x;
+                
+                size = Math.max( size, station.getWindowMinSize() );
+                station.setWindowSize( dockable, size );
+            }
         }
     }
     
