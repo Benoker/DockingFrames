@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -76,6 +76,7 @@ public class FlatTheme extends BasicTheme{
      * Creates a new theme
      */
     public FlatTheme() {
+        setColorScheme( new FlatColorScheme() );
         setPaint( new FlatStationPaint() );
         setTitleFactory( new FlatTitleFactory() );
         setDisplayerFactory( new FlatDisplayerFactory( false ));
@@ -184,6 +185,44 @@ public class FlatTheme extends BasicTheme{
         			stack.setStackComponent( new DefaultStackDockComponent( stack ) );
         	}
         }
+    }
+    
+    @Override
+    protected void updateColors( DockController[] controllers ) {
+        for( DockController controller : controllers )
+            controller.getColors().lockUpdate();
+        
+        super.updateColors( controllers );
+        
+        updateColor( controllers, "title.active.left", null );
+        updateColor( controllers, "title.inactive.left", null );
+        updateColor( controllers, "title.active.right", null );
+        updateColor( controllers, "title.inactive.right", null );
+        updateColor( controllers, "title.active.text", null );
+        updateColor( controllers, "title.inactive.text", null );
+        
+        updateColor( controllers, "paint.line", null );
+        updateColor( controllers, "paint.divider", null );
+        updateColor( controllers, "paint.insertion.area", null );
+        updateColor( controllers, "paint.insertion.border", null );
+        
+        updateColor( controllers, "stack.tab.border.out.selected", null );
+        updateColor( controllers, "stack.tab.border.center.selected", null );
+        updateColor( controllers, "stack.tab.border.out", null );
+        updateColor( controllers, "stack.tab.border.center", null );
+        updateColor( controllers, "stack.tab.border", null );
+                        
+        updateColor( controllers, "stack.tab.background.top.selected", null ); 
+        updateColor( controllers, "stack.tab.background.bottom.selected", null );
+        updateColor( controllers, "stack.tab.background.top", null );
+        updateColor( controllers, "stack.tab.background.bottom", null );
+        updateColor( controllers, "stack.tab.background", null );
+            
+        updateColor( controllers, "stack.tab.foreground", null );
+        updateColor( controllers, "stack.tab.foreground.selected",  null );
+        
+        for( DockController controller : controllers )
+            controller.getColors().unlockUpdate();
     }
     
     /**

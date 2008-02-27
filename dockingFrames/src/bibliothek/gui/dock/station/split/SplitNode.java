@@ -235,7 +235,7 @@ public abstract class SplitNode{
      * Gets the current bounds of this root. The difference between the current
      * bounds and the value {@link #getBounds()} is, that the current bounds are
      * cached. The current bounds are calculated every time when 
-     * {@link #updateBounds(double, double, double, double, double, double) updateBounds} 
+     * {@link #updateBounds(double, double, double, double, double, double, boolean) updateBounds} 
      * is called, and then remain until the bounds are updated again.
      * @return the current bounds
      */

@@ -32,7 +32,7 @@ import javax.swing.JComponent;
 import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.themes.basic.color.TitleColor;
+import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.title.AbstractDockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.color.ColorCodes;
@@ -139,6 +139,12 @@ public class BubbleDockTitle extends AbstractDockTitle {
                 updateAnimation( false );
             }
         });
+    }
+    
+    @Override
+    public void bind() {
+        super.bind();
+        animation.kick();
     }
     
     @Override

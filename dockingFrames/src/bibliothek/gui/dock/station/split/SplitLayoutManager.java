@@ -119,7 +119,7 @@ public interface SplitLayoutManager {
     
     /**
      * Called when the bounds of all {@link DockableDisplayer} of a station have
-     * to be updated. Subclasses normally can just call {@link Root#updateBounds(double, double, double, double, double, double)}.
+     * to be updated. Subclasses normally can just call {@link Root#updateBounds(double, double, double, double, double, double, boolean)}.
      * @param root the root of a tree of {@link Dockable}s
      * @param x the left bound
      * @param y the top bound

@@ -26,15 +26,16 @@
 
 package bibliothek.extension.gui.dock.theme.flat;
 
-import java.awt.Color;
-
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.themes.basic.BasicDockTitle;
-import bibliothek.gui.dock.title.*;
+import bibliothek.gui.dock.title.AbstractDockTitle;
+import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.title.DockTitleFactory;
+import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
  * A factory that creates instances of {@link BasicDockTitle}, but
@@ -45,23 +46,7 @@ import bibliothek.gui.dock.title.*;
  */
 public class FlatTitleFactory implements DockTitleFactory{
     public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
-        BasicDockTitle title = new BasicDockTitle( dockable, version ){
-            @Override
-            public void updateUI() {
-                super.updateUI();
-                if( getDockable() != null ){
-                    Color background = getDockable().getComponent().getBackground();
-                    setInactiveRightColor( background );
-                    setActiveRightColor( background );
-                }
-            }
-        };
-        
-        Color background = dockable.getComponent().getBackground();
-        title.setInactiveRightColor( background );
-        title.setActiveRightColor( background );
-        
-        return title;
+        return new BasicDockTitle( dockable, version );
     }
     
     public <D extends Dockable & DockStation> DockTitle createStationTitle( 

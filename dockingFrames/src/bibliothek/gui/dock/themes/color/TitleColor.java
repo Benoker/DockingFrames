@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.themes.basic.color;
+package bibliothek.gui.dock.themes.color;
 
 import java.awt.Color;
 

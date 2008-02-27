@@ -35,7 +35,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
-import bibliothek.gui.dock.themes.basic.color.ActionColor;
+import bibliothek.gui.dock.themes.color.ActionColor;
 import bibliothek.gui.dock.util.color.ColorCodes;
 
 /**
@@ -109,6 +109,8 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 	public void setController( DockController controller ){
 	    for( RoundActionColor color : colors )
 	        color.connect( controller );
+	    
+	    animation.kick();
 	}
 	
     public BasicButtonModel getModel() {
@@ -164,10 +166,6 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 		g2.fillOval( 0, 0, getWidth(), getHeight() );
 		g2.dispose();
 
-		/*
-		 * Icon der DockAction (sofern es ein Icon gibt).
-		 */
-		//	Icon icon = action.getIcon( dockable );
         Icon icon = model.getPaintIcon();
 		if( icon != null ){
 			icon.paintIcon( this, g, 

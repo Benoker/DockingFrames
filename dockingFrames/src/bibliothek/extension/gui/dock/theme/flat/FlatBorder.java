@@ -33,20 +33,63 @@ import java.awt.Insets;
 
 import javax.swing.border.Border;
 
+import bibliothek.gui.DockController;
+import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.themes.color.DisplayerColor;
+import bibliothek.gui.dock.util.color.ColorCodes;
+
 /**
  * A {@link Border} which paints a 3d-effect. The owner of this
  * border seems to fly over its parent.
  * @author Benjamin Sigg
  */
+@ColorCodes({ "displayer.border", "displayer.border.light", "displayer.border.middle", "displayer.border.dark" })
 public class FlatBorder implements Border{
     /** Factor to be multiplied with an RGB-value to darken a color */
     private static final float FACTOR = 0.85f;
     
+    /** the {@link Component} which uses this border */
+    private DockableDisplayer owner;
+    
+    private BorderColor background = new BorderColor( "displayer.border" );
+    private BorderColor light = new BorderColor( "displayer.border.light" );
+    private BorderColor dark = new BorderColor( "displayer.border.dark" );
+    private BorderColor middle = new BorderColor( "displayer.border.middle" );
+    
+    /**
+     * Creates a new border.
+     * @param owner the component which uses this border
+     */
+    public FlatBorder( DockableDisplayer owner ){
+        this.owner = owner;
+    }
+    
+    /**
+     * Connects this border with <code>controller</code> and reads some
+     * collors from <code>controller</code>.
+     * @param controller the source of information or <code>null</code>
+     */
+    public void connect( DockController controller ){
+        background.connect( controller );
+        light.connect( controller );
+        dark.connect( controller );
+        middle.connect( controller );
+    }
+    
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height){
-        Color background = c.getBackground();
-        Color light = darker( background );
-        Color middle = darker( light );
-        Color dark = darker( middle );
+        Color background = this.background.color();
+        Color light = this.light.color();
+        Color middle = this.middle.color();
+        Color dark = this.dark.color();
+        
+        if( background == null )
+            background = c.getBackground();
+        if( light == null )
+            light = darker( background );
+        if( middle == null )
+            middle = darker( light );
+        if( dark == null )
+            dark = darker( middle );
         
         g.setColor( dark );
         g.drawRect( x, y, width-3, height-3 );
@@ -82,5 +125,20 @@ public class FlatBorder implements Border{
 
     public boolean isBorderOpaque(){
         return false;
+    }
+    
+    /**
+     * Describes a color used by this border
+     * @author Benjamin Sigg
+     */
+    private class BorderColor extends DisplayerColor{
+        public BorderColor( String id ) {
+            super( id, DisplayerColor.class, owner, null );
+        }
+
+        @Override
+        protected void changed( Color oldColor, Color newColor ) {
+            owner.getComponent().repaint();
+        }
     }
 }

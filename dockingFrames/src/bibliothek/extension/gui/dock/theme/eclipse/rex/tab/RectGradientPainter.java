@@ -26,39 +26,39 @@
 package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
 import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 
-import bibliothek.extension.gui.dock.theme.eclipse.EclipseDockActionSource;
 import bibliothek.extension.gui.dock.theme.eclipse.RectEclipseBorder;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexSystemColor;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.event.DockableListener;
+import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
-import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.util.color.ColorCodes;
 
 /**
  * @author Janni Kovacs
  */
-public class RectGradientPainter extends JComponent implements TabComponent {
+@ColorCodes({"stack.tab.border", "stack.tab.border.selected", "stack.tab.border.selected.focused", "stack.tab.border.selected.focuslost",
+    "stack.tab.top", "stack.tab.tob.selected", "stack.tab.top.selected.focused","stack.tab.top.selected.focuslost",
+    "stack.tab.bottom", "stack.tab.bottom.selected", "stack.tab.bottom.selected.focused", "stack.tab.bottom.selected.focuslost",
+    "stack.tab.text", "stack.tab.text.selected", "stack.tab.text.selected.focused", "stack.tab.text.selected.focuslost", })
+public class RectGradientPainter extends BaseTabComponent {
 	public static final TabPainter FACTORY = new TabPainter(){
 	    private final Border border = new RectEclipseBorder( true );
 	    
 	    public TabComponent createTabComponent( DockController controller,
-	            RexTabbedComponent component, Dockable dockable, int index ) {
+	            RexTabbedComponent component, StackDockStation station, Dockable dockable, int index ) {
 	        
-	        return new RectGradientPainter( component, dockable, index );
+	        return new RectGradientPainter( component, controller, station, dockable, index );
 	    }
 	    
 		public void paintTabStrip( RexTabbedComponent tabbedComponent, Component tabStrip, Graphics g ){
@@ -88,90 +88,22 @@ public class RectGradientPainter extends JComponent implements TabComponent {
         }
 	};
 	
-	private boolean paintIconWhenInactive = false;
-
-//	private EditableMatteBorder contentBorder = new EditableMatteBorder(2, 2, 2, 2);
 	private MatteBorder contentBorder = new MatteBorder(2, 2, 2, 2, Color.BLACK);
 
-	private boolean hasFocus;
-	private boolean isSelected;
-	private RexTabbedComponent comp;
-	private Dockable dockable;
-	private int tabIndex;
-	private ButtonPanel buttons;
-    private Listener dockableListener = new Listener();
 	
-	public RectGradientPainter( RexTabbedComponent comp, Dockable dockable, int index ){
-		this.comp = comp;
-		this.dockable = dockable;
-		this.tabIndex = index;
-		
+	public RectGradientPainter( RexTabbedComponent component, DockController controller, StackDockStation station, Dockable dockable, int index ){
+	    super( component, controller, station, dockable, index );
+	    
 		setLayout( null );
 		setOpaque( false );
 		
-		buttons = new ButtonPanel( false );
-        add( buttons );
-		
-		addHierarchyListener( new WindowActiveObserver() );
-		addMouseListener( new MouseAdapter(){
-		    @Override
-		    public void mouseClicked( MouseEvent e ) {
-		        if( e.getClickCount() == 2 ){
-		            DockController controller = RectGradientPainter.this.dockable.getController();
-		            if( controller != null ){
-		                controller.getDoubleClickController().send( 
-		                        RectGradientPainter.this.dockable, e );
-		            }
-		        }
-		    }
-		});
+        add( getButtons() );
 	}
-	
-	public void bind() {
-        if( buttons != null )
-            buttons.set( dockable, new EclipseDockActionSource(
-                    comp.getTheme(), dockable.getGlobalActionOffers(), dockable, true ) );
-        dockable.addDockableListener( dockableListener );
-        revalidate();
-    }
-    
-    public void unbind() {
-        if( buttons != null )
-            buttons.set( null );
-        dockable.removeDockableListener( dockableListener );
-    }
-
-	
+		
 	public int getOverlap() {
 	    return 0;
 	}
 	
-	public Component getComponent(){
-		return this;
-	}
-
-	public void setFocused( boolean focused ){
-		hasFocus = focused;
-		updateBorder();
-		repaint();
-	}
-
-	public void setIndex( int index ){
-		tabIndex = index;
-	}
-
-	public void setPaintIconWhenInactive( boolean paint ){
-		paintIconWhenInactive = paint;
-		revalidate();
-	}
-
-	public void setSelected( boolean selected ){
-		isSelected = selected;
-		updateBorder();
-		revalidate();
-		repaint();
-	}
-
 	public void update(){
 		updateBorder();
 		revalidate();
@@ -179,17 +111,24 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 
 	@Override
 	public Dimension getPreferredSize() {
+	    Dockable dockable = getDockable();
+	    boolean isSelected = isSelected();
+	    ButtonPanel buttons = getButtons();
+	    
 		FontRenderContext frc = new FontRenderContext(null, false, false);
 		Rectangle2D bounds = getFont().getStringBounds(dockable.getTitleText(), frc);
 		int width = 5 + (int) bounds.getWidth() + 5;
 		int height = 23;
-		if ((paintIconWhenInactive || isSelected) && dockable.getTitleIcon() != null)
+		if (( doPaintIconWhenInactive() || isSelected) && dockable.getTitleIcon() != null)
 			width += dockable.getTitleIcon().getIconWidth() + 5;
+		
+		if( isSelected )
+		    width += 5;
 		
 		if( buttons != null ){
 			Dimension preferred = buttons.getPreferredSize();
 			width += preferred.width;
-			height = Math.max( height, preferred.height );
+			height = Math.max( height, preferred.height+1 );
 		}
 		
 		return new Dimension(width, height);
@@ -197,11 +136,16 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 	
 	@Override
 	public void doLayout(){
+	    ButtonPanel buttons = getButtons();
+	    
 		if( buttons != null ){
+		    Dockable dockable = getDockable();
+		    boolean isSelected = isSelected();
+		    
 			FontRenderContext frc = new FontRenderContext(null, false, false);
-			Rectangle2D bounds = UIManager.getFont("Label.font").getStringBounds(dockable.getTitleText(), frc);
+			Rectangle2D bounds = getFont().getStringBounds(dockable.getTitleText(), frc);
 			int x = 5 + (int) bounds.getWidth() + 5;
-			if ((paintIconWhenInactive || isSelected) && dockable.getTitleIcon() != null)
+			if (( doPaintIconWhenInactive() || isSelected) && dockable.getTitleIcon() != null)
 				x += dockable.getTitleIcon().getIconWidth() + 5;
 			
 			if( isSelected )
@@ -210,7 +154,7 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 			Dimension preferred = buttons.getPreferredSize();
 			int width = Math.min( preferred.width, getWidth()-x );
 			
-			buttons.setBounds( x, 0, width, getHeight() );
+			buttons.setBounds( x, 0, width, getHeight()-1 );
 		}
 	}
 
@@ -218,31 +162,35 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 		return contentBorder;
 	}
 	
-	private void updateBorder(){
+	@Override
+	protected void updateBorder(){
 		Color color2;
 		
-		Window window = SwingUtilities.getWindowAncestor(comp);
+		Window window = SwingUtilities.getWindowAncestor( getTabbedComponent() );
 		boolean focusTemporarilyLost = false;
 		
 		if( window != null ){
 			focusTemporarilyLost = !window.isActive();
 		}
 		
-		if( hasFocus && !focusTemporarilyLost ){
-			color2 = RexSystemColor.getActiveColorGradient();
-		}
-		else if (hasFocus && focusTemporarilyLost) {
-			color2 = RexSystemColor.getInactiveColor();
-		}
-		else{
-			color2 = RexSystemColor.getInactiveColorGradient();
-		}
+		if( isSelected() ){
+            if( isFocused() ){
+                if( focusTemporarilyLost )
+                    color2 = colorStackTabBorderSelectedFocusLost.color();
+                else
+                    color2 = colorStackTabBorderSelectedFocused.color();
+            }
+            else
+                color2 = colorStackTabBorderSelected.color();
+        }
+        else
+            color2 = colorStackTabBorder.color();
 		
 		// set border around tab content
 		if (!color2.equals(contentBorder.getMatteColor())) {
 			contentBorder = new MatteBorder(2, 2, 2, 2, color2);
-			if( comp != null )
-				comp.updateContentBorder();
+			if( getTabbedComponent() != null )
+				getTabbedComponent().updateContentBorder();
 		}
 	}
 
@@ -254,30 +202,42 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 		Color lineColor = RexSystemColor.getBorderColor();
 		Color color1, color2, colorText;
 		boolean focusTemporarilyLost = KeyboardFocusManager.getCurrentKeyboardFocusManager()
-				.getActiveWindow() != SwingUtilities.getWindowAncestor(comp);
+				.getActiveWindow() != SwingUtilities.getWindowAncestor( getTabbedComponent() );
 		
-		if( hasFocus && !focusTemporarilyLost ){
-			color1 = RexSystemColor.getActiveColor();
-			color2 = RexSystemColor.getActiveColorGradient();
-			colorText = RexSystemColor.getActiveTextColor(); 
-		}
-		else if (hasFocus && focusTemporarilyLost) {
-			color1 = RexSystemColor.getInactiveColor();
-			color2 = RexSystemColor.getInactiveColor();
-			colorText = RexSystemColor.getInactiveTextColor();
-		}
-		else{
-			color1 = RexSystemColor.getInactiveColor();
-			color2 = RexSystemColor.getInactiveColorGradient();
-			colorText = RexSystemColor.getInactiveTextColor();
-		}
+        if( isFocused() && !focusTemporarilyLost ){
+            color1 = colorStackTabTopSelectedFocused.color();
+            color2 = colorStackTabBottomSelectedFocused.color();
+            colorText = colorStackTabTextSelectedFocused.color();
+        }
+        else if (isFocused() && focusTemporarilyLost) {
+            color1 = colorStackTabTopSelectedFocusLost.color();
+            color2 = colorStackTabBottomSelectedFocusLost.color();
+            colorText = colorStackTabTextSelectedFocusLost.color();
+        }
+        else if( isSelected() ){
+            color1 = colorStackTabTopSelected.color();
+            color2 = colorStackTabBottomSelected.color();
+            colorText = colorStackTabTextSelected.color();
+        }
+        else{
+            color1 = colorStackTabTop.color();
+            color2 = colorStackTabBottom.color();
+            colorText = colorStackTabText.color();
+        }
 		
-		GradientPaint selectedGradient = new GradientPaint(0, 0, color1, 0, height, color2);
+		GradientPaint gradient = color1.equals( color2 ) ? null : new GradientPaint(0, 0, color1, 0, height, color2);
+		boolean isSelected = isSelected();
+		Dockable dockable = getDockable();
+		int tabIndex = getIndex();
+		RexTabbedComponent comp = getTabbedComponent();
 		
-		g.setColor(lineColor);
+		Paint old = g2d.getPaint();
+        if( gradient != null )
+            g2d.setPaint(gradient);
+        else
+            g2d.setPaint( color1 );
+		
 		if (isSelected) {
-			Paint old = g2d.getPaint();
-			g2d.setPaint(selectedGradient);
 			g.fillRect(1, 0, width - 2, height);
 			g.drawLine( 0, 1, 0, height );
 			g2d.setPaint(old);
@@ -290,14 +250,16 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 			g.drawLine(width - 2, 0, width - 2, 0);
 			g.drawLine(width - 1, 1, width - 1, height);
 			// overwrite gradient pixels
-			g.setColor(getBackground());
-			//g.drawLine(0, 0, 0, 0);
-			//g.drawLine(width, 0, width, 0);
+		}
+		else{
+		    g.fillRect( 0, 0, getWidth(), getHeight()-1 );
+		    
+		    g2d.setPaint(old);
 		}
 
 		// draw icon
 		int iconOffset = 0;
-		if (isSelected || paintIconWhenInactive) {
+		if (isSelected || doPaintIconWhenInactive()) {
 			Icon i = dockable.getTitleIcon();
 			if (i != null) {
 				i.paintIcon(comp, g, 5, 4);
@@ -315,56 +277,4 @@ public class RectGradientPainter extends JComponent implements TabComponent {
 		g.setColor(colorText);
 		g.drawString( dockable.getTitleText(), 5 + iconOffset, height / 2 + g.getFontMetrics().getHeight() / 2 - 2);
 	}
-	
-	private class WindowActiveObserver extends WindowAdapter implements HierarchyListener{
-		private Window window;
-		
-		public void hierarchyChanged( HierarchyEvent e ){
-			if( window != null ){
-				window.removeWindowListener( this );
-				window = null;
-			}
-			
-			window = SwingUtilities.getWindowAncestor( RectGradientPainter.this );
-			
-			if( window != null ){
-				window.addWindowListener( this );
-				updateBorder();
-				repaint();
-			}
-		}
-		
-		@Override
-		public void windowActivated( WindowEvent e ){
-			updateBorder();
-			repaint();
-		}
-		
-		@Override
-		public void windowDeactivated( WindowEvent e ){
-			updateBorder();
-			repaint();
-		}
-	}
-	
-	   
-    private class Listener implements DockableListener{
-        public void titleBound( Dockable dockable, DockTitle title ) {
-            // ignore
-        }
-
-        public void titleIconChanged( Dockable dockable, Icon oldIcon, Icon newIcon ) {
-            repaint();
-            revalidate();
-        }
-
-        public void titleTextChanged( Dockable dockable, String oldTitle, String newTitle ) {
-            repaint();
-            revalidate();
-        }
-
-        public void titleUnbound( Dockable dockable, DockTitle title ) {
-            // ignore
-        }       
-    }
 }

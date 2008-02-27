@@ -23,22 +23,39 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.themes;
+package bibliothek.gui.dock.themes.color;
 
 import java.awt.Color;
 
-import bibliothek.gui.dock.util.color.ColorProvider;
+import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.util.color.AbstractDockColor;
+import bibliothek.gui.dock.util.color.DockColor;
 
-public class DefaultColorScheme implements ColorScheme{
-
-    public Color getColor( String id ) {
-        // TODO Auto-generated method stub
-        return null;
+/**
+ * A color used on a {@link DockableDisplayer}.
+ * @author Benjamin Sigg
+ */
+public abstract class DisplayerColor extends AbstractDockColor {
+    /** the element for which the color is needed */
+    private DockableDisplayer displayer;
+    
+    /**
+     * Creates a new {@link DisplayerColor}
+     * @param id the identifier of the color
+     * @param kind which kind of color this is
+     * @param displayer the element for which the color is used
+     * @param backup a backup color
+     */
+    public DisplayerColor( String id, Class<? extends DockColor> kind, DockableDisplayer displayer, Color backup ){
+        super( id, kind, backup );
+        this.displayer = displayer;
     }
-
-    public ColorProvider<?> getProvider( Class<?> kind ) {
-        // TODO Auto-generated method stub
-        return null;
+    
+    /**
+     * Gets the element for which this color is used.
+     * @return the element
+     */
+    public DockableDisplayer getDisplayer() {
+        return displayer;
     }
-
 }

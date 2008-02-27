@@ -108,6 +108,7 @@ public class EclipseTheme extends BasicTheme {
 	 * Creates a new theme
 	 */
 	public EclipseTheme() {
+	    setColorScheme( new EclipseColorScheme() );
 		setStackDockComponentFactory( new StackDockComponentFactory(){
 			public StackDockComponent create( StackDockStation station ){
 				return new EclipseStackDockComponent( EclipseTheme.this, station );
@@ -212,6 +213,37 @@ public class EclipseTheme extends BasicTheme {
                 return handler;
             }
         });
+	}
+	
+	@Override
+	protected void updateColors( DockController[] controllers ) {
+	    for( DockController controller : controllers )
+            controller.getColors().lockUpdate();
+	    
+	    super.updateColors( controllers );
+	    
+        updateColor( controllers, "stack.tab.border", null );
+        updateColor( controllers, "stack.tab.border.selected", null );
+        updateColor( controllers, "stack.tab.border.selected.focused", null );
+        updateColor( controllers, "stack.tab.border.selected.focuslost", null );
+        
+        updateColor( controllers, "stack.tab.top", null );
+        updateColor( controllers, "stack.tab.tob.selected", null );
+        updateColor( controllers, "stack.tab.tob.selected.focused", null );
+        updateColor( controllers, "stack.tab.tob.selected.focuslost", null );
+        
+        updateColor( controllers, "stack.tab.bottom", null );
+        updateColor( controllers, "stack.tab.bottom.selected", null );
+        updateColor( controllers, "stack.tab.bottom.selected.focused", null );
+        updateColor( controllers, "stack.tab.bottom.selected.focuslost", null );
+        
+        updateColor( controllers, "stack.tab.text", null );
+        updateColor( controllers, "stack.tab.text.selected", null );
+        updateColor( controllers, "stack.tab.text.selected.focused", null );
+        updateColor( controllers, "stack.tab.text.selected.focuslost", null );
+	    
+	    for( DockController controller : controllers )
+            controller.getColors().unlockUpdate();
 	}
 	
     /**

@@ -42,6 +42,7 @@ import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabPainter;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.title.DockTitle;
 
 
@@ -69,6 +70,7 @@ public class RexTabbedComponent extends JComponent {
 	private DockController controller;
 	
 	private EclipseTheme theme;
+	private StackDockStation stack;
 	private DockStation station;
 	
 	/**
@@ -79,6 +81,8 @@ public class RexTabbedComponent extends JComponent {
 	public RexTabbedComponent( EclipseTheme theme, DockStation station ) {
 		this.theme = theme;
 		this.station = station;
+		if( station instanceof StackDockStation )
+		    stack = (StackDockStation)station;
 		initComponent();
 	}
 
@@ -174,7 +178,7 @@ public class RexTabbedComponent extends JComponent {
 	    if( controller != null && tabPainter != null ){
 	        int index = 0;
 	        for( TabEntry entry : tabs ){
-                entry.tab = tabPainter.createTabComponent( controller, this, entry.dockable, index++ );
+                entry.tab = tabPainter.createTabComponent( controller, this, stack, entry.dockable, index++ );
                 entry.tab.addMouseListener( entry.tabMouseListener );
                 entry.tab.setPaintIconWhenInactive( paintIconsWhenInactive );
                 entry.tab.setSelected( entry.dockable == selectedTab );
@@ -211,7 +215,7 @@ public class RexTabbedComponent extends JComponent {
 		tabs.add( index, entry );
         
 		if( controller != null ){
-    		entry.tab = tabPainter.createTabComponent( controller, this, dockable, index );
+    		entry.tab = tabPainter.createTabComponent( controller, this, stack, dockable, index );
     		
     		entry.tab.addMouseListener( entry.tabMouseListener );
     		entry.tab.setPaintIconWhenInactive( paintIconsWhenInactive );
@@ -414,7 +418,6 @@ public class RexTabbedComponent extends JComponent {
 			    contentArea.setBorder( null );
 			}
 			else{
-			    entry.tab.setSelected( true );
 			    contentArea.setBorder( entry.tab.getContentBorder() );
 			}
 		}

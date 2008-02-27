@@ -36,7 +36,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonHandler;
 import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonModel;
-import bibliothek.gui.dock.themes.basic.color.ActionColor;
+import bibliothek.gui.dock.themes.color.ActionColor;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.color.ColorCodes;
 
@@ -141,6 +141,8 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
         for( RoundActionColor color : colors ){
             color.connect( controller );
         }
+        
+        animation.kick();
     }
     
     public BasicDropDownButtonModel getModel() {

@@ -34,6 +34,7 @@ import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.StackDockStation;
 
 /**
  * @author Janni Kovacs
@@ -54,11 +55,12 @@ public interface TabPainter {
 	 * @param component the owner of the tab, clients might need
 	 * {@link RexTabbedComponent#getStation() component.getStation()} to get
 	 * access to the {@link DockStation} for which the tab is intended
+	 * @param station the station for which the tab is needed.
 	 * @param dockable the element for which the tab is shown
 	 * @param index the initial location of the tab
 	 * @return the new tab, never <code>null</code>
 	 */
-	public TabComponent createTabComponent( DockController controller, RexTabbedComponent component, Dockable dockable, int index );
+	public TabComponent createTabComponent( DockController controller, RexTabbedComponent component, StackDockStation station, Dockable dockable, int index );
 	
 	/**
 	 * Gets the border which will be around <code>component</code>, which is

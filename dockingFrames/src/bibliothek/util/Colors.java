@@ -109,6 +109,55 @@ public final class Colors {
 
 		return new Color ( red, green, blue );
 	}
+	
+    public static Color middle( Color a, Color b ){
+        return between( a, b, 0.5 );
+    }
+    
+    public static Color fuller( Color color, double factor ){
+        int r = color.getRed();
+        int g = color.getGreen();
+        int b = color.getBlue();
+        
+        int max = Math.max( r, Math.max( g, b ));
+        
+        if( r < max )
+            r *= (1-factor);
+        else
+            r += r*factor;
+        
+        if( g < max )
+            g *= (1-factor);
+        else
+            g += g * factor;
+            
+        if( b < max )
+            b *= (1-factor);
+        else
+            b += b * factor;
+        
+        return new Color(
+                Math.max( 0, Math.min( 255, r )),
+                Math.max( 0, Math.min( 255, g )),
+                Math.max( 0, Math.min( 255, b ))
+        );
+    }
+    
+    public static Color undiffMirror( Color color, double factor ){
+        int sum = color.getRed() + color.getGreen() + color.getBlue();
+        if( sum > (3*255/2.0) )
+            return brighter( color, factor );
+        else
+            return darker( color, factor );
+    }
+    
+    public static Color diffMirror( Color color, double factor ){
+        int sum = color.getRed() + color.getGreen() + color.getBlue();
+        if( sum < (3*255/2.0) )
+            return brighter( color, factor );
+        else
+            return darker( color, factor );
+    }
 }
 
 

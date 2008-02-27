@@ -27,7 +27,12 @@ package bibliothek.gui.dock.themes;
 
 import java.awt.Color;
 
+import javax.swing.LookAndFeel;
+
+import bibliothek.gui.dock.util.Priority;
+import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.ColorProvider;
+import bibliothek.gui.dock.util.color.DockColor;
 
 /**
  * A <code>ColorScheme</code> is a collection of colors and providers. A 
@@ -37,16 +42,32 @@ import bibliothek.gui.dock.util.color.ColorProvider;
  */
 public interface ColorScheme {
     /**
-     * 
-     * @param id
-     * @return
+     * Searches for a color that can be used for the identifier <code>id</code>.
+     * @param id an identifier of some color
+     * @return some color or <code>null</code>
      */
     public Color getColor( String id );
     
     /**
-     * 
-     * @param kind
-     * @return
+     * Searches for a provider that can be used for a specific kind of {@link DockColor}.
+     * @param kind the kind of color the provider should support 
+     * @return some provider or <code>null</code>
      */
-    public ColorProvider<?> getProvider( Class<?> kind );
+    public ColorProvider<?> getProvider( Class<? extends DockColor> kind );
+    
+    /**
+     * Transmits all values in this scheme to <code>manager</code>.
+     * @param priority the priority to use when registering colors
+     * and providers.
+     * @param manager the manager to fill
+     */
+    public void transmitAll( Priority priority, ColorManager manager );
+    
+    /**
+     * Called when the {@link LookAndFeel} changed and this scheme
+     * perhaps needs to update its colors.
+     * @return <code>true</code> if anything changed, <code>false</code>
+     * if this scheme was not changed.
+     */
+    public boolean updateUI();
 }

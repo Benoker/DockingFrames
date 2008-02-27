@@ -30,7 +30,7 @@ import java.awt.*;
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.dock.station.StationPaint;
-import bibliothek.gui.dock.themes.basic.color.StationPaintColor;
+import bibliothek.gui.dock.themes.color.StationPaintColor;
 import bibliothek.gui.dock.util.color.ColorCodes;
 
 /**

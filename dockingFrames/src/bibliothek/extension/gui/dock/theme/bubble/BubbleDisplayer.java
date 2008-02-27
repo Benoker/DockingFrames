@@ -35,7 +35,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.event.DockableFocusAdapter;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
-import bibliothek.gui.dock.themes.basic.color.DisplayerColor;
+import bibliothek.gui.dock.themes.color.DisplayerColor;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.color.ColorCodes;
 
@@ -166,6 +166,7 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
         borderHighInactive.connect( controller );
         borderLowActive.connect( controller );
         borderLowInactive.connect( controller );
+        animation.kick();
     }
     
     @Override

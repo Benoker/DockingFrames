@@ -51,6 +51,29 @@ public class ColorManager {
     /** a list of all observers */
     private List<Observer<?>> observers = new LinkedList<Observer<?>>();
     
+    /** whether to stall updates or not */
+    private int updateLock = 0;
+    
+    /**
+     * Tells this manager to stall all updates. No {@link DockColor} will
+     * be informed when a color or provider changes.
+     */
+    public void lockUpdate(){
+        updateLock++;
+    }
+    
+    /**
+     * Tells this manager no longer to stall updates. This triggers a full
+     * update on all {@link DockColor}s.
+     */
+    public void unlockUpdate(){
+        updateLock--;
+        if( updateLock == 0 ){
+            for( Observer<?> observer : observers )
+                observer.resetAll();
+        }
+    }
+    
     /**
      * Adds a new provider of colors to this manager.
      * @param <D> the kind of observers this provider likes
@@ -73,8 +96,10 @@ public class ColorManager {
         }
         
         if( value.set( priority, provider )){
-            for( Observer<?> check : observers ){
-                check.resetProvider();
+            if( updateLock == 0 ){
+                for( Observer<?> check : observers ){
+                    check.resetProvider();
+                }
             }
         }
     }
@@ -99,7 +124,7 @@ public class ColorManager {
             }
         }
         
-        if( change ){
+        if( change && updateLock == 0 ){
             for( Observer<?> check : observers ){
                 check.resetProvider();
             }
@@ -164,9 +189,11 @@ public class ColorManager {
         }
         
         if( value.set( priority, color ) ){
-            for( Observer<?> observer : observers ){
-                if( observer.id.equals( id )){
-                    observer.update( color );
+            if( updateLock == 0 ){
+                for( Observer<?> observer : observers ){
+                    if( observer.id.equals( id )){
+                        observer.update( color );
+                    }
                 }
             }
         }
@@ -207,8 +234,10 @@ public class ColorManager {
                 providerIterator.remove();
         }
         
-        for( Observer<?> observer : observers ){
-            observer.resetAll();
+        if( updateLock == 0 ){
+            for( Observer<?> observer : observers ){
+                observer.resetAll();
+            }
         }
     }
     

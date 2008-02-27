@@ -26,7 +26,11 @@
 
 package bibliothek.gui.dock.themes;
 
-import javax.swing.UIManager;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.LookAndFeel;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -34,6 +38,7 @@ import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
+import bibliothek.gui.dock.event.UIListener;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
@@ -42,10 +47,13 @@ import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.themes.basic.*;
+import bibliothek.gui.dock.themes.color.*;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.color.ColorManager;
+import bibliothek.gui.dock.util.color.ColorProvider;
+import bibliothek.gui.dock.util.color.DockColor;
 
 /**
  * A {@link DockTheme theme} that does not install anything and uses the
@@ -77,6 +85,19 @@ public class BasicTheme implements DockTheme{
     /** the factory used to create components for {@link StackDockStation} */
     private StackDockComponentFactory stackDockComponentFactory;
     
+    /** the colors of this theme */
+    private ColorScheme colorScheme;
+    
+    /** the controllers which are installed */
+    private List<DockController> controllers = new ArrayList<DockController>();
+    
+    /** a listener waiting for changed {@link LookAndFeel}s */
+    private UIListener uiListener = new UIListener(){
+        public void updateUI( DockController controller ){
+            BasicTheme.this.updateUI();
+        }
+    };
+    
     /**
      * Creates a new <code>BasicTheme</code>.
      */
@@ -91,31 +112,135 @@ public class BasicTheme implements DockTheme{
                 return new DefaultStackDockComponent( station );
             }
         });
+        setColorScheme( new BasicColorScheme() );
     }
     
     public void install( DockController controller ) {
+        if( controllers.isEmpty() ){
+            controller.addUIListener( uiListener );
+            updateUI();
+        }
+        controllers.add( controller );
         controller.getProperties().set( StackDockStation.COMPONENT_FACTORY, stackDockComponentFactory );
-        updateColors( controller );
+        updateColors( new DockController[]{ controller } );
     }
     
     public void uninstall(DockController controller) {
         controller.getProperties().set( StackDockStation.COMPONENT_FACTORY, null );
         controller.getColors().clear( Priority.THEME );
+        
+        if( controllers.get( 0 ) == controller ){
+            controller.removeUIListener( uiListener );
+            controllers.remove( 0 );
+            if( !controllers.isEmpty() )
+                controllers.get( 0 ).addUIListener( uiListener );
+        }
+        else{
+            controllers.remove( controller );
+        }
+    }
+    
+    /**
+     * Called when the {@link LookAndFeel} changed, should update colors, fonts, ...
+     */
+    public void updateUI(){
+        if( colorScheme.updateUI() ){
+            updateColors( getControllers() );
+        }
     }
     
     /**
      * Called when the the colors of the {@link ColorManager} have to be updated.
-     * @param controller the controller whose colors must be updated
+     * @param controllers the set of controllers whose colors must be updated.
      */
-    protected void updateColors( DockController controller ){
-        ColorManager colors = controller.getColors();
+    protected void updateColors( DockController[] controllers ){
+        for( DockController controller : controllers ){
+            controller.getColors().lockUpdate();
+            controller.getColors().clear( Priority.THEME );
+        }
         
-        colors.put( Priority.THEME, "title.active.left", UIManager.getColor( "MenuItem.selectionBackground") );
-        colors.put( Priority.THEME, "title.inactive.left", UIManager.getColor( "MenuItem.background" ) );
-        colors.put( Priority.THEME, "title.active.right", UIManager.getColor( "MenuItem.selectionBackground") );
-        colors.put( Priority.THEME, "title.inactive.right", UIManager.getColor( "MenuItem.background") );
-        colors.put( Priority.THEME, "title.active.text", UIManager.getColor( "MenuItem.selectionForeground") );
-        colors.put( Priority.THEME, "title.inactive.text", UIManager.getColor( "MenuItem.foreground") );        
+        for( DockController controller : controllers )
+            colorScheme.transmitAll( Priority.THEME, controller.getColors() );
+        
+        updateColor( controllers, "title.active.left", null );
+        updateColor( controllers, "title.inactive.left", null );
+        updateColor( controllers, "title.active.right", null );
+        updateColor( controllers, "title.inactive.right", null );
+        updateColor( controllers, "title.active.text", null );
+        updateColor( controllers, "title.inactive.text", null );
+        
+        updateColorProvider( controllers, DockColor.class );
+        updateColorProvider( controllers, TabColor.class );
+        updateColorProvider( controllers, TitleColor.class );
+        updateColorProvider( controllers, ActionColor.class );
+        updateColorProvider( controllers, DisplayerColor.class );
+        updateColorProvider( controllers, StationPaintColor.class );
+        
+        for( DockController controller : controllers )
+            controller.getColors().unlockUpdate();
+    }
+    
+    /**
+     * Changes the color of all {@link ColorManager}s to the color obtained
+     * through the {@link ColorScheme} or to <code>backup</code> if the scheme
+     * returns a <code>null</code> value.
+     * @param controllers the set of affected controllers
+     * @param id the id of the new color
+     * @param backup backup color in case that the scheme does not
+     * know what to use
+     */
+    protected void updateColor( DockController[] controllers, String id, Color backup ){
+        Color color = colorScheme.getColor( id );
+        if( color == null )
+            color = backup;
+        
+        for( DockController controller : controllers ){
+            controller.getColors().put( Priority.THEME, id, color );
+        }
+    }
+    
+    /**
+     * Publishes to {@link ColorProvider} for <code>kind</code> on all <code>controllers</code>.
+     * @param controllers the set of affected controllers
+     * @param kind the kind of provider that should be published
+     */
+    @SuppressWarnings("unchecked")
+    protected void updateColorProvider( DockController[] controllers, Class<? extends DockColor> kind ){
+        ColorProvider<DockColor> provider = (ColorProvider<DockColor>)colorScheme.getProvider( kind );
+        if( provider != null ){
+            for( DockController controller : controllers )
+                controller.getColors().publish( Priority.THEME, kind, provider );
+        }
+    }
+    
+    /**
+     * Gets a list of all {@link DockController} which are currently installed
+     * with this theme.
+     * @return the list of controllers
+     */
+    public DockController[] getControllers(){
+        return controllers.toArray( new DockController[ controllers.size() ] );
+    }
+    
+    /**
+     * Sets the currently used set of colors. The colors of all {@link DockController}s
+     * will change immediately.
+     * @param colorScheme the new scheme
+     */
+    public void setColorScheme( ColorScheme colorScheme ) {
+        if( colorScheme == null )
+            throw new IllegalArgumentException( "The scheme must not be null" );
+        
+        this.colorScheme = colorScheme;
+        updateColors( getControllers() );
+    }
+    
+    /**
+     * Gets the currently used color scheme
+     * @return the scheme
+     */
+    public ColorScheme getColorScheme() {
+        return colorScheme;
     }
     
     /**

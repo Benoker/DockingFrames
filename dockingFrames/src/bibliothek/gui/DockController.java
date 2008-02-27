@@ -28,10 +28,14 @@ package bibliothek.gui;
 
 import java.awt.Component;
 import java.awt.KeyboardFocusManager;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.*;
 
 import javax.swing.FocusManager;
+import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.accept.DockAcceptance;
@@ -80,7 +84,9 @@ public class DockController {
     private List<DockableFocusListener> dockableFocusListeners = new ArrayList<DockableFocusListener>();
     /** Listeners observing the bound-state of {@link DockTitle}s */
     private List<DockTitleBindingListener> dockTitleBindingListeners = new ArrayList<DockTitleBindingListener>();
-        
+    /** Listeners observing the ui */
+    private List<UIListener> uiListeners = new ArrayList<UIListener>();
+    
     /** <code>true</code> while the controller actively changes the focus */
     private boolean onFocusing = false;
     /** a special controller listening to AWT-events and changing the focused dockable */
@@ -126,6 +132,15 @@ public class DockController {
     /** tells which {@link Component} represents which {@link DockElement} */
     private Map<Component, DockElement> componentToDockElements = 
     	new HashMap<Component, DockElement>();
+    
+
+    /** a listener that is added to the {@link UIManager} and gets notified when the {@link LookAndFeel} changes */
+    private PropertyChangeListener lookAndFeelObserver = new PropertyChangeListener(){
+        public void propertyChange( PropertyChangeEvent evt ) {
+            if( "lookAndFeel".equals( evt.getPropertyName() ))
+                updateUI();
+        }
+    };
     
     /**
      * Creates a new controller. 
@@ -214,18 +229,10 @@ public class DockController {
         relocator.addMode( DockRelocatorMode.NO_COMBINATION );
         
         setSingleParentRemover( factory.createSingleParentRemover( this, setup ) );
+        UIManager.addPropertyChangeListener( lookAndFeelObserver );
         
         for( ControllerSetupListener listener : setupListeners )
             listener.done( this );
-        
-        /*
-        relocator.install();
-        register.install();
-        focusObserver.install();
-        doubleClickController.install();
-        keyboardController.install();
-        componentHierarchyObserver.install();
-        */
     }
     
     /**
@@ -236,6 +243,8 @@ public class DockController {
 	    focusObserver.kill();
 	    register.kill();
 	    keyboardController.kill();
+	    theme.uninstall( this );
+	    UIManager.removePropertyChangeListener( lookAndFeelObserver );
     }
     
     /**
@@ -926,6 +935,35 @@ public class DockController {
             listener.dockableSelected( this, station, dockable );
     }
 
+    /**
+     * Adds an {@link UIListener} to this controller, the listener gets
+     * notified when the graphical user interface needs an update because
+     * the {@link LookAndFeel} changed.
+     * @param listener the new listener
+     */
+    public void addUIListener( UIListener listener ){
+        uiListeners.add( listener );
+    }
+    
+    /**
+     * Removes a listener from this controller.
+     * @param listener the listener to remove
+     */
+    public void removeUIListener( UIListener listener ){
+        uiListeners.remove( listener );
+    }
+    
+    /**
+     * Informs all registered {@link UIListener}s that the user interface
+     * needs an update because the {@link LookAndFeel} changed.
+     * @see #addUIListener(UIListener)
+     * @see #removeUIListener(UIListener)
+     */
+    public void updateUI(){
+        for( UIListener listener : uiListeners.toArray( new UIListener[ uiListeners.size() ] ))
+            listener.updateUI( this );
+    }
+    
     /**
      * An observer of the register and all {@link DockStation}s, informs when
      * a {@link DockStation} changes its selected {@link Dockable}.

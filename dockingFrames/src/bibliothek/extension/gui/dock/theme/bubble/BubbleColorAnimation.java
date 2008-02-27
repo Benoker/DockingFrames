@@ -72,6 +72,7 @@ public class BubbleColorAnimation {
                 pulse();
             }
         });
+    	timer.setCoalesce( true );
     }
     
     /**
@@ -168,6 +169,20 @@ public class BubbleColorAnimation {
     }
     
     /**
+     * Immediately puts all colors to their final state and stops the animation.
+     */
+    public void kick(){
+        if( timer.isRunning() ){
+            stop();
+            for( Entry entry : colors.values() )
+                entry.kick();
+            
+            for( Runnable task : tasks )
+                task.run();
+        }
+    }
+    
+    /**
      * Starts the animation if it is not yet running.
      */
     protected void start(){
@@ -251,6 +266,16 @@ public class BubbleColorAnimation {
             }
             
             return true;
+        }
+        
+        /**
+         * Immediately finishes this animation.
+         */
+        public void kick(){
+            age = 0;
+            source = destination;
+            destination = null;
+            intermediate = null;
         }
         
         /**

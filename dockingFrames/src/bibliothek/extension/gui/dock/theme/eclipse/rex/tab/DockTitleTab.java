@@ -18,6 +18,7 @@ import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.title.DockTitleVersion;
@@ -53,12 +54,12 @@ public class DockTitleTab implements TabComponent{
             private final Border border = BorderFactory.createLineBorder( RexSystemColor.getBorderColor() );
             
             public TabComponent createTabComponent( DockController controller,
-                    RexTabbedComponent component, Dockable dockable, int index ) {
+                    RexTabbedComponent component, StackDockStation station, Dockable dockable, int index ) {
                 
                 DockTitleVersion version = controller.getDockTitleManager().getVersion( EclipseTheme.TAB_DOCK_TITLE );
                 DockTitle title = version == null ? null : dockable.getDockTitle( version );
                 if( title == null )
-                    return fallback.createTabComponent( controller, component, dockable, index );
+                    return fallback.createTabComponent( controller, component, station, dockable, index );
                     
                 title.setOrientation( Orientation.NORTH_SIDED );
                 return new DockTitleTab( component.getStation(), dockable, title, index );

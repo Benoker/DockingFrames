@@ -28,10 +28,11 @@ package bibliothek.gui.dock.themes.basic;
 
 import java.awt.*;
 
-import javax.swing.UIManager;
-
 import bibliothek.gui.DockStation;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.themes.color.StationPaintColor;
+import bibliothek.gui.dock.util.color.ColorCodes;
+import bibliothek.gui.dock.util.color.ColorManager;
 
 /**
  * A simple implementation of {@link StationPaint}. This paint uses
@@ -39,56 +40,53 @@ import bibliothek.gui.dock.station.StationPaint;
  * @author Benjamin Sigg
  *
  */
+@ColorCodes({ "paint.line", "paint.divider", "paint.insertion" })
 public class BasicStationPaint implements StationPaint {
-    private Color color = null;
+    private StationPaintColor color = new StationPaintColor( "", StationPaintColor.class, this, SystemColor.textHighlight ){
+        @Override
+        protected void changed( Color oldColor, Color newColor ) {
+            // ignore
+        }
+    };
     
     /**
      * Gets the color that is used in this paint.
      * @return the color
      */
     public Color getColor() {
-        return color;
+        return color.color();
     }
     
     /**
      * Sets the color which is used in this paint.
      * @param color the color or <code>null</code> to use the default-color
+     * @deprecated better use the {@link ColorManager} with keys
+     * <code>paint.line</code>, <code>paint.divider</code>, <code>paint.insertion</code>
      */
     public void setColor( Color color ) {
-        this.color = color;
-    }
-    
-    /**
-     * Gets the color which should be used to paint things.
-     * @return the color
-     */
-    protected Color color(){
-        if( color == null ){
-            Color result = UIManager.getColor( "TextField.selectionBackground" );
-            if( result != null )
-                return result;
-            
-            return SystemColor.textHighlight;
-        }
-        
-        return color;
+        this.color.setValue( color );
     }
     
     public void drawDivider( Graphics g, DockStation station, Rectangle bounds ) {
-        g.setColor( color() );
+        color.setId( "paint.divider" );
+        color.connect( station.getController() );
+        
+        g.setColor( color.color() );
         g.fillRect( bounds.x, bounds.y, bounds.width, bounds.height );
+        
+        color.connect( null );
     }
     
     public void drawInsertion( Graphics g, DockStation station, Rectangle stationBounds, Rectangle dockableBounds ) {
-        Color color = new Color( color().getRGB() );
+        color.setId( "paint.insertion" );
+        color.connect( station.getController() );
         
-        g.setColor( color );
+        g.setColor( color.color() );
         Graphics2D g2 = (Graphics2D)g;
         
         Composite old = g2.getComposite();
         g2.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 0.33f ));
         
-        //g2.fillRect( stationBounds.x, stationBounds.y, stationBounds.width, stationBounds.height );
         g2.fillRect( dockableBounds.x, dockableBounds.y, dockableBounds.width, dockableBounds.height );
         
         int x = dockableBounds.x-1;
@@ -102,17 +100,24 @@ public class BasicStationPaint implements StationPaint {
         drawInsertionLine( g, station, x, y, x, y+h );
         drawInsertionLine( g, station, x+w, y+h, x, y+h );
         drawInsertionLine( g, station, x+w, y+h, x+w, y );
+        
+        color.connect( null );
     }
     
     public void drawInsertionLine( Graphics g, DockStation station, int x1,
             int x2, int y1, int y2 ) {
         
-        g.setColor( color() );
+        color.setId( "paint.line" );
+        color.connect( station.getController() );
+        
+        g.setColor( color.color() );
         Graphics2D g2 = (Graphics2D)g;
         
         Stroke old = g2.getStroke();
         g2.setStroke( new BasicStroke( 3f ));
         g2.drawLine( x1, x2, y1, y2 );
         g2.setStroke( old );
+        
+        color.connect( null );
     }
 }

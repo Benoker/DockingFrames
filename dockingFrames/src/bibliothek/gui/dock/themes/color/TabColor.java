@@ -23,39 +23,50 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.themes.basic.color;
+package bibliothek.gui.dock.themes.color;
 
 import java.awt.Color;
 
-import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
 import bibliothek.gui.dock.util.color.DockColor;
 
 /**
- * A color used on a {@link DockableDisplayer}.
+ * Color related to a single {@link Dockable} on a {@link StackDockStation}.
  * @author Benjamin Sigg
  */
-public abstract class DisplayerColor extends AbstractDockColor {
-    /** the element for which the color is needed */
-    private DockableDisplayer displayer;
+public abstract class TabColor extends AbstractDockColor{
+    private StackDockStation station;
+    private Dockable dockable;
     
     /**
-     * Creates a new {@link DisplayerColor}
-     * @param id the identifier of the color
-     * @param kind which kind of color this is
-     * @param displayer the element for which the color is used
-     * @param backup a backup color
+     * Creates a new TabColor.
+     * @param id the identifier of the color that is searched
+     * @param kind the kind of {@link DockColor} this is.
+     * @param station the station on which the color will be used
+     * @param dockable the {@link Dockable} for whose tab this color is used
+     * @param backup a backup color in case that no color can be found
      */
-    public DisplayerColor( String id, Class<? extends DockColor> kind, DockableDisplayer displayer, Color backup ){
+    public TabColor( String id, Class<? extends DockColor> kind, StackDockStation station, Dockable dockable, Color backup ){
         super( id, kind, backup );
-        this.displayer = displayer;
+        this.station = station;
+        this.dockable = dockable;
     }
     
     /**
-     * Gets the element for which this color is used.
+     * Gets the station on which the tab is shown.
+     * @return the station, might be <code>null</code>
+     */
+    public StackDockStation getStation() {
+        return station;
+    }
+    
+    /**
+     * Gets the element for which the tab is shown.
      * @return the element
      */
-    public DockableDisplayer getDisplayer() {
-        return displayer;
+    public Dockable getDockable() {
+        return dockable;
     }
 }

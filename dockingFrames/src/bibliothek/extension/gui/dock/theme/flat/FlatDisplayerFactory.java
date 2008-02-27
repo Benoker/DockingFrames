@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -30,6 +30,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.DockableDisplayer.Location;
 import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
 
@@ -52,15 +53,17 @@ public class FlatDisplayerFactory implements DisplayerFactory{
     }
     
     public DockableDisplayer create( DockStation station, Dockable dockable, DockTitle title ) {
-        BasicDockableDisplayer display;
-        if( dockable.asDockStation() != null )
-            display = new BasicDockableDisplayer( dockable, title, DockableDisplayer.Location.LEFT );
-        else
-            display = new BasicDockableDisplayer( dockable, title, DockableDisplayer.Location.TOP );
-
-        if( border )
-            display.setBorder( new FlatBorder() );
+        Location location;
         
-        return display;
+        if( dockable.asDockStation() != null )
+            location = DockableDisplayer.Location.LEFT;
+        else
+            location = DockableDisplayer.Location.TOP;
+
+        if( border ){
+            return new FlatDockableDisplayer( dockable, title, location );
+        }
+        
+        return new BasicDockableDisplayer( dockable, title, location );
     }
 }

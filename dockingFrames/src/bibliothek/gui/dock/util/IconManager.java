@@ -135,7 +135,7 @@ public class IconManager {
      */
     public void clearThemeIcons(){
         for( Entry entry : icons.values())
-            entry.set( Priority.THEME, null );
+            entry.setIcon( Priority.THEME, null );
     }
     
     /**
