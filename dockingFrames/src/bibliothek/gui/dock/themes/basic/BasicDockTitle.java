@@ -29,20 +29,24 @@ package bibliothek.gui.dock.themes.basic;
 import java.awt.*;
 
 import javax.swing.JComponent;
-import javax.swing.UIManager;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.themes.basic.color.TitleColor;
 import bibliothek.gui.dock.title.AbstractDockTitle;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.color.ColorCodes;
 
 /**
  * The default-title that is used most times in the framework. This title
  * shows an icon, a text, some small buttons and a gradient as background.
  * @author Benjamin Sigg
  */
+@ColorCodes({ "title.active.left", "title.inactive.left", 
+    "title.active.right", "title.inactive.right", 
+    "title.active.text", "title.inactive.text" })
 public class BasicDockTitle extends AbstractDockTitle {
     /**
      * A factory for the {@link BasicDockTitle}.
@@ -59,19 +63,19 @@ public class BasicDockTitle extends AbstractDockTitle {
     };
     
     /** The left color of the gradient if the title is active */
-    private Color activeLeftColor;// = UIManager.getColor( "MenuItem.selectionBackground");// SystemColor.activeCaption;
+    private TitleColor activeLeftColor = new BasicTitleColor( "title.active.left", Color.BLACK );
     /** The left color of the gradient if the title is not active */
-    private Color inactiveLeftColor;// = SystemColor.inactiveCaption;
+    private TitleColor inactiveLeftColor = new BasicTitleColor( "title.inactive.left", Color.DARK_GRAY );
     
     /** The right color of the gradient if the title is active */
-    private Color activeRightColor;// = inactiveLeftColor;
+    private TitleColor activeRightColor = new BasicTitleColor( "title.active.right", Color.DARK_GRAY );
     /** The right color of the gradient if the title is not active */
-    private Color inactiveRightColor;// = inactiveLeftColor;
+    private TitleColor inactiveRightColor = new BasicTitleColor( "title.inactive.right", Color.LIGHT_GRAY );
     
     /** The color of the text if the title is active */
-    private Color activeTextColor;// = SystemColor.activeCaptionText;
+    private TitleColor activeTextColor = new BasicTitleColor( "title.active.text", Color.WHITE );
     /** The color of the text if the title is not active */
-    private Color inactiveTextColor;// = SystemColor.inactiveCaptionText;
+    private TitleColor inactiveTextColor = new BasicTitleColor( "title.inactive.text", Color.BLACK );
     
     /** The gradient used to paint this title */
     private GradientPaint gradient;
@@ -84,20 +88,13 @@ public class BasicDockTitle extends AbstractDockTitle {
     public BasicDockTitle( Dockable dockable, DockTitleVersion origin ){
         super( dockable, origin );
         setActive( false );
-    }
-    
-    @Override
-    public void updateUI() {
-    	super.updateUI();
-    	
-        activeLeftColor = UIManager.getColor( "MenuItem.selectionBackground");
-        inactiveLeftColor = UIManager.getColor( "MenuItem.background");
         
-        activeRightColor = UIManager.getColor( "MenuItem.selectionBackground");
-        inactiveRightColor = UIManager.getColor( "MenuItem.background");
-        
-        activeTextColor = UIManager.getColor( "MenuItem.selectionForeground");
-        inactiveTextColor = UIManager.getColor( "MenuItem.foreground");
+        addColor( activeLeftColor );
+        addColor( inactiveLeftColor );
+        addColor( activeRightColor );
+        addColor( inactiveRightColor );
+        addColor( activeTextColor );
+        addColor( inactiveTextColor );
     }
 
     @Override
@@ -125,10 +122,10 @@ public class BasicDockTitle extends AbstractDockTitle {
 
         if( gradient == null ){
             if ( isActive() ){
-                gradient = getGradient( activeLeftColor, activeRightColor, component );
+                gradient = getGradient( activeLeftColor.color(), activeRightColor.color(), component );
             }
             else{
-                gradient = getGradient( inactiveLeftColor, inactiveRightColor, component );
+                gradient = getGradient( inactiveLeftColor.color(), inactiveRightColor.color(), component );
             }
         }
         
@@ -169,7 +166,7 @@ public class BasicDockTitle extends AbstractDockTitle {
      * @see #setActiveLeftColor(Color)
      */
     public Color getActiveLeftColor() {
-        return activeLeftColor;
+        return activeLeftColor.color();
     }
 
     /**
@@ -178,7 +175,7 @@ public class BasicDockTitle extends AbstractDockTitle {
      * @param activeLeftColor the color
      */
     public void setActiveLeftColor( Color activeLeftColor ) {
-        this.activeLeftColor = activeLeftColor;
+        this.activeLeftColor.setValue( activeLeftColor );
         updateColors();
     }
     
@@ -188,7 +185,7 @@ public class BasicDockTitle extends AbstractDockTitle {
      * @return the color
      */
     public Color getActiveRightColor() {
-        return activeRightColor;
+        return activeRightColor.color();
     }
     
     /**
@@ -197,7 +194,7 @@ public class BasicDockTitle extends AbstractDockTitle {
      * @param activeRightColor the color
      */
     public void setActiveRightColor( Color activeRightColor ) {
-        this.activeRightColor = activeRightColor;
+        this.activeRightColor.setValue( activeRightColor );
         updateColors();
     }
 
@@ -206,7 +203,7 @@ public class BasicDockTitle extends AbstractDockTitle {
      * @return the color
      */
     public Color getActiveTextColor() {
-        return activeTextColor;
+        return activeTextColor.color();
     }
 
     /**
@@ -215,7 +212,7 @@ public class BasicDockTitle extends AbstractDockTitle {
      * @param activeTextColor the color
      */
     public void setActiveTextColor( Color activeTextColor ) {
-        this.activeTextColor = activeTextColor;
+        this.activeTextColor.set( activeTextColor );
         updateColors();
     }
 
@@ -225,7 +222,7 @@ public class BasicDockTitle extends AbstractDockTitle {
      * @return the color
      */
     public Color getInactiveLeftColor() {
-        return inactiveLeftColor;
+        return inactiveLeftColor.color();
     }
 
     /**
@@ -234,7 +231,7 @@ public class BasicDockTitle extends AbstractDockTitle {
      * @param inactiveLeftColor the color
      */
     public void setInactiveLeftColor( Color inactiveLeftColor ) {
-        this.inactiveLeftColor = inactiveLeftColor;
+        this.inactiveLeftColor.setValue( inactiveLeftColor );
         updateColors();
     }
     
@@ -244,7 +241,7 @@ public class BasicDockTitle extends AbstractDockTitle {
      * @return the color on the right side
      */
     public Color getInactiveRightColor() {
-        return inactiveRightColor;
+        return inactiveRightColor.color();
     }
     
     /**
@@ -253,7 +250,7 @@ public class BasicDockTitle extends AbstractDockTitle {
      * @param inactiveRightColor the color
      */
     public void setInactiveRightColor( Color inactiveRightColor ) {
-        this.inactiveRightColor = inactiveRightColor;
+        this.inactiveRightColor.setValue( inactiveRightColor );
         updateColors();
     }
 
@@ -262,7 +259,7 @@ public class BasicDockTitle extends AbstractDockTitle {
      * @return the color
      */
     public Color getInactiveTextColor() {
-        return inactiveTextColor;
+        return inactiveTextColor.color();
     }
 
     /**
@@ -271,7 +268,7 @@ public class BasicDockTitle extends AbstractDockTitle {
      * @param inactiveTextColor the color
      */
     public void setInactiveTextColor( Color inactiveTextColor ) {
-        this.inactiveTextColor = inactiveTextColor;
+        this.inactiveTextColor.setValue( inactiveTextColor );
         updateColors();
     }
 
@@ -290,15 +287,37 @@ public class BasicDockTitle extends AbstractDockTitle {
         
         if( isActive() ){
             if( activeTextColor != null ){
-                setForeground( activeTextColor );
+                setForeground( activeTextColor.color() );
             }
         }
         else{
             if( inactiveTextColor != null ){
-                setForeground( inactiveTextColor );
+                setForeground( inactiveTextColor.color() );
             }
         }
         
         repaint();
+    }
+    
+    /**
+     * A implementation of {@link TitleColor} that calls <code>repaint</code>
+     * when the color changes.
+     * @author Benjamin Sigg
+     */
+    private class BasicTitleColor extends TitleColor{
+        /**
+         * Creates a new color
+         * @param id the id of the color
+         * @param backup a backup color
+         */
+        public BasicTitleColor( String id, Color backup ){
+            super( id, TitleColor.class, BasicDockTitle.this, backup );
+        }
+        
+        @Override
+        protected void changed( Color oldColor, Color newColor ) {
+            gradient = null;
+            repaint();
+        }
     }
 }

@@ -23,31 +23,39 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.bubble;
+package bibliothek.gui.dock.themes.basic.color;
 
-import bibliothek.gui.DockController;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
-import bibliothek.gui.dock.dockable.MovingImage;
-import bibliothek.gui.dock.title.DockTitle;
-import bibliothek.gui.dock.title.TitleMovingImage;
+import java.awt.Color;
+
+import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.util.color.AbstractDockColor;
+import bibliothek.gui.dock.util.color.DockColor;
 
 /**
- * A factory that creates images using the {@link ReducedBubbleTitleFactory}.
+ * A color used by a {@link StationPaint}.
  * @author Benjamin Sigg
  */
-public class BubbleMovingImageFactory implements DockableMovingImageFactory {
-    private ReducedBubbleTitleFactory reduced;
+public abstract class StationPaintColor extends AbstractDockColor{
+    /** the paint that uses this color */
+    private StationPaint paint;
     
-    public BubbleMovingImageFactory(){
-        reduced = new ReducedBubbleTitleFactory();
+    /**
+     * Creates a new {@link DockColor}
+     * @param id the identifier of this color
+     * @param kind what kind of color this is
+     * @param paint the {@link StationPaint} that uses this color
+     * @param backup a backup used when no color was found
+     */
+    public StationPaintColor( String id, Class<? extends DockColor> kind, StationPaint paint, Color backup ){
+        super( id, kind, backup );
+        this.paint = paint;
     }
     
-    public MovingImage create( DockController controller, DockTitle snatched ) {
-        return new TitleMovingImage( snatched.getDockable(), reduced.createDockableTitle( snatched.getDockable(), null ));
-    }
-
-    public MovingImage create( DockController controller, Dockable dockable ) {
-        return new TitleMovingImage( dockable, reduced.createDockableTitle( dockable, null ));
+    /**
+     * Gets the {@link StationPaint} that uses this color.
+     * @return the paint that uses <code>this</code>
+     */
+    public StationPaint getPaint() {
+        return paint;
     }
 }

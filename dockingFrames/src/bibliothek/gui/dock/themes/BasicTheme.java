@@ -26,6 +26,8 @@
 
 package bibliothek.gui.dock.themes;
 
+import javax.swing.UIManager;
+
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
@@ -42,6 +44,8 @@ import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.themes.basic.*;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
+import bibliothek.gui.dock.util.Priority;
+import bibliothek.gui.dock.util.color.ColorManager;
 
 /**
  * A {@link DockTheme theme} that does not install anything and uses the
@@ -84,17 +88,34 @@ public class BasicTheme implements DockTheme{
         setMovingImageFactory( new BasicMovingImageFactory() );
         setStackDockComponentFactory( new StackDockComponentFactory(){
             public StackDockComponent create( StackDockStation station ) {
-                return new DefaultStackDockComponent();
+                return new DefaultStackDockComponent( station );
             }
         });
     }
     
     public void install( DockController controller ) {
         controller.getProperties().set( StackDockStation.COMPONENT_FACTORY, stackDockComponentFactory );
+        updateColors( controller );
     }
     
     public void uninstall(DockController controller) {
         controller.getProperties().set( StackDockStation.COMPONENT_FACTORY, null );
+        controller.getColors().clear( Priority.THEME );
+    }
+    
+    /**
+     * Called when the the colors of the {@link ColorManager} have to be updated.
+     * @param controller the controller whose colors must be updated
+     */
+    protected void updateColors( DockController controller ){
+        ColorManager colors = controller.getColors();
+        
+        colors.put( Priority.THEME, "title.active.left", UIManager.getColor( "MenuItem.selectionBackground") );
+        colors.put( Priority.THEME, "title.inactive.left", UIManager.getColor( "MenuItem.background" ) );
+        colors.put( Priority.THEME, "title.active.right", UIManager.getColor( "MenuItem.selectionBackground") );
+        colors.put( Priority.THEME, "title.inactive.right", UIManager.getColor( "MenuItem.background") );
+        colors.put( Priority.THEME, "title.active.text", UIManager.getColor( "MenuItem.selectionForeground") );
+        colors.put( Priority.THEME, "title.inactive.text", UIManager.getColor( "MenuItem.foreground") );        
     }
     
     /**

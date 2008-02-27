@@ -23,31 +23,21 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.bubble;
+package bibliothek.gui.dock.util.color;
 
-import bibliothek.gui.DockController;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
-import bibliothek.gui.dock.dockable.MovingImage;
-import bibliothek.gui.dock.title.DockTitle;
-import bibliothek.gui.dock.title.TitleMovingImage;
+import java.lang.annotation.*;
 
 /**
- * A factory that creates images using the {@link ReducedBubbleTitleFactory}.
+ * Used to mark all classes which use some {@link DockColor}.
  * @author Benjamin Sigg
  */
-public class BubbleMovingImageFactory implements DockableMovingImageFactory {
-    private ReducedBubbleTitleFactory reduced;
-    
-    public BubbleMovingImageFactory(){
-        reduced = new ReducedBubbleTitleFactory();
-    }
-    
-    public MovingImage create( DockController controller, DockTitle snatched ) {
-        return new TitleMovingImage( snatched.getDockable(), reduced.createDockableTitle( snatched.getDockable(), null ));
-    }
-
-    public MovingImage create( DockController controller, Dockable dockable ) {
-        return new TitleMovingImage( dockable, reduced.createDockableTitle( dockable, null ));
-    }
+@Retention( RetentionPolicy.SOURCE )
+@Target({ ElementType.TYPE })
+@Documented
+public @interface ColorCodes {
+    /**
+     * The color codes which are used to query the {@link ColorManager}.
+     * @return the color keys
+     */
+    public String[] value();
 }

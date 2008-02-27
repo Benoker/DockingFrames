@@ -197,7 +197,7 @@ public class StackDockStation extends AbstractDockableStation {
      * @return the new component
      */
     protected StackDockComponent createStackDockComponent(){
-        return new DefaultStackDockComponent();
+        return new DefaultStackDockComponent( this );
     }
     
     /**

@@ -23,37 +23,19 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.themes.color;
+package bibliothek.gui.dock.util.color;
 
 import java.awt.Color;
 
 /**
- * A <code>ColorProvider</code> is a layer between a {@link ColorManager} and
- * a {@link DockColor}. A provider can exchange the color that is used for
- * some <code>DockColor</code>.
+ * A wrapper around a {@link Color} object. Installed at a {@link ColorProvider}
+ * to receive notification when the color changes.
  * @author Benjamin Sigg
- * @param <D> the type of {@link DockColor}s this provider can handle
  */
-public interface ColorProvider<D extends DockColor> {
+public interface DockColor {
     /**
-     * Adds a listener for some type of color to this provider.
-     * @param color the new listener
-     */
-    public void add( D color );
-    
-    /**
-     * Removes a listener for some type of color from this provider.
-     * @param color the listener to remove
-     */
-    public void remove( D color );
-    
-    /**
-     * Called by a {@link ColorManager} when one color has been exchanged.
-     * Normally a provider would call {@link DockColor#set(Color)} on
-     * <code>observer</code> with <code>color</code> as argument.
+     * Called by the {@link ColorProvider} when the color changes.
      * @param color the new color, can be <code>null</code>
-     * @param id the identifier of the color
-     * @param observer the observer which is affected
      */
-    public void set( Color color, String id, D observer );
+    public void set( Color color );
 }

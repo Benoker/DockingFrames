@@ -31,10 +31,14 @@ import java.awt.geom.RoundRectangle2D;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import bibliothek.extension.gui.dock.theme.BubbleTheme;
+import bibliothek.gui.DockController;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonHandler;
 import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonModel;
+import bibliothek.gui.dock.themes.basic.color.ActionColor;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.color.ColorCodes;
 
 /**
  * A button which can be pressed by the user either to execute 
@@ -43,7 +47,25 @@ import bibliothek.gui.dock.util.DockUtilities;
  * {@link BasicDropDownButtonHandler} to manage its internal states.
  * @author Benjamin Sigg
  */
-public class RoundDropDownButton extends JComponent{
+
+@ColorCodes({"action.dropdown",
+    "action.dropdown.enabled",
+    "action.dropdown.selected",
+    "action.dropdown.selected.enabled",
+    "action.dropdown.mouse.enabled",
+    "action.dropdown.mouse.selected.enabled",
+    "action.dropdown.pressed.enabled",
+    "action.dropdown.pressed.selected.enabled",
+    
+    "action.dropdown.line",
+    "action.dropdown.line.enabled",
+    "action.dropdown.line.selected",
+    "action.dropdown.line.selected.enabled",
+    "action.dropdown.line.mouse.enabled",
+    "action.dropdown.line.mouse.selected.enabled",
+    "action.dropdown.line.pressed.enabled",
+    "action.dropdown.line.pressed.selected.enabled"})
+public class RoundDropDownButton extends JComponent implements RoundButtonConnectable{
 	/** the animation that changes the colors */
     private BubbleColorAnimation animation;
     
@@ -58,14 +80,38 @@ public class RoundDropDownButton extends JComponent{
     /** a disabled version of {@link #dropIcon} */
     private Icon disabledDropIcon;
     
+    /** the colors used on this button */
+    private RoundActionColor[] colors;
+    
     /**
      * Creates a new button
-     * @param theme the theme which delivers the colors used to paint this button
      * @param handler a handler used to announce that this button is clicked
+     * @param dockable the element for which the action is shown
+     * @param action the action that is shown
      */
-    public RoundDropDownButton( BubbleTheme theme, BasicDropDownButtonHandler handler ){
-        animation = new BubbleColorAnimation( theme );
-        animation.putColor( "background", "dropdown" );
+    public RoundDropDownButton( BasicDropDownButtonHandler handler, Dockable dockable, DockAction action ){
+        animation = new BubbleColorAnimation();
+        
+        colors = new RoundActionColor[]{
+                new RoundActionColor( "action.dropdown", dockable, action, Color.WHITE ),
+                new RoundActionColor( "action.dropdown.enabled", dockable, action, Color.LIGHT_GRAY ),
+                new RoundActionColor( "action.dropdown.selected", dockable, action, Color.YELLOW ),
+                new RoundActionColor( "action.dropdown.enabled.selected", dockable, action, Color.ORANGE ),
+                new RoundActionColor( "action.dropdown.mouse.enabled", dockable, action, Color.RED ),
+                new RoundActionColor( "action.dropdown.mouse.selected.enabled", dockable, action, new Color( 128, 0, 0 ) ),
+                new RoundActionColor( "action.dropdown.pressed.enabled", dockable, action, Color.BLUE ),
+                new RoundActionColor( "action.dropdown.pressed.selected.enabled", dockable, action, Color.MAGENTA ),
+                
+                new RoundActionColor( "action.dropdown.line", dockable, action, Color.DARK_GRAY ),
+                new RoundActionColor( "action.dropdown.line.enabled", dockable, action, Color.DARK_GRAY ),
+                new RoundActionColor( "action.dropdown.line.selected", dockable, action, Color.DARK_GRAY ),
+                new RoundActionColor( "action.dropdown.line.enabled.selected", dockable, action, Color.DARK_GRAY ),
+                new RoundActionColor( "action.dropdown.line.mouse.enabled", dockable, action, Color.DARK_GRAY ),
+                new RoundActionColor( "action.dropdown.line.mouse.selected.enabled", dockable, action, Color.DARK_GRAY ),
+                new RoundActionColor( "action.dropdown.line.pressed.enabled", dockable, action, Color.DARK_GRAY ),
+                new RoundActionColor( "action.dropdown.line.pressed.selected.enabled", dockable, action, Color.DARK_GRAY ),
+        };
+        
         animation.addTask( new Runnable(){
             public void run() {
                 repaint();
@@ -87,6 +133,14 @@ public class RoundDropDownButton extends JComponent{
                 return overDropIcon( x, y );
             }
         };
+        
+        updateColors();
+    }
+    
+    public void setController( DockController controller ) {
+        for( RoundActionColor color : colors ){
+            color.connect( controller );
+        }
     }
     
     public BasicDropDownButtonModel getModel() {
@@ -275,17 +329,40 @@ public class RoundDropDownButton extends JComponent{
         else
             mouse = "dropdown";
         
+        String background;
+        
         if( pressed && enabled ){
-            animation.putColor( "background", "dropdown.pressed" + postfix );
-            animation.putColor( "mouse", mouse + ".pressed" + postfix );
+            background = "action.dropdown.pressed" + postfix;
+            mouse = "action." + mouse + ".pressed" + postfix;
         }
         else if( entered && enabled ){
-            animation.putColor( "background", "dropdown.mouse" + postfix );
-            animation.putColor( "mouse", mouse + ".mouse" + postfix );
+            background = "action.dropdown.mouse" + postfix;
+            mouse = "action." + mouse + ".mouse" + postfix;
         }
         else{
-            animation.putColor( "background", "dropdown" + postfix );
-            animation.putColor( "mouse", mouse + postfix );
+            background = "action.dropdown" + postfix;
+            mouse = "action." + mouse + postfix;
+        }
+        
+        for( RoundActionColor color : colors ){
+            if( background.equals( color.getId() ))
+                animation.putColor( "background", color.color() );
+            if( mouse.equals( color.getId() ))
+                animation.putColor( "mouse", color.color() );
+        }
+    }
+    
+    /**
+     * A color used in a round dropdown button
+     * @author Benjamin Sigg
+     */
+    private class RoundActionColor extends ActionColor{
+        public RoundActionColor( String id, Dockable dockable, DockAction action, Color backup ){
+            super( id, ActionColor.class, dockable, action, backup );
+        }
+        @Override
+        protected void changed( Color oldColor, Color newColor ) {
+            updateColors();
         }
     }
 }

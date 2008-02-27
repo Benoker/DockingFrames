@@ -25,27 +25,62 @@
  */
 package bibliothek.extension.gui.dock.theme.bubble;
 
-
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import bibliothek.extension.gui.dock.theme.BubbleTheme;
+import bibliothek.gui.DockController;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
+import bibliothek.gui.dock.themes.basic.color.ActionColor;
+import bibliothek.gui.dock.util.color.ColorCodes;
 
-
-public class RoundButton extends JComponent{
-	private BubbleColorAnimation animation;
+/**
+ * A round button is a button that has a oval form. Clients should call
+ * {@link #setController(DockController)} for optimal usage.
+ * @author Benjamin Sigg
+ *
+ */
+@ColorCodes({ "action.button",
+    "action.button.enabled",
+    "action.button.selected",
+    "action.button.selected.enabled",
+    "action.button.mouse.enabled",
+    "action.button.mouse.selected.enabled",
+    "action.button.pressed.enabled",
+    "action.button.pressed.selected.enabled"
+})
+public class RoundButton extends JComponent implements RoundButtonConnectable{
+    private BubbleColorAnimation animation;
 	
     private BasicButtonModel model;
 	
-	public RoundButton(BubbleTheme theme, BasicTrigger trigger){
-		animation=new BubbleColorAnimation(theme);
+    private RoundActionColor[] colors;
+    
+    /**
+     * Creates a new round button.
+     * @param trigger a trigger which gets informed when the user clicks the
+     * button.
+     * @param dockable the dockable for which this button is used
+     * @param action the action for which this button is used
+     */
+	public RoundButton( BasicTrigger trigger, Dockable dockable, DockAction action ){
+		animation = new BubbleColorAnimation();
+		
+		colors = new RoundActionColor[]{
+		        new RoundActionColor( "action.button", dockable, action, Color.WHITE ),
+		        new RoundActionColor( "action.button.enabled", dockable, action, Color.LIGHT_GRAY ),
+		        new RoundActionColor( "action.button.selected", dockable, action, Color.YELLOW ),
+		        new RoundActionColor( "action.button.selected.enabled", dockable, action, Color.ORANGE ),
+		        new RoundActionColor( "action.button.mouse.enabled", dockable, action, Color.RED ),
+		        new RoundActionColor( "action.button.mouse.selected.enabled", dockable, action, new Color( 128, 0, 0) ),
+		        new RoundActionColor( "action.button.pressed.enabled", dockable, action, Color.BLUE ),
+		        new RoundActionColor( "action.button.pressed.selected.enabled", dockable, action, Color.MAGENTA )
+		};
+		
         model = new BasicButtonModel( this, trigger ){
             @Override
             public void changed() {
@@ -66,6 +101,16 @@ public class RoundButton extends JComponent{
 		});
 	}
     
+	/**
+	 * Connects this button with a controller, that is necessary to get the
+	 * colors for this button.
+	 * @param controller the controller, can be <code>null</code>
+	 */
+	public void setController( DockController controller ){
+	    for( RoundActionColor color : colors )
+	        color.connect( controller );
+	}
+	
     public BasicButtonModel getModel() {
         return model;
     }
@@ -152,6 +197,26 @@ public class RoundButton extends JComponent{
     	if (enabled)
     		postfix+=".enabled";
     	
-    	animation.putColor("button", "button"+ postfix);    	
+    	String key = "action.button"+ postfix;
+    	for( RoundActionColor color : colors ){
+    	    if( key.equals( color.getId() )){
+    	        animation.putColor( "button", color.color() );
+    	        break;
+    	    }
+    	}    	
+    }
+    
+    /**
+     * A color used in a round button
+     * @author Benjamin Sigg
+     */
+    private class RoundActionColor extends ActionColor{
+        public RoundActionColor( String id, Dockable dockable, DockAction action, Color backup ){
+            super( id, ActionColor.class, dockable, action, backup );
+        }
+        @Override
+        protected void changed( Color oldColor, Color newColor ) {
+            updateColors();
+        }
     }
 }

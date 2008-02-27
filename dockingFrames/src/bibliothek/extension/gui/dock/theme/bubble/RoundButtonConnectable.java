@@ -26,28 +26,15 @@
 package bibliothek.extension.gui.dock.theme.bubble;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
-import bibliothek.gui.dock.dockable.MovingImage;
-import bibliothek.gui.dock.title.DockTitle;
-import bibliothek.gui.dock.title.TitleMovingImage;
 
 /**
- * A factory that creates images using the {@link ReducedBubbleTitleFactory}.
+ * An element which can use a {@link DockController}.
  * @author Benjamin Sigg
  */
-public class BubbleMovingImageFactory implements DockableMovingImageFactory {
-    private ReducedBubbleTitleFactory reduced;
-    
-    public BubbleMovingImageFactory(){
-        reduced = new ReducedBubbleTitleFactory();
-    }
-    
-    public MovingImage create( DockController controller, DockTitle snatched ) {
-        return new TitleMovingImage( snatched.getDockable(), reduced.createDockableTitle( snatched.getDockable(), null ));
-    }
-
-    public MovingImage create( DockController controller, Dockable dockable ) {
-        return new TitleMovingImage( dockable, reduced.createDockableTitle( dockable, null ));
-    }
+public interface RoundButtonConnectable {
+    /**
+     * Sets the controller of this element.
+     * @param controller the controller, can be <code>null</code>
+     */
+    public void setController( DockController controller );
 }

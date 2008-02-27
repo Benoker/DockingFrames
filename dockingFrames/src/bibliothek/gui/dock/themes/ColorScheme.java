@@ -23,31 +23,30 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.bubble;
+package bibliothek.gui.dock.themes;
 
-import bibliothek.gui.DockController;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
-import bibliothek.gui.dock.dockable.MovingImage;
-import bibliothek.gui.dock.title.DockTitle;
-import bibliothek.gui.dock.title.TitleMovingImage;
+import java.awt.Color;
+
+import bibliothek.gui.dock.util.color.ColorProvider;
 
 /**
- * A factory that creates images using the {@link ReducedBubbleTitleFactory}.
+ * A <code>ColorScheme</code> is a collection of colors and providers. A 
+ * <code>ColorScheme</code> cannot change its content.
+ * 
  * @author Benjamin Sigg
  */
-public class BubbleMovingImageFactory implements DockableMovingImageFactory {
-    private ReducedBubbleTitleFactory reduced;
+public interface ColorScheme {
+    /**
+     * 
+     * @param id
+     * @return
+     */
+    public Color getColor( String id );
     
-    public BubbleMovingImageFactory(){
-        reduced = new ReducedBubbleTitleFactory();
-    }
-    
-    public MovingImage create( DockController controller, DockTitle snatched ) {
-        return new TitleMovingImage( snatched.getDockable(), reduced.createDockableTitle( snatched.getDockable(), null ));
-    }
-
-    public MovingImage create( DockController controller, Dockable dockable ) {
-        return new TitleMovingImage( dockable, reduced.createDockableTitle( dockable, null ));
-    }
+    /**
+     * 
+     * @param kind
+     * @return
+     */
+    public ColorProvider<?> getProvider( Class<?> kind );
 }

@@ -29,10 +29,7 @@ package bibliothek.extension.gui.dock.theme;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
@@ -69,10 +66,14 @@ public class BubbleTheme extends BasicTheme {
 	/** The colors used by this theme */
     private Map<String, Color> colors = new HashMap<String, Color>();
     
+    /** the {@link DockController}s which currently use this theme */
+    private List<DockController> controllers = new ArrayList<DockController>();
+    
 	/**
 	 * Creates a new theme
 	 */
     public BubbleTheme(){
+        // stack
         colors.put( "tab.border.active",            new Color( 150, 0, 0 ) );
         colors.put( "tab.border.active.mouse",      new Color( 200, 100, 100 ) );
         colors.put( "tab.border.inactive",          new Color( 100, 100, 100 ) );
@@ -90,6 +91,8 @@ public class BubbleTheme extends BasicTheme {
         colors.put( "tab.text.inactive",            new Color( 100, 100, 100 ));
         colors.put( "tab.text.inactive.mouse",      new Color( 25, 25, 25 ));
         
+        
+        // title
         colors.put( "title.top.active",               new Color( 200, 0, 0 ) );
         colors.put( "title.top.active.mouse",         new Color( 255, 100, 100 ) );
         colors.put( "title.top.inactive",             new Color( 150, 150, 150 ) );
@@ -103,13 +106,13 @@ public class BubbleTheme extends BasicTheme {
         colors.put( "title.text.inactive",            new Color( 100, 100, 100 ));
         colors.put( "title.text.inactive.mouse",      new Color( 25, 25, 25 ));
         
+        // display border
         colors.put( "border.high.active",           new Color( 255, 100, 100 ));
         colors.put( "border.high.inactive",         new Color( 200, 200, 200 ));
         colors.put( "border.low.active",            new Color( 200, 100, 100 ));
         colors.put( "border.low.inactive",          new Color( 100, 100, 100 ));
         
         // RoundButton
-       
         colors.put( "button",                                 new Color( 255, 255, 255 ));
         colors.put( "button.enabled",                         new Color( 215, 215, 215 ));
         colors.put( "button.selected",                        new Color( 200, 200, 255 ));
@@ -139,15 +142,18 @@ public class BubbleTheme extends BasicTheme {
         colors.put( "dropdown.line.pressed.enabled",            new Color( 200, 200, 0 ));
         colors.put( "dropdown.line.pressed.selected.enabled",   new Color( 0, 0, 200 ));
         
-        colors.put( "paint",                        new Color( 0, 0, 0 ));
+        // Paint
+        colors.put( "paint.divider",                            new Color( 0, 0, 0 ));
+        colors.put( "paint.insertion",                          new Color( 0, 0, 0 ));
+        colors.put( "paint.line",                               new Color( 0, 0, 0 ));
 
-        setDisplayerFactory( new BubbleDisplayerFactory( this ));
-        setTitleFactory( new BubbleDockTitleFactory( this ));
-        setPaint( new BubbleStationPaint( this ) );
-        setMovingImageFactory( new BubbleMovingImageFactory( this ) );
+        setDisplayerFactory( new BubbleDisplayerFactory());
+        setTitleFactory( new BubbleDockTitleFactory());
+        setPaint( new BubbleStationPaint() );
+        setMovingImageFactory( new BubbleMovingImageFactory() );
         setStackDockComponentFactory( new StackDockComponentFactory(){
             public StackDockComponent create( StackDockStation station ) {
-                return new BubbleStackDockComponent( BubbleTheme.this );
+                return new BubbleStackDockComponent( station );
             }
         });
     }
@@ -264,7 +270,8 @@ public class BubbleTheme extends BasicTheme {
     }
     
     /**
-     * Stores a color which will be used in the theme.
+     * Stores a color which will be used in the theme. Note that this method
+     * takes effect the next time when this theme is installed.
      * @param key the key of the color
      * @param color the color to store
      */
@@ -275,11 +282,12 @@ public class BubbleTheme extends BasicTheme {
 	@Override
 	public void install( DockController controller ){
 		super.install( controller );
+		controllers.add( controller );
 		
         // set new titles
         controller.getDockTitleManager().registerTheme( 
                 FlapDockStation.BUTTON_TITLE_ID, 
-                new ReducedBubbleTitleFactory( this ));
+                new ReducedBubbleTitleFactory());
         
         Map<String,Icon> icons = loadIcons();
         for( Map.Entry<String, Icon> icon : icons.entrySet() ){
@@ -354,6 +362,7 @@ public class BubbleTheme extends BasicTheme {
 	@Override
 	public void uninstall( DockController controller ){
 		super.uninstall( controller );
+		controllers.remove( controller );
 		
         controller.getDockTitleManager().clearThemeFactories();
         
@@ -376,7 +385,7 @@ public class BubbleTheme extends BasicTheme {
     private class ButtonGenerator implements ViewGenerator<ButtonDockAction, BasicTitleViewItem<JComponent>>{
         public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, ButtonDockAction action, Dockable dockable ) {
             BasicButtonHandler handler = new BasicButtonHandler( action, dockable );
-            RoundButton button = new RoundButton( BubbleTheme.this, handler );
+            RoundButton button = new RoundButton( handler, dockable, action );
             handler.setModel( button.getModel() );
             return handler;
         }
@@ -389,9 +398,9 @@ public class BubbleTheme extends BasicTheme {
     private class CheckGenerator implements ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>{
         public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ) {
             BasicSelectableHandler.Check handler = new BasicSelectableHandler.Check( action, dockable );
-            RoundButton button = new RoundButton( BubbleTheme.this, handler );
+            RoundButton button = new RoundButton( handler, dockable, action );
             handler.setModel( button.getModel() );
-            return handler;
+            return new RoundButtonViewItem( dockable, handler, button );
         }
     }
     
@@ -402,9 +411,9 @@ public class BubbleTheme extends BasicTheme {
     private class RadioGenerator implements ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>{
         public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ) {
             BasicSelectableHandler.Radio handler = new BasicSelectableHandler.Radio( action, dockable );
-            RoundButton button = new RoundButton( BubbleTheme.this, handler );
+            RoundButton button = new RoundButton( handler, dockable, action );
             handler.setModel( button.getModel() );
-            return handler;
+            return new RoundButtonViewItem( dockable, handler, button );
         }
     }
     
@@ -415,9 +424,9 @@ public class BubbleTheme extends BasicTheme {
     private class DropDownGenerator implements ViewGenerator<DropDownAction, BasicTitleViewItem<JComponent>>{
         public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, DropDownAction action, Dockable dockable ) {
             BasicDropDownButtonHandler handler = new BasicDropDownButtonHandler( action, dockable );
-            RoundDropDownButton button = new RoundDropDownButton( BubbleTheme.this, handler );
+            RoundDropDownButton button = new RoundDropDownButton( handler, dockable, action );
             handler.setModel( button.getModel() );
-            return handler;
+            return new RoundButtonViewItem( dockable, handler, button );
         }
     }
     
@@ -428,9 +437,9 @@ public class BubbleTheme extends BasicTheme {
     private class MenuGenerator implements ViewGenerator<MenuDockAction, BasicTitleViewItem<JComponent>>{
     	public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, MenuDockAction action, Dockable dockable ){
             BasicMenuHandler handler = new BasicMenuHandler( action, dockable );
-            RoundButton button = new RoundButton( BubbleTheme.this, handler );
+            RoundButton button = new RoundButton( handler, dockable, action );
             handler.setModel( button.getModel() );
-            return handler;
+            return new RoundButtonViewItem( dockable, handler, button );
     	}
     }
  

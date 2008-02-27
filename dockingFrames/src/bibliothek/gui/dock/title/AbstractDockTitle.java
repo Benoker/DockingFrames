@@ -27,6 +27,8 @@
 package bibliothek.gui.dock.title;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -34,15 +36,20 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionPopup;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.view.ViewTarget;
+import bibliothek.gui.dock.event.DockHierarchyEvent;
+import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
+import bibliothek.gui.dock.util.color.AbstractDockColor;
+import bibliothek.gui.dock.util.color.ColorManager;
 
 /**
  * An abstract implementation of {@link DockTitle}. This title can have
@@ -88,7 +95,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     /** <code>true</code> if this title is currently selected, <code>false</code> otherwise */
     private boolean active = false;
     /** <code>true</code> if this title is currently bound to a {@link Dockable} */
-    private boolean bind = false;
+    private boolean bound = false;
     /** Tells whether small buttons for each action should be created and shown, or not */
     private boolean showMiniButtons = true;
     
@@ -96,6 +103,9 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     private Orientation orientation = Orientation.FREE_HORIZONTAL;
     /** The icon which is shown on this title */
     private Icon icon;
+    
+    /** the colors used by this title */
+    private List<AbstractDockColor> colors = new ArrayList<AbstractDockColor>();
     
     /**
      * Constructs a new title
@@ -134,6 +144,28 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         }
         
         setOpaque( false );
+    }
+    
+    /**
+     * Adds a color to the list of colors, this title will ensure that 
+     * <code>color</code> gets connected to a {@link ColorManager} as soon
+     * as this title is bound.
+     * @param color the new color
+     */
+    protected void addColor( AbstractDockColor color ){
+        colors.add( color );
+        if( bound ){
+            color.connect( getDockable().getController() );
+        }
+    }
+    
+    /**
+     * Removes a color from this title
+     * @param color the color to remove
+     */
+    protected void removeColor( AbstractDockColor color ){
+        colors.remove( color );
+        color.connect( null );
     }
     
     @Override
@@ -506,14 +538,19 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     }
     
     public void bind() {        
-        if( bind )
-            throw new IllegalArgumentException( "Do not call bind twice!" );
-        bind = true;
+        if( bound )
+            throw new IllegalArgumentException( "Do not call bound twice!" );
+        bound = true;
         
         if( showMiniButtons )
         	itemPanel.set( dockable, getActionSourceFor( dockable ) );
         
         dockable.addDockableListener( listener );
+        DockController controller = dockable.getController();
+        if( controller != null ){
+            for( AbstractDockColor color : colors )
+                color.connect( controller );
+        }
         
         setText( dockable.getTitleText() );
         setIcon( dockable.getTitleIcon() );
@@ -522,14 +559,17 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     }
 
     public void unbind() {
-        if( !bind )
+        if( !bound )
             throw new IllegalArgumentException( "Do not call unbind twice" );
-        bind = false;
+        bound = false;
         
         dockable.removeDockableListener( listener );
         
         if( showMiniButtons )
         	itemPanel.set( null );
+        
+        for( AbstractDockColor color : colors )
+            color.connect( null );
         
         setText( "" );
         setIcon( null );
@@ -541,7 +581,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
      * {@link #unbind() otherwise}
      */
     public boolean isBound(){
-        return bind;
+        return bound;
     }
     
     /**
@@ -650,7 +690,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
      * A listener to the {@link Dockable} of this title.
      * @author Benjamin Sigg
      */
-    private class Listener implements DockableListener{
+    private class Listener implements DockableListener, DockHierarchyListener{
         public void titleIconChanged( Dockable dockable, Icon oldIcon, Icon newIcon ) {
             setIcon( newIcon );
         }
@@ -666,5 +706,14 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
             // do nothing
         }
         
+        public void controllerChanged( DockHierarchyEvent event ) {
+            DockController controller = event.getDockable().getController();
+            for( AbstractDockColor color : colors )
+                color.connect( controller );
+        }
+        
+        public void hierarchyChanged( DockHierarchyEvent event ) {
+            // do nothing
+        }
     }
 }

@@ -23,31 +23,39 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.bubble;
+package bibliothek.gui.dock.themes.basic.color;
 
-import bibliothek.gui.DockController;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
-import bibliothek.gui.dock.dockable.MovingImage;
-import bibliothek.gui.dock.title.DockTitle;
-import bibliothek.gui.dock.title.TitleMovingImage;
+import java.awt.Color;
+
+import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.util.color.AbstractDockColor;
+import bibliothek.gui.dock.util.color.DockColor;
 
 /**
- * A factory that creates images using the {@link ReducedBubbleTitleFactory}.
+ * A color used on a {@link DockableDisplayer}.
  * @author Benjamin Sigg
  */
-public class BubbleMovingImageFactory implements DockableMovingImageFactory {
-    private ReducedBubbleTitleFactory reduced;
+public abstract class DisplayerColor extends AbstractDockColor {
+    /** the element for which the color is needed */
+    private DockableDisplayer displayer;
     
-    public BubbleMovingImageFactory(){
-        reduced = new ReducedBubbleTitleFactory();
+    /**
+     * Creates a new {@link DisplayerColor}
+     * @param id the identifier of the color
+     * @param kind which kind of color this is
+     * @param displayer the element for which the color is used
+     * @param backup a backup color
+     */
+    public DisplayerColor( String id, Class<? extends DockColor> kind, DockableDisplayer displayer, Color backup ){
+        super( id, kind, backup );
+        this.displayer = displayer;
     }
     
-    public MovingImage create( DockController controller, DockTitle snatched ) {
-        return new TitleMovingImage( snatched.getDockable(), reduced.createDockableTitle( snatched.getDockable(), null ));
-    }
-
-    public MovingImage create( DockController controller, Dockable dockable ) {
-        return new TitleMovingImage( dockable, reduced.createDockableTitle( dockable, null ));
+    /**
+     * Gets the element for which this color is used.
+     * @return the element
+     */
+    public DockableDisplayer getDisplayer() {
+        return displayer;
     }
 }

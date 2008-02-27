@@ -23,26 +23,30 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.themes.color;
+package bibliothek.gui.dock.util.color;
 
 import java.awt.Color;
 import java.util.*;
+
+import bibliothek.gui.dock.util.Priority;
+import bibliothek.gui.dock.util.PriorityValue;
 
 /**
  * A {@link ColorManager} contains {@link Color}s, {@link ColorProvider}s and
  * {@link DockColor}s. Some <code>DockColor</code>s are associated with a 
  * <code>ColorProvider</code>. If a <code>Color</code> in this manager is
- * {@link #put(String, Color) set}, then each <code>DockColor</code> that listens
+ * {@link #put(Priority, String, Color) set}, then each <code>DockColor</code> that listens
  * for that color gets informed about the change either through its 
  * provider or directly from the manager.
  * @author Benjamin Sigg
  */
 public class ColorManager {
     /** the map of providers known to this manager */
-    private Map<Class<?>, ColorProvider<?>> providers = new HashMap<Class<?>, ColorProvider<?>>();
+    private Map<Class<?>, PriorityValue<ColorProvider<?>>> providers =
+        new HashMap<Class<?>, PriorityValue<ColorProvider<?>>>();
     
     /** the map of the known {@link Color}s */
-    private Map<String, Color> colors = new HashMap<String, Color>();
+    private Map<String, PriorityValue<Color>> colors = new HashMap<String, PriorityValue<Color>>();
     
     /** a list of all observers */
     private List<Observer<?>> observers = new LinkedList<Observer<?>>();
@@ -50,36 +54,55 @@ public class ColorManager {
     /**
      * Adds a new provider of colors to this manager.
      * @param <D> the kind of observers this provider likes
+     * @param priority the importance of the new provider
      * @param kind the kind of observers this provider likes
      * @param provider the new provider
      */
-    public <D extends DockColor>void publish( Class<? extends D> kind, ColorProvider<D> provider ){
+    public <D extends DockColor>void publish( Priority priority, Class<? extends D> kind, ColorProvider<D> provider ){
+        if( priority == null )
+            throw new IllegalArgumentException( "priority must not be null" );
         if( kind == null )
             throw new IllegalArgumentException( "kind must not be null" );
         if( provider == null )
             throw new IllegalArgumentException( "Provider must not be null" );
         
-        providers.put( kind, provider );
+        PriorityValue<ColorProvider<?>> value = providers.get( kind );
+        if( value == null ){
+            value = new PriorityValue<ColorProvider<?>>();
+            providers.put( kind, value );
+        }
         
-        for( Observer<?> check : observers ){
-            check.resetProvider();
+        if( value.set( priority, provider )){
+            for( Observer<?> check : observers ){
+                check.resetProvider();
+            }
         }
     }
     
     /**
      * Searches for all occurrences of <code>provider</code> and removes them.
-     * All {@link DockColor}s that used <code>provider</code> are redistributed. 
-     * @param provider
+     * All {@link DockColor}s that used <code>provider</code> are redistributed.
+     * @param priority the importance of the provider 
+     * @param provider the provider to remove
      */
-    public void unpublish( ColorProvider<?> provider ){
-        Iterator<ColorProvider<?>> iterator = providers.values().iterator();
+    public void unpublish( Priority priority, ColorProvider<?> provider ){
+        Iterator<PriorityValue<ColorProvider<?>>> iterator = providers.values().iterator();
+        boolean change = false;
+        
         while( iterator.hasNext() ){
-            if( iterator.next() == provider )
-                iterator.remove();
+            PriorityValue<ColorProvider<?>> next = iterator.next();
+            if( next.get( priority ) == provider ){
+                change = next.set( priority, null ) || change;
+                if( next.get() == null ){
+                    iterator.remove();
+                }
+            }
         }
         
-        for( Observer<?> check : observers ){
-            check.resetProvider();
+        if( change ){
+            for( Observer<?> check : observers ){
+                check.resetProvider();
+            }
         }
     }
 
@@ -129,28 +152,64 @@ public class ColorManager {
     
     /**
      * Sets a color of this manager.
+     * @param priority the importance of this value
      * @param id the id of the color
      * @param color the new color
      */
-    public void put( String id, Color color ){
-        Color old = colors.put( id, color );
-        if( (old == null && color != null) || ( old != null && !old.equals( color ) )){
+    public void put( Priority priority, String id, Color color ){
+        PriorityValue<Color> value = colors.get( id );
+        if( value == null ){
+            value = new PriorityValue<Color>();
+            colors.put( id, value );
+        }
+        
+        if( value.set( priority, color ) ){
             for( Observer<?> observer : observers ){
                 if( observer.id.equals( id )){
                     observer.update( color );
                 }
             }
         }
+        
+        if( value.get() == null )
+            colors.remove( id );
     }
     
     /**
      * Gets a color of this manager.
      * @param id the id of the color
      * @return the color or <code>null</code>
-     * @see #put(String, Color)
+     * @see #put(Priority, String, Color)
      */
     public Color get( String id ){
-        return colors.get( id );
+        PriorityValue<Color> value = colors.get( id );
+        return value == null ? null : value.get();
+    }
+    
+    /**
+     * Removes all values that stored under the given priority.
+     * @param priority the priority whose elements should be removed
+     */
+    public void clear( Priority priority ){
+        Iterator<PriorityValue<Color>> colorIterator = colors.values().iterator();
+        while( colorIterator.hasNext() ){
+            PriorityValue<Color> value = colorIterator.next();
+            value.set( priority, null );
+            if( value.get() == null )
+                colorIterator.remove();
+        }
+        
+        Iterator<PriorityValue<ColorProvider<?>>> providerIterator = providers.values().iterator();
+        while( providerIterator.hasNext() ){
+            PriorityValue<ColorProvider<?>> value = providerIterator.next();
+            value.set( priority, null );
+            if( value.get() == null )
+                providerIterator.remove();
+        }
+        
+        for( Observer<?> observer : observers ){
+            observer.resetAll();
+        }
     }
     
     /**
@@ -163,7 +222,8 @@ public class ColorManager {
         if( !checked.add( clazz ))
             return null;
         
-        ColorProvider<?> result = providers.get( clazz );
+        PriorityValue<ColorProvider<?>> value = providers.get( clazz );
+        ColorProvider<?> result = value == null ? null : value.get();
         if( result != null )
             return result;
         
@@ -202,17 +262,12 @@ public class ColorManager {
          * @param type the type of observer that is wrapped by this <code>Observer</code>
          * @param observer the listener for changed colors
          */
-        @SuppressWarnings("unchecked")
         public Observer( String id, Class<? super D> type, D observer ){
             this.id = id;
             this.type = type;
             this.observer = observer;
             
-            ColorProvider<D> provider = (ColorProvider<D>)getProviderFor( type );
-            if( provider == null )
-                update( get( id ) );
-            else
-                setProvider( provider );
+            resetAll();
         }
         
         /**
@@ -221,6 +276,18 @@ public class ColorManager {
          */
         public D getObserver() {
             return observer;
+        }
+        
+        /**
+         * Updates color and provider of this <code>Observer</code>.
+         */
+        @SuppressWarnings("unchecked")
+        public void resetAll(){
+            ColorProvider<D> provider = (ColorProvider<D>)getProviderFor( type );
+            if( provider == null )
+                update( get( id ) );
+            else
+                setProvider( provider );
         }
         
         /**

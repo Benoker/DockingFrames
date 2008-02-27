@@ -25,7 +25,6 @@
  */
 package bibliothek.extension.gui.dock.theme.bubble;
 
-import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.title.DockTitle;
@@ -37,23 +36,12 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  * @author Benjamin Sigg
  */
 public class BubbleDockTitleFactory implements DockTitleFactory {
-	/** A theme to read colors from */
-    private BubbleTheme theme;
-    
-    /**
-     * Creates a new factory
-     * @param theme the theme from which colors are read
-     */
-    public BubbleDockTitleFactory( BubbleTheme theme ){
-        this.theme = theme;
-    }
-
     public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
-        return new BubbleDockTitle( theme, dockable, version );
+        return new BubbleDockTitle( dockable, version );
     }
 
     public <D extends Dockable & DockStation> DockTitle createStationTitle( D dockable, DockTitleVersion version ) {
-        return new BubbleDockTitle( theme, dockable, version );
+        return new BubbleDockTitle( dockable, version );
     }
 
 }

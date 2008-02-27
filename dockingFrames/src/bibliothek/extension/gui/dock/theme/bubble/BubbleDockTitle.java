@@ -31,17 +31,32 @@ import java.awt.event.MouseEvent;
 import javax.swing.JComponent;
 import javax.swing.event.MouseInputAdapter;
 
-import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.themes.basic.color.TitleColor;
 import bibliothek.gui.dock.title.AbstractDockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.color.ColorCodes;
 
 /**
  * A <code>BubbleDockTitle</code> is a title which has two or four round edges.
  * The title can smoothly change its colors when touched by the mouse.
  * @author Benjamin Sigg
- *
  */
+
+@ColorCodes({ "title.background.top.active.mouse",
+    "title.background.top.active",
+    "title.background.top.inactive.mouse",
+    "title.background.top.inactive",
+    
+    "title.background.bottom.active.mouse",
+    "title.background.bottom.active",
+    "title.background.bottom.inactive.mouse",
+    "title.background.bottom.inactive",
+    
+    "title.foreground.active.mouse",
+    "title.foreground.active",
+    "title.foreground.inactive.mouse",
+    "title.foreground.inactive"})
 public class BubbleDockTitle extends AbstractDockTitle {
 	/** An animation which can change a set of colors smoothly */
 	private BubbleColorAnimation animation;
@@ -51,46 +66,60 @@ public class BubbleDockTitle extends AbstractDockTitle {
     /** The size of the round edges */
     private int arc = 16;
     
+    /** the set of colors used on this title */
+    private BubbleTitleColor[] colors;
+    
     /**
      * Creates a new title.
-     * @param theme the theme from which this title will read some colors
      * @param dockable the {@link Dockable} for which this title is shown
      * @param origin the creator of this title
      */
-    public BubbleDockTitle( BubbleTheme theme, Dockable dockable, DockTitleVersion origin ) {
+    public BubbleDockTitle( Dockable dockable, DockTitleVersion origin ) {
         super( dockable, origin );
         setOpaque( false );
-        
-        if( theme == null )
-            throw new IllegalArgumentException( "theme must not be null" );
-        
-        initAnimation( theme );
+        initAnimation();
     }
     
     /**
      * Creates a new title.
-     * @param theme the theme from which this title will read some colors
      * @param dockable the {@link Dockable} for which this title is shown
      * @param origin the creator of this title
      * @param showMiniButtons whether this title should show the {@link bibliothek.gui.dock.action.DockAction actions} or not
      */
-    public BubbleDockTitle( BubbleTheme theme, Dockable dockable, DockTitleVersion origin, boolean showMiniButtons ){
+    public BubbleDockTitle( Dockable dockable, DockTitleVersion origin, boolean showMiniButtons ){
         super( dockable, origin, showMiniButtons );
         setOpaque( false );
-        
-        if( theme == null )
-            throw new IllegalArgumentException( "theme must not be null" );
-        
-        initAnimation( theme );
+        initAnimation();
     }
     
     /**
      * Sets up the animation such that it can be started at any time.
-     * @param theme the theme to read colors from
      */
-    private void initAnimation( BubbleTheme theme ){
-        animation = new BubbleColorAnimation( theme );
+    private void initAnimation(){
+        animation = new BubbleColorAnimation();
+        
+        colors = new BubbleTitleColor[]{
+                new BubbleTitleColor( "title.background.top.active.mouse", Color.RED ),
+                new BubbleTitleColor( "title.background.top.active", Color.LIGHT_GRAY ),
+                new BubbleTitleColor( "title.background.top.inactive.mouse", Color.BLUE ),
+                new BubbleTitleColor( "title.background.top.inactive", Color.DARK_GRAY ),
+        
+                new BubbleTitleColor( "title.background.bottom.active.mouse", Color.LIGHT_GRAY ),
+                new BubbleTitleColor( "title.background.bottom.active", Color.WHITE ),
+                new BubbleTitleColor( "title.background.bottom.inactive.mouse", Color.DARK_GRAY ),
+                new BubbleTitleColor( "title.background.bottom.inactive", Color.BLACK ),
+        
+                new BubbleTitleColor( "title.foreground.active.mouse", Color.BLACK ),
+                new BubbleTitleColor( "title.foreground.active", Color.BLACK ),
+                new BubbleTitleColor( "title.foreground.inactive.mouse", Color.WHITE ),
+                new BubbleTitleColor( "title.foreground.inactive", Color.WHITE )
+        };
+        
+        for( BubbleTitleColor color : colors )
+            addColor( color );
+        
         updateAnimation( false );
+        
         animation.addTask( new Runnable(){
             public void run() {
                 pulse();
@@ -142,9 +171,18 @@ public class BubbleDockTitle extends AbstractDockTitle {
                 postfix = "inactive";            
         }
         
-        animation.putColor( "top",     "title.top." + postfix );
-        animation.putColor( "bottom",  "title.bottom." + postfix );
-        animation.putColor( "text",    "title.text." + postfix );
+        String top = "title.background.top." + postfix;
+        String bottom = "title.background.bottom." + postfix;
+        String text = "title.foreground." + postfix;
+        
+        for( BubbleTitleColor color : colors ){
+            if( top.equals( color.getId() ))
+                animation.putColor( "top", color.color() );
+            else if( bottom.equals( color.getId() ))
+                animation.putColor( "bottom", color.color() );
+            else if( text.equals( color.getId() ))
+                animation.putColor( "text", color.color() );
+        }
     }
     
     /**
@@ -271,6 +309,20 @@ public class BubbleDockTitle extends AbstractDockTitle {
             case WEST_SIDED:
                 g2.fillRoundRect( x, y, w+arc, h, arc, arc );
                 break;
+        }
+    }
+    
+    /**
+     * A color used on a {@link BubbleDockTitle}.
+     * @author Benjamin Sigg
+     */
+    private class BubbleTitleColor extends TitleColor{
+        public BubbleTitleColor( String id, Color backup ){
+            super( id, TitleColor.class, BubbleDockTitle.this, backup );
+        }
+        @Override
+        protected void changed( Color oldColor, Color newColor ) {
+            updateAnimation( mouse );
         }
     }
 }

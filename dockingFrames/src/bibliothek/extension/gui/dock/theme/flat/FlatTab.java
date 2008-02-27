@@ -26,15 +26,7 @@
 
 package bibliothek.extension.gui.dock.theme.flat;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.Paint;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -47,10 +39,13 @@ import javax.swing.border.Border;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.control.RemoteRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
 import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
 import bibliothek.gui.dock.station.stack.CombinedTab;
+import bibliothek.gui.dock.themes.basic.color.TabColor;
+import bibliothek.gui.dock.util.color.ColorCodes;
 
 /**
  * A panel that works like a {@link JTabbedPane}, but the buttons to
@@ -58,8 +53,33 @@ import bibliothek.gui.dock.station.stack.CombinedTab;
  * buttons of the <code>JTabbedPane</code>.
  * @author Benjamin Sigg
  */
+@ColorCodes({"stack.tab.border.out.selected", 
+    "stack.tab.border.center.selected", 
+    "stack.tab.border.out", 
+    "stack.tab.border.center", 
+    "stack.tab.border", 
+                
+    "stack.tab.background.top.selected", 
+    "stack.tab.background.bottom.selected", 
+    "stack.tab.background.top", 
+    "stack.tab.background.bottom", 
+    "stack.tab.background",
+    
+    "stack.tab.foreground",
+    "stack.tab.foreground.selected" })
 public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
-	@Override
+    /** the station which uses this component */
+    private StackDockStation station;
+    
+    /**
+     * Creates a new {@link FlatTab}
+     * @param station the station which uses this component
+     */
+    public FlatTab( StackDockStation station ){
+        this.station = station;
+    }
+    
+    @Override
 	protected FlatButton createTab( Dockable dockable ){
 		return new FlatButton( dockable );
 	}
@@ -75,7 +95,14 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
 		for( int i = 0, n = getTabCount(); i<n; i++ ){
 			getTab( i ).setController( controller );
 		}
-			
+	}
+	
+	@Override
+	public void setSelectedIndex( int index ) {
+	    super.setSelectedIndex( index );
+	    for( int i = 0, n = getTabCount(); i<n; i++ ){
+            getTab( i ).updateForeground();
+        }
 	}
 	
     /**
@@ -92,13 +119,55 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
         /** The location of this button */
         private int index;
        
+        private TabColor borderSelectedOut;
+        private TabColor borderSelectedCenter;
+        private TabColor borderOut;
+        private TabColor borderCenter;
+        private TabColor border;
+        private TabColor backgroundSelectedTop;
+        private TabColor backgroundSelectedBottom;
+        private TabColor backgroundTop;
+        private TabColor backgroundBottom;
+        private TabColor background;
+        private TabColor foreground;
+        private TabColor foregroundSelected;
+        
         /**
          * Constructs a new button
          * @param dockable the Dockable for which this tab is displayed
          */
         public FlatButton( Dockable dockable ){
         	this.dockable = dockable;
-        	setController( getController() );
+        	            
+            borderSelectedOut    = new FlatTabColor( "stack.tab.border.out.selected", dockable );
+            borderSelectedCenter = new FlatTabColor( "stack.tab.border.center.selected", dockable );
+            borderOut            = new FlatTabColor( "stack.tab.border.out", dockable );
+            borderCenter         = new FlatTabColor( "stack.tab.border.center", dockable );
+            border               = new FlatTabColor( "stack.tab.border", dockable );
+            
+            backgroundSelectedTop    = new FlatTabColor( "stack.tab.background.top.selected", dockable );
+            backgroundSelectedBottom = new FlatTabColor( "stack.tab.background.bottom.selected", dockable );
+            backgroundTop            = new FlatTabColor( "stack.tab.background.top", dockable );
+            backgroundBottom         = new FlatTabColor( "stack.tab.background.bottom", dockable );
+            background               = new FlatTabColor( "stack.tab.background", dockable );
+            
+            foreground = new FlatTabColor( "stack.tab.foreground", dockable ){
+                @Override
+                protected void changed( Color oldColor, Color newColor ) {
+                    if( !isSelected() )
+                        setForeground( newColor );
+                }
+            };
+            foregroundSelected = new FlatTabColor( "stack.tab.foreground.selected", dockable ){
+                @Override
+                protected void changed( Color oldColor, Color newColor ) {
+                    if( isSelected() ){
+                        setForeground( newColor );
+                    }
+                }
+            };
+            
+            setController( getController() );
             setOpaque( false );
             setFocusable( true );
             
@@ -159,22 +228,44 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
                     Graphics2D g2 = (Graphics2D)g;
                     Paint oldPaint = g2.getPaint();
                     
-                    Color dark = c.getBackground().darker();
-                    Color bright = c.getBackground().brighter();
+                    Color out;
+                    Color center;
+
+                    if( isSelected() ){
+                        out = borderSelectedOut.color();
+                        center = borderSelectedCenter.color();
+                    }
+                    else{
+                        out = borderOut.color();
+                        center = borderCenter.color();
+                    }
                     
-                    if( isSelected() )
-                        g2.setPaint( new GradientPaint( x, y, getBackground(), x, y+h/2, bright ));
-                    else
-                        g2.setPaint( new GradientPaint( x, y, getBackground(), x, y+h/2, dark ));
+                    if( out == null || center == null ){
+                        Color background = border.color();
+                        if( background == null )
+                            background = FlatButton.this.background.color();
+                        
+                        if( background == null )
+                            background = getBackground();
+                        
+                        if( out == null )
+                            out = background;
+                        
+                        if( center == null ){
+                            if( isSelected() ){
+                                center = background.brighter();
+                            }
+                            else{
+                                center = background.darker();
+                            }
+                        }
+                    }
                     
+                    g2.setPaint( new GradientPaint( x, y, out, x, y+h/2, center ));
                     g.drawLine( x, y, x, y+h/2 );
                     g.drawLine( x+w-1, y, x+w-1, y+h/2 );
                     
-                    if( isSelected() )
-                        g2.setPaint( new GradientPaint( x, y+h, getBackground(), x, y+h/2, bright ));
-                    else
-                        g2.setPaint( new GradientPaint( x, y+h, getBackground(), x, y+h/2, dark ));
-
+                    g2.setPaint( new GradientPaint( x, y+h, out, x, y+h/2, center ));
                     g.drawLine( x, y+h, x, y+h/2 );
                     g.drawLine( x+w-1, y+h, x+w-1, y+h/2 );
                     
@@ -189,11 +280,34 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
             });
         }
         
+        public void updateForeground(){
+            if( isSelected() )
+                setForeground( foregroundSelected.color() );
+            else
+                setForeground( foreground.color() );
+        }
+        
         public void setController( DockController controller ){
         	if( controller == null )
         		relocator = null;
         	else
         		relocator = controller.getRelocator().createRemote( dockable );
+        	
+            
+            borderSelectedOut.connect( controller );
+            borderSelectedCenter.connect( controller );
+            borderOut.connect( controller );
+            borderCenter.connect( controller );
+            border.connect( controller );
+            
+            backgroundSelectedTop.connect( controller );
+            backgroundSelectedBottom.connect( controller );
+            backgroundTop.connect( controller );
+            backgroundBottom.connect( controller );
+            background.connect( controller );
+            
+            foreground.connect( controller );
+            foregroundSelected.connect( controller );
         }
         
         public JComponent getComponent(){
@@ -249,19 +363,68 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
             int w = getWidth();
             int h = getHeight();
             
+            Color top;
+            Color bottom;
+            
             if( isSelected() ){
-                GradientPaint gradient = new GradientPaint( 0, 0, getBackground().brighter(),
-                        0, h, getBackground() );
-                g2.setPaint( gradient );
+                top = backgroundSelectedTop.color();
+                bottom = backgroundSelectedBottom.color();
             }
             else{
-                g.setColor( getBackground() );
+                top = backgroundTop.color();
+                bottom = backgroundBottom.color();
             }
+            
+            if( top == null || bottom == null ){
+                Color background = FlatButton.this.background.color();
+                if( background == null )
+                    background = getBackground();
+                
+                if( bottom == null )
+                    bottom = background;
+                
+                if( top == null ){
+                    if( isSelected() ){
+                        top = background.brighter();
+                    }
+                    else{
+                        top = background;
+                    }
+                }
+            }
+
+            if( top.equals( bottom ))
+                g.setColor( top );
+            else{
+                GradientPaint gradient = new GradientPaint( 0, 0, top,
+                        0, h, bottom );
+                g2.setPaint( gradient );
+            }
+            
             g.fillRect( 0, 0, w, h );
             
             g2.setPaint( oldPaint );
             
             super.paintComponent( g );
+        }
+        
+        /**
+         * A color of this tab.
+         * @author Benjamin Sigg
+         */
+        private class FlatTabColor extends TabColor{
+            /**
+             * Creates a new color.
+             * @param id the id of the color
+             * @param dockable the element for which the color is used
+             */
+            public FlatTabColor( String id, Dockable dockable ){
+                super( id, TabColor.class, station, dockable, null );
+            }
+            @Override
+            protected void changed( Color oldColor, Color newColor ) {
+                repaint();
+            }
         }
     }
 }

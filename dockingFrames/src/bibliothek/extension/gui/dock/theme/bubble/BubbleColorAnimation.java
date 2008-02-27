@@ -63,20 +63,11 @@ public class BubbleColorAnimation {
     /** The tasks that are executed at every step of the animation */
     private List<Runnable> tasks = new ArrayList<Runnable>();
     
-    /** the theme from which colors are read */
-    private BubbleTheme theme;
-    
     /**
      * Creates a new animation.
-     * @param theme the theme from which colors are read
      */
-    public BubbleColorAnimation( BubbleTheme theme ){
-    	if( theme == null )
-    		throw new IllegalArgumentException( "Theme must not be null" );
-    	
-        this.theme = theme;
-        
-        timer = new Timer( 25, new ActionListener(){
+    public BubbleColorAnimation(){
+    	timer = new Timer( 25, new ActionListener(){
             public void actionPerformed( ActionEvent e ) {
                 pulse();
             }
@@ -92,7 +83,7 @@ public class BubbleColorAnimation {
      * @param source where the animation starts
      * @param destination the destination of the animation
      */
-    public void putColors( String key, String source, String destination ){
+    public void putColors( String key, Color source, Color destination ){
         Entry entry = colors.get( key );
         if( entry == null ){
             entry = new Entry();
@@ -107,7 +98,7 @@ public class BubbleColorAnimation {
      * @param key the key of the pair
      * @param color the destination of the animation
      */
-    public void putColor( String key, String color ){
+    public void putColor( String key, Color color ){
         Entry entry = colors.get( key );
         if( entry == null ){
             entry = new Entry();
@@ -210,10 +201,10 @@ public class BubbleColorAnimation {
      * @author Benjamin Sigg
      */
     private class Entry{
-    	/** Key of the color which is abandoned by the animation */
-        private String source;
-        /** Key of the color to which the animation runs */
-        private String destination;
+    	/** The color which is abandoned by the animation */
+        private Color source;
+        /** The color to which the animation runs */
+        private Color destination;
         /** Replacement of {@link #source} for special circumstances */
         private Color intermediate;
         /** The age of the current transition from source to destination */
@@ -225,13 +216,12 @@ public class BubbleColorAnimation {
          */
         public Color getColor(){
             if( age <= 0 )
-                return theme.getColor( source );
+                return source;
             
             if( age >= duration )
-                return theme.getColor( destination );
+                return destination;
             
-            Color source = intermediate == null ? theme.getColor( this.source ) : intermediate;
-            Color destination = theme.getColor( this.destination );
+            Color source = intermediate == null ? this.source : intermediate;
             
             double s = (duration - age) / (double)duration;
             double d = age / (double)duration;
@@ -268,7 +258,7 @@ public class BubbleColorAnimation {
          * @param source the new source
          * @param destination the new destination
          */
-        public void setColors( String source, String destination ){
+        public void setColors( Color source, Color destination ){
             if( age == 0 ){
                 this.source = destination;
             }
@@ -283,7 +273,7 @@ public class BubbleColorAnimation {
          * to <code>color</code> can happen.
          * @param color the new destination
          */
-        public void setDestination( String color ){
+        public void setDestination( Color color ){
         	if( destination == null || !destination.equals( color )){
         		if( age == 0 ){
 	                destination = color;

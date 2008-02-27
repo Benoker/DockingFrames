@@ -23,26 +23,22 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.bubble;
+package bibliothek.gui.dock.themes;
 
-import bibliothek.gui.DockStation;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.DisplayerFactory;
-import bibliothek.gui.dock.station.DockableDisplayer;
-import bibliothek.gui.dock.station.DockableDisplayer.Location;
-import bibliothek.gui.dock.title.DockTitle;
+import java.awt.Color;
 
-/**
- * A factory creating {@link BubbleDisplayer}.
- * @author Benjamin Sigg
- */
-public class BubbleDisplayerFactory implements DisplayerFactory {
-	public DockableDisplayer create( DockStation station, Dockable dockable, DockTitle title ) {
-        BubbleDisplayer displayer = new BubbleDisplayer( dockable, title );
-        displayer.setBorder( null );
-        if( dockable.asDockStation() != null )
-            displayer.setTitleLocation( Location.RIGHT );
-        return displayer;
+import bibliothek.gui.dock.util.color.ColorProvider;
+
+public class DefaultColorScheme implements ColorScheme{
+
+    public Color getColor( String id ) {
+        // TODO Auto-generated method stub
+        return null;
     }
-    
+
+    public ColorProvider<?> getProvider( Class<?> kind ) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

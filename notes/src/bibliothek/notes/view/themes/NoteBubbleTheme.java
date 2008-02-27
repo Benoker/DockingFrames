@@ -4,6 +4,7 @@ import javax.swing.JComponent;
 
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.extension.gui.dock.theme.bubble.RoundButton;
+import bibliothek.extension.gui.dock.theme.bubble.RoundButtonViewItem;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
@@ -32,9 +33,9 @@ public class NoteBubbleTheme extends BubbleTheme {
 
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, IconAction action, Dockable dockable ){
 				IconButtonHandler handler = new IconButtonHandler( action, dockable );
-				RoundButton button = new RoundButton( NoteBubbleTheme.this, handler );
+				RoundButton button = new RoundButton( handler, dockable, action );
 				handler.setModel( button.getModel() );
-				return handler;
+				return new RoundButtonViewItem( dockable, handler, button );
 			}
 		});
 		

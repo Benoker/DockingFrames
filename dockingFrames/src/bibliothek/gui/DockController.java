@@ -45,6 +45,7 @@ import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
+import bibliothek.gui.dock.util.color.ColorManager;
 
 /**
  * A controller is needed to drag and drop {@link Dockable dockables} from
@@ -94,6 +95,8 @@ public class DockController {
     
     /** the set of icons used with this controller */
     private IconManager icons = new IconManager();
+    /** map of colors that are used through the realm of this controller */
+    private ColorManager colors = new ColorManager();
     
     /** A list of sources for a {@link DockActionSource} */
     private List<ActionOffer> actionOffers = new ArrayList<ActionOffer>();
@@ -738,6 +741,14 @@ public class DockController {
      */
     public IconManager getIcons() {
         return icons;
+    }
+    
+    /**
+     * Gets the map of colors which are used by this controller.
+     * @return the map of colors
+     */
+    public ColorManager getColors() {
+        return colors;
     }
     
     /**

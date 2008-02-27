@@ -27,52 +27,63 @@
 package bibliothek.extension.gui.dock.theme.bubble;
 
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.control.RemoteRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
 import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
 import bibliothek.gui.dock.station.stack.CombinedTab;
+import bibliothek.gui.dock.themes.basic.color.TabColor;
+import bibliothek.gui.dock.util.color.ColorCodes;
 
 /**
  * A {@link bibliothek.gui.dock.station.stack.StackDockComponent StackDockComponent} 
  * used by a {@link BubbleTheme}. This component can animate its tabs.
  * @author Benjamin Sigg
  */
+@ColorCodes({ "tab.top.active.mouse",
+    "tab.bottom.active.mouse",
+    "tab.border.active.mouse",
+    "tab.text.active.mouse",
+    
+    "tab.top.inactive.mouse",
+    "tab.bottom.inactive.mouse",
+    "tab.border.inactive.mouse",
+    "tab.tex.inactive.mouse",
+    
+    "tab.top.active",
+    "tab.bottom.active",
+    "tab.border.active",
+    "tab.text.active",
+    
+    "tab.top.inactive",
+    "tab.bottom.inactive",
+    "tab.border.inactive",
+    "tab.text.inactive"})
 public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleStackDockComponent.Tab> {
-	/** the theme which uses this component */
-	private BubbleTheme theme;
 	/** the size of the arc of the round tabs */
 	private int arc = 6;
 	/** the size of the border of the tabs */
 	private int borderSize = 3;
 	/** the free space around text and icon of the tabs */
 	private Insets insets = new Insets( borderSize, borderSize, 0, borderSize );
+	/** the station for which this component is used */
+	private StackDockStation station;
 	
 	/**
 	 * Creates a new component.
-	 * @param theme the theme which uses this component
+	 * @param station the station on which this component is used
 	 */
-	public BubbleStackDockComponent( BubbleTheme theme ){
-		if( theme == null )
-			throw new IllegalArgumentException( "Theme must not be null" );
-		
-		this.theme = theme;
+	public BubbleStackDockComponent( StackDockStation station ){
+		this.station = station;
 	}
 	
 	@Override
@@ -96,6 +107,43 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 	}
 
 	/**
+	 * Some color needed on a {@link Tab}.
+	 * @author Benjamin Sigg
+	 *
+	 */
+	protected class BubbleTabColor extends TabColor{
+	    private Tab tab;
+	    private int state;
+	    private String animationId;
+	    private BubbleColorAnimation animation;
+	    
+	    public BubbleTabColor( Tab tab, int state, String id, String animationId, BubbleColorAnimation animation, Dockable dockable, Color backup ){
+	        super( id, TabColor.class, station, dockable, backup);
+	        this.tab = tab;
+	        this.state = state;
+	        this.animationId = animationId;
+	        this.animation = animation;
+	    }
+	    
+	    /**
+	     * Transmits the color of this {@link TabColor} if the state is
+	     * correct.
+	     */
+	    public void transmit(){
+	        if( tab.getState() == state ){
+                animation.putColor( animationId, color() );
+            }
+	    }
+	    
+	    @Override
+	    protected void changed( Color oldColor, Color newColor ) {
+	        if( tab.getState() == state ){
+	            animation.putColor( animationId, newColor );
+	        }
+	    }
+	}
+	
+	/**
 	 * A tab of the StackDockComponent
 	 * @author Benjamin Sigg
 	 */
@@ -114,15 +162,70 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
         /** the remote device to do drag & drop */
         private RemoteRelocator relocator;
         
+        private BubbleTabColor topActiveMouse;
+        private BubbleTabColor bottomActiveMouse;
+        private BubbleTabColor borderActiveMouse;
+        private BubbleTabColor textActiveMouse;
+        
+        private BubbleTabColor topInactiveMouse;
+        private BubbleTabColor bottomInactiveMouse;
+        private BubbleTabColor borderInactiveMouse;
+        private BubbleTabColor textInactiveMouse;
+     
+        private BubbleTabColor topActive;
+        private BubbleTabColor bottomActive;
+        private BubbleTabColor borderActive;
+        private BubbleTabColor textActive;
+        
+        private BubbleTabColor topInactive;
+        private BubbleTabColor bottomInactive;
+        private BubbleTabColor borderInactive;
+        private BubbleTabColor textInactive;
+        
+        private BubbleTabColor[] colors;
+        
+        private static final int STATE_ACTIVE = 1;
+        private static final int STATE_MOUSE = 2;
+        
+        private int state = 0;
+        
         /**
          * Creates a new tab
          * @param dockable the element whose title will be shown on this tab
          */
 		public Tab( Dockable dockable ){
 			this.dockable = dockable;
-			setController( getController() );
-            animation = new BubbleColorAnimation( theme );
+			
+            animation = new BubbleColorAnimation();
             animation.addTask( this );
+            
+            topActiveMouse = new BubbleTabColor( this, STATE_ACTIVE | STATE_MOUSE, "tab.top.active.mouse", "top", animation, dockable, Color.RED.brighter() );
+            bottomActiveMouse = new BubbleTabColor( this, STATE_ACTIVE | STATE_MOUSE, "tab.bottom.active.mouse", "bottom", animation, dockable, Color.RED.darker() );
+            borderActiveMouse = new BubbleTabColor( this, STATE_ACTIVE | STATE_MOUSE, "tab.border.active.mouse", "border", animation, dockable, Color.RED.darker().darker() );
+            textActiveMouse = new BubbleTabColor( this, STATE_ACTIVE | STATE_MOUSE, "tab.text.active.mouse", "text", animation, dockable, Color.BLACK );
+            
+            topInactiveMouse = new BubbleTabColor( this, STATE_MOUSE, "tab.top.inactive.mouse", "top", animation, dockable, Color.BLUE.brighter() );
+            bottomInactiveMouse = new BubbleTabColor( this, STATE_MOUSE, "tab.bottom.inactive.mouse", "bottom", animation, dockable, Color.BLUE.darker() );
+            borderInactiveMouse = new BubbleTabColor( this, STATE_MOUSE, "tab.border.inactive.mouse", "border", animation, dockable, Color.BLUE.darker().darker() );
+            textInactiveMouse = new BubbleTabColor( this, STATE_MOUSE, "tab.tex.inactive.mouse", "text", animation, dockable, Color.BLACK );
+            
+            topActive = new BubbleTabColor( this, STATE_ACTIVE, "tab.top.active", "top", animation, dockable, Color.WHITE );
+            bottomActive = new BubbleTabColor( this, STATE_ACTIVE, "tab.bottom.active", "bottom", animation, dockable, Color.LIGHT_GRAY );
+            borderActive = new BubbleTabColor( this, STATE_ACTIVE, "tab.border.active", "border", animation, dockable, Color.DARK_GRAY );
+            textActive = new BubbleTabColor( this, STATE_ACTIVE, "tab.text.active", "text", animation, dockable, Color.BLACK );
+            
+            topInactive = new BubbleTabColor( this, 0, "tab.top.inactive", "top", animation, dockable, Color.DARK_GRAY );
+            bottomInactive = new BubbleTabColor( this, 0, "tab.bottom.inactive", "bottom", animation, dockable, Color.BLACK );
+            borderInactive = new BubbleTabColor( this, 0, "tab.border.inactive", "border", animation, dockable, Color.LIGHT_GRAY );
+            textInactive = new BubbleTabColor( this, 0, "tab.text.inactive", "text", animation, dockable, Color.WHITE );
+            
+            colors = new BubbleTabColor[]{
+                    topActiveMouse, bottomActiveMouse, borderActiveMouse, textActiveMouse,
+                    topInactiveMouse, bottomInactiveMouse, borderInactiveMouse, textInactiveMouse,
+                    topActive, bottomActive, borderActive, textActive,
+                    topInactive, bottomInactive, borderInactive, textInactive };
+            
+            setController( getController() );
             checkAnimation();
             
 			setOpaque( false );
@@ -139,34 +242,37 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
                 public void mouseEntered( MouseEvent e ) {
                     mouse = true;
                     if( getSelectedIndex() == index ){
-                        animation.putColor( "top", "tab.top.active.mouse" );
-                        animation.putColor( "bottom", "tab.bottom.active.mouse" );
-                        animation.putColor( "border", "tab.border.active.mouse" );
-                        animation.putColor( "text", "tab.text.active.mouse" );
+                        animation.putColor( "top", topActiveMouse.color() );
+                        animation.putColor( "bottom", bottomActiveMouse.color() );
+                        animation.putColor( "border", borderActiveMouse.color() );
+                        animation.putColor( "text", textActiveMouse.color());
                     }
                     else{
-                        animation.putColor( "top", "tab.top.inactive.mouse" );
-                        animation.putColor( "bottom", "tab.bottom.inactive.mouse" );
-                        animation.putColor( "border", "tab.border.inactive.mouse" );
-                        animation.putColor( "text", "tab.text.inactive.mouse" );
+                        animation.putColor( "top", topInactiveMouse.color() );
+                        animation.putColor( "bottom", bottomInactiveMouse.color() );
+                        animation.putColor( "border", borderInactiveMouse.color() );
+                        animation.putColor( "text", textInactiveMouse.color());
                     }
+                    state = state | STATE_MOUSE;
                 }
                 
                 @Override
                 public void mouseExited( MouseEvent e ) {
                     mouse = false;
                     if( getSelectedIndex() == index ){
-                        animation.putColor( "top", "tab.top.active" );
-                        animation.putColor( "bottom", "tab.bottom.active" );
-                        animation.putColor( "border", "tab.border.active" );
-                        animation.putColor( "text", "tab.text.active" );
+                        animation.putColor( "top", topActive.color() );
+                        animation.putColor( "bottom", bottomActive.color() );
+                        animation.putColor( "border", borderActive.color() );
+                        animation.putColor( "text", textActive.color());
                     }
                     else{
-                        animation.putColor( "top", "tab.top.inactive" );
-                        animation.putColor( "bottom", "tab.bottom.inactive" );
-                        animation.putColor( "border", "tab.border.inactive" );
-                        animation.putColor( "text", "tab.text.inactive" );
+                        animation.putColor( "top", topInactive.color() );
+                        animation.putColor( "bottom", bottomInactive.color() );
+                        animation.putColor( "border", borderInactive.color() );
+                        animation.putColor( "text", textInactive.color());
                     }
+                    
+                    state = state & ~STATE_MOUSE;
                 }
                 
                 @Override
@@ -223,11 +329,18 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 			label.addMouseMotionListener( motion );
 		}
 		
+		public int getState() {
+            return state;
+        }
+		
 		public void setController( DockController controller ){
 			if( controller == null )
 				relocator = null;
 			else
 				relocator = controller.getRelocator().createRemote( dockable );
+			
+			for( BubbleTabColor color : colors )
+			    color.connect( controller );
 		}
 		
         public void run() {
@@ -316,41 +429,26 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 		 * Ensures that {@link #animation} uses the correct set of color pairs.
 		 */
         private void checkAnimation(){
-            // String source, destination;
-            String destination;
-            
             if( getSelectedIndex() == index ){
                 if( mouse ){
-                 //   source = "active";
-                    destination = "active.mouse";
+                    state = STATE_ACTIVE | STATE_MOUSE;
                 }
                 else{
-                 //   source = "active.mouse";
-                    destination = "active";
+                    state = STATE_ACTIVE;
                 }
             }
             else{
                 if( mouse ){
-                //    source = "inactive";
-                    destination = "inactive.mouse";
+                    state = STATE_MOUSE;
                 }
                 else{
-                //    source = "inactive.mouse";
-                    destination = "inactive";
+                    state = 0;
+                    
                 }
             }
             
-            /*
-            animation.putColors( "top", "tab.top." + source, "tab.top." + destination );
-            animation.putColors( "bottom", "tab.bottom." + source, "tab.bottom." + destination );
-            animation.putColors( "border", "tab.border." + source, "tab.border." + destination );
-            animation.putColors( "text", "tab.text." + source, "tab.text." + destination );
-            */
-            
-            animation.putColor( "top", "tab.top." + destination );
-            animation.putColor( "bottom", "tab.bottom." + destination );
-            animation.putColor( "border", "tab.border." + destination );
-            animation.putColor( "text", "tab.text." + destination );
+            for( BubbleTabColor color : colors )
+                color.transmit();
         }
 		
 		public void setIcon( Icon icon ){

@@ -27,7 +27,6 @@ package bibliothek.extension.gui.dock.theme.bubble;
 
 import java.awt.Point;
 
-import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.title.DockTitle;
@@ -41,23 +40,12 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  *
  */
 public class ReducedBubbleTitleFactory implements DockTitleFactory {
-	/** the theme from which colors can be read */
-    private BubbleTheme theme;
-    
-    /**
-     * Creates a new factory.
-     * @param theme a theme from which colors will be read
-     */
-    public ReducedBubbleTitleFactory( BubbleTheme theme ){
-        this.theme = theme;
-    }
-
     public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
-        return new Title( theme, dockable, version );
+        return new Title( dockable, version );
     }
 
     public <D extends Dockable & DockStation> DockTitle createStationTitle( D dockable, DockTitleVersion version ) {
-        return new Title( theme, dockable, version );
+        return new Title( dockable, version );
     }
 
     /**
@@ -67,12 +55,11 @@ public class ReducedBubbleTitleFactory implements DockTitleFactory {
     private static class Title extends BubbleDockTitle{
     	/**
     	 * Creates a new title.
-    	 * @param theme the theme from which to read colors
     	 * @param dockable the dockable for which this title will be shown
     	 * @param origin the {@link DockTitleVersion} which was used to create this title
     	 */
-        public Title( BubbleTheme theme, Dockable dockable, DockTitleVersion origin ) {
-            super( theme, dockable, origin, false );
+        public Title( Dockable dockable, DockTitleVersion origin ) {
+            super( dockable, origin, false );
         }
         
         @Override

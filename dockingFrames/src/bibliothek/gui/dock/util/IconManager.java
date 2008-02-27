@@ -72,7 +72,7 @@ public class IconManager {
      * @param icon the icon, <code>null</code> if the icon should be removed
      */
     public void setIcon( String key, Priority priority, Icon icon ){
-        getEntry( key ).set( priority, icon );
+        getEntry( key ).setIcon( priority, icon );
     }
 
     /**
@@ -142,9 +142,8 @@ public class IconManager {
      * A set of icons with different priority and a set of listeners.
      * @author Benjamin Sigg
      */
-    private class Entry{
+    private class Entry extends PriorityValue<Icon>{
         private String key;
-        private Icon[] icons = new Icon[3];
         private List<IconManagerListener> listeners = new ArrayList<IconManagerListener>();
         
         /**
@@ -160,11 +159,7 @@ public class IconManager {
          * @return the icon with the highest priority
          */
         public Icon getIcon(){
-            for( Icon icon : icons )
-                if( icon != null )
-                    return icon;
-            
-            return null;
+            return get();
         }
         
         /**
@@ -172,19 +167,9 @@ public class IconManager {
          * @param priority the priority, where to store the icon
          * @param icon the new icon or <code>null</code>
          */
-        public void set( Priority priority, Icon icon ){
+        public void setIcon( Priority priority, Icon icon ){
             Icon oldIcon = getIcon();
-            switch( priority ){
-                case CLIENT:
-                    icons[0] = icon;
-                    break;
-                case THEME:
-                    icons[1] = icon;
-                    break;
-                case DEFAULT:
-                    icons[2] = icon;
-                    break;
-            }
+            set( priority, icon );
             Icon newIcon = getIcon();
             
             if( oldIcon != newIcon ){

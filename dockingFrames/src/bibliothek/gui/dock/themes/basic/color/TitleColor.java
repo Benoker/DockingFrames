@@ -23,31 +23,41 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.bubble;
+package bibliothek.gui.dock.themes.basic.color;
 
-import bibliothek.gui.DockController;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
-import bibliothek.gui.dock.dockable.MovingImage;
+import java.awt.Color;
+
 import bibliothek.gui.dock.title.DockTitle;
-import bibliothek.gui.dock.title.TitleMovingImage;
+import bibliothek.gui.dock.util.color.AbstractDockColor;
+import bibliothek.gui.dock.util.color.DockColor;
 
 /**
- * A factory that creates images using the {@link ReducedBubbleTitleFactory}.
+ * A color used by a {@link DockTitle}.
  * @author Benjamin Sigg
+ *
  */
-public class BubbleMovingImageFactory implements DockableMovingImageFactory {
-    private ReducedBubbleTitleFactory reduced;
+public abstract class TitleColor extends AbstractDockColor{
+    private DockTitle title;
     
-    public BubbleMovingImageFactory(){
-        reduced = new ReducedBubbleTitleFactory();
+    /**
+     * Creates a new {@link TitleColor}.
+     * @param id the id of the color
+     * @param kind the kind of the color, can be <code>null</code>
+     * @param title the title which uses this color
+     * @param backup a backup, can be <code>null</code>
+     */
+    public TitleColor( String id, Class<? extends DockColor> kind, DockTitle title, Color backup ){
+        super( id, kind, backup );
+        if( title == null )
+            throw new IllegalArgumentException( "title must not be null" );
+        this.title = title;
     }
     
-    public MovingImage create( DockController controller, DockTitle snatched ) {
-        return new TitleMovingImage( snatched.getDockable(), reduced.createDockableTitle( snatched.getDockable(), null ));
-    }
-
-    public MovingImage create( DockController controller, Dockable dockable ) {
-        return new TitleMovingImage( dockable, reduced.createDockableTitle( dockable, null ));
+    /**
+     * Gets the title which uses this color.
+     * @return the title
+     */
+    public DockTitle getTitle() {
+        return title;
     }
 }

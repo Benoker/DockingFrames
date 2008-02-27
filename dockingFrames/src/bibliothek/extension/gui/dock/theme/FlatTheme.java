@@ -81,7 +81,7 @@ public class FlatTheme extends BasicTheme{
         setDisplayerFactory( new FlatDisplayerFactory( false ));
         setStackDockComponentFactory( new StackDockComponentFactory(){
             public StackDockComponent create( StackDockStation station ) {
-                return new FlatTab();
+                return new FlatTab( station );
             }
         });
         setMovingImageFactory( new ScreencaptureMovingImageFactory( new Dimension( 300, 200 ) ) );
@@ -181,7 +181,7 @@ public class FlatTheme extends BasicTheme{
         	if( station instanceof StackDockStation ){
         		StackDockStation stack = (StackDockStation)station;
         		if( stack.getStackComponent() instanceof FlatTab )
-        			stack.setStackComponent( new DefaultStackDockComponent() );
+        			stack.setStackComponent( new DefaultStackDockComponent( stack ) );
         	}
         }
     }
