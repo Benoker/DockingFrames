@@ -40,22 +40,30 @@ public class BubbleColorScheme extends DefaultColorScheme {
      */
     public BubbleColorScheme(){
         // stack
-        setColor( "stack.tab.border.active",            new Color( 150, 0, 0 ) );
-        setColor( "stack.tab.border.active.mouse",      new Color( 200, 100, 100 ) );
-        setColor( "stack.tab.border.inactive",          new Color( 100, 100, 100 ) );
-        setColor( "stack.tab.border.inactive.mouse",    new Color( 100, 175, 100 ) );
-        setColor( "stack.tab.top.active",               new Color( 200, 0, 0 ) );
-        setColor( "stack.tab.top.active.mouse",         new Color( 255, 100, 100 ) );
-        setColor( "stack.tab.top.inactive",             new Color( 150, 150, 150 ) );
-        setColor( "stack.tab.top.inactive.mouse",       new Color( 150, 255, 150 ) );
-        setColor( "stack.tab.bottom.active",            new Color( 255, 100, 100 ) );
-        setColor( "stack.tab.bottom.active.mouse",      new Color( 255, 200, 200 ) );
-        setColor( "stack.tab.bottom.inactive",          new Color( 200, 200, 200 ) );
-        setColor( "stack.tab.bottom.inactive.mouse",    new Color( 220, 255, 220 ) );
-        setColor( "stack.tab.text.active",              new Color( 0, 0, 0 ));
-        setColor( "stack.tab.text.active.mouse",        new Color( 0, 0, 0 ));
-        setColor( "stack.tab.text.inactive",            new Color( 100, 100, 100 ));
-        setColor( "stack.tab.text.inactive.mouse",      new Color( 25, 25, 25 ));
+        setColor( "stack.tab.border.seleced",                   new Color( 150, 0, 0 ) );
+        setColor( "stack.tab.border.selected.mouse",            new Color( 200, 100, 100 ) );
+        setColor( "stack.tab.border.focused",                   new Color( 200, 0, 0 ) );
+        setColor( "stack.tab.border.focused.mouse",             new Color( 255, 150, 150 ) );
+        setColor( "stack.tab.border",                           new Color( 100, 100, 100 ) );
+        setColor( "stack.tab.border.mouse",                     new Color( 100, 175, 100 ) );
+        setColor( "stack.tab.background.top.selected",          new Color( 200, 0, 0 ) );
+        setColor( "stack.tab.background.top.selected.mouse",    new Color( 255, 100, 100 ) );
+        setColor( "stack.tab.background.top.focused",           new Color( 200, 100, 100 ) );
+        setColor( "stack.tab.background.top.focused.mouse",     new Color( 255, 200, 200 ) );
+        setColor( "stack.tab.background.top",                   new Color( 150, 150, 150 ) );
+        setColor( "stack.tab.background.top.mouse",             new Color( 150, 255, 150 ) );
+        setColor( "stack.tab.background.bottom.selected",       new Color( 255, 100, 100 ) );
+        setColor( "stack.tab.background.bottom.selected.mouse", new Color( 255, 200, 200 ) );
+        setColor( "stack.tab.background.bottom.focused",        new Color( 255, 200, 200 ) );
+        setColor( "stack.tab.background.bottom.focused.mouse",  new Color( 255, 255, 255 ) );
+        setColor( "stack.tab.background.bottom",                new Color( 200, 200, 200 ) );
+        setColor( "stack.tab.background.bottom.mouse",          new Color( 220, 255, 220 ) );
+        setColor( "stack.tab.foreground.selected",              new Color( 0, 0, 0 ));
+        setColor( "stack.tab.foreground.selected.mouse",        new Color( 0, 0, 0 ));
+        setColor( "stack.tab.foreground.focused",               new Color( 0, 0, 0 ));
+        setColor( "stack.tab.foreground.focused.mouse",         new Color( 0, 0, 0 ));
+        setColor( "stack.tab.foreground",                       new Color( 100, 100, 100 ));
+        setColor( "stack.tab.foreground.mouse",                 new Color( 25, 25, 25 ));
         
         
         // title

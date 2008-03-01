@@ -104,6 +104,28 @@ public class ColorManager {
         }
     }
     
+
+    /**
+     * Removes the {@link ColorProvider} that handles {@link DockColor}s 
+     * of kind <code>kind</code>.
+     * @param priority the importance of the provider 
+     * @param kind some kind of {@link DockColor}
+     */
+    public void unpublish( Priority priority, Class<? extends DockColor> kind ){
+        PriorityValue<ColorProvider<?>> value = providers.get( kind );
+        if( value != null ){
+            boolean change = value.set( priority, null );
+            if( value.get() == null )
+                providers.remove( kind );
+            
+            if( change && updateLock == 0 ){
+                for( Observer<?> check : observers ){
+                    check.resetProvider();
+                }
+            }   
+        }
+    }
+    
     /**
      * Searches for all occurrences of <code>provider</code> and removes them.
      * All {@link DockColor}s that used <code>provider</code> are redistributed.
@@ -334,12 +356,12 @@ public class ColorManager {
         public void setProvider( ColorProvider<D> provider ) {
             if( this.provider != provider ){
                 if( this.provider != null )
-                    this.provider.remove( observer );
+                    this.provider.remove( id, observer );
                 
                 this.provider = provider;
                 
                 if( provider != null ){
-                    provider.add( observer );
+                    provider.add( id, observer );
                 }
                 
                 update( get( id ));
@@ -355,7 +377,7 @@ public class ColorManager {
             if( provider == null )
                 observer.set( color );
             else
-                provider.set( color, id, observer );
+                provider.set( id, color, observer );
         }
     }
 }

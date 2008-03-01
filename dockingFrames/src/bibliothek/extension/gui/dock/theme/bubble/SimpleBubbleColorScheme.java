@@ -37,6 +37,7 @@ import java.awt.Color;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 
+import bibliothek.gui.dock.themes.ColorProviderFactory;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.themes.color.DefaultColorScheme;
 import bibliothek.gui.dock.util.Priority;
@@ -72,10 +73,10 @@ public class SimpleBubbleColorScheme extends DefaultColorScheme {
                 return delegate.getColor( id ); 
             }
 
-            public ColorProvider<?> getProvider( Class<? extends DockColor> kind ) {
+            public <D extends DockColor> ColorProviderFactory<D, ? extends ColorProvider<D>> getProvider( Class<D> kind ) {
                 return delegate.getProvider( kind );
             }
-
+            
             public void transmitAll( Priority priority, ColorManager manager ) {
                 delegate.transmitAll( priority, manager );
             }
@@ -139,24 +140,36 @@ public class SimpleBubbleColorScheme extends DefaultColorScheme {
      * @param factorStrong factor for strong color transformation
      */
     public SimpleBubbleColorScheme( Color active, Color inactive, Color enabled, Color selected, Color disabled, Color activeText, Color inactiveText, double factorWeak, double factor, double factorStrong ){
-        // stack
-        setColor( "stack.tab.border.active",            diffMirror( active, factorWeak ));
-        setColor( "stack.tab.border.active.mouse",      diffMirror( active, factor ));
-        setColor( "stack.tab.border.inactive",          diffMirror( inactive, factorWeak ));
-        setColor( "stack.tab.border.inactive.mouse",    middle( diffMirror( inactive, factorWeak ), diffMirror( active, factorWeak )) );
-        setColor( "stack.tab.top.active",               brighter( active, factorWeak ));
-        setColor( "stack.tab.top.active.mouse",         brighter( active, factor ));
-        setColor( "stack.tab.top.inactive",             brighter( inactive, factorWeak ));
-        setColor( "stack.tab.top.inactive.mouse",       brighter( inactive, factor ));
-        setColor( "stack.tab.bottom.active",            darker( active, factorWeak ) );
-        setColor( "stack.tab.bottom.active.mouse",      darker( active, factor ) );
-        setColor( "stack.tab.bottom.inactive",          darker( inactive, factorWeak ) );
-        setColor( "stack.tab.bottom.inactive.mouse",    darker( inactive, factor ) );
-        setColor( "stack.tab.text.active",              diffMirror( active, 1.0 ));
-        setColor( "stack.tab.text.active.mouse",        diffMirror( active, 1.0 ));
-        setColor( "stack.tab.text.inactive",            diffMirror( inactive, 1.0 ));
-        setColor( "stack.tab.text.inactive.mouse",      diffMirror( inactive, 1.0 ));
+        // stack        
+        setColor( "stack.tab.background.top.mouse",               brighter( inactive, factor ));
+        setColor( "stack.tab.background.bottom.mouse",            darker( inactive, factor ) );
+        setColor( "stack.tab.border.mouse",                       middle( diffMirror( inactive, factorWeak ), diffMirror( active, factorWeak )) );
+        setColor( "stack.tab.foreground.mouse",                   diffMirror( inactive, 1.0 ));
         
+        setColor( "stack.tab.background.top",                     brighter( inactive, factorWeak ));
+        setColor( "stack.tab.background.bottom",                  darker( inactive, factorWeak ) );
+        setColor( "stack.tab.border",                             diffMirror( inactive, factorWeak ));
+        setColor( "stack.tab.foreground",                         diffMirror( inactive, 1.0 ));
+        
+        setColor( "stack.tab.background.top.selected.mouse",      brighter( active, factor ));
+        setColor( "stack.tab.background.bottom.selected.mouse",   darker( active, factor ) );
+        setColor( "stack.tab.border.selected.mouse",              diffMirror( active, factor ));
+        setColor( "stack.tab.foreground.selected.mouse",          diffMirror( active, 1.0 ));
+        
+        setColor( "stack.tab.background.top.selected",            brighter( active, factorWeak ));
+        setColor( "stack.tab.background.bottom.selected",         darker( active, factorWeak ) );
+        setColor( "stack.tab.border.selected",                    diffMirror( active, factorWeak ));
+        setColor( "stack.tab.foreground.selected",                diffMirror( active, 1.0 ));
+        
+        setColor( "stack.tab.background.top.focused.mouse",       fuller( brighter( active, factor ), factor ));
+        setColor( "stack.tab.background.bottom.focused.mouse",    fuller( darker( active, factor ), factor ) );
+        setColor( "stack.tab.border.focused.mouse",               diffMirror( active, factor ));
+        setColor( "stack.tab.foreground.focused.mouse",           diffMirror( active, 1.0 ));
+        
+        setColor( "stack.tab.background.top.focused",             fuller( brighter( active, factorWeak ), factor ));
+        setColor( "stack.tab.background.bottom.focused",          fuller( darker( active, factorWeak ), factor ) );
+        setColor( "stack.tab.border.focused",                     diffMirror( active, factorWeak ));
+        setColor( "stack.tab.foreground.focused",                 diffMirror( active, 1.0 ));
         
         // title
         setColor( "title.background.top.active",               brighter( active, factorWeak ));

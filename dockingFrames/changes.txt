@@ -96,3 +96,4 @@
 - API: Many elements now use the ColorManager and the ColorSchemes
 - Bugfix: EclipseTheme Shaped/RectGradientPaint did not do "doLayout" correct, the effect was that some buttons got too small
 - API: LookAndFeel changes noted by DockController and forwarded to all UIListeners
+- Bugfix: Memoryleak in FlatTab and BubbleStackDockComponent

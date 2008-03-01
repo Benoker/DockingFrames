@@ -37,23 +37,25 @@ import java.awt.Color;
 public interface ColorProvider<D extends DockColor> {
     /**
      * Adds a listener for some type of color to this provider.
-     * @param color the new listener
+     * @param id the id of the color the observer needs
+     * @param observer the new listener
      */
-    public void add( D color );
+    public void add( String id, D observer );
     
     /**
      * Removes a listener for some type of color from this provider.
-     * @param color the listener to remove
+     * @param id the id of the color which the observer was observing
+     * @param observer the listener to remove
      */
-    public void remove( D color );
+    public void remove( String id, D observer );
     
     /**
      * Called by a {@link ColorManager} when one color has been exchanged.
      * Normally a provider would call {@link DockColor#set(Color)} on
      * <code>observer</code> with <code>color</code> as argument.
-     * @param color the new color, can be <code>null</code>
      * @param id the identifier of the color
+     * @param color the new color, can be <code>null</code>
      * @param observer the observer which is affected
      */
-    public void set( Color color, String id, D observer );
+    public void set( String id, Color color, D observer );
 }

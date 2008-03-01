@@ -312,7 +312,16 @@ public class FlapDockStation extends AbstractDockableStation {
     
             super.setController(controller);
             displayers.setController( controller );
+            FlapLayoutManager oldLayoutManager = layoutManager.getValue();
             layoutManager.setProperties( controller );
+            FlapLayoutManager newLayoutManager = layoutManager.getValue();
+            
+            if( oldLayoutManager == newLayoutManager ){
+                if( controller == null )
+                    oldLayoutManager.uninstall( this );
+                else
+                    newLayoutManager.install( this );
+            }
             
             if( holdAction != null )
                 holdAction.setController( controller );

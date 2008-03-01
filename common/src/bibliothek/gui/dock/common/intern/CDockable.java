@@ -29,6 +29,7 @@ import java.awt.Dimension;
 
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.ColorMap;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CWorkingArea;
 import bibliothek.gui.dock.common.event.CDockablePropertyListener;
@@ -245,6 +246,13 @@ public interface CDockable {
 	 * @return the source
 	 */
 	public DockActionSource getClose();
+	
+	/**
+	 * Gets a mutable map of colors. Clients can put colors into this map, and
+	 * the colors will be presented on the screen by various effects.
+	 * @return the map, this has always to be the same object
+	 */
+	public ColorMap getColors();
 	
 	/**
 	 * Gets the control which is responsible for this dockable. Clients

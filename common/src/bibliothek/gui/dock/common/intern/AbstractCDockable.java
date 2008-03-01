@@ -33,6 +33,7 @@ import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.ColorMap;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CWorkingArea;
 import bibliothek.gui.dock.common.action.CAction;
@@ -76,6 +77,9 @@ public abstract class AbstractCDockable implements CDockable {
     
     /** the preferred size when minimized */
     private Dimension minimizeSize = new Dimension( -1, -1 );
+    
+    /** the colors associated with this dockable */
+    private ColorMap colors = new ColorMap( this );
     
     /** Source that contains the action that closes this dockable */
     private DefaultDockActionSource close = new DefaultDockActionSource(
@@ -359,6 +363,10 @@ public abstract class AbstractCDockable implements CDockable {
      */
     public DockActionSource getClose() {
         return close;
+    }
+    
+    public ColorMap getColors() {
+        return colors;
     }
     
     /**

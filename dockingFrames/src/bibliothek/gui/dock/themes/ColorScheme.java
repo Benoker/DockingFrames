@@ -49,11 +49,12 @@ public interface ColorScheme {
     public Color getColor( String id );
     
     /**
-     * Searches for a provider that can be used for a specific kind of {@link DockColor}.
+     * Searches for a factory for a provider that can be used for a specific
+     * kind of {@link DockColor}.
      * @param kind the kind of color the provider should support 
-     * @return some provider or <code>null</code>
+     * @return some a factory for a provider or <code>null</code>
      */
-    public ColorProvider<?> getProvider( Class<? extends DockColor> kind );
+    public <D extends DockColor> ColorProviderFactory<D, ? extends ColorProvider<D>> getProvider( Class<D> kind );
     
     /**
      * Transmits all values in this scheme to <code>manager</code>.

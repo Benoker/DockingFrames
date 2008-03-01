@@ -212,23 +212,36 @@ public class BubbleTheme extends BasicTheme {
 	    
 	    updateColor( controllers, "tab.border.active", null );
 	    
-	 // stack
-        updateColor( controllers, "stack.tab.border.active", null );
-        updateColor( controllers, "stack.tab.border.active.mouse", null );
-        updateColor( controllers, "stack.tab.border.inactive", null );
-        updateColor( controllers, "stack.tab.border.inactive.mouse", null );
-        updateColor( controllers, "stack.tab.top.active", null );
-        updateColor( controllers, "stack.tab.top.active.mouse", null );
-        updateColor( controllers, "stack.tab.top.inactive", null );
-        updateColor( controllers, "stack.tab.top.inactive.mouse", null );
-        updateColor( controllers, "stack.tab.bottom.active", null );
-        updateColor( controllers, "stack.tab.bottom.active.mouse", null );
-        updateColor( controllers, "stack.tab.bottom.inactive", null );
-        updateColor( controllers, "stack.tab.bottom.inactive.mouse", null );
-        updateColor( controllers, "stack.tab.text.active", null );
-        updateColor( controllers, "stack.tab.text.active.mouse", null );
-        updateColor( controllers, "stack.tab.text.inactive", null );
-        updateColor( controllers, "stack.tab.text.inactive.mouse", null );
+	    // stack
+        updateColor( controllers, "stack.tab.background.top.mouse", null );
+        updateColor( controllers, "stack.tab.background.bottom.mouse", null );
+        updateColor( controllers, "stack.tab.border.mouse", null );
+        updateColor( controllers, "stack.tab.foreground.mouse", null );
+        
+        updateColor( controllers, "stack.tab.background.top", null );
+        updateColor( controllers, "stack.tab.background.bottom", null );
+        updateColor( controllers, "stack.tab.border", null );
+        updateColor( controllers, "stack.tab.foreground", null );
+        
+        updateColor( controllers, "stack.tab.background.top.selected.mouse", null );
+        updateColor( controllers, "stack.tab.background.bottom.selected.mouse", null );
+        updateColor( controllers, "stack.tab.border.selected.mouse", null );
+        updateColor( controllers, "stack.tab.foreground.selected.mouse", null );
+        
+        updateColor( controllers, "stack.tab.background.top.selected", null );
+        updateColor( controllers, "stack.tab.background.bottom.selected", null );
+        updateColor( controllers, "stack.tab.border.selected", null );
+        updateColor( controllers, "stack.tab.foreground.selected", null );
+        
+        updateColor( controllers, "stack.tab.background.top.focused.mouse", null );
+        updateColor( controllers, "stack.tab.background.bottom.focused.mouse", null );
+        updateColor( controllers, "stack.tab.border.focused.mouse", null );
+        updateColor( controllers, "stack.tab.foreground.focused.mouse", null );
+        
+        updateColor( controllers, "stack.tab.background.top.focused", null );
+        updateColor( controllers, "stack.tab.background.bottom.focused", null );
+        updateColor( controllers, "stack.tab.border.focused", null );
+        updateColor( controllers, "stack.tab.foreground.focused", null );
         
         
         // title

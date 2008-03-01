@@ -168,7 +168,6 @@ public class Core implements ComponentCollector{
 		try{
 			frame.dispose();
 			views.getScreen().setShowing( false );
-			frontend.getController().kill();
 			
 			if( !secure ){
 				try{
@@ -194,6 +193,8 @@ public class Core implements ComponentCollector{
 					t.printStackTrace();
 				}
 			}
+			
+			frontend.getController().kill();
 		}
 		finally{
 			if( monitor == null )

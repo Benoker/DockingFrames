@@ -45,6 +45,7 @@ import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.common.event.CControlListener;
 import bibliothek.gui.dock.common.intern.*;
 import bibliothek.gui.dock.common.intern.station.CFlapLayoutManager;
 import bibliothek.gui.dock.common.intern.station.CLockedResizeLayoutManager;
@@ -164,6 +165,9 @@ public class CControl {
 	
 	/** factory used to create new elements for this control */
 	private CControlFactory factory;
+	
+	/** the list of listeners to this {@link CControl} */
+	private List<CControlListener> listeners = new ArrayList<CControlListener>();
 
     /**
      * Creates a new control
@@ -260,10 +264,14 @@ public class CControl {
 		    @Override
 		    public void dockableRegistered( DockController controller, Dockable dockable ) {
 		        if( dockable instanceof CommonDockable ){
-		            CDockableAccess access = accesses.get( ((CommonDockable)dockable).getDockable() );
+		            CDockable cdock = ((CommonDockable)dockable).getDockable();
+		            CDockableAccess access = accesses.get( cdock );
 		            if( access != null ){
 		                access.informVisibility( true );
 		            }
+		            
+		            for( CControlListener listener : listeners() )
+		                listener.opened( CControl.this, cdock );
 		        }
 		    }
 		    
@@ -275,6 +283,10 @@ public class CControl {
                     if( access != null ){
                         access.informVisibility( false );
                     }
+                    
+                    for( CControlListener listener : listeners() )
+                        listener.closed( CControl.this, cdock );
+                    
                     if( cdock instanceof MultipleCDockable ){
                         MultipleCDockable multiple = (MultipleCDockable)cdock;
                         if( multiple.isRemoveOnClose() ){
@@ -344,6 +356,32 @@ public class CControl {
 		putProperty( KEY_CLOSE, KeyStroke.getKeyStroke( KeyEvent.VK_C, InputEvent.CTRL_MASK ) );
 		putProperty( SplitDockStation.LAYOUT_MANAGER, new CLockedResizeLayoutManager() );
 		putProperty( FlapDockStation.LAYOUT_MANAGER, new CFlapLayoutManager() );
+	}
+	
+	/**
+	 * Adds a listener to this control.
+	 * @param listener the new listener
+	 */
+	public void addControlListener( CControlListener listener ){
+	    if( listener == null )
+	        throw new IllegalArgumentException( "Listener must not be null" );
+	    listeners.add( listener );
+	}
+	
+	/**
+	 * Removes a listener from this control.
+	 * @param listener the listener to remove
+	 */
+	public void removeControlListener( CControlListener listener ){
+	    listeners.remove( listener );
+	}
+	
+	/**
+	 * Gets a list of currently registered listeners.
+	 * @return the listeners
+	 */
+	private CControlListener[] listeners(){
+	    return listeners.toArray( new CControlListener[ listeners.size() ] );
 	}
 	
 	/**
@@ -624,6 +662,10 @@ public class CControl {
 		frontend.setHideable( dockable.intern(), true );
 		dockables.add( dockable );
 		singleDockables.add( dockable );
+		
+		for( CControlListener listener : listeners() )
+            listener.added( CControl.this, dockable );
+		
 		return dockable;
 	}
 	
@@ -674,6 +716,10 @@ public class CControl {
 		accesses.get( dockable ).setUniqueId( uniqueId );
 		multiDockables.add( dockable );
 		dockables.add( dockable );
+		
+		for( CControlListener listener : listeners() )
+            listener.added( CControl.this, dockable );
+		
 		return dockable;
 	}
 	
@@ -691,6 +737,9 @@ public class CControl {
 			dockables.remove( dockable );
 			singleDockables.remove( dockable );
 			dockable.setControl( null );
+			
+			for( CControlListener listener : listeners() )
+                listener.removed( CControl.this, dockable );
 		}
 	}
 	
@@ -715,6 +764,9 @@ public class CControl {
 			
 			factories.get( factory ).count--;
 			dockable.setControl( null );
+			
+			for( CControlListener listener : listeners() )
+                listener.removed( CControl.this, dockable );
 		}
 	}
 	

@@ -151,6 +151,13 @@ public class BasicTheme implements DockTheme{
     
     /**
      * Called when the the colors of the {@link ColorManager} have to be updated.
+     * Subclasses should override this method and explicitly call
+     * {@link #updateColor(DockController[], String, Color) updateColor} and
+     * {@link #updateColorProvider(DockController[], Class) updateColorProvider}
+     * for all {@link Color}s and {@link ColorProvider}s that will be used by
+     * this theme. Since {@link ColorScheme}s can create new colors and providers 
+     * lazily, just reading out all colors will ensure that all colors 
+     * and providers exists and are registered at the {@link ColorManager}s.
      * @param controllers the set of controllers whose colors must be updated.
      */
     protected void updateColors( DockController[] controllers ){

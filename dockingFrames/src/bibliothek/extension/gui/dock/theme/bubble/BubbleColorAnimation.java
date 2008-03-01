@@ -273,7 +273,9 @@ public class BubbleColorAnimation {
          */
         public void kick(){
             age = 0;
-            source = destination;
+            if( destination != null ){
+                source = destination;
+            }
             destination = null;
             intermediate = null;
         }

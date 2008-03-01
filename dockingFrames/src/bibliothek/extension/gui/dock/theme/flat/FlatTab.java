@@ -86,7 +86,7 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
 	
 	@Override
 	protected void destroy( FlatButton tab ){
-		// nothing to do
+	    tab.setController( null );
 	}
 	
 	@Override

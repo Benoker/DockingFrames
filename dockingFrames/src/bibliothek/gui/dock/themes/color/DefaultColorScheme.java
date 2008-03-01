@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import bibliothek.gui.dock.themes.ColorProviderFactory;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.color.ColorManager;
@@ -45,7 +46,8 @@ import bibliothek.gui.dock.util.color.DockColor;
  */
 public class DefaultColorScheme implements ColorScheme{
     private Map<String, Color> colors = new HashMap<String, Color>();
-    private Map<Class<?>, ColorProvider<?>> providers = new HashMap<Class<?>, ColorProvider<?>>();
+    private Map<Class<?>, ColorProviderFactory<?,?>> providers =
+        new HashMap<Class<?>, ColorProviderFactory<?,?>>();
     
     public boolean updateUI() {
         return false;
@@ -68,7 +70,7 @@ public class DefaultColorScheme implements ColorScheme{
      * @param kind the kind of {@link DockColor}s the provider works with
      * @param provider the provider or <code>null</code>
      */
-    public void setProvider( Class<? extends DockColor> kind, ColorProvider<?> provider ){
+    public <D extends DockColor> void setProvider( Class<? super D> kind, ColorProviderFactory<D, ColorProvider<D>> provider ){
         if( provider == null )
             providers.remove( kind );
         else
@@ -93,8 +95,9 @@ public class DefaultColorScheme implements ColorScheme{
         return color;
     }
 
-    public ColorProvider<?> getProvider( Class<? extends DockColor> kind ) {
-        return getProvider( kind, new HashSet<Class<?>>() );
+    @SuppressWarnings("unchecked")
+    public <D extends DockColor> ColorProviderFactory<D, ? extends ColorProvider<D>> getProvider( Class<D> kind ) {
+        return (ColorProviderFactory<D, ? extends ColorProvider<D>>)getProvider( kind, new HashSet<Class<?>>() );
     }
     
     @SuppressWarnings("unchecked")
@@ -105,8 +108,11 @@ public class DefaultColorScheme implements ColorScheme{
             for( Map.Entry<String, Color> entry : colors.entrySet() )
                 manager.put( priority, entry.getKey(), entry.getValue() );
             
-            for( Map.Entry<Class<?>, ColorProvider<?>> entry : providers.entrySet() )
-                manager.publish( priority, (Class<DockColor>)entry.getKey(), (ColorProvider<DockColor>)entry.getValue() );
+            for( Map.Entry<Class<?>, ColorProviderFactory<?,?>> entry : providers.entrySet() )
+                manager.publish( 
+                        priority, 
+                        (Class<DockColor>)entry.getKey(), 
+                        (ColorProvider<DockColor>)entry.getValue().create( manager ) );
         
         }
         finally{
@@ -120,11 +126,11 @@ public class DefaultColorScheme implements ColorScheme{
      * @param checked a set of already checked types, might be expanded by this method
      * @return the provider or <code>null</code>
      */
-    private ColorProvider<?> getProvider( Class<?> clazz, Set<Class<?>> checked ){
+    private ColorProviderFactory<?,?> getProvider( Class<?> clazz, Set<Class<?>> checked ){
         if( !checked.add( clazz ))
             return null;
         
-        ColorProvider<?> result = providers.get( clazz );
+        ColorProviderFactory<?,?> result = providers.get( clazz );
         if( result != null )
             return result;
         
