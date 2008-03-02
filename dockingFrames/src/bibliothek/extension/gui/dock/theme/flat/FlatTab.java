@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -38,10 +38,12 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.control.RemoteRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
+import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
 import bibliothek.gui.dock.station.stack.CombinedTab;
 import bibliothek.gui.dock.themes.color.TabColor;
@@ -53,20 +55,26 @@ import bibliothek.gui.dock.util.color.ColorCodes;
  * buttons of the <code>JTabbedPane</code>.
  * @author Benjamin Sigg
  */
-@ColorCodes({"stack.tab.border.out.selected", 
-    "stack.tab.border.center.selected", 
+@ColorCodes({
+    "stack.tab.border.out.selected", 
+    "stack.tab.border.center.selected",
+    "stack.tab.border.out.focused", 
+    "stack.tab.border.center.focused",
     "stack.tab.border.out", 
     "stack.tab.border.center", 
     "stack.tab.border", 
                 
     "stack.tab.background.top.selected", 
-    "stack.tab.background.bottom.selected", 
+    "stack.tab.background.bottom.selected",
+    "stack.tab.background.top.focused", 
+    "stack.tab.background.bottom.focused",
     "stack.tab.background.top", 
     "stack.tab.background.bottom", 
     "stack.tab.background",
     
-    "stack.tab.foreground",
-    "stack.tab.foreground.selected" })
+    "stack.tab.foreground.selected",
+    "stack.tab.foreground.focused",
+    "stack.tab.foreground" })
 public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
     /** the station which uses this component */
     private StackDockStation station;
@@ -109,28 +117,38 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
      * A small button which can be clicked by the user.
      * @author Benjamin Sigg
      */
-	protected class FlatButton extends JLabel implements CombinedTab{
+	protected class FlatButton extends JLabel implements CombinedTab, DockableFocusListener{
 		/** the currently used remote to do drag&drop operations */
 	    private RemoteRelocator relocator;
 		
 	    /** the dockable for which this button is shown */
 	    private Dockable dockable;
 	    
+	    /** the current controller */
+	    private DockController controller;
+	    
         /** The location of this button */
         private int index;
-       
+        /** whether {@link #dockable} is currently focused */
+        private boolean focused = false;
+        
         private TabColor borderSelectedOut;
         private TabColor borderSelectedCenter;
+        private TabColor borderFocusedOut;
+        private TabColor borderFocusedCenter;
         private TabColor borderOut;
         private TabColor borderCenter;
         private TabColor border;
         private TabColor backgroundSelectedTop;
         private TabColor backgroundSelectedBottom;
+        private TabColor backgroundFocusedTop;
+        private TabColor backgroundFocusedBottom;
         private TabColor backgroundTop;
         private TabColor backgroundBottom;
         private TabColor background;
         private TabColor foreground;
         private TabColor foregroundSelected;
+        private TabColor foregroundFocused;
         
         /**
          * Constructs a new button
@@ -141,12 +159,16 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
         	            
             borderSelectedOut    = new FlatTabColor( "stack.tab.border.out.selected", dockable );
             borderSelectedCenter = new FlatTabColor( "stack.tab.border.center.selected", dockable );
+            borderFocusedOut    = new FlatTabColor( "stack.tab.border.out.focused", dockable );
+            borderFocusedCenter = new FlatTabColor( "stack.tab.border.center.focused", dockable );
             borderOut            = new FlatTabColor( "stack.tab.border.out", dockable );
             borderCenter         = new FlatTabColor( "stack.tab.border.center", dockable );
             border               = new FlatTabColor( "stack.tab.border", dockable );
             
             backgroundSelectedTop    = new FlatTabColor( "stack.tab.background.top.selected", dockable );
             backgroundSelectedBottom = new FlatTabColor( "stack.tab.background.bottom.selected", dockable );
+            backgroundFocusedTop    = new FlatTabColor( "stack.tab.background.top.focused", dockable );
+            backgroundFocusedBottom = new FlatTabColor( "stack.tab.background.bottom.focused", dockable );
             backgroundTop            = new FlatTabColor( "stack.tab.background.top", dockable );
             backgroundBottom         = new FlatTabColor( "stack.tab.background.bottom", dockable );
             background               = new FlatTabColor( "stack.tab.background", dockable );
@@ -161,7 +183,15 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
             foregroundSelected = new FlatTabColor( "stack.tab.foreground.selected", dockable ){
                 @Override
                 protected void changed( Color oldColor, Color newColor ) {
-                    if( isSelected() ){
+                    if( isSelected() && !focused ){
+                        setForeground( newColor );
+                    }
+                }
+            };
+            foregroundFocused = new FlatTabColor( "stack.tab.foreground.focused", dockable ){
+                @Override
+                protected void changed( Color oldColor, Color newColor ) {
+                    if( focused ){
                         setForeground( newColor );
                     }
                 }
@@ -228,17 +258,23 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
                     Graphics2D g2 = (Graphics2D)g;
                     Paint oldPaint = g2.getPaint();
                     
-                    Color out;
-                    Color center;
+                    Color out = null;
+                    Color center = null;
 
+                    if( focused ){
+                        out = borderFocusedOut.color();
+                        center = borderFocusedCenter.color();
+                    }
                     if( isSelected() ){
-                        out = borderSelectedOut.color();
-                        center = borderSelectedCenter.color();
+                        if( out == null )
+                            out = borderSelectedOut.color();
+                        if( center == null )
+                            center = borderSelectedCenter.color();
                     }
-                    else{
+                    if( out == null )
                         out = borderOut.color();
+                    if( center == null )
                         center = borderCenter.color();
-                    }
                     
                     if( out == null || center == null ){
                         Color background = border.color();
@@ -293,21 +329,39 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
         	else
         		relocator = controller.getRelocator().createRemote( dockable );
         	
-            
+            if( this.controller != null )
+                this.controller.removeDockableFocusListener( this );
+            this.controller = controller;
+            if( controller != null )
+                controller.addDockableFocusListener( this );
+        	
             borderSelectedOut.connect( controller );
             borderSelectedCenter.connect( controller );
+            borderFocusedOut.connect( controller );
+            borderFocusedCenter.connect( controller );
             borderOut.connect( controller );
             borderCenter.connect( controller );
             border.connect( controller );
             
             backgroundSelectedTop.connect( controller );
             backgroundSelectedBottom.connect( controller );
+            backgroundFocusedTop.connect( controller );
+            backgroundFocusedBottom.connect( controller );
             backgroundTop.connect( controller );
             backgroundBottom.connect( controller );
             background.connect( controller );
             
-            foreground.connect( controller );
             foregroundSelected.connect( controller );
+            foregroundFocused.connect( controller );
+            foreground.connect( controller );
+        }
+        
+        public void dockableFocused( DockController controller, Dockable dockable ) {
+            focused = this.dockable == dockable;
+            repaint();
+        }
+        public void dockableSelected( DockController controller, DockStation station, Dockable dockable ) {
+            // ignore
         }
         
         public JComponent getComponent(){
@@ -363,17 +417,23 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
             int w = getWidth();
             int h = getHeight();
             
-            Color top;
-            Color bottom;
+            Color top = null;
+            Color bottom = null;
             
+            if( focused ){
+                top = backgroundFocusedTop.color();
+                bottom = backgroundFocusedBottom.color();
+            }
             if( isSelected() ){
-                top = backgroundSelectedTop.color();
-                bottom = backgroundSelectedBottom.color();
+                if( top == null )
+                    top = backgroundSelectedTop.color();
+                if( bottom == null )
+                    bottom = backgroundSelectedBottom.color();
             }
-            else{
+            if( top == null )
                 top = backgroundTop.color();
+            if( bottom == null )
                 bottom = backgroundBottom.color();
-            }
             
             if( top == null || bottom == null ){
                 Color background = FlatButton.this.background.color();

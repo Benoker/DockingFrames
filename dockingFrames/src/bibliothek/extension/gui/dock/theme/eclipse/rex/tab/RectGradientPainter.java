@@ -189,9 +189,10 @@ public class RectGradientPainter extends BaseTabComponent {
 		// set border around tab content
 		if (!color2.equals(contentBorder.getMatteColor())) {
 			contentBorder = new MatteBorder(2, 2, 2, 2, color2);
-			if( getTabbedComponent() != null )
-				getTabbedComponent().updateContentBorder();
 		}
+		
+        if( getTabbedComponent() != null )
+            getTabbedComponent().updateContentBorder();
 	}
 
 	@Override

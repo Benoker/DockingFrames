@@ -25,34 +25,34 @@
  */
 package bibliothek.gui.dock.common.intern.theme;
 
-import bibliothek.extension.gui.dock.theme.BubbleTheme;
+import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.intern.color.BubbleTabTransmitter;
+import bibliothek.gui.dock.common.intern.color.FlatTabTransmitter;
 import bibliothek.gui.dock.themes.ColorProviderFactory;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.ColorProvider;
 
 /**
- * A theme wrapping {@link BubbleTheme} and adding additional features to
- * properly work within the common-project.
+ * A {@link CDockTheme} that encapsulates a {@link FlatTheme} in order to 
+ * allow the theme access to the possibilities of the common-project.
  * @author Benjamin Sigg
- *
  */
-public class CBubbleTheme extends CDockTheme<BubbleTheme>{
+public class CFlatTabTheme extends CDockTheme<FlatTheme> {
     /**
-     * Creates a new theme
-     * @param control the {@link CControl} for which this theme will be used.
+     * Creates a new theme.
+     * @param control the controller for which this theme will be used
      * @param theme the theme that gets encapsulated
      */
-    public CBubbleTheme( final CControl control, BubbleTheme theme ) {
+    public CFlatTabTheme( final CControl control, FlatTheme theme ) {
         super( theme );
         putColorProviderFactory( TabColor.class, new ColorProviderFactory<TabColor, ColorProvider<TabColor>>(){
             public ColorProvider<TabColor> create( ColorManager manager ) {
-                BubbleTabTransmitter transmitter = new BubbleTabTransmitter( manager );
+                FlatTabTransmitter transmitter = new FlatTabTransmitter( manager );
                 transmitter.setControl( control );
                 return transmitter;
             }
         });
     }
+
 }

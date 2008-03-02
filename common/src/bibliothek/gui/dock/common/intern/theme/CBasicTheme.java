@@ -25,31 +25,30 @@
  */
 package bibliothek.gui.dock.common.intern.theme;
 
-import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.intern.color.BubbleTabTransmitter;
+import bibliothek.gui.dock.common.intern.color.BasicTabTransmitter;
+import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.ColorProviderFactory;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.ColorProvider;
 
 /**
- * A theme wrapping {@link BubbleTheme} and adding additional features to
- * properly work within the common-project.
+ * A bridge between a {@link BasicTheme} and the common-project.
  * @author Benjamin Sigg
  *
  */
-public class CBubbleTheme extends CDockTheme<BubbleTheme>{
+public class CBasicTheme extends CDockTheme<BasicTheme> {
     /**
-     * Creates a new theme
-     * @param control the {@link CControl} for which this theme will be used.
+     * Creates a new theme.
+     * @param control the controller for which this theme will be used
      * @param theme the theme that gets encapsulated
      */
-    public CBubbleTheme( final CControl control, BubbleTheme theme ) {
+    public CBasicTheme( final CControl control, BasicTheme theme ){
         super( theme );
         putColorProviderFactory( TabColor.class, new ColorProviderFactory<TabColor, ColorProvider<TabColor>>(){
             public ColorProvider<TabColor> create( ColorManager manager ) {
-                BubbleTabTransmitter transmitter = new BubbleTabTransmitter( manager );
+                BasicTabTransmitter transmitter = new BasicTabTransmitter( manager );
                 transmitter.setControl( control );
                 return transmitter;
             }

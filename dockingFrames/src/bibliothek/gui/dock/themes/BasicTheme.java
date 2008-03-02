@@ -43,7 +43,6 @@ import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationPaint;
-import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.themes.basic.*;
@@ -109,7 +108,7 @@ public class BasicTheme implements DockTheme{
         setMovingImageFactory( new BasicMovingImageFactory() );
         setStackDockComponentFactory( new StackDockComponentFactory(){
             public StackDockComponent create( StackDockStation station ) {
-                return new DefaultStackDockComponent( station );
+                return new BasicStackDockComponent( station );
             }
         });
         setColorScheme( new BasicColorScheme() );
@@ -175,6 +174,13 @@ public class BasicTheme implements DockTheme{
         updateColor( controllers, "title.inactive.right", null );
         updateColor( controllers, "title.active.text", null );
         updateColor( controllers, "title.inactive.text", null );
+        
+        updateColor( controllers, "stack.tab.foreground", null );
+        updateColor( controllers, "stack.tab.foreground.selected", null );
+        updateColor( controllers, "stack.tab.foreground.focused", null );
+        updateColor( controllers, "stack.tab.background", null );
+        updateColor( controllers, "stack.tab.background.selected", null );
+        updateColor( controllers, "stack.tab.background.focused", null );
         
         updateColorProvider( controllers, DockColor.class );
         updateColorProvider( controllers, TabColor.class );

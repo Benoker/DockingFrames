@@ -25,34 +25,36 @@
  */
 package bibliothek.gui.dock.common.intern.theme;
 
-import bibliothek.extension.gui.dock.theme.BubbleTheme;
+import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.intern.color.BubbleTabTransmitter;
+import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.ColorMap;
+import bibliothek.gui.dock.common.intern.color.EclipseTabTransmitter;
 import bibliothek.gui.dock.themes.ColorProviderFactory;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.ColorProvider;
 
 /**
- * A theme wrapping {@link BubbleTheme} and adding additional features to
- * properly work within the common-project.
+ * A wrapper around a {@link EclipseTheme}, allows to use the {@link ColorMap} of
+ * {@link CDockable}.
  * @author Benjamin Sigg
- *
  */
-public class CBubbleTheme extends CDockTheme<BubbleTheme>{
+public class CEclipseTheme extends CDockTheme<EclipseTheme>{
     /**
      * Creates a new theme
-     * @param control the {@link CControl} for which this theme will be used.
+     * @param control the controller for which this theme is used
      * @param theme the theme that gets encapsulated
      */
-    public CBubbleTheme( final CControl control, BubbleTheme theme ) {
+    public CEclipseTheme( final CControl control, EclipseTheme theme ) {
         super( theme );
         putColorProviderFactory( TabColor.class, new ColorProviderFactory<TabColor, ColorProvider<TabColor>>(){
             public ColorProvider<TabColor> create( ColorManager manager ) {
-                BubbleTabTransmitter transmitter = new BubbleTabTransmitter( manager );
+                EclipseTabTransmitter transmitter = new EclipseTabTransmitter( manager );
                 transmitter.setControl( control );
                 return transmitter;
             }
         });
     }
+    
 }

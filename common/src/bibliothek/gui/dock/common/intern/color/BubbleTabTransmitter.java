@@ -28,11 +28,6 @@ package bibliothek.gui.dock.common.intern.color;
 import java.awt.Color;
 
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
-import bibliothek.extension.gui.dock.theme.bubble.BubbleStackDockComponent;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.common.ColorMap;
-import bibliothek.gui.dock.common.intern.CDockable;
-import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.themes.ColorProviderFactory;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.util.color.ColorManager;
@@ -42,7 +37,7 @@ import bibliothek.util.Colors;
  * A transmitter handling {@link TabColor}s related to a {@link BubbleTheme}.
  * @author Benjamin Sigg
  */
-public class BubbleTabTransmitter extends ColorTransmitter<TabColor> {
+public class BubbleTabTransmitter extends TabColorTransmitter {
     /**
      * A factory that creates {@link BubbleTabTransmitter}s.
      */
@@ -85,24 +80,30 @@ public class BubbleTabTransmitter extends ColorTransmitter<TabColor> {
         "stack.tab.foreground.focused"
         };
     
-    private ColorManager manager;
-    
     /**
      * Creates a new transmitter.
      * @param manager the source of all colors
      */
     public BubbleTabTransmitter( ColorManager manager ){
-        super( KEYS );
-        
-        this.manager = manager;
+        super( manager, KEYS );
     }
     
-    /**
-     * Changes a background color such that it can be used on a {@link BubbleStackDockComponent}
-     * @param source the original color
-     * @param key the key for which the color is needed
-     * @return the new color
-     */
+    @Override
+    protected boolean isFocused( String id ) {
+        return id.contains( "focused" );
+    }
+    
+    @Override
+    protected boolean isForeground( String id ) {
+        return id.contains( "foreground" );
+    }
+    
+    @Override
+    protected boolean isSelected( String id ) {
+        return id.contains( "selected" );
+    }
+    
+    @Override
     protected Color convert( Color source, String key ){
         if( key.contains(  "selected" ))
             return convertSelected( Colors.undiffMirror( source, 0.2 ), key );
@@ -131,13 +132,7 @@ public class BubbleTabTransmitter extends ColorTransmitter<TabColor> {
         return null;
     }
     
-    /**
-     * Changes a background color such that it can be used on a {@link BubbleStackDockComponent} 
-     * @param source the original color
-     * @param key the key for which the color is needed, can be one of
-     * the selected or focused kind
-     * @return the new color
-     */
+    @Override
     protected Color convertSelected( Color source, String key ){
         if( key.contains( "focused" ))
             return convertFocused( Colors.diffMirror( source, 0.2 ), key );
@@ -163,13 +158,7 @@ public class BubbleTabTransmitter extends ColorTransmitter<TabColor> {
         return null;
     }
     
-    /**
-     * Changes a background color such that it can be used on a {@link BubbleStackDockComponent} 
-     * @param source the original color
-     * @param key the key for which the color is needed, can only be one
-     * of the focused kind
-     * @return the new color
-     */
+    @Override
     protected Color convertFocused( Color source, String key ){
         if( "stack.tab.background.top.focused.mouse".equals( key ))
             return Colors.fuller( source, 0.3 );
@@ -192,92 +181,4 @@ public class BubbleTabTransmitter extends ColorTransmitter<TabColor> {
         return null;
     }
     
-    @Override
-    protected Color get( Color color, String id, TabColor observer ) {
-        CDockable dockable = getDockable( observer );
-        if( dockable != null ){
-            return get( color, id, dockable );
-        }
-        
-        return color;
-    }
-    
-    /**
-     * Searches the color <code>id</code> for <code>dockable</code>.
-     * @param color the color to be returned if the search for <code>id</code> fails.
-     * @param id the identifier of the color to search
-     * @param dockable the element for which the color will be used
-     * @return some color
-     */
-    protected Color get( Color color, String id, CDockable dockable ){
-        Color check = null;
-        ColorMap colors = dockable.getColors();
-        
-        boolean foreground = id.contains( "foreground" );
-        boolean selected = id.contains( "selected" );
-        boolean focused = id.contains( "focused" );
-        
-        if( foreground ){
-            if( focused ){
-                check = colors.getColor( ColorMap.COLOR_KEY_TAB_FOREGROUND_FOCUSED );
-            }
-            if( (focused && check == null) || selected ){
-                check = colors.getColor( ColorMap.COLOR_KEY_TAB_FOREGROUND_SELECTED );
-            }
-            
-            if( check == null ){
-                check = colors.getColor( ColorMap.COLOR_KEY_TAB_FOREGROUND );
-            }
-        }
-        
-        if( check == null ){
-            if( focused ){
-                check = colors.getColor( ColorMap.COLOR_KEY_TAB_BACKGROUND_FOCUSED );
-                if( check != null )
-                    check = convertFocused( check, id );
-            }
-            
-            if( (focused && check == null) || selected ){
-                check = colors.getColor( ColorMap.COLOR_KEY_TAB_BACKGROUND_SELECTED );
-                if( check != null )
-                    check = convertSelected( check, id );
-            }
-            
-            if( check == null ){
-                check = colors.getColor( ColorMap.COLOR_KEY_TAB_BACKGROUND );
-                if( check != null )
-                    check = convert( check, id );
-            }
-        }
-        
-        if( check != null )
-            return check;
-        
-        return color;
-    }
-    
-    @Override
-    protected void update( CDockable dockable, String key, Color color ) {
-        boolean change =
-            ColorMap.COLOR_KEY_TAB_BACKGROUND.equals( key ) ||
-            ColorMap.COLOR_KEY_TAB_BACKGROUND_FOCUSED.equals( key ) ||
-            ColorMap.COLOR_KEY_TAB_BACKGROUND_SELECTED.equals( key ) ||
-            ColorMap.COLOR_KEY_TAB_FOREGROUND.equals( key ) ||
-            ColorMap.COLOR_KEY_TAB_FOREGROUND_FOCUSED.equals( key ) ||
-            ColorMap.COLOR_KEY_TAB_FOREGROUND_SELECTED.equals( key );
-        
-        if( change ){
-            for( String check : KEYS )
-                set( check, get( manager.get( check ), check, dockable ), dockable );
-        }
-    }
-    
-    @Override
-    protected CDockable getDockable( TabColor observer ) {
-        Dockable dockable = observer.getDockable();
-        if( dockable instanceof CommonDockable )
-            return ((CommonDockable)dockable).getDockable();
-        
-        return null;
-    }
 }

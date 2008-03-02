@@ -55,10 +55,12 @@ public class FlatColorScheme extends DefaultColorScheme {
         
         Color border = UIManager.getColor( "Panel.background" );
         setColor( "stack.tab.border.center.selected", border.brighter() );
+        setColor( "stack.tab.border.center.focused", border.brighter() );
         setColor( "stack.tab.border.center", border.darker() );
         setColor( "stack.tab.border", border );
                         
         setColor( "stack.tab.background.top.selected", border.brighter() );
+        setColor( "stack.tab.background.top.focused", border.brighter() );
         setColor( "stack.tab.background", border );
             
         setColor( "stack.tab.foreground", UIManager.getColor( "Panel.foreground" ));

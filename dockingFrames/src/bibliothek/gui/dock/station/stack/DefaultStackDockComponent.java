@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -26,7 +26,6 @@
 
 package bibliothek.gui.dock.station.stack;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -41,11 +40,8 @@ import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.control.RemoteRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
-import bibliothek.gui.dock.themes.color.TabColor;
-import bibliothek.gui.dock.util.color.ColorCodes;
 
 
 /**
@@ -57,7 +53,6 @@ import bibliothek.gui.dock.util.color.ColorCodes;
  * @see StackDockComponent
  * @see JTabbedPane
  */
-@ColorCodes( {"stack.tab.foreground", "stack.tab.background" } )
 public class DefaultStackDockComponent extends JTabbedPane implements StackDockComponent {
 	/** The Dockables shown on this component and their RemoteRelocators to control drag&drop operations */
 	private List<Tab> dockables = new ArrayList<Tab>();
@@ -68,16 +63,11 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 	/** the currently used remote */
 	private RemoteRelocator relocator;
 	
-	/** the station for which this component is used */
-	private StackDockStation station;
-	
 	/**
 	 * Constructs the component, sets the location of the tabs to bottom.
 	 */
-    public DefaultStackDockComponent( StackDockStation station ){
+    public DefaultStackDockComponent(){
         super(BOTTOM);
-    
-        this.station = station;
         
         Listener listener = new Listener();
         addMouseListener( listener );
@@ -86,22 +76,31 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 
     public void insertTab(String title, Icon icon, Component comp, Dockable dockable, int index) {
         insertTab(title, icon, comp, (String)null, index);
-        Tab tab = new Tab(  dockable );
+        Tab tab = createTab( dockable );
         dockables.add( index, tab );
-        tab.connect( controller );
+        tab.setController( controller );
+    }
+    
+    /**
+     * Creates a new representation of a tab on this component.
+     * @param dockable the element which is represented by the tab
+     * @return the new tab
+     */
+    protected Tab createTab( Dockable dockable ){
+        return new Tab( dockable );
     }
 
 	public void addTab( String title, Icon icon, Component comp, Dockable dockable ){
 		addTab( title, icon, comp );
-		Tab tab = new Tab(  dockable );
+		Tab tab = createTab( dockable );
         dockables.add( tab );
-        tab.connect( controller );
+        tab.setController( controller );
 	}
     
     @Override
     public void removeAll(){
     	for( Tab tab : dockables )
-    	    tab.connect( null );
+    	    tab.setController( null );
         super.removeAll();
     	dockables.clear();
     }
@@ -109,7 +108,7 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
     @Override
     public void remove( int index ){
         Tab tab = dockables.remove( index );
-        tab.connect( null );
+        tab.setController( null );
         super.remove( index );
     }
 
@@ -125,18 +124,10 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 			}
 			
 			this.controller = controller;
-			if( controller == null ){
-			    for( Tab tab : dockables ){
-			        tab.relocator = null;
-			        tab.connect( null );
-			    }
-			}
-			else{
-			    for( Tab tab : dockables ){
-			        tab.relocator = controller.getRelocator().createRemote( tab.dockable );
-			        tab.connect( controller );
-			    }
-			}
+			
+		    for( Tab tab : dockables ){
+		        tab.setController( controller );
+		    }
 		}
 	}
 	
@@ -145,16 +136,11 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 	 * @author Benjamin Sigg
 	 *
 	 */
-	private class Tab{
+	protected class Tab{
 	    /** the element on the tab */
-	    public Dockable dockable;
+	    protected Dockable dockable;
 	    /** used to drag and drop the tab */
-	    public RemoteRelocator relocator;
-	    
-	    /** the foreground color */
-	    public TabColor foreground;
-	    /** the background color */
-	    public TabColor background;
+	    private RemoteRelocator relocator;
 	    
 	    /**
 	     * Creates a new Tab
@@ -162,35 +148,27 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 	     */
 	    public Tab( Dockable dockable ){
 	        this.dockable = dockable;
-	        
-	        if( controller != null )
-	            relocator = controller.getRelocator().createRemote( dockable );
-	        
-	        foreground = new TabColor( "stack.tab.foreground", TabColor.class, station, dockable, null ){
-	            @Override
-	            protected void changed( Color oldColor, Color newColor ) {
-	                int index = station.indexOf( Tab.this.dockable );
-	                if( index >= 0 )
-	                    setForegroundAt( index, newColor );
-	            }
-	        };
-	        background = new TabColor( "stack.tab.background", TabColor.class, station, dockable, null ){
-                @Override
-                protected void changed( Color oldColor, Color newColor ) {
-                    int index = station.indexOf( Tab.this.dockable );
-                    if( index >= 0 )
-                        setBackgroundAt( index, newColor );
-                }
-            };
 	    }
 	    
 	    /**
-	     * Updates the colors of this tab
+	     * Gets the {@link Dockable} which is represented by this tab.
+	     * @return the element represented by this tab
+	     */
+	    public Dockable getDockable() {
+            return dockable;
+        }
+	    
+	    /**
+	     * Tells this tab which controller is currently used. Set to <code>null</code>
+	     * if this tab is no longer used, or when the connection to a 
+	     * {@link DockController} is lost.
 	     * @param controller the new source of information, can be <code>null</code>
 	     */
-	    public void connect( DockController controller ){
-	        foreground.connect( controller );
-	        background.connect( controller );
+	    public void setController( DockController controller ){
+	        if( controller == null )
+	            relocator = null;
+	        else
+	            relocator = controller.getRelocator().createRemote( dockable );
 	    }
 	}
 	

@@ -45,7 +45,6 @@ import bibliothek.gui.dock.action.view.ViewGenerator;
 import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.dockable.ScreencaptureMovingImageFactory;
 import bibliothek.gui.dock.station.DisplayerFactory;
-import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.themes.BasicTheme;
@@ -176,15 +175,6 @@ public class FlatTheme extends BasicTheme{
     	controller.getActionViewConverter().putTheme( ActionType.MENU, ViewTarget.TITLE, null );
     	controller.getActionViewConverter().putTheme( ActionType.RADIO, ViewTarget.TITLE, null );
     	controller.getActionViewConverter().putTheme( ActionType.DROP_DOWN, ViewTarget.TITLE, null );
-    	
-        for( int i = 0, n = controller.getStationCount(); i<n; i++ ){
-        	DockStation station = controller.getStation(i);
-        	if( station instanceof StackDockStation ){
-        		StackDockStation stack = (StackDockStation)station;
-        		if( stack.getStackComponent() instanceof FlatTab )
-        			stack.setStackComponent( new DefaultStackDockComponent( stack ) );
-        	}
-        }
     }
     
     @Override
@@ -208,12 +198,16 @@ public class FlatTheme extends BasicTheme{
         
         updateColor( controllers, "stack.tab.border.out.selected", null );
         updateColor( controllers, "stack.tab.border.center.selected", null );
+        updateColor( controllers, "stack.tab.border.out.focused", null );
+        updateColor( controllers, "stack.tab.border.center.focused", null );
         updateColor( controllers, "stack.tab.border.out", null );
         updateColor( controllers, "stack.tab.border.center", null );
         updateColor( controllers, "stack.tab.border", null );
                         
         updateColor( controllers, "stack.tab.background.top.selected", null ); 
         updateColor( controllers, "stack.tab.background.bottom.selected", null );
+        updateColor( controllers, "stack.tab.background.top.focused", null ); 
+        updateColor( controllers, "stack.tab.background.bottom.focused", null );
         updateColor( controllers, "stack.tab.background.top", null );
         updateColor( controllers, "stack.tab.background.bottom", null );
         updateColor( controllers, "stack.tab.background", null );

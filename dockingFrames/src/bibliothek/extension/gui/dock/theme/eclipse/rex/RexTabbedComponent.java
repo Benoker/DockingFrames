@@ -413,13 +413,19 @@ public class RexTabbedComponent extends JComponent {
 	
 	public void updateContentBorder(){
 		if( selectedTab != null ){
-			TabEntry entry = tabs.get( indexOf( selectedTab ) );
-			if( entry.tab == null ){
-			    contentArea.setBorder( null );
+		    int index = indexOf( selectedTab );
+		    if( index >= 0 ){
+    			TabEntry entry = tabs.get( index );
+    			if( entry.tab == null ){
+    			    contentArea.setBorder( null );
+    			}
+    			else{
+    			    contentArea.setBorder( entry.tab.getContentBorder() );
+    			}
 			}
-			else{
-			    contentArea.setBorder( entry.tab.getContentBorder() );
-			}
+		    else{
+		        contentArea.setBorder( null );
+		    }
 		}
 		else
 			contentArea.setBorder( null );

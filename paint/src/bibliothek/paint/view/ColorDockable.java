@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
+import bibliothek.gui.dock.common.ColorMap;
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.paint.util.Resources;
@@ -64,12 +65,14 @@ public class ColorDockable extends DefaultSingleCDockable{
 		setResizeLocked( true );
 		
 		colorButton = new JButton( new ColorIcon( 48, 48, manager.getColor() ));
+		getColors().setColor( ColorMap.COLOR_KEY_TAB_BACKGROUND, manager.getColor() );
 		colorButton.addActionListener( new ActionListener(){
 			public void actionPerformed( ActionEvent e ){
 				Color color = JColorChooser.showDialog( getContentPane(), "Color", ColorDockable.this.manager.getColor() );
 				if( color != null ){
 					colorButton.setIcon( new ColorIcon( 48, 48, color ) );
 					ColorDockable.this.manager.setColor( color );
+					getColors().setColor( ColorMap.COLOR_KEY_TAB_BACKGROUND, color );
 				}
 			}
 		});
@@ -141,6 +144,7 @@ public class ColorDockable extends DefaultSingleCDockable{
 			public void actionPerformed( ActionEvent e ){
 				colorButton.setIcon( new ColorIcon( 48, 48, color ) );
 				manager.setColor( color );
+				getColors().setColor( ColorMap.COLOR_KEY_TAB_BACKGROUND, color );
 			}
 		});
 		return button;

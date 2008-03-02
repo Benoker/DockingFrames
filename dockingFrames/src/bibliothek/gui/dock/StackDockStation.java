@@ -197,7 +197,7 @@ public class StackDockStation extends AbstractDockableStation {
      * @return the new component
      */
     protected StackDockComponent createStackDockComponent(){
-        return new DefaultStackDockComponent( this );
+        return new DefaultStackDockComponent();
     }
     
     /**
@@ -216,6 +216,8 @@ public class StackDockStation extends AbstractDockableStation {
             throw new IllegalArgumentException( "Component must not be null" );
         
         if( stackComponent != this.stackComponent ){
+            int selected = -1;
+            
             if( this.stackComponent != null ){
             	this.stackComponent.setController( null );
                 Component component = this.stackComponent.getComponent();
@@ -223,20 +225,19 @@ public class StackDockStation extends AbstractDockableStation {
                     component.removeMouseListener( listener );
                     component.removeMouseMotionListener( listener );
                 }
+                
+                selected = this.stackComponent.getSelectedIndex();
+                this.stackComponent.removeChangeListener( visibleListener );
+                this.stackComponent.removeAll();
             }
             
+            this.stackComponent = stackComponent;
+            
             if( getDockableCount() < 2 ){
-                this.stackComponent.removeChangeListener( visibleListener );
-                this.stackComponent = stackComponent;
                 stackComponent.addChangeListener( visibleListener );
             }
             else{
-                int selected = this.stackComponent.getSelectedIndex();
-                this.stackComponent.removeChangeListener( visibleListener );
-                this.stackComponent.removeAll();
                 panel.removeAll();
-                
-                this.stackComponent = stackComponent;
                 
                 for( DockableDisplayer displayer : dockables ){
                     Dockable dockable = displayer.getDockable();
@@ -255,13 +256,11 @@ public class StackDockStation extends AbstractDockableStation {
                 stackComponent.addChangeListener( visibleListener );
             }
             
-            if( stackComponent != null ){
-                Component component = stackComponent.getComponent();
-                stackComponent.setController( getController() );
-                for( MouseInputListener listener : mouseInputListeners ){
-                    component.addMouseListener( listener );
-                    component.addMouseMotionListener( listener );
-                }
+            Component component = stackComponent.getComponent();
+            stackComponent.setController( getController() );
+            for( MouseInputListener listener : mouseInputListeners ){
+                component.addMouseListener( listener );
+                component.addMouseMotionListener( listener );
             }
         }
     }

@@ -36,6 +36,7 @@ import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.extension.gui.dock.theme.SmoothTheme;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.intern.theme.*;
 import bibliothek.gui.dock.facile.menu.ThemeMenuPiece;
 import bibliothek.gui.dock.support.util.ApplicationResource;
 import bibliothek.gui.dock.themes.BasicTheme;
@@ -50,12 +51,16 @@ import bibliothek.util.xml.XElement;
  * @author Benjamin Sigg
  */
 public class CThemeMenuPiece extends ThemeMenuPiece{
+    /** the control which uses this menu */
+    private CControl control;
+    
     /**
      * Creates a new piece.
      * @param control the control whose theme might be changed
      */
     public CThemeMenuPiece( CControl control ) {
         super( control.intern().getController(), false );
+        this.control = control;
         init( control );
     }
     
@@ -64,11 +69,44 @@ public class CThemeMenuPiece extends ThemeMenuPiece{
      * @param control the control whose theme might be changed
      */
     private void init( CControl control ){
-        ThemeFactory flat = new NoStackFactory( new ThemePropertyFactory<FlatTheme>( FlatTheme.class ) );
-        ThemeFactory bubble = new NoStackFactory( new ThemePropertyFactory<BubbleTheme>( BubbleTheme.class ) );
-        ThemeFactory eclipse = new ThemePropertyFactory<EclipseTheme>( EclipseTheme.class );
-        ThemeFactory smooth = new NoStackFactory( new ThemePropertyFactory<SmoothTheme>( SmoothTheme.class ) );
-        ThemeFactory basic = new NoStackFactory( new ThemePropertyFactory<BasicTheme>( BasicTheme.class ) );
+        ThemeFactory flat = new NoStackFactory( 
+                new CDockThemeFactory<FlatTheme>( new ThemePropertyFactory<FlatTheme>( FlatTheme.class ) ){
+                    @Override
+                    protected DockTheme create( FlatTheme theme, CControl control ) {
+                        return new CFlatTabTheme( control, theme );
+                    }
+                });
+        
+        ThemeFactory bubble = new NoStackFactory(
+                new CDockThemeFactory<BubbleTheme>( new ThemePropertyFactory<BubbleTheme>( BubbleTheme.class ) ){
+                    @Override
+                    protected DockTheme create( BubbleTheme theme, CControl control ) {
+                        return new CBubbleTheme( control, theme );
+                    }
+                });
+        
+        ThemeFactory eclipse = new CDockThemeFactory<EclipseTheme>( new ThemePropertyFactory<EclipseTheme>( EclipseTheme.class )){
+            @Override
+            protected DockTheme create( EclipseTheme theme, CControl control ) {
+                return new CEclipseTheme( control, theme );
+            }
+        };
+        
+        ThemeFactory smooth = new NoStackFactory(
+                new CDockThemeFactory<SmoothTheme>( new ThemePropertyFactory<SmoothTheme>( SmoothTheme.class ) ){
+                    @Override
+                    protected DockTheme create( SmoothTheme theme, CControl control ) {
+                        return new CSmoothTheme( control, theme );
+                    }
+                });
+        
+        ThemeFactory basic = new NoStackFactory(
+                new CDockThemeFactory<BasicTheme>( new ThemePropertyFactory<BasicTheme>( BasicTheme.class ) ){
+                    @Override
+                    protected DockTheme create( BasicTheme theme, CControl control ) {
+                        return new CBasicTheme( control, theme );
+                    }
+                });
         
         add( basic );
         add( smooth );
@@ -104,6 +142,52 @@ public class CThemeMenuPiece extends ThemeMenuPiece{
         catch( IOException e ) {
             System.err.println( "Non-lethal IO-error:" );
             e.printStackTrace();
+        }
+    }
+    
+    /**
+     * A factory that envelops another factory in order to build a 
+     * CX-theme instead of a X-theme.
+     * @author Benjamin Sigg
+     *
+     * @param <D> the kind of theme that gets wrapped up
+     */
+    private abstract class CDockThemeFactory<D extends DockTheme> implements ThemeFactory{
+        private ThemePropertyFactory<D> delegate;
+
+        /**
+         * Creates a new factory.
+         * @param delegate the factory that should be used as delegate to create
+         * the initial {@link DockTheme}.
+         */
+        public CDockThemeFactory( ThemePropertyFactory<D> delegate ){
+            this.delegate = delegate;
+        }
+        
+        /**
+         * Creates a new theme.
+         * @return the new theme
+         */
+        public DockTheme create() {
+            return create( delegate.create(), control );
+        }
+        
+        protected abstract DockTheme create( D theme, CControl control );
+        
+        public String[] getAuthors() {
+            return delegate.getAuthors();
+        }
+
+        public String getDescription() {
+            return delegate.getDescription();
+        }
+
+        public String getName() {
+            return delegate.getName();
+        }
+
+        public URI[] getWebpages() {
+            return delegate.getWebpages();
         }
     }
     
