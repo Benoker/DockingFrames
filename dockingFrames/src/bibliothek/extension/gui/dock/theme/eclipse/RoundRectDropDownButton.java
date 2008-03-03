@@ -91,8 +91,8 @@ public class RoundRectDropDownButton extends JComponent {
             return super.getPreferredSize();
         
         Dimension icon = model.getMaxIconSize();
-        int w = Math.max( icon.width+6, 10 );
-        int h = Math.max( icon.height+6, 10 );
+        int w = Math.max( icon.width+4, 10 );
+        int h = Math.max( icon.height+4, 10 );
         
         if( model.getOrientation().isHorizontal() )
             return new Dimension( w + 6 + dropIcon.getIconWidth(), h );

@@ -66,8 +66,8 @@ public class RoundRectButton extends JComponent{
             return super.getPreferredSize();
         
         Dimension size = model.getMaxIconSize();
-        size.width = Math.max( 10, size.width + 6 );
-        size.height = Math.max( 10, size.height + 6 );
+        size.width = Math.max( 10, size.width + 4 );
+        size.height = Math.max( 10, size.height + 4 );
         return size;
     }
     

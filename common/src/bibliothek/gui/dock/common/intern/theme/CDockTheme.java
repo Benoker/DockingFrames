@@ -51,7 +51,9 @@ import bibliothek.gui.dock.util.color.DockColor;
  */
 public class CDockTheme<D extends DockTheme> implements DockTheme {
     /** the original theme */
-    private D delegate;
+    private D theme;
+    /** the theme to which all work is delegated */
+    private DockTheme delegate;
     
     /** the factories used in this theme */
     private Map<Class<?>, ColorProviderFactory<?, ?>> colorProviderFactories =
@@ -62,12 +64,24 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
     
     /**
      * Creates a new theme 
-     * @param delegate a normal {@link DockTheme}
+     * @param delegate the theme to which all work is delegated
      */
     public CDockTheme( D delegate ){
+        this( delegate, delegate );
+    }
+    
+    /**
+     * Creates a new theme.
+     * @param theme the theme which is represented by this {@link CDockTheme}.
+     * @param delegate the theme to which all work is delegated
+     */
+    public CDockTheme( D theme, DockTheme delegate ){
+        if( theme == null )
+            throw new IllegalArgumentException( "theme must not be null" );
         if( delegate == null )
             throw new IllegalArgumentException( "delegate must not be null" );
         
+        this.theme = theme;
         this.delegate = delegate;
     }
     
@@ -76,7 +90,7 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
      * @return the internal representation
      */
     public D intern(){
-        return delegate;
+        return theme;
     }
     
     public Combiner getCombiner( DockStation station ) {

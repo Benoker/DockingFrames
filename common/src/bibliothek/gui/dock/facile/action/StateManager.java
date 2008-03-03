@@ -71,13 +71,13 @@ import bibliothek.util.xml.XElement;
  */
 public class StateManager extends ModeTransitionManager<StateManager.Location> {
 	/** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "minimize"-action */
-	public static final String ICON_MANAGER_KEY_MINIMIZE = "state manager minimize";
+	public static final String ICON_MANAGER_KEY_MINIMIZE = "statemanager.minimize";
 	/** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "maximize"-action */
-	public static final String ICON_MANAGER_KEY_MAXIMIZE = "state manager maximize";
+	public static final String ICON_MANAGER_KEY_MAXIMIZE = "statemanager.maximize";
 	/** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "normalize"-action */
-	public static final String ICON_MANAGER_KEY_NORMALIZE = "state manager normalize";
+	public static final String ICON_MANAGER_KEY_NORMALIZE = "statemanager.normalize";
 	/** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "externalize"-action */
-	public static final String ICON_MANAGER_KEY_EXTERNALIZE = "state manager externalize";
+	public static final String ICON_MANAGER_KEY_EXTERNALIZE = "statemanager.externalize";
 	
     /** the areas used to show a maximized element */
     private Set<SplitDockStation> normal = new HashSet<SplitDockStation>();

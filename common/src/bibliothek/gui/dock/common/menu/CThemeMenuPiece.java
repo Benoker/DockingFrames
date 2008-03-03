@@ -69,45 +69,45 @@ public class CThemeMenuPiece extends ThemeMenuPiece{
      * @param control the control whose theme might be changed
      */
     private void init( CControl control ){
-        ThemeFactory flat = new NoStackFactory( 
-                new CDockThemeFactory<FlatTheme>( new ThemePropertyFactory<FlatTheme>( FlatTheme.class ) ){
-                    @Override
-                    protected DockTheme create( FlatTheme theme, CControl control ) {
-                        return new CFlatTabTheme( control, theme );
-                    }
-                });
-        
-        ThemeFactory bubble = new NoStackFactory(
-                new CDockThemeFactory<BubbleTheme>( new ThemePropertyFactory<BubbleTheme>( BubbleTheme.class ) ){
-                    @Override
-                    protected DockTheme create( BubbleTheme theme, CControl control ) {
-                        return new CBubbleTheme( control, theme );
-                    }
-                });
-        
-        ThemeFactory eclipse = new CDockThemeFactory<EclipseTheme>( new ThemePropertyFactory<EclipseTheme>( EclipseTheme.class )){
+        ThemeFactory flat = 
+            new CDockThemeFactory<FlatTheme>( new ThemePropertyFactory<FlatTheme>( FlatTheme.class ) ){
             @Override
-            protected DockTheme create( EclipseTheme theme, CControl control ) {
-                return new CEclipseTheme( control, theme );
+            public DockTheme create( CControl control ) {
+                return new CFlatTabTheme( control );
             }
         };
-        
-        ThemeFactory smooth = new NoStackFactory(
-                new CDockThemeFactory<SmoothTheme>( new ThemePropertyFactory<SmoothTheme>( SmoothTheme.class ) ){
-                    @Override
-                    protected DockTheme create( SmoothTheme theme, CControl control ) {
-                        return new CSmoothTheme( control, theme );
-                    }
-                });
-        
-        ThemeFactory basic = new NoStackFactory(
-                new CDockThemeFactory<BasicTheme>( new ThemePropertyFactory<BasicTheme>( BasicTheme.class ) ){
-                    @Override
-                    protected DockTheme create( BasicTheme theme, CControl control ) {
-                        return new CBasicTheme( control, theme );
-                    }
-                });
-        
+
+        ThemeFactory bubble = 
+            new CDockThemeFactory<BubbleTheme>( new ThemePropertyFactory<BubbleTheme>( BubbleTheme.class ) ){
+            @Override
+            public DockTheme create( CControl control ) {
+                return new CBubbleTheme( control );
+            }
+        };
+
+        ThemeFactory eclipse = new CDockThemeFactory<EclipseTheme>( new ThemePropertyFactory<EclipseTheme>( EclipseTheme.class )){
+            @Override
+            public DockTheme create( CControl control ) {
+                return new CEclipseTheme( control );
+            }
+        };
+
+        ThemeFactory smooth = 
+            new CDockThemeFactory<SmoothTheme>( new ThemePropertyFactory<SmoothTheme>( SmoothTheme.class ) ){
+            @Override
+            public DockTheme create( CControl control ) {
+                return new CSmoothTheme( control );
+            }
+        };
+
+        ThemeFactory basic =
+            new CDockThemeFactory<BasicTheme>( new ThemePropertyFactory<BasicTheme>( BasicTheme.class ) ){
+            @Override
+            public DockTheme create( CControl control ) {
+                return new CBasicTheme( control );
+            }
+        };
+
         add( basic );
         add( smooth );
         add( flat );
@@ -164,53 +164,16 @@ public class CThemeMenuPiece extends ThemeMenuPiece{
             this.delegate = delegate;
         }
         
+        public DockTheme create() {
+            return create( control );
+        }
+        
         /**
          * Creates a new theme.
          * @return the new theme
          */
-        public DockTheme create() {
-            return create( delegate.create(), control );
-        }
+        public abstract DockTheme create( CControl control );
         
-        protected abstract DockTheme create( D theme, CControl control );
-        
-        public String[] getAuthors() {
-            return delegate.getAuthors();
-        }
-
-        public String getDescription() {
-            return delegate.getDescription();
-        }
-
-        public String getName() {
-            return delegate.getName();
-        }
-
-        public URI[] getWebpages() {
-            return delegate.getWebpages();
-        }
-    }
-    
-    /**
-     * A factory creating new {@link NoStackTheme}s.
-     * @author Benjamin Sigg
-     */
-    private static class NoStackFactory implements ThemeFactory{
-        /** the creator of the base theme */
-        private ThemeFactory delegate;
-        
-        /**
-         * Creates a new factory
-         * @param delegate the creator of the base theme
-         */
-        public NoStackFactory( ThemeFactory delegate ){
-            this.delegate = delegate;
-        }
-        
-        public DockTheme create() {
-            return new NoStackTheme( delegate.create() );
-        }
-
         public String[] getAuthors() {
             return delegate.getAuthors();
         }

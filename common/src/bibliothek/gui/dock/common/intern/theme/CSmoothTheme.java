@@ -30,6 +30,7 @@ import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.color.BasicTabTransmitter;
 import bibliothek.gui.dock.common.intern.color.BasicTitleTransmitter;
 import bibliothek.gui.dock.themes.ColorProviderFactory;
+import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.util.color.ColorManager;
@@ -45,8 +46,34 @@ public class CSmoothTheme extends CDockTheme<SmoothTheme> {
      * @param control the controller for which this theme will be used
      * @param theme the theme that gets encapsulated
      */
-    public CSmoothTheme( final CControl control, SmoothTheme theme ){
+    public CSmoothTheme( CControl control, SmoothTheme theme ){
         super( theme );
+        init( control );
+    }
+    
+    /**
+     * Creates a new theme. This theme can be used directly with a 
+     * {@link CControl}.
+     * @param control the controller for which this theme will be used.
+     */
+    public CSmoothTheme( CControl control ){
+        this( new SmoothTheme() );
+        init( control );
+    }
+    
+    /**
+     * Creates a new theme.
+     * @param theme the delegate which will do most of the work
+     */
+    private CSmoothTheme( SmoothTheme theme ){
+        super( theme, new NoStackTheme( theme ) );
+    }
+    
+    /**
+     * Initializes the properties of this theme.
+     * @param control the controller for which this theme will be used
+     */
+    private void init( final CControl control ){
         putColorProviderFactory( TabColor.class, new ColorProviderFactory<TabColor, ColorProvider<TabColor>>(){
             public ColorProvider<TabColor> create( ColorManager manager ) {
                 BasicTabTransmitter transmitter = new BasicTabTransmitter( manager );

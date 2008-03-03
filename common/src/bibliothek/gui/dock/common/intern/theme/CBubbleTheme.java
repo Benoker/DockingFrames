@@ -31,6 +31,7 @@ import bibliothek.gui.dock.common.intern.color.BubbleDisplayerTransmitter;
 import bibliothek.gui.dock.common.intern.color.BubbleTabTransmitter;
 import bibliothek.gui.dock.common.intern.color.BubbleTitleTransmitter;
 import bibliothek.gui.dock.themes.ColorProviderFactory;
+import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.gui.dock.themes.color.DisplayerColor;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.color.TitleColor;
@@ -45,12 +46,38 @@ import bibliothek.gui.dock.util.color.ColorProvider;
  */
 public class CBubbleTheme extends CDockTheme<BubbleTheme>{
     /**
-     * Creates a new theme
-     * @param control the {@link CControl} for which this theme will be used.
+     * Creates a new theme.
+     * @param control the controller for which this theme will be used
      * @param theme the theme that gets encapsulated
      */
-    public CBubbleTheme( final CControl control, BubbleTheme theme ) {
+    public CBubbleTheme( CControl control, BubbleTheme theme ){
         super( theme );
+        init( control );
+    }
+    
+    /**
+     * Creates a new theme. This theme can be used directly with a 
+     * {@link CControl}.
+     * @param control the controller for which this theme will be used.
+     */
+    public CBubbleTheme( CControl control ){
+        this( new BubbleTheme() );
+        init( control );
+    }
+    
+    /**
+     * Creates a new theme.
+     * @param theme the delegate which will do most of the work
+     */
+    private CBubbleTheme( BubbleTheme theme ){
+        super( theme, new NoStackTheme( theme ) );
+    }
+    
+    /**
+     * Initializes the properties of this theme.
+     * @param control the controller for which this theme will be used
+     */
+    private void init( final CControl control ){
         putColorProviderFactory( TabColor.class, new ColorProviderFactory<TabColor, ColorProvider<TabColor>>(){
             public ColorProvider<TabColor> create( ColorManager manager ) {
                 BubbleTabTransmitter transmitter = new BubbleTabTransmitter( manager );

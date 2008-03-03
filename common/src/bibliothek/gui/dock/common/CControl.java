@@ -49,6 +49,7 @@ import bibliothek.gui.dock.common.event.CControlListener;
 import bibliothek.gui.dock.common.intern.*;
 import bibliothek.gui.dock.common.intern.station.CFlapLayoutManager;
 import bibliothek.gui.dock.common.intern.station.CLockedResizeLayoutManager;
+import bibliothek.gui.dock.common.intern.theme.CSmoothTheme;
 import bibliothek.gui.dock.event.DockAdapter;
 import bibliothek.gui.dock.facile.action.CloseAction;
 import bibliothek.gui.dock.facile.action.StateManager;
@@ -251,7 +252,7 @@ public class CControl {
 		    }
 		});
 		frontend.setShowHideAction( false );
-		frontend.getController().setTheme( new NoStackTheme( new SmoothTheme() ) );
+		frontend.getController().setTheme( new NoStackTheme( new CSmoothTheme( this, new SmoothTheme())));
 		frontend.getController().addActionGuard( new ActionGuard(){
 		    public boolean react( Dockable dockable ) {
 		        return dockable instanceof CommonDockable;
