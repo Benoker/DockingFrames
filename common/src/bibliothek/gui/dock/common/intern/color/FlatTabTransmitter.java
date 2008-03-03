@@ -1,5 +1,3 @@
-package bibliothek.gui.dock.common.intern.color;
-
 /*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
@@ -25,6 +23,8 @@ package bibliothek.gui.dock.common.intern.color;
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
+package bibliothek.gui.dock.common.intern.color;
+
 import java.awt.Color;
 
 import bibliothek.extension.gui.dock.theme.FlatTheme;

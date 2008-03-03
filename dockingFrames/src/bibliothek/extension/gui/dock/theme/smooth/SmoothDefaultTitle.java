@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -56,6 +56,7 @@ public class SmoothDefaultTitle extends BasicDockTitle{
         @Override
         protected void repaint( int current ) {
             SmoothDefaultTitle.this.current = current;
+            updateForegroundColor();
             SmoothDefaultTitle.this.repaint();
         }
     };
@@ -97,7 +98,15 @@ public class SmoothDefaultTitle extends BasicDockTitle{
     @Override
     protected void updateColors() {
     	super.updateColors();
-    	
+    	updateForegroundColor();
+    }
+    
+    /**
+     * Updates the foreground color.
+     */
+    protected void updateForegroundColor(){
+        boolean done = false;
+        
         if( changer != null ){
             int duration = getDuration();
             
@@ -107,6 +116,14 @@ public class SmoothDefaultTitle extends BasicDockTitle{
                 double ratio = current / (double)duration;
                 
                 setForeground( Colors.between( getInactiveTextColor(), getActiveTextColor(), ratio ));
+                done = true;
+            }
+            
+            if( !done ){
+                if( isActive() )
+                    setForeground( getActiveTextColor() );
+                else
+                    setForeground( getInactiveTextColor() );
             }
         }
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -161,45 +161,66 @@ public class BasicDockTitle extends AbstractDockTitle {
     
     /**
      * Gets the color that is used on the left side if this title
-     * is active.
+     * is active. This method does the same as
+     * <code>getActiveLeftTitleColor().color();</code>.
      * @return the color
      * @see #setActiveLeftColor(Color)
+     * @see #getActiveLeftTitleColor()
      */
     public Color getActiveLeftColor() {
         return activeLeftColor.color();
     }
+    
+    /**
+     * Gets the handle for the left active color.
+     * @return the handle, can be used to change the color of this title
+     */
+    public TitleColor getActiveLeftTitleColor(){
+        return activeLeftColor;
+    }
 
     /**
      * Sets the color that is used on the left side if this
-     * title is active.
+     * title is active. This method does the same as
+     * <code>getActiveLeftTitleColor().setValue( activeLeftColor );</code>.
      * @param activeLeftColor the color
+     * @see #getActiveLeftTitleColor()
      */
     public void setActiveLeftColor( Color activeLeftColor ) {
         this.activeLeftColor.setValue( activeLeftColor );
-        updateColors();
     }
     
     /**
      * Gets the color that is used on the right side in the
-     * gradient of this title.
+     * gradient of this title. This method does the same
+     * as <code>getActiveRightTitleColor().color();</code>.
      * @return the color
      */
     public Color getActiveRightColor() {
         return activeRightColor.color();
     }
+
+    /**
+     * Gets the handle for the left active color.
+     * @return the handle, can be used to change the color of this title
+     */
+    public TitleColor getActiveRightTitleColor(){
+        return activeRightColor;
+    }
     
     /**
      * Sets the color which is used on the right side in the
-     * gradient of this title.
+     * gradient of this title. This method does the same as
+     * <code>getActiveRightTitleColor().setValue( activeRightColor );</code>.
      * @param activeRightColor the color
      */
     public void setActiveRightColor( Color activeRightColor ) {
         this.activeRightColor.setValue( activeRightColor );
-        updateColors();
     }
 
     /**
-     * Gets the color that is used for text if this title is active.
+     * Gets the color that is used for text if this title is active. This
+     * method does the same as <code>getActiveTextTitleColor().color();</code>.
      * @return the color
      */
     public Color getActiveTextColor() {
@@ -207,37 +228,55 @@ public class BasicDockTitle extends AbstractDockTitle {
     }
 
     /**
+     * Gets a handle for the foreground color of an active title.
+     * @return the handle, can be used to change the color of this title
+     */
+    public TitleColor getActiveTextTitleColor(){
+        return activeTextColor;
+    }
+    
+    /**
      * Sets the color which is used to paint the text if this title
-     * is active.
+     * is active. This method does the same as 
+     * <code>getActiveTextTitleColor().setValue( activeTextColor );</code>.
      * @param activeTextColor the color
      */
     public void setActiveTextColor( Color activeTextColor ) {
-        this.activeTextColor.set( activeTextColor );
-        updateColors();
+        this.activeTextColor.setValue( activeTextColor );
     }
 
     /**
      * Gets the color which is used on the left side of the
-     * gradient if this title is not active.
+     * gradient if this title is not active. This method does the
+     * same as <code>getInactiveLeftTitleColor().color();</code>.
      * @return the color
      */
     public Color getInactiveLeftColor() {
         return inactiveLeftColor.color();
     }
+    
+    /**
+     * Gets a handle for the left inactive color.
+     * @return the handle, can be used to change the color of this title
+     */
+    public TitleColor getInactiveLeftTitleColor(){
+        return inactiveLeftColor;
+    }
 
     /**
      * Sets the color which will be used on the left side of
-     * the gradient if this title is not active.
+     * the gradient if this title is not active. This method does the
+     * same as <code>getInactiveLeftTitleColor().setValue( inactiveLeftColor );</code>.
      * @param inactiveLeftColor the color
      */
     public void setInactiveLeftColor( Color inactiveLeftColor ) {
         this.inactiveLeftColor.setValue( inactiveLeftColor );
-        updateColors();
     }
     
     /**
      * Gets the color which is used on the right side of the
-     * gradient if this title is not active.
+     * gradient if this title is not active. This method does
+     * the same as <code>getInactiveRightTitleColor().color();</code>.
      * @return the color on the right side
      */
     public Color getInactiveRightColor() {
@@ -245,31 +284,48 @@ public class BasicDockTitle extends AbstractDockTitle {
     }
     
     /**
+     * Gets a handle for the inactive right background color.
+     * @return a handle, can be used to change the colors of this title
+     */
+    public TitleColor getInactiveRightTitleColor(){
+        return inactiveRightColor;
+    }
+    
+    /**
      * Sets the color of the right side of the gradient. The color
-     * will only be used if this title is not active.
+     * will only be used if this title is not active. This method does
+     * the same as <code>getInactiveRightTitleColor().setValue( inactiveRightColor );</code>.
      * @param inactiveRightColor the color
      */
     public void setInactiveRightColor( Color inactiveRightColor ) {
         this.inactiveRightColor.setValue( inactiveRightColor );
-        updateColors();
     }
 
     /**
      * Gets the color of the text. This color is used if this title is not active.
+     * This method does the same as <code>getInactiveTextTitleColor().color();</code>.
      * @return the color
      */
     public Color getInactiveTextColor() {
         return inactiveTextColor.color();
     }
+    
+    /**
+     * Gets a handle for the inactive foreground color.
+     * @return a handle, can be used to change the color of this title.
+     */
+    public TitleColor getInactiveTextTitleColor(){
+        return inactiveTextColor;
+    }
 
     /**
      * Sets the color of the text. The color will only be used if this title
-     * is not active.
+     * is not active. This method does the same as
+     * <code>getInactiveTextTitleColor().setValue( inactiveTextColor );</code>.
      * @param inactiveTextColor the color
      */
     public void setInactiveTextColor( Color inactiveTextColor ) {
         this.inactiveTextColor.setValue( inactiveTextColor );
-        updateColors();
     }
 
     @Override
@@ -295,7 +351,6 @@ public class BasicDockTitle extends AbstractDockTitle {
                 setForeground( inactiveTextColor.color() );
             }
         }
-        
         repaint();
     }
     
@@ -317,7 +372,7 @@ public class BasicDockTitle extends AbstractDockTitle {
         @Override
         protected void changed( Color oldColor, Color newColor ) {
             gradient = null;
-            repaint();
+            updateColors();
         }
     }
 }

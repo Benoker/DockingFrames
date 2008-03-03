@@ -70,10 +70,10 @@ public class BubbleStationPaint implements StationPaint {
         g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
         g2.setStroke( new BasicStroke( 3f ));
         
-        int x = dockableBounds.x;
-        int y = dockableBounds.y;
-        int w = dockableBounds.width;
-        int h = dockableBounds.height;
+        int x = dockableBounds.x-1;
+        int y = dockableBounds.y-1;
+        int w = dockableBounds.width-2;
+        int h = dockableBounds.height-2;
         
         g2.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_ATOP, 0.4f ) );
         g2.drawRoundRect( x, y, w, h, 50, 50 );

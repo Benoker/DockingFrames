@@ -53,6 +53,12 @@ public class ColorMap {
     public static final String COLOR_KEY_TAB_BACKGROUND_FOCUSED = "tab.background.focused";
     public static final String COLOR_KEY_TAB_FOREGROUND_FOCUSED = "tab.foreground.focused";
     
+    public static final String COLOR_KEY_TITLE_BACKGROUND = "title.background";
+    public static final String COLOR_KEY_TITLE_FOREGROUND = "title.foreground";
+    
+    public static final String COLOR_KEY_TITLE_BACKGROUND_FOCUSED = "title.background.focused";
+    public static final String COLOR_KEY_TITLE_FOREGROUND_FOCUSED = "title.foreground.focused";
+    
     /** the list of observers of this map */
     private List<ColorMapListener> listeners = new ArrayList<ColorMapListener>();
     

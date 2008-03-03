@@ -86,13 +86,13 @@ public class BasicStationPaint implements StationPaint {
         
         Composite old = g2.getComposite();
         g2.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 0.33f ));
+
+        int x = dockableBounds.x+1;
+        int y = dockableBounds.y+1;
+        int w = dockableBounds.width-3;
+        int h = dockableBounds.height-3;
         
-        g2.fillRect( dockableBounds.x, dockableBounds.y, dockableBounds.width, dockableBounds.height );
-        
-        int x = dockableBounds.x-1;
-        int y = dockableBounds.y-1;
-        int w = dockableBounds.width+2;
-        int h = dockableBounds.height+2;
+        g2.fillRect( x, y, w, h );
         
         g2.setComposite( old );
         

@@ -26,13 +26,16 @@
 package bibliothek.extension.gui.dock.theme.bubble;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JPanel;
 import javax.swing.border.Border;
+import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.event.DockableFocusAdapter;
+import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
 import bibliothek.gui.dock.themes.color.DisplayerColor;
@@ -44,7 +47,15 @@ import bibliothek.gui.dock.util.color.ColorCodes;
  * the side at which the title lies open.
  * @author Benjamin Sigg
  */
-@ColorCodes({ "displayer.border.high.active", "displayer.border.high.inactive", "displayer.border.low.active", "displayer.border.low.inactive" })
+@ColorCodes({ 
+    "displayer.border.high.active",
+    "displayer.border.high.active.mouse",
+    "displayer.border.high.inactive",
+    "displayer.border.high.inactive.mouse",
+    "displayer.border.low.active",
+    "displayer.border.low.active.mouse",
+    "displayer.border.low.inactive",
+    "displayer.border.low.inactive.mouse"})
 public class BubbleDisplayer extends BasicDockableDisplayer {
 	/** the size of the border in pixel */
     private int borderSize = 2;
@@ -53,54 +64,18 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
     /** the animation changing the colors of this displayer */
     private BubbleColorAnimation animation;
 
-    /** color of the border when active */
-    private DisplayerColor borderHighActive =
-        new DisplayerColor( "displayer.border.high.active", DisplayerColor.class, this, Color.WHITE ){
-        @Override
-        protected void changed( Color oldColor, Color newColor ) {
-            DockController controller = getController();
-            if( controller != null && controller.getFocusedDockable() == getDockable() ){
-                animation.putColor( "high", newColor );
-            }
-        }
-    };
+    private DisplayerColor borderHighActive = new BubbleDisplayerColor( "displayer.border.high.active", Color.WHITE );
+    private DisplayerColor borderHighActiveMouse = new BubbleDisplayerColor( "displayer.border.high.active.mouse", Color.WHITE );
+    private DisplayerColor borderHighInactive = new BubbleDisplayerColor( "displayer.border.high.inactive", Color.DARK_GRAY );
+    private DisplayerColor borderHighInactiveMouse = new BubbleDisplayerColor( "displayer.border.high.inactive.mouse", Color.DARK_GRAY );
+    private DisplayerColor borderLowActive = new BubbleDisplayerColor( "displayer.border.low.active", Color.LIGHT_GRAY );
+    private DisplayerColor borderLowActiveMouse = new BubbleDisplayerColor( "displayer.border.low.active.mouse", Color.LIGHT_GRAY );
+    private DisplayerColor borderLowInactive = new BubbleDisplayerColor( "displayer.border.low.inactive", Color.BLACK );
+    private DisplayerColor borderLowInactiveMouse = new BubbleDisplayerColor( "displayer.border.low.inactive.mouse", Color.BLACK );
     
-    /** color of the border when inactive */
-    private DisplayerColor borderHighInactive =
-        new DisplayerColor( "displayer.border.high.inactive", DisplayerColor.class, this, Color.DARK_GRAY ){
-        @Override
-        protected void changed( Color oldColor, Color newColor ) {
-            DockController controller = getController();
-            if( controller == null || controller.getFocusedDockable() != getDockable() ){
-                animation.putColor( "high", newColor );
-            }
-        }
-    };
+    /** <code>true</code> if the mouse is over the title of this displayer */
+    private boolean mouse = false;
     
-    /** color of the border when active */
-    private DisplayerColor borderLowActive =
-        new DisplayerColor( "displayer.border.low.active", DisplayerColor.class, this, Color.LIGHT_GRAY ){
-        @Override
-        protected void changed( Color oldColor, Color newColor ) {
-            DockController controller = getController();
-            if( controller != null && controller.getFocusedDockable() == getDockable() ){
-                animation.putColor( "low", newColor );
-            }
-        }
-    };
-    
-    /** color of the border when inactive */
-    private DisplayerColor borderLowInactive =
-        new DisplayerColor( "displayer.border.low.inactive", DisplayerColor.class, this, Color.BLACK ){
-        @Override
-        protected void changed( Color oldColor, Color newColor ) {
-            DockController controller = getController();
-            if( controller == null || controller.getFocusedDockable() != getDockable() ){
-                animation.putColor( "low", newColor );
-            }
-        }
-    };
-
     /** 
      * a listener to the controller informing this displayer when the focused
      * {@link Dockable} has changed.
@@ -130,14 +105,28 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
      * Sets the colors to which the animation should run.
      */
     protected void updateAnimation(){
-        DockController controller = getController();
-        if( controller != null && controller.getFocusedDockable() == getDockable() ){
-            animation.putColor( "high", borderHighActive.color() );
-            animation.putColor( "low", borderLowActive.color() );
-        }
-        else{
-            animation.putColor( "high", borderHighInactive.color() );
-            animation.putColor( "low", borderLowInactive.color() );
+        if( animation != null ){
+            DockController controller = getController();
+            if( controller != null && controller.getFocusedDockable() == getDockable() ){
+                if( mouse ){
+                    animation.putColor( "high", borderHighActiveMouse.color() );
+                    animation.putColor( "low", borderLowActiveMouse.color() );
+                }
+                else{
+                    animation.putColor( "high", borderHighActive.color() );
+                    animation.putColor( "low", borderLowActive.color() );
+                }
+            }
+            else{
+                if( mouse ){
+                    animation.putColor( "high", borderHighInactiveMouse.color() );
+                    animation.putColor( "low", borderLowInactiveMouse.color() );
+                }
+                else{
+                    animation.putColor( "high", borderHighInactive.color() );
+                    animation.putColor( "low", borderLowInactive.color() );
+                }
+            }
         }
     }
     
@@ -163,9 +152,13 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
         }
         
         borderHighActive.connect( controller );
+        borderHighActiveMouse.connect( controller );
         borderHighInactive.connect( controller );
+        borderHighInactiveMouse.connect( controller );
         borderLowActive.connect( controller );
+        borderLowActiveMouse.connect( controller );
         borderLowInactive.connect( controller );
+        borderLowInactiveMouse.connect( controller );
         animation.kick();
     }
     
@@ -187,15 +180,35 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
         return this.dockable;
     }
     
+    @Override
+    public void setTitle( DockTitle title ) {
+        DockTitle old = getTitle();
+        if( old != null )
+            old.removeMouseInputListener( listener );
+        
+        super.setTitle( title );
+        
+        if( title != null )
+            title.addMouseInputListener( listener );
+        
+        mouse = false;
+        updateAnimation();
+        ensureDockable();
+    }
+    
     /**
      * Ensures that there is a panel for the {@link Dockable}
      */
     private void ensureDockable(){
         if( dockable == null ){
             dockable = new JPanel( new GridLayout( 1, 1 ));
-            dockable.setBorder(  new OpenBorder() );
             add( dockable );
         }
+        
+        if( getTitle() == null )
+            dockable.setBorder( null );
+        else
+            dockable.setBorder( new OpenBorder() );
     }
     
     /**
@@ -203,9 +216,41 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
      * has changed.
      * @author Benjamin Sigg
      */
-    private class Listener extends DockableFocusAdapter{
-        @Override
+    private class Listener extends MouseInputAdapter implements DockableFocusListener{
         public void dockableFocused( DockController controller, Dockable dockable ) {
+            updateAnimation();
+        }
+        public void dockableSelected( DockController controller, DockStation station, Dockable dockable ) {
+            // ignore   
+        }
+        @Override
+        public void mouseEntered( MouseEvent e ) {
+            mouse = true;
+            updateAnimation();
+        }
+        @Override
+        public void mouseExited( MouseEvent e ) {
+            mouse = false;
+            updateAnimation();
+        }
+    }
+    
+    /**
+     * A color used on a {@link BubbleDisplayer}.
+     * @author Benjamin Sigg
+     */
+    private class BubbleDisplayerColor extends DisplayerColor{
+        /**
+         * Creates a new color.
+         * @param id the name of the color
+         * @param backup a backup in case that no color could be read
+         */
+        public BubbleDisplayerColor( String id, Color backup ) {
+            super( id, DisplayerColor.class, BubbleDisplayer.this, backup );
+        }
+
+        @Override
+        protected void changed( Color oldColor, Color newColor ) {
             updateAnimation();
         }
     }

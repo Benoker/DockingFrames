@@ -422,6 +422,20 @@ public class CStateManager extends StateManager {
         return null;
     }
     
+    @Override
+    protected boolean isValidNormalized( Dockable dockable ) {
+        if( dockable instanceof CommonDockable ){
+            CDockable cdock = ((CommonDockable)dockable).getDockable();
+            
+            CWorkingArea current = getAreaOf( dockable );
+            CWorkingArea preferred = cdock.getWorkingArea();
+            
+            return current == preferred;
+        }
+        
+        return super.isValidNormalized( dockable );
+    }
+    
     /**
      * Analyzes the contents of <code>property</code> and tries to create an
      * {@link CLocation} that matches <code>property</code> as good as possible. 

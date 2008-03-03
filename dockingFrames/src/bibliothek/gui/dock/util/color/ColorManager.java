@@ -182,7 +182,7 @@ public class ColorManager {
             Observer<?> next = list.next();
             if( next.getObserver() == observer ){
                 list.remove();
-                next.setProvider( null );
+                next.setProvider( null, false );
                 return;
             }
         }
@@ -338,7 +338,7 @@ public class ColorManager {
             if( provider == null )
                 update( get( id ) );
             else
-                setProvider( provider );
+                setProvider( provider, true );
         }
         
         /**
@@ -346,14 +346,17 @@ public class ColorManager {
          */
         @SuppressWarnings("unchecked")
         public void resetProvider(){
-            setProvider( (ColorProvider<D>)getProviderFor( type ) );
+            setProvider( (ColorProvider<D>)getProviderFor( type ), false );
         }
         
         /**
          * Sets the {@link ColorProvider} of this <code>Observer</code>.
          * @param provider the new provider, can be <code>null</code>
+         * @param force if <code>true</code>, than an update of the color will
+         * be done anyway. Otherwise an update will only be done if a new
+         * provider is set.
          */
-        public void setProvider( ColorProvider<D> provider ) {
+        public void setProvider( ColorProvider<D> provider, boolean force ) {
             if( this.provider != provider ){
                 if( this.provider != null )
                     this.provider.remove( id, observer );
@@ -364,6 +367,9 @@ public class ColorManager {
                     provider.add( id, observer );
                 }
                 
+                update( get( id ));
+            }
+            else if( force ){
                 update( get( id ));
             }
         }

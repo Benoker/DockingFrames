@@ -64,15 +64,14 @@ public class ColorDockable extends DefaultSingleCDockable{
 		setTitleIcon( Resources.getIcon( "dockable.color" ) );
 		setResizeLocked( true );
 		
-		colorButton = new JButton( new ColorIcon( 48, 48, manager.getColor() ));
-		getColors().setColor( ColorMap.COLOR_KEY_TAB_BACKGROUND, manager.getColor() );
+		colorButton = new JButton();
+		transmittColor( manager.getColor() );
+		
 		colorButton.addActionListener( new ActionListener(){
 			public void actionPerformed( ActionEvent e ){
 				Color color = JColorChooser.showDialog( getContentPane(), "Color", ColorDockable.this.manager.getColor() );
 				if( color != null ){
-					colorButton.setIcon( new ColorIcon( 48, 48, color ) );
-					ColorDockable.this.manager.setColor( color );
-					getColors().setColor( ColorMap.COLOR_KEY_TAB_BACKGROUND, color );
+					transmittColor( color );
 				}
 			}
 		});
@@ -132,6 +131,18 @@ public class ColorDockable extends DefaultSingleCDockable{
 	}
 	
 	/**
+	 * Transmitts a new color to {@link #manager} and to all other parties
+	 * that need to be informed.
+	 * @param color the new color
+	 */
+	private void transmittColor( Color color ){
+	    colorButton.setIcon( new ColorIcon( 48, 48, color ) );
+        ColorDockable.this.manager.setColor( color );
+        getColors().setColor( ColorMap.COLOR_KEY_TAB_BACKGROUND, color );
+        getColors().setColor( ColorMap.COLOR_KEY_TITLE_BACKGROUND_FOCUSED, color );
+	}
+	
+	/**
 	 * Creates a button which will change the color of the main-button of
 	 * this dockable, and the color used to paint new {@link bibliothek.paint.model.Shape}s
 	 * to <code>color</code>.
@@ -142,9 +153,7 @@ public class ColorDockable extends DefaultSingleCDockable{
 		JButton button = new JButton( new ColorIcon( 32, 32, color ) );
 		button.addActionListener( new ActionListener(){
 			public void actionPerformed( ActionEvent e ){
-				colorButton.setIcon( new ColorIcon( 48, 48, color ) );
-				manager.setColor( color );
-				getColors().setColor( ColorMap.COLOR_KEY_TAB_BACKGROUND, color );
+			    transmittColor( color );
 			}
 		});
 		return button;

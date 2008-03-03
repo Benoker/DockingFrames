@@ -1802,7 +1802,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         public void doLayout() {
             updateBounds();
             
-            Insets insets = getRoot().getInsets();
+            Insets insets = getInsets();
             
             if( fullScreenDockable != null ){
                 fullScreenDockable.getComponent().setBounds( insets.left, insets.top, 

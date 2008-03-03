@@ -27,9 +27,13 @@ package bibliothek.gui.dock.common.intern.theme;
 
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.intern.color.BubbleDisplayerTransmitter;
 import bibliothek.gui.dock.common.intern.color.BubbleTabTransmitter;
+import bibliothek.gui.dock.common.intern.color.BubbleTitleTransmitter;
 import bibliothek.gui.dock.themes.ColorProviderFactory;
+import bibliothek.gui.dock.themes.color.DisplayerColor;
 import bibliothek.gui.dock.themes.color.TabColor;
+import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.ColorProvider;
 
@@ -50,6 +54,20 @@ public class CBubbleTheme extends CDockTheme<BubbleTheme>{
         putColorProviderFactory( TabColor.class, new ColorProviderFactory<TabColor, ColorProvider<TabColor>>(){
             public ColorProvider<TabColor> create( ColorManager manager ) {
                 BubbleTabTransmitter transmitter = new BubbleTabTransmitter( manager );
+                transmitter.setControl( control );
+                return transmitter;
+            }
+        });
+        putColorProviderFactory( TitleColor.class, new ColorProviderFactory<TitleColor, ColorProvider<TitleColor>>(){
+            public ColorProvider<TitleColor> create( ColorManager manager ) {
+                BubbleTitleTransmitter transmitter = new BubbleTitleTransmitter( manager );
+                transmitter.setControl( control );
+                return transmitter;
+            }
+        });
+        putColorProviderFactory( DisplayerColor.class, new ColorProviderFactory<DisplayerColor, ColorProvider<DisplayerColor>>(){
+            public ColorProvider<DisplayerColor> create( ColorManager manager ) {
+                BubbleDisplayerTransmitter transmitter = new BubbleDisplayerTransmitter( manager );
                 transmitter.setControl( control );
                 return transmitter;
             }

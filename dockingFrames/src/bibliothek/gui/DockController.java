@@ -137,8 +137,9 @@ public class DockController {
     /** a listener that is added to the {@link UIManager} and gets notified when the {@link LookAndFeel} changes */
     private PropertyChangeListener lookAndFeelObserver = new PropertyChangeListener(){
         public void propertyChange( PropertyChangeEvent evt ) {
-            if( "lookAndFeel".equals( evt.getPropertyName() ))
+            if( "lookAndFeel".equals( evt.getPropertyName() )){
                 updateUI();
+            }
         }
     };
     

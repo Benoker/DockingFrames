@@ -5,7 +5,8 @@
 - [Done] Commons: new layer that simplifies DF. Should not contain more than 5 public interfaces
 - [Done] A global way to use the keyboard to give additional commands when moving a Dockable
 - All DockStations: make sure the children do not get too small, for example use "getPreferredSize" or a similar mechanism.
-- ShapedGradientPainter & others: exchangeable colors
+- [Done] ShapedGradientPainter & others: exchangeable colors
 - [Done] Store and load DockSituation from XML?
-- Allow StackDockStations to have different colors on the tab.
-- Possibility to fix size of Dockables on SplitDockStations
+- [Done] Allow StackDockStations to have different colors on the tab.
+- [Done] Possibility to fix size of Dockables on SplitDockStations
+- Guide: mention ColorSchemes and the new layout capabilities of SplitDockStation

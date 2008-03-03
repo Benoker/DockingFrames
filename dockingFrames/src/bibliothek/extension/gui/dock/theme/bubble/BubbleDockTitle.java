@@ -43,7 +43,8 @@ import bibliothek.gui.dock.util.color.ColorCodes;
  * @author Benjamin Sigg
  */
 
-@ColorCodes({ "title.background.top.active.mouse",
+@ColorCodes({ 
+    "title.background.top.active.mouse",
     "title.background.top.active",
     "title.background.top.inactive.mouse",
     "title.background.top.inactive",
@@ -56,7 +57,7 @@ import bibliothek.gui.dock.util.color.ColorCodes;
     "title.foreground.active.mouse",
     "title.foreground.active",
     "title.foreground.inactive.mouse",
-    "title.foreground.inactive"})
+    "title.foreground.inactive" })
 public class BubbleDockTitle extends AbstractDockTitle {
 	/** An animation which can change a set of colors smoothly */
 	private BubbleColorAnimation animation;

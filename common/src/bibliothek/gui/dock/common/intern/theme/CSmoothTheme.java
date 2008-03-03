@@ -28,8 +28,10 @@ package bibliothek.gui.dock.common.intern.theme;
 import bibliothek.extension.gui.dock.theme.SmoothTheme;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.color.BasicTabTransmitter;
+import bibliothek.gui.dock.common.intern.color.BasicTitleTransmitter;
 import bibliothek.gui.dock.themes.ColorProviderFactory;
 import bibliothek.gui.dock.themes.color.TabColor;
+import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.ColorProvider;
 
@@ -48,6 +50,13 @@ public class CSmoothTheme extends CDockTheme<SmoothTheme> {
         putColorProviderFactory( TabColor.class, new ColorProviderFactory<TabColor, ColorProvider<TabColor>>(){
             public ColorProvider<TabColor> create( ColorManager manager ) {
                 BasicTabTransmitter transmitter = new BasicTabTransmitter( manager );
+                transmitter.setControl( control );
+                return transmitter;
+            }
+        });
+        putColorProviderFactory( TitleColor.class, new ColorProviderFactory<TitleColor, ColorProvider<TitleColor>>(){
+            public ColorProvider<TitleColor> create( ColorManager manager ) {
+                BasicTitleTransmitter transmitter = new BasicTitleTransmitter( manager );
                 transmitter.setControl( control );
                 return transmitter;
             }

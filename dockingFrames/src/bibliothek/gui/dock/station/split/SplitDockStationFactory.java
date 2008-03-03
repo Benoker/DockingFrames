@@ -115,7 +115,7 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
         if( root != null ){
             tree.root( root );
         }
-        station.dropTree( tree );
+        station.dropTree( tree, false );
         
         station.setFullScreen( children.get( layout.getFullscreen() ) );
     }

@@ -77,7 +77,7 @@
 - API: Support for xml, intended for debugging purposes.
 - Bugfix: SplitDockStation fired dockableAdding/Added-Event to often.
 
-[Beta v1.1]
+[v1.1.0]
 - API: DefaultkeyBoardController renamed to DefaultKeyboardController
 - Doc: Correction for GlassedPane and OverpaintablePanel
 - Bugfix: SingleCDockableListMenuPiece did not hide non-CommonDockables
@@ -89,11 +89,12 @@
 - API: The tree of a SplitDockStation is now accessible and modifiable from outside
 - API: New SplitLayoutManager calculates where to drop, and how to divide, elements of a SplitDockStation
 - API: CDockables can now try to lock their size during resize
-- API: CDockableListener divided into CDockableStateListener and CDockablePropertyListener
+! API: CDockableListener divided into CDockableStateListener and CDockablePropertyListener
 - API: FlapDockStation uses now a FlapLayoutManager to arrange its children
 ! API: Streamed FlapDockLayout broken compared to previous version.
 - API: The size and hold-property of a minimized CDockable are now stored and remain on different FlapDockStations  
-- API: Many elements now use the ColorManager and the ColorSchemes
+- API: Many graphical elements now use the ColorManager and the ColorSchemes
 - Bugfix: EclipseTheme Shaped/RectGradientPaint did not do "doLayout" correct, the effect was that some buttons got too small
 - API: LookAndFeel changes noted by DockController and forwarded to all UIListeners
 - Bugfix: Memoryleak in FlatTab and BubbleStackDockComponent
+- Bugfix: StateManager did not store the old location of a Dockable that was maximized, but not registered, when working with XML files

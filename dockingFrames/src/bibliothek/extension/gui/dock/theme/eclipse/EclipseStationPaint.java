@@ -54,6 +54,6 @@ public class EclipseStationPaint implements StationPaint {
 	public void drawInsertion(Graphics g, DockStation station, Rectangle stationBounds, Rectangle dockableBounds) {
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setStroke(new BasicStroke(2f));
-		g.drawRect(dockableBounds.x, dockableBounds.y, dockableBounds.width, dockableBounds.height);
+		g.drawRect(dockableBounds.x+1, dockableBounds.y+1, dockableBounds.width-2, dockableBounds.height-2 );
 	}
 }

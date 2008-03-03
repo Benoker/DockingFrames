@@ -26,11 +26,8 @@
 
 package bibliothek.gui.dock.station.split;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
-
-import javax.swing.border.Border;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
@@ -44,9 +41,6 @@ import bibliothek.gui.dock.station.split.SplitDockTree.Key;
 public class Root extends SplitNode{
 	/** the single child of this root */
     private SplitNode child;
-    
-    /** space around the root that is left free */
-    private Insets insets = new Insets( 2, 2, 2, 2 );
     
     /**
      * Creates a new root.
@@ -74,6 +68,7 @@ public class Root extends SplitNode{
         }
         
         getAccess().getOwner().revalidate();
+        getAccess().getOwner().repaint();
     }
     
     /**
@@ -119,6 +114,7 @@ public class Root extends SplitNode{
      * @return the horizontal stretch factor
      */
     public double getWidthFactor(){
+        Insets insets = getAccess().getOwner().getInsets();
         return getAccess().getOwner().getWidth() - insets.left - insets.right;
     }
     
@@ -128,6 +124,7 @@ public class Root extends SplitNode{
      * @return the vertical stretch factor
      */
     public double getHeightFactor(){
+        Insets insets = getAccess().getOwner().getInsets();
         return getAccess().getOwner().getHeight() - insets.top - insets.bottom;
     }
     
@@ -158,21 +155,6 @@ public class Root extends SplitNode{
         double factorH = getHeightFactor();
         
         return isInOverrideZone( x, y, factorW, factorH );
-    }
-    
-    /**
-     * Gets the insets which will be free from any {@link Component}.
-     * @return the insets
-     */
-    public Insets getInsets(){
-        Border border = getAccess().getOwner().getBorder();
-        if( border != null ){
-            Insets in = border.getBorderInsets( getAccess().getOwner() );
-            return new Insets( in.top + insets.top, in.left + insets.left,
-                    in.bottom + insets.bottom, in.right + insets.right );
-        }
-        else
-            return insets;
     }
     
     @Override

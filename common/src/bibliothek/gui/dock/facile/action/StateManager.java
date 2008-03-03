@@ -680,15 +680,28 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
             unmaximize( affected );
 
             if( !drop( location, dockable )){
-                checkedDrop( getDefaultNormal( dockable ), dockable, null );
-
-                if( !child && maximized != null && maximized.getDockParent() != null ){
-                    if( !DockUtilities.isAncestor( maxi, dockable )){
-                        maximize( currentMode( maximized ), maximized, affected );
+                if( !isValidNormalized( dockable )){
+                    checkedDrop( getDefaultNormal( dockable ), dockable, null );
+    
+                    if( !child && maximized != null && maximized.getDockParent() != null ){
+                        if( !DockUtilities.isAncestor( maxi, dockable )){
+                            maximize( currentMode( maximized ), maximized, affected );
+                        }
                     }
                 }
             }
         }
+    }
+    
+    /**
+     * Tells whether the element <code>dockable</code> is on a valid normalized
+     * area or not.
+     * @param dockable the element to check
+     * @return <code>true</code> if <code>dockable</code> can remain at the
+     * location that it currently has
+     */
+    protected boolean isValidNormalized( Dockable dockable ){
+        return DockUtilities.isAncestor( getDefaultNormal( dockable ), dockable );
     }
     
     /**
@@ -1053,6 +1066,15 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         }
         
         @Override
+        public void writeXML( XElement element ) {
+            super.writeXML( element.addElement( "states" ) );
+            if( lastMaximizedMode != null )
+                element.addElement( "mode" ).setString( lastMaximizedMode );
+            if( lastMaximizedLocation != null )
+                getConverter().writePropertyXML( lastMaximizedLocation, element.addElement( "location" ) );                
+        }
+        
+        @Override
         public void read( DataInputStream in ) throws IOException {
             super.read( in );
             if( in.readBoolean() )
@@ -1064,6 +1086,28 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
                 lastMaximizedLocation = getConverter().readProperty( in );
             else
                 lastMaximizedLocation = null;
+        }
+        
+        @Override
+        public void readXML( XElement element ) {
+            XElement states = element.getElement( "states" );
+            if( states == null ){
+                super.readXML( element );                
+            }
+            else{
+                super.readXML( states );
+                XElement mode = element.getElement( "mode" );
+                if( mode == null )
+                    lastMaximizedMode = null;
+                else
+                    lastMaximizedMode = mode.getString();
+                
+                XElement location = element.getElement( "location" );
+                if( location == null )
+                    lastMaximizedLocation = null;
+                else
+                    lastMaximizedLocation = getConverter().readPropertyXML( location );
+            }
         }
     }
     

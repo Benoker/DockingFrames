@@ -28,8 +28,10 @@ package bibliothek.gui.dock.common.intern.theme;
 import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.color.FlatTabTransmitter;
+import bibliothek.gui.dock.common.intern.color.FlatTitleTransmitter;
 import bibliothek.gui.dock.themes.ColorProviderFactory;
 import bibliothek.gui.dock.themes.color.TabColor;
+import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.ColorProvider;
 
@@ -49,6 +51,13 @@ public class CFlatTabTheme extends CDockTheme<FlatTheme> {
         putColorProviderFactory( TabColor.class, new ColorProviderFactory<TabColor, ColorProvider<TabColor>>(){
             public ColorProvider<TabColor> create( ColorManager manager ) {
                 FlatTabTransmitter transmitter = new FlatTabTransmitter( manager );
+                transmitter.setControl( control );
+                return transmitter;
+            }
+        });
+        putColorProviderFactory( TitleColor.class, new ColorProviderFactory<TitleColor, ColorProvider<TitleColor>>(){
+            public ColorProvider<TitleColor> create( ColorManager manager ) {
+                FlatTitleTransmitter transmitter = new FlatTitleTransmitter( manager );
                 transmitter.setControl( control );
                 return transmitter;
             }
