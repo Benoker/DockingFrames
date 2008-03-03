@@ -59,8 +59,11 @@ public class CLockedResizeLayoutManager extends LockedResizeLayoutManager<Rectan
 
     @Override
     protected Rectangle prepareResize( Leaf leaf ) {
-        if( isLocked( leaf.getDockable() ))
-            return leaf.getCurrentBounds();
+        if( isLocked( leaf.getDockable() )){
+            if( leaf.getWidth() > 0 && leaf.getHeight() > 0 ){
+                return leaf.getCurrentBounds();
+            }
+        }
         
         return null;
     }

@@ -77,7 +77,7 @@
 - API: Support for xml, intended for debugging purposes.
 - Bugfix: SplitDockStation fired dockableAdding/Added-Event to often.
 
-[v1.1.0]
+[v1.0.3]
 - API: DefaultkeyBoardController renamed to DefaultKeyboardController
 - Doc: Correction for GlassedPane and OverpaintablePanel
 - Bugfix: SingleCDockableListMenuPiece did not hide non-CommonDockables
@@ -98,3 +98,4 @@
 - API: LookAndFeel changes noted by DockController and forwarded to all UIListeners
 - Bugfix: Memoryleak in FlatTab and BubbleStackDockComponent
 - Bugfix: StateManager did not store the old location of a Dockable that was maximized, but not registered, when working with XML files
+- API: new buttons for the EclipseTheme

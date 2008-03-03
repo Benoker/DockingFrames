@@ -77,23 +77,10 @@ A FlapDockStation shows one of its children in a window that is above all other 
 	<frontend>
 		<current>
 			<roots>
-				<root name="east">
+				<root name="screen">
 					<layout factory="predefined">
-						<replacement id="rooteast"/>
-						<delegate id="delegate_flap dock">
-							<window auto="true" direction="WEST"/>
-							<children/>
-						</delegate>
-					</layout>
-					<children ignore="false"/>
-				</root>
-				<root name="west">
-					<layout factory="predefined">
-						<replacement id="rootwest"/>
-						<delegate id="delegate_flap dock">
-							<window auto="true" direction="EAST"/>
-							<children/>
-						</delegate>
+						<replacement id="rootscreen"/>
+						<delegate id="delegate_screen dock"/>
 					</layout>
 					<children ignore="false"/>
 				</root>
@@ -101,7 +88,7 @@ A FlapDockStation shows one of its children in a window that is above all other 
 					<layout factory="predefined">
 						<replacement id="rootsouth"/>
 						<delegate id="delegate_flap dock">
-							<window auto="true" direction="NORTH"/>
+							<window auto="true" direction="SOUTH"/>
 							<children>
 								<child id="0" hold="false" size="400"/>
 							</children>
@@ -116,13 +103,6 @@ A FlapDockStation shows one of its children in a window that is above all other 
 						</child>
 					</children>
 				</root>
-				<root name="screen">
-					<layout factory="predefined">
-						<replacement id="rootscreen"/>
-						<delegate id="delegate_screen dock"/>
-					</layout>
-					<children ignore="false"/>
-				</root>
 				<root name="split">
 					<layout factory="predefined">
 						<replacement id="rootsplit"/>
@@ -130,16 +110,39 @@ A FlapDockStation shows one of its children in a window that is above all other 
 							<node orientation="VERTICAL" divider="0.5">
 								<node orientation="HORIZONTAL" divider="0.7936305732484077">
 									<node orientation="HORIZONTAL" divider="0.4718196457326892">
-										<leaf id="3"/>
 										<leaf id="0"/>
+										<leaf id="1"/>
 									</node>
-									<leaf id="1"/>
+									<leaf id="2"/>
 								</node>
-								<leaf id="2"/>
+								<leaf id="3"/>
 							</node>
 						</delegate>
 					</layout>
 					<children ignore="false">
+						<child>
+							<layout factory="delegate_StackDockStationFactory">
+								<selected>1</selected>
+								<children>
+									<child id="0"/>
+									<child id="1"/>
+								</children>
+							</layout>
+							<children ignore="false">
+								<child>
+									<layout factory="delegate_note">
+										<note>0</note>
+									</layout>
+									<children ignore="false"/>
+								</child>
+								<child>
+									<layout factory="delegate_note">
+										<note>2</note>
+									</layout>
+									<children ignore="false"/>
+								</child>
+							</children>
+						</child>
 						<child>
 							<layout factory="delegate_StackDockStationFactory">
 								<selected>2</selected>
@@ -183,30 +186,17 @@ A FlapDockStation shows one of its children in a window that is above all other 
 							</layout>
 							<children ignore="false"/>
 						</child>
-						<child>
-							<layout factory="delegate_StackDockStationFactory">
-								<selected>1</selected>
-								<children>
-									<child id="0"/>
-									<child id="1"/>
-								</children>
-							</layout>
-							<children ignore="false">
-								<child>
-									<layout factory="delegate_note">
-										<note>0</note>
-									</layout>
-									<children ignore="false"/>
-								</child>
-								<child>
-									<layout factory="delegate_note">
-										<note>2</note>
-									</layout>
-									<children ignore="false"/>
-								</child>
-							</children>
-						</child>
 					</children>
+				</root>
+				<root name="east">
+					<layout factory="predefined">
+						<replacement id="rooteast"/>
+						<delegate id="delegate_flap dock">
+							<window auto="true" direction="WEST"/>
+							<children/>
+						</delegate>
+					</layout>
+					<children ignore="false"/>
 				</root>
 				<root name="north">
 					<layout factory="predefined">
@@ -218,13 +208,23 @@ A FlapDockStation shows one of its children in a window that is above all other 
 					</layout>
 					<children ignore="false"/>
 				</root>
+				<root name="west">
+					<layout factory="predefined">
+						<replacement id="rootwest"/>
+						<delegate id="delegate_flap dock">
+							<window auto="true" direction="EAST"/>
+							<children/>
+						</delegate>
+					</layout>
+					<children ignore="false"/>
+				</root>
 			</roots>
 			<children/>
 		</current>
 	</frontend>
 	<frame>
 		<extended>0</extended>
-		<bounds x="79" y="47" width="884" height="501"/>
-		<theme>6</theme>
+		<bounds x="75" y="23" width="884" height="501"/>
+		<theme>8</theme>
 	</frame>
 </properties>

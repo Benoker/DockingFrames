@@ -39,24 +39,34 @@ import bibliothek.gui.dock.common.intern.CDockable;
  * associated with exactly one {@link CDockable}. The colors in the map are
  * used to change the standard colors that normally used for example to paint
  * a title or to draw a tab. The entries of this map can be changed at any
- * time.
+ * time. Changes of any entry in this map will be forwarded instantaneously
+ * to the element that uses the entry.
  * @author Benjamin Sigg
- *
  */
 public class ColorMap {
+    /** a key for colors that are used on unselected tabs as background */
     public static final String COLOR_KEY_TAB_BACKGROUND = "tab.background";
+    /** a key for colors that are used on unselected tabs as foreground */
     public static final String COLOR_KEY_TAB_FOREGROUND = "tab.foreground";
     
+    /** a key for colors that are used on selected, but not focused, tabs as background */
     public static final String COLOR_KEY_TAB_BACKGROUND_SELECTED = "tab.background.selected";
+    /** a key for colors that are used on selected, but not focused, tabs as foreground */
     public static final String COLOR_KEY_TAB_FOREGROUND_SELECTED = "tab.foreground.selected";
     
+    /** a key for colors that are used on focused tabs as background */
     public static final String COLOR_KEY_TAB_BACKGROUND_FOCUSED = "tab.background.focused";
+    /** a key for colors that are used on focused tabs a foreground */ 
     public static final String COLOR_KEY_TAB_FOREGROUND_FOCUSED = "tab.foreground.focused";
     
+    /** a key for colors that are used on titles as background */
     public static final String COLOR_KEY_TITLE_BACKGROUND = "title.background";
+    /** a key for colors that are used on titles as foreground */
     public static final String COLOR_KEY_TITLE_FOREGROUND = "title.foreground";
     
+    /** a key for colors that are used on focused titles as background */
     public static final String COLOR_KEY_TITLE_BACKGROUND_FOCUSED = "title.background.focused";
+    /** a key for colors that are used on focused titles as foreground */
     public static final String COLOR_KEY_TITLE_FOREGROUND_FOCUSED = "title.foreground.focused";
     
     /** the list of observers of this map */

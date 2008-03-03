@@ -2426,13 +2426,10 @@
 										</child>
 									</children>
 								</root>
-								<root name="ccontrol north">
+								<root name="external">
 									<layout factory="predefined">
-										<replacement id="rootccontrol north"/>
-										<delegate id="delegate_flap dock">
-											<window auto="false" direction="SOUTH"/>
-											<children/>
-										</delegate>
+										<replacement id="rootexternal"/>
+										<delegate id="delegate_screen dock"/>
 									</layout>
 									<children ignore="false"/>
 								</root>
@@ -2446,10 +2443,13 @@
 									</layout>
 									<children ignore="false"/>
 								</root>
-								<root name="external">
+								<root name="ccontrol north">
 									<layout factory="predefined">
-										<replacement id="rootexternal"/>
-										<delegate id="delegate_screen dock"/>
+										<replacement id="rootccontrol north"/>
+										<delegate id="delegate_flap dock">
+											<window auto="false" direction="SOUTH"/>
+											<children/>
+										</delegate>
 									</layout>
 									<children ignore="false"/>
 								</root>
@@ -2510,6 +2510,23 @@
 										</child>
 									</children>
 								</root>
+								<root name="external">
+									<layout factory="predefined">
+										<replacement id="rootexternal"/>
+										<delegate id="delegate_screen dock"/>
+									</layout>
+									<children ignore="false"/>
+								</root>
+								<root name="ccontrol south">
+									<layout factory="predefined">
+										<replacement id="rootccontrol south"/>
+										<delegate id="delegate_flap dock">
+											<window auto="false" direction="NORTH"/>
+											<children/>
+										</delegate>
+									</layout>
+									<children ignore="false"/>
+								</root>
 								<root name="ccontrol north">
 									<layout factory="predefined">
 										<replacement id="rootccontrol north"/>
@@ -2529,23 +2546,6 @@
 											<children ignore="false"/>
 										</child>
 									</children>
-								</root>
-								<root name="ccontrol south">
-									<layout factory="predefined">
-										<replacement id="rootccontrol south"/>
-										<delegate id="delegate_flap dock">
-											<window auto="false" direction="NORTH"/>
-											<children/>
-										</delegate>
-									</layout>
-									<children ignore="false"/>
-								</root>
-								<root name="external">
-									<layout factory="predefined">
-										<replacement id="rootexternal"/>
-										<delegate id="delegate_screen dock"/>
-									</layout>
-									<children ignore="false"/>
 								</root>
 								<root name="ccontrol east">
 									<layout factory="predefined">
@@ -2592,7 +2592,7 @@
 								<layout factory="predefined">
 									<replacement id="rootccontrol center"/>
 									<delegate id="delegate_SplitDockStationFactory">
-										<node orientation="VERTICAL" divider="0.5810668557188275">
+										<node orientation="VERTICAL" divider="0.6403269754768393">
 											<leaf id="0"/>
 											<leaf id="1"/>
 										</node>
@@ -2609,7 +2609,7 @@
 										<children ignore="false">
 											<child>
 												<layout factory="delegate_StackDockStationFactory">
-													<selected>0</selected>
+													<selected>1</selected>
 													<children>
 														<child id="0"/>
 														<child id="1"/>
@@ -2735,6 +2735,7 @@
 							</entry>
 							<entry id="single ColorDockable" current="normal">
 								<history>
+									<mode>mini</mode>
 									<mode>normal</mode>
 								</history>
 								<properties>
@@ -2742,8 +2743,14 @@
 										<root>ccontrol center</root>
 										<location>
 											<property factory="SplitDockPathProperty">
-												<node location="BOTTOM" size="0.25"/>
+												<node location="BOTTOM" size="0.3549883990719258"/>
 											</property>
+										</location>
+									</property>
+									<property id="mini">
+										<root>ccontrol north</root>
+										<location>
+											<property factory="flap dock">0</property>
 										</location>
 									</property>
 								</properties>
@@ -2759,6 +2766,12 @@
 											<property factory="SplitDockPathProperty">
 												<node location="LEFT" size="0.2"/>
 											</property>
+										</location>
+									</property>
+									<property id="mini">
+										<root>ccontrol west</root>
+										<location>
+											<property factory="flap dock">0</property>
 										</location>
 									</property>
 								</properties>

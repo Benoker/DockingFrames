@@ -3,14 +3,13 @@ package bibliothek.notes.view.themes;
 import javax.swing.JComponent;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
+import bibliothek.extension.gui.dock.theme.eclipse.RoundRectButton;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.action.view.ViewGenerator;
 import bibliothek.gui.dock.action.view.ViewTarget;
-import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
 import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
-import bibliothek.gui.dock.themes.basic.action.buttons.MiniButton;
 import bibliothek.gui.dock.themes.basic.action.dropdown.DropDownViewItem;
 import bibliothek.gui.dock.themes.basic.action.menu.MenuViewItem;
 import bibliothek.notes.view.actions.IconAction;
@@ -31,7 +30,7 @@ public class NoteEclipseTheme extends EclipseTheme {
 
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, IconAction action, Dockable dockable ){
 				IconButtonHandler handler = new IconButtonHandler( action, dockable );
-				MiniButton<BasicButtonModel> button = createTitleMiniButton( handler );
+				RoundRectButton button = new RoundRectButton( handler );
 				handler.setModel( button.getModel() );
 				return handler;
 			}

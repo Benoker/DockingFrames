@@ -158,10 +158,6 @@ public class BubbleTheme extends BasicTheme {
 	 */
 	protected Map<String, Icon> loadIcons(){
 	    try{
-	    	/*
-	    	 * @Todo reading all icons? Is there a way to do this using less resources?
-	    	 */
-	    	
 	    	Properties properties = new Properties();
 	        InputStream in = DockUI.class.getResourceAsStream( "/data/bubble/icons.ini" );
 	        properties.load( in );

@@ -173,7 +173,7 @@ public class ShapedGradientPainter extends BaseTabComponent {
 		
 		if( buttons != null ){
 			Dimension tabPreferred = buttons.getPreferredSize();
-			width += tabPreferred.width;
+			width += tabPreferred.width+1;
 			height = Math.max( height, tabPreferred.height+1 );
 		}
 		
@@ -203,7 +203,7 @@ public class ShapedGradientPainter extends BaseTabComponent {
 			Dimension preferred = buttons.getPreferredSize();
 			int width = Math.min( preferred.width, getWidth()-x );
 			
-			buttons.setBounds( x, 0, width, getHeight()-1 );
+			buttons.setBounds( x, 0, width-1, getHeight()-1 );
 		}
 	}
 	

@@ -116,7 +116,7 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
     public BasicButtonModel getModel() {
         return model;
     }
-
+    
     @Override
     public boolean contains( int x, int y ) {
         if( !super.contains( x, y ))

@@ -125,6 +125,7 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
             @Override
             public void changed() {
                 updateColors();
+                revalidate();
                 repaint();
             }
             

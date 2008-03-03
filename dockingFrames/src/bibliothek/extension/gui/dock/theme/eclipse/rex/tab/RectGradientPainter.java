@@ -127,7 +127,7 @@ public class RectGradientPainter extends BaseTabComponent {
 		
 		if( buttons != null ){
 			Dimension preferred = buttons.getPreferredSize();
-			width += preferred.width;
+			width += preferred.width+1;
 			height = Math.max( height, preferred.height+1 );
 		}
 		

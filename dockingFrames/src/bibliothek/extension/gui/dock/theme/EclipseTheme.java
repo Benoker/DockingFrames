@@ -25,7 +25,16 @@
  */
 package bibliothek.extension.gui.dock.theme;
 
-import javax.swing.BorderFactory;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import bibliothek.extension.gui.dock.theme.eclipse.*;
@@ -33,6 +42,7 @@ import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.*;
 import bibliothek.extension.gui.dock.theme.flat.FlatButtonTitle;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
+import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
@@ -51,9 +61,6 @@ import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.ThemeProperties;
 import bibliothek.gui.dock.themes.basic.BasicDockTitleFactory;
 import bibliothek.gui.dock.themes.basic.action.*;
-import bibliothek.gui.dock.themes.basic.action.buttons.BasicMiniButton;
-import bibliothek.gui.dock.themes.basic.action.buttons.DropDownMiniButton;
-import bibliothek.gui.dock.themes.basic.action.buttons.MiniButton;
 import bibliothek.gui.dock.themes.nostack.NoStackAcceptance;
 import bibliothek.gui.dock.title.*;
 import bibliothek.gui.dock.util.DockProperties;
@@ -137,12 +144,14 @@ public class EclipseTheme extends BasicTheme {
 
 	@Override
 	public void install( DockController controller ){
-	    
-	    
 	    DockTitleManager titleManager = controller.getDockTitleManager();
 	    titleManager.registerTheme( EclipseTheme.TAB_DOCK_TITLE, BasicTabDockTitle.createFactory( this ) );
 	    
 		super.install( controller );
+		
+		Map<String, Icon> icons = loadIcons();
+		for( Map.Entry<String, Icon> entry : icons.entrySet() )
+		    controller.getIcons().setIconTheme( entry.getKey(), entry.getValue() );
 		
 		EclipseDockTitleFactory factory = new EclipseDockTitleFactory( this, new ControllerTitleFactory() );
 		
@@ -167,7 +176,7 @@ public class EclipseTheme extends BasicTheme {
                 new ViewGenerator<ButtonDockAction, BasicTitleViewItem<JComponent>>(){
             public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, ButtonDockAction action, Dockable dockable ){
                 BasicButtonHandler handler = new BasicButtonHandler( action, dockable );
-                MiniButton<BasicButtonModel> button = createTitleMiniButton( handler );
+                RoundRectButton button = new RoundRectButton( handler );
                 handler.setModel( button.getModel() );
                 return handler;
             }
@@ -177,7 +186,7 @@ public class EclipseTheme extends BasicTheme {
                 new ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>(){
             public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
                 BasicSelectableHandler.Check handler = new BasicSelectableHandler.Check( action, dockable );
-                MiniButton<BasicButtonModel> button = createTitleMiniButton( handler );
+                RoundRectButton button = new RoundRectButton( handler );
                 handler.setModel( button.getModel() );
                 return handler;
             }
@@ -187,7 +196,7 @@ public class EclipseTheme extends BasicTheme {
                 new ViewGenerator<MenuDockAction, BasicTitleViewItem<JComponent>>(){
             public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, MenuDockAction action, Dockable dockable ){
                 BasicMenuHandler handler = new BasicMenuHandler( action, dockable );
-                MiniButton<BasicButtonModel> button = createTitleMiniButton( handler );
+                RoundRectButton button = new RoundRectButton( handler );
                 handler.setModel( button.getModel() );
                 return handler;
             }
@@ -197,7 +206,7 @@ public class EclipseTheme extends BasicTheme {
                 new ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>(){
             public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
                 BasicSelectableHandler.Radio handler = new BasicSelectableHandler.Radio( action, dockable );
-                MiniButton<BasicButtonModel> button = createTitleMiniButton( handler );
+                RoundRectButton button = new RoundRectButton( handler );
                 handler.setModel( button.getModel() );
                 return handler;
             }
@@ -207,9 +216,8 @@ public class EclipseTheme extends BasicTheme {
                 new ViewGenerator<DropDownAction, BasicTitleViewItem<JComponent>>(){
             public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, DropDownAction action, Dockable dockable ){
                 BasicDropDownButtonHandler handler = new BasicDropDownButtonHandler( action, dockable );
-                DropDownMiniButton button = new DropDownMiniButton( handler );
+                RoundRectDropDownButton button = new RoundRectDropDownButton( handler );
                 handler.setModel( button.getModel() );
-                button.setMouseOverBorder( BorderFactory.createEtchedBorder() );
                 return handler;
             }
         });
@@ -246,22 +254,10 @@ public class EclipseTheme extends BasicTheme {
             controller.getColors().unlockUpdate();
 	}
 	
-    /**
-     * Creates a {@link MiniButton} in a flat look.
-     * @param trigger the trigger to invoke when the button has been clicked
-     * @return the new button
-     */
-    protected MiniButton<BasicButtonModel> createTitleMiniButton( BasicTrigger trigger ){
-        BasicMiniButton button = new BasicMiniButton( trigger );
-        button.setMouseOverBorder( BorderFactory.createEtchedBorder() );
-        button.setNormalSelectedBorder( BorderFactory.createEtchedBorder() );
-        
-        return button;
-    }
-	
 	@Override
 	public void uninstall( DockController controller ){
 		super.uninstall( controller );
+		controller.getIcons().clearThemeIcons();
 		controller.getDockTitleManager().clearThemeFactories();
 		controller.removeAcceptance( acceptance );
         controller.getActionViewConverter().putTheme( ActionType.BUTTON, ViewTarget.TITLE, null );
@@ -270,6 +266,33 @@ public class EclipseTheme extends BasicTheme {
         controller.getActionViewConverter().putTheme( ActionType.RADIO, ViewTarget.TITLE, null );
         controller.getActionViewConverter().putTheme( ActionType.DROP_DOWN, ViewTarget.TITLE, null );
 	}
+	
+	/**
+     * Reads a set of icons which will replace the ordinary icons.
+     * @return the new set of icons
+     */
+    protected Map<String, Icon> loadIcons(){
+        try{
+            Properties properties = new Properties();
+            InputStream in = DockUI.class.getResourceAsStream( "/data/eclipse/icons.ini" );
+            properties.load( in );
+            in.close();
+            ClassLoader loader = EclipseTheme.class.getClassLoader();
+
+            Map<String, Icon> result = new HashMap<String, Icon>();
+            Enumeration<Object> e = properties.keys();
+            while( e.hasMoreElements() ){
+                String key = (String)e.nextElement();
+                ImageIcon icon = new ImageIcon( ImageIO.read( loader.getResource( properties.getProperty(key)) ));
+                result.put( key, icon);
+            }
+            return result;
+        }
+        catch( IOException ex ){
+            ex.printStackTrace();
+            return new HashMap<String, Icon>();
+        }
+    }
 
 	/**
 	 * Gets the connector which is used for decisions which are normally
