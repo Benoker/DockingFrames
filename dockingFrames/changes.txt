@@ -99,3 +99,6 @@
 - Bugfix: Memoryleak in FlatTab and BubbleStackDockComponent
 - Bugfix: StateManager did not store the old location of a Dockable that was maximized, but not registered, when working with XML files
 - API: new buttons for the EclipseTheme
+! API: XElement now extends XContainer, and no longer XAttribute. XAttribute extends XContainer as well.
+- Layout: New set of icons for EclipseTheme
+- Layout: Icons of BubbleTheme replaced by LGPL 2.1 compatible images

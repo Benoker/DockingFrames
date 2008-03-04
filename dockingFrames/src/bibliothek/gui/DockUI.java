@@ -30,12 +30,10 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.io.*;
+import java.io.IOException;
 import java.util.*;
 
-import javax.imageio.ImageIO;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
@@ -51,6 +49,7 @@ import bibliothek.gui.dock.themes.*;
 import bibliothek.gui.dock.themes.basic.BasicCombiner;
 import bibliothek.gui.dock.themes.basic.BasicDisplayerFactory;
 import bibliothek.gui.dock.themes.basic.BasicStationPaint;
+import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.Priority;
 
@@ -83,18 +82,7 @@ public class DockUI {
      * Creates a new DockUI
      */
     protected DockUI(){
-        Map<String, String> map = loadKeyPathMapping();
-        ClassLoader loader = DockUI.class.getClassLoader();
-        icons = new HashMap<String, Icon>();
-        for( Map.Entry<String, String> entry : map.entrySet() ){
-            try{
-                ImageIcon icon = new ImageIcon( ImageIO.read( loader.getResource( entry.getValue()) ));
-                icons.put( entry.getKey(), icon );
-            }
-            catch( IOException ex ){
-                ex.printStackTrace();
-            }
-        }
+        icons = DockUtilities.loadIcons( "data/icons.ini", null, DockUI.class.getClassLoader() );
         
         // special icons
         icons.put( "ButtonPanel.overflow.menu", new Icon(){
@@ -234,33 +222,6 @@ public class DockUI {
      */
     public void setIcon( String key, Icon icon ){
         icons.put( key, icon );
-    }
-    
-    /**
-     * Gets a map containing keys and path for icon.
-     * @return the icons
-     */
-    @SuppressWarnings("unchecked")
-    protected Map<String, String> loadKeyPathMapping(){
-        try{
-            Properties properties = new Properties();
-            InputStream in = DockUI.class.getResourceAsStream( "/data/icons.ini" );
-            properties.load( in );
-            in.close();
-            
-            //Properties properties = ResourceManager.getDefault().ini( "DockUI.mapping", "data/icons.ini", getClass().getClassLoader() ).get();
-            Map<String, String> result = new HashMap<String, String>();
-            Enumeration e = properties.keys();
-            while( e.hasMoreElements() ){
-                String key = (String)e.nextElement();
-                result.put( key, properties.getProperty( key ));
-            }
-            return result;
-        }
-        catch( IOException ex ){
-            ex.printStackTrace();
-            return new HashMap<String, String>();
-        }
     }
     
     /**

@@ -25,14 +25,9 @@
  */
 package bibliothek.gui.dock.common.intern.theme;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.gui.DockController;
@@ -43,6 +38,7 @@ import bibliothek.gui.dock.common.intern.color.EclipseTabTransmitter;
 import bibliothek.gui.dock.themes.ColorProviderFactory;
 import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.gui.dock.themes.color.TabColor;
+import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.ColorProvider;
@@ -99,7 +95,9 @@ public class CEclipseTheme extends CDockTheme<EclipseTheme>{
     public void install( DockController controller ) {
         super.install( controller );
         IconManager manager = controller.getIcons();
-        Map<String, Icon> icons = getIcons();
+        Map<String, Icon> icons = DockUtilities.loadIcons(
+                "data/bibliothek/gui/dock/icons/eclipse/icons.ini",
+                "data/bibliothek/gui/dock/icons/eclipse/", CEclipseTheme.class.getClassLoader() );
         for( Map.Entry<String, Icon> entry : icons.entrySet() ){
             manager.setIconTheme( entry.getKey(), entry.getValue() );
         }
@@ -109,34 +107,5 @@ public class CEclipseTheme extends CDockTheme<EclipseTheme>{
     public void uninstall( DockController controller ) {
         super.uninstall( controller );
         controller.getIcons().clearThemeIcons();
-    }
-    
-    /**
-     * Gets a map of icons that should be installed for this theme.
-     * @return the map of icons to install
-     */
-    protected Map<String, Icon> getIcons(){
-        try{
-            ClassLoader loader = CEclipseTheme.class.getClassLoader();
-            Properties properties = new Properties();
-            InputStream in = loader.getResourceAsStream( "data/bibliothek/gui/dock/icons/eclipse/icons.ini" );
-            properties.load( in );
-            in.close();
-            
-            Map<String, Icon> result = new HashMap<String, Icon>();
-            for( Map.Entry<Object, Object> entry : properties.entrySet() ){
-                String key = (String)entry.getKey();
-                String path = "data/bibliothek/gui/dock/icons/eclipse/" + (String)entry.getValue();
-                
-                Icon icon = new ImageIcon( loader.getResource( path ) );
-                result.put( key, icon );
-            }
-            
-            return result;
-        }
-        catch( IOException ex ){
-            ex.printStackTrace();
-            return new HashMap<String, Icon>();
-        }
     }
 }

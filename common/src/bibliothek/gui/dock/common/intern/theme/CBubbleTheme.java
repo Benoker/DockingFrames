@@ -25,7 +25,12 @@
  */
 package bibliothek.gui.dock.common.intern.theme;
 
+import java.util.Map;
+
+import javax.swing.Icon;
+
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
+import bibliothek.gui.DockController;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.color.BubbleDisplayerTransmitter;
 import bibliothek.gui.dock.common.intern.color.BubbleTabTransmitter;
@@ -35,6 +40,8 @@ import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.gui.dock.themes.color.DisplayerColor;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.color.TitleColor;
+import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.ColorProvider;
 
@@ -99,5 +106,23 @@ public class CBubbleTheme extends CDockTheme<BubbleTheme>{
                 return transmitter;
             }
         });
+    }
+    
+    @Override
+    public void install( DockController controller ) {
+        super.install( controller );
+        IconManager manager = controller.getIcons();
+        Map<String, Icon> icons = DockUtilities.loadIcons(
+                "data/bibliothek/gui/dock/icons/bubble/icons.ini",
+                "data/bibliothek/gui/dock/icons/bubble/", CEclipseTheme.class.getClassLoader() );
+        for( Map.Entry<String, Icon> entry : icons.entrySet() ){
+            manager.setIconTheme( entry.getKey(), entry.getValue() );
+        }
+    }
+    
+    @Override
+    public void uninstall( DockController controller ) {
+        super.uninstall( controller );
+        controller.getIcons().clearThemeIcons();
     }
 }

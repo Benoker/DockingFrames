@@ -27,18 +27,16 @@
 package bibliothek.extension.gui.dock.theme;
 
 import java.awt.Color;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import javax.imageio.ImageIO;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import bibliothek.extension.gui.dock.theme.bubble.*;
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.StackDockStation;
@@ -52,6 +50,7 @@ import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.ThemeProperties;
 import bibliothek.gui.dock.themes.basic.action.*;
+import bibliothek.gui.dock.util.DockUtilities;
 
 /**
  * A theme using a lot of eye-candy.
@@ -114,7 +113,7 @@ public class BubbleTheme extends BasicTheme {
                 FlapDockStation.BUTTON_TITLE_ID, 
                 new ReducedBubbleTitleFactory());
         
-        Map<String,Icon> icons = loadIcons();
+        Map<String,Icon> icons = DockUtilities.loadIcons( "data/bubble/icons.ini", null, BubbleTheme.class.getClassLoader() );
         for( Map.Entry<String, Icon> icon : icons.entrySet() ){
             controller.getIcons().setIconTheme( icon.getKey(), icon.getValue() );
         }
@@ -150,34 +149,6 @@ public class BubbleTheme extends BasicTheme {
         		ActionType.SEPARATOR,
         		ViewTarget.TITLE,
         		new SeparatorGenerator() );
-	}
-
-	/**
-	 * Reads a set of icons which will replace the ordinary icons.
-	 * @return the new set of icons
-	 */
-	protected Map<String, Icon> loadIcons(){
-	    try{
-	    	Properties properties = new Properties();
-	        InputStream in = DockUI.class.getResourceAsStream( "/data/bubble/icons.ini" );
-	        properties.load( in );
-	        in.close();
-	        ClassLoader loader=BubbleTheme.class.getClassLoader();
-
-	        //Properties properties = ResourceManager.getDefault().ini( "DockUI.mapping", "data/bubble/icons.ini", getClass().getClassLoader() ).get();
-	        Map<String, Icon> result = new HashMap<String, Icon>();
-	        Enumeration<Object> e = properties.keys();
-	        while( e.hasMoreElements() ){
-	            String key = (String)e.nextElement();
-	            ImageIcon icon = new ImageIcon( ImageIO.read( loader.getResource( properties.getProperty(key)) ));
-	            result.put( key, icon);
-	        }
-	        return result;
-	    }
-	    catch( IOException ex ){
-	        ex.printStackTrace();
-	        return new HashMap<String, Icon>();
-	    }
 	}
 
 	@Override

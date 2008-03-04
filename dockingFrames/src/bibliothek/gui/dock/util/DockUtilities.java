@@ -29,6 +29,12 @@ package bibliothek.gui.dock.util;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -305,4 +311,49 @@ public class DockUtilities {
         
         return icon;
     }
+    
+    /**
+     * Loads a map of icons.
+     * @param list a path to a property-file containing key-path-pairs.
+     * @param path the base path to the icons, will be added before any
+     * path of the property file, can be <code>null</code>
+     * @param loader used to transform paths into urls.
+     * @return the map of {@link Icon}s, the map can be empty if no icons were found
+     * @see Properties#load(InputStream)
+     */
+    public static Map<String, Icon> loadIcons( String list, String path, ClassLoader loader ){
+        try{
+            InputStream in = loader.getResourceAsStream( list );
+            if( in == null )
+                return new HashMap<String, Icon>();
+            
+            Properties properties = new Properties();
+            properties.load( in );
+            in.close();
+            
+            Map<String, Icon> result = new HashMap<String, Icon>();
+            for( Map.Entry<Object, Object> entry : properties.entrySet() ){
+                String key = (String)entry.getKey();
+                String file = (String)entry.getValue();
+                if( path != null )
+                    file = path + file;
+                
+                URL url = loader.getResource( file );
+                if( url == null ){
+                    System.err.println( "Missing file: " + file );
+                }
+                else{
+                    ImageIcon icon = new ImageIcon( url );
+                    result.put( key, icon );
+                }
+            }
+            
+            return result;
+        }
+        catch( IOException ex ){
+            ex.printStackTrace();
+            return new HashMap<String, Icon>();
+        }
+    }
+    
 }

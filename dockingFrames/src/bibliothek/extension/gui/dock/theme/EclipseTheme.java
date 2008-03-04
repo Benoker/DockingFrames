@@ -25,16 +25,9 @@
  */
 package bibliothek.extension.gui.dock.theme;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
-import javax.imageio.ImageIO;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import bibliothek.extension.gui.dock.theme.eclipse.*;
@@ -42,7 +35,6 @@ import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.*;
 import bibliothek.extension.gui.dock.theme.flat.FlatButtonTitle;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
-import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
@@ -64,6 +56,7 @@ import bibliothek.gui.dock.themes.basic.action.*;
 import bibliothek.gui.dock.themes.nostack.NoStackAcceptance;
 import bibliothek.gui.dock.title.*;
 import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
 
 /**
@@ -149,7 +142,7 @@ public class EclipseTheme extends BasicTheme {
 	    
 		super.install( controller );
 		
-		Map<String, Icon> icons = loadIcons();
+		Map<String, Icon> icons = DockUtilities.loadIcons( "data/eclipse/icons.ini", null, EclipseTheme.class.getClassLoader() );
 		for( Map.Entry<String, Icon> entry : icons.entrySet() )
 		    controller.getIcons().setIconTheme( entry.getKey(), entry.getValue() );
 		
@@ -266,33 +259,6 @@ public class EclipseTheme extends BasicTheme {
         controller.getActionViewConverter().putTheme( ActionType.RADIO, ViewTarget.TITLE, null );
         controller.getActionViewConverter().putTheme( ActionType.DROP_DOWN, ViewTarget.TITLE, null );
 	}
-	
-	/**
-     * Reads a set of icons which will replace the ordinary icons.
-     * @return the new set of icons
-     */
-    protected Map<String, Icon> loadIcons(){
-        try{
-            Properties properties = new Properties();
-            InputStream in = DockUI.class.getResourceAsStream( "/data/eclipse/icons.ini" );
-            properties.load( in );
-            in.close();
-            ClassLoader loader = EclipseTheme.class.getClassLoader();
-
-            Map<String, Icon> result = new HashMap<String, Icon>();
-            Enumeration<Object> e = properties.keys();
-            while( e.hasMoreElements() ){
-                String key = (String)e.nextElement();
-                ImageIcon icon = new ImageIcon( ImageIO.read( loader.getResource( properties.getProperty(key)) ));
-                result.put( key, icon);
-            }
-            return result;
-        }
-        catch( IOException ex ){
-            ex.printStackTrace();
-            return new HashMap<String, Icon>();
-        }
-    }
 
 	/**
 	 * Gets the connector which is used for decisions which are normally

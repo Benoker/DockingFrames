@@ -36,18 +36,40 @@ import java.util.List;
  * and attributes, and might have a value.
  * @author Benjamin Sigg
  */
-public class XElement extends XAttribute implements Iterable<XElement>{
+public class XElement extends XContainer implements Iterable<XElement>{
     /** the attributes of this entry */
     private List<XAttribute> attributes = new ArrayList<XAttribute>();
     /** the children of this entry */
     private List<XElement> children = new ArrayList<XElement>();
     
+    /** the name of this attribute */
+    private String name;
+
     /**
-     * Creates a new entry with the given name.
-     * @param name the name
+     * Creates a new entry with given name.
+     * @param name the name of this entry
      */
     public XElement( String name ){
-        super( name );
+        setName( name );
+    }
+    
+    /**
+     * Sets the name of this attribute.
+     * @param name the new name
+     */
+    public void setName( String name ) {
+        if( name == null )
+            throw new IllegalArgumentException( "name must not be null" );
+        
+        this.name = name;
+    }
+    
+    /**
+     * Gets the name of this attribute.
+     * @return the name
+     */
+    public String getName() {
+        return name;
     }
     
     public Iterator<XElement> iterator() {

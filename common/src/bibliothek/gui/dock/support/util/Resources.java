@@ -25,15 +25,14 @@
  */
 package bibliothek.gui.dock.support.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
 
-import javax.imageio.ImageIO;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.util.DockUtilities;
 
 /**
  * A set of resources available through the whole framework
@@ -44,7 +43,7 @@ public class Resources {
     private static ResourceBundle bundle;
     
     /** the list of default-icons */
-    private static Map<String, Icon> icons = new HashMap<String, Icon>();
+    private static Map<String, Icon> icons;
     
     static{
         // read the localized text
@@ -53,21 +52,8 @@ public class Resources {
                 Locale.getDefault(), CControl.class.getClassLoader() );
         
         // read the icons
-        try{
-            Properties properties = new Properties();
-            InputStream in = Resources.class.getResourceAsStream( "/data/bibliothek/gui/dock/icons/icons.ini" );
-            properties.load( in );
-            in.close();
-            
-            ClassLoader loader = Resources.class.getClassLoader();
-            for( Map.Entry<Object, Object> entry : properties.entrySet() ){
-                ImageIcon icon = new ImageIcon( ImageIO.read( loader.getResource( "data/bibliothek/gui/dock/icons/" + entry.getValue()) ));
-                icons.put( (String)entry.getKey(), icon );
-            }
-        }
-        catch( IOException ex ){
-            ex.printStackTrace();
-        }
+        icons = DockUtilities.loadIcons( "data/bibliothek/gui/dock/icons/icons.ini",
+                "data/bibliothek/gui/dock/icons/", Resources.class.getClassLoader() );
     }
     
     /**
