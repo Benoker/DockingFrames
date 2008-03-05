@@ -37,6 +37,7 @@ import bibliothek.gui.dock.common.intern.AbstractCDockable;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
+import bibliothek.gui.dock.common.intern.station.SplitResizeRequestHandler;
 import bibliothek.gui.dock.security.SecureSplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockTree;
 import bibliothek.gui.dock.title.DockTitle;
@@ -57,6 +58,8 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable{
     private SplitDockStation station;
     /** whether the {@link DockTitle} should not be created */
     private boolean suppressTitle = true;
+    /** a handler used to update the bounds of children of this station */
+    private SplitResizeRequestHandler resizeRequestHandler;
     
     /**
      * Creates a new area.
@@ -82,6 +85,7 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable{
         }
         
         station.setExpandOnDoubleclick( false );
+        resizeRequestHandler = new SplitResizeRequestHandler( station );
     }
     
     /**
@@ -96,8 +100,8 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable{
         station.dropTree( tree );
         for( Dockable dockable : tree.getDockables() ){
             if( dockable instanceof CommonDockable ){
-                CommonDockable facile = (CommonDockable)dockable;
-                facile.getDockable().setWorkingArea( this );
+                CommonDockable cdock = (CommonDockable)dockable;
+                cdock.getDockable().setWorkingArea( this );
             }
         }
     }
@@ -192,10 +196,14 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable{
         CControlAccess old = control();
         if( old != null ){
             old.getStateManager().remove( uniqueId );
+            old.getOwner().removeResizeRequestListener( resizeRequestHandler );
         }
+        
         super.setControl( control );
+        
         if( control != null ){
             control.getStateManager().add( uniqueId, station );
+            control.getOwner().addResizeRequestListener( resizeRequestHandler );
         }
     }
     

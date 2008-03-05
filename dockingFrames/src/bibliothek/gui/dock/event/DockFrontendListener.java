@@ -28,6 +28,7 @@ package bibliothek.gui.dock.event;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 
 /**
@@ -80,7 +81,10 @@ public interface DockFrontendListener {
     public void hideable( DockFrontend frontend, Dockable dockable, boolean hideable );
     
     /**
-     * Invoked if a new setting was loaded.
+     * Invoked if a new setting was loaded. Only settings that are known to 
+     * <code>frontend</code> can be loaded. When a setting is loaded, the 
+     * layout of all {@link DockStation}s and {@link Dockable}s is changed such
+     * that the layout reflects the properties of the setting.
      * @param frontend the invoker
      * @param name the name of the setting
      */
@@ -88,7 +92,9 @@ public interface DockFrontendListener {
     
     /**
      * Called when a setting was read. The setting could have be known
-     * before it was read.
+     * before it was read. Reading a setting does not mean that the setting
+     * is applied. It is just available now for 
+     * {@link #loaded(DockFrontend, String) loading}.
      * @param frontend the invoker
      * @param name the name of the setting which was read
      */

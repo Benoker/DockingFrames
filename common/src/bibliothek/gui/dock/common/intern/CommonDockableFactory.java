@@ -35,6 +35,12 @@ import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.common.*;
 import bibliothek.util.xml.XElement;
 
+/**
+ * A factory used to create {@link CommonDockable}s. This factory is only
+ * used to create {@link MultipleCDockable}s because {@link SingleCDockable}s
+ * are never stored. 
+ * @author Benjamin Sigg
+ */
 public class CommonDockableFactory implements DockFactory<CommonDockable, CommonDockableLayout> {
     /** the unique identifier of this factory */
     private String id;
@@ -43,6 +49,13 @@ public class CommonDockableFactory implements DockFactory<CommonDockable, Common
     /** access to private properties of {@link CControl} */
     private CControlAccess access;
     
+    /**
+     * Creates a new factory.
+     * @param id the identifier of this factory
+     * @param delegate the factory that should be used to load the contents of the
+     * new {@link CommonDockable}
+     * @param access access to the internal affairs of a {@link CControl}
+     */
     @SuppressWarnings("unchecked")
     public CommonDockableFactory( String id, MultipleCDockableFactory<?,?> delegate, CControlAccess access ){
         this.id = id;
@@ -83,7 +96,7 @@ public class CommonDockableFactory implements DockFactory<CommonDockable, Common
         
         // id
         String id = layout.getId();
-        access.add( dockable, id );
+        access.getOwner().add( dockable, id );
         
         // working area
         String areaId = layout.getArea();

@@ -1777,7 +1777,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      * Updates all locations and sizes of the {@link Component Components}
      * which are in the structure of this tree.
      */
-    protected void updateBounds(){
+    public void updateBounds(){
         Insets insets = getInsets();
         double factorW = getWidth() - insets.left - insets.right;
         double factorH = getHeight() - insets.top - insets.bottom;
@@ -1785,11 +1785,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         SplitLayoutManager manager = layoutManager.getValue();
         
         if( factorW < 0 || factorH < 0 ){
-            manager.updateBounds( root, 0, 0, 1.0, 1.0, 1.0, 1.0 );
+            manager.updateBounds( root, 0, 0, 1.0, 1.0 );
         }
         else{
-            manager.updateBounds( root, insets.left / factorW, insets.top / factorH, 
-                1.0, 1.0, factorW, factorH );
+            manager.updateBounds( root, insets.left / factorW, insets.top / factorH, factorW, factorH );
         }
     }
     

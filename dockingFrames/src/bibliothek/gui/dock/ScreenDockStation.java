@@ -518,8 +518,8 @@ public class ScreenDockStation extends AbstractDockStation {
         dialog.setDisplayer( displayer );
         
         bounds = new Rectangle( bounds );
-        if( !boundsIncludeDialog && displayer != null ){
-            Insets estimate = displayer.getDockableInsets();
+        if( !boundsIncludeDialog ){
+            Insets estimate = dialog.getDockableInsets();
             if( estimate != null ){
                 bounds.x -= estimate.left;
                 bounds.y -= estimate.top;

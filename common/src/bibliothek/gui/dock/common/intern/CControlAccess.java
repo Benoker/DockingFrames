@@ -28,7 +28,6 @@ package bibliothek.gui.dock.common.intern;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.MultipleCDockableFactory;
 
 /**
@@ -42,15 +41,6 @@ public interface CControlAccess {
 	 */
 	public CControl getOwner();
     
-	/**
-     * Adds a dockable to this control. The dockable can be made visible afterwards.
-     * @param <F> the type of the new element
-     * @param dockable the new element to show
-     * @param uniqueId id the unique id of the new element
-     * @return <code>dockable</code>
-     */
-	public <F extends MultipleCDockable> F add( F dockable, String uniqueId );
-	
 	/**
 	 * Makes <code>dockable</code> visible.
 	 * @param dockable the element that will be made visible

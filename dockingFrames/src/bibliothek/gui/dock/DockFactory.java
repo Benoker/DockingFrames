@@ -53,12 +53,16 @@ public interface DockFactory<D extends DockElement, L extends DockLayout> {
     public String getID();
     
     /**
-     * Gets the layout of <code>element</code>.
+     * Gets the layout of <code>element</code>. This method should create
+     * a new instance of the layout object, that new object should not be
+     * tied to <code>element</code> in any way. A layout can be living for
+     * a long period of time and might be used on another <code>dockable</code>
+     * object.
      * @param element the element for which a new layout should be created
      * @param children a map containing unique identifiers for the children
      * of the element. Children which are not in this map should not be
      * stored in the layout.
-     * @return the new layout
+     * @return the newly created, independent layout object.
      */
     public L getLayout( D element, Map<Dockable, Integer> children );
     

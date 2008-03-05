@@ -56,7 +56,7 @@ public abstract class LockedResizeLayoutManager<T> extends DelegatingSplitLayout
     }
     
     @Override
-    public void updateBounds( Root root, double x, double y, double width, double height, double factorW, double factorH ) {
+    public void updateBounds( Root root, double x, double y, double factorW, double factorH ) {
         Rectangle current = root.getCurrentBounds();
         Rectangle bounds = root.getBounds();
         
@@ -66,17 +66,33 @@ public abstract class LockedResizeLayoutManager<T> extends DelegatingSplitLayout
         }
         
         if( !resize ){
-            super.updateBounds( root, x, y, width, height, factorW, factorH );
+            super.updateBounds( root, x, y, factorW, factorH );
         }
         else{
-            ResizeElement element = toElement( null, root );
-            element.prepareResize();
-            root.updateBounds( x, y, width, height, factorW, factorH, false );
-            element.prepareRequests();
-            element.adapt( 0, 0 );
-            root.updateBounds( x, y, width, height, factorW, factorH, true );
+            updateBoundsLocked( root, x, y, factorW, factorH );
         }
     }
+
+    /**
+     * Updates the bounds of <code>root</code> and all its children and does
+     * consider all {@link ResizeRequest}.
+     * @param root the root element of a tree to update
+     * @param x the left coordinate of <code>root</code>
+     * @param y the top coordinate of <code>root</code>
+     * @param factorW a factor all x-coordinates have to be multiplied with
+     * in order to get the pixel coordinates
+     * @param factorH a factor all y-coordinates have to be multiplied with
+     * in order to get the pixel coordinates
+     */
+    public void updateBoundsLocked( Root root, double x, double y, double factorW, double factorH ){
+        ResizeElement element = toElement( null, root );
+        element.prepareResize();
+        root.updateBounds( x, y, 1, 1, factorW, factorH, false );
+        element.prepareRequests();
+        element.adapt( 0, 0 );
+        root.updateBounds( x, y, 1, 1, factorW, factorH, true );
+    }
+
     
     /**
      * Gets the size request that changes the size of <code>leaf</code> such

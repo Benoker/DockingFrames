@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.common.intern.station;
 
+import java.awt.Dimension;
 import java.awt.Rectangle;
 
 import bibliothek.gui.Dockable;
@@ -34,19 +35,36 @@ import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.facile.station.split.LockedResizeLayoutManager;
 import bibliothek.gui.dock.station.split.Leaf;
 import bibliothek.gui.dock.station.split.Root;
+import bibliothek.gui.dock.station.split.SplitLayoutManager;
 
 /**
  * A {@link LockedResizeLayoutManager} that looks out for {@link CDockable#isResizeLocked()}.
  * @author Benjamin Sigg
  */
-public class CLockedResizeLayoutManager extends LockedResizeLayoutManager<Rectangle> {
+public class CLockedResizeLayoutManager extends LockedResizeLayoutManager<Dimension> {
+    /**
+     * Creates a new layout manager
+     */
+    public CLockedResizeLayoutManager(){
+        // nothing to do
+    }
+    
+    /**
+     * Creates a new layout manager using <code>delegate</code> as 
+     * delegate for all tasks that have to be carried out.
+     * @param delegate the delegate used for standard tasks to carry out. 
+     */
+    public CLockedResizeLayoutManager( SplitLayoutManager delegate ){
+        super( delegate );
+    }
+    
     @Override
-    protected ResizeRequest getRequest( Rectangle bounds, Leaf leaf ) {
-        if( bounds != null ){
+    protected ResizeRequest getRequest( Dimension size, Leaf leaf ) {
+        if( size != null ){
             Rectangle modified = leaf.getCurrentBounds();
             
-            double deltaWidth = bounds.width - modified.width;
-            double deltaHeight = bounds.height - modified.height;
+            double deltaWidth = size.width - modified.width;
+            double deltaHeight = size.height - modified.height;
             
             Root root = leaf.getRoot();
             deltaWidth /= root.getWidthFactor();
@@ -58,10 +76,10 @@ public class CLockedResizeLayoutManager extends LockedResizeLayoutManager<Rectan
     }
 
     @Override
-    protected Rectangle prepareResize( Leaf leaf ) {
+    protected Dimension prepareResize( Leaf leaf ) {
         if( isLocked( leaf.getDockable() )){
             if( leaf.getWidth() > 0 && leaf.getHeight() > 0 ){
-                return leaf.getCurrentBounds();
+                return leaf.getCurrentBounds().getSize();
             }
         }
         

@@ -38,6 +38,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.OverpaintablePanel;
@@ -130,6 +131,9 @@ public class ScreenDockDialog extends JDialog {
             setBounds( valid );
         else
             setBounds( bounds );
+        
+        invalidate();
+        validate();
     }
     
     /**
@@ -168,6 +172,37 @@ public class ScreenDockDialog extends JDialog {
      */
     public ScreenDockStation getStation() {
         return station;
+    }
+    
+    /**
+     * Makes a guess how big the insets of the {@link Dockable} compared to
+     * the whole dialog are.
+     * @return the insets, only a guess
+     */
+    public Insets getDockableInsets(){
+        Container parent = getDisplayerParent();
+        Insets parentInsets = parent.getInsets();
+        if( parentInsets == null )
+            parentInsets = new Insets( 0, 0, 0, 0 );
+        
+        Point zero = new Point( 0, 0 );
+        zero = SwingUtilities.convertPoint( parent, zero, this );
+        
+        parentInsets.left += zero.x;
+        parentInsets.top += zero.y;
+        parentInsets.right += getWidth() - parent.getWidth() - zero.x;
+        parentInsets.bottom += getHeight() - parent.getHeight() - zero.y;
+        
+        if( displayer == null )
+            return parentInsets;
+        
+        Insets insets = displayer.getDockableInsets();
+        parentInsets.top += insets.top;
+        parentInsets.bottom += insets.bottom;
+        parentInsets.left += insets.left;
+        parentInsets.right += insets.right;
+        
+        return parentInsets;
     }
     
     /**

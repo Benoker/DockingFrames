@@ -37,9 +37,12 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
+import bibliothek.gui.dock.common.event.ResizeRequestListener;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CStateManager;
+import bibliothek.gui.dock.common.intern.station.FlapResizeRequestHandler;
+import bibliothek.gui.dock.common.intern.station.SplitResizeRequestHandler;
 
 /**
  * A component that is normally set into the center of the
@@ -96,12 +99,22 @@ public class CContentArea extends JPanel{
     /** an identifier for this center */
     private String uniqueId;
     
+    /** access to the controller which uses this area */
+    private CControlAccess control;
+    
+    /** whether this area is currently in usage */
+    private boolean used = false;
+    
+    /** set of listeners which are to be informed about changes */
+    private ResizeRequestListener[] resizeRequestListeners;
+    
     /**
      * Creates a new center.
      * @param access connection to a {@link CControl}
      * @param uniqueId a unique identifier of this center
      */
-    public CContentArea( final CControlAccess access, String uniqueId ){
+    public CContentArea( CControlAccess access, String uniqueId ){
+        this.control = access;
     	this.uniqueId = uniqueId;
         center = access.getOwner().getFactory().createSplitDockStation();
         center.setExpandOnDoubleclick( false );
@@ -152,6 +165,14 @@ public class CContentArea extends JPanel{
         frontend.addRoot( south, getSouthIdentifier() );
         frontend.addRoot( east, getEastIdentifier() );
         frontend.addRoot( west, getWestIdentifier() );
+        
+        resizeRequestListeners = new ResizeRequestListener[]{
+                new SplitResizeRequestHandler( center ),
+                new FlapResizeRequestHandler( north ),
+                new FlapResizeRequestHandler( south ),
+                new FlapResizeRequestHandler( east ),
+                new FlapResizeRequestHandler( west )
+        };
     }
     
     /**
@@ -169,6 +190,28 @@ public class CContentArea extends JPanel{
      */
     public void deploy( CGrid grid ){
         getCenter().dropTree( grid.toTree() );
+    }
+    
+    /**
+     * Informs this area whether it is in use or not. This method should
+     * not be called by clients.
+     * @param used whether this area should listen to the changes of its
+     * owning {@link CControl}
+     */
+    public void setUsed( boolean used ){
+        if( this.used != used ){
+            if( this.used ){
+                for( ResizeRequestListener listener : resizeRequestListeners )
+                    control.getOwner().removeResizeRequestListener( listener );
+            }
+            
+            this.used = used;
+            
+            if( used ){
+                for( ResizeRequestListener listener : resizeRequestListeners )
+                    control.getOwner().addResizeRequestListener( listener );
+            }
+        }
     }
     
     /**

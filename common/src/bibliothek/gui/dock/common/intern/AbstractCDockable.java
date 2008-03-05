@@ -78,6 +78,9 @@ public abstract class AbstractCDockable implements CDockable {
     /** the preferred size when minimized */
     private Dimension minimizeSize = new Dimension( -1, -1 );
     
+    /** the preferred size of this {@link CDockable} */
+    private Dimension resizeRequest;
+    
     /** the colors associated with this dockable */
     private ColorMap colors = new ColorMap( this );
     
@@ -249,6 +252,37 @@ public abstract class AbstractCDockable implements CDockable {
     
     public boolean isResizeLocked() {
         return resizeLocked;
+    }
+    
+    /**
+     * Tells this {@link CDockable} which size it should have. The size will
+     * be stored until it is read by {@link #getAndClearResizeRequest()}.<br>
+     * This method will call {@link CControl#handleResizeRequests()} in order to
+     * try to apply the requested size. However, there are no guarantees that
+     * the requested size can be matched, or that the request gets handled at all.<br>
+     * If this dockable is not registered at a {@link CControl}, then the request
+     * will remain unprocessed until this dockable is registered, and someone calls
+     * {@link CControl#handleResizeRequests()} on the new owner.
+     * @param size the new preferred size, can be <code>null</code> to cancel an
+     * earlier request
+     * @param process whether to process all pending requests of all {@link CDockable}
+     * registered at the {@link CControl} which is the owner of <code>this</code>.
+     * Clients can set this parameter to <code>false</code> and call
+     * {@link CControl#handleResizeRequests()} manually to process all pending
+     * requests.
+     */
+    public void setResizeRequest( Dimension size, boolean process ){
+        resizeRequest = size;
+        
+        if( process && control != null ){
+            control.getOwner().handleResizeRequests();
+        }
+    }
+    
+    public Dimension getAndClearResizeRequest() {
+        Dimension result = resizeRequest;
+        resizeRequest = null;
+        return result;
     }
     
     /**

@@ -68,8 +68,8 @@ public class DelegatingSplitLayoutManager implements SplitLayoutManager {
         delegate.uninstall( station );
     }
 
-    public void updateBounds( Root root, double x, double y, double width, double height, double factorW, double factorH ) {
-        delegate.updateBounds( root, x, y, width, height, factorW, factorH );
+    public void updateBounds( Root root, double x, double y, double factorW, double factorH ) {
+        delegate.updateBounds( root, x, y, factorW, factorH );
     }
 
     public double validateDivider( SplitDockStation station, double divider, Node node ) {

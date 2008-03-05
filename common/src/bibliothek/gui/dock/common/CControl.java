@@ -46,9 +46,11 @@ import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.event.CControlListener;
+import bibliothek.gui.dock.common.event.ResizeRequestListener;
 import bibliothek.gui.dock.common.intern.*;
 import bibliothek.gui.dock.common.intern.station.CFlapLayoutManager;
 import bibliothek.gui.dock.common.intern.station.CLockedResizeLayoutManager;
+import bibliothek.gui.dock.common.intern.station.ScreenResizeRequestHandler;
 import bibliothek.gui.dock.common.intern.theme.CSmoothTheme;
 import bibliothek.gui.dock.event.DockAdapter;
 import bibliothek.gui.dock.facile.action.CloseAction;
@@ -169,6 +171,9 @@ public class CControl {
 	
 	/** the list of listeners to this {@link CControl} */
 	private List<CControlListener> listeners = new ArrayList<CControlListener>();
+	
+	/** the list of resize-listeners */
+	private List<ResizeRequestListener> resizeListeners = new ArrayList<ResizeRequestListener>();
 
     /**
      * Creates a new control
@@ -332,6 +337,7 @@ public class CControl {
 		frontend.setDefaultStation( content.getCenter() );
 		
 		final ScreenDockStation screen = factory.createScreenDockStation( frame );
+		addResizeRequestListener( new ScreenResizeRequestHandler( screen ) );
 		stateManager.add( EXTERNALIZED_STATION_ID, screen );
 		frontend.addRoot( screen, EXTERNALIZED_STATION_ID );
 		screen.setShowing( frame.isVisible() );
@@ -529,6 +535,7 @@ public class CControl {
 		
 		CContentArea center = new CContentArea( access, uniqueId );
 		contents.add( center );
+		center.setUsed( true );
 		return center;
 	}
 	
@@ -544,6 +551,8 @@ public class CControl {
 			throw new IllegalArgumentException( "The default-contentarea can't be removed" );
 		
 		if( contents.remove( content ) ){
+		    content.setUsed( false );
+		    
 			frontend.removeRoot( content.getCenter() );
 			frontend.removeRoot( content.getEast() );
 			frontend.removeRoot( content.getWest() );
@@ -677,12 +686,7 @@ public class CControl {
 	 * @return <code>dockable</code>
 	 */
 	public <F extends MultipleCDockable> F add( F dockable ){
-	    String factory = access.getFactoryId( dockable.getFactory() );
-        if( factory == null ){
-            throw new IllegalStateException( "the factory for a MultipleCDockable is not registered: " + dockable.getFactory() );
-        }
-        
-        Set<String> ids = new HashSet<String>();
+	    Set<String> ids = new HashSet<String>();
         for( MultipleCDockable multi : multiDockables ){
             if( factory.equals( access.getFactoryId( multi.getFactory() ))){
                 ids.add( accesses.get( multi ).getUniqueId() );
@@ -690,10 +694,10 @@ public class CControl {
         }
         
         int count = 0;
-        String id = "multi " + count + " " + factory;
-        while( ids.contains( id )){
+        String id = count + " " + factory;
+        while( ids.contains( "multi " + id )){
             count++;
-            id = "multi " + count + " " + factory;
+            id = count + " " + factory;
         }
         
         return add( dockable, id );
@@ -701,17 +705,41 @@ public class CControl {
 
 	/**
      * Adds a dockable to this control. The dockable can be made visible afterwards.
+     * This method will throw an exception when the unique identifier is already
+     * in use. Clients better use {@link #add(MultipleCDockable)}.
      * @param <F> the type of the new element
      * @param dockable the new element to show
      * @param uniqueId id the unique id of the new element
      * @return <code>dockable</code>
+     * @throws IllegalArgumentException if the unique identifier is already in
+     * use, if <code>dockable</code> is already used elsewhere, if there is
+     * no factory for <code>dockable</code>
+     * @throws NullPointerException if any argument is <code>null</code>
      */
-	private <F extends MultipleCDockable> F add( F dockable, String uniqueId ){
+	public <F extends MultipleCDockable> F add( F dockable, String uniqueId ){
 		if( dockable == null )
 			throw new NullPointerException( "dockable must not be null" );
 		
+		if( uniqueId == null )
+		    throw new NullPointerException( "uniqueId must not be null" );
+		
+		String factory = access.getFactoryId( dockable.getFactory() );
+        if( factory == null ){
+            throw new IllegalStateException( "the factory for a MultipleCDockable is not registered: " + dockable.getFactory() );
+        }
+        
 		if( dockable.getControl() != null )
 			throw new IllegalStateException( "dockable is already part of a control" );
+		
+		uniqueId = "multi " + uniqueId;
+		
+        for( MultipleCDockable multi : multiDockables ){
+            if( factory.equals( access.getFactoryId( multi.getFactory() ))){
+                String id = accesses.get( multi ).getUniqueId();
+                if( uniqueId.equals( id ))
+                    throw new IllegalArgumentException( "The unique identifier is already in use: " + uniqueId );
+            }
+        }
 		
 		dockable.setControl( access );
 		accesses.get( dockable ).setUniqueId( uniqueId );
@@ -857,6 +885,43 @@ public class CControl {
 	 */
 	public void setTheme( DockTheme  theme ){
 	    frontend.getController().setTheme( theme );
+	}
+	
+	/**
+	 * Adds a {@link ResizeRequestListener} to this {@link CControl}. The listener
+	 * will be informed when the resize requests of a {@link CDockable} should
+	 * be processed. 
+	 * @param listener the new listener, not <code>null</code>
+	 */
+	public void addResizeRequestListener( ResizeRequestListener listener ){
+	    if( listener == null )
+	        throw new NullPointerException( "listener must not be null" );
+	    resizeListeners.add( listener );
+	}
+	
+	/**
+	 * Removes a {@link ResizeRequestListener} from this {@link CControl}.
+	 * @param listener the listener to remove
+	 */
+	public void removeResizeRequestListener( ResizeRequestListener listener ){
+	    resizeListeners.remove( listener );
+	}
+	
+	/**
+	 * Informs all {@link ResizeRequestListener}s, that the
+	 * {@link CDockable#getAndClearResizeRequest() resize request} of all 
+	 * <code>CDockable</code>s should be processed. There are no
+	 * guarantees that a resize requests can be granted or even gets processed.<br>
+	 * All requests, independent from whether they were processed, will be deleted 
+	 * by this method.
+	 */
+	public void handleResizeRequests(){
+	    ResizeRequestListener[] listeners = resizeListeners.toArray( new ResizeRequestListener[ resizeListeners.size() ] );
+	    for( ResizeRequestListener listener : listeners )
+	        listener.handleResizeRequest();
+	    
+	    for( CDockable dockable : dockables )
+	        dockable.getAndClearResizeRequest();
 	}
 	
 	/**

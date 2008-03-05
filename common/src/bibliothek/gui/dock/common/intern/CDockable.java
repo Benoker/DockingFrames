@@ -124,6 +124,18 @@ public interface CDockable {
 	public boolean isResizeLocked();
 	
 	/**
+	 * Gets the preferred size of this {@link CDockable}. The preferred size
+	 * will be used to resize this <code>CDockable</code> when 
+	 * {@link CControl#handleResizeRequests()} is called. There are no guarantees
+	 * that the request can be granted, or will be handled at all.<br>
+	 * Calling this method should delete the request, so calling this method
+	 * twice should have the effect, that the second time <code>null</code> is
+	 * returned.
+	 * @return the next requested size or <code>null</code>
+	 */
+	public Dimension getAndClearResizeRequest();
+	
+	/**
 	 * Shows or hides this dockable. If this dockable is not visible and
 	 * is made visible, then the framework tries to set its location at
 	 * the last known position.<br>

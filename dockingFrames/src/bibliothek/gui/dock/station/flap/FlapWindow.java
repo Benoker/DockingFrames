@@ -33,16 +33,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.border.BevelBorder;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
 import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
@@ -63,6 +61,9 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
     private ButtonPane buttonPane;
     /** Information where the user will drop or move a {@link Dockable} */
     private FlapDropInfo dropInfo;
+    
+    /** the panel onto which {@link #displayer} is put */
+    private JComponent contentPane;
     
     /**
      * Constructs a new window.
@@ -89,24 +90,25 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
     }
     
     {
-        JPanel content = new JPanel(){
+        OverpaintablePanel content = new OverpaintablePanel(){
             @Override
-            public void paint( Graphics g ) {
-                super.paint(g);
+            protected void paintOverlay( Graphics g ) {
                 if( dropInfo != null && dropInfo.getCombine() != null && dropInfo.isDraw() ){
                     Rectangle bounds = new Rectangle( 0, 0, getWidth(), getHeight() );
                     FlapWindow.this.station.getPaint().drawInsertion( g, FlapWindow.this.station, bounds, bounds );
                 }
             }
         };
+        
         setContentPane( content );
+        contentPane = content.getContentPane();
         
-        content.setBorder( BorderFactory.createBevelBorder( BevelBorder.RAISED ));
+        contentPane.setBorder( BorderFactory.createBevelBorder( BevelBorder.RAISED ));
         setUndecorated( true );
-        content.addMouseListener( this );
-        content.addMouseMotionListener( this );
+        contentPane.addMouseListener( this );
+        contentPane.addMouseMotionListener( this );
         
-        content.setLayout( new LayoutManager(){
+        contentPane.setLayout( new LayoutManager(){
             public void addLayoutComponent( String name, Component comp ) {
             	// do nothing
             }
@@ -272,7 +274,32 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
      * @return the parent
      */
     protected Container getDisplayerParent(){
-        return getContentPane();
+        return contentPane;
+    }
+    
+    /**
+     * Makes a guess how big the insets around the current {@link Dockable}
+     * of this window are.
+     * @return a guess of the insets
+     */
+    public Insets getDockableInsets(){
+        Insets insets = displayer.getDockableInsets();
+        displayer.getComponent().getBounds();
+        
+        Point zero = new Point( 0, 0 );
+        zero = SwingUtilities.convertPoint( displayer.getComponent(), zero, this );
+        
+        int deltaX = zero.x;
+        int deltaY = zero.y;
+        int deltaW = getWidth() - displayer.getComponent().getWidth();
+        int deltaH = getHeight() - displayer.getComponent().getHeight();
+        
+        insets.left += deltaX;
+        insets.top += deltaY;
+        insets.right += deltaW - deltaX;
+        insets.bottom += deltaH - deltaY;
+        
+        return insets;
     }
     
     /**
@@ -286,20 +313,25 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
             FlapDockStation.Direction direction = station.getDirection();
             int windowSize = station.getWindowSize( dockable );
             Rectangle bounds = station.getExpansionBounds();
+            Insets insets = getDockableInsets();
             
             if( direction == Direction.SOUTH ){
+                windowSize += insets.top + insets.bottom;
                 location = new Point( bounds.x, bounds.height );
                 size = new Dimension( bounds.width, windowSize );
             }
             else if( direction == Direction.NORTH ){
+                windowSize += insets.top + insets.bottom;
                 location = new Point( bounds.x, -windowSize );
                 size = new Dimension( bounds.width, windowSize );
             }
             else if( direction == Direction.WEST ){
+                windowSize += insets.left + insets.right;
                 location = new Point( -windowSize, bounds.y );
                 size = new Dimension( windowSize, bounds.height );
             }
             else{
+                windowSize += insets.left + insets.right;
                 location = new Point( bounds.width, bounds.y );
                 size = new Dimension( windowSize, bounds.height );
             }
@@ -359,6 +391,12 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
                     size = zero.x - mouse.x;
                 
                 size = Math.max( size, station.getWindowMinSize() );
+                Insets insets = getDockableInsets();
+                if( station.getDirection() == Direction.NORTH || station.getDirection() == Direction.SOUTH )
+                    size -= insets.top + insets.bottom;
+                else
+                    size -= insets.left + insets.right;
+                
                 station.setWindowSize( dockable, size );
             }
         }

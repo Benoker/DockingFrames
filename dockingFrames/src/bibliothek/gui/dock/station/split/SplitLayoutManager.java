@@ -119,16 +119,16 @@ public interface SplitLayoutManager {
     
     /**
      * Called when the bounds of all {@link DockableDisplayer} of a station have
-     * to be updated. Subclasses normally can just call {@link Root#updateBounds(double, double, double, double, double, double, boolean)}.
+     * to be updated. Subclasses normally can just call
+     * {@link Root#updateBounds(double, double, double, double, double, double, boolean)} 
+     * with <code>width</code> and <code>height</code> set to 1.0.
      * @param root the root of a tree of {@link Dockable}s
      * @param x the left bound
      * @param y the top bound
-     * @param width the width of the area into which all displayers should be put
-     * @param height the height of the area into which all displayers should be put
      * @param factorW a factory with which all x-coordinates have to be multiplied in
      * order to get coordinates in pixels.
      * @param factorH a factory with which all y-coordinates have to be multiplied in
      * order to get coordinates in pixels.
      */
-    public void updateBounds( Root root, double x, double y, double width, double height, double factorW, double factorH );
+    public void updateBounds( Root root, double x, double y, double factorW, double factorH );
 }

@@ -102,3 +102,4 @@
 ! API: XElement now extends XContainer, and no longer XAttribute. XAttribute extends XContainer as well.
 - Layout: New set of icons for EclipseTheme
 - Layout: Icons of BubbleTheme replaced by LGPL 2.1 compatible images
+- API: CDockables can now request a size they would like to have, and in most environments they will get this size
