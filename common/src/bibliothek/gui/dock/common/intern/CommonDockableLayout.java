@@ -25,19 +25,16 @@
  */
 package bibliothek.gui.dock.common.intern;
 
+import bibliothek.gui.dock.common.CWorkingArea;
 import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.MultipleCDockableLayout;
-import bibliothek.gui.dock.common.CWorkingArea;
-import bibliothek.gui.dock.layout.DockLayout;
 
 /**
  * An intermediate representation of the layout of a {@link CommonDockable}
  * that is connected with a {@link MultipleCDockable}.
  * @author Benjamin Sigg
  */
-public class CommonDockableLayout implements DockLayout {
-    /** the id of the factory that created this layout */
-    private String factory;
+public class CommonDockableLayout {
     /** the layout of the {@link MultipleCDockable}  */
     private MultipleCDockableLayout layout;
     
@@ -46,14 +43,6 @@ public class CommonDockableLayout implements DockLayout {
     /** the area on which the dockable was, might be <code>null</code> */
     private String area;
     
-    public String getFactoryID() {
-        return factory;
-    }
-
-    public void setFactoryID( String id ) {
-        this.factory = id;
-    }
-
     /**
      * Sets the description of the layout of a {@link MultipleCDockable}. The 
      * described dockable is connected with the {@link CommonDockable} for

@@ -1,0 +1,147 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{listings}
+\usepackage{color}
+
+\lstset{language=Java}
+\lstset{breaklines=true, numbers=left}
+\lstset{tabsize=4}
+
+\definecolor{CommentColor}{rgb}{0,0.5,0} 
+\definecolor{KeywordColor}{rgb}{0,0,0.5}
+
+\lstset{commentstyle=\scriptsize\color{CommentColor}\itshape}
+\lstset{keywordstyle=\scriptsize\color{KeywordColor}\bfseries}
+\lstset{basicstyle=\scriptsize}
+\lstset{identifierstyle=\scriptsize}
+\lstset{stringstyle=\scriptsize}
+
+% \lstset{basicstyle=\ttfamily}
+
+\newcommand{\src}[1]{\lstinline[basicstyle=\normalsize\ttfamily,keywordstyle=\normalsize\ttfamily,identifierstyle=\normalsize\ttfamily]|#1|}
+
+\newcommand{\short}{\item[Short]}
+\newcommand{\why}{\item[Reason]}
+\newcommand{\clients}{\item[Clients]}
+
+\title{DockingFrames 1.0.3 - Transition}
+\author{Benjamin Sigg}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+
+\begin{abstract}
+This document describes the most important changes between versions, and how developers should change their application in order to use new features. This document does not make any distinction between the core-library and the common-project. Not all changes are listed up in this document, only those enhancments which might be interesting for the majority of developers.
+\end{abstract}
+
+\section{Version 1.0.3}
+Version 1.0.3 emphasizes on background enhancments. The API remains unchanged for most parts.
+\subsection{Incompatibilities}
+These changes break with the API from 1.0.2, clients must be change their interfaces in order to work properly.
+
+\subsubsection{DefaultKeyboardController}
+\begin{description}
+\short The class \src{DefaultkeyBoardController} has been renamed to \\\src{DefaultKeyboardController} 
+\why The new name looks better
+\clients Replace any occurrence of \src{DefaultkeyBoardController} to \\\src{DefaultKeyboardController}
+\end{description}
+
+\subsubsection{DefaultDockable/DefaultCDockable}
+\begin{description}
+ \short \src{DefaultDockable} and \src{DefaultCDockable} now have \src{BorderLayout} set as default \src{LayoutManager}
+ \why \src{BorderLayout} is the most often used \src{LayoutManager}.
+ \clients If another \src{LayoutManager} than \src{BorderLayout} is needed, set it up.
+\end{description}
+
+\subsubsection{CDockableListener}
+\begin{description}
+ \short \src{CDockableListener} divided into \\\src{CDockableStateListener} and \src{CDockablePropertyListener}
+ \why \src{CDockableListener} was to big. Most clients either need information about the state, or about the properties of a \src{CDockable}. The case that both informations are needed is seldom.
+ \clients Need to decide which listener they implement. Note that \\\src{CDockableAdapter} implements both listeners, but not all methods get invoked when the adapter is registered only as one kind of listener.
+\end{description}
+
+\subsubsection{FlapDockStation}
+\begin{description}
+ \short \src{FlapDockStation}s layout is stored in a new format. The xml format will do the transition automatically, but the \src{DataInput/OutputStream} will not work properly.
+ \why the old format did not carry enough information
+ \clients Store the layout in xml-format and load it again to do the transition.
+\end{description}
+
+\subsubsection{XML}
+\begin{description}
+ \short \src{XElement} now extends \\\src{XContainer}, and no longer \src{XAttribute}. \src{XAttribute} extends \src{XContainer} as well.
+ \why An element of a xml file is not an attribute, that is now reflected in the class structure
+ \clients May need to replace some occurrences of \src{XAttribute} by \src{XContainer}
+\end{description}
+
+\subsubsection{DockTheme}
+\begin{description}
+ \short The common-project uses its own set of \src{DockTheme}s. Each theme \src{XTheme} gets replaced by \src{CXTheme}
+ \why The new themes make use of the new \src{ColorMap}
+ \clients Should use the new themes when possible. The old themes will work, but the user will see less features.
+\end{description}
+
+\subsubsection{DockFactory}
+\begin{description}
+ \short \src{DockFactories} can now create any \src{Object} they want, and are no longer required to create \src{DockLayout}s. \src{DockLayout} has been converted into a class that wraps the \src{Object} that was created by a DockFactory
+ \why All \src{DockLayout}s need to do the same things, hence clients would need to write the same code over and over again. Clients have now more freedom in how to implements \src{DockFactory}
+ \clients Should remove all occurrences of \src{implements DockLayout} and the methods \src{set/getFactoryId} that were defined in \src{DockLayout}
+\end{description}
+
+
+\subsection{Features}
+This is the set of new features.
+
+\subsubsection{SplitDockStation}
+\begin{description}
+ \short The tree of elements of a \src{SplitDockStation} is now accessible from outside and can be modified directly
+ \why It is more intuitive to work directly with the tree, some new algorithms work on the tree and are easier to implement that way.
+\end{description}
+
+\subsubsection{SplitLayoutManager}
+\begin{description}
+ \short New \src{SplitLayoutManager} calculates where to drop, and how to divide, elements of a \src{SplitDockStation}
+ \why New features, like the locked size of \src{CDockable}, were only possible if the behavior of a \src{SplitDockStation} can be changed on runtime.
+\end{description}
+
+\subsubsection{CDockable resize lock}
+\begin{description}
+ \short The size of a \src{CDockable} can be locked during resize of its parent. See \src{setResizeLocked}, a method of \src{AbstractCDockable}.
+ \why This was a request from a user
+\end{description}
+
+\subsubsection{FlapLayoutManager}
+\begin{description}
+ \short \src{FlapDockStation} now uses \src{FlapLayoutManager} to arrange its children
+ \why Exchangeable behavior was a requirement for new features in the common-project.
+\end{description}
+
+\subsubsection{ColorManager/ColorScheme}
+\begin{description}
+ \short Many graphical elements now use \src{ColorManager} and \src{ColorSchemes}
+ \why Colors can now be exchanged by clients. The control goes deep, even the color of a single element can be exchanged without affecting other elements of the same kind.
+\end{description}
+
+\subsubsection{ColorMap}
+\begin{description}
+ \short \src{CDockable} uses a \src{ColorMap} to define special colors for tabs and titles that are related to the \src{CDockable}
+ \why This was a request from a user
+\end{description}
+
+\subsubsection{LookAndFeel}
+\begin{description}
+ \short Changes of \src{LookAndFeel} noted by \src{DockController} and forwarded to all \src{UIListeners}.
+ \why Because the \src{ColorManager} would not be informed of the new \\\src{LookAndFeel} otherwise
+\end{description}
+
+\subsubsection{CDockable resize request}
+\begin{description}
+ \short \src{CDockable}s can now request a size they would like to have, and in most environments they will get this size. See the method \src{setResizeRequest} of \src{AbstractCDockable}.
+ \why This was a request from a user
+\end{description}
+
+
+\end{document}

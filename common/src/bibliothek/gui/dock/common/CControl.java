@@ -687,6 +687,12 @@ public class CControl {
 	 */
 	public <F extends MultipleCDockable> F add( F dockable ){
 	    Set<String> ids = new HashSet<String>();
+
+        String factory = access.getFactoryId( dockable.getFactory() );
+        if( factory == null ){
+            throw new IllegalStateException( "the factory for a MultipleCDockable is not registered: " + dockable.getFactory() );
+        }
+         
         for( MultipleCDockable multi : multiDockables ){
             if( factory.equals( access.getFactoryId( multi.getFactory() ))){
                 ids.add( accesses.get( multi ).getUniqueId() );

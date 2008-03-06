@@ -41,7 +41,6 @@ import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.extension.gui.dock.theme.SmoothTheme;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.control.SingleParentRemover;
-import bibliothek.gui.dock.layout.DockLayout;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StationPaint;
@@ -295,7 +294,7 @@ public class DockUI {
      * @param factory a factory used to remove and to add the elements
      * @throws IOException if the factory throws an exception
      */
-    public static <D extends DockStation, L extends DockLayout> void updateTheme(
+    public static <D extends DockStation, L> void updateTheme(
             D station, DockFactory<D,L> factory ) throws IOException{
         
     	Map<Integer, Dockable> children = new HashMap<Integer, Dockable>();

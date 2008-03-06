@@ -1,0 +1,82 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{listings}
+\usepackage{color}
+
+\lstset{language=Java}
+\lstset{breaklines=true, numbers=left}
+\lstset{tabsize=4}
+
+\definecolor{CommentColor}{rgb}{0,0.5,0} 
+\definecolor{KeywordColor}{rgb}{0,0,0.5}
+
+\lstset{commentstyle=\scriptsize\color{CommentColor}\itshape}
+\lstset{keywordstyle=\scriptsize\color{KeywordColor}\bfseries}
+\lstset{basicstyle=\scriptsize}
+\lstset{identifierstyle=\scriptsize}
+\lstset{stringstyle=\scriptsize}
+
+% \lstset{basicstyle=\ttfamily}
+
+\newcommand{\src}[1]{\lstinline[basicstyle=\normalsize\ttfamily,keywordstyle=\normalsize\ttfamily,identifierstyle=\normalsize\ttfamily]|#1|}
+
+\newcommand{\short}{\item[Short]}
+\newcommand{\why}{\item[Reason]}
+\newcommand{\clients}{\item[Necessary measures]}
+
+\title{DockingFrames 1.0.3 - Transition}
+\author{Benjamin Sigg}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+
+\begin{abstract}
+This document describes the most important changes between versions, and how developers should change their application in order to use new features. This document does not make any distinction between the core-library and the common-project. Not all changes are listed up in this document, only those enhancments which might be interesting for the majority of developers.
+\end{abstract}
+
+\section{Version 1.0.3}
+Version 1.0.3 emphasizes on background enhancments. The API remains unchanged for most parts.
+\subsection{Incompatibilities}
+These changes break with the API from 1.0.2, clients must be change their interfaces in order to work properly.
+
+\subsubsection{DefaultKeyboardController}
+\begin{description}
+\short The class \src{DefaultkeyBoardController} has been renamed to \\\src{DefaultKeyboardController} 
+\why The new name looks better
+\clients Replace any occurrence of \\\src{DefaultkeyBoardController} to \src{DefaultKeyboardController}
+\end{description}
+
+\subsubsection{DefaultDockable/DefaultCDockable}
+\begin{description}
+ \short \src{DefaultDockable} and \src{DefaultCDockable} now have \src{BorderLayout} set as default \src{LayoutManager}
+ \why \src{BorderLayout} is the most often used \src{LayoutManager}.
+ \clients If another \src{LayoutManager} that \src{BorderLayout} is needed, set it up.
+\end{description}
+
+\subsubsection{CDockableListener}
+
+\subsection{Features}
+\subsubsection{SplitDockStation}
+\begin{description}
+ \short The tree of elements of a \src{SplitDockStation} is now accessible from outside and can be modified directly
+ \why It is more intuitive to work directly with the tree, some new algorithms work on the tree and are easier to implement that way.
+\end{description}
+
+\subsubsection{SplitLayoutManager}
+\begin{description}
+ \short New \src{SplitLayoutManager} calculates where to drop, and how to divide, elements of a \src{SplitDockStation}
+ \why New features, like the locked size of \src{CDockable}, were only possible if the behavior of a \src{SplitDockStation} can be changed on runtime.
+\end{description}
+
+\subsubsection{CDockable resize lock}
+\begin{description}
+ \short The size of a \src{CDockable} can be locked during resize of its parent. See \src{setResizeLocked}, a method of \src{AbstractCDockable}.
+ \why This was a request from a user
+\end{description}
+
+
+
+\end{document}

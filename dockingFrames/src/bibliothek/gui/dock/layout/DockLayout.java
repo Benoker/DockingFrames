@@ -36,16 +36,49 @@ import bibliothek.gui.dock.DockFactory;
  * A <code>DockLayout</code> should not have any references to <code>DockElement</code>s. 
  * @author Benjamin Sigg
  */
-public interface DockLayout{
+public class DockLayout<L>{
+    private String factory;
+    private L data;
+    
+    /**
+     * Creates a new layout.
+     * @param factory the factory that created the layout, might be <code>null</code>
+     * @param data the data that is stored in this layout, might be <code>null</code>
+     */
+    public DockLayout( String factory, L data ){
+        this.factory = factory;
+        this.data = data;
+    }
+    
     /**
      * Sets the identifier of the factory which created this layout.
      * @param id the identifier of the factory
      */
-    public void setFactoryID( String id );
+    public void setFactoryID( String id ){
+        factory = id;
+    }
     
     /**
      * Gets the identifier of the factory which created this layout.
      * @return the identifier of the factory
      */
-    public String getFactoryID();
+    public String getFactoryID(){
+        return factory;
+    }
+    
+    /**
+     * Sets the data that is stored in the layout.
+     * @param data the data, can be <code>null</code>
+     */
+    public void setData( L data ) {
+        this.data = data;
+    }
+    
+    /**
+     * Gets the data that is stored in the layout.
+     * @return the data, can be <code>null</code>
+     */
+    public L getData() {
+        return data;
+    }
 }

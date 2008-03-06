@@ -1,3 +1,28 @@
+/*
+ * Bibliothek - DockingFrames
+ * Library built on Java/Swing, allows the user to "drag and drop"
+ * panels containing any Swing-Component the developer likes to add.
+ * 
+ * Copyright (C) 2007 Benjamin Sigg
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ * Benjamin Sigg
+ * benjamin_sigg@gmx.ch
+ * CH - Switzerland
+ */
 package bibliothek.notes.view.panels;
 
 import java.io.DataInputStream;
@@ -7,7 +32,6 @@ import java.util.Map;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
-import bibliothek.gui.dock.layout.DockLayout;
 import bibliothek.notes.model.Note;
 import bibliothek.notes.model.NoteModel;
 import bibliothek.notes.view.NoteViewManager;
@@ -17,7 +41,7 @@ import bibliothek.util.xml.XElement;
  * A factory creating new {@link NoteView}s.
  * @author Benjamin Sigg
  */
-public class NoteViewFactory implements DockFactory<NoteView, NoteViewFactory.NoteViewLayout> {
+public class NoteViewFactory implements DockFactory<NoteView, String> {
     /** the unique id for this factory */
 	public static final String FACTORY_ID = "note";
 	
@@ -40,81 +64,45 @@ public class NoteViewFactory implements DockFactory<NoteView, NoteViewFactory.No
 		return "note";
 	}
 	
-	public NoteViewLayout getLayout( NoteView element, Map<Dockable, Integer> children ) {
-	    return new NoteViewLayout( element.getNote().getId() );
+	public String getLayout( NoteView element, Map<Dockable, Integer> children ) {
+	    return element.getNote().getId();
 	}
 	
-	public NoteView layout( NoteViewLayout layout ) {
+	public NoteView layout( String layout ) {
 	    NoteView view = new NoteView( manager, model );
-	    view.setNote( model.getNote( layout.getId() ) );
+	    view.setNote( model.getNote( layout ) );
 	    manager.putExternal( view );
 	    return view;
 	}
 	
-	public NoteView layout( NoteViewLayout layout, Map<Integer, Dockable> children ) {
+	public NoteView layout( String layout, Map<Integer, Dockable> children ) {
 	    NoteView view = new NoteView( manager, model );
-        view.setNote( model.getNote( layout.getId() ) );
+        view.setNote( model.getNote( layout ) );
         manager.putExternal( view );
         return view;
 	}
 	
-	public void setLayout( NoteView element, NoteViewLayout layout ) {
-	    element.setNote( model.getNote( layout.getId() ) );
+	public void setLayout( NoteView element, String layout ) {
+	    element.setNote( model.getNote( layout ) );
 	}
 	
-	public void setLayout( NoteView element, NoteViewLayout layout, Map<Integer, Dockable> children ) {
-	    element.setNote( model.getNote( layout.getId() ) );
+	public void setLayout( NoteView element, String layout, Map<Integer, Dockable> children ) {
+	    element.setNote( model.getNote( layout ) );
 	}
 	
-	public void write( NoteViewLayout layout, DataOutputStream out ) throws IOException {
-	    out.writeUTF( layout.getId() );
+	public void write( String layout, DataOutputStream out ) throws IOException {
+	    out.writeUTF( layout );
 	}
 	
-	public void write( NoteViewLayout layout, XElement element ) {
-	    element.addElement( "note" ).setString( layout.getId() );
+	public void write( String layout, XElement element ) {
+	    element.addElement( "note" ).setString( layout );
 	}
 	
-	public NoteViewLayout read( DataInputStream in ) throws IOException {
-	    return new NoteViewLayout( in.readUTF() );
+	public String read( DataInputStream in ) throws IOException {
+	    return in.readUTF();
 	}
 	
-	public NoteViewLayout read( XElement element ) {
-	    return new NoteViewLayout( element.getElement( "note" ).getString() );
-	}
-	
-	/**
-	 * A layout storing all the data of a {@link NoteView}. 
-	 * @author Benjamin Sigg
-	 */
-	public static class NoteViewLayout implements DockLayout{
-	    /** the id of the factory that wrote this layout */
-	    private String factory;
-	    /** the id of the note */
-	    private String id;
-	    
-	    /**
-	     * Creates a new layout.
-	     * @param id the id of the note
-	     */
-	    public NoteViewLayout( String id ){
-	        this.id = id;
-	    }
-	    
-	    /**
-	     * Gets the id of the note.
-	     * @return the id of the note
-	     */
-	    public String getId() {
-            return id;
-        }
-	    
-        public String getFactoryID() {
-            return factory;
-        }
-
-        public void setFactoryID( String id ) {
-            this.factory = id;
-        }
-	    
+	public String read( XElement element ) {
+	    return element.getElement( "note" ).getString();
 	}
 }

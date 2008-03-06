@@ -29,25 +29,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bibliothek.gui.dock.ScreenDockStation;
-import bibliothek.gui.dock.layout.DockLayout;
 
 /**
  * A layout that holds the contents of a {@link ScreenDockStation}.
  * @author Benjamin Sigg
  */
-public class ScreenDockStationLayout implements DockLayout {
+public class ScreenDockStationLayout {
     private List<Entry> entries = new ArrayList<Entry>();
-    /** the id of the factory of this layout */
-    private String factory;
-    
-    public String getFactoryID() {
-        return factory;
-    }
-    
-    public void setFactoryID( String id ) {
-        factory = id;
-    }
-    
+
     /**
      * Adds a new entry to this layout.
      * @param id the id of the entry

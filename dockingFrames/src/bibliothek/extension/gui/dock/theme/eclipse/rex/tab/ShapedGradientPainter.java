@@ -50,7 +50,7 @@ import bibliothek.gui.dock.util.color.ColorCodes;
 @ColorCodes({"stack.tab.border", "stack.tab.border.selected", "stack.tab.border.selected.focused", "stack.tab.border.selected.focuslost",
     "stack.tab.top", "stack.tab.tob.selected", "stack.tab.top.selected.focused","stack.tab.top.selected.focuslost",
     "stack.tab.bottom", "stack.tab.bottom.selected", "stack.tab.bottom.selected.focused", "stack.tab.bottom.selected.focuslost",
-    "stack.tab.text", "stack.tab.text.selected", "stack.tab.text.selected.focused", "stack.tab.text.selected.focuslost", })
+    "stack.tab.text", "stack.tab.text.selected", "stack.tab.text.selected.focused", "stack.tab.text.selected.focuslost" })
 public class ShapedGradientPainter extends BaseTabComponent {
 	public static final TabPainter FACTORY = new TabPainter(){
 	    private final Border border = new EclipseBorder( true );

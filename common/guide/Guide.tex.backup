@@ -84,7 +84,7 @@ documents.setVisible( true );
 \end{lstlisting}
 
 \subsubsection{Multiple dockables}
-A multiple dockable is an object of type \src{MultipleCDockable}. These dockables are created by the application or the controller, shown for some time and then removed from memory. Other than a single dockable, a multiple dockable can be created or deleted at any time.
+A multiple dockable is an object of type \src{MultipleCDockable}. These dockables are created by the application or the controller, shown for some time and then removed from memory. Unlike a single dockable, a multiple dockable can be created or deleted at any time.
 
 Every multiple dockable needs a \src{MultipleCDockableFactory}, which must have been registered at the controller.
 
@@ -124,12 +124,12 @@ An analysis: in line \src{2} a new \src{CWorkingArea} is created. Then in lines 
 \subsection{Changing the mode of a dockable}
 Every dockable needs to be in one mode: minimized, normalized, maximized or externalized. The user can change the mode of a dockable by clicking some buttons or moving the dockable around. Clients can read or change this mode as well, they just call \src{CDockable.getExtendedMode()} or \src{CDockable.setExtendedMode}.
 
-The client can also specifiy, what modes are available for a dockable. When using the default-\src{CDockable}s, then \src{setMinimizable}, \src{setMaximizable} and \src{setExternalizable} can be used.
+The client can also specifiy, what modes are available for a dockable. When using the default-\src{CDockable}s, then \src{setMinimizable}, \src{setMaximizable} and \\\src{setExternalizable} can be used.
 
 \subsection{Close a dockable}
 When a dockable is no longer of use, it needs to be removed. There are several ways to remove a dockable and they have different effects.
 
-With \src{CDockable.setVisible} the visibility of a dockable can just be changed to \src{false}. Single dockables will remain in the structure and can be reopened at a later time. \src{MultipleCDockable}s will be removed from the controller unless the \src{removeOnClose} property was set to \src{false}. When using a \src{DefaultMultipleCDockable} then this property can be changed through \src{setRemoveOnClose}.
+With \src{CDockable.setVisible} the visibility of a dockable can just be changed to \src{false}. Single dockables will remain in the structure and can be reopened at a later time. \src{MultipleCDockable}s will be removed from the controller unless the \src{removeOnClose} property was set to \src{false}. When using a \\\src{DefaultMultipleCDockable} then this property can be changed through \\\src{setRemoveOnClose}.
 
 With \src{CControl.remove} the dockable is not only made invisible, it is also removed from the controller. All properties related to the dockable will be lost. Unless added to a controller again, it is no longer possible to reopen the dockable.
 
@@ -209,7 +209,7 @@ Naturally a dockable has some location. This section deals with the various form
 \subsubsection{for a single Dockable}
 For one dockable alone, the location is represented through a \src{CLocation}. Calling \src{CDockable.getLocation()} gets the current location (if any) of a dockable, \src{CDockable.setLocation} immediatelly changes the location of a dockable.
 
-\src{CLocation}s should be created using some factory methods. The first \src{CLocation} is optained through the static methods of \src{CLocation}, for example \src{CLocation.base()}. Afterwards one can use the methods of the newly created object.
+\src{CLocation}s should be created using some factory methods. The first \\\src{CLocation} is optained through the static methods of \src{CLocation}, for example \src{CLocation.base()}. Afterwards one can use the methods of the newly created object.
 \begin{lstlisting}
 CDockable dockable = ...
 CLocation location = CLocation.base().normalSouth( 0.5 ).east( 0.5 ).stack( 2 )
@@ -277,8 +277,20 @@ catch( IOException ex ){
 \end{lstlisting}
 The properties can also be stored in xml-format. But the purpose of that option is mainly for debugging and migration, most applications will do just fine using a byte-stream.
 
+\subsection{The size of dockables}
+
+
+\subsection{Colors associated with dockables}
+Every \src{CDockable} has a map full of colors. This map, the \src{ColorMap}, is read by the \src{DockTheme}s which are included in the Common-project. If a client changes a color in the map, the change will be propagated to the graphical user interface immediatelly. There are various keys for different colors. If a client wants to change the color of a tab, it might use this piece of code:
+\begin{lstlisting}
+CDockable dockable = ...
+ColorMap map = dockable.getColors();
+map.setColor( ColorMap.COLOR_KEY_TAB_BACKGROUND, Color.RED );
+\end{lstlisting}
+
+
 \section{Menus}
-Some things, like the list of all known dockables, can be presented to the user through a menu. Common defines \src{MenuPiece}s: a set of items of a \src{JMenu}, perhaps just as child of a bigger set of items. Several \src{MenuPiece}s are put together in order to create the contents of one \src{JMenu}.
+Some things, like the list of all known dockables, can be presented to the user through a menu. Common uses \src{MenuPiece}s to build new menus, each \src{MenuPiece} is set of items of a \src{JMenu}. A \src{MenuPiece} can be just a child of a bigger set of items. Several \src{MenuPiece}s are put together in order to create the contents of one \src{JMenu}.
 
 A collection of \src{MenuPiece}s:
 \begin{description}
@@ -290,13 +302,13 @@ A collection of \src{MenuPiece}s:
 \end{description}
 
 \subsection{List of dockables}
-The \src{CSingleDockableListMenuPiece} contains a list of \src{JCheckBoxMenuItem}s. Each item represents one "single dockable" of a controller. When the user clicks onto one item, then the associated dockable is either made visible or invisible.
+The \src{SingleCDockableListMenuPiece} contains a list of \src{JCheckBoxMenuItem}s. Each item represents one "single dockable" of a controller. When the user clicks onto one item, then the associated dockable is either made visible or invisible.
 
 The construction of a \src{CSingleDockableListMenuPiece}:
 \begin{lstlisting}
 CControl control = ...
 RootMenuPiece root = new RootMenuPiece( "List", false );
-root.add( new CSingleDockableListMenuPiece( control ));
+root.add( new SingleCDockableListMenuPiece( control ));
 JMenu menu = root.getMenu();
 \end{lstlisting}
 
@@ -306,12 +318,12 @@ Layout refers to the positions and relations of all the dockables. A controller 
 \subsection{List of themes}
 A theme is something like a \src{LookAndFeel}. It defines the look and to some degree also the behavior of DF. There are various themes available, and the user can exchange them through a \src{CThemeMenuPiece}.
 
-Creating a \src{CThemeMenuPiece} has an additional effect: the theme will be stored persistant if the client stores the layouts persistant.
+Creating a \src{CThemeMenuPiece} has an additional effect: the theme will be stored persistent if the client stores the layouts persistent.
 
 \subsection{LookAndFeel}
-There is a menu that exchanges the \src{LookAndFeel}, its name is \src{CLookAndFeelMenuPiece}. This \src{MenuPiece} will automatically collect all \src{Window}s which show a dockable or a content-area and update their ui (using \src{JComponent.updateUI}).
+There is a menu that exchanges the \src{LookAndFeel}, its name is \\\src{CLookAndFeelMenuPiece}.
 
-Only one \src{LookAndFeel} can be set at a time, and when changing the \src{LookAndFeel} the method \src{JComponent.updateUI()} method has to be called on all \src{JComponent}s. Common uses the class \src{LookAndFeelList} to manage the \src{LookAndFeel}. This list offers a set of \src{LookAndFeel}s, and the \src{CLookAndFeelMenuPiece} is a reflection of that set. The \src{CLookAndFeelMenuPiece} will make sure, that the \src{updateUI}-method gets called on any \src{Window} showing at least one dockable of the controller the menu is associated with. However if there are other windows, for example a \src{JDialog} showing the preferences, then this dialogs user interface will not get updated automatically. Then the client has to create a new \src{ComponentCollector} and add this collector to the \src{LookAndFeelList}
+Common uses the class \src{LookAndFeelList} to manage the \src{LookAndFeel}. This list offers a set of \src{LookAndFeel}s, and the \src{CLookAndFeelMenuPiece} is a reflection of that set. Only one \src{LookAndFeel} can be set at a time, and when changing the \src{LookAndFeel} the method \src{JComponent.updateUI()} has to be called on all \src{JComponent}s. The \src{CLookAndFeelMenuPiece} will make sure, that the \src{updateUI}-method gets called on any \src{Window} showing at least one dockable of the controller the menu is associated with. However if there are other windows, then their user interface will not get updated automatically. Then the client has to create a new \src{ComponentCollector} and add this collector to the \src{LookAndFeelList}
 
 An example:
 \begin{lstlisting}
@@ -328,7 +340,7 @@ ComponentCollector collector = new ComponentCollector(){
 LookAndFeelList list = LookAndFeelList.getDefaultList();
 list.addComponentCollector( collector );
 \end{lstlisting}
-Let's have a look at the code. In line \src{1} some dialog is defined. In lines \src{3-9} a \src{ComponentCollector} is defined. \src{collector} contains one method: \src{listComponents}. This method just collects some \src{Component}s, in this case \src{dialog}. For every \src{Component} found through a \src{ComponentCollector}, the \src{LookAndFeelList} will search the upermost parent and then update all children of this parent. That includes even child-\src{Window}s.
+Let's have a look at the code. In line \src{1} some dialog is defined. In lines \src{3-9} a \src{ComponentCollector} is defined. \src{collector} contains one method: \\\src{listComponents}. This method just collects some \src{Component}s, in this case \src{dialog}. For every \src{Component} found through a \src{ComponentCollector}, the \\\src{LookAndFeelList} will search the upermost parent and then update all children of this parent. That includes even child-\src{Window}s.
 
 \end{document}
 

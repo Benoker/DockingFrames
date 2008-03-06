@@ -38,7 +38,7 @@ import bibliothek.gui.dock.DockElement;
  */
 public class DockLayoutComposition {
     /** a description of the {@link DockElement} that is represented by this composition */
-    private DockLayout layout;
+    private DockLayout<?> layout;
     /** the list of known children of this element */
     private List<DockLayoutComposition> children;
     /** tells that the children of this station should be ignored */
@@ -51,7 +51,7 @@ public class DockLayoutComposition {
      * @param children the children of the station represented by this composition
      * @param ignoreChildren whether the children should be ignored or not
      */
-    public DockLayoutComposition( DockLayout layout, List<DockLayoutComposition> children, boolean ignoreChildren ){
+    public DockLayoutComposition( DockLayout<?> layout, List<DockLayoutComposition> children, boolean ignoreChildren ){
         if( children == null )
             throw new IllegalArgumentException( "children must not be null" );
         
@@ -65,7 +65,7 @@ public class DockLayoutComposition {
      * @return the layout, can be <code>null</code> to indicate that this composition
      * was not loaded properly
      */
-    public DockLayout getLayout() {
+    public DockLayout<?> getLayout() {
         return layout;
     }
     

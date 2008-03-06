@@ -97,7 +97,8 @@ public class DefaultColorScheme implements ColorScheme{
 
     @SuppressWarnings("unchecked")
     public <D extends DockColor> ColorProviderFactory<D, ? extends ColorProvider<D>> getProvider( Class<D> kind ) {
-        return (ColorProviderFactory<D, ? extends ColorProvider<D>>)getProvider( kind, new HashSet<Class<?>>() );
+        ColorProviderFactory result = getProvider( kind, new HashSet<Class<?>>() );
+        return result;
     }
     
     @SuppressWarnings("unchecked")

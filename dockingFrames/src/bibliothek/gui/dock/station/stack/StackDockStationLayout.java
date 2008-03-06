@@ -28,22 +28,18 @@ package bibliothek.gui.dock.station.stack;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.StackDockStation;
-import bibliothek.gui.dock.layout.DockLayout;
 
 /**
  * A layout of a {@link StackDockStation}, stores the order of all {@link Dockable}s
  * on the station.
  * @author Benjamin Sigg
  */
-public class StackDockStationLayout implements DockLayout {
+public class StackDockStationLayout {
     /** the order of the chilren */
     private int[] children;
     
     /** the name of the selected child */
     private int selected;
-    
-    /** the id of the factory of this layout */
-    private String factory;
     
     /**
      * Creates a new layout.
@@ -56,15 +52,7 @@ public class StackDockStationLayout implements DockLayout {
         this.selected = selected;
         this.children = children;
     }
-    
-    public String getFactoryID() {
-        return factory;
-    }
-    
-    public void setFactoryID( String id ) {
-        factory = id;
-    }
-    
+
     /**
      * Gets the order of the children.
      * @return the order

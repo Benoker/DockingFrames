@@ -34,6 +34,7 @@ import javax.swing.JComponent;
 
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
+import bibliothek.util.Colors;
 
 /**
  * A button that has a round rect shape.
@@ -77,12 +78,12 @@ public class RoundRectButton extends JComponent{
         
         Color border = null;
         if( model.isMousePressed() ){
-            border = background.darker();
-            background = background.brighter().brighter();
+            border = Colors.diffMirror( background, 0.3 );
+            background = Colors.undiffMirror( background, 0.6 );
         }
         else if( model.isSelected() || model.isMouseInside() ){
-            border = background.darker();
-            background = background.brighter();
+            border = Colors.diffMirror( background, 0.3 );
+            background = Colors.undiffMirror( background, 0.3 );
         }
         
         int w = getWidth()-1;

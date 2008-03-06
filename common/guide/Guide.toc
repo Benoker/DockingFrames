@@ -22,8 +22,12 @@
 \contentsline {subsubsection}{\numberline {3.2.2}for a group of Dockables}{8}
 \contentsline {subsection}{\numberline {3.3}Store the layout}{9}
 \contentsline {subsection}{\numberline {3.4}Store the layout persistent}{9}
-\contentsline {section}{\numberline {4}Menus}{9}
-\contentsline {subsection}{\numberline {4.1}List of dockables}{10}
-\contentsline {subsection}{\numberline {4.2}Layout}{10}
-\contentsline {subsection}{\numberline {4.3}List of themes}{10}
-\contentsline {subsection}{\numberline {4.4}LookAndFeel}{10}
+\contentsline {subsection}{\numberline {3.5}The size of dockables}{9}
+\contentsline {subsubsection}{\numberline {3.5.1}Lock size}{9}
+\contentsline {subsubsection}{\numberline {3.5.2}Request size}{10}
+\contentsline {subsection}{\numberline {3.6}Colors associated with dockables}{10}
+\contentsline {section}{\numberline {4}Menus}{10}
+\contentsline {subsection}{\numberline {4.1}List of dockables}{11}
+\contentsline {subsection}{\numberline {4.2}Layout}{11}
+\contentsline {subsection}{\numberline {4.3}List of themes}{11}
+\contentsline {subsection}{\numberline {4.4}LookAndFeel}{11}

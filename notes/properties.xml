@@ -90,7 +90,7 @@ A FlapDockStation shows one of its children in a window that is above all other 
 						<delegate id="delegate_flap dock">
 							<window auto="true" direction="SOUTH"/>
 							<children>
-								<child id="0" hold="false" size="400"/>
+								<child id="0" hold="true" size="400"/>
 							</children>
 						</delegate>
 					</layout>
@@ -107,15 +107,15 @@ A FlapDockStation shows one of its children in a window that is above all other 
 					<layout factory="predefined">
 						<replacement id="rootsplit"/>
 						<delegate id="delegate_SplitDockStationFactory">
-							<node orientation="VERTICAL" divider="0.5">
-								<node orientation="HORIZONTAL" divider="0.7936305732484077">
-									<node orientation="HORIZONTAL" divider="0.4718196457326892">
-										<leaf id="0"/>
+							<node orientation="HORIZONTAL" divider="0.4718196457326892">
+								<leaf id="0"/>
+								<node orientation="HORIZONTAL" divider="0.6075462232675871">
+									<node orientation="VERTICAL" divider="0.5">
 										<leaf id="1"/>
+										<leaf id="2"/>
 									</node>
-									<leaf id="2"/>
+									<leaf id="3"/>
 								</node>
-								<leaf id="3"/>
 							</node>
 						</delegate>
 					</layout>
@@ -176,13 +176,13 @@ A FlapDockStation shows one of its children in a window that is above all other 
 						</child>
 						<child>
 							<layout factory="delegate_note">
-								<note>1</note>
+								<note>5</note>
 							</layout>
 							<children ignore="false"/>
 						</child>
 						<child>
 							<layout factory="delegate_note">
-								<note>5</note>
+								<note>1</note>
 							</layout>
 							<children ignore="false"/>
 						</child>
@@ -224,7 +224,7 @@ A FlapDockStation shows one of its children in a window that is above all other 
 	</frontend>
 	<frame>
 		<extended>0</extended>
-		<bounds x="75" y="23" width="884" height="501"/>
+		<bounds x="55" y="0" width="884" height="501"/>
 		<theme>8</theme>
 	</frame>
 </properties>

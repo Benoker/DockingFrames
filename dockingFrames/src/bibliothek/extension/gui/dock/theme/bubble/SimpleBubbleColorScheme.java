@@ -73,8 +73,12 @@ public class SimpleBubbleColorScheme extends DefaultColorScheme {
                 return delegate.getColor( id ); 
             }
 
+            @SuppressWarnings("unchecked")
             public <D extends DockColor> ColorProviderFactory<D, ? extends ColorProvider<D>> getProvider( Class<D> kind ) {
-                return delegate.getProvider( kind );
+                // otherwise the compiler finds an error
+                
+                ColorProviderFactory result = delegate.getProvider( kind );
+                return result;
             }
             
             public void transmitAll( Priority priority, ColorManager manager ) {

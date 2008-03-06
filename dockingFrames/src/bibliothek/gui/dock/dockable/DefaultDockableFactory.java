@@ -34,7 +34,6 @@ import java.util.Map;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.DockFactory;
-import bibliothek.gui.dock.layout.DockLayout;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -44,7 +43,7 @@ import bibliothek.util.xml.XElement;
  * DefaultDockable.
  * @author Benjamin Sigg
  */
-public class DefaultDockableFactory implements DockFactory<DefaultDockable, DefaultDockableFactory.DefaultDockLayout> {
+public class DefaultDockableFactory implements DockFactory<DefaultDockable, Object> {
     /** The unique id of this factory */
     public static final String ID = "DefaultDockableFactory";
     
@@ -52,63 +51,46 @@ public class DefaultDockableFactory implements DockFactory<DefaultDockable, Defa
         return ID;
     }
 
-    public DefaultDockLayout getLayout( DefaultDockable element,
+    public Object getLayout( DefaultDockable element,
             Map<Dockable, Integer> children ) {
         
-        return new DefaultDockLayout();
+        return new Object();
     }
     
-    public void setLayout( DefaultDockable element, DefaultDockLayout layout,
+    public void setLayout( DefaultDockable element, Object layout,
             Map<Integer, Dockable> children ) {
         // nothing to do
     }
     
-    public void setLayout( DefaultDockable element, DefaultDockLayout layout ) {
+    public void setLayout( DefaultDockable element, Object layout ) {
         // nothing to do
     }
 
-    public DefaultDockable layout( DefaultDockLayout layout,
+    public DefaultDockable layout( Object layout,
             Map<Integer, Dockable> children ) {
         
         return new DefaultDockable();
     }
     
-    public DefaultDockable layout( DefaultDockLayout layout ) {
+    public DefaultDockable layout( Object layout ) {
         return new DefaultDockable();
     }
 
-    public DefaultDockLayout read( DataInputStream in ) throws IOException {
-        return new DefaultDockLayout();
+    public Object read( DataInputStream in ) throws IOException {
+        return new Object();
     }
 
-    public DefaultDockLayout read( XElement element ) {
-        return new DefaultDockLayout();
+    public Object read( XElement element ) {
+        return new Object();
     }
 
 
-    public void write( DefaultDockLayout layout, DataOutputStream out )
+    public void write( Object layout, DataOutputStream out )
             throws IOException {
         // nothing to do
     }
 
-    public void write( DefaultDockLayout layout, XElement element ) {
+    public void write( Object layout, XElement element ) {
         // nothing to do
-    }
-    
-    /**
-     * A simple layout that does not store any information.
-     * @author Benjamin Sigg
-     */
-    public static class DefaultDockLayout implements DockLayout{
-        /** the id of the factory of this layout */
-        private String factory;
-        
-        public void setFactoryID( String id ) {
-            factory = id;
-        }
-        
-        public String getFactoryID() {
-            return factory;
-        }
     }
 }

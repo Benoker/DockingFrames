@@ -28,19 +28,16 @@ package bibliothek.gui.dock.station.split;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.SplitDockStation.Orientation;
-import bibliothek.gui.dock.layout.DockLayout;
 
 /**
  * A layout storing the contents of a {@link SplitDockStation}.
  * @author Benjamin Sigg
  */
-public class SplitDockStationLayout implements DockLayout {
+public class SplitDockStationLayout {
     /** the root of the tree, can be <code>null</code> */
     private Entry root;
     /** the id of the element that is put into fullscreen-mode */
     private int fullscreen;
-    /** the id of the factory of this layout */
-    private String factory;
     
     /**
      * Creates a new layout
@@ -69,14 +66,6 @@ public class SplitDockStationLayout implements DockLayout {
         return fullscreen;
     }
     
-    public String getFactoryID() {
-        return factory;
-    }
-    
-    public void setFactoryID( String id ) {
-         factory = id;   
-    }
-
     /**
      * An entry in a tree, either a node or a leaf.
      * @author Benjamin Sigg

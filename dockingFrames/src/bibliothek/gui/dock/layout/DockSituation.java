@@ -127,7 +127,7 @@ public class DockSituation {
             return null;
         
         String id = getID( element );
-        DockFactory<DockElement,DockLayout> factory = (DockFactory<DockElement, DockLayout>)getFactory( id );
+        DockFactory<DockElement,Object> factory = (DockFactory<DockElement, Object>)getFactory( id );
         if( factory == null )
             throw new IllegalArgumentException( "Unknown factory-id: " + element.getFactoryID() );
         
@@ -152,8 +152,8 @@ public class DockSituation {
             }
         }
         
-        DockLayout layout = factory.getLayout( element, ids );
-        layout.setFactoryID( id );
+        Object data = factory.getLayout( element, ids );
+        DockLayout<Object> layout = new DockLayout<Object>( id, data );
         return new DockLayoutComposition( layout, children, ignore );
     }
     
@@ -166,11 +166,11 @@ public class DockSituation {
      */
     @SuppressWarnings("unchecked")
     public DockElement convert( DockLayoutComposition composition ){
-        DockLayout layout = composition.getLayout();
+        DockLayout<?> layout = composition.getLayout();
         if( layout == null )
             return null;
         
-        DockFactory<DockElement, DockLayout> factory = (DockFactory<DockElement, DockLayout>)getFactory( layout.getFactoryID() );
+        DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( layout.getFactoryID() );
         if( factory == null )
             return null;
         
@@ -179,7 +179,7 @@ public class DockSituation {
                 convert( childComposition );
             }
             
-            return factory.layout( layout );
+            return factory.layout( layout.getData() );
         }
         else{
             Map<Integer, Dockable> children = new HashMap<Integer, Dockable>();
@@ -197,7 +197,7 @@ public class DockSituation {
                 index++;
             }
             
-            return factory.layout( layout, children );
+            return factory.layout( layout.getData(), children );
         }
         
     }
@@ -213,8 +213,8 @@ public class DockSituation {
      */
     @SuppressWarnings("unchecked")
     public void writeComposition( DockLayoutComposition composition, DataOutputStream out ) throws IOException{
-        DockLayout layout = composition.getLayout();
-        DockFactory<DockElement, DockLayout> factory = (DockFactory<DockElement, DockLayout>)getFactory( layout.getFactoryID() );
+        DockLayout<?> layout = composition.getLayout();
+        DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( layout.getFactoryID() );
         if( factory == null )
             throw new IOException( "Missing factory: " + layout.getFactoryID() );
         
@@ -224,7 +224,7 @@ public class DockSituation {
         // contents
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         DataOutputStream dout = new DataOutputStream( bout );
-        factory.write( layout, dout );
+        factory.write( layout.getData(), dout );
         dout.close();
         
         out.writeInt( bout.size() );
@@ -251,10 +251,10 @@ public class DockSituation {
     public DockLayoutComposition readComposition( DataInputStream in ) throws IOException{
         // factory
         String factoryId = in.readUTF();
-        DockFactory<DockElement, DockLayout> factory = (DockFactory<DockElement, DockLayout>)getFactory( factoryId );
+        DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
         
         // contents
-        DockLayout layout;
+        DockLayout<?> layout;
         int count = in.readInt();
         
         if( factory == null ){
@@ -278,8 +278,12 @@ public class DockSituation {
             
             ByteArrayInputStream bin = new ByteArrayInputStream( buffer );
             DataInputStream din = new DataInputStream( bin );
-            layout = factory.read( din );
-            layout.setFactoryID( factoryId );
+            Object data = factory.read( din );
+            if( data == null )
+                layout = null;
+            else
+                layout = new DockLayout<Object>( factoryId, data );
+            
             din.close();
         }
         
@@ -377,14 +381,14 @@ public class DockSituation {
      */
     @SuppressWarnings("unchecked")
     public void writeCompositionXML( DockLayoutComposition composition, XElement element ){
-        DockLayout layout = composition.getLayout();
-        DockFactory<DockElement, DockLayout> factory = (DockFactory<DockElement, DockLayout>)getFactory( layout.getFactoryID() );
+        DockLayout<?> layout = composition.getLayout();
+        DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( layout.getFactoryID() );
         if( factory == null )
             throw new IllegalArgumentException( "Missing factory: " + layout.getFactoryID() );
         
         XElement xfactory = element.addElement( "layout" );
         xfactory.addString( "factory", getID( factory ) );
-        factory.write( layout, xfactory );
+        factory.write( layout.getData(), xfactory );
         
         XElement xchildren = element.addElement( "children" );
         xchildren.addBoolean( "ignore", composition.isIgnoreChildren() );
@@ -404,13 +408,15 @@ public class DockSituation {
     @SuppressWarnings("unchecked")
     public DockLayoutComposition readCompositionXML( XElement element ){
         XElement xfactory = element.getElement( "layout" );
-        DockLayout layout = null;
+        DockLayout<?> layout = null;
         if( xfactory != null ){
             String factoryId = xfactory.getString( "factory" );
-            DockFactory<DockElement, DockLayout> factory = (DockFactory<DockElement, DockLayout>)getFactory( factoryId );
+            DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
             if( factory != null ){
-                layout = factory.read( xfactory );
-                layout.setFactoryID( factoryId );
+                Object data = factory.read( xfactory );
+                if( data != null ){
+                    layout = new DockLayout<Object>( factoryId, data );
+                }
             }
         }
         

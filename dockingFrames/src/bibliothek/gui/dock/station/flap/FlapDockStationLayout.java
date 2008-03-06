@@ -27,13 +27,12 @@ package bibliothek.gui.dock.station.flap;
 
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
-import bibliothek.gui.dock.layout.DockLayout;
 
 /**
  * A layout describing the content of a {@link FlapDockStation}.
  * @author Benjamin Sigg
  */
-public class FlapDockStationLayout implements DockLayout {
+public class FlapDockStationLayout {
     /** the order of the children */
     private int[] children;
     
@@ -48,9 +47,6 @@ public class FlapDockStationLayout implements DockLayout {
     
     /** the direction of the window */
     private Direction direction;
-    
-    /** the id of the factory of this layout */
-    private String factory;
 
     /**
      * Creates a new layout
@@ -71,15 +67,7 @@ public class FlapDockStationLayout implements DockLayout {
         this.autoDirection = autoDirection;
         this.direction = direction;
     }
-    
-    public String getFactoryID() {
-        return factory;
-    }
-    
-    public void setFactoryID( String id ) {
-        factory = id;
-    }
-    
+
     /**
      * Gets the order of the children.
      * @return the children

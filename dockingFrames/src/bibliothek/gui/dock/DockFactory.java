@@ -32,19 +32,18 @@ import java.io.IOException;
 import java.util.Map;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.layout.DockLayout;
 import bibliothek.util.xml.XElement;
 
 /**
  * A {@link DockFactory} can convert the contents of a {@link DockElement} in
  * a persistent form.<br>
- * Some kind of {@link DockElement} will be converted into a {@link DockLayout}, 
+ * Some kind of {@link DockElement} will be converted into a {@link Object}, 
  * this layout can then be written into a stream.
  * @author Benjamin Sigg
  * @param <D> the type of element which can be written and read by this factory
  * @param <L> the type of object that stores the contents of a <code>D</code>
  */
-public interface DockFactory<D extends DockElement, L extends DockLayout> {
+public interface DockFactory<D extends DockElement, L> {
 
     /**
      * Gets the unique name of this factory.

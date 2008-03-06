@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -102,7 +102,7 @@ public class PredefinedDockSituation extends DockSituation {
 	}
 	
 	@Override
-	protected DockFactory<? extends DockElement,? extends DockLayout> getFactory(String id) {
+	protected DockFactory<? extends DockElement,?> getFactory(String id) {
 		if( KNOWN.equals( id ))
 			return factory;
 		else
@@ -114,12 +114,9 @@ public class PredefinedDockSituation extends DockSituation {
 	 * for a preloaded element.
 	 * @author Benjamin Sigg
 	 */
-	private static class PreloadedLayout implements DockLayout{
-	    /** the id of the factory that created this layout */
-	    private String factory;
-	    
+	private static class PreloadedLayout<L>{
 	    /** the layout that stores the content */
-	    private DockLayout delegate;
+	    private DockLayout<L> delegate;
 	    /** the id of the element which was predefined */
 	    private String preload;
 	    
@@ -128,17 +125,9 @@ public class PredefinedDockSituation extends DockSituation {
 	     * @param preload the element which was preloaded
 	     * @param delegate the delegate which stores the content
 	     */
-	    public PreloadedLayout( String preload, DockLayout delegate ){
+	    public PreloadedLayout( String preload, DockLayout<L> delegate ){
 	        this.preload = preload;
 	        this.delegate = delegate;
-	    }
-	    
-	    public String getFactoryID() {
-	        return factory;
-	    }
-	    
-	    public void setFactoryID( String id ) {
-	        factory = id;
 	    }
 	    
 	    /**
@@ -153,7 +142,7 @@ public class PredefinedDockSituation extends DockSituation {
 	     * Gets the layout which stores the contents of the predefined element.
 	     * @return the content
 	     */
-	    public DockLayout getDelegate() {
+	    public DockLayout<L> getDelegate() {
             return delegate;
         }
 	}
@@ -164,46 +153,45 @@ public class PredefinedDockSituation extends DockSituation {
 	 * which was predefined in {@link PredefinedDockSituation}.
 	 * @author Benjamin Sigg
 	 */
-	private class PreloadFactory implements DockFactory<DockElement, PreloadedLayout>{
+	private class PreloadFactory implements DockFactory<DockElement, PreloadedLayout<?>>{
 		public String getID() {
 			return KNOWN;
 		}
 		
 		@SuppressWarnings("unchecked")
-        public PreloadedLayout getLayout( DockElement element, Map<Dockable, Integer> children ) {
+        public PreloadedLayout<?> getLayout( DockElement element, Map<Dockable, Integer> children ) {
 		    String factoryId = UNKNOWN + PredefinedDockSituation.super.getID( element );
-		    DockFactory<DockElement, DockLayout> factory = (DockFactory<DockElement, DockLayout>)getFactory( factoryId );
+		    DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
 		    if( factory == null )
 		        throw new IllegalStateException( "Missing factory: " + factoryId );
 		    
-		    DockLayout layout = factory.getLayout( element, children );
-		    layout.setFactoryID( factoryId );
-		    
+		    Object data = factory.getLayout( element, children );
+		    DockLayout<Object> layout = new DockLayout<Object>( factoryId, data );
 		    return new PreloadedLayout( elementToString.get( element ), layout );
 		}
 		
 		@SuppressWarnings("unchecked")
-        public void setLayout( DockElement element, PreloadedLayout layout,
+        public void setLayout( DockElement element, PreloadedLayout<?> layout,
 		        Map<Integer, Dockable> children ) {
 		 
 		    String factoryId = layout.getDelegate().getFactoryID();
-		    DockFactory<DockElement, DockLayout> factory = (DockFactory<DockElement, DockLayout>)getFactory( factoryId );
+		    DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
             if( factory != null ){
-                factory.setLayout( element, layout.getDelegate(), children );
+                factory.setLayout( element, layout.getDelegate().getData(), children );
             }
 		}
 		
 		@SuppressWarnings("unchecked")
-        public void setLayout( DockElement element, PreloadedLayout layout ) {
+        public void setLayout( DockElement element, PreloadedLayout<?> layout ) {
 		    String factoryId = layout.getDelegate().getFactoryID();
-            DockFactory<DockElement, DockLayout> factory = (DockFactory<DockElement, DockLayout>)getFactory( factoryId );
+            DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
             if( factory != null ){
-                factory.setLayout( element, layout.getDelegate() );
+                factory.setLayout( element, layout.getDelegate().getData() );
             }
 		}
 		
 		@SuppressWarnings("unchecked")
-        public DockElement layout( PreloadedLayout layout, Map<Integer, Dockable> children ) {
+        public DockElement layout( PreloadedLayout<?> layout, Map<Integer, Dockable> children ) {
 		    DockElement element = stringToElement.get( layout.getPreload() );
 		    if( element == null )
 		        return null;
@@ -213,7 +201,7 @@ public class PredefinedDockSituation extends DockSituation {
 		}
 		
 		@SuppressWarnings("unchecked")
-        public DockElement layout( PreloadedLayout layout ) {
+        public DockElement layout( PreloadedLayout<?> layout ) {
             DockElement element = stringToElement.get( layout.getPreload() );
             if( element == null )
                 return null;
@@ -228,42 +216,42 @@ public class PredefinedDockSituation extends DockSituation {
 		    
 		    DockLayout delegate = layout.getDelegate();
 		    String factoryId = delegate.getFactoryID();
-		    DockFactory<DockElement, DockLayout> factory = (DockFactory<DockElement, DockLayout>)getFactory( factoryId );
+		    DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
 		    if( factory == null )
 		        throw new IOException( "Missing factory: " + factoryId );
 		    
 		    out.writeUTF( factoryId );
-		    factory.write( delegate, out );
+		    factory.write( delegate.getData(), out );
 		}
 		
 		@SuppressWarnings("unchecked")
-        public PreloadedLayout read( DataInputStream in ) throws IOException {
+        public PreloadedLayout<?> read( DataInputStream in ) throws IOException {
 		    String preloaded = in.readUTF();
 		    String factoryId = in.readUTF();
-		    DockFactory<DockElement, DockLayout> factory = (DockFactory<DockElement, DockLayout>)getFactory( factoryId );
+		    DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
             if( factory == null )
                 return null;
             
-            DockLayout delegate = factory.read( in );
+            Object delegate = factory.read( in );
             if( delegate == null )
                 return null;
             
-            delegate.setFactoryID( factoryId );
-            return new PreloadedLayout( preloaded, delegate );
+            DockLayout<Object> layout = new DockLayout<Object>( factoryId, delegate );
+            return new PreloadedLayout<Object>( preloaded, layout );
 		}
 		
 		@SuppressWarnings("unchecked")
-        public void write( PreloadedLayout layout, XElement element ) {
-		    DockLayout delegate = layout.getDelegate();
+        public void write( PreloadedLayout<?> layout, XElement element ) {
+		    DockLayout<?> delegate = layout.getDelegate();
 		    String factoryId = delegate.getFactoryID();
-            DockFactory<DockElement, DockLayout> factory = (DockFactory<DockElement, DockLayout>)getFactory( factoryId );
+            DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
             if( factory == null )
                 throw new XException( "Missing factory: " + factoryId );
             
 		    element.addElement( "replacement" ).addString( "id", layout.getPreload() );
 		    XElement xdelegate = element.addElement( "delegate" );
 		    xdelegate.addString( "id", factoryId );
-		    factory.write( delegate, xdelegate );
+		    factory.write( delegate.getData(), xdelegate );
 		}
 		
 		@SuppressWarnings("unchecked")
@@ -272,16 +260,16 @@ public class PredefinedDockSituation extends DockSituation {
 		    
 		    XElement xdelegate = element.getElement( "delegate" );
 		    String factoryId = xdelegate.getString( "id" );
-            DockFactory<DockElement, DockLayout> factory = (DockFactory<DockElement, DockLayout>)getFactory( factoryId );
+            DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
             if( factory == null )
                 return null;
             
-            DockLayout delegate = factory.read( xdelegate );
+            Object delegate = factory.read( xdelegate );
             if( delegate == null )
                 return null;
             
-            delegate.setFactoryID( factoryId );
-            return new PreloadedLayout( preload, delegate );
+            DockLayout<Object> layout = new DockLayout<Object>( factoryId, delegate );
+            return new PreloadedLayout( preload, layout );
 		}
 	}
 }

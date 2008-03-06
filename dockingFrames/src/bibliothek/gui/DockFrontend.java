@@ -120,8 +120,8 @@ public class DockFrontend {
     private Map<String, RootInfo> roots = new HashMap<String, RootInfo>();
     
     /** A set of factories needed to store Dockables */
-    private Set<DockFactory<? extends DockElement, ? extends DockLayout>> dockFactories = 
-        new HashSet<DockFactory<? extends DockElement, ? extends DockLayout>>();
+    private Set<DockFactory<? extends DockElement, ?>> dockFactories = 
+        new HashSet<DockFactory<? extends DockElement, ?>>();
     /** A set of factories needed to store {@link DockableProperty properties} */
     private Set<DockablePropertyFactory> propertyFactories = new HashSet<DockablePropertyFactory>();
     
@@ -267,7 +267,7 @@ public class DockFrontend {
      * {@link DockStation DockStations}
      * @param factory the new factory
      */
-    public void registerFactory( DockFactory<? extends DockElement, ? extends DockLayout> factory ){
+    public void registerFactory( DockFactory<? extends DockElement, ?> factory ){
     	if( factory == null )
     		throw new IllegalArgumentException( "factory must not be null" );
         dockFactories.add( factory );

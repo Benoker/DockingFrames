@@ -37,6 +37,7 @@ import bibliothek.gui.dock.action.DropDownAction;
 import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonHandler;
 import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonModel;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.util.Colors;
 
 /**
  * A button with a shape of a roundrect, displaying a {@link DropDownAction}.
@@ -113,12 +114,12 @@ public class RoundRectDropDownButton extends JComponent {
         
         Color border = null;
         if( model.isMousePressed() ){
-            border = background.darker();
-            background = background.brighter().brighter();
+            border = Colors.diffMirror( background, 0.3 );
+            background = Colors.undiffMirror( background, 0.8 );
         }
         else if( model.isSelected() || model.isMouseInside() ){
-            border = background.darker();
-            background = background.brighter();
+            border = Colors.diffMirror( background, 0.3 );
+            background = Colors.undiffMirror( background, 0.4 );
         }
         
         int w = getWidth()-1;

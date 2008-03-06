@@ -8,7 +8,7 @@
 \newcommand{\src}[1]{\lstinline[basicstyle=\ttfamily]|#1|}
 
 %opening
-\title{DockingFrames 1.0.2 - Common}
+\title{DockingFrames 1.0.3 - Common}
 \author{Benjamin Sigg}
 
 \begin{document}
@@ -276,6 +276,28 @@ catch( IOException ex ){
 }
 \end{lstlisting}
 The properties can also be stored in xml-format. But the purpose of that option is mainly for debugging and migration, most applications will do just fine using a byte-stream.
+
+\subsection{The size of dockables}
+Each \src{CDockable} has a certain size. Some \src{Component}s have an optimal size, others are flexible and can have any size. There are two interesting features for the first kind of \src{Component}s.
+
+\subsubsection{Lock size}
+Every \src{CDockable} has a method \src{isResizeLocked()}. If that methods returns \src{true}, then the \src{DockStation}s try not to change the size of the \src{CDockable} when the stations are resized themselfs. The user still can resize the \src{CDockable} by hand, and there are some other actions that will change the sizes as well.
+
+Clients that use \src{DefaultSingleCDockable} and \\\src{DefaultMultipleCDockable} can use the method \src{setResizeLocked} to change the behavior.
+
+\subsubsection{Request size}
+Each \src{CDockable} can have a "size request" provided by \\\src{getAndClearResizeRequest}. Whenever \src{handleResizeRequest} of \src{CControl} is called, all resize requests are read and the stations try to change the size of their children such that the requests are fullfilled. There are no guarantees that the request can be fullfilled. And requests that cannot be fullfilled are simply lost.
+
+Clients that use \src{DefaultSingleCDockable} and \\\src{DefaultMultipleCDockable} can use the method \src{setResizeRequest} to issue such a request. The method \src{setResizeRequest} can just store the request, or can process the request as well.
+
+\subsection{Colors associated with dockables}
+Every \src{CDockable} has a map full of colors. This map, the \src{ColorMap}, is read by the \src{DockTheme}s which are included in the Common-project. If a client changes a color in the map, the change will be propagated to the graphical user interface immediatelly. There are various keys for different colors. If a client wants to change the color of a tab, it might use this piece of code:
+\begin{lstlisting}
+CDockable dockable = ...
+ColorMap map = dockable.getColors();
+map.setColor( ColorMap.COLOR_KEY_TAB_BACKGROUND, Color.RED );
+\end{lstlisting}
+
 
 \section{Menus}
 Some things, like the list of all known dockables, can be presented to the user through a menu. Common uses \src{MenuPiece}s to build new menus, each \src{MenuPiece} is set of items of a \src{JMenu}. A \src{MenuPiece} can be just a child of a bigger set of items. Several \src{MenuPiece}s are put together in order to create the contents of one \src{JMenu}.
