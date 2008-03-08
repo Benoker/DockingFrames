@@ -99,7 +99,7 @@ public class Core implements Demonstration{
 
             final JFrame frame = new JFrame( "Size & Color" );
             frame.setIconImage( icon.getImage() );
-            final CControl control = new CControl( frame );
+            final CControl control = new CControl( frame, true );
 
             LookAndFeelList list = monitor == null ? null : monitor.getGlobalLookAndFeel();
             RootMenuPiece laf = new RootMenuPiece( "Look And Feel", false, new CLookAndFeelMenuPiece( control, list ));

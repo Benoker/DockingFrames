@@ -83,6 +83,7 @@ Demonstration - a client starting other applications, shows some demonstrations
 		help
 		chess
 		paint
+		sizeAndColor
 
 Notes - an application showing some notes
 	Path: "notes.jar"
@@ -116,3 +117,11 @@ Paint - application to paint images
 		dockingFramesCore
 		dockingFramesCommon
 		interfaces
+		
+SizeAndColor - application to demonstrate new features of version 1.0.3
+	Path: "sizeAndColor.jar"
+	Executable: yes
+	Dependencies:
+		dockingFramesCore
+		dockingFramesCommon
+		interfaces	

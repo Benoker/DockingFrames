@@ -919,7 +919,11 @@ public class CControl {
 	 * <code>CDockable</code>s should be processed. There are no
 	 * guarantees that a resize requests can be granted or even gets processed.<br>
 	 * All requests, independent from whether they were processed, will be deleted 
-	 * by this method.
+	 * by this method.<br>
+	 * Note that a request might conflict with a "resize lock"
+	 * {@link CDockable#isResizeLocked()}. The behavior of that case is not
+	 * specified, but clients can assume that the locked components introduce
+	 * additional resize requests.
 	 */
 	public void handleResizeRequests(){
 	    ResizeRequestListener[] listeners = resizeListeners.toArray( new ResizeRequestListener[ resizeListeners.size() ] );
