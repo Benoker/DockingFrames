@@ -12,6 +12,7 @@ Each directory represents an own project:
 	notes - a client of the demonstration-framework, shows some notes
 	chess - a client of the demonstration-framework, creates a new type of DockStation
 	paint - a client using the common project
+	sizeAndColor - a client using the common project
 
 The projects have these dependencies:
 	dockingFrame:
@@ -35,6 +36,7 @@ The projects have these dependencies:
 	+ notes
 	+ chess
 	+ paint
+	+ sizeAndColor
 
 	help
 	+ demonstration_interface
@@ -53,6 +55,11 @@ The projects have these dependencies:
 	+ common
 
 	paint
+	+ demonstration_interface
+	+ dockingFrame
+	+ common
+
+	sizeAndColor
 	+ demonstration_interface
 	+ dockingFrame
 	+ common
