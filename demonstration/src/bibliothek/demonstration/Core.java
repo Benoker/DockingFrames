@@ -107,7 +107,8 @@ public class Core {
 				new bibliothek.notes.Webstart(),
 				new bibliothek.help.Webstart(),
 				new bibliothek.chess.Main(),
-				new bibliothek.paint.Webstart()
+				new bibliothek.paint.Webstart(),
+				new bibliothek.sizeAndColor.Core()
 		});
 	}
 	

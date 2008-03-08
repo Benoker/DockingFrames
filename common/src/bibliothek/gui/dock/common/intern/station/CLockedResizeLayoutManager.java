@@ -63,8 +63,9 @@ public class CLockedResizeLayoutManager extends LockedResizeLayoutManager<Dimens
         if( size != null ){
             Rectangle modified = leaf.getCurrentBounds();
             
-            double deltaWidth = size.width - modified.width;
-            double deltaHeight = size.height - modified.height;
+            // +0.1: to work against a later integer conversion that might round down
+            double deltaWidth = size.width + 0.1 - modified.width;
+            double deltaHeight = size.height + 0.1 - modified.height;
             
             Root root = leaf.getRoot();
             deltaWidth /= root.getWidthFactor();

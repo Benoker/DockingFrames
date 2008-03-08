@@ -37,6 +37,7 @@ import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.facile.lookandfeel.DockableCollector;
 import bibliothek.gui.dock.facile.menu.LookAndFeelMenuPiece;
 import bibliothek.gui.dock.support.lookandfeel.ComponentCollector;
+import bibliothek.gui.dock.support.lookandfeel.LookAndFeelList;
 import bibliothek.gui.dock.support.util.ApplicationResource;
 import bibliothek.util.xml.XElement;
 
@@ -54,7 +55,16 @@ public class CLookAndFeelMenuPiece extends LookAndFeelMenuPiece implements Destr
      * @param control needed to load the last {@link LookAndFeel}
      */
     public CLookAndFeelMenuPiece( CControl control ){
-        super();
+        this( control, LookAndFeelList.getDefaultList() );
+    }
+    
+    /**
+     * Creates a new menu.
+     * @param control needed to access the list of dockables
+     * @param list the list of available {@link LookAndFeel}s, can be <code>null</code>
+     */
+    public CLookAndFeelMenuPiece( CControl control, LookAndFeelList list ){
+        super( null, list );
         control.addDestroyHook( this );
         dockableCollector = new DockableCollector( control.intern() );
         getList().addComponentCollector( dockableCollector );

@@ -41,13 +41,13 @@ import bibliothek.gui.dock.util.color.ColorProvider;
  * allow the theme access to the possibilities of the common-project.
  * @author Benjamin Sigg
  */
-public class CFlatTabTheme extends CDockTheme<FlatTheme> {
+public class CFlatTheme extends CDockTheme<FlatTheme> {
     /**
      * Creates a new theme.
      * @param control the controller for which this theme will be used
      * @param theme the theme that gets encapsulated
      */
-    public CFlatTabTheme( CControl control, FlatTheme theme ){
+    public CFlatTheme( CControl control, FlatTheme theme ){
         super( theme );
         init( control );
     }
@@ -57,7 +57,7 @@ public class CFlatTabTheme extends CDockTheme<FlatTheme> {
      * {@link CControl}.
      * @param control the controller for which this theme will be used.
      */
-    public CFlatTabTheme( CControl control ){
+    public CFlatTheme( CControl control ){
         this( new FlatTheme() );
         init( control );
     }
@@ -66,7 +66,7 @@ public class CFlatTabTheme extends CDockTheme<FlatTheme> {
      * Creates a new theme.
      * @param theme the delegate which will do most of the work
      */
-    private CFlatTabTheme( FlatTheme theme ){
+    private CFlatTheme( FlatTheme theme ){
         super( theme, new NoStackTheme( theme ) );
     }
     

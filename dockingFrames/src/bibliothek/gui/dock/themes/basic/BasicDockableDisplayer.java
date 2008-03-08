@@ -385,6 +385,17 @@ public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
             return insets;
         }
         else if( dockable != null ){
+            Component dockableComponent = dockable.getComponent();
+            Component resizeComponent = getComponent( dockable );
+            if( dockableComponent != resizeComponent ){
+                Point zero = new Point( 0, 0 );
+                zero = SwingUtilities.convertPoint( dockableComponent, zero, resizeComponent );
+                insets.left += zero.x;
+                insets.top += zero.y;
+                insets.right += resizeComponent.getWidth() - dockableComponent.getWidth() - zero.x;
+                insets.bottom += resizeComponent.getHeight() - dockableComponent.getHeight() - zero.y;
+            }
+            
             Dimension preferred = getComponent( title ).getPreferredSize();
             
             if( location == Location.LEFT ){

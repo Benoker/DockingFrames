@@ -135,7 +135,7 @@ public class ColorMap {
         else
             old = colors.put( key, color );
         
-        if( (old == null && color != null) || (!old.equals( color )) ){
+        if( (old == null && color != null) || (old != null && !old.equals( color )) ){
             for( ColorMapListener listener : listeners.toArray( new ColorMapListener[ listeners.size() ] ))
                 listener.colorChanged( this, key, color );
         }

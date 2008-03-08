@@ -73,7 +73,7 @@ public class CThemeMenuPiece extends ThemeMenuPiece{
             new CDockThemeFactory<FlatTheme>( new ThemePropertyFactory<FlatTheme>( FlatTheme.class ) ){
             @Override
             public DockTheme create( CControl control ) {
-                return new CFlatTabTheme( control );
+                return new CFlatTheme( control );
             }
         };
 

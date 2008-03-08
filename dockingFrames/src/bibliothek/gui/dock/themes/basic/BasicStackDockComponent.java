@@ -134,8 +134,8 @@ public class BasicStackDockComponent extends DefaultStackDockComponent {
                     background = colorBackground.color();
                 }
                 
-                setBackgroundAt( index, background );
                 setForegroundAt( index, foreground );
+                setBackgroundAt( index, background );
             }
         }
         

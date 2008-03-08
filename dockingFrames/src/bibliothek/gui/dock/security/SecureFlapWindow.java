@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -26,7 +26,6 @@
 
 package bibliothek.gui.dock.security;
 
-import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
@@ -34,11 +33,8 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JComponent;
 
-import bibliothek.gui.DockController;
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
-import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.flap.ButtonPane;
 import bibliothek.gui.dock.station.flap.FlapWindow;
 
@@ -51,8 +47,6 @@ import bibliothek.gui.dock.station.flap.FlapWindow;
 public class SecureFlapWindow extends FlapWindow {
     /** The pane between Dockable and outer world */
     private GlassedPane pane;
-    /** The component on which a {@link DockableDisplayer} will be added */
-    private JComponent content;
     
     /**
      * Creates a new window
@@ -76,15 +70,10 @@ public class SecureFlapWindow extends FlapWindow {
     
     {
         pane = new GlassedPane();
-        content = (JComponent)getContentPane();
+        JComponent content = (JComponent)getContentPane();
         setContentPane( pane );
         pane.setContentPane( content );
         addWindowListener( new Listener() );
-    }
-    
-    @Override
-    protected Container getDisplayerParent() {
-        return content;
     }
     
     /**
@@ -93,21 +82,21 @@ public class SecureFlapWindow extends FlapWindow {
      * @author Benjamin Sigg
      */
     private class Listener extends WindowAdapter{
+        private SecureMouseFocusObserver controller;
+        
         @Override
         public void windowOpened( WindowEvent e ) {
-            SecureMouseFocusObserver controller = (SecureMouseFocusObserver)getStation().getController().getFocusObserver();
-            controller.addGlassPane( pane );
+            if( controller == null ){
+                controller = (SecureMouseFocusObserver)getStation().getController().getFocusObserver();
+                controller.addGlassPane( pane );
+            }
         }
         
         @Override
         public void windowClosed( WindowEvent e ) {
-            DockStation station = getStation();
-            if( station != null ){
-                DockController controller = station.getController();
-                if( controller != null ){
-                    SecureMouseFocusObserver observer = (SecureMouseFocusObserver)controller.getFocusObserver();
-                    observer.removeGlassPane( pane );
-                }
+            if( controller != null ){
+                controller.removeGlassPane( pane );
+                controller = null;
             }
         }
     }

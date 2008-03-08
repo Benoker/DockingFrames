@@ -37,6 +37,9 @@ import bibliothek.gui.dock.util.color.ColorManager;
  */
 public class BasicTabTransmitter extends TabColorTransmitter {
     private static final String[] KEYS = {
+        "stack.tab.foreground",
+        "stack.tab.foreground.selected",
+        "stack.tab.foreground.focused",
         "stack.tab.background",
         "stack.tab.background.selected",
         "stack.tab.background.focused"

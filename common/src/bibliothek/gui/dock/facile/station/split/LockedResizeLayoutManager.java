@@ -338,6 +338,9 @@ public abstract class LockedResizeLayoutManager<T> extends DelegatingSplitLayout
         /** the node that is represented by this node-element */
         private Node node;
         
+        /** size of the divider before the resize */
+        private double dividerSize;
+        
         /** the two children of this node */
         @SuppressWarnings("unchecked")
         private ResizeElement[] children = new LockedResizeLayoutManager.ResizeElement[2];
@@ -381,6 +384,15 @@ public abstract class LockedResizeLayoutManager<T> extends DelegatingSplitLayout
         @Override
         protected ResizeElement[] getChildren() {
             return children;
+        }
+        
+        @Override
+        public void prepareResize() {
+            super.prepareResize();
+            if( node.getOrientation() == Orientation.HORIZONTAL )
+                dividerSize = getDividerWidth();
+            else
+                dividerSize = getDividerHeight();
         }
         
         /**
@@ -427,7 +439,8 @@ public abstract class LockedResizeLayoutManager<T> extends DelegatingSplitLayout
              
              
                  return new ResizeRequest(
-                         alpha.getDeltaWidth() / alpha.getFractionWidth() + beta.getDeltaWidth() / beta.getFractionWidth() + getDividerWidth(),
+                         alpha.getDeltaWidth() / alpha.getFractionWidth() + beta.getDeltaWidth() / beta.getFractionWidth() +
+                             getDividerWidth() - dividerSize,
                          Math.max( alpha.getDeltaHeight(), beta.getDeltaHeight() ),
                          1,
                          Math.min( alpha.getFractionHeight(), beta.getFractionHeight() ));
@@ -451,7 +464,8 @@ public abstract class LockedResizeLayoutManager<T> extends DelegatingSplitLayout
                  
                  return new ResizeRequest(
                          Math.max( alpha.getDeltaWidth(), beta.getDeltaWidth() ),
-                         alpha.getDeltaHeight() / alpha.getFractionHeight() +  beta.getDeltaHeight() / beta.getFractionHeight() + getDividerHeight(),
+                         alpha.getDeltaHeight() / alpha.getFractionHeight() +  beta.getDeltaHeight() / beta.getFractionHeight() +
+                             getDividerHeight() - dividerSize,
                          Math.min( alpha.getFractionWidth(), beta.getFractionWidth() ),
                          1 );
              }
@@ -501,7 +515,7 @@ public abstract class LockedResizeLayoutManager<T> extends DelegatingSplitLayout
                     double requestRight = beta.getDeltaWidth() / beta.getFractionWidth();
                     
                     requestLeft -= deltaWidth * divider;
-                    requestRight -= deltaWidth * (divider-1);
+                    requestRight -= deltaWidth * (1-divider);
                     
                     double deltaLeft = width <= 0.0 ? 0.0 : requestLeft / width;
                     double deltaRight = width <= 0.0 ? 0.0 : -requestRight / width;
@@ -512,7 +526,7 @@ public abstract class LockedResizeLayoutManager<T> extends DelegatingSplitLayout
                         delta = deltaRight;
                     else
                         delta = (deltaLeft * alpha.getFractionWidth() + deltaRight * beta.getFractionWidth()) /
-                            (2.0 * (alpha.getFractionWidth() + beta.getFractionWidth() ));
+                            (alpha.getFractionWidth() + beta.getFractionWidth() );
                 }
                 
                 divider += delta;
@@ -564,7 +578,7 @@ public abstract class LockedResizeLayoutManager<T> extends DelegatingSplitLayout
                         delta = deltaBottom;
                     else
                         delta = (deltaTop * alpha.getFractionHeight() + deltaBottom * beta.getFractionHeight()) /
-                            (2.0 * (alpha.getFractionHeight() + beta.getFractionHeight() ));
+                            (alpha.getFractionHeight() + beta.getFractionHeight() );
                 }
                 
                 divider += delta;

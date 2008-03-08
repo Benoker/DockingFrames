@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -52,7 +52,9 @@ public class BasicStationPaint implements StationPaint {
     /**
      * Gets the color that is used in this paint.
      * @return the color
+     * @deprecated see {@link #setColor(Color)}
      */
+    @Deprecated
     public Color getColor() {
         return color.color();
     }
@@ -63,6 +65,7 @@ public class BasicStationPaint implements StationPaint {
      * @deprecated better use the {@link ColorManager} with keys
      * <code>paint.line</code>, <code>paint.divider</code>, <code>paint.insertion</code>
      */
+    @Deprecated
     public void setColor( Color color ) {
         this.color.setValue( color );
     }

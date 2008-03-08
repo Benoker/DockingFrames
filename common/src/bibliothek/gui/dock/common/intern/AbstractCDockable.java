@@ -272,7 +272,7 @@ public abstract class AbstractCDockable implements CDockable {
      * requests.
      */
     public void setResizeRequest( Dimension size, boolean process ){
-        resizeRequest = size;
+        resizeRequest = size == null ? null : new Dimension( size );
         
         if( process && control != null ){
             control.getOwner().handleResizeRequests();
