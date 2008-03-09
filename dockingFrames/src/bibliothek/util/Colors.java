@@ -32,7 +32,6 @@ import java.awt.Color;
  * Some fields and methods that make life easier when dealing 
  * with Colors.
  * @author Benjamin Sigg
- * @version 1.0
  */
 public final class Colors {
 	private Colors(){

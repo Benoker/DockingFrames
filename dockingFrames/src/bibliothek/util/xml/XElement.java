@@ -472,6 +472,9 @@ public class XElement extends XContainer implements Iterable<XElement>{
             if( Character.isWhitespace( s.charAt( 0 ) ) || Character.isWhitespace( s.charAt( s.length()-1 ) )){
                 s = "[" + s + "]";
             }
+            else if( s.charAt( 0 ) == '[' && s.charAt( s.length()-1 ) == ']' ){
+                s = "[" + s + "]";
+            }
         }
         
         super.setString( s );

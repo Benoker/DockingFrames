@@ -106,3 +106,5 @@
 - Layout: Icons of BubbleTheme replaced by LGPL 2.1 compatible images
 - API: CDockables can now request a size they would like to have, and in most environments they will get this size
 ! API: DockFactories can now create any Object they want, and are no longer required to create DockLayouts. DockLayout has been converted into a class that wraps the Object that was created by a DockFactory
+
+[v1.0.4]

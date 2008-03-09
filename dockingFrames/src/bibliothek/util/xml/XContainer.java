@@ -32,11 +32,11 @@ package bibliothek.util.xml;
  *
  */
 public class XContainer {
-    /** the value of this attribute */
+    /** the value of this container */
     private String value = "";
 
     /**
-     * Sets the exact value that is stored in this attribute.
+     * Sets the exact value that is stored in this container.
      * @param value the value that will not be encoded by this method
      */
     public void setValue( String value ) {
@@ -44,7 +44,7 @@ public class XContainer {
     }
     
     /**
-     * Gets the exact value that is stored in this attribute.
+     * Gets the exact value that is stored in this container.
      * @return the value that is not encoded
      */
     public String getValue() {
@@ -52,7 +52,7 @@ public class XContainer {
     }
     
     /**
-     * Sets the value of this attribute.
+     * Sets the value of this container.
      * @param b the value
      */
     public void setByte( byte b ){
@@ -60,7 +60,7 @@ public class XContainer {
     }
     
     /**
-     * Sets the value of this attribute.
+     * Sets the value of this container.
      * @param s the value
      */
     public void setShort( short s ){
@@ -68,7 +68,7 @@ public class XContainer {
     }
     
     /**
-     * Sets the value of this attribute.
+     * Sets the value of this container.
      * @param i the value
      */
     public void setInt( int i ){
@@ -76,7 +76,7 @@ public class XContainer {
     }
     
     /**
-     * Sets the value of this attribute.
+     * Sets the value of this container.
      * @param l the value
      */
     public void setLong( long l ){
@@ -84,7 +84,7 @@ public class XContainer {
     }
     
     /**
-     * Sets the value of this attribute.
+     * Sets the value of this container.
      * @param b the value
      */
     public void setBoolean( boolean b ){
@@ -92,7 +92,7 @@ public class XContainer {
     }
     
     /**
-     * Sets the value of this attribute.
+     * Sets the value of this container.
      * @param c the value
      */
     public void setChar( char c ){
@@ -100,7 +100,7 @@ public class XContainer {
     }
     
     /**
-     * Sets the value of this attribute.
+     * Sets the value of this container.
      * @param s the value
      */
     public void setString( String s ){
@@ -110,7 +110,7 @@ public class XContainer {
     }
     
     /**
-     * Sets the value of this attribute.
+     * Sets the value of this container.
      * @param f the value
      */
     public void setFloat( float f ){
@@ -118,7 +118,7 @@ public class XContainer {
     }
     
     /**
-     * Sets the value of this attribute.
+     * Sets the value of this container.
      * @param d the value
      */
     public void setDouble( double d ){
@@ -126,7 +126,7 @@ public class XContainer {
     }
     
     /**
-     * Sets the value of this attribute.
+     * Sets the value of this container.
      * @param bs the value
      */
     public void setByteArray( byte[] bs ){
@@ -141,7 +141,7 @@ public class XContainer {
     
     
     /**
-     * Gets the value of this attribute as byte.
+     * Gets the value of this container as byte.
      * @return the value
      * @throws XException if value is not a byte
      */
@@ -155,7 +155,7 @@ public class XContainer {
     }
     
     /**
-     * Gets the value of this attribute as short.
+     * Gets the value of this container as short.
      * @return the value
      * @throws XException if value is not a short
      */
@@ -169,7 +169,7 @@ public class XContainer {
     }
     
     /**
-     * Gets the value of this attribute as integer.
+     * Gets the value of this container as integer.
      * @return the value
      * @throws XException if value is not an integer
      */
@@ -183,7 +183,7 @@ public class XContainer {
     }
     
     /**
-     * Gets the value of this attribute as long.
+     * Gets the value of this container as long.
      * @return the value
      * @throws XException if value is not a long
      */
@@ -197,7 +197,7 @@ public class XContainer {
     }
     
     /**
-     * Gets the value of this attribute as float.
+     * Gets the value of this container as float.
      * @return the value
      * @throws XException if value is not a float
      */
@@ -211,7 +211,7 @@ public class XContainer {
     }
     
     /**
-     * Gets the value of this attribute as double.
+     * Gets the value of this container as double.
      * @return the value
      * @throws XException if value is not a double
      */
@@ -225,7 +225,7 @@ public class XContainer {
     }
     
     /**
-     * Gets the value of this attribute as character.
+     * Gets the value of this container as character.
      * @return the value
      * @throws XException if value is not a character
      */
@@ -237,7 +237,7 @@ public class XContainer {
     }
     
     /**
-     * Gets the value of this attribute as string.
+     * Gets the value of this container as string.
      * @return the value
      * @throws XException if value is not a string
      */
@@ -246,7 +246,7 @@ public class XContainer {
     }
     
     /**
-     * Gets the value of this attribute as boolean.
+     * Gets the value of this container as boolean.
      * @return the value
      * @throws XException if value is not a boolean
      */
@@ -275,7 +275,7 @@ public class XContainer {
     }
     
     /**
-     * Gets the value of this attribute as byte-array.
+     * Gets the value of this container as byte-array.
      * @return the value
      * @throws XException if value is not a byte-array
      */

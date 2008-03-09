@@ -87,7 +87,7 @@ These changes break with the API from 1.0.2, clients must be change their interf
 \subsubsection{DockFactory}
 \begin{description}
  \short \src{DockFactories} can now create any \src{Object} they want, and are no longer required to create \src{DockLayout}s. \src{DockLayout} has been converted into a class that wraps the \src{Object} that was created by a DockFactory
- \why All \src{DockLayout}s need to do the same things, hence clients would need to write the same code over and over again. Clients have now more freedom in how to implements \src{DockFactory}
+ \why All \src{DockLayout}s need to do the same things, hence clients would need to write the same code over and over again. Clients have now more freedom in how to implement \src{DockFactory}
  \clients Should remove all occurrences of \src{implements DockLayout} and the methods \src{set/getFactoryId} that were defined in \src{DockLayout}
 \end{description}
 

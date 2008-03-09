@@ -35,8 +35,7 @@ import bibliothek.gui.dock.util.color.ColorProvider;
 import bibliothek.gui.dock.util.color.DockColor;
 
 /**
- * A <code>ColorScheme</code> is a collection of colors and providers. A 
- * <code>ColorScheme</code> cannot change its content.
+ * A <code>ColorScheme</code> is a collection of colors and providers.
  * 
  * @author Benjamin Sigg
  */

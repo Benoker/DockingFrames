@@ -935,7 +935,7 @@ public class CControl {
 	}
 	
 	/**
-	 * Gets the representation of the layer beneath the facile-layer.
+	 * Gets the representation of the layer beneath the common-layer.
 	 * @return the entry point to DockingFrames
 	 */
 	public DockFrontend intern(){
