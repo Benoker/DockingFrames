@@ -39,6 +39,7 @@ import bibliothek.gui.dock.facile.menu.LookAndFeelMenuPiece;
 import bibliothek.gui.dock.support.lookandfeel.ComponentCollector;
 import bibliothek.gui.dock.support.lookandfeel.LookAndFeelList;
 import bibliothek.gui.dock.support.util.ApplicationResource;
+import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -71,9 +72,11 @@ public class CLookAndFeelMenuPiece extends LookAndFeelMenuPiece implements Destr
         try {
             control.getResources().put( "CLookAndFeelMenuPiece", new ApplicationResource(){
                 public void write( DataOutputStream out ) throws IOException {
+                    Version.write( out, Version.VERSION_1_0_4 );
                     getList().write( out );
                 }
                 public void read( DataInputStream in ) throws IOException {
+                    Version.read( in );
                     getList().read( in );
                 }
                 public void writeXML( XElement element ) {

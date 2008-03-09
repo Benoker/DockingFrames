@@ -62,6 +62,7 @@ import bibliothek.gui.dock.support.util.ApplicationResourceManager;
 import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -310,10 +311,12 @@ public class CControl {
 		try{
     		resources.put( "ccontrol.frontend", new ApplicationResource(){
     		    public void write( DataOutputStream out ) throws IOException {
+    		        Version.write( out, Version.VERSION_1_0_4 );
                     writeWorkingAreas( out );
     		        frontend.write( out );
     		    }
     		    public void read( DataInputStream in ) throws IOException {
+    		        Version.read( in );
     		        readWorkingAreas( in );
     		        frontend.read( in );
     		    }

@@ -43,6 +43,7 @@ import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.MetalTheme;
 
+import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -396,6 +397,7 @@ public class LookAndFeelList{
      * @throws IOException if the method can't write into <code>out</code>
      */
     public void write( DataOutputStream out ) throws IOException {
+        Version.write( out, Version.VERSION_1_0_4 );
         out.writeInt( indexOfFull( getLookAndFeel() ) );
     }
     
@@ -407,6 +409,7 @@ public class LookAndFeelList{
      * @throws IOException if <code>in</code> can't be read
      */
     public void read( DataInputStream in ) throws IOException {
+        Version.read( in );
         int index = in.readInt();
         if( !hasRead || !allowReadOnlyOnce ){
             if( index >= 0 && index < size()+2 ){

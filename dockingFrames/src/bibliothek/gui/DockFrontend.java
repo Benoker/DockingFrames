@@ -69,6 +69,7 @@ import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.util.Version;
 import bibliothek.util.xml.XAttribute;
 import bibliothek.util.xml.XElement;
 
@@ -915,6 +916,8 @@ public class DockFrontend {
      * @throws IOException if there are any problems
      */
     public void write( DataOutputStream out ) throws IOException{
+        Version.write( out, Version.VERSION_1_0_4 );
+        
         if( currentSetting == null )
             out.writeBoolean( false );
         else{
@@ -952,6 +955,8 @@ public class DockFrontend {
      * @throws IOException if there are any problems
      */
     public void read( DataInputStream in ) throws IOException{
+        Version.read( in );
+        
         if( in.readBoolean() )
             currentSetting = in.readUTF();
         else

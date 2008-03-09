@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.util.*;
 
 import bibliothek.gui.Dockable;
+import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -148,6 +149,8 @@ public class ModeTransitionSetting<A, B> {
      * @throws IOException if an I/O-error occurs
      */
     public void write( DataOutputStream out ) throws IOException{
+        Version.write( out, Version.VERSION_1_0_4 );
+        
         out.writeInt( entries.size() );
         for( Entry entry : entries ){
             out.writeUTF( entry.id );
@@ -174,6 +177,8 @@ public class ModeTransitionSetting<A, B> {
      * @throws IOException if an I/O-error occurs
      */
     public void read( DataInputStream in ) throws IOException{
+        Version.read( in );
+        
         entries.clear();
         for( int i = 0, n = in.readInt(); i<n; i++ ){
             Entry entry = new Entry();

@@ -42,6 +42,7 @@ import bibliothek.gui.dock.security.SecureStackDockStationFactory;
 import bibliothek.gui.dock.station.flap.FlapDockStationFactory;
 import bibliothek.gui.dock.station.split.SplitDockStationFactory;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
+import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
 
@@ -213,6 +214,21 @@ public class DockSituation {
      */
     @SuppressWarnings("unchecked")
     public void writeComposition( DockLayoutComposition composition, DataOutputStream out ) throws IOException{
+        Version.write( out, Version.VERSION_1_0_4 );
+        writeCompositionStream( composition, out );
+    }
+    
+    /**
+     * Writes the contents of <code>composition</code> and all its children
+     * to <code>out</code>.
+     * @param composition the composition to write, should be created by
+     * <code>this</code> {@link DockSituation} or a <code>DockSituation</code> with
+     * similar properties.
+     * @param out the stream to write into
+     * @throws IOException if an I/O-error occurs
+     */
+    @SuppressWarnings("unchecked")
+    private void writeCompositionStream( DockLayoutComposition composition, DataOutputStream out ) throws IOException{
         DockLayout<?> layout = composition.getLayout();
         DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( layout.getFactoryID() );
         if( factory == null )
@@ -237,7 +253,7 @@ public class DockSituation {
         List<DockLayoutComposition> children = composition.getChildren();
         out.writeInt( children.size() );
         for( DockLayoutComposition child : children ){
-            writeComposition( child, out );
+            writeCompositionStream( child, out );
         }
     }
     
@@ -247,8 +263,19 @@ public class DockSituation {
      * @return the new composition or <code>null</code> if the factory was missing
      * @throws IOException if an I/O-error occurs
      */
-    @SuppressWarnings("unchecked")
     public DockLayoutComposition readComposition( DataInputStream in ) throws IOException{
+        Version.read( in );
+        return readCompositionStream( in );
+    }
+    
+    /**
+     * Reads one {@link DockLayoutComposition} and all its children.
+     * @param in the stream to read from
+     * @return the new composition or <code>null</code> if the factory was missing
+     * @throws IOException if an I/O-error occurs
+     */
+    @SuppressWarnings("unchecked")
+    private DockLayoutComposition readCompositionStream( DataInputStream in ) throws IOException{
         // factory
         String factoryId = in.readUTF();
         DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
@@ -326,6 +353,8 @@ public class DockSituation {
      * @throws IOException if the stream throws an exception
      */
     public void write( Map<String, DockStation> stations, DataOutputStream out ) throws IOException{
+        Version.write( out, Version.VERSION_1_0_4 );
+        
         out.writeInt( stations.size() );
         for( Map.Entry<String, DockStation> entry : stations.entrySet() ){
             DockLayoutComposition composition = convert( entry.getValue() );
@@ -358,6 +387,8 @@ public class DockSituation {
      * @throws IOException if the stream can't be read
      */
     public Map<String, DockStation> read( DataInputStream in ) throws IOException{
+        Version.read( in );
+        
         int count = in.readInt();
         Map<String, DockStation> result = new HashMap<String, DockStation>();
         for( int i = 0; i < count; i++ ){

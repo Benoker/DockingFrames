@@ -34,6 +34,7 @@ import bibliothek.gui.dock.frontend.Setting;
 import bibliothek.gui.dock.layout.DockSituation;
 import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.support.action.ModeTransitionSetting;
+import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -65,6 +66,8 @@ public class CSetting extends Setting{
             PropertyTransformer transformer, boolean entry, DataOutputStream out )
             throws IOException {
         
+        Version.write( out, Version.VERSION_1_0_4 );
+        
         super.write( situation, transformer, entry, out );
         modes.write( out );
     }
@@ -80,6 +83,8 @@ public class CSetting extends Setting{
     @Override
     public void read( DockSituation situation, PropertyTransformer transformer,
             boolean entry, DataInputStream in ) throws IOException {
+        
+        Version.read( in );
         
         super.read( situation, transformer, entry, in );
         modes.read( in );

@@ -39,6 +39,7 @@ import bibliothek.gui.dock.station.split.SplitDockProperty;
 import bibliothek.gui.dock.station.split.SplitDockPropertyFactory;
 import bibliothek.gui.dock.station.stack.StackDockProperty;
 import bibliothek.gui.dock.station.stack.StackDockPropertyFactory;
+import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -92,6 +93,8 @@ public class PropertyTransformer {
      * @throws IOException if the stream throws an exception
      */
     public void write( DockableProperty property, DataOutputStream out ) throws IOException{
+        Version.write( out, Version.VERSION_1_0_4 );
+        
         int count = 0;
         DockableProperty successor = property;
         while( successor != null ){
@@ -122,6 +125,8 @@ public class PropertyTransformer {
      * @throws IOException if the property can't be read
      */
     public DockableProperty read( DataInputStream in ) throws IOException{
+        Version.read( in );
+        
         int count = in.readInt();
         
         DockableProperty property = null;

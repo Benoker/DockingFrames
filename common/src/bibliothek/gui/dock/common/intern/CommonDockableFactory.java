@@ -33,6 +33,7 @@ import java.util.Map;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.common.*;
+import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -128,6 +129,8 @@ public class CommonDockableFactory implements DockFactory<CommonDockable, Common
     }
     
     public CommonDockableLayout read( DataInputStream in ) throws IOException {
+        Version.read( in );
+        
         CommonDockableLayout layout = new CommonDockableLayout();
         layout.setLayout( delegate.create() );
         layout.getLayout().readStream( in );
@@ -149,6 +152,8 @@ public class CommonDockableFactory implements DockFactory<CommonDockable, Common
     }
 
     public void write( CommonDockableLayout layout, DataOutputStream out ) throws IOException {
+        Version.write( out, Version.VERSION_1_0_4 );
+        
         layout.getLayout().writeStream( out );
         out.writeUTF( layout.getId() );
         if( layout.getArea() == null ){

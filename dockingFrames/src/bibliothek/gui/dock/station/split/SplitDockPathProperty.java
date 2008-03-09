@@ -36,6 +36,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.layout.AbstractDockableProperty;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -153,6 +154,7 @@ public class SplitDockPathProperty extends AbstractDockableProperty implements I
     }
 
     public void store( DataOutputStream out ) throws IOException {
+        Version.write( out, Version.VERSION_1_0_4 );
         out.writeInt( nodes.size() );
         for( Node node : nodes ){
             switch( node.getLocation() ){
@@ -182,6 +184,7 @@ public class SplitDockPathProperty extends AbstractDockableProperty implements I
     }
     
     public void load( DataInputStream in ) throws IOException {
+        Version.read( in );
         nodes.clear();
         int count = in.readInt();
         while( count > 0 ){

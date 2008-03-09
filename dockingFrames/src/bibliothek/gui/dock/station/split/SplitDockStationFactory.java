@@ -36,6 +36,7 @@ import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.SplitDockStation.Orientation;
 import bibliothek.gui.dock.station.split.SplitDockStationLayout.Entry;
+import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
 
@@ -201,6 +202,8 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     public void write( SplitDockStationLayout layout, DataOutputStream out )
             throws IOException {
 
+        Version.write( out, Version.VERSION_1_0_4 );
+        
         SplitDockStationLayout.Entry root = layout.getRoot();
         if( root == null ){
             out.writeBoolean( false );
@@ -235,6 +238,8 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     }
     
     public SplitDockStationLayout read( DataInputStream in ) throws IOException {
+        Version.read( in );
+        
         SplitDockStationLayout.Entry root = null;
         if( in.readBoolean() ){
             root = readEntry( in );

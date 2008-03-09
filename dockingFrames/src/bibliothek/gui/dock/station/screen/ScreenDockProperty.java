@@ -32,6 +32,7 @@ import java.io.IOException;
 
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.layout.AbstractDockableProperty;
+import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -68,6 +69,7 @@ public class ScreenDockProperty extends AbstractDockableProperty {
     }
 
     public void store( DataOutputStream out ) throws IOException {
+        Version.write( out, Version.VERSION_1_0_4 );
         out.writeInt( x );
         out.writeInt( y );
         out.writeInt( width );
@@ -82,6 +84,7 @@ public class ScreenDockProperty extends AbstractDockableProperty {
     }
 
     public void load( DataInputStream in ) throws IOException {
+        Version.read( in );
         x = in.readInt();
         y = in.readInt();
         width = in.readInt();

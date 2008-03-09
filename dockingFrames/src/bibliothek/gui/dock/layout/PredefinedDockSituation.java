@@ -35,6 +35,7 @@ import java.util.Map;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.DockFactory;
+import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
 
@@ -212,6 +213,8 @@ public class PredefinedDockSituation extends DockSituation {
 		
 		@SuppressWarnings("unchecked")
         public void write( PreloadedLayout layout, DataOutputStream out ) throws IOException {
+		    Version.write( out, Version.VERSION_1_0_4 );
+		    
 		    out.writeUTF( layout.getPreload() );
 		    
 		    DockLayout delegate = layout.getDelegate();
@@ -226,6 +229,8 @@ public class PredefinedDockSituation extends DockSituation {
 		
 		@SuppressWarnings("unchecked")
         public PreloadedLayout<?> read( DataInputStream in ) throws IOException {
+		    Version.read( in );
+		    
 		    String preloaded = in.readUTF();
 		    String factoryId = in.readUTF();
 		    DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );

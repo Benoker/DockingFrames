@@ -36,6 +36,7 @@ import java.util.Map;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -131,6 +132,8 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
     public void write( ScreenDockStationLayout layout, DataOutputStream out )
             throws IOException {
      
+        Version.write( out, Version.VERSION_1_0_4 );
+        
         out.writeInt( layout.size() );
         for( int i = 0, n = layout.size(); i<n; i++ ){
             out.writeInt( layout.id( i ) );
@@ -143,6 +146,8 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
     
     public ScreenDockStationLayout read( DataInputStream in )
             throws IOException {
+        
+        Version.read( in );
         
         ScreenDockStationLayout layout = new ScreenDockStationLayout();
         int count = in.readInt();

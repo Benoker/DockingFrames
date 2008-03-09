@@ -60,12 +60,6 @@ import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 
-/*
- * Notiz:
- * Der DividerListener setzt den Cursor beim Root. Die Demo zeigt, dass das
- * die einfachste Variante ist, den Cursor auch wirklich anzeigen zu lassen.
- * Leider ist das nicht eben gutes Design... und Fehleranf�llig.
- */
 
 /**
  * This station shows all its children at once. The children are separated

@@ -43,6 +43,7 @@ import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.gui.dock.themes.ThemeFactory;
 import bibliothek.gui.dock.themes.ThemePropertyFactory;
+import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -119,15 +120,15 @@ public class CThemeMenuPiece extends ThemeMenuPiece{
         try {
             control.getResources().put( "CThemeMenuPiece", new ApplicationResource(){
                 public void write( DataOutputStream out ) throws IOException {
-                    out.writeInt( 1 );
+                    Version.write( out, Version.VERSION_1_0_4 );
                     out.writeInt( indexOf( getSelected() ) );
                 }
                 public void read( DataInputStream in ) throws IOException {
-                    if( in.readInt() == 1 ){
-                        int index = in.readInt();
-                        if( index >= 0 && index < getFactoryCount() )
-                            setSelected( getFactory( index ) );
-                    }
+                    Version.read( in );
+                    
+                    int index = in.readInt();
+                    if( index >= 0 && index < getFactoryCount() )
+                        setSelected( getFactory( index ) );
                 }
                 public void writeXML( XElement element ) {
                     element.setInt( indexOf( getSelected() ) );

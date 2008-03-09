@@ -34,6 +34,7 @@ import java.util.Map;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.DockFactory;
+import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -77,6 +78,7 @@ public class DefaultDockableFactory implements DockFactory<DefaultDockable, Obje
     }
 
     public Object read( DataInputStream in ) throws IOException {
+        Version.read( in );
         return new Object();
     }
 
@@ -87,6 +89,8 @@ public class DefaultDockableFactory implements DockFactory<DefaultDockable, Obje
 
     public void write( Object layout, DataOutputStream out )
             throws IOException {
+        Version.write( out, Version.VERSION_1_0_4 );
+        
         // nothing to do
     }
 

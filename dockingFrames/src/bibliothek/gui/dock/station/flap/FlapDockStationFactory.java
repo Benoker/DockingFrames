@@ -37,6 +37,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
+import bibliothek.util.Version;
 import bibliothek.util.xml.XAttribute;
 import bibliothek.util.xml.XElement;
 
@@ -129,6 +130,8 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
     public void write( FlapDockStationLayout layout, DataOutputStream out )
             throws IOException {
      
+        Version.write( out, Version.VERSION_1_0_4 );
+        
         out.writeBoolean( layout.isAutoDirection() );
         out.writeInt( layout.getDirection().ordinal() );
         
@@ -142,6 +145,8 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
     }
 
     public FlapDockStationLayout read( DataInputStream in ) throws IOException {
+        Version.read( in );
+        
         boolean auto = in.readBoolean();
         Direction direction = Direction.values()[ in.readInt() ];
         int count = in.readInt();

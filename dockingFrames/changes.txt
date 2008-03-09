@@ -108,3 +108,5 @@
 ! API: DockFactories can now create any Object they want, and are no longer required to create DockLayouts. DockLayout has been converted into a class that wraps the Object that was created by a DockFactory
 
 [v1.0.4]
+- Bugfix: BubbleDisplayer did not calculate its "getDockableInsets" correctly. A flaw in the design of BasicDockableDisplayer caused the failure.
+! API: almost everyone that uses a Input/OutputStream now writes the version number into the stream. This will help to implement backwards compatibility. This should be the last break in the file format.

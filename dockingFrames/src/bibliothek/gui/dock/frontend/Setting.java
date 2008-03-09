@@ -32,6 +32,7 @@ import java.util.*;
 
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.dock.layout.*;
+import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
 
@@ -134,6 +135,8 @@ public class Setting{
      * @throws IOException if an I/O-error occurs
      */
     public void write( DockSituation situation, PropertyTransformer transformer, boolean entry, DataOutputStream out ) throws IOException{
+        Version.write( out, Version.VERSION_1_0_4 );
+        
         String[] roots = getRootKeys();
         out.writeInt( roots.length );
         for( String root : roots ){
@@ -191,6 +194,8 @@ public class Setting{
      * @throws IOException if an I/O-error occurs
      */
     public void read( DockSituation situation, PropertyTransformer transformer, boolean entry,DataInputStream in ) throws IOException{
+        Version.read( in );
+        
         roots.clear();
         dockables.clear();
         

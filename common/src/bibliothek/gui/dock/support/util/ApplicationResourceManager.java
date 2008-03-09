@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.prefs.Preferences;
 
+import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -100,7 +101,7 @@ public class ApplicationResourceManager {
      */
     public void writeStream( DataOutputStream out ) throws IOException{
         // version
-        out.writeInt( 1 );
+        Version.write( out, Version.VERSION_1_0_4 );
         
         // number of elements
         out.writeInt( resources.size() );
@@ -126,9 +127,7 @@ public class ApplicationResourceManager {
      * @throws IOException if the operation can't be completed
      */
     public void readStream( DataInputStream in ) throws IOException{
-        int version = in.readInt();
-        if( version != 1 )
-            throw new IOException( "Unknown version: " + version );
+        Version.read( in );
         
         int size = in.readInt();
         for( int i = 0; i < size; i++ ){

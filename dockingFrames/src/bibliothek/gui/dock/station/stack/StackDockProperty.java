@@ -33,6 +33,7 @@ import java.io.IOException;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.layout.AbstractDockableProperty;
+import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -90,6 +91,7 @@ public class StackDockProperty extends AbstractDockableProperty {
     }
 
     public void store( DataOutputStream out ) throws IOException {
+        Version.write( out, Version.VERSION_1_0_4 );
         out.writeInt( index );
     }
     
@@ -98,6 +100,7 @@ public class StackDockProperty extends AbstractDockableProperty {
     }
 
     public void load( DataInputStream in ) throws IOException {
+        Version.read( in );
         index = in.readInt();
     }
     

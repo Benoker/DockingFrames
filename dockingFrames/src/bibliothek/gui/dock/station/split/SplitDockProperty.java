@@ -32,6 +32,7 @@ import java.io.IOException;
 
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.layout.AbstractDockableProperty;
+import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -83,6 +84,7 @@ public class SplitDockProperty extends AbstractDockableProperty {
     }
 
     public void store( DataOutputStream out ) throws IOException {
+        Version.write( out, Version.VERSION_1_0_4 );
         out.writeDouble( x );
         out.writeDouble( y );
         out.writeDouble( width );
@@ -97,6 +99,7 @@ public class SplitDockProperty extends AbstractDockableProperty {
     }
 
     public void load( DataInputStream in ) throws IOException {
+        Version.read( in );
         x = in.readDouble();
         y = in.readDouble();
         width = in.readDouble();

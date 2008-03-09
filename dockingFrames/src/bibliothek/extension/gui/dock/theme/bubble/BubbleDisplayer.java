@@ -211,6 +211,20 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
             dockable.setBorder( new OpenBorder() );
     }
     
+    @Override
+    public Insets getDockableInsets() {
+        Insets insets = super.getDockableInsets();
+        Border border = dockable.getBorder();
+        if( border != null ){
+            Insets borderInsets = border.getBorderInsets( dockable );
+            insets.left += borderInsets.left;
+            insets.right += borderInsets.right;
+            insets.top += borderInsets.top;
+            insets.bottom += borderInsets.bottom;
+        }
+        return insets;
+    }
+    
     /**
      * A listener to the controller, reacting when the focused {@link Dockable}
      * has changed.

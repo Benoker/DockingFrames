@@ -29,6 +29,7 @@ import java.awt.Color;
 
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.util.color.ColorManager;
+import bibliothek.util.Colors;
 
 /**
  * A {@link ColorTransmitter} connecting the {@link BasicTheme} with the
@@ -55,16 +56,25 @@ public class BasicTabTransmitter extends TabColorTransmitter {
     
     @Override
     protected Color convert( Color source, String key ) {
+        if( isForeground( key ))
+            return Colors.diffMirror( source, 1.0 );
+        
         return source;
     }
 
     @Override
     protected Color convertFocused( Color source, String key ) {
+        if( isForeground( key ))
+            return Colors.diffMirror( source, 1.0 );
+        
         return source;
     }
 
     @Override
     protected Color convertSelected( Color source, String key ) {
+        if( isForeground( key ))
+            return Colors.diffMirror( source, 1.0 );
+        
         return source;
     }
 

@@ -36,6 +36,7 @@ import java.util.Map;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -116,6 +117,7 @@ public class StackDockStationFactory implements DockFactory<StackDockStation, St
     public void write( StackDockStationLayout layout, DataOutputStream out )
             throws IOException {
         
+        Version.write( out, Version.VERSION_1_0_4 );
         out.writeInt( layout.getSelected() );
         out.writeInt( layout.getChildren().length );
         for( int c : layout.getChildren() )
@@ -123,6 +125,8 @@ public class StackDockStationFactory implements DockFactory<StackDockStation, St
     }
     
     public StackDockStationLayout read( DataInputStream in ) throws IOException {
+        Version.read( in );
+        
         int selected = in.readInt();
         int count = in.readInt();
         int[] ids = new int[ count ];

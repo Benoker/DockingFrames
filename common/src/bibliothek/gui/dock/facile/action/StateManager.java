@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.facile.action;
 
+import java.awt.Component;
 import java.awt.Point;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -55,6 +56,7 @@ import bibliothek.gui.dock.support.action.ModeTransitionSetting;
 import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
+import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -770,10 +772,19 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         
         if( !drop( location, dockable )){
             if( dockable.getDockParent() != defaultExternal ){
+                Component component = dockable.getComponent();
+                component.invalidate();
+                
+                Component parent = component;
+                while( parent.getParent() != null )
+                    parent = parent.getParent();
+                parent.validate();
+                
                 Point corner = new Point();
                 SwingUtilities.convertPointToScreen( corner, dockable.getComponent() );
+                
                 ScreenDockProperty property = new ScreenDockProperty( 
-                        corner.x, corner.y, dockable.getComponent().getWidth(), dockable.getComponent().getHeight() );
+                        corner.x, corner.y, component.getWidth(), component.getHeight() );
                 
                 boolean externDone = defaultExternal.drop( dockable, property, false );
                 
@@ -974,11 +985,13 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         }
         
         public void writeProperty( Location element, DataOutputStream out ) throws IOException {
+            Version.write( out, Version.VERSION_1_0_4 );
             out.writeUTF( element.root );
             transformer.write( element.location, out );
         }
         
         public Location readProperty( DataInputStream in ) throws IOException {
+            Version.read( in );
             String root = in.readUTF();
             DockableProperty location = transformer.read( in );
             return new Location( root, location );
@@ -1047,6 +1060,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         
         @Override
         public void write( DataOutputStream out ) throws IOException {
+            Version.write( out, Version.VERSION_1_0_4 );
             super.write( out );
             if( lastMaximizedMode == null ){
                 out.writeBoolean( false );
@@ -1076,6 +1090,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         
         @Override
         public void read( DataInputStream in ) throws IOException {
+            Version.read( in );
             super.read( in );
             if( in.readBoolean() )
                 lastMaximizedMode = in.readUTF();
