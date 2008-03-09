@@ -100,6 +100,17 @@ public final class Version implements Comparable<Version>{
     }
     
     /**
+     * Checks whether this version is greater than the current version and
+     * throws an exception if so. This method is intended to be called from code
+     * that is loading some file, but other usages are possible as well.
+     * @throws IOException thrown if the current version is smaller than <code>this</code>.
+     */
+    public void checkCurrent() throws IOException{
+        if( this.compareTo( CURRENT ) > 0 )
+            throw new IOException( "Trying to read something from the future: " + this + " is greater than the current version " + CURRENT );
+    }
+    
+    /**
      * Gets the additional information
      * @return the additional information, can be an empty string
      */
@@ -138,7 +149,7 @@ public final class Version implements Comparable<Version>{
             return -1;
         if( minor > o.minor )
             return 1;
-        if( minor < o.mikro )
+        if( minor < o.minor )
             return -1;
         if( mikro > o.mikro )
             return 1;

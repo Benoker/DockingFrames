@@ -397,7 +397,9 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
                 else
                     size -= insets.left + insets.right;
                 
-                station.setWindowSize( dockable, size );
+                if( size > 0 ){
+                    station.setWindowSize( dockable, size );
+                }
             }
         }
     }

@@ -129,7 +129,8 @@ public class CommonDockableFactory implements DockFactory<CommonDockable, Common
     }
     
     public CommonDockableLayout read( DataInputStream in ) throws IOException {
-        Version.read( in );
+        Version version = Version.read( in );
+        version.checkCurrent();
         
         CommonDockableLayout layout = new CommonDockableLayout();
         layout.setLayout( delegate.create() );

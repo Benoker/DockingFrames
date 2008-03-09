@@ -229,7 +229,8 @@ public class PredefinedDockSituation extends DockSituation {
 		
 		@SuppressWarnings("unchecked")
         public PreloadedLayout<?> read( DataInputStream in ) throws IOException {
-		    Version.read( in );
+		    Version version = Version.read( in );
+	        version.checkCurrent();
 		    
 		    String preloaded = in.readUTF();
 		    String factoryId = in.readUTF();

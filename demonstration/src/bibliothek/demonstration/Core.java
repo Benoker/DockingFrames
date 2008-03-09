@@ -4,8 +4,6 @@ import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.DataInputStream;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,7 +16,6 @@ import javax.swing.WindowConstants;
 
 import bibliothek.gui.dock.support.lookandfeel.ComponentCollector;
 import bibliothek.gui.dock.support.lookandfeel.LookAndFeelList;
-import bibliothek.util.xml.XElement;
 
 /**
  * The center of the demonstration-application. Is responsible to create
@@ -42,19 +39,9 @@ public class Core {
 	 * Creates a new core, creates the graphical user interface.
 	 */
 	public Core(){
-		lookAndFeel = new LookAndFeelList(){
-			@Override
-			public void read( DataInputStream in ) throws IOException{
-				// just skip
-				in.readInt();
-			}
-			@Override
-			public void readXML( XElement element ) {
-			    // skip
-			}
-		};
-		
-		LookAndFeelList.setDefaultList( lookAndFeel );
+		lookAndFeel = LookAndFeelList.getDefaultList();
+		lookAndFeel.setAllowReadOnlyOnce( true );
+		lookAndFeel.setReadOnce( true );
 		lookAndFeel.setLookAndFeel( lookAndFeel.getSystem() );
 		
 		main = new MainPanel( this, listDemonstrations() );

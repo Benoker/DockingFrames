@@ -238,7 +238,8 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     }
     
     public SplitDockStationLayout read( DataInputStream in ) throws IOException {
-        Version.read( in );
+        Version version = Version.read( in );
+        version.checkCurrent();
         
         SplitDockStationLayout.Entry root = null;
         if( in.readBoolean() ){

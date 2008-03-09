@@ -991,7 +991,8 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         }
         
         public Location readProperty( DataInputStream in ) throws IOException {
-            Version.read( in );
+            Version version = Version.read( in );
+            version.checkCurrent();
             String root = in.readUTF();
             DockableProperty location = transformer.read( in );
             return new Location( root, location );
@@ -1090,7 +1091,8 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         
         @Override
         public void read( DataInputStream in ) throws IOException {
-            Version.read( in );
+            Version version = Version.read( in );
+            version.checkCurrent();
             super.read( in );
             if( in.readBoolean() )
                 lastMaximizedMode = in.readUTF();

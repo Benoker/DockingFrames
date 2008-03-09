@@ -264,7 +264,8 @@ public class DockSituation {
      * @throws IOException if an I/O-error occurs
      */
     public DockLayoutComposition readComposition( DataInputStream in ) throws IOException{
-        Version.read( in );
+        Version version = Version.read( in );
+        version.checkCurrent();
         return readCompositionStream( in );
     }
     
@@ -321,7 +322,7 @@ public class DockSituation {
         List<DockLayoutComposition> children = new ArrayList<DockLayoutComposition>();
         count = in.readInt();
         for( int i = 0; i < count; i++ ){
-            children.add( readComposition( in ) );
+            children.add( readCompositionStream( in ) );
         }
         
         // result
@@ -387,7 +388,8 @@ public class DockSituation {
      * @throws IOException if the stream can't be read
      */
     public Map<String, DockStation> read( DataInputStream in ) throws IOException{
-        Version.read( in );
+        Version version = Version.read( in );
+        version.checkCurrent();
         
         int count = in.readInt();
         Map<String, DockStation> result = new HashMap<String, DockStation>();

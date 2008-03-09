@@ -84,7 +84,8 @@ public class CSetting extends Setting{
     public void read( DockSituation situation, PropertyTransformer transformer,
             boolean entry, DataInputStream in ) throws IOException {
         
-        Version.read( in );
+        Version version = Version.read( in );
+        version.checkCurrent();
         
         super.read( situation, transformer, entry, in );
         modes.read( in );

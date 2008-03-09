@@ -125,7 +125,8 @@ public class StackDockStationFactory implements DockFactory<StackDockStation, St
     }
     
     public StackDockStationLayout read( DataInputStream in ) throws IOException {
-        Version.read( in );
+        Version version = Version.read( in );
+        version.checkCurrent();
         
         int selected = in.readInt();
         int count = in.readInt();

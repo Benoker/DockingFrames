@@ -184,7 +184,8 @@ public class SplitDockPathProperty extends AbstractDockableProperty implements I
     }
     
     public void load( DataInputStream in ) throws IOException {
-        Version.read( in );
+        Version version = Version.read( in );
+        version.checkCurrent();
         nodes.clear();
         int count = in.readInt();
         while( count > 0 ){

@@ -955,7 +955,8 @@ public class DockFrontend {
      * @throws IOException if there are any problems
      */
     public void read( DataInputStream in ) throws IOException{
-        Version.read( in );
+        Version version = Version.read( in );
+        version.checkCurrent();
         
         if( in.readBoolean() )
             currentSetting = in.readUTF();

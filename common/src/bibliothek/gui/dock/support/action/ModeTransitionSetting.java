@@ -177,7 +177,8 @@ public class ModeTransitionSetting<A, B> {
      * @throws IOException if an I/O-error occurs
      */
     public void read( DataInputStream in ) throws IOException{
-        Version.read( in );
+        Version version = Version.read( in );
+        version.checkCurrent();
         
         entries.clear();
         for( int i = 0, n = in.readInt(); i<n; i++ ){

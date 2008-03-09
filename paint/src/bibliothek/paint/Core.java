@@ -103,6 +103,7 @@ public class Core {
         
         // read and write settings
         if( secure ){
+            // InputStream in = Core.class.getResourceAsStream( "/data/bibliothek/paint/config.xml" );
             InputStream in = Core.class.getResourceAsStream( "/data/bibliothek/paint/config.xml" );
             if( in != null ){
                 try{
@@ -124,7 +125,7 @@ public class Core {
                 readXML( XIO.readUTF( in ) );
                 in.close();
                 
-                /*DataInputStream in = new DataInputStream( new FileInputStream( "config.xml" ));
+                /*DataInputStream in = new DataInputStream( new FileInputStream( "paint.config" ));
                 read( in );
                 in.close();*/
             }
@@ -148,7 +149,7 @@ public class Core {
                             OutputStream out = new BufferedOutputStream( new FileOutputStream( "config.xml" ));
                             XIO.writeUTF( element, out );
                             
-                            /*DataOutputStream out = new DataOutputStream( new FileOutputStream( "config.xml" ));
+                            /*DataOutputStream out = new DataOutputStream( new FileOutputStream( "paint.config" ));
                             write( out );
                             out.close();*/
                         }

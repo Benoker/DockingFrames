@@ -316,7 +316,8 @@ public class CControl {
     		        frontend.write( out );
     		    }
     		    public void read( DataInputStream in ) throws IOException {
-    		        Version.read( in );
+    		        Version version = Version.read( in );
+    		        version.checkCurrent();
     		        readWorkingAreas( in );
     		        frontend.read( in );
     		    }

@@ -28,7 +28,6 @@ import bibliothek.notes.view.actions.icon.IconGrid;
 import bibliothek.notes.view.panels.NoteViewFactory;
 import bibliothek.notes.view.themes.NoteBasicTheme;
 import bibliothek.util.xml.XElement;
-import bibliothek.util.xml.XIO;
 
 /**
  * The core is the center of this application. All objects can be
@@ -120,26 +119,28 @@ public class Core implements ComponentCollector{
 		
 		try{
 			if( !secure ){
-				/*File file = new File( "notes.properties" );
+				File file = new File( "notes.properties" );
 				DataInputStream in = new DataInputStream( new BufferedInputStream( new FileInputStream( file )));
 				read( in );
-				in.close();*/
-			    
+				in.close(); // */ 
+			    /*
 			    File file = new File( "properties.xml" );
 			    InputStreamReader in = new InputStreamReader( new BufferedInputStream( new FileInputStream( file )), "UTF-8" );
 			    XElement element = XIO.read( in );
 			    in.close();
 			    readXML( element );
+			    
+			    // */
 			}
 			else{
-				/*DataInputStream in = new DataInputStream( ResourceSet.openStream( "/data/bibliothek/notes/backup.properties" ));
+				DataInputStream in = new DataInputStream( ResourceSet.openStream( "/data/bibliothek/notes/notes.properties" ));
 				read( in );
-				in.close();*/
+				in.close();
 			    
-                InputStreamReader in = new InputStreamReader( ResourceSet.openStream( "/data/bibliothek/notes/properties.xml" ), "UTF-8" );
+                /*InputStreamReader in = new InputStreamReader( ResourceSet.openStream( "/data/bibliothek/notes/properties.xml" ), "UTF-8" );
                 XElement element = XIO.read( in );
                 in.close();
-                readXML( element );
+                readXML( element );*/
 			}
 		}
 		catch( IOException ex ){
@@ -171,12 +172,12 @@ public class Core implements ComponentCollector{
 			
 			if( !secure ){
 				try{
-					/*File file = new File( "notes.properties" );
+					File file = new File( "notes.properties" );
 					DataOutputStream out = new DataOutputStream( new BufferedOutputStream( new FileOutputStream( file )));
 					write( out );
 					out.flush();
-					out.close();*/
-				    
+					out.close();
+				    /*
 				    XElement element = new XElement( "properties" );
                     writeXML( element );
 				    
@@ -184,7 +185,7 @@ public class Core implements ComponentCollector{
                     OutputStream out = new BufferedOutputStream( new FileOutputStream( file ));
                     OutputStreamWriter writer = new OutputStreamWriter( out, "UTF-8" );
                     XIO.write( element, writer );
-                    writer.close();
+                    writer.close();*/
 				}
 				catch( IOException ex ){
 					ex.printStackTrace();

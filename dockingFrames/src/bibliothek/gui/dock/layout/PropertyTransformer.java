@@ -125,7 +125,8 @@ public class PropertyTransformer {
      * @throws IOException if the property can't be read
      */
     public DockableProperty read( DataInputStream in ) throws IOException{
-        Version.read( in );
+        Version version = Version.read( in );
+        version.checkCurrent();
         
         int count = in.readInt();
         

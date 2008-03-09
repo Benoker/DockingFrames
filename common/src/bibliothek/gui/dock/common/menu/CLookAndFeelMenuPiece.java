@@ -76,7 +76,8 @@ public class CLookAndFeelMenuPiece extends LookAndFeelMenuPiece implements Destr
                     getList().write( out );
                 }
                 public void read( DataInputStream in ) throws IOException {
-                    Version.read( in );
+                    Version version = Version.read( in );
+                    version.checkCurrent();
                     getList().read( in );
                 }
                 public void writeXML( XElement element ) {

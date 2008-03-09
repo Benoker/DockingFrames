@@ -84,7 +84,8 @@ public class ScreenDockProperty extends AbstractDockableProperty {
     }
 
     public void load( DataInputStream in ) throws IOException {
-        Version.read( in );
+        Version version = Version.read( in );
+        version.checkCurrent();
         x = in.readInt();
         y = in.readInt();
         width = in.readInt();

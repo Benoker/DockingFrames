@@ -145,7 +145,8 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
     }
 
     public FlapDockStationLayout read( DataInputStream in ) throws IOException {
-        Version.read( in );
+        Version version = Version.read( in );
+        version.checkCurrent();
         
         boolean auto = in.readBoolean();
         Direction direction = Direction.values()[ in.readInt() ];

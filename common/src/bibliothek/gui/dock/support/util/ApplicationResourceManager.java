@@ -127,7 +127,8 @@ public class ApplicationResourceManager {
      * @throws IOException if the operation can't be completed
      */
     public void readStream( DataInputStream in ) throws IOException{
-        Version.read( in );
+        Version version = Version.read( in );
+        version.checkCurrent();
         
         int size = in.readInt();
         for( int i = 0; i < size; i++ ){

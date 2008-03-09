@@ -147,7 +147,8 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
     public ScreenDockStationLayout read( DataInputStream in )
             throws IOException {
         
-        Version.read( in );
+        Version version = Version.read( in );
+        version.checkCurrent();
         
         ScreenDockStationLayout layout = new ScreenDockStationLayout();
         int count = in.readInt();

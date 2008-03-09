@@ -151,6 +151,16 @@ public class LookAndFeelList{
     }
     
     /**
+     * Sets whether this list has already read something once, or whether
+     * it is fresh. Can be used to reset a list to its initial state.
+     * @param read <code>true</code> if at least one time one of the
+     * <code>read</code> methods was called, <code>false</code> otherwise.
+     */
+    public void setReadOnce( boolean read ){
+        hasRead = read;
+    }
+    
+    /**
      * Adds a listener to this list, the listener will be notified
      * whenever the {@link LookAndFeel} is changed.
      * @param listener the new listener
@@ -409,7 +419,9 @@ public class LookAndFeelList{
      * @throws IOException if <code>in</code> can't be read
      */
     public void read( DataInputStream in ) throws IOException {
-        Version.read( in );
+        Version version = Version.read( in );
+        version.checkCurrent();
+        
         int index = in.readInt();
         if( !hasRead || !allowReadOnlyOnce ){
             if( index >= 0 && index < size()+2 ){

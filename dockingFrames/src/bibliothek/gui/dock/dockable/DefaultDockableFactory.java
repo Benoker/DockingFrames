@@ -78,7 +78,8 @@ public class DefaultDockableFactory implements DockFactory<DefaultDockable, Obje
     }
 
     public Object read( DataInputStream in ) throws IOException {
-        Version.read( in );
+        Version version = Version.read( in );
+        version.checkCurrent();
         return new Object();
     }
 

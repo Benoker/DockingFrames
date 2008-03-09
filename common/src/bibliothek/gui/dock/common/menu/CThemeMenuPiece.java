@@ -124,7 +124,8 @@ public class CThemeMenuPiece extends ThemeMenuPiece{
                     out.writeInt( indexOf( getSelected() ) );
                 }
                 public void read( DataInputStream in ) throws IOException {
-                    Version.read( in );
+                    Version version = Version.read( in );
+                    version.checkCurrent();
                     
                     int index = in.readInt();
                     if( index >= 0 && index < getFactoryCount() )

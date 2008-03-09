@@ -99,7 +99,8 @@ public class SplitDockProperty extends AbstractDockableProperty {
     }
 
     public void load( DataInputStream in ) throws IOException {
-        Version.read( in );
+        Version version = Version.read( in );
+        version.checkCurrent();
         x = in.readDouble();
         y = in.readDouble();
         width = in.readDouble();

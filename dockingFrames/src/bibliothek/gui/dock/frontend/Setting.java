@@ -194,7 +194,8 @@ public class Setting{
      * @throws IOException if an I/O-error occurs
      */
     public void read( DockSituation situation, PropertyTransformer transformer, boolean entry,DataInputStream in ) throws IOException{
-        Version.read( in );
+        Version version = Version.read( in );
+        version.checkCurrent();
         
         roots.clear();
         dockables.clear();
