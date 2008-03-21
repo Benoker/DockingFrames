@@ -27,6 +27,7 @@ package bibliothek.gui.dock.common.intern;
 
 import java.awt.Dimension;
 
+import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.ColorMap;
@@ -237,6 +238,14 @@ public interface CDockable {
      * otherwise 
      */
     public boolean isMinimizedHold();
+    
+    /**
+     * Tells whether this dockable shows its title or not. Note that some
+     * {@link DockTheme}s might override this setting.
+     * @return <code>true</code> if the title is shown, <code>false</code>
+     * otherwise.
+     */
+    public boolean isTitleShown();
     
 	/**
 	 * Gets the intern representation of this dockable.

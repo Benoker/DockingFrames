@@ -24,9 +24,12 @@ package bibliothek.gui.dock.common.intern;
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-import bibliothek.gui.dock.DefaultDockable;
+import bibliothek.gui.dock.*;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.LocationHint;
+import bibliothek.gui.dock.common.event.CDockableAdapter;
+import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
  * A default implementation of {@link CommonDockable}, based on a {@link DefaultDockable}.
@@ -49,6 +52,12 @@ public class DefaultCommonDockable extends DefaultDockable implements CommonDock
         actions = new DefaultDockActionSource(
                 new LocationHint( LocationHint.DOCKABLE, LocationHint.LEFT ));
         setActionOffers( actions );
+        dockable.addCDockablePropertyListener( new CDockableAdapter(){
+            @Override
+            public void titleShownChanged( CDockable dockable ) {
+                fireTitleExchanged();
+            }
+        });
     }
     
     public DefaultDockActionSource getActions() {
@@ -57,5 +66,22 @@ public class DefaultCommonDockable extends DefaultDockable implements CommonDock
     
     public CDockable getDockable(){
         return dockable;
+    }
+    
+    @Override
+    public DockTitle getDockTitle( DockTitleVersion version ) {
+        if( dockable.isTitleShown() )
+            return super.getDockTitle( version );
+        
+        boolean hide = 
+            version.getID().equals( SplitDockStation.TITLE_ID ) ||
+            version.getID().equals( StackDockStation.TITLE_ID ) ||
+            version.getID().equals( ScreenDockStation.TITLE_ID ) ||
+            version.getID().equals( FlapDockStation.WINDOW_TITLE_ID );
+        
+        if( hide )
+            return null;
+        else
+            return super.getDockTitle( version );
     }
 }

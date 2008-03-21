@@ -47,7 +47,9 @@ import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
  * A list of methods which can be used for different purposes. Methods
@@ -356,4 +358,34 @@ public class DockUtilities {
         }
     }
     
+    /**
+     * Removes the current title of <code>displayer</code> and sets a new
+     * title. The {@link Dockable} of <code>displayer</code> is used to create
+     * the new title.
+     * @param displayer some displayer
+     * @param version the kind of title that should be created, can be <code>null</code>
+     * to indicate that no title should be created.
+     */
+    public static void exchangeTitle( DockableDisplayer displayer, DockTitleVersion version ){
+        Dockable dockable = displayer.getDockable();
+        if( dockable == null )
+            throw new IllegalArgumentException( "Missing dockable for displayer" );
+        
+        DockTitle title = displayer.getTitle();
+        if( title != null ){
+            dockable.unbind( title );
+        }
+        
+        if( version != null ){
+            title = dockable.getDockTitle( version );
+            if( title != null ){
+                dockable.bind( title );
+            }
+        }
+        else{
+            title = null;
+        }
+        
+        displayer.setTitle( title );
+    }
 }

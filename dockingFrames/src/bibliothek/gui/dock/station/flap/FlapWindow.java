@@ -39,10 +39,13 @@ import javax.swing.border.BevelBorder;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
+import bibliothek.gui.dock.event.DockableAdapter;
+import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.DockUtilities;
 
 /**
  * This window pops up if the user presses one of the buttons of a 
@@ -64,6 +67,14 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
     
     /** the panel onto which {@link #displayer} is put */
     private JComponent contentPane;
+    
+    /** ensures that the title is correct */
+    private DockableListener dockableListener = new DockableAdapter(){
+        @Override
+        public void titleExchanged( Dockable dockable, DockTitle title ) {
+            DockUtilities.exchangeTitle( displayer, station.getTitleVersion() );
+        }
+    };
     
     /**
      * Constructs a new window.
@@ -253,6 +264,9 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
             
             if( oldTitle != null && old != null )
                 old.unbind( oldTitle );
+            
+            if( old != null )
+                old.removeDockableListener( dockableListener );
         }
         
         if( dockable != null ){
@@ -266,6 +280,8 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
             
             displayer = station.getDisplayers().fetch( dockable, title );
             content.add( displayer.getComponent() );
+            
+            dockable.addDockableListener( dockableListener );
         }
     }
     

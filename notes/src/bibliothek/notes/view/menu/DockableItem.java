@@ -59,4 +59,7 @@ public class DockableItem extends UpdateableCheckBoxMenuItem implements Dockable
 		// ignore
 	}
 
+	public void titleExchanged( Dockable dockable, DockTitle title ) {
+	    // ignore
+	}
 }

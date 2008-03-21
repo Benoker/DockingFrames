@@ -68,4 +68,15 @@ public interface DockableListener {
      * @param newIcon the new icon, may be <code>null</code>
      */
     public void titleIconChanged( Dockable dockable, Icon oldIcon, Icon newIcon );
+    
+    /**
+     * Invoked when the properties of a {@link Dockable} have a so dramatically
+     * changed, that the {@link DockTitle} <code>title</code> is no longer 
+     * considered a good title and should be replaced. The one element which shows 
+     * <code>title</code> should unbind it, and request a new title.
+     * @param dockable the source of the event
+     * @param title the title that should be discarded, can be <code>null</code>
+     * to alert elements which do show the <code>null</code>-title
+     */
+    public void titleExchanged( Dockable dockable, DockTitle title );
 }

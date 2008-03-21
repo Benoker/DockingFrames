@@ -288,4 +288,27 @@ public abstract class AbstractDockable implements Dockable {
         for( DockableListener listener : dockableListeners.toArray( new DockableListener[ dockableListeners.size()] ))
             listener.titleUnbound( this, title );
     }
+    
+    /**
+     * Informs all {@link DockableListener}s that <code>title</code> is no longer
+     * considered to be a good title and should be exchanged.
+     * @param title a title, can be <code>null</code>
+     */
+    protected void fireTitleExchanged( DockTitle title ){
+        for( DockableListener listener : dockableListeners.toArray( new DockableListener[ dockableListeners.size()] ))
+            listener.titleExchanged( this, title );
+    }
+    
+    /**
+     * Informs all {@link DockableListener}s that all bound titles and the
+     * <code>null</code> title are no longer considered good titles and
+     * should be replaced
+     */
+    protected void fireTitleExchanged(){
+        DockTitle[] bound = listBoundTitles();
+        for( DockTitle title : bound )
+            fireTitleExchanged( title );
+        
+        fireTitleExchanged( null );
+    }
 }

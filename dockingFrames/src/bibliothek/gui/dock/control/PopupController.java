@@ -160,6 +160,10 @@ public class PopupController implements DockRegisterListener{
 		public void titleTextChanged( Dockable dockable, String oldTitle, String newTitle ){
 			// ignore
 		}
+		
+		public void titleExchanged( Dockable dockable, DockTitle title ) {
+		    // ignore
+		}
     }
     
     /**

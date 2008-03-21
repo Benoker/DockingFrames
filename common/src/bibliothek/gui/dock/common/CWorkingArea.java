@@ -33,6 +33,7 @@ import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.action.ListeningDockAction;
+import bibliothek.gui.dock.common.event.CDockableAdapter;
 import bibliothek.gui.dock.common.intern.AbstractCDockable;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
@@ -56,8 +57,6 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable{
     private String uniqueId;
     /** the station representing this area */
     private SplitDockStation station;
-    /** whether the {@link DockTitle} should not be created */
-    private boolean suppressTitle = true;
     /** a handler used to update the bounds of children of this station */
     private SplitResizeRequestHandler resizeRequestHandler;
     
@@ -84,6 +83,7 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable{
             init( station );
         }
         
+        setTitleShown( false );
         station.setExpandOnDoubleclick( false );
         resizeRequestHandler = new SplitResizeRequestHandler( station );
     }
@@ -110,17 +110,21 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable{
      * Sets whether this working-area should suppress its title or not. 
      * @param suppressTitle <code>true</code> if this area should try
      * not to have a title.
+     * @deprecated use {@link #setTitleShown(boolean)} instead
      */
+    @Deprecated
     public void setSuppressTitle( boolean suppressTitle ) {
-        this.suppressTitle = suppressTitle;
+        setTitleShown( !suppressTitle );
     }
     
     /**
      * Tells whether this working-area suppresses its title.
      * @return <code>true</code> if this area normally has no title
+     * @deprecated use {@link #isTitleShown()} instead
      */
+    @Deprecated
     public boolean isSuppressTitle() {
-        return suppressTitle;
+        return !isTitleShown();
     }
     
     /**
@@ -238,7 +242,7 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable{
      * @return <code>true</code> if no {@link DockTitle} should be created
      */
     protected boolean suppressTitle( DockTitleVersion version ){
-        if( suppressTitle ){
+        if( !isTitleShown() ){
             if( version.getID().equals( SplitDockStation.TITLE_ID ))
                 return true;
             if( version.getID().equals( FlapDockStation.WINDOW_TITLE_ID ))
@@ -256,6 +260,15 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable{
      * @author Benjamin Sigg
      */
     private class Station extends SplitDockStation implements CommonDockable{
+        public Station(){
+            addCDockablePropertyListener( new CDockableAdapter(){
+                @Override
+                public void titleShownChanged( CDockable dockable ) {
+                    fireTitleExchanged();
+                }
+            });
+        }
+        
         public CDockable getDockable() {
             return CWorkingArea.this;
         }
@@ -284,6 +297,15 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable{
      *
      */
     private class SecureStation extends SecureSplitDockStation implements CommonDockable{
+        public SecureStation(){
+            addCDockablePropertyListener( new CDockableAdapter(){
+                @Override
+                public void titleShownChanged( CDockable dockable ) {
+                    fireTitleExchanged();
+                }
+            });
+        }
+        
         public CDockable getDockable() {
             return CWorkingArea.this;
         }

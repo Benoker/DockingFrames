@@ -211,6 +211,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         public DockableDisplayer getFullScreenDockable() {
             return fullScreenDockable;
         }
+        
+        public DockTitleVersion getTitleVersion() {
+            return title;
+        }
 
         public SplitDockStation getOwner() {
             return SplitDockStation.this;
@@ -1422,6 +1426,29 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     protected void fireFullScreenChanged( Dockable oldDockable, Dockable newDockable ){
         for( SplitDockListener listener : splitListeners.toArray( new SplitDockListener[ splitListeners.size() ] ))
             listener.fullScreenDockableChanged( this, oldDockable, newDockable );
+    }
+    
+    /**
+     * Informs all {@link DockableListener}s that <code>title</code> is no longer
+     * considered to be a good title and should be exchanged.
+     * @param title a title, can be <code>null</code>
+     */
+    protected void fireTitleExchanged( DockTitle title ){
+        for( DockableListener listener : dockableListeners.toArray( new DockableListener[ dockableListeners.size()] ))
+            listener.titleExchanged( this, title );
+    }
+    
+    /**
+     * Informs all {@link DockableListener}s that all bound titles and the
+     * <code>null</code> title are no longer considered good titles and
+     * should be replaced
+     */
+    protected void fireTitleExchanged(){
+        DockTitle[] bound = listBoundTitles();
+        for( DockTitle title : bound )
+            fireTitleExchanged( title );
+        
+        fireTitleExchanged( null );
     }
     
     public Rectangle getStationBounds() {

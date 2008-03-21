@@ -49,6 +49,8 @@ public class Frame extends DefaultMultipleCDockable {
     private JSpinner height = new JSpinner( new SpinnerNumberModel( 200, 50, 500, 1 ));
     /** whether the size is locked */
     private JCheckBox locked = new JCheckBox( "Size locked during resize" );
+    /** whether titles are shown or not */
+    private JCheckBox showTitle;
     
     /** a factory that can create new frames */
     public static final EmptyMultipleCDockableFactory<Frame> FACTORY = new EmptyMultipleCDockableFactory<Frame>(){
@@ -64,6 +66,11 @@ public class Frame extends DefaultMultipleCDockable {
     public Frame(){
         super( FACTORY );
         setTitleText( "Frame" );
+        
+        JPanel title = new JPanel( new GridLayout() );
+        title.setBorder( BorderFactory.createTitledBorder( "Title" ) );
+        showTitle = new JCheckBox( "Show title", isTitleShown() );
+        title.add( showTitle );
         
         JPanel sizes = new JPanel( new GridBagLayout() );
         sizes.setBorder( BorderFactory.createTitledBorder( "Size" ) );
@@ -107,9 +114,11 @@ public class Frame extends DefaultMultipleCDockable {
         colors.add( new ColorButton( map, ColorMap.COLOR_KEY_TITLE_FOREGROUND_FOCUSED, Color.BLACK ));
         
         JPanel all = new JPanel( new GridBagLayout() );
-        all.add( sizes, new GridBagConstraints( 0, 0, 1, 1, 1.0, 1.0, 
+        all.add( title, new GridBagConstraints( 0, 0, 1, 1, 1.0, 1.0, 
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets( 0, 0, 0, 0 ), 0, 0 ));
-        all.add( colors, new GridBagConstraints( 0, 1, 1, 1, 1.0, 1.0, 
+        all.add( sizes, new GridBagConstraints( 0, 1, 1, 1, 1.0, 1.0, 
+                GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets( 0, 0, 0, 0 ), 0, 0 ));
+        all.add( colors, new GridBagConstraints( 0, 2, 1, 1, 1.0, 1.0, 
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets( 0, 0, 0, 0 ), 0, 0 ));
         
         getContentPane().add( new JScrollPane( all ));
@@ -117,6 +126,11 @@ public class Frame extends DefaultMultipleCDockable {
             @Override
             public void componentResized( ComponentEvent e ) {
                 setTitleText( getContentPane().getWidth() + " x " + getContentPane().getHeight() );
+            }
+        });
+        showTitle.addActionListener( new ActionListener(){
+            public void actionPerformed( ActionEvent e ) {
+                setTitleShown( showTitle.isSelected() );
             }
         });
         locked.addActionListener( new ActionListener(){

@@ -706,6 +706,10 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
             // do nothing
         }
         
+        public void titleExchanged( Dockable dockable, DockTitle title ) {
+            // do nothing
+        }
+        
         public void controllerChanged( DockHierarchyEvent event ) {
             DockController controller = event.getDockable().getController();
             for( AbstractDockColor color : colors )

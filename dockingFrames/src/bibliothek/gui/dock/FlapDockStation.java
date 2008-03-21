@@ -142,6 +142,8 @@ public class FlapDockStation extends AbstractDockableStation {
     
     /** A list of all {@link Dockable Dockables} registered on this station */
     private List<Dockable> dockables = new ArrayList<Dockable>();
+    /** a listener for all {@link Dockable}s of this station */
+    private Listener dockableListener = new Listener();
     
     /** A map that tells for every {@link Dockable} which {@link DockTitle} is used for it */
     private Map<Dockable, DockTitle> buttonTitles = new HashMap<Dockable, DockTitle>();
@@ -1147,6 +1149,7 @@ public class FlapDockStation extends AbstractDockableStation {
         if( title != null )
             unbind( dockable, title );
         
+        dockable.removeDockableListener( dockableListener );
         buttonPane.resetTitles();
         listeners.fireDockableRemoved( dockable );
     }
@@ -1178,6 +1181,7 @@ public class FlapDockStation extends AbstractDockableStation {
                 bind( dockable, title );
             buttonPane.resetTitles();
         }
+        dockable.addDockableListener( dockableListener );
         listeners.fireDockableAdded( dockable );
     }
     
@@ -1308,6 +1312,37 @@ public class FlapDockStation extends AbstractDockableStation {
                     
                     visibility.fire();
                 }
+            }
+        }
+    }
+    
+    /**
+     * Listener added to the {@link Dockable}s of the enclosing
+     * {@link FlapDockStation}, reacts on changes of the {@link DockTitle}.
+     * @author Benjamin Sigg
+     */
+    private class Listener extends DockableAdapter{
+        @Override
+        public void titleExchanged( Dockable dockable, DockTitle title ) {
+            if( buttonTitles.get( dockable ) == title ){
+                boolean changed = true;
+                
+                if( title != null ){
+                    dockable.unbind( title );
+                    title = null;
+                    changed = true;
+                }
+                
+                if( buttonVersion != null ){
+                    title = dockable.getDockTitle( buttonVersion );
+                    if( title != null ){
+                        dockable.bind( title );
+                        changed = true;
+                    }
+                }
+                
+                if( changed )
+                    buttonPane.resetTitles();
             }
         }
     }

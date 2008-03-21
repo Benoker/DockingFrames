@@ -338,5 +338,9 @@ public abstract class BaseTabComponent extends JComponent implements TabComponen
         public void titleUnbound( Dockable dockable, DockTitle title ) {
             // ignore
         }
+        
+        public void titleExchanged( Dockable dockable, DockTitle title ) {
+            // ignore
+        }
     }
 }

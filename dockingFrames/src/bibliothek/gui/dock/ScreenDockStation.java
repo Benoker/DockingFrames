@@ -39,6 +39,7 @@ import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
+import bibliothek.gui.dock.event.DockableAdapter;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.*;
 import bibliothek.gui.dock.station.screen.BoundaryRestriction;
@@ -79,6 +80,9 @@ public class ScreenDockStation extends AbstractDockStation {
     /** A list of all dialogs that are used by this station */
     private List<ScreenDockDialog> dockables = new ArrayList<ScreenDockDialog>();
     
+    /** a listener to the {@link Dockable}s, reacts when the title changes */
+    private Listener listener = new Listener();
+    
     /** The version of titles that are used */
     private DockTitleVersion version;
     
@@ -102,9 +106,6 @@ public class ScreenDockStation extends AbstractDockStation {
     
     /** The dialog which has currently the focus */
     private ScreenDockDialog frontDialog;
-    
-    /** A listener for dialogs */
-  //  private DialogListener dialogListener = new DialogListener();
     
     /** A manager for the visibility of the children */
     private DockableVisibilityManager visibility;
@@ -539,6 +540,7 @@ public class ScreenDockStation extends AbstractDockStation {
             dialog.setVisible( true );
         
         dockable.setDockParent( this );
+        dockable.addDockableListener( listener );
         listeners.fireDockableAdded( dockable );
     }
     
@@ -733,6 +735,7 @@ public class ScreenDockStation extends AbstractDockStation {
         Dockable dockable = dialog.getDisplayer().getDockable();
         
         listeners.fireDockableRemoving( dockable );
+        dockable.removeDockableListener( listener );
         
         dockables.remove( index );
         dialog.dispose();
@@ -870,18 +873,15 @@ public class ScreenDockStation extends AbstractDockStation {
     }
     
     /**
-     * A listener to the {@link ScreenDockDialog dialogs} of the enclosing
-     * {@link ScreenDockStation}. This listener ensures that a dialog with
-     * focus has also the {@link DockController#getFocusedDockable() focused} {@link Dockable}
-     *//*
-    private class DialogListener extends WindowAdapter{
+     * A listener to the {@link Dockable}s of the enclosing {@link ScreenDockStation}.
+     * @author Benjamin Sigg
+     */
+    private class Listener extends DockableAdapter{
         @Override
-        public void windowGainedFocus( WindowEvent e ) {
-            DockController controller = getController();
-            if( controller != null && !controller.isOnPut() && !controller.isOnFocusing() ){
-                Dockable dockable = ((ScreenDockDialog)e.getWindow()).getDisplayer().getDockable();
-                controller.setAtLeastFocusedDockable( dockable );
-            }
+        public void titleExchanged( Dockable dockable, DockTitle title ) {
+            ScreenDockDialog dialog = getDialog( dockable );
+            DockableDisplayer displayer = dialog.getDisplayer();
+            DockUtilities.exchangeTitle( displayer, ScreenDockStation.this.version );
         }
-    }*/
+    }
 }

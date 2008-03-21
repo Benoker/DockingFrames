@@ -238,12 +238,11 @@ public class DockFrontend {
     /**
      * Gets the list of {@link Dockable Dockables} which are added to this frontend.
      * @return the Dockables
+     * @deprecated please use {@link #listDockables()}
      */
+    @Deprecated
     public Collection<Dockable> getDockables(){
-        List<Dockable> list = new ArrayList<Dockable>( dockables.size() );
-        for( DockInfo info : dockables.values() )
-            list.add( info.getDockable() );
-        return list;
+        return listDockables();
     }
     
     /**

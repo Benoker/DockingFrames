@@ -196,6 +196,12 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
         ensureDockable();
     }
     
+    @Override
+    public void setDockable( Dockable dockable ) {
+        super.setDockable( dockable );
+        ensureBorder();
+    }
+    
     /**
      * Ensures that there is a panel for the {@link Dockable}
      */
@@ -205,10 +211,19 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
             add( dockable );
         }
         
-        if( getTitle() == null )
-            dockable.setBorder( null );
-        else
-            dockable.setBorder( new OpenBorder() );
+        ensureBorder();
+    }
+    
+    private void ensureBorder(){
+        if( dockable != null ){
+            Dockable dock = getDockable();
+            boolean station = dock != null && dock.asDockStation() != null;
+            
+            if( getTitle() == null && station )
+                dockable.setBorder( null );
+            else
+                dockable.setBorder( new OpenBorder() );
+        }
     }
     
     @Override

@@ -56,4 +56,8 @@ public abstract class DockableAdapter implements DockableListener {
     public void titleIconChanged( Dockable dockable, Icon oldIcon, Icon newIcon ) {
         // do nothing
     }
+    
+    public void titleExchanged( Dockable dockable, DockTitle title ) {
+        // do nothing
+    }
 }

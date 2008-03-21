@@ -2592,13 +2592,23 @@
 								<layout factory="predefined">
 									<replacement id="rootccontrol center"/>
 									<delegate id="delegate_SplitDockStationFactory">
-										<node orientation="VERTICAL" divider="0.36459982219138276">
+										<node orientation="HORIZONTAL" divider="0.20629195804195807">
 											<leaf id="0"/>
-											<leaf id="1"/>
+											<node orientation="VERTICAL" divider="0.3599733720753735">
+												<leaf id="1"/>
+												<leaf id="2"/>
+											</node>
 										</node>
 									</delegate>
 								</layout>
 								<children ignore="false">
+									<child>
+										<layout factory="predefined">
+											<replacement id="dockablesingle PictureListDockable"/>
+											<delegate id="delegate_DefaultDockableFactory"/>
+										</layout>
+										<children ignore="false"/>
+									</child>
 									<child>
 										<layout factory="predefined">
 											<replacement id="dockablesingle ColorDockable"/>
@@ -2625,7 +2635,7 @@
 												<children ignore="false">
 													<child>
 														<layout factory="delegate_page">
-															<id>multi multi multi multi 0 page</id>
+															<id>multi multi multi multi multi multi 0 page</id>
 															<area>picture area</area>
 															<multiple>Apple</multiple>
 														</layout>
@@ -2633,7 +2643,7 @@
 													</child>
 													<child>
 														<layout factory="delegate_page">
-															<id>multi multi multi multi 1 page</id>
+															<id>multi multi multi multi multi multi 1 page</id>
 															<area>picture area</area>
 															<multiple>Face</multiple>
 														</layout>
@@ -2687,20 +2697,10 @@
 									<replacement id="rootccontrol west"/>
 									<delegate id="delegate_flap dock">
 										<window auto="false" direction="EAST"/>
-										<children>
-											<child id="0" hold="false" size="400"/>
-										</children>
+										<children/>
 									</delegate>
 								</layout>
-								<children ignore="false">
-									<child>
-										<layout factory="predefined">
-											<replacement id="dockablesingle PictureListDockable"/>
-											<delegate id="delegate_DefaultDockableFactory"/>
-										</layout>
-										<children ignore="false"/>
-									</child>
-								</children>
+								<children ignore="false"/>
 							</root>
 						</roots>
 						<children/>
@@ -2725,14 +2725,9 @@
 									</property>
 								</properties>
 							</entry>
-							<entry id="multi multi multi multi 0 page" current="normal">
-								<history>
-									<mode>normal</mode>
-								</history>
-								<properties/>
-							</entry>
 							<entry id="single ColorDockable" current="normal">
 								<history>
+									<mode>maxi</mode>
 									<mode>normal</mode>
 								</history>
 								<properties>
@@ -2740,19 +2735,14 @@
 										<root>ccontrol center</root>
 										<location>
 											<property factory="SplitDockPathProperty">
-												<node location="BOTTOM" size="0.25"/>
+												<node location="RIGHT" size="0.7937080419580419"/>
+												<node location="TOP" size="0.3599733720753735"/>
 											</property>
 										</location>
 									</property>
 								</properties>
 							</entry>
-							<entry id="multi multi multi multi 1 page" current="normal">
-								<history>
-									<mode>normal</mode>
-								</history>
-								<properties/>
-							</entry>
-							<entry id="single PictureListDockable" current="mini">
+							<entry id="single PictureListDockable" current="normal">
 								<history>
 									<mode>normal</mode>
 								</history>
@@ -2767,11 +2757,23 @@
 									</property>
 								</properties>
 							</entry>
+							<entry id="multi multi multi multi multi multi 0 page" current="normal">
+								<history>
+									<mode>normal</mode>
+								</history>
+								<properties/>
+							</entry>
+							<entry id="multi multi multi multi multi multi 1 page" current="normal">
+								<history>
+									<mode>normal</mode>
+								</history>
+								<properties/>
+							</entry>
 						</states>
 					</modes>
 				</current>
 			</frontend>
 		</resource>
-		<resource name="CThemeMenuPiece">3</resource>
+		<resource name="CThemeMenuPiece">4</resource>
 	</resources>
 </config>

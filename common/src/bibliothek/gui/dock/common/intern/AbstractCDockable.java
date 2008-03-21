@@ -39,6 +39,7 @@ import bibliothek.gui.dock.common.CWorkingArea;
 import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.event.CDockablePropertyListener;
 import bibliothek.gui.dock.common.event.CDockableStateListener;
+import bibliothek.gui.dock.title.DockTitle;
 
 
 /**
@@ -83,6 +84,9 @@ public abstract class AbstractCDockable implements CDockable {
     
     /** the colors associated with this dockable */
     private ColorMap colors = new ColorMap( this );
+    
+    /** whether the {@link DockTitle} should not be created */
+    private boolean titleShown = true;
     
     /** Source that contains the action that closes this dockable */
     private DefaultDockActionSource close = new DefaultDockActionSource(
@@ -320,6 +324,25 @@ public abstract class AbstractCDockable implements CDockable {
     public Dimension getMinimizedSize() {
         return new Dimension( minimizeSize.width, minimizeSize.height );
     }
+    
+    /**
+     * Tells this {@link CDockable} whether to show or to hide its titles.
+     * @param shown <code>true</code> if titles should be shown, <code>false</code>
+     * if they should be hidden.
+     */
+    public void setTitleShown( boolean shown ){
+        if( this.titleShown != shown ){
+            this.titleShown = shown;
+            
+            for( CDockablePropertyListener listener : propertyListeners() )
+                listener.titleShownChanged( this );
+        }
+    }
+    
+    public boolean isTitleShown() {
+        return titleShown;
+    }
+    
     
     /**
      * Gets the intern representation of this dockable.

@@ -283,6 +283,10 @@ public class CloseableDockableMenuPiece extends BaseMenuPiece{
         public void titleUnbound( Dockable dockable, DockTitle title ) {
             // ignore
         }
+        
+        public void titleExchanged( Dockable dockable, DockTitle title ) {
+            // ignore
+        }
 
         public void actionPerformed( ActionEvent e ) {
             if( !onChange ){

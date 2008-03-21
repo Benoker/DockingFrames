@@ -35,9 +35,13 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.event.DockStationListener;
+import bibliothek.gui.dock.event.DockableAdapter;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.split.SplitDockTree.Key;
+import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.DockUtilities;
 
 /**
  * Represents a leaf in the tree that is the structure of a {@link SplitDockStation}.
@@ -50,6 +54,8 @@ public class Leaf extends SplitNode{
     private DockableDisplayer displayer;
     /** The Dockable on the displayer*/
     private Dockable dockable;
+    /** a listener for {@link #dockable} */
+    private Listener listener = new Listener();
     
     /**
      * Creates a new leaf.
@@ -94,7 +100,13 @@ public class Leaf extends SplitNode{
             displayer = getAccess().addDisplayer( dockable, fire );
         }
         
+        if( this.dockable != null )
+            this.dockable.removeDockableListener( listener );
+        
         this.dockable = dockable;
+        
+        if( dockable != null )
+            dockable.addDockableListener( listener );
     }
     
     /**
@@ -315,5 +327,21 @@ public class Leaf extends SplitNode{
         if( dockable != null )
             out.append( dockable.getTitleText() );
         out.append( " ]" );
+    }
+    
+    /**
+     * Listens to the property changes of the {@link Dockable} of the 
+     * enclosing {@link Leaf}
+     * @author Benjamin Sigg
+     */
+    private class Listener extends DockableAdapter{
+        @Override
+        public void titleExchanged( Dockable dockable, DockTitle title ) {
+            SplitDockAccess access = getAccess();
+            if( access != null ){
+                DockTitleVersion version = access.getTitleVersion();
+                DockUtilities.exchangeTitle( displayer, version );
+            }
+        }
     }
 }

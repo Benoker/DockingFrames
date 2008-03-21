@@ -898,6 +898,16 @@ public class StackDockStation extends AbstractDockableStation {
                 stackComponent.setIconAt( index, newIcon );
             }            
         }
+        
+        public void titleExchanged( Dockable dockable, DockTitle title ) {
+            int index = indexOf( dockable );
+            if( index >= 0 ){
+                DockableDisplayer displayer = dockables.get( index );
+                if( displayer.getTitle() == title ){
+                    DockUtilities.exchangeTitle( displayer, StackDockStation.this.title );
+                }
+            }
+        }
     }
     
     /**

@@ -30,6 +30,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
  * Provides access to some internal methods and attributes of a {@link SplitDockStation}. An access
@@ -43,6 +44,12 @@ public interface SplitDockAccess {
 	 */
     public SplitDockStation getOwner();
         
+    /**
+     * Gets the kind of title {@link #getOwner() owner} uses.
+     * @return the kind of title, can be <code>null</code>
+     */
+    public DockTitleVersion getTitleVersion();
+    
     /**
      * Gets the {@link DockableDisplayer} which is currently in fullscreen-mode.
      * @return the displayer, may be <code>null</code>
