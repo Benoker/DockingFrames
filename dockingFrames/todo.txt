@@ -10,3 +10,4 @@
 - [Done] Allow StackDockStations to have different colors on the tab.
 - [Done] Possibility to fix size of Dockables on SplitDockStations
 - Guide: mention ColorSchemes and the new layout capabilities of SplitDockStation
+- SplitDockStation: droping children with SplitDockProperty does not work when the stations size is too small (or the station is not child of a frame?)

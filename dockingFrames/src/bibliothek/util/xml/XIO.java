@@ -96,7 +96,7 @@ public class XIO {
     }
     
     /**
-     * Reads a xml file provided from <code>in</code> using <code>UTF-8</code>
+     * Reads a xml file provided from <code>in</code> using <code>encoding</code>
      * as encoding.
      * @param in the stream to read from
      * @param encoding the encoding used to decode characters
