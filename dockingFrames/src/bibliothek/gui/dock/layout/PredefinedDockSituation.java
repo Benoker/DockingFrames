@@ -56,7 +56,28 @@ public class PredefinedDockSituation extends DockSituation {
 	private static final String KNOWN = "predefined";
 	private static final String UNKNOWN = "delegate_";
 	
+	/** backup factories for elements that should be in the cache, but are missing */
+	private Map<String, DockFactory<? extends DockElement, ?>> backups =
+	    new HashMap<String, DockFactory<? extends DockElement,?>>();
+	
 	private final PreloadFactory factory = new PreloadFactory();
+	
+	/**
+	 * Adds a backup factory to this situation. A backup factory is used when
+	 * a element should be in the cache, but is missing.
+	 * @param factory a backup factory
+	 */
+	public void addBackup( DockFactory<? extends DockElement, ?> factory ){
+	    backups.put( UNKNOWN + factory.getID(), factory );
+	}
+	
+	/**
+	 * Removes the backup factory with the name <code>id</code>.
+	 * @param id the id of the factory which should be removed
+	 */
+	public void removeBackup( String id ){
+	    backups.remove( UNKNOWN + id );
+	}
 	
 	/**
 	 * Registers an element at this situation. When a stream is read, this
@@ -108,6 +129,15 @@ public class PredefinedDockSituation extends DockSituation {
 			return factory;
 		else
 			return super.getFactory( id );
+	}
+	
+	/**
+	 * Searches a backup factory with the name <code>id</code>.
+	 * @param id the name of the factory
+	 * @return the factory or <code>null</code>
+	 */
+	protected DockFactory<? extends DockElement, ?> getBackup( String id ){
+	    return backups.get( id );
 	}
 	
 	/**
@@ -194,8 +224,15 @@ public class PredefinedDockSituation extends DockSituation {
 		@SuppressWarnings("unchecked")
         public DockElement layout( PreloadedLayout<?> layout, Map<Integer, Dockable> children ) {
 		    DockElement element = stringToElement.get( layout.getPreload() );
-		    if( element == null )
+		    if( element == null ){
+		        String factoryId = layout.getDelegate().getFactoryID();
+		        DockFactory<DockElement, Object> factory = 
+		            (DockFactory<DockElement, Object>)getBackup( factoryId );
+		        if( factory != null ){
+		            return factory.layout( layout.getDelegate().getData(), children );
+		        }
 		        return null;
+		    }
 		    
 		    setLayout( element, layout, children );
 		    return element;
@@ -204,8 +241,16 @@ public class PredefinedDockSituation extends DockSituation {
 		@SuppressWarnings("unchecked")
         public DockElement layout( PreloadedLayout<?> layout ) {
             DockElement element = stringToElement.get( layout.getPreload() );
-            if( element == null )
+            if( element == null ){
+                String factoryId = layout.getDelegate().getFactoryID();
+                DockFactory<DockElement, Object> factory =
+                    (DockFactory<DockElement, Object>)getBackup( factoryId );
+                if( factory != null ){
+                    return factory.layout( layout.getDelegate().getData() );
+                }
+                
                 return null;
+            }
             
             setLayout( element, layout );
             return element;
@@ -236,6 +281,9 @@ public class PredefinedDockSituation extends DockSituation {
 		    String factoryId = in.readUTF();
 		    DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
             if( factory == null )
+                factory = (DockFactory<DockElement, Object>)getBackup( factoryId );
+		    
+		    if( factory == null )
                 return null;
             
             Object delegate = factory.read( in );
@@ -267,6 +315,9 @@ public class PredefinedDockSituation extends DockSituation {
 		    XElement xdelegate = element.getElement( "delegate" );
 		    String factoryId = xdelegate.getString( "id" );
             DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
+            if( factory == null )
+                factory = (DockFactory<DockElement, Object>)getBackup( factoryId );
+            
             if( factory == null )
                 return null;
             

@@ -121,8 +121,13 @@ public class DockFrontend {
     private Map<String, RootInfo> roots = new HashMap<String, RootInfo>();
     
     /** A set of factories needed to store Dockables */
-    private Set<DockFactory<? extends DockElement, ?>> dockFactories = 
-        new HashSet<DockFactory<? extends DockElement, ?>>();
+    private Set<DockFactory<? extends DockElement, ?>> dockFactories =
+        new HashSet<DockFactory<? extends DockElement,?>>();
+    
+    /** A set of factories needed to read Dockables that are missing in the cache */
+    private Set<DockFactory<? extends DockElement, ?>> backupDockFactories =
+        new HashSet<DockFactory<? extends DockElement,?>>();
+    
     /** A set of factories needed to store {@link DockableProperty properties} */
     private Set<DockablePropertyFactory> propertyFactories = new HashSet<DockablePropertyFactory>();
     
@@ -271,6 +276,48 @@ public class DockFrontend {
     	if( factory == null )
     		throw new IllegalArgumentException( "factory must not be null" );
         dockFactories.add( factory );
+    }
+
+    /**
+     * Registers a factory to write and read {@link Dockable}s and {@link DockStation}s.
+     * @param factory the new factory
+     * @param backup if <code>true</code>, then <code>factory</code> is registered
+     * as {@link #registerBackupFactory(DockFactory) backup factory} as well.
+     */
+    public void registerFactory( DockFactory<? extends DockElement, ?> factory, boolean backup ){
+        registerFactory( factory );
+        if( backup )
+            registerBackupFactory( factory );
+    }
+    
+    /**
+     * Register a backup factory. A backup factory is used to create a {@link Dockable}
+     * that is expected to be in the cache, but is missing.
+     * @param factory a new factory
+     */
+    public void registerBackupFactory( DockFactory<? extends DockElement, ?> factory ){
+        if( factory == null )
+            throw new IllegalArgumentException( "factory must not be null" );
+        
+        backupDockFactories.add( factory );
+    }
+    
+    /**
+     * Removes a factory from this frontend. This method does not remove
+     * backup factories.
+     * @param factory the factory to remove
+     * @see #unregisterBackupFactory(DockFactory)
+     */
+    public void unregisterFactory( DockFactory<? extends DockElement, ?> factory ){
+        dockFactories.remove( factory );
+    }
+    
+    /**
+     * Removes a backup factory from this frontend.
+     * @param factory the factory to remove
+     */
+    public void unregisterBackupFactory( DockFactory<? extends DockElement, ?> factory ){
+        backupDockFactories.remove( factory );
     }
     
     /**
@@ -1088,6 +1135,9 @@ public class DockFrontend {
         
         for( DockFactory<?,?> factory : dockFactories )
             situation.add( factory );
+        
+        for( DockFactory<?,?> backup : backupDockFactories )
+            situation.addBackup( backup );
         
         if( entry )
         	situation.setIgnore( getIgnoreForEntry() );
