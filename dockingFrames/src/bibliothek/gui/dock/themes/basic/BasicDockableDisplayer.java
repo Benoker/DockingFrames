@@ -33,6 +33,8 @@ import javax.swing.SwingUtilities;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.displayer.DisplayerFocusTraversalPolicy;
+import bibliothek.gui.dock.focus.DockFocusTraversalPolicy;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
@@ -124,7 +126,11 @@ public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
         setDockable( dockable );
         setTitle( title );
         setFocusable( true );
+        
         setFocusCycleRoot( true );
+        setFocusTraversalPolicy( 
+                new DockFocusTraversalPolicy( 
+                        new DisplayerFocusTraversalPolicy( this ), true ));
     }
     
     public void setController( DockController controller ) {

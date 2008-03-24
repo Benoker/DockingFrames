@@ -30,6 +30,7 @@ import java.awt.*;
 
 import javax.swing.Icon;
 import javax.swing.JPanel;
+import javax.swing.LayoutFocusTraversalPolicy;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -111,7 +112,9 @@ public class DefaultDockable extends AbstractDockable {
      */
     public DefaultDockable( Component component, String title, Icon icon ){
     	super( PropertyKey.DOCKABLE_ICON, PropertyKey.DOCKABLE_TITLE );
-    	pane.setFocusCycleRoot( true );
+    	
+    	pane.setFocusTraversalPolicyProvider( true );
+    	pane.setFocusTraversalPolicy( new LayoutFocusTraversalPolicy() );
     	
         if( component != null ){
             getContentPane().setLayout( new GridLayout( 1, 1 ));

@@ -51,6 +51,7 @@ public class BubbleSeparator extends JComponent implements BasicTitleViewItem<JC
 	public BubbleSeparator( SeparatorAction action ){
 		this.action = action;
 		setOpaque( false );
+		setFocusable( false );
 	}
 	
 	@Override

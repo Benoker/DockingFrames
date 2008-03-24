@@ -30,6 +30,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -76,6 +78,17 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
         normalSelectedBorder = mousePressedBorder;
         mouseOverSelectedBorder = mousePressedBorder;
         mousePressedSelectedBorder = mouseOverBorder;
+        
+        addFocusListener( new FocusAdapter(){
+            @Override
+            public void focusGained( FocusEvent e ) {
+                repaint();
+            }
+            @Override
+            public void focusLost( FocusEvent e ) {
+                repaint();
+            }
+        });
     }
 
     /**
@@ -214,9 +227,15 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
         if( border != null )
             border.paintBorder( this, g, 0, 0, getWidth(), getHeight() );
         
+        // icon
         Icon icon = model.getPaintIcon();
         if( icon != null ){
-        	paintIcon( icon, g );
+            paintIcon( icon, g );
+        }
+        
+        // focus
+        if( isFocusOwner() ){
+            paintFocus( g );
         }
     }
     
@@ -233,6 +252,39 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
                 max.top + (getHeight()-max.top-max.bottom-icon.getIconHeight())/2 );
     }
     
+    /**
+     * Paints markings on this button when this button is the focus owner.
+     * @param g the graphics context
+     */
+    protected void paintFocus( Graphics g ){
+        g.setColor( getForeground() );
+        Insets insets = getMaxBorderInsets();
+        
+        int x = insets.left;
+        int y = insets.right;
+        int w = getWidth() - insets.left - insets.right;
+        int h = getHeight() - insets.top - insets.bottom;
+    
+        h--;
+        w--;
+        
+        g.drawLine( x, y,   x+2, y   );
+        g.drawLine( x, y+1, x+1, y+1 );
+        g.drawLine( x, y+2, x,   y+2 );
+        
+        g.drawLine( x+w, y,   x+w-2, y   );
+        g.drawLine( x+w, y+1, x+w-1, y+1 );
+        g.drawLine( x+w, y+2, x+w,   y+2 );
+        
+        g.drawLine( x+w, y+h,   x+w-2, y+h   );
+        g.drawLine( x+w, y+h-1, x+w-1, y+h-1 );
+        g.drawLine( x+w, y+h-2, x+w,   y+h-2 );
+        
+        g.drawLine( x, y+h,   x+2, y+h   );
+        g.drawLine( x, y+h-1, x+1, y+h-1 );
+        g.drawLine( x, y+h-2, x,   y+h-2 );
+    }
+    
     @Override
     public Dimension getPreferredSize() {
     	if( isPreferredSizeSet() )
@@ -244,8 +296,8 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
         size.width = Math.max( size.width, 16 );
         size.height = Math.max( size.height, 16 );
         
-        size.width += max.left + max.right;
-        size.height += max.top + max.bottom;
+        size.width += max.left + max.right + 2;
+        size.height += max.top + max.bottom + 2;
         return size;
     }
     

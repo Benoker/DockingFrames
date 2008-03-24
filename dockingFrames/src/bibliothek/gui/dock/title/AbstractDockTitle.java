@@ -143,6 +143,13 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
             add( itemPanel );
         }
         
+        setFocusTraversalPolicyProvider( true );
+        setFocusTraversalPolicy( new ContainerOrderFocusTraversalPolicy(){
+            @Override
+            protected boolean accept( Component component ) {
+                return component != AbstractDockTitle.this && super.accept( component );
+            }
+        });
         setOpaque( false );
     }
     

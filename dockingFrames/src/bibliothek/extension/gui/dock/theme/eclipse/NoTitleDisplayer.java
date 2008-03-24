@@ -37,6 +37,8 @@ import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabPainter;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.displayer.DisplayerFocusTraversalPolicy;
+import bibliothek.gui.dock.focus.DockFocusTraversalPolicy;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.DockProperties;
@@ -75,6 +77,9 @@ public class NoTitleDisplayer extends JPanel implements DockableDisplayer {
     	    };
     	    updateFullBorder();
 		}
+		
+		setFocusCycleRoot( true );
+		setFocusTraversalPolicy( new DockFocusTraversalPolicy( new DisplayerFocusTraversalPolicy( this ), true ) );
 	}
 	
 	/**

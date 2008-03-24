@@ -215,6 +215,10 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 			drop.paintIcon( this, g, insets.left+(getWidth()-insets.left-insets.right-dropIcon.getIconWidth()) / 2,
 					(int)(factor * (insets.top + insets.bottom + iconHeight + dropHeight/2 ) - dropHeight/2 ) );
 		}
+		
+		if( isFocusOwner() ){
+		    paintFocus( g );
+		}
 	}
 	
 	/**

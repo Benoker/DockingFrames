@@ -1,9 +1,6 @@
 package bibliothek.gui.dock.themes.basic.action.buttons;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Insets;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,6 +68,10 @@ public class ButtonPanel extends JPanel{
 			menuSource = new DefaultDockActionSource();
 			menuAction = new SimpleMenuAction( menuSource );
 		}
+		
+		setFocusable( false );
+		setFocusTraversalPolicyProvider( true );
+		setFocusTraversalPolicy( new ContainerOrderFocusTraversalPolicy() );
 	}
 	
     /**
