@@ -52,7 +52,7 @@ import bibliothek.gui.dock.title.DockTitle.Orientation;
  * connect model and handler.
  * @author Benjamin Sigg
  */
-public class BasicDropDownButtonHandler implements BasicTrigger, BasicTitleViewItem<JComponent> {
+public class BasicDropDownButtonHandler implements BasicDropDownButtonTrigger, BasicTitleViewItem<JComponent> {
     /** the action to observe and to trigger */
     private DropDownAction action;
     /** the current source of child-actions */

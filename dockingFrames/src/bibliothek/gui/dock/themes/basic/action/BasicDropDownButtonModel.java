@@ -25,15 +25,13 @@
  */
 package bibliothek.gui.dock.themes.basic.action;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
+import java.util.List;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
+import javax.swing.*;
 
 import bibliothek.gui.dock.action.DropDownAction;
+import bibliothek.util.container.Triple;
 
 /**
  * An expanded {@link BasicButtonModel} that can handle the properties needed
@@ -47,12 +45,15 @@ public abstract class BasicDropDownButtonModel extends BasicButtonModel{
     /** whether the selected action is currently enabled */
     private boolean selectionEnabled = true;
     
+    /** trigger used on this model */
+    private BasicDropDownButtonTrigger trigger;
+    
     /**
      * Creates a new model.
      * @param owner the view of this model
      * @param trigger the callback used when the user clicks on the view
      */
-    public BasicDropDownButtonModel( JComponent owner, BasicTrigger trigger ) {
+    public BasicDropDownButtonModel( JComponent owner, BasicDropDownButtonTrigger trigger ) {
         this( owner, trigger, true );
     }
     
@@ -63,12 +64,30 @@ public abstract class BasicDropDownButtonModel extends BasicButtonModel{
      * @param createListener whether the model should add a {@link MouseListener} and
      * a {@link MouseMotionListener} to the view or not.
      */
-    public BasicDropDownButtonModel( JComponent owner, BasicTrigger trigger, boolean createListener ) {
+    public BasicDropDownButtonModel( JComponent owner, BasicDropDownButtonTrigger trigger, boolean createListener ) {
         super( owner, trigger, createListener );
+        this.trigger = trigger;
         if( createListener ){
             Listener listener = new Listener();
             owner.addMouseMotionListener( listener );
         }
+    }
+    
+    @Override
+    protected List<Triple<KeyStroke, String, Action>> listActions() {
+        List<Triple<KeyStroke, String, Action>> list = super.listActions();
+        Triple<KeyStroke, String, Action> popup = new Triple<KeyStroke, String, Action>();
+        
+        popup.setA( KeyStroke.getKeyStroke( KeyEvent.VK_DOWN, 0, true ) );
+        popup.setB( "basic_drop_down_model_popup" );
+        popup.setC( new AbstractAction(){
+            public void actionPerformed( ActionEvent e ) {
+                popupTriggered();
+            }
+        });
+        list.add( popup );
+        
+        return list;
     }
     
     @Override
@@ -131,6 +150,13 @@ public abstract class BasicDropDownButtonModel extends BasicButtonModel{
      * selection-menu of the {@link DropDownAction}
      */
     protected abstract boolean inDropDownArea( int x, int y );
+    
+    /**
+     * Triggers the drop down menu to open.
+     */
+    protected void popupTriggered(){
+        trigger.popupTriggered();
+    }
     
     /**
      * A listener ensuring that the {@link BasicDropDownButtonModel#isMouseOverDropDown() mouseOverDropDown}

@@ -27,18 +27,18 @@ package bibliothek.gui.dock.themes.basic.action;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
+import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.util.container.Triple;
 
 /**
  * A class containing all properties and methods needed to handle a button-component
@@ -109,6 +109,58 @@ public class BasicButtonModel {
             owner.addMouseListener( listener );
             owner.addMouseMotionListener( listener );
         }
+        
+        List<Triple<KeyStroke, String, Action>> actions = listActions();
+        if( actions != null ){
+            InputMap inputMap = owner.getInputMap();
+            ActionMap actionMap = owner.getActionMap();
+            
+            for( Triple<KeyStroke, String, Action> action : actions ){
+                inputMap.put( action.getA(), action.getB() );
+                actionMap.put( action.getB(), action.getC() );
+            }
+            
+            owner.addFocusListener( new FocusAdapter(){
+                @Override
+                public void focusLost( FocusEvent e ) {
+                    setMousePressed( false );
+                }
+            });
+        }
+    }
+    
+    /**
+     * Gets a list of {@link KeyStroke}s, String keys and {@link Action}s which
+     * are to be applied to the {@link #getOwner() owner} of this model. 
+     * @return the list of actions
+     */
+    protected List<Triple<KeyStroke, String, Action>> listActions(){
+        List<Triple<KeyStroke, String, Action>> actions = new ArrayList<Triple<KeyStroke,String,Action>>();
+        
+        Triple<KeyStroke, String, Action> select = new Triple<KeyStroke, String, Action>();
+        select.setA( KeyStroke.getKeyStroke( KeyEvent.VK_SPACE, 0, false ) );
+        select.setB( "button_model_select" );
+        select.setC( new AbstractAction(){
+            public void actionPerformed(java.awt.event.ActionEvent e){
+                setMousePressed( true );
+            }
+        });
+        actions.add( select );
+        
+        Triple<KeyStroke, String, Action> trigger = new Triple<KeyStroke, String, Action>();
+        trigger.setA( KeyStroke.getKeyStroke( KeyEvent.VK_SPACE, 0, true ) );
+        trigger.setB( "button_model_trigger" );
+        trigger.setC( new AbstractAction(){
+            public void actionPerformed(java.awt.event.ActionEvent e){
+                if( mousePressed ){
+                    setMousePressed( false );
+                    trigger();
+                }
+            }
+        });
+        actions.add( trigger );
+        
+        return actions;
     }
     
     /**
@@ -187,7 +239,12 @@ public class BasicButtonModel {
      */
     public void setEnabled( boolean enabled ) {
         owner.setEnabled( enabled );
-        changed();
+        if( !enabled ){
+            setMousePressed( false );
+        }
+        else{
+            changed();
+        }
     }
     
     /**

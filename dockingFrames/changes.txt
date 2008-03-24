@@ -114,4 +114,6 @@
 ! API: CDockable and subclasses can now hide or show their titles at any time.
 - Layout: BubbleDisplayer now shows a border if the title is not null, or if the dockable is not a station
 - API: PredefinedDockSituation can use backup factories for elements that are missing in the cache. DockFrontend supports these backup factories as well, Dockables read by the backup-factory are automatically added to the frontend.
-- API: DockFactories can now be unregistered from DockFrontend  
+- API: DockFactories can now be unregistered from DockFrontend
+- Layout: DockActions are triggered by pressing SPACE on the focused button, DropDownActions pop up when the DOWN (non numpad) key is pressed
+- Layout: New FocusTraversalPolicies allow to navigate within all elements of a DockableDisplayer (including title).
