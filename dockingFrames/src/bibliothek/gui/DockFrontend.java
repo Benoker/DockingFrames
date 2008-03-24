@@ -51,6 +51,7 @@ import bibliothek.gui.dock.dockable.DefaultDockableFactory;
 import bibliothek.gui.dock.event.DockAdapter;
 import bibliothek.gui.dock.event.DockFrontendListener;
 import bibliothek.gui.dock.event.IconManagerListener;
+import bibliothek.gui.dock.frontend.RegisteringDockFactory;
 import bibliothek.gui.dock.frontend.Setting;
 import bibliothek.gui.dock.layout.*;
 import bibliothek.gui.dock.security.SecureFlapDockStationFactory;
@@ -125,8 +126,8 @@ public class DockFrontend {
         new HashSet<DockFactory<? extends DockElement,?>>();
     
     /** A set of factories needed to read Dockables that are missing in the cache */
-    private Set<DockFactory<? extends DockElement, ?>> backupDockFactories =
-        new HashSet<DockFactory<? extends DockElement,?>>();
+    private Set<DockFactory<? extends Dockable, ?>> backupDockFactories =
+        new HashSet<DockFactory<? extends Dockable,?>>();
     
     /** A set of factories needed to store {@link DockableProperty properties} */
     private Set<DockablePropertyFactory> propertyFactories = new HashSet<DockablePropertyFactory>();
@@ -284,7 +285,7 @@ public class DockFrontend {
      * @param backup if <code>true</code>, then <code>factory</code> is registered
      * as {@link #registerBackupFactory(DockFactory) backup factory} as well.
      */
-    public void registerFactory( DockFactory<? extends DockElement, ?> factory, boolean backup ){
+    public void registerFactory( DockFactory<? extends Dockable, ?> factory, boolean backup ){
         registerFactory( factory );
         if( backup )
             registerBackupFactory( factory );
@@ -292,10 +293,11 @@ public class DockFrontend {
     
     /**
      * Register a backup factory. A backup factory is used to create a {@link Dockable}
-     * that is expected to be in the cache, but is missing.
+     * that is expected to be in the cache, but is missing. The new {@link Dockable}
+     * is automatically added to this frontend.
      * @param factory a new factory
      */
-    public void registerBackupFactory( DockFactory<? extends DockElement, ?> factory ){
+    public void registerBackupFactory( DockFactory<? extends Dockable, ?> factory ){
         if( factory == null )
             throw new IllegalArgumentException( "factory must not be null" );
         
@@ -370,6 +372,17 @@ public class DockFrontend {
     		result.put( entry.getKey(), entry.getValue().getDockable() );
     	}
     	return result;
+    }
+    
+    /**
+     * Gets the {@link Dockable} which was {@link #add(Dockable, String) added}
+     * to this frontend with the name <code>name</code>.
+     * @param name the name of a {@link Dockable}
+     * @return the element or <code>null</code>
+     */
+    public Dockable getDockable( String name ){
+        DockInfo info = getInfo( name );
+        return info == null ? null : info.dockable;
     }
     
     /**
@@ -1123,6 +1136,7 @@ public class DockFrontend {
      * be loaded the next time the application starts.
      * @return the situation
      */
+    @SuppressWarnings("unchecked")
     protected DockSituation createSituation( boolean entry ){
         PredefinedDockSituation situation = new PredefinedDockSituation();
         for( DockInfo info : dockables.values() ){
@@ -1136,8 +1150,9 @@ public class DockFrontend {
         for( DockFactory<?,?> factory : dockFactories )
             situation.add( factory );
         
-        for( DockFactory<?,?> backup : backupDockFactories )
-            situation.addBackup( backup );
+        for( DockFactory backup : backupDockFactories ){
+            situation.addBackup( new RegisteringDockFactory( this, backup ) );
+        }
         
         if( entry )
         	situation.setIgnore( getIgnoreForEntry() );

@@ -57,8 +57,8 @@ public class PredefinedDockSituation extends DockSituation {
 	private static final String UNKNOWN = "delegate_";
 	
 	/** backup factories for elements that should be in the cache, but are missing */
-	private Map<String, DockFactory<? extends DockElement, ?>> backups =
-	    new HashMap<String, DockFactory<? extends DockElement,?>>();
+	private Map<String, DockFactory<? extends DockElement, BackupFactoryData<?>>> backups =
+	    new HashMap<String, DockFactory<? extends DockElement, BackupFactoryData<?>>>();
 	
 	private final PreloadFactory factory = new PreloadFactory();
 	
@@ -67,7 +67,7 @@ public class PredefinedDockSituation extends DockSituation {
 	 * a element should be in the cache, but is missing.
 	 * @param factory a backup factory
 	 */
-	public void addBackup( DockFactory<? extends DockElement, ?> factory ){
+	public void addBackup( DockFactory<? extends DockElement, BackupFactoryData<?>> factory ){
 	    backups.put( UNKNOWN + factory.getID(), factory );
 	}
 	
@@ -136,7 +136,7 @@ public class PredefinedDockSituation extends DockSituation {
 	 * @param id the name of the factory
 	 * @return the factory or <code>null</code>
 	 */
-	protected DockFactory<? extends DockElement, ?> getBackup( String id ){
+	protected DockFactory<? extends DockElement, BackupFactoryData<?>> getBackup( String id ){
 	    return backups.get( id );
 	}
 	
@@ -226,10 +226,9 @@ public class PredefinedDockSituation extends DockSituation {
 		    DockElement element = stringToElement.get( layout.getPreload() );
 		    if( element == null ){
 		        String factoryId = layout.getDelegate().getFactoryID();
-		        DockFactory<DockElement, Object> factory = 
-		            (DockFactory<DockElement, Object>)getBackup( factoryId );
+		        DockFactory factory = getBackup( factoryId );
 		        if( factory != null ){
-		            return factory.layout( layout.getDelegate().getData(), children );
+		            return factory.layout( new BackupFactoryData<Object>( layout.getPreload(), layout.getDelegate().getData()), children );
 		        }
 		        return null;
 		    }
@@ -243,10 +242,9 @@ public class PredefinedDockSituation extends DockSituation {
             DockElement element = stringToElement.get( layout.getPreload() );
             if( element == null ){
                 String factoryId = layout.getDelegate().getFactoryID();
-                DockFactory<DockElement, Object> factory =
-                    (DockFactory<DockElement, Object>)getBackup( factoryId );
+                DockFactory factory = getBackup( factoryId );
                 if( factory != null ){
-                    return factory.layout( layout.getDelegate().getData() );
+                    return factory.layout( new BackupFactoryData<Object>( layout.getPreload(), layout.getDelegate().getData()) );
                 }
                 
                 return null;
@@ -279,14 +277,22 @@ public class PredefinedDockSituation extends DockSituation {
 		    
 		    String preloaded = in.readUTF();
 		    String factoryId = in.readUTF();
-		    DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
-            if( factory == null )
-                factory = (DockFactory<DockElement, Object>)getBackup( factoryId );
 		    
-		    if( factory == null )
-                return null;
-            
-            Object delegate = factory.read( in );
+		    Object delegate = null;
+		    
+		    DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
+		    if( factory == null ){
+                DockFactory backup = getBackup( factoryId );
+                if( backup != null ){
+                    BackupFactoryData<Object> data = (BackupFactoryData<Object>)backup.read( in );
+                    if( data != null )
+                        delegate = data.getData();
+                }
+            }
+		    else{
+		        delegate = factory.read( in );
+		    }
+		    
             if( delegate == null )
                 return null;
             
@@ -314,16 +320,23 @@ public class PredefinedDockSituation extends DockSituation {
 		    
 		    XElement xdelegate = element.getElement( "delegate" );
 		    String factoryId = xdelegate.getString( "id" );
+            
+
+            Object delegate = null;
+            
             DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
-            if( factory == null )
-                factory = (DockFactory<DockElement, Object>)getBackup( factoryId );
+            if( factory == null ){
+                DockFactory backup = getBackup( factoryId );
+                if( backup != null ){
+                    BackupFactoryData<Object> data = (BackupFactoryData<Object>)backup.read( xdelegate );
+                    if( data != null )
+                        delegate = data.getData();
+                }
+            }
+            else{
+                delegate = factory.read( xdelegate );
+            }
             
-            if( factory == null )
-                return null;
-            
-            Object delegate = factory.read( xdelegate );
-            if( delegate == null )
-                return null;
             
             DockLayout<Object> layout = new DockLayout<Object>( factoryId, delegate );
             return new PreloadedLayout( preload, layout );

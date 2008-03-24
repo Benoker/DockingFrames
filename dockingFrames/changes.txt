@@ -113,5 +113,5 @@
 ! API: DockableListener has an additional method "titleExchanged" which can be used to exchange a DockTitle.
 ! API: CDockable and subclasses can now hide or show their titles at any time.
 - Layout: BubbleDisplayer now shows a border if the title is not null, or if the dockable is not a station
-- API: PredefinedDockSituation can use backup factories for elements that are missing in the cache. DockFrontend supports these backup factories as well.
+- API: PredefinedDockSituation can use backup factories for elements that are missing in the cache. DockFrontend supports these backup factories as well, Dockables read by the backup-factory are automatically added to the frontend.
 - API: DockFactories can now be unregistered from DockFrontend  
