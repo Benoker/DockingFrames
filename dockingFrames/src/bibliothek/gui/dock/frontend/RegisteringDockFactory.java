@@ -71,8 +71,12 @@ public class RegisteringDockFactory<D extends Dockable, L> implements DockFactor
     public D layout( BackupFactoryData<L> layout, Map<Integer, Dockable> children ) {
         D element = factory.layout( layout.getData() );
         if( element != null ){
-            if( frontend.getDockable( layout.getIdentifier() ) == null ){
-                frontend.add( element, layout.getIdentifier() );
+            String id = layout.getIdentifier();
+            if( id.startsWith( "dockable" )){
+                id = id.substring( "dockable".length() );
+                if( frontend.getDockable( id ) == null ){
+                    frontend.add( element, id );
+                }
             }
         }
         return element;
@@ -81,8 +85,12 @@ public class RegisteringDockFactory<D extends Dockable, L> implements DockFactor
     public D layout( BackupFactoryData<L> layout ) {
         D element = factory.layout( layout.getData() );
         if( element != null ){
-            if( frontend.getDockable( layout.getIdentifier() ) == null ){
-                frontend.add( element, layout.getIdentifier() );
+            String id = layout.getIdentifier();
+            if( id.startsWith( "dockable" )){
+                id = id.substring( "dockable".length() );
+                if( frontend.getDockable( id ) == null ){
+                    frontend.add( element, id );
+                }
             }
         }
         return element;

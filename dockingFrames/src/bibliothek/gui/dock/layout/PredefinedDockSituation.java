@@ -64,7 +64,13 @@ public class PredefinedDockSituation extends DockSituation {
 	
 	/**
 	 * Adds a backup factory to this situation. A backup factory is used when
-	 * a element should be in the cache, but is missing.
+	 * a element should be in the cache, but is missing. The backup factory
+	 * receives a {@link BackupFactoryData} object, the identifier of that
+	 * object does not have to be stored by <code>factory</code>. The
+	 * factory has only to look at the {@link BackupFactoryData#getData() data}-property.
+	 * This {@link PredefinedDockSituation} will set the identifier whenever
+	 * a method of <code>factory</code> is called, that has a {@link BackupFactoryData}
+	 * as parameter.
 	 * @param factory a backup factory
 	 */
 	public void addBackup( DockFactory<? extends DockElement, BackupFactoryData<?>> factory ){

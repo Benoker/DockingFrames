@@ -386,6 +386,20 @@ public class DockFrontend {
     }
     
     /**
+     * Searches the name of <code>dockable</code> as it was given to
+     * {@link #add(Dockable, String)}.
+     * @param dockable some element whose name is searched
+     * @return the name or <code>null</code>
+     */
+    public String getNameOf( Dockable dockable ){
+        for( Map.Entry<String, DockInfo> entry : dockables.entrySet() ){
+            if( entry.getValue().dockable == dockable )
+                return entry.getKey();
+        }
+        return null;
+    }
+    
+    /**
      * Adds a root to this frontend. Only {@link Dockable Dockables} which are
      * children of a root can be stored. The frontend forwards the roots to
      * its {@link #getController() controller} 
@@ -1130,7 +1144,13 @@ public class DockFrontend {
     }
     
     /**
-     * Invoked every time before the current setting is written into a stream.
+     * Invoked every time before the current setting is written into a stream.<br>
+     * Note: the frontend and the file formats heavely depend on the internal
+     * implementation of this method. Overriding this method is possible, but
+     * extreme care should be applied when doing so. A good solution would be
+     * to call {@link #createInternalSituation(boolean)}, then change and return
+     * the result of that method.<br>
+     * This method just calls <code>return createInternalSituation( entry );</code>.
      * @param entry <code>true</code> if the situation is used for a regular setting,
      * <code>false</code> if the situation is used as the final setting which will
      * be loaded the next time the application starts.
@@ -1138,6 +1158,21 @@ public class DockFrontend {
      */
     @SuppressWarnings("unchecked")
     protected DockSituation createSituation( boolean entry ){
+        return createInternalSituation( entry );
+    }
+    
+    /**
+     * Creates a {@link DockSituation} which represents all the knowledge this
+     * frontend currently has. This method is declared final, clients should
+     * override {@link #createSituation(boolean)} if they need to introduce their
+     * own implementation of {@link DockSituation}.
+     * @param entry <code>true</code> if the situation is used for a regular setting,
+     * <code>false</code> if the situation is used as the final setting which will
+     * be loaded the next time the application starts.
+     * @return the situation
+     */
+    @SuppressWarnings("unchecked")
+    protected final PredefinedDockSituation createInternalSituation( boolean entry ){
         PredefinedDockSituation situation = new PredefinedDockSituation();
         for( DockInfo info : dockables.values() ){
             situation.put( "dockable" + info.getKey(), info.getDockable() );
@@ -1147,8 +1182,9 @@ public class DockFrontend {
             situation.put( "root" + info.getName(), info.getStation() );
         }
         
-        for( DockFactory<?,?> factory : dockFactories )
+        for( DockFactory<?,?> factory : dockFactories ){
             situation.add( factory );
+        }
         
         for( DockFactory backup : backupDockFactories ){
             situation.addBackup( new RegisteringDockFactory( this, backup ) );
