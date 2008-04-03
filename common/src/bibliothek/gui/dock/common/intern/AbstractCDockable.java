@@ -27,18 +27,18 @@ package bibliothek.gui.dock.common.intern;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import bibliothek.gui.dock.action.DefaultDockActionSource;
-import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.ColorMap;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CWorkingArea;
+import bibliothek.gui.dock.common.ColorMap;
 import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.event.CDockablePropertyListener;
 import bibliothek.gui.dock.common.event.CDockableStateListener;
+import bibliothek.gui.dock.common.intern.action.CloseActionSource;
 import bibliothek.gui.dock.title.DockTitle;
 
 
@@ -85,12 +85,14 @@ public abstract class AbstractCDockable implements CDockable {
     /** the colors associated with this dockable */
     private ColorMap colors = new ColorMap( this );
     
+    /** the actions that are shown by other modules */
+    private Map<String, CAction> actions = new HashMap<String, CAction>();
+    
     /** whether the {@link DockTitle} should not be created */
     private boolean titleShown = true;
     
     /** Source that contains the action that closes this dockable */
-    private DefaultDockActionSource close = new DefaultDockActionSource(
-            new LocationHint( LocationHint.ACTION_GUARD, LocationHint.RIGHT_OF_ALL ));
+    private CloseActionSource close = new CloseActionSource( this );
     
     /**
      * Creates a new dockable
@@ -113,6 +115,15 @@ public abstract class AbstractCDockable implements CDockable {
             throw new NullPointerException( "dockable is null" );
         
         this.dockable = dockable;
+    }
+    
+    /**
+     * Gets the action source which might show a single action that closes
+     * this dockable.
+     * @return the close source
+     */
+    protected CloseActionSource getClose(){
+        return close;
     }
     
     /**
@@ -153,18 +164,6 @@ public abstract class AbstractCDockable implements CDockable {
      */
     protected CDockablePropertyListener[] propertyListeners(){
         return propertyListeners.toArray( new CDockablePropertyListener[ propertyListeners.size() ] );
-    }
-    
-    /**
-     * Ensures that {@link #close} contains an action when necessary.
-     */
-    protected void updateClose(){
-        boolean closeable = isCloseable();
-        
-        if( control == null || !closeable )
-            close.removeAll();
-        else if( control != null && closeable && close.getDockActionCount() == 0 )
-            close.add( control.createCloseAction( this ) );
     }
     
     public void setVisible( boolean visible ){
@@ -410,16 +409,28 @@ public abstract class AbstractCDockable implements CDockable {
             });
         }
         
-        close.removeAll();
-        updateClose();
+        close.setControl( control );
     }
     
     /**
-     * Gets the source that contains the close-action.
-     * @return the source
+     * Exchanges an action of this dockable. The actions that are associated 
+     * with this dockable through this method are not necessarily shown on the 
+     * title. They are used by other modules to create effects that are known
+     * only to them.
+     * @param key the key of the action
+     * @param action the new action, can be <code>null</code> which might force
+     * back a default action (that depends on the module that uses <code>key</code>)
      */
-    public DockActionSource getClose() {
-        return close;
+    public void putAction( String key, CAction action ){
+        CAction old = actions.put( key, action );
+        if( old != action ){
+            for( CDockablePropertyListener listener : propertyListeners())
+                listener.actionChanged( this, key, old, action );
+        }
+    }
+    
+    public CAction getAction( String key ) {
+        return actions.get( key );
     }
     
     public ColorMap getColors() {

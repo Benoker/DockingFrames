@@ -198,7 +198,7 @@ public class DefaultCDockable extends AbstractCDockable{
      */
     public DefaultCDockable( Permissions permission ){
         super( null );
-        dockable = new DefaultCommonDockable( this );
+        dockable = new DefaultCommonDockable( this, getClose() );
         init( dockable );
         
         setMinimizable( permission.isMinimizable() );
@@ -343,7 +343,6 @@ public class DefaultCDockable extends AbstractCDockable{
     public void setCloseable( boolean closeable ){
         if( this.closeable != closeable ){
             this.closeable = closeable;     
-            updateClose();
             for( CDockablePropertyListener listener : propertyListeners() )
                 listener.closeableChanged( this );
         }

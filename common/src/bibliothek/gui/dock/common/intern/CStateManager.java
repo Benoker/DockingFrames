@@ -38,8 +38,12 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.common.*;
+import bibliothek.gui.dock.common.action.CAction;
+import bibliothek.gui.dock.common.event.CDockableAdapter;
+import bibliothek.gui.dock.common.event.CDockablePropertyListener;
 import bibliothek.gui.dock.common.intern.CDockable.ExtendedMode;
 import bibliothek.gui.dock.common.location.*;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
@@ -76,6 +80,22 @@ public class CStateManager extends StateManager {
         protected void valueChanged( KeyStroke oldValue, KeyStroke newValue ) {
             if( keyStrokeMaximized.getValue() == null )
                 getIngoingAction( MAXIMIZED ).setAccelerator( newValue );
+        }
+    };
+    
+    /**
+     * A listener to all {@link CDockable}s, calls {@link #rebuild(Dockable)}
+     * when one of the actions of the dockables changes.
+     */
+    private CDockablePropertyListener actionChangeListener = new CDockableAdapter(){
+        @Override
+        public void actionChanged( CDockable dockable, String key, CAction oldAction, CAction newAction ) {
+            if( CDockable.ACTION_KEY_EXTERNALIZE.equals( key ) ||
+                    CDockable.ACTION_KEY_MAXIMIZE.equals( key ) ||
+                    CDockable.ACTION_KEY_MINIMIZE.equals( key ) ||
+                    CDockable.ACTION_KEY_NORMALIZE.equals( key )){
+                rebuild( dockable.intern() );
+            }
         }
     };
     
@@ -237,6 +257,23 @@ public class CStateManager extends StateManager {
     protected Dockable getMaximizingElement( Dockable old, Dockable dockable ){
     	return maximizeBehavior.getMaximizingElement( old, dockable );
     }
+    
+    @Override
+    protected void added( Dockable dockable ) {
+        super.added( dockable );
+        if( dockable instanceof CommonDockable ){
+            ((CommonDockable)dockable).getDockable().addCDockablePropertyListener( actionChangeListener );
+        }
+    }
+    
+    @Override
+    public void removed( Dockable dockable ) {
+        super.removed( dockable );
+        if( dockable instanceof CommonDockable ){
+            ((CommonDockable)dockable).getDockable().removeCDockablePropertyListener( actionChangeListener );
+        }
+    }
+    
     
     /**
      * Sets a new {@link CMaximizeBehavior}. The behavior decides what happens
@@ -718,6 +755,27 @@ public class CStateManager extends StateManager {
         }
         
         return super.getDefaultNormal( dockable );
+    }
+    
+    @Override
+    public DockAction getIngoingAction( String mode, Dockable dockable ) {
+        if( dockable instanceof CommonDockable ){
+            CDockable cdock = ((CommonDockable)dockable).getDockable();
+            CAction action = null;
+            if( MINIMIZED.equals( mode ))
+                action = cdock.getAction( CDockable.ACTION_KEY_MINIMIZE );
+            else if( MAXIMIZED.equals( mode ))
+                action = cdock.getAction( CDockable.ACTION_KEY_MAXIMIZE );
+            else if( EXTERNALIZED.equals( mode ))
+                action = cdock.getAction( CDockable.ACTION_KEY_EXTERNALIZE );
+            else if( NORMALIZED.equals( mode ))
+                action = cdock.getAction( CDockable.ACTION_KEY_NORMALIZE );
+            
+            if( action != null )
+                return action.intern();
+        }
+        
+        return super.getIngoingAction( mode, dockable );
     }
     
     @Override

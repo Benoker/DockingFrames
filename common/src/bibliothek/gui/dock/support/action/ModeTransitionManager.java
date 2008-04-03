@@ -93,6 +93,16 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
         Entry entry = new Entry( dockable, name );
         dockables.put( dockable, entry );
         entry.putMode( currentMode( dockable ) );
+        
+        added( dockable );
+    }
+    
+    /**
+     * Called when a {@link Dockable} has been added to this manager.
+     * @param dockable the new dockable
+     */
+    protected void added( Dockable dockable ){
+        
     }
     
     /**
@@ -114,8 +124,10 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
         for( Entry entry : dockables.values() ){
             if( entry.id.equals( name )){
                 dockables.remove( entry.dockable );
+                removed( entry.dockable );
                 entry.dockable = dockable;
                 dockables.put( dockable, entry );
+                added( dockable );
                 return;
             }
         }
@@ -124,6 +136,7 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
         Entry entry = new Entry( dockable, name );
         dockables.put( dockable, entry );
         entry.putMode( currentMode( dockable ) );
+        added( dockable );
     }
     
     /**
@@ -131,7 +144,18 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
      * @param dockable the element to remove
      */
     public void remove( Dockable dockable ){
-        dockables.remove( dockable );
+        Entry entry = dockables.remove( dockable );
+        if( entry != null ){
+            removed( dockable );
+        }
+    }
+    
+    /**
+     * Called after a {@link Dockable} was removed from this managar.
+     * @param dockable the element that was removed
+     */
+    protected void removed( Dockable dockable ){
+        
     }
     
     /**
@@ -158,14 +182,27 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
      * Gets the action that is displayed on {@link Dockable}s which are
      * currently in the mode <code>mode</code>.
      * @param mode the mode whose outgoing action is searched
-     * @return the action or <code>null</code> if <code>mode</code> is unknown
+     * @return the action or <code>null</code>
+     * @throws IllegalArgumentException if <code>mode</code> is unknown
      */
     public SimpleButtonAction getOutgoingAction( String mode ){
         Mode m = modes.get( mode );
         if( m == null )
-        	return null;
+        	throw new IllegalArgumentException( "mode is unknown: " + mode );
 
         return m.outgoing();
+    }
+    
+    /**
+     * Gets the action that should be used to go out from mode <code>mode</code>
+     * and that will be shown on <code>dockable</code>.
+     * @param mode the mode whose outgoing action is searched
+     * @param dockable the element for which the action will be used
+     * @return the action
+     * @throws IllegalArgumentException if <code>mode</code> is unknown
+     */
+    public DockAction getOutgoingAction( String mode, Dockable dockable ){
+        return getOutgoingAction( mode );
     }
 
     /**
@@ -187,14 +224,27 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
      * Gets the action that is displayed on {@link Dockable}s which might
      * go into the mode <code>mode</code>.
      * @param mode the mode whose ingoing action is searched
-     * @return the action or <code>null</code> if <code>mode</code> is unknown
+     * @return the action or <code>null</code>
+     * @throws IllegalArgumentException if <code>mode</code> is unknown
      */
     public SimpleButtonAction getIngoingAction( String mode ){
         Mode m = modes.get( mode );
         if( m == null )
-        	return null;
+        	throw new IllegalArgumentException( "Mode is unknown: " + mode );
         
         return m.ingoing();        
+    }
+    
+    /**
+     * Gets the action that is used to go into mode <code>mode</code>
+     * and that is shown on <code>dockable</code>.
+     * @param mode the mode whose ingoing action is searched
+     * @param dockable the element for which the action will be used
+     * @return the action or <code>null</code>
+     * @throws IllegalArgumentException if <code>mode</code> is unknown
+     */
+    public DockAction getIngoingAction( String mode, Dockable dockable ){
+        return getIngoingAction( mode );
     }
     
     /**
@@ -338,9 +388,9 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
         for( String check : available ){
             if( modes.containsKey( check ) ){
                 if( check.equals( mode ))
-                    entry.source.add( getOutgoingAction( check ));
+                    entry.source.add( getOutgoingAction( check, entry.dockable ));
                 else
-                    entry.source.add( getIngoingAction( check ) );
+                    entry.source.add( getIngoingAction( check, entry.dockable ) );
             }
         }
     }

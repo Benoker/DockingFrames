@@ -28,11 +28,11 @@ package bibliothek.gui.dock.common.intern;
 import java.awt.Dimension;
 
 import bibliothek.gui.DockTheme;
-import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.ColorMap;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CWorkingArea;
+import bibliothek.gui.dock.common.ColorMap;
+import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.event.CDockablePropertyListener;
 import bibliothek.gui.dock.common.event.CDockableStateListener;
 
@@ -55,6 +55,41 @@ public interface CDockable {
 		/** the dockable is floating in a dialog */
 		EXTERNALIZED
 	}
+	
+	/**
+	 * Key for an action of {@link #getAction(String)}. The action behind this
+	 * key should call {@link #setExtendedMode(bibliothek.gui.dock.common.intern.CDockable.ExtendedMode)}
+	 * with an argument of {@link ExtendedMode#MINIMIZED}.
+	 */
+	public static final String ACTION_KEY_MINIMIZE = "cdockable.minimize";
+
+	/**
+	 * Key for an action of {@link #getAction(String)}. The action behind this
+	 * key should call {@link #setExtendedMode(bibliothek.gui.dock.common.intern.CDockable.ExtendedMode)}
+	 * with an argument of {@link ExtendedMode#MAXIMIZED}.
+	 */
+	public static final String ACTION_KEY_MAXIMIZE = "cdockable.maximize";
+
+	/**
+	 * Key for an action of {@link #getAction(String)}. The action behind this
+	 * key should call {@link #setExtendedMode(bibliothek.gui.dock.common.intern.CDockable.ExtendedMode)}
+	 * with an argument of {@link ExtendedMode#NORMALIZED}.
+	 */
+	public static final String ACTION_KEY_NORMALIZE = "cdockable.normalize";
+
+	/**
+	 * Key for an action of {@link #getAction(String)}. The action behind this
+     * key should call {@link #setExtendedMode(bibliothek.gui.dock.common.intern.CDockable.ExtendedMode)}
+     * with an argument of {@link ExtendedMode#EXTERNALIZED}.
+     */
+	public static final String ACTION_KEY_EXTERNALIZE = "cdockable.externalize";
+
+	/**
+	 * Key for an action of {@link #getAction(String)}. The action behind this
+	 * key should call {@link #setVisible(boolean)} with the argument
+	 * <code>false</code>.
+     */
+	public static final String ACTION_KEY_CLOSE = "cdockable.close";
 	
 	/**
 	 * Adds a state listener to this dockable, the listener will be informed of
@@ -263,10 +298,12 @@ public interface CDockable {
 	public void setControl( CControlAccess control );
 	
 	/**
-	 * Gets the source that contains the close-action.
-	 * @return the source
+	 * Gets an action which is not added to the title by this {@link CDockable}
+	 * put by another module.
+	 * @param key the name of the action
+	 * @return an action or <code>null</code>
 	 */
-	public DockActionSource getClose();
+	public CAction getAction( String key );
 	
 	/**
 	 * Gets a mutable map of colors. Clients can put colors into this map, and

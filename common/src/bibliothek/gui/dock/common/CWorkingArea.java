@@ -32,6 +32,7 @@ import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.common.event.CDockableAdapter;
 import bibliothek.gui.dock.common.intern.AbstractCDockable;
@@ -283,6 +284,10 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable{
             // ignore
         }
         
+        public DockActionSource getClose() {
+            return CWorkingArea.this.getClose();
+        }
+        
         @Override
         public DockTitle getDockTitle( DockTitleVersion version ) {
             if( suppressTitle( version ))
@@ -304,6 +309,10 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable{
                     fireTitleExchanged();
                 }
             });
+        }
+        
+        public DockActionSource getClose() {
+            return CWorkingArea.this.getClose();
         }
         
         public CDockable getDockable() {

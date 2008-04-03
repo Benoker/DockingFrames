@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.common.event;
 
+import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.intern.CDockable;
 
 /**
@@ -86,4 +87,13 @@ public interface CDockablePropertyListener {
      */
     public void titleShownChanged( CDockable dockable );
     
+    /**
+     * Called when an action that is returned by {@link CDockable#getAction(String)}
+     * has been exchanged.
+     * @param dockable the source of the event
+     * @param key the name of the exchanged action
+     * @param oldAction the old action, can be <code>null</code>
+     * @param newAction the new action, can be <code>null</code>
+     */
+    public void actionChanged( CDockable dockable, String key, CAction oldAction, CAction newAction );
 }

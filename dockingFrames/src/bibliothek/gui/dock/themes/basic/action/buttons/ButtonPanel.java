@@ -427,8 +427,9 @@ public class ButtonPanel extends JPanel{
 				int set = 0;
 				int index = 0;
 				int max = actions.size();
+				int length = actions.size();
 				
-				while( set < count ){
+				while( set < count && index < length ){
 					BasicTitleViewItem<JComponent> item = actions.get( index++ ).item;
 					if( item == null ){
 						max--;

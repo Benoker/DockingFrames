@@ -264,7 +264,7 @@ public class CControl {
 		        return dockable instanceof CommonDockable;
 		    }
 		    public DockActionSource getSource( Dockable dockable ) {
-		        return ((CommonDockable)dockable).getDockable().getClose();
+		        return ((CommonDockable)dockable).getClose();
 		    }
 		});
 		frontend.getController().getRegister().addDockRegisterListener( new DockAdapter(){

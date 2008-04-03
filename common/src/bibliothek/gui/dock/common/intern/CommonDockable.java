@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.common.intern;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.DockActionSource;
 
 /**
  * Represents a {@link bibliothek.gui.dock.common.intern.CDockable}.
@@ -37,4 +38,10 @@ public interface CommonDockable extends Dockable{
 	 * @return the model
 	 */
 	public CDockable getDockable();
+	
+	/**
+	 * Gets the {@link DockActionSource} which shows the close-action.
+	 * @return the action source
+	 */
+	public DockActionSource getClose();
 }

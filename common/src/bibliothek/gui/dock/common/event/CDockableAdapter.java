@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.common.event;
 
+import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.intern.CDockable;
 
 /**
@@ -78,6 +79,10 @@ public class CDockableAdapter implements CDockableStateListener, CDockableProper
         // empty
     }
 
+    public void actionChanged( CDockable dockable, String key, CAction oldAction, CAction newAction ) {
+        // empty
+    }
+    
     public void normalized( CDockable dockable ) {
         // empty
     }

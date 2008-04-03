@@ -116,4 +116,9 @@
 - API: PredefinedDockSituation can use backup factories for elements that are missing in the cache. DockFrontend supports these backup factories as well, Dockables read by the backup-factory are automatically added to the frontend.
 - API: DockFactories can now be unregistered from DockFrontend
 - Layout: DockActions are triggered by pressing SPACE on the focused button, DropDownActions pop up when the DOWN (non numpad) key is pressed
+! API: BasicDropDownButtonHandler now requests a BasicDropDownButtonTrigger instead of a BasicTrigger
 - Layout: New FocusTraversalPolicies allow to navigate within all elements of a DockableDisplayer (including title).
+! API: CDockable.getClose() has been moved into CommonDockable
+- API: CDockable has an additional method "getAction" which is used by various modules to override their default actions (for example the state manager)
+- API: new action CBlank, which does not show anything. 
+- Bugfix: ButtonPanel could throw an IndexOutOfBoundsException if an invisible action was in the DockActionSource

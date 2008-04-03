@@ -26,6 +26,7 @@ package bibliothek.gui.dock.common.intern;
  */
 import bibliothek.gui.dock.*;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
+import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.common.event.CDockableAdapter;
 import bibliothek.gui.dock.title.DockTitle;
@@ -43,12 +44,17 @@ public class DefaultCommonDockable extends DefaultDockable implements CommonDock
     /** the list of actions of this dockable */
     private DefaultDockActionSource actions;
     
+    /** the action source with the potential close action */
+    private DockActionSource close;
+    
     /**
      * Creates a new dockable
      * @param dockable the model of this element
+     * @param close action source which shows the close action
      */
-    public DefaultCommonDockable( CDockable dockable ){
+    public DefaultCommonDockable( CDockable dockable, DockActionSource close ){
         this.dockable = dockable;
+        this.close = close;
         actions = new DefaultDockActionSource(
                 new LocationHint( LocationHint.DOCKABLE, LocationHint.LEFT ));
         setActionOffers( actions );
@@ -66,6 +72,10 @@ public class DefaultCommonDockable extends DefaultDockable implements CommonDock
     
     public CDockable getDockable(){
         return dockable;
+    }
+    
+    public DockActionSource getClose() {
+        return close;
     }
     
     @Override
