@@ -122,3 +122,8 @@
 - API: CDockable has an additional method "getAction" which is used by various modules to override their default actions (for example the state manager)
 - API: new action CBlank, which does not show anything. 
 - Bugfix: ButtonPanel could throw an IndexOutOfBoundsException if an invisible action was in the DockActionSource
+- Bugfix: CDockable did not go into normalized-mode when externalized and never normalized before
+- API: additional interface CStation in common, allows clients to implement their own new stations. Two new stations: CMinimizeArea and CGridArea.
+! API: changes in CLocation in order to allow CStations
+- Bugfix: CDockables could not be opened maximized.
+s! API: Every CStation can now be a "working area", CWorkingArea remains in the system as the default working areas.

@@ -269,6 +269,27 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         
         station.addSplitDockStationListener( listener );
     }
+    
+    /**
+     * Sets the station which should be used for maximized {@link Dockable}s.
+     * Any currently maximized elements will be normalized.
+     * @param name the unique identifier of the station that should become
+     * the maximize area
+     */
+    public void setMaximizingStation( String name ) {
+        DockStation station = stations.get( name );
+        if( station == null )
+            throw new IllegalArgumentException( "No station registered with name " + name );
+        
+        if( !( station instanceof SplitDockStation ))
+            throw new IllegalArgumentException( "Station is not a SplidDockStation " + name );
+        
+        AffectedSet set = new AffectedSet();
+        unmaximize( set );
+        set.finish();
+        
+        maxi = (SplitDockStation)station;
+    }
 
     /**
      * Adds a station to which a {@link Dockable} can be <i>minimized</i>.
@@ -595,7 +616,9 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
     	if( maximizing.getDockParent() == maxi )
     		maxi.setFullScreen( maximizing );
     	else{
-    	    maximizing.getDockParent().drag( maximizing );
+    	    if( maximizing.getDockParent() != null )
+    	        maximizing.getDockParent().drag( maximizing );
+    	    
     	    SplitDockTree tree = maxi.createTree();
     		if( tree.getRoot() == null )
     			tree.root( maximizing );
@@ -703,14 +726,18 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      * location that it currently has
      */
     protected boolean isValidNormalized( Dockable dockable ){
-        return DockUtilities.isAncestor( getDefaultNormal( dockable ), dockable );
+        DockStation normal = getDefaultNormal( dockable );
+        if( normal == null )
+            return false;
+        
+        return DockUtilities.isAncestor( normal, dockable );
     }
     
     /**
      * Gets the {@link DockStation} which should be used as default normal
      * parent for <code>dockable</code>.
      * @param dockable some {@link Dockable}
-     * @return the preferred normal parent for <code>dockable</code>
+     * @return the preferred normal parent for <code>dockable</code> or <code>null</code>
      */
     protected DockStation getDefaultNormal( Dockable dockable ){
         return defaultNormal;
@@ -824,7 +851,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      * @param location the preferred location, can be <code>null</code>
      */
     private void checkedDrop( DockStation station, Dockable dockable, DockableProperty location ){
-        if( station != dockable.getDockParent() ){
+        if( station != null && station != dockable.getDockParent() ){
             boolean done = false;
             
             if( location != null )

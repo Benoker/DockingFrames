@@ -25,58 +25,57 @@
  */
 package bibliothek.gui.dock.common.location;
 
+import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.common.CLocation;
-import bibliothek.gui.dock.common.CWorkingArea;
 import bibliothek.gui.dock.common.intern.CDockable.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
-import bibliothek.gui.dock.station.split.SplitDockProperty;
+import bibliothek.gui.dock.station.flap.FlapDockProperty;
 
 /**
- * A location representing a {@link CWorkingArea}.
+ * A location which represents a {@link FlapDockStation}.
  * @author Benjamin Sigg
- *
  */
-public class CWorkingAreaLocation extends CSplitLocation{
-    /** the area to which this location relates, can be <code>null</code> */
-    private CWorkingArea area;
-    
+public abstract class CFlapLocation extends CLocation{
     /**
-     * Creates a new location.
-     * @param area the area which is represented by this location
+     * Creates a location to append children at the end of the station.
+     * @return the location marking the last position
      */
-    public CWorkingAreaLocation( CWorkingArea area ){
-        if( area == null )
-            throw new NullPointerException( "area must not be null" );
-        this.area = area;
+    public CFlapIndexLocation append(){
+        return insert( Integer.MAX_VALUE );
     }
     
     /**
-     * Gets the workingarea to which this location relates.
-     * @return the area or <code>null</code> if the default center is meant.
+     * Creates a location to insert children into the station.
+     * @param index the exact position
+     * @return a location marking the position <code>index</code>
      */
-    public CWorkingArea getWorkingArea(){
-        return area;
+    public CFlapIndexLocation insert( int index ){
+        return new CFlapIndexLocation( this, index );
     }
-    
+
     @Override
     public CLocation aside() {
         return this;
     }
     
     @Override
+    public CLocation expandProperty( DockableProperty property ) {
+        if( property instanceof FlapDockProperty ){
+            FlapDockProperty flap = (FlapDockProperty)property;
+            return insert( flap.getIndex() );
+        }
+        return null;
+    }
+
+    @Override
     public ExtendedMode findMode() {
-        return ExtendedMode.NORMALIZED;
+        return ExtendedMode.MINIMIZED;
     }
 
     @Override
     public DockableProperty findProperty( DockableProperty successor ) {
-        SplitDockProperty property = new SplitDockProperty( 0, 0, 1, 1 );
+        FlapDockProperty property = new FlapDockProperty( Integer.MAX_VALUE );
         property.setSuccessor( successor );
         return property;
-    }
-
-    @Override
-    public String findRoot() {
-        return area.getUniqueId();
     }
 }

@@ -26,7 +26,6 @@
 package bibliothek.gui.dock.common.location;
 
 import bibliothek.gui.dock.common.CContentArea;
-import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.intern.CDockable.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
@@ -35,7 +34,7 @@ import bibliothek.gui.dock.layout.DockableProperty;
  * A location based on a {@link CContentArea}.
  * @author Benjamin Sigg
  */
-public class CBaseLocation extends CRootLocation{
+public class CBaseLocation extends CLocation{
 	/** the contentarea to which this location relates, can be <code>null</code> */
 	private CContentArea content;
 	
@@ -56,6 +55,15 @@ public class CBaseLocation extends CRootLocation{
 	}
 	
 	/**
+	 * Gets a location that points to the center of the {@link CContentArea}.
+	 * @return the location pointing to the center where normalized 
+	 * dockables are shown
+	 */
+	public CContentAreaCenterLocation normal(){
+	    return new CContentAreaCenterLocation( this );
+	}
+	
+	/**
 	 * Creates a location describing a normalized element at a given location.
 	 * Note that the normalized area is seen as a rectangle of size 1/1.
 	 * @param x the x-coordinate, a value between 0 and 1
@@ -65,7 +73,7 @@ public class CBaseLocation extends CRootLocation{
 	 * @return the new location
 	 */
 	public CRectangleLocation normalRectangle( double x, double y, double width, double height ){
-		return new CRectangleLocation( this, x, y, width, height );
+		return normal().rectangle( x, y, width, height );
 	}
 	
 	/**
@@ -76,7 +84,7 @@ public class CBaseLocation extends CRootLocation{
 	 * @return the new location
 	 */
 	public TreeLocationRoot normalNorth( double size ){
-		return new TreeLocationRoot( this, size, Side.NORTH );
+		return normal().north( size );
 	}	
 
 	/**
@@ -87,7 +95,7 @@ public class CBaseLocation extends CRootLocation{
 	 * @return the new location
 	 */
 	public TreeLocationRoot normalSouth( double size ){
-		return new TreeLocationRoot( this, size, Side.SOUTH );
+		return normal().south( size );
 	}
 	
 	/**
@@ -98,7 +106,7 @@ public class CBaseLocation extends CRootLocation{
 	 * @return the new location
 	 */
 	public TreeLocationRoot normalEast( double size ){
-		return new TreeLocationRoot( this, size, Side.EAST );
+		return normal().east( size );
 	}
 
 	/**
@@ -109,15 +117,15 @@ public class CBaseLocation extends CRootLocation{
 	 * @return the new location
 	 */
 	public TreeLocationRoot normalWest( double size ){
-		return new TreeLocationRoot( this, size, Side.WEST );
+		return normal().west( size );
 	}
 	
 	/**
 	 * Creates a location describing a minimized element at the top.
 	 * @return the new location
 	 */
-	public CMinimizedLocation minimalNorth(){
-		return minimalNorth( Integer.MAX_VALUE );
+	public CFlapIndexLocation minimalNorth(){
+	    return new CMinimizedLocation( this, Side.NORTH ).append();
 	}
 	
 	/**
@@ -125,16 +133,16 @@ public class CBaseLocation extends CRootLocation{
 	 * @param index the location in the list of minimized elements
 	 * @return the new location
 	 */
-	public CMinimizedLocation minimalNorth( int index ){
-		return new CMinimizedLocation( this, Side.NORTH, index );
+	public CFlapIndexLocation minimalNorth( int index ){
+		return new CMinimizedLocation( this, Side.NORTH ).insert( index );
 	}
 
 	/**
 	 * Creates a location describing a minimized element at the bottom.
 	 * @return the new location
 	 */
-	public CMinimizedLocation minimalSouth(){
-		return minimalSouth( Integer.MAX_VALUE );
+	public CFlapIndexLocation minimalSouth(){
+	    return new CMinimizedLocation( this, Side.SOUTH ).append();
 	}
 	
 	/**
@@ -142,16 +150,16 @@ public class CBaseLocation extends CRootLocation{
 	 * @param index the location in the list of minimized elements
 	 * @return the new location
 	 */
-	public CMinimizedLocation minimalSouth( int index ){
-		return new CMinimizedLocation( this, Side.SOUTH, index );
+	public CFlapIndexLocation minimalSouth( int index ){
+		return new CMinimizedLocation( this, Side.SOUTH ).insert( index );
 	}
 	
 	/**
 	 * Creates a location describing a minimized element at the right.
 	 * @return the new location
 	 */
-	public CMinimizedLocation minimalEast(){
-		return minimalEast( Integer.MAX_VALUE );
+	public CFlapIndexLocation minimalEast(){
+	    return new CMinimizedLocation( this, Side.EAST ).append();
 	}
 	
 	/**
@@ -159,16 +167,16 @@ public class CBaseLocation extends CRootLocation{
 	 * @param index the location in the list of minimized elements
 	 * @return the new location
 	 */
-	public CMinimizedLocation minimalEast( int index ){
-		return new CMinimizedLocation( this, Side.EAST, index );
+	public CFlapIndexLocation minimalEast( int index ){
+		return new CMinimizedLocation( this, Side.EAST ).insert( index );
 	}
 	
 	/**
 	 * Creates a location describing a minimized element at the left.
 	 * @return the new location
 	 */
-	public CMinimizedLocation minimalWest(){
-		return minimalWest( Integer.MAX_VALUE );
+	public CFlapIndexLocation minimalWest(){
+	    return new CMinimizedLocation( this, Side.WEST ).append();
 	}
 	
 	/**
@@ -176,8 +184,8 @@ public class CBaseLocation extends CRootLocation{
 	 * @param index the location in the list of minimized elements
 	 * @return the new location
 	 */
-	public CMinimizedLocation minimalWest( int index ){
-		return new CMinimizedLocation( this, Side.WEST, index );
+	public CFlapIndexLocation minimalWest( int index ){
+		return new CMinimizedLocation( this, Side.WEST ).insert( index );
 	}
 	
 	@Override
@@ -191,12 +199,8 @@ public class CBaseLocation extends CRootLocation{
 	}
 	
 	@Override
-	public String findRootNormal() {
-	    CContentArea center = getContentArea();
-        if( center == null )
-            return CContentArea.getCenterIdentifier( CControl.CONTENT_AREA_STATIONS_ID );
-        else
-            return center.getCenterIdentifier();
+	public CLocation expandProperty( DockableProperty property ) {
+	    return null;
 	}
 	
 	@Override

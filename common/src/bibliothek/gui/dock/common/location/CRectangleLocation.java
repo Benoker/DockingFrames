@@ -37,8 +37,8 @@ import bibliothek.gui.dock.station.split.SplitDockProperty;
  * @author Benjamin Sigg
  */
 public class CRectangleLocation extends AbstractStackholdingLocation{
-	/** the root element telling which area is the normalized-area */
-	private CRootLocation root;
+	/** the parenting split station */
+	private CSplitLocation parent;
 	
 	/** the relative x-coordinate */
 	private double x;
@@ -51,17 +51,17 @@ public class CRectangleLocation extends AbstractStackholdingLocation{
 	
 	/**
 	 * Creates a new location.
-	 * @param root the root element telling which area is the normalized-area.
+	 * @param parent the parent that knows the id of the root station
 	 * @param x the relative x-coordinate, a value between 0 and 1 is preferred
 	 * @param y the relative y-coordinate, a value between 0 and 1 is preferred
 	 * @param width the relative width, a value between 0 and 1 is preferred
 	 * @param height the relative height, a value between 0 and 1 is preferred
 	 */
-	public CRectangleLocation( CRootLocation root, double x, double y, double width, double height ){
-		if( root == null )
-			throw new NullPointerException( "base is null" );
+	public CRectangleLocation( CSplitLocation parent, double x, double y, double width, double height ){
+		if( parent == null )
+			throw new NullPointerException( "parent is null" );
 		
-		this.root = root;
+		this.parent = parent;
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -70,7 +70,7 @@ public class CRectangleLocation extends AbstractStackholdingLocation{
 	
 	@Override
 	public String findRoot(){
-		return root.findRootNormal();
+		return parent.findRoot();
 	}
 
 	@Override

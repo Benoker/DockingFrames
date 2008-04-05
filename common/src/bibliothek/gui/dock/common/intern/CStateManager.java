@@ -28,7 +28,9 @@ package bibliothek.gui.dock.common.intern;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.KeyStroke;
 
@@ -45,17 +47,12 @@ import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.event.CDockableAdapter;
 import bibliothek.gui.dock.common.event.CDockablePropertyListener;
 import bibliothek.gui.dock.common.intern.CDockable.ExtendedMode;
-import bibliothek.gui.dock.common.location.*;
+import bibliothek.gui.dock.common.location.CMaximizedLocation;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.event.KeyboardListener;
 import bibliothek.gui.dock.facile.action.StateManager;
 import bibliothek.gui.dock.layout.DockableProperty;
-import bibliothek.gui.dock.station.flap.FlapDockProperty;
-import bibliothek.gui.dock.station.screen.ScreenDockProperty;
-import bibliothek.gui.dock.station.split.SplitDockPathProperty;
-import bibliothek.gui.dock.station.split.SplitDockProperty;
-import bibliothek.gui.dock.station.stack.StackDockProperty;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.util.container.Single;
@@ -368,33 +365,20 @@ public class CStateManager extends StateManager {
     	String newMode = null;
     	
     	if( root != null && mode != null ){
-	        switch( mode ){
-		        case EXTERNALIZED:
-		            newMode = EXTERNALIZED;
-		            break;
-		        case MAXIMIZED:
-		        	newMode = MAXIMIZED;
-		            break;
-		        case MINIMIZED:
-		        	newMode = MINIMIZED;
-		            break;
-		        case NORMALIZED:
-		        	newMode = NORMALIZED;
-		            break;
-		    }
+    	    newMode = convertMode( mode );
 	        
-	        // ensure the correct CWorkingArea is set.
+	        // ensure the correct working area is set.
             boolean set = false;
             if( root != null ){
                 DockStation station = getStation( root );
                 if( station != null ){
-                    Dockable stationDockable = station.asDockable();
-                    if( stationDockable instanceof CommonDockable ){
-                        CDockable cdockable = ((CommonDockable)stationDockable).getDockable();
-                        if( cdockable instanceof CWorkingArea ){
-                            dockable.getDockable().setWorkingArea( (CWorkingArea)cdockable );
-                            set = true;
-                            newMode = NORMALIZED;
+                    CStation cstation = control.getOwner().getStation( station );
+                    if( cstation != null && cstation.isWorkingArea() ){
+                        dockable.getDockable().setWorkingArea( cstation );
+                        set = true;
+                        ExtendedMode stationMode = cstation.getStationLocation().findMode();
+                        if( stationMode != null ){
+                            newMode = convertMode( stationMode );
                         }
                     }
                 }
@@ -413,6 +397,28 @@ public class CStateManager extends StateManager {
     }
     
     /**
+     * Converts <code>mode</code> into one of the strings
+     * {@link StateManager#EXTERNALIZED}, {@link StateManager#MAXIMIZED},
+     * {@link StateManager#MINIMIZED} or {@link StateManager#NORMALIZED}.
+     * @param mode the mode, not <code>null</code>
+     * @return the mode represented as string
+     */
+    protected String convertMode( ExtendedMode mode ){
+        switch( mode ){
+            case EXTERNALIZED:
+                return EXTERNALIZED;
+            case MAXIMIZED:
+                return MAXIMIZED;
+            case MINIMIZED:
+                return MINIMIZED;
+            case NORMALIZED:
+                return NORMALIZED;
+        }
+        
+        return null;
+    }
+    
+    /**
      * Gets an element describing the location of <code>dockable</code> as
      * good as possible.
      * @param dockable the element whose location should be searched
@@ -422,38 +428,66 @@ public class CStateManager extends StateManager {
     	if( getMode( dockable ) == ExtendedMode.MAXIMIZED )
     		return new CMaximizedLocation();
     	
-    	CWorkingArea area = getAreaOf( dockable );
-    	DockableProperty property;
-    	if( area == null ){
-    	    property = DockUtilities.getPropertyChain( dockable );
-    	    return fill( null, property, dockable );    
+    	List<CStation> stations = control.getOwner().getStations();
+    	CStation root = null;
+    	
+    	Dockable child = dockable;
+    	DockStation search = dockable.asDockStation();
+    	
+    	loop:while( search != null ){
+    	    for( CStation station : stations ){
+    	        if( station.getStation() == search ){
+    	            root = station;
+    	            break loop;
+    	        }
+    	    }
+    	    
+    	    child = search.asDockable();
+    	    if( child == null )
+    	        search = null;
+    	    else
+    	        search = child.getDockParent();
     	}
-    	else{
-    	    property = DockUtilities.getPropertyChain( area.intern().asDockStation(), dockable );
-    	    return fill( new CWorkingAreaLocation( area ), property, dockable );
-    	}
+    	
+    	if( root == null )
+    	    return null;
+    	
+    	DockableProperty property = DockUtilities.getPropertyChain( root.getStation(), dockable );
+    	CLocation location = root.getStationLocation();
+    	return location.expandProperty( property );
     }
     
     /**
-     * Searches <code>dockable</code> and its parent for the first {@link CWorkingArea}.
+     * Searches <code>dockable</code> and its parent for the first {@link CStation} 
+     * that is a working area.
      * @param dockable the element whose working area is searched
      * @return the first working area or <code>null</code>
      */
-    protected CWorkingArea getAreaOf( Dockable dockable ){
+    protected CStation getAreaOf( Dockable dockable ){
+        Map<DockStation, CStation> stations = new HashMap<DockStation, CStation>();
+        for( CStation station : control.getOwner().getStations() ){
+            if( station.isWorkingArea() ){
+                stations.put( station.getStation(), station );
+            }
+        }
+        
+        if( dockable.asDockStation() != null ){
+            CStation station = stations.get( dockable.asDockStation() );
+            if( station != null )
+                return station;
+        }
+        
         Dockable check = dockable;
         while( check != null ){
-            if( check instanceof CommonDockable ){
-                CDockable cdock = ((CommonDockable)check).getDockable();
-                if( cdock instanceof CWorkingArea ){
-                    return (CWorkingArea)cdock;
-                }
-            }
-            
             DockStation parent = check.getDockParent();
             if( parent == null )
                 check = null;
             else
                 check = parent.asDockable();
+            
+            CStation station = stations.get( parent );
+            if( station != null )
+                return station;
         }
         
         return null;
@@ -461,144 +495,19 @@ public class CStateManager extends StateManager {
     
     @Override
     protected boolean isValidNormalized( Dockable dockable ) {
+        if( !super.isValidNormalized( dockable ) )
+            return false;
+        
         if( dockable instanceof CommonDockable ){
             CDockable cdock = ((CommonDockable)dockable).getDockable();
             
-            CWorkingArea current = getAreaOf( dockable );
-            CWorkingArea preferred = cdock.getWorkingArea();
+            CStation current = getAreaOf( dockable );
+            CStation preferred = cdock.getWorkingArea();
             
             return current == preferred;
         }
         
-        return super.isValidNormalized( dockable );
-    }
-    
-    /**
-     * Analyzes the contents of <code>property</code> and tries to create an
-     * {@link CLocation} that matches <code>property</code> as good as possible. 
-     * @param base the parent of the next location to create, can be <code>null</code>
-     * @param property the property whose location should become a child of
-     * <code>base</code>, can be <code>null</code>
-     * @param dockable the element whose location is analyzed
-     * @return either a location matching <code>property</code> and all its successors
-     * as good as possible, <code>base</code> in case <code>property</code> can't
-     * be analyzed or <code>null</code> if no analysis is possible at all
-     */
-    private CLocation fill( CLocation base, DockableProperty property, Dockable dockable ){
-    	if( property == null )
-    		return base;
-    	
-    	if( base == null ){
-	    	if( property instanceof ScreenDockProperty ){
-	    		ScreenDockProperty screen = (ScreenDockProperty)property;
-	    		CExternalizedLocation extern = new CExternalizedLocation(
-    				screen.getX(), screen.getY(), screen.getWidth(), screen.getHeight() );
-	    		return fill( extern, screen.getSuccessor(), dockable );
-	    	}
-	    	else{
-	    	    CWorkingArea workingArea = getAreaOf( dockable );
-	    	    if( workingArea == null ){
-	    	        base = new CBaseLocation( getCenterOf( dockable ) );
-	    	    }
-	    	    else{
-	    	        base = new CWorkingAreaLocation( workingArea );
-	    	    }
-	    	}
-    	}
-    	
-    	if( property instanceof StackDockProperty ){
-    		int index = ((StackDockProperty)property).getIndex();
-    		return fill( new CStackLocation( base, index ), property.getSuccessor(), dockable );
-    	}
-    	
-    	if( property instanceof FlapDockProperty ){
-    		if( base instanceof CBaseLocation ){
-    			CBaseLocation location = (CBaseLocation)base;
-    			FlapDockProperty flap = (FlapDockProperty)property;
-    			
-    			CContentArea center = location.getContentArea();
-    			String root = getRootName( dockable );
-    			if( root == null )
-    				return base;
-    			
-    			if( center == null ){
-    				if( root.equals( CContentArea.getNorthIdentifier( CControl.CONTENT_AREA_STATIONS_ID ) )){
-    					return fill( location.minimalNorth( flap.getIndex() ), flap.getSuccessor(), dockable );
-    				}
-    				if( root.equals( CContentArea.getSouthIdentifier( CControl.CONTENT_AREA_STATIONS_ID ) )){
-    					return fill( location.minimalSouth( flap.getIndex() ), flap.getSuccessor(), dockable );
-    				}
-    				if( root.equals( CContentArea.getEastIdentifier( CControl.CONTENT_AREA_STATIONS_ID ) )){
-    					return fill( location.minimalEast( flap.getIndex() ), flap.getSuccessor(), dockable );
-    				}
-    				if( root.equals( CContentArea.getWestIdentifier( CControl.CONTENT_AREA_STATIONS_ID ) )){
-    					return fill( location.minimalWest( flap.getIndex() ), flap.getSuccessor(), dockable );
-    				}
-    			}
-    			else{
-    				if( root.equals( center.getNorthIdentifier() )){
-    					return fill( location.minimalNorth( flap.getIndex() ), flap.getSuccessor(), dockable );
-    				}
-    				if( root.equals( center.getSouthIdentifier() )){
-    					return fill( location.minimalSouth( flap.getIndex() ), flap.getSuccessor(), dockable );
-    				}
-    				if( root.equals( center.getEastIdentifier() )){
-    					return fill( location.minimalEast( flap.getIndex() ), flap.getSuccessor(), dockable );
-    				}
-    				if( root.equals( center.getWestIdentifier() )){
-    					return fill( location.minimalWest( flap.getIndex() ), flap.getSuccessor(), dockable );
-    				}    				
-    			}
-    		}
-    		
-    		return null;
-    	}
-    	
-    	if( property instanceof SplitDockProperty ){
-    		if( base instanceof CBaseLocation ){
-    			SplitDockProperty split = (SplitDockProperty)property;
-    			return fill( ((CBaseLocation)base).normalRectangle( split.getX(), split.getY(), split.getWidth(), split.getHeight() ), split.getSuccessor(), dockable );
-    		}
-    	}
-    	
-    	if( property instanceof SplitDockPathProperty ){
-    		if( base instanceof CRootLocation ){
-    			SplitDockPathProperty path = (SplitDockPathProperty)property;
-    			AbstractTreeLocation tree = null;
-    			for( SplitDockPathProperty.Node node : path ){
-    				Side side = null;
-    				
-    				switch( node.getLocation() ){
-    					case TOP: 
-    						side = Side.NORTH;
-    						break;
-    					case BOTTOM:
-    						side = Side.SOUTH;
-    						break;
-    					case LEFT: 
-    						side = Side.WEST;
-    						break;
-    					case RIGHT:
-    						side = Side.EAST;
-    						break;
-    				}
-    				
-    				if( tree == null ){
-    					tree = new TreeLocationRoot( (CRootLocation)base, node.getSize(), side );
-    				}
-    				else{
-    					tree = new TreeLocationNode( tree, node.getSize(), side );
-    				}
-    			}
-    			
-    			if( tree == null )
-    			    return fill( base, path.getSuccessor(), dockable );
-    			else
-    			    return fill( tree, path.getSuccessor(), dockable );
-    		}
-    	}
-    	
-    	return base;
+        return true; 
     }
     
     /**
@@ -659,22 +568,22 @@ public class CStateManager extends StateManager {
     
     /**
      * Ensures that <code>dockable</code> is in a valid location (a mode that
-     * is enabled by <code>dockable</code> and in the correct {@link CWorkingArea}),
+     * is enabled by <code>dockable</code> and in the correct working area,
      * perhaps changes the current location to ensure that.
      * @param dockable the element which might not be in a valid location
      */
     public void ensureValidLocation( CDockable dockable ){
         ExtendedMode mode = getMode( dockable.intern() );
         if( mode == ExtendedMode.NORMALIZED ){
-            CWorkingArea preferredArea = dockable.getWorkingArea();
-            CWorkingArea currentArea = findFirstParentWorkingArea( dockable.intern() );
+            CStation preferredArea = dockable.getWorkingArea();
+            CStation currentArea = findFirstParentWorkingArea( dockable.intern() );
             
             if( preferredArea != currentArea ){
                 if( preferredArea == null ){
                     dockable.setLocation( CLocation.base().normalRectangle( 0.25, 0.25, 0.5, 0.5 ) );
                 }
                 else{
-                    dockable.setLocation( CLocation.working( preferredArea ).rectangle( 0.25, 0.25, 0.5, 0.5 ) );
+                    dockable.setLocation( preferredArea.getStationLocation() );
                 }
             }
             
@@ -692,41 +601,37 @@ public class CStateManager extends StateManager {
     }
     
     /**
-     * Finds the first {@link CWorkingArea} in the path up to the root from
-     * <code>dockable</code>.
-     * @param dockable the element which might have a {@link CWorkingArea}
+     * Finds the first {@link CStation} in the path up to the root from
+     * <code>dockable</code> wich is a working area.
+     * @param dockable the element which might have a {@link CStation}
      * as parent.
-     * @return the first found {@link CWorkingArea}.
+     * @return the first found {@link CStation}.
      */
-    private CWorkingArea findFirstParentWorkingArea( Dockable dockable ){
+    private CStation findFirstParentWorkingArea( Dockable dockable ){
         DockStation station = dockable.getDockParent();
         dockable = station == null ? null : station.asDockable();
         
-        while( dockable != null ){
-            if( dockable instanceof CommonDockable ){
-                CDockable fdock = ((CommonDockable)dockable).getDockable();
-                if( fdock instanceof CWorkingArea )
-                    return (CWorkingArea)fdock;
-            }
-            
-            station = dockable.getDockParent();
-            dockable = station == null ? null : station.asDockable();
-        }
-        
-        return null;
+        if( dockable != null )
+            return getAreaOf( dockable );
+        else
+            return null;
     }
     
     /**
-     * Ensures that all {@link CDockable}s which have a {@link CWorkingArea} as
-     * parent, are normalized.
+     * Ensures that all {@link CDockable}s which have a working area as
+     * parent, are in their preferred mode.
      */
     public void normalizeAllWorkingAreaChildren(){
         for( Dockable dockable : control.getOwner().intern().getController().getRegister().listDockables() ){
             if( dockable instanceof CommonDockable ){
                 CDockable fdockable = ((CommonDockable)dockable).getDockable();
                 if( fdockable.getWorkingArea() != null ){
-                    if( !ExtendedMode.NORMALIZED.equals( fdockable.getExtendedMode() )){
-                        fdockable.setExtendedMode( ExtendedMode.NORMALIZED );
+                    ExtendedMode mode = fdockable.getWorkingArea().getStationLocation().findMode();
+                    if( mode == null )
+                        mode = ExtendedMode.NORMALIZED;
+                    
+                    if( !mode.equals( fdockable.getExtendedMode() )){
+                        fdockable.setExtendedMode( mode );
                     }
                 }
             }
@@ -750,8 +655,13 @@ public class CStateManager extends StateManager {
     protected DockStation getDefaultNormal( Dockable dockable ) {
         if( dockable instanceof CommonDockable ){
             CDockable cdockable = ((CommonDockable)dockable).getDockable();
-            if( cdockable.getWorkingArea() != null )
-                return cdockable.getWorkingArea().intern().asDockStation();
+            if( cdockable.getWorkingArea() != null ){
+                ExtendedMode mode = cdockable.getWorkingArea().getStationLocation().findMode();
+                if( mode != ExtendedMode.NORMALIZED )
+                    return null;
+                
+                return cdockable.getWorkingArea().getStation();
+            }
         }
         
         return super.getDefaultNormal( dockable );

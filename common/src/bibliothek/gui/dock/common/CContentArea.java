@@ -32,17 +32,17 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
 import bibliothek.gui.dock.common.event.ResizeRequestListener;
+import bibliothek.gui.dock.common.intern.AbstractCStation;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
-import bibliothek.gui.dock.common.intern.CStateManager;
 import bibliothek.gui.dock.common.intern.station.FlapResizeRequestHandler;
 import bibliothek.gui.dock.common.intern.station.SplitResizeRequestHandler;
+import bibliothek.gui.dock.common.location.CBaseLocation;
 
 /**
  * A component that is normally set into the center of the
@@ -100,23 +100,20 @@ public class CContentArea extends JPanel{
     private String uniqueId;
     
     /** access to the controller which uses this area */
-    private CControlAccess control;
+    private CControl control;
     
-    /** whether this area is currently in usage */
-    private boolean used = false;
-    
-    /** set of listeners which are to be informed about changes */
-    private ResizeRequestListener[] resizeRequestListeners;
+    /** the set of stations on this content area */
+    private CStation[] stations;
     
     /**
-     * Creates a new center.
-     * @param access connection to a {@link CControl}
+     * Creates a new content area.
+     * @param control the control for which this area will be used
      * @param uniqueId a unique identifier of this center
      */
-    public CContentArea( CControlAccess access, String uniqueId ){
-        this.control = access;
+    public CContentArea( CControl control, String uniqueId ){
+        this.control = control;
     	this.uniqueId = uniqueId;
-        center = access.getOwner().getFactory().createSplitDockStation();
+        center = control.getFactory().createSplitDockStation();
         center.setExpandOnDoubleclick( false );
         
         northComponent = new JPanel( new BorderLayout() );
@@ -124,10 +121,10 @@ public class CContentArea extends JPanel{
         eastComponent = new JPanel( new BorderLayout() );
         westComponent = new JPanel( new BorderLayout() );
         
-        north = access.getOwner().getFactory().createFlapDockStation( northComponent );
-        south = access.getOwner().getFactory().createFlapDockStation( southComponent );
-        east = access.getOwner().getFactory().createFlapDockStation( eastComponent );
-        west = access.getOwner().getFactory().createFlapDockStation( westComponent );
+        north = control.getFactory().createFlapDockStation( northComponent );
+        south = control.getFactory().createFlapDockStation( southComponent );
+        east = control.getFactory().createFlapDockStation( eastComponent );
+        west = control.getFactory().createFlapDockStation( westComponent );
         
         north.setAutoDirection( false );
         north.setDirection( Direction.SOUTH );
@@ -152,26 +149,14 @@ public class CContentArea extends JPanel{
         add( eastComponent, BorderLayout.EAST );
         add( westComponent, BorderLayout.WEST );
         
-        CStateManager state = access.getStateManager();
-        state.add( getCenterIdentifier(), center );
-        state.add( getSouthIdentifier(), south );
-        state.add( getNorthIdentifier(), north );
-        state.add( getEastIdentifier(), east );
-        state.add( getWestIdentifier(), west );
+        CBaseLocation base = new CBaseLocation( this );
         
-        DockFrontend frontend = access.getOwner().intern();
-        frontend.addRoot( center, getCenterIdentifier() );
-        frontend.addRoot( north, getNorthIdentifier() );
-        frontend.addRoot( south, getSouthIdentifier() );
-        frontend.addRoot( east, getEastIdentifier() );
-        frontend.addRoot( west, getWestIdentifier() );
-        
-        resizeRequestListeners = new ResizeRequestListener[]{
-                new SplitResizeRequestHandler( center ),
-                new FlapResizeRequestHandler( north ),
-                new FlapResizeRequestHandler( south ),
-                new FlapResizeRequestHandler( east ),
-                new FlapResizeRequestHandler( west )
+        stations = new CStation[]{
+                new CenterStation( center, getCenterIdentifier(), base.normal() ),
+                new MinimizeStation( north, getNorthIdentifier(), base.minimalNorth() ),
+                new MinimizeStation( south, getSouthIdentifier(), base.minimalSouth() ),
+                new MinimizeStation( east, getEastIdentifier(), base.minimalEast() ),
+                new MinimizeStation( west, getWestIdentifier(), base.minimalWest() )
         };
     }
     
@@ -182,6 +167,25 @@ public class CContentArea extends JPanel{
     public String getUniqueId(){
 		return uniqueId;
 	}
+    
+    /**
+     * Gets the {@link CControl} for which this content area was created.
+     * @return the owner of this area
+     */
+    public CControl getControl(){
+        return control;
+    }
+    
+    /**
+     * Gets an independant array of all stations that are used on this
+     * {@link CContentArea}.
+     * @return the list of stations
+     */
+    public CStation[] getStations(){
+        CStation[] copy = new CStation[ stations.length ];
+        System.arraycopy( stations, 0, copy, 0, stations.length );
+        return copy;
+    }
     
     /**
      * Exchanges all the {@link CDockable}s on the center panel by
@@ -197,7 +201,7 @@ public class CContentArea extends JPanel{
      * not be called by clients.
      * @param used whether this area should listen to the changes of its
      * owning {@link CControl}
-     */
+     *//*
     public void setUsed( boolean used ){
         if( this.used != used ){
             if( this.used ){
@@ -212,7 +216,7 @@ public class CContentArea extends JPanel{
                     control.getOwner().addResizeRequestListener( listener );
             }
         }
-    }
+    }*/
     
     /**
      * Puts <code>component</code> in one corner of this area.
@@ -441,5 +445,59 @@ public class CContentArea extends JPanel{
      */
     public static String getWestIdentifier( String uniqueCenterId ){
     	return uniqueCenterId + " west";
+    }
+    
+    /**
+     * A wrapper around the {@link FlapDockStation}s which represent the minimize
+     * areas.
+     * @author Benjamin Sigg
+     */
+    private class MinimizeStation extends AbstractCStation{
+        private FlapDockStation station;
+        private ResizeRequestListener handler;
+        
+        public MinimizeStation( FlapDockStation station, String id, CLocation location ){
+            super( station, id, location );
+            this.station = station;
+            handler = new FlapResizeRequestHandler( station );
+        }
+        
+        @Override
+        protected void install( CControlAccess access ) {
+            access.getOwner().addResizeRequestListener( handler );
+            access.getStateManager().add( getUniqueId(), station );
+        }
+        @Override
+        protected void uninstall( CControlAccess access ) {
+            access.getOwner().removeResizeRequestListener( handler );
+            access.getStateManager().remove( getUniqueId() );
+        }
+    }
+    
+    /**
+     * A wrapper around the {@link SplitDockStation} that sits in the middle
+     * of the area.
+     * @author Benjamin Sigg
+     */
+    private class CenterStation extends AbstractCStation{
+        private SplitDockStation station;
+        private ResizeRequestListener handler;
+        
+        public CenterStation( SplitDockStation station, String id, CLocation location ){
+            super( station, id, location );
+            this.station = station;
+            handler = new SplitResizeRequestHandler( station );
+        }
+        
+        @Override
+        protected void install( CControlAccess access ) {
+            access.getOwner().addResizeRequestListener( handler );
+            access.getStateManager().add( getUniqueId(), station );
+        }
+        @Override
+        protected void uninstall( CControlAccess access ) {
+            access.getOwner().removeResizeRequestListener( handler );
+            access.getStateManager().remove( getUniqueId() );
+        }
     }
 }

@@ -27,31 +27,23 @@ package bibliothek.gui.dock.common.location;
 
 import bibliothek.gui.dock.common.CContentArea;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.CLocation;
-import bibliothek.gui.dock.common.intern.CDockable.ExtendedMode;
-import bibliothek.gui.dock.layout.DockableProperty;
-import bibliothek.gui.dock.station.flap.FlapDockProperty;
 
 /**
  * A location aiming at minimized elements.
  * @author Benjamin Sigg
  */
-public class CMinimizedLocation extends AbstractStackholdingLocation{
+public class CMinimizedLocation extends CFlapLocation{
 	/** the location describing where the "minimized-area" is */
 	private CBaseLocation parent;
 	/** telling which side this location occupies */
 	private Side side;
-	/** the location in the list of elements */
-	private int index;
 	
 	/**
 	 * Creates a new location.
 	 * @param parent the location describing where the "minimized-areas" are
 	 * @param side the side this location is aiming at.
-	 * @param index the index of this location in the list of all minimized
-	 * elements.
 	 */
-	public CMinimizedLocation( CBaseLocation parent, Side side, int index ){
+	public CMinimizedLocation( CBaseLocation parent, Side side ){
 		if( parent == null )
 			throw new NullPointerException( "parent is null" );
 		
@@ -60,7 +52,6 @@ public class CMinimizedLocation extends AbstractStackholdingLocation{
 		
 		this.parent = parent;
 		this.side = side;
-		this.index = index;
 	}
 	
 	@Override
@@ -82,27 +73,7 @@ public class CMinimizedLocation extends AbstractStackholdingLocation{
 	}
 	
 	@Override
-	public ExtendedMode findMode(){
-		return ExtendedMode.MINIMIZED;
-	}
-	
-	@Override
-	public DockableProperty findProperty( DockableProperty successor ){
-		FlapDockProperty flap = new FlapDockProperty( index );
-		flap.setSuccessor( successor );
-		return flap;
-	}
-
-	@Override
-	public CLocation aside() {
-	    if( index == Integer.MAX_VALUE )
-	        return this;
-	    else
-	        return new CMinimizedLocation( parent, side, index+1 );
-	}
-	
-	@Override
 	public String toString() {
-	    return String.valueOf( parent ) + " [minimized " + side + " " + index + "]";
+	    return String.valueOf( parent ) + " [minimized " + side + "]";
 	}
 }

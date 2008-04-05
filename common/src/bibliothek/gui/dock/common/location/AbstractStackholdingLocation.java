@@ -26,6 +26,8 @@
 package bibliothek.gui.dock.common.location;
 
 import bibliothek.gui.dock.common.CLocation;
+import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.station.stack.StackDockProperty;
 
 /**
  * A location which can be parent of a stack (stack is also known as tabbed-pane).
@@ -48,5 +50,19 @@ public abstract class AbstractStackholdingLocation extends CLocation{
 	 */
 	public CStackLocation stack(){
 		return new CStackLocation( this );
+	}
+	
+	@Override
+	public CLocation expandProperty( DockableProperty property ) {
+	    if( property instanceof StackDockProperty ){
+	        StackDockProperty stack = (StackDockProperty)property;
+	        CStackLocation location = stack( stack.getIndex() );
+	        DockableProperty successor = property.getSuccessor();
+	        if( successor == null )
+	            return location;
+	        else
+	            return location.expandProperty( successor );
+	    }
+	    return null;
 	}
 }

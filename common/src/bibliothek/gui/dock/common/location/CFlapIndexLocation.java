@@ -25,58 +25,64 @@
  */
 package bibliothek.gui.dock.common.location;
 
+import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.common.CLocation;
-import bibliothek.gui.dock.common.CWorkingArea;
 import bibliothek.gui.dock.common.intern.CDockable.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
-import bibliothek.gui.dock.station.split.SplitDockProperty;
+import bibliothek.gui.dock.station.flap.FlapDockProperty;
 
 /**
- * A location representing a {@link CWorkingArea}.
+ * A location which represents the index on a {@link FlapDockStation}. 
  * @author Benjamin Sigg
- *
  */
-public class CWorkingAreaLocation extends CSplitLocation{
-    /** the area to which this location relates, can be <code>null</code> */
-    private CWorkingArea area;
+public class CFlapIndexLocation extends AbstractStackholdingLocation{
+    private int index;
+    private CFlapLocation parent;
     
     /**
-     * Creates a new location.
-     * @param area the area which is represented by this location
+     * Creates a new location
+     * @param parent the {@link FlapDockStation} to which this location
+     * belongs
+     * @param index the exact position of this location
      */
-    public CWorkingAreaLocation( CWorkingArea area ){
-        if( area == null )
-            throw new NullPointerException( "area must not be null" );
-        this.area = area;
+    public CFlapIndexLocation( CFlapLocation parent, int index ){
+        if( parent == null )
+            throw new NullPointerException( "parent must not be null" );
+        
+        this.parent = parent;
+        this.index = index;
     }
     
     /**
-     * Gets the workingarea to which this location relates.
-     * @return the area or <code>null</code> if the default center is meant.
+     * Gets the exact location of this location on its parent.
+     * @return the exact location
      */
-    public CWorkingArea getWorkingArea(){
-        return area;
+    public int getIndex() {
+        return index;
     }
     
     @Override
     public CLocation aside() {
-        return this;
+        if( index == Integer.MAX_VALUE )
+            return this;
+        
+        return new CFlapIndexLocation( parent, index+1 );
     }
-    
+
     @Override
     public ExtendedMode findMode() {
-        return ExtendedMode.NORMALIZED;
+        return ExtendedMode.MINIMIZED;
     }
 
     @Override
     public DockableProperty findProperty( DockableProperty successor ) {
-        SplitDockProperty property = new SplitDockProperty( 0, 0, 1, 1 );
+        FlapDockProperty property = new FlapDockProperty( index );
         property.setSuccessor( successor );
         return property;
     }
 
     @Override
     public String findRoot() {
-        return area.getUniqueId();
+        return parent.findRoot();
     }
 }

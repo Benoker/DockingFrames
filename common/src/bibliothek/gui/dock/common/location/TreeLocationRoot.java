@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.common.location;
 
+import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockPathProperty;
 
 /**
@@ -33,17 +34,18 @@ import bibliothek.gui.dock.station.split.SplitDockPathProperty;
  * @author Benjamin Sigg
  */
 public class TreeLocationRoot extends AbstractTreeLocation{
-	/** the element describing where the "normalized-area" is */
-	private CRootLocation root;
+	/** the element knowing the split station */
+	private CSplitLocation root;
 	
 	/**
 	 * Creates a new location.
-	 * @param root the location describing where the "normalized-area" is.
+	 * @param root the location that knows to which {@link SplitDockStation} this
+	 * location belongs
 	 * @param size the relative size of this location
 	 * @param side the side which is occupied by this location
 	 * @see AbstractTreeLocation#AbstractTreeLocation(double, Side)
 	 */
-	public TreeLocationRoot( CRootLocation root, double size, Side side ){
+	public TreeLocationRoot( CSplitLocation root, double size, Side side ){
 		super( size, side );
 		if( root == null )
 			throw new NullPointerException( "Parent must not be null" );
@@ -53,7 +55,7 @@ public class TreeLocationRoot extends AbstractTreeLocation{
 	
 	@Override
 	public String findRoot(){
-	    return root.findRootNormal();
+	    return root.findRoot();
 	}
 	
 	@Override

@@ -36,6 +36,41 @@ import bibliothek.gui.dock.station.screen.ScreenDockProperty;
  * @author Benjamin Sigg
  */
 public class CExternalizedLocation extends AbstractStackholdingLocation{
+    /**
+     * A location describing the externalize station with the id
+     * {@link CControl#EXTERNALIZED_STATION_ID}.
+     */
+    public static final CLocation STATION = new CLocation(){
+        @Override
+        public CLocation aside() {
+            return this;
+        }
+
+        @Override
+        public CLocation expandProperty( DockableProperty property ) {
+            if( property instanceof ScreenDockProperty ){
+                ScreenDockProperty screen = (ScreenDockProperty)property;
+                return new CExternalizedLocation( screen.getX(), screen.getY(), screen.getWidth(), screen.getHeight() );
+            }
+            return null;
+        }
+
+        @Override
+        public ExtendedMode findMode() {
+            return ExtendedMode.EXTERNALIZED;
+        }
+
+        @Override
+        public DockableProperty findProperty( DockableProperty successor ) {
+            return null;
+        }
+
+        @Override
+        public String findRoot() {
+            return CControl.EXTERNALIZED_STATION_ID;
+        }
+    };
+    
 	/** the x-coordinate */
 	private int x;
 	/** the y-coordinate */

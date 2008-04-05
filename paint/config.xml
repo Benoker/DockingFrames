@@ -2399,6 +2399,16 @@
 					<setting name="2">
 						<base>
 							<roots>
+								<root name="ccontrol south">
+									<layout factory="predefined">
+										<replacement id="rootccontrol south"/>
+										<delegate id="delegate_flap dock">
+											<window auto="false" direction="NORTH"/>
+											<children/>
+										</delegate>
+									</layout>
+									<children ignore="false"/>
+								</root>
 								<root name="ccontrol center">
 									<layout factory="predefined">
 										<replacement id="rootccontrol center"/>
@@ -2426,28 +2436,11 @@
 										</child>
 									</children>
 								</root>
-								<root name="external">
-									<layout factory="predefined">
-										<replacement id="rootexternal"/>
-										<delegate id="delegate_screen dock"/>
-									</layout>
-									<children ignore="false"/>
-								</root>
 								<root name="ccontrol north">
 									<layout factory="predefined">
 										<replacement id="rootccontrol north"/>
 										<delegate id="delegate_flap dock">
 											<window auto="false" direction="SOUTH"/>
-											<children/>
-										</delegate>
-									</layout>
-									<children ignore="false"/>
-								</root>
-								<root name="ccontrol south">
-									<layout factory="predefined">
-										<replacement id="rootccontrol south"/>
-										<delegate id="delegate_flap dock">
-											<window auto="false" direction="NORTH"/>
 											<children/>
 										</delegate>
 									</layout>
@@ -2460,6 +2453,13 @@
 											<window auto="false" direction="WEST"/>
 											<children/>
 										</delegate>
+									</layout>
+									<children ignore="false"/>
+								</root>
+								<root name="external">
+									<layout factory="predefined">
+										<replacement id="rootexternal"/>
+										<delegate id="delegate_screen dock"/>
 									</layout>
 									<children ignore="false"/>
 								</root>
@@ -2493,6 +2493,16 @@
 					<setting name="1">
 						<base>
 							<roots>
+								<root name="ccontrol south">
+									<layout factory="predefined">
+										<replacement id="rootccontrol south"/>
+										<delegate id="delegate_flap dock">
+											<window auto="false" direction="NORTH"/>
+											<children/>
+										</delegate>
+									</layout>
+									<children ignore="false"/>
+								</root>
 								<root name="ccontrol center">
 									<layout factory="predefined">
 										<replacement id="rootccontrol center"/>
@@ -2509,13 +2519,6 @@
 											<children ignore="true"/>
 										</child>
 									</children>
-								</root>
-								<root name="external">
-									<layout factory="predefined">
-										<replacement id="rootexternal"/>
-										<delegate id="delegate_screen dock"/>
-									</layout>
-									<children ignore="false"/>
 								</root>
 								<root name="ccontrol north">
 									<layout factory="predefined">
@@ -2537,16 +2540,6 @@
 										</child>
 									</children>
 								</root>
-								<root name="ccontrol south">
-									<layout factory="predefined">
-										<replacement id="rootccontrol south"/>
-										<delegate id="delegate_flap dock">
-											<window auto="false" direction="NORTH"/>
-											<children/>
-										</delegate>
-									</layout>
-									<children ignore="false"/>
-								</root>
 								<root name="ccontrol east">
 									<layout factory="predefined">
 										<replacement id="rootccontrol east"/>
@@ -2554,6 +2547,13 @@
 											<window auto="false" direction="WEST"/>
 											<children/>
 										</delegate>
+									</layout>
+									<children ignore="false"/>
+								</root>
+								<root name="external">
+									<layout factory="predefined">
+										<replacement id="rootexternal"/>
+										<delegate id="delegate_screen dock"/>
 									</layout>
 									<children ignore="false"/>
 								</root>
@@ -2588,13 +2588,23 @@
 				<current name="2">
 					<base>
 						<roots>
+							<root name="ccontrol south">
+								<layout factory="predefined">
+									<replacement id="rootccontrol south"/>
+									<delegate id="delegate_flap dock">
+										<window auto="false" direction="NORTH"/>
+										<children/>
+									</delegate>
+								</layout>
+								<children ignore="false"/>
+							</root>
 							<root name="ccontrol center">
 								<layout factory="predefined">
 									<replacement id="rootccontrol center"/>
 									<delegate id="delegate_SplitDockStationFactory">
-										<node orientation="HORIZONTAL" divider="0.20629195804195807">
+										<node orientation="HORIZONTAL" divider="0.2067736328419784">
 											<leaf id="0"/>
-											<node orientation="VERTICAL" divider="0.3599733720753735">
+											<node orientation="VERTICAL" divider="0.24342334401709406">
 												<leaf id="1"/>
 												<leaf id="2"/>
 											</node>
@@ -2635,7 +2645,7 @@
 												<children ignore="false">
 													<child>
 														<layout factory="delegate_page">
-															<id>multi multi multi multi multi multi 0 page</id>
+															<id>multi multi multi 1 page</id>
 															<area>picture area</area>
 															<multiple>Apple</multiple>
 														</layout>
@@ -2643,7 +2653,7 @@
 													</child>
 													<child>
 														<layout factory="delegate_page">
-															<id>multi multi multi multi multi multi 1 page</id>
+															<id>multi multi multi 0 page</id>
 															<area>picture area</area>
 															<multiple>Face</multiple>
 														</layout>
@@ -2665,11 +2675,11 @@
 								</layout>
 								<children ignore="false"/>
 							</root>
-							<root name="ccontrol south">
+							<root name="ccontrol east">
 								<layout factory="predefined">
-									<replacement id="rootccontrol south"/>
+									<replacement id="rootccontrol east"/>
 									<delegate id="delegate_flap dock">
-										<window auto="false" direction="NORTH"/>
+										<window auto="false" direction="WEST"/>
 										<children/>
 									</delegate>
 								</layout>
@@ -2679,16 +2689,6 @@
 								<layout factory="predefined">
 									<replacement id="rootexternal"/>
 									<delegate id="delegate_screen dock"/>
-								</layout>
-								<children ignore="false"/>
-							</root>
-							<root name="ccontrol east">
-								<layout factory="predefined">
-									<replacement id="rootccontrol east"/>
-									<delegate id="delegate_flap dock">
-										<window auto="false" direction="WEST"/>
-										<children/>
-									</delegate>
 								</layout>
 								<children ignore="false"/>
 							</root>
@@ -2707,27 +2707,8 @@
 					</base>
 					<modes>
 						<states>
-							<entry id="single picture area" current="normal">
-								<history>
-									<mode>normal</mode>
-								</history>
-								<properties>
-									<property id="normal">
-										<root>ccontrol center</root>
-										<location>
-											<property factory="SplitDockPropertyFactory">
-												<x>0.0</x>
-												<y>0.0</y>
-												<width>1.0</width>
-												<height>1.0</height>
-											</property>
-										</location>
-									</property>
-								</properties>
-							</entry>
 							<entry id="single ColorDockable" current="normal">
 								<history>
-									<mode>maxi</mode>
 									<mode>normal</mode>
 								</history>
 								<properties>
@@ -2735,9 +2716,15 @@
 										<root>ccontrol center</root>
 										<location>
 											<property factory="SplitDockPathProperty">
-												<node location="RIGHT" size="0.7937080419580419"/>
-												<node location="TOP" size="0.3599733720753735"/>
+												<node location="RIGHT" size="0.7943673592594455"/>
+												<node location="TOP" size="0.2434187143874644"/>
 											</property>
+										</location>
+									</property>
+									<property id="mini">
+										<root>ccontrol east</root>
+										<location>
+											<property factory="flap dock">0</property>
 										</location>
 									</property>
 								</properties>
@@ -2757,23 +2744,56 @@
 									</property>
 								</properties>
 							</entry>
-							<entry id="multi multi multi multi multi multi 0 page" current="normal">
+							<entry id="multi multi multi 1 page" current="normal">
 								<history>
+									<mode>maxi</mode>
 									<mode>normal</mode>
 								</history>
-								<properties/>
+								<properties>
+									<property id="normal">
+										<root>ccontrol center</root>
+										<location>
+											<property factory="SplitDockPathProperty">
+												<node location="RIGHT" size="0.7943673592594455"/>
+												<node location="BOTTOM" size="0.7565812856125356"/>
+											</property>
+											<property factory="SplitDockPathProperty"/>
+											<property factory="StackDockPropertyFactory">0</property>
+										</location>
+									</property>
+								</properties>
 							</entry>
-							<entry id="multi multi multi multi multi multi 1 page" current="normal">
+							<entry id="multi multi multi 0 page" current="normal">
 								<history>
+									<mode>maxi</mode>
+									<mode>mini</mode>
 									<mode>normal</mode>
 								</history>
-								<properties/>
+								<properties>
+									<property id="normal">
+										<root>ccontrol center</root>
+										<location>
+											<property factory="SplitDockPathProperty">
+												<node location="RIGHT" size="0.7943673592594455"/>
+												<node location="BOTTOM" size="0.7565812856125356"/>
+											</property>
+											<property factory="SplitDockPathProperty"/>
+											<property factory="StackDockPropertyFactory">1</property>
+										</location>
+									</property>
+									<property id="mini">
+										<root>ccontrol west</root>
+										<location>
+											<property factory="flap dock">0</property>
+										</location>
+									</property>
+								</properties>
 							</entry>
 						</states>
 					</modes>
 				</current>
 			</frontend>
 		</resource>
-		<resource name="CThemeMenuPiece">4</resource>
+		<resource name="CThemeMenuPiece">0</resource>
 	</resources>
 </config>

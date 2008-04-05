@@ -23,31 +23,35 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.intern;
+package bibliothek.gui.dock.common.location;
 
-import bibliothek.gui.DockStation;
+import bibliothek.gui.dock.common.CContentArea;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.CStation;
-import bibliothek.gui.dock.control.SingleParentRemover;
 
 /**
- * A {@link SingleParentRemover} not removing any {@link CStation}s.
+ * This location points to the center of a {@link CContentArea}.
  * @author Benjamin Sigg
- *
  */
-public class CSingleParentRemover extends SingleParentRemover {
-    private CControl control;
+public class CContentAreaCenterLocation extends CSplitLocation{
+    /** location of the {@link CContentArea} itself */
+    private CBaseLocation base;
     
     /**
-     * Creates a new remover
-     * @param control the control for which this remover will be used
+     * Creates a new location
+     * @param base the location describing a {@link CContentArea}, not <code>null</code>
      */
-    public CSingleParentRemover( CControl control ){
-        this.control = control;
+    public CContentAreaCenterLocation( CBaseLocation base ){
+        if( base == null )
+            throw new NullPointerException( "base is null" );
+        this.base = base;
     }
-    
+
     @Override
-    protected boolean shouldTest( DockStation station ) {
-        return control.getStation( station ) == null;
+    public String findRoot() {
+        CContentArea area = base.getContentArea();
+        if( area == null )
+            return CContentArea.getCenterIdentifier( CControl.CONTENT_AREA_STATIONS_ID );
+        else
+            return area.getCenterIdentifier();
     }
 }

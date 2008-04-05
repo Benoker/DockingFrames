@@ -27,6 +27,7 @@ package bibliothek.gui.dock.common;
 
 import javax.swing.Icon;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
@@ -35,11 +36,9 @@ import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.common.event.CDockableAdapter;
-import bibliothek.gui.dock.common.intern.AbstractCDockable;
-import bibliothek.gui.dock.common.intern.CControlAccess;
-import bibliothek.gui.dock.common.intern.CDockable;
-import bibliothek.gui.dock.common.intern.CommonDockable;
+import bibliothek.gui.dock.common.intern.*;
 import bibliothek.gui.dock.common.intern.station.SplitResizeRequestHandler;
+import bibliothek.gui.dock.common.location.CWorkingAreaLocation;
 import bibliothek.gui.dock.security.SecureSplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockTree;
 import bibliothek.gui.dock.title.DockTitle;
@@ -53,7 +52,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  * can be nested.
  * @author Benjamin Sigg
  */
-public class CWorkingArea extends AbstractCDockable implements SingleCDockable{
+public class CWorkingArea extends AbstractCDockable implements SingleCDockable, CStation{
     /** the unique identifier of this area */
     private String uniqueId;
     /** the station representing this area */
@@ -92,7 +91,7 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable{
     /**
      * Exchanges all the {@link CDockable}s on this area with the
      * elements of <code>grid</code>. This method also calls
-     * {@link CDockable#setWorkingArea(CWorkingArea)} for each
+     * {@link CDockable#setWorkingArea(CStation)} for each
      * dockable in <code>grid</code>.
      * @param grid a grid containing some new {@link Dockable}s
      */
@@ -105,6 +104,18 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable{
                 cdock.getDockable().setWorkingArea( this );
             }
         }
+    }
+
+    public DockStation getStation() {
+        return station;
+    }
+    
+    public CDockable asDockable() {
+        return this;
+    }
+    
+    public CLocation getStationLocation() {
+        return new CWorkingAreaLocation( this );
     }
     
     /**
@@ -234,6 +245,10 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable{
     
     public boolean isStackable() {
         return false;
+    }
+    
+    public boolean isWorkingArea() {
+        return true;
     }
     
     /**

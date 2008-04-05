@@ -12,6 +12,6 @@
 - Guide: mention ColorSchemes and the new layout capabilities of SplitDockStation
 - SplitDockStation: droping children with SplitDockProperty does not work when the stations size is too small (or the station is not child of a frame?)
 - Problems with LaFs jtatto and synthethica, titlebar seems to be empty.
-- Actions (minimize, ...) of CDockable should be customizeable and hideable
-- More flexibility in different stations for common, for example only one minimizing-area
+- [Done] Actions (minimize, ...) of CDockable should be customizeable and hideable
+- [Done] More flexibility in different stations for common, for example only one minimizing-area
 - Size request on invisible panels?

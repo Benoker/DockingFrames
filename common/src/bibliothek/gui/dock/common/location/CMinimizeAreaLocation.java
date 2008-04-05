@@ -23,31 +23,30 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.intern;
+package bibliothek.gui.dock.common.location;
 
-import bibliothek.gui.DockStation;
-import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.CStation;
-import bibliothek.gui.dock.control.SingleParentRemover;
+import bibliothek.gui.dock.common.CMinimizeArea;
 
 /**
- * A {@link SingleParentRemover} not removing any {@link CStation}s.
+ * A location describing a child of a {@link CMinimizeArea}.
  * @author Benjamin Sigg
- *
  */
-public class CSingleParentRemover extends SingleParentRemover {
-    private CControl control;
-    
+public class CMinimizeAreaLocation extends CFlapLocation{
+    private CMinimizeArea area;
+
     /**
-     * Creates a new remover
-     * @param control the control for which this remover will be used
+     * Crates a new location at the end of the minimize area.
+     * @param area the minimize area, not <code>null</code>
      */
-    public CSingleParentRemover( CControl control ){
-        this.control = control;
+    public CMinimizeAreaLocation( CMinimizeArea area ){
+        if( area == null )
+            throw new NullPointerException( "area must not be null" );
+        
+        this.area = area;
     }
     
     @Override
-    protected boolean shouldTest( DockStation station ) {
-        return control.getStation( station ) == null;
+    public String findRoot() {
+        return area.getUniqueId();
     }
 }

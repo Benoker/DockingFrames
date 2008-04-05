@@ -155,7 +155,7 @@ public class EclipseTheme extends BasicTheme {
 		
 		controller.addAcceptance( acceptance );
 		
-        controller.getDockTitleManager().registerTheme( FlapDockStation.BUTTON_TITLE_ID, new DockTitleFactory(){
+        titleManager.registerTheme( FlapDockStation.BUTTON_TITLE_ID, new DockTitleFactory(){
             public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
                 return new FlatButtonTitle( dockable, version );
             }

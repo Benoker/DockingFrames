@@ -25,16 +25,28 @@
  */
 package bibliothek.gui.dock.common.location;
 
-import bibliothek.gui.dock.common.CLocation;
+import bibliothek.gui.dock.common.CGridArea;
 
 /**
- * A location representing some root element.
+ * A location that represents a {@link CGridArea}.
  * @author Benjamin Sigg
  */
-public abstract class CRootLocation extends CLocation{
+public class CGridAreaLocation extends CSplitLocation{
+    private CGridArea area;
+    
     /**
-     * Gets the id of the root if this root is used as normalized-area
-     * @return the id of the root
+     * Creates the new location
+     * @param area the grid area which is represented by this location
      */
-    public abstract String findRootNormal();
+    public CGridAreaLocation( CGridArea area ){
+        if( area == null )
+            throw new NullPointerException( "area must not be null" );
+        
+        this.area = area;
+    }
+
+    @Override
+    public String findRoot() {
+        return area.getUniqueId();
+    }
 }

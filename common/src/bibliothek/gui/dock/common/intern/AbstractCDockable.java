@@ -31,10 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.CLocation;
-import bibliothek.gui.dock.common.CWorkingArea;
-import bibliothek.gui.dock.common.ColorMap;
+import bibliothek.gui.dock.common.*;
 import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.event.CDockablePropertyListener;
 import bibliothek.gui.dock.common.event.CDockableStateListener;
@@ -62,7 +59,7 @@ public abstract class AbstractCDockable implements CDockable {
     private CommonDockable dockable;
 
     /** the preferred parent of this dockable */
-    private CWorkingArea workingArea;
+    private CStation workingArea;
     
     /** the control managing this dockable */
     private CControlAccess control;
@@ -206,7 +203,7 @@ public abstract class AbstractCDockable implements CDockable {
         }
     }
     
-    public CLocation getLocation(){
+    public CLocation getBaseLocation(){
         if( control != null && isVisible() ){
             return control.getStateManager().getLocation( dockable );
         }
@@ -245,11 +242,11 @@ public abstract class AbstractCDockable implements CDockable {
         return control.getStateManager().getMode( dockable );
     }
     
-    public void setWorkingArea( CWorkingArea area ) {
+    public void setWorkingArea( CStation area ) {
         this.workingArea = area;
     }
     
-    public CWorkingArea getWorkingArea() {
+    public CStation getWorkingArea() {
         return workingArea;
     }
     

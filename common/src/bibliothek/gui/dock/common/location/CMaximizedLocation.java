@@ -45,6 +45,11 @@ public class CMaximizedLocation extends CLocation {
 	public DockableProperty findProperty( DockableProperty successor ){
 		return null;
 	}
+	
+	@Override
+	public CLocation expandProperty( DockableProperty property ) {
+	    return null;
+	}
 
 	@Override
 	public String findRoot(){

@@ -26,10 +26,7 @@
 package bibliothek.gui.dock.common;
 
 import bibliothek.gui.dock.common.intern.CDockable;
-import bibliothek.gui.dock.common.location.CBaseLocation;
-import bibliothek.gui.dock.common.location.CExternalizedLocation;
-import bibliothek.gui.dock.common.location.CMaximizedLocation;
-import bibliothek.gui.dock.common.location.CWorkingAreaLocation;
+import bibliothek.gui.dock.common.location.*;
 import bibliothek.gui.dock.layout.DockableProperty;
 
 /**
@@ -82,6 +79,34 @@ public abstract class CLocation {
 	}
 	
 	/**
+	 * Creates a new location representing a minimize area.
+	 * @param area the area to which the location refers
+	 * @return the new location
+	 */
+	public static CMinimizeAreaLocation minimized( CMinimizeArea area ){
+	    return new CMinimizeAreaLocation( area );
+	}
+
+	/**
+     * Creates a new location representing a minimize area.
+     * @param area the area to which the location refers
+     * @param index the exact location on <code>area</code>
+     * @return the new location
+     */
+	public static CFlapIndexLocation minimized( CMinimizeArea area, int index ){
+        return new CMinimizeAreaLocation( area ).insert( index );
+    }
+	
+	/**
+	 * Creates a new location representing a grid area.
+	 * @param area the area that is represented
+	 * @return the new location
+	 */
+	public static CGridAreaLocation normalized( CGridArea area ){
+	    return new CGridAreaLocation( area );
+	}
+	
+	/**
 	 * Creates a new location representing the externalized mode.
 	 * @param x the x-coordinate in pixels
 	 * @param y the y-coordinate in pixels
@@ -130,6 +155,15 @@ public abstract class CLocation {
 	 * @return the path to this location or <code>null</code>
 	 */
 	public abstract DockableProperty findProperty( DockableProperty successor );
+	
+	/**
+	 * Tries to create a location that resembles <code>property</code>.
+	 * @param property some location
+	 * @return a location whose {@link #findProperty()} would create 
+	 * <code>property</code> again, or <code>null</code> in case that <code>property</code>
+	 * can't be used
+	 */
+	public abstract CLocation expandProperty( DockableProperty property );
 	
 	/**
 	 * Returns a {@link CLocation} that describes the location of an element

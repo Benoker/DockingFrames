@@ -28,10 +28,7 @@ package bibliothek.gui.dock.common.intern;
 import java.awt.Dimension;
 
 import bibliothek.gui.DockTheme;
-import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.CLocation;
-import bibliothek.gui.dock.common.CWorkingArea;
-import bibliothek.gui.dock.common.ColorMap;
+import bibliothek.gui.dock.common.*;
 import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.event.CDockablePropertyListener;
 import bibliothek.gui.dock.common.event.CDockableStateListener;
@@ -213,7 +210,7 @@ public interface CDockable {
 	 * be returned if it just was set using {@link #setLocation(CLocation)}.
 	 * @return the location or <code>null</code>
 	 */
-	public CLocation getLocation();
+	public CLocation getBaseLocation();
 	
     /**
      * Sets how and where this dockable should be shown. Conflicts with
@@ -235,14 +232,14 @@ public interface CDockable {
      * or indirectly through {@link #setLocation(CLocation)}.
      * @param area the new parent or <code>null</code>
      */
-    public void setWorkingArea( CWorkingArea area );
+    public void setWorkingArea( CStation area );
     
     /**
      * Gets the parent of this dockable, this should be the same as
-     * set by the last call of {@link #setWorkingArea(CWorkingArea)}.
+     * set by the last call of {@link #setWorkingArea(CStation)}.
      * @return the parent or <code>null</code>
      */
-    public CWorkingArea getWorkingArea();
+    public CStation getWorkingArea();
     
     /**
      * Sets the size of this dockable when this dockable is minimized and

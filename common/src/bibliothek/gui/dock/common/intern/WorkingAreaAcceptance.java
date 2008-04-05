@@ -25,12 +25,15 @@
  */
 package bibliothek.gui.dock.common.intern;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.CWorkingArea;
+import bibliothek.gui.dock.common.CStation;
 
 /**
  * A {@link DockAcceptance} ensuring that the {@link CDockable#getWorkingArea()}
@@ -54,7 +57,7 @@ public class WorkingAreaAcceptance implements DockAcceptance {
             return true;
         
         if( control.getStateManager().childsExtendedMode( parent ) == CDockable.ExtendedMode.NORMALIZED ){
-            CWorkingArea area = searchArea( parent );
+            CStation area = searchArea( parent );
             return match( area, child );
         }
         return true;
@@ -65,28 +68,38 @@ public class WorkingAreaAcceptance implements DockAcceptance {
             return true;
         
         if( control.getStateManager().childsExtendedMode( parent ) == CDockable.ExtendedMode.NORMALIZED ){
-            CWorkingArea area = searchArea( parent );
+            CStation area = searchArea( parent );
             return match( area, next );
         }
         return true;
     }
     
     /**
-     * Searches the first {@link CWorkingArea} in the path to the root.
+     * Searches the first {@link CStation} in the path to the root.
      * @param element some element
-     * @return the first {@link CWorkingArea} that occurs on the path from
-     * <code>element</code> to the root.
+     * @return the first {@link CStation} that occurs on the path from
+     * <code>element</code> to the root and which is a working area
      */
-    private CWorkingArea searchArea( DockElement element ){
-        Dockable dockable = element.asDockable();
-        while( dockable != null ){
-            if( dockable instanceof CommonDockable ){
-                CDockable fdock = ((CommonDockable)dockable).getDockable();
-                if( fdock instanceof CWorkingArea )
-                    return (CWorkingArea)fdock;
+    private CStation searchArea( DockElement element ){
+        Map<DockStation, CStation> stations = new HashMap<DockStation, CStation>();
+        for( CStation station : control.getOwner().getStations() ){
+            if( station.isWorkingArea() ){
+                stations.put( station.getStation(), station );
             }
-            DockStation station = dockable.getDockParent();
+        }
+        
+        DockStation station = element.asDockStation();
+        Dockable dockable = element.asDockable();
+        
+        while( dockable != null || station != null ){
+            if( station != null ){
+                CStation cstation = stations.get( station );
+                if( cstation != null )
+                    return cstation;
+            }
+            
             dockable = station == null ? null : station.asDockable();
+            station = dockable == null ? null : dockable.getDockParent();
         }
         return null;
     }
@@ -100,15 +113,12 @@ public class WorkingAreaAcceptance implements DockAcceptance {
      * @return <code>true</code> if all elements have <code>area</code> as
      * preferred parent, <code>false</code> otherwise
      */
-    private boolean match( CWorkingArea area, Dockable dockable ){
+    private boolean match( CStation area, Dockable dockable ){
         if( dockable instanceof CommonDockable ){
             CDockable fdockable = ((CommonDockable)dockable).getDockable();
-            CWorkingArea request = fdockable.getWorkingArea();
+            CStation request = fdockable.getWorkingArea();
             if( request != area )
                 return false;
-            
-            if( fdockable instanceof CWorkingArea )
-                return true;
         }
         
         DockStation station = dockable.asDockStation();
@@ -127,7 +137,7 @@ public class WorkingAreaAcceptance implements DockAcceptance {
      * @return <code>true</code> if all elements have <code>area</code> as
      * preferred parent, <code>false</code> otherwise
      */
-    private boolean match( CWorkingArea area, DockStation station ){
+    private boolean match( CStation area, DockStation station ){
         for( int i = 0, n = station.getDockableCount(); i < n; i++ ){
             boolean result = match( area, station.getDockable( i ));
             if( !result )
