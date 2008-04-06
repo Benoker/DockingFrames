@@ -1419,7 +1419,7 @@ public class FlapDockStation extends AbstractDockableStation {
                 boolean changed = true;
                 
                 if( title != null ){
-                    dockable.unbind( title );
+                    unbind( dockable, title );
                     title = null;
                     changed = true;
                 }
@@ -1427,7 +1427,7 @@ public class FlapDockStation extends AbstractDockableStation {
                 if( buttonVersion != null ){
                     title = dockable.getDockTitle( buttonVersion );
                     if( title != null ){
-                        dockable.bind( title );
+                        bind( dockable, title );
                         changed = true;
                     }
                 }

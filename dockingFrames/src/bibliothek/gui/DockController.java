@@ -27,6 +27,7 @@
 package bibliothek.gui;
 
 import java.awt.Component;
+import java.awt.EventQueue;
 import java.awt.KeyboardFocusManager;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -638,11 +639,17 @@ public class DockController {
 	            }
 	            
 	            if( ensureFocusSet ){
-	                SwingUtilities.invokeLater( new Runnable(){
-	                    public void run() {
-	                        ensureFocusSet();     
-	                    }
-	                });
+	                if( EventQueue.isDispatchThread() ){
+    	                SwingUtilities.invokeLater( new Runnable(){
+    	                    public void run() {
+    	                        ensureFocusSet();     
+    	                    }
+    	                });
+	                }
+	                else{
+	                    // we are in the wrong Thread, but we can try...
+	                    ensureFocusSet();
+	                }
 	            }
 	            
 	            fireDockableFocused( focusedDockable );

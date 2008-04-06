@@ -1805,7 +1805,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         
         SplitLayoutManager manager = layoutManager.getValue();
         
-        if( factorW < 0 || factorH < 0 ){
+        if( factorW <= 0 || factorH <= 0 ){
             manager.updateBounds( root, 0, 0, 1.0, 1.0 );
         }
         else{

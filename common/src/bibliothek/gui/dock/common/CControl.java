@@ -388,7 +388,7 @@ public class CControl {
 		putProperty( KEY_MAXIMIZE_CHANGE, KeyStroke.getKeyStroke( KeyEvent.VK_M, InputEvent.CTRL_MASK ) );
 		putProperty( KEY_GOTO_EXTERNALIZED, KeyStroke.getKeyStroke( KeyEvent.VK_E, InputEvent.CTRL_MASK ) );
 		putProperty( KEY_GOTO_NORMALIZED, KeyStroke.getKeyStroke( KeyEvent.VK_N, InputEvent.CTRL_MASK ) );
-		putProperty( KEY_CLOSE, KeyStroke.getKeyStroke( KeyEvent.VK_C, InputEvent.CTRL_MASK ) );
+		putProperty( KEY_CLOSE, KeyStroke.getKeyStroke( KeyEvent.VK_F4, InputEvent.CTRL_MASK ) );
 		putProperty( SplitDockStation.LAYOUT_MANAGER, new CLockedResizeLayoutManager() );
 		putProperty( FlapDockStation.LAYOUT_MANAGER, new CFlapLayoutManager() );
 	}

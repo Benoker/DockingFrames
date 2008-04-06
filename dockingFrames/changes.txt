@@ -130,3 +130,6 @@
 - API: CControl supports backup factories for single dockables
 - API: DockFrontend supports "empty dockables". That means that DockFrontend can store properties for Dockables which are not registered at the frontend
 - Bugfix: Unbind was called to often on some DockActions when they were children of a Menu-Action
+
+[v1.0.5]
+- Layout: Changed the default KeyStroke to close a CDockable from ctrl+c to ctrl+F4, Andrew pointed out that ctrl+c already has a special meaning...
