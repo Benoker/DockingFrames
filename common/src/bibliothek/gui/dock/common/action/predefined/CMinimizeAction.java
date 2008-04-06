@@ -23,37 +23,32 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.intern;
+package bibliothek.gui.dock.common.action.predefined;
 
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockFactory;
-import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.common.MultipleCDockable;
-import bibliothek.gui.dock.common.SingleCDockable;
+import java.util.ResourceBundle;
+
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.CDockable.ExtendedMode;
+import bibliothek.gui.dock.common.intern.action.CExtendedModeAction;
+import bibliothek.gui.dock.facile.action.StateManager;
+import bibliothek.gui.dock.support.util.Resources;
 
 /**
- * Represents a {@link bibliothek.gui.dock.common.intern.CDockable}.
+ * This action minimizes each {@link CDockable} to which it is added.
  * @author Benjamin Sigg
  */
-public interface CommonDockable extends Dockable{
-	/**
-	 * Gets the model of this dockable.
-	 * @return the model
-	 */
-	public CDockable getDockable();
-	
-	/**
-	 * Gets the {@link DockActionSource} which shows the close-action.
-	 * @return the action source
-	 */
-	public DockActionSource getClose();
-	
-	/**
-	 * Gets the identifier of the {@link DockFactory} which can store and load
-	 * this dockable. {@link CommonDockable}s which show a {@link SingleCDockable}
-	 * should return {@link CommonSingleDockableFactory#BACKUP_FACTORY_ID} and
-	 * the others should return the id of {@link MultipleCDockable#getFactory()}.
-	 * @return the name of the factory
-	 */
-	public String getFactoryID();
+public class CMinimizeAction extends CExtendedModeAction{
+    /**
+     * Creates a new action
+     * @param control the control for which this action will be used
+     */
+    public CMinimizeAction( CControl control ){
+        super( control, ExtendedMode.MINIMIZED, "minimize", StateManager.ICON_MANAGER_KEY_MINIMIZE, CControl.KEY_GOTO_MINIMIZED );
+        
+        ResourceBundle bundle = Resources.getBundle();
+        
+        setText( bundle.getString( "minimize.in" ) );
+        setTooltip( bundle.getString( "minimize.in.tooltip" ) );
+    }
 }

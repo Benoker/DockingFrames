@@ -143,6 +143,9 @@ public class CControl {
 	private List<SingleCDockable> singleDockables =
 	    new ArrayList<SingleCDockable>();
 	
+	/** A factory used to create missing {@link SingleCDockable}s */
+	private CommonSingleDockableFactory backupFactory;
+	
 	/** the set of {@link MultipleCDockable}s */
 	private List<MultipleCDockable> multiDockables = 
 		new ArrayList<MultipleCDockable>();
@@ -245,14 +248,10 @@ public class CControl {
 		};
 		frontend.setIgnoreForEntry( new DockSituationIgnore(){
 		    public boolean ignoreChildren( DockStation station ) {
-		        Dockable dockable = station.asDockable();
-		        if( dockable == null )
-		            return false;
-		        if( dockable instanceof CommonDockable ){
-		            CDockable cdockable = ((CommonDockable)dockable).getDockable();
-		            if( cdockable instanceof CWorkingArea )
-		                return true;
-		        }
+		        CStation cstation = getStation( station );
+		        if( cstation != null )
+		            return cstation.isWorkingArea();
+		        
 		        return false;
 		    }
 		    public boolean ignoreElement( DockElement element ) {
@@ -314,6 +313,10 @@ public class CControl {
 		frontend.getController().addAcceptance( new StackableAcceptance() );
 		frontend.getController().addAcceptance( new WorkingAreaAcceptance( access ) );
 		frontend.getController().addAcceptance( new ExtendedModeAcceptance( access ) );
+		
+		backupFactory = new CommonSingleDockableFactory( this );
+		frontend.registerFactory( backupFactory );
+		frontend.registerBackupFactory( backupFactory );
 		
 		try{
     		resources.put( "ccontrol.frontend", new ApplicationResource(){
@@ -547,7 +550,7 @@ public class CControl {
 	 * @return the new area
 	 */
 	public CMinimizeArea createMinimizeArea( String uniqueId ){
-	    CMinimizeArea area = new CMinimizeArea( this, uniqueId, false );
+	    CMinimizeArea area = new CMinimizeArea( this, uniqueId );
 	    add( area, true );
 	    return area;
 	}
@@ -838,7 +841,7 @@ public class CControl {
 			throw new IllegalStateException( "dockable is already part of a control" );
 
 		dockable.setControl( access );
-		String id = "single " + dockable.getUniqueId();
+		String id = toSingleId( dockable.getUniqueId() );
 		accesses.get( dockable ).setUniqueId( id );
 		frontend.add( dockable.intern(), id );
 		frontend.setHideable( dockable.intern(), true );
@@ -866,9 +869,46 @@ public class CControl {
             singleDockables.remove( dockable );
             dockable.setControl( null );
             
+            if( backupFactory.getFactory( dockable.getUniqueId() ) == null )
+                stateManager.remove( dockable.intern() );
+            else
+                stateManager.reduceToEmpty( dockable.intern() );
+            
             for( CControlListener listener : listeners() )
                 listener.removed( CControl.this, dockable );
         }
+    }
+    
+    /**
+     * Adds a backup factory to this control. The backup factory will be used
+     * to create and add a {@link SingleCDockable} when one is requested that
+     * is not yet in the cache.
+     * @param id the id of the dockable that might be requested
+     * @param backupFactory the new factory
+     */
+    public void addSingleBackupFactory( String id, SingleCDockableBackupFactory backupFactory ){
+        this.backupFactory.add( id, backupFactory );
+        
+        id = toSingleId( id );
+        stateManager.addEmpty( id );
+        frontend.addEmpty( id );
+    }
+    
+    /**
+     * Removes a backup factory from this control.
+     * @param id the name of the factory
+     * @see #addSingleBackupFactory(String, SingleCDockableBackupFactory)
+     */
+    public void removeSingleBackupFactory( String id ){
+        this.backupFactory.remove( id );
+        
+        id = toSingleId( id );
+        stateManager.removeEmpty( id );
+        frontend.removeEmpty( id );
+    }
+    
+    private String toSingleId( String id ){
+        return "single " + id;
     }
     
 	/**
@@ -1017,7 +1057,7 @@ public class CControl {
 		
 		factories.put( id, properties );
 		
-		frontend.registerFactory( new CommonDockableFactory( id, factory, access ) );
+		frontend.registerFactory( new CommonMultipleDockableFactory( id, factory, access ) );
 	}
 	
 	/**

@@ -111,7 +111,7 @@ public class BubbleTheme extends BasicTheme {
         // set new titles
         controller.getDockTitleManager().registerTheme( 
                 FlapDockStation.BUTTON_TITLE_ID, 
-                new ReducedBubbleTitleFactory());
+                BubbleButtonDockTitle.FACTORY );
         
         Map<String,Icon> icons = DockUtilities.loadIcons( "data/bubble/icons.ini", null, BubbleTheme.class.getClassLoader() );
         for( Map.Entry<String, Icon> icon : icons.entrySet() ){

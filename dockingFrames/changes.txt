@@ -126,4 +126,7 @@
 - API: additional interface CStation in common, allows clients to implement their own new stations. Two new stations: CMinimizeArea and CGridArea.
 ! API: changes in CLocation in order to allow CStations
 - Bugfix: CDockables could not be opened maximized.
-s! API: Every CStation can now be a "working area", CWorkingArea remains in the system as the default working areas.
+! API: Every CStation can now be a "working area", CWorkingArea remains in the system as the default working areas.
+- API: CControl supports backup factories for single dockables
+- API: DockFrontend supports "empty dockables". That means that DockFrontend can store properties for Dockables which are not registered at the frontend
+- Bugfix: Unbind was called to often on some DockActions when they were children of a Menu-Action

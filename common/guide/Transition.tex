@@ -23,7 +23,7 @@
 \newcommand{\why}{\item[Reason]}
 \newcommand{\clients}{\item[Clients]}
 
-\title{DockingFrames 1.0.3 - Transition}
+\title{DockingFrames 1.0.4 - Transition}
 \author{Benjamin Sigg}
 
 \begin{document}
@@ -40,7 +40,7 @@ This document describes the most important changes between versions, and how dev
 \section{Version 1.0.3}
 Version 1.0.3 emphasizes on background enhancments. The API remains unchanged for most parts.
 \subsection{Incompatibilities}
-These changes break with the API from 1.0.2, clients must be change their interfaces in order to work properly.
+These changes break with the API from 1.0.2, clients must change their interfaces in order to work properly.
 
 \subsubsection{DefaultKeyboardController}
 \begin{description}
@@ -143,5 +143,165 @@ This is the set of new features.
  \why This was a request from a user
 \end{description}
 
+\section{Version 1.0.4}
+Version 1.0.4 introduces a few new features that add customizability
+\subsection{Incompatibilities}
+These changes break with the API from 1.0.3, clients must change their interfaces in order to work properly.
+
+\subsubsection{Binary file format}
+\begin{description}
+\short The binary file format has been changed
+\why The format now includes version numbers so that backwards compatibility should be possible in the next versions
+\clients Need to delete all binary files. They might try to write their properties with the old version in xml, and then load the xml file with the new version. This should convert the files.
+\end{description}
+
+\subsubsection{DockableListener}
+\begin{description}
+\short Has an additional method \src{titleExchanged}
+\why Allows to exchange a \src{DockTitle} while the \src{Dockable} is visible
+\clients Need to update any class that implements \src{DockableListener}.
+\end{description}
+
+\subsubsection{Title visibility on CDockables}
+\begin{description}
+\short Any \src{CDockable} can now hide its titles at any time
+\why user request
+\clients Need to update any class implementing \src{CDockablePropertyListener} since that listener has an additional method \src{titleShownChanged}.
+\end{description}
+
+\subsubsection{BasicDropDownButtonHandler}
+\begin{description}
+\short Requests now a \src{BasicDropDownButtonTrigger} instead of a \\\src{BasicTrigger}
+\why to allow steering any drop down action with the keyboard.
+\clients unlikly to have an effect on any client
+\end{description}
+
+\subsubsection{CDockable.getClose}
+\begin{description}
+\short Method has been moved into \src{CommonDockable}
+\why The action can now be replaced through \src{CDockable.getAction}. There is no need for any client to replace the action by replacing the whole \src{DockActionSource}
+\clients should use \src{putAction}, a method of \src{AbstractCDockable} to exchange the close-action. No fix for clients which added additional elements to the close-source.
+\end{description}
+
+\subsubsection{CLocation}
+\begin{description}
+\short Additional \src{CLocations}, some methods have been moved
+\why To allow the new \src{CStation} more flexible \src{CLocation}s were needed.
+\clients No general solution available, clients should recompile their project and check all compiler errors.
+\end{description}
+
+\subsubsection{working area}
+\begin{description}
+\short Every \src{CStation} can now be a working area
+\why To allow more flexibility in grouping \src{CDockable}s
+\clients That should not be visible for any client using version 1.0.3
+\end{description}
+
+
+\subsection{Features}
+This is the set of new features.
+
+\subsubsection{Border around BubbleDisplayer}
+\begin{description}
+ \short BubbleDisplayer now shows a border if the title is not null, or if the dockable is not a station
+ \why Looks better
+\end{description}
+
+\subsubsection{Backup factories (core)}
+\begin{description}
+ \short \src{DockFrontend} and \src{PredefinedDockSituation} can now use backup factories. These factories are used to load elements which should be in the cache, but are missing. In case of \src{DockFrontend} they are automatically added to the frontend.
+ \why Removes the need to add all \src{Dockable}s to a \src{DockFrontend} before loading a layout from a file.
+\end{description}
+
+\subsubsection{Backup factories (common)}
+\begin{description}
+ \short \src{CControl} now supports lazy initialisation of \src{SingleCDockable}s through the \src{SingleCDockableBackupFactory}.
+ \why saves memory
+\end{description}
+
+\subsubsection{Unregister factories from DockFrontend}
+\begin{description}
+ \short \src{DockFactory}s can now be unregistered from \src{DockFrontend}
+ \why Was missing
+\end{description}
+
+\subsubsection{Action support keyboard}
+\begin{description}
+ \short \src{DockAction}s are triggered by pressing SPACE on the focused button, \src{DropDownAction}s pop up when the DOWN (non numpad) key is pressed
+ \why Ongoing work to allow navigating in DF without the mouse.
+\end{description}
+
+\subsubsection{FocusTraversalPolicies}
+\begin{description}
+ \short New \src{FocusTraversalPolicy}s allow to navigate within all elements of a \src{DockableDisplayer} (including title).
+ \why Ongoing work to allow navigating in DF without the mouse.
+\end{description}
+
+\subsubsection{override predefined actions}
+\begin{description}
+ \short \src{CDockable} has an additional method \src{getAction} which is used by various modules to override their default actions.
+ \why Answer to a user request
+\end{description}
+
+\subsubsection{CBlank}
+\begin{description}
+ \short New action \src{CBlank}, which does not show anything.
+ \why As value for \src{CDockable.getAction} when a predefined action should be hidden
+\end{description}
+
+\subsubsection{CStation}
+\begin{description}
+ \short Additional interface \src{CStation} in common. Two new stations: \\\src{CMinimizeArea} and \src{CGridArea}.
+ \why Allows clients to add their own \src{DockStation}s to \src{CControl}, allows to create other layouts than the
+ "one center, four minimize areas"-layout.
+\end{description}
+
+\subsection{Bugfixes}
+These are the bugs that were fixed/
+
+\subsubsection{BubbleDisplayer.getDockableInsets}
+\begin{description}
+ \short The method did not calculate its result correctly.
+ \why A flaw in the design of \src{BasicDockableDisplayer}
+\end{description}
+
+\subsubsection{IndexOutOfBoundsException from ButtonPanel}
+\begin{description}
+ \short The exception was thrown when an invisible action was on the panel
+ \why invisible actions were not considered when writing \src{ButtonPanel}
+\end{description}
+
+\subsubsection{Mode change of CDockable}
+\begin{description}
+ \short \src{CDockable} did not go into normalized-mode when externalized and never normalized before
+ \why Properties were missing and could not be created automatically
+\end{description}
+
+\subsubsection{Opening maximized CDockable}
+\begin{description}
+ \short \src{CDockable} could not be opened maximized.
+ \why framework got confused because \src{CDockable} did not have a parent.
+\end{description}
+
+\subsubsection{Unbind of DockAction called to often}
+\begin{description}
+ \short A \src{DockAction} could throw an exception "unbind called to often"
+ \why When a \src{DockAction} was a child of a \src{MenuMenuHandler}, its \src{unbind} method was called even if the action was not displayed. However the \src{bind} action was called only if the action was displayed, so the internal counter was no longer correct. Every time a menu with such an action was shown, the counter was decremented by one. When it reached a value below 0, an exception was thrown. Since an action could be bound by many elements, the exception occured at random places.
+\end{description}
 
 \end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

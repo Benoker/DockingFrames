@@ -115,6 +115,8 @@ public class DockFrontend {
     
     /** The locations of the known Dockables */
     private Map<String, DockInfo> dockables = new HashMap<String, DockInfo>();
+    /** the identifiers of the {@link DockInfo}s which should stay around even if their dockable is removed */
+    private Set<String> empty = new HashSet<String>();
     
     /** The station which is used to add Dockables if no other station is explicitly requested */
     private DockStation defaultStation;
@@ -354,11 +356,36 @@ public class DockFrontend {
         if( name == null )
             throw new IllegalArgumentException( "name must not be null" );
         
-        if( dockables.containsKey( name ))
-        	throw new IllegalArgumentException( "There is already a dockable registered with name " + name );
+        DockInfo info = dockables.get( name );
+        if( info != null ){
+            if( info.getDockable() == null ){
+                info.setDockable( dockable );
+                info.updateHideAction();
+            }
+            else
+                throw new IllegalArgumentException( "There is already a dockable registered with name " + name );
+        }
+        else{
+            dockables.put( name, new DockInfo( dockable, name ));    
+        }
         
-        dockables.put( name, new DockInfo( dockable, name ));
         fireAdded( dockable );
+    }
+    
+    /**
+     * Adds the name of a {@link Dockable} whose properties should be stored
+     * in this frontend even if the {@link Dockable} itself is not 
+     * registered.
+     * @param name the name of the dockable
+     */
+    public void addEmpty( String name ){
+        if( name == null )
+            throw new IllegalArgumentException( "name must not be null" );
+        
+        empty.add( name );
+        if( !dockables.containsKey( name )){
+            dockables.put( name, new DockInfo( null, name ));
+        }
     }
     
     /**
@@ -369,7 +396,8 @@ public class DockFrontend {
     public Map<String, Dockable> getNamedDockables(){
     	Map<String, Dockable> result = new HashMap<String, Dockable>();
     	for( Map.Entry<String, DockInfo> entry : dockables.entrySet() ){
-    		result.put( entry.getKey(), entry.getValue().getDockable() );
+    	    if( entry.getValue().getDockable() != null )
+    	        result.put( entry.getKey(), entry.getValue().getDockable() );
     	}
     	return result;
     }
@@ -392,6 +420,9 @@ public class DockFrontend {
      * @return the name or <code>null</code>
      */
     public String getNameOf( Dockable dockable ){
+        if( dockable == null )
+            throw new NullPointerException( "dockable is null" );
+        
         for( Map.Entry<String, DockInfo> entry : dockables.entrySet() ){
             if( entry.getValue().dockable == dockable )
                 return entry.getKey();
@@ -489,9 +520,34 @@ public class DockFrontend {
     public void remove( Dockable dockable ){
         DockInfo info = getInfo( dockable );
         if( info != null ){
-        	info.setHideable( false );
-            dockables.remove( info.getKey() );
-            fireRemoved( dockable );
+            boolean hideable = info.isHideable();
+            info.setHideable( false );
+            
+            if( empty.contains( info.getKey() )){
+                fireRemoved( dockable );
+                info.setDockable( null );
+                info.setHideable( hideable );
+            }
+            else{
+                dockables.remove( info.getKey() );
+                fireRemoved( dockable );
+            }
+        }
+    }
+    
+    /**
+     * Removes the properties of a non existing {@link Dockable} and/or 
+     * changes the flag to store information about the non existing 
+     * <code>Dockable</code><code>name</code> to <code>false</code>.
+     * @param name the empty element to remove
+     */
+    public void removeEmpty( String name ){
+        empty.remove( name );
+        DockInfo info = getInfo( name );
+        if( info != null ){
+            if( info.getDockable() == null ){
+                dockables.remove( name );
+            }
         }
     }
     
@@ -826,7 +882,7 @@ public class DockFrontend {
         }
         
         for( DockInfo info : dockables.values() ){
-            if( info.getDockable().getController() == null ){
+            if( info.getDockable() == null || info.getDockable().getController() == null ){
                 if( info.getLocation() != null ){
                     setting.addInvisible( info.getKey(), info.getRoot(), info.getLocation() );
                 }
@@ -888,7 +944,7 @@ public class DockFrontend {
         }
         
         for( DockInfo info : dockables.values() ){
-            if( !info.isHideable() && isHidden( info.getDockable() )){
+            if( info.getDockable() != null && !info.isHideable() && isHidden( info.getDockable() )){
                 show( info.getDockable() );
             }
         }
@@ -902,9 +958,11 @@ public class DockFrontend {
      */
     public Set<Dockable> listShownDockables(){
         Set<Dockable> set = new HashSet<Dockable>();
-        for( DockInfo info : dockables.values() )
-            if( isShown( info.getDockable() ))
+        for( DockInfo info : dockables.values() ){
+            if( info.getDockable() != null && isShown( info.getDockable() )){
                 set.add( info.getDockable() );
+            }
+        }
         return set;
     }
     
@@ -915,8 +973,11 @@ public class DockFrontend {
      */
     public List<Dockable> listDockables(){
     	List<Dockable> result = new ArrayList<Dockable>( dockables.size() );
-    	for( DockInfo info : dockables.values() )
-    		result.add( info.getDockable() );
+    	for( DockInfo info : dockables.values() ){
+    	    if( info.getDockable() != null ){
+    	        result.add( info.getDockable() );
+    	    }
+    	}
     	
     	return result;
     }
@@ -1175,7 +1236,9 @@ public class DockFrontend {
     protected final PredefinedDockSituation createInternalSituation( boolean entry ){
         PredefinedDockSituation situation = new PredefinedDockSituation();
         for( DockInfo info : dockables.values() ){
-            situation.put( "dockable" + info.getKey(), info.getDockable() );
+            if( info.getDockable() != null ){
+                situation.put( "dockable" + info.getKey(), info.getDockable() );
+            }
         }
         
         for( RootInfo info : roots.values() ){
@@ -1243,6 +1306,9 @@ public class DockFrontend {
      * @return the states or <code>null</code>
      */
     private DockInfo getInfo( Dockable dockable ){
+        if( dockable == null )
+            throw new NullPointerException( "dockable is null" );
+        
         for( DockInfo info : dockables.values() )
             if( info.getDockable() == dockable )
                 return info;
@@ -1489,10 +1555,18 @@ public class DockFrontend {
         
         /**
          * The element for which this object stores information.
-         * @return the element
+         * @return the element, can be <code>null</code>
          */
         public Dockable getDockable() {
             return dockable;
+        }
+        
+        /**
+         * Exchanges the dockable which is stored in this {@link DockInfo}
+         * @param dockable the new dockable, can be <code>null</code>
+         */
+        public void setDockable( Dockable dockable ) {
+            this.dockable = dockable;
         }
         
         /**

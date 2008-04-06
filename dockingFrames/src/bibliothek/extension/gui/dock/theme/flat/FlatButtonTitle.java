@@ -26,8 +26,6 @@
 
 package bibliothek.extension.gui.dock.theme.flat;
 
-import java.awt.Dimension;
-import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
@@ -35,7 +33,6 @@ import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.MouseInputAdapter;
 
@@ -56,8 +53,6 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  *
  */
 public class FlatButtonTitle extends AbstractDockTitle {
-    /** Text to display if there is no icon for this title */
-    private String noIconText = "";
     /** 
      * Current state of the mouse, is <code>true</code> when the
      * mouse is over this title 
@@ -73,13 +68,20 @@ public class FlatButtonTitle extends AbstractDockTitle {
      */
     private boolean selected = false;
     
+    /** when to show which icons and text */
+    private FlapDockStation.ButtonContent behavior;
+    
     /**
      * Constructs a new title
      * @param dockable the owner of the title
      * @param origin the version which was used to create this title
      */
     public FlatButtonTitle( Dockable dockable, DockTitleVersion origin ) {
-        super(dockable, origin, false);
+        behavior = FlapDockStation.ButtonContent.THEME_DEPENDENT;
+        if( origin != null )
+            behavior = origin.getController().getProperties().get( FlapDockStation.BUTTON_CONTENT );
+        
+        init(dockable, origin, behavior.showActions( false ) );
         Listener listener = new Listener();
         addMouseInputListener( listener );
     }
@@ -118,44 +120,26 @@ public class FlatButtonTitle extends AbstractDockTitle {
     }
     
     @Override
-    public Dimension getPreferredSize() {
-        if( getIcon() == null )
-            return super.getPreferredSize();
-        else{
-            Icon icon = getIcon();
-            
-            Dimension preferred = new Dimension( icon.getIconWidth(), icon.getIconHeight() );
-            
-            Border border = getBorder();
-            if( border != null ){
-                Insets insets = border.getBorderInsets( this );
-                preferred.width += insets.left + insets.right;
-                preferred.height += insets.top + insets.bottom;
-            }
-            
-            Insets inner = getInnerInsets();
-            preferred.width += inner.left + inner.right;
-            preferred.height += inner.top + inner.bottom;
-            
-            return preferred;
-        }
-    }
-    
-    @Override
-    protected void setIcon( Icon icon ) {
-        super.setIcon(icon);
-        setText( noIconText );
-    }
-    
-    @Override
-    protected void setText( String text ) {
-        if( getIcon() != null )
-            super.setText( "" );
+    protected void updateIcon() {
+        String text = getDockable().getTitleText();
+        if( behavior.showIcon( text != null && text.length() > 0, true ) )
+            super.updateIcon();
         else
-            super.setText( text );
+            setIcon( null );
+    }
+    
+    @Override
+    protected void updateText() {
+        Icon icon = getDockable().getTitleIcon();
         
-        noIconText = text;
-        setToolTipText( text );
+        if( behavior.showText( getDockable().getTitleIcon() != null, icon == null ) ){
+            super.updateText();
+            setToolTipText( null );
+        }
+        else{
+            setText( "" );
+            setToolTipText( getDockable().getTitleText() );
+        }
     }
     
     /**

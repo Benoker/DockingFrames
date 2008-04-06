@@ -53,6 +53,9 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
     /** the set of all dockables */
     private Map<Dockable, Entry> dockables = new HashMap<Dockable, Entry>();
     
+    /** the set of all entries, includes the content of {@link #dockables} */
+    private Map<String, Entry> entries = new HashMap<String, Entry>();
+    
     /**
      * Creates a new manager
      * @param modes the list of modes in which a {@link Dockable} might
@@ -73,6 +76,41 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
     }
     
     /**
+     * Adds an empty entry to this manager. The empty entry can be used to store
+     * information for a {@link Dockable} that has not yet been created. It is
+     * helpful if the client intends to load first its properties and create
+     * only those {@link Dockable}s which are visible.<br>
+     * If there is already an entry for <code>name</code>, then this method
+     * does do nothing.
+     * @param name the name of the empty entry
+     */
+    public void addEmpty( String name ){
+        if( name == null )
+            throw new NullPointerException( "name must not be null" );
+        
+        Entry entry = entries.get( name );
+        
+        if( entry == null ){
+            entry = new Entry( null, name );
+            entries.put( name, entry );
+        }
+    }
+    
+    /**
+     * Removes the entry for <code>name</code> but only if the entry is not
+     * associated with any {@link Dockable}.
+     * @param name the name of the entry which might be empty
+     */
+    public void removeEmpty( String name ){
+        if( name == null )
+            throw new NullPointerException( "name must not be null" );
+        
+        Entry entry = entries.get( name );
+        if( entry.dockable == null )
+            entries.remove( name );
+    }
+    
+    /**
      * Makes an entry for <code>dockable</code> and adds actions to its
      * global {@link DockActionSource}.
      * @param name a unique name for <code>dockable</code>
@@ -85,12 +123,18 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
         if( dockable == null )
             throw new NullPointerException( "dockable must not be null" );
         
-        for( Entry entry : dockables.values() ){
-            if( entry.id.equals( name ))
-                throw new IllegalArgumentException( "There is already a dockable registered with the name: " + name );
+        Entry entry = entries.get( name );
+        if( entry != null && entry.dockable != null )
+            throw new IllegalArgumentException( "There is already a dockable registered with the name: " + name );
+        
+        if( entry == null ){
+            entry = new Entry( dockable, name );
+            entries.put( entry.id, entry );
+        }
+        else{
+            entry.dockable = dockable;
         }
         
-        Entry entry = new Entry( dockable, name );
         dockables.put( dockable, entry );
         entry.putMode( currentMode( dockable ) );
         
@@ -120,21 +164,22 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
         if( dockable == null )
             throw new NullPointerException( "dockable must not be null" );
         
-        // try to insert
-        for( Entry entry : dockables.values() ){
-            if( entry.id.equals( name )){
+        Entry entry = entries.get( name );
+        if( entry != null ){
+            if( entry.dockable != null ){
                 dockables.remove( entry.dockable );
                 removed( entry.dockable );
-                entry.dockable = dockable;
-                dockables.put( dockable, entry );
-                added( dockable );
-                return;
             }
+            entry.dockable = dockable;
+            dockables.put( dockable, entry );
+            added( dockable );
+            return;
         }
         
         // was not inserted
-        Entry entry = new Entry( dockable, name );
+        entry = new Entry( dockable, name );
         dockables.put( dockable, entry );
+        entries.put( entry.id, entry );
         entry.putMode( currentMode( dockable ) );
         added( dockable );
     }
@@ -146,6 +191,20 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
     public void remove( Dockable dockable ){
         Entry entry = dockables.remove( dockable );
         if( entry != null ){
+            entries.remove( entry.id );
+            removed( dockable );
+        }
+    }
+    
+    /**
+     * Removes <code>dockable</code> itself, put the properties of
+     * <code>dockable</code> remain in the system.
+     * @param dockable the element to reduce
+     */
+    public void reduceToEmpty( Dockable dockable ){
+        Entry entry = dockables.remove( dockable );
+        if( entry != null ){
+            entry.dockable = null;
             removed( dockable );
         }
     }
@@ -467,12 +526,17 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
     public <B> ModeTransitionSetting<A, B> getSetting( ModeTransitionConverter<A, B> converter ){
         ModeTransitionSetting<A, B> setting = createSetting( converter );
         
-        for( Map.Entry<Dockable, Entry> element : dockables.entrySet() ){
+        for( Map.Entry<String, Entry> element : entries.entrySet() ){
+            String current = null;
+            Entry entry = element.getValue();
+            if( entry.dockable != null )
+                current = currentMode( entry.dockable );
+            
             setting.add(
-                    element.getValue().id, 
-                    currentMode( element.getKey() ),
-                    element.getValue().properties, 
-                    element.getValue().history );
+                    entry.id, 
+                    current,
+                    entry.properties, 
+                    entry.history );
         }
         
         return setting;
@@ -484,16 +548,17 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
      * @param setting the set of properties
      */
     public void setSetting( ModeTransitionSetting<A, ?> setting ){
-        Map<String, Entry> entries = new HashMap<String, Entry>();
-        for( Entry entry : dockables.values() )
-            entries.put( entry.id, entry );
-        
         for( int i = 0, n = setting.size(); i < n; i++ ){
             String key = setting.getId( i );
             Entry entry = entries.get( key );
             if( entry != null ){
                 String current = setting.getCurrent( i );
-                String old = currentMode( entry.dockable );
+                String old = null;
+                if( entry.dockable != null )
+                    old = currentMode( entry.dockable );
+                
+                if( current == null )
+                    current = old;
                 
                 entry.history.clear();
                 for( String next : setting.getHistory( i ))
@@ -501,7 +566,7 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
                 
                 entry.properties = setting.getProperties( i );
                 
-                if( !old.equals( current )){
+                if( (old == null && current != null) || (old != null && !old.equals( current ))){
                     transitionDuringRead( old, current, entry.dockable );
                 }
             }

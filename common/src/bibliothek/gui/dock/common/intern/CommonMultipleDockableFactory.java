@@ -42,7 +42,7 @@ import bibliothek.util.xml.XElement;
  * are never stored. 
  * @author Benjamin Sigg
  */
-public class CommonDockableFactory implements DockFactory<CommonDockable, CommonDockableLayout> {
+public class CommonMultipleDockableFactory implements DockFactory<CommonDockable, CommonDockableLayout> {
     /** the unique identifier of this factory */
     private String id;
     /** the factory used to read and write {@link MultipleCDockable}s */
@@ -58,7 +58,7 @@ public class CommonDockableFactory implements DockFactory<CommonDockable, Common
      * @param access access to the internal affairs of a {@link CControl}
      */
     @SuppressWarnings("unchecked")
-    public CommonDockableFactory( String id, MultipleCDockableFactory<?,?> delegate, CControlAccess access ){
+    public CommonMultipleDockableFactory( String id, MultipleCDockableFactory<?,?> delegate, CControlAccess access ){
         this.id = id;
         this.delegate = (MultipleCDockableFactory<MultipleCDockable, MultipleCDockableLayout>)delegate;
         this.access = access;

@@ -1,18 +1,43 @@
-\contentsline {section}{\numberline {1}Version 1.0.3}{2}
-\contentsline {subsection}{\numberline {1.1}Incompatibilities}{2}
-\contentsline {subsubsection}{\numberline {1.1.1}DefaultKeyboardController}{2}
-\contentsline {subsubsection}{\numberline {1.1.2}DefaultDockable/DefaultCDockable}{2}
-\contentsline {subsubsection}{\numberline {1.1.3}CDockableListener}{2}
-\contentsline {subsubsection}{\numberline {1.1.4}FlapDockStation}{3}
-\contentsline {subsubsection}{\numberline {1.1.5}XML}{3}
-\contentsline {subsubsection}{\numberline {1.1.6}DockTheme}{3}
-\contentsline {subsubsection}{\numberline {1.1.7}DockFactory}{3}
-\contentsline {subsection}{\numberline {1.2}Features}{3}
-\contentsline {subsubsection}{\numberline {1.2.1}SplitDockStation}{3}
-\contentsline {subsubsection}{\numberline {1.2.2}SplitLayoutManager}{4}
-\contentsline {subsubsection}{\numberline {1.2.3}CDockable resize lock}{4}
-\contentsline {subsubsection}{\numberline {1.2.4}FlapLayoutManager}{4}
-\contentsline {subsubsection}{\numberline {1.2.5}ColorManager/ColorScheme}{4}
-\contentsline {subsubsection}{\numberline {1.2.6}ColorMap}{4}
-\contentsline {subsubsection}{\numberline {1.2.7}LookAndFeel}{4}
-\contentsline {subsubsection}{\numberline {1.2.8}CDockable resize request}{4}
+\contentsline {section}{\numberline {1}Version 1.0.3}{3}
+\contentsline {subsection}{\numberline {1.1}Incompatibilities}{3}
+\contentsline {subsubsection}{\numberline {1.1.1}DefaultKeyboardController}{3}
+\contentsline {subsubsection}{\numberline {1.1.2}DefaultDockable/DefaultCDockable}{3}
+\contentsline {subsubsection}{\numberline {1.1.3}CDockableListener}{3}
+\contentsline {subsubsection}{\numberline {1.1.4}FlapDockStation}{4}
+\contentsline {subsubsection}{\numberline {1.1.5}XML}{4}
+\contentsline {subsubsection}{\numberline {1.1.6}DockTheme}{4}
+\contentsline {subsubsection}{\numberline {1.1.7}DockFactory}{4}
+\contentsline {subsection}{\numberline {1.2}Features}{4}
+\contentsline {subsubsection}{\numberline {1.2.1}SplitDockStation}{4}
+\contentsline {subsubsection}{\numberline {1.2.2}SplitLayoutManager}{5}
+\contentsline {subsubsection}{\numberline {1.2.3}CDockable resize lock}{5}
+\contentsline {subsubsection}{\numberline {1.2.4}FlapLayoutManager}{5}
+\contentsline {subsubsection}{\numberline {1.2.5}ColorManager/ColorScheme}{5}
+\contentsline {subsubsection}{\numberline {1.2.6}ColorMap}{5}
+\contentsline {subsubsection}{\numberline {1.2.7}LookAndFeel}{5}
+\contentsline {subsubsection}{\numberline {1.2.8}CDockable resize request}{5}
+\contentsline {section}{\numberline {2}Version 1.0.4}{6}
+\contentsline {subsection}{\numberline {2.1}Incompatibilities}{6}
+\contentsline {subsubsection}{\numberline {2.1.1}Binary file format}{6}
+\contentsline {subsubsection}{\numberline {2.1.2}DockableListener}{6}
+\contentsline {subsubsection}{\numberline {2.1.3}Title visibility on CDockables}{6}
+\contentsline {subsubsection}{\numberline {2.1.4}BasicDropDownButtonHandler}{6}
+\contentsline {subsubsection}{\numberline {2.1.5}CDockable.getClose}{6}
+\contentsline {subsubsection}{\numberline {2.1.6}CLocation}{7}
+\contentsline {subsubsection}{\numberline {2.1.7}working area}{7}
+\contentsline {subsection}{\numberline {2.2}Features}{7}
+\contentsline {subsubsection}{\numberline {2.2.1}Border around BubbleDisplayer}{7}
+\contentsline {subsubsection}{\numberline {2.2.2}Backup factories (core)}{7}
+\contentsline {subsubsection}{\numberline {2.2.3}Backup factories (common)}{7}
+\contentsline {subsubsection}{\numberline {2.2.4}Unregister factories from DockFrontend}{7}
+\contentsline {subsubsection}{\numberline {2.2.5}Action support keyboard}{8}
+\contentsline {subsubsection}{\numberline {2.2.6}FocusTraversalPolicies}{8}
+\contentsline {subsubsection}{\numberline {2.2.7}override predefined actions}{8}
+\contentsline {subsubsection}{\numberline {2.2.8}CBlank}{8}
+\contentsline {subsubsection}{\numberline {2.2.9}CStation}{8}
+\contentsline {subsection}{\numberline {2.3}Bugfixes}{8}
+\contentsline {subsubsection}{\numberline {2.3.1}BubbleDisplayer.getDockableInsets}{8}
+\contentsline {subsubsection}{\numberline {2.3.2}IndexOutOfBoundsException from ButtonPanel}{8}
+\contentsline {subsubsection}{\numberline {2.3.3}Mode change of CDockable}{9}
+\contentsline {subsubsection}{\numberline {2.3.4}Opening maximized CDockable}{9}
+\contentsline {subsubsection}{\numberline {2.3.5}Unbind of DockAction called to often}{9}

@@ -23,37 +23,32 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.intern;
+package bibliothek.gui.dock.common.action.predefined;
 
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockFactory;
-import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.common.MultipleCDockable;
-import bibliothek.gui.dock.common.SingleCDockable;
+import java.util.ResourceBundle;
+
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.CDockable.ExtendedMode;
+import bibliothek.gui.dock.common.intern.action.CExtendedModeAction;
+import bibliothek.gui.dock.facile.action.StateManager;
+import bibliothek.gui.dock.support.util.Resources;
 
 /**
- * Represents a {@link bibliothek.gui.dock.common.intern.CDockable}.
+ * An action that normalizes each {@link CDockable} to which it is added.
  * @author Benjamin Sigg
  */
-public interface CommonDockable extends Dockable{
-	/**
-	 * Gets the model of this dockable.
-	 * @return the model
-	 */
-	public CDockable getDockable();
-	
-	/**
-	 * Gets the {@link DockActionSource} which shows the close-action.
-	 * @return the action source
-	 */
-	public DockActionSource getClose();
-	
-	/**
-	 * Gets the identifier of the {@link DockFactory} which can store and load
-	 * this dockable. {@link CommonDockable}s which show a {@link SingleCDockable}
-	 * should return {@link CommonSingleDockableFactory#BACKUP_FACTORY_ID} and
-	 * the others should return the id of {@link MultipleCDockable#getFactory()}.
-	 * @return the name of the factory
-	 */
-	public String getFactoryID();
+public class CNormalizeAction extends CExtendedModeAction{
+    /**
+     * Creates a new action
+     * @param control the control for which this action will be used
+     */
+    public CNormalizeAction( CControl control ){
+        super( control, ExtendedMode.NORMALIZED, "normalize", StateManager.ICON_MANAGER_KEY_NORMALIZE, CControl.KEY_GOTO_NORMALIZED );
+        
+        ResourceBundle bundle = Resources.getBundle();
+        
+        setText( bundle.getString( "normalize.in" ) );
+        setTooltip( bundle.getString( "normalize.in.tooltip" ) );
+    }
 }

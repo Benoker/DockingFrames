@@ -35,6 +35,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.title.AbstractDockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
@@ -50,13 +51,22 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
 	/** the argument of the last call of {@link #changeBorder(boolean)} */
 	private boolean selected = false;
 	
+	/** when and how to show icons and text */
+	private FlapDockStation.ButtonContent behavior;
+	
     /**
      * Constructs a new title
      * @param dockable the {@link Dockable} for which this title is created
      * @param origin the version which was used to create this title
      */
     public BasicButtonDockTitle( Dockable dockable, DockTitleVersion origin ) {
-        super(dockable, origin);
+        super();
+        
+        behavior = FlapDockStation.ButtonContent.THEME_DEPENDENT;
+        if( origin != null )
+            behavior = origin.getController().getProperties().get( FlapDockStation.BUTTON_CONTENT );
+        
+        init( dockable, origin, behavior.showActions( true ) );
         setBorder( BorderFactory.createBevelBorder( BevelBorder.RAISED ));
         
         addMouseInputListener( new MouseInputAdapter(){
@@ -72,6 +82,23 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
         		changeBorder( selected );
         	}
         });
+    }
+    
+    @Override
+    protected void updateIcon() {
+        String text = getDockable().getTitleText();
+        if( behavior.showIcon( text != null && text.length() > 0, true ) )
+            super.updateIcon();
+        else
+            setIcon( null );
+    }
+    
+    @Override
+    protected void updateText() {
+        if( behavior.showText( getDockable().getTitleIcon() != null, true ) )
+            super.updateText();
+        else
+            setText( "" );     
     }
     
     @Override

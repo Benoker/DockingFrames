@@ -39,9 +39,25 @@ public abstract class CAction {
     
     /**
      * Creates a new CAction
-     * @param action the internal representation of this action
+     * @param action the internal representation of this action. Subclasses
+     * can put <code>null</code> in here and later call {@link #init(DockAction)}
      */
     protected CAction( DockAction action ){
+        if( action != null )
+            init( action );
+    }
+    
+    /**
+     * Initializes this action. This method can be called only once.
+     * @param action the internal representation, not <code>null</code>
+     */
+    protected void init( DockAction action ){
+        if( this.action != null )
+            throw new IllegalStateException( "already initialized" );
+        
+        if( action == null )
+            throw new NullPointerException( "action is null" );
+        
         this.action = action;
     }
     

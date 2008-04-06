@@ -23,12 +23,13 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.action;
+package bibliothek.gui.dock.common.action.predefined;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.action.view.ViewTarget;
+import bibliothek.gui.dock.common.action.CAction;
 
 /**
  * An action which is never visible, can be used as placeholder

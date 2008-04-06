@@ -8,7 +8,7 @@
 \newcommand{\src}[1]{\lstinline[basicstyle=\ttfamily]|#1|}
 
 %opening
-\title{DockingFrames 1.0.2 - Common}
+\title{DockingFrames 1.0.4 - Common}
 \author{Benjamin Sigg}
 
 \begin{document}
@@ -54,13 +54,41 @@ In line \src{2} it is specified that the application does run in an unsecure env
 Finally in line \src{3} the controller is created.
 
 \subsection{Between mainframe and dockable}
-After creating mainframe and controller, the layer between mainframe and the dockables has to be set up. A \src{CContentArea} does the job. The controller grants access to a default-content-area through \src{CControl.getContentArea()}. You can use \src{CControl.createContentArea(String)} to create additional areas when needed.
+After creating mainframe and controller, the layer between mainframe and the dockables has to be set up.
+
+\subsubsection{Content area}
+A \src{CContentArea} contains all the functionality an application normally needs. The controller grants access to a default-content-area through \\\src{CControl.getContentArea()}. You can use \src{CControl.createContentArea(String)} to create additional areas when needed.
 \begin{lstlisting}
 JFrame frame = ...
 CControl control = ...	
 frame.add( control.getContentArea() );
 \end{lstlisting}
 Note line \src{3}, a content-area is just a \src{JComponent} and can be added anywhere.
+
+\subsubsection{Stations}
+Sometimes a \src{CContentArea} is too much or does not the right thing. In version 1.0.4 the \src{CStation} was introduced. A \src{CStation} is a thin wrapper around an ordinary \src{DockStation}. Clients can write their own \src{CStation}s or use some of the predefined stations:
+\begin{description}
+ \item[CMinimizeArea] A station where minimized dockables are shown.
+ \item[CGridArea] A station where normalized and maximized dockables are shown.
+ \end{description}
+
+An example setting up a layout where normalized dockables can be shown in the middle of a \src{JFrame}, and minimized dockables are shown at the bottom only:
+\begin{lstlisting}
+JFrame frame = new JFrame( "Demo" );
+CControl control = new CControl( frame );
+
+CMinimizeArea miniArea = new CMinimizeArea( control, "mini" );
+miniArea.setDirection( FlapDockStation.Direction.NORTH );
+control.add( miniArea, true );
+
+CGridArea gridArea = control.createGridArea( "grid" );
+
+frame.add( gridArea.getComponent(), BorderLayout.CENTER );
+frame.add( miniArea, BorderLayout.SOUTH );
+\end{lstlisting}
+Note how \src{miniArea}, defined in line \src{4}, has to be added to the control in line \src{6}. The argument \src{true} tells the control, that \src{miniArea} is a root station, which means that \src{miniArea} has no parent.
+
+A second station called \src{gridArea} is created in line \src{8}. Here one of the factory methods of \src{CControl} is used. That method does all the wiring that is necessary, and factory methods should be preferred whenever possible.
 
 \subsection{Wrapping a panel}
 There are some thoughts needed to create a dockable (to wrap a panel into a \src{CDockable}). Each kind of panel can fall in one of two categories: the number of instances during the lifetime of an application remains the same, or the number changes.
@@ -100,7 +128,7 @@ document.setVisible( true );
 \end{lstlisting}
 
 \subsection{Grouping dockables}
-Every time the user loads a previously stored layout, the multiple dockables will be deleted and new instances created. That can be very annoying and disturbing for user and developer. \src{CWorkingArea}s are designed to prevent such a behavior. A working-area is a single dockable which can be parent of other dockables.
+Every time the user loads a previously stored layout, the multiple dockables will be deleted and new instances created. That can be very annoying and disturbing for user and developer. "working-areas" are designed to prevent such a behavior. Every \src{CStation} whose method \src{isWorkingArea} returns \src{true} is considered to be a working area. Most clients will use the class \src{CWorkingArea} and so this chapter will from now on use working-area and \src{CWorkingArea} as synonym.
 
 \src{CWorkingArea}s can be fetched from the controller using \ \src{CController.createWorkingArea}. After their creation they are handled like every other single dockable, except that the \src{createWorkingArea}-method already added them to the controller.
 
@@ -203,6 +231,22 @@ buttonB.setDropDownSelectable( false );
 \end{lstlisting}
 Let's analyze this code. In lines \src{1-4} some actions are created. In lines \src{6,7} the two \src{CButton}-actions are inserted into the menu of \src{dropDown}. Then in line \src{9} one action is marked as the last triggered action. \src{dropDown} will now show icon and text from \src{buttonA}. Something interesting happens in line \src{11}: the call to \src{setDropDownSelectable} will make sure that even when \src{buttonB} is triggered, it will not be marked as the last triggered action. Sometimes one wants to use \src{CDropDownButton} just as an ordinary drop-down-menu without more functionality.
 
+\subsubsection{CBlank}
+The action \src{CBlank} is never visible nor does the action anything. It can be used in places where a non-\src{null} action is required, but the developer does not want to show an action.
+
+\subsubsection{Predefined actions}
+There are a number of actions which are added automatically to a \src{CDockable}. For example the close-action or the maximize-action. These actions are often rooted deeply in the system and it is not possible to access them. However it is possible to override them. Every \src{CDockable} has a method \src{getAction} which is called before one of the predefined actions is shown. If that \src{getAction} method returns a value other than \src{null}, the predefined action gets replaced.
+
+An example:
+\begin{lstlisting}
+DefaultSingleCDockable dockable = ...
+dockable.setMaximizable( true );
+dockable.putAction( CDockable.ACTION_KEY_MAXIMIZE, CBlank.BLANK );
+\end{lstlisting}
+This code produces a dockable that is clearly maximizable (line \src{2}). However when the programm is running, the maximize-action is not visible. That is because in line \src{3} the predefined action for maximizing gets overridden by a new action. Since the new action is a \src{CBlank}, the action gets in fact invisible.
+
+This feature has to be treated very carefully. Every predefined action has a special meaning, however the replacing actions depend on the client only. The developer has to ensure, that the replacing actions do something meaningful.
+
 \subsection{The location of dockables}
 Naturally a dockable has some location. This section deals with the various forms of locations that are used in DF.
 
@@ -252,14 +296,14 @@ control.getContentArea().deploy( grid );
 \end{lstlisting}
 What happens here? In lines \src{1}, \src{3} and \src{4}, new objects are created. In line \src{6} a new \src{CGrid} is created. The new grid will add all dockables to \src{control}. Then in lines \src{7} and \src{8} dockables are added to the grid. \src{single} and \src{multi} will flank each other horizontally, \src{single} on the left side, \src{multi} on the right. The size of \src{multi} will be twice the size of \src{single}. Finally in line \src{10} the contents of the grid are put onto the \src{CContentArea} of the application.
 
-\subsection{Store the layout}
+\subsubsection{Store the layout}
 With "layout" are all locations and relations of the dockables meant. It's a great help for the user if he can choose between various (predefined) layouts. For example: a \LaTeX editor might have a layout for editing the document, and a layout for looking at the compiled document.
 
 The controller allows to store the current layout, load older layouts and delete layouts during runtime. Four methods deal with the layout: \src{save}, \src{load}, \src{delete} and \src{layouts}.
 
 The method \src{CControl.save} gives the current layout some name and stores it. The method \src{CControl.load} searches a layout with a given name and changes the location of all dockables. The method \src{delete} removes a layout, and \src{layouts} returns a \src{String[]} with the names of all currently known layouts.
 
-\subsection{Store the layout persistent}
+\subsubsection{Store the layout persistent}
 Good applications store all their properties persistent (although many developers forget the directory which the file-chooser showed last). The user should not find any changes when he closes and restarts the applications.
 
 The controller can use an \src{ApplicationResourceManager} to store its properties. However the client is responsible to tell the controller when and where to store its properties:
@@ -277,8 +321,21 @@ catch( IOException ex ){
 \end{lstlisting}
 The properties can also be stored in xml-format. But the purpose of that option is mainly for debugging and migration, most applications will do just fine using a byte-stream.
 
-\subsection{The size of dockables}
+\subsubsection{Lazy initialisation}
 
+
+\subsection{The size of dockables}
+Each \src{CDockable} has a certain size. Some \src{Component}s have an optimal size, others are flexible and can have any size. There are two interesting features for the first kind of \src{Component}s.
+
+\subsubsection{Lock size}
+Every \src{CDockable} has a method \src{isResizeLocked()}. If that methods returns \src{true}, then the \src{DockStation}s try not to change the size of the \src{CDockable} when the stations are resized themselfs. The user still can resize the \src{CDockable} by hand, and there are some other actions that will change the sizes as well.
+
+Clients that use \src{DefaultSingleCDockable} and \\\src{DefaultMultipleCDockable} can use the method \src{setResizeLocked} to change the behavior.
+
+\subsubsection{Request size}
+Each \src{CDockable} can have a "size request" provided by \\\src{getAndClearResizeRequest}. Whenever \src{handleResizeRequest} of \src{CControl} is called, all resize requests are read and the stations try to change the size of their children such that the requests are fullfilled. There are no guarantees that the request can be fullfilled. And requests that cannot be fullfilled are simply lost.
+
+Clients that use \src{DefaultSingleCDockable} and \\\src{DefaultMultipleCDockable} can use the method \src{setResizeRequest} to issue such a request. The method \src{setResizeRequest} can just store the request, or can process the request as well.
 
 \subsection{Colors associated with dockables}
 Every \src{CDockable} has a map full of colors. This map, the \src{ColorMap}, is read by the \src{DockTheme}s which are included in the Common-project. If a client changes a color in the map, the change will be propagated to the graphical user interface immediatelly. There are various keys for different colors. If a client wants to change the color of a tab, it might use this piece of code:

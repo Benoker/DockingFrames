@@ -28,6 +28,7 @@ package bibliothek.gui.dock.common.intern;
 import javax.swing.Icon;
 import javax.swing.KeyStroke;
 
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.actions.SimpleDockAction;
 import bibliothek.gui.dock.common.action.CAction;
 
@@ -41,10 +42,21 @@ public abstract class CDecorateableAction extends CAction {
     
     /**
      * Creates a new action.
-     * @param action the internal representation
+     * @param action the internal representation, can be <code>null</code>
+     * if {@link #init(SimpleDockAction)} is called later
      */
     public CDecorateableAction( SimpleDockAction action ){
-        super( action );
+        super( null );
+        if( action != null )
+            init( action );
+    }
+    
+    /**
+     * Initializes this action, this method can be called only once.
+     * @param action the internal representation
+     */
+    protected void init( SimpleDockAction action ){
+        init( (DockAction)action );
         this.action = action;
     }
     

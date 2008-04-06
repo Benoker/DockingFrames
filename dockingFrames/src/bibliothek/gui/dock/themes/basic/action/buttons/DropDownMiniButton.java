@@ -216,7 +216,7 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 					(int)(factor * (insets.top + insets.bottom + iconHeight + dropHeight/2 ) - dropHeight/2 ) );
 		}
 		
-		if( isFocusOwner() ){
+		if( isFocusOwner() && isFocusable() && isEnabled() ){
 		    paintFocus( g );
 		}
 	}

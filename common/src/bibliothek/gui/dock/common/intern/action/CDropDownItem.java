@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.common.intern.action;
 
+import bibliothek.gui.dock.action.actions.SimpleDockAction;
 import bibliothek.gui.dock.action.actions.SimpleDropDownItemAction;
 import bibliothek.gui.dock.common.action.CDropDownButton;
 import bibliothek.gui.dock.common.intern.CDecorateableAction;
@@ -39,10 +40,21 @@ public class CDropDownItem extends CDecorateableAction{
     
     /**
      * Creates a new action
-     * @param action the internal representation
+     * @param action the internal representation, can be <code>null</code> if
+     * {@link #init(SimpleDropDownItemAction)} is called later
      */
     protected CDropDownItem( SimpleDropDownItemAction action ) {
-        super( action );
+        super( null );
+        if( action != null )
+            init( action );
+    }
+    
+    /**
+     * Initializes this action, this method can be called only once.
+     * @param action the internal representation
+     */
+    protected void init( SimpleDropDownItemAction action ){
+        init( (SimpleDockAction)action );
         this.action = action;
     }
 

@@ -76,9 +76,7 @@ public class BubbleDockTitle extends AbstractDockTitle {
      * @param origin the creator of this title
      */
     public BubbleDockTitle( Dockable dockable, DockTitleVersion origin ) {
-        super( dockable, origin );
-        setOpaque( false );
-        initAnimation();
+        this( dockable, origin, true );
     }
     
     /**
@@ -88,7 +86,26 @@ public class BubbleDockTitle extends AbstractDockTitle {
      * @param showMiniButtons whether this title should show the {@link bibliothek.gui.dock.action.DockAction actions} or not
      */
     public BubbleDockTitle( Dockable dockable, DockTitleVersion origin, boolean showMiniButtons ){
-        super( dockable, origin, showMiniButtons );
+        init( dockable, origin, showMiniButtons );
+    }
+    
+    /**
+     * A constructor that does not do anything, subclasses should later call
+     * {@link #init(Dockable, DockTitleVersion, boolean)}.
+     */
+    protected BubbleDockTitle(){
+        
+    }
+
+    /**
+     * Initializes this title, this method should be called only once.
+     * @param dockable the {@link Dockable} for which this title is shown
+     * @param origin the creator of this title
+     * @param showMiniButtons whether this title should show the {@link bibliothek.gui.dock.action.DockAction actions} or not
+     */
+    @Override
+    protected void init( Dockable dockable, DockTitleVersion origin, boolean showMiniButtons ){
+        super.init( dockable, origin, showMiniButtons );
         setOpaque( false );
         initAnimation();
     }

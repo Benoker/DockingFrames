@@ -47,17 +47,14 @@ public class CMinimizeArea extends JPanel implements CStation{
     private ResizeRequestListener request;
     private CControlAccess access;
     private String uniqueId;
-    private boolean workingArea;
     
     /**
      * Creates a new minimize area.
      * @param control the control for which this area will be used
      * @param uniqueId the unique uniqueId of this area
-     * @param workingArea whether this is a {@link CStation#isWorkingArea() working area}
      */
-    public CMinimizeArea( CControl control, String uniqueId, boolean workingArea ){
+    public CMinimizeArea( CControl control, String uniqueId ){
         this.uniqueId = uniqueId;
-        this.workingArea = workingArea;
         
         setLayout( new BorderLayout() );
         
@@ -100,7 +97,7 @@ public class CMinimizeArea extends JPanel implements CStation{
     }
     
     public boolean isWorkingArea() {
-        return workingArea;
+        return false;
     }
     
     public CDockable asDockable() {

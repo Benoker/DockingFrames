@@ -23,37 +23,20 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.intern;
-
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockFactory;
-import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.common.MultipleCDockable;
-import bibliothek.gui.dock.common.SingleCDockable;
+package bibliothek.gui.dock.common;
 
 /**
- * Represents a {@link bibliothek.gui.dock.common.intern.CDockable}.
+ * A backup factory is used by a {@link CControl} to create {@link SingleCDockable}s
+ * if a dockable is missing in the cache, but needed because some layout is loaded
+ * from a file.
  * @author Benjamin Sigg
  */
-public interface CommonDockable extends Dockable{
-	/**
-	 * Gets the model of this dockable.
-	 * @return the model
-	 */
-	public CDockable getDockable();
-	
-	/**
-	 * Gets the {@link DockActionSource} which shows the close-action.
-	 * @return the action source
-	 */
-	public DockActionSource getClose();
-	
-	/**
-	 * Gets the identifier of the {@link DockFactory} which can store and load
-	 * this dockable. {@link CommonDockable}s which show a {@link SingleCDockable}
-	 * should return {@link CommonSingleDockableFactory#BACKUP_FACTORY_ID} and
-	 * the others should return the id of {@link MultipleCDockable#getFactory()}.
-	 * @return the name of the factory
-	 */
-	public String getFactoryID();
+public interface SingleCDockableBackupFactory {
+    /**
+     * Creates a backup of a {@link SingleCDockable}.
+     * @param id the unique id that the result must have
+     * @return the backup dockable or <code>null</code> if no dockable can
+     * be created
+     */
+    public SingleCDockable createBackup( String id );
 }

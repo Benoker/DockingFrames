@@ -75,7 +75,7 @@ public class BasicTabDockTitle extends BasicDockTitle {
             EclipseDockTitleEvent e = (EclipseDockTitleEvent)event;
             selected = e.isSelected();
             paintIconWhenInactive = e.isPaintIconWhenInactive();
-            updateIcon();
+            updateTabIcon();
         }
     }
     
@@ -92,7 +92,7 @@ public class BasicTabDockTitle extends BasicDockTitle {
      * shown but only if this title is {@link #selected} or
      * {@link #paintIconWhenInactive} is <code>true</code>.
      */
-    private void updateIcon(){
+    private void updateTabIcon(){
         if( selected || paintIconWhenInactive )
             setIcon( getDockable().getTitleIcon() );
         else

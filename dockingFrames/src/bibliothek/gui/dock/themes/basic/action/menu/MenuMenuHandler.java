@@ -137,9 +137,10 @@ public class MenuMenuHandler extends AbstractMenuHandler<JMenu, MenuDockAction> 
         menu.removeAll();
         
         for( ActionItem item : actions ){
-        	if( item.handler != null )
+        	if( item.handler != null ){
         		item.handler.unbind();
-        	item.action.unbind( dockable );
+        		item.action.unbind( dockable );
+        	}
         }
         
         actions.clear();

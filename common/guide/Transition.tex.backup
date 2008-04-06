@@ -21,7 +21,7 @@
 
 \newcommand{\short}{\item[Short]}
 \newcommand{\why}{\item[Reason]}
-\newcommand{\clients}{\item[Necessary measures]}
+\newcommand{\clients}{\item[Clients]}
 
 \title{DockingFrames 1.0.3 - Transition}
 \author{Benjamin Sigg}
@@ -46,19 +46,55 @@ These changes break with the API from 1.0.2, clients must be change their interf
 \begin{description}
 \short The class \src{DefaultkeyBoardController} has been renamed to \\\src{DefaultKeyboardController} 
 \why The new name looks better
-\clients Replace any occurrence of \\\src{DefaultkeyBoardController} to \src{DefaultKeyboardController}
+\clients Replace any occurrence of \src{DefaultkeyBoardController} to \\\src{DefaultKeyboardController}
 \end{description}
 
 \subsubsection{DefaultDockable/DefaultCDockable}
 \begin{description}
  \short \src{DefaultDockable} and \src{DefaultCDockable} now have \src{BorderLayout} set as default \src{LayoutManager}
  \why \src{BorderLayout} is the most often used \src{LayoutManager}.
- \clients If another \src{LayoutManager} that \src{BorderLayout} is needed, set it up.
+ \clients If another \src{LayoutManager} than \src{BorderLayout} is needed, set it up.
 \end{description}
 
 \subsubsection{CDockableListener}
+\begin{description}
+ \short \src{CDockableListener} divided into \\\src{CDockableStateListener} and \src{CDockablePropertyListener}
+ \why \src{CDockableListener} was to big. Most clients either need information about the state, or about the properties of a \src{CDockable}. The case that both informations are needed is seldom.
+ \clients Need to decide which listener they implement. Note that \\\src{CDockableAdapter} implements both listeners, but not all methods get invoked when the adapter is registered only as one kind of listener.
+\end{description}
+
+\subsubsection{FlapDockStation}
+\begin{description}
+ \short \src{FlapDockStation}s layout is stored in a new format. The xml format will do the transition automatically, but the \src{DataInput/OutputStream} will not work properly.
+ \why the old format did not carry enough information
+ \clients Store the layout in xml-format and load it again to do the transition.
+\end{description}
+
+\subsubsection{XML}
+\begin{description}
+ \short \src{XElement} now extends \\\src{XContainer}, and no longer \src{XAttribute}. \src{XAttribute} extends \src{XContainer} as well.
+ \why An element of a xml file is not an attribute, that is now reflected in the class structure
+ \clients May need to replace some occurrences of \src{XAttribute} by \src{XContainer}
+\end{description}
+
+\subsubsection{DockTheme}
+\begin{description}
+ \short The common-project uses its own set of \src{DockTheme}s. Each theme \src{XTheme} gets replaced by \src{CXTheme}
+ \why The new themes make use of the new \src{ColorMap}
+ \clients Should use the new themes when possible. The old themes will work, but the user will see less features.
+\end{description}
+
+\subsubsection{DockFactory}
+\begin{description}
+ \short \src{DockFactories} can now create any \src{Object} they want, and are no longer required to create \src{DockLayout}s. \src{DockLayout} has been converted into a class that wraps the \src{Object} that was created by a DockFactory
+ \why All \src{DockLayout}s need to do the same things, hence clients would need to write the same code over and over again. Clients have now more freedom in how to implement \src{DockFactory}
+ \clients Should remove all occurrences of \src{implements DockLayout} and the methods \src{set/getFactoryId} that were defined in \src{DockLayout}
+\end{description}
+
 
 \subsection{Features}
+This is the set of new features.
+
 \subsubsection{SplitDockStation}
 \begin{description}
  \short The tree of elements of a \src{SplitDockStation} is now accessible from outside and can be modified directly
@@ -77,6 +113,183 @@ These changes break with the API from 1.0.2, clients must be change their interf
  \why This was a request from a user
 \end{description}
 
+\subsubsection{FlapLayoutManager}
+\begin{description}
+ \short \src{FlapDockStation} now uses \src{FlapLayoutManager} to arrange its children
+ \why Exchangeable behavior was a requirement for new features in the common-project.
+\end{description}
 
+\subsubsection{ColorManager/ColorScheme}
+\begin{description}
+ \short Many graphical elements now use \src{ColorManager} and \src{ColorSchemes}
+ \why Colors can now be exchanged by clients. The control goes deep, even the color of a single element can be exchanged without affecting other elements of the same kind.
+\end{description}
+
+\subsubsection{ColorMap}
+\begin{description}
+ \short \src{CDockable} uses a \src{ColorMap} to define special colors for tabs and titles that are related to the \src{CDockable}
+ \why This was a request from a user
+\end{description}
+
+\subsubsection{LookAndFeel}
+\begin{description}
+ \short Changes of \src{LookAndFeel} noted by \src{DockController} and forwarded to all \src{UIListeners}.
+ \why Because the \src{ColorManager} would not be informed of the new \\\src{LookAndFeel} otherwise
+\end{description}
+
+\subsubsection{CDockable resize request}
+\begin{description}
+ \short \src{CDockable}s can now request a size they would like to have, and in most environments they will get this size. See the method \src{setResizeRequest} of \src{AbstractCDockable}.
+ \why This was a request from a user
+\end{description}
+
+\section{Version 1.0.4}
+Version 1.0.4 introduces a few new features that add customizability
+\subsection{Incompatibilities}
+These changes break with the API from 1.0.3, clients must be change their interfaces in order to work properly.
+
+\subsubsection{Binary file format}
+\begin{description}
+\short The binary file format has been changed
+\why The format now includes version numbers so that backwards compatibility should be possible in the next versions
+\clients Need to delete all binary files. They might try to write their properties with the old version in xml, and then load the xml file with the new version. This should convert the files.
+\end{description}
+
+\subsubsection{DockableListener}
+\begin{description}
+\short Has an additional method \src{titleExchanged}
+\why Allows to exchange a \src{DockTitle} while the \src{Dockable} is visible
+\clients Need to update any class that implements \src{DockableListener}.
+\end{description}
+
+\subsubsection{Title visibility on CDockables}
+\begin{description}
+\short Any \src{CDockable} can now hide its titles at any time
+\why user request
+\clients Need to update any class implementing \src{CDockablePropertyListener} since that listener has an additional method \src{titleShownChanged}.
+\end{description}
+
+\subsubsection{BasicDropDownButtonHandler}
+\begin{description}
+\short Requests now a \src{BasicDropDownButtonTrigger} instead of a \\\src{BasicTrigger}
+\why to allow steering any drop down action with the keyboard.
+\clients unlikly to have an effect on any client
+\end{description}
+
+\subsubsection{CDockable.getClose}
+\begin{description}
+\short Method has been moved into \src{CommonDockable}
+\why The action can now be replaced through \src{CDockable.getAction}. There is no need for any client to replace the action by replacing the whole \src{DockActionSource}
+\clients should use \src{putAction}, a method of \src{AbstractCDockable} to exchange the close-action. No fix for clients which added additional elements to the close-source.
+\end{description}
+
+\subsubsection{CLocation}
+\begin{description}
+\short Additional \src{CLocations}, some methods have been moved
+\why To allow the new \src{CStation} more flexible \src{CLocation}s were needed.
+\clients No general solution available, clients should recompile their project and check all compiler errors.
+\end{description}
+
+\subsubsection{working area}
+\begin{description}
+\short Every \src{CStation} can now be a working area
+\why To allow more flexibility in grouping \src{CDockable}s
+\clients That should not be visible for any client using version 1.0.3
+\end{description}
+
+
+\subsection{Features}
+This is the set of new features.
+
+\subsubsection{Border around BubbleDisplayer}
+\begin{description}
+ \short BubbleDisplayer now shows a border if the title is not null, or if the dockable is not a station
+ \why Looks better
+\end{description}
+
+\subsubsection{Backup factories}
+\begin{description}
+ \short \src{DockFrontend} and \src{PredefinedDockSituation} can now use backup factories. These factories are used to load elements which should be in the cache, but are missing. In case of \src{DockFrontend} they are automatically added to the frontend.
+ \why Removes the need to add all \src{Dockable}s to a \src{DockFrontend} before loading a layout from a file.
+\end{description}
+
+\subsubsection{Unregister factories from DockFrontend}
+\begin{description}
+ \short \src{DockFactory}s can now be unregistered from \src{DockFrontend}
+ \why Was missing
+\end{description}
+
+\subsubsection{Action support keyboard}
+\begin{description}
+ \short \src{DockAction}s are triggered by pressing SPACE on the focused button, \src{DropDownAction}s pop up when the DOWN (non numpad) key is pressed
+ \why Ongoing work to allow navigating in DF without the mouse.
+\end{description}
+
+\subsubsection{FocusTraversalPolicies}
+\begin{description}
+ \short New \src{FocusTraversalPolicy}s allow to navigate within all elements of a \src{DockableDisplayer} (including title).
+ \why Ongoing work to allow navigating in DF without the mouse.
+\end{description}
+
+\subsubsection{override predefined actions}
+\begin{description}
+ \short \src{CDockable} has an additional method \src{getAction} which is used by various modules to override their default actions.
+ \why Answer to a user request
+\end{description}
+
+\subsubsection{CBlank}
+\begin{description}
+ \short New action \src{CBlank}, which does not show anything.
+ \why As value for \src{CDockable.getAction} when a predefined action should be hidden
+\end{description}
+
+\subsubsection{CStation}
+\begin{description}
+ \short Additional interface \src{CStation} in common. Two new stations: \src{CMinimizeArea} and \src{CGridArea}.
+ \why Allows clients to add their own \src{DockStation}s to \src{CControl}, allows to create other layouts than the
+ "one center, four minimize areas"-layout.
+\end{description}
+
+\subsection{Bugfixes}
+These are the bugs that were fixed/
+
+\subsubsection{BubbleDisplayer.getDockableInsets}
+\begin{description}
+ \short The method did not calculate its result correctly.
+ \why A flaw in the design of \src{BasicDockableDisplayer}
+\end{description}
+
+\subsubsection{IndexOutOfBoundsException from ButtonPanel}
+\begin{description}
+ \short The exception was thrown when an invisible action was on the panel
+ \why invisible actions were not considered when writing \src{ButtonPanel}
+\end{description}
+
+\subsubsection{Mode change of CDockable}
+\begin{description}
+ \short \src{CDockable} did not go into normalized-mode when externalized and never normalized before
+ \why Properties were missing and could not be created automatically
+\end{description}
+
+\subsubsection{Opening maximized CDockable}
+\begin{description}
+ \short \src{CDockable} could not be opened maximized.
+ \why framework got confused because \src{CDockable} did not have a parent.
+\end{description}
 
 \end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

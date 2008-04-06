@@ -234,7 +234,7 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
         }
         
         // focus
-        if( isFocusOwner() ){
+        if( isFocusOwner() && isFocusable() && isEnabled() ){
             paintFocus( g );
         }
     }

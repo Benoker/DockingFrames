@@ -64,6 +64,8 @@ public class DefaultCommonDockable extends DefaultDockable implements CommonDock
                 fireTitleExchanged();
             }
         });
+        
+        setFactoryID( CommonSingleDockableFactory.BACKUP_FACTORY_ID );
     }
     
     public DefaultDockActionSource getActions() {

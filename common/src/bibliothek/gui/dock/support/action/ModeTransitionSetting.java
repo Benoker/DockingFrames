@@ -32,6 +32,7 @@ import java.util.*;
 
 import bibliothek.gui.Dockable;
 import bibliothek.util.Version;
+import bibliothek.util.xml.XAttribute;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -70,15 +71,13 @@ public class ModeTransitionSetting<A, B> {
     /**
      * Adds a new set of properties to this setting.
      * @param id the unique identifier of this set of properties
-     * @param current the current mode of the set
+     * @param current the current mode of the set, can be <code>null</code>
      * @param properties the properties, will be copied by this method
      * @param history older modes of the setting, will be copied by this method
      */
     public void add( String id, String current, Map<String, A> properties, Collection<String> history ){
         if( id == null )
             throw new NullPointerException( "id" );
-        if( current == null )
-            throw new NullPointerException( "current" );
         if( properties == null )
             throw new NullPointerException( "properties" );
         if( history == null )
@@ -154,7 +153,14 @@ public class ModeTransitionSetting<A, B> {
         out.writeInt( entries.size() );
         for( Entry entry : entries ){
             out.writeUTF( entry.id );
-            out.writeUTF( entry.current );
+            
+            if( entry.current == null ){
+                out.writeBoolean( false );
+            }
+            else{
+                out.writeBoolean( true );
+                out.writeUTF( entry.current );
+            }
             
             out.writeInt( entry.history.length );
             for( String history : entry.history )
@@ -183,8 +189,10 @@ public class ModeTransitionSetting<A, B> {
         entries.clear();
         for( int i = 0, n = in.readInt(); i<n; i++ ){
             Entry entry = new Entry();
+            entries.add( entry );
             entry.id = in.readUTF();
-            entry.current = in.readUTF();
+            if( in.readBoolean() )
+                entry.current = in.readUTF();
             
             entry.history = new String[ in.readInt() ];
             for( int j = 0; j < entry.history.length; j++ )
@@ -209,7 +217,8 @@ public class ModeTransitionSetting<A, B> {
         for( Entry entry : entries ){
             XElement xentry = element.addElement( "entry" );
             xentry.addString( "id", entry.id );
-            xentry.addString( "current", entry.current );
+            if( entry.current != null )
+                xentry.addString( "current", entry.current );
             
             XElement xhistory = xentry.addElement( "history" );
             for( String history : entry.history ){
@@ -236,8 +245,11 @@ public class ModeTransitionSetting<A, B> {
         
         for( XElement xentry : element.getElements( "entry" )){
             Entry entry = new Entry();
+            entries.add( entry );
             entry.id = xentry.getString( "id" );
-            entry.current = xentry.getString( "current" );
+            XAttribute current = xentry.getAttribute( "current" );
+            if( current != null )
+                entry.current = current.getString();
             
             XElement xhistory = xentry.getElement( "history" );
             if( xhistory == null )

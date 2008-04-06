@@ -71,10 +71,10 @@ import bibliothek.gui.dock.util.color.ColorManager;
  *
  */
 public class AbstractDockTitle extends JPanel implements DockTitle {
-    /** Insets of the size 0,2,0,0 */
-    private static final Insets DEFAULT_INSETS_HORIZONTAL = new Insets( 0, 2, 0, 0 );
-    /** Insets of the size 2,0,0,0 */
-    private static final Insets DEFAULT_INSETS_VERTICAL = new Insets( 2, 0, 0, 0 );
+    /** Insets of the size 1,2,1,2 */
+    private static final Insets DEFAULT_INSETS_HORIZONTAL = new Insets( 1, 2, 1, 2 );
+    /** Insets of the size 2,1,2,1 */
+    private static final Insets DEFAULT_INSETS_VERTICAL = new Insets( 2, 1, 2, 1 );
     
     /** The {@link Dockable} for which this title is shown */
     private Dockable dockable;
@@ -124,6 +124,26 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
      * should be shown, <code>false</code> if they should not be visible
      */
     public AbstractDockTitle( Dockable dockable, DockTitleVersion origin, boolean showMiniButtons ){
+        init( dockable, origin, showMiniButtons );
+    }
+    
+    /**
+     * Constructor which does not do anything. Subclasses should call
+     * {@link #init(Dockable, DockTitleVersion, boolean)} to initialize
+     * the title.
+     */
+    protected AbstractDockTitle(){
+       // nothing 
+    }
+    
+    /**
+     * Initializer called by the constructor.
+     * @param dockable The Dockable whose title this will be
+     * @param origin The version which was used to create this title
+     * @param showMiniButtons <code>true</code> if the actions of the Dockable
+     * should be shown, <code>false</code> if they should not be visible
+     */
+    protected void init( Dockable dockable, DockTitleVersion origin, boolean showMiniButtons ){
         this.dockable = dockable;
         this.showMiniButtons = showMiniButtons;
         this.origin = origin;
@@ -471,7 +491,11 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     
     @Override
     public Dimension getPreferredSize() {
-        Dimension preferred = label.getPreferredSize();
+        Dimension preferred;
+        if( getText() == null || getText().length() == 0 )
+            preferred = new Dimension( 0, 0 );
+        else
+            preferred = label.getPreferredSize();
         
         Insets insets = titleInsets();
 
@@ -495,7 +519,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
             if( icon == null )
                 width = Math.max( width, 2*height );
             
-            return new Dimension( width + insets.left + insets.right,
+            preferred = new Dimension( width + insets.left + insets.right,
                     height + insets.top + insets.bottom );
         }
         else{
@@ -519,9 +543,17 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
             if( icon == null )
                 height = Math.max( height, 2*width );
             
-            return new Dimension( width + insets.left + insets.right,
+            preferred = new Dimension( width + insets.left + insets.right,
                     height + insets.top + insets.bottom );
         }            
+        
+        if( preferred.width < 10 )
+            preferred.width = 10;
+        
+        if( preferred.height < 10 )
+            preferred.height = 10;
+        
+        return preferred;
     }
 
     /**
@@ -559,8 +591,8 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
                 color.connect( controller );
         }
         
-        setText( dockable.getTitleText() );
-        setIcon( dockable.getTitleIcon() );
+        updateText();
+        updateIcon();
         
         revalidate();
     }
@@ -580,6 +612,26 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         
         setText( "" );
         setIcon( null );
+    }
+    
+    /**
+     * Called when the icon of this title should be updated. This title
+     * never calls {@link #setIcon(Icon)} directly, it always calls this method
+     * which then calls {@link #setIcon(Icon)} (the only exception: on
+     * unbinding the icon is set to <code>null</code>)
+     */
+    protected void updateIcon(){
+        setIcon( dockable.getTitleIcon() );
+    }
+    
+    /**
+     * Called when the text of this title should be updated. This title
+     * never calls {@link #setText(String)} directly, it always calls this method
+     * which then calls {@link #setText(String)} (the only exception: on
+     * unbinding the text is set to <code>null</code>)
+     */
+    protected void updateText(){
+        setText( dockable.getTitleText() );
     }
     
     /**
@@ -660,9 +712,9 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         public Dimension getPreferredSize() {
             Dimension size = label.getPreferredSize();
             if( orientation.isHorizontal() )
-                return new Dimension( size.width, size.height );
+                return new Dimension( size.width+5, size.height );
             else
-                return new Dimension( size.height, size.width );
+                return new Dimension( size.height, size.width+5 );
         }
         
         @Override
@@ -699,10 +751,12 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
      */
     private class Listener implements DockableListener, DockHierarchyListener{
         public void titleIconChanged( Dockable dockable, Icon oldIcon, Icon newIcon ) {
-            setIcon( newIcon );
+            updateIcon();
+            updateText();
         }
         public void titleTextChanged( Dockable dockable, String oldTitle, String newTitle ) {
-            setText( newTitle );
+            updateIcon();
+            updateText();
         }
         
         public void titleUnbound( Dockable dockable, DockTitle title ) {
