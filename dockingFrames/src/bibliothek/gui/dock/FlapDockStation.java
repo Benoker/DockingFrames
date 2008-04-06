@@ -481,6 +481,7 @@ public class FlapDockStation extends AbstractDockableStation {
         
         buttonPane.resetTitles();
         updateWindowBounds();
+        buttonPane.revalidate();
     }
     
     /**
@@ -1431,8 +1432,10 @@ public class FlapDockStation extends AbstractDockableStation {
                     }
                 }
                 
-                if( changed )
+                if( changed ){
+                    buttonTitles.put( dockable, title );
                     buttonPane.resetTitles();
+                }
             }
         }
     }

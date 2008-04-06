@@ -234,9 +234,9 @@ public class ButtonPanel extends JPanel{
     			}
     		}
         	
-    		visibleActions = -1;
-    		if( menuAction == null )
-            	setVisibleActions( actions.size() );
+    		
+    		visibleActions = actions.size();
+    		resetVisibleActions();
     		
         	revalidate();
     	}
@@ -412,42 +412,49 @@ public class ButtonPanel extends JPanel{
 	 */
 	public void setVisibleActions( int count ){
 		if( visibleActions != count ){
-			removeAll();
-			visibleActions = count;			
-			if( menuItem == null ){
-				for( ActionItem entry : actions ){
-					if( entry.item != null ){
-						add( entry.item.getItem() );
-					}
-				}
-			}
-			else{
-				menuSource.removeAll();
-				
-				int set = 0;
-				int index = 0;
-				int max = actions.size();
-				int length = actions.size();
-				
-				while( set < count && index < length ){
-					BasicTitleViewItem<JComponent> item = actions.get( index++ ).item;
-					if( item == null ){
-						max--;
-					}
-					else{
-						set++;
-						add( item.getItem() );
-					}
-				}
-				
-				if( set < max ){
-					for( int i = set, n = actions.size(); i<n; i++ ){
-						menuSource.add( actions.get( i ).action );
-					}
-					add( menuItem.getItem() );
-				}
-			}
+		    visibleActions = count;
+		    resetVisibleActions();
 		}
+	}
+	
+	/**
+	 * Update the components shown on this panel.
+	 */
+	private void resetVisibleActions(){
+	    removeAll();
+	    if( menuItem == null ){
+	        for( ActionItem entry : actions ){
+	            if( entry.item != null ){
+	                add( entry.item.getItem() );
+	            }
+	        }
+	    }
+	    else{
+	        menuSource.removeAll();
+
+	        int set = 0;
+	        int index = 0;
+	        int max = actions.size();
+	        int length = actions.size();
+
+	        while( set < visibleActions && index < length ){
+	            BasicTitleViewItem<JComponent> item = actions.get( index++ ).item;
+	            if( item == null ){
+	                max--;
+	            }
+	            else{
+	                set++;
+	                add( item.getItem() );
+	            }
+	        }
+
+	        if( set < max ){
+	            for( int i = set, n = actions.size(); i<n; i++ ){
+	                menuSource.add( actions.get( i ).action );
+	            }
+	            add( menuItem.getItem() );
+	        }
+	    }
 	}
 	
 	@Override
@@ -630,9 +637,8 @@ public class ButtonPanel extends JPanel{
                 actions.add( i, entry );
             }
             
-            visibleActions = -1;
-            if( menuAction == null )
-            	setVisibleActions( actions.size() );
+            visibleActions = actions.size();
+            resetVisibleActions();
             revalidate();
         }
         public void actionsRemoved( DockActionSource source, int firstIndex, int lastIndex ) {
@@ -645,9 +651,8 @@ public class ButtonPanel extends JPanel{
                 }
             }
             
-            visibleActions = -1;
-            if( menuAction == null )
-            	setVisibleActions( actions.size() );
+            visibleActions = actions.size();
+            resetVisibleActions();
             revalidate();
         }
 	}
