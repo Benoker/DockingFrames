@@ -311,6 +311,32 @@ There is method called \src{install}. This method can be overriden (don't forget
 
 Don't forget to undo the changes in the method \src{uninstall}.
 
+\subsection{Colors}
+Since DF is a graphical user interface, colors are used often and by a all sorts of components. The most important colors are collected in a map, and components get their colors from that color-map.
+
+There is no repository for the keys of the color-map, nor any rule how to choose them. But each class that uses the color-map, should have the annotation \src{ColorCodes}. All keys should be listed as arguments. The annotation is for documentation only.
+
+Components do not ask the color-map directly for a color, they register a \src{DockColor}-object at the map. \src{DockColor} is just an observer which gets informed whenever a color in the map changes. That allows to exchange colors while the components are visible, and the changes are immediately visible.
+
+There are different subclasses of \src{DockColor}. Each subclass tells by whom the color is used, for example a \src{TitleColor} would be used by a specific \src{DockTitle}.
+
+Clients can exchange and influence the colors on different levels.
+
+\subsubsection{ColorScheme}
+The \src{BasicTheme} uses a \src{ColorScheme} to put up its set of colors. \src{ColorScheme} has one important method: \src{getColor}. That method gets a key for a color, and has to return the color that matches. The \src{ColorScheme} of \src{BasicTheme} can be replaced at any time calling the method \src{setColorScheme}. Since all \src{DockTheme}s of the core library inherit \src{BasicTheme}, the possibility to use a \src{ColorScheme} is available for all themes.
+
+\subsubsection{ColorManager}
+Instead of putting all colors at once, using a \src{ColorScheme}, a single color can be set with the \src{ColorManager}. The \src{ColorManager} is accessible through the method \src{DockController.getColors}. Clients can just call the method \src{put} to put a new color into the color-map.
+
+\subsubsection{ColorProvider}
+Normally everyone that wants a color gets the same color. Put the color-map forces everyone to use a \src{DockColor}-object to get to its color. That object contains a lot of information, and a \src{ColorProvider} can use that information to return different colors for the same key.
+
+Each subclass of \src{DockColor} can have its own \src{ColorProvider}, but only one \src{ColorProvider} per subclass is allowed. \src{ColorProvider}s are added to the \src{ColorManager} through the \src{publish}-method.
+
+A \src{ColorProvider} has two methods to add and remove observers. The observers need to be stored only if the provider wants to change the colors actively. If the provider only reacts to its \src{set}-method, then no observers need to be stored.
+
+The \src{set}-method is invoked by the \src{ColorManager} whenever either \src{Color} or \src{DockColor} changes. The \src{set}-method then decides which color the \src{DockColor} should get. When the decision is made, it calls \src{setColor} on the \src{DockColor}.
+
 \section{Actions}
 A \src{DockAction} is an object which is related to one or many \src{Dockable}s, they describe some action like "close a \src{Dockable}". Every \src{DockAction} has the ability to create one or many views of itself. A view might be a \src{JButton}, a \src{JCheckBox}, a \src{JMenuItem} or other objects.
 

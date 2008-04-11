@@ -19,7 +19,7 @@
 
 \newcommand{\src}[1]{\lstinline[basicstyle=\normalsize\ttfamily,keywordstyle=\normalsize\ttfamily,identifierstyle=\normalsize\ttfamily]|#1|}
 
-\title{DockingFrames 1.0.2 - Core}
+\title{DockingFrames 1.0.4 - Core}
 \author{Benjamin Sigg}
 
 \begin{document}
@@ -311,6 +311,25 @@ There is method called \src{install}. This method can be overriden (don't forget
 
 Don't forget to undo the changes in the method \src{uninstall}.
 
+\subsection{Colors}
+Since DF is a graphical user interface, colors are used often and by a all sorts of components. The most important colors are collected in a map, and components get their colors from that color-map.
+
+There is no repository for the keys of the color-map, nor any rule how to choose them. But each class that uses the color-map, should have the annotation \src{ColorCodes}. All keys should be listed as arguments. The annotation is for documentation only.
+
+Components do not ask the color-map directly for a color, they register a \src{DockColor}-object at the map. \src{DockColor} is just an observer which gets informed whenever a color in the map changes. That allows to exchange colors while the components are visible, and the changes are immediately visible.
+
+There are different subclasses of \src{DockColor}. Each subclass tells by whom the color is used, for example a \src{TitleColor} would be used by a specific \src{DockTitle}.
+
+Clients can exchange and influence the colors in different grades.
+\subsubsection{ColorScheme}
+The \src{BasicTheme} uses a \src{ColorScheme} to put up its set of colors. \src{ColorScheme} has one important method: \src{getColor}. That method gets a key for a color, and has to return the color that matches. The \src{ColorScheme} of \src{BasicTheme} can be replaced at any time calling through the method \src{setColorScheme}. Since all \src{DockTheme}s of the core library inherit \src{BasicTheme}, the possibility to use a \src{ColorScheme} is available for all themes.
+
+\subsubsection{ColorManager}
+Instead of putting all colors at once, using a \src{ColorScheme}, a single color can be set with the \src{ColorManager}. The \src{ColorManager} is accessible through the method \src{DockController.getColors}. Clients can just call the method \src{put} to put a new color into the color-map.
+
+\subsubsection{ColorProvider}
+
+
 \section{Actions}
 A \src{DockAction} is an object which is related to one or many \src{Dockable}s, they describe some action like "close a \src{Dockable}". Every \src{DockAction} has the ability to create one or many views of itself. A view might be a \src{JButton}, a \src{JCheckBox}, a \src{JMenuItem} or other objects.
 
@@ -360,7 +379,7 @@ In line \src{4} a new \src{DockActionSource} is created. The \src{LocationHint} 
 So how exactly does a module find out, which \src{DockAction}s to show for a \src{Dockable}? The module uses the method \src{Dockable.getGlobalActionOffers} to optain a \src{DockActionSource}. The result of \src{getGlobalActionOffers} is a composite of \src{DockActionSource}s. The children of the result come from different sources:
 \begin{description}
  \item[Local DockActionSource] Every \src{Dockable} should have a local list of actions, this list can be accessed through \src{getLocalActionOffers}. Some implementations of \src{Dockable} have a method that allows clients to exchange that local list. For example \src{setActionOffers} in \src{DefaultDockable}.
- \item[Through the parents] Most \src{Dockable}s have one or more \src{DockStation}s as parents. Each \src{DockStation} can offer \src{direct} (if direct parent) or \src{indirect} (if grandparent) \src{DockActionSource}s for each child. Clients rarely interfere in that mechanism.
+ \item[Through the parents] Most \src{Dockable}s have one or more \src{DockStation}s as parents. Each \src{DockStation} can offer \src{direct} (if direct parent) or \\\src{indirect} (if grandparent) \src{DockActionSource}s for each child. Clients rarely interfere in that mechanism.
  \item[Guards] \src{ActionGuard}s observe all \src{Dockable}s of a \src{DockController}. They can react to a \src{Dockable} and add additional \src{DockActionSource}s. An \src{ActionGuard} has to be made registered by calling \src{addActionGuard} of \\\src{DockController}.
  \item[Alternative sources] The \src{ActionOffer} normally is the authority that creates the content of the global \src{DockActionSource}. A \src{Dockable} will get one \src{ActionOffer} and give that offer all \src{DockActionSource}s that were gathered. Then the \src{ActionOffer} will determine in which order the \\\src{DockActionSource}s appear and create a new composite of the sources. Clients can add new \src{ActionOffer}s by calling \src{addActionOffer} of \\\src{DockController}.
  \end{description}
@@ -448,7 +467,7 @@ Eventually each \src{DockAction} is instantiated and stored at a place where it 
 Clients might be interested to introduce new kinds of views or new types of actions.
 \begin{itemize}
  \item When a client adds a new kind of view, it has to define a new \\\src{ViewTarget}. The client then has to register a new \src{ViewGenerator} for each type of action at the \src{ActionViewConverter}.
- \item When a client adds a new type of action, it has to define a new \src{ActionType}. The client then has to register a new \src{ViewGenerator} for each kind of view at the \src{ActionViewConverter}.
+ \item When a client adds a new type of action, it has to define a new \\\src{ActionType}. The client then has to register a new \src{ViewGenerator} for each kind of view at the \src{ActionViewConverter}.
 \end{itemize}
 
 Let's have a look at an example. In the example a new kind of view and a new kind of action will be introduced.
