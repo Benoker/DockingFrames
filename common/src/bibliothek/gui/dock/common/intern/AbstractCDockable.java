@@ -26,15 +26,15 @@
 package bibliothek.gui.dock.common.intern;
 
 import java.awt.Dimension;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import bibliothek.gui.dock.common.*;
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.CLocation;
+import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.ColorMap;
 import bibliothek.gui.dock.common.action.CAction;
-import bibliothek.gui.dock.common.event.CDockablePropertyListener;
-import bibliothek.gui.dock.common.event.CDockableStateListener;
+import bibliothek.gui.dock.common.event.*;
 import bibliothek.gui.dock.common.intern.action.CloseActionSource;
 import bibliothek.gui.dock.title.DockTitle;
 
@@ -45,15 +45,8 @@ import bibliothek.gui.dock.title.DockTitle;
  * @author Benjamin Sigg
  */
 public abstract class AbstractCDockable implements CDockable {
-    
     /** the location of this dockable */
     private CLocation location = null;
-    
-    /** a list of state listeners that were added to this dockable */
-    private List<CDockableStateListener> stateListeners = new ArrayList<CDockableStateListener>();
-    
-    /** a list of property listeners that were added to this dockable */
-    private List<CDockablePropertyListener> propertyListeners = new ArrayList<CDockablePropertyListener>();
     
     /** the graphical representation of this dockable */
     private CommonDockable dockable;
@@ -87,6 +80,9 @@ public abstract class AbstractCDockable implements CDockable {
     
     /** whether the {@link DockTitle} should not be created */
     private boolean titleShown = true;
+    
+    /** the listeners that were added to this dockable */
+    protected CListenerCollection listenerCollection = new CListenerCollection();
     
     /** Source that contains the action that closes this dockable */
     private CloseActionSource close = new CloseActionSource( this );
@@ -132,35 +128,65 @@ public abstract class AbstractCDockable implements CDockable {
     }
     
     public void addCDockableStateListener( CDockableStateListener listener ){
-        stateListeners.add( listener );
+        listenerCollection.addCDockableStateListener( listener );
     }
     
     public void addCDockablePropertyListener( CDockablePropertyListener listener ) {
-        propertyListeners.add( listener );
+        listenerCollection.addCDockablePropertyListener( listener );
     }
     
     public void removeCDockableStateListener( CDockableStateListener listener ){
-        stateListeners.remove( listener );
+        listenerCollection.removeCDockableStateListener( listener );
     }
     
     public void removeCDockablePropertyListener( CDockablePropertyListener listener ) {
-        propertyListeners.remove( listener );
+        listenerCollection.removeCDockablePropertyListener( listener );
+    }
+    
+    public void addFocusListener( CFocusListener listener ){
+        listenerCollection.addFocusListener( listener );
+    }
+    
+    public void removeFocusListener( CFocusListener listener ){
+        listenerCollection.removeFocusListener( listener );
+    }
+    
+    public void addKeyboardListener( CKeyboardListener listener ){
+        listenerCollection.addKeyboardListener( listener );
+    }
+    
+    public void removeKeyboardListener( CKeyboardListener listener ){
+        listenerCollection.removeKeyboardListener( listener );
+    }
+    
+    public void addDoubleClickListener( CDoubleClickListener listener ){
+        listenerCollection.addDoubleClickListener( listener );
+    }
+    
+    public void removeDoubleClickListener( CDoubleClickListener listener ){
+        listenerCollection.removeDoubleClickListener( listener );
     }
     
     /**
      * Gets the list of state listeners.
      * @return the stateListeners
+     * @deprecated subclasses should use {@link CListenerCollection#getCDockableStateListener()}
+     * of {@link #listenerCollection} if they want to fire an event
      */
+    @Deprecated
     protected CDockableStateListener[] stateListeners(){
-        return stateListeners.toArray( new CDockableStateListener[ stateListeners.size() ] );
+        return listenerCollection.getCDockableStateListeners();
     }
     
     /**
      * Gets the list of property listeners.
      * @return the stateListeners
+     * @deprecated subclasses should use {@link CListenerCollection#getCDockablePropertyListener()}
+     * of {@link #listenerCollection} if they want to fire an event
      */
+    @Deprecated
     protected CDockablePropertyListener[] propertyListeners(){
-        return propertyListeners.toArray( new CDockablePropertyListener[ propertyListeners.size() ] );
+        return listenerCollection.getCDockablePropertyListeners();
     }
     
     public void setVisible( boolean visible ){
@@ -293,17 +319,14 @@ public abstract class AbstractCDockable implements CDockable {
     public void setResizeLocked( boolean resizeLocked ) {
         if( this.resizeLocked != resizeLocked ){
             this.resizeLocked = resizeLocked;
-            
-            for( CDockablePropertyListener listener : propertyListeners() )
-                listener.resizeLockedChanged( this );
+            listenerCollection.getCDockablePropertyListener().resizeLockedChanged( this );
         }
     }
     
     public void setMinimizedHold( boolean hold ) {
         if( this.minimizeHold != hold ){
             this.minimizeHold = hold;
-            for( CDockablePropertyListener listener : propertyListeners() )
-                listener.minimizedHoldChanged( this );
+            listenerCollection.getCDockablePropertyListener().minimizedHoldChanged( this );
         }
     }
     
@@ -313,8 +336,7 @@ public abstract class AbstractCDockable implements CDockable {
     
     public void setMinimizedSize( Dimension size ) {
         minimizeSize = new Dimension( size.width, size.height );
-        for( CDockablePropertyListener listener : propertyListeners() )
-            listener.minimizeSizeChanged( this );
+        listenerCollection.getCDockablePropertyListener().minimizeSizeChanged( this );
     }
     
     public Dimension getMinimizedSize() {
@@ -329,9 +351,7 @@ public abstract class AbstractCDockable implements CDockable {
     public void setTitleShown( boolean shown ){
         if( this.titleShown != shown ){
             this.titleShown = shown;
-            
-            for( CDockablePropertyListener listener : propertyListeners() )
-                listener.titleShownChanged( this );
+            listenerCollection.getCDockablePropertyListener().titleShownChanged( this );
         }
     }
     
@@ -363,28 +383,33 @@ public abstract class AbstractCDockable implements CDockable {
         if( control != null ){
             control.link( this, new CDockableAccess(){
                 public void informVisibility( boolean visible ) {
-                    for( CDockableStateListener listener : stateListeners() )
-                        listener.visibilityChanged( AbstractCDockable.this );
+                    listenerCollection.getCDockableStateListener().visibilityChanged( AbstractCDockable.this );
                 }
                 public void informMode( ExtendedMode mode ) {
+                    CDockableStateListener forward = listenerCollection.getCDockableStateListener();
                     switch( mode ){
                         case EXTERNALIZED:
-                            for( CDockableStateListener listener : stateListeners() )
-                                listener.externalized( AbstractCDockable.this );
+                            forward.externalized( AbstractCDockable.this );
                             break;
                         case MINIMIZED:
-                            for( CDockableStateListener listener : stateListeners() )
-                                listener.minimized( AbstractCDockable.this );
+                            forward.minimized( AbstractCDockable.this );
                             break;
                         case MAXIMIZED:
-                            for( CDockableStateListener listener : stateListeners() )
-                                listener.maximized( AbstractCDockable.this );
+                            forward.maximized( AbstractCDockable.this );
                             break;
                         case NORMALIZED:
-                            for( CDockableStateListener listener : stateListeners() )
-                                listener.normalized( AbstractCDockable.this );
+                            forward.normalized( AbstractCDockable.this );
                             break;
                     }
+                }
+                public CFocusListener getFocusListener() {
+                    return listenerCollection.getFocusListener();
+                }
+                public CKeyboardListener getKeyboardListener() {
+                    return listenerCollection.getKeyboardListener();
+                }
+                public CDoubleClickListener getDoubleClickListener() {
+                    return listenerCollection.getDoubleClickListener();
                 }
                 public void setUniqueId( String id ) {
                     uniqueId = id;
@@ -421,8 +446,7 @@ public abstract class AbstractCDockable implements CDockable {
     public void putAction( String key, CAction action ){
         CAction old = actions.put( key, action );
         if( old != action ){
-            for( CDockablePropertyListener listener : propertyListeners())
-                listener.actionChanged( this, key, old, action );
+            listenerCollection.getCDockablePropertyListener().actionChanged( this, key, old, action );
         }
     }
     

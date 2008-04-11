@@ -30,8 +30,7 @@ import java.awt.Dimension;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.common.*;
 import bibliothek.gui.dock.common.action.CAction;
-import bibliothek.gui.dock.common.event.CDockablePropertyListener;
-import bibliothek.gui.dock.common.event.CDockableStateListener;
+import bibliothek.gui.dock.common.event.*;
 
 /**
  * A basic element representing some {@link java.awt.Component}.
@@ -113,6 +112,45 @@ public interface CDockable {
      * @param listener the listener to remove
      */
 	public void removeCDockablePropertyListener( CDockablePropertyListener listener );
+	
+	/**
+	 * Adds a focus listener to this dockable. The focus listener gets informed
+	 * when this dockable gains or loses the focus.
+	 * @param listener the new listener
+	 */
+	public void addFocusListener( CFocusListener listener );
+	
+	/**
+	 * Removes a focus listener from this dockable.
+	 * @param listener the listener to remove
+	 */
+	public void removeFocusListener( CFocusListener listener );
+	
+	/**
+	 * Adds a keyboard listener to this dockable. The listener gets informed
+	 * when a key is pressed or released on this dockable.
+	 * @param listener the new listener
+	 */
+	public void addKeyboardListener( CKeyboardListener listener );
+	
+    /**
+     * Removes a listener from this dockable.
+     * @param listener the listener to remove
+     */
+	public void removeKeyboardListener( CKeyboardListener listener );
+	
+	/**
+	 * Adds a new listener to this dockable. The listener gets informed
+	 * when the mouse is clicked twice on this dockable.
+	 * @param listener the new listener
+	 */
+	public void addDoubleClickListener( CDoubleClickListener listener );
+	
+	/**
+	 * Removes a listener from this dockable.
+	 * @param listener the listener to remove
+	 */
+	public void removeDoubleClickListener( CDoubleClickListener listener );
 	
 	/**
 	 * Tells whether this dockable can be minimized by the user.

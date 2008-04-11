@@ -608,6 +608,7 @@ public class DockController {
 	        onFocusing = true;
 	        
 	        if( force || this.focusedDockable != focusedDockable ){
+	            Dockable oldFocused = this.focusedDockable;
 	            this.focusedDockable = focusedDockable;
 	            
 	            for( Map.Entry<DockTitle, Dockable> title : activeTitles.entrySet() ){
@@ -652,7 +653,8 @@ public class DockController {
 	                }
 	            }
 	            
-	            fireDockableFocused( focusedDockable );
+	            if( oldFocused != focusedDockable )
+	                fireDockableFocused( oldFocused, focusedDockable );
 	        }
     	}
     	finally{
@@ -925,22 +927,24 @@ public class DockController {
     /**
      * Informs all listeners that <code>dockable</code> has gained
      * the focus.
-     * @param dockable the owner of the focus, may be <code>null</code>
+     * @param oldFocused the old owner of the focus, may be <code>null</code>
+     * @param newFocused the owner of the focus, may be <code>null</code>
      */
-    protected void fireDockableFocused( Dockable dockable ){
+    protected void fireDockableFocused( Dockable oldFocused, Dockable newFocused ){
         for( DockableFocusListener listener : dockableFocusListeners() )
-            listener.dockableFocused( this, dockable );
+            listener.dockableFocused( this, oldFocused, newFocused );
     }
     
     /**
      * Informs all listeners that <code>dockable</code> has been selected
      * by <code>station</code>.
      * @param station some {@link DockStation}
-     * @param dockable the selected element of <code>station</code>
+     * @param oldSelected the element which was selected earlier
+     * @param newSelected the selected element of <code>station</code>
      */
-    protected void fireDockableSelected( DockStation station, Dockable dockable ){
+    protected void fireDockableSelected( DockStation station, Dockable newSelected, Dockable oldSelected ){
         for( DockableFocusListener listener : dockableFocusListeners() )
-            listener.dockableSelected( this, station, dockable );
+            listener.dockableSelected( this, station, newSelected, oldSelected );
     }
 
     /**
@@ -981,8 +985,8 @@ public class DockController {
         /** listener added to all {@link DockStation}s */
         private DockStationListener listener = new DockStationAdapter(){
             @Override
-            public void dockableSelected( DockStation station, Dockable dockable ) {
-                fireDockableSelected( station, dockable );
+            public void dockableSelected( DockStation station, Dockable oldSelected, Dockable newSelected ) {
+                fireDockableSelected( station, oldSelected, newSelected );
             }
         };
         

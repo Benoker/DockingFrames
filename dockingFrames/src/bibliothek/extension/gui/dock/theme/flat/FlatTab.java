@@ -356,11 +356,12 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
             foreground.connect( controller );
         }
         
-        public void dockableFocused( DockController controller, Dockable dockable ) {
+        public void dockableFocused( DockController controller, Dockable oldFocused, Dockable newFocused ) {
             focused = this.dockable == dockable;
             repaint();
         }
-        public void dockableSelected( DockController controller, DockStation station, Dockable dockable ) {
+        
+        public void dockableSelected( DockController controller, DockStation station, Dockable oldSelected, Dockable newSelected ) {
             // ignore
         }
         

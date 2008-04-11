@@ -25,10 +25,8 @@
  */
 package bibliothek.gui.dock.common;
 
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
+import java.awt.Component;
+import java.awt.event.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -48,8 +46,7 @@ import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.common.event.CControlListener;
-import bibliothek.gui.dock.common.event.ResizeRequestListener;
+import bibliothek.gui.dock.common.event.*;
 import bibliothek.gui.dock.common.intern.*;
 import bibliothek.gui.dock.common.intern.station.CFlapLayoutManager;
 import bibliothek.gui.dock.common.intern.station.CLockedResizeLayoutManager;
@@ -57,6 +54,9 @@ import bibliothek.gui.dock.common.intern.station.ScreenResizeRequestHandler;
 import bibliothek.gui.dock.common.intern.theme.CSmoothTheme;
 import bibliothek.gui.dock.common.location.CExternalizedLocation;
 import bibliothek.gui.dock.event.DockAdapter;
+import bibliothek.gui.dock.event.DockableFocusListener;
+import bibliothek.gui.dock.event.DoubleClickListener;
+import bibliothek.gui.dock.event.KeyboardListener;
 import bibliothek.gui.dock.facile.action.CloseAction;
 import bibliothek.gui.dock.facile.action.StateManager;
 import bibliothek.gui.dock.frontend.Setting;
@@ -185,6 +185,9 @@ public class CControl {
 	
 	/** the list of resize-listeners */
 	private List<ResizeRequestListener> resizeListeners = new ArrayList<ResizeRequestListener>();
+	
+	/** the collection of global listeners */
+	private CListenerCollection listenerCollection = new CListenerCollection();
 
     /**
      * Creates a new control
@@ -218,7 +221,10 @@ public class CControl {
 	    
 	    DockController controller = factory.createController();
 	    controller.setSingleParentRemover( new CSingleParentRemover( this ) );
-
+	    
+	    initFocusListeners( controller );
+	    initInputListener( controller );
+	    
 		frontend = new DockFrontend( controller, frame ){
 		    @Override
 		    protected Setting createSetting() {
@@ -264,6 +270,7 @@ public class CControl {
 		    }
 		});
 		frontend.setShowHideAction( false );
+		
 		frontend.getController().setTheme( new NoStackTheme( new CSmoothTheme( this, new SmoothTheme())));
 		frontend.getController().addActionGuard( new ActionGuard(){
 		    public boolean react( Dockable dockable ) {
@@ -346,51 +353,166 @@ public class CControl {
 		    ex.printStackTrace();
 		}
 		
-		stateManager = new CStateManager( access );
-		
-		final ScreenDockStation screen = factory.createScreenDockStation( frame );
-		
-		// frontend.addRoot( screen, EXTERNALIZED_STATION_ID );
-		CStation screenStation = new AbstractCStation( screen, EXTERNALIZED_STATION_ID, CExternalizedLocation.STATION ){
-		    private ScreenResizeRequestHandler handler = new ScreenResizeRequestHandler( screen );
-		    
-		    @Override
-		    protected void install( CControlAccess access ) {
-		        access.getOwner().addResizeRequestListener( handler );
-		        access.getStateManager().add( EXTERNALIZED_STATION_ID, screen );
-		    }
-		    @Override
-		    protected void uninstall( CControlAccess access ) {
-		        access.getOwner().removeResizeRequestListener( handler );
-		        access.getStateManager().remove( EXTERNALIZED_STATION_ID );
-		    }
-		};
-		
-		add( screenStation, true );
-		
-		screen.setShowing( frame.isVisible() );
-		frame.addComponentListener( new ComponentListener(){
-		    public void componentShown( ComponentEvent e ) {
-		        screen.setShowing( true );
-		    }
-		    public void componentHidden( ComponentEvent e ) {
-		        screen.setShowing( false );
-		    }
-		    public void componentMoved( ComponentEvent e ) {
-		        // ignore
-		    }
-		    public void componentResized( ComponentEvent e ) {
-		        // ignore
-		    }
-		});
-		
-		// set some default values
-		putProperty( KEY_MAXIMIZE_CHANGE, KeyStroke.getKeyStroke( KeyEvent.VK_M, InputEvent.CTRL_MASK ) );
-		putProperty( KEY_GOTO_EXTERNALIZED, KeyStroke.getKeyStroke( KeyEvent.VK_E, InputEvent.CTRL_MASK ) );
-		putProperty( KEY_GOTO_NORMALIZED, KeyStroke.getKeyStroke( KeyEvent.VK_N, InputEvent.CTRL_MASK ) );
-		putProperty( KEY_CLOSE, KeyStroke.getKeyStroke( KeyEvent.VK_F4, InputEvent.CTRL_MASK ) );
-		putProperty( SplitDockStation.LAYOUT_MANAGER, new CLockedResizeLayoutManager() );
-		putProperty( FlapDockStation.LAYOUT_MANAGER, new CFlapLayoutManager() );
+		initExtendedModes( frame );
+		initProperties();
+	}
+	
+	/**
+	 * Creates and adds the listeners needed to track the focus.
+	 * @param controller the controller which will be observed
+	 */
+	private void initFocusListeners( DockController controller ){
+	    controller.addDockableFocusListener( new DockableFocusListener(){
+	        public void dockableFocused( DockController controller,
+	                Dockable oldFocused, Dockable newFocused ) {
+
+	            if( oldFocused != null && oldFocused instanceof CommonDockable ){
+	                CDockable oldC = ((CommonDockable)oldFocused).getDockable();
+	                CDockableAccess access = accesses.get( oldC );
+	                if( access != null ){
+	                    access.getFocusListener().focusLost( oldC );
+	                }
+	                
+	                listenerCollection.getFocusListener().focusLost( oldC );
+	            }
+	            if( newFocused != null && newFocused instanceof CommonDockable ){
+	                CDockable newC = ((CommonDockable)newFocused).getDockable();
+	                CDockableAccess access = accesses.get( newC );
+                    if( access != null ){
+                        access.getFocusListener().focusGained( newC );
+                    }
+                    
+	                listenerCollection.getFocusListener().focusGained( newC );
+	            }
+	        }
+	        public void dockableSelected( DockController controller,
+	                DockStation station, Dockable oldSelected,
+	                Dockable newSelected ) {
+	            // ignore
+	        }
+	    });
+	}
+	
+	private void initInputListener( DockController controller ){
+	    controller.getKeyboardController().addListener( new KeyboardListener(){
+            public boolean keyPressed( DockElement element, KeyEvent event ) {
+                if( element instanceof CommonDockable ){
+                    CDockable source = ((CommonDockable)element).getDockable();
+                    CDockableAccess access = accesses.get( source );
+                    if( access != null ){
+                        if( access.getKeyboardListener().keyPressed( source, event ))
+                            return true;
+                    }
+                    return listenerCollection.getKeyboardListener().keyPressed( source, event );
+                }
+                return false;
+            }
+
+            public boolean keyReleased( DockElement element, KeyEvent event ) {
+                if( element instanceof CommonDockable ){
+                    CDockable source = ((CommonDockable)element).getDockable();
+                    CDockableAccess access = accesses.get( source );
+                    if( access != null ){
+                        if( access.getKeyboardListener().keyReleased( source, event ))
+                            return true;
+                    }
+                    return listenerCollection.getKeyboardListener().keyReleased( source, event );
+                }
+                return false;
+            }
+
+            public boolean keyTyped( DockElement element, KeyEvent event ) {
+                if( element instanceof CommonDockable ){
+                    CDockable source = ((CommonDockable)element).getDockable();
+                    CDockableAccess access = accesses.get( source );
+                    if( access != null ){
+                        if( access.getKeyboardListener().keyTyped( source, event ))
+                            return true;
+                    }
+                    return listenerCollection.getKeyboardListener().keyTyped( source, event );
+                }
+                return false;
+            }
+
+            public DockElement getTreeLocation() {
+                return null;
+            }	        
+	    });
+	    
+	    controller.getDoubleClickController().addListener( new DoubleClickListener(){
+            public boolean process( Dockable dockable, MouseEvent event ) {
+                if( dockable instanceof CommonDockable ){
+                    CDockable source = ((CommonDockable)dockable).getDockable();
+                    CDockableAccess access = accesses.get( source );
+                    if( access != null ){
+                        if( access.getDoubleClickListener().clicked( source, event ))
+                            return true;
+                    }
+                    return listenerCollection.getDoubleClickListener().clicked( source, event );
+                }
+                return false;                
+            }
+
+            public DockElement getTreeLocation() {
+                return null;
+            }
+	    });
+	}
+	
+	/**
+	 * Sets up the {@link #stateManager}.
+	 * @param frame base for the {@link ScreenDockStation}
+	 */
+	private void initExtendedModes( JFrame frame ){
+        stateManager = new CStateManager( access );
+        
+        final ScreenDockStation screen = factory.createScreenDockStation( frame );
+        
+        // frontend.addRoot( screen, EXTERNALIZED_STATION_ID );
+        CStation screenStation = new AbstractCStation( screen, EXTERNALIZED_STATION_ID, CExternalizedLocation.STATION ){
+            private ScreenResizeRequestHandler handler = new ScreenResizeRequestHandler( screen );
+            
+            @Override
+            protected void install( CControlAccess access ) {
+                access.getOwner().addResizeRequestListener( handler );
+                access.getStateManager().add( EXTERNALIZED_STATION_ID, screen );
+            }
+            @Override
+            protected void uninstall( CControlAccess access ) {
+                access.getOwner().removeResizeRequestListener( handler );
+                access.getStateManager().remove( EXTERNALIZED_STATION_ID );
+            }
+        };
+        
+        add( screenStation, true );
+        
+        screen.setShowing( frame.isVisible() );
+        frame.addComponentListener( new ComponentListener(){
+            public void componentShown( ComponentEvent e ) {
+                screen.setShowing( true );
+            }
+            public void componentHidden( ComponentEvent e ) {
+                screen.setShowing( false );
+            }
+            public void componentMoved( ComponentEvent e ) {
+                // ignore
+            }
+            public void componentResized( ComponentEvent e ) {
+                // ignore
+            }
+        });
+	}
+	
+	/**
+	 * Sets up the default properties.
+	 */
+	private void initProperties(){
+        putProperty( KEY_MAXIMIZE_CHANGE, KeyStroke.getKeyStroke( KeyEvent.VK_M, InputEvent.CTRL_MASK ) );
+        putProperty( KEY_GOTO_EXTERNALIZED, KeyStroke.getKeyStroke( KeyEvent.VK_E, InputEvent.CTRL_MASK ) );
+        putProperty( KEY_GOTO_NORMALIZED, KeyStroke.getKeyStroke( KeyEvent.VK_N, InputEvent.CTRL_MASK ) );
+        putProperty( KEY_CLOSE, KeyStroke.getKeyStroke( KeyEvent.VK_F4, InputEvent.CTRL_MASK ) );
+        putProperty( SplitDockStation.LAYOUT_MANAGER, new CLockedResizeLayoutManager() );
+        putProperty( FlapDockStation.LAYOUT_MANAGER, new CFlapLayoutManager() );	    
 	}
 	
 	/**
@@ -409,6 +531,103 @@ public class CControl {
 	 */
 	public void removeControlListener( CControlListener listener ){
 	    listeners.remove( listener );
+	}
+	
+	/**
+	 * Adds a new focus listener to this control. The listener gets informed
+	 * about changes in the focus.
+	 * @param listener the new listener
+	 */
+	public void addFocusListener( CFocusListener listener ){
+	    listenerCollection.addFocusListener( listener );
+	}
+	
+	/**
+	 * Removes a listener from this control.
+	 * @param listener the listener to remove
+	 */
+	public void removeFocusListener( CFocusListener listener ){
+	    listenerCollection.removeFocusListener( listener );
+	}
+	
+	/**
+	 * Adds a global state listener. This has the same effect as adding
+	 * a state listener to each {@link CDockable} that is known to this 
+	 * control.
+	 * @param listener the new listener
+	 */
+	public void addStateListener( CDockableStateListener listener ){
+	    listenerCollection.addCDockableStateListener( listener );
+	}
+	
+	/**
+	 * Removes a global state listener.
+	 * @param listener the listener to remove
+	 */
+	public void removeStateListener( CDockableStateListener listener ){
+	    listenerCollection.removeCDockableStateListener( listener );
+	}
+	
+	/**
+	 * Adds a global property listener. This has the same effect as adding
+	 * a property listener to each {@link CDockable} that is known to this
+	 * control.
+	 * @param listener the new listener
+	 */
+	public void addPropertyListener( CDockablePropertyListener listener ){
+	    listenerCollection.addCDockablePropertyListener( listener );
+	}
+	
+	/**
+	 * Removes a global listener from this control.
+	 * @param listener the listener to remove
+	 */
+	public void removePropertyListener( CDockablePropertyListener listener ){
+	    listenerCollection.removeCDockablePropertyListener( listener );
+	}
+	
+	/**
+	 * Adds a global keyboard listener to this control. The listener gets 
+	 * informed whenever a key is touched on a {@link Component} which is a child
+	 * of a {@link CDockable}.<br>
+	 * Note: listeners directly added to a {@link CDockable} will always
+	 * be informed first.<br>
+	 * Note: if a listener processes the event, then the other listeners will
+	 * not be informed.
+	 * @param listener the new listener
+	 */
+	public void addKeyboardListener( CKeyboardListener listener ){
+	    listenerCollection.addKeyboardListener( listener );
+	}
+	
+	/**
+	 * Removes a listener from this control.
+	 * @param listener the listener to remove
+	 */
+	public void removeKeybaordListener( CKeyboardListener listener ){
+	    listenerCollection.removeKeyboardListener( listener );
+	}
+	
+    /**
+     * Adds a global mouse double click listener to this control. The listener gets 
+     * informed whenever the mouse is clicked twice on a {@link Component} which
+     * is a child of a {@link CDockable}.<br>
+     * Note: listeners directly added to a {@link CDockable} will always
+     * be informed first.<br>
+     * Note: if a listener processes the event, then the other listeners will
+     * not be informed.
+     * @param listener the new listener
+     */
+	public void addDoubleClickListener( CDoubleClickListener listener ){
+	    listenerCollection.addDoubleClickListener( listener );
+	}
+	
+	/**
+	 * Removes a listener from this control.
+	 * @param listener the listener to remove
+	 */
+	public void removeDoubleClickListener( CDoubleClickListener listener ){
+	    listenerCollection.removeDoubleClickListener( listener );
 	}
 	
 	/**
@@ -1269,10 +1488,16 @@ public class CControl {
 	    }
 	    
 	    public void link( CDockable dockable, CDockableAccess access ) {
-	        if( access == null )
+	        if( access == null ){
 	            accesses.remove( dockable );
+	            dockable.removeCDockablePropertyListener( listenerCollection.getCDockablePropertyListener() );
+	            dockable.removeCDockableStateListener( listenerCollection.getCDockableStateListener() );
+	        }
 	        else{
-	            accesses.put( dockable, access );
+	            if( accesses.put( dockable, access ) == null ){
+	                dockable.addCDockablePropertyListener( listenerCollection.getCDockablePropertyListener() );
+                    dockable.addCDockableStateListener( listenerCollection.getCDockableStateListener() );
+	            }
 	        }
 	    }
 	    

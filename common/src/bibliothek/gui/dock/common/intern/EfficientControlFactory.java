@@ -73,7 +73,9 @@ public class EfficientControlFactory implements CControlFactory {
              }
              @Override
              public void setFrontDockable( Dockable dockable ) {
-                 // ignore
+                 if( !isFullScreen() ){
+                     super.setFrontDockable( dockable );
+                 }
              }
          };
     }

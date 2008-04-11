@@ -251,12 +251,16 @@ public class ScreenDockStation extends AbstractDockStation {
     }
 
     public void setFrontDockable( Dockable dockable ) {
+        Dockable oldSelected = getFrontDockable();
         frontDialog = getDialog( dockable );
 
         if( frontDialog != null ){
             frontDialog.toFront();
-            listeners.fireDockableSelected( dockable );
         }
+        
+        Dockable newSelected = getFrontDockable();
+        if( oldSelected != newSelected )
+            listeners.fireDockableSelected( oldSelected, newSelected );
     }
 
     public boolean prepareDrop( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {

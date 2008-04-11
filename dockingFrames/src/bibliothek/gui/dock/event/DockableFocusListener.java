@@ -39,17 +39,19 @@ public interface DockableFocusListener {
     /**
      * Invoked when <code>dockable</code> has gained the focus. 
      * @param controller the origin of the event
-     * @param dockable the {@link Dockable} which is now focused, can be <code>null</code>
+     * @param oldFocused the element which was focused earlier
+     * @param newFocused the {@link Dockable} which is now focused, can be <code>null</code>
      */
-    public void dockableFocused( DockController controller, Dockable dockable );
+    public void dockableFocused( DockController controller, Dockable oldFocused, Dockable newFocused );
     
     /**
      * Called when <code>station</code> changes its selected <code>dockable</code>.
      * @param controller the controller in whose realm the event occurred
      * @param station some {@link DockStation}
-     * @param dockable the currently selected element on <code>station</code>,
+     * @param oldSelected the element which was selected earlier
+     * @param newSelected the currently selected element on <code>station</code>,
      * can be <code>null</code>
      * @see DockStation#getFrontDockable()
      */
-    public void dockableSelected( DockController controller, DockStation station, Dockable dockable );
+    public void dockableSelected( DockController controller, DockStation station, Dockable oldSelected, Dockable newSelected );
 }

@@ -210,16 +210,18 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable, 
     @Override
     public void setControl( CControlAccess control ) {
         CControlAccess old = control();
-        if( old != null ){
-            old.getStateManager().remove( uniqueId );
-            old.getOwner().removeResizeRequestListener( resizeRequestHandler );
-        }
-        
-        super.setControl( control );
-        
-        if( control != null ){
-            control.getStateManager().add( uniqueId, station );
-            control.getOwner().addResizeRequestListener( resizeRequestHandler );
+        if( old != control ){
+            if( old != null ){
+                old.getStateManager().remove( uniqueId );
+                old.getOwner().removeResizeRequestListener( resizeRequestHandler );
+            }
+            
+            super.setControl( control );
+            
+            if( control != null ){
+                control.getStateManager().add( uniqueId, station );
+                control.getOwner().addResizeRequestListener( resizeRequestHandler );
+            }
         }
     }
     
@@ -296,7 +298,9 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable, 
         
         @Override
         public void setFrontDockable( Dockable dockable ) {
-            // ignore
+            if( !isFullScreen() ){
+                super.setFrontDockable( dockable );
+            }
         }
         
         public DockActionSource getClose() {
@@ -341,7 +345,9 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable, 
         
         @Override
         public void setFrontDockable( Dockable dockable ) {
-            // ignore
+            if( !isFullScreen() ){
+                super.setFrontDockable( dockable );
+            }
         }
         
         @Override

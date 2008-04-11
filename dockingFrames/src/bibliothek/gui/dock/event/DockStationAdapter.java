@@ -58,7 +58,7 @@ public abstract class DockStationAdapter implements DockStationListener {
         // do nothing
     }
     
-    public void dockableSelected( DockStation station, Dockable dockable ) {
+    public void dockableSelected( DockStation station, Dockable oldSelection, Dockable newSelection ) {
         // do nothing
     }
 }

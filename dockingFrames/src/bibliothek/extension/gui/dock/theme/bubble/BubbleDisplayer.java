@@ -246,10 +246,10 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
      * @author Benjamin Sigg
      */
     private class Listener extends MouseInputAdapter implements DockableFocusListener{
-        public void dockableFocused( DockController controller, Dockable dockable ) {
+        public void dockableFocused( DockController controller, Dockable oldFocused, Dockable newFocused ) {
             updateAnimation();
         }
-        public void dockableSelected( DockController controller, DockStation station, Dockable dockable ) {
+        public void dockableSelected( DockController controller, DockStation station, Dockable oldSelected, Dockable newSelected ) {
             // ignore   
         }
         @Override

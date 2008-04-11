@@ -675,7 +675,7 @@ public class FlapDockStation extends AbstractDockableStation {
         }
         
         visibility.fire();
-        listeners.fireDockableSelected( dockable );
+        listeners.fireDockableSelected( oldFrontDockable, dockable );
     }
     
     /**
@@ -1450,7 +1450,7 @@ public class FlapDockStation extends AbstractDockableStation {
         }
         
         @Override
-        public void dockableFocused( DockController controller, Dockable dockable ) {
+        public void dockableFocused( DockController controller, Dockable old, Dockable dockable ) {
             Dockable front = getFrontDockable();
             
             if( isStationVisible() ){

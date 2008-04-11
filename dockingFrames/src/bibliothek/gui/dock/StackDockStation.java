@@ -416,10 +416,13 @@ public class StackDockStation extends AbstractDockableStation {
     }
     
     public void setFrontDockable( Dockable dockable ) {
+        Dockable old = getFrontDockable();
+        
         if( dockables.size() > 1 && dockable != null )
             stackComponent.setSelectedIndex( indexOf( dockable ));
         
-        listeners.fireDockableSelected( dockable );
+        if( old != dockable )
+            listeners.fireDockableSelected( old, dockable );
     }
     
     /**
@@ -774,6 +777,8 @@ public class StackDockStation extends AbstractDockableStation {
         if( index < 0 || index >= dockables.size() )
             throw new IllegalArgumentException( "Index out of bounds" );
         
+        Dockable oldSelected = getFrontDockable();
+        
         DockableDisplayer displayer = dockables.get( index );
         Dockable dockable = displayer.getDockable();
         DockTitle title = displayer.getTitle();
@@ -810,6 +815,10 @@ public class StackDockStation extends AbstractDockableStation {
         dockable.setDockParent( null );
         if( fire )
         	listeners.fireDockableRemoved( dockable );
+        
+        Dockable newSelected = getFrontDockable();
+        if( oldSelected != newSelected )
+            listeners.fireDockableSelected( oldSelected, newSelected );
     }
 
     public Component getComponent() {

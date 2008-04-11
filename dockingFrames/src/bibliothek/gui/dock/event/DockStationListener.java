@@ -86,7 +86,8 @@ public interface DockStationListener {
      * Called when <code>dockable</code> has been selected. The value of
      * <code>dockable</code> should be the same as {@link DockStation#getFrontDockable()}.
      * @param station the source of the event
-     * @param dockable the current value of {@link DockStation#getFrontDockable()}
+     * @param oldSelection the element which was selected before the change, can be <code>null</code>
+     * @param newSelection the current value of {@link DockStation#getFrontDockable()}, can be <code>null</code>
      */
-    public void dockableSelected( DockStation station, Dockable dockable );
+    public void dockableSelected( DockStation station, Dockable oldSelection, Dockable newSelection );
 }

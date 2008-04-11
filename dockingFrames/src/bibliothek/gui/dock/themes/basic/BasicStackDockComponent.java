@@ -139,11 +139,11 @@ public class BasicStackDockComponent extends DefaultStackDockComponent {
             }
         }
         
-        public void dockableFocused( DockController controller, Dockable dockable ) {
+        public void dockableFocused( DockController controller, Dockable oldFocused, Dockable newFocused ) {
             recolor();
         }
         
-        public void dockableSelected( DockController controller, DockStation station, Dockable dockable ) {
+        public void dockableSelected( DockController controller, DockStation station, Dockable oldSelected, Dockable newSelected ) {
             // do nothing
         }
         

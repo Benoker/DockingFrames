@@ -35,11 +35,11 @@ import bibliothek.gui.Dockable;
  * @author Benjamin Sigg
  */
 public class DockableFocusAdapter implements DockableFocusListener {
-    public void dockableFocused( DockController controller, Dockable dockable ) {
+    public void dockableFocused( DockController controller, Dockable oldFocused, Dockable newFocused ) {
         // do nothing
     }
-
-    public void dockableSelected( DockController controller, DockStation station, Dockable dockable ) {
+    
+    public void dockableSelected( DockController controller, DockStation station, Dockable oldSelected, Dockable newSelected ) {
         // do nothing
     }
 }

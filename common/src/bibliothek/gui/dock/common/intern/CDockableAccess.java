@@ -26,6 +26,9 @@
 package bibliothek.gui.dock.common.intern;
 
 import bibliothek.gui.dock.common.CLocation;
+import bibliothek.gui.dock.common.event.CDoubleClickListener;
+import bibliothek.gui.dock.common.event.CFocusListener;
+import bibliothek.gui.dock.common.event.CKeyboardListener;
 
 /**
  * An interface giving access to the internal methods of an {@link CDockable}. Only
@@ -64,4 +67,25 @@ public interface CDockableAccess {
      * @return the location
      */
     public CLocation internalLocation();
+    
+    /**
+     * A focus listener which will be informed whenever the owner of this
+     * {@link CDockableAccess} experiences a change in the focus. 
+     * @return the listener
+     */
+    public CFocusListener getFocusListener();
+    
+    /**
+     * A keyboard listener which will be informed about key events that happen
+     * on the owner of this access.
+     * @return the listener
+     */
+    public CKeyboardListener getKeyboardListener();
+    
+    /**
+     * A double click listener which will be informed about double click events
+     * that happen on the owner of this access.
+     * @return the listener
+     */
+    public CDoubleClickListener getDoubleClickListener();
 }

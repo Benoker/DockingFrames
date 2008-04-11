@@ -346,7 +346,7 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 	
 	private class FocusListener extends DockableFocusAdapter{
 		@Override
-		public void dockableFocused( DockController controller, Dockable dockable ){
+		public void dockableFocused( DockController controller, Dockable oldFocused, Dockable newFocused ){
 			updateFocus();
 		}
 	}

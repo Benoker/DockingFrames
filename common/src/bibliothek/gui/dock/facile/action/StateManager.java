@@ -852,6 +852,14 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      */
     private void checkedDrop( DockStation station, Dockable dockable, DockableProperty location ){
         if( station != null && station != dockable.getDockParent() ){
+            if( station == dockable ){
+                throw new IllegalStateException( "Trying to drop a DockStation on itself. " +
+                		"If you are using a CControl: make sure that the CControl has a root " +
+                		"station for all ExtendedModes. Do not use CDockables as " +
+                		"root station or do not call CDockable.setVisible if " +
+                		"you use them as root station.");
+            }
+            
             boolean done = false;
             
             if( location != null )

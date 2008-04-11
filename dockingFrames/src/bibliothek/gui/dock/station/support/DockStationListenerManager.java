@@ -130,12 +130,13 @@ public class DockStationListenerManager {
     }
     
     /**
-     * Invokes the method {@link DockStationListener#dockableSelected(DockStation, Dockable)}
+     * Invokes the method {@link DockStationListener#dockableSelected(DockStation, Dockable, Dockable)}
      * on all registered {@link DockStationListener}s.
-     * @param dockable the selected {@link Dockable}
+     * @param oldSelected the element which was selected earlier
+     * @param newSelected the selected {@link Dockable}
      */
-    public void fireDockableSelected( Dockable dockable ){
+    public void fireDockableSelected( Dockable oldSelected, Dockable newSelected ){
         for( DockStationListener listener : listeners.toArray( new DockStationListener[ listeners.size() ] ))
-            listener.dockableSelected( station, dockable );
+            listener.dockableSelected( station, oldSelected, newSelected );
     }
 }

@@ -374,7 +374,7 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 			animation.kick();
 		}
 		
-		public void dockableFocused( DockController controller, Dockable dockable ) {
+		public void dockableFocused( DockController controller, Dockable oldFocused, Dockable newFocused ) {
 		    boolean old = focused;
 		    focused = this.dockable == dockable;
 		    if( old != focused ){
@@ -382,7 +382,7 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 		    }
 		}
 		
-		public void dockableSelected( DockController controller, DockStation station, Dockable dockable ) {
+		public void dockableSelected( DockController controller, DockStation station, Dockable oldSelected, Dockable newSelected ) {
 		    // ignore
 		}
 		
