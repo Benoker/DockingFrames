@@ -26,6 +26,8 @@
 package bibliothek.extension.gui.dock.theme.bubble;
 
 import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.Icon;
@@ -48,7 +50,8 @@ import bibliothek.gui.dock.util.color.ColorCodes;
  * @author Benjamin Sigg
  */
 
-@ColorCodes({"action.dropdown",
+@ColorCodes({
+    "action.dropdown",
     "action.dropdown.enabled",
     "action.dropdown.selected",
     "action.dropdown.selected.enabled",
@@ -56,6 +59,15 @@ import bibliothek.gui.dock.util.color.ColorCodes;
     "action.dropdown.mouse.selected.enabled",
     "action.dropdown.pressed.enabled",
     "action.dropdown.pressed.selected.enabled",
+    
+    "action.dropdown.focus",
+    "action.dropdown.enabled.focus",
+    "action.dropdown.selected.focus",
+    "action.dropdown.selected.enabled.focus",
+    "action.dropdown.mouse.enabled.focus",
+    "action.dropdown.mouse.selected.enabled.focus",
+    "action.dropdown.pressed.enabled.focus",
+    "action.dropdown.pressed.selected.enabled.focus",
     
     "action.dropdown.line",
     "action.dropdown.line.enabled",
@@ -101,6 +113,15 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
                 new RoundActionColor( "action.dropdown.mouse.selected.enabled", dockable, action, new Color( 128, 0, 0 ) ),
                 new RoundActionColor( "action.dropdown.pressed.enabled", dockable, action, Color.BLUE ),
                 new RoundActionColor( "action.dropdown.pressed.selected.enabled", dockable, action, Color.MAGENTA ),
+
+                new RoundActionColor( "action.dropdown.focus", dockable, action, Color.DARK_GRAY ),
+                new RoundActionColor( "action.dropdown.enabled.focus", dockable, action, Color.DARK_GRAY ),
+                new RoundActionColor( "action.dropdown.selected.focus", dockable, action, Color.DARK_GRAY ),
+                new RoundActionColor( "action.dropdown.enabled.selected.focus", dockable, action, Color.DARK_GRAY ),
+                new RoundActionColor( "action.dropdown.mouse.enabled.focus", dockable, action, Color.DARK_GRAY ),
+                new RoundActionColor( "action.dropdown.mouse.selected.enabled.focus", dockable, action, Color.DARK_GRAY ),
+                new RoundActionColor( "action.dropdown.pressed.enabled.focus", dockable, action, Color.DARK_GRAY ),
+                new RoundActionColor( "action.dropdown.pressed.selected.enabled.focus", dockable, action, Color.DARK_GRAY ),
                 
                 new RoundActionColor( "action.dropdown.line", dockable, action, Color.DARK_GRAY ),
                 new RoundActionColor( "action.dropdown.line.enabled", dockable, action, Color.DARK_GRAY ),
@@ -134,6 +155,15 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
                 return overDropIcon( x, y );
             }
         };
+        
+        addFocusListener( new FocusListener(){
+            public void focusGained( FocusEvent e ) {
+                repaint();
+            }
+            public void focusLost( FocusEvent e ) {
+                repaint();
+            }
+        });
         
         updateColors();
     }
@@ -232,6 +262,14 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
             }
             if( drop != null )
             	drop.paintIcon( this, g, (int)(x + w - 1.25 * dropIconWidth), y+(h-dropIconHeight)/2 );
+            
+            if( hasFocus() && isFocusable() && isEnabled() ){
+                Stroke stroke = g2.getStroke();
+                g2.setStroke( new BasicStroke( 3f ) );
+                g2.setColor( animation.getColor( "focus" ) );
+                g2.drawRoundRect( x+1, y+1, w-3, h-3, h, h );
+                g2.setStroke( stroke );
+            }
         }
         else{
             g2.setColor( animation.getColor( "background" ) );
@@ -247,6 +285,14 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
             }
             if( drop != null )
             	drop.paintIcon( this, g, x + ( w - dropIconWidth ) / 2, (int)(y+h-1.25*dropIconHeight) );
+            
+            if( hasFocus() && isFocusable() && isEnabled() ){
+                Stroke stroke = g2.getStroke();
+                g2.setStroke( new BasicStroke( 3f ) );
+                g2.setColor( animation.getColor( "focus" ) );
+                g2.drawRoundRect( x+1, y+1, w-3, h-3, w, w );
+                g2.setStroke( stroke );
+            }
         }
         
         g2.dispose();
@@ -347,11 +393,15 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
             mouse = "action." + mouse + postfix;
         }
         
+        String focus = background + ".focus";
+        
         for( RoundActionColor color : colors ){
             if( background.equals( color.getId() ))
                 animation.putColor( "background", color.color() );
             if( mouse.equals( color.getId() ))
                 animation.putColor( "mouse", color.color() );
+            if( focus.equals( color.getId() ))
+                animation.putColor( "focus", color.color() );
         }
     }
     

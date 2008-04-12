@@ -26,6 +26,8 @@
 package bibliothek.extension.gui.dock.theme.bubble;
 
 import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -44,14 +46,23 @@ import bibliothek.gui.dock.util.color.ColorCodes;
  * @author Benjamin Sigg
  *
  */
-@ColorCodes({ "action.button",
+@ColorCodes({
+    "action.button",
+    "action.button.focus",
     "action.button.enabled",
+    "action.button.enabled.focus",
     "action.button.selected",
+    "action.button.selected.focus",
     "action.button.selected.enabled",
+    "action.button.selected.enabled.focus",
     "action.button.mouse.enabled",
+    "action.button.mouse.enabled.focus",
     "action.button.mouse.selected.enabled",
+    "action.button.mouse.selected.enabled.focus",
     "action.button.pressed.enabled",
-    "action.button.pressed.selected.enabled"
+    "action.button.pressed.enabled.focus",
+    "action.button.pressed.selected.enabled",
+    "action.button.pressed.selected.enabled.focus"
 })
 public class RoundButton extends JComponent implements RoundButtonConnectable{
     private BubbleColorAnimation animation;
@@ -78,7 +89,16 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 		        new RoundActionColor( "action.button.mouse.enabled", dockable, action, Color.RED ),
 		        new RoundActionColor( "action.button.mouse.selected.enabled", dockable, action, new Color( 128, 0, 0) ),
 		        new RoundActionColor( "action.button.pressed.enabled", dockable, action, Color.BLUE ),
-		        new RoundActionColor( "action.button.pressed.selected.enabled", dockable, action, Color.MAGENTA )
+		        new RoundActionColor( "action.button.pressed.selected.enabled", dockable, action, Color.MAGENTA ),
+		        
+		        new RoundActionColor( "action.button.focus", dockable, action, Color.DARK_GRAY ),
+		        new RoundActionColor( "action.button.enabled.focus", dockable, action, Color.DARK_GRAY ),
+		        new RoundActionColor( "action.button.selected.focus", dockable, action, Color.DARK_GRAY ),
+		        new RoundActionColor( "action.button.selected.enabled.focus", dockable, action, Color.DARK_GRAY ),
+		        new RoundActionColor( "action.button.mouse.enabled.focus", dockable, action, Color.DARK_GRAY ),
+		        new RoundActionColor( "action.button.mouse.selected.enabled.focus", dockable, action, Color.DARK_GRAY ),
+		        new RoundActionColor( "action.button.pressed.enabled.focus", dockable, action, Color.DARK_GRAY ),
+		        new RoundActionColor( "action.button.pressed.selected.enabled.focus", dockable, action, Color.DARK_GRAY ),
 		};
 		
         model = new BasicButtonModel( this, trigger ){
@@ -92,12 +112,18 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 		updateColors();
 
 		animation.addTask(new Runnable() {
-
-			public void run()
-			{
+			public void run(){
 				repaint();	
 			}
-
+		});
+		
+		addFocusListener( new FocusListener(){
+		    public void focusGained( FocusEvent e ) {
+		        repaint();
+		    }
+		    public void focusLost( FocusEvent e ) {
+		        repaint();
+		    }
 		});
 	}
     
@@ -158,14 +184,12 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 
 	@Override
 	protected void paintComponent(Graphics g) {
-
 		Graphics2D g2 = (Graphics2D)g.create();
 		g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
 
 		g2.setColor(animation.getColor("button"));
 		g2.fillOval( 0, 0, getWidth(), getHeight() );
-		g2.dispose();
-
+		
         Icon icon = model.getPaintIcon();
 		if( icon != null ){
 			icon.paintIcon( this, g, 
@@ -173,27 +197,35 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 					(getHeight() - icon.getIconHeight()) / 2 );
 		}
 
+		if( hasFocus() && isFocusable() && isEnabled() ){
+		    Stroke stroke = g2.getStroke();
+            g2.setStroke( new BasicStroke( 3f ) );
+		    g2.setColor( animation.getColor( "focus" ) );
+		    g2.drawOval( 1, 1, getWidth()-3, getHeight()-3 );
+		    g2.setStroke( stroke );
+		}
+		
+		g2.dispose();
 	}
 
     private void updateColors() {
-    	
     	String postfix="";
     	boolean mousePressed = model.isMousePressed();
         boolean mouseEntered = model.isMouseInside();
         boolean selected = model.isSelected();
         boolean enabled = model.isEnabled();
         
-    	if (enabled&&mousePressed)
-    		postfix=".pressed";
+    	if( enabled&&mousePressed )
+    		postfix = ".pressed";
     	
-    	if (enabled&&mouseEntered&&!mousePressed)
-    		postfix=".mouse";
+    	if( enabled && mouseEntered && !mousePressed )
+    		postfix = ".mouse";
     	
-    	if (selected)
-    		postfix+=".selected";
+    	if( selected )
+    		postfix += ".selected";
     	
-    	if (enabled)
-    		postfix+=".enabled";
+    	if( enabled )
+    		postfix += ".enabled";
     	
     	String key = "action.button"+ postfix;
     	for( RoundActionColor color : colors ){
@@ -201,7 +233,14 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
     	        animation.putColor( "button", color.color() );
     	        break;
     	    }
-    	}    	
+    	}
+        key += ".focus";
+        for( RoundActionColor color : colors ){
+            if( key.equals( color.getId() )){
+                animation.putColor( "focus", color.color() );
+                break;
+            }
+        }       
     }
     
     /**

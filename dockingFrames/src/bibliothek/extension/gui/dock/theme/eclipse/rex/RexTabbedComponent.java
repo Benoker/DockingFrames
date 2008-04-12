@@ -89,6 +89,7 @@ public class RexTabbedComponent extends JComponent {
 	private void initComponent() {
 		setTabStrip( new RexTabStrip( this ));
 		contentArea = new JPanel(new BorderLayout());
+		contentArea.setFocusable( false );
 		
 		setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, SystemColor.controlShadow));
 		setLayout(new BorderLayout());

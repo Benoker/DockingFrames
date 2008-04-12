@@ -51,6 +51,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.RemoteRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
 import bibliothek.gui.dock.event.DockableFocusAdapter;
+import bibliothek.gui.dock.focus.DockFocusTraversalPolicy;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.util.PropertyValue;
 
@@ -81,7 +82,6 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 	private RemoteRelocator relocator;
 	
 	private EclipseTheme theme;
-	//private DockStation station;
 	private EclipseTabbedComponent tabs;
 	
 	private Dockable selectedDockable;
@@ -131,21 +131,23 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 
 	public EclipseStackDockComponent(EclipseTheme theme, DockStation station) {
 		this.theme = theme;
-		//this.station = station;
 		setLayout( new GridLayout( 1, 1 ) );
-		tabs = new EclipseTabbedComponent(this, theme, station);
+		tabs = new EclipseTabbedComponent( theme, station);
 		tabs.addTabListener(this);
 		tabs.setAlignmentX(1.0f);
 		tabs.setAlignmentY(0f);
 		add(tabs);
+		
+		setFocusTraversalPolicyProvider( true );
+		setFocusTraversalPolicy( new DockFocusTraversalPolicy( new EclipseFocusTraversalPolicy( this ), true ));
 	}
 	
 	/**
 	 * Gets the component onto which this {@link StackDockComponent}
 	 * puts its children.
-	 * @return the tab-component, should not be modified by subclasses
+	 * @return the tab-component, should not be modified by clients
 	 */
-	protected EclipseTabbedComponent getTabs(){
+	public EclipseTabbedComponent getTabs(){
 	    return tabs;
 	}
 	

@@ -201,13 +201,21 @@ public class SimpleBubbleColorScheme extends DefaultColorScheme {
         
         // RoundButton
         setColor( "action.button",                                 disabled );
+        setColor( "action.button.focus",                           diffMirror( disabled, factorWeak ));
         setColor( "action.button.enabled",                         enabled );
+        setColor( "action.button.enabled.focus",                   diffMirror( enabled, factorWeak ));
         setColor( "action.button.selected",                        middle( disabled, middle( selected, disabled ) ));
+        setColor( "action.button.selected.focus",                  diffMirror( middle( disabled, middle( selected, disabled ) ), factorWeak ));
         setColor( "action.button.selected.enabled",                selected );
+        setColor( "action.button.selected.enabled.focus",          diffMirror( selected, factorWeak ));
         setColor( "action.button.mouse.enabled",                   undiffMirror( enabled, factor ) );
+        setColor( "action.button.mouse.enabled.focus",             undiffMirror( diffMirror( enabled, factor ), factorWeak ));
         setColor( "action.button.mouse.selected.enabled",          undiffMirror( selected, factor ) );
+        setColor( "action.button.mouse.selected.enabled.focus",    undiffMirror( diffMirror( selected, factor ), factorWeak ));
         setColor( "action.button.pressed.enabled",                 undiffMirror( enabled, factorStrong ) );
+        setColor( "action.button.pressed.enabled.focus",           undiffMirror( diffMirror( enabled, factorStrong ), factorWeak ));
         setColor( "action.button.pressed.selected.enabled",        undiffMirror( selected, factorStrong ) );
+        setColor( "action.button.pressed.selected.enabled.focus",  undiffMirror( diffMirror( selected, factorStrong ), factorWeak ));
 
         // Round drop down button
         setColor( "action.dropdown",                                 disabled );
@@ -218,6 +226,15 @@ public class SimpleBubbleColorScheme extends DefaultColorScheme {
         setColor( "action.dropdown.mouse.selected.enabled",          undiffMirror( selected, factor ) );
         setColor( "action.dropdown.pressed.enabled",                 undiffMirror( enabled, factorStrong ) );
         setColor( "action.dropdown.pressed.selected.enabled",        undiffMirror( selected, factorStrong ) );
+        
+        setColor( "action.dropdown.focus",                           diffMirror( disabled, factorWeak ));
+        setColor( "action.dropdown.enabled.focus",                   diffMirror( enabled, factorWeak ));
+        setColor( "action.dropdown.selected.focus",                  diffMirror( middle( disabled, middle( selected, disabled ) ), factorWeak ));
+        setColor( "action.dropdown.selected.enabled.focus",          diffMirror( selected, factorWeak ));
+        setColor( "action.dropdown.mouse.enabled.focus",             undiffMirror( diffMirror( enabled, factor ), factorWeak ));
+        setColor( "action.dropdown.mouse.selected.enabled.focus",    undiffMirror( diffMirror( selected, factor ), factorWeak ));
+        setColor( "action.dropdown.pressed.enabled.focus",           undiffMirror( diffMirror( enabled, factorStrong ), factorWeak ));
+        setColor( "action.dropdown.pressed.selected.enabled.focus",  undiffMirror( diffMirror( selected, factorStrong ), factorWeak ));
         
         setColor( "action.dropdown.line",                            diffMirror( disabled, factorWeak ));
         setColor( "action.dropdown.line.enabled",                    diffMirror( enabled, factorWeak ));

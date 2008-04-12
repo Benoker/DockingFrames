@@ -100,6 +100,15 @@ public class BubbleColorScheme extends DefaultColorScheme {
         setColor( "action.button.pressed.enabled",                 new Color( 255, 255, 0 ));
         setColor( "action.button.pressed.selected.enabled",        new Color( 0, 0, 255 ));
 
+        setColor( "action.button.focus",                             new Color( 150, 150, 150 ));
+        setColor( "action.button.enabled.focus",                     new Color( 150, 150, 150 ));
+        setColor( "action.button.selected.focus",                    new Color( 150, 150, 200 ));
+        setColor( "action.button.selected.enabled.focus",            new Color( 120, 120, 175 ));
+        setColor( "action.button.mouse.enabled.focus",               new Color( 200, 200, 100 ));
+        setColor( "action.button.mouse.selected.enabled.focus",      new Color( 50, 50, 150 ));
+        setColor( "action.button.pressed.enabled.focus",             new Color( 200, 200, 0 ));
+        setColor( "action.button.pressed.selected.enabled.focus",    new Color( 0, 0, 200 ));
+        
         // Round drop down button
         setColor( "action.dropdown",                                 new Color( 255, 255, 255 ));
         setColor( "action.dropdown.enabled",                         new Color( 215, 215, 215 ));
@@ -109,6 +118,15 @@ public class BubbleColorScheme extends DefaultColorScheme {
         setColor( "action.dropdown.mouse.selected.enabled",          new Color( 100, 100, 255 ));
         setColor( "action.dropdown.pressed.enabled",                 new Color( 255, 255, 0 ));
         setColor( "action.dropdown.pressed.selected.enabled",        new Color( 0, 0, 255 ));
+
+        setColor( "action.dropdown.focus",                           new Color( 150, 150, 150 ));
+        setColor( "action.dropdown.enabled.focus",                   new Color( 150, 150, 150 ));
+        setColor( "action.dropdown.selected.focus",                  new Color( 150, 150, 200 ));
+        setColor( "action.dropdown.selected.enabled.focus",          new Color( 120, 120, 175 ));
+        setColor( "action.dropdown.mouse.enabled.focus",             new Color( 200, 200, 100 ));
+        setColor( "action.dropdown.mouse.selected.enabled.focus",    new Color( 50, 50, 150 ));
+        setColor( "action.dropdown.pressed.enabled.focus",           new Color( 200, 200, 0 ));
+        setColor( "action.dropdown.pressed.selected.enabled.focus",  new Color( 0, 0, 200 ));
         
         setColor( "action.dropdown.line",                            new Color( 150, 150, 150 ));
         setColor( "action.dropdown.line.enabled",                    new Color( 150, 150, 150 ));

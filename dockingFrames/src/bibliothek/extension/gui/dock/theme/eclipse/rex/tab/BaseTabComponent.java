@@ -27,6 +27,7 @@ package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.ContainerOrderFocusTraversalPolicy;
 import java.awt.Window;
 import java.awt.event.*;
 
@@ -157,7 +158,10 @@ public abstract class BaseTabComponent extends JComponent implements TabComponen
                 }
             }
         });
-
+        
+        setFocusable( false );
+        setFocusTraversalPolicyProvider( true );
+        setFocusTraversalPolicy( new ContainerOrderFocusTraversalPolicy() );
         buttons = new ButtonPanel( false );
     }
     

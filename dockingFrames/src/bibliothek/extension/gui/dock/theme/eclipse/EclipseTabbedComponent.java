@@ -43,6 +43,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionPopup;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 import bibliothek.gui.dock.util.PropertyValue;
@@ -51,7 +52,6 @@ import bibliothek.gui.dock.util.PropertyValue;
  * @author Janni Kovacs
  */
 public class EclipseTabbedComponent extends RexTabbedComponent {
-	private EclipseStackDockComponent eclipseStackDockComponent;
 	private ButtonPanel itemPanel;
 	
 	private PropertyValue<TabPainter> painter = new PropertyValue<TabPainter>( EclipseTheme.TAB_PAINTER ){
@@ -61,9 +61,8 @@ public class EclipseTabbedComponent extends RexTabbedComponent {
 	    }
 	};
 	
-	public EclipseTabbedComponent(EclipseStackDockComponent eclipseStackDockComponent, EclipseTheme theme, DockStation station ) {
+	public EclipseTabbedComponent( EclipseTheme theme, DockStation station ) {
 	    super( theme, station );
-		this.eclipseStackDockComponent = eclipseStackDockComponent;
 		
 		itemPanel = new ButtonPanel( true );
 		itemPanel.setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 4));
@@ -72,6 +71,8 @@ public class EclipseTabbedComponent extends RexTabbedComponent {
 		setTabStrip( new EclipseTabStrip() );
 		setTabPainter( ShapedGradientPainter.FACTORY );
 		updateFullBorder();
+		
+		setFocusable( false );
 	}
 
 	public JComponent getTabStrip() {
@@ -81,6 +82,16 @@ public class EclipseTabbedComponent extends RexTabbedComponent {
 	public void set( Dockable dockable, DockActionSource source ){
 		itemPanel.set( dockable, source );
 	}
+	
+	/**
+	 * Gets the panel on which the {@link DockAction}s of the currently
+	 * selected {@link Dockable} are shown. Clients should not exchange the
+	 * elements on that panel.
+	 * @return the panel with the buttons
+	 */
+	public ButtonPanel getItemPanel() {
+        return itemPanel;
+    }
 	
 	@Override
 	public void setController( DockController controller ) {
@@ -112,8 +123,7 @@ public class EclipseTabbedComponent extends RexTabbedComponent {
 			ActionPopup popup = new ActionPopup( true ){
 				@Override
 				protected Dockable getDockable(){
-					int index = indexOf( tab );
-					return eclipseStackDockComponent.getDockable( index );
+				    return tab;
 				}
 
 				@Override

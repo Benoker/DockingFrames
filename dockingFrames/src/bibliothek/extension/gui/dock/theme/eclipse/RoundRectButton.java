@@ -28,6 +28,8 @@ package bibliothek.extension.gui.dock.theme.eclipse;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -51,6 +53,15 @@ public class RoundRectButton extends JComponent{
     public RoundRectButton( BasicTrigger trigger ){
         model = new BasicButtonModel( this, trigger, true );
         setOpaque( false );
+        
+        addFocusListener( new FocusListener(){
+            public void focusGained( FocusEvent e ) {
+                repaint();
+            }
+            public void focusLost( FocusEvent e ) {
+                repaint();
+            }
+        });
     }
     
     /**
@@ -100,6 +111,25 @@ public class RoundRectButton extends JComponent{
         Icon icon = model.getPaintIcon();
         if( icon != null ){
             icon.paintIcon( this, g, (w +1 - icon.getIconWidth())/2, (h +1 - icon.getIconHeight())/2 );
+        }
+        
+        if( hasFocus() && isFocusable() && isEnabled() ){
+            g.setColor( Colors.diffMirror( background, 0.4 ) );
+            // top left
+            g.drawLine( 3, 2, 4, 2 );
+            g.drawLine( 2, 3, 2, 4 );
+            
+            // top right
+            g.drawLine( 3, w-2, 4, w-2 );
+            g.drawLine( 2, w-3, 2, w-4 );
+            
+            // bottom left
+            g.drawLine( h-3, 2, h-4, 2 );
+            g.drawLine( h-2, 3, h-2, 4 );
+            
+            // bottom right
+            g.drawLine( h-3, w-2, h-4, w-2 );
+            g.drawLine( h-2, w-3, h-2, w-4 );
         }
     }
 }
