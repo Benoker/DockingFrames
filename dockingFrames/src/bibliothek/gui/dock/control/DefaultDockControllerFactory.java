@@ -25,10 +25,15 @@
  */
 package bibliothek.gui.dock.control;
 
+import java.awt.event.KeyEvent;
+
+import javax.swing.KeyStroke;
+
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.action.ActionOffer;
 import bibliothek.gui.dock.action.DefaultActionOffer;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
+import bibliothek.gui.dock.event.ControllerSetupListener;
 import bibliothek.gui.dock.event.DockRegisterListener;
 
 /**
@@ -61,6 +66,19 @@ public class DefaultDockControllerFactory implements DockControllerFactory {
         return new FocusController( controller );
     }
 
+    public DockableSelector createDockableSelector( DockController controller, ControllerSetupCollection setup ) {
+        final DockableSelector selector = new DockableSelector();
+        
+        setup.add( new ControllerSetupListener(){
+            public void done( DockController controller ) {
+                selector.setController( controller );
+                controller.getProperties().set( DockableSelector.INIT_SELECTION, KeyStroke.getKeyStroke( KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK ) );
+            }
+        });
+        
+        return selector;
+    }
+    
     public KeyboardController createKeyboardController(
             DockController controller, ControllerSetupCollection setup ) {
         

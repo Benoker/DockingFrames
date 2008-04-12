@@ -35,6 +35,8 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.event.ComponentHierarchyObserverListener;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
+import bibliothek.gui.dock.event.DockTitleBindingListener;
+import bibliothek.gui.dock.title.DockTitle;
 
 /**
  * A class collecting all {@link Component}s which are somehow used on
@@ -72,6 +74,16 @@ public class ComponentHierarchyObserver {
             @Override
             public void dockableUnregistered( DockController controller, Dockable dockable ) {
                 remove( dockable.getComponent(), null );
+            }
+        });
+        
+        controller.addDockTitleBindingListener( new DockTitleBindingListener(){
+            public void titleBound( DockController controller, DockTitle title, Dockable dockable ) {
+                add( title.getComponent(), null );
+            }
+
+            public void titleUnbound( DockController controller, DockTitle title, Dockable dockable ) {
+                remove( title.getComponent(), null );
             }
         });
     }

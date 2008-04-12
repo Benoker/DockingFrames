@@ -207,6 +207,23 @@ public class DockRegister {
     }
     
     /**
+     * Gets the number of dockables registered at this {@link DockRegister}.
+     * @return the number of dockables
+     */
+    public int getDockableCount(){
+        return dockables.size();
+    }
+    
+    /**
+     * Gets the index'th {@link Dockable} that is registered at this {@link DockRegister}.
+     * @param index the location of the {@link Dockable}
+     * @return the element
+     */
+    public Dockable getDockable( int index ){
+        return dockables.get( index );
+    }
+    
+    /**
      * Gets a list of all Dockables.
      * @return the list of Dockables
      */

@@ -34,6 +34,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
+import bibliothek.gui.dock.focus.DockableSelection;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StationPaint;
@@ -113,6 +114,10 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
         return delegate.getTitleFactory( controller );
     }
 
+    public DockableSelection getDockableSelection( DockController controller ) {
+        return delegate.getDockableSelection( controller );
+    }
+    
     /**
      * Sets the {@link ColorProvider} which should be used for a certain kind
      * of {@link DockColor}s. The providers will be installed with priority

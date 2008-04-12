@@ -31,10 +31,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.border.BevelBorder;
 
 import bibliothek.gui.DockController;
@@ -98,6 +95,7 @@ public class ScreenDockDialog extends JDialog {
     
     {
         setUndecorated( true );
+        getRootPane().setWindowDecorationStyle( JRootPane.NONE );
         setDefaultCloseOperation( DO_NOTHING_ON_CLOSE );
         
         content = createContent();

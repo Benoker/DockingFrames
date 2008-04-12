@@ -116,6 +116,7 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
         
         contentPane.setBorder( BorderFactory.createBevelBorder( BevelBorder.RAISED ));
         setUndecorated( true );
+        getRootPane().setWindowDecorationStyle( JRootPane.NONE );
         contentPane.addMouseListener( this );
         contentPane.addMouseMotionListener( this );
         

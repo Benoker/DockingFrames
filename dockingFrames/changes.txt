@@ -136,4 +136,7 @@
 ! API: the focused/selected methods of DockableFocusListener/DockStationListener have an additional parameter telling which dockable was focused/selected before the new selection
 - API: new listeners (CFocusListener, CKeyboardListener, CDoubleClickListener) which can be added to CDockable (local information) or directly to CControl (global information)
 - API: CDockableStateListener, CDockablePropertyListener can now be added to CControl as well.
-- Layout: all DockThemes now support FocusTraversalPolicies such that each DockAction and element of a Dockable can be reached 
+- Layout: all DockThemes now support FocusTraversalPolicies such that each DockAction and element of a Dockable can be reached
+- API: the DockableSelector/DockableSelection allow users to select new Dockables with the keyboard
+! API: DockTheme has an additional method getDockableSelection 
+- API: the ComponentHierarchyObserver includes now DockTitles in its search for Components

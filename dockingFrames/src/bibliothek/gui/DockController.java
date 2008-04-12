@@ -26,12 +26,11 @@
 
 package bibliothek.gui;
 
-import java.awt.Component;
-import java.awt.EventQueue;
-import java.awt.KeyboardFocusManager;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.*;
+import java.util.List;
 
 import javax.swing.FocusManager;
 import javax.swing.LookAndFeel;
@@ -77,6 +76,9 @@ public class DockController {
 	
 	/** the controller that manages global key-events */
 	private KeyboardController keyboardController;
+	
+	/** selector allows to select {@link Dockable} using the mouse or the keyboard */
+	private DockableSelector dockableSelector;
 	
     /** the Dockable which has currently the focus, can be <code>null</code> */
     private Dockable focusedDockable = null;
@@ -222,6 +224,7 @@ public class DockController {
         actionViewConverter = factory.createActionViewConverter( this, setup );
         doubleClickController = factory.createDoubleClickController( this, setup );
         keyboardController = factory.createKeyboardController( this, setup );
+        dockableSelector = factory.createDockableSelector( this, setup );
         
         DockUI.getDefaultDockUI().fillIcons( icons );
         
@@ -747,6 +750,15 @@ public class DockController {
     }
     
     /**
+     * Gets the selector which can show a popup window such that the user
+     * can use the keyboard or the mouse to focus a {@link Dockable}.
+     * @return the selector
+     */
+    public DockableSelector getDockableSelector() {
+        return dockableSelector;
+    }
+    
+    /**
      * Gets the manager of all titles on this controller
      * @return the manager
      */
@@ -768,6 +780,56 @@ public class DockController {
      */
     public ColorManager getColors() {
         return colors;
+    }
+    
+    /**
+     * Uses all {@link DockElement}s known to this controller to search
+     * the root window. This method first tries to find a {@link Frame},
+     * then a {@link Dialog} and finally returns every {@link Window}
+     * that it finds.
+     * @return the root window or <code>null</code>
+     */
+    public Window findRootWindow(){
+        Window window = null;
+        Dialog dialog = null;
+        
+        for( DockStation station : getRegister().listRoots() ){
+            Dockable dockable = station.asDockable();
+            if( dockable != null ){
+                Component component = dockable.getComponent();
+                Window ancestor = SwingUtilities.getWindowAncestor( component );
+                if( ancestor != null ){
+                    window = ancestor;
+                    
+                    if( ancestor instanceof Frame ){
+                        return ancestor;
+                    }
+                    else if( ancestor instanceof Dialog ){
+                        dialog = (Dialog)ancestor;
+                    }
+                }
+            }
+        }
+        
+        for( Dockable dockable : getRegister().listDockables() ){
+            Component component = dockable.getComponent();
+            Window ancestor = SwingUtilities.getWindowAncestor( component );
+            if( ancestor != null ){
+                window = ancestor;
+                
+                if( ancestor instanceof Frame ){
+                    return ancestor;
+                }
+                else if( ancestor instanceof Dialog ){
+                    dialog = (Dialog)ancestor;
+                }
+            }
+        }
+        
+        if( dialog != null )
+            return dialog;
+        
+        return window;
     }
     
     /**

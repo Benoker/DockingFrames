@@ -68,9 +68,9 @@ public class NoteViewManager{
 		
 		frontend.getController().addDockableFocusListener( new DockableFocusAdapter(){
 			@Override
-			public void dockableFocused( DockController controller, Dockable dockable ){
-				if( dockable instanceof NoteView ){
-					NoteView view = (NoteView)dockable;
+			public void dockableFocused( DockController controller, Dockable oldFocused, Dockable newFocused ){
+				if( newFocused instanceof NoteView ){
+					NoteView view = (NoteView)newFocused;
 					focusedViews.remove( view );
 					focusedViews.addFirst( view );
 				}

@@ -36,6 +36,7 @@ import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
+import bibliothek.gui.dock.focus.DockableSelection;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StationPaint;
@@ -147,6 +148,10 @@ public class NoStackTheme implements DockTheme {
 
     public DockableMovingImageFactory getMovingImageFactory( DockController controller ) {
         return base.getMovingImageFactory( controller );
+    }
+    
+    public DockableSelection getDockableSelection( DockController controller ) {
+        return base.getDockableSelection( controller );
     }
     
     public void install( DockController controller ) {

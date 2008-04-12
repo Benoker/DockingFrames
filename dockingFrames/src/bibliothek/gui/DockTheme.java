@@ -27,6 +27,7 @@
 package bibliothek.gui;
 
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
+import bibliothek.gui.dock.focus.DockableSelection;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
@@ -94,4 +95,11 @@ public interface DockTheme {
      * @return a factory
      */
     public DockableMovingImageFactory getMovingImageFactory( DockController controller );
+    
+    /**
+     * Gets a selector for {@link Dockable}s.
+     * @param controller the controller for which the selector will be used
+     * @return the selector
+     */
+    public DockableSelection getDockableSelection( DockController controller );
 }

@@ -116,6 +116,15 @@ public interface DockControllerFactory {
     public KeyboardController createKeyboardController( DockController controller, ControllerSetupCollection setup );
 
     /**
+     * Creates a new selector for {@link Dockable}s.
+     * @param controller the controller for which the element is created
+     * @param setup an observable where new objects can add {@link ControllerSetupListener}
+     * to be informed when the setup of <code>controller</code> is finished.
+     * @return the new controller, not <code>null</code>
+     */
+    public DockableSelector createDockableSelector( DockController controller, ControllerSetupCollection setup );
+    
+    /**
      * Creates the converter that will transform actions into views.
      * @param controller the controller for which the element is created
      * @param setup an observable where new objects can add {@link ControllerSetupListener}

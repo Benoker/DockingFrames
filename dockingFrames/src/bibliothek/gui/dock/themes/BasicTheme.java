@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.LookAndFeel;
+import javax.swing.SwingUtilities;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -39,6 +40,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.event.UIListener;
+import bibliothek.gui.dock.focus.DockableSelection;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
@@ -87,6 +89,9 @@ public class BasicTheme implements DockTheme{
     /** the colors of this theme */
     private ColorScheme colorScheme;
     
+    /** how to select a new focused dockable */
+    private DockableSelection selection;
+    
     /** the controllers which are installed */
     private List<DockController> controllers = new ArrayList<DockController>();
     
@@ -111,6 +116,7 @@ public class BasicTheme implements DockTheme{
                 return new BasicStackDockComponent( station );
             }
         });
+        setDockableSelection( new BasicDockableSelection() );
         setColorScheme( new BasicColorScheme() );
     }
     
@@ -145,6 +151,9 @@ public class BasicTheme implements DockTheme{
     public void updateUI(){
         if( colorScheme.updateUI() ){
             updateColors( getControllers() );
+        }
+        if( selection != null ){
+            SwingUtilities.updateComponentTreeUI( selection.getComponent() );
         }
     }
     
@@ -327,6 +336,17 @@ public class BasicTheme implements DockTheme{
         this.titleFactory = titleFactory;
     }
     
+    /**
+     * Sets how the user can select the focused {@link Dockable}.
+     * @param selection the new selector, not <code>null</code>
+     */
+    public void setDockableSelection( DockableSelection selection ){
+        if( selection == null )
+            throw new IllegalArgumentException( "selection must not be null" );
+        
+        this.selection = selection;
+    }
+    
     public DockableMovingImageFactory getMovingImageFactory( DockController controller ) {
         return movingImage;
     }
@@ -345,5 +365,9 @@ public class BasicTheme implements DockTheme{
     
     public DockTitleFactory getTitleFactory( DockController controller ) {
         return titleFactory;
+    }
+    
+    public DockableSelection getDockableSelection( DockController controller ) {
+        return selection;
     }
 }
