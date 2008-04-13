@@ -27,10 +27,10 @@ package bibliothek.extension.gui.dock.theme.flat;
 
 import java.awt.Color;
 
-import javax.swing.UIManager;
-
 import bibliothek.extension.gui.dock.theme.FlatTheme;
+import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.themes.color.DefaultColorScheme;
+import bibliothek.gui.dock.util.laf.LookAndFeelColors;
 
 /**
  * A color scheme for {@link FlatTheme}.
@@ -43,17 +43,17 @@ public class FlatColorScheme extends DefaultColorScheme {
     
     @Override
     public boolean updateUI(){
-        setColor( "title.active.left", UIManager.getColor( "MenuItem.selectionBackground") );
-        setColor( "title.inactive.left", UIManager.getColor( "MenuItem.background" ) );
-        setColor( "title.active.right", UIManager.getColor( "Panel.background") );
-        setColor( "title.inactive.right", UIManager.getColor( "Panel.background") );
-        setColor( "title.active.text", UIManager.getColor( "MenuItem.selectionForeground") );
-        setColor( "title.inactive.text", UIManager.getColor( "MenuItem.foreground") );
+        setColor( "title.active.left", DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_BACKGROUND ));
+        setColor( "title.inactive.left", DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ) );
+        setColor( "title.active.right", DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND ) );
+        setColor( "title.inactive.right", DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND ) );
+        setColor( "title.active.text", DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_FOREGROUND ) );
+        setColor( "title.inactive.text", DockUI.getColor( LookAndFeelColors.TITLE_FOREGROUND ) );
         
         setColor( "paint", Color.DARK_GRAY );
         setColor( "paint.insertion.area", Color.WHITE );
         
-        Color border = UIManager.getColor( "Panel.background" );
+        Color border = DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND );
         setColor( "stack.tab.border.center.selected", border.brighter() );
         setColor( "stack.tab.border.center.focused", border.brighter() );
         setColor( "stack.tab.border.center", border.darker() );
@@ -63,7 +63,7 @@ public class FlatColorScheme extends DefaultColorScheme {
         setColor( "stack.tab.background.top.focused", border.brighter() );
         setColor( "stack.tab.background", border );
             
-        setColor( "stack.tab.foreground", UIManager.getColor( "Panel.foreground" ));
+        setColor( "stack.tab.foreground", DockUI.getColor( LookAndFeelColors.PANEL_FOREGROUND ));
         
         return true;
     }

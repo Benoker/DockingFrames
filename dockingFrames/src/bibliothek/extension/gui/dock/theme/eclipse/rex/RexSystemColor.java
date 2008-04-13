@@ -28,7 +28,8 @@ package bibliothek.extension.gui.dock.theme.eclipse.rex;
 import java.awt.Color;
 import java.awt.SystemColor;
 
-import javax.swing.UIManager;
+import bibliothek.gui.DockUI;
+import bibliothek.gui.dock.util.laf.LookAndFeelColors;
 
 /**
  * @author Janni Kovacs
@@ -39,33 +40,33 @@ public class RexSystemColor {
 	}
 
 	public static Color getActiveColor() {
-	    return decide( "MenuItem.selectionBackground.[brighter]", SystemColor.activeCaption.brighter() );
+	    return decide( LookAndFeelColors.TITLE_SELECTION_BACKGROUND + ".[brighter]", SystemColor.activeCaption.brighter() );
 	}
 
 	public static Color getActiveColorGradient() {
-		return decide( "MenuItem.selectionBackground", SystemColor.activeCaption );
+		return decide( LookAndFeelColors.TITLE_SELECTION_BACKGROUND, SystemColor.activeCaption );
 	}
 
 	public static Color getInactiveColor() {
 		//return decide( "MenuItem.background", SystemColor.inactiveCaption );
-		return decide( "Panel.background.[darker]", SystemColor.inactiveCaption.darker() );
+		return decide( LookAndFeelColors.TITLE_BACKGROUND + ".[darker]", SystemColor.inactiveCaption.darker() );
 	}
 
 	public static Color getInactiveColorGradient() {
 		//return decide( "MenuItem.background.[brighter]", SystemColor.inactiveCaption.brighter() );
-		return decide( "Panel.background", SystemColor.inactiveCaption );
+		return decide( LookAndFeelColors.PANEL_BACKGROUND, SystemColor.inactiveCaption );
 	}
 	
 	public static Color getActiveTextColor(){
-	    return decide( "MenuItem.selectionForeground", SystemColor.activeCaptionText );
+	    return decide( LookAndFeelColors.TITLE_SELECTION_FOREGROUND, SystemColor.activeCaptionText );
 	}
 	
 	public static Color getInactiveTextColor(){
-	    return decide( "MenuItem.foreground", SystemColor.inactiveCaptionText );
+	    return decide( LookAndFeelColors.TITLE_FOREGROUND, SystemColor.inactiveCaptionText );
 	}
 
 	public static Color getBorderColor(){
-	    return SystemColor.controlShadow;
+	    return decide( LookAndFeelColors.CONTROL_SHADOW, SystemColor.controlShadow );
 	}
 	
 	private static Color decide(String lookAndFeelKey, Color defaultColor ) {
@@ -75,7 +76,7 @@ public class RexSystemColor {
 	    if( brighter || darker )
 	        lookAndFeelKey = lookAndFeelKey.substring( 0, lookAndFeelKey.lastIndexOf( '.' ) );
 	    
-	    Color result = UIManager.getDefaults().getColor( lookAndFeelKey );
+	    Color result = DockUI.getDefaultDockUI().getColors().getColor( lookAndFeelKey );
 	    if( result == null )
 	        return defaultColor;
 	    

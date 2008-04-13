@@ -50,11 +50,10 @@ import bibliothek.gui.dock.util.color.ColorCodes;
 @ColorCodes({"stack.tab.border", "stack.tab.border.selected", "stack.tab.border.selected.focused", "stack.tab.border.selected.focuslost",
     "stack.tab.top", "stack.tab.tob.selected", "stack.tab.top.selected.focused","stack.tab.top.selected.focuslost",
     "stack.tab.bottom", "stack.tab.bottom.selected", "stack.tab.bottom.selected.focused", "stack.tab.bottom.selected.focuslost",
-    "stack.tab.text", "stack.tab.text.selected", "stack.tab.text.selected.focused", "stack.tab.text.selected.focuslost" })
+    "stack.tab.text", "stack.tab.text.selected", "stack.tab.text.selected.focused", "stack.tab.text.selected.focuslost",
+    "stack.border "})
 public class RectGradientPainter extends BaseTabComponent {
 	public static final TabPainter FACTORY = new TabPainter(){
-	    private final Border border = new RectEclipseBorder( true );
-	    
 	    public TabComponent createTabComponent( DockController controller,
 	            RexTabbedComponent component, StackDockStation station, Dockable dockable, int index ) {
 	        
@@ -68,7 +67,14 @@ public class RectGradientPainter extends BaseTabComponent {
 				int to = selectedBounds.x;
 				int from = selectedBounds.x + selectedBounds.width-1;
 				int end = tabStrip.getWidth();
-				Color lineColor = SystemColor.controlShadow;
+				
+				Color lineColor = null;
+				DockController controller = tabbedComponent.getController();
+				if( controller != null )
+				    lineColor = controller.getColors().get( "stack.border" );
+				if( lineColor == null )
+				    lineColor = RexSystemColor.getBorderColor();
+				
 				g.setColor(lineColor);
 				int y = tabStrip.getHeight()-1;
 				
@@ -80,11 +86,11 @@ public class RectGradientPainter extends BaseTabComponent {
 		}
 		
         public Border getFullBorder( DockController controller, Dockable dockable ) {
-            return border;
+            return new RectEclipseBorder( controller, true );
         }
         
         public Border getFullBorder( DockController controller, DockStation station, RexTabbedComponent component ) {
-            return border;
+            return new RectEclipseBorder( controller, true );
         }
 	};
 	
@@ -201,7 +207,7 @@ public class RectGradientPainter extends BaseTabComponent {
 		super.paintComponent(g);
 		int height = getHeight(), width = getWidth();
 		Graphics2D g2d = (Graphics2D) g;
-		Color lineColor = RexSystemColor.getBorderColor();
+		Color lineColor = colorStackBorder.color();
 		Color color1, color2, colorText;
 		boolean focusTemporarilyLost = KeyboardFocusManager.getCurrentKeyboardFocusManager()
 				.getActiveWindow() != SwingUtilities.getWindowAncestor( getTabbedComponent() );

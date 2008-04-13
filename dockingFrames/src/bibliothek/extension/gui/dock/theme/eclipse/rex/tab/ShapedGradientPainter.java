@@ -35,6 +35,7 @@ import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseBorder;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.RexSystemColor;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -53,8 +54,6 @@ import bibliothek.gui.dock.util.color.ColorCodes;
     "stack.tab.text", "stack.tab.text.selected", "stack.tab.text.selected.focused", "stack.tab.text.selected.focuslost" })
 public class ShapedGradientPainter extends BaseTabComponent {
 	public static final TabPainter FACTORY = new TabPainter(){
-	    private final Border border = new EclipseBorder( true );
-	    
 	    public TabComponent createTabComponent( DockController controller,
 	            RexTabbedComponent component, StackDockStation station, Dockable dockable, int index ) {
 
@@ -70,7 +69,14 @@ public class ShapedGradientPainter extends BaseTabComponent {
 				int to = selectedBounds.x;
 				int from = selectedBounds.x + selectedBounds.width - 1;
 				int end = tabStrip.getWidth();
-				Color lineColor = SystemColor.controlShadow;
+
+                Color lineColor = null;
+                DockController controller = tabbedComponent.getController();
+                if( controller != null )
+                    lineColor = controller.getColors().get( "stack.border" );
+                if( lineColor == null )
+                    lineColor = RexSystemColor.getBorderColor();
+                
 				g.setColor(lineColor);
 				int y = tabStrip.getHeight()-1;
 				
@@ -82,11 +88,11 @@ public class ShapedGradientPainter extends BaseTabComponent {
 		}
 		
 		public Border getFullBorder( DockController controller, Dockable dockable ) {
-		    return border;
+		    return new EclipseBorder( controller, true );
 		}
 		
 		public Border getFullBorder( DockController controller, DockStation station, RexTabbedComponent component ) {
-		    return border;
+		    return new EclipseBorder( controller, true );
 		}
 	};
 
@@ -221,7 +227,7 @@ public class ShapedGradientPainter extends BaseTabComponent {
 		int x = 0, y = 0;
 		int w = bounds.width, h = bounds.height;
 		Graphics2D g2d = (Graphics2D) g;
-		Color lineColor = SystemColor.controlShadow;
+		Color lineColor = colorStackBorder.color();
 
 		Color color1;
 		Color color2;

@@ -39,7 +39,7 @@ import bibliothek.gui.dock.event.DockTitleBindingListener;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
- * A class collecting all {@link Component}s which are somehow used on
+ * A class collecting all {@link Component}s which are somehow used on or with
  * the {@link Dockable}s  in the realm of one {@link DockController}.<br>
  * A global instance of {@link ComponentHierarchyObserver} can be obtained
  * through {@link DockController#getComponentHierarchyObserver()}.

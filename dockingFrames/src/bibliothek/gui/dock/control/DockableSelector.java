@@ -152,13 +152,8 @@ public class DockableSelector {
             
             selection.addDockableSelectionListener( listener );
             
+            base.requestFocusInWindow();
             dialog.setVisible( true );
-            
-            EventQueue.invokeLater( new Runnable(){
-                public void run() {
-                    base.requestFocusInWindow();
-                }
-            });
         }
         else
             selection = null;

@@ -36,110 +36,179 @@ import bibliothek.gui.dock.themes.color.DefaultColorScheme;
  */
 public class BubbleColorScheme extends DefaultColorScheme {
     /**
+     * Tells how the primary, secondary and tertiary color components are
+     * distributed.
+     * @author Benjamin Sigg
+     */
+    public static enum Distribution{
+        /**
+         * primary: red<br>
+         * secondary: green<br>
+         * tertiary: blue
+         */
+        RGB, 
+
+        /**
+         * primary: red<br>
+         * secondary: blue<br>
+         * tertiary: green
+         */
+        RBG,
+        
+        /**
+         * primary: blue<br>
+         * secondary: red<br>
+         * tertiary: green
+         */
+        BRG,
+        
+        /**
+         * primary: blue<br>
+         * secondary: green<br>
+         * tertiary: red
+         */
+        BGR,
+        
+        /**
+         * primary: green<br>
+         * secondary: red<br>
+         * tertiary: blue
+         */
+        GRB,
+        
+        /**
+         * primary: green<br>
+         * secondary: blue<br>
+         * tertiary: red
+         */
+        GBR
+    }
+    
+    /**
      * Creates a new color scheme
      */
     public BubbleColorScheme(){
+        this( Distribution.RGB );
+    }
+        
+    /**
+     * Creatse a new color scheme
+     * @param distribution how to put up the colors
+     */
+    public BubbleColorScheme( Distribution distribution ){
         // stack
-        setColor( "stack.tab.border.seleced",                   new Color( 150, 0, 0 ) );
-        setColor( "stack.tab.border.selected.mouse",            new Color( 200, 100, 100 ) );
-        setColor( "stack.tab.border.focused",                   new Color( 200, 0, 0 ) );
-        setColor( "stack.tab.border.focused.mouse",             new Color( 255, 150, 150 ) );
-        setColor( "stack.tab.border",                           new Color( 100, 100, 100 ) );
-        setColor( "stack.tab.border.mouse",                     new Color( 100, 175, 100 ) );
-        setColor( "stack.tab.background.top.selected",          new Color( 200, 0, 0 ) );
-        setColor( "stack.tab.background.top.selected.mouse",    new Color( 255, 100, 100 ) );
-        setColor( "stack.tab.background.top.focused",           new Color( 200, 100, 100 ) );
-        setColor( "stack.tab.background.top.focused.mouse",     new Color( 255, 200, 200 ) );
-        setColor( "stack.tab.background.top",                   new Color( 150, 150, 150 ) );
-        setColor( "stack.tab.background.top.mouse",             new Color( 150, 255, 150 ) );
-        setColor( "stack.tab.background.bottom.selected",       new Color( 255, 100, 100 ) );
-        setColor( "stack.tab.background.bottom.selected.mouse", new Color( 255, 200, 200 ) );
-        setColor( "stack.tab.background.bottom.focused",        new Color( 255, 200, 200 ) );
-        setColor( "stack.tab.background.bottom.focused.mouse",  new Color( 255, 255, 255 ) );
-        setColor( "stack.tab.background.bottom",                new Color( 200, 200, 200 ) );
-        setColor( "stack.tab.background.bottom.mouse",          new Color( 220, 255, 220 ) );
-        setColor( "stack.tab.foreground.selected",              new Color( 0, 0, 0 ));
-        setColor( "stack.tab.foreground.selected.mouse",        new Color( 0, 0, 0 ));
-        setColor( "stack.tab.foreground.focused",               new Color( 0, 0, 0 ));
-        setColor( "stack.tab.foreground.focused.mouse",         new Color( 0, 0, 0 ));
-        setColor( "stack.tab.foreground",                       new Color( 100, 100, 100 ));
-        setColor( "stack.tab.foreground.mouse",                 new Color( 25, 25, 25 ));
+        setColor( "stack.tab.border.seleced",                   color( distribution, 150, 0, 0 ) );
+        setColor( "stack.tab.border.selected.mouse",            color( distribution, 200, 100, 100 ) );
+        setColor( "stack.tab.border.focused",                   color( distribution, 200, 0, 0 ) );
+        setColor( "stack.tab.border.focused.mouse",             color( distribution, 255, 150, 150 ) );
+        setColor( "stack.tab.border",                           color( distribution, 100, 100, 100 ) );
+        setColor( "stack.tab.border.mouse",                     color( distribution, 100, 175, 100 ) );
+        setColor( "stack.tab.background.top.selected",          color( distribution, 200, 0, 0 ) );
+        setColor( "stack.tab.background.top.selected.mouse",    color( distribution, 255, 100, 100 ) );
+        setColor( "stack.tab.background.top.focused",           color( distribution, 200, 100, 100 ) );
+        setColor( "stack.tab.background.top.focused.mouse",     color( distribution, 255, 200, 200 ) );
+        setColor( "stack.tab.background.top",                   color( distribution, 150, 150, 150 ) );
+        setColor( "stack.tab.background.top.mouse",             color( distribution, 150, 255, 150 ) );
+        setColor( "stack.tab.background.bottom.selected",       color( distribution, 255, 100, 100 ) );
+        setColor( "stack.tab.background.bottom.selected.mouse", color( distribution, 255, 200, 200 ) );
+        setColor( "stack.tab.background.bottom.focused",        color( distribution, 255, 200, 200 ) );
+        setColor( "stack.tab.background.bottom.focused.mouse",  color( distribution, 255, 255, 255 ) );
+        setColor( "stack.tab.background.bottom",                color( distribution, 200, 200, 200 ) );
+        setColor( "stack.tab.background.bottom.mouse",          color( distribution, 220, 255, 220 ) );
+        setColor( "stack.tab.foreground.selected",              color( distribution, 0, 0, 0 ));
+        setColor( "stack.tab.foreground.selected.mouse",        color( distribution, 0, 0, 0 ));
+        setColor( "stack.tab.foreground.focused",               color( distribution, 0, 0, 0 ));
+        setColor( "stack.tab.foreground.focused.mouse",         color( distribution, 0, 0, 0 ));
+        setColor( "stack.tab.foreground",                       color( distribution, 100, 100, 100 ));
+        setColor( "stack.tab.foreground.mouse",                 color( distribution, 25, 25, 25 ));
         
         
         // title
-        setColor( "title.background.top.active",               new Color( 200, 0, 0 ) );
-        setColor( "title.background.top.active.mouse",         new Color( 255, 100, 100 ) );
-        setColor( "title.background.top.inactive",             new Color( 150, 150, 150 ) );
-        setColor( "title.background.top.inactive.mouse",       new Color( 150, 255, 150 ) );
-        setColor( "title.background.bottom.active",            new Color( 255, 100, 100 ) );
-        setColor( "title.background.bottom.active.mouse",      new Color( 255, 200, 200 ) );
-        setColor( "title.background.bottom.inactive",          new Color( 200, 200, 200 ) );
-        setColor( "title.background.bottom.inactive.mouse",    new Color( 220, 255, 220 ) );
-        setColor( "title.foreground.active",              new Color( 0, 0, 0 ));
-        setColor( "title.foreground.active.mouse",        new Color( 0, 0, 0 ));
-        setColor( "title.foreground.inactive",            new Color( 100, 100, 100 ));
-        setColor( "title.foreground.inactive.mouse",      new Color( 25, 25, 25 ));
+        setColor( "title.background.top.active",               color( distribution, 200, 0, 0 ) );
+        setColor( "title.background.top.active.mouse",         color( distribution, 255, 100, 100 ) );
+        setColor( "title.background.top.inactive",             color( distribution, 150, 150, 150 ) );
+        setColor( "title.background.top.inactive.mouse",       color( distribution, 150, 255, 150 ) );
+        setColor( "title.background.bottom.active",            color( distribution, 255, 100, 100 ) );
+        setColor( "title.background.bottom.active.mouse",      color( distribution, 255, 200, 200 ) );
+        setColor( "title.background.bottom.inactive",          color( distribution, 200, 200, 200 ) );
+        setColor( "title.background.bottom.inactive.mouse",    color( distribution, 220, 255, 220 ) );
+        setColor( "title.foreground.active",              color( distribution, 0, 0, 0 ));
+        setColor( "title.foreground.active.mouse",        color( distribution, 0, 0, 0 ));
+        setColor( "title.foreground.inactive",            color( distribution, 100, 100, 100 ));
+        setColor( "title.foreground.inactive.mouse",      color( distribution, 25, 25, 25 ));
         
         // display border
-        setColor( "displayer.border.high.active",           new Color( 255, 100, 100 ));
-        setColor( "displayer.border.high.active.mouse",     new Color( 255, 200, 200 ));
-        setColor( "displayer.border.high.inactive",         new Color( 200, 200, 200 ));
-        setColor( "displayer.border.high.inactive.mouse",   new Color( 220, 255, 220 ));
-        setColor( "displayer.border.low.active",            new Color( 200, 100, 100 ));
-        setColor( "displayer.border.low.active.mouse",      new Color( 255, 150, 150 ));
-        setColor( "displayer.border.low.inactive",          new Color( 100, 100, 100 ));
-        setColor( "displayer.border.low.inactive.mouse",    new Color( 120, 150, 120 ));
+        setColor( "displayer.border.high.active",           color( distribution, 255, 100, 100 ));
+        setColor( "displayer.border.high.active.mouse",     color( distribution, 255, 200, 200 ));
+        setColor( "displayer.border.high.inactive",         color( distribution, 200, 200, 200 ));
+        setColor( "displayer.border.high.inactive.mouse",   color( distribution, 220, 255, 220 ));
+        setColor( "displayer.border.low.active",            color( distribution, 200, 100, 100 ));
+        setColor( "displayer.border.low.active.mouse",      color( distribution, 255, 150, 150 ));
+        setColor( "displayer.border.low.inactive",          color( distribution, 100, 100, 100 ));
+        setColor( "displayer.border.low.inactive.mouse",    color( distribution, 120, 150, 120 ));
         
         // RoundButton
-        setColor( "action.button",                                 new Color( 255, 255, 255 ));
-        setColor( "action.button.enabled",                         new Color( 215, 215, 215 ));
-        setColor( "action.button.selected",                        new Color( 200, 200, 255 ));
-        setColor( "action.button.selected.enabled",                new Color( 150, 150, 210 ));
-        setColor( "action.button.mouse.enabled",                   new Color( 255, 255, 100 ));
-        setColor( "action.button.mouse.selected.enabled",          new Color( 100, 100, 255 ));
-        setColor( "action.button.pressed.enabled",                 new Color( 255, 255, 0 ));
-        setColor( "action.button.pressed.selected.enabled",        new Color( 0, 0, 255 ));
+        setColor( "action.button",                                 color( distribution, 255, 255, 255 ));
+        setColor( "action.button.enabled",                         color( distribution, 215, 215, 215 ));
+        setColor( "action.button.selected",                        color( distribution, 200, 200, 255 ));
+        setColor( "action.button.selected.enabled",                color( distribution, 150, 150, 210 ));
+        setColor( "action.button.mouse.enabled",                   color( distribution, 255, 255, 100 ));
+        setColor( "action.button.mouse.selected.enabled",          color( distribution, 100, 100, 255 ));
+        setColor( "action.button.pressed.enabled",                 color( distribution, 255, 255, 0 ));
+        setColor( "action.button.pressed.selected.enabled",        color( distribution, 0, 0, 255 ));
 
-        setColor( "action.button.focus",                             new Color( 150, 150, 150 ));
-        setColor( "action.button.enabled.focus",                     new Color( 150, 150, 150 ));
-        setColor( "action.button.selected.focus",                    new Color( 150, 150, 200 ));
-        setColor( "action.button.selected.enabled.focus",            new Color( 120, 120, 175 ));
-        setColor( "action.button.mouse.enabled.focus",               new Color( 200, 200, 100 ));
-        setColor( "action.button.mouse.selected.enabled.focus",      new Color( 50, 50, 150 ));
-        setColor( "action.button.pressed.enabled.focus",             new Color( 200, 200, 0 ));
-        setColor( "action.button.pressed.selected.enabled.focus",    new Color( 0, 0, 200 ));
+        setColor( "action.button.focus",                             color( distribution, 150, 150, 150 ));
+        setColor( "action.button.enabled.focus",                     color( distribution, 150, 150, 150 ));
+        setColor( "action.button.selected.focus",                    color( distribution, 150, 150, 200 ));
+        setColor( "action.button.selected.enabled.focus",            color( distribution, 120, 120, 175 ));
+        setColor( "action.button.mouse.enabled.focus",               color( distribution, 200, 200, 100 ));
+        setColor( "action.button.mouse.selected.enabled.focus",      color( distribution, 50, 50, 150 ));
+        setColor( "action.button.pressed.enabled.focus",             color( distribution, 200, 200, 0 ));
+        setColor( "action.button.pressed.selected.enabled.focus",    color( distribution, 0, 0, 200 ));
         
         // Round drop down button
-        setColor( "action.dropdown",                                 new Color( 255, 255, 255 ));
-        setColor( "action.dropdown.enabled",                         new Color( 215, 215, 215 ));
-        setColor( "action.dropdown.selected",                        new Color( 200, 200, 255 ));
-        setColor( "action.dropdown.selected.enabled",                new Color( 150, 150, 210 ));
-        setColor( "action.dropdown.mouse.enabled",                   new Color( 255, 255, 100 ));
-        setColor( "action.dropdown.mouse.selected.enabled",          new Color( 100, 100, 255 ));
-        setColor( "action.dropdown.pressed.enabled",                 new Color( 255, 255, 0 ));
-        setColor( "action.dropdown.pressed.selected.enabled",        new Color( 0, 0, 255 ));
+        setColor( "action.dropdown",                                 color( distribution, 255, 255, 255 ));
+        setColor( "action.dropdown.enabled",                         color( distribution, 215, 215, 215 ));
+        setColor( "action.dropdown.selected",                        color( distribution, 200, 200, 255 ));
+        setColor( "action.dropdown.selected.enabled",                color( distribution, 150, 150, 210 ));
+        setColor( "action.dropdown.mouse.enabled",                   color( distribution, 255, 255, 100 ));
+        setColor( "action.dropdown.mouse.selected.enabled",          color( distribution, 100, 100, 255 ));
+        setColor( "action.dropdown.pressed.enabled",                 color( distribution, 255, 255, 0 ));
+        setColor( "action.dropdown.pressed.selected.enabled",        color( distribution, 0, 0, 255 ));
 
-        setColor( "action.dropdown.focus",                           new Color( 150, 150, 150 ));
-        setColor( "action.dropdown.enabled.focus",                   new Color( 150, 150, 150 ));
-        setColor( "action.dropdown.selected.focus",                  new Color( 150, 150, 200 ));
-        setColor( "action.dropdown.selected.enabled.focus",          new Color( 120, 120, 175 ));
-        setColor( "action.dropdown.mouse.enabled.focus",             new Color( 200, 200, 100 ));
-        setColor( "action.dropdown.mouse.selected.enabled.focus",    new Color( 50, 50, 150 ));
-        setColor( "action.dropdown.pressed.enabled.focus",           new Color( 200, 200, 0 ));
-        setColor( "action.dropdown.pressed.selected.enabled.focus",  new Color( 0, 0, 200 ));
+        setColor( "action.dropdown.focus",                           color( distribution, 150, 150, 150 ));
+        setColor( "action.dropdown.enabled.focus",                   color( distribution, 150, 150, 150 ));
+        setColor( "action.dropdown.selected.focus",                  color( distribution, 150, 150, 200 ));
+        setColor( "action.dropdown.selected.enabled.focus",          color( distribution, 120, 120, 175 ));
+        setColor( "action.dropdown.mouse.enabled.focus",             color( distribution, 200, 200, 100 ));
+        setColor( "action.dropdown.mouse.selected.enabled.focus",    color( distribution, 50, 50, 150 ));
+        setColor( "action.dropdown.pressed.enabled.focus",           color( distribution, 200, 200, 0 ));
+        setColor( "action.dropdown.pressed.selected.enabled.focus",  color( distribution, 0, 0, 200 ));
         
-        setColor( "action.dropdown.line",                            new Color( 150, 150, 150 ));
-        setColor( "action.dropdown.line.enabled",                    new Color( 150, 150, 150 ));
-        setColor( "action.dropdown.line.selected",                   new Color( 150, 150, 200 ));
-        setColor( "action.dropdown.line.selected.enabled",           new Color( 120, 120, 175 ));
-        setColor( "action.dropdown.line.mouse.enabled",              new Color( 200, 200, 100 ));
-        setColor( "action.dropdown.line.mouse.selected.enabled",     new Color( 50, 50, 150 ));
-        setColor( "action.dropdown.line.pressed.enabled",            new Color( 200, 200, 0 ));
-        setColor( "action.dropdown.line.pressed.selected.enabled",   new Color( 0, 0, 200 ));
+        setColor( "action.dropdown.line",                            color( distribution, 150, 150, 150 ));
+        setColor( "action.dropdown.line.enabled",                    color( distribution, 150, 150, 150 ));
+        setColor( "action.dropdown.line.selected",                   color( distribution, 150, 150, 200 ));
+        setColor( "action.dropdown.line.selected.enabled",           color( distribution, 120, 120, 175 ));
+        setColor( "action.dropdown.line.mouse.enabled",              color( distribution, 200, 200, 100 ));
+        setColor( "action.dropdown.line.mouse.selected.enabled",     color( distribution, 50, 50, 150 ));
+        setColor( "action.dropdown.line.pressed.enabled",            color( distribution, 200, 200, 0 ));
+        setColor( "action.dropdown.line.pressed.selected.enabled",   color( distribution, 0, 0, 200 ));
         
         // Paint
-        setColor( "paint.divider",                            new Color( 0, 0, 0 ));
-        setColor( "paint.insertion",                          new Color( 255, 0, 0 ));
-        setColor( "paint.line",                               new Color( 0, 0, 0 ));
+        setColor( "paint.divider",                            color( distribution, 0, 0, 0 ));
+        setColor( "paint.insertion",                          color( distribution, 255, 0, 0 ));
+        setColor( "paint.line",                               color( distribution, 0, 0, 0 ));
+    }
+    
+    private Color color( Distribution distribution, int p, int s, int t ){
+        switch( distribution ){
+            case BGR: return new Color( t, s, p );
+            case BRG: return new Color( t, p, s );
+            case GBR: return new Color( t, p, s );
+            case GRB: return new Color( s, p, t );
+            case RBG: return new Color( p, t, s );
+            case RGB: return new Color( p, s, t );
+            default:  return new Color( p, s, t );
+        }
     }
 }

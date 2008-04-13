@@ -29,15 +29,21 @@ import java.awt.*;
 import javax.swing.border.Border;
 
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexSystemColor;
+import bibliothek.gui.DockController;
+import bibliothek.gui.dock.util.color.ColorCodes;
 
 /**
+ * A border that has round edges.
  * @author Janni Kovacs
  */
+@ColorCodes( "stack.border" )
 public class EclipseBorder implements Border {
 	private boolean fillEdges;
+	private DockController controller;
 	
-	public EclipseBorder( boolean fillEdges ){
+	public EclipseBorder( DockController controller, boolean fillEdges ){
 	    this.fillEdges = fillEdges;
+	    this.controller = controller;
 	}
 	
 	public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
@@ -58,7 +64,11 @@ public class EclipseBorder implements Border {
             g.fillRect( width-1, 4, 1, 2 );
 		}
 		
-		g.setColor( RexSystemColor.getBorderColor() );
+		Color color = controller.getColors().get( "stack.border" );
+		if( color == null )
+		    color = RexSystemColor.getBorderColor();
+		
+		g.setColor( color );
 		// top left corner
 		g.drawLine(4, 1, 5, 1);
 		g.drawLine(3, 2, 3, 2);

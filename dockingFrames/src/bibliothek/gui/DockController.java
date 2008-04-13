@@ -27,6 +27,8 @@
 package bibliothek.gui;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.*;
@@ -35,6 +37,7 @@ import java.util.List;
 import javax.swing.FocusManager;
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 
 import bibliothek.gui.dock.DockElement;
@@ -234,6 +237,7 @@ public class DockController {
         relocator.addMode( DockRelocatorMode.NO_COMBINATION );
         
         setSingleParentRemover( factory.createSingleParentRemover( this, setup ) );
+        
         UIManager.addPropertyChangeListener( lookAndFeelObserver );
         
         for( ControllerSetupListener listener : setupListeners )
@@ -734,11 +738,49 @@ public class DockController {
             Component component = focusedDockable.getComponent();
             if( component.isFocusable() ){
                 component.requestFocus();
+                component.requestFocusInWindow();
+                focus( component, 10, 20 );
             }
             else{
                 KeyboardFocusManager.getCurrentKeyboardFocusManager().focusNextComponent( component );
             }
         }
+    }
+    
+    /**
+     * Ensures that <code>component</code> has the focus and is on the 
+     * active window. This is done by waiting <code>delay</code> milliseconds
+     * and then checking the current focus owner. If the owner is not <code>component</code>,
+     * then the focus is transfered. Checking stops after <code>component</code>
+     * is found to be the focus owner, or <code>loops</code> failures were reported.<br>
+     * Note: this awkward method to change the focus is necessary because on some
+     * systems - like Linux - Java does not handle focus very well.
+     * @param component the component which should have the focus
+     * @param delay how much time to wait between two checks of the focus
+     * @param loops how many times to check
+     */
+    private void focus( final Component component, int delay, final int loops ){
+        final Timer timer = new Timer( delay, null );
+        timer.addActionListener( new ActionListener(){
+            private int remaining = loops;
+            
+            public void actionPerformed( ActionEvent e ) {
+                remaining--;
+
+                KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+                if( manager.getPermanentFocusOwner() != component ){
+                    manager.clearGlobalFocusOwner();
+                    component.requestFocus();
+                    
+                    if( remaining > 0 ){
+                        timer.restart();
+                    }
+                }
+            }
+        });
+        
+        timer.setRepeats( false );
+        timer.start();
     }
     
     /**

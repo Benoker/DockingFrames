@@ -33,6 +33,7 @@ import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.ColorProvider;
 import bibliothek.gui.dock.util.color.DockColor;
+import bibliothek.gui.dock.util.laf.LookAndFeelColors;
 
 /**
  * A <code>ColorScheme</code> is a collection of colors and providers.
@@ -64,7 +65,8 @@ public interface ColorScheme {
     public void transmitAll( Priority priority, ColorManager manager );
     
     /**
-     * Called when the {@link LookAndFeel} changed and this scheme
+     * Called when the {@link LookAndFeel} or a color of the
+     * {@link LookAndFeelColors} changed and this scheme
      * perhaps needs to update its colors.
      * @return <code>true</code> if anything changed, <code>false</code>
      * if this scheme was not changed.

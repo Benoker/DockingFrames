@@ -35,8 +35,8 @@ import static bibliothek.util.Colors.undiffMirror;
 import java.awt.Color;
 
 import javax.swing.LookAndFeel;
-import javax.swing.UIManager;
 
+import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.themes.ColorProviderFactory;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.themes.color.DefaultColorScheme;
@@ -44,6 +44,7 @@ import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.ColorProvider;
 import bibliothek.gui.dock.util.color.DockColor;
+import bibliothek.gui.dock.util.laf.LookAndFeelColors;
 
 /**
  * A color scheme that generates most of its colors from a small starting set of
@@ -87,15 +88,17 @@ public class SimpleBubbleColorScheme extends DefaultColorScheme {
 
             public boolean updateUI() {
                 delegate = new SimpleBubbleColorScheme( 
-                        UIManager.getColor( "MenuItem.selectionBackground"),
-                        UIManager.getColor( "MenuItem.background" ),
+                        DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_BACKGROUND ),
+                        DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ),
                         
-                        diffMirror( UIManager.getColor( "MenuItem.background" ), 0.25 ),
-                        diffMirror( UIManager.getColor( "MenuItem.selectionBackground" ), 0.4 ),
-                        undiffMirror( UIManager.getColor( "MenuItem.background" ), 0.75 ),
                         
-                        UIManager.getColor( "MenuItem.selectionForeground"),
-                        UIManager.getColor( "MenuItem.foreground"),
+                        
+                        diffMirror( DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ), 0.25 ),
+                        diffMirror( DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_BACKGROUND ), 0.4 ),
+                        undiffMirror( DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ), 0.75 ),
+                        
+                        DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_FOREGROUND ),
+                        DockUI.getColor( LookAndFeelColors.TITLE_FOREGROUND ),
                         0.3, 0.6, 0.9 );
                 
                 return true;

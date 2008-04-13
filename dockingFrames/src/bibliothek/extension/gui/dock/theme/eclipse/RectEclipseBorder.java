@@ -25,6 +25,7 @@
  */
 package bibliothek.extension.gui.dock.theme.eclipse;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Insets;
@@ -32,6 +33,7 @@ import java.awt.Insets;
 import javax.swing.border.Border;
 
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexSystemColor;
+import bibliothek.gui.DockController;
 
 /**
  * This border paints a thin line. At the bottom, two hard edges are painted,
@@ -43,12 +45,17 @@ public class RectEclipseBorder implements Border {
     /** whether to fill the top edges */
     private boolean fillEdges;
     
+    /** the source for colors */
+    private DockController controller;
+    
     /**
      * Creates a new border.
+     * @param controller the controller for which this border will be used
      * @param fillEdges whether the top edges should be filled with the
      * background color or let empty.
      */
-    public RectEclipseBorder( boolean fillEdges ){
+    public RectEclipseBorder( DockController controller, boolean fillEdges ){
+        this.controller = controller;
         this.fillEdges = fillEdges;
     }
     
@@ -64,7 +71,12 @@ public class RectEclipseBorder implements Border {
             g.drawLine( width-1, 1, width-1, 1 );
         }
         
-        g.setColor( RexSystemColor.getBorderColor() );
+        Color color = controller.getColors().get( "stack.border" );
+        if( color == null )
+            color = RexSystemColor.getBorderColor();
+        
+        g.setColor( color );
+        
         // top left corner
         g.drawLine( 1, 1, 1, 1 );
         // top right corner

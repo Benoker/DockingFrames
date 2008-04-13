@@ -62,6 +62,7 @@ import bibliothek.gui.dock.util.PropertyKey;
 /**
  * A theme imitating the look and feel of the Eclipse-IDE.
  * @author Janni Kovacs
+ * @author Benjamin Sigg
  */
 @ThemeProperties(
 		authors = {"Janni Kovacs", "Benjamin Sigg"},
@@ -243,6 +244,8 @@ public class EclipseTheme extends BasicTheme {
         updateColor( controllers, "stack.tab.text.selected.focused", null );
         updateColor( controllers, "stack.tab.text.selected.focuslost", null );
 	    
+        updateColor( controllers, "stack.border", null );
+        
 	    for( DockController controller : controllers )
             controller.getColors().unlockUpdate();
 	}

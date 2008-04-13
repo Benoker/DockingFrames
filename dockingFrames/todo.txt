@@ -9,9 +9,10 @@
 - [Done] Store and load DockSituation from XML?
 - [Done] Allow StackDockStations to have different colors on the tab.
 - [Done] Possibility to fix size of Dockables on SplitDockStations
-- Guide: mention ColorSchemes and the new layout capabilities of SplitDockStation
+- [Done] Guide: mention ColorSchemes and the new layout capabilities of SplitDockStation
 - SplitDockStation: droping children with SplitDockProperty does not work when the stations size is too small (or the station is not child of a frame?)
-- Problems with LaFs jtatto and synthethica, titlebar seems to be empty.
+- [Done] Problems with LaF jtatto, decorated windows
+- [Done] Problem with Nimbus, colors not found
 - [Done] Actions (minimize, ...) of CDockable should be customizeable and hideable
 - [Done] More flexibility in different stations for common, for example only one minimizing-area
 - Size request on invisible panels?

@@ -33,10 +33,7 @@ import java.util.List;
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 
-import bibliothek.gui.DockController;
-import bibliothek.gui.DockStation;
-import bibliothek.gui.DockTheme;
-import bibliothek.gui.Dockable;
+import bibliothek.gui.*;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.event.UIListener;
@@ -55,6 +52,8 @@ import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.ColorProvider;
 import bibliothek.gui.dock.util.color.DockColor;
+import bibliothek.gui.dock.util.laf.LookAndFeelColors;
+import bibliothek.gui.dock.util.laf.LookAndFeelColorsListener;
 
 /**
  * A {@link DockTheme theme} that does not install anything and uses the
@@ -102,6 +101,17 @@ public class BasicTheme implements DockTheme{
         }
     };
     
+    /** a listener waiting for changes in the {@link LookAndFeelColors} */
+    private LookAndFeelColorsListener colorListener = new LookAndFeelColorsListener(){
+        public void colorChanged( String key ) {
+            colorsChanged();
+        }
+        public void colorsChanged() {
+            if( colorScheme.updateUI() )
+                updateColors( getControllers() );
+        }
+    };
+    
     /**
      * Creates a new <code>BasicTheme</code>.
      */
@@ -123,6 +133,7 @@ public class BasicTheme implements DockTheme{
     public void install( DockController controller ) {
         if( controllers.isEmpty() ){
             controller.addUIListener( uiListener );
+            DockUI.getDefaultDockUI().addLookAndFeelColorsListener( colorListener );
             updateUI();
         }
         controllers.add( controller );
@@ -142,6 +153,10 @@ public class BasicTheme implements DockTheme{
         }
         else{
             controllers.remove( controller );
+        }
+        
+        if( controllers.isEmpty() ){
+            DockUI.getDefaultDockUI().removeLookAndFeelColorsListener( colorListener );
         }
     }
     
@@ -190,6 +205,10 @@ public class BasicTheme implements DockTheme{
         updateColor( controllers, "stack.tab.background", null );
         updateColor( controllers, "stack.tab.background.selected", null );
         updateColor( controllers, "stack.tab.background.focused", null );
+        
+        updateColor( controllers, "paint.line", null );
+        updateColor( controllers, "paint.divider", null );
+        updateColor( controllers, "paint.insertion", null );
         
         updateColorProvider( controllers, DockColor.class );
         updateColorProvider( controllers, TabColor.class );

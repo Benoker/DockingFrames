@@ -53,7 +53,8 @@ import bibliothek.gui.dock.util.color.ColorCodes;
 @ColorCodes({"stack.tab.border", "stack.tab.border.selected", "stack.tab.border.selected.focused", "stack.tab.border.selected.focuslost",
     "stack.tab.top", "stack.tab.tob.selected", "stack.tab.top.selected.focused","stack.tab.top.selected.focuslost",
     "stack.tab.bottom", "stack.tab.bottom.selected", "stack.tab.bottom.selected.focused", "stack.tab.bottom.selected.focuslost",
-    "stack.tab.text", "stack.tab.text.selected", "stack.tab.text.selected.focused", "stack.tab.text.selected.focuslost" })
+    "stack.tab.text", "stack.tab.text.selected", "stack.tab.text.selected.focused", "stack.tab.text.selected.focuslost",
+    "stack.border" })
 public abstract class BaseTabComponent extends JComponent implements TabComponent{
     protected final TabColor colorStackTabBorder;
     protected final TabColor colorStackTabBorderSelected;
@@ -74,6 +75,8 @@ public abstract class BaseTabComponent extends JComponent implements TabComponen
     protected final TabColor colorStackTabTextSelected;
     protected final TabColor colorStackTabTextSelectedFocused;
     protected final TabColor colorStackTabTextSelectedFocusLost;
+    
+    protected final TabColor colorStackBorder;
     
     private TabColor[] colors;
     
@@ -127,6 +130,8 @@ public abstract class BaseTabComponent extends JComponent implements TabComponen
         colorStackTabTextSelectedFocused = new ShapedTabColor( "stack.tab.text.selected.focused", Color.BLACK );
         colorStackTabTextSelectedFocusLost = new ShapedTabColor( "stack.tab.text.selected.focuslost", Color.BLACK );
         
+        colorStackBorder = new ShapedTabColor( "stack.border", Color.BLACK );
+        
         colors = new TabColor[]{
                 colorStackTabBorder,
                 colorStackTabBorderSelected,
@@ -143,7 +148,8 @@ public abstract class BaseTabComponent extends JComponent implements TabComponen
                 colorStackTabText,
                 colorStackTabTextSelected,
                 colorStackTabTextSelectedFocused,
-                colorStackTabTextSelectedFocusLost
+                colorStackTabTextSelectedFocusLost,
+                colorStackBorder
         };
         
         addHierarchyListener( new WindowActiveObserver() );

@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -26,14 +26,16 @@
 
 package bibliothek.gui;
 
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 import javax.swing.Icon;
+import javax.swing.LookAndFeel;
+import javax.swing.UIManager;
 
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
@@ -51,6 +53,10 @@ import bibliothek.gui.dock.themes.basic.BasicStationPaint;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.Priority;
+import bibliothek.gui.dock.util.laf.DefaultLookAndFeelColors;
+import bibliothek.gui.dock.util.laf.LookAndFeelColors;
+import bibliothek.gui.dock.util.laf.LookAndFeelColorsListener;
+import bibliothek.util.container.Tuple;
 
 /**
  * A list of icons, text and methods used by the framework. 
@@ -58,7 +64,7 @@ import bibliothek.gui.dock.util.Priority;
  */
 public class DockUI {
     /** An instance of DockUI */
-	private static DockUI ui = new DockUI();
+	private static DockUI ui;
 	
 	/** The resource bundle for some text shown in this framework */
 	private ResourceBundle bundle;
@@ -69,11 +75,40 @@ public class DockUI {
     /** A list of all available themes */
     private List<ThemeFactory> themes = new ArrayList<ThemeFactory>();
     
+    /** contains regex-LookAndFeelColor pairs */
+    private List<Tuple<String, LookAndFeelColors>> lookAndFeelColors = new ArrayList<Tuple<String,LookAndFeelColors>>();
+    
+    /** the currently used {@link LookAndFeelColors} */
+    private LookAndFeelColors lookAndFeelColor;
+    
+    /** a list of color listeners that is called from {@link #colorsListeners} */
+    private List<LookAndFeelColorsListener> colorsListeners = new ArrayList<LookAndFeelColorsListener>();
+    
+    /** a listener added to {@link #lookAndFeelColor} */
+    private LookAndFeelColorsListener colorsListener = new LookAndFeelColorsListener(){
+        public void colorChanged( String key ) {
+            for( LookAndFeelColorsListener listener : colorsListeners.toArray( new LookAndFeelColorsListener[ colorsListeners.size()] ))
+                listener.colorChanged( key );
+        }
+
+        public void colorsChanged() {
+            for( LookAndFeelColorsListener listener : colorsListeners.toArray( new LookAndFeelColorsListener[ colorsListeners.size()] ))
+                listener.colorsChanged();
+        }
+    };
+    
     /**
      * Gets the default instance of DockUI.
      * @return the instance
      */
 	public static DockUI getDefaultDockUI(){
+		if( ui == null ){
+		    synchronized( DockUI.class ){
+		        if( ui == null ){
+		            ui = new DockUI();
+		        }
+		    }
+		}
 		return ui;
 	}
 	
@@ -108,6 +143,23 @@ public class DockUI {
         setBundle( Locale.getDefault() );
         
         registerThemes();
+        
+        registerColors();
+        
+        UIManager.addPropertyChangeListener( new PropertyChangeListener(){
+            public void propertyChange( PropertyChangeEvent evt ) {
+                if( "lookAndFeel".equals( evt.getPropertyName() )){
+                    updateUI();
+                }
+            }            
+        });
+    }
+    
+    /**
+     * Called when the {@link LookAndFeel} changed.
+     */
+    protected void updateUI(){
+        updateLookAndFeelColors();
     }
     
     private void registerThemes(){
@@ -120,6 +172,11 @@ public class DockUI {
         registerTheme( NoStackTheme.getFactory( FlatTheme.class, null, this ));
         registerTheme( NoStackTheme.getFactory( SmoothTheme.class, null, this ));
         registerTheme( NoStackTheme.getFactory( BubbleTheme.class, null, this ));
+    }
+    
+    private void registerColors(){
+        registerColors( ".+", new DefaultLookAndFeelColors() );
+        
     }
     
     /**
@@ -169,6 +226,104 @@ public class DockUI {
      */
     public void unregisterTheme( ThemeFactory factory ){
         themes.remove( factory );
+    }
+    
+    /**
+     * Registeres a new {@link LookAndFeelColors}. The <code>lookAndFeelClassNameRegex</code>
+     * is a regular expression. If a {@link LookAndFeel} is active whose class name
+     * {@link String#matches(String) matches} <code>lookAndFeelClassNameRegex</code>,
+     * then <code>colors</code> becomes the selected source for colors. If more
+     * then one regex matches, the last one that was added to this {@link DockUI}
+     * is taken. So generally one would first add the most general regexes, and
+     * the more detailed ones later.
+     * @param lookAndFeelClassNameRegex a description of a class name
+     * @param colors the new set of colors
+     */
+    public void registerColors( String lookAndFeelClassNameRegex, LookAndFeelColors colors ){
+        if( lookAndFeelClassNameRegex == null )
+            throw new IllegalArgumentException( "lookAndFeelClassNameRegex must not be null" );
+            
+        if( colors == null )
+            throw new IllegalArgumentException( "colors must not be null" );
+        
+        lookAndFeelColors.add( new Tuple<String, LookAndFeelColors>( lookAndFeelClassNameRegex, colors ));
+        updateLookAndFeelColors();
+    }
+    
+    /**
+     * Adds a listener which gets informed when a color of the current
+     * {@link LookAndFeelColors} changes. This listener gets not informed
+     * about any changes when the {@link LookAndFeel} itself gets replaced.
+     * This listener will automatically be transfered when another 
+     * {@link LookAndFeelColors} gets selected.
+     * @param listener the new listener, not <code>null</code>
+     */
+    public void addLookAndFeelColorsListener( LookAndFeelColorsListener listener ){
+        if( listener == null )
+            throw new IllegalArgumentException( "listener must not be null" );
+        
+        colorsListeners.add( listener );
+    }
+    
+    /**
+     * Removes a listener from this {@link DockUI}.
+     * @param listener the listener to remove
+     */
+    public void removeLookAndFeelColorsListener( LookAndFeelColorsListener listener ){
+        colorsListeners.remove( listener );
+    }
+    
+    /**
+     * Updates the currently used {@link LookAndFeelColors} to the best
+     * matching colors.
+     */
+    protected void updateLookAndFeelColors(){
+        LookAndFeelColors next = selectBestMatchingColors();
+        if( next != lookAndFeelColor ){
+            if( lookAndFeelColor != null ){
+                lookAndFeelColor.unbind();
+                lookAndFeelColor.removeListener( colorsListener );
+            }
+            
+            lookAndFeelColor = next;
+            if( next != null ){
+                next.bind();
+                lookAndFeelColor.addListener( colorsListener );
+            }
+        }
+    }
+    
+    /**
+     * Gets the {@link LookAndFeelColors} which matches the current
+     * {@link LookAndFeel} best.
+     * @return the current set of colors
+     */
+    protected LookAndFeelColors selectBestMatchingColors(){
+        String className = UIManager.getLookAndFeel().getClass().getName();
+        for( int i = lookAndFeelColors.size()-1; i >= 0; i-- ){
+            if( className.matches( lookAndFeelColors.get( i ).getA() ))
+                return lookAndFeelColors.get( i ).getB();
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Gets the current source of colors that depend on the {@link LookAndFeel}.
+     * @return the current source of colors
+     */
+    public LookAndFeelColors getColors(){
+        return lookAndFeelColor;
+    }
+    
+    /**
+     * Gets the color <code>key</code> where <code>key</code> is one of
+     * the keys specified in {@link LookAndFeelColors}.
+     * @param key the name of the color
+     * @return the color or <code>null</code>
+     */
+    public static Color getColor( String key ){
+        return getDefaultDockUI().getColors().getColor( key );
     }
     
     /**

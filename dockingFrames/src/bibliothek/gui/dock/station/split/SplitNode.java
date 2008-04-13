@@ -226,8 +226,15 @@ public abstract class SplitNode{
                 (int)(width * fw + 0.5),
                 (int)(height * fh + 0.5 ));
         
-        rec.width = Math.max( 0, rec.width );
-        rec.height = Math.max( 0, rec.height );
+
+        Dimension parent = getAccess().getOwner().getSize();
+        
+        rec.x = Math.min( parent.width, Math.max( 0, rec.x ));
+        rec.y = Math.min( parent.height, Math.max( 0, rec.y ));
+        
+        rec.width  = Math.min( parent.width - rec.x, Math.max( 0, rec.width ));
+        rec.height = Math.min( parent.height - rec.y, Math.max( 0, rec.height ));
+        
         return rec;
     }
     

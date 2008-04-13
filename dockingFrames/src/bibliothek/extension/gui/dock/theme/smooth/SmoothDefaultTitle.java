@@ -120,10 +120,12 @@ public class SmoothDefaultTitle extends BasicDockTitle{
             }
             
             if( !done ){
-                if( isActive() )
+                if( isActive() ){
                     setForeground( getActiveTextColor() );
-                else
+                }
+                else{
                     setForeground( getInactiveTextColor() );
+                }
             }
         }
     }
