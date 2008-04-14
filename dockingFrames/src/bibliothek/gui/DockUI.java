@@ -53,9 +53,7 @@ import bibliothek.gui.dock.themes.basic.BasicStationPaint;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.Priority;
-import bibliothek.gui.dock.util.laf.DefaultLookAndFeelColors;
-import bibliothek.gui.dock.util.laf.LookAndFeelColors;
-import bibliothek.gui.dock.util.laf.LookAndFeelColorsListener;
+import bibliothek.gui.dock.util.laf.*;
 import bibliothek.util.container.Tuple;
 
 /**
@@ -176,7 +174,7 @@ public class DockUI {
     
     private void registerColors(){
         registerColors( ".+", new DefaultLookAndFeelColors() );
-        
+        registerColors( "com\\.sun\\.java\\.swing\\.plaf\\.nimbus\\.NimbusLookAndFeel", new Nimbus6u10() );
     }
     
     /**

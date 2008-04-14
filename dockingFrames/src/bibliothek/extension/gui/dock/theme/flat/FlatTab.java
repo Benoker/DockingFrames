@@ -357,7 +357,7 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
         }
         
         public void dockableFocused( DockController controller, Dockable oldFocused, Dockable newFocused ) {
-            focused = this.dockable == dockable;
+            focused = this.dockable == newFocused;
             repaint();
         }
         

@@ -114,7 +114,12 @@ public class DockFocusTraversalPolicy extends FocusTraversalPolicy {
      */
     protected Component after( Component component ){
         Container provider = getRootOrProvider( component );
+        if( provider == null )
+            return null;
+        
         FocusTraversalPolicy providerPolicy = getFocusTraversalPolicy( provider );
+        if( providerPolicy == null )
+            return null;
         
         Component result;
         if( providerPolicy == this ){

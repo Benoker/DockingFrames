@@ -230,9 +230,9 @@ public class EclipseTheme extends BasicTheme {
         updateColor( controllers, "stack.tab.border.selected.focuslost", null );
         
         updateColor( controllers, "stack.tab.top", null );
-        updateColor( controllers, "stack.tab.tob.selected", null );
-        updateColor( controllers, "stack.tab.tob.selected.focused", null );
-        updateColor( controllers, "stack.tab.tob.selected.focuslost", null );
+        updateColor( controllers, "stack.tab.top.selected", null );
+        updateColor( controllers, "stack.tab.top.selected.focused", null );
+        updateColor( controllers, "stack.tab.top.selected.focuslost", null );
         
         updateColor( controllers, "stack.tab.bottom", null );
         updateColor( controllers, "stack.tab.bottom.selected", null );

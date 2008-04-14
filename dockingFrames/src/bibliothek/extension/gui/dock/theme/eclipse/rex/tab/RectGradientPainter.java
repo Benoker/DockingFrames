@@ -35,7 +35,6 @@ import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 
 import bibliothek.extension.gui.dock.theme.eclipse.RectEclipseBorder;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.RexSystemColor;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -48,7 +47,7 @@ import bibliothek.gui.dock.util.color.ColorCodes;
  * @author Janni Kovacs
  */
 @ColorCodes({"stack.tab.border", "stack.tab.border.selected", "stack.tab.border.selected.focused", "stack.tab.border.selected.focuslost",
-    "stack.tab.top", "stack.tab.tob.selected", "stack.tab.top.selected.focused","stack.tab.top.selected.focuslost",
+    "stack.tab.top", "stack.tab.top.selected", "stack.tab.top.selected.focused","stack.tab.top.selected.focuslost",
     "stack.tab.bottom", "stack.tab.bottom.selected", "stack.tab.bottom.selected.focused", "stack.tab.bottom.selected.focuslost",
     "stack.tab.text", "stack.tab.text.selected", "stack.tab.text.selected.focused", "stack.tab.text.selected.focuslost",
     "stack.border "})
@@ -60,29 +59,8 @@ public class RectGradientPainter extends BaseTabComponent {
 	        return new RectGradientPainter( component, controller, station, dockable, index );
 	    }
 	    
-		public void paintTabStrip( RexTabbedComponent tabbedComponent, Component tabStrip, Graphics g ){
-			int selectedIndex = tabbedComponent.getSelectedIndex();
-			if (selectedIndex != -1) {
-				Rectangle selectedBounds = tabbedComponent.getBoundsAt(selectedIndex);
-				int to = selectedBounds.x;
-				int from = selectedBounds.x + selectedBounds.width-1;
-				int end = tabStrip.getWidth();
-				
-				Color lineColor = null;
-				DockController controller = tabbedComponent.getController();
-				if( controller != null )
-				    lineColor = controller.getColors().get( "stack.border" );
-				if( lineColor == null )
-				    lineColor = RexSystemColor.getBorderColor();
-				
-				g.setColor(lineColor);
-				int y = tabStrip.getHeight()-1;
-				
-				if (to != 0)
-					g.drawLine(-1, y, to-1, y);
-				if( from != end )
-					g.drawLine(from, y, end, y);
-			}
+		public TabStripPainter createTabStripPainter( RexTabbedComponent component ) {
+		    return new LineStripPainter( component );
 		}
 		
         public Border getFullBorder( DockController controller, Dockable dockable ) {

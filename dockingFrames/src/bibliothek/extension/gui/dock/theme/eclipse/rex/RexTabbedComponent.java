@@ -35,10 +35,7 @@ import java.util.List;
 import javax.swing.*;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.ShapedGradientPainter;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabComponent;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabListener;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.*;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -62,6 +59,7 @@ public class RexTabbedComponent extends JComponent {
 	private Dockable selectedTab;
 	private Dockable focusedTab;
 	private TabPainter tabPainter;
+	private TabStripPainter tabStripPainter;
 	private List<TabListener> listeners = new LinkedList<TabListener>();
 	private List<TabEntry> tabs = new ArrayList<TabEntry>();
 	private JComponent contentArea;
@@ -141,6 +139,10 @@ public class RexTabbedComponent extends JComponent {
 	    	}
 	    	
             this.controller = controller;
+            
+            if( tabStripPainter != null )
+                tabStripPainter.setController( controller );
+            
             reinitializeTabs();
         }
 	}
@@ -160,6 +162,18 @@ public class RexTabbedComponent extends JComponent {
 	public void setTabPainter(TabPainter painter) {
 	    if( this.tabPainter != painter ){
 	        this.tabPainter = painter;
+	        
+	        if( tabStripPainter != null ){
+	            tabStripPainter.setController( null );
+	            tabStripPainter = null;
+	        }
+	        
+	        if( painter != null ){
+	            tabStripPainter = painter.createTabStripPainter( this );
+	            if( tabStripPainter != null )
+	                tabStripPainter.setController( controller );
+	        }
+	        
 		    reinitializeTabs();
 	    }
 	}
@@ -195,6 +209,10 @@ public class RexTabbedComponent extends JComponent {
 	public TabPainter getTabPainter(){
 		return tabPainter;
 	}
+	
+	public TabStripPainter getTabStripPainter() {
+        return tabStripPainter;
+    }
 	
 	public void setPaintIconsWhenInactive( boolean paint ){
 		this.paintIconsWhenInactive = paint;

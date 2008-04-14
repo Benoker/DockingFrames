@@ -33,7 +33,7 @@ public class EclipseDockTitleEvent extends DockTitleEvent {
     public EclipseDockTitleEvent( DockStation station, Dockable dockable,
             boolean selected, boolean focused, boolean paintIconWhenInactive, int index ){
         
-        super( station, dockable, selected );
+        super( station, dockable, focused );
         this.focused = focused;
         setPreferred( selected && !focused );
         this.index = index;

@@ -52,7 +52,7 @@ public class EclipseColorScheme extends DefaultColorScheme {
         setColor( "stack.tab.border.selected.focuslost",RexSystemColor.getInactiveColor() );
         
         setColor( "stack.tab.top",                      DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND ) );
-        setColor( "stack.tab.tob.selected",             RexSystemColor.getInactiveColor() );
+        setColor( "stack.tab.top.selected",             RexSystemColor.getInactiveColor() );
         setColor( "stack.tab.top.selected.focused",     RexSystemColor.getActiveColor() );
         setColor( "stack.tab.top.selected.focuslost",   RexSystemColor.getInactiveColor() );
         

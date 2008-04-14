@@ -23,35 +23,30 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.eclipse.rex;
+package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
 
+import java.awt.Component;
 import java.awt.Graphics;
 
-import javax.swing.JComponent;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
+import bibliothek.gui.DockController;
 
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabStripLayoutManager;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabStripPainter;
-
-public class RexTabStrip extends JComponent{
-	private RexTabbedComponent tabbedComponent;
-	
-	public RexTabStrip( RexTabbedComponent component ) {
-		setLayout( new TabStripLayoutManager( component ) );
-		setFocusable(false);
-		this.tabbedComponent = component;
-	}
-
-	public RexTabbedComponent getTabbedComponent() {
-        return tabbedComponent;
-    }
-	
-	@Override
-	protected void paintComponent( Graphics g ){
-		super.paintComponent( g );
-		TabStripPainter painter = tabbedComponent.getTabStripPainter();
-		if( painter != null ){
-		    g.setClip(0, 0, getWidth(), getHeight());
-		    painter.paintTabStrip( this, g );
-		}
-	}
+/**
+ * A {@link TabStripPainter} paints the background of a {@link Component}
+ * which shows the tabs of a {@link RexTabbedComponent}.
+ * @author Benjamin Sigg
+ */
+public interface TabStripPainter {
+    /**
+     * Sets the controller for which this painter is used.
+     * @param controller the controller, can be <code>null</code>
+     */
+    public void setController( DockController controller );
+    
+    /**
+     * Paints the background of <code>tabStrip</code>.
+     * @param tabStrip the tabs of <code>tabbedComponent</code>
+     * @param g the graphics used to paint on <code>tabStrip</code> 
+     */
+    public void paintTabStrip( Component tabStrip, Graphics g);
 }

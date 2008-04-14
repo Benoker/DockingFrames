@@ -25,9 +25,6 @@
  */
 package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
 
-import java.awt.Component;
-import java.awt.Graphics;
-
 import javax.swing.border.Border;
 
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
@@ -41,12 +38,11 @@ import bibliothek.gui.dock.StackDockStation;
  */
 public interface TabPainter {
     /**
-     * Paints the background of <code>tabStrip</code>.
-     * @param tabbedComponent the {@link RexTabbedComponent} for which <code>tabStrip</code> is shown
-     * @param tabStrip the tabs of <code>tabbedComponent</code>
-     * @param g the graphics used to paint on <code>tabStrip</code> 
-     */
-	public void paintTabStrip( RexTabbedComponent tabbedComponent, Component tabStrip, Graphics g);
+	 * Creates a new painter for the component which contains the tabs.
+	 * @param component the component for which the painter is created
+	 * @return the new painter, can be <code>null</code>
+	 */
+	public TabStripPainter createTabStripPainter( RexTabbedComponent component );
 	
 	/**
 	 * Creates a new entry for the tab-strip above the contents of a 

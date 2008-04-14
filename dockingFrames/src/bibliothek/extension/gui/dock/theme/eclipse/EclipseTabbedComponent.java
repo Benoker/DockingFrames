@@ -39,6 +39,7 @@ import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.ShapedGradientPainter;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabPainter;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabStripLayoutManager;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabStripPainter;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -184,7 +185,10 @@ public class EclipseTabbedComponent extends RexTabbedComponent {
 		@Override
 		protected void paintComponent( Graphics g ){
 			super.paintComponent( g );
-			getTabPainter().paintTabStrip( EclipseTabbedComponent.this, this, g );
+			TabStripPainter painter = getTabStripPainter();
+			if( painter != null ){
+			    painter.paintTabStrip( this, g );
+			}
 		}
 		
 		@Override

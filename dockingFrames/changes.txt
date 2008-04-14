@@ -144,6 +144,7 @@
 - API: some LookAndFeels use their own scheme how to name colors. With LookAndFeelColors it is now possible to use a specialized algorithm for different LookAndFeels to extract their colors.
 - Bugfix: BasicTheme did not update colors for key paint.line, paint.divider and paint.division. Hence the color used to indicate drag and drop elements was black on most systems.
 - Bugfix, Layout: The bounds of children of SplitDockStation are now always within the station, rounding errors are cut away.
-- Layout: EclipseTheme uses more colors directly from the LookAndFeel. 
-
-- Patch: colors of the Nimbus LookAndFeel can be extracted under jdk 1.6.0_10, the code for that will be delivered in a new project.
+- Layout: EclipseTheme uses more colors directly from the LookAndFeel.
+! API: TabPainter does no longer paint the strip, it now creates an object that paints the strip. That object can now work with the color-map. 
+- Bugfix: Focus system could throw a NPE. 
+- Layout: colors of the Nimbus LookAndFeel can be extracted under jdk 1.6.0_10

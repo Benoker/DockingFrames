@@ -376,7 +376,7 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 		
 		public void dockableFocused( DockController controller, Dockable oldFocused, Dockable newFocused ) {
 		    boolean old = focused;
-		    focused = this.dockable == dockable;
+		    focused = this.dockable == newFocused;
 		    if( old != focused ){
 		        checkAnimation();
 		    }
