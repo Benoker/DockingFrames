@@ -256,6 +256,7 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 			entry.relocator = controller.getRelocator().createRemote(dockable);
 		
 		dockables.add( index, entry );
+		updateFocus();
 	}
 
 	public Dockable getDockable( int index ){

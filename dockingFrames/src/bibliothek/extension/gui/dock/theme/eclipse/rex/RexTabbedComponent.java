@@ -56,13 +56,15 @@ public class RexTabbedComponent extends JComponent {
 	public static final int RIGHT = 3;
 
 	protected JComponent tabStrip;
-	private Dockable selectedTab;
-	private Dockable focusedTab;
+	private int selectedTab = -1;
+	private int focusedTab = -1;
 	private TabPainter tabPainter;
 	private TabStripPainter tabStripPainter;
 	private List<TabListener> listeners = new LinkedList<TabListener>();
 	private List<TabEntry> tabs = new ArrayList<TabEntry>();
+	
 	private JComponent contentArea;
+	private CardLayout contentLayout;
 	
 	private boolean paintIconsWhenInactive = false;
 	private DockController controller;
@@ -86,7 +88,8 @@ public class RexTabbedComponent extends JComponent {
 
 	private void initComponent() {
 		setTabStrip( new RexTabStrip( this ));
-		contentArea = new JPanel(new BorderLayout());
+		contentLayout = new CardLayout();
+		contentArea = new JPanel( contentLayout );
 		contentArea.setFocusable( false );
 		
 		setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, SystemColor.controlShadow));
@@ -193,14 +196,16 @@ public class RexTabbedComponent extends JComponent {
 	    if( controller != null && tabPainter != null ){
 	        int index = 0;
 	        for( TabEntry entry : tabs ){
-                entry.tab = tabPainter.createTabComponent( controller, this, stack, entry.dockable, index++ );
+                entry.tab = tabPainter.createTabComponent( controller, this, stack, entry.dockable, index );
                 entry.tab.addMouseListener( entry.tabMouseListener );
                 entry.tab.setPaintIconWhenInactive( paintIconsWhenInactive );
-                entry.tab.setSelected( entry.dockable == selectedTab );
-                entry.tab.setFocused( entry.dockable == focusedTab );
+                entry.tab.setSelected( index == selectedTab );
+                entry.tab.setFocused( index == focusedTab );
                 bind( entry );
                 
                 tabStrip.add( entry.tab.getComponent() );
+                
+                index++;
             }
 	        tabStrip.revalidate();
 	    }
@@ -228,7 +233,7 @@ public class RexTabbedComponent extends JComponent {
 	}
 
 	public void insertTab( Dockable dockable, int index) {
-		TabEntry entry = new TabEntry();
+	    TabEntry entry = new TabEntry();
 		entry.dockable = dockable;
 		entry.tabMouseListener = new TabMouseListener( dockable );
 		tabs.add( index, entry );
@@ -248,14 +253,26 @@ public class RexTabbedComponent extends JComponent {
     			tabStrip.add( tabComponent.getComponent() );
     		}
 		}
+		
+		if( selectedTab >= index )
+		    selectedTab++;
+		
+		if( focusedTab >= index )
+		    focusedTab++;
+		
+		contentArea.add( dockable.getComponent(), String.valueOf( entry.id ) );
+		setSelectedTab( index, true );
 	}
-
+	
 	public int getTabCount() {
 		return tabs.size();
 	}
 
 	public Dockable getSelectedTab() {
-		return selectedTab;
+	    if( selectedTab < 0 )
+	        return null;
+	    
+	    return getTabAt( selectedTab );
 	}
 
 	public TabComponent getTabComponent( int index ){
@@ -271,41 +288,66 @@ public class RexTabbedComponent extends JComponent {
 		return -1;
 	}
 
+	public void removeTab( int index ){
+	    Dockable dockable = getTabAt( index );
+	    
+	    TabEntry entry = tabs.get( index );
+        tabs.remove( index );
+        if( entry.tab != null ){
+            tabStrip.remove( entry.tab.getComponent() );
+            unbind( entry );
+            entry.tab.removeMouseListener( entry.tabMouseListener );
+        }
+        
+        for( int i = index, n = tabs.size(); i<n; i++ ){
+            TabComponent tab = tabs.get( i ).tab;
+            if( tab != null ){
+                tab.setIndex( i );
+            }
+        }
+        
+        int selection;
+        if( index < selectedTab )
+            selection = selectedTab-1;
+        else if( index == selectedTab ){
+            if( index == tabs.size() )
+                selection = index-1;
+            else
+                selection = index;
+        }
+        else
+            selection = selectedTab;
+        
+        selectedTab = -1;
+        contentArea.remove( entry.dockable.getComponent() );
+
+        if( index < focusedTab )
+            focusedTab--;
+        else if( index == focusedTab )
+            focusedTab = -1;
+        
+	    for (TabListener listener : listeners) {
+            listener.tabRemoved( dockable );
+        }
+	    
+	    setSelectedTab( selection, true );
+	}
+	
 	public void removeTab( Dockable dockable ) {
-		for (TabListener listener : listeners) {
-			listener.tabRemoved( dockable );
-		}
 		int index = indexOf( dockable );
-		TabEntry entry = tabs.get( index );
-		tabs.remove( index );
-		if( entry.tab != null ){
-		    tabStrip.remove( entry.tab.getComponent() );
-		    unbind( entry );
-		    entry.tab.removeMouseListener( entry.tabMouseListener );
-		}
-		
-		for( int i = index, n = tabs.size(); i<n; i++ ){
-		    TabComponent tab = tabs.get( i ).tab;
-		    if( tab != null ){
-		        tab.setIndex( i );
-		    }
-		}
-		
-		if (dockable == selectedTab) {
-			if (index == tabs.size()) {
-				index = tabs.size() - 1;
-			}
-			if (index >= 0 && index < tabs.size()) {
-				setSelectedTab(index);
-			} else {
-				setSelectedTab(null);
-			}
-		}
-		
+		if( index >= 0 )
+		    removeTab( index );
 	}
 
 	public void removeAllTabs() {
-		for (TabEntry tab : tabs) {			
+	    selectedTab = -1;
+        focusedTab = -1;
+        
+	    contentArea.removeAll();
+	    
+		for (TabEntry tab : tabs) {
+		    contentLayout.removeLayoutComponent( tab.dockable.getComponent() );
+		    
 			for (TabListener listener : listeners) {
 				listener.tabRemoved( tab.dockable );
 				if( tab.tab != null ){
@@ -317,7 +359,6 @@ public class RexTabbedComponent extends JComponent {
 		
 		tabStrip.removeAll();
 		tabs.clear();
-		setSelectedTab(null);
 	}
 
 	public JComponent getContentArea() {
@@ -366,12 +407,60 @@ public class RexTabbedComponent extends JComponent {
 		return indexOf(getSelectedTab());
 	}
 
-	public void setSelectedTab(int i) {
-		setSelectedTab(tabs.get(i).dockable);
+	public void setSelectedTab( int index ) {
+	    setSelectedTab( index, false );
 	}
 	
+	private void setSelectedTab( int index, boolean force ) {
+	    if( force || index != selectedTab ){
+	        if( !force ){
+    	        if( selectedTab >= 0 && selectedTab < tabs.size() ){
+    	            TabComponent tab = tabs.get( selectedTab ).tab;
+    	            if( tab != null ){
+    	                tab.setSelected( false );
+    	            }
+    	        }
+	        }
+
+	        selectedTab = index;
+
+	        if( !force ){
+    	        if( selectedTab >= 0 && selectedTab < tabs.size() ){
+    	            TabComponent tab = tabs.get( selectedTab ).tab;
+    	            if( tab != null )
+    	                tab.setSelected( true );
+    	        }
+	        }
+
+	        if( force ){
+	            int i = 0;
+	            for( TabEntry entry : tabs ){
+	                if( entry.tab != null )
+	                    entry.tab.setSelected( index == i );
+	                
+	                i++;
+	            }
+	        }
+	        
+	        Dockable dockable;
+	        
+	        if( index >= 0 && index < tabs.size() ){
+	            TabEntry entry = tabs.get( index );
+	            dockable = entry.dockable;
+	            contentLayout.show( contentArea, String.valueOf( entry.id ));
+	        }
+	        else
+	            dockable = null;
+	        
+	        for (TabListener listener : listeners) {
+	            listener.tabChanged(dockable);
+	        }
+
+        }
+	}
+
 	public void setFocusedTab( Dockable dockable ){
-		focusedTab = dockable;
+		focusedTab = indexOf( dockable );
 		for( TabEntry entry : tabs ){
 		    if( entry.tab != null )
 		        entry.tab.setFocused( entry.dockable == dockable );
@@ -379,39 +468,9 @@ public class RexTabbedComponent extends JComponent {
 	}
 
 	public void setSelectedTab( Dockable dockable ) {
-		if (dockable != selectedTab) {
-		    int newIndex = -1;
-		    if( dockable != null )
-		        newIndex = indexOf( dockable );
-		    
-		    if( dockable == null || newIndex >= 0 ){
-    			if( selectedTab != null ){
-    				int index = indexOf( selectedTab );
-    				if( index >= 0 ){
-    				    TabComponent tab = tabs.get( index ).tab;
-    				    if( tab != null ){
-    				        tab.setSelected( false );
-    				    }
-    				}
-    			}
-    			
-    			selectedTab = dockable;
-    			
-    			if( selectedTab != null ){
-                    if( newIndex >= 0 ){
-                        TabComponent tab = tabs.get( newIndex ).tab;
-                        if( tab != null )
-                            tab.setSelected( true );
-                    }
-                }
-                
-    			
-    			tabChanged(dockable);
-    			for (TabListener listener : listeners) {
-    				listener.tabChanged(dockable);
-    			}
-		    }
-		}
+		int index = indexOf( dockable );
+		if( index >= 0 )
+		    setSelectedTab( index );
 	}
 
 	public Dockable getTabAt(int index) {
@@ -431,23 +490,18 @@ public class RexTabbedComponent extends JComponent {
 	}
 	
 	public void updateContentBorder(){
-		if( selectedTab != null ){
-		    int index = indexOf( selectedTab );
-		    if( index >= 0 ){
-    			TabEntry entry = tabs.get( index );
-    			if( entry.tab == null ){
-    			    contentArea.setBorder( null );
-    			}
-    			else{
-    			    contentArea.setBorder( entry.tab.getContentBorder() );
-    			}
-			}
-		    else{
+		if( selectedTab >= 0 && selectedTab < tabs.size() ){
+		    TabEntry entry = tabs.get( selectedTab );
+		    if( entry.tab == null ){
 		        contentArea.setBorder( null );
 		    }
+		    else{
+		        contentArea.setBorder( entry.tab.getContentBorder() );
+		    }
 		}
-		else
-			contentArea.setBorder( null );
+		else{
+		    contentArea.setBorder( null );
+		}
 	}
 	
 	protected void popup( Dockable dockable, MouseEvent e ){
@@ -467,24 +521,38 @@ public class RexTabbedComponent extends JComponent {
 			}
 		}
 	}
-	
-	protected void tabChanged(Dockable dockable) {
-		contentArea.removeAll();
-		if (dockable == null) {
-			contentArea.removeAll();
-		} else {
-			contentArea.add( dockable.getComponent(), BorderLayout.CENTER);
-		}
-		contentArea.revalidate();
-		contentArea.repaint();
-	}
 
-	protected static class TabEntry{
+    /**
+     * Searches a new id that is not used on this tabbed component.
+     * @return the next free id
+     */
+    private int nextFreeId(){
+        int id = 0;
+        boolean found = false;
+        do{
+            found = false;
+            
+            for( int i = 0, n = tabs.size(); i<n; i++ ){
+                if( tabs.get( i ).id == id ){
+                    id++;
+                    found = true;
+                }
+            }
+        }while( found );
+        return id;
+    }
+	
+	private class TabEntry{
 		public Dockable dockable;
 		public DockTitle title;
 		public TabComponent tab;
 		public boolean tabBound = false;
 		public TabMouseListener tabMouseListener;
+		public int id;
+		
+		public TabEntry(){
+		    id = nextFreeId();
+		}
 	}
 	
 	private class TabMouseListener extends MouseAdapter{

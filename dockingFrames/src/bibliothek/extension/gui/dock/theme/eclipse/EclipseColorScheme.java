@@ -29,14 +29,14 @@ import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexSystemColor;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.themes.ColorScheme;
-import bibliothek.gui.dock.themes.color.DefaultColorScheme;
+import bibliothek.gui.dock.themes.basic.BasicColorScheme;
 import bibliothek.gui.dock.util.laf.LookAndFeelColors;
 
 /**
  * A {@link ColorScheme} used by the {@link EclipseTheme}.
  * @author Benjamin Sigg
  */
-public class EclipseColorScheme extends DefaultColorScheme {
+public class EclipseColorScheme extends BasicColorScheme {
     /**
      * Creates the new color scheme
      */
@@ -46,6 +46,8 @@ public class EclipseColorScheme extends DefaultColorScheme {
     
     @Override
     public boolean updateUI(){
+        super.updateUI();
+        
         setColor( "stack.tab.border",                   DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND ) );
         setColor( "stack.tab.border.selected",          RexSystemColor.getInactiveColorGradient() );
         setColor( "stack.tab.border.selected.focused",  RexSystemColor.getActiveColorGradient() );
@@ -67,7 +69,6 @@ public class EclipseColorScheme extends DefaultColorScheme {
         setColor( "stack.tab.text.selected.focuslost",  RexSystemColor.getInactiveTextColor() );
         
         setColor( "stack.border",                             RexSystemColor.getBorderColor() );
-    
         return true;
     }
 }
