@@ -134,7 +134,7 @@
 [v1.0.5]
 - Layout: Changed the default KeyStroke to close a CDockable/hide a Dockable from ctrl+c to ctrl+F4, Andrew pointed out that ctrl+c already has a special meaning...
 ! API: the focused/selected methods of DockableFocusListener/DockStationListener have an additional parameter telling which dockable was focused/selected before the new selection
-- API: new listeners (CFocusListener, CKeyboardListener, CDoubleClickListener) which can be added to CDockable (local information) or directly to CControl (global information)
+- API: new listeners (CFocusListener, CKeyboardListener, CDoubleClickListener, global KeyListener) which can be added to CDockable (local information) or directly to CControl (global information)
 - API: CDockableStateListener, CDockablePropertyListener can now be added to CControl as well.
 - Layout: all DockThemes now support FocusTraversalPolicies such that each DockAction and element of a Dockable can be reached
 - API: the DockableSelector/DockableSelection allow users to select new Dockables with the keyboard
@@ -155,3 +155,4 @@
 - API: KeyboardController supports now "global KeyListeners". This listeners get informed about any event that the KeyboardController handles, even if there is no DockElement as source of the event.
 - API: clients can now add and remove Components from the ComponentHiearchyObserver, DockController will add the root-window to the observer if it knows the root window.
 - Bugfix: when focusing a normalized CDockable that was hidden by a maximized element, then the focused Dockale did not replace the maximized element.
+- Bugfix: when changing the ExtendedMode of a CDockable, directly or indirectly, then state-events could be lost.

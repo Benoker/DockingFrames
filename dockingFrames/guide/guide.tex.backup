@@ -19,7 +19,7 @@
 
 \newcommand{\src}[1]{\lstinline[basicstyle=\normalsize\ttfamily,keywordstyle=\normalsize\ttfamily,identifierstyle=\normalsize\ttfamily]|#1|}
 
-\title{DockingFrames 1.0.4 - Core}
+\title{DockingFrames 1.0.5 - Core}
 \author{Benjamin Sigg}
 
 \begin{document}
@@ -260,7 +260,7 @@ The \src{BasicTheme} is a very simple implementation. Its strength is, that it s
 The reverse of \src{BasicTheme}, this theme does not add any borders, buttons or other decorations unless necessary. It's not a very complex theme, and easy to understand by a user.
 \subsubsection{BubbleTheme}
 A more experimental theme. It uses animations and graphical gimmicks wherever possible. This theme has some issues with performance, but it is certainly a good demonstration of the potential of the theming-mechanism.
-\subsubsection{EclipseTheme}
+\subsubsection{EclipseTheme} \label{EclipseTheme}
 The \src{EclipseTheme} tries to imitate the behavior of the famous Eclipse platform. It changes the behavior of DF massivly. Some properties of \src{EclipseTheme} can be set through the \src{DockProperties} as in the following example.
 \begin{lstlisting}
 DockController controller = ...
@@ -320,15 +320,22 @@ Components do not ask the color-map directly for a color, they register a \src{D
 
 There are different subclasses of \src{DockColor}. Each subclass tells by whom the color is used, for example a \src{TitleColor} would be used by a specific \src{DockTitle}.
 
-Clients can exchange and influence the colors in different grades.
+Clients can exchange and influence the colors on different levels.
+
 \subsubsection{ColorScheme}
-The \src{BasicTheme} uses a \src{ColorScheme} to put up its set of colors. \src{ColorScheme} has one important method: \src{getColor}. That method gets a key for a color, and has to return the color that matches. The \src{ColorScheme} of \src{BasicTheme} can be replaced at any time calling through the method \src{setColorScheme}. Since all \src{DockTheme}s of the core library inherit \src{BasicTheme}, the possibility to use a \src{ColorScheme} is available for all themes.
+The \src{BasicTheme} uses a \src{ColorScheme} to put up its set of colors. \src{ColorScheme} has one important method: \src{getColor}. That method gets a key for a color, and has to return the color that matches. The \src{ColorScheme} of \src{BasicTheme} can be replaced at any time calling the method \src{setColorScheme}. Since all \src{DockTheme}s of the core library inherit \src{BasicTheme}, the possibility to use a \src{ColorScheme} is available for all themes.
 
 \subsubsection{ColorManager}
 Instead of putting all colors at once, using a \src{ColorScheme}, a single color can be set with the \src{ColorManager}. The \src{ColorManager} is accessible through the method \src{DockController.getColors}. Clients can just call the method \src{put} to put a new color into the color-map.
 
 \subsubsection{ColorProvider}
+Normally everyone that wants a color gets the same color. Put the color-map forces everyone to use a \src{DockColor}-object to get to its color. That object contains a lot of information, and a \src{ColorProvider} can use that information to return different colors for the same key.
 
+Each subclass of \src{DockColor} can have its own \src{ColorProvider}, but only one \src{ColorProvider} per subclass is allowed. \src{ColorProvider}s are added to the \src{ColorManager} through the \src{publish}-method.
+
+A \src{ColorProvider} has two methods to add and remove observers. The observers need to be stored only if the provider wants to change the colors actively. If the provider only reacts to its \src{set}-method, then no observers need to be stored.
+
+The \src{set}-method is invoked by the \src{ColorManager} whenever either \src{Color} or \src{DockColor} changes. The \src{set}-method then decides which color the \src{DockColor} should get. When the decision is made, it calls \src{setColor} on the \src{DockColor}.
 
 \section{Actions}
 A \src{DockAction} is an object which is related to one or many \src{Dockable}s, they describe some action like "close a \src{Dockable}". Every \src{DockAction} has the ability to create one or many views of itself. A view might be a \src{JButton}, a \src{JCheckBox}, a \src{JMenuItem} or other objects.
@@ -574,6 +581,38 @@ Clients can influence the \src{DockTitle} that is used for a \src{Dockable} in t
  \item They override \src{Dockable.getDockTitle} and return any title they like.
  \item They install a new \src{DockTitleFactory} at the \src{DockTitleManager}. Clients can do this by invoking \src{registerClient(String,DockTitleFactory)}.
 \end{itemize}
+
+\section{Global Properties}
+Every \src{DockController} has map that contains global properties. There are no restrictions to what a property can be, a \src{Boolean} could be a property of a \src{KeyStroke}. 
+
+The map itself is an instance of \src{DockProperties} and can be accessed through \src{DockController.getProperties}. The keys for the map are of type \\\src{PropertyKey}. Each key needs a generic argument, that ensures that there are no casting problems. Clients can use the map for their own purposes.
+
+Clients can add a \src{DockPropertyListener} to the map. This listener will be informed whenever the property of a specified key changes.
+
+Clients might also use a \src{PropertyValue}, which is a \src{DockPropertyListener} that can attach itself to a \src{DockProperties}. A \src{PropertyValue} has also the ability to override the value it normaly reads from the map by a custom value.
+
+This chapter will now list up all keys and their meanings that are present in DF. 
+
+\begin{itemize}
+\item \src{PropertyKey.DOCKABLE_ICON} An \src{Icon} that is shown in the title of a \src{Dockable} if the \src{Dockable} has no \src{Icon} of its own.
+\item \src{PropertyKey.DOCKABLE_TITLE} A \src{String} that is shown as text in the title of a \src{Dockable} if the \src{Dockable} has no title text of its own.
+\item \src{PropertyKey.DOCK_STATION_ICON} A \src{Icon} that is shown in the title of a \src{DockStation} if the \src{DockStation} does not have an \src{Icon} of its own.
+\item \src{PropertyKey.DOCK_STATION_TITLE} A \src{String} that is shown as text in the title of a \src{DockStation} if the \src{DockStation} does not have a title text of its own.
+\item \src{EclipseTheme.PAINT_ICONS_WHEN_DESELECTED} A \src{Boolean} that tells \\whether \src{Icon}s are painted on tabs if the tabs are not selected. Please refer to the chapter \ref{EclipseTheme}.
+\item \src{EclipseTheme.TAB_PAINTER} A \src{TabPainter} used by the \src{EclipseTheme} to paint the tabs. Please refer to the chapter \ref{EclipseTheme}.
+\item \src{EclipseTheme.THEME_CONNECTOR} An \src{EclipseThemeConnector} that tells the \src{EclipseTheme} how put up its layout. Please refer to the chapter \ref{EclipseTheme}.
+\item \src{DockableSelector.INIT_SELECTION} A \src{KeyStroke} that activates the \\\src{DockableSelector}. The selector then allows the user to select a \src{Dockable} which gains the focus. The default value is set to \src{ctrl + e}.
+\item \src{DockRelocatorMode.NO_COMBINATION_MASK} A \src{ModifierMask} that tells which keys have to be pressed in order to activate the no-combination-mode when dragging around a \src{Dockable}. The default value is set to \src{alt}.
+\item \src{DockRelocatorMode.SCREEN_MASK} A \src{ModifierMask} that tells which keys have to be pressed in order to activate the drop-on-screen-only-mode when dragging around a \src{Dockable}. The default value is set to \src{shift}.
+\item \src{FlapDockStation.BUTTON_CONTENT} A value of the enumeration \\\src{ButtonContent}. Tells the \src{FlapDockStation} how to paint the buttons of its children. The default is set to \src{THEME_DEPENDENT} which leaves the choice to the current \src{DockTheme}.
+\item \src{FlapDockStation.LAYOUT_MANAGER} The \src{FlapLayoutManager} that is used by all \src{FlapDockStation}s. That layout manager can store the \src{hold}- and the \src{size}-property of children of \src{FlapDockStation}. The default value is an instance of \src{DefaultFlapLayoutManager} which does not store anything.
+\item \src{ScreenDockStation.BOUNDARY_RESTRICTION} A \src{BoundaryRestriction} \\that will be used by \src{ScreenDockStation} to determine where to put its dialogs. The interface \src{BoundaryRestriction} contains already some constant restrictions: \src{FREE} that allows anything (and is the default value), and \src{HARD} which is very restrictive.
+\item \src{SplitDockStation.LAYOUT_MANAGER} The \src{SplitLayoutManager} that will be used by \src{SplitDockStation} to validate its content and to perform drag and drop operations. This value normaly is an instance of \\\src{DefaultSplitLayoutMangaer}. 
+\item \src{SplitDockStation.MAXIMIZE_ACCELERATOR} A \src{KeyStroke} that changes the maximized-state of \src{SplitDockStation} assuming that a \\\src{SplitDockStation} or one of its children has the focus. The default is set to \src{ctrl + m}.
+\item \src{StackDockStation.COMPONENT_FACTORY} This key represents a \\\src{StackDockComponentFactory} that is used by the \src{StackDockStation} to create its content. A warning: this key is used by many \src{DockTheme}s to exchange the look of \\\src{StackDockStation}.
+\item \src{DockFrontend.HIDE_ACCELERATOR} The \src{KeyStroke} that is used to activate the hide-action (also known as close-action) when using a \src{DockFrontend}. The default value for this key is \src{ctrl + F4}
+\end{itemize}
+
 \end{document}
 
 

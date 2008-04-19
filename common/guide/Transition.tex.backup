@@ -23,7 +23,7 @@
 \newcommand{\why}{\item[Reason]}
 \newcommand{\clients}{\item[Clients]}
 
-\title{DockingFrames 1.0.3 - Transition}
+\title{DockingFrames 1.0.5 - Transition}
 \author{Benjamin Sigg}
 
 \begin{document}
@@ -40,7 +40,7 @@ This document describes the most important changes between versions, and how dev
 \section{Version 1.0.3}
 Version 1.0.3 emphasizes on background enhancments. The API remains unchanged for most parts.
 \subsection{Incompatibilities}
-These changes break with the API from 1.0.2, clients must be change their interfaces in order to work properly.
+These changes break with the API from 1.0.2, clients must change their interfaces in order to work properly.
 
 \subsubsection{DefaultKeyboardController}
 \begin{description}
@@ -146,7 +146,7 @@ This is the set of new features.
 \section{Version 1.0.4}
 Version 1.0.4 introduces a few new features that add customizability
 \subsection{Incompatibilities}
-These changes break with the API from 1.0.3, clients must be change their interfaces in order to work properly.
+These changes break with the API from 1.0.3, clients must change their interfaces in order to work properly.
 
 \subsubsection{Binary file format}
 \begin{description}
@@ -207,10 +207,16 @@ This is the set of new features.
  \why Looks better
 \end{description}
 
-\subsubsection{Backup factories}
+\subsubsection{Backup factories (core)}
 \begin{description}
  \short \src{DockFrontend} and \src{PredefinedDockSituation} can now use backup factories. These factories are used to load elements which should be in the cache, but are missing. In case of \src{DockFrontend} they are automatically added to the frontend.
  \why Removes the need to add all \src{Dockable}s to a \src{DockFrontend} before loading a layout from a file.
+\end{description}
+
+\subsubsection{Backup factories (common)}
+\begin{description}
+ \short \src{CControl} now supports lazy initialisation of \src{SingleCDockable}s through the \src{SingleCDockableBackupFactory}.
+ \why saves memory
 \end{description}
 
 \subsubsection{Unregister factories from DockFrontend}
@@ -245,7 +251,7 @@ This is the set of new features.
 
 \subsubsection{CStation}
 \begin{description}
- \short Additional interface \src{CStation} in common. Two new stations: \src{CMinimizeArea} and \src{CGridArea}.
+ \short Additional interface \src{CStation} in common. Two new stations: \\\src{CMinimizeArea} and \src{CGridArea}.
  \why Allows clients to add their own \src{DockStation}s to \src{CControl}, allows to create other layouts than the
  "one center, four minimize areas"-layout.
 \end{description}
@@ -275,6 +281,12 @@ These are the bugs that were fixed/
 \begin{description}
  \short \src{CDockable} could not be opened maximized.
  \why framework got confused because \src{CDockable} did not have a parent.
+\end{description}
+
+\subsubsection{Unbind of DockAction called to often}
+\begin{description}
+ \short A \src{DockAction} could throw an exception "unbind called to often"
+ \why When a \src{DockAction} was a child of a \src{MenuMenuHandler}, its \src{unbind} method was called even if the action was not displayed. However the \src{bind} action was called only if the action was displayed, so the internal counter was no longer correct. Every time a menu with such an action was shown, the counter was decremented by one. When it reached a value below 0, an exception was thrown. Since an action could be bound by many elements, the exception occured at random places.
 \end{description}
 
 \end{document}

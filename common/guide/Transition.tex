@@ -23,7 +23,7 @@
 \newcommand{\why}{\item[Reason]}
 \newcommand{\clients}{\item[Clients]}
 
-\title{DockingFrames 1.0.4 - Transition}
+\title{DockingFrames 1.0.5 - Transition}
 \author{Benjamin Sigg}
 
 \begin{document}
@@ -288,6 +288,9 @@ These are the bugs that were fixed/
  \short A \src{DockAction} could throw an exception "unbind called to often"
  \why When a \src{DockAction} was a child of a \src{MenuMenuHandler}, its \src{unbind} method was called even if the action was not displayed. However the \src{bind} action was called only if the action was displayed, so the internal counter was no longer correct. Every time a menu with such an action was shown, the counter was decremented by one. When it reached a value below 0, an exception was thrown. Since an action could be bound by many elements, the exception occured at random places.
 \end{description}
+
+\section{Version 1.0.5}
+Version 1.0.5 brings the possibility 
 
 \end{document}
 

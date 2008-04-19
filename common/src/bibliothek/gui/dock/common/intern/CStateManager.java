@@ -417,6 +417,29 @@ public class CStateManager extends StateManager {
         
         return null;
     }
+
+    /**
+     * Converts <code>mode</code> into one of the {@link ExtendedMode}s.
+     * 
+     * @param mode {@link StateManager#EXTERNALIZED}, {@link StateManager#MAXIMIZED},
+     * {@link StateManager#MINIMIZED} or {@link StateManager#NORMALIZED}.
+     * @return the mode represented as {@link ExtendedMode}
+     */
+    protected ExtendedMode convertMode( String mode ){
+        if( EXTERNALIZED.equals( mode ))
+            return ExtendedMode.EXTERNALIZED;
+        
+        if( MAXIMIZED.equals( mode ))
+            return ExtendedMode.MAXIMIZED;
+        
+        if( NORMALIZED.equals( mode ))
+            return ExtendedMode.NORMALIZED;
+        
+        if( MINIMIZED.equals( mode ))
+            return ExtendedMode.MINIMIZED;
+        
+        throw new IllegalArgumentException( "Not the name of a mode: " + mode );
+    }
     
     /**
      * Gets an element describing the location of <code>dockable</code> as
@@ -637,16 +660,17 @@ public class CStateManager extends StateManager {
             }
         }
     }
-    
+        
     @Override
-    protected void transition( String oldMode, String newMode, Dockable dockable ) {
-        super.transition( oldMode, newMode, dockable );
-        if( dockable instanceof CommonDockable ){
-            CDockable fdockable = ((CommonDockable)dockable).getDockable();
-            CDockableAccess access = control.access( fdockable );
-            if( access != null ){
-                CDockable.ExtendedMode mode = getMode( dockable );
-                access.informMode( mode );
+    protected void modeChanged( Dockable dockable, String oldMode, String newMode ) {
+        if( newMode != null && !newMode.equals( oldMode ) ){
+            if( dockable instanceof CommonDockable && oldMode != null ){
+                CDockable fdockable = ((CommonDockable)dockable).getDockable();
+                CDockableAccess access = control.access( fdockable );
+                if( access != null ){
+                    CDockable.ExtendedMode extMode = convertMode( newMode );
+                    access.informMode( extMode );
+                }
             }
         }
     }

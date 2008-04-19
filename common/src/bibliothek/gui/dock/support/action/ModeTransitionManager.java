@@ -502,6 +502,18 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
     }
     
     /**
+     * Called when the mode of a known <code>dockable</code> has been
+     * changed. This method is intended to be overriden and does not do
+     * anything in its basic version.
+     * @param dockable the element whose mode changed
+     * @param oldMode the mode before the change
+     * @param newMode the mode after the change
+     */
+    protected void modeChanged( Dockable dockable, String oldMode, String newMode ){
+        
+    }
+    
+    /**
      * Gets the mode in which <code>Dockable</code> was previously
      * @param dockable the element whose mode is searched
      * @return the previous more or <code>null</code>
@@ -702,9 +714,11 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
          * @param mode the mode to store
          */
         public void putMode( String mode ){
+            String oldMode = peekMode();
             history.remove( mode );
             history.add( mode );
             rebuild( dockable );
+            modeChanged( dockable, oldMode, mode );
         }
         
         /**

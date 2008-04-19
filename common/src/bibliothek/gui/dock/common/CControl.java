@@ -608,6 +608,25 @@ public class CControl {
 	    listenerCollection.removeKeyboardListener( listener );
 	}
 	
+	/**
+	 * Adds a key listener to this control that will be informed about any
+	 * {@link KeyEvent} that gets processed or analyzed by this control. Especially
+	 * any event that gets forwarded to a {@link CKeyboardListener} gets also
+	 * forwarded to <code>listener</code>.
+	 * @param listener the new listener
+	 */
+	public void addGlobalKeyListener( KeyListener listener ){
+	    intern().getController().getKeyboardController().addGlobalListener( listener );
+	}
+	
+	/**
+	 * Removes a global {@link KeyListener} from this control.
+	 * @param listener the listener to remove
+	 */
+	public void removeGlobalKeyListener( KeyListener listener ){
+	    intern().getController().getKeyboardController().removeGlobalListener( listener );
+	}
+	
     /**
      * Adds a global mouse double click listener to this control. The listener gets 
      * informed whenever the mouse is clicked twice on a {@link Component} which
