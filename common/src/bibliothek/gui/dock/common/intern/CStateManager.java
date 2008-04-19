@@ -664,7 +664,7 @@ public class CStateManager extends StateManager {
     @Override
     protected void modeChanged( Dockable dockable, String oldMode, String newMode ) {
         if( newMode != null && !newMode.equals( oldMode ) ){
-            if( dockable instanceof CommonDockable && oldMode != null ){
+            if( dockable instanceof CommonDockable ){
                 CDockable fdockable = ((CommonDockable)dockable).getDockable();
                 CDockableAccess access = control.access( fdockable );
                 if( access != null ){

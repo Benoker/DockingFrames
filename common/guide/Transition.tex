@@ -179,7 +179,7 @@ These changes break with the API from 1.0.3, clients must change their interface
 \subsubsection{CDockable.getClose}
 \begin{description}
 \short Method has been moved into \src{CommonDockable}
-\why The action can now be replaced through \src{CDockable.getAction}. There is no need for any client to replace the action by replacing the whole \src{DockActionSource}
+\why The action can now be replaced through \src{CDockable.getAction}.\\There is no need for any client to replace the action by replacing the whole \src{DockActionSource}
 \clients should use \src{putAction}, a method of \src{AbstractCDockable} to exchange the close-action. No fix for clients which added additional elements to the close-source.
 \end{description}
 
@@ -290,8 +290,142 @@ These are the bugs that were fixed/
 \end{description}
 
 \section{Version 1.0.5}
-Version 1.0.5 brings the possibility 
+Version 1.0.5 brings the possibility to navigate around only by hitting some keys on the keyboard. When clicking the \src{ctrl+shift+e} combination, a dialog opens on which a \src{Dockable} can be selected.
 
+\src{DockAction}s in button form can be activated with \src{space}, and the dropdown actions menu can be opened with the \src{arrow down} key.
+
+This release contains some tricky incompatibilities which need to be handled very carefully.
+
+\subsection{Incombatibilities}
+The changes that need special care.
+
+\subsubsection{DockableFocusListener, DockStationListener}
+\begin{description}
+ \short The methods of \src{DockableFocusListner} and \src{DockStationListener}\\have more parameters. Methods which indicate a change, like focusing a new \src{Dockable}, now also tell what was the old value of the changed property.
+ \why No need for listeners to store the old values.
+ \clients Must carefully update all classes and interfaces that implement \\\src{DockableFocusListener} or \src{DockStationListener}. Work should be easier when using the \src{@Override} annotation. Be especially careful not to mix up the new arguments with the old ones.
+\end{description}
+
+\subsubsection{DockTheme.getDockableSelection}
+\begin{description}
+ \short \src{DockTheme} has an additional method \src{getDockableSelection}.
+ \why A \src{DockableSelection} is needed to change the focused \src{Dockable} using only the keyboard. Since \src{DockableSelection} is a graphical element, it has to be handled by the \src{DockTheme}.
+ \clients Should implement the missing method in their \src{DockTheme}s. Using \src{DefaultDockableSelection} is an easy solution.
+\end{description}
+
+\subsubsection{tap-strip no longer painted by TapPainter}
+\begin{description}
+ \short \src{TabPainter} does no longer paint the tab-strip directly. It now creates a \src{TabStripPainter} that paints the strip.
+ \why The new object can work with the color map.
+ \clients Have to provide a \src{TabStripPainter} as well.
+\end{description}
+
+\subsubsection{KeyboardController does fire less events}
+\begin{description}
+ \short The \src{KeyboardController} does no longer fire events when it could not find the source-\src{Dockable} of the event. As a result the \src{KeyboardListener} does no longer receive \src{null} as argument of any of its methods.
+ \why Events were fired which had nothing to do with the framework at all.
+ \clients If they need all key events, then they can add a global \src{KeyListener} to \src{KeyboardController} using the method \src{addGlobalListener}.
+\end{description}
+
+\subsubsection{ComponentHierarchyObserver}
+\begin{description}
+ \short The \src{ComponentHierarchyObserver} includes more \src{Components} in its search.
+ \why Allows more features to work correctly in restricted environments.
+ \clients Need to be aware that not every \src{Component} that is found by the observer is a child of a \src{Dockable}.
+\end{description}
+
+
+\subsection{Features}
+A list of the new features.
+
+\subsubsection{KeyStroke for closing Dockable}
+\begin{description}
+ \short The \src{KeyStroke} for closing a \src{CDockable} or \src{Dockable} has been changed from \src{ctrl+c} to \src{ctrl+F4}.
+ \why Andrew pointed out, that \src{ctrl+c} is already used by many applications...
+\end{description}
+
+\subsubsection{New listeners}
+\begin{description}
+ \short There are new listeners, \src{CFocusListener}, \src{CKeyboardListener} and \\\src{CDoubleClickListener}, which can be added to \src{CDockable} or to \\\src{CControl} if all \src{CDockable}s should be monitored.
+ \why Might be helpful for some applications
+\end{description}
+
+\subsubsection{ComponentHierarchObserver}
+\begin{description}
+ \short Clients can now add and remove \src{Component}s from the \\\src{ComponentHierarchyObserver}. The observer also includes \src{DockTitle}s in its search for \src{Component}s.
+ \why Might become necessary for complex applications that run in a restricted environment.
+\end{description}
+
+\subsubsection{Root window for DockController}
+\begin{description}
+ \short The \src{DockController} can now find the root window of the application. The window can also be set directly using \src{setRootWindow}. If so, then the root window is added to the \src{ComponentHierarchyObserver}.
+ \why Necessary to show small dialogs like the new \src{DockableSelector}
+\end{description}
+
+\subsubsection{FocusTraversalPolicies}
+\begin{description}
+ \short All \src{DockTheme}s now support \src{FocusTraversalPolicies}. Now each \\\src{DockAction} and all \src{Component}s of a \src{Dockable} can be reached by using only the keyboard.
+ \why A nice feature for people which do not like the mouse
+\end{description}
+
+\subsubsection{Dialog to select focused Dockable}
+\begin{description}
+ \short The \src{DockableSelector} and \src{DockableSelection} allow users to select the focused \src{Dockable} using only the keyboard. The feature is activated as soon as \src{ctrl+shift+e} is pressed.
+ \why A nice feature for people which do not like the mouse
+\end{description}
+
+\subsubsection{Extracting colors from LookAndFeel}
+\begin{description}
+ \short The mechanism to read colors from \src{LookAndFeel}s has been upgraded. Each \src{LookAndFeel} can now have its own specialized \src{LookAndFeelColors} that reads the colors.
+ \why Allows to be more flexible with colors, allows the use of Nimbus.
+\end{description}
+
+\subsubsection{EclipseTheme}
+\begin{description}
+ \short \src{EclipseTheme} uses more colors from the \src{LookAndFeel}
+ \why looks better
+\end{description}
+
+\subsection{Bugfixes}
+\subsubsection{Missing colors for BasicTheme}
+\begin{description}
+ \short \src{BasicTheme} did not update colors for the keys \src{paint.line}, \src{paint.divider} and \src{paint.division}. As a result some painting was not as in the older versions.
+\end{description}
+
+\subsubsection{Cutting bounds of children of SplitDockStation}
+\begin{description}
+ \short The bounds of children of \src{SplitDockStation} are now cut such that they are always within the stations boundaries.
+ \why Rounding errors sometimes lead to little failures that made a single line of pixels invisible.
+\end{description}
+
+\subsubsection{NullPointerException when changing focus}
+\begin{description}
+ \short A \src{NullPointerException} could been thrown when the focus changed.
+\end{description}
+
+\subsubsection{Undecorated dialogs not undecorated}
+\begin{description}
+ \short When using \src{LookAndFeel}s that can draw window decorations on their own (like JTattoo), then \src{FlapWindow}, \src{ScreenDockDialog} and others\\could have decorations.
+ \why The flag that advices the \src{LookAndFeel} not to paint a decoration was not set in the \src{JRootPane}s of these windows.
+\end{description}
+
+\subsubsection{RexTabbedComponent not adding/removing children}
+\begin{description}
+ \short \src{RexTabbedComponent} does no longer add and remove its children to change their visibility, it now uses a \src{CardLayout}.
+ \why Some \src{Component}s did miss the change of the \src{LookAndFeel} when they were a child of \src{RexTabbedComponent}.
+\end{description}
+
+\subsubsection{Focusing a hidden CDockable}
+\begin{description}
+ \short When focusing a normalized \src{CDockable} that was hidden behind a maximized \src{CDockable}, then the focused dockable did not became visible.
+ \why An old security system prevents change of the maximized element by the focus system.
+\end{description}
+
+\subsubsection{Missing events when changing state of CDockable}
+\begin{description}
+ \short When the \src{ExtendedMode} of a \src{CDockable} did not change because of a call of a special method, no state-change-events were fired.
+ \why It was not intended that one action could change the state of many \src{CDockable}s.
+\end{description}
 \end{document}
 
 

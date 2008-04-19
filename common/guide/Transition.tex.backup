@@ -289,6 +289,133 @@ These are the bugs that were fixed/
  \why When a \src{DockAction} was a child of a \src{MenuMenuHandler}, its \src{unbind} method was called even if the action was not displayed. However the \src{bind} action was called only if the action was displayed, so the internal counter was no longer correct. Every time a menu with such an action was shown, the counter was decremented by one. When it reached a value below 0, an exception was thrown. Since an action could be bound by many elements, the exception occured at random places.
 \end{description}
 
+\section{Version 1.0.5}
+Version 1.0.5 brings the possibility to navigate around only by hitting some keys on the keyboard. When clicking the \src{ctrl+shift+e} combination, a dialog opens on which a \src{Dockable} can be selected.
+
+\src{DockAction}s in button form can be activated with \src{space}, and the dropdown actions menu can be opened with the \src{arrow down} key.
+
+This release contains some tricky incompatibilities which need to be handled very carefully.
+
+\subsection{Incombatibilities}
+The changes that need special care.
+
+\subsubsection{DockableFocusListener, DockStationListener}
+\begin{description}
+ \short The methods of \src{DockableFocusListner} and \src{DockStationListener} have more parameters. Methods which indicate a change, like focusing a new \src{Dockable}, now also tell what was the old value of the changed property.
+ \why No need for listeners to store the old values.
+ \clients Must carefully update all classes and interfaces that implement \src{DockableFocusListener} or \src{DockStationListener}. Work should be easier when using the \src{@Override} annotation. Be especially careful not to mix up the new arguments with the old ones.
+\end{description}
+
+\subsubsection{DockTheme.getDockableSelection}
+\begin{description}
+ \short \src{DockTheme} has an additional method \src{getDockableSelection}.
+ \why A \src{DockableSelection} is needed to change the focused \src{Dockable} using only the keyboard. Since \src{DockableSelection} is a graphical element, it has to be handled by the \src{DockTheme}.
+ \clients Should implement the missing method in their \src{DockTheme}s. Using \src{DefaultDockableSelection} is an easy solution.
+\end{description}
+
+\subsubsection{tap-strip no longer painted by TapPainter}
+\begin{description}
+ \short \src{TabPainter} does no longer paint the tab-strip directly. It now creates a \src{TabStripPainter} that paints the strip.
+ \why The new object can work with the color map.
+ \clients Have to provide a \src{TabStripPainter} as well.
+\end{description}
+
+\subsubsection{KeyboardController does fire less events}
+\begin{description}
+ \short The \src{KeyboardController} does no longer fire events when it could not find the source-\src{Dockable} of the event. As a result the \src{KeyboardListener} does no longer receive \src{null} as argument of any of its methods.
+ \why Events were fired which had nothing to do with the framework at all.
+ \clients If they need all key events, then they can add a global \src{KeyListener} to \src{KeyboardController} using the method \src{addGlobalListener}.
+\end{description}
+
+\subsubsection{ComponentHierarchyObserver}
+\begin{description}
+ \short The \src{ComponentHierarchyObserver} includes more \src{Components} in its search.
+ \why Allows more features to work correctly in restricted environments.
+ \clients Need to be aware that not every \src{Component} that is found by the observer is a child of a \src{Dockable}.
+\end{description}
+
+
+\subsection{Features}
+A list of the new features.
+
+\subsubsection{KeyStroke for closing Dockable}
+\begin{description}
+ \short The \src{KeyStroke} for closing a \src{CDockable} or \src{Dockable} has been changed from \src{ctrl+c} to \src{ctrl+F4}.
+ \why Andrew pointed out, that \src{ctrl+c} is already used by many applications...
+\end{description}
+
+\subsubsection{New listeners}
+\begin{description}
+ \short There are new listeners, \src{CFocusListener}, \src{CKeyboardListener} and \src{CDoubleClickListener}, which can be added to \src{CDockable} or to \src{CControl} if all \src{CDockable}s should be monitored.
+ \why Might be helpful for some applications
+\end{description}
+
+\subsubsection{ComponentHierarchObserver}
+\begin{description}
+ \short Clients can now add and remove \src{Component}s from the \src{ComponentHierarchyObserver}. The observer also includes \src{DockTitle}s in its search for \src{Component}s.
+ \why Might become necessary for complex applications that run in a restricted environment.
+\end{description}
+
+\subsubsection{Root window for DockController}
+\begin{description}
+ \short The \src{DockController} can now find the root window of the application. The window can also be set directly using \src{setRootWindow}. If so, then the root window is added to the \src{ComponentHierarchyObserver}.
+ \why Necessary to show small dialogs like the new \src{DockableSelector}
+\end{description}
+
+\subsubsection{FocusTraversalPolicies}
+\begin{description}
+ \short All \src{DockTheme}s now support \src{FocusTraversalPolicies}. Now each \src{DockAction} and all \src{Component}s of a \src{Dockable} can be reached by using only the keyboard.
+ \why A nice feature for people which do not like the mouse
+\end{description}
+
+\subsubsection{Dialog to select focused Dockable}
+\begin{description}
+ \short The \src{DockableSelector} and \src{DockableSelection} allow users to select the focused \src{Dockable} using only the keyboard. The feature is activated as soon as \src{ctrl+shift+e} is pressed.
+ \why A nice feature for people which do not like the mouse
+\end{description}
+
+\subsubsection{Extracting colors from LookAndFeel}
+\begin{description}
+ \short The mechanism to read colors from \src{LookAndFeel}s has been upgraded. Each \src{LookAndFeel} can now have its own specialized \src{LookAndFeelColors} that reads the colors.
+ \why Allows to be more flexible with colors, allows the use of Nimbus.
+\end{description}
+
+\subsubsection{EclipseTheme}
+\begin{description}
+ \short \src{EclipseTheme} uses more colors from the \src{LookAndFeel}
+ \why looks better
+\end{description}
+
+\subsection{Bugfixes}
+\subsubsection{}
+\begin{description}
+ \short
+ \why
+\end{description}
+
+\subsubsection{}
+\begin{description}
+ \short
+ \why
+\end{description}
+
+\subsubsection{}
+\begin{description}
+ \short
+ \why
+\end{description}
+
+
+- Bugfix: BasicTheme did not update colors for key paint.line, paint.divider and paint.division. Hence the color used to indicate drag and drop elements was black on most systems.
+- Bugfix, Layout: The bounds of children of SplitDockStation are now always within the station, rounding errors are cut away.
+- Bugfix: Focus system could throw a NPE. 
+- Bugfix: when using LookAndFeels that could draw window decarations on their own (like JTattoo), then FlapWindow, ScreenDockDialog and others could have decorations. Their JRootPane is now explicitly advised not to have any decorations.
+- Bugfix: RexTabbedComponent does no longer add and remove children, it uses now a CardLayout. LookAndFeel changes work now also with the EclipseTheme.
+- Bugfix: Chessdemo did not correctly calculate the "en passent" maneuver
+- Bugfix: when focusing a normalized CDockable that was hidden by a maximized element, then the focused Dockale did not replace the maximized element.
+- Bugfix: when changing the ExtendedMode of a CDockable, directly or indirectly, then state-events could be lost.
+
+
 \end{document}
 
 

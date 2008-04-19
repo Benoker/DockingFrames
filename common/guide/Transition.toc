@@ -41,3 +41,27 @@
 \contentsline {subsubsection}{\numberline {2.3.3}Mode change of CDockable}{9}
 \contentsline {subsubsection}{\numberline {2.3.4}Opening maximized CDockable}{9}
 \contentsline {subsubsection}{\numberline {2.3.5}Unbind of DockAction called to often}{9}
+\contentsline {section}{\numberline {3}Version 1.0.5}{9}
+\contentsline {subsection}{\numberline {3.1}Incombatibilities}{9}
+\contentsline {subsubsection}{\numberline {3.1.1}DockableFocusListener, DockStationListener}{9}
+\contentsline {subsubsection}{\numberline {3.1.2}DockTheme.getDockableSelection}{10}
+\contentsline {subsubsection}{\numberline {3.1.3}tap-strip no longer painted by TapPainter}{10}
+\contentsline {subsubsection}{\numberline {3.1.4}KeyboardController does fire less events}{10}
+\contentsline {subsubsection}{\numberline {3.1.5}ComponentHierarchyObserver}{10}
+\contentsline {subsection}{\numberline {3.2}Features}{10}
+\contentsline {subsubsection}{\numberline {3.2.1}KeyStroke for closing Dockable}{10}
+\contentsline {subsubsection}{\numberline {3.2.2}New listeners}{11}
+\contentsline {subsubsection}{\numberline {3.2.3}ComponentHierarchObserver}{11}
+\contentsline {subsubsection}{\numberline {3.2.4}Root window for DockController}{11}
+\contentsline {subsubsection}{\numberline {3.2.5}FocusTraversalPolicies}{11}
+\contentsline {subsubsection}{\numberline {3.2.6}Dialog to select focused Dockable}{11}
+\contentsline {subsubsection}{\numberline {3.2.7}Extracting colors from LookAndFeel}{11}
+\contentsline {subsubsection}{\numberline {3.2.8}EclipseTheme}{11}
+\contentsline {subsection}{\numberline {3.3}Bugfixes}{12}
+\contentsline {subsubsection}{\numberline {3.3.1}Missing colors for BasicTheme}{12}
+\contentsline {subsubsection}{\numberline {3.3.2}Cutting bounds of children of SplitDockStation}{12}
+\contentsline {subsubsection}{\numberline {3.3.3}NullPointerException when changing focus}{12}
+\contentsline {subsubsection}{\numberline {3.3.4}Undecorated dialogs not undecorated}{12}
+\contentsline {subsubsection}{\numberline {3.3.5}RexTabbedComponent not adding/removing children}{12}
+\contentsline {subsubsection}{\numberline {3.3.6}Focusing a hidden CDockable}{12}
+\contentsline {subsubsection}{\numberline {3.3.7}Missing events when changing state of CDockable}{12}
