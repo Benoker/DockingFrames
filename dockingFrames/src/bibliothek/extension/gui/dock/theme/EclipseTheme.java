@@ -134,6 +134,7 @@ public class EclipseTheme extends BasicTheme {
 		        return createDockableTitle( dockable, version );
 		    }
 		});
+		setDockableSelection( new EclipseDockableSelection() );
 	}
 
 	@Override
@@ -245,6 +246,8 @@ public class EclipseTheme extends BasicTheme {
         updateColor( controllers, "stack.tab.text.selected.focuslost", null );
 	    
         updateColor( controllers, "stack.border", null );
+        
+        updateColor( controllers, "selection.border", null );
         
 	    for( DockController controller : controllers )
             controller.getColors().unlockUpdate();

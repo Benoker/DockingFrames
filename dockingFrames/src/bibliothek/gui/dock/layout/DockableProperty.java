@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -67,7 +67,7 @@ public interface DockableProperty {
     public void setSuccessor( DockableProperty properties );
     
     /**
-     * Gest the unique name of the {@link DockablePropertyFactory} which
+     * Gets the unique name of the {@link DockablePropertyFactory} which
      * can create this type of DockableProperty.
      * @return the id
      * @see DockablePropertyFactory

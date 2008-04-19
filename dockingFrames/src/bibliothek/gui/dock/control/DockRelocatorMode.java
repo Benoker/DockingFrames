@@ -34,6 +34,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.util.PropertyKey;
 
 /**
  * A {@link DockRelocatorMode} is used by a {@link DockRelocator} to change
@@ -43,13 +44,17 @@ import bibliothek.gui.dock.StackDockStation;
  *
  */
 public interface DockRelocatorMode {
+    /** the modifiers that must be pressed to activate the {@link #SCREEN_ONLY} relocator mode */
+    public static final PropertyKey<ModifierMask> SCREEN_MASK = 
+        new PropertyKey<ModifierMask>( "DockRelocatorMode screen mask", 
+                new SimpleModifierMask(InputEvent.SHIFT_DOWN_MASK,
+                        InputEvent.ALT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_GRAPH_DOWN_MASK ));
+    
     /**
      * Ensures that a {@link Dockable} can be dragged only onto a {@link ScreenDockStation}.
      * This mode is installed automatically by the {@link DockController}.
      */
-    public static DockRelocatorMode SCREEN_ONLY = new AcceptanceDockRelocatorMode( 
-            InputEvent.SHIFT_DOWN_MASK, 
-            InputEvent.ALT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_GRAPH_DOWN_MASK ){
+    public static DockRelocatorMode SCREEN_ONLY = new AcceptanceDockRelocatorMode( 0, 0 ){
         
         public boolean accept( DockStation parent, Dockable child ) {
             return parent instanceof ScreenDockStation;
@@ -58,22 +63,35 @@ public interface DockRelocatorMode {
         public boolean accept( DockStation parent, Dockable child, Dockable next ) {
             return parent instanceof ScreenDockStation;
         }
+        
+        @Override
+        public boolean shouldBeActive( DockController controller, int modifiers ) {
+            return controller.getProperties().get( SCREEN_MASK ).matches( modifiers );
+        }
     };
+    
+    /** the modifiers that must be pressed to activate the {@link #NO_COMBINATION} relocator mode */
+    public static final PropertyKey<ModifierMask> NO_COMBINATION_MASK = 
+        new PropertyKey<ModifierMask>( "DockRelocatorMode no combination", 
+                new SimpleModifierMask(InputEvent.ALT_DOWN_MASK,
+                        InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_GRAPH_DOWN_MASK ));
     
     /**
      * Ensures that a {@link Dockable} can be dragged only if no combination results.
      * This mode is installed automatically by the {@link DockController}.
      */
-    public static DockRelocatorMode NO_COMBINATION = new AcceptanceDockRelocatorMode(
-            InputEvent.ALT_DOWN_MASK,
-            InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_GRAPH_DOWN_MASK ){
-        
+    public static DockRelocatorMode NO_COMBINATION = new AcceptanceDockRelocatorMode( 0, 0 ){
         public boolean accept( DockStation parent, Dockable child ) {
             return !(parent instanceof StackDockStation);
         }
 
         public boolean accept( DockStation parent, Dockable child, Dockable next ) {
             return false;
+        }
+        
+        @Override
+        public boolean shouldBeActive( DockController controller, int modifiers ) {
+            return controller.getProperties().get( NO_COMBINATION_MASK ).matches( modifiers );
         }
     };
     

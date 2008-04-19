@@ -219,7 +219,7 @@ public class CControl {
 	public CControl( JFrame frame, CControlFactory factory ){
 	    this.factory = factory;
 	    
-	    DockController controller = factory.createController();
+	    DockController controller = factory.createController( this );
 	    controller.setSingleParentRemover( new CSingleParentRemover( this ) );
 	    
 	    initFocusListeners( controller );
@@ -900,6 +900,18 @@ public class CControl {
 	 */
 	public CControlFactory getFactory() {
         return factory;
+    }
+	
+	/**
+	 * Gets the manager that is responsible to handle all changes of the
+	 * modes (maximized, normalized, ... ) of {@link Dockable}s.<br>
+	 * Note: clients should be careful when working with the state manager. 
+	 * Changing the properties of the state manager might introduce failures that
+	 * are not visible directly.
+	 * @return the manager
+	 */
+	public CStateManager getStateManager() {
+        return stateManager;
     }
 
 	/**

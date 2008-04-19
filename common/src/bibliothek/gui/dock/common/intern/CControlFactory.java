@@ -44,9 +44,10 @@ import bibliothek.gui.dock.common.CWorkingArea;
 public interface CControlFactory {
     /**
      * Creates or gets the {@link DockController}.
+     * @param owner the control for which the result of this method will be used
      * @return the controller, always the same object
      */
-    public DockController createController();
+    public DockController createController( CControl owner );
     
     /**
      * Creates a new {@link FlapDockStation}.

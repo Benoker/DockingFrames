@@ -38,6 +38,7 @@ import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.ListeningDockAction;
+import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CWorkingArea;
 
 /**
@@ -46,8 +47,19 @@ import bibliothek.gui.dock.common.CWorkingArea;
  * @author Benjamin Sigg
  */
 public class EfficientControlFactory implements CControlFactory {
-    public DockController createController() {
-        return new DockController();
+    public DockController createController( final CControl owner ) {
+        return new DockController(){
+            @Override
+            public void setFocusedDockable( Dockable focusedDockable, boolean force, boolean ensureFocusSet ) {
+                if( focusedDockable != null ){
+                    CStateManager states = owner.getStateManager();
+                    if( states != null ){
+                        states.ensureNotHidden( focusedDockable );
+                    }
+                }
+                super.setFocusedDockable( focusedDockable, force, ensureFocusSet );
+            }
+        };
     }
 
     public FlapDockStation createFlapDockStation( final Component expansion ) {
@@ -75,6 +87,9 @@ public class EfficientControlFactory implements CControlFactory {
              public void setFrontDockable( Dockable dockable ) {
                  if( !isFullScreen() ){
                      super.setFrontDockable( dockable );
+                 }
+                 else{
+                     
                  }
              }
          };

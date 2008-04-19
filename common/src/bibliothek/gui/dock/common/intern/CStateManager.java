@@ -264,7 +264,7 @@ public class CStateManager extends StateManager {
     }
     
     @Override
-    public void removed( Dockable dockable ) {
+    protected void removed( Dockable dockable ) {
         super.removed( dockable );
         if( dockable instanceof CommonDockable ){
             ((CommonDockable)dockable).getDockable().removeCDockablePropertyListener( actionChangeListener );

@@ -139,6 +139,8 @@ public class DockController {
     private Map<Component, DockElement> componentToDockElements = 
     	new HashMap<Component, DockElement>();
     
+    /** the root window of the application, can be <code>null</code> */
+    private Window rootWindow;
 
     /** a listener that is added to the {@link UIManager} and gets notified when the {@link LookAndFeel} changes */
     private PropertyChangeListener lookAndFeelObserver = new PropertyChangeListener(){
@@ -281,6 +283,8 @@ public class DockController {
     public ComponentHierarchyObserver getComponentHierarchyObserver() {
         if( componentHierarchyObserver == null ){
             componentHierarchyObserver = new ComponentHierarchyObserver( this );
+            if( rootWindow != null )
+                componentHierarchyObserver.add( rootWindow );
         }
         return componentHierarchyObserver;
     }
@@ -825,13 +829,38 @@ public class DockController {
     }
     
     /**
+     * Sets the window that is used when dialogs have to be shown.
+     * @param window the root window, can be <code>null</code>
+     * @see #findRootWindow()
+     */
+    public void setRootWindow( Window window ){
+        if( this.rootWindow != window ){
+            if( this.rootWindow != null ){
+                if( componentHierarchyObserver != null )
+                    componentHierarchyObserver.remove( this.rootWindow );
+            }
+            
+            this.rootWindow = window;
+            
+            if( this.rootWindow != null ){
+                if( componentHierarchyObserver != null )
+                    componentHierarchyObserver.add( this.rootWindow );
+            }   
+        }
+    }
+    
+    /**
      * Uses all {@link DockElement}s known to this controller to search
      * the root window. This method first tries to find a {@link Frame},
      * then a {@link Dialog} and finally returns every {@link Window}
      * that it finds.
      * @return the root window or <code>null</code>
+     * @see #setRootWindow(Window)
      */
     public Window findRootWindow(){
+        if( rootWindow != null )
+            return rootWindow;
+        
         Window window = null;
         Dialog dialog = null;
         

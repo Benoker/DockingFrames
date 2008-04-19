@@ -14,10 +14,9 @@ import bibliothek.gui.dock.accept.DockAcceptance;
 public abstract class AcceptanceDockRelocatorMode implements DockRelocatorMode, DockAcceptance {
     /** whether this mode is active */
     private boolean active;
-    /** the keys that must be pressed to activate */
-    private int onmask;
-    /** the keys that must not be pressed to activate */
-    private int offmask;
+    
+    /** which keys must be pressed in order to activate this mode */
+    private ModifierMask mask;
     
     /**
      * Creates a new mode. The masks are created by using the
@@ -26,8 +25,30 @@ public abstract class AcceptanceDockRelocatorMode implements DockRelocatorMode, 
      * @param offmask the keys that must not be pressed to activate this mode
      */
     public AcceptanceDockRelocatorMode( int onmask, int offmask ){
-        this.onmask = onmask;
-        this.offmask = offmask;
+        mask = new SimpleModifierMask( onmask, offmask );
+    }
+    
+    /**
+     * Creates a new mode.
+     * @param mask the pattern of keys that must be pressed to activate this
+     * mode
+     */
+    public AcceptanceDockRelocatorMode( ModifierMask mask ){
+        if( mask == null )
+            throw new IllegalArgumentException( "mask must not be null" );
+        
+        this.mask = mask;
+    }
+    
+    /**
+     * Sets the keys that must be pressed in order to activate this mode.
+     * @param mask the mask
+     */
+    public void setMask( ModifierMask mask ) {
+        if( mask == null )
+            throw new IllegalArgumentException( "mask must not be null" );
+        
+        this.mask = mask;
     }
     
     public void setActive( DockController controller, boolean active ) {
@@ -42,6 +63,6 @@ public abstract class AcceptanceDockRelocatorMode implements DockRelocatorMode, 
     }
 
     public boolean shouldBeActive( DockController controller, int modifiers ) {
-        return (modifiers & (onmask | offmask)) == onmask;
+        return mask.matches( modifiers );
     }
 }

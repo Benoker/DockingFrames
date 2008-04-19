@@ -366,6 +366,23 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
     		maxi = null;
     }
     
+    /**
+     * Ensures that <code>dockable</code> is not hidden behind another 
+     * {@link Dockable}. That does not mean that <code>dockable</code> becomes
+     * visible, just that it is easier reachable without the need to change
+     * modes of any <code>Dockable</code>s.  
+     * @param dockable the element which should not be hidden
+     */
+    public void ensureNotHidden( Dockable dockable ){
+        String mode = currentModeSharp( dockable );
+        if( NORMALIZED.equals( mode ) ){
+            if( maxi != null && maxi.getFullScreen() != null ){
+                if( DockUtilities.isAncestor( maxi, dockable )){
+                    setMode( dockable, MAXIMIZED );
+                }
+            }
+        }
+    }
     
     @Override
     protected String[] availableModes( String current, Dockable dockable ) {

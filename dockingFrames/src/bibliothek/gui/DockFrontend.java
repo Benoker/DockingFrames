@@ -106,7 +106,7 @@ import bibliothek.util.xml.XElement;
  */
 public class DockFrontend {
     public static final PropertyKey<KeyStroke> HIDE_ACCELERATOR = 
-        new PropertyKey<KeyStroke>( "frontend hide accelerator", KeyStroke.getKeyStroke( KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK ) );
+        new PropertyKey<KeyStroke>( "frontend hide accelerator", KeyStroke.getKeyStroke( KeyEvent.VK_F4, InputEvent.CTRL_DOWN_MASK ) );
     
 	/** The controller where roots are added */
     private DockController controller;
@@ -188,7 +188,8 @@ public class DockFrontend {
     }
     
     /**
-     * Constructs a new frontend, tries to set up a {@link ScreenDockStationFactory}.
+     * Constructs a new frontend, tries to set up a {@link ScreenDockStationFactory}
+     * and sets the root window of <code>controller</code> to <code>owner</code>.
      * @param controller the controller used to store the root stations
      * @param owner the owner of the dialog of a {@link ScreenDockStation},
      * may be <code>null</code>
@@ -198,6 +199,7 @@ public class DockFrontend {
             throw new IllegalArgumentException( "controller must not be null" );
         
         this.controller = controller;
+        
         hider = createHider();
         controller.addActionGuard( hider );
         
@@ -210,6 +212,7 @@ public class DockFrontend {
         registerFactory( new SecureFlapDockStationFactory() );
         
         if( owner != null ){
+            controller.setRootWindow( owner );
             registerFactory( new ScreenDockStationFactory( owner ));
             registerFactory( new SecureScreenDockStationFactory( owner ));
         }

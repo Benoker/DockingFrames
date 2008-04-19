@@ -42,10 +42,18 @@ import bibliothek.gui.dock.title.DockTitle;
  * A class collecting all {@link Component}s which are somehow used on or with
  * the {@link Dockable}s  in the realm of one {@link DockController}.<br>
  * A global instance of {@link ComponentHierarchyObserver} can be obtained
- * through {@link DockController#getComponentHierarchyObserver()}.
+ * through {@link DockController#getComponentHierarchyObserver()}.<br>
+ * Note that a hierarchy observer may also know {@link Component}s which are
+ * not directly associated with {@link Dockable}s.
  * @author Benjamin Sigg
  */
 public class ComponentHierarchyObserver {
+    /**
+     * The set of components which were explicitly added to this observer and
+     * will not be removed implicitly.
+     */
+    private Set<Component> roots = new HashSet<Component>();
+    
     /** the currently known components */
     private Set<Component> components = new HashSet<Component>();
     
@@ -69,21 +77,21 @@ public class ComponentHierarchyObserver {
         controller.getRegister().addDockRegisterListener( new DockRegisterAdapter(){
             @Override
             public void dockableRegistered( DockController controller, Dockable dockable ) {
-                add( dockable.getComponent(), null );
+                add( dockable.getComponent() );
             }
             @Override
             public void dockableUnregistered( DockController controller, Dockable dockable ) {
-                remove( dockable.getComponent(), null );
+                remove( dockable.getComponent() );
             }
         });
         
         controller.addDockTitleBindingListener( new DockTitleBindingListener(){
             public void titleBound( DockController controller, DockTitle title, Dockable dockable ) {
-                add( title.getComponent(), null );
+                add( title.getComponent() );
             }
 
             public void titleUnbound( DockController controller, DockTitle title, Dockable dockable ) {
-                remove( title.getComponent(), null );
+                remove( title.getComponent() );
             }
         });
     }
@@ -135,8 +143,22 @@ public class ComponentHierarchyObserver {
     }
     
     /**
+     * Adds <code>component</code> and all its children to the set of
+     * known {@link Component}s. Components that are already known will
+     * not be registered twice. This observer will notice when a child of
+     * <code>component</code> changes and update itself accordingly.
+     * @param component the new component
+     */
+    public void add( Component component ){
+        roots.add( component );
+        add( component, null );
+    }
+    
+    /**
      * Adds <code>component</code> and all children of it to the set of
-     * known {@link Component}s.
+     * known {@link Component}s. This will add <code>component</code> as a
+     * root, which prevents <code>component</code> from beeing removed
+     * implicitly because its parent gets removed.
      * @param component the new component
      * @param list a list to be filled with the affected {@link Component}s,
      * can be <code>null</code> to indicate that this method has to fire
@@ -167,6 +189,17 @@ public class ComponentHierarchyObserver {
     
     /**
      * Removes <code>component</code> and all its children from the set
+     * of known {@link Component}s. If a child was added as a root, then
+     * the recursion stops there because roots can't be removed implicitly.
+     * @param component the component to remove
+     */
+    public void remove( Component component ){
+        roots.remove( component );
+        remove( component, null );
+    }
+    
+    /**
+     * Removes <code>component</code> and all its children from the set
      * of known {@link Component}s.
      * @param component the removed component.
      * @param list a list to be filled with the affected {@link Component}s,
@@ -174,25 +207,27 @@ public class ComponentHierarchyObserver {
      * an event.
      */
     private void remove( Component component, List<Component> list ){
-        boolean fire = list == null;
-        if( fire )
-            list = new LinkedList<Component>();
-        
-        if( components.remove( component )){
-            list.add( component );
-            if( component instanceof Container ){
-                Container container = (Container)component;
-                container.removeContainerListener( listener );
-                for( int i = 0, n = container.getComponentCount(); i<n; i++ ){
-                    remove( container.getComponent( i ), list );
+        if( !roots.contains( component )){
+            boolean fire = list == null;
+            if( fire )
+                list = new LinkedList<Component>();
+            
+            if( components.remove( component )){
+                list.add( component );
+                if( component instanceof Container ){
+                    Container container = (Container)component;
+                    container.removeContainerListener( listener );
+                    for( int i = 0, n = container.getComponentCount(); i<n; i++ ){
+                        remove( container.getComponent( i ), list );
+                    }
                 }
             }
-        }
-        
-        if( fire && !list.isEmpty() ){
-            list = Collections.unmodifiableList( list );
-            for( ComponentHierarchyObserverListener listener : listeners() )
-                listener.removed( controller, list );
+            
+            if( fire && !list.isEmpty() ){
+                list = Collections.unmodifiableList( list );
+                for( ComponentHierarchyObserverListener listener : listeners() )
+                    listener.removed( controller, list );
+            }
         }
     }
     

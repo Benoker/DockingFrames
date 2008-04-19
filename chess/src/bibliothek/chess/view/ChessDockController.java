@@ -24,24 +24,34 @@ public class ChessDockController extends SecureDockController {
         super( null );
         initiate( new SecureDockControllerFactory(){
             @Override
-            public DockRelocator createRelocator( DockController controller, ControllerSetupCollection setup ) {
-                return new DefaultDockRelocator( controller, setup ){
-                    {
-                        setDragDistance( 0 );
-                    }
-                    
-                    @Override
-                    protected Reaction dragMousePressed( int x, int y, int dx, int dy, int modifiers, Dockable dockable ) {
-                        Reaction reaction = super.dragMousePressed( x, y, dx, dy, modifiers, dockable );
-                        if( reaction == Reaction.CONTINUE || reaction == Reaction.CONTINUE_CONSUMED ){
-                            return createRemote( dockable ).drag( x, y, modifiers );
-                        }
-                        
-                        return reaction;
-                    }
-                };             
+            public DockRelocator createRelocator( DockController controller,  ControllerSetupCollection setup ) {
+                return createChessRelocator( controller, setup );
             }
         }, null );
+    }
+    
+    /**
+     * Creates the relocator that should be used by this controller.
+     * @param controller <code>this</code>
+     * @param setup a collection for listeners that get informed when the setup is complet
+     * @return the new relocator
+     */
+    private DockRelocator createChessRelocator( DockController controller, ControllerSetupCollection setup ) {
+        return new DefaultDockRelocator( controller, setup ){
+            {
+                setDragDistance( 0 );
+            }
+            
+            @Override
+            protected Reaction dragMousePressed( int x, int y, int dx, int dy, int modifiers, Dockable dockable ) {
+                Reaction reaction = super.dragMousePressed( x, y, dx, dy, modifiers, dockable );
+                if( reaction == Reaction.CONTINUE || reaction == Reaction.CONTINUE_CONSUMED ){
+                    return createRemote( dockable ).drag( x, y, modifiers );
+                }
+                
+                return reaction;
+            }
+        };             
     }
 }
 

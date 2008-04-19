@@ -72,7 +72,8 @@ public class DefaultDockControllerFactory implements DockControllerFactory {
         setup.add( new ControllerSetupListener(){
             public void done( DockController controller ) {
                 selector.setController( controller );
-                controller.getProperties().set( DockableSelector.INIT_SELECTION, KeyStroke.getKeyStroke( KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK ) );
+                controller.getProperties().set( DockableSelector.INIT_SELECTION, 
+                        KeyStroke.getKeyStroke( KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK ) );
             }
         });
         

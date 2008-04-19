@@ -27,6 +27,7 @@ package bibliothek.gui.dock.control;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 
@@ -37,7 +38,6 @@ import javax.swing.KeyStroke;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
-import bibliothek.gui.dock.event.KeyboardListener;
 import bibliothek.gui.dock.focus.DockableSelection;
 import bibliothek.gui.dock.focus.DockableSelectionListener;
 import bibliothek.gui.dock.util.DockProperties;
@@ -52,7 +52,8 @@ import bibliothek.gui.dock.util.PropertyValue;
  */
 public class DockableSelector {
     /** key for the {@link DockProperties}, telling which {@link KeyStroke} activates the selection */
-    public static final PropertyKey<KeyStroke> INIT_SELECTION = new PropertyKey<KeyStroke>( "dockable selector init selection keystroke" );
+    public static final PropertyKey<KeyStroke> INIT_SELECTION = 
+        new PropertyKey<KeyStroke>( "dockable selector init selection keystroke" );
     
     /** the currently active keystroke */
     private PropertyValue<KeyStroke> initSelection = new PropertyValue<KeyStroke>( INIT_SELECTION ){
@@ -82,14 +83,14 @@ public class DockableSelector {
         cancel();
         
         if( this.controller != null ){
-            this.controller.getKeyboardController().removeListener( listener );
+            this.controller.getKeyboardController().removeGlobalListener( listener );
         }
         
         this.controller = controller;
         initSelection.setProperties( controller );
         
         if( this.controller != null ){
-            this.controller.getKeyboardController().addListener( listener );
+            this.controller.getKeyboardController().addGlobalListener( listener );
         }
     }
     
@@ -178,32 +179,35 @@ public class DockableSelector {
      * the active {@link DockableSelection}.
      * @author Benjamin Sigg
      */
-    private class Listener implements KeyboardListener, DockableSelectionListener, WindowFocusListener{
-        public boolean keyPressed( DockElement element, KeyEvent event ) {
+    private class Listener implements KeyListener, DockableSelectionListener, WindowFocusListener{
+        public void keyPressed( KeyEvent event ) {
+            if( event.isConsumed() )
+                return;
+            
             if( KeyStroke.getKeyStrokeForEvent( event ).equals( initSelection.getValue() )){
                 select();
-                return true;
+                event.consume();
             }
+        }
+        
+        public void keyReleased( KeyEvent event ) {
+            if( event.isConsumed() )
+                return;
             
-            return false;
+            if( KeyStroke.getKeyStrokeForEvent( event ).equals( initSelection.getValue() )){
+                select();
+                event.consume();
+            }
         }
 
-        public boolean keyReleased( DockElement element, KeyEvent event ) {
+        public void keyTyped( KeyEvent event ) {
+            if( event.isConsumed() )
+                return;
+            
             if( KeyStroke.getKeyStrokeForEvent( event ).equals( initSelection.getValue() )){
                 select();
-                return true;
+                event.consume();
             }
-            
-            return false;
-        }
-
-        public boolean keyTyped( DockElement element, KeyEvent event ) {
-            if( KeyStroke.getKeyStrokeForEvent( event ).equals( initSelection.getValue() )){
-                select();
-                return true;
-            }
-            
-            return false;
         }
         
         public void windowGainedFocus( WindowEvent e ) {

@@ -68,7 +68,9 @@ public class EclipseColorScheme extends BasicColorScheme {
         setColor( "stack.tab.text.selected.focused",    RexSystemColor.getActiveTextColor() );
         setColor( "stack.tab.text.selected.focuslost",  RexSystemColor.getInactiveTextColor() );
         
-        setColor( "stack.border",                             RexSystemColor.getBorderColor() );
+        setColor( "stack.border",                       RexSystemColor.getBorderColor() );
+        
+        setColor( "selection.border",                   RexSystemColor.getBorderColor() );         
         return true;
     }
 }

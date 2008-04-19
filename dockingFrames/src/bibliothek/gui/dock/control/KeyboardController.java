@@ -27,6 +27,8 @@
 package bibliothek.gui.dock.control;
 
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import bibliothek.gui.DockController;
@@ -43,8 +45,11 @@ import bibliothek.gui.dock.event.LocatedListenerList;
  */
 public abstract class KeyboardController {
 	/** the list of listeners */
-	private LocatedListenerList<KeyboardListener> listeners = 
+	private LocatedListenerList<KeyboardListener> keyListeners = 
 		new LocatedListenerList<KeyboardListener>();
+	
+	/** the listeners which will be informed about any events */
+	private List<KeyListener> globalListeners = new ArrayList<KeyListener>();
 	
 	/** the controller in whose realm this {@link KeyboardController} works */
 	private DockController controller;
@@ -59,13 +64,36 @@ public abstract class KeyboardController {
 	}
 	
 	/**
+	 * Adds a global key listener to this controller. Global {@link KeyListener}s
+	 * will receive a notification for every event that this controller handles.
+	 * The listeners will also be informed about events that are consumed.
+	 * @param listener the new listener
+	 */
+	public void addGlobalListener( KeyListener listener ){
+	    if( listener == null )
+	        throw new IllegalArgumentException( "listener must not be null" );
+	    globalListeners.add( listener );
+	}
+	
+	/**
+	 * Removes a listener from this controller.
+	 * @param listener the listener to remove
+	 */
+	public void removeGlobalListener( KeyListener listener ){
+	    globalListeners.remove( listener );
+	}
+	
+	/**
 	 * Adds a listener to this controller. The listener will be invoked
 	 * when a {@link java.awt.event.KeyEvent} occurs in the subtree below
 	 * the listeners {@link bibliothek.gui.dock.DockElement}.
 	 * @param listener the new listener
 	 */
 	public void addListener( KeyboardListener listener ){
-		listeners.addListener( listener );
+	    if( listener == null )
+	        throw new IllegalArgumentException( "listener must not be null" );
+	    
+		keyListeners.addListener( listener );
 	}
 	
 	/**
@@ -73,7 +101,7 @@ public abstract class KeyboardController {
 	 * @param listener the listener to remove
 	 */
 	public void removeListener( KeyboardListener listener ){
-		listeners.removeListener( listener );
+		keyListeners.removeListener( listener );
 	}
 	
 	/**
@@ -97,16 +125,21 @@ public abstract class KeyboardController {
 	 * @param event the event to send
 	 */
 	protected void fireKeyPressed( KeyEvent event ){
-		if( event.isConsumed() )
-			return;
+		if( !event.isConsumed() ){
+    		DockElement element = controller.searchElement( event.getComponent() );
+    		if( element != null ){
+        		List<KeyboardListener> list = keyListeners.affected( element );
+        		loop:for( KeyboardListener listener : list ){
+        			if( listener.keyPressed( element, event )){
+        				event.consume();
+        				break loop;
+        			}
+        		}
+    		}
+		}
 		
-		DockElement element = controller.searchElement( event.getComponent() );
-		List<KeyboardListener> list = listeners.affected( element );
-		for( KeyboardListener listener : list ){
-			if( listener.keyPressed( element, event )){
-				event.consume();
-				return;
-			}
+		for( KeyListener listener : globalListeners.toArray( new KeyListener[ globalListeners.size() ] )){
+		    listener.keyPressed( event );
 		}
 	}
 	
@@ -117,16 +150,21 @@ public abstract class KeyboardController {
 	 * @param event the event to send
 	 */
 	protected void fireKeyReleased( KeyEvent event ){
-		if( event.isConsumed() )
-			return;
-		
-		DockElement element = controller.searchElement( event.getComponent() );
-		List<KeyboardListener> list = listeners.affected( element );
-		for( KeyboardListener listener : list ){
-			if( listener.keyReleased( element, event )){
-				event.consume();
-				return;
-			}
+		if( !event.isConsumed() ){
+			DockElement element = controller.searchElement( event.getComponent() );
+    		if( element != null ){
+        		List<KeyboardListener> list = keyListeners.affected( element );
+        		loop:for( KeyboardListener listener : list ){
+        			if( listener.keyReleased( element, event )){
+        				event.consume();
+        				break loop;
+        			}
+        		}
+    		}
+		}
+
+		for( KeyListener listener : globalListeners.toArray( new KeyListener[ globalListeners.size() ] )){
+		    listener.keyReleased( event );
 		}
 	}
 	
@@ -137,16 +175,21 @@ public abstract class KeyboardController {
 	 * @param event the event to send
 	 */
 	protected void fireKeyTyped( KeyEvent event ){
-		if( event.isConsumed() )
-			return;
-		
-		DockElement element = controller.searchElement( event.getComponent() );
-		List<KeyboardListener> list = listeners.affected( element );
-		for( KeyboardListener listener : list ){
-			if( listener.keyTyped( element, event )){
-				event.consume();
-				return;
-			}
+		if( !event.isConsumed() ){
+			DockElement element = controller.searchElement( event.getComponent() );
+    		if( element != null ){
+        		List<KeyboardListener> list = keyListeners.affected( element );
+        		loop:for( KeyboardListener listener : list ){
+        			if( listener.keyTyped( element, event )){
+        				event.consume();
+        				break loop;
+        			}
+        		}
+    		}
+		}
+
+		for( KeyListener listener : globalListeners.toArray( new KeyListener[ globalListeners.size() ] )){
+		    listener.keyTyped( event );
 		}
 	}
 }

@@ -216,6 +216,7 @@ public class BasicTheme implements DockTheme{
         updateColorProvider( controllers, ActionColor.class );
         updateColorProvider( controllers, DisplayerColor.class );
         updateColorProvider( controllers, StationPaintColor.class );
+        updateColorProvider( controllers, DockableSelectionColor.class );
         
         for( DockController controller : controllers )
             controller.getColors().unlockUpdate();

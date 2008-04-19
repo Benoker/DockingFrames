@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2008 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -47,8 +47,12 @@ import bibliothek.gui.Dockable;
  */
 public class DefaultDockableSelection extends AbstractDockableSelection{
     private Model model = new Model();
+    private JScrollPane listPane;
     private JList list;
     
+    /**
+     * Creates a new selection
+     */
     public DefaultDockableSelection(){
         list = new JList( model );
         list.setCellRenderer( new Renderer() );
@@ -61,7 +65,8 @@ public class DefaultDockableSelection extends AbstractDockableSelection{
         });
         
         setLayout( new BorderLayout() );
-        add( new JScrollPane( list ), BorderLayout.CENTER );
+        listPane = new JScrollPane( list );
+        add( listPane, BorderLayout.CENTER );
         
         list.addMouseListener( new MouseAdapter(){
             @Override
@@ -95,7 +100,7 @@ public class DefaultDockableSelection extends AbstractDockableSelection{
      * @return the list
      */
     protected JComponent getList(){
-        return list;
+        return listPane;
     }
     
     @Override
