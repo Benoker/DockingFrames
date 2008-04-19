@@ -42,6 +42,9 @@ public class Board {
     private Figure white;
     /** the black king */
     private Figure black;
+    
+    /** whether this board is a copy of the original board or not */
+    private boolean copy = false;
    
     /**
      * Creates a new board, puts all figures at their initial position.
@@ -76,6 +79,8 @@ public class Board {
      * @param board the original board
      */
     private Board( Board board ){
+        copy = true;
+        
         for( int r = 0; r < 8; r++ ){
             for( int c = 0; c < 8; c++ ){
                 if( board.figures[r][c] != null ){
@@ -289,6 +294,18 @@ public class Board {
         if( figures[dr][dc] != null )
             kill( dr, dc );
         figures[dr][dc] = figure;
+        
+        if( !copy ){
+            for( int i = 0; i < 8; i++ ){
+                for( int j = 0; j < 8; j++ ){
+                    if( i != dr || j != dc ){
+                        Figure check = figures[i][j];
+                        if( check != null )
+                            check.cleanJustMoved();
+                    }
+                }
+            }
+        }
         
         for( ChessListener listener : listeners )
             listener.moved( sr, sc, dr, dc, figure );

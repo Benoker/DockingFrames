@@ -149,3 +149,4 @@
 - Bugfix: Focus system could throw a NPE. 
 - Layout: colors of the Nimbus LookAndFeel can be extracted under jdk 1.6.0_10
 - Bugfix: RexTabbedComponent does no longer add and remove children, it uses now a CardLayout. LookAndFeel changes work now also with the EclipseTheme.
+- Bugfix: Chessdemo did not correctly calculate the "en passent" maneuver

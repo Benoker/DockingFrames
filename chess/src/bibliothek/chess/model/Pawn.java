@@ -81,22 +81,31 @@ public class Pawn extends Behavior{
                 return;
 	    
 	    // en passant
-	    for( int i = 0; i < 2; i++ ){
-	        c = figure.getColumn();
-	        r = figure.getRow();
-	        if( i == 0 )
-	            c++;
-	        else
-	            c--;
-	        
-	        if( board.isValid( r, c )){
-	            Figure pawn = board.getFigure( r, c );
-	            if( pawn != null && pawn.getType() == Figure.Type.PAWN ){
-	                if( pawn.isJustMoved() && pawn.getPlayer().opponent() == figure.getPlayer() )
-	                    if( !board.visit( r+plus, c, visitor ))
-	                        return;
-	            }
-	        }
+	    int enpassent;
+	    
+	    if( figure.getPlayer() == Player.WHITE )
+	        enpassent = 4;
+	    else
+	        enpassent = 3;
+	    
+	    if( enpassent == figure.getRow() ){
+    	    for( int i = 0; i < 2; i++ ){
+    	        c = figure.getColumn();
+    	        r = figure.getRow();
+    	        if( i == 0 )
+    	            c++;
+    	        else
+    	            c--;
+    	        
+    	        if( board.isValid( r, c )){
+    	            Figure pawn = board.getFigure( r, c );
+    	            if( pawn != null && pawn.getType() == Figure.Type.PAWN ){
+    	                if( pawn.isJustMoved() && pawn.getPlayer().opponent() == figure.getPlayer() )
+    	                    if( !board.visit( r+plus, c, visitor ))
+    	                        return;
+    	            }
+    	        }
+    	    }
 	    }
 	}
 }

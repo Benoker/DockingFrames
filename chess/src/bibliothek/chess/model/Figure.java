@@ -206,12 +206,20 @@ public final class Figure {
     }
 	
 	/**
-	 * Tells whether this figure has been moved exactly once or not.
+	 * Tells whether this figure has been moved exactly once or not 
 	 * @return <code>true</code> if this figure has been moved exactly once
+	 * and only in the last stroke.
 	 */
 	public boolean isJustMoved() {
         return justMoved;
     }
+	
+	/**
+	 * Cleans the just moved flag and sets it to <code>false</code>.
+	 */
+	public void cleanJustMoved(){
+	    justMoved = false;
+	}
 	
 	/**
 	 * Changes the location of this figure. This might have influence on other
