@@ -25,6 +25,8 @@
  */
 package bibliothek.gui.dock.themes.basic.action;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.util.Set;
 
 import javax.swing.JComponent;
@@ -108,6 +110,19 @@ public abstract class BasicHandler<D extends StandardDockAction> implements Basi
     
     public JComponent getItem() {
         return model.getOwner();
+    }
+    
+    
+    public void setBackground( Color background ) {
+        Component item = getItem();
+        if( item != null )
+            item.setBackground( background );
+    }
+    
+    public void setForeground( Color foreground ) {
+        Component item = getItem();
+        if( item != null )
+            item.setForeground( foreground );
     }
     
     public void setOrientation( Orientation orientation ) {

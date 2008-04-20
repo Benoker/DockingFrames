@@ -26,7 +26,6 @@
 package bibliothek.gui.dock.util.laf;
 
 import java.awt.Color;
-import java.awt.SystemColor;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
@@ -54,12 +53,10 @@ public class DefaultLookAndFeelColors extends AbstractLookAndFeelColors {
         translations.put( SELECTION, "TextField.selectionBackground" );
         translations.put( PANEL_BACKGROUND, "Panel.background" );
         translations.put( PANEL_FOREGROUND, "Panel.foreground" );
+        translations.put( CONTROL_SHADOW, "controlDkShadow" );
     }
     
     public Color getColor( String key ) {
-        if( CONTROL_SHADOW.equals( key ))
-            return SystemColor.controlShadow;
-        
         key = translations.get( key );
         if( key == null )
             return null;

@@ -207,8 +207,8 @@ public class ButtonPanel extends JPanel{
 		    			menuItem = createItemFor( menuAction, dockable );
 		    			if( menuItem != null ){
 			    			menuItem.setOrientation( orientation );
-			    			menuItem.getItem().setForeground( getForeground() );
-			    			menuItem.getItem().setBackground( getBackground() );
+			    			menuItem.setForeground( getForeground() );
+			    			menuItem.setBackground( getBackground() );
 			    			menuItem.bind();
 		    			}
 	    			}
@@ -227,8 +227,8 @@ public class ButtonPanel extends JPanel{
 	    					actionItem.item = item;
 	    					
 	    					item.setOrientation( orientation );
-	    					item.getItem().setForeground( getForeground() );
-	    					item.getItem().setBackground( getBackground() );
+	    					item.setForeground( getForeground() );
+	    					item.setBackground( getBackground() );
 	    				}
     				}
     			}
@@ -248,12 +248,11 @@ public class ButtonPanel extends JPanel{
         super.setForeground( fg );
         
         if( menuItem != null )
-        	menuItem.getItem().setForeground( fg );
-        
+            menuItem.setForeground( fg );        
         if( actions != null ){
 	        for( ActionItem item : actions ){
 	        	if( item.item != null )
-	        		item.item.getItem().setForeground( fg );
+	        		item.item.setForeground( fg );
 	        }
         }
     }
@@ -263,14 +262,29 @@ public class ButtonPanel extends JPanel{
         super.setBackground( bg );
         
         if( menuItem != null )
-        	menuItem.getItem().setBackground( bg );
+        	menuItem.setBackground( bg );
         
         if( actions != null ){
 	        for( ActionItem item : actions ){
 	        	if( item.item != null )
-	        		item.item.getItem().setBackground( bg );
+	        		item.item.setBackground( bg );
 	        }
         }
+    }
+    
+    @Override
+    public void updateUI() {
+        super.updateUI();
+        
+        // the children of this panel must have the same colors as
+        // this panel, so wait until the updateUI reached them as well,
+        // and then reset the colors to be sure
+        EventQueue.invokeLater( new Runnable(){
+            public void run() {
+                setForeground( getForeground() );
+                setBackground( getBackground() );
+            }
+        });
     }
     
 	@Override
@@ -629,8 +643,8 @@ public class ButtonPanel extends JPanel{
 	                	action.bind( dockable );
 	                    item.bind();
 	                    item.setOrientation( orientation );
-	                    item.getItem().setForeground( getForeground() );
-		                item.getItem().setBackground( getBackground() );
+	                    item.setForeground( getForeground() );
+		                item.setBackground( getBackground() );
 	                }
                 }
             

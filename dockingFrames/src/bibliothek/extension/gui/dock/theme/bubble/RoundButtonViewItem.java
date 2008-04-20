@@ -25,6 +25,9 @@
  */
 package bibliothek.extension.gui.dock.theme.bubble;
 
+import java.awt.Color;
+import java.awt.Component;
+
 import javax.swing.JComponent;
 
 import bibliothek.gui.DockController;
@@ -53,6 +56,18 @@ public class RoundButtonViewItem  extends ConnectingViewItem<JComponent> impleme
         super( dockable, delegate );
         this.delegate = delegate;
         this.button = button;
+    }
+    
+    public void setBackground( Color background ) {
+        Component item = getItem();
+        if( item != null )
+            item.setBackground( background );
+    }
+    
+    public void setForeground( Color foreground ) {
+        Component item = getItem();
+        if( item != null )
+            item.setForeground( foreground );
     }
 
     @Override

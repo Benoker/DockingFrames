@@ -25,6 +25,8 @@
  */
 package bibliothek.gui.dock.themes.basic.action;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.util.*;
 
 import javax.swing.Icon;
@@ -152,6 +154,19 @@ public class BasicDropDownButtonHandler implements BasicDropDownButtonTrigger, B
         actions.clear();
     }
 
+    
+    public void setBackground( Color background ) {
+        Component item = getItem();
+        if( item != null )
+            item.setBackground( background );
+    }
+    
+    public void setForeground( Color foreground ) {
+        Component item = getItem();
+        if( item != null )
+            item.setForeground( foreground );
+    }
+    
     /**
      * Adds an action into the list of all known actions.
      * @param index the location of the action

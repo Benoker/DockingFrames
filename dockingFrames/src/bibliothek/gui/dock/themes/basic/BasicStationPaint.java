@@ -84,7 +84,7 @@ public class BasicStationPaint implements StationPaint {
         color.setId( "paint.insertion" );
         color.connect( station.getController() );
         
-        g.setColor( color.color() );
+        g.setColor( new Color( color.color().getRGB() ) );
         Graphics2D g2 = (Graphics2D)g;
         
         Composite old = g2.getComposite();

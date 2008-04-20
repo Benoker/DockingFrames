@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.themes.basic.action;
 
+import java.awt.Color;
 import java.awt.event.ActionListener;
 
 import javax.swing.JComponent;
@@ -85,6 +86,14 @@ public class BasicSeparatorHandler implements BasicTitleViewItem<JComponent>, Me
 		return separator;
 	}
 
+	public void setBackground( Color background ) {
+	    // ignore
+	}
+	
+	public void setForeground( Color foreground ) {
+	    // ignore
+	}
+	
 	public void unbind(){
 		// ignore
 	}

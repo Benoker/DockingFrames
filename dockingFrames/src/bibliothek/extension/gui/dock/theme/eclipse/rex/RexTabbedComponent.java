@@ -319,6 +319,7 @@ public class RexTabbedComponent extends JComponent {
             selection = selectedTab;
         
         selectedTab = -1;
+        contentLayout.show( contentArea, String.valueOf( entry.id ) );
         contentArea.remove( entry.dockable.getComponent() );
 
         if( index < focusedTab )
@@ -346,6 +347,7 @@ public class RexTabbedComponent extends JComponent {
 	    contentArea.removeAll();
 	    
 		for (TabEntry tab : tabs) {
+		    contentLayout.show( contentArea, String.valueOf( tab.id ) );
 		    contentLayout.removeLayoutComponent( tab.dockable.getComponent() );
 		    
 			for (TabListener listener : listeners) {

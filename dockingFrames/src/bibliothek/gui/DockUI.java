@@ -175,6 +175,7 @@ public class DockUI {
     private void registerColors(){
         registerColors( ".+", new DefaultLookAndFeelColors() );
         registerColors( "com\\.sun\\.java\\.swing\\.plaf\\.nimbus\\.NimbusLookAndFeel", new Nimbus6u10() );
+        registerColors( "com\\.sun\\.java\\.swing\\.plaf\\.windows\\.WindowsLookAndFeel", new Windows() );
     }
     
     /**

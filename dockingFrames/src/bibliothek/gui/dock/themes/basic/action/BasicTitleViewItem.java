@@ -26,6 +26,8 @@
 
 package bibliothek.gui.dock.themes.basic.action;
 
+import java.awt.Color;
+
 import bibliothek.gui.dock.action.view.ViewItem;
 import bibliothek.gui.dock.title.DockTitle;
 
@@ -42,4 +44,18 @@ public interface BasicTitleViewItem<A> extends ViewItem<A> {
 	 * @param orientation the orientation
 	 */
 	public void setOrientation( DockTitle.Orientation orientation );
+	
+	/**
+	 * Called by the title that shows this item to tell this item what the
+	 * foreground color of the title is.
+	 * @param foreground the foreground color of the title
+	 */
+	public void setForeground( Color foreground );
+	
+	/**
+	 * Called by the title that shows this item to tell this item what the
+	 * background color of the title is.
+	 * @param background the background color of the title
+	 */
+	public void setBackground( Color background );
 }
