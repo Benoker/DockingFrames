@@ -155,8 +155,7 @@
 - API: clients can now add and remove Components from the ComponentHiearchyObserver, DockController will add the root-window to the observer if it knows the root window.
 - Bugfix: when focusing a normalized CDockable that was hidden by a maximized element, then the focused Dockable did not replace the maximized element.
 - Bugfix: when changing the ExtendedMode of a CDockable, directly or indirectly, then state-events could be lost.
-
-! API: DockableFocusListener/DockHierarchyObserverListener now use events
+! API: DockableFocusListener/ComponentHierarchyObserverListener now use events
 ! API: DockableFocusAdapter deleted, no longer necessary
 ! API: DockableFocusListener divided into DockableFocusListener/DockableSelectionListener
 Layout: when dropping something into SplitDockStation, the old leaf always gets at least 25% of the original space.

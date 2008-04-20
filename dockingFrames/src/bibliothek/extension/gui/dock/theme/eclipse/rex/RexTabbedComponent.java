@@ -290,6 +290,8 @@ public class RexTabbedComponent extends JComponent {
 
 	public void removeTab( int index ){
 	    Dockable dockable = getTabAt( index );
+	    int selectedTab = this.selectedTab;
+	    this.selectedTab = -1;
 	    
 	    TabEntry entry = tabs.get( index );
         tabs.remove( index );
@@ -406,7 +408,7 @@ public class RexTabbedComponent extends JComponent {
 	}
 
 	public int getSelectedIndex() {
-		return indexOf(getSelectedTab());
+	    return selectedTab;
 	}
 
 	public void setSelectedTab( int index ) {

@@ -7,6 +7,98 @@
 		</delete>
 	</target>
 
+	<target name="release" depends="release.dock, release.base, release.web, release.doc">
+		<!-- nothing to do -->
+	</target>
+	
+	<target name="release.properties" depends="default">
+		<property name="release" value="${base}/release"/>
+		<property name="release.dock" value="${release}/dock"/>
+		<property name="release.base" value="${release}/base"/>
+		<property name="release.web" value="${release}/web"/>
+	</target>
+	
+	<target name="release.dock" depends="release.properties, default">
+		<mkdir dir="${release.dock}/dock/src"/>
+		<copy todir="${release.dock}/dock/src">
+			<fileset dir="${source}"/>	
+		</copy>
+		<mkdir dir="${release.dock}/dock/bin"/>
+		<copy todir="${release.dock}/dock/bin">
+			<fileset dir="${bin}"/>	
+		</copy>
+		<mkdir dir="${release.dock}/dock/doc"/>
+		<copy todir="${release.dock}/dock/doc">
+			<fileset dir="${doc}"/>	
+		</copy>
+		
+		<copy todir="${release.dock}/dock">
+			<fileset dir="${base}">
+				<include name="*.pdf"/>
+				<include name="*.txt"/>
+				<exclude name="faq*"/>
+			</fileset>
+		</copy>
+		
+		<zip destfile="${base}/dock.zip">
+			<fileset dir="${release.dock}"/>
+		</zip>
+	</target>
+	
+	<target name="release.base" depends="release.properties, default">
+		<mkdir dir="${release.base}/dock/src/${name.common}"/>
+		<copy todir="${release.base}/dock/src/${name.common}">
+			<fileset dir="${source}/${name.common}"/>
+		</copy>
+		<mkdir dir="${release.base}/dock/src/${name.dockingFrames}"/>
+		<copy todir="${release.base}/dock/src/${name.dockingFrames}">
+			<fileset dir="${source}/${name.dockingFrames}"/>
+		</copy>		
+				
+		<mkdir dir="${release.base}/dock/bin"/>
+		<copy todir="${release.base}/dock/bin" file="${bin}/${name.common}.jar"/>
+		<copy todir="${release.base}/dock/bin" file="${bin}/${name.dockingFrames}.jar"/>
+		
+		<copy todir="${release.base}/dock">
+			<fileset dir="${base}">
+				<include name="*.pdf"/>
+				<include name="*.txt"/>
+				<exclude name="faq*"/>
+			</fileset>
+		</copy>
+		
+		<zip destfile="${base}/base.zip">
+			<fileset dir="${release.base}"/>
+		</zip>
+	</target>
+	
+	<target name="release.web" depends="release.properties, default">
+		<mkdir dir="${release.web}"/>
+		<copy todir="${release.web}">
+			<fileset dir="${web}"/>
+		</copy>
+		
+		<zip destfile="${release.web}/demo.zip">
+			<fileset dir="${release.web}"/>
+		</zip>
+		
+		<move todir="${release.web}">
+			<fileset dir="${release.web}/lib"/>
+		</move>
+		
+		<delete dir="${release.web}/lib"/>
+		
+		<zip destfile="${base}/web.zip">
+			<fileset dir="${release.web}"/>
+		</zip>
+	</target>
+	
+	<target name="release.doc" depends="release.properties, default">
+		<zip destfile="${base}/doc.zip">
+			<fileset dir="${doc}/${name.common}"/>
+		</zip>
+	</target>
+	
 	<target name="paths">
 		<property name="base" value="dock"/>
 		<property name="source" value="${base}/src"/>
@@ -46,7 +138,7 @@
 			</fileset>
 			<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
 		</javadoc>
-		
+	
 		<mkdir dir="${doc}/${name.common}"/>
 		<javadoc destdir="${doc}/${name.common}" use="true" splitindex="true">
 			<fileset dir="${source}/${name.dockingFrames}">

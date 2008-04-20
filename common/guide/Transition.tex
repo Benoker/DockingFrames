@@ -299,11 +299,18 @@ This release contains some tricky incompatibilities which need to be handled ver
 \subsection{Incombatibilities}
 The changes that need special care.
 
-\subsubsection{DockableFocusListener, DockStationListener}
+\subsubsection{DockStationListener}
 \begin{description}
- \short The methods of \src{DockableFocusListner} and \src{DockStationListener}\\have more parameters. Methods which indicate a change, like focusing a new \src{Dockable}, now also tell what was the old value of the changed property.
+ \short The method \src{dockableSelected} of \src{DockStationListener} has an additional parameter that indicates which element was selected before the change.
  \why No need for listeners to store the old values.
- \clients Must carefully update all classes and interfaces that implement \\\src{DockableFocusListener} or \src{DockStationListener}. Work should be easier when using the \src{@Override} annotation. Be especially careful not to mix up the new arguments with the old ones.
+ \clients Must carefully update all classes and interfaces that implement \\\src{DockStationListener}. Be especially careful not to mix up the new arguments with the old ones.
+\end{description}
+
+\subsubsection{DockableFocusListener}
+\begin{description}
+ \short The \src{DockableFocusListener} has been divided into two interfaces: \\\src{DockableFocusListener} and \src{DockableSelectionListener}. The\\remaining method in \src{DockableFocusListener} now takes a \\\src{DockableFocusEvent} and no longer directly the involved elements. The class \src{DockableFocusAdapter} has been deleted.
+ \why Events allow further changes of the system without change of the \src{DockableFocusListener} itself. Since every client needs to update its methods anyway, \src{DockableFocusAdapter} could be deleted.
+ \clients Should use \src{DockableFocusListener} instead of \\\src{DockableFocusAdapter}.
 \end{description}
 
 \subsubsection{DockTheme.getDockableSelection}
@@ -329,14 +336,14 @@ The changes that need special care.
 
 \subsubsection{ComponentHierarchyObserver}
 \begin{description}
- \short The \src{ComponentHierarchyObserver} includes more \src{Components} in its search.
+ \short The \src{ComponentHierarchyObserver} includes more \src{Components} in its search. The \src{ComponentHierarchyObserverListener} now works with an event and does no longer receive all the elements as arguments.
  \why Allows more features to work correctly in restricted environments.
  \clients Need to be aware that not every \src{Component} that is found by the observer is a child of a \src{Dockable}.
 \end{description}
 
 
-\subsection{Features}
-A list of the new features.
+\subsection{API and Layout}
+A list of new API elements and changes that affect the layout.
 
 \subsubsection{KeyStroke for closing Dockable}
 \begin{description}
@@ -377,13 +384,19 @@ A list of the new features.
 \subsubsection{Extracting colors from LookAndFeel}
 \begin{description}
  \short The mechanism to read colors from \src{LookAndFeel}s has been upgraded. Each \src{LookAndFeel} can now have its own specialized \src{LookAndFeelColors} that reads the colors.
- \why Allows to be more flexible with colors, allows the use of Nimbus.
+ \why Allows to be more flexible with colors, allows the correct use of Nimbus and Windows.
 \end{description}
 
 \subsubsection{EclipseTheme}
 \begin{description}
  \short \src{EclipseTheme} uses more colors from the \src{LookAndFeel}
  \why looks better
+\end{description}
+
+\subsubsection{SplitDockStation}
+\begin{description}
+ \short When dropping an element onto a \src{SplitDockStation}, the elements that are put aside receive at least a quarter of their original size.
+ \why Sometimes the old elements shrunk too mutch.
 \end{description}
 
 \subsection{Bugfixes}

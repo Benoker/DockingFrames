@@ -2,4 +2,4 @@
 - [done ]check whether multiple CContentAreas work properly or not
 - [done] More constructors for DefaultCSingleDockable, DefaultCMultipleDockable.
 - Closing a maximized, stacked Dockable is counterintuitive
-- Way to track focus on CDockable 
+- [done] Way to track focus on CDockable 

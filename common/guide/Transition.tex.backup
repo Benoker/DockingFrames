@@ -179,7 +179,7 @@ These changes break with the API from 1.0.3, clients must change their interface
 \subsubsection{CDockable.getClose}
 \begin{description}
 \short Method has been moved into \src{CommonDockable}
-\why The action can now be replaced through \src{CDockable.getAction}. There is no need for any client to replace the action by replacing the whole \src{DockActionSource}
+\why The action can now be replaced through \src{CDockable.getAction}.\\There is no need for any client to replace the action by replacing the whole \src{DockActionSource}
 \clients should use \src{putAction}, a method of \src{AbstractCDockable} to exchange the close-action. No fix for clients which added additional elements to the close-source.
 \end{description}
 
@@ -301,9 +301,9 @@ The changes that need special care.
 
 \subsubsection{DockableFocusListener, DockStationListener}
 \begin{description}
- \short The methods of \src{DockableFocusListner} and \src{DockStationListener} have more parameters. Methods which indicate a change, like focusing a new \src{Dockable}, now also tell what was the old value of the changed property.
+ \short The methods of \src{DockableFocusListner} and \src{DockStationListener}\\have more parameters. Methods which indicate a change, like focusing a new \src{Dockable}, now also tell what was the old value of the changed property.
  \why No need for listeners to store the old values.
- \clients Must carefully update all classes and interfaces that implement \src{DockableFocusListener} or \src{DockStationListener}. Work should be easier when using the \src{@Override} annotation. Be especially careful not to mix up the new arguments with the old ones.
+ \clients Must carefully update all classes and interfaces that implement \\\src{DockableFocusListener} or \src{DockStationListener}. Work should be easier when using the \src{@Override} annotation. Be especially careful not to mix up the new arguments with the old ones.
 \end{description}
 
 \subsubsection{DockTheme.getDockableSelection}
@@ -346,13 +346,13 @@ A list of the new features.
 
 \subsubsection{New listeners}
 \begin{description}
- \short There are new listeners, \src{CFocusListener}, \src{CKeyboardListener} and \src{CDoubleClickListener}, which can be added to \src{CDockable} or to \src{CControl} if all \src{CDockable}s should be monitored.
+ \short There are new listeners, \src{CFocusListener}, \src{CKeyboardListener} and \\\src{CDoubleClickListener}, which can be added to \src{CDockable} or to \\\src{CControl} if all \src{CDockable}s should be monitored.
  \why Might be helpful for some applications
 \end{description}
 
 \subsubsection{ComponentHierarchObserver}
 \begin{description}
- \short Clients can now add and remove \src{Component}s from the \src{ComponentHierarchyObserver}. The observer also includes \src{DockTitle}s in its search for \src{Component}s.
+ \short Clients can now add and remove \src{Component}s from the \\\src{ComponentHierarchyObserver}. The observer also includes \src{DockTitle}s in its search for \src{Component}s.
  \why Might become necessary for complex applications that run in a restricted environment.
 \end{description}
 
@@ -364,7 +364,7 @@ A list of the new features.
 
 \subsubsection{FocusTraversalPolicies}
 \begin{description}
- \short All \src{DockTheme}s now support \src{FocusTraversalPolicies}. Now each \src{DockAction} and all \src{Component}s of a \src{Dockable} can be reached by using only the keyboard.
+ \short All \src{DockTheme}s now support \src{FocusTraversalPolicies}. Now each \\\src{DockAction} and all \src{Component}s of a \src{Dockable} can be reached by using only the keyboard.
  \why A nice feature for people which do not like the mouse
 \end{description}
 
@@ -387,35 +387,45 @@ A list of the new features.
 \end{description}
 
 \subsection{Bugfixes}
-\subsubsection{}
+\subsubsection{Missing colors for BasicTheme}
 \begin{description}
- \short
- \why
+ \short \src{BasicTheme} did not update colors for the keys \src{paint.line}, \src{paint.divider} and \src{paint.division}. As a result some painting was not as in the older versions.
 \end{description}
 
-\subsubsection{}
+\subsubsection{Cutting bounds of children of SplitDockStation}
 \begin{description}
- \short
- \why
+ \short The bounds of children of \src{SplitDockStation} are now cut such that they are always within the stations boundaries.
+ \why Rounding errors sometimes lead to little failures that made a single line of pixels invisible.
 \end{description}
 
-\subsubsection{}
+\subsubsection{NullPointerException when changing focus}
 \begin{description}
- \short
- \why
+ \short A \src{NullPointerException} could been thrown when the focus changed.
 \end{description}
 
+\subsubsection{Undecorated dialogs not undecorated}
+\begin{description}
+ \short When using \src{LookAndFeel}s that can draw window decorations on their own (like JTattoo), then \src{FlapWindow}, \src{ScreenDockDialog} and others\\could have decorations.
+ \why The flag that advices the \src{LookAndFeel} not to paint a decoration was not set in the \src{JRootPane}s of these windows.
+\end{description}
 
-- Bugfix: BasicTheme did not update colors for key paint.line, paint.divider and paint.division. Hence the color used to indicate drag and drop elements was black on most systems.
-- Bugfix, Layout: The bounds of children of SplitDockStation are now always within the station, rounding errors are cut away.
-- Bugfix: Focus system could throw a NPE. 
-- Bugfix: when using LookAndFeels that could draw window decarations on their own (like JTattoo), then FlapWindow, ScreenDockDialog and others could have decorations. Their JRootPane is now explicitly advised not to have any decorations.
-- Bugfix: RexTabbedComponent does no longer add and remove children, it uses now a CardLayout. LookAndFeel changes work now also with the EclipseTheme.
-- Bugfix: Chessdemo did not correctly calculate the "en passent" maneuver
-- Bugfix: when focusing a normalized CDockable that was hidden by a maximized element, then the focused Dockale did not replace the maximized element.
-- Bugfix: when changing the ExtendedMode of a CDockable, directly or indirectly, then state-events could be lost.
+\subsubsection{RexTabbedComponent not adding/removing children}
+\begin{description}
+ \short \src{RexTabbedComponent} does no longer add and remove its children to change their visibility, it now uses a \src{CardLayout}.
+ \why Some \src{Component}s did miss the change of the \src{LookAndFeel} when they were a child of \src{RexTabbedComponent}.
+\end{description}
 
+\subsubsection{Focusing a hidden CDockable}
+\begin{description}
+ \short When focusing a normalized \src{CDockable} that was hidden behind a maximized \src{CDockable}, then the focused dockable did not became visible.
+ \why An old security system prevents change of the maximized element by the focus system.
+\end{description}
 
+\subsubsection{Missing events when changing state of CDockable}
+\begin{description}
+ \short When the \src{ExtendedMode} of a \src{CDockable} did not change because of a call of a special method, no state-change-events were fired.
+ \why It was not intended that one action could change the state of many \src{CDockable}s.
+\end{description}
 \end{document}
 
 
