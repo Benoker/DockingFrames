@@ -53,10 +53,7 @@ import bibliothek.gui.dock.common.intern.station.CLockedResizeLayoutManager;
 import bibliothek.gui.dock.common.intern.station.ScreenResizeRequestHandler;
 import bibliothek.gui.dock.common.intern.theme.CSmoothTheme;
 import bibliothek.gui.dock.common.location.CExternalizedLocation;
-import bibliothek.gui.dock.event.DockAdapter;
-import bibliothek.gui.dock.event.DockableFocusListener;
-import bibliothek.gui.dock.event.DoubleClickListener;
-import bibliothek.gui.dock.event.KeyboardListener;
+import bibliothek.gui.dock.event.*;
 import bibliothek.gui.dock.facile.action.CloseAction;
 import bibliothek.gui.dock.facile.action.StateManager;
 import bibliothek.gui.dock.frontend.Setting;
@@ -363,8 +360,9 @@ public class CControl {
 	 */
 	private void initFocusListeners( DockController controller ){
 	    controller.addDockableFocusListener( new DockableFocusListener(){
-	        public void dockableFocused( DockController controller,
-	                Dockable oldFocused, Dockable newFocused ) {
+	        public void dockableFocused( DockableFocusEvent event ) {
+	            Dockable oldFocused = event.getOldFocusOwner();
+	            Dockable newFocused = event.getNewFocusOwner();
 
 	            if( oldFocused != null && oldFocused instanceof CommonDockable ){
 	                CDockable oldC = ((CommonDockable)oldFocused).getDockable();
@@ -384,11 +382,6 @@ public class CControl {
                     
 	                listenerCollection.getFocusListener().focusGained( newC );
 	            }
-	        }
-	        public void dockableSelected( DockController controller,
-	                DockStation station, Dockable oldSelected,
-	                Dockable newSelected ) {
-	            // ignore
 	        }
 	    });
 	}

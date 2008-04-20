@@ -35,11 +35,11 @@ import javax.swing.event.ChangeListener;
 
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.control.RemoteRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
+import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
 import bibliothek.gui.dock.station.stack.CombinedTab;
@@ -374,16 +374,12 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 			animation.kick();
 		}
 		
-		public void dockableFocused( DockController controller, Dockable oldFocused, Dockable newFocused ) {
+		public void dockableFocused( DockableFocusEvent event ) {
 		    boolean old = focused;
-		    focused = this.dockable == newFocused;
+		    focused = this.dockable == event.getNewFocusOwner();
 		    if( old != focused ){
 		        checkAnimation();
 		    }
-		}
-		
-		public void dockableSelected( DockController controller, DockStation station, Dockable oldSelected, Dockable newSelected ) {
-		    // ignore
 		}
 		
         public void run() {

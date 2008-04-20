@@ -50,7 +50,8 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.RemoteRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
-import bibliothek.gui.dock.event.DockableFocusAdapter;
+import bibliothek.gui.dock.event.DockableFocusEvent;
+import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.focus.DockFocusTraversalPolicy;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.util.PropertyValue;
@@ -347,9 +348,8 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 		public Listener listener;
 	}
 	
-	private class FocusListener extends DockableFocusAdapter{
-		@Override
-		public void dockableFocused( DockController controller, Dockable oldFocused, Dockable newFocused ){
+	private class FocusListener implements DockableFocusListener{
+	    public void dockableFocused( DockableFocusEvent event ) {
 			updateFocus();
 		}
 	}

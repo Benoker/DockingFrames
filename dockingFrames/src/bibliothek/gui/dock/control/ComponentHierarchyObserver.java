@@ -33,6 +33,7 @@ import java.util.*;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.event.ComponentHierarchyObserverEvent;
 import bibliothek.gui.dock.event.ComponentHierarchyObserverListener;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.event.DockTitleBindingListener;
@@ -182,8 +183,9 @@ public class ComponentHierarchyObserver {
         
         if( fire && !list.isEmpty() ){
             list = Collections.unmodifiableList( list );
+            ComponentHierarchyObserverEvent event = new ComponentHierarchyObserverEvent( controller, list );
             for( ComponentHierarchyObserverListener listener : listeners() )
-                listener.added( controller, list );
+                listener.added( event );
         }
     }
     
@@ -225,8 +227,9 @@ public class ComponentHierarchyObserver {
             
             if( fire && !list.isEmpty() ){
                 list = Collections.unmodifiableList( list );
+                ComponentHierarchyObserverEvent event = new ComponentHierarchyObserverEvent( controller, list );
                 for( ComponentHierarchyObserverListener listener : listeners() )
-                    listener.removed( controller, list );
+                    listener.removed( event );
             }
         }
     }

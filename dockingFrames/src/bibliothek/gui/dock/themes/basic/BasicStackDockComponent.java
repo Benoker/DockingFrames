@@ -30,9 +30,9 @@ import java.awt.Color;
 import javax.swing.JTabbedPane;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
@@ -139,12 +139,8 @@ public class BasicStackDockComponent extends DefaultStackDockComponent {
             }
         }
         
-        public void dockableFocused( DockController controller, Dockable oldFocused, Dockable newFocused ) {
+        public void dockableFocused( DockableFocusEvent event ) {
             recolor();
-        }
-        
-        public void dockableSelected( DockController controller, DockStation station, Dockable oldSelected, Dockable newSelected ) {
-            // do nothing
         }
         
         /**

@@ -133,7 +133,6 @@
 
 [v1.0.5]
 - Layout: Changed the default KeyStroke to close a CDockable/hide a Dockable from ctrl+c to ctrl+F4, Andrew pointed out that ctrl+c already has a special meaning...
-! API: the focused/selected methods of DockableFocusListener/DockStationListener have an additional parameter telling which dockable was focused/selected before the new selection
 - API: new listeners (CFocusListener, CKeyboardListener, CDoubleClickListener, global KeyListener) which can be added to CDockable (local information) or directly to CControl (global information)
 - API: CDockableStateListener, CDockablePropertyListener can now be added to CControl as well.
 - Layout: all DockThemes now support FocusTraversalPolicies such that each DockAction and element of a Dockable can be reached
@@ -154,5 +153,10 @@
 - API: KeyboardController does no longer fire events when the source of the event could not be found, hence the KeyboardListener does no longer receive null as source.
 - API: KeyboardController supports now "global KeyListeners". This listeners get informed about any event that the KeyboardController handles, even if there is no DockElement as source of the event.
 - API: clients can now add and remove Components from the ComponentHiearchyObserver, DockController will add the root-window to the observer if it knows the root window.
-- Bugfix: when focusing a normalized CDockable that was hidden by a maximized element, then the focused Dockale did not replace the maximized element.
+- Bugfix: when focusing a normalized CDockable that was hidden by a maximized element, then the focused Dockable did not replace the maximized element.
 - Bugfix: when changing the ExtendedMode of a CDockable, directly or indirectly, then state-events could be lost.
+
+! API: DockableFocusListener/DockHierarchyObserverListener now use events
+! API: DockableFocusAdapter deleted, no longer necessary
+! API: DockableFocusListener divided into DockableFocusListener/DockableSelectionListener
+Layout: when dropping something into SplitDockStation, the old leaf always gets at least 25% of the original space.

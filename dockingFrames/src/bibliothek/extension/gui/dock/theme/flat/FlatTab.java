@@ -38,11 +38,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.control.RemoteRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
+import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
 import bibliothek.gui.dock.station.stack.CombinedTab;
@@ -356,13 +356,9 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
             foreground.connect( controller );
         }
         
-        public void dockableFocused( DockController controller, Dockable oldFocused, Dockable newFocused ) {
-            focused = this.dockable == newFocused;
+        public void dockableFocused( DockableFocusEvent event ) {
+            focused = this.dockable == event.getNewFocusOwner();
             repaint();
-        }
-        
-        public void dockableSelected( DockController controller, DockStation station, Dockable oldSelected, Dockable newSelected ) {
-            // ignore
         }
         
         public JComponent getComponent(){

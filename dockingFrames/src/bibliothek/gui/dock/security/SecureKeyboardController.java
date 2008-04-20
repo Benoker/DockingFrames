@@ -34,6 +34,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.ControllerSetupCollection;
 import bibliothek.gui.dock.control.KeyboardController;
+import bibliothek.gui.dock.event.ComponentHierarchyObserverEvent;
 import bibliothek.gui.dock.event.ComponentHierarchyObserverListener;
 import bibliothek.gui.dock.event.ControllerSetupListener;
 
@@ -58,14 +59,16 @@ public class SecureKeyboardController extends KeyboardController {
         setup.add( new ControllerSetupListener(){
             public void done( DockController controller ) {
                 controller.getComponentHierarchyObserver().addListener( new ComponentHierarchyObserverListener(){
-                    public void added( DockController controller, List<Component> components ) {
+                    public void added( ComponentHierarchyObserverEvent event ) {
+                        List<Component> components = event.getComponents();
                         if( listener != null ){
                             for( Component component : components ){
                                 component.addKeyListener( listener );
                             }
                         }
                     }
-                    public void removed( DockController controller, List<Component> components ) {
+                    public void removed( ComponentHierarchyObserverEvent event ) {
+                        List<Component> components = event.getComponents();
                         if( listener != null ){
                             for( Component component : components ){
                                 component.removeKeyListener( listener );

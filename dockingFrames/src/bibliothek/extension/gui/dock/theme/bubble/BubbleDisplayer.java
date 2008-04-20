@@ -33,8 +33,8 @@ import javax.swing.border.Border;
 import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
@@ -246,11 +246,8 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
      * @author Benjamin Sigg
      */
     private class Listener extends MouseInputAdapter implements DockableFocusListener{
-        public void dockableFocused( DockController controller, Dockable oldFocused, Dockable newFocused ) {
+        public void dockableFocused( DockableFocusEvent event ) {
             updateAnimation();
-        }
-        public void dockableSelected( DockController controller, DockStation station, Dockable oldSelected, Dockable newSelected ) {
-            // ignore   
         }
         @Override
         public void mouseEntered( MouseEvent e ) {

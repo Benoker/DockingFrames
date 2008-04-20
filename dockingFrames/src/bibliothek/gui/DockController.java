@@ -88,6 +88,8 @@ public class DockController {
     
     /** Listeners observing the focused {@link Dockable} */
     private List<DockableFocusListener> dockableFocusListeners = new ArrayList<DockableFocusListener>();
+    /** Listeners observing the selected {@link Dockable}s */
+    private List<DockableSelectionListener> dockableSelectionListeners = new ArrayList<DockableSelectionListener>();
     /** Listeners observing the bound-state of {@link DockTitle}s */
     private List<DockTitleBindingListener> dockTitleBindingListeners = new ArrayList<DockTitleBindingListener>();
     /** Listeners observing the ui */
@@ -1036,6 +1038,34 @@ public class DockController {
     }
     
     /**
+     * Adds a listener to this controller, the listener will be informed when
+     * a selected {@link Dockable} changes. A selected {@link Dockable} shown
+     * in a special way by its parent {@link DockStation}.
+     * @param listener the new listener
+     */
+    public void addDockableSelectionListener( DockableSelectionListener listener ){
+        if( listener == null )
+            throw new NullPointerException( "listener must not be null" );
+        dockableSelectionListeners.add( listener );
+    }
+    
+    /**
+     * Removes a listener from this controller.
+     * @param listener the listener to remove
+     */
+    public void removeDockableSelectionListener( DockableSelectionListener listener ){
+        dockableSelectionListeners.remove( listener );
+    }
+    
+    /**
+     * Gets an array of currently registered {@link DockableSelectionListener}s.
+     * @return the modifiable array
+     */
+    protected DockableSelectionListener[] dockableSelectionListeners(){
+        return dockableSelectionListeners.toArray( new DockableSelectionListener[ dockableSelectionListeners.size() ] );
+    }
+    
+    /**
      * Informs all listeners that <code>title</code> has been bound
      * to <code>dockable</code>.
      * @param title the bound title
@@ -1064,8 +1094,10 @@ public class DockController {
      * @param newFocused the owner of the focus, may be <code>null</code>
      */
     protected void fireDockableFocused( Dockable oldFocused, Dockable newFocused ){
+        DockableFocusEvent event = new DockableFocusEvent( this, oldFocused, newFocused );
+        
         for( DockableFocusListener listener : dockableFocusListeners() )
-            listener.dockableFocused( this, oldFocused, newFocused );
+            listener.dockableFocused( event );
     }
     
     /**
@@ -1075,9 +1107,11 @@ public class DockController {
      * @param oldSelected the element which was selected earlier
      * @param newSelected the selected element of <code>station</code>
      */
-    protected void fireDockableSelected( DockStation station, Dockable newSelected, Dockable oldSelected ){
-        for( DockableFocusListener listener : dockableFocusListeners() )
-            listener.dockableSelected( this, station, newSelected, oldSelected );
+    protected void fireDockableSelected( DockStation station, Dockable oldSelected, Dockable newSelected){
+        DockableSelectionEvent event = new DockableSelectionEvent( this, station, oldSelected, newSelected );
+        
+        for( DockableSelectionListener listener : dockableSelectionListeners() )
+            listener.dockableSelected( event );
     }
 
     /**

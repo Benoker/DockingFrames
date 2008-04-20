@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2008 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,30 +25,20 @@
  */
 package bibliothek.gui.dock.event;
 
-import java.awt.Component;
-
-import bibliothek.gui.DockController;
-import bibliothek.gui.dock.control.ComponentHierarchyObserver;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 
 /**
- * A listener of a {@link ComponentHierarchyObserver}, this listener
- * gets informed whenever some {@link Component}s enter or leave the realm
- * of a {@link DockController}.
+ * A listener that gets called when the selected {@link Dockable} of a 
+ * {@link DockStation} changes.
  * @author Benjamin Sigg
  */
-public interface ComponentHierarchyObserverListener {
-    /**
-     * Called when some {@link Component}s have entered the realm of
-     * <code>controller</code>.
-     * @param event an event object that contains all the new {@link Component}s
-     */
-    public void added( ComponentHierarchyObserverEvent event );
+public interface DockableSelectionListener {
     
     /**
-     * Called when some {@link Component}s have left the realm of
-     * <code>controller</code>.
-     * @param event an event object that contains all the {@link Component}s
-     * that were just removed
+     * Called when <code>station</code> changes its selected <code>dockable</code>.
+     * @param event contains the newly selected element
+     * @see DockStation#getFrontDockable()
      */
-    public void removed( ComponentHierarchyObserverEvent event );
+    public void dockableSelected( DockableSelectionEvent event );
 }

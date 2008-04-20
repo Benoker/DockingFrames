@@ -199,6 +199,8 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
     }
     
     public void calculateDivider( SplitDockStation station, PutInfo putInfo, Leaf origin ){
+        final double MINIMUM_ORIGINAL_SIZE = 0.25;
+        
         SplitNode other = putInfo.getNode();
         
         Dimension oldSize = origin == null ? 
@@ -241,6 +243,9 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
                     other.getMinimumSize(), 
                     Orientation.VERTICAL, 
                     other.getWidth(), other.getHeight() );
+            
+            if( divider > 1 - MINIMUM_ORIGINAL_SIZE )
+                divider = 1 - MINIMUM_ORIGINAL_SIZE;
         }
         else if( putInfo.getPut() == PutInfo.Put.BOTTOM ){
             if( size != 0 )
@@ -251,6 +256,10 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
                     putInfo.getDockable().getComponent().getMinimumSize(),
                     Orientation.VERTICAL, 
                     other.getWidth(), other.getHeight() );
+            
+
+            if( divider < MINIMUM_ORIGINAL_SIZE )
+                divider = MINIMUM_ORIGINAL_SIZE;
         }
         else if( putInfo.getPut() == PutInfo.Put.LEFT ){
             if( size != 0 )
@@ -261,6 +270,9 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
                     other.getMinimumSize(), 
                     Orientation.HORIZONTAL, 
                     other.getWidth(), other.getHeight() );
+            
+            if( divider > 1 - MINIMUM_ORIGINAL_SIZE )
+                divider = 1 - MINIMUM_ORIGINAL_SIZE;
         }
         else if( putInfo.getPut() == PutInfo.Put.RIGHT ){
             if( size != 0 )
@@ -271,8 +283,11 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
                     putInfo.getDockable().getComponent().getMinimumSize(), 
                     Orientation.HORIZONTAL, 
                     other.getWidth(), other.getHeight() );
+                        
+            if( divider < MINIMUM_ORIGINAL_SIZE )
+                divider = MINIMUM_ORIGINAL_SIZE;
         }
-
+        
         putInfo.setDivider( divider );
         putInfo.setOldSize( size );
     }

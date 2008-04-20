@@ -7,11 +7,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.event.DockableFocusAdapter;
+import bibliothek.gui.dock.event.DockableFocusEvent;
+import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.util.DockUtilities;
@@ -66,11 +66,10 @@ public class NoteViewManager{
 			}
 		});
 		
-		frontend.getController().addDockableFocusListener( new DockableFocusAdapter(){
-			@Override
-			public void dockableFocused( DockController controller, Dockable oldFocused, Dockable newFocused ){
-				if( newFocused instanceof NoteView ){
-					NoteView view = (NoteView)newFocused;
+		frontend.getController().addDockableFocusListener( new DockableFocusListener(){
+		    public void dockableFocused( DockableFocusEvent event ) {
+				if( event.getNewFocusOwner() instanceof NoteView ){
+					NoteView view = (NoteView)event.getNewFocusOwner();
 					focusedViews.remove( view );
 					focusedViews.addFirst( view );
 				}

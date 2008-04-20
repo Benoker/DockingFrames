@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2008 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,29 +26,44 @@
 package bibliothek.gui.dock.event;
 
 import java.awt.Component;
+import java.util.List;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.control.ComponentHierarchyObserver;
 
 /**
- * A listener of a {@link ComponentHierarchyObserver}, this listener
- * gets informed whenever some {@link Component}s enter or leave the realm
- * of a {@link DockController}.
+ * An event telling that {@link Component}s have been added or removed from
+ * a {@link ComponentHierarchyObserver}.
  * @author Benjamin Sigg
+ *
  */
-public interface ComponentHierarchyObserverListener {
-    /**
-     * Called when some {@link Component}s have entered the realm of
-     * <code>controller</code>.
-     * @param event an event object that contains all the new {@link Component}s
-     */
-    public void added( ComponentHierarchyObserverEvent event );
+public class ComponentHierarchyObserverEvent {
+    private DockController source;
+    private List<Component> components;
     
     /**
-     * Called when some {@link Component}s have left the realm of
-     * <code>controller</code>.
-     * @param event an event object that contains all the {@link Component}s
-     * that were just removed
+     * Creates a new event
+     * @param source the source of the event
+     * @param components the components that have been added or removed
      */
-    public void removed( ComponentHierarchyObserverEvent event );
+    public ComponentHierarchyObserverEvent( DockController source, List<Component> components ){
+        this.source = source;
+        this.components = components;
+    }
+    
+    /**
+     * Gets the source of the event.
+     * @return the source
+     */
+    public DockController getSource() {
+        return source;
+    }
+    
+    /**
+     * Gets a list that contains all the components that were added or removed.
+     * @return the new or lost components
+     */
+    public List<Component> getComponents() {
+        return components;
+    }
 }
