@@ -33,6 +33,7 @@ import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.facile.station.split.LockedResizeLayoutManager;
+import bibliothek.gui.dock.facile.station.split.ResizeRequest;
 import bibliothek.gui.dock.station.split.Leaf;
 import bibliothek.gui.dock.station.split.Root;
 import bibliothek.gui.dock.station.split.SplitLayoutManager;

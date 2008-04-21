@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.common.action.predefined;
 
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabDockAction;
@@ -71,7 +72,10 @@ public class CCloseAction extends CDropDownItem{
     }
     
     /**
-     * Closes <code>dockable</code> now.
+     * Closes <code>dockable</code> now. This method is always called when
+     * this action is triggered, to this is the optimal method to be overridden
+     * and extended with new features like a {@link JOptionPane} asking whether
+     * <code>dockable</code> should really be closed.
      * @param dockable the element to close
      */
     public void close( CDockable dockable ){

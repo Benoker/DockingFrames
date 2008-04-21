@@ -160,6 +160,17 @@ public class CExtendedModeAction extends CDropDownItem{
     }
     
     /**
+     * This method actually changes the {@link ExtendedMode} of <code>dockable</code> 
+     * to the mode that was given to this action in the constructor. Every 
+     * triggering of this action will finally call this method, so this method
+     * is the optimal point to be overridden and modified.
+     * @param dockable
+     */
+    public void action( CDockable dockable ){
+        dockable.setExtendedMode( mode );
+    }
+    
+    /**
      * The internal representation of a {@link CExtendedModeAction}.
      * @author Benjamin Sigg
      */
@@ -178,7 +189,7 @@ public class CExtendedModeAction extends CDropDownItem{
         @Override
         public void action( Dockable dockable ) {
             if( dockable instanceof CommonDockable ){
-                ((CommonDockable)dockable).getDockable().setExtendedMode( mode );
+                CExtendedModeAction.this.action( ((CommonDockable)dockable).getDockable() );
             }
         }
         

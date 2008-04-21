@@ -2,4 +2,5 @@
 - [done ]check whether multiple CContentAreas work properly or not
 - [done] More constructors for DefaultCSingleDockable, DefaultCMultipleDockable.
 - Closing a maximized, stacked Dockable is counterintuitive
-- [done] Way to track focus on CDockable 
+- [done] Way to track focus on CDockable
+- Give an option to handle locked resize like in VLDocking: see http://forum.byte-welt.net/showthread.php?p=4278#post4278 

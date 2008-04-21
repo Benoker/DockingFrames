@@ -158,4 +158,6 @@
 ! API: DockableFocusListener/ComponentHierarchyObserverListener now use events
 ! API: DockableFocusAdapter deleted, no longer necessary
 ! API: DockableFocusListener divided into DockableFocusListener/DockableSelectionListener
-Layout: when dropping something into SplitDockStation, the old leaf always gets at least 25% of the original space.
+- Layout: when dropping something into SplitDockStation, the old leaf always gets at least 25% of the original space.
+
+- API:  the inner classes of LockedResizeLayoutManager made public such that they can be given to other classes.

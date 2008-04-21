@@ -498,15 +498,20 @@ public class DockController {
     /**
      * Tells this controller that <code>component</code> somehow represents
      * <code>element</code>, and that events on <code>component</code> belong
-     * to <code>element</code>.
+     * to <code>element</code>. Every <code>Component</code> can only represent
+     * one element. If <code>element</code> is <code>null</code>, then any reference
+     * to <code>component</code> is removed. 
      * @param component the representative
      * @param element some element or <code>null</code>
+     * @see #searchElement(Component)
      */
     public void putRepresentative( Component component, DockElement element ){
-    	if( element == null )
+    	if( element == null ){
     		componentToDockElements.remove( component );
-    	else
+    	}
+    	else{
     		componentToDockElements.put( component, element );
+    	}
     }
     
     /**
@@ -515,6 +520,7 @@ public class DockController {
      * <code>Components</code> given by {@link #putRepresentative(Component, DockElement)}.
      * @param representative some component
      * @return the parent or <code>null</code>
+     * @see #putRepresentative(Component, DockElement)
      */
     public DockElement searchElement( Component representative ){
     	while( representative != null ){

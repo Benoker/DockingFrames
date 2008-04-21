@@ -16,4 +16,6 @@
 - [Done] Actions (minimize, ...) of CDockable should be customizeable and hideable
 - [Done] More flexibility in different stations for common, for example only one minimizing-area
 - Size request on invisible panels?
-- ButtonPanel: handling add/remove actions and how many actions should be on the menu, is not yet very save and needs too much resources 
+- ButtonPanel: handling add/remove actions and how many actions should be on the menu, is not yet very save and needs too much resources
+- When a StackDockStation is visible: changing from EclipseTheme to BubbleTheme will leave some Dockable-Components invisible (tested with "Paint").
+- DockController.putRepresentative: should also work for DoubleClickListeners and the Relocator

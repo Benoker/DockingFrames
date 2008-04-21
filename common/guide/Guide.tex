@@ -161,7 +161,7 @@ With \src{CDockable.setVisible} the visibility of a dockable can just be changed
 
 With \src{CControl.remove} the dockable is not only made invisible, it is also removed from the controller. All properties related to the dockable will be lost. Unless added to a controller again, it is no longer possible to reopen the dockable.
 
-Or give the user the possibility to close the dockable: setting the property \src{closeable} of the default-\src{CDockable}s to \src{true} will add a close-button to the title. A client can add a \src{CDockableListener} to the dockable in order to get informed when the visibility state changes. Clicking the close-button has the same effects as calling \src{setVisible(false)}.
+Or give the user the possibility to close the dockable: setting the property \src{closeable} of the default-\src{CDockable}s to \src{true} will add a close-button to the title. A client can add a \src{CDockableStateListener} to the dockable in order to get informed when the visibility state changes. Clicking the close-button has the same effects as calling \src{setVisible(false)}.
 
 After some time, the need for any elements of the framework might vanish. Using \src{CControl.destroy()} will release as many resources as possible.
 
