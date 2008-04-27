@@ -25,15 +25,15 @@
 \contentsline {subsubsection}{\numberline {4.1.5}EclipseTheme}{10}
 \contentsline {subsubsection}{\numberline {4.1.6}NoStackTheme}{10}
 \contentsline {subsection}{\numberline {4.2}How to write your own DockTheme}{10}
-\contentsline {subsection}{\numberline {4.3}Colors}{11}
-\contentsline {subsubsection}{\numberline {4.3.1}ColorScheme}{11}
-\contentsline {subsubsection}{\numberline {4.3.2}ColorManager}{12}
-\contentsline {subsubsection}{\numberline {4.3.3}ColorProvider}{12}
+\contentsline {subsection}{\numberline {4.3}UI properties}{11}
+\contentsline {subsection}{\numberline {4.4}Colors}{12}
+\contentsline {subsubsection}{\numberline {4.4.1}ColorScheme}{12}
+\contentsline {subsubsection}{\numberline {4.4.2}ColorManager}{12}
 \contentsline {section}{\numberline {5}Actions}{12}
 \contentsline {subsection}{\numberline {5.1}Sources of DockActions}{13}
 \contentsline {subsection}{\numberline {5.2}Kinds of DockActions}{14}
 \contentsline {subsection}{\numberline {5.3}Lifecycle}{15}
 \contentsline {section}{\numberline {6}Titles}{17}
-\contentsline {subsection}{\numberline {6.1}New titles}{17}
+\contentsline {subsection}{\numberline {6.1}New titles}{18}
 \contentsline {subsection}{\numberline {6.2}Lifecycle}{18}
 \contentsline {section}{\numberline {7}Global Properties}{18}

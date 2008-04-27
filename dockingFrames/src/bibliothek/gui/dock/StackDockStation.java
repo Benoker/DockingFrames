@@ -240,13 +240,15 @@ public class StackDockStation extends AbstractDockableStation {
                 panel.removeAll();
                 
                 for( DockableDisplayer displayer : dockables ){
+                    int index = stackComponent.getTabCount();
                     Dockable dockable = displayer.getDockable();
                     stackComponent.insertTab( 
                             dockable.getTitleText(), 
                             dockable.getTitleIcon(), 
                             displayer.getComponent(), 
                             dockable,
-                            stackComponent.getTabCount() );
+                            index );
+                    stackComponent.setTooltipAt( index, dockable.getTitleToolTip() );
                 }
                 
                 panel.add( stackComponent.getComponent() );
@@ -742,11 +744,13 @@ public class StackDockStation extends AbstractDockableStation {
                 panel.removeAll();
                 DockableDisplayer child = dockables.get( 0 );
                 stackComponent.addTab( child.getDockable().getTitleText(), child.getDockable().getTitleIcon(), child.getComponent(), child.getDockable() );
+                stackComponent.setTooltipAt( 0, child.getDockable().getTitleToolTip() );
                 panel.add( stackComponent.getComponent() );
             }
             
             dockables.add( index, displayer );
             stackComponent.insertTab( dockable.getTitleText(), dockable.getTitleIcon(), displayer.getComponent(), dockable, index );
+            stackComponent.setTooltipAt( index, dockable.getTitleToolTip() );
             stackComponent.setSelectedIndex( index );
         }
         

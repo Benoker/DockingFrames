@@ -19,7 +19,7 @@
 
 \newcommand{\src}[1]{\lstinline[basicstyle=\normalsize\ttfamily,keywordstyle=\normalsize\ttfamily,identifierstyle=\normalsize\ttfamily]|#1|}
 
-\title{DockingFrames 1.0.5 - Core}
+\title{DockingFrames 1.0.6 - Core}
 \author{Benjamin Sigg}
 
 \begin{document}
@@ -307,6 +307,17 @@ There is method called \src{install}. This method can be overriden (don't forget
 
 Don't forget to undo the changes in the method \src{uninstall}.
 
+\subsection{UI properties}
+There are resources that need to be distributed through the whole user interface, for example colors. An easy way is just to have some map with \src{String}-resource pairs. The \src{UIProperties} is just such a map with a few extras.
+
+Components that use \src{UIProperties} do not just ask for a resource when they need it, they register an \src{UIValue} which gets informed whenever the resource changes. At a first glance \src{UIValue} is just an observer of the map.
+
+The map does not forward its resources directly to the \src{UIValue}s, it forwards the resources and the values to an \src{UIBridge}. The bridge is then responsible to forward the resource to its \src{UIValue}. Each subclass of \src{UIValue} can have its own bridge. The \src{UIBridge} can modifie the resource before sending it to the \src{UIValue}. If a subclass of \src{UIValue} would have a \src{Dockable} field, then a bridge for that subclass could make its decision based on the value of that field.
+
+\src{UIBridges} are also informed about which \src{UIValue}s are observing the \\\src{UIProperties}. A bridge could decide to change the resource of a \src{UIValue} when the \src{UIProperties} did not change at all. The \src{UIValue} would not be able to tell the difference.
+
+There is currently one \src{UIProperties} used in the core for colors (another one for fonts might be in one of the next releases).
+
 \subsection{Colors}
 Since DF is a graphical user interface, colors are used often and by a all sorts of components. The most important colors are collected in a map, and components get their colors from that color-map.
 
@@ -322,16 +333,7 @@ Clients can exchange and influence the colors on different levels.
 The \src{BasicTheme} uses a \src{ColorScheme} to put up its set of colors. \src{ColorScheme} has one important method: \src{getColor}. That method gets a key for a color, and has to return the color that matches. The \src{ColorScheme} of \src{BasicTheme} can be replaced at any time calling the method \src{setColorScheme}. Since all \src{DockTheme}s of the core library inherit \src{BasicTheme}, the possibility to use a \src{ColorScheme} is available for all themes.
 
 \subsubsection{ColorManager}
-Instead of putting all colors at once, using a \src{ColorScheme}, a single color can be set with the \src{ColorManager}. The \src{ColorManager} is accessible through the method \src{DockController.getColors}. Clients can just call the method \src{put} to put a new color into the color-map.
-
-\subsubsection{ColorProvider}
-Normally everyone that wants a color gets the same color. Put the color-map forces everyone to use a \src{DockColor}-object to get to its color. That object contains a lot of information, and a \src{ColorProvider} can use that information to return different colors for the same key.
-
-Each subclass of \src{DockColor} can have its own \src{ColorProvider}, but only one \src{ColorProvider} per subclass is allowed. \src{ColorProvider}s are added to the \src{ColorManager} through the \src{publish}-method.
-
-A \src{ColorProvider} has two methods to add and remove observers. The observers need to be stored only if the provider wants to change the colors actively. If the provider only reacts to its \src{set}-method, then no observers need to be stored.
-
-The \src{set}-method is invoked by the \src{ColorManager} whenever either \src{Color} or \src{DockColor} changes. The \src{set}-method then decides which color the \src{DockColor} should get. When the decision is made, it calls \src{setColor} on the \src{DockColor}.
+Instead of putting all colors at once, using a \src{ColorScheme}, a single color can be set with the \src{ColorManager}. The \src{ColorManager} is accessible through the method \src{DockController.getColors}. Clients can just call the method \src{put} to put a new color into the color-map. The \src{ColorManager} is an \src{UIProperties} and hence has the ability to use \src{UIBridges}.
 
 \section{Actions}
 A \src{DockAction} is an object which is related to one or many \src{Dockable}s, they describe some action like "close a \src{Dockable}". Every \src{DockAction} has the ability to create one or many views of itself. A view might be a \src{JButton}, a \src{JCheckBox}, a \src{JMenuItem} or other objects.

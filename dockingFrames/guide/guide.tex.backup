@@ -28,10 +28,6 @@
 \tableofcontents
 \newpage
 
-
-\begin{abstract}
-\end{abstract}
-
 \section{Basics}
 DockingFrames (or just DF) contains several key elements that must be understood by any developer. This chapter will give an overview of these elements, at the end of this chapter you'll be able to write your first application with DF.
 
@@ -585,7 +581,9 @@ Clients can influence the \src{DockTitle} that is used for a \src{Dockable} in t
 \section{Global Properties}
 Every \src{DockController} has map that contains global properties. There are no restrictions to what a property can be, a \src{Boolean} could be a property of a \src{KeyStroke}. 
 
-The map itself is an instance of \src{DockProperties} and can be accessed through \src{DockController.getProperties}. The keys for the map are of type \\\src{PropertyKey}. Each key needs a generic argument, that ensures that there are no casting problems. Clients can use the map for their own purposes.
+Clients may use the map for their own purposes.
+
+The map itself is an instance of \src{DockProperties} and can be accessed with the method \src{DockController.getProperties}. The keys for the map are of type \\\src{PropertyKey}. Each key needs a generic argument, that ensures that there are no casting problems.
 
 Clients can add a \src{DockPropertyListener} to the map. This listener will be informed whenever the property of a specified key changes.
 
@@ -601,7 +599,7 @@ This chapter will now list up all keys and their meanings that are present in DF
 \item \src{EclipseTheme.PAINT_ICONS_WHEN_DESELECTED} A \src{Boolean} that tells \\whether \src{Icon}s are painted on tabs if the tabs are not selected. Please refer to the chapter \ref{EclipseTheme}.
 \item \src{EclipseTheme.TAB_PAINTER} A \src{TabPainter} used by the \src{EclipseTheme} to paint the tabs. Please refer to the chapter \ref{EclipseTheme}.
 \item \src{EclipseTheme.THEME_CONNECTOR} An \src{EclipseThemeConnector} that tells the \src{EclipseTheme} how put up its layout. Please refer to the chapter \ref{EclipseTheme}.
-\item \src{DockableSelector.INIT_SELECTION} A \src{KeyStroke} that activates the \\\src{DockableSelector}. The selector then allows the user to select a \src{Dockable} which gains the focus. The default value is set to \src{ctrl + e}.
+\item \src{DockableSelector.INIT_SELECTION} A \src{KeyStroke} that activates the \\\src{DockableSelector}. The selector then allows the user to select a \src{Dockable} which gains the focus. The default value is set to \src{ctrl + shift + e}.
 \item \src{DockRelocatorMode.NO_COMBINATION_MASK} A \src{ModifierMask} that tells which keys have to be pressed in order to activate the no-combination-mode when dragging around a \src{Dockable}. The default value is set to \src{alt}.
 \item \src{DockRelocatorMode.SCREEN_MASK} A \src{ModifierMask} that tells which keys have to be pressed in order to activate the drop-on-screen-only-mode when dragging around a \src{Dockable}. The default value is set to \src{shift}.
 \item \src{FlapDockStation.BUTTON_CONTENT} A value of the enumeration \\\src{ButtonContent}. Tells the \src{FlapDockStation} how to paint the buttons of its children. The default is set to \src{THEME_DEPENDENT} which leaves the choice to the current \src{DockTheme}.
