@@ -38,12 +38,17 @@ public abstract class ResizeElement<T>{
     /** the parent of this node */
     private ResizeElement<T> parent;
     
+    /** the origin of this element */
+    private LockedResizeLayoutManager<T> layout;
+    
     /**
      * Creates a new element.
      * @param parent the parent of <code>this</code>
+     * @param layout the origin of this element
      */
-    public ResizeElement( ResizeElement<T> parent ){
+    public ResizeElement( ResizeElement<T> parent, LockedResizeLayoutManager<T> layout ){
         this.parent = parent;
+        this.layout = layout;
     }
     
     /**
@@ -52,6 +57,14 @@ public abstract class ResizeElement<T>{
      */
     public ResizeElement<T> getParent() {
         return parent;
+    }
+    
+    /**
+     * Gets the layout that created this element.
+     * @return the origin of this element
+     */
+    public LockedResizeLayoutManager<T> getLayout() {
+        return layout;
     }
     
     /**

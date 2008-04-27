@@ -166,3 +166,4 @@
 - API: New UIProperties, a generalisation of ColorManager
 ! API: ColorManager, ColorProvider and DockColor extend now UIProperties, UIBridge and UIValue. Their only use is now to prevent clients from rewriting generics all the time (!: ColorMangager.getProviderFor - getBridgeFor)
 ! API: ColorProvider marked as deprecated, clients should replace it by UIBridge.
+- API, Layout: The ConflictResolver in common can now be used to resolve conflicts on resize when locked CDockables are around. Can be applied using the key CControl.RESIZE_LOCK_CONFLICT_RESOLVER

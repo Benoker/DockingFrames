@@ -84,7 +84,8 @@ public class ResizeRequest{
     
     /**
      * Gets the fraction of the mismatch the parent of the element that issued
-     * this request should provide.
+     * this request should provide. A value of -1 indicates that this request
+     * does not care about the width.
      * @return the fraction
      */
     public int getFractionWidth() {
@@ -93,7 +94,8 @@ public class ResizeRequest{
     
     /**
      * Gets the fraction of the mismatch the parent of the element that issued
-     * this request should provide.
+     * this request should provide. A value of -1 indicates that this request
+     * does not care about the height.
      * @return the fraction
      */
     public int getFractionHeight() {

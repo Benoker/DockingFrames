@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.common;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -56,6 +57,8 @@ import bibliothek.gui.dock.common.location.CExternalizedLocation;
 import bibliothek.gui.dock.event.*;
 import bibliothek.gui.dock.facile.action.CloseAction;
 import bibliothek.gui.dock.facile.action.StateManager;
+import bibliothek.gui.dock.facile.station.split.ConflictResolver;
+import bibliothek.gui.dock.facile.station.split.DefaultConflictResolver;
 import bibliothek.gui.dock.frontend.Setting;
 import bibliothek.gui.dock.layout.DockSituationIgnore;
 import bibliothek.gui.dock.support.util.ApplicationResource;
@@ -118,6 +121,16 @@ public class CControl {
      */
     public static final PropertyKey<KeyStroke> KEY_CLOSE = 
         new PropertyKey<KeyStroke>( "ccontrol.close" );
+    
+    /**
+     * {@link ConflictResolver} used to determine what happens when there is
+     * a conflict between two resize requests on a {@link SplitDockStation} like
+     * {@link CGridArea}, {@link CWorkingArea} or {@link CContentArea}. 
+     */
+    public static final PropertyKey<ConflictResolver<Dimension>> RESIZE_LOCK_CONFLICT_RESOLVER =
+        new PropertyKey<ConflictResolver<Dimension>>( 
+                "ccontrol.resize_lock_conflict_resolver", 
+                new DefaultConflictResolver<Dimension>() );
     
     /** the unique id of the station that handles the externalized dockables */
     public static final String EXTERNALIZED_STATION_ID = "external";
@@ -504,7 +517,7 @@ public class CControl {
         putProperty( KEY_GOTO_EXTERNALIZED, KeyStroke.getKeyStroke( KeyEvent.VK_E, InputEvent.CTRL_MASK ) );
         putProperty( KEY_GOTO_NORMALIZED, KeyStroke.getKeyStroke( KeyEvent.VK_N, InputEvent.CTRL_MASK ) );
         putProperty( KEY_CLOSE, KeyStroke.getKeyStroke( KeyEvent.VK_F4, InputEvent.CTRL_MASK ) );
-        putProperty( SplitDockStation.LAYOUT_MANAGER, new CLockedResizeLayoutManager() );
+        putProperty( SplitDockStation.LAYOUT_MANAGER, new CLockedResizeLayoutManager( this ) );
         putProperty( FlapDockStation.LAYOUT_MANAGER, new CFlapLayoutManager() );	    
 	}
 	
@@ -1394,7 +1407,7 @@ public class CControl {
 	public void handleResizeRequests(){
 	    ResizeRequestListener[] listeners = resizeListeners.toArray( new ResizeRequestListener[ resizeListeners.size() ] );
 	    for( ResizeRequestListener listener : listeners )
-	        listener.handleResizeRequest();
+	        listener.handleResizeRequest( this );
 	    
 	    for( CDockable dockable : dockables )
 	        dockable.getAndClearResizeRequest();

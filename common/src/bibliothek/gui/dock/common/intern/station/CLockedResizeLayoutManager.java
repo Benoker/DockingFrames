@@ -30,8 +30,10 @@ import java.awt.Rectangle;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
+import bibliothek.gui.dock.facile.station.split.ConflictResolver;
 import bibliothek.gui.dock.facile.station.split.LockedResizeLayoutManager;
 import bibliothek.gui.dock.facile.station.split.ResizeRequest;
 import bibliothek.gui.dock.station.split.Leaf;
@@ -43,11 +45,22 @@ import bibliothek.gui.dock.station.split.SplitLayoutManager;
  * @author Benjamin Sigg
  */
 public class CLockedResizeLayoutManager extends LockedResizeLayoutManager<Dimension> {
+    /** the control in whose realm this manager works */
+    private CControl control;
+    
     /**
      * Creates a new layout manager
      */
     public CLockedResizeLayoutManager(){
         // nothing to do
+    }
+
+    /**
+     * Creates a new layout manager
+     * @param control the control in whose realm this manager works
+     */
+    public CLockedResizeLayoutManager( CControl control ){
+        this.control = control;
     }
     
     /**
@@ -59,8 +72,24 @@ public class CLockedResizeLayoutManager extends LockedResizeLayoutManager<Dimens
         super( delegate );
     }
     
+    /**
+     * Sets the control in whose realm this manager should work.
+     * @param control the control, can be <code>null</code>
+     */
+    public void setControl( CControl control ){
+        this.control = control;
+    }
+    
     @Override
-    protected ResizeRequest getRequest( Dimension size, Leaf leaf ) {
+    public ConflictResolver<Dimension> getConflictResolver() {
+        if( control != null )
+            return control.getProperty( CControl.RESIZE_LOCK_CONFLICT_RESOLVER );
+        
+        return super.getConflictResolver();
+    }
+    
+    @Override
+    public ResizeRequest getRequest( Dimension size, Leaf leaf ) {
         if( size != null ){
             Rectangle modified = leaf.getCurrentBounds();
             
@@ -78,7 +107,7 @@ public class CLockedResizeLayoutManager extends LockedResizeLayoutManager<Dimens
     }
 
     @Override
-    protected Dimension prepareResize( Leaf leaf ) {
+    public Dimension prepareResize( Leaf leaf ) {
         if( isLocked( leaf.getDockable() )){
             if( leaf.getWidth() > 0 && leaf.getHeight() > 0 ){
                 return leaf.getCurrentBounds().getSize();

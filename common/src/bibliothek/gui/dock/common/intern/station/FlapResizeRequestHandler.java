@@ -30,6 +30,7 @@ import java.awt.Dimension;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
+import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
 
 /**
@@ -51,7 +52,7 @@ public class FlapResizeRequestHandler extends AbstractResizeRequestHandler{
         this.station = station;
     }
     
-    public void handleResizeRequest() {
+    public void handleResizeRequest( CControl control ) {
         boolean horizontal = station.getDirection() == Direction.SOUTH || station.getDirection() == Direction.NORTH;
         
         for( int i = 0, n = station.getDockableCount(); i<n; i++ ){

@@ -50,7 +50,7 @@ public class ResizeNode<T> extends ResizeElement<T>{
      * @param node the node that is represented by this node-element
      */
     public ResizeNode( LockedResizeLayoutManager<T> layout, ResizeElement<T> parent, Node node ){
-        super( parent );
+        super( parent, layout );
         this.node = node;
         children[0] = layout.toElement( this, node.getLeft() );
         children[1] = layout.toElement( this, node.getRight() );
@@ -98,7 +98,7 @@ public class ResizeNode<T> extends ResizeElement<T>{
      * Gets the space that a divider needs in the width.
      * @return the width of a divider
      */
-    protected double getDividerWidth(){
+    public double getDividerWidth(){
         return node.getStation().getDividerSize() / node.getRoot().getWidthFactor();
     }
     
@@ -106,17 +106,27 @@ public class ResizeNode<T> extends ResizeElement<T>{
      * Gets the space that a divider needs in the height.
      * @return the height of a divider
      */
-    protected double getDividerHeight(){
+    public double getDividerHeight(){
         return node.getStation().getDividerSize() / node.getRoot().getHeightFactor();
     }
 
     /**
-     * Increments an integer but only if the integer is not -1.
-     * @param i the integer to increment.
-     * @return i+1 if i is not -1. -1 if i is -1.
+     * Gets the space the divider needs right now.
+     * @return the space the divider occupies now
      */
-    private int increment( int i ){
-        return (i==-1) ? -1 : (i+1);
+    public double getNewDividerSize(){
+        if( node.getOrientation() == Orientation.HORIZONTAL )
+            return getDividerWidth();
+        else
+            return getDividerHeight();
+    }
+    
+    /**
+     * Gets the space the divider needed before the resize.
+     * @return the old size needed by the divider
+     */
+    public double getOldDividerSize(){
+        return dividerSize;
     }
     
     @Override
@@ -125,56 +135,11 @@ public class ResizeNode<T> extends ResizeElement<T>{
          ResizeRequest beta = getRight().getRequest();
          boolean horizontal = node.getOrientation() == Orientation.HORIZONTAL;
          
-         if( alpha == null && beta == null )
-             return null;
-         
          if( horizontal ){
-             if( alpha == null ){
-                 return new ResizeRequest( 
-                         beta.getDeltaWidth(), 
-                         beta.getDeltaHeight(),
-                         increment( beta.getFractionWidth() ),
-                         beta.getFractionHeight());
-             }
-             
-             if( beta == null ){
-                 return new ResizeRequest( 
-                         alpha.getDeltaWidth(), 
-                         alpha.getDeltaHeight(),
-                         increment(alpha.getFractionWidth()),
-                         alpha.getFractionHeight());
-             }
-         
-             return new ResizeRequest(
-                     alpha.getDeltaWidth() / alpha.getFractionWidth() + beta.getDeltaWidth() / beta.getFractionWidth() +
-                         getDividerWidth() - dividerSize,
-                     Math.max( alpha.getDeltaHeight(), beta.getDeltaHeight() ),
-                     1,
-                     Math.min( alpha.getFractionHeight(), beta.getFractionHeight() ));
+             return getLayout().getConflictResolver().requestHorizontal( alpha, beta, this );
          }
          else{
-             if( alpha == null ){
-                 return new ResizeRequest( 
-                         beta.getDeltaWidth(), 
-                         beta.getDeltaHeight(),
-                         beta.getFractionWidth(),
-                         increment(beta.getFractionHeight()));
-             }
-             
-             if( beta == null ){
-                 return new ResizeRequest( 
-                         alpha.getDeltaWidth(), 
-                         alpha.getDeltaHeight(),
-                         alpha.getFractionWidth(),
-                         increment(alpha.getFractionHeight()));
-             }
-             
-             return new ResizeRequest(
-                     Math.max( alpha.getDeltaWidth(), beta.getDeltaWidth() ),
-                     alpha.getDeltaHeight() / alpha.getFractionHeight() +  beta.getDeltaHeight() / beta.getFractionHeight() +
-                         getDividerHeight() - dividerSize,
-                     Math.min( alpha.getFractionWidth(), beta.getFractionWidth() ),
-                     1 );
+             return getLayout().getConflictResolver().requestVertical( alpha, beta, this );
          }
     }
     
@@ -185,6 +150,19 @@ public class ResizeNode<T> extends ResizeElement<T>{
         
         boolean horizontal = node.getOrientation() == Orientation.HORIZONTAL;
         
+        if( horizontal ){
+            if( alpha != null && alpha.getFractionWidth() == -1 )
+                alpha = null;
+            if( beta != null && beta.getFractionWidth() == -1 )
+                beta = null;
+        }
+        else{
+            if( alpha != null && alpha.getFractionHeight() == -1 )
+                alpha = null;
+            if( beta != null && beta.getFractionHeight() == -1 )
+                beta = null;
+        }
+     
         if( alpha == null && beta == null ){
             if( horizontal ){
                 getLeft().adapt( deltaWidth * node.getDivider(), deltaHeight );
@@ -227,13 +205,7 @@ public class ResizeNode<T> extends ResizeElement<T>{
                 double deltaLeft = width <= 0.0 ? 0.0 : requestLeft / width;
                 double deltaRight = width <= 0.0 ? 0.0 : -requestRight / width;
                 
-                if( alpha.getFractionWidth() == 1 && beta.getFractionWidth() > 1 )
-                    delta = deltaLeft;
-                else if( alpha.getFractionWidth() > 1 && beta.getFractionWidth() == 1 )
-                    delta = deltaRight;
-                else
-                    delta = (deltaLeft * alpha.getFractionWidth() + deltaRight * beta.getFractionWidth()) /
-                        (alpha.getFractionWidth() + beta.getFractionWidth() );
+                delta = getLayout().getConflictResolver().resolveHorizontal( this, alpha, deltaLeft, beta, deltaRight );
             }
             
             divider += delta;
@@ -278,14 +250,8 @@ public class ResizeNode<T> extends ResizeElement<T>{
                 
                 double deltaTop = height <= 0.0 ? 0.0 : requestTop / height;
                 double deltaBottom = height <= 0.0 ? 0.0 : -requestBottom / height;
-                
-                if( alpha.getFractionHeight() == 1 && beta.getFractionHeight() > 1 )
-                    delta = deltaTop;
-                else if( alpha.getFractionHeight() > 1 && beta.getFractionHeight() == 1 )
-                    delta = deltaBottom;
-                else
-                    delta = (deltaTop * alpha.getFractionHeight() + deltaBottom * beta.getFractionHeight()) /
-                        (alpha.getFractionHeight() + beta.getFractionHeight() );
+
+                delta = getLayout().getConflictResolver().resolveVertical( this, alpha, deltaTop, beta, deltaBottom );
             }
             
             divider += delta;

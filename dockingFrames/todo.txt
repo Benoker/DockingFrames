@@ -19,3 +19,4 @@
 - ButtonPanel: handling add/remove actions and how many actions should be on the menu, is not yet very save and needs too much resources
 - When a StackDockStation is visible: changing from EclipseTheme to BubbleTheme will leave some Dockable-Components invisible (tested with "Paint").
 - DockController.putRepresentative: should also work for DoubleClickListeners and the Relocator
+- Support for tooltips on titles and tabs?

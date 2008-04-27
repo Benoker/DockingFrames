@@ -32,8 +32,6 @@ import bibliothek.gui.dock.station.split.Leaf;
  * @author Benjamin Sigg
  */
 public class ResizeLeaf<T> extends ResizeElement<T>{
-    /** the layout manager that uses this leaf */
-    private LockedResizeLayoutManager<T> layout;
     /** the leaf that is represented by this ResizeLeaf */
     private Leaf leaf;
     /** temporary data created by the LayoutManager */
@@ -46,8 +44,7 @@ public class ResizeLeaf<T> extends ResizeElement<T>{
      * @param leaf the leaf that is represented by this element
      */
     public ResizeLeaf( LockedResizeLayoutManager<T> layout, ResizeElement<T> parent, Leaf leaf ){
-        super( parent );
-        this.layout = layout;
+        super( parent, layout );
         this.leaf = leaf;
     }
     
@@ -61,12 +58,12 @@ public class ResizeLeaf<T> extends ResizeElement<T>{
     
     @Override
     protected ResizeRequest createRequest() {
-        return layout.getRequest( temporary, leaf );
+        return getLayout().getRequest( temporary, leaf );
     }
     
     @Override
     public void prepareResize() {
-        temporary = layout.prepareResize( leaf );
+        temporary = getLayout().prepareResize( leaf );
         super.prepareResize();
     }
     

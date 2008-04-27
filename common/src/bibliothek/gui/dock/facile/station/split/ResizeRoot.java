@@ -45,7 +45,7 @@ public class ResizeRoot<T> extends ResizeElement<T>{
      * @param root the root which is represented by this root-element
      */
     public ResizeRoot( LockedResizeLayoutManager<T> layout, Root root ){
-        super( null );
+        super( null, layout );
         this.root = root;
         this.child[0] = layout.toElement( this, root.getChild() );
     }

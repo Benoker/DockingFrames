@@ -38,6 +38,11 @@ import bibliothek.gui.dock.station.split.*;
  */
 public abstract class LockedResizeLayoutManager<T> extends DelegatingSplitLayoutManager{
     /**
+     * Tells how to merge the {@link ResizeRequest}s of this manager.
+     */
+    private ConflictResolver<T> conflictResolver = new DefaultConflictResolver<T>();
+    
+    /**
      * Creates a new manager using the {@link DefaultSplitLayoutManager}
      * as delegate.
      */
@@ -51,6 +56,25 @@ public abstract class LockedResizeLayoutManager<T> extends DelegatingSplitLayout
      */
     public LockedResizeLayoutManager( SplitLayoutManager delegate ){
         super( delegate );
+    }
+    
+    /**
+     * Sets the {@link ConflictResolver} that will determine how to merge
+     * {@link ResizeRequest}s and how to resolve conflicts.
+     * @param conflictResolver the new policy, not <code>null</code>
+     */
+    public void setConflictResolver( ConflictResolver<T> conflictResolver ) {
+        if( conflictResolver == null )
+            throw new IllegalArgumentException( "conflictResolver must not be null" );
+        this.conflictResolver = conflictResolver;
+    }
+    
+    /**
+     * Gets the policy that tells how two {@link ResizeRequest}s are merged.
+     * @return the policy
+     */
+    public ConflictResolver<T> getConflictResolver() {
+        return conflictResolver;
     }
     
     @Override
@@ -99,7 +123,7 @@ public abstract class LockedResizeLayoutManager<T> extends DelegatingSplitLayout
      * @param leaf the leaf which size is not yet valid.
      * @return the preferred size or <code>null</code>
      */
-    protected abstract ResizeRequest getRequest( T t, Leaf leaf );
+    public abstract ResizeRequest getRequest( T t, Leaf leaf );
     
     /**
      * Called before the resize takes place, subclasses might store some
@@ -108,7 +132,7 @@ public abstract class LockedResizeLayoutManager<T> extends DelegatingSplitLayout
      * @return some temporary data that gets forwarded to {@link #getRequest(Object, Leaf)},
      * can be <code>null</code>
      */
-    protected abstract T prepareResize( Leaf leaf );
+    public abstract T prepareResize( Leaf leaf );
     
     /**
      * Transforms a {@link SplitNode} into the matching kind of {@link ResizeElement}.
@@ -117,7 +141,7 @@ public abstract class LockedResizeLayoutManager<T> extends DelegatingSplitLayout
      * @param node some root, node, leaf or <code>null</code>
      * @return some root, node, leaf or <code>null</code>
      */
-    protected ResizeElement<T> toElement( ResizeElement<T> parent, SplitNode node ){
+    public ResizeElement<T> toElement( ResizeElement<T> parent, SplitNode node ){
         if( node instanceof Root )
             return new ResizeRoot<T>( this, (Root)node );
         if( node instanceof Node )

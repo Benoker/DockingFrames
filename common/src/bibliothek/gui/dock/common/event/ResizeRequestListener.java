@@ -40,6 +40,7 @@ public interface ResizeRequestListener {
     /**
      * Called when the layout of {@link DockStation}s should be updated such
      * that {@link CDockable#getAndClearResizeRequest()} is matched.
+     * @param control the control in whose realm the station is
      */
-    public void handleResizeRequest();
+    public void handleResizeRequest( CControl control );
 }

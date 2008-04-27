@@ -29,6 +29,7 @@ import java.awt.Dimension;
 import java.awt.Insets;
 
 import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.station.split.Leaf;
 import bibliothek.gui.dock.station.split.Root;
@@ -52,14 +53,16 @@ public class SplitResizeRequestHandler extends AbstractResizeRequestHandler{
         this.station = station;
     }
     
-    public void handleResizeRequest() {
+    public void handleResizeRequest( CControl control ) {
         SplitLayoutManager oldManager = station.getSplitLayoutManager();
+        LayoutManager layout = new LayoutManager();
         try{
-            LayoutManager layout = new LayoutManager();
+            layout.setControl( control );
             station.setSplitLayoutManager( layout );
             station.updateBounds();
         }
         finally{
+            layout.setControl( null );
             station.setSplitLayoutManager( oldManager );
         }
     }
@@ -74,7 +77,7 @@ public class SplitResizeRequestHandler extends AbstractResizeRequestHandler{
             updateBoundsLocked( root, x, y, factorW, factorH );
         }
         @Override
-        protected Dimension prepareResize( Leaf leaf ) {
+        public Dimension prepareResize( Leaf leaf ) {
             Dimension request = getAndClearResizeRequest( leaf.getDockable() );
             if( request != null ){
                 Insets insets = leaf.getDisplayer().getDockableInsets();

@@ -30,6 +30,7 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 
 import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.station.screen.ScreenDockDialog;
 
@@ -52,7 +53,7 @@ public class ScreenResizeRequestHandler extends AbstractResizeRequestHandler {
         this.station = station;
     }
     
-    public void handleResizeRequest() {
+    public void handleResizeRequest( CControl control ) {
         for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
             ScreenDockDialog dialog = station.getDialog( i );
             Dimension size = getAndClearResizeRequest( station.getDockable( i ) );
