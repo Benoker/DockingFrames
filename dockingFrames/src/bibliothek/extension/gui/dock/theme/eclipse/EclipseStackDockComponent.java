@@ -275,6 +275,10 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 	public void setIconAt(int index, Icon newIcon) {
 		// ignore
 	}
+	
+	public void setTooltipAt( int index, String newTooltip ) {
+	    // ignore
+	}
 
 	public Component getComponent() {
 		return this;

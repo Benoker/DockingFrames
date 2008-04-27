@@ -65,7 +65,7 @@ public abstract class AbstractDockableStation extends AbstractDockable implement
 	 * Constructs a new station, but does nothing more
 	 */
 	public AbstractDockableStation(){
-		super( PropertyKey.DOCK_STATION_ICON, PropertyKey.DOCK_STATION_TITLE );
+		super( PropertyKey.DOCK_STATION_ICON, PropertyKey.DOCK_STATION_TITLE, PropertyKey.DOCK_STATION_TOOLTIP );
 	}
 	
 	/**

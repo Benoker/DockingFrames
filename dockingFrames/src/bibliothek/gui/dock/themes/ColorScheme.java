@@ -30,8 +30,8 @@ import java.awt.Color;
 import javax.swing.LookAndFeel;
 
 import bibliothek.gui.dock.util.Priority;
+import bibliothek.gui.dock.util.UIBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
-import bibliothek.gui.dock.util.color.ColorProvider;
 import bibliothek.gui.dock.util.color.DockColor;
 import bibliothek.gui.dock.util.laf.LookAndFeelColors;
 
@@ -54,7 +54,7 @@ public interface ColorScheme {
      * @param kind the kind of color the provider should support 
      * @return some a factory for a provider or <code>null</code>
      */
-    public <D extends DockColor> ColorProviderFactory<D, ? extends ColorProvider<D>> getProvider( Class<D> kind );
+    public <D extends DockColor> ColorProviderFactory<D, ? extends UIBridge<Color, D>> getProvider( Class<D> kind );
     
     /**
      * Transmits all values in this scheme to <code>manager</code>.
