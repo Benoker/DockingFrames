@@ -281,6 +281,17 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         return label.getText();
     }
     
+    /**
+     * Sets the tooltip that will be shown on this title.
+     * @param text the new tooltip, can be <code>null</code>
+     */
+    protected void setTooltip( String text ){
+        setToolTipText( text );
+        label.setToolTipText( text );
+        if( itemPanel != null )
+            itemPanel.setToolTipText( text );
+    }
+    
     public void setOrientation( Orientation orientation ) {
         this.orientation = orientation;
         if( showMiniButtons )
@@ -593,6 +604,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         
         updateText();
         updateIcon();
+        updateTooltip();
         
         revalidate();
     }
@@ -612,6 +624,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         
         setText( "" );
         setIcon( null );
+        setTooltip( null );
     }
     
     /**
@@ -632,6 +645,16 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
      */
     protected void updateText(){
         setText( dockable.getTitleText() );
+    }
+    
+    /**
+     * Called when the tooltip of this title should be updated. This
+     * title never calls {@link #setTooltip(String)} directly, it always
+     * calls this method which then calls {@link #setTooltip(String)} (the
+     * only exception: on unbinding the tooltip is set to <code>null</code>)
+     */
+    protected void updateTooltip(){
+        setTooltip( dockable.getTitleToolTip() );
     }
     
     /**
@@ -757,6 +780,10 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         public void titleTextChanged( Dockable dockable, String oldTitle, String newTitle ) {
             updateIcon();
             updateText();
+        }
+        
+        public void titleToolTipChanged( Dockable dockable, String oldTooltip, String newTooltip ) {
+            updateTooltip();
         }
         
         public void titleUnbound( Dockable dockable, DockTitle title ) {

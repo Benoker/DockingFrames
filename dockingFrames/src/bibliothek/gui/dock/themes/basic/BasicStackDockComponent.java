@@ -122,16 +122,16 @@ public class BasicStackDockComponent extends DefaultStackDockComponent {
                 Color background = null;
                 
                 if( focused ){
-                    foreground = colorForegroundFocused.color();
-                    background = colorBackgroundFocused.color();
+                    foreground = colorForegroundFocused.value();
+                    background = colorBackgroundFocused.value();
                 }
                 else if( selected ){
-                    foreground = colorForegroundSelected.color();
-                    background = colorBackgroundSelected.color();
+                    foreground = colorForegroundSelected.value();
+                    background = colorBackgroundSelected.value();
                 }
                 else{
-                    foreground = colorForeground.color();
-                    background = colorBackground.color();
+                    foreground = colorForeground.value();
+                    background = colorBackground.value();
                 }
                 
                 setForegroundAt( index, foreground );

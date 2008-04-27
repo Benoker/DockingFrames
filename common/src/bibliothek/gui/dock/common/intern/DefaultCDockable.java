@@ -233,6 +233,22 @@ public class DefaultCDockable extends AbstractCDockable{
     }
     
     /**
+     * Sets the tooltip that should be shown on the title of this dockable.
+     * @param text the new tooltip, can be <code>null</code>
+     */
+    public void setTitleToolTip( String text ){
+        dockable.setTitleToolTip( text );
+    }
+    
+    /**
+     * Gets the tooltip that is shown on the title of this dockable.
+     * @return the tooltip or <code>null</code>
+     */
+    public String getTitleToolTip(){
+        return dockable.getTitleToolTip();
+    }
+    
+    /**
      * Sets the icon that is shown in the title of this <code>CDockable</code>.
      * @param icon the title-icon
      */

@@ -329,6 +329,10 @@ public abstract class CombinedStackDockComponent<C extends CombinedTab> implemen
         buttons.get(index).setText( newTitle );
     }
 
+    public void setTooltipAt( int index, String newTooltip ) {
+        buttons.get(index).setTooltip( newTooltip );
+    }
+    
     public void setIconAt( int index, Icon newIcon ) {
         buttons.get(index).setIcon( newIcon );
     }

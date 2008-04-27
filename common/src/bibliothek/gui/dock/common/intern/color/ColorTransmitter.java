@@ -33,7 +33,7 @@ import bibliothek.gui.dock.common.ColorMap;
 import bibliothek.gui.dock.common.event.CControlListener;
 import bibliothek.gui.dock.common.event.ColorMapListener;
 import bibliothek.gui.dock.common.intern.CDockable;
-import bibliothek.gui.dock.util.color.ColorProvider;
+import bibliothek.gui.dock.util.UIBridge;
 import bibliothek.gui.dock.util.color.DockColor;
 
 /**
@@ -42,7 +42,7 @@ import bibliothek.gui.dock.util.color.DockColor;
  * @author Benjamin Sigg
  * @param <D> the kind of {@link DockColor} used in this transmitter
  */
-public abstract class ColorTransmitter<D extends DockColor> implements ColorProvider<D> {
+public abstract class ColorTransmitter<D extends DockColor> implements UIBridge<Color, D> {
     private CControl control;
     private Set<String> keys = new HashSet<String>();
     private Map<String, List<D>> colors = new HashMap<String, List<D>>();

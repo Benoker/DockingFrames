@@ -129,6 +129,13 @@ public interface StackDockComponent {
     public void setTitleAt(int index, String newTitle);
 
     /**
+     * Sets the tooltip of the child at location <code>index</code>.
+     * @param index the index of the child
+     * @param newTooltip the new tooltip, can be <code>null</code>
+     */
+    public void setTooltipAt( int index, String newTooltip );
+    
+    /**
      * Sets the icon of the child at location <code>index</code>.
      * @param index the index of the child
      * @param newIcon the new icon, <code>null</code> if no icon

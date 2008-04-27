@@ -53,6 +53,11 @@ public abstract class DockableAdapter implements DockableListener {
         // do nothing
     }
 
+    public void titleToolTipChanged( Dockable dockable, String oldTooltip,
+            String newTooltip ) {
+        // do nothing
+    }
+    
     public void titleIconChanged( Dockable dockable, Icon oldIcon, Icon newIcon ) {
         // do nothing
     }

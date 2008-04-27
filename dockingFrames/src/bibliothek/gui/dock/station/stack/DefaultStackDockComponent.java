@@ -115,6 +115,10 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
     public Component getComponent() {
         return this;
     }
+    
+    public void setTooltipAt( int index, String newTooltip ) {
+        setToolTipTextAt( index, newTooltip );
+    }
 
 	public void setController( DockController controller ){
 		if( this.controller != controller ){

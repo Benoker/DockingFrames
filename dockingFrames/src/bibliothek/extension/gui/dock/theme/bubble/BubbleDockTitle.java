@@ -201,11 +201,11 @@ public class BubbleDockTitle extends AbstractDockTitle {
         
         for( BubbleTitleColor color : colors ){
             if( top.equals( color.getId() ))
-                animation.putColor( "top", color.color() );
+                animation.putColor( "top", color.value() );
             else if( bottom.equals( color.getId() ))
-                animation.putColor( "bottom", color.color() );
+                animation.putColor( "bottom", color.value() );
             else if( text.equals( color.getId() ))
-                animation.putColor( "text", color.color() );
+                animation.putColor( "text", color.value() );
         }
     }
     

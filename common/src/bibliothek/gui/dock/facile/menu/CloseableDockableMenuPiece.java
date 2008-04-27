@@ -280,6 +280,10 @@ public class CloseableDockableMenuPiece extends BaseMenuPiece{
             setText( newTitle );
         }
 
+        public void titleToolTipChanged( Dockable dockable, String oldToolTip, String newToolTip ) {
+            // ignore
+        }
+        
         public void titleUnbound( Dockable dockable, DockTitle title ) {
             // ignore
         }

@@ -900,6 +900,13 @@ public class StackDockStation extends AbstractDockableStation {
                 stackComponent.setTitleAt( index, newTitle );
             }
         }
+        
+        public void titleToolTipChanged( Dockable dockable, String oldTooltip, String newTooltip ) {
+            if( dockables.size() > 1 ){
+                int index = indexOf( dockable );
+                stackComponent.setTooltipAt( index, newTooltip );
+            }
+        }
 
         public void titleIconChanged( Dockable dockable, Icon oldIcon, Icon newIcon ) {
             if( dockables.size() > 1 ){

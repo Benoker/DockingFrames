@@ -51,7 +51,7 @@ public class FlatStationPaint implements StationPaint{
         color.setBackup( Color.DARK_GRAY );
         color.connect( station.getController() );
         
-        g.setColor( color.color() );
+        g.setColor( color.value() );
         Graphics2D g2 = (Graphics2D)g;
         Stroke old = g2.getStroke();
         g2.setStroke( new BasicStroke( 3f ));
@@ -66,7 +66,7 @@ public class FlatStationPaint implements StationPaint{
         color.setBackup( Color.DARK_GRAY );
         color.connect( station.getController() );
         
-        g.setColor( color.color() );
+        g.setColor( color.value() );
         Graphics2D g2 = (Graphics2D)g;
         Stroke old = g2.getStroke();
         g2.setStroke( new BasicStroke( 3f ));
@@ -82,7 +82,7 @@ public class FlatStationPaint implements StationPaint{
         color.connect( station.getController() );
         
         Graphics2D g2 = (Graphics2D)g;
-        g2.setColor( color.color() );
+        g2.setColor( color.value() );
         Composite oldComposite = g2.getComposite();
         g2.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 0.5f ) );
         g.fillRect( dockableBounds.x+1, dockableBounds.y+1, dockableBounds.width-2, dockableBounds.height-2 );
@@ -90,7 +90,7 @@ public class FlatStationPaint implements StationPaint{
         
         color.setId( "paint.insertion.border" );
         color.setBackup( Color.DARK_GRAY );
-        g.setColor( color.color() );
+        g.setColor( color.value() );
         
         Stroke old = g2.getStroke();
         g2.setStroke( new BasicStroke( 2f ));

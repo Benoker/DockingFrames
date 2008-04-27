@@ -27,35 +27,17 @@ package bibliothek.gui.dock.util.color;
 
 import java.awt.Color;
 
+import bibliothek.gui.dock.util.UIBridge;
+
 /**
  * A <code>ColorProvider</code> is a layer between a {@link ColorManager} and
  * a {@link DockColor}. A provider can exchange the color that is used for
  * some <code>DockColor</code>.
  * @author Benjamin Sigg
  * @param <D> the type of {@link DockColor}s this provider can handle
+ * @deprecated please use {@link UIBridge UIBridge<Color, D extends DockColor>} instead.
  */
-public interface ColorProvider<D extends DockColor> {
-    /**
-     * Adds a listener for some type of color to this provider.
-     * @param id the id of the color the observer needs
-     * @param observer the new listener
-     */
-    public void add( String id, D observer );
-    
-    /**
-     * Removes a listener for some type of color from this provider.
-     * @param id the id of the color which the observer was observing
-     * @param observer the listener to remove
-     */
-    public void remove( String id, D observer );
-    
-    /**
-     * Called by a {@link ColorManager} when one color has been exchanged.
-     * Normally a provider would call {@link DockColor#set(Color)} on
-     * <code>observer</code> with <code>color</code> as argument.
-     * @param id the identifier of the color
-     * @param color the new color, can be <code>null</code>
-     * @param observer the observer which is affected
-     */
-    public void set( String id, Color color, D observer );
+@Deprecated
+public interface ColorProvider<D extends DockColor> extends UIBridge<Color, D> {
+    // no new methods
 }

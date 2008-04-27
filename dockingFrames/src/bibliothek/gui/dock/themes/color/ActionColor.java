@@ -26,7 +26,7 @@ public abstract class ActionColor extends AbstractDockColor{
      * @param action the action for which the color is used
      * @param backup a backup in case a color is missing
      */
-    public ActionColor( String id, Class<? extends DockColor> kind, Dockable dockable, DockAction action, Color backup ){
+    public ActionColor( String id, Class<? extends AbstractDockColor> kind, Dockable dockable, DockAction action, Color backup ){
         super( id, kind, backup );
         this.action = action;
         this.dockable = dockable;

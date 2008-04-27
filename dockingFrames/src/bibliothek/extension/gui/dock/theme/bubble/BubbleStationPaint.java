@@ -52,7 +52,7 @@ public class BubbleStationPaint implements StationPaint {
         color.connect( station.getController() );
         
         Graphics2D g2 = (Graphics2D)g.create();
-        g2.setColor( color.color() );
+        g2.setColor( color.value() );
         g2.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_ATOP, 0.4f ) );
         
         g2.fillRect( bounds.x, bounds.y, bounds.width, bounds.height );
@@ -66,7 +66,7 @@ public class BubbleStationPaint implements StationPaint {
         color.connect( station.getController() );
         
         Graphics2D g2 = (Graphics2D)g.create();
-        g2.setColor( color.color() );
+        g2.setColor( color.value() );
         g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
         g2.setStroke( new BasicStroke( 3f ));
         
@@ -89,7 +89,7 @@ public class BubbleStationPaint implements StationPaint {
         color.connect( station.getController() );
         
         Graphics2D g2 = (Graphics2D)g.create();
-        g2.setColor( color.color() );
+        g2.setColor( color.value() );
         g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
         g2.setStroke( new BasicStroke( 3f ));
         g2.drawLine( x1, y1, x2, y2 );

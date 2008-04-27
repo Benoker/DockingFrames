@@ -70,6 +70,14 @@ public interface DockableListener {
     public void titleIconChanged( Dockable dockable, Icon oldIcon, Icon newIcon );
     
     /**
+     * Called when the tooltip of a {@link Dockable} changed.
+     * @param dockable the dockable whose tooltip changed
+     * @param oldToolTip the old value
+     * @param newToolTip the new value
+     */
+    public void titleToolTipChanged( Dockable dockable, String oldToolTip, String newToolTip );
+    
+    /**
      * Invoked when the properties of a {@link Dockable} have a so dramatically
      * changed, that the {@link DockTitle} <code>title</code> is no longer 
      * considered a good title and should be replaced. The one element which shows 

@@ -230,14 +230,14 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
     	String key = "action.button"+ postfix;
     	for( RoundActionColor color : colors ){
     	    if( key.equals( color.getId() )){
-    	        animation.putColor( "button", color.color() );
+    	        animation.putColor( "button", color.value() );
     	        break;
     	    }
     	}
         key += ".focus";
         for( RoundActionColor color : colors ){
             if( key.equals( color.getId() )){
-                animation.putColor( "focus", color.color() );
+                animation.putColor( "focus", color.value() );
                 break;
             }
         }       

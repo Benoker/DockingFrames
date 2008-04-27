@@ -25,44 +25,45 @@
  */
 package bibliothek.gui.dock.themes.color;
 
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
 import bibliothek.gui.dock.themes.ColorProviderFactory;
+import bibliothek.gui.dock.util.MultiUIBridge;
+import bibliothek.gui.dock.util.UIBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
-import bibliothek.gui.dock.util.color.ColorProvider;
 import bibliothek.gui.dock.util.color.DockColor;
-import bibliothek.gui.dock.util.color.MultiColorProvider;
 
 /**
- * A factory for a {@link MultiColorProvider}, this factory can contain other
- * factories to fill up the new <code>MultiColorProvider</code>.
+ * A factory for a {@link MultiUIBridge}, this factory can contain other
+ * factories to fill up the new <code>MultiUIBridge</code>.
  * @author Benjamin Sigg
  *
- * @param <D> the kind of {@link DockColor}s the created {@link ColorProvider} will handle
+ * @param <D> the kind of {@link DockColor}s the created {@link UIBridge} will handle
  */
-public class MultiColorProviderFactory<D extends DockColor> implements ColorProviderFactory<D, MultiColorProvider<D>> {
+public class MultiColorProviderFactory<D extends DockColor> implements ColorProviderFactory<D, MultiUIBridge<Color, D>> {
     /** the set of factories that will create a child of the MultiColorProvider */
-    private Map<String, ColorProviderFactory<? super D, ?>> factories =
-        new HashMap<String, ColorProviderFactory<? super D,?>>();
+    private Map<String, ColorProviderFactory<? super D, ? extends UIBridge<Color, D>>> factories =
+        new HashMap<String, ColorProviderFactory<? super D,? extends UIBridge<Color, D>>>();
     
     /**
-     * Sets the factory of a child of the {@link MultiColorProvider} which will
+     * Sets the factory of a child of the {@link MultiUIBridge} which will
      * be created by this factory.
      * @param key the name of the child
      * @param provider the child or <code>null</code>
      */
-    public void put( String key, ColorProviderFactory<? super D, ?> provider ){
+    public void put( String key, ColorProviderFactory<? super D, ? extends UIBridge<Color, D>> provider ){
         if( provider == null )
             factories.remove( key );
         else
             factories.put( key, provider );
     }
     
-    public MultiColorProvider<D> create( ColorManager manager ) {
-        MultiColorProvider<D> multi = new MultiColorProvider<D>( manager );
+    public MultiUIBridge<Color, D> create( ColorManager manager ) {
+        MultiUIBridge<Color, D> multi = new MultiUIBridge<Color, D>( manager );
         
-        for( Map.Entry<String, ColorProviderFactory<? super D, ?>> entry : factories.entrySet()){
+        for( Map.Entry<String, ColorProviderFactory<? super D, ? extends UIBridge<Color, D>>> entry : factories.entrySet()){
             multi.put( entry.getKey(), entry.getValue().create( manager ) );
         }
         

@@ -77,10 +77,10 @@ public class FlatBorder implements Border{
     }
     
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height){
-        Color background = this.background.color();
-        Color light = this.light.color();
-        Color middle = this.middle.color();
-        Color dark = this.dark.color();
+        Color background = this.background.value();
+        Color light = this.light.value();
+        Color middle = this.middle.value();
+        Color dark = this.dark.value();
         
         if( background == null )
             background = c.getBackground();

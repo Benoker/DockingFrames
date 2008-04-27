@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.common.intern.theme;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,8 +42,8 @@ import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.themes.ColorProviderFactory;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.util.Priority;
+import bibliothek.gui.dock.util.UIBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
-import bibliothek.gui.dock.util.color.ColorProvider;
 import bibliothek.gui.dock.util.color.DockColor;
 
 /**
@@ -119,31 +120,31 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
     }
     
     /**
-     * Sets the {@link ColorProvider} which should be used for a certain kind
-     * of {@link DockColor}s. The providers will be installed with priority
+     * Sets the {@link UIBridge} which should be used for a certain kind
+     * of {@link DockColor}s. The bridges will be installed with priority
      * {@link Priority#DEFAULT} at all {@link ColorManager}s.
      * @param <C> the kind of {@link DockColor} the providers will handle
      * @param kind the kind of {@link DockColor} the providers will handle
      * @param factory the factory for new providers
      */
     @SuppressWarnings("unchecked")
-    public <C extends DockColor> void putColorProviderFactory( Class<C> kind, ColorProviderFactory<C, ? extends ColorProvider<C>> factory ){
+    public <C extends DockColor> void putColorProviderFactory( Class<C> kind, ColorProviderFactory<C, ? extends UIBridge<Color, C>> factory ){
         colorProviderFactories.put( kind, factory );
         for( Controller setting : controllers ){
             ColorManager colors = setting.controller.getColors();
             
-            ColorProvider<?> oldProvider = setting.providers.remove( kind );
-            ColorProvider<?> newProvider = factory == null ? null : factory.create( colors );
+            UIBridge<Color, ? extends DockColor> oldProvider = setting.bridges.remove( kind );
+            UIBridge<Color, ? extends DockColor> newProvider = factory == null ? null : factory.create( colors );
             
             if( newProvider == null ){
-                setting.providers.remove( kind );
+                setting.bridges.remove( kind );
                 
                 if( oldProvider != null )
                     colors.unpublish( Priority.DEFAULT, kind );
             }
             else{
-                setting.providers.put( kind, newProvider );
-                colors.publish( Priority.DEFAULT, (Class<DockColor>)kind, (ColorProvider<DockColor>)newProvider );
+                setting.bridges.put( kind, newProvider );
+                colors.publish( Priority.DEFAULT, (Class<DockColor>)kind, (UIBridge<Color, DockColor>)newProvider );
             }
         }
     }
@@ -157,12 +158,12 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
         
         ColorManager colors = controller.getColors();
         for( Map.Entry<Class<?>, ColorProviderFactory<?, ?>> entry : colorProviderFactories.entrySet() ){
-            ColorProvider<DockColor> provider = (ColorProvider<DockColor>)entry.getValue().create( colors );
+            UIBridge<Color, DockColor> provider = (UIBridge<Color, DockColor>)entry.getValue().create( colors );
             colors.publish( 
                     Priority.DEFAULT, 
                     (Class<DockColor>)entry.getKey(), 
                     provider );
-            settings.providers.put( entry.getKey(), provider );
+            settings.bridges.put( entry.getKey(), provider );
         }
         controllers.add( settings );
     }
@@ -176,7 +177,7 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
                 controllers.remove( i );
                 
                 ColorManager colors = controller.getColors();
-                for( ColorProvider<?> provider : settings.providers.values() ){
+                for( UIBridge<Color, ? extends DockColor> provider : settings.bridges.values() ){
                     colors.unpublish( Priority.DEFAULT, provider );
                 }
             }
@@ -190,7 +191,7 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
     private class Controller{
         /** the controller which is represented by this element */
         public DockController controller;
-        /** the list of {@link ColorProvider}s which is used in that controller */
-        public Map<Class<?>,ColorProvider<?>> providers = new HashMap<Class<?>, ColorProvider<?>>();
+        /** the list of {@link UIBridge}s which is used in that controller */
+        public Map<Class<?>,UIBridge<Color, ? extends DockColor>> bridges = new HashMap<Class<?>, UIBridge<Color, ? extends DockColor>>();
     }
 }

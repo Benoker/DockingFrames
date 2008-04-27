@@ -146,7 +146,7 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 	     */
 	    public void transmit(){
 	        if( tab.getState() == state ){
-                animation.putColor( animationId, color() );
+                animation.putColor( animationId, value() );
             }
 	    }
 	    
@@ -346,6 +346,11 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 			addMouseMotionListener( motion );
 			label.addMouseListener( listener );
 			label.addMouseMotionListener( motion );
+		}
+		
+		public void setTooltip( String tooltip ) {
+		    setToolTipText( tooltip );
+		    label.setToolTipText( tooltip );
 		}
 		
 		public int getState() {

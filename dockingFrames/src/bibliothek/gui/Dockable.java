@@ -184,6 +184,13 @@ public interface Dockable extends DockElement{
     public String getTitleText();
     
     /**
+     * Gets a tooltip that is associated with this {@link Dockable} and
+     * that should be shown on any {@link DockTitle}.
+     * @return the tooltip, can be <code>null</code>
+     */
+    public String getTitleToolTip();
+    
+    /**
      * Gets the current icon of this Dockable.
      * @return the icon, may be <code>null</code>
      */

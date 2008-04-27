@@ -161,6 +161,10 @@ public class PopupController implements DockRegisterListener{
 			// ignore
 		}
 		
+		public void titleToolTipChanged( Dockable dockable, String oldTooltip, String newTooltip ) {
+		    // ignore
+		}
+		
 		public void titleExchanged( Dockable dockable, DockTitle title ) {
 		    // ignore
 		}

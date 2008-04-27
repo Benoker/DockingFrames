@@ -56,7 +56,7 @@ public class BasicStationPaint implements StationPaint {
      */
     @Deprecated
     public Color getColor() {
-        return color.color();
+        return color.value();
     }
     
     /**
@@ -74,7 +74,7 @@ public class BasicStationPaint implements StationPaint {
         color.setId( "paint.divider" );
         color.connect( station.getController() );
         
-        g.setColor( color.color() );
+        g.setColor( color.value() );
         g.fillRect( bounds.x, bounds.y, bounds.width, bounds.height );
         
         color.connect( null );
@@ -84,7 +84,7 @@ public class BasicStationPaint implements StationPaint {
         color.setId( "paint.insertion" );
         color.connect( station.getController() );
         
-        g.setColor( new Color( color.color().getRGB() ) );
+        g.setColor( new Color( color.value().getRGB() ) );
         Graphics2D g2 = (Graphics2D)g;
         
         Composite old = g2.getComposite();
@@ -113,7 +113,7 @@ public class BasicStationPaint implements StationPaint {
         color.setId( "paint.line" );
         color.connect( station.getController() );
         
-        g.setColor( color.color() );
+        g.setColor( color.value() );
         Graphics2D g2 = (Graphics2D)g;
         
         Stroke old = g2.getStroke();

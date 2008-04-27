@@ -46,7 +46,7 @@ public abstract class StationPaintColor extends AbstractDockColor{
      * @param paint the {@link StationPaint} that uses this color
      * @param backup a backup used when no color was found
      */
-    public StationPaintColor( String id, Class<? extends DockColor> kind, StationPaint paint, Color backup ){
+    public StationPaintColor( String id, Class<? extends AbstractDockColor> kind, StationPaint paint, Color backup ){
         super( id, kind, backup );
         this.paint = paint;
     }

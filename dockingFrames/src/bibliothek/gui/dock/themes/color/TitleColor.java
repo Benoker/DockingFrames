@@ -29,7 +29,6 @@ import java.awt.Color;
 
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
-import bibliothek.gui.dock.util.color.DockColor;
 
 /**
  * A color used by a {@link DockTitle}.
@@ -46,7 +45,7 @@ public abstract class TitleColor extends AbstractDockColor{
      * @param title the title which uses this color
      * @param backup a backup, can be <code>null</code>
      */
-    public TitleColor( String id, Class<? extends DockColor> kind, DockTitle title, Color backup ){
+    public TitleColor( String id, Class<? extends AbstractDockColor> kind, DockTitle title, Color backup ){
         super( id, kind, backup );
         if( title == null )
             throw new IllegalArgumentException( "title must not be null" );

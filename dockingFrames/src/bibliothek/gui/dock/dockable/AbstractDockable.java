@@ -74,6 +74,8 @@ public abstract class AbstractDockable implements Dockable {
     private PropertyValue<String> titleText;
     /** the icon of this dockable */
     private PropertyValue<Icon> titleIcon;
+    /** the tooltip of this dockable */
+    private PropertyValue<String> titleToolTip;
     
     /** the DockTitles which are bound to this dockable */
     private List<DockTitle> titles = new LinkedList<DockTitle>();
@@ -91,8 +93,9 @@ public abstract class AbstractDockable implements Dockable {
      * Creates a new dockable.
      * @param titleIcon the key of the icon, used to read in {@link DockProperties}
      * @param titleText the key of the title, used to read in {@link DockProperties}
+     * @param titleTooltip the key of the tooltip, used to read in {@link DockProperties}
      */
-    protected AbstractDockable( PropertyKey<Icon> titleIcon, PropertyKey<String> titleText ){
+    protected AbstractDockable( PropertyKey<Icon> titleIcon, PropertyKey<String> titleText, PropertyKey<String> titleTooltip ){
     	this.titleIcon = new PropertyValue<Icon>( titleIcon ){
     		@Override
     		protected void valueChanged( Icon oldValue, Icon newValue ){
@@ -111,6 +114,13 @@ public abstract class AbstractDockable implements Dockable {
     			
     			fireTitleTextChanged( oldValue, newValue );
     		}
+    	};
+    	
+    	this.titleToolTip = new PropertyValue<String>( titleTooltip ){
+    	    @Override
+    	    protected void valueChanged( String oldValue, String newValue ) {
+    	        fireTitleTooltipChanged( oldValue, newValue );
+    	    }
     	};
     	
     	hierarchyObserver = new DockHierarchyObserver( this );
@@ -199,6 +209,18 @@ public abstract class AbstractDockable implements Dockable {
     public Icon getTitleIcon() {
         return titleIcon.getValue();
     }
+    
+    /**
+     * Sets the tooltip that will be shown on any title of this dockable.
+     * @param titleToolTip the new tooltip, can be <code>null</code>
+     */
+    public void setTitleToolTip( String titleToolTip ){
+        this.titleToolTip.setValue( titleToolTip );
+    }
+    
+    public String getTitleToolTip() {
+        return titleToolTip.getValue();
+    }
 
     /**
      * Sets the icon of this dockable. All dockableListeners are informed about 
@@ -251,13 +273,24 @@ public abstract class AbstractDockable implements Dockable {
     
     /**
      * Calls the {@link DockableListener#titleTextChanged(Dockable, String, String) titleTextChanged}
-     * method of all registered {@link DockableListener}.
+     * method of all registered {@link DockableListener}s.
      * @param oldTitle the old title
      * @param newTitle the new title
      */
     protected void fireTitleTextChanged( String oldTitle, String newTitle ){
         for( DockableListener listener : dockableListeners.toArray( new DockableListener[ dockableListeners.size()] ))
             listener.titleTextChanged( this, oldTitle, newTitle );
+    }
+    
+    /**
+     * Called the {@link DockableListener#titleToolTipChanged(Dockable, String, String) titleTooltipChanged}
+     * method of all registered {@link DockableListener}s.
+     * @param oldTooltip the old value
+     * @param newTooltip the new value
+     */
+    protected void fireTitleTooltipChanged( String oldTooltip, String newTooltip ){
+        for( DockableListener listener : dockableListeners.toArray( new DockableListener[ dockableListeners.size()] ))
+            listener.titleToolTipChanged( this, oldTooltip, newTooltip );
     }
 
     /**

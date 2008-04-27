@@ -262,24 +262,24 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
                     Color center = null;
 
                     if( focused ){
-                        out = borderFocusedOut.color();
-                        center = borderFocusedCenter.color();
+                        out = borderFocusedOut.value();
+                        center = borderFocusedCenter.value();
                     }
                     if( isSelected() ){
                         if( out == null )
-                            out = borderSelectedOut.color();
+                            out = borderSelectedOut.value();
                         if( center == null )
-                            center = borderSelectedCenter.color();
+                            center = borderSelectedCenter.value();
                     }
                     if( out == null )
-                        out = borderOut.color();
+                        out = borderOut.value();
                     if( center == null )
-                        center = borderCenter.color();
+                        center = borderCenter.value();
                     
                     if( out == null || center == null ){
-                        Color background = border.color();
+                        Color background = border.value();
                         if( background == null )
-                            background = FlatButton.this.background.color();
+                            background = FlatButton.this.background.value();
                         
                         if( background == null )
                             background = getBackground();
@@ -318,9 +318,9 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
         
         public void updateForeground(){
             if( isSelected() )
-                setForeground( foregroundSelected.color() );
+                setForeground( foregroundSelected.value() );
             else
-                setForeground( foreground.color() );
+                setForeground( foreground.value() );
         }
         
         public void setController( DockController controller ){
@@ -387,6 +387,10 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
             return min;
         }
        
+        public void setTooltip( String tooltip ) {
+            setToolTipText( tooltip );
+        }
+        
         /**
          * Sets the location of this button. The buttons knows
          * through the {@link FlatTab#getSelectedIndex() selectedIndex}-property
@@ -418,22 +422,22 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
             Color bottom = null;
             
             if( focused ){
-                top = backgroundFocusedTop.color();
-                bottom = backgroundFocusedBottom.color();
+                top = backgroundFocusedTop.value();
+                bottom = backgroundFocusedBottom.value();
             }
             if( isSelected() ){
                 if( top == null )
-                    top = backgroundSelectedTop.color();
+                    top = backgroundSelectedTop.value();
                 if( bottom == null )
-                    bottom = backgroundSelectedBottom.color();
+                    bottom = backgroundSelectedBottom.value();
             }
             if( top == null )
-                top = backgroundTop.color();
+                top = backgroundTop.value();
             if( bottom == null )
-                bottom = backgroundBottom.color();
+                bottom = backgroundBottom.value();
             
             if( top == null || bottom == null ){
-                Color background = FlatButton.this.background.color();
+                Color background = FlatButton.this.background.value();
                 if( background == null )
                     background = getBackground();
                 

@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.common.intern.theme;
 
+import java.awt.Color;
 import java.util.Map;
 
 import javax.swing.Icon;
@@ -40,8 +41,8 @@ import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
+import bibliothek.gui.dock.util.UIBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
-import bibliothek.gui.dock.util.color.ColorProvider;
 
 /**
  * A wrapper around a {@link EclipseTheme}, allows to use the {@link ColorMap} of
@@ -82,8 +83,8 @@ public class CEclipseTheme extends CDockTheme<EclipseTheme>{
      * @param control the controller for which this theme will be used
      */
     private void init( final CControl control ){
-        putColorProviderFactory( TabColor.class, new ColorProviderFactory<TabColor, ColorProvider<TabColor>>(){
-            public ColorProvider<TabColor> create( ColorManager manager ) {
+        putColorProviderFactory( TabColor.class, new ColorProviderFactory<TabColor, UIBridge<Color, TabColor>>(){
+            public UIBridge<Color, TabColor> create( ColorManager manager ) {
                 EclipseTabTransmitter transmitter = new EclipseTabTransmitter( manager );
                 transmitter.setControl( control );
                 return transmitter;

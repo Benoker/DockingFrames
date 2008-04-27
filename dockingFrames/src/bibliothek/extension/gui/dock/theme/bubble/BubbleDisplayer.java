@@ -109,22 +109,22 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
             DockController controller = getController();
             if( controller != null && controller.getFocusedDockable() == getDockable() ){
                 if( mouse ){
-                    animation.putColor( "high", borderHighActiveMouse.color() );
-                    animation.putColor( "low", borderLowActiveMouse.color() );
+                    animation.putColor( "high", borderHighActiveMouse.value() );
+                    animation.putColor( "low", borderLowActiveMouse.value() );
                 }
                 else{
-                    animation.putColor( "high", borderHighActive.color() );
-                    animation.putColor( "low", borderLowActive.color() );
+                    animation.putColor( "high", borderHighActive.value() );
+                    animation.putColor( "low", borderLowActive.value() );
                 }
             }
             else{
                 if( mouse ){
-                    animation.putColor( "high", borderHighInactiveMouse.color() );
-                    animation.putColor( "low", borderLowInactiveMouse.color() );
+                    animation.putColor( "high", borderHighInactiveMouse.value() );
+                    animation.putColor( "low", borderLowInactiveMouse.value() );
                 }
                 else{
-                    animation.putColor( "high", borderHighInactive.color() );
-                    animation.putColor( "low", borderLowInactive.color() );
+                    animation.putColor( "high", borderHighInactive.value() );
+                    animation.putColor( "low", borderLowInactive.value() );
                 }
             }
         }

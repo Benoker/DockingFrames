@@ -23,16 +23,18 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.util.color;
-
-import java.awt.Color;
-
-import bibliothek.gui.dock.util.UIValue;
+package bibliothek.gui.dock.util;
 
 /**
- * A wrapper around a {@link Color} object.
+ * An {@link UIValue} is a wrapper around a resource that can be modified
+ * by an {@link UIBridge} or the {@link UIProperties}.
  * @author Benjamin Sigg
+ * @param <V> the type of resource that is wrapped into <code>this</code>.
  */
-public interface DockColor extends UIValue<Color>{
-    // no new methods
+public interface UIValue<V> {
+    /**
+     * Called when the underlying resource of this {@link UIValue} changes.
+     * @param value the new value
+     */
+    public void set( V value );
 }

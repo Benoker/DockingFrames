@@ -25,6 +25,8 @@
  */
 package bibliothek.gui.dock.common.intern.theme;
 
+import java.awt.Color;
+
 import bibliothek.extension.gui.dock.theme.SmoothTheme;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.color.BasicTabTransmitter;
@@ -33,8 +35,8 @@ import bibliothek.gui.dock.themes.ColorProviderFactory;
 import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.color.TitleColor;
+import bibliothek.gui.dock.util.UIBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
-import bibliothek.gui.dock.util.color.ColorProvider;
 
 /**
  * A bridge between a {@link SmoothTheme} and the common-project.
@@ -74,15 +76,15 @@ public class CSmoothTheme extends CDockTheme<SmoothTheme> {
      * @param control the controller for which this theme will be used
      */
     private void init( final CControl control ){
-        putColorProviderFactory( TabColor.class, new ColorProviderFactory<TabColor, ColorProvider<TabColor>>(){
-            public ColorProvider<TabColor> create( ColorManager manager ) {
+        putColorProviderFactory( TabColor.class, new ColorProviderFactory<TabColor, UIBridge<Color, TabColor>>(){
+            public UIBridge<Color, TabColor> create( ColorManager manager ) {
                 BasicTabTransmitter transmitter = new BasicTabTransmitter( manager );
                 transmitter.setControl( control );
                 return transmitter;
             }
         });
-        putColorProviderFactory( TitleColor.class, new ColorProviderFactory<TitleColor, ColorProvider<TitleColor>>(){
-            public ColorProvider<TitleColor> create( ColorManager manager ) {
+        putColorProviderFactory( TitleColor.class, new ColorProviderFactory<TitleColor, UIBridge<Color, TitleColor>>(){
+            public UIBridge<Color, TitleColor> create( ColorManager manager ) {
                 BasicTitleTransmitter transmitter = new BasicTitleTransmitter( manager );
                 transmitter.setControl( control );
                 return transmitter;

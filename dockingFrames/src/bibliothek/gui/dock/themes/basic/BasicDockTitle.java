@@ -122,10 +122,10 @@ public class BasicDockTitle extends AbstractDockTitle {
 
         if( gradient == null ){
             if ( isActive() ){
-                gradient = getGradient( activeLeftColor.color(), activeRightColor.color(), component );
+                gradient = getGradient( activeLeftColor.value(), activeRightColor.value(), component );
             }
             else{
-                gradient = getGradient( inactiveLeftColor.color(), inactiveRightColor.color(), component );
+                gradient = getGradient( inactiveLeftColor.value(), inactiveRightColor.value(), component );
             }
         }
         
@@ -168,7 +168,7 @@ public class BasicDockTitle extends AbstractDockTitle {
      * @see #getActiveLeftTitleColor()
      */
     public Color getActiveLeftColor() {
-        return activeLeftColor.color();
+        return activeLeftColor.value();
     }
     
     /**
@@ -197,7 +197,7 @@ public class BasicDockTitle extends AbstractDockTitle {
      * @return the color
      */
     public Color getActiveRightColor() {
-        return activeRightColor.color();
+        return activeRightColor.value();
     }
 
     /**
@@ -224,7 +224,7 @@ public class BasicDockTitle extends AbstractDockTitle {
      * @return the color
      */
     public Color getActiveTextColor() {
-        return activeTextColor.color();
+        return activeTextColor.value();
     }
 
     /**
@@ -252,7 +252,7 @@ public class BasicDockTitle extends AbstractDockTitle {
      * @return the color
      */
     public Color getInactiveLeftColor() {
-        return inactiveLeftColor.color();
+        return inactiveLeftColor.value();
     }
     
     /**
@@ -280,7 +280,7 @@ public class BasicDockTitle extends AbstractDockTitle {
      * @return the color on the right side
      */
     public Color getInactiveRightColor() {
-        return inactiveRightColor.color();
+        return inactiveRightColor.value();
     }
     
     /**
@@ -307,7 +307,7 @@ public class BasicDockTitle extends AbstractDockTitle {
      * @return the color
      */
     public Color getInactiveTextColor() {
-        return inactiveTextColor.color();
+        return inactiveTextColor.value();
     }
     
     /**
@@ -343,12 +343,12 @@ public class BasicDockTitle extends AbstractDockTitle {
         
         if( isActive() ){
             if( activeTextColor != null ){
-                setForeground( activeTextColor.color() );
+                setForeground( activeTextColor.value() );
             }
         }
         else{
             if( inactiveTextColor != null ){
-                setForeground( inactiveTextColor.color() );
+                setForeground( inactiveTextColor.value() );
             }
         }
         repaint();

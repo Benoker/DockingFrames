@@ -48,7 +48,7 @@ public abstract class TabColor extends AbstractDockColor{
      * @param dockable the {@link Dockable} for whose tab this color is used
      * @param backup a backup color in case that no color can be found
      */
-    public TabColor( String id, Class<? extends DockColor> kind, StackDockStation station, Dockable dockable, Color backup ){
+    public TabColor( String id, Class<? extends AbstractDockColor> kind, StackDockStation station, Dockable dockable, Color backup ){
         super( id, kind, backup );
         this.station = station;
         this.dockable = dockable;

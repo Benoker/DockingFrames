@@ -141,6 +141,10 @@ public class ChessFigure extends JLabel implements Dockable {
 	public String getTitleText(){
 		return figure.getName();
 	}
+	
+	public String getTitleToolTip() {
+	    return null;
+	}
 
 	public DockTitle[] listBoundTitles(){
 		return titles.toArray( new DockTitle[ titles.size() ] );

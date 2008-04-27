@@ -50,6 +50,10 @@ public class DockableItem extends UpdateableCheckBoxMenuItem implements Dockable
 	public void titleTextChanged( Dockable dockable, String oldTitle, String newTitle ){
 		setText( newTitle );
 	}
+	
+	public void titleToolTipChanged( Dockable dockable, String oldToolTip, String newToolTip ) {
+	    setToolTipText( newToolTip );
+	}
 
 	public void titleBound( Dockable dockable, DockTitle title ){
 		// ignore

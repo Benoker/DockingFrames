@@ -185,6 +185,7 @@ public abstract class BaseTabComponent extends JComponent implements TabComponen
         for( TabColor color : colors )
             color.connect( controller );
         
+        setToolTipText( dockable.getTitleToolTip() );
         revalidate();
     }
     
@@ -195,6 +196,8 @@ public abstract class BaseTabComponent extends JComponent implements TabComponen
         
         for( TabColor color : colors )
             color.connect( null );
+        
+        setToolTipText( null );
     }
 
     public Dockable getDockable() {
@@ -343,6 +346,10 @@ public abstract class BaseTabComponent extends JComponent implements TabComponen
         public void titleTextChanged( Dockable dockable, String oldTitle, String newTitle ) {
             repaint();
             revalidate();
+        }
+        
+        public void titleToolTipChanged( Dockable dockable, String oldToolTip, String newToolTip ) {
+            setToolTipText( newToolTip );
         }
 
         public void titleUnbound( Dockable dockable, DockTitle title ) {

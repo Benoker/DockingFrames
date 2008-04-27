@@ -187,7 +187,7 @@ public class BasicTabDockTitle extends BasicDockTitle {
     public void paintComponent( Graphics g ) {
         super.paintComponent( g );
         if( !selected ){
-            g.setColor( borderColor.color() );
+            g.setColor( borderColor.value() );
             g.drawLine( 0, getHeight()-1, getWidth(), getHeight()-1 );
         }
     }

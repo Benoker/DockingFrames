@@ -161,15 +161,15 @@ public class RectGradientPainter extends BaseTabComponent {
 		if( isSelected() ){
             if( isFocused() ){
                 if( focusTemporarilyLost )
-                    color2 = colorStackTabBorderSelectedFocusLost.color();
+                    color2 = colorStackTabBorderSelectedFocusLost.value();
                 else
-                    color2 = colorStackTabBorderSelectedFocused.color();
+                    color2 = colorStackTabBorderSelectedFocused.value();
             }
             else
-                color2 = colorStackTabBorderSelected.color();
+                color2 = colorStackTabBorderSelected.value();
         }
         else
-            color2 = colorStackTabBorder.color();
+            color2 = colorStackTabBorder.value();
 		
 		// set border around tab content
 		if (!color2.equals(contentBorder.getMatteColor())) {
@@ -185,30 +185,30 @@ public class RectGradientPainter extends BaseTabComponent {
 		super.paintComponent(g);
 		int height = getHeight(), width = getWidth();
 		Graphics2D g2d = (Graphics2D) g;
-		Color lineColor = colorStackBorder.color();
+		Color lineColor = colorStackBorder.value();
 		Color color1, color2, colorText;
 		boolean focusTemporarilyLost = KeyboardFocusManager.getCurrentKeyboardFocusManager()
 				.getActiveWindow() != SwingUtilities.getWindowAncestor( getTabbedComponent() );
 		
         if( isFocused() && !focusTemporarilyLost ){
-            color1 = colorStackTabTopSelectedFocused.color();
-            color2 = colorStackTabBottomSelectedFocused.color();
-            colorText = colorStackTabTextSelectedFocused.color();
+            color1 = colorStackTabTopSelectedFocused.value();
+            color2 = colorStackTabBottomSelectedFocused.value();
+            colorText = colorStackTabTextSelectedFocused.value();
         }
         else if (isFocused() && focusTemporarilyLost) {
-            color1 = colorStackTabTopSelectedFocusLost.color();
-            color2 = colorStackTabBottomSelectedFocusLost.color();
-            colorText = colorStackTabTextSelectedFocusLost.color();
+            color1 = colorStackTabTopSelectedFocusLost.value();
+            color2 = colorStackTabBottomSelectedFocusLost.value();
+            colorText = colorStackTabTextSelectedFocusLost.value();
         }
         else if( isSelected() ){
-            color1 = colorStackTabTopSelected.color();
-            color2 = colorStackTabBottomSelected.color();
-            colorText = colorStackTabTextSelected.color();
+            color1 = colorStackTabTopSelected.value();
+            color2 = colorStackTabBottomSelected.value();
+            colorText = colorStackTabTextSelected.value();
         }
         else{
-            color1 = colorStackTabTop.color();
-            color2 = colorStackTabBottom.color();
-            colorText = colorStackTabText.color();
+            color1 = colorStackTabTop.value();
+            color2 = colorStackTabBottom.value();
+            colorText = colorStackTabText.value();
         }
 		
 		GradientPaint gradient = color1.equals( color2 ) ? null : new GradientPaint(0, 0, color1, 0, height, color2);

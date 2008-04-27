@@ -158,6 +158,11 @@
 ! API: DockableFocusListener/ComponentHierarchyObserverListener now use events
 ! API: DockableFocusAdapter deleted, no longer necessary
 ! API: DockableFocusListener divided into DockableFocusListener/DockableSelectionListener
-- Layout: when dropping something into SplitDockStation, the old leaf always gets at least 25% of the original space.
 
+[v1.0.6]
+- Layout: when dropping something into SplitDockStation, the old leaf always gets at least 25% of the original space.
 - API:  the inner classes of LockedResizeLayoutManager made public such that they can be given to other classes.
+! API, Layout: Dockables can now have a tooltip, this tooltip is shown on titles and tabs. (!: Dockable.getTitleToolTip, DockableListener.titleToolTipChanged).
+- API: New UIProperties, a generalisation of ColorManager
+! API: ColorManager, ColorProvider and DockColor extend now UIProperties, UIBridge and UIValue. Their only use is now to prevent clients from rewriting generics all the time (!: ColorMangager.getProviderFor - getBridgeFor)
+! API: ColorProvider marked as deprecated, clients should replace it by UIBridge.

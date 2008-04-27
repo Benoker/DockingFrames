@@ -83,6 +83,11 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     	new PropertyKey<KeyStroke>( "SplitDockStation maximize accelerator", 
     			KeyStroke.getKeyStroke( KeyEvent.VK_M, InputEvent.CTRL_DOWN_MASK ));
     
+    /**
+     * Defines the behavior of a {@link DockStation}, how to react on a
+     * drop-event, how to react on resize and other things related
+     * to the layout.
+     */
     public static final PropertyKey<SplitLayoutManager> LAYOUT_MANAGER =
         new PropertyKey<SplitLayoutManager>( "SplitDockStation layout manager",
                 new DefaultSplitLayoutManager() );
@@ -150,6 +155,15 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     		for( DockableListener listener : dockableListeners.toArray( new DockableListener[ dockableListeners.size() ] ))
                 listener.titleIconChanged( SplitDockStation.this, oldValue, newValue );
     	}
+    };
+    
+    /** Optional tooltip for this station */
+    private PropertyValue<String> titleToolTip = new PropertyValue<String>( PropertyKey.DOCK_STATION_TOOLTIP ){
+        @Override
+        protected void valueChanged( String oldValue, String newValue ) {
+            for( DockableListener listener : dockableListeners.toArray( new DockableListener[ dockableListeners.size() ] ))
+                listener.titleToolTipChanged( SplitDockStation.this, oldValue, newValue );
+        }
     };
     
     /** the manager for detailed control of the behavior of this station */
@@ -488,6 +502,19 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      */
     public void setTitleText( String titleText ) {
     	this.titleText.setValue( titleText );
+    }
+    
+    public String getTitleToolTip() {
+        return titleToolTip.getValue();
+    }
+    
+    /**
+     * Sets the tooltip that should be shown on any title that is {@link #bind(DockTitle) bound}
+     * to this dockable.
+     * @param text the tooltip, can be <code>null</code>
+     */
+    public void setTitleToolTip( String text ){
+        titleToolTip.setValue( text );
     }
     
     public Icon getTitleIcon() {

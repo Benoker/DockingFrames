@@ -397,11 +397,11 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
         
         for( RoundActionColor color : colors ){
             if( background.equals( color.getId() ))
-                animation.putColor( "background", color.color() );
+                animation.putColor( "background", color.value() );
             if( mouse.equals( color.getId() ))
-                animation.putColor( "mouse", color.color() );
+                animation.putColor( "mouse", color.value() );
             if( focus.equals( color.getId() ))
-                animation.putColor( "focus", color.color() );
+                animation.putColor( "focus", color.value() );
         }
     }
     

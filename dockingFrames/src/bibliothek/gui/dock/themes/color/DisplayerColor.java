@@ -29,7 +29,6 @@ import java.awt.Color;
 
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
-import bibliothek.gui.dock.util.color.DockColor;
 
 /**
  * A color used on a {@link DockableDisplayer}.
@@ -46,7 +45,7 @@ public abstract class DisplayerColor extends AbstractDockColor {
      * @param displayer the element for which the color is used
      * @param backup a backup color
      */
-    public DisplayerColor( String id, Class<? extends DockColor> kind, DockableDisplayer displayer, Color backup ){
+    public DisplayerColor( String id, Class<? extends AbstractDockColor> kind, DockableDisplayer displayer, Color backup ){
         super( id, kind, backup );
         this.displayer = displayer;
     }

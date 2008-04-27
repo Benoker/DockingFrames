@@ -54,6 +54,12 @@ public interface CombinedTab {
 	public void setIcon( Icon icon );
 	
 	/**
+	 * Sets the tooltip of this tab.
+	 * @param tooltip the tooltip text, can be <code>null</code>
+	 */
+	public void setTooltip( String tooltip );
+	
+	/**
 	 * Sets the location of this tab. Every tab has another location, and
 	 * the location can be used to find the component for which this tab
 	 * is shown.
