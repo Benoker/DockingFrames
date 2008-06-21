@@ -8,7 +8,7 @@
 \newcommand{\src}[1]{\lstinline[basicstyle=\ttfamily]|#1|}
 
 %opening
-\title{DockingFrames 1.0.4 - Common}
+\title{DockingFrames 1.0.6 - Common}
 \author{Benjamin Sigg}
 
 \begin{document}
@@ -161,7 +161,7 @@ With \src{CDockable.setVisible} the visibility of a dockable can just be changed
 
 With \src{CControl.remove} the dockable is not only made invisible, it is also removed from the controller. All properties related to the dockable will be lost. Unless added to a controller again, it is no longer possible to reopen the dockable.
 
-Or give the user the possibility to close the dockable: setting the property \src{closeable} of the default-\src{CDockable}s to \src{true} will add a close-button to the title. A client can add a \src{CDockableListener} to the dockable in order to get informed when the visibility state changes. Clicking the close-button has the same effects as calling \src{setVisible(false)}.
+Or give the user the possibility to close the dockable: setting the property \src{closeable} of the default-\src{CDockable}s to \src{true} will add a close-button to the title. A client can add a \src{CDockableStateListener} to the dockable in order to get informed when the visibility state changes. Clicking the close-button has the same effects as calling \src{setVisible(false)}.
 
 After some time, the need for any elements of the framework might vanish. Using \src{CControl.destroy()} will release as many resources as possible.
 
@@ -322,7 +322,9 @@ catch( IOException ex ){
 The properties can also be stored in xml-format. But the purpose of that option is mainly for debugging and migration, most applications will do just fine using a byte-stream.
 
 \subsubsection{Lazy initialisation}
+While \src{MultipleCDockable}s are created lazy anyway, \src{SingleCDockable}s normally are created in advance. Since that can use a lot of memory, lazy initialisation for \src{SingleCDockable}s was added in version 1.0.4.
 
+Lazy initialisation is done through a \src{SingleCDockableBackupFactory} which is added to \src{CControl}. Each backup factory represents exactly one \\\src{SingleCDockable}. If the dockable is required (for example because the layout is read from a file), the factory will create the dockable and it will be automatically added to \src{CControl}. If a \src{SingleCDockable} is removed from \src{CControl} but a backup factory still is in place, then the properties of that dockable are not deleted. If another dockable is added later to the \src{CControl} with the same unique id, then this other dockable will inherit the old properties.
 
 \subsection{The size of dockables}
 Each \src{CDockable} has a certain size. Some \src{Component}s have an optimal size, others are flexible and can have any size. There are two interesting features for the first kind of \src{Component}s.
@@ -336,6 +338,11 @@ Clients that use \src{DefaultSingleCDockable} and \\\src{DefaultMultipleCDockabl
 Each \src{CDockable} can have a "size request" provided by \\\src{getAndClearResizeRequest}. Whenever \src{handleResizeRequest} of \src{CControl} is called, all resize requests are read and the stations try to change the size of their children such that the requests are fullfilled. There are no guarantees that the request can be fullfilled. And requests that cannot be fullfilled are simply lost.
 
 Clients that use \src{DefaultSingleCDockable} and \\\src{DefaultMultipleCDockable} can use the method \src{setResizeRequest} to issue such a request. The method \src{setResizeRequest} can just store the request, or can process the request as well.
+
+\subsubsection{Strategy}
+Since requests can contradict each other, there needs to be a strategy how to resolve this contradictions. A \src{ConflictResolver} is used for that. Each \src{ConflictResolver} has methods to combine size-requests and thus create new requests. Additionally each \src{ConflictResolver} has methods to resolve contradictions later when the layout is applied.
+
+Clients can use the property key \src{CControl.RESIZE_LOCK_CONFLICT_RESOLVER} to set a new strategy. Currently there are two strategies available: \src{DefaultConflictResolver} is the default installation and tries to distribute space as fair as possible. \src{FullLockConflictResolver} denies requests of elements that are mixed with elements without requests.
 
 \subsection{Colors associated with dockables}
 Every \src{CDockable} has a map full of colors. This map, the \src{ColorMap}, is read by the \src{DockTheme}s which are included in the Common-project. If a client changes a color in the map, the change will be propagated to the graphical user interface immediatelly. There are various keys for different colors. If a client wants to change the color of a tab, it might use this piece of code:

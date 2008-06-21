@@ -8,7 +8,7 @@
 \newcommand{\src}[1]{\lstinline[basicstyle=\ttfamily]|#1|}
 
 %opening
-\title{DockingFrames 1.0.5 - Common}
+\title{DockingFrames 1.0.6 - Common}
 \author{Benjamin Sigg}
 
 \begin{document}
@@ -338,6 +338,11 @@ Clients that use \src{DefaultSingleCDockable} and \\\src{DefaultMultipleCDockabl
 Each \src{CDockable} can have a "size request" provided by \\\src{getAndClearResizeRequest}. Whenever \src{handleResizeRequest} of \src{CControl} is called, all resize requests are read and the stations try to change the size of their children such that the requests are fullfilled. There are no guarantees that the request can be fullfilled. And requests that cannot be fullfilled are simply lost.
 
 Clients that use \src{DefaultSingleCDockable} and \\\src{DefaultMultipleCDockable} can use the method \src{setResizeRequest} to issue such a request. The method \src{setResizeRequest} can just store the request, or can process the request as well.
+
+\subsubsection{Strategy}
+Since requests can contradict each other, there needs to be a strategy how to resolve this contradictions. A \src{ConflictResolver} is used for that. Each \src{ConflictResolver} has methods to combine size-requests and thus create new requests. Additionally each \src{ConflictResolver} has methods to resolve contradictions later when the layout is applied.
+
+Clients can use the property key \src{RESIZE_LOCK_CONFLICT_RESOLVER} (to be found in \src{CControl}) to set a new strategy. Currently there are two strategies available: \src{DefaultConflictResolver} is the default installation and tries to distribute space as fair as possible. \src{FullLockConflictResolver} denies requests of elements that are mixed with elements without requests.
 
 \subsection{Colors associated with dockables}
 Every \src{CDockable} has a map full of colors. This map, the \src{ColorMap}, is read by the \src{DockTheme}s which are included in the Common-project. If a client changes a color in the map, the change will be propagated to the graphical user interface immediatelly. There are various keys for different colors. If a client wants to change the color of a tab, it might use this piece of code:
