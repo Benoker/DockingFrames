@@ -47,8 +47,10 @@ public class Frame extends DefaultMultipleCDockable {
     private JSpinner width = new JSpinner( new SpinnerNumberModel( 200, 50, 500, 1 ));
     /** the preferred height */
     private JSpinner height = new JSpinner( new SpinnerNumberModel( 200, 50, 500, 1 ));
-    /** whether the size is locked */
-    private JCheckBox locked = new JCheckBox( "Size locked during resize" );
+    /** whether the width is locked */
+    private JCheckBox lockedWidth = new JCheckBox( "Width locked during resize" );
+    /** whether the height is locked */
+    private JCheckBox lockedHeight = new JCheckBox( "Height locked during resize" );
     /** whether titles are shown or not */
     private JCheckBox showTitle;
     
@@ -75,16 +77,18 @@ public class Frame extends DefaultMultipleCDockable {
         JPanel sizes = new JPanel( new GridBagLayout() );
         sizes.setBorder( BorderFactory.createTitledBorder( "Size" ) );
         
-        sizes.add( locked, new GridBagConstraints( 0, 0, 2, 1, 1.0, 1.0,
+        sizes.add( lockedWidth, new GridBagConstraints( 0, 0, 2, 1, 1.0, 1.0,
                 GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets( 1, 1, 1, 1 ), 0, 0 ));
-        sizes.add( new JLabel( "Width: " ), new GridBagConstraints( 0, 1, 1, 1, 1.0, 1.0,
+        sizes.add( lockedHeight, new GridBagConstraints( 0, 1, 2, 1, 1.0, 1.0,
+                GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets( 1, 1, 1, 1 ), 0, 0 ));
+        sizes.add( new JLabel( "Width: " ), new GridBagConstraints( 0, 2, 1, 1, 1.0, 1.0,
                 GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets( 1, 1, 1, 1 ), 0, 0 ));
-        sizes.add( new JLabel( "Height: " ), new GridBagConstraints( 0, 2, 1, 1, 1.0, 1.0,
+        sizes.add( new JLabel( "Height: " ), new GridBagConstraints( 0, 3, 1, 1, 1.0, 1.0,
                 GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets( 1, 1, 1, 1 ), 0, 0 ));
         
-        sizes.add( width, new GridBagConstraints( 1, 1, 1, 1, 100.0, 1.0,
+        sizes.add( width, new GridBagConstraints( 1, 2, 1, 1, 100.0, 1.0,
                 GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets( 1, 1, 1, 1 ), 0, 0 ));
-        sizes.add( height, new GridBagConstraints( 1, 2, 1, 1, 100.0, 1.0,
+        sizes.add( height, new GridBagConstraints( 1, 3, 1, 1, 100.0, 1.0,
                 GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets( 1, 1, 1, 1 ), 0, 0 ));
         
         JPanel buttons = new JPanel( new GridLayout( 1, 2 ));
@@ -94,7 +98,7 @@ public class Frame extends DefaultMultipleCDockable {
         process.setToolTipText( "States the request and processes all pending requests." );
         buttons.add( set );
         buttons.add( process );
-        sizes.add( buttons, new GridBagConstraints( 0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.LAST_LINE_END,
+        sizes.add( buttons, new GridBagConstraints( 0, 4, 2, 1, 1.0, 1.0, GridBagConstraints.LAST_LINE_END,
                 GridBagConstraints.NONE, new Insets( 1, 1, 1, 1 ), 0, 0 )); 
         
         
@@ -133,9 +137,14 @@ public class Frame extends DefaultMultipleCDockable {
                 setTitleShown( showTitle.isSelected() );
             }
         });
-        locked.addActionListener( new ActionListener(){
+        lockedWidth.addActionListener( new ActionListener(){
             public void actionPerformed( ActionEvent e ) {
-                setResizeLocked( locked.isSelected() );
+                setResizeLockedHorizontally( lockedWidth.isSelected() );
+            }
+        });
+        lockedHeight.addActionListener( new ActionListener(){
+            public void actionPerformed( ActionEvent e ) {
+                setResizeLockedVertically( lockedHeight.isSelected() );
             }
         });
         set.addActionListener( new ActionListener(){

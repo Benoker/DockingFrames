@@ -26,7 +26,6 @@
 package bibliothek.gui.dock.common;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -53,6 +52,8 @@ import bibliothek.gui.dock.common.intern.station.CFlapLayoutManager;
 import bibliothek.gui.dock.common.intern.station.CLockedResizeLayoutManager;
 import bibliothek.gui.dock.common.intern.station.ScreenResizeRequestHandler;
 import bibliothek.gui.dock.common.intern.theme.CSmoothTheme;
+import bibliothek.gui.dock.common.layout.FullLockConflictResolver;
+import bibliothek.gui.dock.common.layout.RequestDimension;
 import bibliothek.gui.dock.common.location.CExternalizedLocation;
 import bibliothek.gui.dock.event.*;
 import bibliothek.gui.dock.facile.action.CloseAction;
@@ -126,11 +127,13 @@ public class CControl {
      * {@link ConflictResolver} used to determine what happens when there is
      * a conflict between two resize requests on a {@link SplitDockStation} like
      * {@link CGridArea}, {@link CWorkingArea} or {@link CContentArea}. 
+     * @see DefaultConflictResolver
+     * @see FullLockConflictResolver
      */
-    public static final PropertyKey<ConflictResolver<Dimension>> RESIZE_LOCK_CONFLICT_RESOLVER =
-        new PropertyKey<ConflictResolver<Dimension>>( 
+    public static final PropertyKey<ConflictResolver<RequestDimension>> RESIZE_LOCK_CONFLICT_RESOLVER =
+        new PropertyKey<ConflictResolver<RequestDimension>>( 
                 "ccontrol.resize_lock_conflict_resolver", 
-                new DefaultConflictResolver<Dimension>() );
+                new DefaultConflictResolver<RequestDimension>() );
     
     /** the unique id of the station that handles the externalized dockables */
     public static final String EXTERNALIZED_STATION_ID = "external";

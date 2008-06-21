@@ -63,7 +63,8 @@ public interface CDockablePropertyListener {
     public void externalizableChanged( CDockable dockable );
     
     /**
-     * Called when the {@link CDockable#isResizeLocked()}-property has changed.
+     * Called when the {@link CDockable#isResizeLockedHorizontally()} or
+     * {@link CDockable#isResizeLockedVertically()}-property has changed.
      * @param dockable the source of the event
      */
     public void resizeLockedChanged( CDockable dockable );

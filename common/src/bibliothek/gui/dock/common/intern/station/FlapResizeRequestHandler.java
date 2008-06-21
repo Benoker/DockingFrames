@@ -25,13 +25,12 @@
  */
 package bibliothek.gui.dock.common.intern.station;
 
-import java.awt.Dimension;
-
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.layout.RequestDimension;
 
 /**
  * A handler that can change the size of a {@link CDockable} such that it
@@ -57,12 +56,18 @@ public class FlapResizeRequestHandler extends AbstractResizeRequestHandler{
         
         for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
             Dockable dockable = station.getDockable( i );
-            Dimension size = getAndClearResizeRequest( dockable );
+            RequestDimension size = getAndClearResizeRequest( dockable );
             if( size != null ){
-                if( horizontal )
-                    station.setWindowSize( dockable, size.width );
-                else
-                    station.setWindowSize( dockable, size.height );
+                if( horizontal ){
+                    if( size.isWidthSet() ){
+                        station.setWindowSize( dockable, size.getWidth() );
+                    }
+                }
+                else{
+                    if( size.isHeightSet() ){
+                        station.setWindowSize( dockable, size.getHeight() );
+                    }
+                }
             }
         }
     }

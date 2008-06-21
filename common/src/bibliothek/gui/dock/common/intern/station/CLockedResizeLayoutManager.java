@@ -25,7 +25,6 @@
  */
 package bibliothek.gui.dock.common.intern.station;
 
-import java.awt.Dimension;
 import java.awt.Rectangle;
 
 import bibliothek.gui.Dockable;
@@ -33,6 +32,7 @@ import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
+import bibliothek.gui.dock.common.layout.RequestDimension;
 import bibliothek.gui.dock.facile.station.split.ConflictResolver;
 import bibliothek.gui.dock.facile.station.split.LockedResizeLayoutManager;
 import bibliothek.gui.dock.facile.station.split.ResizeRequest;
@@ -41,10 +41,11 @@ import bibliothek.gui.dock.station.split.Root;
 import bibliothek.gui.dock.station.split.SplitLayoutManager;
 
 /**
- * A {@link LockedResizeLayoutManager} that looks out for {@link CDockable#isResizeLocked()}.
+ * A {@link LockedResizeLayoutManager} that looks out for 
+ * {@link CDockable#isResizeLockedVertically()} and {@link CDockable#isResizeLockedHorizontally()}.
  * @author Benjamin Sigg
  */
-public class CLockedResizeLayoutManager extends LockedResizeLayoutManager<Dimension> {
+public class CLockedResizeLayoutManager extends LockedResizeLayoutManager<RequestDimension> {
     /** the control in whose realm this manager works */
     private CControl control;
     
@@ -81,7 +82,7 @@ public class CLockedResizeLayoutManager extends LockedResizeLayoutManager<Dimens
     }
     
     @Override
-    public ConflictResolver<Dimension> getConflictResolver() {
+    public ConflictResolver<RequestDimension> getConflictResolver() {
         if( control != null )
             return control.getProperty( CControl.RESIZE_LOCK_CONFLICT_RESOLVER );
         
@@ -89,48 +90,90 @@ public class CLockedResizeLayoutManager extends LockedResizeLayoutManager<Dimens
     }
     
     @Override
-    public ResizeRequest getRequest( Dimension size, Leaf leaf ) {
+    public ResizeRequest getRequest( RequestDimension size, Leaf leaf ) {
         if( size != null ){
             Rectangle modified = leaf.getCurrentBounds();
             
             // +0.1: to work against a later integer conversion that might round down
-            double deltaWidth = size.width + 0.001 - modified.width;
-            double deltaHeight = size.height + 0.001 - modified.height;
+            double deltaWidth = size.getWidth() + 0.001 - modified.width;
+            double deltaHeight = size.getHeight() + 0.001 - modified.height;
             
             Root root = leaf.getRoot();
             deltaWidth /= root.getWidthFactor();
             deltaHeight /= root.getHeightFactor();
             
-            return new ResizeRequest( deltaWidth, deltaHeight );
+            return new ResizeRequest(
+                    deltaWidth, 
+                    deltaHeight,
+                    size.isWidthSet() ? 1 : -1,
+                    size.isHeightSet() ? 1 : -1 );
         }
         return null;
     }
 
     @Override
-    public Dimension prepareResize( Leaf leaf ) {
-        if( isLocked( leaf.getDockable() )){
-            if( leaf.getWidth() > 0 && leaf.getHeight() > 0 ){
-                return leaf.getCurrentBounds().getSize();
+    public RequestDimension prepareResize( Leaf leaf ) {
+        boolean lockedWidth = isLockedHorizontally( leaf.getDockable() );
+        boolean lockedHeight = isLockedVertically( leaf.getDockable() );
+        
+        if( !lockedWidth && !lockedHeight )
+            return null;
+        
+        RequestDimension request = new RequestDimension();
+        Rectangle bounds = leaf.getCurrentBounds();
+        
+        if( lockedWidth ){
+            double width = leaf.getWidth();
+            if( width > 0 ){
+                request.setWidth( bounds.width );
             }
         }
         
-        return null;
+        if( lockedHeight ){
+            double height = leaf.getHeight();
+            if( height > 0 ){
+                request.setHeight( bounds.height );
+            }
+        }
+        
+        return request;
     }
 
     /**
-     * Checks whether <code>dockable</code>s size is locked.
+     * Checks whether <code>dockable</code>s height is locked.
      * @param dockable the element to test
-     * @return <code>true</code> if the size is locked
+     * @return <code>true</code> if the height is locked
      */
-    private boolean isLocked( Dockable dockable ){
+    private boolean isLockedVertically( Dockable dockable ){
         if( dockable instanceof CommonDockable ){
             CDockable cdock = ((CommonDockable)dockable).getDockable();
-            return cdock.isResizeLocked();
+            return cdock.isResizeLockedVertically();
         }
         if( dockable.asDockStation() instanceof StackDockStation ){
             StackDockStation station = (StackDockStation)dockable.asDockStation();
             for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
-                if( isLocked( station.getDockable( i ) ))
+                if( isLockedVertically( station.getDockable( i ) ))
+                    return true;
+            }
+        }
+        return false;
+    }
+    
+
+    /**
+     * Checks whether <code>dockable</code>s width is locked.
+     * @param dockable the element to test
+     * @return <code>true</code> if the width is locked
+     */
+    private boolean isLockedHorizontally( Dockable dockable ){
+        if( dockable instanceof CommonDockable ){
+            CDockable cdock = ((CommonDockable)dockable).getDockable();
+            return cdock.isResizeLockedHorizontally();
+        }
+        if( dockable.asDockStation() instanceof StackDockStation ){
+            StackDockStation station = (StackDockStation)dockable.asDockStation();
+            for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
+                if( isLockedHorizontally( station.getDockable( i ) ))
                     return true;
             }
         }

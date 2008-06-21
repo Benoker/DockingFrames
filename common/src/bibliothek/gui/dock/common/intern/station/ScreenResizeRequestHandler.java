@@ -25,13 +25,13 @@
  */
 package bibliothek.gui.dock.common.intern.station;
 
-import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Rectangle;
 
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.layout.RequestDimension;
 import bibliothek.gui.dock.station.screen.ScreenDockDialog;
 
 /**
@@ -56,21 +56,28 @@ public class ScreenResizeRequestHandler extends AbstractResizeRequestHandler {
     public void handleResizeRequest( CControl control ) {
         for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
             ScreenDockDialog dialog = station.getDialog( i );
-            Dimension size = getAndClearResizeRequest( station.getDockable( i ) );
+            RequestDimension size = getAndClearResizeRequest( station.getDockable( i ) );
             if( size != null ){
                 Insets insets = dialog.getDockableInsets();
                 Rectangle bounds = dialog.getBounds();
                 
-                size = new Dimension( size );
-                size.width += insets.left + insets.right;
-                size.height += insets.top + insets.bottom;
+                int width;
+                if( size.isWidthSet() )
+                    width = size.getWidth() + insets.left + insets.right;
+                else
+                    width = bounds.width;
                 
+                int height;
+                if( size.isHeightSet() )
+                    height = size.getHeight() + insets.top + insets.bottom;
+                else
+                    height = bounds.height;
                 
                 dialog.setRestrictedBounds(
-                        bounds.x + (bounds.width - size.width)/2, 
-                        bounds.y + (bounds.height - size.height)/2,
-                        size.width,
-                        size.height );
+                        bounds.x + (bounds.width - width)/2, 
+                        bounds.y + (bounds.height - height)/2,
+                        width,
+                        height );
             }
         }
     }

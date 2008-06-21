@@ -32,7 +32,7 @@ import bibliothek.gui.dock.station.split.*;
 
 /**
  * A {@link SplitLayoutManager} that can lock the size of some {@link Dockable}s
- * during resize. This class is intended to be subclassed,
+ * during resize. This class is intended to be subclassed.
  * @param <T> the type of the temporary data this manager works with 
  * @author Benjamin Sigg
  */

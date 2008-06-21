@@ -167,3 +167,7 @@
 ! API: ColorManager, ColorProvider and DockColor extend now UIProperties, UIBridge and UIValue. Their only use is now to prevent clients from rewriting generics all the time (!: ColorMangager.getProviderFor - getBridgeFor)
 ! API: ColorProvider marked as deprecated, clients should replace it by UIBridge.
 - API, Layout: The ConflictResolver in common can now be used to resolve conflicts on resize when locked CDockables are around. Can be applied using the key CControl.RESIZE_LOCK_CONFLICT_RESOLVER
+- API: New ConflictResolver "FullLockConflictResolver" inspired by the behavior of VLDocking
+- Bugfix: DefaultConflictResolver creates now better combinations of ResizeRequests if the combined requests have different priority
+! API: The size request ist now handled with a RequestDimension and no longer with Dimension. This allows to issue requests only for one of width or height, and to lock only one of width or height
+

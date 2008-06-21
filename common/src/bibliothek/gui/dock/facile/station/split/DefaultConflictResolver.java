@@ -96,21 +96,23 @@ public class DefaultConflictResolver<T> implements ConflictResolver<T>{
             heightDelta = left.getDeltaHeight();
             heightFraction = left.getFractionHeight();
         }
+        else if( left.getFractionHeight() == right.getFractionHeight()){
+            heightDelta = (left.getDeltaHeight() + right.getDeltaHeight())/2;
+            heightFraction = left.getFractionHeight();
+        }
+        else if( left.getFractionHeight() < right.getFractionHeight() ){
+            heightDelta = left.getDeltaHeight();
+            heightFraction = left.getFractionHeight();
+        }
         else{
-            heightDelta = Math.max( left.getDeltaHeight(), right.getDeltaHeight() );
-            heightFraction = Math.min( left.getFractionHeight(), right.getFractionHeight() );
+            heightDelta = right.getDeltaHeight();
+            heightFraction = right.getFractionHeight();
         }
         
         if( widthFraction == -1 && heightFraction == -1 )
             return null;
         
         return new ResizeRequest( widthDelta, heightDelta, widthFraction, heightFraction );
-                
-            /* left.getDeltaWidth() / left.getFractionWidth() + right.getDeltaWidth() / right.getFractionWidth() +
-                    node.getNewDividerSize() - node.getOldDividerSize(),
-                Math.max( left.getDeltaHeight(), right.getDeltaHeight() ),
-                1,
-                Math.min( left.getFractionHeight(), right.getFractionHeight() )); */
     }
     
     public ResizeRequest requestVertical( ResizeRequest top, ResizeRequest bottom, ResizeNode<T> node ) {
@@ -147,9 +149,17 @@ public class DefaultConflictResolver<T> implements ConflictResolver<T>{
             widthDelta = top.getDeltaWidth();
             widthFraction = top.getFractionWidth();
         }
+        else if( top.getFractionWidth() == bottom.getFractionWidth()){
+            widthDelta = (top.getDeltaWidth() + bottom.getDeltaWidth())/2;
+            widthFraction = top.getFractionWidth();
+        }
+        else if( top.getFractionWidth() < bottom.getFractionWidth() ){
+            widthDelta = top.getDeltaWidth();
+            widthFraction = top.getFractionWidth();
+        }
         else{
-            widthDelta = Math.max( top.getDeltaWidth(), bottom.getDeltaWidth() );
-            widthFraction = Math.min( top.getFractionWidth(), bottom.getFractionWidth() );
+            widthDelta = bottom.getDeltaWidth();
+            widthFraction = bottom.getFractionWidth();
         }
         
         double heightDelta = 0;
@@ -177,13 +187,6 @@ public class DefaultConflictResolver<T> implements ConflictResolver<T>{
             return null;
         
         return new ResizeRequest( widthDelta, heightDelta, widthFraction, heightFraction );
-        
-        /*return new ResizeRequest(
-                Math.max( top.getDeltaWidth(), bottom.getDeltaWidth() ),
-                top.getDeltaHeight() / top.getFractionHeight() +  bottom.getDeltaHeight() / bottom.getFractionHeight() +
-                    node.getNewDividerSize() - node.getOldDividerSize(),
-                Math.min( top.getFractionWidth(), bottom.getFractionWidth() ),
-                1 );*/
     }
     
     

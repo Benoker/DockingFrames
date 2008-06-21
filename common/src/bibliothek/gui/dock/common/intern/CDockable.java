@@ -31,6 +31,7 @@ import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.common.*;
 import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.event.*;
+import bibliothek.gui.dock.common.layout.RequestDimension;
 
 /**
  * A basic element representing some {@link java.awt.Component}.
@@ -185,14 +186,24 @@ public interface CDockable {
 	public boolean isCloseable();
 	
 	/**
-	 * Tells whether the size of this dockable should remain the same when
+	 * Tells whether the height of this dockable should remain the same when
 	 * its parent changes the size. This has only effect if the parent can
 	 * choose the size of its children. A lock is no guarantee for staying
 	 * with the same size, the user still can resize this dockable.
-	 * @return <code>true</code> if the size of this dockable should remain
+	 * @return <code>true</code> if the height of this dockable should remain
 	 * the same during resize events of the parent.
 	 */
-	public boolean isResizeLocked();
+	public boolean isResizeLockedVertically();
+	
+	/**
+     * Tells whether the width of this dockable should remain the same when
+     * its parent changes the size. This has only effect if the parent can
+     * choose the size of its children. A lock is no guarantee for staying
+     * with the same size, the user still can resize this dockable.
+     * @return <code>true</code> if the width of this dockable should remain
+     * the same during resize events of the parent.
+     */
+	public boolean isResizeLockedHorizontally();
 	
 	/**
 	 * Gets the preferred size of this {@link CDockable}. The preferred size
@@ -204,7 +215,7 @@ public interface CDockable {
 	 * returned.
 	 * @return the next requested size or <code>null</code>
 	 */
-	public Dimension getAndClearResizeRequest();
+	public RequestDimension getAndClearResizeRequest();
 	
 	/**
 	 * Shows or hides this dockable. If this dockable is not visible and

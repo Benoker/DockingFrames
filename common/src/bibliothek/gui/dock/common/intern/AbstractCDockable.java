@@ -36,6 +36,7 @@ import bibliothek.gui.dock.common.ColorMap;
 import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.event.*;
 import bibliothek.gui.dock.common.intern.action.CloseActionSource;
+import bibliothek.gui.dock.common.layout.RequestDimension;
 import bibliothek.gui.dock.title.DockTitle;
 
 
@@ -60,8 +61,11 @@ public abstract class AbstractCDockable implements CDockable {
     /** unique id of this {@link CDockable} */
     private String uniqueId;
     
-    /** whether this element likes to have the same size all the time */
-    private boolean resizeLocked = false;
+    /** whether this element likes to have the same height all the time */
+    private boolean resizeLockedVertically = false;
+    
+    /** whether this element likes to have the same width all the time */
+    private boolean resizeLockedHorizontally = false;
     
     /** whether to remain visible when minimized and unfocused or not */
     private boolean minimizeHold = false;
@@ -70,7 +74,7 @@ public abstract class AbstractCDockable implements CDockable {
     private Dimension minimizeSize = new Dimension( -1, -1 );
     
     /** the preferred size of this {@link CDockable} */
-    private Dimension resizeRequest;
+    private RequestDimension resizeRequest;
     
     /** the colors associated with this dockable */
     private ColorMap colors = new ColorMap( this );
@@ -276,8 +280,20 @@ public abstract class AbstractCDockable implements CDockable {
         return workingArea;
     }
     
+    /**
+     * Tells whether width and height are locked.
+     * @return <code>true</code> if width and height are locked
+     */
     public boolean isResizeLocked() {
-        return resizeLocked;
+        return resizeLockedVertically && resizeLockedHorizontally;
+    }
+    
+    public boolean isResizeLockedVertically() {
+        return resizeLockedVertically;
+    }
+    
+    public boolean isResizeLockedHorizontally() {
+        return resizeLockedHorizontally;
     }
     
     /**
@@ -296,17 +312,43 @@ public abstract class AbstractCDockable implements CDockable {
      * Clients can set this parameter to <code>false</code> and call
      * {@link CControl#handleResizeRequests()} manually to process all pending
      * requests.
+     * @see #setResizeRequest(RequestDimension, boolean)
      */
     public void setResizeRequest( Dimension size, boolean process ){
-        resizeRequest = size == null ? null : new Dimension( size );
+        resizeRequest = size == null ? null : new RequestDimension( size );
+        
+        if( process && control != null ){
+            control.getOwner().handleResizeRequests();
+        }
+    }
+
+    /**
+     * Tells this {@link CDockable} which size it should have. The size will
+     * be stored until it is read by {@link #getAndClearResizeRequest()}.<br>
+     * This method will call {@link CControl#handleResizeRequests()} in order to
+     * try to apply the requested size. However, there are no guarantees that
+     * the requested size can be matched, or that the request gets handled at all.<br>
+     * If this dockable is not registered at a {@link CControl}, then the request
+     * will remain unprocessed until this dockable is registered, and someone calls
+     * {@link CControl#handleResizeRequests()} on the new owner.
+     * @param size the new preferred size, can be <code>null</code> to cancel an
+     * earlier request
+     * @param process whether to process all pending requests of all {@link CDockable}
+     * registered at the {@link CControl} which is the owner of <code>this</code>.
+     * Clients can set this parameter to <code>false</code> and call
+     * {@link CControl#handleResizeRequests()} manually to process all pending
+     * requests.
+     */
+    public void setResizeRequest( RequestDimension size, boolean process ){
+        resizeRequest = size == null ? null : new RequestDimension( size );
         
         if( process && control != null ){
             control.getOwner().handleResizeRequests();
         }
     }
     
-    public Dimension getAndClearResizeRequest() {
-        Dimension result = resizeRequest;
+    public RequestDimension getAndClearResizeRequest() {
+        RequestDimension result = resizeRequest;
         resizeRequest = null;
         return result;
     }
@@ -314,11 +356,40 @@ public abstract class AbstractCDockable implements CDockable {
     /**
      * Sets whether this dockable likes to remain with the same size all the time.
      * @param resizeLocked <code>true</code> if the size of this dockable should
-     * be kept as long as possible.
+     * be kept as long as possible
+     * @see #setResizeLockedHorizontally(boolean)
+     * @see #setResizeLockedVertically(boolean)
      */
     public void setResizeLocked( boolean resizeLocked ) {
-        if( this.resizeLocked != resizeLocked ){
-            this.resizeLocked = resizeLocked;
+        if( isResizeLocked() != resizeLocked ){
+            this.resizeLockedHorizontally = resizeLocked;
+            this.resizeLockedVertically = resizeLocked;
+            listenerCollection.getCDockablePropertyListener().resizeLockedChanged( this );
+        }
+    }
+    
+    /**
+     * Sets whether this dockable likes to remain with the same width all
+     * the time.
+     * @param resizeLockedHorizontally <code>true</code> if the width of
+     * this dockable should be kept as long as possible
+     */
+    public void setResizeLockedHorizontally( boolean resizeLockedHorizontally ) {
+        if( this.resizeLockedHorizontally != resizeLockedHorizontally ){
+            this.resizeLockedHorizontally = resizeLockedHorizontally;
+            listenerCollection.getCDockablePropertyListener().resizeLockedChanged( this );
+        }
+    }
+    
+    /**
+     * Sets whether this dockable likes to remain with the same height
+     * all the time.
+     * @param resizeLockedVertically <code>true</code> if the height
+     * of this dockable should be kept as long as possible
+     */
+    public void setResizeLockedVertically( boolean resizeLockedVertically ) {
+        if( this.resizeLockedVertically != resizeLockedVertically ){
+            this.resizeLockedVertically = resizeLockedVertically;
             listenerCollection.getCDockablePropertyListener().resizeLockedChanged( this );
         }
     }

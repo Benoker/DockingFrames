@@ -42,6 +42,7 @@ import bibliothek.demonstration.Demonstration;
 import bibliothek.demonstration.Monitor;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CGrid;
+import bibliothek.gui.dock.common.layout.FullLockConflictResolver;
 import bibliothek.gui.dock.common.menu.CLookAndFeelMenuPiece;
 import bibliothek.gui.dock.common.menu.CThemeMenuPiece;
 import bibliothek.gui.dock.facile.menu.RootMenuPiece;
@@ -100,7 +101,8 @@ public class Core implements Demonstration{
             final JFrame frame = new JFrame( "Size & Color" );
             frame.setIconImage( icon.getImage() );
             final CControl control = new CControl( frame, true );
-
+            control.putProperty( CControl.RESIZE_LOCK_CONFLICT_RESOLVER, new FullLockConflictResolver() );
+            
             LookAndFeelList list = monitor == null ? null : monitor.getGlobalLookAndFeel();
             RootMenuPiece laf = new RootMenuPiece( "Look And Feel", false, new CLookAndFeelMenuPiece( control, list ));
             RootMenuPiece theme = new RootMenuPiece( "Theme", false, new CThemeMenuPiece( control ));
