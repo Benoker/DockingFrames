@@ -115,8 +115,11 @@ public class FlatButtonTitle extends AbstractDockTitle {
     }
     
     @Override
-    public Point getPopupLocation( Point click ){
-    	return null;
+    public Point getPopupLocation( Point click, boolean popupTrigger ){
+        if( popupTrigger )
+            return click;
+        else
+            return null;
     }
     
     @Override

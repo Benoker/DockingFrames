@@ -25,32 +25,30 @@
  */
 package bibliothek.gui.dock.control;
 
+import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.Icon;
 import javax.swing.SwingUtilities;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.action.ActionPopup;
 import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.event.DockRegisterListener;
-import bibliothek.gui.dock.event.DockableListener;
-import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.event.DockControllerRepresentativeListener;
 
 /**
- * Adds listeners to all {@link Dockable Dockables} and {@link DockTitle DockTitles}.
+ * Adds listeners to all {@link DockElementRepresentative}s.
  * Opens a popup-menu when the user triggers the popup-action.
  * @author Benjamin Sigg
  */
-public class PopupController implements DockRegisterListener{
+public class PopupController implements DockControllerRepresentativeListener{
     /** tells which Dockable has which listener */
-    private Map<Dockable, DockableObserver> listeners =
-        new HashMap<Dockable, DockableObserver>();
+    private Map<DockElementRepresentative, ComponentObserver> listeners =
+        new HashMap<DockElementRepresentative, ComponentObserver>();
     
     /** the controller for which this popup-controller works */
     private DockController controller;
@@ -64,31 +62,22 @@ public class PopupController implements DockRegisterListener{
     		throw new IllegalArgumentException( "controller must not be null" );
     	
     	this.controller = controller;
+    	controller.addRepresentativeListener( this );
     }
     
-    public void dockableRegistered( DockController controller, Dockable dockable ) {
-        if( !listeners.containsKey( dockable )){
-            DockableObserver listener = new DockableObserver( dockable );
-            dockable.addMouseInputListener( listener );
-            dockable.addDockableListener( listener );
-            listeners.put( dockable, listener );
-            
-            DockTitle[] titles = dockable.listBoundTitles();
-            for( DockTitle title : titles ){
-            	listener.titleBound( dockable, title );
-            }
+    public void representativeAdded( DockController controller, DockElementRepresentative representative ) {
+        if( representative.getElement().asDockable() != null ){
+            ComponentObserver observer = new ComponentObserver( representative );
+            listeners.put( representative, observer );
+            representative.addMouseInputListener( observer );
         }
     }
     
-    public void dockableUnregistered( DockController controller, Dockable dockable ) {
-        DockableObserver listener = listeners.remove( dockable );
-        if( listener != null ){
-            dockable.removeMouseInputListener( listener );
-            dockable.removeDockableListener( listener );
-            
-            DockTitle[] titles = dockable.listBoundTitles();
-            for( DockTitle title : titles ){
-            	listener.titleUnbound( dockable, title );
+    public void representativeRemoved( DockController controller, DockElementRepresentative representative ) {
+        if( representative.getElement().asDockable() != null ){
+            ComponentObserver observer = listeners.remove( representative );
+            if( observer != null ){
+                representative.removeMouseInputListener( observer );
             }
         }
     }
@@ -101,116 +90,63 @@ public class PopupController implements DockRegisterListener{
 		return controller;
 	}
     
-	public void dockStationRegistered( DockController controller, DockStation station ){
-	    // ignore
-	}
-
-	public void dockStationRegistering( DockController controller, DockStation station ){
-		// ignore
-	}
-
-	public void dockStationUnregistered( DockController controller, DockStation station ){
-		// ignore
-	}
-
-	public void dockableRegistering( DockController controller, Dockable dockable ){
-		// ignore
-	}
-	
-	public void dockableCycledRegister( DockController controller, Dockable dockable ) {
-	    // ignore
-	}
-
-	/**
-     * A listener to a Dockable, lets the user
-     * drag and drop a Dockable.
-     * @author Benjamin Sigg
-     */
-    private class DockableObserver extends ComponentObserver implements DockableListener{
-        private Map<DockTitle, ComponentObserver> listeners = new HashMap<DockTitle, ComponentObserver>();
-        
-        /**
-         * Constructs a new listener
-         * @param dockable the Dockable to observe
-         */
-        public DockableObserver( Dockable dockable ){
-        	super( dockable, null );
-        }
-        
-
-		public void titleBound( Dockable dockable, DockTitle title ){
-			if( !listeners.containsKey( title )){
-				ComponentObserver listener = new ComponentObserver( dockable, title );
-				title.addMouseInputListener( listener );
-				listeners.put( title, listener );
-			}
-		}
-		
-		public void titleUnbound( Dockable dockable, DockTitle title ){
-			ComponentObserver listener = listeners.remove( title );
-			if( listener != null ){
-				title.removeMouseInputListener( listener );
-			}
-		}
-
-		public void titleIconChanged( Dockable dockable, Icon oldIcon, Icon newIcon ){
-			// ignore
-		}
-
-		public void titleTextChanged( Dockable dockable, String oldTitle, String newTitle ){
-			// ignore
-		}
-		
-		public void titleToolTipChanged( Dockable dockable, String oldTooltip, String newTooltip ) {
-		    // ignore
-		}
-		
-		public void titleExchanged( Dockable dockable, DockTitle title ) {
-		    // ignore
-		}
-    }
-    
     /**
      * A mouse listener opening a popup menu when necessary.
      * @author Benjamin Sigg
      */
     private class ComponentObserver extends ActionPopup{
-    	/** the dockable for which a listener might be opened */
-    	protected Dockable dockable;
-    	/** the observed title, can be <code>null</code> */
-    	private DockTitle title;
+        /** the representation of the element for which this might open a popup */
+    	private DockElementRepresentative representative;
+        
+    	/** whether currently the mouse gets clicked */
+    	private boolean onMouseClick = false;
     	
     	/**
     	 * Creates a new observer
-    	 * @param dockable the element for which a popup might be opened
-    	 * @param title the title which might be observed, can be <code>null</code>
+    	 * @param representative the element which represents the {@link Dockable}
+    	 * of this observer
     	 */
-    	public ComponentObserver( Dockable dockable, DockTitle title ){
+    	public ComponentObserver( DockElementRepresentative representative ){
     		super( true );
-    		this.dockable = dockable;
-    		this.title = title;
+    		this.representative = representative;
     	}
     	
     	@Override
     	public void mouseClicked( MouseEvent e ){
-    		if( title != null && isEnabled() ){
-    			Point click = e.getPoint();
-    			click = SwingUtilities.convertPoint( e.getComponent(), click, title.getComponent() );
-    			Point popup = title.getPopupLocation( click );
-    			if( popup != null ){
-    				popup( title.getComponent(), popup.x, popup.y );
-    			}
+    	    if( isMenuOpen() )
+    	        return;
+    	    
+    		if( isEnabled() && e.getClickCount() == 1 ){
+    		    try{
+    		        onMouseClick = true;
+    		        popup( e.getComponent(), e.getX(), e.getY() );
+    		    }
+    		    finally{
+    		        onMouseClick = false;
+    		    }
     		}
+    	}
+    	
+    	@Override
+    	protected Point getPopupLocation( Component owner, Point location ) {
+    	    location = new Point( location );
+    	    location = SwingUtilities.convertPoint( owner, location, representative.getComponent() );
+    	    location = representative.getPopupLocation( location, !onMouseClick );
+    	    if( location == null )
+    	        return null;
+    	    else
+    	        location = new Point( location );
+    	    return SwingUtilities.convertPoint( representative.getComponent(), location, owner );
     	}
     	
         @Override
         protected Dockable getDockable() {
-            return dockable;
+            return representative.getElement().asDockable();
         }
 
         @Override
         protected DockActionSource getSource() {
-        	return dockable.getGlobalActionOffers();
+            return getDockable().getGlobalActionOffers();
         }
 
         @Override

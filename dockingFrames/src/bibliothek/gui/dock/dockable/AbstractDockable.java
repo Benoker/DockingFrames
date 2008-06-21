@@ -26,6 +26,7 @@
 
 package bibliothek.gui.dock.dockable;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,6 +38,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.HierarchyDockActionSource;
@@ -179,6 +181,10 @@ public abstract class AbstractDockable implements Dockable {
         getComponent().removeMouseListener( listener );
         getComponent().removeMouseMotionListener( listener );
     }
+    
+    public DockElement getElement() {
+        return this;
+    }
 
     public boolean accept( DockStation station ) {
         return true;
@@ -220,6 +226,13 @@ public abstract class AbstractDockable implements Dockable {
     
     public String getTitleToolTip() {
         return titleToolTip.getValue();
+    }
+    
+    public Point getPopupLocation( Point click, boolean popupTrigger ) {
+        if( popupTrigger )
+            return click;
+        else
+            return null;
     }
 
     /**

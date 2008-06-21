@@ -27,12 +27,12 @@
 package bibliothek.gui.dock.title;
 
 import java.awt.Component;
-import java.awt.Point;
 
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.event.DockTitleEvent;
 
@@ -49,7 +49,7 @@ import bibliothek.gui.dock.event.DockTitleEvent;
  * the {@link DockController}.
  * @author Benjamin Sigg
  */
-public interface DockTitle {
+public interface DockTitle extends DockElementRepresentative{
     /** How to layout a {@link DockTitle} */
     public static enum Orientation{
         /**
@@ -127,17 +127,6 @@ public interface DockTitle {
      * @param listener the listener to remove
      */
     public void removeMouseInputListener( MouseInputListener listener );
-    
-    /**
-     * Tells whether a popup menu should be opened when the user clicks
-     * at <code>click</code> with the mouse. If yes, then the top left edge
-     * of the popup should be returned, otherwise <code>null</code> should be
-     * returned.
-     * @param click the location where the user clicked with the mouse
-     * @return the preferred location of a popup or <code>null</code> if no
-     * popup-menu should be opened
-     */
-    public Point getPopupLocation( Point click );
     
     /**
      * Gets the owner of this title.

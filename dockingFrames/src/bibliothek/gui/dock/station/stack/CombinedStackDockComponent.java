@@ -170,7 +170,19 @@ public abstract class CombinedStackDockComponent<C extends CombinedTab> implemen
     }
     
     public void setController( DockController controller ){
-    	this.controller = controller;
+        if( this.controller != controller ){
+            if( this.controller != null ){
+                for( C button : buttons )
+                    this.controller.removeRepresentative( button );
+            }
+
+            this.controller = controller;
+            
+            if( this.controller != null ){
+                for( C button : buttons )
+                    this.controller.addRepresentative( button );
+            }
+        }
     }
     
     /**
@@ -256,6 +268,9 @@ public abstract class CombinedStackDockComponent<C extends CombinedTab> implemen
 
     public void insertTab( String title, Icon icon, Component comp, Dockable dockable, int index ) {
         C button = createTab( dockable );
+        if( controller != null )
+            controller.addRepresentative( button );
+        
         button.setText( title );
         button.setIcon( icon );
         buttons.add( index, button );
@@ -289,8 +304,11 @@ public abstract class CombinedStackDockComponent<C extends CombinedTab> implemen
         componentPanel.removeAll();
         selectedIndex = -1;
         
-        for( C c : buttons )
+        for( C c : buttons ){
+            if( controller != null )
+                controller.removeRepresentative( c );
     		destroy( c );
+        }
     	
         buttons.clear();
         
@@ -311,6 +329,8 @@ public abstract class CombinedStackDockComponent<C extends CombinedTab> implemen
         
         C button = buttons.remove( index );
         buttonPanel.remove( button.getComponent() );
+        if( controller != null )
+            controller.removeRepresentative( button );
         destroy( button );
         componentPanel.remove( components.remove( index ) );
         

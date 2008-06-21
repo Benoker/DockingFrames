@@ -85,7 +85,10 @@ public class BubbleButtonDockTitle extends BubbleDockTitle{
     }
     
     @Override
-    public Point getPopupLocation( Point click ){
+    public Point getPopupLocation( Point click, boolean popupTrigger ) {
+        if( popupTrigger )
+            return click;
+        
         return null;
     }
     

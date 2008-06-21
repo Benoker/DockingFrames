@@ -41,6 +41,7 @@ import javax.swing.Timer;
 import javax.swing.UIManager;
 
 import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.accept.MultiDockAcceptance;
 import bibliothek.gui.dock.action.*;
@@ -138,8 +139,11 @@ public class DockController {
     private DockControllerFactory factory;
     
     /** tells which {@link Component} represents which {@link DockElement} */
-    private Map<Component, DockElement> componentToDockElements = 
-    	new HashMap<Component, DockElement>();
+    private Map<Component, DockElementRepresentative> componentToDockElements = 
+    	new HashMap<Component, DockElementRepresentative>();
+    /** a list of listeners listening for changes in {@link #componentToDockElements} */
+    private List<DockControllerRepresentativeListener> componentToDockElementsListeners =
+        new ArrayList<DockControllerRepresentativeListener>();
     
     /** the root window of the application, can be <code>null</code> */
     private Window rootWindow;
@@ -212,9 +216,7 @@ public class DockController {
     	if( focus != null )
     		register.addDockRegisterListener( focus );
     	
-    	DockRegisterListener popup = factory.createPopupController( this, setup );
-    	if( popup != null )
-    		register.addDockRegisterListener( popup );
+    	factory.createPopupController( this, setup );
     	
     	DockRegisterListener binder = factory.createActionBinder( this, setup );
     	if( binder != null )
@@ -496,35 +498,78 @@ public class DockController {
 	}
     
     /**
-     * Tells this controller that <code>component</code> somehow represents
-     * <code>element</code>, and that events on <code>component</code> belong
-     * to <code>element</code>. Every <code>Component</code> can only represent
-     * one element. If <code>element</code> is <code>null</code>, then any reference
-     * to <code>component</code> is removed. 
-     * @param component the representative
-     * @param element some element or <code>null</code>
+     * Adds a listener to this controller, <code>listener</code> will be informed
+     * when the map of {@link DockElement}s and the {@link Component}s which 
+     * represent them changes.
+     * @param listener the new listener, not <code>null</code>
+     */
+    public void addRepresentativeListener( DockControllerRepresentativeListener listener ){
+        if( listener == null )
+            throw new IllegalArgumentException( "listener must not be null" );
+        componentToDockElementsListeners.add( listener );
+    }
+    
+    /**
+     * Removes <code>listener</code> from this controller.
+     * @param listener the listener to remove
+     */
+    public void removeRepresentativeListener( DockControllerRepresentativeListener listener ){
+        componentToDockElementsListeners.remove( listener );
+    }
+    
+    /**
+     * Informs this controller about a new representative for a {@link DockElement}.
+     * Note that each {@link DockElementRepresentative} of this {@link DockController}
+     * must have another {@link DockElementRepresentative#getComponent() component}.
+     * @param representative the new representative
      * @see #searchElement(Component)
      */
-    public void putRepresentative( Component component, DockElement element ){
-    	if( element == null ){
-    		componentToDockElements.remove( component );
+    public void addRepresentative( DockElementRepresentative representative ) {
+        DockControllerRepresentativeListener[] listeners = componentToDockElementsListeners
+                .toArray( new DockControllerRepresentativeListener[componentToDockElementsListeners.size()] );
+        
+        DockElementRepresentative old = componentToDockElements.put(
+                representative.getComponent(), representative );
+    	
+    	if( old != null ){
+    	    for( DockControllerRepresentativeListener listener : listeners ){
+    	        listener.representativeRemoved( this, old );
+    	    }
     	}
-    	else{
-    		componentToDockElements.put( component, element );
+    	if( representative != null ){
+    	    for( DockControllerRepresentativeListener listener : listeners ){
+    	        listener.representativeAdded( this, representative );
+    	    }
     	}
+    }
+    
+    /**
+     * Removes <code>representative</code> from this controller.
+     * @param representative the element to remove
+     * @see #addRepresentative(DockElementRepresentative)
+     */
+    public void removeRepresentative( DockElementRepresentative representative ){
+        if( componentToDockElements.remove( representative.getComponent() ) != null ){
+            DockControllerRepresentativeListener[] listeners = componentToDockElementsListeners
+                .toArray( new DockControllerRepresentativeListener[componentToDockElementsListeners.size()] );
+        
+            for( DockControllerRepresentativeListener listener : listeners ){
+                listener.representativeRemoved( this, representative );
+            }
+        }
     }
     
     /**
      * Searches the element which is parent or equal to <code>representative</code>.
      * This method also searches all {@link DockTitle}s and all
-     * <code>Components</code> given by {@link #putRepresentative(Component, DockElement)}.
+     * <code>Components</code> given by {@link #addRepresentative(DockElementRepresentative)}.
      * @param representative some component
      * @return the parent or <code>null</code>
-     * @see #putRepresentative(Component, DockElement)
+     * @see #addRepresentative(DockElementRepresentative)
      */
-    public DockElement searchElement( Component representative ){
+    public DockElementRepresentative searchElement( Component representative ){
     	while( representative != null ){
-    		DockElement element = componentToDockElements.get( representative );
+    	    DockElementRepresentative element = componentToDockElements.get( representative );
     		if( element != null )
     			return element;
     		
@@ -1187,7 +1232,7 @@ public class DockController {
             @Override
             public void titleBound( Dockable dockable, DockTitle title ) {
                 titles.add( title );
-                putRepresentative( title.getComponent(), dockable );
+                addRepresentative( title );
                 
                 title.bind();
                 fireTitleBound( title, dockable );
@@ -1214,7 +1259,7 @@ public class DockController {
             @Override
             public void titleUnbound( Dockable dockable, DockTitle title ) {
                 titles.remove( title );
-                putRepresentative( title.getComponent(), null );
+                removeRepresentative( title );
                 title.unbind();
                 fireTitleUnbound( title, dockable );
             }
@@ -1249,7 +1294,7 @@ public class DockController {
         
         @Override
         public void dockableRegistered( DockController controller, Dockable dockable ) {
-        	putRepresentative( dockable.getComponent(), dockable );
+        	addRepresentative( dockable );
             DockTitle[] titles = dockable.listBoundTitles();
             for( DockTitle title : titles ){
                 if( this.titles.add( title )){
@@ -1262,7 +1307,7 @@ public class DockController {
         @Override
         public void dockableUnregistered( DockController controller, Dockable dockable ) {
             dockable.removeDockableListener( dockableListener );
-            putRepresentative( dockable.getComponent(), null );
+            removeRepresentative( dockable );
         	
             DockTitle[] titles = dockable.listBoundTitles();
             for( DockTitle title : titles ){

@@ -26,7 +26,10 @@
 package bibliothek.gui.dock.control;
 
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,15 +38,16 @@ import java.util.Map;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
-import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.dockable.MovingImage;
-import bibliothek.gui.dock.event.*;
+import bibliothek.gui.dock.event.ControllerSetupListener;
+import bibliothek.gui.dock.event.DockControllerRepresentativeListener;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.DockUtilities;
 
@@ -79,8 +83,7 @@ public class DefaultDockRelocator extends DockRelocator{
 		super( controller );
 		setup.add( new ControllerSetupListener(){
 		    public void done( DockController controller ) {
-		        controller.getRegister().addDockRegisterListener( new MouseDockableListener() );
-	            controller.getRegister().addDockRegisterListener( new TitleListener() );
+		        controller.addRepresentativeListener( new Listener() );
 		    }
 		});
 	}
@@ -652,172 +655,82 @@ public class DefaultDockRelocator extends DockRelocator{
     }
     
     /**
-     * A listener to the set of known {@link Dockable Dockables}. 
-     * Adds a {@link MouseListener} to all Dockables. This second listener allows
-     * a popup-menu and connects the Dockables to the drag and drop mechanism.
+     * A listener observing the {@link DockController} for new {@link DockElementRepresentative}s
+     * and adding the new representatives a {@link MouseRepresentativeListener}.
+     * @author Benjamin Sigg
      */
-    private class MouseDockableListener extends DockRegisterAdapter{
-        /** tells which Dockable has which listener */
-        private Map<Dockable, SingleMouseDockableListener> listeners =
-            new HashMap<Dockable, SingleMouseDockableListener>();
+    private class Listener implements DockControllerRepresentativeListener{
+        private Map<DockElementRepresentative, MouseRepresentativeListener> listeners =
+            new HashMap<DockElementRepresentative, MouseRepresentativeListener>();
         
-        @Override
-        public void dockableRegistered( DockController controller, Dockable dockable ) {
-            if( !listeners.containsKey( dockable )){
-                SingleMouseDockableListener listener = new SingleMouseDockableListener( dockable );
-                dockable.addMouseInputListener( listener );
-                listeners.put( dockable, listener );
+        public void representativeAdded( DockController controller,
+                DockElementRepresentative representative ) {
+         
+            if( representative.getElement().asDockable() != null ){
+                MouseRepresentativeListener listener = new MouseRepresentativeListener( representative );
+                listeners.put( representative, listener );
+                representative.addMouseInputListener( listener );
             }
         }
-        
-        @Override
-        public void dockableUnregistered( DockController controller, Dockable dockable ) {
-            SingleMouseDockableListener listener = listeners.remove( dockable );
-            if( listener != null ){
-                dockable.removeMouseInputListener( listener );
-            }
-        }
-        
-        
-        /**
-         * A listener to a Dockable, lets the user
-         * drag and drop a Dockable.
-         * @author Benjamin Sigg
-         */
-        private class SingleMouseDockableListener extends MouseInputAdapter{
-            /** the observed element */
-            private Dockable dockable;
+        public void representativeRemoved( DockController controller,
+                DockElementRepresentative representative ) {
             
-            /**
-             * Constructs a new listener
-             * @param dockable the Dockable to observe
-             */
-            public SingleMouseDockableListener( Dockable dockable ){
-                this.dockable = dockable;
-            }
-            
-            @Override
-            public void mousePressed( MouseEvent e ) {
-                if( !e.isConsumed() ){
-                	if( !isDragOnlyTitel() )
-                		dragMousePressed( e, null, dockable );
-                }
-            }
-            @Override
-            public void mouseDragged( MouseEvent e ) {
-                if( !e.isConsumed() ){
-                	if( !isDragOnlyTitel() )
-                		dragMouseDragged( e, null, dockable );
-                }
-            }
-            @Override
-            public void mouseReleased( MouseEvent e ) {
-                if( !e.isConsumed() ){
-                	if( !isDragOnlyTitel() )
-                		dragMouseReleased( e, null, dockable );
+            if( representative.getElement().asDockable() != null ){
+                MouseRepresentativeListener listener = listeners.remove( representative );
+                if( listener != null ){
+                    representative.removeMouseInputListener( listener );
                 }
             }
         }
-    }    
+    }
     
     /**
-     * Observers this controller and registers listeners to all new titles.
+     * A listener that can be added to a {@link DockElementRepresentative}. Will
+     * forward {@link MouseEvent}s to the appropriate method of this relocator.
+     * @author Benjamin Sigg
      */
-    private class TitleListener extends DockRegisterAdapter{
-        /** a map telling which listener was added to which title */
-        private Map<DockTitle, MouseTitleListener> listeners =
-            new HashMap<DockTitle, MouseTitleListener>();
-
-        /** a listener added to each {@link Dockable} */
-        private DockableListener dockableListener = new DockableAdapter(){
-            @Override
-            public void titleBound( Dockable dockable, DockTitle title ) {
-                if( !listeners.containsKey( title )){
-                    MouseTitleListener listener = new MouseTitleListener( title );
-                    listeners.put( title, listener );
-                
-                    title.addMouseInputListener( listener );
-                }
-            }
-            
-            @Override
-            public void titleUnbound( Dockable dockable, DockTitle title ) {
-                MouseTitleListener listener = listeners.remove( title );
-                if( listener != null ){
-                    title.removeMouseInputListener( listener );
-                }
-            }    
-        };
-        
-        
-        @Override
-        public void dockableRegistering( DockController controller, Dockable dockable ){
-        	dockable.addDockableListener( dockableListener );
-        }
-        
-        @Override
-        public void dockableRegistered( DockController controller, Dockable dockable ) {
-            DockTitle[] titles = dockable.listBoundTitles();
-            for( DockTitle title : titles ){
-                if( !listeners.containsKey( title )){
-                    MouseTitleListener listener = new MouseTitleListener( title );
-                    listeners.put( title, listener );
-                    title.addMouseInputListener( listener );
-                }
-            }
-        }
-
-        @Override
-        public void dockableUnregistered( DockController controller, Dockable dockable ) {
-            dockable.removeDockableListener( dockableListener );
-        	
-            DockTitle[] titles = dockable.listBoundTitles();
-            for( DockTitle title : titles ){
-                if( listeners.containsKey( title )){
-                    MouseInputListener listener = listeners.remove( title );
-                    title.removeMouseInputListener( listener );
-                }
-            }
-        }
+    private class MouseRepresentativeListener extends MouseInputAdapter{
+        /** the title which is observed by this listener */
+        private DockTitle title;
+        /** the dockable which might be moved around by this listener */
+        private Dockable dockable;
         
         /**
-         * A {@link MouseListener} which is added to a {@link DockTitle}. This
-         * listener informs a controller as soon as the mouse grabs the
-         * title.
-         * @author Benjamin Sigg
+         * Creates a new listener
+         * @param representative the element which will be observed
          */
-        private class MouseTitleListener extends MouseInputAdapter{
-            /** the observed title */
-            private DockTitle title;
+        public MouseRepresentativeListener( DockElementRepresentative representative ){
+            if( representative instanceof DockTitle )
+                title = (DockTitle)representative;
             
-            /**
-             * Creates a new listener
-             * @param title the title to observe
-             */
-            public MouseTitleListener( DockTitle title ){
-                this.title = title;
-            }
-            
-            @Override
-            public void mousePressed( MouseEvent e ){
-                if( e.isConsumed() )
-                    return;
-                dragMousePressed( e, title, null );
-            }
-            @Override
-            public void mouseReleased( MouseEvent e ) {
-                if( e.isConsumed() )
-                    return;
-                dragMouseReleased( e, title, null );
-            }
-            @Override
-            public void mouseDragged( MouseEvent e ) {
-                if( e.isConsumed() )
-                    return;
-                dragMouseDragged( e, title, null );
-            }
+            dockable = representative.getElement().asDockable();
         }
-    }    
+        
+        @Override
+        public void mousePressed( MouseEvent e ){
+            if( e.isConsumed() )
+                return;
+            if( title == null && isDragOnlyTitel() )
+                return;
+            dragMousePressed( e, title, dockable );
+        }
+        @Override
+        public void mouseReleased( MouseEvent e ) {
+            if( e.isConsumed() )
+                return;
+            if( title == null && isDragOnlyTitel() )
+                return;
+            dragMouseReleased( e, title, dockable );
+        }
+        @Override
+        public void mouseDragged( MouseEvent e ) {
+            if( e.isConsumed() )
+                return;
+            if( title == null && isDragOnlyTitel() )
+                return;
+            dragMouseDragged( e, title, dockable );
+        }
+    }
     
     /**
      * A window which shows a single {@link DockTitle}.

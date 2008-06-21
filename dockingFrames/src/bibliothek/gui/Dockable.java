@@ -32,6 +32,7 @@ import javax.swing.Icon;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.HierarchyDockActionSource;
@@ -58,7 +59,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  * 
  * @author Benjamin Sigg
  */
-public interface Dockable extends DockElement{
+public interface Dockable extends DockElement, DockElementRepresentative{
     /**
      * Sets the parent property. This Dockable is shown as direct child of
      * <code>station</code>.<br>

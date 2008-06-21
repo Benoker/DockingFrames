@@ -36,7 +36,11 @@ import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.event.*;
+import bibliothek.gui.dock.DockElementRepresentative;
+import bibliothek.gui.dock.event.ControllerSetupListener;
+import bibliothek.gui.dock.event.DockControllerRepresentativeListener;
+import bibliothek.gui.dock.event.DoubleClickListener;
+import bibliothek.gui.dock.event.LocatedListenerList;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
@@ -51,8 +55,8 @@ public class DoubleClickController {
     	new LocatedListenerList<DoubleClickListener>();
     
     /** A map that tells which listener was added to which {@link Dockable} */
-    private Map<Dockable, GlobalDoubleClickListener> listeners = 
-        new HashMap<Dockable, GlobalDoubleClickListener>();
+    private Map<DockElementRepresentative, GlobalDoubleClickListener> listeners = 
+        new HashMap<DockElementRepresentative, GlobalDoubleClickListener>();
     
     /**
      * Creates a new <code>DoubleClickController</code>.
@@ -62,32 +66,30 @@ public class DoubleClickController {
     public DoubleClickController( ControllerSetupCollection setup ){
         setup.add( new ControllerSetupListener(){
             public void done( DockController controller ) {
-                controller.getRegister().addDockRegisterListener( new DockRegisterAdapter(){
-                    @Override
-                    public void dockableRegistered( DockController controller, Dockable dockable ) {
-                        GlobalDoubleClickListener listener = new GlobalDoubleClickListener( dockable );
-                        dockable.addMouseInputListener( listener );
-                        listeners.put( dockable, listener );
-                        for( DockTitle title : dockable.listBoundTitles() )
-                            title.addMouseInputListener( listener );
+                controller.addRepresentativeListener( new DockControllerRepresentativeListener(){
+                    public void representativeAdded( DockController controller,
+                            DockElementRepresentative representative ) {
+                    
+                        Dockable dockable = representative.getElement().asDockable();
+                        if( dockable != null ){
+                            GlobalDoubleClickListener listener = new GlobalDoubleClickListener( dockable );
+                            representative.addMouseInputListener( listener );
+                            listeners.put( representative, listener );
+                        }
                     }
                     
-                    @Override
-                    public void dockableUnregistered( DockController controller, Dockable dockable ) {
-                        GlobalDoubleClickListener listener = listeners.remove( dockable );
-                        dockable.removeMouseInputListener( listener );
-                        for( DockTitle title : dockable.listBoundTitles() )
-                            title.removeMouseInputListener( listener );
-                    }                    
-                });
-                controller.addDockTitleBindingListener( new DockTitleBindingListener(){
-                    public void titleBound( DockController controller, DockTitle title, Dockable dockable ) {
-                        title.addMouseInputListener( listeners.get( dockable ) );
+                    public void representativeRemoved(
+                            DockController controller,
+                            DockElementRepresentative representative ) {
+                     
+                        Dockable dockable = representative.getElement().asDockable();
+                        if( dockable != null ){
+                            GlobalDoubleClickListener listener = listeners.remove( representative );
+                            if( listener != null ){
+                                representative.removeMouseInputListener( listener );
+                            }
+                        }
                     }
-                    
-                    public void titleUnbound( DockController controller, DockTitle title, Dockable dockable ) {
-                        title.removeMouseInputListener( listeners.get( dockable ) );
-                    }        
                 });
             }
         });
@@ -155,7 +157,7 @@ public class DoubleClickController {
         
         @Override
         public void mousePressed( MouseEvent event ) {
-            if( event.getClickCount() == 2 ){
+            if( !event.isConsumed() && event.getClickCount() == 2 ){
                 send( dockable, event );
             }
         }

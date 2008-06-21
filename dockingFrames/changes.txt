@@ -170,4 +170,7 @@
 - API: New ConflictResolver "FullLockConflictResolver" inspired by the behavior of VLDocking
 - Bugfix: DefaultConflictResolver creates now better combinations of ResizeRequests if the combined requests have different priority
 ! API: The size request ist now handled with a RequestDimension and no longer with Dimension. This allows to issue requests only for one of width or height, and to lock only one of width or height
+- API: new interface DockElementRepresentative which creates a link between a Component and a DockElement. Allows a unified way to make popup menus, drag and drop Dockables and more
+! API: Dockable and DockTitle now also implement DockElementRepresentative
+
 

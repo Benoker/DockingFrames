@@ -31,7 +31,9 @@ import java.awt.event.MouseMotionListener;
 
 import javax.swing.border.Border;
 
-public interface TabComponent {
+import bibliothek.gui.dock.DockElementRepresentative;
+
+public interface TabComponent extends DockElementRepresentative{
 	public Component getComponent();
 	
 	public void setSelected( boolean selected );

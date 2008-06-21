@@ -25,20 +25,19 @@
  */
 package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.ContainerOrderFocusTraversalPolicy;
-import java.awt.Window;
+import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
+import javax.swing.event.MouseInputListener;
 
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseDockActionSource;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
@@ -153,18 +152,6 @@ public abstract class BaseTabComponent extends JComponent implements TabComponen
         };
         
         addHierarchyListener( new WindowActiveObserver() );
-        addMouseListener( new MouseAdapter(){
-            @Override
-            public void mouseClicked( MouseEvent e ) {
-                if( e.getClickCount() == 2 ){
-                    if( BaseTabComponent.this.controller != null ){
-                        BaseTabComponent.this.controller.getDoubleClickController().send( 
-                                BaseTabComponent.this.dockable, e );
-                    }
-                }
-            }
-        });
-        
         setFocusable( false );
         setFocusTraversalPolicyProvider( true );
         setFocusTraversalPolicy( new ContainerOrderFocusTraversalPolicy() );
@@ -202,6 +189,27 @@ public abstract class BaseTabComponent extends JComponent implements TabComponen
 
     public Dockable getDockable() {
         return dockable;
+    }
+    
+    public DockElement getElement() {
+        return dockable;
+    }
+    
+    public void addMouseInputListener( MouseInputListener listener ) {
+        addMouseListener( listener );
+        addMouseMotionListener( listener );
+    }
+    
+    public void removeMouseInputListener( MouseInputListener listener ) {
+        removeMouseListener( listener );
+        removeMouseMotionListener( listener );
+    }
+    
+    public Point getPopupLocation( Point click, boolean popupTrigger ) {
+        if( popupTrigger )
+            return click;
+        
+        return null;
     }
     
     public DockController getController() {

@@ -1,6 +1,7 @@
 package bibliothek.chess.view;
 
 import java.awt.Component;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import bibliothek.chess.model.Figure;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.dockable.DockHierarchyObserver;
@@ -120,6 +122,14 @@ public class ChessFigure extends JLabel implements Dockable {
 
 	public Component getComponent(){
 		return this;
+	}
+	
+	public DockElement getElement() {
+	    return this;
+	}
+	
+	public Point getPopupLocation( Point click, boolean popupTrigger ) {
+	    return null;
 	}
 
 	public DockController getController(){

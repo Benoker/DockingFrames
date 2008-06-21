@@ -116,7 +116,10 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
     }
     
     @Override
-    public Point getPopupLocation( Point click ){
+    public Point getPopupLocation( Point click, boolean popupTrigger ){
+        if( popupTrigger )
+            return click;
+        
     	return null;
     }
     

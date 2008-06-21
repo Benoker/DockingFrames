@@ -38,6 +38,7 @@ import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.ActionPopup;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
@@ -453,7 +454,10 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         label.removeMouseMotionListener( listener );
     }
 
-    public Point getPopupLocation( Point click ){
+    public Point getPopupLocation( Point click, boolean popupTrigger ){
+        if( popupTrigger )
+            return click;
+        
         boolean restrained = getText() == null || getText().length() == 0;
         
         Rectangle icon = getIconBounds();
@@ -481,6 +485,10 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     
     public Dockable getDockable() {
         return dockable;
+    }
+    
+    public DockElement getElement() {
+        return getDockable();
     }
 
     /**

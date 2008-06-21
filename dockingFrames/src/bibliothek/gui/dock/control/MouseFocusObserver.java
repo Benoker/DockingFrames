@@ -31,14 +31,15 @@ import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.event.*;
+import bibliothek.gui.dock.DockElementRepresentative;
+import bibliothek.gui.dock.event.ControllerSetupListener;
+import bibliothek.gui.dock.event.DockRelocatorListener;
+import bibliothek.gui.dock.event.FocusVetoListener;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.DockUtilities;
 
@@ -48,11 +49,7 @@ import bibliothek.gui.dock.util.DockUtilities;
  * about a new {@link DockController#setFocusedDockable(Dockable, boolean) front-dockable}.
  * @author Benjamin Sigg
  */
-public abstract class MouseFocusObserver implements DockRegisterListener, DockRelocatorListener, DockTitleBindingListener {
-    /** a list of all Dockables and their base-component */
-    private Map<Component, Dockable> dockables = new HashMap<Component, Dockable>();
-    /** a list of all DockTitles and their base-component */
-    private Map<Component, DockTitle> titles = new HashMap<Component, DockTitle>();
+public abstract class MouseFocusObserver implements DockRelocatorListener {
     
     /** A list of listeners which can cancel a call to the controller */
     private List<FocusVetoListener> vetos = new ArrayList<FocusVetoListener>();
@@ -71,9 +68,7 @@ public abstract class MouseFocusObserver implements DockRegisterListener, DockRe
         this.controller = controller;
         setup.add( new ControllerSetupListener(){
             public void done( DockController controller ) {
-                controller.getRegister().addDockRegisterListener( MouseFocusObserver.this );
                 controller.getRelocator().addDockRelocatorListener( MouseFocusObserver.this );
-                controller.addDockTitleBindingListener( MouseFocusObserver.this );
             }
         });
     }
@@ -83,9 +78,7 @@ public abstract class MouseFocusObserver implements DockRegisterListener, DockRe
      * its listeners and become ready for the garbage collector. 
      */
     public void kill(){
-        getController().getRegister().removeDockRegisterListener( this );
         getController().getRelocator().removeDockRelocatorListener( this );
-        getController().removeDockTitleBindingListener( this );
     }
     
     /**
@@ -218,10 +211,6 @@ public abstract class MouseFocusObserver implements DockRegisterListener, DockRe
         }
     }
     
-    public void dockableRegistered( DockController controller, Dockable dockable ) {
-        dockables.put( dockable.getComponent(), dockable );
-    }
-    
     public void init( DockController controller, Dockable dockable ) {
         // do nothing
     }
@@ -242,21 +231,6 @@ public abstract class MouseFocusObserver implements DockRegisterListener, DockRe
         });
     }
     
-    public void dockableUnregistered( DockController controller, Dockable dockable ) {
-        dockables.remove( dockable.getComponent() );
-    }
-    
-    public void dockableCycledRegister( DockController controller, Dockable dockable ) {
-        // ignore
-    }
-    
-    public void titleBound( DockController controller, DockTitle title, Dockable dockable ) {
-        titles.put( title.getComponent(), title );
-    }
-    public void titleUnbound( DockController controller, DockTitle title, Dockable dockable ) {
-        titles.remove( title.getComponent() );
-    }
-    
     /**
      * Gets the top-dockable which has <code>component</code> or 
      * parent of <code>component</code> as base Component.
@@ -265,46 +239,23 @@ public abstract class MouseFocusObserver implements DockRegisterListener, DockRe
      * a {@link FocusVetoListener} doesn't want to inform the controller
      */
     protected Dockable getDockable( Component component ){
-        Dockable dock = null;
+        DockElementRepresentative element = controller.searchElement( component );
+        if( element == null )
+            return null;
         
-        while( component != null && dock == null ){
-            dock = dockables.get( component );
-            
-            if( dock == null ){
-                DockTitle title = titles.get( component );
-                
-                if( title != null ){
-                    if( fireVetoTitle( title ))
-                        return null;
-                    
-                    dock = title.getDockable();
-                }
-            }
-            else{
-                if( fireVetoDockable( dock ))
-                    return null;
-            }
-            
-            component = component.getParent();
+        Dockable dockable = element.getElement().asDockable();
+        if( dockable == null )
+            return null;
+        
+        if( element instanceof DockTitle ){
+            if( fireVetoTitle( (DockTitle)element ))
+                return null;
+        }
+        else{
+            if( fireVetoDockable( dockable ))
+                return null;
         }
         
-        return dock;
-    }
-    
-    public void dockStationUnregistered( DockController controller, DockStation station ) {
-        // do nothing
-    }
-    public void dockStationRegistered( DockController controller, DockStation station ) {
-        // do nothing
-    }
-    
-    public void dockableRegistering( DockController controller, Dockable dockable ) {
-        // do nothing
-    }
-    public void dockStationRegistering( DockController controller, DockStation station ) {
-        // do nothing
-    }
-    public void dockableFocused( DockController controller, Dockable dockable ) {
-        // do nothing
+        return dockable;
     }
 }

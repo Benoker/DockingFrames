@@ -33,6 +33,7 @@ import java.util.List;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.event.KeyboardListener;
 import bibliothek.gui.dock.event.LocatedListenerList;
 
@@ -126,8 +127,10 @@ public abstract class KeyboardController {
 	 */
 	protected void fireKeyPressed( KeyEvent event ){
 		if( !event.isConsumed() ){
-    		DockElement element = controller.searchElement( event.getComponent() );
-    		if( element != null ){
+    		DockElementRepresentative representative = controller.searchElement( event.getComponent() );
+    		if( representative != null ){
+    		    DockElement element = representative.getElement();
+    		    
         		List<KeyboardListener> list = keyListeners.affected( element );
         		loop:for( KeyboardListener listener : list ){
         			if( listener.keyPressed( element, event )){
@@ -151,8 +154,10 @@ public abstract class KeyboardController {
 	 */
 	protected void fireKeyReleased( KeyEvent event ){
 		if( !event.isConsumed() ){
-			DockElement element = controller.searchElement( event.getComponent() );
-    		if( element != null ){
+			DockElementRepresentative representative = controller.searchElement( event.getComponent() );
+    		if( representative != null ){
+    		    DockElement element = representative.getElement();
+    		    
         		List<KeyboardListener> list = keyListeners.affected( element );
         		loop:for( KeyboardListener listener : list ){
         			if( listener.keyReleased( element, event )){
@@ -176,8 +181,9 @@ public abstract class KeyboardController {
 	 */
 	protected void fireKeyTyped( KeyEvent event ){
 		if( !event.isConsumed() ){
-			DockElement element = controller.searchElement( event.getComponent() );
-    		if( element != null ){
+			DockElementRepresentative representative = controller.searchElement( event.getComponent() );
+    		if( representative != null ){
+    		    DockElement element = representative.getElement();
         		List<KeyboardListener> list = keyListeners.affected( element );
         		loop:for( KeyboardListener listener : list ){
         			if( listener.keyTyped( element, event )){

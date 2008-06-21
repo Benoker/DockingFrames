@@ -63,8 +63,11 @@ public class ReducedBubbleTitleFactory implements DockTitleFactory {
         }
         
         @Override
-        public Point getPopupLocation( Point click ){
-        	return null;
+        public Point getPopupLocation( Point click, boolean popupTrigger ) {
+            if( popupTrigger )
+                return click;
+            
+            return null;
         }
         
         @Override

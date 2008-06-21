@@ -92,7 +92,7 @@ public class DefaultDockControllerFactory implements DockControllerFactory {
         return new DefaultMouseFocusObserver( controller, setup );
     }
 
-    public DockRegisterListener createPopupController( DockController controller, ControllerSetupCollection setup ) {
+    public PopupController createPopupController( DockController controller, ControllerSetupCollection setup ) {
         return new PopupController( controller );
     }
 

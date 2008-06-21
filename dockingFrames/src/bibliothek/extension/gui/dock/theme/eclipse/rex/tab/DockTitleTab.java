@@ -1,6 +1,7 @@
 package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
 
 import java.awt.Component;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -12,11 +13,11 @@ import javax.swing.border.Border;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.RexSystemColor;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleManager;
@@ -167,6 +168,22 @@ public class DockTitleTab implements TabComponent{
 
     public Component getComponent() {
         return title.getComponent();
+    }
+    
+    public DockElement getElement() {
+        return title.getElement();
+    }
+    
+    public Point getPopupLocation( Point click, boolean popupTrigger ) {
+        return title.getPopupLocation( click, popupTrigger );
+    }
+    
+    public void addMouseInputListener( MouseInputListener listener ) {
+        title.addMouseInputListener( listener );
+    }
+    
+    public void removeMouseInputListener( MouseInputListener listener ) {
+        title.removeMouseInputListener( listener );
     }
 
     public Border getContentBorder() {

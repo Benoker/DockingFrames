@@ -76,7 +76,7 @@ public interface DockControllerFactory {
      * to be informed when the setup of <code>controller</code> is finished.
      * @return the new listener or <code>null</code>
      */
-    public DockRegisterListener createPopupController( DockController controller, ControllerSetupCollection setup );
+    public PopupController createPopupController( DockController controller, ControllerSetupCollection setup );
     
     /**
      * Creates a listener that will ensure that every {@link DockAction} is

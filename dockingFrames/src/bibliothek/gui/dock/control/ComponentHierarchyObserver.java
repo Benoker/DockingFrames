@@ -33,11 +33,10 @@ import java.util.*;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.event.ComponentHierarchyObserverEvent;
 import bibliothek.gui.dock.event.ComponentHierarchyObserverListener;
-import bibliothek.gui.dock.event.DockRegisterAdapter;
-import bibliothek.gui.dock.event.DockTitleBindingListener;
-import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.event.DockControllerRepresentativeListener;
 
 /**
  * A class collecting all {@link Component}s which are somehow used on or with
@@ -75,24 +74,12 @@ public class ComponentHierarchyObserver {
     public ComponentHierarchyObserver( DockController controller ){
         this.controller = controller;
         
-        controller.getRegister().addDockRegisterListener( new DockRegisterAdapter(){
-            @Override
-            public void dockableRegistered( DockController controller, Dockable dockable ) {
-                add( dockable.getComponent() );
+        controller.addRepresentativeListener( new DockControllerRepresentativeListener(){
+            public void representativeAdded( DockController controller, DockElementRepresentative representative ) {
+                add( representative.getComponent() );
             }
-            @Override
-            public void dockableUnregistered( DockController controller, Dockable dockable ) {
-                remove( dockable.getComponent() );
-            }
-        });
-        
-        controller.addDockTitleBindingListener( new DockTitleBindingListener(){
-            public void titleBound( DockController controller, DockTitle title, Dockable dockable ) {
-                add( title.getComponent() );
-            }
-
-            public void titleUnbound( DockController controller, DockTitle title, Dockable dockable ) {
-                remove( title.getComponent() );
+            public void representativeRemoved( DockController controller, DockElementRepresentative representative ) {
+                remove( representative.getComponent() );
             }
         });
     }

@@ -27,6 +27,7 @@
 package bibliothek.gui.dock.action;
 
 import java.awt.Component;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JPopupMenu;
@@ -46,6 +47,9 @@ import bibliothek.gui.dock.themes.basic.action.menu.MenuMenuHandler;
 public abstract class ActionPopup extends MouseInputAdapter{
     /** Whether to check the {@link ActionPopupSuppressor} or not */
     private boolean suppressable;
+    
+    /** The menu that is currently shown */
+    private JPopupMenu menu;
     
     /**
      * Constructs a new ActionPopup
@@ -116,6 +120,9 @@ public abstract class ActionPopup extends MouseInputAdapter{
      * {@link MouseEvent#isConsumed() consumed}
      */
     protected void popup( MouseEvent e ){
+        if( isMenuOpen() )
+            return;
+        
         if( e.isConsumed() )
             return;
         
@@ -128,6 +135,17 @@ public abstract class ActionPopup extends MouseInputAdapter{
     }
     
     /**
+     * Tells the exact location where the popup should appear.
+     * @param owner the component which triggered a mouse event
+     * @param location where the user clicked onto <code>owner</code>
+     * @return where to open the menu or <code>null</code> to cancel
+     * the operation
+     */
+    protected Point getPopupLocation( Component owner, Point location ){
+        return location;
+    }
+    
+    /**
      * Pops up this menu.
      * @param owner the owner of the menu
      * @param x x-coordinate
@@ -135,6 +153,10 @@ public abstract class ActionPopup extends MouseInputAdapter{
      * @return <code>true</code> if the menu is shown
      */
     public boolean popup( Component owner, int x, int y ){
+        Point location = getPopupLocation( owner, new Point( x, y ));
+        if( location == null )
+            return false;
+        
         final Dockable dockable = getDockable();
         if( dockable.getController() == null )
             return false;
@@ -150,7 +172,8 @@ public abstract class ActionPopup extends MouseInputAdapter{
         if( isSuppressable() && dockable.getController().getPopupSuppressor().suppress( dockable, source ))
             return false;
         
-        JPopupMenu menu = new JPopupMenu();
+        final JPopupMenu methodMenu = new JPopupMenu();
+        menu = methodMenu;
         final MenuMenuHandler handler = new MenuMenuHandler( source, dockable, menu );
         handler.bind();
         
@@ -160,13 +183,23 @@ public abstract class ActionPopup extends MouseInputAdapter{
             }
             public void popupMenuCanceled( PopupMenuEvent e ) {
                 handler.unbind();
+                if( methodMenu == menu )
+                    menu = null;
             }
             public void popupMenuWillBecomeVisible( PopupMenuEvent e ) {
             	// do nothing
             }
         });
         
-        menu.show( owner, x, y );
+        menu.show( owner, location.x, location.y );
         return true;
+    }
+    
+    /**
+     * Tells whether this {@link ActionPopup} currently shows a menu.
+     * @return <code>true</code> if a menu is visible, <code>false</code> otherwise
+     */
+    public boolean isMenuOpen(){
+        return menu != null;
     }
 }

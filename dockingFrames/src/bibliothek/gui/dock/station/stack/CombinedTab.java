@@ -29,12 +29,14 @@ package bibliothek.gui.dock.station.stack;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
+import bibliothek.gui.dock.DockElementRepresentative;
+
 /**
  * A tab of a {@link CombinedStackDockComponent}. Every tab represents one
  * Component which can be selected.
  * @author Benjamin Sigg
  */
-public interface CombinedTab {
+public interface CombinedTab extends DockElementRepresentative{
 	/**
 	 * Gets a component which represents this tab.
 	 * @return the graphical representation of this tab

@@ -27,29 +27,23 @@ package bibliothek.extension.gui.dock.theme.eclipse;
 
 import java.awt.Component;
 import java.awt.GridLayout;
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.ShapedGradientPainter;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabComponent;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabListener;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabPainter;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.RemoteRelocator;
-import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
 import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.focus.DockFocusTraversalPolicy;
@@ -68,7 +62,7 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 	/**
 	 * The Dockables shown on this component and their RemoteRelocators to control drag&drop operations
 	 */
-	private List<TabEntry> dockables = new ArrayList<TabEntry>();
+	private List<Dockable> dockables = new ArrayList<Dockable>();
 
 	/**
 	 * The controller for which this component is shown
@@ -105,27 +99,7 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 				newValue = ShapedGradientPainter.FACTORY;
 			
 			if( tabs.getTabPainter() != newValue ){
-				for( int i = 0, n = dockables.size(); i<n; i++ ){
-					TabEntry entry = dockables.get( i );
-					
-					TabComponent tabComponent = tabs.getTabComponent( i );
-					if( tabComponent != null ){
-					    tabComponent.removeMouseListener( entry.listener );
-					    tabComponent.removeMouseMotionListener( entry.listener );
-					}
-				}
-				
 				tabs.setTabPainter( newValue );
-				
-				for( int i = 0, n = dockables.size(); i<n; i++ ){
-					TabEntry entry = dockables.get( i );
-					
-					TabComponent tabComponent = tabs.getTabComponent( i );
-					if( tabComponent != null ){
-					    tabComponent.addMouseListener( entry.listener );
-					    tabComponent.addMouseMotionListener( entry.listener );
-					}
-				}
 			}
 		}
 	};
@@ -154,15 +128,6 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 	
 	@Override
 	public void removeAll() {
-		for( int i = 0, n = dockables.size(); i<n; i++ ){
-			TabEntry entry = dockables.get( i );
-			TabComponent tabComponent = tabs.getTabComponent( i );
-			
-			if( tabComponent != null ){
-			    tabComponent.removeMouseListener( entry.listener );
-			    tabComponent.removeMouseMotionListener( entry.listener );
-			}
-		}
 		tabs.removeAllTabs();
 		dockables.clear();
 	}
@@ -170,13 +135,7 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 	@Override
 	public void remove(int index) {
 		Dockable tab = tabs.getTabAt(index);
-		TabComponent tabComponent = tabs.getTabComponent( index );
 		tabs.removeTab(tab);
-		TabEntry entry = dockables.remove(index);
-		if( tabComponent != null ){
-		    tabComponent.removeMouseListener( entry.listener );
-		    tabComponent.removeMouseMotionListener( entry.listener );
-		}
 	}
 
 	public void tabRemoved(Dockable t) {
@@ -241,27 +200,12 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 
 	public void insertTab(String title, Icon icon, Component comp, Dockable dockable, int index) {
 		tabs.insertTab( dockable, index);
-		TabEntry entry = new TabEntry();
-		entry.dockable = dockable;
-		entry.listener = new Listener( entry );
-		
-		TabComponent tabComponent = tabs.getTabComponent( index );
-		if( tabComponent != null ){
-		    tabComponent.addMouseListener( entry.listener );
-		    tabComponent.addMouseMotionListener( entry.listener );
-		}
-		
-		if (controller == null)
-			entry.relocator = null;
-		else
-			entry.relocator = controller.getRelocator().createRemote(dockable);
-		
-		dockables.add( index, entry );
+		dockables.add( index, dockable );
 		updateFocus();
 	}
 
 	public Dockable getDockable( int index ){
-		return dockables.get( index ).dockable;
+		return dockables.get( index );
 	}
 	
 	public int getTabCount() {
@@ -294,27 +238,7 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 
 	public void setController(DockController controller) {
 	    if( tabs != null ){
-            for( int i = 0, n = dockables.size(); i<n; i++ ){
-                TabEntry entry = dockables.get( i );
-                
-                TabComponent tabComponent = tabs.getTabComponent( i );
-                if( tabComponent != null ){
-                    tabComponent.removeMouseListener( entry.listener );
-                    tabComponent.removeMouseMotionListener( entry.listener );
-                }
-            }
-	        
-	        tabs.setController( controller );
-
-            for( int i = 0, n = dockables.size(); i<n; i++ ){
-                TabEntry entry = dockables.get( i );
-                
-                TabComponent tabComponent = tabs.getTabComponent( i );
-                if( tabComponent != null ){
-                    tabComponent.addMouseListener( entry.listener );
-                    tabComponent.addMouseMotionListener( entry.listener );
-                }
-            }
+            tabs.setController( controller );
 	    }
 	    
 		if (this.controller != controller) {
@@ -328,16 +252,11 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 			}
 			
 			this.controller = controller;
-			if (controller == null) {
-				for ( TabEntry entry : dockables)
-					entry.relocator = null;
-			} else {				
+			
+			if( controller != null ){				
 				controller.addDockableFocusListener( controllerFocusListener );
-				
-				for ( TabEntry entry : dockables)
-					entry.relocator = controller.getRelocator().createRemote(entry.dockable);
 			}
-
+			
 			paintIconsWhenDeselected.setProperties( controller );
 			tabPainter.setProperties( controller );
 
@@ -346,114 +265,9 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 		}
 	}
 	
-	private static class TabEntry{
-		public Dockable dockable;
-		public RemoteRelocator relocator;
-		public Listener listener;
-	}
-	
 	private class FocusListener implements DockableFocusListener{
 	    public void dockableFocused( DockableFocusEvent event ) {
 			updateFocus();
 		}
 	}
-	
-	   /**
-     * A listener to the enclosing component, using some {@link bibliothek.gui.dock.control.RemoteRelocator}
-     * to do drag & drop operations.
-     *
-     * @author Benjamin Sigg
-     */
-    private class Listener extends MouseInputAdapter {
-        private TabEntry entry;
-        
-        public Listener( TabEntry entry ){
-            this.entry = entry;
-        }
-        
-        private void updateRelocator(){
-            if( relocator != null ){
-                if( entry.relocator != relocator ){
-                    relocator.cancel();
-                    relocator = null;
-                }
-            }
-            
-            if( relocator == null ){
-                relocator = entry.relocator;
-            }
-        }
-        
-        @Override
-        public void mousePressed(MouseEvent e) {
-            if( controller != null )
-                controller.setFocusedDockable( entry.dockable, false );
-            
-            if (e.isConsumed())
-                return;
-        
-            updateRelocator();
-            
-            if( relocator != null ){
-                Point mouse = e.getPoint();
-                SwingUtilities.convertPointToScreen(mouse, e.getComponent());
-                Reaction reaction = relocator.init(mouse.x, mouse.y, 0, 0, e.getModifiersEx());
-                switch (reaction) {
-                    case BREAK_CONSUMED:
-                        e.consume();
-                    case BREAK:
-                        relocator = null;
-                        break;
-                    case CONTINUE_CONSUMED:
-                        e.consume();
-                        break;
-                }
-            }
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent e) {
-            if (e.isConsumed())
-                return;
-
-            if( relocator != null ){
-                Point mouse = e.getPoint();
-                SwingUtilities.convertPointToScreen(mouse, e.getComponent());
-                Reaction reaction = relocator.drop(mouse.x, mouse.y, e.getModifiersEx());
-                switch (reaction) {
-                    case BREAK_CONSUMED:
-                        e.consume();
-                    case BREAK:
-                        relocator = null;
-                        break;
-                    case CONTINUE_CONSUMED:
-                        e.consume();
-                        break;
-                }
-            }
-        }
-
-        @Override
-        public void mouseDragged(MouseEvent e) {
-            if (e.isConsumed())
-                return;
-            
-
-            if( relocator != null ){
-                Point mouse = e.getPoint();
-                SwingUtilities.convertPointToScreen(mouse, e.getComponent());
-                Reaction reaction = relocator.drag(mouse.x, mouse.y, e.getModifiersEx());
-                switch (reaction) {
-                    case BREAK_CONSUMED:
-                        e.consume();
-                    case BREAK:
-                        relocator = null;
-                        break;
-                    case CONTINUE_CONSUMED:
-                        e.consume();
-                        break;
-                }
-            }
-        }
-    }
 }

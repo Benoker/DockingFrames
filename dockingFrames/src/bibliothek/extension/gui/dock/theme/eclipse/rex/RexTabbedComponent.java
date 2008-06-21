@@ -104,7 +104,7 @@ public class RexTabbedComponent extends JComponent {
 	        tab.tab.bind();
 	        tab.tabBound = true;
 	        if( controller != null )
-	        	controller.putRepresentative( tab.tab.getComponent(), tab.dockable );
+	        	controller.addRepresentative( tab.tab );
 	    }
 	}
 	
@@ -113,7 +113,7 @@ public class RexTabbedComponent extends JComponent {
             tab.tab.unbind();
             tab.tabBound = false;
             if( controller != null )
-            	controller.putRepresentative( tab.tab.getComponent(), null );
+            	controller.removeRepresentative( tab.tab );
         }
 	}
 	
@@ -137,7 +137,7 @@ public class RexTabbedComponent extends JComponent {
 	    if( this.controller != controller ){
 	    	if( this.controller != null ){
 	    		for( TabEntry tab : tabs ){
-	    			this.controller.putRepresentative( tab.tab.getComponent(), null );
+	    			this.controller.removeRepresentative( tab.tab );
 	    		}
 	    	}
 	    	
@@ -546,7 +546,7 @@ public class RexTabbedComponent extends JComponent {
         return id;
     }
 	
-	private class TabEntry{
+	private class TabEntry {
 		public Dockable dockable;
 		public DockTitle title;
 		public TabComponent tab;

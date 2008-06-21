@@ -27,18 +27,23 @@
 package bibliothek.extension.gui.dock.theme.bubble;
 
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.MouseInputListener;
 
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.StackDockStation;
-import bibliothek.gui.dock.control.RemoteRelocator;
-import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
 import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
@@ -178,9 +183,6 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
         /** the currently observed controller */
         private DockController controller;
         
-        /** the remote device to do drag & drop */
-        private RemoteRelocator relocator;
-        
         private BubbleTabColor topMouse;
         private BubbleTabColor bottomMouse;
         private BubbleTabColor borderMouse;
@@ -293,60 +295,18 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
                     mouse = false;
                     checkAnimation();
                 }
-                
-                @Override
-                public void mousePressed( MouseEvent e ){
-                	if( !e.isConsumed() && relocator != null ){
-                		Point mouse = e.getPoint();
-                		SwingUtilities.convertPointToScreen( mouse, e.getComponent() );
-                		Reaction reaction = relocator.init( mouse.x, mouse.y, 0, 0, e.getModifiersEx() );
-                		switch( reaction ){
-                			case BREAK_CONSUMED:
-                			case CONTINUE_CONSUMED:
-                				e.consume();
-                				break;
-                		}
-                	}
-                }
-                
-                @Override
-                public void mouseReleased( MouseEvent e ){
-                	if( !e.isConsumed() && relocator != null ){
-                		Point mouse = e.getPoint();
-                		SwingUtilities.convertPointToScreen( mouse, e.getComponent() );
-                		Reaction reaction = relocator.drop( mouse.x, mouse.y, e.getModifiersEx() );
-                		switch( reaction ){
-                			case BREAK_CONSUMED:
-                			case CONTINUE_CONSUMED:
-                				e.consume();
-                				break;
-                		}
-                	}
-                }
-			};
-			
-			MouseMotionListener motion = new MouseMotionAdapter(){
-				@Override
-				public void mouseDragged( MouseEvent e ){
-                	if( !e.isConsumed() && relocator != null ){
-                		Point mouse = e.getPoint();
-                		SwingUtilities.convertPointToScreen( mouse, e.getComponent() );
-                		Reaction reaction = relocator.drag( mouse.x, mouse.y, e.getModifiersEx() );
-                		switch( reaction ){
-                			case BREAK_CONSUMED:
-                			case CONTINUE_CONSUMED:
-                				e.consume();
-                				break;
-                		}
-                	}
-				}
 			};
 			
 			addMouseListener( listener );
-			addMouseMotionListener( motion );
 			label.addMouseListener( listener );
-			label.addMouseMotionListener( motion );
 		}
+		
+        public Point getPopupLocation( Point click, boolean popupTrigger ) {
+            if( popupTrigger )
+                return click;
+            
+            return null;
+        }
 		
 		public void setTooltip( String tooltip ) {
 		    setToolTipText( tooltip );
@@ -361,11 +321,6 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 		    if( this.controller != null )
 		        this.controller.removeDockableFocusListener( this );
 		    
-			if( controller == null )
-				relocator = null;
-			else
-				relocator = controller.getRelocator().createRemote( dockable );
-			
 			for( BubbleTabColor color : colors )
 			    color.connect( controller );
 			
@@ -458,6 +413,24 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 			return this;
 		}
 
+		public DockElement getElement() {
+		    return dockable;
+		}
+		
+		public void addMouseInputListener( MouseInputListener listener ) {
+		    addMouseListener( listener );
+		    addMouseMotionListener( listener );
+		    label.addMouseListener( listener );
+		    label.addMouseMotionListener( listener );
+		}
+		
+		public void removeMouseInputListener( MouseInputListener listener ) {
+		    removeMouseListener( listener );
+		    removeMouseMotionListener( listener );
+		    label.removeMouseListener( listener );
+		    label.removeMouseMotionListener( listener );
+		}
+		
 		public void stateChanged( ChangeEvent e ){
             checkAnimation();
 		}

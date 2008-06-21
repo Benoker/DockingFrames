@@ -29,19 +29,17 @@ package bibliothek.extension.gui.dock.theme.flat;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
+import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.StackDockStation;
-import bibliothek.gui.dock.control.RemoteRelocator;
-import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
 import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
@@ -118,10 +116,7 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
      * @author Benjamin Sigg
      */
 	protected class FlatButton extends JLabel implements CombinedTab, DockableFocusListener{
-		/** the currently used remote to do drag&drop operations */
-	    private RemoteRelocator relocator;
-		
-	    /** the dockable for which this button is shown */
+		/** the dockable for which this button is shown */
 	    private Dockable dockable;
 	    
 	    /** the current controller */
@@ -206,51 +201,7 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
                 public void mousePressed( MouseEvent e ){
                     setSelectedIndex( index );
                     repaint();
-                    
-                    if( relocator != null && !e.isConsumed()){
-                    	Point mouse = e.getPoint();
-                    	SwingUtilities.convertPointToScreen( mouse, e.getComponent() );
-                    	Reaction reaction = relocator.init( mouse.x, mouse.y, 0, 0, e.getModifiersEx() );
-                    	switch( reaction ){
-                    		case BREAK_CONSUMED:
-                    		case CONTINUE_CONSUMED:
-                    			e.consume();
-                    			break;
-                    	}
-                    }
                 }
-                
-                @Override
-                public void mouseReleased( MouseEvent e ){
-                	if( relocator != null && !e.isConsumed()){
-                    	Point mouse = e.getPoint();
-                    	SwingUtilities.convertPointToScreen( mouse, e.getComponent() );
-                    	Reaction reaction =relocator.drop( mouse.x, mouse.y, e.getModifiersEx() );
-                    	switch( reaction ){
-                			case BREAK_CONSUMED:
-                			case CONTINUE_CONSUMED:
-                				e.consume();
-                				break;
-                    	}
-                    }
-                }
-            });
-            
-            addMouseMotionListener( new MouseMotionAdapter(){
-            	@Override
-            	public void mouseDragged( MouseEvent e ){
-            		if( relocator != null && !e.isConsumed()){
-                    	Point mouse = e.getPoint();
-                    	SwingUtilities.convertPointToScreen( mouse, e.getComponent() );
-                    	Reaction reaction =relocator.drag( mouse.x, mouse.y, e.getModifiersEx() );
-                    	switch( reaction ){
-                			case BREAK_CONSUMED:
-                			case CONTINUE_CONSUMED:
-                				e.consume();
-                				break;
-                    	}
-                    }
-            	}
             });
             
             setBorder( new Border(){
@@ -324,12 +275,7 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
         }
         
         public void setController( DockController controller ){
-        	if( controller == null )
-        		relocator = null;
-        	else
-        		relocator = controller.getRelocator().createRemote( dockable );
-        	
-            if( this.controller != null )
+        	if( this.controller != null )
                 this.controller.removeDockableFocusListener( this );
             this.controller = controller;
             if( controller != null )
@@ -356,6 +302,13 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
             foreground.connect( controller );
         }
         
+        public Point getPopupLocation( Point click, boolean popupTrigger ) {
+            if( popupTrigger )
+                return click;
+            
+            return null;
+        }
+        
         public void dockableFocused( DockableFocusEvent event ) {
             focused = this.dockable == event.getNewFocusOwner();
             repaint();
@@ -363,6 +316,20 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
         
         public JComponent getComponent(){
         	return this;
+        }
+        
+        public DockElement getElement() {
+            return dockable;
+        }
+        
+        public void addMouseInputListener( MouseInputListener listener ) {
+            addMouseListener( listener );
+            addMouseMotionListener( listener );
+        }
+        
+        public void removeMouseInputListener( MouseInputListener listener ) {
+            removeMouseListener( listener );
+            removeMouseMotionListener( listener );
         }
         
         @Override
