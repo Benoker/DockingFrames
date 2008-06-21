@@ -179,12 +179,12 @@ public abstract class ActionPopup extends MouseInputAdapter{
         
         menu.addPopupMenuListener( new PopupMenuListener(){
             public void popupMenuWillBecomeInvisible( PopupMenuEvent e ) {
-            	// do nothing
-            }
-            public void popupMenuCanceled( PopupMenuEvent e ) {
-                handler.unbind();
+            	handler.unbind();
                 if( methodMenu == menu )
                     menu = null;
+            }
+            public void popupMenuCanceled( PopupMenuEvent e ) {
+                // do nothing
             }
             public void popupMenuWillBecomeVisible( PopupMenuEvent e ) {
             	// do nothing

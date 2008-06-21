@@ -11,5 +11,10 @@ Some noteworthy features:
 	<li>The drop-down-menus are part of DockingFrames. They consist of a list
 	of actions, and they can copy the icons/tooltip/behavior of the last
 	selected action.</li>
+	<li>The buttons on the top are not part of DockingFrames. They are just
+	JPanels which paint an icon for an associated Dockable and have a MouseListener
+	which shows the associated Dockable when clicked. But they are registered
+	as DockElementRepresentative and thus inherit some abilities a Dockable has.
+	For example: if dragged, then the associated Dockable gets dragged.</li>
 </ul>
 </html>

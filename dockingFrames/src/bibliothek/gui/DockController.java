@@ -570,8 +570,10 @@ public class DockController {
     public DockElementRepresentative searchElement( Component representative ){
     	while( representative != null ){
     	    DockElementRepresentative element = componentToDockElements.get( representative );
-    		if( element != null )
-    			return element;
+    		if( element != null ){
+    		    if( element.getElement().getController() == this )
+    		        return element;
+    		}
     		
     		representative = representative.getParent();
     	}

@@ -39,6 +39,7 @@ import javax.swing.KeyStroke;
 
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabDockAction;
 import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.action.ActionGuard;
@@ -485,6 +486,27 @@ public class DockFrontend {
             stations[i++] = info.station;
         }
         return stations;
+    }
+    
+    /**
+     * Adds a representative for some {@link DockElement}. Note that no two
+     * representatives can have the same
+     * {@link DockElementRepresentative#getComponent() component}. If two have
+     * the same, then the second one overrides the first one.
+     * @param representative the new representative
+     * @see DockController#addRepresentative(DockElementRepresentative)
+     */
+    public void addRepresentative( DockElementRepresentative representative ){
+        controller.addRepresentative( representative );
+    }
+    
+    /**
+     * Removes <code>representative</code> from this frontend.
+     * @param representative the element to remove
+     * @see DockController#removeRepresentative(DockElementRepresentative)
+     */
+    public void removeRepresentative( DockElementRepresentative representative ){
+        controller.removeRepresentative( representative );
     }
     
     /**

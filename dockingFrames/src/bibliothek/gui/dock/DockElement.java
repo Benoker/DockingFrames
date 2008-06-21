@@ -26,6 +26,7 @@
 
 package bibliothek.gui.dock;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 
@@ -48,6 +49,12 @@ public interface DockElement {
      * @return <code>this</code> or <code>null</code>
      */
     public DockStation asDockStation();
+    
+    /**
+     * Gets the controller that currently is associated with this {@link DockElement}.
+     * @return the controller or <code>null</code>
+     */
+    public DockController getController();
     
     /**
      * Gets the unique name of the {@link DockFactory} which can read

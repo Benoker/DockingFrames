@@ -3,6 +3,7 @@ package bibliothek.help;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -12,12 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 
 import bibliothek.demonstration.Monitor;
 import bibliothek.demonstration.util.LookAndFeelMenu;
@@ -54,6 +50,7 @@ import bibliothek.help.view.LayoutMenu;
 import bibliothek.help.view.PanelMenu;
 import bibliothek.help.view.SelectingView;
 import bibliothek.help.view.TypeHierarchyView;
+import bibliothek.help.view.dock.DockableButton;
 import bibliothek.help.view.dock.Minimizer;
 
 /**
@@ -99,7 +96,8 @@ public class Core implements ComponentCollector{
 	 */
 	public void startup(){
 		try{
-	        buildContent();
+		    JPanel dockbar = new JPanel( new FlowLayout( FlowLayout.LEADING ));
+	        buildContent( dockbar );
 	        
 	        HelpModel model = new HelpModel( "/data/bibliothek/help/help.data" );
 	        LinkManager links = new LinkManager();
@@ -134,6 +132,14 @@ public class Core implements ComponentCollector{
 	        TypeHierarchyView viewHierarchy = new TypeHierarchyView( links );
 	        
 	        links.select( "package-list:root" );
+	        
+	        buttonize( dockbar, viewPackage );
+	        buttonize( dockbar, viewClasses );
+	        buttonize( dockbar, viewFields );
+	        buttonize( dockbar, viewConstructors );
+	        buttonize( dockbar, viewMethods );
+	        buttonize( dockbar, viewContent );
+	        buttonize( dockbar, viewHierarchy );
 	        
 	        frontend.add( viewPackage, "packages" );
 	        frontend.add( viewClasses, "classes" );
@@ -194,7 +200,7 @@ public class Core implements ComponentCollector{
 	/**
 	 * Creates the main frame and all {@link DockStation}s.
 	 */
-	private void buildContent(){
+	private void buildContent( Container dockbar ){
 		FlapDockStation north, south, east, west;
         frame = new JFrame();
         frame.setTitle( "Help - Demonstration of DockingFrames" );
@@ -233,11 +239,15 @@ public class Core implements ComponentCollector{
         
         Container content = frame.getContentPane();
         content.setLayout( new BorderLayout() );
-        content.add( station, BorderLayout.CENTER );
-        content.add( south.getComponent(), BorderLayout.SOUTH );
-        content.add( north.getComponent(), BorderLayout.NORTH );
-        content.add( east.getComponent(), BorderLayout.EAST );
-        content.add( west.getComponent(), BorderLayout.WEST );
+        content.add( dockbar, BorderLayout.NORTH );
+        Container center = new Container();
+        content.add( center, BorderLayout.CENTER );
+        center.setLayout( new BorderLayout() );
+        center.add( station, BorderLayout.CENTER );
+        center.add( south.getComponent(), BorderLayout.SOUTH );
+        center.add( north.getComponent(), BorderLayout.NORTH );
+        center.add( east.getComponent(), BorderLayout.EAST );
+        center.add( west.getComponent(), BorderLayout.WEST );
         
         minimizer.addAreaMinimized( north, SplitDockProperty.NORTH );
         minimizer.addAreaMinimized( south, SplitDockProperty.SOUTH );
@@ -260,6 +270,18 @@ public class Core implements ComponentCollector{
         frontend.addRoot( west, "west" );
         frontend.addRoot( station, "root" );
         frontend.addRoot( screen, "screen" );
+	}
+	
+	/**
+	 * Creates a button in <code>dockbar</code> and connects the button with
+	 * <code>dockable</code> and {@link #frontend}.
+	 * @param dockbar the parent of the new button
+	 * @param dockable the element for which to create the button
+	 */
+	private void buttonize( Container dockbar, Dockable dockable ){
+	    DockableButton button = new DockableButton( frontend, dockable );
+	    dockbar.add( button );
+	    frontend.addRepresentative( button );
 	}
 	
 	/**

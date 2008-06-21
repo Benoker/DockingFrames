@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.KeyStroke;
 
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.actions.SeparatorAction;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.action.actions.SimpleDropDownAction;
