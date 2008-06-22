@@ -384,6 +384,34 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         }
     }
     
+    /**
+     * Ensures that there is no maximized element.
+     * @return <code>true</code> if at least one element was affected by changes,
+     * <code>false</code> if nothing happened.
+     */
+    public boolean ensureNothingMaximized(){
+        if( maxi == null )
+            return false;
+        
+        AffectedSet set = new AffectedSet();
+        unmaximize( set );
+        set.finish();
+        
+        return !set.isEmpty();
+    }
+    
+    /**
+     * Gets the one {@link Dockable} which is considered to be the root of
+     * all maximized <code>Dockable</code>s.
+     * @return the root of all currently maximized <code>Dockable</code>s or <code>null</code>
+     */
+    public Dockable getMaximized(){
+        if( maxi == null )
+            return null;
+        
+        return maxi.getFullScreen();
+    }
+    
     @Override
     protected String[] availableModes( String current, Dockable dockable ) {
         if( MINIMIZED.equals( current ))
@@ -1214,6 +1242,14 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
             for( Dockable dockable : set ){
                 putMode( dockable, currentMode( dockable ) );
             }
+        }
+        
+        /**
+         * Tells whether there are no entries in this set.
+         * @return <code>true</code> if there are no entries
+         */
+        public boolean isEmpty(){
+            return set.isEmpty();
         }
     }
     

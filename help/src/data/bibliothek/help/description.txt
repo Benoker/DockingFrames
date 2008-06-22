@@ -15,6 +15,7 @@ Some noteworthy features:
 	JPanels which paint an icon for an associated Dockable and have a MouseListener
 	which shows the associated Dockable when clicked. But they are registered
 	as DockElementRepresentative and thus inherit some abilities a Dockable has.
-	For example: if dragged, then the associated Dockable gets dragged.</li>
+	For example: if dragged, then instead of the button the associated Dockable
+	gets dragged.</li>
 </ul>
 </html>

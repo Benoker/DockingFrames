@@ -73,9 +73,9 @@ import bibliothek.gui.dock.util.color.ColorManager;
  */
 public class AbstractDockTitle extends JPanel implements DockTitle {
     /** Insets of the size 1,2,1,2 */
-    private static final Insets DEFAULT_INSETS_HORIZONTAL = new Insets( 1, 2, 1, 2 );
+    private static final Insets DEFAULT_INSETS_HORIZONTAL = new Insets( 0, 1, 0, 1 );
     /** Insets of the size 2,1,2,1 */
-    private static final Insets DEFAULT_INSETS_VERTICAL = new Insets( 2, 1, 2, 1 );
+    private static final Insets DEFAULT_INSETS_VERTICAL = new Insets( 1, 0, 1, 0 );
     
     /** The {@link Dockable} for which this title is shown */
     private Dockable dockable;

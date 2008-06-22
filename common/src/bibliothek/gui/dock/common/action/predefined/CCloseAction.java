@@ -33,7 +33,6 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
-import bibliothek.gui.dock.common.intern.CDockable.ExtendedMode;
 import bibliothek.gui.dock.common.intern.action.CDropDownItem;
 import bibliothek.gui.dock.facile.action.CloseAction;
 import bibliothek.gui.dock.util.DockProperties;
@@ -80,9 +79,6 @@ public class CCloseAction extends CDropDownItem{
      */
     public void close( CDockable dockable ){
         if( dockable.isVisible() ){
-            if( dockable.getExtendedMode() == ExtendedMode.MAXIMIZED )
-                dockable.setExtendedMode( ExtendedMode.NORMALIZED );
-            
             dockable.setVisible( false );
         }
     }

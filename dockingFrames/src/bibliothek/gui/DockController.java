@@ -1234,7 +1234,6 @@ public class DockController {
             @Override
             public void titleBound( Dockable dockable, DockTitle title ) {
                 titles.add( title );
-                addRepresentative( title );
                 
                 title.bind();
                 fireTitleBound( title, dockable );
@@ -1261,7 +1260,6 @@ public class DockController {
             @Override
             public void titleUnbound( Dockable dockable, DockTitle title ) {
                 titles.remove( title );
-                removeRepresentative( title );
                 title.unbind();
                 fireTitleUnbound( title, dockable );
             }
@@ -1277,10 +1275,11 @@ public class DockController {
         }
 
         public void titleBound( DockController controller, DockTitle title, Dockable dockable ) {
-            // ignore
+            addRepresentative( title );
         }
         
         public void titleUnbound( DockController controller, DockTitle title, Dockable dockable ) {
+            removeRepresentative( title );
             activeTitles.remove( title );
             DockStation parent = dockable.getDockParent();
             if( parent != null )

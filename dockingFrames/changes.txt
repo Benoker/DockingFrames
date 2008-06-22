@@ -161,7 +161,7 @@
 
 [v1.0.6]
 - Layout: when dropping something into SplitDockStation, the old leaf always gets at least 25% of the original space.
-- API:  the inner classes of LockedResizeLayoutManager made public such that they can be given to other classes.
+- API: the inner classes of LockedResizeLayoutManager made public such that they can be given to other classes.
 ! API, Layout: Dockables can now have a tooltip, this tooltip is shown on titles and tabs. (!: Dockable.getTitleToolTip, DockableListener.titleToolTipChanged).
 - API: New UIProperties, a generalisation of ColorManager
 ! API: ColorManager, ColorProvider and DockColor extend now UIProperties, UIBridge and UIValue. Their only use is now to prevent clients from rewriting generics all the time (!: ColorMangager.getProviderFor - getBridgeFor)
@@ -169,8 +169,9 @@
 - API, Layout: The ConflictResolver in common can now be used to resolve conflicts on resize when locked CDockables are around. Can be applied using the key CControl.RESIZE_LOCK_CONFLICT_RESOLVER
 - API: New ConflictResolver "FullLockConflictResolver" inspired by the behavior of VLDocking
 - Bugfix: DefaultConflictResolver creates now better combinations of ResizeRequests if the combined requests have different priority
-! API: The size request ist now handled with a RequestDimension and no longer with Dimension. This allows to issue requests only for one of width or height, and to lock only one of width or height
+! API: The size request is now handled with RequestDimension and no longer with Dimension. This allows to issue requests only for one of width or height, and to lock only one of width or height
 - API: new interface DockElementRepresentative which creates a link between a Component and a DockElement. Allows a unified way to make popup menus, drag and drop Dockables and more
 ! API: Dockable and DockTitle now also implement DockElementRepresentative
-
-
+- Bugfix: when opening a CDockable that would stack on another CDockable which was maximized, the layout could get scrambled.
+- Layout: Closing a maximized CDockable will not normalize other maximized Dockables
+- API, Layout: Clicking on the "close-action" in common and calling "setVisible( false )" will now have the exact same effects.

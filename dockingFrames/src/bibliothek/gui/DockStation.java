@@ -201,7 +201,7 @@ public interface DockStation extends DockElement{
      * with an appropriate event. The station may add some additional information
      * to this call.
      * @param dockable the child whose title is changed
-     * @param title the changed title
+     * @param title the changed title, may not be bound
      * @param active the new state of the title
      */
     public void changed( Dockable dockable, DockTitle title, boolean active );

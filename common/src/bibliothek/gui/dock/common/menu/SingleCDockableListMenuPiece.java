@@ -123,7 +123,7 @@ public class SingleCDockableListMenuPiece extends CloseableDockableMenuPiece {
             if( this.frontend != frontend ){
                 if( this.frontend != null ){
                     this.frontend.removeFrontendListener( this );
-                    for( Dockable dockable : frontend.getDockables() )
+                    for( Dockable dockable : frontend.listDockables() )
                         removed( this.frontend, dockable );
                 }
                 
@@ -131,7 +131,7 @@ public class SingleCDockableListMenuPiece extends CloseableDockableMenuPiece {
                 
                 if( this.frontend != null ){
                     this.frontend.addFrontendListener( this );
-                    for( Dockable dockable : frontend.getDockables() )
+                    for( Dockable dockable : frontend.listDockables() )
                         added( this.frontend, dockable );
                 }
             }
