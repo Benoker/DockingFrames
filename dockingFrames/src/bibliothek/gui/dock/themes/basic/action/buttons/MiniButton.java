@@ -90,7 +90,7 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
             }
         });
     }
-
+    
     /**
      * Sets the model of this button. The model contains all properties which
      * are necessary to show this button.

@@ -154,7 +154,9 @@ public class BasicButtonModel {
             public void actionPerformed(java.awt.event.ActionEvent e){
                 if( mousePressed ){
                     setMousePressed( false );
-                    trigger();
+                    if( isEnabled() ){
+                        trigger();
+                    }
                 }
             }
         });

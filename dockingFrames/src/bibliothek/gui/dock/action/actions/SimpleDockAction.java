@@ -33,6 +33,7 @@ import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.KeyStroke;
 
+import bibliothek.extension.gui.dock.preference.editor.KeyStrokeEditor;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.DockAction;
@@ -121,23 +122,7 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
     	if( accelerator == null )
     		return tooltip;
 
-    	// source copy & pasted from BasicMenuItemUI
-    	String acceleratorText = "";
-    	if (accelerator != null) {
-    		int modifiers = accelerator.getModifiers();
-    		if (modifiers > 0) {
-    			acceleratorText = KeyEvent.getKeyModifiersText(modifiers);
-    			acceleratorText += "+";
-    		}
-
-    		int keyCode = accelerator.getKeyCode();
-    		if (keyCode != 0) {
-    			acceleratorText += KeyEvent.getKeyText(keyCode);
-    		}
-    		else {
-    			acceleratorText += accelerator.getKeyChar();
-    		}
-    	}
+    	String acceleratorText = KeyStrokeEditor.toString( accelerator );
 
     	if( tooltip == null )
     		return acceleratorText;
