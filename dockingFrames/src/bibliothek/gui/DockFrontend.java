@@ -27,8 +27,6 @@
 package bibliothek.gui;
 
 import java.awt.Window;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -107,7 +105,7 @@ import bibliothek.util.xml.XElement;
  */
 public class DockFrontend {
     public static final PropertyKey<KeyStroke> HIDE_ACCELERATOR = 
-        new PropertyKey<KeyStroke>( "frontend hide accelerator", KeyStroke.getKeyStroke( KeyEvent.VK_F4, InputEvent.CTRL_DOWN_MASK ) );
+        new PropertyKey<KeyStroke>( "frontend hide accelerator" );
     
 	/** The controller where roots are added */
     private DockController controller;

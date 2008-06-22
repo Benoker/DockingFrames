@@ -30,14 +30,15 @@ import javax.swing.Icon;
 import bibliothek.gui.DockUI;
 
 /**
- * A key for an operation which might be available for a {@link PreferenceEditor}.
+ * A key for an operation which might be available for a {@link PreferenceEditor}
+ * or a {@link PreferenceModel}.
  * @author Benjamin Sigg
  */
-public class PreferenceEditorOperation {
+public class PreferenceOperation {
     /**
      * Operation for deleting a property.
      */
-    public static final PreferenceEditorOperation DELETE = new PreferenceEditorOperation(
+    public static final PreferenceOperation DELETE = new PreferenceOperation(
             "delete", 
             DockUI.getDefaultDockUI().getIcon( "delete.small" ),
             DockUI.getDefaultDockUI().getString( "preference.operation.delete" ));
@@ -45,8 +46,8 @@ public class PreferenceEditorOperation {
     /**
      * Operation for setting a property to its default value
      */
-    public static final PreferenceEditorOperation DEFAULT = new PreferenceEditorOperation(
-            "delete", 
+    public static final PreferenceOperation DEFAULT = new PreferenceOperation(
+            "default", 
             DockUI.getDefaultDockUI().getIcon( "default.small" ),
             DockUI.getDefaultDockUI().getString( "preference.operation.default" ));
     
@@ -59,7 +60,7 @@ public class PreferenceEditorOperation {
      * Creates a new operation.
      * @param key the unique identifier of this operation
      */
-    public PreferenceEditorOperation( String key ){
+    public PreferenceOperation( String key ){
         if( key == null )
             throw new IllegalArgumentException( "key must not be null" );
         this.key = key;
@@ -71,7 +72,7 @@ public class PreferenceEditorOperation {
      * @param icon an icon for this operation, should have a size of 10x10 pixels
      * @param description a small description of this operation
      */
-    public PreferenceEditorOperation( String key, Icon icon, String description ){
+    public PreferenceOperation( String key, Icon icon, String description ){
         this( key );
         setIcon( icon );
         setDescription( description );
@@ -84,8 +85,8 @@ public class PreferenceEditorOperation {
 
     @Override
     public boolean equals( Object obj ) {
-        if( obj instanceof PreferenceEditorOperation ){
-            return key.equals( ((PreferenceEditorOperation)obj).key );
+        if( obj instanceof PreferenceOperation ){
+            return key.equals( ((PreferenceOperation)obj).key );
         }
         
         return false;

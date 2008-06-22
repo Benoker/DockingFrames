@@ -70,7 +70,7 @@ public class PreferenceTable extends JPanel{
     private Listener listener = new Listener();
     
     /** the operations visible on this table */
-    private List<PreferenceEditorOperation> operations = new ArrayList<PreferenceEditorOperation>();
+    private List<PreferenceOperation> operations = new ArrayList<PreferenceOperation>();
     
     /**
      * Creates a new table
@@ -84,11 +84,22 @@ public class PreferenceTable extends JPanel{
         
         setEditorFactory( KeyStroke.class, KeyStrokeEditor.FACTORY );
         
-        operations.add( PreferenceEditorOperation.DEFAULT );
-        operations.add( PreferenceEditorOperation.DELETE );
+        operations.add( PreferenceOperation.DELETE );
+        operations.add( PreferenceOperation.DEFAULT );
     }
     
-    private int getOperationIndex( PreferenceEditorOperation operation ){
+    /**
+     * Adds a new operation at the end of the set of operations. The set of
+     * operations tells the order in which the operations appear on the table.
+     * @param operation a new operation
+     */
+    public void addOperation( PreferenceOperation operation ){
+        if( !operations.contains( operation )){
+            operations.add( operation );
+        }
+    }
+    
+    private int getOperationIndex( PreferenceOperation operation ){
         int index = operations.indexOf( operation );
         if( index < 0 ){
             operations.add( operation );
@@ -186,7 +197,11 @@ public class PreferenceTable extends JPanel{
         
         private JLabel label;
         private PreferenceEditor<V> editor;
-        private Map<PreferenceEditorOperation, Button> operations;
+        
+        private Map<PreferenceOperation, Button> editorOperations;
+        private Map<PreferenceOperation, Button> modelOperations;
+        
+        private boolean initialized = false;
         
         public Row( PreferenceEditor<V> editor, String label, String description ){
             this.editor = editor;
@@ -217,8 +232,24 @@ public class PreferenceTable extends JPanel{
                                 new Insets( 1, 1, 1, 1 ), 0, 0 ) );
             }
             
-            if( operations != null ){
-                for( Map.Entry<PreferenceEditorOperation, Button> entry : operations.entrySet() ){
+            if( !initialized ){
+                initialized = true;
+                initialize();
+            }
+            
+            if( modelOperations != null ){
+                for( Map.Entry<PreferenceOperation, Button> entry : modelOperations.entrySet() ){
+                    int location = 2 + getOperationIndex( entry.getKey() );
+                    
+                    layout.setConstraints( entry.getValue(),
+                            new GridBagConstraints( location, index, 1, 1, 1.0, 1.0,
+                                    GridBagConstraints.LINE_END, GridBagConstraints.NONE,
+                                    new Insets( 1, 0, 1, 0 ), 0, 0 ) );
+                }
+            }
+            
+            if( editorOperations != null ){
+                for( Map.Entry<PreferenceOperation, Button> entry : editorOperations.entrySet() ){
                     int location = 2 + getOperationIndex( entry.getKey() );
                     
                     layout.setConstraints( entry.getValue(),
@@ -231,14 +262,44 @@ public class PreferenceTable extends JPanel{
             revalidate();
         }
         
-        public void setOperation( final PreferenceEditorOperation operation, boolean enabled ) {
-            if( operations == null ){
-                operations = new HashMap<PreferenceEditorOperation, Button>();
+        public void setOperation( PreferenceOperation operation, boolean enabled ) {
+            setOperation( operation, enabled, true );
+        }
+        
+        @SuppressWarnings("unchecked")
+        private void initialize(){
+            PreferenceOperation[] operations = model.getOperations( index );
+            if( operations != null ){
+                for( PreferenceOperation operation : operations ){
+                    if( !editorOperations.containsKey( operation )){
+                        setOperation( operation, model.isEnabled( index, operation ), false );
+                    }
+                }
+            }
+            if( editor != null ){
+                editor.setValue( (V)model.getValue( index ) );
+            }
+        }
+        
+        private void setOperation( final PreferenceOperation operation, boolean enabled, final boolean editor ) {
+            Map<PreferenceOperation, Button> operations;
+            
+            if( editor ){
+                if( editorOperations == null ){
+                    editorOperations = new HashMap<PreferenceOperation, Button>();
+                }   
+                operations = editorOperations;
+            }
+            else{
+                if( modelOperations == null ){
+                    modelOperations = new HashMap<PreferenceOperation, Button>();
+                }   
+                operations = modelOperations;                
             }
             
             Button button = operations.get( operation );
             if( button == null ){
-                button = new Button( operation );
+                button = new Button( operation, editor );
                 operations.put( operation, button );
                 addTable( button );
                 
@@ -254,11 +315,18 @@ public class PreferenceTable extends JPanel{
             
             button.getModel().setEnabled( enabled );
         }
-        
+
         @SuppressWarnings("unchecked")
-        public void setValue( Object value ){
+        public void changed(){
             if( editor != null ){
-                editor.setValue( (V)value );
+                editor.setValue( (V)model.getValue( index ) );
+            }
+            
+            if( modelOperations != null ){
+                for( Map.Entry<PreferenceOperation, Button> entry : modelOperations.entrySet() ){
+                    boolean enabled = model.isEnabled( index, entry.getKey() );
+                    entry.getValue().getModel().setEnabled( enabled );
+                }
             }
         }
         
@@ -272,8 +340,13 @@ public class PreferenceTable extends JPanel{
                 editor.setValue( null );
                 removeTable( editor.getComponent() );
             }
-            if( operations != null ){
-                for( Button button : operations.values() ){
+            if( editorOperations != null ){
+                for( Button button : editorOperations.values() ){
+                    removeTable( button );
+                }
+            }
+            if( modelOperations != null ){
+                for( Button button : modelOperations.values() ){
                     removeTable( button );
                 }
             }
@@ -287,15 +360,22 @@ public class PreferenceTable extends JPanel{
             model.setValue( index, value );
         }
 
+        private void doOperation( PreferenceOperation operation ){
+            model.doOperation( index, operation );
+        }
+        
         /**
          * A small button that can trigger an operation 
          * @author Benjamin Sigg
          */
         private class Button extends BasicMiniButton{
-            public Button( final PreferenceEditorOperation operation ){
+            public Button( final PreferenceOperation operation, final boolean editorOperation ){
                 super( new BasicTrigger(){
                     public void triggered() {
-                        editor.doOperation( operation );
+                        if( editorOperation )
+                            editor.doOperation( operation );
+                        else
+                            doOperation( operation );
                     }
                 });
                 
@@ -327,7 +407,7 @@ public class PreferenceTable extends JPanel{
                 PreferenceEditor<?> editor = createEditor( model.getPreferenceClass( index ) );
                 Row<?> row = new Row( editor, model.getLabel( index ), model.getDescription( index ));
                 rows.add( index, row );
-                row.setValue( model.getValue( index ) );
+                row.setIndex( index );
             }
             
             for( int i = beginIndex, n = rows.size(); i<n; i++ ){
@@ -340,7 +420,7 @@ public class PreferenceTable extends JPanel{
         public void preferenceChanged( PreferenceModel model, int beginIndex, int endIndex ){
             for( int i = beginIndex; i <= endIndex; i++ ){
                 Row<?> row = rows.get( i );
-                row.setValue( model.getValue( i ));
+                row.changed();
             }
             
             revalidate();

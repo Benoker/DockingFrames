@@ -74,4 +74,16 @@ public abstract class AbstractPreference<V> implements Preference<V>{
     public void write() {
         // do nothing   
     }
+    
+    public boolean isEnabled( PreferenceOperation operation ) {
+        return false;
+    }
+    
+    public PreferenceOperation[] getOperations() {
+        return null;
+    }
+    
+    public void doOperation( PreferenceOperation operation ) {
+        // do nothing
+    }
 }

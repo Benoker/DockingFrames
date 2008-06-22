@@ -29,19 +29,20 @@ package bibliothek.gui;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.util.List;
 
+import javax.swing.*;
 import javax.swing.FocusManager;
-import javax.swing.LookAndFeel;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import javax.swing.UIManager;
 
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.DockElementRepresentative;
+import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.accept.MultiDockAcceptance;
 import bibliothek.gui.dock.action.*;
@@ -241,6 +242,18 @@ public class DockController {
         
         relocator.addMode( DockRelocatorMode.SCREEN_ONLY );
         relocator.addMode( DockRelocatorMode.NO_COMBINATION );
+        
+        // set properties here, allows the keys not to have a default value and
+        // allows to have the properties present
+        properties.set( SplitDockStation.MAXIMIZE_ACCELERATOR,
+                KeyStroke.getKeyStroke( KeyEvent.VK_M, InputEvent.CTRL_DOWN_MASK ) );
+        
+        properties.set( DockFrontend.HIDE_ACCELERATOR,
+                KeyStroke.getKeyStroke( KeyEvent.VK_F4, InputEvent.CTRL_DOWN_MASK ) );
+        
+        properties.set( DockableSelector.INIT_SELECTION, 
+                KeyStroke.getKeyStroke( KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK ) );
+        
         
         setSingleParentRemover( factory.createSingleParentRemover( this, setup ) );
         

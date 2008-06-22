@@ -90,10 +90,12 @@ public class DockPropertyPreference<V> extends DefaultPreference<V> {
      * @param properties the properties from which this preference reads its values
      * and to which it writes its values
      * @param key the key of the value this preference reads from a {@link DockProperties}.
+     * @param defaultValue the initial value of this preference
      * @param type the type of values used in this preference
      */
-    public DockPropertyPreference( ResourceBundle bundle, String prefix, DockProperties properties, PropertyKey<V> key, Class<V> type ){
+    public DockPropertyPreference( ResourceBundle bundle, String prefix, DockProperties properties, PropertyKey<V> key, V defaultValue, Class<V> type ){
         this( properties, key, type );
+        setDefaultValue( defaultValue );
         
         try{
             setLabel( bundle.getString( prefix + ".label" ) );

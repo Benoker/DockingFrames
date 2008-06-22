@@ -63,5 +63,5 @@ public interface PreferenceEditor<V> {
      * nothing if <code>operation</code> is unknown.
      * @param operation the operation that was triggered
      */
-    public void doOperation( PreferenceEditorOperation operation );
+    public void doOperation( PreferenceOperation operation );
 }

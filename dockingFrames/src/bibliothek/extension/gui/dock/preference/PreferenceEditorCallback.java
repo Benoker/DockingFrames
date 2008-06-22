@@ -51,5 +51,5 @@ public interface PreferenceEditorCallback<V> {
      * @param operation the key of the action
      * @param enabled whether the operation is available right now 
      */
-    public void setOperation( PreferenceEditorOperation operation, boolean enabled );
+    public void setOperation( PreferenceOperation operation, boolean enabled );
 }

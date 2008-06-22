@@ -27,7 +27,6 @@
 package bibliothek.gui.dock;
 
 import java.awt.*;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -80,8 +79,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      * selected {@link Dockable}. 
      */
     public static final PropertyKey<KeyStroke> MAXIMIZE_ACCELERATOR =
-    	new PropertyKey<KeyStroke>( "SplitDockStation maximize accelerator", 
-    			KeyStroke.getKeyStroke( KeyEvent.VK_M, InputEvent.CTRL_DOWN_MASK ));
+    	new PropertyKey<KeyStroke>( "SplitDockStation maximize accelerator" );
     
     /**
      * Defines the behavior of a {@link DockStation}, how to react on a

@@ -44,6 +44,26 @@ public interface Preference<V> {
     public void write();
     
     /**
+     * Tells whether <code>operation</code> is enabled and thus {@link #doOperation(PreferenceOperation)}
+     * can be called.
+     * @param operation some operation of {@link #getOperations()}
+     * @return <code>true</code> if the operation can be executed
+     */
+    public boolean isEnabled( PreferenceOperation operation );
+    
+    /**
+     * Gets a list of operations which can be executed by this preference.
+     * @return the list of operations (enabled and disabled operations)
+     */
+    public PreferenceOperation[] getOperations();
+    
+    /**
+     * Executes the enabled operation <code>operation</code>
+     * @param operation the key of the operation
+     */
+    public void doOperation( PreferenceOperation operation );
+    
+    /**
      * Adds a listener to this preference.
      * @param listener the new listener
      */

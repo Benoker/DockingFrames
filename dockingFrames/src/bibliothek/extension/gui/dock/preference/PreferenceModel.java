@@ -79,6 +79,34 @@ public interface PreferenceModel {
     public String getDescription( int index );
     
     /**
+     * Tells whether the operation <code>operation</code> is enabled for
+     * the preference at location <code>index</code>.
+     * @param index some location
+     * @param operation an operation from {@link #getOperations(int)}
+     * @return <code>true</code> if the operation is enabled, <code>false</code>
+     * if not
+     */
+    public boolean isEnabled( int index, PreferenceOperation operation );
+    
+    /**
+     * Gets all operations for which this model has a definition for
+     * the preference at location <code>index</code>. Note: a {@link PreferenceEditor}
+     * has operations as well, if the editor and the model share an operation,
+     * then the operation is considered to belong to the editor.
+     * @param index the location of a preference
+     * @return the list of available operations (enabled and disabled operations),
+     * can be <code>null</code>
+     */
+    public PreferenceOperation[] getOperations( int index );
+    
+    /**
+     * Executes the enabled operation <code>operation</code>.
+     * @param index the location of the affected preference
+     * @param operation the operation to execute
+     */
+    public void doOperation( int index, PreferenceOperation operation );
+    
+    /**
      * Gets the <code>index</code>'th preference. The type of the result of
      * this method should be a subtype of {@link #getPreferenceClass(int)}. It
      * depends on the type whether <code>null</code> is valid.

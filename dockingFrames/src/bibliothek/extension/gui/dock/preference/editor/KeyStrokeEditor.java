@@ -37,7 +37,7 @@ import javax.swing.KeyStroke;
 import bibliothek.extension.gui.dock.preference.PreferenceEditor;
 import bibliothek.extension.gui.dock.preference.PreferenceEditorCallback;
 import bibliothek.extension.gui.dock.preference.PreferenceEditorFactory;
-import bibliothek.extension.gui.dock.preference.PreferenceEditorOperation;
+import bibliothek.extension.gui.dock.preference.PreferenceOperation;
 import bibliothek.gui.DockUI;
 
 /**
@@ -163,7 +163,7 @@ public class KeyStrokeEditor extends JTextField implements PreferenceEditor<KeyS
     public void setCallback( PreferenceEditorCallback<KeyStroke> callback ) {
         this.callback = callback;
         if( callback != null ){
-            callback.setOperation( PreferenceEditorOperation.DELETE, stroke != null );
+            callback.setOperation( PreferenceOperation.DELETE, stroke != null );
         }
     }
 
@@ -182,12 +182,12 @@ public class KeyStrokeEditor extends JTextField implements PreferenceEditor<KeyS
         }
         
         if( callback != null ){
-            callback.setOperation( PreferenceEditorOperation.DELETE, stroke != null );
+            callback.setOperation( PreferenceOperation.DELETE, stroke != null );
         }
     }
 
-    public void doOperation( PreferenceEditorOperation operation ) {
-        if( operation == PreferenceEditorOperation.DELETE ){
+    public void doOperation( PreferenceOperation operation ) {
+        if( operation == PreferenceOperation.DELETE ){
             setValue( null );
             if( callback != null ){
                 callback.set( null );

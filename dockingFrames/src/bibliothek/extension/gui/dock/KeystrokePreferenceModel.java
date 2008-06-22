@@ -25,6 +25,9 @@
  */
 package bibliothek.extension.gui.dock;
 
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
@@ -67,17 +70,23 @@ public class KeystrokePreferenceModel extends DefaultPreferenceModel{
         if( properties == null )
             throw new IllegalArgumentException( "properties must not be null" );
         
-        add( keystroke( "init_selection", DockableSelector.INIT_SELECTION, properties ) );
-        add( keystroke( "maximize_accelerator", SplitDockStation.MAXIMIZE_ACCELERATOR, properties ) );
-        add( keystroke( "hide_accelerator", DockFrontend.HIDE_ACCELERATOR, properties ) );
+        add( keystroke( "init_selection", DockableSelector.INIT_SELECTION, properties,
+                KeyStroke.getKeyStroke( KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK ) ) );
+        
+        add( keystroke( "maximize_accelerator", SplitDockStation.MAXIMIZE_ACCELERATOR, properties,
+                KeyStroke.getKeyStroke( KeyEvent.VK_M, InputEvent.CTRL_DOWN_MASK ) ) );
+        
+        add( keystroke( "hide_accelerator", DockFrontend.HIDE_ACCELERATOR, properties,
+                KeyStroke.getKeyStroke( KeyEvent.VK_F4, InputEvent.CTRL_DOWN_MASK ) ) );
     }
     
-    private Preference<KeyStroke> keystroke( String prefix, PropertyKey<KeyStroke> key, DockProperties properties ){
+    private Preference<KeyStroke> keystroke( String prefix, PropertyKey<KeyStroke> key, DockProperties properties, KeyStroke defaultValue ){
         return new DockPropertyPreference<KeyStroke>(
                 DockUI.getDefaultDockUI().getBundle(),
                 "preference." + prefix, 
                 properties,
                 key,
+                defaultValue,
                 KeyStroke.class );
     }
 }

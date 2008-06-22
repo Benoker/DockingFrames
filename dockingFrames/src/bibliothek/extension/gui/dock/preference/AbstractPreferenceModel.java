@@ -46,6 +46,18 @@ public abstract class AbstractPreferenceModel implements PreferenceModel{
         // do nothing
     }
     
+    public boolean isEnabled( int index, PreferenceOperation operation ) {
+        return false;
+    }
+    
+    public PreferenceOperation[] getOperations( int index ) {
+        return null;
+    }
+    
+    public void doOperation( int index, PreferenceOperation operation ) {
+        // do nothing
+    }
+    
     public void addModelListener( PreferenceModelListener listener ) {
         if( listener == null )
             throw new IllegalArgumentException( "listener must not be null" );

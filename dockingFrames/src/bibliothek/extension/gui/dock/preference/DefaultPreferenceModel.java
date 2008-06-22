@@ -168,6 +168,21 @@ public class DefaultPreferenceModel extends AbstractPreferenceModel{
         }
     }
     
+    @Override
+    public PreferenceOperation[] getOperations( int index ) {
+        return entries.get( index ).getPreference().getOperations();
+    }
+    
+    @Override
+    public boolean isEnabled( int index, PreferenceOperation operation ) {
+        return entries.get( index ).getPreference().isEnabled( operation );
+    }
+    
+    @Override
+    public void doOperation( int index, PreferenceOperation operation ) {
+        entries.get( index ).getPreference().doOperation( operation );
+    }
+    
     /**
      * A single preference in this model.
      * @author Benjamin Sigg

@@ -37,6 +37,8 @@ public class DefaultPreference<V> extends AbstractPreference<V>{
     
     private String label;
     private String description;
+
+    private V defaultValue;
     
     /**
      * Creates a new preference.
@@ -100,6 +102,54 @@ public class DefaultPreference<V> extends AbstractPreference<V>{
         if( this.value != value ){
             this.value = value;
             fireChanged();
+        }
+    }
+
+    /**
+     * Sets the default value of this preference
+     * @param defaultValue the new default value
+     */
+    public void setDefaultValue( V defaultValue ) {
+        this.defaultValue = defaultValue;
+        fireChanged();
+    }
+    
+    /**
+     * Gets the default value of this preference
+     * @return the default value, might be <code>null</code>
+     */
+    public V getDefaultValue() {
+        return defaultValue;
+    }
+
+    @Override
+    public PreferenceOperation[] getOperations() {
+        if( defaultValue == null )
+            return null;
+        else
+            return new PreferenceOperation[]{ PreferenceOperation.DEFAULT };
+    }
+    
+    @Override
+    public boolean isEnabled( PreferenceOperation operation ) {
+        if( operation == PreferenceOperation.DEFAULT ){
+            if( defaultValue == null )
+                return false;
+            
+            return !defaultValue.equals( getValue() );
+        }
+        return false;
+    }
+    
+    @Override
+    public void doOperation( PreferenceOperation operation ) {
+        if( operation == PreferenceOperation.DEFAULT ){
+            if( defaultValue != null ){
+                setValue( defaultValue );
+            }
+        }
+        else{
+            super.doOperation( operation );
         }
     }
 }
