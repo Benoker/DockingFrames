@@ -37,11 +37,11 @@ import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.KeyStroke;
 import javax.swing.border.EtchedBorder;
 
 import bibliothek.extension.gui.dock.preference.*;
 import bibliothek.extension.gui.dock.preference.editor.KeyStrokeEditor;
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
 import bibliothek.gui.dock.themes.basic.action.buttons.BasicMiniButton;
 
@@ -52,7 +52,7 @@ import bibliothek.gui.dock.themes.basic.action.buttons.BasicMiniButton;
  */
 public class PreferenceTable extends JPanel{
     /** The factories that are available. */
-    private Map<Class<?>, PreferenceEditorFactory<?>> factories = new HashMap<Class<?>, PreferenceEditorFactory<?>>();
+    private Map<Path, PreferenceEditorFactory<?>> factories = new HashMap<Path, PreferenceEditorFactory<?>>();
     
     /** the preferences that are shown in this table */
     private PreferenceModel model;
@@ -82,7 +82,7 @@ public class PreferenceTable extends JPanel{
         add( panel, new GridBagConstraints( 0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.FIRST_LINE_START,
                 GridBagConstraints.HORIZONTAL, new Insets( 0, 0, 0, 0 ), 0, 0 ));
         
-        setEditorFactory( KeyStroke.class, KeyStrokeEditor.FACTORY );
+        setEditorFactory( Path.TYPE_KEYSTROKE_PATH, KeyStrokeEditor.FACTORY );
         
         operations.add( PreferenceOperation.DELETE );
         operations.add( PreferenceOperation.DEFAULT );
@@ -139,23 +139,24 @@ public class PreferenceTable extends JPanel{
      */
     public void setModel( PreferenceModel model ) {
         if( this.model != null ){
-            this.model.removeModelListener( listener );
+            this.model.removePreferenceModelListener( listener );
             listener.preferenceRemoved( this.model, 0, this.model.getSize()-1 );
         }
         this.model = model;
         if( this.model != null ){
-            this.model.addModelListener( listener );
+            this.model.addPreferenceModelListener( listener );
             listener.preferenceAdded( this.model, 0, this.model.getSize()-1 );
         }
     }
     
     /**
      * Sets the kind of factory that should be used to edit some type of object.
-     * @param <V> the kind of object that will be edited
-     * @param type the kind of object that will be edited
+     * @param type a path describing the type that will be edited, most
+     * times the path is just the name of some class. There is a set of 
+     * standard paths defined in {@link Path}
      * @param factory the new factory or <code>null</code> to delete a factory
      */
-    public <V> void setEditorFactory( Class<V> type, PreferenceEditorFactory<V> factory ){
+    public void setEditorFactory( Path type, PreferenceEditorFactory<?> factory ){
         if( factory == null )
             factories.remove( type );
         else
@@ -170,7 +171,7 @@ public class PreferenceTable extends JPanel{
      * @return the factory for <code>type</code> or <code>null</code>
      */
     @SuppressWarnings("unchecked")
-    public <V> PreferenceEditorFactory<V> getEditorFactory( Class<V> type ){
+    public <V> PreferenceEditorFactory<V> getEditorFactory( Path type ){
         return (PreferenceEditorFactory<V>)factories.get( type );
     }
     
@@ -181,7 +182,7 @@ public class PreferenceTable extends JPanel{
      * @return a new editor
      */
     @SuppressWarnings("unchecked")
-    protected <V> PreferenceEditor<V> createEditor( Class<V> type ){
+    protected <V> PreferenceEditor<V> createEditor( Path type ){
         PreferenceEditorFactory<?> factory = factories.get( type );
         return (PreferenceEditor<V>)factory.create();
     }
@@ -404,7 +405,7 @@ public class PreferenceTable extends JPanel{
         @SuppressWarnings("unchecked")
         public void preferenceAdded( PreferenceModel model, int beginIndex, int endIndex ){
             for( int index = beginIndex; index <= endIndex; index++ ){
-                PreferenceEditor<?> editor = createEditor( model.getPreferenceClass( index ) );
+                PreferenceEditor<?> editor = createEditor( model.getTypePath( index ) );
                 Row<?> row = new Row( editor, model.getLabel( index ), model.getDescription( index ));
                 rows.add( index, row );
                 row.setIndex( index );

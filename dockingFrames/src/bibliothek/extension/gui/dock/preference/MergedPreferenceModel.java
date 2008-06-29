@@ -28,12 +28,14 @@ package bibliothek.extension.gui.dock.preference;
 import java.util.ArrayList;
 import java.util.List;
 
+import bibliothek.extension.gui.dock.util.Path;
+
 /**
  * A preference model that envelops other models and uses their preferences.
  * @author Benjamin Sigg
  */
 public class MergedPreferenceModel extends AbstractPreferenceModel{
-    private List<PreferenceModel> models = new ArrayList<PreferenceModel>();
+    private List<Model> models = new ArrayList<Model>();
     
     private PreferenceModelListener listener = new PreferenceModelListener(){
         public void preferenceAdded( PreferenceModel model, int beginIndex, int endIndex ){
@@ -58,33 +60,46 @@ public class MergedPreferenceModel extends AbstractPreferenceModel{
     /**
      * Adds <code>model</code> at the end of this model.
      * @param model the additional model
+     * @param path the location of the new model
+     * @see #insert(int, PreferenceModel, Path)
      */
-    public void add( PreferenceModel model ){
-        insert( models.size(), model );
+    public void add( PreferenceModel model, Path path ){
+        insert( models.size(), model, path );
     }
     
     /**
      * Inserts a new submodel into this model.
      * @param index the location of the new model
      * @param model the new model
+     * @param path the path of the new model, the path must be unique compared
+     * to the paths of any other model.
      */
-    public void insert( int index, PreferenceModel model ){
+    public void insert( int index, PreferenceModel model, Path path ){
         if( this == model )
             throw new IllegalArgumentException( "model must not be this" );
         
-        if( models.contains( model ))
-            throw new IllegalArgumentException( "can't add a model twice" );
+        for( Model check : models ){
+            if( check.model == model )
+                throw new IllegalArgumentException( "can't add a model twice" );
+            
+            if( check.path.equals( path ))
+                throw new IllegalArgumentException( "there is already a model with the path " + path );
+        }
         
-        models.add( index, model );
+        Model insert = new Model();
+        insert.model = model;
+        insert.path = path;
+        
+        models.add( index, insert );
         if( hasListeners() )
-            model.addModelListener( listener );
+            model.addPreferenceModelListener( listener );
         
         int size = model.getSize();
 
         if( size > 0 ){
             int begin = 0;
             for( int i = 0; i < index; i++ ){
-                begin += models.get( i ).getSize();
+                begin += models.get( i ).model.getSize();
             }
             firePreferenceAdded( begin, begin+size-1 );
         }
@@ -95,15 +110,15 @@ public class MergedPreferenceModel extends AbstractPreferenceModel{
      * @param index the location of a child
      */
     public void remove( int index ){
-        PreferenceModel model = models.remove( index );
+        Model model = models.remove( index );
         if( hasListeners() )
-            model.removeModelListener( listener );
+            model.model.removePreferenceModelListener( listener );
         
-        int size = model.getSize();
+        int size = model.model.getSize();
         if( size > 0 ){
             int begin = 0;
             for( int i = 0; i < index; i++ ){
-                begin += models.get( i ).getSize();
+                begin += models.get( i ).model.getSize();
             }
             firePreferenceRemoved( begin, begin+size-1 );
         }
@@ -120,13 +135,23 @@ public class MergedPreferenceModel extends AbstractPreferenceModel{
     }
     
     /**
+     * Removes the model with the path <code>path</code>.
+     * @param path some path
+     */
+    public void remove( Path path ){
+        int index = indexOf( path );
+        if( index >= 0 )
+            remove( index );        
+    }
+    
+    /**
      * Removes all children from this model.
      */
     public void clear(){
         int size = getSize();
         if( hasListeners() ){
-            for( PreferenceModel model : models ){
-                model.removeModelListener( listener );
+            for( Model model : models ){
+                model.model.removePreferenceModelListener( listener );
             }
         }
         models.clear();
@@ -141,7 +166,32 @@ public class MergedPreferenceModel extends AbstractPreferenceModel{
      * @return the index or -1 if not found
      */
     public int indexOf( PreferenceModel model ){
-        return models.indexOf( model );
+        int i = 0;
+        for( Model check : models ){
+            if( check.model == model )
+                return i;
+            
+            i++;
+        }
+        
+        return -1;
+    }
+    
+    /**
+     * Gets the index of <code>path</code>.
+     * @param path the path of some model
+     * @return the index or -1 if not found
+     */
+    public int indexOf( Path path ){
+        int i = 0;
+        for( Model check : models ){
+            if( check.path.equals( path ) )
+                return i;
+            
+            i++;
+        }
+        
+        return -1;
     }
     
     /**
@@ -150,35 +200,49 @@ public class MergedPreferenceModel extends AbstractPreferenceModel{
      * @return a child of this model
      */
     public PreferenceModel getModel( int index ){
-        return models.get( index );
+        return models.get( index ).model;
     }
     
     @Override
-    public void addModelListener( PreferenceModelListener listener ) {
+    public void read() {
+        for( Model model : models ){
+            model.model.read();
+        }
+    }
+    
+    @Override
+    public void write() {
+        for( Model model : models ){
+            model.model.write();
+        }
+    }
+    
+    @Override
+    public void addPreferenceModelListener( PreferenceModelListener listener ) {
         boolean hadListeners = hasListeners();
-        super.addModelListener( listener );
+        super.addPreferenceModelListener( listener );
         if( hasListeners() && !hadListeners ){
-            for( PreferenceModel model : models ){
-                model.addModelListener( this.listener );
+            for( Model model : models ){
+                model.model.addPreferenceModelListener( this.listener );
             }
         }
     }
     
     @Override
-    public void removeModelListener( PreferenceModelListener listener ) {
+    public void removePreferenceModelListener( PreferenceModelListener listener ) {
         boolean hadListeners = hasListeners();
-        super.removeModelListener( listener );
+        super.removePreferenceModelListener( listener );
         if( !hasListeners() && hadListeners ){
-            for( PreferenceModel model : models ){
-                model.removeModelListener( this.listener );
+            for( Model model : models ){
+                model.model.removePreferenceModelListener( this.listener );
             }
         }
     }
     
     public int getSize() {
         int size = 0;
-        for( PreferenceModel model : models ){
-            size += model.getSize();
+        for( Model model : models ){
+            size += model.model.getSize();
         }
         return size;
     }
@@ -188,7 +252,7 @@ public class MergedPreferenceModel extends AbstractPreferenceModel{
         if( local == null )
             throw new ArrayIndexOutOfBoundsException( index );
         
-        return local.model.getLabel( local.index );
+        return local.model.model.getLabel( local.index );
     }
     
     @Override
@@ -197,7 +261,7 @@ public class MergedPreferenceModel extends AbstractPreferenceModel{
         if( local == null )
             throw new ArrayIndexOutOfBoundsException( index );
         
-        return local.model.getDescription( local.index );
+        return local.model.model.getDescription( local.index );
     }
     
     public Object getValue( int index ) {
@@ -205,7 +269,7 @@ public class MergedPreferenceModel extends AbstractPreferenceModel{
         if( local == null )
             throw new ArrayIndexOutOfBoundsException( index );
         
-        return local.model.getValue( local.index );
+        return local.model.model.getValue( local.index );
     }
     
     public void setValue( int index, Object value ) {
@@ -213,16 +277,23 @@ public class MergedPreferenceModel extends AbstractPreferenceModel{
         if( local == null )
             throw new ArrayIndexOutOfBoundsException( index );
         
-        local.model.setValue( local.index, value );
+        local.model.model.setValue( local.index, value );
     }
     
-    @Override
-    public Class<?> getPreferenceClass( int index ) {
+    public Path getTypePath( int index ) {
         Index local = indexAt( index );
         if( local == null )
             throw new ArrayIndexOutOfBoundsException( index );
         
-        return local.model.getPreferenceClass( local.index );
+        return local.model.model.getTypePath( local.index );
+    }
+    
+    public Path getPath( int index ) {
+        Index local = indexAt( index );
+        if( local == null )
+            throw new ArrayIndexOutOfBoundsException( index );
+     
+        return local.model.path.uniqueAppend( local.model.model.getPath( local.index ) );
     }
     
     /**
@@ -232,8 +303,8 @@ public class MergedPreferenceModel extends AbstractPreferenceModel{
      * @return the local index
      */
     protected Index indexAt( int globalIndex ){
-        for( PreferenceModel model : models ){
-            int size = model.getSize();
+        for( Model model : models ){
+            int size = model.model.getSize();
             if( globalIndex < size )
                 return new Index( model, globalIndex );
             else
@@ -249,11 +320,11 @@ public class MergedPreferenceModel extends AbstractPreferenceModel{
      * @return the global index
      */
     protected int indexAt( PreferenceModel model, int index ){
-        for( PreferenceModel check : models ){
-            if( check == model )
+        for( Model check : models ){
+            if( check.model == model )
                 return index;
             
-            index += check.getSize();
+            index += check.model.getSize();
         }
         
         return index;
@@ -264,12 +335,21 @@ public class MergedPreferenceModel extends AbstractPreferenceModel{
      * @author Benjamin Sigg
      */
     protected static class Index{
-        public PreferenceModel model;
+        public Model model;
         public int index;
         
-        public Index( PreferenceModel model, int index ){
+        public Index( Model model, int index ){
             this.model = model;
             this.index = index;
         }
+    }
+    
+    /**
+     * A sub-model entry of a {@link MergedPreferenceModel}.
+     * @author Benjamin Sigg
+     */
+    private static class Model{
+        public PreferenceModel model;
+        public Path path;
     }
 }

@@ -28,6 +28,8 @@ package bibliothek.extension.gui.dock.preference;
 import java.util.ArrayList;
 import java.util.List;
 
+import bibliothek.extension.gui.dock.util.Path;
+
 /**
  * An implementation of {@link PreferenceModel} using {@link Preference}s to
  * describe its entries.
@@ -58,14 +60,17 @@ public class DefaultPreferenceModel extends AbstractPreferenceModel{
         ((Preference)getPreference( index )).setValue( value );
     }
     
-    @Override
-    public Class<?> getPreferenceClass( int index ) {
-        return getPreference( index ).getPreferenceClass();
+    public Path getTypePath( int index ) {
+        return getPreference( index ).getTypePath();
+    }
+    
+    public Path getPath( int index ) {
+        return getPreference( index ).getPath();
     }
     
     /**
      * Gets the preference of location <code>index</code>.
-     * @param index the locatio nof the preference
+     * @param index the location of the preference
      * @return the preference
      */
     public Preference<?> getPreference( int index ){
@@ -93,6 +98,12 @@ public class DefaultPreferenceModel extends AbstractPreferenceModel{
         if( index < 0 || index > entries.size() )
             throw new ArrayIndexOutOfBoundsException( index );
 
+        Path path = preference.getPath();
+        for( Entry<?> entry : entries ){
+            if( entry.getPreference().getPath().equals( path ))
+                throw new IllegalArgumentException( "there is already a preference with path " + path );
+        }
+        
         Entry<?> entry = new Entry( preference, index );
         entries.add( index, entry );
         for( int i = index+1, n = entries.size(); i<n; i++ ){

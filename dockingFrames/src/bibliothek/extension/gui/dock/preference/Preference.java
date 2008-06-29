@@ -25,6 +25,8 @@
  */
 package bibliothek.extension.gui.dock.preference;
 
+import bibliothek.extension.gui.dock.util.Path;
+
 /**
  * A representation of a single entry in a {@link DefaultPreferenceModel}.
  * @author Benjamin Sigg
@@ -102,8 +104,19 @@ public interface Preference<V> {
     public void setValue( V value );
     
     /**
-     * Gets the type of the value that this preferences uses.
+     * Gets the type of the value that this preferences uses. The path
+     * normally is just the name of some class. There is a set of
+     * standard paths defined in {@link Path}
      * @return the type of value
      */
-    public Class<V> getPreferenceClass();
+    public Path getTypePath();
+    
+    /**
+     * Gets the unique path of this resource. The path has to be unique within
+     * the model which uses this preference. Paths whose first segment is "dock"
+     * are reserved for this framework. Clients may use any path not starting
+     * with "dock".
+     * @return the unique path
+     */
+    public Path getPath();
 }

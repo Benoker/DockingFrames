@@ -25,6 +25,8 @@
  */
 package bibliothek.extension.gui.dock.preference;
 
+import bibliothek.extension.gui.dock.util.Path;
+
 /**
  * A preference model is a list of objects which represent some preferences
  * of another resource. A preference model has enough information to be displayed
@@ -47,13 +49,13 @@ public interface PreferenceModel {
      * Adds a listener to this model.
      * @param listener the new listener
      */
-    public void addModelListener( PreferenceModelListener listener );
+    public void addPreferenceModelListener( PreferenceModelListener listener );
     
     /**
      * Removes a listener from this model.
      * @param listener the listener to remove.
      */
-    public void removeModelListener( PreferenceModelListener listener );
+    public void removePreferenceModelListener( PreferenceModelListener listener );
     
     /**
      * Gets the number of preferences stored in this model.
@@ -107,11 +109,10 @@ public interface PreferenceModel {
     public void doOperation( int index, PreferenceOperation operation );
     
     /**
-     * Gets the <code>index</code>'th preference. The type of the result of
-     * this method should be a subtype of {@link #getPreferenceClass(int)}. It
-     * depends on the type whether <code>null</code> is valid.
+     * Gets the <code>index</code>'th preference. The {@link #getTypePath(int) type path}
+     * determines how the value is to be presented on the screen.
      * @param index the number of the preference
-     * @return the value or maybe <code>null</code>
+     * @return the value or maybe <code>null</code>, has to be immutable
      */
     public Object getValue( int index );
     
@@ -123,9 +124,20 @@ public interface PreferenceModel {
     public void setValue( int index, Object value );
     
     /**
-     * Tells what kind of value the <code>index</code>'th preference requires.
+     * Tells what kind of type the <code>index</code>'th value is. The type
+     * is represented as a path. Most times the path would equal the name of
+     * some class. Note: there is a set of standard paths defined in {@link Path}.
      * @param index the number of the value
-     * @return the class, not <code>null</code>
+     * @return a unique path for the type of this value
      */
-    public Class<?> getPreferenceClass( int index );
+    public Path getTypePath( int index );
+    
+    /**
+     * Gets the unique location of the <code>index</code>'th preference of
+     * this model.
+     * @param index the index of the preference
+     * @return the unique path, compared to the other paths of this model, 
+     * to the preference
+     */
+    public Path getPath( int index );
 }

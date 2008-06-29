@@ -25,6 +25,8 @@
  */
 package bibliothek.extension.gui.dock.preference;
 
+import bibliothek.extension.gui.dock.util.Path;
+
 /**
  * A generic {@link Preference} that can hold any value.
  * @author Benjamin Sigg
@@ -33,34 +35,43 @@ package bibliothek.extension.gui.dock.preference;
  */
 public class DefaultPreference<V> extends AbstractPreference<V>{
     private V value;
-    private Class<V> type;
+    private Path type;
     
     private String label;
     private String description;
 
     private V defaultValue;
+    private Path path;
     
     /**
      * Creates a new preference.
      * @param type the type of value this preference uses
+     * @param path a unique path for this preference, all paths starting with
+     * "dock" are reserved for this framework
      */
-    public DefaultPreference( Class<V> type ){
+    public DefaultPreference( Path type, Path path ){
         if( type == null )
             throw new IllegalArgumentException( "type must not be null" );
         
+        if( path == null )
+            throw new IllegalArgumentException( "path must not be null" );
+        
+        if( path.getSegmentCount() == 0 )
+            throw new IllegalArgumentException( "the root path is not a valid path for a preference" );          
+        
         this.type = type;
+        this.path = path;
     }
     
     /**
      * Creates a new preference.
-     * @param label a shurt human readable label for this preference
+     * @param label a short human readable label for this preference
      * @param type the type of value this preference uses
+     * @param path a unique path for this preference, all paths starting with
+     * "dock" are reserved for this framework
      */
-    public DefaultPreference( String label, Class<V> type ){
-        if( type == null )
-            throw new IllegalArgumentException( "type must not be null" );
-        
-        this.type = type;
+    public DefaultPreference( String label, Path type, Path path ){
+        this( type, path );
         setLabel( label );
     }
     
@@ -90,7 +101,7 @@ public class DefaultPreference<V> extends AbstractPreference<V>{
         this.description = description;
     }
     
-    public Class<V> getPreferenceClass() {
+    public Path getTypePath() {
         return type;
     }
     
@@ -122,6 +133,10 @@ public class DefaultPreference<V> extends AbstractPreference<V>{
         return defaultValue;
     }
 
+    public Path getPath() {
+        return path;
+    }
+    
     @Override
     public PreferenceOperation[] getOperations() {
         if( defaultValue == null )

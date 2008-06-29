@@ -236,6 +236,15 @@ public class XElement extends XContainer implements Iterable<XElement>{
     }
     
     /**
+     * Tells whether the attribute <code>name</code> exists.
+     * @param name the name to search
+     * @return <code>true</code> if such an attribute exists
+     */
+    public boolean attributeExists( String name ){
+        return getAttribute( name ) != null;
+    }
+    
+    /**
      * Searches an attribute with the given name.
      * @param name the name of the attribute
      * @return the attribute

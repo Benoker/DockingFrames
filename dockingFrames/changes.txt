@@ -175,3 +175,5 @@
 - Bugfix: when opening a CDockable that would stack on another CDockable which was maximized, the layout could get scrambled.
 - Layout: Closing a maximized CDockable will not normalize other maximized Dockables
 - API, Layout: Clicking on the "close-action" in common and calling "setVisible( false )" will now have the exact same effects.
+
+- API: new preferences package, includes new MenuPieces

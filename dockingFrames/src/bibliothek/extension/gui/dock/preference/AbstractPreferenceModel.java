@@ -58,13 +58,13 @@ public abstract class AbstractPreferenceModel implements PreferenceModel{
         // do nothing
     }
     
-    public void addModelListener( PreferenceModelListener listener ) {
+    public void addPreferenceModelListener( PreferenceModelListener listener ) {
         if( listener == null )
             throw new IllegalArgumentException( "listener must not be null" );
         listeners.add( listener );
     }
     
-    public void removeModelListener( PreferenceModelListener listener ) {
+    public void removePreferenceModelListener( PreferenceModelListener listener ) {
         listeners.remove( listener );
     }
     
@@ -119,9 +119,5 @@ public abstract class AbstractPreferenceModel implements PreferenceModel{
     
     public String getDescription( int index ) {
         return null;
-    }
-    
-    public Class<?> getPreferenceClass( int index ) {
-        return Object.class;
     }
 }

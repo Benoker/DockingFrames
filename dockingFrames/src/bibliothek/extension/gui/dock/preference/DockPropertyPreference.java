@@ -28,6 +28,7 @@ package bibliothek.extension.gui.dock.preference;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyKey;
 
@@ -48,9 +49,10 @@ public class DockPropertyPreference<V> extends DefaultPreference<V> {
      * and to which it writes its values
      * @param key the key of the value this preference reads from a {@link DockProperties}.
      * @param type the type of values used in this preference
+     * @param path the unique path of this preference
      */
-    public DockPropertyPreference( DockProperties properties, PropertyKey<V> key, Class<V> type ){
-        super( type );
+    public DockPropertyPreference( DockProperties properties, PropertyKey<V> key, Path type, Path path ){
+        super( type, path );
         if( key == null )
             throw new IllegalArgumentException( "key must not be null" );
         
@@ -68,9 +70,10 @@ public class DockPropertyPreference<V> extends DefaultPreference<V> {
      * @param key the key of the value this preference reads from a {@link DockProperties}.
      * @param label the text associated with this preference
      * @param type the type of values used in this preference
+     * @param path the unique path of this preference
      */
-    public DockPropertyPreference( DockProperties properties, PropertyKey<V> key, String label, Class<V> type ){
-        super( label, type );
+    public DockPropertyPreference( DockProperties properties, PropertyKey<V> key, String label, Path type, Path path ){
+        super( label, type, path );
         if( key == null )
             throw new IllegalArgumentException( "key must not be null" );
         
@@ -92,9 +95,10 @@ public class DockPropertyPreference<V> extends DefaultPreference<V> {
      * @param key the key of the value this preference reads from a {@link DockProperties}.
      * @param defaultValue the initial value of this preference
      * @param type the type of values used in this preference
+     * @param path the unique path of this preference
      */
-    public DockPropertyPreference( ResourceBundle bundle, String prefix, DockProperties properties, PropertyKey<V> key, V defaultValue, Class<V> type ){
-        this( properties, key, type );
+    public DockPropertyPreference( ResourceBundle bundle, String prefix, DockProperties properties, PropertyKey<V> key, V defaultValue, Path type, Path path ){
+        this( properties, key, type, path );
         setDefaultValue( defaultValue );
         
         try{
