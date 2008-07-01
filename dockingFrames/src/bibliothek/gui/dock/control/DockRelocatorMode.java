@@ -47,8 +47,7 @@ public interface DockRelocatorMode {
     /** the modifiers that must be pressed to activate the {@link #SCREEN_ONLY} relocator mode */
     public static final PropertyKey<ModifierMask> SCREEN_MASK = 
         new PropertyKey<ModifierMask>( "DockRelocatorMode screen mask", 
-                new SimpleModifierMask(InputEvent.SHIFT_DOWN_MASK,
-                        InputEvent.ALT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_GRAPH_DOWN_MASK ));
+                new ModifierMask(InputEvent.SHIFT_DOWN_MASK ));
     
     /**
      * Ensures that a {@link Dockable} can be dragged only onto a {@link ScreenDockStation}.
@@ -73,8 +72,7 @@ public interface DockRelocatorMode {
     /** the modifiers that must be pressed to activate the {@link #NO_COMBINATION} relocator mode */
     public static final PropertyKey<ModifierMask> NO_COMBINATION_MASK = 
         new PropertyKey<ModifierMask>( "DockRelocatorMode no combination", 
-                new SimpleModifierMask(InputEvent.ALT_DOWN_MASK,
-                        InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_GRAPH_DOWN_MASK ));
+                new ModifierMask(InputEvent.ALT_DOWN_MASK ));
     
     /**
      * Ensures that a {@link Dockable} can be dragged only if no combination results.

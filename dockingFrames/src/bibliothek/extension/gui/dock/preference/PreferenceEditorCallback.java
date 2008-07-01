@@ -40,7 +40,8 @@ public interface PreferenceEditorCallback<V> {
     public V get();
     
     /**
-     * Sets the value of this callback.
+     * Sets the value of this callback. An editor should call this method
+     * whenever its value changes.
      * @param value the value, might be <code>null</code>
      */
     public void set( V value );

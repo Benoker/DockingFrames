@@ -122,7 +122,7 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
     	if( accelerator == null )
     		return tooltip;
 
-    	String acceleratorText = KeyStrokeEditor.toString( accelerator );
+    	String acceleratorText = KeyStrokeEditor.toString( accelerator, true );
 
     	if( tooltip == null )
     		return acceleratorText;

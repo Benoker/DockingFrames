@@ -47,6 +47,14 @@ public interface PreferenceEditor<V> {
     public void setCallback( PreferenceEditorCallback<V> callback );
     
     /**
+     * Sets information about the value that is shown. This method is called
+     * before {@link #setValue(Object)}. This method might be called with
+     * a <code>null</code> argument when the editor is no longer needed.
+     * @param information the information, may be <code>null</code>
+     */
+    public void setValueInfo( Object information );
+    
+    /**
      * Sets the current value of this editor
      * @param value the value, might be <code>null</code> 
      */

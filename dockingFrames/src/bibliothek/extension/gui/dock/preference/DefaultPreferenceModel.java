@@ -51,6 +51,10 @@ public class DefaultPreferenceModel extends AbstractPreferenceModel{
         return getPreference( index ).getDescription();
     }
     
+    public Object getValueInfo(int index) {
+    	return getPreference( index ).getValueInfo();
+    }
+    
     public Object getValue( int index ) {
         return getPreference( index ).getValue();
     }

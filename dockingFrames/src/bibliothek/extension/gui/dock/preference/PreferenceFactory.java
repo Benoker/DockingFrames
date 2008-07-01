@@ -31,6 +31,7 @@ import java.io.IOException;
 
 import javax.swing.KeyStroke;
 
+import bibliothek.gui.dock.control.ModifierMask;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
 
@@ -62,6 +63,22 @@ public interface PreferenceFactory<V> {
         }
     };
     
+    /** A factory for handling {@link String} */
+    public static PreferenceFactory<String> FACTORY_STRING = new PreferenceFactory<String>(){
+    	public String read( DataInputStream in ) throws IOException {
+    		return in.readUTF();
+    	}
+    	public String readXML( XElement element ){
+    		return element.getString();
+    	}
+    	public void write( String value, DataOutputStream out ) throws IOException {
+    		out.writeUTF( value );
+    	}
+    	public void writeXML( String value, XElement element ){
+    		element.setString( value );
+    	}
+    };
+    
     /** a factory for handling {@link KeyStroke} */
     public static PreferenceFactory<KeyStroke> FACTORY_KEYSTROKE = new PreferenceFactory<KeyStroke>(){
         public KeyStroke read( DataInputStream in ) throws IOException {
@@ -79,6 +96,31 @@ public interface PreferenceFactory<V> {
         public void writeXML( KeyStroke value, XElement element ) {
             element.setString( value.toString() );
         }
+    };
+    
+    /** a factory for {@link ModifierMask}s */
+    public static PreferenceFactory<ModifierMask> FACTORY_MODIFIER_MASK = new PreferenceFactory<ModifierMask>(){
+		public ModifierMask read( DataInputStream in ) throws IOException {
+			int on = in.readInt();
+			int off = in.readInt();
+			return new ModifierMask( on, off );
+		}
+
+		public ModifierMask readXML( XElement element ) {
+			int on = element.getInt( "on" );
+			int off = element.getInt( "off" );
+			return new ModifierMask( on, off );
+		}
+
+		public void write( ModifierMask value, DataOutputStream out ) throws IOException {
+			out.writeInt( value.getOnmask() );
+			out.writeInt( value.getOffmask() );
+		}
+
+		public void writeXML( ModifierMask value, XElement element ){
+			element.addInt( "on", value.getOnmask() );
+			element.addInt( "off", value.getOffmask() );
+		}
     };
     
     /**

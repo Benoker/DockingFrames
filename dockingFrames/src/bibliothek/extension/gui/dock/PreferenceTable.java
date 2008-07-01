@@ -39,8 +39,15 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 
-import bibliothek.extension.gui.dock.preference.*;
+import bibliothek.extension.gui.dock.preference.PreferenceEditor;
+import bibliothek.extension.gui.dock.preference.PreferenceEditorCallback;
+import bibliothek.extension.gui.dock.preference.PreferenceEditorFactory;
+import bibliothek.extension.gui.dock.preference.PreferenceModel;
+import bibliothek.extension.gui.dock.preference.PreferenceModelListener;
+import bibliothek.extension.gui.dock.preference.PreferenceOperation;
+import bibliothek.extension.gui.dock.preference.editor.ChoiceEditor;
 import bibliothek.extension.gui.dock.preference.editor.KeyStrokeEditor;
+import bibliothek.extension.gui.dock.preference.editor.ModifierMaskEditor;
 import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
 import bibliothek.gui.dock.themes.basic.action.buttons.BasicMiniButton;
@@ -82,7 +89,9 @@ public class PreferenceTable extends JPanel{
         add( panel, new GridBagConstraints( 0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.FIRST_LINE_START,
                 GridBagConstraints.HORIZONTAL, new Insets( 0, 0, 0, 0 ), 0, 0 ));
         
+        setEditorFactory( Path.TYPE_MODIFIER_MASK_PATH, ModifierMaskEditor.FACTORY );
         setEditorFactory( Path.TYPE_KEYSTROKE_PATH, KeyStrokeEditor.FACTORY );
+        setEditorFactory( Path.TYPE_STRING_CHOICE_PATH, ChoiceEditor.FACTORY );
         
         operations.add( PreferenceOperation.DELETE );
         operations.add( PreferenceOperation.DEFAULT );
@@ -272,12 +281,13 @@ public class PreferenceTable extends JPanel{
             PreferenceOperation[] operations = model.getOperations( index );
             if( operations != null ){
                 for( PreferenceOperation operation : operations ){
-                    if( !editorOperations.containsKey( operation )){
+                    if( editorOperations == null || !editorOperations.containsKey( operation )){
                         setOperation( operation, model.isEnabled( index, operation ), false );
                     }
                 }
             }
             if( editor != null ){
+            	editor.setValueInfo( model.getValueInfo( index ));
                 editor.setValue( (V)model.getValue( index ) );
             }
         }
@@ -340,6 +350,7 @@ public class PreferenceTable extends JPanel{
                 editor.setCallback( null );
                 editor.setValue( null );
                 removeTable( editor.getComponent() );
+                editor.setValueInfo( null );
             }
             if( editorOperations != null ){
                 for( Button button : editorOperations.values() ){

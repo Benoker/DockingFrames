@@ -142,7 +142,7 @@ public class BasicTheme implements DockTheme{
     }
     
     public void uninstall(DockController controller) {
-        controller.getProperties().set( StackDockStation.COMPONENT_FACTORY, null );
+        controller.getProperties().toDefault( StackDockStation.COMPONENT_FACTORY );
         controller.getColors().clear( Priority.THEME );
         
         if( controllers.get( 0 ) == controller ){

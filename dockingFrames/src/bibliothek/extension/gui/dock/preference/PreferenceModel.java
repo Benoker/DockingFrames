@@ -109,6 +109,16 @@ public interface PreferenceModel {
     public void doOperation( int index, PreferenceOperation operation );
     
     /**
+     * Gets information about how the <code>index</code>'th value can
+     * be modified. For an integer that might be its upper and lower boundaries.
+     * The type of this objects depends on {@link #getTypePath(int)}.
+     * @param index the index of the info
+     * @return the information or <code>null</code> if no information is
+     * available
+     */
+    public Object getValueInfo( int index );
+    
+    /**
      * Gets the <code>index</code>'th preference. The {@link #getTypePath(int) type path}
      * determines how the value is to be presented on the screen.
      * @param index the number of the preference

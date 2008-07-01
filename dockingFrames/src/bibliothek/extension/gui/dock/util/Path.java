@@ -31,6 +31,10 @@ import java.util.List;
 
 import javax.swing.KeyStroke;
 
+import bibliothek.extension.gui.dock.preference.preferences.KeyStrokeValidator;
+import bibliothek.extension.gui.dock.preference.preferences.choice.Choice;
+import bibliothek.gui.dock.control.ModifierMask;
+
 /**
  * A path is a description of the position of some resource. A path consists
  * of segments, segments are separated by a dot. A segment must be a valid
@@ -38,11 +42,20 @@ import javax.swing.KeyStroke;
  * @author Benjamin Sigg
  */
 public final class Path {
-    /** standard path for the integer type */
-    public static final Path TYPE_INT_PATH = new Path( "dock.int" );
+    /** standard path for {@link Integer}  */
+    public static final Path TYPE_INT_PATH = new Path( "java.lang.Integer" );
     
-    /** standard path for {@link KeyStroke} */
+    /** standard path for {@link String} */
+    public static final Path TYPE_STRING_PATH = new Path( "java.lang.String" );
+    
+    /** standard path for {@link KeyStroke}, can use {@link KeyStrokeValidator} as information */
     public static final Path TYPE_KEYSTROKE_PATH = new Path( "javax.swing.KeyStroke" );
+    
+    /** standard path for {@link ModifierMask} */
+    public static final Path TYPE_MODIFIER_MASK_PATH = new Path( "dock.modifier_mask" );
+    
+    /** standard path for a choice using a {@link String} as value and a {@link Choice} as information */
+    public static final Path TYPE_STRING_CHOICE_PATH = new Path( "dock.choice" );
     
     /** the segments of this path */
     private String[] segments;

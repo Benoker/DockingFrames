@@ -25,7 +25,7 @@ public abstract class AcceptanceDockRelocatorMode implements DockRelocatorMode, 
      * @param offmask the keys that must not be pressed to activate this mode
      */
     public AcceptanceDockRelocatorMode( int onmask, int offmask ){
-        mask = new SimpleModifierMask( onmask, offmask );
+        mask = new ModifierMask( onmask, offmask );
     }
     
     /**
@@ -50,6 +50,14 @@ public abstract class AcceptanceDockRelocatorMode implements DockRelocatorMode, 
         
         this.mask = mask;
     }
+    
+    /**
+     * Gets the mask for this mode.
+     * @return the mask
+     */
+    public ModifierMask getMask() {
+		return mask;
+	}
     
     public void setActive( DockController controller, boolean active ) {
         if( this.active != active ){

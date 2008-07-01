@@ -177,3 +177,4 @@
 - API, Layout: Clicking on the "close-action" in common and calling "setVisible( false )" will now have the exact same effects.
 
 - API: new preferences package, includes new MenuPieces
+! API: SimpleModifierMask has been deleted, it gets replaced by ModiferMask which is no longer an interface. Reason is that a modifier mask does not need to be very sophisticated and chances of additional implementions are hardly given. Also the preferences can now operate with the modifier masks.

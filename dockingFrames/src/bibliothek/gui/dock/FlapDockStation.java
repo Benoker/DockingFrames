@@ -205,6 +205,18 @@ public class FlapDockStation extends AbstractDockableStation {
         }
     };
     
+    /**
+     * How to layout the buttons on this station
+     */
+    private PropertyValue<ButtonContent> buttonContent = new PropertyValue<ButtonContent>( BUTTON_CONTENT ){
+    	@Override
+    	protected void valueChanged( ButtonContent oldValue, ButtonContent newValue ){
+    		if( oldValue != newValue ){
+    			recreateTitles();
+    		}
+    	}
+    };
+    
     /** The direction in which the popup-window is, in respect to this station */
     private Direction direction = Direction.SOUTH;
     /** 
@@ -414,6 +426,8 @@ public class FlapDockStation extends AbstractDockableStation {
                 else
                     newLayoutManager.install( this );
             }
+            
+            buttonContent.setProperties( controller );
             
             if( holdAction != null )
                 holdAction.setController( controller );
@@ -1208,6 +1222,32 @@ public class FlapDockStation extends AbstractDockableStation {
     @Override
     public boolean isVisible( Dockable dockable ) {
         return isStationVisible() && (getFrontDockable() == dockable);
+    }
+    
+    /**
+     * Deletes all titles of the button pane and then recreates them.
+     */
+    protected void recreateTitles(){
+    	// delete
+    	Map<Dockable, DockTitle> buttonTitles = new HashMap<Dockable, DockTitle>( this.buttonTitles );
+    	
+    	for( Map.Entry<Dockable, DockTitle> title : buttonTitles.entrySet() ){
+    		if( title.getValue() != null ){
+    			unbind( title.getKey(), title.getValue() );
+    		}
+    	}
+    	
+    	// create
+        if( buttonVersion != null ){
+        	for( Dockable dockable : dockables ){
+
+        		DockTitle title = dockable.getDockTitle( buttonVersion );
+        		if( title != null )
+        			bind( dockable, title );
+        	}
+        }
+
+        buttonPane.resetTitles();
     }
     
     /**

@@ -78,7 +78,7 @@ public class PreferenceDialog extends JPanel{
         buttons.add( new JButton( new OkAction() ));
         buttons.add( new JButton( new CancelAction() ));
         
-        add( panel, new GridBagConstraints( 0, 0, 1, 1, 1.0, 1.0,
+        add( panel, new GridBagConstraints( 0, 0, 1, 1, 1.0, 1000.0,
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                 new Insets( 1, 1, 1, 1 ), 0, 0 ));
         
@@ -120,6 +120,7 @@ public class PreferenceDialog extends JPanel{
         doReset();
         
         dialog.pack();
+        dialog.setSize( (int)(dialog.getWidth() * 1.5), dialog.getHeight() );
         dialog.setLocationRelativeTo( owner );
         dialog.setVisible( true );
     }

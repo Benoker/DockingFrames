@@ -55,6 +55,21 @@ public class DockProperties {
 	}
 	
 	/**
+	 * Either sets the property <code>key</code> to <code>value</code> or
+	 * set the default value for <code>key</code>.
+	 * @param <A> the type of the value
+	 * @param key the key to access the value
+	 * @param value the new value, if <code>null</code> then the default
+	 * value will be set
+	 */
+	public <A> void setOrRemove( PropertyKey<A> key, A value ){
+		if( value == null )
+			toDefault( key );
+		else
+			set( key, value );
+	}
+	
+	/**
 	 * Tells the entry <code>key</code> that the user has never set its value.
 	 * Also removes the old value of the entry.
 	 * @param key the key to access the entry

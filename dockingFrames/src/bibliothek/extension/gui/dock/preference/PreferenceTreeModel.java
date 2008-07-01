@@ -224,6 +224,10 @@ public class PreferenceTreeModel extends AbstractPreferenceModel implements Tree
         return delegate.getTypePath( index );
     }
     
+    public Object getValueInfo(int index) {
+    	return delegate.getValueInfo( index );
+    }
+    
     public Object getValue( int index ) {
         return delegate.getValue( index );
     }

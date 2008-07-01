@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2008 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,29 +23,20 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.control;
+package bibliothek.extension.gui.dock.preference.model;
+
+import bibliothek.extension.gui.dock.preference.DefaultPreferenceModel;
+import bibliothek.extension.gui.dock.preference.preferences.ButtonContentPreference;
+import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.gui.dock.util.DockProperties;
 
 /**
- * This mask uses two integers <code>on</code> and <code>off</code>
- * to check a modifier. A modifier is accepted if <code>(modifier & (on | off))== on</code>
- * is <code>true</code>.
+ * A model containing preferences that are related to the layout of
+ * the framework.
  * @author Benjamin Sigg
  */
-public class SimpleModifierMask implements ModifierMask{
-    private int onmask;
-    private int offmask;
-    
-    /**
-     * Creates a new mask.
-     * @param on the keys that must be pressed
-     * @param off the keys that must not be pressed
-     */
-    public SimpleModifierMask( int on, int off ){
-        this.onmask = on;
-        this.offmask = off;
-    }
-    
-    public boolean matches( int modifiers ) {
-        return (modifiers & (onmask | offmask)) == onmask;
-    }
+public class LayoutPreferenceModel extends DefaultPreferenceModel{
+	public LayoutPreferenceModel( DockProperties properties ){
+		add( new ButtonContentPreference( properties, new Path( "dock.layout.ButtonContent" )));
+	}
 }

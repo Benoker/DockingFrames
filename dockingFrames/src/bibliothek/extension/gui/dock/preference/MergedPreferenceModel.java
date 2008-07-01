@@ -264,6 +264,14 @@ public class MergedPreferenceModel extends AbstractPreferenceModel{
         return local.model.model.getDescription( local.index );
     }
     
+    public Object getValueInfo(int index) {
+        Index local = indexAt( index );
+        if( local == null )
+            throw new ArrayIndexOutOfBoundsException( index );
+        
+        return local.model.model.getValueInfo( local.index );
+    }
+    
     public Object getValue( int index ) {
         Index local = indexAt( index );
         if( local == null )

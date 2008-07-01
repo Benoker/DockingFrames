@@ -123,6 +123,6 @@ public class DockPropertyPreference<V> extends DefaultPreference<V> {
     
     @Override
     public void write(){
-        properties.set( key, getValue() );
+        properties.setOrRemove( key, getValue() );
     }
 }

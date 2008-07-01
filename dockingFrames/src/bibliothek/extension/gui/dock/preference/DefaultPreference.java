@@ -35,6 +35,7 @@ import bibliothek.extension.gui.dock.util.Path;
  */
 public class DefaultPreference<V> extends AbstractPreference<V>{
     private V value;
+    private Object valueInfo;
     private Path type;
     
     private String label;
@@ -103,6 +104,20 @@ public class DefaultPreference<V> extends AbstractPreference<V>{
     
     public Path getTypePath() {
         return type;
+    }
+    
+    /**
+     * Sets information about this preferences value. For example for
+     * an integer that could be the upper and the lower bounds. The exact
+     * meaning and type of this object depends on {@link #getTypePath()}.
+     * @param valueInfo the new information or <code>null</code>
+     */
+    public void setValueInfo(Object valueInfo) {
+		this.valueInfo = valueInfo;
+	}
+    
+    public Object getValueInfo() {
+    	return valueInfo;
     }
     
     public V getValue() {

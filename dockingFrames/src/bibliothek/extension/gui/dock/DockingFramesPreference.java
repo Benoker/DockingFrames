@@ -27,6 +27,7 @@ package bibliothek.extension.gui.dock;
 
 import bibliothek.extension.gui.dock.preference.PreferenceTreeModel;
 import bibliothek.extension.gui.dock.preference.model.KeystrokePreferenceModel;
+import bibliothek.extension.gui.dock.preference.model.LayoutPreferenceModel;
 import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockUI;
@@ -46,5 +47,9 @@ public class DockingFramesPreference extends PreferenceTreeModel{
         put( new Path( "shortcuts" ),
                 DockUI.getDefaultDockUI().getString( "preference.shortcuts" ), 
                 new KeystrokePreferenceModel( controller.getProperties() ) );
+        
+        put( new Path( "layout" ),
+        		DockUI.getDefaultDockUI().getString( "preference.layout" ),
+        		new LayoutPreferenceModel( controller.getProperties() ));
     }
 }

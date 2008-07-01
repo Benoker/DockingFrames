@@ -38,6 +38,7 @@ import bibliothek.extension.gui.dock.preference.PreferenceEditor;
 import bibliothek.extension.gui.dock.preference.PreferenceEditorCallback;
 import bibliothek.extension.gui.dock.preference.PreferenceEditorFactory;
 import bibliothek.extension.gui.dock.preference.PreferenceOperation;
+import bibliothek.extension.gui.dock.preference.preferences.KeyStrokeValidator;
 import bibliothek.gui.DockUI;
 
 /**
@@ -53,30 +54,40 @@ public class KeyStrokeEditor extends JTextField implements PreferenceEditor<KeyS
             return new KeyStrokeEditor();
         }
     };
-
+    
     /**
      * Transforms <code>stroke</code> into a human readable string.
      * @param stroke the stroke to transform
+     * @param complete if set, then the combination is complete, otherwise
+     * a "+" sign will be added at the end.
      * @return the human readable form
      */
-    public static final String toString( KeyStroke stroke ){
+    public static final String toString( KeyStroke stroke, boolean complete ){
         // source copy & pasted from BasicMenuItemUI
         String result = "";
         
         int modifiers = stroke.getModifiers();
-        if (modifiers > 0) {
+        if( modifiers != 0 ){
             result = KeyEvent.getKeyModifiersText( modifiers );
-            result += "+";
+            if( !complete ){
+            	result += "+";
+            }
         }
 
         int keyCode = stroke.getKeyCode();
         if( !isModifierKey( keyCode )){
+        	if( complete && modifiers != 0 )
+        		result += "+";
+        	
             if( keyCode != 0 ){
                 result += KeyEvent.getKeyText( keyCode );
             }
             else{
                 result += stroke.getKeyChar();
             }
+            
+            if( !complete )
+            	result += "+";
         }
 
         return result;
@@ -102,6 +113,7 @@ public class KeyStrokeEditor extends JTextField implements PreferenceEditor<KeyS
     }
     
     private KeyStroke stroke;
+    private KeyStrokeValidator validator = KeyStrokeValidator.EVERYTHING;
     private PreferenceEditorCallback<KeyStroke> callback;
     private boolean focused = false;
     
@@ -146,10 +158,17 @@ public class KeyStrokeEditor extends JTextField implements PreferenceEditor<KeyS
     
     private void maybeStore( KeyStroke stroke ){
         if( stroke != null && callback != null ){
-            if( !isModifierKey( stroke.getKeyCode() )){
+            if( validator.isValid( stroke ) ){
                 callback.set( stroke );
             }
         }
+    }
+
+    public void setValueInfo( Object information ) {
+    	if( information instanceof KeyStrokeValidator )
+    		validator = (KeyStrokeValidator)information;
+    	else
+    		validator = KeyStrokeValidator.EVERYTHING;
     }
     
     public Component getComponent() {
@@ -178,7 +197,12 @@ public class KeyStrokeEditor extends JTextField implements PreferenceEditor<KeyS
             }
         }
         else{
-            setText( toString( value ) );
+        	if( validator.isValid( value )){
+        		setText( toString( value, true ) );
+        	}
+        	else{
+        		setText( toString( value, !validator.isCompleteable( value ) ));
+        	}
         }
         
         if( callback != null ){

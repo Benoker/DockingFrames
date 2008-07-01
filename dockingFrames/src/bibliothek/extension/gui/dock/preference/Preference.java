@@ -91,6 +91,13 @@ public interface Preference<V> {
     public String getDescription();
     
     /**
+     * Information about the choices for this preferences value. See
+     * {@link PreferenceModel#getValueInfo(int)}.
+     * @return the information or <code>null</code>
+     */
+    public Object getValueInfo(); 
+    
+    /**
      * Gets the value of this preference.
      * @return the value, might be <code>null</code> 
      */
