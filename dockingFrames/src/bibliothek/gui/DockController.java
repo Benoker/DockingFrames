@@ -468,6 +468,10 @@ public class DockController {
     		throw new IllegalArgumentException( "Theme must not be null" );
     	
     	if( this.theme != theme ){
+    		for( UIListener listener : uiListeners() )
+    			listener.themeWillChange( this, this.theme, theme );
+    		
+    		DockTheme oldTheme = this.theme;
     		Dockable focused = null;
     		try{
     			register.setStalled( true );
@@ -491,6 +495,9 @@ public class DockController {
     		}
 	    		
     		setFocusedDockable( focused, true );
+    		
+    		for( UIListener listener : uiListeners() )
+    			listener.themeChanged( this, oldTheme, theme );
     	}
 	}
     
@@ -1199,13 +1206,21 @@ public class DockController {
     }
     
     /**
+     * Gets all the available {@link UIListener}s.
+     * @return the list of listeners
+     */
+    protected UIListener[] uiListeners(){
+    	return uiListeners.toArray( new UIListener[ uiListeners.size() ]);
+    }
+    
+    /**
      * Informs all registered {@link UIListener}s that the user interface
      * needs an update because the {@link LookAndFeel} changed.
      * @see #addUIListener(UIListener)
      * @see #removeUIListener(UIListener)
      */
     public void updateUI(){
-        for( UIListener listener : uiListeners.toArray( new UIListener[ uiListeners.size() ] ))
+        for( UIListener listener : uiListeners() )
             listener.updateUI( this );
     }
     

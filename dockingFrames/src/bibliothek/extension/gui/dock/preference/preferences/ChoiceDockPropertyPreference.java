@@ -1,4 +1,3 @@
-
 /*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
@@ -23,47 +22,49 @@
  * Benjamin Sigg
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
- */package bibliothek.extension.gui.dock.preference.preferences;
+ */
+package bibliothek.extension.gui.dock.preference.preferences;
 
 import bibliothek.extension.gui.dock.preference.DefaultPreference;
-import bibliothek.extension.gui.dock.preference.preferences.choice.ButtonContentChoice;
+import bibliothek.extension.gui.dock.preference.preferences.choice.DefaultChoice;
 import bibliothek.extension.gui.dock.util.Path;
-import bibliothek.gui.DockUI;
-import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.gui.dock.util.PropertyKey;
 
 /**
- * A preference for {@link FlapDockStation#BUTTON_CONTENT}.
+ * A preference that offers a choice and write the value into a {@link DockProperties}.
  * @author Benjamin Sigg
+ *
+ * @param <V> the kind of value to store into the properties
  */
-public class ButtonContentPreference extends DefaultPreference<String>{
+public class ChoiceDockPropertyPreference<V> extends DefaultPreference<String>{
 	private DockProperties properties;
-	private ButtonContentChoice choice;
+	private PropertyKey<V> key;
+	private DefaultChoice<V> choice;
 	
 	/**
 	 * Creates a new preference.
-	 * @param properties the properties to read or write from
-	 * @param path the path of this property
+	 * @param properties the properties to read and write from
+	 * @param key the key for the property that gets accessed 
+	 * @param path the unique identifier of this preference
+	 * @param choice the available choices
 	 */
-	public ButtonContentPreference( DockProperties properties, Path path ){
+	public ChoiceDockPropertyPreference( DockProperties properties, PropertyKey<V> key, Path path, DefaultChoice<V> choice ){
 		super( Path.TYPE_STRING_CHOICE_PATH, path );
-		if( properties == null )
-			throw new IllegalArgumentException( "properties must not be null" );
-		
-		choice = new ButtonContentChoice();
-		setValueInfo( choice );
-		setLabel( DockUI.getDefaultDockUI().getString( "preference.layout.ButtonContentPreference.text" ) );
-		setDescription( DockUI.getDefaultDockUI().getString( "preference.layout.ButtonContentPreference.description" ) );
 		this.properties = properties;
-	}
-	
-	@Override
-	public void read() {
-		setValue( choice.valueToIdentifier(properties.get( FlapDockStation.BUTTON_CONTENT )));
+		this.choice = choice;
+		this.key = key;
+		
+		setValueInfo( choice );
 	}
 	
 	@Override
 	public void write() {
-		properties.setOrRemove( FlapDockStation.BUTTON_CONTENT, choice.identifierToValue( getValue() ));
+		properties.setOrRemove( key, choice.identifierToValue( getValue() ));
+	}
+	
+	@Override
+	public void read() {
+		setValue( choice.valueToIdentifier( properties.get( key )));
 	}
 }

@@ -38,7 +38,8 @@ import bibliothek.gui.dock.title.DockTitleManager;
 
 /**
  * A theme describes how a {@link DockStation} looks like, which
- * {@link DockTitle} are selected, and other behavior.
+ * {@link DockTitle} are selected, and other behavior. A theme needs
+ * only to support one {@link DockController} at a time.
  * @author Benjamin Sigg
  */
 public interface DockTheme {

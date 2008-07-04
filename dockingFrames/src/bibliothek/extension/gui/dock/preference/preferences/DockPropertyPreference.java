@@ -23,11 +23,13 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.preference;
+package bibliothek.extension.gui.dock.preference.preferences;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import bibliothek.extension.gui.dock.preference.DefaultPreference;
+import bibliothek.extension.gui.dock.preference.Preference;
 import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyKey;

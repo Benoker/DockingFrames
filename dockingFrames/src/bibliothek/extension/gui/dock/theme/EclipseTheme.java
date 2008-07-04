@@ -30,8 +30,21 @@ import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import bibliothek.extension.gui.dock.theme.eclipse.*;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.*;
+import bibliothek.extension.gui.dock.theme.eclipse.DefaultEclipseThemeConnector;
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseColorScheme;
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseDisplayerFactory;
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseDockTitleFactory;
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseDockableSelection;
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseStackDockComponent;
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseStationPaint;
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector;
+import bibliothek.extension.gui.dock.theme.eclipse.RoundRectButton;
+import bibliothek.extension.gui.dock.theme.eclipse.RoundRectDropDownButton;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.BasicTabDockTitle;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.DockTitleTab;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.RectGradientPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.ShapedGradientPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabPainter;
 import bibliothek.extension.gui.dock.theme.flat.FlatButtonTitle;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -41,7 +54,11 @@ import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
-import bibliothek.gui.dock.action.*;
+import bibliothek.gui.dock.action.ActionType;
+import bibliothek.gui.dock.action.ButtonDockAction;
+import bibliothek.gui.dock.action.DropDownAction;
+import bibliothek.gui.dock.action.MenuDockAction;
+import bibliothek.gui.dock.action.SelectableDockAction;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.action.view.ViewGenerator;
 import bibliothek.gui.dock.action.view.ViewTarget;
@@ -50,11 +67,20 @@ import bibliothek.gui.dock.dockable.MovingImage;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.themes.BasicTheme;
+import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.themes.ThemeProperties;
 import bibliothek.gui.dock.themes.basic.BasicDockTitleFactory;
-import bibliothek.gui.dock.themes.basic.action.*;
+import bibliothek.gui.dock.themes.basic.action.BasicButtonHandler;
+import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonHandler;
+import bibliothek.gui.dock.themes.basic.action.BasicMenuHandler;
+import bibliothek.gui.dock.themes.basic.action.BasicSelectableHandler;
+import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
 import bibliothek.gui.dock.themes.nostack.NoStackAcceptance;
-import bibliothek.gui.dock.title.*;
+import bibliothek.gui.dock.title.ControllerTitleFactory;
+import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.title.DockTitleFactory;
+import bibliothek.gui.dock.title.DockTitleManager;
+import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
@@ -93,6 +119,10 @@ public class EclipseTheme extends BasicTheme {
 		        "EclipseTheme theme connector",
 		        new DefaultEclipseThemeConnector() );
 	
+	/** Access to the {@link ColorScheme} used for this theme */
+	public static final PropertyKey<ColorScheme> ECLIPSE_COLOR_SCHEME =
+		new PropertyKey<ColorScheme>( "dock.ui.EclipseTheme.ColorScheme", new EclipseColorScheme() );
+	
 	/**
 	 * The id of the {@link DockTitleVersion} that is intended to create
 	 * {@link DockTitle}s used as tabs by the {@link DockTitleTab}. Clients
@@ -109,7 +139,7 @@ public class EclipseTheme extends BasicTheme {
 	 * Creates a new theme
 	 */
 	public EclipseTheme() {
-	    setColorScheme( new EclipseColorScheme() );
+	    setColorSchemeKey( ECLIPSE_COLOR_SCHEME );
 		setStackDockComponentFactory( new StackDockComponentFactory(){
 			public StackDockComponent create( StackDockStation station ){
 				return new EclipseStackDockComponent( EclipseTheme.this, station );
@@ -219,38 +249,37 @@ public class EclipseTheme extends BasicTheme {
 	}
 	
 	@Override
-	protected void updateColors( DockController[] controllers ) {
-	    for( DockController controller : controllers )
-            controller.getColors().lockUpdate();
+	protected void updateColors() {
+	    DockController controller = getController();
+	    controller.getColors().lockUpdate();
 	    
-	    super.updateColors( controllers );
+	    super.updateColors();
 	    
-        updateColor( controllers, "stack.tab.border", null );
-        updateColor( controllers, "stack.tab.border.selected", null );
-        updateColor( controllers, "stack.tab.border.selected.focused", null );
-        updateColor( controllers, "stack.tab.border.selected.focuslost", null );
+        updateColor( "stack.tab.border", null );
+        updateColor( "stack.tab.border.selected", null );
+        updateColor( "stack.tab.border.selected.focused", null );
+        updateColor( "stack.tab.border.selected.focuslost", null );
         
-        updateColor( controllers, "stack.tab.top", null );
-        updateColor( controllers, "stack.tab.top.selected", null );
-        updateColor( controllers, "stack.tab.top.selected.focused", null );
-        updateColor( controllers, "stack.tab.top.selected.focuslost", null );
+        updateColor( "stack.tab.top", null );
+        updateColor( "stack.tab.top.selected", null );
+        updateColor( "stack.tab.top.selected.focused", null );
+        updateColor( "stack.tab.top.selected.focuslost", null );
         
-        updateColor( controllers, "stack.tab.bottom", null );
-        updateColor( controllers, "stack.tab.bottom.selected", null );
-        updateColor( controllers, "stack.tab.bottom.selected.focused", null );
-        updateColor( controllers, "stack.tab.bottom.selected.focuslost", null );
+        updateColor( "stack.tab.bottom", null );
+        updateColor( "stack.tab.bottom.selected", null );
+        updateColor( "stack.tab.bottom.selected.focused", null );
+        updateColor( "stack.tab.bottom.selected.focuslost", null );
         
-        updateColor( controllers, "stack.tab.text", null );
-        updateColor( controllers, "stack.tab.text.selected", null );
-        updateColor( controllers, "stack.tab.text.selected.focused", null );
-        updateColor( controllers, "stack.tab.text.selected.focuslost", null );
+        updateColor( "stack.tab.text", null );
+        updateColor( "stack.tab.text.selected", null );
+        updateColor( "stack.tab.text.selected.focused", null );
+        updateColor( "stack.tab.text.selected.focuslost", null );
 	    
-        updateColor( controllers, "stack.border", null );
+        updateColor( "stack.border", null );
         
-        updateColor( controllers, "selection.border", null );
+        updateColor( "selection.border", null );
         
-	    for( DockController controller : controllers )
-            controller.getColors().unlockUpdate();
+        controller.getColors().unlockUpdate();
 	}
 	
 	@Override

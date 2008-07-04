@@ -92,7 +92,7 @@ public class BubbleColorScheme extends DefaultColorScheme {
     }
         
     /**
-     * Creatse a new color scheme
+     * Creates a new color scheme
      * @param distribution how to put up the colors
      */
     public BubbleColorScheme( Distribution distribution ){
@@ -203,7 +203,7 @@ public class BubbleColorScheme extends DefaultColorScheme {
     private Color color( Distribution distribution, int p, int s, int t ){
         switch( distribution ){
             case BGR: return new Color( t, s, p );
-            case BRG: return new Color( t, p, s );
+            case BRG: return new Color( s, t, p );
             case GBR: return new Color( t, p, s );
             case GRB: return new Color( s, p, t );
             case RBG: return new Color( p, t, s );

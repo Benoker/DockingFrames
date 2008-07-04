@@ -34,8 +34,8 @@ import javax.swing.KeyStroke;
 
 import bibliothek.extension.gui.dock.PreferenceTable;
 import bibliothek.extension.gui.dock.preference.DefaultPreferenceModel;
-import bibliothek.extension.gui.dock.preference.DockPropertyPreference;
 import bibliothek.extension.gui.dock.preference.Preference;
+import bibliothek.extension.gui.dock.preference.preferences.DockPropertyPreference;
 import bibliothek.extension.gui.dock.preference.preferences.KeyStrokeValidator;
 import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;

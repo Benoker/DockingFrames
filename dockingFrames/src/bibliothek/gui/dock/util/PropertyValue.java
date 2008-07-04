@@ -123,11 +123,38 @@ public abstract class PropertyValue<A> {
 	}
 	
 	/**
-	 * Gest the key which is used to access the value in {@link DockProperties}.
+	 * Gets the key which is used to access the value in {@link DockProperties}.
 	 * @return the key
 	 */
 	public PropertyKey<A> getKey(){
 		return key;
+	}
+	
+	/**
+	 * Sets the key which is used to access the value in {@link DockProperties}.
+	 * @param key the new key
+	 */
+	public void setKey( PropertyKey<A> key ) {
+		if( key == null )
+			throw new IllegalArgumentException( "key must not be null" );
+		
+		if( properties == null ){
+			this.key = key;
+		}
+		else{
+			A oldValue = getValue();
+			properties.removeListener( this.key, listener );
+			this.key = key;
+			properties.addListener( this.key, listener );
+
+			A newValue = getValue();
+			if( (oldValue == null && newValue != null) ||
+				(oldValue != null && newValue == null) ||
+				(oldValue != null && !oldValue.equals( newValue ))){
+				
+				valueChanged( oldValue, newValue );
+			}
+		}
 	}
 	
 	/**

@@ -41,8 +41,8 @@ import bibliothek.gui.dock.themes.ColorProviderFactory;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.themes.color.DefaultColorScheme;
 import bibliothek.gui.dock.util.Priority;
+import bibliothek.gui.dock.util.UIBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
-import bibliothek.gui.dock.util.color.ColorProvider;
 import bibliothek.gui.dock.util.color.DockColor;
 import bibliothek.gui.dock.util.laf.LookAndFeelColors;
 
@@ -73,13 +73,9 @@ public class SimpleBubbleColorScheme extends DefaultColorScheme {
             public Color getColor( String id ) {
                 return delegate.getColor( id ); 
             }
-
-            @SuppressWarnings("unchecked")
-            public <D extends DockColor> ColorProviderFactory<D, ? extends ColorProvider<D>> getProvider( Class<D> kind ) {
-                // otherwise the compiler finds an error
-                
-                ColorProviderFactory result = delegate.getProvider( kind );
-                return result;
+            
+            public <D extends DockColor> ColorProviderFactory<D, ? extends UIBridge<Color, D>> getProvider( Class<D> kind) {
+                return delegate.getProvider( kind );
             }
             
             public void transmitAll( Priority priority, ColorManager manager ) {

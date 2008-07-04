@@ -26,6 +26,7 @@
 package bibliothek.extension.gui.dock;
 
 import bibliothek.extension.gui.dock.preference.PreferenceTreeModel;
+import bibliothek.extension.gui.dock.preference.model.BubbleThemePreferenceModel;
 import bibliothek.extension.gui.dock.preference.model.KeystrokePreferenceModel;
 import bibliothek.extension.gui.dock.preference.model.LayoutPreferenceModel;
 import bibliothek.extension.gui.dock.util.Path;
@@ -51,5 +52,11 @@ public class DockingFramesPreference extends PreferenceTreeModel{
         put( new Path( "layout" ),
         		DockUI.getDefaultDockUI().getString( "preference.layout" ),
         		new LayoutPreferenceModel( controller.getProperties() ));
+        
+        put( new Path( "theme" ), DockUI.getDefaultDockUI().getString( "preference.theme" ), null );
+        
+        put( new Path( "theme.BubbleTheme" ),
+        		DockUI.getDefaultDockUI().getString( "theme.bubble" ),
+        		new BubbleThemePreferenceModel( controller.getProperties() ));
     }
 }

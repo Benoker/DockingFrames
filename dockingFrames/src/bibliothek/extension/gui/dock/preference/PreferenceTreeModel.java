@@ -264,13 +264,15 @@ public class PreferenceTreeModel extends AbstractPreferenceModel implements Tree
      * Sets name and model of a given node.
      * @param path the path to the node
      * @param name the new name
-     * @param model the new model
+     * @param model the new model, can be <code>null</code>
      * @see #putNode(Path, String)
      * @see #putModel(Path, PreferenceModel)
      */
     public void put( Path path, String name, PreferenceModel model ){
         delegate.remove( path );
-        delegate.add( model, path );
+        if( model != null ){
+        	delegate.add( model, path );
+        }
         root.getNode( path, 0 ).set( name, model );
     }
     

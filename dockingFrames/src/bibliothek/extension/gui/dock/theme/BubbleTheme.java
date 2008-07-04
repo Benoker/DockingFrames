@@ -35,12 +35,26 @@ import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import bibliothek.extension.gui.dock.theme.bubble.*;
+import bibliothek.extension.gui.dock.theme.bubble.BubbleButtonDockTitle;
+import bibliothek.extension.gui.dock.theme.bubble.BubbleColorScheme;
+import bibliothek.extension.gui.dock.theme.bubble.BubbleDisplayerFactory;
+import bibliothek.extension.gui.dock.theme.bubble.BubbleDockTitleFactory;
+import bibliothek.extension.gui.dock.theme.bubble.BubbleMovingImageFactory;
+import bibliothek.extension.gui.dock.theme.bubble.BubbleSeparator;
+import bibliothek.extension.gui.dock.theme.bubble.BubbleStackDockComponent;
+import bibliothek.extension.gui.dock.theme.bubble.BubbleStationPaint;
+import bibliothek.extension.gui.dock.theme.bubble.RoundButton;
+import bibliothek.extension.gui.dock.theme.bubble.RoundButtonViewItem;
+import bibliothek.extension.gui.dock.theme.bubble.RoundDropDownButton;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.StackDockStation;
-import bibliothek.gui.dock.action.*;
+import bibliothek.gui.dock.action.ActionType;
+import bibliothek.gui.dock.action.ButtonDockAction;
+import bibliothek.gui.dock.action.DropDownAction;
+import bibliothek.gui.dock.action.MenuDockAction;
+import bibliothek.gui.dock.action.SelectableDockAction;
 import bibliothek.gui.dock.action.actions.SeparatorAction;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.action.view.ViewGenerator;
@@ -48,9 +62,15 @@ import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.themes.BasicTheme;
+import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.themes.ThemeProperties;
-import bibliothek.gui.dock.themes.basic.action.*;
+import bibliothek.gui.dock.themes.basic.action.BasicButtonHandler;
+import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonHandler;
+import bibliothek.gui.dock.themes.basic.action.BasicMenuHandler;
+import bibliothek.gui.dock.themes.basic.action.BasicSelectableHandler;
+import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.PropertyKey;
 
 /**
  * A theme using a lot of eye-candy.
@@ -62,6 +82,11 @@ import bibliothek.gui.dock.util.DockUtilities;
 		nameBundle = "theme.bubble", 
 		webpages = { "" }  )
 public class BubbleTheme extends BasicTheme {
+    /** the key to set the {@link ColorScheme} of this theme */
+    public static final PropertyKey<ColorScheme> BUBBLE_COLOR_SCHEME = 
+    	new PropertyKey<ColorScheme>( "dock.ui.BubbleTheme.ColorScheme", new BubbleColorScheme() );
+    
+	
 	/** The colors used by this theme */
     private Map<String, Color> colors = new HashMap<String, Color>();
     
@@ -72,7 +97,7 @@ public class BubbleTheme extends BasicTheme {
 	 * Creates a new theme
 	 */
     public BubbleTheme(){
-        setColorScheme( new BubbleColorScheme() );
+        setColorSchemeKey( BUBBLE_COLOR_SCHEME );
         setDisplayerFactory( new BubbleDisplayerFactory());
         setTitleFactory( new BubbleDockTitleFactory());
         setPaint( new BubbleStationPaint() );
@@ -171,102 +196,102 @@ public class BubbleTheme extends BasicTheme {
 	}
 	
 	@Override
-	protected void updateColors( DockController[] controllers ) {
-	    for( DockController controller : controllers )
-	        controller.getColors().lockUpdate();
+	protected void updateColors() {
+		DockController controller = getController();
+		
+		controller.getColors().lockUpdate();
 	    
-	    super.updateColors( controllers );
+	    super.updateColors();
 	    
-	    updateColor( controllers, "tab.border.active", null );
+	    updateColor( "tab.border.active", null );
 	    
 	    // stack
-        updateColor( controllers, "stack.tab.background.top.mouse", null );
-        updateColor( controllers, "stack.tab.background.bottom.mouse", null );
-        updateColor( controllers, "stack.tab.border.mouse", null );
-        updateColor( controllers, "stack.tab.foreground.mouse", null );
+        updateColor( "stack.tab.background.top.mouse", null );
+        updateColor( "stack.tab.background.bottom.mouse", null );
+        updateColor( "stack.tab.border.mouse", null );
+        updateColor( "stack.tab.foreground.mouse", null );
         
-        updateColor( controllers, "stack.tab.background.top", null );
-        updateColor( controllers, "stack.tab.background.bottom", null );
-        updateColor( controllers, "stack.tab.border", null );
-        updateColor( controllers, "stack.tab.foreground", null );
+        updateColor( "stack.tab.background.top", null );
+        updateColor( "stack.tab.background.bottom", null );
+        updateColor( "stack.tab.border", null );
+        updateColor( "stack.tab.foreground", null );
         
-        updateColor( controllers, "stack.tab.background.top.selected.mouse", null );
-        updateColor( controllers, "stack.tab.background.bottom.selected.mouse", null );
-        updateColor( controllers, "stack.tab.border.selected.mouse", null );
-        updateColor( controllers, "stack.tab.foreground.selected.mouse", null );
+        updateColor( "stack.tab.background.top.selected.mouse", null );
+        updateColor( "stack.tab.background.bottom.selected.mouse", null );
+        updateColor( "stack.tab.border.selected.mouse", null );
+        updateColor( "stack.tab.foreground.selected.mouse", null );
         
-        updateColor( controllers, "stack.tab.background.top.selected", null );
-        updateColor( controllers, "stack.tab.background.bottom.selected", null );
-        updateColor( controllers, "stack.tab.border.selected", null );
-        updateColor( controllers, "stack.tab.foreground.selected", null );
+        updateColor( "stack.tab.background.top.selected", null );
+        updateColor( "stack.tab.background.bottom.selected", null );
+        updateColor( "stack.tab.border.selected", null );
+        updateColor( "stack.tab.foreground.selected", null );
         
-        updateColor( controllers, "stack.tab.background.top.focused.mouse", null );
-        updateColor( controllers, "stack.tab.background.bottom.focused.mouse", null );
-        updateColor( controllers, "stack.tab.border.focused.mouse", null );
-        updateColor( controllers, "stack.tab.foreground.focused.mouse", null );
+        updateColor( "stack.tab.background.top.focused.mouse", null );
+        updateColor( "stack.tab.background.bottom.focused.mouse", null );
+        updateColor( "stack.tab.border.focused.mouse", null );
+        updateColor( "stack.tab.foreground.focused.mouse", null );
         
-        updateColor( controllers, "stack.tab.background.top.focused", null );
-        updateColor( controllers, "stack.tab.background.bottom.focused", null );
-        updateColor( controllers, "stack.tab.border.focused", null );
-        updateColor( controllers, "stack.tab.foreground.focused", null );
+        updateColor( "stack.tab.background.top.focused", null );
+        updateColor( "stack.tab.background.bottom.focused", null );
+        updateColor( "stack.tab.border.focused", null );
+        updateColor( "stack.tab.foreground.focused", null );
         
         
         // title
-        updateColor( controllers, "title.background.top.active", null );
-        updateColor( controllers, "title.background.top.active.mouse", null );
-        updateColor( controllers, "title.background.top.inactive", null );
-        updateColor( controllers, "title.background.top.inactive.mouse", null );
-        updateColor( controllers, "title.background.bottom.active", null );
-        updateColor( controllers, "title.background.bottom.active.mouse", null );
-        updateColor( controllers, "title.background.bottom.inactive", null );
-        updateColor( controllers, "title.background.bottom.inactive.mouse", null );
-        updateColor( controllers, "title.foreground.active", null );
-        updateColor( controllers, "title.foreground.active.mouse", null );
-        updateColor( controllers, "title.foreground.inactive", null );
-        updateColor( controllers, "title.foreground.inactive.mouse", null );
+        updateColor( "title.background.top.active", null );
+        updateColor( "title.background.top.active.mouse", null );
+        updateColor( "title.background.top.inactive", null );
+        updateColor( "title.background.top.inactive.mouse", null );
+        updateColor( "title.background.bottom.active", null );
+        updateColor( "title.background.bottom.active.mouse", null );
+        updateColor( "title.background.bottom.inactive", null );
+        updateColor( "title.background.bottom.inactive.mouse", null );
+        updateColor( "title.foreground.active", null );
+        updateColor( "title.foreground.active.mouse", null );
+        updateColor( "title.foreground.inactive", null );
+        updateColor( "title.foreground.inactive.mouse", null );
         
         // display border
-        updateColor( controllers, "displayer.border.high.active", null );
-        updateColor( controllers, "displayer.border.high.inactive", null );
-        updateColor( controllers, "displayer.border.low.active", null );
-        updateColor( controllers, "displayer.border.low.inactive", null );
+        updateColor( "displayer.border.high.active", null );
+        updateColor( "displayer.border.high.inactive", null );
+        updateColor( "displayer.border.low.active", null );
+        updateColor( "displayer.border.low.inactive", null );
         
         // RoundButton
-        updateColor( controllers, "action.button", null );
-        updateColor( controllers, "action.button.enabled", null );
-        updateColor( controllers, "action.button.selected", null );
-        updateColor( controllers, "action.button.selected.enabled", null );
-        updateColor( controllers, "action.button.mouse.enabled", null );
-        updateColor( controllers, "action.button.mouse.selected.enabled", null );
-        updateColor( controllers, "action.button.pressed.enabled", null );
-        updateColor( controllers, "action.button.pressed.selected.enabled", null );
+        updateColor( "action.button", null );
+        updateColor( "action.button.enabled", null );
+        updateColor( "action.button.selected", null );
+        updateColor( "action.button.selected.enabled", null );
+        updateColor( "action.button.mouse.enabled", null );
+        updateColor( "action.button.mouse.selected.enabled", null );
+        updateColor( "action.button.pressed.enabled", null );
+        updateColor( "action.button.pressed.selected.enabled", null );
 
         // Round drop down button
-        updateColor( controllers, "action.dropdown", null );
-        updateColor( controllers, "action.dropdown.enabled", null );
-        updateColor( controllers, "action.dropdown.selected", null );
-        updateColor( controllers, "action.dropdown.selected.enabled", null );
-        updateColor( controllers, "action.dropdown.mouse.enabled", null );
-        updateColor( controllers, "action.dropdown.mouse.selected.enabled", null );
-        updateColor( controllers, "action.dropdown.pressed.enabled", null );
-        updateColor( controllers, "action.dropdown.pressed.selected.enabled", null );
+        updateColor( "action.dropdown", null );
+        updateColor( "action.dropdown.enabled", null );
+        updateColor( "action.dropdown.selected", null );
+        updateColor( "action.dropdown.selected.enabled", null );
+        updateColor( "action.dropdown.mouse.enabled", null );
+        updateColor( "action.dropdown.mouse.selected.enabled", null );
+        updateColor( "action.dropdown.pressed.enabled", null );
+        updateColor( "action.dropdown.pressed.selected.enabled", null );
         
-        updateColor( controllers, "action.dropdown.line", null );
-        updateColor( controllers, "action.dropdown.line.enabled", null );
-        updateColor( controllers, "action.dropdown.line.selected", null );
-        updateColor( controllers, "action.dropdown.line.selected.enabled", null );
-        updateColor( controllers, "action.dropdown.line.mouse.enabled", null );
-        updateColor( controllers, "action.dropdown.line.mouse.selected.enabled", null );
-        updateColor( controllers, "action.dropdown.line.pressed.enabled", null );
-        updateColor( controllers, "action.dropdown.line.pressed.selected.enabled", null );
+        updateColor( "action.dropdown.line", null );
+        updateColor( "action.dropdown.line.enabled", null );
+        updateColor( "action.dropdown.line.selected", null );
+        updateColor( "action.dropdown.line.selected.enabled", null );
+        updateColor( "action.dropdown.line.mouse.enabled", null );
+        updateColor( "action.dropdown.line.mouse.selected.enabled", null );
+        updateColor( "action.dropdown.line.pressed.enabled", null );
+        updateColor( "action.dropdown.line.pressed.selected.enabled", null );
         
         // Paint
-        updateColor( controllers, "paint.divider", null );
-        updateColor( controllers, "paint.insertion", null );
-        updateColor( controllers, "paint.line", null );
+        updateColor( "paint.divider", null );
+        updateColor( "paint.insertion", null );
+        updateColor( "paint.line", null );
 	    
-	    for( DockController controller : controllers )
-	        controller.getColors().unlockUpdate();
+        controller.getColors().unlockUpdate();
 	}
 
     /**

@@ -34,7 +34,7 @@ import java.util.List;
  * for every possible choice.
  * @author Benjamin Sigg
  */
-public class DefaultChoice implements Choice {
+public class DefaultChoice<V> implements Choice {
 	private List<Entry> list = new ArrayList<Entry>();
 	private boolean nullEntryAllowed = false;
 	private String defaultChoice;
@@ -51,15 +51,16 @@ public class DefaultChoice implements Choice {
 	 * Adds an entry to this {@link Choice}.
 	 * @param id the id of the new entry
 	 * @param text the text of the new entry
+	 * @param value the optional value
 	 */
-	public void add( String id, String text ){
+	public void add( String id, String text, V value ){
 		if( id == null )
 			throw new IllegalArgumentException( "id must not be null" );
 		
 		if( text == null )
 			throw new IllegalArgumentException( "text must not be null" );
 		
-		list.add( new Entry( id, text ));
+		list.add( new Entry( id, text, value ));
 	}
 	
 	public String getId( int index ){
@@ -68,6 +69,94 @@ public class DefaultChoice implements Choice {
 	
 	public String getText( int index ){
 		return list.get( index ).text;
+	}
+	
+	/**
+	 * Gets the value associated with the <code>index</code>'th entry.
+	 * @param index the index of the entry
+	 * @return the value
+	 */
+	public V getValue( int index ){
+		return list.get( index ).value;
+	}
+	
+	/**
+	 * Searches the entry with the identifier <code>id</code>.
+	 * @param id some id, might be <code>null</code>
+	 * @return the index or -1
+	 */
+	public int indexOfIdentifier( String id ){
+		if( id == null ){
+			for( int i = 0, n = list.size(); i<n; i++ ){
+				if( list.get( i ).id == null )
+					return i;
+			}
+		}
+		else{
+			for( int i = 0, n = list.size(); i<n; i++ ){
+				if( list.get( i ).id.equals( id ))
+					return i;
+			}
+		}
+		
+		return -1;
+	}
+	
+	/**
+	 * Searches the index of the entry that contains <code>value</code>. This
+	 * method uses {@link #equals(Object, Object)} to compare two objects.
+	 * @param value the value to search
+	 * @return the index or -1
+	 */
+	public int indexOfValue( V value ){
+		for( int i = 0, n = list.size(); i<n; i++ ){
+			if( equals( list.get( i ).value, value ))
+				return i;
+		}
+		
+		return -1;
+	}
+	
+	/**
+	 * Checks the equality of <code>a</code> and <code>b</code>.
+	 * @param a some value, might be <code>null</code>
+	 * @param b some value, might be <code>null</code>
+	 * @return <code>true</code> if <code>a</code> and <code>b</code> are equal
+	 */
+	protected boolean equals( V a, V b ){
+		if( a == b )
+			return true;
+		
+		if( a == null )
+			return false;
+		
+		return a.equals( b );
+	}
+	
+	/**
+	 * Searches the identifier for an entry which contains <code>value</code>,
+	 * this method uses {@link #equals(Object, Object)} to decide wheter two
+	 * values are equal.
+	 * @param value the value to search
+	 * @return its identifier
+	 */
+	public String valueToIdentifier( V value ){
+		int index = indexOfValue( value );
+		if( index < 0 )
+			return null;
+		return getId( index );
+	}
+	
+	/**
+	 * Search the value for the entry width identifier <code>id</code>.
+	 * @param id the id to search
+	 * @return the value associated with <code>id</code>
+	 */
+	public V identifierToValue( String id ){
+		int index = indexOfIdentifier( id );
+		if( index < 0 )
+			return null;
+		return getValue( index );
 	}
 	
 	public int size() {
@@ -111,10 +200,12 @@ public class DefaultChoice implements Choice {
 	private class Entry{
 		public String id;
 		public String text;
+		public V value;
 		
-		public Entry( String id, String text ){
+		public Entry( String id, String text, V value ){
 			this.id = id;
 			this.text = text;
+			this.value = value;
 		}
 	}
 }

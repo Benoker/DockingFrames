@@ -31,7 +31,12 @@ import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 
-import bibliothek.extension.gui.dock.theme.flat.*;
+import bibliothek.extension.gui.dock.theme.flat.FlatButtonTitle;
+import bibliothek.extension.gui.dock.theme.flat.FlatColorScheme;
+import bibliothek.extension.gui.dock.theme.flat.FlatDisplayerFactory;
+import bibliothek.extension.gui.dock.theme.flat.FlatStationPaint;
+import bibliothek.extension.gui.dock.theme.flat.FlatTab;
+import bibliothek.extension.gui.dock.theme.flat.FlatTitleFactory;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
@@ -39,7 +44,11 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.StackDockStation;
-import bibliothek.gui.dock.action.*;
+import bibliothek.gui.dock.action.ActionType;
+import bibliothek.gui.dock.action.ButtonDockAction;
+import bibliothek.gui.dock.action.DropDownAction;
+import bibliothek.gui.dock.action.MenuDockAction;
+import bibliothek.gui.dock.action.SelectableDockAction;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.action.view.ViewGenerator;
 import bibliothek.gui.dock.action.view.ViewTarget;
@@ -48,14 +57,22 @@ import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.themes.BasicTheme;
+import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.themes.ThemeProperties;
-import bibliothek.gui.dock.themes.basic.action.*;
+import bibliothek.gui.dock.themes.basic.action.BasicButtonHandler;
+import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
+import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonHandler;
+import bibliothek.gui.dock.themes.basic.action.BasicMenuHandler;
+import bibliothek.gui.dock.themes.basic.action.BasicSelectableHandler;
+import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
+import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
 import bibliothek.gui.dock.themes.basic.action.buttons.BasicMiniButton;
 import bibliothek.gui.dock.themes.basic.action.buttons.DropDownMiniButton;
 import bibliothek.gui.dock.themes.basic.action.buttons.MiniButton;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.PropertyKey;
 
 /**
  * A {@link DockTheme theme} that uses very few borders.
@@ -71,11 +88,16 @@ public class FlatTheme extends BasicTheme{
     /** A special factory for the {@link SplitDockStation} */
     protected DisplayerFactory splitDisplayFactory = new FlatDisplayerFactory( true );
     
+
+    /** the key to set the {@link ColorScheme} of this theme */
+    public static final PropertyKey<ColorScheme> FLAT_COLOR_SCHEME = 
+    	new PropertyKey<ColorScheme>( "dock.ui.FlatTheme.ColorScheme", new FlatColorScheme() );
+    
     /**
      * Creates a new theme
      */
     public FlatTheme() {
-        setColorScheme( new FlatColorScheme() );
+        setColorSchemeKey( FLAT_COLOR_SCHEME );
         setPaint( new FlatStationPaint() );
         setTitleFactory( new FlatTitleFactory() );
         setDisplayerFactory( new FlatDisplayerFactory( false ));
@@ -178,45 +200,45 @@ public class FlatTheme extends BasicTheme{
     }
     
     @Override
-    protected void updateColors( DockController[] controllers ) {
-        for( DockController controller : controllers )
-            controller.getColors().lockUpdate();
+    protected void updateColors() {
+    	DockController controller = getController();
+
+    	controller.getColors().lockUpdate();
         
-        super.updateColors( controllers );
+        super.updateColors();
         
-        updateColor( controllers, "title.active.left", null );
-        updateColor( controllers, "title.inactive.left", null );
-        updateColor( controllers, "title.active.right", null );
-        updateColor( controllers, "title.inactive.right", null );
-        updateColor( controllers, "title.active.text", null );
-        updateColor( controllers, "title.inactive.text", null );
+        updateColor( "title.active.left", null );
+        updateColor( "title.inactive.left", null );
+        updateColor( "title.active.right", null );
+        updateColor( "title.inactive.right", null );
+        updateColor( "title.active.text", null );
+        updateColor( "title.inactive.text", null );
         
-        updateColor( controllers, "paint.line", null );
-        updateColor( controllers, "paint.divider", null );
-        updateColor( controllers, "paint.insertion.area", null );
-        updateColor( controllers, "paint.insertion.border", null );
+        updateColor( "paint.line", null );
+        updateColor( "paint.divider", null );
+        updateColor( "paint.insertion.area", null );
+        updateColor( "paint.insertion.border", null );
         
-        updateColor( controllers, "stack.tab.border.out.selected", null );
-        updateColor( controllers, "stack.tab.border.center.selected", null );
-        updateColor( controllers, "stack.tab.border.out.focused", null );
-        updateColor( controllers, "stack.tab.border.center.focused", null );
-        updateColor( controllers, "stack.tab.border.out", null );
-        updateColor( controllers, "stack.tab.border.center", null );
-        updateColor( controllers, "stack.tab.border", null );
+        updateColor( "stack.tab.border.out.selected", null );
+        updateColor( "stack.tab.border.center.selected", null );
+        updateColor( "stack.tab.border.out.focused", null );
+        updateColor( "stack.tab.border.center.focused", null );
+        updateColor( "stack.tab.border.out", null );
+        updateColor( "stack.tab.border.center", null );
+        updateColor( "stack.tab.border", null );
                         
-        updateColor( controllers, "stack.tab.background.top.selected", null ); 
-        updateColor( controllers, "stack.tab.background.bottom.selected", null );
-        updateColor( controllers, "stack.tab.background.top.focused", null ); 
-        updateColor( controllers, "stack.tab.background.bottom.focused", null );
-        updateColor( controllers, "stack.tab.background.top", null );
-        updateColor( controllers, "stack.tab.background.bottom", null );
-        updateColor( controllers, "stack.tab.background", null );
+        updateColor( "stack.tab.background.top.selected", null ); 
+        updateColor( "stack.tab.background.bottom.selected", null );
+        updateColor( "stack.tab.background.top.focused", null ); 
+        updateColor( "stack.tab.background.bottom.focused", null );
+        updateColor( "stack.tab.background.top", null );
+        updateColor( "stack.tab.background.bottom", null );
+        updateColor( "stack.tab.background", null );
             
-        updateColor( controllers, "stack.tab.foreground", null );
-        updateColor( controllers, "stack.tab.foreground.selected",  null );
-        
-        for( DockController controller : controllers )
-            controller.getColors().unlockUpdate();
+        updateColor( "stack.tab.foreground", null );
+        updateColor( "stack.tab.foreground.selected",  null );
+     
+        controller.getColors().unlockUpdate();
     }
     
     /**
