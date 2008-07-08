@@ -91,6 +91,9 @@ public abstract class AbstractCDockable implements CDockable {
     /** Source that contains the action that closes this dockable */
     private CloseActionSource close = new CloseActionSource( this );
     
+    /** The default locations for the available {@link CDockable.ExtendedMode}s. */
+    private Map<ExtendedMode, CLocation> defaultLocations = new HashMap<ExtendedMode, CLocation>( 4 );
+    
     /**
      * Creates a new dockable
      * @param dockable the internal representation of this {@link CDockable},
@@ -430,13 +433,45 @@ public abstract class AbstractCDockable implements CDockable {
         return titleShown;
     }
     
-    
     /**
      * Gets the intern representation of this dockable.
      * @return the intern representation.
      */
     public CommonDockable intern(){
         return dockable;
+    }
+    
+    /**
+     * Sets the default location for mode <code>mode</code> for this dockable. Note
+     * that this location does not override any existing setting. This method can
+     * be called either before or after making this dockable visible. It is
+     * the client's responsibility to ensure that <code>location</code> is valid
+     * together with <code>mode</code>. It makes no sense to specify the default
+     * location for {@link CDockable.ExtendedMode#MAXIMIZED}.
+     * @param mode the mode for which to store the default location
+     * @param location the default location or <code>null</code>
+     */
+    public void setDefaultLocation( ExtendedMode mode, CLocation location ){
+        if( location == null )
+            defaultLocations.remove( mode );
+        else{
+            defaultLocations.put( mode, location );
+        
+            if( control != null ){
+                CStateManager state = control.getStateManager();
+                if( state.getLocation( dockable, mode ) == null )
+                    state.setLocation( dockable, mode, location );
+            }
+        }
+    }
+    
+    /**
+     * Gets an earlier set value of {@link #setDefaultLocation(bibliothek.gui.dock.common.intern.CDockable.ExtendedMode, CLocation)}.
+     * @param mode the mode for which to search the default location
+     * @return the location or <code>null</code>
+     */
+    public CLocation getDefaultLocation( ExtendedMode mode ){
+        return defaultLocations.get( mode );
     }
     
     /**
@@ -487,6 +522,11 @@ public abstract class AbstractCDockable implements CDockable {
                     if( AbstractCDockable.this.control != null && id != null ){
                         CStateManager state = AbstractCDockable.this.control.getStateManager();
                         state.put( uniqueId, dockable );
+                        
+                        for( Map.Entry<ExtendedMode, CLocation> location : defaultLocations.entrySet() ){
+                            if( state.getLocation( dockable, location.getKey() ) == null )
+                                state.setLocation( dockable, location.getKey(), location.getValue() );
+                        }
                     }
                 }
                 

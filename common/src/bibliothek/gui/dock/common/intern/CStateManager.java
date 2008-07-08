@@ -294,6 +294,80 @@ public class CStateManager extends StateManager {
 	}
     
     /**
+     * Sets the default location of <code>dockable</code> when going into
+     * <code>mode</code>. The properties set here will be overridden
+     * as soon as the user drags <code>dockable</code> to another location (within 
+     * the same mode) or <code>dockable</code> is removed permanently.<br> 
+     * This method has no effect if <code>dockable</code> is already in
+     * <code>mode</code>. There is also no effect if <code>dockable</code>
+     * has not been registered at the {@link CStateManager}.<br>
+     * Note: it is the clients responsibility to ensure that <code>location</code>
+     * and <code>mode</code> belong to each other.
+     * @param dockable the element whose location will be set
+     * @param mode the mode for which the location is to be set
+     * @param location the new location
+     * @throws IllegalArgumentException if either argument is <code>null</code> or
+     * if {@link CLocation#findRoot()} or {@link CLocation#findProperty()} returns
+     * <code>null</code>
+     */
+    public void setLocation( Dockable dockable, CDockable.ExtendedMode mode, CLocation location ){
+        if( dockable == null )
+            throw new IllegalArgumentException( "dockable must not be null" );
+        
+        if( mode == null )
+            throw new IllegalArgumentException( "mode must not be null" );
+        
+        if( location == null )
+            throw new IllegalArgumentException( "location must not be null" );
+        
+        String root = location.findRoot();
+        if( root == null )
+            throw new IllegalArgumentException( "the location is not sufficient to find the root station" );
+        
+        DockableProperty property = location.findProperty();
+        if( property == null )
+            throw new IllegalArgumentException( "the location does not carry enough information to find the location of dockable" );
+        
+        setProperties( convertMode( mode ), dockable, new Location( root, property ) );
+    }
+    
+    /**
+     * Assuming that <code>dockable</code> is currently not in mode <code>mode</code>,
+     * then this method searches for the previously stored location of <code>dockable</code>.
+     * Note that this method can't tell where <code>dockable</code> would be
+     * shown if it never was in that mode and the client never specified the 
+     * location.
+     * @param dockable the dockable whose location is searched
+     * @param mode the mode which might be taken by <code>dockable</code>
+     * @return the location or <code>null</code>
+     * @throws IllegalArgumentException if any argument is <code>null</code>
+     */
+    public CLocation getLocation( Dockable dockable, CDockable.ExtendedMode mode ){
+        if( dockable == null )
+            throw new IllegalArgumentException( "dockable must not be null" );
+        
+        if( mode == null )
+            throw new IllegalArgumentException( "mode must not be null" );
+        
+        if( mode == ExtendedMode.MAXIMIZED )
+            return CLocation.maximized();
+        
+        Location location = getProperties( convertMode( mode ), dockable );
+        if( location == null )
+            return null;
+        
+        List<CStation> stations = control.getOwner().getStations();
+        for( CStation station : stations ){
+            if( station.getUniqueId().equals( location.getRoot() ) ){
+                CLocation stationLocation = station.getStationLocation();
+                return stationLocation.expandProperty( location.getLocation() );
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
      * Changes the mode of <code>dockable</code>.
      * @param dockable an element whose mode will be changed
      * @param mode the new mode

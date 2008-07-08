@@ -1,5 +1,5 @@
 - Minimized, maximized and externalized elements with a CWorkingArea might get stored and recreated on layout change. That should not happen.
-- [done ]check whether multiple CContentAreas work properly or not
+- [done] check whether multiple CContentAreas work properly or not
 - [done] More constructors for DefaultCSingleDockable, DefaultCMultipleDockable.
 - [done] Closing a maximized, stacked Dockable is counterintuitive
 - [done] Opening a CDockable when another is maximized (and the two should be stacked) leads to layout failures
@@ -8,3 +8,4 @@
 - [done] When opening a closed CDockable it can't be selected (tested with Paint)
 (- Introduce concept of "DockGroup" a set of Dockables which should not be mixed)
 (- Preference pages for colors and keystrokes?) 
+- [done] Allow default locations for CDockables (for example allow to set, that a CDockable should be minimized to the left area)

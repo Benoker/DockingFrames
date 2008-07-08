@@ -115,6 +115,7 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
      * global {@link DockActionSource}.
      * @param name a unique name for <code>dockable</code>
      * @param dockable the element to add
+     * @see #put(String, Dockable)
      */
     public void add( String name, Dockable dockable ){
         if( name == null )
@@ -156,6 +157,7 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
      * <code>Dockable</code> is replaced by <code>dockable</code>.
      * @param name the name of <code>dockable</code>
      * @param dockable the new {@link Dockable}
+     * @see #add(String, Dockable)
      */
     public void put( String name, Dockable dockable ){
         if( name == null )
@@ -202,7 +204,7 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
      * @param dockable the element to reduce
      */
     public void reduceToEmpty( Dockable dockable ){
-        Entry entry = dockables.remove( dockable );
+        Entry entry = dockables.get( dockable );
         if( entry != null ){
             entry.dockable = null;
             removed( dockable );

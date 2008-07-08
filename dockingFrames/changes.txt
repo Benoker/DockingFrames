@@ -178,3 +178,4 @@
 
 - API: new preferences package, includes new MenuPieces
 ! API: SimpleModifierMask has been deleted, it gets replaced by ModiferMask which is no longer an interface. Reason is that a modifier mask does not need to be very sophisticated and chances of additional implementions are hardly given. Also the preferences can now operate with the modifier masks.
+- API: AbstractCDockable can have default-locations, the default locations are set using the new method CStateManager#setLocation(Dockable, ExtendedMode, CLocation)
