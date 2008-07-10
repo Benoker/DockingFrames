@@ -213,7 +213,7 @@ import bibliothek.gui.dock.util.laf.LookAndFeelColorsListener;
 	 * Subclasses should override this method and explicitly call
 	 * {@link #updateColor(String, Color) updateColor} and
 	 * {@link #updateColorProvider(Class) updateColorProvider}
-	 * for all {@link Color}s and {@link ColorProvider}s that will be used by
+	 * for all {@link Color}s and {@link UIBridge}s that will be used by
 	 * this theme. Since {@link ColorScheme}s can create new colors and providers 
 	 * lazily, just reading out all colors will ensure that all colors 
 	 * and providers exists and are registered at the {@link ColorManager}s.
@@ -277,7 +277,11 @@ import bibliothek.gui.dock.util.laf.LookAndFeelColorsListener;
 	 */
 	@SuppressWarnings("unchecked")
 	protected <P extends DockColor> void updateColorProvider( Class<P> kind ){
-		ColorProviderFactory<P, ? extends UIBridge<Color, P>> factory = colorScheme.getValue().getProvider( kind );
+	    ColorProviderFactory temp = colorScheme.getValue().getProvider( kind );
+
+	    // this would be a problem if would would have write access to factory
+		ColorProviderFactory<P, ? extends UIBridge<Color, P>> factory = temp;
+		
 		if( factory != null ){
 			UIBridge<Color, P> bridge = factory.create( controller.getColors() );
 			controller.getColors().publish( Priority.THEME, kind, bridge );

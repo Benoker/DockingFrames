@@ -34,8 +34,8 @@ import java.util.Set;
 import bibliothek.gui.dock.themes.ColorProviderFactory;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.util.Priority;
+import bibliothek.gui.dock.util.UIBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
-import bibliothek.gui.dock.util.color.ColorProvider;
 import bibliothek.gui.dock.util.color.DockColor;
 
 /**
@@ -70,7 +70,7 @@ public class DefaultColorScheme implements ColorScheme{
      * @param kind the kind of {@link DockColor}s the provider works with
      * @param provider the provider or <code>null</code>
      */
-    public <D extends DockColor> void setProvider( Class<? super D> kind, ColorProviderFactory<D, ColorProvider<D>> provider ){
+    public <D extends DockColor> void setProvider( Class<? super D> kind, ColorProviderFactory<D, ? extends UIBridge<Color, D>> provider ){
         if( provider == null )
             providers.remove( kind );
         else
@@ -95,8 +95,8 @@ public class DefaultColorScheme implements ColorScheme{
         return color;
     }
 
-    @SuppressWarnings("unchecked")
-    public <D extends DockColor> ColorProviderFactory<D, ? extends ColorProvider<D>> getProvider( Class<D> kind ) {
+    @SuppressWarnings( "unchecked" )
+    public <D extends DockColor> ColorProviderFactory<D, ? extends UIBridge<Color, D>> getProvider( Class<D> kind ) {
         ColorProviderFactory result = getProvider( kind, new HashSet<Class<?>>() );
         return result;
     }
@@ -113,7 +113,7 @@ public class DefaultColorScheme implements ColorScheme{
                 manager.publish( 
                         priority, 
                         (Class<DockColor>)entry.getKey(), 
-                        (ColorProvider<DockColor>)entry.getValue().create( manager ) );
+                        (UIBridge<Color,DockColor>)entry.getValue().create( manager ) );
         
         }
         finally{

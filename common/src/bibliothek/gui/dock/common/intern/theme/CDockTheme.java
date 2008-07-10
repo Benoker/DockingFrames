@@ -133,7 +133,7 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
         for( Controller setting : controllers ){
             ColorManager colors = setting.controller.getColors();
             
-            UIBridge<Color, ? extends DockColor> oldProvider = setting.bridges.remove( kind );
+            UIBridge<Color, ?> oldProvider = setting.bridges.remove( kind );
             UIBridge<Color, ? extends DockColor> newProvider = factory == null ? null : factory.create( colors );
             
             if( newProvider == null ){
@@ -168,6 +168,7 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
         controllers.add( settings );
     }
 
+    @SuppressWarnings( "unchecked" )
     public void uninstall( DockController controller ) {
         delegate.uninstall( controller );
         
@@ -177,7 +178,8 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
                 controllers.remove( i );
                 
                 ColorManager colors = controller.getColors();
-                for( UIBridge<Color, ? extends DockColor> provider : settings.bridges.values() ){
+                for( UIBridge provider : settings.bridges.values() ){
+                    // TODO ensure typesafety
                     colors.unpublish( Priority.DEFAULT, provider );
                 }
             }

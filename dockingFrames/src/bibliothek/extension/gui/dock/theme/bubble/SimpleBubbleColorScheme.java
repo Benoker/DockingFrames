@@ -74,8 +74,12 @@ public class SimpleBubbleColorScheme extends DefaultColorScheme {
                 return delegate.getColor( id ); 
             }
             
+            @SuppressWarnings( "unchecked" )
             public <D extends DockColor> ColorProviderFactory<D, ? extends UIBridge<Color, D>> getProvider( Class<D> kind) {
-                return delegate.getProvider( kind );
+                ColorProviderFactory factory = delegate.getProvider( kind );
+                
+                // this cast would be a problem if factory would have generic arguments in its methods 
+                return factory;
             }
             
             public void transmitAll( Priority priority, ColorManager manager ) {

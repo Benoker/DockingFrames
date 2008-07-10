@@ -181,8 +181,10 @@ public class UIProperties<V, U extends UIValue<V>> {
      * @param clazz the type whose bridge is searched
      * @return the bridge or <code>null</code>
      */
+    @SuppressWarnings( "unchecked" )
     protected UIBridge<V, ? extends U> getBridgeFor( Class<?> clazz ){
-        return getBridgeFor( clazz, new HashSet<Class<?>>() );
+        UIBridge result = getBridgeFor( clazz, new HashSet<Class<?>>() );
+        return result;
     }
     
     
