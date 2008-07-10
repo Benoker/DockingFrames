@@ -231,7 +231,7 @@ public class Node extends SplitNode{
         
         if( orientation == Orientation.HORIZONTAL ){
             // Components are left and right
-            double dividerWidth = Math.max( 0, dividerSize / factorW);
+            double dividerWidth = factorW > 0 ? Math.max( 0, dividerSize / factorW) : 0.0;
             double dividerLocation = width * divider;
             
             if( left != null )
@@ -248,7 +248,7 @@ public class Node extends SplitNode{
                     (int)( height*factorH + 0.5 ));
         }
         else{
-            double dividerHeight = Math.max( 0, dividerSize / factorH );
+            double dividerHeight = factorH > 0 ? Math.max( 0, dividerSize / factorH ) : 0.0;
             double dividerLocation = height * divider;
             
             if( left != null)

@@ -126,9 +126,9 @@ public interface SplitLayoutManager {
      * @param x the left bound
      * @param y the top bound
      * @param factorW a factory with which all x-coordinates have to be multiplied in
-     * order to get coordinates in pixels.
+     * order to get coordinates in pixels. 0 if the basic station has no size.
      * @param factorH a factory with which all y-coordinates have to be multiplied in
-     * order to get coordinates in pixels.
+     * order to get coordinates in pixels. 0 if the basic station has no size.
      */
     public void updateBounds( Root root, double x, double y, double factorW, double factorH );
 }

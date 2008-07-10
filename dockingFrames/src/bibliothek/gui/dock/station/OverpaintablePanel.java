@@ -28,6 +28,7 @@ package bibliothek.gui.dock.station;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Graphics;
+import java.awt.Insets;
 
 import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
@@ -127,8 +128,21 @@ public class OverpaintablePanel extends JLayeredPane {
     
     @Override
     public void doLayout() {
-        base.setBounds( 0, 0, getWidth(), getHeight() );
-        overlay.setBounds( 0, 0, getWidth(), getHeight() );
+        Insets insets = getInsets();
+        int x = 0;
+        int y = 0;
+        int width = getWidth();
+        int height = getHeight();
+        
+        if( insets != null ){
+            x = insets.left;
+            y = insets.top;
+            width -= insets.left + insets.right;
+            height -= insets.top + insets.bottom;
+        }
+        
+        base.setBounds( x, y, width, height );
+        overlay.setBounds( x, y, width, height );
     }
     
     private class Overlay extends JPanel{

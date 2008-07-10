@@ -28,7 +28,10 @@ package bibliothek.gui.dock.station.split;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.Rectangle;
+
+import javax.swing.JComponent;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -226,14 +229,26 @@ public abstract class SplitNode{
                 (int)(width * fw + 0.5),
                 (int)(height * fh + 0.5 ));
         
-
-        Dimension parent = getAccess().getOwner().getSize();
+        JComponent base = getAccess().getOwner().getBasePane();
         
-        rec.x = Math.min( parent.width, Math.max( 0, rec.x ));
-        rec.y = Math.min( parent.height, Math.max( 0, rec.y ));
+        Insets insets = base.getInsets();
         
-        rec.width  = Math.min( parent.width - rec.x, Math.max( 0, rec.width ));
-        rec.height = Math.min( parent.height - rec.y, Math.max( 0, rec.height ));
+        int x = 0;
+        int y = 0;
+        int width = base.getWidth();
+        int height = base.getHeight();
+        if( insets != null ){
+            x = insets.left;
+            y = insets.top;
+            width -= insets.left + insets.right;
+            height -= insets.top + insets.bottom;
+        }
+        
+        rec.x = Math.min( width, Math.max( x, rec.x ));
+        rec.y = Math.min( height, Math.max( y, rec.y ));
+        
+        rec.width  = Math.min( width - rec.x + x, Math.max( 0, rec.width ));
+        rec.height = Math.min( height - rec.y + y, Math.max( 0, rec.height ));
         
         return rec;
     }

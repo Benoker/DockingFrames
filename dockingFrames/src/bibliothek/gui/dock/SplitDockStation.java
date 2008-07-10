@@ -1839,14 +1839,14 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      * which are in the structure of this tree.
      */
     public void updateBounds(){
-        Insets insets = getInsets();
+        Insets insets = getBasePane().getInsets();
         double factorW = getWidth() - insets.left - insets.right;
         double factorH = getHeight() - insets.top - insets.bottom;
         
         SplitLayoutManager manager = layoutManager.getValue();
         
         if( factorW <= 0 || factorH <= 0 ){
-            manager.updateBounds( root, 0, 0, 1.0, 1.0 );
+            manager.updateBounds( root, 0, 0, 0, 00 );
         }
         else{
             manager.updateBounds( root, insets.left / factorW, insets.top / factorH, factorW, factorH );
