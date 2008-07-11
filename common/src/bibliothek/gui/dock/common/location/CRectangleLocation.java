@@ -92,6 +92,6 @@ public class CRectangleLocation extends AbstractStackholdingLocation{
     
 	@Override
 	public String toString() {
-	    return "[normal " + x + " " + y + " " + width + " " + height + "]";
+	    return String.valueOf( parent ) + " [normal " + x + " " + y + " " + width + " " + height + "]";
 	}
 }

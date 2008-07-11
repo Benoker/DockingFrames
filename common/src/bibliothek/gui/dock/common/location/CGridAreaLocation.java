@@ -49,4 +49,9 @@ public class CGridAreaLocation extends CSplitLocation{
     public String findRoot() {
         return area.getUniqueId();
     }
+    
+    @Override
+    public String toString() {
+        return "[" + findRoot() + "]";
+    }
 }

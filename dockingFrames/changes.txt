@@ -182,4 +182,4 @@
 - Layout: OverpaintablePanel now supports Borders
 - Bugfix: Dockables can now be dropped onto SplitDockStation using some position information even if the station has a size of 0/0.
 - Bugfix: CSplitLocation.expandProperty did process the first element of a tree-path twice.
-- Bugfix: CStateManager.getLocation did return null when it should produce a result
+- Bugfix: CStateManager.getLocation did return null when it should produce a result. There were also some CLocations which did not return the correct result causing getLocation to fail. 

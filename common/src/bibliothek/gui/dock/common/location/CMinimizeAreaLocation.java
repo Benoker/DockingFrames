@@ -49,4 +49,9 @@ public class CMinimizeAreaLocation extends CFlapLocation{
     public String findRoot() {
         return area.getUniqueId();
     }
+    
+    @Override
+    public String toString() {
+        return "[" + findRoot() + "]";
+    }
 }

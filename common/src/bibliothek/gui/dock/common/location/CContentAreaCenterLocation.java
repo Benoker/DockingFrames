@@ -54,4 +54,9 @@ public class CContentAreaCenterLocation extends CSplitLocation{
         else
             return area.getCenterIdentifier();
     }
+    
+    @Override
+    public String toString() {
+        return "[" + findRoot() + "]";
+    }
 }

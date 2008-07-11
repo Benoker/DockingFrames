@@ -50,7 +50,11 @@ public class CExternalizedLocation extends AbstractStackholdingLocation{
         public CLocation expandProperty( DockableProperty property ) {
             if( property instanceof ScreenDockProperty ){
                 ScreenDockProperty screen = (ScreenDockProperty)property;
-                return new CExternalizedLocation( screen.getX(), screen.getY(), screen.getWidth(), screen.getHeight() );
+                CLocation location = new CExternalizedLocation( screen.getX(), screen.getY(), screen.getWidth(), screen.getHeight() );
+                DockableProperty successor = property.getSuccessor();
+                if( successor != null )
+                    location = location.expandProperty( successor );
+                return location;
             }
             return null;
         }
