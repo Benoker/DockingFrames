@@ -530,6 +530,9 @@ public class CStateManager extends StateManager {
     	
     	Dockable child = dockable;
     	DockStation search = dockable.asDockStation();
+    	if( search == null ){
+    	    search = child.getDockParent();
+    	}
     	
     	loop:while( search != null ){
     	    for( CStation station : stations ){

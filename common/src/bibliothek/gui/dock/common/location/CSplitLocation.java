@@ -105,7 +105,7 @@ public abstract class CSplitLocation extends CLocation{
             SplitDockProperty split = (SplitDockProperty)property;
             location = rectangle( split.getX(), split.getY(), split.getWidth(), split.getHeight() );
         }
-        if( property instanceof SplitDockPathProperty ){
+        else if( property instanceof SplitDockPathProperty ){
             SplitDockPathProperty path = (SplitDockPathProperty)property;
             if( path.size() > 0 ){
                 AbstractTreeLocation tree = null;
@@ -125,7 +125,7 @@ public abstract class CSplitLocation extends CLocation{
                         break;
                 }
                 
-                for( int i = 0, n = path.size(); i<n; i++ ){
+                for( int i = 1, n = path.size(); i<n; i++ ){
                     node = path.getNode( i );
                     switch( node.getLocation() ){
                         case BOTTOM:
