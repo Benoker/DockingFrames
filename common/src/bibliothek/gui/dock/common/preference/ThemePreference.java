@@ -25,33 +25,44 @@
  */
 package bibliothek.gui.dock.common.preference;
 
-import java.awt.event.KeyEvent;
-
-import javax.swing.KeyStroke;
-
-import bibliothek.extension.gui.dock.preference.preferences.DockPropertyPreference;
+import bibliothek.extension.gui.dock.preference.DefaultPreference;
 import bibliothek.extension.gui.dock.util.Path;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.DockTheme;
+import bibliothek.gui.dock.common.layout.ThemeMap;
 import bibliothek.gui.dock.support.util.Resources;
-import bibliothek.gui.dock.util.DockProperties;
 
 /**
- * Preference setting the keystroke for maximizing/unmaximizing a {@link Dockable}.
+ * A preference allowing the user to select one {@link DockTheme}. This preference
+ * uses a {@link ThemeMap} to read and store its content.
  * @author Benjamin Sigg
- * @see CControl#KEY_MAXIMIZE_CHANGE
  */
-public class KeystrokeMaximizeChangePreference extends DockPropertyPreference<KeyStroke>{
-	/**
-	 * Creates a new preference
-	 * @param properties the properties to access
-	 */
-	public KeystrokeMaximizeChangePreference( DockProperties properties ){
-		super( properties, CControl.KEY_MAXIMIZE_CHANGE, Path.TYPE_KEYSTROKE_PATH, new Path( "dock.common.control.maximize_change" ) );
-		
-		setLabel( Resources.getString( "preference.shortcut.maximize_change.label" ));
-		setDescription( Resources.getString( "preference.shortcut.maximize_change.description" ));
-		
-		setDefaultValue( KeyStroke.getKeyStroke( KeyEvent.VK_M, KeyEvent.CTRL_DOWN_MASK ));
-	}
+public class ThemePreference extends DefaultPreference<String>{
+    private ThemeMap themes;
+    
+    /**
+     * Creates a new preference.
+     * @param themes a list of themes to show
+     */
+    public ThemePreference( ThemeMap themes ){
+        super( Path.TYPE_STRING_CHOICE_PATH, new Path( "dock.theme" ));
+        this.themes = themes;
+        
+        setValueInfo( new ThemeChoice( themes ) );
+        
+        setLabel( Resources.getString( "preference.layout.theme.label" ) );
+        setDescription( Resources.getString( "preference.layout.theme.description" ) );
+        
+        setNatural( true );
+    }
+    
+    @Override
+    public void read() {
+        setValueInfo( new ThemeChoice( themes ) );
+        setValue( themes.getSelectedKey() );
+    }
+    
+    @Override
+    public void write() {
+        themes.select( getValue() );
+    }
 }

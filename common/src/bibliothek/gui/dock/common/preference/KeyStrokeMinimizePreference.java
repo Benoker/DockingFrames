@@ -23,35 +23,32 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.preference.preferences;
-
-import java.awt.event.KeyEvent;
+package bibliothek.gui.dock.common.preference;
 
 import javax.swing.KeyStroke;
 
+import bibliothek.extension.gui.dock.preference.preferences.DockPropertyPreference;
 import bibliothek.extension.gui.dock.util.Path;
-import bibliothek.gui.DockFrontend;
-import bibliothek.gui.DockUI;
-import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockProperties;
 
 /**
- * Preference for the shortcut used by the {@link DockFrontend} to hide
- * {@link Dockable}s.
+ * {@link KeyStroke} that will minimize a {@link CDockable}.
  * @author Benjamin Sigg
- * @see DockFrontend#HIDE_ACCELERATOR
  */
-public class KeystrokeHidePreference extends DockPropertyPreference<KeyStroke>{
-	/**
-	 * Creates a new preference
-	 * @param properties to read and write the value of this preference
-	 */
-	public KeystrokeHidePreference( DockProperties properties ){
-		super( properties, DockFrontend.HIDE_ACCELERATOR, Path.TYPE_KEYSTROKE_PATH, new Path( "dock.frontend.INIT_SELECTION" ));
-		
-		setLabel( DockUI.getDefaultDockUI().getString( "preference.shortcuts.hide_accelerator.label" ));
-		setDescription( DockUI.getDefaultDockUI().getString( "preference.shortcuts.hide_accelerator.description" ));
-		
-		setDefaultValue( KeyStroke.getKeyStroke( KeyEvent.VK_F4, KeyEvent.CTRL_DOWN_MASK  ) );
-	}
+public class KeyStrokeMinimizePreference extends DockPropertyPreference<KeyStroke>{
+    /**
+     * Creates a new preference
+     * @param properties the properties to access
+     */
+    public KeyStrokeMinimizePreference( DockProperties properties ){
+        super( properties, CControl.KEY_GOTO_MINIMIZED, Path.TYPE_KEYSTROKE_PATH, new Path( "dock.common.control.minimize" ) );
+        
+        setLabel( Resources.getString( "preference.shortcut.minimize.label" ));
+        setDescription( Resources.getString( "preference.shortcut.minimize.description" ));
+        
+        // setDefaultValue( KeyStroke.getKeyStroke( KeyEvent.VK_M, KeyEvent.CTRL_DOWN_MASK ));
+    }
 }

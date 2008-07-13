@@ -72,6 +72,16 @@ public class DefaultPreferenceModel extends AbstractPreferenceModel{
         return getPreference( index ).getPath();
     }
     
+    @Override
+    public boolean isNatural( int index ) {
+        return getPreference( index ).isNatural();
+    }
+    
+    @Override
+    public void setValueNatural( int index ) {
+        getPreference( index ).read();
+    }
+    
     /**
      * Gets the preference of location <code>index</code>.
      * @param index the location of the preference

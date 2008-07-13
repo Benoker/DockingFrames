@@ -30,27 +30,28 @@ import java.awt.event.KeyEvent;
 import javax.swing.KeyStroke;
 
 import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.gui.DockFrontend;
 import bibliothek.gui.DockUI;
-import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.util.DockProperties;
 
 /**
- * Preference for the shortcut used by the {@link SplitDockStation} to
- * maximize its children.
+ * Preference for the shortcut used by the {@link DockFrontend} to hide
+ * {@link Dockable}s.
  * @author Benjamin Sigg
- * @see SplitDockStation#MAXIMIZE_ACCELERATOR
+ * @see DockFrontend#HIDE_ACCELERATOR
  */
-public class KeystrokeMaximizePreference extends DockPropertyPreference<KeyStroke>{
+public class KeyStrokeHidePreference extends DockPropertyPreference<KeyStroke>{
 	/**
 	 * Creates a new preference
 	 * @param properties to read and write the value of this preference
 	 */
-	public KeystrokeMaximizePreference( DockProperties properties ){
-		super( properties, SplitDockStation.MAXIMIZE_ACCELERATOR, Path.TYPE_KEYSTROKE_PATH, new Path( "dock.station.split.MAXIMIZE_ACCELERATOR" ));
+	public KeyStrokeHidePreference( DockProperties properties ){
+		super( properties, DockFrontend.HIDE_ACCELERATOR, Path.TYPE_KEYSTROKE_PATH, new Path( "dock.frontend.INIT_SELECTION" ));
 		
-		setLabel( DockUI.getDefaultDockUI().getString( "preference.shortcuts.maximize_accelerator.label" ));
-		setDescription( DockUI.getDefaultDockUI().getString( "preference.shortcuts.maximize_accelerator.description" ));
+		setLabel( DockUI.getDefaultDockUI().getString( "preference.shortcuts.hide_accelerator.label" ));
+		setDescription( DockUI.getDefaultDockUI().getString( "preference.shortcuts.hide_accelerator.description" ));
 		
-		setDefaultValue( KeyStroke.getKeyStroke( KeyEvent.VK_M, KeyEvent.CTRL_DOWN_MASK ) );
+		setDefaultValue( KeyStroke.getKeyStroke( KeyEvent.VK_F4, KeyEvent.CTRL_DOWN_MASK  ) );
 	}
 }

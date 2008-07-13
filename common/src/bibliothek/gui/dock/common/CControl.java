@@ -55,6 +55,7 @@ import bibliothek.gui.dock.common.intern.station.ScreenResizeRequestHandler;
 import bibliothek.gui.dock.common.intern.theme.CSmoothTheme;
 import bibliothek.gui.dock.common.layout.FullLockConflictResolver;
 import bibliothek.gui.dock.common.layout.RequestDimension;
+import bibliothek.gui.dock.common.layout.ThemeMap;
 import bibliothek.gui.dock.common.location.CExternalizedLocation;
 import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.event.*;
@@ -67,6 +68,7 @@ import bibliothek.gui.dock.layout.DockSituationIgnore;
 import bibliothek.gui.dock.support.util.ApplicationResource;
 import bibliothek.gui.dock.support.util.ApplicationResourceManager;
 import bibliothek.gui.dock.themes.NoStackTheme;
+import bibliothek.gui.dock.themes.ThemeFactory;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.util.Version;
@@ -177,6 +179,9 @@ public class CControl {
     /** the center component of the main-frame */
     private CContentArea content;
 
+    /** a list of available {@link DockTheme}s */
+    private ThemeMap themes;
+    
     /** the whole list of contentareas known to this control, includes {@link #content} */
     private List<CContentArea> contents = new ArrayList<CContentArea>();
 
@@ -339,7 +344,9 @@ public class CControl {
         backupFactory = new CommonSingleDockableFactory( this );
         frontend.registerFactory( backupFactory );
         frontend.registerBackupFactory( backupFactory );
-
+        
+        themes = new ThemeMap( this );
+        
         try{
             resources.put( "ccontrol.frontend", new ApplicationResource(){
                 public void write( DataOutputStream out ) throws IOException {
@@ -1372,9 +1379,36 @@ public class CControl {
     /**
      * Sets the theme of the elements in the realm of this control.
      * @param theme the new theme
+     * @deprecated replaced by {@link #setTheme(String)}. While this method still
+     * works, the theme will not get stored persistent and any module using
+     * the {@link ThemeMap} ({@link #getThemes()}) will not be informed about
+     * the change.
      */
-    public void setTheme( DockTheme  theme ){
+    @Deprecated
+    public void setTheme( DockTheme theme ){
         frontend.getController().setTheme( theme );
+    }
+    
+    /**
+     * Sets the theme of the elements in the realm of this control. The String
+     * <code>theme</code> is used as key for {@link ThemeMap#select(String)}.
+     * @param theme the name of the theme, this might be one of 
+     * {@link ThemeMap#KEY_BASIC_THEME}, {@link ThemeMap#KEY_BUBBLE_THEME},
+     * {@link ThemeMap#KEY_ECLIPSE_THEME}, {@link ThemeMap#KEY_FLAT_THEME}
+     * or {@link ThemeMap#KEY_SMOOTH_THEME}. This can also be a any other
+     * string which was used for {@link ThemeMap#put(String, ThemeFactory)},
+     * {@link ThemeMap#add(String, ThemeFactory)} or {@link ThemeMap#insert(int, String, ThemeFactory)}.
+     */
+    public void setTheme( String theme ){
+        themes.select( theme );
+    }
+    
+    /**
+     * Gets the list of installed themes.
+     * @return the list of themes
+     */
+    public ThemeMap getThemes(){
+        return themes;
     }
 
     /**

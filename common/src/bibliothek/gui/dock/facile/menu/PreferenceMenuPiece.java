@@ -43,14 +43,23 @@ import bibliothek.gui.dock.support.util.Resources;
  */
 public class PreferenceMenuPiece extends BaseMenuPiece{
     private DockController controller;
+    
     private PreferenceTreeModel model;
     
     private AbstractAction action = new AbstractAction(){
         public void actionPerformed( ActionEvent e ) {
+            PreferenceTreeModel model = getModel();
             PreferenceDialog dialog = new PreferenceDialog( model );
             dialog.openDialog( controller.findRootWindow(), true );
         }
     };
+    
+    /**
+     * Creates a new unlinked menu piece
+     */
+    protected PreferenceMenuPiece(){
+        this( null );
+    }
     
     /**
      * Creates a new menu piece
@@ -63,21 +72,19 @@ public class PreferenceMenuPiece extends BaseMenuPiece{
     }
     
     /**
-     * Gets the model which will be shown on the dialog.
+     * Creates a new model for this piece.
      * @return the model
      */
-    protected PreferenceTreeModel updateModel(){
+    protected PreferenceTreeModel createModel(){
         if( controller == null )
             return new PreferenceTreeModel();
         else
             return new DockingFramesPreference( controller );
     }
     
-    /**
-     * Gets the model which is used on the dialog.
-     * @return the model
-     */
-    protected PreferenceTreeModel getModel(){
+    public PreferenceTreeModel getModel() {
+        if( model == null )
+            model = createModel();
         return model;
     }
     
@@ -88,8 +95,7 @@ public class PreferenceMenuPiece extends BaseMenuPiece{
     public void setController( DockController controller ) {
         this.controller = controller;
         action.setEnabled( controller != null );
-        
-        model = updateModel();
+        model = null;
     }
     
     /**

@@ -25,29 +25,32 @@
  */
 package bibliothek.gui.dock.common.preference;
 
+import java.awt.event.KeyEvent;
+
 import javax.swing.KeyStroke;
 
 import bibliothek.extension.gui.dock.preference.preferences.DockPropertyPreference;
 import bibliothek.extension.gui.dock.util.Path;
-import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockProperties;
 
 /**
- * Preference to set the keystroke that maximizes a {@link Dockable}.
+ * {@link KeyStroke} that will externalize a {@link CDockable}
  * @author Benjamin Sigg
- * @see CControl#KEY_GOTO_MAXIMIZED
  */
-public class KeystrokeMaximizePreference extends DockPropertyPreference<KeyStroke>{
-	/**
-	 * Creates a new preference
-	 * @param properties the properties to access
-	 */
-	public KeystrokeMaximizePreference( DockProperties properties ){
-		super( properties, CControl.KEY_GOTO_MAXIMIZED, Path.TYPE_KEYSTROKE_PATH, new Path( "dock.common.control.maximize" ) );
-		
-		setLabel( Resources.getString( "preference.shortcut.maximize.label" ));
-		setDescription( Resources.getString( "preference.shortcut.maximize.description" ));
-	}
+public class KeyStrokeExternalizePreference extends DockPropertyPreference<KeyStroke>{
+    /**
+     * Creates a new preference
+     * @param properties the properties to access
+     */
+    public KeyStrokeExternalizePreference( DockProperties properties ){
+        super( properties, CControl.KEY_GOTO_EXTERNALIZED, Path.TYPE_KEYSTROKE_PATH, new Path( "dock.common.control.externalize" ) );
+        
+        setLabel( Resources.getString( "preference.shortcut.externalize.label" ));
+        setDescription( Resources.getString( "preference.shortcut.externalize.description" ));
+        
+        setDefaultValue( KeyStroke.getKeyStroke( KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK ));
+    }
 }

@@ -30,12 +30,13 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.ButtonGroup;
 import javax.swing.JRadioButtonMenuItem;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
+import bibliothek.gui.dock.common.layout.ThemeMap;
+import bibliothek.gui.dock.common.layout.ThemeMapListener;
 import bibliothek.gui.dock.support.menu.BaseMenuPiece;
 import bibliothek.gui.dock.support.menu.MenuPiece;
 import bibliothek.gui.dock.themes.ThemeFactory;
@@ -48,27 +49,152 @@ public class ThemeMenuPiece extends BaseMenuPiece {
     /** the controller whose theme might be changed */
     private DockController controller;
     
-    /** ensures that only one item is selected */
-    private ButtonGroup group = new ButtonGroup();
-    
     /** the items shown by this piece */
     private List<Item> items = new ArrayList<Item>();
     
-    /** The currently selected factory */
-    private ThemeFactory selection;
+    /** the list of available themes */
+    private ThemeMap themes;
     
     /**
-     * Creates a new piece
+     * Whether it is the responsibility of this menu to transfer the changes
+     * of {@link #themes} to {@link #controller} or not 
+     */
+    private boolean transferTheme = true;
+    
+    /** a listener for {@link #themes} */
+    private ThemeMapListener listener = new ThemeMapListener(){
+        public void changed( ThemeMap map, int index, String key, ThemeFactory oldFactory, ThemeFactory newFactory ) {
+            if( oldFactory != null ){
+                items.remove( index );
+                remove( index );
+            }
+            
+            if( newFactory != null ){
+                Item item = new Item( key, newFactory );
+                items.add( index, item );
+                insert( index, item );
+            }
+        }
+        
+        public void selectionChanged( ThemeMap map, String oldKey, String newKey ) {
+            for( Item item : items ){
+                item.setSelected( item.getKey().equals( newKey ) );
+            }
+            
+            if( controller != null && transferTheme ){
+                ThemeFactory factory = themes.getSelectedFactory();
+                if( factory != null ){
+                    controller.setTheme( factory.create() );
+                }
+            }
+        }
+    };
+    
+    /**
+     * Creates a new piece. The {@link #setTransferTheme(boolean) transfer-flag}
+     * will be set to <code>true</code>.
      * @param controller the controller whose theme might be changed, can be <code>null</code>
      * @param defaultThemes whether the piece should be filled up with the
      * factories that can be obtained through the {@link DockUI}
      */
     public ThemeMenuPiece( DockController controller, boolean defaultThemes ) {
         setController( controller );
-        if( defaultThemes )
-            addDefaultThemes();
+        setTransferTheme( true );
+        
+        ThemeMap themes = new ThemeMap();
+        
+        if( defaultThemes ){
+            DockUI ui = DockUI.getDefaultDockUI();
+            int index = 0;
+            for( ThemeFactory theme : ui.getThemes() ){
+                themes.add( String.valueOf( index++ ), theme );
+            }
+            themes.select( ui.getDefaultTheme() );
+        }
+        
+        setThemes( themes );
+    }
+    
+    /**
+     * Creates a new piece using the themes of <code>map</code>. The
+     * {@link #setTransferTheme(boolean) transfer-flag} will be set to <code>false</code>.
+     * @param controller the controller, will just be stored but not used
+     * unless {@link #setTransferTheme(boolean)} is called with the argument
+     * <code>true</code>. Can be <code>null</code>
+     * @param map the list of themes, can be <code>null</code>
+     */
+    public ThemeMenuPiece( DockController controller, ThemeMap map ){
+        setTransferTheme( false );
+        setController( controller );
+        setThemes( map );
+    }
+    
+    /**
+     * Instructs this piece whether it should transfer the 
+     * @param transferTheme
+     */
+    public void setTransferTheme( boolean transferTheme ) {
+        this.transferTheme = transferTheme;
+    }
+    
+    /**
+     * Tells whether this piece is transfers the {@link DockTheme} from
+     * its {@link #getThemes() map} to the {@link #getController() controller}.
+     * @return <code>true</code> if this piece transfers the theme
+     * @see #setTransferTheme(boolean)
+     */
+    public boolean isTransferTheme() {
+        return transferTheme;
     }
 
+    /**
+     * Sets the themes which this piece offers
+     * @param themes the offered themes, can be <code>null</code>
+     */
+    public void setThemes( ThemeMap themes ) {
+        if( this.themes != themes ){
+            if( this.themes != null ){
+                this.themes.removeThemeMapListener( listener );
+                
+                removeAll();
+                items.clear();
+            }
+            
+            this.themes = themes;
+            
+            if( themes != null ){
+                themes.addThemeMapListener( listener );
+                
+                String selected = themes.getSelectedKey();
+                
+                for( int i = 0, n = themes.size(); i<n; i++ ){
+                    Item item = new Item( themes.getKey( i ), themes.getFactory( i ));
+                    items.add( item );
+                    add( item );
+                    
+                    item.setSelected( item.getKey().equals( selected ) );
+                }
+                
+                if( transferTheme ){
+                    if( controller != null ){
+                        ThemeFactory factory = themes.getSelectedFactory();
+                        if( factory != null ){
+                            controller.setTheme( factory.create() );
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Gets the set of themes used by this piece.
+     * @return the set of themes
+     */
+    public ThemeMap getThemes() {
+        return themes;
+    }
+    
     /**
      * Gets the controller whose theme might be changed by this piece.
      * @return the controller
@@ -85,124 +211,12 @@ public class ThemeMenuPiece extends BaseMenuPiece {
      */
     public void setController( DockController controller ) {
         this.controller = controller;
-        if( controller != null ){
+        if( controller != null && themes != null && transferTheme ){
+            ThemeFactory selection = themes.getSelectedFactory();
+            
             if( selection != null )
                 controller.setTheme( selection.create() );
         }
-    }
-    
-    /**
-     * Adds the default themes.
-     */
-    private void addDefaultThemes(){
-        for( ThemeFactory factory : DockUI.getDefaultDockUI().getThemes() )
-            add( factory );
-        
-        setSelected( DockUI.getDefaultDockUI().getDefaultTheme() );
-    }
-    
-    /**
-     * Adds an item for <code>factory</code>.
-     * @param factory the factory to be made available
-     */
-    public void add( ThemeFactory factory ){
-        if( factory == null )
-            throw new NullPointerException( "factory must not be null" );
-        
-        Item item = new Item( factory );
-        items.add( item );
-        group.add( item );
-        add( item );
-    }
-    
-    /**
-     * Removes the item of <code>factory</code>. Please note that the {@link DockTheme}
-     * created by <code>factory</code> might still be in use.
-     * @param factory the factory to remove
-     */
-    public void remove( ThemeFactory factory ){
-        Item item = null;
-        for( Item check : items ){
-            if( check.factory == factory ){
-                item = check;
-                break;
-            }
-        }
-        
-        items.remove( item );
-        group.remove( item );
-        remove( item );
-        
-        if( selection == factory )
-            selection = null;
-    }
-    
-    /**
-     * Selects the item which represents <code>factory</code> and changes
-     * the {@link DockTheme} when necessary.
-     * @param factory the factory to select
-     */
-    public void setSelected( ThemeFactory factory ){
-        for( Item item : items ){
-            if( item.factory == factory ){
-                if( !item.isSelected() ){
-                    item.setSelected( true );
-                }
-                break;
-            }
-        }
-        
-        if( this.selection != factory ){
-            this.selection = factory;
-            if( controller != null )
-                controller.setTheme( factory.create() );
-        }
-    }
-    
-    /**
-     * Gets the factory which is currently selected.
-     * @return the factory or <code>null</code> if nothing is selected
-     */
-    public ThemeFactory getSelected(){
-        for( Item item : items ){
-            if( item.isSelected() )
-                return item.factory;
-        }
-        
-        return null;
-    }
-    
-    /**
-     * Gets the number of factories that can be selected by the user.
-     * @return the number of factories
-     */
-    public int getFactoryCount(){
-        return items.size();
-    }
-    
-    /**
-     * Gets the index'th factory.
-     * @param index the index of the factory
-     * @return the factory
-     */
-    public ThemeFactory getFactory( int index ){
-        return items.get( index ).factory;
-    }
-    
-    /**
-     * Gets the index of <code>factory</code>.
-     * @param factory the factory to search
-     * @return the index or -1
-     */
-    public int indexOf( ThemeFactory factory ){
-        int index = 0;
-        for( Item item : items ){
-            if( item.factory == factory )
-                return index;
-            
-            index++;
-        }
-        return -1;
     }
     
     /**
@@ -210,22 +224,32 @@ public class ThemeMenuPiece extends BaseMenuPiece {
      * @author Benjamin Sigg
      */
     private class Item extends JRadioButtonMenuItem implements ActionListener{
-        /** the factory that creates the new theme */
-        private ThemeFactory factory;
+        /** the name of this factory */
+        private String key;
         
         /**
          * Creates a new item.
+         * @param key the name of the factory
          * @param factory the factory used to create a theme
          */
-        public Item( ThemeFactory factory ){
-            this.factory = factory;
+        public Item( String key, ThemeFactory factory ){
+            this.key = key;
+            
             setText( factory.getName() );
             setToolTipText( factory.getDescription() );
             addActionListener( this );
         }
         
         public void actionPerformed( ActionEvent e ) {
-            ThemeMenuPiece.this.setSelected( factory );
+            themes.select( key );
+        }
+        
+        /**
+         * Gets the key of the factory.
+         * @return the key
+         */
+        public String getKey() {
+            return key;
         }
     }
 }

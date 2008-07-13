@@ -184,6 +184,16 @@ public class PreferenceTreeModel extends AbstractPreferenceModel implements Tree
     }
     
     @Override
+    public boolean isNatural( int index ) {
+        return delegate.isNatural( index );
+    }
+    
+    @Override
+    public void setValueNatural( int index ) {
+         delegate.setValueNatural( index );   
+    }
+    
+    @Override
     public PreferenceOperation[] getOperations( int index ) {
         return delegate.getOperations( index );
     }

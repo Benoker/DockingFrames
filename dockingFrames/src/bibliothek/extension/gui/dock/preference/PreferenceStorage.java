@@ -96,8 +96,10 @@ public class PreferenceStorage {
      */
     public void store( PreferenceModel model ){
         for( int i = 0, n = model.getSize(); i<n; i++ ){
-            Node node = root.getNode( model.getPath( i ), true );
-            node.put( model.getTypePath( i ), model.getValue( i ) );
+            if( !model.isNatural( i )){
+                Node node = root.getNode( model.getPath( i ), true );
+                node.put( model.getTypePath( i ), model.getValue( i ) );
+            }
         }
     }
     
@@ -110,14 +112,19 @@ public class PreferenceStorage {
      */
     public void load( PreferenceModel model, boolean missingToNull ){
         for( int i = 0, n = model.getSize(); i<n; i++ ){
-            Node node = root.getNode( model.getPath( i ), false );
-            if( node == null ){
-                if( missingToNull ){
-                    model.setValue( i, null );
+            if( !model.isNatural( i )){
+                Node node = root.getNode( model.getPath( i ), false );
+                if( node == null ){
+                    if( missingToNull ){
+                        model.setValue( i, null );
+                    }
+                }
+                else{
+                    model.setValue( i, node.value );
                 }
             }
             else{
-                model.setValue( i, node.value );
+                model.setValueNatural( i );
             }
         }
     }

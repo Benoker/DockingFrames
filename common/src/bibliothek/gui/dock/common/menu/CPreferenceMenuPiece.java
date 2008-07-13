@@ -29,10 +29,10 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import bibliothek.extension.gui.dock.preference.PreferenceModel;
 import bibliothek.extension.gui.dock.preference.PreferenceStorage;
 import bibliothek.extension.gui.dock.preference.PreferenceTreeModel;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.CommonPreferenceModel;
 import bibliothek.gui.dock.facile.menu.PreferenceMenuPiece;
 import bibliothek.gui.dock.support.util.ApplicationResource;
 import bibliothek.util.xml.XElement;
@@ -46,17 +46,19 @@ import bibliothek.util.xml.XElement;
 public class CPreferenceMenuPiece extends PreferenceMenuPiece{
     private CControl control;
     private PreferenceStorage storage;
-    
+
     /**
      * Creates a new menu piece.
      * @param control the control for which this piece works
      */
     public CPreferenceMenuPiece( CControl control ) {
-        super( control.intern().getController() );
-        
+        super();
         this.control = control;
+
+        setController( control.intern().getController() );
+
         storage = new PreferenceStorage();
-        
+
         try {
             control.getResources().put( "CPreferenceMenuPiece", new ApplicationResource(){
                 public void read( DataInputStream in ) throws IOException {
@@ -76,17 +78,17 @@ public class CPreferenceMenuPiece extends PreferenceMenuPiece{
                 }
 
                 public void write( DataOutputStream out ) throws IOException {
-                    PreferenceModel model = getModel();
+                    PreferenceTreeModel model = getModel();
                     model.read();
-                    storage.store( getModel() );
+                    storage.store( model );
                     storage.write( out );
                     storage.clear();
                 }
 
                 public void writeXML( XElement element ) {
-                    PreferenceModel model = getModel();
+                    PreferenceTreeModel model = getModel();
                     model.read();
-                    storage.store( getModel() );
+                    storage.store( model );
                     storage.writeXML( element );
                     storage.clear();
                 }
@@ -98,4 +100,8 @@ public class CPreferenceMenuPiece extends PreferenceMenuPiece{
         }
     }
 
+    @Override
+    protected PreferenceTreeModel createModel() {
+        return new CommonPreferenceModel( control );
+    }
 }

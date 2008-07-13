@@ -23,35 +23,31 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.preference.preferences;
-
-import java.awt.event.KeyEvent;
+package bibliothek.gui.dock.common.preference;
 
 import javax.swing.KeyStroke;
 
+import bibliothek.extension.gui.dock.preference.preferences.DockPropertyPreference;
 import bibliothek.extension.gui.dock.util.Path;
-import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.control.DockableSelector;
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockProperties;
 
 /**
- * Preference for the shortcut that allows selecting a new {@link Dockable}
- * with the keyboard.
+ * Preference to set the keystroke that maximizes a {@link Dockable}.
  * @author Benjamin Sigg
- * @see DockableSelector#INIT_SELECTION
+ * @see CControl#KEY_GOTO_MAXIMIZED
  */
-public class KeystrokeInitSelectorPreference extends DockPropertyPreference<KeyStroke>{
+public class KeyStrokeMaximizePreference extends DockPropertyPreference<KeyStroke>{
 	/**
 	 * Creates a new preference
-	 * @param properties to read and write the value of this preference
+	 * @param properties the properties to access
 	 */
-	public KeystrokeInitSelectorPreference( DockProperties properties ){
-		super( properties, DockableSelector.INIT_SELECTION, Path.TYPE_KEYSTROKE_PATH, new Path( "dock.DockableSelector.INIT_SELECTION" ));
+	public KeyStrokeMaximizePreference( DockProperties properties ){
+		super( properties, CControl.KEY_GOTO_MAXIMIZED, Path.TYPE_KEYSTROKE_PATH, new Path( "dock.common.control.maximize" ) );
 		
-		setLabel( DockUI.getDefaultDockUI().getString( "preference.shortcuts.init_selection.label" ));
-		setDescription( DockUI.getDefaultDockUI().getString( "preference.shortcuts.init_selection.description" ));
-		
-		setDefaultValue( KeyStroke.getKeyStroke( KeyEvent.VK_E, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK ) );
+		setLabel( Resources.getString( "preference.shortcut.maximize.label" ));
+		setDescription( Resources.getString( "preference.shortcut.maximize.description" ));
 	}
 }

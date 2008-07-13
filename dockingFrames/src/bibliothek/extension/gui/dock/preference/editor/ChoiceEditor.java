@@ -58,8 +58,6 @@ public class ChoiceEditor extends JComboBox implements PreferenceEditor<String>{
 	
 	/**
 	 * Creates a new editor.
-	 * @param choice the available choices, note that this editor assumes that
-	 * <code>choice</code> is immutable
 	 */
 	public ChoiceEditor(){
 		addItemListener( new ItemListener(){

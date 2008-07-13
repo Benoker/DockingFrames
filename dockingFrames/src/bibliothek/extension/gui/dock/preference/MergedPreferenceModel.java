@@ -304,6 +304,24 @@ public class MergedPreferenceModel extends AbstractPreferenceModel{
         return local.model.path.uniqueAppend( local.model.model.getPath( local.index ) );
     }
     
+    @Override
+    public boolean isNatural( int index ) {
+        Index local = indexAt( index );
+        if( local == null )
+            throw new ArrayIndexOutOfBoundsException( index );
+     
+        return local.model.model.isNatural( local.index );
+    }
+    
+    @Override
+    public void setValueNatural( int index ) {
+        Index local = indexAt( index );
+        if( local == null )
+            throw new ArrayIndexOutOfBoundsException( index );
+     
+        local.model.model.setValueNatural( local.index );   
+    }
+    
     /**
      * Gets the model and the index that <code>globalIndex</code> describe in
      * this model.

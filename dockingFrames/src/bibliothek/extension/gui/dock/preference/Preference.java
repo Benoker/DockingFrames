@@ -111,6 +111,14 @@ public interface Preference<V> {
     public void setValue( V value );
     
     /**
+     * Tells whether this preference is natural or artificial.
+     * @return <code>true</code> if natural, <code>false</code>
+     * if artificial
+     * @see PreferenceModel#isNatural(int)
+     */
+    public boolean isNatural();
+    
+    /**
      * Gets the type of the value that this preferences uses. The path
      * normally is just the name of some class. There is a set of
      * standard paths defined in {@link Path}

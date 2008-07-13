@@ -26,9 +26,9 @@
 package bibliothek.extension.gui.dock.preference.model;
 
 import bibliothek.extension.gui.dock.preference.DefaultPreferenceModel;
-import bibliothek.extension.gui.dock.preference.preferences.KeystrokeHidePreference;
-import bibliothek.extension.gui.dock.preference.preferences.KeystrokeInitSelectorPreference;
-import bibliothek.extension.gui.dock.preference.preferences.KeystrokeMaximizePreference;
+import bibliothek.extension.gui.dock.preference.preferences.KeyStrokeHidePreference;
+import bibliothek.extension.gui.dock.preference.preferences.KeyStrokeInitSelectorPreference;
+import bibliothek.extension.gui.dock.preference.preferences.KeyStrokeMaximizePreference;
 import bibliothek.extension.gui.dock.preference.preferences.ModifierMaskNoCombinationPreference;
 import bibliothek.extension.gui.dock.preference.preferences.ModifierMaskScreenOnlyPreference;
 import bibliothek.gui.dock.util.DockProperties;
@@ -37,18 +37,18 @@ import bibliothek.gui.dock.util.DockProperties;
  * A model that lists the keystrokes which are used in the framework.
  * @author Benjamin Sigg
  */
-public class KeystrokePreferenceModel extends DefaultPreferenceModel{
+public class KeyStrokePreferenceModel extends DefaultPreferenceModel{
     /**
      * Creates a new model.
      * @param properties the properties to read and write from
      */
-    public KeystrokePreferenceModel( DockProperties properties ){
+    public KeyStrokePreferenceModel( DockProperties properties ){
         if( properties == null )
             throw new IllegalArgumentException( "properties must not be null" );
         
-        add( new KeystrokeInitSelectorPreference( properties ));
-        add( new KeystrokeMaximizePreference( properties ));
-        add( new KeystrokeHidePreference( properties ));
+        add( new KeyStrokeInitSelectorPreference( properties ));
+        add( new KeyStrokeMaximizePreference( properties ));
+        add( new KeyStrokeHidePreference( properties ));
         add( new ModifierMaskNoCombinationPreference( properties ));
         add( new ModifierMaskScreenOnlyPreference( properties ));
     }

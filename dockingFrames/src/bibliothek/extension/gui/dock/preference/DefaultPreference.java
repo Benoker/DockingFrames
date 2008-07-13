@@ -44,6 +44,8 @@ public class DefaultPreference<V> extends AbstractPreference<V>{
     private V defaultValue;
     private Path path;
     
+    private boolean natural = false;
+    
     /**
      * Creates a new preference.
      * @param type the type of value this preference uses
@@ -150,6 +152,21 @@ public class DefaultPreference<V> extends AbstractPreference<V>{
 
     public Path getPath() {
         return path;
+    }
+    
+    /**
+     * Sets whether this preference is natural or artificial.
+     * @param natural <code>true</code> if natural, <code>false</code>
+     * if artificial
+     * @see #isNatural()
+     * @see PreferenceModel#isNatural(int)
+     */
+    public void setNatural( boolean natural ) {
+        this.natural = natural;
+    }
+    
+    public boolean isNatural() {
+        return natural;
     }
     
     @Override

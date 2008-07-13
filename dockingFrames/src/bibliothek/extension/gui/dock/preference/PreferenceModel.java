@@ -134,6 +134,32 @@ public interface PreferenceModel {
     public void setValue( int index, Object value );
     
     /**
+     * Tells whether the <code>index</code>'th preference is natural or
+     * artificial.
+     * <ul>
+     * <li>A natural preference is just available, it does not need
+     * to be stored anywhere and will maintain its value even if the application
+     * is restarted. Natural preferences may be views of other models which
+     * already have persistent storage or represent values that are calculated
+     * from other values.</li>
+     * <li>An artificial preference needs to be stored. It represents some
+     * setting that is not available in the wild. It cannot maintain its state
+     * during application restarts.</li>
+     * </ul>
+     * @param index the index of the preference
+     * @return <code>true</code> if the preference is natural, <code>false</code>
+     * if it is artificial
+     */
+    public boolean isNatural( int index );
+    
+    /**
+     * Asks this model to set the <code>index</code>'th preference on its
+     * natural way.
+     * @param index the index of the preference to set
+     */
+    public void setValueNatural( int index );
+    
+    /**
      * Tells what kind of type the <code>index</code>'th value is. The type
      * is represented as a path. Most times the path would equal the name of
      * some class. Note: there is a set of standard paths defined in {@link Path}.

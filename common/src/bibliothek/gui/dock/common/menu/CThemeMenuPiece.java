@@ -25,26 +25,10 @@
  */
 package bibliothek.gui.dock.common.menu;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.URI;
-
-import bibliothek.extension.gui.dock.theme.BubbleTheme;
-import bibliothek.extension.gui.dock.theme.EclipseTheme;
-import bibliothek.extension.gui.dock.theme.FlatTheme;
-import bibliothek.extension.gui.dock.theme.SmoothTheme;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.intern.theme.*;
 import bibliothek.gui.dock.facile.menu.ThemeMenuPiece;
-import bibliothek.gui.dock.support.util.ApplicationResource;
-import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.NoStackTheme;
-import bibliothek.gui.dock.themes.ThemeFactory;
-import bibliothek.gui.dock.themes.ThemePropertyFactory;
-import bibliothek.util.Version;
-import bibliothek.util.xml.XElement;
 
 /**
  * A {@link ThemeMenuPiece} that uses the default {@link DockTheme}s of
@@ -52,144 +36,12 @@ import bibliothek.util.xml.XElement;
  * @author Benjamin Sigg
  */
 public class CThemeMenuPiece extends ThemeMenuPiece{
-    /** the control which uses this menu */
-    private CControl control;
     
     /**
      * Creates a new piece.
      * @param control the control whose theme might be changed
      */
     public CThemeMenuPiece( CControl control ) {
-        super( control.intern().getController(), false );
-        this.control = control;
-        init( control );
-    }
-    
-    /**
-     * Adds the factories to this piece.
-     * @param control the control whose theme might be changed
-     */
-    private void init( CControl control ){
-        ThemeFactory flat = 
-            new CDockThemeFactory<FlatTheme>( new ThemePropertyFactory<FlatTheme>( FlatTheme.class ) ){
-            @Override
-            public DockTheme create( CControl control ) {
-                return new CFlatTheme( control );
-            }
-        };
-
-        ThemeFactory bubble = 
-            new CDockThemeFactory<BubbleTheme>( new ThemePropertyFactory<BubbleTheme>( BubbleTheme.class ) ){
-            @Override
-            public DockTheme create( CControl control ) {
-                return new CBubbleTheme( control );
-            }
-        };
-
-        ThemeFactory eclipse = new CDockThemeFactory<EclipseTheme>( new ThemePropertyFactory<EclipseTheme>( EclipseTheme.class )){
-            @Override
-            public DockTheme create( CControl control ) {
-                return new CEclipseTheme( control );
-            }
-        };
-
-        ThemeFactory smooth = 
-            new CDockThemeFactory<SmoothTheme>( new ThemePropertyFactory<SmoothTheme>( SmoothTheme.class ) ){
-            @Override
-            public DockTheme create( CControl control ) {
-                return new CSmoothTheme( control );
-            }
-        };
-
-        ThemeFactory basic =
-            new CDockThemeFactory<BasicTheme>( new ThemePropertyFactory<BasicTheme>( BasicTheme.class ) ){
-            @Override
-            public DockTheme create( CControl control ) {
-                return new CBasicTheme( control );
-            }
-        };
-
-        add( basic );
-        add( smooth );
-        add( flat );
-        add( bubble );
-        add( eclipse );
-        
-        setSelected( smooth );
-        
-        try {
-            control.getResources().put( "CThemeMenuPiece", new ApplicationResource(){
-                public void write( DataOutputStream out ) throws IOException {
-                    Version.write( out, Version.VERSION_1_0_4 );
-                    out.writeInt( indexOf( getSelected() ) );
-                }
-                public void read( DataInputStream in ) throws IOException {
-                    Version version = Version.read( in );
-                    version.checkCurrent();
-                    
-                    int index = in.readInt();
-                    if( index >= 0 && index < getFactoryCount() )
-                        setSelected( getFactory( index ) );
-                }
-                public void writeXML( XElement element ) {
-                    element.setInt( indexOf( getSelected() ) );
-                }
-                public void readXML( XElement element ) {
-                    int index = element.getInt();
-                    if( index >= 0 && index < getFactoryCount() )
-                        setSelected( getFactory( index ) );
-                }
-            });
-        }
-        catch( IOException e ) {
-            System.err.println( "Non-lethal IO-error:" );
-            e.printStackTrace();
-        }
-    }
-    
-    /**
-     * A factory that envelops another factory in order to build a 
-     * CX-theme instead of a X-theme.
-     * @author Benjamin Sigg
-     *
-     * @param <D> the kind of theme that gets wrapped up
-     */
-    private abstract class CDockThemeFactory<D extends DockTheme> implements ThemeFactory{
-        private ThemePropertyFactory<D> delegate;
-
-        /**
-         * Creates a new factory.
-         * @param delegate the factory that should be used as delegate to create
-         * the initial {@link DockTheme}.
-         */
-        public CDockThemeFactory( ThemePropertyFactory<D> delegate ){
-            this.delegate = delegate;
-        }
-        
-        public DockTheme create() {
-            return create( control );
-        }
-        
-        /**
-         * Creates a new theme.
-         * @return the new theme
-         */
-        public abstract DockTheme create( CControl control );
-        
-        public String[] getAuthors() {
-            return delegate.getAuthors();
-        }
-
-        public String getDescription() {
-            return delegate.getDescription();
-        }
-
-        public String getName() {
-            return delegate.getName();
-        }
-
-        public URI[] getWebpages() {
-            return delegate.getWebpages();
-        }
+        super( control.intern().getController(), control.getThemes() );
     }
 }

@@ -120,4 +120,12 @@ public abstract class AbstractPreferenceModel implements PreferenceModel{
     public String getDescription( int index ) {
         return null;
     }
+    
+    public boolean isNatural( int index ) {
+        return false;
+    }
+    
+    public void setValueNatural( int index ) {
+        // ignore
+    }
 }

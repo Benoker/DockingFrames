@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2008 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,23 +23,27 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.util.color;
+package bibliothek.gui.dock.common.preference;
 
-import java.awt.Color;
-
-import bibliothek.gui.dock.util.Priority;
-import bibliothek.gui.dock.util.UIBridge;
-import bibliothek.gui.dock.util.UIProperties;
+import bibliothek.extension.gui.dock.preference.preferences.choice.DefaultChoice;
+import bibliothek.gui.dock.common.layout.ThemeMap;
+import bibliothek.gui.dock.themes.ThemeFactory;
 
 /**
- * A {@link ColorManager} contains {@link Color}s, {@link UIBridge}s and
- * {@link DockColor}s. Some <code>DockColor</code>s are associated with a 
- * <code>ColorProvider</code>. If a <code>Color</code> in this manager is
- * {@link #put(Priority, String, Color) set}, then each <code>DockColor</code> that listens
- * for that color gets informed about the change either through its 
- * provider or directly from the manager.
+ * A choice offering all the {@link ThemeFactory}s a {@link ThemeMap} provides.
  * @author Benjamin Sigg
  */
-public class ColorManager extends UIProperties<Color, DockColor>{
-    // no new methods
+public class ThemeChoice extends DefaultChoice<ThemeFactory>{
+    /**
+     * Creates a new set of choices.
+     * @param themes the map to read
+     */
+    public ThemeChoice( ThemeMap themes ){
+        setNullEntryAllowed( false );
+        
+        for( int i = 0, n = themes.size(); i<n; i++ ){
+            ThemeFactory factory = themes.getFactory( i );
+            add( themes.getKey( i ), factory.getName(), factory );
+        }
+    }
 }

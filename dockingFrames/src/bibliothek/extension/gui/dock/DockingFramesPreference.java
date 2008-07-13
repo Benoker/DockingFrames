@@ -28,7 +28,7 @@ package bibliothek.extension.gui.dock;
 import bibliothek.extension.gui.dock.preference.PreferenceTreeModel;
 import bibliothek.extension.gui.dock.preference.model.BubbleThemePreferenceModel;
 import bibliothek.extension.gui.dock.preference.model.EclipseThemePreferenceModel;
-import bibliothek.extension.gui.dock.preference.model.KeystrokePreferenceModel;
+import bibliothek.extension.gui.dock.preference.model.KeyStrokePreferenceModel;
 import bibliothek.extension.gui.dock.preference.model.LayoutPreferenceModel;
 import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
@@ -48,7 +48,7 @@ public class DockingFramesPreference extends PreferenceTreeModel{
     public DockingFramesPreference( DockController controller ){
         put( new Path( "shortcuts" ),
                 DockUI.getDefaultDockUI().getString( "preference.shortcuts" ), 
-                new KeystrokePreferenceModel( controller.getProperties() ) );
+                new KeyStrokePreferenceModel( controller.getProperties() ) );
         
         put( new Path( "layout" ),
         		DockUI.getDefaultDockUI().getString( "preference.layout" ),

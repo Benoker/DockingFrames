@@ -175,7 +175,6 @@
 - Bugfix: when opening a CDockable that would stack on another CDockable which was maximized, the layout could get scrambled.
 - Layout: Closing a maximized CDockable will not normalize other maximized Dockables
 - API, Layout: Clicking on the "close-action" in common and calling "setVisible( false )" will now have the exact same effects.
-
 - API: new preferences package, includes new MenuPieces
 ! API: SimpleModifierMask has been deleted, it gets replaced by ModiferMask which is no longer an interface. Reason is that a modifier mask does not need to be very sophisticated and chances of additional implementions are hardly given. Also the preferences can now operate with the modifier masks.
 - API: BasicTheme and subclasses read their ColorScheme from the Properties using a PropertyKey
@@ -183,4 +182,8 @@
 - Layout: OverpaintablePanel now supports Borders
 - Bugfix: Dockables can now be dropped onto SplitDockStation using some position information even if the station has a size of 0/0.
 - Bugfix: CSplitLocation.expandProperty did process the first element of a tree-path twice.
-- Bugfix: CStateManager.getLocation did return null when it should produce a result. There were also some CLocations which did not return the correct result causing getLocation to fail. 
+- Bugfix: CStateManager.getLocation did return null when it should produce a result. There were also some CLocations which did not return the correct result causing getLocation to fail.
+- API: CControl uses now a ThemeMap to select its DockTheme. The method "setTheme( DockTheme )" has been marked as deprecated and is replaced by "setTheme( String )".
+! API: the DockTheme of a CControl is no longer stored by the CThemeMenuPiece but directly by its ThemeMap. 
+! API: ThemeMenuPiece rewritten in order to use and support ThemeMap. ThemeMenuPiece does no longer contain a list of ThemeFactories.
+- Bugfix: Moving away from EclipseTheme could left some Dockables invisible
