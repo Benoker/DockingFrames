@@ -25,26 +25,32 @@
  */
 package bibliothek.extension.gui.dock.preference.preferences;
 
-import bibliothek.extension.gui.dock.preference.preferences.choice.BubbleColorSchemeChoice;
-import bibliothek.extension.gui.dock.theme.BubbleTheme;
+import java.awt.event.KeyEvent;
+
+import javax.swing.KeyStroke;
+
 import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockUI;
-import bibliothek.gui.dock.themes.ColorScheme;
+import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.util.DockProperties;
 
 /**
- * Allows to set the {@link ColorScheme} of the {@link BubbleTheme}.
+ * Preference for the shortcut used by the {@link SplitDockStation} to
+ * maximize its children.
  * @author Benjamin Sigg
+ * @see SplitDockStation#MAXIMIZE_ACCELERATOR
  */
-public class BubbleColorSchemePreference extends ChoiceDockPropertyPreference<ColorScheme>{
+public class KeystrokeMaximizePreference extends DockPropertyPreference<KeyStroke>{
 	/**
-	 * Creates a new preference.
-	 * @param properties the properties which is read by this preference
+	 * Creates a new preference
+	 * @param properties to read and write the value of this preference
 	 */
-	public BubbleColorSchemePreference( DockProperties properties ){
-		super( properties, BubbleTheme.BUBBLE_COLOR_SCHEME, new Path( "dock.theme.bubble.colorscheme" ), new BubbleColorSchemeChoice() );
+	public KeystrokeMaximizePreference( DockProperties properties ){
+		super( properties, SplitDockStation.MAXIMIZE_ACCELERATOR, Path.TYPE_KEYSTROKE_PATH, new Path( "dock.station.split.MAXIMIZE_ACCELERATOR" ));
 		
-		setLabel( DockUI.getDefaultDockUI().getString( "preference.theme.bubble.color.label" ));
-		setDefaultValue( DockUI.getDefaultDockUI().getString( "preference.theme.bubble.color.description" ));
+		setLabel( DockUI.getDefaultDockUI().getString( "preference.shortcuts.maximize_accelerator.label" ));
+		setDescription( DockUI.getDefaultDockUI().getString( "preference.shortcuts.maximize_accelerator.description" ));
+		
+		setDefaultValue( KeyStroke.getKeyStroke( KeyEvent.VK_M, KeyEvent.CTRL_DOWN_MASK ) );
 	}
 }

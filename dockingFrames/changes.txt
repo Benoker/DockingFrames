@@ -178,6 +178,7 @@
 
 - API: new preferences package, includes new MenuPieces
 ! API: SimpleModifierMask has been deleted, it gets replaced by ModiferMask which is no longer an interface. Reason is that a modifier mask does not need to be very sophisticated and chances of additional implementions are hardly given. Also the preferences can now operate with the modifier masks.
+- API: BasicTheme and subclasses read their ColorScheme from the Properties using a PropertyKey
 - API: AbstractCDockable can have default-locations, the default locations are set using the new method CStateManager#setLocation(Dockable, ExtendedMode, CLocation)
 - Layout: OverpaintablePanel now supports Borders
 - Bugfix: Dockables can now be dropped onto SplitDockStation using some position information even if the station has a size of 0/0.

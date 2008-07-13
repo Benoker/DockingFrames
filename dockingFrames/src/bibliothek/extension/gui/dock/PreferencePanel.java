@@ -1,5 +1,6 @@
 package bibliothek.extension.gui.dock;
 
+import java.awt.Dimension;
 import java.awt.GridLayout;
 
 import javax.swing.JPanel;
@@ -63,6 +64,15 @@ public class PreferencePanel extends JPanel{
         
         add( pane );
         checkSelection();
+    }
+    
+    @Override
+    public Dimension getPreferredSize() {
+    	Dimension size = super.getPreferredSize();
+    	if( table.getModel() == null ){
+    		size = new Dimension( size.width * 2, size.height );
+    	}
+    	return size;
     }
     
     private void checkSelection(){

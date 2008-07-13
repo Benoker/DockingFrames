@@ -45,6 +45,7 @@ import bibliothek.extension.gui.dock.preference.PreferenceEditorFactory;
 import bibliothek.extension.gui.dock.preference.PreferenceModel;
 import bibliothek.extension.gui.dock.preference.PreferenceModelListener;
 import bibliothek.extension.gui.dock.preference.PreferenceOperation;
+import bibliothek.extension.gui.dock.preference.editor.BooleanEditor;
 import bibliothek.extension.gui.dock.preference.editor.ChoiceEditor;
 import bibliothek.extension.gui.dock.preference.editor.KeyStrokeEditor;
 import bibliothek.extension.gui.dock.preference.editor.ModifierMaskEditor;
@@ -89,6 +90,7 @@ public class PreferenceTable extends JPanel{
         add( panel, new GridBagConstraints( 0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.FIRST_LINE_START,
                 GridBagConstraints.HORIZONTAL, new Insets( 0, 0, 0, 0 ), 0, 0 ));
         
+        setEditorFactory( Path.TYPE_BOOLEAN_PATH, BooleanEditor.FACTORY );
         setEditorFactory( Path.TYPE_MODIFIER_MASK_PATH, ModifierMaskEditor.FACTORY );
         setEditorFactory( Path.TYPE_KEYSTROKE_PATH, KeyStrokeEditor.FACTORY );
         setEditorFactory( Path.TYPE_STRING_CHOICE_PATH, ChoiceEditor.FACTORY );

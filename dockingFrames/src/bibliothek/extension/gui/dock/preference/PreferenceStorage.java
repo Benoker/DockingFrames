@@ -57,6 +57,7 @@ public class PreferenceStorage {
     public PreferenceStorage(){
         addFactory( Path.TYPE_INT_PATH, PreferenceFactory.FACTORY_INT );
         addFactory( Path.TYPE_STRING_PATH, PreferenceFactory.FACTORY_STRING );
+        addFactory( Path.TYPE_BOOLEAN_PATH, PreferenceFactory.FACTORY_BOOLEAN );
         addFactory( Path.TYPE_KEYSTROKE_PATH, PreferenceFactory.FACTORY_KEYSTROKE );
         addFactory( Path.TYPE_MODIFIER_MASK_PATH, PreferenceFactory.FACTORY_MODIFIER_MASK );
         

@@ -25,26 +25,30 @@
  */
 package bibliothek.extension.gui.dock.preference.preferences;
 
-import bibliothek.extension.gui.dock.preference.preferences.choice.BubbleColorSchemeChoice;
-import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockUI;
-import bibliothek.gui.dock.themes.ColorScheme;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.control.DockRelocatorMode;
+import bibliothek.gui.dock.control.ModifierMask;
 import bibliothek.gui.dock.util.DockProperties;
 
 /**
- * Allows to set the {@link ColorScheme} of the {@link BubbleTheme}.
+ * Preference for the mask that prevents combinations when moving
+ * a {@link Dockable}.
  * @author Benjamin Sigg
+ * @see DockRelocatorMode#NO_COMBINATION_MASK
  */
-public class BubbleColorSchemePreference extends ChoiceDockPropertyPreference<ColorScheme>{
+public class ModifierMaskNoCombinationPreference extends DockPropertyPreference<ModifierMask>{
 	/**
-	 * Creates a new preference.
-	 * @param properties the properties which is read by this preference
+	 * Creates a new preference
+	 * @param properties to read and write the value of this preference
 	 */
-	public BubbleColorSchemePreference( DockProperties properties ){
-		super( properties, BubbleTheme.BUBBLE_COLOR_SCHEME, new Path( "dock.theme.bubble.colorscheme" ), new BubbleColorSchemeChoice() );
+	public ModifierMaskNoCombinationPreference( DockProperties properties ){
+		super( properties, DockRelocatorMode.NO_COMBINATION_MASK, Path.TYPE_MODIFIER_MASK_PATH, new Path( "dock.DockRelocatorMode.NO_COMBINATION_MASK" ) );
 		
-		setLabel( DockUI.getDefaultDockUI().getString( "preference.theme.bubble.color.label" ));
-		setDefaultValue( DockUI.getDefaultDockUI().getString( "preference.theme.bubble.color.description" ));
+		setLabel( DockUI.getDefaultDockUI().getString( "preference.shortcuts.no_combination_mask.label" ));
+		setDescription( DockUI.getDefaultDockUI().getString( "preference.shortcuts.no_combination_mask.description" ));
+		
+		setDefaultValue( DockRelocatorMode.NO_COMBINATION_MASK.getDefault() );
 	}
 }

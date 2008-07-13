@@ -44,27 +44,40 @@ import bibliothek.util.xml.XException;
  * @param <V> the kind of preference this factory stores
  */
 public interface PreferenceFactory<V> {
+	/** a factory for handling {@link Boolean} */
+	public static final PreferenceFactory<Boolean> FACTORY_BOOLEAN = new PreferenceFactory<Boolean>(){
+		public Boolean read( DataInputStream in ) throws IOException {
+			return in.readBoolean();
+		}
+		public Boolean readXML( XElement element ) {
+			return element.getBoolean();
+		}
+		public void write( Boolean value, DataOutputStream out ) throws IOException {
+			out.writeBoolean( value );
+		}
+		public void writeXML( Boolean value, XElement element ){
+			element.setBoolean( value );
+		}
+	};
+	
     /** a factory for handling {@link Integer} */
-    public static PreferenceFactory<Integer> FACTORY_INT = new PreferenceFactory<Integer>(){
+    public static final PreferenceFactory<Integer> FACTORY_INT = new PreferenceFactory<Integer>(){
         public Integer read( DataInputStream in ) throws IOException {
             return in.readInt();
         }
-
         public Integer readXML( XElement element ) {
             return element.getInt();
         }
-
         public void write( Integer value, DataOutputStream out ) throws IOException {
             out.writeInt( value );
         }
-
         public void writeXML( Integer value, XElement element ) {
             element.setInt( value );
         }
     };
     
     /** A factory for handling {@link String} */
-    public static PreferenceFactory<String> FACTORY_STRING = new PreferenceFactory<String>(){
+    public static final PreferenceFactory<String> FACTORY_STRING = new PreferenceFactory<String>(){
     	public String read( DataInputStream in ) throws IOException {
     		return in.readUTF();
     	}
@@ -80,7 +93,7 @@ public interface PreferenceFactory<V> {
     };
     
     /** a factory for handling {@link KeyStroke} */
-    public static PreferenceFactory<KeyStroke> FACTORY_KEYSTROKE = new PreferenceFactory<KeyStroke>(){
+    public static final PreferenceFactory<KeyStroke> FACTORY_KEYSTROKE = new PreferenceFactory<KeyStroke>(){
         public KeyStroke read( DataInputStream in ) throws IOException {
             return KeyStroke.getKeyStroke( in.readUTF() );
         }
@@ -99,7 +112,7 @@ public interface PreferenceFactory<V> {
     };
     
     /** a factory for {@link ModifierMask}s */
-    public static PreferenceFactory<ModifierMask> FACTORY_MODIFIER_MASK = new PreferenceFactory<ModifierMask>(){
+    public static final PreferenceFactory<ModifierMask> FACTORY_MODIFIER_MASK = new PreferenceFactory<ModifierMask>(){
 		public ModifierMask read( DataInputStream in ) throws IOException {
 			int on = in.readInt();
 			int off = in.readInt();

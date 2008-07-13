@@ -23,28 +23,35 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.preference.preferences;
+package bibliothek.gui.dock.common.preference;
 
-import bibliothek.extension.gui.dock.preference.preferences.choice.BubbleColorSchemeChoice;
-import bibliothek.extension.gui.dock.theme.BubbleTheme;
+import java.awt.event.KeyEvent;
+
+import javax.swing.KeyStroke;
+
+import bibliothek.extension.gui.dock.preference.preferences.DockPropertyPreference;
 import bibliothek.extension.gui.dock.util.Path;
-import bibliothek.gui.DockUI;
-import bibliothek.gui.dock.themes.ColorScheme;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockProperties;
 
 /**
- * Allows to set the {@link ColorScheme} of the {@link BubbleTheme}.
+ * Preference setting the keystroke for maximizing/unmaximizing a {@link Dockable}.
  * @author Benjamin Sigg
+ * @see CControl#KEY_MAXIMIZE_CHANGE
  */
-public class BubbleColorSchemePreference extends ChoiceDockPropertyPreference<ColorScheme>{
+public class KeystrokeMaximizeChangePreference extends DockPropertyPreference<KeyStroke>{
 	/**
-	 * Creates a new preference.
-	 * @param properties the properties which is read by this preference
+	 * Creates a new preference
+	 * @param properties the properties to access
 	 */
-	public BubbleColorSchemePreference( DockProperties properties ){
-		super( properties, BubbleTheme.BUBBLE_COLOR_SCHEME, new Path( "dock.theme.bubble.colorscheme" ), new BubbleColorSchemeChoice() );
+	public KeystrokeMaximizeChangePreference( DockProperties properties ){
+		super( properties, CControl.KEY_MAXIMIZE_CHANGE, Path.TYPE_KEYSTROKE_PATH, new Path( "dock.common.control.maximize_change" ) );
 		
-		setLabel( DockUI.getDefaultDockUI().getString( "preference.theme.bubble.color.label" ));
-		setDefaultValue( DockUI.getDefaultDockUI().getString( "preference.theme.bubble.color.description" ));
+		setLabel( Resources.getString( "preference.shortcut.maximize_change.label" ));
+		setDescription( Resources.getString( "preference.shortcut.maximize_change.description" ));
+		
+		setDefaultValue( KeyStroke.getKeyStroke( KeyEvent.VK_M, KeyEvent.CTRL_DOWN_MASK ));
 	}
 }

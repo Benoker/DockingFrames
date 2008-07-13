@@ -57,11 +57,20 @@ public class Resources {
     }
     
     /**
-     * Gets localized text snippets. 
+     * Gets localized texts. 
      * @return the text
      */
     public static ResourceBundle getBundle() {
         return bundle;
+    }
+    
+    /**
+     * Gets a localized text.
+     * @param key the key for the text
+     * @return the text
+     */
+    public static String getString( String key ){
+    	return bundle.getString( key );
     }
     
     /**

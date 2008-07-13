@@ -25,26 +25,33 @@
  */
 package bibliothek.extension.gui.dock.preference.preferences;
 
-import bibliothek.extension.gui.dock.preference.preferences.choice.BubbleColorSchemeChoice;
-import bibliothek.extension.gui.dock.theme.BubbleTheme;
+import java.awt.event.KeyEvent;
+
+import javax.swing.KeyStroke;
+
 import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockUI;
-import bibliothek.gui.dock.themes.ColorScheme;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.control.DockableSelector;
 import bibliothek.gui.dock.util.DockProperties;
 
 /**
- * Allows to set the {@link ColorScheme} of the {@link BubbleTheme}.
+ * Preference for the shortcut that allows selecting a new {@link Dockable}
+ * with the keyboard.
  * @author Benjamin Sigg
+ * @see DockableSelector#INIT_SELECTION
  */
-public class BubbleColorSchemePreference extends ChoiceDockPropertyPreference<ColorScheme>{
+public class KeystrokeInitSelectorPreference extends DockPropertyPreference<KeyStroke>{
 	/**
-	 * Creates a new preference.
-	 * @param properties the properties which is read by this preference
+	 * Creates a new preference
+	 * @param properties to read and write the value of this preference
 	 */
-	public BubbleColorSchemePreference( DockProperties properties ){
-		super( properties, BubbleTheme.BUBBLE_COLOR_SCHEME, new Path( "dock.theme.bubble.colorscheme" ), new BubbleColorSchemeChoice() );
+	public KeystrokeInitSelectorPreference( DockProperties properties ){
+		super( properties, DockableSelector.INIT_SELECTION, Path.TYPE_KEYSTROKE_PATH, new Path( "dock.DockableSelector.INIT_SELECTION" ));
 		
-		setLabel( DockUI.getDefaultDockUI().getString( "preference.theme.bubble.color.label" ));
-		setDefaultValue( DockUI.getDefaultDockUI().getString( "preference.theme.bubble.color.description" ));
+		setLabel( DockUI.getDefaultDockUI().getString( "preference.shortcuts.init_selection.label" ));
+		setDescription( DockUI.getDefaultDockUI().getString( "preference.shortcuts.init_selection.description" ));
+		
+		setDefaultValue( KeyStroke.getKeyStroke( KeyEvent.VK_E, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK ) );
 	}
 }

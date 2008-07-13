@@ -48,6 +48,9 @@ public final class Path {
     /** standard path for {@link String} */
     public static final Path TYPE_STRING_PATH = new Path( "java.lang.String" );
     
+    /** standard path for {@link Boolean} */
+    public static final Path TYPE_BOOLEAN_PATH = new Path( "java.lang.Boolean" );
+    
     /** standard path for {@link KeyStroke}, can use {@link KeyStrokeValidator} as information */
     public static final Path TYPE_KEYSTROKE_PATH = new Path( "javax.swing.KeyStroke" );
     

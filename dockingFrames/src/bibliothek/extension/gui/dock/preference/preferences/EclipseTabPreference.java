@@ -25,26 +25,26 @@
  */
 package bibliothek.extension.gui.dock.preference.preferences;
 
-import bibliothek.extension.gui.dock.preference.preferences.choice.BubbleColorSchemeChoice;
-import bibliothek.extension.gui.dock.theme.BubbleTheme;
+import bibliothek.extension.gui.dock.preference.preferences.choice.EclipseTabChoice;
+import bibliothek.extension.gui.dock.theme.EclipseTheme;
+import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabPainter;
 import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockUI;
-import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.util.DockProperties;
 
 /**
- * Allows to set the {@link ColorScheme} of the {@link BubbleTheme}.
+ * Determines the way tabs are painted in the {@link EclipseTheme}.
  * @author Benjamin Sigg
  */
-public class BubbleColorSchemePreference extends ChoiceDockPropertyPreference<ColorScheme>{
+public class EclipseTabPreference extends ChoiceDockPropertyPreference<TabPainter>{
 	/**
-	 * Creates a new preference.
-	 * @param properties the properties which is read by this preference
+	 * Creates a new preference
+	 * @param properties the properties to read from or to write to
 	 */
-	public BubbleColorSchemePreference( DockProperties properties ){
-		super( properties, BubbleTheme.BUBBLE_COLOR_SCHEME, new Path( "dock.theme.bubble.colorscheme" ), new BubbleColorSchemeChoice() );
+	public EclipseTabPreference( DockProperties properties ){
+		super( properties, EclipseTheme.TAB_PAINTER, new Path( "dock.theme.eclipse.tab" ), new EclipseTabChoice() );
 		
-		setLabel( DockUI.getDefaultDockUI().getString( "preference.theme.bubble.color.label" ));
-		setDefaultValue( DockUI.getDefaultDockUI().getString( "preference.theme.bubble.color.description" ));
+		setLabel( DockUI.getDefaultDockUI().getString( "preference.theme.eclipse.tab.label" ));
+		setDescription( DockUI.getDefaultDockUI().getString( "preference.theme.eclipse.tab.description" ));
 	}
 }
