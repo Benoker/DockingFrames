@@ -580,6 +580,49 @@ Clients can influence the \src{DockTitle} that is used for a \src{Dockable} in t
  \item They install a new \src{DockTitleFactory} at the \src{DockTitleManager}. Clients can do this by invoking \src{registerClient(String,DockTitleFactory)}.
 \end{itemize}
 
+\section{Preferences}
+The preference system was introduced with version 1.0.6 of the core library.
+
+If a setting is meaningful for the ordinary user, and the user would like to be able to change the setting, then this setting should be a preference. For example the shortcut to maximize a \src{Dockable} (ctrl+m) is a good candidate for a preference.
+
+What is a preference? A preference is a representation of some kind of property in a unified way.
+
+Each preference consists of some properties:
+\begin{description}
+ \item[Value] of course every preference has some value
+ \item[ValueInfo] information about the value, for example the maximum value for an \src{Integer}-value. The exact meaning of this property depends on the \src{TypePath}.
+ \item[TypePath] the type tells how to present the value to the user. The type is represented by a \src{Path}-object. It is a \src{Path} and not a \src{Class} object because it many preference-types may use the same objects as value. For example an unbounded \src{Integer} versus an \src{Integer} which must be in the range 1 to 10.
+ \item[Path] a unique path to this preference. Used as an identifier if preferences have to be stored in some kind of map.
+\end{description}
+
+\subsection{Organization}
+The basic module of the preference system is the \src{PreferenceModel}. 
+
+Most methods of the \src{PreferenceModel} are simple to understand and do not need a discussion. Those which are part of a greater scheme however will receive some attention in this chapter.
+
+In the preference system a \src{PreferenceModel} is just a layer above some kind of storage mechanism for the real properties. It is most often used as a mediator and a buffer between that storage mechanism and the algorithms that want to use the preferences (for example a user interface). The methods \src{read} and \src{write} are used to access the covered storage mechanism. The method \src{read} will read values from the storage mechanism into the model. The method \src{write} will write the values back into that storage mechanism.
+
+\subsection{Models}
+There are some implementations of \src{PreferenceModel} already in the core library.
+
+\subsubsection{DefaultPreferenceModel}
+This model uses a list of \src{Preference}-objects to represent the preferences. All the properties needed for a preference are stored in such a \src{Preference}-object. The API-documentation reveals that there are many \src{Preference}s representing different aspects of the core library. For example there is a \src{Preference} which represents the keystroke for maximizing a \src{Dockable}.
+
+There are also subclasses of \src{DefaultPreferenceModel}. These subclasses are collections of preferences which belong together, for example the \\\src{EclipseThemePreferenceModel} which contains preferences that are related to the \src{EclipseTheme}.
+
+\subsubsection{MergedPreferenceModel}
+This model is a list of other models. It just takes the preferences from these other models and presents them as its own preferences. It offers a quick and simple way to create a combination of two ore more models.
+
+\subsubsection{PreferenceTreeModel}
+
+
+\subsection{User Interface}
+
+\subsubsection{Operators}
+
+\subsection{Storage}
+
+
 \section{Global Properties}
 Every \src{DockController} has map that contains global properties. There are no restrictions to what a property can be, a \src{Boolean} could be a property of a \src{KeyStroke}. 
 
@@ -611,6 +654,7 @@ This chapter will now list up all keys and their meanings that are present in DF
 \item \src{SplitDockStation.MAXIMIZE_ACCELERATOR} A \src{KeyStroke} that changes the maximized-state of \src{SplitDockStation} assuming that a \\\src{SplitDockStation} or one of its children has the focus. The default is set to \src{ctrl + m}.
 \item \src{StackDockStation.COMPONENT_FACTORY} This key represents a \\\src{StackDockComponentFactory} that is used by the \src{StackDockStation} to create its content. A warning: this key is used by many \src{DockTheme}s to exchange the look of \\\src{StackDockStation}.
 \item \src{DockFrontend.HIDE_ACCELERATOR} The \src{KeyStroke} that is used to activate the hide-action (also known as close-action) when using a \src{DockFrontend}. The default value for this key is \src{ctrl + F4}
+\item \src{BasicTheme.BASIC_COLOR_SCHEME} \\\src{BubbleTheme.BUBBLE_COLOR_SCHEME} \\\src{EclipseTheme.ECLIPSE_COLOR_SCHEME} \\\src{FlatTheme.FLAT_COLOR_SCHEME}: The \src{ColorScheme} used for various \\\src{DochTheme}s.
 \end{itemize}
 
 \end{document}

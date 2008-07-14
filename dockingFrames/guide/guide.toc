@@ -36,4 +36,13 @@
 \contentsline {section}{\numberline {6}Titles}{17}
 \contentsline {subsection}{\numberline {6.1}New titles}{18}
 \contentsline {subsection}{\numberline {6.2}Lifecycle}{18}
-\contentsline {section}{\numberline {7}Global Properties}{18}
+\contentsline {section}{\numberline {7}Preferences}{18}
+\contentsline {subsection}{\numberline {7.1}Organization}{19}
+\contentsline {subsection}{\numberline {7.2}Models}{19}
+\contentsline {subsubsection}{\numberline {7.2.1}DefaultPreferenceModel}{19}
+\contentsline {subsubsection}{\numberline {7.2.2}MergedPreferenceModel}{20}
+\contentsline {subsubsection}{\numberline {7.2.3}PreferenceTreeModel}{20}
+\contentsline {subsection}{\numberline {7.3}User Interface}{20}
+\contentsline {subsubsection}{\numberline {7.3.1}Operators}{20}
+\contentsline {subsection}{\numberline {7.4}Storage}{20}
+\contentsline {section}{\numberline {8}Global Properties}{20}
