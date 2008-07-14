@@ -48,6 +48,7 @@ import bibliothek.help.model.HelpModel;
 import bibliothek.help.util.ResourceSet;
 import bibliothek.help.view.LayoutMenu;
 import bibliothek.help.view.PanelMenu;
+import bibliothek.help.view.PreferenceItem;
 import bibliothek.help.view.SelectingView;
 import bibliothek.help.view.TypeHierarchyView;
 import bibliothek.help.view.dock.DockableButton;
@@ -293,7 +294,7 @@ public class Core implements ComponentCollector{
 		
 		menubar.add( new LayoutMenu( frontend ) );
 		
-		JMenu themes = new JMenu( "Themes" );
+		JMenu themes = new JMenu( "Window" );
 		menubar.add( themes );
 		
 		LookAndFeelList list;
@@ -306,6 +307,7 @@ public class Core implements ComponentCollector{
 		
 		themes.add( new LookAndFeelMenu( frame, list ) );
 		themes.add( createThemeMenu() );
+		themes.add( new PreferenceItem( frame, frontend.getController() ));
 		
 		frame.setJMenuBar( menubar );
 	}

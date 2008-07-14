@@ -6,6 +6,8 @@
 % \lstset{basicstyle=\ttfamily}
 
 \newcommand{\src}[1]{\lstinline[basicstyle=\ttfamily]|#1|}
+\newcommand{\until}[1]{\textbf{Note (until #1): }}
+\newcommand{\since}[1]{\textbf{Note (since #1): }}
 
 %opening
 \title{DockingFrames 1.0.6 - Common}
@@ -342,7 +344,7 @@ Clients that use \src{DefaultSingleCDockable} and \\\src{DefaultMultipleCDockabl
 \subsubsection{Strategy}
 Since requests can contradict each other, there needs to be a strategy how to resolve this contradictions. A \src{ConflictResolver} is used for that. Each \src{ConflictResolver} has methods to combine size-requests and thus create new requests. Additionally each \src{ConflictResolver} has methods to resolve contradictions later when the layout is applied.
 
-Clients can use the property key \src{CControl.RESIZE_LOCK_CONFLICT_RESOLVER} to set a new strategy. Currently there are two strategies available: \src{DefaultConflictResolver} is the default installation and tries to distribute space as fair as possible. \src{FullLockConflictResolver} denies requests of elements that are mixed with elements without requests.
+Clients can use the property key \src{RESIZE_LOCK_CONFLICT_RESOLVER} (to be found in \src{CControl}) to set a new strategy. Currently there are two strategies available: \src{DefaultConflictResolver} is the default installation and tries to distribute space as fair as possible. \src{FullLockConflictResolver} denies requests of elements that are mixed with elements without requests.
 
 \subsection{Colors associated with dockables}
 Every \src{CDockable} has a map full of colors. This map, the \src{ColorMap}, is read by the \src{DockTheme}s which are included in the Common-project. If a client changes a color in the map, the change will be propagated to the graphical user interface immediatelly. There are various keys for different colors. If a client wants to change the color of a tab, it might use this piece of code:
@@ -382,7 +384,9 @@ Layout refers to the positions and relations of all the dockables. A controller 
 \subsection{List of themes}
 A theme is something like a \src{LookAndFeel}. It defines the look and to some degree also the behavior of DF. There are various themes available, and the user can exchange them through a \src{CThemeMenuPiece}.
 
-Creating a \src{CThemeMenuPiece} has an additional effect: the theme will be stored persistent if the client stores the layouts persistent.
+\until{1.0.5} Creating a \src{CThemeMenuPiece} has an additional effect: the theme will be stored persistent if the client stores the layouts persistent.
+
+\since{1.0.6} The theme gets now stored automatically by the \src{ThemeMap}. Settings made in earlier versions will be lost.
 
 \subsection{LookAndFeel}
 There is a menu that exchanges the \src{LookAndFeel}, its name is \\\src{CLookAndFeelMenuPiece}.

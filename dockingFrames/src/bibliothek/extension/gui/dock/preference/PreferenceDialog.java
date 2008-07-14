@@ -25,16 +25,25 @@
  */
 package bibliothek.extension.gui.dock.preference;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
-import bibliothek.extension.gui.dock.DockingFramesPreference;
 import bibliothek.extension.gui.dock.PreferencePanel;
-import bibliothek.gui.DockController;
 import bibliothek.gui.DockUI;
 
 /**
@@ -46,11 +55,11 @@ public class PreferenceDialog extends JPanel{
     /**
      * Shows a modal dialog on which the user can change the preferences of
      * <code>controller</code>.
-     * @param controller the controller for which the dialog will be shown
+     * @param model the model to show on the dialog
      * @param owner the owner of the dialog
      */
-    public static void openDialog( DockController controller, Component owner ){
-        PreferenceDialog dialog = new PreferenceDialog( new DockingFramesPreference( controller ));
+    public static void openDialog( PreferenceTreeModel model, Component owner ){
+        PreferenceDialog dialog = new PreferenceDialog( model );
         dialog.openDialog( owner, true );
     }
     

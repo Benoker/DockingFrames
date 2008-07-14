@@ -6,6 +6,8 @@
 % \lstset{basicstyle=\ttfamily}
 
 \newcommand{\src}[1]{\lstinline[basicstyle=\ttfamily]|#1|}
+\newcommand{\until}[1]{\textbf{Note (until #1): }}
+\newcommand{\since}[1]{\textbf{Note (since #1): }}
 
 %opening
 \title{DockingFrames 1.0.6 - Common}
@@ -330,9 +332,9 @@ Lazy initialisation is done through a \src{SingleCDockableBackupFactory} which i
 Each \src{CDockable} has a certain size. Some \src{Component}s have an optimal size, others are flexible and can have any size. There are two interesting features for the first kind of \src{Component}s.
 
 \subsubsection{Lock size}
-Every \src{CDockable} has a method \src{isResizeLocked()}. If that methods returns \src{true}, then the \src{DockStation}s try not to change the size of the \src{CDockable} when the stations are resized themselfs. The user still can resize the \src{CDockable} by hand, and there are some other actions that will change the sizes as well.
+Every \src{CDockable} has a method \src{isResizeLockedHorizontally} and \\\src{isResizeLockedVertically}. If one of these methods returns \src{true}, then the \src{DockStation}s try not to change the size of the \src{CDockable} when the stations are resized themselfs. The user still can resize the \src{CDockable} by hand, and there are some other actions that will change the sizes as well.
 
-Clients that use \src{DefaultSingleCDockable} and \\\src{DefaultMultipleCDockable} can use the method \src{setResizeLocked} to change the behavior.
+Clients that use \src{DefaultSingleCDockable} and \\\src{DefaultMultipleCDockable} can use the method \src{setResizeLocked}, \\\src{setResizeLockedHorizontally} or \src{setResizeLockedVertically} to change the behavior.
 
 \subsubsection{Request size}
 Each \src{CDockable} can have a "size request" provided by \\\src{getAndClearResizeRequest}. Whenever \src{handleResizeRequest} of \src{CControl} is called, all resize requests are read and the stations try to change the size of their children such that the requests are fullfilled. There are no guarantees that the request can be fullfilled. And requests that cannot be fullfilled are simply lost.
@@ -382,7 +384,9 @@ Layout refers to the positions and relations of all the dockables. A controller 
 \subsection{List of themes}
 A theme is something like a \src{LookAndFeel}. It defines the look and to some degree also the behavior of DF. There are various themes available, and the user can exchange them through a \src{CThemeMenuPiece}.
 
-Creating a \src{CThemeMenuPiece} has an additional effect: the theme will be stored persistent if the client stores the layouts persistent.
+\until{1.0.5} Creating a \src{CThemeMenuPiece} has an additional effect: the theme will be stored persistent if the client stores the layouts persistent.
+
+\since{1.0.6} The theme gets now stored automatically by the \src{ThemeMap}. Settings made in earlier versions will be lost.
 
 \subsection{LookAndFeel}
 There is a menu that exchanges the \src{LookAndFeel}, its name is \\\src{CLookAndFeelMenuPiece}.
@@ -405,6 +409,15 @@ LookAndFeelList list = LookAndFeelList.getDefaultList();
 list.addComponentCollector( collector );
 \end{lstlisting}
 Let's have a look at the code. In line \src{1} some dialog is defined. In lines \src{3-9} a \src{ComponentCollector} is defined. \src{collector} contains one method: \\\src{listComponents}. This method just collects some \src{Component}s, in this case \src{dialog}. For every \src{Component} found through a \src{ComponentCollector}, the \\\src{LookAndFeelList} will search the upermost parent and then update all children of this parent. That includes even child-\src{Window}s.
+
+\subsection{Preferences}
+Preferences allow the user to change the behavior of the library. The menu \src{CPreferenceMenuPiece} will insert one new item into a menu. If triggered, the item opens a dialog with the standard preferences of Common.
+
+This menu will also ensure that the preferences are stored persistent.
+
+Note: the preference system has been added in version 1.0.6. It is still experimental and incompatible changes for future releases are likely.
+
+Clients can override the method \src{createModel} to use their own preferences. They can either add new preferences to the model created by the super-class, or create a total new model.
 
 \end{document}
 

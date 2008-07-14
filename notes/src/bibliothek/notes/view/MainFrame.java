@@ -20,6 +20,7 @@ import bibliothek.notes.model.Note;
 import bibliothek.notes.util.ResourceSet;
 import bibliothek.notes.view.menu.HelpMenu;
 import bibliothek.notes.view.menu.PanelList;
+import bibliothek.notes.view.menu.PreferenceItem;
 import bibliothek.notes.view.menu.ThemeMenu;
 import bibliothek.util.xml.XElement;
 
@@ -96,10 +97,11 @@ public class MainFrame extends JFrame{
 		JMenuBar menubar = new JMenuBar();
 		menubar.add( new PanelList( core.getViews(), core.getModel() ));
 		
-		JMenu theme = new JMenu( "Themes" );
+		JMenu theme = new JMenu( "Window" );
 		themes = new ThemeMenu( core.getViews().getFrontend() );
 		theme.add( new LookAndFeelMenu( this, core.getLookAndFeels() ) );
 		theme.add( themes );
+		theme.add( new PreferenceItem( this, core.getPreferences() ));
 		menubar.add( theme );
 		menubar.add( new HelpMenu( this ) );
 		

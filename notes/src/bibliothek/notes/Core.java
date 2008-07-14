@@ -10,6 +10,9 @@ import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 
 import bibliothek.demonstration.Monitor;
+import bibliothek.extension.gui.dock.DockingFramesPreference;
+import bibliothek.extension.gui.dock.preference.PreferenceStorage;
+import bibliothek.extension.gui.dock.preference.PreferenceTreeModel;
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.RectGradientPainter;
 import bibliothek.gui.DockController;
@@ -47,6 +50,9 @@ public class Core implements ComponentCollector{
 	private MainFrame frame;
 	/** set of available {@link LookAndFeel}s */
 	private LookAndFeelList lookAndFeels;
+	
+	/** the available preferences */
+	private PreferenceTreeModel preferences;
 	
 	/** whether the application runs in a restricted environment or not */
 	private boolean secure;
@@ -106,6 +112,7 @@ public class Core implements ComponentCollector{
 		controller.getProperties().set( FlapDockStation.BUTTON_CONTENT, FlapDockStation.ButtonContent.ICON_AND_TEXT_ONLY );
 		
 		frontend = new DockFrontend( controller, frame );
+		preferences = new DockingFramesPreference( controller );
 		views = new ViewManager( frontend, frame, secure, model );
 		frontend.registerFactory( new NoteViewFactory( views.getNotes(), model ));
 		
@@ -224,6 +231,14 @@ public class Core implements ComponentCollector{
 	}
 	
 	/**
+	 * Gets the user made settings of this application.
+	 * @return the preferences
+	 */
+	public PreferenceTreeModel getPreferences() {
+		return preferences;
+	}
+	
+	/**
 	 * Gets the set of root-{@link DockStation}s
 	 * @return the manager
 	 */
@@ -250,6 +265,9 @@ public class Core implements ComponentCollector{
 		views.getNotes().write( out );
 		views.getFrontend().write( out );
 		frame.write( out );
+		
+		preferences.read();
+		PreferenceStorage.write( preferences, out );
 	}
 	
 	/**
@@ -264,6 +282,9 @@ public class Core implements ComponentCollector{
 		views.getNotes().read( in );
 		views.getFrontend().read( in );
 		frame.read( in );
+		
+		PreferenceStorage.read( preferences, in );
+		preferences.write();
 	}
 
 	/**
@@ -276,6 +297,9 @@ public class Core implements ComponentCollector{
 	    views.getNotes().writeXML( element.addElement( "notes" ) );
 	    views.getFrontend().writeXML( element.addElement( "frontend" ) );
 	    frame.writeXML( element.addElement( "frame" ) );
+	    
+	    preferences.read();
+	    PreferenceStorage.writeXML( preferences, element.addElement( "preferences" ));
 	}
 
 	/**
@@ -288,6 +312,9 @@ public class Core implements ComponentCollector{
 	    views.getNotes().readXML( element.getElement( "notes" ) );
 	    views.getFrontend().readXML( element.getElement( "frontend" ) );
 	    frame.readXML( element.getElement( "frame" ) );
+	    
+	    PreferenceStorage.readXML( preferences, element.getElement( "preferences" ));
+	    preferences.write();
 	}
 
     public Collection<Component> listComponents(){

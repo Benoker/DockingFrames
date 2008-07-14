@@ -37,3 +37,4 @@
 \contentsline {subsection}{\numberline {4.2}Layout}{14}
 \contentsline {subsection}{\numberline {4.3}List of themes}{14}
 \contentsline {subsection}{\numberline {4.4}LookAndFeel}{14}
+\contentsline {subsection}{\numberline {4.5}Preferences}{15}

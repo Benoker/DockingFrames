@@ -45,6 +45,57 @@ import bibliothek.util.xml.XException;
  * @author Benjamin Sigg
  */
 public class PreferenceStorage {
+	/**
+	 * Writes the current preferences of <code>model</code> into <code>out</code>.
+	 * @param model the model to store
+	 * @param out the stream to write into
+	 * @throws IOException if the stream is not writeable
+	 */
+	public static void write( PreferenceModel model, DataOutputStream out ) throws IOException{
+		PreferenceStorage storage = new PreferenceStorage();
+		storage.store( model );
+		storage.write( out );
+	}
+	
+	/**
+	 * Reads preferences from <code>in</code> and transfers them into <code>model</code>. 
+	 * Missing preferences will be replaced by <code>null</code>.
+	 * @param model the model to write into.
+	 * @param in the stream to read from
+	 * @throws IOException if the stream cannot be read
+	 */
+	public static void read( PreferenceModel model, DataInputStream in ) throws IOException{
+		PreferenceStorage storage = new PreferenceStorage();
+		storage.read( in );
+		storage.load( model, true );
+	}
+	
+	/**
+	 * Writes the preferences of <code>model</code> into <code>element</code>. This
+	 * method will add new children to <code>element</code> but not change
+	 * its attributes.
+	 * @param model the model to store
+	 * @param element the element to write into
+	 */
+	public static void writeXML( PreferenceModel model, XElement element ) {
+		PreferenceStorage storage = new PreferenceStorage();
+		storage.store( model );
+		storage.writeXML( element );
+	}
+	
+	/**
+	 * Reads some preferences from <code>element</code> and stores them in
+	 * <code>model</code>.
+	 * @param model the model to write into
+	 * @param element the element to read
+	 * @throws XException if <code>element</code> is incorrect
+	 */
+	public static void readXML( PreferenceModel model, XElement element ){
+		PreferenceStorage storage = new PreferenceStorage();
+		storage.readXML( element );
+		storage.load( model, true );
+	}
+	
     /** the available factories */
     private Map<Path, PreferenceFactory<?>> factories = new HashMap<Path, PreferenceFactory<?>>();
     
@@ -253,7 +304,7 @@ public class PreferenceStorage {
      * {@link PreferenceFactory} missing for some type, then this value will silently
      * be left out.
      * @param element the element to read from
-     * @throws XException if <code>element</code> is malformed
+     * @throws XException if <code>element</code> is not correct
      */
     public void readXML( XElement element ){
         readXML( root, element );

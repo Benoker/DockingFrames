@@ -299,11 +299,18 @@ This release contains some tricky incompatibilities which need to be handled ver
 \subsection{Incombatibilities}
 The changes that need special care.
 
-\subsubsection{DockableFocusListener, DockStationListener}
+\subsubsection{DockStationListener}
 \begin{description}
- \short The methods of \src{DockableFocusListner} and \src{DockStationListener}\\have more parameters. Methods which indicate a change, like focusing a new \src{Dockable}, now also tell what was the old value of the changed property.
+ \short The method \src{dockableSelected} of \src{DockStationListener} has an additional parameter that indicates which element was selected before the change.
  \why No need for listeners to store the old values.
- \clients Must carefully update all classes and interfaces that implement \\\src{DockableFocusListener} or \src{DockStationListener}. Work should be easier when using the \src{@Override} annotation. Be especially careful not to mix up the new arguments with the old ones.
+ \clients Must carefully update all classes and interfaces that implement \\\src{DockStationListener}. Be especially careful not to mix up the new arguments with the old ones.
+\end{description}
+
+\subsubsection{DockableFocusListener}
+\begin{description}
+ \short The \src{DockableFocusListener} has been divided into two interfaces: \\\src{DockableFocusListener} and \src{DockableSelectionListener}. The\\remaining method in \src{DockableFocusListener} now takes a \\\src{DockableFocusEvent} and no longer directly the involved elements. The class \src{DockableFocusAdapter} has been deleted.
+ \why Events allow further changes of the system without change of the \src{DockableFocusListener} itself. Since every client needs to update its methods anyway, \src{DockableFocusAdapter} could be deleted.
+ \clients Should use \src{DockableFocusListener} instead of \\\src{DockableFocusAdapter}.
 \end{description}
 
 \subsubsection{DockTheme.getDockableSelection}
@@ -329,14 +336,14 @@ The changes that need special care.
 
 \subsubsection{ComponentHierarchyObserver}
 \begin{description}
- \short The \src{ComponentHierarchyObserver} includes more \src{Components} in its search.
+ \short The \src{ComponentHierarchyObserver} includes more \src{Components} in its search. The \src{ComponentHierarchyObserverListener} now works with an event and does no longer receive all the elements as arguments.
  \why Allows more features to work correctly in restricted environments.
  \clients Need to be aware that not every \src{Component} that is found by the observer is a child of a \src{Dockable}.
 \end{description}
 
 
-\subsection{Features}
-A list of the new features.
+\subsection{API and Layout}
+A list of new API elements and changes that affect the layout.
 
 \subsubsection{KeyStroke for closing Dockable}
 \begin{description}
@@ -377,13 +384,19 @@ A list of the new features.
 \subsubsection{Extracting colors from LookAndFeel}
 \begin{description}
  \short The mechanism to read colors from \src{LookAndFeel}s has been upgraded. Each \src{LookAndFeel} can now have its own specialized \src{LookAndFeelColors} that reads the colors.
- \why Allows to be more flexible with colors, allows the use of Nimbus.
+ \why Allows to be more flexible with colors, allows the correct use of Nimbus and Windows.
 \end{description}
 
 \subsubsection{EclipseTheme}
 \begin{description}
  \short \src{EclipseTheme} uses more colors from the \src{LookAndFeel}
  \why looks better
+\end{description}
+
+\subsubsection{SplitDockStation}
+\begin{description}
+ \short When dropping an element onto a \src{SplitDockStation}, the elements that are put aside receive at least a quarter of their original size.
+ \why Sometimes the old elements shrunk too mutch.
 \end{description}
 
 \subsection{Bugfixes}
@@ -428,17 +441,131 @@ A list of the new features.
 \end{description}
 \end{document}
 
+\section{Version 1.0.6}
+This version brings the preference system. The API was changed at some places in order to bring the preference system to work.
+
+\subsection{Incombatibilities}
+The changes that need special care.
+
+\subsubsection{Dockable with Tooltip}
+\begin{description}
+ \short \src{Dockable} has a new method \src{getTitleToolTip}. \src{DockableListener} has a new method \src{titleToolTipChanged}.
+ \why Allows to show a tooltip for a \src{Dockable} on titles and on tabs.
+ \clients Must implement the two new methods.
+\end{description}
+
+\subsubsection{ColorManager generalized}
+\begin{description}
+ \short \src{ColorManager} extends \src{UIProperties}, \src{ColorProvider} extends \src{UIBridge} and has been declared deprecated, \src{DockColor} extends \src{UIValue}. \src{ColorManager.getProviderFor} is replaced by \src{UIProperties.getBridgeFor}.
+ \why This generalization will allow to use the \src{UIProperties} for other things than just colors. There are plans to use the same system for fonts as well.
+ \clients Should replace \src{ColorProvider} by \src{UIBridge}
+\end{description}
+
+\subsubsection{Resize Request in Common}
+\begin{description}
+ \short Size requests are now handled by \src{RequestDimension} and no longer with \src{Dimension}.
+ \why Allows to issue requests only for with or for height.
+ \clients Have to replace occurences of \src{Dimension} by \src{RequestDimension}.
+\end{description}
+
+\subsubsection{DockElementRepresentative}
+\begin{description}
+ \short \src{Dockable} and \src{DockTitle} implement the interface \src{DockElementRepresentative}
+ \why Allows unified access to all \src{Component}s which are linked to a \src{Dockable}.
+ \clients Have to implement the additional methods of \src{DockElementRepresentative}
+\end{description}
+
+\subsubsection{SimpleModifierMask deleted}
+\begin{description}
+ \short The class \src{SimpleModifierMask} has been removed. The interface \src{ModifierMask} has been changed to be
+a class effectivly replacing \src{SimpleModifierMask}.
+ \why This was necessary for the preference system. It was also unlikely that a client would ever implement \src{ModifierMask}.
+ \clients Must replace \src{SimpleModifierMask} by \src{ModifierMask}.
+\end{description}
+
+\subsubsection{Map of DockThemes}
+\begin{description}
+ \short \src{CControl} has now a \src{ThemeMap}. This map contains \src{String}-\src{ThemeFactory} pairs. A new theme can be activated by calling \src{ThemeMap.select}.
+ \why This is a simple representation of all the choices a user can do. The \src{CThemeMenuPiece} and the preference system can use the map to show choices and selection.
+ \clients Instead of using \src{CControl.setTheme( DockTheme )} they should use \src{CControl.setTheme( String )}. Additinal \src{ThemeFactory}s have to be added directly to the \src{ThemeMap}, \src{CThemeMenuPiece} does no longer support inserting factories.
+\end{description}
+
+\subsubsection{Persistent storage of DockTheme}
+\begin{description}
+ \short The \src{DockTheme} of a \src{CControl} is no longer stored by the \src{CThemeMenuPiece} but directly by its \src{ThemeMap}.
+ \why The \src{ThemeMap} is always present, the \src{CThemeMenuPiece} not. Hence if the \src{ThemeMap} is responsible for storing the theme, then the theme gets always stored.
+ \clients Cannot do anything. The setting of the theme will be lost the next time the application starts and has to be set anew.
+\end{description}
 
 
 
+\subsection{API and Layout}
+A list of new API elements and changes that affect the layout.
 
+\subsubsection{Dropping onto SplitDockStation}
+\begin{description}
+ \short When dropping something onto a \src{SplitDockStation}, the old content always gets at least 25\% of the remaining space.
+ \why In some situations the old content get no space and became invisible.
+\end{description}
 
+\subsubsection{UIProperties}
+\begin{description}
+ \short New \src{UIProperties}, a generalisation of \src{ColorManager}.
+ \why Precondition to implement a similar system for fonts.
+\end{description}
 
+\subsubsection{Opened LockedResizeLayoutManager}
+\begin{description}
+ \short The private inner clases of \src{LockedResizeLayoutManager} have been made public and top level.
+ \why Clients have better access and can better customize \src{LockedResizeLayoutManager}.
+\end{description}
 
+\subsubsection{ConflictResolver for locked resize}
+\begin{description}
+ \short The \src{ConflictResolver} in Common can now be used to resolve conflicts on resize when locked \src{CDockables} are around. Can be applied using the key \src{CControl.RESIZE_LOCK_CONFLICT_RESOLVER}.
+ \why Developers wished to have the choice between different behaviors.
+\end{description}
 
+\subsubsection{FullLockConflictResolver}
+\begin{description}
+ \short A new \src{ConflictResolver} which is inspired by the behavior of VLDocking
+ \why User request
+\end{description}
 
+\subsubsection{DockElementRepresentative}
+\begin{description}
+ \short New interface \src{DockElementRepresentative}. Creates a link between a \src{Component} and a \src{DockElement}.
+ \why Gives a unified way to handle popup menus and drag and drop operations.
+\end{description}
 
+\subsubsection{Common: close-action and setVisible}
+\begin{description}
+ \short Clicking onto the close-action and calling \src{setVisible( false )} on a \src{CDockable} will now have the exact same effects.
+ \why Seems to be reasonable that the close action just calls \src{setVisible}.
+\end{description}
 
+- API: new preferences package, includes new MenuPieces
 
+\subsubsection{Preference system}
+\begin{description}
+ \short A new system has been put in place to handle preferences. This new system is located in the package \src{bibliothek.extension.gui.dock}.
+ \why This new system allows users to see and change various properties of the library. This includes things like the shortcuts for actions (like ctrl+m for maximizing a \src{Dockable}) or which colors are used by \src{BubbleTheme}. Future releases might contain more preferences.
+\end{description}
 
+\subsubsection{ColorScheme as property}
+\begin{description}
+ \short \src{BasicTheme} and subclasses read their \src{ColorScheme} from the \src{DockProperties}.
+ \why a condition for the preference system
+\end{description}
 
+\subsubsection{Default locations in Common}
+\begin{description}
+ \short Clients can set the default location of a \src{Dockable} in Common. The method \src{setLocation} of \src{CStateManager} can be used for that. Also \src{AbstractCDockable} has a new method \src{setDefaultLocation} which can be used even if the element is not yet added to a \src{CControl}.
+ \why user request.
+\end{description}
+
+\subsubsection{Borders on OverpaintablePanel}
+\begin{description}
+ \short \src{OverpaintablePanel} now supports \src{Border}s.
+ \why Every \src{Component} should support \src{Border}s.
+\end{description}
