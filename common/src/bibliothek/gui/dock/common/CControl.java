@@ -26,19 +26,36 @@
 package bibliothek.gui.dock.common;
 
 import java.awt.Component;
-import java.awt.event.*;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 
+import bibliothek.extension.gui.dock.preference.PreferenceModel;
+import bibliothek.extension.gui.dock.preference.PreferenceStorage;
 import bibliothek.extension.gui.dock.theme.SmoothTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabDockAction;
-import bibliothek.gui.*;
+import bibliothek.gui.DockController;
+import bibliothek.gui.DockFrontend;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.DockTheme;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
@@ -46,8 +63,30 @@ import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.common.event.*;
-import bibliothek.gui.dock.common.intern.*;
+import bibliothek.gui.dock.common.event.CControlListener;
+import bibliothek.gui.dock.common.event.CDockablePropertyListener;
+import bibliothek.gui.dock.common.event.CDockableStateListener;
+import bibliothek.gui.dock.common.event.CDoubleClickListener;
+import bibliothek.gui.dock.common.event.CFocusListener;
+import bibliothek.gui.dock.common.event.CKeyboardListener;
+import bibliothek.gui.dock.common.event.ResizeRequestListener;
+import bibliothek.gui.dock.common.intern.AbstractCStation;
+import bibliothek.gui.dock.common.intern.CControlAccess;
+import bibliothek.gui.dock.common.intern.CControlFactory;
+import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.CDockableAccess;
+import bibliothek.gui.dock.common.intern.CListenerCollection;
+import bibliothek.gui.dock.common.intern.CSetting;
+import bibliothek.gui.dock.common.intern.CSingleParentRemover;
+import bibliothek.gui.dock.common.intern.CStateManager;
+import bibliothek.gui.dock.common.intern.CommonDockable;
+import bibliothek.gui.dock.common.intern.CommonMultipleDockableFactory;
+import bibliothek.gui.dock.common.intern.CommonSingleDockableFactory;
+import bibliothek.gui.dock.common.intern.EfficientControlFactory;
+import bibliothek.gui.dock.common.intern.ExtendedModeAcceptance;
+import bibliothek.gui.dock.common.intern.SecureControlFactory;
+import bibliothek.gui.dock.common.intern.StackableAcceptance;
+import bibliothek.gui.dock.common.intern.WorkingAreaAcceptance;
 import bibliothek.gui.dock.common.intern.CDockable.ExtendedMode;
 import bibliothek.gui.dock.common.intern.station.CFlapLayoutManager;
 import bibliothek.gui.dock.common.intern.station.CLockedResizeLayoutManager;
@@ -58,7 +97,11 @@ import bibliothek.gui.dock.common.layout.RequestDimension;
 import bibliothek.gui.dock.common.layout.ThemeMap;
 import bibliothek.gui.dock.common.location.CExternalizedLocation;
 import bibliothek.gui.dock.control.DockRegister;
-import bibliothek.gui.dock.event.*;
+import bibliothek.gui.dock.event.DockAdapter;
+import bibliothek.gui.dock.event.DockableFocusEvent;
+import bibliothek.gui.dock.event.DockableFocusListener;
+import bibliothek.gui.dock.event.DoubleClickListener;
+import bibliothek.gui.dock.event.KeyboardListener;
 import bibliothek.gui.dock.facile.action.CloseAction;
 import bibliothek.gui.dock.facile.action.StateManager;
 import bibliothek.gui.dock.facile.station.split.ConflictResolver;
@@ -209,6 +252,12 @@ public class CControl {
     /** the collection of global listeners */
     private CListenerCollection listenerCollection = new CListenerCollection();
 
+    /** the preferences used by this instance of {@link CControl} */
+    private PreferenceStorage preferences = new PreferenceStorage();
+    
+    /** the model which is used to translate between {@link #preferences} and <code>this</code> */
+    private PreferenceModel preferenceModel;
+    
     /**
      * Creates a new control
      * @param frame the main frame of the application, needed to create
@@ -369,12 +418,54 @@ public class CControl {
                     frontend.readXML( element.getElement( "frontend" ) );
                 }
             });
+            
+            resources.put( "ccontrol.preferences", new ApplicationResource(){
+				public void read( DataInputStream in ) throws IOException {
+					Version version = Version.read( in );
+					version.checkCurrent();
+					preferences.read( in );
+					
+					if( preferenceModel != null ){
+						preferences.load( preferenceModel, false );
+						preferenceModel.write();
+					}
+				}
+
+				public void readXML( XElement element ) {
+					preferences.readXML( element );
+					
+					if( preferenceModel != null ){
+						preferences.load( preferenceModel, false );
+						preferenceModel.write();
+					}
+				}
+
+				public void write( DataOutputStream out ) throws IOException {
+					if( preferenceModel != null ){
+						preferenceModel.read();
+						preferences.store( preferenceModel );
+					}
+					
+					Version.write( out, Version.VERSION_1_0_6 );
+					preferences.write( out );
+				}
+
+				public void writeXML( XElement element ) {
+					if( preferenceModel != null ){
+						preferenceModel.read();
+						preferences.store( preferenceModel );
+					}
+					
+					preferences.writeXML( element );
+				}
+            	
+            });
         }
         catch( IOException ex ){
             System.err.println( "Non lethal IO-error:" );
             ex.printStackTrace();
         }
-
+        
         initExtendedModes( frame );
         initProperties();
     }
@@ -1410,6 +1501,46 @@ public class CControl {
     public ThemeMap getThemes(){
         return themes;
     }
+    
+    /**
+     * Gets the storage container for {@link PreferenceModel}s for this control.
+     * The contents of this container are stored in the
+     * {@link #getResources() resource manager}.
+     * @return the storage for preferences
+     */
+    public PreferenceStorage getPreferences(){
+    	return preferences;
+    }
+    
+    /**
+     * Sets the {@link PreferenceModel} which will be used to translate between
+     * <code>this</code> and the {@link #getPreferences() preferences}. This
+     * model can be set to <code>null</code>.<br>
+     * The default value of this property is <code>null</code>.
+     * @param preferenceModel the new model, it will used to translate
+     * the contents of {@link #getPreferences()} immediately, can be <code>null</code>
+     */
+    public void setPreferenceModel( PreferenceModel preferenceModel ) {
+    	if( this.preferenceModel != null ){
+    		this.preferenceModel.read();
+    		preferences.store( this.preferenceModel );
+    	}
+		this.preferenceModel = preferenceModel;
+		if( preferenceModel != null ){
+			preferences.load( preferenceModel, false );
+			preferenceModel.write();
+		}
+	}
+    
+    /**
+     * Gets the preference model which is used to translate between the 
+     * {@link #getPreferences() preferences} and <code>this</code>.
+     * @return the model, can be <code>null</code>
+     * @see #setPreferenceModel(PreferenceModel)
+     */
+    public PreferenceModel getPreferenceModel() {
+		return preferenceModel;
+	}
 
     /**
      * Adds a {@link ResizeRequestListener} to this {@link CControl}. The listener

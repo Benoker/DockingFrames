@@ -34,6 +34,8 @@ import javax.swing.JMenuBar;
 import javax.swing.WindowConstants;
 
 import bibliothek.demonstration.Monitor;
+import bibliothek.extension.gui.dock.preference.DefaultPreferenceModel;
+import bibliothek.extension.gui.dock.preference.preferences.EclipseTabPreference;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.menu.*;
 import bibliothek.gui.dock.facile.menu.RootMenuPiece;
@@ -86,7 +88,7 @@ public class Core {
         RootMenuPiece layout = new RootMenuPiece( "Layout", false );
         layout.add( new SubmenuPiece( "LookAndFeel", true, new CLookAndFeelMenuPiece( control )));
         layout.add( new SubmenuPiece( "Layout", true, new CThemeMenuPiece( control )));
-        layout.add( new CPreferenceMenuPiece( control ));
+        layout.add( CPreferenceMenuPiece.setup( control ));
         
         JMenuBar bar = new JMenuBar();
         bar.add( settings.getMenu() );

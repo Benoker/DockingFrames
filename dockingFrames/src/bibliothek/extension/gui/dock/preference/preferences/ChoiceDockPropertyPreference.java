@@ -65,6 +65,15 @@ public class ChoiceDockPropertyPreference<V> extends DefaultPreference<String>{
 	
 	@Override
 	public void read() {
-		setValue( choice.valueToIdentifier( properties.get( key )));
+		V property = properties.get( key );
+		if( property == null ){
+			setValue( null );
+		}
+		else{
+			String value = choice.valueToIdentifier( properties.get( key ));
+			if( value != null || choice.isNullEntryAllowed() ){
+				setValue( value );
+			}
+		}
 	}
 }

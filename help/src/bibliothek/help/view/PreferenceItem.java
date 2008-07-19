@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 
 import bibliothek.extension.gui.dock.DockingFramesPreference;
-import bibliothek.extension.gui.dock.preference.PreferenceDialog;
+import bibliothek.extension.gui.dock.preference.PreferenceTreeDialog;
 import bibliothek.extension.gui.dock.preference.PreferenceTreeModel;
 import bibliothek.gui.DockController;
 
@@ -38,6 +38,6 @@ public class PreferenceItem extends JMenuItem implements ActionListener{
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		PreferenceDialog.openDialog( model, frame );
+		PreferenceTreeDialog.openDialog( model, frame );
 	}
 }

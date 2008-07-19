@@ -41,7 +41,9 @@ public interface PreferenceEditor<V> {
     
     /**
      * Sets a callback, a callback can be used to read the value that has to
-     * be edited or to store the edited value
+     * be edited or to store the edited value.<br>
+     * Note: this editor should call {@link PreferenceEditorCallback#set(Object)}
+     * whenever this editor shows a new valid value.
      * @param callback the callback, might be <code>null</code>
      */
     public void setCallback( PreferenceEditorCallback<V> callback );
@@ -61,7 +63,10 @@ public interface PreferenceEditor<V> {
     public void setValue( V value );
     
     /**
-     * Gets the value of this editor.
+     * Gets the value of this editor.<br>
+     * Note: editors should call {@link PreferenceEditorCallback#set(Object)}
+     * when they show a new valid value. They should not await a call to this
+     * method (which may never come).
      * @return the value, might be <code>null</code>
      */
     public V getValue();

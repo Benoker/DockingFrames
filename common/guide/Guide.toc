@@ -32,9 +32,10 @@
 \contentsline {subsubsection}{\numberline {3.3.2}Request size}{12}
 \contentsline {subsubsection}{\numberline {3.3.3}Strategy}{13}
 \contentsline {subsection}{\numberline {3.4}Colors associated with dockables}{13}
-\contentsline {section}{\numberline {4}Menus}{13}
+\contentsline {subsection}{\numberline {3.5}Preferences}{13}
+\contentsline {section}{\numberline {4}Menus}{14}
 \contentsline {subsection}{\numberline {4.1}List of dockables}{14}
 \contentsline {subsection}{\numberline {4.2}Layout}{14}
-\contentsline {subsection}{\numberline {4.3}List of themes}{14}
-\contentsline {subsection}{\numberline {4.4}LookAndFeel}{14}
+\contentsline {subsection}{\numberline {4.3}List of themes}{15}
+\contentsline {subsection}{\numberline {4.4}LookAndFeel}{15}
 \contentsline {subsection}{\numberline {4.5}Preferences}{15}

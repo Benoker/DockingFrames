@@ -31,7 +31,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JMenuItem;
 
 import bibliothek.extension.gui.dock.DockingFramesPreference;
-import bibliothek.extension.gui.dock.preference.PreferenceDialog;
+import bibliothek.extension.gui.dock.preference.PreferenceTreeDialog;
 import bibliothek.extension.gui.dock.preference.PreferenceTreeModel;
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.support.menu.BaseMenuPiece;
@@ -49,7 +49,7 @@ public class PreferenceMenuPiece extends BaseMenuPiece{
     private AbstractAction action = new AbstractAction(){
         public void actionPerformed( ActionEvent e ) {
             PreferenceTreeModel model = getModel();
-            PreferenceDialog dialog = new PreferenceDialog( model );
+            PreferenceTreeDialog dialog = new PreferenceTreeDialog( model );
             dialog.openDialog( controller.findRootWindow(), true );
         }
     };

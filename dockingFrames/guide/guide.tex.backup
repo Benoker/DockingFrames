@@ -611,15 +611,74 @@ This model uses a list of \src{Preference}-objects to represent the preferences.
 There are also subclasses of \src{DefaultPreferenceModel}. These subclasses are collections of preferences which belong together, for example the \\\src{EclipseThemePreferenceModel} which contains preferences that are related to the \src{EclipseTheme}.
 
 \subsubsection{MergedPreferenceModel}
+This model is a list of other models. It just takes the preferences from these other models and presents them as its own preferences. It offers a quick and simple way to create a combination of two ore more models.
+
 \subsubsection{PreferenceTreeModel}
+This model is a \src{PreferenceModel} and a \src{javax.swing.TreeModel}. If seen as \src{PreferenceModel}, then it behaves like a \src{MergedPreferenceModel}. If seen as \src{TreeModel}, then it contains \src{PrefereceTreeModel.Node}-objects. A node can either be just a name, or another \src{PreferenceModel}. This model is intended to be used in a \src{JTree} where the user can select one aspect of the whole set of preferences to show.
+
+The subclass \src{DockingFramesPreferenceModel} is the set of preferences which includes all the aspects of the core-library.
+
+\subsection{Lifecycle}
+This section describes the best way how to use a \src{PreferenceModel}. Not everything used in this section is explained yet, so you might want to read this section a second time when you finished this whole chapter.
+
+The correct lifecycle of a \src{PreferenceModel} includes nothing less than these steps:
+\begin{enumerate}
+ \item Create the model. Set up all the preferences that are used by the model.
+ \item 
+\end{enumerate}
 
 
 \subsection{User Interface}
+If one \src{PreferenceModel} should be displayed, the \src{PreferenceTable} can be used. This table shows a label and an editor for each preference. 
+
+\subsubsection{Editors}
+Since there are different types of preferences, different editors are needed. The kind of editor for one preference is determined by the type-path (\src{getTypePath} in a model). Clients can add new editors to a table through the method \src{setEditorFactory}.
+
+An editor is always of type \src{PreferenceEditor}. Each editor gets a \src{PreferenceEditorCallback} with which it can interact with the table. Whenever the user changes the editors value, the editor should call the method \src{set} of \src{PreferenceEditorCallback} to make sure the new value gets stored.
 
 \subsubsection{Operators}
+There are some operations which should be available for almost any preference. For example \textit{set a default value} or \textit{delete the current value}. The preference system introduces the \src{PreferenceOperation} to handle this kind of actions.
+
+A \src{PreferenceOperation} is nothing more than a label and an icon. The logic for an operation is either in an editor or in a model.
+
+\begin{description}
+ \item[Editors] with operations must the method \src{setOperation} of \src{PreferenceEditorCallback} for each operation they offer. By calling \src{setOperation} more than once, the editor can change the enabled state of the operation. If the user triggers an operation of the editor, the method \src{doOperation} of \src{PreferenceEditor} is called. It is then the editor responsibility to handle the operation.
+ \item[Preferences] can have operations as well. The method \src{getOperations} of \src{PreferenceModel} will be called once to get all the available operations for one preference. The method \src{isEnabled} will be invoked to find out whether an operation is enabled or not. Models can change the enabled state by calling \src{preferenceChanged} of \src{PreferenceModelListener}. If the user triggers an operation, \src{doOperation} of \src{PreferenceModel} will be invoked.
+\end{description}
+If an editor and a preference share the same operations, then per definition the operations belong to the editor. All settings from the model will just be ignored.
 
 \subsection{Storage}
+The \src{PreferenceStorage} can be used to store \src{PreferenceModel}s in memory or persistent either as byte-stream or as XML.
 
+The normal way to write a model from memory to the disk looks like this:
+\begin{lstlisting}
+// the stream we want to write into
+DataOutputStream out = ...
+
+// the model we want to store
+PreferenceModel model = ...
+
+// And now store the model
+PreferenceStorage storage = new PreferenceStorage();
+storage.store( model );
+storage.write( out );
+\end{lstlisting}
+Note that there are two phases in writing \src{model}. First the model gets \src{store}d (line \src{9}) into \src{storage}. It is possible to store more than just one model in a \src{PreferenceStorage}. Second \src{storage} gets written onto the disk in line \src{10}.
+
+The standard way to read a model are to apply the same steps in reverse:
+\begin{lstlisting}
+// the source of out information
+DataInputStream in = ...
+
+// the model we want to load
+PreferenceModel model = ...
+
+// And now load the model
+PreferenceStorage storage = new PreferenceStorage();
+storage.read( in );
+storage.load( model, false );
+\end{lstlisting}
+Like writing this operation has two phases. In line \src{9} \src{storage} gets filled with information, in line \src{10} the information gets transfered to \src{model}. The argument \src{false} is a hint what to do with missing preferences. In this case missing preferences are just ignored. A value of \src{true} would force the to be \src{null}.
 
 \section{Global Properties}
 Every \src{DockController} has map that contains global properties. There are no restrictions to what a property can be, a \src{Boolean} could be a property of a \src{KeyStroke}. 

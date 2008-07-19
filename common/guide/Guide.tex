@@ -354,6 +354,27 @@ ColorMap map = dockable.getColors();
 map.setColor( ColorMap.COLOR_KEY_TAB_BACKGROUND, Color.RED );
 \end{lstlisting}
 
+\subsection{Preferences}
+The preference system, introduced in version 1.0.6, allows the user to change the settings of this framework. The preference system is normally disabled and has to be activated by the client.
+
+Common already has persistent storage for preferences. One can use \\\src{getPreferences} of \src{CControl} to optain a \src{PreferenceStorage}. This storage is hooked into the \src{ApplicationResourceManager}. Whenever the manager reads or writes its content, the storage will read or write as well.
+
+Normally an application uses exactly one \src{PreferenceModel}. \src{CControl} provides the methods \src{setPreferenceModel} and \src{getPreferenceModel} to set and access that model. The default value of this property is \src{null}. If the client sets a model, then the models content will be loaded through the storage. Afterwards the content will be distributed into the system.
+
+The standard way how to use this property looks like this:
+\begin{lstlisting}
+CControl control = new CControl();
+control.setPreferenceModel( new MyPreferenceModel() );
+
+// ... further setup
+
+control.getResources().readFile( ... );
+\end{lstlisting}
+The code in line \src{2} sets the model. From now on the model gets automatically loaded and stored.
+
+Clients can use the class \src{CPreferenceModel} if they just need the default set of preferences.
+
+Last but not least: there is a \src{MenuPiece} called \src{CPreferenceMenuPiece} which can show a dialog in which the user can modify the \src{PreferenceModel}.
 
 \section{Menus}
 Some things, like the list of all known dockables, can be presented to the user through a menu. Common uses \src{MenuPiece}s to build new menus, each \src{MenuPiece} is set of items of a \src{JMenu}. A \src{MenuPiece} can be just a child of a bigger set of items. Several \src{MenuPiece}s are put together in order to create the contents of one \src{JMenu}.
@@ -413,11 +434,7 @@ Let's have a look at the code. In line \src{1} some dialog is defined. In lines 
 \subsection{Preferences}
 Preferences allow the user to change the behavior of the library. The menu \src{CPreferenceMenuPiece} will insert one new item into a menu. If triggered, the item opens a dialog with the standard preferences of Common.
 
-This menu will also ensure that the preferences are stored persistent.
-
-Note: the preference system has been added in version 1.0.6. It is still experimental and incompatible changes for future releases are likely.
-
-Clients can override the method \src{createModel} to use their own preferences. They can either add new preferences to the model created by the super-class, or create a total new model.
+Clients which do not want to make any special settings should use the static method \src{setup} of \src{CPreferenceMenuPiece} to ensure that \src{CControl} actually has a \src{PreferenceModel}.
 
 \end{document}
 

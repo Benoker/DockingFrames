@@ -583,16 +583,16 @@ Clients can influence the \src{DockTitle} that is used for a \src{Dockable} in t
 \section{Preferences}
 The preference system was introduced with version 1.0.6 of the core library.
 
-If a setting is meaningful for the ordinary user, and the user would like to be able to change the setting, then this setting should be a preference. For example the shortcut to maximize a \src{Dockable} (ctrl+m) is a good candidate for a preference.
+If a setting is meaningful for the ordinary user, and the user would like to be able to change the setting, then this setting should be made accessible through a preference. For example the shortcut to maximize a \src{Dockable} (ctrl+m) is a good candidate for a preference.
 
-What is a preference? A preference is a representation of some kind of property in a unified way.
+So what is a preference? A preference is a representation of some kind of property in a unified way. It is a mediator between the system in which the property is stored, and the graphical user interface and storage mechanisms written for preferences.
 
 Each preference consists of some properties:
 \begin{description}
- \item[Value] of course every preference has some value
- \item[ValueInfo] information about the value, for example the maximum value for an \src{Integer}-value. The exact meaning of this property depends on the \src{TypePath}.
- \item[TypePath] the type tells how to present the value to the user. The type is represented by a \src{Path}-object. It is a \src{Path} and not a \src{Class} object because it many preference-types may use the same objects as value. For example an unbounded \src{Integer} versus an \src{Integer} which must be in the range 1 to 10.
- \item[Path] a unique path to this preference. Used as an identifier if preferences have to be stored in some kind of map.
+ \item[Value] The thing which the user would like to change.
+ \item[ValueInfo] Information about the value, for example the maximum value for an \src{Integer}-value. The exact meaning of this property depends on the \src{TypePath}.
+ \item[TypePath] The type tells how to work with the value, how to present it to the user or how to write it as xml. The type is represented by a \src{Path}-object. It is a \src{Path} and not a \src{Class} object because many preference-types may use the same objects as value. For example an unbounded \src{Integer} versus an \src{Integer} which must be in the range 1 to 10.
+ \item[Path] A unique path to this preference. Used as an identifier if preferences have to be stored in some kind of map.
 \end{description}
 
 \subsection{Organization}
@@ -614,13 +614,86 @@ There are also subclasses of \src{DefaultPreferenceModel}. These subclasses are 
 This model is a list of other models. It just takes the preferences from these other models and presents them as its own preferences. It offers a quick and simple way to create a combination of two ore more models.
 
 \subsubsection{PreferenceTreeModel}
+This model is a \src{PreferenceModel} and a \src{javax.swing.TreeModel}. If seen as \src{PreferenceModel}, then it behaves like a \src{MergedPreferenceModel}. If seen as \src{TreeModel}, then it contains \src{PrefereceTreeModel.Node}-objects. A node can either be just a name, or another \src{PreferenceModel}. This model is intended to be used in a \src{JTree} where the user can select one aspect of the whole set of preferences to show.
 
+The subclass \src{DockingFramesPreferenceModel} is the set of preferences \\which includes all the aspects of the core-library.
+
+\subsection{Lifecycle}
+This section describes the best way how to use a \src{PreferenceModel}. Not everything used in this section is explained yet, so you might want to read this section a second time when you finished this whole chapter.
+
+The correct lifecycle of a \src{PreferenceModel} includes normally these steps:
+\begin{enumerate}
+ \item Create the model. Set up all the preferences that are used by the model.
+ \item Call \src{load} on a \src{StoragePreference}.
+ \item Call \src{write} on the model to synchronize the model with the underlying system.
+ \item (work with the underlying system)
+ \item To work with the model: call first \src{read}, then make the changes in the model, then call \src{write}.
+ \item (work with the underlying system)
+ \item Call \src{read} on the model to synchronize the model with the underlying system.
+ \item Store the model using \src{store} of a \src{PreferenceStorage}.
+\end{enumerate}
+
+If the \src{PreferenceStorage} used in step \src{2} is empty because its \src{read} or \src{readXML} method failed, then calling \src{read} of \src{PreferenceModel} would at least load some default settings.
+
+Steps \src{4, 5, 6} can be cycled as many times as needed.
+
+An additional step \src{0} and \src{9} would be to read and write the \\\src{PreferenceStorage} when starting up or shuting down the application.
 
 \subsection{User Interface}
+If a \src{PreferenceModel} should be displayed, the \src{PreferenceTable} can be used. This table shows a label and an editor for each preference. For \\\src{PreferenceTreeModel}s a \src{PreferenceTreePanel} should be used, it shows a \\\src{PreferenceTable} and a \src{JTree} for the nodes of the \src{PreferenceTreeModel}.
+
+Clients can also use a \src{PreferenceDialog} or a \src{PreferenceTreeDialog} to show a dialog with the well known buttons "ok" and "cancel".
+
+\subsubsection{Editors}
+Since there are different types of preferences, different editors are needed. The kind of editor for one preference is determined by the type-path (\src{getTypePath} in a model). Clients can add new editors to a \src{PreferenceTable} through the method \src{setEditorFactory}.
+
+An editor is always of type \src{PreferenceEditor}. Each editor gets a \\\src{PreferenceEditorCallback} with which it can interact with the table. Whenever the user changes the editors value, the editor should call the method \src{set} of \src{PreferenceEditorCallback} to make sure the new value gets stored.
 
 \subsubsection{Operators}
+There are some operations which should be available for almost any preference. For example \textit{set a default value} or \textit{delete the current value}. The preference system introduces the \src{PreferenceOperation} to handle this kind of actions.
+
+A \src{PreferenceOperation} is nothing more than a label and an icon. The logic for an operation is either in an editor or in a model.
+
+\begin{description}
+ \item[Editor:] Editors with operations must call the method \src{setOperation} of \\\src{PreferenceEditorCallback} for each operation they offer. By calling \src{setOperation} more than once, the editor can change the enabled state of the operation. If the user triggers an operation of the editor, the method \src{doOperation} of \src{PreferenceEditor} is called. It is then the editors responsibility to handle the operation.
+ \item[Preference:] Preferences can have operations as well. The method \\\src{getOperations} of \src{PreferenceModel} will be called once to get all the available operations for one preference. The method \src{isEnabled} will be invoked to find out whether an operation is enabled or not. Models can change the enabled state by calling \src{preferenceChanged} of \\\src{PreferenceModelListener}. If the user triggers an operation, \\\src{doOperation} of \src{PreferenceModel} will be invoked.
+\end{description}
+If an editor and a preference share the same operations, then per definition the operations belong to the editor. All settings from the model will just be ignored.
 
 \subsection{Storage}
+The \src{PreferenceStorage} can be used to store \src{PreferenceModel}s in memory or persistent either as byte-stream or as XML.
+
+The normal way to write a model from memory to the disk looks like this:
+\begin{lstlisting}
+// the stream we want to write into
+DataOutputStream out = ...
+
+// the model we want to store
+PreferenceModel model = ...
+
+// And now store the model
+PreferenceStorage storage = new PreferenceStorage();
+storage.store( model );
+storage.write( out );
+\end{lstlisting}
+Note that there are two phases in writing \src{model}. First the model gets \src{store}d (line \src{9}) into \src{storage}. It is possible to store more than just one model in a \src{PreferenceStorage}. Second \src{storage} gets written onto the disk in line \src{10}.
+
+The standard way to read a model are to apply the same steps in reverse:
+\begin{lstlisting}
+// the source of any new data
+DataInputStream in = ...
+
+// the model we want to load
+PreferenceModel model = ...
+
+// And now load the model
+PreferenceStorage storage = new PreferenceStorage();
+storage.read( in );
+storage.load( model, false );
+\end{lstlisting}
+Like writing this operation has two phases. In line \src{9} \src{storage} gets filled with information, in line \src{10} the information gets transfered to \src{model}. The argument \src{false} is a hint what to do with missing preferences. In this case missing preferences are just ignored. A value of \src{true} would force them to become \src{null}.
+
+There are some preferences which do not need to be stored by the \\\src{PreferenceStorage} because they are already stored by the underlying systen. These preferences are called \textit{natural}, while the others are called \textit{artificial}. The method \src{isNatural} of \src{PreferenceModel} can be used to distinguish them.
 
 
 \section{Global Properties}

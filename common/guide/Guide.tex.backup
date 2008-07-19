@@ -332,9 +332,9 @@ Lazy initialisation is done through a \src{SingleCDockableBackupFactory} which i
 Each \src{CDockable} has a certain size. Some \src{Component}s have an optimal size, others are flexible and can have any size. There are two interesting features for the first kind of \src{Component}s.
 
 \subsubsection{Lock size}
-Every \src{CDockable} has a method \src{isResizeLocked()}. If that methods returns \src{true}, then the \src{DockStation}s try not to change the size of the \src{CDockable} when the stations are resized themselfs. The user still can resize the \src{CDockable} by hand, and there are some other actions that will change the sizes as well.
+Every \src{CDockable} has a method \src{isResizeLockedHorizontally} and \\\src{isResizeLockedVertically}. If one of these methods returns \src{true}, then the \src{DockStation}s try not to change the size of the \src{CDockable} when the stations are resized themselfs. The user still can resize the \src{CDockable} by hand, and there are some other actions that will change the sizes as well.
 
-Clients that use \src{DefaultSingleCDockable} and \\\src{DefaultMultipleCDockable} can use the method \src{setResizeLocked} to change the behavior.
+Clients that use \src{DefaultSingleCDockable} and \\\src{DefaultMultipleCDockable} can use the method \src{setResizeLocked}, \\\src{setResizeLockedHorizontally} or \src{setResizeLockedVertically} to change the behavior.
 
 \subsubsection{Request size}
 Each \src{CDockable} can have a "size request" provided by \\\src{getAndClearResizeRequest}. Whenever \src{handleResizeRequest} of \src{CControl} is called, all resize requests are read and the stations try to change the size of their children such that the requests are fullfilled. There are no guarantees that the request can be fullfilled. And requests that cannot be fullfilled are simply lost.
@@ -353,6 +353,8 @@ CDockable dockable = ...
 ColorMap map = dockable.getColors();
 map.setColor( ColorMap.COLOR_KEY_TAB_BACKGROUND, Color.RED );
 \end{lstlisting}
+
+\subsection{Preferences}
 
 
 \section{Menus}
@@ -409,6 +411,11 @@ LookAndFeelList list = LookAndFeelList.getDefaultList();
 list.addComponentCollector( collector );
 \end{lstlisting}
 Let's have a look at the code. In line \src{1} some dialog is defined. In lines \src{3-9} a \src{ComponentCollector} is defined. \src{collector} contains one method: \\\src{listComponents}. This method just collects some \src{Component}s, in this case \src{dialog}. For every \src{Component} found through a \src{ComponentCollector}, the \\\src{LookAndFeelList} will search the upermost parent and then update all children of this parent. That includes even child-\src{Window}s.
+
+\subsection{Preferences}
+Preferences allow the user to change the behavior of the library. The menu \src{CPreferenceMenuPiece} will insert one new item into a menu. If triggered, the item opens a dialog with the standard preferences of Common.
+
+Clients which do not want to make any special settings should use the static method \src{setup} of \src{CPreferenceMenuPiece} to ensure that \src{CControl} actually has a \src{PreferenceModel}.
 
 \end{document}
 

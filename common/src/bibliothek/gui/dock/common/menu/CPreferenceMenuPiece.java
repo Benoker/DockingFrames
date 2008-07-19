@@ -25,83 +25,112 @@
  */
 package bibliothek.gui.dock.common.menu;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
 
-import bibliothek.extension.gui.dock.preference.PreferenceStorage;
+import javax.swing.AbstractAction;
+import javax.swing.JMenuItem;
+
+import bibliothek.extension.gui.dock.preference.DefaultPreferenceModel;
+import bibliothek.extension.gui.dock.preference.PreferenceDialog;
+import bibliothek.extension.gui.dock.preference.PreferenceModel;
+import bibliothek.extension.gui.dock.preference.PreferenceTreeDialog;
 import bibliothek.extension.gui.dock.preference.PreferenceTreeModel;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.CommonPreferenceModel;
-import bibliothek.gui.dock.facile.menu.PreferenceMenuPiece;
-import bibliothek.gui.dock.support.util.ApplicationResource;
-import bibliothek.util.xml.XElement;
+import bibliothek.gui.dock.common.CPreferenceModel;
+import bibliothek.gui.dock.support.menu.BaseMenuPiece;
+import bibliothek.gui.dock.support.util.Resources;
 
 /**
- * A menu piece that shows an entry for opening the preferences-dialog. This
- * piece will register an {@link ApplicationResource} at the {@link CControl}
- * in order to store the preferences. 
+ * A menu piece that shows an entry for opening the preferences-dialog. The
+ * {@link PreferenceModel model} to show on the dialog can either be set
+ * explicitly using {@link #setModel(PreferenceModel)}, or else will be read
+ * from {@link CControl#getPreferenceModel()}.<br>
+ * Note: clients can use {@link #setup(CControl)} to ensure that the
+ * {@link CControl} has a model.
  * @author Benjamin Sigg
  */
-public class CPreferenceMenuPiece extends PreferenceMenuPiece{
+public class CPreferenceMenuPiece extends BaseMenuPiece{
+	/**
+	 * Creates a new {@link CPreferenceMenuPiece}. Reads the model of <code>control</code>,
+	 * if <code>control</code> has no model then a new {@link PreferenceModel} will
+	 * be created and set.
+	 * @param control the control whose model will be shown
+	 * @return a new menu piece
+	 * @see CControl#getPreferenceModel()
+	 * @see CControl#setPreferenceModel(PreferenceModel)
+	 */
+	public static CPreferenceMenuPiece setup( CControl control ){
+		if( control.getPreferenceModel() == null )
+			control.setPreferenceModel( new CPreferenceModel( control ));
+		
+		return new CPreferenceMenuPiece( control );
+	}
+	
+	/** where to store the model */
     private CControl control;
-    private PreferenceStorage storage;
 
+    /** the model which is to be used on this dialog */
+    private PreferenceModel model;
+
+    private AbstractAction action = new AbstractAction(){
+        public void actionPerformed( ActionEvent e ) {
+        	action();
+        }
+    };
+    
     /**
      * Creates a new menu piece.
-     * @param control the control for which this piece works
+     * @param control the control for which this piece works, not <code>null</code>
      */
     public CPreferenceMenuPiece( CControl control ) {
-        super();
+    	if( control == null )
+    		throw new IllegalArgumentException( "control must not be null" );
+    	
         this.control = control;
-
-        setController( control.intern().getController() );
-
-        storage = new PreferenceStorage();
-
-        try {
-            control.getResources().put( "CPreferenceMenuPiece", new ApplicationResource(){
-                public void read( DataInputStream in ) throws IOException {
-                    storage.read( in );
-                    PreferenceTreeModel model = getModel();
-                    storage.load( model, false );
-                    storage.clear();
-                    model.write();
-                }
-
-                public void readXML( XElement element ) {
-                    storage.readXML( element );
-                    PreferenceTreeModel model = getModel();
-                    storage.load( model, false );
-                    storage.clear();
-                    model.write();
-                }
-
-                public void write( DataOutputStream out ) throws IOException {
-                    PreferenceTreeModel model = getModel();
-                    model.read();
-                    storage.store( model );
-                    storage.write( out );
-                    storage.clear();
-                }
-
-                public void writeXML( XElement element ) {
-                    PreferenceTreeModel model = getModel();
-                    model.read();
-                    storage.store( model );
-                    storage.writeXML( element );
-                    storage.clear();
-                }
-            });
-        }
-        catch( IOException e ) {
-            System.err.println( "Non-lethal IO-error:" );
-            e.printStackTrace();
-        }
+        action.putValue( AbstractAction.NAME, Resources.getBundle().getString( "PreferenceMenuPiece.text" ) );
+        add( new JMenuItem( action ) );
     }
-
-    @Override
-    protected PreferenceTreeModel createModel() {
-        return new CommonPreferenceModel( control );
+    
+    /**
+     * Explicitly sets the model which will be shown on the dialog. If 
+     * <code>null</code> is set, then this menu will try to show
+     * {@link CControl#getPreferenceModel()}.
+     * @param model the model to use or <code>null</code>
+     */
+    public void setModel( PreferenceModel model ) {
+		this.model = model;
+	}
+    
+    /**
+     * Gets the model which was explicitly set.
+     * @return the model or <code>null</code>
+     * @see #setModel(PreferenceModel)
+     */
+    public PreferenceModel getModel() {
+		return model;
+	}
+    
+    /**
+     * Opens a dialog with the current {@link PreferenceModel}.
+     */
+    protected void action(){
+    	PreferenceModel model = this.model;
+    	if( model == null )
+    		model = control.getPreferenceModel();
+    	if( model == null )
+    		model = new DefaultPreferenceModel();
+    	
+    	Component owner = control.intern().getController().findRootWindow();
+    	control.getPreferences().load( model, false );
+    	
+    	if( model instanceof PreferenceTreeModel ){
+    		PreferenceTreeDialog.openDialog( (PreferenceTreeModel)model, owner );
+    	}
+    	else{
+    		PreferenceDialog.openDialog( model, owner );
+    	}
+    	
+    	control.getPreferences().store( model );
     }
 }

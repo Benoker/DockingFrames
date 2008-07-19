@@ -106,9 +106,13 @@ public class DefaultChoice<V> implements Choice {
 	 * Searches the index of the entry that contains <code>value</code>. This
 	 * method uses {@link #equals(Object, Object)} to compare two objects.
 	 * @param value the value to search
-	 * @return the index or -1
+	 * @return the index or -1 if <code>value</code> can't be found or
+	 * is <code>null</code>
 	 */
 	public int indexOfValue( V value ){
+		if( value == null )
+			return -1;
+		
 		for( int i = 0, n = list.size(); i<n; i++ ){
 			if( equals( list.get( i ).value, value ))
 				return i;
@@ -135,10 +139,10 @@ public class DefaultChoice<V> implements Choice {
 	
 	/**
 	 * Searches the identifier for an entry which contains <code>value</code>,
-	 * this method uses {@link #equals(Object, Object)} to decide wheter two
+	 * this method uses {@link #equals(Object, Object)} to decide whether two
 	 * values are equal.
 	 * @param value the value to search
-	 * @return its identifier
+	 * @return its identifier, <code>null</code> if <code>value</code> is <code>null</code>
 	 */
 	public String valueToIdentifier( V value ){
 		int index = indexOfValue( value );

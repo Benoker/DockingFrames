@@ -39,12 +39,12 @@ import bibliothek.gui.dock.common.preference.CLayoutPreferenceModel;
  * A {@link PreferenceModel} that shows the settings of a {@link CControl}.
  * @author Benjamin Sigg
  */
-public class CommonPreferenceModel extends PreferenceTreeModel{
+public class CPreferenceModel extends PreferenceTreeModel{
     /**
      * Creates a new model.
      * @param control the control whose settings can be changed by this model
      */
-    public CommonPreferenceModel( CControl control ){
+    public CPreferenceModel( CControl control ){
         DockController controller = control.intern().getController();
         
         put( new Path( "shortcuts" ),

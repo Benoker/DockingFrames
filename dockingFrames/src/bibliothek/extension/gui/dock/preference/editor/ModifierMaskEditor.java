@@ -32,7 +32,7 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.JTextField;
 
-import bibliothek.extension.gui.dock.preference.PreferenceDialog;
+import bibliothek.extension.gui.dock.preference.PreferenceTreeDialog;
 import bibliothek.extension.gui.dock.preference.PreferenceEditor;
 import bibliothek.extension.gui.dock.preference.PreferenceEditorCallback;
 import bibliothek.extension.gui.dock.preference.PreferenceEditorFactory;

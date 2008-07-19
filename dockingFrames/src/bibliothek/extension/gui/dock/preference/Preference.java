@@ -35,7 +35,9 @@ import bibliothek.extension.gui.dock.util.Path;
  */
 public interface Preference<V> {
     /**
-     * Uses an unknown source to reload this preference.
+     * Uses an unknown source to reload this preference. If the underlying
+     * resource cannot be interpreted, or contains an invalid value, then
+     * this {@link Preference} should not change its value.
      */
     public void read();
     

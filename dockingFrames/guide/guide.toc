@@ -40,9 +40,11 @@
 \contentsline {subsection}{\numberline {7.1}Organization}{19}
 \contentsline {subsection}{\numberline {7.2}Models}{19}
 \contentsline {subsubsection}{\numberline {7.2.1}DefaultPreferenceModel}{19}
-\contentsline {subsubsection}{\numberline {7.2.2}MergedPreferenceModel}{20}
+\contentsline {subsubsection}{\numberline {7.2.2}MergedPreferenceModel}{19}
 \contentsline {subsubsection}{\numberline {7.2.3}PreferenceTreeModel}{20}
-\contentsline {subsection}{\numberline {7.3}User Interface}{20}
-\contentsline {subsubsection}{\numberline {7.3.1}Operators}{20}
-\contentsline {subsection}{\numberline {7.4}Storage}{20}
-\contentsline {section}{\numberline {8}Global Properties}{20}
+\contentsline {subsection}{\numberline {7.3}Lifecycle}{20}
+\contentsline {subsection}{\numberline {7.4}User Interface}{20}
+\contentsline {subsubsection}{\numberline {7.4.1}Editors}{21}
+\contentsline {subsubsection}{\numberline {7.4.2}Operators}{21}
+\contentsline {subsection}{\numberline {7.5}Storage}{21}
+\contentsline {section}{\numberline {8}Global Properties}{22}

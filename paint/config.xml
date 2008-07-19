@@ -2389,10 +2389,13 @@
 		</picture>
 	</pictures>
 	<resources>
+		<resource name="dock.ui.ThemeMap">
+			<key>eclipse</key>
+		</resource>
 		<resource name="CLookAndFeelMenuPiece">
 			<index>0</index>
 		</resource>
-		<resource name="CPreferenceMenuPiece">
+		<resource name="ccontrol.preferences">
 			<child name="_f1">
 				<child name="shortcuts">
 					<child name="_s3">
@@ -2400,11 +2403,6 @@
 							<child name="DockableSelector">
 								<child name="INIT_SELECTION">
 									<value type="javax.swing.KeyStroke">shift ctrl pressed E</value>
-								</child>
-							</child>
-							<child name="frontend">
-								<child name="INIT_SELECTION">
-									<value type="javax.swing.KeyStroke">ctrl pressed F4</value>
 								</child>
 							</child>
 							<child name="DockRelocatorMode">
@@ -2419,10 +2417,18 @@
 					</child>
 					<child name="_s4">
 						<child name="dock">
-							<child name="station">
-								<child name="split">
-									<child name="MAXIMIZE_ACCELERATOR">
+							<child name="common">
+								<child name="control">
+									<child name="maximize_change">
 										<value type="javax.swing.KeyStroke">ctrl pressed M</value>
+									</child>
+									<child name="maximize"/>
+									<child name="normalize">
+										<value type="javax.swing.KeyStroke">ctrl pressed N</value>
+									</child>
+									<child name="minimize"/>
+									<child name="externalize">
+										<value type="javax.swing.KeyStroke">ctrl pressed E</value>
 									</child>
 								</child>
 							</child>
@@ -2434,7 +2440,7 @@
 						<child name="dock">
 							<child name="layout">
 								<child name="ButtonContent">
-									<value type="dock.choice">ita</value>
+									<value type="dock.choice">td</value>
 								</child>
 							</child>
 						</child>
@@ -2442,14 +2448,14 @@
 				</child>
 			</child>
 			<child name="_f2">
-				<child name="theme">
+				<child name="layout">
 					<child name="BubbleTheme">
 						<child name="_s4">
 							<child name="dock">
 								<child name="theme">
 									<child name="bubble">
 										<child name="colorscheme">
-											<value type="dock.choice">looAndFeel</value>
+											<value type="dock.choice">bright</value>
 										</child>
 									</child>
 								</child>
@@ -2470,6 +2476,15 @@
 									</child>
 								</child>
 							</child>
+						</child>
+					</child>
+				</child>
+			</child>
+			<child name="dock">
+				<child name="theme">
+					<child name="eclipse">
+						<child name="tab">
+							<value type="dock.choice">round</value>
 						</child>
 					</child>
 				</child>
@@ -2685,7 +2700,7 @@
 								<layout factory="predefined">
 									<replacement id="rootccontrol center"/>
 									<delegate id="delegate_SplitDockStationFactory">
-										<node orientation="HORIZONTAL" divider="0.5736807017543859">
+										<node orientation="HORIZONTAL" divider="0.7323626086815166">
 											<leaf id="0"/>
 											<leaf id="1"/>
 										</node>
@@ -2702,7 +2717,7 @@
 										<children ignore="false">
 											<child>
 												<layout factory="delegate_StackDockStationFactory">
-													<selected>0</selected>
+													<selected>1</selected>
 													<children>
 														<child id="0"/>
 														<child id="1"/>
@@ -2711,7 +2726,7 @@
 												<children ignore="false">
 													<child>
 														<layout factory="delegate_page">
-															<id>multi multi multi multi multi multi multi multi multi 1 page</id>
+															<id>multi multi multi multi multi multi multi multi multi multi multi multi multi multi multi multi multi multi multi 1 page</id>
 															<area>picture area</area>
 															<multiple>Face</multiple>
 														</layout>
@@ -2719,7 +2734,7 @@
 													</child>
 													<child>
 														<layout factory="delegate_page">
-															<id>multi multi multi multi multi multi multi multi multi 0 page</id>
+															<id>multi multi multi multi multi multi multi multi multi multi multi multi multi multi multi multi multi multi multi 0 page</id>
 															<area>picture area</area>
 															<multiple>Apple</multiple>
 														</layout>
@@ -2820,6 +2835,12 @@
 									</property>
 								</properties>
 							</entry>
+							<entry id="multi multi multi multi multi multi multi multi multi multi multi multi multi multi multi multi multi multi multi 1 page" current="normal">
+								<history>
+									<mode>normal</mode>
+								</history>
+								<properties/>
+							</entry>
 							<entry id="single ColorDockable" current="normal">
 								<history>
 									<mode>maxi</mode>
@@ -2844,7 +2865,7 @@
 									</property>
 								</properties>
 							</entry>
-							<entry id="multi multi multi multi multi multi multi multi multi 1 page" current="normal">
+							<entry id="multi multi multi multi multi multi multi multi multi multi multi multi multi multi multi multi multi multi multi 0 page" current="normal">
 								<history>
 									<mode>normal</mode>
 								</history>
@@ -2885,17 +2906,10 @@
 									</property>
 								</properties>
 							</entry>
-							<entry id="multi multi multi multi multi multi multi multi multi 0 page" current="normal">
-								<history>
-									<mode>normal</mode>
-								</history>
-								<properties/>
-							</entry>
 						</states>
 					</modes>
 				</current>
 			</frontend>
 		</resource>
-		<resource name="CThemeMenuPiece">4</resource>
 	</resources>
 </config>

@@ -36,7 +36,9 @@ import bibliothek.extension.gui.dock.util.Path;
 public interface PreferenceModel {
     /**
      * Uses an unknown source to update this model and load all the preferences
-     * that are currently available.
+     * that are currently available. If the underlying resource cannot be
+     * read, or returns invalid data, then this model should not change its
+     * content.
      */
     public void read();
     
