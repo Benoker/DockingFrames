@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.extension.gui.dock.util.PathCombiner;
 
 /**
  * A preference model that envelops other models and uses their preferences.
@@ -36,6 +37,9 @@ import bibliothek.extension.gui.dock.util.Path;
  */
 public class MergedPreferenceModel extends AbstractPreferenceModel{
     private List<Model> models = new ArrayList<Model>();
+    
+    /** how to create the result of {@link #getPath(int)} */
+    private PathCombiner combiner = PathCombiner.UNIQUE;
     
     private PreferenceModelListener listener = new PreferenceModelListener(){
         public void preferenceAdded( PreferenceModel model, int beginIndex, int endIndex ){
@@ -56,6 +60,25 @@ public class MergedPreferenceModel extends AbstractPreferenceModel{
             firePreferenceRemoved( begin, end );
         }
     };
+    
+    /**
+     * Creates a new model
+     */
+    public MergedPreferenceModel(){
+        // nothing
+    }
+    
+    /**
+     * Creates a new path.
+     * @param combiner tells how to combine the path of a model and of
+     * its preferences in {@link #getPath(int)}. Not <code>null</code>.
+     */
+    public MergedPreferenceModel( PathCombiner combiner ){
+        if( combiner == null )
+            throw new IllegalArgumentException( "combiner must not be null" );
+        
+        this.combiner = combiner;
+    }
     
     /**
      * Adds <code>model</code> at the end of this model.
@@ -301,7 +324,7 @@ public class MergedPreferenceModel extends AbstractPreferenceModel{
         if( local == null )
             throw new ArrayIndexOutOfBoundsException( index );
      
-        return local.model.path.uniqueAppend( local.model.model.getPath( local.index ) );
+        return combiner.combine( local.model.path, local.model.model.getPath( local.index ) );
     }
     
     @Override

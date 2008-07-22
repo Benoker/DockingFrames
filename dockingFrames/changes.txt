@@ -188,3 +188,4 @@
 ! API: the DockTheme of a CControl is no longer stored by the CThemeMenuPiece but directly by its ThemeMap. 
 ! API: ThemeMenuPiece rewritten in order to use and support ThemeMap. ThemeMenuPiece does no longer contain a list of ThemeFactories.
 - Bugfix: Moving away from EclipseTheme could left some Dockables invisible
+- Bugfix: updateColors in varios DockThemes could throw NPE (found by Parag Shah)

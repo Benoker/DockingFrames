@@ -83,16 +83,16 @@ import bibliothek.gui.dock.util.PropertyKey;
         descriptionBundle="theme.flat.description",
         authors={"Benjamin Sigg"},
         webpages={})
-public class FlatTheme extends BasicTheme{
-    
+        public class FlatTheme extends BasicTheme{
+
     /** A special factory for the {@link SplitDockStation} */
     protected DisplayerFactory splitDisplayFactory = new FlatDisplayerFactory( true );
-    
+
 
     /** the key to set the {@link ColorScheme} of this theme */
     public static final PropertyKey<ColorScheme> FLAT_COLOR_SCHEME = 
-    	new PropertyKey<ColorScheme>( "dock.ui.FlatTheme.ColorScheme", new FlatColorScheme() );
-    
+        new PropertyKey<ColorScheme>( "dock.ui.FlatTheme.ColorScheme", new FlatColorScheme() );
+
     /**
      * Creates a new theme
      */
@@ -108,10 +108,10 @@ public class FlatTheme extends BasicTheme{
         });
         setMovingImageFactory( new ScreencaptureMovingImageFactory( new Dimension( 300, 200 ) ) );
     }
-    
+
     @Override
     public void install( DockController controller ) {
-    	super.install(controller);
+        super.install(controller);
         controller.getDockTitleManager().registerTheme( FlapDockStation.BUTTON_TITLE_ID, new DockTitleFactory(){
             public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
                 return new FlatButtonTitle( dockable, version );
@@ -121,126 +121,131 @@ public class FlatTheme extends BasicTheme{
                 return new FlatButtonTitle( dockable, version );
             }
         });
-        
+
         controller.getActionViewConverter().putTheme( ActionType.BUTTON, ViewTarget.TITLE, 
-        		new ViewGenerator<ButtonDockAction, BasicTitleViewItem<JComponent>>(){
-        	public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, ButtonDockAction action, Dockable dockable ){
+                new ViewGenerator<ButtonDockAction, BasicTitleViewItem<JComponent>>(){
+            public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, ButtonDockAction action, Dockable dockable ){
                 BasicButtonHandler handler = new BasicButtonHandler( action, dockable );
                 MiniButton<BasicButtonModel> button = createTitleMiniButton( handler );
                 handler.setModel( button.getModel() );
                 return handler;
-        	}
+            }
         });
-        
+
         controller.getActionViewConverter().putTheme( ActionType.CHECK, ViewTarget.TITLE, 
-        		new ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>(){
-        	public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
+                new ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>(){
+            public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
                 BasicSelectableHandler.Check handler = new BasicSelectableHandler.Check( action, dockable );
                 MiniButton<BasicButtonModel> button = createTitleMiniButton( handler );
                 handler.setModel( button.getModel() );
                 return handler;
-        	}
+            }
         });
-        
+
         controller.getActionViewConverter().putTheme( ActionType.MENU, ViewTarget.TITLE, 
-        		new ViewGenerator<MenuDockAction, BasicTitleViewItem<JComponent>>(){
-        	public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, MenuDockAction action, Dockable dockable ){
+                new ViewGenerator<MenuDockAction, BasicTitleViewItem<JComponent>>(){
+            public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, MenuDockAction action, Dockable dockable ){
                 BasicMenuHandler handler = new BasicMenuHandler( action, dockable );
                 MiniButton<BasicButtonModel> button = createTitleMiniButton( handler );
                 handler.setModel( button.getModel() );
                 return handler;
-        	}
+            }
         });
-        
+
         controller.getActionViewConverter().putTheme( ActionType.RADIO, ViewTarget.TITLE, 
-        		new ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>(){
-        	public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
+                new ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>(){
+            public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
                 BasicSelectableHandler.Radio handler = new BasicSelectableHandler.Radio( action, dockable );
                 MiniButton<BasicButtonModel> button = createTitleMiniButton( handler );
                 handler.setModel( button.getModel() );
                 return handler;
-        	}
+            }
         });
-        
+
         controller.getActionViewConverter().putTheme( ActionType.DROP_DOWN, ViewTarget.TITLE,
-        		new ViewGenerator<DropDownAction, BasicTitleViewItem<JComponent>>(){
-        	public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, DropDownAction action, Dockable dockable ){
+                new ViewGenerator<DropDownAction, BasicTitleViewItem<JComponent>>(){
+            public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, DropDownAction action, Dockable dockable ){
                 BasicDropDownButtonHandler handler = new BasicDropDownButtonHandler( action, dockable );
-        		DropDownMiniButton button = new DropDownMiniButton( handler );
+                DropDownMiniButton button = new DropDownMiniButton( handler );
                 handler.setModel( button.getModel() );
-        		button.setMouseOverBorder( BorderFactory.createEtchedBorder() );
-        		return handler;
-        	}
+                button.setMouseOverBorder( BorderFactory.createEtchedBorder() );
+                return handler;
+            }
         });
     }
-    
+
     /**
      * Creates a {@link MiniButton} in a flat look.
      * @param trigger the trigger to invoke when the button has been clicked
      * @return the new button
      */
     protected MiniButton<BasicButtonModel> createTitleMiniButton( BasicTrigger trigger ){
-    	BasicMiniButton button = new BasicMiniButton( trigger );
-    	button.setMouseOverBorder( BorderFactory.createEtchedBorder() );
-    	button.setNormalSelectedBorder( BorderFactory.createEtchedBorder() );
-    	
-    	return button;
+        BasicMiniButton button = new BasicMiniButton( trigger );
+        button.setMouseOverBorder( BorderFactory.createEtchedBorder() );
+        button.setNormalSelectedBorder( BorderFactory.createEtchedBorder() );
+
+        return button;
     }
 
     @Override
     public void uninstall(DockController controller) {
-    	super.uninstall(controller);
-    	controller.getDockTitleManager().clearThemeFactories();
-    	
-    	controller.getActionViewConverter().putTheme( ActionType.BUTTON, ViewTarget.TITLE, null );
-    	controller.getActionViewConverter().putTheme( ActionType.CHECK, ViewTarget.TITLE, null );
-    	controller.getActionViewConverter().putTheme( ActionType.MENU, ViewTarget.TITLE, null );
-    	controller.getActionViewConverter().putTheme( ActionType.RADIO, ViewTarget.TITLE, null );
-    	controller.getActionViewConverter().putTheme( ActionType.DROP_DOWN, ViewTarget.TITLE, null );
+        super.uninstall(controller);
+        controller.getDockTitleManager().clearThemeFactories();
+
+        controller.getActionViewConverter().putTheme( ActionType.BUTTON, ViewTarget.TITLE, null );
+        controller.getActionViewConverter().putTheme( ActionType.CHECK, ViewTarget.TITLE, null );
+        controller.getActionViewConverter().putTheme( ActionType.MENU, ViewTarget.TITLE, null );
+        controller.getActionViewConverter().putTheme( ActionType.RADIO, ViewTarget.TITLE, null );
+        controller.getActionViewConverter().putTheme( ActionType.DROP_DOWN, ViewTarget.TITLE, null );
     }
-    
+
     @Override
     protected void updateColors() {
-    	DockController controller = getController();
+        DockController controller = getController();
 
-    	controller.getColors().lockUpdate();
-        
-        super.updateColors();
-        
-        updateColor( "title.active.left", null );
-        updateColor( "title.inactive.left", null );
-        updateColor( "title.active.right", null );
-        updateColor( "title.inactive.right", null );
-        updateColor( "title.active.text", null );
-        updateColor( "title.inactive.text", null );
-        
-        updateColor( "paint.line", null );
-        updateColor( "paint.divider", null );
-        updateColor( "paint.insertion.area", null );
-        updateColor( "paint.insertion.border", null );
-        
-        updateColor( "stack.tab.border.out.selected", null );
-        updateColor( "stack.tab.border.center.selected", null );
-        updateColor( "stack.tab.border.out.focused", null );
-        updateColor( "stack.tab.border.center.focused", null );
-        updateColor( "stack.tab.border.out", null );
-        updateColor( "stack.tab.border.center", null );
-        updateColor( "stack.tab.border", null );
-                        
-        updateColor( "stack.tab.background.top.selected", null ); 
-        updateColor( "stack.tab.background.bottom.selected", null );
-        updateColor( "stack.tab.background.top.focused", null ); 
-        updateColor( "stack.tab.background.bottom.focused", null );
-        updateColor( "stack.tab.background.top", null );
-        updateColor( "stack.tab.background.bottom", null );
-        updateColor( "stack.tab.background", null );
-            
-        updateColor( "stack.tab.foreground", null );
-        updateColor( "stack.tab.foreground.selected",  null );
-     
-        controller.getColors().unlockUpdate();
+        if( controller != null ){
+            controller.getColors().lockUpdate();
+
+            super.updateColors();
+
+            updateColor( "title.active.left", null );
+            updateColor( "title.inactive.left", null );
+            updateColor( "title.active.right", null );
+            updateColor( "title.inactive.right", null );
+            updateColor( "title.active.text", null );
+            updateColor( "title.inactive.text", null );
+
+            updateColor( "paint.line", null );
+            updateColor( "paint.divider", null );
+            updateColor( "paint.insertion.area", null );
+            updateColor( "paint.insertion.border", null );
+
+            updateColor( "stack.tab.border.out.selected", null );
+            updateColor( "stack.tab.border.center.selected", null );
+            updateColor( "stack.tab.border.out.focused", null );
+            updateColor( "stack.tab.border.center.focused", null );
+            updateColor( "stack.tab.border.out", null );
+            updateColor( "stack.tab.border.center", null );
+            updateColor( "stack.tab.border", null );
+
+            updateColor( "stack.tab.background.top.selected", null ); 
+            updateColor( "stack.tab.background.bottom.selected", null );
+            updateColor( "stack.tab.background.top.focused", null ); 
+            updateColor( "stack.tab.background.bottom.focused", null );
+            updateColor( "stack.tab.background.top", null );
+            updateColor( "stack.tab.background.bottom", null );
+            updateColor( "stack.tab.background", null );
+
+            updateColor( "stack.tab.foreground", null );
+            updateColor( "stack.tab.foreground.selected",  null );
+
+            controller.getColors().unlockUpdate();
+        }
+        else{
+            super.updateColors();
+        }
     }
-    
+
     /**
      * Sets the {@link DisplayerFactory} that is used for the {@link SplitDockStation}.
      * Normally all displayers do not have any border, but the displayers on
@@ -250,7 +255,7 @@ public class FlatTheme extends BasicTheme{
     public void setSplitDisplayFactory( DisplayerFactory splitDisplayFactory ) {
         this.splitDisplayFactory = splitDisplayFactory;
     }
-    
+
     /**
      * Gets the special factory for the {@link SplitDockStation}.
      * @return the factory
@@ -259,12 +264,12 @@ public class FlatTheme extends BasicTheme{
     public DisplayerFactory getSplitDisplayFactory() {
         return splitDisplayFactory;
     }
-    
+
     @Override
     public DisplayerFactory getDisplayFactory( DockStation station ) {
         if( station instanceof SplitDockStation )
             return splitDisplayFactory;
-        
+
         return super.getDisplayFactory( station );
     }
 }

@@ -31,6 +31,7 @@ import bibliothek.extension.gui.dock.preference.model.EclipseThemePreferenceMode
 import bibliothek.extension.gui.dock.preference.model.KeyStrokePreferenceModel;
 import bibliothek.extension.gui.dock.preference.model.LayoutPreferenceModel;
 import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.extension.gui.dock.util.PathCombiner;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockUI;
 
@@ -41,11 +42,26 @@ import bibliothek.gui.DockUI;
  */
 public class DockingFramesPreference extends PreferenceTreeModel{
     /**
-     * Creates a new model.
+     * Creates a new model. This constructor sets the behavior of how to
+     * create paths for preferences to {@link PathCombiner#SECOND}. This
+     * behavior allows reordering of models and preferences in future releases,
+     * however forces any preference to have a truly unique path in a global
+     * scale.
      * @param controller the controller whose preferences this model should 
      * represent
      */
     public DockingFramesPreference( DockController controller ){
+        this( controller, PathCombiner.SECOND );
+    }
+    
+    /**
+     * Creates a new model.
+     * @param controller the controller whose preferences this model should 
+     * represent
+     * @param combiner how to create preference paths for nested preferences
+     */
+    public DockingFramesPreference( DockController controller, PathCombiner combiner ){
+        super( combiner );
         put( new Path( "shortcuts" ),
                 DockUI.getDefaultDockUI().getString( "preference.shortcuts" ), 
                 new KeyStrokePreferenceModel( controller.getProperties() ) );

@@ -34,6 +34,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.extension.gui.dock.util.PathCombiner;
 
 /**
  * A {@link PreferenceModel} that is also a {@link TreeModel}. It contains
@@ -44,7 +45,7 @@ import bibliothek.extension.gui.dock.util.Path;
  */
 public class PreferenceTreeModel extends AbstractPreferenceModel implements TreeModel{
     /** internal representation of all models */
-    private MergedPreferenceModel delegate = new MergedPreferenceModel();
+    private MergedPreferenceModel delegate;
     
     /** a listener to <code>delegate</code> */
     private PreferenceModelListener delegateListener = new PreferenceModelListener(){
@@ -62,6 +63,23 @@ public class PreferenceTreeModel extends AbstractPreferenceModel implements Tree
     private List<TreeModelListener> treeListeners = new ArrayList<TreeModelListener>();
     
     private TreeNode root = new TreeNode( null, new Path() );
+    
+    /**
+     * Creates a new empty model.
+     */
+    public PreferenceTreeModel(){
+        delegate = new MergedPreferenceModel();
+    }
+    
+    /**
+     * Creates a new empty model.
+     * @param combiner tells how to combine the {@link Path} of a model with
+     * the preferences of a model. Used in {@link #getPath(int)}. Not <code>null</code>.
+     * @see MergedPreferenceModel#MergedPreferenceModel(PathCombiner)
+     */
+    public PreferenceTreeModel( PathCombiner combiner ){
+        delegate = new MergedPreferenceModel( combiner );
+    }
     
     public void addTreeModelListener( TreeModelListener l ) {
         treeListeners.add( l );
