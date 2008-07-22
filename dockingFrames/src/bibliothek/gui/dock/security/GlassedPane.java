@@ -96,7 +96,7 @@ public class GlassedPane extends JPanel{
     }
     @Override
     public Dimension getMaximumSize() {
-        return contentPane.getMinimumSize();
+        return contentPane.getMaximumSize();
     }
     @Override
     public Dimension getMinimumSize() {
