@@ -98,6 +98,12 @@ public abstract class SelectableMenuHandler<M extends JMenuItem> extends Abstrac
      */
     public SelectableMenuHandler( final SelectableDockAction action, final Dockable dockable, M item ) {
     	super( action, dockable, item );
+    	
+    	item.addActionListener( new ActionListener(){
+    	    public void actionPerformed( ActionEvent e ) {
+    	        action.trigger( dockable );
+    	    }
+    	});
     }
     
     public void addActionListener( ActionListener listener ){

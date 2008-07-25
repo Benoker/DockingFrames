@@ -1948,7 +1948,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
                 repaint( bounds.x, bounds.y, bounds.width, bounds.height );
                 bounds = current.getDividerBounds( divider, bounds );
                 repaint( bounds.x, bounds.y, bounds.width, bounds.height );
-                
+
                 if( continousDisplay && current != null ){
                     current.setDivider( divider );
                     updateBounds();
