@@ -81,6 +81,12 @@ public class FlapDockHoldToggle extends GroupedSelectableDockAction.Check<Boolea
     }
     
     @Override
+    public boolean trigger( Dockable dockable ) {
+        setSelected( dockable, !isSelected( dockable ) );
+        return true;
+    }
+    
+    @Override
     public void setSelected( Dockable dockable, boolean selected ){
     	flap.setHold( dockable, selected );
     	setGroup( selected, dockable );

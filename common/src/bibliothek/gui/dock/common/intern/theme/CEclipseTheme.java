@@ -25,7 +25,6 @@
  */
 package bibliothek.gui.dock.common.intern.theme;
 
-import java.awt.Color;
 import java.util.Map;
 
 import javax.swing.Icon;
@@ -36,12 +35,12 @@ import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.ColorMap;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.color.EclipseTabTransmitter;
-import bibliothek.gui.dock.themes.ColorProviderFactory;
+import bibliothek.gui.dock.themes.ColorBridgeFactory;
 import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
-import bibliothek.gui.dock.util.UIBridge;
+import bibliothek.gui.dock.util.color.ColorBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
 
 /**
@@ -83,8 +82,8 @@ public class CEclipseTheme extends CDockTheme<EclipseTheme>{
      * @param control the controller for which this theme will be used
      */
     private void init( final CControl control ){
-        putColorProviderFactory( TabColor.class, new ColorProviderFactory<TabColor, UIBridge<Color, TabColor>>(){
-            public UIBridge<Color, TabColor> create( ColorManager manager ) {
+        putColorBridgeFactory( TabColor.KIND_TAB_COLOR, new ColorBridgeFactory(){
+            public ColorBridge create( ColorManager manager ) {
                 EclipseTabTransmitter transmitter = new EclipseTabTransmitter( manager );
                 transmitter.setControl( control );
                 return transmitter;

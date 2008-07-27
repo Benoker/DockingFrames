@@ -108,45 +108,45 @@ public class BasicTabDockTitle extends BasicDockTitle {
         
         setBorder( BorderFactory.createEmptyBorder( 0, 0, 1, 0 ) );
         
-        activeLeft = new TitleColor( "stack.tab.top.selected.focused", TitleColor.class, this, Color.WHITE ){
+        activeLeft = new TitleColor( "stack.tab.top.selected.focused", this, Color.WHITE ){
             @Override
             protected void changed( Color oldColor, Color newColor ) {
                 setActiveLeftColor( newColor );
             }
         };
-        activeRight = new TitleColor( "stack.tab.bottom.selected.focused", TitleColor.class, this, Color.WHITE ){
+        activeRight = new TitleColor( "stack.tab.bottom.selected.focused", this, Color.WHITE ){
             @Override
             protected void changed( Color oldColor, Color newColor ) {
                 setActiveRightColor( newColor );
             }
         };
-        activeText = new TitleColor( "stack.tab.text", TitleColor.class, this, Color.BLACK ){
+        activeText = new TitleColor( "stack.tab.text", this, Color.BLACK ){
             @Override
             protected void changed( Color oldColor, Color newColor ) {
                 setActiveTextColor( newColor );
             }
         };
         
-        inactiveLeft = new TitleColor( "stack.tab.top.selected", TitleColor.class, this, Color.WHITE ){
+        inactiveLeft = new TitleColor( "stack.tab.top.selected", this, Color.WHITE ){
             @Override
             protected void changed( Color oldColor, Color newColor ) {
                 setInactiveLeftColor( newColor );
             }
         };
-        inactiveRight = new TitleColor( "stack.tab.bottom.selected", TitleColor.class, this, Color.WHITE ){
+        inactiveRight = new TitleColor( "stack.tab.bottom.selected", this, Color.WHITE ){
             @Override
             protected void changed( Color oldColor, Color newColor ) {
                 setInactiveRightColor( newColor );
             }
         };
-        inactiveText = new TitleColor( "stack.tab.text", TitleColor.class, this, Color.BLACK ){
+        inactiveText = new TitleColor( "stack.tab.text", this, Color.BLACK ){
             @Override
             protected void changed( Color oldColor, Color newColor ) {
                 setInactiveTextColor( newColor );
             }
         };
         
-        borderColor = new TitleColor( "stack.border", TitleColor.class, this, Color.BLACK ){
+        borderColor = new TitleColor( "stack.border", this, Color.BLACK ){
             @Override
             protected void changed( Color oldColor, Color newColor ) {
                 repaint();

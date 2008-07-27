@@ -138,7 +138,7 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 	    private BubbleColorAnimation animation;
 	    
 	    public BubbleTabColor( Tab tab, int state, String id, String animationId, BubbleColorAnimation animation, Dockable dockable, Color backup ){
-	        super( id, TabColor.class, station, dockable, backup);
+	        super( id, station, dockable, backup);
 	        this.tab = tab;
 	        this.state = state;
 	        this.animationId = animationId;

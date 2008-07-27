@@ -35,11 +35,11 @@ import bibliothek.gui.dock.util.UIProperties;
  * A {@link ColorManager} contains {@link Color}s, {@link UIBridge}s and
  * {@link DockColor}s. Some <code>DockColor</code>s are associated with a 
  * <code>ColorProvider</code>. If a <code>Color</code> in this manager is
- * {@link #put(Priority, String, Color) set}, then each <code>DockColor</code> that listens
+ * {@link UIProperties#put(Priority, String, Object) set}, then each <code>DockColor</code> that listens
  * for that color gets informed about the change either through its 
  * provider or directly from the manager.
  * @author Benjamin Sigg
  */
-public class ColorManager extends UIProperties<Color, DockColor>{
+public class ColorManager extends UIProperties<Color, DockColor, ColorBridge>{
     // no new methods
 }

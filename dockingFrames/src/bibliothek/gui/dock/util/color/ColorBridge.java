@@ -30,14 +30,11 @@ import java.awt.Color;
 import bibliothek.gui.dock.util.UIBridge;
 
 /**
- * A <code>ColorProvider</code> is a layer between a {@link ColorManager} and
- * a {@link DockColor}. A provider can exchange the color that is used for
+ * A <code>ColorBridge</code> is a layer between a {@link ColorManager} and
+ * a {@link DockColor}. A bridge can exchange the color that is used for
  * some <code>DockColor</code>.
  * @author Benjamin Sigg
- * @param <D> the type of {@link DockColor}s this provider can handle
- * @deprecated please use {@link UIBridge UIBridge<Color, D extends DockColor>} instead.
  */
-@Deprecated
-public interface ColorProvider<D extends DockColor> extends UIBridge<Color, D> {
+public interface ColorBridge extends UIBridge<Color, DockColor> {
     // no new methods
 }

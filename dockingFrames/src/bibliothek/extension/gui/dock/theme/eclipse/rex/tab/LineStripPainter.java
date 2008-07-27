@@ -35,6 +35,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.color.ColorManager;
+import bibliothek.gui.dock.util.color.DockColor;
 
 /**
  * Paints the background of the tab by just painting a single line.
@@ -42,7 +43,7 @@ import bibliothek.gui.dock.util.color.ColorManager;
  */
 @ColorCodes( "stack.border" )
 public class LineStripPainter implements TabStripPainter {
-    private AbstractDockColor color = new AbstractDockColor( "stack.border", AbstractDockColor.class, Color.BLACK ){
+    private AbstractDockColor color = new AbstractDockColor( "stack.border", DockColor.KIND_DOCK_COLOR, Color.BLACK ){
         @Override
         protected void changed( Color oldColor, Color newColor ) {
             tabbedComponent.repaint();

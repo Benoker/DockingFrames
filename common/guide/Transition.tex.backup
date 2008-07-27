@@ -23,7 +23,7 @@
 \newcommand{\why}{\item[Reason]}
 \newcommand{\clients}{\item[Clients]}
 
-\title{DockingFrames 1.0.5 - Transition}
+\title{DockingFrames 1.0.6 - Transition}
 \author{Benjamin Sigg}
 
 \begin{document}
@@ -439,7 +439,6 @@ A list of new API elements and changes that affect the layout.
  \short When the \src{ExtendedMode} of a \src{CDockable} did not change because of a call of a special method, no state-change-events were fired.
  \why It was not intended that one action could change the state of many \src{CDockable}s.
 \end{description}
-\end{document}
 
 \section{Version 1.0.6}
 This version brings the preference system. The API was changed at some places in order to bring the preference system to work.
@@ -456,7 +455,7 @@ The changes that need special care.
 
 \subsubsection{ColorManager generalized}
 \begin{description}
- \short \src{ColorManager} extends \src{UIProperties}, \src{ColorProvider} extends \src{UIBridge} and has been declared deprecated, \src{DockColor} extends \src{UIValue}. \src{ColorManager.getProviderFor} is replaced by \src{UIProperties.getBridgeFor}.
+ \short \src{ColorManager} extends \src{UIProperties}, \src{ColorProvider} is replaced by \src{ColorBridge} which extends \\\src{UIBridge}, \src{DockColor} extends \src{UIValue}. \\\src{ColorManager.getProviderFor} is replaced by \\\src{UIProperties.getBridgeFor}. Bridges and Values are no longer connected though the class of the \src{UIValue} but by a \src{Path} object. These objects are much more flexibel than classes and not hard to understand.
  \why This generalization will allow to use the \src{UIProperties} for other things than just colors. There are plans to use the same system for fonts as well.
  \clients Should replace \src{ColorProvider} by \src{UIBridge}
 \end{description}
@@ -470,29 +469,29 @@ The changes that need special care.
 
 \subsubsection{DockElementRepresentative}
 \begin{description}
- \short \src{Dockable} and \src{DockTitle} implement the interface \src{DockElementRepresentative}
+ \short \src{Dockable} and \src{DockTitle} implement the interface \\\src{DockElementRepresentative}
  \why Allows unified access to all \src{Component}s which are linked to a \src{Dockable}.
- \clients Have to implement the additional methods of \src{DockElementRepresentative}
+ \clients Have to implement the additional methods of \\\src{DockElementRepresentative}
 \end{description}
 
 \subsubsection{SimpleModifierMask deleted}
 \begin{description}
- \short The class \src{SimpleModifierMask} has been removed. The interface \src{ModifierMask} has been changed to be
-a class effectivly replacing \src{SimpleModifierMask}.
+ \short The class \src{SimpleModifierMask} has been removed. The interface \\\src{ModifierMask} has been changed to be
+a class effectivly replacing \\\src{SimpleModifierMask}.
  \why This was necessary for the preference system. It was also unlikely that a client would ever implement \src{ModifierMask}.
  \clients Must replace \src{SimpleModifierMask} by \src{ModifierMask}.
 \end{description}
 
 \subsubsection{Map of DockThemes}
 \begin{description}
- \short \src{CControl} has now a \src{ThemeMap}. This map contains \src{String}-\src{ThemeFactory} pairs. A new theme can be activated by calling \src{ThemeMap.select}.
+ \short \src{CControl} has now a \src{ThemeMap}. This map contains \src{String}-\\\src{ThemeFactory} pairs. A new theme can be activated by calling \src{ThemeMap.select}.
  \why This is a simple representation of all the choices a user can do. The \src{CThemeMenuPiece} and the preference system can use the map to show choices and selection.
  \clients Instead of using \src{CControl.setTheme( DockTheme )} they should use \src{CControl.setTheme( String )}. Additinal \src{ThemeFactory}s have to be added directly to the \src{ThemeMap}, \src{CThemeMenuPiece} does no longer support inserting factories.
 \end{description}
 
 \subsubsection{Persistent storage of DockTheme}
 \begin{description}
- \short The \src{DockTheme} of a \src{CControl} is no longer stored by the \src{CThemeMenuPiece} but directly by its \src{ThemeMap}.
+ \short The \src{DockTheme} of a \src{CControl} is no longer stored by the \\\src{CThemeMenuPiece} but directly by its \src{ThemeMap}.
  \why The \src{ThemeMap} is always present, the \src{CThemeMenuPiece} not. Hence if the \src{ThemeMap} is responsible for storing the theme, then the theme gets always stored.
  \clients Cannot do anything. The setting of the theme will be lost the next time the application starts and has to be set anew.
 \end{description}
@@ -516,8 +515,8 @@ A list of new API elements and changes that affect the layout.
 
 \subsubsection{Opened LockedResizeLayoutManager}
 \begin{description}
- \short The private inner clases of \src{LockedResizeLayoutManager} have been made public and top level.
- \why Clients have better access and can better customize \src{LockedResizeLayoutManager}.
+ \short The private inner classes of \src{LockedResizeLayoutManager} have been made public and top level.
+ \why Clients have better access and can better customize \\\src{LockedResizeLayoutManager}.
 \end{description}
 
 \subsubsection{ConflictResolver for locked resize}
@@ -554,13 +553,13 @@ A list of new API elements and changes that affect the layout.
 
 \subsubsection{ColorScheme as property}
 \begin{description}
- \short \src{BasicTheme} and subclasses read their \src{ColorScheme} from the \src{DockProperties}.
+ \short \src{BasicTheme} and subclasses read their \src{ColorScheme} from the \\\src{DockProperties}.
  \why a condition for the preference system
 \end{description}
 
 \subsubsection{Default locations in Common}
 \begin{description}
- \short Clients can set the default location of a \src{Dockable} in Common. The method \src{setLocation} of \src{CStateManager} can be used for that. Also \src{AbstractCDockable} has a new method \src{setDefaultLocation} which can be used even if the element is not yet added to a \src{CControl}.
+ \short Clients can set the default location of a \src{Dockable} in Common. The method \src{setLocation} of \src{CStateManager} can be used for that. Also \\\src{AbstractCDockable} has a new method \src{setDefaultLocation} which can be used even if the element is not yet added to a \src{CControl}.
  \why user request.
 \end{description}
 
@@ -569,3 +568,37 @@ A list of new API elements and changes that affect the layout.
  \short \src{OverpaintablePanel} now supports \src{Border}s.
  \why Every \src{Component} should support \src{Border}s.
 \end{description}
+
+\subsection{Bugfixes}
+
+\subsubsection{DefaultConflictResolver did not respect locked sizes}
+\begin{description}
+ \short When several \src{ResizeRequest}s with different priority had to be handled, \src{DefaultConflictResolver} did not respect all of them. The algorithm has been fixed.
+\end{description}
+
+\subsubsection{Opening maximized CDockable}
+\begin{description}
+ \short When opening a \src{CDockable} which would stack on a maximized \\\src{CDockable}, then the layout could get scrambled. The solution is now to unmaximize any \src{CDockable}, then add the new element, then re-maximize the \src{CDockable}s.
+\end{description}
+
+\subsubsection{Dropping Dockable on SplitDockStation}
+\begin{description}
+ \short \src{Dockable}s can now be dropped onto \src{SplitDockStation}s which have size 0/0. In earlier versions the divider between \src{Dockable}s had a fixed size in pixels. Now the size of the divider is set to 0 if the \src{SplitDockStation} is too small. This prevents children to have negative sizes.
+\end{description}
+
+\subsubsection{CSplitLocation broken}
+\begin{description}
+ \short \src{CSplitLocation.expandProperty} did process the first element of a tree-path twice (thanks srcnick for fixing this bug).
+\end{description}
+
+\subsubsection{CStateManager.getLocation broken}
+\begin{description}
+ \short \src{CStateManager.getLocation} did return \src{null} when it should produce a result. There were also some \src{CLocation}s which did not return the correct result causing \src{getLocation} to fail.
+\end{description}
+
+- Bugfix: Moving away from EclipseTheme could left some Dockables invisible
+\subsubsection{Stack-component of EclipseTheme broken}
+\begin{description}
+ \short When removing all elements of \src{EclipseStackDockComponent}, some elements could remain invisible.
+\end{description}
+\end{document}

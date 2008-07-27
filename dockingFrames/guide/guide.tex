@@ -312,7 +312,7 @@ There are resources that need to be distributed through the whole user interface
 
 Components that use \src{UIProperties} do not just ask for a resource when they need it, they register an \src{UIValue} which gets informed whenever the resource changes. At a first glance \src{UIValue} is just an observer of the map.
 
-The map does not forward its resources directly to the \src{UIValue}s, it forwards the resources and the values to an \src{UIBridge}. The bridge is then responsible to forward the resource to its \src{UIValue}. Each subclass of \src{UIValue} can have its own bridge. The \src{UIBridge} can modifie the resource before sending it to the \src{UIValue}. If a subclass of \src{UIValue} would have a \src{Dockable} field, then a bridge for that subclass could make its decision based on the value of that field.
+The map does not forward its resources directly to the \src{UIValue}s, it forwards the resources and the values to an \src{UIBridge}. The bridge is then responsible to forward the resource to its \src{UIValue}. Each kind of \src{UIValue} can have its own bridge (the kind is defined through a \src{Path} object). The \src{UIBridge} can modifie the resource before sending it to the \src{UIValue}. If a subclass of \src{UIValue} would have a \src{Dockable} field, then a bridge for that subclass could make its decision based on the value of that field.
 
 \src{UIBridges} are also informed about which \src{UIValue}s are observing the \\\src{UIProperties}. A bridge could decide to change the resource of a \src{UIValue} when the \src{UIProperties} did not change at all. The \src{UIValue} would not be able to tell the difference.
 
@@ -330,10 +330,10 @@ There are different subclasses of \src{DockColor}. Each subclass tells by whom t
 Clients can exchange and influence the colors on different levels.
 
 \subsubsection{ColorScheme}
-The \src{BasicTheme} uses a \src{ColorScheme} to put up its set of colors. \src{ColorScheme} has one important method: \src{getColor}. That method gets a key for a color, and has to return the color that matches. The \src{ColorScheme} of \src{BasicTheme} can be replaced at any time calling the method \src{setColorScheme}. Since all \src{DockTheme}s of the core library inherit \src{BasicTheme}, the possibility to use a \src{ColorScheme} is available for all themes.
+The \src{BasicTheme} uses a \src{ColorScheme} to put up its set of colors. \src{ColorScheme} has one important method: \src{getColor}. That method gets a key for a color, and has to return the color that matches. The \src{ColorScheme} of \src{BasicTheme} can be replaced at any time calling the method \src{setColorScheme} or through the \src{DockProperties} using the key \src{BasicTheme.BASIC_COLOR_SCHEME}. Note that subclasses might use another key for the \src{ColorScheme}. Since all \src{DockTheme}s of the core library inherit \src{BasicTheme}, the possibility to use a \src{ColorScheme} is available for all themes.
 
 \subsubsection{ColorManager}
-Instead of putting all colors at once, using a \src{ColorScheme}, a single color can be set with the \src{ColorManager}. The \src{ColorManager} is accessible through the method \src{DockController.getColors}. Clients can just call the method \src{put} to put a new color into the color-map. The \src{ColorManager} is an \src{UIProperties} and hence has the ability to use \src{UIBridges}.
+Instead of putting all colors at once, using a \src{ColorScheme}, a single color can be set with the \src{ColorManager}. The \src{ColorManager} is accessible through the method \src{DockController.getColors}. Clients can just call the method \src{put} to put a new color into the color-map. The \src{ColorManager} is an \src{UIProperties} and hence has the ability to use \src{UIBridge}s. The \src{ColorManager} requires to use the subinterface \src{ColorBridge} instead of \src{UIBridge}.
 
 \section{Actions}
 A \src{DockAction} is an object which is related to one or many \src{Dockable}s, they describe some action like "close a \src{Dockable}". Every \src{DockAction} has the ability to create one or many views of itself. A view might be a \src{JButton}, a \src{JCheckBox}, a \src{JMenuItem} or other objects.

@@ -27,6 +27,7 @@ package bibliothek.gui.dock.util.color;
 
 import java.awt.Color;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.util.UIValue;
 
 /**
@@ -34,5 +35,7 @@ import bibliothek.gui.dock.util.UIValue;
  * @author Benjamin Sigg
  */
 public interface DockColor extends UIValue<Color>{
+    public static final Path KIND_DOCK_COLOR = new Path( "DockColor" );
+    
     // no new methods
 }

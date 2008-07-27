@@ -42,60 +42,7 @@ import bibliothek.gui.dock.event.SelectableDockActionListener;
  * drop-down-button.
  * @author Benjamin Sigg
  */
-public abstract class SelectableDropDownHandler extends AbstractDropDownHandler<SelectableDockAction> {
-	/**
-	 * A connection representing a check-box.
-	 * @author Benjamin Sigg
-	 */
-	public static class Check extends SelectableDropDownHandler{
-		/**
-		 * Creates a new handler.
-		 * @param action the action to observe
-		 * @param dockable the Dockable for which the action is shown
-		 * @param item the graphical representation of the action
-		 */
-		public Check( SelectableDockAction action, Dockable dockable, JMenuItem item ){
-			super( action, dockable, item );
-		}
-
-		public void triggered(){
-			action.setSelected( dockable, !action.isSelected( dockable ));
-		}
-		
-		@Override
-		protected void itemTriggered(){
-			action.setSelected( dockable, item.isSelected() );
-		}
-	}
-	
-	/**
-	 * A connection representing a radio-button.
-	 * @author Benjamin Sigg
-	 */
-	public static class Radio extends SelectableDropDownHandler{
-		/**
-		 * Creates a new handler.
-		 * @param action the action to observe
-		 * @param dockable the Dockable for which the action is shown
-		 * @param item the graphical representation of the action
-		 */
-		public Radio( SelectableDockAction action, Dockable dockable, JMenuItem item ){
-			super( action, dockable, item );
-		}
-
-		public void triggered(){
-			action.setSelected( dockable, true );
-		}
-		
-		@Override
-		protected void itemTriggered(){
-			if( !item.isSelected() )
-				item.setSelected( true );
-			else
-				action.setSelected( dockable, true );
-		}
-	}
-	
+public class SelectableDropDownHandler extends AbstractDropDownHandler<SelectableDockAction> {
 	/** a listener to the action and the view */
 	private Listener listener = new Listener();
 	
@@ -107,6 +54,7 @@ public abstract class SelectableDropDownHandler extends AbstractDropDownHandler<
 	 */
 	public SelectableDropDownHandler( SelectableDockAction action, Dockable dockable, JMenuItem item ){
 		super( action, dockable, item );
+		item.addActionListener( listener );
 	}
 	
 	@Override
@@ -115,7 +63,6 @@ public abstract class SelectableDropDownHandler extends AbstractDropDownHandler<
 		boolean selected = action.isSelected( dockable );
 		item.setSelected( selected );
 		action.addSelectableListener( listener );
-		item.addActionListener( listener );
 		if( getView() != null )
 			getView().setSelected( selected );
 	}
@@ -123,7 +70,6 @@ public abstract class SelectableDropDownHandler extends AbstractDropDownHandler<
 	@Override
 	public void unbind(){
 		action.removeSelectableListener( listener );
-		item.removeActionListener( listener );
 		super.unbind();
 	}
 	
@@ -135,9 +81,18 @@ public abstract class SelectableDropDownHandler extends AbstractDropDownHandler<
 	}
 
 	/**
-	 * Called if the menuitem was clicked.
+	 * Called if the menuitem was clicked. The default implementation forwards
+	 * the call to {@link #triggered()}. This method is not called if the item
+	 * if in a drop-down-menu and cannot be triggered in the unselected-state.
 	 */
-	protected abstract void itemTriggered();
+	protected void itemTriggered(){
+	    triggered();
+	}
+	
+	public void triggered() {
+	    action.trigger( dockable );
+	    item.setSelected( action.isSelected( dockable ) );
+	}
 	
 	/**
 	 * A listener that ensures, that the menuitem and the action have

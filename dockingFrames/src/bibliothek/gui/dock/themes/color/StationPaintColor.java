@@ -27,6 +27,7 @@ package bibliothek.gui.dock.themes.color;
 
 import java.awt.Color;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
 import bibliothek.gui.dock.util.color.DockColor;
@@ -36,6 +37,9 @@ import bibliothek.gui.dock.util.color.DockColor;
  * @author Benjamin Sigg
  */
 public abstract class StationPaintColor extends AbstractDockColor{
+    /** the kind of color {@link StationPaintColor} is */
+    public static final Path KIND_STATION_PAINT_COLOR = KIND_DOCK_COLOR.append( "StationPaintColor" );
+    
     /** the paint that uses this color */
     private StationPaint paint;
     
@@ -46,9 +50,20 @@ public abstract class StationPaintColor extends AbstractDockColor{
      * @param paint the {@link StationPaint} that uses this color
      * @param backup a backup used when no color was found
      */
-    public StationPaintColor( String id, Class<? extends AbstractDockColor> kind, StationPaint paint, Color backup ){
+    public StationPaintColor( String id, Path kind, StationPaint paint, Color backup ){
         super( id, kind, backup );
         this.paint = paint;
+    }
+    
+
+    /**
+     * Creates a new {@link DockColor}
+     * @param id the identifier of this color
+     * @param paint the {@link StationPaint} that uses this color
+     * @param backup a backup used when no color was found
+     */
+    public StationPaintColor( String id, StationPaint paint, Color backup ){
+        this( id, KIND_DOCK_COLOR, paint, backup );
     }
     
     /**

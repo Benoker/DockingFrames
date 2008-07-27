@@ -25,12 +25,12 @@
  */
 package bibliothek.gui.dock.common.intern.theme;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
@@ -39,10 +39,10 @@ import bibliothek.gui.dock.focus.DockableSelection;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StationPaint;
-import bibliothek.gui.dock.themes.ColorProviderFactory;
+import bibliothek.gui.dock.themes.ColorBridgeFactory;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.util.Priority;
-import bibliothek.gui.dock.util.UIBridge;
+import bibliothek.gui.dock.util.color.ColorBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.DockColor;
 
@@ -58,8 +58,8 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
     private DockTheme delegate;
     
     /** the factories used in this theme */
-    private Map<Class<?>, ColorProviderFactory<?, ?>> colorProviderFactories =
-        new HashMap<Class<?>, ColorProviderFactory<?,?>>();
+    private Map<Path, ColorBridgeFactory> colorBridgeFactories =
+        new HashMap<Path, ColorBridgeFactory>();
     
     /** the settings of all {@link DockController}s */
     private List<Controller> controllers = new ArrayList<Controller>();
@@ -120,36 +120,33 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
     }
     
     /**
-     * Sets the {@link UIBridge} which should be used for a certain kind
+     * Sets the {@link ColorBridge} which should be used for a certain kind
      * of {@link DockColor}s. The bridges will be installed with priority
      * {@link Priority#DEFAULT} at all {@link ColorManager}s.
-     * @param <C> the kind of {@link DockColor} the providers will handle
      * @param kind the kind of {@link DockColor} the providers will handle
      * @param factory the factory for new providers
      */
-    @SuppressWarnings("unchecked")
-    public <C extends DockColor> void putColorProviderFactory( Class<C> kind, ColorProviderFactory<C, ? extends UIBridge<Color, C>> factory ){
-        colorProviderFactories.put( kind, factory );
+    public <C extends DockColor> void putColorBridgeFactory( Path kind, ColorBridgeFactory factory ){
+        colorBridgeFactories.put( kind, factory );
         for( Controller setting : controllers ){
             ColorManager colors = setting.controller.getColors();
             
-            UIBridge<Color, ?> oldProvider = setting.bridges.remove( kind );
-            UIBridge<Color, ? extends DockColor> newProvider = factory == null ? null : factory.create( colors );
+            ColorBridge oldBridge = setting.bridges.remove( kind );
+            ColorBridge newBridge = factory == null ? null : factory.create( colors );
             
-            if( newProvider == null ){
+            if( newBridge == null ){
                 setting.bridges.remove( kind );
                 
-                if( oldProvider != null )
+                if( oldBridge != null )
                     colors.unpublish( Priority.DEFAULT, kind );
             }
             else{
-                setting.bridges.put( kind, newProvider );
-                colors.publish( Priority.DEFAULT, (Class<DockColor>)kind, (UIBridge<Color, DockColor>)newProvider );
+                setting.bridges.put( kind, newBridge );
+                colors.publish( Priority.DEFAULT, kind, newBridge );
             }
         }
     }
 
-    @SuppressWarnings("unchecked")
     public void install( DockController controller ) {
         delegate.install( controller );
         
@@ -157,18 +154,17 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
         settings.controller = controller;
         
         ColorManager colors = controller.getColors();
-        for( Map.Entry<Class<?>, ColorProviderFactory<?, ?>> entry : colorProviderFactories.entrySet() ){
-            UIBridge<Color, DockColor> provider = (UIBridge<Color, DockColor>)entry.getValue().create( colors );
+        for( Map.Entry<Path, ColorBridgeFactory> entry : colorBridgeFactories.entrySet() ){
+            ColorBridge bridge = entry.getValue().create( colors );
             colors.publish( 
                     Priority.DEFAULT, 
-                    (Class<DockColor>)entry.getKey(), 
-                    provider );
-            settings.bridges.put( entry.getKey(), provider );
+                    entry.getKey(), 
+                    bridge );
+            settings.bridges.put( entry.getKey(), bridge );
         }
         controllers.add( settings );
     }
 
-    @SuppressWarnings( "unchecked" )
     public void uninstall( DockController controller ) {
         delegate.uninstall( controller );
         
@@ -178,9 +174,8 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
                 controllers.remove( i );
                 
                 ColorManager colors = controller.getColors();
-                for( UIBridge provider : settings.bridges.values() ){
-                    // TODO ensure typesafety
-                    colors.unpublish( Priority.DEFAULT, provider );
+                for( ColorBridge bridge : settings.bridges.values() ){
+                    colors.unpublish( Priority.DEFAULT, bridge );
                 }
             }
         }
@@ -193,7 +188,7 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
     private class Controller{
         /** the controller which is represented by this element */
         public DockController controller;
-        /** the list of {@link UIBridge}s which is used in that controller */
-        public Map<Class<?>,UIBridge<Color, ? extends DockColor>> bridges = new HashMap<Class<?>, UIBridge<Color, ? extends DockColor>>();
+        /** the list of {@link ColorBridge}s which is used in that controller */
+        public Map<Path, ColorBridge> bridges = new HashMap<Path, ColorBridge>();
     }
 }

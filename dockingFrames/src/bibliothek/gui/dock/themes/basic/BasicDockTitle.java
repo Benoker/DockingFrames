@@ -366,7 +366,7 @@ public class BasicDockTitle extends AbstractDockTitle {
          * @param backup a backup color
          */
         public BasicTitleColor( String id, Color backup ){
-            super( id, TitleColor.class, BasicDockTitle.this, backup );
+            super( id, BasicDockTitle.this, backup );
         }
         
         @Override

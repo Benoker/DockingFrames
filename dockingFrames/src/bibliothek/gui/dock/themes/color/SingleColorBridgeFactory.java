@@ -25,33 +25,31 @@
  */
 package bibliothek.gui.dock.themes.color;
 
-import bibliothek.gui.dock.themes.ColorProviderFactory;
+import bibliothek.gui.dock.themes.ColorBridgeFactory;
+import bibliothek.gui.dock.util.color.ColorBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
-import bibliothek.gui.dock.util.color.ColorProvider;
-import bibliothek.gui.dock.util.color.DockColor;
 
 /**
- * A {@link ColorProviderFactory} that always returns the same instance
- * of {@link ColorProvider}.
+ * A {@link ColorBridgeFactory} that always returns the same instance
+ * of {@link ColorBridge}.
  * @author Benjamin Sigg
- *
- * @param <D> the kind of {@link DockColor}s this factories child will handle
+
  */
-public class SingleColorProviderFactory<D extends DockColor> implements ColorProviderFactory<D, ColorProvider<D>>{
-    private ColorProvider<D> provider;
+public class SingleColorBridgeFactory implements ColorBridgeFactory{
+    private ColorBridge bridge;
     
     /**
      * Creates a new factory.
-     * @param provider the provider which will be returned at {@link #create(ColorManager)}
+     * @param bridge the provider which will be returned at {@link #create(ColorManager)}
      */
-    public SingleColorProviderFactory( ColorProvider<D> provider ){
-        if( provider == null )
-            throw new IllegalArgumentException( "provider must not be null" );
+    public SingleColorBridgeFactory( ColorBridge bridge ){
+        if( bridge == null )
+            throw new IllegalArgumentException( "bridge must not be null" );
         
-        this.provider = provider;
+        this.bridge = bridge;
     }
     
-    public ColorProvider<D> create( ColorManager manager ) {
-        return provider;
+    public ColorBridge create( ColorManager manager ) {
+        return bridge;
     }
 }

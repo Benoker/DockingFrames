@@ -153,7 +153,7 @@ public class BasicStackDockComponent extends DefaultStackDockComponent {
              * @param id the name of this color
              */
             public BasicTabColor( String id ){
-                super( id, TabColor.class, station, dockable, null );
+                super( id, station, dockable, null );
             }
             
             @Override

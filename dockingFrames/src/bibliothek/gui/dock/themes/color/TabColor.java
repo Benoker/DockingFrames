@@ -27,6 +27,7 @@ package bibliothek.gui.dock.themes.color;
 
 import java.awt.Color;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
@@ -37,6 +38,9 @@ import bibliothek.gui.dock.util.color.DockColor;
  * @author Benjamin Sigg
  */
 public abstract class TabColor extends AbstractDockColor{
+    /** the kind of color {@link TabColor} is */
+    public static final Path KIND_TAB_COLOR = KIND_DOCK_COLOR.append( "TabColor" );
+    
     private StackDockStation station;
     private Dockable dockable;
     
@@ -48,10 +52,21 @@ public abstract class TabColor extends AbstractDockColor{
      * @param dockable the {@link Dockable} for whose tab this color is used
      * @param backup a backup color in case that no color can be found
      */
-    public TabColor( String id, Class<? extends AbstractDockColor> kind, StackDockStation station, Dockable dockable, Color backup ){
+    public TabColor( String id, Path kind, StackDockStation station, Dockable dockable, Color backup ){
         super( id, kind, backup );
         this.station = station;
         this.dockable = dockable;
+    }
+    
+    /**
+     * Creates a new TabColor.
+     * @param id the identifier of the color that is searched
+     * @param station the station on which the color will be used
+     * @param dockable the {@link Dockable} for whose tab this color is used
+     * @param backup a backup color in case that no color can be found
+     */
+    public TabColor( String id, StackDockStation station, Dockable dockable, Color backup ){
+        this( id, KIND_TAB_COLOR, station, dockable, backup );
     }
     
     /**

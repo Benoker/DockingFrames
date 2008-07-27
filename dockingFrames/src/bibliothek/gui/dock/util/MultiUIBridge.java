@@ -49,14 +49,14 @@ public class MultiUIBridge<V, U extends UIValue<V>> implements UIBridge<V, U> {
     private Map<String, List<U>> values = new HashMap<String, List<U>>();
     
     /** the manager that delivers default resources when necessary */
-    private UIProperties<V, ?> manager;
+    private UIProperties<V, U, ?> manager;
     
     /**
      * Creates a new {@link MultiUIBridge}.
      * @param manager the manager from whom this provider will get default
      * colors when necessary
      */
-    public MultiUIBridge( UIProperties<V, ?> manager ){
+    public MultiUIBridge( UIProperties<V, U, ?> manager ){
         if( manager == null )
             throw new IllegalArgumentException( "Manager must not be null" );
         this.manager = manager;

@@ -29,14 +29,14 @@ import java.awt.Color;
 
 import javax.swing.LookAndFeel;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.util.Priority;
-import bibliothek.gui.dock.util.UIBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.DockColor;
 import bibliothek.gui.dock.util.laf.LookAndFeelColors;
 
 /**
- * A <code>ColorScheme</code> is a collection of colors and providers.
+ * A <code>ColorScheme</code> is a collection of colors and bridges.
  * 
  * @author Benjamin Sigg
  */
@@ -49,12 +49,12 @@ public interface ColorScheme {
     public Color getColor( String id );
     
     /**
-     * Searches for a factory for a provider that can be used for a specific
+     * Searches for a factory for a bridge that can be used for a specific
      * kind of {@link DockColor}.
      * @param kind the kind of color the provider should support 
-     * @return some a factory for a provider or <code>null</code>
+     * @return some a factory for a bridge or <code>null</code>
      */
-    public <D extends DockColor> ColorProviderFactory<D, ? extends UIBridge<Color, D>> getProvider( Class<D> kind );
+    public ColorBridgeFactory getBridgeFactory( Path kind );
     
     /**
      * Transmits all values in this scheme to <code>manager</code>.

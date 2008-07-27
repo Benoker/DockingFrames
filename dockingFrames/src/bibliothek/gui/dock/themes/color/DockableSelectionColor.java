@@ -27,6 +27,7 @@ package bibliothek.gui.dock.themes.color;
 
 import java.awt.Color;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.focus.DockableSelection;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
 import bibliothek.gui.dock.util.color.DockColor;
@@ -36,17 +37,20 @@ import bibliothek.gui.dock.util.color.DockColor;
  * @author Benjamin Sigg
  */
 public abstract class DockableSelectionColor extends AbstractDockColor {
+    /** the kind of color {@link DockableSelectionColor} is */
+    public static final Path KIND_DOCKABLE_SELECTION_COLOR = KIND_DOCK_COLOR.append( "DockableSelectionColor" );
+    
     private DockableSelection selection;
     
     /**
      * Creates a new {@link DockColor}.
      * @param selection the owner of this color
      * @param id the id of this color
-     * @param clazz the class of this color
+     * @param kind the kind of color this is
      * @param backup the backup color if nothing is available
      */
-    public DockableSelectionColor( DockableSelection selection, String id, Class<? extends DockableSelectionColor> clazz, Color backup ){
-        super( id, clazz, backup );
+    public DockableSelectionColor( DockableSelection selection, String id, Path kind, Color backup ){
+        super( id, kind, backup );
     }
     
     /**
@@ -56,7 +60,7 @@ public abstract class DockableSelectionColor extends AbstractDockColor {
      * @param backup the backup color if nothing is available
      */
     public DockableSelectionColor( DockableSelection selection, String id, Color backup ){
-        super( id, DockableSelectionColor.class, backup );
+        super( id, KIND_DOCKABLE_SELECTION_COLOR, backup );
     }
     
     /**

@@ -411,7 +411,7 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
      */
     private class RoundActionColor extends ActionColor{
         public RoundActionColor( String id, Dockable dockable, DockAction action, Color backup ){
-            super( id, ActionColor.class, dockable, action, backup );
+            super( id, dockable, action, backup );
         }
         @Override
         protected void changed( Color oldColor, Color newColor ) {

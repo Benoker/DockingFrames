@@ -342,7 +342,7 @@ public class BubbleDockTitle extends AbstractDockTitle {
      */
     private class BubbleTitleColor extends TitleColor{
         public BubbleTitleColor( String id, Color backup ){
-            super( id, TitleColor.class, BubbleDockTitle.this, backup );
+            super( id, BubbleDockTitle.this, backup );
         }
         @Override
         protected void changed( Color oldColor, Color newColor ) {

@@ -447,7 +447,7 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
              * @param dockable the element for which the color is used
              */
             public FlatTabColor( String id, Dockable dockable ){
-                super( id, TabColor.class, station, dockable, null );
+                super( id, station, dockable, null );
             }
             @Override
             protected void changed( Color oldColor, Color newColor ) {

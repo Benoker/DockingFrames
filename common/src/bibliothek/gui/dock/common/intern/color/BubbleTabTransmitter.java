@@ -28,7 +28,7 @@ package bibliothek.gui.dock.common.intern.color;
 import java.awt.Color;
 
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
-import bibliothek.gui.dock.themes.ColorProviderFactory;
+import bibliothek.gui.dock.themes.ColorBridgeFactory;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.util.Colors;
@@ -41,8 +41,8 @@ public class BubbleTabTransmitter extends TabColorTransmitter {
     /**
      * A factory that creates {@link BubbleTabTransmitter}s.
      */
-    public static final ColorProviderFactory<TabColor, BubbleTabTransmitter> FACTORY =
-        new ColorProviderFactory<TabColor, BubbleTabTransmitter>(){
+    public static final ColorBridgeFactory FACTORY =
+        new ColorBridgeFactory(){
         public BubbleTabTransmitter create( ColorManager manager ){
             return new BubbleTabTransmitter( manager );
         }

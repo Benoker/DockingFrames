@@ -25,17 +25,15 @@
  */
 package bibliothek.gui.dock.common.intern.theme;
 
-import java.awt.Color;
-
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.color.BasicTabTransmitter;
 import bibliothek.gui.dock.common.intern.color.BasicTitleTransmitter;
 import bibliothek.gui.dock.themes.BasicTheme;
-import bibliothek.gui.dock.themes.ColorProviderFactory;
+import bibliothek.gui.dock.themes.ColorBridgeFactory;
 import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.color.TitleColor;
-import bibliothek.gui.dock.util.UIBridge;
+import bibliothek.gui.dock.util.color.ColorBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
 
 /**
@@ -77,15 +75,15 @@ public class CBasicTheme extends CDockTheme<BasicTheme> {
      * @param control the controller for which this theme will be used
      */
     private void init( final CControl control ){
-        putColorProviderFactory( TabColor.class, new ColorProviderFactory<TabColor, UIBridge<Color, TabColor>>(){
-            public UIBridge<Color, TabColor> create( ColorManager manager ) {
+        putColorBridgeFactory( TabColor.KIND_TAB_COLOR, new ColorBridgeFactory(){
+            public ColorBridge create( ColorManager manager ) {
                 BasicTabTransmitter transmitter = new BasicTabTransmitter( manager );
                 transmitter.setControl( control );
                 return transmitter;
             }
         });
-        putColorProviderFactory( TitleColor.class, new ColorProviderFactory<TitleColor, UIBridge<Color, TitleColor>>(){
-            public UIBridge<Color, TitleColor> create( ColorManager manager ) {
+        putColorBridgeFactory( TitleColor.KIND_TITLE_COLOR, new ColorBridgeFactory(){
+            public ColorBridge create( ColorManager manager ) {
                 BasicTitleTransmitter transmitter = new BasicTitleTransmitter( manager );
                 transmitter.setControl( control );
                 return transmitter;

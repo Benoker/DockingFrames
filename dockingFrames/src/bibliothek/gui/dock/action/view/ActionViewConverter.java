@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -105,7 +105,7 @@ public class ActionViewConverter {
 		
 		putDefault( ActionType.CHECK, ViewTarget.MENU, new ViewGenerator<SelectableDockAction, MenuViewItem<JComponent>>(){
 			public MenuViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
-				return new SelectableMenuHandler.Check( action, dockable );
+				return new SelectableMenuHandler( action, dockable, new JCheckBoxMenuItem() );
 			}
 		});
 		
@@ -117,7 +117,7 @@ public class ActionViewConverter {
 		
 		putDefault( ActionType.RADIO, ViewTarget.MENU, new ViewGenerator<SelectableDockAction, MenuViewItem<JComponent>>(){
 			public MenuViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
-				return new SelectableMenuHandler.Radio( action, dockable );
+				return new SelectableMenuHandler( action, dockable, new JRadioButtonMenuItem() );
 			}
 		});
 		
@@ -202,13 +202,13 @@ public class ActionViewConverter {
 		
 		putDefault( ActionType.CHECK, ViewTarget.DROP_DOWN, new ViewGenerator<SelectableDockAction, DropDownViewItem>(){
 			public DropDownViewItem create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
-				return new SelectableDropDownHandler.Check( action, dockable, new JCheckBoxMenuItem() );
+				return new SelectableDropDownHandler( action, dockable, new JCheckBoxMenuItem() );
 			}
 		});
 		
 		putDefault( ActionType.RADIO, ViewTarget.DROP_DOWN, new ViewGenerator<SelectableDockAction, DropDownViewItem>(){
 			public DropDownViewItem create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
-				return new SelectableDropDownHandler.Radio( action, dockable, new JRadioButtonMenuItem() );
+				return new SelectableDropDownHandler( action, dockable, new JRadioButtonMenuItem() );
 			}
 		});
 		

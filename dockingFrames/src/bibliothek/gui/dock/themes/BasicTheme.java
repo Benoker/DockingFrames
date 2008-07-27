@@ -31,6 +31,7 @@ import java.awt.Color;
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
@@ -67,6 +68,7 @@ import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.UIBridge;
+import bibliothek.gui.dock.util.color.ColorBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.DockColor;
 import bibliothek.gui.dock.util.laf.LookAndFeelColors;
@@ -212,7 +214,7 @@ import bibliothek.gui.dock.util.laf.LookAndFeelColorsListener;
 	 * Called when the the colors of the {@link ColorManager} have to be updated.
 	 * Subclasses should override this method and explicitly call
 	 * {@link #updateColor(String, Color) updateColor} and
-	 * {@link #updateColorProvider(Class) updateColorProvider}
+	 * {@link #updateColorBridge(Path) updateColorProvider}
 	 * for all {@link Color}s and {@link UIBridge}s that will be used by
 	 * this theme. Since {@link ColorScheme}s can create new colors and providers 
 	 * lazily, just reading out all colors will ensure that all colors 
@@ -243,13 +245,13 @@ import bibliothek.gui.dock.util.laf.LookAndFeelColorsListener;
 			updateColor( "paint.divider", null );
 			updateColor( "paint.insertion", null );
 
-			updateColorProvider( DockColor.class );
-			updateColorProvider( TabColor.class );
-			updateColorProvider( TitleColor.class );
-			updateColorProvider( ActionColor.class );
-			updateColorProvider( DisplayerColor.class );
-			updateColorProvider( StationPaintColor.class );
-			updateColorProvider( DockableSelectionColor.class );
+			updateColorBridge( DockColor.KIND_DOCK_COLOR );
+			updateColorBridge( TabColor.KIND_TAB_COLOR );
+			updateColorBridge( TitleColor.KIND_TITLE_COLOR );
+			updateColorBridge( ActionColor.KIND_ACTION_COLOR );
+			updateColorBridge( DisplayerColor.KIND_DISPLAYER_COLOR );
+			updateColorBridge( StationPaintColor.KIND_STATION_PAINT_COLOR );
+			updateColorBridge( DockableSelectionColor.KIND_DOCKABLE_SELECTION_COLOR );
 
 			controller.getColors().unlockUpdate();
 		}
@@ -272,18 +274,14 @@ import bibliothek.gui.dock.util.laf.LookAndFeelColorsListener;
 	}
 
 	/**
-	 * Transmits the {@link UIBridge} for <code>kind</code> to the {@link ColorManager}
+	 * Transmits the {@link ColorBridge} for <code>kind</code> to the {@link ColorManager}
 	 * @param kind the kind of provider that should be published
 	 */
-	@SuppressWarnings("unchecked")
-	protected <P extends DockColor> void updateColorProvider( Class<P> kind ){
-	    ColorProviderFactory temp = colorScheme.getValue().getProvider( kind );
+	protected <P extends DockColor> void updateColorBridge( Path kind ){
+	    ColorBridgeFactory factory = colorScheme.getValue().getBridgeFactory( kind );
 
-	    // this would be a problem if would would have write access to factory
-		ColorProviderFactory<P, ? extends UIBridge<Color, P>> factory = temp;
-		
 		if( factory != null ){
-			UIBridge<Color, P> bridge = factory.create( controller.getColors() );
+			ColorBridge bridge = factory.create( controller.getColors() );
 			controller.getColors().publish( Priority.THEME, kind, bridge );
 		}
 	}

@@ -27,14 +27,12 @@ package bibliothek.gui.dock.themes.color;
 
 import java.awt.Color;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
-import bibliothek.gui.dock.themes.ColorProviderFactory;
+import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.gui.dock.themes.ColorBridgeFactory;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.util.Priority;
-import bibliothek.gui.dock.util.UIBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.DockColor;
 
@@ -46,8 +44,8 @@ import bibliothek.gui.dock.util.color.DockColor;
  */
 public class DefaultColorScheme implements ColorScheme{
     private Map<String, Color> colors = new HashMap<String, Color>();
-    private Map<Class<?>, ColorProviderFactory<?,?>> providers =
-        new HashMap<Class<?>, ColorProviderFactory<?,?>>();
+    private Map<Path, ColorBridgeFactory> bridges =
+        new HashMap<Path, ColorBridgeFactory>();
     
     public boolean updateUI() {
         return false;
@@ -68,13 +66,13 @@ public class DefaultColorScheme implements ColorScheme{
     /**
      * Sets the value of some provider.
      * @param kind the kind of {@link DockColor}s the provider works with
-     * @param provider the provider or <code>null</code>
+     * @param bridge the provider or <code>null</code>
      */
-    public <D extends DockColor> void setProvider( Class<? super D> kind, ColorProviderFactory<D, ? extends UIBridge<Color, D>> provider ){
-        if( provider == null )
-            providers.remove( kind );
+    public void setBridgeFactory( Path kind, ColorBridgeFactory bridge ){
+        if( bridge == null )
+            bridges.remove( kind );
         else
-            providers.put( kind, provider );
+            bridges.put( kind, bridge );
     }
     
     public Color getColor( String id ) {
@@ -95,10 +93,16 @@ public class DefaultColorScheme implements ColorScheme{
         return color;
     }
 
-    @SuppressWarnings( "unchecked" )
-    public <D extends DockColor> ColorProviderFactory<D, ? extends UIBridge<Color, D>> getProvider( Class<D> kind ) {
-        ColorProviderFactory result = getProvider( kind, new HashSet<Class<?>>() );
-        return result;
+    public ColorBridgeFactory getBridgeFactory( Path kind ) {
+        while( kind != null ){
+            ColorBridgeFactory factory = bridges.get( kind );
+            if( factory != null )
+                return factory;
+            
+            kind = kind.getParent();
+        }
+        
+        return null;
     }
     
     @SuppressWarnings("unchecked")
@@ -109,42 +113,15 @@ public class DefaultColorScheme implements ColorScheme{
             for( Map.Entry<String, Color> entry : colors.entrySet() )
                 manager.put( priority, entry.getKey(), entry.getValue() );
             
-            for( Map.Entry<Class<?>, ColorProviderFactory<?,?>> entry : providers.entrySet() )
+            for( Map.Entry<Path, ColorBridgeFactory> entry : bridges.entrySet() )
                 manager.publish( 
                         priority, 
-                        (Class<DockColor>)entry.getKey(), 
-                        (UIBridge<Color,DockColor>)entry.getValue().create( manager ) );
+                        entry.getKey(), 
+                        entry.getValue().create( manager ) );
         
         }
         finally{
             manager.unlockUpdate();
         }
-    }
-    
-    /**
-     * Searches a provider that can be used for <code>clazz</code>.
-     * @param clazz the type whose provider is searched
-     * @param checked a set of already checked types, might be expanded by this method
-     * @return the provider or <code>null</code>
-     */
-    private ColorProviderFactory<?,?> getProvider( Class<?> clazz, Set<Class<?>> checked ){
-        if( !checked.add( clazz ))
-            return null;
-        
-        ColorProviderFactory<?,?> result = providers.get( clazz );
-        if( result != null )
-            return result;
-        
-        for( Class<?> next : clazz.getInterfaces() ){
-            result = getProvider( next, checked );
-            if( result != null )
-                return result;
-        }
-        
-        Class<?> parent = clazz.getSuperclass();
-        if( parent == null )
-            return null;
-        
-        return getProvider( parent, checked );
     }
 }

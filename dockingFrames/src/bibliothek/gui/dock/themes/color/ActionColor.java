@@ -2,6 +2,7 @@ package bibliothek.gui.dock.themes.color;
 
 import java.awt.Color;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
@@ -12,6 +13,9 @@ import bibliothek.gui.dock.util.color.DockColor;
  * @author Benjamin Sigg
  */
 public abstract class ActionColor extends AbstractDockColor{
+    /** the path describing this kind of color */
+    public static final Path KIND_ACTION_COLOR = DockColor.KIND_DOCK_COLOR.append( "ActionColor" );
+    
     /** the dockable for which the action is used */
     private Dockable dockable;
     
@@ -26,10 +30,22 @@ public abstract class ActionColor extends AbstractDockColor{
      * @param action the action for which the color is used
      * @param backup a backup in case a color is missing
      */
-    public ActionColor( String id, Class<? extends AbstractDockColor> kind, Dockable dockable, DockAction action, Color backup ){
+    public ActionColor( String id, Path kind, Dockable dockable, DockAction action, Color backup ){
         super( id, kind, backup );
         this.action = action;
         this.dockable = dockable;
+    }
+    
+    
+    /**
+     * Creates a new {@link DockColor}.
+     * @param id the identifier of this color
+     * @param dockable the Dockable for which the action is shown
+     * @param action the action for which the color is used
+     * @param backup a backup in case a color is missing
+     */
+    public ActionColor( String id, Dockable dockable, DockAction action, Color backup ){
+        this( id, KIND_ACTION_COLOR, dockable, action, backup );
     }
     
     /**

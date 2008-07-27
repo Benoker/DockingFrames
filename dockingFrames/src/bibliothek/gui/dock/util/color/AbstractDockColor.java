@@ -27,6 +27,7 @@ package bibliothek.gui.dock.util.color;
 
 import java.awt.Color;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.util.AbstractUIValue;
 import bibliothek.gui.dock.util.UIProperties;
@@ -56,17 +57,8 @@ public abstract class AbstractDockColor extends AbstractUIValue<Color, DockColor
      * @param id the id of the color for which <code>this</code> should listen
      * @param kind the kind of {@link DockColor} this is
      */
-    public AbstractDockColor( String id, Class<? extends AbstractDockColor> kind ){
+    public AbstractDockColor( String id, Path kind ){
         super( id, kind );
-    }
-
-    /**
-     * Creates a new {@link DockColor}.
-     * @param id the id of the color for which <code>this</code> should listen
-     * @param backup a backup color, can be <code>null</code>
-     */
-    public AbstractDockColor( String id, Color backup ){
-        super( id, backup );
     }
     
     /**
@@ -75,7 +67,7 @@ public abstract class AbstractDockColor extends AbstractUIValue<Color, DockColor
      * @param kind the kind of {@link DockColor} this is, can be <code>null</code>
      * @param backup a backup color, can be <code>null</code>
      */
-    public AbstractDockColor( String id, Class<? extends AbstractDockColor> kind, Color backup ){
+    public AbstractDockColor( String id, Path kind, Color backup ){
         super( id, kind, backup );
     }
     

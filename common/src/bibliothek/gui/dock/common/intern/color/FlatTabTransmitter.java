@@ -31,11 +31,11 @@ import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.gui.dock.common.ColorMap;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.util.color.ColorManager;
-import bibliothek.gui.dock.util.color.ColorProvider;
+import bibliothek.gui.dock.util.color.ColorBridge;
 import bibliothek.util.Colors;
 
 /**
- * A {@link ColorProvider} for {@link FlatTheme} used in combination with
+ * A {@link ColorBridge} for {@link FlatTheme} used in combination with
  * {@link CDockable} and its {@link ColorMap}.
  * @author Benjamin Sigg
  *

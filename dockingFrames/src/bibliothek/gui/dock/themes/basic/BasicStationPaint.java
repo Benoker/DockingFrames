@@ -42,7 +42,7 @@ import bibliothek.gui.dock.util.color.ColorManager;
  */
 @ColorCodes({ "paint.line", "paint.divider", "paint.insertion" })
 public class BasicStationPaint implements StationPaint {
-    private StationPaintColor color = new StationPaintColor( "", StationPaintColor.class, this, SystemColor.textHighlight ){
+    private StationPaintColor color = new StationPaintColor( "", this, SystemColor.textHighlight ){
         @Override
         protected void changed( Color oldColor, Color newColor ) {
             // ignore

@@ -27,16 +27,25 @@ package bibliothek.gui.dock.util;
 
 import java.util.*;
 
-public class UIProperties<V, U extends UIValue<V>> {
+import bibliothek.extension.gui.dock.util.Path;
+
+/**
+ * A map containing which contains some string-values pairs and so called
+ * bridges to modify these values when reading them out. 
+ * @author Benjamin Sigg
+ * @param <V> The kind of values this map contains
+ * @param <U> The kind of observers used to read values from this map
+ * @param <B> The kind of bridges used to transfer values <code>V</code> to observers <code>U</code>
+ */
+public class UIProperties<V, U extends UIValue<V>, B extends UIBridge<V, U>> {
     /** the map of providers known to this manager */
-    private java.util.Map<Class<? extends U>, PriorityValue<UIBridge<V, ? extends U>>> bridges =
-        new HashMap<Class<? extends U>, PriorityValue<UIBridge<V, ? extends U>>>();
+    private Map<Path, PriorityValue<B>> bridges = new HashMap<Path, PriorityValue<B>>();
     
     /** the map of resources that have been set */
     private Map<String, PriorityValue<V>> resources = new HashMap<String, PriorityValue<V>>();
     
     /** a list of all observers */
-    private List<Observer<?>> observers = new LinkedList<Observer<?>>();
+    private List<Observer> observers = new LinkedList<Observer>();
     
     /** whether to stall updates or not */
     private int updateLock = 0;
@@ -56,7 +65,7 @@ public class UIProperties<V, U extends UIValue<V>> {
     public void unlockUpdate(){
         updateLock--;
         if( updateLock == 0 ){
-            for( Observer<?> observer : observers )
+            for( Observer observer : observers )
                 observer.resetAll();
         }
     }
@@ -64,28 +73,27 @@ public class UIProperties<V, U extends UIValue<V>> {
     /**
      * Adds a new bridge between this {@link UIProperties} and a set of
      * {@link UIValue}s that have a certain type.
-     * @param <P> the kind of {@link UIValue}s the bridge can handle.
      * @param priority the importance of the new provider
-     * @param kind the kind of values that the new bridge should handle
+     * @param path the path for which this bridge should be used.
      * @param bridge the new bridge
      */
-    public <P extends U>void publish( Priority priority, Class<? extends P> kind, UIBridge<V, P> bridge ){
+    public void publish( Priority priority, Path path, B bridge ){
         if( priority == null )
             throw new IllegalArgumentException( "priority must not be null" );
-        if( kind == null )
-            throw new IllegalArgumentException( "kind must not be null" );
+        if( path == null )
+            throw new IllegalArgumentException( "path must not be null" );
         if( bridge == null )
             throw new IllegalArgumentException( "bridge must not be null" );
         
-        PriorityValue<UIBridge<V, ? extends U>> value = bridges.get( kind );
+        PriorityValue<B> value = bridges.get( path );
         if( value == null ){
-            value = new PriorityValue<UIBridge<V, ? extends U>>();
-            bridges.put( kind, value );
+            value = new PriorityValue<B>();
+            bridges.put( path, value );
         }
         
         if( value.set( priority, bridge )){
             if( updateLock == 0 ){
-                for( Observer<?> check : observers ){
+                for( Observer check : observers ){
                     check.resetBridge();
                 }
             }
@@ -94,19 +102,19 @@ public class UIProperties<V, U extends UIValue<V>> {
     
 
     /**
-     * Removes the bridge that handles the {@link UIValue}s of kind <code>kind</code>.
+     * Removes the bridge that handles the {@link UIValue}s of kind <code>path</code>.
      * @param priority the importance of the bridge 
-     * @param kind some kind of {@link UIValue}
+     * @param path the path of the bridge
      */
-    public void unpublish( Priority priority, Class<? extends U> kind ){
-        PriorityValue<UIBridge<V, ? extends U>> value = bridges.get( kind );
+    public void unpublish( Priority priority, Path path ){
+        PriorityValue<B> value = bridges.get( path );
         if( value != null ){
             boolean change = value.set( priority, null );
             if( value.get() == null )
-                bridges.remove( kind );
+                bridges.remove( path );
             
             if( change && updateLock == 0 ){
-                for( Observer<?> check : observers ){
+                for( Observer check : observers ){
                     check.resetBridge();
                 }
             }   
@@ -119,12 +127,12 @@ public class UIProperties<V, U extends UIValue<V>> {
      * @param priority the importance of the bridge 
      * @param bridge the bridge to remove
      */
-    public void unpublish( Priority priority, UIBridge<V, ? extends U> bridge ){
-        Iterator<PriorityValue<UIBridge<V, ? extends U>>> iterator = bridges.values().iterator();
+    public void unpublish( Priority priority, B bridge ){
+        Iterator<PriorityValue<B>> iterator = bridges.values().iterator();
         boolean change = false;
         
         while( iterator.hasNext() ){
-            PriorityValue<UIBridge<V, ? extends U>> next = iterator.next();
+            PriorityValue<B> next = iterator.next();
             if( next.get( priority ) == bridge ){
                 change = next.set( priority, null ) || change;
                 if( next.get() == null ){
@@ -134,7 +142,7 @@ public class UIProperties<V, U extends UIValue<V>> {
         }
         
         if( change && updateLock == 0 ){
-            for( Observer<?> check : observers ){
+            for( Observer check : observers ){
                 check.resetBridge();
             }
         }
@@ -143,20 +151,19 @@ public class UIProperties<V, U extends UIValue<V>> {
     /**
      * Installs a new {@link UIValue}. The value will be informed about
      * any change in the resource <code>id</code>.
-     * @param <P> the type of the value
      * @param id the id of the resource that <code>value</code> will monitor
-     * @param kind the type of the observer
+     * @param path the kind of the value
      * @param value the new value
      */
-    public <P extends U> void add( String id, Class<? super P> kind, P value ){
-        if( kind == null )
-            throw new IllegalArgumentException( "kind must not be null" );
+    public void add( String id, Path path, U value ){
+        if( path == null )
+            throw new IllegalArgumentException( "path must not be null" );
         if( id == null )
             throw new IllegalArgumentException( "id must not be null" );
         if( value == null )
             throw new IllegalArgumentException( "value must not be null" );
         
-        Observer<P> combination = new Observer<P>( id, kind, value );
+        Observer combination = new Observer( id, path, value );
         observers.add( combination );
     }
     
@@ -165,9 +172,9 @@ public class UIProperties<V, U extends UIValue<V>> {
      * @param value the observer to remove
      */
     public void remove( U value ){
-        ListIterator<Observer<?>> list = observers.listIterator();
+        ListIterator<Observer> list = observers.listIterator();
         while( list.hasNext() ){
-            Observer<?> next = list.next();
+            Observer next = list.next();
             if( next.getValue() == value ){
                 list.remove();
                 next.setBridge( null, false );
@@ -177,45 +184,26 @@ public class UIProperties<V, U extends UIValue<V>> {
     }
     
     /**
-     * Searches a bridge that can be used for <code>clazz</code>.
-     * @param clazz the type whose bridge is searched
+     * Searches a bridge that can be used for <code>path</code>.
+     * @param path the kind of bridge that is searched. First a bridge for
+     * <code>path</code> will be searched, then for the parent of <code>path</code>,
+     * and so on...
      * @return the bridge or <code>null</code>
      */
-    @SuppressWarnings( "unchecked" )
-    protected UIBridge<V, ? extends U> getBridgeFor( Class<?> clazz ){
-        UIBridge result = getBridgeFor( clazz, new HashSet<Class<?>>() );
-        return result;
-    }
-    
-    
-    /**
-     * Searches a bridge that can be used for <code>clazz</code>.
-     * @param clazz the type whose bridge is searched
-     * @param checked a set of already checked types, might be expanded by this method
-     * @return the bridge or <code>null</code>
-     */
-    private UIBridge<V, ? extends U> getBridgeFor( Class<?> clazz, Set<Class<?>> checked ){
-        if( !checked.add( clazz ))
-            return null;
-        
-        PriorityValue<UIBridge<V, ? extends U>> value = bridges.get( clazz );
-        UIBridge<V, ? extends U> result = value == null ? null : value.get();
-        if( result != null )
-            return result;
-        
-        for( Class<?> next : clazz.getInterfaces() ){
-            result = getBridgeFor( next, checked );
-            if( result != null )
-                return result;
+    protected B getBridgeFor( Path path ){
+        while( path != null ){
+            PriorityValue<B> bridge = bridges.get( path );
+            if( bridge != null ){
+                B result = bridge.get();
+                if( result != null )
+                    return result;
+            }
+            
+            path = path.getParent();
         }
         
-        Class<?> parent = clazz.getSuperclass();
-        if( parent == null )
-            return null;
-        
-        return getBridgeFor( parent, checked );
+        return null;
     }
-    
     
     /**
      * Sets a new resource and informs all {@link UIValue} that are observing
@@ -233,7 +221,7 @@ public class UIProperties<V, U extends UIValue<V>> {
         
         if( value.set( priority, resource ) ){
             if( updateLock == 0 ){
-                for( Observer<?> observer : observers ){
+                for( Observer observer : observers ){
                     if( observer.id.equals( id )){
                         observer.update( resource );
                     }
@@ -269,16 +257,16 @@ public class UIProperties<V, U extends UIValue<V>> {
                 colorIterator.remove();
         }
         
-        Iterator<PriorityValue<UIBridge<V, ? extends U>>> providerIterator = bridges.values().iterator();
+        Iterator<PriorityValue<B>> providerIterator = bridges.values().iterator();
         while( providerIterator.hasNext() ){
-            PriorityValue<UIBridge<V, ? extends U>> value = providerIterator.next();
+            PriorityValue<B> value = providerIterator.next();
             value.set( priority, null );
             if( value.get() == null )
                 providerIterator.remove();
         }
         
         if( updateLock == 0 ){
-            for( Observer<?> observer : observers ){
+            for( Observer observer : observers ){
                 observer.resetAll();
             }
         }
@@ -288,27 +276,26 @@ public class UIProperties<V, U extends UIValue<V>> {
      * Represents the combination of a resource, an {@link UIValue} and its 
      * {@link UIBridge}.
      * @author Benjamin Sigg
-     * @param <P> the kind of {@link UIValue} that is wrapped by this <code>Observer</code>
      */
-    private class Observer<P extends U>{
+    private class Observer{
         /** the id of the observed resource */
         private String id;
         /** the kind of value this observers bridge handles */
-        private Class<? super P> type;
+        private Path path;
         /** the observer which gets informed about changed resources */
-        private P value;
+        private U value;
         /** a bridge for modified resources */
-        private UIBridge<V, ? super P> bridge;
+        private B bridge;
         
         /**
          * Creates a new observer
          * @param id the id of the observed resource
-         * @param type the type of observer that is wrapped by this <code>Observer</code>
+         * @param path the type of observer that is wrapped by this <code>Observer</code>
          * @param value the listener for changed resources
          */
-        public Observer( String id, Class<? super P> type, P value ){
+        public Observer( String id, Path path, U value ){
             this.id = id;
-            this.type = type;
+            this.path = path;
             this.value = value;
             
             resetAll();
@@ -318,28 +305,26 @@ public class UIProperties<V, U extends UIValue<V>> {
          * Gets the listener for changed resources.
          * @return the listener
          */
-        public P getValue() {
+        public U getValue() {
             return value;
         }
         
         /**
          * Updates resource and bridge of this <code>Observer</code>.
          */
-        @SuppressWarnings("unchecked")
         public void resetAll(){
-            UIBridge<V, ? super P> provider = (UIBridge<V, ? super P>)getBridgeFor( type );
-            if( provider == null )
-                update( get( id ) );
+            B bridge = getBridgeFor( path );
+            if( bridge == null )
+                update( get( id ));
             else
-                setBridge( provider, true );
+                setBridge( bridge, true );
         }
         
         /**
          * Ensures that the correct {@link UIBridge} is used.
          */
-        @SuppressWarnings("unchecked")
         public void resetBridge(){
-            setBridge( (UIBridge<V, ? super P>)getBridgeFor( type ), false );
+            setBridge( getBridgeFor( path ), false );
         }
         
         /**
@@ -349,7 +334,7 @@ public class UIProperties<V, U extends UIValue<V>> {
          * be done anyway. Otherwise an update will only be done if a new
          * provider is set.
          */
-        public void setBridge( UIBridge<V, ? super P> bridge, boolean force ) {
+        public void setBridge( B bridge, boolean force ) {
             if( this.bridge != bridge ){
                 if( this.bridge != null )
                     this.bridge.remove( id, value );
@@ -368,8 +353,8 @@ public class UIProperties<V, U extends UIValue<V>> {
         }
         
         /**
-         * Called when a resource has been exchanged and the {@link #getValue() listener}
-         * of this <code>Observer</code> has to be informed.
+         * Called when a resource has been exchanged and the callback of this
+         * <code>Observer</code> has to be informed.
          * @param value the new value of the resource, can be <code>null</code>
          */
         public void update( V value ){

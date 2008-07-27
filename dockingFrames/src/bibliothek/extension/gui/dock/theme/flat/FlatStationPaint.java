@@ -39,7 +39,7 @@ import bibliothek.gui.dock.util.color.ColorCodes;
  */
 @ColorCodes({ "paint.line", "paint.divider", "paint.insertion.area", "paint.insertion.border" })
 public class FlatStationPaint implements StationPaint{
-    private StationPaintColor color = new StationPaintColor( "", StationPaintColor.class, this, Color.WHITE ){
+    private StationPaintColor color = new StationPaintColor( "", this, Color.WHITE ){
         @Override
         protected void changed( Color oldColor, Color newColor ) {
             // ignore

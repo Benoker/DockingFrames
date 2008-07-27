@@ -277,7 +277,7 @@ public abstract class BaseTabComponent extends JComponent implements TabComponen
      */
     private class BorderTabColor extends TabColor{
         public BorderTabColor( String id, Color backup ){
-            super( id, TabColor.class, station, dockable, backup );
+            super( id, station, dockable, backup );
         }
         @Override
         protected void changed( Color oldColor, Color newColor ) {
@@ -291,7 +291,7 @@ public abstract class BaseTabComponent extends JComponent implements TabComponen
      */
     private class ShapedTabColor extends TabColor{
         public ShapedTabColor( String id, Color backup ){
-            super( id, TabColor.class, station, dockable, backup );
+            super( id, station, dockable, backup );
         }
         @Override
         protected void changed( Color oldColor, Color newColor ) {

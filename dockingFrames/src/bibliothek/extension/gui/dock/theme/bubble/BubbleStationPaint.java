@@ -40,7 +40,7 @@ import bibliothek.gui.dock.util.color.ColorCodes;
  */
 @ColorCodes({ "paint.divider", "paint.insertion", "paint.line" })
 public class BubbleStationPaint implements StationPaint {
-    private StationPaintColor color = new StationPaintColor( "paint", StationPaintColor.class, this, Color.RED ){
+    private StationPaintColor color = new StationPaintColor( "paint", this, Color.RED ){
         @Override
         protected void changed( Color oldColor, Color newColor ) {
             // ignore

@@ -25,7 +25,6 @@
  */
 package bibliothek.gui.dock.common.intern.theme;
 
-import java.awt.Color;
 import java.util.Map;
 
 import javax.swing.Icon;
@@ -36,14 +35,14 @@ import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.color.BubbleDisplayerTransmitter;
 import bibliothek.gui.dock.common.intern.color.BubbleTabTransmitter;
 import bibliothek.gui.dock.common.intern.color.BubbleTitleTransmitter;
-import bibliothek.gui.dock.themes.ColorProviderFactory;
+import bibliothek.gui.dock.themes.ColorBridgeFactory;
 import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.gui.dock.themes.color.DisplayerColor;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
-import bibliothek.gui.dock.util.UIBridge;
+import bibliothek.gui.dock.util.color.ColorBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
 
 /**
@@ -86,22 +85,22 @@ public class CBubbleTheme extends CDockTheme<BubbleTheme>{
      * @param control the controller for which this theme will be used
      */
     private void init( final CControl control ){
-        putColorProviderFactory( TabColor.class, new ColorProviderFactory<TabColor, UIBridge<Color, TabColor>>(){
-            public UIBridge<Color, TabColor> create( ColorManager manager ) {
+        putColorBridgeFactory( TabColor.KIND_TAB_COLOR, new ColorBridgeFactory(){
+            public ColorBridge create( ColorManager manager ) {
                 BubbleTabTransmitter transmitter = new BubbleTabTransmitter( manager );
                 transmitter.setControl( control );
                 return transmitter;
             }
         });
-        putColorProviderFactory( TitleColor.class, new ColorProviderFactory<TitleColor, UIBridge<Color, TitleColor>>(){
-            public UIBridge<Color, TitleColor> create( ColorManager manager ) {
+        putColorBridgeFactory( TitleColor.KIND_TITLE_COLOR, new ColorBridgeFactory(){
+            public ColorBridge create( ColorManager manager ) {
                 BubbleTitleTransmitter transmitter = new BubbleTitleTransmitter( manager );
                 transmitter.setControl( control );
                 return transmitter;
             }
         });
-        putColorProviderFactory( DisplayerColor.class, new ColorProviderFactory<DisplayerColor, UIBridge<Color, DisplayerColor>>(){
-            public UIBridge<Color, DisplayerColor> create( ColorManager manager ) {
+        putColorBridgeFactory( DisplayerColor.KIND_DISPLAYER_COLOR, new ColorBridgeFactory(){
+            public ColorBridge create( ColorManager manager ) {
                 BubbleDisplayerTransmitter transmitter = new BubbleDisplayerTransmitter( manager );
                 transmitter.setControl( control );
                 return transmitter;

@@ -36,14 +36,13 @@ import java.awt.Color;
 
 import javax.swing.LookAndFeel;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockUI;
-import bibliothek.gui.dock.themes.ColorProviderFactory;
+import bibliothek.gui.dock.themes.ColorBridgeFactory;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.themes.color.DefaultColorScheme;
 import bibliothek.gui.dock.util.Priority;
-import bibliothek.gui.dock.util.UIBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
-import bibliothek.gui.dock.util.color.DockColor;
 import bibliothek.gui.dock.util.laf.LookAndFeelColors;
 
 /**
@@ -74,12 +73,8 @@ public class SimpleBubbleColorScheme extends DefaultColorScheme {
                 return delegate.getColor( id ); 
             }
             
-            @SuppressWarnings( "unchecked" )
-            public <D extends DockColor> ColorProviderFactory<D, ? extends UIBridge<Color, D>> getProvider( Class<D> kind) {
-                ColorProviderFactory factory = delegate.getProvider( kind );
-                
-                // this cast would be a problem if factory would have generic arguments in its methods 
-                return factory;
+            public ColorBridgeFactory getBridgeFactory( Path kind ) {
+                return delegate.getBridgeFactory( kind );
             }
             
             public void transmitAll( Priority priority, ColorManager manager ) {

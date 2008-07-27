@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.util;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
 
 /**
@@ -53,9 +54,9 @@ public abstract class AbstractUIValue<V, U extends UIValue<V>> implements UIValu
     /** the id for which this {@link UIValue} should listen */
     private String id;
     /** the kind of this {@link UIValue} */
-    private Class<?> kind;
+    private Path kind;
     /** the current owner of this {@link UIValue} */
-    private UIProperties<V, U> manager;
+    private UIProperties<V, U, ?> manager;
     
 
     /**
@@ -71,7 +72,7 @@ public abstract class AbstractUIValue<V, U extends UIValue<V>> implements UIValu
      * @param id the id of the resource for which <code>this</code> should listen for
      * @param kind the kind of {@link UIValue} this is
      */
-    public AbstractUIValue( String id, Class<? extends AbstractUIValue<V, U>> kind ){
+    public AbstractUIValue( String id, Path kind ){
         this( id, kind, null );
     }
 
@@ -90,12 +91,15 @@ public abstract class AbstractUIValue<V, U extends UIValue<V>> implements UIValu
      * @param kind the kind of {@link UIValue} this is, can be <code>null</code>
      * @param backup a backup resource, can be <code>null</code>
      */
-    public AbstractUIValue( String id, Class<? extends AbstractUIValue<V, U>> kind, V backup ){
+    public AbstractUIValue( String id, Path kind, V backup ){
         if( id == null )
             throw new IllegalArgumentException( "id must no be null" );
         
+        if( kind == null )
+            throw new IllegalArgumentException( "kind must not be null" );
+        
         this.id = id;
-        this.kind = kind == null ? getClass() : kind;
+        this.kind = kind;
         this.backup = backup;
     }
     
@@ -111,7 +115,6 @@ public abstract class AbstractUIValue<V, U extends UIValue<V>> implements UIValu
      * Changes the identifier of this value.
      * @param id the new id, must not be <code>null</code>
      */
-    @SuppressWarnings("unchecked")
     public void setId( String id ) {
         if( id == null )
             throw new IllegalArgumentException( "id must not be null" );
@@ -120,7 +123,7 @@ public abstract class AbstractUIValue<V, U extends UIValue<V>> implements UIValu
         if( this.manager != null ){
             U me = me();
             this.manager.remove( me );
-            this.manager.add( id, (Class<UIValue<V>>)kind, me );
+            this.manager.add( id, kind, me );
         }
     }
     
@@ -139,8 +142,7 @@ public abstract class AbstractUIValue<V, U extends UIValue<V>> implements UIValu
      * @param kind the new kind, not <code>null</code>. The kind should be
      * a class or interfaces that is implemented by this {@link UIValue}.
      */
-    @SuppressWarnings("unchecked")
-    public void setKind( Class<? extends U> kind ) {
+    public void setKind( Path kind ) {
         if( kind == null )
             throw new IllegalArgumentException( "kind must not be null" );
         
@@ -148,17 +150,16 @@ public abstract class AbstractUIValue<V, U extends UIValue<V>> implements UIValu
         if( this.manager != null ){
             U me = me();
             this.manager.remove( me );
-            this.manager.add( id, (Class<UIValue<V>>)kind, me );
+            this.manager.add( id, kind, me );
         }
     }
     
     /**
-     * Gets the kind of this value. See {@link #setKind(Class)}.
+     * Gets the kind of this value. See {@link #setKind(Path)}.
      * @return the kind, never <code>null</code>
      */
-    @SuppressWarnings("unchecked")
-    public Class<? extends U> getKind() {
-        return (Class<? extends U>)kind;
+    public Path getKind() {
+        return kind;
     }
     
     /**
@@ -167,7 +168,7 @@ public abstract class AbstractUIValue<V, U extends UIValue<V>> implements UIValu
      * @param manager the new manager, can be <code>null</code>
      */
     @SuppressWarnings("unchecked")
-    public void setManager( UIProperties<V, U> manager ){
+    public void setManager( UIProperties<V, U, ?> manager ){
         if( manager != this.manager ){
             U me = me();
             if( this.manager != null )
@@ -176,7 +177,7 @@ public abstract class AbstractUIValue<V, U extends UIValue<V>> implements UIValu
             this.manager = manager;
             
             if( this.manager != null )
-                this.manager.add( id, (Class<UIValue<V>>)kind, me );
+                this.manager.add( id, kind, me );
         }
     }
 

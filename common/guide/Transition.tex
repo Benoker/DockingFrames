@@ -455,7 +455,7 @@ The changes that need special care.
 
 \subsubsection{ColorManager generalized}
 \begin{description}
- \short \src{ColorManager} extends \src{UIProperties}, \src{ColorProvider} extends \\\src{UIBridge} and has been declared deprecated, \src{DockColor} extends \src{UIValue}. \\\src{ColorManager.getProviderFor} is replaced by \\\src{UIProperties.getBridgeFor}.
+ \short \src{ColorManager} extends \src{UIProperties}, \src{ColorProvider} is replaced by \src{ColorBridge} which extends \\\src{UIBridge}, \src{DockColor} extends \src{UIValue}. \\\src{ColorManager.getProviderFor} is replaced by \\\src{UIProperties.getBridgeFor}. Bridges and Values are no longer connected though the class of the \src{UIValue} but by a \src{Path} object. These objects are much more flexibel than classes and not hard to understand.
  \why This generalization will allow to use the \src{UIProperties} for other things than just colors. There are plans to use the same system for fonts as well.
  \clients Should replace \src{ColorProvider} by \src{UIBridge}
 \end{description}
@@ -569,6 +569,12 @@ A list of new API elements and changes that affect the layout.
  \why Every \src{Component} should support \src{Border}s.
 \end{description}
 
+\subsubsection{SplitDockStation can disabled resizing}
+\begin{description}
+ \short Resizing on a \src{SplitDockStation} can be disabled.
+ \why Requested by a user.
+\end{description}
+
 \subsection{Bugfixes}
 
 \subsubsection{DefaultConflictResolver did not respect locked sizes}
@@ -596,9 +602,18 @@ A list of new API elements and changes that affect the layout.
  \short \src{CStateManager.getLocation} did return \src{null} when it should produce a result. There were also some \src{CLocation}s which did not return the correct result causing \src{getLocation} to fail.
 \end{description}
 
-- Bugfix: Moving away from EclipseTheme could left some Dockables invisible
 \subsubsection{Stack-component of EclipseTheme broken}
 \begin{description}
  \short When removing all elements of \src{EclipseStackDockComponent}, some elements could remain invisible.
+\end{description}
+
+\subsubsection{Change ColorScheme could throw NPE}
+\begin{description}
+ \short When updating the colors of a \src{BasicDockTheme} which was not installed, a \src{NullPointerException} was thrown.
+\end{description}
+
+\subsubsection{Items in popup-menu did do nothing}
+\begin{description}
+ \short Some \src{DockAction}s where not correctly wird when in a popup-menu. Clicking them would not result in any action (affects all \\\src{SelectableDockAction}s).
 \end{description}
 \end{document}

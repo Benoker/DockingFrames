@@ -27,8 +27,10 @@ package bibliothek.gui.dock.themes.color;
 
 import java.awt.Color;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
+import bibliothek.gui.dock.util.color.DockColor;
 
 /**
  * A color used by a {@link DockTitle}.
@@ -36,6 +38,9 @@ import bibliothek.gui.dock.util.color.AbstractDockColor;
  *
  */
 public abstract class TitleColor extends AbstractDockColor{
+    /** the kind of color {@link TitleColor} is */
+    public static final Path KIND_TITLE_COLOR = DockColor.KIND_DOCK_COLOR.append( "TitleColor" );
+    
     private DockTitle title;
     
     /**
@@ -45,11 +50,21 @@ public abstract class TitleColor extends AbstractDockColor{
      * @param title the title which uses this color
      * @param backup a backup, can be <code>null</code>
      */
-    public TitleColor( String id, Class<? extends AbstractDockColor> kind, DockTitle title, Color backup ){
+    public TitleColor( String id, Path kind, DockTitle title, Color backup ){
         super( id, kind, backup );
         if( title == null )
             throw new IllegalArgumentException( "title must not be null" );
         this.title = title;
+    }
+    
+    /**
+     * Creates a new {@link TitleColor}.
+     * @param id the id of the color
+     * @param title the title which uses this color
+     * @param backup a backup, can be <code>null</code>
+     */
+    public TitleColor( String id, DockTitle title, Color backup ){
+        this( id, KIND_TITLE_COLOR, title, backup );
     }
     
     /**

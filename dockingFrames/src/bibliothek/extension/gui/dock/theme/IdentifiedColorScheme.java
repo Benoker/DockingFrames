@@ -27,12 +27,11 @@ package bibliothek.extension.gui.dock.theme;
 
 import java.awt.Color;
 
-import bibliothek.gui.dock.themes.ColorProviderFactory;
+import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.gui.dock.themes.ColorBridgeFactory;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.util.Priority;
-import bibliothek.gui.dock.util.UIBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
-import bibliothek.gui.dock.util.color.DockColor;
 
 /**
  * A {@link ColorScheme} that is wrapped around another scheme. This scheme
@@ -85,8 +84,8 @@ public class IdentifiedColorScheme implements ColorScheme{
 		return delegate.getColor( id );
 	}
 
-	public <D extends DockColor> ColorProviderFactory<D, ? extends UIBridge<Color, D>> getProvider( Class<D> kind ) {
-		return delegate.getProvider( kind );
+	public ColorBridgeFactory getBridgeFactory( Path kind ) {
+	    return delegate.getBridgeFactory( kind );
 	}
 
 	public void transmitAll( Priority priority, ColorManager manager ) {

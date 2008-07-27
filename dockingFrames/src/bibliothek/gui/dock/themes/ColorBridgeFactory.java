@@ -25,24 +25,18 @@
  */
 package bibliothek.gui.dock.themes;
 
-import java.awt.Color;
-
-import bibliothek.gui.dock.util.UIBridge;
+import bibliothek.gui.dock.util.color.ColorBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
-import bibliothek.gui.dock.util.color.DockColor;
 
 /**
- * A factory that creates new {@link UIBridge}s.
+ * A factory that creates new {@link ColorBridge}s.
  * @author Benjamin Sigg
- *
- * @param <D> the kind of {@link DockColor} the provider will use
- * @param <C> the kind of {@link UIBridge}s this factory creates
  */
-public interface ColorProviderFactory<D extends DockColor, C extends UIBridge<Color, D>> {
+public interface ColorBridgeFactory {
     /**
-     * Creates a new provider for <code>manager</code>.
-     * @param manager the manager which will use the {@link UIBridge}.
-     * @return the new provider
+     * Creates a new bridge for <code>manager</code>.
+     * @param manager the manager which will use the bridge
+     * @return the new bridge
      */
-    public C create( ColorManager manager );
+    public ColorBridge create( ColorManager manager );
 }

@@ -33,7 +33,7 @@ import bibliothek.gui.dock.common.ColorMap;
 import bibliothek.gui.dock.common.event.CControlListener;
 import bibliothek.gui.dock.common.event.ColorMapListener;
 import bibliothek.gui.dock.common.intern.CDockable;
-import bibliothek.gui.dock.util.UIBridge;
+import bibliothek.gui.dock.util.color.ColorBridge;
 import bibliothek.gui.dock.util.color.DockColor;
 
 /**
@@ -42,7 +42,7 @@ import bibliothek.gui.dock.util.color.DockColor;
  * @author Benjamin Sigg
  * @param <D> the kind of {@link DockColor} used in this transmitter
  */
-public abstract class ColorTransmitter<D extends DockColor> implements UIBridge<Color, D> {
+public abstract class ColorTransmitter<D extends DockColor> implements ColorBridge {
     private CControl control;
     private Set<String> keys = new HashSet<String>();
     private Map<String, List<D>> colors = new HashMap<String, List<D>>();
@@ -57,7 +57,8 @@ public abstract class ColorTransmitter<D extends DockColor> implements UIBridge<
             this.keys.add( key );
     }
     
-    public void add( String id, D color ) {
+    @SuppressWarnings( "unchecked" )
+    public void add( String id, DockColor color ) {
         if( keys.contains( id )){
             boolean empty = colors.isEmpty();
             
@@ -66,13 +67,13 @@ public abstract class ColorTransmitter<D extends DockColor> implements UIBridge<
                 list = new LinkedList<D>();
                 colors.put( id, list );
             }
-            list.add( color );            
+            list.add( (D)color );            
             if( empty )
                 setListening( true );
         }
     }
     
-    public void remove( String id, D color ) {
+    public void remove( String id, DockColor color ) {
         if( keys.contains( id )){
             boolean empty = colors.isEmpty();
             
@@ -121,9 +122,10 @@ public abstract class ColorTransmitter<D extends DockColor> implements UIBridge<
         }
     }
     
-    public void set( String id, Color color, D observer ) {
+    @SuppressWarnings("unchecked")
+    public void set( String id, Color color, DockColor observer ) {
         if( keys.contains( id )){
-            color = get( color, id, observer );
+            color = get( color, id, (D)observer );
         }
         observer.set( color );
     }

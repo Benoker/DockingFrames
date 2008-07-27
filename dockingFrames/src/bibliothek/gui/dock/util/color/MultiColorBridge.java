@@ -30,20 +30,16 @@ import java.awt.Color;
 import bibliothek.gui.dock.util.MultiUIBridge;
 
 /**
- * A {@link ColorProvider} which uses other providers to handle some
- * colors.
+ * A {@link ColorBridge} which uses other bridges to handle some colors.
  * @author Benjamin Sigg
- * @param <D> the kind of {@link DockColor}s this provider handles.
- * @deprecated this class was replaced by {@link MultiUIBridge} 
  */
-@Deprecated
-public class MultiColorProvider<D extends DockColor> extends MultiUIBridge<Color, D> implements ColorProvider<D>{
+public class MultiColorBridge extends MultiUIBridge<Color, DockColor> implements ColorBridge{
     /**
-     * Creates a new {@link ColorProvider}.
+     * Creates a new {@link ColorBridge}.
      * @param manager the manager from whom this provider will get default
      * colors when necessary
      */
-    public MultiColorProvider( ColorManager manager ){
+    public MultiColorBridge( ColorManager manager ){
         super( manager );
     }
 }

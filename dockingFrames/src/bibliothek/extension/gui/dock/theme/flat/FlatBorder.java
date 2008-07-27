@@ -133,7 +133,7 @@ public class FlatBorder implements Border{
      */
     private class BorderColor extends DisplayerColor{
         public BorderColor( String id ) {
-            super( id, DisplayerColor.class, owner, null );
+            super( id, owner, null );
         }
 
         @Override

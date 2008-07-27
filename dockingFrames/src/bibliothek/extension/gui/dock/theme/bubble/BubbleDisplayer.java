@@ -272,7 +272,7 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
          * @param backup a backup in case that no color could be read
          */
         public BubbleDisplayerColor( String id, Color backup ) {
-            super( id, DisplayerColor.class, BubbleDisplayer.this, backup );
+            super( id, BubbleDisplayer.this, backup );
         }
 
         @Override

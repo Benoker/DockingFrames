@@ -28,7 +28,7 @@ package bibliothek.gui.dock.common.intern.color;
 import java.awt.Color;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
-import bibliothek.gui.dock.themes.ColorProviderFactory;
+import bibliothek.gui.dock.themes.ColorBridgeFactory;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.util.Colors;
@@ -42,39 +42,39 @@ public class EclipseTabTransmitter extends TabColorTransmitter {
     /**
      * A factory that creates {@link EclipseTabTransmitter}s.
      */
-    public static final ColorProviderFactory<TabColor, EclipseTabTransmitter> FACTORY =
-        new ColorProviderFactory<TabColor, EclipseTabTransmitter>(){
+    public static final ColorBridgeFactory FACTORY =
+        new ColorBridgeFactory(){
         public EclipseTabTransmitter create( ColorManager manager ){
             return new EclipseTabTransmitter( manager );
         }
     };
-    
+
     private static final String KEYS[] = new String[]{
         "stack.tab.border", 
         "stack.tab.border.selected", 
         "stack.tab.border.selected.focused", 
         "stack.tab.border.selected.focuslost",
-        
+
         "stack.tab.top",
         "stack.tab.tob.selected",
         "stack.tab.top.selected.focused",
         "stack.tab.top.selected.focuslost",
-        
+
         "stack.tab.bottom",
         "stack.tab.bottom.selected",
         "stack.tab.bottom.selected.focused",
         "stack.tab.bottom.selected.focuslost",
-        
+
         "stack.tab.text",
         "stack.tab.text.selected",
         "stack.tab.text.selected.focused", 
         "stack.tab.text.selected.focuslost"
-        };
-    
+    };
+
     public EclipseTabTransmitter( ColorManager manager ){
         super( manager, KEYS );
     }
-    
+
     @Override
     protected boolean isFocused( String id ) {
         return id.contains( "focused" ) || id.contains( "focuslost" );
@@ -84,17 +84,17 @@ public class EclipseTabTransmitter extends TabColorTransmitter {
     protected boolean isSelected( String id ) {
         return id.contains( "selected" );
     }
-    
+
     @Override
     protected boolean isForeground( String id ) {
         return id.contains( "text" );
     }
-    
+
     @Override
     protected Color convert( Color source, String key ) {
         if( isSelected( key ))
             return convertSelected( source, key );
-        
+
         if( isFocused( key ))
             return convertFocused( source, key );
 
@@ -132,7 +132,7 @@ public class EclipseTabTransmitter extends TabColorTransmitter {
 
         return null;
     }
-    
+
     @Override
     protected Color convertFocused( Color source, String key ) {
         if( "stack.tab.border.selected.focused".equals( key ))
