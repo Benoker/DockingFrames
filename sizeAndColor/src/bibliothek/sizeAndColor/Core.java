@@ -113,7 +113,7 @@ public class Core implements Demonstration{
 
             control.add( "frame", Frame.FACTORY );
             frame.add( control.getContentArea() );
-
+            
             CGrid grid = new CGrid();
             for( int i = 0; i < 3; i++ ){
                 for( int j = 0; j < 2; j++ ){

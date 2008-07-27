@@ -188,6 +188,8 @@
 ! API: the DockTheme of a CControl is no longer stored by the CThemeMenuPiece but directly by its ThemeMap. 
 ! API: ThemeMenuPiece rewritten in order to use and support ThemeMap. ThemeMenuPiece does no longer contain a list of ThemeFactories.
 - Bugfix: Moving away from EclipseTheme could left some Dockables invisible
+
 - Bugfix: updateColors in varios DockThemes could throw NPE (found by Parag Shah)
 - Bugfix: SelectableMenuHandler did not register a listener on JCheckBoxMenuItem or JRadioButtonMenuItem and as a result these items did not work.
- 
+- API: new method "createRoot" in SplitDockStation, allows clients to use their own roots.
+- API: new method "setResizingEnabled" in SplitDockStation
