@@ -543,8 +543,6 @@ A list of new API elements and changes that affect the layout.
  \why Seems to be reasonable that the close action just calls \src{setVisible}.
 \end{description}
 
-- API: new preferences package, includes new MenuPieces
-
 \subsubsection{Preference system}
 \begin{description}
  \short A new system has been put in place to handle preferences. This new system is located in the package \src{bibliothek.extension.gui.dock}.
@@ -573,6 +571,12 @@ A list of new API elements and changes that affect the layout.
 \begin{description}
  \short Resizing on a \src{SplitDockStation} can be disabled.
  \why Requested by a user.
+\end{description}
+
+\subsubsection{Handle AWT components}
+\begin{description}
+ \short The \src{AWTComponentCaptureStrategy} can be used to create images from AWT components.
+ \why AWT components cannot be handled like Swing components, the \\mechanism normally used created just a blank image.
 \end{description}
 
 \subsection{Bugfixes}

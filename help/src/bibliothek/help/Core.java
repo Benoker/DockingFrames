@@ -17,23 +17,14 @@ import javax.swing.*;
 
 import bibliothek.demonstration.Monitor;
 import bibliothek.demonstration.util.LookAndFeelMenu;
-import bibliothek.gui.DockFrontend;
-import bibliothek.gui.DockStation;
-import bibliothek.gui.DockTheme;
-import bibliothek.gui.DockUI;
-import bibliothek.gui.Dockable;
+import bibliothek.gui.*;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.security.SecureDockController;
-import bibliothek.gui.dock.security.SecureFlapDockStation;
-import bibliothek.gui.dock.security.SecureFlapDockStationFactory;
-import bibliothek.gui.dock.security.SecureScreenDockStation;
-import bibliothek.gui.dock.security.SecureScreenDockStationFactory;
-import bibliothek.gui.dock.security.SecureSplitDockStation;
+import bibliothek.gui.dock.security.*;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
 import bibliothek.gui.dock.station.split.SplitDockProperty;
 import bibliothek.gui.dock.support.lookandfeel.ComponentCollector;
@@ -48,7 +39,6 @@ import bibliothek.help.model.HelpModel;
 import bibliothek.help.util.ResourceSet;
 import bibliothek.help.view.LayoutMenu;
 import bibliothek.help.view.PanelMenu;
-import bibliothek.help.view.PreferenceItem;
 import bibliothek.help.view.SelectingView;
 import bibliothek.help.view.TypeHierarchyView;
 import bibliothek.help.view.dock.DockableButton;
@@ -307,7 +297,9 @@ public class Core implements ComponentCollector{
 		
 		themes.add( new LookAndFeelMenu( frame, list ) );
 		themes.add( createThemeMenu() );
-		themes.add( new PreferenceItem( frame, frontend.getController() ));
+		
+		// no preferences yet
+		// themes.add( new PreferenceItem( frame, frontend.getController() ));
 		
 		frame.setJMenuBar( menubar );
 	}

@@ -89,6 +89,7 @@
 \contentsline {subsubsection}{\numberline {4.2.10}Default locations in Common}{17}
 \contentsline {subsubsection}{\numberline {4.2.11}Borders on OverpaintablePanel}{17}
 \contentsline {subsubsection}{\numberline {4.2.12}SplitDockStation can disabled resizing}{17}
+\contentsline {subsubsection}{\numberline {4.2.13}Handle AWT components}{18}
 \contentsline {subsection}{\numberline {4.3}Bugfixes}{18}
 \contentsline {subsubsection}{\numberline {4.3.1}DefaultConflictResolver did not respect locked sizes}{18}
 \contentsline {subsubsection}{\numberline {4.3.2}Opening maximized CDockable}{18}
@@ -97,4 +98,4 @@
 \contentsline {subsubsection}{\numberline {4.3.5}CStateManager.getLocation broken}{18}
 \contentsline {subsubsection}{\numberline {4.3.6}Stack-component of EclipseTheme broken}{18}
 \contentsline {subsubsection}{\numberline {4.3.7}Change ColorScheme could throw NPE}{18}
-\contentsline {subsubsection}{\numberline {4.3.8}Items in popup-menu did do nothing}{18}
+\contentsline {subsubsection}{\numberline {4.3.8}Items in popup-menu did do nothing}{19}
