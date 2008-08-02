@@ -43,6 +43,7 @@ import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.*;
 import bibliothek.gui.dock.action.*;
+import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.dockable.DockHierarchyObserver;
 import bibliothek.gui.dock.event.*;
 import bibliothek.gui.dock.layout.DockableProperty;
@@ -281,6 +282,9 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     /** If <code>true</code>, the components are resized while the split is dragged */
     private boolean continousDisplay = false;
 
+    /** the configurable hints for the parent of this station */
+    private DockableDisplayerHints hints;
+    
     /**
      * Constructs a new {@link SplitDockStation}. 
      */
@@ -299,6 +303,18 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         hierarchyObserver = new DockHierarchyObserver( this );
         globalSource = new HierarchyDockActionSource( this );
         globalSource.bind();
+        
+        addDockStationListener( new DockStationAdapter(){
+            @Override
+            public void dockableAdded( DockStation station, Dockable dockable ) {
+                updateConfigurableDisplayerHints();
+            }
+            
+            @Override
+            public void dockableRemoved( DockStation station, Dockable dockable ) {
+                updateConfigurableDisplayerHints();
+            }
+        });
     }
 
     /**
@@ -750,7 +766,34 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     public DockActionSource getGlobalActionOffers(){
         return globalSource;
     }
+    
+    public void configureDisplayerHints( DockableDisplayerHints hints ) {
+         this.hints = hints;
+         updateConfigurableDisplayerHints();
+    }
 
+    /**
+     * Gets the argument that was last used for
+     * {@link #configureDisplayerHints(DockableDisplayerHints)}. 
+     * @return the configurable hints or <code>null</code>
+     */
+    protected DockableDisplayerHints getConfigurableDisplayerHints(){
+        return hints;
+    }
+    
+    /**
+     * Updates the {@link #getConfigurableDisplayerHints() current hints}
+     * of this station.
+     */
+    protected void updateConfigurableDisplayerHints(){
+        if( hints != null ){
+            if( getDockableCount() == 0 )
+                hints.setShowBorderHint( Boolean.TRUE );
+            else
+                hints.setShowBorderHint( Boolean.FALSE );
+        }
+    }
+    
     public DockStation asDockStation() {
         return this;
     }

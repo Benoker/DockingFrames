@@ -66,7 +66,7 @@ public class FlatBorder implements Border{
     
     /**
      * Connects this border with <code>controller</code> and reads some
-     * collors from <code>controller</code>.
+     * colors from <code>controller</code>.
      * @param controller the source of information or <code>null</code>
      */
     public void connect( DockController controller ){

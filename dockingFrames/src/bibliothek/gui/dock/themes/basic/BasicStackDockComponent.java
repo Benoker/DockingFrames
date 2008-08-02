@@ -65,6 +65,11 @@ public class BasicStackDockComponent extends DefaultStackDockComponent {
         return new BasicTab( dockable );
     }
     
+    @Override
+    public boolean hasBorder() {
+        return false;
+    }
+    
     /**
      * A basic tab that listens to the {@link DockController} to recognize
      * when it is focused.

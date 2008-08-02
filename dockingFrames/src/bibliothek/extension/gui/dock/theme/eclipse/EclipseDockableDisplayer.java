@@ -56,7 +56,6 @@ public class EclipseDockableDisplayer extends EclipseStackDockComponent implemen
 		setDockable(dockable);
 		
 		setFocusCycleRoot( true );
-		// setFocusTraversalPolicy( new DockFocusTraversalPolicy( new DisplayerFocusTraversalPolicy( this ), true ) );
 	}
 
 	@Override

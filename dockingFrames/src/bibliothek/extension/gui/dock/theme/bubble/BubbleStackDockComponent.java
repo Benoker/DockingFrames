@@ -126,10 +126,13 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 			getTab( i ).setController( controller );
 	}
 
+	public boolean hasBorder() {
+	    return true;
+	}
+	
 	/**
 	 * Some color needed on a {@link Tab}.
 	 * @author Benjamin Sigg
-	 *
 	 */
 	protected class BubbleTabColor extends TabColor{
 	    private Tab tab;

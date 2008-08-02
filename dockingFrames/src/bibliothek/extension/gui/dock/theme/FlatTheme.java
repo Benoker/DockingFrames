@@ -88,7 +88,6 @@ import bibliothek.gui.dock.util.PropertyKey;
     /** A special factory for the {@link SplitDockStation} */
     protected DisplayerFactory splitDisplayFactory = new FlatDisplayerFactory( true );
 
-
     /** the key to set the {@link ColorScheme} of this theme */
     public static final PropertyKey<ColorScheme> FLAT_COLOR_SCHEME = 
         new PropertyKey<ColorScheme>( "dock.ui.FlatTheme.ColorScheme", new FlatColorScheme(), true );

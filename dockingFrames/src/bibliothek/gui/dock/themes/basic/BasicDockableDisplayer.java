@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2008 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,13 +27,17 @@ package bibliothek.gui.dock.themes.basic;
 
 import java.awt.*;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.displayer.DisplayerFocusTraversalPolicy;
+import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.focus.DockFocusTraversalPolicy;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
@@ -57,7 +61,6 @@ import bibliothek.gui.dock.title.DockTitle;
  * @author Benjamin Sigg
  */
 public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
-
     /** The content of this displayer */
     private Dockable dockable;
     /** The title on this displayer */
@@ -68,6 +71,13 @@ public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
     private DockStation station;
     /** the controller for which this displayer might be used */
     private DockController controller;
+    
+    /** the set of hints for this displayer */
+    private Hints hints = new Hints();
+    /** whether the hint for the border of {@link DockableDisplayerHints} should be respected */
+    private boolean respectBorderHint = false;
+    /** the default value for the border hint */
+    private boolean defaultBorderHint = true;
     
     /**
      * Creates a new displayer
@@ -154,12 +164,18 @@ public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
     }
 
     public void setDockable( Dockable dockable ) {
-        if( this.dockable != null )
+        if( this.dockable != null ){
+            this.dockable.configureDisplayerHints( null );
             removeDockable( this.dockable.getComponent() );
+        }
         
+        hints.setShowBorderHint( null );
         this.dockable = dockable;
-        if( dockable != null )
+        
+        if( dockable != null ){
             addDockable( dockable.getComponent() );
+            this.dockable.configureDisplayerHints( hints );
+        }
         
         revalidate();
     }
@@ -408,5 +424,109 @@ public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
         }
         
         return insets;
+    }
+    
+    /**
+     * Gets the set of hints for displaying this component.
+     * @return the set of hints
+     */
+    protected Hints getHints() {
+        return hints;
+    }
+    
+    /**
+     * Tells this displayer whether the show border hint of 
+     * {@link #getHints()} should be respected or not. The default value
+     * is <code>false</code>.
+     * @param respectBorderHint <code>true</code> if the hint should be respected,
+     * <code>false</code> if not.
+     */
+    public void setRespectBorderHint( boolean respectBorderHint ) {
+        if( this.respectBorderHint != respectBorderHint ){
+            this.respectBorderHint = respectBorderHint;
+            updateBorder();
+        }
+    }
+    
+    /**
+     * Whether the show border hint is respected by this displayer.
+     * @return <code>true</code> if the hint is respected
+     * @see #setRespectBorderHint(boolean)
+     */
+    public boolean isRespectBorderHint() {
+        return respectBorderHint;
+    }
+    
+    /**
+     * Sets the default value for the show border hint.
+     * @param defaultBorderHint the default value
+     */
+    public void setDefaultBorderHint( boolean defaultBorderHint ) {
+        if( this.defaultBorderHint != defaultBorderHint ){
+            this.defaultBorderHint = defaultBorderHint;
+            updateBorder();
+        }
+    }
+    
+    /**
+     * Gets the default value for the show border hint.
+     * @return the default value
+     */
+    public boolean getDefaultBorderHint() {
+        return defaultBorderHint;
+    }
+    
+    /**
+     * Called when the hint, whether a border should be shown or not, has changed. 
+     */
+    protected void updateBorder(){
+        if( respectBorderHint ){
+            boolean show = hints.getShowBorderHint();
+            
+            if( show ){
+                setBorder( getDefaultBorder() );
+            }
+            else{
+                setBorder( null );
+            }
+        }
+    }
+    
+    /**
+     * Gets the default border for this displayer. That can either be
+     * a new object or an old border. It should not be <code>null</code>.
+     * The standard implementation just returns a new instance of of 
+     * {@link BevelBorder}.
+     * @return the default border to be used on this displayer
+     */
+    protected Border getDefaultBorder(){
+        return BorderFactory.createBevelBorder( BevelBorder.RAISED );
+    }
+    
+    /**
+     * This implementation of {@link DockableDisplayerHints} forwards
+     * any changes to its {@link BasicDockableDisplayer}.
+     * @author Benjamin Sigg
+     */
+    protected class Hints implements DockableDisplayerHints{
+        private Boolean border;
+        
+        public void setShowBorderHint( Boolean border ) {
+            if( this.border != border ){
+                this.border = border;
+                updateBorder();
+            }
+        }
+        
+        /**
+         * Gets the hint that tells whether the border should be shown or not.
+         * @return whether the border should be shown or <code>null</code>
+         */
+        public boolean getShowBorderHint() {
+            if( border != null )
+                return border.booleanValue();
+            
+            return defaultBorderHint;
+        }
     }
 }

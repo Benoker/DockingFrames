@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2008 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -40,6 +40,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.*;
+import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.layout.DockableProperty;
@@ -264,6 +265,8 @@ public class StackDockStation extends AbstractDockableStation {
                 component.addMouseListener( listener );
                 component.addMouseMotionListener( listener );
             }
+            
+            updateConfigurableDisplayerHints();
         }
     }
     
@@ -827,6 +830,23 @@ public class StackDockStation extends AbstractDockableStation {
 
     public Component getComponent() {
         return background;
+    }
+    
+    @Override
+    public void configureDisplayerHints( DockableDisplayerHints hints ) {
+        super.configureDisplayerHints( hints );
+        updateConfigurableDisplayerHints();
+    }
+    
+    /**
+     * Updates the {@link #getConfigurableDisplayerHints() displayer hints}
+     * of this station.
+     */
+    protected void updateConfigurableDisplayerHints(){
+        DockableDisplayerHints hints = getConfigurableDisplayerHints();
+        if( hints != null ){
+            hints.setShowBorderHint( !getStackComponent().hasBorder() );
+        }
     }
     
     @Override

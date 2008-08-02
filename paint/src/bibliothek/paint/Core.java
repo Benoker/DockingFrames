@@ -34,8 +34,6 @@ import javax.swing.JMenuBar;
 import javax.swing.WindowConstants;
 
 import bibliothek.demonstration.Monitor;
-import bibliothek.extension.gui.dock.preference.DefaultPreferenceModel;
-import bibliothek.extension.gui.dock.preference.preferences.EclipseTabPreference;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.menu.*;
 import bibliothek.gui.dock.facile.menu.RootMenuPiece;

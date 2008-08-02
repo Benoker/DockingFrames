@@ -228,6 +228,10 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 		return this;
 	}
 	
+	public boolean hasBorder() {
+	    return true;
+	}
+	
 	/**
 	 * Gets the controller that is currently used.
 	 * @return the controller or <code>null</code>

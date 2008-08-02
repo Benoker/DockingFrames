@@ -26,9 +26,6 @@
 
 package bibliothek.gui.dock.themes.basic;
 
-import javax.swing.BorderFactory;
-import javax.swing.border.BevelBorder;
-
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.DisplayerFactory;
@@ -55,7 +52,10 @@ public class BasicDisplayerFactory implements DisplayerFactory {
             displayer = create( dockable, title, stationLocation );
         else
             displayer = create( dockable, title, dockableLocation );
-        displayer.setBorder( BorderFactory.createBevelBorder( BevelBorder.RAISED ));
+        
+        displayer.setDefaultBorderHint( true );
+        displayer.setRespectBorderHint( true );
+        
         return displayer;
     }
     

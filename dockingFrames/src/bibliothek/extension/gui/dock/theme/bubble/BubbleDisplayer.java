@@ -98,7 +98,9 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
         });
         
         updateAnimation();
-        setBorder( null );
+        
+        setRespectBorderHint( true );
+        setDefaultBorderHint( true );
     }
     
     /**
@@ -220,10 +222,27 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
             boolean station = dock != null && dock.asDockStation() != null;
             
             if( getTitle() == null && station )
-                dockable.setBorder( null );
+                setDefaultBorderHint( false );
             else
-                dockable.setBorder( new OpenBorder() );
+                setDefaultBorderHint( true );
         }
+    }
+    
+    @Override
+    protected void updateBorder() {
+        if( isRespectBorderHint() ){
+            if( getHints().getShowBorderHint() || getTitle() != null ){
+                dockable.setBorder( getDefaultBorder() );
+            }
+            else{
+                dockable.setBorder( null );
+            }
+        }
+    }
+    
+    @Override
+    protected Border getDefaultBorder() {
+        return new OpenBorder();
     }
     
     @Override

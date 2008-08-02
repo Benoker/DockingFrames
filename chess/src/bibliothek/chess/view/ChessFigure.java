@@ -16,6 +16,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.dockable.DockHierarchyObserver;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockableListener;
@@ -203,5 +204,9 @@ public class ChessFigure extends JLabel implements Dockable {
 
 	public String getFactoryID(){
 		return "chess-figure";
+	}
+	
+	public void configureDisplayerHints( DockableDisplayerHints hints ) {
+	    // ignore
 	}
 }

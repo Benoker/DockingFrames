@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2008 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,7 +23,6 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-
 package bibliothek.gui;
 
 import java.awt.Component;
@@ -36,6 +35,7 @@ import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.HierarchyDockActionSource;
+import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.event.DockActionSourceListener;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockableListener;
@@ -282,4 +282,15 @@ public interface Dockable extends DockElement, DockElementRepresentative{
      * @return the source containing all actions, never <code>null</code>
      */
     public DockActionSource getGlobalActionOffers();
+
+    /**
+     * Orders this {@link Dockable} to configure <code>hints</code> which will
+     * be used by the parent component of this element. This <code>Dockable</code>
+     * can store a reference to <code>hints</code> and use it to change the
+     * hints whenever it is appropriate. This method will be called with <code>null</code>
+     * if the link should be broken.
+     * @param hints the hints to configure or <code>null</code> if the last
+     * <code>hints</code> should no longer be configured by this element
+     */
+    public void configureDisplayerHints( DockableDisplayerHints hints );
 }

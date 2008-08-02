@@ -193,3 +193,6 @@
 - API: new method "setResizingEnabled" in SplitDockStation
 - Layout: when a picture of a Dockable is needed, that contains AWT-components, different AWTComponentCaptureStrategies can be used
 ! API: MultiColorProviderFactory renamed to MultiColorBridgeFactory
+
+[v1.0.7]
+! API: Each Dockable can now configure a DockableDisplayerHints which is used by the parent of the Dockable. The hints tell the parent how to draw elements around the Dockable. Dockables must implement the new method configureDisplayerHints.

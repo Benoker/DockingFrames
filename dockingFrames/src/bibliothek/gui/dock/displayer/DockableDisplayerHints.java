@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2008 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,27 +23,23 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.bubble;
+package bibliothek.gui.dock.displayer;
 
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.DisplayerFactory;
-import bibliothek.gui.dock.station.DockableDisplayer;
-import bibliothek.gui.dock.station.DockableDisplayer.Location;
-import bibliothek.gui.dock.title.DockTitle;
 
 /**
- * A factory creating {@link BubbleDisplayer}.
+ * Hints are used by components which are parents of {@link Dockable}s. Hints
+ * tell the parent how to display its child, for example whether they should
+ * paint a border around the child or not.<br>
+ * There is no obligation for a parent to respect any hint.
  * @author Benjamin Sigg
  */
-public class BubbleDisplayerFactory implements DisplayerFactory {
-	public DockableDisplayer create( DockStation station, Dockable dockable, DockTitle title ) {
-        BubbleDisplayer displayer = new BubbleDisplayer( dockable, title );
-        
-        if( dockable.asDockStation() != null )
-            displayer.setTitleLocation( Location.RIGHT );
-        
-        return displayer;
-    }
-    
+public interface DockableDisplayerHints {
+    /**
+     * Tells whether to paint a border or not.
+     * @param border <code>true</code> if the border should be painted,
+     * <code>false</code> if not, <code>null</code> if the default setting
+     * should be used
+     */
+    public void setShowBorderHint( Boolean border );
 }

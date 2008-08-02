@@ -33,7 +33,7 @@ public class DefaultEclipseThemeConnector implements EclipseThemeConnector {
         if( dockable.asDockStation() == null )
             return TitleBar.ECLIPSE;
         else
-            return TitleBar.NONE;
+            return TitleBar.NONE_HINTED;
     }
     
 	public boolean isTabAction( Dockable dockable, DockAction action ){

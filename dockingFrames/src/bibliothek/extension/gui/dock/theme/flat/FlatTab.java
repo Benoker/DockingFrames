@@ -111,6 +111,10 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
         }
 	}
 	
+	public boolean hasBorder() {
+	    return false;
+	}
+	
     /**
      * A small button which can be clicked by the user.
      * @author Benjamin Sigg

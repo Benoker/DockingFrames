@@ -155,4 +155,11 @@ public interface StackDockComponent {
      * @param controller the controller or <code>null</code>
      */
     public void setController( DockController controller );
+    
+    /**
+     * Whether this kind of component already has a border.
+     * @return <code>true</code> if this has a border, <code>false</code>
+     * if the parent should paint one.
+     */
+    public boolean hasBorder();
 }

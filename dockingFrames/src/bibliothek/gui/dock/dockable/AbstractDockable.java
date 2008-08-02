@@ -42,6 +42,7 @@ import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.HierarchyDockActionSource;
+import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.title.DockTitle;
@@ -81,6 +82,8 @@ public abstract class AbstractDockable implements Dockable {
     
     /** the DockTitles which are bound to this dockable */
     private List<DockTitle> titles = new LinkedList<DockTitle>();
+    
+    private DockableDisplayerHints hints;
     
     /**
      * A modifiable list of {@link DockAction} which can be triggered and 
@@ -356,5 +359,18 @@ public abstract class AbstractDockable implements Dockable {
             fireTitleExchanged( title );
         
         fireTitleExchanged( null );
+    }
+    
+    public void configureDisplayerHints( DockableDisplayerHints hints ) {
+        this.hints = hints;
+    }
+    
+    /**
+     * Gets the last {@link DockableDisplayerHints} that were given to
+     * {@link #configureDisplayerHints(DockableDisplayerHints)}.
+     * @return the current configurable hints, can be <code>null</code>
+     */
+    protected DockableDisplayerHints getConfigurableDisplayerHints() {
+        return hints;
     }
 }

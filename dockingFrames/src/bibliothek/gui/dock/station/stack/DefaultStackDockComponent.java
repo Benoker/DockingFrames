@@ -135,6 +135,10 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 		}
 	}
 	
+	public boolean hasBorder() {
+	    return true;
+	}
+	
 	/**
 	 * Representation of a single tab of this {@link StackDockComponent}.
 	 * @author Benjamin Sigg

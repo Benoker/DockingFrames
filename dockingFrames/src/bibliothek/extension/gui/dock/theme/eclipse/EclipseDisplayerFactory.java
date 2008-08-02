@@ -56,11 +56,13 @@ public class EclipseDisplayerFactory extends BasicDisplayerFactory {
 		
 		switch( bar ){
 		    case NONE:
-		        NoTitleDisplayer noTitle = new NoTitleDisplayer( station, dockable, false );
-		        noTitle.setBorder( null );
-		        return noTitle;
+		        return new NoTitleDisplayer( station, dockable, false, false );
 		    case NONE_BORDERED:
-		        return new NoTitleDisplayer( station, dockable, true );
+		        return new NoTitleDisplayer( station, dockable, true, false );
+		    case NONE_HINTED:
+		        return new NoTitleDisplayer( station, dockable, false, true );
+		    case NONE_HINTED_BORDERED:
+		        return new NoTitleDisplayer( station, dockable, true, true );
 		    case ECLIPSE:
 		        return new EclipseDockableDisplayer(theme, station, dockable);
 		    case BASIC_BORDERED:
