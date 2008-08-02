@@ -36,6 +36,8 @@ import javax.swing.Icon;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.util.DockSwingUtilities;
+import bibliothek.gui.dock.util.DockUtilities;
 
 /**
  * A factory that makes a snapshot of the {@link Dockable} which will be represented
@@ -68,6 +70,7 @@ public class ScreencaptureMovingImageFactory implements DockableMovingImageFacto
      */
     public BufferedImage createImageFrom( Dockable dockable ){
         Component c = dockable.getComponent();
+
         Dimension size = new Dimension( 
                 Math.max( 1, c.getWidth() ),
                 Math.max( 1, c.getHeight() ));

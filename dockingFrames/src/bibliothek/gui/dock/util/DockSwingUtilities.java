@@ -23,46 +23,37 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
+package bibliothek.gui.dock.util;
 
-package bibliothek.gui.dock.themes;
+import java.awt.Component;
+import java.awt.Container;
 
-import java.net.URI;
-
-import bibliothek.gui.DockTheme;
+import javax.swing.JComponent;
 
 /**
- * A factory creating new themes.
+ * A set of methods useful for working with Swing.
  * @author Benjamin Sigg
  */
-public interface ThemeFactory {
-    /**
-     * Creates a new theme.
-     * @return the new theme
-     */
-    public DockTheme create();
+public final class DockSwingUtilities {
+    private DockSwingUtilities(){
+        // nothing
+    }
     
     /**
-     * Gets a human readable description of the theme.
-     * @return the description, might be <code>null</code>
+     * Checks whether the tree of components, starting with <code>component</code>,
+     * contains elements that are not from Swing but from AWT.
+     * @param component the top of the tree
+     * @return <code>true</code> if at least one AWT component was found
      */
-    public String getDescription();
-    
-    /**
-     * Gets the name of the theme.
-     * @return the name, might be <code>null</code>
-     */
-    public String getName();
-    
-    /**
-     * Gets a list of strings, containing the names of the authors.
-     * @return the authors, might be <code>null</code>
-     */
-    public String[] getAuthors();
-    
-    /**
-     * Gets a set of links to any webpage the authors might want to
-     * show the user.
-     * @return the pages, might be <code>null</code>
-     */
-    public URI[] getWebpages();
+    public static boolean containsAWTComponents( Component component ){
+        if( component instanceof Container ){
+            Container container = (Container)component;
+            for( int i = 0, n = container.getComponentCount(); i<n; i++ ){
+                if( containsAWTComponents( container.getComponent( i ) ))
+                    return true;
+            }
+        }
+        
+        return !(component instanceof JComponent);
+    }
 }

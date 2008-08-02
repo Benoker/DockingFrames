@@ -43,6 +43,7 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
     public void install( SplitDockStation station ) {
         // ignore
     }
+    
     public void uninstall( SplitDockStation station ) {
         // ignore
     }

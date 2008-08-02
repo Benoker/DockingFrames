@@ -23,46 +23,21 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-
-package bibliothek.gui.dock.themes;
-
-import java.net.URI;
+package bibliothek.gui.dock.common.layout;
 
 import bibliothek.gui.DockTheme;
 
 /**
- * A factory creating new themes.
+ * A {@link DockThemeModifier} modifies a {@link DockTheme}. This can either
+ * mean replacing some values, or using another theme at all.
  * @author Benjamin Sigg
  */
-public interface ThemeFactory {
+public interface DockThemeModifier {
     /**
-     * Creates a new theme.
-     * @return the new theme
+     * Modifies <code>theme</code> and returns either the modified theme or
+     * a new instance of of another {@link DockTheme}.
+     * @param theme the theme to modify, not <code>null</code>
+     * @return the modified them, <code>theme</code> or a new object
      */
-    public DockTheme create();
-    
-    /**
-     * Gets a human readable description of the theme.
-     * @return the description, might be <code>null</code>
-     */
-    public String getDescription();
-    
-    /**
-     * Gets the name of the theme.
-     * @return the name, might be <code>null</code>
-     */
-    public String getName();
-    
-    /**
-     * Gets a list of strings, containing the names of the authors.
-     * @return the authors, might be <code>null</code>
-     */
-    public String[] getAuthors();
-    
-    /**
-     * Gets a set of links to any webpage the authors might want to
-     * show the user.
-     * @return the pages, might be <code>null</code>
-     */
-    public URI[] getWebpages();
+    public DockTheme modify( DockTheme theme );
 }

@@ -35,6 +35,7 @@ import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.extension.gui.dock.theme.SmoothTheme;
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.theme.*;
@@ -63,8 +64,9 @@ public class ThemeMap {
     public static final String KEY_FLAT_THEME = "flat";
     /** standard key for the {@link CSmoothTheme} */
     public static final String KEY_SMOOTH_THEME = "smooth";
-    
-    
+   
+    /** modifies the themes created by this map */
+    private DockThemeModifier modifier;
     
     /** the observers of this map */
     private List<ThemeMapListener> listeners = new ArrayList<ThemeMapListener>();
@@ -102,12 +104,19 @@ public class ThemeMap {
                 if( newKey != null )
                     factory = getFactory( newKey );
                 
+                DockTheme theme;
+                
                 if( factory == null ){
-                    control.intern().getController().setTheme( new CBasicTheme( control ) );
+                    theme = new CBasicTheme( control );
                 }
                 else{
-                    control.intern().getController().setTheme( factory.create() );
+                    theme = factory.create();
                 }
+                
+                if( modifier != null )
+                    theme = modifier.modify( theme );
+                
+                control.intern().getController().setTheme( theme );
             }
         });
         
@@ -237,16 +246,50 @@ public class ThemeMap {
     }
     
     /**
+     * Sets the object which will modify the {@link DockTheme} before applying
+     * the theme to the {@link DockController}.
+     * @param modifier the new modifier, can be <code>null</code>
+     */
+    public void setModifier( DockThemeModifier modifier ) {
+        if( this.modifier != modifier ){
+            this.modifier = modifier;
+            String key = getSelectedKey();
+            select( key, true );
+        }
+    }
+    
+    /**
+     * Gets the object which will modify the {@link DockTheme} before applying
+     * the theme to the {@link DockController}.
+     * @return the modifier, can be <code>null</code>
+     */
+    public DockThemeModifier getModifier() {
+        return modifier;
+    }
+    
+    /**
      * Changes the selected factory. If there is no factory with name
      * <code>key</code> or <code>key</code> is <code>null</code>, then the
      * <code>null</code>-factory is selected.
-     * @param key the name of the newly selected factory
+     * @param key the name of the newly selected factory, can be <code>null</code>
      */
     public void select( String key ){
+        select( key, false );
+    }
+    
+    /**
+     * Changes the selected factory. If there is no factory with name
+     * <code>key</code> or <code>key</code> is <code>null</code>, then the
+     * <code>null</code>-factory is selected.
+     * @param key the name of the newly selected factory, can be <code>null</code>
+     * @param force <code>true</code> if the theme is to be loaded even
+     * if it is already selected
+     */
+    public void select( String key, boolean force ){
         if( key == null )
-            select( -1 );
+            select( -1, force );
         else
-            select( indexOf( key ));
+            select( indexOf( key ), force );
     }
     
     /**
@@ -269,6 +312,17 @@ public class ThemeMap {
      * any factory
      */
     public void select( int index ){
+        select( index, false );
+    }
+
+    /**
+     * Changes the selected factory.
+     * @param index the index of the newly selected factory, -1 will deselect
+     * any factory
+     * @param force <code>true</code> if an update should be forced even if
+     * there seems not to be a change
+     */
+    public void select( int index, boolean force ){
         Entry entry = null;
         if( index >= 0 )
             entry = factories.get( index );

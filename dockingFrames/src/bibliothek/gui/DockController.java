@@ -463,7 +463,7 @@ public class DockController {
      * registered stations know also the new theme.
      * @param theme the new theme
      */
-    public void setTheme(DockTheme theme) {
+    public void setTheme( DockTheme theme ){
     	if( theme == null )
     		throw new IllegalArgumentException( "Theme must not be null" );
     	
