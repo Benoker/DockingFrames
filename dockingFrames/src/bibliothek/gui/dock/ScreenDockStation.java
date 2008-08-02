@@ -72,7 +72,7 @@ public class ScreenDockStation extends AbstractDockStation {
     
     /** a key for a property telling which boundaries a {@link ScreenDockDialog} can have */
     public static final PropertyKey<BoundaryRestriction> BOUNDARY_RESTRICTION = 
-        new PropertyKey<BoundaryRestriction>( "ScreenDockStation.boundary_restriction", BoundaryRestriction.FREE );
+        new PropertyKey<BoundaryRestriction>( "ScreenDockStation.boundary_restriction", BoundaryRestriction.FREE, true );
     
     /** The visibility state of the dialogs */
     private boolean showing = false;

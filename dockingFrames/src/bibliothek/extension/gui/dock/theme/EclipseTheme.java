@@ -98,7 +98,7 @@ import bibliothek.gui.dock.util.PropertyKey;
         public class EclipseTheme extends BasicTheme {
     /** Tells whether icons on tabs that are not selected should be painted or not. */
     public static final PropertyKey<Boolean> PAINT_ICONS_WHEN_DESELECTED = 
-        new PropertyKey<Boolean>( "EclipseTheme paint icons when deselected", false );
+        new PropertyKey<Boolean>( "EclipseTheme paint icons when deselected", false, true );
 
     /**
      *  Tells in which way the tabs should be painted.
@@ -106,7 +106,7 @@ import bibliothek.gui.dock.util.PropertyKey;
      *  @see RectGradientPainter 
      */
     public static final PropertyKey<TabPainter> TAB_PAINTER =
-        new PropertyKey<TabPainter>( "EclipseTheme tab painter", ShapedGradientPainter.FACTORY );
+        new PropertyKey<TabPainter>( "EclipseTheme tab painter", ShapedGradientPainter.FACTORY, true );
 
     /**
      * Provides additional dockable-wise information used to layout components
@@ -117,11 +117,11 @@ import bibliothek.gui.dock.util.PropertyKey;
     public static final PropertyKey<EclipseThemeConnector> THEME_CONNECTOR =
         new PropertyKey<EclipseThemeConnector>( 
                 "EclipseTheme theme connector",
-                new DefaultEclipseThemeConnector() );
+                new DefaultEclipseThemeConnector(), true );
 
     /** Access to the {@link ColorScheme} used for this theme */
     public static final PropertyKey<ColorScheme> ECLIPSE_COLOR_SCHEME =
-        new PropertyKey<ColorScheme>( "dock.ui.EclipseTheme.ColorScheme", new EclipseColorScheme() );
+        new PropertyKey<ColorScheme>( "dock.ui.EclipseTheme.ColorScheme", new EclipseColorScheme(), true );
 
     /**
      * The id of the {@link DockTitleVersion} that is intended to create

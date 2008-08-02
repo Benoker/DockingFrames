@@ -258,6 +258,14 @@ public abstract class AbstractDockableSelection extends JPanel implements Dockab
     }
     
     /**
+     * Gets the currently used controller.
+     * @return the controller for which this selection shows content
+     */
+    public DockController getController() {
+        return controller;
+    }
+    
+    /**
      * Decides whether <code>dockable</code> fits the requirements for
      * an element that can be selected.
      * @param dockable the element to check

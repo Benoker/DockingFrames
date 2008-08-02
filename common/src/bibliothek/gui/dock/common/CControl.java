@@ -180,7 +180,7 @@ public class CControl {
     public static final PropertyKey<ConflictResolver<RequestDimension>> RESIZE_LOCK_CONFLICT_RESOLVER =
         new PropertyKey<ConflictResolver<RequestDimension>>( 
                 "ccontrol.resize_lock_conflict_resolver", 
-                new DefaultConflictResolver<RequestDimension>() );
+                new DefaultConflictResolver<RequestDimension>(), true );
 
     /** the unique id of the station that handles the externalized dockables */
     public static final String EXTERNALIZED_STATION_ID = "external";

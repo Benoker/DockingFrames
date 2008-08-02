@@ -71,13 +71,16 @@ public class PropertyKey<A> {
 	/** default value */
 	private A value;
 
+	/** if set, then the <code>null</code> value gets replaced by the default specified in this key */
+	private boolean nullValueReplacedByDefault = false;
+	
 	/**
 	 * Creates a new key.
 	 * @param id a unique identifier, should contain the name of the
 	 * type of property, represented by this key.
 	 */
 	public PropertyKey( String id ){
-	    this( id, null );
+	    this( id, null, false );
 	}
 
     /**
@@ -86,13 +89,29 @@ public class PropertyKey<A> {
      * type of property, represented by this key.
      * @param value the value that will be used when no value is set
      * in the properties
+     * @deprecated replaced by {@link #PropertyKey(String, Object, boolean)}
      */
+	@Deprecated
 	public PropertyKey( String id, A value ){
+	    this( id, value, false );
+	}
+
+	/**
+.
+     * @param id a unique identifier, should contain the name of the
+     * type of property, represented by this key.
+     * @param value the value that will be used when no value is set
+     * in the properties
+	 * @param nullValueReplacedByDefault if set, then the <code>null</code> value
+	 * in {@link DockProperties} gets replaced by the default value of this key.
+	 */
+	public PropertyKey( String id, A value, boolean nullValueReplacedByDefault ){
 		if( id == null )
 			throw new IllegalArgumentException( "id must not be null" );
 		
 		this.value = value;
 		this.id = id;
+		this.nullValueReplacedByDefault = nullValueReplacedByDefault;
 	}
 	
 	/**
@@ -103,6 +122,15 @@ public class PropertyKey<A> {
 	public final A getDefault(){
 	    return value;
 	}
+	
+	/**
+	 * If set, then the <code>null</code> value should be replaced by the
+	 * default value specified by this key.
+	 * @return <code>true</code> if <code>null</code> means default
+	 */
+	public boolean isNullValueReplacedByDefault() {
+        return nullValueReplacedByDefault;
+    }
 	
 	@Override
 	public final int hashCode(){

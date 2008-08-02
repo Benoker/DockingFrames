@@ -88,7 +88,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      */
     public static final PropertyKey<SplitLayoutManager> LAYOUT_MANAGER =
         new PropertyKey<SplitLayoutManager>( "SplitDockStation layout manager",
-                new DefaultSplitLayoutManager() );
+                new DefaultSplitLayoutManager(), true );
 
     /** The parent of this station */
     private DockStation parent;

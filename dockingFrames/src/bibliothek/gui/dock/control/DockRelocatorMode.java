@@ -47,7 +47,7 @@ public interface DockRelocatorMode {
     /** the modifiers that must be pressed to activate the {@link #SCREEN_ONLY} relocator mode */
     public static final PropertyKey<ModifierMask> SCREEN_MASK = 
         new PropertyKey<ModifierMask>( "DockRelocatorMode screen mask", 
-                new ModifierMask(InputEvent.SHIFT_DOWN_MASK ));
+                new ModifierMask(InputEvent.SHIFT_DOWN_MASK ), false );
     
     /**
      * Ensures that a {@link Dockable} can be dragged only onto a {@link ScreenDockStation}.
@@ -65,14 +65,15 @@ public interface DockRelocatorMode {
         
         @Override
         public boolean shouldBeActive( DockController controller, int modifiers ) {
-            return controller.getProperties().get( SCREEN_MASK ).matches( modifiers );
+            ModifierMask mask = controller.getProperties().get( SCREEN_MASK );
+            return mask != null && mask.matches( modifiers );
         }
     };
     
     /** the modifiers that must be pressed to activate the {@link #NO_COMBINATION} relocator mode */
     public static final PropertyKey<ModifierMask> NO_COMBINATION_MASK = 
         new PropertyKey<ModifierMask>( "DockRelocatorMode no combination", 
-                new ModifierMask(InputEvent.ALT_DOWN_MASK ));
+                new ModifierMask(InputEvent.ALT_DOWN_MASK ), false );
     
     /**
      * Ensures that a {@link Dockable} can be dragged only if no combination results.
@@ -89,7 +90,8 @@ public interface DockRelocatorMode {
         
         @Override
         public boolean shouldBeActive( DockController controller, int modifiers ) {
-            return controller.getProperties().get( NO_COMBINATION_MASK ).matches( modifiers );
+            ModifierMask mask = controller.getProperties().get( NO_COMBINATION_MASK );
+            return mask != null && mask.matches( modifiers );
         }
     };
     

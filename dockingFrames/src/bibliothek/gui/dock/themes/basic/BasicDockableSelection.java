@@ -84,7 +84,7 @@ public class BasicDockableSelection extends DefaultDockableSelection {
             if( dockable == null )
                 image = null;
             else{
-                image = factory.createImageFrom( dockable );
+                image = factory.createImageFrom( getController(), dockable );
             }
             repaint();
         }

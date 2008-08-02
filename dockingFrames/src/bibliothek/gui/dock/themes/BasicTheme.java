@@ -106,7 +106,7 @@ import bibliothek.gui.dock.util.laf.LookAndFeelColorsListener;
 
 	/** the key to set the {@link ColorScheme} of this theme */
 	public static final PropertyKey<ColorScheme> BASIC_COLOR_SCHEME = 
-		new PropertyKey<ColorScheme>( "dock.ui.BasicTheme.ColorScheme", new BasicColorScheme() );
+		new PropertyKey<ColorScheme>( "dock.ui.BasicTheme.ColorScheme", new BasicColorScheme(), true );
 
 	/** the color scheme used in this theme */
 	private PropertyValue<ColorScheme> colorScheme = new PropertyValue<ColorScheme>( BASIC_COLOR_SCHEME ){

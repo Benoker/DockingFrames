@@ -95,7 +95,7 @@ public class DockProperties {
 		if( entry == null )
 			result = key.getDefault();
 		else{
-			result = entry.getValue();
+		    result = entry.getValue();
 		}
 		
 		return result;
@@ -206,7 +206,7 @@ public class DockProperties {
 		 */
 		public A getValue(){
 			if( value == null ){
-			    if( hasBeenSet )
+			    if( hasBeenSet && !key.isNullValueReplacedByDefault() )
 			        return null;
 			    else
 			        return key.getDefault();

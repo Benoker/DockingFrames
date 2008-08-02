@@ -96,7 +96,7 @@ public class FlapDockStation extends AbstractDockableStation {
      * Key for the {@link FlapLayoutManager} that is used by all {@link FlapDockStation}s.
      */
     public static final PropertyKey<FlapLayoutManager> LAYOUT_MANAGER = new PropertyKey<FlapLayoutManager>(
-            "flap dock station layout manager", new DefaultFlapLayoutManager() );
+            "flap dock station layout manager", new DefaultFlapLayoutManager(), true );
     
     /**
      * What kind of information should be displayed on the buttons. 
@@ -189,7 +189,7 @@ public class FlapDockStation extends AbstractDockableStation {
      * should be visible. Note that some themes might ignore that setting.
      */
     public static final PropertyKey<ButtonContent> BUTTON_CONTENT = new PropertyKey<ButtonContent>(
-            "flap dock station button content", ButtonContent.THEME_DEPENDENT );
+            "flap dock station button content", ButtonContent.THEME_DEPENDENT, true );
     
     /**
      * The layoutManager which is responsible to layout this station

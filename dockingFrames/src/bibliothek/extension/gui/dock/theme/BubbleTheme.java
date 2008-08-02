@@ -84,7 +84,7 @@ import bibliothek.gui.dock.util.PropertyKey;
         public class BubbleTheme extends BasicTheme {
     /** the key to set the {@link ColorScheme} of this theme */
     public static final PropertyKey<ColorScheme> BUBBLE_COLOR_SCHEME = 
-        new PropertyKey<ColorScheme>( "dock.ui.BubbleTheme.ColorScheme", new BubbleColorScheme() );
+        new PropertyKey<ColorScheme>( "dock.ui.BubbleTheme.ColorScheme", new BubbleColorScheme(), true );
 
 
     /** The colors used by this theme */
