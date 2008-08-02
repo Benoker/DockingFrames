@@ -182,13 +182,13 @@ public abstract class AbstractUIValue<V, U extends UIValue<V>> implements UIValu
     }
 
     
-    public void set( V color ) {
-        V oldColor = value();
-        this.value = color;
-        V newColor = value();
+    public void set( V value ) {
+        V oldValue = value();
+        this.value = value;
+        V newValue = value();
         
-        if( oldColor != newColor ){
-            changed( oldColor, newColor );
+        if( oldValue != newValue ){
+            changed( oldValue, newValue );
         }
     }
     

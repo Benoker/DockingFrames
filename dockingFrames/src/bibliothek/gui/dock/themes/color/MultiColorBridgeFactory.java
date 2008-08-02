@@ -38,7 +38,7 @@ import bibliothek.gui.dock.util.color.MultiColorBridge;
  * factories to fill up the new <code>MultiUIBridge</code>.
  * @author Benjamin Sigg
  */
-public class MultiColorProviderFactory implements ColorBridgeFactory {
+public class MultiColorBridgeFactory implements ColorBridgeFactory {
     /** the set of factories that will create a child of the MultiColorProvider */
     private Map<String, ColorBridgeFactory> factories =
         new HashMap<String, ColorBridgeFactory>();

@@ -40,7 +40,7 @@ public final class Version implements Comparable<Version>{
     /** the version 1.0.5 */
     public static final Version VERSION_1_0_5 = new Version( 1, 0, 5, null );
     
-    /** the version 1.0.5 */
+    /** the version 1.0.6 */
     public static final Version VERSION_1_0_6 = new Version( 1, 0, 6, null );
     
     /** The current version of this library. This constant will be changed for every release. */

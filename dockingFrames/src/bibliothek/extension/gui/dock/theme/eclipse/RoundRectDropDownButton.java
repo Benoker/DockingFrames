@@ -175,20 +175,20 @@ public class RoundRectDropDownButton extends JComponent {
         if( hasFocus() && isFocusable() && isEnabled() ){
             g.setColor( Colors.diffMirror( background, 0.4 ) );
             // top left
-            g.drawLine( 3, 2, 4, 2 );
             g.drawLine( 2, 3, 2, 4 );
+            g.drawLine( 3, 2, 4, 2 );
             
             // top right
-            g.drawLine( 3, w-2, 4, w-2 );
-            g.drawLine( 2, w-3, 2, w-4 );
+            g.drawLine( w-2, 3, w-2, 4 );
+            g.drawLine( w-3, 2, w-4, 2 );
             
             // bottom left
-            g.drawLine( h-3, 2, h-4, 2 );
-            g.drawLine( h-2, 3, h-2, 4 );
+            g.drawLine( 2, h-3, 2, h-4 );
+            g.drawLine( 3, h-2, 4, h-2 );
             
             // bottom right
-            g.drawLine( h-3, w-2, h-4, w-2 );
-            g.drawLine( h-2, w-3, h-2, w-4 );
+            g.drawLine( w-2, h-3, w-2, h-4 );
+            g.drawLine( w-3, h-2, w-4, h-2 );
         }
     }
     

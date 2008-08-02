@@ -234,6 +234,11 @@ import bibliothek.gui.dock.util.laf.LookAndFeelColorsListener;
 			updateColor( "title.active.text", null );
 			updateColor( "title.inactive.text", null );
 
+			updateColor( "title.station.active", null );
+			updateColor( "title.station.active.text", null );
+			updateColor( "title.station.inactive", null );
+			updateColor( "title.station.inactive.text", null );
+			
 			updateColor( "stack.tab.foreground", null );
 			updateColor( "stack.tab.foreground.selected", null );
 			updateColor( "stack.tab.foreground.focused", null );

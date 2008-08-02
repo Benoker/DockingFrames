@@ -52,6 +52,11 @@ public class BasicColorScheme extends DefaultColorScheme{
         setColor( "title.active.text", DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_FOREGROUND ));
         setColor( "title.inactive.text", DockUI.getColor( LookAndFeelColors.TITLE_FOREGROUND ));
         
+        setColor( "title.station.active", DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_BACKGROUND ));
+        setColor( "title.station.active.text",  DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_FOREGROUND ));
+        setColor( "title.station.inactive",  DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ));
+        setColor( "title.station.inactive.text",  DockUI.getColor( LookAndFeelColors.TITLE_FOREGROUND ));
+        
         setColor( "paint", DockUI.getColor( LookAndFeelColors.SELECTION ));
         
         return true;

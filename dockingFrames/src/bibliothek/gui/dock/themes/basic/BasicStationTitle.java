@@ -1,9 +1,9 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2008 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -33,13 +33,15 @@ import java.awt.Insets;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
-import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.title.AbstractDockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.color.ColorCodes;
+import bibliothek.gui.dock.util.color.DockColor;
 import bibliothek.util.Colors;
 
 /**
@@ -48,19 +50,21 @@ import bibliothek.util.Colors;
  * @author Benjamin Sigg
  *
  */
+@ColorCodes( {"title.station.active", "title.station.active.text",
+    "title.station.inactive", "title.station.inactive.text" })
 public class BasicStationTitle extends AbstractDockTitle {
     /** The minimal preferred width and height of this title */
     private int preferredDimension = 20;
     
     /** The background if the title is selected */
-    private Color activeColor; // = SystemColor.activeCaption;
+    private TitleColor activeColor = new BasicStationTitleColor( "title.station.active", Color.WHITE );
     /** The foreground if the title is selected */
-    private Color activeTextColor; // = SystemColor.activeCaptionText;
+    private TitleColor activeTextColor = new BasicStationTitleColor( "title.station.active.text", Color.BLACK );
     
     /** The background if the title is not selected */
-    private Color inactiveColor; // = SystemColor.inactiveCaption;
+    private TitleColor inactiveColor = new BasicStationTitleColor( "title.station.inactive", Color.WHITE );
     /** The foreground if the title is not selected */
-    private Color inactiveTextColor; // = SystemColor.inactiveCaptionText;
+    private TitleColor inactiveTextColor = new BasicStationTitleColor( "title.station.inactive.text", Color.DARK_GRAY );
     
     /**
      * Creates a new instance
@@ -71,19 +75,13 @@ public class BasicStationTitle extends AbstractDockTitle {
         super(dockable, origin);
         setBorder( BorderFactory.createBevelBorder( BevelBorder.RAISED ));
         setActive( false );
+        
+        addColor( activeColor );
+        addColor( activeTextColor );
+        addColor( inactiveColor );
+        addColor( inactiveTextColor );
     }
     
-    @Override
-    public void updateUI() {
-    	super.updateUI();
-    	
-        activeColor = UIManager.getColor( "MenuItem.selectionBackground");
-        activeTextColor = UIManager.getColor( "MenuItem.selectionForeground");
-        
-        inactiveColor = UIManager.getColor( "MenuItem.background");
-        inactiveTextColor = UIManager.getColor( "MenuItem.foreground");
-    }
-
     @Override
     protected void paintBackground( Graphics g, JComponent component ) {
     	Color background = component.getBackground();
@@ -166,14 +164,14 @@ public class BasicStationTitle extends AbstractDockTitle {
     protected void updateColors(){
         if( isActive() ){
             if( activeTextColor != null && activeColor != null ){
-                setBackground( activeColor );
-                setForeground( activeTextColor );
+                setBackground( activeColor.color() );
+                setForeground( activeTextColor.color() );
             }
         }
         else{
             if( inactiveColor != null && inactiveTextColor != null ){
-                setBackground( inactiveColor );
-                setForeground( inactiveTextColor );
+                setBackground( inactiveColor.color() );
+                setForeground( inactiveTextColor.color() );
             }
         }
         
@@ -185,14 +183,14 @@ public class BasicStationTitle extends AbstractDockTitle {
      * @return the background
      */
     public Color getActiveColor() {
-        return activeColor;
+        return activeColor.value();
     }
     /**
      * Gets the background-color which is used if this title is not selected. 
      * @return the background
      */
     public Color getInactiveColor() {
-        return inactiveColor;
+        return inactiveColor.value();
     }
     
     /**
@@ -200,7 +198,7 @@ public class BasicStationTitle extends AbstractDockTitle {
      * @return the foreground
      */
     public Color getActiveTextColor() {
-        return activeTextColor;
+        return activeTextColor.value();
     }
     
     /**
@@ -208,7 +206,7 @@ public class BasicStationTitle extends AbstractDockTitle {
      * @return the foreground
      */
     public Color getInactiveTextColor() {
-        return inactiveTextColor;
+        return inactiveTextColor.value();
     }
     
     /**
@@ -216,7 +214,7 @@ public class BasicStationTitle extends AbstractDockTitle {
      * @param activeColor the background
      */
     public void setActiveColor( Color activeColor ) {
-        this.activeColor = activeColor;
+        this.activeColor.setValue( activeColor );
         updateColors();
     }
     
@@ -225,7 +223,7 @@ public class BasicStationTitle extends AbstractDockTitle {
      * @param activeTextColor the foreground
      */
     public void setActiveTextColor( Color activeTextColor ) {
-        this.activeTextColor = activeTextColor;
+        this.activeTextColor.setValue( activeTextColor );
         updateColors();
     }
     
@@ -234,7 +232,7 @@ public class BasicStationTitle extends AbstractDockTitle {
      * @param inactiveColor the background
      */
     public void setInactiveColor( Color inactiveColor ) {
-        this.inactiveColor = inactiveColor;
+        this.inactiveColor.setValue( inactiveColor );
         updateColors();
     }
     
@@ -243,8 +241,40 @@ public class BasicStationTitle extends AbstractDockTitle {
      * @param inactiveTextColor the background
      */
     public void setInactiveTextColor( Color inactiveTextColor ) {
-        this.inactiveTextColor = inactiveTextColor;
+        this.inactiveTextColor.setValue( inactiveTextColor );
         updateColors();
+    }
+    
+    /**
+     * Gets the {@link TitleColor} which represents the background of an active title.
+     * @return the active background
+     */
+    public TitleColor getActiveTitleColor(){
+        return activeColor;
+    }
+    
+    /**
+     * Gets the {@link TitleColor} which represents the foreground of an active title.
+     * @return the active foreground
+     */    
+    public TitleColor getActiveTextTitleColor(){
+        return activeTextColor;
+    }
+    
+    /**
+     * Gets the {@link TitleColor} which represents the background of an inactive title.
+     * @return the inactive background
+     */
+    public TitleColor getInactiveTitleColor(){
+        return inactiveColor;
+    }
+    
+    /**
+     * Gets the {@link TitleColor} which represents the foreground of an inactive title.
+     * @return the inactive foreground
+     */
+    public TitleColor getInactiveTextTitleColor(){
+        return inactiveTextColor;
     }
     
     @Override
@@ -287,5 +317,25 @@ public class BasicStationTitle extends AbstractDockTitle {
         
         g.setColor( down );
         g.drawLine( x+1, y+2, x+1, y+height-4 );
+    }
+    
+    /**
+     * A {@link DockColor} representing a color of {@link BasicStationTitle}.
+     * @author Benjamin Sigg
+     */
+    private class BasicStationTitleColor extends TitleColor{
+        /**
+         * Creates a new color
+         * @param id the unique identifier of the color
+         * @param backup the default value
+         */
+        public BasicStationTitleColor( String id, Color backup ){
+            super( id, BasicStationTitle.this, backup );
+        }
+        
+        @Override
+        protected void changed( Color oldValue, Color newValue ) {
+            updateColors();
+        }
     }
 }
