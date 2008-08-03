@@ -157,6 +157,8 @@ public class GlassedPane extends JPanel{
             addMouseWheelListener( this );
 
             setOpaque( false );
+            
+            setFocusable( false );
         }
 
         public void mouseClicked( MouseEvent e ) {

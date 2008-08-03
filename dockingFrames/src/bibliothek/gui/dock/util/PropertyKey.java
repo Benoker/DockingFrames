@@ -97,7 +97,7 @@ public class PropertyKey<A> {
 	}
 
 	/**
-.
+	 * Creates a new key.
      * @param id a unique identifier, should contain the name of the
      * type of property, represented by this key.
      * @param value the value that will be used when no value is set

@@ -196,3 +196,4 @@
 
 [v1.0.7]
 ! API: Each Dockable can now configure a DockableDisplayerHints which is used by the parent of the Dockable. The hints tell the parent how to draw elements around the Dockable. Dockables must implement the new method configureDisplayerHints.
+- API: new AdjacentDockFactory, something like a DockFactory that can store additional information about a Dockable.

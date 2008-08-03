@@ -58,6 +58,9 @@ public class DockSituation {
     /** the factories used to create new {@link DockElement elements}*/
     private Map<String, DockFactory<?,?>> factories = new HashMap<String, DockFactory<?,?>>();
     
+    /** a set of additional factories for the {@link DockElement}s */
+    private Map<String, AdjacentDockFactory<?>> adjacent = new HashMap<String, AdjacentDockFactory<?>>();
+    
     /** a filter for elements which should be ignored */
     private DockSituationIgnore ignore;
     
@@ -113,6 +116,14 @@ public class DockSituation {
     }
     
     /**
+     * Adds an adjacent factory
+     * @param factory the new factory
+     */
+    public void addAdjacent( AdjacentDockFactory<?> factory ){
+        adjacent.put( getAdjacentID( factory ), factory );
+    }
+    
+    /**
      * Converts the layout of <code>element</code> and all its children into a 
      * {@link DockLayoutComposition}.
      * @param element the element to convert
@@ -155,7 +166,19 @@ public class DockSituation {
         
         Object data = factory.getLayout( element, ids );
         DockLayout<Object> layout = new DockLayout<Object>( id, data );
-        return new DockLayoutComposition( layout, children, ignore );
+        
+        List<DockLayout<?>> adjacent = null;
+        for( AdjacentDockFactory<?> adjacentFactory : this.adjacent.values() ){
+            if( adjacentFactory.interested( element )){
+                Object adjacentData = adjacentFactory.getLayout( element, ids );
+                if( adjacent == null ){
+                    adjacent = new ArrayList<DockLayout<?>>();
+                }
+                adjacent.add( new DockLayout<Object>( getAdjacentID( adjacentFactory ), adjacentData ) );
+            }
+        }
+        
+        return new DockLayoutComposition( layout, adjacent, children, ignore );
     }
     
     /**
@@ -175,15 +198,18 @@ public class DockSituation {
         if( factory == null )
             return null;
         
+        DockElement result = null;
+        Map<Integer, Dockable> children = null;
+        
         if( composition.isIgnoreChildren() ){
             for( DockLayoutComposition childComposition : composition.getChildren() ){
                 convert( childComposition );
             }
             
-            return factory.layout( layout.getData() );
+            result = factory.layout( layout.getData() );
         }
         else{
-            Map<Integer, Dockable> children = new HashMap<Integer, Dockable>();
+            children = new HashMap<Integer, Dockable>();
             int index = 0;
             
             for( DockLayoutComposition childComposition : composition.getChildren() ){
@@ -198,9 +224,27 @@ public class DockSituation {
                 index++;
             }
             
-            return factory.layout( layout.getData(), children );
+            result = factory.layout( layout.getData(), children );
         }
         
+        if( result != null ){
+            List<DockLayout<?>> adjacent = composition.getAdjacent();
+            if( adjacent != null ){
+                for( DockLayout<?> adjacentLayout : adjacent ){
+                    AdjacentDockFactory<Object> adjacentFactory = (AdjacentDockFactory<Object>)getAdjacentFactory( adjacentLayout.getFactoryID() );
+                    if( adjacentFactory != null ){
+                        if( children == null ){
+                            adjacentFactory.setLayout( result, adjacentLayout.getData() );
+                        }
+                        else{
+                            adjacentFactory.setLayout( result, adjacentLayout.getData(), children );
+                        }
+                    }
+                }
+            }
+        }
+        
+        return result;
     }
     
     /**
@@ -214,7 +258,7 @@ public class DockSituation {
      */
     @SuppressWarnings("unchecked")
     public void writeComposition( DockLayoutComposition composition, DataOutputStream out ) throws IOException{
-        Version.write( out, Version.VERSION_1_0_4 );
+        Version.write( out, Version.VERSION_1_0_7 );
         writeCompositionStream( composition, out );
     }
     
@@ -246,6 +290,29 @@ public class DockSituation {
         out.writeInt( bout.size() );
         bout.writeTo( out );
 
+        // adjacent
+        List<DockLayout<?>> adjacentLayouts = composition.getAdjacent();
+        if( adjacentLayouts == null ){
+            out.writeInt( 0 );
+        }
+        else{
+            out.writeInt( adjacentLayouts.size() );
+            for( DockLayout<?> adjacentLayout : adjacentLayouts ){
+                AdjacentDockFactory<Object> adjacentFactory = (AdjacentDockFactory<Object>)getAdjacentFactory( adjacentLayout.getFactoryID() );
+                if( adjacentFactory == null )
+                    throw new IOException( "Missing adjacent factory: " + adjacentLayout.getFactoryID() );
+                
+                ByteArrayOutputStream adjacentBOut = new ByteArrayOutputStream();
+                DataOutputStream adjacentOut = new DataOutputStream( adjacentBOut );
+                adjacentFactory.write( adjacentLayout.getData(), adjacentOut );
+                adjacentOut.close();
+                
+                out.writeUTF( getAdjacentID( adjacentFactory ) );
+                out.writeInt( adjacentBOut.size() );
+                adjacentBOut.writeTo( out );
+            }
+        }
+        
         // ignore
         out.writeBoolean( composition.isIgnoreChildren() );
         
@@ -266,17 +333,18 @@ public class DockSituation {
     public DockLayoutComposition readComposition( DataInputStream in ) throws IOException{
         Version version = Version.read( in );
         version.checkCurrent();
-        return readCompositionStream( in );
+        return readCompositionStream( in, version );
     }
     
     /**
      * Reads one {@link DockLayoutComposition} and all its children.
      * @param in the stream to read from
+     * @param version the format of <code>in</code>
      * @return the new composition or <code>null</code> if the factory was missing
      * @throws IOException if an I/O-error occurs
      */
     @SuppressWarnings("unchecked")
-    private DockLayoutComposition readCompositionStream( DataInputStream in ) throws IOException{
+    private DockLayoutComposition readCompositionStream( DataInputStream in, Version version ) throws IOException{
         // factory
         String factoryId = in.readUTF();
         DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
@@ -295,17 +363,7 @@ public class DockSituation {
             }
         }
         else{
-            byte[] buffer = new byte[ count ];
-            int read = 0;
-            while( read < count ){
-                int input = in.read( buffer, read, count-read );
-                if( input < 0 )
-                    throw new EOFException();
-                read += input;
-            }
-            
-            ByteArrayInputStream bin = new ByteArrayInputStream( buffer );
-            DataInputStream din = new DataInputStream( bin );
+            DataInputStream din = readBuffer( in, count );
             Object data = factory.read( din );
             if( data == null )
                 layout = null;
@@ -315,6 +373,38 @@ public class DockSituation {
             din.close();
         }
         
+        List<DockLayout<?>> adjacentLayouts = null;
+        if( Version.VERSION_1_0_7.compareTo( version ) <= 0 ){
+            // adjacent
+            int layoutCount = in.readInt();
+            if( layoutCount > 0 ){
+                adjacentLayouts = new ArrayList<DockLayout<?>>( layoutCount );
+                for( int i = 0; i < layoutCount; i++ ){
+                    String adjacentFactoryId = in.readUTF();
+                    int adjacentCount = in.readInt();
+                    AdjacentDockFactory<Object> adjacentFactory = (AdjacentDockFactory<Object>)getAdjacentFactory( adjacentFactoryId );
+                    if( adjacentFactory == null ){
+                        // skip
+                        while( adjacentCount > 0 ){
+                            int skipped = (int)in.skip( adjacentCount );
+                            if( skipped <= 0 )
+                                throw new EOFException();
+                            adjacentCount -= skipped;
+                        }
+                    }
+                    else{
+                        DataInputStream din = readBuffer( in, adjacentCount );
+                        Object data = adjacentFactory.read( din );
+                        if( data != null ){
+                            adjacentLayouts.add( new DockLayout<Object>( adjacentFactoryId, data ) );
+                        }
+                        
+                        din.close();
+                    }
+                }
+            }
+        }
+        
         // ignore
         boolean ignore = in.readBoolean();
         
@@ -322,11 +412,26 @@ public class DockSituation {
         List<DockLayoutComposition> children = new ArrayList<DockLayoutComposition>();
         count = in.readInt();
         for( int i = 0; i < count; i++ ){
-            children.add( readCompositionStream( in ) );
+            children.add( readCompositionStream( in, version ) );
         }
         
         // result
-        return new DockLayoutComposition( layout, children, ignore );
+        return new DockLayoutComposition( layout, adjacentLayouts, children, ignore );
+    }
+    
+    private DataInputStream readBuffer( DataInputStream in, int count ) throws IOException{
+        byte[] buffer = new byte[ count ];
+        int read = 0;
+        while( read < count ){
+            int input = in.read( buffer, read, count-read );
+            if( input < 0 )
+                throw new EOFException();
+            read += input;
+        }
+        
+        ByteArrayInputStream bin = new ByteArrayInputStream( buffer );
+        DataInputStream din = new DataInputStream( bin );
+        return din;
     }
     
     
@@ -423,6 +528,21 @@ public class DockSituation {
         xfactory.addString( "factory", getID( factory ) );
         factory.write( layout.getData(), xfactory );
         
+        List<DockLayout<?>> adjacentLayouts = composition.getAdjacent();
+        if( adjacentLayouts != null ){
+            XElement xadjacent = element.addElement( "adjacent" );
+            
+            for( DockLayout<?> adjacentLayout : adjacentLayouts ){
+                AdjacentDockFactory<Object> adjacentFactory = (AdjacentDockFactory<Object>)getAdjacentFactory( adjacentLayout.getFactoryID() );
+                if( adjacentFactory == null )
+                    throw new IllegalArgumentException( "Missing adjacent factory: " + adjacentLayout.getFactoryID() );
+                
+                XElement xlayout = xadjacent.addElement( "layout" );
+                xlayout.addString( "factory", getAdjacentID( adjacentFactory ) );
+                adjacentFactory.write( adjacentLayout.getData(), xlayout );
+            }
+        }
+        
         XElement xchildren = element.addElement( "children" );
         xchildren.addBoolean( "ignore", composition.isIgnoreChildren() );
         
@@ -453,6 +573,23 @@ public class DockSituation {
             }
         }
         
+        XElement xadjacent = element.getElement( "adjacent" );
+        List<DockLayout<?>> adjacentLayouts = null;
+        if( xadjacent != null ){
+            adjacentLayouts = new ArrayList<DockLayout<?>>();
+            
+            for( XElement xlayout : xadjacent.getElements( "layout" )){
+                String factoryId = xlayout.getString( "factory" );
+                AdjacentDockFactory<Object> adjacentFactory = (AdjacentDockFactory<Object>)getAdjacentFactory( factoryId );
+                if( adjacentFactory != null ){
+                    Object data = adjacentFactory.read( xlayout );
+                    if( data != null ){
+                        adjacentLayouts.add( new DockLayout<Object>( factoryId, data ));
+                    }
+                }
+            }
+        }
+        
         XElement xchildren = element.getElement( "children" );
         boolean ignore = true;
         List<DockLayoutComposition> children = new ArrayList<DockLayoutComposition>();
@@ -464,7 +601,7 @@ public class DockSituation {
             }
         }
         
-        return new DockLayoutComposition( layout, children, ignore );
+        return new DockLayoutComposition( layout, adjacentLayouts, children, ignore );
     }
     
     /**
@@ -554,6 +691,17 @@ public class DockSituation {
     protected String getID( DockFactory<?,?> factory ){
         return factory.getID();
     }
+
+    /**
+     * Gets the id of <code>factory</code>. The default behavior is just to
+     * return {@link DockFactory#getID()}. Note that this method should be
+     * a bijection to {@link #getAdjacentFactory(String)}.
+     * @param factory the factory whose id is needed
+     * @return the id of the factory
+     */
+    protected String getAdjacentID( AdjacentDockFactory<?> factory ){
+        return factory.getID();
+    }
     
     /**
      * Gets the factory which has the given <code>id</code>. Note that this
@@ -565,5 +713,17 @@ public class DockSituation {
      */
     protected DockFactory<? extends DockElement,?> getFactory( String id ){
     	return factories.get( id );
+    }
+    
+    /**
+     * Gets the adjacent factory which has the given <code>id</code>. Note that this
+     * method should be a bijection to {@link #getID(DockFactory)}. The 
+     * default behavior compares <code>id</code> with the 
+     * {@link #getID(DockFactory)}.
+     * @param id the name of the factory
+     * @return the factory or <code>null</code> if no factory has this id
+     */
+    protected AdjacentDockFactory<?> getAdjacentFactory( String id ){
+        return adjacent.get( id );
     }
 }

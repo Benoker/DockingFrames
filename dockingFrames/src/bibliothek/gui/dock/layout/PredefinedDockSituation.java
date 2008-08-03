@@ -113,7 +113,7 @@ public class PredefinedDockSituation extends DockSituation {
 	}
 
 	@Override
-	protected String getID(DockElement dockable) {
+	protected String getID( DockElement dockable ){
 		String key = elementToString.get( dockable );
 		if( key == null )
 			return UNKNOWN + super.getID( dockable );
@@ -122,15 +122,15 @@ public class PredefinedDockSituation extends DockSituation {
 	}
 	
 	@Override
-	protected String getID(DockFactory<?,?> factory) {
-		if( factory == this.factory )
+	protected String getID( DockFactory<?, ?> factory ) {
+	    if( factory == this.factory )
 			return KNOWN;
 		else
-			return UNKNOWN + super.getID(factory);
+			return UNKNOWN + super.getID( factory );
 	}
 	
 	@Override
-	protected DockFactory<? extends DockElement,?> getFactory(String id) {
+	protected DockFactory<? extends DockElement,?> getFactory( String id ){
 		if( KNOWN.equals( id ))
 			return factory;
 		else

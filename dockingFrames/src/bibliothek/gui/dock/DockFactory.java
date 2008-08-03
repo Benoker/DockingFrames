@@ -26,64 +26,20 @@
 
 package bibliothek.gui.dock;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.Map;
 
 import bibliothek.gui.Dockable;
-import bibliothek.util.xml.XElement;
+import bibliothek.gui.dock.layout.DockConverter;
 
 /**
- * A {@link DockFactory} can convert the contents of a {@link DockElement} in
- * a persistent form.<br>
- * Some kind of {@link DockElement} will be converted into a {@link Object}, 
- * this layout can then be written into a stream.
+ * A {@link DockConverter} which can not only store and load the contents of an
+ * element, but also create a new {@link DockElement} with the content.
  * @author Benjamin Sigg
  * @param <D> the type of element which can be written and read by this factory
  * @param <L> the type of object that stores the contents of a <code>D</code>
  */
-public interface DockFactory<D extends DockElement, L> {
+public interface DockFactory<D extends DockElement, L> extends DockConverter<D, L>{
 
-    /**
-     * Gets the unique name of this factory.
-     * @return the id
-     */
-    public String getID();
-    
-    /**
-     * Gets the layout of <code>element</code>. This method should create
-     * a new instance of the layout object, that new object should not be
-     * tied to <code>element</code> in any way. A layout can be living for
-     * a long period of time and might be used on another <code>dockable</code>
-     * object.
-     * @param element the element for which a new layout should be created
-     * @param children a map containing unique identifiers for the children
-     * of the element. Children which are not in this map should not be
-     * stored in the layout.
-     * @return the newly created, independent layout object.
-     */
-    public L getLayout( D element, Map<Dockable, Integer> children );
-    
-    /**
-     * Reads the contents of <code>layout</code> and changes the layout of
-     * <code>element</code> accordingly. This method should remove all
-     * children from <code>element</code> and add new children.
-     * @param element the element whose content and children will be rearranged.
-     * @param layout the new layout of <code>element</code>
-     * @param children some children, note that the map may not contain all elements
-     * which were present when the layout was created.
-     */
-    public void setLayout( D element, L layout, Map<Integer, Dockable> children );
-    
-    /**
-     * Reads the contents of <code>layout</code> and changes the layout of
-     * <code>element</code> accordingly. This method should not add or remove
-     * children to or from <code>element</code>.
-     * @param element the element whose properties will be changed
-     * @param layout the new set of properties
-     */
-    public void setLayout( D element, L layout );
     
     /**
      * Creates a new {@link DockElement} and changes the layout of the new 
@@ -103,36 +59,4 @@ public interface DockFactory<D extends DockElement, L> {
      * @return a new element or <code>null</code> if layout can't be used
      */
     public D layout( L layout );
-    
-    /**
-     * Writes the contents of <code>layout</code> into <code>out</code>.
-     * @param layout the layout to store
-     * @param out the stream to write into
-     * @throws IOException if an I/O-error occurs
-     */
-    public void write( L layout, DataOutputStream out ) throws IOException;
-    
-    /**
-     * Writes the contents of <code>layout</code> into <code>element</code>.
-     * @param layout the layout to store
-     * @param element an xml-element into which this method should write, the
-     * attributes of <code>element</code> should not be changed.
-     */
-    public void write( L layout, XElement element );
-    
-    /**
-     * Reads a layout from a stream.
-     * @param in the stream to read from
-     * @return the new layout
-     * @throws IOException if an I/O-error occurs
-     */
-    public L read( DataInputStream in ) throws IOException;
-    
-    /**
-     * Reads a layout from an xml-element.
-     * @param element the element to read, should not be changed by this 
-     * method.
-     * @return the new layout
-     */
-    public L read( XElement element );
 }

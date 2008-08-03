@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -32,7 +32,6 @@ import bibliothek.gui.dock.title.DockTitle;
 
 /**
  * Carries information where to put a {@link Dockable} onto a {@link SplitDockStation}.
- * The information is collected by the station itself.
  * @author Benjamin Sigg
  */
 public class PutInfo{

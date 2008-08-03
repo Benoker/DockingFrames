@@ -130,6 +130,10 @@ public class DockFrontend {
     private Set<DockFactory<? extends Dockable, ?>> backupDockFactories =
         new HashSet<DockFactory<? extends Dockable,?>>();
     
+    /** A set of factories needed to store additional information about Dockables */
+    private Set<AdjacentDockFactory<?>> adjacentDockFactories =
+        new HashSet<AdjacentDockFactory<?>>();
+    
     /** A set of factories needed to store {@link DockableProperty properties} */
     private Set<DockablePropertyFactory> propertyFactories = new HashSet<DockablePropertyFactory>();
     
@@ -309,6 +313,18 @@ public class DockFrontend {
     }
     
     /**
+     * Registers a factory that stores additional information for a set of
+     * {@link Dockable}s.
+     * @param factory the additional factory, not <code>null</code>
+     */
+    public void registerAdjacentFactory( AdjacentDockFactory<?> factory ){
+        if( factory == null )
+            throw new IllegalArgumentException( "factory must not be null" );
+        
+        adjacentDockFactories.add( factory );
+    }
+    
+    /**
      * Removes a factory from this frontend. This method does not remove
      * backup factories.
      * @param factory the factory to remove
@@ -324,6 +340,14 @@ public class DockFrontend {
      */
     public void unregisterBackupFactory( DockFactory<? extends DockElement, ?> factory ){
         backupDockFactories.remove( factory );
+    }
+    
+    /**
+     * Removes an additional factory from this frontend.
+     * @param factory the factory to remove
+     */
+    public void unregisterAdjacentFactory( AdjacentDockFactory<?> factory ){
+        adjacentDockFactories.remove( factory );
     }
     
     /**
@@ -1274,6 +1298,10 @@ public class DockFrontend {
         
         for( DockFactory backup : backupDockFactories ){
             situation.addBackup( new RegisteringDockFactory( this, backup ) );
+        }
+        
+        for( AdjacentDockFactory<?> factory : adjacentDockFactories ){
+            situation.addAdjacent( factory );
         }
         
         if( entry )
