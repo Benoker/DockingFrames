@@ -26,13 +26,11 @@
 package bibliothek.extension.gui.dock.preference.editor;
 
 import java.awt.Component;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JTextField;
 
-import bibliothek.extension.gui.dock.preference.PreferenceTreeDialog;
 import bibliothek.extension.gui.dock.preference.PreferenceEditor;
 import bibliothek.extension.gui.dock.preference.PreferenceEditorCallback;
 import bibliothek.extension.gui.dock.preference.PreferenceEditorFactory;

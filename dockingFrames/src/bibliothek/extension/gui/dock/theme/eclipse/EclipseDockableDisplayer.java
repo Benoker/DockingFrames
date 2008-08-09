@@ -35,8 +35,6 @@ import javax.swing.SwingUtilities;
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.displayer.DisplayerFocusTraversalPolicy;
-import bibliothek.gui.dock.focus.DockFocusTraversalPolicy;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
 

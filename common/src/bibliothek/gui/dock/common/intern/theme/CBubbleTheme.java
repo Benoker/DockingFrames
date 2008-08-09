@@ -32,6 +32,7 @@ import javax.swing.Icon;
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.intern.color.BubbleButtonTitleTransmitter;
 import bibliothek.gui.dock.common.intern.color.BubbleDisplayerTransmitter;
 import bibliothek.gui.dock.common.intern.color.BubbleTabTransmitter;
 import bibliothek.gui.dock.common.intern.color.BubbleTitleTransmitter;
@@ -106,6 +107,13 @@ public class CBubbleTheme extends CDockTheme<BubbleTheme>{
                 return transmitter;
             }
         });
+        putColorBridgeFactory( TitleColor.KIND_FLAP_BUTTON_COLOR, new ColorBridgeFactory(){
+            public ColorBridge create( ColorManager manager ) {
+                BubbleButtonTitleTransmitter transmitter = new BubbleButtonTitleTransmitter( manager );
+                transmitter.setControl( control );
+                return transmitter;
+            }
+        });
     }
     
     @Override
@@ -114,7 +122,7 @@ public class CBubbleTheme extends CDockTheme<BubbleTheme>{
         IconManager manager = controller.getIcons();
         Map<String, Icon> icons = DockUtilities.loadIcons(
                 "data/bibliothek/gui/dock/icons/bubble/icons.ini",
-                "data/bibliothek/gui/dock/icons/bubble/", CEclipseTheme.class.getClassLoader() );
+                "data/bibliothek/gui/dock/icons/bubble/", CBubbleTheme.class.getClassLoader() );
         for( Map.Entry<String, Icon> entry : icons.entrySet() ){
             manager.setIconTheme( entry.getKey(), entry.getValue() );
         }

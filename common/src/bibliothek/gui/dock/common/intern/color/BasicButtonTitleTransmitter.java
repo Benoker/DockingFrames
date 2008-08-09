@@ -27,7 +27,6 @@ package bibliothek.gui.dock.common.intern.color;
 
 import java.awt.Color;
 
-import bibliothek.gui.dock.common.ColorMap;
 import bibliothek.gui.dock.themes.basic.BasicButtonDockTitle;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.util.Colors;

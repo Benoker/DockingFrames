@@ -137,6 +137,25 @@ public class BubbleColorScheme extends DefaultColorScheme {
         setColor( "title.foreground.inactive",            color( distribution, 100, 100, 100 ));
         setColor( "title.foreground.inactive.mouse",      color( distribution, 25, 25, 25 ));
         
+        setColor( "title.background.top.active.flap",               color( distribution, 200, 0, 0 ) );
+        setColor( "title.background.top.active.mouse.flap",         color( distribution, 255, 100, 100 ) );
+        setColor( "title.background.top.inactive.flap",             color( distribution, 150, 150, 150 ) );
+        setColor( "title.background.top.inactive.mouse.flap",       color( distribution, 150, 255, 150 ) );
+        setColor( "title.background.top.selected.flap",             color( distribution, 150, 150, 150 ) );
+        setColor( "title.background.top.selected.mouse.flap",       color( distribution, 150, 255, 150 ) );
+        setColor( "title.background.bottom.active.flap",            color( distribution, 255, 100, 100 ) );
+        setColor( "title.background.bottom.active.mouse.flap",      color( distribution, 255, 200, 200 ) );
+        setColor( "title.background.bottom.inactive.flap",          color( distribution, 200, 200, 200 ) );
+        setColor( "title.background.bottom.inactive.mouse.flap",    color( distribution, 220, 255, 220 ) );
+        setColor( "title.background.bottom.selected.flap",          color( distribution, 200, 200, 200 ) );
+        setColor( "title.background.bottom.selected.mouse.flap",    color( distribution, 220, 255, 220 ) );
+        setColor( "title.foreground.active.flap",              color( distribution, 0, 0, 0 ));
+        setColor( "title.foreground.active.mouse.flap",        color( distribution, 0, 0, 0 ));
+        setColor( "title.foreground.inactive.flap",            color( distribution, 100, 100, 100 ));
+        setColor( "title.foreground.inactive.mouse.flap",      color( distribution, 25, 25, 25 ));
+        setColor( "title.foreground.selected.flap",            color( distribution, 100, 100, 100 ));
+        setColor( "title.foreground.selected.mouse.flap",      color( distribution, 25, 25, 25 ));
+        
         // display border
         setColor( "displayer.border.high.active",           color( distribution, 255, 100, 100 ));
         setColor( "displayer.border.high.active.mouse",     color( distribution, 255, 200, 200 ));

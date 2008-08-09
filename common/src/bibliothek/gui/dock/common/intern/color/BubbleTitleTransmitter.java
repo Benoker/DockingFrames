@@ -60,7 +60,7 @@ public class BubbleTitleTransmitter extends TitleColorTransmitter {
     public BubbleTitleTransmitter( ColorManager manager ){
         super( manager, KEYS );
     }
-        
+
     @Override
     protected Color convert( Color source, String key ) {
         if( isFocused( key ))

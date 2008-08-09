@@ -25,21 +25,47 @@
  */
 package bibliothek.extension.gui.dock.theme.bubble;
 
+import java.awt.Color;
 import java.awt.Point;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.FlapDockStation.ButtonContent;
+import bibliothek.gui.dock.event.DockTitleEvent;
+import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.color.ColorCodes;
 
 /**
  * A {@link DockTitle} used for the buttons on a {@link FlapDockStation}.
  * @author Benjamin Sigg
  */
-public class BubbleButtonDockTitle extends BubbleDockTitle{
+@ColorCodes({ 
+    "title.background.top.active.mouse.flap",
+    "title.background.top.active.flap",
+    "title.background.top.inactive.mouse.flap",
+    "title.background.top.inactive.flap",
+    "title.background.top.selected.mouse.flap",
+    "title.background.top.selected.flap",
+    
+    "title.background.bottom.active.mouse.flap",
+    "title.background.bottom.active.flap",
+    "title.background.bottom.inactive.mouse.flap",
+    "title.background.bottom.inactive.flap",
+    "title.background.bottom.selected.mouse.flap",
+    "title.background.bottom.selected.flap",
+    
+    "title.foreground.active.mouse.flap",
+    "title.foreground.active.flap",
+    "title.foreground.inactive.mouse.flap",
+    "title.foreground.inactive.flap",
+    "title.foreground.selected.mouse.flap",
+    "title.foreground.selected.flap" })
+public class BubbleButtonDockTitle extends AbstractBubbleDockTitle{
     /**
      * A factory which creates new {@link BubbleButtonDockTitle}s.
      */
@@ -54,6 +80,8 @@ public class BubbleButtonDockTitle extends BubbleDockTitle{
     
     private ButtonContent behavior;
     
+    private boolean selected = false;
+    
     /**
      * Creates a new title.
      * @param dockable the dockable for which this title will be shown
@@ -65,6 +93,106 @@ public class BubbleButtonDockTitle extends BubbleDockTitle{
             behavior = origin.getController().getProperties().get( FlapDockStation.BUTTON_CONTENT );
         
         init( dockable, origin, behavior.showActions( false ) );
+    }
+    
+    /**
+     * Constructor that does nothing, subclasses should call {@link #init(Dockable, DockTitleVersion, boolean)}
+     * to initialize the tile.
+     */
+    protected BubbleButtonDockTitle(){
+        // nothing
+    }
+    
+    @Override
+    protected void init( Dockable dockable, DockTitleVersion origin, boolean showMiniButtons ) {
+        super.init( dockable, origin, showMiniButtons );
+        initAnimation();
+        updateAnimation();
+    }
+    
+    /**
+     * Sets up the animation such that it can be started at any time.
+     */
+    private void initAnimation(){
+        Path path = TitleColor.KIND_FLAP_BUTTON_COLOR;
+        
+        addColor( "title.background.top.active.mouse.flap", path, Color.RED );
+        addColor( "title.background.top.active.flap", path, Color.LIGHT_GRAY );
+        addColor( "title.background.top.inactive.mouse.flap", path, Color.BLUE );
+        addColor( "title.background.top.inactive.flap", path, Color.DARK_GRAY );
+        addColor( "title.background.top.selected.mouse.flap", path, Color.BLUE );
+        addColor( "title.background.top.selected.flap", path, Color.DARK_GRAY );
+
+        addColor( "title.background.bottom.active.mouse.flap", path, Color.LIGHT_GRAY );
+        addColor( "title.background.bottom.active.flap", path, Color.WHITE );
+        addColor( "title.background.bottom.inactive.mouse.flap", path, Color.DARK_GRAY );
+        addColor( "title.background.bottom.inactive.flap", path, Color.BLACK );
+        addColor( "title.background.bottom.selected.mouse.flap", path, Color.DARK_GRAY );
+        addColor( "title.background.bottom.selected.flap", path, Color.BLACK );
+
+        addColor( "title.foreground.active.mouse.flap", path, Color.BLACK );
+        addColor( "title.foreground.active.flap", path, Color.BLACK );
+        addColor( "title.foreground.inactive.mouse.flap", path, Color.WHITE );
+        addColor( "title.foreground.inactive.flap", path, Color.WHITE );
+        addColor( "title.foreground.selected.mouse.flap", path, Color.WHITE );
+        addColor( "title.foreground.selected.flap", path, Color.WHITE );
+    }
+    
+    @Override
+    public void changed( DockTitleEvent event ) {
+        selected = event.isActive() || event.isPreferred();
+        super.setActive( event.isActive() );
+        updateAnimation();
+    }
+    
+    @Override
+    public void setActive( boolean active ) {
+        if( active != isActive() ){
+            super.setActive(active);
+            selected = active;
+            updateAnimation();
+        }
+    }
+    
+    
+    @Override
+    protected void updateAnimation(){
+        String postfix = "";
+        if( isActive() ){
+            if( isMouseOver() )
+                postfix = "active.mouse";
+            else
+                postfix = "active";
+        }
+        else if( isSelected() ){
+            if( isMouseOver() )
+                postfix = "selected.mouse";
+            else
+                postfix = "selected";
+        }
+        else{
+            if( isMouseOver() )
+                postfix = "inactive.mouse";
+            else
+                postfix = "inactive";            
+        }
+        
+        String top = "title.background.top." + postfix + ".flap";
+        String bottom = "title.background.bottom." + postfix + ".flap";
+        String text = "title.foreground." + postfix + ".flap";
+        
+        updateAnimation( ANIMATION_KEY_TEXT, text );
+        updateAnimation( ANIMATION_KEY_BACKGROUND_TOP, top );
+        updateAnimation( ANIMATION_KEY_BACKGROUND_BOTTOM, bottom );
+    }
+    
+    /**
+     * Tells whether this title is selected, being focused implies being
+     * selected.
+     * @return <code>true</code> if this button is selected
+     */
+    public boolean isSelected(){
+        return selected;
     }
     
     @Override

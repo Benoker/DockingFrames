@@ -252,6 +252,25 @@ import bibliothek.gui.dock.util.PropertyKey;
             updateColor( "title.foreground.inactive", null );
             updateColor( "title.foreground.inactive.mouse", null );
 
+            updateColor( "title.background.top.active.flap", null );
+            updateColor( "title.background.top.active.mouse.flap", null );
+            updateColor( "title.background.top.inactive.flap", null );
+            updateColor( "title.background.top.inactive.mouse.flap", null );
+            updateColor( "title.background.top.selected.flap", null );
+            updateColor( "title.background.top.selected.mouse.flap", null );
+            updateColor( "title.background.bottom.active.flap", null );
+            updateColor( "title.background.bottom.active.mouse.flap", null );
+            updateColor( "title.background.bottom.inactive.flap", null );
+            updateColor( "title.background.bottom.inactive.mouse.flap", null );
+            updateColor( "title.background.bottom.selected.flap", null );
+            updateColor( "title.background.bottom.selected.mouse.flap", null );
+            updateColor( "title.foreground.active.flap", null );
+            updateColor( "title.foreground.active.mouse.flap", null );
+            updateColor( "title.foreground.inactive.flap", null );
+            updateColor( "title.foreground.inactive.mouse.flap", null );
+            updateColor( "title.foreground.selected.flap", null );
+            updateColor( "title.foreground.selected.mouse.flap", null );
+            
             // display border
             updateColor( "displayer.border.high.active", null );
             updateColor( "displayer.border.high.inactive", null );

@@ -186,6 +186,25 @@ public class SimpleBubbleColorScheme extends DefaultColorScheme {
         setColor( "title.foreground.active.mouse",        activeText );
         setColor( "title.foreground.inactive",            inactiveText );
         setColor( "title.foreground.inactive.mouse",      inactiveText );
+
+        setColor( "title.background.top.active.flap",               brighter( active, factorWeak ));
+        setColor( "title.background.top.active.mouse.flap",         brighter( active, factor ));
+        setColor( "title.background.top.inactive.flap",             brighter( inactive, factorWeak ));
+        setColor( "title.background.top.inactive.mouse.flap",       brighter( inactive, factor ));
+        setColor( "title.background.top.selected.flap",             brighter( inactive, factorWeak ));
+        setColor( "title.background.top.selected.mouse.flap",       brighter( inactive, factor ));
+        setColor( "title.background.bottom.active.flap",            darker( active, factorWeak ) );
+        setColor( "title.background.bottom.active.mouse.flap",      darker( active, factor ) );
+        setColor( "title.background.bottom.inactive.flap",          darker( inactive, factorWeak ) );
+        setColor( "title.background.bottom.inactive.mouse.flap",    darker( inactive, factor ) );
+        setColor( "title.background.bottom.selected.flap",          darker( inactive, factorWeak ) );
+        setColor( "title.background.bottom.selected.mouse.flap",    darker( inactive, factor ) );
+        setColor( "title.foreground.active.flap",              activeText );
+        setColor( "title.foreground.active.mouse.flap",        activeText );
+        setColor( "title.foreground.inactive.flap",            inactiveText );
+        setColor( "title.foreground.inactive.mouse.flap",      inactiveText );
+        setColor( "title.foreground.selected.flap",            inactiveText );
+        setColor( "title.foreground.selected.mouse.flap",      inactiveText );
         
         // display border
         setColor( "displayer.border.high.active",           brighter( active, factorWeak ));

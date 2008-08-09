@@ -26,18 +26,12 @@
 
 package bibliothek.extension.gui.dock.theme.flat;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.event.ContainerEvent;
-import java.awt.event.ContainerListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
 import javax.swing.BorderFactory;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 
 import bibliothek.extension.gui.dock.theme.FlatTheme;
+import bibliothek.extension.gui.dock.util.MouseOverListener;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.action.DockAction;
@@ -56,7 +50,7 @@ public class FlatButtonTitle extends BasicButtonDockTitle {
      * Current state of the mouse, is <code>true</code> when the
      * mouse is over this title.
      */
-    private boolean mouseover = false;
+    private MouseOverListener mouseover;
     
     /**
      * Constructs a new title
@@ -66,9 +60,13 @@ public class FlatButtonTitle extends BasicButtonDockTitle {
     public FlatButtonTitle( Dockable dockable, DockTitleVersion origin ) {
     	super( dockable, origin );
     	
-        Listener listener = new Listener();
-        listener.added( getComponent() );
-        
+    	mouseover = new MouseOverListener( getComponent() ){
+    	    @Override
+    	    protected void changed() {
+    	        changeBorder();
+    	    }
+    	};
+    	
         setBorder( null );
     }
     
@@ -77,14 +75,12 @@ public class FlatButtonTitle extends BasicButtonDockTitle {
      * @return <code>true</code> if the mouse is over this button
      */
     public boolean isMouseover() {
-		return mouseover;
+		return mouseover == null ? false : mouseover.isMouseOver();
 	}
     
     /**
      * Exchanges the border of this title according to the state of
      * <code>selected</code> and of <code>mouseover</code>.
-     * @param selected <code>true</code> if this title is selected
-     * @param mouseover <code>true</code> if the mouse is currently
      * over this title
      */
     @Override
@@ -101,55 +97,6 @@ public class FlatButtonTitle extends BasicButtonDockTitle {
                 setBorder( BorderFactory.createEtchedBorder( EtchedBorder.LOWERED ));
             else
                 setBorder( BorderFactory.createEmptyBorder( 2, 2, 2, 2 ));
-        }
-    }
-    
-    /**
-     * A listener added to this title. The listener is triggered
-     * when the mouse is moved over this title. This listener will
-     * then invoke {@link FlatButtonTitle#changeBorder(boolean, boolean) changeBorder}.
-     * @author Benjamin Sigg
-     */
-    private class Listener extends MouseAdapter implements ContainerListener{
-        @Override
-        public void mouseEntered( MouseEvent e ) {
-        	mouseover = true;
-        	changeBorder();
-        }
-        @Override
-        public void mouseExited( MouseEvent e ) {
-        	mouseover = false;
-        	changeBorder();
-        }
-        
-        public void componentAdded( ContainerEvent e ){
-        	added( e.getChild() );
-        }
-        
-        public void added( Component component ){
-        	component.addMouseListener( this );
-        	if( component instanceof Container ){
-        		Container container = (Container)component;
-        		container.addContainerListener( this );
-        		for( int i = 0, n = container.getComponentCount(); i<n; i++ ){
-        			added( container.getComponent( i ));
-        		}
-        	}
-        }
-        
-        public void componentRemoved( ContainerEvent e ){
-        	removed( e.getChild() );
-        }
-        
-        public void removed( Component component ){
-        	component.removeMouseListener( this );
-        	if( component instanceof Container ){
-        		Container container = (Container)component;
-        		container.removeContainerListener( this );
-        		for( int i = 0, n = container.getComponentCount(); i<n; i++ ){
-        			removed( container.getComponent( i ));
-        		}
-        	}
         }
     }
 }

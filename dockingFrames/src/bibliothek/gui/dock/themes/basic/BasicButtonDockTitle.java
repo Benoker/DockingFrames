@@ -57,7 +57,7 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
 	/** whether the mouse is currently pressed or not */
 	private boolean mousePressed = false;
 	
-	/** the argument of the last call of {@link #changeBorder(boolean)} */
+	/** whether this button is selected on its owner or not */
 	private boolean selected = false;
 	
 	/** when and how to show icons and text */

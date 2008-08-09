@@ -2387,7 +2387,7 @@
 			<key>flat</key>
 		</resource>
 		<resource name="CLookAndFeelMenuPiece">
-			<index>0</index>
+			<index>4</index>
 		</resource>
 		<resource name="ccontrol.preferences">
 			<child name="dock">
@@ -2482,7 +2482,7 @@
 												<children ignore="false">
 													<child>
 														<layout factory="delegate_page">
-															<id>multi multi 2 page</id>
+															<id>multi multi multi multi 2 page</id>
 															<area>picture area</area>
 															<multiple>Apple</multiple>
 														</layout>
@@ -2490,7 +2490,7 @@
 													</child>
 													<child>
 														<layout factory="delegate_page">
-															<id>multi multi 3 page</id>
+															<id>multi multi multi multi 3 page</id>
 															<area>picture area</area>
 															<multiple>Face</multiple>
 														</layout>
@@ -2568,6 +2568,12 @@
 					</base>
 					<modes>
 						<states>
+							<entry id="multi multi multi multi 3 page" current="normal">
+								<history>
+									<mode>normal</mode>
+								</history>
+								<properties/>
+							</entry>
 							<entry id="single picture area" current="normal">
 								<history>
 									<mode>normal</mode>
@@ -2601,13 +2607,7 @@
 									</property>
 								</properties>
 							</entry>
-							<entry id="multi multi 3 page" current="normal">
-								<history>
-									<mode>normal</mode>
-								</history>
-								<properties/>
-							</entry>
-							<entry id="multi multi 2 page" current="normal">
+							<entry id="multi multi multi multi 2 page" current="normal">
 								<history>
 									<mode>normal</mode>
 								</history>

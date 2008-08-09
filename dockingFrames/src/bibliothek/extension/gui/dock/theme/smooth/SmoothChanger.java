@@ -52,7 +52,7 @@ public abstract class SmoothChanger implements ActionListener{
     private Timer timer;
     
     /**
-     * Constructor, sets {@link #setDuration(int, int) duration} to 250 milliseconds.
+     * Constructor, sets {@link #setDuration(int) duration} to 250 milliseconds.
      * @param states the number of states this changer can have
      */
     public SmoothChanger( int states ){
@@ -75,7 +75,7 @@ public abstract class SmoothChanger implements ActionListener{
      * The direction of the change. The counter of for the state
      * <code>destination()</code> will always rise, while the other
      * counters decent.
-     * @param the favored state
+     * @return the favored state
      */
     protected abstract int destination();
     
