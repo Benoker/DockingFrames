@@ -954,16 +954,22 @@ public class CControl {
     public CContentArea createContentArea( String uniqueId ){
         if( uniqueId == null )
             throw new NullPointerException( "uniqueId must not be null" );
-
+        
         for( CContentArea center : contents ){
             if( center.getUniqueId().equals( uniqueId ))
                 throw new IllegalArgumentException( "There exists already a CContentArea with the unique id " + uniqueId );
         }
 
+        DockStation defaultStation = frontend.getDefaultStation();
+        
+        boolean noDefaultStation = defaultStation == null || defaultStation instanceof ScreenDockStation;
+        
         CContentArea center = new CContentArea( this, uniqueId );
-        if( frontend.getDefaultStation() == null )
-            frontend.setDefaultStation( center.getCenter() );
         addContentArea( center );
+        
+        if( noDefaultStation )
+            frontend.setDefaultStation( center.getCenter() );
+        
         return center;
     }
 
@@ -1108,8 +1114,6 @@ public class CControl {
     public CContentArea getContentArea() {
         if( content == null ){
             content = createContentArea( CONTENT_AREA_STATIONS_ID );
-            if( frontend.getDefaultStation() == null )
-                frontend.setDefaultStation( content.getCenter() );
         }
 
         return content;
