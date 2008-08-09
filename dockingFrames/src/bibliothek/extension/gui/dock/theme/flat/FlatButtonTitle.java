@@ -26,22 +26,22 @@
 
 package bibliothek.extension.gui.dock.theme.flat;
 
-import java.awt.Point;
-import java.awt.event.InputEvent;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
-import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.action.DockAction;
-import bibliothek.gui.dock.event.DockTitleEvent;
-import bibliothek.gui.dock.title.AbstractDockTitle;
+import bibliothek.gui.dock.themes.basic.BasicButtonDockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
@@ -50,26 +50,13 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  * does not show any {@link DockAction actions}, and if there is
  * an icon, the text of the title isn't shown either.
  * @author Benjamin Sigg
- *
  */
-public class FlatButtonTitle extends AbstractDockTitle {
+public class FlatButtonTitle extends BasicButtonDockTitle {
     /** 
      * Current state of the mouse, is <code>true</code> when the
-     * mouse is over this title 
+     * mouse is over this title.
      */
     private boolean mouseover = false;
-    
-    /** Whether the mouse is currently pressed or not */
-    private boolean mousePressed = false;
-    
-    /**
-     * Selected state of this title. Another border will be painted
-     * if this title is selected.
-     */
-    private boolean selected = false;
-    
-    /** when to show which icons and text */
-    private FlapDockStation.ButtonContent behavior;
     
     /**
      * Constructs a new title
@@ -77,20 +64,21 @@ public class FlatButtonTitle extends AbstractDockTitle {
      * @param origin the version which was used to create this title
      */
     public FlatButtonTitle( Dockable dockable, DockTitleVersion origin ) {
-        behavior = FlapDockStation.ButtonContent.THEME_DEPENDENT;
-        if( origin != null )
-            behavior = origin.getController().getProperties().get( FlapDockStation.BUTTON_CONTENT );
-        
-        init(dockable, origin, behavior.showActions( false ) );
+    	super( dockable, origin );
+    	
         Listener listener = new Listener();
-        addMouseInputListener( listener );
+        listener.added( getComponent() );
+        
+        setBorder( null );
     }
-
-    @Override
-    public void changed( DockTitleEvent event ) {
-        super.setActive( event.isActive() );
-        changeBorder( event.isActive() || event.isPreferred(), mouseover );
-    }
+    
+    /**
+     * Tells whether the mouse is currently over this button or not.
+     * @return <code>true</code> if the mouse is over this button
+     */
+    public boolean isMouseover() {
+		return mouseover;
+	}
     
     /**
      * Exchanges the border of this title according to the state of
@@ -99,10 +87,12 @@ public class FlatButtonTitle extends AbstractDockTitle {
      * @param mouseover <code>true</code> if the mouse is currently
      * over this title
      */
-    protected void changeBorder( boolean selected, boolean mouseover ){
-        this.selected = selected;
-        this.mouseover = mouseover;
-        
+    @Override
+    protected void changeBorder(){
+    	boolean selected = isSelected();
+    	boolean mouseover = isMouseover();
+    	boolean mousePressed = isMousePressed();
+    	
         if( selected ^ mousePressed ){
             setBorder( BorderFactory.createBevelBorder( BevelBorder.LOWERED ));
         }
@@ -114,63 +104,52 @@ public class FlatButtonTitle extends AbstractDockTitle {
         }
     }
     
-    @Override
-    public Point getPopupLocation( Point click, boolean popupTrigger ){
-        if( popupTrigger )
-            return click;
-        else
-            return null;
-    }
-    
-    @Override
-    protected void updateIcon() {
-        String text = getDockable().getTitleText();
-        if( behavior.showIcon( text != null && text.length() > 0, true ) )
-            super.updateIcon();
-        else
-            setIcon( null );
-    }
-    
-    @Override
-    protected void updateText() {
-        Icon icon = getDockable().getTitleIcon();
-        
-        if( behavior.showText( getDockable().getTitleIcon() != null, icon == null ) ){
-            super.updateText();
-            setToolTipText( null );
-        }
-        else{
-            setText( "" );
-            setToolTipText( getDockable().getTitleText() );
-        }
-    }
-    
     /**
      * A listener added to this title. The listener is triggered
      * when the mouse is moved over this title. This listener will
      * then invoke {@link FlatButtonTitle#changeBorder(boolean, boolean) changeBorder}.
      * @author Benjamin Sigg
      */
-    private class Listener extends MouseInputAdapter{
+    private class Listener extends MouseAdapter implements ContainerListener{
         @Override
         public void mouseEntered( MouseEvent e ) {
-            changeBorder( selected, true );
+        	mouseover = true;
+        	changeBorder();
         }
         @Override
         public void mouseExited( MouseEvent e ) {
-            changeBorder( selected, false );
+        	mouseover = false;
+        	changeBorder();
         }
         
-    	@Override
-    	public void mousePressed( MouseEvent e ){
-    		mousePressed = (e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK ) != 0;
-    		changeBorder( selected, mouseover );
-    	}
-    	
-    	@Override
-    	public void mouseReleased( MouseEvent e ){
-    		mousePressed = (e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK ) != 0;
-    		changeBorder( selected, mouseover );
-    	}
+        public void componentAdded( ContainerEvent e ){
+        	added( e.getChild() );
+        }
+        
+        public void added( Component component ){
+        	component.addMouseListener( this );
+        	if( component instanceof Container ){
+        		Container container = (Container)component;
+        		container.addContainerListener( this );
+        		for( int i = 0, n = container.getComponentCount(); i<n; i++ ){
+        			added( container.getComponent( i ));
+        		}
+        	}
+        }
+        
+        public void componentRemoved( ContainerEvent e ){
+        	removed( e.getChild() );
+        }
+        
+        public void removed( Component component ){
+        	component.removeMouseListener( this );
+        	if( component instanceof Container ){
+        		Container container = (Container)component;
+        		container.removeContainerListener( this );
+        		for( int i = 0, n = container.getComponentCount(); i<n; i++ ){
+        			removed( container.getComponent( i ));
+        		}
+        	}
+        }
     }
 }

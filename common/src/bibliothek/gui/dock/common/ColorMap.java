@@ -69,6 +69,21 @@ public class ColorMap {
     /** a key for colors that are used on focused titles as foreground */
     public static final String COLOR_KEY_TITLE_FOREGROUND_FOCUSED = "title.foreground.focused";
     
+    /** a key for colors that are used on the button of the minimized-area as background */
+    public static final String COLOR_KEY_MINIMIZED_BUTTON_BACKGROUND = "minimized.background";
+    /** a key for colors that are used on the button of the minimized-area as foreground */
+    public static final String COLOR_KEY_MINIMIZED_BUTTON_FOREGROUND = "minimized.foreground";
+    
+    /** a key for colors that are used on the button of the minimized-area as background if focused */
+    public static final String COLOR_KEY_MINIMIZED_BUTTON_BACKGROUND_FOCUSED = "minimized.background.focused";
+    /** a key for colors that are used on the button of the minimized-area as foreground if focused */
+    public static final String COLOR_KEY_MINIMIZED_BUTTON_FOREGROUND_FOCUSED = "minimized.foreground.focused";
+
+    /** a key for colors that are used on the button of the minimized-area as background if selected */
+    public static final String COLOR_KEY_MINIMIZED_BUTTON_BACKGROUND_SELECTED = "minimized.background.selected";
+    /** a key for colors that are used on the button of the minimized-area as foreground if selected */
+    public static final String COLOR_KEY_MINIMIZED_BUTTON_FOREGROUND_SELECTED = "minimized.foreground.selected";
+    
     /** the list of observers of this map */
     private List<ColorMapListener> listeners = new ArrayList<ColorMapListener>();
     

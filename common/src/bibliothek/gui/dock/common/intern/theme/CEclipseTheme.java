@@ -34,10 +34,12 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.ColorMap;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.color.BasicButtonTitleTransmitter;
 import bibliothek.gui.dock.common.intern.color.EclipseTabTransmitter;
 import bibliothek.gui.dock.themes.ColorBridgeFactory;
 import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.gui.dock.themes.color.TabColor;
+import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.color.ColorBridge;
@@ -88,6 +90,14 @@ public class CEclipseTheme extends CDockTheme<EclipseTheme>{
                 transmitter.setControl( control );
                 return transmitter;
             }
+        });
+
+        putColorBridgeFactory( TitleColor.KIND_FLAP_BUTTON_COLOR, new ColorBridgeFactory(){
+        	public ColorBridge create(ColorManager manager) {
+        		BasicButtonTitleTransmitter transmitter = new BasicButtonTitleTransmitter( manager );
+        		transmitter.setControl( control );
+        		return transmitter;
+        	}
         });
     }
     

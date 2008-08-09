@@ -35,11 +35,10 @@ import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.util.color.ColorManager;
 
 /**
- * A color transmitter that connects {@link TitleColor}s with the common-project
- * and the {@link ColorMap} of the {@link CDockable}s.
+ * A color transmitter for the button-title used on minimized areas.
  * @author Benjamin Sigg
  */
-public abstract class TitleColorTransmitter extends ColorTransmitter<TitleColor>{
+public abstract class MinimizedButtonColorTransmitter extends ColorTransmitter<TitleColor>{
     private ColorManager manager;
     private String[] keys;
     
@@ -48,7 +47,7 @@ public abstract class TitleColorTransmitter extends ColorTransmitter<TitleColor>
      * @param keys the keys of the colors that are handled by this transmitter
      * @param manager the source of all colors
      */
-    public TitleColorTransmitter( ColorManager manager, String... keys ){
+    public MinimizedButtonColorTransmitter( ColorManager manager, String... keys ){
     	super( keys );
         this.keys = keys;
         this.manager = manager;
@@ -72,6 +71,15 @@ public abstract class TitleColorTransmitter extends ColorTransmitter<TitleColor>
     protected abstract Color convertFocused( Color source, String key );
     
     /**
+     * Changes a background color such that is can be used for <code>key</code>.
+     * @param source the original color
+     * @param key the key for which the color is needed, can only
+     * be one of the selected kind
+     * @return the new color, can be <code>null</code>
+     */
+    protected abstract Color convertSelected( Color source, String key );
+    
+    /**
      * Tells whether <code>id</code> represents a color that is used for
      * the foreground.
      * @param id some id
@@ -81,11 +89,19 @@ public abstract class TitleColorTransmitter extends ColorTransmitter<TitleColor>
     
     /**
      * Tells whether <code>id</code> represents a color that is used on
-     * focused tabs.
+     * focused titles.
      * @param id some id
-     * @return <code>true</code> if the color is used on focused tabs
+     * @return <code>true</code> if the color is used on focused buttons
      */
     protected abstract boolean isFocused( String id );
+    
+    /**
+     * Tells whether <code>id</code> represents a color that is used
+     * on a selected title.
+     * @param id some id
+     * @return <code>true</code> if the color is used on a selected button
+     */
+    protected abstract boolean isSelected( String id );
     
     /**
      * Gets the list of keys for which this transmitter works.
@@ -128,26 +144,34 @@ public abstract class TitleColorTransmitter extends ColorTransmitter<TitleColor>
         
         boolean foreground = isForeground( id );
         boolean focused = isFocused( id );
+        boolean selected = focused || isSelected( id );
         
         if( foreground ){
             if( focused ){
-                check = colors.getColor( ColorMap.COLOR_KEY_TITLE_FOREGROUND_FOCUSED );
+                check = colors.getColor( ColorMap.COLOR_KEY_MINIMIZED_BUTTON_FOREGROUND_FOCUSED );
             }
-            
+            if( check == null && selected ){
+            	check = colors.getColor( ColorMap.COLOR_KEY_MINIMIZED_BUTTON_FOREGROUND_SELECTED );
+            }
             if( check == null ){
-                check = colors.getColor( ColorMap.COLOR_KEY_TITLE_FOREGROUND );
+                check = colors.getColor( ColorMap.COLOR_KEY_MINIMIZED_BUTTON_FOREGROUND );
             }
         }
         
         if( check == null ){
             if( focused ){
-                check = colors.getColor( ColorMap.COLOR_KEY_TITLE_BACKGROUND_FOCUSED );
+                check = colors.getColor( ColorMap.COLOR_KEY_MINIMIZED_BUTTON_BACKGROUND_FOCUSED );
                 if( check != null )
                     check = convertFocused( check, id );
             }
+            if( check == null && selected ){
+            	check = colors.getColor( ColorMap.COLOR_KEY_MINIMIZED_BUTTON_BACKGROUND_SELECTED );
+            	if( check != null )
+            		check = convertSelected( check, id );
+            }
             
             if( check == null ){
-                check = colors.getColor( ColorMap.COLOR_KEY_TITLE_BACKGROUND );
+                check = colors.getColor( ColorMap.COLOR_KEY_MINIMIZED_BUTTON_BACKGROUND );
                 if( check != null )
                     check = convert( check, id );
             }
@@ -162,10 +186,12 @@ public abstract class TitleColorTransmitter extends ColorTransmitter<TitleColor>
     @Override
     protected void update( CDockable dockable, String key, Color color ) {
         boolean change = 
-        	ColorMap.COLOR_KEY_TITLE_BACKGROUND.equals( key ) ||
-            ColorMap.COLOR_KEY_TITLE_BACKGROUND_FOCUSED.equals( key ) ||
-            ColorMap.COLOR_KEY_TITLE_FOREGROUND.equals( key ) ||
-            ColorMap.COLOR_KEY_TITLE_FOREGROUND_FOCUSED.equals( key );
+        	ColorMap.COLOR_KEY_MINIMIZED_BUTTON_BACKGROUND.equals( key ) ||
+            ColorMap.COLOR_KEY_MINIMIZED_BUTTON_BACKGROUND_FOCUSED.equals( key ) ||
+            ColorMap.COLOR_KEY_MINIMIZED_BUTTON_BACKGROUND_SELECTED.equals( key ) ||
+            ColorMap.COLOR_KEY_MINIMIZED_BUTTON_FOREGROUND.equals( key ) ||
+            ColorMap.COLOR_KEY_MINIMIZED_BUTTON_FOREGROUND_FOCUSED.equals( key ) ||
+            ColorMap.COLOR_KEY_MINIMIZED_BUTTON_FOREGROUND_SELECTED.equals( key );
 
         if( change ){
             for( String check : keys )

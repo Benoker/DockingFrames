@@ -102,7 +102,7 @@ public class Frame extends DefaultMultipleCDockable {
                 GridBagConstraints.NONE, new Insets( 1, 1, 1, 1 ), 0, 0 )); 
         
         
-        JPanel colors = new JPanel( new GridLayout( 10, 1 ));
+        JPanel colors = new JPanel( new GridLayout( 16, 1 ));
         colors.setBorder( BorderFactory.createTitledBorder( "Color" ) );
         
         ColorMap map = getColors();
@@ -116,6 +116,12 @@ public class Frame extends DefaultMultipleCDockable {
         colors.add( new ColorButton( map, ColorMap.COLOR_KEY_TITLE_BACKGROUND_FOCUSED, Color.WHITE ));
         colors.add( new ColorButton( map, ColorMap.COLOR_KEY_TITLE_FOREGROUND, Color.BLACK ));
         colors.add( new ColorButton( map, ColorMap.COLOR_KEY_TITLE_FOREGROUND_FOCUSED, Color.BLACK ));
+        colors.add( new ColorButton( map, ColorMap.COLOR_KEY_MINIMIZED_BUTTON_BACKGROUND, Color.WHITE ));
+        colors.add( new ColorButton( map, ColorMap.COLOR_KEY_MINIMIZED_BUTTON_BACKGROUND_FOCUSED, Color.WHITE ));
+        colors.add( new ColorButton( map, ColorMap.COLOR_KEY_MINIMIZED_BUTTON_BACKGROUND_SELECTED, Color.WHITE ));
+        colors.add( new ColorButton( map, ColorMap.COLOR_KEY_MINIMIZED_BUTTON_FOREGROUND, Color.BLACK ));
+        colors.add( new ColorButton( map, ColorMap.COLOR_KEY_MINIMIZED_BUTTON_FOREGROUND_FOCUSED, Color.BLACK ));
+        colors.add( new ColorButton( map, ColorMap.COLOR_KEY_MINIMIZED_BUTTON_FOREGROUND_SELECTED, Color.BLACK ));
         
         JPanel all = new JPanel( new GridBagLayout() );
         all.add( title, new GridBagConstraints( 0, 0, 1, 1, 1.0, 1.0, 

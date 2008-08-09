@@ -1,9 +1,9 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2008 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,6 +26,7 @@
 
 package bibliothek.gui.dock.themes.basic;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
@@ -37,13 +38,21 @@ import javax.swing.event.MouseInputAdapter;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.event.DockTitleEvent;
+import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.title.AbstractDockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.color.ColorCodes;
 
 /**
  * This title changes its border whenever the active-state changes.
  * @author Benjamin Sigg
  */
+@ColorCodes({ "title.flap.active", 
+	"title.flap.active.text",
+	"title.flap.inactive",
+	"title.flap.inactive.text",
+	"title.flap.selected",
+	"title.flap.selected.text" })
 public class BasicButtonDockTitle extends AbstractDockTitle {
 	/** whether the mouse is currently pressed or not */
 	private boolean mousePressed = false;
@@ -53,6 +62,19 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
 	
 	/** when and how to show icons and text */
 	private FlapDockStation.ButtonContent behavior;
+	
+	/** the color used for the background when active */
+	private TitleColor activeColor = new BasicTitleColor( "title.flap.active", null );
+	/** the color used for the foreground when active */
+	private TitleColor activeTextColor = new BasicTitleColor( "title.flap.active.text", null );
+	/** the color used for background when inactive */
+	private TitleColor inactiveColor = new BasicTitleColor( "title.flap.inactive", null );
+	/** the color used for foreground when inactive */
+	private TitleColor inactiveTextColor = new BasicTitleColor( "title.flap.inactive.text", null );
+	/** the color used for background when selected */
+	private TitleColor selectedColor = new BasicTitleColor( "title.flap.selected", null );
+	/** the color used for foreground when selected */
+	private TitleColor selectedTextColor = new BasicTitleColor( "title.flap.selected.text", null );
 	
     /**
      * Constructs a new title
@@ -73,15 +95,22 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
         	@Override
         	public void mousePressed( MouseEvent e ){
         		mousePressed = (e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK ) != 0;
-        		changeBorder( selected );
+        		changeBorder();
         	}
         	
         	@Override
         	public void mouseReleased( MouseEvent e ){
         		mousePressed = (e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK ) != 0;
-        		changeBorder( selected );
+        		changeBorder();
         	}
         });
+        
+        addColor( activeColor );
+        addColor( activeTextColor );
+        addColor( inactiveColor );
+        addColor( inactiveTextColor );
+        addColor( selectedColor );
+        addColor( selectedTextColor );
     }
     
     @Override
@@ -105,14 +134,17 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
     public void setActive( boolean active ) {
         if( active != isActive() ){
             super.setActive(active);
-            changeBorder( active );
+            selected = active;
+            changeBorder();
         }
     }
     
     @Override
     public void changed( DockTitleEvent event ) {
         super.setActive( event.isActive() );
-        changeBorder( event.isActive() || event.isPreferred() );
+        selected = event.isActive() || event.isPreferred();
+        changeBorder();
+        updateColors();
     }
     
     @Override
@@ -132,15 +164,158 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
 	}
     
     /**
-     * Exchanges the current border.
-     * @param selected whether the title is selected (active) or not
+     * Whether this button is selected or not.
+     * @return <code>true</code> if selected, <code>false</code> otherwise
      */
-    protected void changeBorder( boolean selected ){
-    	this.selected = selected;
-    	
-        if( selected ^ mousePressed )
+    public boolean isSelected() {
+		return selected;
+	}
+    
+    /**
+     * Exchanges the current border.
+     */
+    protected void changeBorder(){
+    	if( selected ^ mousePressed )
             setBorder( BorderFactory.createBevelBorder( BevelBorder.LOWERED ));
         else
             setBorder( BorderFactory.createBevelBorder( BevelBorder.RAISED ));
+    }
+    
+    /**
+     * Updates the colors of this title.
+     */
+    protected void updateColors(){
+    	if( isActive() ){
+    		setBackground( activeColor.color() );
+    		setForeground( activeTextColor.color() );
+    	}
+    	else if( selected ){
+    		setBackground( selectedColor.color() );
+    		setForeground( selectedTextColor.color() );
+    	}
+    	else{
+    		setBackground( inactiveColor.color() );
+    		setForeground( inactiveTextColor.color() );
+    	}
+    }
+
+    /**
+     * Gets the color that is used as foreground if the title is focused.
+     * @return the color, might be <code>null</code>
+     */
+    public Color getActiveTextColor(){
+    	return activeTextColor.color();
+    }
+    
+    /**
+     * Sets the color that is used as foreground if the title is focused.
+     * @param color the new color, <code>null</code> to reset the property
+     */
+    public void setActiveTextColor( Color color ){
+    	activeTextColor.setValue( color );
+    }
+    
+
+    /**
+     * Gets the color that is used as background if the title is focused.
+     * @return the color, might be <code>null</code>
+     */
+    public Color getActiveColor(){
+    	return activeColor.color();
+    }
+    
+    /**
+     * Sets the color that is used as background if the title is focused.
+     * @param color the new color, <code>null</code> to reset the property
+     */
+    public void setActiveColor( Color color ){
+    	activeColor.setValue( color );
+    }
+    
+    /**
+     * Gets the color that is used as foreground if the title is selected.
+     * @return the color, might be <code>null</code>
+     */
+    public Color getSelectedTextColor(){
+    	return selectedTextColor.color();
+    }
+    
+    /**
+     * Sets the color that is used as foreground if the title is selected.
+     * @param color the new color, <code>null</code> to reset the property
+     */
+    public void setSelectedTextColor( Color color ){
+    	selectedTextColor.setValue( color );
+    }
+    
+
+    /**
+     * Gets the color that is used as background if the title is selected.
+     * @return the color, might be <code>null</code>
+     */
+    public Color getSelectedColor(){
+    	return selectedColor.color();
+    }
+    
+    /**
+     * Sets the color that is used as background if the title is selected.
+     * @param color the new color, <code>null</code> to reset the property
+     */
+    public void setSelectedColor( Color color ){
+    	selectedColor.setValue( color );
+    }
+    
+    /**
+     * Gets the color that is used as foreground
+     * @return the color, might be <code>null</code>
+     */
+    public Color getInactiveTextColor(){
+    	return inactiveTextColor.color();
+    }
+    
+    /**
+     * Sets the color that is used as foreground
+     * @param color the new color, <code>null</code> to reset the property
+     */
+    public void setInactiveTextColor( Color color ){
+    	inactiveTextColor.setValue( color );
+    }
+    
+
+    /**
+     * Gets the color that is used as background
+     * @return the color, might be <code>null</code>
+     */
+    public Color getInactiveColor(){
+    	return inactiveColor.color();
+    }
+    
+    /**
+     * Sets the color that is used as background
+     * @param color the new color, <code>null</code> to reset the property
+     */
+    public void setInactiveColor( Color color ){
+    	inactiveColor.setValue( color );
+    }
+    
+    /**
+     * A implementation of {@link TitleColor} that calls <code>repaint</code>
+     * when the color changes.
+     * @author Benjamin Sigg
+     */
+    private class BasicTitleColor extends TitleColor{
+        /**
+         * Creates a new color
+         * @param id the id of the color
+         * @param backup a backup color
+         */
+        public BasicTitleColor( String id, Color backup ){
+            super( id, TitleColor.KIND_FLAP_BUTTON_COLOR, BasicButtonDockTitle.this, backup );
+        }
+        
+        @Override
+        protected void changed( Color oldColor, Color newColor ) {
+            updateColors();
+        }
     }
 }

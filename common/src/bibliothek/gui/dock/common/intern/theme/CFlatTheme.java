@@ -27,6 +27,7 @@ package bibliothek.gui.dock.common.intern.theme;
 
 import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.intern.color.BasicButtonTitleTransmitter;
 import bibliothek.gui.dock.common.intern.color.FlatTabTransmitter;
 import bibliothek.gui.dock.common.intern.color.FlatTitleTransmitter;
 import bibliothek.gui.dock.themes.ColorBridgeFactory;
@@ -88,6 +89,13 @@ public class CFlatTheme extends CDockTheme<FlatTheme> {
                 transmitter.setControl( control );
                 return transmitter;
             }
+        });
+        putColorBridgeFactory( TitleColor.KIND_FLAP_BUTTON_COLOR, new ColorBridgeFactory(){
+        	public ColorBridge create(ColorManager manager) {
+        		BasicButtonTitleTransmitter transmitter = new BasicButtonTitleTransmitter( manager );
+        		transmitter.setControl( control );
+        		return transmitter;
+        	}
         });
     }
 

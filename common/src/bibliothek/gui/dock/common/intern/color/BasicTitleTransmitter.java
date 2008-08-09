@@ -52,7 +52,7 @@ public class BasicTitleTransmitter extends TitleColorTransmitter {
         
     @Override
     protected Color convert( Color source, String key ) {
-        if( isFocused( key ))
+    	if( isFocused( key ))
             return convertFocused( source, key );
         
         if( "title.inactive.text".equals( key ))

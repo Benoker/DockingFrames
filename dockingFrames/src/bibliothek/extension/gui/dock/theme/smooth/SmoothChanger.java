@@ -42,8 +42,8 @@ public abstract class SmoothChanger implements ActionListener{
     /** the time at the last pulse */
     private long last;
     
-    /** the current location, something between 0 and {@link #duration} */
-    private int current;
+    /** the current location for each state, something between 0 and {@link #duration} */
+    private int[] current;
     
     /** the duration of the change */
     private int duration;
@@ -52,33 +52,39 @@ public abstract class SmoothChanger implements ActionListener{
     private Timer timer;
     
     /**
-     * Constructor, sets {@link #setDuration(int) duration} to 250 milliseconds.
+     * Constructor, sets {@link #setDuration(int, int) duration} to 250 milliseconds.
+     * @param states the number of states this changer can have
      */
-    public SmoothChanger(){
-    	this( 250 );
+    public SmoothChanger( int states ){
+    	this( 250, states );
     }
     
     /**
      * Constructs a new changer.
      * @param duration the duration of one transition, should not be less than 1
+     * @param states the number of states this changer can have, should
+     * at least be 2
      */
-    public SmoothChanger( int duration ){
+    public SmoothChanger( int duration, int states ){
         this.duration = duration;
         timer = new Timer( 15, this );
+        current = new int[ states ];
     }
     
     /**
-     * The direction of the change. If active, then the counter of this changer
-     * is increasing. Otherwise, the value of this changer is decreasing.
-     * @return whether to in- or to decrease the counter
+     * The direction of the change. The counter of for the state
+     * <code>destination()</code> will always rise, while the other
+     * counters decent.
+     * @param the favored state
      */
-    protected abstract boolean isActive();
+    protected abstract int destination();
     
     /**
      * Triggered during a transition when the counter has been changed
-     * @param current the counter
+     * @param current for each state a number between 0 and {@link #getDuration()},
+     * the state with the highest number is the best selected state
      */
-    protected abstract void repaint( int current );
+    protected abstract void repaint( int[] current );
     
     /**
      * Sets the duration of the transition.
@@ -90,12 +96,20 @@ public abstract class SmoothChanger implements ActionListener{
             throw new IllegalArgumentException( "duration must be >= 1" );
         
         this.duration = duration;
-        if( isActive() )
-            current = Math.min( current, duration );
-        else
-            current = Math.max( current, 0 );
+        
+        for( int i = 0; i < current.length; i++ ){
+        	current[i] = Math.min( current[i], duration );
+        }
         
         repaint( current );
+    }
+    
+    /**
+     * Tells whether this changer is currently active or not.
+     * @return <code>true</code> if active, <code>false</code> if not
+     */
+    public boolean isRunning(){
+    	return timer.isRunning();
     }
     
     /**
@@ -120,23 +134,24 @@ public abstract class SmoothChanger implements ActionListener{
         int delta = (int)( time - last );
         last = time;
         
-        if( isActive() ){
-            current += delta;
-            
-            if( current >= duration ){
-                current = duration;
-                timer.stop();
-            }
-        }
-        else{
-            current -= delta;
-            
-            if( current <= 0 ){
-                current = 0;
-                timer.stop();
-            }
+        int destination = destination();
+        boolean incomplete = false;
+        
+        for( int i = 0; i < current.length; i++ ){
+        	if( i == destination ){
+        		current[i] = Math.min( current[i] + delta, duration );
+        		incomplete = incomplete || current[i] < duration;
+        	}
+        	else{
+        		current[i] = Math.max( current[i] - delta, 0 );
+        		incomplete = incomplete || current[i] > 0;
+        	}
         }
         
+        if( !incomplete ){
+        	timer.stop();
+        }
+                
         repaint( current );
     }
 }

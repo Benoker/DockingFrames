@@ -28,7 +28,9 @@ package bibliothek.gui.dock.util.color;
 import java.lang.annotation.*;
 
 /**
- * Used to mark all classes which use some {@link DockColor}.
+ * Used to mark all classes which use some {@link DockColor}. These codes
+ * are inherited by subclasses, unless subclasses override them by having
+ * an annotation as well.
  * @author Benjamin Sigg
  */
 @Retention( RetentionPolicy.SOURCE )

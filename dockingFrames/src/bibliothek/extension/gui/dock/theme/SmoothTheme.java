@@ -26,7 +26,10 @@
 
 package bibliothek.extension.gui.dock.theme;
 
+import bibliothek.extension.gui.dock.theme.smooth.SmoothDefaultButtonTitleFactory;
 import bibliothek.extension.gui.dock.theme.smooth.SmoothDefaultTitleFactory;
+import bibliothek.gui.DockController;
+import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.ThemeProperties;
 
@@ -47,5 +50,19 @@ public class SmoothTheme extends BasicTheme {
      */
     public SmoothTheme(){
         setTitleFactory( new SmoothDefaultTitleFactory() );
+    }
+    
+    @Override
+    public void install(DockController controller) {
+    	super.install(controller);
+    	
+    	controller.getDockTitleManager().registerTheme( FlapDockStation.BUTTON_TITLE_ID, new SmoothDefaultButtonTitleFactory());
+    }
+    
+    @Override
+    public void uninstall(DockController controller) {
+    	super.uninstall(controller);
+    	
+    	controller.getDockTitleManager().clearThemeFactories();
     }
 }

@@ -87,8 +87,11 @@ public class DockTitleManager {
         DockTitleVersion version = titleVersions.get( id );
         if( version == null ){
             version = new DockTitleVersion( controller, id );
-            version.setFactory( factory, Priority.DEFAULT );
             titleVersions.put( id, version );
+        }
+        
+        if( version.getFactory( Priority.DEFAULT ) == null ){
+            version.setFactory( factory, Priority.DEFAULT );
         }
         return version;
     }

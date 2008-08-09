@@ -43,19 +43,25 @@ import bibliothek.util.Colors;
  * @author Benjamin Sigg
  */
 public class SmoothDefaultTitle extends BasicDockTitle{
+	private final int ACTIVE_STATE = 0;
+	private final int INACTIVE_STATE = 1;
+	
     /** The current state of the transition */
     private int current = 0;
     
     /** a trigger for the animation */
-    private SmoothChanger changer = new SmoothChanger(){
+    private SmoothChanger changer = new SmoothChanger( 2 ){
+    	@Override
+    	protected int destination() {
+    		if( isActive() )
+    			return ACTIVE_STATE;
+    		else
+    			return INACTIVE_STATE;
+    	}
+    	
         @Override
-        protected boolean isActive() {
-            return SmoothDefaultTitle.this.isActive();
-        }
-        
-        @Override
-        protected void repaint( int current ) {
-            SmoothDefaultTitle.this.current = current;
+        protected void repaint( int[] current ) {
+            SmoothDefaultTitle.this.current = current[ ACTIVE_STATE ];
             updateForegroundColor();
             SmoothDefaultTitle.this.repaint();
         }

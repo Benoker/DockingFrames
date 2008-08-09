@@ -28,6 +28,7 @@ package bibliothek.gui.dock.themes.color;
 import java.awt.Color;
 
 import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
 import bibliothek.gui.dock.util.color.DockColor;
@@ -40,6 +41,9 @@ import bibliothek.gui.dock.util.color.DockColor;
 public abstract class TitleColor extends AbstractDockColor{
     /** the kind of color {@link TitleColor} is */
     public static final Path KIND_TITLE_COLOR = DockColor.KIND_DOCK_COLOR.append( "TitleColor" );
+    
+    /** special kind of color for buttons on the {@link FlapDockStation} */
+    public static final Path KIND_FLAP_BUTTON_COLOR = KIND_TITLE_COLOR.append( "flap" );
     
     private DockTitle title;
     

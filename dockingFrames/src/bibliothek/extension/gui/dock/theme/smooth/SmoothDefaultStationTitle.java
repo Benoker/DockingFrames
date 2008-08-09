@@ -43,15 +43,18 @@ public class SmoothDefaultStationTitle extends BasicStationTitle{
     /**
      * Source for pulses for this title.
      */
-    private SmoothChanger changer = new SmoothChanger(){
+    private SmoothChanger changer = new SmoothChanger( 2 ){
+    	@Override
+    	protected int destination() {
+    		if( isActive() )
+    			return 0;
+    		else
+    			return 1;
+    	}
+    	
         @Override
-        protected boolean isActive() {
-            return SmoothDefaultStationTitle.this.isActive();
-        }
-        
-        @Override
-        protected void repaint( int current ) {
-            SmoothDefaultStationTitle.this.current = current;
+        protected void repaint( int[] current ) {
+            SmoothDefaultStationTitle.this.current = current[0];
             SmoothDefaultStationTitle.this.updateColors();
         }
     };

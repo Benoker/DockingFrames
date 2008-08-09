@@ -23,8 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-
-package bibliothek.gui.dock.themes.basic;
+package bibliothek.extension.gui.dock.theme.smooth;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -33,22 +32,16 @@ import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
- * A {@link DockTitleFactory factory} for the {@link BasicButtonDockTitle}
+ * A factory creating new {@link SmoothDefaultButtonTitle}s.
  * @author Benjamin Sigg
  */
-public class BasicButtonTitleFactory implements DockTitleFactory {
-    /** A static instance of this factory, can be used everywhere */
-    public static final BasicButtonTitleFactory FACTORY = new BasicButtonTitleFactory();
+public class SmoothDefaultButtonTitleFactory implements DockTitleFactory{
+	public DockTitle createDockableTitle(Dockable dockable, DockTitleVersion version) {
+		return new SmoothDefaultButtonTitle( dockable, version );
+	}
 
-    public DockTitle createDockableTitle( Dockable dockable,
-            DockTitleVersion version ) {
-        
-        return new BasicButtonDockTitle( dockable, version );
-    }
+	public <D extends Dockable & DockStation> DockTitle createStationTitle( D dockable, DockTitleVersion version) {
+		return new SmoothDefaultButtonTitle( dockable, version );
+	}
 
-    public <D extends Dockable & DockStation> DockTitle createStationTitle(
-            D dockable, DockTitleVersion version ) {
-        
-        return new BasicButtonDockTitle( dockable, version );
-    }
 }

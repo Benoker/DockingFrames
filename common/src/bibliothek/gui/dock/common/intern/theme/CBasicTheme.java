@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.common.intern.theme;
 
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.intern.color.BasicButtonTitleTransmitter;
 import bibliothek.gui.dock.common.intern.color.BasicTabTransmitter;
 import bibliothek.gui.dock.common.intern.color.BasicTitleTransmitter;
 import bibliothek.gui.dock.themes.BasicTheme;
@@ -42,52 +43,59 @@ import bibliothek.gui.dock.util.color.ColorManager;
  *
  */
 public class CBasicTheme extends CDockTheme<BasicTheme> {
-    /**
-     * Creates a new theme.
-     * @param control the controller for which this theme will be used
-     * @param theme the theme that gets encapsulated
-     */
-    public CBasicTheme( CControl control, BasicTheme theme ){
-        super( theme );
-        init( control );
-    }
-    
-    /**
-     * Creates a new theme. This theme can be used directly with a 
-     * {@link CControl}.
-     * @param control the controller for which this theme will be used.
-     */
-    public CBasicTheme( CControl control ){
-        this( new BasicTheme() );
-        init( control );
-    }
-    
-    /**
-     * Creates a new theme.
-     * @param theme the delegate which will do most of the work
-     */
-    private CBasicTheme( BasicTheme theme ){
-        super( theme, new NoStackTheme( theme ) );
-    }
-    
-    /**
-     * Initializes the properties of this theme.
-     * @param control the controller for which this theme will be used
-     */
-    private void init( final CControl control ){
-        putColorBridgeFactory( TabColor.KIND_TAB_COLOR, new ColorBridgeFactory(){
-            public ColorBridge create( ColorManager manager ) {
-                BasicTabTransmitter transmitter = new BasicTabTransmitter( manager );
-                transmitter.setControl( control );
-                return transmitter;
-            }
-        });
-        putColorBridgeFactory( TitleColor.KIND_TITLE_COLOR, new ColorBridgeFactory(){
-            public ColorBridge create( ColorManager manager ) {
-                BasicTitleTransmitter transmitter = new BasicTitleTransmitter( manager );
-                transmitter.setControl( control );
-                return transmitter;
-            }
-        });
-    }
+	/**
+	 * Creates a new theme.
+	 * @param control the controller for which this theme will be used
+	 * @param theme the theme that gets encapsulated
+	 */
+	public CBasicTheme( CControl control, BasicTheme theme ){
+		super( theme );
+		init( control );
+	}
+
+	/**
+	 * Creates a new theme. This theme can be used directly with a 
+	 * {@link CControl}.
+	 * @param control the controller for which this theme will be used.
+	 */
+	public CBasicTheme( CControl control ){
+		this( new BasicTheme() );
+		init( control );
+	}
+
+	/**
+	 * Creates a new theme.
+	 * @param theme the delegate which will do most of the work
+	 */
+	private CBasicTheme( BasicTheme theme ){
+		super( theme, new NoStackTheme( theme ) );
+	}
+
+	/**
+	 * Initializes the properties of this theme.
+	 * @param control the controller for which this theme will be used
+	 */
+	private void init( final CControl control ){
+		putColorBridgeFactory( TabColor.KIND_TAB_COLOR, new ColorBridgeFactory(){
+			public ColorBridge create( ColorManager manager ) {
+				BasicTabTransmitter transmitter = new BasicTabTransmitter( manager );
+				transmitter.setControl( control );
+				return transmitter;
+			}
+		});
+		putColorBridgeFactory( TitleColor.KIND_TITLE_COLOR, new ColorBridgeFactory(){
+			public ColorBridge create( ColorManager manager ) {
+				BasicTitleTransmitter transmitter = new BasicTitleTransmitter( manager );
+				transmitter.setControl( control );
+				return transmitter;
+			}
+		});
+		putColorBridgeFactory( TitleColor.KIND_FLAP_BUTTON_COLOR, new ColorBridgeFactory(){
+			public ColorBridge create(ColorManager manager) {
+				BasicButtonTitleTransmitter transmitter = new BasicButtonTitleTransmitter( manager );
+				transmitter.setControl( control );
+				return transmitter;
+			}
+		});
+	}
 }
