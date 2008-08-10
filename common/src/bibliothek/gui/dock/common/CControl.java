@@ -26,36 +26,20 @@
 package bibliothek.gui.dock.common;
 
 import java.awt.Component;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 
 import bibliothek.extension.gui.dock.preference.PreferenceModel;
 import bibliothek.extension.gui.dock.preference.PreferenceStorage;
-import bibliothek.extension.gui.dock.theme.SmoothTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabDockAction;
-import bibliothek.gui.DockController;
-import bibliothek.gui.DockFrontend;
-import bibliothek.gui.DockStation;
-import bibliothek.gui.DockTheme;
-import bibliothek.gui.Dockable;
+import bibliothek.gui.*;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
@@ -63,45 +47,18 @@ import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.common.event.CControlListener;
-import bibliothek.gui.dock.common.event.CDockablePropertyListener;
-import bibliothek.gui.dock.common.event.CDockableStateListener;
-import bibliothek.gui.dock.common.event.CDoubleClickListener;
-import bibliothek.gui.dock.common.event.CFocusListener;
-import bibliothek.gui.dock.common.event.CKeyboardListener;
-import bibliothek.gui.dock.common.event.ResizeRequestListener;
-import bibliothek.gui.dock.common.intern.AbstractCStation;
-import bibliothek.gui.dock.common.intern.CControlAccess;
-import bibliothek.gui.dock.common.intern.CControlFactory;
-import bibliothek.gui.dock.common.intern.CDockable;
-import bibliothek.gui.dock.common.intern.CDockableAccess;
-import bibliothek.gui.dock.common.intern.CListenerCollection;
-import bibliothek.gui.dock.common.intern.CSetting;
-import bibliothek.gui.dock.common.intern.CSingleParentRemover;
-import bibliothek.gui.dock.common.intern.CStateManager;
-import bibliothek.gui.dock.common.intern.CommonDockable;
-import bibliothek.gui.dock.common.intern.CommonMultipleDockableFactory;
-import bibliothek.gui.dock.common.intern.CommonSingleDockableFactory;
-import bibliothek.gui.dock.common.intern.EfficientControlFactory;
-import bibliothek.gui.dock.common.intern.ExtendedModeAcceptance;
-import bibliothek.gui.dock.common.intern.SecureControlFactory;
-import bibliothek.gui.dock.common.intern.StackableAcceptance;
-import bibliothek.gui.dock.common.intern.WorkingAreaAcceptance;
+import bibliothek.gui.dock.common.event.*;
+import bibliothek.gui.dock.common.intern.*;
 import bibliothek.gui.dock.common.intern.CDockable.ExtendedMode;
 import bibliothek.gui.dock.common.intern.station.CFlapLayoutManager;
 import bibliothek.gui.dock.common.intern.station.CLockedResizeLayoutManager;
 import bibliothek.gui.dock.common.intern.station.ScreenResizeRequestHandler;
-import bibliothek.gui.dock.common.intern.theme.CSmoothTheme;
 import bibliothek.gui.dock.common.layout.FullLockConflictResolver;
 import bibliothek.gui.dock.common.layout.RequestDimension;
 import bibliothek.gui.dock.common.layout.ThemeMap;
 import bibliothek.gui.dock.common.location.CExternalizedLocation;
 import bibliothek.gui.dock.control.DockRegister;
-import bibliothek.gui.dock.event.DockAdapter;
-import bibliothek.gui.dock.event.DockableFocusEvent;
-import bibliothek.gui.dock.event.DockableFocusListener;
-import bibliothek.gui.dock.event.DoubleClickListener;
-import bibliothek.gui.dock.event.KeyboardListener;
+import bibliothek.gui.dock.event.*;
 import bibliothek.gui.dock.facile.action.CloseAction;
 import bibliothek.gui.dock.facile.action.StateManager;
 import bibliothek.gui.dock.facile.station.split.ConflictResolver;
@@ -110,7 +67,6 @@ import bibliothek.gui.dock.frontend.Setting;
 import bibliothek.gui.dock.layout.DockSituationIgnore;
 import bibliothek.gui.dock.support.util.ApplicationResource;
 import bibliothek.gui.dock.support.util.ApplicationResourceManager;
-import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.gui.dock.themes.ThemeFactory;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
@@ -340,7 +296,9 @@ public class CControl {
         });
         frontend.setShowHideAction( false );
 
-        frontend.getController().setTheme( new NoStackTheme( new CSmoothTheme( this, new SmoothTheme())));
+        // replaced by setTheme( ThemeMap.SMOOTH_THEME ) at the end of this method
+        //frontend.getController().setTheme( new NoStackTheme( new CSmoothTheme( this, new SmoothTheme())));
+        
         frontend.getController().addActionGuard( new ActionGuard(){
             public boolean react( Dockable dockable ) {
                 return dockable instanceof CommonDockable;
@@ -468,6 +426,8 @@ public class CControl {
         
         initExtendedModes( frame );
         initProperties();
+        
+        setTheme( ThemeMap.KEY_SMOOTH_THEME );
     }
 
     /**

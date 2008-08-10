@@ -119,7 +119,7 @@ public class BasicStackDockComponent extends DefaultStackDockComponent {
         
         private void recolor(){
             int index = station.indexOf( BasicTab.this.getDockable() );
-            if( index >= 0 ){
+            if( index >= 0 && index < getTabCount() ){
                 boolean focused = controller == null ? false : controller.getFocusedDockable() == getDockable();
                 boolean selected = index == getSelectedIndex();
             

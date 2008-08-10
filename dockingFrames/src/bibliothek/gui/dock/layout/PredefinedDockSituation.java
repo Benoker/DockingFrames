@@ -130,6 +130,14 @@ public class PredefinedDockSituation extends DockSituation {
 	}
 	
 	@Override
+	protected String getFactoryID( String id ) {
+	    if( KNOWN.equals( id ))
+	        return factory.getID();
+	    else
+	        return id.substring( UNKNOWN.length() );
+	}
+	
+	@Override
 	protected DockFactory<? extends DockElement,?> getFactory( String id ){
 		if( KNOWN.equals( id ))
 			return factory;

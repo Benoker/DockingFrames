@@ -58,8 +58,14 @@ public class DockSituation {
     /** the factories used to create new {@link DockElement elements}*/
     private Map<String, DockFactory<?,?>> factories = new HashMap<String, DockFactory<?,?>>();
     
+    /** the factory used when no {@link DockFactory} is available */
+    private MissingDockFactory missingFactory;
+    
     /** a set of additional factories for the {@link DockElement}s */
     private Map<String, AdjacentDockFactory<?>> adjacent = new HashMap<String, AdjacentDockFactory<?>>();
+    
+    /** the factory used when no {@link AdjacentDockFactory} is available */
+    private MissingDockFactory missingAdjacent;
     
     /** a filter for elements which should be ignored */
     private DockSituationIgnore ignore;
@@ -121,6 +127,54 @@ public class DockSituation {
      */
     public void addAdjacent( AdjacentDockFactory<?> factory ){
         adjacent.put( getAdjacentID( factory ), factory );
+    }
+    
+    /**
+     * Sets a factory which is used whenever no ordinary {@link DockFactory}
+     * can be found to read something. The <code>missingFactory</code> can convert
+     * the input to any {@link Object} it likes, but if a missing factory
+     * is later added to this situation, then that object needs to be casted
+     * into the object used by the original factory. So when working with
+     * a {@link MissingDockFactory} handling different types of layout-data
+     * needs to be done very carefully. Note that this factory cannot be
+     * used to convert {@link DockLayoutComposition}s {@link #convert(DockLayoutComposition) to} 
+     * or {@link #convert(DockElement) from} {@link DockElement}s.
+     * So using a {@link MissingDockFactory} without looking at a {@link DockLayoutComposition}
+     * is pointless.
+     * @param missingFactory the factory, can be <code>null</code>
+     */
+    public void setMissingFactory( MissingDockFactory missingFactory ) {
+        this.missingFactory = missingFactory;
+    }
+    
+    /**
+     * Gets the factory which is used when another factory is missing.
+     * @return the factory replacing missing factories, can be <code>null</code>
+     * @see #setMissingFactory(MissingDockFactory)
+     */
+    public MissingDockFactory getMissingFactory() {
+        return missingFactory;
+    }
+    
+    /**
+     * Sets a factory which is used when a {@link AdjacentDockFactory} is missing.
+     * There are the same issures with this factory than with the one used
+     * by {@link #setMissingFactory(MissingDockFactory)}.
+     * @param missingAdjacent the new factory, can be <code>null</code>
+     * @see #setMissingFactory(MissingDockFactory)
+     */
+    public void setMissingAdjacentFactory( MissingDockFactory missingAdjacent ) {
+        this.missingAdjacent = missingAdjacent;
+    }
+    
+    /**
+     * Gets the factory which is used when another {@link AdjacentDockFactory}
+     * is missing.
+     * @return the factory, can be <code>null</code>
+     * @see #setMissingAdjacentFactory(MissingDockFactory)
+     */
+    public MissingDockFactory getMissingAdjacentFactory() {
+        return missingAdjacent;
     }
     
     /**
@@ -354,12 +408,23 @@ public class DockSituation {
         int count = in.readInt();
         
         if( factory == null ){
-            layout = null;
-            while( count > 0 ){
-                int skipped = (int)in.skip( count );
-                if( skipped <= 0 )
-                    throw new EOFException();
-                count -= skipped;
+            if( missingFactory == null ){
+                layout = null;
+                while( count > 0 ){
+                    int skipped = (int)in.skip( count );
+                    if( skipped <= 0 )
+                        throw new EOFException();
+                    count -= skipped;
+                }
+            }
+            else{
+                DataInputStream din = readBuffer( in, count );
+                Object data = missingFactory.read( getFactoryID( factoryId ), din, count );
+                if( data == null )
+                    layout = null;
+                else
+                    layout = new DockLayout<Object>( factoryId, data );
+                din.close();
             }
         }
         else{
@@ -384,12 +449,22 @@ public class DockSituation {
                     int adjacentCount = in.readInt();
                     AdjacentDockFactory<Object> adjacentFactory = (AdjacentDockFactory<Object>)getAdjacentFactory( adjacentFactoryId );
                     if( adjacentFactory == null ){
-                        // skip
-                        while( adjacentCount > 0 ){
-                            int skipped = (int)in.skip( adjacentCount );
-                            if( skipped <= 0 )
-                                throw new EOFException();
-                            adjacentCount -= skipped;
+                        if( missingAdjacent == null ){
+                            // skip
+                            while( adjacentCount > 0 ){
+                                int skipped = (int)in.skip( adjacentCount );
+                                if( skipped <= 0 )
+                                    throw new EOFException();
+                                adjacentCount -= skipped;
+                            }
+                        }
+                        else{
+                            DataInputStream din = readBuffer( in, adjacentCount );
+                            Object data = missingAdjacent.read( getAdjacentFactoryID( adjacentFactoryId ), din, count );
+                            if( data != null ){
+                                adjacentLayouts.add( new DockLayout<Object>( adjacentFactoryId, data ) );
+                            }
+                            din.close();
                         }
                     }
                     else{
@@ -571,6 +646,12 @@ public class DockSituation {
                     layout = new DockLayout<Object>( factoryId, data );
                 }
             }
+            else if( missingFactory != null ){
+                Object data = missingFactory.readXML( getFactoryID( factoryId ), xfactory );
+                if( data != null ){
+                    layout = new DockLayout<Object>( factoryId, data );
+                }
+            }
         }
         
         XElement xadjacent = element.getElement( "adjacent" );
@@ -585,6 +666,12 @@ public class DockSituation {
                     Object data = adjacentFactory.read( xlayout );
                     if( data != null ){
                         adjacentLayouts.add( new DockLayout<Object>( factoryId, data ));
+                    }
+                }
+                else if( missingAdjacent != null ){
+                    Object data = missingAdjacent.readXML( getAdjacentFactoryID( factoryId ), xlayout );
+                    if( data != null ){
+                        adjacentLayouts.add( new DockLayout<Object>( factoryId, data ) );
                     }
                 }
             }
@@ -691,6 +778,18 @@ public class DockSituation {
     protected String getID( DockFactory<?,?> factory ){
         return factory.getID();
     }
+    
+    /**
+     * Transforms an id read from a stream to the id of the factory which
+     * would be used. This method must fulfill one contract:
+     * <code>DockFactory factory = ...
+     * factory.getID().equals( getFactoryID( getID( factory )));</code>
+     * @param id the id read from a stream
+     * @return the id of the original factory
+     */
+    protected String getFactoryID( String id ){
+        return id;
+    }
 
     /**
      * Gets the id of <code>factory</code>. The default behavior is just to
@@ -702,6 +801,19 @@ public class DockSituation {
     protected String getAdjacentID( AdjacentDockFactory<?> factory ){
         return factory.getID();
     }
+    
+    /**
+     * Transforms an id read from a stream to the id of the adjacent factory which
+     * would be used. This method must fulfill one contract:
+     * <code>AdjacentDockFactory factory = ...
+     * factory.getID().equals( getFactoryID( getAdjacentID( factory )));</code>
+     * @param id the id read from a stream
+     * @return the id of the original factory
+     */
+    protected String getAdjacentFactoryID( String id ){
+        return id;
+    }
+
     
     /**
      * Gets the factory which has the given <code>id</code>. Note that this
