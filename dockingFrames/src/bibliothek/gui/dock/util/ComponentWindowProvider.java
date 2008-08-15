@@ -46,7 +46,7 @@ public class ComponentWindowProvider extends AbstractWindowProvider{
     private HierarchyListener listener = new HierarchyListener(){
         public void hierarchyChanged( HierarchyEvent e ) {
             Window oldWindow = window;
-            window = SwingUtilities.getWindowAncestor( component );
+            window = getWindowAncestor( component );
             if( oldWindow != window ){
                 fireWindowChanged( window );
             }
@@ -68,7 +68,7 @@ public class ComponentWindowProvider extends AbstractWindowProvider{
         super.addWindowProviderListener( listener );
         if( previous == 0 && listeners.size() > 0 && component != null ){
             component.addHierarchyListener( this.listener );
-            window = SwingUtilities.getWindowAncestor( component );
+            window = getWindowAncestor( component );
         }
     }
     
@@ -108,7 +108,7 @@ public class ComponentWindowProvider extends AbstractWindowProvider{
                 this.component.addHierarchyListener( listener );
             
             Window oldWindow = window;
-            window = component == null ? null : SwingUtilities.getWindowAncestor( component );
+            window = component == null ? null : getWindowAncestor( component );
             if( oldWindow != window ){
                 fireWindowChanged( window );
             }
@@ -120,8 +120,15 @@ public class ComponentWindowProvider extends AbstractWindowProvider{
             return null;
         
         if( listeners.size() == 0 )
-            return SwingUtilities.getWindowAncestor( component );
+            return getWindowAncestor( component );
         
         return window;
+    }
+    
+    private Window getWindowAncestor( Component component ){
+        if( component instanceof Window )
+            return (Window)component;
+        
+        return SwingUtilities.getWindowAncestor( component );
     }
 }
