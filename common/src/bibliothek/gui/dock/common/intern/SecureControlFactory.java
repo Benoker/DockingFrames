@@ -29,7 +29,6 @@ import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import bibliothek.gui.DockController;
@@ -44,6 +43,7 @@ import bibliothek.gui.dock.security.SecureDockController;
 import bibliothek.gui.dock.security.SecureFlapDockStation;
 import bibliothek.gui.dock.security.SecureScreenDockStation;
 import bibliothek.gui.dock.security.SecureSplitDockStation;
+import bibliothek.gui.dock.util.WindowProvider;
 
 /**
  * A factory used in restricted environment, where no global events can
@@ -78,7 +78,7 @@ public class SecureControlFactory implements CControlFactory {
         };
     }
 
-    public ScreenDockStation createScreenDockStation( JFrame owner ) {
+    public ScreenDockStation createScreenDockStation( WindowProvider owner ) {
         return new SecureScreenDockStation( owner );
     }
 

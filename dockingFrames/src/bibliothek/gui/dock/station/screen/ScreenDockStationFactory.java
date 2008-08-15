@@ -36,6 +36,8 @@ import java.util.Map;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.util.ComponentWindowProvider;
+import bibliothek.gui.dock.util.WindowProvider;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
@@ -48,7 +50,7 @@ import bibliothek.util.xml.XElement;
 public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, ScreenDockStationLayout> {
     public static final String ID = "screen dock";
 
-    private Window owner;
+    private WindowProvider owner;
     
     /**
      * Constructs a factory
@@ -57,14 +59,35 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
     public ScreenDockStationFactory( Window owner ){
     	if( owner == null )
             throw new IllegalArgumentException( "Owner must not be null" );
+        this.owner = new ComponentWindowProvider( owner );
+    }
+
+    /**
+     * Constructs a factory
+     * @param owner the window which will be used as owner for {@link ScreenDockDialog dialogs}
+     */
+    public ScreenDockStationFactory( WindowProvider owner ){
+        if( owner == null )
+            throw new IllegalArgumentException( "Owner must not be null" );
         this.owner = owner;
     }
     
     /**
      * Gets the owner of all created dialogs.
      * @return the owner
+     * @deprecated replaced by {@link #getProvider()}
      */
+    @Deprecated
     public Window getOwner(){
+        return owner.searchWindow();
+    }
+    
+    /**
+     * Gets the provider for windows, which will be used as owner for newly
+     * created dialogs.
+     * @return the owner
+     */
+    public WindowProvider getProvider(){
         return owner;
     }
     

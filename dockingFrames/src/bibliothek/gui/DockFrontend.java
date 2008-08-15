@@ -65,10 +65,7 @@ import bibliothek.gui.dock.station.split.SplitDockPropertyFactory;
 import bibliothek.gui.dock.station.split.SplitDockStationFactory;
 import bibliothek.gui.dock.station.stack.StackDockPropertyFactory;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
-import bibliothek.gui.dock.util.DockProperties;
-import bibliothek.gui.dock.util.DockUtilities;
-import bibliothek.gui.dock.util.PropertyKey;
-import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.*;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XAttribute;
 import bibliothek.util.xml.XElement;
@@ -168,7 +165,7 @@ public class DockFrontend {
      * Constructs a new frontend, creates a new controller.
      */
     public DockFrontend(){
-        this( new DockController(), null );
+        this( new DockController(), (WindowProvider)null );
     }
     
     /**
@@ -179,6 +176,17 @@ public class DockFrontend {
      * may be <code>null</code>
      */
     public DockFrontend( Window owner ){
+        this( new DockController(), owner == null ? null : new ComponentWindowProvider( owner ) );
+    }
+    
+    /**
+     * Constructs a new frontend, creates a new controller. Registers a
+     * {@link ScreenDockStationFactory}, which can only be created if the owner
+     * of the dialogs is known.
+     * @param owner the owner of the dialogs of a {@link ScreenDockStationFactory},
+     * may be <code>null</code>
+     */
+    public DockFrontend( WindowProvider owner ){
         this( new DockController(), owner );
     }
     
@@ -187,7 +195,7 @@ public class DockFrontend {
      * @param controller the controller used to store root stations
      */
     public DockFrontend( DockController controller ){
-        this( controller, null );
+        this( controller, (WindowProvider)null );
     }
     
     /**
@@ -198,6 +206,17 @@ public class DockFrontend {
      * may be <code>null</code>
      */
     public DockFrontend( DockController controller, Window owner ){
+        this( controller, owner == null ? null : new ComponentWindowProvider( owner ));
+    }
+
+    /**
+     * Constructs a new frontend, tries to set up a {@link ScreenDockStationFactory}
+     * and sets the root window of <code>controller</code> to <code>owner</code>.
+     * @param controller the controller used to store the root stations
+     * @param owner the owner of the dialog of a {@link ScreenDockStation},
+     * may be <code>null</code>
+     */
+    public DockFrontend( DockController controller, WindowProvider owner ){
         if( controller == null )
             throw new IllegalArgumentException( "controller must not be null" );
         
@@ -215,7 +234,7 @@ public class DockFrontend {
         registerFactory( new SecureFlapDockStationFactory() );
         
         if( owner != null ){
-            controller.setRootWindow( owner );
+            controller.setRootWindowProvider( owner );
             registerFactory( new ScreenDockStationFactory( owner ));
             registerFactory( new SecureScreenDockStationFactory( owner ));
         }

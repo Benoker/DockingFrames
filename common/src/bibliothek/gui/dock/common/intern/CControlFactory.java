@@ -27,14 +27,13 @@ package bibliothek.gui.dock.common.intern;
 
 import java.awt.Component;
 
-import javax.swing.JFrame;
-
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CWorkingArea;
+import bibliothek.gui.dock.util.WindowProvider;
 
 /**
  * A factory creating various elements that are needed in a {@link CControl}
@@ -63,7 +62,7 @@ public interface CControlFactory {
      * @param owner the owner of the dialogs of the station
      * @return the new station
      */
-    public ScreenDockStation createScreenDockStation( JFrame owner );
+    public ScreenDockStation createScreenDockStation( WindowProvider owner );
     
     /**
      * Creates a new {@link SplitDockStation}.

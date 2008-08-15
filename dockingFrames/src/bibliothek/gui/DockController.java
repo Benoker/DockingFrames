@@ -51,9 +51,7 @@ import bibliothek.gui.dock.control.*;
 import bibliothek.gui.dock.event.*;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleManager;
-import bibliothek.gui.dock.util.DockProperties;
-import bibliothek.gui.dock.util.DockUtilities;
-import bibliothek.gui.dock.util.IconManager;
+import bibliothek.gui.dock.util.*;
 import bibliothek.gui.dock.util.color.ColorManager;
 
 /**
@@ -146,9 +144,11 @@ public class DockController {
     private List<DockControllerRepresentativeListener> componentToDockElementsListeners =
         new ArrayList<DockControllerRepresentativeListener>();
     
-    /** the root window of the application, can be <code>null</code> */
+    /** the root window of the application */
+    private WindowProviderWrapper rootWindowProvider;
+    /** the current root window, can be <code>null</code> */
     private Window rootWindow;
-
+    
     /** a listener that is added to the {@link UIManager} and gets notified when the {@link LookAndFeel} changes */
     private PropertyChangeListener lookAndFeelObserver = new PropertyChangeListener(){
         public void propertyChange( PropertyChangeEvent evt ) {
@@ -198,6 +198,15 @@ public class DockController {
         
         if( factory == null )
             throw new IllegalArgumentException( "Factory must not be null" );
+        
+        rootWindowProvider = new WindowProviderWrapper();
+        rootWindowProvider.addWindowProviderListener( new WindowProviderListener(){
+            public void windowChanged( WindowProvider provider, Window window ) {
+                Window oldWindow = rootWindow;
+                rootWindow = window;
+                rootWindowChanged( oldWindow, window );
+            }
+        });
         
         final List<ControllerSetupListener> setupListeners = new LinkedList<ControllerSetupListener>();
         if( setup == null ){
@@ -907,20 +916,36 @@ public class DockController {
      * Sets the window that is used when dialogs have to be shown.
      * @param window the root window, can be <code>null</code>
      * @see #findRootWindow()
+     * @see #setRootWindowProvider(WindowProvider)
      */
     public void setRootWindow( Window window ){
-        if( this.rootWindow != window ){
-            if( this.rootWindow != null ){
-                if( componentHierarchyObserver != null )
-                    componentHierarchyObserver.remove( this.rootWindow );
-            }
+        if( window == null )
+            setRootWindowProvider( null );
+        else
+            setRootWindowProvider( new ComponentWindowProvider( window ) );
+    }
+    
+    /**
+     * Sets the provider which will be used to find a root window
+     * for this controller. The root window is used as owner for dialogs.
+     * @param window the new provider, can be <code>null</code>
+     */
+    public void setRootWindowProvider( WindowProvider window ){
+        rootWindowProvider.setDelegate( window );
+    }
+    
+    /**
+     * Called whenever the root window of this controller changed.
+     * @param oldWindow the old root window
+     * @param newWindow the new root window
+     */
+    protected void rootWindowChanged( Window oldWindow, Window newWindow ){
+        if( componentHierarchyObserver != null ){
+            if( oldWindow != null )
+                componentHierarchyObserver.remove( oldWindow );
             
-            this.rootWindow = window;
-            
-            if( this.rootWindow != null ){
-                if( componentHierarchyObserver != null )
-                    componentHierarchyObserver.add( this.rootWindow );
-            }   
+            if( newWindow != null )
+                componentHierarchyObserver.add( newWindow );
         }
     }
     

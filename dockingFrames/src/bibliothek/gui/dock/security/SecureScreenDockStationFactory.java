@@ -30,6 +30,7 @@ import java.awt.Window;
 
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.station.screen.ScreenDockStationFactory;
+import bibliothek.gui.dock.util.WindowProvider;
 
 /**
  * A factory which creates instances of {@link SecureScreenDockStation}.
@@ -47,6 +48,15 @@ public class SecureScreenDockStationFactory extends ScreenDockStationFactory {
     public SecureScreenDockStationFactory( Window owner ) {
         super(owner);
     }
+    
+    /**
+     * Creates a new factory.
+     * @param owner the window which will be used as owner of all windows
+     * created by this station.
+     */
+    public SecureScreenDockStationFactory( WindowProvider owner ) {
+        super(owner);
+    }
 
     @Override
     public String getID() {
@@ -55,6 +65,6 @@ public class SecureScreenDockStationFactory extends ScreenDockStationFactory {
     
     @Override
     protected ScreenDockStation createStation() {
-        return new SecureScreenDockStation( getOwner() );
+        return new SecureScreenDockStation( getProvider() );
     }
 }

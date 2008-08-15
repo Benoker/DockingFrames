@@ -57,6 +57,14 @@ public class SecureScreenDockDialog extends ScreenDockDialog {
     /**
      * Creates a new dialog.
      * @param station the station for which this dialog is shown
+     */
+    public SecureScreenDockDialog( ScreenDockStation station ) {
+        super( station );
+    }
+    
+    /**
+     * Creates a new dialog.
+     * @param station the station for which this dialog is shown
      * @param dialog the owner of this dialog
      */
     public SecureScreenDockDialog( ScreenDockStation station, Dialog dialog ) {

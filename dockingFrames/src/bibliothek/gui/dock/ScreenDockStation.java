@@ -53,8 +53,10 @@ import bibliothek.gui.dock.station.support.StationPaintWrapper;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.ComponentWindowProvider;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.WindowProvider;
 
 /**
  * A {@link DockStation} which is the whole screen. Every child of this
@@ -93,7 +95,7 @@ public class ScreenDockStation extends AbstractDockStation {
     private DropInfo dropInfo;
     
     /** The {@link Window} that is used as parent for the dialogs */
-    private Window owner;
+    private WindowProvider owner;
     
     /** The paint used to draw information on this station */
     private StationPaintWrapper stationPaint = new StationPaintWrapper();
@@ -113,11 +115,28 @@ public class ScreenDockStation extends AbstractDockStation {
     /**
      * Constructs a new <code>ScreenDockStation</code>.
      * @param owner the window which will be used as parent for the 
-     * dialogs of this station
+     * dialogs of this station, must not be <code>null</code>
      */
     public ScreenDockStation( Window owner ){
+        if( owner == null )
+            throw new IllegalArgumentException( "Owner must not be null" );
+        
+        init( new ComponentWindowProvider( owner ));
+    }
+    
+    /**
+     * Constructs a new <code>ScreenDockStation</code>.
+     * @param owner the window which will be used as parent for
+     * the dialogs of this station, must not be <code>null</code>
+     */
+    public ScreenDockStation( WindowProvider owner ){
     	if( owner == null )
             throw new IllegalArgumentException( "Owner must not be null" );
+    	
+    	init( owner );
+    }
+    
+    private void init( WindowProvider owner ){
         visibility = new DockableVisibilityManager( listeners );
         this.owner = owner;
         
@@ -376,8 +395,16 @@ public class ScreenDockStation extends AbstractDockStation {
     }
 
     public void drop( Dockable dockable ) {
-        int x = owner.getX() + 30;
-        int y = owner.getY() + 30;
+        Window owner = getOwner();
+        
+        int x = 30;
+        int y = 30;
+        
+        if( owner != null ){
+            x += owner.getX();
+            y += owner.getY();
+        }
+        
         Dimension preferred = dockable.getComponent().getPreferredSize();
         Rectangle rect = new Rectangle( x, y, Math.max( preferred.width, 100 ), Math.max( preferred.height, 100 ));
         addDockable( dockable, rect );
@@ -786,8 +813,8 @@ public class ScreenDockStation extends AbstractDockStation {
     /**
      * Creates a new dialog which is associated with this station.
      * @return the new dialog
-     * @throws IllegalStateException if the {{@link #getOwner() owner}
-     * of this station is neither a {@link Dialog} nor a {@link Frame}.
+     * @throws IllegalStateException if the owner of this station is
+     * not suitable for the new dialog
      */
     protected ScreenDockDialog createDialog(){
         Window window = getOwner();
@@ -796,16 +823,26 @@ public class ScreenDockStation extends AbstractDockStation {
         else if( window instanceof Frame )
             return new ScreenDockDialog( this, (Frame)window );
         else
-            throw new IllegalStateException( "Owner is not a frame or a dialog" );
+            return new ScreenDockDialog( this );
     }
     
     /**
      * Gets the owner of this station. The owner is forwarded to some
      * dialogs as their owner. So the dialogs will always remain in the
      * foreground.
-     * @return the owner
+     * @return the current owner
+     * @see #getProvider()
      */
     public Window getOwner(){
+        return owner.searchWindow();
+    }
+    
+    /**
+     * Gets the provider which delivers window owners for the dialogs of this
+     * station.
+     * @return the provider for windows
+     */
+    public WindowProvider getProvider(){
         return owner;
     }
     

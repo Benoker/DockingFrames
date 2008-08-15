@@ -29,7 +29,6 @@ import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import bibliothek.gui.DockController;
@@ -40,6 +39,7 @@ import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CWorkingArea;
+import bibliothek.gui.dock.util.WindowProvider;
 
 /**
  * A factory that uses the most efficient elements, can only be used in
@@ -73,7 +73,7 @@ public class EfficientControlFactory implements CControlFactory {
         };
     }
 
-    public ScreenDockStation createScreenDockStation( JFrame owner ) {
+    public ScreenDockStation createScreenDockStation( WindowProvider owner ) {
         return new ScreenDockStation( owner );
     }
     

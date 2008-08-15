@@ -61,6 +61,7 @@ import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.event.*;
 import bibliothek.gui.dock.facile.action.CloseAction;
 import bibliothek.gui.dock.facile.action.StateManager;
+import bibliothek.gui.dock.facile.station.screen.WindowProviderVisibility;
 import bibliothek.gui.dock.facile.station.split.ConflictResolver;
 import bibliothek.gui.dock.facile.station.split.DefaultConflictResolver;
 import bibliothek.gui.dock.frontend.Setting;
@@ -68,8 +69,7 @@ import bibliothek.gui.dock.layout.DockSituationIgnore;
 import bibliothek.gui.dock.support.util.ApplicationResource;
 import bibliothek.gui.dock.support.util.ApplicationResourceManager;
 import bibliothek.gui.dock.themes.ThemeFactory;
-import bibliothek.gui.dock.util.PropertyKey;
-import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.*;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
@@ -215,12 +215,31 @@ public class CControl {
     private PreferenceModel preferenceModel;
     
     /**
+     * Creates a new control. Note that a control should know the main
+     * window of the application, thus {@link CControl#CControl(WindowProvider)}
+     * would be the better choice than this constructor.
+     */
+    public CControl(){
+        this( new NullWindowProvider(), false );
+    }
+    
+    /**
      * Creates a new control
      * @param frame the main frame of the application, needed to create
      * dialogs for externalized {@link CDockable}s
      */
     public CControl( JFrame frame ){
         this( frame, false );
+    }
+    
+    /**
+     * Creates a new control
+     * @param window a provider for the main window of this application. Needed
+     * to create dialogs for externalized {@link CDockable}s. Must not be <code>null</code>, but
+     * its search method may return <code>null</code>
+     */
+    public CControl( WindowProvider window ){
+        this( window, false );
     }
 
     /**
@@ -231,8 +250,21 @@ public class CControl {
      * restricted environment and is not allowed to listen for global events.
      */
     public CControl( JFrame frame, boolean restrictedEnvironment ){
-        this( frame, restrictedEnvironment ? new SecureControlFactory() : new EfficientControlFactory() );
+        this( frame == null ? new NullWindowProvider() : new ComponentWindowProvider( frame ), restrictedEnvironment );
     }
+
+    /**
+     * Creates a new control
+     * @param window a provider for the main window of this application. Needed
+     * to create dialogs for externalized {@link CDockable}s. Must not be <code>null</code>, but
+     * its search method may return <code>null</code>
+     * @param restrictedEnvironment whether this application runs in a
+     * restricted environment and is not allowed to listen for global events.
+     */
+    public CControl( WindowProvider window, boolean restrictedEnvironment ){
+        this( window, restrictedEnvironment ? new SecureControlFactory() : new EfficientControlFactory() );
+    }
+
 
     /**
      * Creates a new control
@@ -242,6 +274,22 @@ public class CControl {
      * control.
      */
     public CControl( JFrame frame, CControlFactory factory ){
+        this( frame == null ? new NullWindowProvider() : new ComponentWindowProvider( frame ), factory );
+    }
+
+    /**
+     * Creates a new control
+     * @param window a provider for the main window of this application. Needed
+     * to create dialogs for externalized {@link CDockable}s. Must not be <code>null</code>, but
+     * its search method may return <code>null</code>
+     * @param factory a factory which is used to create new elements for this
+     * control.
+     */
+    public CControl( WindowProvider window, CControlFactory factory ){
+        if( window == null ){
+            throw new IllegalArgumentException( "window must not be null, however its search method may return null" );
+        }
+        
         this.factory = factory;
 
         DockController controller = factory.createController( this );
@@ -250,7 +298,7 @@ public class CControl {
         initFocusListeners( controller );
         initInputListener( controller );
 
-        frontend = new DockFrontend( controller, frame ){
+        frontend = new DockFrontend( controller, window ){
             @Override
             protected Setting createSetting() {
                 CSetting setting = new CSetting();
@@ -424,7 +472,7 @@ public class CControl {
             ex.printStackTrace();
         }
         
-        initExtendedModes( frame );
+        initExtendedModes( window );
         initProperties();
         
         setTheme( ThemeMap.KEY_SMOOTH_THEME );
@@ -530,12 +578,12 @@ public class CControl {
 
     /**
      * Sets up the {@link #stateManager}.
-     * @param frame base for the {@link ScreenDockStation}
+     * @param window base for the {@link ScreenDockStation}
      */
-    private void initExtendedModes( JFrame frame ){
+    private void initExtendedModes( WindowProvider window ){
         stateManager = new CStateManager( access );
 
-        final ScreenDockStation screen = factory.createScreenDockStation( frame );
+        final ScreenDockStation screen = factory.createScreenDockStation( window );
 
         // frontend.addRoot( screen, EXTERNALIZED_STATION_ID );
         CStation screenStation = new AbstractCStation( screen, EXTERNALIZED_STATION_ID, CExternalizedLocation.STATION ){
@@ -555,21 +603,10 @@ public class CControl {
 
         add( screenStation, true );
 
-        screen.setShowing( frame.isVisible() );
-        frame.addComponentListener( new ComponentListener(){
-            public void componentShown( ComponentEvent e ) {
-                screen.setShowing( true );
-            }
-            public void componentHidden( ComponentEvent e ) {
-                screen.setShowing( false );
-            }
-            public void componentMoved( ComponentEvent e ) {
-                // ignore
-            }
-            public void componentResized( ComponentEvent e ) {
-                // ignore
-            }
-        });
+        if( window != null ){
+            WindowProviderVisibility visibility = new WindowProviderVisibility( screen );
+            visibility.setProvider( window );
+        }
     }
 
     /**

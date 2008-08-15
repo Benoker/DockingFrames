@@ -64,6 +64,20 @@ public class ScreenDockDialog extends JDialog {
                 checkRestrictedBounds();
             }
     };
+
+    
+    /**
+     * Creates a new dialog. Note that the constructors with
+     * an owner window are preferred.
+     * @param station the station to which this dialog is responsible
+     */
+    public ScreenDockDialog( ScreenDockStation station ){
+        if( station == null )
+            throw new IllegalArgumentException( "Station must not be null" );
+        
+        this.station = station;
+    }
+
     
     /**
      * Creates a new dialog.

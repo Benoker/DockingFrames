@@ -32,6 +32,7 @@ import java.awt.Window;
 
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.station.screen.ScreenDockDialog;
+import bibliothek.gui.dock.util.WindowProvider;
 
 /**
  * A {@link ScreenDockStation} that uses {@link SecureScreenDockDialog} 
@@ -48,6 +49,15 @@ public class SecureScreenDockStation extends ScreenDockStation {
         super(owner);
     }
 
+    /**
+     * Creates a new factory.
+     * @param owner the window which will be used as owner of all windows
+     * created by this station.
+     */
+    public SecureScreenDockStation( WindowProvider owner ) {
+        super(owner);
+    }
+    
     @Override
     public String getFactoryID() {
         return SecureScreenDockStationFactory.ID;
@@ -61,6 +71,6 @@ public class SecureScreenDockStation extends ScreenDockStation {
         else if( window instanceof Frame )
             return new SecureScreenDockDialog( this, (Frame)window );
         else
-            throw new IllegalStateException( "Window is not a frame or a dialog" );
+            return new SecureScreenDockDialog( this );
     }
 }
