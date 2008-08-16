@@ -23,21 +23,16 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.util.color;
+package bibliothek.gui.dock.util.font;
 
-import java.awt.Color;
-
-import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.UIProperties;
 
 /**
- * A {@link ColorManager} contains {@link Color}s, {@link ColorBridge}s and
- * {@link DockColor}s. Some <code>DockColor</code>s are associated with a 
- * <code>ColorBridge</code>. If a <code>Color</code> in this manager is
- * {@link UIProperties#put(Priority, String, Object) set}, then each <code>DockColor</code>
- * that listens for that color gets informed about the change.
+ * A {@link FontManager} contains {@link FontModifier}s, {@link DockFont}s
+ * and {@link FontBridge}s. Changes of any {@link FontModifier}s will be 
+ * reported to the {@link DockFont}s.
  * @author Benjamin Sigg
  */
-public class ColorManager extends UIProperties<Color, DockColor, ColorBridge>{
-    // no new methods
+public class FontManager extends UIProperties<FontModifier, DockFont, FontBridge>{
+    // nothing
 }

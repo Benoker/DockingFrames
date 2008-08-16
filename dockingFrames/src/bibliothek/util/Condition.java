@@ -23,21 +23,16 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.util.color;
-
-import java.awt.Color;
-
-import bibliothek.gui.dock.util.Priority;
-import bibliothek.gui.dock.util.UIProperties;
+package bibliothek.util;
 
 /**
- * A {@link ColorManager} contains {@link Color}s, {@link ColorBridge}s and
- * {@link DockColor}s. Some <code>DockColor</code>s are associated with a 
- * <code>ColorBridge</code>. If a <code>Color</code> in this manager is
- * {@link UIProperties#put(Priority, String, Object) set}, then each <code>DockColor</code>
- * that listens for that color gets informed about the change.
+ * A condition is a boolean value that depends on some properties.
  * @author Benjamin Sigg
  */
-public class ColorManager extends UIProperties<Color, DockColor, ColorBridge>{
-    // no new methods
+public interface Condition {
+    /**
+     * Gets the current state of this condition.
+     * @return <code>true</code> if the condition is met, <code>false</code> otherwise
+     */
+    public boolean getState();
 }

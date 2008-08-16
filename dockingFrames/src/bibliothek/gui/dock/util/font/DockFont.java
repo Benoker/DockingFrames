@@ -23,21 +23,22 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.util.color;
+package bibliothek.gui.dock.util.font;
 
-import java.awt.Color;
-
-import bibliothek.gui.dock.util.Priority;
-import bibliothek.gui.dock.util.UIProperties;
+import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.gui.dock.util.UIValue;
 
 /**
- * A {@link ColorManager} contains {@link Color}s, {@link ColorBridge}s and
- * {@link DockColor}s. Some <code>DockColor</code>s are associated with a 
- * <code>ColorBridge</code>. If a <code>Color</code> in this manager is
- * {@link UIProperties#put(Priority, String, Object) set}, then each <code>DockColor</code>
- * that listens for that color gets informed about the change.
+ * A wrapper around a {@link FontModifier} object.
  * @author Benjamin Sigg
  */
-public class ColorManager extends UIProperties<Color, DockColor, ColorBridge>{
-    // no new methods
+public interface DockFont extends UIValue<FontModifier> {
+    /** the default kind of fonts */
+    public static final Path KIND_DOCK_FONT = new Path( "DockFont" );
+    
+    /** default id for the title active font */
+    public static final String ID_TITLE_ACTIVE = "title.active";
+    
+    /** default id for the title inactive font */
+    public static final String ID_TITLE_INACTIVE = "title.inactive";
 }

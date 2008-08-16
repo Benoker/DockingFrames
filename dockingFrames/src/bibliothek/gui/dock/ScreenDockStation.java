@@ -53,10 +53,7 @@ import bibliothek.gui.dock.station.support.StationPaintWrapper;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
-import bibliothek.gui.dock.util.ComponentWindowProvider;
-import bibliothek.gui.dock.util.DockUtilities;
-import bibliothek.gui.dock.util.PropertyKey;
-import bibliothek.gui.dock.util.WindowProvider;
+import bibliothek.gui.dock.util.*;
 
 /**
  * A {@link DockStation} which is the whole screen. Every child of this
@@ -121,7 +118,7 @@ public class ScreenDockStation extends AbstractDockStation {
         if( owner == null )
             throw new IllegalArgumentException( "Owner must not be null" );
         
-        init( new ComponentWindowProvider( owner ));
+        init( new DirectWindowProvider( owner ));
     }
     
     /**

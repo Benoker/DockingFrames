@@ -165,7 +165,7 @@ public class DockFrontend {
      * Constructs a new frontend, creates a new controller.
      */
     public DockFrontend(){
-        this( new DockController(), (WindowProvider)null );
+        this( new DockController(), new NullWindowProvider() );
     }
     
     /**
@@ -176,7 +176,7 @@ public class DockFrontend {
      * may be <code>null</code>
      */
     public DockFrontend( Window owner ){
-        this( new DockController(), owner == null ? null : new ComponentWindowProvider( owner ) );
+        this( new DockController(), owner == null ? new NullWindowProvider() : new DirectWindowProvider( owner ) );
     }
     
     /**
@@ -195,7 +195,7 @@ public class DockFrontend {
      * @param controller the controller used to store root stations
      */
     public DockFrontend( DockController controller ){
-        this( controller, (WindowProvider)null );
+        this( controller, new NullWindowProvider() );
     }
     
     /**
@@ -206,7 +206,7 @@ public class DockFrontend {
      * may be <code>null</code>
      */
     public DockFrontend( DockController controller, Window owner ){
-        this( controller, owner == null ? null : new ComponentWindowProvider( owner ));
+        this( controller, owner == null ? new NullWindowProvider() : new DirectWindowProvider( owner ));
     }
 
     /**
@@ -221,6 +221,7 @@ public class DockFrontend {
             throw new IllegalArgumentException( "controller must not be null" );
         
         this.controller = controller;
+        controller.setRootWindowProvider( owner );
         
         hider = createHider();
         controller.addActionGuard( hider );
@@ -233,11 +234,8 @@ public class DockFrontend {
         registerFactory( new FlapDockStationFactory() );
         registerFactory( new SecureFlapDockStationFactory() );
         
-        if( owner != null ){
-            controller.setRootWindowProvider( owner );
-            registerFactory( new ScreenDockStationFactory( owner ));
-            registerFactory( new SecureScreenDockStationFactory( owner ));
-        }
+        registerFactory( new ScreenDockStationFactory( controller.getRootWindowProvider() ));
+        registerFactory( new SecureScreenDockStationFactory( controller.getRootWindowProvider() ));
         
         registerFactory( new SplitDockPropertyFactory() );
         registerFactory( new StackDockPropertyFactory() );
@@ -266,6 +264,15 @@ public class DockFrontend {
      */
     public DockController getController() {
         return controller;
+    }
+    
+    /**
+     * Sets the window which is used as root for any dialog, can be <code>null</code>.
+     * @param owner the owning window
+     * @see DockController#setRootWindowProvider(WindowProvider)
+     */
+    public void setOwner( WindowProvider owner ){
+        controller.setRootWindowProvider( owner );
     }
     
     /**

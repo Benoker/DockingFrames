@@ -33,11 +33,14 @@ import javax.swing.JComponent;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.themes.color.TitleColor;
+import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.title.AbstractDockTitle;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.color.ColorCodes;
+import bibliothek.gui.dock.util.font.DockFont;
+import bibliothek.util.Condition;
 
 /**
  * The default-title that is used most times in the framework. This title
@@ -95,6 +98,18 @@ public class BasicDockTitle extends AbstractDockTitle {
         addColor( inactiveRightColor );
         addColor( activeTextColor );
         addColor( inactiveTextColor );
+        
+        addConditionalFont( DockFont.ID_TITLE_ACTIVE, TitleFont.KIND_TITLE_FONT, new Condition(){
+            public boolean getState() {
+                return isActive();
+            }
+        }, null );
+        
+        addConditionalFont( DockFont.ID_TITLE_INACTIVE, TitleFont.KIND_TITLE_FONT, new Condition(){
+            public boolean getState() {
+                return !isActive();
+            }
+        }, null );
     }
 
     @Override
@@ -332,6 +347,7 @@ public class BasicDockTitle extends AbstractDockTitle {
     public void setActive( boolean active ) {
         super.setActive( active );
         updateColors();
+        updateFonts();
     }
     
     /**

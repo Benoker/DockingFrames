@@ -36,6 +36,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
@@ -49,8 +50,13 @@ import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
+import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
 import bibliothek.gui.dock.util.color.ColorManager;
+import bibliothek.gui.dock.util.font.AbstractDockFont;
+import bibliothek.gui.dock.util.font.FontManager;
+import bibliothek.gui.dock.util.font.FontModifier;
+import bibliothek.util.Condition;
 
 /**
  * An abstract implementation of {@link DockTitle}. This title can have
@@ -107,6 +113,10 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     
     /** the colors used by this title */
     private List<AbstractDockColor> colors = new ArrayList<AbstractDockColor>();
+    /** the fonts used by this title */
+    private List<AbstractDockFont> fonts = new ArrayList<AbstractDockFont>();
+    /** the fonts which are used automatically */
+    private List<ConditionalFont> conditionalFonts;
     
     /**
      * Constructs a new title
@@ -194,6 +204,61 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     protected void removeColor( AbstractDockColor color ){
         colors.remove( color );
         color.connect( null );
+    }
+    
+    /**
+     * Adds a font to the list of fonts, this title will ensure that 
+     * <code>font</code> gets connected to a {@link FontManager} as soon
+     * as this title is bound.
+     * @param font the new font
+     */
+    protected void addFont( AbstractDockFont font ){
+        fonts.add( font );
+        if( bound ){
+            font.connect( getDockable().getController() );
+        }
+    }
+    
+    /**
+     * Removes a font from this title.
+     * @param font the font to remove
+     */
+    protected void removeFont( AbstractDockFont font ){
+        fonts.remove( font );
+        font.connect( null );
+    }
+    
+
+    /**
+     * Adds a new conditional font to this title, the conditional font will
+     * be applied to {@link #setFont(Font)} when its <code>condition</code>
+     * is met. If there is more than one font whose condition is met, then the
+     * first one that was registered is used.
+     * @param id the id of the font which is to be used
+     * @param kind what kind of title this is
+     * @param condition the condition to met
+     * @param backup to be used when there is not font set in the {@link FontManager}
+     */
+    protected void addConditionalFont( String id, Path kind, Condition condition, FontModifier backup ){
+        ConditionalFont font = new ConditionalFont( id, kind, condition, backup );
+        addFont( font );
+        if( conditionalFonts == null )
+            conditionalFonts = new ArrayList<ConditionalFont>();
+        conditionalFonts.add( font );
+        updateFonts();
+    }
+    
+    /**
+     * Removes all fonts which were set using {@link #addConditionalFont(String, Path, Condition, FontModifier)}
+     */
+    protected void removeAllConditionalFonts(){
+        if( conditionalFonts != null ){
+            for( ConditionalFont font : conditionalFonts ){
+                removeFont( font );
+            }
+            conditionalFonts = null;
+            updateFonts();
+        }
     }
     
     @Override
@@ -326,6 +391,14 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         
         if( label != null )
             label.setBackground( fg );
+    }
+    
+    @Override
+    public void setFont( Font font ) {
+        super.setFont( font );
+        
+        if( label != null )
+            label.setFont( font );
     }
     
     @Override
@@ -608,6 +681,9 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         if( controller != null ){
             for( AbstractDockColor color : colors )
                 color.connect( controller );
+            
+            for( AbstractDockFont font : fonts )
+                font.connect( controller );
         }
         
         updateText();
@@ -629,6 +705,9 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         
         for( AbstractDockColor color : colors )
             color.connect( null );
+        
+        for( AbstractDockFont font : fonts )
+            font.connect( null );
         
         setText( "" );
         setIcon( null );
@@ -675,6 +754,50 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     }
     
     /**
+     * Checks the state of this title and may replace the font of the title.
+     */
+    protected void updateFonts(){
+        if( conditionalFonts != null ){
+            Font newFont = null;
+            
+            for( ConditionalFont font : conditionalFonts ){
+                if( font.getState() ){
+                    newFont = font.font( this );
+                    break;
+                }
+            }
+            
+            setFont( newFont );
+        }
+    }
+    
+    /**
+     * A font that is only used when a condition is met.
+     * @author Benjamin Sigg
+     */
+    private class ConditionalFont extends TitleFont{
+        private Condition condition;
+        
+        public ConditionalFont( String id, Path kind, Condition condition, FontModifier backup ){
+            super( id, AbstractDockTitle.this, kind, backup );
+            this.condition = condition;
+        }
+        
+        /**
+         * Gets whether the condition is met or not.
+         * @return <code>true</code> if this font should be used
+         */
+        public boolean getState(){
+            return condition.getState();
+        }
+        
+        @Override
+        protected void changed( FontModifier oldValue, FontModifier newValue ) {
+            updateFonts();
+        }
+    }
+    
+    /**
      * A label which draws some text, and can change the layout of the text 
      * between horizontal and vertical.
      * @author Benjamin Sigg
@@ -682,6 +805,12 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     private class OrientedLabel extends JPanel{
         /** The label which really paints the text */
         private JLabel label = new JLabel();
+        
+        /** the original font of {@link #label} */
+        private Font originalFont;
+        
+        /** whether the {@link #originalFont} has been set */
+        private boolean originalFontSet = false;
         
         /** The text on the label */
         private String text;
@@ -730,8 +859,35 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         @Override
         public void updateUI() {
             super.updateUI();
-            if( label != null )
+            if( label != null ){
+                originalFontSet = false;
+                originalFont = null;
+                label.setFont( null );
+                
                 label.updateUI();
+                
+                updateFonts();
+            }
+        }
+        
+        @Override
+        public void setFont( Font font ) {
+            super.setFont( font );
+            if( label != null ){
+                if( !originalFontSet ){
+                    originalFontSet = true;
+                    originalFont = label.getFont();
+                }
+                
+                if( font != null ){
+                    label.setFont( font );
+                }
+                else{
+                    label.setFont( originalFont );
+                    originalFont = null;
+                    originalFontSet = false;
+                }
+            }
         }
         
         @Override

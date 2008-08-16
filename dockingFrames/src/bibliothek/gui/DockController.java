@@ -53,6 +53,7 @@ import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.util.*;
 import bibliothek.gui.dock.util.color.ColorManager;
+import bibliothek.gui.dock.util.font.FontManager;
 
 /**
  * A controller is needed to drag and drop {@link Dockable dockables} from
@@ -111,6 +112,8 @@ public class DockController {
     private IconManager icons = new IconManager();
     /** map of colors that are used through the realm of this controller */
     private ColorManager colors = new ColorManager();
+    /** map of fonts that are used through the realm of this controller */
+    private FontManager fonts = new FontManager();
     
     /** A list of sources for a {@link DockActionSource} */
     private List<ActionOffer> actionOffers = new ArrayList<ActionOffer>();
@@ -913,6 +916,14 @@ public class DockController {
     }
     
     /**
+     * Gets the map of fonts which are used by this controller.
+     * @return the map of fonts
+     */
+    public FontManager getFonts() {
+        return fonts;
+    }
+    
+    /**
      * Sets the window that is used when dialogs have to be shown.
      * @param window the root window, can be <code>null</code>
      * @see #findRootWindow()
@@ -922,7 +933,7 @@ public class DockController {
         if( window == null )
             setRootWindowProvider( null );
         else
-            setRootWindowProvider( new ComponentWindowProvider( window ) );
+            setRootWindowProvider( new DirectWindowProvider( window ) );
     }
     
     /**
@@ -932,6 +943,18 @@ public class DockController {
      */
     public void setRootWindowProvider( WindowProvider window ){
         rootWindowProvider.setDelegate( window );
+    }
+    
+    /**
+     * Gets the provider which will be used to find a root window for this
+     * controller. Note that this is not the same provider as given to
+     * {@link #setRootWindowProvider(WindowProvider)}, but one that will
+     * always return the same result as the provider set by the client. This
+     * method always returns the same object.
+     * @return the root window provider
+     */
+    public WindowProviderWrapper getRootWindowProvider() {
+        return rootWindowProvider;
     }
     
     /**

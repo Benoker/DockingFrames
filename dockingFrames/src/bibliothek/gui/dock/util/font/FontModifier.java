@@ -23,21 +23,21 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.util.color;
+package bibliothek.gui.dock.util.font;
 
-import java.awt.Color;
-
-import bibliothek.gui.dock.util.Priority;
-import bibliothek.gui.dock.util.UIProperties;
+import java.awt.Component;
+import java.awt.Font;
 
 /**
- * A {@link ColorManager} contains {@link Color}s, {@link ColorBridge}s and
- * {@link DockColor}s. Some <code>DockColor</code>s are associated with a 
- * <code>ColorBridge</code>. If a <code>Color</code> in this manager is
- * {@link UIProperties#put(Priority, String, Object) set}, then each <code>DockColor</code>
- * that listens for that color gets informed about the change.
+ * A font modifier generates a {@link Font} object for some {@link Component}.
  * @author Benjamin Sigg
  */
-public class ColorManager extends UIProperties<Color, DockColor, ColorBridge>{
-    // no new methods
+public interface FontModifier {
+    /**
+     * Creates or gets a font for <code>component</code>. Note that <code>component</code>
+     * can already have a font set from this or another {@link FontModifier}.
+     * @param component the component for which a font is requested
+     * @return the font for <code>component</code>, can be <code>null</code>
+     */
+    public Font getFont( Component component );
 }

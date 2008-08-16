@@ -250,7 +250,7 @@ public class CControl {
      * restricted environment and is not allowed to listen for global events.
      */
     public CControl( JFrame frame, boolean restrictedEnvironment ){
-        this( frame == null ? new NullWindowProvider() : new ComponentWindowProvider( frame ), restrictedEnvironment );
+        this( frame == null ? new NullWindowProvider() : new DirectWindowProvider( frame ), restrictedEnvironment );
     }
 
     /**
@@ -274,7 +274,7 @@ public class CControl {
      * control.
      */
     public CControl( JFrame frame, CControlFactory factory ){
-        this( frame == null ? new NullWindowProvider() : new ComponentWindowProvider( frame ), factory );
+        this( frame == null ? new NullWindowProvider() : new DirectWindowProvider( frame ), factory );
     }
 
     /**
@@ -472,7 +472,7 @@ public class CControl {
             ex.printStackTrace();
         }
         
-        initExtendedModes( window );
+        initExtendedModes();
         initProperties();
         
         setTheme( ThemeMap.KEY_SMOOTH_THEME );
@@ -578,11 +578,11 @@ public class CControl {
 
     /**
      * Sets up the {@link #stateManager}.
-     * @param window base for the {@link ScreenDockStation}
      */
-    private void initExtendedModes( WindowProvider window ){
+    private void initExtendedModes(){
         stateManager = new CStateManager( access );
 
+        WindowProvider window = frontend.getController().getRootWindowProvider();
         final ScreenDockStation screen = factory.createScreenDockStation( window );
 
         // frontend.addRoot( screen, EXTERNALIZED_STATION_ID );
@@ -1501,6 +1501,16 @@ public class CControl {
      */
     public ThemeMap getThemes(){
         return themes;
+    }
+    
+    /**
+     * Sets the root window of the application. The root window is used
+     * as owner of any dialog that is created. Already existing dialogs
+     * will not change their owner.
+     * @param window the new owner, can be <code>null</code>
+     */
+    public void setRootWindow( WindowProvider window ){
+        frontend.setOwner( window );
     }
     
     /**
