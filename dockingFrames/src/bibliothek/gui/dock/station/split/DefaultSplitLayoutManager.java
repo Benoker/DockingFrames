@@ -373,6 +373,7 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
             
             if( putInfo.getNode() != null && (putInfo.getPut() == PutInfo.Put.CENTER || putInfo.getPut() == PutInfo.Put.TITLE )){
                 if( !putInfo.getDockable().accept( station, ((Leaf)putInfo.getNode()).getDockable() ) ||
+                        !((Leaf)putInfo.getNode()).getDockable().accept( station, putInfo.getDockable() ) ||
                         !station.getController().getAcceptance().accept( station, ((Leaf)putInfo.getNode()).getDockable(), putInfo.getDockable() )){
                     return null;
                 }
