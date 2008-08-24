@@ -603,10 +603,8 @@ public class CControl {
 
         add( screenStation, true );
 
-        if( window != null ){
-            WindowProviderVisibility visibility = new WindowProviderVisibility( screen );
-            visibility.setProvider( window );
-        }
+        WindowProviderVisibility visibility = new WindowProviderVisibility( screen );
+        visibility.setProvider( window );
     }
 
     /**
