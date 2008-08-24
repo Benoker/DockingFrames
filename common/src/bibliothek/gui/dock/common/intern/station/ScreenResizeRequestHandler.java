@@ -32,7 +32,7 @@ import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.layout.RequestDimension;
-import bibliothek.gui.dock.station.screen.ScreenDockDialog;
+import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 
 /**
  * A handler which can change the size of children of a {@link ScreenDockStation}
@@ -55,11 +55,11 @@ public class ScreenResizeRequestHandler extends AbstractResizeRequestHandler {
     
     public void handleResizeRequest( CControl control ) {
         for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
-            ScreenDockDialog dialog = station.getDialog( i );
+            ScreenDockWindow window = station.getWindow( i );
             RequestDimension size = getAndClearResizeRequest( station.getDockable( i ) );
             if( size != null ){
-                Insets insets = dialog.getDockableInsets();
-                Rectangle bounds = dialog.getBounds();
+                Insets insets = window.getDockableInsets();
+                Rectangle bounds = window.getWindowBounds();
                 
                 int width;
                 if( size.isWidthSet() )
@@ -72,12 +72,13 @@ public class ScreenResizeRequestHandler extends AbstractResizeRequestHandler {
                     height = size.getHeight() + insets.top + insets.bottom;
                 else
                     height = bounds.height;
-                
-                dialog.setRestrictedBounds(
-                        bounds.x + (bounds.width - width)/2, 
-                        bounds.y + (bounds.height - height)/2,
-                        width,
-                        height );
+
+                window.setWindowBounds(
+                        new Rectangle( 
+                                bounds.x + (bounds.width - width)/2, 
+                                bounds.y + (bounds.height - height)/2,
+                                width,
+                                height ));
             }
         }
     }

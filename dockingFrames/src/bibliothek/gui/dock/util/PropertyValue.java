@@ -182,6 +182,23 @@ public abstract class PropertyValue<A> {
 	}
 	
 	/**
+	 * Tells whether any value is set.
+	 * @return <code>true</code> if not the default value of the key
+	 * would be returned
+	 */
+	public boolean isAnyValueSet(){
+	    if( value != null )
+	        return true;
+	    
+	    if( properties != null ){
+	        if( properties.isSet( key ))
+	            return true;
+	    }
+	    
+	    return false;
+	}
+	
+	/**
 	 * Sets the current value.
 	 * @param value the value, <code>null</code> if the value should be read
 	 * from the {@link #setProperties(DockProperties) properties}

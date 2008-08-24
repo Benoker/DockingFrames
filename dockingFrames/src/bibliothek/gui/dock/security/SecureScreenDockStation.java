@@ -26,12 +26,11 @@
 
 package bibliothek.gui.dock.security;
 
-import java.awt.Dialog;
-import java.awt.Frame;
 import java.awt.Window;
 
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.station.screen.ScreenDockDialog;
+import bibliothek.gui.dock.station.screen.ScreenDockWindowFactory;
 import bibliothek.gui.dock.util.WindowProvider;
 
 /**
@@ -64,13 +63,12 @@ public class SecureScreenDockStation extends ScreenDockStation {
     }
     
     @Override
-    public SecureScreenDockDialog createDialog() {
-        Window window = getOwner();
-        if( window instanceof Dialog )
-            return new SecureScreenDockDialog( this, (Dialog)window );
-        else if( window instanceof Frame )
-            return new SecureScreenDockDialog( this, (Frame)window );
-        else
-            return new SecureScreenDockDialog( this );
+    public ScreenDockWindowFactory getWindowFactory() {
+        if( getWindowFactoryProperty().isAnyValueSet() ){
+            return super.getWindowFactory();
+        }
+        else{
+            return new SecureScreenDockWindowFactory();
+        }
     }
 }

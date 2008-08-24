@@ -27,17 +27,21 @@ package bibliothek.gui.dock.station.screen;
 
 import java.awt.*;
 
+import javax.swing.SwingUtilities;
+
+import bibliothek.gui.Dockable;
+
 /**
  * A restriction that ensures that each dialog is always visible, even when some
  * screens can't be used because of that.
  * @author Benjamin Sigg
  */
 public class HardBoundaryRestriction implements BoundaryRestriction{
-    public Rectangle check( ScreenDockDialog dialog ) {
-        return check( dialog, dialog.getBounds() );
+    public Rectangle check( ScreenDockWindow window ) {
+        return check( window, window.getWindowBounds() );
     }
     
-    public Rectangle check( ScreenDockDialog dialog, Rectangle target ) {
+    public Rectangle check( ScreenDockWindow window, Rectangle target ) {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] screens = ge.getScreenDevices();
     
@@ -50,7 +54,7 @@ public class HardBoundaryRestriction implements BoundaryRestriction{
         GraphicsDevice best = null;
         
         for( GraphicsDevice screen : screens ){
-            double check = measureBounds( dialog, x, y, width, height, screen );
+            double check = measureBounds( window, x, y, width, height, screen );
             if( check > fit ){
                 fit = check;
                 best = screen;
@@ -60,13 +64,13 @@ public class HardBoundaryRestriction implements BoundaryRestriction{
         if( best == null )
             return null;
         else
-            return boundsInDevice( dialog, x, y, width, height, best );
+            return boundsInDevice( window, x, y, width, height, best );
     }
     
     
     /**
-     * Checks how good <code>dialog</code> fits into the screen <code>device</code>
-     * @param dialog the dialog that is checked
+     * Checks how good <code>window</code> fits into the screen <code>device</code>
+     * @param window the window that is checked
      * @param x the desired x-coordinate
      * @param y the desired y-coordinate
      * @param width the desired width
@@ -75,11 +79,11 @@ public class HardBoundaryRestriction implements BoundaryRestriction{
      * @return a value between 0 and 1, where 0 means "does not fit" and
      * 1 means "perfect".
      */
-    protected double measureBounds( ScreenDockDialog dialog, int x, int y, int width, int height, GraphicsDevice device ){
+    protected double measureBounds( ScreenDockWindow window, int x, int y, int width, int height, GraphicsDevice device ){
         if( width == 0 || height == 0 )
             return 0.0;
         
-        GraphicsConfiguration config = dialog.getGraphicsConfiguration();
+        GraphicsConfiguration config = getGraphicsConfiguration( window );
         if( config == null )
             return 0.0;
         
@@ -98,7 +102,7 @@ public class HardBoundaryRestriction implements BoundaryRestriction{
     /**
      * Calculates size and location of <code>dialog</code> such that it is
      * in <code>device</code>. 
-     * @param dialog the dialog to check
+     * @param window the window to check
      * @param x the desired x-coordinate
      * @param y the desired y-coordinate
      * @param width the desired width
@@ -106,8 +110,8 @@ public class HardBoundaryRestriction implements BoundaryRestriction{
      * @param device the screen in which to show this dialog
      * @return the new bounds, can be <code>null</code>
      */
-    protected Rectangle boundsInDevice( ScreenDockDialog dialog, int x, int y, int width, int height, GraphicsDevice device ){
-        GraphicsConfiguration config = dialog.getGraphicsConfiguration();
+    protected Rectangle boundsInDevice( ScreenDockWindow window, int x, int y, int width, int height, GraphicsDevice device ){
+        GraphicsConfiguration config = getGraphicsConfiguration( window );
         if( config != null ){
             Rectangle size = config.getBounds();
             x += size.x;
@@ -132,4 +136,21 @@ public class HardBoundaryRestriction implements BoundaryRestriction{
         return new Rectangle( x, y, width, height );
     }
     
+    /**
+     * Searches the {@link GraphicsConfiguration} of <code>window</code>.
+     * @param window some window
+     * @return its configuration, might be <code>null</code>
+     */
+    protected GraphicsConfiguration getGraphicsConfiguration( ScreenDockWindow window ){
+        Dockable dockable = window.getDockable();
+        if( dockable == null )
+            return null;
+        
+        Component component = dockable.getComponent();
+        Window parent = SwingUtilities.getWindowAncestor( component );
+        if( parent == null )
+            return null;
+        
+        return parent.getGraphicsConfiguration();
+    }
 }

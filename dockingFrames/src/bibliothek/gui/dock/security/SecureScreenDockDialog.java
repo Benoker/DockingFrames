@@ -1,9 +1,9 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2008 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,40 +26,32 @@
 
 package bibliothek.gui.dock.security;
 
-import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JRootPane;
 
-import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
-import bibliothek.gui.dock.station.DockableDisplayer;
-import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.screen.ScreenDockDialog;
 
 /**
- * A {@link ScreenDockDialog} that inserts a {@link GlassedPane} between its
- * {@link Dockable} and the outer world. The GlassPane is added and removed
- * from the {@link SecureMouseFocusObserver} automatically.
+ * The secure reimplementation of {@link ScreenDockDialog}.
  * @author Benjamin Sigg
  */
-public class SecureScreenDockDialog extends ScreenDockDialog {
-    /** The panel on which the {@link DockableDisplayer} is added */
-    private JComponent content;
-    /** The panel used to catch MouseEvents */
-    private GlassedPane pane;
-    /** The observer to which the {@link #pane} of this dialog has been added */
-    private SecureMouseFocusObserver observer;
+public class SecureScreenDockDialog extends SecureAbstractScreenDockWindow {
+    private JDialog dialog;
     
     /**
      * Creates a new dialog.
      * @param station the station for which this dialog is shown
      */
-    public SecureScreenDockDialog( ScreenDockStation station ) {
+    public SecureScreenDockDialog( ScreenDockStation station, boolean undecorated ) {
         super( station );
+        this.dialog = new JDialog();
+        init( undecorated );
     }
     
     /**
@@ -67,8 +59,10 @@ public class SecureScreenDockDialog extends ScreenDockDialog {
      * @param station the station for which this dialog is shown
      * @param dialog the owner of this dialog
      */
-    public SecureScreenDockDialog( ScreenDockStation station, Dialog dialog ) {
-        super(station, dialog);
+    public SecureScreenDockDialog( ScreenDockStation station, Dialog dialog, boolean undecorated ) {
+        super( station );
+        this.dialog = new JDialog( dialog );
+        init( undecorated );
     }
 
     /**
@@ -76,28 +70,37 @@ public class SecureScreenDockDialog extends ScreenDockDialog {
      * @param station the station for which this dialog is shown
      * @param frame the owner of this dialog
      */
-    public SecureScreenDockDialog( ScreenDockStation station, Frame frame ) {
-        super(station, frame);
+    public SecureScreenDockDialog( ScreenDockStation station, Frame frame, boolean undecorated ) {
+        super( station );
+        this.dialog = new JDialog( frame );
+        init( undecorated );
     }
     
-    {
-        addWindowListener( new Listener() );
-    }
-    
-    @Override
-    protected OverpaintablePanel createContent() {
-        OverpaintablePanel overpaint = super.createContent();
+    private void init( boolean undecorated ){
+        dialog.addWindowListener( new Listener() );
         
-        pane = new GlassedPane();
-        overpaint.setBasePane( pane );
-        content = pane.getContentPane();
+        if( undecorated ){
+            dialog.setUndecorated( true );
+            dialog.getRootPane().setWindowDecorationStyle( JRootPane.NONE );
+        }
         
-        return overpaint;
+        dialog.setDefaultCloseOperation( JDialog.DO_NOTHING_ON_CLOSE );
+        dialog.setModal( false );
+        
+        init( dialog, dialog.getContentPane(), undecorated );
     }
-    
+
+    public void destroy() {
+        dialog.dispose();
+    }
+
+    public void toFront() {
+        dialog.toFront();
+    }
+
     @Override
-    protected Container getDisplayerParent() {
-        return content;
+    protected void updateTitleText() {
+        dialog.setTitle( getTitleText() );
     }
     
     /**
@@ -109,20 +112,12 @@ public class SecureScreenDockDialog extends ScreenDockDialog {
     private class Listener extends WindowAdapter{
         @Override
         public void windowOpened( WindowEvent e ) {
-            if( observer != null ){
-                observer.removeGlassPane( pane );
-            }
-            
-            observer = (SecureMouseFocusObserver)getStation().getController().getFocusObserver();
-            observer.addGlassPane( pane );
+            ensureSecure( true );
         }
         
         @Override
         public void windowClosed( WindowEvent e ) {
-            if( observer != null ){
-                observer.removeGlassPane( pane );
-                observer = null;
-            }
+            ensureSecure( false );
         }
     }
 }

@@ -39,13 +39,9 @@ import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
-import bibliothek.gui.dock.event.DockableAdapter;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.*;
-import bibliothek.gui.dock.station.screen.BoundaryRestriction;
-import bibliothek.gui.dock.station.screen.ScreenDockDialog;
-import bibliothek.gui.dock.station.screen.ScreenDockProperty;
-import bibliothek.gui.dock.station.screen.ScreenDockStationFactory;
+import bibliothek.gui.dock.station.screen.*;
 import bibliothek.gui.dock.station.support.CombinerWrapper;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
@@ -57,9 +53,7 @@ import bibliothek.gui.dock.util.*;
 
 /**
  * A {@link DockStation} which is the whole screen. Every child of this
- * station is a non modal dialog. These dialogs do not have a border or
- * a title (except a {@link DockTitle}), but they can be moved and resized
- * by the user.<br>
+ * station is a window. These windows can be moved and resized by the user.<br>
  * This station tries to register a {@link DockTitleVersion} with 
  * the key {@link #TITLE_ID}.
  * 
@@ -69,18 +63,19 @@ public class ScreenDockStation extends AbstractDockStation {
     /** The key for the {@link DockTitleVersion} of this station */
     public static final String TITLE_ID = "screen dock";
     
-    /** a key for a property telling which boundaries a {@link ScreenDockDialog} can have */
+    /** a key for a property telling which boundaries a {@link ScreenDockWindow} can have */
     public static final PropertyKey<BoundaryRestriction> BOUNDARY_RESTRICTION = 
         new PropertyKey<BoundaryRestriction>( "ScreenDockStation.boundary_restriction", BoundaryRestriction.FREE, true );
     
-    /** The visibility state of the dialogs */
+    /** a key for a property telling how to create new windows */
+    public static final PropertyKey<ScreenDockWindowFactory> WINDOW_FACTORY =
+        new PropertyKey<ScreenDockWindowFactory>( "ScreenDockStation.window_factory", new DefaultScreenDockWindowFactory(), true );
+    
+    /** The visibility state of the windows */
     private boolean showing = false;
     
-    /** A list of all dialogs that are used by this station */
-    private List<ScreenDockDialog> dockables = new ArrayList<ScreenDockDialog>();
-    
-    /** a listener to the {@link Dockable}s, reacts when the title changes */
-    private Listener listener = new Listener();
+    /** A list of all windows that are used by this station */
+    private List<ScreenDockWindow> dockables = new ArrayList<ScreenDockWindow>();
     
     /** The version of titles that are used */
     private DockTitleVersion version;
@@ -91,7 +86,7 @@ public class ScreenDockStation extends AbstractDockStation {
     /** Information about the current movement of a {@link Dockable} */
     private DropInfo dropInfo;
     
-    /** The {@link Window} that is used as parent for the dialogs */
+    /** The {@link Window} that is used as parent for the windows */
     private WindowProvider owner;
     
     /** The paint used to draw information on this station */
@@ -103,16 +98,34 @@ public class ScreenDockStation extends AbstractDockStation {
     /** The set of {@link DockableDisplayer} used on this station */
     private DisplayerCollection displayers;
     
-    /** The dialog which has currently the focus */
-    private ScreenDockDialog frontDialog;
+    /** The window which has currently the focus */
+    private ScreenDockWindow frontWindow;
     
     /** A manager for the visibility of the children */
     private DockableVisibilityManager visibility;
+
+    /** the restrictions of the boundaries of this window*/
+    private PropertyValue<BoundaryRestriction> restriction =
+        new PropertyValue<BoundaryRestriction>( ScreenDockStation.BOUNDARY_RESTRICTION ){
+            @Override
+            protected void valueChanged( BoundaryRestriction oldValue, BoundaryRestriction newValue ) {
+                checkWindowBoundaries();
+            }
+    };
+    
+    /** a factory used to create new windows for this station */
+    private PropertyValue<ScreenDockWindowFactory> windowFactory =
+        new PropertyValue<ScreenDockWindowFactory>( ScreenDockStation.WINDOW_FACTORY ){
+        @Override
+        protected void valueChanged( ScreenDockWindowFactory oldValue, ScreenDockWindowFactory newValue ) {
+            // ignore   
+        }
+    };
     
     /**
      * Constructs a new <code>ScreenDockStation</code>.
      * @param owner the window which will be used as parent for the 
-     * dialogs of this station, must not be <code>null</code>
+     * windows of this station, must not be <code>null</code>
      */
     public ScreenDockStation( Window owner ){
         if( owner == null )
@@ -124,7 +137,7 @@ public class ScreenDockStation extends AbstractDockStation {
     /**
      * Constructs a new <code>ScreenDockStation</code>.
      * @param owner the window which will be used as parent for
-     * the dialogs of this station, must not be <code>null</code>
+     * the windows of this station, must not be <code>null</code>
      */
     public ScreenDockStation( WindowProvider owner ){
     	if( owner == null )
@@ -187,41 +200,21 @@ public class ScreenDockStation extends AbstractDockStation {
     
     @Override
     public void setController( DockController controller ) {
-        if( getController() != null ){
-            for( ScreenDockDialog dialog : dockables ){
-                DockableDisplayer displayer = dialog.getDisplayer();
-                DockTitle title = displayer.getTitle();
-                Dockable dockable = displayer.getDockable();
-                if( title != null && dockable != null ){
-                    dockable.unbind( title );
-                    displayer.setTitle( null );
-                }
-            }
-            
-            version = null;
-        }
-        
-        super.setController(controller);
+        version = null;
+        super.setController( controller );
         displayers.setController( controller );
         
         if( controller != null ){
             version = controller.getDockTitleManager().getVersion( TITLE_ID, ControllerTitleFactory.INSTANCE );
-            
-            for( ScreenDockDialog dialog : dockables ){
-                DockableDisplayer displayer = dialog.getDisplayer();
-                Dockable dockable = displayer.getDockable();
-                DockTitle title = dockable.getDockTitle( version );
-                if( title != null )
-                    dockable.bind( title );
-                displayer.setTitle( title );
-            }
         }
         
-        for( ScreenDockDialog dialog : dockables ){
-            dialog.setController( controller );
+        restriction.setProperties( controller );
+        windowFactory.setProperties( controller );
+        
+        for( ScreenDockWindow window : dockables ){
+            window.setController( controller );
         }
     }
-    
     
     public DefaultDockActionSource getDirectActionOffers( Dockable dockable ) {
         return null;
@@ -236,7 +229,7 @@ public class ScreenDockStation extends AbstractDockStation {
     }
 
     public Dockable getDockable( int index ) {
-        return dockables.get( index ).getDisplayer().getDockable();
+        return dockables.get( index ).getDockable();
     }
     
     /**
@@ -249,29 +242,27 @@ public class ScreenDockStation extends AbstractDockStation {
      */
     public int indexOf( Dockable dockable ){
         for( int i = 0, n = dockables.size(); i<n; i++ ){
-            ScreenDockDialog dialog = dockables.get( i );
-            if( dialog.getDisplayer() != null ){
-                if( dialog.getDisplayer().getDockable() == dockable )
-                    return i;
-            }
+            ScreenDockWindow window = dockables.get( i );
+            if( window.getDockable() == dockable )
+                return i;
         }
         
         return -1;
     }
 
     public Dockable getFrontDockable() {
-        if( frontDialog == null )
+        if( frontWindow == null )
             return null;
         else
-            return frontDialog.getDisplayer().getDockable();
+            return frontWindow.getDockable();
     }
 
     public void setFrontDockable( Dockable dockable ) {
         Dockable oldSelected = getFrontDockable();
-        frontDialog = getDialog( dockable );
+        frontWindow = getWindow( dockable );
 
-        if( frontDialog != null ){
-            frontDialog.toFront();
+        if( frontWindow != null ){
+            frontWindow.toFront();
         }
         
         Dockable newSelected = getFrontDockable();
@@ -287,7 +278,7 @@ public class ScreenDockStation extends AbstractDockStation {
         if( dropInfo == null )
             dropInfo = new DropInfo();
         
-        ScreenDockDialog oldCombine = dropInfo.combine;
+        ScreenDockWindow oldCombine = dropInfo.combine;
         
         dropInfo.x = x;
         dropInfo.y = y;
@@ -296,15 +287,15 @@ public class ScreenDockStation extends AbstractDockStation {
         dropInfo.dockable = dockable;
         dropInfo.combine = searchCombineDockable( x, y, dockable );
         
-        if( dropInfo.combine != null && dropInfo.combine.getDisplayer().getDockable() == dockable )
+        if( dropInfo.combine != null && dropInfo.combine.getDockable() == dockable )
             dropInfo.combine = null;
         
         if( dropInfo.combine != oldCombine ){
             if( oldCombine != null )
-                oldCombine.repaint();
+                oldCombine.setPaintCombining( false );
             
             if( dropInfo.combine != null )
-                dropInfo.combine.repaint();
+                dropInfo.combine.setPaintCombining( true );
         }
         
         checkDropInfo();
@@ -320,8 +311,9 @@ public class ScreenDockStation extends AbstractDockStation {
         if( dropInfo != null ){
             if( dropInfo.combine != null ){
                 if( !accept( dropInfo.dockable ) || 
-                        !dropInfo.dockable.accept( this, dropInfo.combine.getDisplayer().getDockable() ) ||
-                        !getController().getAcceptance().accept( this, dropInfo.combine.getDisplayer().getDockable(), dropInfo.dockable )){
+                        !dropInfo.dockable.accept( this, dropInfo.combine.getDockable() ) ||
+                        !dropInfo.combine.getDockable().accept( this, dropInfo.dockable ) ||
+                        !getController().getAcceptance().accept( this, dropInfo.combine.getDockable(), dropInfo.dockable )){
                     dropInfo = null;
                 }
             }
@@ -337,29 +329,23 @@ public class ScreenDockStation extends AbstractDockStation {
 
     
     /**
-     * Searches a dialog on the coordinates x/y which can be used to create
+     * Searches a window on the coordinates x/y which can be used to create
      * a combination with <code>drop</code>.
      * @param x the x-coordinate on the screen
      * @param y die y-coordinate on the screen
-     * @param drop the {@link Dockable} which might be combined with a dialog
-     * @return the dialog which might become the parent of <code>drop</code>.
+     * @param drop the {@link Dockable} which might be combined with a window
+     * @return the window which might become the parent of <code>drop</code>.
      */
-    protected ScreenDockDialog searchCombineDockable( int x, int y, Dockable drop ){
+    protected ScreenDockWindow searchCombineDockable( int x, int y, Dockable drop ){
         DockAcceptance acceptance = getController() == null ? null : getController().getAcceptance();
         
-        for( ScreenDockDialog dialog : dockables ){
-        	DockableDisplayer displayer = dialog.getDisplayer();
-            Point point = new Point( x, y );
-            SwingUtilities.convertPointFromScreen( point, displayer.getComponent() );
-            if( displayer.titleContains( point.x, point.y ) ){
-                Dockable child = dialog.getDisplayer().getDockable();
+        for( ScreenDockWindow window : dockables ){
+            if( window.inCombineArea( x, y )){
+                Dockable child = window.getDockable();
                 
-                if( acceptance == null || 
-                        acceptance.accept( this, child, drop )){
-                
-                    if( drop.accept( this, child ) &&
-                            child.accept( this, drop )){
-                        return dialog;
+                if( acceptance == null || acceptance.accept( this, child, drop )){
+                    if( drop.accept( this, child ) && child.accept( this, drop )){
+                        return window;
                     }
                 }
             }
@@ -368,21 +354,9 @@ public class ScreenDockStation extends AbstractDockStation {
         return null;
     }
     
-    /**
-     * Tells whether there should be a "selection-rectangle" painted on the 
-     * <code>dialog</code> or not. This is needed while a {@link Dockable}
-     * is dragged around.
-     * @param dialog the asking dialog
-     * @return <code>true</code> if something should be painted, <code>false</code> 
-     * otherwise
-     */
-    public boolean shouldDraw( ScreenDockDialog dialog ){
-        return dropInfo != null && dropInfo.draw && dropInfo.combine == dialog;
-    }
-    
     public void drop() {
         if( dropInfo.combine != null ){
-            combine( dropInfo.combine.getDisplayer().getDockable(), dropInfo.dockable );
+            combine( dropInfo.combine.getDockable(), dropInfo.dockable );
         }
         else{
             Component component = dropInfo.dockable.getComponent();
@@ -408,18 +382,17 @@ public class ScreenDockStation extends AbstractDockStation {
     }
 
     public DockableProperty getDockableProperty( Dockable dockable ) {
-        ScreenDockDialog dialog = getDialog( dockable );
-        return new ScreenDockProperty( dialog.getX(), dialog.getY(), dialog.getWidth(), dialog.getHeight() );
+        ScreenDockWindow window = getWindow( dockable );
+        Rectangle bounds = window.getWindowBounds();
+        return new ScreenDockProperty( bounds.x, bounds.y, bounds.width, bounds.height );
     }
     
     /**
-     * Searches the {@link ScreenDockDialog} which displays the <code>dockable</code>.<br>
-     * Note: don't change the {@link DockableDisplayer} or the
-     * {@link Dockable} of the dialog.
+     * Searches the {@link ScreenDockWindow} which displays the <code>dockable</code>.
      * @param dockable the {@link Dockable} to search
-     * @return the dialog or <code>null</code>
+     * @return the window or <code>null</code>
      */
-    public ScreenDockDialog getDialog( Dockable dockable ){
+    public ScreenDockWindow getWindow( Dockable dockable ){
         int index = indexOf( dockable );
         if( index < 0 )
             return null;
@@ -428,12 +401,12 @@ public class ScreenDockStation extends AbstractDockStation {
     }
     
     /**
-     * Get's the <code>index</code>'th dialog of this station. The number
-     * of dialogs is identical to the {@link #getDockableCount() number of Dockables}.
-     * @param index the index of the dialog
-     * @return the dialog which shows the index'th Dockable.
+     * Get's the <code>index</code>'th window of this station. The number
+     * of windows is identical to the {@link #getDockableCount() number of Dockables}.
+     * @param index the index of the window
+     * @return the window which shows the index'th Dockable.
      */
-    public ScreenDockDialog getDialog( int index ){
+    public ScreenDockWindow getWindow( int index ){
         return dockables.get( index );
     }
 
@@ -443,29 +416,29 @@ public class ScreenDockStation extends AbstractDockStation {
 
     public void move() {
         if( dropInfo.combine != null ){
-            combine( dropInfo.combine.getDisplayer().getDockable(), dropInfo.dockable );
+            combine( dropInfo.combine.getDockable(), dropInfo.dockable );
         }
         else{
-            ScreenDockDialog dialog = getDialog( dropInfo.dockable );
+            ScreenDockWindow window = getWindow( dropInfo.dockable );
+            Point zero = window.getOffsetMove();
+            if( zero == null )
+                zero = new Point( 0, 0 );
             
-            DockTitle title = dialog.getDisplayer().getTitle();
-            Point zero = new Point( 0, 0 );
-            if( title != null )
-                zero = SwingUtilities.convertPoint( title.getComponent(), zero, dialog );
-            
-            dialog.setRestrictedBounds( dropInfo.titleX - zero.x, dropInfo.titleY - zero.y, dialog.getWidth(), dialog.getHeight() );
+            Rectangle bounds = window.getWindowBounds();
+            bounds = new Rectangle( dropInfo.titleX - zero.x, dropInfo.titleY - zero.y, bounds.width, bounds.height );
+            window.setWindowBounds( bounds );
         }
     }
     
     public void move( Dockable dockable, DockableProperty property ) {
         if( property instanceof ScreenDockProperty ){
-            ScreenDockDialog dialog = getDialog( dockable );
-            if( dialog == null )
+            ScreenDockWindow window = getWindow( dockable );
+            if( window == null )
                 throw new IllegalArgumentException( "dockable not child of this station" );
             
             ScreenDockProperty bounds = (ScreenDockProperty)property;
             
-            dialog.setRestrictedBounds( bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight() );
+            window.setWindowBounds( new Rectangle( bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight() ) );
         }
     }
 
@@ -475,14 +448,14 @@ public class ScreenDockStation extends AbstractDockStation {
         
         dropInfo.draw = true;
         if( dropInfo.combine != null )
-            dropInfo.combine.repaint();
+            dropInfo.combine.setPaintCombining( true );
     }
 
     public void forget() {
         if( dropInfo != null ){
             dropInfo.draw = false;
             if( dropInfo.combine != null )
-                dropInfo.combine.repaint();
+                dropInfo.combine.setPaintCombining( false );
             dropInfo = null;
         }
     }
@@ -505,27 +478,27 @@ public class ScreenDockStation extends AbstractDockStation {
     }
 
     /**
-     * Adds a {@link Dockable} on a newly created {@link ScreenDockDialog} to
-     * the station. If the station {@link #isShowing() is visible}, the dialog
+     * Adds a {@link Dockable} on a newly created {@link ScreenDockWindow} to
+     * the station. If the station {@link #isShowing() is visible}, the window
      * will be made visible too.
      * @param dockable the {@link Dockable} to show
-     * @param bounds the bounds that the dialog will have
+     * @param bounds the bounds that the window will have
      */
     public void addDockable( Dockable dockable, Rectangle bounds ){
         addDockable( dockable, bounds, true );
     }
 
     /**
-     * Adds a {@link Dockable} on a newly created {@link ScreenDockDialog} to
-     * the station. If the station {@link #isShowing() is visible}, the dialog
+     * Adds a {@link Dockable} on a newly created {@link ScreenDockWindow} to
+     * the station. If the station {@link #isShowing() is visible}, the window
      * will be made visible too.
      * @param dockable the {@link Dockable} to show
-     * @param bounds the bounds that the dialog will have
-     * @param boundsIncludeDialog if <code>true</code>, the bounds describe the size
+     * @param bounds the bounds that the window will have
+     * @param boundsIncludeWindow if <code>true</code>, the bounds describe the size
      * of the resulting window. Otherwise the size of the window will be a bit larger
      * such that the title can be shown in the new space
      */
-    public void addDockable( Dockable dockable, Rectangle bounds, boolean boundsIncludeDialog ){
+    public void addDockable( Dockable dockable, Rectangle bounds, boolean boundsIncludeWindow ){
         DockUtilities.ensureTreeValidity( this, dockable );
         
         if( bounds == null )
@@ -533,22 +506,14 @@ public class ScreenDockStation extends AbstractDockStation {
         
         listeners.fireDockableAdding( dockable );
         
-        ScreenDockDialog dialog = createDialog();
-        DockTitle title = null;
-        if( version != null ){
-            title = dockable.getDockTitle( version );
-            if( title != null )
-                dockable.bind( title );
-        }
-        
-        DockableDisplayer displayer = getDisplayers().fetch( dockable, title );
-        
-        register( dialog );
-        dialog.setDisplayer( displayer );
+        ScreenDockWindow window = createWindow();
+        register( window );
+        window.setDockable( dockable );
         
         bounds = new Rectangle( bounds );
-        if( !boundsIncludeDialog ){
-            Insets estimate = dialog.getDockableInsets();
+        if( !boundsIncludeWindow ){
+            window.validate();
+            Insets estimate = window.getDockableInsets();
             if( estimate != null ){
                 bounds.x -= estimate.left;
                 bounds.y -= estimate.top;
@@ -557,18 +522,23 @@ public class ScreenDockStation extends AbstractDockStation {
             }
         }
         
-        dialog.setRestrictedBounds( bounds );
-        dialog.validate();
+        window.setWindowBounds( bounds );
+        window.validate();
         
-        Point zero = new Point( 0, 0 );
-        zero = SwingUtilities.convertPoint( displayer.getComponent(), zero, dialog );
-        dialog.setRestrictedBounds( dialog.getX() - zero.x, dialog.getY() - zero.y, dialog.getWidth(), dialog.getHeight() );
+        if( !boundsIncludeWindow ){
+            window.validate();
+            Point offset = window.getOffsetDrop();
+            if( offset != null ){
+                Rectangle windowBounds = window.getWindowBounds();
+                windowBounds = new Rectangle( windowBounds.x + offset.x, windowBounds.y + offset.y, windowBounds.width, windowBounds.height );
+                window.setWindowBounds( windowBounds );
+            }
+        }
         
         if( isShowing() )
-            dialog.setVisible( true );
+            window.setVisible( true );
         
         dockable.setDockParent( this );
-        dockable.addDockableListener( listener );
         listeners.fireDockableAdded( dockable );
     }
     
@@ -582,7 +552,7 @@ public class ScreenDockStation extends AbstractDockStation {
     /**
      * Tries to add the <code>dockable</code> to this station, and uses
      * the <code>property</code> to determine its location. If the preferred
-     * location overlaps an existing dialog, then the {@link Dockable} may be
+     * location overlaps an existing window, then the {@link Dockable} may be
      * added to a child-station of this station.
      * @param dockable the new {@link Dockable}
      * @param property the preferred location of the dockable
@@ -596,19 +566,19 @@ public class ScreenDockStation extends AbstractDockStation {
     /**
      * Tries to add the <code>dockable</code> to this station, and uses
      * the <code>property</code> to determine its location. If the preferred
-     * location overlaps an existing dialog, then the {@link Dockable} may be
+     * location overlaps an existing window, then the {@link Dockable} may be
      * added to a child-station of this station.
      * @param dockable the new {@link Dockable}
      * @param property the preferred location of the dockable
-     * @param boundsIncludeDialog if <code>true</code>, the bounds describe the size
+     * @param boundsIncludeWindow if <code>true</code>, the bounds describe the size
      * of the resulting window. Otherwise the size of the window will be a bit larger
      * such that the title can be shown in the new space
      * @return <code>true</code> if the dockable could be added, <code>false</code>
      * otherwise.
      */
-    public boolean drop( Dockable dockable, ScreenDockProperty property, boolean boundsIncludeDialog ){
+    public boolean drop( Dockable dockable, ScreenDockProperty property, boolean boundsIncludeWindow ){
         DockUtilities.ensureTreeValidity( this, dockable );
-        ScreenDockDialog best = null;
+        ScreenDockWindow best = null;
         double bestRatio = 0;
         
         int x = property.getX();
@@ -618,21 +588,19 @@ public class ScreenDockStation extends AbstractDockStation {
         
         double propertySize = width * height;
         
-        Rectangle bounds = new Rectangle();
-        
-        for( ScreenDockDialog dialog : dockables ){
-            bounds = dialog.getBounds( bounds );
-            double dialogSize = bounds.width * bounds.height;
+        for( ScreenDockWindow window : dockables ){
+            Rectangle bounds = window.getWindowBounds();
+            double windowSize = bounds.width * bounds.height;
             bounds = SwingUtilities.computeIntersection( x, y, width, height, bounds );
             
             if( !(bounds.width == 0 || bounds.height == 0) ){
                 double size = bounds.width * bounds.height;
-                double max = Math.max( propertySize, dialogSize );
+                double max = Math.max( propertySize, windowSize );
                 double ratio = size / max;
                 
                 if( ratio > bestRatio ){
                     bestRatio = max;
-                    best = dialog;
+                    best = window;
                 }
             }
         }
@@ -641,7 +609,7 @@ public class ScreenDockStation extends AbstractDockStation {
         
         if( bestRatio > 0.75 ){
             DockableProperty successor = property.getSuccessor();
-            Dockable dock = best.getDisplayer().getDockable();
+            Dockable dock = best.getDockable();
             if( successor != null ){
                 DockStation station = dock.asDockStation();
                 if( station != null )
@@ -649,7 +617,7 @@ public class ScreenDockStation extends AbstractDockStation {
             }
             
             if( !done ){
-                Dockable old = best.getDisplayer().getDockable();
+                Dockable old = best.getDockable();
                 if( old.accept( this, dockable ) && dockable.accept( this, old )){
                     combine( old, dockable );
                     done = true;
@@ -660,7 +628,7 @@ public class ScreenDockStation extends AbstractDockStation {
         if( !done ){
             boolean accept = accept( dockable ) && dockable.accept( this );
             if( accept ){
-                addDockable( dockable, new Rectangle( x, y, width, height ), boundsIncludeDialog );
+                addDockable( dockable, new Rectangle( x, y, width, height ), boundsIncludeWindow );
                 done = true;
             }
         }
@@ -679,36 +647,23 @@ public class ScreenDockStation extends AbstractDockStation {
      * @param upper a {@link Dockable} which may be child of this station
      */
     public void combine( Dockable lower, Dockable upper ){
+        ScreenDockWindow window = getWindow( lower );
+        if( window == null )
+            throw new IllegalArgumentException( "lower is not child of this station" );
+        
         removeDockable( upper );
-        int index = indexOf( lower );
         
         listeners.fireDockableRemoving( lower );
-        ScreenDockDialog dialog = dockables.get( index );
-        DockableDisplayer displayer = dialog.getDisplayer();
-        dialog.setDisplayer( null );
-        DockTitle title = displayer.getTitle();
-        if( title != null )
-            displayer.getDockable().unbind( title );
-        getDisplayers().release( displayer );
+        window.setDockable( null );
         lower.setDockParent( null );
         listeners.fireDockableRemoved( lower );
         
         Dockable valid = combiner.combine( lower, upper, this );
         
         listeners.fireDockableAdding( valid );
-        title = null;
-        if( version != null ){
-            title = valid.getDockTitle( version );
-            if( title != null )
-                valid.bind( title );
-        }
-        
-        displayer = getDisplayers().fetch( valid, title );
-        dialog.setDisplayer( displayer );
         valid.setDockParent( this );
+        window.setDockable( valid );
         listeners.fireDockableAdded( valid );
-        
-        dialog.validate();
     }
     
     public boolean canReplace( Dockable old, Dockable next ) {
@@ -716,29 +671,16 @@ public class ScreenDockStation extends AbstractDockStation {
     }
 
     public void replace( Dockable current, Dockable other ){
-        ScreenDockDialog dialog = getDialog( current );
-        DockableDisplayer displayer = dialog.getDisplayer();
+        ScreenDockWindow window = getWindow( current );
         
         listeners.fireDockableRemoving( current );
-        DockTitle title = displayer.getTitle();
-        if( title != null )
-            displayer.getDockable().unbind( title );
-        getDisplayers().release( displayer );
+        window.setDockable( null );
         current.setDockParent( null );
         listeners.fireDockableRemoved( current );
         
         listeners.fireDockableAdding( other );
-        if( version != null ){
-            title = other.getDockTitle( version );
-            if( title != null )
-                other.bind( title );
-        }
-        else
-            title = null;
-        
-        displayer = getDisplayers().fetch( other, title );
-        dialog.setDisplayer( displayer );
         other.setDockParent( this );
+        window.setDockable( other );
         listeners.fireDockableAdded( other );
     }
     
@@ -759,73 +701,58 @@ public class ScreenDockStation extends AbstractDockStation {
      * @param index the index of the {@link Dockable} to remove
      */
     public void removeDockable( int index ){
-        ScreenDockDialog dialog = dockables.get( index );
-        Dockable dockable = dialog.getDisplayer().getDockable();
+        ScreenDockWindow window = dockables.get( index );
+        Dockable dockable = window.getDockable();
         
         listeners.fireDockableRemoving( dockable );
-        dockable.removeDockableListener( listener );
-        
         dockables.remove( index );
-        dialog.dispose();
         
-        DockableDisplayer displayer = dialog.getDisplayer();
-        DockTitle title = displayer.getTitle();
-        getDisplayers().release( displayer );
-        dialog.setDisplayer( null );
-        
-        if( title != null )
-            dockable.unbind( title );
+        window.setVisible( false );
+        window.setDockable( null );
+        deregister( window );
         
         dockable.setDockParent( null );
-        deregister( dialog );
         listeners.fireDockableRemoved( dockable );
     }
     
     /**
-     * Invoked after a new {@link ScreenDockDialog} has been created. This
-     * method adds some listeners to the dialog. If the method is overridden,
+     * Invoked after a new {@link ScreenDockWindow} has been created. This
+     * method adds some listeners to the window. If the method is overridden,
      * it should be called from the subclass to ensure the correct function
      * of this station.
-     * @param dialog the dialog which was newly created
+     * @param window the window which was newly created
      */
-    protected void register( ScreenDockDialog dialog ){
-        dockables.add( dialog );
-        dialog.setController( getController() );
+    protected void register( ScreenDockWindow window ){
+        dockables.add( window );
+        window.setController( getController() );
     }
     
     /**
-     * Invoked when a {@link ScreenDockDialog} is no longer needed. This
-     * method removes some listeners from the dialog. If overridden
+     * Invoked when a {@link ScreenDockWindow} is no longer needed. This
+     * method removes some listeners from the window. If overridden
      * by a subclass, the subclass should ensure that this implementation
      * is invoked too.
-     * @param dialog the old dialog
+     * @param window the old window
      */
-    protected void deregister( ScreenDockDialog dialog ){
-        if( frontDialog == dialog )
-            frontDialog = null;
-        dockables.remove( dialog );
-        dialog.setController( null );
+    protected void deregister( ScreenDockWindow window ){
+        if( frontWindow == window )
+            frontWindow = null;
+        dockables.remove( window );
+        window.setController( null );
+        window.destroy();
     }
     
     /**
-     * Creates a new dialog which is associated with this station.
-     * @return the new dialog
-     * @throws IllegalStateException if the owner of this station is
-     * not suitable for the new dialog
+     * Creates a new window which is associated with this station.
+     * @return the new window
      */
-    protected ScreenDockDialog createDialog(){
-        Window window = getOwner();
-        if( window instanceof Dialog )
-            return new ScreenDockDialog( this, (Dialog)window );
-        else if( window instanceof Frame )
-            return new ScreenDockDialog( this, (Frame)window );
-        else
-            return new ScreenDockDialog( this );
+    protected ScreenDockWindow createWindow(){
+        return windowFactory.getValue().createWindow( this );
     }
     
     /**
      * Gets the owner of this station. The owner is forwarded to some
-     * dialogs as their owner. So the dialogs will always remain in the
+     * windows as their owner. So the windows will always remain in the
      * foreground.
      * @return the current owner
      * @see #getProvider()
@@ -835,7 +762,7 @@ public class ScreenDockStation extends AbstractDockStation {
     }
     
     /**
-     * Gets the provider which delivers window owners for the dialogs of this
+     * Gets the provider which delivers window owners for the windows of this
      * station.
      * @return the provider for windows
      */
@@ -844,8 +771,34 @@ public class ScreenDockStation extends AbstractDockStation {
     }
     
     /**
+     * Gets the factory that is currently used to create new windows for this station.
+     * @return the factory, not <code>null</code>
+     */
+    public ScreenDockWindowFactory getWindowFactory(){
+        return windowFactory.getValue();
+    }
+    
+    /**
+     * Gets the property which represents the window factory.
+     * @return the property
+     */
+    protected PropertyValue<ScreenDockWindowFactory> getWindowFactoryProperty(){
+        return windowFactory;
+    }
+    
+    /**
+     * Sets the factory that will be used to create new windows for this station,
+     * already existing windows are not affected by this change.
+     * @param factory the new factory, <code>null</code> to set the default
+     * value
+     */
+    public void setWindowFactory( ScreenDockWindowFactory factory ){
+        windowFactory.setValue( factory );
+    }
+    
+    /**
      * Tells whether this station shows its children or not.
-     * @return <code>true</code> if the dialogs are visible, <code>false</code>
+     * @return <code>true</code> if the windows are visible, <code>false</code>
      * otherwise
      * @see #setShowing(boolean)
      */
@@ -854,15 +807,15 @@ public class ScreenDockStation extends AbstractDockStation {
     }
     
     /**
-     * Sets the visibility of all dialogs of this station.
-     * @param showing <code>true</code> if all dialogs should be visible,
+     * Sets the visibility of all windows of this station.
+     * @param showing <code>true</code> if all windows should be visible,
      * <code>false</code> otherwise.
      */
     public void setShowing( boolean showing ){
         if( this.showing != showing ){
             this.showing = showing;
-            for( ScreenDockDialog dialog : dockables ){
-                dialog.setVisible( showing );
+            for( ScreenDockWindow window : dockables ){
+                window.setVisible( showing );
             }
             visibility.fire();
         }
@@ -895,6 +848,53 @@ public class ScreenDockStation extends AbstractDockStation {
     }
     
     /**
+     * Gets the {@link DockTitleVersion} used by this station to create
+     * new {@link DockTitle}s.
+     * @return the version, can be <code>null</code>
+     */
+    public DockTitleVersion getTitleVersion(){
+        return version;
+    }
+    
+    /**
+     * Creates a {@link DockTitle} that will be used for <code>dockable</code>.
+     * @param dockable the element for which a title is required
+     * @return the new title or <code>null</code>
+     */
+    public DockTitle createDockTitle( Dockable dockable ){
+        if( version == null )
+            return null;
+        
+        return dockable.getDockTitle( version );
+    }
+    
+    /**
+     * Gets the currently used {@link BoundaryRestriction}.
+     * @return the restriction
+     */
+    public BoundaryRestriction getBoundaryRestriction(){
+        return restriction.getValue();
+    }
+    
+    /**
+     * Changes the boundary restriction used to check the boundaries of
+     * the windows of this station.
+     * @param restriction the new restriction or <code>null</code> to reset
+     * the default value
+     */
+    public void setBoundaryRestriction( BoundaryRestriction restriction ){
+        this.restriction.setValue( restriction );
+    }
+    
+    /**
+     * Checks the boundaries of all windows of this station
+     */
+    public void checkWindowBoundaries(){
+        for( ScreenDockWindow window : dockables )
+            window.checkWindowBounds();
+    }
+    
+    /**
      * Information where a {@link Dockable} will be dropped. This class
      * is used only while a Dockable is dragged and this station has answered
      * as possible parent.
@@ -905,21 +905,9 @@ public class ScreenDockStation extends AbstractDockStation {
         /** Location of the mouse */
         public int x, y, titleX, titleY;
         /** Possible new parent */
-        public ScreenDockDialog combine;
+        public ScreenDockWindow combine;
         /** <code>true</code> if some sort of selection should be painted */
         public boolean draw;
     }
     
-    /**
-     * A listener to the {@link Dockable}s of the enclosing {@link ScreenDockStation}.
-     * @author Benjamin Sigg
-     */
-    private class Listener extends DockableAdapter{
-        @Override
-        public void titleExchanged( Dockable dockable, DockTitle title ) {
-            ScreenDockDialog dialog = getDialog( dockable );
-            DockableDisplayer displayer = dialog.getDisplayer();
-            DockUtilities.exchangeTitle( displayer, ScreenDockStation.this.version );
-        }
-    }
 }

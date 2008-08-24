@@ -103,14 +103,15 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
             Dockable dockable = station.getDockable( i );
             Integer id = children.get( dockable );
             if( id != null ){
-                ScreenDockDialog dialog = station.getDialog( i );
+                ScreenDockWindow window = station.getWindow( i );
+                Rectangle bounds = window.getWindowBounds();
                 
                 layout.add( 
                         id,
-                        dialog.getX(),
-                        dialog.getY(), 
-                        dialog.getWidth(),
-                        dialog.getHeight() );
+                        bounds.x,
+                        bounds.y, 
+                        bounds.width,
+                        bounds.height );
             }
         }
         

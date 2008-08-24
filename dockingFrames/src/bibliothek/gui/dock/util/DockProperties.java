@@ -83,7 +83,7 @@ public class DockProperties {
 	
 	/**
 	 * Gets the value accessed by <code>key</code>. If the value in the
-	 * properties is <code>null</code>, then the {@link PropertyKey#getDefault() default}
+	 * properties is not set, then the {@link PropertyKey#getDefault() default}
 	 * value is returned.
 	 * @param <A> the type of the value
 	 * @param key the key to search
@@ -97,8 +97,27 @@ public class DockProperties {
 		else{
 		    result = entry.getValue();
 		}
-		
 		return result;
+	}
+	
+	/**
+	 * Tells whether there is a value set for <code>key</code>.
+	 * @param <A> the type of the value
+	 * @param key some key
+	 * @return <code>true</code> if a value is set for <code>key</code>
+	 */
+	public <A> boolean isSet( PropertyKey<A> key ){
+	    Entry<A> entry = getEntry( key, false );
+	    if( entry == null )
+	        return false;
+
+	    if( !entry.hasBeenSet() )
+	        return false;
+	    
+	    if( entry.value != null )
+	        return true;
+	    
+	    return !key.isNullValueReplacedByDefault();
 	}
 	
 	/**

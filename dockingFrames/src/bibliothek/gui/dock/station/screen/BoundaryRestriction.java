@@ -35,10 +35,10 @@ import java.awt.*;
 public interface BoundaryRestriction {
     /** A restriction that allows all boundaries. */
     public BoundaryRestriction FREE = new BoundaryRestriction(){
-        public Rectangle check( ScreenDockDialog dialog ) {
+        public Rectangle check( ScreenDockWindow dialog ) {
             return null;
         }
-        public Rectangle check( ScreenDockDialog dialog, Rectangle target ) {
+        public Rectangle check( ScreenDockWindow dialog, Rectangle target ) {
             return null;
         }
     };
@@ -51,20 +51,20 @@ public interface BoundaryRestriction {
     public BoundaryRestriction HARD = new HardBoundaryRestriction();
     
     /**
-     * Calculates the bounds which <code>dialog</code> can have. 
-     * @param dialog the dialog whose bounds should be checked.
-     * @return the new boundaries of <code>dialog</code>, can be <code>null</code>
+     * Calculates the bounds which <code>window</code> can have. 
+     * @param window the window whose bounds should be checked.
+     * @return the new boundaries of <code>window</code>, can be <code>null</code>
      * to indicate that the current boundaries are valid. 
      */
-    public Rectangle check( ScreenDockDialog dialog );
+    public Rectangle check( ScreenDockWindow window );
     
     /**
-     * Calculates the bounds which <code>dialog</code> can have.
-     * @param dialog the dialog whose future bounds should be checked.
-     * @param target the bounds <code>dialog</code> should have, this method
+     * Calculates the bounds which <code>window</code> can have.
+     * @param window the window whose future bounds should be checked.
+     * @param target the bounds <code>window</code> should have, this method
      * should not write into <code>target</code>.
      * @return the new boundaries, <code>null</code> to indicate that 
      * <code>target</code> is valid. 
      */
-    public Rectangle check( ScreenDockDialog dialog, Rectangle target );
+    public Rectangle check( ScreenDockWindow window, Rectangle target );
 }

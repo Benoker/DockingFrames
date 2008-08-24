@@ -28,6 +28,7 @@ package bibliothek.gui.dock.util;
 
 import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -312,6 +313,18 @@ public class DockUtilities {
         	return result;
         
         return icon;
+    }
+    
+    /**
+     * Transforms <code>icon</code> into an image.
+     * @param icon some icon
+     * @return the image of the icon or <code>null</code>
+     */
+    public static Image iconImage( Icon icon ){
+        if( icon instanceof ImageIcon )
+            return ((ImageIcon)icon).getImage();
+        
+        return null;
     }
     
     /**
