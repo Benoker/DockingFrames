@@ -204,6 +204,17 @@ public class PredefinedDockSituation extends DockSituation {
 		}
 		
 		@SuppressWarnings("unchecked")
+		public void estimateLocations( PreloadedLayout<?> layout, 
+				DockableProperty location, Map<Integer, DockLayoutInfo> children ) {
+			
+			String factoryId = layout.getDelegate().getFactoryID();
+		    DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
+            if( factory != null ){
+                factory.estimateLocations( layout, location, children );
+            }
+		}
+		
+		@SuppressWarnings("unchecked")
         public PreloadedLayout<?> getLayout( DockElement element, Map<Dockable, Integer> children ) {
 		    String factoryId = UNKNOWN + PredefinedDockSituation.super.getID( element );
 		    DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );

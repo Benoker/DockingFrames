@@ -34,6 +34,8 @@ import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.layout.BackupFactoryData;
+import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -64,6 +66,11 @@ public class RegisteringDockFactory<D extends Dockable, L> implements DockFactor
         return factory.getID();
     }
 
+    public void estimateLocations( BackupFactoryData<L> layout, 
+    		DockableProperty location, Map<Integer, DockLayoutInfo> children ) {
+    	factory.estimateLocations( layout.getData(), location, children );
+    }
+    
     public BackupFactoryData<L> getLayout( D element, Map<Dockable, Integer> children ) {
         return new BackupFactoryData<L>( null, factory.getLayout( element, children ));
     }

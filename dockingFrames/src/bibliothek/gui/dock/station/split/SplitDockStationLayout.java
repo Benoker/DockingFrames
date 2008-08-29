@@ -28,6 +28,7 @@ package bibliothek.gui.dock.station.split;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.SplitDockStation.Orientation;
+import bibliothek.gui.dock.station.split.SplitDockPathProperty.Location;
 
 /**
  * A layout storing the contents of a {@link SplitDockStation}.
@@ -71,6 +72,26 @@ public class SplitDockStationLayout {
      * @author Benjamin Sigg
      */
     public static abstract class Entry{
+    	/** the parent element of this entry */
+    	private Node parent;
+    	
+    	/**
+    	 * Sets the parent of this entry.
+    	 * @param parent the parent
+    	 */
+    	protected void setParent( Node parent ){
+			this.parent = parent;
+		}
+    	
+    	/**
+    	 * Gets the parent of this entry, is <code>null</code> for the
+    	 * root entry.
+    	 * @return the parent.
+    	 */
+    	public Node getParent() {
+			return parent;
+		}
+    	
         /**
          * Returns <code>this</code> as leaf or <code>null</code>.
          * @return <code>this</code> or <code>null</code>
@@ -85,6 +106,22 @@ public class SplitDockStationLayout {
          */
         public Node asNode(){
             return null;
+        }
+        
+        /**
+         * Creates a new path property which describes the location of
+         * this element.
+         * @return the new path property
+         */
+        public SplitDockPathProperty createPathProperty() {
+        	SplitDockPathProperty path = null;
+        	if( parent != null ){
+        	 	path = parent.createPathProperty( this );
+        	}
+        	else{
+        		path = new SplitDockPathProperty();
+        	}
+        	return path;
         }
     }
     
@@ -144,11 +181,43 @@ public class SplitDockStationLayout {
             this.divider = divider;
             this.childA = childA;
             this.childB = childB;
+            
+            if( childA != null )
+            	childA.setParent( this );
+            if( childB != null )
+            	childB.setParent( this );
         }
         
         @Override
         public Node asNode() {
             return this;
+        }
+        
+        /**
+         * Creates a new path pointing to <code>child</code> which must be
+         * a child of this node.
+         * @param child some child of this node
+         * @return a new path for <code>child</code>
+         */
+        public SplitDockPathProperty createPathProperty( Entry child ){
+        	SplitDockPathProperty property = createPathProperty();
+        	if( child == childA ){
+        		if( orientation == Orientation.HORIZONTAL ){
+        			property.add( Location.LEFT, divider );
+        		}
+        		else{
+        			property.add( Location.TOP, divider );
+        		}
+        	}
+        	else if( child == childB ){
+        		if( orientation == Orientation.HORIZONTAL ){
+        			property.add( Location.RIGHT, 1-divider );
+        		}
+        		else{
+        			property.add( Location.BOTTOM, 1-divider );
+        		}
+        	}
+        	return property;
         }
         
         /**

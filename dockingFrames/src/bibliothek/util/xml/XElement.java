@@ -53,6 +53,28 @@ public class XElement extends XContainer implements Iterable<XElement>{
         setName( name );
     }
     
+    @Override
+    public XElement copy() {
+    	XElement copy = new XElement( name );
+    	copy.copy( this );
+    	return copy;
+    }
+    
+    /**
+     * Makes a copy of all the elements of <code>original</code>
+     * and stores them in this container.
+     * @param original the element to copy
+     */
+    public void copy( XElement original ){
+    	attributes.clear();
+    	for( XAttribute attr : original.attributes )
+    		attributes.add( attr.copy() );
+    	
+    	children.clear();
+    	for( XElement child : original.children )
+    		children.add( child.copy() );
+    }
+    
     /**
      * Sets the name of this attribute.
      * @param name the new name

@@ -202,3 +202,5 @@
 - API: new WindowProvider allows to later set the root-window of CControl, DockFrontend, DockController or ScreenDockStation. Also allows to change the root window.
 - Bugfix: SplitDockStation: a Dockable could be dropped over another dockable which did not accept the combination
 ! API: new ScreenDockWindowFactory: creates the windows for ScreenDockStation. ScreenDockDialog inherits from a new class.
+- API: FlapDockProperty stores now also holding state and window size
+! API: DockFactory now uses DockableLayoutInfo instead of Dockable when setting up a layout

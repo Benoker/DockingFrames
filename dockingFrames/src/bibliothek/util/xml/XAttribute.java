@@ -41,6 +41,13 @@ public class XAttribute extends XContainer{
         setName( name );
     }
     
+    @Override
+    public XAttribute copy() {
+    	XAttribute copy = new XAttribute( name );
+    	copy.copy( this );
+    	return copy;
+    }
+    
     /**
      * Sets the name of this attribute.
      * @param name the new name

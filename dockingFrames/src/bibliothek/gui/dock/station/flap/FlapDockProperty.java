@@ -53,7 +53,14 @@ public class FlapDockProperty extends AbstractDockableProperty {
      */
     public static final FlapDockProperty LAST = new FlapDockProperty( Integer.MAX_VALUE );
     
+    /** the location of the element */
     private int index;
+
+    /** whether the element is pinned */
+    private boolean holding = false;
+
+    /** the size of the window, -1 if unknown */
+    private int size = -1;
     
     /**
      * Constructs a FlapDockProperty
@@ -69,6 +76,22 @@ public class FlapDockProperty extends AbstractDockableProperty {
      */
     public FlapDockProperty( int index ){
         setIndex( index );
+    }
+    
+
+    /**
+     * Constructs a FlapDockProperty
+     * @param index the location of the {@link Dockable}
+     * @param holding whether the <code>Dockable</code> is pinned down or not
+     * @param size the size of the window, -1 if unknown
+     * @see #setIndex(int)
+     * @see #setHolding(boolean)
+     * @see #setSize(int)
+     */
+    public FlapDockProperty( int index, boolean holding, int size ){
+        setIndex( index );
+        setHolding( holding );
+        setSize( size );
     }
     
     /**
@@ -91,17 +114,59 @@ public class FlapDockProperty extends AbstractDockableProperty {
         return index;
     }
     
+    /**
+     * Whether the element should be pinned down or not.
+     * @param holding <code>true</code> if it should be pinned, <code>false</code>
+     * if not
+     */
+    public void setHolding(boolean holding) {
+		this.holding = holding;
+	}
+    
+    /**
+     * Tells whether an element was pinned down or not.
+     * @return <code>true</code> if pinned down, <code>false</code> otherwise
+     */
+    public boolean isHolding() {
+		return holding;
+	}
+    
+    /**
+     * Sets the size the window has in which the <code>Dockable</code> will
+     * be presented.
+     * @param size the size, -1 if unknown
+     */
+    public void setSize( int size ){
+		this.size = size;
+	}
+    
+    /**
+     * Gets the size the window has in which the <code>Dockable</code> will
+     * be presented.
+     * @return the size or -1 if unknown
+     */
+    public int getSize() {
+		return size;
+	}
+    
     public String getFactoryID() {
         return FlapDockPropertyFactory.ID;
     }
 
     public void store( DataOutputStream out ) throws IOException {
-        Version.write( out, Version.VERSION_1_0_4 );
+        Version.write( out, Version.VERSION_1_0_7 );
         out.writeInt( index );
+        out.writeBoolean( holding );
+        out.writeInt( size );
     }
     
     public void store( XElement element ) {
-        element.setInt( index );
+        // element.setInt( index );
+    	element.addElement( "index" ).setInt( index );
+    	element.addElement( "holding" ).setBoolean( holding );
+    	if( size >= 0 ){
+    		element.addElement( "size" ).setInt( size );
+    	}
     }
 
     public void load( DataInputStream in ) throws IOException {
@@ -109,9 +174,35 @@ public class FlapDockProperty extends AbstractDockableProperty {
         version.checkCurrent();
         
         setIndex( in.readInt() );
+        if( version.compareTo( Version.VERSION_1_0_7 ) >= 0 ){
+        	holding = in.readBoolean();
+        	size = in.readInt();
+        }
+        else{
+        	holding = false;
+        	size = -1;
+        }
     }
     
     public void load( XElement element ) {
-        index = element.getInt();
+    	XElement xindex = element.getElement( "index" );
+    	XElement xholding = element.getElement( "holding" );
+    	XElement xsize = element.getElement( "size" );
+    	
+    	if( xindex == null && xholding == null ){
+    		index = element.getInt();
+    	}
+    	else{
+    		if( xindex != null )
+    			index = xindex.getInt();
+    		
+    		if( xholding != null )
+    			holding = xholding.getBoolean();
+    		
+    		if( xsize == null )
+    			size = -1;
+    		else
+    			size = xsize.getInt();
+    	}
     }
 }

@@ -36,6 +36,24 @@ public class XContainer {
     private String value = "";
 
     /**
+     * Creates an independent copy of this container.
+     * @return the new copy
+     */
+    public XContainer copy(){
+    	XContainer copy = new XContainer();
+    	copy.copy( this );
+    	return copy;
+    }
+    
+    /**
+     * Copies all the settings of <code>original</code> into this container.
+     * @param original the container to read
+     */
+    protected void copy( XContainer original ){
+    	this.value = original.value;
+    }
+    
+    /**
      * Sets the exact value that is stored in this container.
      * @param value the value that will not be encoded by this method
      */

@@ -36,6 +36,8 @@ import java.util.Map;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
@@ -78,6 +80,19 @@ public class StackDockStationFactory implements DockFactory<StackDockStation, St
         return new StackDockStationLayout( selected, ids );
     }
     
+    public void estimateLocations( StackDockStationLayout layout,
+    		DockableProperty location, Map<Integer, DockLayoutInfo> children ) {
+    	
+    	for( int id : layout.getChildren() ){
+    		DockLayoutInfo info = children.get( id );
+    		if( info != null ){
+    			StackDockProperty property = new StackDockProperty( id );
+    			property.setSuccessor( location );
+    			info.setLocation( property );
+    		}
+    	}
+    }
+    
     public void setLayout( StackDockStation station,
             StackDockStationLayout layout, Map<Integer, Dockable> children ) {
         
@@ -85,15 +100,16 @@ public class StackDockStationFactory implements DockFactory<StackDockStation, St
             station.remove( i );
         
         for( int id : layout.getChildren() ){
-            Dockable dockable = children.get( id );
-            if( dockable != null ){
-                station.drop( dockable );
-            }
+        	Dockable dockable = children.get( id );
+        	if( dockable != null ){
+        		station.drop( dockable );
+        	}
         }
         
         Dockable selected = children.get( layout.getSelected() );
-        if( selected != null )
-            station.setFrontDockable( selected );
+        if( selected != null ){
+    		station.setFrontDockable( selected );
+        }
     }
     
     public void setLayout( StackDockStation element, StackDockStationLayout layout ) {

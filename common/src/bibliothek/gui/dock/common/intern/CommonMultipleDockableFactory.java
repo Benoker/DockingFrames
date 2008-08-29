@@ -33,6 +33,8 @@ import java.util.Map;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.common.*;
+import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
@@ -67,6 +69,10 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
     public String getID() {
         return id;
     }
+    
+    public void estimateLocations(CommonDockableLayout layout, DockableProperty location, Map<Integer, DockLayoutInfo> children) {
+    	// currently not supported
+    }
 
     public CommonDockableLayout getLayout( CommonDockable element,
             Map<Dockable, Integer> children ) {
@@ -83,9 +89,7 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         return flayout;
     }
 
-    public CommonDockable layout( CommonDockableLayout layout,
-            Map<Integer, Dockable> children ) {
-        
+    public CommonDockable layout( CommonDockableLayout layout, Map<Integer, Dockable> children ) {
         return layout( layout );
     }
 
@@ -118,9 +122,7 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         return dockable.intern();
     }
 
-    public void setLayout( CommonDockable element, CommonDockableLayout layout,
-            Map<Integer, Dockable> children ) {
-        
+    public void setLayout( CommonDockable element, CommonDockableLayout layout, Map<Integer, Dockable> children ) {
         // not supported
     }
 

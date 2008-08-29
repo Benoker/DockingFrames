@@ -34,6 +34,8 @@ import java.util.Map;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
@@ -52,14 +54,17 @@ public class DefaultDockableFactory implements DockFactory<DefaultDockable, Obje
         return ID;
     }
 
+    public void estimateLocations(Object layout, DockableProperty location, Map<Integer, DockLayoutInfo> children) {
+    	// nothing to do
+    }
+    
     public Object getLayout( DefaultDockable element,
             Map<Dockable, Integer> children ) {
         
         return new Object();
     }
     
-    public void setLayout( DefaultDockable element, Object layout,
-            Map<Integer, Dockable> children ) {
+    public void setLayout( DefaultDockable element, Object layout, Map<Integer, Dockable> children ) {
         // nothing to do
     }
     
@@ -67,9 +72,7 @@ public class DefaultDockableFactory implements DockFactory<DefaultDockable, Obje
         // nothing to do
     }
 
-    public DefaultDockable layout( Object layout,
-            Map<Integer, Dockable> children ) {
-        
+    public DefaultDockable layout( Object layout, Map<Integer, Dockable> children ) {
         return new DefaultDockable();
     }
     

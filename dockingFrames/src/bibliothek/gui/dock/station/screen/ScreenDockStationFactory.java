@@ -36,6 +36,8 @@ import java.util.Map;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.util.DirectWindowProvider;
 import bibliothek.gui.dock.util.WindowProvider;
 import bibliothek.util.Version;
@@ -61,7 +63,7 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
             throw new IllegalArgumentException( "Owner must not be null" );
         this.owner = new DirectWindowProvider( owner );
     }
-
+    
     /**
      * Constructs a factory
      * @param owner the window which will be used as owner for {@link ScreenDockDialog dialogs}
@@ -93,6 +95,19 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
     
     public String getID() {
         return ID;
+    }
+    
+    public void estimateLocations( ScreenDockStationLayout layout,
+    		DockableProperty location, Map<Integer, DockLayoutInfo> children ) {
+    	
+    	for( int i = 0, n = layout.size(); i<n; i++ ){
+    		DockLayoutInfo info = children.get( layout.id( i ));
+    		if( info != null ){
+    			ScreenDockProperty property = new ScreenDockProperty( layout.x( i ), layout.y( i ), layout.width( i ), layout.height( i ));
+    			property.setSuccessor( location );
+    			info.setLocation( property );
+    		}
+    	}
     }
     
     public ScreenDockStationLayout getLayout( ScreenDockStation station,
@@ -131,12 +146,13 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
         
         for( int i = 0, n = layout.size(); i<n; i++ ){
             Dockable dockable = children.get( layout.id( i ) );
-            if( dockable != null ){
-                station.addDockable(
-                        dockable,
-                        new Rectangle( layout.x( i ), layout.y( i ), layout.width( i ), layout.height( i )), 
-                        true );
-            }
+        	if( dockable != null ){
+             	Rectangle location = new Rectangle( layout.x( i ), layout.y( i ), layout.width( i ), layout.height( i ));
+        		station.addDockable(
+        				dockable,
+        				location, 
+        				true );
+        	}
         }
     }
 

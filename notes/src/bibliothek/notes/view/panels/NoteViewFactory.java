@@ -32,6 +32,8 @@ import java.util.Map;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.notes.model.Note;
 import bibliothek.notes.model.NoteModel;
 import bibliothek.notes.view.NoteViewManager;
@@ -62,6 +64,11 @@ public class NoteViewFactory implements DockFactory<NoteView, String> {
 	
 	public String getID(){
 		return "note";
+	}
+	
+	public void estimateLocations( String layout, DockableProperty location,
+			Map<Integer, DockLayoutInfo> children ){
+		// nothing to do
 	}
 	
 	public String getLayout( NoteView element, Map<Dockable, Integer> children ) {

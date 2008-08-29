@@ -1102,6 +1102,10 @@ public class FlapDockStation extends AbstractDockableStation {
         
         if( index >= getDockableCount() && this.accept( dockable ) && dockable.accept( this )){
             add( dockable );
+            setHold( dockable, property.isHolding() );
+            int size = property.getSize();
+            if( size >= getWindowMinSize() )
+            	setWindowSize( dockable, size );
             return true;
         }
         
@@ -1116,6 +1120,10 @@ public class FlapDockStation extends AbstractDockableStation {
         
         if( dockable.accept( this ) && this.accept( dockable )){
             add( dockable, index );
+            setHold( dockable, property.isHolding() );
+            int size = property.getSize();
+            if( size >= getWindowMinSize() )
+            	setWindowSize( dockable, size );
             return true;
         }
         else
@@ -1123,7 +1131,11 @@ public class FlapDockStation extends AbstractDockableStation {
     }
 
     public DockableProperty getDockableProperty( Dockable dockable ) {
-        return new FlapDockProperty( indexOf( dockable ));
+    	int index = indexOf( dockable );
+    	boolean holding = isHold( dockable );
+    	int size = getWindowSize( dockable );
+    	
+        return new FlapDockProperty( index, holding, size );
     }
 
     public boolean prepareMove( int mouseX, int mouseY, int titleX, int titleY,

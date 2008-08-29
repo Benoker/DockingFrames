@@ -36,6 +36,8 @@ import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.SingleCDockable;
 import bibliothek.gui.dock.common.SingleCDockableBackupFactory;
+import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
@@ -89,6 +91,10 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
     
     public String getID() {
         return BACKUP_FACTORY_ID;
+    }
+    
+    public void estimateLocations(String layout, DockableProperty location, Map<Integer, DockLayoutInfo> children) {
+    	// currently not supported
     }
 
     public String getLayout( CommonDockable element, Map<Dockable, Integer> children ) {

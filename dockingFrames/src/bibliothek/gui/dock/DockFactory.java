@@ -30,6 +30,8 @@ import java.util.Map;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.layout.DockConverter;
+import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.layout.DockableProperty;
 
 /**
  * A {@link DockConverter} which can not only store and load the contents of an
@@ -39,8 +41,17 @@ import bibliothek.gui.dock.layout.DockConverter;
  * @param <L> the type of object that stores the contents of a <code>D</code>
  */
 public interface DockFactory<D extends DockElement, L> extends DockConverter<D, L>{
-
-    
+	/**
+	 * Tries to estimate the {@link DockableProperty}s of the children of the
+	 * station which is represented by <code>layout</code>.
+	 * @param layout this station
+	 * @param location the location of <code>layout</code>, may be <code>null</code>
+	 * @param children the children of the station, this method should call
+	 * {@link DockLayoutInfo#setLocation(DockableProperty)} for as many
+	 * children as possible
+	 */
+	public void estimateLocations( L layout, DockableProperty location, Map<Integer, DockLayoutInfo> children );
+	
     /**
      * Creates a new {@link DockElement} and changes the layout of the new 
      * element such that is matches <code>layout</code>.

@@ -35,6 +35,8 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.SplitDockStation.Orientation;
+import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.split.SplitDockStationLayout.Entry;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
@@ -118,7 +120,8 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
         }
         station.dropTree( tree, false );
         
-        station.setFullScreen( children.get( layout.getFullscreen() ) );
+        Dockable fullscreen = children.get( layout.getFullscreen() );
+        station.setFullScreen( fullscreen );
     }
     
     /**
@@ -145,10 +148,11 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
      * @return the key or <code>null</code>
      */
     private SplitDockTree.Key handleLeaf( SplitDockStationLayout.Leaf leaf, SplitDockTree tree, Map<Integer, Dockable> children ){
-        Dockable dockable = children.get( leaf.getId() );
-        if( dockable == null )
-            return null;
-        return tree.put( dockable );
+    	Dockable dockable = children.get( leaf.getId() );
+        if( dockable != null ){
+        	return tree.put( dockable );
+        }
+        return null;
     }
     
     /**
@@ -177,6 +181,38 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
         }
         
         return null;
+    }
+    
+    public void estimateLocations( SplitDockStationLayout layout, DockableProperty location, Map<Integer, DockLayoutInfo> children ) {
+    	estimateLocations( layout.getRoot(), location, children );
+    }
+    
+    /**
+     * Estimates the {@link DockableProperty location} of all leafs in the subtree
+     * beginning with <code>entry</code>.
+     * @param entry the root of the subtree to check
+     * @param location the location of the station that is analyzed, can be <code>null</code>
+     * @param children the children of the station
+     */
+    private void estimateLocations( SplitDockStationLayout.Entry entry, DockableProperty location, Map<Integer, DockLayoutInfo> children ){
+    	if( entry == null )
+    		return;
+    	
+    	SplitDockStationLayout.Leaf leaf = entry.asLeaf();
+    	if( leaf != null ){
+    		DockLayoutInfo info = children.get( leaf.getId() );
+    		if( info != null ){
+    		 	SplitDockPathProperty property = leaf.createPathProperty();
+    		 	property.setSuccessor( location );
+    		 	info.setLocation( property );
+    		}
+    	}
+    	
+    	SplitDockStationLayout.Node node = entry.asNode();
+    	if( node != null ){
+    		estimateLocations( node.getChildA(), location, children );
+    		estimateLocations( node.getChildB(), location, children );
+    	}
     }
     
     public void setLayout( SplitDockStation element,
