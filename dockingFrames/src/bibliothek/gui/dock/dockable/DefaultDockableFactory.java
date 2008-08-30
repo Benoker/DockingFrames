@@ -50,8 +50,25 @@ public class DefaultDockableFactory implements DockFactory<DefaultDockable, Obje
     /** The unique id of this factory */
     public static final String ID = "DefaultDockableFactory";
     
+    private String id;
+    
+    /** creates a new factory */
+    public DefaultDockableFactory(){
+        id = ID;
+    }
+    
+    /**
+     * Creates a new factory with the given identifier.
+     * @param id the id of the factory, not <code>null</code>
+     */
+    public DefaultDockableFactory( String id ){
+        if( id == null )
+            throw new IllegalArgumentException( "id must not be null" );
+        this.id = id;
+    }
+    
     public String getID() {
-        return ID;
+        return id;
     }
 
     public void estimateLocations(Object layout, DockableProperty location, Map<Integer, DockLayoutInfo> children) {

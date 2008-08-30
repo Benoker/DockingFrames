@@ -50,6 +50,7 @@ import bibliothek.gui.dock.dockable.DefaultDockableFactory;
 import bibliothek.gui.dock.event.DockAdapter;
 import bibliothek.gui.dock.event.DockFrontendListener;
 import bibliothek.gui.dock.event.IconManagerListener;
+import bibliothek.gui.dock.frontend.MissingDockableStrategy;
 import bibliothek.gui.dock.frontend.RegisteringDockFactory;
 import bibliothek.gui.dock.frontend.Setting;
 import bibliothek.gui.dock.layout.*;
@@ -69,6 +70,7 @@ import bibliothek.gui.dock.util.*;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XAttribute;
 import bibliothek.util.xml.XElement;
+import bibliothek.util.xml.XException;
 
 /**
  * A DockFrontend provides some methods to handle the storage of various layouts.
@@ -103,6 +105,12 @@ import bibliothek.util.xml.XElement;
 public class DockFrontend {
     public static final PropertyKey<KeyStroke> HIDE_ACCELERATOR = 
         new PropertyKey<KeyStroke>( "frontend hide accelerator" );
+    
+    /** prefix used for {@link Dockable}s when creating a new {@link PredefinedDockSituation} */
+    protected static final String DOCKABLE_KEY_PREFIX = "dockable";
+    
+    /** prefix used for {@link DockStation root}s when creating a new {@link PredefinedDockSituation} */
+    protected static final String ROOT_KEY_PREFIX = "root";
     
 	/** The controller where roots are added */
     private DockController controller;
@@ -149,6 +157,9 @@ public class DockFrontend {
      *  final setting during the startup or shutdown of the application. 
      */
     private DockSituationIgnore ignoreForFinal;
+    
+    /** tells what to do with the location information of missing {@link Dockable}s */
+    private MissingDockableStrategy missingDockable = MissingDockableStrategy.DISCARD_ALL;
     
     /**
      * Tells whether to show the hide-action on hideable dockables or not
@@ -395,12 +406,33 @@ public class DockFrontend {
      * when reading the preferences of <code>dockable</code>. You should note that
      * the frontend does not support {@link Dockable Dockables} whose lifespan
      * ends when they are made invisible.
+     * @param id the unique name of the Dockable
+     * @param dockable the new Dockable
+     * @throws IllegalArgumentException if either of <code>dockable</code> or
+     * <code>id</code> is <code>null</code>, or if <code>id</code> is not
+     * unique.
+     */
+    public void addDockable( String id, Dockable dockable ){
+        add( dockable, id );
+    }
+    
+    /**
+     * Adds a Dockable to this frontend. The frontend provides a "close"-button
+     * for <code>dockable</code>. The frontend also assumes that <code>dockable</code>
+     * can be reused when reading a setting. That means, that the factory which
+     * matches the key of <code>dockable</code> does not create a new instance
+     * when reading the preferences of <code>dockable</code>. You should note that
+     * the frontend does not support {@link Dockable Dockables} whose lifespan
+     * ends when they are made invisible.
      * @param dockable the new Dockable
      * @param name the unique name of the Dockable
      * @throws IllegalArgumentException if either of <code>dockable</code> or
      * <code>name</code> is <code>null</code>, or if <code>name</code> is not
      * unique.
+     * @deprecated replaced by {@link #addDockable(String, Dockable)}, since <code>name</code>
+     * is used as key in a map, it should come first
      */
+    @Deprecated
     public void add( Dockable dockable, String name ){
         if( dockable == null )
             throw new IllegalArgumentException( "Dockable must not be null" );
@@ -427,7 +459,11 @@ public class DockFrontend {
     /**
      * Adds the name of a {@link Dockable} whose properties should be stored
      * in this frontend even if the {@link Dockable} itself is not 
-     * registered.
+     * registered.<br>
+     * Note that <code>this</code> can add "empty infos" automatically
+     * when calling {@link #setSetting(Setting, boolean)} and information
+     * is found that is not associated with any {@link Dockable}, but
+     * whose key passes the methods of {@link MissingDockableStrategy}.
      * @param name the name of the dockable
      */
     public void addEmpty( String name ){
@@ -438,6 +474,33 @@ public class DockFrontend {
         if( !dockables.containsKey( name )){
             dockables.put( name, new DockInfo( null, name ));
         }
+    }
+    
+    /**
+     * Sets the strategy how to deal with location information of {@link Dockable}s
+     * which are missing and which are not marked as {@link #addEmpty(String) empty}.<br>
+     * If information passes the strategy, then a new {@link #addEmpty(String) empty info}
+     * will be added to store it. Note that setting the strategy does only
+     * affect future actions, information already stored or discarded will not
+     * be rescued or thrown away.
+     * @param missingDockable the new strategy, <code>null</code> is valid and
+     * will force this frontend to discard any information.
+     */
+    public void setMissingDockableStrategy( MissingDockableStrategy missingDockable ) {
+        if( missingDockable == null )
+            this.missingDockable = MissingDockableStrategy.DISCARD_ALL;
+        else
+            this.missingDockable = missingDockable;
+    }
+    
+    /**
+     * Gets the strategy that is applied for location information of 
+     * missing {@link Dockable}s.
+     * @return the strategy, never <code>null</code>
+     * @see #setMissingDockableStrategy(MissingDockableStrategy)
+     */
+    public MissingDockableStrategy getMissingDockable() {
+        return missingDockable;
     }
     
     /**
@@ -487,14 +550,34 @@ public class DockFrontend {
      * children of a root can be stored. The frontend forwards the roots to
      * its {@link #getController() controller} 
      * (through the {@link DockController#add(DockStation) add}-method). Note
-     * that the frontend does not observ its controller and therefore does not
+     * that the frontend does not observe its controller and therefore does not
+     * know whether there are other roots registered at the controller.<br>
+     * Clients should also provide a {@link #setDefaultStation(DockStation) default station}.
+     * @param id the unique name of the station
+     * @param station the new station
+     * @throws IllegalArgumentException if <code>station</code> or <code>name</code>
+     * is <code>null</code>, or if <code>name</code> is not unique.
+     */
+    public void addRoot( String id, DockStation station ){
+        addRoot( station, id );
+    }
+    
+    /**
+     * Adds a root to this frontend. Only {@link Dockable Dockables} which are
+     * children of a root can be stored. The frontend forwards the roots to
+     * its {@link #getController() controller} 
+     * (through the {@link DockController#add(DockStation) add}-method). Note
+     * that the frontend does not observe its controller and therefore does not
      * know whether there are other roots registered at the controller.<br>
      * Clients should also provide a {@link #setDefaultStation(DockStation) default station}.
      * @param station the new station
      * @param name the unique name of the station
      * @throws IllegalArgumentException if <code>station</code> or <code>name</code>
      * is <code>null</code>, or if <code>name</code> is not unique.
+     * @deprecated replaced by {@link #addRoot(String, DockStation)}, since 
+     * <code>name</code> is used as key in a map it should come first
      */
+    @Deprecated
     public void addRoot( DockStation station, String name ){
         if( station == null )
             throw new IllegalArgumentException( "Stations must not be null" );
@@ -621,6 +704,31 @@ public class DockFrontend {
             if( info.getDockable() == null ){
                 dockables.remove( name );
             }
+        }
+    }
+    
+    /**
+     * Gets a list of all keys that are marked as <code>empty</code>.
+     * @param all if <code>true</code> then just all keys are returned, if 
+     * <code>false</code> then only those keys are returned for which no
+     * {@link Dockable} is registered.
+     * @return the list of keys marked as empty, may be <code>null</code>
+     * @see #addEmpty(String)
+     * @see #removeEmpty(String)
+     */
+    public String[] listEmpty( boolean all ){
+        if( all ){
+            return empty.toArray( new String[ empty.size() ] );
+        }
+        else{
+            List<String> result = new ArrayList<String>();
+            for( String key : empty ){
+                DockInfo info = getInfo( key );
+                if( info.getDockable() == null ){
+                    result.add( key );
+                }
+            }
+            return result.toArray( new String[ result.size() ] );
         }
     }
     
@@ -966,7 +1074,10 @@ public class DockFrontend {
     }
     
     /**
-     * Changes the content of all root-stations according to <code>setting</code>. 
+     * Changes the content of all root-stations according to <code>setting</code>.<br>
+     * This method may add new {@link #addEmpty(String) empty infos} if it finds
+     * information for a non existing, non empty {@link Dockable} but whose
+     * key passes the methods of {@link MissingDockableStrategy}.
      * @param setting a new set of properties
      * @param entry <code>true</code> if only information for an ordinary
      * entry should be extracted, <code>false</code> if as much information
@@ -997,6 +1108,27 @@ public class DockFrontend {
             for( RootInfo info : roots.values() ){
                 DockLayoutComposition layout = setting.getRoot( info.getName() );
                 if( layout != null ){
+                    layout = situation.fillMissing( layout );
+                    
+                    Map<String, DockableProperty> missingLocations = 
+                        listEstimateLocations( situation, layout );
+
+                    if( missingLocations != null ){
+                        for( Map.Entry<String, DockableProperty> missing : missingLocations.entrySet() ){
+                            String key = missing.getKey();
+                            DockInfo dockInfo = getInfo( key );
+                            
+                            if( dockInfo == null && missingDockable.shouldStoreShown( key )){
+                                addEmpty( key );
+                                dockInfo = getInfo( key );
+                            }
+                            
+                            if( dockInfo != null ){
+                                dockInfo.setLocation( info.getName(), missing.getValue() );
+                            }
+                        }
+                    }
+                    
                     situation.convert( layout );
                 }
             }
@@ -1004,12 +1136,24 @@ public class DockFrontend {
             for( int i = 0, n = setting.getInvisibleCount(); i<n; i++ ){
                 String key = setting.getInvisibleKey( i );
                 DockInfo info = getInfo( key );
+                
+                if( info == null && missingDockable.shouldStoreHidden( key )){
+                    addEmpty( key );
+                    info = getInfo( key );
+                }
+                
                 if( info != null ){
                     info.setLocation( 
                             setting.getInvisibleRoot( i ), 
                             setting.getInvisibleLocation( i ) );
                 }
             }
+        }
+        catch( IOException e ){
+            throw new IllegalArgumentException( "Cannot set Setting", e );
+        }
+        catch( XException e ){
+            throw new IllegalArgumentException( "Cannot set Setting", e );
         }
         finally{
             onAutoFire--;
@@ -1023,6 +1167,32 @@ public class DockFrontend {
         }
     }
     
+    /**
+     * Tries to estimate the location of missing {@link Dockable}s. The
+     * default implementation works with any {@link PredefinedDockSituation}.
+     * @param situation the situation to use for transforming information
+     * @param layout the layout to analyze
+     * @return a map with <code>Dockable</code>-names as key or <code>null</code>
+     */
+    protected Map<String, DockableProperty> listEstimateLocations( DockSituation situation, DockLayoutComposition layout ){
+        if( situation instanceof PredefinedDockSituation ){
+            Map<String, DockableProperty> map = ((PredefinedDockSituation)situation).listEstimatedLocations( layout, true );
+            Map<String, DockableProperty> result = new HashMap<String, DockableProperty>();
+            
+            for( Map.Entry<String, DockableProperty> entry : map.entrySet() ){
+                String key = entry.getKey();
+                if( key.startsWith( DOCKABLE_KEY_PREFIX ))
+                    result.put( key.substring( DOCKABLE_KEY_PREFIX.length() ), entry.getValue() );
+                else if( key.startsWith( ROOT_KEY_PREFIX ))
+                    result.put( key.substring( ROOT_KEY_PREFIX.length() ), entry.getValue() );
+                else
+                    result.put( key, entry.getValue() );
+            }
+            
+            return result;
+        }
+        return null;
+    }
     
     /**
      * Gets a set of all {@link Dockable} which are known to this frontend
@@ -1284,7 +1454,9 @@ public class DockFrontend {
      * extreme care should be applied when doing so. A good solution would be
      * to call {@link #createInternalSituation(boolean)}, then change and return
      * the result of that method.<br>
-     * This method just calls <code>return createInternalSituation( entry );</code>.
+     * This method just calls <code>return createInternalSituation( entry );</code>.<br>
+     * Subclasses overridding this method may also need to override 
+     * {@link #listEstimateLocations(DockSituation, DockLayoutComposition)}
      * @param entry <code>true</code> if the situation is used for a regular setting,
      * <code>false</code> if the situation is used as the final setting which will
      * be loaded the next time the application starts.
@@ -1310,12 +1482,12 @@ public class DockFrontend {
         PredefinedDockSituation situation = new PredefinedDockSituation();
         for( DockInfo info : dockables.values() ){
             if( info.getDockable() != null ){
-                situation.put( "dockable" + info.getKey(), info.getDockable() );
+                situation.put( DOCKABLE_KEY_PREFIX + info.getKey(), info.getDockable() );
             }
         }
         
         for( RootInfo info : roots.values() ){
-            situation.put( "root" + info.getName(), info.getStation() );
+            situation.put( ROOT_KEY_PREFIX + info.getName(), info.getStation() );
         }
         
         for( DockFactory<?,?> factory : dockFactories ){

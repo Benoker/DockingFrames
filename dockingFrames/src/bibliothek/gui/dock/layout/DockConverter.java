@@ -104,7 +104,8 @@ public interface DockConverter <D extends DockElement, L>{
     /**
      * Reads a layout from a stream.
      * @param in the stream to read from
-     * @return the new layout
+     * @return the new layout, can be <code>null</code> if the layout
+     * should be discarded
      * @throws IOException if an I/O-error occurs
      */
     public L read( DataInputStream in ) throws IOException;
@@ -113,7 +114,8 @@ public interface DockConverter <D extends DockElement, L>{
      * Reads a layout from an xml-element.
      * @param element the element to read, should not be changed by this 
      * method.
-     * @return the new layout
+     * @return the new layout, can be <code>null</code> if the layout
+     * should be discarded
      */
     public L read( XElement element );
 }

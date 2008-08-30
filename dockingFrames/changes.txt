@@ -204,3 +204,6 @@
 ! API: new ScreenDockWindowFactory: creates the windows for ScreenDockStation. ScreenDockDialog inherits from a new class.
 - API: FlapDockProperty stores now also holding state and window size
 ! API: DockFactory now uses DockableLayoutInfo instead of Dockable when setting up a layout
+- API: DockSituation has new methods "estimateLocation" to estimate the DockableProperty of Dockables even if they or their parents are not yet created
+- API: DockSituation has a new method "fillMissing" to convert byte[]- or xml-data to DockLayout even after the DockLayoutComposition was already read
+- API: DockFrontend#setSetting now tries to fill missing gaps in the layout before applying it.

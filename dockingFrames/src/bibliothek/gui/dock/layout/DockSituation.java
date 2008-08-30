@@ -57,29 +57,29 @@ import bibliothek.util.xml.XException;
 public class DockSituation {
     /** the factories used to create new {@link DockElement elements}*/
     private Map<String, DockFactory<?,?>> factories = new HashMap<String, DockFactory<?,?>>();
-    
+
     /** the factory used when no {@link DockFactory} is available */
     private MissingDockFactory missingFactory;
-    
+
     /** a set of additional factories for the {@link DockElement}s */
     private Map<String, AdjacentDockFactory<?>> adjacent = new HashMap<String, AdjacentDockFactory<?>>();
-    
+
     /** the factory used when no {@link AdjacentDockFactory} is available */
     private MissingDockFactory missingAdjacent;
-    
+
     /** a filter for elements which should be ignored */
     private DockSituationIgnore ignore;
-    
+
     /**
      * Constructs a new DockSituation and sets some factories which are
      * used to create new {@link DockElement DockElements}
      * @param factories the factories
      */
     public DockSituation( DockFactory<?,?>...factories ){
-    	for( DockFactory<?,?> factory : factories )
+        for( DockFactory<?,?> factory : factories )
             this.factories.put( getID( factory ), factory );
     }
-    
+
     /**
      * Constructs a new DockSituation. Factories for {@link DefaultDockable},
      * {@link SplitDockStation}, {@link StackDockStation} and
@@ -95,7 +95,7 @@ public class DockSituation {
                 new FlapDockStationFactory(),
                 new SecureFlapDockStationFactory());
     }
-    
+
     /**
      * Sets a filter which decides, which elements (stations and dockables)
      * are stored.
@@ -104,7 +104,7 @@ public class DockSituation {
     public void setIgnore( DockSituationIgnore ignore ) {
         this.ignore = ignore;
     }
-    
+
     /**
      * Gets the filter which decides, which elements are stored.
      * @return the filter or <code>null</code>
@@ -112,7 +112,7 @@ public class DockSituation {
     public DockSituationIgnore getIgnore() {
         return ignore;
     }
-    
+
     /**
      * Adds a factory
      * @param factory the additional factory
@@ -120,7 +120,7 @@ public class DockSituation {
     public void add( DockFactory<?,?> factory ){
         factories.put( getID( factory ), factory );
     }
-    
+
     /**
      * Adds an adjacent factory
      * @param factory the new factory
@@ -128,7 +128,7 @@ public class DockSituation {
     public void addAdjacent( AdjacentDockFactory<?> factory ){
         adjacent.put( getAdjacentID( factory ), factory );
     }
-    
+
     /**
      * Sets a factory which is used whenever no ordinary {@link DockFactory}
      * can be found to read something. The <code>missingFactory</code> can convert
@@ -146,7 +146,7 @@ public class DockSituation {
     public void setMissingFactory( MissingDockFactory missingFactory ) {
         this.missingFactory = missingFactory;
     }
-    
+
     /**
      * Gets the factory which is used when another factory is missing.
      * @return the factory replacing missing factories, can be <code>null</code>
@@ -155,7 +155,7 @@ public class DockSituation {
     public MissingDockFactory getMissingFactory() {
         return missingFactory;
     }
-    
+
     /**
      * Sets a factory which is used when a {@link AdjacentDockFactory} is missing.
      * There are the same issures with this factory than with the one used
@@ -166,7 +166,7 @@ public class DockSituation {
     public void setMissingAdjacentFactory( MissingDockFactory missingAdjacent ) {
         this.missingAdjacent = missingAdjacent;
     }
-    
+
     /**
      * Gets the factory which is used when another {@link AdjacentDockFactory}
      * is missing.
@@ -176,7 +176,7 @@ public class DockSituation {
     public MissingDockFactory getMissingAdjacentFactory() {
         return missingAdjacent;
     }
-    
+
     /**
      * Converts the layout of <code>element</code> and all its children into a 
      * {@link DockLayoutComposition}.
@@ -191,18 +191,18 @@ public class DockSituation {
     public DockLayoutComposition convert( DockElement element ){
         if( ignoreElement( element ))
             return null;
-        
+
         String id = getID( element );
         DockFactory<DockElement,Object> factory = (DockFactory<DockElement, Object>)getFactory( id );
         if( factory == null )
             throw new IllegalArgumentException( "Unknown factory-id: " + element.getFactoryID() );
-        
+
         DockStation station = element.asDockStation();
         Map<Dockable, Integer> ids = new HashMap<Dockable, Integer>();
         List<DockLayoutComposition> children = new ArrayList<DockLayoutComposition>();
-        
+
         boolean ignore = false;
-        
+
         if( station != null ){
             ignore = ignoreChildren( station );
             if( !ignore ){
@@ -217,10 +217,10 @@ public class DockSituation {
                 }
             }
         }
-        
+
         Object data = factory.getLayout( element, ids );
         DockLayout<Object> layout = new DockLayout<Object>( id, data );
-        
+
         List<DockLayout<?>> adjacent = null;
         for( AdjacentDockFactory<?> adjacentFactory : this.adjacent.values() ){
             if( adjacentFactory.interested( element )){
@@ -231,10 +231,10 @@ public class DockSituation {
                 adjacent.add( new DockLayout<Object>( getAdjacentID( adjacentFactory ), adjacentData ) );
             }
         }
-        
+
         return new DockLayoutComposition( new DockLayoutInfo( layout ), adjacent, children, ignore );
     }
-    
+
     /**
      * Reads the contents of <code>composition</code> and tries to create a
      * {@link DockElement} that matches the composition.
@@ -244,47 +244,47 @@ public class DockSituation {
      */
     @SuppressWarnings("unchecked")
     public DockElement convert( DockLayoutComposition composition ){
-    	DockLayoutInfo info = composition.getLayout();
-    	if( info == null )
-    		return null;
-    	
+        DockLayoutInfo info = composition.getLayout();
+        if( info == null )
+            return null;
+
         DockLayout<?> layout = info.getDataLayout();
         if( layout == null )
             return null;
-        
+
         DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( layout.getFactoryID() );
         if( factory == null )
             return null;
-        
+
         DockElement result = null;
         Map<Integer, Dockable> children = null;
-        
+
         if( composition.isIgnoreChildren() ){
             for( DockLayoutComposition childComposition : composition.getChildren() ){
                 convert( childComposition );
             }
-            
+
             result = factory.layout( layout.getData() );
         }
         else{
             children = new HashMap<Integer, Dockable>();
             int index = 0;
-            
+
             for( DockLayoutComposition childComposition : composition.getChildren() ){
                 DockElement child = convert( childComposition );
                 if( child != null ){
-                	Dockable dockable = child.asDockable();
-                	if( dockable != null ){
-                		children.put( index, dockable );
-                	}
+                    Dockable dockable = child.asDockable();
+                    if( dockable != null ){
+                        children.put( index, dockable );
+                    }
                 }
-                
+
                 index++;
             }
-            
+
             result = factory.layout( layout.getData(), children );
         }
-        
+
         if( result != null ){
             List<DockLayout<?>> adjacent = composition.getAdjacent();
             if( adjacent != null ){
@@ -301,10 +301,10 @@ public class DockSituation {
                 }
             }
         }
-        
+
         return result;
     }
-    
+
     /**
      * Writes the contents of <code>composition</code> and all its children
      * to <code>out</code>.
@@ -319,7 +319,7 @@ public class DockSituation {
         Version.write( out, Version.VERSION_1_0_7 );
         writeCompositionStream( composition, out );
     }
-    
+
     /**
      * Writes the contents of <code>composition</code> and all its children
      * to <code>out</code>.
@@ -331,32 +331,32 @@ public class DockSituation {
      */
     @SuppressWarnings("unchecked")
     private void writeCompositionStream( DockLayoutComposition composition, DataOutputStream out ) throws IOException{
-    	DockLayoutInfo info = composition.getLayout();
-    	if( info.getKind() == DockLayoutInfo.Data.BYTE ){
-    		out.write( info.getDataByte() );
-    	}
-    	else if( info.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT ){
-    		DockLayout<?> layout = info.getDataLayout();
-    		DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( layout.getFactoryID() );
-    		if( factory == null )
-    			throw new IOException( "Missing factory: " + layout.getFactoryID() );
+        DockLayoutInfo info = composition.getLayout();
+        if( info.getKind() == DockLayoutInfo.Data.BYTE ){
+            out.write( info.getDataByte() );
+        }
+        else if( info.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT ){
+            DockLayout<?> layout = info.getDataLayout();
+            DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( layout.getFactoryID() );
+            if( factory == null )
+                throw new IOException( "Missing factory: " + layout.getFactoryID() );
 
-    		// factory
-    		out.writeUTF( getID( factory ) );
+            // factory
+            out.writeUTF( getID( factory ) );
 
-    		// contents
-    		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-    		DataOutputStream dout = new DataOutputStream( bout );
-    		factory.write( layout.getData(), dout );
-    		dout.close();
+            // contents
+            ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            DataOutputStream dout = new DataOutputStream( bout );
+            factory.write( layout.getData(), dout );
+            dout.close();
 
-    		out.writeInt( bout.size() );
-    		bout.writeTo( out );
-    	}
-    	else{
-        	// there is nothing to write...
-        	throw new IllegalArgumentException( "Cannot store layout in stream: it was never translated and its raw format is not a byte stream" );
-    	}
+            out.writeInt( bout.size() );
+            bout.writeTo( out );
+        }
+        else{
+            // there is nothing to write...
+            throw new IllegalArgumentException( "Cannot store layout in stream: it was never translated and its raw format is not a byte stream" );
+        }
 
         // adjacent
         List<DockLayout<?>> adjacentLayouts = composition.getAdjacent();
@@ -369,21 +369,21 @@ public class DockSituation {
                 AdjacentDockFactory<Object> adjacentFactory = (AdjacentDockFactory<Object>)getAdjacentFactory( adjacentLayout.getFactoryID() );
                 if( adjacentFactory == null )
                     throw new IOException( "Missing adjacent factory: " + adjacentLayout.getFactoryID() );
-                
+
                 ByteArrayOutputStream adjacentBOut = new ByteArrayOutputStream();
                 DataOutputStream adjacentOut = new DataOutputStream( adjacentBOut );
                 adjacentFactory.write( adjacentLayout.getData(), adjacentOut );
                 adjacentOut.close();
-                
+
                 out.writeUTF( getAdjacentID( adjacentFactory ) );
                 out.writeInt( adjacentBOut.size() );
                 adjacentBOut.writeTo( out );
             }
         }
-        
+
         // ignore
         out.writeBoolean( composition.isIgnoreChildren() );
-        
+
         // children
         List<DockLayoutComposition> children = composition.getChildren();
         out.writeInt( children.size() );
@@ -391,7 +391,7 @@ public class DockSituation {
             writeCompositionStream( child, out );
         }
     }
-    
+
     /**
      * Reads one {@link DockLayoutComposition} and all its children.
      * @param in the stream to read from
@@ -403,7 +403,7 @@ public class DockSituation {
         version.checkCurrent();
         return readCompositionStream( in, version );
     }
-    
+
     /**
      * Reads one {@link DockLayoutComposition} and all its children.
      * @param in the stream to read from
@@ -414,61 +414,10 @@ public class DockSituation {
     @SuppressWarnings("unchecked")
     private DockLayoutComposition readCompositionStream( DataInputStream in, Version version ) throws IOException{
         // factory
-        String factoryId = in.readUTF();
-        DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
-        
-        // contents
-        DockLayoutInfo info;
-        int count = in.readInt();
-        
-        if( factory == null ){
-        	// copy contents to store byte[]
-        	ByteArrayOutputStream byteOutput = new ByteArrayOutputStream( count + 4 + factoryId.length() * 4 );
-        	DataOutputStream byteDataOutput = new DataOutputStream( byteOutput );
-        	
-        	byteDataOutput.writeUTF( factoryId );
-        	byteDataOutput.writeInt( count );
-        	for( int i = 0; i < count; i++ ){
-        		int read = in.read();
-        		if( read == -1 )
-        			throw new EOFException();
-        		byteDataOutput.write( read );
-        	}
-        	byteDataOutput.close();
-        	byte[] dataArray = byteOutput.toByteArray();
-        	
-        	// try read
-        	info = null;
-        	
-        	if( missingFactory != null ){
-        		ByteArrayInputStream byteInput = new ByteArrayInputStream( dataArray );
-        		DataInputStream byteDataInput = new DataInputStream( byteInput );
-        		byteDataInput.readUTF();
-        		byteDataInput.readInt();
-        		
-        		Object data = missingFactory.read( getFactoryID( factoryId ), byteDataInput, count );
-        		byteDataInput.close();
-        		
-        		if( data != null ){
-        			info = new DockLayoutInfo( new DockLayout<Object>( factoryId, data ));
-        		}
-        	}
-        	
-        	if( info == null ){
-        		info = new DockLayoutInfo( dataArray );
-        	}
-        }
-        else{
-            DataInputStream din = readBuffer( in, count );
-            Object data = factory.read( din );
-            if( data == null )
-                info = null;
-            else
-                info = new DockLayoutInfo( new DockLayout<Object>( factoryId, data ) );
-            
-            din.close();
-        }
-        
+        byte[] entry = readBuffer( in );
+
+        DockLayoutInfo info = readEntry( entry );
+
         List<DockLayout<?>> adjacentLayouts = null;
         if( Version.VERSION_1_0_7.compareTo( version ) <= 0 ){
             // adjacent
@@ -491,7 +440,7 @@ public class DockSituation {
                         }
                         else{
                             DataInputStream din = readBuffer( in, adjacentCount );
-                            Object data = missingAdjacent.read( getAdjacentFactoryID( adjacentFactoryId ), din, count );
+                            Object data = missingAdjacent.read( getAdjacentFactoryID( adjacentFactoryId ), din, adjacentCount );
                             if( data != null ){
                                 adjacentLayouts.add( new DockLayout<Object>( adjacentFactoryId, data ) );
                             }
@@ -504,27 +453,86 @@ public class DockSituation {
                         if( data != null ){
                             adjacentLayouts.add( new DockLayout<Object>( adjacentFactoryId, data ) );
                         }
-                        
+
                         din.close();
                     }
                 }
             }
         }
-        
+
         // ignore
         boolean ignore = in.readBoolean();
-        
+
         // children
         List<DockLayoutComposition> children = new ArrayList<DockLayoutComposition>();
-        count = in.readInt();
+        int count = in.readInt();
         for( int i = 0; i < count; i++ ){
             children.add( readCompositionStream( in, version ) );
         }
-        
+
         // result
         return new DockLayoutComposition( info, adjacentLayouts, children, ignore );
     }
-    
+
+    /**
+     * Tries to read <code>entry</code>. Entry will be read by a {@link DataInputStream},
+     * it must start with an utf-String used as id for a {@link DockFactory},
+     * then followed by an int telling how many bytes are in the remaining
+     * array. The rest of the array will be given to a {@link DockFactory}.
+     * @param entry the entry to read
+     * @return the information that was obtained, may be <code>null</code>
+     * @throws IOException if <code>entry</code> has not the correct format
+     */
+    @SuppressWarnings("unchecked")
+    private DockLayoutInfo readEntry( byte[] entry ) throws IOException{
+        DataInputStream entryIn = new DataInputStream( new ByteArrayInputStream( entry ));
+
+        String factoryId = entryIn.readUTF();
+        DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
+
+        // contents
+        DockLayoutInfo info;
+        int count = entryIn.readInt();
+
+        if( factory == null ){
+            // try read
+            info = null;
+
+            if( missingFactory != null ){
+                Object data = missingFactory.read( getFactoryID( factoryId ), entryIn, count );
+                entryIn.close();
+
+                if( data != null ){
+                    info = new DockLayoutInfo( new DockLayout<Object>( factoryId, data ));
+                }
+            }
+
+            if( info == null ){
+                info = new DockLayoutInfo( entry );
+            }
+        }
+        else{
+            Object data = factory.read( entryIn );
+            if( data == null )
+                info = null;
+            else
+                info = new DockLayoutInfo( new DockLayout<Object>( factoryId, data ) );
+
+            entryIn.close();
+        }
+
+        return info;
+    }
+
+    /**
+     * Reads <code>count</code> bytes from <code>in</code> and returns them
+     * in a new stream.
+     * @param in the stream to read from
+     * @param count the number of bytes to read
+     * @return a new stream with <code>count</code> bytes
+     * @throws IOException if <code>in</code> cannot be read or does not
+     * have <code>count</code> elements
+     */
     private DataInputStream readBuffer( DataInputStream in, int count ) throws IOException{
         byte[] buffer = new byte[ count ];
         int read = 0;
@@ -534,13 +542,41 @@ public class DockSituation {
                 throw new EOFException();
             read += input;
         }
-        
+
         ByteArrayInputStream bin = new ByteArrayInputStream( buffer );
         DataInputStream din = new DataInputStream( bin );
         return din;
     }
-    
-    
+
+    /**
+     * Reads one entry of the stream and returns the whole entry.
+     * An entry starts with an UTF-String, then an int telling how many bytes
+     * follow, then an array of bytes.
+     * @param in the stream to read from
+     * @return the whole entry
+     * @throws IOException if the entry cannot be read from <code>in</code>
+     */
+    private byte[] readBuffer( DataInputStream in ) throws IOException{
+        String factory = in.readUTF();
+        int count = in.readInt();
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream( factory.length()*4 + 4 + count );
+        DataOutputStream dout = new DataOutputStream( out );
+
+        dout.writeUTF( factory );
+        dout.writeInt( count );
+
+        for( int i = 0; i < count; i++ ){
+            int read = in.read();
+            if( read == -1 )
+                throw new EOFException( "unexpectetly reached end of file" );
+            dout.write( read );
+        }
+
+        dout.close();
+        return out.toByteArray();
+    }
+
     /**
      * Writes all locations and relationships of the {@link DockStation DockStations}
      * <code>stations</code> and their children into an array of bytes.
@@ -556,7 +592,7 @@ public class DockSituation {
         out.close();
         return bytes.toByteArray();
     }
-    
+
     /**
      * Writes all locations and relationships of the {@link DockStation DockStations}
      * <code>stations</code> and their children into the stream <code>out</code>.
@@ -566,7 +602,7 @@ public class DockSituation {
      */
     public void write( Map<String, DockStation> stations, DataOutputStream out ) throws IOException{
         Version.write( out, Version.VERSION_1_0_4 );
-        
+
         out.writeInt( stations.size() );
         for( Map.Entry<String, DockStation> entry : stations.entrySet() ){
             DockLayoutComposition composition = convert( entry.getValue() );
@@ -576,7 +612,7 @@ public class DockSituation {
             }
         }
     }
-    
+
     /**
      * Reads <code>data</code> as stream and returns the roots of the
      * {@link DockElement DockElements} which were found. 
@@ -590,7 +626,7 @@ public class DockSituation {
         in.close();
         return result;
     }
-    
+
     /**
      * Reads <code>in</code> and returns the roots of the
      * {@link DockElement DockElements} which were found. 
@@ -601,7 +637,7 @@ public class DockSituation {
     public Map<String, DockStation> read( DataInputStream in ) throws IOException{
         Version version = Version.read( in );
         version.checkCurrent();
-        
+
         int count = in.readInt();
         Map<String, DockStation> result = new HashMap<String, DockStation>();
         for( int i = 0; i < count; i++ ){
@@ -615,7 +651,7 @@ public class DockSituation {
         }
         return result;
     }
-    
+
     /**
      * Writes the contents of <code>composition</code> into <code>element</code> without
      * changing the attributes of <code>element</code>.
@@ -627,48 +663,48 @@ public class DockSituation {
     public void writeCompositionXML( DockLayoutComposition composition, XElement element ){
         DockLayoutInfo info = composition.getLayout();
         if( info.getKind() == DockLayoutInfo.Data.XML ){
-        	element.addElement( info.getDataXML() );
+            element.addElement( info.getDataXML() );
         }
         else if( info.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT ){
-        	DockLayout<?> layout = info.getDataLayout();
-        	
-        	DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( layout.getFactoryID() );
-        	if( factory == null )
-        		throw new IllegalArgumentException( "Missing factory: " + layout.getFactoryID() );
+            DockLayout<?> layout = info.getDataLayout();
 
-        	XElement xfactory = element.addElement( "layout" );
-        	xfactory.addString( "factory", getID( factory ) );
-        	factory.write( layout.getData(), xfactory );
+            DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( layout.getFactoryID() );
+            if( factory == null )
+                throw new IllegalArgumentException( "Missing factory: " + layout.getFactoryID() );
+
+            XElement xfactory = element.addElement( "layout" );
+            xfactory.addString( "factory", getID( factory ) );
+            factory.write( layout.getData(), xfactory );
         }
         else{
-        	// there is nothing to write...
-        	throw new IllegalArgumentException( "Cannot store layout as XML: it was never translated and its raw format is not XML" );
+            // there is nothing to write...
+            throw new IllegalArgumentException( "Cannot store layout as XML: it was never translated and its raw format is not XML" );
         }
-        
+
         List<DockLayout<?>> adjacentLayouts = composition.getAdjacent();
         if( adjacentLayouts != null ){
             XElement xadjacent = element.addElement( "adjacent" );
-            
+
             for( DockLayout<?> adjacentLayout : adjacentLayouts ){
                 AdjacentDockFactory<Object> adjacentFactory = (AdjacentDockFactory<Object>)getAdjacentFactory( adjacentLayout.getFactoryID() );
                 if( adjacentFactory == null )
                     throw new IllegalArgumentException( "Missing adjacent factory: " + adjacentLayout.getFactoryID() );
-                
+
                 XElement xlayout = xadjacent.addElement( "layout" );
                 xlayout.addString( "factory", getAdjacentID( adjacentFactory ) );
                 adjacentFactory.write( adjacentLayout.getData(), xlayout );
             }
         }
-        
+
         XElement xchildren = element.addElement( "children" );
         xchildren.addBoolean( "ignore", composition.isIgnoreChildren() );
-        
+
         for( DockLayoutComposition child : composition.getChildren() ){
             XElement xchild = xchildren.addElement( "child" );
             writeCompositionXML( child, xchild );
         }
     }
-    
+
     /**
      * Reads a {@link DockLayoutComposition} from an xml element.
      * @param element the element to read
@@ -678,37 +714,13 @@ public class DockSituation {
     @SuppressWarnings("unchecked")
     public DockLayoutComposition readCompositionXML( XElement element ){
         XElement xfactory = element.getElement( "layout" );
-        DockLayoutInfo layout = null;
-        if( xfactory != null ){
-            String factoryId = xfactory.getString( "factory" );
-            DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
-            if( factory != null ){
-                Object data = factory.read( xfactory );
-                if( data != null ){
-                    layout = new DockLayoutInfo( new DockLayout<Object>( factoryId, data ) );
-                }
-            }
-            else{
-            	layout = null;
-            	
-            	if( missingFactory != null ){
-            		Object data = missingFactory.readXML( getFactoryID( factoryId ), xfactory );
-            		if( data != null ){
-            			layout = new DockLayoutInfo( new DockLayout<Object>( factoryId, data ) );
-            		}
-            	}
-            	
-            	if( layout == null ){
-            		layout = new DockLayoutInfo( xfactory.copy() );
-            	}
-            }
-        }
-        
+        DockLayoutInfo layout = readEntry( xfactory );
+
         XElement xadjacent = element.getElement( "adjacent" );
         List<DockLayout<?>> adjacentLayouts = null;
         if( xadjacent != null ){
             adjacentLayouts = new ArrayList<DockLayout<?>>();
-            
+
             for( XElement xlayout : xadjacent.getElements( "layout" )){
                 String factoryId = xlayout.getString( "factory" );
                 AdjacentDockFactory<Object> adjacentFactory = (AdjacentDockFactory<Object>)getAdjacentFactory( factoryId );
@@ -726,21 +738,57 @@ public class DockSituation {
                 }
             }
         }
-        
+
         XElement xchildren = element.getElement( "children" );
         boolean ignore = true;
         List<DockLayoutComposition> children = new ArrayList<DockLayoutComposition>();
-        
+
         if( xchildren != null ){
             ignore = xchildren.getBoolean( "ignore" );
             for( XElement xchild : xchildren.getElements( "child" )){
                 children.add( readCompositionXML( xchild ));
             }
         }
-        
+
         return new DockLayoutComposition( layout, adjacentLayouts, children, ignore );
     }
-    
+
+    /**
+     * Reads an entry that was stored in xml format. The entry should have
+     * one attribute <code>factory</code>.
+     * @param element the element to read, can be <code>null</code>
+     * @return the information of <code>element</code>, may be <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
+    private DockLayoutInfo readEntry( XElement element ){
+        DockLayoutInfo layout = null;
+        if( element != null ){
+            String factoryId = element.getString( "factory" );
+            DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
+            if( factory != null ){
+                Object data = factory.read( element );
+                if( data != null ){
+                    layout = new DockLayoutInfo( new DockLayout<Object>( factoryId, data ) );
+                }
+            }
+            else{
+                layout = null;
+
+                if( missingFactory != null ){
+                    Object data = missingFactory.readXML( getFactoryID( factoryId ), element );
+                    if( data != null ){
+                        layout = new DockLayoutInfo( new DockLayout<Object>( factoryId, data ) );
+                    }
+                }
+
+                if( layout == null ){
+                    layout = new DockLayoutInfo( element );
+                }
+            }
+        }
+        return layout;
+    }
+
     /**
      * Writes all locations and relationships of the {@link DockStation}s
      * <code>stations</code> and their children as xml.
@@ -759,7 +807,7 @@ public class DockSituation {
             }
         }
     }
-    
+
     /**
      * Reads a set of {@link DockStation}s that were stored earlier.
      * @param root the xml element from which to read
@@ -777,7 +825,7 @@ public class DockSituation {
         }
         return result;
     }
-    
+
     /**
      * Using the factories currently known to this {@link DockSituation}, this
      * method tries to fill gaps in <code>composition</code>. It checks
@@ -792,22 +840,132 @@ public class DockSituation {
      * @throws XException if some xml element was found but cannot be read
      */
     public DockLayoutComposition fillMissing( DockLayoutComposition composition ) throws IOException, XException{
-    	DockLayoutInfo info = composition.getLayout();
-    	if( info.getKind() == DockLayoutInfo.Data.BYTE ){
-    		DataInputStream in = new DataInputStream( new ByteArrayInputStream( info.getDataByte() ));
-    		String factoryId = in.readUTF();
-    		int count = in.readInt();
-    		
-    		
-    	}
-    	else if( info.getKind() == DockLayoutInfo.Data.XML ){
-    		
-    	}
-    	
-    	// TODO continue here
-    	throw new IOException( "Method incomplete" );
+        DockLayoutInfo info = composition.getLayout();
+        DockLayoutInfo original = info;
+
+        if( info.getKind() == DockLayoutInfo.Data.BYTE ){
+            info = readEntry( info.getDataByte() );
+            if( info != null && info.getKind() == DockLayoutInfo.Data.BYTE ){
+                info = original;
+            }
+        }
+        else if( info.getKind() == DockLayoutInfo.Data.XML ){
+            info = readEntry( info.getDataXML() );
+            if( info != null && info.getKind() == DockLayoutInfo.Data.XML ){
+                info = original;
+            }
+        }
+        
+        if( info.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT ){
+            info = fillMissing( info );
+        }
+
+        boolean createNew = info != original;
+        List<DockLayoutComposition> children = composition.getChildren();
+        List<DockLayoutComposition> newChildren;
+
+        if( children != null ){
+            newChildren = new ArrayList<DockLayoutComposition>( children.size() );
+
+            for( DockLayoutComposition child : children ){
+                DockLayoutComposition filled = fillMissing( child );
+                newChildren.add( filled );
+                if( child != filled ){
+                    createNew = true;
+                }
+            }
+        }
+        else{
+            newChildren = null;
+        }
+
+        if( info != null && info != original ){
+            info.setLocation( original.getLocation() );
+        }
+
+        if( createNew ){
+            return new DockLayoutComposition( info, composition.getAdjacent(), newChildren, composition.isIgnoreChildren() );
+        }
+
+        return composition;
     }
     
+    /**
+     * Called by {@link #fillMissing(DockLayoutComposition)} only for
+     * {@link DockLayoutInfo}s which contain a {@link DockLayout}. This method
+     * can apply further updates to <code>info</code> if necessary. The default
+     * implementation just returns <code>info</code>.<br>
+     * This method is intended for subclasses which wrap {@link DockFactory}s 
+     * and use a {@link DockLayout} even for incomplete data.
+     * @param info the info to update
+     * @return either <code>info</code> if nothing changed or a new
+     * {@link DockLayoutInfo} if additional information could be retrieved
+     */
+    protected DockLayoutInfo fillMissing( DockLayoutInfo info ){
+        return info;
+    }
+
+    /**
+     * Tries to guess the location of the elements stored in the tree
+     * below <code>composition</code>. Invoking this method is the same as calling
+     * <code>guessLocation( composition, composition.getLayout().getLocation() );</code>.
+     * @param composition the composition whose location will be determined
+     */
+    public void estimateLocations( DockLayoutComposition composition ){
+        estimateLocations( composition, composition.getLayout().getLocation() );
+    }
+
+    /**
+     * Tries to guess the location of the elements stored in the tree below
+     * <code>composition</code>, assuming that <code>composition</code> itself
+     * is at location <code>location</code>. This method reads out the
+     * {@link DockLayoutInfo} through {@link DockLayoutComposition#getLayout()}
+     * and then calls {@link DockLayoutInfo#setLocation(DockableProperty)}, so
+     * <code>composition</code> gets modified by this method. This method stops
+     * its recursion if the location of a child of <code>composition</code>
+     * was not found.<br>
+     * This method returns immediately if one of:
+     * <ul>
+     *  <li><code>composition</code> does not have children</li>
+     *  <li><code>composition</code> does not carry a {@link DockLayout}</li>
+     *  <li>There is no {@link DockFactory} registered for the factory-id found 
+     *  in <code>composition</code></li>
+     * </ul> <br>
+     * Note: if the number of factories changed, then it might be a good idea 
+     * to call {@link #fillMissing(DockLayoutComposition)} before invoking this method.
+     * @param composition the composition whose children should be analyzed
+     * @param location the location of <code>composition</code>, can be <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
+    public void estimateLocations( DockLayoutComposition composition, DockableProperty location ){
+        List<DockLayoutComposition> children = composition.getChildren();
+        if( children == null || children.size() == 0 )
+            return;
+        
+        DockLayout<Object> layout = (DockLayout<Object>)composition.getLayout().getDataLayout();
+        if( layout == null )
+            return;
+        
+        DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( layout.getFactoryID() );
+        if( factory == null )
+            return;
+        
+        Map<Integer, DockLayoutInfo> map = new HashMap<Integer, DockLayoutInfo>();
+        int index = 0;
+        for( DockLayoutComposition child : children ){
+            map.put( index++, child.getLayout() );
+        }
+        
+        factory.estimateLocations( layout.getData(), location, map );
+        
+        for( DockLayoutComposition child : children ){
+             DockableProperty childLocation = child.getLayout().getLocation();
+             if( childLocation != null ){
+                 estimateLocations( child, childLocation );
+             }
+        }
+    }
+
     /**
      * Tells whether to ignore this element when saving. If an element is ignored, no 
      * factory is needed for it. This implementation forwards
@@ -818,10 +976,10 @@ public class DockSituation {
     protected boolean ignoreElement( DockElement element ){
         if( ignore == null )
             return false;
-        
+
         return ignore.ignoreElement( element );
     }
-    
+
     /**
      * Tells whether to ignore the children of the station when saving or not. If the children
      * are ignored, no factories are needed for them. This implementation forwards
@@ -832,10 +990,10 @@ public class DockSituation {
     protected boolean ignoreChildren( DockStation station ){
         if( ignore == null )
             return false;
-        
+
         return ignore.ignoreChildren( station );
     }
-    
+
     /**
      * Gets the id of the factory which is needed to write (and later
      * read) the element <code>dockable</code>.
@@ -847,7 +1005,7 @@ public class DockSituation {
     protected String getID( DockElement dockable ){
         return dockable.getFactoryID();
     }
-    
+
     /**
      * Gets the id of <code>factory</code>. The default behavior is just to
      * return {@link DockFactory#getID()}. Note that this method should be
@@ -858,7 +1016,39 @@ public class DockSituation {
     protected String getID( DockFactory<?,?> factory ){
         return factory.getID();
     }
-    
+
+    /**
+     * Reads the id of the factory which was used to create <code>info</code>.
+     * This returns the id of the factory as it is used internally by this
+     * {@link DockSituation}.
+     * @param info the info to check
+     * @return the id of a factory or <code>null</code> if info does not contain
+     * data
+     * @throws IllegalArgumentException if the data of <code>info</code> is in the wrong format
+     * @throws XException if the data of <code>info</code> is in the wrong format
+     */
+    protected String getFactoryID( DockLayoutInfo info ){
+        if( info.getKind() == DockLayoutInfo.Data.BYTE ){
+            try{
+                DataInputStream in = new DataInputStream( new ByteArrayInputStream( info.getDataByte() ));
+                String result = in.readUTF();
+                in.close();
+                return result;
+            }
+            catch( IOException ex ){
+                throw new IllegalArgumentException( "byte entry not in the correct format", ex );
+            }
+        }
+        if( info.getKind() == DockLayoutInfo.Data.XML ){
+            return info.getDataXML().getString( "factory" );
+        }
+        if( info.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT ){
+            return info.getDataLayout().getFactoryID();
+        }
+        
+        return null;
+    }
+
     /**
      * Transforms an id read from a stream to the id of the factory which
      * would be used. This method must fulfill one contract:
@@ -881,7 +1071,7 @@ public class DockSituation {
     protected String getAdjacentID( AdjacentDockFactory<?> factory ){
         return factory.getID();
     }
-    
+
     /**
      * Transforms an id read from a stream to the id of the adjacent factory which
      * would be used. This method must fulfill one contract:
@@ -894,7 +1084,7 @@ public class DockSituation {
         return id;
     }
 
-    
+
     /**
      * Gets the factory which has the given <code>id</code>. Note that this
      * method should be a bijection to {@link #getID(DockFactory)}. The 
@@ -904,9 +1094,9 @@ public class DockSituation {
      * @return the factory or <code>null</code> if no factory has this id
      */
     protected DockFactory<? extends DockElement,?> getFactory( String id ){
-    	return factories.get( id );
+        return factories.get( id );
     }
-    
+
     /**
      * Gets the adjacent factory which has the given <code>id</code>. Note that this
      * method should be a bijection to {@link #getID(DockFactory)}. The 
