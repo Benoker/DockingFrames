@@ -166,6 +166,12 @@ public class DockFrontend {
      */
     private boolean showHideAction = true;
     
+    /** the default value for {@link DockInfo#entryLayout} */
+    private boolean defaultEntryLayout = true;
+    
+    /** the default value for {@link DockInfo#hideActionVisible} */
+    private boolean defaultHideable = false;
+    
     /**
      * Whether {@link #fireShown(Dockable)} and {@link #fireHidden(Dockable)} should be called
      * automatically when triggered by a {@link DockRegister}-event or not.
@@ -450,7 +456,21 @@ public class DockFrontend {
                 throw new IllegalArgumentException( "There is already a dockable registered with name " + name );
         }
         else{
-            dockables.put( name, new DockInfo( dockable, name ));    
+            info = new DockInfo( dockable, name );
+            dockables.put( name, info );    
+        }
+        
+        DockLayoutComposition layout = info.getLayout();
+        if( layout != null ){
+            try{
+                DockSituation situation = createSituation( false );
+                layout = situation.fillMissing( layout );
+                situation.convert( layout );
+                info.setLayout( null );
+            }
+            catch( IOException ex ){
+                throw new IllegalArgumentException( "Cannot read old layout information", ex );
+            }
         }
         
         fireAdded( dockable );
@@ -840,21 +860,7 @@ public class DockFrontend {
     	else
     		save( setting );
     }
-    
-    /**
-     * Tells whether there is a "close"-action for <code>dockable</code> or not.
-     * @param dockable the element whose state is asked, must be known to this
-     * frontend.
-     * @return <code>true</code> if <code>dockable</code> has a close-action
-     */
-    public boolean isHideable( Dockable dockable ){
-        DockInfo info = getInfo( dockable );
-        if( info == null )
-            throw new IllegalArgumentException( "Dockable not registered" );
-        
-        return info.isHideable();
-    }
-    
+
     /**
      * Tells whether <code>dockable</code> is hidden or not.
      * @param dockable the element whose state is asked
@@ -871,6 +877,40 @@ public class DockFrontend {
      */
     public boolean isShown( Dockable dockable ){
         return dockable.getController() != null;
+    }
+    
+    /**
+     * Sets the default setting for {@link #setHideable(Dockable, boolean)}. This
+     * default value is stored as soon as the identifier of a {@link Dockable} 
+     * becomes known and further changes of the default value will not affect it. 
+     * @param defaultHideable the default value
+     * @see #setHideable(Dockable, boolean)
+     */
+    public void setDefaultHideable( boolean defaultHideable ) {
+        this.defaultHideable = defaultHideable;
+    }
+    
+    /**
+     * Gets the default value of {@link #setHideable(Dockable, boolean)}.
+     * @return the default value
+     * @see #setDefaultHideable(boolean)
+     */
+    public boolean isDefaultHideable() {
+        return defaultHideable;
+    }
+    
+    /**
+     * Tells whether there is a "close"-action for <code>dockable</code> or not.
+     * @param dockable the element whose state is asked, must be known to this
+     * frontend.
+     * @return <code>true</code> if <code>dockable</code> has a close-action
+     */
+    public boolean isHideable( Dockable dockable ){
+        DockInfo info = getInfo( dockable );
+        if( info == null )
+            throw new IllegalArgumentException( "Dockable not registered" );
+        
+        return info.isHideable();
     }
     
     /**
@@ -917,6 +957,93 @@ public class DockFrontend {
      */
     public boolean isShowHideAction(){
     	return showHideAction;
+    }
+    
+    /**
+     * Sets the default value for {@link #setEntryLayout(Dockable, boolean)}.
+     * This default value is stored as soon as the identifier of a {@link Dockable}
+     * becomes known and will not be affected by further changes of the default
+     * value.
+     * @param defaultEntryLayout whether the contents of {@link Dockable}s should
+     * be stored in <code>entry</code> {@link Setting}s or not
+     * @see #getSetting(boolean)
+     */
+    public void setDefaultEntryLayout( boolean defaultEntryLayout ) {
+        this.defaultEntryLayout = defaultEntryLayout;
+    }
+    
+    /**
+     * Gets the default value of {@link #isEntryLayout(Dockable)}.
+     * @return the default value
+     */
+    public boolean isDefaultEntryLayout() {
+        return defaultEntryLayout;
+    }
+    
+    /**
+     * Sets whether the layout of <code>dockable</code> should be stored
+     * for <code>entry</code> {@link Setting}s.
+     * @param dockable the element whose state is to be set
+     * @param layout the new state
+     * @throws IllegalArgumentException if <code>dockable</code> is not
+     * known
+     * @see #getSetting(boolean)
+     */
+    public void setEntryLayout( Dockable dockable, boolean layout ){
+        DockInfo info = getInfo( dockable );
+        if( info == null )
+            throw new IllegalArgumentException( "dockable not registered" );
+        
+        info.setEntryLayout( layout );
+    }
+    
+    /**
+     * Sets whether the layout of <code>id</code> should be stored
+     * for <code>entry</code> {@link Setting}s.
+     * @param id the id of the element whose state is to be changed
+     * @param layout the new state
+     * @throws IllegalArgumentException if <code>id</code> is not
+     * known
+     * @see #getSetting(boolean)
+     */
+    public void setEntryLayout( String id, boolean layout ){
+        DockInfo info = getInfo( id );
+        if( info == null )
+            throw new IllegalArgumentException( "no entry present for: " + id );
+        
+        info.setEntryLayout( layout );
+    }
+    
+    /**
+     * Tells whether the layout of <code>dockable</code> should be stored
+     * for <code>entry</code> {@link Setting}s.
+     * @param dockable the element whose state is asked
+     * @return the state
+     * @throws IllegalArgumentException if <code>dockable</code> is not known
+     * @see #getSetting(boolean)
+     */
+    public boolean isEntryLayout( Dockable dockable ){
+        DockInfo info = getInfo( dockable );
+        if( info == null )
+            throw new IllegalArgumentException( "dockable not registered" );
+        
+        return info.isEntryLayout();
+    }
+
+    /**
+     * Tells whether the layout of <code>id</code> should be stored
+     * for <code>entry</code> {@link Setting}s.
+     * @param id the identifier of an element whose state is requested
+     * @return the state
+     * @throws IllegalArgumentException if <code>id</code> is not known
+     * @see #getSetting(boolean)
+     */
+    public boolean isEntryLayout( String id ){
+        DockInfo info = getInfo( id );
+        if( info == null )
+            throw new IllegalArgumentException( "no entry present for: " + id );
+        
+        return info.isEntryLayout();
     }
     
     /**
@@ -1063,10 +1190,20 @@ public class DockFrontend {
         }
         
         for( DockInfo info : dockables.values() ){
-            if( info.getDockable() == null || info.getDockable().getController() == null ){
-                if( info.getLocation() != null ){
-                    setting.addInvisible( info.getKey(), info.getRoot(), info.getLocation() );
+            Dockable dockable = info.getDockable();
+            
+            if( dockable == null || dockable.getController() == null ){
+                DockLayoutComposition layout = null;
+                if( !entry || info.isEntryLayout() ){
+                    if( dockable != null ){
+                        layout = situation.convert( dockable );
+                    }
+                    else{
+                        layout = info.getLayout();
+                    }
                 }
+                
+                setting.addInvisible( info.getKey(), info.getRoot(), layout, info.getLocation() );
             }
         }
         
@@ -1112,7 +1249,6 @@ public class DockFrontend {
                     
                     Map<String, DockableProperty> missingLocations = 
                         listEstimateLocations( situation, layout );
-
                     if( missingLocations != null ){
                         for( Map.Entry<String, DockableProperty> missing : missingLocations.entrySet() ){
                             String key = missing.getKey();
@@ -1127,6 +1263,27 @@ public class DockFrontend {
                                 dockInfo.setLocation( info.getName(), missing.getValue() );
                             }
                         }
+                    }
+                    
+                    Map<String, DockLayoutComposition> missingLayouts =
+                        listLayouts( situation, layout );
+                    if( missingLayouts != null ){
+                        for( Map.Entry<String, DockLayoutComposition> missing : missingLayouts.entrySet() ){
+                            String key = missing.getKey();
+                            DockInfo dockInfo = getInfo( key );
+                            
+                            if( dockInfo == null && missingDockable.shouldStoreShown( key )){
+                                addEmpty( key );
+                                dockInfo = getInfo( key );
+                            }
+                            
+                            if( dockInfo != null ){
+                                if( !entry || dockInfo.isEntryLayout() ){
+                                    dockInfo.setLayout( missing.getValue() );
+                                }
+                            }
+                        }
+                        
                     }
                     
                     situation.convert( layout );
@@ -1146,6 +1303,16 @@ public class DockFrontend {
                     info.setLocation( 
                             setting.getInvisibleRoot( i ), 
                             setting.getInvisibleLocation( i ) );
+                    
+                    DockLayoutComposition layout = setting.getInvisibleLayout( i );
+                    if( layout != null ){
+                        layout = situation.fillMissing( layout );
+                    }
+                    if( info.getDockable() != null ){
+                        situation.convert( layout );
+                        layout = null;
+                    }
+                    info.setLayout( layout );
                 }
             }
         }
@@ -1180,6 +1347,33 @@ public class DockFrontend {
             Map<String, DockableProperty> result = new HashMap<String, DockableProperty>();
             
             for( Map.Entry<String, DockableProperty> entry : map.entrySet() ){
+                String key = entry.getKey();
+                if( key.startsWith( DOCKABLE_KEY_PREFIX ))
+                    result.put( key.substring( DOCKABLE_KEY_PREFIX.length() ), entry.getValue() );
+                else if( key.startsWith( ROOT_KEY_PREFIX ))
+                    result.put( key.substring( ROOT_KEY_PREFIX.length() ), entry.getValue() );
+                else
+                    result.put( key, entry.getValue() );
+            }
+            
+            return result;
+        }
+        return null;
+    }
+    
+    /**
+     * Tries to estimate the layouts of missing {@link Dockable}s. The
+     * default implementation works with any {@link PredefinedDockSituation}.
+     * @param situation the situation to use for transforming information
+     * @param layout the layout to analyze
+     * @return a map with <code>Dockable</code>-names as key or <code>null</code>
+     */
+    protected Map<String, DockLayoutComposition> listLayouts( DockSituation situation, DockLayoutComposition layout ){
+        if( situation instanceof PredefinedDockSituation ){
+            Map<String, DockLayoutComposition> map = ((PredefinedDockSituation)situation).listLayouts( layout, true );
+            Map<String, DockLayoutComposition> result = new HashMap<String, DockLayoutComposition>();
+            
+            for( Map.Entry<String, DockLayoutComposition> entry : map.entrySet() ){
                 String key = entry.getKey();
                 if( key.startsWith( DOCKABLE_KEY_PREFIX ))
                     result.put( key.substring( DOCKABLE_KEY_PREFIX.length() ), entry.getValue() );
@@ -1449,7 +1643,7 @@ public class DockFrontend {
     
     /**
      * Invoked every time before the current setting is written into a stream.<br>
-     * Note: the frontend and the file formats heavely depend on the internal
+     * Note: the frontend and the file formats heavily depend on the internal
      * implementation of this method. Overriding this method is possible, but
      * extreme care should be applied when doing so. A good solution would be
      * to call {@link #createInternalSituation(boolean)}, then change and return
@@ -1457,6 +1651,7 @@ public class DockFrontend {
      * This method just calls <code>return createInternalSituation( entry );</code>.<br>
      * Subclasses overridding this method may also need to override 
      * {@link #listEstimateLocations(DockSituation, DockLayoutComposition)}
+     * and {@link #listLayouts(DockSituation, DockLayoutComposition)}
      * @param entry <code>true</code> if the situation is used for a regular setting,
      * <code>false</code> if the situation is used as the final setting which will
      * be loaded the next time the application starts.
@@ -1478,8 +1673,24 @@ public class DockFrontend {
      * @return the situation
      */
     @SuppressWarnings("unchecked")
-    protected final PredefinedDockSituation createInternalSituation( boolean entry ){
-        PredefinedDockSituation situation = new PredefinedDockSituation();
+    protected final PredefinedDockSituation createInternalSituation( final boolean entry ){
+        PredefinedDockSituation situation = new PredefinedDockSituation(){
+            @Override
+            protected boolean shouldLayout( DockElement element ) {
+                if( entry ){
+                    Dockable dockable = element.asDockable();
+                    if( dockable != null ){
+                        DockInfo info = getInfo( dockable );
+                        if( info != null ){
+                            info.isEntryLayout();
+                        }
+                    }
+                }
+                
+                return true;
+            }
+        };
+        
         for( DockInfo info : dockables.values() ){
             if( info.getDockable() != null ){
                 situation.put( DOCKABLE_KEY_PREFIX + info.getKey(), info.getDockable() );
@@ -1740,6 +1951,11 @@ public class DockFrontend {
         private String root;
         /** The location of {@link #dockable} on the station named {@link #root} */
         private DockableProperty location;
+        
+        /** if set, then every entry-Setting can store the layout of this element */
+        private boolean entryLayout;
+        /** Information about the layout of this {@link #dockable}, can be <code>null</code> */
+        private DockLayoutComposition layout;
         /** Whether the hide-action is currently visible or not */
         private boolean hideActionVisible;
         
@@ -1751,11 +1967,35 @@ public class DockFrontend {
         public DockInfo( Dockable dockable, String key ){
             this.dockable = dockable;
             this.key = key;
+            
+            entryLayout = defaultEntryLayout;
+            
             source = new DefaultDockActionSource( new LocationHint( LocationHint.ACTION_GUARD, LocationHint.RIGHT_OF_ALL ));
             
             hideActionVisible = false;
             
-            setHideable( true );
+            setHideable( defaultHideable );
+        }
+        
+        /**
+         * If set, then every entry {@link Setting} can change the layout
+         * of this element.
+         * @return <code>true</code> if the layout of this element should be
+         * stored always.
+         */
+        public boolean isEntryLayout() {
+            return entryLayout;
+        }
+        
+
+        /**
+         * If set, then every entry {@link Setting} can change the layout
+         * of this element.
+         * @param entryLayout if the layout of this element should be
+         * stored always.
+         */
+        public void setEntryLayout( boolean entryLayout ) {
+            this.entryLayout = entryLayout;
         }
         
         /**
@@ -1872,6 +2112,22 @@ public class DockFrontend {
          */
         public DockableProperty getLocation() {
             return location;
+        }
+        
+        /**
+         * Sets information about the layout of this element.
+         * @param layout the layout, can be <code>null</code>
+         */
+        public void setLayout( DockLayoutComposition layout ) {
+            this.layout = layout;
+        }
+        
+        /**
+         * Gets information about the layout of this element.
+         * @return the information, may be <code>null</code>
+         */
+        public DockLayoutComposition getLayout() {
+            return layout;
         }
     }
     

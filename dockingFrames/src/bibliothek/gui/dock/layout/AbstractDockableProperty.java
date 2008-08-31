@@ -44,4 +44,13 @@ public abstract class AbstractDockableProperty implements DockableProperty {
     public void setSuccessor( DockableProperty properties ) {
         this.successor = properties;
     }
+    
+    /**
+     * Copies the fields of this property to <code>copy</code>.
+     * @param copy the copy of <code>this</code>
+     */
+    protected void copy( AbstractDockableProperty copy ){
+        if( successor != null )
+            copy.successor = successor;
+    }
 }

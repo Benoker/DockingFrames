@@ -33,6 +33,7 @@ import java.io.IOException;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.layout.AbstractDockableProperty;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
@@ -92,6 +93,12 @@ public class FlapDockProperty extends AbstractDockableProperty {
         setIndex( index );
         setHolding( holding );
         setSize( size );
+    }
+
+    public DockableProperty copy() {
+        FlapDockProperty copy = new FlapDockProperty( index, holding, size );
+        copy( copy );
+        return copy;
     }
     
     /**

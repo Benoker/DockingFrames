@@ -175,6 +175,35 @@ public class DockUtilities {
     }
     
     /**
+     * Creates a copy of <code>root</code> and sets <code>property</code>
+     * as the successor of the very last element in the property chain beginning
+     * at <code>root</code>.
+     * @param root the root of the chain, can be <code>null</code>
+     * @param property the new last element of the chain
+     * @return the root of the new chain
+     */
+    public static DockableProperty append( DockableProperty root, DockableProperty property ){
+        if( root == null )
+            return property;
+        
+        root = root.copy();
+        getLastProperty( root ).setSuccessor( property );
+        return root;
+    }
+    
+    /**
+     * Gets the last successor in the property chain beginning at <code>property</code>.
+     * @param property the start of the chain
+     * @return the end of the chain
+     */
+    public static DockableProperty getLastProperty( DockableProperty property ){
+        while( property.getSuccessor() != null )
+            property = property.getSuccessor();
+        
+        return property;
+    }
+    
+    /**
      * Gets a {@link DockableProperty} which describes the path from the
      * {@link #getRoot(DockElement) root} to <code>dockable</code>.
      * @param dockable a Dockable whose location is searched

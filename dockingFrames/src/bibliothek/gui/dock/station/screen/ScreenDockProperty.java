@@ -32,6 +32,7 @@ import java.io.IOException;
 
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.layout.AbstractDockableProperty;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
@@ -66,6 +67,13 @@ public class ScreenDockProperty extends AbstractDockableProperty {
         this.y = y;
         this.width = width;
         this.height = height;
+    }
+    
+
+    public DockableProperty copy() {
+        ScreenDockProperty copy = new ScreenDockProperty( x, y, width, height );
+        copy( copy );
+        return copy;
     }
 
     public void store( DataOutputStream out ) throws IOException {

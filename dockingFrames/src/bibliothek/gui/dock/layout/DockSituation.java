@@ -42,6 +42,7 @@ import bibliothek.gui.dock.security.SecureStackDockStationFactory;
 import bibliothek.gui.dock.station.flap.FlapDockStationFactory;
 import bibliothek.gui.dock.station.split.SplitDockStationFactory;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
+import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
@@ -956,11 +957,13 @@ public class DockSituation {
             map.put( index++, child.getLayout() );
         }
         
-        factory.estimateLocations( layout.getData(), location, map );
+        factory.estimateLocations( layout.getData(), map );
         
         for( DockLayoutComposition child : children ){
              DockableProperty childLocation = child.getLayout().getLocation();
              if( childLocation != null ){
+                 childLocation = DockUtilities.append( location, childLocation );
+                 child.getLayout().setLocation( childLocation );
                  estimateLocations( child, childLocation );
              }
         }

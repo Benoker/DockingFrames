@@ -34,7 +34,6 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.common.*;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
-import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
@@ -70,7 +69,7 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         return id;
     }
     
-    public void estimateLocations(CommonDockableLayout layout, DockableProperty location, Map<Integer, DockLayoutInfo> children) {
+    public void estimateLocations(CommonDockableLayout layout, Map<Integer, DockLayoutInfo> children) {
     	// currently not supported
     }
 

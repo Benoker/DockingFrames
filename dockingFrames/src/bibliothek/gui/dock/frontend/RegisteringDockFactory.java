@@ -35,7 +35,6 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.layout.BackupFactoryData;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
-import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -66,9 +65,8 @@ public class RegisteringDockFactory<D extends Dockable, L> implements DockFactor
         return factory.getID();
     }
 
-    public void estimateLocations( BackupFactoryData<L> layout, 
-    		DockableProperty location, Map<Integer, DockLayoutInfo> children ) {
-    	factory.estimateLocations( layout.getData(), location, children );
+    public void estimateLocations( BackupFactoryData<L> layout, Map<Integer, DockLayoutInfo> children ) {
+    	factory.estimateLocations( layout.getData(), children );
     }
     
     public BackupFactoryData<L> getLayout( D element, Map<Dockable, Integer> children ) {
@@ -82,7 +80,7 @@ public class RegisteringDockFactory<D extends Dockable, L> implements DockFactor
             if( id.startsWith( "dockable" )){
                 id = id.substring( "dockable".length() );
                 if( frontend.getDockable( id ) == null ){
-                    frontend.add( element, id );
+                    frontend.addDockable( id, element );
                 }
             }
         }
@@ -96,7 +94,7 @@ public class RegisteringDockFactory<D extends Dockable, L> implements DockFactor
             if( id.startsWith( "dockable" )){
                 id = id.substring( "dockable".length() );
                 if( frontend.getDockable( id ) == null ){
-                    frontend.add( element, id );
+                    frontend.addDockable( id, element );
                 }
             }
         }

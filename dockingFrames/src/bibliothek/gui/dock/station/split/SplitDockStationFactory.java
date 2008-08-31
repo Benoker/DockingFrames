@@ -183,18 +183,17 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
         return null;
     }
     
-    public void estimateLocations( SplitDockStationLayout layout, DockableProperty location, Map<Integer, DockLayoutInfo> children ) {
-    	estimateLocations( layout.getRoot(), location, children );
+    public void estimateLocations( SplitDockStationLayout layout, Map<Integer, DockLayoutInfo> children ) {
+    	estimateLocations( layout.getRoot(), children );
     }
     
     /**
      * Estimates the {@link DockableProperty location} of all leafs in the subtree
      * beginning with <code>entry</code>.
      * @param entry the root of the subtree to check
-     * @param location the location of the station that is analyzed, can be <code>null</code>
      * @param children the children of the station
      */
-    private void estimateLocations( SplitDockStationLayout.Entry entry, DockableProperty location, Map<Integer, DockLayoutInfo> children ){
+    private void estimateLocations( SplitDockStationLayout.Entry entry, Map<Integer, DockLayoutInfo> children ){
     	if( entry == null )
     		return;
     	
@@ -203,15 +202,14 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     		DockLayoutInfo info = children.get( leaf.getId() );
     		if( info != null ){
     		 	SplitDockPathProperty property = leaf.createPathProperty();
-    		 	property.setSuccessor( location );
     		 	info.setLocation( property );
     		}
     	}
     	
     	SplitDockStationLayout.Node node = entry.asNode();
     	if( node != null ){
-    		estimateLocations( node.getChildA(), location, children );
-    		estimateLocations( node.getChildB(), location, children );
+    		estimateLocations( node.getChildA(), children );
+    		estimateLocations( node.getChildB(), children );
     	}
     }
     

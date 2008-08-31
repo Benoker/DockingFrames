@@ -45,6 +45,13 @@ public class ChessBoardProperty implements DockableProperty {
 		this.column = column;
 	}
 	
+	public DockableProperty copy() {
+	    ChessBoardProperty copy = new ChessBoardProperty( row, column );
+	    if( successor != null )
+	        copy.successor = successor.copy();
+	    return copy;
+	}
+	
 	/**
 	 * Gets the row in which the field lies that contains the figure.
 	 * @return the row

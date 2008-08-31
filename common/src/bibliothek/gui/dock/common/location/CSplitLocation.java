@@ -56,6 +56,25 @@ public abstract class CSplitLocation extends CLocation{
     public CRectangleLocation rectangle( double x, double y, double width, double height ){
         return new CRectangleLocation( this, x, y, width, height );
     }
+
+    /**
+     * Creates a new location which represents a position in a stack
+     * that covers the whole {@link SplitDockStation}.
+     * @return the new location
+     */
+    public CStackLocation stack(){
+        return rectangle( 0, 0, 1, 1 ).stack();
+    }
+    
+    /**
+     * Creates a new location which represents a position in a stack
+     * that covers the whole {@link SplitDockStation}.
+     * @param index the index within the stack
+     * @return the new location
+     */
+    public CStackLocation stack( int index ){
+        return rectangle( 0, 0, 1, 1 ).stack( index );
+    }
     
     /**
      * Creates a location that describes a space in the upper part of

@@ -33,6 +33,7 @@ import java.io.IOException;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.layout.AbstractDockableProperty;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
@@ -66,6 +67,12 @@ public class StackDockProperty extends AbstractDockableProperty {
      */
     public StackDockProperty(){
     	// do nothing
+    }
+
+    public DockableProperty copy() {
+        StackDockProperty copy = new StackDockProperty( index );
+        copy( copy );
+        return copy;
     }
     
     /**

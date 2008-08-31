@@ -38,19 +38,24 @@ import bibliothek.gui.dock.layout.DockableProperty;
  * element, but also create a new {@link DockElement} with the content.
  * @author Benjamin Sigg
  * @param <D> the type of element which can be written and read by this factory
- * @param <L> the type of object that stores the contents of a <code>D</code>
+ * @param <L> the type of object that stores the contents of a <code>D</code>. If
+ * clients cannot guarantee that always the same factory will be mapped
+ * to the same identifier, then <code>L</code> should be set to {@link Object}
+ * and the methods which receive an <code>L</code> should use 
+ * <code>instanceof</code> before casting the argument.
  */
 public interface DockFactory<D extends DockElement, L> extends DockConverter<D, L>{
 	/**
 	 * Tries to estimate the {@link DockableProperty}s of the children of the
-	 * station which is represented by <code>layout</code>.
+	 * station which is represented by <code>layout</code>.<br>
+	 * Note: this method must not set the successor of any {@link DockableProperty},
+	 * it is the callers responsibility to handle chains of stations.
 	 * @param layout this station
-	 * @param location the location of <code>layout</code>, may be <code>null</code>
 	 * @param children the children of the station, this method should call
 	 * {@link DockLayoutInfo#setLocation(DockableProperty)} for as many
 	 * children as possible
 	 */
-	public void estimateLocations( L layout, DockableProperty location, Map<Integer, DockLayoutInfo> children );
+	public void estimateLocations( L layout, Map<Integer, DockLayoutInfo> children );
 	
     /**
      * Creates a new {@link DockElement} and changes the layout of the new 

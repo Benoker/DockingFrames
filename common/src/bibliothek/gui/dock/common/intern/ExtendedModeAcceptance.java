@@ -55,8 +55,12 @@ public class ExtendedModeAcceptance implements DockAcceptance {
             CDockable fdockable = ((CommonDockable)child).getDockable();
             CDockable.ExtendedMode mode = control.getStateManager().childsExtendedMode( parent );
             
-            if( mode == null )
-                return false;
+            if( mode == null ){
+                // the parent is not yet known to anyone, so just hope
+                // that the developer has made the correct settings, because
+                // we cannot check them here.
+                return true;
+            }
             
             switch( mode ){
                 case MINIMIZED:

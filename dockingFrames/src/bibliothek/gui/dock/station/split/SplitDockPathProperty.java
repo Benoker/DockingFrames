@@ -67,6 +67,16 @@ public class SplitDockPathProperty extends AbstractDockableProperty implements I
         // do nothing
     }
     
+
+    public DockableProperty copy() {
+        SplitDockPathProperty copy = new SplitDockPathProperty();
+        for( Node node : nodes ){
+            copy.add( node.getLocation(), node.getSize() );
+        }
+        copy( copy );
+        return copy;
+    }
+    
     public Iterator<SplitDockPathProperty.Node> iterator() {
         return nodes.iterator();
     }

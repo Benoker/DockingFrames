@@ -37,7 +37,6 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
-import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.util.DirectWindowProvider;
 import bibliothek.gui.dock.util.WindowProvider;
 import bibliothek.util.Version;
@@ -97,14 +96,11 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
         return ID;
     }
     
-    public void estimateLocations( ScreenDockStationLayout layout,
-    		DockableProperty location, Map<Integer, DockLayoutInfo> children ) {
-    	
+    public void estimateLocations( ScreenDockStationLayout layout, Map<Integer, DockLayoutInfo> children ) {
     	for( int i = 0, n = layout.size(); i<n; i++ ){
     		DockLayoutInfo info = children.get( layout.id( i ));
     		if( info != null ){
     			ScreenDockProperty property = new ScreenDockProperty( layout.x( i ), layout.y( i ), layout.width( i ), layout.height( i ));
-    			property.setSuccessor( location );
     			info.setLocation( property );
     		}
     	}

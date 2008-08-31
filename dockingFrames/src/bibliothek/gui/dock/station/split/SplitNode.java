@@ -489,6 +489,9 @@ public abstract class SplitNode{
                     DockStation station = combination.asDockStation();
                     if( station == null )
                         throw new SplitDropTreeException( access.getOwner(), "Combination of two Dockables does not create a new station" );
+
+                    leaf = createLeaf();
+                    leaf.setDockable( combination, true );
                     
                     for( int i = 2; i < dockables.length; i++ ){
                         Dockable dockable = dockables[ i ];
@@ -505,9 +508,6 @@ public abstract class SplitNode{
                         
                         station.drop( dockable );
                     }
-                    
-                    leaf = createLeaf();
-                    leaf.setDockable( combination, true );
                 }
             }
             

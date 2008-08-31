@@ -32,6 +32,7 @@ import java.io.IOException;
 
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.layout.AbstractDockableProperty;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
@@ -77,6 +78,13 @@ public class SplitDockProperty extends AbstractDockableProperty {
         setY( y );
         setWidth( width );
         setHeight( height );
+    }
+    
+
+    public DockableProperty copy() {
+        SplitDockProperty copy = new SplitDockProperty( x, y, width, height );
+        copy( copy );
+        return copy;
     }
     
     public String getFactoryID() {

@@ -37,7 +37,6 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
-import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
@@ -80,14 +79,11 @@ public class StackDockStationFactory implements DockFactory<StackDockStation, St
         return new StackDockStationLayout( selected, ids );
     }
     
-    public void estimateLocations( StackDockStationLayout layout,
-    		DockableProperty location, Map<Integer, DockLayoutInfo> children ) {
-    	
+    public void estimateLocations( StackDockStationLayout layout, Map<Integer, DockLayoutInfo> children ) {
     	for( int id : layout.getChildren() ){
     		DockLayoutInfo info = children.get( id );
     		if( info != null ){
     			StackDockProperty property = new StackDockProperty( id );
-    			property.setSuccessor( location );
     			info.setLocation( property );
     		}
     	}

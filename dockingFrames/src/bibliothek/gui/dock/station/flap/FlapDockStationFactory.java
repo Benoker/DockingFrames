@@ -38,7 +38,6 @@ import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
-import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XAttribute;
 import bibliothek.util.xml.XElement;
@@ -116,9 +115,7 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
         }
     }
     
-    public void estimateLocations( FlapDockStationLayout layout,
-    		DockableProperty location, Map<Integer, DockLayoutInfo> children ){
-    	
+    public void estimateLocations( FlapDockStationLayout layout, Map<Integer, DockLayoutInfo> children ){
     	int[] ids = layout.getChildren();
     	boolean[] holding = layout.getHolds();
     	int[] sizes = layout.getSizes();
@@ -127,7 +124,6 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
     		DockLayoutInfo info = children.get( ids[i] );
     		if( info != null ){
     			FlapDockProperty property = new FlapDockProperty( i, holding[i], sizes[i] );
-    			property.setSuccessor( location );
     			info.setLocation( property );
     		}
     	}

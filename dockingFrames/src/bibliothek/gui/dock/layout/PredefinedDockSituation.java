@@ -111,6 +111,21 @@ public class PredefinedDockSituation extends DockSituation {
         elementToString.put( element, key );
     }
 
+    /**
+     * Tells whether the layout of <code>element</code> itself should be stored
+     * or loaded, that will not prevent the <code>element</code> from showing
+     * up but from changing its content. The default implementation returns
+     * always <code>true</code>. This method is intended to be overridden by
+     * subclasses.
+     * @param element the element whose contents might or might not be stored
+     * or loaded
+     * @return <code>true</code> if the contents should be handled, <code>false</code>
+     * if they should be discarded
+     */
+    protected boolean shouldLayout( DockElement element ){
+        return true;
+    }
+    
     @Override
     protected DockLayoutInfo fillMissing( DockLayoutInfo info ) {
         DockLayout<?> layout = info.getDataLayout();
@@ -190,6 +205,34 @@ public class PredefinedDockSituation extends DockSituation {
         if( children != null ){
             for( DockLayoutComposition child : children ){
                 listEstimatedLocations( child, missingOnly, map );
+            }
+        }
+    }
+    
+    /**
+     * Gets a map containing some or all of the named layouts.
+     * @param composition some composition to analyze
+     * @param missingOnly if set, then only locations of keys for which 
+     * no {@link DockLayout} is set are reported. This are the keys which most
+     * likely will be ignored when calling {@link #convert(DockLayoutComposition)}
+     * @return the map of keys and layouts, might be empty
+     */
+    public Map<String, DockLayoutComposition> listLayouts( DockLayoutComposition composition, boolean missingOnly ){
+        Map<String, DockLayoutComposition> map = new HashMap<String, DockLayoutComposition>();
+        listLayouts( composition, missingOnly, map );
+        return map;
+    }
+    
+    private void listLayouts( DockLayoutComposition composition, boolean missingOnly, Map<String, DockLayoutComposition> map ){
+        String key = getKey( composition, missingOnly );
+        if( key != null){
+            map.put( key, composition );
+        }
+        
+        List<DockLayoutComposition> children = composition.getChildren();
+        if( children != null ){
+            for( DockLayoutComposition child : children ){
+                listLayouts( child, missingOnly, map );
             }
         }
     }
@@ -388,29 +431,33 @@ public class PredefinedDockSituation extends DockSituation {
         }
 
         @SuppressWarnings("unchecked")
-        public void estimateLocations( PreloadedLayout layout, 
-                DockableProperty location, Map<Integer, DockLayoutInfo> children ) {
+        public void estimateLocations( PreloadedLayout layout, Map<Integer, DockLayoutInfo> children ) {
 
             DockLayoutInfo delegate = layout.getDelegate();
             if( delegate.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT ){
                 String factoryId = delegate.getDataLayout().getFactoryID();
                 DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
                 if( factory != null ){
-                    factory.estimateLocations( delegate.getDataLayout().getData(), location, children );
+                    factory.estimateLocations( delegate.getDataLayout().getData(), children );
                 }
             }
         }
 
         @SuppressWarnings("unchecked")
         public PreloadedLayout getLayout( DockElement element, Map<Dockable, Integer> children ) {
-            String factoryId = UNKNOWN + PredefinedDockSituation.super.getID( element );
-            DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
-            if( factory == null )
-                throw new IllegalStateException( "Missing factory: " + factoryId );
+            if( shouldLayout( element )){
+                String factoryId = UNKNOWN + PredefinedDockSituation.super.getID( element );
+                DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
+                if( factory == null )
+                    throw new IllegalStateException( "Missing factory: " + factoryId );
 
-            Object data = factory.getLayout( element, children );
-            DockLayout<Object> layout = new DockLayout<Object>( factoryId, data );
-            return new PreloadedLayout( elementToString.get( element ), new DockLayoutInfo( layout ));
+                Object data = factory.getLayout( element, children );
+                DockLayout<Object> layout = new DockLayout<Object>( factoryId, data );
+                return new PreloadedLayout( elementToString.get( element ), new DockLayoutInfo( layout ));    
+            }
+            else{
+                return new PreloadedLayout( elementToString.get( element ), new DockLayoutInfo() );
+            }
         }
 
         @SuppressWarnings("unchecked")
@@ -418,7 +465,7 @@ public class PredefinedDockSituation extends DockSituation {
                 Map<Integer, Dockable> children ) {
 
             DockLayoutInfo delegate = layout.getDelegate();
-            if( delegate.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT ){
+            if( delegate.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT && shouldLayout( element )){
                 String factoryId = delegate.getDataLayout().getFactoryID();
                 DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
                 if( factory != null ){
@@ -430,7 +477,7 @@ public class PredefinedDockSituation extends DockSituation {
         @SuppressWarnings("unchecked")
         public void setLayout( DockElement element, PreloadedLayout layout ) {
             DockLayoutInfo delegate = layout.getDelegate();
-            if( delegate.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT ){
+            if( delegate.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT && shouldLayout( element )){
                 String factoryId = delegate.getDataLayout().getFactoryID();
                 DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
                 if( factory != null ){
@@ -442,12 +489,15 @@ public class PredefinedDockSituation extends DockSituation {
         @SuppressWarnings("unchecked")
         public DockElement layout( PreloadedLayout layout, Map<Integer, Dockable> children ) {
             DockLayoutInfo delegate = layout.getDelegate();
-            if( delegate.getKind() != DockLayoutInfo.Data.DOCK_LAYOUT ){
+            boolean isLayout = delegate.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT;
+            boolean isNull =  delegate.getKind() == DockLayoutInfo.Data.NULL;
+
+            if( !isLayout && !isNull ){
                 return null;
             }
-
+            
             DockElement element = stringToElement.get( layout.getPreload() );
-            if( element == null ){
+            if( element == null && isLayout ){
                 String factoryId = delegate.getDataLayout().getFactoryID();
                 DockFactory factory = getBackup( factoryId );
                 if( factory != null ){
@@ -465,11 +515,16 @@ public class PredefinedDockSituation extends DockSituation {
         @SuppressWarnings("unchecked")
         public DockElement layout( PreloadedLayout layout ) {
             DockLayoutInfo delegate = layout.getDelegate();
-            if( delegate.getKind() != DockLayoutInfo.Data.DOCK_LAYOUT )
+            
+            boolean isLayout = delegate.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT;
+            boolean isNull =  delegate.getKind() == DockLayoutInfo.Data.NULL;
+
+            if( !isLayout && !isNull ){
                 return null;
+            }
 
             DockElement element = stringToElement.get( layout.getPreload() );
-            if( element == null ){
+            if( element == null && isLayout ){
                 if( layout.getDelegate() == null )
                     return null;
 
@@ -490,15 +545,17 @@ public class PredefinedDockSituation extends DockSituation {
 
         @SuppressWarnings("unchecked")
         public void write( PreloadedLayout layout, DataOutputStream out ) throws IOException {
-            Version.write( out, Version.VERSION_1_0_4 );
+            Version.write( out, Version.VERSION_1_0_7 );
 
             DockLayoutInfo info = layout.getDelegate();
             out.writeUTF( layout.getPreload() );
 
             if( info.getKind() == DockLayoutInfo.Data.BYTE ){
+                out.writeBoolean( true );
                 out.write( info.getDataByte() );
             }
             else if( info.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT ){
+                out.writeBoolean( true );
                 DockLayout delegate = info.getDataLayout();
                 String factoryId = delegate.getFactoryID();
                 DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
@@ -507,6 +564,9 @@ public class PredefinedDockSituation extends DockSituation {
 
                 out.writeUTF( factoryId );
                 factory.write( delegate.getData(), out );    
+            }
+            else if( info.getKind() == DockLayoutInfo.Data.NULL ){
+                out.writeBoolean( false );
             }
             else{
                 throw new IllegalArgumentException( "Cannot store information as byte[], it is not present as raw byte[] or in an understandable format" );
@@ -518,39 +578,51 @@ public class PredefinedDockSituation extends DockSituation {
             Version version = Version.read( in );
             version.checkCurrent();
 
+            boolean version7 = Version.VERSION_1_0_7.compareTo( version ) <= 0;
+            
             String preloaded = in.readUTF();
-            String factoryId = in.readUTF();
+            boolean nullValue = false;
+            if( version7 ){
+                nullValue = !in.readBoolean();
+            }
 
             DockLayoutInfo info = null;
+            
+            if( nullValue ){
+                info = new DockLayoutInfo();
+            }
+            else{
+                String factoryId = in.readUTF();
 
-            DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
-            if( factory == null ){
-                DockFactory backup = getBackup( factoryId );
-                if( backup != null ){
-                    BackupFactoryData<Object> data = (BackupFactoryData<Object>)backup.read( in );
-                    if( data != null && data.getData() != null ){
-                        info = new DockLayoutInfo( new DockLayout<Object>( factoryId, data.getData() ));
+                DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
+                if( factory == null ){
+                    DockFactory backup = getBackup( factoryId );
+                    if( backup != null ){
+                        BackupFactoryData<Object> data = (BackupFactoryData<Object>)backup.read( in );
+                        if( data != null && data.getData() != null ){
+                            info = new DockLayoutInfo( new DockLayout<Object>( factoryId, data.getData() ));
+                        }
+                    }
+                    else{
+                        // store as byte[]
+                        ByteArrayOutputStream out = new ByteArrayOutputStream();
+                        DataOutputStream dout = new DataOutputStream( out );
+                        dout.writeUTF( factoryId );
+
+                        int read;
+                        while( (read = in.read()) != -1 ){
+                            dout.write( read );
+                        }
+
+                        dout.close();
+                        info = new DockLayoutInfo( out.toByteArray() );
                     }
                 }
                 else{
-                    // store as byte[]
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    DataOutputStream dout = new DataOutputStream( out );
-                    dout.writeUTF( factoryId );
-
-                    int read;
-                    while( (read = in.read()) != -1 ){
-                        dout.write( read );
+                    Object delegate = factory.read( in );
+                    if( delegate != null ){
+                        info = new DockLayoutInfo( new DockLayout<Object>( factoryId, delegate ));
                     }
-
-                    dout.close();
-                    info = new DockLayoutInfo( out.toByteArray() );
-                }
-            }
-            else{
-                Object delegate = factory.read( in );
-                if( delegate != null ){
-                    info = new DockLayoutInfo( new DockLayout<Object>( factoryId, delegate ));
                 }
             }
 
@@ -579,6 +651,9 @@ public class PredefinedDockSituation extends DockSituation {
                 xdelegate.addString( "id", factoryId );
                 factory.write( delegate.getData(), xdelegate );    
             }
+            else if( info.getKind() == DockLayoutInfo.Data.NULL ){
+                // nothing to store
+            }
             else{
                 throw new IllegalArgumentException( "Cannot store information as xml, it is neither present as raw xml nor in an understandable format" );
             }
@@ -589,6 +664,10 @@ public class PredefinedDockSituation extends DockSituation {
             String preload = element.getElement( "replacement" ).getString( "id" );
 
             XElement xdelegate = element.getElement( "delegate" );
+            if( xdelegate == null ){
+                return new PreloadedLayout( preload, new DockLayoutInfo() );
+            }
+            
             String factoryId = xdelegate.getString( "id" );
 
             Object delegate = null;
