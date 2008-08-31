@@ -1542,7 +1542,7 @@ public class DockFrontend {
             fireRead( key );
         }
         
-        setSetting( read( true, in ), true );
+        setSetting( read( false, in ), false );
     }
     
     /**

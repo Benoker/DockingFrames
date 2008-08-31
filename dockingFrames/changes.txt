@@ -209,3 +209,4 @@
 - API: DockFrontend#setSetting now tries to fill missing gaps in the layout before applying it.
 - Bugfix: Dropping a CGrid with 3 or more stacked elements produced an exception
 - API: DockFrontend stores also the layout of invisible elements (using DockFactories)
+- Bugfix: DockFrontend.read from DataInputStream did mark the main Setting as "entry=true" while it should have been "entry=false"
