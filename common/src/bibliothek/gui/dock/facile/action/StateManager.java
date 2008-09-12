@@ -541,7 +541,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
     }
     
     @Override
-    protected void transitionDuringRead( String oldMode, String newMode, Dockable dockable ) {
+    protected void transitionDuringRead( String id, String oldMode, String newMode, Dockable dockable ) {
         // ignore
     }
     

@@ -210,3 +210,4 @@
 - Bugfix: Dropping a CGrid with 3 or more stacked elements produced an exception
 - API: DockFrontend stores also the layout of invisible elements (using DockFactories)
 - Bugfix: DockFrontend.read from DataInputStream did mark the main Setting as "entry=true" while it should have been "entry=false"
+- API: 'DockFrontend.listFrontendEntries()' and 'getFontendEntry( String key )' allow access to any information a frontend knows about a (missing or not missing) Dockable

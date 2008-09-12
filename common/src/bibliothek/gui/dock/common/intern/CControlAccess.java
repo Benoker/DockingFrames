@@ -28,6 +28,7 @@ package bibliothek.gui.dock.common.intern;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.MissingCDockableStrategy;
 import bibliothek.gui.dock.common.MultipleCDockableFactory;
 
 /**
@@ -94,4 +95,14 @@ public interface CControlAccess {
 	 * @return the access or <code>null</code>
 	 */
 	public CDockableAccess access( CDockable dockable );
+	
+	/**
+	 * Calls either {@link MissingCDockableStrategy#shouldStoreSingle(String)}
+	 * or {@link MissingCDockableStrategy#shouldStoreMultiple(String)} depending
+	 * on how <code>key</code> looks like. 
+	 * @param key the key for which a dockable might be stored
+	 * @return <code>true</code> if layout information for <code>key</code> should
+	 * be stored, <code>false</code> otherwise
+	 */
+	public boolean shouldStore( String key );
 }

@@ -26,7 +26,10 @@
 package bibliothek.gui.dock.common;
 
 import java.awt.Component;
-import java.awt.event.*;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -38,7 +41,6 @@ import javax.swing.KeyStroke;
 
 import bibliothek.extension.gui.dock.preference.PreferenceModel;
 import bibliothek.extension.gui.dock.preference.PreferenceStorage;
-import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabDockAction;
 import bibliothek.gui.*;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.FlapDockStation;
@@ -47,6 +49,7 @@ import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.common.action.predefined.CCloseAction;
 import bibliothek.gui.dock.common.event.*;
 import bibliothek.gui.dock.common.intern.*;
 import bibliothek.gui.dock.common.intern.CDockable.ExtendedMode;
@@ -59,17 +62,21 @@ import bibliothek.gui.dock.common.layout.ThemeMap;
 import bibliothek.gui.dock.common.location.CExternalizedLocation;
 import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.event.*;
-import bibliothek.gui.dock.facile.action.CloseAction;
 import bibliothek.gui.dock.facile.action.StateManager;
 import bibliothek.gui.dock.facile.station.screen.WindowProviderVisibility;
 import bibliothek.gui.dock.facile.station.split.ConflictResolver;
 import bibliothek.gui.dock.facile.station.split.DefaultConflictResolver;
+import bibliothek.gui.dock.frontend.FrontendEntry;
+import bibliothek.gui.dock.frontend.MissingDockableStrategy;
 import bibliothek.gui.dock.frontend.Setting;
 import bibliothek.gui.dock.layout.DockSituationIgnore;
 import bibliothek.gui.dock.support.util.ApplicationResource;
 import bibliothek.gui.dock.support.util.ApplicationResourceManager;
 import bibliothek.gui.dock.themes.ThemeFactory;
-import bibliothek.gui.dock.util.*;
+import bibliothek.gui.dock.util.DirectWindowProvider;
+import bibliothek.gui.dock.util.NullWindowProvider;
+import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.WindowProvider;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
@@ -146,10 +153,13 @@ public class CControl {
 
     /** connection to the real DockingFrames */
     private DockFrontend frontend;
+    
+    /** strategy what to do when reading layout information of a missing dockable */
+    private MissingCDockableStrategy missingStrategy = MissingCDockableStrategy.PURGE;
 
     /** the set of known factories */
-    private Map<String, FactoryProperties> factories = 
-        new HashMap<String, FactoryProperties>();
+    private Map<String, MultipleCDockableFactory<?,?>> factories = 
+        new HashMap<String, MultipleCDockableFactory<?,?>>();
 
     /** list of all dockables registered to this control */
     private List<CDockable> dockables =
@@ -325,6 +335,16 @@ public class CControl {
                 stateManager.setSetting( ((CSetting)setting).getModes() );
             }
         };
+        
+        frontend.setMissingDockableStrategy( new MissingDockableStrategy(){
+            public boolean shouldStoreHidden( String key ) {
+                return shouldStore( key );
+            }
+            public boolean shouldStoreShown( String key ) {
+                return shouldStore( key );
+            }
+        });
+        
         frontend.setIgnoreForEntry( new DockSituationIgnore(){
             public boolean ignoreChildren( DockStation station ) {
                 CStation cstation = getStation( station );
@@ -1143,7 +1163,7 @@ public class CControl {
             checkStationIdentifierUniqueness( id );
 
         if( root ){
-            frontend.addRoot( station.getStation(), id );
+            frontend.addRoot( id, station.getStation() );
         }
 
         station.setControl( access );
@@ -1201,7 +1221,7 @@ public class CControl {
         dockable.setControl( access );
         String id = toSingleId( dockable.getUniqueId() );
         accesses.get( dockable ).setUniqueId( id );
-        frontend.add( dockable.intern(), id );
+        frontend.addDockable( id, dockable.intern() );
         frontend.setHideable( dockable.intern(), true );
         dockables.add( dockable );
         singleDockables.add( dockable );
@@ -1240,16 +1260,28 @@ public class CControl {
     /**
      * Adds a backup factory to this control. The backup factory will be used
      * to create and add a {@link SingleCDockable} when one is requested that
-     * is not yet in the cache.
+     * is not yet in the cache.<br>
+     * If there is already information for <code>id</code> available and
+     * <code>id</code> should be visible, then the factory will be used
+     * Instantaneously.
      * @param id the id of the dockable that might be requested
      * @param backupFactory the new factory
      */
     public void addSingleBackupFactory( String id, SingleCDockableBackupFactory backupFactory ){
         this.backupFactory.add( id, backupFactory );
 
-        id = toSingleId( id );
-        stateManager.addEmpty( id );
-        frontend.addEmpty( id );
+        String singleId = toSingleId( id );
+        stateManager.addEmpty( singleId );
+        frontend.addEmpty( singleId );
+        
+        // if there is already layout information for id, then load this information now
+        FrontendEntry entry = frontend.getFrontendEntry( singleId );
+        if( entry != null && entry.getDockable() == null && entry.isShown() ){
+            SingleCDockable dockable = backupFactory.createBackup( id );
+            if( dockable != null ){
+                add( dockable );
+            }
+        }
     }
 
     /**
@@ -1263,10 +1295,6 @@ public class CControl {
         id = toSingleId( id );
         stateManager.removeEmpty( id );
         frontend.removeEmpty( id );
-    }
-
-    private String toSingleId( String id ){
-        return "single " + id;
     }
 
     /**
@@ -1291,14 +1319,14 @@ public class CControl {
 
         int count = 0;
         String id = count + " " + factory;
-        while( ids.contains( "multi " + id )){
+        while( ids.contains( toMultiId( id ) ) ){
             count++;
             id = count + " " + factory;
         }
 
         return add( dockable, id );
     }
-
+    
     /**
      * Adds a dockable to this control. The dockable can be made visible afterwards.
      * This method will throw an exception when the unique identifier is already
@@ -1327,7 +1355,7 @@ public class CControl {
         if( dockable.getControl() != null )
             throw new IllegalStateException( "dockable is already part of a control" );
 
-        uniqueId = "multi " + uniqueId;
+        uniqueId = toMultiId( uniqueId );
 
         for( MultipleCDockable multi : multiDockables ){
             if( factory.equals( access.getFactoryId( multi.getFactory() ))){
@@ -1346,6 +1374,23 @@ public class CControl {
             listener.added( CControl.this, dockable );
 
         return dockable;
+    }
+
+    private String toSingleId( String id ){
+        return "single " + id;
+    }
+
+    private String toMultiId( String id ){
+        return "multi " + id;
+    }
+    
+    private boolean shouldStore( String id ){
+        if( id.startsWith( "single " ))
+            return missingStrategy.shouldStoreSingle( id.substring( 7 ) );
+        else if( id.startsWith( "multi " ))
+            return missingStrategy.shouldStoreMultiple( id.substring( 6 ) );
+        else
+            return false;
     }
 
     /**
@@ -1367,7 +1412,6 @@ public class CControl {
                 throw new IllegalStateException( "the factory for a MultipleDockable is not registered" );
             }
 
-            factories.get( factory ).count--;
             dockable.setControl( null );
 
             for( CControlListener listener : listeners() )
@@ -1410,10 +1454,7 @@ public class CControl {
             throw new IllegalArgumentException( "there is already a factory named " + id );
         }
 
-        FactoryProperties properties = new FactoryProperties();
-        properties.factory = factory;
-
-        factories.put( id, properties );
+        factories.put( id, factory );
 
         frontend.registerFactory( new CommonMultipleDockableFactory( id, factory, access ) );
     }
@@ -1551,6 +1592,30 @@ public class CControl {
 		return preferenceModel;
 	}
 
+    /**
+     * Sets the strategy that tells what to do if layout information of a missing
+     * {@link CDockable} is found.
+     * @param missingStrategy the strategy, <code>null</code> will set
+     * the default strategy
+     */
+    public void setMissingStrategy( MissingCDockableStrategy missingStrategy ) {
+        if( missingStrategy == null ){
+            this.missingStrategy = MissingCDockableStrategy.PURGE;
+        }
+        else{
+            this.missingStrategy = missingStrategy;
+        }
+    }
+    
+    /**
+     * Gets the strategy that tells what to do if layout information of a missing
+     * {@link CDockable} is found.
+     * @return the strategy, never <code>null</code>
+     */
+    public MissingCDockableStrategy getMissingStrategy() {
+        return missingStrategy;
+    }
+    
     /**
      * Adds a {@link ResizeRequestListener} to this {@link CControl}. The listener
      * will be informed when the resize requests of a {@link CDockable} should
@@ -1699,18 +1764,6 @@ public class CControl {
     }
 
     /**
-     * Properties associated with one factory.
-     * @author Benjamin Sigg
-     *
-     */
-    private static class FactoryProperties{
-        /** the associated factory */
-        public MultipleCDockableFactory<?,?> factory;
-        /** the number of {@link MultipleCDockable} that belong to {@link #factory} */
-        public int count = 0;
-    }
-
-    /**
      * A class giving access to the internal methods of the enclosing
      * {@link CControl}.
      * @author Benjamin Sigg
@@ -1811,8 +1864,8 @@ public class CControl {
         }
 
         public String getFactoryId( MultipleCDockableFactory<?,?> factory ){
-            for( Map.Entry<String, FactoryProperties> entry : factories.entrySet() ){
-                if( entry.getValue().factory == factory )
+            for( Map.Entry<String, MultipleCDockableFactory<?,?>> entry : factories.entrySet() ){
+                if( entry.getValue() == factory )
                     return entry.getKey();
             }
 
@@ -1825,35 +1878,13 @@ public class CControl {
 
         public DockAction createCloseAction( final CDockable fdockable ) {
             if( closeAction == null )
-                closeAction = new CCloseAction();
+                closeAction = new CCloseAction( CControl.this );
 
-            return closeAction;
+            return closeAction.intern();
         }
-    }
-
-    /**
-     * Action that can close {@link CDockable}s
-     * @author Benjamin Sigg
-     */
-    @EclipseTabDockAction
-    private class CCloseAction extends CloseAction{
-        /**
-         * Creates a new action
-         */
-        public CCloseAction(){
-            super( frontend.getController() );
-            new PropertyValue<KeyStroke>( KEY_CLOSE, frontend.getController() ){
-                @Override
-                protected void valueChanged( KeyStroke oldValue, KeyStroke newValue ) {
-                    setAccelerator( newValue );
-                }
-            };
-        }
-
-        @Override
-        protected void close( Dockable dockable ) {
-            CDockable cdockable = ((CommonDockable)dockable).getDockable();
-            cdockable.setVisible( false );
+        
+        public boolean shouldStore( String key ) {
+            return CControl.this.shouldStore( key );
         }
     }
 }

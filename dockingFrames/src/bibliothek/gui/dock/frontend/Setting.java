@@ -35,6 +35,7 @@ import bibliothek.gui.dock.layout.*;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XAttribute;
 import bibliothek.util.xml.XElement;
+import bibliothek.util.xml.XException;
 
 
 /**
@@ -133,6 +134,27 @@ public class Setting{
      */
     public DockLayoutComposition getInvisibleLayout( int index ){
         return dockables.get( index ).layout;
+    }
+    
+    /**
+     * Using the factories given by <code>situation</code>, this method tries
+     * to fill any gaps in the layout.
+     * @param situation a set of factories to use
+     * @throws IllegalArgumentException if <code>situation</code> cannot handle
+     * the content of this setting
+     */
+    public void fillMissing( DockSituation situation ){
+        try{
+            for( Map.Entry<String, DockLayoutComposition> entry : roots.entrySet() ){
+                entry.setValue( situation.fillMissing( entry.getValue() ) );
+            }
+        }
+        catch( IOException ex ){
+            throw new IllegalArgumentException( ex );
+        }
+        catch( XException ex ){
+            throw new IllegalArgumentException( ex );
+        }
     }
     
     /**

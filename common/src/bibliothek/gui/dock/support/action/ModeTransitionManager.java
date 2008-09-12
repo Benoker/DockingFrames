@@ -364,11 +364,12 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
     /**
      * Called while reading modes in {@link #setSetting(ModeTransitionSetting)}.
      * Subclasses might change the mode according to <code>newMode</code>.
+     * @param id the identifier of <code>dockable</code>
      * @param oldMode the mode <code>dockable</code> is currently in
      * @param newMode the mode <code>dockable</code> is going to be
-     * @param dockable the element that changes its mode
+     * @param dockable the element that changes its mode, might be <code>null</code>
      */
-    protected abstract void transitionDuringRead( String oldMode, String newMode, Dockable dockable );
+    protected abstract void transitionDuringRead( String id, String oldMode, String newMode, Dockable dockable );
     
     /**
      * Gets the history of modes <code>dockable</code> was into. The history
@@ -565,6 +566,14 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
         for( int i = 0, n = setting.size(); i < n; i++ ){
             String key = setting.getId( i );
             Entry entry = entries.get( key );
+            
+            if( entry == null ){
+                if( createEntryDuringRead( key )){
+                    addEmpty( key );
+                    entry = entries.get( key );
+                }
+            }
+            
             if( entry != null ){
                 String current = setting.getCurrent( i );
                 String old = null;
@@ -581,10 +590,22 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
                 entry.properties = setting.getProperties( i );
                 
                 if( (old == null && current != null) || (old != null && !old.equals( current ))){
-                    transitionDuringRead( old, current, entry.dockable );
+                    transitionDuringRead( key, old, current, entry.dockable );
                 }
             }
         }
+    }
+    
+    /**
+     * Tells whether an entry for a missing {@link Dockable} should be created.
+     * This will result in a call to {@link #addEmpty(String)} during
+     * {@link #setSetting(ModeTransitionSetting)}.
+     * The default implementation returns always <code>false</code>.
+     * @param key the key for which to create a new entry
+     * @return <code>true</code> if an entry should be created
+     */
+    protected boolean createEntryDuringRead( String key ){
+        return false;
     }
     
     /**

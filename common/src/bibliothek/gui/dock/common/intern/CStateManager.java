@@ -271,6 +271,10 @@ public class CStateManager extends StateManager {
         }
     }
     
+    @Override
+    protected boolean createEntryDuringRead( String key ) {
+        return control.shouldStore( key );
+    }
     
     /**
      * Sets a new {@link CMaximizeBehavior}. The behavior decides what happens
