@@ -1231,12 +1231,48 @@ public class CControl {
 
         return dockable;
     }
+    
+    /**
+     * Searches for the {@link SingleCDockable} which has the unique identifier
+     * <code>id</code>.
+     * @param id the identifier to look out for
+     * @return the element with that identifier or <code>null</code>
+     */
+    public SingleCDockable getSingleDockable( String id ){
+        for( SingleCDockable dockable : singleDockables ){
+            if( dockable.getUniqueId().equals( id )){
+                return dockable;
+            }
+        }
+        return null;
+    }
 
     /**
-     * Removes a dockable from this control. The dockable is made invisible.
-     * @param dockable the element to remove
+     * Removes the {@link SingleCDockable} with the identifier <code>id</code>.
+     * This has the same effect as calling {@link #remove(SingleCDockable)}.
+     * @param id the id of the element to remove
+     * @return <code>true</code> if the element was removed, <code>false</code>
+     * otherwise
      */
-    public void remove( SingleCDockable dockable ){
+    public boolean removeSingleDockable( String id ){
+        for( SingleCDockable dockable : singleDockables ){
+            if( dockable.getUniqueId().equals( id )){
+                return remove( dockable );
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Removes <code>dockable</code> from this control. The location information
+     * for <code>dockable</code> remains stored if either there is a 
+     * {@link #addSingleBackupFactory(String, SingleCDockableBackupFactory) SingleCDockableBackupFactory}
+     * registered or the {@link #setMissingStrategy(MissingCDockableStrategy) MissingCDockableStrategy}
+     * tells to store the values.
+     * @param dockable the element to remove
+     * @return true if the element was removed, <code>false</code> otherwise
+     */
+    public boolean remove( SingleCDockable dockable ){
         if( dockable == null )
             throw new NullPointerException( "dockable must not be null" );
 
@@ -1246,15 +1282,21 @@ public class CControl {
             dockables.remove( dockable );
             singleDockables.remove( dockable );
             dockable.setControl( null );
-
-            if( backupFactory.getFactory( dockable.getUniqueId() ) == null )
+            
+            if( !missingStrategy.shouldStoreSingle( dockable.getUniqueId() ) && backupFactory.getFactory( dockable.getUniqueId() ) == null ){
                 stateManager.remove( dockable.intern() );
-            else
+            }
+            else{
                 stateManager.reduceToEmpty( dockable.intern() );
+            }
 
             for( CControlListener listener : listeners() )
                 listener.removed( CControl.this, dockable );
+            
+            return true;
         }
+        
+        return false;
     }
 
     /**
@@ -1283,20 +1325,36 @@ public class CControl {
             }
         }
     }
+    
+    /**
+     * Searches for the {@link SingleCDockableBackupFactory} which was registered
+     * with the key <code>id</code>.
+     * @param id the identifier of some factory
+     * @return the factory or <code>null</code>
+     */
+    public SingleCDockableBackupFactory getSingleBackupFactory( String id ){
+        return backupFactory.getFactory( id );
+    }
 
     /**
-     * Removes a backup factory from this control.
+     * Removes a backup factory from this control. Location information for
+     * <code>id</code> will be deleted if neither a {@link #add(SingleCDockable) SingleCDockable}
+     * is added nor the {@link #setMissingStrategy(MissingCDockableStrategy) MissingCDockableStrategy}
+     * tells to store the information.
      * @param id the name of the factory
      * @see #addSingleBackupFactory(String, SingleCDockableBackupFactory)
      */
     public void removeSingleBackupFactory( String id ){
         this.backupFactory.remove( id );
 
-        id = toSingleId( id );
-        stateManager.removeEmpty( id );
-        frontend.removeEmpty( id );
+        if( !missingStrategy.shouldStoreSingle( id )){
+            id = toSingleId( id );
+            
+            stateManager.removeEmpty( id );
+            frontend.removeEmpty( id );
+        }
     }
-
+    
     /**
      * Adds a dockable to this control. The dockable can be made visible afterwards.
      * @param <F> the type of the new element
@@ -1380,19 +1438,37 @@ public class CControl {
         return "single " + id;
     }
 
+    private boolean isSingleId( String id ){
+        return id.startsWith( "single " );
+    }
+    
+    private String singleToNormalId( String id ){
+        return id.substring( 7 );
+    }
+    
     private String toMultiId( String id ){
         return "multi " + id;
     }
     
+    private boolean isMultiId( String id ){
+        return id.startsWith( "multi " );
+    }
+    
+    private String multiToNormalId( String id ){
+        return id.substring( 6 );
+    }
+    
     private boolean shouldStore( String id ){
-        if( id.startsWith( "single " ))
-            return missingStrategy.shouldStoreSingle( id.substring( 7 ) );
-        else if( id.startsWith( "multi " ))
-            return missingStrategy.shouldStoreMultiple( id.substring( 6 ) );
+        if( isSingleId( id ))
+            return missingStrategy.shouldStoreSingle( singleToNormalId( id ) );
+        else if( isMultiId( id ))
+            return missingStrategy.shouldStoreMultiple( multiToNormalId( id ) );
         else
             return false;
     }
 
+    
+    
     /**
      * Removes a dockable from this control. The dockable is made invisible.
      * @param dockable the element to remove
@@ -1553,10 +1629,22 @@ public class CControl {
     }
     
     /**
+     * Gets the root window of the application. Note that this method might
+     * not return the same object as given to {@link #setRootWindow(WindowProvider)},
+     * however the provide returned by this method will return the same window
+     * as specified by {@link #setRootWindow(WindowProvider)}.
+     * @return the provider, never <code>null</code>
+     */
+    public WindowProvider getRootWindow(){
+        return frontend.getOwner();
+    }
+    
+    /**
      * Gets the storage container for {@link PreferenceModel}s for this control.
      * The contents of this container are stored in the
      * {@link #getResources() resource manager}.
      * @return the storage for preferences
+     * @see #getResources()
      */
     public PreferenceStorage getPreferences(){
     	return preferences;
@@ -1762,7 +1850,23 @@ public class CControl {
         }
         return list.toArray( new CDockable[ list.size() ] );
     }
-
+    
+    /**
+     * Gets a list of all identifiers of {@link SingleCDockable} for which
+     * this control has location information within the current {@link #load(String) setting}.
+     * @return the list of ids, never <code>null</code>
+     */
+    public String[] listSingleDockableIds(){
+        List<String> result = new ArrayList<String>();
+        for( FrontendEntry entry : frontend.listFrontendEntries() ){
+            String id = entry.getKey();
+            if( isSingleId( id )){
+                result.add( singleToNormalId( id ));
+            }
+        }
+        return result.toArray( new String[ result.size() ]);
+    }
+    
     /**
      * A class giving access to the internal methods of the enclosing
      * {@link CControl}.

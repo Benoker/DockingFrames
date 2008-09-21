@@ -25,7 +25,9 @@
  */
 package bibliothek.gui.dock.common.intern;
 
+import java.awt.Component;
 import java.awt.Container;
+import java.awt.LayoutManager;
 
 import javax.swing.Icon;
 
@@ -214,6 +216,39 @@ public class DefaultCDockable extends AbstractCDockable{
      */
     public Container getContentPane(){
         return dockable.getContentPane();
+    }
+    
+    /**
+     * Sets the {@link LayoutManager} of the {@link #getContentPane() content pane}.
+     * @param layout the new layout manager
+     */
+    public void setLayout( LayoutManager layout ){
+        getContentPane().setLayout( layout );
+    }
+    
+    /**
+     * Adds <code>component</code> to the content pane.
+     * @param component the new component
+     */
+    public void add( Component component ){
+        getContentPane().add( component );
+    }
+    
+    /**
+     * Adds <code>component</code> to the content pane.
+     * @param component the new component
+     * @param constraints constraints for the {@link #setLayout(LayoutManager) layout manager}
+     */
+    public void add( Component component, Object constraints ){
+        getContentPane().add( component, constraints );
+    }
+    
+    /**
+     * Removes <code>component</code> from the content pane.
+     * @param component the component to remove
+     */
+    public void remove( Component component ){
+        getContentPane().remove( component );
     }
     
     /**

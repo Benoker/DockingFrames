@@ -951,7 +951,7 @@ public class DockController {
      * {@link #setRootWindowProvider(WindowProvider)}, but one that will
      * always return the same result as the provider set by the client. This
      * method always returns the same object.
-     * @return the root window provider
+     * @return the root window provider, never <code>null</code>
      */
     public WindowProviderWrapper getRootWindowProvider() {
         return rootWindowProvider;

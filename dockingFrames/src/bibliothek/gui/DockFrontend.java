@@ -294,6 +294,16 @@ public class DockFrontend {
     }
     
     /**
+     * Gets the current provider for the root window. Note that this might not
+     * be the same as given to {@link #setOwner(WindowProvider)}, however it
+     * will return the same value.
+     * @return the provider, never <code>null</code>
+     */
+    public WindowProvider getOwner(){
+        return controller.getRootWindowProvider();
+    }
+    
+    /**
      * Gets the list of {@link Dockable Dockables} which are added to this frontend.
      * @return the Dockables
      * @deprecated please use {@link #listDockables()}

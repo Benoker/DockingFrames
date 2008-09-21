@@ -39,16 +39,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 
-import bibliothek.extension.gui.dock.preference.PreferenceEditor;
-import bibliothek.extension.gui.dock.preference.PreferenceEditorCallback;
-import bibliothek.extension.gui.dock.preference.PreferenceEditorFactory;
-import bibliothek.extension.gui.dock.preference.PreferenceModel;
-import bibliothek.extension.gui.dock.preference.PreferenceModelListener;
-import bibliothek.extension.gui.dock.preference.PreferenceOperation;
-import bibliothek.extension.gui.dock.preference.editor.BooleanEditor;
-import bibliothek.extension.gui.dock.preference.editor.ChoiceEditor;
-import bibliothek.extension.gui.dock.preference.editor.KeyStrokeEditor;
-import bibliothek.extension.gui.dock.preference.editor.ModifierMaskEditor;
+import bibliothek.extension.gui.dock.preference.*;
+import bibliothek.extension.gui.dock.preference.editor.*;
 import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
 import bibliothek.gui.dock.themes.basic.action.buttons.BasicMiniButton;
@@ -80,6 +72,9 @@ public class PreferenceTable extends JPanel{
     /** the operations visible on this table */
     private List<PreferenceOperation> operations = new ArrayList<PreferenceOperation>();
     
+    /** whether the order of the operations should be reversed or not */
+    private boolean reverseOrder = true;
+    
     /**
      * Creates a new table
      */
@@ -94,9 +89,35 @@ public class PreferenceTable extends JPanel{
         setEditorFactory( Path.TYPE_MODIFIER_MASK_PATH, ModifierMaskEditor.FACTORY );
         setEditorFactory( Path.TYPE_KEYSTROKE_PATH, KeyStrokeEditor.FACTORY );
         setEditorFactory( Path.TYPE_STRING_CHOICE_PATH, ChoiceEditor.FACTORY );
+        setEditorFactory( Path.TYPE_LABEL, LabelEditor.FACTORY );
+        setEditorFactory( Path.TYPE_STRING_PATH, StringEditor.FACTORY );
         
-        operations.add( PreferenceOperation.DELETE );
         operations.add( PreferenceOperation.DEFAULT );
+        operations.add( PreferenceOperation.DELETE );
+    }
+    
+    /**
+     * Sets the order in which the operations should be shown. Either 
+     * left to right or right to left. The default value is <code>true</code>
+     * which means right to left.
+     * @param reverseOrder how to display the operations
+     */
+    public void setReverseOrder( boolean reverseOrder ) {
+        this.reverseOrder = reverseOrder;
+        
+        int index = 0;
+        for( Row<?> row : rows ){
+            row.setIndex( index++ );
+        }
+    }
+    
+    /**
+     * Tells in which order the operations are shown.
+     * @return the order
+     * @see #setReverseOrder(boolean)
+     */
+    public boolean isReverseOrder() {
+        return reverseOrder;
     }
     
     /**
@@ -110,12 +131,28 @@ public class PreferenceTable extends JPanel{
         }
     }
     
+    /**
+     * Insert an operation at the given index. The set of operations tells
+     * the order in which the operations appear on the table.
+     * @param index the index of the new operation
+     * @param operation the new operation
+     */
+    public void insertOperation( int index, PreferenceOperation operation ){
+        if( !operations.contains( operation )){
+            operations.add( index, operation );
+        }
+    }
+    
     private int getOperationIndex( PreferenceOperation operation ){
         int index = operations.indexOf( operation );
         if( index < 0 ){
             operations.add( operation );
-            return operations.size()-1;
+            index = operations.size()-1;
         }
+        
+        if( reverseOrder )
+            index = operations.size() - 1 - index;
+        
         return index;
     }
     
@@ -195,6 +232,8 @@ public class PreferenceTable extends JPanel{
     @SuppressWarnings("unchecked")
     protected <V> PreferenceEditor<V> createEditor( Path type ){
         PreferenceEditorFactory<?> factory = factories.get( type );
+        if( factory == null )
+            throw new IllegalArgumentException( "No editor defined for type '" + type.toString() + "'" );
         return (PreferenceEditor<V>)factory.create();
     }
     

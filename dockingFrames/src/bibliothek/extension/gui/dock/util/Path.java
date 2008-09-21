@@ -60,8 +60,22 @@ public final class Path {
     /** standard path for a choice using a {@link String} as value and a {@link Choice} as information */
     public static final Path TYPE_STRING_CHOICE_PATH = new Path( "dock.choice" );
     
+    /** standard path for a label, a label is not shown in an enabled editor */
+    public static final Path TYPE_LABEL = new Path( "dock.label" );
+    
     /** the segments of this path */
     private String[] segments;
+    
+    /** tells whether <code>path</code> is a valid path or not */
+    public static boolean isValidPath( String path ){
+        try{
+            new Path( path );
+            return true;
+        }
+        catch( IllegalArgumentException ex ){
+            return false;
+        }
+    }
     
     /**
      * Creates a new path with the given segments.
