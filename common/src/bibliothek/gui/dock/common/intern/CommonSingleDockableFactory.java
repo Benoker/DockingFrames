@@ -30,6 +30,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
@@ -90,6 +91,15 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
     
     public String getID() {
         return BACKUP_FACTORY_ID;
+    }
+    
+    /**
+     * Gets a list of keys for all factories known to this.
+     * @return the list of keys
+     */
+    public String[] listFactories(){
+        Set<String> keys = backups.keySet();
+        return keys.toArray( new String[ keys.size() ] );
     }
     
     public void estimateLocations(String layout, Map<Integer, DockLayoutInfo> children) {

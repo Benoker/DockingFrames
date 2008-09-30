@@ -69,6 +69,14 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         return id;
     }
     
+    /**
+     * Gets the delegate of this factory.
+     * @return the delegate, not <code>null</code>
+     */
+    public MultipleCDockableFactory<?, ?> getFactory(){
+        return delegate;
+    }
+    
     public void estimateLocations(CommonDockableLayout layout, Map<Integer, DockLayoutInfo> children) {
     	// currently not supported
     }

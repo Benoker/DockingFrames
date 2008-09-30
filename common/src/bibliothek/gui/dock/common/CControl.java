@@ -158,8 +158,8 @@ public class CControl {
     private MissingCDockableStrategy missingStrategy = MissingCDockableStrategy.PURGE;
 
     /** the set of known factories */
-    private Map<String, MultipleCDockableFactory<?,?>> factories = 
-        new HashMap<String, MultipleCDockableFactory<?,?>>();
+    private Map<String, CommonMultipleDockableFactory> factories = 
+        new HashMap<String, CommonMultipleDockableFactory>();
 
     /** list of all dockables registered to this control */
     private List<CDockable> dockables =
@@ -1356,6 +1356,15 @@ public class CControl {
     }
     
     /**
+     * Gets a list of keys for all {@link SingleCDockableBackupFactory}s which
+     * are currently registered at this control.
+     * @return the list of keys
+     */
+    public String[] listSingleBackupFactories(){
+        return backupFactory.listFactories();
+    }
+    
+    /**
      * Adds a dockable to this control. The dockable can be made visible afterwards.
      * @param <F> the type of the new element
      * @param dockable the new element to show
@@ -1416,10 +1425,9 @@ public class CControl {
         uniqueId = toMultiId( uniqueId );
 
         for( MultipleCDockable multi : multiDockables ){
-            if( factory.equals( access.getFactoryId( multi.getFactory() ))){
-                String id = accesses.get( multi ).getUniqueId();
-                if( uniqueId.equals( id ))
-                    throw new IllegalArgumentException( "The unique identifier is already in use: " + uniqueId );
+            String id = accesses.get( multi ).getUniqueId();
+            if( uniqueId.equals( id )){
+                throw new IllegalArgumentException( "The unique identifier is already in use: " + uniqueId );
             }
         }
 
@@ -1482,11 +1490,6 @@ public class CControl {
             frontend.remove( dockable.intern() );
             multiDockables.remove( dockable );
             dockables.remove( dockable );
-            String factory = access.getFactoryId( dockable.getFactory() );
-
-            if( factory == null ){
-                throw new IllegalStateException( "the factory for a MultipleDockable is not registered" );
-            }
 
             dockable.setControl( null );
 
@@ -1518,7 +1521,9 @@ public class CControl {
      * when a layout is loaded.
      * @param id the unique id of the factory
      * @param factory the new factory
+     * @deprecated use {@link #addMultipleDockableFactory(String, MultipleCDockableFactory)}
      */
+    @Deprecated
     public void add( final String id, final MultipleCDockableFactory<?,?> factory ){
         if( id == null )
             throw new NullPointerException( "id must not be null" );
@@ -1530,11 +1535,74 @@ public class CControl {
             throw new IllegalArgumentException( "there is already a factory named " + id );
         }
 
-        factories.put( id, factory );
-
-        frontend.registerFactory( new CommonMultipleDockableFactory( id, factory, access ) );
+        if( access.getFactoryId( factory ) != null ){
+            throw new IllegalArgumentException( "this factory-object is already in use and cannot be added a second time" );
+        }
+        
+        CommonMultipleDockableFactory cfactory = new CommonMultipleDockableFactory( id, factory, access );
+        
+        factories.put( id, cfactory );
+        frontend.registerFactory( cfactory );
     }
 
+    /**
+     * Adds a factory to this control. The factory will create {@link MultipleCDockable}s
+     * when a layout is loaded.
+     * @param id the unique id of the factory
+     * @param factory the new factory
+     */
+    public void addMultipleDockableFactory( String id, MultipleCDockableFactory<?, ?> factory ){
+        add( id, factory );
+    }
+    
+    /**
+     * Searches for the {@link MultipleCDockableFactory} with the identifier
+     * <code>id</code>.
+     * @param id the identifier to search for
+     * @return the factory or <code>null</code>
+     */
+    public MultipleCDockableFactory<?, ?> getMultipleDockableFactory( String id ){
+        CommonMultipleDockableFactory factory = factories.get( id );
+        if( factory == null )
+            return null;
+        return factory.getFactory();
+    }
+    
+    /**
+     * Gets a list of identifiers of all {@link MultipleCDockableFactory}s
+     * which are currently registered at this control.
+     * @return the list of factories
+     */
+    public String[] listMultipleDockableFactories(){
+        Set<String> set = factories.keySet();
+        return set.toArray( new String[ set.size() ]);
+    }
+    
+    /**
+     * Removes the {@link MultipleCDockableFactory} with identifier <code>id</code>
+     * from this control. As a side effect all {@link MultipleCDockable}s which
+     * use that factory are removed as well. Nothing happens if there is no
+     * factory registered with <code>id</code>.
+     * @param id the identifier of the factory to remove
+     */
+    public void removeMultipleDockableFactory( String id ){
+        CommonMultipleDockableFactory factory = factories.remove( id );
+        if( factory != null ){
+            frontend.unregisterFactory( factory );
+            
+            List<MultipleCDockable> toRemove = new ArrayList<MultipleCDockable>();
+            for( MultipleCDockable dockable : multiDockables ){
+                if( dockable.getFactory() == factory.getFactory() ){
+                    toRemove.add( dockable );
+                }
+            }
+            
+            for( MultipleCDockable dockable : toRemove ){
+                remove( dockable );
+            }
+        }
+    }
+    
     /**
      * Sets the location where {@link CDockable}s are opened when there is
      * nothing else specified for these <code>CDockable</code>s.
@@ -1968,8 +2036,8 @@ public class CControl {
         }
 
         public String getFactoryId( MultipleCDockableFactory<?,?> factory ){
-            for( Map.Entry<String, MultipleCDockableFactory<?,?>> entry : factories.entrySet() ){
-                if( entry.getValue() == factory )
+            for( Map.Entry<String, CommonMultipleDockableFactory> entry : factories.entrySet() ){
+                if( entry.getValue().getFactory() == factory )
                     return entry.getKey();
             }
 
