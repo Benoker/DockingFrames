@@ -61,6 +61,14 @@ public class EfficientControlFactory implements CControlFactory {
             }
         };
     }
+    
+    public CDockFrontend createFrontend( CControlAccess owner, DockController controller ) {
+        return new CDockFrontend( owner, controller );
+    }
+    
+    public MutableCControlRegister createRegister( CControl owner ) {
+        return new DefaultCControlRegister( owner );
+    }
 
     public FlapDockStation createFlapDockStation( final Component expansion ) {
         return new FlapDockStation(){

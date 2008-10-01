@@ -1053,6 +1053,33 @@ public class DockSituation {
     }
 
     /**
+     * Tells what identifier is used for <code>factory</code> in the
+     * {@link DockLayoutComposition}.<br>
+     * This method just calls {@link #getID(DockFactory)}, but 
+     * {@link #getID(DockFactory)} is intended for internal use while this
+     * method is intended to be used by clients which read out a {@link DockLayoutComposition}.
+     * @param factory the factory which might be used
+     * @return the identifier
+     * @see #getID(DockFactory)
+     */
+    public String convertFactoryId( DockFactory<?, ?> factory ){
+        return getID( factory );
+    }
+    
+    /**
+     * Tells what identifier the {@link DockFactory} has, for which the
+     * identifier <code>id</code> is used within a {@link DockLayoutComposition}.<br>
+     * This method just calls {@link #getFactoryID(String)}, but while
+     * {@link #getFactoryID(String)} is intended for internal use, this method
+     * is intended for clients. 
+     * @param id an identifier found in a {@link DockLayoutComposition}
+     * @return the identifer of a {@link DockFactory}
+     */
+    public String convertFactoryId( String id ){
+        return getFactoryID( id );
+    }
+    
+    /**
      * Transforms an id read from a stream to the id of the factory which
      * would be used. This method must fulfill one contract:
      * <code>DockFactory factory = ...

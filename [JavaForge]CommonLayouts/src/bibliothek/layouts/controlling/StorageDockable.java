@@ -107,6 +107,7 @@ public class StorageDockable extends DefaultSingleCDockable{
                     }
                     
                     core.getSingleDockables().updateTable();
+                    core.getMultiDockables().updateTable();
                 }
                 if( operation == PreferenceOperation.DELETE ){
                     model.remove( this );

@@ -3,6 +3,7 @@ package bibliothek.layouts.controlling;
 import java.awt.GridLayout;
 import java.text.Collator;
 import java.util.Arrays;
+import java.util.Set;
 
 import javax.swing.JScrollPane;
 
@@ -31,7 +32,7 @@ public class ModifySingleDockable extends DefaultSingleCDockable{
     
     public ModifySingleDockable( Core core ){
         super( "modify single" );
-        setTitleText( "Manage SingleCDockable" );
+        setTitleText( "Single Dockables" );
      
         this.core = core;
         model = new DefaultPreferenceModel();
@@ -45,7 +46,8 @@ public class ModifySingleDockable extends DefaultSingleCDockable{
     
     public void updateTable(){
         CControl control = core.getEnvironment().getEnvironmentControl();
-        String[] ids = control.listSingleDockableIds();
+        Set<String> idSet = control.getRegister().listSingleDockables();
+        String[] ids = idSet.toArray( new String[ idSet.size() ] );
         
         Arrays.sort( ids, Collator.getInstance() );
                 
@@ -167,7 +169,7 @@ public class ModifySingleDockable extends DefaultSingleCDockable{
         }
 
         public String getLabel() {
-            return "New";
+            return "New:";
         }
 
         public Path getPath() {

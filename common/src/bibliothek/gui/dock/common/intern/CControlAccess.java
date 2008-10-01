@@ -105,4 +105,11 @@ public interface CControlAccess {
 	 * be stored, <code>false</code> otherwise
 	 */
 	public boolean shouldStore( String key );
+	
+	/**
+	 * Fills the property {@link CSetting#putMultipleFactoryDockables(String, java.util.List) multiple factory dockables}
+	 * in <code>setting</code>.
+	 * @param setting the setting to fill
+	 */
+	public void fillMultiFactories( CSetting setting );
 }

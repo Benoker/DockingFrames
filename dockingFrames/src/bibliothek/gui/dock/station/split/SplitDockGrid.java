@@ -101,7 +101,9 @@ public class SplitDockGrid {
     
 	/**
 	 * Adds <code>dockable</code> to the grid. The coordinates are not absolute,
-	 * only the relative location and size matters.
+	 * only the relative location and size matters. If there are already 
+	 * <code>dockables</code> at the exact same location, then 
+	 * the <code>dockables</code> are stacked.
 	 * @param x the x-coordinate
 	 * @param y the y-coordinate
 	 * @param width the width, more than 0
@@ -125,13 +127,34 @@ public class SplitDockGrid {
         if( height < 0 )
             throw new IllegalArgumentException( "height < 0" );
         
-		Node node = new Node();
-		node.dockables = new Dockable[ dockables.length ];
-        System.arraycopy( dockables, 0, node.dockables, 0, dockables.length );
-		node.x = x;
-		node.y = y;
-		node.width = width;
-		node.height = height;
+        Node node = null;
+        int insert = 0;
+        
+        for( Node existingNode : nodes ){
+            if( existingNode.x == x && 
+                    existingNode.y == y && 
+                    existingNode.width == width && 
+                    existingNode.height == height){
+                
+                node = existingNode;
+                Dockable[] oldDockables = node.dockables;
+                insert = oldDockables.length;
+                node.dockables = new Dockable[ oldDockables.length + dockables.length ];
+                System.arraycopy( oldDockables, 0, node.dockables, 0, oldDockables.length ); 
+                break;
+            }
+        } 
+        if( node == null ){
+            node = new Node();
+            node.x = x;
+            node.y = y;
+            node.width = width;
+            node.height = height;
+            node.dockables = new Dockable[ dockables.length ];
+        }
+        
+        System.arraycopy( dockables, 0, node.dockables, insert, dockables.length );
+		
 		nodes.add( node );
 	}
 	
@@ -453,9 +476,9 @@ public class SplitDockGrid {
 		public Node childB;
 		/** the location of the divider */
 		public double divider;
-		/** whether the children of this node are laied out horizontally or not */
+		/** whether the children of this node are laid out horizontally or not */
 		public boolean horizontal;
-		/** the elements represtented by this leaf */
+		/** the elements represented by this leaf */
 		public Dockable[] dockables;
 	
 		/**

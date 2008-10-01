@@ -28,7 +28,14 @@ package bibliothek.gui.dock.common.intern;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.MultipleCDockable;
+import bibliothek.gui.dock.common.MultipleCDockableFactory;
 import bibliothek.gui.dock.facile.action.StateManager;
 import bibliothek.gui.dock.frontend.Setting;
 import bibliothek.gui.dock.layout.DockSituation;
@@ -44,6 +51,9 @@ import bibliothek.util.xml.XElement;
 public class CSetting extends Setting{
     /** a set of modes */
     private ModeTransitionSetting<StateManager.Location, ?> modes;
+    
+    /** tells for some {@link MultipleCDockableFactory}s which {@link MultipleCDockable} existed */
+    private Map<String, List<String>> multiFactoryDockables = new HashMap<String, List<String>>();
     
     /**
      * Sets the set of modes.
@@ -61,15 +71,48 @@ public class CSetting extends Setting{
         return modes;
     }
     
+    /**
+     * Links the factory with identifier <code>factoryId</code> with the
+     * elements <code>dockables</code>. This information can be useful when 
+     * a factory is added to the {@link CControl} after a setting was loaded.
+     * @param factoryId the id of the factory
+     * @param dockables the list of elements, not <code>null</code>
+     */
+    public void putMultipleFactoryDockables( String factoryId, List<String> dockables ){
+        if( dockables == null )
+            throw new IllegalArgumentException( "dockables must not be null" );
+        
+        multiFactoryDockables.put( factoryId, dockables );
+    }
+    
+    /**
+     * Gets all the identifiers of dockables which were created and shown for <code>factoryId</code>.
+     * @param factoryId the id of a factory
+     * @return its dockables
+     */
+    public List<String> getMultipleFactoryDockables( String factoryId ){
+        return multiFactoryDockables.get( factoryId );
+    }
+    
     @Override
     public void write( DockSituation situation,
             PropertyTransformer transformer, boolean entry, DataOutputStream out )
             throws IOException {
         
-        Version.write( out, Version.VERSION_1_0_4 );
+        Version.write( out, Version.VERSION_1_0_7 );
         
         super.write( situation, transformer, entry, out );
         modes.write( out );
+        
+        out.writeInt( multiFactoryDockables.size() );
+        for( Map.Entry<String, List<String>> factory : multiFactoryDockables.entrySet() ){
+            out.writeUTF( factory.getKey() );
+            List<String> list = factory.getValue();
+            out.writeInt( list.size() );
+            for( String dockable : list ){
+                out.writeUTF( dockable );
+            }
+        }
     }
     
     @Override
@@ -78,6 +121,17 @@ public class CSetting extends Setting{
         
         super.writeXML( situation, transformer, entry, element.addElement( "base" ) );
         modes.writeXML( element.addElement( "modes" ) );
+        
+        if( !multiFactoryDockables.isEmpty() ){
+            XElement xmultiFactories = element.addElement( "multi-factories" );
+            for( Map.Entry<String, List<String>> factory : multiFactoryDockables.entrySet() ){
+                XElement xfactory = xmultiFactories.addElement( "factory" );
+                xfactory.addString( "id", factory.getKey() );
+                for( String dockable : factory.getValue() ){
+                    xfactory.addElement( "dockable" ).addString( "id", dockable );
+                }
+            }
+        }
     }
     
     @Override
@@ -87,8 +141,21 @@ public class CSetting extends Setting{
         Version version = Version.read( in );
         version.checkCurrent();
         
+        boolean version7 = version.compareTo( Version.VERSION_1_0_7 ) >= 0;
+        
         super.read( situation, transformer, entry, in );
         modes.read( in );
+        
+        if( version7 ){
+            for( int i = 0, n = in.readInt(); i<n; i++ ){
+                String id = in.readUTF();
+                List<String> dockables = new ArrayList<String>();
+                for( int j = 0, m = in.readInt(); j<m; j++ ){
+                    dockables.add( in.readUTF() );
+                }
+                putMultipleFactoryDockables( id, dockables );
+            }
+        }
     }
     
     @Override
@@ -96,5 +163,22 @@ public class CSetting extends Setting{
             PropertyTransformer transformer, boolean entry, XElement element ) {
         super.readXML( situation, transformer, entry, element.getElement( "base" ) );
         modes.readXML( element.getElement( "modes" ) );
+        
+        XElement xmultiFactories = element.getElement( "multi-factories" );
+        if( xmultiFactories != null ){
+            for( XElement xfactory : xmultiFactories.getElements( "factory" ) ){
+                List<String> dockables = new ArrayList<String>();
+                for( XElement xdockable : xfactory.getElements( "dockable" )){
+                    String id = xdockable.getString( "id" );
+                    if( id != null ){
+                        dockables.add( id );
+                    }
+                }
+                String id = xfactory.getString( "id" );
+                if( id != null ){
+                    putMultipleFactoryDockables( id, dockables );
+                }
+            }
+        }
     }
 }

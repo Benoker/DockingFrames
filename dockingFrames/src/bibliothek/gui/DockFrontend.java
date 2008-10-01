@@ -180,6 +180,18 @@ public class DockFrontend {
     private int onAutoFire = 0;
     
     /**
+     * The last {@link Setting} that was {@link #setSetting(Setting, boolean) applied}
+     * with the entry flag set to <code>false</code>. Can be <code>null</code>.
+     */
+    private Setting lastAppliedFullSetting = null;
+    
+    /**
+     * The last {@link Setting} that was {@link #setSetting(Setting, boolean) applied}
+     * with the entry flag set to <code>true</code>. Can be <code>null</code>.
+     */
+    private Setting lastAppliedEntrySetting = null;
+    
+    /**
      * Constructs a new frontend, creates a new controller.
      */
     public DockFrontend(){
@@ -340,7 +352,7 @@ public class DockFrontend {
     		throw new IllegalArgumentException( "factory must not be null" );
     	
         dockFactories.add( factory );
-        fillMissing();
+        fillMissing( factory );
     }
 
     /**
@@ -356,7 +368,7 @@ public class DockFrontend {
         dockFactories.add( factory );
         if( backup )
             backupDockFactories.add( factory );
-        fillMissing();
+        fillMissing( factory );
     }
     
     /**
@@ -370,7 +382,7 @@ public class DockFrontend {
             throw new IllegalArgumentException( "factory must not be null" );
         
         backupDockFactories.add( factory );
-        fillMissing();
+        fillMissing( factory );
     }
     
     /**
@@ -454,7 +466,8 @@ public class DockFrontend {
      * <code>name</code> is <code>null</code>, or if <code>name</code> is not
      * unique.
      * @deprecated replaced by {@link #addDockable(String, Dockable)}, since <code>name</code>
-     * is used as key in a map, it should come first
+     * is used as key in a map, it should come first. Note: this method might
+     * be removed in future releases.
      */
     @Deprecated
     public void add( Dockable dockable, String name ){
@@ -845,7 +858,28 @@ public class DockFrontend {
    	public DockProperties getDockProperties(){
    		return controller.getProperties();
    	}
+   	
+   	/**
+   	 * Gets the last {@link Setting} that was given to {@link #setSetting(Setting, boolean)}
+   	 * when the entry-parameter was set to <code>false</code>. This might be
+   	 * <code>null</code> if no setting was yet applied.
+   	 * @return the setting, can be <code>null</code>
+   	 */
+   	public Setting getLastAppliedFullSetting() {
+        return lastAppliedFullSetting;
+    }
 
+    /**
+     * Gets the last {@link Setting} that was given to {@link #setSetting(Setting, boolean)}
+     * when the entry-parameter was set to <code>true</code>. This might be
+     * <code>null</code> if no setting was yet applied or a non-entry setting
+     * was applied.
+     * @return the setting, can be <code>null</code>
+     */
+   	public Setting getLastAppliedEntrySetting() {
+        return lastAppliedEntrySetting;
+    }
+   	
     /**
      * Gets a set of the names of all known settings.
      * @return the set of names
@@ -1240,6 +1274,14 @@ public class DockFrontend {
      * be the same as was used when {@link #getSetting(boolean)} was called.
      */
     public void setSetting( Setting setting, boolean entry ){
+        if( entry ){
+            lastAppliedEntrySetting = setting;
+        }
+        else{
+            lastAppliedEntrySetting = null;
+            lastAppliedFullSetting = setting;
+        }
+        
         try{
             onAutoFire++;
             controller.getRegister().setStalled( true );
@@ -1370,7 +1412,15 @@ public class DockFrontend {
             setting.fillMissing( situation );
         }
         
-        // read missing dockables
+        if( lastAppliedFullSetting != null && !settings.containsValue( lastAppliedFullSetting )){
+            lastAppliedFullSetting.fillMissing( situation );
+        }
+        
+        if( lastAppliedEntrySetting != null && lastAppliedEntrySetting != lastAppliedFullSetting && !settings.containsValue( lastAppliedEntrySetting )){
+            lastAppliedEntrySetting.fillMissing( situation );
+        }
+        
+        // try fill in missing dockables which have a name
         List<FrontendEntry> entries = listFrontendEntries();
         
         for( FrontendEntry entry : entries ){
@@ -1381,6 +1431,76 @@ public class DockFrontend {
                     entry.setLayout( null );
                     addDockable( entry.getKey(), dockable );
                 }
+            }
+        }
+    }
+    
+    /**
+     * Tries to locate and create those {@link Dockable}s for which location 
+     * information can be found in the last applied {@link Setting} and which
+     * use the newly added factory <code>factory</code>.
+     * @param factory the new factory
+     */
+    private void fillMissing( DockFactory<?,?> factory ){
+        fillMissing();
+        
+        Setting last = getLastAppliedEntrySetting();
+        boolean entry = true;
+        
+        if( last == null ){
+            last = getLastAppliedFullSetting();
+            entry = false;
+        }
+        
+        if( last == null ){
+            return;
+        }
+        
+        DockSituation situation = createSituation( entry );
+        String factoryId = situation.convertFactoryId( factory );
+        
+        for( String root : roots.keySet() ){
+            DockLayoutComposition composition = last.getRoot( root );
+            if( composition != null ){
+                estimateLocations( situation, composition );
+                fillMissing( root, composition, factory, factoryId );
+            }
+        }
+    }
+    
+    /**
+     * Searches for elements which can be created by the factory
+     * <code>factory</code> and creates them.
+     * @param root the root station
+     * @param composition the composition to search in
+     * @param factory the factory to look out for
+     * @param factoryId the identifier of the factory, translated for the {@link DockLayoutComposition}
+     */
+    @SuppressWarnings("unchecked")
+    private void fillMissing( String root, DockLayoutComposition composition, DockFactory<?, ?> factory, String factoryId ){
+        DockLayoutInfo info = composition.getLayout();
+        if( info.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT ){
+            if( info.getDataLayout().getFactoryID().equals( factoryId )){
+                DockableProperty location = info.getLocation();
+                if( location != null ){
+                    DockElement element = ((DockFactory<DockElement, Object>)factory).layout( info.getDataLayout().getData() );
+                    if( element != null ){
+                        Dockable dockable = element.asDockable();
+                        if( dockable != null ){
+                            RootInfo rootInfo = roots.get( root );
+                            if( !rootInfo.getStation().drop( dockable, location ) ){
+                                rootInfo.getStation().drop( dockable );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        List<DockLayoutComposition> children = composition.getChildren();
+        if( children != null ){
+            for( DockLayoutComposition child : children ){
+                fillMissing( root, child, factory, factoryId );
             }
         }
     }
@@ -1410,6 +1530,19 @@ public class DockFrontend {
             return result;
         }
         return null;
+    }
+    
+    /**
+     * Tries to fill the property {@link DockLayoutInfo#getLocation() location}
+     * for each element in <code>layout</code>. The default implementation only
+     * works if <code>situation</code> is an instance of {@link PredefinedDockSituation}.
+     * @param situation the situation to use for transforming information
+     * @param layout the layout to estimate
+     */
+    protected void estimateLocations( DockSituation situation, DockLayoutComposition layout ){
+        if( situation instanceof PredefinedDockSituation ){
+            ((PredefinedDockSituation)situation).estimateLocations( layout );
+        }
     }
     
     /**

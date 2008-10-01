@@ -1,20 +1,8 @@
 package bibliothek.layouts.testing;
 
-import java.awt.Color;
-
 import bibliothek.gui.dock.common.MultipleCDockableFactory;
 
 public class MultipleTestFactory implements MultipleCDockableFactory<MultipleTestDockable, MultipleTestLayout>{
-    private Color color;
-    
-    public MultipleTestFactory( Color color ){
-        this.color = color;
-    }
-    
-    public Color getColor() {
-        return color;
-    }
-    
     public MultipleTestLayout create() {
         return new MultipleTestLayout();
     }

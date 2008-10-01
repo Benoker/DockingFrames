@@ -13,6 +13,7 @@ import bibliothek.demonstration.Monitor;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CGrid;
 import bibliothek.gui.dock.facile.lookandfeel.DockableCollector;
+import bibliothek.layouts.controlling.ModifyMultiDockable;
 import bibliothek.layouts.controlling.ModifySingleDockable;
 import bibliothek.layouts.controlling.StorageDockable;
 import bibliothek.layouts.testing.EnvironmentDockable;
@@ -21,6 +22,7 @@ public class Core implements Demonstration{
     private EnvironmentDockable environment;
     private StorageDockable storage;
     private ModifySingleDockable singleDockables;
+    private ModifyMultiDockable multiDockables;
     
     public String getHTML() {
         // TODO Auto-generated method stub
@@ -53,6 +55,10 @@ public class Core implements Demonstration{
     public ModifySingleDockable getSingleDockables() {
         return singleDockables;
     }
+    
+    public ModifyMultiDockable getMultiDockables() {
+        return multiDockables;
+    }
 
     public void show( final Monitor monitor ) {
         if( monitor != null ){
@@ -68,10 +74,12 @@ public class Core implements Demonstration{
         environment = new EnvironmentDockable();
         storage = new StorageDockable( this );
         singleDockables = new ModifySingleDockable( this );
+        multiDockables = new ModifyMultiDockable( this );
         
         grid.add( 0, 0, 100, 100, environment );
         grid.add( 100, 0, 30, 100, storage );
-        grid.add( 0, 100, 130, 30, singleDockables );
+        grid.add( 0, 100, 65, 30, singleDockables );
+        grid.add( 65, 100, 65, 30, multiDockables );
         control.getContentArea().deploy( grid );
         
         if( monitor != null ){

@@ -28,6 +28,7 @@ package bibliothek.gui.dock.common.intern;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -100,6 +101,14 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
     public String[] listFactories(){
         Set<String> keys = backups.keySet();
         return keys.toArray( new String[ keys.size() ] );
+    }
+    
+    /**
+     * Gets the set of keys for all factories known to this.
+     * @return the set of keys
+     */
+    public Set<String> getFactoryIds(){
+        return Collections.unmodifiableSet( backups.keySet() );
     }
     
     public void estimateLocations(String layout, Map<Integer, DockLayoutInfo> children) {

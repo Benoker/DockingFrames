@@ -212,3 +212,5 @@
 - Bugfix: DockFrontend.read from DataInputStream did mark the main Setting as "entry=true" while it should have been "entry=false"
 - API: 'DockFrontend.listFrontendEntries()' and 'getFontendEntry( String key )' allow access to any information a frontend knows about a (missing or not missing) Dockable
 - API: Order of operations in PreferenceTable reversed.
+- API: Eduardo Born suggested an upgrade of CGrid: if some dockables are placed at the exact same location they are stacked
+- API: new CControlRegister for better access to all the elements that are used by a CControl

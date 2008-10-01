@@ -17,7 +17,6 @@ public class MultipleTestDockable extends DefaultMultipleCDockable{
         setExternalizable( false );
         
         content = new JTextArea();
-        content.setBackground( factory.getColor() );
         
         setLayout( new GridLayout( 1, 1 ) );
         add( new JScrollPane( content ));

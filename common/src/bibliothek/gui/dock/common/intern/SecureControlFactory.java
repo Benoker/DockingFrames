@@ -51,7 +51,8 @@ import bibliothek.gui.dock.util.WindowProvider;
  * @author Benjamin Sigg
  *
  */
-public class SecureControlFactory implements CControlFactory {
+public class SecureControlFactory extends EfficientControlFactory implements CControlFactory {
+    @Override
     public DockController createController( final CControl owner ) {
         return new SecureDockController(){
             @Override
@@ -66,7 +67,8 @@ public class SecureControlFactory implements CControlFactory {
             }
         };
     }
-
+    
+    @Override
     public FlapDockStation createFlapDockStation( final Component expansion ) {
         return new SecureFlapDockStation(){
             @Override
@@ -78,10 +80,12 @@ public class SecureControlFactory implements CControlFactory {
         };
     }
 
+    @Override
     public ScreenDockStation createScreenDockStation( WindowProvider owner ) {
         return new SecureScreenDockStation( owner );
     }
 
+    @Override
     public SplitDockStation createSplitDockStation(){
         return new SecureSplitDockStation(){
             @Override
@@ -97,6 +101,7 @@ public class SecureControlFactory implements CControlFactory {
         };
     }
     
+    @Override
     public CWorkingArea createWorkingArea( String id ) {
         return new CWorkingArea( id, true );
     }

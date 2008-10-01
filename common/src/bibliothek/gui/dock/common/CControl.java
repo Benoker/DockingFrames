@@ -62,13 +62,11 @@ import bibliothek.gui.dock.common.layout.ThemeMap;
 import bibliothek.gui.dock.common.location.CExternalizedLocation;
 import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.event.*;
-import bibliothek.gui.dock.facile.action.StateManager;
 import bibliothek.gui.dock.facile.station.screen.WindowProviderVisibility;
 import bibliothek.gui.dock.facile.station.split.ConflictResolver;
 import bibliothek.gui.dock.facile.station.split.DefaultConflictResolver;
 import bibliothek.gui.dock.frontend.FrontendEntry;
 import bibliothek.gui.dock.frontend.MissingDockableStrategy;
-import bibliothek.gui.dock.frontend.Setting;
 import bibliothek.gui.dock.layout.DockSituationIgnore;
 import bibliothek.gui.dock.support.util.ApplicationResource;
 import bibliothek.gui.dock.support.util.ApplicationResourceManager;
@@ -157,25 +155,6 @@ public class CControl {
     /** strategy what to do when reading layout information of a missing dockable */
     private MissingCDockableStrategy missingStrategy = MissingCDockableStrategy.PURGE;
 
-    /** the set of known factories */
-    private Map<String, CommonMultipleDockableFactory> factories = 
-        new HashMap<String, CommonMultipleDockableFactory>();
-
-    /** list of all dockables registered to this control */
-    private List<CDockable> dockables =
-        new ArrayList<CDockable>();
-
-    /** list of all {@link SingleCDockable}s */
-    private List<SingleCDockable> singleDockables =
-        new ArrayList<SingleCDockable>();
-
-    /** A factory used to create missing {@link SingleCDockable}s */
-    private CommonSingleDockableFactory backupFactory;
-
-    /** the set of {@link MultipleCDockable}s */
-    private List<MultipleCDockable> multiDockables = 
-        new ArrayList<MultipleCDockable>();
-
     /** access to internal methods of some {@link CDockable}s */
     private Map<CDockable, CDockableAccess> accesses = new HashMap<CDockable, CDockableAccess>();
 
@@ -184,18 +163,9 @@ public class CControl {
 
     /** the default location of newly opened {@link CDockable}s */
     private CLocation defaultLocation;
-
-    /** the center component of the main-frame */
-    private CContentArea content;
-
+    
     /** a list of available {@link DockTheme}s */
     private ThemeMap themes;
-    
-    /** the whole list of contentareas known to this control, includes {@link #content} */
-    private List<CContentArea> contents = new ArrayList<CContentArea>();
-
-    /** the stations known to this control */
-    private List<CStation> stations = new ArrayList<CStation>();
 
     /** Access to the internal methods of this control */
     private CControlAccess access = new Access();
@@ -209,6 +179,9 @@ public class CControl {
     /** factory used to create new elements for this control */
     private CControlFactory factory;
 
+    /** the {@link CDockable}s and other elements used by this control */
+    private MutableCControlRegister register;
+    
     /** the list of listeners to this {@link CControl} */
     private List<CControlListener> listeners = new ArrayList<CControlListener>();
 
@@ -302,39 +275,15 @@ public class CControl {
         
         this.factory = factory;
 
+        register = factory.createRegister( this );
         DockController controller = factory.createController( this );
         controller.setSingleParentRemover( new CSingleParentRemover( this ) );
 
         initFocusListeners( controller );
         initInputListener( controller );
 
-        frontend = new DockFrontend( controller, window ){
-            @Override
-            protected Setting createSetting() {
-                CSetting setting = new CSetting();
-                setting.setModes(
-                        new StateManager.StateManagerSetting<StateManager.Location>( 
-                                new StateManager.LocationConverter() ) );
-                return setting;
-            }
-
-            @Override
-            public Setting getSetting( boolean entry ) {
-                CSetting setting = (CSetting)super.getSetting( entry );
-                setting.setModes( stateManager.getSetting( new StateManager.LocationConverter() ) );
-                return setting;
-            }
-
-            @Override
-            public void setSetting( Setting setting, boolean entry ) {
-                if( entry ){
-                    stateManager.normalizeAllWorkingAreaChildren();
-                }
-
-                super.setSetting( setting, entry );
-                stateManager.setSetting( ((CSetting)setting).getModes() );
-            }
-        };
+        frontend = factory.createFrontend( access, controller );
+        frontend.setOwner( window );
         
         frontend.setMissingDockableStrategy( new MissingDockableStrategy(){
             public boolean shouldStoreHidden( String key ) {
@@ -416,7 +365,7 @@ public class CControl {
         frontend.getController().addAcceptance( new WorkingAreaAcceptance( access ) );
         frontend.getController().addAcceptance( new ExtendedModeAcceptance( access ) );
 
-        backupFactory = new CommonSingleDockableFactory( this );
+        CommonSingleDockableFactory backupFactory = register.getBackupFactory();
         frontend.registerFactory( backupFactory );
         frontend.registerBackupFactory( backupFactory );
         
@@ -640,6 +589,26 @@ public class CControl {
     }
 
     /**
+     * Stores the mapping of {@link MultipleCDockableFactory} and 
+     * {@link MultipleCDockable}s in <code>setting</code>.
+     * @param setting the setting to fill
+     */
+    private void fillMultiFactories( CSetting setting ){
+        for( String id : register.listMultipleDockableFactories() ){
+            MultipleCDockableFactory<?, ?> factory = register.getFactory( id );
+            List<MultipleCDockable> dockables = register.listMultipleDockables( factory );
+            if( !dockables.isEmpty() ){
+                List<String> ids = new ArrayList<String>( dockables.size() );
+                for( MultipleCDockable dockable : dockables ){
+                    String uniqueId = accesses.get( dockable ).getUniqueId();
+                    ids.add( register.multiToNormalId( uniqueId ) );
+                }
+                setting.putMultipleFactoryDockables( id, ids );
+            }
+        }
+    }
+    
+    /**
      * Adds a listener to this control.
      * @param listener the new listener
      */
@@ -790,7 +759,7 @@ public class CControl {
     private void writeWorkingAreas( DataOutputStream out ) throws IOException{
         Map<String,String> map = new HashMap<String, String>();
 
-        for( SingleCDockable dockable : singleDockables ){
+        for( SingleCDockable dockable : register.getSingleDockables() ){
             CStation area = dockable.getWorkingArea();
             if( area != null ){
                 map.put( dockable.getUniqueId(), area.getUniqueId() );
@@ -809,7 +778,7 @@ public class CControl {
      * @param element the element to write into
      */
     private void writeWorkingAreasXML( XElement element ){
-        for( SingleCDockable dockable : singleDockables ){
+        for( SingleCDockable dockable : register.getSingleDockables() ){
             CStation area = dockable.getWorkingArea();
             if( area != null ){
                 XElement xarea = element.addElement( "area" );
@@ -829,13 +798,13 @@ public class CControl {
         Map<String, SingleCDockable> dockables = new HashMap<String, SingleCDockable>();
         Map<String, CStation> areas = new HashMap<String, CStation>();
 
-        for( CStation station : stations ){
+        for( CStation station : register.getStations() ){
             if( station.isWorkingArea() ){
                 areas.put( station.getUniqueId(), station );
             }
         }
 
-        for( SingleCDockable dockable : this.singleDockables ){
+        for( SingleCDockable dockable : register.getSingleDockables() ){
             dockables.put( dockable.getUniqueId(), dockable );
         }
 
@@ -860,13 +829,13 @@ public class CControl {
         Map<String, SingleCDockable> dockables = new HashMap<String, SingleCDockable>();
         Map<String, CStation> areas = new HashMap<String, CStation>();
 
-        for( CStation station : stations ){
+        for( CStation station : register.getStations() ){
             if( station.isWorkingArea() ){
                 areas.put( station.getUniqueId(), station );
             }
         }
 
-        for( SingleCDockable dockable : this.singleDockables ){
+        for( SingleCDockable dockable : register.getSingleDockables() ){
             dockables.put( dockable.getUniqueId(), dockable );
         }
 
@@ -951,7 +920,7 @@ public class CControl {
         if( CContentArea.getNorthIdentifier( CONTENT_AREA_STATIONS_ID ).equals( uniqueId ) )
             throw new IllegalArgumentException( "The id " + uniqueId + " is reserved for special purposes" );
 
-        for( CStation station : stations ){
+        for( CStation station : register.getStations() ){
             if( station.getUniqueId().equals( uniqueId )){
                 throw new IllegalArgumentException( "There exists already a station with id: " + uniqueId );    
             }
@@ -970,7 +939,7 @@ public class CControl {
         if( uniqueId == null )
             throw new NullPointerException( "uniqueId must not be null" );
         
-        for( CContentArea center : contents ){
+        for( CContentArea center : register.getContentAreas() ){
             if( center.getUniqueId().equals( uniqueId ))
                 throw new IllegalArgumentException( "There exists already a CContentArea with the unique id " + uniqueId );
         }
@@ -996,16 +965,16 @@ public class CControl {
      */
     public void addContentArea( CContentArea content ){
         if( content == null )
-            throw new NullPointerException( "content must not be null" );
-
+            throw new NullPointerException( "content is null" );
+        
         if( content.getControl() != this )
             throw new IllegalArgumentException( "content was not created using this CControl" );
-
-        if( contents.contains( content ))
-            throw new IllegalArgumentException( "content already in use" );
-
-        contents.add( content );
-        boolean check = !(this.content == null || content != this.content);
+        
+        register.addContentArea( content );
+        
+        CContentArea defaultArea = register.getDefaultContentArea();
+        
+        boolean check = !(defaultArea == null || content != defaultArea);
 
         for( CStation station : content.getStations() ){
             add( station, true, check );
@@ -1023,10 +992,10 @@ public class CControl {
         if( content == null )
             throw new NullPointerException( "content must not be null" );
 
-        if( this.content == content )
+        if( register.getDefaultContentArea() == content )
             throw new IllegalArgumentException( "The default-contentarea can't be removed" );
 
-        if( contents.remove( content ) ){
+        if( register.removeContentArea( content ) ){
             for( CStation station : content.getStations() ){
                 remove( station );
             }
@@ -1034,12 +1003,21 @@ public class CControl {
     }
 
     /**
+     * Gets the set of dockables, stations and other elemnts that are used
+     * by this control.
+     * @return the set of elements, never <code>null</code>
+     */
+    public CControlRegister getRegister(){
+        return register;
+    }
+    
+    /**
      * Gets an unmodifiable list of all {@link CContentArea}s registered at
      * this control
-     * @return the list of contentareas
+     * @return the list of content-areas
      */
     public List<CContentArea> getContentAreas(){
-        return Collections.unmodifiableList( contents );
+        return register.getContentAreas();
     }
 
     /**
@@ -1127,8 +1105,11 @@ public class CControl {
      * @return the center of the mainframe of the application
      */
     public CContentArea getContentArea() {
+        CContentArea content = register.getDefaultContentArea();
+        
         if( content == null ){
             content = createContentArea( CONTENT_AREA_STATIONS_ID );
+            register.setDefaultContentArea( content );
         }
 
         return content;
@@ -1159,24 +1140,25 @@ public class CControl {
      */    
     private void add( CStation station, boolean root, boolean check ){
         String id = station.getUniqueId();
-        if( check )
+        if( check ){
             checkStationIdentifierUniqueness( id );
+        }
 
         if( root ){
             frontend.addRoot( id, station.getStation() );
         }
 
         station.setControl( access );
-        stations.add( station );
+        register.addStation( station );
     }
 
     /**
      * Removes a {@link CStation} from this control. It is unspecified what
      * happens with the children on <code>station</code>
-     * @param station the statio to remove
+     * @param station the station to remove
      */
     public void remove( CStation station ){
-        if( stations.remove( station ) ){
+        if( register.removeStation( station ) ){
             frontend.removeRoot( station.getStation() );
             station.setControl( null );
         }
@@ -1188,7 +1170,7 @@ public class CControl {
      * @return the list of stations
      */
     public List<CStation> getStations(){
-        return Collections.unmodifiableList( stations );
+        return register.getStations();
     }
 
     /**
@@ -1198,7 +1180,7 @@ public class CControl {
      * @return the station or <code>null</code>
      */
     public CStation getStation( DockStation intern ){
-        for( CStation station : stations ){
+        for( CStation station : register.getStations() ){
             if( station.getStation() == intern )
                 return station;
         }
@@ -1219,13 +1201,13 @@ public class CControl {
             throw new IllegalStateException( "dockable is already part of a control" );
 
         dockable.setControl( access );
-        String id = toSingleId( dockable.getUniqueId() );
+        String id = register.toSingleId( dockable.getUniqueId() );
         accesses.get( dockable ).setUniqueId( id );
         frontend.addDockable( id, dockable.intern() );
         frontend.setHideable( dockable.intern(), true );
-        dockables.add( dockable );
-        singleDockables.add( dockable );
-
+        
+        register.addSingleDockable( dockable );
+        
         for( CControlListener listener : listeners() )
             listener.added( CControl.this, dockable );
 
@@ -1239,7 +1221,7 @@ public class CControl {
      * @return the element with that identifier or <code>null</code>
      */
     public SingleCDockable getSingleDockable( String id ){
-        for( SingleCDockable dockable : singleDockables ){
+        for( SingleCDockable dockable : register.getSingleDockables() ){
             if( dockable.getUniqueId().equals( id )){
                 return dockable;
             }
@@ -1255,7 +1237,7 @@ public class CControl {
      * otherwise
      */
     public boolean removeSingleDockable( String id ){
-        for( SingleCDockable dockable : singleDockables ){
+        for( SingleCDockable dockable : register.getSingleDockables() ){
             if( dockable.getUniqueId().equals( id )){
                 return remove( dockable );
             }
@@ -1279,11 +1261,10 @@ public class CControl {
         if( dockable.getControl() == access ){
             dockable.setVisible( false );
             frontend.remove( dockable.intern() );
-            dockables.remove( dockable );
-            singleDockables.remove( dockable );
+            register.removeSingleDockable( dockable );
             dockable.setControl( null );
             
-            if( !missingStrategy.shouldStoreSingle( dockable.getUniqueId() ) && backupFactory.getFactory( dockable.getUniqueId() ) == null ){
+            if( !missingStrategy.shouldStoreSingle( dockable.getUniqueId() ) && register.getBackupFactory().getFactory( dockable.getUniqueId() ) == null ){
                 stateManager.remove( dockable.intern() );
             }
             else{
@@ -1310,9 +1291,9 @@ public class CControl {
      * @param backupFactory the new factory
      */
     public void addSingleBackupFactory( String id, SingleCDockableBackupFactory backupFactory ){
-        this.backupFactory.add( id, backupFactory );
+        register.getBackupFactory().add( id, backupFactory );
 
-        String singleId = toSingleId( id );
+        String singleId = register.toSingleId( id );
         stateManager.addEmpty( singleId );
         frontend.addEmpty( singleId );
         
@@ -1333,7 +1314,7 @@ public class CControl {
      * @return the factory or <code>null</code>
      */
     public SingleCDockableBackupFactory getSingleBackupFactory( String id ){
-        return backupFactory.getFactory( id );
+        return register.getBackupFactory().getFactory( id );
     }
 
     /**
@@ -1345,25 +1326,16 @@ public class CControl {
      * @see #addSingleBackupFactory(String, SingleCDockableBackupFactory)
      */
     public void removeSingleBackupFactory( String id ){
-        this.backupFactory.remove( id );
+        register.getBackupFactory().remove( id );
 
         if( !missingStrategy.shouldStoreSingle( id )){
-            id = toSingleId( id );
+            id = register.toSingleId( id );
             
             stateManager.removeEmpty( id );
             frontend.removeEmpty( id );
         }
     }
-    
-    /**
-     * Gets a list of keys for all {@link SingleCDockableBackupFactory}s which
-     * are currently registered at this control.
-     * @return the list of keys
-     */
-    public String[] listSingleBackupFactories(){
-        return backupFactory.listFactories();
-    }
-    
+
     /**
      * Adds a dockable to this control. The dockable can be made visible afterwards.
      * @param <F> the type of the new element
@@ -1378,7 +1350,7 @@ public class CControl {
             throw new IllegalStateException( "the factory for a MultipleCDockable is not registered: " + dockable.getFactory() );
         }
 
-        for( MultipleCDockable multi : multiDockables ){
+        for( MultipleCDockable multi : register.getMultipleDockables() ){
             if( factory.equals( access.getFactoryId( multi.getFactory() ))){
                 ids.add( accesses.get( multi ).getUniqueId() );
             }
@@ -1386,7 +1358,7 @@ public class CControl {
 
         int count = 0;
         String id = count + " " + factory;
-        while( ids.contains( toMultiId( id ) ) ){
+        while( ids.contains( register.toMultiId( id ) ) ){
             count++;
             id = count + " " + factory;
         }
@@ -1422,9 +1394,9 @@ public class CControl {
         if( dockable.getControl() != null )
             throw new IllegalStateException( "dockable is already part of a control" );
 
-        uniqueId = toMultiId( uniqueId );
+        uniqueId = register.toMultiId( uniqueId );
 
-        for( MultipleCDockable multi : multiDockables ){
+        for( MultipleCDockable multi : register.getMultipleDockables() ){
             String id = accesses.get( multi ).getUniqueId();
             if( uniqueId.equals( id )){
                 throw new IllegalArgumentException( "The unique identifier is already in use: " + uniqueId );
@@ -1433,49 +1405,23 @@ public class CControl {
 
         dockable.setControl( access );
         accesses.get( dockable ).setUniqueId( uniqueId );
-        multiDockables.add( dockable );
-        dockables.add( dockable );
+        
+        register.addMultipleDockable( dockable );
 
         for( CControlListener listener : listeners() )
             listener.added( CControl.this, dockable );
 
         return dockable;
     }
-
-    private String toSingleId( String id ){
-        return "single " + id;
-    }
-
-    private boolean isSingleId( String id ){
-        return id.startsWith( "single " );
-    }
-    
-    private String singleToNormalId( String id ){
-        return id.substring( 7 );
-    }
-    
-    private String toMultiId( String id ){
-        return "multi " + id;
-    }
-    
-    private boolean isMultiId( String id ){
-        return id.startsWith( "multi " );
-    }
-    
-    private String multiToNormalId( String id ){
-        return id.substring( 6 );
-    }
     
     private boolean shouldStore( String id ){
-        if( isSingleId( id ))
-            return missingStrategy.shouldStoreSingle( singleToNormalId( id ) );
-        else if( isMultiId( id ))
-            return missingStrategy.shouldStoreMultiple( multiToNormalId( id ) );
+        if( register.isSingleId( id ))
+            return missingStrategy.shouldStoreSingle( register.singleToNormalId( id ) );
+        else if( register.isMultiId( id ))
+            return missingStrategy.shouldStoreMultiple( register.multiToNormalId( id ) );
         else
             return false;
-    }
-
-    
+    }    
     
     /**
      * Removes a dockable from this control. The dockable is made invisible.
@@ -1488,8 +1434,8 @@ public class CControl {
         if( dockable.getControl() == access ){
             dockable.setVisible( false );
             frontend.remove( dockable.intern() );
-            multiDockables.remove( dockable );
-            dockables.remove( dockable );
+            
+            register.removeMultipleDockable( dockable );
 
             dockable.setControl( null );
 
@@ -1504,7 +1450,7 @@ public class CControl {
      * @return the number of dockables
      */
     public int getCDockableCount(){
-        return dockables.size();
+        return register.getDockableCount();
     }
 
     /**
@@ -1513,7 +1459,7 @@ public class CControl {
      * @return the selected dockable
      */
     public CDockable getCDockable( int index ){
-        return dockables.get( index );
+        return register.getDockable( index );
     }
 
     /**
@@ -1531,7 +1477,7 @@ public class CControl {
         if( factory == null )
             throw new NullPointerException( "factory must not be null" );
 
-        if( factories.containsKey( id )){
+        if( register.getCommonMultipleDockableFactory( id ) != null ){
             throw new IllegalArgumentException( "there is already a factory named " + id );
         }
 
@@ -1541,10 +1487,12 @@ public class CControl {
         
         CommonMultipleDockableFactory cfactory = new CommonMultipleDockableFactory( id, factory, access );
         
-        factories.put( id, cfactory );
+        register.putCommonMultipleDockableFactory( id, cfactory );
         frontend.registerFactory( cfactory );
     }
 
+    
+    
     /**
      * Adds a factory to this control. The factory will create {@link MultipleCDockable}s
      * when a layout is loaded.
@@ -1562,21 +1510,9 @@ public class CControl {
      * @return the factory or <code>null</code>
      */
     public MultipleCDockableFactory<?, ?> getMultipleDockableFactory( String id ){
-        CommonMultipleDockableFactory factory = factories.get( id );
-        if( factory == null )
-            return null;
-        return factory.getFactory();
+        return register.getFactory( id );
     }
     
-    /**
-     * Gets a list of identifiers of all {@link MultipleCDockableFactory}s
-     * which are currently registered at this control.
-     * @return the list of factories
-     */
-    public String[] listMultipleDockableFactories(){
-        Set<String> set = factories.keySet();
-        return set.toArray( new String[ set.size() ]);
-    }
     
     /**
      * Removes the {@link MultipleCDockableFactory} with identifier <code>id</code>
@@ -1586,12 +1522,12 @@ public class CControl {
      * @param id the identifier of the factory to remove
      */
     public void removeMultipleDockableFactory( String id ){
-        CommonMultipleDockableFactory factory = factories.remove( id );
+        CommonMultipleDockableFactory factory = register.removeCommonMultipleDockableFactory( id );
         if( factory != null ){
             frontend.unregisterFactory( factory );
             
             List<MultipleCDockable> toRemove = new ArrayList<MultipleCDockable>();
-            for( MultipleCDockable dockable : multiDockables ){
+            for( MultipleCDockable dockable : register.getMultipleDockables() ){
                 if( dockable.getFactory() == factory.getFactory() ){
                     toRemove.add( dockable );
                 }
@@ -1810,7 +1746,7 @@ public class CControl {
         for( ResizeRequestListener listener : listeners )
             listener.handleResizeRequest( this );
 
-        for( CDockable dockable : dockables )
+        for( CDockable dockable : register.getDockables() )
             dockable.getAndClearResizeRequest();
     }
 
@@ -1894,46 +1830,6 @@ public class CControl {
         Set<String> settings = frontend.getSettings();
         return settings.toArray( new String[ settings.size() ] );
     }
-
-    /**
-     * Gets a list of all {@link CDockable}s that are known to this control. This includes
-     * invisible dockables.
-     * @return the list of dockables
-     */
-    public CDockable[] listDockables(){
-        return dockables.toArray( new CDockable[ dockables.size() ] );
-    }
-
-    /**
-     * Gets a list of all visible {@link CDockable}s in the given mode.
-     * @param mode the mode which each <code>CDockable</code> must have
-     * @return the list of <code>CDockable</code>s
-     */
-    public CDockable[] listDockablesInMode( ExtendedMode mode ){
-        List<CDockable> list = new ArrayList<CDockable>();
-        for( CDockable check : dockables ){
-            if( check.isVisible() && check.getExtendedMode() == mode ){
-                list.add( check );
-            }
-        }
-        return list.toArray( new CDockable[ list.size() ] );
-    }
-    
-    /**
-     * Gets a list of all identifiers of {@link SingleCDockable} for which
-     * this control has location information within the current {@link #load(String) setting}.
-     * @return the list of ids, never <code>null</code>
-     */
-    public String[] listSingleDockableIds(){
-        List<String> result = new ArrayList<String>();
-        for( FrontendEntry entry : frontend.listFrontendEntries() ){
-            String id = entry.getKey();
-            if( isSingleId( id )){
-                result.add( singleToNormalId( id ));
-            }
-        }
-        return result.toArray( new String[ result.size() ]);
-    }
     
     /**
      * A class giving access to the internal methods of the enclosing
@@ -1974,7 +1870,7 @@ public class CControl {
             DockRegister register = frontend.getController().getRegister();
             register.setStalled( true );
             try{
-                CDockable[] maximized = listDockablesInMode( ExtendedMode.MAXIMIZED );
+                List<CDockable> maximized = CControl.this.register.listDockablesInMode( ExtendedMode.MAXIMIZED );
                 boolean changes = stateManager.ensureNothingMaximized();
 
                 frontend.hide( dockable.intern() );
@@ -2036,11 +1932,12 @@ public class CControl {
         }
 
         public String getFactoryId( MultipleCDockableFactory<?,?> factory ){
-            for( Map.Entry<String, CommonMultipleDockableFactory> entry : factories.entrySet() ){
-                if( entry.getValue().getFactory() == factory )
+            for( Map.Entry<String, MultipleCDockableFactory<?, ?>> entry : register.getFactories().entrySet() ){
+                if( entry.getValue() == factory ){
                     return entry.getKey();
+                }
             }
-
+            
             return null;
         }
 
@@ -2057,6 +1954,10 @@ public class CControl {
         
         public boolean shouldStore( String key ) {
             return CControl.this.shouldStore( key );
+        }
+        
+        public void fillMultiFactories( CSetting setting ) {
+            CControl.this.fillMultiFactories( setting );
         }
     }
 }

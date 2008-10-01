@@ -28,11 +28,13 @@ package bibliothek.gui.dock.common.intern;
 import java.awt.Component;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockFrontend;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CWorkingArea;
+import bibliothek.gui.dock.frontend.Setting;
 import bibliothek.gui.dock.util.WindowProvider;
 
 /**
@@ -44,9 +46,25 @@ public interface CControlFactory {
     /**
      * Creates or gets the {@link DockController}.
      * @param owner the control for which the result of this method will be used
-     * @return the controller, always the same object
+     * @return the new controller
      */
     public DockController createController( CControl owner );
+    
+    /**
+     * Creates a new {@link DockFrontend} that will be used by <code>owner</code>. 
+     * @param owner the owner
+     * @param controller the controller to be used by the new frontend
+     * @return the new frontend
+     */
+    public CDockFrontend createFrontend( CControlAccess owner, DockController controller );
+    
+    /**
+     * Creates a new register that keeps track of all the elements shown and
+     * used by <code>owner</code>.
+     * @param owner the owner of the register
+     * @return the new register
+     */
+    public MutableCControlRegister createRegister( CControl owner );
     
     /**
      * Creates a new {@link FlapDockStation}.
