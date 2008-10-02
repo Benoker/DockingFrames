@@ -42,10 +42,7 @@ import javax.swing.KeyStroke;
 import bibliothek.extension.gui.dock.preference.PreferenceModel;
 import bibliothek.extension.gui.dock.preference.PreferenceStorage;
 import bibliothek.gui.*;
-import bibliothek.gui.dock.DockElement;
-import bibliothek.gui.dock.FlapDockStation;
-import bibliothek.gui.dock.ScreenDockStation;
-import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.*;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
@@ -214,6 +211,15 @@ public class CControl {
     public CControl( JFrame frame ){
         this( frame, false );
     }
+
+    /**
+     * Creates a new control
+     * @param restrictedEnvironment whether this application runs in a
+     * restricted environment and is not allowed to listen for global events.
+     */
+    public CControl( boolean restrictedEnvironment ){
+        this( new NullWindowProvider(), restrictedEnvironment );
+    }
     
     /**
      * Creates a new control
@@ -291,6 +297,20 @@ public class CControl {
             }
             public boolean shouldStoreShown( String key ) {
                 return shouldStore( key );
+            }
+            public boolean shouldCreate( DockFactory<?, ?> factory ) {
+                if( factory instanceof CommonMultipleDockableFactory ){
+                    return CControl.this.shouldCreate( ((CommonMultipleDockableFactory)factory).getFactory() );
+                }
+                return false;
+            }
+            public <L> boolean shouldCreate( DockFactory<?, L> factory, L data ) {
+                if( factory instanceof CommonMultipleDockableFactory && data instanceof CommonDockableLayout ){
+                    return CControl.this.shouldCreate( 
+                            ((CommonMultipleDockableFactory)factory).getFactory(), 
+                            (CommonDockableLayout)data );
+                }
+                return false;
             }
         });
         
@@ -1414,14 +1434,51 @@ public class CControl {
         return dockable;
     }
     
+    /**
+     * Searches and returns the one {@link MultipleCDockable} which uses
+     * the unique identifier <code>id</code>.
+     * @param id the identifier to look out for
+     * @return the element using <code>id</code> or <code>null</code> if nothing
+     * was found
+     */
+    public MultipleCDockable getMultipleDockable( String id ){
+        id = register.toMultiId( id );
+        for( MultipleCDockable dockable : register.getMultipleDockables() ){
+            if( accesses.get( dockable ).getUniqueId().equals( id )){
+                return dockable;
+            }
+        }
+        return null;
+    }
+    
     private boolean shouldStore( String id ){
         if( register.isSingleId( id ))
             return missingStrategy.shouldStoreSingle( register.singleToNormalId( id ) );
-        else if( register.isMultiId( id ))
-            return missingStrategy.shouldStoreMultiple( register.multiToNormalId( id ) );
         else
             return false;
     }    
+    
+    private boolean shouldCreate( MultipleCDockableFactory<?, ?> factory ){
+       String id = access.getFactoryId( factory );
+       return missingStrategy.shouldCreate( id, factory );
+    }
+    
+    @SuppressWarnings("unchecked")
+    private boolean shouldCreate( MultipleCDockableFactory<?, ?> factory, CommonDockableLayout layout ){
+        String uniqueId = layout.getId();
+        
+        for( MultipleCDockable multi : register.getMultipleDockables() ){
+            if( accesses.get( multi ).getUniqueId().equals( uniqueId )){
+                return false;
+            }
+        }
+        
+        uniqueId = register.multiToNormalId( uniqueId );
+        
+        String factoryId = access.getFactoryId( factory );
+        MultipleCDockableFactory<?, MultipleCDockableLayout> normalizedFactory = (MultipleCDockableFactory<?, MultipleCDockableLayout>)factory;
+        return missingStrategy.shouldCreate( factoryId, normalizedFactory, uniqueId, layout.getLayout() );
+    }
     
     /**
      * Removes a dockable from this control. The dockable is made invisible.
@@ -1950,6 +2007,10 @@ public class CControl {
                 closeAction = new CCloseAction( CControl.this );
 
             return closeAction.intern();
+        }
+        
+        public MutableCControlRegister getRegister() {
+            return register;
         }
         
         public boolean shouldStore( String key ) {

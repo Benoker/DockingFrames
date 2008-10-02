@@ -1160,12 +1160,12 @@ public class DockFrontend {
             onAutoFire++;
             if( isShown( dockable )){
                 DockInfo info = getInfo( dockable );
-                if( info == null ){
-                    dockable.getDockParent().drag( dockable );
-                    fireAllHidden( dockable, null );
-                }
-                else{
+                
+                if( info != null ){
                     info.updateLocation();
+                }
+                
+                if( dockable.getDockParent() != null ){
                     dockable.getDockParent().drag( dockable );
                     fireAllHidden( dockable, null );
                 }
@@ -1483,13 +1483,16 @@ public class DockFrontend {
             if( info.getDataLayout().getFactoryID().equals( factoryId )){
                 DockableProperty location = info.getLocation();
                 if( location != null ){
-                    DockElement element = ((DockFactory<DockElement, Object>)factory).layout( info.getDataLayout().getData() );
-                    if( element != null ){
-                        Dockable dockable = element.asDockable();
-                        if( dockable != null ){
-                            RootInfo rootInfo = roots.get( root );
-                            if( !rootInfo.getStation().drop( dockable, location ) ){
-                                rootInfo.getStation().drop( dockable );
+                    DockFactory<DockElement, Object> normalizedFactory = (DockFactory<DockElement, Object>)factory;
+                    if( missingDockable.shouldCreate( normalizedFactory, info.getDataLayout().getData() ) ){
+                        DockElement element = normalizedFactory.layout( info.getDataLayout().getData() );
+                        if( element != null ){
+                            Dockable dockable = element.asDockable();
+                            if( dockable != null ){
+                                RootInfo rootInfo = roots.get( root );
+                                if( !rootInfo.getStation().drop( dockable, location ) ){
+                                    rootInfo.getStation().drop( dockable );
+                                }
                             }
                         }
                     }

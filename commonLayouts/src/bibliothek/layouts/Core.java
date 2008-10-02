@@ -3,8 +3,10 @@ package bibliothek.layouts;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
+import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.JFrame;
 
@@ -24,6 +26,8 @@ public class Core implements Demonstration{
     private ModifySingleDockable singleDockables;
     private ModifyMultiDockable multiDockables;
     
+    private BufferedImage image;
+    
     public String getHTML() {
         // TODO Auto-generated method stub
         return null;
@@ -35,13 +39,20 @@ public class Core implements Demonstration{
     }
 
     public BufferedImage getImage() {
-        // TODO Auto-generated method stub
-        return null;
+        if( image == null ){
+            try {
+                image = ImageIO.read( Core.class.getResource( "/data/bibliothek/commonLayouts/image.png" ) );
+            }
+            catch( IOException e ) {
+                // that should not happen
+                e.printStackTrace();
+            }
+        }
+        return image;
     }
 
     public String getName() {
-        // TODO Auto-generated method stub
-        return null;
+        return "Common Layouts";
     }
     
     public EnvironmentDockable getEnvironment() {
@@ -66,7 +77,7 @@ public class Core implements Demonstration{
         }
         
         final JFrame frame = new JFrame( "Common Layout" );
-        CControl control = new CControl( frame );
+        CControl control = new CControl( frame, true );
         frame.add( control.getContentArea() );
         
         CGrid grid = new CGrid( control );
@@ -77,16 +88,16 @@ public class Core implements Demonstration{
         multiDockables = new ModifyMultiDockable( this );
         
         grid.add( 0, 0, 100, 100, environment );
-        grid.add( 100, 0, 30, 100, storage );
-        grid.add( 0, 100, 65, 30, singleDockables );
-        grid.add( 65, 100, 65, 30, multiDockables );
+        grid.add( 100, 0, 50, 100, storage );
+        grid.add( 0, 100, 65, 50, singleDockables );
+        grid.add( 65, 100, 65, 50, multiDockables );
         control.getContentArea().deploy( grid );
         
         if( monitor != null ){
             monitor.publish( new DockableCollector( control.intern() ));
         }
         
-        frame.setBounds( 20, 20, 500, 400 );
+        frame.setBounds( 20, 20, 600, 400 );
         
         if( monitor != null ){
             frame.setDefaultCloseOperation( JFrame.DO_NOTHING_ON_CLOSE );

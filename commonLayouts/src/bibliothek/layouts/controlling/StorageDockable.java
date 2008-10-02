@@ -1,8 +1,6 @@
 package bibliothek.layouts.controlling;
 
 import java.awt.BorderLayout;
-import java.text.DateFormat;
-import java.util.Date;
 
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -88,11 +86,12 @@ public class StorageDockable extends DefaultSingleCDockable{
                         XElement element = new XElement( "root" );
                         core.getEnvironment().getEnvironmentControl().getResources().writeXML( element );
                         data = element;
+                        label = "xml";
                     }
                     if( operation == STORE_BINARY ){
                         data = core.getEnvironment().getEnvironmentControl().getResources().writeArray();
+                        label = "binary";
                     }
-                    label = DateFormat.getDateTimeInstance().format( new Date() );
                     fireChanged();
                     if( model.indexOf( this ) == model.getSize()-1 ){
                         model.add( new Entry( ++entryCount ) );

@@ -97,14 +97,20 @@ public interface CControlAccess {
 	public CDockableAccess access( CDockable dockable );
 	
 	/**
-	 * Calls either {@link MissingCDockableStrategy#shouldStoreSingle(String)}
-	 * or {@link MissingCDockableStrategy#shouldStoreMultiple(String)} depending
-	 * on how <code>key</code> looks like. 
+	 * Calls {@link MissingCDockableStrategy#shouldStoreSingle(String)} if 
+	 * <code>key</code> has the correct format
 	 * @param key the key for which a dockable might be stored
 	 * @return <code>true</code> if layout information for <code>key</code> should
 	 * be stored, <code>false</code> otherwise
 	 */
 	public boolean shouldStore( String key );
+	
+	/**
+	 * Gets the mutable register of the {@link CControl}. Note that clients should
+	 * only query this register, but not change anything in it.
+	 * @return the register
+	 */
+	public MutableCControlRegister getRegister();
 	
 	/**
 	 * Fills the property {@link CSetting#putMultipleFactoryDockables(String, java.util.List) multiple factory dockables}

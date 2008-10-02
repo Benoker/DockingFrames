@@ -84,6 +84,7 @@ Demonstration - a client starting other applications, shows some demonstrations
 		chess
 		paint
 		sizeAndColor
+		commonLayouts
 
 Notes - an application showing some notes
 	Path: "notes.jar"
@@ -124,4 +125,12 @@ SizeAndColor - application to demonstrate new features of version 1.0.3
 	Dependencies:
 		dockingFramesCore
 		dockingFramesCommon
-		interfaces	
+		interfaces
+		
+Common Layouts - application to test the layout storage capabilities of common
+	Path: "commonLayouts.jar"
+	Executable: yes
+	Dependencies:
+		dockingFramesCore
+		dockingFramesCommon
+		interfaces 

@@ -74,7 +74,7 @@ public class ModifySingleDockable extends DefaultSingleCDockable{
         }
         
         public String getLabel() {
-            return "Single ID '" + id + "': ";
+            return "";
         }
 
         public String getDescription() {
@@ -145,7 +145,7 @@ public class ModifySingleDockable extends DefaultSingleCDockable{
         }
         
         public String getValue() {
-            return "Dockable: " + dockableSet + ", Factory: " + backupFactorySet;
+            return "'" + id + "': ";
         }
 
         public Object getValueInfo() {

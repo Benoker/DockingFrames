@@ -95,7 +95,8 @@ public class Core {
 				new bibliothek.help.Webstart(),
 				new bibliothek.chess.Main(),
 				new bibliothek.paint.Webstart(),
-				new bibliothek.sizeAndColor.Core()
+				new bibliothek.sizeAndColor.Core(),
+				new bibliothek.layouts.Core()
 		});
 	}
 	

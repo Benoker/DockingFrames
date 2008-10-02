@@ -23,7 +23,7 @@ public class Icons {
     }
     
     private static void load( String id, String path ){
-        URL url = Icons.class.getResource( "/data/icons/" + path );
+        URL url = Icons.class.getResource( "/data/bibliothek/commonLayouts/icons/" + path );
         ImageIcon icon = new ImageIcon( url );
         icons.put( id, icon );
     }

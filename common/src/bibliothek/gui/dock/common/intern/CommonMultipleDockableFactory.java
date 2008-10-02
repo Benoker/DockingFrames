@@ -89,7 +89,9 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         
         CommonDockableLayout flayout = new CommonDockableLayout();
         flayout.setLayout( layout );
-        flayout.setId( access.access( element.getDockable() ).getUniqueId() );
+        String uniqueId = access.access( element.getDockable() ).getUniqueId();
+        uniqueId = access.getRegister().multiToNormalId( uniqueId );
+        flayout.setId( uniqueId );
         if( element.getDockable().getWorkingArea() != null )
             flayout.setArea( element.getDockable().getWorkingArea().getUniqueId() );
         
@@ -108,6 +110,12 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         
         // id
         String id = layout.getId();
+        
+        MultipleCDockable oldDockable = access.getOwner().getMultipleDockable( id );
+        if( oldDockable != null ){
+            access.getOwner().remove( oldDockable );
+        }
+        
         access.getOwner().add( dockable, id );
         
         // working area

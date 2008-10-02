@@ -27,6 +27,7 @@ package bibliothek.gui.dock.frontend;
 
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockFactory;
 
 /**
  * Used by the {@link DockFrontend} to handle missing {@link Dockable}s. The
@@ -45,6 +46,12 @@ public interface MissingDockableStrategy {
         public boolean shouldStoreShown( String key ) {
             return false;
         }
+        public boolean shouldCreate( DockFactory<?, ?> factory ) {
+            return false;
+        }
+        public <L> boolean shouldCreate( DockFactory<?, L> factory, L data ) {
+            return false;
+        }
     };
     
     /**
@@ -55,6 +62,12 @@ public interface MissingDockableStrategy {
             return true;
         }
         public boolean shouldStoreShown( String key ) {
+            return true;
+        }
+        public boolean shouldCreate( DockFactory<?, ?> factory ) {
+            return true;
+        }
+        public <L> boolean shouldCreate( DockFactory<?, L> factory, L data ) {
             return true;
         }
     };
@@ -82,4 +95,31 @@ public interface MissingDockableStrategy {
      * should be discarded
      */
     public boolean shouldStoreShown( String key );
+    
+    /**
+     * Tells whether <code>factory</code> should be used to create {@link Dockable}s
+     * which do not have an identifier (meaning: that are not 
+     * {@link DockFrontend#addDockable(String, Dockable) registered}). Factories
+     * which do not pass this test will only be allowed to create elements during
+     * {@link DockFrontend#setSetting(Setting, boolean) set up of a new layout}.
+     * @param factory the factory which might be used to create unnamed elements
+     * @return <code>true</code> if <code>factory</code> should be allowed
+     * to create {@link Dockable}s even when not setting up a layout 
+     * @see #shouldCreate(DockFactory, Object)
+     */
+    public boolean shouldCreate( DockFactory<?,?> factory );
+    
+    /**
+     * Tells whether <code>factory</code> should be used to create a new
+     * {@link Dockable} using <code>data</code>. This method is only called
+     * when the element would be created outside the normal setup phase, i.e.
+     * when a new factory has become known and old data is revisited.
+     * @param <L> the kind of data to use for <code>factory</code>
+     * @param factory the factory which might create new elements
+     * @param data the information <code>factory</code> would convert
+     * @return <code>true</code> if <code>factory</code> is allowed to convert
+     * <code>data</code>
+     * @see #shouldCreate(DockFactory)
+     */
+    public <L> boolean shouldCreate( DockFactory<?, L> factory, L data );
 }

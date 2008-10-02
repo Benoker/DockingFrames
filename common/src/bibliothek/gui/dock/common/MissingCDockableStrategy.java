@@ -37,11 +37,17 @@ public interface MissingCDockableStrategy {
      * A strategy that will always throw away information.
      */
     public static final MissingCDockableStrategy PURGE = new MissingCDockableStrategy(){
-        public boolean shouldStoreMultiple( String id ) {
+        public boolean shouldStoreSingle( String id ) {
+            return false;
+        }
+         
+        public boolean shouldCreate( String id, MultipleCDockableFactory<?, ?> factory ) {
             return false;
         }
         
-        public boolean shouldStoreSingle( String id ) {
+        public <L extends MultipleCDockableLayout> boolean shouldCreate(
+                String id, MultipleCDockableFactory<?, L> factory,
+                String uniqueId, L data ) {
             return false;
         }
     };
@@ -51,12 +57,16 @@ public interface MissingCDockableStrategy {
      * but store information for {@link SingleCDockable}.
      */
     public static final MissingCDockableStrategy SINGLE = new MissingCDockableStrategy(){
-        public boolean shouldStoreMultiple( String id ) {
-            return false;
-        }
-        
         public boolean shouldStoreSingle( String id ) {
             return true;
+        }
+        public boolean shouldCreate( String id, MultipleCDockableFactory<?, ?> factory ) {
+            return false;
+        }
+        public <L extends MultipleCDockableLayout> boolean shouldCreate(
+                String id, MultipleCDockableFactory<?, L> factory,
+                String uniqueId, L data ) {
+            return false;
         }
     };
     
@@ -64,11 +74,15 @@ public interface MissingCDockableStrategy {
      * A strategy that will always store any information
      */
     public static final MissingCDockableStrategy STORE = new MissingCDockableStrategy(){
-        public boolean shouldStoreMultiple( String id ) {
+        public boolean shouldStoreSingle( String id ) {
             return true;
         }
-        
-        public boolean shouldStoreSingle( String id ) {
+        public boolean shouldCreate( String id, MultipleCDockableFactory<?, ?> factory ) {
+            return true;
+        }
+        public <L extends MultipleCDockableLayout> boolean shouldCreate(
+                String id, MultipleCDockableFactory<?, L> factory,
+                String uniqueId, L data ) {
             return true;
         }
     };
@@ -84,11 +98,27 @@ public interface MissingCDockableStrategy {
     public boolean shouldStoreSingle( String id );
     
     /**
-     * Tells whether layout information for the missing {@link MultipleCDockable}
-     * with identifier <code>id</code> should be stored.
-     * @param id the identifier of the missing {@link MultipleCDockable}
-     * @return <code>true</code> if layout information should remain available,
-     * <code>false</code> if the information should be purged.
+     * Tells whether the factory <code>factory</code> should be used to create
+     * {@link MultipleCDockable}s for which location information is available.
+     * @param id the identifier of the factory
+     * @param factory the factory to use
+     * @return <code>true</code> if dockables can be restored by <code>factory</code>
      */
-    public boolean shouldStoreMultiple( String id );
+    public boolean shouldCreate( String id, MultipleCDockableFactory<?,?> factory );
+    
+    /**
+     * Tells whether the {@link MultipleCDockable} with identifier <code>uniqueId</code>
+     * should automatically be created outside the normal setup-phase. This method
+     * is not called when applying a new layout through the normal ways, only
+     * when <code>factory</code> has become available after the layout was already
+     * set.
+     * @param <L> the kind of data <code>factory</code> uses
+     * @param id the identifier of <code>factory</code>
+     * @param factory the factory which would create the new element
+     * @param uniqueId the identifier of the element that would be created
+     * @param data the data that would be given to <code>factory</code> to create
+     * the new element
+     * @return <code>true</code> if a new element should be created
+     */
+    public <L extends MultipleCDockableLayout> boolean shouldCreate( String id, MultipleCDockableFactory<?, L> factory, String uniqueId, L data );
 }

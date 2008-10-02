@@ -31,7 +31,7 @@ public class EnvironmentDockable extends DefaultSingleCDockable {
         setLayout( new GridLayout( 1, 1 ) );
         add( rootPane );
         
-        control = new CControl();
+        control = new CControl( true );
         control.setMissingStrategy( MissingCDockableStrategy.STORE );
         
         rootPane.getContentPane().setLayout( new BorderLayout() );

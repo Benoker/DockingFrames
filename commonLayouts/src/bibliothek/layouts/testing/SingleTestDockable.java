@@ -25,6 +25,6 @@ public class SingleTestDockable extends DefaultSingleCDockable{
         add( new JScrollPane( pane ) );
         
         setExternalizable( false );
-        setCloseable( true );
+        setCloseable( false );
     }
 }
