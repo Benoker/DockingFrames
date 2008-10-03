@@ -1,0 +1,45 @@
+<html>Originally designed to be a test client, this application now shows how
+Common handles the case were a layout is loaded for which not all Dockables 
+are available.
+
+The application contains 4 different views:
+<ul>
+<li><b>Testing Environment</b>: This view uses its own <i>CControl</i> and the other 
+views can add or remove elements from this control. It represents the part
+of an application that the user would see, while the other views represent
+those parts which are normally hidden from the user.</li>
+<li><b>Storage</b>: Allows to store and load the layout of 'Testing Environment' 
+at any time. The layout can either be stored in 'xml' or in 'binary' format.</li>
+<li><b>Single Dockables</b>: Can be used to add/remove <i>SingleCDockable</i>s or
+<i>SingleCDockableBackupFactory</i>s to/from 'Testing Environment'.</li>
+<li><b>Multiple Dockables</b>: Can be used to add <i>MultipleCDockable</i>s
+to 'Testring Environment' or to add/remove <i>MultipleCDockableFactory</i>s.</li>
+</ul>
+
+You can use this application as follows:
+<ol>
+<li>Create a more or less sophisticated layout by adding various <i>SingleCDockable</i>s
+and <i>MultipleCDockable</i>s to 'Testing Environment'.</li>
+<li>Store the layout in 'Storage'.</li>
+<li>Remove none, some or all <i>CDockable</i>s from 'Testing Environment'.</li>
+<li>Load a layout from 'Storage'.</li>
+<li>Add dockables or factories to 'Testing Environment' and observe how Common
+tries to put the elements again at their old location.</li>
+</ol>
+
+There are some limitations of which you need to be aware:
+<ul>
+<li>Once you choose a format for the layout ('xml' or 'binary') you should
+stick with that format. If some part of a layout cannot be read because a factory
+is missing, then it remains in its raw format. It is not possible to convert
+such a fragment into the other format.</li>
+<li>Data about <i>SingleCDockable</i>s tends to stick around for a longer period
+than data for <i>MultipleCDockable</i>s. But in any case: loading a layout with
+a missing factory, and then storing the layout again can and will result in
+a loss of data.</li>
+<li>There are different degrees in how aggressive Common tries to put the elements
+back at their old place. This application runs at the highest possible degree.
+It is possible to disable the whole recovery system or to do some fine-tuning, 
+i.e. only restore a subset of elements.</li>
+</ul>
+</html>

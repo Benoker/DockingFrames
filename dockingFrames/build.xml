@@ -109,6 +109,7 @@
 
 		<property name="name.chess" value="chess"/>
 		<property name="name.common" value="dockingFramesCommon"/>
+		<property name="name.layouts" value="commonLayouts"/>
 		<property name="name.demo" value="tutorial"/>
 		<property name="name.demonstration" value="demonstration"/>
 		<property name="name.demonstrationInterface" value="interfaces"/>
@@ -120,6 +121,7 @@
 
 		<property name="location.chess" value="[JavaForge]Chess"/>
 		<property name="location.common" value="[JavaForge]Common"/>
+		<property name="location.layouts" value="[JavaForge]CommonLayouts"/>
 		<property name="location.demo" value="[JavaForge]Demo"/>
 		<property name="location.demonstration" value="[JavaForge]Demonstration"/>
 		<property name="location.demonstrationInterface" value="[JavaForge]DemonstrationInterface"/>
@@ -159,6 +161,8 @@
 		<copy todir="${base}" file="${location.dockingFrames}/license.txt"/>
 		<copy todir="${base}" file="${location.dockingFrames}/changes.txt"/>
 		<copy tofile="${base}/readme.txt" file="${location.dockingFrames}/readme_full.txt"/>
+		<copy tofile="${base}/readme_v1.0.7p4.txt" file="${location.dockingFrames}/readme_v1.0.7p4.txt"/>
+		<copy tofile="${base}/readme_v1.0.7p5.txt" file="${location.dockingFrames}/readme_v1.0.7p5.txt"/>
 	</target>
 
 	<target name="webstart" depends="bin, paths">
@@ -196,14 +200,24 @@
 		<jar destfile="${web}/lib/${name.sizeAndColor}.jar">
 			<fileset dir="${temp}/${name.sizeAndColor}"/>
 		</jar>
+		<jar destfile="${web}/lib/${name.layouts}.jar">
+			<fileset dir="${temp}/${name.layouts}"/>
+		</jar>
 	</target>
 	
-	<target name="bin" depends="source, bin dir, bin.chess, bin.common, bin.demo, bin.demonstration, bin.demonstrationInterface, bin.dockingFrames, bin.help, bin.notes, bin.paint">
+	<target name="bin" depends="source, bin dir, bin.chess, bin.common, bin.layouts, bin.demo, bin.demonstration, bin.demonstrationInterface, bin.dockingFrames, bin.help, bin.notes, bin.paint">
 		<jar destfile="${bin}/${name.chess}.jar">
 			<fileset dir="${temp}/${name.chess}"/>
 			<manifest>
 				<attribute name="Main-Class" value="bibliothek.chess.Main"/>
 				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.dockingFrames}.jar"/>
+			</manifest>
+		</jar>
+		<jar destfile="${bin}/${name.layouts}.jar">
+			<fileset dir="${temp}/${name.layouts}"/>
+			<manifest>
+				<attribute name="Main-Class" value="bibliothek.commonLayouts.Application"/>
+				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.dockingFrames}.jar"/> 
 			</manifest>
 		</jar>
 		<jar destfile="${bin}/${name.common}.jar">
@@ -274,6 +288,19 @@
 			</fileset>
 		</copy>
 	</target>
+	
+	<target name="bin.layouts" depends="source, bin dir, bin.common, bin.demonstrationInterface, bin.dockingFrames">
+		<javac srcdir="${source}/${name.layouts}" destdir="${temp}/${name.layouts}">
+			<classpath path="${temp}/${name.common}"/>
+			<classpath path="${temp}/${name.demonstrationInterface}"/>
+			<classpath path="${temp}/${name.dockingFrames}"/>
+		</javac>
+		<copy todir="${temp}/${name.layouts}">
+			<fileset dir="${source}/${name.layouts}">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
 
 	<target name="bin.common" depends="source, bin dir, bin.dockingFrames">
 		<javac srcdir="${source}/${name.common}" destdir="${temp}/${name.common}">
@@ -302,6 +329,7 @@
 	<target name="bin.demonstration" depends="source, bin dir, bin.chess, bin.common, bin.demonstrationInterface, bin.dockingFrames, bin.help, bin.notes, bin.paint, bin.sizeAndColor">
 		<javac srcdir="${source}/${name.demonstration}" destdir="${temp}/${name.demonstration}">
 			<classpath path="${temp}/${name.chess}"/>
+			<classpath path="${temp}/${name.layouts}"/>
 			<classpath path="${temp}/${name.common}"/>
 			<classpath path="${temp}/${name.demonstrationInterface}"/>
 			<classpath path="${temp}/${name.dockingFrames}"/>
@@ -397,6 +425,7 @@
 		<mkdir dir="${bin}"/>
 		<mkdir dir="${temp}"/>
 		<mkdir dir="${temp}/${name.chess}"/>
+		<mkdir dir="${temp}/${name.layouts}"/>
 		<mkdir dir="${temp}/${name.common}"/>
 		<mkdir dir="${temp}/${name.demo}"/>
 		<mkdir dir="${temp}/${name.demonstration}"/>
@@ -412,6 +441,11 @@
 	<target name="source" depends="source dir, clean, paths">
 		<copy todir="${source}/${name.chess}">
 			<fileset dir="${location.chess}/src">
+				<exclude name="*.svn/*"/>
+			</fileset>
+		</copy>
+		<copy todir="${source}/${name.layouts}}">
+			<fileset dir="${location.layouts}/src">
 				<exclude name="*.svn/*"/>
 			</fileset>
 		</copy>
@@ -468,6 +502,7 @@
 		<mkdir dir="${source}"/>
 		<mkdir dir="${source}/${name.chess}"/>
 		<mkdir dir="${source}/${name.common}"/>
+		<mkdir dir="${source}/${name.layouts}"/>
 		<mkdir dir="${source}/${name.demo}"/>
 		<mkdir dir="${source}/${name.demonstration}"/>
 		<mkdir dir="${source}/${name.demonstrationInterface}"/>
