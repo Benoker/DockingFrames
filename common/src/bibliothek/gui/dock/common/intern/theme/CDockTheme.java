@@ -34,6 +34,7 @@ import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
+import bibliothek.gui.dock.common.intern.font.FontBridgeFactory;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.focus.DockableSelection;
 import bibliothek.gui.dock.station.Combiner;
@@ -45,6 +46,9 @@ import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.color.ColorBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.DockColor;
+import bibliothek.gui.dock.util.font.DockFont;
+import bibliothek.gui.dock.util.font.FontBridge;
+import bibliothek.gui.dock.util.font.FontManager;
 
 /**
  * A {@link DockTheme} that wraps another theme and works within
@@ -57,9 +61,13 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
     /** the theme to which all work is delegated */
     private DockTheme delegate;
     
-    /** the factories used in this theme */
+    /** the factories for colors used in this theme */
     private Map<Path, ColorBridgeFactory> colorBridgeFactories =
         new HashMap<Path, ColorBridgeFactory>();
+    
+    /** the factories for fonts used in this theme */
+    private Map<Path, FontBridgeFactory> fontBridgeFactories =
+        new HashMap<Path, FontBridgeFactory>();
     
     /** the settings of all {@link DockController}s */
     private List<Controller> controllers = new ArrayList<Controller>();
@@ -123,26 +131,55 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
      * Sets the {@link ColorBridge} which should be used for a certain kind
      * of {@link DockColor}s. The bridges will be installed with priority
      * {@link Priority#DEFAULT} at all {@link ColorManager}s.
-     * @param kind the kind of {@link DockColor} the providers will handle
-     * @param factory the factory for new providers
+     * @param kind the kind of {@link DockColor} the bridges will handle
+     * @param factory the factory for new bridges, can be <code>null</code>
      */
-    public <C extends DockColor> void putColorBridgeFactory( Path kind, ColorBridgeFactory factory ){
+    public void putColorBridgeFactory( Path kind, ColorBridgeFactory factory ){
         colorBridgeFactories.put( kind, factory );
         for( Controller setting : controllers ){
             ColorManager colors = setting.controller.getColors();
             
-            ColorBridge oldBridge = setting.bridges.remove( kind );
+            ColorBridge oldBridge = setting.colors.remove( kind );
             ColorBridge newBridge = factory == null ? null : factory.create( colors );
             
             if( newBridge == null ){
-                setting.bridges.remove( kind );
+                setting.colors.remove( kind );
                 
                 if( oldBridge != null )
                     colors.unpublish( Priority.DEFAULT, kind );
             }
             else{
-                setting.bridges.put( kind, newBridge );
+                setting.colors.put( kind, newBridge );
                 colors.publish( Priority.DEFAULT, kind, newBridge );
+            }
+        }
+    }
+    
+    /**
+     * Sets the {@link FontBridge} which should be used for a certain kind
+     * of {@link DockFont}s. The bridges will be installed with priority
+     * {@link Priority#DEFAULT} at all {@link FontManager}s.
+     * @param kind the kind of {@link DockFont} the bridges will handle
+     * @param factory the factory for new bridges, can be <code>null</code>
+     */
+    public void putFontBridgeFactory( Path kind, FontBridgeFactory factory ){
+        fontBridgeFactories.put( kind, factory );
+        for( Controller setting : controllers ){
+            FontManager fonts = setting.controller.getFonts();
+            
+            FontBridge oldBridge = setting.fonts.remove( kind );
+            FontBridge newBridge = factory == null ? null : factory.create( fonts );
+            
+            if( newBridge == null ){
+                setting.fonts.remove( kind );
+                
+                if( oldBridge != null ){
+                    fonts.unpublish( Priority.DEFAULT, kind );
+                }
+            }
+            else{
+                setting.fonts.put( kind, newBridge );
+                fonts.publish( Priority.DEFAULT, kind, newBridge );
             }
         }
     }
@@ -160,8 +197,16 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
                     Priority.DEFAULT, 
                     entry.getKey(), 
                     bridge );
-            settings.bridges.put( entry.getKey(), bridge );
+            settings.colors.put( entry.getKey(), bridge );
         }
+        
+        FontManager fonts = controller.getFonts();
+        for( Map.Entry<Path, FontBridgeFactory> entry : fontBridgeFactories.entrySet() ){
+            FontBridge bridge = entry.getValue().create( fonts );
+            fonts.publish( Priority.DEFAULT, entry.getKey(), bridge );
+            settings.fonts.put( entry.getKey(), bridge );
+        }
+        
         controllers.add( settings );
     }
 
@@ -174,8 +219,13 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
                 controllers.remove( i );
                 
                 ColorManager colors = controller.getColors();
-                for( ColorBridge bridge : settings.bridges.values() ){
+                for( ColorBridge bridge : settings.colors.values() ){
                     colors.unpublish( Priority.DEFAULT, bridge );
+                }
+                
+                FontManager fonts = controller.getFonts();
+                for( FontBridge bridge : settings.fonts.values() ){
+                    fonts.unpublish( Priority.DEFAULT, bridge );
                 }
             }
         }
@@ -189,6 +239,8 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
         /** the controller which is represented by this element */
         public DockController controller;
         /** the list of {@link ColorBridge}s which is used in that controller */
-        public Map<Path, ColorBridge> bridges = new HashMap<Path, ColorBridge>();
+        public Map<Path, ColorBridge> colors = new HashMap<Path, ColorBridge>();
+        /** the list of {@link FontBridge}s which are used in that controller */
+        public Map<Path, FontBridge> fonts = new HashMap<Path, FontBridge>();
     }
 }

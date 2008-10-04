@@ -140,6 +140,7 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
         entry.putMode( currentMode( dockable ) );
         
         added( dockable );
+        rebuild( dockable );
     }
     
     /**
@@ -174,16 +175,17 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
             }
             entry.dockable = dockable;
             dockables.put( dockable, entry );
-            added( dockable );
-            return;
+        }
+        else{
+            // was not inserted
+            entry = new Entry( dockable, name );
+            dockables.put( dockable, entry );
+            entries.put( entry.id, entry );
+            entry.putMode( currentMode( dockable ) );
         }
         
-        // was not inserted
-        entry = new Entry( dockable, name );
-        dockables.put( dockable, entry );
-        entries.put( entry.id, entry );
-        entry.putMode( currentMode( dockable ) );
         added( dockable );
+        rebuild( dockable );
     }
     
     /**

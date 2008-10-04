@@ -1323,6 +1323,9 @@ public class CControl {
             SingleCDockable dockable = backupFactory.createBackup( id );
             if( dockable != null ){
                 add( dockable );
+                if( entry.isShown() || !dockable.isCloseable() ){
+                    dockable.setVisible( true );
+                }
             }
         }
     }
@@ -1467,13 +1470,13 @@ public class CControl {
     private boolean shouldCreate( MultipleCDockableFactory<?, ?> factory, CommonDockableLayout layout ){
         String uniqueId = layout.getId();
         
+        String multiId = register.toMultiId( uniqueId );
+        
         for( MultipleCDockable multi : register.getMultipleDockables() ){
-            if( accesses.get( multi ).getUniqueId().equals( uniqueId )){
+            if( accesses.get( multi ).getUniqueId().equals( multiId )){
                 return false;
             }
         }
-        
-        uniqueId = register.multiToNormalId( uniqueId );
         
         String factoryId = access.getFactoryId( factory );
         MultipleCDockableFactory<?, MultipleCDockableLayout> normalizedFactory = (MultipleCDockableFactory<?, MultipleCDockableLayout>)factory;

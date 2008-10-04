@@ -359,6 +359,13 @@ public interface CDockable {
 	public ColorMap getColors();
 	
 	/**
+	 * Gets a mutable map of fonts. Clients can put fonts into this map, and
+	 * the fonts will be presented on the screen through various effects.
+	 * @return the map, this has always to be the same object
+	 */
+	public FontMap getFonts();
+	
+	/**
 	 * Gets the control which is responsible for this dockable. Clients
 	 * should not use this method unless they know exactly what they are doing.
 	 * @return the control

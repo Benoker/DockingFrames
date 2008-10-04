@@ -29,10 +29,7 @@ import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Map;
 
-import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.CLocation;
-import bibliothek.gui.dock.common.CStation;
-import bibliothek.gui.dock.common.ColorMap;
+import bibliothek.gui.dock.common.*;
 import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.event.*;
 import bibliothek.gui.dock.common.intern.action.CloseActionSource;
@@ -78,6 +75,9 @@ public abstract class AbstractCDockable implements CDockable {
     
     /** the colors associated with this dockable */
     private ColorMap colors = new ColorMap( this );
+    
+    /** the fonts associated with this dockable */
+    private FontMap fonts = new FontMap( this );
     
     /** the actions that are shown by other modules */
     private Map<String, CAction> actions = new HashMap<String, CAction>();
@@ -567,6 +567,10 @@ public abstract class AbstractCDockable implements CDockable {
     
     public ColorMap getColors() {
         return colors;
+    }
+    
+    public FontMap getFonts() {
+        return fonts;
     }
     
     /**

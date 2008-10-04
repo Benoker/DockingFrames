@@ -111,7 +111,7 @@ public class Core implements Demonstration{
             bar.add( theme.getMenu() );
             frame.setJMenuBar( bar );
 
-            control.add( "frame", Frame.FACTORY );
+            control.addMultipleDockableFactory( "frame", Frame.FACTORY );
             frame.add( control.getContentArea() );
             
             CGrid grid = new CGrid();

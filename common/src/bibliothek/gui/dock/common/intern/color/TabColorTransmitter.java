@@ -34,12 +34,13 @@ import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.util.color.ColorManager;
+import bibliothek.gui.dock.util.color.DockColor;
 
 /**
  * A {@link ColorTransmitter} used for {@link TabColor}s.
  * @author Benjamin Sigg
  */
-public abstract class TabColorTransmitter extends ColorTransmitter<TabColor>{
+public abstract class TabColorTransmitter extends ColorTransmitter{
     private ColorManager manager;
     private String[] keys;
     
@@ -81,7 +82,7 @@ public abstract class TabColorTransmitter extends ColorTransmitter<TabColor>{
     protected abstract Color convertFocused( Color source, String key );
     
     @Override
-    protected Color get( Color color, String id, TabColor observer ) {
+    protected Color get( Color color, String id, DockColor observer ) {
         CDockable dockable = getDockable( observer );
         if( dockable != null ){
             return get( color, id, dockable );
@@ -185,8 +186,8 @@ public abstract class TabColorTransmitter extends ColorTransmitter<TabColor>{
     }
     
     @Override
-    protected CDockable getDockable( TabColor observer ) {
-        Dockable dockable = observer.getDockable();
+    protected CDockable getDockable( DockColor observer ) {
+        Dockable dockable = ((TabColor)observer).getDockable();
         if( dockable instanceof CommonDockable )
             return ((CommonDockable)dockable).getDockable();
         

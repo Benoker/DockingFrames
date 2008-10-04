@@ -36,6 +36,7 @@ import javax.swing.*;
 import bibliothek.gui.dock.common.ColorMap;
 import bibliothek.gui.dock.common.DefaultMultipleCDockable;
 import bibliothek.gui.dock.common.EmptyMultipleCDockableFactory;
+import bibliothek.gui.dock.common.FontMap;
 
 /**
  * A frame contains some buttons that change some properties in order to 
@@ -102,33 +103,37 @@ public class Frame extends DefaultMultipleCDockable {
                 GridBagConstraints.NONE, new Insets( 1, 1, 1, 1 ), 0, 0 )); 
         
         
-        JPanel colors = new JPanel( new GridLayout( 16, 1 ));
-        colors.setBorder( BorderFactory.createTitledBorder( "Color" ) );
+        JPanel properties = new JPanel( new GridLayout( 18, 1 ));
+        properties.setBorder( BorderFactory.createTitledBorder( "Color" ) );
         
-        ColorMap map = getColors();
-        colors.add( new ColorButton( map, ColorMap.COLOR_KEY_TAB_BACKGROUND, Color.WHITE ));
-        colors.add( new ColorButton( map, ColorMap.COLOR_KEY_TAB_BACKGROUND_SELECTED, Color.WHITE ));
-        colors.add( new ColorButton( map, ColorMap.COLOR_KEY_TAB_BACKGROUND_FOCUSED, Color.WHITE ));
-        colors.add( new ColorButton( map, ColorMap.COLOR_KEY_TAB_FOREGROUND, Color.BLACK ));
-        colors.add( new ColorButton( map, ColorMap.COLOR_KEY_TAB_FOREGROUND_SELECTED, Color.BLACK ));
-        colors.add( new ColorButton( map, ColorMap.COLOR_KEY_TAB_FOREGROUND_FOCUSED, Color.BLACK ));
-        colors.add( new ColorButton( map, ColorMap.COLOR_KEY_TITLE_BACKGROUND, Color.WHITE ));
-        colors.add( new ColorButton( map, ColorMap.COLOR_KEY_TITLE_BACKGROUND_FOCUSED, Color.WHITE ));
-        colors.add( new ColorButton( map, ColorMap.COLOR_KEY_TITLE_FOREGROUND, Color.BLACK ));
-        colors.add( new ColorButton( map, ColorMap.COLOR_KEY_TITLE_FOREGROUND_FOCUSED, Color.BLACK ));
-        colors.add( new ColorButton( map, ColorMap.COLOR_KEY_MINIMIZED_BUTTON_BACKGROUND, Color.WHITE ));
-        colors.add( new ColorButton( map, ColorMap.COLOR_KEY_MINIMIZED_BUTTON_BACKGROUND_FOCUSED, Color.WHITE ));
-        colors.add( new ColorButton( map, ColorMap.COLOR_KEY_MINIMIZED_BUTTON_BACKGROUND_SELECTED, Color.WHITE ));
-        colors.add( new ColorButton( map, ColorMap.COLOR_KEY_MINIMIZED_BUTTON_FOREGROUND, Color.BLACK ));
-        colors.add( new ColorButton( map, ColorMap.COLOR_KEY_MINIMIZED_BUTTON_FOREGROUND_FOCUSED, Color.BLACK ));
-        colors.add( new ColorButton( map, ColorMap.COLOR_KEY_MINIMIZED_BUTTON_FOREGROUND_SELECTED, Color.BLACK ));
+        ColorMap colors = getColors();
+        FontMap fonts = getFonts();
+        
+        properties.add( new ColorButton( colors, ColorMap.COLOR_KEY_TAB_BACKGROUND, Color.WHITE ));
+        properties.add( new ColorButton( colors, ColorMap.COLOR_KEY_TAB_BACKGROUND_SELECTED, Color.WHITE ));
+        properties.add( new ColorButton( colors, ColorMap.COLOR_KEY_TAB_BACKGROUND_FOCUSED, Color.WHITE ));
+        properties.add( new ColorButton( colors, ColorMap.COLOR_KEY_TAB_FOREGROUND, Color.BLACK ));
+        properties.add( new ColorButton( colors, ColorMap.COLOR_KEY_TAB_FOREGROUND_SELECTED, Color.BLACK ));
+        properties.add( new ColorButton( colors, ColorMap.COLOR_KEY_TAB_FOREGROUND_FOCUSED, Color.BLACK ));
+        properties.add( new ColorButton( colors, ColorMap.COLOR_KEY_TITLE_BACKGROUND, Color.WHITE ));
+        properties.add( new ColorButton( colors, ColorMap.COLOR_KEY_TITLE_BACKGROUND_FOCUSED, Color.WHITE ));
+        properties.add( new ColorButton( colors, ColorMap.COLOR_KEY_TITLE_FOREGROUND, Color.BLACK ));
+        properties.add( new ColorButton( colors, ColorMap.COLOR_KEY_TITLE_FOREGROUND_FOCUSED, Color.BLACK ));
+        properties.add( new ColorButton( colors, ColorMap.COLOR_KEY_MINIMIZED_BUTTON_BACKGROUND, Color.WHITE ));
+        properties.add( new ColorButton( colors, ColorMap.COLOR_KEY_MINIMIZED_BUTTON_BACKGROUND_FOCUSED, Color.WHITE ));
+        properties.add( new ColorButton( colors, ColorMap.COLOR_KEY_MINIMIZED_BUTTON_BACKGROUND_SELECTED, Color.WHITE ));
+        properties.add( new ColorButton( colors, ColorMap.COLOR_KEY_MINIMIZED_BUTTON_FOREGROUND, Color.BLACK ));
+        properties.add( new ColorButton( colors, ColorMap.COLOR_KEY_MINIMIZED_BUTTON_FOREGROUND_FOCUSED, Color.BLACK ));
+        properties.add( new ColorButton( colors, ColorMap.COLOR_KEY_MINIMIZED_BUTTON_FOREGROUND_SELECTED, Color.BLACK ));
+        properties.add( new FontButton( fonts, FontMap.FONT_KEY_TITLE ));
+        properties.add( new FontButton( fonts, FontMap.FONT_KEY_TITLE_FOCUSED ));
         
         JPanel all = new JPanel( new GridBagLayout() );
         all.add( title, new GridBagConstraints( 0, 0, 1, 1, 1.0, 1.0, 
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets( 0, 0, 0, 0 ), 0, 0 ));
         all.add( sizes, new GridBagConstraints( 0, 1, 1, 1, 1.0, 1.0, 
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets( 0, 0, 0, 0 ), 0, 0 ));
-        all.add( colors, new GridBagConstraints( 0, 2, 1, 1, 1.0, 1.0, 
+        all.add( properties, new GridBagConstraints( 0, 2, 1, 1, 1.0, 1.0, 
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets( 0, 0, 0, 0 ), 0, 0 ));
         
         getContentPane().add( new JScrollPane( all ));

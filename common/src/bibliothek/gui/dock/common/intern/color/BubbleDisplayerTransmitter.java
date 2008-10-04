@@ -34,13 +34,14 @@ import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.themes.color.DisplayerColor;
 import bibliothek.gui.dock.util.color.ColorManager;
+import bibliothek.gui.dock.util.color.DockColor;
 import bibliothek.util.Colors;
 
 /**
  * A transmitter connecting {@link ColorMap} and {@link BubbleDisplayer}.
  * @author Benjamin Sigg
  */
-public class BubbleDisplayerTransmitter extends ColorTransmitter<DisplayerColor> {
+public class BubbleDisplayerTransmitter extends ColorTransmitter {
     private static final String[] KEYS = {
         "displayer.border.high.active",
         "displayer.border.high.active.mouse",
@@ -64,7 +65,7 @@ public class BubbleDisplayerTransmitter extends ColorTransmitter<DisplayerColor>
     }
     
     @Override
-    protected Color get( Color color, String id, DisplayerColor observer ) {
+    protected Color get( Color color, String id, DockColor observer ) {
         CDockable dockable = getDockable( observer );
         return get( color, id, dockable );
     }
@@ -159,8 +160,8 @@ public class BubbleDisplayerTransmitter extends ColorTransmitter<DisplayerColor>
     }
 
     @Override
-    protected CDockable getDockable( DisplayerColor observer ) {
-        Dockable dockable = observer.getDisplayer().getDockable();
+    protected CDockable getDockable( DockColor observer ) {
+        Dockable dockable = ((DisplayerColor)observer).getDisplayer().getDockable();
         if( dockable == null )
             return null;
         

@@ -33,12 +33,13 @@ import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.util.color.ColorManager;
+import bibliothek.gui.dock.util.color.DockColor;
 
 /**
  * A color transmitter for the button-title used on minimized areas.
  * @author Benjamin Sigg
  */
-public abstract class MinimizedButtonColorTransmitter extends ColorTransmitter<TitleColor>{
+public abstract class MinimizedButtonColorTransmitter extends ColorTransmitter{
     private ColorManager manager;
     private String[] keys;
     
@@ -112,7 +113,7 @@ public abstract class MinimizedButtonColorTransmitter extends ColorTransmitter<T
 	}
     
     @Override
-    protected Color get( Color color, String id, TitleColor observer ) {
+    protected Color get( Color color, String id, DockColor observer ) {
         CDockable dockable = getDockable( observer );
         if( dockable != null ){
             return get( color, id, dockable );
@@ -122,8 +123,8 @@ public abstract class MinimizedButtonColorTransmitter extends ColorTransmitter<T
     }
 
     @Override
-    protected CDockable getDockable( TitleColor observer ) {
-        Dockable dockable = observer.getTitle().getDockable();
+    protected CDockable getDockable( DockColor observer ) {
+        Dockable dockable = ((TitleColor)observer).getTitle().getDockable();
         if( dockable instanceof CommonDockable )
             return ((CommonDockable)dockable).getDockable();
         

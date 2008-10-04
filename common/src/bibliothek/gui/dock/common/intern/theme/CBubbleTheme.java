@@ -36,15 +36,20 @@ import bibliothek.gui.dock.common.intern.color.BubbleButtonTitleTransmitter;
 import bibliothek.gui.dock.common.intern.color.BubbleDisplayerTransmitter;
 import bibliothek.gui.dock.common.intern.color.BubbleTabTransmitter;
 import bibliothek.gui.dock.common.intern.color.BubbleTitleTransmitter;
+import bibliothek.gui.dock.common.intern.font.FontBridgeFactory;
+import bibliothek.gui.dock.common.intern.font.TitleFontTransmitter;
 import bibliothek.gui.dock.themes.ColorBridgeFactory;
 import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.gui.dock.themes.color.DisplayerColor;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.color.TitleColor;
+import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.color.ColorBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
+import bibliothek.gui.dock.util.font.FontBridge;
+import bibliothek.gui.dock.util.font.FontManager;
 
 /**
  * A theme wrapping {@link BubbleTheme} and adding additional features to
@@ -110,6 +115,13 @@ public class CBubbleTheme extends CDockTheme<BubbleTheme>{
         putColorBridgeFactory( TitleColor.KIND_FLAP_BUTTON_COLOR, new ColorBridgeFactory(){
             public ColorBridge create( ColorManager manager ) {
                 BubbleButtonTitleTransmitter transmitter = new BubbleButtonTitleTransmitter( manager );
+                transmitter.setControl( control );
+                return transmitter;
+            }
+        });
+        putFontBridgeFactory( TitleFont.KIND_TITLE_FONT, new FontBridgeFactory(){
+            public FontBridge create( FontManager manager ) {
+                TitleFontTransmitter transmitter = new TitleFontTransmitter( manager );
                 transmitter.setControl( control );
                 return transmitter;
             }
