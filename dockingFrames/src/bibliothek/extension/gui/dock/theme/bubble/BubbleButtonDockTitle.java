@@ -35,10 +35,13 @@ import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.FlapDockStation.ButtonContent;
 import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.themes.color.TitleColor;
+import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.color.ColorCodes;
+import bibliothek.gui.dock.util.font.DockFont;
+import bibliothek.util.Condition;
 
 /**
  * A {@link DockTitle} used for the buttons on a {@link FlapDockStation}.
@@ -108,6 +111,7 @@ public class BubbleButtonDockTitle extends AbstractBubbleDockTitle{
         super.init( dockable, origin, showMiniButtons );
         initAnimation();
         updateAnimation();
+        updateFonts();
     }
     
     /**
@@ -136,6 +140,27 @@ public class BubbleButtonDockTitle extends AbstractBubbleDockTitle{
         addColor( "title.foreground.inactive.flap", path, Color.WHITE );
         addColor( "title.foreground.selected.mouse.flap", path, Color.WHITE );
         addColor( "title.foreground.selected.flap", path, Color.WHITE );
+        
+        addConditionalFont( DockFont.ID_FLAP_BUTTON_ACTIVE, TitleFont.KIND_FLAP_BUTTON_FONT, 
+                new Condition(){
+            public boolean getState() {
+                return isActive();
+            }
+        }, null );
+
+        addConditionalFont( DockFont.ID_FLAP_BUTTON_SELECTED, TitleFont.KIND_FLAP_BUTTON_FONT, 
+                new Condition(){
+            public boolean getState() {
+                return isSelected();
+            }
+        }, null );
+
+        addConditionalFont( DockFont.ID_FLAP_BUTTON_INACTIVE, TitleFont.KIND_FLAP_BUTTON_FONT, 
+                new Condition(){
+            public boolean getState() {
+                return !isActive();
+            }
+        }, null );
     }
     
     @Override
@@ -143,6 +168,7 @@ public class BubbleButtonDockTitle extends AbstractBubbleDockTitle{
         selected = event.isActive() || event.isPreferred();
         super.setActive( event.isActive() );
         updateAnimation();
+        updateFonts();
     }
     
     @Override
@@ -151,6 +177,7 @@ public class BubbleButtonDockTitle extends AbstractBubbleDockTitle{
             super.setActive(active);
             selected = active;
             updateAnimation();
+            updateFonts();
         }
     }
     

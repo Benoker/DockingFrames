@@ -30,8 +30,11 @@ import java.awt.Color;
 import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.themes.color.TitleColor;
+import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.color.ColorCodes;
+import bibliothek.gui.dock.util.font.DockFont;
+import bibliothek.util.Condition;
 
 /**
  * A <code>BubbleDockTitle</code> is a title which has two or four round edges.
@@ -116,10 +119,24 @@ public class BubbleDockTitle extends AbstractBubbleDockTitle {
         addColor( "title.foreground.active", path, Color.BLACK );
         addColor( "title.foreground.inactive.mouse", path, Color.WHITE );
         addColor( "title.foreground.inactive", path, Color.WHITE );
+        
+        addConditionalFont( DockFont.ID_TITLE_ACTIVE, TitleFont.KIND_TITLE_FONT, new Condition(){
+            public boolean getState() {
+                return isActive();
+            }
+        }, null );
+        
+        addConditionalFont( DockFont.ID_TITLE_INACTIVE, TitleFont.KIND_TITLE_FONT, new Condition(){
+            public boolean getState() {
+                return !isActive();
+            }
+        }, null );
     }
     
     @Override
     protected void updateAnimation(){
+        updateFonts();
+        
         String postfix = "";
         if( isActive() ){
             if( isMouseOver() )

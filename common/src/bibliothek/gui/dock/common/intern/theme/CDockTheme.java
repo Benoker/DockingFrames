@@ -34,13 +34,17 @@ import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.intern.font.ButtonFontTransmitter;
 import bibliothek.gui.dock.common.intern.font.FontBridgeFactory;
+import bibliothek.gui.dock.common.intern.font.TitleFontTransmitter;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.focus.DockableSelection;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.themes.ColorBridgeFactory;
+import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.color.ColorBridge;
@@ -93,6 +97,27 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
         
         this.theme = theme;
         this.delegate = delegate;
+    }
+    
+    /**
+     * Adds the default {@link FontBridgeFactory}s to this theme.
+     * @param control the owner of this theme
+     */
+    protected void initDefaultFontBridges( final CControl control ){
+        putFontBridgeFactory( TitleFont.KIND_TITLE_FONT, new FontBridgeFactory(){
+            public FontBridge create( FontManager manager ) {
+                TitleFontTransmitter transmitter = new TitleFontTransmitter( manager );
+                transmitter.setControl( control );
+                return transmitter;
+            }
+        });
+        putFontBridgeFactory( TitleFont.KIND_FLAP_BUTTON_FONT, new FontBridgeFactory(){
+            public FontBridge create( FontManager manager ) {
+                ButtonFontTransmitter transmitter = new ButtonFontTransmitter( manager );
+                transmitter.setControl( control );
+                return transmitter;
+            }
+        });
     }
     
     /**

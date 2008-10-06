@@ -214,3 +214,4 @@
 - API: Order of operations in PreferenceTable reversed.
 - API: Eduardo Born suggested an upgrade of CGrid: if some dockables are placed at the exact same location they are stacked
 - API: new CControlRegister for better access to all the elements that are used by a CControl
+- Bugfix: DockFocusTraversalPolicy could create endlos recursion if used together with javax.swing.LegacyGlueFocusTraversalPolicy

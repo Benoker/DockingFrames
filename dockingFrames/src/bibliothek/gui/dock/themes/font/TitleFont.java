@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.themes.font;
 
 import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.font.AbstractDockFont;
 import bibliothek.gui.dock.util.font.FontModifier;
@@ -35,7 +36,11 @@ import bibliothek.gui.dock.util.font.FontModifier;
  * @author Benjamin Sigg
  */
 public abstract class TitleFont extends AbstractDockFont{
+    /** this kind describes a font that is used on a title */
     public static final Path KIND_TITLE_FONT = KIND_DOCK_FONT.append( "title" );
+    
+    /** this kind describes a font that is used on a button title of a {@link FlapDockStation} */
+    public static final Path KIND_FLAP_BUTTON_FONT = KIND_TITLE_FONT.append( "flap" );
     
     private DockTitle title;
 

@@ -30,17 +30,12 @@ import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.color.BasicButtonTitleTransmitter;
 import bibliothek.gui.dock.common.intern.color.FlatTabTransmitter;
 import bibliothek.gui.dock.common.intern.color.FlatTitleTransmitter;
-import bibliothek.gui.dock.common.intern.font.FontBridgeFactory;
-import bibliothek.gui.dock.common.intern.font.TitleFontTransmitter;
 import bibliothek.gui.dock.themes.ColorBridgeFactory;
 import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.color.TitleColor;
-import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.util.color.ColorBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
-import bibliothek.gui.dock.util.font.FontBridge;
-import bibliothek.gui.dock.util.font.FontManager;
 
 /**
  * A {@link CDockTheme} that encapsulates a {@link FlatTheme} in order to 
@@ -102,13 +97,7 @@ public class CFlatTheme extends CDockTheme<FlatTheme> {
         		return transmitter;
         	}
         });
-        putFontBridgeFactory( TitleFont.KIND_TITLE_FONT, new FontBridgeFactory(){
-            public FontBridge create( FontManager manager ) {
-                TitleFontTransmitter transmitter = new TitleFontTransmitter( manager );
-                transmitter.setControl( control );
-                return transmitter;
-            }
-        });
+        initDefaultFontBridges( control );
     }
 
 }

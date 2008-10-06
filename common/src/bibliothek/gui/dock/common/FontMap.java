@@ -48,6 +48,12 @@ public class FontMap {
     /** key for font used in titles if the title is focused */
     public static final String FONT_KEY_TITLE_FOCUSED = "dock.title.focused";
     
+    /** key for font used on the button for a minimized dokable */
+    public static final String FONT_KEY_MINIMIZED_BUTTON = "dock.minimized";
+    
+    /** key for font used on the focused button for a minimized dokable */
+    public static final String FONT_KEY_MINIMIZED_BUTTON_FOCUSED = "dock.minimized.focused";
+    
     /** the map of fonts associated with {@link #dockable} */
     private Map<String, FontModifier> fonts = new HashMap<String, FontModifier>();
     

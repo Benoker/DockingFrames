@@ -39,9 +39,12 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.themes.color.TitleColor;
+import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.title.AbstractDockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.color.ColorCodes;
+import bibliothek.gui.dock.util.font.DockFont;
+import bibliothek.util.Condition;
 
 /**
  * This title changes its border whenever the active-state changes.
@@ -111,6 +114,27 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
         addColor( inactiveTextColor );
         addColor( selectedColor );
         addColor( selectedTextColor );
+        
+        addConditionalFont( DockFont.ID_FLAP_BUTTON_ACTIVE, TitleFont.KIND_FLAP_BUTTON_FONT, 
+                new Condition(){
+            public boolean getState() {
+                return isActive();
+            }
+        }, null );
+
+        addConditionalFont( DockFont.ID_FLAP_BUTTON_SELECTED, TitleFont.KIND_FLAP_BUTTON_FONT, 
+                new Condition(){
+            public boolean getState() {
+                return isSelected();
+            }
+        }, null );
+
+        addConditionalFont( DockFont.ID_FLAP_BUTTON_INACTIVE, TitleFont.KIND_FLAP_BUTTON_FONT, 
+                new Condition(){
+            public boolean getState() {
+                return !isActive();
+            }
+        }, null );
     }
     
     @Override
@@ -135,7 +159,7 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
         if( active != isActive() ){
             super.setActive(active);
             selected = active;
-            changeBorder();
+            updateLayout();
         }
     }
     
@@ -143,8 +167,7 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
     public void changed( DockTitleEvent event ) {
         super.setActive( event.isActive() );
         selected = event.isActive() || event.isPreferred();
-        changeBorder();
-        updateColors();
+        updateLayout();
     }
     
     @Override
@@ -170,6 +193,16 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
     public boolean isSelected() {
 		return selected;
 	}
+    
+    /**
+     * Updates various elements of this title such that the current state
+     * is met.
+     */
+    protected void updateLayout(){
+        changeBorder();
+        updateColors();
+        updateFonts();
+    }
     
     /**
      * Exchanges the current border.

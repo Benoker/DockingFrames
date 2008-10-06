@@ -34,7 +34,6 @@ import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CWorkingArea;
-import bibliothek.gui.dock.frontend.Setting;
 import bibliothek.gui.dock.util.WindowProvider;
 
 /**

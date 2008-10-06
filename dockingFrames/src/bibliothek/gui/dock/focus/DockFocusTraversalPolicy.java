@@ -38,10 +38,19 @@ import java.awt.FocusTraversalPolicy;
 public class DockFocusTraversalPolicy extends FocusTraversalPolicy {
     /** the delegate used to determine the next or previous component */
     private SimplifiedFocusTraversalPolicy policy;
-    
+
     /** whether this policy should try to create real circles or not */
     private boolean circle;
-    
+
+    /** detects recursion in the {@link #getComponentBefore(Container, Component)} method */
+    private boolean recursionComponentBefore = false;
+
+    /** detects recursion in the {@link #getComponentAfter(Container, Component)} method */
+    private boolean recursionComponentAfter = false;
+
+    /** detects recursion in the {@link #getDefaultComponent(Container)} method */
+    private boolean recursionDefaultComponent = false;
+
     /**
      * Creates a new policy.
      * @param policy the delegate providing algorithms for this policy
@@ -53,11 +62,11 @@ public class DockFocusTraversalPolicy extends FocusTraversalPolicy {
     public DockFocusTraversalPolicy( SimplifiedFocusTraversalPolicy policy, boolean circle ){
         if( policy == null )
             throw new IllegalArgumentException( "policy must not be null" );
-        
+
         this.policy = policy;
         this.circle = circle;
     }
-    
+
     /**
      * Tells whether <code>component</code> can be focused or not.
      * @param component some {@link Component} which might gain the focus.
@@ -66,45 +75,56 @@ public class DockFocusTraversalPolicy extends FocusTraversalPolicy {
      */
     protected boolean accept( Component component ){
         return component.isFocusable() &&
-            component.isEnabled() &&
-            component.isDisplayable() &&
-            component.isShowing();
+        component.isEnabled() &&
+        component.isDisplayable() &&
+        component.isShowing();
     }
-    
+
     @Override
     public Component getComponentAfter( Container container, Component component ) {
-        Component next = after( component );
-        
-        while( true ){
-            if( next == component )
-                return null;
-            
-            if( next == null )
-                return null;
-            
-            if( next instanceof Container ){
-                Container nextContainer = (Container)next;
-                if( !nextContainer.isFocusCycleRoot() && nextContainer.isFocusTraversalPolicyProvider() ){
-                    Component selected;
-                    if( circle )
-                        selected = nextContainer.getFocusTraversalPolicy().getFirstComponent( nextContainer );
-                    else
-                        selected = nextContainer.getFocusTraversalPolicy().getDefaultComponent( nextContainer );
-                    
-                    if( selected == next )
-                        return next;
-                    next = selected;
-                    continue;
+        if( recursionComponentAfter ){
+            return policy.getAfter( container, component );
+        }
+
+        try{
+            recursionComponentAfter = true;
+
+            Component next = after( component );
+
+            while( true ){
+                if( next == component )
+                    return null;
+
+                if( next == null )
+                    return null;
+
+                if( next instanceof Container ){
+                    Container nextContainer = (Container)next;
+                    if( !nextContainer.isFocusCycleRoot() && nextContainer.isFocusTraversalPolicyProvider() ){
+                        Component selected;
+                        if( circle )
+                            selected = nextContainer.getFocusTraversalPolicy().getFirstComponent( nextContainer );
+                        else
+                            selected = nextContainer.getFocusTraversalPolicy().getDefaultComponent( nextContainer );
+
+                        if( selected == next )
+                            return next;
+                        next = selected;
+                        continue;
+                    }
                 }
+
+                if( accept( next ))
+                    return next;
+
+                next = after( next );
             }
-            
-            if( accept( next ))
-                return next;
-            
-            next = after( next );
+        }
+        finally{
+            recursionComponentAfter = false;
         }
     }
-    
+
     /**
      * Searches the next {@link Component} which might gain the focus. This
      * method searches recursively through the tree of {@link Component}s, but
@@ -116,19 +136,13 @@ public class DockFocusTraversalPolicy extends FocusTraversalPolicy {
         Container provider = getRootOrProvider( component );
         if( provider == null )
             return null;
-        
+
         FocusTraversalPolicy providerPolicy = getFocusTraversalPolicy( provider );
         if( providerPolicy == null )
             return null;
-        
-        Component result;
-        if( providerPolicy == this ){
-            result = policy.getAfter( provider, component );
-        }
-        else{
-            result = providerPolicy.getComponentAfter( provider, component );
-        }
-        
+
+        Component result = providerPolicy.getComponentAfter( provider, component );
+
         if( provider.isFocusCycleRoot() ){
             return result;
         }
@@ -149,39 +163,49 @@ public class DockFocusTraversalPolicy extends FocusTraversalPolicy {
 
     @Override
     public Component getComponentBefore( Container container, Component component ) {
-        Component previous = before( component );
-        
-        while( true ){
-            if( previous == component )
-                return null;
-            
-            if( previous == null )
-                return null;
-            
-            if( previous instanceof Container ){
-                Container previousContainer = (Container)previous;
-                if( !previousContainer.isFocusCycleRoot() && previousContainer.isFocusTraversalPolicyProvider() ){
-                    Component selected;
-                    if( circle )
-                        selected = previousContainer.getFocusTraversalPolicy().getLastComponent( previousContainer );
-                    else
-                        selected = previousContainer.getFocusTraversalPolicy().getDefaultComponent( previousContainer );
-                    
-                    if( selected == previous )
-                        return previous;
-                    previous = selected;
-                    continue;
+        if( recursionComponentBefore ){
+            return policy.getBefore( container, component );
+        }
+        try{
+            recursionComponentBefore = true;
+
+            Component previous = before( component );
+
+            while( true ){
+                if( previous == component )
+                    return null;
+
+                if( previous == null )
+                    return null;
+
+                if( previous instanceof Container ){
+                    Container previousContainer = (Container)previous;
+                    if( !previousContainer.isFocusCycleRoot() && previousContainer.isFocusTraversalPolicyProvider() ){
+                        Component selected;
+                        if( circle )
+                            selected = previousContainer.getFocusTraversalPolicy().getLastComponent( previousContainer );
+                        else
+                            selected = previousContainer.getFocusTraversalPolicy().getDefaultComponent( previousContainer );
+
+                        if( selected == previous )
+                            return previous;
+                        previous = selected;
+                        continue;
+                    }
                 }
+
+                if( accept( previous ))
+                    return previous;
+
+                previous = after( previous );
             }
-            
-            if( accept( previous ))
-                return previous;
-            
-            previous = after( previous );
+        }
+        finally{
+            recursionComponentBefore = false;
         }
     }
 
-    
+
     /**
      * Searches the previous {@link Component} which might gain the focus. This
      * method searches recursively through the tree of {@link Component}s, but
@@ -192,15 +216,9 @@ public class DockFocusTraversalPolicy extends FocusTraversalPolicy {
     protected Component before( Component component ){
         Container provider = getRootOrProvider( component );
         FocusTraversalPolicy providerPolicy = getFocusTraversalPolicy( provider );
-        
-        Component result;
-        if( providerPolicy == this ){
-            result = policy.getBefore( provider, component );
-        }
-        else{
-            result = providerPolicy.getComponentBefore( provider, component );
-        }
-        
+
+        Component result = providerPolicy.getComponentBefore( provider, component );
+
         if( provider.isFocusCycleRoot() ){
             return result;
         }
@@ -221,46 +239,43 @@ public class DockFocusTraversalPolicy extends FocusTraversalPolicy {
 
     @Override
     public Component getDefaultComponent( Container container ) {
-        FocusTraversalPolicy providerPolicy = getFocusTraversalPolicy( container );
-        Component component;
-        
-        if( providerPolicy == this ){
-            component = policy.getDefault( container );
+        if( recursionDefaultComponent ){
+            return policy.getDefault( container );
         }
-        else{
-            component = providerPolicy.getDefaultComponent( container );
-        }
-        
-        if( component == container )
-            return component;
-        
-        if( component instanceof Container ){
-            Container ccontainer = (Container)component;
-            if( ccontainer.isFocusCycleRoot() || ccontainer.isFocusTraversalPolicyProvider() ){
-                Component result = getDefaultComponent( ccontainer );
-                if( result != null )
-                    return result;
+        try{
+            recursionDefaultComponent = true;
+
+            FocusTraversalPolicy providerPolicy = getFocusTraversalPolicy( container );
+            Component component = providerPolicy.getDefaultComponent( container );
+            
+            if( component == container )
+                return component;
+
+            if( component instanceof Container ){
+                Container ccontainer = (Container)component;
+                if( ccontainer.isFocusCycleRoot() || ccontainer.isFocusTraversalPolicyProvider() ){
+                    Component result = getDefaultComponent( ccontainer );
+                    if( result != null )
+                        return result;
+                }
             }
+
+            return component;
         }
-        
-        return component;
+        finally{
+            recursionDefaultComponent = false;
+        }
     }
 
     @Override
     public Component getFirstComponent( Container container ) {
         FocusTraversalPolicy providerPolicy = getFocusTraversalPolicy( container );
-        Component component;
         
-        if( providerPolicy == this ){
-            component = policy.getDefault( container );
-        }
-        else{
-            component = providerPolicy.getDefaultComponent( container );
-        }
-        
+        Component component = providerPolicy.getDefaultComponent( container );
+
         if( component == container )
             return component;
-        
+
         if( component instanceof Container ){
             Container ccontainer = (Container)component;
             if( ccontainer.isFocusCycleRoot() || ccontainer.isFocusTraversalPolicyProvider() ){
@@ -269,25 +284,18 @@ public class DockFocusTraversalPolicy extends FocusTraversalPolicy {
                     return result;
             }
         }
-        
+
         return component;
     }
 
     @Override
     public Component getLastComponent( Container container ) {
         FocusTraversalPolicy providerPolicy = getFocusTraversalPolicy( container );
-        Component component;
-        
-        if( providerPolicy == this ){
-            component = policy.getDefault( container );
-        }
-        else{
-            component = providerPolicy.getDefaultComponent( container );
-        }
-        
+        Component component = providerPolicy.getDefaultComponent( container );
+
         if( component == container )
             return component;
-        
+
         if( component instanceof Container ){
             Container ccontainer = (Container)component;
             if( ccontainer.isFocusCycleRoot() || ccontainer.isFocusTraversalPolicyProvider() ){
@@ -296,7 +304,7 @@ public class DockFocusTraversalPolicy extends FocusTraversalPolicy {
                     return result;
             }
         }
-        
+
         return component;
     }
 
@@ -309,17 +317,17 @@ public class DockFocusTraversalPolicy extends FocusTraversalPolicy {
      */
     protected Container getRootOrProvider( Component component ){
         Container container = component.getParent();
-        
+
         while( container != null ){
             if( container.isFocusCycleRoot() || container.isFocusTraversalPolicyProvider() )
                 return container;
 
             container = container.getParent();
         }
-        
+
         return null;
     }
-    
+
     /**
      * Searches the {@link FocusTraversalPolicy} which should be used by
      * <code>provider</code>. This method searches for a focus cycle root or
@@ -335,10 +343,10 @@ public class DockFocusTraversalPolicy extends FocusTraversalPolicy {
                     return provider.getFocusTraversalPolicy();
                 }
             }
-            
+
             provider = provider.getParent();
         }
-        
+
         return null;
     }
 }
