@@ -40,11 +40,14 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.themes.basic.BasicDockTitle;
 import bibliothek.gui.dock.themes.color.TitleColor;
+import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.color.ColorManager;
+import bibliothek.gui.dock.util.font.DockFont;
+import bibliothek.util.Condition;
 
 /**
  * A {@link DockTitle} normally used by the {@link DockTitleTab} to show
@@ -87,13 +90,6 @@ public class BasicTabDockTitle extends BasicDockTitle {
     /** whether to paint the icon when this tab is not selected */
     private boolean paintIconWhenInactive = true;
     
-    private TitleColor activeLeft;
-    private TitleColor activeRight;
-    private TitleColor activeText;
-    private TitleColor inactiveLeft;
-    private TitleColor inactiveRight;
-    private TitleColor inactiveText;
-    
     private TitleColor borderColor;
     
     /**
@@ -103,48 +99,18 @@ public class BasicTabDockTitle extends BasicDockTitle {
      * @param origin the type of this title
      */
     public BasicTabDockTitle( EclipseTheme theme, Dockable dockable, DockTitleVersion origin ) {
-        super( dockable, origin );
+        super( dockable, origin, false );
         this.theme = theme;
         
         setBorder( BorderFactory.createEmptyBorder( 0, 0, 1, 0 ) );
         
-        activeLeft = new TitleColor( "stack.tab.top.selected.focused", this, Color.WHITE ){
-            @Override
-            protected void changed( Color oldColor, Color newColor ) {
-                setActiveLeftColor( newColor );
-            }
-        };
-        activeRight = new TitleColor( "stack.tab.bottom.selected.focused", this, Color.WHITE ){
-            @Override
-            protected void changed( Color oldColor, Color newColor ) {
-                setActiveRightColor( newColor );
-            }
-        };
-        activeText = new TitleColor( "stack.tab.text", this, Color.BLACK ){
-            @Override
-            protected void changed( Color oldColor, Color newColor ) {
-                setActiveTextColor( newColor );
-            }
-        };
+        setActiveLeftColorId( "stack.tab.top.selected.focused" );
+        setActiveRightColorId( "stack.tab.bottom.selected.focused" );
+        setActiveTextColorId( "stack.tab.text" );
         
-        inactiveLeft = new TitleColor( "stack.tab.top.selected", this, Color.WHITE ){
-            @Override
-            protected void changed( Color oldColor, Color newColor ) {
-                setInactiveLeftColor( newColor );
-            }
-        };
-        inactiveRight = new TitleColor( "stack.tab.bottom.selected", this, Color.WHITE ){
-            @Override
-            protected void changed( Color oldColor, Color newColor ) {
-                setInactiveRightColor( newColor );
-            }
-        };
-        inactiveText = new TitleColor( "stack.tab.text", this, Color.BLACK ){
-            @Override
-            protected void changed( Color oldColor, Color newColor ) {
-                setInactiveTextColor( newColor );
-            }
-        };
+        setInactiveLeftColorId( "stack.tab.top.selected" );
+        setInactiveRightColorId( "stack.tab.bottom.selected" );
+        setInactiveTextColorId( "stack.tab.text" );
         
         borderColor = new TitleColor( "stack.border", this, Color.BLACK ){
             @Override
@@ -152,6 +118,27 @@ public class BasicTabDockTitle extends BasicDockTitle {
                 repaint();
             }
         };
+        
+        addConditionalFont( DockFont.ID_TAB_FOCUSED, TitleFont.KIND_TAB_TITLE_FONT,
+                new Condition(){
+            public boolean getState() {
+                return isActive();
+            }
+        }, null );
+        
+        addConditionalFont( DockFont.ID_TAB_SELECTED, TitleFont.KIND_TAB_TITLE_FONT,
+                new Condition(){
+            public boolean getState() {
+                return selected;
+            }
+        }, null );
+        
+        addConditionalFont( DockFont.ID_TAB_UNSELECTED, TitleFont.KIND_TAB_TITLE_FONT,  
+                new Condition(){
+            public boolean getState() {
+                return !isActive();
+            }
+        }, null );
     }
     
     @Override
@@ -161,12 +148,6 @@ public class BasicTabDockTitle extends BasicDockTitle {
         DockController controller = getDockable().getController();
         ColorManager colors = controller.getColors();
 
-        activeLeft.setManager( colors );
-        activeRight.setManager( colors );
-        activeText.setManager( colors );
-        inactiveLeft.setManager( colors );
-        inactiveRight.setManager( colors );
-        inactiveText.setManager( colors );
         borderColor.setManager( colors );
     }
     
@@ -174,12 +155,6 @@ public class BasicTabDockTitle extends BasicDockTitle {
     public void unbind() {
         super.unbind();
 
-        activeLeft.setManager( null );
-        activeRight.setManager( null );
-        activeText.setManager( null );
-        inactiveLeft.setManager( null );
-        inactiveRight.setManager( null );
-        inactiveText.setManager( null );
         borderColor.setManager( null );
     }
     

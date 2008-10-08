@@ -89,6 +89,18 @@ public class BasicDockTitle extends AbstractDockTitle {
      * @param origin the version which was used to create this title
      */
     public BasicDockTitle( Dockable dockable, DockTitleVersion origin ){
+        this( dockable, origin, true );
+    }
+
+    /**
+     * Creates a new title
+     * @param dockable the owner of this title
+     * @param origin the version which was used to create this title
+     * @param setDefaultConditionalFonts whether to set the default set of
+     * conditional fonts for {@link DockFont#ID_TITLE_ACTIVE} and
+     * {@link DockFont#ID_TITLE_INACTIVE}
+     */
+    protected BasicDockTitle( Dockable dockable, DockTitleVersion origin, boolean setDefaultConditionalFonts ){
         super( dockable, origin );
         setActive( false );
         
@@ -99,17 +111,19 @@ public class BasicDockTitle extends AbstractDockTitle {
         addColor( activeTextColor );
         addColor( inactiveTextColor );
         
-        addConditionalFont( DockFont.ID_TITLE_ACTIVE, TitleFont.KIND_TITLE_FONT, new Condition(){
-            public boolean getState() {
-                return isActive();
-            }
-        }, null );
-        
-        addConditionalFont( DockFont.ID_TITLE_INACTIVE, TitleFont.KIND_TITLE_FONT, new Condition(){
-            public boolean getState() {
-                return !isActive();
-            }
-        }, null );
+        if( setDefaultConditionalFonts ){
+            addConditionalFont( DockFont.ID_TITLE_ACTIVE, TitleFont.KIND_TITLE_FONT, new Condition(){
+                public boolean getState() {
+                    return isActive();
+                }
+            }, null );
+
+            addConditionalFont( DockFont.ID_TITLE_INACTIVE, TitleFont.KIND_TITLE_FONT, new Condition(){
+                public boolean getState() {
+                    return !isActive();
+                }
+            }, null );
+        }
     }
 
     @Override
@@ -206,6 +220,14 @@ public class BasicDockTitle extends AbstractDockTitle {
     }
     
     /**
+     * Changes the identifier that is used for the active left color.
+     * @param id the new identifier, not <code>null</code>
+     */
+    public void setActiveLeftColorId( String id ){ 
+        activeLeftColor.setId( id );
+    }
+    
+    /**
      * Gets the color that is used on the right side in the
      * gradient of this title. This method does the same
      * as <code>getActiveRightTitleColor().color();</code>.
@@ -231,6 +253,14 @@ public class BasicDockTitle extends AbstractDockTitle {
      */
     public void setActiveRightColor( Color activeRightColor ) {
         this.activeRightColor.setValue( activeRightColor );
+    }
+    
+    /**
+     * Changes the identifier that is used for the active right color.
+     * @param id the new identifier, not <code>null</code>
+     */
+    public void setActiveRightColorId( String id ){ 
+        activeRightColor.setId( id );
     }
 
     /**
@@ -258,6 +288,14 @@ public class BasicDockTitle extends AbstractDockTitle {
      */
     public void setActiveTextColor( Color activeTextColor ) {
         this.activeTextColor.setValue( activeTextColor );
+    }
+    
+    /**
+     * Changes the identifier that is used for the active text color.
+     * @param id the new identifier, not <code>null</code>
+     */
+    public void setActiveTextColorId( String id ){ 
+        activeTextColor.setId( id );
     }
 
     /**
@@ -289,6 +327,14 @@ public class BasicDockTitle extends AbstractDockTitle {
     }
     
     /**
+     * Changes the identifier that is used for the inactive left color.
+     * @param id the new identifier, not <code>null</code>
+     */
+    public void setInactiveLeftColorId( String id ){ 
+        inactiveLeftColor.setId( id );
+    }
+    
+    /**
      * Gets the color which is used on the right side of the
      * gradient if this title is not active. This method does
      * the same as <code>getInactiveRightTitleColor().color();</code>.
@@ -314,6 +360,14 @@ public class BasicDockTitle extends AbstractDockTitle {
      */
     public void setInactiveRightColor( Color inactiveRightColor ) {
         this.inactiveRightColor.setValue( inactiveRightColor );
+    }
+    
+    /**
+     * Changes the identifier that is used for the inactive right color.
+     * @param id the new identifier, not <code>null</code>
+     */
+    public void setInactiveRightColorId( String id ){ 
+        activeRightColor.setId( id );
     }
 
     /**
@@ -343,6 +397,14 @@ public class BasicDockTitle extends AbstractDockTitle {
         this.inactiveTextColor.setValue( inactiveTextColor );
     }
 
+    /**
+     * Changes the identifier that is used for the inactive text color.
+     * @param id the new identifier, not <code>null</code>
+     */
+    public void setInactiveTextColorId( String id ){ 
+        inactiveTextColor.setId( id );
+    }
+    
     @Override
     public void setActive( boolean active ) {
         super.setActive( active );

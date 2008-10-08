@@ -51,4 +51,13 @@ public interface DockFont extends UIValue<FontModifier> {
     
     /** default id for an inactive button of a {@link FlapDockStation} */
     public static final String ID_FLAP_BUTTON_INACTIVE = "title.flap.inactive";
+    
+    /** default id for an active button of a {@link FlapDockStation} */
+    public static final String ID_TAB_FOCUSED = "tab.focused";
+    
+    /** default id for an selected button of a {@link FlapDockStation} */
+    public static final String ID_TAB_SELECTED = "tab.selected";
+    
+    /** default id for an inactive button of a {@link FlapDockStation} */
+    public static final String ID_TAB_UNSELECTED = "tab.unselected";
 }

@@ -25,7 +25,6 @@
  */
 package bibliothek.gui.dock.util.font;
 
-import java.awt.Component;
 import java.awt.Font;
 
 import bibliothek.extension.gui.dock.util.Path;
@@ -99,14 +98,14 @@ public abstract class AbstractDockFont extends AbstractUIValue<FontModifier, Doc
     }
     
     /**
-     * Gets the font which should be used for <code>component</code>.
-     * @param component some component
+     * Gets a modified version of <code>font</code>
+     * @param font some font to modify
      * @return the font that should be used, can be <code>null</code>
      */
-    public Font font( Component component ){
-        FontModifier font = value();
-        if( font == null )
+    public Font font( Font font ){
+        FontModifier modifier = value();
+        if( modifier == null )
             return null;
-        return font.getFont( component );
+        return modifier.modify( font );
     }
 }

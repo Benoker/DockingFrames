@@ -146,7 +146,7 @@ public class ShapedGradientPainter extends BaseTabComponent {
 		FontRenderContext frc = new FontRenderContext(null, false, false);
 		Rectangle2D bounds = getFont().getStringBounds(dockable.getTitleText(), frc);
 		int width = 5 + (int) bounds.getWidth() + 5;
-		int height = 23;
+		int height = 6 + (int) bounds.getHeight();
 		if ((doPaintIconWhenInactive() || isSelected) && dockable.getTitleIcon() != null)
 			width += dockable.getTitleIcon().getIconWidth() + 5;
 		if (isSelected)

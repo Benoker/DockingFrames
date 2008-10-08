@@ -42,6 +42,9 @@ public abstract class TitleFont extends AbstractDockFont{
     /** this kind describes a font that is used on a button title of a {@link FlapDockStation} */
     public static final Path KIND_FLAP_BUTTON_FONT = KIND_TITLE_FONT.append( "flap" );
     
+    /** this kind describes a font that is used for a title which then is used as tab */
+    public static final Path KIND_TAB_TITLE_FONT = KIND_TITLE_FONT.append( "tab" );
+    
     private DockTitle title;
 
     /**

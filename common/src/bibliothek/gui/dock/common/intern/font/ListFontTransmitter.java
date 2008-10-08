@@ -25,11 +25,8 @@
  */
 package bibliothek.gui.dock.common.intern.font;
 
-import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.FontMap;
 import bibliothek.gui.dock.common.intern.CDockable;
-import bibliothek.gui.dock.common.intern.CommonDockable;
-import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.util.font.DockFont;
 import bibliothek.gui.dock.util.font.FontManager;
 import bibliothek.gui.dock.util.font.FontModifier;
@@ -40,7 +37,7 @@ import bibliothek.gui.dock.util.font.FontModifier;
  * @author Benjamin Sigg
  *
  */
-public class ListFontTransmitter extends FontTransmitter{
+public abstract class ListFontTransmitter extends FontTransmitter{
     private String[] source;
     private String[] destination;
     
@@ -65,15 +62,6 @@ public class ListFontTransmitter extends FontTransmitter{
             return value;
         
         return get( value, id, dockable );
-    }
-
-    @Override
-    protected CDockable getDockable( DockFont observer ) {
-        Dockable dockable = ((TitleFont)observer).getTitle().getDockable();
-        if( dockable instanceof CommonDockable ){
-            return ((CommonDockable)dockable).getDockable();
-        }
-        return null;
     }
     
     @Override

@@ -103,7 +103,7 @@ public class Frame extends DefaultMultipleCDockable {
                 GridBagConstraints.NONE, new Insets( 1, 1, 1, 1 ), 0, 0 )); 
         
         
-        JPanel properties = new JPanel( new GridLayout( 20, 1 ));
+        JPanel properties = new JPanel( new GridLayout( 23, 1 ));
         properties.setBorder( BorderFactory.createTitledBorder( "Color" ) );
         
         ColorMap colors = getColors();
@@ -129,6 +129,9 @@ public class Frame extends DefaultMultipleCDockable {
         properties.add( new FontButton( fonts, FontMap.FONT_KEY_TITLE_FOCUSED ));
         properties.add( new FontButton( fonts, FontMap.FONT_KEY_MINIMIZED_BUTTON ));
         properties.add( new FontButton( fonts, FontMap.FONT_KEY_MINIMIZED_BUTTON_FOCUSED ));
+        properties.add( new FontButton( fonts, FontMap.FONT_KEY_TAB ));
+        properties.add( new FontButton( fonts, FontMap.FONT_KEY_TAB_SELECTED ));
+        properties.add( new FontButton( fonts, FontMap.FONT_KEY_TAB_FOCUSED ));
         
         JPanel all = new JPanel( new GridBagLayout() );
         all.add( title, new GridBagConstraints( 0, 0, 1, 1, 1.0, 1.0, 

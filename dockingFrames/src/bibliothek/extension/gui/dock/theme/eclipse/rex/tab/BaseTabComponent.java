@@ -26,10 +26,12 @@
 package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
 
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
@@ -42,11 +44,15 @@ import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 import bibliothek.gui.dock.themes.color.TabColor;
+import bibliothek.gui.dock.themes.font.TabFont;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.color.ColorCodes;
+import bibliothek.gui.dock.util.font.DockFont;
+import bibliothek.gui.dock.util.font.FontModifier;
+import bibliothek.gui.dock.util.swing.DComponent;
 
 /**
- * A base implementation ob {@link TabComponent}.
+ * A base implementation of {@link TabComponent}.
  * @author Benjamin Sigg
  */
 @ColorCodes({"stack.tab.border", "stack.tab.border.selected", "stack.tab.border.selected.focused", "stack.tab.border.selected.focuslost",
@@ -54,7 +60,7 @@ import bibliothek.gui.dock.util.color.ColorCodes;
     "stack.tab.bottom", "stack.tab.bottom.selected", "stack.tab.bottom.selected.focused", "stack.tab.bottom.selected.focuslost",
     "stack.tab.text", "stack.tab.text.selected", "stack.tab.text.selected.focused", "stack.tab.text.selected.focuslost",
     "stack.border" })
-public abstract class BaseTabComponent extends JComponent implements TabComponent{
+public abstract class BaseTabComponent extends DComponent implements TabComponent{
     protected final TabColor colorStackTabBorder;
     protected final TabColor colorStackTabBorderSelected;
     protected final TabColor colorStackTabBorderSelectedFocused;
@@ -77,7 +83,12 @@ public abstract class BaseTabComponent extends JComponent implements TabComponen
     
     protected final TabColor colorStackBorder;
     
+    protected final TabFont fontSelected;
+    protected final TabFont fontFocused;
+    protected final TabFont fontUnselected;
+    
     private TabColor[] colors;
+    private TabFont[] fonts;
     
     private Dockable dockable;
     private StackDockStation station;
@@ -114,22 +125,26 @@ public abstract class BaseTabComponent extends JComponent implements TabComponen
         colorStackTabBorderSelectedFocused = new BorderTabColor( "stack.tab.border.selected.focused", Color.WHITE );
         colorStackTabBorderSelectedFocusLost = new BorderTabColor( "stack.tab.border.selected.focuslost", Color.WHITE );
         
-        colorStackTabTop = new ShapedTabColor( "stack.tab.top", Color.LIGHT_GRAY );
-        colorStackTabTopSelected = new ShapedTabColor( "stack.tab.top.selected", Color.LIGHT_GRAY );
-        colorStackTabTopSelectedFocused = new ShapedTabColor( "stack.tab.top.selected.focused", Color.LIGHT_GRAY );
-        colorStackTabTopSelectedFocusLost = new ShapedTabColor( "stack.tab.top.selected.focuslost", Color.LIGHT_GRAY );
+        colorStackTabTop = new BaseTabColor( "stack.tab.top", Color.LIGHT_GRAY );
+        colorStackTabTopSelected = new BaseTabColor( "stack.tab.top.selected", Color.LIGHT_GRAY );
+        colorStackTabTopSelectedFocused = new BaseTabColor( "stack.tab.top.selected.focused", Color.LIGHT_GRAY );
+        colorStackTabTopSelectedFocusLost = new BaseTabColor( "stack.tab.top.selected.focuslost", Color.LIGHT_GRAY );
         
-        colorStackTabBottom = new ShapedTabColor( "stack.tab.bottom", Color.WHITE );
-        colorStackTabBottomSelected = new ShapedTabColor( "stack.tab.bottom.selected", Color.WHITE );
-        colorStackTabBottomSelectedFocused = new ShapedTabColor( "stack.tab.bottom.selected.focused", Color.WHITE );
-        colorStackTabBottomSelectedFocusLost = new ShapedTabColor( "stack.tab.bottom.selected.focuslost", Color.WHITE );
+        colorStackTabBottom = new BaseTabColor( "stack.tab.bottom", Color.WHITE );
+        colorStackTabBottomSelected = new BaseTabColor( "stack.tab.bottom.selected", Color.WHITE );
+        colorStackTabBottomSelectedFocused = new BaseTabColor( "stack.tab.bottom.selected.focused", Color.WHITE );
+        colorStackTabBottomSelectedFocusLost = new BaseTabColor( "stack.tab.bottom.selected.focuslost", Color.WHITE );
         
-        colorStackTabText = new ShapedTabColor( "stack.tab.text", Color.BLACK );
-        colorStackTabTextSelected = new ShapedTabColor( "stack.tab.text.selected", Color.BLACK );
-        colorStackTabTextSelectedFocused = new ShapedTabColor( "stack.tab.text.selected.focused", Color.BLACK );
-        colorStackTabTextSelectedFocusLost = new ShapedTabColor( "stack.tab.text.selected.focuslost", Color.BLACK );
+        colorStackTabText = new BaseTabColor( "stack.tab.text", Color.BLACK );
+        colorStackTabTextSelected = new BaseTabColor( "stack.tab.text.selected", Color.BLACK );
+        colorStackTabTextSelectedFocused = new BaseTabColor( "stack.tab.text.selected.focused", Color.BLACK );
+        colorStackTabTextSelectedFocusLost = new BaseTabColor( "stack.tab.text.selected.focuslost", Color.BLACK );
         
-        colorStackBorder = new ShapedTabColor( "stack.border", Color.BLACK );
+        colorStackBorder = new BaseTabColor( "stack.border", Color.BLACK );
+        
+        fontFocused = new BaseTabFont( DockFont.ID_TAB_FOCUSED );
+        fontSelected = new BaseTabFont( DockFont.ID_TAB_SELECTED );
+        fontUnselected = new BaseTabFont( DockFont.ID_TAB_UNSELECTED );
         
         colors = new TabColor[]{
                 colorStackTabBorder,
@@ -151,6 +166,12 @@ public abstract class BaseTabComponent extends JComponent implements TabComponen
                 colorStackBorder
         };
         
+        fonts = new TabFont[]{
+                fontFocused,
+                fontSelected,
+                fontUnselected
+        };
+        
         addHierarchyListener( new WindowActiveObserver() );
         setFocusable( false );
         setFocusTraversalPolicyProvider( true );
@@ -163,6 +184,24 @@ public abstract class BaseTabComponent extends JComponent implements TabComponen
      */
     protected abstract void updateBorder();
     
+    /**
+     * Called when the font of this component has to be updated
+     */
+    protected void updateFont(){
+        TabFont font = null;
+        if( isFocused() ){
+            font = fontFocused;
+        }
+        else if( isSelected() ){
+            font = fontSelected;
+        }
+        else{
+            font = fontUnselected;
+        }
+        
+        setFontModifier( font.font() );
+    }
+
     public void bind() {
         if( buttons != null )
             buttons.set( dockable, new EclipseDockActionSource(
@@ -171,6 +210,8 @@ public abstract class BaseTabComponent extends JComponent implements TabComponen
         
         for( TabColor color : colors )
             color.connect( controller );
+        for( TabFont font : fonts )
+            font.connect( controller );
         
         setToolTipText( dockable.getTitleToolTip() );
         revalidate();
@@ -183,6 +224,8 @@ public abstract class BaseTabComponent extends JComponent implements TabComponen
         
         for( TabColor color : colors )
             color.connect( null );
+        for( TabFont font : fonts )
+            font.connect( null );
         
         setToolTipText( null );
     }
@@ -235,6 +278,7 @@ public abstract class BaseTabComponent extends JComponent implements TabComponen
     public void setFocused( boolean focused ){
         hasFocus = focused;
         updateBorder();
+        updateFont();
         repaint();
     }
     
@@ -245,6 +289,7 @@ public abstract class BaseTabComponent extends JComponent implements TabComponen
     public void setSelected( boolean selected ){
         isSelected = selected;
         updateBorder();
+        updateFont();
         revalidate();
     }
     
@@ -289,8 +334,8 @@ public abstract class BaseTabComponent extends JComponent implements TabComponen
      * A color used on this tab
      * @author Benjamin Sigg
      */
-    private class ShapedTabColor extends TabColor{
-        public ShapedTabColor( String id, Color backup ){
+    private class BaseTabColor extends TabColor{
+        public BaseTabColor( String id, Color backup ){
             super( id, station, dockable, backup );
         }
         @Override
@@ -298,7 +343,20 @@ public abstract class BaseTabComponent extends JComponent implements TabComponen
             repaint();
         }
     }
-    
+
+    /**
+     * A font used on this tab
+     * @author Benjamin Sigg
+     */
+    private class BaseTabFont extends TabFont{
+        public BaseTabFont( String id ){
+            super( id, station, dockable );
+        }
+        @Override
+        protected void changed( FontModifier oldValue, FontModifier newValue ) {
+            updateFont();
+        }
+    }
 
     /**
      * Listens to the window ancestor of this {@link TabComponent} and updates

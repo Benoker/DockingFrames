@@ -25,7 +25,6 @@
  */
 package bibliothek.gui.dock.util.font;
 
-import java.awt.Component;
 import java.awt.Font;
 
 /**
@@ -45,7 +44,7 @@ public class ConstantFontModifier implements FontModifier{
         this.font = font;
     }
     
-    public Font getFont( Component component ) {
-        return font;
+    public Font modify( Font font ) {
+        return this.font;
     }
 }

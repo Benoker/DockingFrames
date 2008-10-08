@@ -37,6 +37,7 @@ import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.font.ButtonFontTransmitter;
 import bibliothek.gui.dock.common.intern.font.FontBridgeFactory;
+import bibliothek.gui.dock.common.intern.font.TabFontTransmitter;
 import bibliothek.gui.dock.common.intern.font.TitleFontTransmitter;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.focus.DockableSelection;
@@ -44,6 +45,7 @@ import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.themes.ColorBridgeFactory;
+import bibliothek.gui.dock.themes.font.TabFont;
 import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.util.Priority;
@@ -103,7 +105,7 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
      * Adds the default {@link FontBridgeFactory}s to this theme.
      * @param control the owner of this theme
      */
-    protected void initDefaultFontBridges( final CControl control ){
+    protected void initDefaultFontBridges( final CControl control ){        
         putFontBridgeFactory( TitleFont.KIND_TITLE_FONT, new FontBridgeFactory(){
             public FontBridge create( FontManager manager ) {
                 TitleFontTransmitter transmitter = new TitleFontTransmitter( manager );
@@ -114,6 +116,13 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
         putFontBridgeFactory( TitleFont.KIND_FLAP_BUTTON_FONT, new FontBridgeFactory(){
             public FontBridge create( FontManager manager ) {
                 ButtonFontTransmitter transmitter = new ButtonFontTransmitter( manager );
+                transmitter.setControl( control );
+                return transmitter;
+            }
+        });
+        putFontBridgeFactory( TabFont.KIND_TAB_FONT, new FontBridgeFactory(){
+            public FontBridge create( FontManager manager ) {
+                TabFontTransmitter transmitter = new TabFontTransmitter( manager );
                 transmitter.setControl( control );
                 return transmitter;
             }
@@ -216,20 +225,32 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
         settings.controller = controller;
         
         ColorManager colors = controller.getColors();
-        for( Map.Entry<Path, ColorBridgeFactory> entry : colorBridgeFactories.entrySet() ){
-            ColorBridge bridge = entry.getValue().create( colors );
-            colors.publish( 
-                    Priority.DEFAULT, 
-                    entry.getKey(), 
-                    bridge );
-            settings.colors.put( entry.getKey(), bridge );
+        try{
+            colors.lockUpdate();
+            for( Map.Entry<Path, ColorBridgeFactory> entry : colorBridgeFactories.entrySet() ){
+                ColorBridge bridge = entry.getValue().create( colors );
+                colors.publish( 
+                        Priority.DEFAULT, 
+                        entry.getKey(), 
+                        bridge );
+                settings.colors.put( entry.getKey(), bridge );
+            }
+        }
+        finally{
+            colors.unlockUpdate();
         }
         
         FontManager fonts = controller.getFonts();
-        for( Map.Entry<Path, FontBridgeFactory> entry : fontBridgeFactories.entrySet() ){
-            FontBridge bridge = entry.getValue().create( fonts );
-            fonts.publish( Priority.DEFAULT, entry.getKey(), bridge );
-            settings.fonts.put( entry.getKey(), bridge );
+        try{
+            fonts.lockUpdate();
+            for( Map.Entry<Path, FontBridgeFactory> entry : fontBridgeFactories.entrySet() ){
+                FontBridge bridge = entry.getValue().create( fonts );
+                fonts.publish( Priority.DEFAULT, entry.getKey(), bridge );
+                settings.fonts.put( entry.getKey(), bridge );
+            }
+        }
+        finally{
+            fonts.unlockUpdate();
         }
         
         controllers.add( settings );

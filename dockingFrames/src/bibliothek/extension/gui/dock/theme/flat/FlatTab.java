@@ -31,7 +31,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JTabbedPane;
 import javax.swing.border.Border;
 import javax.swing.event.MouseInputListener;
@@ -45,7 +44,11 @@ import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
 import bibliothek.gui.dock.station.stack.CombinedTab;
 import bibliothek.gui.dock.themes.color.TabColor;
+import bibliothek.gui.dock.themes.font.TabFont;
 import bibliothek.gui.dock.util.color.ColorCodes;
+import bibliothek.gui.dock.util.font.DockFont;
+import bibliothek.gui.dock.util.font.FontModifier;
+import bibliothek.gui.dock.util.swing.DLabel;
 
 /**
  * A panel that works like a {@link JTabbedPane}, but the buttons to
@@ -108,6 +111,7 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
 	    super.setSelectedIndex( index );
 	    for( int i = 0, n = getTabCount(); i<n; i++ ){
             getTab( i ).updateForeground();
+            getTab( i ).updateFonts();
         }
 	}
 	
@@ -119,7 +123,7 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
      * A small button which can be clicked by the user.
      * @author Benjamin Sigg
      */
-	protected class FlatButton extends JLabel implements CombinedTab, DockableFocusListener{
+	protected class FlatButton extends DLabel implements CombinedTab, DockableFocusListener{
 		/** the dockable for which this button is shown */
 	    private Dockable dockable;
 	    
@@ -148,6 +152,10 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
         private TabColor foreground;
         private TabColor foregroundSelected;
         private TabColor foregroundFocused;
+        
+        private TabFont fontFocused;
+        private TabFont fontSelected;
+        private TabFont fontUnselected;
         
         /**
          * Constructs a new button
@@ -195,6 +203,10 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
                     }
                 }
             };
+            
+            fontFocused = new FlatTabFont( DockFont.ID_TAB_FOCUSED, dockable );
+            fontSelected = new FlatTabFont( DockFont.ID_TAB_SELECTED, dockable );
+            fontUnselected = new FlatTabFont( DockFont.ID_TAB_UNSELECTED, dockable );
             
             setController( getController() );
             setOpaque( false );
@@ -272,10 +284,27 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
         }
         
         public void updateForeground(){
-            if( isSelected() )
+            if( focused ){
+                setForeground( foregroundFocused.value() );
+            }
+            else if( isSelected() ){
                 setForeground( foregroundSelected.value() );
-            else
+            }
+            else{
                 setForeground( foreground.value() );
+            }
+        }
+        
+        public void updateFonts(){
+            if( focused ){
+                setFontModifier( fontFocused.font() );
+            }
+            else if( isSelected() ){
+                setFontModifier( fontSelected.font() );
+            }
+            else{
+                setFontModifier( fontUnselected.font() );
+            }
         }
         
         public void setController( DockController controller ){
@@ -304,6 +333,10 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
             foregroundSelected.connect( controller );
             foregroundFocused.connect( controller );
             foreground.connect( controller );
+            
+            fontFocused.connect( controller );
+            fontSelected.connect( controller );
+            fontUnselected.connect( controller );
         }
         
         public Point getPopupLocation( Point click, boolean popupTrigger ) {
@@ -315,6 +348,8 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
         
         public void dockableFocused( DockableFocusEvent event ) {
             focused = this.dockable == event.getNewFocusOwner();
+            updateForeground();
+            updateFonts();
             repaint();
         }
         
@@ -456,6 +491,26 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
             @Override
             protected void changed( Color oldColor, Color newColor ) {
                 repaint();
+            }
+        }
+        
+        /**
+         * A font of this tab.
+         * @author Benjamin Sigg
+         */
+        private class FlatTabFont extends TabFont{
+            /**
+             * Creates a new font
+             * @param id the identifier of the font
+             * @param dockable the element for which the font is used
+             */
+            public FlatTabFont( String id, Dockable dockable ){
+                super( id, station, dockable );
+            }
+            
+            @Override
+            protected void changed( FontModifier oldValue, FontModifier newValue ) {
+                updateFonts();
             }
         }
     }

@@ -25,7 +25,11 @@
  */
 package bibliothek.gui.dock.common.intern.font;
 
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.FontMap;
+import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.CommonDockable;
+import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.util.font.DockFont;
 import bibliothek.gui.dock.util.font.FontManager;
 
@@ -44,5 +48,14 @@ public class ButtonFontTransmitter extends ListFontTransmitter{
         super( manager, 
                 new String[]{ FontMap.FONT_KEY_MINIMIZED_BUTTON_FOCUSED, FontMap.FONT_KEY_MINIMIZED_BUTTON }, 
                 new String[]{ DockFont.ID_FLAP_BUTTON_ACTIVE, DockFont.ID_FLAP_BUTTON_INACTIVE });
+    }
+    
+    @Override
+    protected CDockable getDockable( DockFont observer ) {
+        Dockable dockable = ((TitleFont)observer).getTitle().getDockable();
+        if( dockable instanceof CommonDockable ){
+            return ((CommonDockable)dockable).getDockable();
+        }
+        return null;
     }
 }

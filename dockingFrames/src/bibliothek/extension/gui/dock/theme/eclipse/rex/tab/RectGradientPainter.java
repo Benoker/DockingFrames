@@ -102,7 +102,7 @@ public class RectGradientPainter extends BaseTabComponent {
 		FontRenderContext frc = new FontRenderContext(null, false, false);
 		Rectangle2D bounds = getFont().getStringBounds(dockable.getTitleText(), frc);
 		int width = 5 + (int) bounds.getWidth() + 5;
-		int height = 23;
+		int height = 6 + (int) bounds.getHeight();
 		if (( doPaintIconWhenInactive() || isSelected) && dockable.getTitleIcon() != null)
 			width += dockable.getTitleIcon().getIconWidth() + 5;
 		
@@ -261,6 +261,7 @@ public class RectGradientPainter extends BaseTabComponent {
 
 		// draw text
 		g.setColor(colorText);
+		g.setFont( getFont() );
 		g.drawString( dockable.getTitleText(), 5 + iconOffset, height / 2 + g.getFontMetrics().getHeight() / 2 - 2);
 	}
 }

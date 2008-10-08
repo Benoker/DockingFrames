@@ -34,22 +34,23 @@ import bibliothek.gui.dock.util.font.DockFont;
 import bibliothek.gui.dock.util.font.FontManager;
 
 /**
- * A {@link TitleFontTransmitter} updates the fonts for
- * {@link DockFont#ID_TITLE_ACTIVE} and {@link DockFont#ID_TITLE_INACTIVE}
- * using {@link FontMap#FONT_KEY_TITLE} and {@link FontMap#FONT_KEY_TITLE_FOCUSED}.
+ * A {@link ListFontTransmitter} updates the fonts for
+ * {@link DockFont#ID_TAB_FOCUSED}, {@link DockFont#ID_TAB_SELECTED} and 
+ * {@link DockFont#ID_TAB_UNSELECTED} using {@link FontMap#FONT_KEY_TAB},
+ * {@link FontMap#FONT_KEY_TAB_FOCUSED} and {@link FontMap#FONT_KEY_TAB_SELECTED}.
  * @author Benjamin Sigg
  */
-public class TitleFontTransmitter extends ListFontTransmitter{    
+public class TabTitleFontTransmitter extends ListFontTransmitter{
     /**
      * Creates a new transmitter
      * @param manager the manager to ask for default values
      */
-    public TitleFontTransmitter( FontManager manager ){
+    public TabTitleFontTransmitter( FontManager manager ){
         super( manager,
-                new String[]{ FontMap.FONT_KEY_TITLE_FOCUSED, FontMap.FONT_KEY_TITLE },
-                new String[]{ DockFont.ID_TITLE_ACTIVE, DockFont.ID_TITLE_INACTIVE });
+                new String[]{ FontMap.FONT_KEY_TAB_FOCUSED, FontMap.FONT_KEY_TAB_SELECTED, FontMap.FONT_KEY_TAB },
+                new String[]{ DockFont.ID_TAB_FOCUSED, DockFont.ID_TAB_SELECTED, DockFont.ID_TAB_UNSELECTED });
     }
-    
+
     @Override
     protected CDockable getDockable( DockFont observer ) {
         Dockable dockable = ((TitleFont)observer).getTitle().getDockable();

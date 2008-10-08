@@ -32,7 +32,6 @@ import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
 
@@ -56,6 +55,7 @@ import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.font.AbstractDockFont;
 import bibliothek.gui.dock.util.font.FontManager;
 import bibliothek.gui.dock.util.font.FontModifier;
+import bibliothek.gui.dock.util.swing.DLabel;
 import bibliothek.util.Condition;
 
 /**
@@ -399,6 +399,10 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         
         if( label != null )
             label.setFont( font );
+    }
+    
+    public void setFontModifier( FontModifier modifier ) {
+        label.setFontModifier( modifier );
     }
     
     @Override
@@ -758,16 +762,16 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
      */
     protected void updateFonts(){
         if( conditionalFonts != null ){
-            Font newFont = null;
+            FontModifier modifier = null;
             
             for( ConditionalFont font : conditionalFonts ){
                 if( font.getState() ){
-                    newFont = font.font( this );
+                    modifier = font.value();
                     break;
                 }
             }
             
-            setFont( newFont );
+            setFontModifier( modifier );
         }
     }
     
@@ -804,7 +808,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
      */
     private class OrientedLabel extends JPanel{
         /** The label which really paints the text */
-        private JLabel label = new JLabel();
+        private DLabel label = new DLabel();
         
         /** the original font of {@link #label} */
         private Font originalFont;
@@ -887,7 +891,16 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
                     originalFont = null;
                     originalFontSet = false;
                 }
+                
+                revalidate();
+                repaint();
             }
+        }
+        
+        public void setFontModifier( FontModifier modifier ) {
+            label.setFontModifier( modifier );
+            revalidate();
+            repaint();
         }
         
         @Override

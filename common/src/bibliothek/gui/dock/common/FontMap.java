@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.common;
 
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +33,9 @@ import java.util.Map;
 
 import bibliothek.gui.dock.common.event.FontMapListener;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.util.font.ConstantFontModifier;
 import bibliothek.gui.dock.util.font.FontModifier;
+import bibliothek.gui.dock.util.font.GenericFontModifier;
 
 /**
  * A map containing {@link FontModifier}s. Each <code>FontMap</code> is associated
@@ -53,6 +56,15 @@ public class FontMap {
     
     /** key for font used on the focused button for a minimized dokable */
     public static final String FONT_KEY_MINIMIZED_BUTTON_FOCUSED = "dock.minimized.focused";
+    
+    /** key for font used on a tab */
+    public static final String FONT_KEY_TAB = "dock.tab";
+    
+    /** key for font used on a selected tab */
+    public static final String FONT_KEY_TAB_SELECTED = "dock.tab.selected";
+    
+    /** key for font used on a focused tab */
+    public static final String FONT_KEY_TAB_FOCUSED = "dock.tab.focused";
     
     /** the map of fonts associated with {@link #dockable} */
     private Map<String, FontModifier> fonts = new HashMap<String, FontModifier>();
@@ -106,6 +118,147 @@ public class FontMap {
      */
     public FontModifier getFont( String key ){
         return fonts.get( key );
+    }
+    
+    /**
+     * Sets the font which should be used for <code>key</code>.
+     * @param key the key of the font
+     * @param font the new font, can be <code>null</code>
+     */
+    public void setFont( String key, Font font ){
+        if( font == null )
+            setFont( key, (FontModifier)null );
+        else
+            setFont( key, new ConstantFontModifier( font ) );
+    }
+    
+    /**
+     * Tells to use a font that is derived from the original font of 
+     * <code>key</code>. There are different modifications possible, all
+     * have to be supplied in the same form: <code>key=value</code>.<br>
+     * Example: <code>setFont( x, "i=!", "b=+", s=14" );</code> would
+     * create a modification that reverses the italic flag, sets any font
+     * to bold and creates only fonts of size 14
+     * <ul>
+     *      <li>'i': italic
+     *          <ul>
+     *              <li>'+': make the font italic</li>
+     *              <li>'-': make the font not italic</li>
+     *              <li>'!': reverse the italic property of the font</li>
+     *          </ul>
+     *      </li>
+     *      <li>'b': bold
+     *          <ul>
+     *              <li>'+': make the font bold</li>
+     *              <li>'-': make the font not bold</li>
+     *              <li>'!': reverse the bold property of the font</li>
+     *          </ul>
+     *      </li>
+     *      <li>'s': size
+     *          <ul>
+     *              <li>'+number': increase the size by <code>number</code></li>
+     *              <li>'-number': decrease the size by <code>number</code></li>
+     *              <li>'number': set the size to <code>number</code></li>
+     *          </ul>
+     *      </li>
+     * </ul>
+     * @param key the key for the font
+     * @param modifications a set of modifications
+     */
+    public void setFont( String key, String... modifications ){
+        if( modifications.length == 0 ){
+            setFont( key, (FontModifier)null );
+        }
+        else{
+            GenericFontModifier modifier = new GenericFontModifier();
+            for( String modification : modifications ){
+                String[] entry = split( modification );
+                String entryKey = entry[0];
+                String entryValue = entry[1];
+                
+                boolean italic = "i".equals( entryKey );
+                boolean bold = "b".equals( entryKey );
+                boolean size = "s".equals( entryKey );
+                
+                if( italic || bold ){
+                    GenericFontModifier.Modify modify;
+                    
+                    if( "+".equals( entryValue )){
+                        modify = GenericFontModifier.Modify.ON;
+                    }
+                    else if( "-".equals( entryValue )){
+                        modify = GenericFontModifier.Modify.OFF;
+                    }
+                    else if( "!".equals( entryValue )){
+                        modify = GenericFontModifier.Modify.REVERSE;
+                    }
+                    else{
+                        throw new IllegalArgumentException( "illegal value, must be one of '+', '-' or '!': " + modification );
+                    }
+                    
+                    if( italic )
+                        modifier.setItalic( modify );
+                    else
+                        modifier.setBold( modify );
+                }
+                else if( size ){
+                    String number;
+                    
+                    if( entryValue.startsWith( "+" )){
+                        modifier.setSizeDelta( true );
+                        number = entryValue.substring( 1 ).trim();
+                    }
+                    else if( entryValue.startsWith( "-" )){
+                        modifier.setSizeDelta( true );
+                        number = entryValue.substring( 1 ).trim();
+                    }
+                    else{
+                        modifier.setSizeDelta( false );
+                        number = entryValue;
+                    }
+                    
+                    int parsed = Integer.parseInt( number );
+                    if( entryValue.startsWith( "-" )){
+                        parsed = -parsed;
+                    }
+                    
+                    modifier.setSize( parsed );
+                }
+                else{
+                    throw new IllegalArgumentException( "unknown key: " + modification );
+                }
+            }
+            
+            setFont( key, modifier );
+        }
+    }
+    
+    private String[] split( String modification ){
+        int index = modification.indexOf( '=' );
+        if( index < 0 )
+            throw new IllegalArgumentException( "not in the form 'key'='value': " + modification );
+        
+        String key = modification.substring( 0, index );
+        String value = modification.substring( index+1 );
+        
+        key = key.trim();
+        value = value.trim();
+        
+        if( key.length() == 0 )
+            throw new IllegalArgumentException( "missing key in: " + modification );
+        
+        if( value.length() == 0 )
+            throw new IllegalArgumentException( "missing value in: " + modification );
+        
+        return new String[]{ key, value };
+    }
+    
+    /**
+     * Ensures that the original font is used for <code>key</code>
+     * @param key the key which should no longer use a modified font
+     */
+    public void removeFont( String key ){
+        setFont( key, (FontModifier)null );
     }
     
     /**

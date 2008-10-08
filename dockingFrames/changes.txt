@@ -214,4 +214,6 @@
 - API: Order of operations in PreferenceTable reversed.
 - API: Eduardo Born suggested an upgrade of CGrid: if some dockables are placed at the exact same location they are stacked
 - API: new CControlRegister for better access to all the elements that are used by a CControl
-- Bugfix: DockFocusTraversalPolicy could create endlos recursion if used together with javax.swing.LegacyGlueFocusTraversalPolicy
+- Bugfix: DockFocusTraversalPolicy could create infinite recursion if used together with javax.swing.LegacyGlueFocusTraversalPolicy
+- API: New methods to change the fonts of titles and tabs. The interface DockFont provides some keys which can be used together with FontManager to change fonts.
+- API: Common supports new font system as well, the new FontMap can be used just like the ColorMap.

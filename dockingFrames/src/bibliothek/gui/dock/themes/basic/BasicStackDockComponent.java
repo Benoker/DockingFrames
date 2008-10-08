@@ -114,10 +114,10 @@ public class BasicStackDockComponent extends DefaultStackDockComponent {
             if( controller != null )
                 controller.addDockableFocusListener( this );
             
-            recolor();
+            updateColors();
         }
         
-        private void recolor(){
+        private void updateColors(){
             int index = station.indexOf( BasicTab.this.getDockable() );
             if( index >= 0 && index < getTabCount() ){
                 boolean focused = controller == null ? false : controller.getFocusedDockable() == getDockable();
@@ -145,7 +145,7 @@ public class BasicStackDockComponent extends DefaultStackDockComponent {
         }
         
         public void dockableFocused( DockableFocusEvent event ) {
-            recolor();
+            updateColors();
         }
         
         /**
@@ -163,7 +163,7 @@ public class BasicStackDockComponent extends DefaultStackDockComponent {
             
             @Override
             protected void changed( Color oldColor, Color newColor ) {
-                recolor();
+                updateColors();
             }
         }
     }

@@ -33,7 +33,6 @@ import java.awt.event.MouseListener;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -49,7 +48,11 @@ import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
 import bibliothek.gui.dock.station.stack.CombinedTab;
 import bibliothek.gui.dock.themes.color.TabColor;
+import bibliothek.gui.dock.themes.font.TabFont;
 import bibliothek.gui.dock.util.color.ColorCodes;
+import bibliothek.gui.dock.util.font.DockFont;
+import bibliothek.gui.dock.util.font.FontModifier;
+import bibliothek.gui.dock.util.swing.DLabel;
 
 /**
  * A {@link bibliothek.gui.dock.station.stack.StackDockComponent StackDockComponent} 
@@ -167,6 +170,30 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 	}
 	
 	/**
+	 * Some font needed on a {@link Tab}
+	 * @author Benjamin Sigg
+	 */
+	protected class BubbleTabFont extends TabFont{
+	    private Tab tab;
+	    
+	    /**
+	     * Creates a new font
+	     * @param tab the tab for which this font is used
+	     * @param id the name of the font
+	     * @param dockable the element shown on the tab
+	     */
+	    public BubbleTabFont( Tab tab, String id, Dockable dockable ){
+	        super( id, station, dockable );
+	        this.tab = tab;
+	    }
+	    
+	    @Override
+	    protected void changed( FontModifier oldValue, FontModifier newValue ) {
+	        tab.updateFonts();
+	    }
+	}
+	
+	/**
 	 * A tab of the StackDockComponent
 	 * @author Benjamin Sigg
 	 */
@@ -174,7 +201,7 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 		/** the location of this tab */
 		private int index = 0;
 		/** a label showing text and icon for this tab */
-		private JLabel label = new JLabel();
+		private DLabel label = new DLabel();
 		/** an animation used when the mouse enters or leaves this tab */
 		private BubbleColorAnimation animation;
 		/** whether the mouse is inside this tab or not */
@@ -217,6 +244,10 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
         private BubbleTabColor textFocused;
         
         private BubbleTabColor[] colors;
+        
+        private BubbleTabFont fontFocused;
+        private BubbleTabFont fontSelected;
+        private BubbleTabFont fontUnselected;
         
         private static final int STATE_SELECTED = 1;
         private static final int STATE_FOCUSED = 2 | STATE_SELECTED;
@@ -274,6 +305,10 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
                     topFocused, bottomFocused, borderFocused, textFocused,
                     topFocusedMouse, bottomFocusedMouse, borderFocusedMouse, textFocusedMouse };
             
+            fontFocused = new BubbleTabFont( this, DockFont.ID_TAB_FOCUSED, dockable );
+            fontSelected = new BubbleTabFont( this, DockFont.ID_TAB_SELECTED, dockable );
+            fontUnselected = new BubbleTabFont( this, DockFont.ID_TAB_UNSELECTED, dockable );
+            
             setController( getController() );
             checkAnimation();
             
@@ -326,6 +361,10 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 		    
 			for( BubbleTabColor color : colors )
 			    color.connect( controller );
+			
+			fontFocused.connect( controller );
+			fontSelected.connect( controller );
+			fontUnselected.connect( controller );
 			
 			this.controller = controller;
 			if( controller != null ){
@@ -444,7 +483,8 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 		}
         
 		/**
-		 * Ensures that {@link #animation} uses the correct set of color pairs.
+		 * Ensures that {@link #animation} uses the correct set of color pairs
+		 * and that the correct {@link FontModifier} is used.
 		 */
         private void checkAnimation(){
             state = 0;
@@ -460,6 +500,23 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 
             for( BubbleTabColor color : colors )
                 color.transmit();
+            
+            updateFonts();
+        }
+        
+        /**
+         * Ensures that the correct font modifier is used.
+         */
+        public void updateFonts(){
+            if( focused ){
+                label.setFontModifier( fontFocused.value() );
+            }
+            else if( getSelectedIndex() == index ){
+                label.setFontModifier( fontSelected.value() );
+            }
+            else{
+                label.setFontModifier( fontUnselected.value() );
+            }
         }
 		
 		public void setIcon( Icon icon ){

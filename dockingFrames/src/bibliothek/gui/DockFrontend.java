@@ -47,9 +47,7 @@ import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.dockable.DefaultDockableFactory;
-import bibliothek.gui.dock.event.DockAdapter;
-import bibliothek.gui.dock.event.DockFrontendListener;
-import bibliothek.gui.dock.event.IconManagerListener;
+import bibliothek.gui.dock.event.*;
 import bibliothek.gui.dock.frontend.FrontendEntry;
 import bibliothek.gui.dock.frontend.MissingDockableStrategy;
 import bibliothek.gui.dock.frontend.RegisteringDockFactory;
@@ -69,6 +67,7 @@ import bibliothek.gui.dock.station.stack.StackDockPropertyFactory;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
 import bibliothek.gui.dock.util.*;
 import bibliothek.util.Version;
+import bibliothek.util.container.Single;
 import bibliothek.util.xml.XAttribute;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
@@ -150,6 +149,9 @@ public class DockFrontend {
     
     /** A list of observers */
     private List<DockFrontendListener> listeners = new ArrayList<DockFrontendListener>();
+    
+    /** A list of observers to be notified if a {@link Dockable} gets closed or opened */
+    private List<VetoableDockFrontendListener> vetoableListeners = new ArrayList<VetoableDockFrontendListener>();
     
     /** A filter for elements which should not be changed when writing or reading a normal setting */
     private DockSituationIgnore ignoreForEntry;
@@ -277,12 +279,14 @@ public class DockFrontend {
             public void dockableRegistered( DockController controller, Dockable dockable ) {
                 if( onAutoFire == 0 ){
                     fireShown( dockable );
+                    fireShown( dockable, false );
                 }
             }
             @Override
             public void dockableUnregistered( DockController controller, Dockable dockable ) {
                 if( onAutoFire == 0 ){
                     fireHidden( dockable );
+                    fireHidden( dockable, false );
                 }
             }
         });
@@ -340,6 +344,23 @@ public class DockFrontend {
      */
     public void removeFrontendListener( DockFrontendListener listener ){
         listeners.remove( listener );
+    }
+    
+    /**
+     * Adds <code>listener</code> to this frontend. The listener will be notified
+     * when a {@link Dockable} will be or is closed.
+     * @param listener the new listener
+     */
+    public void addVetoableListener( VetoableDockFrontendListener listener ){
+        vetoableListeners.add( listener );
+    }
+    
+    /**
+     * Removes <code>listener</code> from this frontend.
+     * @param listener the listener to remove
+     */
+    public void removeVetoableListener( VetoableDockFrontendListener listener ){
+        vetoableListeners.remove( listener );
     }
     
     /**
@@ -1106,17 +1127,32 @@ public class DockFrontend {
      * needed but can't be found 
      */
     public void show( Dockable dockable ){
+        show( dockable, true );
+    }
+    
+    /**
+     * Ensures that <code>dockable</code> is child of a root known to this
+     * frontend.
+     * @param dockable the element which should be made visible
+     * @param cancelable whether a {@link VetoableDockFrontendListener} can 
+     * cancel the operation or not
+     * @throws IllegalStateException if the {@link #getDefaultStation() default station} is
+     * needed but can't be found 
+     */
+    public void show( Dockable dockable, boolean cancelable ){
         try{
             onAutoFire++;
         
             if( isHidden( dockable )){
+                if( fireAllShowing( dockable, cancelable ))
+                    return;
+                
                 DockInfo info = getInfo( dockable );
             	if( info == null ){
             		DockStation station = getDefaultStation();
             		if( station == null )
                 		throw new IllegalStateException( "Can't find the default station" );
             		station.drop( dockable );
-            		fireAllShown( dockable, null );
             	}
             	else{
             		String root = info.getRoot();
@@ -1140,9 +1176,10 @@ public class DockFrontend {
                         if( !station.drop( dockable, location ))
                             getDefaultStation().drop( dockable );
                     }
-                    
-                    fireAllShown( dockable, null );
             	}
+            	
+            	fireAllShown( dockable, null );
+            	fireAllShown( dockable, true );
             }
         }
         finally{
@@ -1156,18 +1193,32 @@ public class DockFrontend {
      * @param dockable the element which should be hidden
      */
     public void hide( Dockable dockable ){
+        hide( dockable, true );
+    }
+
+    /**
+     * Makes <code>dockable</code> invisible. The location of <code>dockable</code>
+     * is saved, and if made visible again, it will reappear at its old location.
+     * @param dockable the element which should be hidden
+     * @param cancelable whether a {@link VetoableDockFrontendListener} can cancel
+     * the operation or not
+     */
+    public void hide( Dockable dockable, boolean cancelable ){
         try{
             onAutoFire++;
             if( isShown( dockable )){
-                DockInfo info = getInfo( dockable );
-                
-                if( info != null ){
-                    info.updateLocation();
-                }
-                
-                if( dockable.getDockParent() != null ){
-                    dockable.getDockParent().drag( dockable );
-                    fireAllHidden( dockable, null );
+                if( dockable.getDockParent() == null || !fireAllHiding( dockable, cancelable )){
+                    DockInfo info = getInfo( dockable );
+
+                    if( info != null ){
+                        info.updateLocation();
+                    }
+
+                    if( dockable.getDockParent() != null ){
+                        dockable.getDockParent().drag( dockable );
+                        fireAllHidden( dockable, null );
+                        fireAllHidden( dockable, true );
+                    }
                 }
             }
         }
@@ -2015,6 +2066,85 @@ public class DockFrontend {
     }
     
     /**
+     * Gets an independent array containing all currently registered
+     * {@link VetoableDockFrontendListener}s.
+     * @return the array of listeners
+     */
+    protected VetoableDockFrontendListener[] vetoableListeners(){
+        return vetoableListeners.toArray( new VetoableDockFrontendListener[ vetoableListeners.size() ] );
+    }
+    
+    /**
+     * Calls the method {@link VetoableDockFrontendListener#hiding(VetoableDockFrontendEvent)}
+     * for all elements in the tree beginning with <code>dockable</code>.
+     * @param dockable the root of the tree of elements to remove
+     * @param cancelable whether the operation can be aborted
+     * @return <code>true</code> if the operation was aborted, <code>false</code>
+     * if not.
+     */
+    protected boolean fireAllHiding( Dockable dockable, final boolean cancelable ){
+        if( vetoableListeners.size() == 0 )
+            return true;
+        
+        final Single<Boolean> result = new Single<Boolean>( false );
+        
+        DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
+            @Override
+            public void handleDockable( Dockable dockable ) {
+                result.setA( fireHiding( dockable, result.getA(), cancelable ) );
+            }
+        });
+        
+        return result.getA();
+    }
+    
+    /**
+     * Invokes the method {@link VetoableDockFrontendListener#hiding(VetoableDockFrontendEvent)}
+     * until no listeners remain.
+     * @param dockable the element for which to invoke the listeners 
+     * @param canceled whether the operation already is aborted
+     * @param cancelable whether the operation can be aborted
+     * @return <code>true</code> if the operation is aborted
+     */
+    protected boolean fireHiding( Dockable dockable, boolean canceled, boolean cancelable ){
+        VetoableDockFrontendEvent event = new VetoableDockFrontendEvent( this, dockable, cancelable, true );
+        if( canceled )
+            event.cancel();
+        
+        for( VetoableDockFrontendListener listener : vetoableListeners() ){
+            listener.hiding( event );
+        }
+        return event.isCanceled();
+    }
+    
+    /**
+     * Invokes the method {@link VetoableDockFrontendListener#hidden(VetoableDockFrontendEvent)}
+     * for all listeners for all elemets of the tree with root <code>dockable</code>.
+     * @param dockable the element that was hidden
+     * @param expected whether this event was expected or unexpected
+     */
+    protected void fireAllHidden( Dockable dockable, final boolean expected ){
+        DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
+            @Override
+            public void handleDockable( Dockable dockable ) {
+                fireHidden( dockable, expected );
+            }
+        });
+    }
+    
+    /**
+     * Invokes the method {@link VetoableDockFrontendListener#hidden(VetoableDockFrontendEvent)}
+     * for all listeners.
+     * @param dockable the element that was hidden
+     * @param expected whether this event was expected or unexpected
+     */
+    protected void fireHidden( Dockable dockable, boolean expected ){
+        VetoableDockFrontendEvent event = new VetoableDockFrontendEvent( this, dockable, false, expected );
+        for( VetoableDockFrontendListener listener : vetoableListeners() )
+            listener.hidden( event );
+    }
+    
+    /**
      * Invokes the method {@link DockFrontendListener#hidden(DockFrontend, Dockable)}
      * on all listeners for <code>dockable</code> and all its children.
      * @param dockable the hidden element
@@ -2076,6 +2206,78 @@ public class DockFrontend {
     protected void fireRemoved( Dockable dockable ){
         for( DockFrontendListener listener : listeners() )
             listener.removed( this, dockable );
+    }
+    
+    /**
+     * Calls {@link VetoableDockFrontendListener#showing(VetoableDockFrontendEvent)}
+     * for all elements in the tree with root <code>dockable</code>.
+     * @param dockable the root of the tree that will become visible
+     * @param cancelable whether the operation can be canceled
+     * @return <code>true</code> if the operation was aborted, <code>false</code>
+     * if the operation can continue
+     */
+    protected boolean fireAllShowing( Dockable dockable, final boolean cancelable ){
+        final Single<Boolean> cancel = new Single<Boolean>( false );
+        
+        DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
+            @Override
+            public void handleDockable( Dockable dockable ) {
+                cancel.setA( fireShowing( dockable, cancel.getA(), cancelable ));    
+            }
+        });
+        
+        return cancel.getA();
+    }
+    
+    /**
+     * Calls {@link VetoableDockFrontendListener#showing(VetoableDockFrontendEvent)}
+     * for <code>dockable</code>.
+     * @param dockable the element that will be shown
+     * @param canceled whether the operation is already canceled
+     * @param cancelable whether the operation can be canceled
+     * @return whether the operation was aborted
+     */
+    protected boolean fireShowing( Dockable dockable, boolean canceled, boolean cancelable ){
+        VetoableDockFrontendEvent event = new VetoableDockFrontendEvent( this, dockable, cancelable, true );
+        
+        if( canceled )
+            event.cancel();
+        
+        for( VetoableDockFrontendListener listener : vetoableListeners() ){
+            listener.showing( event );
+        }
+        
+        return event.isCanceled();
+    }
+    
+    /**
+     * Invokes the method {@link VetoableDockFrontendListener#shown(VetoableDockFrontendEvent)}
+     * for all elements in the tree with root <code>dockable</code>.
+     * @param dockable the root of the tree that is shown
+     * @param expected whether the event is expected or not
+     */
+    protected void fireAllShown( Dockable dockable, final boolean expected ){
+        if( vetoableListeners.size() == 0 )
+            return;
+        
+        DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
+            @Override
+            public void handleDockable( Dockable dockable ) {
+                fireShown( dockable, expected );
+            }
+        });
+    }
+    
+    /**
+     * Invokes the method {@link VetoableDockFrontendListener#shown(VetoableDockFrontendEvent)}
+     * on all listeners.
+     * @param dockable the element that was shown
+     * @param expected whether the event was expected or not
+     */
+    protected void fireShown( Dockable dockable, boolean expected ){
+        VetoableDockFrontendEvent event = new VetoableDockFrontendEvent( this, dockable, false, expected );
+        for( VetoableDockFrontendListener listener : vetoableListeners() )
+            listener.shown( event );
     }
 
     /**

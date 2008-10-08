@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -55,52 +55,8 @@ public abstract class CombinedStackDockComponent<C extends CombinedTab> implemen
     /** The controller for which this component renders its content */
     private DockController controller;
     
-    /** A panel which displays the buttons of this FlatTab */
-    private JPanel buttonPanel = new JPanel( new FlowLayout( FlowLayout.LEADING, 0, 0 ){
-        @Override
-        public Dimension minimumLayoutSize( Container target ){
-            return preferredLayoutSize( target );
-        }
-        
-        @Override
-        public Dimension preferredLayoutSize( Container target ){
-            if( target.getParent() == null )
-                return super.preferredLayoutSize( target );
-            
-            int width = target.getParent().getWidth();
-            
-            int maxWidth = 0;
-            int currentWidth = 0;
-            int currentHeight = 0;
-            int left = 0;
-            int height = 0;
-            
-            for( int i = 0, n = target.getComponentCount(); i<n; i++ ){
-                Dimension preferred = target.getComponent(i).getPreferredSize();
-                
-                if( left == 0 || currentWidth + preferred.width <= width ){
-                    currentWidth += preferred.width;
-                    currentHeight = Math.max( currentHeight, preferred.height );
-                    left++;
-                }
-                else{
-                    height += currentHeight;
-                    maxWidth = Math.max( maxWidth, currentWidth );
-                    left = 0;
-                    
-                    currentWidth = preferred.width;    
-                    currentHeight = preferred.height;
-                    left++;
-                }
-            }
-            
-            
-            height += currentHeight;
-            maxWidth = Math.max( maxWidth, currentWidth );
-        
-            return new Dimension( maxWidth, height );
-        }
-    });
+    /** A panel which displays the buttons of this stack component */
+    private JPanel buttonPanel = new JPanel( new StackTabListLayout() );
     
     /** A list of all {@link Component Components} which are shown on this panel */
     private List<Component> components = new ArrayList<Component>();

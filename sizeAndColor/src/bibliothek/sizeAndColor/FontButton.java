@@ -1,14 +1,17 @@
 package bibliothek.sizeAndColor;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
+import javax.swing.JPanel;
 
 import bibliothek.gui.dock.common.ColorMap;
 import bibliothek.gui.dock.common.FontMap;
-import bibliothek.gui.dock.util.font.ConstantFontModifier;
 
 /**
  * This button can be used to change a font in a {@link FontMap}.
@@ -72,10 +75,10 @@ public class FontButton extends JPanel{
             if( font == null )
                 font = button.getFont();
             
-            map.setFont( key, new ConstantFontModifier( font ) );
+            map.setFont( key, font );
         }
         else{
-            map.setFont( key, null );
+            map.removeFont( key );
         }
     }    
 }
