@@ -192,8 +192,20 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 		 * @param y the y-coordinate of the mouse
 		 */
 		private void updateRelocator( int x, int y ){
-			if( relocator != null )
+		    boolean allowed = controller == null || !controller.getRelocator().isDragOnlyTitel();
+		    
+			if( relocator != null ){
+			    if( !allowed ){
+			        relocator.cancel();
+			        relocator = null;
+			    }
+			    
 				return;
+			}
+			
+			if( !allowed ){
+			    return;
+			}
 			
 			for( int i = 0, n = getTabCount(); i<n; i++ ){
 				Rectangle bounds = getBoundsAt( i );
