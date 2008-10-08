@@ -277,7 +277,8 @@ public class DockController {
     
     /**
      * Removes listeners and frees resources. This method should be called
-     * if this controller is no longer needed.
+     * if this controller is no longer needed. This method should be called
+     * only once.
      */
     public void kill(){
 	    focusObserver.kill();

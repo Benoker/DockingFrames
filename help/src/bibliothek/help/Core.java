@@ -221,6 +221,8 @@ public class Core implements ComponentCollector{
         	station = new SplitDockStation();
         }
         
+        frontend.setDefaultHideable( true );
+        
         Minimizer minimizer = new Minimizer( this, frontend.getController() );
         
         

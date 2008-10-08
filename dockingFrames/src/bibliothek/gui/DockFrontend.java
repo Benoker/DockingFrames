@@ -2084,7 +2084,7 @@ public class DockFrontend {
      */
     protected boolean fireAllHiding( Dockable dockable, final boolean cancelable ){
         if( vetoableListeners.size() == 0 )
-            return true;
+            return false;
         
         final Single<Boolean> result = new Single<Boolean>( false );
         
@@ -2217,6 +2217,9 @@ public class DockFrontend {
      * if the operation can continue
      */
     protected boolean fireAllShowing( Dockable dockable, final boolean cancelable ){
+        if( vetoableListeners.size() == 0 )
+            return false;
+        
         final Single<Boolean> cancel = new Single<Boolean>( false );
         
         DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){

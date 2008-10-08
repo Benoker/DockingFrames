@@ -66,7 +66,7 @@ public class ViewManager {
 		frontend.getController().getProperties().set( PropertyKey.DOCK_STATION_TITLE, "Notes" );
 		frontend.getController().getProperties().set( PropertyKey.DOCK_STATION_ICON, ResourceSet.APPLICATION_ICONS.get( "application" ) );
 		
-		frontend.add( list, "list" );
+		frontend.addDockable( "list", list );
 		
 		if( secure ){
 			split = new SecureSplitDockStation();
