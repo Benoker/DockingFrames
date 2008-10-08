@@ -552,6 +552,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     public DockElement getElement() {
         return this;
     }
+    
+    public boolean isUsedAsTitle() {
+        return false;
+    }
 
     public Point getPopupLocation( Point click, boolean popupTrigger ) {
         if( popupTrigger )

@@ -174,6 +174,10 @@ public class DockTitleTab implements TabComponent{
         return title.getElement();
     }
     
+    public boolean isUsedAsTitle() {
+        return true;
+    }
+    
     public Point getPopupLocation( Point click, boolean popupTrigger ) {
         return title.getPopupLocation( click, popupTrigger );
     }

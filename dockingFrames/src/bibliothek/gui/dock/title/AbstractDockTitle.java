@@ -567,6 +567,10 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     public DockElement getElement() {
         return getDockable();
     }
+    
+    public boolean isUsedAsTitle() {
+        return true;
+    }
 
     /**
      * Sets whether this title should be painted as focused or not.

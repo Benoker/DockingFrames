@@ -695,11 +695,16 @@ public class DefaultDockRelocator extends DockRelocator{
         /** the dockable which might be moved around by this listener */
         private Dockable dockable;
         
+        /** the current element that is observed */
+        private DockElementRepresentative representative;
+        
         /**
          * Creates a new listener
          * @param representative the element which will be observed
          */
         public MouseRepresentativeListener( DockElementRepresentative representative ){
+            this.representative = representative;
+            
             if( representative instanceof DockTitle )
                 title = (DockTitle)representative;
             
@@ -710,7 +715,7 @@ public class DefaultDockRelocator extends DockRelocator{
         public void mousePressed( MouseEvent e ){
             if( e.isConsumed() )
                 return;
-            if( title == null && isDragOnlyTitel() )
+            if( !representative.isUsedAsTitle() && isDragOnlyTitel() )
                 return;
             dragMousePressed( e, title, dockable );
         }
@@ -718,7 +723,7 @@ public class DefaultDockRelocator extends DockRelocator{
         public void mouseReleased( MouseEvent e ) {
             if( e.isConsumed() )
                 return;
-            if( title == null && isDragOnlyTitel() )
+            if( !representative.isUsedAsTitle() && isDragOnlyTitel() )
                 return;
             dragMouseReleased( e, title, dockable );
         }
@@ -726,7 +731,7 @@ public class DefaultDockRelocator extends DockRelocator{
         public void mouseDragged( MouseEvent e ) {
             if( e.isConsumed() )
                 return;
-            if( title == null && isDragOnlyTitel() )
+            if( !representative.isUsedAsTitle() && isDragOnlyTitel() )
                 return;
             dragMouseDragged( e, title, dockable );
         }

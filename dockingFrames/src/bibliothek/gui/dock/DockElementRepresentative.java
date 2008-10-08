@@ -33,6 +33,7 @@ import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.control.DockRelocator;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
@@ -64,6 +65,16 @@ public interface DockElementRepresentative {
      * @return the element, never <code>null</code>
      */
     public DockElement getElement();
+    
+    /**
+     * Tells whether this {@link DockElementRepresentative} is used as title.<br>
+     * Some modules grant more rights to titles than to non-titles, i.e. 
+     * a {@link DockRelocator} can allow drag &amp; drop only for titles.<br>
+     * Normally a {@link Dockable} should have only one element that is a title,
+     * so if in doubt return <code>false</code>.
+     * @return <code>true</code> if this representative should be seen as title
+     */
+    public boolean isUsedAsTitle();
     
     /**
      * Adds a listener to this representative, it is not defined what to do

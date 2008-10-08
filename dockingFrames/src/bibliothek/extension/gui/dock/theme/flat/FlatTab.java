@@ -361,6 +361,10 @@ public class FlatTab extends CombinedStackDockComponent<FlatTab.FlatButton>{
             return dockable;
         }
         
+        public boolean isUsedAsTitle() {
+            return false;
+        }
+        
         public void addMouseInputListener( MouseInputListener listener ) {
             addMouseListener( listener );
             addMouseMotionListener( listener );

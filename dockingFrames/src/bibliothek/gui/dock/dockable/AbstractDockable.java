@@ -188,6 +188,10 @@ public abstract class AbstractDockable implements Dockable {
     public DockElement getElement() {
         return this;
     }
+    
+    public boolean isUsedAsTitle() {
+        return false;
+    }
 
     public boolean accept( DockStation station ) {
         return true;

@@ -129,6 +129,10 @@ public class ChessFigure extends JLabel implements Dockable {
 	    return this;
 	}
 	
+	public boolean isUsedAsTitle() {
+	    return false;
+	}
+	
 	public Point getPopupLocation( Point click, boolean popupTrigger ) {
 	    return null;
 	}

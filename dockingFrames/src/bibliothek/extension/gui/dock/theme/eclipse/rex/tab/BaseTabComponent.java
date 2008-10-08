@@ -238,6 +238,10 @@ public abstract class BaseTabComponent extends DComponent implements TabComponen
         return dockable;
     }
     
+    public boolean isUsedAsTitle() {
+        return true;
+    }
+    
     public void addMouseInputListener( MouseInputListener listener ) {
         addMouseListener( listener );
         addMouseMotionListener( listener );

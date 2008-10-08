@@ -86,6 +86,10 @@ public class DockableButton extends JComponent implements DockElementRepresentat
     public DockElement getElement() {
         return dockable;
     }
+    
+    public boolean isUsedAsTitle() {
+        return false;
+    }
 
     public Point getPopupLocation( Point click, boolean popupTrigger ) {
         if( popupTrigger )

@@ -459,6 +459,10 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleS
 		    return dockable;
 		}
 		
+		public boolean isUsedAsTitle() {
+		    return false;
+		}
+		
 		public void addMouseInputListener( MouseInputListener listener ) {
 		    addMouseListener( listener );
 		    addMouseMotionListener( listener );
