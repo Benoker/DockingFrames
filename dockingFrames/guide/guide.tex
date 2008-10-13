@@ -1,6 +1,7 @@
 \documentclass[a4paper,10pt]{article}
 \usepackage{listings}
 \usepackage{color}
+\usepackage{graphicx}
 
 \lstset{language=Java}
 \lstset{breaklines=true, numbers=left}
@@ -138,6 +139,8 @@ A \src{DockSituation} object is a set of \src{DockFactory}s that are used to wri
 \subsubsection{Plain DockSituation}
 Clients first need to add new \src{DockFactory}s for any new kind of \src{Dockable} they introduce. Then they have to collect all root-\src{DockStation}s, put them into a \src{Map} and call one of the \src{write}-methods of the \src{DockSituation}. Later they can use \src{read} to get the same \src{Map} pack (filled with new objects).
 
+If there is data to store for some subset of \src{Dockable}s, then clients can use an \src{AdjacentDockFactory} to store them. This factory can tell for each \src{Dockable} whether it has something to store, and if so works just like a \src{DockFactory}.
+
 How does a \src{DockSituation} know which factory to use for which \\\src{Dockable}? Every \src{Dockable} has a method \src{getFactoryID}, the result of this method is a \src{String} that should match the identifier of a \src{DockFactory}. Clients using \src{DefaultDockable} can call \src{setFactoryID} to change the id.
 
 Note: clients using \src{ScreenDockStation} must add a \\\src{ScreenDockStationFactory} to every \src{DockSituation}.
@@ -175,6 +178,37 @@ We get some stream in line \src{15}, and then read the layout in line \src{16}. 
 
 \subsubsection{Ignoring}
 Sometimes not every element has to be stored. A client can add a \\\src{DockSituationIgnore} to a \src{DockSituation}. The \src{DockSituation} will not store any element that is not approved by the \src{DockSituationIgnore}.
+
+\subsubsection{Implementation and data recovery}
+What exactly does a \src{DockSituation} do? This subsection will give a more detailed description of how all these interfaces and classes work together.
+
+Layout information is always in one of four formats (see figure \ref{fig:formats}). Either it is stored in an xml- or a binary-file (also called ``in raw format''), present as a tree of \src{DockStation}s and \src{Dockable}s, or in the intermediate ``layout'' format. \src{DockFactory}s are used to convert data from one format into another.
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.3]{guide/formats}
+\caption{The four formats in which layout information can appear. The arrows mark which format can be converted in which other format. The arrows are implemented by \src{DockSituation} and \src{DockFactory}.}
+\label{fig:formats}
+\end{figure}
+
+Layout information can be valid or invalid. There is only one possibility to produce invalid layout information: when reading a file in an environment that differs form the environment in which the file was written, i.e. when a \src{DockFactory} is missing. The ``tree'' must always be valid, otherwise the user would notice the errors. And \src{DockSituation} will throw an exception when attempting to write invalid layout information into a file. Hence the only format that has to support invalid layouts is the ``layout''-format.
+
+The ''layout''-format is organized in a tree of \src{DockLayoutComposition}s. Each \src{DockLayoutComposition} represents a \src{Dockable} or a \src{DockStation} and all information that is available for them. Files on the other hand are a list of entries. Each entry contains structural information and a chunk of data. When \src{DockSituation} reads a file, it tries to map these entries to fields of \src{DockLayoutCompositions} (see figure \ref{fig:read}).
+
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.3]{guide/read}
+\caption{When converting data from a file (left side) to the ``layout''-format (right side) each entry of the file is mapped to a field in one of the \src{DockLayoutComposition}s.}
+\label{fig:read}
+\end{figure}
+
+A \src{DockLayoutComposition} contains three fields: \src{children}, \src{layout} and \src{adjacent}.
+\begin{description}
+ \item[children] If this composition represents a \src{DockStation} then this is a list of \src{DockLayoutComposition}s for the children of the station. In any other case this field is not used.
+ \item[layout] This \src{DockLayoutInfo} tells how the element looks like, i.e. where to position the children. This data can either be in raw xml or binary-format, or an instance of \src{DockLayout}. In any case this data contains the unique identifier of the \src{DockFactory} which should be used to access the data.
+ \item[adjacent] Additional set of data for this element. These \src{DockLayout}s are converted by \src{AdjacentDockFactory}s.
+\end{description}
+The data for \src{children} cannot be corrupted, however the data for \src{layout} and \src{adjacent} can. If data for \src{adjacent} is corrupted, then the entry is just ignored. If data for \src{layout} is corrupted, then the original entry in its raw format gets written into the field. While the data cannot be understood, it is still available and at its intended place. At a later point in time one might try to read that raw data again, perhaps now in an environment that understands the data.
 
 \subsection{Local and Global: DockFrontend}
 A \src{DockFrontend} uses both local and global methods to store the layout. Local methods are used when a \src{Dockable} is made visible or invisible through \src{show} and \src{hide}. Global methods are used by \src{write}, \src{read}, \src{save} and \src{load}. A \src{DockFrontend} behaves much like a \src{PredefinedDockSituation}, either elements will be created by a \src{DockFactory} or the \src{Dockables} have to be registered through \src{add}.
@@ -312,11 +346,11 @@ There are resources that need to be distributed through the whole user interface
 
 Components that use \src{UIProperties} do not just ask for a resource when they need it, they register an \src{UIValue} which gets informed whenever the resource changes. At a first glance \src{UIValue} is just an observer of the map.
 
-The map does not forward its resources directly to the \src{UIValue}s, it forwards the resources and the values to an \src{UIBridge}. The bridge is then responsible to forward the resource to its \src{UIValue}. Each kind of \src{UIValue} can have its own bridge (the kind is defined through a \src{Path} object). The \src{UIBridge} can modifie the resource before sending it to the \src{UIValue}. If a subclass of \src{UIValue} would have a \src{Dockable} field, then a bridge for that subclass could make its decision based on the value of that field.
+The map does not forward its resources directly to the \src{UIValue}s, it forwards the resources and the values to an \src{UIBridge}. The bridge is then responsible to forward the resource to its \src{UIValue}. Each kind of \src{UIValue} can have its own bridge (the kind is defined through a \src{Path} object). The \src{UIBridge} can modify the resource before sending it to the \src{UIValue}. If a subclass of \src{UIValue} would have a \src{Dockable} field, then a bridge for that subclass could make its decision based on the value of that field.
 
 \src{UIBridges} are also informed about which \src{UIValue}s are observing the \\\src{UIProperties}. A bridge could decide to change the resource of a \src{UIValue} when the \src{UIProperties} did not change at all. The \src{UIValue} would not be able to tell the difference.
 
-There is currently one \src{UIProperties} used in the core for colors (another one for fonts might be in one of the next releases).
+There is currently one \src{UIProperties} used in the core for colors and another one for fonts.
 
 \subsection{Colors}
 Since DF is a graphical user interface, colors are used often and by a all sorts of components. The most important colors are collected in a map, and components get their colors from that color-map.
