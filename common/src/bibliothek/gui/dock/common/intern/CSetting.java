@@ -36,7 +36,7 @@ import java.util.Map;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.MultipleCDockableFactory;
-import bibliothek.gui.dock.facile.action.StateManager;
+import bibliothek.gui.dock.facile.state.StateManager;
 import bibliothek.gui.dock.frontend.Setting;
 import bibliothek.gui.dock.layout.DockSituation;
 import bibliothek.gui.dock.layout.PropertyTransformer;

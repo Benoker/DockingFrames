@@ -26,7 +26,12 @@
 
 package bibliothek.gui.dock.layout;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +39,12 @@ import java.util.Map;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.*;
+import bibliothek.gui.dock.DefaultDockable;
+import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.dockable.DefaultDockableFactory;
 import bibliothek.gui.dock.security.SecureFlapDockStationFactory;
 import bibliothek.gui.dock.security.SecureSplitDockStationFactory;
@@ -315,7 +325,6 @@ public class DockSituation {
      * @param out the stream to write into
      * @throws IOException if an I/O-error occurs
      */
-    @SuppressWarnings("unchecked")
     public void writeComposition( DockLayoutComposition composition, DataOutputStream out ) throws IOException{
         Version.write( out, Version.VERSION_1_0_7 );
         writeCompositionStream( composition, out );

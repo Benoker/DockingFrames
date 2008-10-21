@@ -31,7 +31,7 @@ import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CDockable.ExtendedMode;
 import bibliothek.gui.dock.common.intern.action.CExtendedModeAction;
-import bibliothek.gui.dock.facile.action.StateManager;
+import bibliothek.gui.dock.facile.state.StateManager;
 import bibliothek.gui.dock.support.util.Resources;
 
 /**

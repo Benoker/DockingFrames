@@ -51,7 +51,7 @@ import bibliothek.gui.dock.common.location.CMaximizedLocation;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.event.KeyboardListener;
-import bibliothek.gui.dock.facile.action.StateManager;
+import bibliothek.gui.dock.facile.state.StateManager;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyValue;

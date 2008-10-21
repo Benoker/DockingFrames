@@ -36,9 +36,14 @@ import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.common.event.CDockableAdapter;
-import bibliothek.gui.dock.common.intern.*;
+import bibliothek.gui.dock.common.intern.AbstractCDockable;
+import bibliothek.gui.dock.common.intern.CControlAccess;
+import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.intern.station.SplitResizeRequestHandler;
 import bibliothek.gui.dock.common.location.CWorkingAreaLocation;
+import bibliothek.gui.dock.facile.state.MaximizeArea;
+import bibliothek.gui.dock.facile.state.MaximizeSplitDockStation;
 import bibliothek.gui.dock.security.SecureSplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockTree;
 import bibliothek.gui.dock.title.DockTitle;
@@ -59,6 +64,9 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable, 
     private SplitDockStation station;
     /** a handler used to update the bounds of children of this station */
     private SplitResizeRequestHandler resizeRequestHandler;
+    
+    /** this working area as parent of maximized dockables, can be <code>null</code> if not used */
+    private MaximizeArea maximizingArea;
     
     /**
      * Creates a new area.
@@ -207,6 +215,44 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable, 
             access.getOwner().add( dockable );
         }
         return dockable;
+    }
+    
+    /**
+     * Sets whether this area is also used as maximizing area. If so then pressing
+     * the "maximize"-button of a child of this area will have the effect that
+     * the child is maximized only within this area. Otherwise it takes more
+     * space.
+     * @param maximize <code>true</code> if children should be maximized to this
+     * area, <code>false</code> if not.
+     */
+    public void setMaximizingArea( boolean maximize ){
+	if( maximize ){
+	    if( maximizingArea == null ){
+		maximizingArea = new MaximizeSplitDockStation( getUniqueId(), station );
+		CControlAccess access = getControl();
+		if( access != null ){
+		    access.getStateManager().addMaximizingArea( maximizingArea );
+		}
+	    }
+	}
+	else{
+	    if( maximizingArea != null ){
+		CControlAccess access = getControl();
+		if( access != null ){
+		    access.getStateManager().removeMaximizingArea( maximizingArea );
+		}
+		maximizingArea = null;
+	    }
+	}
+    }
+    
+    /**
+     * Tells whether children of this area remain children when maximized or not.
+     * @return <code>true</code> if children remain children
+     * @see #setMaximizingArea(boolean)
+     */
+    public boolean isMaximizingArea(){
+	return maximizingArea != null;
     }
 
     @Override

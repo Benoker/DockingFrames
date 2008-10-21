@@ -28,7 +28,7 @@ package bibliothek.gui.dock.common.intern;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.facile.action.StateManager;
+import bibliothek.gui.dock.facile.state.StateManager;
 import bibliothek.gui.dock.frontend.Setting;
 
 /**

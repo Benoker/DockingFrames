@@ -161,8 +161,8 @@
 		<copy todir="${base}" file="${location.dockingFrames}/license.txt"/>
 		<copy todir="${base}" file="${location.dockingFrames}/changes.txt"/>
 		<copy tofile="${base}/readme.txt" file="${location.dockingFrames}/readme_full.txt"/>
-		<copy tofile="${base}/readme_v1.0.7p4.txt" file="${location.dockingFrames}/readme_v1.0.7p4.txt"/>
-		<copy tofile="${base}/readme_v1.0.7p5.txt" file="${location.dockingFrames}/readme_v1.0.7p5.txt"/>
+		<copy tofile="${base}/readme_v1.0.7p4.txt" file="${location.dockingFrames}/Readme_v1.0.7p4.txt"/>
+		<copy tofile="${base}/readme_v1.0.7p5.txt" file="${location.dockingFrames}/Readme_v1.0.7p5.txt"/>
 	</target>
 
 	<target name="webstart" depends="bin, paths">
@@ -326,7 +326,7 @@
 		</copy>
 	</target>
 
-	<target name="bin.demonstration" depends="source, bin dir, bin.chess, bin.common, bin.demonstrationInterface, bin.dockingFrames, bin.help, bin.notes, bin.paint, bin.sizeAndColor">
+	<target name="bin.demonstration" depends="source, bin dir, bin.layouts, bin.chess, bin.common, bin.demonstrationInterface, bin.dockingFrames, bin.help, bin.notes, bin.paint, bin.sizeAndColor">
 		<javac srcdir="${source}/${name.demonstration}" destdir="${temp}/${name.demonstration}">
 			<classpath path="${temp}/${name.chess}"/>
 			<classpath path="${temp}/${name.layouts}"/>
@@ -444,7 +444,7 @@
 				<exclude name="*.svn/*"/>
 			</fileset>
 		</copy>
-		<copy todir="${source}/${name.layouts}}">
+		<copy todir="${source}/${name.layouts}">
 			<fileset dir="${location.layouts}/src">
 				<exclude name="*.svn/*"/>
 			</fileset>
