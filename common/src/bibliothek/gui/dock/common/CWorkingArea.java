@@ -97,13 +97,15 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable, 
      */
     public void deploy( CGrid grid ){
         SplitDockTree tree = grid.toTree();
-        station.dropTree( tree );
+        
         for( Dockable dockable : tree.getDockables() ){
             if( dockable instanceof CommonDockable ){
                 CommonDockable cdock = (CommonDockable)dockable;
                 cdock.getDockable().setWorkingArea( this );
             }
         }
+        
+        station.dropTree( tree );
     }
 
     public DockStation getStation() {

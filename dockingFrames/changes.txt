@@ -217,3 +217,4 @@
 - Bugfix: DockFocusTraversalPolicy could create infinite recursion if used together with javax.swing.LegacyGlueFocusTraversalPolicy
 - API: New methods to change the fonts of titles and tabs. The interface DockFont provides some keys which can be used together with FontManager to change fonts.
 - API: Common supports new font system as well, the new FontMap can be used just like the ColorMap.
+- Bugfix: CWoringArea.deploy did not correctly change the working-area of the newly added children
