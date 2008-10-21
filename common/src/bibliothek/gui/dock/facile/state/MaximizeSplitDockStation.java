@@ -25,9 +25,13 @@
  */
 package bibliothek.gui.dock.facile.state;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.event.SplitDockListener;
 import bibliothek.gui.dock.station.split.SplitDockTree;
 
 /**
@@ -40,6 +44,19 @@ public class MaximizeSplitDockStation implements MaximizeArea{
     /** delegate to show the elements */
     private SplitDockStation station;
 
+    /** observers of this station */
+    private List<MaximizeAreaListener> listeners = new ArrayList<MaximizeAreaListener>();
+    
+    /** listener to {@link #station} */
+    private SplitDockListener stationListener = new SplitDockListener(){
+	public void fullScreenDockableChanged( SplitDockStation station, Dockable oldFullScreen, Dockable newFullScreen ) {
+	    MaximizeAreaListener[] array = listeners.toArray( new MaximizeAreaListener[ listeners.size() ] );
+	    for( MaximizeAreaListener listener : array ){
+		listener.maximizedChanged( MaximizeSplitDockStation.this, oldFullScreen, newFullScreen );
+	    }
+	}
+    };
+    
     /**
      * Creates a new area.
      * @param uniqueId the result of {@link #getUniqueId()}
@@ -55,6 +72,23 @@ public class MaximizeSplitDockStation implements MaximizeArea{
 	this.station = station;
     }
 
+    public void addMaximizeAreaListener( MaximizeAreaListener listener ) {
+	if( listener == null )
+	    throw new IllegalArgumentException( "listener must not be null" );
+	
+	if( listeners.isEmpty() ){
+	    station.addSplitDockStationListener( stationListener );
+	}
+	listeners.add( listener );
+    }
+    
+    public void removeMaximizeAreaListener( MaximizeAreaListener listener ) {
+        listeners.remove( listener );
+        if( listeners.isEmpty() ){
+            station.removeSplitDockStationListener( stationListener );
+        }
+    }
+    
     public void dropAside( Dockable dockable ) {
 	SplitDockTree tree = station.createTree();
 	if( tree.getRoot() == null )

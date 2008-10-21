@@ -48,6 +48,19 @@ public interface MaximizeArea {
     public DockStation getStation();
     
     /**
+     * Adds a listener to this area. This listener will be informed whenever the
+     * maximized dockable changes.
+     * @param listener the new listener
+     */
+    public void addMaximizeAreaListener( MaximizeAreaListener listener );
+    
+    /**
+     * Removes a listener from this area
+     * @param listener the listener to remove
+     */
+    public void removeMaximizeAreaListener( MaximizeAreaListener listener );
+    
+    /**
      * Somehow makes <code>dockable</code> child of this station. This
      * method should add <code>dockable</code> at a place were it can 
      * be removed without destroying the original layout.

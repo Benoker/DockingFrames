@@ -54,7 +54,6 @@ import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockRegisterListener;
 import bibliothek.gui.dock.event.DockRelocatorListener;
 import bibliothek.gui.dock.event.IconManagerListener;
-import bibliothek.gui.dock.event.SplitDockListener;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
@@ -279,8 +278,6 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
 	if( defaultMaxi == null ){
 	    setMaximizingArea( new MaximizeSplitDockStation( "dock.default", station ) );
 	}
-
-	station.addSplitDockStationListener( listener );
     }
 
     /**
@@ -303,6 +300,8 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
 	ensureNothingMaximized();
 	
 	maxi.add( area );
+	
+	area.addMaximizeAreaListener( listener );
 
 	if( defaultMaxi == null )
 	    defaultMaxi = area;
@@ -330,6 +329,11 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
 	ensureNothingMaximized();
 	
 	maxi.remove( area );
+	
+	area.removeMaximizeAreaListener( listener );
+	
+	lastMaximizedLocation.remove( area.getUniqueId() );
+	lastMaximizedMode.remove( area.getUniqueId() );
 	
 	if( defaultMaxi == area ){
 	    defaultMaxi = null;
@@ -1508,7 +1512,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
 		lastMaximizedLocation = new HashMap<String, B>();
 		lastMaximizedMode = new HashMap<String, String>();
 
-		XElement xmaximized = states.getElement( "maximized" );
+		XElement xmaximized = element.getElement( "maximized" );
 
 		if( xmaximized != null ){
 		    for( XElement xitem : xmaximized.getElements( "item" )){
@@ -1579,14 +1583,14 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      * its mode.
      * @author Benjamin Sigg
      */
-    private class Listener implements SplitDockListener, DockRelocatorListener, DockRegisterListener, DockHierarchyListener{
-	public void fullScreenDockableChanged( SplitDockStation station, Dockable oldFullScreen, Dockable newFullScreen ) {
+    private class Listener implements MaximizeAreaListener, DockRelocatorListener, DockRegisterListener, DockHierarchyListener{
+	public void maximizedChanged( MaximizeArea area, Dockable oldElement, Dockable newElement ) {
 	    if( !onTransition ){
-		if( oldFullScreen != null )
-		    putMode( oldFullScreen );
+		if( oldElement != null )
+		    putMode( oldElement );
 
-		if( newFullScreen != null )
-		    putMode( newFullScreen );
+		if( newElement != null )
+		    putMode( newElement );
 	    }
 	}
 
