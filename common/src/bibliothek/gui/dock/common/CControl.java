@@ -30,10 +30,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 import javax.swing.JFrame;
@@ -74,6 +71,8 @@ import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.WindowProvider;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
+import bibliothek.util.xml.XException;
+import bibliothek.util.xml.XIO;
 
 /**
  * Manages the interaction between {@link SingleCDockable}, {@link MultipleCDockable}
@@ -92,41 +91,41 @@ public class CControl {
      * or to go out of maximized-state when needed.
      */
     public static final PropertyKey<KeyStroke> KEY_MAXIMIZE_CHANGE = 
-	new PropertyKey<KeyStroke>( "ccontrol.maximize_change" );
+        new PropertyKey<KeyStroke>( "ccontrol.maximize_change" );
 
     /**
      * {@link KeyStroke} used to change a {@link CDockable} into
      * maximized-state.
      */
     public static final PropertyKey<KeyStroke> KEY_GOTO_MAXIMIZED =
-	new PropertyKey<KeyStroke>( "ccontrol.goto_maximized" );
+        new PropertyKey<KeyStroke>( "ccontrol.goto_maximized" );
 
     /**
      * {@link KeyStroke} used to change a {@link CDockable} into
      * normalized-state.
      */
     public static final PropertyKey<KeyStroke> KEY_GOTO_NORMALIZED =
-	new PropertyKey<KeyStroke>( "ccontrol.goto_normalized" );
+        new PropertyKey<KeyStroke>( "ccontrol.goto_normalized" );
 
     /**
      * {@link KeyStroke} used to change a {@link CDockable} into
      * minimized-state.
      */
     public static final PropertyKey<KeyStroke> KEY_GOTO_MINIMIZED =
-	new PropertyKey<KeyStroke>( "ccontrol.goto_minimized" );
+        new PropertyKey<KeyStroke>( "ccontrol.goto_minimized" );
 
     /**
      * {@link KeyStroke} used to change a {@link CDockable} into
      * externalized-state.
      */
     public static final PropertyKey<KeyStroke> KEY_GOTO_EXTERNALIZED =
-	new PropertyKey<KeyStroke>( "ccontrol.goto_externalized" );
+        new PropertyKey<KeyStroke>( "ccontrol.goto_externalized" );
 
     /**
      * {@link KeyStroke} used to close a {@link CDockable}.
      */
     public static final PropertyKey<KeyStroke> KEY_CLOSE = 
-	new PropertyKey<KeyStroke>( "ccontrol.close" );
+        new PropertyKey<KeyStroke>( "ccontrol.close" );
 
     /**
      * {@link ConflictResolver} used to determine what happens when there is
@@ -136,9 +135,9 @@ public class CControl {
      * @see FullLockConflictResolver
      */
     public static final PropertyKey<ConflictResolver<RequestDimension>> RESIZE_LOCK_CONFLICT_RESOLVER =
-	new PropertyKey<ConflictResolver<RequestDimension>>( 
-		"ccontrol.resize_lock_conflict_resolver", 
-		new DefaultConflictResolver<RequestDimension>(), true );
+        new PropertyKey<ConflictResolver<RequestDimension>>( 
+                "ccontrol.resize_lock_conflict_resolver", 
+                new DefaultConflictResolver<RequestDimension>(), true );
 
     /** the unique id of the station that handles the externalized dockables */
     public static final String EXTERNALIZED_STATION_ID = "external";
@@ -200,7 +199,7 @@ public class CControl {
      * would be the better choice than this constructor.
      */
     public CControl(){
-	this( new NullWindowProvider(), false );
+        this( new NullWindowProvider(), false );
     }
 
     /**
@@ -209,7 +208,7 @@ public class CControl {
      * dialogs for externalized {@link CDockable}s
      */
     public CControl( JFrame frame ){
-	this( frame, false );
+        this( frame, false );
     }
 
     /**
@@ -218,7 +217,7 @@ public class CControl {
      * restricted environment and is not allowed to listen for global events.
      */
     public CControl( boolean restrictedEnvironment ){
-	this( new NullWindowProvider(), restrictedEnvironment );
+        this( new NullWindowProvider(), restrictedEnvironment );
     }
 
     /**
@@ -228,7 +227,7 @@ public class CControl {
      * its search method may return <code>null</code>
      */
     public CControl( WindowProvider window ){
-	this( window, false );
+        this( window, false );
     }
 
     /**
@@ -239,7 +238,7 @@ public class CControl {
      * restricted environment and is not allowed to listen for global events.
      */
     public CControl( JFrame frame, boolean restrictedEnvironment ){
-	this( frame == null ? new NullWindowProvider() : new DirectWindowProvider( frame ), restrictedEnvironment );
+        this( frame == null ? new NullWindowProvider() : new DirectWindowProvider( frame ), restrictedEnvironment );
     }
 
     /**
@@ -251,7 +250,7 @@ public class CControl {
      * restricted environment and is not allowed to listen for global events.
      */
     public CControl( WindowProvider window, boolean restrictedEnvironment ){
-	this( window, restrictedEnvironment ? new SecureControlFactory() : new EfficientControlFactory() );
+        this( window, restrictedEnvironment ? new SecureControlFactory() : new EfficientControlFactory() );
     }
 
 
@@ -263,7 +262,7 @@ public class CControl {
      * control.
      */
     public CControl( JFrame frame, CControlFactory factory ){
-	this( frame == null ? new NullWindowProvider() : new DirectWindowProvider( frame ), factory );
+        this( frame == null ? new NullWindowProvider() : new DirectWindowProvider( frame ), factory );
     }
 
     /**
@@ -275,196 +274,196 @@ public class CControl {
      * control.
      */
     public CControl( WindowProvider window, CControlFactory factory ){
-	if( window == null ){
-	    throw new IllegalArgumentException( "window must not be null, however its search method may return null" );
-	}
+        if( window == null ){
+            throw new IllegalArgumentException( "window must not be null, however its search method may return null" );
+        }
 
-	this.factory = factory;
+        this.factory = factory;
 
-	register = factory.createRegister( this );
-	DockController controller = factory.createController( this );
-	controller.setSingleParentRemover( new CSingleParentRemover( this ) );
+        register = factory.createRegister( this );
+        DockController controller = factory.createController( this );
+        controller.setSingleParentRemover( new CSingleParentRemover( this ) );
 
-	initFocusListeners( controller );
-	initInputListener( controller );
+        initFocusListeners( controller );
+        initInputListener( controller );
 
-	frontend = factory.createFrontend( access, controller );
-	frontend.setOwner( window );
+        frontend = factory.createFrontend( access, controller );
+        frontend.setOwner( window );
 
-	frontend.setMissingDockableStrategy( new MissingDockableStrategy(){
-	    public boolean shouldStoreHidden( String key ) {
-		return shouldStore( key );
-	    }
-	    public boolean shouldStoreShown( String key ) {
-		return shouldStore( key );
-	    }
-	    public boolean shouldCreate( DockFactory<?, ?> factory ) {
-		if( factory instanceof CommonMultipleDockableFactory ){
-		    return CControl.this.shouldCreate( ((CommonMultipleDockableFactory)factory).getFactory() );
-		}
-		return false;
-	    }
-	    public <L> boolean shouldCreate( DockFactory<?, L> factory, L data ) {
-		if( factory instanceof CommonMultipleDockableFactory && data instanceof CommonDockableLayout ){
-		    return CControl.this.shouldCreate( 
-			    ((CommonMultipleDockableFactory)factory).getFactory(), 
-			    (CommonDockableLayout)data );
-		}
-		return false;
-	    }
-	});
+        frontend.setMissingDockableStrategy( new MissingDockableStrategy(){
+            public boolean shouldStoreHidden( String key ) {
+                return shouldStore( key );
+            }
+            public boolean shouldStoreShown( String key ) {
+                return shouldStore( key );
+            }
+            public boolean shouldCreate( DockFactory<?, ?> factory ) {
+                if( factory instanceof CommonMultipleDockableFactory ){
+                    return CControl.this.shouldCreate( ((CommonMultipleDockableFactory)factory).getFactory() );
+                }
+                return false;
+            }
+            public <L> boolean shouldCreate( DockFactory<?, L> factory, L data ) {
+                if( factory instanceof CommonMultipleDockableFactory && data instanceof CommonDockableLayout ){
+                    return CControl.this.shouldCreate( 
+                            ((CommonMultipleDockableFactory)factory).getFactory(), 
+                            (CommonDockableLayout)data );
+                }
+                return false;
+            }
+        });
 
-	frontend.setIgnoreForEntry( new DockSituationIgnore(){
-	    public boolean ignoreChildren( DockStation station ) {
-		CStation cstation = getStation( station );
-		if( cstation != null )
-		    return cstation.isWorkingArea();
+        frontend.setIgnoreForEntry( new DockSituationIgnore(){
+            public boolean ignoreChildren( DockStation station ) {
+                CStation cstation = getStation( station );
+                if( cstation != null )
+                    return cstation.isWorkingArea();
 
-		return false;
-	    }
-	    public boolean ignoreElement( DockElement element ) {
-		if( element instanceof CommonDockable ){
-		    CDockable cdockable = ((CommonDockable)element).getDockable();
-		    if( cdockable.getWorkingArea() != null )
-			return true;
-		}
-		return false;
-	    }
-	});
-	frontend.setShowHideAction( false );
+                return false;
+            }
+            public boolean ignoreElement( DockElement element ) {
+                if( element instanceof CommonDockable ){
+                    CDockable cdockable = ((CommonDockable)element).getDockable();
+                    if( cdockable.getWorkingArea() != null )
+                        return true;
+                }
+                return false;
+            }
+        });
+        frontend.setShowHideAction( false );
 
-	// replaced by setTheme( ThemeMap.SMOOTH_THEME ) at the end of this method
-	//frontend.getController().setTheme( new NoStackTheme( new CSmoothTheme( this, new SmoothTheme())));
+        // replaced by setTheme( ThemeMap.SMOOTH_THEME ) at the end of this method
+        //frontend.getController().setTheme( new NoStackTheme( new CSmoothTheme( this, new SmoothTheme())));
 
-	frontend.getController().addActionGuard( new ActionGuard(){
-	    public boolean react( Dockable dockable ) {
-		return dockable instanceof CommonDockable;
-	    }
-	    public DockActionSource getSource( Dockable dockable ) {
-		return ((CommonDockable)dockable).getClose();
-	    }
-	});
-	frontend.getController().getRegister().addDockRegisterListener( new DockAdapter(){
-	    @Override
-	    public void dockableRegistered( DockController controller, Dockable dockable ) {
-		if( dockable instanceof CommonDockable ){
-		    CDockable cdock = ((CommonDockable)dockable).getDockable();
-		    CDockableAccess access = accesses.get( cdock );
-		    if( access != null ){
-			access.informVisibility( true );
-		    }
+        frontend.getController().addActionGuard( new ActionGuard(){
+            public boolean react( Dockable dockable ) {
+                return dockable instanceof CommonDockable;
+            }
+            public DockActionSource getSource( Dockable dockable ) {
+                return ((CommonDockable)dockable).getClose();
+            }
+        });
+        frontend.getController().getRegister().addDockRegisterListener( new DockAdapter(){
+            @Override
+            public void dockableRegistered( DockController controller, Dockable dockable ) {
+                if( dockable instanceof CommonDockable ){
+                    CDockable cdock = ((CommonDockable)dockable).getDockable();
+                    CDockableAccess access = accesses.get( cdock );
+                    if( access != null ){
+                        access.informVisibility( true );
+                    }
 
-		    for( CControlListener listener : listeners() )
-			listener.opened( CControl.this, cdock );
-		}
-	    }
+                    for( CControlListener listener : listeners() )
+                        listener.opened( CControl.this, cdock );
+                }
+            }
 
-	    @Override
-	    public void dockableUnregistered( DockController controller, Dockable dockable ) {
-		if( dockable instanceof CommonDockable ){
-		    CDockable cdock = ((CommonDockable)dockable).getDockable();
-		    CDockableAccess access = accesses.get( cdock );
-		    if( access != null ){
-			access.informVisibility( false );
-		    }
+            @Override
+            public void dockableUnregistered( DockController controller, Dockable dockable ) {
+                if( dockable instanceof CommonDockable ){
+                    CDockable cdock = ((CommonDockable)dockable).getDockable();
+                    CDockableAccess access = accesses.get( cdock );
+                    if( access != null ){
+                        access.informVisibility( false );
+                    }
 
-		    for( CControlListener listener : listeners() )
-			listener.closed( CControl.this, cdock );
+                    for( CControlListener listener : listeners() )
+                        listener.closed( CControl.this, cdock );
 
-		    if( cdock instanceof MultipleCDockable ){
-			MultipleCDockable multiple = (MultipleCDockable)cdock;
-			if( multiple.isRemoveOnClose() ){
-			    remove( multiple );
-			}
-		    }
-		}
-	    }
-	});
+                    if( cdock instanceof MultipleCDockable ){
+                        MultipleCDockable multiple = (MultipleCDockable)cdock;
+                        if( multiple.isRemoveOnClose() ){
+                            remove( multiple );
+                        }
+                    }
+                }
+            }
+        });
 
-	frontend.getController().addAcceptance( new StackableAcceptance() );
-	frontend.getController().addAcceptance( new WorkingAreaAcceptance( access ) );
-	frontend.getController().addAcceptance( new ExtendedModeAcceptance( access ) );
+        frontend.getController().addAcceptance( new StackableAcceptance() );
+        frontend.getController().addAcceptance( new WorkingAreaAcceptance( access ) );
+        frontend.getController().addAcceptance( new ExtendedModeAcceptance( access ) );
 
-	CommonSingleDockableFactory backupFactory = register.getBackupFactory();
-	frontend.registerFactory( backupFactory );
-	frontend.registerBackupFactory( backupFactory );
+        CommonSingleDockableFactory backupFactory = register.getBackupFactory();
+        frontend.registerFactory( backupFactory );
+        frontend.registerBackupFactory( backupFactory );
 
-	themes = new ThemeMap( this );
+        themes = new ThemeMap( this );
 
-	try{
-	    resources.put( "ccontrol.frontend", new ApplicationResource(){
-		public void write( DataOutputStream out ) throws IOException {
-		    Version.write( out, Version.VERSION_1_0_4 );
-		    writeWorkingAreas( out );
-		    frontend.write( out );
-		}
-		public void read( DataInputStream in ) throws IOException {
-		    Version version = Version.read( in );
-		    version.checkCurrent();
-		    readWorkingAreas( in );
-		    frontend.read( in );
-		}
-		public void writeXML( XElement element ) {
-		    writeWorkingAreasXML( element.addElement( "areas" ) );
-		    frontend.writeXML( element.addElement( "frontend" ) );
-		}
-		public void readXML( XElement element ) {
-		    readWorkingAreasXML( element.getElement( "areas" ) );
-		    frontend.readXML( element.getElement( "frontend" ) );
-		}
-	    });
+        try{
+            resources.put( "ccontrol.frontend", new ApplicationResource(){
+                public void write( DataOutputStream out ) throws IOException {
+                    Version.write( out, Version.VERSION_1_0_4 );
+                    writeWorkingAreas( out );
+                    frontend.write( out );
+                }
+                public void read( DataInputStream in ) throws IOException {
+                    Version version = Version.read( in );
+                    version.checkCurrent();
+                    readWorkingAreas( in );
+                    frontend.read( in );
+                }
+                public void writeXML( XElement element ) {
+                    writeWorkingAreasXML( element.addElement( "areas" ) );
+                    frontend.writeXML( element.addElement( "frontend" ) );
+                }
+                public void readXML( XElement element ) {
+                    readWorkingAreasXML( element.getElement( "areas" ) );
+                    frontend.readXML( element.getElement( "frontend" ) );
+                }
+            });
 
-	    resources.put( "ccontrol.preferences", new ApplicationResource(){
-		public void read( DataInputStream in ) throws IOException {
-		    Version version = Version.read( in );
-		    version.checkCurrent();
-		    preferences.read( in );
+            resources.put( "ccontrol.preferences", new ApplicationResource(){
+                public void read( DataInputStream in ) throws IOException {
+                    Version version = Version.read( in );
+                    version.checkCurrent();
+                    preferences.read( in );
 
-		    if( preferenceModel != null ){
-			preferences.load( preferenceModel, false );
-			preferenceModel.write();
-		    }
-		}
+                    if( preferenceModel != null ){
+                        preferences.load( preferenceModel, false );
+                        preferenceModel.write();
+                    }
+                }
 
-		public void readXML( XElement element ) {
-		    preferences.readXML( element );
+                public void readXML( XElement element ) {
+                    preferences.readXML( element );
 
-		    if( preferenceModel != null ){
-			preferences.load( preferenceModel, false );
-			preferenceModel.write();
-		    }
-		}
+                    if( preferenceModel != null ){
+                        preferences.load( preferenceModel, false );
+                        preferenceModel.write();
+                    }
+                }
 
-		public void write( DataOutputStream out ) throws IOException {
-		    if( preferenceModel != null ){
-			preferenceModel.read();
-			preferences.store( preferenceModel );
-		    }
+                public void write( DataOutputStream out ) throws IOException {
+                    if( preferenceModel != null ){
+                        preferenceModel.read();
+                        preferences.store( preferenceModel );
+                    }
 
-		    Version.write( out, Version.VERSION_1_0_6 );
-		    preferences.write( out );
-		}
+                    Version.write( out, Version.VERSION_1_0_6 );
+                    preferences.write( out );
+                }
 
-		public void writeXML( XElement element ) {
-		    if( preferenceModel != null ){
-			preferenceModel.read();
-			preferences.store( preferenceModel );
-		    }
+                public void writeXML( XElement element ) {
+                    if( preferenceModel != null ){
+                        preferenceModel.read();
+                        preferences.store( preferenceModel );
+                    }
 
-		    preferences.writeXML( element );
-		}
+                    preferences.writeXML( element );
+                }
 
-	    });
-	}
-	catch( IOException ex ){
-	    System.err.println( "Non lethal IO-error:" );
-	    ex.printStackTrace();
-	}
+            });
+        }
+        catch( IOException ex ){
+            System.err.println( "Non lethal IO-error:" );
+            ex.printStackTrace();
+        }
 
-	initExtendedModes();
-	initProperties();
+        initExtendedModes();
+        initProperties();
 
-	setTheme( ThemeMap.KEY_SMOOTH_THEME );
+        setTheme( ThemeMap.KEY_SMOOTH_THEME );
     }
 
     /**
@@ -472,1556 +471,1601 @@ public class CControl {
      * @param controller the controller which will be observed
      */
     private void initFocusListeners( DockController controller ){
-	controller.addDockableFocusListener( new DockableFocusListener(){
-	    public void dockableFocused( DockableFocusEvent event ) {
-		Dockable oldFocused = event.getOldFocusOwner();
-		Dockable newFocused = event.getNewFocusOwner();
+        controller.addDockableFocusListener( new DockableFocusListener(){
+            public void dockableFocused( DockableFocusEvent event ) {
+                Dockable oldFocused = event.getOldFocusOwner();
+                Dockable newFocused = event.getNewFocusOwner();
 
-		if( oldFocused != null && oldFocused instanceof CommonDockable ){
-		    CDockable oldC = ((CommonDockable)oldFocused).getDockable();
-		    CDockableAccess access = accesses.get( oldC );
-		    if( access != null ){
-			access.getFocusListener().focusLost( oldC );
-		    }
+                if( oldFocused != null && oldFocused instanceof CommonDockable ){
+                    CDockable oldC = ((CommonDockable)oldFocused).getDockable();
+                    CDockableAccess access = accesses.get( oldC );
+                    if( access != null ){
+                        access.getFocusListener().focusLost( oldC );
+                    }
 
-		    listenerCollection.getFocusListener().focusLost( oldC );
-		}
-		if( newFocused != null && newFocused instanceof CommonDockable ){
-		    CDockable newC = ((CommonDockable)newFocused).getDockable();
-		    CDockableAccess access = accesses.get( newC );
-		    if( access != null ){
-			access.getFocusListener().focusGained( newC );
-		    }
+                    listenerCollection.getFocusListener().focusLost( oldC );
+                }
+                if( newFocused != null && newFocused instanceof CommonDockable ){
+                    CDockable newC = ((CommonDockable)newFocused).getDockable();
+                    CDockableAccess access = accesses.get( newC );
+                    if( access != null ){
+                        access.getFocusListener().focusGained( newC );
+                    }
 
-		    listenerCollection.getFocusListener().focusGained( newC );
-		}
-	    }
-	});
+                    listenerCollection.getFocusListener().focusGained( newC );
+                }
+            }
+        });
     }
 
     private void initInputListener( DockController controller ){
-	controller.getKeyboardController().addListener( new KeyboardListener(){
-	    public boolean keyPressed( DockElement element, KeyEvent event ) {
-		if( element instanceof CommonDockable ){
-		    CDockable source = ((CommonDockable)element).getDockable();
-		    CDockableAccess access = accesses.get( source );
-		    if( access != null ){
-			if( access.getKeyboardListener().keyPressed( source, event ))
-			    return true;
-		    }
-		    return listenerCollection.getKeyboardListener().keyPressed( source, event );
-		}
-		return false;
-	    }
+        controller.getKeyboardController().addListener( new KeyboardListener(){
+            public boolean keyPressed( DockElement element, KeyEvent event ) {
+                if( element instanceof CommonDockable ){
+                    CDockable source = ((CommonDockable)element).getDockable();
+                    CDockableAccess access = accesses.get( source );
+                    if( access != null ){
+                        if( access.getKeyboardListener().keyPressed( source, event ))
+                            return true;
+                    }
+                    return listenerCollection.getKeyboardListener().keyPressed( source, event );
+                }
+                return false;
+            }
 
-	    public boolean keyReleased( DockElement element, KeyEvent event ) {
-		if( element instanceof CommonDockable ){
-		    CDockable source = ((CommonDockable)element).getDockable();
-		    CDockableAccess access = accesses.get( source );
-		    if( access != null ){
-			if( access.getKeyboardListener().keyReleased( source, event ))
-			    return true;
-		    }
-		    return listenerCollection.getKeyboardListener().keyReleased( source, event );
-		}
-		return false;
-	    }
+            public boolean keyReleased( DockElement element, KeyEvent event ) {
+                if( element instanceof CommonDockable ){
+                    CDockable source = ((CommonDockable)element).getDockable();
+                    CDockableAccess access = accesses.get( source );
+                    if( access != null ){
+                        if( access.getKeyboardListener().keyReleased( source, event ))
+                            return true;
+                    }
+                    return listenerCollection.getKeyboardListener().keyReleased( source, event );
+                }
+                return false;
+            }
 
-	    public boolean keyTyped( DockElement element, KeyEvent event ) {
-		if( element instanceof CommonDockable ){
-		    CDockable source = ((CommonDockable)element).getDockable();
-		    CDockableAccess access = accesses.get( source );
-		    if( access != null ){
-			if( access.getKeyboardListener().keyTyped( source, event ))
-			    return true;
-		    }
-		    return listenerCollection.getKeyboardListener().keyTyped( source, event );
-		}
-		return false;
-	    }
+            public boolean keyTyped( DockElement element, KeyEvent event ) {
+                if( element instanceof CommonDockable ){
+                    CDockable source = ((CommonDockable)element).getDockable();
+                    CDockableAccess access = accesses.get( source );
+                    if( access != null ){
+                        if( access.getKeyboardListener().keyTyped( source, event ))
+                            return true;
+                    }
+                    return listenerCollection.getKeyboardListener().keyTyped( source, event );
+                }
+                return false;
+            }
 
-	    public DockElement getTreeLocation() {
-		return null;
-	    }	        
-	});
+            public DockElement getTreeLocation() {
+                return null;
+            }	        
+        });
 
-	controller.getDoubleClickController().addListener( new DoubleClickListener(){
-	    public boolean process( Dockable dockable, MouseEvent event ) {
-		if( dockable instanceof CommonDockable ){
-		    CDockable source = ((CommonDockable)dockable).getDockable();
-		    CDockableAccess access = accesses.get( source );
-		    if( access != null ){
-			if( access.getDoubleClickListener().clicked( source, event ))
-			    return true;
-		    }
-		    return listenerCollection.getDoubleClickListener().clicked( source, event );
-		}
-		return false;                
-	    }
+        controller.getDoubleClickController().addListener( new DoubleClickListener(){
+            public boolean process( Dockable dockable, MouseEvent event ) {
+                if( dockable instanceof CommonDockable ){
+                    CDockable source = ((CommonDockable)dockable).getDockable();
+                    CDockableAccess access = accesses.get( source );
+                    if( access != null ){
+                        if( access.getDoubleClickListener().clicked( source, event ))
+                            return true;
+                    }
+                    return listenerCollection.getDoubleClickListener().clicked( source, event );
+                }
+                return false;                
+            }
 
-	    public DockElement getTreeLocation() {
-		return null;
-	    }
-	});
+            public DockElement getTreeLocation() {
+                return null;
+            }
+        });
     }
 
     /**
      * Sets up the {@link #stateManager}.
      */
-     private void initExtendedModes(){
-	 stateManager = new CStateManager( access );
-
-	 WindowProvider window = frontend.getController().getRootWindowProvider();
-	 final ScreenDockStation screen = factory.createScreenDockStation( window );
-
-	 // frontend.addRoot( screen, EXTERNALIZED_STATION_ID );
-	 CStation screenStation = new AbstractCStation( screen, EXTERNALIZED_STATION_ID, CExternalizedLocation.STATION ){
-	     private ScreenResizeRequestHandler handler = new ScreenResizeRequestHandler( screen );
-
-	     @Override
-	     protected void install( CControlAccess access ) {
-		 access.getOwner().addResizeRequestListener( handler );
-		 access.getStateManager().add( EXTERNALIZED_STATION_ID, screen );
-	     }
-	     @Override
-	     protected void uninstall( CControlAccess access ) {
-		 access.getOwner().removeResizeRequestListener( handler );
-		 access.getStateManager().remove( EXTERNALIZED_STATION_ID );
-	     }
-	 };
-
-	 add( screenStation, true );
-
-	 WindowProviderVisibility visibility = new WindowProviderVisibility( screen );
-	 visibility.setProvider( window );
-     }
-
-     /**
-      * Sets up the default properties.
-      */
-     private void initProperties(){
-	 putProperty( KEY_MAXIMIZE_CHANGE, KeyStroke.getKeyStroke( KeyEvent.VK_M, InputEvent.CTRL_MASK ) );
-	 putProperty( KEY_GOTO_EXTERNALIZED, KeyStroke.getKeyStroke( KeyEvent.VK_E, InputEvent.CTRL_MASK ) );
-	 putProperty( KEY_GOTO_NORMALIZED, KeyStroke.getKeyStroke( KeyEvent.VK_N, InputEvent.CTRL_MASK ) );
-	 putProperty( KEY_CLOSE, KeyStroke.getKeyStroke( KeyEvent.VK_F4, InputEvent.CTRL_MASK ) );
-	 putProperty( SplitDockStation.LAYOUT_MANAGER, new CLockedResizeLayoutManager( this ) );
-	 putProperty( FlapDockStation.LAYOUT_MANAGER, new CFlapLayoutManager() );	    
-     }
-
-     /**
-      * Stores the mapping of {@link MultipleCDockableFactory} and 
-      * {@link MultipleCDockable}s in <code>setting</code>.
-      * @param setting the setting to fill
-      */
-     private void fillMultiFactories( CSetting setting ){
-	 for( String id : register.listMultipleDockableFactories() ){
-	     MultipleCDockableFactory<?, ?> factory = register.getFactory( id );
-	     List<MultipleCDockable> dockables = register.listMultipleDockables( factory );
-	     if( !dockables.isEmpty() ){
-		 List<String> ids = new ArrayList<String>( dockables.size() );
-		 for( MultipleCDockable dockable : dockables ){
-		     String uniqueId = accesses.get( dockable ).getUniqueId();
-		     ids.add( register.multiToNormalId( uniqueId ) );
-		 }
-		 setting.putMultipleFactoryDockables( id, ids );
-	     }
-	 }
-     }
-
-     /**
-      * Adds a listener to this control.
-      * @param listener the new listener
-      */
-     public void addControlListener( CControlListener listener ){
-	 if( listener == null )
-	     throw new IllegalArgumentException( "Listener must not be null" );
-	 listeners.add( listener );
-     }
-
-     /**
-      * Removes a listener from this control.
-      * @param listener the listener to remove
-      */
-     public void removeControlListener( CControlListener listener ){
-	 listeners.remove( listener );
-     }
-
-     /**
-      * Adds a new focus listener to this control. The listener gets informed
-      * about changes in the focus.
-      * @param listener the new listener
-      */
-     public void addFocusListener( CFocusListener listener ){
-	 listenerCollection.addFocusListener( listener );
-     }
-
-     /**
-      * Removes a listener from this control.
-      * @param listener the listener to remove
-      */
-     public void removeFocusListener( CFocusListener listener ){
-	 listenerCollection.removeFocusListener( listener );
-     }
-
-     /**
-      * Adds a global state listener. This has the same effect as adding
-      * a state listener to each {@link CDockable} that is known to this 
-      * control.
-      * @param listener the new listener
-      */
-     public void addStateListener( CDockableStateListener listener ){
-	 listenerCollection.addCDockableStateListener( listener );
-     }
-
-     /**
-      * Removes a global state listener.
-      * @param listener the listener to remove
-      */
-     public void removeStateListener( CDockableStateListener listener ){
-	 listenerCollection.removeCDockableStateListener( listener );
-     }
-
-     /**
-      * Adds a global property listener. This has the same effect as adding
-      * a property listener to each {@link CDockable} that is known to this
-      * control.
-      * @param listener the new listener
-      */
-     public void addPropertyListener( CDockablePropertyListener listener ){
-	 listenerCollection.addCDockablePropertyListener( listener );
-     }
-
-     /**
-      * Removes a global listener from this control.
-      * @param listener the listener to remove
-      */
-     public void removePropertyListener( CDockablePropertyListener listener ){
-	 listenerCollection.removeCDockablePropertyListener( listener );
-     }
-
-     /**
-      * Adds a global keyboard listener to this control. The listener gets 
-      * informed whenever a key is touched on a {@link Component} which is a child
-      * of a {@link CDockable}.<br>
-      * Note: listeners directly added to a {@link CDockable} will always
-      * be informed first.<br>
-      * Note: if a listener processes the event, then the other listeners will
-      * not be informed.
-      * @param listener the new listener
-      */
-     public void addKeyboardListener( CKeyboardListener listener ){
-	 listenerCollection.addKeyboardListener( listener );
-     }
-
-     /**
-      * Removes a listener from this control.
-      * @param listener the listener to remove
-      */
-     public void removeKeybaordListener( CKeyboardListener listener ){
-	 listenerCollection.removeKeyboardListener( listener );
-     }
-
-     /**
-      * Adds a key listener to this control that will be informed about any
-      * {@link KeyEvent} that gets processed or analyzed by this control. Especially
-      * any event that gets forwarded to a {@link CKeyboardListener} gets also
-      * forwarded to <code>listener</code>.
-      * @param listener the new listener
-      */
-     public void addGlobalKeyListener( KeyListener listener ){
-	 intern().getController().getKeyboardController().addGlobalListener( listener );
-     }
-
-     /**
-      * Removes a global {@link KeyListener} from this control.
-      * @param listener the listener to remove
-      */
-     public void removeGlobalKeyListener( KeyListener listener ){
-	 intern().getController().getKeyboardController().removeGlobalListener( listener );
-     }
-
-     /**
-      * Adds a global mouse double click listener to this control. The listener gets 
-      * informed whenever the mouse is clicked twice on a {@link Component} which
-      * is a child of a {@link CDockable}.<br>
-      * Note: listeners directly added to a {@link CDockable} will always
-      * be informed first.<br>
-      * Note: if a listener processes the event, then the other listeners will
-      * not be informed.
-      * @param listener the new listener
-      */
-     public void addDoubleClickListener( CDoubleClickListener listener ){
-	 listenerCollection.addDoubleClickListener( listener );
-     }
-
-     /**
-      * Removes a listener from this control.
-      * @param listener the listener to remove
-      */
-     public void removeDoubleClickListener( CDoubleClickListener listener ){
-	 listenerCollection.removeDoubleClickListener( listener );
-     }
-
-     /**
-      * Gets a list of currently registered listeners.
-      * @return the listeners
-      */
-     private CControlListener[] listeners(){
-	 return listeners.toArray( new CControlListener[ listeners.size() ] );
-     }
-
-     /**
-      * Writes a map using the unique identifiers of each {@link SingleCDockable} to
-      * tell to which {@link CWorkingArea} it belongs.
-      * @param out the stream to write into
-      * @throws IOException if an I/O error occurs
-      */
-     private void writeWorkingAreas( DataOutputStream out ) throws IOException{
-	 Map<String,String> map = new HashMap<String, String>();
-
-	 for( SingleCDockable dockable : register.getSingleDockables() ){
-	     CStation area = dockable.getWorkingArea();
-	     if( area != null ){
-		 map.put( dockable.getUniqueId(), area.getUniqueId() );
-	     }
-	 }
-
-	 out.writeInt( map.size() );
-	 for( Map.Entry<String, String> entry : map.entrySet() ){
-	     out.writeUTF( entry.getKey() );
-	     out.writeUTF( entry.getValue() );
-	 }
-     }
-
-     /**
-      * Writes a map of all {@link SingleCDockable}s and their {@link CWorkingArea}.
-      * @param element the element to write into
-      */
-     private void writeWorkingAreasXML( XElement element ){
-	 for( SingleCDockable dockable : register.getSingleDockables() ){
-	     CStation area = dockable.getWorkingArea();
-	     if( area != null ){
-		 XElement xarea = element.addElement( "area" );
-		 xarea.addString( "id", area.getUniqueId() );
-		 xarea.addString( "child", dockable.getUniqueId() );
-	     }
-	 }
-     }
-
-     /**
-      * Reads a map telling for each {@link SingleCDockable} to which {@link CWorkingArea}
-      * it belongs.
-      * @param in the stream to read from
-      * @throws IOException if an I/O error occurs
-      */
-     private void readWorkingAreas( DataInputStream in ) throws IOException{
-	 Map<String, SingleCDockable> dockables = new HashMap<String, SingleCDockable>();
-	 Map<String, CStation> areas = new HashMap<String, CStation>();
-
-	 for( CStation station : register.getStations() ){
-	     if( station.isWorkingArea() ){
-		 areas.put( station.getUniqueId(), station );
-	     }
-	 }
-
-	 for( SingleCDockable dockable : register.getSingleDockables() ){
-	     dockables.put( dockable.getUniqueId(), dockable );
-	 }
-
-	 for( int i = 0, n = in.readInt(); i<n; i++ ){
-	     String key = in.readUTF();
-	     String value = in.readUTF();
-
-	     CDockable dockable = dockables.get( key );
-	     if( dockable != null ){
-		 CStation area = areas.get( value );
-		 dockable.setWorkingArea( area );
-	     }
-	 }
-     }
-
-     /**
-      * Reads a map telling for each {@link SingleCDockable} to which {@link CWorkingArea}
-      * it belongs.
-      * @param element the xml element to read from
-      */
-     private void readWorkingAreasXML( XElement element ){
-	 Map<String, SingleCDockable> dockables = new HashMap<String, SingleCDockable>();
-	 Map<String, CStation> areas = new HashMap<String, CStation>();
-
-	 for( CStation station : register.getStations() ){
-	     if( station.isWorkingArea() ){
-		 areas.put( station.getUniqueId(), station );
-	     }
-	 }
-
-	 for( SingleCDockable dockable : register.getSingleDockables() ){
-	     dockables.put( dockable.getUniqueId(), dockable );
-	 }
-
-	 for( XElement xarea : element.getElements( "area" )){
-	     String key = xarea.getString( "child" );
-	     String value = xarea.getString( "id" );
-
-	     CDockable dockable = dockables.get( key );
-	     if( dockable != null ){
-		 CStation area = areas.get( value );
-		 dockable.setWorkingArea( area );
-	     }
-	 }
-     }
-
-     /**
-      * Frees as much resources as possible. This {@link CControl} will no longer
-      * work correctly after this method was called.
-      */
-     public void destroy(){
-	 frontend.getController().kill();
-	 for( DestroyHook hook : hooks )
-	     hook.destroy();
-     }
-
-     /**
-      * Creates and adds a new {@link CWorkingArea} to this control. The area
-      * is not made visible by this method.
-      * @param uniqueId the unique id of the area
-      * @return the new area
-      */
-     public CWorkingArea createWorkingArea( String uniqueId ){
-	 CWorkingArea area = factory.createWorkingArea( uniqueId );
-	 add( area );
-	 add( area, false );
-	 return area;
-     }
-
-     /**
-      * Creates a new area where minimized {@link CDockable}s can be stored. This
-      * method adds the new area directly as a root station to this control.
-      * @param uniqueId a unique identifier
-      * @return the new area
-      */
-     public CMinimizeArea createMinimizeArea( String uniqueId ){
-	 CMinimizeArea area = new CMinimizeArea( this, uniqueId );
-	 add( area, true );
-	 return area;
-     }
-
-     /**
-      * Creates a new area where normalized {@link CDockable}s can be stored.
-      * This method adds the new area directly as a root station to this control
-      * @param uniqueId a unique identifier
-      * @return the new area
-      */
-     public CGridArea createGridArea( String uniqueId ){
-	 CGridArea area = new CGridArea( this, uniqueId, false );
-	 add( area, true );
-	 if( frontend.getDefaultStation() == null )
-	     frontend.setDefaultStation( area.getStation() );
-	 return area;
-     }
-
-     /**
-      * Ensures the uniqueness of the identifier <code>uniqueId</code>. Throws
-      * various exceptions if the id is not unique.
-      * @param uniqueId the id that might be unique
-      */
-     private void checkStationIdentifierUniqueness( String uniqueId ){
-	 if( uniqueId == null )
-	     throw new NullPointerException( "uniqueId must not be null" );
-
-	 if( CContentArea.getCenterIdentifier( CONTENT_AREA_STATIONS_ID ).equals( uniqueId ) )
-	     throw new IllegalArgumentException( "The id " + uniqueId + " is reserved for special purposes" );
-	 if( CContentArea.getEastIdentifier( CONTENT_AREA_STATIONS_ID ).equals( uniqueId ) )
-	     throw new IllegalArgumentException( "The id " + uniqueId + " is reserved for special purposes" );
-	 if( CContentArea.getWestIdentifier( CONTENT_AREA_STATIONS_ID ).equals( uniqueId ) )
-	     throw new IllegalArgumentException( "The id " + uniqueId + " is reserved for special purposes" );
-	 if( CContentArea.getSouthIdentifier( CONTENT_AREA_STATIONS_ID ).equals( uniqueId ) )
-	     throw new IllegalArgumentException( "The id " + uniqueId + " is reserved for special purposes" );
-	 if( CContentArea.getNorthIdentifier( CONTENT_AREA_STATIONS_ID ).equals( uniqueId ) )
-	     throw new IllegalArgumentException( "The id " + uniqueId + " is reserved for special purposes" );
-
-	 for( CStation station : register.getStations() ){
-	     if( station.getUniqueId().equals( uniqueId )){
-		 throw new IllegalArgumentException( "There exists already a station with id: " + uniqueId );    
-	     }
-	 }
-     }
-
-     /**
-      * Creates and adds a new {@link CContentArea}.
-      * @param uniqueId the unique id of the new contentarea, the id must be unique
-      * in respect to all other contentareas which are registered at this control.
-      * @return the new contentarea
-      * @throws IllegalArgumentException if the id is not unique
-      * @throws NullPointerException if the id is <code>null</code>
-      */
-     public CContentArea createContentArea( String uniqueId ){
-	 if( uniqueId == null )
-	     throw new NullPointerException( "uniqueId must not be null" );
-
-	 for( CContentArea center : register.getContentAreas() ){
-	     if( center.getUniqueId().equals( uniqueId ))
-		 throw new IllegalArgumentException( "There exists already a CContentArea with the unique id " + uniqueId );
-	 }
-
-	 DockStation defaultStation = frontend.getDefaultStation();
-
-	 boolean noDefaultStation = defaultStation == null || defaultStation instanceof ScreenDockStation;
-
-	 CContentArea center = new CContentArea( this, uniqueId );
-	 addContentArea( center );
-
-	 if( noDefaultStation )
-	     frontend.setDefaultStation( center.getCenter() );
-
-	 return center;
-     }
-
-     /**
-      * Adds a new {@link CContentArea} to this control.
-      * @param content the new area
-      * @throws IllegalArgumentException if the area is already in use or if
-      * the area was not created using <code>this</code>
-      */
-     public void addContentArea( CContentArea content ){
-	 if( content == null )
-	     throw new NullPointerException( "content is null" );
-
-	 if( content.getControl() != this )
-	     throw new IllegalArgumentException( "content was not created using this CControl" );
-
-	 register.addContentArea( content );
-
-	 CContentArea defaultArea = register.getDefaultContentArea();
-
-	 boolean check = !(defaultArea == null || content != defaultArea);
-
-	 for( CStation station : content.getStations() ){
-	     add( station, true, check );
-	 }
-     }
-
-     /**
-      * Removes <code>content</code> from the list of known contentareas. This also removes
-      * the stations of <code>content</code> from this control. Elements aboard the
-      * stations are made invisible, but not removed from this control.
-      * @param content the contentarea to remove
-      * @throws IllegalArgumentException if the default-contentarea equals <code>content</code>
-      */
-     public void removeContentArea( CContentArea content ){
-	 if( content == null )
-	     throw new NullPointerException( "content must not be null" );
-
-	 if( register.getDefaultContentArea() == content )
-	     throw new IllegalArgumentException( "The default-contentarea can't be removed" );
-
-	 if( register.removeContentArea( content ) ){
-	     for( CStation station : content.getStations() ){
-		 remove( station );
-	     }
-	 }
-     }
-
-     /**
-      * Gets the set of dockables, stations and other elemnts that are used
-      * by this control.
-      * @return the set of elements, never <code>null</code>
-      */
-     public CControlRegister getRegister(){
-	 return register;
-     }
-
-     /**
-      * Gets an unmodifiable list of all {@link CContentArea}s registered at
-      * this control
-      * @return the list of content-areas
-      */
-     public List<CContentArea> getContentAreas(){
-	 return register.getContentAreas();
-     }
-
-     /**
-      * Gets the factory which is mainly used to create new elements for this
-      * control.
-      * @return the factory
-      */
-     public CControlFactory getFactory() {
-	 return factory;
-     }
-
-     /**
-      * Gets the manager that is responsible to handle all changes of the
-      * modes (maximized, normalized, ... ) of {@link Dockable}s.<br>
-      * Note: clients should be careful when working with the state manager. 
-      * Changing the properties of the state manager might introduce failures that
-      * are not visible directly.
-      * @return the manager
-      */
-     public CStateManager getStateManager() {
-	 return stateManager;
-     }
-
-     /**
-      * Adds a destroy-hook. The hook is called when this {@link CControl} is
-      * destroyed through {@link #destroy()}.
-      * @param hook the new hook
-      */
-     public void addDestroyHook( DestroyHook hook ){
-	 if( hook == null )
-	     throw new NullPointerException( "hook must not be null" );
-	 hooks.add( hook );
-     }
-
-     /**
-      * Removes a destroy-hook from this {@link CControl}.
-      * @param hook the hook to remove
-      */
-     public void removeDestroyHook( DestroyHook hook ){
-	 hooks.remove( hook );
-     }
-
-     /**
-      * Grants access to the manager that reads and stores configurations
-      * of the common-project.<br>
-      * Clients can add their own {@link ApplicationResource}s to this manager,
-      * however clients are strongly discouraged from removing {@link ApplicationResource}
-      * which they did not add by themself.
-      * @return the persistent storage
-      */
-     public ApplicationResourceManager getResources() {
-	 return resources;
-     }
-
-     /**
-      * Changes the value of a property. Some properties are:
-      * <ul>
-      * <li>{@link #KEY_MAXIMIZE_CHANGE}</li>
-      * <li>{@link #KEY_GOTO_EXTERNALIZED}</li>
-      * <li>{@link #KEY_GOTO_MAXIMIZED}</li>
-      * <li>{@link #KEY_GOTO_MINIMIZED}</li>
-      * <li>{@link #KEY_GOTO_NORMALIZED}</li>
-      * <li>{@link #KEY_CLOSE}</li>
-      * </ul>
-      * @param <A> the type of the value
-      * @param key the name of the property
-      * @param value the new value, can be <code>null</code>
-      */
-     public <A> void putProperty( PropertyKey<A> key, A value ){
-	 frontend.getController().getProperties().set( key, value );
-     }
-
-     /**
-      * Gets the value of a property.
-      * @param <A> the type of the property
-      * @param key the name of the property
-      * @return the value or <code>null</code>
-      */
-     public <A> A getProperty( PropertyKey<A> key ){
-	 return frontend.getController().getProperties().get( key );
-     }
-
-     /**
-      * Gets the element that should be in the center of the mainframe.
-      * @return the center of the mainframe of the application
-      */
-     public CContentArea getContentArea() {
-	 CContentArea content = register.getDefaultContentArea();
-
-	 if( content == null ){
-	     content = createContentArea( CONTENT_AREA_STATIONS_ID );
-	     register.setDefaultContentArea( content );
-	 }
-
-	 return content;
-     }
-
-     /**
-      * Adds an additional station to this control.
-      * @param station the new station
-      * @param root <code>true</code> if the station should become a root station,
-      * which means that the station will not have any parent. <code>false</code>
-      * if the station will have another parent, that is often the case if the
-      * station is a {@link CDockable} as well.
-      */
-     public void add( CStation station, boolean root ){
-	 add( station, root, true );
-     }
-
-     /**
-      * Adds an additional station to this control.
-      * @param station the new station
-      * @param root <code>true</code> if the station should become a root station,
-      * which means that the station will not have any parent. <code>false</code>
-      * if the station will have another parent, that is often the case if the
-      * station is a {@link CDockable} as well.
-      * @param check if <code>true</code> a check of the unique id is performed,
-      * otherwise the station is just put into, perhaps wrongly replacing
-      * other stations.
-      */    
-     private void add( CStation station, boolean root, boolean check ){
-	 String id = station.getUniqueId();
-	 if( check ){
-	     checkStationIdentifierUniqueness( id );
-	 }
-
-	 if( root ){
-	     frontend.addRoot( id, station.getStation() );
-	 }
-
-	 station.setControl( access );
-	 register.addStation( station );
-     }
-
-     /**
-      * Removes a {@link CStation} from this control. It is unspecified what
-      * happens with the children on <code>station</code>
-      * @param station the station to remove
-      */
-     public void remove( CStation station ){
-	 if( register.removeStation( station ) ){
-	     frontend.removeRoot( station.getStation() );
-	     station.setControl( null );
-	 }
-     }
-
-     /**
-      * Gets an unmodifiable list of all stations that are currently 
-      * registered at this control.
-      * @return the list of stations
-      */
-     public List<CStation> getStations(){
-	 return register.getStations();
-     }
-
-     /**
-      * Searches the {@link CStation} whose {@link CStation#getStation() internal representation}
-      * is <code>intern</code>.
-      * @param intern the internal representation
-      * @return the station or <code>null</code>
-      */
-     public CStation getStation( DockStation intern ){
-	 for( CStation station : register.getStations() ){
-	     if( station.getStation() == intern )
-		 return station;
-	 }
-	 return null;
-     }
-
-     /**
-      * Adds a dockable to this control. The dockable can be made visible afterwards.
-      * @param <S> the type of the new element
-      * @param dockable the new element to show
-      * @return <code>dockable</code>
-      */
-     public <S extends SingleCDockable> S add( S dockable ){
-	 if( dockable == null )
-	     throw new NullPointerException( "dockable must not be null" );
-
-	 if( dockable.getControl() != null )
-	     throw new IllegalStateException( "dockable is already part of a control" );
-
-	 dockable.setControl( access );
-	 String id = register.toSingleId( dockable.getUniqueId() );
-	 accesses.get( dockable ).setUniqueId( id );
-	 frontend.addDockable( id, dockable.intern() );
-	 frontend.setHideable( dockable.intern(), true );
-
-	 register.addSingleDockable( dockable );
-
-	 for( CControlListener listener : listeners() )
-	     listener.added( CControl.this, dockable );
-
-	 return dockable;
-     }
-
-     /**
-      * Searches for the {@link SingleCDockable} which has the unique identifier
-      * <code>id</code>.
-      * @param id the identifier to look out for
-      * @return the element with that identifier or <code>null</code>
-      */
-     public SingleCDockable getSingleDockable( String id ){
-	 for( SingleCDockable dockable : register.getSingleDockables() ){
-	     if( dockable.getUniqueId().equals( id )){
-		 return dockable;
-	     }
-	 }
-	 return null;
-     }
-
-     /**
-      * Removes the {@link SingleCDockable} with the identifier <code>id</code>.
-      * This has the same effect as calling {@link #remove(SingleCDockable)}.
-      * @param id the id of the element to remove
-      * @return <code>true</code> if the element was removed, <code>false</code>
-      * otherwise
-      */
-     public boolean removeSingleDockable( String id ){
-	 for( SingleCDockable dockable : register.getSingleDockables() ){
-	     if( dockable.getUniqueId().equals( id )){
-		 return remove( dockable );
-	     }
-	 }
-	 return false;
-     }
-
-     /**
-      * Removes <code>dockable</code> from this control. The location information
-      * for <code>dockable</code> remains stored if either there is a 
-      * {@link #addSingleBackupFactory(String, SingleCDockableBackupFactory) SingleCDockableBackupFactory}
-      * registered or the {@link #setMissingStrategy(MissingCDockableStrategy) MissingCDockableStrategy}
-      * tells to store the values.
-      * @param dockable the element to remove
-      * @return true if the element was removed, <code>false</code> otherwise
-      */
-     public boolean remove( SingleCDockable dockable ){
-	 if( dockable == null )
-	     throw new NullPointerException( "dockable must not be null" );
-
-	 if( dockable.getControl() == access ){
-	     dockable.setVisible( false );
-	     frontend.remove( dockable.intern() );
-	     register.removeSingleDockable( dockable );
-	     dockable.setControl( null );
-
-	     if( !missingStrategy.shouldStoreSingle( dockable.getUniqueId() ) && register.getBackupFactory().getFactory( dockable.getUniqueId() ) == null ){
-		 stateManager.remove( dockable.intern() );
-	     }
-	     else{
-		 stateManager.reduceToEmpty( dockable.intern() );
-	     }
-
-	     for( CControlListener listener : listeners() )
-		 listener.removed( CControl.this, dockable );
-
-	     return true;
-	 }
-
-	 return false;
-     }
-
-     /**
-      * Adds a backup factory to this control. The backup factory will be used
-      * to create and add a {@link SingleCDockable} when one is requested that
-      * is not yet in the cache.<br>
-      * If there is already information for <code>id</code> available and
-      * <code>id</code> should be visible, then the factory will be used
-      * Instantaneously.
-      * @param id the id of the dockable that might be requested
-      * @param backupFactory the new factory
-      */
-     public void addSingleBackupFactory( String id, SingleCDockableBackupFactory backupFactory ){
-	 register.getBackupFactory().add( id, backupFactory );
-
-	 String singleId = register.toSingleId( id );
-	 stateManager.addEmpty( singleId );
-	 frontend.addEmpty( singleId );
-
-	 // if there is already layout information for id, then load this information now
-	 FrontendEntry entry = frontend.getFrontendEntry( singleId );
-	 if( entry != null && entry.getDockable() == null && entry.isShown() ){
-	     SingleCDockable dockable = backupFactory.createBackup( id );
-	     if( dockable != null ){
-		 add( dockable );
-		 if( entry.isShown() || !dockable.isCloseable() ){
-		     dockable.setVisible( true );
-		 }
-	     }
-	 }
-     }
-
-     /**
-      * Searches for the {@link SingleCDockableBackupFactory} which was registered
-      * with the key <code>id</code>.
-      * @param id the identifier of some factory
-      * @return the factory or <code>null</code>
-      */
-     public SingleCDockableBackupFactory getSingleBackupFactory( String id ){
-	 return register.getBackupFactory().getFactory( id );
-     }
-
-     /**
-      * Removes a backup factory from this control. Location information for
-      * <code>id</code> will be deleted if neither a {@link #add(SingleCDockable) SingleCDockable}
-      * is added nor the {@link #setMissingStrategy(MissingCDockableStrategy) MissingCDockableStrategy}
-      * tells to store the information.
-      * @param id the name of the factory
-      * @see #addSingleBackupFactory(String, SingleCDockableBackupFactory)
-      */
-     public void removeSingleBackupFactory( String id ){
-	 register.getBackupFactory().remove( id );
-
-	 if( !missingStrategy.shouldStoreSingle( id )){
-	     id = register.toSingleId( id );
-
-	     stateManager.removeEmpty( id );
-	     frontend.removeEmpty( id );
-	 }
-     }
-
-     /**
-      * Adds a dockable to this control. The dockable can be made visible afterwards.
-      * @param <F> the type of the new element
-      * @param dockable the new element to show
-      * @return <code>dockable</code>
-      */
-     public <F extends MultipleCDockable> F add( F dockable ){
-	 Set<String> ids = new HashSet<String>();
-
-	 String factory = access.getFactoryId( dockable.getFactory() );
-	 if( factory == null ){
-	     throw new IllegalStateException( "the factory for a MultipleCDockable is not registered: " + dockable.getFactory() );
-	 }
-
-	 for( MultipleCDockable multi : register.getMultipleDockables() ){
-	     if( factory.equals( access.getFactoryId( multi.getFactory() ))){
-		 ids.add( accesses.get( multi ).getUniqueId() );
-	     }
-	 }
-
-	 int count = 0;
-	 String id = count + " " + factory;
-	 while( ids.contains( register.toMultiId( id ) ) ){
-	     count++;
-	     id = count + " " + factory;
-	 }
-
-	 return add( dockable, id );
-     }
-
-     /**
-      * Adds a dockable to this control. The dockable can be made visible afterwards.
-      * This method will throw an exception when the unique identifier is already
-      * in use. Clients better use {@link #add(MultipleCDockable)}.
-      * @param <M> the type of the new element
-      * @param dockable the new element to show
-      * @param uniqueId id the unique id of the new element
-      * @return <code>dockable</code>
-      * @throws IllegalArgumentException if the unique identifier is already in
-      * use, if <code>dockable</code> is already used elsewhere, if there is
-      * no factory for <code>dockable</code>
-      * @throws NullPointerException if any argument is <code>null</code>
-      */
-     public <M extends MultipleCDockable> M add( M dockable, String uniqueId ){
-	 if( dockable == null )
-	     throw new NullPointerException( "dockable must not be null" );
-
-	 if( uniqueId == null )
-	     throw new NullPointerException( "uniqueId must not be null" );
-
-	 String factory = access.getFactoryId( dockable.getFactory() );
-	 if( factory == null ){
-	     throw new IllegalStateException( "the factory for a MultipleCDockable is not registered: " + dockable.getFactory() );
-	 }
-
-	 if( dockable.getControl() != null )
-	     throw new IllegalStateException( "dockable is already part of a control" );
-
-	 uniqueId = register.toMultiId( uniqueId );
-
-	 for( MultipleCDockable multi : register.getMultipleDockables() ){
-	     String id = accesses.get( multi ).getUniqueId();
-	     if( uniqueId.equals( id )){
-		 throw new IllegalArgumentException( "The unique identifier is already in use: " + uniqueId );
-	     }
-	 }
-
-	 dockable.setControl( access );
-	 accesses.get( dockable ).setUniqueId( uniqueId );
-
-	 register.addMultipleDockable( dockable );
-
-	 for( CControlListener listener : listeners() )
-	     listener.added( CControl.this, dockable );
-
-	 return dockable;
-     }
-
-     /**
-      * Searches and returns the one {@link MultipleCDockable} which uses
-      * the unique identifier <code>id</code>.
-      * @param id the identifier to look out for
-      * @return the element using <code>id</code> or <code>null</code> if nothing
-      * was found
-      */
-     public MultipleCDockable getMultipleDockable( String id ){
-	 id = register.toMultiId( id );
-	 for( MultipleCDockable dockable : register.getMultipleDockables() ){
-	     if( accesses.get( dockable ).getUniqueId().equals( id )){
-		 return dockable;
-	     }
-	 }
-	 return null;
-     }
-
-     private boolean shouldStore( String id ){
-	 if( register.isSingleId( id ))
-	     return missingStrategy.shouldStoreSingle( register.singleToNormalId( id ) );
-	 else
-	     return false;
-     }    
-
-     private boolean shouldCreate( MultipleCDockableFactory<?, ?> factory ){
-	 String id = access.getFactoryId( factory );
-	 return missingStrategy.shouldCreate( id, factory );
-     }
-
-     @SuppressWarnings("unchecked")
-     private boolean shouldCreate( MultipleCDockableFactory<?, ?> factory, CommonDockableLayout layout ){
-	 String uniqueId = layout.getId();
-
-	 String multiId = register.toMultiId( uniqueId );
-
-	 for( MultipleCDockable multi : register.getMultipleDockables() ){
-	     if( accesses.get( multi ).getUniqueId().equals( multiId )){
-		 return false;
-	     }
-	 }
-
-	 String factoryId = access.getFactoryId( factory );
-	 MultipleCDockableFactory<?, MultipleCDockableLayout> normalizedFactory = (MultipleCDockableFactory<?, MultipleCDockableLayout>)factory;
-	 return missingStrategy.shouldCreate( factoryId, normalizedFactory, uniqueId, layout.getLayout() );
-     }
-
-     /**
-      * Removes a dockable from this control. The dockable is made invisible.
-      * @param dockable the element to remove
-      */
-     public void remove( MultipleCDockable dockable ){
-	 if( dockable == null )
-	     throw new NullPointerException( "dockable must not be null" );
-
-	 if( dockable.getControl() == access ){
-	     dockable.setVisible( false );
-	     frontend.remove( dockable.intern() );
-
-	     register.removeMultipleDockable( dockable );
-
-	     dockable.setControl( null );
-
-	     for( CControlListener listener : listeners() )
-		 listener.removed( CControl.this, dockable );
-	 }
-     }
-
-     /**
-      * Gets the number of {@link CDockable}s that are registered in this
-      * {@link CControl}.
-      * @return the number of dockables
-      */
-     public int getCDockableCount(){
-	 return register.getDockableCount();
-     }
-
-     /**
-      * Gets the index'th dockable that is registered in this control
-      * @param index the index of the element
-      * @return the selected dockable
-      */
-     public CDockable getCDockable( int index ){
-	 return register.getDockable( index );
-     }
-
-     /**
-      * Adds a factory to this control. The factory will create {@link MultipleCDockable}s
-      * when a layout is loaded.
-      * @param id the unique id of the factory
-      * @param factory the new factory
-      * @deprecated use {@link #addMultipleDockableFactory(String, MultipleCDockableFactory)}
-      */
-     @Deprecated
-     public void add( final String id, final MultipleCDockableFactory<?,?> factory ){
-	 if( id == null )
-	     throw new NullPointerException( "id must not be null" );
-
-	 if( factory == null )
-	     throw new NullPointerException( "factory must not be null" );
-
-	 if( register.getCommonMultipleDockableFactory( id ) != null ){
-	     throw new IllegalArgumentException( "there is already a factory named " + id );
-	 }
-
-	 if( access.getFactoryId( factory ) != null ){
-	     throw new IllegalArgumentException( "this factory-object is already in use and cannot be added a second time" );
-	 }
-
-	 CommonMultipleDockableFactory cfactory = new CommonMultipleDockableFactory( id, factory, access );
-
-	 register.putCommonMultipleDockableFactory( id, cfactory );
-	 frontend.registerFactory( cfactory );
-     }
-
-
-
-     /**
-      * Adds a factory to this control. The factory will create {@link MultipleCDockable}s
-      * when a layout is loaded.
-      * @param id the unique id of the factory
-      * @param factory the new factory
-      */
-     public void addMultipleDockableFactory( String id, MultipleCDockableFactory<?, ?> factory ){
-	 add( id, factory );
-     }
-
-     /**
-      * Searches for the {@link MultipleCDockableFactory} with the identifier
-      * <code>id</code>.
-      * @param id the identifier to search for
-      * @return the factory or <code>null</code>
-      */
-     public MultipleCDockableFactory<?, ?> getMultipleDockableFactory( String id ){
-	 return register.getFactory( id );
-     }
-
-
-     /**
-      * Removes the {@link MultipleCDockableFactory} with identifier <code>id</code>
-      * from this control. As a side effect all {@link MultipleCDockable}s which
-      * use that factory are removed as well. Nothing happens if there is no
-      * factory registered with <code>id</code>.
-      * @param id the identifier of the factory to remove
-      */
-     public void removeMultipleDockableFactory( String id ){
-	 CommonMultipleDockableFactory factory = register.removeCommonMultipleDockableFactory( id );
-	 if( factory != null ){
-	     frontend.unregisterFactory( factory );
-
-	     List<MultipleCDockable> toRemove = new ArrayList<MultipleCDockable>();
-	     for( MultipleCDockable dockable : register.getMultipleDockables() ){
-		 if( dockable.getFactory() == factory.getFactory() ){
-		     toRemove.add( dockable );
-		 }
-	     }
-
-	     for( MultipleCDockable dockable : toRemove ){
-		 remove( dockable );
-	     }
-	 }
-     }
-
-     /**
-      * Sets the location where {@link CDockable}s are opened when there is
-      * nothing else specified for these <code>CDockable</code>s.
-      * @param defaultLocation the location, can be <code>null</code>
-      */
-     public void setDefaultLocation( CLocation defaultLocation ){
-	 this.defaultLocation = defaultLocation;
-     }
-
-     /**
-      * Gets the location where {@link CDockable}s are opened when nothing else
-      * is specified.
-      * @return the location, might be <code>null</code>
-      * @see #setDefaultLocation(CLocation)
-      */
-     public CLocation getDefaultLocation(){
-	 return defaultLocation;
-     }	
-
-     /**
-      * Makes sure that all {@link CDockable}s are maximized onto the area
-      * which is registered under the given unique id.
-      * @param id the unique id of the area
-      * @see CGridArea#getUniqueId()
-      * @see CContentArea#getCenterIdentifier()
-      */
-     public void setMaximizeArea( String id ){
-	 stateManager.setMaximizingStation( id );
-     }
-
-     /**
-      * Sets the {@link CMaximizeBehavior}. The behavior decides what happens
-      * when the user want's to maximize or to un-maximize a {@link CDockable}.
-      * @param behavior the new behavior, not <code>null</code>
-      */
-     public void setMaximizeBehavior( CMaximizeBehavior behavior ){
-	 stateManager.setMaximizeBehavior( behavior );
-     }
-
-     /**
-      * Gets the currently used maximize-behavior.
-      * @return the behavior, not <code>null</code>
-      * @see #setMaximizeBehavior(CMaximizeBehavior)
-      */
-     public CMaximizeBehavior getMaximizeBehavior(){
-	 return stateManager.getMaximizeBehavior();
-     }
-
-     /**
-      * Sets the theme of the elements in the realm of this control.
-      * @param theme the new theme
-      * @deprecated replaced by {@link #setTheme(String)}. While this method still
-      * works, the theme will not get stored persistent and any module using
-      * the {@link ThemeMap} ({@link #getThemes()}) will not be informed about
-      * the change.
-      */
-     @Deprecated
-     public void setTheme( DockTheme theme ){
-	 frontend.getController().setTheme( theme );
-     }
-
-     /**
-      * Sets the theme of the elements in the realm of this control. The String
-      * <code>theme</code> is used as key for {@link ThemeMap#select(String)}.
-      * @param theme the name of the theme, this might be one of 
-      * {@link ThemeMap#KEY_BASIC_THEME}, {@link ThemeMap#KEY_BUBBLE_THEME},
-      * {@link ThemeMap#KEY_ECLIPSE_THEME}, {@link ThemeMap#KEY_FLAT_THEME}
-      * or {@link ThemeMap#KEY_SMOOTH_THEME}. This can also be a any other
-      * string which was used for {@link ThemeMap#put(String, ThemeFactory)},
-      * {@link ThemeMap#add(String, ThemeFactory)} or {@link ThemeMap#insert(int, String, ThemeFactory)}.
-      */
-     public void setTheme( String theme ){
-	 themes.select( theme );
-     }
-
-     /**
-      * Gets the list of installed themes.
-      * @return the list of themes
-      */
-     public ThemeMap getThemes(){
-	 return themes;
-     }
-
-     /**
-      * Sets the root window of the application. The root window is used
-      * as owner of any dialog that is created. Already existing dialogs
-      * will not change their owner.
-      * @param window the new owner, can be <code>null</code>
-      */
-     public void setRootWindow( WindowProvider window ){
-	 frontend.setOwner( window );
-     }
-
-     /**
-      * Gets the root window of the application. Note that this method might
-      * not return the same object as given to {@link #setRootWindow(WindowProvider)},
-      * however the provide returned by this method will return the same window
-      * as specified by {@link #setRootWindow(WindowProvider)}.
-      * @return the provider, never <code>null</code>
-      */
-     public WindowProvider getRootWindow(){
-	 return frontend.getOwner();
-     }
-
-     /**
-      * Gets the storage container for {@link PreferenceModel}s for this control.
-      * The contents of this container are stored in the
-      * {@link #getResources() resource manager}.
-      * @return the storage for preferences
-      * @see #getResources()
-      */
-     public PreferenceStorage getPreferences(){
-	 return preferences;
-     }
-
-     /**
-      * Sets the {@link PreferenceModel} which will be used to translate between
-      * <code>this</code> and the {@link #getPreferences() preferences}. This
-      * model can be set to <code>null</code>.<br>
-      * The default value of this property is <code>null</code>.
-      * @param preferenceModel the new model, it will used to translate
-      * the contents of {@link #getPreferences()} immediately, can be <code>null</code>
-      */
-     public void setPreferenceModel( PreferenceModel preferenceModel ) {
-	 if( this.preferenceModel != null ){
-	     this.preferenceModel.read();
-	     preferences.store( this.preferenceModel );
-	 }
-	 this.preferenceModel = preferenceModel;
-	 if( preferenceModel != null ){
-	     preferences.load( preferenceModel, false );
-	     preferenceModel.write();
-	 }
-     }
-
-     /**
-      * Gets the preference model which is used to translate between the 
-      * {@link #getPreferences() preferences} and <code>this</code>.
-      * @return the model, can be <code>null</code>
-      * @see #setPreferenceModel(PreferenceModel)
-      */
-     public PreferenceModel getPreferenceModel() {
-	 return preferenceModel;
-     }
-
-     /**
-      * Sets the strategy that tells what to do if layout information of a missing
-      * {@link CDockable} is found.
-      * @param missingStrategy the strategy, <code>null</code> will set
-      * the default strategy
-      */
-     public void setMissingStrategy( MissingCDockableStrategy missingStrategy ) {
-	 if( missingStrategy == null ){
-	     this.missingStrategy = MissingCDockableStrategy.PURGE;
-	 }
-	 else{
-	     this.missingStrategy = missingStrategy;
-	 }
-     }
-
-     /**
-      * Gets the strategy that tells what to do if layout information of a missing
-      * {@link CDockable} is found.
-      * @return the strategy, never <code>null</code>
-      */
-     public MissingCDockableStrategy getMissingStrategy() {
-	 return missingStrategy;
-     }
-
-     /**
-      * Adds a {@link ResizeRequestListener} to this {@link CControl}. The listener
-      * will be informed when the resize requests of a {@link CDockable} should
-      * be processed. 
-      * @param listener the new listener, not <code>null</code>
-      */
-     public void addResizeRequestListener( ResizeRequestListener listener ){
-	 if( listener == null )
-	     throw new NullPointerException( "listener must not be null" );
-	 resizeListeners.add( listener );
-     }
-
-     /**
-      * Removes a {@link ResizeRequestListener} from this {@link CControl}.
-      * @param listener the listener to remove
-      */
-     public void removeResizeRequestListener( ResizeRequestListener listener ){
-	 resizeListeners.remove( listener );
-     }
-
-     /**
-      * Informs all {@link ResizeRequestListener}s, that the
-      * {@link CDockable#getAndClearResizeRequest() resize request} of all 
-      * <code>CDockable</code>s should be processed. There are no
-      * guarantees that a resize requests can be granted or even gets processed.<br>
-      * All requests, independent from whether they were processed, will be deleted 
-      * by this method.<br>
-      * Note that a request might conflict with a "resize lock"
-      * {@link CDockable#isResizeLockedHorizontally()} and 
-      * {@link CDockable#isResizeLockedVertically()}. The behavior of that case is not
-      * specified, but clients can assume that the locked components introduce
-      * additional resize requests.
-      */
-     public void handleResizeRequests(){
-	 ResizeRequestListener[] listeners = resizeListeners.toArray( new ResizeRequestListener[ resizeListeners.size() ] );
-	 for( ResizeRequestListener listener : listeners )
-	     listener.handleResizeRequest( this );
-
-	 for( CDockable dockable : register.getDockables() )
-	     dockable.getAndClearResizeRequest();
-     }
-
-     /**
-      * Gets the representation of the layer beneath the common-layer.
-      * @return the entry point to DockingFrames
-      */
-     public DockFrontend intern(){
-	 return frontend;
-     }
-
-     /**
-      * Writes the current and all known layouts into <code>file</code>.<br>
-      * This is the same as calling <code>getResources().writeFile( file )</code>.
-      * @param file the file to override
-      * @throws IOException if the file can't be written
-      */
-     public void write( File file ) throws IOException{
-	 getResources().writeFile( file );
-     }
-
-     /**
-      * Writes the current and all known layouts into <code>out</code>.<br>
-      * This is the same as calling <code>getResources().writeStream( out )</code>.
-      * @param out the stream to write into
-      * @throws IOException if the stream is not writable
-      */
-     public void write( DataOutputStream out ) throws IOException{
-	 getResources().writeStream( out );
-     }
-
-     /**
-      * Reads the current and other known layouts from <code>file</code>.<br>
-      * This is the same as calling <code>getResources().readFile( file )</code>.
-      * @param file the file to read from
-      * @throws IOException if the file can't be read
-      */
-     public void read( File file ) throws IOException{
-	 getResources().readFile( file );
-     }
-
-     /**
-      * Reads the current and other known layouts from <code>in</code>.<br>
-      * This is the same as calling <code>getResources().readStream( out )</code>.
-      * @param in the stream to read from
-      * @throws IOException if the stream can't be read
-      */
-     public void read( DataInputStream in ) throws IOException{
-	 getResources().readStream( in );
-     }
-
-     /**
-      * Stores the current layout with the given name.
-      * @param name the name of the current layout.
-      */
-     public void save( String name ){
-	 frontend.save( name );
-     }
-
-     /**
-      * Loads an earlier stored layout.
-      * @param name the name of the layout.
-      */
-     public void load( String name ){
-	 frontend.load( name );
-     }
-
-     /**
-      * Deletes a layout that has been stored earlier.
-      * @param name the name of the layout to delete
-      */
-     public void delete( String name ){
-	 frontend.delete( name );
-     }
-
-     /**
-      * Gets a list of all layouts that are currently known.
-      * @return the list of layouts
-      */
-     public String[] layouts(){
-	 Set<String> settings = frontend.getSettings();
-	 return settings.toArray( new String[ settings.size() ] );
-     }
-
-     /**
-      * A class giving access to the internal methods of the enclosing
-      * {@link CControl}.
-      * @author Benjamin Sigg
-      */
-     private class Access implements CControlAccess{
-	 /** action used to close {@link CDockable}s  */
-	 private CCloseAction closeAction;
-
-	 public CControl getOwner(){
-	     return CControl.this;
-	 }
-
-	 public <F extends MultipleCDockable> F add( F dockable, String uniqueId ) {
-	     return CControl.this.add( dockable, uniqueId );
-	 }
-
-	 public void link( CDockable dockable, CDockableAccess access ) {
-	     if( access == null ){
-		 accesses.remove( dockable );
-		 dockable.removeCDockablePropertyListener( listenerCollection.getCDockablePropertyListener() );
-		 dockable.removeCDockableStateListener( listenerCollection.getCDockableStateListener() );
-	     }
-	     else{
-		 if( accesses.put( dockable, access ) == null ){
-		     dockable.addCDockablePropertyListener( listenerCollection.getCDockablePropertyListener() );
-		     dockable.addCDockableStateListener( listenerCollection.getCDockableStateListener() );
-		 }
-	     }
-	 }
-
-	 public CDockableAccess access( CDockable dockable ) {
-	     return accesses.get( dockable );
-	 }
-
-	 public void hide( CDockable dockable ){
-	     DockRegister register = frontend.getController().getRegister();
-	     register.setStalled( true );
-	     try{
-		 List<CDockable> maximized = CControl.this.register.listDockablesInMode( ExtendedMode.MAXIMIZED );
-		 boolean changes = stateManager.ensureNothingMaximized();
-
-		 frontend.hide( dockable.intern() );
-
-		 if( changes ){
-		     for( CDockable check : maximized ){
-			 if( check != dockable && check.isMaximizable() && check.isVisible() ){
-			     check.setExtendedMode( ExtendedMode.MAXIMIZED );
-			     break;
-			 }
-		     }
-		 }
-	     }
-	     finally{
-		 register.setStalled( false );
-	     }
-	 }
-
-	 public void show( CDockable dockable ){
-	     DockRegister register = frontend.getController().getRegister();
-	     register.setStalled( true );
-	     try{
-		 CStation area = dockable.getWorkingArea();
-		 if( area != null && area.asDockable() != null ){
-		     if( !area.asDockable().isVisible() ){
-			 throw new IllegalStateException( "A dockable that wants to be on a CWorkingArea can't be made visible unless the CWorkingArea is visible." );
-		     }
-		 }
-
-		 CDockableAccess access = access( dockable );
-		 CLocation location = null;
-		 if( access != null ){
-		     location = access.internalLocation();
-		 }
-		 if( location == null ){
-		     if( !frontend.hasLocation( dockable.intern() ))
-			 location = defaultLocation;
-		 }
-
-		 boolean maximized = stateManager.ensureNothingMaximized();
-
-		 if( location == null ){
-		     frontend.show( dockable.intern() );
-		 }
-		 else{
-		     stateManager.setLocation( dockable.intern(), location );
-		 }
-		 stateManager.ensureValidLocation( dockable );
-		 if( location == null && maximized && dockable.isMaximizable() )
-		     dockable.setExtendedMode( ExtendedMode.MAXIMIZED );
-	     }
-	     finally{
-		 register.setStalled( false );
-	     }
-	 }
-
-	 public boolean isVisible( CDockable dockable ){
-	     return frontend.isShown( dockable.intern() );
-	 }
-
-	 public String getFactoryId( MultipleCDockableFactory<?,?> factory ){
-	     for( Map.Entry<String, MultipleCDockableFactory<?, ?>> entry : register.getFactories().entrySet() ){
-		 if( entry.getValue() == factory ){
-		     return entry.getKey();
-		 }
-	     }
-
-	     return null;
-	 }
-
-	 public CStateManager getStateManager() {
-	     return stateManager;
-	 }
-
-	 public DockAction createCloseAction( final CDockable fdockable ) {
-	     if( closeAction == null )
-		 closeAction = new CCloseAction( CControl.this );
-
-	     return closeAction.intern();
-	 }
-
-	 public MutableCControlRegister getRegister() {
-	     return register;
-	 }
-
-	 public boolean shouldStore( String key ) {
-	     return CControl.this.shouldStore( key );
-	 }
-
-	 public void fillMultiFactories( CSetting setting ) {
-	     CControl.this.fillMultiFactories( setting );
-	 }
-     }
+    private void initExtendedModes(){
+        stateManager = new CStateManager( access );
+
+        WindowProvider window = frontend.getController().getRootWindowProvider();
+        final ScreenDockStation screen = factory.createScreenDockStation( window );
+
+        // frontend.addRoot( screen, EXTERNALIZED_STATION_ID );
+        CStation screenStation = new AbstractCStation( screen, EXTERNALIZED_STATION_ID, CExternalizedLocation.STATION ){
+            private ScreenResizeRequestHandler handler = new ScreenResizeRequestHandler( screen );
+
+            @Override
+            protected void install( CControlAccess access ) {
+                access.getOwner().addResizeRequestListener( handler );
+                access.getStateManager().add( EXTERNALIZED_STATION_ID, screen );
+            }
+            @Override
+            protected void uninstall( CControlAccess access ) {
+                access.getOwner().removeResizeRequestListener( handler );
+                access.getStateManager().remove( EXTERNALIZED_STATION_ID );
+            }
+        };
+
+        add( screenStation, true );
+
+        WindowProviderVisibility visibility = new WindowProviderVisibility( screen );
+        visibility.setProvider( window );
+    }
+
+    /**
+     * Sets up the default properties.
+     */
+    private void initProperties(){
+        putProperty( KEY_MAXIMIZE_CHANGE, KeyStroke.getKeyStroke( KeyEvent.VK_M, InputEvent.CTRL_MASK ) );
+        putProperty( KEY_GOTO_EXTERNALIZED, KeyStroke.getKeyStroke( KeyEvent.VK_E, InputEvent.CTRL_MASK ) );
+        putProperty( KEY_GOTO_NORMALIZED, KeyStroke.getKeyStroke( KeyEvent.VK_N, InputEvent.CTRL_MASK ) );
+        putProperty( KEY_CLOSE, KeyStroke.getKeyStroke( KeyEvent.VK_F4, InputEvent.CTRL_MASK ) );
+        putProperty( SplitDockStation.LAYOUT_MANAGER, new CLockedResizeLayoutManager( this ) );
+        putProperty( FlapDockStation.LAYOUT_MANAGER, new CFlapLayoutManager() );	    
+    }
+
+    /**
+     * Stores the mapping of {@link MultipleCDockableFactory} and 
+     * {@link MultipleCDockable}s in <code>setting</code>.
+     * @param setting the setting to fill
+     */
+    private void fillMultiFactories( CSetting setting ){
+        for( String id : register.listMultipleDockableFactories() ){
+            MultipleCDockableFactory<?, ?> factory = register.getFactory( id );
+            List<MultipleCDockable> dockables = register.listMultipleDockables( factory );
+            if( !dockables.isEmpty() ){
+                List<String> ids = new ArrayList<String>( dockables.size() );
+                for( MultipleCDockable dockable : dockables ){
+                    String uniqueId = accesses.get( dockable ).getUniqueId();
+                    ids.add( register.multiToNormalId( uniqueId ) );
+                }
+                setting.putMultipleFactoryDockables( id, ids );
+            }
+        }
+    }
+
+    /**
+     * Adds a listener to this control.
+     * @param listener the new listener
+     */
+    public void addControlListener( CControlListener listener ){
+        if( listener == null )
+            throw new IllegalArgumentException( "Listener must not be null" );
+        listeners.add( listener );
+    }
+
+    /**
+     * Removes a listener from this control.
+     * @param listener the listener to remove
+     */
+    public void removeControlListener( CControlListener listener ){
+        listeners.remove( listener );
+    }
+
+    /**
+     * Adds a new focus listener to this control. The listener gets informed
+     * about changes in the focus.
+     * @param listener the new listener
+     */
+    public void addFocusListener( CFocusListener listener ){
+        listenerCollection.addFocusListener( listener );
+    }
+
+    /**
+     * Removes a listener from this control.
+     * @param listener the listener to remove
+     */
+    public void removeFocusListener( CFocusListener listener ){
+        listenerCollection.removeFocusListener( listener );
+    }
+
+    /**
+     * Adds a global state listener. This has the same effect as adding
+     * a state listener to each {@link CDockable} that is known to this 
+     * control.
+     * @param listener the new listener
+     */
+    public void addStateListener( CDockableStateListener listener ){
+        listenerCollection.addCDockableStateListener( listener );
+    }
+
+    /**
+     * Removes a global state listener.
+     * @param listener the listener to remove
+     */
+    public void removeStateListener( CDockableStateListener listener ){
+        listenerCollection.removeCDockableStateListener( listener );
+    }
+
+    /**
+     * Adds a global property listener. This has the same effect as adding
+     * a property listener to each {@link CDockable} that is known to this
+     * control.
+     * @param listener the new listener
+     */
+    public void addPropertyListener( CDockablePropertyListener listener ){
+        listenerCollection.addCDockablePropertyListener( listener );
+    }
+
+    /**
+     * Removes a global listener from this control.
+     * @param listener the listener to remove
+     */
+    public void removePropertyListener( CDockablePropertyListener listener ){
+        listenerCollection.removeCDockablePropertyListener( listener );
+    }
+
+    /**
+     * Adds a global keyboard listener to this control. The listener gets 
+     * informed whenever a key is touched on a {@link Component} which is a child
+     * of a {@link CDockable}.<br>
+     * Note: listeners directly added to a {@link CDockable} will always
+     * be informed first.<br>
+     * Note: if a listener processes the event, then the other listeners will
+     * not be informed.
+     * @param listener the new listener
+     */
+    public void addKeyboardListener( CKeyboardListener listener ){
+        listenerCollection.addKeyboardListener( listener );
+    }
+
+    /**
+     * Removes a listener from this control.
+     * @param listener the listener to remove
+     */
+    public void removeKeybaordListener( CKeyboardListener listener ){
+        listenerCollection.removeKeyboardListener( listener );
+    }
+
+    /**
+     * Adds a key listener to this control that will be informed about any
+     * {@link KeyEvent} that gets processed or analyzed by this control. Especially
+     * any event that gets forwarded to a {@link CKeyboardListener} gets also
+     * forwarded to <code>listener</code>.
+     * @param listener the new listener
+     */
+    public void addGlobalKeyListener( KeyListener listener ){
+        intern().getController().getKeyboardController().addGlobalListener( listener );
+    }
+
+    /**
+     * Removes a global {@link KeyListener} from this control.
+     * @param listener the listener to remove
+     */
+    public void removeGlobalKeyListener( KeyListener listener ){
+        intern().getController().getKeyboardController().removeGlobalListener( listener );
+    }
+
+    /**
+     * Adds a global mouse double click listener to this control. The listener gets 
+     * informed whenever the mouse is clicked twice on a {@link Component} which
+     * is a child of a {@link CDockable}.<br>
+     * Note: listeners directly added to a {@link CDockable} will always
+     * be informed first.<br>
+     * Note: if a listener processes the event, then the other listeners will
+     * not be informed.
+     * @param listener the new listener
+     */
+    public void addDoubleClickListener( CDoubleClickListener listener ){
+        listenerCollection.addDoubleClickListener( listener );
+    }
+
+    /**
+     * Removes a listener from this control.
+     * @param listener the listener to remove
+     */
+    public void removeDoubleClickListener( CDoubleClickListener listener ){
+        listenerCollection.removeDoubleClickListener( listener );
+    }
+
+    /**
+     * Gets a list of currently registered listeners.
+     * @return the listeners
+     */
+    private CControlListener[] listeners(){
+        return listeners.toArray( new CControlListener[ listeners.size() ] );
+    }
+
+    /**
+     * Writes a map using the unique identifiers of each {@link SingleCDockable} to
+     * tell to which {@link CWorkingArea} it belongs.
+     * @param out the stream to write into
+     * @throws IOException if an I/O error occurs
+     */
+    private void writeWorkingAreas( DataOutputStream out ) throws IOException{
+        Map<String,String> map = new HashMap<String, String>();
+
+        for( SingleCDockable dockable : register.getSingleDockables() ){
+            CStation area = dockable.getWorkingArea();
+            if( area != null ){
+                map.put( dockable.getUniqueId(), area.getUniqueId() );
+            }
+        }
+
+        out.writeInt( map.size() );
+        for( Map.Entry<String, String> entry : map.entrySet() ){
+            out.writeUTF( entry.getKey() );
+            out.writeUTF( entry.getValue() );
+        }
+    }
+
+    /**
+     * Writes a map of all {@link SingleCDockable}s and their {@link CWorkingArea}.
+     * @param element the element to write into
+     */
+    private void writeWorkingAreasXML( XElement element ){
+        for( SingleCDockable dockable : register.getSingleDockables() ){
+            CStation area = dockable.getWorkingArea();
+            if( area != null ){
+                XElement xarea = element.addElement( "area" );
+                xarea.addString( "id", area.getUniqueId() );
+                xarea.addString( "child", dockable.getUniqueId() );
+            }
+        }
+    }
+
+    /**
+     * Reads a map telling for each {@link SingleCDockable} to which {@link CWorkingArea}
+     * it belongs.
+     * @param in the stream to read from
+     * @throws IOException if an I/O error occurs
+     */
+    private void readWorkingAreas( DataInputStream in ) throws IOException{
+        Map<String, SingleCDockable> dockables = new HashMap<String, SingleCDockable>();
+        Map<String, CStation> areas = new HashMap<String, CStation>();
+
+        for( CStation station : register.getStations() ){
+            if( station.isWorkingArea() ){
+                areas.put( station.getUniqueId(), station );
+            }
+        }
+
+        for( SingleCDockable dockable : register.getSingleDockables() ){
+            dockables.put( dockable.getUniqueId(), dockable );
+        }
+
+        for( int i = 0, n = in.readInt(); i<n; i++ ){
+            String key = in.readUTF();
+            String value = in.readUTF();
+
+            CDockable dockable = dockables.get( key );
+            if( dockable != null ){
+                CStation area = areas.get( value );
+                dockable.setWorkingArea( area );
+            }
+        }
+    }
+
+    /**
+     * Reads a map telling for each {@link SingleCDockable} to which {@link CWorkingArea}
+     * it belongs.
+     * @param element the xml element to read from
+     */
+    private void readWorkingAreasXML( XElement element ){
+        Map<String, SingleCDockable> dockables = new HashMap<String, SingleCDockable>();
+        Map<String, CStation> areas = new HashMap<String, CStation>();
+
+        for( CStation station : register.getStations() ){
+            if( station.isWorkingArea() ){
+                areas.put( station.getUniqueId(), station );
+            }
+        }
+
+        for( SingleCDockable dockable : register.getSingleDockables() ){
+            dockables.put( dockable.getUniqueId(), dockable );
+        }
+
+        for( XElement xarea : element.getElements( "area" )){
+            String key = xarea.getString( "child" );
+            String value = xarea.getString( "id" );
+
+            CDockable dockable = dockables.get( key );
+            if( dockable != null ){
+                CStation area = areas.get( value );
+                dockable.setWorkingArea( area );
+            }
+        }
+    }
+
+    /**
+     * Frees as much resources as possible. This {@link CControl} will no longer
+     * work correctly after this method was called.
+     */
+    public void destroy(){
+        frontend.getController().kill();
+        for( DestroyHook hook : hooks )
+            hook.destroy();
+    }
+
+    /**
+     * Creates and adds a new {@link CWorkingArea} to this control. The area
+     * is not made visible by this method.
+     * @param uniqueId the unique id of the area
+     * @return the new area
+     */
+    public CWorkingArea createWorkingArea( String uniqueId ){
+        CWorkingArea area = factory.createWorkingArea( uniqueId );
+        add( area );
+        add( area, false );
+        return area;
+    }
+
+    /**
+     * Creates a new area where minimized {@link CDockable}s can be stored. This
+     * method adds the new area directly as a root station to this control.
+     * @param uniqueId a unique identifier
+     * @return the new area
+     */
+    public CMinimizeArea createMinimizeArea( String uniqueId ){
+        CMinimizeArea area = new CMinimizeArea( this, uniqueId );
+        add( area, true );
+        return area;
+    }
+
+    /**
+     * Creates a new area where normalized {@link CDockable}s can be stored.
+     * This method adds the new area directly as a root station to this control
+     * @param uniqueId a unique identifier
+     * @return the new area
+     */
+    public CGridArea createGridArea( String uniqueId ){
+        CGridArea area = new CGridArea( this, uniqueId, false );
+        add( area, true );
+        if( frontend.getDefaultStation() == null )
+            frontend.setDefaultStation( area.getStation() );
+        return area;
+    }
+
+    /**
+     * Ensures the uniqueness of the identifier <code>uniqueId</code>. Throws
+     * various exceptions if the id is not unique.
+     * @param uniqueId the id that might be unique
+     */
+    private void checkStationIdentifierUniqueness( String uniqueId ){
+        if( uniqueId == null )
+            throw new NullPointerException( "uniqueId must not be null" );
+
+        if( CContentArea.getCenterIdentifier( CONTENT_AREA_STATIONS_ID ).equals( uniqueId ) )
+            throw new IllegalArgumentException( "The id " + uniqueId + " is reserved for special purposes" );
+        if( CContentArea.getEastIdentifier( CONTENT_AREA_STATIONS_ID ).equals( uniqueId ) )
+            throw new IllegalArgumentException( "The id " + uniqueId + " is reserved for special purposes" );
+        if( CContentArea.getWestIdentifier( CONTENT_AREA_STATIONS_ID ).equals( uniqueId ) )
+            throw new IllegalArgumentException( "The id " + uniqueId + " is reserved for special purposes" );
+        if( CContentArea.getSouthIdentifier( CONTENT_AREA_STATIONS_ID ).equals( uniqueId ) )
+            throw new IllegalArgumentException( "The id " + uniqueId + " is reserved for special purposes" );
+        if( CContentArea.getNorthIdentifier( CONTENT_AREA_STATIONS_ID ).equals( uniqueId ) )
+            throw new IllegalArgumentException( "The id " + uniqueId + " is reserved for special purposes" );
+
+        for( CStation station : register.getStations() ){
+            if( station.getUniqueId().equals( uniqueId )){
+                throw new IllegalArgumentException( "There exists already a station with id: " + uniqueId );    
+            }
+        }
+    }
+
+    /**
+     * Creates and adds a new {@link CContentArea}.
+     * @param uniqueId the unique id of the new contentarea, the id must be unique
+     * in respect to all other contentareas which are registered at this control.
+     * @return the new contentarea
+     * @throws IllegalArgumentException if the id is not unique
+     * @throws NullPointerException if the id is <code>null</code>
+     */
+    public CContentArea createContentArea( String uniqueId ){
+        if( uniqueId == null )
+            throw new NullPointerException( "uniqueId must not be null" );
+
+        for( CContentArea center : register.getContentAreas() ){
+            if( center.getUniqueId().equals( uniqueId ))
+                throw new IllegalArgumentException( "There exists already a CContentArea with the unique id " + uniqueId );
+        }
+
+        DockStation defaultStation = frontend.getDefaultStation();
+
+        boolean noDefaultStation = defaultStation == null || defaultStation instanceof ScreenDockStation;
+
+        CContentArea center = new CContentArea( this, uniqueId );
+        addContentArea( center );
+
+        if( noDefaultStation )
+            frontend.setDefaultStation( center.getCenter() );
+
+        return center;
+    }
+
+    /**
+     * Adds a new {@link CContentArea} to this control.
+     * @param content the new area
+     * @throws IllegalArgumentException if the area is already in use or if
+     * the area was not created using <code>this</code>
+     */
+    public void addContentArea( CContentArea content ){
+        if( content == null )
+            throw new NullPointerException( "content is null" );
+
+        if( content.getControl() != this )
+            throw new IllegalArgumentException( "content was not created using this CControl" );
+
+        register.addContentArea( content );
+
+        CContentArea defaultArea = register.getDefaultContentArea();
+
+        boolean check = !(defaultArea == null || content != defaultArea);
+
+        for( CStation station : content.getStations() ){
+            add( station, true, check );
+        }
+    }
+
+    /**
+     * Removes <code>content</code> from the list of known contentareas. This also removes
+     * the stations of <code>content</code> from this control. Elements aboard the
+     * stations are made invisible, but not removed from this control.
+     * @param content the contentarea to remove
+     * @throws IllegalArgumentException if the default-contentarea equals <code>content</code>
+     */
+    public void removeContentArea( CContentArea content ){
+        if( content == null )
+            throw new NullPointerException( "content must not be null" );
+
+        if( register.getDefaultContentArea() == content )
+            throw new IllegalArgumentException( "The default-contentarea can't be removed" );
+
+        if( register.removeContentArea( content ) ){
+            for( CStation station : content.getStations() ){
+                remove( station );
+            }
+        }
+    }
+
+    /**
+     * Gets the set of dockables, stations and other elemnts that are used
+     * by this control.
+     * @return the set of elements, never <code>null</code>
+     */
+    public CControlRegister getRegister(){
+        return register;
+    }
+
+    /**
+     * Gets an unmodifiable list of all {@link CContentArea}s registered at
+     * this control
+     * @return the list of content-areas
+     */
+    public List<CContentArea> getContentAreas(){
+        return register.getContentAreas();
+    }
+
+    /**
+     * Gets the factory which is mainly used to create new elements for this
+     * control.
+     * @return the factory
+     */
+    public CControlFactory getFactory() {
+        return factory;
+    }
+
+    /**
+     * Gets the manager that is responsible to handle all changes of the
+     * modes (maximized, normalized, ... ) of {@link Dockable}s.<br>
+     * Note: clients should be careful when working with the state manager. 
+     * Changing the properties of the state manager might introduce failures that
+     * are not visible directly.
+     * @return the manager
+     */
+    public CStateManager getStateManager() {
+        return stateManager;
+    }
+
+    /**
+     * Adds a destroy-hook. The hook is called when this {@link CControl} is
+     * destroyed through {@link #destroy()}.
+     * @param hook the new hook
+     */
+    public void addDestroyHook( DestroyHook hook ){
+        if( hook == null )
+            throw new NullPointerException( "hook must not be null" );
+        hooks.add( hook );
+    }
+
+    /**
+     * Removes a destroy-hook from this {@link CControl}.
+     * @param hook the hook to remove
+     */
+    public void removeDestroyHook( DestroyHook hook ){
+        hooks.remove( hook );
+    }
+
+    /**
+     * Grants access to the manager that reads and stores configurations
+     * of the common-project.<br>
+     * Clients can add their own {@link ApplicationResource}s to this manager,
+     * however clients are strongly discouraged from removing {@link ApplicationResource}
+     * which they did not add by themself.
+     * @return the persistent storage
+     */
+    public ApplicationResourceManager getResources() {
+        return resources;
+    }
+
+    /**
+     * Changes the value of a property. Some properties are:
+     * <ul>
+     * <li>{@link #KEY_MAXIMIZE_CHANGE}</li>
+     * <li>{@link #KEY_GOTO_EXTERNALIZED}</li>
+     * <li>{@link #KEY_GOTO_MAXIMIZED}</li>
+     * <li>{@link #KEY_GOTO_MINIMIZED}</li>
+     * <li>{@link #KEY_GOTO_NORMALIZED}</li>
+     * <li>{@link #KEY_CLOSE}</li>
+     * </ul>
+     * @param <A> the type of the value
+     * @param key the name of the property
+     * @param value the new value, can be <code>null</code>
+     */
+    public <A> void putProperty( PropertyKey<A> key, A value ){
+        frontend.getController().getProperties().set( key, value );
+    }
+
+    /**
+     * Gets the value of a property.
+     * @param <A> the type of the property
+     * @param key the name of the property
+     * @return the value or <code>null</code>
+     */
+    public <A> A getProperty( PropertyKey<A> key ){
+        return frontend.getController().getProperties().get( key );
+    }
+
+    /**
+     * Gets the element that should be in the center of the mainframe.
+     * @return the center of the mainframe of the application
+     */
+    public CContentArea getContentArea() {
+        CContentArea content = register.getDefaultContentArea();
+
+        if( content == null ){
+            content = createContentArea( CONTENT_AREA_STATIONS_ID );
+            register.setDefaultContentArea( content );
+        }
+
+        return content;
+    }
+
+    /**
+     * Adds an additional station to this control.
+     * @param station the new station
+     * @param root <code>true</code> if the station should become a root station,
+     * which means that the station will not have any parent. <code>false</code>
+     * if the station will have another parent, that is often the case if the
+     * station is a {@link CDockable} as well.
+     */
+    public void add( CStation station, boolean root ){
+        add( station, root, true );
+    }
+
+    /**
+     * Adds an additional station to this control.
+     * @param station the new station
+     * @param root <code>true</code> if the station should become a root station,
+     * which means that the station will not have any parent. <code>false</code>
+     * if the station will have another parent, that is often the case if the
+     * station is a {@link CDockable} as well.
+     * @param check if <code>true</code> a check of the unique id is performed,
+     * otherwise the station is just put into, perhaps wrongly replacing
+     * other stations.
+     */    
+    private void add( CStation station, boolean root, boolean check ){
+        String id = station.getUniqueId();
+        if( check ){
+            checkStationIdentifierUniqueness( id );
+        }
+
+        if( root ){
+            frontend.addRoot( id, station.getStation() );
+        }
+
+        station.setControl( access );
+        register.addStation( station );
+    }
+
+    /**
+     * Removes a {@link CStation} from this control. It is unspecified what
+     * happens with the children on <code>station</code>
+     * @param station the station to remove
+     */
+    public void remove( CStation station ){
+        if( register.removeStation( station ) ){
+            frontend.removeRoot( station.getStation() );
+            station.setControl( null );
+        }
+    }
+
+    /**
+     * Gets an unmodifiable list of all stations that are currently 
+     * registered at this control.
+     * @return the list of stations
+     */
+    public List<CStation> getStations(){
+        return register.getStations();
+    }
+
+    /**
+     * Searches the {@link CStation} whose {@link CStation#getStation() internal representation}
+     * is <code>intern</code>.
+     * @param intern the internal representation
+     * @return the station or <code>null</code>
+     */
+    public CStation getStation( DockStation intern ){
+        for( CStation station : register.getStations() ){
+            if( station.getStation() == intern )
+                return station;
+        }
+        return null;
+    }
+
+    /**
+     * Adds a dockable to this control. The dockable can be made visible afterwards.
+     * @param <S> the type of the new element
+     * @param dockable the new element to show
+     * @return <code>dockable</code>
+     */
+    public <S extends SingleCDockable> S add( S dockable ){
+        if( dockable == null )
+            throw new NullPointerException( "dockable must not be null" );
+
+        if( dockable.getControl() != null )
+            throw new IllegalStateException( "dockable is already part of a control" );
+
+        dockable.setControl( access );
+        String id = register.toSingleId( dockable.getUniqueId() );
+        accesses.get( dockable ).setUniqueId( id );
+        frontend.addDockable( id, dockable.intern() );
+        frontend.setHideable( dockable.intern(), true );
+
+        register.addSingleDockable( dockable );
+
+        for( CControlListener listener : listeners() )
+            listener.added( CControl.this, dockable );
+
+        return dockable;
+    }
+
+    /**
+     * Searches for the {@link SingleCDockable} which has the unique identifier
+     * <code>id</code>.
+     * @param id the identifier to look out for
+     * @return the element with that identifier or <code>null</code>
+     */
+    public SingleCDockable getSingleDockable( String id ){
+        for( SingleCDockable dockable : register.getSingleDockables() ){
+            if( dockable.getUniqueId().equals( id )){
+                return dockable;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Removes the {@link SingleCDockable} with the identifier <code>id</code>.
+     * This has the same effect as calling {@link #remove(SingleCDockable)}.
+     * @param id the id of the element to remove
+     * @return <code>true</code> if the element was removed, <code>false</code>
+     * otherwise
+     */
+    public boolean removeSingleDockable( String id ){
+        for( SingleCDockable dockable : register.getSingleDockables() ){
+            if( dockable.getUniqueId().equals( id )){
+                return remove( dockable );
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Removes <code>dockable</code> from this control. The location information
+     * for <code>dockable</code> remains stored if either there is a 
+     * {@link #addSingleBackupFactory(String, SingleCDockableBackupFactory) SingleCDockableBackupFactory}
+     * registered or the {@link #setMissingStrategy(MissingCDockableStrategy) MissingCDockableStrategy}
+     * tells to store the values.
+     * @param dockable the element to remove
+     * @return true if the element was removed, <code>false</code> otherwise
+     */
+    public boolean remove( SingleCDockable dockable ){
+        if( dockable == null )
+            throw new NullPointerException( "dockable must not be null" );
+
+        if( dockable.getControl() == access ){
+            dockable.setVisible( false );
+            frontend.remove( dockable.intern() );
+            register.removeSingleDockable( dockable );
+            dockable.setControl( null );
+
+            if( !missingStrategy.shouldStoreSingle( dockable.getUniqueId() ) && register.getBackupFactory().getFactory( dockable.getUniqueId() ) == null ){
+                stateManager.remove( dockable.intern() );
+            }
+            else{
+                stateManager.reduceToEmpty( dockable.intern() );
+            }
+
+            for( CControlListener listener : listeners() )
+                listener.removed( CControl.this, dockable );
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Adds a backup factory to this control. The backup factory will be used
+     * to create and add a {@link SingleCDockable} when one is requested that
+     * is not yet in the cache.<br>
+     * If there is already information for <code>id</code> available and
+     * <code>id</code> should be visible, then the factory will be used
+     * Instantaneously.
+     * @param id the id of the dockable that might be requested
+     * @param backupFactory the new factory
+     */
+    public void addSingleBackupFactory( String id, SingleCDockableBackupFactory backupFactory ){
+        register.getBackupFactory().add( id, backupFactory );
+
+        String singleId = register.toSingleId( id );
+        stateManager.addEmpty( singleId );
+        frontend.addEmpty( singleId );
+
+        // if there is already layout information for id, then load this information now
+        FrontendEntry entry = frontend.getFrontendEntry( singleId );
+        if( entry != null && entry.getDockable() == null && entry.isShown() ){
+            SingleCDockable dockable = backupFactory.createBackup( id );
+            if( dockable != null ){
+                add( dockable );
+                if( entry.isShown() || !dockable.isCloseable() ){
+                    dockable.setVisible( true );
+                }
+            }
+        }
+    }
+
+    /**
+     * Searches for the {@link SingleCDockableBackupFactory} which was registered
+     * with the key <code>id</code>.
+     * @param id the identifier of some factory
+     * @return the factory or <code>null</code>
+     */
+    public SingleCDockableBackupFactory getSingleBackupFactory( String id ){
+        return register.getBackupFactory().getFactory( id );
+    }
+
+    /**
+     * Removes a backup factory from this control. Location information for
+     * <code>id</code> will be deleted if neither a {@link #add(SingleCDockable) SingleCDockable}
+     * is added nor the {@link #setMissingStrategy(MissingCDockableStrategy) MissingCDockableStrategy}
+     * tells to store the information.
+     * @param id the name of the factory
+     * @see #addSingleBackupFactory(String, SingleCDockableBackupFactory)
+     */
+    public void removeSingleBackupFactory( String id ){
+        register.getBackupFactory().remove( id );
+
+        if( !missingStrategy.shouldStoreSingle( id )){
+            id = register.toSingleId( id );
+
+            stateManager.removeEmpty( id );
+            frontend.removeEmpty( id );
+        }
+    }
+
+    /**
+     * Adds a dockable to this control. The dockable can be made visible afterwards.
+     * @param <F> the type of the new element
+     * @param dockable the new element to show
+     * @return <code>dockable</code>
+     */
+    public <F extends MultipleCDockable> F add( F dockable ){
+        Set<String> ids = new HashSet<String>();
+
+        String factory = access.getFactoryId( dockable.getFactory() );
+        if( factory == null ){
+            throw new IllegalStateException( "the factory for a MultipleCDockable is not registered: " + dockable.getFactory() );
+        }
+
+        for( MultipleCDockable multi : register.getMultipleDockables() ){
+            if( factory.equals( access.getFactoryId( multi.getFactory() ))){
+                ids.add( accesses.get( multi ).getUniqueId() );
+            }
+        }
+
+        int count = 0;
+        String id = count + " " + factory;
+        while( ids.contains( register.toMultiId( id ) ) ){
+            count++;
+            id = count + " " + factory;
+        }
+
+        return add( dockable, id );
+    }
+
+    /**
+     * Adds a dockable to this control. The dockable can be made visible afterwards.
+     * This method will throw an exception when the unique identifier is already
+     * in use. Clients better use {@link #add(MultipleCDockable)}.
+     * @param <M> the type of the new element
+     * @param dockable the new element to show
+     * @param uniqueId id the unique id of the new element
+     * @return <code>dockable</code>
+     * @throws IllegalArgumentException if the unique identifier is already in
+     * use, if <code>dockable</code> is already used elsewhere, if there is
+     * no factory for <code>dockable</code>
+     * @throws NullPointerException if any argument is <code>null</code>
+     */
+    public <M extends MultipleCDockable> M add( M dockable, String uniqueId ){
+        if( dockable == null )
+            throw new NullPointerException( "dockable must not be null" );
+
+        if( uniqueId == null )
+            throw new NullPointerException( "uniqueId must not be null" );
+
+        String factory = access.getFactoryId( dockable.getFactory() );
+        if( factory == null ){
+            throw new IllegalStateException( "the factory for a MultipleCDockable is not registered: " + dockable.getFactory() );
+        }
+
+        if( dockable.getControl() != null )
+            throw new IllegalStateException( "dockable is already part of a control" );
+
+        uniqueId = register.toMultiId( uniqueId );
+
+        for( MultipleCDockable multi : register.getMultipleDockables() ){
+            String id = accesses.get( multi ).getUniqueId();
+            if( uniqueId.equals( id )){
+                throw new IllegalArgumentException( "The unique identifier is already in use: " + uniqueId );
+            }
+        }
+
+        dockable.setControl( access );
+        accesses.get( dockable ).setUniqueId( uniqueId );
+
+        register.addMultipleDockable( dockable );
+
+        for( CControlListener listener : listeners() )
+            listener.added( CControl.this, dockable );
+
+        return dockable;
+    }
+
+    /**
+     * Searches and returns the one {@link MultipleCDockable} which uses
+     * the unique identifier <code>id</code>.
+     * @param id the identifier to look out for
+     * @return the element using <code>id</code> or <code>null</code> if nothing
+     * was found
+     */
+    public MultipleCDockable getMultipleDockable( String id ){
+        id = register.toMultiId( id );
+        for( MultipleCDockable dockable : register.getMultipleDockables() ){
+            if( accesses.get( dockable ).getUniqueId().equals( id )){
+                return dockable;
+            }
+        }
+        return null;
+    }
+
+    private boolean shouldStore( String id ){
+        if( register.isSingleId( id ))
+            return missingStrategy.shouldStoreSingle( register.singleToNormalId( id ) );
+        else
+            return false;
+    }    
+
+    private boolean shouldCreate( MultipleCDockableFactory<?, ?> factory ){
+        String id = access.getFactoryId( factory );
+        return missingStrategy.shouldCreate( id, factory );
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean shouldCreate( MultipleCDockableFactory<?, ?> factory, CommonDockableLayout layout ){
+        String uniqueId = layout.getId();
+
+        String multiId = register.toMultiId( uniqueId );
+
+        for( MultipleCDockable multi : register.getMultipleDockables() ){
+            if( accesses.get( multi ).getUniqueId().equals( multiId )){
+                return false;
+            }
+        }
+
+        String factoryId = access.getFactoryId( factory );
+        MultipleCDockableFactory<?, MultipleCDockableLayout> normalizedFactory = (MultipleCDockableFactory<?, MultipleCDockableLayout>)factory;
+        return missingStrategy.shouldCreate( factoryId, normalizedFactory, uniqueId, layout.getLayout() );
+    }
+
+    /**
+     * Removes a dockable from this control. The dockable is made invisible.
+     * @param dockable the element to remove
+     */
+    public void remove( MultipleCDockable dockable ){
+        if( dockable == null )
+            throw new NullPointerException( "dockable must not be null" );
+
+        if( dockable.getControl() == access ){
+            dockable.setVisible( false );
+            frontend.remove( dockable.intern() );
+
+            register.removeMultipleDockable( dockable );
+
+            dockable.setControl( null );
+
+            for( CControlListener listener : listeners() )
+                listener.removed( CControl.this, dockable );
+        }
+    }
+
+    /**
+     * Gets the number of {@link CDockable}s that are registered in this
+     * {@link CControl}.
+     * @return the number of dockables
+     */
+    public int getCDockableCount(){
+        return register.getDockableCount();
+    }
+
+    /**
+     * Gets the index'th dockable that is registered in this control
+     * @param index the index of the element
+     * @return the selected dockable
+     */
+    public CDockable getCDockable( int index ){
+        return register.getDockable( index );
+    }
+
+    /**
+     * Adds a factory to this control. The factory will create {@link MultipleCDockable}s
+     * when a layout is loaded.
+     * @param id the unique id of the factory
+     * @param factory the new factory
+     * @deprecated use {@link #addMultipleDockableFactory(String, MultipleCDockableFactory)}
+     */
+    @Deprecated
+    public void add( final String id, final MultipleCDockableFactory<?,?> factory ){
+        if( id == null )
+            throw new NullPointerException( "id must not be null" );
+
+        if( factory == null )
+            throw new NullPointerException( "factory must not be null" );
+
+        if( register.getCommonMultipleDockableFactory( id ) != null ){
+            throw new IllegalArgumentException( "there is already a factory named " + id );
+        }
+
+        if( access.getFactoryId( factory ) != null ){
+            throw new IllegalArgumentException( "this factory-object is already in use and cannot be added a second time" );
+        }
+
+        CommonMultipleDockableFactory cfactory = new CommonMultipleDockableFactory( id, factory, access );
+
+        register.putCommonMultipleDockableFactory( id, cfactory );
+        frontend.registerFactory( cfactory );
+    }
+
+
+
+    /**
+     * Adds a factory to this control. The factory will create {@link MultipleCDockable}s
+     * when a layout is loaded.
+     * @param id the unique id of the factory
+     * @param factory the new factory
+     */
+    public void addMultipleDockableFactory( String id, MultipleCDockableFactory<?, ?> factory ){
+        add( id, factory );
+    }
+
+    /**
+     * Searches for the {@link MultipleCDockableFactory} with the identifier
+     * <code>id</code>.
+     * @param id the identifier to search for
+     * @return the factory or <code>null</code>
+     */
+    public MultipleCDockableFactory<?, ?> getMultipleDockableFactory( String id ){
+        return register.getFactory( id );
+    }
+
+
+    /**
+     * Removes the {@link MultipleCDockableFactory} with identifier <code>id</code>
+     * from this control. As a side effect all {@link MultipleCDockable}s which
+     * use that factory are removed as well. Nothing happens if there is no
+     * factory registered with <code>id</code>.
+     * @param id the identifier of the factory to remove
+     */
+    public void removeMultipleDockableFactory( String id ){
+        CommonMultipleDockableFactory factory = register.removeCommonMultipleDockableFactory( id );
+        if( factory != null ){
+            frontend.unregisterFactory( factory );
+
+            List<MultipleCDockable> toRemove = new ArrayList<MultipleCDockable>();
+            for( MultipleCDockable dockable : register.getMultipleDockables() ){
+                if( dockable.getFactory() == factory.getFactory() ){
+                    toRemove.add( dockable );
+                }
+            }
+
+            for( MultipleCDockable dockable : toRemove ){
+                remove( dockable );
+            }
+        }
+    }
+
+    /**
+     * Sets the location where {@link CDockable}s are opened when there is
+     * nothing else specified for these <code>CDockable</code>s.
+     * @param defaultLocation the location, can be <code>null</code>
+     */
+    public void setDefaultLocation( CLocation defaultLocation ){
+        this.defaultLocation = defaultLocation;
+    }
+
+    /**
+     * Gets the location where {@link CDockable}s are opened when nothing else
+     * is specified.
+     * @return the location, might be <code>null</code>
+     * @see #setDefaultLocation(CLocation)
+     */
+    public CLocation getDefaultLocation(){
+        return defaultLocation;
+    }	
+
+    /**
+     * Makes sure that all {@link CDockable}s are maximized onto the area
+     * which is registered under the given unique id.
+     * @param id the unique id of the area
+     * @see CGridArea#getUniqueId()
+     * @see CContentArea#getCenterIdentifier()
+     */
+    public void setMaximizeArea( String id ){
+        stateManager.setMaximizingStation( id );
+    }
+
+    /**
+     * Sets the {@link CMaximizeBehavior}. The behavior decides what happens
+     * when the user want's to maximize or to un-maximize a {@link CDockable}.
+     * @param behavior the new behavior, not <code>null</code>
+     */
+    public void setMaximizeBehavior( CMaximizeBehavior behavior ){
+        stateManager.setMaximizeBehavior( behavior );
+    }
+
+    /**
+     * Gets the currently used maximize-behavior.
+     * @return the behavior, not <code>null</code>
+     * @see #setMaximizeBehavior(CMaximizeBehavior)
+     */
+    public CMaximizeBehavior getMaximizeBehavior(){
+        return stateManager.getMaximizeBehavior();
+    }
+
+    /**
+     * Sets the theme of the elements in the realm of this control.
+     * @param theme the new theme
+     * @deprecated replaced by {@link #setTheme(String)}. While this method still
+     * works, the theme will not get stored persistent and any module using
+     * the {@link ThemeMap} ({@link #getThemes()}) will not be informed about
+     * the change.
+     */
+    @Deprecated
+    public void setTheme( DockTheme theme ){
+        frontend.getController().setTheme( theme );
+    }
+
+    /**
+     * Sets the theme of the elements in the realm of this control. The String
+     * <code>theme</code> is used as key for {@link ThemeMap#select(String)}.
+     * @param theme the name of the theme, this might be one of 
+     * {@link ThemeMap#KEY_BASIC_THEME}, {@link ThemeMap#KEY_BUBBLE_THEME},
+     * {@link ThemeMap#KEY_ECLIPSE_THEME}, {@link ThemeMap#KEY_FLAT_THEME}
+     * or {@link ThemeMap#KEY_SMOOTH_THEME}. This can also be a any other
+     * string which was used for {@link ThemeMap#put(String, ThemeFactory)},
+     * {@link ThemeMap#add(String, ThemeFactory)} or {@link ThemeMap#insert(int, String, ThemeFactory)}.
+     */
+    public void setTheme( String theme ){
+        themes.select( theme );
+    }
+
+    /**
+     * Gets the list of installed themes.
+     * @return the list of themes
+     */
+    public ThemeMap getThemes(){
+        return themes;
+    }
+
+    /**
+     * Sets the root window of the application. The root window is used
+     * as owner of any dialog that is created. Already existing dialogs
+     * will not change their owner.
+     * @param window the new owner, can be <code>null</code>
+     */
+    public void setRootWindow( WindowProvider window ){
+        frontend.setOwner( window );
+    }
+
+    /**
+     * Gets the root window of the application. Note that this method might
+     * not return the same object as given to {@link #setRootWindow(WindowProvider)},
+     * however the provide returned by this method will return the same window
+     * as specified by {@link #setRootWindow(WindowProvider)}.
+     * @return the provider, never <code>null</code>
+     */
+    public WindowProvider getRootWindow(){
+        return frontend.getOwner();
+    }
+
+    /**
+     * Gets the storage container for {@link PreferenceModel}s for this control.
+     * The contents of this container are stored in the
+     * {@link #getResources() resource manager}.
+     * @return the storage for preferences
+     * @see #getResources()
+     */
+    public PreferenceStorage getPreferences(){
+        return preferences;
+    }
+
+    /**
+     * Sets the {@link PreferenceModel} which will be used to translate between
+     * <code>this</code> and the {@link #getPreferences() preferences}. This
+     * model can be set to <code>null</code>.<br>
+     * The default value of this property is <code>null</code>.
+     * @param preferenceModel the new model, it will used to translate
+     * the contents of {@link #getPreferences()} immediately, can be <code>null</code>
+     */
+    public void setPreferenceModel( PreferenceModel preferenceModel ) {
+        if( this.preferenceModel != null ){
+            this.preferenceModel.read();
+            preferences.store( this.preferenceModel );
+        }
+        this.preferenceModel = preferenceModel;
+        if( preferenceModel != null ){
+            preferences.load( preferenceModel, false );
+            preferenceModel.write();
+        }
+    }
+
+    /**
+     * Gets the preference model which is used to translate between the 
+     * {@link #getPreferences() preferences} and <code>this</code>.
+     * @return the model, can be <code>null</code>
+     * @see #setPreferenceModel(PreferenceModel)
+     */
+    public PreferenceModel getPreferenceModel() {
+        return preferenceModel;
+    }
+
+    /**
+     * Sets the strategy that tells what to do if layout information of a missing
+     * {@link CDockable} is found.
+     * @param missingStrategy the strategy, <code>null</code> will set
+     * the default strategy
+     */
+    public void setMissingStrategy( MissingCDockableStrategy missingStrategy ) {
+        if( missingStrategy == null ){
+            this.missingStrategy = MissingCDockableStrategy.PURGE;
+        }
+        else{
+            this.missingStrategy = missingStrategy;
+        }
+    }
+
+    /**
+     * Gets the strategy that tells what to do if layout information of a missing
+     * {@link CDockable} is found.
+     * @return the strategy, never <code>null</code>
+     */
+    public MissingCDockableStrategy getMissingStrategy() {
+        return missingStrategy;
+    }
+
+    /**
+     * Adds a {@link ResizeRequestListener} to this {@link CControl}. The listener
+     * will be informed when the resize requests of a {@link CDockable} should
+     * be processed. 
+     * @param listener the new listener, not <code>null</code>
+     */
+    public void addResizeRequestListener( ResizeRequestListener listener ){
+        if( listener == null )
+            throw new NullPointerException( "listener must not be null" );
+        resizeListeners.add( listener );
+    }
+
+    /**
+     * Removes a {@link ResizeRequestListener} from this {@link CControl}.
+     * @param listener the listener to remove
+     */
+    public void removeResizeRequestListener( ResizeRequestListener listener ){
+        resizeListeners.remove( listener );
+    }
+
+    /**
+     * Informs all {@link ResizeRequestListener}s, that the
+     * {@link CDockable#getAndClearResizeRequest() resize request} of all 
+     * <code>CDockable</code>s should be processed. There are no
+     * guarantees that a resize requests can be granted or even gets processed.<br>
+     * All requests, independent from whether they were processed, will be deleted 
+     * by this method.<br>
+     * Note that a request might conflict with a "resize lock"
+     * {@link CDockable#isResizeLockedHorizontally()} and 
+     * {@link CDockable#isResizeLockedVertically()}. The behavior of that case is not
+     * specified, but clients can assume that the locked components introduce
+     * additional resize requests.
+     */
+    public void handleResizeRequests(){
+        ResizeRequestListener[] listeners = resizeListeners.toArray( new ResizeRequestListener[ resizeListeners.size() ] );
+        for( ResizeRequestListener listener : listeners )
+            listener.handleResizeRequest( this );
+
+        for( CDockable dockable : register.getDockables() )
+            dockable.getAndClearResizeRequest();
+    }
+
+    /**
+     * Gets the representation of the layer beneath the common-layer.
+     * @return the entry point to DockingFrames
+     */
+    public DockFrontend intern(){
+        return frontend;
+    }
+
+    /**
+     * Writes the current and all known layouts into <code>file</code>.<br>
+     * This is the same as calling <code>getResources().writeFile( file )</code>.
+     * @param file the file to override
+     * @throws IOException if the file can't be written
+     */
+    public void write( File file ) throws IOException{
+        getResources().writeFile( file );
+    }
+
+    /**
+     * Writes the current and all known layouts into <code>out</code>.<br>
+     * This is the same as calling <code>getResources().writeStream( out )</code>.
+     * @param out the stream to write into
+     * @throws IOException if the stream is not writable
+     */
+    public void write( DataOutputStream out ) throws IOException{
+        getResources().writeStream( out );
+    }
+
+    /**
+     * Writes the current and all known layouts into <code>element</code>.<br>
+     * This is the same as calling <code>getResources().writeXML( element )</code>.
+     * @param element the element to write into
+     */
+    public void writeXML( XElement element ){
+        getResources().writeXML( element );
+    }
+
+    /**
+     * Writes the current and all known layouts into <code>file</code> in xml format.
+     * @param file the file to write into
+     * @throws IOException if the file is not writable
+     */
+    public void writeXML( File file ) throws IOException{
+        XElement root = new XElement( "root" );
+        getResources().writeXML( root );
+        BufferedOutputStream out = new BufferedOutputStream( new FileOutputStream( file ));
+        XIO.writeUTF( root, out );
+        out.close();
+    }
+    
+    /**
+     * Reads the current and other known layouts from <code>file</code>.<br>
+     * This is the same as calling <code>getResources().readFile( file )</code>.
+     * @param file the file to read from
+     * @throws IOException if the file can't be read
+     */
+    public void read( File file ) throws IOException{
+        getResources().readFile( file );
+    }
+
+    /**
+     * Reads the current and other known layouts from <code>in</code>.<br>
+     * This is the same as calling <code>getResources().readStream( in )</code>.
+     * @param in the stream to read from
+     * @throws IOException if the stream can't be read
+     */
+    public void read( DataInputStream in ) throws IOException{
+        getResources().readStream( in );
+    }
+    
+    /**
+     * Reads the current and other known layouts from <code>element</code>.<br>
+     * This is the same as calling <code>getResources().readXML( element )</code>.
+     * @param element the element to read
+     * @throws XException if the xml file has the wrong structure
+     */
+    public void readXML( XElement element ){
+        getResources().readXML( element );
+    }
+    
+    /**
+     * Reads the current and other known layouts from <code>file</code>.
+     * @param file the file to open and to read
+     * @throws IOException if the file cannot be read
+     * @throws XException if the xml file has the wrong structure
+     */
+    public void readXML( File file ) throws IOException{
+        BufferedInputStream in = new BufferedInputStream( new FileInputStream( file ));
+        XElement element = XIO.readUTF( in );
+        in.close();
+        readXML( element );
+    }
+
+    /**
+     * Stores the current layout with the given name.
+     * @param name the name of the current layout.
+     */
+    public void save( String name ){
+        frontend.save( name );
+    }
+
+    /**
+     * Loads an earlier stored layout.
+     * @param name the name of the layout.
+     */
+    public void load( String name ){
+        frontend.load( name );
+    }
+
+    /**
+     * Deletes a layout that has been stored earlier.
+     * @param name the name of the layout to delete
+     */
+    public void delete( String name ){
+        frontend.delete( name );
+    }
+
+    /**
+     * Gets a list of all layouts that are currently known.
+     * @return the list of layouts
+     */
+    public String[] layouts(){
+        Set<String> settings = frontend.getSettings();
+        return settings.toArray( new String[ settings.size() ] );
+    }
+
+    /**
+     * A class giving access to the internal methods of the enclosing
+     * {@link CControl}.
+     * @author Benjamin Sigg
+     */
+    private class Access implements CControlAccess{
+        /** action used to close {@link CDockable}s  */
+        private CCloseAction closeAction;
+
+        public CControl getOwner(){
+            return CControl.this;
+        }
+
+        public <F extends MultipleCDockable> F add( F dockable, String uniqueId ) {
+            return CControl.this.add( dockable, uniqueId );
+        }
+
+        public void link( CDockable dockable, CDockableAccess access ) {
+            if( access == null ){
+                accesses.remove( dockable );
+                dockable.removeCDockablePropertyListener( listenerCollection.getCDockablePropertyListener() );
+                dockable.removeCDockableStateListener( listenerCollection.getCDockableStateListener() );
+            }
+            else{
+                if( accesses.put( dockable, access ) == null ){
+                    dockable.addCDockablePropertyListener( listenerCollection.getCDockablePropertyListener() );
+                    dockable.addCDockableStateListener( listenerCollection.getCDockableStateListener() );
+                }
+            }
+        }
+
+        public CDockableAccess access( CDockable dockable ) {
+            return accesses.get( dockable );
+        }
+
+        public void hide( CDockable dockable ){
+            DockRegister register = frontend.getController().getRegister();
+            register.setStalled( true );
+            try{
+                List<CDockable> maximized = CControl.this.register.listDockablesInMode( ExtendedMode.MAXIMIZED );
+                boolean changes = stateManager.ensureNothingMaximized();
+
+                frontend.hide( dockable.intern() );
+
+                if( changes ){
+                    for( CDockable check : maximized ){
+                        if( check != dockable && check.isMaximizable() && check.isVisible() ){
+                            check.setExtendedMode( ExtendedMode.MAXIMIZED );
+                            break;
+                        }
+                    }
+                }
+            }
+            finally{
+                register.setStalled( false );
+            }
+        }
+
+        public void show( CDockable dockable ){
+            DockRegister register = frontend.getController().getRegister();
+            register.setStalled( true );
+            try{
+                CStation area = dockable.getWorkingArea();
+                if( area != null && area.asDockable() != null ){
+                    if( !area.asDockable().isVisible() ){
+                        throw new IllegalStateException( "A dockable that wants to be on a CWorkingArea can't be made visible unless the CWorkingArea is visible." );
+                    }
+                }
+
+                CDockableAccess access = access( dockable );
+                CLocation location = null;
+                if( access != null ){
+                    location = access.internalLocation();
+                }
+                if( location == null ){
+                    if( !frontend.hasLocation( dockable.intern() ))
+                        location = defaultLocation;
+                }
+
+                boolean maximized = stateManager.ensureNothingMaximized();
+
+                if( location == null ){
+                    frontend.show( dockable.intern() );
+                }
+                else{
+                    stateManager.setLocation( dockable.intern(), location );
+                }
+                stateManager.ensureValidLocation( dockable );
+                if( location == null && maximized && dockable.isMaximizable() )
+                    dockable.setExtendedMode( ExtendedMode.MAXIMIZED );
+            }
+            finally{
+                register.setStalled( false );
+            }
+        }
+
+        public boolean isVisible( CDockable dockable ){
+            return frontend.isShown( dockable.intern() );
+        }
+
+        public String getFactoryId( MultipleCDockableFactory<?,?> factory ){
+            for( Map.Entry<String, MultipleCDockableFactory<?, ?>> entry : register.getFactories().entrySet() ){
+                if( entry.getValue() == factory ){
+                    return entry.getKey();
+                }
+            }
+
+            return null;
+        }
+
+        public CStateManager getStateManager() {
+            return stateManager;
+        }
+
+        public DockAction createCloseAction( final CDockable fdockable ) {
+            if( closeAction == null )
+                closeAction = new CCloseAction( CControl.this );
+
+            return closeAction.intern();
+        }
+
+        public MutableCControlRegister getRegister() {
+            return register;
+        }
+
+        public boolean shouldStore( String key ) {
+            return CControl.this.shouldStore( key );
+        }
+
+        public void fillMultiFactories( CSetting setting ) {
+            CControl.this.fillMultiFactories( setting );
+        }
+    }
 }
