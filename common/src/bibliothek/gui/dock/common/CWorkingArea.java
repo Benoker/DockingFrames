@@ -262,6 +262,9 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable, 
             if( old != null ){
                 old.getStateManager().remove( uniqueId );
                 old.getOwner().removeResizeRequestListener( resizeRequestHandler );
+                if( maximizingArea != null ){
+                    old.getStateManager().removeMaximizingArea( maximizingArea );
+                }
             }
             
             super.setControl( control );
@@ -269,6 +272,9 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable, 
             if( control != null ){
                 control.getStateManager().add( uniqueId, station );
                 control.getOwner().addResizeRequestListener( resizeRequestHandler );
+                if( maximizingArea != null ){
+                    control.getStateManager().addMaximizingArea( maximizingArea );
+                }
             }
         }
     }
