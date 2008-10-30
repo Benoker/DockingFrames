@@ -476,6 +476,32 @@ If some component wants to show some actions it firsts asks a \src{Dockable} for
 \designbox{There are three levels in the design of \src{DockAction} and its subclasses. First there is \src{DockAction} which allows almost any kind of \src{Component} to be used as view. Second there are subinterfaces for the standard tasks, the framework provides views for them. Third are real implementations of the second-level interfaces. Some interfaces are implemented in more than one action for different styles of aplication organization.}
 
 \subsection{Standard Actions}
+There are a number of standard actions in the framework. Clients can either subclass them or instantiate and add listeners to them. A user would put the actions into six groups:
+\begin{description}
+ \item[Button] If the user clicks this action then always the same happens. The interface \src{ButtonDockAction} collects all the buttonlike actions.
+ \item[Checkbox] When triggered it changes some property from \src{true} to \src{false} or from \src{false} to \src{true}. They are represented by the interface \src{SelectableDockAction}.
+ \item[Radiobutton] Like a group of checkboxes, but only one radiobutton can be selected within that group. They are also represented through \src{SelectableDockAction}. Several radiobuttons can be linked together with the help of a \src{SelectableDockActionGroup}.
+ \item[Menu] A menu just contains a list of other \src{DockAction}s. These other actions are normally hidden and only shown if the user wants to see them. Menus are implementing the interface \src{MenuDockAction}.
+ \item[Drop-down-button] Like a menu but the last triggered action can be triggered again without opening the menu. The interface \src{DropDownAction} represents these special menus.
+ \item[Separator] 
+\end{description}
+
+\begin{lstlisting}
+public class ExampleAction extends SimpleButtonAction{
+	public ExampleAction() {
+		setText( "Run..." );
+		setIcon( new ImageIcon( "example.png" ) );
+		setTooltip( "Run the example" );
+	}
+
+	@Override
+	public void action( Dockable dockable ) {
+		System.out.println( "kabum" );
+	}
+}
+\end{lstlisting}
+
+
 
 \section{Titles}
 \section{Themes}

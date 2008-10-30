@@ -219,3 +219,4 @@
 - API: Common supports new font system as well, the new FontMap can be used just like the ColorMap.
 - Bugfix: CWoringArea.deploy did not correctly change the working-area of the newly added children
 - Layout: more than just one DockStation can be marked as beeing the parent of maximized Dockables in Common, the interface MaximizeArea has been introduced for that
+- Bugfix: When using the same coordinates in SplitDockGrid twice or more times, an exception occured

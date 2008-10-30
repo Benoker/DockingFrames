@@ -471,6 +471,29 @@ Actions are represented by the interface \src{DockAction}. Each \src{Dockable} h
 
 If some component wants to show some actions it firsts asks a \src{Dockable} for its global \src{DockActionSource}. It then asks each \src{DockAction} of that list to create a view that fits to the component. A title will ask for another kind of view than a menu. At any time actions can be added or removed from the \src{DockActionSource} and any component showing actions will react on these events.
 
+\classbox{The interface \src{DockAction} is quite simple. Two methods to install (\src{bind}) and to uninstall (\src{unbind}) the action. One method to create new views (\src{createView}) and one method to trigger an action programatically (\src{trigger}). More useful are the many subclasses and subinterfaces. \src{StandardDockAction} introduces icons, text and tooltip. Five subinterfaces for \src{StandardDockAction} exist and for all of them a default-view is provided.}
+
+\designbox{There are three levels in the design of \src{DockAction} and its subclasses. First there is \src{DockAction} which allows almost any kind of \src{Component} to be used as view. Second there are subinterfaces for the standard tasks, the framework provides views for them. Third are real implementations of the second-level interfaces. Some interfaces are implemented in more than one action for different styles of aplication organization.}
+
+\subsection{Standard Actions}
+There are five standard action types. They represent buttons, checkboxes, radiobuttons, menus and drop-down-menus. 
+
+\begin{lstlisting}
+public class ExampleAction extends SimpleButtonAction{
+	public ExampleAction() {
+		setText( "Run..." );
+		setIcon( new ImageIcon( "example.png" ) );
+		setTooltip( "Run the example" );
+	}
+
+	@Override
+	public void action( Dockable dockable ) {
+		System.out.println( "kabum" );
+	}
+}
+\end{lstlisting}
+
+
 
 \section{Titles}
 \section{Themes}

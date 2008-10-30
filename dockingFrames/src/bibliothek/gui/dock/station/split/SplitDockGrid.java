@@ -151,11 +151,10 @@ public class SplitDockGrid {
             node.width = width;
             node.height = height;
             node.dockables = new Dockable[ dockables.length ];
+            nodes.add( node );
         }
         
         System.arraycopy( dockables, 0, node.dockables, insert, dockables.length );
-		
-		nodes.add( node );
 	}
 	
 	/**
