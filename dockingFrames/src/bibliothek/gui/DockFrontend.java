@@ -48,10 +48,7 @@ import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.dockable.DefaultDockableFactory;
 import bibliothek.gui.dock.event.*;
-import bibliothek.gui.dock.frontend.FrontendEntry;
-import bibliothek.gui.dock.frontend.MissingDockableStrategy;
-import bibliothek.gui.dock.frontend.RegisteringDockFactory;
-import bibliothek.gui.dock.frontend.Setting;
+import bibliothek.gui.dock.frontend.*;
 import bibliothek.gui.dock.layout.*;
 import bibliothek.gui.dock.security.SecureFlapDockStationFactory;
 import bibliothek.gui.dock.security.SecureScreenDockStationFactory;
@@ -67,7 +64,6 @@ import bibliothek.gui.dock.station.stack.StackDockPropertyFactory;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
 import bibliothek.gui.dock.util.*;
 import bibliothek.util.Version;
-import bibliothek.util.container.Single;
 import bibliothek.util.xml.XAttribute;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
@@ -150,8 +146,8 @@ public class DockFrontend {
     /** A list of observers */
     private List<DockFrontendListener> listeners = new ArrayList<DockFrontendListener>();
     
-    /** A list of observers to be notified if a {@link Dockable} gets closed or opened */
-    private List<VetoableDockFrontendListener> vetoableListeners = new ArrayList<VetoableDockFrontendListener>();
+    /** handles all the events regarding {@link VetoableDockFrontendListener} */
+    private VetoManager veto;
     
     /** A filter for elements which should not be changed when writing or reading a normal setting */
     private DockSituationIgnore ignoreForEntry;
@@ -176,8 +172,9 @@ public class DockFrontend {
     private boolean defaultHideable = false;
     
     /**
-     * Whether {@link #fireShown(Dockable)} and {@link #fireHidden(Dockable)} should be called
-     * automatically when triggered by a {@link DockRegister}-event or not.
+     * Whether the {@link DockFrontendListener} and the {@link VetoableDockFrontendListener}
+     * should be called automatically when triggered by a {@link DockRegister}-event or not.
+     * If this property is 0 then the listeners are armed.
      */
     private int onAutoFire = 0;
     
@@ -255,6 +252,8 @@ public class DockFrontend {
         this.controller = controller;
         controller.setRootWindowProvider( owner );
         
+        veto = new VetoManager( this );
+        
         hider = createHider();
         controller.addActionGuard( hider );
         
@@ -279,14 +278,12 @@ public class DockFrontend {
             public void dockableRegistered( DockController controller, Dockable dockable ) {
                 if( onAutoFire == 0 ){
                     fireShown( dockable );
-                    fireShown( dockable, false );
                 }
             }
             @Override
             public void dockableUnregistered( DockController controller, Dockable dockable ) {
                 if( onAutoFire == 0 ){
                     fireHidden( dockable );
-                    fireHidden( dockable, false );
                 }
             }
         });
@@ -352,7 +349,7 @@ public class DockFrontend {
      * @param listener the new listener
      */
     public void addVetoableListener( VetoableDockFrontendListener listener ){
-        vetoableListeners.add( listener );
+        veto.addVetoableListener( listener );
     }
     
     /**
@@ -360,7 +357,7 @@ public class DockFrontend {
      * @param listener the listener to remove
      */
     public void removeVetoableListener( VetoableDockFrontendListener listener ){
-        vetoableListeners.remove( listener );
+        veto.removeVetoableListener( listener );
     }
     
     /**
@@ -1144,42 +1141,40 @@ public class DockFrontend {
             onAutoFire++;
         
             if( isHidden( dockable )){
-                if( fireAllShowing( dockable, cancelable ))
-                    return;
-                
-                DockInfo info = getInfo( dockable );
-            	if( info == null ){
-            		DockStation station = getDefaultStation();
-            		if( station == null )
-                		throw new IllegalStateException( "Can't find the default station" );
-            		station.drop( dockable );
-            	}
-            	else{
-            		String root = info.getRoot();
-                    DockableProperty location = info.getLocation();
-                    
-                    DockStation station;
-                    if( root == null )
-                        station = getDefaultStation();
-                    else
-                        station = getRoot( root );
-                    
-                    if( station == null ){
-                    	station = getDefaultStation();
-                    	if( station == null )
-                    		throw new IllegalStateException( "Can't find the default station" );
+                if( veto.expectToShow( dockable, cancelable )){
+                    DockInfo info = getInfo( dockable );
+                    if( info == null ){
+                        DockStation station = getDefaultStation();
+                        if( station == null )
+                            throw new IllegalStateException( "Can't find the default station" );
+                        station.drop( dockable );
                     }
-                    
-                    if( location == null )
-                        getDefaultStation().drop( dockable );
                     else{
-                        if( !station.drop( dockable, location ))
+                        String root = info.getRoot();
+                        DockableProperty location = info.getLocation();
+
+                        DockStation station;
+                        if( root == null )
+                            station = getDefaultStation();
+                        else
+                            station = getRoot( root );
+
+                        if( station == null ){
+                            station = getDefaultStation();
+                            if( station == null )
+                                throw new IllegalStateException( "Can't find the default station" );
+                        }
+
+                        if( location == null )
                             getDefaultStation().drop( dockable );
+                        else{
+                            if( !station.drop( dockable, location ))
+                                getDefaultStation().drop( dockable );
+                        }
                     }
-            	}
-            	
-            	fireAllShown( dockable, null );
-            	fireAllShown( dockable, true );
+
+                    fireAllShown( dockable, null );
+                }
             }
         }
         finally{
@@ -1207,7 +1202,7 @@ public class DockFrontend {
         try{
             onAutoFire++;
             if( isShown( dockable )){
-                if( dockable.getDockParent() == null || !fireAllHiding( dockable, cancelable )){
+                if( dockable.getDockParent() == null || veto.expectToHide( dockable, cancelable ) ){
                     DockInfo info = getInfo( dockable );
 
                     if( info != null ){
@@ -1217,7 +1212,6 @@ public class DockFrontend {
                     if( dockable.getDockParent() != null ){
                         dockable.getDockParent().drag( dockable );
                         fireAllHidden( dockable, null );
-                        fireAllHidden( dockable, true );
                     }
                 }
             }
@@ -1325,13 +1319,7 @@ public class DockFrontend {
      * be the same as was used when {@link #getSetting(boolean)} was called.
      */
     public void setSetting( Setting setting, boolean entry ){
-        if( entry ){
-            lastAppliedEntrySetting = setting;
-        }
-        else{
-            lastAppliedEntrySetting = null;
-            lastAppliedFullSetting = setting;
-        }
+        Set<Dockable> approvedRemove = null;
         
         try{
             onAutoFire++;
@@ -1351,84 +1339,27 @@ public class DockFrontend {
                 };
             }
             
+            // maybe cancel the operation
+            approvedRemove = approveClosing( situation, setting );
+            if( approvedRemove == null ){
+                return;
+            }
+            
+            // the new setting will now be applied, store it
+            if( entry ){
+                lastAppliedEntrySetting = setting;
+            }
+            else{
+                lastAppliedEntrySetting = null;
+                lastAppliedFullSetting = setting;
+            }
+            
+            // split up all child parent relations
             clean( ignore );
             
-            for( RootInfo info : roots.values() ){
-                DockLayoutComposition layout = setting.getRoot( info.getName() );
-                if( layout != null ){
-                    layout = situation.fillMissing( layout );
-                    
-                    Map<String, DockableProperty> missingLocations = 
-                        listEstimateLocations( situation, layout );
-                    if( missingLocations != null ){
-                        for( Map.Entry<String, DockableProperty> missing : missingLocations.entrySet() ){
-                            String key = missing.getKey();
-                            DockInfo dockInfo = getInfo( key );
-                            
-                            if( dockInfo == null && missingDockable.shouldStoreShown( key )){
-                                addEmpty( key );
-                                dockInfo = getInfo( key );
-                            }
-                            
-                            if( dockInfo != null ){
-                                dockInfo.setLocation( info.getName(), missing.getValue() );
-                                dockInfo.setShown( true );
-                            }
-                        }
-                    }
-                    
-                    Map<String, DockLayoutComposition> missingLayouts = listLayouts( situation, layout );
-                    
-                    if( missingLayouts != null ){
-                        for( Map.Entry<String, DockLayoutComposition> missing : missingLayouts.entrySet() ){
-                            String key = missing.getKey();
-                            DockInfo dockInfo = getInfo( key );
-                            
-                            if( dockInfo == null && missingDockable.shouldStoreShown( key )){
-                                addEmpty( key );
-                                dockInfo = getInfo( key );
-                            }
-                            
-                            if( dockInfo != null ){
-                                dockInfo.setShown( true );
-                                if( !entry || dockInfo.isEntryLayout() ){
-                                    dockInfo.setLayout( missing.getValue() );
-                                }
-                            }
-                        }
-                        
-                    }
-                    
-                    situation.convert( layout );
-                }
-            }
-            
-            for( int i = 0, n = setting.getInvisibleCount(); i<n; i++ ){
-                String key = setting.getInvisibleKey( i );
-                DockInfo info = getInfo( key );
-                
-                if( info == null && missingDockable.shouldStoreHidden( key )){
-                    addEmpty( key );
-                    info = getInfo( key );
-                }
-                
-                if( info != null ){
-                    info.setShown( false );
-                    info.setLocation( 
-                            setting.getInvisibleRoot( i ), 
-                            setting.getInvisibleLocation( i ) );
-                    
-                    DockLayoutComposition layout = setting.getInvisibleLayout( i );
-                    if( layout != null ){
-                        layout = situation.fillMissing( layout );
-                    }
-                    if( info.getDockable() != null ){
-                        situation.convert( layout );
-                        layout = null;
-                    }
-                    info.setLayout( layout );
-                }
-            }
+            // apply the new layout
+            applyLayout( situation, setting, entry );
+            applyInvisibleLayout( situation, setting );
         }
         catch( IOException e ){
             throw new IllegalArgumentException( "Cannot set Setting", e );
@@ -1444,6 +1375,137 @@ public class DockFrontend {
         for( DockInfo info : dockables.values() ){
             if( info.getDockable() != null && !info.isHideable() && isHidden( info.getDockable() )){
                 show( info.getDockable() );
+            }
+        }
+    }
+    
+    /**
+     * Checks whether the setting <code>setting</code> can be applied or not.
+     * @param situation the situation that will convert the layout
+     * @param setting the new layout
+     * @return the set of elements for which closing was explicitly approved
+     * or <code>null</code> if the operation should be canceled
+     */
+    private Set<Dockable> approveClosing( DockSituation situation, Setting setting ){
+        // check whether some elements really should be closed
+        Set<Dockable> closing = new HashSet<Dockable>();
+        for( RootInfo info : roots.values() ){
+            DockLayoutComposition layout = setting.getRoot( info.getName() );
+            if( layout != null ){
+                Set<Dockable> next = estimateClosing( situation, layout );
+                if( next != null ){
+                    closing.addAll( next );
+                }
+            }
+        }
+        for( DockInfo info : dockables.values() ){
+            if( info.getDockable() != null && !info.isHideable() ){
+                closing.remove( info.getDockable() );
+            }
+        }
+        if( !closing.isEmpty() ){
+            if( !veto.expectToHide( closing, true ) ){
+                // cancel the operation
+                return null;
+            }
+        }
+        return closing;
+    }
+    
+    /**
+     * Applies the layout described in <code>setting</code> to the visible
+     * elements.
+     * @param situation used to convert the layout
+     * @param setting the new layout
+     * @param entry whether <code>setting</code> describes only a small layout
+     * or the final layout
+     * @throws IOException if the layout cannot be converted
+     * @throws XException if the layout cannot be converted 
+     */
+    private void applyLayout( DockSituation situation, Setting setting, boolean entry ) throws IOException, XException{
+        for( RootInfo info : roots.values() ){
+            DockLayoutComposition layout = setting.getRoot( info.getName() );
+            if( layout != null ){
+                layout = situation.fillMissing( layout );
+                
+                Map<String, DockableProperty> missingLocations = 
+                    listEstimateLocations( situation, layout );
+                if( missingLocations != null ){
+                    for( Map.Entry<String, DockableProperty> missing : missingLocations.entrySet() ){
+                        String key = missing.getKey();
+                        DockInfo dockInfo = getInfo( key );
+                        
+                        if( dockInfo == null && missingDockable.shouldStoreShown( key )){
+                            addEmpty( key );
+                            dockInfo = getInfo( key );
+                        }
+                        
+                        if( dockInfo != null ){
+                            dockInfo.setLocation( info.getName(), missing.getValue() );
+                            dockInfo.setShown( true );
+                        }
+                    }
+                }
+                
+                Map<String, DockLayoutComposition> missingLayouts = listLayouts( situation, layout );
+                
+                if( missingLayouts != null ){
+                    for( Map.Entry<String, DockLayoutComposition> missing : missingLayouts.entrySet() ){
+                        String key = missing.getKey();
+                        DockInfo dockInfo = getInfo( key );
+                        
+                        if( dockInfo == null && missingDockable.shouldStoreShown( key )){
+                            addEmpty( key );
+                            dockInfo = getInfo( key );
+                        }
+                        
+                        if( dockInfo != null ){
+                            dockInfo.setShown( true );
+                            if( !entry || dockInfo.isEntryLayout() ){
+                                dockInfo.setLayout( missing.getValue() );
+                            }
+                        }
+                    }
+                    
+                }
+                
+                situation.convert( layout );
+            }
+        }
+    }
+    
+    /**
+     * Applies <code>setting</code> to the invisible elements.
+     * @param situation to convert the layout
+     * @param setting the new layout
+     * @throws IOException if the layout cannot be converted
+     * @throws XException if the layout cannot be converted
+     */
+    private void applyInvisibleLayout( DockSituation situation, Setting setting ) throws IOException, XException{
+        for( int i = 0, n = setting.getInvisibleCount(); i<n; i++ ){
+            String key = setting.getInvisibleKey( i );
+            DockInfo info = getInfo( key );
+            
+            if( info == null && missingDockable.shouldStoreHidden( key )){
+                addEmpty( key );
+                info = getInfo( key );
+            }
+            
+            if( info != null ){
+                info.setShown( false );
+                info.setLocation( 
+                        setting.getInvisibleRoot( i ), 
+                        setting.getInvisibleLocation( i ) );
+                
+                DockLayoutComposition layout = setting.getInvisibleLayout( i );
+                if( layout != null ){
+                    layout = situation.fillMissing( layout );
+                    if( info.getDockable() != null ){
+                        situation.convert( layout );
+                        layout = null;
+                    }
+                    info.setLayout( layout );
+                }
             }
         }
     }
@@ -1600,6 +1662,30 @@ public class DockFrontend {
     }
     
     /**
+     * Tries to estimate which of the currently visible {@link Dockable}s will
+     * be closed if <code>layout</code> is applied to this frontend. The
+     * default implementation assumes that <code>situation</code> is a {@link PredefinedDockSituation}.
+     * @param situation algoritm used to convert <code>layout</code>
+     * @param layout the layout that will be applied
+     * @return an estimation of the elements that will be made invisible or <code>null</code>
+     */
+    protected Set<Dockable> estimateClosing( DockSituation situation, DockLayoutComposition layout ){
+        if( situation instanceof PredefinedDockSituation ){
+            Set<Dockable> allDockables = new HashSet<Dockable>();
+            for( Dockable dockable : controller.getRegister().listDockables() ){
+                allDockables.add( dockable );
+            }
+            
+            PredefinedDockSituation predefined = (PredefinedDockSituation)situation;
+            Set<Dockable> visible = predefined.listVisible( allDockables, layout );
+            allDockables.removeAll( visible );
+            return allDockables;
+        }
+        
+        return null;
+    }
+    
+    /**
      * Tries to estimate the layouts of missing {@link Dockable}s. The
      * default implementation works with any {@link PredefinedDockSituation}.
      * @param situation the situation to use for transforming information
@@ -1692,7 +1778,7 @@ public class DockFrontend {
     }
     
     /**
-     * Removes all recursively all children from <code>station</code>, but only
+     * Removes recursively all children from <code>station</code>, but only
      * if the children are not filtered by <code>ignore</code>.
      * @param station a station to clean
      * @param ignore a filter
@@ -2091,86 +2177,7 @@ public class DockFrontend {
     protected DockFrontendListener[] listeners(){
         return listeners.toArray( new DockFrontendListener[ listeners.size() ]);
     }
-    
-    /**
-     * Gets an independent array containing all currently registered
-     * {@link VetoableDockFrontendListener}s.
-     * @return the array of listeners
-     */
-    protected VetoableDockFrontendListener[] vetoableListeners(){
-        return vetoableListeners.toArray( new VetoableDockFrontendListener[ vetoableListeners.size() ] );
-    }
-    
-    /**
-     * Calls the method {@link VetoableDockFrontendListener#hiding(VetoableDockFrontendEvent)}
-     * for all elements in the tree beginning with <code>dockable</code>.
-     * @param dockable the root of the tree of elements to remove
-     * @param cancelable whether the operation can be aborted
-     * @return <code>true</code> if the operation was aborted, <code>false</code>
-     * if not.
-     */
-    protected boolean fireAllHiding( Dockable dockable, final boolean cancelable ){
-        if( vetoableListeners.size() == 0 )
-            return false;
-        
-        final Single<Boolean> result = new Single<Boolean>( false );
-        
-        DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
-            @Override
-            public void handleDockable( Dockable dockable ) {
-                result.setA( fireHiding( dockable, result.getA(), cancelable ) );
-            }
-        });
-        
-        return result.getA();
-    }
-    
-    /**
-     * Invokes the method {@link VetoableDockFrontendListener#hiding(VetoableDockFrontendEvent)}
-     * until no listeners remain.
-     * @param dockable the element for which to invoke the listeners 
-     * @param canceled whether the operation already is aborted
-     * @param cancelable whether the operation can be aborted
-     * @return <code>true</code> if the operation is aborted
-     */
-    protected boolean fireHiding( Dockable dockable, boolean canceled, boolean cancelable ){
-        VetoableDockFrontendEvent event = new VetoableDockFrontendEvent( this, dockable, cancelable, true );
-        if( canceled )
-            event.cancel();
-        
-        for( VetoableDockFrontendListener listener : vetoableListeners() ){
-            listener.hiding( event );
-        }
-        return event.isCanceled();
-    }
-    
-    /**
-     * Invokes the method {@link VetoableDockFrontendListener#hidden(VetoableDockFrontendEvent)}
-     * for all listeners for all elemets of the tree with root <code>dockable</code>.
-     * @param dockable the element that was hidden
-     * @param expected whether this event was expected or unexpected
-     */
-    protected void fireAllHidden( Dockable dockable, final boolean expected ){
-        DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
-            @Override
-            public void handleDockable( Dockable dockable ) {
-                fireHidden( dockable, expected );
-            }
-        });
-    }
-    
-    /**
-     * Invokes the method {@link VetoableDockFrontendListener#hidden(VetoableDockFrontendEvent)}
-     * for all listeners.
-     * @param dockable the element that was hidden
-     * @param expected whether this event was expected or unexpected
-     */
-    protected void fireHidden( Dockable dockable, boolean expected ){
-        VetoableDockFrontendEvent event = new VetoableDockFrontendEvent( this, dockable, false, expected );
-        for( VetoableDockFrontendListener listener : vetoableListeners() )
-            listener.hidden( event );
-    }
-    
+
     /**
      * Invokes the method {@link DockFrontendListener#hidden(DockFrontend, Dockable)}
      * on all listeners for <code>dockable</code> and all its children.
@@ -2235,81 +2242,6 @@ public class DockFrontend {
             listener.removed( this, dockable );
     }
     
-    /**
-     * Calls {@link VetoableDockFrontendListener#showing(VetoableDockFrontendEvent)}
-     * for all elements in the tree with root <code>dockable</code>.
-     * @param dockable the root of the tree that will become visible
-     * @param cancelable whether the operation can be canceled
-     * @return <code>true</code> if the operation was aborted, <code>false</code>
-     * if the operation can continue
-     */
-    protected boolean fireAllShowing( Dockable dockable, final boolean cancelable ){
-        if( vetoableListeners.size() == 0 )
-            return false;
-        
-        final Single<Boolean> cancel = new Single<Boolean>( false );
-        
-        DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
-            @Override
-            public void handleDockable( Dockable dockable ) {
-                cancel.setA( fireShowing( dockable, cancel.getA(), cancelable ));    
-            }
-        });
-        
-        return cancel.getA();
-    }
-    
-    /**
-     * Calls {@link VetoableDockFrontendListener#showing(VetoableDockFrontendEvent)}
-     * for <code>dockable</code>.
-     * @param dockable the element that will be shown
-     * @param canceled whether the operation is already canceled
-     * @param cancelable whether the operation can be canceled
-     * @return whether the operation was aborted
-     */
-    protected boolean fireShowing( Dockable dockable, boolean canceled, boolean cancelable ){
-        VetoableDockFrontendEvent event = new VetoableDockFrontendEvent( this, dockable, cancelable, true );
-        
-        if( canceled )
-            event.cancel();
-        
-        for( VetoableDockFrontendListener listener : vetoableListeners() ){
-            listener.showing( event );
-        }
-        
-        return event.isCanceled();
-    }
-    
-    /**
-     * Invokes the method {@link VetoableDockFrontendListener#shown(VetoableDockFrontendEvent)}
-     * for all elements in the tree with root <code>dockable</code>.
-     * @param dockable the root of the tree that is shown
-     * @param expected whether the event is expected or not
-     */
-    protected void fireAllShown( Dockable dockable, final boolean expected ){
-        if( vetoableListeners.size() == 0 )
-            return;
-        
-        DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
-            @Override
-            public void handleDockable( Dockable dockable ) {
-                fireShown( dockable, expected );
-            }
-        });
-    }
-    
-    /**
-     * Invokes the method {@link VetoableDockFrontendListener#shown(VetoableDockFrontendEvent)}
-     * on all listeners.
-     * @param dockable the element that was shown
-     * @param expected whether the event was expected or not
-     */
-    protected void fireShown( Dockable dockable, boolean expected ){
-        VetoableDockFrontendEvent event = new VetoableDockFrontendEvent( this, dockable, false, expected );
-        for( VetoableDockFrontendListener listener : vetoableListeners() )
-            listener.shown( event );
-    }
-
     /**
      * Invokes the method {@link DockFrontendListener#shown(DockFrontend, Dockable)}
      * on all listeners for <code>dockable</code> and all its children.

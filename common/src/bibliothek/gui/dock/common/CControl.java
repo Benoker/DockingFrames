@@ -2017,7 +2017,7 @@ public class CControl {
                 boolean maximized = stateManager.ensureNothingMaximized();
 
                 if( location == null ){
-                    frontend.show( dockable.intern() );
+                    frontend.show( dockable.intern(), false );
                 }
                 else{
                     stateManager.setLocation( dockable.intern(), location );

@@ -27,13 +27,13 @@
 package bibliothek.gui.dock.layout;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
@@ -147,6 +147,66 @@ public class PredefinedDockSituation extends DockSituation {
             }
         }
         return info;
+    }
+    
+    /**
+     * Given a set of <code>Dockable</code>s this method
+     * estimates which of them will be visible once <code>composition</code>
+     * is applied.
+     * @param <D> the kind of elements to check
+     * @param base a collection of <code>Dockable</code>s in no specific
+     * order and with no restrictions
+     * @param composition location information for various elements
+     * @return A subset of <code>base</code> with those elements which will
+     * be visible once this situation converts <code>composition</code>
+     */
+    public <D extends DockElement> Set<D> listVisible( Collection<D> base, DockLayoutComposition composition ){
+        Set<D> result = new HashSet<D>();
+        listVisible( base, composition, result );
+        return result;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private <D extends DockElement> void listVisible( final Collection<D> base, DockLayoutComposition composition, final Set<D> result ){
+        DockLayoutInfo info = composition.getLayout();
+        if( info.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT ){
+            DockLayout<?> layout = info.getDataLayout();
+            
+            // preloaded element with key
+            if( KNOWN.equals( layout.getFactoryID() )){
+                PreloadedLayout preload = (PreloadedLayout)layout.getData();
+                String key = preload.getPreload();
+                DockElement element = stringToElement.get( key );
+                if( element != null ){
+                    if( base.contains( element )){
+                        result.add( (D)element );
+                    }
+                    if( composition.isIgnoreChildren() ){
+                        DockUtilities.visit( element, new DockUtilities.DockVisitor(){
+                            @SuppressWarnings("unchecked")
+                            @Override
+                            public void handleDockable( Dockable dockable ) {
+                                if( base.contains( dockable )){
+                                    result.add( (D)dockable );
+                                }
+                            }
+                            @SuppressWarnings("unchecked")
+                            @Override
+                            public void handleDockStation( DockStation station ) {
+                                if( base.contains( station )){
+                                    result.add( (D)station );
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        }
+        
+        // check all children
+        for( DockLayoutComposition child : composition.getChildren() ){
+            listVisible( base, child, result );
+        }
     }
     
     /**

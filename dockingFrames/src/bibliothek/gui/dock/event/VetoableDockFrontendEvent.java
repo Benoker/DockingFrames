@@ -25,6 +25,9 @@
  */
 package bibliothek.gui.dock.event;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
 
@@ -33,9 +36,9 @@ import bibliothek.gui.Dockable;
  * @author Benjamin Sigg
  *
  */
-public class VetoableDockFrontendEvent {
+public class VetoableDockFrontendEvent implements Iterable<Dockable>{
     private DockFrontend frontend;
-    private Dockable dockable;
+    private Dockable[] dockables;
     
     private boolean cancelable;
     private boolean canceled = false;
@@ -44,13 +47,17 @@ public class VetoableDockFrontendEvent {
     /**
      * Creates a new event
      * @param frontend the source of the event
-     * @param dockable the element which will be or is hidden
      * @param cancelable whether the operation can be aborted
      * @param expected whether the event is expected or unexpected
+     * @param dockables the elements which will be or is hidden, at least one entry
+     * is required
      */
-    public VetoableDockFrontendEvent( DockFrontend frontend, Dockable dockable, boolean cancelable, boolean expected ){
+    public VetoableDockFrontendEvent( DockFrontend frontend, boolean cancelable, boolean expected, Dockable... dockables ){
+        if( dockables.length < 1 )
+            throw new IllegalArgumentException( "An empty event is not allowed" );
+        
         this.frontend = frontend;
-        this.dockable = dockable;
+        this.dockables = dockables;
         this.cancelable = cancelable;
         this.expected = expected;
     }
@@ -64,11 +71,53 @@ public class VetoableDockFrontendEvent {
     }
     
     /**
-     * Gets the element which will be or is hidden.
+     * Gets the number of {@link Dockable}s which are in this event.
+     * @return the number of elements
+     */
+    public int getDockableCount(){
+        return dockables.length;
+    }
+    
+    /**
+     * Gets an element which will be or is hidden.
+     * @param index the index of the element, the index <code>0</code> is always
+     * valid.
      * @return the element, never <code>null</code>
      */
-    public Dockable getDockable() {
-        return dockable;
+    public Dockable getDockable( int index ) {
+        return dockables[ index ];
+    }
+    
+    /**
+     * Gets all the elements that are used in this event.
+     * @return all the elements, modifications of this array will not affect
+     * this event
+     */
+    public Dockable[] getDockables(){
+        Dockable[] copy = new Dockable[ dockables.length ];
+        System.arraycopy( dockables, 0, copy, 0, dockables.length );
+        return copy;
+    }
+    
+    public Iterator<Dockable> iterator() {
+        return new Iterator<Dockable>(){
+            private int index = 0;
+
+            public boolean hasNext() {
+                return index < dockables.length;
+            }
+
+            public Dockable next() {
+                if( !hasNext() )
+                    throw new NoSuchElementException();
+                
+                return dockables[ index++ ];
+            }
+
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }            
+        };
     }
     
     /**

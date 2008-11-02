@@ -33,9 +33,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -99,6 +97,23 @@ public class DockUtilities {
     }
     
     /**
+     * Visits <code>element</code> and all its children.
+     * @param element the first element to visit
+     * @param visitor a delegate
+     */
+    public static void visit( DockElement element, DockVisitor visitor ){
+        Dockable dockable = element.asDockable();
+        if( dockable != null )
+            visitDockable( dockable, visitor );
+        else{
+            DockStation station = element.asDockStation();
+            if( station != null ){
+                visitStation( station, visitor );
+            }
+        }
+    }
+    
+    /**
      * Visits <code>dockable</code> and all its children.
      * @param dockable the first element to visit
      * @param visitor a delegate
@@ -121,6 +136,27 @@ public class DockUtilities {
             visitDockable( station.getDockable( i ), visitor );
     }
     
+    /**
+     * Lists all {@link Dockable}s in the tree under <code>root</code>.
+     * @param root the root of a tree of elements
+     * @param includeRoot whether <code>root</code> should be in the resulting
+     * list as well
+     * @return the list of found {@link Dockable}s, might be empty but not <code>null</code>
+     */
+    public static List<Dockable> listDockables( final DockElement root, final boolean includeRoot ){
+        final List<Dockable> list = new ArrayList<Dockable>();
+        
+        visit( root, new DockVisitor(){
+            @Override
+            public void handleDockable( Dockable dockable ) {
+                if( includeRoot || dockable != root ){
+                    list.add( dockable );
+                }
+            }
+        });
+        
+        return list;
+    }
     
     /**
      * Tells whether <code>child</code> is identical with <code>ancestor</code>

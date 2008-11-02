@@ -31,16 +31,21 @@ import bibliothek.gui.Dockable;
 /**
  * This listener is added to a {@link DockFrontend}. It gets informed before
  * and after a {@link Dockable} is shown or hidden. In some cases this listener 
- * can cancel the operation.
+ * can cancel the operation.<br>
+ * The number of calls of a method of this listener does not have to be the
+ * same number for any other method. Also an array of <code>Dockable</code>s
+ * given to one method may be split up into many arrays the next time or when
+ * given to another method. It is however guaranteed that there are no false
+ * alarms (i.e. an already invisible <code>Dockable</code> will never
+ * be given to {@link #hiding(VetoableDockFrontendEvent)}).
  * @author Benjamin Sigg
  */
 public interface VetoableDockFrontendListener {
     /**
-     * Called before a {@link Dockable} is shown. This method is only called
-     * if the user tries to open the element through the standard way, meaning
-     * that {@link DockFrontend#show(Dockable,boolean)} is called.<br>
-     * To abort the operation, {@link VetoableDockFrontendEvent#cancel()} can
-     * be invoked.
+     * Called before a {@link Dockable} is shown. To abort the operation, 
+     * {@link VetoableDockFrontendEvent#cancel()} can be invoked.
+     * This method may not be called for all {@link Dockable}s, it is certainly
+     * called if a client opens a {@link Dockable} through {@link DockFrontend#show(Dockable)}
      * @param event description of the element to close
      */
     public void showing( VetoableDockFrontendEvent event );
@@ -53,17 +58,17 @@ public interface VetoableDockFrontendListener {
     public void shown( VetoableDockFrontendEvent event );
     
     /**
-     * Called before a {@link Dockable} is hidden. This method is only called
-     * if the user tries to close the element through the close-action, meaning
-     * that {@link DockFrontend#hide(Dockable,boolean)} is called.<br>
-     * To abort the operation, {@link VetoableDockFrontendEvent#cancel()} can
-     * be invoked.
+     * Called before a set of {@link Dockable}s is hidden. To abort the 
+     * operation, {@link VetoableDockFrontendEvent#cancel()} can be invoked.
+     * This method may not always be invoked for all {@link Dockable}s, it
+     * is certainly invoked if {@link DockFrontend#hide(Dockable)}
+     * is called or if {@link DockFrontend#setSetting(bibliothek.gui.dock.frontend.Setting, boolean)}.
      * @param event description of the element to close
      */
     public void hiding( VetoableDockFrontendEvent event );
     
     /**
-     * Called whenever a {@link Dockable} was hidden. Other than
+     * Called whenever a set of {@link Dockable} was hidden. Other than
      * {@link #hiding(VetoableDockFrontendEvent)} this method is always called.
      * @param event description of the element and how it got closed
      */
