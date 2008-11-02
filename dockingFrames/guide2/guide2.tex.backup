@@ -475,8 +475,42 @@ If some component wants to show some actions it firsts asks a \src{Dockable} for
 
 \designbox{There are three levels in the design of \src{DockAction} and its subclasses. First there is \src{DockAction} which allows almost any kind of \src{Component} to be used as view. Second there are subinterfaces for the standard tasks, the framework provides views for them. Third are real implementations of the second-level interfaces. Some interfaces are implemented in more than one action for different styles of aplication organization.}
 
+\subsection{Show Actions}
+Assuming one has a \src{DockAction} (more about different kind of actions is in the next chapter) how can the framework be advised to show it? 
+
+\subsubsection{List of Actions}
+
+\subsubsection{}
+Actions haf different sources, each kind of source has a specific purpose.
+
+\begin{itemize}
+ \item The \textbf{local action source} is part of every \src{Dockable}. This source is accessed through \src{getLocalActionOffers}. If \src{AbstractDockable} or a subclass like \src{DefaultDockable} is used then \src{setLocalActionOffers} allows to quickly set and exchange the actions. This source of actions should be used for actions that are closely linked with some \src{Dockable}.
+ \item \src{ActionGuard}s can add actions to every \src{Dockable}. An \src{ActionGuard} is added to a \src{DockController} through \src{addActionGuard}. Its method \src{react} will be called whenever the actions of a \src{Dockable} are searched. If \src{react} returns \src{true} them the method \src{getSource} is called which adds the actions. This source of actions is intended either for general purpose action or for actions which need a special position in the list of actions (like a close-action needs to be at the very right end).
+ \item Every \src{DockStation} can add \textbf{direct} and \textbf{indirect action offers} to its children. For this \src{DockStation} has two methods \src{getDirectActionOffers} and \src{getIndirectActionOffers}. \textbf{Direct action offers} are used only for true children, \src{indirect action offers} can be applied to grand-children as well. These sources of actions is intended for actions that are linked to a \src{DockStation}, like the maixmimze-action that can be seen on a \src{SplitDockStation}.
+\end{itemize}
+
+Two mechanisms are responsible for collecting all the actions form these different sources and o put them into one list. Clients can adjust these mechanisms even to a point where they no longer collect actions but introduce their own actions.
+
+\begin{itemize}
+ \item Every \src{DockController} has at least one \src{ActionOffer}. An \src{ActionOffer} has two methods, \src{interested} tells whether the offer is interested in managing a certain \src{Dockable} and \src{getSource} collects the actions of an interesting \src{Dockable}. The primary function of an \src{ActionOffer} is to order the various sources. It is up to the offer to decide how to actually do the sorting. The default \src{ActionOffer} uses the \src{LocationHint} which is attached to every \src{DockActionSource}.
+
+Clients can use \src{addActionOffer} and \src{setDefaultActionOffer} to change the offers of a \src{DockController}. The public method \src{listOffers} then advises the controller to use its offers, clients however should not call this method directly. They should call \src{getGlobalActionOffers} of \src{Dockable}.
+
+ \item Modules which need a list of actions call \src{getGlobalActionOffers} from \src{Dockable}. This method is the ultimate piece of code which decides what to show. If need by this method can ignore anything else that has been said in this chapter and introduce its very own mechanism to collect actinos. Most \src{Dockable}s however will create a field holding a \src{HierarchyDockActionSource}. This special source observes the hierarchy of a \src{Dockable} and changes its content automatically. \src{Dockable}s using \src{HierarchyDockActionSource} should \src{bind} the source. They need to call \src{update} if their own local action source is exchanged. 
+\end{itemize}
+
+\warningbox{It is generally a bad idea to write \src{DockActionOffer}s or \src{getGlobalActionOffer} methods which do not just collect actions. There are already mechanisms to introduce \src{DockAction}s and they should suffice for every possible situation.}
+
 \subsection{Standard Actions}
-There are five standard action types. They represent buttons, checkboxes, radiobuttons, menus and drop-down-menus. 
+There are a number of standard actions in the framework. Clients can either subclass them or instantiate and add listeners to them. A user would put the actions into six groups:
+\begin{description}
+ \item[Button] If the user clicks this action then always the same happens. The interface \src{ButtonDockAction} collects all the buttonlike actions.
+ \item[Checkbox] When triggered it changes some property from \src{true} to \src{false} or from \src{false} to \src{true}. All actions with this behavior implement the interface \src{SelectableDockAction}.
+ \item[Radiobutton] Like a group of checkboxes, but only one radiobutton can be selected within that group. Like checkboxes all these actions are represented by \src{SelectableDockAction}. Several radiobuttons can be linked together with the help of a \src{SelectableDockActionGroup}.
+ \item[Menu] A menu just contains a list of other \src{DockAction}s. These other actions are normally hidden and only shown if the user wants to see them. Menus are implementing the interface \src{MenuDockAction}.
+ \item[Drop-down-button] Like a menu but the last triggered action can be triggered again without opening the menu. The interface \src{DropDownAction} represents these special menus.
+ \item[Separator] 
+\end{description}
 
 \begin{lstlisting}
 public class ExampleAction extends SimpleButtonAction{
