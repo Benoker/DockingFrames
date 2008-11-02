@@ -889,7 +889,7 @@ public class CControl {
     public CWorkingArea createWorkingArea( String uniqueId ){
         CWorkingArea area = factory.createWorkingArea( uniqueId );
         add( area );
-        add( area, false );
+        add( area, true );
         return area;
     }
 

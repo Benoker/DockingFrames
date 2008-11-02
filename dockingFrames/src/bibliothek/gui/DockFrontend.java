@@ -2056,6 +2056,33 @@ public class DockFrontend {
         
         return null;
     }
+
+    /**
+     * Gets information about the root of <code>dockable</code>.
+     * @param dockable some dockable
+     * @return the information or <code>null</code>
+     */
+    private RootInfo getRoot( Dockable dockable ){
+        DockStation station = dockable.asDockStation();
+        if( station != null ){
+            RootInfo info = getRoot( station );
+            if( info != null )
+                return info;
+        }
+        
+        station = dockable.getDockParent();
+        while( station != null ){
+            RootInfo info = getRoot( station );
+            if( info != null )
+                return info;
+            
+            dockable = station.asDockable();
+            if( dockable == null )
+                return null;
+            station = dockable.getDockParent();
+        }
+        return null;
+    }
     
     /**
      * Gets an independent array containing all currently registered listeners. 
@@ -2476,16 +2503,12 @@ public class DockFrontend {
          * according to the current location of {@link #getDockable() the element}.
          */
         public void updateLocation(){
-            DockStation station = DockUtilities.getRoot( dockable );
-            if( station == null )
-                return;
-            
-            RootInfo info = DockFrontend.this.getRoot( station );
+            RootInfo info = DockFrontend.this.getRoot( dockable );
             if( info == null )
                 return;
             
             root = info.getName();
-            location = DockUtilities.getPropertyChain( station, dockable );
+            location = DockUtilities.getPropertyChain( info.getStation(), dockable );
         }
         
         public void setLocation( String root, DockableProperty location ){
