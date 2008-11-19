@@ -191,6 +191,18 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
         });
     }
     
+    @Override
+    public void setVisible( boolean flag ){    	   
+    	if( flag ){
+    		// Actually this should not be necessary and only
+    		// prevents some strange bug where the size gets wrong,
+    		// the origin of the bug remains a mystery.
+    		updateBounds();
+    	}
+
+    	super.setVisible( flag );
+    }
+    
     /**
      * Gets the station for which this window is shown.
      * @return the owner of this window
