@@ -158,6 +158,51 @@ public class SplitDockGrid {
 	}
 	
 	/**
+	 * Marks <code>dockable</code> as selected in the stack of elements that
+	 * are on position <code>x, y, width, height</code>. This method requires
+	 * that {@link #addDockable(double, double, double, double, Dockable...) add}
+	 * was called with the exact same coordinates and with <code>dockable</code>.
+	 * @param x the x coordinate
+	 * @param y the y coordinate
+	 * @param width the width of the elements
+	 * @param height the height of the elements
+	 * @param dockable the element to select, not <code>null</code>
+	 * @throws IllegalArgumentException if <code>width</code> or <code>height</code>
+	 * are below 0, if <code>dockable</code> is <code>null</code>, if 
+	 * {@link #addDockable(double, double, double, double, Dockable...) add}
+	 * was never called with the arguments
+	 */
+	public void setSelected( double x, double y, double width, double height, Dockable dockable ){
+		if( dockable == null )
+			throw new IllegalArgumentException( "dockable is null" );
+		
+        if( width < 0 )
+            throw new IllegalArgumentException( "width < 0" );
+        
+        if( height < 0 )
+            throw new IllegalArgumentException( "height < 0" );
+
+        for( Node node : nodes ){
+            if( node.x == x && 
+                    node.y == y && 
+                    node.width == width && 
+                    node.height == height){
+                
+            	for( Dockable check : node.dockables ){
+            		if( check == dockable ){
+            			node.selected = dockable;
+            			return;
+            		}
+            	}
+            	
+            	throw new IllegalArgumentException( "dockable is not in the described stack" );
+            }
+        } 
+        
+        throw new IllegalArgumentException( "there are no dockables registered with the given coordinates" );
+	}
+	
+	/**
 	 * Adds a vertical dividing line.
 	 * @param x the x-coordinate of the line
 	 * @param y1 the y-coordinate of the first endpoint
@@ -479,15 +524,18 @@ public class SplitDockGrid {
 		public boolean horizontal;
 		/** the elements represented by this leaf */
 		public Dockable[] dockables;
-	
+		/** the element that is selected */
+		public Dockable selected;
+		
 		/**
 		 * Writes the contents of this node into <code>tree</code>.
 		 * @param tree the tree to write into
 		 * @return the key of the node
 		 */
 		public SplitDockTree.Key put( SplitDockTree tree ){
-			if( dockables != null )
-				return tree.put( dockables );
+			if( dockables != null ){
+				return tree.put( dockables, selected );
+			}
 			else if( horizontal ){
 				return tree.horizontal( childA.put( tree ), childB.put( tree ), divider );
 			}

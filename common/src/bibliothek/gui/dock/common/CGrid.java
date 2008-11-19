@@ -111,6 +111,19 @@ public class CGrid {
     }
     
     /**
+     * Marks <code>dockable</code> as beeing selected in the stack that
+     * has the boundaries of <code>x, y, width, height</code>.
+     * @param x the x coordinate of the stack
+     * @param y the y coordinate of the stack
+     * @param width the width of the stack
+     * @param height the height of the stack
+     * @param dockable the element to select, not <code>null</code>
+     */
+    public void select( double x, double y, double width, double height, CDockable dockable ){
+    	grid.setSelected( x, y, width, height, dockable.intern() );
+    }
+    
+    /**
      * Informs this grid about a horizontal divider that should be inserted
      * into the layout. There are no guarantees that the divider really is inserted.
      * @param x1 the first x coordinate of the divider

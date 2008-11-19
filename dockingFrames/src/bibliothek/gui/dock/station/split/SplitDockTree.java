@@ -93,6 +93,16 @@ public class SplitDockTree{
 	 * @return the new key
 	 */
 	public Key put( Dockable... dockables ){
+		return put( dockables, null );
+	}
+
+	/**
+	 * Creates a key for the set <code>dockables</code>.
+	 * @param dockables the elements for which a key is requested
+	 * @param selected the element that should be selected, can be <code>null</code>
+	 * @return the new key
+	 */
+	public Key put( Dockable[] dockables, Dockable selected ){
 		if( dockables == null )
 			throw new IllegalArgumentException( "Dockables must not be null" );
         
@@ -108,7 +118,7 @@ public class SplitDockTree{
     		
         }
 		
-		return new Leaf( dockables );
+		return new Leaf( dockables, selected );
 	}
 	
 	/**
@@ -245,6 +255,17 @@ public class SplitDockTree{
 	}
 	
 	/**
+	 * Gets the element that is selected in this leaf.
+	 * @param key the leaf
+	 * @return the selected element, can be <code>null</code>
+	 */
+	public Dockable getSelected( Key key ){
+		if( !isDockable( key ))
+			throw new IllegalArgumentException( "Not a Dockable" );
+		return key.asLeaf().selected;
+	}
+	
+	/**
 	 * Tells whether the node <code>key</code> represents a horizontal
 	 * or a vertical node.
 	 * @param key the node
@@ -370,14 +391,18 @@ public class SplitDockTree{
 	private class Leaf extends Key{
 		/** the Dockable that will replace this leaf */
 		public Dockable[] dockables;
+		/** the element that is selected, can be <code>null</code> */
+		public Dockable selected;
 		
 		/**
 		 * Creates a new leaf.
 		 * @param dockables the set of dockables which will replace this leaf
+		 * @param selected the selected element
 		 */
-		public Leaf( Dockable[] dockables ){
+		public Leaf( Dockable[] dockables, Dockable selected ){
             this.dockables = new Dockable[ dockables.length ];
             System.arraycopy( dockables, 0, this.dockables, 0, dockables.length );
+            this.selected = selected;
 		}
 		
 		@Override

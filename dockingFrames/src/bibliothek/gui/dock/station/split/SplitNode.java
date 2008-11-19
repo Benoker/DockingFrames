@@ -484,6 +484,13 @@ public abstract class SplitNode{
                 if( dockables.length == 2 ){
                     leaf = createLeaf();
                     leaf.setDockable( combination, true );
+                    
+                    DockStation station = combination.asDockStation();
+                    if( station != null ){
+                    	Dockable selected = key.getTree().getSelected( key );
+                    	if( selected != null )
+                    		station.setFrontDockable( selected );
+                    }
                 }
                 else{
                     DockStation station = combination.asDockStation();
@@ -508,6 +515,10 @@ public abstract class SplitNode{
                         
                         station.drop( dockable );
                     }
+                    
+                    Dockable selected = key.getTree().getSelected( key );
+                    if( selected != null )
+                    	station.setFrontDockable( selected );
                 }
             }
             
