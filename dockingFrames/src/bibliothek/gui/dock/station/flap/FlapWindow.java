@@ -327,7 +327,7 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
         insets.top += deltaY;
         insets.right += deltaW - deltaX;
         insets.bottom += deltaH - deltaY;
-        
+
         return insets;
     }
     
@@ -335,8 +335,9 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
      * Recalculates the size and the location of this window.
      */
     public void updateBounds(){
-        Dockable dockable = displayer == null ? null : displayer.getDockable();
+    	Dockable dockable = displayer == null ? null : displayer.getDockable();
         if( dockable != null ){
+        	validate();
             Point location;
             Dimension size;
             FlapDockStation.Direction direction = station.getDirection();

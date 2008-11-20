@@ -223,3 +223,5 @@
 - API: VetoableDockFrontendListener.hiding is now also called when appliying a new layout. The method showing is not called because the elements to show do not yet exist.
 - Bugfix: FlapWindow did not always get the correct size when its parent got resized while the window was invisible. Fixed by Peter.
 - API: CGrid/SplitDockGrid: new method select/setSelected to preselect a CDockable/Dockable in a stack of Dockables. 
+- Bugfix: Dropping a CWorkingArea with children did not work
+- Bugfix: Dropping a CDockable with no location but a working-area will automatically use the working-areas default location.

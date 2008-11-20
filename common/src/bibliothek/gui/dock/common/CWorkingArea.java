@@ -345,6 +345,10 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable, 
             return CWorkingArea.this;
         }
         
+        public CStation getStation(){
+        	return CWorkingArea.this;
+        }
+        
         @Override
         protected ListeningDockAction createFullScreenAction() {
             return null;
@@ -390,6 +394,10 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable, 
         
         public CDockable getDockable() {
             return CWorkingArea.this;
+        }
+        
+        public CStation getStation(){
+        	return CWorkingArea.this;
         }
         
         @Override

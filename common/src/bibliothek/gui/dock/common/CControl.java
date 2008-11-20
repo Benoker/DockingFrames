@@ -30,22 +30,66 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 
 import bibliothek.extension.gui.dock.preference.PreferenceModel;
 import bibliothek.extension.gui.dock.preference.PreferenceStorage;
-import bibliothek.gui.*;
-import bibliothek.gui.dock.*;
+import bibliothek.gui.DockController;
+import bibliothek.gui.DockFrontend;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.DockTheme;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.action.predefined.CCloseAction;
-import bibliothek.gui.dock.common.event.*;
-import bibliothek.gui.dock.common.intern.*;
+import bibliothek.gui.dock.common.event.CControlListener;
+import bibliothek.gui.dock.common.event.CDockablePropertyListener;
+import bibliothek.gui.dock.common.event.CDockableStateListener;
+import bibliothek.gui.dock.common.event.CDoubleClickListener;
+import bibliothek.gui.dock.common.event.CFocusListener;
+import bibliothek.gui.dock.common.event.CKeyboardListener;
+import bibliothek.gui.dock.common.event.ResizeRequestListener;
+import bibliothek.gui.dock.common.intern.AbstractCStation;
+import bibliothek.gui.dock.common.intern.CControlAccess;
+import bibliothek.gui.dock.common.intern.CControlFactory;
+import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.CDockableAccess;
+import bibliothek.gui.dock.common.intern.CListenerCollection;
+import bibliothek.gui.dock.common.intern.CSetting;
+import bibliothek.gui.dock.common.intern.CSingleParentRemover;
+import bibliothek.gui.dock.common.intern.CStateManager;
+import bibliothek.gui.dock.common.intern.CommonDockable;
+import bibliothek.gui.dock.common.intern.CommonDockableLayout;
+import bibliothek.gui.dock.common.intern.CommonMultipleDockableFactory;
+import bibliothek.gui.dock.common.intern.CommonSingleDockableFactory;
+import bibliothek.gui.dock.common.intern.EfficientControlFactory;
+import bibliothek.gui.dock.common.intern.ExtendedModeAcceptance;
+import bibliothek.gui.dock.common.intern.MutableCControlRegister;
+import bibliothek.gui.dock.common.intern.SecureControlFactory;
+import bibliothek.gui.dock.common.intern.StackableAcceptance;
+import bibliothek.gui.dock.common.intern.WorkingAreaAcceptance;
 import bibliothek.gui.dock.common.intern.CDockable.ExtendedMode;
 import bibliothek.gui.dock.common.intern.station.CFlapLayoutManager;
 import bibliothek.gui.dock.common.intern.station.CLockedResizeLayoutManager;
@@ -55,7 +99,11 @@ import bibliothek.gui.dock.common.layout.RequestDimension;
 import bibliothek.gui.dock.common.layout.ThemeMap;
 import bibliothek.gui.dock.common.location.CExternalizedLocation;
 import bibliothek.gui.dock.control.DockRegister;
-import bibliothek.gui.dock.event.*;
+import bibliothek.gui.dock.event.DockAdapter;
+import bibliothek.gui.dock.event.DockableFocusEvent;
+import bibliothek.gui.dock.event.DockableFocusListener;
+import bibliothek.gui.dock.event.DoubleClickListener;
+import bibliothek.gui.dock.event.KeyboardListener;
 import bibliothek.gui.dock.facile.station.screen.WindowProviderVisibility;
 import bibliothek.gui.dock.facile.station.split.ConflictResolver;
 import bibliothek.gui.dock.facile.station.split.DefaultConflictResolver;
@@ -2010,8 +2058,12 @@ public class CControl {
                     location = access.internalLocation();
                 }
                 if( location == null ){
-                    if( !frontend.hasLocation( dockable.intern() ))
-                        location = defaultLocation;
+                    if( !frontend.hasLocation( dockable.intern() )){
+                    	if( area != null )
+                    		location = area.getStationLocation();
+                    	else
+                    		location = defaultLocation;
+                    }
                 }
 
                 boolean maximized = stateManager.ensureNothingMaximized();

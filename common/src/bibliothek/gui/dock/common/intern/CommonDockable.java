@@ -28,6 +28,7 @@ package bibliothek.gui.dock.common.intern;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.SingleCDockable;
 
@@ -41,6 +42,12 @@ public interface CommonDockable extends Dockable{
 	 * @return the model
 	 */
 	public CDockable getDockable();
+	
+	/**
+	 * Gets the model of this dockable as station.
+	 * @return the model, may be <code>null</code>
+	 */
+	public CStation getStation();
 	
 	/**
 	 * Gets the {@link DockActionSource} which shows the close-action.

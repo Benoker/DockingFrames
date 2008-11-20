@@ -122,8 +122,16 @@ public class WorkingAreaAcceptance implements DockAcceptance {
         }
         
         DockStation station = dockable.asDockStation();
-        if( station != null )
+        if( station != null ){
+        	if( dockable instanceof CommonDockable ){
+        		CStation cstation = ((CommonDockable)dockable).getStation();
+        		if( cstation != null && cstation.isWorkingArea() ){
+        			return true;
+        		}
+        	}
+        	
             return match( area, station );
+        }
         else
             return true;
     }

@@ -28,6 +28,7 @@ import bibliothek.gui.dock.*;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.LocationHint;
+import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.event.CDockableAdapter;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
@@ -74,6 +75,10 @@ public class DefaultCommonDockable extends DefaultDockable implements CommonDock
     
     public CDockable getDockable(){
         return dockable;
+    }
+    
+    public CStation getStation(){
+    	return null;
     }
     
     public DockActionSource getClose() {
