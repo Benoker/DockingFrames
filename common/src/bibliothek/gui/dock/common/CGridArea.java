@@ -79,7 +79,7 @@ public class CGridArea implements CStation{
         
         if( this.access != null ){
             this.access.getOwner().addResizeRequestListener( request );
-            this.access.getStateManager().add( uniqueId, station );
+            this.access.getStateManager().add( uniqueId, station, true );
         }
     }
     

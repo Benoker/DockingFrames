@@ -258,9 +258,23 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      * <code>station</code> becomes the default station for this kind or
      * operation.
      * @param name the name of the station
-     * @param station the new station.
+     * @param station the new station
      */
     public void add( String name, SplitDockStation station ){
+    	add( name, station, true );
+    }
+    
+    /**
+     * Adds a station to which a {@link Dockable} can be <i>normalized</i>
+     * or <i>maximized</i>. If this is the first call to this method, then
+     * <code>station</code> becomes the default station for this kind or
+     * operation.
+     * @param name the name of the station
+     * @param station the new station
+     * @param allowAutoDefault tells whether <code>station</code> can automatically
+     * become the default station for some actions like maximizing
+     */
+    public void add( String name, SplitDockStation station, boolean allowAutoDefault ){
         if( name == null )
             throw new NullPointerException( "name must not be null" );
 
@@ -272,11 +286,14 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
 
         stations.put( name, station );
         normal.add( station );
-        if( defaultNormal == null )
-            defaultNormal = station;
+        
+        if( allowAutoDefault ){
+        	if( defaultNormal == null )
+        		defaultNormal = station;
 
-        if( defaultMaxi == null ){
-            setMaximizingArea( new MaximizeSplitDockStation( "dock.default", station ) );
+        	if( defaultMaxi == null ){
+        		setMaximizingArea( new MaximizeSplitDockStation( "dock.default", station ) );
+        	}
         }
     }
 

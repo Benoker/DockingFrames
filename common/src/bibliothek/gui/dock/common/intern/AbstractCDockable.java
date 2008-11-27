@@ -252,14 +252,15 @@ public abstract class AbstractCDockable implements CDockable {
             case EXTERNALIZED:
                 if( !isExternalizable() )
                     return;
-                
+                break;
             case MAXIMIZED:
                 if( !isMaximizable() )
                     return;
-                
+                break;
             case MINIMIZED:
                 if( !isMinimizable() )
                     return;
+                break;
         }
         
         CControlAccess control = control();

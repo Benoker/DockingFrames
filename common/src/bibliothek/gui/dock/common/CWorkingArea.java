@@ -270,7 +270,7 @@ public class CWorkingArea extends AbstractCDockable implements SingleCDockable, 
             super.setControl( control );
             
             if( control != null ){
-                control.getStateManager().add( uniqueId, station );
+                control.getStateManager().add( uniqueId, station, false );
                 control.getOwner().addResizeRequestListener( resizeRequestHandler );
                 if( maximizingArea != null ){
                     control.getStateManager().addMaximizingArea( maximizingArea );

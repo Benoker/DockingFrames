@@ -225,3 +225,4 @@
 - API: CGrid/SplitDockGrid: new method select/setSelected to preselect a CDockable/Dockable in a stack of Dockables. 
 - Bugfix: Dropping a CWorkingArea with children did not work
 - Bugfix: Dropping a CDockable with no location but a working-area will automatically use the working-areas default location.
+- Bugfix: AbstractCDockable did ignore to set some extended modes if some other extended modes were disabled. This was caused by a missing "break" in a "switch case"-statement. 
