@@ -134,7 +134,7 @@
 	
 	<target name="doc" depends="source, paths">
 		<mkdir dir="${doc}/${name.dockingFrames}"/>
-		<javadoc destdir="${doc}/${name.dockingFrames}" use="true" splitindex="true">
+		<javadoc destdir="${doc}/${name.dockingFrames}" use="true" splitindex="true" useexternalfile="true">
 			<fileset dir="${source}/${name.dockingFrames}">
 				<include name="**/*.java"/>
 			</fileset>
@@ -142,7 +142,7 @@
 		</javadoc>
 	
 		<mkdir dir="${doc}/${name.common}"/>
-		<javadoc destdir="${doc}/${name.common}" use="true" splitindex="true">
+		<javadoc destdir="${doc}/${name.common}" use="true" splitindex="true" useexternalfile="true">
 			<fileset dir="${source}/${name.dockingFrames}">
 				<include name="**/*.java"/>
 			</fileset>
@@ -179,7 +179,7 @@
 			<fileset dir="${temp}/${name.demonstration}"/>
 			<manifest>
 				<attribute name="Main-Class" value="bibliothek.demonstration.Main"/>
-				<attribute name="Class-Path" value="lib/${name.common}.jar lib/${name.demonstrationInterface}.jar lib/${name.dockingFrames}.jar lib/${name.chess}.jar lib/${name.help}.jar lib/${name.notes}.jar lib/${name.paint}.jar lib/${name.sizeAndColor}.jar"/>
+				<attribute name="Class-Path" value="lib/${name.common}.jar lib/${name.demonstrationInterface}.jar lib/${name.dockingFrames}.jar lib/${name.chess}.jar lib/${name.help}.jar lib/${name.notes}.jar lib/${name.paint}.jar lib/${name.sizeAndColor}.jar lib/${name.layouts}.jar"/>
 			</manifest>
 		</jar>
 		<jar destfile="${web}/lib/${name.demonstrationInterface}.jar">
@@ -233,7 +233,7 @@
 			<fileset dir="${temp}/${name.demonstration}"/>
 			<manifest>
 				<attribute name="Main-Class" value="bibliothek.demonstration.Main"/>
-				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.dockingFrames}.jar ${name.chess}.jar ${name.help}.jar ${name.notes}.jar ${name.paint}.jar ${name.sizeAndColor}.jar"/>
+				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.dockingFrames}.jar ${name.chess}.jar ${name.help}.jar ${name.notes}.jar ${name.paint}.jar ${name.sizeAndColor}.jar ${name.layouts}.jar"/>
 			</manifest>
 		</jar>
 		<jar destfile="${bin}/${name.demonstrationInterface}.jar">

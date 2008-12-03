@@ -479,15 +479,11 @@ If some component wants to show some actions it firsts asks a \src{Dockable} for
 Assuming one has a \src{DockAction} (more about different kind of actions is in the next chapter) how can the framework be advised to show it? 
 
 \subsubsection{List of Actions}
-\src{DockAction} never travel alone in this framework. They always travel with other actions in a \src{DockActionSource}. Actions can be added or removed from \src{DockActionSource}s at any time and modules showing actions will react on this.
+\src{DockAction}s never travel alone in this framework. They always travel with other actions in a \src{DockActionSource}. Actions can be added or removed from \src{DockActionSource}s at any time and modules showing actions will react on this.
 
 Most methods of \src{DockActionSource} can be understood without explanation. The method \src{getLocationHint} is an exception. It returns a  \src{LocationHint} which is used to order several \src{DockActionSources} into a list (and treat them as one big \src{DockActionSource}). Clients which implement an \src{ActionOffer} can also introduce new kind of \src{LocationHint}s.
 
-\classbox{\src{LocationHint}s consists of an \src{Origin} and a \src{Hint}. The hint tells the preferred location in respect to other elements, the origin are used if multiple hints collide. New \src{Hint}s and \src{Origin}s can be written.
-
-new DefaultActionOffer / DockController setDefaultActionOFfers
-
-}
+\classbox{\src{LocationHint}s consists of an \src{Origin} and a \src{Hint}. The hint tells the preferred location in respect to other elements, the origin are used if multiple hints collide. New \src{Hint}s and \src{Origin}s can be written.}
 
 \subsubsection{Source of Actions}
 Actions haf different sources, each kind of source has a specific purpose.
@@ -518,8 +514,11 @@ There are a number of standard actions in the framework. Clients can either subc
  \item[Radiobutton] Like a group of checkboxes, but only one radiobutton can be selected within that group. Like checkboxes all these actions are represented by \src{SelectableDockAction}. Several radiobuttons can be linked together with the help of a \src{SelectableDockActionGroup}.
  \item[Menu] A menu just contains a list of other \src{DockAction}s. These other actions are normally hidden and only shown if the user wants to see them. Menus are implementing the interface \src{MenuDockAction}.
  \item[Drop-down-button] Like a menu but the last triggered action can be triggered again without opening the menu. The interface \src{DropDownAction} represents these special menus.
- \item[Separator] 
+ \item[Separator] A separator just is a line, a graphical element to divide a set of actions into subsets. Separators are implemented through the class \src{SeparatorAction}.
 \end{description}
+
+\subsubsection{Simple actions}
+Simple actions are a set of classes that implement the various action-interfaces. These simple actions do not have any advanced features and should be quite simple to use. An example might be the following code:
 
 \begin{lstlisting}
 public class ExampleAction extends SimpleButtonAction{
@@ -536,12 +535,178 @@ public class ExampleAction extends SimpleButtonAction{
 }
 \end{lstlisting}
 
+Here the class \src{SimpleButtonAction} is used. The action is subclassed by \src{ExampleAction}. In lines \src{3-5} properties like the icon are set. The subclass overrides the method \src{action} (lines \src{9-11}) which is invoked every time when the user presses the button.
 
+The available simple actions are:
+\begin{itemize}
+	\item \src{SimpleButtonAction}: For creating buttons. Can either be subclassed (like in the example above) or just instanciated. Clients can add instances of the well known \src{ActionListener}s which will be invoked when the user presses the button. Exaclty like a \src{JButton}.
+	\item \src{SimpleSelectableAction.Check} and \src{SimpleSelectableAction.Radio}: \linebreak For creating checkboxes and radiobuttons. Clients can add instances of \linebreak \src{SelectableDockActionListener} to be informed whenever the state of the action changes. A \src{SelectableDockActionGroup} can be used to make sure that only one action out of a set of actions is selected at any time.
+	\item \src{SimpleMenuAction}: For creating menus. The method \src{setMenu} takes a \src{DockActionSource} and the content of this source will be shown.
+	\item \src{SimpleDropDownAction}: For creating drop down menus. Has methods to get and set the selection, and methods to add or remove actions from the menu.
+\end{itemize}
+
+\subsubsection{Group actions}
+Group actions are \src{DockAction}s that can be used for many \src{Dockable}s at once even with different properties for each \src{Dockable}. To be more precise, a \linebreak \src{GroupKeyGenerator} will assign a key to each \src{Dockable}. If any view asks the action for a property (like the icon) this key will be used to search the property in a map. All the group actions extend the class \src{GroupedDockAction}.
+
+Let's have a look at an example. The following action behaves like a checkbox. Its unique feature is the text that changes if the selected-state changes.
+\begin{lstlisting}
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.actions.GroupKeyGenerator;
+import bibliothek.gui.dock.action.actions.GroupedSelectableDockAction;
+
+public class ExampleGroupAction extends 
+			GroupedSelectableDockAction.Check<Boolean> {
+    public ExampleGroupAction(){
+        super( new GroupKeyGenerator<Boolean>(){
+        	public Boolean generateKey( Dockable dockable ){
+        		return dockable.<getSomeProperty()>;
+        	}
+        });
+        setRemoveEmptyGroups( false );
+                
+        setSelected( Boolean.FALSE, false );
+        setSelected( Boolean.TRUE, true );
+        
+        setText( Boolean.FALSE, "Unselected" );
+        setText( Boolean.TRUE, "Selected" );
+    }
+    
+    @Override
+    public boolean trigger( Dockable dockable ) {
+        setSelected( dockable, !isSelected( dockable ) );
+        return true;
+    }
+    
+    @Override
+    public void setSelected( Dockable dockable, boolean selected ){
+    	dockable.<setSomeProperty( selected )>;
+    	setGroup( selected, dockable );
+    }    
+}
+\end{lstlisting}
+The constructor (lines \src{7-20}) sets up the action. First the \src{GroupKeyGenerator} is set in lines \src{9-12}. The key is a \src{Boolean} which represents ``some property'' of a \src{Dockable}. The meaning of the property is not important. Through the keys \src{Dockable}s get grouped. When \src{Dockable}s get added and removed a group may become empty. Line \src{13} ensures that the action does not delete the properties of empty groups.
+
+A \src{Boolean} only has two states, both states will be used as key. So there is a ``true'' and a ``false'' group. The selected-state of the action should match the key of the group. In other words: if ``some property'' is \src{true} then the action is selected, if ``some property'' is \src{false} then it is not. Lines \src{15, 16} are responsible for this setting. The same behavior is enforced for the text of the action in lines \src{18, 19}.
+
+The standard behavior of a \src{SelectableDockAction} is to change its selected state as soon as the user triggers the action. If the action is used for many \src{Dockable}s than this behavior would look rather odd. All the actions would change their state and most of them would do so wrongly. By overriding the method \src{trigger} this problem can be prevented (lines \src{23-26}). Instead of changing the selected state of the action, the group of the \src{Dockable} is changed by invoking \src{setSelected} in line \src{24}. Since the two groups have different selection states the user will think that the action changed the state.
+
+By the way: the method \src{setSelected} in lines \src{29-32} needs to be overriden since the default behavior is to change the state of the action, not to change the group of a \src{Dockable}.
+
+\warningbox{Be careful when using group actions: they are complex to handle. In many cases a simple action can replace a group action.}
+
+\designbox{Group actions were introduced for \src{DockStation}s. \src{DockStation}s need to apply the same actions to many \src{Dockable}s. Instead of setting up new actions all the time it was easier to have one action that holds many properties at the same time. }
+
+\classbox{There are only three group actions implemented: 
+
+\begin{itemize}
+	\item \src{GroupedButtonDockAction}
+	\item \src{GroupedSelectableDockAction.Check}
+	\item \src{GroupedSelectableDockAction.Radio}
+\end{itemize}}
+
+\subsection{Custom actions}
+Clients are free to implement new actions.
+
+\subsubsection{Reuse existing view}
+Whenever possible an existing view should be reused. There are 6 kind of views defined in the framework. Each kind of view is represented through an instance of \src{ActionType}, each of them is stored as constant in \src{ActionType} itself. \src{ActionType} has one generic parameter. The view can force an action to implement some interface through that parameter. For example, the kind \src{ActionType.BUTTON} forces an action to implement \src{ButtonDockAction}. Actions can use an \src{ActionType} as key for a factory that is stored in the \src{ActionViewConverter}. 
+
+In a real world example that will look like this:
+\begin{lstlisting}
+public class ExampleButtonAction implements ButtonDockAction{
+
+	public <V> V createView( ViewTarget<V> target,
+			ActionViewConverter converter, Dockable dockable ){
+	
+		return converter.createView( ActionType.BUTTON, this, 
+			target, dockable );
+	}
+	
+	public void action( Dockable dockable ){
+		[...]
+	}
+	
+	public Icon getIcon( Dockable dockable ){
+		return [...];
+	}
+	
+	[...]
+}
+\end{lstlisting}
+Really important are the lines \src{3-8}: these lines are all that is necessary to create different button-views for different environments (menu, title). The \src{ActionViewConverter} does all the work, it just has to be called with the correct parameters.
+
+The interface \src{ButtonDockAction} declares other methods like \src{getIcon} (lines \src{14-16}) which will not be a challenge to implement.
+
+\subsubsection{Custom view}
+Writing a custom action with custom view is possible, but will require a lot of work. Some good news: it is only necessary to implement the interface \src{DockAction} and the raw interface \src{DockAction} has only very few methods. The greatest challenge will be to write the method \src{createView}. This method can be called any time and receives a \src{ViewTarget}, a \src{ActionViewConverter} and the \src{Dockable} for which the view will be used. It has to return either \src{null} or the type of object that is specified as the generic parameter of \src{ViewTarget}. The framework will always use the same three instances of \src{ViewTarget}, all of them are stored as constants in \src{ViewTarget} itself. So in theory a \src{createView} could check which of the three \src{ViewTarget}s it received and create one of three different views. In practice it is much better to use the \src{ActionViewConverter} for this task.
+
+You might remember that the \src{ActionViewConverter} can instanciate new views if an \src{ActionType} is given to its \src{createView} method. So the first step in creating a custom action should be to write the new class (or interface) and declare the new type. The second step would be to call \src{createView}. The third step to implement the remaing methods. The result of these steps could look like this:
+
+\begin{lstlisting}
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ActionType;
+import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.action.view.ActionViewConverter;
+import bibliothek.gui.dock.action.view.ViewTarget;
+
+public class CustomAction implements DockAction{
+	public static final ActionType<CustomAction> CUSTOM =
+		new ActionType<CustomAction>( "custom" );
+	
+	public <V> V createView( ViewTarget<V> target,
+			ActionViewConverter converter, Dockable dockable ){
+		return converter.createView( CUSTOM, this, 
+				target, dockable );
+	}
+	
+	@Override
+	public void bind( Dockable dockable ){
+		// ignore
+	}
+	
+	@Override
+	public void unbind( Dockable dockable ){
+		// ignore
+	}
+	
+	public boolean trigger( Dockable dockable ){
+		return false;
+	}	
+}
+\end{lstlisting}
+
+Now the \src{ActionViewConverter} needs to be instructed of what to do with the \src{ActionType} \src{CUSTOM}. This should be done on startup, before the first \linebreak \src{CustomAction} is even created. The \src{ActionViewConverter} is accessible through the \src{DockController}. A client can call \src{putDefault} to set the default view factory for some type and target:
+
+\begin{lstlisting}
+DockController controller = ...;
+ActionViewConverter converter = controller.getActionViewConverter();
+
+ViewGenerator<CustomAction, BasicTitleViewItem<JComponent>> generator =
+	new CustomButtonGenerator();
+
+converter.putDefault( CustomAction.CUSTOM, ViewTarget.TITLE, 
+	generator );
+\end{lstlisting}
+In this code the converter is accessed in line \src{2}. Some new factory is created in lines \src{4, 5} and this new factory is registered at the converter in lines \src{7, 8}. The \src{CustomButtonGenerator} is just a class that implements \src{ViewGenerator}:
+\begin{lstlisting}
+public class CustomButtonGenerator implements
+		ViewGenerator<CustomAction, BasicTitleViewItem<JComponent>>{
+	public BasicTitleViewItem<JComponent> create(
+			ActionViewConverter converter, CustomAction action,
+			Dockable dockable ){
+		
+		return [...]
+	}
+}
+\end{lstlisting}
+
+\warningbox{Set a \src{ViewGenerator} for \src{ViewTarget.TITLE}, \src{ViewTarget.MENU} and for \src{ViewTarget.DROP\_DOWN}. Even if these generators do not create views but just return \src{null}, not installing them would lead to an error.}
 
 \section{Titles}
+
+
 \section{Themes}
 \section{Drag and Drop}
 \section{Preferences}
 \section{Properties}
 
-\end{document}
+\end{document} 
