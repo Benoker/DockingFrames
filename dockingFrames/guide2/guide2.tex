@@ -2,6 +2,7 @@
 \usepackage{listings}
 \usepackage{color}
 \usepackage{graphicx}
+\usepackage{textcomp}
 
 \lstset{language=Java}
 \lstset{breaklines=true, numbers=left}
@@ -88,7 +89,7 @@ The goal of this document is to provide any developer with a basic understanding
 \section{Notation}
 This document uses various notations.
 
-Any element that can be source code (i.e. a class name) and project names are written monospaced like this: \src{java.lang.String}. The package of classes and interfaces is rarely given since almost no name is used twice. The packages can be easily found with the help of the generated api documentation (JavaDoc).
+Any element that can be source code (e.g. a class name) and project names are written monospaced like this: \src{java.lang.String}. The package of classes and interfaces is rarely given since almost no name is used twice. The packages can be easily found with the help of the generated api documentation (JavaDoc).
 
 \infobox{Tipps and tricks are listed in boxes.}
 
@@ -213,7 +214,7 @@ Clients need to register the root of their \src{DockStation}-\src{Dockable}-tree
 
 The class \src{DockFrontend} represents a layer before \src{DockController} and adds a set of helpful methods. Especially a ``close''-button and the ability to store and load the layout are a great help. \src{DockFrontend} replaces \src{DockController}, clients should add the root-\src{DockStation}s directly to the frontend, not to the controller. They can use the method \src{addRoot} to do so.
 
-\warningbox{\src{DockFrontend} adds a few nice features but not enough to write an application without even bothering to have a look at \src{DockingFrames}. Developers which can live with not having absolute control over the framework should use \src{Common}. \src{Common} adds all those features which make a docking-framework complete, i.e. a ``minimize''-button}
+\warningbox{\src{DockFrontend} adds a few nice features but not enough to write an application without even bothering to have a look at \src{DockingFrames}. Developers which can live with not having absolute control over the framework should use \src{Common}. \src{Common} adds all those features which make a docking-framework complete, e.g. a ``minimize''-button}
 
 \designbox{\src{DockFrontend} was written long after \src{DockController}. For the most part it just reuses code that already exists. It would be possible to write two applications with exact the same behavior once with and once without \src{DockFrontend}. The only thing that \src{DockFrontend} adds to the framework is a central hub where all the important features are accessible and a good set of default-values for various properties of the framework.}
 
@@ -284,7 +285,7 @@ In lines \src{1-3} some elements that were stored earlier are described. In line
 \infobox{If using \src{DockFrontend} the method \src{registerFactory} can be used to add a new \src{DockablePropertyFactory}. This factory will then be used by global transformer of the frontent.}
 
 \subsection{Global: DockSituation}
-The layout of a whole set of \src{Dockable}s and \src{DockStation}s can be stored with the help of a \src{DockSituation}. A \src{DockSituation} is a set of algorithms that transform the layout information from one format into another, i.e. from the dock-tree (built by stations and \src{Dockable}s) to an xml-file. A \src{DockSituation} uses various factories to transform one format into another.
+The layout of a whole set of \src{Dockable}s and \src{DockStation}s can be stored with the help of a \src{DockSituation}. A \src{DockSituation} is a set of algorithms that transform the layout information from one format into another, e.g. from the dock-tree (built by stations and \src{Dockable}s) to an xml-file. A \src{DockSituation} uses various factories to transform one format into another.
 
 \subsubsection{Basic Algorithms}
 Global layout information comes in four formats:
@@ -303,7 +304,7 @@ A \src{DockSituation} uses different factories and strategies for these conversi
  \item[DockFactory] These factories are responsible to load or store the layout of a single \src{Dockable} or \src{DockStation}. Like \src{DockSituation} they need to support four formats. For one the dock-element they store or read, then binary- and xml-format and finally some object as intermediate formate. They are free to choose any kind of object as intermediate format.
  \item[AdjacentDockFactory] They function the same way as \src{DockFactories} but can be used for arbitrary dock-elements. \src{AdjacentDockFactories} are used to store additional information about elements, that can, but does not have to be, layout information.
  \item[MissingDockFactory] These are used when another factory is missing. The \src{MissingDockFactory} can try to read the xml-format or binary-format and convert it to the intermediate format.
- \item[DockSituationIgnore] This strategy allows a \src{DockSituation} to ignore dock-elements when storing the layout. That can be helpful if i.e. an application has \src{Dockable}s which show only temporary information that will be lost on shutdown anyway.
+ \item[DockSituationIgnore] This strategy allows a \src{DockSituation} to ignore dock-elements when storing the layout. That can be helpful if e.g. an application has \src{Dockable}s which show only temporary information that will be lost on shutdown anyway.
  \end{description}
 
 A \src{DockSituation} can handle missing factories when reading xml or binary format. It first tries to use a \src{MissingDockFatory} to read the data, if that fails it either throws away the data (for \src{AdjacentDockFactories}) or stores the data in the layout-composition as ``bubble'' in its raw format. These ``bubbles'' can be converted later when the missing factories are found.
@@ -851,7 +852,7 @@ Unfortunatelly a simple map is not enough. There needs to be a way to specify va
 The UI-properties provide the necessary features. The mechanism includes these classes, interfaces and generic parameters:
 \begin{itemize}
 	\item \src{UIProperties}: the base map.
-	\item \src{V}: the generic values that have to be distributed, i.e. the class \src{Color}.
+	\item \src{V}: the generic values that have to be distributed, e.g. the class \src{Color}.
 	\item \src{UIValue}: A wrapper around \src{V}. Each component creates one \src{UIValue} for each query it will ask the \src{UIProperties}. In example a \src{DockTitle} would have to create and store exactly one \src{UIValue} to represent its background color. \src{UIValue}s also act as observer and the \src{UIProperties} notify an \src{UIValue} if its wrapped \src{V} gets changed.
 	\item \src{UIBridge}: An \src{UIBridge} is set between a set of \src{UIValue}s and the \linebreak \src{UIProperties}. \src{V} properties will not be handed directly from \linebreak \src{UIProperties} to \src{UIValue} if there is a bridge between. The bridge can modify the \src{V} property in any way it likes, since the \src{UIBridge} knows the destination of a \src{V} it can also use information derived from the \src{UIValue}.
 \end{itemize}
@@ -863,7 +864,7 @@ The implementation gets more complex:
 	\item \src{UIBridge}s are also associated with a \src{Path}. An \src{UIBridge} is responsible to handle all those \src{UIValue}s that are associated either with the same \src{Path} or a \src{Path} that has the bridges \src{Path} as prefix.
 \end{itemize}
 
-\designbox{This scheme allows a flexible handling of resources. On one hand the number of keys is limited and one method call is enough to change a lot things in the user interface (i.e. all background colors of titles). On the other hand clients can implement sophisticated strategies to change some properties without the need to know in detail how the property will be used.
+\designbox{This scheme allows a flexible handling of resources. On one hand the number of keys is limited and one method call is enough to change a lot things in the user interface (e.g. all background colors of titles). On the other hand clients can implement sophisticated strategies to change some properties without the need to know in detail how the property will be used.
 
 Originally this mechanism was invented to handle \src{Color}s. Then it became evident that the same mechanism could be used for other resources as well. The current implementation requires to implement several classes for each type of resource. While this might be annoying for the first use it ensures type safety. In a system where cause (writing in the map) and effect (reading from the map) can be separated by dozens of classes and an unknown amount of time one does not want to care about types as well.}
 
@@ -931,15 +932,80 @@ The views for \src{DockAction}s are changed through the \src{ActionViewConverter
 \src{DockTitle}s are managed by the \src{DockTitleManager}. Please read chapter \ref{sec:titles} for more information.
 
 \subsection{Custom Theme}
-No code in the framework ever assumes that some \src{DockTheme} with some special undocummented behavior is ever used. Clients can reimplement the interface \src{DockTheme} without fear to break things.
+With the exception of the classes that are directly related to a \src{DockTheme} no code in the framework depends on a special undocummented behavior of a theme. Clients can reimplement the interface \src{DockTheme} without fear to break things.
 
-A better approach might be to extend the class \src{BasicTheme}. This class provides some default values which can easily be changed by the appropriate \src{setXZY} method.
+A better approach then full reimplementation might be to extend the class \src{BasicTheme}. This class provides some default values which can easily be changed by the appropriate \src{setXZY} method.
 
 \src{DockTheme} has a method \src{install}, this method can be used to exchange some values that are not stored in the \src{DockTheme} itself. For example to exchange icons in the \src{IconManager}.
 
 \warningbox{A theme dives deep into the framework. Implementing a new theme requires a lot of time and a good understanding of the framework. This document might help to understand the basics, but some stuff can only be found out by looking directly at the source code.}
 
 \section{Drag and Drop}
+To drag a \src{Dockable} to a new location and drop it there is the most important feature of any docking framework. Surprisingly the implementation of this part is very small.
+
+\subsection{Relocator}
+The sourcecode that detects drag gestures, searches for the target station and makes sure that the user has some visual feedback is located in the \linebreak \src{DefaultDockRelocator}. \src{DefaultDockRelocator} itself extends from \linebreak \src{DockRelocator} which just allows to register some listeners and set some useful properties. Clients seldomly need to implement a new \src{DockRelocator}. If they do then they, then they have to implement a new \src{DockControllerFactory}. The code will look like this:
+
+\begin{lstlisting}
+public class MyDockControllerFactory extends DefaultDockControllerFactory{
+  @Override
+  public DockRelocator createRelocator( DockController controller ) {
+    return new MyDockReloactor();
+  }
+}
+\end{lstlisting}
+This factory has then to be given to the constructor of a \src{DockController}. For the remainder of this chapter it is assumed, that the default relocator is in use.
+
+The \src{DockRelocator} that is in use can be accessed through the method \src{getRelocator} of \src{DockController}.
+
+\subsection{Sources}
+The relocator needs to know where and when the user presses and moves the mouse. There is more than one solution for this problem.
+
+\subsubsection{DockElementRepresentative}
+A \src{DockElementRepresentative} is a \src{Component} which represents a \src{Dockable}. Anyone can add \src{MouseInputListener}s to a representative and hence be informed about anything the mouse does on top of such a \src{Component}.
+
+\src{DockTitle} and \src{Dockable} are two implementations of \linebreak \src{DockElementRepresentative}. Their registration is handled automatically. If clients implement a new representative then they should call the methods \linebreak \src{addRepresentative} and \src{removeRepresentative} of \src{DockController} to install or uninstall the representative.
+
+\infobox{\src{DockElementRepresentative} was added late to the framework. It carries some legacy code: the method \src{isUsedAsTitle}. This method introduces a distinction between those representations for which all features are activated (e.g. popup menus) and those for which only a selected subset is available. Normally clients implement representatives that are used as title and can return \src{true} here.}
+
+\warningbox{The behavior for representations of \src{Dockable}s that are not registered is unspecified. Clients should not add a \src{DockElementRepresentative} if its \src{Dockable} is unknown to the \src{DockController}.}
+
+\subsubsection{Remote control}
+Sometimes it is not possible to implement a \src{DockElementRepresentative}. Remote control of a relocator is an alternative for these cases. Remote control is realized by the classes \src{RemoteRelocator} and \src{DirectRemoteRelocator}.
+
+A \src{RemoteRelocator} can be optained by calling \src{createRemote} of \linebreak \src{DockRelocator}. \src{RemoteRelocator} should be used in combination with a \linebreak \src{MouseListener} and a \src{MouseMotionListener}:
+\begin{itemize}
+ \item \src{MouseListener.mousePressed} \textrightarrow \src{RemoteRelocator.init}
+ \item \src{MouseMotionListener.mouseDragged} \textrightarrow \src{RemoteRelocator.drag}
+ \item \src{MouseListener.mouseReleased} \textrightarrow \src{RemoteRelocator.drop}
+\end{itemize}
+The methods \src{init}, \src{drag} and \src{drop} return a \src{Reaction}. The reaction tells the caller what to do next:
+\begin{itemize}
+ \item \src{CONTINUE}: the operation continues, the event was ignored.
+ \item \src{CONTINUE\_CONSUMED}: the operation continues, the event was consumed. The caller should invoke \src{MouseEvent.consume}.
+ \item \src{BREAK}: the operation was canceled, the event was ignored.
+ \item \src{BREAK\_CONSUMED}: the operation was canceled, the event was consumed. The caller should invoke \src{MouseEvent.consume}.
+\end{itemize}
+
+A \src{DirectRemoteRelocator} can be optained by calling \src{createDirectRemote} of \src{DockRelocator}. A \src{DirectRemoteRelocator} is basically the same as a \src{RemoteRelocator} but always assumes that the user pressed the correct button on the mouse. Its methods do not return a \src{Reaction} because it would always be the same.
+
+\infobox{Clients can use several remote controls at the same time, they will cancel each other out if necessary. A \src{RemoteRelocator} can be used several times.}
+
+\subsection{Destinations}
+A relocator needs to find the one \src{DockStation} on which the \src{Dockable} is dropped and the stations need to react on the mouse-events.
+
+\subsubsection{Finding a destination}
+Several steps are necessary to find the current destination of a drag and drop operation. The search for a destination starts anew whenever the mouse is moved. The \src{DefaultDockRelocator} follows this path:
+\begin{enumerate}
+ \item An ordered list of all potential destinations is built. A \src{DockStation} is a potential destination if it is visible (\src{isStationVisible} of \src{DockStation}), not the dragged \src{Dockable} nor one of its children, and its boundaries contain the location of the mouse (\src{getStationBounds} of \src{DockStation}). The order depends on parent-child relations between the stations, between the \src{Window}s on which the stations are, and on custom conditions that every station can offer (\src{canCompare} and \src{compare} of \src{DockStation}).
+ \item Then the method \src{prepareMove} or \src{prepareDrop} of \src{DockStation} is called. These methods check whether the station really is a good destination. They return \src{true} if so, \src{false} if not. The first station that returns \src{true} is the destination.
+ \item The method \src{draw} of the new destination is called, the method \src{forget} on the old destination. The new destination will paint some markings to give a visual feedback to the user, the old destination will delete all the information about any drag and drop operation.
+ \item If the user releases the mouse, and the operation ends, then the relocator calls \src{move} or \src{drop} of \src{DockStation} to complete the operation.
+\end{enumerate}
+
+\subsubsection{Reacting on events}
+
+
 \section{Preferences}
 \section{Properties}
 

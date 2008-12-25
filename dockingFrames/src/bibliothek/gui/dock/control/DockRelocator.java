@@ -251,7 +251,7 @@ public abstract class DockRelocator {
     public abstract boolean isOnPut();    
 
     /**
-     * Creates a device with which drag&drop operations concerning
+     * Creates a device with which drag&amp;drop operations concerning
      * <code>dockable</code> can be initiated and executed.
      * @param dockable the dockable which might be moved
      * @return the new remote
@@ -259,7 +259,7 @@ public abstract class DockRelocator {
     public abstract DirectRemoteRelocator createDirectRemote( Dockable dockable );
     
     /**
-     * Creates a device with which drag&drop operations concerning
+     * Creates a device with which drag&amp;drop operations concerning
      * <code>dockable</code> can be initiated and executed.
      * @param dockable the dockable which might be moved
      * @return the new remote
