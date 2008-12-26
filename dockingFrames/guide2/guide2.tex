@@ -992,21 +992,173 @@ A \src{DirectRemoteRelocator} can be optained by calling \src{createDirectRemote
 \infobox{Clients can use several remote controls at the same time, they will cancel each other out if necessary. A \src{RemoteRelocator} can be used several times.}
 
 \subsection{Destinations}
-A relocator needs to find the one \src{DockStation} on which the \src{Dockable} is dropped and the stations need to react on the mouse-events.
+A relocator needs to find the one \src{DockStation} on which the \src{Dockable} is dropped. 
 
-\subsubsection{Finding a destination}
-Several steps are necessary to find the current destination of a drag and drop operation. The search for a destination starts anew whenever the mouse is moved. The \src{DefaultDockRelocator} follows this path:
+\subsubsection{Search}
+The \src{DefaultDockRelocator} searches the destination anew whenever the mouse is moved. The search includes these steps:
 \begin{enumerate}
  \item An ordered list of all potential destinations is built. A \src{DockStation} is a potential destination if it is visible (\src{isStationVisible} of \src{DockStation}), not the dragged \src{Dockable} nor one of its children, and its boundaries contain the location of the mouse (\src{getStationBounds} of \src{DockStation}). The order depends on parent-child relations between the stations, between the \src{Window}s on which the stations are, and on custom conditions that every station can offer (\src{canCompare} and \src{compare} of \src{DockStation}).
  \item Then the method \src{prepareMove} or \src{prepareDrop} of \src{DockStation} is called. These methods check whether the station really is a good destination. They return \src{true} if so, \src{false} if not. The first station that returns \src{true} is the destination.
  \item The method \src{draw} of the new destination is called, the method \src{forget} on the old destination. The new destination will paint some markings to give a visual feedback to the user, the old destination will delete all the information about any drag and drop operation.
- \item If the user releases the mouse, and the operation ends, then the relocator calls \src{move} or \src{drop} of \src{DockStation} to complete the operation.
 \end{enumerate}
 
-\subsubsection{Reacting on events}
+\classbox{There is more information about the exact semantics in the API-documentation for \src{DockStation}.}
 
+\subsubsection{Drop}
+The moment a user releases the mouse and drops a \src{Dockable} the method \src{move} or \src{drop} of \src{DockStation} is called. These methods can either put the \src{Dockable} somewhere onto the station or merge the \src{Dockable} with an existing child of the station (sometimes referred as ``put'' and ``merge'' action). The results of the first reaction depend on the kind of station. The results of the second reaction are independent of the kind of station.
+
+Merging normally results in creating a new \src{StackDockStation}. The existing child and the dropped \src{Dockable} are put onto that new station. Then the \src{StackDockStation} is put at the place where the existing child was. Creation of ``merged \src{Dockable}s'' is handled by a \src{Combiner}, per default by the \src{BasicCombiner}. Many \src{DockStation}s have a method that allows clients to set their own implementation of a \src{Combiner}. Clients can exchange the \src{Combiner} globally by creating a new \src{DockTheme}, overriding the method \src{getCombiner} and then registering a new instance at the \src{DockController} through \src{setTheme}. Note that all descendants of \src{BasicDockTheme} have a method called \src{setCombiner} that exchanges the \src{Combiner} directly without the need to override \src{getCombiner}.
+
+\warningbox{Exchanging a \src{Combiner} does not affect any existing \src{Dockable} or \src{DockStation}, it will only affect the creation of new elements.}
+
+\subsection{Influences}
+There are a number of factors that can influence the search for a new destination. Some of them are customizable.
+
+\subsubsection{Modes}
+A \src{DockRelocator} can have "modes". A mode is some kind of behavior that is activated when the user presses a certain combination of keys. Modes are modeled by the class \src{DockRelocatorMode}. It is not specified what effect a mode really has, but normally a mode would add some restrictions where to put a \src{Dockable} during drag and drop. \src{DockRelocatorMode}s can be added or removed to a \src{DockRelocator} by the methods \src{addMode} and \src{removeMode}.
+
+Currently two modes are installed:
+\begin{description}
+\item[DockRelocatorMode.SCREEN\_ONLY] (press key \textit{shift}) ensures that a \src{Dockable} can only be put on a \src{ScreenDockStation}. That means that a \src{Dockable} can be directly above a \src{DockStation} like a \src{SplitDockStation}, but can't be dropped there.
+\item[DockRelocatorMode.NO\_COMBINATION] (press key \textit{alt}) ensures that a \src{Dockable} can't be put over another \src{Dockable}. That means, every operation that would result in a merge is forbidden. Also dropping a \src{Dockable} on already merged \src{Dockable}s will not be allowed.
+\end{description}
+
+\classbox{The keys that have to be pressed to activate \src{SCREEN\_ONLY} or \src{NO\_COMBINATION} are the properties \src{SCREEN\_MASK} and \src{NO\_COMBINATION\_MASK}. The can be changed by accessing the \src{DockProperties}.}
+
+\subsubsection{Restrictions}
+The set of possible destinations for a \src{Dockable} can be restricted. There are several reasons why a client or the framework itself would do that:
+\begin{itemize}
+ \item Some \src{Dockable} must always be visible.
+ \item Some \src{DockStation}s represent a special area that can only be used by a subset of \src{Dockable}s.
+ \item Some \src{Dockable}s can only be presented on a certain kind of \src{DockStation}.
+\end{itemize}
+
+This restrictions are implemented through acceptance tests. An acceptance test either checks one ``put'' or one ``merge'' action. Tests can be stored at various locations:
+\begin{itemize}
+ \item Every \src{Dockable} has two methods called \src{accept}.
+ \item Each \src{DockStation} has a method \src{accept}. This method tells whether some \src{Dockable} can become a child of the \src{DockStation}. This method checks ``put'' and ``merge'' actions at the same time.
+ \item And then there are \src{DockAcceptance}s. A \src{DockAcceptance} has \src{accept}-methods too. These methods get a \src{DockStation} and some \src{Dockable}s, and then have to decide whether the elements can be put together. Each \src{DockAcceptance} works on a global scale, and thus they are registered at the \src{DockController} through \src{addAcceptance}.
+\end{itemize}
+
+\warningbox{Acceptance tests are very powerful. They have to be implemented carefully or the drag and drop mechanism might become crippled.}
+
+************************  was writing here **********************
 
 \section{Preferences}
+The preference system was introduced with version 1.0.6 of the core library.
+
+If a setting is meaningful for the ordinary user, and the user would like to be able to change the setting, then this setting should be made accessible through a preference. For example the shortcut to maximize a \src{Dockable} (ctrl+m) is a good candidate for a preference.
+
+So what is a preference? A preference is a representation of some kind of property in a unified way. It is a mediator between the system in which the property is stored, and the graphical user interface and storage mechanisms written for preferences.
+
+Each preference consists of some properties:
+\begin{description}
+ \item[Value] The thing which the user would like to change.
+ \item[ValueInfo] Information about the value, for example the maximum value for an \src{Integer}-value. The exact meaning of this property depends on the \src{TypePath}.
+ \item[TypePath] The type tells how to work with the value, how to present it to the user or how to write it as xml. The type is represented by a \src{Path}-object. It is a \src{Path} and not a \src{Class} object because many preference-types may use the same objects as value. For example an unbounded \src{Integer} versus an \src{Integer} which must be in the range 1 to 10.
+ \item[Path] A unique path to this preference. Used as an identifier if preferences have to be stored in some kind of map.
+\end{description}
+
+\subsection{Organization}
+The basic module of the preference system is the \src{PreferenceModel}. 
+
+Most methods of the \src{PreferenceModel} are simple to understand and do not need a discussion. Those which are part of a greater scheme however will receive some attention in this chapter.
+
+In the preference system a \src{PreferenceModel} is just a layer above some kind of storage mechanism for the real properties. It is most often used as a mediator and a buffer between that storage mechanism and the algorithms that want to use the preferences (for example a user interface). The methods \src{read} and \src{write} are used to access the covered storage mechanism. The method \src{read} will read values from the storage mechanism into the model. The method \src{write} will write the values back into that storage mechanism.
+
+\subsection{Models}
+There are some implementations of \src{PreferenceModel} already in the core library.
+
+\subsubsection{DefaultPreferenceModel}
+This model uses a list of \src{Preference}-objects to represent the preferences. All the properties needed for a preference are stored in such a \src{Preference}-object. The API-documentation reveals that there are many \src{Preference}s representing different aspects of the core library. For example there is a \src{Preference} which represents the keystroke for maximizing a \src{Dockable}.
+
+There are also subclasses of \src{DefaultPreferenceModel}. These subclasses are collections of preferences which belong together, for example the \\\src{EclipseThemePreferenceModel} which contains preferences that are related to the \src{EclipseTheme}.
+
+\subsubsection{MergedPreferenceModel}
+This model is a list of other models. It just takes the preferences from these other models and presents them as its own preferences. It offers a quick and simple way to create a combination of two ore more models.
+
+\subsubsection{PreferenceTreeModel}
+This model is a \src{PreferenceModel} and a \src{javax.swing.TreeModel}. If seen as \src{PreferenceModel}, then it behaves like a \src{MergedPreferenceModel}. If seen as \src{TreeModel}, then it contains \src{PrefereceTreeModel.Node}-objects. A node can either be just a name, or another \src{PreferenceModel}. This model is intended to be used in a \src{JTree} where the user can select one aspect of the whole set of preferences to show.
+
+The subclass \src{DockingFramesPreferenceModel} is the set of preferences \\which includes all the aspects of the core-library.
+
+\subsection{Lifecycle}
+This section describes the best way how to use a \src{PreferenceModel}. Not everything used in this section is explained yet, so you might want to read this section a second time when you finished this whole chapter.
+
+The correct lifecycle of a \src{PreferenceModel} includes normally these steps:
+\begin{enumerate}
+ \item Create the model. Set up all the preferences that are used by the model.
+ \item Call \src{load} on a \src{StoragePreference}.
+ \item Call \src{write} on the model to synchronize the model with the underlying system.
+ \item (work with the underlying system)
+ \item To work with the model: call first \src{read}, then make the changes in the model, then call \src{write}.
+ \item (work with the underlying system)
+ \item Call \src{read} on the model to synchronize the model with the underlying system.
+ \item Store the model using \src{store} of a \src{PreferenceStorage}.
+\end{enumerate}
+
+If the \src{PreferenceStorage} used in step \src{2} is empty because its \src{read} or \src{readXML} method failed, then calling \src{read} of \src{PreferenceModel} would at least load some default settings.
+
+Steps \src{4, 5, 6} can be cycled as many times as needed.
+
+An additional step \src{0} and \src{9} would be to read and write the \\\src{PreferenceStorage} when starting up or shuting down the application.
+
+\subsection{User Interface}
+If a \src{PreferenceModel} should be displayed, the \src{PreferenceTable} can be used. This table shows a label and an editor for each preference. For \\\src{PreferenceTreeModel}s a \src{PreferenceTreePanel} should be used, it shows a \\\src{PreferenceTable} and a \src{JTree} for the nodes of the \src{PreferenceTreeModel}.
+
+Clients can also use a \src{PreferenceDialog} or a \src{PreferenceTreeDialog} to show a dialog with the well known buttons "ok" and "cancel".
+
+\subsubsection{Editors}
+Since there are different types of preferences, different editors are needed. The kind of editor for one preference is determined by the type-path (\src{getTypePath} in a model). Clients can add new editors to a \src{PreferenceTable} through the method \src{setEditorFactory}.
+
+An editor is always of type \src{PreferenceEditor}. Each editor gets a \\\src{PreferenceEditorCallback} with which it can interact with the table. Whenever the user changes the editors value, the editor should call the method \src{set} of \src{PreferenceEditorCallback} to make sure the new value gets stored.
+
+\subsubsection{Operators}
+There are some operations which should be available for almost any preference. For example \textit{set a default value} or \textit{delete the current value}. The preference system introduces the \src{PreferenceOperation} to handle this kind of actions.
+
+A \src{PreferenceOperation} is nothing more than a label and an icon. The logic for an operation is either in an editor or in a model.
+
+\begin{description}
+ \item[Editor:] Editors with operations must call the method \src{setOperation} of \\\src{PreferenceEditorCallback} for each operation they offer. By calling \src{setOperation} more than once, the editor can change the enabled state of the operation. If the user triggers an operation of the editor, the method \src{doOperation} of \src{PreferenceEditor} is called. It is then the editors responsibility to handle the operation.
+ \item[Preference:] Preferences can have operations as well. The method \\\src{getOperations} of \src{PreferenceModel} will be called once to get all the available operations for one preference. The method \src{isEnabled} will be invoked to find out whether an operation is enabled or not. Models can change the enabled state by calling \src{preferenceChanged} of \\\src{PreferenceModelListener}. If the user triggers an operation, \\\src{doOperation} of \src{PreferenceModel} will be invoked.
+\end{description}
+If an editor and a preference share the same operations, then per definition the operations belong to the editor. All settings from the model will just be ignored.
+
+\subsection{Storage}
+The \src{PreferenceStorage} can be used to store \src{PreferenceModel}s in memory or persistent either as byte-stream or as XML.
+
+The normal way to write a model from memory to the disk looks like this:
+\begin{lstlisting}
+// the stream we want to write into
+DataOutputStream out = ...
+
+// the model we want to store
+PreferenceModel model = ...
+
+// And now store the model
+PreferenceStorage storage = new PreferenceStorage();
+storage.store( model );
+storage.write( out );
+\end{lstlisting}
+Note that there are two phases in writing \src{model}. First the model gets \src{store}d (line \src{9}) into \src{storage}. It is possible to store more than just one model in a \src{PreferenceStorage}. Second \src{storage} gets written onto the disk in line \src{10}.
+
+The standard way to read a model are to apply the same steps in reverse:
+\begin{lstlisting}
+// the source of any new data
+DataInputStream in = ...
+
+// the model we want to load
+PreferenceModel model = ...
+
+// And now load the model
+PreferenceStorage storage = new PreferenceStorage();
+storage.read( in );
+storage.load( model, false );
+\end{lstlisting}
+Like writing this operation has two phases. In line \src{9} \src{storage} gets filled with information, in line \src{10} the information gets transfered to \src{model}. The argument \src{false} is a hint what to do with missing preferences. In this case missing preferences are just ignored. A value of \src{true} would force them to become \src{null}.
+
+There are some preferences which do not need to be stored by the \\\src{PreferenceStorage} because they are already stored by the underlying systen. These preferences are called \textit{natural}, while the others are called \textit{artificial}. The method \src{isNatural} of \src{PreferenceModel} can be used to distinguish them.
+
 \section{Properties}
 
 \end{document} 
