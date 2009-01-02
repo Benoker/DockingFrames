@@ -67,6 +67,9 @@ public class DockUI {
 	/** The resource bundle for some text shown in this framework */
 	private ResourceBundle bundle;
 	
+	/** the local used to load the {@link ResourceBundle} */
+	private Locale locale = Locale.getDefault();
+	
     /** The icons used in this framework */
     private Map<String, Icon> icons;
     
@@ -343,6 +346,26 @@ public class DockUI {
     }
     
     /**
+     * Sets the locale for which a {@link #getBundle() ResourceBundle}
+     * should be loaded.
+     * @param locale the new locale, not <code>null</code>
+     */
+    public void setLocale( Locale locale ){
+    	if( locale == null )
+    		throw new IllegalArgumentException( "locale must not be null" );
+    	setBundle( locale );
+    }
+    
+    /**
+     * Gets the {@link Locale} for which {@link #getBundle() the ResourceBundle}
+     * was loaded.
+     * @return the locale, not <code>null</code>
+     */
+    public Locale getLocale(){
+		return locale;
+	}
+
+    /**
      * Sets the resource bundle which should be used.
      * @param bundle the bundle
      */
@@ -353,8 +376,11 @@ public class DockUI {
     /**
      * Replaces the bundle of this DockUI using the given Locale
      * @param locale the language of the DockUI
+     * @deprecated replaced by {@link #setLocale(Locale)}
      */
+    @Deprecated
     public void setBundle( Locale locale ){
+    	this.locale = locale;
         setBundle( ResourceBundle.getBundle( "data.locale.text", locale, this.getClass().getClassLoader() ));
     }
     

@@ -26,6 +26,8 @@
 
 \newcommand{\src}[1]{\texttt{#1}}
 
+\newcommand{\property}[4]{\item[#1] \mbox{ } \begin{description} \item[Type] \src{#2} \item[Default] #3 \item[Usage] #4  \end{description}}
+
 % thanks to http://www.alfredklomp.com/programming/tex/macros/
 \long\def\greybox#1#2#3{%
     \newbox\contentbox%
@@ -67,40 +69,39 @@
 \newcommand{\warningbox}[1]{\greybox{lightred}{stop}{#1}}
 \newcommand{\infobox}[1]{\greybox{lightblue}{info}{#1}}
 
-\title{DockingFrames 1.0.6 - Core}
+\title{DockingFrames 1.0.7 - Core}
 \author{Benjamin Sigg}
 
 \begin{document}
 
 \maketitle
+\newpage
+
 \tableofcontents
 \newpage
 
+\section{Introduction}
+\src{DockingFrames} is an open source Java Swing framework. This framework allows to write applications with floating panels. A floating panel is a \src{Component} that can be moved around by the user.
 
-\begin{abstract}
- \src{DockingFrames} is an open source Java Swing framework. This project allows to write applications with floating panels, meaning that the user can freely choose where to place the panels.
+\src{DockingFrames} consists of two libraries, \src{Core} and \src{Common}. \src{Core} provides the basic functionality of the framework. It introduces a lot of features, but does not connect them. \src{Core} can be used without \src{Common}, but it gets a lot easier if both libraries are used together.
 
-\src{DockingFrames} is divided into two projects, \src{Core} and \src{Common}. This document only covers \src{Core}, \src{Common} has its own guide.
-
-The goal of this document is to provide any developer with a basic understanding of \src{DockingFrames}. One will not be able to rewrite the project after reading this document, but one will be able to start digging in the source.
-\end{abstract}
-
+This document covers only \src{Core}, \src{Common} has its own guide. Not all the details of \src{Core} are described, but this document gives a nice oversight of the more important aspects.
 
 \section{Notation}
 This document uses various notations.
 
-Any element that can be source code (e.g. a class name) and project names are written monospaced like this: \src{java.lang.String}. The package of classes and interfaces is rarely given since almost no name is used twice. The packages can be easily found with the help of the generated api documentation (JavaDoc).
+Any element that can be source code (e.g. a class name) and project names are written mono-spaced like this: \src{java.lang.String}. The package of classes and interfaces is rarely given since almost no name is used twice. The packages can be easily found with the help of the generated API documentation (\src{JavaDoc}).
 
-\infobox{Tipps and tricks are listed in boxes.}
+\infobox{Tips and tricks are listed in boxes.}
 
 \warningbox{Important notes and warnings are listed in boxes like this one.}
 
 \classbox{Implementation details, especially lists of class names, are written in boxes like this.}
 
-\designbox{These boxes explain \textit{why} some thing was designed the way it is. This might either contain some bit of history or an explanation why some akward design is as bad as it first looks.}
+\designbox{These boxes explain \textit{why} some thing was designed the way it is. This might either contain some bit of history or an explanation why some awkward design is not as bad as it first looks.}
 
 \section{Basics}
-The basic idea of \src{Core} is to have one object that controlls the framework, one object for each floating panel and one object for each area where a floating panel can be docked.
+The basic idea of \src{Core} is to have one object that controls the framework, one object for each floating panel and one object for each area where a floating panel can be docked.
 
 \classbox{The controller is a \src{DockController}, the floating panels are \src{Dockable}s and the dock-areas are \src{DockStation}s.}
 
@@ -158,16 +159,20 @@ content.setLayout( new GridLayout( 1, 1 ) );
 content.add( new JScrollPane( new JTree() ) );
 \end{lstlisting}
 
-\warningbox{If implementing \src{Dockable}, pay special attention to the api-doc. Some methods have a rather special behavior. It might be a good idea to subclass \src{AbstractDockable} or to copy as much as possible from it.}
+\warningbox{If implementing \src{Dockable}, pay special attention to the API-doc. Some methods have a rather special behavior. It might be a good idea to subclass \src{AbstractDockable} or to copy as much as possible from it.}
 
-\designbox{A careful analysis of \src{Dockable} reveals that there is no way for applications to store their own properties within a \src{Dockable} (unless using a subclass...). There are two reasons for this. First: if only using the default implementation, there is no need for clients to track these properties, store and load them or to delete them once they are no longer used. It is the responsibility of the framework to do so. Second: No special component within the framework or programming technique gets an unfair advantage over others, everything has to be designed in a way that it can work with any new, unknown, crazy other otherwise unexpected kind of \src{Dockable}.}
+\designbox{A careful analysis of \src{Dockable} reveals that there is no way for applications to store their own properties within a \src{Dockable} (unless using a subclass...). There are two reasons for this.
+
+First: if only using the default implementation, then clients do not have to worry about these properties. Storage of properties must and will be handled by the framework itself.
+
+Second: Components of the framework cannot get any unfair advantage over custom components. Everything has to be designed in a way that it can work with new and unexpected implementations of \src{Dockable}.}
 
 \subsection{DockStation}
-\src{Dockable}s can never fly around for themself, they need a \src{DockStation} as anchor point. The relationship between \src{DockStation} and \src{Dockable} can best be described as parent-child-relationship. A \src{DockStation} can have many children, but a \src{Dockable} only one parent.
+\src{Dockable}s can never fly around for themselves, they need a \src{DockStation} as anchor point. The relationship between \src{DockStation} and \src{Dockable} can best be described as parent-child-relationship. A \src{DockStation} can have many children, but a \src{Dockable} only one parent.
 
-There are some classes which are \src{DockStation} and \src{Dockable} at the same time. They allow to build a tree of \src{DockStation}s and \src{Dockable}s. The number of such trees is \textit{not} limited to one.
+There are some classes which are \src{DockStation} and \src{Dockable} at the same time. They allow to build a tree of \src{DockStation}s and \src{Dockable}s. A controller can handle more than just one tree and \src{Dockable}s can switch from one tree to another.
 
-There are different kind of \src{DockStation}s, each kind has its unique behavior and abilities.
+There are different kind of \src{DockStation}s, each kind has its unique behavior and abilities:
 \begin{description}
  \item[StackDockStation] The children are organized like on a \src{JTabbedPane}. Only one child is visible, but another can be made visible by clicking some button.
  \item[SplitDockStation] The children are organized like in a tree of \src{JSplitPane}s. All children are visible and the user can change the (relative) size of the \src{Dockable}s.
@@ -189,11 +194,11 @@ Some observations: \src{StackDockStation} is a \src{Dockable} as well, in line \
 \warningbox{\src{DockStation}s are the most complex classes within the framework, they are also among the most important classes. It is very uncommon to subclass them or to write new ones. If you think you need to subclass a \src{DockStation}, be sure to have explored all other options.}
 
 \subsection{DockController}
-A \src{DockController} manages almost all the interactions between \src{Dockable}s and \src{DockStation}s. A \src{DockController} seldomly does a task by himself, but it always knows how to find an object that can do the task.
+A \src{DockController} holds \src{Dockable}s, \src{DockStation}s and other supporting elements together. Most tasks are not handled by the \src{DockController} but by one of its sub-controllers, e.g. drag and drop is handled by the \src{DockRelocator}.
 
-There can be more than one \src{DockController} in an application. Each controller has its own realm and there is no interaction between controllers. Most applications will need only one \src{DockController}.
+There can be more than one \src{DockController} in an application. Each controller has its own realm and there is no interaction between controllers. But most applications will need only one \src{DockController}.
 
-Clients need to register the root of their \src{DockStation}-\src{Dockable}-trees. They can use the method \src{add} of \src{DockController} to do that. All children of the root will automatically be registered as well. If a \src{DockStation} is not registered anywhere, it just does not work properly. For \src{Dockable}s one could say that registration equals visibility. A registered \src{Dockable} can be seen by the user, an unregistered not.
+Clients need to register the roots of their \src{DockStation}-\src{Dockable}-trees. \linebreak They can use the method \src{add} of \src{DockController} to do that. All children of the root will automatically be registered as well. If a \src{DockStation} is not registered anywhere, it just does not work properly. For \src{Dockable}s one could say that registration equals visibility. A registered \src{Dockable} can be seen by the user, an unregistered not.
 
 \classbox{\src{DockController} uses other classes to handle tasks. Many of these classes can be observed by listeners. An incomplete list:
 
@@ -207,7 +212,7 @@ Clients need to register the root of their \src{DockStation}-\src{Dockable}-tree
 
 \warningbox{Never forget to register the root-\src{DockStation}(s) at the \src{DockController} using the method \src{add}.}
 
-\designbox{Why not just one \src{DockController} implemented as singleton? A singleton would make many interfaces simpler, eliminating all the code where the controller is handed over to even the smallest object. On the other hand there is absolutely no reason to limit oneself to only one object and there are applications which need more than one controller. In the end not using a singleton just gives more flexibility.}
+\designbox{Why not just one \src{DockController} implemented as singleton? A singleton would make many interfaces simpler, eliminating all the code where the controller is handed over to even the smallest object. But there is absolutely no reason why only one controller should exist. A controller has no unique property that would justify a singleton. And not using a singleton gives more flexibility.}
 
 \subsection{DockFrontend}
 \src{DockController} only implements the basic functionallity. While this allows developers to add new exciting shiny customized features, it certainly doesn't help those developers which just want to use the framework.
@@ -218,7 +223,7 @@ The class \src{DockFrontend} represents a layer before \src{DockController} and 
 
 \designbox{\src{DockFrontend} was written long after \src{DockController}. For the most part it just reuses code that already exists. It would be possible to write two applications with exact the same behavior once with and once without \src{DockFrontend}. The only thing that \src{DockFrontend} adds to the framework is a central hub where all the important features are accessible and a good set of default-values for various properties of the framework.}
 
-\infobox{Use the methods called \src{setDefault...} to set default values for properties which will be used for \src{Dockable}s. I.e. whether \src{Dockable}s are hideable or not.}
+\infobox{Use the methods called \src{setDefault...} to set default values for properties which will be used for all \src{Dockable}s, e.g. whether \src{Dockable}s are hideable or not.}
 
 \subsubsection{Close-Button}
 In order to show the close-button clients need first to register their \src{Dockable}s. The method \src{addDockable} is used for that. Each \src{Dockable} needs a unique identifier that is used internally by \src{DockFrontend}. Later clients can call the method \src{setHideable} to show or to hide the close-button.
@@ -233,9 +238,9 @@ If clients want to control whether a \src{Dockable} can be closed, they should a
 The methods \src{save}, \src{load}, \src{delete} and \src{getSettings} are an easy way to store and load the layout. This mechanism will be explained in detail in another chapter.
 
 \section{Load and Save layouts}
-The layout of an application means the position, size and relationships of all the \src{Dockable}s and \src{DockStation}s. To store this layout on a harddrive and later to load it again is a great help for the user, he does not need to setup the layout over and over again.
+The layout of an application means the position, size and relationships of all the \src{Dockable}s and \src{DockStation}s. To store this layout on a hard-drive and later to load it again is a great help for the user, he does not need to setup the layout over and over again.
 
-\src{DockingFrames} distinguishes between local and global layout information. Local information only describes the relationship between one \src{Dockable} and its parent, global information describes whole trees of elements. There are no algorithms which recreate a whole layout from a set containing local information, but there are also no algorithms which can place a \src{Dockable} in the tree using global information. So both kinds of data have their use.
+\src{DockingFrames} distinguishes between local and global layout information. Local information only describes the relationship between one \src{Dockable} and its parent, global information describes whole trees of elements. There are no algorithms which recreate a global layout only from local information, but there are also no algorithms which can place a \src{Dockable} in an existing tree using global information. So both kinds of data have their use.
 
 \subsection{Local: DockableProperty}
 Every \src{DockStation} can create a \src{DockableProperty}-object for one of its children. This \src{DockableProperty} contains the position and size of one child.
@@ -243,7 +248,7 @@ Every \src{DockStation} can create a \src{DockableProperty}-object for one of it
 Some \src{DockStation}s are also \src{Dockable}s. Those stations are not only able to create \src{DockableProperties} for their children but their parents can create a property for them. These two properties can be strung together to form a chain describing the position of a grand-child on its grand-parent.
 
 \subsubsection{Creation}
-How to create a \src{DockableProperty}? One way is of course just to create new objects using \src{new XYProperty(...)}. The other way is to retreive them from some \src{DockStation}s and \src{Dockable}s:
+How to create a \src{DockableProperty}? One way is of course just to create new objects using \src{new XYProperty(...)}. The other way is to retrieve them from some \src{DockStation}s and \src{Dockable}s:
 \begin{lstlisting}
 Dockable dockable = ...
 
@@ -275,7 +280,7 @@ if( !root.drop( dockable, location )){
 \end{lstlisting}
 In lines \src{1-3} some elements that were stored earlier are described. In line \src{5} we try to drop \src{dockable} on \src{root}, if that fails we just drop it somewhere (line \src{6}).
 
-\src{DockableProperty}s are not safe to use. If the tree of stations and \\\src{Dockable}s changes, then an earlier created \src{DockableProperty} might not be consistent anymore. The method \src{drop} of \src{DockStation} checks for consistency and returns \src{false} if a \src{DockableProperty} is no longer valid.
+\src{DockableProperty}s are not safe to use. If the tree of stations and \src{Dockable}s changes, then an earlier created \src{DockableProperty} might not be consistent anymore. The method \src{drop} of \src{DockStation} checks for consistency and returns \src{false} if a \src{DockableProperty} is no longer valid.
 
 \warningbox{Always check the result of \src{drop}, if it is \src{false} then the operation was canceled by the station because the property is invalid.}
 
@@ -285,7 +290,7 @@ In lines \src{1-3} some elements that were stored earlier are described. In line
 \infobox{If using \src{DockFrontend} the method \src{registerFactory} can be used to add a new \src{DockablePropertyFactory}. This factory will then be used by global transformer of the frontent.}
 
 \subsection{Global: DockSituation}
-The layout of a whole set of \src{Dockable}s and \src{DockStation}s can be stored with the help of a \src{DockSituation}. A \src{DockSituation} is a set of algorithms that transform the layout information from one format into another, e.g. from the dock-tree (built by stations and \src{Dockable}s) to an xml-file. A \src{DockSituation} uses various factories to transform one format into another.
+The layout of a whole set of \src{Dockable}s and \src{DockStation}s can be stored with the help of a \src{DockSituation}. A \src{DockSituation} is a set of algorithms that transform the layout information from one format into another, e.g. from the dock-tree (built by stations and \src{Dockable}s) to an xml-file. A \src{DockSituation} uses various factories for these transformations.
 
 \subsubsection{Basic Algorithms}
 Global layout information comes in four formats:
@@ -295,7 +300,7 @@ Global layout information comes in four formats:
  \item[xml format] A file containing xml. To write and read such a file the class \src{XIO} is used.
  \item[layout-composition format] An intermediate format that consists of a set of \src{DockLayoutComposition}s. These objects are organized in a tree that has the same form as the dock-tree.
 \end{description}
-To convert one format into another a \src{DockSituation} is used. If converting from \src{a} to \src{b} then a \src{DockSituation} will always first convert \src{a} to \src{layout-composition} and then \src{layout-composition} to \src{b}.
+If converting from \src{a} to \src{b} then a \src{DockSituation} will always first convert \src{a} to \src{layout-composition} and then \src{layout-composition} to \src{b}.
 
 \warningbox{\src{DockSituation} always creates new files or new objects. In its basic form it is not able to reuse existing elements.}
 
@@ -304,19 +309,19 @@ A \src{DockSituation} uses different factories and strategies for these conversi
  \item[DockFactory] These factories are responsible to load or store the layout of a single \src{Dockable} or \src{DockStation}. Like \src{DockSituation} they need to support four formats. For one the dock-element they store or read, then binary- and xml-format and finally some object as intermediate formate. They are free to choose any kind of object as intermediate format.
  \item[AdjacentDockFactory] They function the same way as \src{DockFactories} but can be used for arbitrary dock-elements. \src{AdjacentDockFactories} are used to store additional information about elements, that can, but does not have to be, layout information.
  \item[MissingDockFactory] These are used when another factory is missing. The \src{MissingDockFactory} can try to read the xml-format or binary-format and convert it to the intermediate format.
- \item[DockSituationIgnore] This strategy allows a \src{DockSituation} to ignore dock-elements when storing the layout. That can be helpful if e.g. an application has \src{Dockable}s which show only temporary information that will be lost on shutdown anyway.
+ \item[DockSituationIgnore] This strategy allows a \src{DockSituation} to ignore dock-elements when storing the layout. That can be helpful if for example an application has \src{Dockable}s which show only temporary information that will be lost on shutdown anyway.
  \end{description}
 
 A \src{DockSituation} can handle missing factories when reading xml or binary format. It first tries to use a \src{MissingDockFatory} to read the data, if that fails it either throws away the data (for \src{AdjacentDockFactories}) or stores the data in the layout-composition as ``bubble'' in its raw format. These ``bubbles'' can be converted later when the missing factories are found.
 
 \classbox{A \src{DockLayoutComposition} contains a lot of information. First of all a list of children to build the tree. Then a list of \src{DockLayout}s which represent the information from \src{AdjacentDockFactories}. Each \src{DockLayout} contains a unique identifier for the factory and the data generated by the factory. Finally a \src{DockLayoutComposition} contains a \src{DockLayoutInfo} which represents the data of or for a \src{DockFactory}. A \src{DockLayoutInfo} either contains a \src{DockLayout} (the normal case) or some data in xml or binary format. The later case happens if a factory was missing while reading a file, the information gets stored until it can be read later.}
 
-\infobox{The method \src{fillMissing} can be used to read ``bubbles'' in raw format. The method \src{estimateLocations} can be used to build \src{DockableProperties} for the elements. These are the positions were the elements would come to rest if the layout information were converted into a dock-tree.}
+\infobox{The method \src{fillMissing} can be used to read ``bubbles'' in raw format. The method \src{estimateLocations} can be used to build \src{DockableProperty}s for the elements. These are the positions were the elements would come to rest if the layout information were converted into a dock-tree.}
 
 \subsubsection{Basic Usage}
 How is a \src{DockSituation} utilized in order to load or store the layout of an application?
 
-Each \src{Dockable} and each \src{DockStation} have a method \src{getFactoryID}. This method returns an identifier that has to match the unique identifier that is returned by the method \src{getID} of \src{DockFactory}. So the first step in using a \src{DockSituation} will always be to make sure that for any identifier a matching \src{DockFactory} is available. Clients will call the method \src{add} of \src{DockSituation} to do so.
+Each \src{Dockable} and each \src{DockStation} has a method \src{getFactoryID}. This method returns an identifier that has to match the unique identifier that is returned by the method \src{getID} of \src{DockFactory}. So the first step in using a \src{DockSituation} will always be to make sure that for any identifier a matching \src{DockFactory} is available. Clients have to call the method \src{add} of \src{DockSituation} to do so.
 
 \infobox{Default factories are installed for \src{DefaultDockable}, \src{SplitDockStation}, \src{StackDockStation} and \src{FlapDockStation}.}
 
@@ -376,15 +381,15 @@ catch( IOException ex ){
 What happens here? In line \src{2} the main frame of the application is defined. In lines \src{4-6} a \src{DockSituation} is set up. In lines \src{8, 9} a file is opened. In line \src{11} that file gets read by the \src{DockSituation} and a map that was earlier given to \src{write} is returned. In line \src{15} the fact that \src{map} was earlier given to \src{write} is used to guess that there is a \src{SplitDockStation} with key ``root'' in the map. Finally in line \src{16} that station is put onto the main-frame which now shows the new elements.
 
 \subsubsection{Extended Algorithms}
-The major drawback of the basic algorithms is that they always create new \src{Dockable}s and \src{DockStation}s. As a result it is nearly impossible to just change the layout while an application is running, a layout can only be loaded on startup. \src{PredefinedDockSituation} builds upon \src{DockSituation} and extends the algorithms in a way that the can reuse existing dock-elements.
+The major drawback of the basic algorithms is that they always create new \src{Dockable}s and \src{DockStation}s. It is nearly impossible to just change the layout while an application is running, a layout can only be loaded on startup. \src{PredefinedDockSituation} builds upon \src{DockSituation} and extends the algorithms in a way that they can reuse existing dock-elements.
 
-The extended version uses a special \src{DockFactory}, called \src{PreloadFactory}, that is wrapped around the factories providied by the client. Writing does not change much, the \src{PreloadFactory} delegates the work just to the original \src{DockFactory}. Reading is more interesting. The \src{PreloadFactory} forwards the dock-element to reuse to the the original \src{DockFactory} which then updates the layout of the element.
+The extended version uses a special \src{DockFactory}, called \src{PreloadFactory}, that is wrapped around the factories providied by the client. Writing does not change much, the \src{PreloadFactory} delegates the work just to the original \src{DockFactory}. Reading is more interesting. The \src{PreloadFactory} forwards an already existing dock-element to the the original \src{DockFactory} which then updates the layout of the element.
 
-A side effect of this implementation is, that for the basic \src{DockSituation} no factories seem ever to be missing. In fact the issue of missing factories is just moved to the \src{PreloadFactory}. The \src{PreloadFactory} can however store data in its raw format if necessary.
+A side effect of this implementation is that for the basic algorithms no factory seems ever to be missing. In fact the issue of missing factories is just moved to the \src{PreloadFactory}. The \src{PreloadFactory} can however store data in its raw format if necessary.
 
 \classbox{A \src{PreloadFactory} uses a \src{PreloadedLayout} as intermediate format. This \src{PreloadedLayout} contains the unique identifier of the original \src{DockFactory} and a \src{DockLayoutInfo}. The \src{DockLayoutInfo} contains either data in raw format or in the intermediate format of the original factory.}
 
-What happens if a \src{PredefinedDockSituation} finds layout information for an element, has all the necessary factories but not the element itself? The default behavior is to ignore the information. However it is possible to use backup-\src{DockFactories}. These backup factories will create new elements if they were missing. They are also used when reading raw format and the original factory is missing. These backup factories are added through \src{addBackup}, they have to use a \src{BackupFactoryData} as intermediate format.
+What happens if a \src{PredefinedDockSituation} finds layout information for an element, has all the necessary factories but not the element itself? The default behavior is to ignore the information. However it is possible to use backup-\src{DockFactories}. These backup factories will create new elements if the originals are missing. They are also used when reading raw format and the original factory is missing. These backup factories are added through \src{addBackup}, they have to use a \src{BackupFactoryData} as intermediate format.
 
 \warningbox{Note that the \src{MissingDockFactory} of \src{DockSituation} is not used for elements that were predefined on writing, because for those elements the \src{PreloadFactory} - which is never missing - was used.}
 
@@ -418,11 +423,13 @@ In lines \src{1-3} some \src{DockStation}s and \src{Dockable}s are defined. Thes
 \subsection{DockFrontend}
 \src{DockFrontend} offers storage for local and for global layout information. Clients need to register their \src{Dockable}s through \src{addDockable} if they want access to the full range of storage-features.
 
+Layout information can be stored in xml- or binary-format. The methods \src{write}, \src{writeXML}, \src{read} and \src{readXML} will take care of this.
+
 \subsubsection{Local}
-Whenever \src{hide} is called for a registered \src{Dockable} its local position gets stored. If later \src{show} is called this position is reapplied and the element shows up at the same (or nearly the same) location it was earlier. This local information can also be stored in xml- or binary-format. The methods \src{write}, \src{writeXML}, \src{read} and \src{readXML} will take care of this.
+Whenever \src{hide} is called for a registered \src{Dockable} its local position gets stored. If later \src{show} is called this position is reapplied and the element shows up at the same (or nearly the same) location it was earlier.
 
 \subsubsection{Global}
-\src{DockFrontend} internally uses a \src{PredefinedDockSituation} to store the global layout. All root-\src{DockStation}s and all registered \src{Dockable}s are automatically added to this situation. The global layout can either be stored on disk using the methods \src{write}, \src{writeXML}, \src{read} and \src{readXML} or it can be stored in memory. It is possible to store more than just one layout in memory and allow the user to choose from different layouts. There are methods to interact with the layouts in memory:
+\src{DockFrontend} internally uses a \src{PredefinedDockSituation} to store the global layout. All root-\src{DockStation}s and all registered \src{Dockable}s are automatically added to this situation. The global layout can either be stored on disk or it can be stored in memory. It is possible to store more than just one layout in memory and allow the user to choose from different layouts. There are methods to interact with the layouts in memory:
 
 \begin{description}
  \item[save] Saves the current layout in memory. Clients can provide a name for the layout or use the name of the last loaded layout.
@@ -433,10 +440,8 @@ Whenever \src{hide} is called for a registered \src{Dockable} its local position
  \item[setCurrentSetting] If there is a layout with the name given to this method than that layout is loaded. Otherwise the current layout gets saved with the new name.
 \end{description}
 
-The layouts that are in memory can be stored persistent as well.
-
 \subsubsection{Missing Dockables}
-The default behavior of \src{DockFrontend} is to through away information for missing \src{Dockable}s. It is however possible to change that behavior.
+The default behavior of \src{DockFrontend} is to throw away information for missing \src{Dockable}s. It is however possible to change that behavior.
 
 If data needs to be stored for a missing \src{Dockable} then \src{DockFrontend} uses an ``empty entry''. Clients can define new empty entries by invoking the method \src{addEmpty}. Existing entries can be removed with \src{removeEmpty}, with \src{listEmpty} all empty entries can be accessed. Once an entry has been marked as ``empty'' it can switch between filled and empty as many times as necessary without loosing its layout information. The \src{DockFrontend} can even store data in raw xml or binary format and convert this data later once an appropriate \src{DockFactory} becomes known.
 
@@ -487,30 +492,32 @@ Most methods of \src{DockActionSource} can be understood without explanation. Th
 \classbox{\src{LocationHint}s consists of an \src{Origin} and a \src{Hint}. The hint tells the preferred location in respect to other elements, the origin are used if multiple hints collide. New \src{Hint}s and \src{Origin}s can be written.}
 
 \subsubsection{Source of Actions}
-Actions haf different sources, each kind of source has a specific purpose.
+Actions have different sources, each kind of source has a specific purpose.
 
 \begin{itemize}
  \item The \textbf{local action source} is part of every \src{Dockable}. This source is accessed through \src{getLocalActionOffers}. If \src{AbstractDockable} or a subclass like \src{DefaultDockable} is used then \src{setLocalActionOffers} allows to quickly set and exchange the actions. This source of actions should be used for actions that are closely linked with some \src{Dockable}.
- \item \src{ActionGuard}s can add actions to every \src{Dockable}. An \src{ActionGuard} is added to a \src{DockController} through \src{addActionGuard}. Its method \src{react} will be called whenever the actions of a \src{Dockable} are searched. If \src{react} returns \src{true} them the method \src{getSource} is called which adds the actions. This source of actions is intended either for general purpose action or for actions which need a special position in the list of actions (like a close-action needs to be at the very right end).
- \item Every \src{DockStation} can add \textbf{direct} and \textbf{indirect action offers} to its children. For this \src{DockStation} has two methods \src{getDirectActionOffers} and \src{getIndirectActionOffers}. \textbf{Direct action offers} are used only for true children, \src{indirect action offers} can be applied to grand-children as well. These sources of actions is intended for actions that are linked to a \src{DockStation}, like the maixmimze-action that can be seen on a \src{SplitDockStation}.
+ \item \src{ActionGuard}s can add actions to every \src{Dockable}. An \src{ActionGuard} is added to a \src{DockController} through \src{addActionGuard}. Its method \src{react} will be called whenever the actions of a \src{Dockable} are searched. If \src{react} returns \src{true} then the method \src{getSource} is called. This source of actions is intended for general purpose actions and for actions which need a special position in the list of actions (e.g. a close-action needs to be at the very end).
+ \item Every \src{DockStation} can add \textbf{direct} and \textbf{indirect action offers} to its children. For this \src{DockStation} has two methods \src{getDirectActionOffers} and \src{getIndirectActionOffers}. \textbf{Direct action offers} are used only for true children, \src{indirect action offers} can be applied to grand-children as well. These sources of actions are intended for actions that are linked to a \src{DockStation}, like the maixmimze-action that can be seen on a \src{SplitDockStation}.
 \end{itemize}
 
-Two mechanisms are responsible for collecting all the actions form these different sources and o put them into one list. Clients can adjust these mechanisms even to a point where they no longer collect actions but introduce their own actions.
+Two mechanisms are responsible for collecting all the actions from these different sources and to put them into a list. Clients can adjust these mechanisms even to a point where they no longer collect actions but introduce their own actions.
 
 \begin{itemize}
- \item Every \src{DockController} has at least one \src{ActionOffer}. An \src{ActionOffer} has two methods, \src{interested} tells whether the offer is interested in managing a certain \src{Dockable} and \src{getSource} collects the actions of an interesting \src{Dockable}. The primary function of an \src{ActionOffer} is to order the various sources. It is up to the offer to decide how to actually do the sorting. The default \src{ActionOffer} uses the \src{LocationHint} which is attached to every \src{DockActionSource}.
+ \item Every \src{DockController} has at least one \src{ActionOffer}. An \src{ActionOffer} has two methods: \src{interested} tells whether the offer is interested in managing a certain \src{Dockable} and \src{getSource} collects the actions of an interesting \src{Dockable}. The primary function of an \src{ActionOffer} is to order the various sources. It is up to the offer to decide how to actually do the sorting. The default \src{ActionOffer} uses the \src{LocationHint} which is attached to every \src{DockActionSource}.
 
-Clients can use \src{addActionOffer} and \src{setDefaultActionOffer} to change the offers of a \src{DockController}. The public method \src{listOffers} then advises the controller to use its offers, clients however should not call this method directly. They should call \src{getGlobalActionOffers} of \src{Dockable}.
+Clients can use \src{addActionOffer} and \src{setDefaultActionOffer} to change the offers of a \src{DockController}. The public method \src{listOffers} then advises the controller to use one of its offers.
 
- \item Modules which need a list of actions call \src{getGlobalActionOffers} from \src{Dockable}. This method is the ultimate piece of code which decides what to show. If need by this method can ignore anything else that has been said in this chapter and introduce its very own mechanism to collect actinos. Most \src{Dockable}s however will create a field holding a \src{HierarchyDockActionSource}. This special source observes the hierarchy of a \src{Dockable} and changes its content automatically. \src{Dockable}s using \src{HierarchyDockActionSource} should \src{bind} the source. They need to call \src{update} if their own local action source is exchanged. 
+ \item Modules which need a list of actions call \src{getGlobalActionOffers} from \src{Dockable}. This method is the ultimate piece of code which decides what to show. This method can ignore anything else that has been said in this chapter and introduce its very own mechanism to collect actions. 
 \end{itemize}
+
+Most \src{Dockable}s will utilize \src{HierarchyDockActionSource} instead of implementing \src{getGlobalActionOffers}. This special source observes the hierarchy of a \src{Dockable} and changes its content automatically. \src{Dockable}s using \src{HierarchyDockActionSource} should \src{bind} the source. They need to call \src{update} if their own local action source is exchanged. 
 
 \warningbox{It is generally a bad idea to write \src{DockActionOffer}s or \src{getGlobalActionOffer} methods which do not just collect actions. There are already mechanisms to introduce \src{DockAction}s and they should suffice for every possible situation.}
 
 \subsection{Standard Actions}
 There are a number of standard actions in the framework. Clients can either subclass them or instantiate and add listeners to them. A user would put the actions into six groups:
 \begin{description}
- \item[Button] If the user clicks this action then always the same happens. The interface \src{ButtonDockAction} collects all the buttonlike actions.
+ \item[Button] If the user clicks this action then always the same thing happens. The interface \src{ButtonDockAction} collects all the buttonlike actions.
  \item[Checkbox] When triggered it changes some property from \src{true} to \src{false} or from \src{false} to \src{true}. All actions with this behavior implement the interface \src{SelectableDockAction}.
  \item[Radiobutton] Like a group of checkboxes, but only one radiobutton can be selected within that group. Like checkboxes all these actions are represented by \src{SelectableDockAction}. Several radiobuttons can be linked together with the help of a \src{SelectableDockActionGroup}.
  \item[Menu] A menu just contains a list of other \src{DockAction}s. These other actions are normally hidden and only shown if the user wants to see them. Menus are implementing the interface \src{MenuDockAction}.
@@ -611,7 +618,7 @@ Clients are free to implement new actions.
 \subsubsection{Reuse existing view}
 Whenever possible an existing view should be reused. There are 6 kind of views defined in the framework. Each kind of view is represented through an instance of \src{ActionType}, each of them is stored as constant in \src{ActionType} itself. \src{ActionType} has one generic parameter. The view can force an action to implement some interface through that parameter. For example, the kind \src{ActionType.BUTTON} forces an action to implement \src{ButtonDockAction}. Actions can use an \src{ActionType} as key for a factory that is stored in the \src{ActionViewConverter}. 
 
-In a real world example that will look like this:
+An example for an action that uses an \src{ActionType} to create its view:
 \begin{lstlisting}
 public class ExampleButtonAction implements ButtonDockAction{
 
@@ -640,8 +647,7 @@ The interface \src{ButtonDockAction} declares other methods like \src{getIcon} (
 \subsubsection{Custom view}
 Writing a custom action with custom view is possible, but will require a lot of work. Some good news: it is only necessary to implement the interface \src{DockAction} and the raw interface \src{DockAction} has only very few methods. The greatest challenge will be to write the method \src{createView}. This method can be called any time and receives a \src{ViewTarget}, a \src{ActionViewConverter} and the \src{Dockable} for which the view will be used. It has to return either \src{null} or the type of object that is specified as the generic parameter of \src{ViewTarget}. The framework will always use the same three instances of \src{ViewTarget}, all of them are stored as constants in \src{ViewTarget} itself. So in theory a \src{createView} could check which of the three \src{ViewTarget}s it received and create one of three different views. In practice it is much better to use the \src{ActionViewConverter} for this task.
 
-You might remember that the \src{ActionViewConverter} can instanciate new views if an \src{ActionType} is given to its \src{createView} method. So the first step in creating a custom action should be to write the new class (or interface) and declare the new type. The second step would be to call \src{createView}. The third step to implement the remaing methods. The result of these steps could look like this:
-
+You might remember that the \src{ActionViewConverter} can instanciate new views if an \src{ActionType} is given to its \src{createView} method. So the first step should be to introduce a new \src{ActionType}. Only the second step is to write the new action-class. This could result in something like this:
 \begin{lstlisting}
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionType;
@@ -703,7 +709,7 @@ public class CustomButtonGenerator implements
 \warningbox{Set a \src{ViewGenerator} for \src{ViewTarget.TITLE}, \src{ViewTarget.MENU} and for \src{ViewTarget.DROP\_DOWN}. Even if these generators do not create views but just return \src{null}, not installing them would lead to an error.}
 
 \section{Titles} \label{sec:titles}
-A \src{DockTitle} is a \src{Component} that may show an icon, a text, some \src{DockAction}s or other information about a \src{Dockable}. Users often grap a \src{DockTitle} when they want to initialize a drag \& drop operation.
+A \src{DockTitle} is a \src{Component} that may show an icon, a text, some \src{DockAction}s or other information about a \src{Dockable}. Users often grab a \src{DockTitle} when they want to start a drag \& drop operation.
 
 \begin{figure}[h]
 \centering
@@ -713,9 +719,9 @@ A \src{DockTitle} is a \src{Component} that may show an icon, a text, some \src{
 \end{figure}
 
 \subsection{Lifecycle}
-This chapter will explain the mechanism of creating and managing \src{DockTitle}s. 
+This chapter explains the mechanism of creating and managing \src{DockTitle}s. 
 
-A module that wants to show a \src{DockTitle} first has to create a unique identifier. The unique identifier is represented by an instance of \src{DockTitleVersion}. A \src{DockTitleVersion} can be created by the \src{DockTitleManager}. When a module asks for a \src{DockTitleVersion} is has to give a \src{DockTitleFactory} to the manager, this factory becomes the default factory and will be used to create titles (unless someone replaces the default factory).
+Any module that wants to show a \src{DockTitle} needs to specify what kind of title it shows. The module needs an instance of \src{DockTitleVersion} to do so. A \src{DockTitleVersion} can be created by the \src{DockTitleManager}. When a module asks for a \src{DockTitleVersion} it has to hand over a \src{DockTitleFactory} to the manager. This factory becomes the default factory and will be used to create titles (unless someone replaces the default factory).
 
 If the module receives a \src{Dockable} it can call \src{getDockTitle}. This method requires the unique identifier \src{DockTitleVersion} which was created earlier. Most \src{Dockable}s would then access the default factory to create the title, but some \src{Dockable}s might create their customized titles.
 
@@ -731,7 +737,7 @@ Assuming \src{getDockTitle} does not return \src{null}, the module calls the met
 
 \subsection{Custom titles}
 \subsubsection{Write the title}
-It is possible to replace all the titles in the framework. The interface \src{DockTitle} is rather open and the title is responsible to collect the information it wants to show.
+It is possible to replace all the titles in the framework. While the interface \src{DockTitle} is rather open, a title is responsible to collect all the information it wants to show by itself.
 
 Most titles will have a constructor that has a \src{Dockable} as argument. They will add a \src{DockableListener} to their \src{Dockable} once \src{bind} is called and remove the listener once \src{unbind} is called.
 
@@ -766,7 +772,7 @@ version.setFactory( new CustomDockTitleFactory(), Priority.CLIENT );
 \end{lstlisting}
 
 \section{Themes}
-A \src{DockTheme} relates to \src{DockingFrames} like a \src{LookAndFeel} to \src{Java Swing}. At any given time a \src{DockController} is associated with exactly one theme. The theme defines various graphical elements like icons, painting code and also some behavior code. The current \src{DockTheme} can be changed through the method \src{setTheme}:
+A \src{DockTheme} relates to \src{DockingFrames} like a \src{LookAndFeel} to \src{Java Swing}. At any given time a \src{DockController} is associated with exactly one theme. The theme defines various graphical elements like icons, painting code and also some behavior. The current \src{DockTheme} can be changed through the method \src{setTheme}:
 \begin{lstlisting}
 DockController controller = ...
 DockTheme theme = new EclipseTheme();
@@ -859,7 +865,7 @@ The UI-properties provide the necessary features. The mechanism includes these c
 
 The implementation gets more complex:
 \begin{itemize}
-	\item For each key several \src{V} properties can be put into the base map. Each value gets assigned another priority (``default'', ``theme'' or ``client'') and only the one with the. highest priority is used.
+	\item For each key several \src{V} properties can be put into the base map. Each value gets assigned another priority (``default'', ``theme'' or ``client'') and only the one with the highest priority is used.
 	\item Each \src{UIValue} is associated with a \src{Path}. The \src{Path} tells what an \src{UIValue} will do with the \src{V} property. The \src{Path} also tells what kind of type the \src{UIValue} has.
 	\item \src{UIBridge}s are also associated with a \src{Path}. An \src{UIBridge} is responsible to handle all those \src{UIValue}s that are associated either with the same \src{Path} or a \src{Path} that has the bridges \src{Path} as prefix.
 \end{itemize}
@@ -934,7 +940,7 @@ The views for \src{DockAction}s are changed through the \src{ActionViewConverter
 \subsection{Custom Theme}
 With the exception of the classes that are directly related to a \src{DockTheme} no code in the framework depends on a special undocummented behavior of a theme. Clients can reimplement the interface \src{DockTheme} without fear to break things.
 
-A better approach then full reimplementation might be to extend the class \src{BasicTheme}. This class provides some default values which can easily be changed by the appropriate \src{setXZY} method.
+A better approach then full reimplementation might be to extend the class \src{BasicTheme}. This class provides some default values which can easily be \linebreak changed by the appropriate \src{setXZY} method.
 
 \src{DockTheme} has a method \src{install}, this method can be used to exchange some values that are not stored in the \src{DockTheme} itself. For example to exchange icons in the \src{IconManager}.
 
@@ -944,7 +950,7 @@ A better approach then full reimplementation might be to extend the class \src{B
 To drag a \src{Dockable} to a new location and drop it there is the most important feature of any docking framework. Surprisingly the implementation of this part is very small.
 
 \subsection{Relocator}
-The sourcecode that detects drag gestures, searches for the target station and makes sure that the user has some visual feedback is located in the \linebreak \src{DefaultDockRelocator}. \src{DefaultDockRelocator} itself extends from \linebreak \src{DockRelocator} which just allows to register some listeners and set some useful properties. Clients seldomly need to implement a new \src{DockRelocator}. If they do then they, then they have to implement a new \src{DockControllerFactory}. The code will look like this:
+The sourcecode that detects drag gestures, searches for the target station and makes sure that the user has some visual feedback is located in the \linebreak \src{DefaultDockRelocator}. \src{DefaultDockRelocator} itself extends from \linebreak \src{DockRelocator} which just allows to register some listeners and set some useful properties. Clients seldomly need to implement a new \src{DockRelocator}. If they do, then they have to implement a new \src{DockControllerFactory}. The code will look like this:
 
 \begin{lstlisting}
 public class MyDockControllerFactory extends DefaultDockControllerFactory{
@@ -989,7 +995,7 @@ The methods \src{init}, \src{drag} and \src{drop} return a \src{Reaction}. The r
 
 A \src{DirectRemoteRelocator} can be optained by calling \src{createDirectRemote} of \src{DockRelocator}. A \src{DirectRemoteRelocator} is basically the same as a \src{RemoteRelocator} but always assumes that the user pressed the correct button on the mouse. Its methods do not return a \src{Reaction} because it would always be the same.
 
-\infobox{Clients can use several remote controls at the same time, they will cancel each other out if necessary. A \src{RemoteRelocator} can be used several times.}
+\infobox{Clients can use several remote controls at the same time, they will cancel out each other if necessary. A \src{RemoteRelocator} can be used several times.}
 
 \subsection{Destinations}
 A relocator needs to find the one \src{DockStation} on which the \src{Dockable} is dropped. 
@@ -1003,6 +1009,14 @@ The \src{DefaultDockRelocator} searches the destination anew whenever the mouse 
 \end{enumerate}
 
 \classbox{There is more information about the exact semantics in the API-documentation for \src{DockStation}.}
+
+\designbox{Due of the varieties of stations a general interface for drag and drop would be very hard to come up with. Hence most of the work has to be done by the stations itself. This might lead to code that is written twice, but also allows much freedom in writing stations. There are some helper classes that can help with the most common tasks:
+\begin{itemize}
+ \item \src{DockController.getAcceptance} to access all the global acceptance tests at once.
+ \item \src{StationPaint}, accessible through \src{DockUI.getPaint}.
+\end{itemize}
+
+}
 
 \subsubsection{Drop}
 The moment a user releases the mouse and drops a \src{Dockable} the method \src{move} or \src{drop} of \src{DockStation} is called. These methods can either put the \src{Dockable} somewhere onto the station or merge the \src{Dockable} with an existing child of the station (sometimes referred as ``put'' and ``merge'' action). The results of the first reaction depend on the kind of station. The results of the second reaction are independent of the kind of station.
@@ -1019,7 +1033,7 @@ A \src{DockRelocator} can have "modes". A mode is some kind of behavior that is 
 
 Currently two modes are installed:
 \begin{description}
-\item[DockRelocatorMode.SCREEN\_ONLY] (press key \textit{shift}) ensures that a \src{Dockable} can only be put on a \src{ScreenDockStation}. That means that a \src{Dockable} can be directly above a \src{DockStation} like a \src{SplitDockStation}, but can't be dropped there.
+\item[DockRelocatorMode.SCREEN\_ONLY] (press key \textit{shift}) ensures that a \linebreak \src{Dockable} can only be put on a \src{ScreenDockStation}. That means that a \src{Dockable} can be directly above a \src{DockStation} like a \src{SplitDockStation}, but can't be dropped there.
 \item[DockRelocatorMode.NO\_COMBINATION] (press key \textit{alt}) ensures that a \src{Dockable} can't be put over another \src{Dockable}. That means, every operation that would result in a merge is forbidden. Also dropping a \src{Dockable} on already merged \src{Dockable}s will not be allowed.
 \end{description}
 
@@ -1033,7 +1047,7 @@ The set of possible destinations for a \src{Dockable} can be restricted. There a
  \item Some \src{Dockable}s can only be presented on a certain kind of \src{DockStation}.
 \end{itemize}
 
-This restrictions are implemented through acceptance tests. An acceptance test either checks one ``put'' or one ``merge'' action. Tests can be stored at various locations:
+These restrictions are implemented through acceptance tests. An acceptance test either checks one ``put'' or one ``merge'' action. Tests can be stored at various locations:
 \begin{itemize}
  \item Every \src{Dockable} has two methods called \src{accept}.
  \item Each \src{DockStation} has a method \src{accept}. This method tells whether some \src{Dockable} can become a child of the \src{DockStation}. This method checks ``put'' and ``merge'' actions at the same time.
@@ -1042,87 +1056,78 @@ This restrictions are implemented through acceptance tests. An acceptance test e
 
 \warningbox{Acceptance tests are very powerful. They have to be implemented carefully or the drag and drop mechanism might become crippled.}
 
-************************  was writing here **********************
+\designbox{Acceptance tests are performed by the potential destination \src{DockStation}. The \src{DockStation} is the first module that knows where a \src{Dockable} will land. Handling acceptance tests allows the station to cut down the amount of work it does, and to try alternative actions (e.g. a ``put'' instead of a ``merge'' action) if some future configuration does not pass the tests.
+
+The drawback is, that a \src{DockStation} can break the mechanism by just not performing the tests.}
 
 \section{Preferences}
-The preference system was introduced with version 1.0.6 of the core library.
+The preference system allows the user to change settings which are otherwise not accessible. An example would be the shortcut for maximizing a \src{Dockable} (\src{ctrl+m}). The preference system makes a sharp distinction between model and view, clients are free to integrate the model in their own view, or to create a new model and using the standard view. Figure \ref{fig:preferences} shows the simple version of the standard view with some random preferences.
 
-If a setting is meaningful for the ordinary user, and the user would like to be able to change the setting, then this setting should be made accessible through a preference. For example the shortcut to maximize a \src{Dockable} (ctrl+m) is a good candidate for a preference.
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.5\textwidth]{preferences}
+\caption{The \src{PreferenceDialog} showing some random preferences.}
+\label{fig:preferences}
+\end{figure}
 
-So what is a preference? A preference is a representation of some kind of property in a unified way. It is a mediator between the system in which the property is stored, and the graphical user interface and storage mechanisms written for preferences.
+\subsection{Model}
+This section explains how the model is organized.
 
-Each preference consists of some properties:
+\subsubsection{Preference}
+A preference is an abstract concept. One preference represents some property of the framework (or of the client). A preference is a set of meta-informations about a property:
 \begin{description}
- \item[Value] The thing which the user would like to change.
- \item[ValueInfo] Information about the value, for example the maximum value for an \src{Integer}-value. The exact meaning of this property depends on the \src{TypePath}.
- \item[TypePath] The type tells how to work with the value, how to present it to the user or how to write it as xml. The type is represented by a \src{Path}-object. It is a \src{Path} and not a \src{Class} object because many preference-types may use the same objects as value. For example an unbounded \src{Integer} versus an \src{Integer} which must be in the range 1 to 10.
- \item[Path] A unique path to this preference. Used as an identifier if preferences have to be stored in some kind of map.
+ \item[Path] A unique identifier
+ \item[TypePath] Tells how to work with \src{Value}. For example how to present the value to the user (as text, as image...) or how to store the value. An object of type \src{Path} is used to represent the \src{TypePath}.
+ \item[Value] The current value of the property.
+ \item[ValueInfo] Information about the value, e.g. the maximum value for an \linebreak \src{Integer}-property. The exact meaning of this information depends on the \src{TypePath}.
 \end{description}
 
-\subsection{Organization}
-The basic module of the preference system is the \src{PreferenceModel}. 
+\designbox{\src{Value} is some \src{Object} and \src{TypePath} tells the view how to cast \src{Value} in order to use it. If \src{TypePath} were a \src{Class} then there would never be doubt whether the correct cast is performed. But \src{TypePath} is a \src{Path} and hence an additional indirection is introduced.
 
-Most methods of the \src{PreferenceModel} are simple to understand and do not need a discussion. Those which are part of a greater scheme however will receive some attention in this chapter.
+The reason for this is that the same \src{Object} might need different treatment in different situations. E.g. an \src{Integer} could just be an int, it could be a natural number or it could be an int from the range 1 to 100.}
 
-In the preference system a \src{PreferenceModel} is just a layer above some kind of storage mechanism for the real properties. It is most often used as a mediator and a buffer between that storage mechanism and the algorithms that want to use the preferences (for example a user interface). The methods \src{read} and \src{write} are used to access the covered storage mechanism. The method \src{read} will read values from the storage mechanism into the model. The method \src{write} will write the values back into that storage mechanism.
+\classbox{There is an interface \src{Preference} and a class \src{DefaultPreference} which bring this preference-abstraction to code. It is not necessary to use them, they are just here to simplify things.}
 
-\subsection{Models}
-There are some implementations of \src{PreferenceModel} already in the core library.
+\subsubsection{PreferenceModel}
+The \src{PreferenceModel} is the basic module of the preference system. A \linebreak \src{PreferenceModel} is a list of preferences (the abstraction, not the interface). It often acts as mediator between some unspecified storage mechanism for properties and the user interface. The methods \src{read} and \src{write} are used to access that covered storage mechanism. To transfer values into the model \src{read} is called, to transver values to the storage mechanism \src{write} is called.
 
-\subsubsection{DefaultPreferenceModel}
-This model uses a list of \src{Preference}-objects to represent the preferences. All the properties needed for a preference are stored in such a \src{Preference}-object. The API-documentation reveals that there are many \src{Preference}s representing different aspects of the core library. For example there is a \src{Preference} which represents the keystroke for maximizing a \src{Dockable}.
+\classbox{\src{DefaultPreferenceModel} is the standard implementation of \src{PreferenceModel}. Its entries are objects of type \src{Preference}.
 
-There are also subclasses of \src{DefaultPreferenceModel}. These subclasses are collections of preferences which belong together, for example the \\\src{EclipseThemePreferenceModel} which contains preferences that are related to the \src{EclipseTheme}.
+Several models can be combined using a \src{MergedPreferenceModel}.}
 
-\subsubsection{MergedPreferenceModel}
-This model is a list of other models. It just takes the preferences from these other models and presents them as its own preferences. It offers a quick and simple way to create a combination of two ore more models.
+\infobox{There are several subclasses of \src{DefaultPreferenceModel} for various settings that can be made. For example \src{EclipseThemeModel} handles properties of \src{EclipseTheme}.
+
+There are also many implementations of \src{Preference} for various properties of the framework. The API-documentation reveals more.}
 
 \subsubsection{PreferenceTreeModel}
 This model is a \src{PreferenceModel} and a \src{javax.swing.TreeModel}. If seen as \src{PreferenceModel}, then it behaves like a \src{MergedPreferenceModel}. If seen as \src{TreeModel}, then it contains \src{PrefereceTreeModel.Node}-objects. A node can either be just a name, or another \src{PreferenceModel}. This model is intended to be used in a \src{JTree} where the user can select one aspect of the whole set of preferences to show.
 
-The subclass \src{DockingFramesPreferenceModel} is the set of preferences \\which includes all the aspects of the core-library.
+\classbox{The subclass \src{DockingFramesPreferenceModel} is the set of preferences which includes all the aspects of the core-library.}
 
-\subsection{Lifecycle}
-This section describes the best way how to use a \src{PreferenceModel}. Not everything used in this section is explained yet, so you might want to read this section a second time when you finished this whole chapter.
+\subsection{View}
+A \src{PreferenceModel} is best displayed in a \src{PreferenceTable}. This table will show a label, an editor and operations for each preference. 
 
-The correct lifecycle of a \src{PreferenceModel} includes normally these steps:
-\begin{enumerate}
- \item Create the model. Set up all the preferences that are used by the model.
- \item Call \src{load} on a \src{StoragePreference}.
- \item Call \src{write} on the model to synchronize the model with the underlying system.
- \item (work with the underlying system)
- \item To work with the model: call first \src{read}, then make the changes in the model, then call \src{write}.
- \item (work with the underlying system)
- \item Call \src{read} on the model to synchronize the model with the underlying system.
- \item Store the model using \src{store} of a \src{PreferenceStorage}.
-\end{enumerate}
+A \src{PreferenceTreeModel} can be displayed in a \src{PreferenceTreePanel}. It will show not only a \src{PreferenceTable} but also a \src{JTree} where the user can select which sub-model to edit.
 
-If the \src{PreferenceStorage} used in step \src{2} is empty because its \src{read} or \src{readXML} method failed, then calling \src{read} of \src{PreferenceModel} would at least load some default settings.
-
-Steps \src{4, 5, 6} can be cycled as many times as needed.
-
-An additional step \src{0} and \src{9} would be to read and write the \\\src{PreferenceStorage} when starting up or shuting down the application.
-
-\subsection{User Interface}
-If a \src{PreferenceModel} should be displayed, the \src{PreferenceTable} can be used. This table shows a label and an editor for each preference. For \\\src{PreferenceTreeModel}s a \src{PreferenceTreePanel} should be used, it shows a \\\src{PreferenceTable} and a \src{JTree} for the nodes of the \src{PreferenceTreeModel}.
-
-Clients can also use a \src{PreferenceDialog} or a \src{PreferenceTreeDialog} to show a dialog with the well known buttons "ok" and "cancel".
+Further more the \src{PreferenceDialog} and the \src{PreferenceTreeDialog} are available. These dialogs offer the options to apply the settings, to cancel editing and to reset all preferences to their default value.
 
 \subsubsection{Editors}
 Since there are different types of preferences, different editors are needed. The kind of editor for one preference is determined by the type-path (\src{getTypePath} in a model). Clients can add new editors to a \src{PreferenceTable} through the method \src{setEditorFactory}.
 
-An editor is always of type \src{PreferenceEditor}. Each editor gets a \\\src{PreferenceEditorCallback} with which it can interact with the table. Whenever the user changes the editors value, the editor should call the method \src{set} of \src{PreferenceEditorCallback} to make sure the new value gets stored.
+An editor is always of type \src{PreferenceEditor}. Each editor gets a \linebreak \src{PreferenceEditorCallback} with which it can interact with the table. Whenever the user changes the editors value, the editor should call the method \src{set} of \src{PreferenceEditorCallback} to make sure the new value gets stored.
 
-\subsubsection{Operators}
-There are some operations which should be available for almost any preference. For example \textit{set a default value} or \textit{delete the current value}. The preference system introduces the \src{PreferenceOperation} to handle this kind of actions.
+\subsubsection{Operations}
+There are some operations which should be available for almost any preference. For example \textit{set a default value} or \textit{delete the current value}. The preference system introduces the \src{PreferenceOperation} to handle these kind of actions.
 
 A \src{PreferenceOperation} is nothing more than a label and an icon. The logic for an operation is either in an editor or in a model.
 
 \begin{description}
- \item[Editor:] Editors with operations must call the method \src{setOperation} of \\\src{PreferenceEditorCallback} for each operation they offer. By calling \src{setOperation} more than once, the editor can change the enabled state of the operation. If the user triggers an operation of the editor, the method \src{doOperation} of \src{PreferenceEditor} is called. It is then the editors responsibility to handle the operation.
- \item[Preference:] Preferences can have operations as well. The method \\\src{getOperations} of \src{PreferenceModel} will be called once to get all the available operations for one preference. The method \src{isEnabled} will be invoked to find out whether an operation is enabled or not. Models can change the enabled state by calling \src{preferenceChanged} of \\\src{PreferenceModelListener}. If the user triggers an operation, \\\src{doOperation} of \src{PreferenceModel} will be invoked.
+ \item[Editor:] Editors with operations must call the method \src{setOperation} of \linebreak \src{PreferenceEditorCallback} for each operation they offer. By calling \src{setOperation} more than once, the editor can change the enabled state of the operation. If the user triggers an operation of the editor, the method \src{doOperation} of \src{PreferenceEditor} is called. It is then the editors responsibility to handle the operation.
+ \item[Preference:] Preferences can have operations as well. The method \linebreak \src{getOperations} of \src{PreferenceModel} will be called once to get all the available operations for one preference. The method \src{isEnabled} will be invoked to find out whether an operation is enabled or not. Models can change the enabled state by calling \src{preferenceChanged} of \linebreak \src{PreferenceModelListener}. If the user triggers an operation, \linebreak \src{doOperation} of \src{PreferenceModel} will be invoked.
 \end{description}
 If an editor and a preference share the same operations, then per definition the operations belong to the editor. All settings from the model will just be ignored.
+
+\infobox{Operations might be confusing at first, but they can be really useful. The strength of operations is that they are handled automatically, and that they need not much code.}
 
 \subsection{Storage}
 The \src{PreferenceStorage} can be used to store \src{PreferenceModel}s in memory or persistent either as byte-stream or as XML.
@@ -1157,8 +1162,83 @@ storage.load( model, false );
 \end{lstlisting}
 Like writing this operation has two phases. In line \src{9} \src{storage} gets filled with information, in line \src{10} the information gets transfered to \src{model}. The argument \src{false} is a hint what to do with missing preferences. In this case missing preferences are just ignored. A value of \src{true} would force them to become \src{null}.
 
-There are some preferences which do not need to be stored by the \\\src{PreferenceStorage} because they are already stored by the underlying systen. These preferences are called \textit{natural}, while the others are called \textit{artificial}. The method \src{isNatural} of \src{PreferenceModel} can be used to distinguish them.
+There are some preferences which do not need to be stored by the \linebreak \src{PreferenceStorage} because they are already stored by the underlying system. These preferences are called \textit{natural}, while the others are called \textit{artificial}. The method \src{isNatural} of \src{PreferenceModel} can be used to distinguish them.
+
+\designbox{The distinction between natural and artificial preferences might seem curious. But actually this allows to use an unlimited number of storage mechanisms at the same time.}
+
+\subsection{Lifecycle}
+This section describes the best way how to use a \src{PreferenceModel}.
+
+The correct lifecycle of a \src{PreferenceModel} includes normally these steps:
+\begin{enumerate}
+ \item Create the model. Set up all the preferences that are used by the model.
+ \item Call \src{load} on a \src{StoragePreference}.
+ \item Call \src{write} on the model to synchronize the model with the underlying system.
+ \item (work with the underlying system)
+ \item To work with the model: call first \src{read}, then make the changes in the model, then call \src{write}.
+ \item (work with the underlying system)
+ \item Call \src{read} on the model to synchronize the model with the underlying system.
+ \item Store the model using \src{store} of a \src{PreferenceStorage}.
+\end{enumerate}
+
+If the \src{PreferenceStorage} used in step \src{2} is empty because its \src{read} or \src{readXML} method failed, then calling \src{read} of \src{PreferenceModel} would at least load some default settings.
+
+Steps \src{4, 5, 6} can be cycled as many times as needed.
+
+An additional step \src{0} and \src{9} would be to read and write the \\\src{PreferenceStorage} when starting up or shuting down the application.
 
 \section{Properties}
+There are a number of interesting settings whose effects are deeply hidden within the framework. Properties are an easy way to access these settings and change them. Properties are represented by the class \src{DockProperties} which can be accessed through \src{getProperties} of \src{DockController}.
+
+\src{DockProperties} is nothing else than a map. As keys are instances of \src{PropertyKey} used. The type of the value depends on the key and the map is typesafe. With the help of a \src{DockPropertyListener} any object can be informed immediately when a value changes.
+
+There are a number of keys and the remainder of this chapter will list all of the keys that are present in version 1.0.7. If not explicitly said otherwise, then any change in the properties will have an immediate effect.
+
+\warningbox{Some of these properties are accessed and changed by \src{DockTheme}s.}
+
+\subsection{Themes}
+\begin{description}
+ \property{BasicTheme.BASIC\_COLOR\_SCHEME}{ColorScheme}{An instance of \src{BasicColorScheme}}{The \src{ColorScheme} used by \src{BasicTheme}.}
+ \property{BubbleTheme.BUBBLE\_COLOR\_SCHEME}{ColorScheme}{An instance of \src{BubbleColorScheme}}{The \src{ColorScheme} used by \src{BubbleTheme}.}
+ \property{FlatTheme.FLAT\_COLOR\_SCHEME}{ColorScheme}{An instance of \src{FlatColorScheme}}{The \src{ColorScheme} used by \src{FlatTheme}.}
+ \property{EclipseTheme.ECLIPSE\_COLOR\_SCHEME}{ColorScheme}{An instance of \src{EclipseColorScheme}}{The \src{ColorScheme} used by \src{EclipseTheme}.}
+ \property{EclipseTheme.PAINT\_ICONS\_WHEN\_DESELECTED}{Boolean}{\src{false}}{Whether to paint icons in tabs of \src{Dockable}s that are not selected. This setting might be ignored if a custom \src{TabPainter} is applied.}
+ \property{EclipseTheme.TAB\_PAINTER}{TabPainter}{\src{ShapedGradientPainter.FACTORY}}{How to paint tabs in \src{EclipseTheme} for \src{Dockable}s.}
+ \property{EclipseTheme.THEME\_CONNECTOR}{EclipseThemeConnector}{An instance of \src{DefaultEclipseThemeConnector}}{Tells how a lonly \src{Dockable} gets presented in \src{EclipseTheme}. \linebreak Whether it has a border and a title. Also tells which \src{DockAction}s are to be shown on tabs. Changing this entry will not affect decisions that were made by the previous connector.}
+\end{description}
+
+\subsection{Stations}
+\begin{description}
+ \property{FlapDockStation.LAYOUT\_MANAGER}{FlapLayoutManager}{An instance of \src{DefaultFlapLayoutManager}}{Tells the initial size and whether to hold a \src{Dockable} in a \linebreak \src{FlapDockStation}. The default setting uses the same size for all \src{Dockable}s and forgets the hold-property as soon as a \src{Dockable} is removed from the station.}
+ \property{FlapDockStation.BUTTON\_CONTENT}{ButtonContent}{\src{ButtonContent.THEME\_DEPENDENT}}{Tells which information to display on the buttons that represent \src{Dockable}s on a \src{FlapDockStation}. Any mix of icons, text and \src{DockAction}s is possible.}
+ \property{ScreenDockStation.BOUNDARY\_RESTRICTION}{BoundaryRestriction}{\src{BoundaryRestriction.FREE}}{Decides about the shape and location a \src{ScreenDockWindow} is allowed to have. E.g. \src{BoundaryRestriction} might force windows to be visible only on one of many screens.}
+ \property{ScreenDockStation.WINDOW\_FACTORY}{ScreenDockWindowFactory}{An instance of \src{DefaultScreenDockWindowFactory}}{The factory used to create new windows for \src{ScreenDockStation}. Changing this property has no effect on existing windows. \linebreak \src{DefaultScreenDockWindowFactory} can be customized and should be preferred over newly written factories.}
+ \property{StackDockStation.COMPONENT\_FACTORY}{StackDockComponentFactory}{\src{null}}{Tells a \src{StackDockStation} how to arrange its children.}
+ \property{SplitDockStation.MAXIMIZE\_ACCELERATOR}{KeyStroke}{\src{ctrl+m}}{The keys that have to be pressed in order to maximize or normalize a child of \src{SplitDockStation}.}
+ \property{SplitDockStation.LAYOUT\_MANAGER}{SplitLayoutManager}{An instance of \src{DefaultSplitLayoutManager}}{The \src{SplitLayoutManager} is responsible to handle most of the actions that can change the layout of a \src{SplitDockStation}}
+\end{description}
+
+\subsection{Controlling}
+\begin{description}
+ \property{DockableSelector.INIT\_SELECTION}{KeyStroke}{\src{ctrl+shift+e}}{Hitting these keys will open a window where the user can select the focused \src{Dockable}.}
+ \property{DockRelocatorMode.SCREEN\_MASK}{ModifierMask}{\src{shift}}{If these modifiers are pressed during a drag and drop operation then \src{DockRelocatorMode.SCREEN\_ONLY} gets activated. This will \linebreak force the \src{Dockable} to be dropped onto a \src{ScreenDockStation}.}
+ \property{DockRelocatorMode.NO\_COMBINATION\_MASK}{ModifierMask}{\src{alt}}{If these modifiers are pressed during a drag and drop operation then \src{DockRelocatorMode.NO\_COMBINATION} gets activated. This will prevent the dropped \src{Dockable} from merging with another \src{Dockable}.}
+ \property{DockFrontend.HIDE\_ACCELERATOR}{KeyStroke}{\src{ctrl+F4}}{If a \src{DockFrontend} is in use then hitting these keys will hide the currently focused \src{Dockable}.}
+\end{description}
+ 
+\subsection{Legacy}
+\begin{description}
+ \property{AWTComponentCaptureStrategy.STRATEGY}{AWTComponentCaptureStrategy}{\src{PAINT\_ALL\_STRATEGY}}{Tells how the framework can take a picture from a \src{Component} that is or contains an AWT-\src{Component}. Different strategies are available, some are more subtile but efficient, others are blunt but working under harsh conditions.}
+\end{description}
+
+\subsection{Gimmicks}
+\begin{description}
+ \property{PropertyKey.DOCKABLE\_ICON}{Icon}{\src{null}}{This icon is shown for any \src{Dockable} that has no icon set.}
+ \property{PropertyKey.DOCKABLE\_TITLE}{String}{\src{null}}{This text is shown for any \src{Dockable} that has no title set.}
+ \property{PropertyKey.DOCKABLE\_TOOLTIP}{String}{\src{null}}{This text is shown for any \src{Dockable} for which no tooltip was set.}
+ \property{PropertyKey.DOCK\_STATION\_ICON}{Icon}{\src{null}}{This icon is shown for any \src{DockStation} that has no icon set.}
+ \property{PropertyKey.DOCK\_STATION\_TITLE}{String}{\src{null}}{This text is shown for any \src{DockStation} that has no title set.}
+ \property{PropertyKey.DOCK\_STATION\_TOOLTIP}{String}{\src{null}}{This text is shown for any \src{DockStation} for which no tooltip was set. }
+\end{description}
 
 \end{document} 

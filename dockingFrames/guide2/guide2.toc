@@ -1,77 +1,82 @@
-\contentsline {section}{\numberline {1}Notation}{3}
-\contentsline {section}{\numberline {2}Basics}{3}
-\contentsline {subsection}{\numberline {2.1}Hello World}{4}
-\contentsline {subsection}{\numberline {2.2}Dockable}{4}
-\contentsline {subsection}{\numberline {2.3}DockStation}{5}
-\contentsline {subsection}{\numberline {2.4}DockController}{6}
-\contentsline {subsection}{\numberline {2.5}DockFrontend}{7}
-\contentsline {subsubsection}{\numberline {2.5.1}Close-Button}{8}
-\contentsline {subsubsection}{\numberline {2.5.2}Storing the layout}{8}
-\contentsline {section}{\numberline {3}Load and Save layouts}{8}
-\contentsline {subsection}{\numberline {3.1}Local: DockableProperty}{8}
-\contentsline {subsubsection}{\numberline {3.1.1}Creation}{9}
-\contentsline {subsubsection}{\numberline {3.1.2}Usage}{9}
-\contentsline {subsubsection}{\numberline {3.1.3}Storage}{10}
-\contentsline {subsection}{\numberline {3.2}Global: DockSituation}{10}
-\contentsline {subsubsection}{\numberline {3.2.1}Basic Algorithms}{10}
-\contentsline {subsubsection}{\numberline {3.2.2}Basic Usage}{11}
-\contentsline {subsubsection}{\numberline {3.2.3}Extended Algorithms}{13}
-\contentsline {subsubsection}{\numberline {3.2.4}Extended Usage}{14}
-\contentsline {subsection}{\numberline {3.3}DockFrontend}{15}
-\contentsline {subsubsection}{\numberline {3.3.1}Local}{15}
-\contentsline {subsubsection}{\numberline {3.3.2}Global}{15}
-\contentsline {subsubsection}{\numberline {3.3.3}Missing Dockables}{15}
-\contentsline {section}{\numberline {4}Actions}{17}
-\contentsline {subsection}{\numberline {4.1}Show Actions}{18}
-\contentsline {subsubsection}{\numberline {4.1.1}List of Actions}{18}
-\contentsline {subsubsection}{\numberline {4.1.2}Source of Actions}{18}
-\contentsline {subsection}{\numberline {4.2}Standard Actions}{19}
-\contentsline {subsubsection}{\numberline {4.2.1}Simple actions}{20}
-\contentsline {subsubsection}{\numberline {4.2.2}Group actions}{20}
-\contentsline {subsection}{\numberline {4.3}Custom actions}{22}
-\contentsline {subsubsection}{\numberline {4.3.1}Reuse existing view}{22}
-\contentsline {subsubsection}{\numberline {4.3.2}Custom view}{23}
-\contentsline {section}{\numberline {5}Titles}{24}
-\contentsline {subsection}{\numberline {5.1}Lifecycle}{24}
-\contentsline {subsection}{\numberline {5.2}Custom titles}{25}
-\contentsline {subsubsection}{\numberline {5.2.1}Write the title}{25}
-\contentsline {subsubsection}{\numberline {5.2.2}Apply the title}{26}
-\contentsline {section}{\numberline {6}Themes}{27}
-\contentsline {subsection}{\numberline {6.1}Existing Themes}{27}
-\contentsline {subsubsection}{\numberline {6.1.1}NoStackTheme}{27}
-\contentsline {subsubsection}{\numberline {6.1.2}BasicTheme}{27}
-\contentsline {subsubsection}{\numberline {6.1.3}SmoothTheme}{28}
-\contentsline {subsubsection}{\numberline {6.1.4}FlatTheme}{28}
-\contentsline {subsubsection}{\numberline {6.1.5}BubbleTheme}{28}
-\contentsline {subsubsection}{\numberline {6.1.6}EclipseTheme}{29}
-\contentsline {subsection}{\numberline {6.2}Customize DockThemes}{30}
-\contentsline {subsubsection}{\numberline {6.2.1}UI-Properties}{30}
-\contentsline {subsubsection}{\numberline {6.2.2}Colors}{31}
-\contentsline {subsubsection}{\numberline {6.2.3}Fonts}{32}
-\contentsline {subsubsection}{\numberline {6.2.4}Icons}{33}
-\contentsline {subsubsection}{\numberline {6.2.5}Actions}{33}
-\contentsline {subsubsection}{\numberline {6.2.6}Titles}{33}
-\contentsline {subsection}{\numberline {6.3}Custom Theme}{33}
-\contentsline {section}{\numberline {7}Drag and Drop}{34}
-\contentsline {subsection}{\numberline {7.1}Relocator}{34}
-\contentsline {subsection}{\numberline {7.2}Sources}{34}
-\contentsline {subsubsection}{\numberline {7.2.1}DockElementRepresentative}{34}
-\contentsline {subsubsection}{\numberline {7.2.2}Remote control}{35}
-\contentsline {subsection}{\numberline {7.3}Destinations}{35}
-\contentsline {subsubsection}{\numberline {7.3.1}Search}{36}
-\contentsline {subsubsection}{\numberline {7.3.2}Drop}{36}
-\contentsline {subsection}{\numberline {7.4}Influences}{37}
-\contentsline {subsubsection}{\numberline {7.4.1}Modes}{37}
-\contentsline {subsubsection}{\numberline {7.4.2}Restrictions}{37}
-\contentsline {section}{\numberline {8}Preferences}{38}
-\contentsline {subsection}{\numberline {8.1}Organization}{38}
-\contentsline {subsection}{\numberline {8.2}Models}{39}
-\contentsline {subsubsection}{\numberline {8.2.1}DefaultPreferenceModel}{39}
-\contentsline {subsubsection}{\numberline {8.2.2}MergedPreferenceModel}{39}
-\contentsline {subsubsection}{\numberline {8.2.3}PreferenceTreeModel}{39}
-\contentsline {subsection}{\numberline {8.3}Lifecycle}{39}
-\contentsline {subsection}{\numberline {8.4}User Interface}{40}
-\contentsline {subsubsection}{\numberline {8.4.1}Editors}{40}
-\contentsline {subsubsection}{\numberline {8.4.2}Operators}{40}
-\contentsline {subsection}{\numberline {8.5}Storage}{41}
-\contentsline {section}{\numberline {9}Properties}{41}
+\contentsline {section}{\numberline {1}Introduction}{4}
+\contentsline {section}{\numberline {2}Notation}{4}
+\contentsline {section}{\numberline {3}Basics}{4}
+\contentsline {subsection}{\numberline {3.1}Hello World}{5}
+\contentsline {subsection}{\numberline {3.2}Dockable}{5}
+\contentsline {subsection}{\numberline {3.3}DockStation}{6}
+\contentsline {subsection}{\numberline {3.4}DockController}{7}
+\contentsline {subsection}{\numberline {3.5}DockFrontend}{8}
+\contentsline {subsubsection}{\numberline {3.5.1}Close-Button}{9}
+\contentsline {subsubsection}{\numberline {3.5.2}Storing the layout}{9}
+\contentsline {section}{\numberline {4}Load and Save layouts}{9}
+\contentsline {subsection}{\numberline {4.1}Local: DockableProperty}{9}
+\contentsline {subsubsection}{\numberline {4.1.1}Creation}{10}
+\contentsline {subsubsection}{\numberline {4.1.2}Usage}{10}
+\contentsline {subsubsection}{\numberline {4.1.3}Storage}{11}
+\contentsline {subsection}{\numberline {4.2}Global: DockSituation}{11}
+\contentsline {subsubsection}{\numberline {4.2.1}Basic Algorithms}{11}
+\contentsline {subsubsection}{\numberline {4.2.2}Basic Usage}{12}
+\contentsline {subsubsection}{\numberline {4.2.3}Extended Algorithms}{14}
+\contentsline {subsubsection}{\numberline {4.2.4}Extended Usage}{15}
+\contentsline {subsection}{\numberline {4.3}DockFrontend}{16}
+\contentsline {subsubsection}{\numberline {4.3.1}Local}{16}
+\contentsline {subsubsection}{\numberline {4.3.2}Global}{16}
+\contentsline {subsubsection}{\numberline {4.3.3}Missing Dockables}{16}
+\contentsline {section}{\numberline {5}Actions}{17}
+\contentsline {subsection}{\numberline {5.1}Show Actions}{18}
+\contentsline {subsubsection}{\numberline {5.1.1}List of Actions}{19}
+\contentsline {subsubsection}{\numberline {5.1.2}Source of Actions}{19}
+\contentsline {subsection}{\numberline {5.2}Standard Actions}{20}
+\contentsline {subsubsection}{\numberline {5.2.1}Simple actions}{21}
+\contentsline {subsubsection}{\numberline {5.2.2}Group actions}{21}
+\contentsline {subsection}{\numberline {5.3}Custom actions}{23}
+\contentsline {subsubsection}{\numberline {5.3.1}Reuse existing view}{23}
+\contentsline {subsubsection}{\numberline {5.3.2}Custom view}{24}
+\contentsline {section}{\numberline {6}Titles}{25}
+\contentsline {subsection}{\numberline {6.1}Lifecycle}{25}
+\contentsline {subsection}{\numberline {6.2}Custom titles}{26}
+\contentsline {subsubsection}{\numberline {6.2.1}Write the title}{26}
+\contentsline {subsubsection}{\numberline {6.2.2}Apply the title}{27}
+\contentsline {section}{\numberline {7}Themes}{27}
+\contentsline {subsection}{\numberline {7.1}Existing Themes}{28}
+\contentsline {subsubsection}{\numberline {7.1.1}NoStackTheme}{28}
+\contentsline {subsubsection}{\numberline {7.1.2}BasicTheme}{28}
+\contentsline {subsubsection}{\numberline {7.1.3}SmoothTheme}{28}
+\contentsline {subsubsection}{\numberline {7.1.4}FlatTheme}{29}
+\contentsline {subsubsection}{\numberline {7.1.5}BubbleTheme}{29}
+\contentsline {subsubsection}{\numberline {7.1.6}EclipseTheme}{29}
+\contentsline {subsection}{\numberline {7.2}Customize DockThemes}{30}
+\contentsline {subsubsection}{\numberline {7.2.1}UI-Properties}{31}
+\contentsline {subsubsection}{\numberline {7.2.2}Colors}{32}
+\contentsline {subsubsection}{\numberline {7.2.3}Fonts}{33}
+\contentsline {subsubsection}{\numberline {7.2.4}Icons}{34}
+\contentsline {subsubsection}{\numberline {7.2.5}Actions}{34}
+\contentsline {subsubsection}{\numberline {7.2.6}Titles}{34}
+\contentsline {subsection}{\numberline {7.3}Custom Theme}{34}
+\contentsline {section}{\numberline {8}Drag and Drop}{34}
+\contentsline {subsection}{\numberline {8.1}Relocator}{34}
+\contentsline {subsection}{\numberline {8.2}Sources}{35}
+\contentsline {subsubsection}{\numberline {8.2.1}DockElementRepresentative}{35}
+\contentsline {subsubsection}{\numberline {8.2.2}Remote control}{35}
+\contentsline {subsection}{\numberline {8.3}Destinations}{36}
+\contentsline {subsubsection}{\numberline {8.3.1}Search}{36}
+\contentsline {subsubsection}{\numberline {8.3.2}Drop}{37}
+\contentsline {subsection}{\numberline {8.4}Influences}{38}
+\contentsline {subsubsection}{\numberline {8.4.1}Modes}{38}
+\contentsline {subsubsection}{\numberline {8.4.2}Restrictions}{38}
+\contentsline {section}{\numberline {9}Preferences}{39}
+\contentsline {subsection}{\numberline {9.1}Model}{39}
+\contentsline {subsubsection}{\numberline {9.1.1}Preference}{39}
+\contentsline {subsubsection}{\numberline {9.1.2}PreferenceModel}{40}
+\contentsline {subsubsection}{\numberline {9.1.3}PreferenceTreeModel}{41}
+\contentsline {subsection}{\numberline {9.2}View}{41}
+\contentsline {subsubsection}{\numberline {9.2.1}Editors}{41}
+\contentsline {subsubsection}{\numberline {9.2.2}Operations}{41}
+\contentsline {subsection}{\numberline {9.3}Storage}{42}
+\contentsline {subsection}{\numberline {9.4}Lifecycle}{43}
+\contentsline {section}{\numberline {10}Properties}{43}
+\contentsline {subsection}{\numberline {10.1}Themes}{44}
+\contentsline {subsection}{\numberline {10.2}Stations}{45}
+\contentsline {subsection}{\numberline {10.3}Controlling}{46}
+\contentsline {subsection}{\numberline {10.4}Legacy}{46}
+\contentsline {subsection}{\numberline {10.5}Gimmicks}{47}
