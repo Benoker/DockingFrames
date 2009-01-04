@@ -209,6 +209,10 @@ public class DockController {
                 rootWindow = window;
                 rootWindowChanged( oldWindow, window );
             }
+            
+            public void visibilityChanged( WindowProvider provider, boolean showing ){
+            	// ignore
+            }
         });
         
         final List<ControllerSetupListener> setupListeners = new LinkedList<ControllerSetupListener>();

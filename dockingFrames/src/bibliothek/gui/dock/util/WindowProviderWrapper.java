@@ -26,35 +26,68 @@
 package bibliothek.gui.dock.util;
 
 import java.awt.Window;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A wrapper around another {@link WindowProvider}, allows to exchange
  * providers without the need to reattach {@link WindowProviderListener}s.
  * @author Benjamin Sigg
  */
-public class WindowProviderWrapper extends AbstractWindowProvider{
+public class WindowProviderWrapper implements WindowProvider{
     private WindowProvider delegate;
+    
+    private List<WindowProviderListener> listeners = new ArrayList<WindowProviderListener>();
     
     private WindowProviderListener listener = new WindowProviderListener(){
         public void windowChanged( WindowProvider provider, Window window ) {
             fireWindowChanged( window );
         }
+        public void visibilityChanged( WindowProvider provider, boolean showing ){
+        	fireVisibilityChanged( showing );
+        }
     };
     
-    @Override
     public void addWindowProviderListener( WindowProviderListener listener ) {
         int previous = listeners.size();
-        super.addWindowProviderListener( listener );
+        listeners.add( listener );
         if( previous == 0 && listeners.size() > 0 && delegate != null )
             delegate.addWindowProviderListener( this.listener );
     }
     
-    @Override
     public void removeWindowProviderListener( WindowProviderListener listener ) {
         int previous = listeners.size();
-        super.removeWindowProviderListener( listener );
+        listeners.remove( listener );
         if( previous > 0 && listeners.size() == 0 && delegate != null )
             delegate.removeWindowProviderListener( this.listener );
+    }
+    
+    /**
+     * Gets all currently registered listeners.
+     * @return the list of listeners.
+     */
+    protected WindowProviderListener[] listeners(){
+    	return listeners.toArray( new WindowProviderListener[ listeners.size() ] );
+    }
+    
+    /**
+     * Informs all listeners that the window has changed.
+     * @param window the new window, might be <code>null</code>
+     */
+    protected void fireWindowChanged( Window window ){
+    	for( WindowProviderListener listener : listeners() ){
+    		listener.windowChanged( this, window );
+    	}
+    }
+    
+    /**
+     * Informs all listeners that the windows visibility has changed.
+     * @param showing the new visibility state
+     */
+    protected void fireVisibilityChanged( boolean showing ){
+    	for( WindowProviderListener listener : listeners() ){
+    		listener.visibilityChanged( this, showing );
+    	}
     }
     
     /**
@@ -95,5 +128,12 @@ public class WindowProviderWrapper extends AbstractWindowProvider{
             return null;
         
         return delegate.searchWindow();
+    }
+    
+    public boolean isShowing(){
+    	if( delegate == null )
+    		return false;
+    	
+    	return delegate.isShowing();
     }
 }

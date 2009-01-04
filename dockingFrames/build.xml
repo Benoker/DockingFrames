@@ -155,7 +155,8 @@
 	
 	<target name="text" depends="source, paths">
 		<copy tofile="${base}/common.pdf" file="${location.common}/guide/Guide.pdf"/>
-		<copy tofile="${base}/core.pdf" file="${location.dockingFrames}/guide/guide.pdf"/>
+		<copy tofile="${base}/core_(old).pdf" file="${location.dockingFrames}/guide/guide.pdf"/>
+		<copy tofile="${base}/core.pdf" file="${location.dockingFrames}/guide2/guide2.pdf"/>
 		<copy tofile="${base}/faq.pdf" file="${location.dockingFrames}/guide/faq.pdf"/>
 		<copy tofile="${base}/transition.pdf" file="${location.common}/guide/Transition.pdf"/>
 		<copy todir="${base}" file="${location.dockingFrames}/license.txt"/>

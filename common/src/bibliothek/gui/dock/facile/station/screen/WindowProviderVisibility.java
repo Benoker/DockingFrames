@@ -26,9 +26,6 @@
 package bibliothek.gui.dock.facile.station.screen;
 
 import java.awt.Window;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.util.WindowProvider;
@@ -43,29 +40,17 @@ public class WindowProviderVisibility {
     /** the station whose visibility will be changed */
     private ScreenDockStation station;
     
-    /** the window which is currently observed */
-    private Window window;
-    
-    /** observes the visibility state of {@link #window} */
-    private ComponentListener windowListener = new ComponentAdapter(){
-        @Override
-        public void componentShown( ComponentEvent e ) {
-            station.setShowing( true );
-        }
-        
-        @Override
-        public void componentHidden( ComponentEvent e ) {
-            station.setShowing( false );
-        }
-    };
-    
     /** the source of the window */
     private WindowProvider provider;
     
     /** observes {@link #provider} in order to find the current window */
     private WindowProviderListener providerListener = new WindowProviderListener(){
         public void windowChanged( WindowProvider provider, Window window ) {
-            changeTo( window );
+            // ignore
+        }
+        
+        public void visibilityChanged( WindowProvider provider, boolean showing ){
+        	station.setShowing( showing );
         }
     };
     
@@ -92,25 +77,7 @@ public class WindowProviderVisibility {
         
         if( this.provider != null ){
             this.provider.addWindowProviderListener( providerListener );
-            changeTo( this.provider.searchWindow() );
-        }
-        else{
-            changeTo( null );
-        }
-    }
-    
-    private void changeTo( Window window ){
-        if( this.window != null )
-            this.window.removeComponentListener( windowListener );
-        
-        this.window = window;
-        
-        if( this.window != null ){
-            this.window.addComponentListener( windowListener );
-            station.setShowing( this.window.isShowing() );
-        }
-        else{
-            station.setShowing( false );
+            station.setShowing( provider.isShowing() );
         }
     }
 }

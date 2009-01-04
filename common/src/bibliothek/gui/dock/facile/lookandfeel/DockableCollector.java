@@ -55,7 +55,7 @@ public class DockableCollector implements ComponentCollector {
     
     public Collection<Component> listComponents() {
         Set<Component> set = new HashSet<Component>();
-        for( Dockable dockable : frontend.getDockables() )
+        for( Dockable dockable : frontend.listDockables() )
             set.add( dockable.getComponent() );
         
         for( Dockable dockable : frontend.getController().getRegister().listDockables() )

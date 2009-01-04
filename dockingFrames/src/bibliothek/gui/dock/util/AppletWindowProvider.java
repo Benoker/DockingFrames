@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2008 Benjamin Sigg
+ * Copyright (C) 2009 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,25 +25,45 @@
  */
 package bibliothek.gui.dock.util;
 
-import java.awt.Window;
+import java.applet.Applet;
+import java.awt.Component;
 
 /**
- * A listener added to a {@link WindowProvider}. The provider should
- * inform the listener when its window changes.
+ * A {@link WindowProvider} designed to work with {@link java.applet.Applet}s. Clients
+ * should call {@link #start()} and {@link #stop()} from the methods
+ * {@link Applet#start()} and {@link Applet#stop()}.
  * @author Benjamin Sigg
  */
-public interface WindowProviderListener {
-    /**
-     * Called when the providers window changed.
-     * @param provider the source of the event
-     * @param window the new window, which might be <code>null</code>
-     */
-    public void windowChanged( WindowProvider provider, Window window );
+public class AppletWindowProvider extends ComponentWindowProvider{
+	/** whether the applet has been started or not */
+	private boolean running = false;
+	
+	/**
+	 * Creates a new window provider
+	 * @param component some component of the applet or the applet itself,
+	 * can be <code>null</code>
+	 */
+	public AppletWindowProvider( Component component ){
+		super( component );
+	}
+	
+	/**
+	 * Informs this provider that the applet started.
+	 */
+	public void start(){
+		running = true;
+		fireVisibilityChanged( isShowing() );
+	}
+	
+	/**
+	 * Informs this provider that the applet stopped.
+	 */
+	public void stop(){
+		running = false;
+		fireVisibilityChanged( isShowing() );
+	}
     
-    /**
-     * Called if the visibility of the window of <code>provider</code> changed.
-     * @param provider the source of the event
-     * @param showing the new visibility state
-     */
-    public void visibilityChanged( WindowProvider provider, boolean showing );
+    public boolean isShowing(){
+    	return running;
+    }
 }

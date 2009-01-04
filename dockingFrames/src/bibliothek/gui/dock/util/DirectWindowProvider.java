@@ -47,7 +47,7 @@ public class DirectWindowProvider extends AbstractWindowProvider {
      * can be <code>null</code>
      */
     public DirectWindowProvider( Window window ){
-        this.window = window;
+        setWindow( window );
     }
     
     /**

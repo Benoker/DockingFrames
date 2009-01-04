@@ -25,12 +25,12 @@
  */
 package bibliothek.gui.dock.support.util;
 
-import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.Icon;
 
+import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.util.DockUtilities;
 
@@ -49,7 +49,8 @@ public class Resources {
         // read the localized text
         bundle = ResourceBundle.getBundle( 
                 "data.bibliothek.gui.dock.locale.common", 
-                Locale.getDefault(), CControl.class.getClassLoader() );
+                DockUI.getDefaultDockUI().getLocale(),
+                CControl.class.getClassLoader() );
         
         // read the icons
         icons = DockUtilities.loadIcons( "data/bibliothek/gui/dock/icons/icons.ini",

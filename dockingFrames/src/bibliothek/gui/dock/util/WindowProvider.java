@@ -51,6 +51,17 @@ public interface WindowProvider {
     public Window searchWindow();
     
     /**
+     * Tells whether this window represents a window that is visible. Under
+     * normal circumstances this method would return:<br>
+     * <code>Window window = sarchWindow();<br>
+     * return window == null ? false : window.isShowing();</code><br>
+     * This method is explicitly allowed to return any value it likes. The result
+     * of this method does not have to correspond with reality.
+     * @return whether this providers window is visible or not
+     */
+    public boolean isShowing();
+    
+    /**
      * Adds a new listener to this provider. The listener should be called
      * when the window provided by this object changes.
      * @param listener the new listener

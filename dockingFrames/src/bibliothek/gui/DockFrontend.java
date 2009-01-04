@@ -2002,7 +2002,6 @@ public class DockFrontend {
      * be loaded the next time the application starts.
      * @return the situation
      */
-    @SuppressWarnings("unchecked")
     protected DockSituation createSituation( boolean entry ){
         return createInternalSituation( entry );
     }

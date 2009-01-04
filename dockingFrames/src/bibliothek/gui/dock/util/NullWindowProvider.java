@@ -42,5 +42,9 @@ public class NullWindowProvider implements WindowProvider{
 
     public Window searchWindow() {
         return null;
-    }    
+    }
+    
+    public boolean isShowing(){
+    	return false;
+    }
 }

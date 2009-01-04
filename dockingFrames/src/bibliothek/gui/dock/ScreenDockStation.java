@@ -747,7 +747,7 @@ public class ScreenDockStation extends AbstractDockStation {
      * @return the new window
      */
     protected ScreenDockWindow createWindow(){
-        return windowFactory.getValue().createWindow( this );
+        return getWindowFactory().createWindow( this );
     }
     
     /**
