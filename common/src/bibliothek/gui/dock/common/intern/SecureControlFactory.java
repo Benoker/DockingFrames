@@ -38,7 +38,9 @@ import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.CWorkingArea;
+import bibliothek.gui.dock.common.intern.station.CommonStation;
+import bibliothek.gui.dock.common.intern.station.CommonStationDelegate;
+import bibliothek.gui.dock.common.intern.station.SecureCSplitDockStation;
 import bibliothek.gui.dock.security.SecureDockController;
 import bibliothek.gui.dock.security.SecureFlapDockStation;
 import bibliothek.gui.dock.security.SecureScreenDockStation;
@@ -52,57 +54,57 @@ import bibliothek.gui.dock.util.WindowProvider;
  *
  */
 public class SecureControlFactory extends EfficientControlFactory implements CControlFactory {
-    @Override
-    public DockController createController( final CControl owner ) {
-        return new SecureDockController(){
-            @Override
-            public void setFocusedDockable( Dockable focusedDockable, boolean force, boolean ensureFocusSet ) {
-                if( focusedDockable != null ){
-                    CStateManager states = owner.getStateManager();
-                    if( states != null ){
-                        states.ensureNotHidden( focusedDockable );
-                    }
-                }
-                super.setFocusedDockable( focusedDockable, force, ensureFocusSet );
-            }
-        };
-    }
-    
-    @Override
-    public FlapDockStation createFlapDockStation( final Component expansion ) {
-        return new SecureFlapDockStation(){
-            @Override
-            public Rectangle getExpansionBounds() {
-                Point point = new Point( 0, 0 );
-                SwingUtilities.convertPoint( this.getComponent(), point, expansion );
-                return new Rectangle( -point.x, -point.y, expansion.getWidth(), expansion.getHeight() );
-            }
-        };
-    }
+	@Override
+	public DockController createController( final CControl owner ) {
+		return new SecureDockController(){
+			@Override
+			public void setFocusedDockable( Dockable focusedDockable, boolean force, boolean ensureFocusSet ) {
+				if( focusedDockable != null ){
+					CStateManager states = owner.getStateManager();
+					if( states != null ){
+						states.ensureNotHidden( focusedDockable );
+					}
+				}
+				super.setFocusedDockable( focusedDockable, force, ensureFocusSet );
+			}
+		};
+	}
 
-    @Override
-    public ScreenDockStation createScreenDockStation( WindowProvider owner ) {
-        return new SecureScreenDockStation( owner );
-    }
+	@Override
+	public FlapDockStation createFlapDockStation( final Component expansion ) {
+		return new SecureFlapDockStation(){
+			@Override
+			public Rectangle getExpansionBounds() {
+				Point point = new Point( 0, 0 );
+				SwingUtilities.convertPoint( this.getComponent(), point, expansion );
+				return new Rectangle( -point.x, -point.y, expansion.getWidth(), expansion.getHeight() );
+			}
+		};
+	}
 
-    @Override
-    public SplitDockStation createSplitDockStation(){
-        return new SecureSplitDockStation(){
-            @Override
-            protected ListeningDockAction createFullScreenAction() {
-                return null;
-            }
-            @Override
-            public void setFrontDockable( Dockable dockable ) {
-                if( !isFullScreen() ){
-                    super.setFrontDockable( dockable );
-                }
-            }
-        };
-    }
-    
-    @Override
-    public CWorkingArea createWorkingArea( String id ) {
-        return new CWorkingArea( id, true );
-    }
+	@Override
+	public ScreenDockStation createScreenDockStation( WindowProvider owner ) {
+		return new SecureScreenDockStation( owner );
+	}
+
+	@Override
+	public SplitDockStation createSplitDockStation(){
+		return new SecureSplitDockStation(){
+			@Override
+			protected ListeningDockAction createFullScreenAction() {
+				return null;
+			}
+			@Override
+			public void setFrontDockable( Dockable dockable ) {
+				if( !isFullScreen() ){
+					super.setFrontDockable( dockable );
+				}
+			}
+		};
+	}
+
+	@Override
+	public CommonStation<SplitDockStation> createSplitDockStation( CommonStationDelegate delegate ){
+		return new SecureCSplitDockStation( delegate );
+	}
 }

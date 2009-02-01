@@ -41,6 +41,10 @@ public interface MissingCDockableStrategy {
             return false;
         }
          
+        public boolean shouldStoreMulti( String arg0 ){
+        	return false;
+        }
+        
         public boolean shouldCreate( String id, MultipleCDockableFactory<?, ?> factory ) {
             return false;
         }
@@ -60,6 +64,11 @@ public interface MissingCDockableStrategy {
         public boolean shouldStoreSingle( String id ) {
             return true;
         }
+        
+        public boolean shouldStoreMulti( String arg0 ){
+        	return false;
+        }
+        
         public boolean shouldCreate( String id, MultipleCDockableFactory<?, ?> factory ) {
             return false;
         }
@@ -77,6 +86,11 @@ public interface MissingCDockableStrategy {
         public boolean shouldStoreSingle( String id ) {
             return true;
         }
+        
+        public boolean shouldStoreMulti( String arg0 ){
+        	return true;
+        }
+        
         public boolean shouldCreate( String id, MultipleCDockableFactory<?, ?> factory ) {
             return true;
         }
@@ -96,6 +110,15 @@ public interface MissingCDockableStrategy {
      * <code>false</code> if the information should be purged.
      */
     public boolean shouldStoreSingle( String id );
+
+    /**
+     * Tells whether layout information for the missing {@link MultipleCDockable}
+     * with identifier <code>id</code> should be stored.
+     * @param id the identifier of the missing {@link MultipleCDockable}
+     * @return <code>true</code> if layout information should remain available,
+     * <code>false</code> if the information should be purged.
+     */
+    public boolean shouldStoreMulti( String id );
     
     /**
      * Tells whether the factory <code>factory</code> should be used to create

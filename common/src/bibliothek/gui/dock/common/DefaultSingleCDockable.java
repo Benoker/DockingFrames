@@ -179,7 +179,7 @@ public class DefaultSingleCDockable extends DefaultCDockable implements SingleCD
     }
     
     /**
-     * Gets the id of this dockable. The id is unique if among all dockables
+     * Gets the id of this dockable. The id is unique among all dockables
      * which are added to the same {@link CControl}.
      * @return the unique id
      */

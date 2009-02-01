@@ -476,6 +476,19 @@ public class DockController {
     }
     
     /**
+     * Searches the {@link ActionOffer} for <code>dockable</code>.
+     * @param dockable the element whose offer is searched
+     * @return the offer
+     */
+    public ActionOffer getActionOffer( Dockable dockable ){
+    	for( ActionOffer offer : actionOffers ){
+    		if( offer.interested( dockable ))
+    			return offer;
+    	}
+    	return getDefaultActionOffer();
+    }
+    
+    /**
      * Sets the theme of this controller. This method ensures that all
      * registered stations know also the new theme.
      * @param theme the new theme
@@ -1083,17 +1096,7 @@ public class DockController {
                 guards.add( guard.getSource( dockable ) );
         }        
         
-        ActionOffer offer = null;
-        
-        for( ActionOffer temp : actionOffers )
-            if( temp.interested( dockable )){
-                offer = temp;
-                break;
-            }
-        
-        if( offer == null )
-            offer = defaultActionOffer;
-
+        ActionOffer offer = getActionOffer( dockable );
         DockActionSource parentSource = null;
         
         if( dockable.getDockParent() != null )

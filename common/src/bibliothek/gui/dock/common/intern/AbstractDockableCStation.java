@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2009 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,35 +31,33 @@ import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CStation;
 
 /**
- * A simple implementation of {@link CStation}. This class adds a 
- * {@link #install(CControlAccess)} and {@link #uninstall(CControlAccess)} method,
- * subclasses do not have to track or store the {@link CControlAccess} that
- * is given in {@link #setControl(CControlAccess)}.
+ * An abstract implementation of {@link CStation} that can be docked like a {@link CDockable}.
  * @author Benjamin Sigg
  *
  */
-public abstract class AbstractCStation implements CStation{
+public abstract class AbstractDockableCStation extends AbstractCDockable implements CStation{
     private CLocation location;
     private String id;
     private DockStation station;
-    private CControlAccess control;
     
     /**
      * Creates a new station.
      * @param station the internal representation of this station
      * @param id the unique id of this station
      * @param location a location that points directly to this station
+     * @param dockable how this station appears as dockable
      */
-    public AbstractCStation( DockStation station, String id, CLocation location ){
-    	init( station, id, location );
+    public AbstractDockableCStation( DockStation station, String id, CLocation location, CommonDockable dockable ){
+    	super( null );
+    	init( station, id, location, dockable );
     }
     
     /**
      * Creates a new station but does not yet initialize its fields. Subclasses
      * should call {@link #init(DockStation, String, CLocation)}.
      */
-    protected AbstractCStation(){
-    	// ignore
+    protected AbstractDockableCStation(){
+    	super( null );
     }
     
     /**
@@ -67,8 +65,9 @@ public abstract class AbstractCStation implements CStation{
      * @param station the internal representation of this station
      * @param id the unique id of this station
      * @param location a location that points directly to this station
+     * @param dockable how this station appears as dockable
      */
-    protected void init( DockStation station, String id, CLocation location ){
+    protected void init( DockStation station, String id, CLocation location, CommonDockable dockable ){
     	if( station == null )
     		throw new IllegalArgumentException( "station must not be null" );
     	
@@ -77,6 +76,8 @@ public abstract class AbstractCStation implements CStation{
     	
     	if( location == null )
     		throw new IllegalArgumentException( "location must not be null" );
+    	
+    	super.init( dockable );
     	
         this.station = station;
         this.id = id;
@@ -96,6 +97,8 @@ public abstract class AbstractCStation implements CStation{
     }
 
     public void setControl( CControlAccess access ) {
+    	CControlAccess control = getControl();
+    	super.setControl( access );
         if( control != access ){
             if( control != null )
                 uninstall( control );
@@ -104,14 +107,6 @@ public abstract class AbstractCStation implements CStation{
             if( control != null )
                 install( control );
         }
-    }
-    
-    /**
-     * Gets the currently used {@link CControlAccess}.
-     * @return access to the current {@link CControl}, can be <code>null</code>
-     */
-    protected CControlAccess getControl() {
-        return control;
     }
     
     public boolean isWorkingArea() {

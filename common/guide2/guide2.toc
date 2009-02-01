@@ -1,4 +1,28 @@
 \contentsline {section}{\numberline {1}Introduction}{3}
 \contentsline {section}{\numberline {2}Notation}{3}
 \contentsline {section}{\numberline {3}Basics}{3}
-\contentsline {section}{\numberline {4}Concepts}{4}
+\contentsline {subsection}{\numberline {3.1}Concepts}{4}
+\contentsline {subsection}{\numberline {3.2}Hello World}{4}
+\contentsline {subsubsection}{\numberline {3.2.1}Setup controller}{5}
+\contentsline {subsubsection}{\numberline {3.2.2}Setup stations}{5}
+\contentsline {subsubsection}{\numberline {3.2.3}Setup dockables}{6}
+\contentsline {section}{\numberline {4}Foundation}{7}
+\contentsline {subsection}{\numberline {4.1}Dockables}{7}
+\contentsline {subsubsection}{\numberline {4.1.1}SingleCDockable}{7}
+\contentsline {subsubsection}{\numberline {4.1.2}MultipleCDockable}{8}
+\contentsline {subsubsection}{\numberline {4.1.3}Visibility}{9}
+\contentsline {subsubsection}{\numberline {4.1.4}Mode}{9}
+\contentsline {subsection}{\numberline {4.2}Stations}{10}
+\contentsline {subsubsection}{\numberline {4.2.1}All in one: CContentArea}{10}
+\contentsline {subsubsection}{\numberline {4.2.2}Center area: CGridArea}{11}
+\contentsline {subsubsection}{\numberline {4.2.3}Minimized: CMinimizeArea}{12}
+\contentsline {subsubsection}{\numberline {4.2.4}Grouping Dockables: CWorkingArea}{12}
+\contentsline {section}{\numberline {5}Locations}{13}
+\contentsline {subsection}{\numberline {5.1}For a single dockable: CLocation}{13}
+\contentsline {subsection}{\numberline {5.2}For a group of dockables: CGrid}{13}
+\contentsline {subsection}{\numberline {5.3}For all dockables: layout}{15}
+\contentsline {subsubsection}{\numberline {5.3.1}Persistant Storage}{15}
+\contentsline {subsubsection}{\numberline {5.3.2}Dealing with lazy creation and missing dockables}{16}
+\contentsline {section}{\numberline {6}Actions}{16}
+\contentsline {section}{\numberline {7}Menus}{16}
+\contentsline {section}{\numberline {8}Unused text}{16}

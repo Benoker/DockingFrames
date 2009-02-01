@@ -100,6 +100,7 @@ public class WindowProviderWrapper implements WindowProvider{
         }
         else{
             Window oldWindow = searchWindow();
+            boolean oldShowing = isShowing();
             
             if( this.delegate != null )
                 this.delegate.removeWindowProviderListener( listener );
@@ -109,8 +110,12 @@ public class WindowProviderWrapper implements WindowProvider{
                 this.delegate.addWindowProviderListener( listener );
             
             Window newWindow = searchWindow();
+            boolean newShowing = isShowing();
             if( oldWindow != newWindow ){
                 fireWindowChanged( newWindow );
+            }
+            if( oldShowing != newShowing ){
+            	fireVisibilityChanged( newShowing );
             }
         }
     }

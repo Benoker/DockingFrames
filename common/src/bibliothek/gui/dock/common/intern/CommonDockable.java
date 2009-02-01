@@ -50,10 +50,13 @@ public interface CommonDockable extends Dockable{
 	public CStation getStation();
 	
 	/**
-	 * Gets the {@link DockActionSource} which shows the close-action.
-	 * @return the action source
+	 * Gets a set of {@link DockActionSource}s which are to be displayed
+	 * on this {@link CommonDockable} as well. Note that every call to this
+	 * method should return the same array of sources. Callers should not
+	 * modify the result.
+	 * @return the action sources
 	 */
-	public DockActionSource getClose();
+	public DockActionSource[] getSources();
 	
 	/**
 	 * Gets the identifier of the {@link DockFactory} which can store and load

@@ -46,16 +46,16 @@ public class DefaultCommonDockable extends DefaultDockable implements CommonDock
     private DefaultDockActionSource actions;
     
     /** the action source with the potential close action */
-    private DockActionSource close;
+    private DockActionSource[] sources;
     
     /**
      * Creates a new dockable
      * @param dockable the model of this element
-     * @param close action source which shows the close action
+     * @param sources action source which shows the close action
      */
-    public DefaultCommonDockable( CDockable dockable, DockActionSource close ){
+    public DefaultCommonDockable( CDockable dockable, DockActionSource... sources ){
         this.dockable = dockable;
-        this.close = close;
+        this.sources = sources;
         actions = new DefaultDockActionSource(
                 new LocationHint( LocationHint.DOCKABLE, LocationHint.LEFT ));
         setActionOffers( actions );
@@ -81,8 +81,8 @@ public class DefaultCommonDockable extends DefaultDockable implements CommonDock
     	return null;
     }
     
-    public DockActionSource getClose() {
-        return close;
+    public DockActionSource[] getSources() {
+        return sources;
     }
     
     @Override

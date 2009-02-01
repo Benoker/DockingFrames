@@ -60,9 +60,7 @@ import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
-import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DockAction;
-import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.action.predefined.CCloseAction;
 import bibliothek.gui.dock.common.event.CControlListener;
 import bibliothek.gui.dock.common.event.CDockablePropertyListener;
@@ -91,6 +89,7 @@ import bibliothek.gui.dock.common.intern.SecureControlFactory;
 import bibliothek.gui.dock.common.intern.StackableAcceptance;
 import bibliothek.gui.dock.common.intern.WorkingAreaAcceptance;
 import bibliothek.gui.dock.common.intern.CDockable.ExtendedMode;
+import bibliothek.gui.dock.common.intern.action.CActionOffer;
 import bibliothek.gui.dock.common.intern.station.CFlapLayoutManager;
 import bibliothek.gui.dock.common.intern.station.CLockedResizeLayoutManager;
 import bibliothek.gui.dock.common.intern.station.ScreenResizeRequestHandler;
@@ -383,14 +382,8 @@ public class CControl {
         // replaced by setTheme( ThemeMap.SMOOTH_THEME ) at the end of this method
         //frontend.getController().setTheme( new NoStackTheme( new CSmoothTheme( this, new SmoothTheme())));
 
-        frontend.getController().addActionGuard( new ActionGuard(){
-            public boolean react( Dockable dockable ) {
-                return dockable instanceof CommonDockable;
-            }
-            public DockActionSource getSource( Dockable dockable ) {
-                return ((CommonDockable)dockable).getClose();
-            }
-        });
+        frontend.getController().addActionOffer( new CActionOffer( this ) );
+        
         frontend.getController().getRegister().addDockRegisterListener( new DockAdapter(){
             @Override
             public void dockableRegistered( DockController controller, Dockable dockable ) {
@@ -935,7 +928,7 @@ public class CControl {
      * @return the new area
      */
     public CWorkingArea createWorkingArea( String uniqueId ){
-        CWorkingArea area = factory.createWorkingArea( uniqueId );
+        CWorkingArea area = new CWorkingArea( this, uniqueId );
         add( area );
         add( area, true );
         return area;
@@ -960,7 +953,7 @@ public class CControl {
      * @return the new area
      */
     public CGridArea createGridArea( String uniqueId ){
-        CGridArea area = new CGridArea( this, uniqueId, false );
+        CGridArea area = new CGridArea( this, uniqueId );
         add( area, true );
         if( frontend.getDefaultStation() == null )
             frontend.setDefaultStation( area.getStation() );
@@ -1029,7 +1022,11 @@ public class CControl {
      * @param content the new area
      * @throws IllegalArgumentException if the area is already in use or if
      * the area was not created using <code>this</code>
+     * @deprecated this method has not the same behavior as {@link #createContentArea(String)},
+     * this method will either be removed in future releases or change its
+     * behavior
      */
+    @Deprecated
     public void addContentArea( CContentArea content ){
         if( content == null )
             throw new NullPointerException( "content is null" );
@@ -1505,7 +1502,7 @@ public class CControl {
         if( register.isSingleId( id ))
             return missingStrategy.shouldStoreSingle( register.singleToNormalId( id ) );
         else
-            return false;
+            return missingStrategy.shouldStoreMulti( register.multiToNormalId( id ) );
     }    
 
     private boolean shouldCreate( MultipleCDockableFactory<?, ?> factory ){

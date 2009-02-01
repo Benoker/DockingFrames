@@ -31,10 +31,13 @@ import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.common.*;
 import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.event.*;
+import bibliothek.gui.dock.common.intern.action.CloseActionSource;
 import bibliothek.gui.dock.common.layout.RequestDimension;
 
 /**
- * A basic element representing some {@link java.awt.Component}.
+ * A basic element representing some {@link java.awt.Component}. This interface
+ * is not intended to be implemented by clients. Clients should extend the
+ * class {@link AbstractCDockable}.
  * @author Benjamin Sigg
  */
 public interface CDockable {
@@ -180,7 +183,10 @@ public interface CDockable {
 	public boolean isStackable();
 	
 	/**
-	 * Tells whether this dockable can be closed by the user.
+	 * Tells whether this dockable can be closed by the user. A close-button
+	 * has to be provided by the dockable itself. The best way to do that is
+	 * to instantiate a {@link CloseActionSource} and include this source
+	 * in the array that is returned by {@link CommonDockable#getSources()}.
 	 * @return <code>true</code> if this element can be closed
 	 */
 	public boolean isCloseable();
@@ -247,7 +253,9 @@ public interface CDockable {
 	 * this method will take immediately effect. Otherwise the location will be
 	 * stored in a cache and read as soon as this dockable is made visible.<br>
 	 * Note that the location can only be seen as a hint, the framework tries
-	 * to fit the location as good as possible, but there are no guarantees.
+	 * to fit the location as good as possible, but there are no guarantees.<br>
+	 * Subclasses should call {@link CControlAccess#getStateManager()} and 
+	 * {@link CStateManager#setLocation(CommonDockable, CLocation)}.
 	 * @param location the new location, <code>null</code> is possible, but
 	 * will not move the dockable immediately
 	 */

@@ -253,10 +253,9 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
     }
 
     /**
-     * Adds a station to which a {@link Dockable} can be <i>normalized</i>
-     * or <i>maximized</i>. If this is the first call to this method, then
-     * <code>station</code> becomes the default station for this kind or
-     * operation.
+     * Adds a station to which a {@link Dockable} can be <i>normalized</i>.
+     * If this is the first call to this method, then <code>station</code> becomes
+     * the default station for this kind or operation.
      * @param name the name of the station
      * @param station the new station
      */
@@ -1626,8 +1625,9 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
         }
 
         public void drop( DockController controller, Dockable dockable, DockStation station ) {
-            AffectedSet affected = new AffectedSet();
+            final AffectedSet affected = new AffectedSet();
             unmaximize( station, affected );
+            affected.add( dockable );
             affected.finish();
         }
 

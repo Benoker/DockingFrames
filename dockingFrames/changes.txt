@@ -228,3 +228,6 @@
 - Bugfix: AbstractCDockable did ignore to set some extended modes if some other extended modes were disabled. This was caused by a missing "break" in a "switch case"-statement. 
 ! Bugfix, API: new AppletWindowProvider, WindowProvider tells now whether the window is visible or not. Allows to use "imaginary" windows that do not exist.
 - Bugfix: SecureScreenDockStation: did not use SecureScreenDockWindowFactory if not explicitly adviced to do so
+! API: CWorkingArea extends now CGridArea, these two classes have now almost the same behavior. CGridArea is now also a CDockable.
+! API: CControlFactory does no longer create CWorkingAreas but has an additional method to create SplitDockStations which implement CommonDockable.
+! API: CommonDockable no longer has the method getClose but getSources. This allows to continue using the old mechanism but break some coupling.

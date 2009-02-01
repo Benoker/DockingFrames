@@ -121,9 +121,10 @@ public abstract class AbstractWindowProvider implements WindowProvider{
             throw new IllegalArgumentException( "null is not allowed as listener" );
         
         if( listeners.size() == 0 ){
+        	updateVisibility();
         	if( window != null ){
         		window.addComponentListener( windowListener );
-        		updateVisibility();
+        		// updateVisibility();
         	}
         }
         

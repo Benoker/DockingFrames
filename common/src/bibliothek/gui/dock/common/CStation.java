@@ -78,7 +78,7 @@ public interface CStation {
      * Called by {@link CControl} when this {@link CStation} is added or removed.
      * There are two actions which most stations might want to do:<br>
      * <ul>
-     * <li>One of the <code>add</code> methods for {@link DockStation}s of {@link CStateManager}.
+     * <li>Call one of the <code>add</code> methods for {@link DockStation}s of {@link CStateManager}.
      * That will ensure that the station can be used as minimize/normalize/... area.</li>
      * <li>Add a {@link ResizeRequestListener} to {@link CControl} in order to be
      * informed when resize requests are to be handled.</li>

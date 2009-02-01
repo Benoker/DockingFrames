@@ -231,7 +231,7 @@ public abstract class AbstractCDockable implements CDockable {
         if( location != null ){
             if( control != null && isVisible() ){
                 control.getStateManager().setLocation( dockable, location );
-                location = null;
+                this.location = null;
             }
         }
     }

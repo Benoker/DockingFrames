@@ -33,7 +33,8 @@ import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.CWorkingArea;
+import bibliothek.gui.dock.common.intern.station.CommonStation;
+import bibliothek.gui.dock.common.intern.station.CommonStationDelegate;
 import bibliothek.gui.dock.util.WindowProvider;
 
 /**
@@ -88,9 +89,10 @@ public interface CControlFactory {
     public SplitDockStation createSplitDockStation();
     
     /**
-     * Creates a new {@link CWorkingArea}.
-     * @param id the unique if of the area
-     * @return the new area
+     * Creates a new {@link SplitDockStation} that implements {@link CommonDockable}
+     * as well.
+     * @param delegate some methods that can be used by the created station
+     * @return the new station
      */
-    public CWorkingArea createWorkingArea( String id );
+    public CommonStation<SplitDockStation> createSplitDockStation( CommonStationDelegate delegate );
 }
