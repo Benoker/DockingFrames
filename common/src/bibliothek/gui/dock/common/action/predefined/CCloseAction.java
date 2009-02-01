@@ -72,7 +72,7 @@ public class CCloseAction extends CDropDownItem{
     
     /**
      * Closes <code>dockable</code> now. This method is always called when
-     * this action is triggered, to this is the optimal method to be overridden
+     * this action is triggered, so this is the optimal method to be overridden
      * and extended with new features like a {@link JOptionPane} asking whether
      * <code>dockable</code> should really be closed.
      * @param dockable the element to close

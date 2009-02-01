@@ -24,5 +24,20 @@
 \contentsline {subsubsection}{\numberline {5.3.1}Persistant Storage}{15}
 \contentsline {subsubsection}{\numberline {5.3.2}Dealing with lazy creation and missing dockables}{16}
 \contentsline {section}{\numberline {6}Actions}{16}
-\contentsline {section}{\numberline {7}Menus}{16}
-\contentsline {section}{\numberline {8}Unused text}{16}
+\contentsline {subsection}{\numberline {6.1}CButton}{17}
+\contentsline {subsection}{\numberline {6.2}CCheckBox}{17}
+\contentsline {subsection}{\numberline {6.3}CRadioButton}{17}
+\contentsline {subsection}{\numberline {6.4}CMenu}{18}
+\contentsline {subsection}{\numberline {6.5}CDropDownButton}{18}
+\contentsline {subsection}{\numberline {6.6}CBlank}{19}
+\contentsline {subsection}{\numberline {6.7}System Actions}{19}
+\contentsline {subsection}{\numberline {6.8}Custom Actions}{20}
+\contentsline {section}{\numberline {7}Customizing: small but impressive}{20}
+\contentsline {subsection}{\numberline {7.1}Color}{20}
+\contentsline {subsection}{\numberline {7.2}Font}{21}
+\contentsline {subsection}{\numberline {7.3}Size}{21}
+\contentsline {subsubsection}{\numberline {7.3.1}Lock the size}{21}
+\contentsline {subsubsection}{\numberline {7.3.2}Request a size}{21}
+\contentsline {subsection}{\numberline {7.4}Maximizing}{21}
+\contentsline {subsection}{\numberline {7.5}Preferences}{21}
+\contentsline {subsection}{\numberline {7.6}Menus}{21}
