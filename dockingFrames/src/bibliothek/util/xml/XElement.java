@@ -66,6 +66,8 @@ public class XElement extends XContainer implements Iterable<XElement>{
      * @param original the element to copy
      */
     public void copy( XElement original ){
+    	super.copy( original );
+    	
     	attributes.clear();
     	for( XAttribute attr : original.attributes )
     		attributes.add( attr.copy() );
