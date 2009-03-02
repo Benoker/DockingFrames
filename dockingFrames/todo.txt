@@ -20,3 +20,7 @@
 - [Done] When a StackDockStation is visible: changing from EclipseTheme to BubbleTheme will leave some Dockable-Components invisible (tested with "Paint").
 - [Done] DockController.putRepresentative: should also work for DoubleClickListeners and the Relocator
 - [Done] Support for tooltips on titles and tabs?
+- FlatTab and others: tabs at different locations
+- Eclipse-Theme: curves are not painted smoothly
+- Maximize externalized dockable: may become maximized on the screen
+- Allow to move a dockable to the edge of a SplitDockStation, even if the station is within a maximized frame

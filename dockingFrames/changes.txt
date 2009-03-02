@@ -231,3 +231,4 @@
 ! API: CWorkingArea extends now CGridArea, these two classes have now almost the same behavior. CGridArea is now also a CDockable.
 ! API: CControlFactory does no longer create CWorkingAreas but has an additional method to create SplitDockStations which implement CommonDockable.
 ! API: CommonDockable no longer has the method getClose but getSources. This allows to continue using the old mechanism but break some coupling.
+- Bugfix: DockFrontend.updateLocation could throw an exception if a dockable in the tree was also registered as root station.

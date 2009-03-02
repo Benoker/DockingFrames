@@ -2438,6 +2438,17 @@ public class DockFrontend {
             if( info == null )
                 return;
             
+            if( info.getStation() == dockable ){
+            	if( dockable.getDockParent() != null ){
+            		info = DockFrontend.this.getRoot( dockable.getDockParent() );
+            		if( info == null )
+            			return;
+            	}
+            	else{
+            		return;
+            	}
+            }
+            
             root = info.getName();
             location = DockUtilities.getPropertyChain( info.getStation(), dockable );
         }

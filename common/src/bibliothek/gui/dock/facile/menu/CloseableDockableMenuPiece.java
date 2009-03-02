@@ -101,7 +101,7 @@ public class CloseableDockableMenuPiece extends BaseMenuPiece{
             
             if( this.frontend != null ){
                 this.frontend.addFrontendListener( collector );
-                for( Dockable dockable : this.frontend.getDockables() ){
+                for( Dockable dockable : this.frontend.listDockables() ){
                     collector.added( frontend, dockable );
                 }
             }
