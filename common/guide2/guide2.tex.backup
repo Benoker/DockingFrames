@@ -760,9 +760,7 @@ list.addComponentCollector( collector );
 XElement xsettings = ...
 list.readXML( xsettings );
 \end{lstlisting}
-In line \src{1} a \src{LookAndFeelList} is accessed, calling \src{getDefaultList} will create it. In order to automatically update \src{JComponent}s they need to be connected to the list. This is done with the help of \src{ComponentCollector}s. If for example a \src{CControl} like \src{control} (line \src{3}) is given, then the class \src{DockableCollector} (lines \src{5-7}) is able to collect \textit{all} components related to it. This includes all dockables but also the root-window of the application. The \src{LookAndFeelList} can store its state persistantly and later read the state, for example in line \src{9} some earlier setting is accessed and in line \src{10} the settings are applied.
 
-\infobox{If using a \src{CLookAndFeelMenuPiece} then everything in the example snippets gets done automatically. Read chapter \ref{sec:menu:lookandfeel} to learn more about this menu.}
 
 \subsection{Menus} \label{sec:menus}
 Most \src{Swing} applications use menus (like in figure \ref{fig:menus}). \src{DockingFrames} contains a few actions that fit nicely into a menu, for example store and load a layout.
@@ -802,7 +800,7 @@ Clients can use a \src{CThemeMenuPiece} to quickly create a menu that changes th
 
 \warningbox{If a \src{CThemeMenuPiece} is no longer required, then clients should call its method \src{destroy}. }
 
-\subsubsection{LookAndFeel} \label{sec:menu:lookandfeel}
+\subsubsection{LookAndFeel}
 \src{Common} already supports \src{LookAndFeel}s, more about this feature can be read in chapter \ref{sec:lookandfeel}. The \src{CLookAndFeelMenuPiece} adds a menu that lists all the available \src{LookAndFeel}s and allows to exchange them.
 
 \warningbox{If a \src{CLookAndFeelMenuPiece} is no longer required, then clients should call its method \src{destroy}. }

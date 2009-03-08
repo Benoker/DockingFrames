@@ -1645,6 +1645,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
 
         public void dockableRegistered( DockController controller, Dockable dockable ){
             dockable.addDockHierarchyListener( this );
+            rebuild( dockable );
         }
 
         public void dockableRegistering( DockController controller, Dockable dockable ){

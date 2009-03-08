@@ -40,7 +40,15 @@
 \contentsline {subsubsection}{\numberline {7.3.2}Request a size}{22}
 \contentsline {subsection}{\numberline {7.4}Maximizing}{23}
 \contentsline {subsection}{\numberline {7.5}Preferences}{23}
-\contentsline {subsection}{\numberline {7.6}Menus}{25}
-\contentsline {section}{\numberline {8}Suggestions}{25}
-\contentsline {subsection}{\numberline {8.1}Of people using the library}{25}
-\contentsline {subsection}{\numberline {8.2}Of the developers}{26}
+\contentsline {subsection}{\numberline {7.6}Themes}{24}
+\contentsline {subsection}{\numberline {7.7}LookAndFeel}{25}
+\contentsline {subsection}{\numberline {7.8}Menus}{26}
+\contentsline {subsubsection}{\numberline {7.8.1}Themes}{27}
+\contentsline {subsubsection}{\numberline {7.8.2}LookAndFeel}{27}
+\contentsline {subsubsection}{\numberline {7.8.3}Layout}{27}
+\contentsline {subsubsection}{\numberline {7.8.4}List of Dockables}{28}
+\contentsline {subsubsection}{\numberline {7.8.5}Preferences}{28}
+\contentsline {section}{\numberline {8}Suggestions}{28}
+\contentsline {subsection}{\numberline {8.1}Of people using the library}{28}
+\contentsline {subsection}{\numberline {8.2}Of the developers}{29}
+\contentsline {section}{\numberline {9}Properties}{30}

@@ -148,6 +148,15 @@ public class ThemeMenuPiece extends BaseMenuPiece {
     }
 
     /**
+     * Severs all connections of this {@link ThemeMenuPiece} with other objects,
+     * allowing the garbage collector to remove this.
+     */
+    public void destroy(){
+    	setThemes( null );
+    	setController( null );
+    }
+    
+    /**
      * Sets the themes which this piece offers
      * @param themes the offered themes, can be <code>null</code>
      */
