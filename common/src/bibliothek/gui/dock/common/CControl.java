@@ -123,7 +123,7 @@ import bibliothek.util.xml.XIO;
 
 /**
  * Manages the interaction between {@link SingleCDockable}, {@link MultipleCDockable}
- * and the {@link CContentArea}.<br>
+ * and {@link CStation}s.<br>
  * Clients should call <code>read</code> and <code>write</code> of the
  * {@link ApplicationResourceManager}, accessible through {@link #getResources()}, 
  * to store or load the configuration.<br>
