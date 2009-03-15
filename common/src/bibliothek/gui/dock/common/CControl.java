@@ -116,6 +116,7 @@ import bibliothek.gui.dock.util.DirectWindowProvider;
 import bibliothek.gui.dock.util.NullWindowProvider;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.WindowProvider;
+import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
@@ -184,7 +185,7 @@ public class CControl {
     public static final PropertyKey<ConflictResolver<RequestDimension>> RESIZE_LOCK_CONFLICT_RESOLVER =
         new PropertyKey<ConflictResolver<RequestDimension>>( 
                 "ccontrol.resize_lock_conflict_resolver", 
-                new DefaultConflictResolver<RequestDimension>(), true );
+                new ConstantPropertyFactory<ConflictResolver<RequestDimension>>( new DefaultConflictResolver<RequestDimension>()), true );
 
     /** the unique id of the station that handles the externalized dockables */
     public static final String EXTERNALIZED_STATION_ID = "external";
@@ -916,7 +917,7 @@ public class CControl {
      * work correctly after this method was called.
      */
     public void destroy(){
-        frontend.getController().kill();
+        frontend.kill();
         for( DestroyHook hook : hooks )
             hook.destroy();
     }
@@ -1182,10 +1183,9 @@ public class CControl {
     /**
      * Adds an additional station to this control.
      * @param station the new station
-     * @param root <code>true</code> if the station should become a root station,
-     * which means that the station will not have any parent. <code>false</code>
-     * if the station will have another parent, that is often the case if the
-     * station is a {@link CDockable} as well.
+     * @param root <code>true</code> if the station should become a root station.
+     * A root station often does not have a parent, the location of a {@link CDockable}
+     * is always relative to its youngest parent that is a root station.
      */
     public void add( CStation station, boolean root ){
         add( station, root, true );
@@ -1194,10 +1194,9 @@ public class CControl {
     /**
      * Adds an additional station to this control.
      * @param station the new station
-     * @param root <code>true</code> if the station should become a root station,
-     * which means that the station will not have any parent. <code>false</code>
-     * if the station will have another parent, that is often the case if the
-     * station is a {@link CDockable} as well.
+     * @param root <code>true</code> if the station should become a root station.
+     * A root station often does not have a parent, the location of a {@link CDockable}
+     * is always relative to its youngest parent that is a root station.
      * @param check if <code>true</code> a check of the unique id is performed,
      * otherwise the station is just put into, perhaps wrongly replacing
      * other stations.

@@ -34,11 +34,11 @@
 
 
 \begin{abstract}
-This document describes the most important changes between versions, and how developers should change their application in order to use new features. This document does not make any distinction between the core-library and the common-project. Not all changes are listed up in this document, only those enhancments which might be interesting for the majority of developers.
+This document describes the most important changes between versions, and how developers should change their application in order to use new features. This document does not make any distinction between the core-library and the common-project. Not all changes are listed up in this document, only those enhancements which might be interesting for the majority of developers.
 \end{abstract}
 
 \section{Version 1.0.3}
-Version 1.0.3 emphasizes on background enhancments. The API remains unchanged for most parts.
+Version 1.0.3 emphasizes on background enhancements. The API remains unchanged for most parts.
 \subsection{Incompatibilities}
 These changes break with the API from 1.0.2, clients must change their interfaces in order to work properly.
 
@@ -296,7 +296,7 @@ Version 1.0.5 brings the possibility to navigate around only by hitting some key
 
 This release contains some tricky incompatibilities which need to be handled very carefully.
 
-\subsection{Incombatibilities}
+\subsection{Incompatibilities}
 The changes that need special care.
 
 \subsubsection{DockStationListener}
@@ -443,7 +443,7 @@ A list of new API elements and changes that affect the layout.
 \section{Version 1.0.6}
 This version brings the preference system. The API was changed at some places in order to bring the preference system to work.
 
-\subsection{Incombatibilities}
+\subsection{Incompatibilities}
 The changes that need special care.
 
 \subsubsection{Dockable with Tooltip}
@@ -622,9 +622,249 @@ A list of new API elements and changes that affect the layout.
 \end{description}
 
 \section{Version 1.0.7}
-Version 1.0.7 emphasizes on details. Many bugfixes are included and new settings allow further customization.
+Version 1.0.7 emphasizes on details. Many bugfixes are included and new settings allow further customization. The layout-storage mechanism has been improved to support missing dockables.
 
-\subsection{Incombatibilities}
+\subsection{Incompatibilities}
+The changes that need special care.
+
+\subsubsection{DockableDisplayerHints}
+\begin{description}
+ \short \src{Dockable} has a new method \src{configureDisplayerHints}.
+ \why This allows \src{Dockable}s to communicate with their \src{DockableDisplayer}s. For example a \src{SplitDockStation} tells its displayer to paint a border if the station has no children, but not to paint a border if it has children.
+ \clients If implementing \src{Dockable} directly need to add this method.
+\end{description}
+
+\subsubsection{ScreenDockDialog extends new class}
+\begin{description}
+ \short \src{ScreenDockDialog} extends other classes than before.
+ \why The whole management of dialogs for \src{ScreenDockStation} has been rewritten. A \src{ScreenDockStation} now supports any kind of window, not only dialogs.
+ \clients Should not be affected.
+\end{description}
+
+\subsubsection{DockFactory uses a new layer}
+\begin{description}
+ \short The whole layout-storage mechanism has been updated.
+ \why To support missing dockables a new layer containing meta information was necessary.
+ \clients The interface \src{DockFactory} contains new and changed methods
+\end{description}
+
+\subsubsection{CGridArea implements CDockable}
+\begin{description}
+ \short \src{CGridArea} is no longer just a panel but can also be used as dockable.
+ \why In order to use \src{CGridArea} as superclass for \src{CWorkingArea} this interface was needed.
+ \clients Should not affect clients.
+\end{description}
+
+\subsubsection{CWorkingArea extends CGridArea}
+\begin{description}
+ \short \src{CWorkingArea} is now a subclass of \src{CGridArea}.
+ \why \src{CWorkingArea} and \src{CGridArea} have almost the same behavior. New interfaces and lesser coupling allowed to reuse \src{CGridArea}. In a future release they might even be merged into one class.
+ \clients Most clients should not notify this change, clients that use code like \src{x instanceof CGridArea} need to be updated.
+\end{description}
+
+\subsubsection{CControlFactory: no longer creates CWorkingAreas}
+\begin{description}
+ \short \src{CControlFactory} no longer creates \src{CWorkingAreas} but \linebreak \src{SplitDockStation}s.
+ \why This is part of an ongoing effort to lessen the coupling of classes in \src{Common}.
+ \clients Clients that used a customized \src{CControlFactory} may need to update their factory.
+\end{description}
+
+\subsubsection{CommonDockable: getClose replaced with getSources}
+\begin{description}
+ \short In \src{CommonDockable} the method \src{getClose} was replaced with \linebreak \src{getSources}.
+ \why This way a \src{CommonDockable} can support more than just one special \src{DockActionSource}. Also the close-action-source is no longer integrated that tight into the system.
+ \clients Since clients should not work on this level anyway they don't need to worry.
+\end{description}
+
+\subsubsection{PropertyKey: requires factory for default value}
+\begin{description}
+ \short \src{PropertyKey} requires a \src{PropertyFactory} to set up its default value.
+ \why Fixes a memory leak by preventing \src{PropertyKey} from sneaking in global variables.
+ \clients Need to implement the factory if they create new \src{PropertyKey}s.
+\end{description}
+
+\subsection{API and Layout}
+A list of new API elements and changes that affect the layout.
+
+\subsubsection{Button-title supports colors}
+\begin{description}
+ \short The button-title on \src{FlapDockStation} can change its color, new keys for that feature are provided in \src{ColorMap}.
+ \why Was just missing.
+\end{description}
+
+\subsubsection{FlapDockProperty: support state and size}
+\begin{description}
+ \short \src{FlapDockProperty} stores now holding state and window size as well.
+ \why Allows clients more control over the layout, was necessary for \src{Common}.
+\end{description}
+
+\subsubsection{AdjacentDockFactory}
+\begin{description}
+ \short The \src{AdjacentDockFactory} can store additional information about a \src{Dockable} when writing a layout.
+ \why Was required for \src{Common}.
+\end{description}
+
+\subsubsection{DockSituation: support for missing elements}
+\begin{description}
+ \short \src{DockSituation} has a number of new methods to support missing or invisible elements. The new methods are \src{fillMissing} and \linebreak \src{estimateLocation}s.
+ \why Makes the user interface more consistent if missing elements are made available later.
+\end{description}
+
+\subsubsection{Support for gaps in layout}
+\begin{description}
+ \short \src{DockFrontend} now tries to fill missing gaps in the layout before a layout is applied.
+ \why Makes the user interface more consistent if missing elements are made available later.
+\end{description}
+
+\subsubsection{Storing information of invisible dockables}
+\begin{description}
+ \short \src{DockFrontend} stores layout information of invisible/missing elements.
+ \why Otherwise information would be lost and the user interface would seem inconsistant.
+\end{description}
+
+\subsubsection{Access to information of missing dockable}
+\begin{description}
+ \short New methods \src{listFrontendEntries} and \src{getFrontendEntry} in \linebreak \src{DockFrontend}.
+ \why The methods allow access to all information of missing (and normal) \src{Dockable}s.
+\end{description}
+
+\subsubsection{PreferenceTable: order of operations reversed}
+\begin{description}
+ \short The order of ``default'' and ``remove'' operation are reversed.
+ \why The ``default'' operation should be the last operation.
+\end{description}
+
+\subsubsection{Automatic stack creation in CGrid}
+\begin{description}
+ \short Eduardo Born suggested that if some dockables are placed at the same location in a \src{CGrid} then they should be put together in a stack.
+ \why There is no reason not to do it this way.
+\end{description}
+
+\subsubsection{Central register for CDockables}
+\begin{description}
+ \short \src{CControl} stores all its stations and dockables now in a \linebreak \src{CControlRegister}.
+ \why New classes are introduced to free \src{CControl} of minor tasks.
+\end{description}
+
+\subsubsection{FontManager}
+\begin{description}
+ \short New methods to change the fonts on titles and tabs. The interface \src{DockFont} provides some keys that can be used together with \linebreak \src{FontManager}.
+ \why That's a feature every docking-framework should have
+\end{description}
+
+\subsubsection{FontMap}
+\begin{description}
+ \short \src{Common} supports the new font system, the \src{FontMap} can be used like the \src{ColorMap}.
+ \why Because \src{Core} allows this.
+\end{description}
+
+\subsubsection{More than one maximize-area}
+\begin{description}
+ \short In \src{Common} more than only one station can now be marked as being potential parent of a maximized \src{CDockable}.
+ \why Part of ongoing work for less coupling in \src{Common}.
+\end{description}
+
+\subsubsection{Veto before changing layout}
+\begin{description}
+ \short The method \src{hiding} of \src{VetoableDockFrontendListener} is called when setting a new layout.
+ \why Prevents dockables to disappear that must always be visible
+\end{description}
+
+\subsubsection{CGrid/SplitDockGrid: preselect element}
+\begin{description}
+ \short \src{CGrid}/\src{SplitDockGrid} have a new method \src{select}/\src{setSelected} to select a \src{CDockable}/\src{Dockable} in a stack of dockables.
+ \why More control over the layout.
+\end{description}
+
+\subsubsection{WindowProviders}
+\begin{description}
+ \short New interface \src{WindowProvider} allows to change the root-window even after the framework runs.
+ \why Some clients do not know their root window when setting up a controller, other clients did have a hard time to find the root-\src{JFrame} (like applets, which do not have such a frame).
+\end{description}
+
+\subsubsection{AppletWindowProvider}
+\begin{description}
+ \short A new \src{WindowProvider} is available, the \src{AppletWindowProvider}.
+ \why This class supports \src{Applet}s by finding the (normally hidden) window on which the applet lies.
+\end{description}
+
+\subsubsection{LocaleListener}
+\begin{description}
+ \short The new \src{LocaleListener} can be added to \src{DockUI} and will be informed if the \src{Locale} changes.
+ \why Internal caches of \src{Common} can be cleaned through this listener.
+\end{description}
+
+\subsubsection{DockController: freeze layout}
+\begin{description}
+ \short \src{DockController} has new methods \src{freezeLayout}, \src{meltLayout} and \linebreak \src{isLayoutFrozen}.
+ \why These methods temporarily freeze the layout so clients can safely add and remove \src{Dockable}s from the tree. Prevents the \src{SingleParentRemover} to do its work and change the tree at the same time.
+\end{description}
+
+\subsection{Bugfixes}
+\subsubsection{SplitDockStation not respecting acceptances}
+\begin{description}
+ \short On a \src{SplitDockStation} a \src{Dockable} could be dropped over another element which didn't accept that combination.
+\end{description}
+
+\subsubsection{Common and CGrid: not supporting big stacks}
+\begin{description}
+ \short When dropping \src{CGrid} with stacks that have 3 or more elements, then an exception was thrown.
+\end{description}
+
+\subsubsection{DockFrontend did not read setting correctly}
+\begin{description}
+ \short The method \src{read} of \src{DockFrontend} did mark the main setting as simple entry while it should have been marked as main entry.
+\end{description}
+
+\subsubsection{Infinite recursion in focus raversal}
+\begin{description}
+ \short \src{DockFocusTraversalPolicy} would create an infinite recursion when used together with \src{javax.swing.LegacyGlueFocusTraversalPolicy}.
+\end{description}
+
+\subsubsection{CWorkingArea not settings itself as working-area}
+\begin{description}
+ \short The method \src{deploy} of \src{CWorkingArea} did not inform the children that they are now child of a working-area.
+\end{description}
+
+\subsubsection{SplitDockGrid throwing exception}
+\begin{description}
+ \short When the same coordinates were used twice or more for putting elements in a \src{SplitDockGrid} an exception was thrown.
+\end{description}
+
+\subsubsection{FlapWindow not resizing}
+\begin{description}
+ \short A \src{FlapWindow} did not always resize correctly when its parent got resized while the window was invisible. Fixed by Peter.
+\end{description}
+
+\subsubsection{Dropping \src{CWorkingArea}}
+\begin{description}
+ \short Dropping a \src{CWorkingArea} that has children did not work.
+\end{description}
+
+\subsubsection{Drop CDockable with no location but working-area}
+\begin{description}
+ \short A \src{CDockable} that has not set any location but belongs to a working-area will now use the default location for that working-area.
+\end{description}
+
+\subsubsection{AbstractCDockable ignores settings}
+\begin{description}
+ \short \src{AbstractCDockable} did not respond when setting an extended mode and another extended mode was disabled. The cause of this failure was a missing ``break'' in a ``switch'' statement.
+\end{description}
+
+\subsubsection{SecureScreenDockStation not secure}
+\begin{description}
+ \short \src{SecureScreenDockStation} was not using \linebreak \src{SecureScreenDockWindowFactory}.
+\end{description}
+
+\subsubsection{Exception in updateLocation}
+\begin{description}
+ \short The method \src{updateLocation} of \src{DockFrontend} would throw an exception if a \src{Dockable} in the tree was at the same time a root-station.
+\end{description}
+
+\subsubsection{Buttons on CDockable}
+\begin{description}
+ \short When a minimzed \src{CDockable} was closed and then made visible again its extension-mode-buttons were not correctly set.
+\end{description}
 
 
 \end{document}

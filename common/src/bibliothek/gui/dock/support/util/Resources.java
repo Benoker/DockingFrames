@@ -33,6 +33,7 @@ import javax.swing.Icon;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.local.LocaleListener;
 
 /**
  * A set of resources available through the whole framework
@@ -47,14 +48,27 @@ public class Resources {
     
     static{
         // read the localized text
-        bundle = ResourceBundle.getBundle( 
-                "data.bibliothek.gui.dock.locale.common", 
-                DockUI.getDefaultDockUI().getLocale(),
-                CControl.class.getClassLoader() );
+        updateBundle();
+        
+        DockUI.getDefaultDockUI().addLocaleListener( new LocaleListener(){
+        	public void localeChanged( DockUI ui ){
+        		updateBundle();
+        	}
+        	public void bundleChanged( DockUI ui ){
+        		// ignore
+        	}
+        });
         
         // read the icons
         icons = DockUtilities.loadIcons( "data/bibliothek/gui/dock/icons/icons.ini",
                 "data/bibliothek/gui/dock/icons/", Resources.class.getClassLoader() );
+    }
+    
+    private static void updateBundle(){
+    	bundle = ResourceBundle.getBundle( 
+                "data.bibliothek.gui.dock.locale.common", 
+                DockUI.getDefaultDockUI().getLocale(),
+                CControl.class.getClassLoader() );
     }
     
     /**

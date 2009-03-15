@@ -39,7 +39,7 @@ public interface PropertyFactory<A> {
 	 * Gets the default value for <code>key</code>. This method is called
 	 * only once for the combination of <code>key</code> and <code>properties</code>,
 	 * it can either always return the same object or create a new one every 
-	 * time. The default value gets stored in <code>properties</code>.
+	 * time. The results gets stored as default value in <code>properties</code>.
 	 * @param key the key for which to get the default
 	 * @param properties the map in which the default will be stored
 	 * @return the new default value, <code>null</code> is valid

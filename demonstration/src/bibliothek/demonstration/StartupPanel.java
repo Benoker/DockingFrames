@@ -149,11 +149,12 @@ public class StartupPanel extends JPanel{
 		
 		@Override
 		protected void paintComponent( Graphics g ){
-			final int POINTS = 9;
-			final float SIZE = 8; 
+			final int POINTS = 7;
+			final float SIZE = 6; 
+			final float BORDER = 3;
 			
 			Graphics2D g2 = (Graphics2D)g.create();
-			g2.setColor( Color.BLUE );
+			
 			g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
 			
 			long time = System.currentTimeMillis();
@@ -178,7 +179,11 @@ public class StartupPanel extends JPanel{
 				double mx = w/2 + x*w *(SIZE-2)/SIZE/2.0;
 				double my = h/2 + y*h *(SIZE-2)/SIZE/2.0;
 				
+				g2.setColor( Color.BLACK );
 				g2.fillOval( (int)(mx - w/SIZE/2), (int)(my - h/SIZE/2), (int)(w/SIZE), (int)(h/SIZE) );
+				
+				g2.setColor( Color.WHITE );
+				g2.fillOval( (int)(mx - w/SIZE/2 + BORDER ), (int)(my - h/SIZE/2 + BORDER), (int)(w/SIZE - 2*BORDER), (int)(h/SIZE - 2*BORDER) );
 			}
 			
 			g2.dispose();

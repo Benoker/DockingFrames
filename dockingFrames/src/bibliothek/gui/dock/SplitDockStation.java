@@ -1522,18 +1522,28 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         if( tree == null )
             throw new IllegalArgumentException( "Tree must not be null" );
 
-        setFullScreen( null );
-        removeAllDockables();
-
-        // ensure valid tree
-        for( Dockable dockable : tree.getDockables() ){
-            DockUtilities.ensureTreeValidity( this, dockable );
+        DockController controller = getController();
+        try{
+	        if( controller != null )
+	        	controller.freezeLayout();
+	        
+	        setFullScreen( null );
+	        removeAllDockables();
+	
+	        // ensure valid tree
+	        for( Dockable dockable : tree.getDockables() ){
+	            DockUtilities.ensureTreeValidity( this, dockable );
+	        }
+	
+	        Key rootKey = tree.getRoot();
+	        if( rootKey != null ){
+	            root().evolve( rootKey, checkValidity );
+	            updateBounds();
+	        }
         }
-
-        Key rootKey = tree.getRoot();
-        if( rootKey != null ){
-            root().evolve( rootKey, checkValidity );
-            updateBounds();
+        finally{
+        	if( controller != null )
+        		controller.meltLayout();
         }
     }
 

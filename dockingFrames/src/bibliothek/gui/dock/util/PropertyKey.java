@@ -90,7 +90,7 @@ public class PropertyKey<A> {
      * type of property, represented by this key.
      * @param value the value that will be used when no value is set
      * in the properties
-     * @deprecated replaced by {@link #PropertyKey(String, Object, boolean)}
+     * @deprecated replaced by {@link #PropertyKey(String, PropertyFactory, boolean)}
      */
 	@Deprecated
 	public PropertyKey( String id, PropertyFactory<A> value ){

@@ -1,54 +1,54 @@
 \contentsline {section}{\numberline {1}Introduction}{4}
 \contentsline {section}{\numberline {2}Notation}{4}
-\contentsline {section}{\numberline {3}Basics}{4}
+\contentsline {section}{\numberline {3}Basics}{5}
 \contentsline {subsection}{\numberline {3.1}Concepts}{5}
 \contentsline {subsection}{\numberline {3.2}Hello World}{5}
 \contentsline {subsubsection}{\numberline {3.2.1}Setup controller}{6}
 \contentsline {subsubsection}{\numberline {3.2.2}Setup stations}{6}
 \contentsline {subsubsection}{\numberline {3.2.3}Setup dockables}{7}
-\contentsline {section}{\numberline {4}Foundation}{8}
-\contentsline {subsection}{\numberline {4.1}Dockables}{8}
-\contentsline {subsubsection}{\numberline {4.1.1}SingleCDockable}{8}
-\contentsline {subsubsection}{\numberline {4.1.2}MultipleCDockable}{9}
+\contentsline {section}{\numberline {4}Foundation}{9}
+\contentsline {subsection}{\numberline {4.1}Dockables}{9}
+\contentsline {subsubsection}{\numberline {4.1.1}SingleCDockable}{9}
+\contentsline {subsubsection}{\numberline {4.1.2}MultipleCDockable}{10}
 \contentsline {subsubsection}{\numberline {4.1.3}Visibility}{10}
-\contentsline {subsubsection}{\numberline {4.1.4}Mode}{10}
-\contentsline {subsection}{\numberline {4.2}Stations}{11}
-\contentsline {subsubsection}{\numberline {4.2.1}All in one: CContentArea}{11}
-\contentsline {subsubsection}{\numberline {4.2.2}Center area: CGridArea}{12}
+\contentsline {subsubsection}{\numberline {4.1.4}Mode}{11}
+\contentsline {subsection}{\numberline {4.2}Stations}{12}
+\contentsline {subsubsection}{\numberline {4.2.1}All in one: CContentArea}{12}
+\contentsline {subsubsection}{\numberline {4.2.2}Center area: CGridArea}{13}
 \contentsline {subsubsection}{\numberline {4.2.3}Minimized: CMinimizeArea}{13}
 \contentsline {subsubsection}{\numberline {4.2.4}Grouping Dockables: CWorkingArea}{13}
-\contentsline {section}{\numberline {5}Locations}{14}
-\contentsline {subsection}{\numberline {5.1}For a single dockable: CLocation}{14}
-\contentsline {subsection}{\numberline {5.2}For a group of dockables: CGrid}{14}
-\contentsline {subsection}{\numberline {5.3}For all dockables: layout}{16}
-\contentsline {subsubsection}{\numberline {5.3.1}Persistant Storage}{16}
-\contentsline {subsubsection}{\numberline {5.3.2}Dealing with lazy creation and missing dockables}{17}
-\contentsline {section}{\numberline {6}Actions}{17}
-\contentsline {subsection}{\numberline {6.1}CButton}{18}
-\contentsline {subsection}{\numberline {6.2}CCheckBox}{18}
-\contentsline {subsection}{\numberline {6.3}CRadioButton}{18}
-\contentsline {subsection}{\numberline {6.4}CMenu}{19}
-\contentsline {subsection}{\numberline {6.5}CDropDownButton}{19}
-\contentsline {subsection}{\numberline {6.6}CBlank}{20}
-\contentsline {subsection}{\numberline {6.7}System Actions}{20}
-\contentsline {subsection}{\numberline {6.8}Custom Actions}{21}
-\contentsline {section}{\numberline {7}Customizing: small but impressive}{21}
-\contentsline {subsection}{\numberline {7.1}Color}{21}
-\contentsline {subsection}{\numberline {7.2}Font}{22}
-\contentsline {subsection}{\numberline {7.3}Size}{22}
-\contentsline {subsubsection}{\numberline {7.3.1}Lock the size}{22}
-\contentsline {subsubsection}{\numberline {7.3.2}Request a size}{22}
-\contentsline {subsection}{\numberline {7.4}Maximizing}{23}
-\contentsline {subsection}{\numberline {7.5}Preferences}{23}
-\contentsline {subsection}{\numberline {7.6}Themes}{24}
-\contentsline {subsection}{\numberline {7.7}LookAndFeel}{25}
-\contentsline {subsection}{\numberline {7.8}Menus}{26}
-\contentsline {subsubsection}{\numberline {7.8.1}Themes}{27}
-\contentsline {subsubsection}{\numberline {7.8.2}LookAndFeel}{27}
-\contentsline {subsubsection}{\numberline {7.8.3}Layout}{27}
-\contentsline {subsubsection}{\numberline {7.8.4}List of Dockables}{28}
-\contentsline {subsubsection}{\numberline {7.8.5}Preferences}{28}
-\contentsline {section}{\numberline {8}Suggestions}{28}
-\contentsline {subsection}{\numberline {8.1}Of people using the library}{28}
-\contentsline {subsection}{\numberline {8.2}Of the developers}{29}
-\contentsline {section}{\numberline {9}Properties}{30}
+\contentsline {section}{\numberline {5}Locations}{15}
+\contentsline {subsection}{\numberline {5.1}For a single dockable: CLocation}{15}
+\contentsline {subsection}{\numberline {5.2}For a group of dockables: CGrid}{15}
+\contentsline {subsection}{\numberline {5.3}For all dockables: layout}{17}
+\contentsline {subsubsection}{\numberline {5.3.1}Persistant Storage}{17}
+\contentsline {subsubsection}{\numberline {5.3.2}Dealing with lazy creation and missing dockables}{18}
+\contentsline {section}{\numberline {6}Actions}{19}
+\contentsline {subsection}{\numberline {6.1}CButton}{19}
+\contentsline {subsection}{\numberline {6.2}CCheckBox}{19}
+\contentsline {subsection}{\numberline {6.3}CRadioButton}{20}
+\contentsline {subsection}{\numberline {6.4}CMenu}{20}
+\contentsline {subsection}{\numberline {6.5}CDropDownButton}{20}
+\contentsline {subsection}{\numberline {6.6}CBlank}{21}
+\contentsline {subsection}{\numberline {6.7}System Actions}{21}
+\contentsline {subsection}{\numberline {6.8}Custom Actions}{22}
+\contentsline {section}{\numberline {7}Other Effects}{23}
+\contentsline {subsection}{\numberline {7.1}Color}{23}
+\contentsline {subsection}{\numberline {7.2}Font}{23}
+\contentsline {subsection}{\numberline {7.3}Size}{24}
+\contentsline {subsubsection}{\numberline {7.3.1}Lock the size}{24}
+\contentsline {subsubsection}{\numberline {7.3.2}Request a size}{24}
+\contentsline {subsection}{\numberline {7.4}Maximizing}{25}
+\contentsline {subsection}{\numberline {7.5}Preferences}{25}
+\contentsline {subsection}{\numberline {7.6}Themes}{26}
+\contentsline {subsection}{\numberline {7.7}LookAndFeel}{27}
+\contentsline {subsection}{\numberline {7.8}Menus}{27}
+\contentsline {subsubsection}{\numberline {7.8.1}Themes}{29}
+\contentsline {subsubsection}{\numberline {7.8.2}LookAndFeel}{29}
+\contentsline {subsubsection}{\numberline {7.8.3}Layout}{29}
+\contentsline {subsubsection}{\numberline {7.8.4}List of Dockables}{29}
+\contentsline {subsubsection}{\numberline {7.8.5}Preferences}{30}
+\contentsline {section}{\numberline {8}Suggestions}{31}
+\contentsline {subsection}{\numberline {8.1}Of people using the library}{31}
+\contentsline {subsection}{\numberline {8.2}Of the developers}{31}
+\contentsline {section}{\numberline {A}Properties}{33}

@@ -105,6 +105,7 @@ Any element that can be source code (e.g. a class name) and project names are wr
 
 \designbox{These boxes explain \textit{why} some thing was designed the way it is. This might either contain some bit of history or an explanation why some awkward design is not as bad as it first looks.}
 
+\newpage
 \section{Basics}
 \src{Common} is partitioned into three sub-projects.
 
@@ -139,7 +140,7 @@ To do so each panel gets wrapped into a \src{CDockable}. These \src{CDockable}s 
 This chapter introduces the very basic vocabulary and shows a first example. In depth discussions of the concepts and implementations follow in the chapters afterwards.
 
 \subsubsection{Setup controller}
-The first step should be to create a \src{CControl}. \src{CControl} has more than one constructor, for this example it is sufficient to use the one constructor which requires only a \src{JFrame}. \src{CControl} monitors the state of this frame and ensures that the windows of \src{Common} are only visible when the frame is visible. Also dialogs created by the framework will have this frame as parent.
+The first step should be to create a \src{CControl}. A \src{CControl} wires all the objects of the framework together. \src{CControl} has more than one constructor, for this example it is sufficient to use the one constructor which requires only a \src{JFrame}. \src{CControl} monitors the state of this frame and ensures that the windows of \src{Common} are only visible when the frame is visible. Also dialogs created by the framework will have this frame as parent.
 
 The code to create the controller looks like this:
 \begin{lstlisting}
@@ -177,7 +178,7 @@ public class Example{
 \infobox{\src{CControl} always creates an additional station for handling externalized dockables.}
 
 \subsubsection{Setup dockables}
-A \src{CDockable} is the thing that can be dragged and dropped by the user. A \src{CDockable} has a set of properties, e.g. what text to show as title, whether it can be maximized, what font to use when focused, and so on.
+The last step is to set up some \src{CDockable}s. \src{CDockable}s are the things that can be dragged and dropped by the user. A \src{CDockable} has a set of properties, e.g. what text to show as title, whether it can be maximized, what font to use when focused, and so on.
 \src{CDockable}s are divided into two categories: ``single'' and ``multi'' dockables. These categories are explained later, for this first example single dockables are the correct choice. Single dockables are represented by the interface \src{SingleCDockable}. The class \src{DefaultSingleCDockable} provides an easy to use implementation.
 In the code below new single dockables are created in lines \src{23-25} and \src{43-48}. They need to be registered at the \src{CControl} in lines \src{27-29}, otherwise they cannot be shown. Optionally the initial position can be set like in line \src{33} and \src{36}. There is no need to set the position of the first dockable \src{red}: since it is the first it gets per default all the space.
 
@@ -235,11 +236,12 @@ public class Example{
 
 \end{lstlisting}
 
+\newpage
 \section{Foundation}
 This chapter focuses on the foundation of \src{Common}: \src{CControl}, the stations and dockables.
 
 \subsection{Dockables}
-As mentioned in the previous chapter \src{CDockable}s fall in one of two categories: ``single'' or ``multiple''. Only one instance of a single dockable may exist during runtime, but many (or none) instance of a multiple dockable may exist. In many cases both kind of dockables have the same behavior, but there are some exceptions when it comes to the storage of their location.
+As mentioned in the previous chapter \src{CDockable}s fall in one of two categories: ``single'' or ``multiple''. Only one instance of a single dockable may exist in the realm of a \src{CControl}, but many (or none) instances of a multiple dockable may exist. In many cases both kind of dockables have the same behavior, but there are some exceptions when it comes to the storage of their location.
 
 Every \src{CDockable} needs to be registered at a \src{CControl}, the methods with name \src{add} can be used. They need to be made visible by calling \src{setVisible} of \src{CDockable}.
 
@@ -313,9 +315,9 @@ dockable.addCDockableStateListener( new CDockableAdapter(){
 
  The default behavior of the close-action is to call \src{setVisible} with \src{visible} set to \src{false}, so overriding this method is an easy way to introduce some additional code that is executed directly before the dockable closes.
 
-\classbox{The close-action can be replaced by calling \src{putAction} with the key \src{ACTION\_KEY\_CLOSE} of \src{CDockable}. The action can be replaced at any time. More about actions in chapter \ref{sec:action}.}
+\classbox{The close-action can be replaced by calling \src{putAction} with the key \src{ACTION\_KEY\_CLOSE} of \src{CDockable}. The action can be replaced at any time. Read more about actions in chapter \ref{sec:action}.}
 
-\infobox{If the method \src{setLocation} of \src{AbstractCDockable} is called before the dockable is made visible, then the dockable is made visible at the supplied location. More about locations in chapter \src{sec:location}.}
+\infobox{If the method \src{setLocation} of \src{AbstractCDockable} is called before the dockable is made visible, then the dockable is made visible at the supplied location. Read more about locations in chapter \ref{sec:location}.}
 
 \subsubsection{Mode}
 If a \src{CDockable} is visible then it always is in an extended-mode. The extended mode tells something about the behaviour of the dockable and where it is placed. There are four extended modes available:
@@ -351,7 +353,7 @@ frame.add( area );
 
 If more than one content-area is needed then clients can use \linebreak \src{createContentArea} of \src{CControl} to create additional areas. These additional areas can later be removed through \src{removeContentArea}. The default content-area cannot be removed.
 
-\infobox{The default content-area is create lazily. There is no obligation to use or create it, clients can as well directly call \src{createContentArea} or not use them at all.}
+\infobox{The default content-area is created lazily. There is no obligation to use or create it, clients can as well directly call \src{createContentArea} or not use them at all.}
 
 \warningbox{While \src{CContentArea} has a public constructor clients should prefer to use the factory method \src{createContentArea}. In future releases the constructor might be changed.}
 
@@ -389,23 +391,24 @@ The \src{CWorkingArea} is a subclass of \src{CGridArea}. The difference between 
 
 Having this property set to \src{true} places some constraints on the station:
 \begin{itemize}
-\item Children of this station cannot be put moved to another station if that other station shows dockables in normalized mode. For a user this means that children can only be minimized, maximized or externalized, but not dragged away.
+\item Children of this station cannot be moved to another station if that other station shows dockables in normalized mode. For a user this means that children can only be minimized, maximized or externalized, but not dragged away.
 \item The user cannot drag dockables away from the station unless they are already children of the station.
 \item If the station has no children then it appears as grey, empty space which does not go away.
-\item Children of a working-area are not stored for temporary layout. For the user this means that applying a layout does neither affect the station, or dockables that can be put onto the station.
+\item Children of a working-area are not stored for temporary layout. For the user this means that applying a layout does neither affect the station, nor dockables that can be put onto the station.
 \end{itemize}
 
 \src{CWorkingArea}s can be used to display a set documents. For example in an IDE (like \src{Eclipse} or \src{Netbeans}) each source file would get its own \src{CDockable} which then is put onto the working-area.
 
 \infobox{The children of a \src{CWorkingArea} are often good candidates for being \src{MultipleCDockable}s.}
 
+\newpage
 \section{Locations} \label{sec:location}
 Location means position and size of a dockable. A location can be relative to some parent of a dockable or it can be fix.
 
 \subsection{For a single dockable: CLocation}
 The location of a single dockable is represented by a \src{CLocation}. The method \src{getBaseLocation} of \src{CDockable} gets the current location and the method \linebreak \src{setLocation} changes the current location.
 
-Most subclasses of \src{CLocation} offer one or more methods to optain new locations. For example a \src{CGridAreaLocation} offers \src{north}. While \linebreak \src{CGridAreaLocation} represents just some \src{CGridArea}, the location optained through \src{north} represents the upper half of the grid-area. Clients can chain together method calls to create locations:
+Most subclasses of \src{CLocation} offer one or more methods to optain new locations. An example: \src{CGridAreaLocation} offers the method \src{north}. While \src{CGridAreaLocation} represents just some \src{CGridArea}, the location optained through \src{north} represents the upper half of the grid-area. Clients can chain together method calls to create locations:
 \begin{lstlisting}
 CGridAreaLocation root = ...
 CDockable dockable = ...
@@ -417,18 +420,18 @@ The chain of calls in line \src{4} creates a location pointing to the upper left
 
 To create a root-location clients can call one of the static factory methods of \src{CLocation} or directly instantiate the location. Calling the factory methods of \src{CLocation} is preferred.
 
-Setting the location of a dockable \src{a} to the location of another dockable \src{b} will move away \src{a} from its position. As an example:
+Setting the location of a dockable \src{a} to the location of another dockable \src{b} will move away \src{b} from its position. As an example:
 \begin{lstlisting}
 CDockable a = ...
 CDockable b = ...
 
-CLocation location = a.getBaseLocation();
-b.setLocation( location );
+CLocation location = b.getBaseLocation();
+a.setLocation( location );
 \end{lstlisting}
 
-If \src{a} should remain at its place then the method \src{aside} of \src{CLocation} can create a location that is near to \src{a}, but not exactly \src{a}'s position:
+If \src{b} should remain at its place then the method \src{aside} of \src{CLocation} can create a location that is near to \src{b}, but not exactly \src{b}'s position:
 \begin{lstlisting}[firstnumber=5]
-b.setLocation( location.aside() );
+a.setLocation( location.aside() );
 \end{lstlisting}
 
 \classbox{\src{CLocation} is a wrapper around \src{DockableProperty}. While each \src{DockableProperty} has its own API and concepts, \src{CLocation}s unify usage by providing the chain-concept. The chain-concept allows some typesafety and should reduce the amount of wrongly put together locations. }
@@ -451,7 +454,7 @@ grid.add( 0, 1, 1, 2, multi );
 CContentArea content = control.getContentArea();
 content.deploy( grid );
 \end{lstlisting}
-The \src{CControl} created in line \src{6} will call the \src{add}-methods of \src{control} (line \src{1}) with any dockable that is given to it. In lines \src{8,9} two dockables are put onto the grid. The numbers are the boundaries of the dockables. In line \src{12} the contents of the grid are put onto \src{content}. The dockables \src{single} and \src{multi} will be arranged such that \src{multi} has twice the size of \src{single}.
+The \src{CGrid} created in line \src{6} will call the \src{add}-methods of \src{control} (line \src{1}) with any dockable that is given to it. In lines \src{8,9} two dockables are put onto the grid. The numbers are the boundaries of the dockables. In line \src{12} the contents of the grid are put onto \src{content}. The dockables \src{single} and \src{multi} will be arranged such that \src{multi} has twice the size of \src{single}.
 
 Boundaries are relative to each other, there is no minimal or maximal value for a coordinate or size. \src{CGrid} is able to handle gaps and overlaps, but such defections might yield awkward layouts.
 
@@ -483,7 +486,7 @@ Working-areas are intended to show some documents that are only temporarely avai
 \warningbox{The client is responsible to store the contents of any single-dockable. }
 
 \subsubsection{Persistant Storage}
-\src{Common} uses a class called \src{ApplicationResourceManager} to store its properties. Among other things all layout information is stored in this resource-manager. Normally any information in the resource-manager gots lost once the application shuts down. But clients can tell the resource-manager to write its contents into a file. Either they call \src{getResources} of \src{CControl} and then one of the many methods that start with ``write'' or they use directly \src{CControl}. An example:
+\src{Common} uses a class called \src{ApplicationResourceManager} to store its properties. Among other things all layout information is stored in this resource-manager. Normally any information in the resource-manager gets lost once the application shuts down. But clients can tell the resource-manager to write its contents into a file. Either they call \src{getResources} of \src{CControl} and then one of the many methods that start with ``write'' or they use directly \src{CControl}. An example:
 \begin{lstlisting}
 File file = new File( "layout.data" );
 
@@ -503,8 +506,9 @@ While \src{MultipleCDockable}s are created only when they are needed, \src{Commo
 
 \classbox{\src{CControl}s behavior for missing dockables can be fine tuned with a \src{MissingCDockableStrategy}.} 
 
+\newpage
 \section{Actions} \label{sec:action}
-Actions are small graphical components associated with a dockable. They can show up a different locations, e.g. as buttons in the title.
+Actions are small graphical components associated with a dockable. They can show up at different locations, e.g. as buttons in the title.
 \begin{figure}[ht]
 \centering
 \includegraphics[scale=1]{actions}
@@ -519,7 +523,7 @@ CAction action = new ...
 dockable.addAction( action )
 \end{lstlisting}
 
-To separate a group actions from another group a separator is needed. The method \src{addSeparator} of \src{DefaultCDockable} adds such a separator. The separator will behave like a \src{CAction}.
+To separate a group actions from another group a separator is needed. The method \src{addSeparator} of \src{DefaultCDockable} adds such a separator. Separators are specialized \src{CAction}s.
 
 An action is not a \src{Component}, it can appear at the same time at different locations with different views. For example an action can be seen as button in a title and at the same time as menu-item in a popup-menu.
 
@@ -553,7 +557,7 @@ public class SomeAction extends CCheckBox{
 \end{lstlisting}
 
 \subsection{CRadioButton}
-In most aspects the \src{CRadioButton} behaves like a \src{CCheckBox}. \src{CRadioButton}s are grouped together, the user can always select on of the buttons. A group of is realized with the help of the class \src{CRadioGroup}:
+In most aspects the \src{CRadioButton} behaves like a \src{CCheckBox}. \src{CRadioButton}s are grouped together, the user can select only one of the buttons in a group. A group is realized with the help of the class \src{CRadioGroup}:
 \begin{lstlisting}
 CRadioButton buttonA = ...
 CRadioButton buttonB = ...
@@ -610,7 +614,8 @@ In this example whenever the maximize-action of \src{dockable} should be visible
 \subsection{Custom Actions}
 Clients are free to write their custom actions. They need to implement a new \src{DockAction} and a subclass of \src{CAction}. The subclass can give its super-class an instance of the custom \src{DockAction} or call \src{init} to set the action. Please refere to the guide for \src{Core} to find out how to implement a \src{DockAction}.
 
-\section{Customizing: small but impressive}
+\newpage
+\section{Other Effects}
 \src{Common} allows to customize some behavior and components. Understanding these features is not necessary to work with \src{Common}, but impressive effects can be built with them. This chapter will, without any specific order, introduce some of these features.
 
 \subsection{Color}
@@ -645,12 +650,12 @@ The \src{FontModifier} \src{italic} will change the italic flag of the original 
 Every dockable has a width and a height. Some dockables are flexibel in their size, others would be better of with a constant size. There is a feature to lock the size and a feature to set a specific size.
 
 \subsubsection{Lock the size}
-Every \src{AbstractCDockable} has the method \src{setResizeLocked}. If the size is locked through this method than any station will try not to change the size of the dockable. There are also methods to lock only width or height (\src{setResizeLockedHorizontally} and \src{setResizeLockedVertically}).
+Every \src{AbstractCDockable} has the method \src{setResizeLocked}. If the size is locked through this method than any station will try not to change the size of the dockable. There are also methods to lock only width or height \linebreak (\src{setResizeLockedHorizontally} and \src{setResizeLockedVertically}).
 
 \warningbox{Locking the size does not prevent the user from manually resizing the dockable. And sometimes a station needs to violate the locking as well, e.g.: when a grid-area has only one child the size cannot be choosen freely. }
 
 \subsubsection{Request a size}
-It is also possible for client code to request a specific size for one or many \src{CDockable}s. Clients need to call \src{setResizeRequest} and \src{handleResizeRequest} like in the example below:
+It is also possible for client code to request a specific size for one or many \src{CDockable}s. Clients need to call \src{setResizeRequest} and maybe \linebreak \src{handleResizeRequest} like in the example below:
 
 \begin{lstlisting}
 CControl control = ...
@@ -663,7 +668,7 @@ b.setResizeRequest( new RequestDimension( 500, true ), false );
 
 control.handleResizeRequests();
 \end{lstlisting}
-In this example to resize requests are handled at the same time. In line \src{6} the resize request of \src{a} is set to $200, 300$, the argument \src{false} tells \src{a} not yet to process the request. In line \src{7} the resize request of \src{b} is set, \src{b} should have the width $500$ but should not care about its height. Finally in line \src{9} all the requests are processed together. If the second parameter in line \src{7} would be \src{true} instead of \src{false}, then line \src{9} would not be necessary.
+In this example two resize requests are handled at the same time. In line \src{6} the resize request of \src{a} is set to $200, 300$, the argument \src{false} tells \src{a} not yet to process the request. In line \src{7} the resize request of \src{b} is set, \src{b} should have the width $500$ but should not care about its height. Finally in line \src{9} all the requests are processed together. If the second parameter in line \src{7} would be \src{true} instead of \src{false}, then line \src{9} would not be necessary.
 
 \designbox{Not processing a request directly, but collect them, allows requests to interact with each other. Assume three dockables in a line and the task to resize the two elements at the begin and end of the line. If one resize request is handled before the other, than the second request might destroy the work of the first one.}
 
@@ -691,7 +696,7 @@ PreferenceModel preferences = new CPreferenceModel( control );
 
 control.setPreferenceModel( preferences );
 \end{lstlisting}
-This piece of code activates the preference mechanism. In line \src{2} the set of preferences that can be changed by the user is setup, a \src{CPreferenceModel} is often the best choice. Then in line \src{4} the model is connected to \src{control}. Calling \src{setPreferenceModel} will activate persistant storage for \src{model} and also immediatelly load values into the model.
+This piece of code activates the preference mechanism. In line \src{2} the set of preferences that can be changed by the user is set up, a \src{CPreferenceModel} is often the best choice. Then in line \src{4} the model is connected to \src{control}. Calling \src{setPreferenceModel} will activate persistant storage for \src{model} and also immediatelly load values into the model.
 
 The model can later be presented to the user:
 \begin{lstlisting}
@@ -798,7 +803,7 @@ In the remainder of this section the more complex \src{MenuPiece}s are introduce
 \subsubsection{Themes}
 \src{Common} has several themes built in, a theme tells how to paint certain components or how to react on certain events. The theme mechanism is described in more detail in chapter \ref{sec:theme}.
 
-Clients can use a \src{CThemeMenuPiece} to quickly create a menu that changes the theme. The menu tracks changes in the \src{ThemeMap} of the associated \src{CControl}.
+Clients can use a \src{CThemeMenuPiece} to quickly create a menu that changes the theme. The menu tracks any changes in the \src{ThemeMap} of the associated \src{CControl}.
 
 \warningbox{If a \src{CThemeMenuPiece} is no longer required, then clients should call its method \src{destroy}. }
 
@@ -819,10 +824,10 @@ The layout is the location of all dockables as described in chapter \ref{sec:lay
 \end{description}
 
 \subsubsection{List of Dockables}
-All closeable \src{SincleCDockable}s known to a \src{CControl} can be listed in a \src{SingleCDockableListMenuPiece}. The user can make the dockables visible or invisible from the menu. The menu will update its content automatically as dockables are added or removed from the \src{CControl}.
+All closeable \src{SincleCDockable}s known to a \src{CControl} can be listed in a \linebreak \src{SingleCDockableListMenuPiece}. With this menu the user can make the dockables visible or invisible. The menu will update its content automatically as dockables are added or removed from the \src{CControl}.
 
 \subsubsection{Preferences}
-\src{Common} supports preferences as described in chapter \ref{sec:preferences}. \src{CPreferenceMenuPiece} adds a single item that opens a dialog with the preferences of a \src{CControl}.
+\src{Common} supports preferences as described in chapter \ref{sec:preferences}. The class \linebreak \src{CPreferenceMenuPiece} adds a single item that opens a dialog with the preferences of a \src{CControl}.
 
 \warningbox{Per default the preference system is disabled. Clients can acivate the preference system in two ways:
 \begin{itemize}
@@ -831,6 +836,7 @@ All closeable \src{SincleCDockable}s known to a \src{CControl} can be listed in 
 \end{itemize}
 }
 
+\newpage
 \section{Suggestions}
 Users and developers made a lot of good suggestions, this chapter is an incomplete list of them.
 
@@ -845,7 +851,7 @@ Some word of warning: this is an open source project, as such its developer(s) a
  
  \qa{AWT, it needs better support (e.g. things should be painted over AWT panels as well).}{AWT and Swing don't work together. This framework is based on Swing, any attempt to support AWT will result in a lot of ugly hacks. Also given the fact that AWT isn't hardly used anymore (except for applications playing video or rendering 3D scenes) this feature has little to none chances of getting implemented.}
  
-  \qa{Could the framework be made available for [insert your favorite tool here]? E.g. in a Maven repository or for the Netbeans GUI Builder.}{Making the framework available in/for any special tool immediately results in two important problems. First, as soon as one tool is supported people will ask for another tool, this will never end... Second, a library does no get better because it does support many other tools, it does get better because it has lesser bugs, more settings or features.}
+  \qa{Could the framework be made available for [insert your favorite tool here]? E.g. in a Maven repository or for the Netbeans GUI Builder.}{Making the framework available in/for any special tool immediately yields two new problems. First, as soon as one tool is supported people will ask for another tool, this will never end... Second, a library does no get better because it does support many other tools, it does get better because it has lesser bugs, more settings or features.}
  
  \qa{Assume an externalized \src{CDockable}, if it gets maximized, could it be maximized like a \src{JFrame}? It would will the entire screen instead of falling back to the nearest \src{CContentArea}.}{This is a good idea. It is not yet clear how to implement this, but it is among those things that will be done.}
  
@@ -855,11 +861,11 @@ Some word of warning: this is an open source project, as such its developer(s) a
 Since the framework has its own forum many questions have been asked, and most of them were answered as well. From these questions some observations can be made:
 
 \begin{itemize}
- \item Problems arise both in Core and in Common. The problems are however of different nature. In Core most problems concern small things, e.g. how to place the tabs. Most of these problems can be solved with small patches. 
+ \item Problems arise both in \src{Core} and in \src{Common}. The problems are however of different nature. In \src{Core} most problems concern small things, e.g. how to place the tabs. Most of these problems can be solved with small patches. 
  
- The problems related to Common are a lot more serious. Often the answer is ``Common is not able to do that''. And even worse, there is often no small patch. In short: \textit{Common has serious design flaws}. Especially Common lacks the ability to customize components.
+ The problems related to \src{Common} are a lot more serious. Often the answer is ``\src{Common} is not able to do that''. And even worse, there is often no small patch. In short: \textit{\src{Common} has serious design flaws}. Especially \src{Common} lacks the ability to customize components.
  
- Hence most future work must be spent on Common.
+ Hence most future work must be spent on \src{Common}.
  
  \item The features now available seem to be sufficient for most applications. The requests for things that are entirely missing has dropped to almost zero. There is no need for new features, there is need to improve existing features.
 \end{itemize}
@@ -872,6 +878,8 @@ Putting the pieces together the areas that will make the framework better are mo
  \item There should also be more observers, clients should be able to register and react (or cancel) to almost all actions of the framework.
 \end{itemize}
 
+\newpage
+\appendix
 \section{Properties}
 \src{Core} allows clients to set a number of properties, \src{Common} adds a few more. All properties can be set or read by \src{putProperty} and \src{getProperty} of \src{CControl}. An example:
 \begin{lstlisting}
@@ -883,7 +891,7 @@ KeyStroke value = KeyStroke.getKeyStroke( "shift X" );
 control.putProperty( key, value );
 \end{lstlisting}
 
-All properties of \src{Common} are stored as constants in \src{CControl}. The complete list:
+The keys for all properties of \src{Common} are stored as constants in \src{CControl}. The complete list:
 \begin{description}
 \property{CControl.KEY\_MAXIMIZE\_CHANGE}{KeyStroke}{\src{ctrl + m}}{If pressed then the focused dockables changes between maximized and normal state.}
 \property{KEY\_GOTO\_MAXIMIZED}{KeyStroke}{\src{null}}{If pressed then the focused dockable becomes maximized.}
@@ -891,6 +899,7 @@ All properties of \src{Common} are stored as constants in \src{CControl}. The co
 \property{KEY\_GOTO\_MINIMIZED}{KeyStroke}{\src{null}}{If pressed then the focused dockable becomes minimized.}
 \property{KEY\_GOTO\_EXTERNALIZED}{KeyStroke}{\src{ctrl + e}}{If pressed then the focused dockable becomes externalized.}
 \property{KEY\_CLOSE}{KeyStroke}{\src{ctrl + F4}}{If pressed then the focused dockable is made invisible.}
+\newpage
 \property{RESIZE\_LOCK\_CONFLICT\_RESOLVER}{ConflictResolver<RequestDimension>}{an instance of \src{DefaultConflictResolver}}{Tells how to distribute space when two or more dockables have conflicting size requests. See also chapter \ref{sec:size}.}
 \end{description}
 

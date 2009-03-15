@@ -83,7 +83,7 @@ public class DockProperties {
 	
 	/**
 	 * Gets the value accessed by <code>key</code>. If the value in the
-	 * properties is not set, then the {@link PropertyKey#getDefault() default}
+	 * properties is not set, then the {@link PropertyKey#getDefault(DockProperties) default}
 	 * value is returned.
 	 * @param <A> the type of the value
 	 * @param key the key to search

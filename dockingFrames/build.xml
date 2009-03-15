@@ -154,7 +154,8 @@
 	</target>
 	
 	<target name="text" depends="source, paths">
-		<copy tofile="${base}/common.pdf" file="${location.common}/guide/Guide.pdf"/>
+		<copy tofile="${base}/common_(old).pdf" file="${location.common}/guide/Guide.pdf"/>
+		<copy tofile="${base}/common.pdf" file="${location.common}/guide2/guide2.pdf"/>
 		<copy tofile="${base}/core_(old).pdf" file="${location.dockingFrames}/guide/guide.pdf"/>
 		<copy tofile="${base}/core.pdf" file="${location.dockingFrames}/guide2/guide2.pdf"/>
 		<copy tofile="${base}/faq.pdf" file="${location.dockingFrames}/guide/faq.pdf"/>
@@ -162,8 +163,6 @@
 		<copy todir="${base}" file="${location.dockingFrames}/license.txt"/>
 		<copy todir="${base}" file="${location.dockingFrames}/changes.txt"/>
 		<copy tofile="${base}/readme.txt" file="${location.dockingFrames}/readme_full.txt"/>
-		<copy tofile="${base}/readme_v1.0.7p4.txt" file="${location.dockingFrames}/Readme_v1.0.7p4.txt"/>
-		<copy tofile="${base}/readme_v1.0.7p5.txt" file="${location.dockingFrames}/Readme_v1.0.7p5.txt"/>
 	</target>
 
 	<target name="webstart" depends="bin, paths">
