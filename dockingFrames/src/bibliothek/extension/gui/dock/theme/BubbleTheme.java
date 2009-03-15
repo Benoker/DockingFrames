@@ -69,8 +69,10 @@ import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonHandler;
 import bibliothek.gui.dock.themes.basic.action.BasicMenuHandler;
 import bibliothek.gui.dock.themes.basic.action.BasicSelectableHandler;
 import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
+import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 
 /**
  * A theme using a lot of eye-candy.
@@ -84,7 +86,14 @@ import bibliothek.gui.dock.util.PropertyKey;
         public class BubbleTheme extends BasicTheme {
     /** the key to set the {@link ColorScheme} of this theme */
     public static final PropertyKey<ColorScheme> BUBBLE_COLOR_SCHEME = 
-        new PropertyKey<ColorScheme>( "dock.ui.BubbleTheme.ColorScheme", new BubbleColorScheme(), true );
+        new PropertyKey<ColorScheme>( "dock.ui.BubbleTheme.ColorScheme",
+        	new DynamicPropertyFactory<ColorScheme>(){
+        		public ColorScheme getDefault(
+	        			PropertyKey<ColorScheme> key,
+	        			DockProperties properties ){
+	        		return new BubbleColorScheme();
+	        	}
+        	}, true );
 
 
     /** The colors used by this theme */
@@ -198,7 +207,7 @@ import bibliothek.gui.dock.util.PropertyKey;
     @Override
     protected void updateColors() {
         DockController controller = getController();
-        if( controller != null ){
+        if( controller != null && getColorScheme() != null ){
 
             controller.getColors().lockUpdate();
 

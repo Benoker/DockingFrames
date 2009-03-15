@@ -90,14 +90,8 @@ public class DockProperties {
 	 * @return the value or <code>null</code>
 	 */
 	public <A> A get( PropertyKey<A> key ){
-		Entry<A> entry = getEntry( key, false );
-		A result;
-		if( entry == null )
-			result = key.getDefault();
-		else{
-		    result = entry.getValue();
-		}
-		return result;
+		Entry<A> entry = getEntry( key, true );
+		return entry.getValue();
 	}
 	
 	/**
@@ -151,15 +145,15 @@ public class DockProperties {
 	 * Gets the entry for <code>key</code>.
 	 * @param <A> the type of the entry
 	 * @param key the name of the entry
-	 * @param secure <code>true</code> if <code>null</code> is not a valid 
+	 * @param createIfNull <code>true</code> if <code>null</code> is not a valid 
 	 * result. 
-	 * @return the entry of <code>null</code>, but only if <code>secure</code>
+	 * @return the entry or <code>null</code>, but only if <code>createIfNull</code>
 	 * is <code>false</code>
 	 */
 	@SuppressWarnings( "unchecked" )
-	private <A> Entry<A> getEntry( PropertyKey<A> key, boolean secure ){
+	private <A> Entry<A> getEntry( PropertyKey<A> key, boolean createIfNull ){
 		Entry<?> entry = map.get( key );
-		if( entry == null && secure ){
+		if( entry == null && createIfNull ){
 			entry = new Entry<A>( key );
 			map.put( key, entry );
 		}
@@ -191,6 +185,11 @@ public class DockProperties {
 		private A value;
 		/** whether the value of this entry has been set by the user */
 		private boolean hasBeenSet = false;
+		
+		/** default value of this entry */
+		private A defaultValue;
+		/** whether the default value was ever needed and has been set */
+		private boolean defaultValueSet = false;
 
 		/**
 		 * Creates a new entry.
@@ -228,9 +227,21 @@ public class DockProperties {
 			    if( hasBeenSet && !key.isNullValueReplacedByDefault() )
 			        return null;
 			    else
-			        return key.getDefault();
+			        return getDefault();
 			}
 			return value;
+		}
+		
+		/**
+		 * Gets the default value of this property.
+		 * @return the default value, may be <code>null</code>
+		 */
+		public A getDefault(){
+			if( !defaultValueSet ){
+				defaultValue = key.getDefault( DockProperties.this );
+				defaultValueSet = true;
+			}
+			return defaultValue;
 		}
 		
 		/**
@@ -289,7 +300,16 @@ public class DockProperties {
 		 * @return <code>true</code> if this entry can be deleted safely.
 		 */
 		public boolean removeable(){
-			return (!hasBeenSet || key.getDefault() == null) && value == null && listeners.isEmpty();
+			if( !listeners.isEmpty() )
+				return false;
+			
+			if( value != null )
+				return false;
+			
+			if( defaultValueSet || hasBeenSet )
+				return false;
+			
+			return true;
 		}
 	}
 }

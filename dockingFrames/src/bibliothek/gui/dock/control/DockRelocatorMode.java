@@ -35,6 +35,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 
 /**
  * A {@link DockRelocatorMode} is used by a {@link DockRelocator} to change
@@ -47,7 +48,9 @@ public interface DockRelocatorMode {
     /** the modifiers that must be pressed to activate the {@link #SCREEN_ONLY} relocator mode */
     public static final PropertyKey<ModifierMask> SCREEN_MASK = 
         new PropertyKey<ModifierMask>( "DockRelocatorMode screen mask", 
-                new ModifierMask(InputEvent.SHIFT_DOWN_MASK ), false );
+                new ConstantPropertyFactory<ModifierMask>( 
+                		new ModifierMask(InputEvent.SHIFT_DOWN_MASK )), 
+                false );
     
     /**
      * Ensures that a {@link Dockable} can be dragged only onto a {@link ScreenDockStation}.
@@ -73,7 +76,8 @@ public interface DockRelocatorMode {
     /** the modifiers that must be pressed to activate the {@link #NO_COMBINATION} relocator mode */
     public static final PropertyKey<ModifierMask> NO_COMBINATION_MASK = 
         new PropertyKey<ModifierMask>( "DockRelocatorMode no combination", 
-                new ModifierMask(InputEvent.ALT_DOWN_MASK ), false );
+                new ConstantPropertyFactory<ModifierMask>(
+                		new ModifierMask(InputEvent.ALT_DOWN_MASK )), false );
     
     /**
      * Ensures that a {@link Dockable} can be dragged only if no combination results.

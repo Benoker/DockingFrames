@@ -72,7 +72,9 @@ import bibliothek.gui.dock.themes.basic.action.buttons.MiniButton;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 
 /**
  * A {@link DockTheme theme} that uses very few borders.
@@ -90,7 +92,14 @@ import bibliothek.gui.dock.util.PropertyKey;
 
     /** the key to set the {@link ColorScheme} of this theme */
     public static final PropertyKey<ColorScheme> FLAT_COLOR_SCHEME = 
-        new PropertyKey<ColorScheme>( "dock.ui.FlatTheme.ColorScheme", new FlatColorScheme(), true );
+    	new PropertyKey<ColorScheme>( "dock.ui.FlatTheme.ColorScheme", 
+    		new DynamicPropertyFactory<ColorScheme>(){
+    			public ColorScheme getDefault( PropertyKey<ColorScheme> key,
+    				DockProperties properties ){
+    			
+    				return new FlatColorScheme();
+    			}
+    		}, true );
 
     /**
      * Creates a new theme
@@ -202,7 +211,7 @@ import bibliothek.gui.dock.util.PropertyKey;
     protected void updateColors() {
         DockController controller = getController();
 
-        if( controller != null ){
+        if( controller != null && getColorScheme() != null ){
             controller.getColors().lockUpdate();
 
             super.updateColors();

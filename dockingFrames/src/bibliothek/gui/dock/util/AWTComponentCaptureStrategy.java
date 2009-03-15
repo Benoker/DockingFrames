@@ -31,6 +31,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.SwingUtilities;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 
 /**
  * Used to capture an image of a {@link Component} which either is from AWT,
@@ -134,7 +135,8 @@ public interface AWTComponentCaptureStrategy {
      * The {@link PropertyKey} for a {@link AWTComponentCaptureStrategy}.
      */
     public static final PropertyKey<AWTComponentCaptureStrategy> STRATEGY = 
-        new PropertyKey<AWTComponentCaptureStrategy>( "dock.AWTComponentCaptureStrategy", PAINT_ALL_STRATEGY, true );
+        new PropertyKey<AWTComponentCaptureStrategy>( "dock.AWTComponentCaptureStrategy",
+        		new ConstantPropertyFactory<AWTComponentCaptureStrategy>( PAINT_ALL_STRATEGY ), true );
     
     
     /**

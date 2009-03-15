@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.FlapDockStation;
@@ -94,25 +95,35 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
     public void setLayout( FlapDockStation station,
             FlapDockStationLayout layout, Map<Integer, Dockable> children ) {
      
-        for( int i = station.getDockableCount()-1; i >= 0; i-- )
-            station.remove( i );
-        
-        station.setDirection( layout.getDirection() );
-        station.setAutoDirection( layout.isAutoDirection() );
-        
-        int[] ids = layout.getChildren();
-        boolean[] holding = layout.getHolds();
-        int[] sizes = layout.getSizes();
-        
-        for( int i = 0, n = ids.length; i<n; i++ ){
-        	Dockable dockable = children.get( ids[i] );
-            
-        	if( dockable != null ){
-        		station.add( dockable );
-        		station.setHold( dockable, holding[i] );
-        		station.setWindowSize( dockable, sizes[i] );
-        	}
-        }
+    	DockController controller = station.getController();
+    	try{
+    		if( controller != null )
+    			controller.freezeLayout();
+    		
+	        for( int i = station.getDockableCount()-1; i >= 0; i-- )
+	            station.remove( i );
+	        
+	        station.setDirection( layout.getDirection() );
+	        station.setAutoDirection( layout.isAutoDirection() );
+	        
+	        int[] ids = layout.getChildren();
+	        boolean[] holding = layout.getHolds();
+	        int[] sizes = layout.getSizes();
+	        
+	        for( int i = 0, n = ids.length; i<n; i++ ){
+	        	Dockable dockable = children.get( ids[i] );
+	            
+	        	if( dockable != null ){
+	        		station.add( dockable );
+	        		station.setHold( dockable, holding[i] );
+	        		station.setWindowSize( dockable, sizes[i] );
+	        	}
+	        }
+    	}
+    	finally{
+    		if( controller != null )
+    			controller.meltLayout();
+    	}
     }
     
     public void estimateLocations( FlapDockStationLayout layout, Map<Integer, DockLayoutInfo> children ){

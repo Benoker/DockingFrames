@@ -54,6 +54,7 @@ import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.laf.*;
+import bibliothek.gui.dock.util.local.LocaleListener;
 import bibliothek.util.container.Tuple;
 
 /**
@@ -84,6 +85,9 @@ public class DockUI {
     
     /** a list of color listeners that is called from {@link #colorsListeners} */
     private List<LookAndFeelColorsListener> colorsListeners = new ArrayList<LookAndFeelColorsListener>();
+    
+    /** a list of listeners waiting for the language to change */
+    private List<LocaleListener> localeListeners = new ArrayList<LocaleListener>();
     
     /** a listener added to {@link #lookAndFeelColor} */
     private LookAndFeelColorsListener colorsListener = new LookAndFeelColorsListener(){
@@ -364,13 +368,36 @@ public class DockUI {
     public Locale getLocale(){
 		return locale;
 	}
+    
+    /**
+     * Adds a new {@link LocaleListener}.
+     * @param listener the new listener, not <code>null</code>
+     */
+    public void addLocaleListener( LocaleListener listener ){
+    	localeListeners.add( listener );
+    }
 
+    /**
+     * Removes <code>listener</code> from this {@link DockUI}.
+     * @param listener the listener to remove
+     */
+    public void removeLocaleListener( LocaleListener listener ){
+    	localeListeners.remove( listener );
+    }
+    
+    private LocaleListener[] localeListeners(){
+    	return localeListeners.toArray( new LocaleListener[ localeListeners.size() ] );
+    }
+    
     /**
      * Sets the resource bundle which should be used.
      * @param bundle the bundle
      */
     public void setBundle( ResourceBundle bundle ){
 		this.bundle = bundle;
+		
+		for( LocaleListener listener : localeListeners() )
+			listener.bundleChanged( this );
 	}
     
     /**
@@ -382,6 +409,9 @@ public class DockUI {
     public void setBundle( Locale locale ){
     	this.locale = locale;
         setBundle( ResourceBundle.getBundle( "data.locale.text", locale, this.getClass().getClassLoader() ));
+        
+        for( LocaleListener listener : localeListeners() )
+        	listener.localeChanged( this );
     }
     
     /**

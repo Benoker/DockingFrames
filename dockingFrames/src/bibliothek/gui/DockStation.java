@@ -390,7 +390,10 @@ public interface DockStation extends DockElement{
     
     /**
      * Removes a child from this station. This method may be called even
-     * if {@link #canDrag(Dockable)} returned <code>false</code>. 
+     * if {@link #canDrag(Dockable)} returned <code>false</code>.<br>
+     * Note: clients may need to invoke {@link DockController#freezeLayout()}
+     * and {@link DockController#meltLayout()} to ensure noone else adds or
+     * removes <code>Dockable</code>s. 
      * @param dockable the child to remove
      */
     public void drag( Dockable dockable );

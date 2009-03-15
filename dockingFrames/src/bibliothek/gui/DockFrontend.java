@@ -317,6 +317,14 @@ public class DockFrontend {
     }
     
     /**
+     * Destroys this {@link DockFrontend}, it will no longer be useful but
+     * can be removed by the garbage collector.
+     */
+    public void kill(){
+    	controller.kill();
+    }
+    
+    /**
      * Gets the list of {@link Dockable Dockables} which are added to this frontend.
      * @return the Dockables
      * @deprecated please use {@link #listDockables()}

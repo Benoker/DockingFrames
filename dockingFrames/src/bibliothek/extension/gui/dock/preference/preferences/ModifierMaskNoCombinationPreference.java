@@ -49,6 +49,6 @@ public class ModifierMaskNoCombinationPreference extends DockPropertyPreference<
 		setLabel( DockUI.getDefaultDockUI().getString( "preference.shortcuts.no_combination_mask.label" ));
 		setDescription( DockUI.getDefaultDockUI().getString( "preference.shortcuts.no_combination_mask.description" ));
 		
-		setDefaultValue( DockRelocatorMode.NO_COMBINATION_MASK.getDefault() );
+		setDefaultValue( DockRelocatorMode.NO_COMBINATION_MASK.getDefault( null ) );
 	}
 }

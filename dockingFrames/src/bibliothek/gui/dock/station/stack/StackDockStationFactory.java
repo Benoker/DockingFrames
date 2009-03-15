@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.StackDockStation;
@@ -92,20 +93,30 @@ public class StackDockStationFactory implements DockFactory<StackDockStation, St
     public void setLayout( StackDockStation station,
             StackDockStationLayout layout, Map<Integer, Dockable> children ) {
         
-        for( int i = station.getDockableCount()-1; i >= 0; i-- )
-            station.remove( i );
-        
-        for( int id : layout.getChildren() ){
-        	Dockable dockable = children.get( id );
-        	if( dockable != null ){
-        		station.drop( dockable );
-        	}
-        }
-        
-        Dockable selected = children.get( layout.getSelected() );
-        if( selected != null ){
-    		station.setFrontDockable( selected );
-        }
+    	DockController controller = station.getController();
+    	try{
+    		if( controller != null )
+    			controller.freezeLayout();
+    		
+	        for( int i = station.getDockableCount()-1; i >= 0; i-- )
+	            station.remove( i );
+	        
+	        for( int id : layout.getChildren() ){
+	        	Dockable dockable = children.get( id );
+	        	if( dockable != null ){
+	        		station.drop( dockable );
+	        	}
+	        }
+	        
+	        Dockable selected = children.get( layout.getSelected() );
+	        if( selected != null ){
+	    		station.setFrontDockable( selected );
+	        }
+    	}
+    	finally{
+    		if( controller != null )
+    			controller.meltLayout();
+    	}
     }
     
     public void setLayout( StackDockStation element, StackDockStationLayout layout ) {

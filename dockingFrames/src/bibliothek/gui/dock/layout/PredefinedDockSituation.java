@@ -26,9 +26,19 @@
 
 package bibliothek.gui.dock.layout;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
@@ -183,14 +193,13 @@ public class PredefinedDockSituation extends DockSituation {
                     }
                     if( composition.isIgnoreChildren() ){
                         DockUtilities.visit( element, new DockUtilities.DockVisitor(){
-                            @SuppressWarnings("unchecked")
                             @Override
                             public void handleDockable( Dockable dockable ) {
                                 if( base.contains( dockable )){
                                     result.add( (D)dockable );
                                 }
                             }
-                            @SuppressWarnings("unchecked")
+                            
                             @Override
                             public void handleDockStation( DockStation station ) {
                                 if( base.contains( station )){
@@ -529,7 +538,17 @@ public class PredefinedDockSituation extends DockSituation {
                 String factoryId = delegate.getDataLayout().getFactoryID();
                 DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
                 if( factory != null ){
-                    factory.setLayout( element, delegate.getDataLayout().getData(), children );
+                	DockController controller = element.getController();
+                	try{
+                		if( controller != null )
+                			controller.freezeLayout();
+                		
+                		factory.setLayout( element, delegate.getDataLayout().getData(), children );
+                	}
+                	finally{
+                		if( controller != null )
+                			controller.meltLayout();
+                	}
                 }
             }
         }
@@ -538,10 +557,20 @@ public class PredefinedDockSituation extends DockSituation {
         public void setLayout( DockElement element, PreloadedLayout layout ) {
             DockLayoutInfo delegate = layout.getDelegate();
             if( delegate.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT && shouldLayout( element )){
-                String factoryId = delegate.getDataLayout().getFactoryID();
+            	String factoryId = delegate.getDataLayout().getFactoryID();
                 DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
                 if( factory != null ){
-                    factory.setLayout( element, delegate.getDataLayout().getData() );
+                	DockController controller = element.getController();
+                	try{
+                		if( controller != null )
+                			controller.freezeLayout();
+                		
+                		factory.setLayout( element, delegate.getDataLayout().getData() );
+                	}
+                	finally{
+                		if( controller != null )
+                			controller.meltLayout();
+                	}
                 }
             }
         }

@@ -397,6 +397,15 @@ public class DockRegister {
 	}
     
     /**
+     * Whether the register is currently stalled and does not forward
+     * changes to the tree.
+     * @return <code>true</code> if stalled
+     */
+    public boolean isStalled(){
+    	return stalled > 0;
+    }
+    
+    /**
      * A listener to the controller of the enclosing register. Ensures that 
      * stations and dockables are known even while the tree of elements is changed.
      * @author Benjamin Sigg

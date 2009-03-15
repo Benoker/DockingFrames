@@ -160,7 +160,9 @@ public abstract class PropertyValue<A> {
 	/**
 	 * Gets the current value. The result is the argument of {@link #setValue(Object)} if
 	 * the argument was not <code>null</code>, or else the value read from
-	 * the {@link #setProperties(DockProperties) properties}. 
+	 * the {@link #setProperties(DockProperties) properties}.<br>
+	 * Note that this method can return <code>null</code> even if the
+	 * {@link PropertyKey} has a non-<code>null</code> default value.
 	 * @return the value or <code>null</code> if no value was found at all
 	 */
 	public A getValue(){
@@ -170,7 +172,7 @@ public abstract class PropertyValue<A> {
 		if( properties != null )
 			return properties.get( key );
 		
-		return key.getDefault();
+		return key.getDefault( null );
 	}
 	
 	/**

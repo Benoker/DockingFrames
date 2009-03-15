@@ -28,10 +28,15 @@ package bibliothek.gui.dock.event;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.control.DockRelocator;
 
 /**
- * A listener receiving events from a {@link bibliothek.gui.dock.control.DockRegister}.
+ * A listener receiving events from a {@link bibliothek.gui.dock.control.DockRegister}.<br>
+ * {@link DockRegister} can be {@link DockRegister#setStalled(boolean) stalled}
+ * and some events may have a great delay when arriving. Subclasses should
+ * be aware that the current state of the dock-tree, and the state one would
+ * get when only monitoring with {@link DockRegisterListener}, may be different.
  * @author Benjamin Sigg
  *
  */

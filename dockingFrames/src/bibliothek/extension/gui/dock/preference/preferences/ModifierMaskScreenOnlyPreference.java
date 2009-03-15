@@ -50,6 +50,6 @@ public class ModifierMaskScreenOnlyPreference extends DockPropertyPreference<Mod
 		setLabel( DockUI.getDefaultDockUI().getString( "preference.shortcuts.screen_only.label" ));
 		setDescription( DockUI.getDefaultDockUI().getString( "preference.shortcuts.screen_only.description" ));
 		
-		setDefaultValue( DockRelocatorMode.SCREEN_MASK.getDefault() );
+		setDefaultValue( DockRelocatorMode.SCREEN_MASK.getDefault( null ) );
 	}
 }

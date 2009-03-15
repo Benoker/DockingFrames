@@ -50,6 +50,7 @@ import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.*;
+import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 
 /**
  * A {@link DockStation} which is the whole screen. Every child of this
@@ -65,11 +66,13 @@ public class ScreenDockStation extends AbstractDockStation {
     
     /** a key for a property telling which boundaries a {@link ScreenDockWindow} can have */
     public static final PropertyKey<BoundaryRestriction> BOUNDARY_RESTRICTION = 
-        new PropertyKey<BoundaryRestriction>( "ScreenDockStation.boundary_restriction", BoundaryRestriction.FREE, true );
+        new PropertyKey<BoundaryRestriction>( "ScreenDockStation.boundary_restriction",
+        		new ConstantPropertyFactory<BoundaryRestriction>( BoundaryRestriction.FREE ), true );
     
     /** a key for a property telling how to create new windows */
     public static final PropertyKey<ScreenDockWindowFactory> WINDOW_FACTORY =
-        new PropertyKey<ScreenDockWindowFactory>( "ScreenDockStation.window_factory", new DefaultScreenDockWindowFactory(), true );
+        new PropertyKey<ScreenDockWindowFactory>( "ScreenDockStation.window_factory", 
+        		new ConstantPropertyFactory<ScreenDockWindowFactory>( new DefaultScreenDockWindowFactory() ), true );
     
     /** The visibility state of the windows */
     private boolean showing = false;
@@ -685,7 +688,10 @@ public class ScreenDockStation extends AbstractDockStation {
     }
     
     /**
-     * Removes the <code>dockable</code> from this station.
+     * Removes the <code>dockable</code> from this station.<br>
+     * Note: clients may need to invoke {@link DockController#freezeLayout()}
+     * and {@link DockController#meltLayout()} to ensure noone else adds or
+     * removes <code>Dockable</code>s.
      * @param dockable the {@link Dockable} to remove
      */
     public void removeDockable( Dockable dockable ){
@@ -697,7 +703,10 @@ public class ScreenDockStation extends AbstractDockStation {
     }
     
     /**
-     * Removes the <code>index</code>'th {@link Dockable} of this station.
+     * Removes the <code>index</code>'th {@link Dockable} of this station.<br>
+     * Note: clients may need to invoke {@link DockController#freezeLayout()}
+     * and {@link DockController#meltLayout()} to ensure noone else adds or
+     * removes <code>Dockable</code>s.
      * @param index the index of the {@link Dockable} to remove
      */
     public void removeDockable( int index ){

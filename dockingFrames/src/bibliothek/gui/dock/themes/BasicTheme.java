@@ -73,6 +73,7 @@ import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.DockColor;
 import bibliothek.gui.dock.util.laf.LookAndFeelColors;
 import bibliothek.gui.dock.util.laf.LookAndFeelColorsListener;
+import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 
 /**
  * A {@link DockTheme theme} that does not install anything and uses the
@@ -106,14 +107,21 @@ public class BasicTheme implements DockTheme{
 
     /** the key to set the {@link ColorScheme} of this theme */
     public static final PropertyKey<ColorScheme> BASIC_COLOR_SCHEME = 
-        new PropertyKey<ColorScheme>( "dock.ui.BasicTheme.ColorScheme", new BasicColorScheme(), true );
+        new PropertyKey<ColorScheme>( "dock.ui.BasicTheme.ColorScheme",
+        		new DynamicPropertyFactory<ColorScheme>(){
+        			public ColorScheme getDefault( PropertyKey<ColorScheme> key, DockProperties properties ){
+        				return new BasicColorScheme();
+        			}
+        		}, true );
 
     /** the color scheme used in this theme */
     private PropertyValue<ColorScheme> colorScheme = new PropertyValue<ColorScheme>( BASIC_COLOR_SCHEME ){
         @Override
         protected void valueChanged( ColorScheme oldValue, ColorScheme newValue ) {
             ColorScheme scheme = getValue();
-            scheme.updateUI();
+            if( scheme != null ){
+            	scheme.updateUI();
+            }
             updateColors();
         }
     };
@@ -202,7 +210,9 @@ public class BasicTheme implements DockTheme{
      * Called when the {@link LookAndFeel} changed, should update colors, fonts, ...
      */
     public void updateUI(){
-        if( colorScheme.getValue().updateUI() ){
+    	ColorScheme scheme = colorScheme.getValue();
+    	
+        if( scheme != null && scheme.updateUI() ){
             updateColors();
         }
         if( selection != null ){
@@ -221,11 +231,13 @@ public class BasicTheme implements DockTheme{
      * and providers exists and are registered at the {@link ColorManager}s.
      */
     protected void updateColors(){
-        if( controller != null ){
+    	ColorScheme scheme = colorScheme.getValue();
+    	
+        if( controller != null && scheme != null ){
             controller.getColors().lockUpdate();
             controller.getColors().clear( Priority.THEME );
 
-            colorScheme.getValue().transmitAll( Priority.THEME, controller.getColors() );
+            scheme.transmitAll( Priority.THEME, controller.getColors() );
 
             updateColor( "title.active.left", null );
             updateColor( "title.inactive.left", null );
@@ -278,7 +290,7 @@ public class BasicTheme implements DockTheme{
      * know what to use
      */
     protected void updateColor( String id, Color backup ){
-        Color color = colorScheme.getValue().getColor( id );
+    	Color color = colorScheme.getValue().getColor( id );
         if( color == null )
             color = backup;
 

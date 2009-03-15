@@ -56,14 +56,28 @@ import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.font.FontManager;
 
 /**
- * A controller is needed to drag and drop {@link Dockable dockables} from
- * one {@link DockStation} to another station.<br>
- * In order to use a station, it must be {@link #add(DockStation) added}
- * to a controller. Stations which are children of other stations will be 
- * added automatically. Dockables can only be dragged and dropped from
- * stations with the same controller.<br>
- * Note: if a controller is no longer in use, the method {@link #kill()} should
- * be called to free some resources.
+ * A controller connects all the {@link DockStation}s, {@link Dockable}s and
+ * other objects that play together in this framework. This class also serves
+ * as low-level access point for clients. When using this framework in general, 
+ * or {@link DockController} in particular, several rules have
+ * to be obeied:
+ * <ul>
+ * 	<li>{@link DockStation}s and {@link Dockable}s build trees. The roots
+ *  of these trees need to be registered using {@link #add(DockStation)}.</li>
+ *  <li>Each <code>DockController</code> builds its own realm, normally only
+ *  objects within such a realm can interact with each other. Drag and drop
+ *  operations cannot move a {@link Dockable} from one realm to another.</li>
+ *  <li>Most of the interesting actions are only available for {@link Dockable}s
+ *  that are within a realm (like drag and drop).</li>
+ *  <li>Normally clients do not work with the trees of stations and <code>Dockable</code>s.
+ *  If they need to work directly in the tree they should call {@link #freezeLayout()}
+ *  and later {@link #meltLayout()} to temporarely disable automatic actions (like
+ *  the fact that a <code>DockStation</code> with only one child gets removed).</li>
+ *  <li>If a <code>DockController</code> is no longer needed then the method
+ *  {@link #kill()} should be called. This method will ensure that the
+ *  reclaimed can be collected by the garbage collector. </li>
+ * </ul>
+ * 
  * @author Benjamin Sigg
  */
 public class DockController {
@@ -290,6 +304,8 @@ public class DockController {
 	    keyboardController.kill();
 	    theme.uninstall( this );
 	    UIManager.removePropertyChangeListener( lookAndFeelObserver );
+	    
+	    setRootWindowProvider( null );
     }
     
     /**
@@ -381,6 +397,54 @@ public class DockController {
             this.remover.install( this );
             this.remover.testAll( this );
         }
+    }
+    
+    /**
+     * Freezes the layout. Normally if a client makes a change in the layout
+     * (e.g. remove a {@link Dockable} from its parent) additional actions
+     * can be triggered (e.g. remove the parent because it has no children
+     * left). If the layout is frozen then these implicit actions are not
+     * triggered. This method can be called more than once and the layout
+     * will remain frozen until {@link #meltLayout()} is called as often
+     * as {@link #freezeLayout()}.<br>
+     * A side note: internally this method disables the {@link DockRegisterListener}s.
+     * Events during the time where the listeners are disabled are collected,
+     * conflicting events will cancel each other out, remaining events will be 
+     * distributed once {@link #meltLayout()} is called. The effect of this method is
+     * equal to the effect when calling {@link DockRegister#setStalled(boolean)}.
+     * @return <code>true</code> if the layout was already frozen,
+     * <code>false</code> if it was frozen
+     * @see #meltLayout()
+     */
+    public boolean freezeLayout(){
+    	DockRegister register = getRegister();
+    	boolean frozen = register.isStalled();
+    	getRegister().setStalled( true );
+    	return frozen;
+    }
+    
+    /**
+     * Tells whether the layout is frozen, see {@link #freezeLayout()}.
+     * @return <code>true</code> if the layout is frozen
+     */
+    public boolean isLayoutFrozen(){
+    	return getRegister().isStalled();
+    }
+    
+    /**
+     * Melts a frozen layout (see {@link #freezeLayout()}).
+     * @return <code>true</code> if the layout remains frozen, <code>false</code>
+     * if the layout has melted.
+     * @throws IllegalStateException if the layout is not {@link #isLayoutFrozen() frozen}
+     * @see #meltLayout()
+     */
+    public boolean meltLayout(){
+    	if( !isLayoutFrozen() )
+    		throw new IllegalStateException( "the layout is not frozen" );
+    	
+    	DockRegister register = getRegister();
+    	register.setStalled( false );
+    	return register.isStalled();
     }
     
     /**

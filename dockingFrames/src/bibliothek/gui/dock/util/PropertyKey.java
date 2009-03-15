@@ -30,6 +30,7 @@ import javax.swing.Icon;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.util.property.PropertyFactory;
 
 /**
  * The key for an entry in a map of properties.
@@ -69,7 +70,7 @@ public class PropertyKey<A> {
 	private String id;
 	
 	/** default value */
-	private A value;
+	private PropertyFactory<A> value;
 
 	/** if set, then the <code>null</code> value gets replaced by the default specified in this key */
 	private boolean nullValueReplacedByDefault = false;
@@ -92,7 +93,7 @@ public class PropertyKey<A> {
      * @deprecated replaced by {@link #PropertyKey(String, Object, boolean)}
      */
 	@Deprecated
-	public PropertyKey( String id, A value ){
+	public PropertyKey( String id, PropertyFactory<A> value ){
 	    this( id, value, false );
 	}
 
@@ -105,7 +106,7 @@ public class PropertyKey<A> {
 	 * @param nullValueReplacedByDefault if set, then the <code>null</code> value
 	 * in {@link DockProperties} gets replaced by the default value of this key.
 	 */
-	public PropertyKey( String id, A value, boolean nullValueReplacedByDefault ){
+	public PropertyKey( String id, PropertyFactory<A> value, boolean nullValueReplacedByDefault ){
 		if( id == null )
 			throw new IllegalArgumentException( "id must not be null" );
 		
@@ -116,11 +117,19 @@ public class PropertyKey<A> {
 	
 	/**
 	 * Gets a default-value that should be used when no value is set
-	 * in the {@link DockProperties}.
+	 * in the {@link DockProperties}.<br>
+	 * Note: this method should not be called by clients.
+	 * @param properties the properties for which the default value will be used
 	 * @return the default-value
 	 */
-	public final A getDefault(){
-	    return value;
+	public final A getDefault( DockProperties properties ){
+	    if( value == null )
+	    	return null;
+	    
+	    if( properties == null )
+	    	return value.getDefault( this  );
+	    else
+	    	return value.getDefault( this, properties );
 	}
 	
 	/**

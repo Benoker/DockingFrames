@@ -84,6 +84,8 @@ import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
+import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 
 /**
  * A theme imitating the look and feel of the Eclipse-IDE.
@@ -98,7 +100,8 @@ import bibliothek.gui.dock.util.PropertyKey;
         public class EclipseTheme extends BasicTheme {
     /** Tells whether icons on tabs that are not selected should be painted or not. */
     public static final PropertyKey<Boolean> PAINT_ICONS_WHEN_DESELECTED = 
-        new PropertyKey<Boolean>( "EclipseTheme paint icons when deselected", false, true );
+        new PropertyKey<Boolean>( "EclipseTheme paint icons when deselected",
+        		new ConstantPropertyFactory<Boolean>( false ), true );
 
     /**
      *  Tells in which way the tabs should be painted.
@@ -106,7 +109,8 @@ import bibliothek.gui.dock.util.PropertyKey;
      *  @see RectGradientPainter 
      */
     public static final PropertyKey<TabPainter> TAB_PAINTER =
-        new PropertyKey<TabPainter>( "EclipseTheme tab painter", ShapedGradientPainter.FACTORY, true );
+        new PropertyKey<TabPainter>( "EclipseTheme tab painter", 
+        		new ConstantPropertyFactory<TabPainter>( ShapedGradientPainter.FACTORY ), true );
 
     /**
      * Provides additional dockable-wise information used to layout components
@@ -117,11 +121,18 @@ import bibliothek.gui.dock.util.PropertyKey;
     public static final PropertyKey<EclipseThemeConnector> THEME_CONNECTOR =
         new PropertyKey<EclipseThemeConnector>( 
                 "EclipseTheme theme connector",
-                new DefaultEclipseThemeConnector(), true );
+                new ConstantPropertyFactory<EclipseThemeConnector>( new DefaultEclipseThemeConnector() ), true );
 
     /** Access to the {@link ColorScheme} used for this theme */
     public static final PropertyKey<ColorScheme> ECLIPSE_COLOR_SCHEME =
-        new PropertyKey<ColorScheme>( "dock.ui.EclipseTheme.ColorScheme", new EclipseColorScheme(), true );
+        new PropertyKey<ColorScheme>( "dock.ui.EclipseTheme.ColorScheme",
+    		new DynamicPropertyFactory<ColorScheme>(){ 
+				public ColorScheme getDefault(
+						PropertyKey<ColorScheme> key,
+						DockProperties properties ){
+					return new EclipseColorScheme();
+				}
+			}, true );
 
     /**
      * The id of the {@link DockTitleVersion} that is intended to create
@@ -251,7 +262,7 @@ import bibliothek.gui.dock.util.PropertyKey;
     @Override
     protected void updateColors() {
         DockController controller = getController();
-        if( controller != null ){
+        if( controller != null && getColorScheme() != null ){
             controller.getColors().lockUpdate();
 
             super.updateColors();
@@ -315,7 +326,7 @@ import bibliothek.gui.dock.util.PropertyKey;
             connector = controller.getProperties().get( THEME_CONNECTOR );
 
         if( connector == null )
-            connector = THEME_CONNECTOR.getDefault();
+            connector = THEME_CONNECTOR.getDefault( null );
 
         return connector;
     }

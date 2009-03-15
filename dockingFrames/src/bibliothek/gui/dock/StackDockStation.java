@@ -700,9 +700,19 @@ public class StackDockStation extends AbstractDockableStation {
     }
     
     public void replace( Dockable old, Dockable next ) {
-        int index = indexOf( old );
-        remove( index );
-        add( next, index );
+    	DockController controller = getController();
+    	try{
+    		if( controller != null )
+    			controller.freezeLayout();
+    			
+    		int index = indexOf( old );
+    		remove( index );
+    		add( next, index );
+    	}
+    	finally{
+    		if( controller != null )
+    			controller.meltLayout();
+    	}
     }
     
     /**
@@ -767,7 +777,10 @@ public class StackDockStation extends AbstractDockableStation {
     }
     
     /**
-     * Removes the child of location <code>index</code>.
+     * Removes the child of location <code>index</code>.<br>
+     * Note: clients may need to invoke {@link DockController#freezeLayout()}
+     * and {@link DockController#meltLayout()} to ensure noone else adds or
+     * removes <code>Dockable</code>s.
      * @param index the location of the child which will be removed
      */
     public void remove( int index ){

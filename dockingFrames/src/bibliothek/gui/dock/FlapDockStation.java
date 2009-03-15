@@ -26,8 +26,20 @@
 
 package bibliothek.gui.dock;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.HierarchyBoundsListener;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,14 +49,24 @@ import java.util.Map;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
 
-import bibliothek.gui.*;
+import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.DockTheme;
+import bibliothek.gui.DockUI;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.control.MouseFocusObserver;
-import bibliothek.gui.dock.event.*;
+import bibliothek.gui.dock.event.DockStationAdapter;
+import bibliothek.gui.dock.event.DockTitleEvent;
+import bibliothek.gui.dock.event.DockableAdapter;
+import bibliothek.gui.dock.event.DockableFocusEvent;
+import bibliothek.gui.dock.event.DockableFocusListener;
+import bibliothek.gui.dock.event.FlapDockListener;
+import bibliothek.gui.dock.event.FocusVetoListener;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.AbstractDockableStation;
 import bibliothek.gui.dock.station.Combiner;
@@ -52,7 +74,14 @@ import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationPaint;
-import bibliothek.gui.dock.station.flap.*;
+import bibliothek.gui.dock.station.flap.ButtonPane;
+import bibliothek.gui.dock.station.flap.DefaultFlapLayoutManager;
+import bibliothek.gui.dock.station.flap.FlapDockHoldToggle;
+import bibliothek.gui.dock.station.flap.FlapDockProperty;
+import bibliothek.gui.dock.station.flap.FlapDockStationFactory;
+import bibliothek.gui.dock.station.flap.FlapDropInfo;
+import bibliothek.gui.dock.station.flap.FlapLayoutManager;
+import bibliothek.gui.dock.station.flap.FlapWindow;
 import bibliothek.gui.dock.station.support.CombinerWrapper;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
@@ -61,9 +90,12 @@ import bibliothek.gui.dock.themes.basic.BasicButtonTitleFactory;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
+import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 
 /**
  * This {@link DockStation} shows only a title for each of it's children.<br>
@@ -96,7 +128,14 @@ public class FlapDockStation extends AbstractDockableStation {
      * Key for the {@link FlapLayoutManager} that is used by all {@link FlapDockStation}s.
      */
     public static final PropertyKey<FlapLayoutManager> LAYOUT_MANAGER = new PropertyKey<FlapLayoutManager>(
-            "flap dock station layout manager", new DefaultFlapLayoutManager(), true );
+            "flap dock station layout manager", 
+            	new DynamicPropertyFactory<FlapLayoutManager>(){
+            		public FlapLayoutManager getDefault(
+            				PropertyKey<FlapLayoutManager> key,
+            				DockProperties properties ){
+            			return new DefaultFlapLayoutManager();
+            		}
+            	}, true );
     
     /**
      * What kind of information should be displayed on the buttons. 
@@ -189,7 +228,7 @@ public class FlapDockStation extends AbstractDockableStation {
      * should be visible. Note that some themes might ignore that setting.
      */
     public static final PropertyKey<ButtonContent> BUTTON_CONTENT = new PropertyKey<ButtonContent>(
-            "flap dock station button content", ButtonContent.THEME_DEPENDENT, true );
+            "flap dock station button content", new ConstantPropertyFactory<ButtonContent>( ButtonContent.THEME_DEPENDENT ), true );
     
     /**
      * The layoutManager which is responsible to layout this station
@@ -421,10 +460,16 @@ public class FlapDockStation extends AbstractDockableStation {
             FlapLayoutManager newLayoutManager = layoutManager.getValue();
             
             if( oldLayoutManager == newLayoutManager ){
-                if( controller == null )
-                    oldLayoutManager.uninstall( this );
-                else
-                    newLayoutManager.install( this );
+                if( controller == null ){
+                	if( oldLayoutManager != null ){
+                		oldLayoutManager.uninstall( this );
+                	}
+                }
+                else{
+                	if( newLayoutManager != null ){
+                		newLayoutManager.install( this );
+                	}
+                }
             }
             
             buttonContent.setProperties( controller );
@@ -713,7 +758,11 @@ public class FlapDockStation extends AbstractDockableStation {
      * @see #setHold(Dockable, boolean)
      */
     public boolean isHold( Dockable dockable ) {
-        return layoutManager.getValue().isHold( this, dockable );
+    	FlapLayoutManager manager = layoutManager.getValue();
+    	if( manager == null )
+    		return false;
+    	
+        return manager.isHold( this, dockable );
     }
     
     /**
@@ -727,11 +776,14 @@ public class FlapDockStation extends AbstractDockableStation {
      * <code>false</code> if it should close
      */
     public void setHold( Dockable dockable, boolean hold ) {
-        boolean old = layoutManager.getValue().isHold( this, dockable );
-        layoutManager.getValue().setHold( this, dockable, hold );
-        hold = layoutManager.getValue().isHold( this, dockable );
-        if( old != hold )
-            updateHold( dockable );
+    	FlapLayoutManager manager = layoutManager.getValue();
+    	if( manager != null ){
+    		boolean old = manager.isHold( this, dockable );
+    		manager.setHold( this, dockable, hold );
+    		hold = manager.isHold( this, dockable );
+    		if( old != hold )
+    			updateHold( dockable );
+    	}
     }
     
     /**
@@ -739,13 +791,17 @@ public class FlapDockStation extends AbstractDockableStation {
      * The new valie is provided by the {@link FlapLayoutManager layout manager}.
      */
     public void updateHold( Dockable dockable ){
-        boolean hold = layoutManager.getValue().isHold( this, dockable );
-        fireHoldChanged( dockable, hold );
-        
-        if( !hold && getController() != null && getFrontDockable() == dockable ){
-            if( !getController().isFocused( dockable ))
-                setFrontDockable( null );
-        }
+    	FlapLayoutManager manager = layoutManager.getValue();
+    	if( manager != null ){
+
+    		boolean hold = manager.isHold( this, dockable );
+    		fireHoldChanged( dockable, hold );
+
+    		if( !hold && getController() != null && getFrontDockable() == dockable ){
+    			if( !getController().isFocused( dockable ))
+    				setFrontDockable( null );
+    		}
+    	}
     }
     
     /**
@@ -835,7 +891,11 @@ public class FlapDockStation extends AbstractDockableStation {
      * @return the current size
      */
     public int getWindowSize( Dockable dockable ){
-        return layoutManager.getValue().getSize( this, dockable );
+    	FlapLayoutManager manager = layoutManager.getValue();
+    	if( manager == null )
+    		return 0;
+    	
+        return manager.getSize( this, dockable );
     }
     
     /**
@@ -850,8 +910,11 @@ public class FlapDockStation extends AbstractDockableStation {
         if( size < 0 )
             throw new IllegalArgumentException( "Size must at least be 0" );
         
-        layoutManager.getValue().setSize( this, dockable, size );
-        updateWindowSize( dockable );
+        FlapLayoutManager manager = layoutManager.getValue();
+        if( manager != null ){
+        	manager.setSize( this, dockable, size );
+        	updateWindowSize( dockable );
+        }
     }
     
     /**
@@ -1263,7 +1326,10 @@ public class FlapDockStation extends AbstractDockableStation {
     }
     
     /**
-     * Removes <code>dockable</code> from this station
+     * Removes <code>dockable</code> from this station.<br>
+     * Note: clients may need to invoke {@link DockController#freezeLayout()}
+     * and {@link DockController#meltLayout()} to ensure noone else adds or
+     * removes <code>Dockable</code>s.
      * @param dockable the child to remove
      */
     public void remove( Dockable dockable ){
@@ -1273,7 +1339,10 @@ public class FlapDockStation extends AbstractDockableStation {
     }
     
     /**
-     * Removes the child with the given <code>index</code> from this station.
+     * Removes the child with the given <code>index</code> from this station.<br>
+     * Note: clients may need to invoke {@link DockController#freezeLayout()}
+     * and {@link DockController#meltLayout()} to ensure noone else adds or
+     * removes <code>Dockable</code>s.
      * @param index the index of the child that will be removed
      */
     public void remove( int index ){
@@ -1339,28 +1408,38 @@ public class FlapDockStation extends AbstractDockableStation {
      * on this station)
      */
     public boolean combine( Dockable child, Dockable append ){
-        int index = indexOf( child );
-        if( index < 0 )
-            throw new IllegalArgumentException( "Child must be a child of this station" );
-        
-        if( append.getDockParent() != null )
-            append.getDockParent().drag( append );
-        
-        boolean hold = isHold( child );
-        
-        remove( index );
-        int other = indexOf( append );
-        if( other >= 0 ){
-            remove( other );
-            if( other < index )
-                index--;
-        }
-        
-        index = Math.min( index, getDockableCount());
-        Dockable combination = combiner.combine( child, append, this );
-        add( combination, index );
-        setHold( combination, hold );
-        return true;
+    	DockController controller = getController();
+    	try{
+    		if( controller != null )
+    			controller.freezeLayout();
+    	
+	        int index = indexOf( child );
+	        if( index < 0 )
+	            throw new IllegalArgumentException( "Child must be a child of this station" );
+	        
+	        if( append.getDockParent() != null )
+	            append.getDockParent().drag( append );
+	        
+	        boolean hold = isHold( child );
+	        
+	        remove( index );
+	        int other = indexOf( append );
+	        if( other >= 0 ){
+	            remove( other );
+	            if( other < index )
+	                index--;
+	        }
+	        
+	        index = Math.min( index, getDockableCount());
+	        Dockable combination = combiner.combine( child, append, this );
+	        add( combination, index );
+	        setHold( combination, hold );
+	        return true;
+    	}
+    	finally{
+    		if( controller != null )
+    			controller.meltLayout();
+    	}
     }
     
     public boolean canReplace( Dockable old, Dockable next ) {
@@ -1368,19 +1447,29 @@ public class FlapDockStation extends AbstractDockableStation {
     }
     
     public void replace( Dockable child, Dockable append ){
-        int index = indexOf( child );
-        if( index < 0 )
-            throw new IllegalArgumentException( "Child must be a child of this station" );
-        
-        boolean hold = isHold( child );
-        boolean open = getFrontDockable() == child;
-        
-        remove( index );
-        add( append, index );
-        setHold( append, hold );
-        
-        if( open )
-            setFrontDockable( append );
+    	DockController controller = getController();
+    	try{
+    		if( controller != null )
+    			controller.freezeLayout();
+    		
+    		int index = indexOf( child );
+    		if( index < 0 )
+    			throw new IllegalArgumentException( "Child must be a child of this station" );
+
+    		boolean hold = isHold( child );
+    		boolean open = getFrontDockable() == child;
+
+    		remove( index );
+    		add( append, index );
+    		setHold( append, hold );
+
+    		if( open )
+    			setFrontDockable( append );
+    	}
+    	finally{
+    		if( controller != null )
+    			controller.meltLayout();
+    	}
     }
     
     /**
