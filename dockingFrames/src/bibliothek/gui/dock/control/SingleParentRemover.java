@@ -116,7 +116,7 @@ public class SingleParentRemover{
      * @param station the station to test
      * @return whether the station was replaced or removed
      */
-    private boolean test( DockStation station ){
+    protected boolean test( DockStation station ){
         DockController controller = station.getController();
         if( controller != null )
             controller.getRegister().setStalled( true );
