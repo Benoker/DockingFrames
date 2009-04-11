@@ -25,7 +25,11 @@
  */
 package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.ContainerOrderFocusTraversalPolicy;
+import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.awt.event.WindowAdapter;
@@ -36,11 +40,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseDockActionSource;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
-import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 import bibliothek.gui.dock.themes.color.TabColor;
@@ -91,8 +95,6 @@ public abstract class BaseTabComponent extends DComponent implements TabComponen
     private TabFont[] fonts;
     
     private Dockable dockable;
-    private StackDockStation station;
-    private DockController controller;
     
     private boolean paintIconWhenInactive = false;
     
@@ -101,50 +103,48 @@ public abstract class BaseTabComponent extends DComponent implements TabComponen
     
     private boolean hasFocus;
     private boolean isSelected;
-    private RexTabbedComponent tabbedComponent;
+    private EclipseTabPane pane;
 
     private int tabIndex;
     
     /**
      * Creates a new {@link TabComponent}
-     * @param component the owner of this tab
-     * @param controller the controller from which this component should read colors
-     * @param station the station on which this component is
+     * @param pane the owner of this tab
      * @param dockable the element which is represented by this component
      * @param index the location of this tab relative to other tabs
      */
-    public BaseTabComponent( RexTabbedComponent component, DockController controller, StackDockStation station, Dockable dockable, int index ){
-        this.tabbedComponent = component;
+    public BaseTabComponent( EclipseTabPane pane, Dockable dockable, int index ){
+        this.pane = pane;
         this.dockable = dockable;
-        this.station = station;
-        this.controller = controller;
         this.tabIndex = index;
         
-        colorStackTabBorder = new BorderTabColor( "stack.tab.border", Color.WHITE );
-        colorStackTabBorderSelected = new BorderTabColor( "stack.tab.border.selected", Color.WHITE );
-        colorStackTabBorderSelectedFocused = new BorderTabColor( "stack.tab.border.selected.focused", Color.WHITE );
-        colorStackTabBorderSelectedFocusLost = new BorderTabColor( "stack.tab.border.selected.focuslost", Color.WHITE );
+        DockStation station = pane.getStation();
         
-        colorStackTabTop = new BaseTabColor( "stack.tab.top", Color.LIGHT_GRAY );
-        colorStackTabTopSelected = new BaseTabColor( "stack.tab.top.selected", Color.LIGHT_GRAY );
-        colorStackTabTopSelectedFocused = new BaseTabColor( "stack.tab.top.selected.focused", Color.LIGHT_GRAY );
-        colorStackTabTopSelectedFocusLost = new BaseTabColor( "stack.tab.top.selected.focuslost", Color.LIGHT_GRAY );
+        colorStackTabBorder = new BorderTabColor( "stack.tab.border", station, Color.WHITE );
+        colorStackTabBorderSelected = new BorderTabColor( "stack.tab.border.selected", station, Color.WHITE );
+        colorStackTabBorderSelectedFocused = new BorderTabColor( "stack.tab.border.selected.focused", station, Color.WHITE );
+        colorStackTabBorderSelectedFocusLost = new BorderTabColor( "stack.tab.border.selected.focuslost", station, Color.WHITE );
         
-        colorStackTabBottom = new BaseTabColor( "stack.tab.bottom", Color.WHITE );
-        colorStackTabBottomSelected = new BaseTabColor( "stack.tab.bottom.selected", Color.WHITE );
-        colorStackTabBottomSelectedFocused = new BaseTabColor( "stack.tab.bottom.selected.focused", Color.WHITE );
-        colorStackTabBottomSelectedFocusLost = new BaseTabColor( "stack.tab.bottom.selected.focuslost", Color.WHITE );
+        colorStackTabTop = new BaseTabColor( "stack.tab.top", station, Color.LIGHT_GRAY );
+        colorStackTabTopSelected = new BaseTabColor( "stack.tab.top.selected", station, Color.LIGHT_GRAY );
+        colorStackTabTopSelectedFocused = new BaseTabColor( "stack.tab.top.selected.focused", station, Color.LIGHT_GRAY );
+        colorStackTabTopSelectedFocusLost = new BaseTabColor( "stack.tab.top.selected.focuslost", station, Color.LIGHT_GRAY );
         
-        colorStackTabText = new BaseTabColor( "stack.tab.text", Color.BLACK );
-        colorStackTabTextSelected = new BaseTabColor( "stack.tab.text.selected", Color.BLACK );
-        colorStackTabTextSelectedFocused = new BaseTabColor( "stack.tab.text.selected.focused", Color.BLACK );
-        colorStackTabTextSelectedFocusLost = new BaseTabColor( "stack.tab.text.selected.focuslost", Color.BLACK );
+        colorStackTabBottom = new BaseTabColor( "stack.tab.bottom", station, Color.WHITE );
+        colorStackTabBottomSelected = new BaseTabColor( "stack.tab.bottom.selected", station, Color.WHITE );
+        colorStackTabBottomSelectedFocused = new BaseTabColor( "stack.tab.bottom.selected.focused", station, Color.WHITE );
+        colorStackTabBottomSelectedFocusLost = new BaseTabColor( "stack.tab.bottom.selected.focuslost", station, Color.WHITE );
         
-        colorStackBorder = new BaseTabColor( "stack.border", Color.BLACK );
+        colorStackTabText = new BaseTabColor( "stack.tab.text", station, Color.BLACK );
+        colorStackTabTextSelected = new BaseTabColor( "stack.tab.text.selected", station, Color.BLACK );
+        colorStackTabTextSelectedFocused = new BaseTabColor( "stack.tab.text.selected.focused", station, Color.BLACK );
+        colorStackTabTextSelectedFocusLost = new BaseTabColor( "stack.tab.text.selected.focuslost", station, Color.BLACK );
         
-        fontFocused = new BaseTabFont( DockFont.ID_TAB_FOCUSED );
-        fontSelected = new BaseTabFont( DockFont.ID_TAB_SELECTED );
-        fontUnselected = new BaseTabFont( DockFont.ID_TAB_UNSELECTED );
+        colorStackBorder = new BaseTabColor( "stack.border", station, Color.BLACK );
+        
+        fontFocused = new BaseTabFont( DockFont.ID_TAB_FOCUSED, station );
+        fontSelected = new BaseTabFont( DockFont.ID_TAB_SELECTED, station );
+        fontUnselected = new BaseTabFont( DockFont.ID_TAB_UNSELECTED, station );
         
         colors = new TabColor[]{
                 colorStackTabBorder,
@@ -205,8 +205,10 @@ public abstract class BaseTabComponent extends DComponent implements TabComponen
     public void bind() {
         if( buttons != null )
             buttons.set( dockable, new EclipseDockActionSource(
-                    tabbedComponent.getTheme(), dockable.getGlobalActionOffers(), dockable, true ) );
+            		pane.getTheme(), dockable.getGlobalActionOffers(), dockable, true ) );
         dockable.addDockableListener( dockableListener );
+        
+        DockController controller = pane.getController();
         
         for( TabColor color : colors )
             color.connect( controller );
@@ -260,21 +262,25 @@ public abstract class BaseTabComponent extends DComponent implements TabComponen
     }
     
     public DockController getController() {
-        return controller;
+        return pane.getController();
     }
     
-    public StackDockStation getStation() {
-        return station;
+    public DockStation getStation() {
+        return pane.getStation();
     }
+    
+    /**
+     * Gets the parent of this component.
+     * @return the owner
+     */
+    public EclipseTabPane getPane(){
+		return pane;
+	}
     
     public ButtonPanel getButtons() {
         return buttons;
     }
     
-    public RexTabbedComponent getTabbedComponent() {
-        return tabbedComponent;
-    }
-
     public Component getComponent(){
         return this;
     }
@@ -325,7 +331,7 @@ public abstract class BaseTabComponent extends DComponent implements TabComponen
      * @author Benjamin Sigg
      */
     private class BorderTabColor extends TabColor{
-        public BorderTabColor( String id, Color backup ){
+        public BorderTabColor( String id, DockStation station, Color backup ){
             super( id, station, dockable, backup );
         }
         @Override
@@ -339,7 +345,7 @@ public abstract class BaseTabComponent extends DComponent implements TabComponen
      * @author Benjamin Sigg
      */
     private class BaseTabColor extends TabColor{
-        public BaseTabColor( String id, Color backup ){
+        public BaseTabColor( String id, DockStation station, Color backup ){
             super( id, station, dockable, backup );
         }
         @Override
@@ -353,7 +359,7 @@ public abstract class BaseTabComponent extends DComponent implements TabComponen
      * @author Benjamin Sigg
      */
     private class BaseTabFont extends TabFont{
-        public BaseTabFont( String id ){
+        public BaseTabFont( String id, DockStation station ){
             super( id, station, dockable );
         }
         @Override

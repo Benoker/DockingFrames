@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -26,22 +26,23 @@
 
 package bibliothek.gui.dock.station.stack;
 
+import java.awt.Component;
+
 import javax.swing.Icon;
-import javax.swing.JComponent;
 
 import bibliothek.gui.dock.DockElementRepresentative;
+import bibliothek.gui.dock.station.stack.tab.Tab;
 
 /**
  * A tab of a {@link CombinedStackDockComponent}. Every tab represents one
  * Component which can be selected.
  * @author Benjamin Sigg
  */
-public interface CombinedTab extends DockElementRepresentative{
+public interface CombinedTab extends DockElementRepresentative, Tab{
 	/**
-	 * Gets a component which represents this tab.
-	 * @return the graphical representation of this tab
+	 * Gets the component which paints and represents this tab.
 	 */
-	public JComponent getComponent();
+	public Component getComponent();
 	
 	/**
 	 * Sets the text of this tab.
@@ -60,12 +61,4 @@ public interface CombinedTab extends DockElementRepresentative{
 	 * @param tooltip the tooltip text, can be <code>null</code>
 	 */
 	public void setTooltip( String tooltip );
-	
-	/**
-	 * Sets the location of this tab. Every tab has another location, and
-	 * the location can be used to find the component for which this tab
-	 * is shown.
-	 * @param index the index of this tab
-	 */
-	public void setIndex( int index );
 }

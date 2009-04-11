@@ -35,7 +35,7 @@ import bibliothek.extension.gui.dock.theme.flat.FlatButtonTitle;
 import bibliothek.extension.gui.dock.theme.flat.FlatColorScheme;
 import bibliothek.extension.gui.dock.theme.flat.FlatDisplayerFactory;
 import bibliothek.extension.gui.dock.theme.flat.FlatStationPaint;
-import bibliothek.extension.gui.dock.theme.flat.FlatTab;
+import bibliothek.extension.gui.dock.theme.flat.FlatTabPane;
 import bibliothek.extension.gui.dock.theme.flat.FlatTitleFactory;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -111,7 +111,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
         setDisplayerFactory( new FlatDisplayerFactory( false ));
         setStackDockComponentFactory( new StackDockComponentFactory(){
             public StackDockComponent create( StackDockStation station ) {
-                return new FlatTab( station );
+                return new FlatTabPane( station );
             }
         });
         setMovingImageFactory( new ScreencaptureMovingImageFactory( new Dimension( 300, 200 ) ) );

@@ -28,13 +28,16 @@ package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
 import javax.swing.border.Border;
 
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.StackDockStation;
 
 /**
+ * A {@link TabPainter} is used to setup the basic graphical elements
+ * of a {@link EclipseTabPane}.
  * @author Janni Kovacs
+ * @author Benjamin Sigg
  */
 public interface TabPainter {
     /**
@@ -45,34 +48,23 @@ public interface TabPainter {
 	public TabStripPainter createTabStripPainter( RexTabbedComponent component );
 	
 	/**
-	 * Creates a new entry for the tab-strip above the contents of a 
-	 * {@link RexTabbedComponent}.
-	 * @param controller the current controller, never <code>null</code>
-	 * @param component the owner of the tab, clients might need
-	 * {@link RexTabbedComponent#getStation() component.getStation()} to get
-	 * access to the {@link DockStation} for which the tab is intended
-	 * @param station the station for which the tab is needed.
+	 * Creates a new tab for an {@link EclipseTabPane}. At the time this method
+	 * is called the {@link EclipseTabPane} is connected to a {@link DockController}
+	 * which will not change as long as the created {@link TabComponent} is 
+	 * in use. The {@link EclipseTabPane} is also connected to a {@link DockStation}
+	 * which will neither change as long as the tab is in use.
+	 * @param pane the panel for which this tab is required
 	 * @param dockable the element for which the tab is shown
 	 * @param index the initial location of the tab
 	 * @return the new tab, never <code>null</code>
 	 */
-	public TabComponent createTabComponent( DockController controller, RexTabbedComponent component, StackDockStation station, Dockable dockable, int index );
+	public TabComponent createTabComponent( EclipseTabPane pane, Dockable dockable, int index );
 	
 	/**
-	 * Gets the border which will be around <code>component</code>, which is
-	 * a child of <code>station</code>.
+	 * Gets the border which will be around <code>pane</code> when <code>dockable</code>
+	 * is selected.
 	 * @param controller the current controller, never <code>null</code>
-	 * @param station the parent of <code>component</code>
-	 * @param component the component whose border is determined by this method
-	 * @return the new border or <code>null</code>
-	 */
-	public Border getFullBorder( DockController controller, DockStation station, RexTabbedComponent component );
-	
-	/**
-	 * Gets the border which will be around <code>dockable</code>.
-	 * @param controller the current controller, never <code>null</code>
-	 * @param dockable the element whose border is set, this element stands
-	 * alone (means: is not on a {@link RexTabbedComponent}).
+	 * @param dockable the element which might influence the border, never <code>null</code>
 	 * @return the border of <code>dockable</code> or <code>null</code>
 	 */
 	public Border getFullBorder( DockController controller, Dockable dockable );

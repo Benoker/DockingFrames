@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2009 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,62 +28,60 @@ package bibliothek.gui.dock.themes.color;
 import java.awt.Color;
 
 import bibliothek.extension.gui.dock.util.Path;
-import bibliothek.gui.DockStation;
-import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.station.stack.CombinedMenu;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
 import bibliothek.gui.dock.util.color.DockColor;
 
 /**
- * Color related to a single {@link Dockable} that is in a tab for example
- * on a {@link StackDockStation}.
+ * A color representing a {@link CombinedMenu}.
  * @author Benjamin Sigg
  */
-public abstract class TabColor extends AbstractDockColor{
+public abstract class MenuColor extends AbstractDockColor{
     /** the kind of color {@link TabColor} is */
-    public static final Path KIND_TAB_COLOR = KIND_DOCK_COLOR.append( "TabColor" );
+    public static final Path KIND_MENU_COLOR = KIND_DOCK_COLOR.append( "MenuColor" );
     
-    private DockStation station;
-    private Dockable dockable;
+    private StackDockStation station;
+    private CombinedMenu menu;
     
     /**
      * Creates a new TabColor.
      * @param id the identifier of the color that is searched
      * @param kind the kind of {@link DockColor} this is.
      * @param station the station on which the color will be used
-     * @param dockable the {@link Dockable} for whose tab this color is used
+     * @param dockable the menu for which this color will be used
      * @param backup a backup color in case that no color can be found
      */
-    public TabColor( String id, Path kind, DockStation station, Dockable dockable, Color backup ){
+    public MenuColor( String id, Path kind, StackDockStation station, CombinedMenu menu, Color backup ){
         super( id, kind, backup );
         this.station = station;
-        this.dockable = dockable;
+        this.menu = menu;
     }
     
     /**
      * Creates a new TabColor.
      * @param id the identifier of the color that is searched
      * @param station the station on which the color will be used
-     * @param dockable the {@link Dockable} for whose tab this color is used
+     * @param dockable the menu for which this color will be used
      * @param backup a backup color in case that no color can be found
      */
-    public TabColor( String id, DockStation station, Dockable dockable, Color backup ){
-        this( id, KIND_TAB_COLOR, station, dockable, backup );
+    public MenuColor( String id, StackDockStation station, CombinedMenu menu, Color backup ){
+        this( id, KIND_MENU_COLOR, station, menu, backup );
     }
     
     /**
      * Gets the station on which the tab is shown.
      * @return the station, might be <code>null</code>
      */
-    public DockStation getStation() {
+    public StackDockStation getStation() {
         return station;
     }
     
     /**
-     * Gets the element for which the tab is shown.
-     * @return the element
+     * Gets the menu for which this color is used.
+     * @return the menu
      */
-    public Dockable getDockable() {
-        return dockable;
-    }
+    public CombinedMenu getMenu(){
+		return menu;
+	}
 }

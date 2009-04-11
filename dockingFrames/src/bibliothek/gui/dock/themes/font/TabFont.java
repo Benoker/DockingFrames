@@ -1,6 +1,7 @@
 package bibliothek.gui.dock.themes.font;
 
 import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.util.font.AbstractDockFont;
@@ -8,7 +9,7 @@ import bibliothek.gui.dock.util.font.FontManager;
 import bibliothek.gui.dock.util.font.FontModifier;
 
 /**
- * A font used for a tab of a {@link StackDockStation}.
+ * A font used for a tab for example on a {@link StackDockStation}.
  * @author Benjamin Sigg
  */
 public abstract class TabFont extends AbstractDockFont{
@@ -16,7 +17,7 @@ public abstract class TabFont extends AbstractDockFont{
     public final static Path KIND_TAB_FONT = KIND_DOCK_FONT.append( "tab" );
     
     /** the station for which this font is used */
-    private StackDockStation station;
+    private DockStation station;
     /** the element with which this font is associated */
     private Dockable dockable;
     
@@ -28,7 +29,7 @@ public abstract class TabFont extends AbstractDockFont{
      * @param dockable the element which is associated with this font
      * @param backup default value for this font
      */
-    public TabFont(  String id, StackDockStation station, Dockable dockable, FontModifier backup ) {
+    public TabFont(  String id, DockStation station, Dockable dockable, FontModifier backup ) {
         this( id, KIND_TAB_FONT, station, dockable, backup );
     }
 
@@ -42,7 +43,7 @@ public abstract class TabFont extends AbstractDockFont{
      * @param dockable the element which is associated with this font
      * @param backup default value for this font
      */
-    public TabFont( String id, Path kind, StackDockStation station, Dockable dockable, FontModifier backup ) {
+    public TabFont( String id, Path kind, DockStation station, Dockable dockable, FontModifier backup ) {
         super( id, kind, backup );
         this.station = station;
         this.dockable = dockable;
@@ -57,7 +58,7 @@ public abstract class TabFont extends AbstractDockFont{
      * @param station the station for which this font is used
      * @param dockable the element which is associated with this font
      */
-    public TabFont( String id, Path kind, StackDockStation station, Dockable dockable ) {
+    public TabFont( String id, Path kind, DockStation station, Dockable dockable ) {
         this( id, kind, station, dockable, null );
     }
 
@@ -68,7 +69,7 @@ public abstract class TabFont extends AbstractDockFont{
      * @param station the station for which this font is used
      * @param dockable the element which is associated with this font
      */
-    public TabFont( String id, StackDockStation station, Dockable dockable ) {
+    public TabFont( String id, DockStation station, Dockable dockable ) {
         this( id, KIND_TAB_FONT, station, dockable, null );
     }
 
@@ -76,7 +77,7 @@ public abstract class TabFont extends AbstractDockFont{
      * Gets the station for which this font is used.
      * @return the station
      */
-    public StackDockStation getStation() {
+    public DockStation getStation() {
         return station;
     }
     

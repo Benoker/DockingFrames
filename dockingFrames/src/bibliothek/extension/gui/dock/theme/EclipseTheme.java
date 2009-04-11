@@ -35,7 +35,6 @@ import bibliothek.extension.gui.dock.theme.eclipse.EclipseColorScheme;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseDisplayerFactory;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseDockTitleFactory;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseDockableSelection;
-import bibliothek.extension.gui.dock.theme.eclipse.EclipseStackDockComponent;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseStationPaint;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector;
 import bibliothek.extension.gui.dock.theme.eclipse.RoundRectButton;
@@ -45,6 +44,7 @@ import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.DockTitleTab;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.RectGradientPainter;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.ShapedGradientPainter;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
 import bibliothek.extension.gui.dock.theme.flat.FlatButtonTitle;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -153,7 +153,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
         setColorSchemeKey( ECLIPSE_COLOR_SCHEME );
         setStackDockComponentFactory( new StackDockComponentFactory(){
             public StackDockComponent create( StackDockStation station ){
-                return new EclipseStackDockComponent( EclipseTheme.this, station );
+            	return new EclipseTabPane( EclipseTheme.this, station );
             }
         });
         setDisplayerFactory( new EclipseDisplayerFactory( this ) );

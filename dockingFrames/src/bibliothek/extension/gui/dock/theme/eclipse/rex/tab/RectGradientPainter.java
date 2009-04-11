@@ -84,8 +84,8 @@ public class RectGradientPainter extends BaseTabComponent {
         add( getButtons() );
 	}
 		
-	public int getOverlap() {
-	    return 0;
+	public Insets getOverlap(){
+		return new Insets( 0, 0, 0, 0 );
 	}
 	
 	public void update(){

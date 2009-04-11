@@ -26,14 +26,18 @@
 package bibliothek.extension.gui.dock.theme.eclipse;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.action.DockAction;
 
 public class DefaultEclipseThemeConnector implements EclipseThemeConnector {
     public TitleBar getTitleBarKind( Dockable dockable ) {
+    	if( dockable.getDockParent() instanceof StackDockStation )
+    		return TitleBar.NONE;
+    	
         if( dockable.asDockStation() == null )
             return TitleBar.ECLIPSE;
-        else
-            return TitleBar.NONE_HINTED;
+        
+        return TitleBar.NONE_HINTED;
     }
     
 	public boolean isTabAction( Dockable dockable, DockAction action ){

@@ -1,6 +1,7 @@
 package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
 
 import java.awt.Component;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -18,7 +19,6 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
-import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.title.DockTitleVersion;
@@ -52,15 +52,15 @@ public class DockTitleTab implements TabComponent{
     public static final TabPainter createFactory( final TabPainter fallback ){
         return new TabPainter(){
             public TabComponent createTabComponent( DockController controller,
-                    RexTabbedComponent component, StackDockStation station, Dockable dockable, int index ) {
+                    DockStation station, Dockable dockable, int index ) {
                 
                 DockTitleVersion version = controller.getDockTitleManager().getVersion( EclipseTheme.TAB_DOCK_TITLE );
                 DockTitle title = version == null ? null : dockable.getDockTitle( version );
                 if( title == null )
-                    return fallback.createTabComponent( controller, component, station, dockable, index );
+                    return fallback.createTabComponent( controller, station, dockable, index );
                     
                 title.setOrientation( Orientation.NORTH_SIDED );
-                return new DockTitleTab( component.getStation(), dockable, title, index );
+                return new DockTitleTab( station, dockable, title, index );
             }
             
             public TabStripPainter createTabStripPainter( RexTabbedComponent component ) {
@@ -68,10 +68,6 @@ public class DockTitleTab implements TabComponent{
             }
             
             public Border getFullBorder( DockController controller, Dockable dockable ) {
-                return BorderFactory.createLineBorder( controller.getColors().get( "stack.border" ) );
-            }
-            
-            public Border getFullBorder( DockController controller, DockStation station, RexTabbedComponent component ) {
                 return BorderFactory.createLineBorder( controller.getColors().get( "stack.border" ) );
             }
         };
@@ -194,8 +190,8 @@ public class DockTitleTab implements TabComponent{
         return null;
     }
 
-    public int getOverlap() {
-        return 0;
+    public Insets getOverlap() {
+        return new Insets( 0, 0, 0, 0 );
     }
 
     public void removeMouseListener( MouseListener listener ) {

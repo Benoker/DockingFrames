@@ -26,6 +26,7 @@
 package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
 
 import java.awt.Component;
+import java.awt.Insets;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
@@ -51,11 +52,11 @@ public interface TabComponent extends DockElementRepresentative{
 	public void update();
 	
 	/**
-	 * Gets the number of pixels which should be covered at the left side
-	 * of this component by its left neighbour.
+	 * Gets the number of pixels which should be covered at the sides
+	 * of this component.
 	 * @return the number of overlapped pixels
 	 */
-	public int getOverlap();
+	public Insets getOverlap();
 	
 	/** Informs this tab that it will be shown soon */
 	public void bind();
@@ -70,6 +71,4 @@ public interface TabComponent extends DockElementRepresentative{
 	public void removeMouseListener( MouseListener listener );
 	
 	public void removeMouseMotionListener( MouseMotionListener listener );
-
-	public Border getContentBorder();
 }

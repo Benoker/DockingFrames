@@ -31,8 +31,9 @@ import java.awt.*;
  * {@link LayoutManager} that works like {@link FlowLayout}, but the components
  * are not centered in their cell but stick to the top of the cell.
  * @author Benjamin Sigg
- *
+ * @deprecated this class is no longer used anywhere and will be removed
  */
+@Deprecated
 public class StackTabListLayout implements LayoutManager{
     public void addLayoutComponent( String name, Component comp ) {
         // ignore

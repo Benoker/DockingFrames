@@ -236,3 +236,6 @@
 - API: new LocaleListener, to be added to a DockUI, will be informed when the Locale changes.
 ! API, Bugfix: PropertyKey requires now a PropertyFactory instead of an Object as default value, this is to prevent memory leaks. No object that can have observers must be global.
 - API, Bugfix: DockController.freezeLayout, meltLayout, isLayoutFrozen to temporarily freeze the layout such that clients can safely update the tree of DockStations and Dockables.
+
+[v1.0.8]
+- Bugfix: EclipseStackDockComponent contained an unnecessary and not correctly updated list of dockables causing an IndexOutOfBoundsException on JREs of version <= 1.5.0_12

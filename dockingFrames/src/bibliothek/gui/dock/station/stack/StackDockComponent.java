@@ -81,7 +81,8 @@ public interface StackDockComponent {
      * Gets the location and size of the graphical element that allows
      * the user to select the <code>index</code>'th child.
      * @param index the index of the child
-     * @return the bounds of the graphical selection-element
+     * @return the bounds of the graphical selection-element, <code>null</code>
+     * if the element is not directly visible
      */
     public Rectangle getBoundsAt(int index);
 

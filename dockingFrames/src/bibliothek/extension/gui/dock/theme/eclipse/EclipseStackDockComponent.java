@@ -28,8 +28,6 @@ package bibliothek.extension.gui.dock.theme.eclipse;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JPanel;
@@ -59,11 +57,6 @@ import bibliothek.gui.dock.util.PropertyValue;
  * @author Benjamin Sigg
  */
 public class EclipseStackDockComponent extends JPanel implements StackDockComponent, TabListener {
-	/**
-	 * The Dockables shown on this component and their RemoteRelocators to control drag&drop operations
-	 */
-	private List<Dockable> dockables = new ArrayList<Dockable>();
-
 	/**
 	 * The controller for which this component is shown
 	 */
@@ -129,7 +122,6 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 	@Override
 	public void removeAll() {
 		tabs.removeAllTabs();
-		dockables.clear();
 	}
 
 	@Override
@@ -200,12 +192,11 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 
 	public void insertTab(String title, Icon icon, Component comp, Dockable dockable, int index) {
 		tabs.insertTab( dockable, index);
-		dockables.add( index, dockable );
 		updateFocus();
 	}
 
 	public Dockable getDockable( int index ){
-		return dockables.get( index );
+		return tabs.getTabAt( index );
 	}
 	
 	public int getTabCount() {
