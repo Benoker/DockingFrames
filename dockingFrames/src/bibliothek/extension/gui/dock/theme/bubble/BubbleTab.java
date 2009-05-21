@@ -54,6 +54,7 @@ import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.station.stack.CombinedTab;
 import bibliothek.gui.dock.station.stack.tab.Tab;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
+import bibliothek.gui.dock.station.stack.tab.TabPaneComponent;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.font.TabFont;
 import bibliothek.gui.dock.util.color.ColorCodes;
@@ -111,6 +112,9 @@ public class BubbleTab extends JPanel implements CombinedTab, ChangeListener, Ru
     private DockController controller;
     /** parent component */
     private BubbleStackDockComponent parent;
+   
+    /** when to paint this panel */
+    private int zOrder;
     
 	/** the size of the arc of the round tabs */
 	private int arc = 6;
@@ -290,6 +294,18 @@ public class BubbleTab extends JPanel implements CombinedTab, ChangeListener, Ru
 		
 		checkAnimation();
 		animation.kick();
+	}
+	
+	public void setZOrder( int order ){
+		this.zOrder = order;	
+	}
+	
+	public int getZOrder(){
+		return zOrder;
+	}
+	
+	public Insets getOverlap( TabPaneComponent other ){
+		return new Insets( 0, 0, 0, 0 );
 	}
 	
 	public void dockableFocused( DockableFocusEvent event ) {

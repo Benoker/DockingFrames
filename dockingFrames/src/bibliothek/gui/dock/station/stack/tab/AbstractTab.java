@@ -40,7 +40,6 @@ import bibliothek.gui.dock.event.DockableFocusListener;
  */
 public abstract class AbstractTab extends AbstractTabPaneComponent implements Tab{
 	private Dockable dockable;
-	private int zOrder = 0;
 	
 	/** whether {@link #bind()} was called and {@link #unbind()} was not yet called */
 	private boolean bound = false;
@@ -99,14 +98,6 @@ public abstract class AbstractTab extends AbstractTabPaneComponent implements Ta
 	
 	public Dockable getDockable(){
 		return dockable;
-	}
-	
-	public void setZOrder( int order ){
-		this.zOrder = order;	
-	}
-	
-	public int getZOrder(){
-		return zOrder;
 	}
 	
 	/**

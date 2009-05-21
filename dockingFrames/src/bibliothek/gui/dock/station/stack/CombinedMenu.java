@@ -33,7 +33,10 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.dock.station.stack.tab.TabMenu;
 
 /**
- * A menu that is displayed on a {@link CombinedStackDockComponent}.
+ * A menu that is displayed on a {@link CombinedStackDockComponent}. Clients
+ * should call {@link #setController(DockController)} when they use this menu,
+ * they should set the <code>controller</code> to <code>null</code> when they
+ * no longer use this menu.
  * @author Benjamin Sigg
  */
 public interface CombinedMenu extends TabMenu{

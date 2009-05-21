@@ -75,12 +75,15 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleT
 	
 	@Override
 	protected BubbleTabMenu createMenu( Dockable[] dockables ){
-		return null;
+		BubbleTabMenu menu = new BubbleTabMenu( station, this, dockables );
+		menu.setController( getController() );
+		return menu;
 	}
 	
 	@Override
 	protected void destroyMenu( BubbleTabMenu menu ){
-		// ignore
+		menu.setController( null );
+		menu.stopAnimation();
 	}
 	
 	@Override
@@ -89,6 +92,9 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleT
 		
 		for( BubbleTab tab : getTabsList() ){
 			tab.setController( controller );
+		}
+		for( BubbleTabMenu menu : getMenuList() ){
+			menu.setController( controller );
 		}
 	}
 

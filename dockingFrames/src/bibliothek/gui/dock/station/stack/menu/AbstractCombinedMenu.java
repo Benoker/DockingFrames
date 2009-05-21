@@ -26,14 +26,13 @@
 package bibliothek.gui.dock.station.stack.menu;
 
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Rectangle;
 
 import javax.swing.Icon;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.stack.CombinedMenu;
+import bibliothek.gui.dock.station.stack.tab.AbstractTabPaneComponent;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.util.PropertyValue;
 
@@ -43,10 +42,7 @@ import bibliothek.gui.dock.util.PropertyValue;
  * subclasses and uses a {@link CombinedMenuContent} to show its content.
  * @author Benjamin Sigg
  */
-public abstract class AbstractCombinedMenu implements CombinedMenu{
-	/** owner of this menu */
-	private TabPane parent;
-	
+public abstract class AbstractCombinedMenu extends AbstractTabPaneComponent implements CombinedMenu{
 	/** the button of this menu */
 	private Component component;
 	
@@ -71,8 +67,7 @@ public abstract class AbstractCombinedMenu implements CombinedMenu{
 	 * @param dockables the items of this menu, must not be <code>null</code> or empty
 	 */
 	public AbstractCombinedMenu( TabPane parent, Dockable[] dockables ){
-		if( parent == null )
-			throw new IllegalArgumentException( "parent must not be null" );
+		super( parent );
 		
 		if( dockables == null )
 			throw new IllegalArgumentException( "dockables must not be null" );
@@ -169,35 +164,6 @@ public abstract class AbstractCombinedMenu implements CombinedMenu{
 			result[i] = entries[i].dockable;
 		}
 		return result;
-	}
-
-	public Rectangle getBounds(){
-		ensureComponent();
-		return component.getBounds();
-	}
-
-	public Dimension getMaximumSize(){
-		ensureComponent();
-		return component.getMaximumSize();
-	}
-
-	public Dimension getMinimumSize(){
-		ensureComponent();
-		return component.getMinimumSize();
-	}
-
-	public Dimension getPreferredSize(){
-		ensureComponent();
-		return component.getPreferredSize();
-	}
-
-	public TabPane getTabParent(){
-		return parent;
-	}
-
-	public void setBounds( Rectangle bounds ){
-		ensureComponent();
-		component.setBounds( bounds );
 	}
 	
 	/**

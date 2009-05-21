@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2009 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,37 +23,30 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.station.stack.tab;
+package bibliothek.gui.dock.station.stack.tab.layouting;
 
-import java.awt.Component;
-
-import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.station.stack.tab.TabMenu;
 
 /**
- * An abstract implementation of {@link TabMenu} based on a real {@link Component}.
+ * A wrapper around a {@link TabMenu}.
  * @author Benjamin Sigg
  */
-public abstract class AbstractTabMenu extends AbstractTabPaneComponent implements TabMenu{
-	/** the elements of this menu */
-	private Dockable[] dockables;
+public class MenuLayoutBlock extends ComponentLayoutBlock<TabMenu>{
+	/**
+	 * Sets the menu for this block.
+	 * @param menu the menu, may be <code>null</code>
+	 * @see #setComponent(TabMenu)
+	 */
+	public void setMenu( TabMenu menu ){
+		setComponent( menu );
+	}
 	
 	/**
-	 * Creates a new menu.
-	 * @param parent the parent of this menu
-	 * @param dockables the children, not <code>null</code>
+	 * Gets the menu of this block.
+	 * @return the menu, may be <code>null</code>
+	 * @see #getComponent()
 	 */
-	public AbstractTabMenu( TabPane parent, Dockable[] dockables ){
-		super( parent );
-		
-		if( dockables == null )
-			throw new IllegalArgumentException( "dockables must not be null" );
-		
-		this.dockables = dockables;
+	public TabMenu getMenu(){
+		return getComponent();
 	}
-	
-	public Dockable[] getDockables(){
-		return dockables;
-	}
-	
-	
 }

@@ -120,15 +120,15 @@ public class ShapedGradientPainter extends BaseTabComponent {
 		}
 	}
 
-	public Insets getOverlap() {
-		int left;
-
-		if( isTabBeforeSelected() )
-			left = 10 + TAB_OVERLAP;
-		else
-			left = 0;
-
-		return new Insets( 0, left, 0, 0 );
+	public Insets getOverlap( TabComponent other ) {
+		if( other instanceof ShapedGradientPainter ){
+			ShapedGradientPainter painter = (ShapedGradientPainter)other;
+			if( painter.isSelected() ){
+				return new Insets( 0, 10 + TAB_OVERLAP, 0, 0 );
+			}
+		}
+		
+		return new Insets( 0, 0, 0, 0 );
 	}
 
 	private boolean isTabBeforeSelected(){

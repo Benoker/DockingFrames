@@ -32,6 +32,7 @@ import bibliothek.gui.Dockable;
 
 /**
  * A layout that puts all tabs at the bottom of the panel, in one or more rows.
+ * This {@link TabLayoutManager} does never create menus and ignores the info panel.
  * @author Benjamin Sigg
  */
 public class BottomFlowLayout implements TabLayoutManager{

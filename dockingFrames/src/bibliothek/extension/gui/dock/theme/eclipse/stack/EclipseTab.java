@@ -38,6 +38,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.station.stack.CombinedTab;
 import bibliothek.gui.dock.station.stack.tab.AbstractTab;
+import bibliothek.gui.dock.station.stack.tab.TabPaneComponent;
 
 /**
  * A wrapper around a {@link TabComponent} allowing to use the {@link TabComponent}
@@ -48,7 +49,6 @@ public class EclipseTab extends AbstractTab implements CombinedTab{
 	/** painting code for this tab */
 	private TabComponent component;
 	
-
 	/**
 	 * Creates a new tab.
 	 * @param parent the owner of this tab.
@@ -85,6 +85,14 @@ public class EclipseTab extends AbstractTab implements CombinedTab{
 		return getDockable();
 	}
 
+	/**
+	 * Gets the component which actually paints stuff.
+	 * @return the actual component
+	 */
+	public TabComponent getTab(){
+		return component;
+	}
+	
 	public Point getPopupLocation( Point click, boolean popupTrigger ){
 		if( popupTrigger ){
 			return click;
@@ -118,9 +126,15 @@ public class EclipseTab extends AbstractTab implements CombinedTab{
 		component.unbind();
 		super.unbind();
 	}
-
-	public Insets getOverlap(){
-		return component.getOverlap();
+	
+	@Override
+	public Insets getOverlap( TabPaneComponent other ){
+		if( other instanceof EclipseTab ){
+			EclipseTab tab = (EclipseTab)other;
+			return getTab().getOverlap( tab.getTab() );
+		}
+		
+		return super.getOverlap( other );
 	}
 
 	public void setPaintIconWhenInactive( boolean paint ){

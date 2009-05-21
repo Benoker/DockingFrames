@@ -74,7 +74,7 @@ public interface TabPane {
 	
 	/**
 	 * Gets a list of all {@link Dockable}s that onto this pane. The list
-	 * may or may not be ordered.
+	 * should be ordered.
 	 * @return the list of children, not <code>null</code> but maybe empty
 	 */
 	public Dockable[] getDockables();
@@ -98,7 +98,9 @@ public interface TabPane {
 	/**
 	 * Informs this pane that its child <code>dockable</code> should have a
 	 * tab-button. This <code>TabPane</code> may create a new {@link Tab}
-	 * or reuse an existing <code>Tab</code>. If <code>dockable</code>
+	 * or reuse an existing <code>Tab</code>. <b>Reusing an existing tab is
+	 * recommended</b>, some layout managers might just put <code>dockable</code>
+	 * in a tab to find out how much space the tab requires. If <code>dockable</code>
 	 * was part of a {@link TabMenu}, then that whole menu must be removed.
 	 * @param dockable the element which needs a tab-button
 	 * @return a <code>Tab</code> that is only used for <code>dockable</code>

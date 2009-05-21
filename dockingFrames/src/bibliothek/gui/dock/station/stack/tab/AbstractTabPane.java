@@ -373,6 +373,14 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 		return info;
 	}
 	
+	/**
+	 * Gets a list of all the menus of this pane.
+	 * @return the list of menus
+	 */
+	public List<M> getMenuList(){
+		return new ArrayList<M>( menus.values() );
+	}
+	
 	public TabMenu[] getMenus(){
 		Set<M> result = new HashSet<M>();
 		for( M menu : menus.values() ){

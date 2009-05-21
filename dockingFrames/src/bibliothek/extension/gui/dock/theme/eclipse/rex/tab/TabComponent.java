@@ -30,8 +30,6 @@ import java.awt.Insets;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import javax.swing.border.Border;
-
 import bibliothek.gui.dock.DockElementRepresentative;
 
 public interface TabComponent extends DockElementRepresentative{
@@ -54,9 +52,10 @@ public interface TabComponent extends DockElementRepresentative{
 	/**
 	 * Gets the number of pixels which should be covered at the sides
 	 * of this component.
+	 * @param other the component which may overlap this component
 	 * @return the number of overlapped pixels
 	 */
-	public Insets getOverlap();
+	public Insets getOverlap( TabComponent other );
 	
 	/** Informs this tab that it will be shown soon */
 	public void bind();

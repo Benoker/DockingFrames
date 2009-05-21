@@ -33,7 +33,6 @@ import javax.swing.JTabbedPane;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
-import bibliothek.gui.dock.station.stack.CombinedMenu;
 import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
 import bibliothek.gui.dock.station.stack.tab.AbstractTabPaneComponent;
 
@@ -43,7 +42,7 @@ import bibliothek.gui.dock.station.stack.tab.AbstractTabPaneComponent;
  * buttons of the <code>JTabbedPane</code>.
  * @author Benjamin Sigg
  */
-public class FlatTabPane extends CombinedStackDockComponent<FlatTab, CombinedMenu, AbstractTabPaneComponent>{
+public class FlatTabPane extends CombinedStackDockComponent<FlatTab, FlatMenu, AbstractTabPaneComponent>{
     /** the station which uses this component */
     private StackDockStation station;
     
@@ -66,13 +65,15 @@ public class FlatTabPane extends CombinedStackDockComponent<FlatTab, CombinedMen
     }
     
 	@Override
-	protected CombinedMenu createMenu( Dockable[] dockables ){
-		return new FlatMenu( this, dockables );
+	protected FlatMenu createMenu( Dockable[] dockables ){
+		FlatMenu menu = new FlatMenu( this, dockables );
+		menu.setController( getController() );
+		return menu;
 	}
 	
 	@Override
-	protected void destroyMenu( CombinedMenu menu ){
-		// nothing to do
+	protected void destroyMenu( FlatMenu menu ){
+		menu.setController( null );
 	}
 	
 	@Override
@@ -80,6 +81,9 @@ public class FlatTabPane extends CombinedStackDockComponent<FlatTab, CombinedMen
 		super.setController( controller );
 		for( FlatTab tab : getTabsList() ){
 			tab.setController( controller );
+		}
+		for( FlatMenu menu : getMenuList() ){
+			menu.setController( controller );
 		}
 	}
 	

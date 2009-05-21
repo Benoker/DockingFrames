@@ -246,6 +246,13 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
             updateColor( "stack.tab.border.focused", null );
             updateColor( "stack.tab.foreground.focused", null );
 
+            updateColor( "stack.menu.background.top.mouse", null );
+            updateColor( "stack.menu.background.bottom.mouse", null );
+            updateColor( "stack.menu.border.mouse", null );
+            
+            updateColor( "stack.menu.background.top", null );
+            updateColor( "stack.menu.background.bottom", null );
+            updateColor( "stack.menu.border", null );
 
             // title
             updateColor( "title.background.top.active", null );

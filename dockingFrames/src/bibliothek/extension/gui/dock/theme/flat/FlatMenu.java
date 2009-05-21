@@ -91,6 +91,8 @@ public class FlatMenu extends AbstractCombinedMenu{
 		buttonMiddleSelected.connect( controller );
 	}
 	
+	
+	
 	/**
 	 * The button shown for this menu.
 	 * @author Benjamin Sigg

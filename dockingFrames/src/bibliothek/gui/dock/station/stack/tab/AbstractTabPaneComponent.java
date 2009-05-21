@@ -38,8 +38,8 @@ public abstract class AbstractTabPaneComponent implements TabPaneComponent{
 	/** the owner of this component */
 	private TabPane parent;
 	
-	/** how much of this component may be overlapt */
-	private Insets overlap = new Insets( 0, 0, 0, 0 );
+	/** when to paint this component */
+	private int zOrder = 0;
 	
 	/**
 	 * Creates a new object.
@@ -83,17 +83,15 @@ public abstract class AbstractTabPaneComponent implements TabPaneComponent{
 		getComponent().setBounds( bounds );
 	}
 	
-	/**
-	 * Sets how much of this component may be overlapped by another component.
-	 * @param overlap the border that may not be visible, not <code>null</code>
-	 */
-	public void setOverlap( Insets overlap ){
-		if( overlap == null )
-			throw new IllegalArgumentException( "overlap must not be null" );
-		this.overlap = overlap;
+	public void setZOrder( int order ){
+		this.zOrder = order;	
 	}
 	
-	public Insets getOverlap(){
-		return overlap;
+	public int getZOrder(){
+		return zOrder;
+	}
+	
+	public Insets getOverlap( TabPaneComponent other ){
+		return new Insets( 0, 0, 0, 0 );
 	}
 }

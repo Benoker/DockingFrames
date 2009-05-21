@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2009 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,37 +23,35 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.station.stack.tab;
-
-import java.awt.Component;
-
-import bibliothek.gui.Dockable;
+package bibliothek.gui.dock.station.stack.tab.layouting;
 
 /**
- * An abstract implementation of {@link TabMenu} based on a real {@link Component}.
+ * Some side of a rectangle.
  * @author Benjamin Sigg
  */
-public abstract class AbstractTabMenu extends AbstractTabPaneComponent implements TabMenu{
-	/** the elements of this menu */
-	private Dockable[] dockables;
+public enum Side{
+	/** top side, horizontal */
+	TOP,
+	/** bottom side, horizontal */
+	BOTTOM,
+	/** to the left, vertical */
+	LEFT, 
+	/** to the right, vertical */
+	RIGHT;
 	
 	/**
-	 * Creates a new menu.
-	 * @param parent the parent of this menu
-	 * @param dockables the children, not <code>null</code>
+	 * Tells whether this side is a horizontal side.
+	 * @return <code>true</code> if {@link #TOP} or {@link #BOTTOM}
 	 */
-	public AbstractTabMenu( TabPane parent, Dockable[] dockables ){
-		super( parent );
-		
-		if( dockables == null )
-			throw new IllegalArgumentException( "dockables must not be null" );
-		
-		this.dockables = dockables;
+	public boolean isHorizontal(){
+		return this == TOP || this == BOTTOM;
 	}
 	
-	public Dockable[] getDockables(){
-		return dockables;
+	/**
+	 * Tells whether this side is a vertical side.
+	 * @return <code>true</code> if {@link #LEFT} or {@link #RIGHT}
+	 */
+	public boolean isVertical(){
+		return this == LEFT || this == RIGHT;
 	}
-	
-	
 }

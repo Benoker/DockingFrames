@@ -23,6 +23,7 @@ import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.station.stack.CombinedTab;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
+import bibliothek.gui.dock.station.stack.tab.TabPaneComponent;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.font.TabFont;
 import bibliothek.gui.dock.util.color.ColorCodes;
@@ -361,7 +362,7 @@ public class FlatTab extends DLabel implements CombinedTab, DockableFocusListene
 	    return zOrder;
     }
     
-    public Insets getOverlap(){
+    public Insets getOverlap( TabPaneComponent other ){
     	return new Insets( 0, 0, 0, 0 );
     }
     

@@ -71,10 +71,11 @@ public interface TabPaneComponent {
 	public int getZOrder();
 	
 	/**
-	 * Tells how much of this component may be overlapped by another component.
+	 * Tells how much of this component may be overlapped by another component <code>other</code>.
+	 * @param other another component which may be painted over this component
 	 * @return the border of this component that may not be visible, not <code>null</code>
 	 */
-	public Insets getOverlap();
+	public Insets getOverlap( TabPaneComponent other );
 	
 	/**
 	 * Gets the minimal size this component should have
