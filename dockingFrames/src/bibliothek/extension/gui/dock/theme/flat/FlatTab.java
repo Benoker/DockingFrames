@@ -346,6 +346,14 @@ public class FlatTab extends DLabel implements CombinedTab, DockableFocusListene
         setToolTipText( tooltip );
     }
     
+    public void setPaneVisible( boolean visible ){
+    	pane.getTabVisibilityHandler().setVisible( this, visible );
+    }
+    
+    public boolean isPaneVisible(){
+    	return pane.getTabVisibilityHandler().isVisible( this );
+    }
+    
     /**
      * Determines whether this button is selected or not.
      * @return <code>true</code> if the button is selected

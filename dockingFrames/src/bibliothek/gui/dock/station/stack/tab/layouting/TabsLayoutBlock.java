@@ -46,7 +46,7 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 	/** the boundaries of this block */
 	private Rectangle bounds = new Rectangle();
 	
-	/** the produced of new tabs */
+	/** the producer of new tabs */
 	private TabPane pane;
 	
 	/**
@@ -115,6 +115,14 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 		return tabs.toArray( new Tab[ tabs.size() ] );
 	}
 	
+	/**
+	 * Returns the number of tabs currently on this block.
+	 * @return the nubmer of {@link Tab}s
+	 */
+	public int getTabsCount(){
+		return tabs.size();
+	}
+	
 	public void addTab( Tab tab ){
 		insertTab( tab, tabs.size() );
 	}
@@ -177,6 +185,112 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 	}
 	
 	/**
+	 * Tells the index at which <code>tab</code> appears on this block. 
+	 * @param tab some tab
+	 * @return its location or -1 if not found
+	 */
+	public int indexOfTab( Tab tab ){
+		return tabs.indexOf( tab );
+	}
+	
+	/**
+	 * Gets all tabs that could, in theory, be displayed on this block. The
+	 * tabs are ordered by importance, the most important tabs come first. In
+	 * the default implementation the fist tab is always {@link #getSelectedTab()},
+	 * then all the currently displayed tabs follow, only after them the invisible
+	 * tabs follow.
+	 * @return all tabs, ordered by importance
+	 * @throws IllegalStateException if {@link #getPane()} returns <code>null</code>
+	 */
+	public Tab[] getTabsOrderedByImportance(){
+		if( pane == null )
+			throw new IllegalStateException( "no TabPane available" );
+		
+		Dockable[] dockables = pane.getDockables();
+		Tab[] allTabs = new Tab[ dockables.length ];
+		int[] visibleToInvisible = getOriginalTabLocations();
+		    
+		for( int i = 0; i < allTabs.length; i++ ){
+			allTabs[i] = pane.getOnTab( dockables[i] );
+		}
+		
+		Tab[] result = new Tab[ allTabs.length ];
+		int resultIndex = 0;
+		
+		// search selected tab
+		Tab selected = getSelectedTab();
+		for( int i = 0; i < allTabs.length; i++ ){
+			if( selected == allTabs[i] ){
+				allTabs[i] = null;
+				result[ resultIndex++ ] = selected;
+			}
+		}
+		
+		// search visible tabs
+		if( selected == null ){
+			for( int i = 0; i < visibleToInvisible.length; i++ ){
+				result[ resultIndex++ ] = allTabs[ visibleToInvisible[ i ]];
+				allTabs[ visibleToInvisible[i] ] = null;
+			}
+		}
+		else{
+			int selectedIndex = indexOfTab( selected );
+			for( int i = selectedIndex-1; i >= 0; i-- ){
+				result[ resultIndex++ ] = allTabs[ visibleToInvisible[ i ]];
+				allTabs[ visibleToInvisible[i] ] = null;
+			}
+			for( int i = selectedIndex+1; i < visibleToInvisible.length; i++ ){
+				result[ resultIndex++ ] = allTabs[ visibleToInvisible[ i ]];
+				allTabs[ visibleToInvisible[i] ] = null;
+			}
+		}
+		
+		// list remaining, invisible tabs
+		
+		// start by filling gaps between visible tabs
+		int leftMostVisible = -1;
+		int rightMostVisible = -1;
+		
+		for( int i = 0; i < allTabs.length; i++ ){
+			if( allTabs[i] == null ){
+				leftMostVisible = i;
+				break;
+			}
+		}
+		for( int i = allTabs.length-1; i >= 0; i-- ){
+			if( allTabs[i] == null ){
+				rightMostVisible = i;
+				break;
+			}
+		}
+		
+		for( int i = leftMostVisible+1; i < rightMostVisible; i++ ){
+			if( allTabs[i] != null ){
+				result[ resultIndex++ ] = allTabs[i];
+				allTabs[i] = null;
+			}
+		}
+		
+		// now fill up tabs to the left of the visible tabs
+		for( int i = leftMostVisible-1; i >= 0; i-- ){
+			if( allTabs[i] != null ){
+				result[ resultIndex++ ] = allTabs[i];
+				allTabs[i] = null;
+			}
+		}
+		
+		// now fill up tabs to the right of the visible tabs
+		for( int i = Math.max( 0, rightMostVisible ); i < allTabs.length; i++ ){
+			if( allTabs[i] != null ){
+				result[ resultIndex++ ] = allTabs[i];
+				allTabs[i] = null;
+			}
+		}
+		
+		return result;
+	}
+	
+	/**
 	 * This method maps each {@link Tab} of this {@link LayoutBlock} to the
 	 * location its {@link Dockable} has in the owning {@link TabPane}.
 	 * @return the location of the original elements
@@ -201,11 +315,45 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 					break;
 				}
 				
-				index = (index+1) % locations.length;
+				index = (index+1) % dockables.length;
 			}
 		}
 		
 		return locations;
+	}
+	
+	/**
+	 * Gets an array that has the same size as {@link TabPane#getDockables()},
+	 * the tab at location <code>x</code> has the same {@link Dockable} as
+	 * in the array returned by <code>getDockables</code>. This includes the
+	 * possibility to have no tab at some locations.
+	 * @return the tabs, may contain <code>null</code> values
+	 * @throws IllegalStateException if there is no {@link TabPane} known
+	 * to this block.
+	 */
+	public Tab[] getDockableTabMap(){
+		TabPane pane = getPane();
+		if( pane == null )
+			throw new IllegalStateException( "missing the TabPane" );
+		
+		Tab[] tabs = getTabs();
+		Dockable[] dockables = pane.getDockables();
+		
+		Tab[] result = new Tab[ dockables.length ];
+		
+		int index = 0;
+		for( int i = 0; i < tabs.length; i++ ){
+			Dockable check = tabs[i].getDockable();
+			for( int j = 0; j < dockables.length; j++ ){
+				if( dockables[index] == check ){
+					result[index] = tabs[i];
+					break;
+				}
+				
+				index = (index+1) % dockables.length;
+			}
+		}
+		return result;
 	}
 	
 	/**
@@ -247,44 +395,38 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 	
 	/**
 	 * Updates the layout of this block. The layout includes the location
-	 * and size of all the {@link Tab}s managed by this block.
+	 * and size of all the {@link Tab}s managed by this block. This method
+	 * must not add or remove tabs from the block.
 	 */
 	public abstract void doLayout();
 	
-	/**
-	 * Automatically determines which tabs should be shown in this block.
-	 * This decision might depend on the currently selected tab, the
-	 * number of tabs, the size of this block, etc...<br>
-	 * In general this method should choose as many tabs as possible and
-	 * should also choose the selected tab.<br>
-	 * Note: this method might create tabs in order to check whether they
-	 * can be used.
-	 */
-	public abstract void autoSelectTabs();
-	
-	public Dimension getMinimumSize(){
-		return getMinimumSize( getTabs() );
+	public void setLayout( Size size ){
+		if( size instanceof TabsSize ){
+			Tab[] tabs = ((TabsSize)size).getTabs();
+			
+			// check current layout before doing too much work
+			Tab[] current = getTabs();
+			if( tabs.length == current.length ){
+				boolean same = true;
+				for( int i = 0; i < tabs.length && same; i++ ){
+					same = tabs[i] == current[i];
+				}
+				if( same )
+					return;
+			}
+			
+			// the tabs are not the current tabs
+			removeAllTabs();
+			
+			for( Tab tab : tabs ){
+				tab = pane.putOnTab( tab.getDockable() );
+				insertTab( tab );
+			}
+		}
+		else{
+			throw new IllegalArgumentException( "not a size created by this block" );
+		}
 	}
-	
-	/**
-	 * Gets the minimum size this {@link LayoutBlock} would need to
-	 * layout <code>tabs</code>.
-	 * @param tabs some tabs
-	 * @return the minimum size
-	 */
-	public abstract Dimension getMinimumSize( Tab[] tabs );
-	
-	public Dimension getPreferredSize(){
-		return getPreferredSize( getTabs() );
-	}
-	
-	/**
-	 * Gets the preferred size this {@link LayoutBlock} would need to
-	 * layout <code>tabs</code>.
-	 * @param tabs some tabs
-	 * @return the preferred size
-	 */
-	public abstract Dimension getPreferredSize( Tab[] tabs );
 	
 	public boolean isVisible(){
 		return true;
@@ -300,5 +442,39 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 	 */
 	public Rectangle getBounds(){
 		return new Rectangle( bounds );
+	}
+	
+	/**
+	 * This {@link Size} contains an array of {@link Tab}s which are required
+	 * to get this size. Instances of this class can be used for {@link TabsLayoutBlock#setLayout(Size)}
+	 * @author Benjamin Sigg
+	 */
+	protected class TabsSize extends Size{
+		/** tabs required for this size */
+		private Tab[] tabs;
+		
+		public TabsSize( Type type, int width, int height, Tab[] tabs ){
+			super( type, width, height );
+		}
+
+		public TabsSize( Type type, Dimension size, Tab[] tabs ){
+			super( type, size );
+		}
+		
+		/**
+		 * Gets the tabs that are required for this size.
+		 * @return the tabs
+		 */
+		public Tab[] getTabs(){
+			return tabs;
+		}
+		
+		/**
+		 * Gets the number of tabs shown with this size.
+		 * @return the number of tabs
+		 */
+		public int getTabCount(){
+			return tabs.length;
+		}
 	}
 }

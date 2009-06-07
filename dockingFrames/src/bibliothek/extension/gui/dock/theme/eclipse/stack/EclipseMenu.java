@@ -25,9 +25,44 @@
  */
 package bibliothek.extension.gui.dock.theme.eclipse.stack;
 
-import bibliothek.gui.dock.station.stack.CombinedMenu;
-import bibliothek.gui.dock.station.stack.tab.AbstractTabMenu;
+import java.awt.Component;
 
-public class EclipseMenu extends AbstractTabMenu implements CombinedMenu{
+import bibliothek.extension.gui.dock.theme.eclipse.RoundRectButton;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.station.stack.menu.AbstractCombinedMenu;
+import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
 
+/**
+ * A menu used by the {@link EclipseTabPane} to select {@link Dockable}s.
+ * @author Benjamin Sigg
+ */
+public class EclipseMenu extends AbstractCombinedMenu{
+	private EclipseTabPane pane;
+	
+	/**
+	 * Creates a new menu.
+	 * @param pane the owner of this menu
+	 */
+	public EclipseMenu( EclipseTabPane pane ){
+		super( pane, pane.getMenuVisibilityHandler() );
+		this.pane = pane;
+	}
+	
+	@Override
+	protected Component createComponent(){
+		BasicTrigger trigger = new BasicTrigger(){
+        	public void triggered(){
+        		open();
+        	}
+        };
+        RoundRectButton button = new RoundRectButton( trigger );
+        //button.getModel().setIcon( icon );
+        
+        return button;
+	}
+
+	@Override
+	protected void selected( Dockable dockable ){
+		pane.setSelectedDockable( dockable );		
+	}
 }

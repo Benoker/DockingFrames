@@ -76,7 +76,7 @@ public interface TabPaneComponent {
 	 * @return the border of this component that may not be visible, not <code>null</code>
 	 */
 	public Insets getOverlap( TabPaneComponent other );
-	
+		
 	/**
 	 * Gets the minimal size this component should have
 	 * @return the minimal size
@@ -94,4 +94,17 @@ public interface TabPaneComponent {
 	 * @return the maximal size
 	 */
 	public Dimension getMaximumSize();
+
+	/**
+	 * Changes the visibility state of this component. Invisible components
+	 * should be removed from any parent.
+	 * @param visible the new state
+	 */
+	public void setPaneVisible( boolean visible );
+	
+	/**
+	 * Tells whether this component is visible or not.
+	 * @return <code>true</code> if visible, <code>false</code> otherwise
+	 */
+	public boolean isPaneVisible();
 }

@@ -64,10 +64,9 @@ public class FlatMenu extends AbstractCombinedMenu{
 	/**
 	 * Creates a new {@link FlatMenu}.
 	 * @param parent the panel for which this menu is used
-	 * @param dockables the content of this menu
 	 */
-	public FlatMenu( FlatTabPane parent, Dockable[] dockables ){
-		super( parent, dockables );
+	public FlatMenu( FlatTabPane parent ){
+		super( parent, parent.getMenuVisibilityHandler() );
 		this.pane = parent;
 	}
 	

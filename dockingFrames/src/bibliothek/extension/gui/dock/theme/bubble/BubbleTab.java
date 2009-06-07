@@ -271,6 +271,14 @@ public class BubbleTab extends JPanel implements CombinedTab, ChangeListener, Ru
 	    label.setToolTipText( tooltip );
 	}
 	
+	public void setPaneVisible( boolean visible ){
+		parent.getTabVisibilityHandler().setVisible( this, visible );	
+	}
+	
+	public boolean isPaneVisible(){
+		return parent.getTabVisibilityHandler().isVisible( this );
+	}
+	
 	public int getState() {
         return state;
     }

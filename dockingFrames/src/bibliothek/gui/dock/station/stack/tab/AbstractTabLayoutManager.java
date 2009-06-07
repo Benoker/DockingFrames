@@ -29,27 +29,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import bibliothek.gui.dock.station.stack.tab.layouting.ComponentLayoutBlock;
-import bibliothek.gui.dock.station.stack.tab.layouting.MenuLayoutBlock;
-import bibliothek.gui.dock.station.stack.tab.layouting.TabsLayoutBlock;
+import bibliothek.gui.Dockable;
 
 /**
- * This layout manager creates a common interface for one menu, one information
- * panel and a block of tabs. It does however not include any code to layout
- * these three components. Further more it stores information about
- * each pane it has to manage.
+ * This layout manager creates a common interface to store information for each
+ * {@link TabPane} individually.
  * @author Benjamin Sigg
  */
 public abstract class AbstractTabLayoutManager<I extends AbstractTabLayoutManager.PaneInfo> implements TabLayoutManager{
 	/** informations about {@link TabPane}s */
 	private List<I> infos = new ArrayList<I>();
 	
-	private MenuLayoutBlock menu;
-	private ComponentLayoutBlock<TabPaneComponent> info;
-	private TabsLayoutBlock tabs;
-	
 	public void install( TabPane pane ){
 		I info = createInfoFor( pane );
+		pane.addTabPaneListener( info );
 		infos.add( info );
 	}
 
@@ -59,6 +52,7 @@ public abstract class AbstractTabLayoutManager<I extends AbstractTabLayoutManage
 			I next = iterator.next();
 			if( next.getPane() == pane ){
 				iterator.remove();
+				pane.removeTabPaneListener( next );
 				destroy( next );
 			}
 		}
@@ -93,11 +87,13 @@ public abstract class AbstractTabLayoutManager<I extends AbstractTabLayoutManage
 	}
 
 	/**
-	 * Information about a {@link TabPane} that gets layed out by 
-	 * this {@link AbstractTabLayoutManager}.
+	 * Information about a {@link TabPane} that gets laid out by 
+	 * this {@link AbstractTabLayoutManager}. This class implements 
+	 * {@link TabPaneListener}, the listener is added and removed from
+	 * the {@link TabPane} automatically.
 	 * @author Benjamin Sigg
 	 */
-	protected static class PaneInfo{
+	protected static class PaneInfo implements TabPaneListener{
 		/** the panel itself */
 		private TabPane pane;
 		
@@ -117,6 +113,22 @@ public abstract class AbstractTabLayoutManager<I extends AbstractTabLayoutManage
 		 */
 		public TabPane getPane(){
 			return pane;
+		}
+
+		public void added( TabPane pane, Dockable dockable ){
+			// ignore
+		}
+
+		public void infoComponentChanged( TabPane pane, LonelyTabPaneComponent oldInfo, LonelyTabPaneComponent newInfo ){
+			// ignore
+		}
+
+		public void removed( TabPane pane, Dockable dockable ){
+			// ignore
+		}
+
+		public void selectionChanged( TabPane pane ){
+			// ignore
 		}
 	}
 }

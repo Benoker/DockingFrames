@@ -42,6 +42,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
+import bibliothek.gui.dock.station.stack.tab.LonelyTabPaneComponent;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.stack.tab.TabPaneListener;
 import bibliothek.gui.dock.util.PropertyValue;
@@ -71,6 +72,8 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 		this.theme = theme;
 		this.station = station;
 		
+		setInfoComponent( new EclipseTabInfo( this ) );
+		
 		addTabPaneListener( new TabPaneListener(){
 			public void added( TabPane pane, Dockable dockable ){
 				// ignore
@@ -80,6 +83,13 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 			}
 			public void selectionChanged( TabPane pane ){
 				updateFullBorder();
+				EclipseTabInfo info = getInfoComponent();
+				if( info != null ){
+					info.setSelection( getSelectedDockable() );
+				}
+			}
+			public void infoComponentChanged( TabPane pane, LonelyTabPaneComponent oldInfo, LonelyTabPaneComponent newInfo ){
+				// ignore
 			}
 		});
 	}
@@ -94,6 +104,20 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 		}
 		
 		updateTabPainter();
+	}
+	
+	@Override
+	public void setInfoComponent( EclipseTabInfo info ){
+		EclipseTabInfo old = getInfoComponent();
+		if( old != null ){
+			old.setSelection( null );
+		}
+		
+		if( info != null ){
+			info.setSelection( getSelectedDockable() );
+		}
+		
+		super.setInfoComponent( info );
 	}
 	
 	/**
@@ -146,13 +170,7 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 	}
 	
 	@Override
-	protected EclipseMenu createMenu( Dockable[] dockables ){
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected EclipseTab createTab( Dockable dockable ){
+	protected EclipseTab newTab( Dockable dockable ){
 		TabComponent component = getTabPainter().createTabComponent( this, dockable, indexOf( dockable ) );
 		EclipseTab tab = new EclipseTab( this, dockable, component );
 		tab.setController( getController() );
@@ -161,16 +179,21 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 	}
 
 	@Override
-	protected void destroyMenu( EclipseMenu menu ){
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void destroyTab( EclipseTab tab ){
+	protected void tabRemoved( EclipseTab tab ){
 		tab.unbind();
 	}
-
+	
+	@Override
+	public EclipseMenu newMenu(){
+		EclipseMenu menu = new EclipseMenu( this );
+		return menu;
+	}
+	
+	@Override
+	protected void menuRemoved( EclipseMenu menu ){
+		// nothing to do
+	}
+	
 	/**
 	 * Used by {@link TabComponent}s and by {@link TabPainter}s this method
 	 * advises the {@link EclipseTabPane} to put <code>border</code> 

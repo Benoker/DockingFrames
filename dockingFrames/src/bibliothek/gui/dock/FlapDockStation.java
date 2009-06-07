@@ -1062,8 +1062,11 @@ public class FlapDockStation extends AbstractDockableStation {
     	return this.window == window;
     }
 
-    public boolean prepareDrop( int mouseX, int mouseY, int titleX, int titleY,
-            boolean checkOverrideZone, Dockable dockable ) {
+    public boolean prepareDrop( int mouseX, int mouseY, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
+    	if( SwingUtilities.isDescendingFrom( getComponent(), dockable.getComponent() )){
+    		setDropInfo( null );
+    		return false;
+    	}
         
         Point mouse = new Point( mouseX, mouseY );
         SwingUtilities.convertPointFromScreen( mouse, buttonPane );

@@ -34,7 +34,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
-import bibliothek.gui.dock.station.stack.tab.AbstractTabPaneComponent;
+import bibliothek.gui.dock.station.stack.tab.LonelyTabPaneComponent;
 
 /**
  * A panel that works like a {@link JTabbedPane}, but the buttons to
@@ -42,7 +42,7 @@ import bibliothek.gui.dock.station.stack.tab.AbstractTabPaneComponent;
  * buttons of the <code>JTabbedPane</code>.
  * @author Benjamin Sigg
  */
-public class FlatTabPane extends CombinedStackDockComponent<FlatTab, FlatMenu, AbstractTabPaneComponent>{
+public class FlatTabPane extends CombinedStackDockComponent<FlatTab, FlatMenu, LonelyTabPaneComponent>{
     /** the station which uses this component */
     private StackDockStation station;
     
@@ -55,27 +55,27 @@ public class FlatTabPane extends CombinedStackDockComponent<FlatTab, FlatMenu, A
     }
     
     @Override
-	protected FlatTab createTab( Dockable dockable ){
+	protected FlatTab newTab( Dockable dockable ){
 		return new FlatTab( this, dockable );
 	}
 	
     @Override
-    protected void destroyTab( FlatTab tab ){
-	    tab.setController( null );	
+    protected void tabRemoved( FlatTab tab ){
+    	tab.setController( null );
     }
     
-	@Override
-	protected FlatMenu createMenu( Dockable[] dockables ){
-		FlatMenu menu = new FlatMenu( this, dockables );
-		menu.setController( getController() );
-		return menu;
-	}
-	
-	@Override
-	protected void destroyMenu( FlatMenu menu ){
-		menu.setController( null );
-	}
-	
+    @Override
+    public FlatMenu newMenu(){
+    	FlatMenu menu = new FlatMenu( this );
+    	menu.setController( getController() );
+    	return menu;
+    }
+    
+    @Override
+    protected void menuRemoved( FlatMenu menu ){
+	    menu.setController( null );	
+    }
+    
 	@Override
     public void setController( DockController controller ){
 		super.setController( controller );

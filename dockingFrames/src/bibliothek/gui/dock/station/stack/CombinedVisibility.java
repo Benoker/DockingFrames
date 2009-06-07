@@ -23,8 +23,32 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.station.stack.tab.layouting;
+package bibliothek.gui.dock.station.stack;
 
-public class InfoLayoutBlock {
-
+/**
+ * A handler to change and read the visibility state of some item. This handler
+ * is attached to some other component, the visibility state depends not only
+ * of the item put also internal states of the other component.
+ * @author Benjamin Sigg
+ *
+ * @param <T> the kind of item whose visibility is changed
+ */
+public interface CombinedVisibility<T> {
+	/**
+	 * Sets the visibility of <code>item</code>.
+	 * @param item some item
+	 * @param visible its new visibility state
+	 * @throws IllegalArgumentException if <code>item</code> does not belong
+	 * to the component this handler is attached to
+	 */
+	public void setVisible( T item, boolean visible );
+	
+	/**
+	 * Tells whether <code>item</code> is visible or not.
+	 * @param item some item
+	 * @return <code>true</code> if visible, <code>false</code> otherwise
+	 * @throws IllegalArgumentException if <code>item</code> does not belong
+	 * to the component this handler is attached to
+	 */
+	public boolean isVisible( T item );
 }

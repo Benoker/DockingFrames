@@ -41,6 +41,8 @@ import javax.swing.JPanel;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.station.stack.CombinedMenu;
+import bibliothek.gui.dock.station.stack.CombinedVisibility;
 import bibliothek.gui.dock.station.stack.menu.AbstractCombinedMenu;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.themes.color.MenuColor;
@@ -80,10 +82,10 @@ public class BubbleTabMenu extends AbstractCombinedMenu{
 	 * Creates a new tab menu.
 	 * @param station the owner of this menu
 	 * @param parent the pane on which the menu is shown
-	 * @param dockables the elements of this menu
+	 * @param visibility handles the visibility of this menu
 	 */
-	public BubbleTabMenu( StackDockStation station, TabPane parent, Dockable[] dockables ){
-		super( parent, dockables );
+	public BubbleTabMenu( StackDockStation station, TabPane parent, CombinedVisibility<CombinedMenu> visibility ){
+		super( parent, visibility );
 		this.station = station;
 		
 		colorTopMouse = new BubbleMenuColor( "stack.menu.background.top.mouse", Color.RED.brighter() );

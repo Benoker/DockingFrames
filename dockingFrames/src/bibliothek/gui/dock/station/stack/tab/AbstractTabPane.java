@@ -25,16 +25,11 @@
  */
 package bibliothek.gui.dock.station.stack.tab;
 
-import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
@@ -50,7 +45,7 @@ import bibliothek.gui.dock.util.PropertyValue;
  * @param <T> the kind of tabs this pane supports
  * @param <M> the kind of menus this pane supports
  */
-public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extends TabPaneComponent> implements TabPane{
+public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extends LonelyTabPaneComponent> implements TabPane{
 	/** the layout manager that is responsible of updating this pane */
 	private PropertyValue<TabLayoutManager> layoutManager = 
 		new PropertyValue<TabLayoutManager>( TabPane.LAYOUT_MANAGER ){
@@ -74,11 +69,14 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 	/** the current selection, can be <code>null</code> */
 	private Dockable selection;
 	
-	/** all the tabs */
+	/** all the tabs, visible and invisible */
 	private Map<Dockable, T> tabs = new HashMap<Dockable, T>();
 	
-	/** all the menus */
-	private Map<Dockable, M> menus = new HashMap<Dockable, M>();
+	/** all the menus, visible and invisible */
+	private List<M> menus = new ArrayList<M>();
+	
+	/** tells for each {@link Dockable} on which menu it is */
+	private Map<Dockable, M> menuPosition = new HashMap<Dockable, M>();
 	
 	/** a list of listeners to be informed when the content or the selection changes */
 	private List<TabPaneListener> listeners = new ArrayList<TabPaneListener>();
@@ -195,6 +193,18 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
     		listener.removed( this, dockable );
     	}
     }
+    
+    /**
+     * Informs all {@link TabPaneListener}s that the info component has been
+     * replaced.
+     * @param oldInfo the old info component
+     * @param newInfo the new info component
+     */
+    protected void fireInfoComponentChanged( I oldInfo, I newInfo ){
+    	for( TabPaneListener listener : listeners() ){
+    		listener.infoComponentChanged( this, oldInfo, newInfo );
+    	}
+    }
 	
     /**
      * Gets the layout manager that is currently used to layout the contents
@@ -247,21 +257,20 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 	 */
 	public void removeAll(){
 		for( T tab : tabs.values() ){
-			setVisibleTab( tab, false );
-			destroyTab( tab );
+			tab.setPaneVisible( false );
+			tabRemoved( tab );
 		}
 		tabs.clear();
 		
-		Set<M> menus = new HashSet<M>( this.menus.values() );
-		for( M menu : menus ){
-			setVisibleMenu( menu, false );
-			destroyMenu( menu );
+		for( Map.Entry<Dockable, M> item : menuPosition.entrySet() ){
+			removeFromMenu( item.getValue(), item.getKey() );
 		}
-		this.menus.clear();
+		menuPosition.clear();
 		
 		for( Dockable dockable : dockables ){
 			fireRemoved( dockable );
 		}
+		
 		dockables.clear();
 		
 		revalidate();
@@ -315,12 +324,18 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 	}
 	
 	public Tab[] getTabs(){
-		Collection<T> values = tabs.values();
-		return values.toArray( new Tab[ values.size() ] );
+		List<Tab> list = new ArrayList<Tab>();
+		for( Tab tab : tabs.values() ){
+			if( tab.isPaneVisible() ){
+				list.add( tab );
+			}
+		}
+		
+		return list.toArray( new Tab[ list.size() ] );
 	}
 	
 	/**
-	 * Gets the tabs of this pane, the list is not ordered.
+	 * Gets all known tabs of this pane, including invisible tabs.
 	 * @return the tabs of this pane
 	 */
 	public List<T> getTabsList(){
@@ -336,7 +351,7 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 		return tabs.get( dockable );
 	}
 	
-	public Tab putOnTab( Dockable dockable ){
+	public T putOnTab( Dockable dockable ){
 		if( dockable == null )
 			throw new IllegalArgumentException( "dockable must not be null" );
 		if( !dockables.contains( dockable ))
@@ -344,13 +359,33 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 		
 		T tab = tabs.get( dockable );
 		if( tab == null ){
-			cleanOut( dockable );
-			tab = createTab( dockable );
-			setVisibleTab( tab, true );
+			tab = newTab( dockable );
+			tabs.put( dockable, tab );
+		}
+		tab.setPaneVisible( true );
+		
+		M menu = menuPosition.remove( dockable );
+		if( menu != null ){
+			removeFromMenu( menu, dockable );
+		}
+		
+		return tab;
+	}
+	
+	public Tab getOnTab( Dockable dockable ){
+		if( dockable == null )
+			throw new IllegalArgumentException( "dockable must not be null" );
+		if( !dockables.contains( dockable ))
+			throw new IllegalArgumentException( "dockable not child of this pane" );
+		
+		T tab = tabs.get( dockable );
+		if( tab == null ){
+			tab = newTab( dockable );
 			tabs.put( dockable, tab );
 		}
 		return tab;
 	}
+	
 	
 	/**
 	 * Sets the info component.
@@ -360,33 +395,37 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 	public void setInfoComponent( I info ){
 		if( this.info != info ){
 			if( this.info != null )
-				setVisibleInfo( this.info, false );
+				this.info.setPaneVisible( false );
 			
+			I oldInfo = this.info;
 			this.info = info;
 			
 			if( this.info != null )
-				setVisibleInfo( this.info, true );
+				this.info.setPaneVisible( true );
+			
+			fireInfoComponentChanged( oldInfo, info );
 		}
 	}
 	
-	public TabPaneComponent getInfoComponent(){
+	public I getInfoComponent(){
 		return info;
 	}
 	
 	/**
-	 * Gets a list of all the menus of this pane.
+	 * Gets a list of all the menus of this pane, includes visible and
+	 * invisible menus
 	 * @return the list of menus
 	 */
 	public List<M> getMenuList(){
-		return new ArrayList<M>( menus.values() );
+		return new ArrayList<M>( menus );
 	}
 	
+	/**
+	 * Gets all the menus of this pane, visible and invisible
+	 * @return all the menus
+	 */
 	public TabMenu[] getMenus(){
-		Set<M> result = new HashSet<M>();
-		for( M menu : menus.values() ){
-			result.add( menu );
-		}
-		return result.toArray( new TabMenu[ result.size() ] );
+		return menus.toArray( new TabMenu[ menus.size() ] );
 	}
 	
 	/**
@@ -395,79 +434,93 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 	 * @return the menu or <code>null</code>
 	 */
 	public M getMenu( Dockable dockable ){
-		return menus.get( dockable );
+		return menuPosition.get( dockable );
 	}
 	
-	public TabMenu putInMenu( Dockable... dockables ){
-		if( dockables == null )
+	@SuppressWarnings("unchecked")
+	public void putInMenu( TabMenu menu, Dockable dockable ){
+		if( dockable == null )
 			throw new IllegalArgumentException( "dockables must not be null" );
-		if( dockables.length == 0 )
-			throw new IllegalArgumentException( "dockables must contains at least one element" );
-		for( int i = 0; i < dockables.length; i++ ){
-			if( dockables[i] == null )
-				throw new IllegalArgumentException( "entry '" + i + "' is null" );
-			
-			if( !this.dockables.contains( dockables[i] ))
-				throw new IllegalArgumentException( "not child of this pane: " + dockables[i] );
-			
-			for( int j = i+1; j < dockables.length; j++ ){
-				if( dockables[i] == dockables[j] )
-					throw new IllegalArgumentException( "a dockable is twice in the list: '" + i + "' and '" + j + "'" );
-			}
-		}
 		
-		// check whether a menu can be reused
-		M menu = menus.get( dockables[0] );
-		if( correctMenu( menu, dockables ))
-			return menu;
+		if( !this.dockables.contains( dockable ))
+			throw new IllegalArgumentException( "not child of this pane: " + dockable );
 		
-		// ... we were not that lucky, clean up tabs and menus and create new menu
-		for( Dockable dockable : dockables ){
-			cleanOut( dockable );
-		}
+		if( menu == null )
+			throw new IllegalArgumentException( "menu is null" );
 		
-		// build up new menu
-		menu = createMenu( dockables );
-		for( Dockable dockable : dockables ){
-			menus.put( dockable, menu );
+		if( !menus.contains( menu ))
+			throw new IllegalArgumentException( "menu not created by this pane" );
+		
+		// check current menu
+		M currentMenu = menuPosition.get( dockable );
+		if( currentMenu == menu )
+			return;
+		
+		removeFromMenu( currentMenu, dockable );
+		addToMenu( (M)menu, dockable );
+		menuPosition.put( dockable, (M)menu );
+		
+		T tab = tabs.get( dockable );
+		if( tab != null ){
+			tab.setPaneVisible( false );
 		}
-		setVisibleMenu( menu, true );
+	}
+	
+	public TabMenu createMenu(){
+		M menu = newMenu();
+		menus.add( menu );
 		return menu;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public void destroyMenu( TabMenu menu ){
+		if( menu == null )
+			throw new IllegalArgumentException( "menu is null" );
+		
+		if( !menus.remove( menu ))
+			throw new IllegalArgumentException( "menu not created by this pane" );
+		
+		menu.setPaneVisible( false );
+		
+		for( Dockable dockable : menu.getDockables() ){
+			menuPosition.remove( dockable );
+		}
+		
+		menuRemoved( (M)menu );
+	}
+
+	/**
+	 * Adds <code>dockable</code> somewhere to <code>menu</code>
+	 * @param menu a menu of this pane
+	 * @param dockable a new child of <code>menu</code>
+	 */
+	protected abstract void addToMenu( M menu, Dockable dockable );
+	
+	/**
+	 * Removes <code>dockable</code> from <code>menu</code>.
+	 * @param menu some menu of this pane
+	 * @param dockable a child of <code>menu</code>
+	 */
+	protected abstract void removeFromMenu( M menu, Dockable dockable );
+	
+	/**
+	 * Removes <code>dockable</code> from all tabs and menus, also removes
+	 * tabs that are no longer needed.
+	 * @param dockable the element to remove
+	 */
 	private void cleanOut( Dockable dockable ){
+		// tab
 		T tab = tabs.remove( dockable );
 		if( tab != null ){
-			setVisibleTab( tab, false );
-			destroyTab( tab );
-		}
-		else{
-			M menu = menus.remove( dockable );
-			if( menu != null ){
-				for( Dockable menuChild : menu.getDockables() ){
-					menus.remove( menuChild );
-				}
-				setVisibleMenu( menu, false );
-				destroyMenu( menu );
-			}
-		}
-	}
-	
-	private boolean correctMenu( M menu, Dockable[] expected ){
-		if( menu == null )
-			return false;
-		
-		Dockable[] dockables = menu.getDockables();
-		if( dockables.length != expected.length )
-			return false;
-		
-		for( int i = 0; i < dockables.length; i++ ){
-			if( dockables[i] != expected[i] ){
-				return false;
-			}
+			tab.setPaneVisible( false );
+			tabRemoved( tab );
 		}
 		
-		return true;
+		// menus
+		M menu = menuPosition.remove( dockable );
+		if( menu != null ){
+			removeFromMenu( menu, dockable );
+		}
 	}
 	
 	/**
@@ -477,7 +530,7 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 	 * @param dockable the element for which a new tab is required
 	 * @return the new tab
 	 */
-	protected abstract T createTab( Dockable dockable );
+	protected abstract T newTab( Dockable dockable );
 	
 	/**
 	 * Creates a new {@link TabMenu} that has <code>this</code> as parent
@@ -486,34 +539,7 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 	 * @param dockables the elements which will be represented by the new menu
 	 * @return the new menu
 	 */
-	protected abstract M createMenu( Dockable[] dockables );
-	
-	/**
-	 * Changes the visibility of <code>tab</code> to <code>visible</code>. For example
-	 * if <code>tab</code> is a {@link Component} then making it visible would mean
-	 * to add it to some {@link Container}, making it invisible would mean to
-	 * remove if from the {@link Container}.
-	 * @param tab the tab whose visibility needs to be changed
-	 * @param visible the new state
-	 */
-	protected abstract void setVisibleTab( T tab, boolean visible );
-
-	/**
-	 * Changes the visibility of <code>menu</code> to <code>visible</code>. For example
-	 * if <code>menu</code> is a {@link Component} then making it visible would mean
-	 * to add it to some {@link Container}, making it invisible would mean to
-	 * remove if from the {@link Container}.
-	 * @param menu menu tab whose visibility needs to be changed
-	 * @param visible the new state
-	 */
-	protected abstract void setVisibleMenu( M menu, boolean visible );
-	
-	/**
-	 * Changes the visibility state of <code>info</code>.
-	 * @param info the info to show or hide
-	 * @param visible whether to show or hide
-	 */
-	protected abstract void setVisibleInfo( I info, boolean visible );
+	public abstract M newMenu();
 	
 	/**
 	 * Informs this pane that <code>tab</code> will never be used again and
@@ -521,13 +547,13 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 	 * method is only called if <code>tab</code> is invisible.
 	 * @param tab the tab to destroy
 	 */
-	protected abstract void destroyTab( T tab );
+	protected abstract void tabRemoved( T tab );
 
 	/**
 	 * Informs this pane that <code>menu</code> will never be used again and
 	 * all resources associated with <code>menu</code> should be freed. This
 	 * method is only called if <code>menu</code> is invisible.
-	 * @param tab the tab to destroy
+	 * @param menu the destroyed menu
 	 */
-	protected abstract void destroyMenu( M menu );
+	protected abstract void menuRemoved( M menu );
 }

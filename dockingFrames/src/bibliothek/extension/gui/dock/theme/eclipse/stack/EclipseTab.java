@@ -49,6 +49,8 @@ public class EclipseTab extends AbstractTab implements CombinedTab{
 	/** painting code for this tab */
 	private TabComponent component;
 	
+	private EclipseTabPane parent;
+	
 	/**
 	 * Creates a new tab.
 	 * @param parent the owner of this tab.
@@ -57,6 +59,7 @@ public class EclipseTab extends AbstractTab implements CombinedTab{
 	 */
 	public EclipseTab( EclipseTabPane parent, Dockable dockable, TabComponent delegate ){
 		super( parent, dockable );
+		this.parent = parent;
 		this.component = delegate;
 	}
 	
@@ -65,6 +68,14 @@ public class EclipseTab extends AbstractTab implements CombinedTab{
 		return component.getComponent();
 	}
 
+	public void setPaneVisible( boolean visible ){
+		parent.getTabVisibilityHandler().setVisible( this, visible );
+	}
+	
+	public boolean isPaneVisible(){
+		return parent.getTabVisibilityHandler().isVisible( this );
+	}
+	
 	public void setIcon( Icon icon ){
 		// ignore	
 	}

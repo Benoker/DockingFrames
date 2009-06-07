@@ -38,4 +38,17 @@ public interface TabMenu extends TabPaneComponent{
 	 * @return the list of elements in this menu
 	 */
 	public Dockable[] getDockables();
+	
+	/**
+	 * Gets the index'th {@link Dockable} of this menu.
+	 * @param index the index of an item
+	 * @return the item
+	 */
+	public Dockable getDockable( int index );
+	
+	/**
+	 * Gets the number of {@link Dockable}s shown on this menu.
+	 * @return the number of items
+	 */
+	public int getDockableCount();
 }

@@ -71,6 +71,11 @@ public abstract class AbstractTab extends AbstractTabPaneComponent implements Ta
 				informSelectionChanged( selected );
 			}
 		}
+		
+		public void infoComponentChanged( TabPane pane,
+				LonelyTabPaneComponent oldInfo, LonelyTabPaneComponent newInfo ){
+			// ignore
+		}
 	};
 	
 	/**

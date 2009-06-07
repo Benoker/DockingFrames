@@ -25,8 +25,6 @@
  */
 package bibliothek.gui.dock.station.stack.tab.layouting;
 
-import java.awt.Dimension;
-
 import bibliothek.gui.dock.station.stack.tab.AbstractTabLayoutManager;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 
@@ -37,25 +35,25 @@ import bibliothek.gui.dock.station.stack.tab.TabPane;
  */
 public interface LayoutBlock {
 	/**
-	 * Gets the preferred size of this block.
-	 * @return the preferred size, may be <code>null</code> if {@link #isVisible()}
-	 * returns <code>false</code>
+	 * Creates a map of all sizes for which this block knows how to make an optimal
+	 * layout. If for example this block consists of 12 buttons, then different
+	 * sizes might lead to a row of 12 blocks, to 2 rows of 6 blocks, to
+	 * 3 rows of 4 blocks, etc...  
+	 * @return the map of sizes, may be empty or <code>null</code> if
+	 * {@link #isVisible()} return <code>false</code>.
 	 */
-	public Dimension getPreferredSize();
+	public Size[] getSizes();
 	
 	/**
-	 * Gets the minimal size this block should have.
-	 * @return the preferred size, may be <code>null</code> if {@link #isVisible()}
-	 * returns <code>false</code>
+	 * Sets the layout of this block, the exact meaning of <code>size</code>
+	 * depends on this block. In general keys returned by the last call of
+	 * {@link #getSizes()} must be accepted, for any  other key the behavior 
+	 * is unspecified.
+	 * @param size the new layout
+	 * @throws IllegalArgumentException if <code>key</code> is <code>null</code>
+	 * or cannot be read
 	 */
-	public Dimension getMinimumSize();
-	
-	/**
-	 * Tells whether this block is actually used.
-	 * @return <code>true</code> if the components behind this block are
-	 * visible, <code>false</code> otherwise.
-	 */
-	public boolean isVisible();
+	public void setLayout( Size size );
 	
 	/**
 	 * Sets the boundaries of this block. The component(s) represented by

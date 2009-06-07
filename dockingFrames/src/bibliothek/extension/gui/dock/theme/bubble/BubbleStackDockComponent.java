@@ -31,14 +31,14 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
-import bibliothek.gui.dock.station.stack.tab.AbstractTabPaneComponent;
+import bibliothek.gui.dock.station.stack.tab.LonelyTabPaneComponent;
 
 /**
  * A {@link bibliothek.gui.dock.station.stack.StackDockComponent StackDockComponent} 
  * used by a {@link BubbleTheme}. This component can animate its tabs.
  * @author Benjamin Sigg
  */
-public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleTab, BubbleTabMenu, AbstractTabPaneComponent> {
+public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleTab, BubbleTabMenu, LonelyTabPaneComponent> {
 
 	/** the station for which this component is used */
 	private StackDockStation station;
@@ -60,28 +60,28 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleT
 	}
 	
 	@Override
-	protected BubbleTab createTab( Dockable dockable ){
+	protected BubbleTab newTab( Dockable dockable ){
 		BubbleTab tab = new BubbleTab( this, dockable );
 		addChangeListener( tab );
 		return tab;
 	}
 	
 	@Override
-	protected void destroyTab( BubbleTab tab ){
+	protected void tabRemoved( BubbleTab tab ){
 		removeChangeListener( tab );
 		tab.setController( null );
         tab.stopAnimation();
 	}
 	
 	@Override
-	protected BubbleTabMenu createMenu( Dockable[] dockables ){
-		BubbleTabMenu menu = new BubbleTabMenu( station, this, dockables );
+	public BubbleTabMenu newMenu(){
+		BubbleTabMenu menu = new BubbleTabMenu( station, this, getMenuVisibilityHandler() );
 		menu.setController( getController() );
 		return menu;
 	}
 	
 	@Override
-	protected void destroyMenu( BubbleTabMenu menu ){
+	protected void menuRemoved( BubbleTabMenu menu ){
 		menu.setController( null );
 		menu.stopAnimation();
 	}

@@ -46,6 +46,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.stack.tab.AbstractTabPane;
 import bibliothek.gui.dock.station.stack.tab.AbstractTabPaneComponent;
+import bibliothek.gui.dock.station.stack.tab.LonelyTabPaneComponent;
 import bibliothek.gui.dock.station.stack.tab.TabLayoutManager;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.stack.tab.TabPaneListener;
@@ -59,7 +60,7 @@ import bibliothek.gui.dock.station.stack.tab.TabPaneListener;
  * @param <T> the type of the tabs
  * @param <M> the type of the menus
  */
-public abstract class CombinedStackDockComponent<T extends CombinedTab, M extends CombinedMenu, I extends AbstractTabPaneComponent> extends AbstractTabPane<T, M, I> implements StackDockComponent{
+public abstract class CombinedStackDockComponent<T extends CombinedTab, M extends CombinedMenu, I extends LonelyTabPaneComponent> extends AbstractTabPane<T, M, I> implements StackDockComponent{
     /** The panel which shows the children */
     private JPanel panel;
     
@@ -103,6 +104,62 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
     
     /** listeners to be informed when the selection changes */
     private List<ChangeListener> listeners = new ArrayList<ChangeListener>();
+
+    /** Handles visibility of tabs */
+    private CombinedVisibility<CombinedTab> tabVisibilityHandler = new CombinedVisibility<CombinedTab>(){
+    	public void setVisible( CombinedTab tab, boolean visible ){
+        	DockController controller = getController();
+        	
+        	if( visible ){
+        		panel.add( tab.getComponent() );
+        		if( controller != null ){
+        			controller.addRepresentative( tab );
+        		}
+        	}
+        	else{
+        		panel.remove( tab.getComponent() );
+        		if( controller != null ){
+        			controller.removeRepresentative( tab );
+        		}
+        	}
+    	}
+    	
+    	public boolean isVisible( CombinedTab item ){
+	    	return item.getComponent() != null && item.getComponent().getParent() == panel;
+    	}
+    };
+    
+    /** Handles visibility of menus. */
+    private CombinedVisibility<CombinedMenu> menuVisibilityHandler = new CombinedVisibility<CombinedMenu>(){
+    	public void setVisible( CombinedMenu menu, boolean visible ){
+    		if( visible ){
+        		panel.add( menu.getComponent() );
+        	}
+        	else{
+        		panel.remove( menu.getComponent() );
+        	}
+        }
+    	
+    	public boolean isVisible( CombinedMenu item ){
+	    	return item.getComponent() != null && item.getComponent().getParent() == panel;
+    	}
+    };
+    
+    /** Handles visibility of info components */
+    private CombinedVisibility<AbstractTabPaneComponent> infoVisibilityHandler = new CombinedVisibility<AbstractTabPaneComponent>(){
+    	public void setVisible( AbstractTabPaneComponent item, boolean visible ){
+    		if( visible ){
+        		panel.add( item.getComponent() );
+        	}
+        	else{
+        		panel.remove( item.getComponent() );
+        	}
+    	}
+    	
+    	public boolean isVisible( AbstractTabPaneComponent item ){
+    		return item.getComponent() != null && item.getComponent().getParent() == panel;
+    	}
+    };
     
     /**
      * Constructs a new component.
@@ -138,6 +195,9 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
         		for( ChangeListener listener : listeners.toArray( new ChangeListener[ listeners.size() ] )){
         			listener.stateChanged( event );
         		}
+        	}
+        	public void infoComponentChanged( TabPane pane, LonelyTabPaneComponent oldInfo, LonelyTabPaneComponent newInfo ){
+        		// ignore
         	}
         });
     }
@@ -177,6 +237,36 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
         }
     }
     
+    /**
+     * Gets a visibility handler for tabs. This visibility handler adds or 
+     * removes {@link CombinedTab}s from this component in order to change
+     * their visibility.
+     * @return the handler
+     */
+    public CombinedVisibility<CombinedTab> getTabVisibilityHandler(){
+		return tabVisibilityHandler;
+	}
+    
+    /**
+     * Gets a visibility handler for menus. This visibility handler adds or 
+     * removes {@link CombinedMenu}s from this component in order to change
+     * their visibility.
+     * @return the handler
+     */
+    public CombinedVisibility<CombinedMenu> getMenuVisibilityHandler(){
+		return menuVisibilityHandler;
+	}
+    
+    /**
+     * Gets a visibility handler for info components. This visibility handler adds or 
+     * removes {@link AbstractTabPaneComponent}s from this component in order to change
+     * their visibility.
+     * @return the handler
+     */
+    public CombinedVisibility<AbstractTabPaneComponent> getInfoVisibilityHandler(){
+		return infoVisibilityHandler;
+	}
+    
     public Rectangle getAvailableArea(){
     	Insets insets = panel.getInsets();
     	if( insets == null ){
@@ -208,55 +298,6 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
     
     public void setSelectedBounds( Rectangle bounds ){
     	componentPanel.setBounds( bounds );
-    }
-    
-    protected void setVisibleTab( T tab, boolean visible ){
-    	DockController controller = getController();
-    	
-    	if( visible ){
-    		Meta meta = components.get( tab.getDockable() );
-    		tab.setIcon( meta.icon );
-    		tab.setText( meta.text );
-    		tab.setTooltip( meta.tooltip );
-    		
-    		panel.add( tab.getComponent() );
-    		if( controller != null ){
-    			controller.addRepresentative( tab );
-    		}
-    	}
-    	else{
-    		panel.remove( tab.getComponent() );
-    		if( controller != null ){
-    			controller.removeRepresentative( tab );
-    		}
-    	}
-    }
-    
-    protected void setVisibleMenu( M menu, boolean visible ){
-    	if( visible ){
-    		int index = 0;
-    		for( Dockable dockable : menu.getDockables() ){
-    			Meta meta = components.get( dockable );
-    			menu.setIcon( index, meta.icon );
-    			menu.setText( index, meta.text );
-    			menu.setTooltip( index, meta.tooltip );
-    			index++;
-    		}
-    		
-    		panel.add( menu.getComponent() );
-    	}
-    	else{
-    		panel.remove( menu.getComponent() );
-    	}
-    }
-    
-    protected void setVisibleInfo( AbstractTabPaneComponent info, boolean visible ){
-    	if( visible ){
-    		panel.add( info.getComponent() );
-    	}
-    	else{
-    		panel.remove( info.getComponent() );
-    	}
     }
     
     public int getSelectedIndex() {
@@ -325,6 +366,32 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
     		componentPanel.remove( meta.component );
     	}
     	components.clear();
+    }
+    
+    @Override
+    public T putOnTab( Dockable dockable ){
+    	T tab = super.putOnTab( dockable );
+    	Meta meta = components.get( dockable );
+    	
+    	tab.setIcon( meta.icon );
+    	tab.setText( meta.text );
+    	tab.setTooltip( meta.tooltip );
+    	
+    	return tab;
+    }
+    
+    protected void addToMenu( M menu, Dockable dockable ){
+    	int index = menu.getDockableCount();
+    	menu.insert( index, dockable );
+    	
+    	Meta meta = components.get( dockable );
+    	menu.setIcon( index, meta.icon );
+    	menu.setText( index, meta.text );
+    	menu.setTooltip( index, meta.tooltip );
+    }
+    
+    protected void removeFromMenu( M menu, Dockable dockable ){
+    	menu.remove( dockable );
     }
     
     /**

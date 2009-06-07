@@ -25,7 +25,15 @@
  */
 package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.KeyboardFocusManager;
+import java.awt.Paint;
+import java.awt.Window;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
@@ -36,10 +44,9 @@ import javax.swing.border.MatteBorder;
 
 import bibliothek.extension.gui.dock.theme.eclipse.RectEclipseBorder;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 import bibliothek.gui.dock.util.color.ColorCodes;
 
@@ -53,12 +60,10 @@ import bibliothek.gui.dock.util.color.ColorCodes;
     "stack.border "})
 public class RectGradientPainter extends BaseTabComponent {
 	public static final TabPainter FACTORY = new TabPainter(){
-	    public TabComponent createTabComponent( DockController controller,
-	            RexTabbedComponent component, StackDockStation station, Dockable dockable, int index ) {
-	        
-	        return new RectGradientPainter( component, controller, station, dockable, index );
-	    }
-	    
+		public TabComponent createTabComponent( EclipseTabPane pane, Dockable dockable, int index ){
+			return new RectGradientPainter( pane, dockable, index );
+		}
+		
 		public TabStripPainter createTabStripPainter( RexTabbedComponent component ) {
 		    return new LineStripPainter( component );
 		}
@@ -66,17 +71,13 @@ public class RectGradientPainter extends BaseTabComponent {
         public Border getFullBorder( DockController controller, Dockable dockable ) {
             return new RectEclipseBorder( controller, true );
         }
-        
-        public Border getFullBorder( DockController controller, DockStation station, RexTabbedComponent component ) {
-            return new RectEclipseBorder( controller, true );
-        }
 	};
 	
 	private MatteBorder contentBorder = new MatteBorder(2, 2, 2, 2, Color.BLACK);
 
 	
-	public RectGradientPainter( RexTabbedComponent component, DockController controller, StackDockStation station, Dockable dockable, int index ){
-	    super( component, controller, station, dockable, index );
+	public RectGradientPainter( EclipseTabPane pane, Dockable dockable, int index ){
+	    super( pane, dockable, index );
 	    
 		setLayout( null );
 		setOpaque( false );
@@ -84,7 +85,7 @@ public class RectGradientPainter extends BaseTabComponent {
         add( getButtons() );
 	}
 		
-	public Insets getOverlap(){
+	public Insets getOverlap( TabComponent other ){
 		return new Insets( 0, 0, 0, 0 );
 	}
 	
@@ -151,7 +152,7 @@ public class RectGradientPainter extends BaseTabComponent {
 	protected void updateBorder(){
 		Color color2;
 		
-		Window window = SwingUtilities.getWindowAncestor( getTabbedComponent() );
+		Window window = SwingUtilities.getWindowAncestor( getComponent() );
 		boolean focusTemporarilyLost = false;
 		
 		if( window != null ){
@@ -175,9 +176,9 @@ public class RectGradientPainter extends BaseTabComponent {
 		if (!color2.equals(contentBorder.getMatteColor())) {
 			contentBorder = new MatteBorder(2, 2, 2, 2, color2);
 		}
-		
-        if( getTabbedComponent() != null )
-            getTabbedComponent().updateContentBorder();
+		/*
+        if( getPane() != null )
+            getPane(). .updateContentBorder();*/
 	}
 
 	@Override
@@ -188,7 +189,7 @@ public class RectGradientPainter extends BaseTabComponent {
 		Color lineColor = colorStackBorder.value();
 		Color color1, color2, colorText;
 		boolean focusTemporarilyLost = KeyboardFocusManager.getCurrentKeyboardFocusManager()
-				.getActiveWindow() != SwingUtilities.getWindowAncestor( getTabbedComponent() );
+				.getActiveWindow() != SwingUtilities.getWindowAncestor( getComponent() );
 		
         if( isFocused() && !focusTemporarilyLost ){
             color1 = colorStackTabTopSelectedFocused.value();
@@ -215,7 +216,8 @@ public class RectGradientPainter extends BaseTabComponent {
 		boolean isSelected = isSelected();
 		Dockable dockable = getDockable();
 		int tabIndex = getIndex();
-		RexTabbedComponent comp = getTabbedComponent();
+		
+		
 		
 		Paint old = g2d.getPaint();
         if( gradient != null )
@@ -248,13 +250,14 @@ public class RectGradientPainter extends BaseTabComponent {
 		if (isSelected || doPaintIconWhenInactive()) {
 			Icon i = dockable.getTitleIcon();
 			if (i != null) {
-				i.paintIcon(comp, g, 5, 4);
+				i.paintIcon( getComponent(), g, 5, 4);
 				iconOffset = i.getIconWidth() + 5;
 			}
 		}
 
 		// draw separator lines
-		if (!isSelected && tabIndex != comp.indexOf(comp.getSelectedTab()) - 1) {
+		EclipseTabPane pane = getPane();
+		if (!isSelected && tabIndex != pane.getSelectedIndex()-1 ) {
 			g.setColor(lineColor);
 			g.drawLine(width - 1, 0, width - 1, height);
 		}

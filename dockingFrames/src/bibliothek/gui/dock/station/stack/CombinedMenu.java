@@ -30,6 +30,7 @@ import java.awt.Component;
 import javax.swing.Icon;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.stack.tab.TabMenu;
 
 /**
@@ -72,4 +73,17 @@ public interface CombinedMenu extends TabMenu{
 	 * @param tooltip the tooltip text, can be <code>null</code>
 	 */
 	public void setTooltip( int index, String tooltip );
+	
+	/**
+	 * Inserts a new item at <code>index</code> in this menu.
+	 * @param index the location of the new item
+	 * @param dockable the new item
+	 */
+	public void insert( int index, Dockable dockable );
+	
+	/**
+	 * Removes the item <code>dockable</code> from this menu
+	 * @param dockable the item to remove
+	 */
+	public void remove( Dockable dockable );
 }

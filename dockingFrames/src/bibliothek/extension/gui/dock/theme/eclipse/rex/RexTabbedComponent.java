@@ -350,7 +350,7 @@ public class RexTabbedComponent extends JComponent {
 	    
 		for (TabEntry tab : tabs) {
 		    contentLayout.removeLayoutComponent( tab.dockable.getComponent() );
-		    tab.dockable.getComponent().setVisible( true );
+		    tab.dockable.getComponent().setPaneVisible( true );
 		    
 			for (TabListener listener : listeners) {
 				listener.tabRemoved( tab.dockable );

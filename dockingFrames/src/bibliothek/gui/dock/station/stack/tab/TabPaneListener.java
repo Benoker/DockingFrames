@@ -28,4 +28,12 @@ public interface TabPaneListener {
 	 * @param pane the {@link TabPane} whose selection changed
 	 */
 	public void selectionChanged( TabPane pane );
+	
+	/**
+	 * Called if the {@link TabPane#getInfoComponent()} was replaced.
+	 * @param pane the source of this event
+	 * @param oldInfo the old info component, may be <code>null</code>
+	 * @param newInfo the new info component, may be <code>null</code>
+	 */
+	public void infoComponentChanged( TabPane pane, LonelyTabPaneComponent oldInfo, LonelyTabPaneComponent newInfo );
 }

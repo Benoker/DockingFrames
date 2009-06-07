@@ -15,6 +15,7 @@ import javax.swing.event.MouseInputListener;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -51,18 +52,20 @@ public class DockTitleTab implements TabComponent{
      */
     public static final TabPainter createFactory( final TabPainter fallback ){
         return new TabPainter(){
-            public TabComponent createTabComponent( DockController controller,
-                    DockStation station, Dockable dockable, int index ) {
-                
-                DockTitleVersion version = controller.getDockTitleManager().getVersion( EclipseTheme.TAB_DOCK_TITLE );
+        	
+        	public TabComponent createTabComponent( EclipseTabPane pane, Dockable dockable, int index ){
+        		DockStation station = pane.getStation();
+        		DockController controller = station.getController();
+        		
+        		DockTitleVersion version = controller == null ? null : controller.getDockTitleManager().getVersion( EclipseTheme.TAB_DOCK_TITLE );
                 DockTitle title = version == null ? null : dockable.getDockTitle( version );
                 if( title == null )
-                    return fallback.createTabComponent( controller, station, dockable, index );
+                    return fallback.createTabComponent( pane, dockable, index );
                     
                 title.setOrientation( Orientation.NORTH_SIDED );
                 return new DockTitleTab( station, dockable, title, index );
-            }
-            
+        	}
+        	
             public TabStripPainter createTabStripPainter( RexTabbedComponent component ) {
                 return fallback.createTabStripPainter( component );
             }
@@ -189,8 +192,8 @@ public class DockTitleTab implements TabComponent{
     public Border getContentBorder() {
         return null;
     }
-
-    public Insets getOverlap() {
+    
+    public Insets getOverlap( TabComponent other ){
         return new Insets( 0, 0, 0, 0 );
     }
 

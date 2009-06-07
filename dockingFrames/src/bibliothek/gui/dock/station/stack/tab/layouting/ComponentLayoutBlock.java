@@ -25,7 +25,6 @@
  */
 package bibliothek.gui.dock.station.stack.tab.layouting;
 
-import java.awt.Dimension;
 import java.awt.Rectangle;
 
 import bibliothek.gui.dock.station.stack.tab.TabPaneComponent;
@@ -53,26 +52,24 @@ public class ComponentLayoutBlock<C extends TabPaneComponent> implements LayoutB
 	public C getComponent(){
 		return component;
 	}
-	
-	public Dimension getMinimumSize(){
-		if( component == null )
-			return null;
-		return component.getMinimumSize();
-	}
-
-	public Dimension getPreferredSize(){
-		if( component == null )
-			return null;
-		return component.getPreferredSize();
-	}
-
-	public boolean isVisible(){
-		return component != null;
-	}
 
 	public void setBounds( int x, int y, int width, int height ){
 		if( component != null ){
 			component.setBounds( new Rectangle( x, y, width, height ));
 		}
+	}
+
+	public Size[] getSizes(){
+		if( component == null )
+			return null;
+		
+		return new Size[]{
+				new Size( Size.Type.MINIMUM, component.getMinimumSize() ),
+				new Size( Size.Type.PREFERRED, component.getPreferredSize() )
+		};
+	}
+	
+	public void setLayout( Size size ){
+		// nothing to do	
 	}
 }

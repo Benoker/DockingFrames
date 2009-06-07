@@ -1092,7 +1092,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     }
 
     public boolean prepareDrop( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
-        putInfo = layoutManager.getValue().prepareDrop( this, x, y, titleX, titleY, checkOverrideZone, dockable );
+    	if( SwingUtilities.isDescendingFrom( getComponent(), dockable.getComponent() ))
+    		putInfo = null;
+    	else
+    		putInfo = layoutManager.getValue().prepareDrop( this, x, y, titleX, titleY, checkOverrideZone, dockable );
         return putInfo != null;
     }
 

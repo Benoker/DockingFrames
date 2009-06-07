@@ -26,9 +26,6 @@ package bibliothek.gui.dock.station.stack.tab.layouting;
  */
 import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.util.Arrays;
-
-import com.sun.java_cup.internal.internal_error;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.stack.tab.AxisConversion;
@@ -86,12 +83,6 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 		this.side = side;
 	}
 	
-	@Override
-	public void autoSelectTabs(){
-		checkExistence();
-		checkSelection();
-		checkSpace();
-	}
 	
 	/**
 	 * Creates the tab that should be selected and adds it at an appropriate
@@ -113,75 +104,30 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 		
 		insertTab( pane.putOnTab( selection ));
 	}
-	
-	/**
-	 * Checks whether the current tabs have enough space using their preferred
-	 * size and whether additional tabs can be added. This method does never
-	 * remove the selected tab (if there is any) nor remove the last
-	 * remaining tab (if there is any). This method may create new {@link Tab}s
-	 * to check their size.
-	 */
-	protected void checkSpace(){
-		// collect required data
-		Tab[] tabs = getTabs();
-		Tab selected = getSelectedTab();
+
+	public LineSize[] getSizes(){
+		Tab[] tabs = getTabsOrderedByImportance();
 		
-		int available = availableSpace();
+		Dimension minimum = new Dimension( 0, 0 );
+		Dimension preferred = new Dimension( 0, 0 );
 		
-		int[] preferred = tabRequirements( tabs );
-		int sumPreferred = 0;
-		for( int value : preferred )
-			sumPreferred += value;
-		
-		// check whether there is enough space...
-		if( sumPreferred > available ){
-			// ... there is not
-			
-			if( selected == null && tabs.length > 0 )
-				selected = tabs[0];
-			
-			// start returning from the right side
-			int right = tabs.length-1;
-			while( right >= 0 && tabs[right] != selected && sumPreferred >= available ){
-				removeTab( right );
-				sumPreferred -= preferred[right];
-				right--;
-			}
-			
-			// remove elements from the left side
-			int left = 0;
-			while( left < right && sumPreferred >= available ){
-				removeTab( 0 );
-				sumPreferred -= preferred[left];
-				left--;
-			}
-		}
-		else{
-			// ... there is
-			ds
-		}
-	}
-	
-	private int availableSpace(){
-		if( getSide().isHorizontal() )
-			return getBounds().width;
-		else
-			return getBounds().height;
-	}
-	
-	private int[] tabRequirements( Tab[] tabs ){
-		int[] preferred = new int[ tabs.length ];
-		boolean horizontal = getSide().isHorizontal();
-		
+		LineSize[] result = new LineSize[ tabs.length+1 ];
 		for( int i = 0; i < tabs.length; i++ ){
-			Dimension size = tabs[i].getPreferredSize();
-			if( horizontal )
-				preferred[i] = size.width;
-			else
-				preferred[i] = size.height;
+			Dimension check = tabs[i].getMinimumSize();
+			minimum.width += check.width;
+			minimum.height = Math.max( minimum.height, check.height );
+			
+			check = tabs[i].getPreferredSize();
+			preferred.width += check.width;
+			preferred.height = Math.max( preferred.height, check.height );
+			
+			Tab[] selection = new Tab[ i+1 ];
+			System.arraycopy( tabs, 0, selection, 0, i+1 );
+			result[i] = new LineSize( Size.Type.MINIMUM, minimum, selection, i == tabs.length );
 		}
 		
-		return preferred;
+		result[tabs.length] = new LineSize( Size.Type.PREFERRED, preferred, tabs, true );
+		return result;
 	}
 	
 	@Override
@@ -192,97 +138,118 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 		AxisConversion conversion = new DefaultAxisConversion( bounds, side );
 		bounds = conversion.viewToModel( bounds );
 		
-		Dimension preferred = getPreferredSize( tabs );
-		if( preferred.width <= bounds.width && preferred.height <= bounds.height ){
-			doLayoutPreferred( conversion, bounds.width, bounds.height, tabs );
+		Dimension[] preferreds = new Dimension[ tabs.length ];
+		Dimension[] minimums = new Dimension[ tabs.length ];
+		
+		int sumPreferred = 0;
+		int sumMinimum = 0;
+		
+		for( int i = 0; i < tabs.length; i++ ){
+			preferreds[i] = conversion.viewToModel( tabs[i].getPreferredSize() );
+			minimums[i] = conversion.viewToModel( tabs[i].getMinimumSize() );
+			
+			sumPreferred += preferreds[i].width;
+			sumMinimum += minimums[i].width;
+		}
+		
+		if( sumPreferred <= bounds.width ){
+			doLayoutPreferred( conversion, bounds.width, bounds.height, preferreds, tabs );
+		}
+		else if( sumMinimum <= bounds.width ){
+			doLayoutMinimum( conversion, bounds.width, bounds.height, minimums, preferreds, tabs );
 		}
 		else{
-			Dimension minimum = getMinimumSize( tabs );
-			if( minimum.width <= bounds.width && minimum.height <= bounds.height ){
-				doLayoutMinimum( conversion, bounds.width, bounds.height, tabs );
-			}
-			else{
-				doLayoutShrinked( conversion, bounds.width, bounds.height, tabs );
-			}
+			doLayoutShrinked( conversion, bounds.width, bounds.height, minimums, tabs );
 		}
 	}
 
-	private void doLayoutPreferred( AxisConversion conversion, int width, int height, Tab[] tabs ){
+	private void doLayoutPreferred( AxisConversion conversion, int width, int height, Dimension[] preferreds, Tab[] tabs ){
 		int x = 0;
 		
-		for( Tab tab : tabs ){
-			Dimension size = conversion.viewToModel( tab.getPreferredSize() );
+		for( int i = 0; i < tabs.length; i++ ){
+			Dimension size = conversion.viewToModel( preferreds[i] );
 			
-			tab.setBounds( conversion.modelToView( new Rectangle( x, 0, size.width, sameSize ? height : size.height ) ) );
+			tabs[i].setBounds( conversion.modelToView( new Rectangle( x, 0, size.width, sameSize ? height : Math.min( height, size.height ) ) ) );
 			x += size.width;
 		}
 	}
 	
-	private void doLayoutMinimum( AxisConversion conversion, int width, int height, Tab[] tabs ){
+	private void doLayoutMinimum( AxisConversion conversion, int width, int height, Dimension[] minimums, Dimension[] preferreds, Tab[] tabs ){
 		int x = 0;
 		
-		for( Tab tab : tabs ){
-			Dimension size = conversion.viewToModel( tab.getMinimumSize() );
+		int sumMinimum = 0;
+		int sumPreferred = 0;
+		
+		for( Dimension minimum : minimums )
+			sumMinimum += minimum.width;
+		for( Dimension preferred : preferreds )
+			sumPreferred += preferred.width;
+		
+		double passage = (width - sumMinimum) / (double)(sumPreferred - sumMinimum);
+		
+		for( int i = 0; i < tabs.length-1; i++ ){
+			int tabWidth = (int)(minimums[i].width + passage * (preferreds[i].width - minimums[i].width ));
 			
-			tab.setBounds( conversion.modelToView( new Rectangle( x, 0, size.width, sameSize ? height : size.height ) ) );
-			x += size.width;
+			tabs[i].setBounds( conversion.modelToView( new Rectangle( x, 0, tabWidth, sameSize ? height : Math.min( height, preferreds[i].height )) ));
+			
+			x += tabWidth;
+		}
+		
+		if( tabs.length > 0 ){
+			int last = tabs.length-1;
+			
+			int tabWidth = Math.min( x - width, preferreds[ last ].width );
+			tabs[last].setBounds( conversion.modelToView( new Rectangle( x, 0, tabWidth, sameSize ? height : Math.min( height, preferreds[last].height )) ));
 		}
 	}
 	
-	private void doLayoutShrinked( AxisConversion conversion, int width, int height, Tab[] tabs ){
+	private void doLayoutShrinked( AxisConversion conversion, int width, int height, Dimension[] minimums, Tab[] tabs ){
 		int x = 0;
 		
-		for( Tab tab : tabs ){
-			Dimension size = conversion.viewToModel( tab.getMinimumSize() );
-			
-			tab.setBounds( conversion.modelToView( new Rectangle( x, 0, width / tabs.length, sameSize ? height : Math.min( height, size.height ) ) ) );
-			x += width / tabs.length;
+		int sum = 0;
+		for( Dimension minimum : minimums ){
+			sum += minimum.width;
+		}
+		
+		double factor = sum / (double)width;
+		
+		for( int i = 0; i < tabs.length-1; i++ ){
+			int tabWidth = (int)(factor * minimums[i].width);
+			tabs[i].setBounds( conversion.modelToView( new Rectangle( x, 0, tabWidth, sameSize ? height : Math.min( height, minimums[i].height ) ) ) );
+			x += tabWidth;
+		}
+		
+		int last = tabs.length-1;
+		if( last >= 0 ){
+			tabs[last].setBounds( conversion.modelToView( new Rectangle( x, 0, width - x, sameSize ? height : Math.min( height, minimums[last].height ) ) ) );
 		}
 	}
 	
-	@Override
-	public Dimension getMinimumSize( Tab[] tabs ){
-		int width = 0;
-		int height = 0;
+	/**
+	 * {@link Size} information about a line on a {@link LineTabsLayoutBlock}.
+	 * @author Benjamin Sigg
+	 */
+	public class LineSize extends TabsSize{
+		private boolean allTabs;
 		
-		if( side == Side.TOP || side == Side.BOTTOM ){
-			for( Tab tab : tabs ){
-				Dimension size = tab.getMinimumSize();
-				width += size.width;
-				height = Math.max( height, size.height );
-			}
+		/**
+		 * Creates a new size
+		 * @param type the kind of size this is
+		 * @param size the amount of needed pixels
+		 * @param tabs the tabs shown with this size
+		 * @param allTabs whether <code>tabs</code> includes all available tabs
+		 */
+		public LineSize( Type type, Dimension size, Tab[] tabs, boolean allTabs ){
+			super( type, size, tabs );
+			this.allTabs = allTabs;
 		}
-		else{
-			for( Tab tab : tabs ){
-				Dimension size = tab.getMinimumSize();
-				width = Math.max( width, size.width );
-				height += size.height;
-			}
-		}
-		
-		return new Dimension( width, height );
-	}
 
-	@Override
-	public Dimension getPreferredSize( Tab[] tabs ){
-		int width = 0;
-		int height = 0;
-		
-		if( side == Side.TOP || side == Side.BOTTOM ){
-			for( Tab tab : tabs ){
-				Dimension size = tab.getPreferredSize();
-				width += size.width;
-				height = Math.max( height, size.height );
-			}
+		/**
+		 * Tells whether this size represents a size where all tabs are shown.
+		 * @return <code>true</code> if all tabs are shown
+		 */
+		public boolean isAllTabs(){
+			return allTabs;
 		}
-		else{
-			for( Tab tab : tabs ){
-				Dimension size = tab.getPreferredSize();
-				width = Math.max( width, size.width );
-				height += size.height;
-			}
-		}
-		
-		return new Dimension( width, height );
 	}
 }

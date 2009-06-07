@@ -26,12 +26,15 @@
 package bibliothek.gui.dock.station.stack.menu;
 
 import java.awt.Component;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Icon;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.stack.CombinedMenu;
+import bibliothek.gui.dock.station.stack.CombinedVisibility;
 import bibliothek.gui.dock.station.stack.tab.AbstractTabPaneComponent;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.util.PropertyValue;
@@ -56,35 +59,22 @@ public abstract class AbstractCombinedMenu extends AbstractTabPaneComponent impl
 	};
 	
 	/** the items of this menu */
-	private Entry[] entries;
+	private List<Entry> entries = new ArrayList<Entry>();
 	
 	/** the controller in whose realm this menu is used */
 	private DockController controller;
 	
+	/** handler for making this menu visible or invisible */
+	private CombinedVisibility<? super AbstractCombinedMenu> visibility;
+	
 	/**
 	 * Creates a new menu.
 	 * @param parent the owner of this menu, must not be <code>null</code>
-	 * @param dockables the items of this menu, must not be <code>null</code> or empty
+	 * @param visibility handler for making this menu visible or invisible
 	 */
-	public AbstractCombinedMenu( TabPane parent, Dockable[] dockables ){
+	public AbstractCombinedMenu( TabPane parent, CombinedVisibility<? super AbstractCombinedMenu> visibility ){
 		super( parent );
-		
-		if( dockables == null )
-			throw new IllegalArgumentException( "dockables must not be null" );
-		
-		if( dockables.length < 1 )
-			throw new IllegalArgumentException( "dockables must contain at least one entry" );
-		
-		entries = new Entry[ dockables.length ];
-		for( int i = 0; i < entries.length; i++ ){
-			Entry entry = new Entry();
-			entry.dockable = dockables[i];
-			entry.text = entry.dockable.getTitleText();
-			entry.tooltip = entry.dockable.getTitleToolTip();
-			entry.icon = entry.dockable.getTitleIcon();
-		}
-		
-		
+		this.visibility = visibility;
 	}
 	
 	/**
@@ -135,6 +125,14 @@ public abstract class AbstractCombinedMenu extends AbstractTabPaneComponent impl
 		return controller;
 	}
 	
+	public void setPaneVisible( boolean visible ){
+		visibility.setVisible( this, visible );
+	}
+	
+	public boolean isPaneVisible(){
+		return visibility.isVisible( this );
+	}
+	
 	/**
 	 * Called if this menu was open, an element was selected and the menu closed.
 	 * @param dockable the selected element
@@ -147,23 +145,49 @@ public abstract class AbstractCombinedMenu extends AbstractTabPaneComponent impl
 	}
 
 	public void setIcon( int index, Icon icon ){
-		entries[ index ].icon = icon;
+		entries.get( index ).icon = icon;
 	}
 
 	public void setText( int index, String text ){
-		entries[ index ].text = text;
+		entries.get( index ).text = text;
 	}
 
 	public void setTooltip( int index, String tooltip ){
-		entries[ index ].tooltip = tooltip;
+		entries.get( index ).tooltip = tooltip;
+	}
+	
+	public void insert( int index, Dockable dockable ){
+		Entry entry = new Entry();
+		entry.dockable = dockable;
+		entry.icon = dockable.getTitleIcon();
+		entry.text = dockable.getTitleText();
+		entry.tooltip = dockable.getTitleToolTip();
+		entries.add( index, entry );
+	}
+	
+	public void remove( Dockable dockable ){
+		for( int i = 0, n = entries.size(); i<n; i++ ){
+			if( entries.get( i ).dockable == dockable ){
+				entries.remove( i );
+				return;
+			}
+		}
 	}
 
 	public Dockable[] getDockables(){
-		Dockable[] result = new Dockable[ entries.length ];
+		Dockable[] result = new Dockable[ entries.size() ];
 		for( int i = 0; i < result.length; i++ ){
-			result[i] = entries[i].dockable;
+			result[i] = entries.get( i ).dockable;
 		}
 		return result;
+	}
+	
+	public int getDockableCount(){
+		return entries.size();
+	}
+	
+	public Dockable getDockable( int index ){
+		return entries.get( index ).dockable;
 	}
 	
 	/**
@@ -189,9 +213,9 @@ public abstract class AbstractCombinedMenu extends AbstractTabPaneComponent impl
 			
 			Component component = getComponent();
 			
-			CombinedMenuContent.Item[] items = new CombinedMenuContent.Item[ entries.length ];
+			CombinedMenuContent.Item[] items = new CombinedMenuContent.Item[ entries.size() ];
 			for( int i = 0; i < items.length; i++ ){
-				items[i] = entries[i].toItem();
+				items[i] = entries.get( i ).toItem();
 			}
 			menu.addCombinedMenuContentListener( this );
 			menu.open( controller, component, 0, component.getHeight(), items );

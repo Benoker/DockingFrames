@@ -98,10 +98,10 @@ public interface TabPane {
 	/**
 	 * Informs this pane that its child <code>dockable</code> should have a
 	 * tab-button. This <code>TabPane</code> may create a new {@link Tab}
-	 * or reuse an existing <code>Tab</code>. <b>Reusing an existing tab is
-	 * recommended</b>, some layout managers might just put <code>dockable</code>
-	 * in a tab to find out how much space the tab requires. If <code>dockable</code>
-	 * was part of a {@link TabMenu}, then that whole menu must be removed.
+	 * or reuse an existing <code>Tab</code>. Reusing an existing tab is
+	 * recommended. If <code>dockable</code> was part of a {@link TabMenu},
+	 * then it should be removed from that menu.<br>
+	 * If <code>dockable</code> already is on a tab then this tab should be reused.
 	 * @param dockable the element which needs a tab-button
 	 * @return a <code>Tab</code> that is only used for <code>dockable</code>
 	 * @throws IllegalArgumentException if <code>dockable</code> is either
@@ -110,25 +110,37 @@ public interface TabPane {
 	public Tab putOnTab( Dockable dockable );
 	
 	/**
-	 * Gets all the menus that are currently visible on this pane.
-	 * @return all the menus
+	 * Gets the tab-button for <code>dockable</code>, if no tab-button
+	 * for <code>dockable</code> exists a new button should be created. Reusing
+	 * existing tabs is recommended. Other than {@link #putOnTab(Dockable)} this
+	 * method must not affect any {@link TabMenu} showing {@link Dockable}. 
+	 * @param dockable the element whose tab is requested
+	 * @return the tab matching <code>dockable</code>
 	 */
-	public TabMenu[] getMenus();
+	public Tab getOnTab( Dockable dockable );
 	
 	/**
-	 * Informs this pane that the children <code>dockables</code> all should
-	 * be shown in the same menu. If an element of <code>dockables</code> is
-	 * in another menu, then the whole other menu has to be removed. If an element
-	 * is represented by a {@link Tab}, then this tab has to be removed.
-	 * This method may create a new {@link TabMenu} or reuse an existing menu.
-	 * @param dockables the elements to put onto the menu
-	 * @return the menu containing <code>dockables</code>
-	 * @throws IllegalArgumentException if <code>dockables</code> is empty,
-	 * is <code>null</code>, contains <code>null</code> entries, contains an
-	 * element more than once, or contains an element that is not child of
-	 * this pane.
+	 * Creates a new menu for this pane.
+	 * @return the new menu
 	 */
-	public TabMenu putInMenu( Dockable... dockables );
+	public TabMenu createMenu();
+	
+	/**
+	 * Destroys <code>menu</code> which was {@link #createMenu() created} by
+	 * this pane. 
+	 * @param menu a menu to destroy
+	 */
+	public void destroyMenu( TabMenu menu );
+	
+	/**
+	 * Adds <code>dockable</code> somewhere on <code>menu</code>. If <code>dockable</code>
+	 * is already shown on another menu or {@link Tab}, then it has to 
+	 * be removed from that other menu or tab.
+	 * @param menu a menu created by this {@link TabPane}
+	 * @param dockable some child of this
+	 * @see TabPane#putOnTab(Dockable)
+	 */
+	public void putInMenu( TabMenu menu, Dockable dockable );
 	
 	/**
 	 * Gets the area in which all the {@link Tab}s, {@link TabMenu}s and
@@ -159,5 +171,5 @@ public interface TabPane {
 	 * current selection.
 	 * @return Gets the current info component, may be <code>null</code>
 	 */
-	public TabPaneComponent getInfoComponent();
+	public LonelyTabPaneComponent getInfoComponent();
 }

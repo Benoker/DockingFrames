@@ -444,6 +444,11 @@ public class StackDockStation extends AbstractDockableStation {
     }
 
     public boolean prepareDrop( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
+    	if( SwingUtilities.isDescendingFrom( getComponent(), dockable.getComponent() )){
+    		setInsert( null, null );
+    		return false;
+    	}
+    	
         DockStation parent = getDockParent();
         Point point = new Point( x, y );
         SwingUtilities.convertPointFromScreen( point, panel );
