@@ -198,7 +198,7 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 		if( tabs.length > 0 ){
 			int last = tabs.length-1;
 			
-			int tabWidth = Math.min( x - width, preferreds[ last ].width );
+			int tabWidth = Math.min( width - x, preferreds[ last ].width );
 			tabs[last].setBounds( conversion.modelToView( new Rectangle( x, 0, tabWidth, sameSize ? height : Math.min( height, preferreds[last].height )) ));
 		}
 	}

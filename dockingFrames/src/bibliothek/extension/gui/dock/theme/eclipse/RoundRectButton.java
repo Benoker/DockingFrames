@@ -73,6 +73,14 @@ public class RoundRectButton extends JComponent{
     }
     
     @Override
+    public Dimension getMinimumSize(){
+    	if( isMinimumSizeSet() )
+    		return super.getMinimumSize();
+    	
+    	return getPreferredSize();
+    }
+    
+    @Override
     public Dimension getPreferredSize() {
         if( isPreferredSizeSet() )
             return super.getPreferredSize();

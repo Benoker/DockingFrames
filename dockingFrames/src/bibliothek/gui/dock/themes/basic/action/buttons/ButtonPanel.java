@@ -9,6 +9,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockAction;
@@ -567,7 +568,6 @@ public class ButtonPanel extends JPanel{
 	private class Listener implements DockActionSourceListener, IconManagerListener, DockHierarchyListener{
 		private Dockable dockable;
 		private DockController controller;
-		private static final String ICON_KEY = "ButtonPanel.overflow.menu";
 		
 		public void setDockable( Dockable dockable ){
 			if( this.dockable != null ){
@@ -577,7 +577,7 @@ public class ButtonPanel extends JPanel{
 			
 			if( controller != null ){
 				if( menuAction != null )
-					controller.getIcons().remove( ICON_KEY, this );
+					controller.getIcons().remove( DockUI.OVERFLOW_MENU_ICON, this );
 				controller = null;
 			}
 			
@@ -590,11 +590,11 @@ public class ButtonPanel extends JPanel{
 			
 			if( menuAction != null ){
 				if( controller != null ){
-					controller.getIcons().add( ICON_KEY, this );
-					iconChanged( ICON_KEY, controller.getIcons().getIcon( ICON_KEY ) );
+					controller.getIcons().add( DockUI.OVERFLOW_MENU_ICON, this );
+					iconChanged( DockUI.OVERFLOW_MENU_ICON, controller.getIcons().getIcon( DockUI.OVERFLOW_MENU_ICON ) );
 				}
 				else
-					iconChanged( ICON_KEY, null );
+					iconChanged( DockUI.OVERFLOW_MENU_ICON, null );
 			}
 		}
 		
@@ -606,7 +606,7 @@ public class ButtonPanel extends JPanel{
 		public void controllerChanged( DockHierarchyEvent event ){
 		    if( controller != null ){
 				if( menuAction != null )
-					controller.getIcons().remove( ICON_KEY, this );
+					controller.getIcons().remove( DockUI.OVERFLOW_MENU_ICON, this );
 				controller = null;
 			}
 			
@@ -616,11 +616,11 @@ public class ButtonPanel extends JPanel{
 			
 			if( menuAction != null ){
 				if( controller != null ){
-					controller.getIcons().add( ICON_KEY, this );
-					iconChanged( ICON_KEY, controller.getIcons().getIcon( ICON_KEY ) );
+					controller.getIcons().add( DockUI.OVERFLOW_MENU_ICON, this );
+					iconChanged( DockUI.OVERFLOW_MENU_ICON, controller.getIcons().getIcon( DockUI.OVERFLOW_MENU_ICON ) );
 				}
 				else
-					iconChanged( ICON_KEY, null );
+					iconChanged( DockUI.OVERFLOW_MENU_ICON, null );
 			}
 			
 			set();

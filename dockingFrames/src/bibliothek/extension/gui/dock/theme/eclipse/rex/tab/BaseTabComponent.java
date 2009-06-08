@@ -109,11 +109,16 @@ public abstract class BaseTabComponent extends DComponent implements TabComponen
     
     /**
      * Creates a new {@link TabComponent}
-     * @param pane the owner of this tab
-     * @param dockable the element which is represented by this component
+     * @param pane the owner of this tab, not <code>null</code>
+     * @param dockable the element which is represented by this component, not <code>null</code>
      * @param index the location of this tab relative to other tabs
      */
     public BaseTabComponent( EclipseTabPane pane, Dockable dockable, int index ){
+    	if( pane == null )
+    		throw new IllegalArgumentException( "pane must not be null" );
+    	if( dockable == null )
+    		throw new IllegalArgumentException( "dockable must not be null" );
+    	
         this.pane = pane;
         this.dockable = dockable;
         this.tabIndex = index;

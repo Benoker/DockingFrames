@@ -26,8 +26,10 @@
 package bibliothek.gui.dock.station.stack.tab.layouting;
 
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -48,6 +50,9 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 	
 	/** the producer of new tabs */
 	private TabPane pane;
+	
+	/** used to call {@link #doLayout()} asynchronously */
+	private Revalidate revalidate = new Revalidate();
 	
 	/**
 	 * Sets the producer of new tabs.
@@ -218,11 +223,20 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 		int resultIndex = 0;
 		
 		// search selected tab
-		Tab selected = getSelectedTab();
+		Dockable selectedDockable = pane.getSelectedDockable();
+		Tab selected = null;
+		for( Tab tab : allTabs ){
+			if( tab.getDockable() == selectedDockable ){
+				selected = tab;
+				break;
+			}
+		}
+		
 		for( int i = 0; i < allTabs.length; i++ ){
 			if( selected == allTabs[i] ){
 				allTabs[i] = null;
 				result[ resultIndex++ ] = selected;
+				break;
 			}
 		}
 		
@@ -400,6 +414,10 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 	 */
 	public abstract void doLayout();
 	
+	public void revalidate(){
+		revalidate.revalidate();
+	}
+	
 	public void setLayout( Size size ){
 		if( size instanceof TabsSize ){
 			Tab[] tabs = ((TabsSize)size).getTabs();
@@ -434,6 +452,7 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 	
 	public void setBounds( int x, int y, int width, int height ){
 		bounds.setBounds( x, y, width, height );
+		revalidate();
 	}
 	
 	/**
@@ -455,10 +474,12 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 		
 		public TabsSize( Type type, int width, int height, Tab[] tabs ){
 			super( type, width, height );
+			this.tabs = tabs;
 		}
 
 		public TabsSize( Type type, Dimension size, Tab[] tabs ){
 			super( type, size );
+			this.tabs = tabs;
 		}
 		
 		/**
@@ -475,6 +496,34 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 		 */
 		public int getTabCount(){
 			return tabs.length;
+		}
+		
+		@Override
+		public String toString(){
+			return "[width=" + getWidth() + ", height=" + getHeight() + ", tabs=" + Arrays.toString( tabs ) + "]";
+		}
+	}
+	
+	/**
+	 * Calls {@link TabsLayoutBlock#doLayout()} from the event queue.
+	 * @author Benjamin Sigg
+	 */
+	private class Revalidate implements Runnable{
+		private boolean started = false;
+		
+		/**
+		 * Schedules the revalidate event.
+		 */
+		public void revalidate(){
+			if( !started ){
+				started = true;
+				EventQueue.invokeLater( this );
+			}
+		}
+		
+		public void run(){
+			started = false;
+			doLayout();
 		}
 	}
 }

@@ -161,4 +161,13 @@ public class EclipseTab extends AbstractTab implements CombinedTab{
 	protected void informSelectionChanged( boolean selected ){
 		component.setSelected( selected );
 	}
+	
+	@Override
+	public String toString(){
+		Dockable dockable = component.getElement().asDockable();
+		if( dockable == null )
+			return getClass().getSimpleName() + "@[component=" + component + "]";
+		else
+			return getClass().getSimpleName() + "@[dockable title=" + dockable.getTitleText() + "]";
+	}
 }

@@ -127,4 +127,9 @@ public class Size {
 	public Dimension toDimension(){
 		return new Dimension( width, height );
 	}
+	
+	@Override
+	public String toString(){
+		return getClass().getSimpleName() + "@[width=" + getWidth() + ", height=" + getHeight() + ", type=" + getType() + "]";
+	}
 }

@@ -323,6 +323,11 @@ public class MenuLineLayout extends AbstractTabLayoutManager<MenuLineLayout.Layo
 				this.infoSize = info;
 			}
 			
+			@Override
+			public String toString(){
+				return getClass().getSimpleName() + "@[menu=" + menuSize + ", info=" + infoSize + ", tabs=" + tabSize + "]";
+			}
+			
 			/**
 			 * Tells whether this layout is a preferred layout. A preferred layout
 			 * shows all tabs, has no menu, and the info panel (if present)
@@ -418,7 +423,7 @@ public class MenuLineLayout extends AbstractTabLayoutManager<MenuLineLayout.Layo
 				
 				if( available.width >= space ){
 					// enough space for all elements
-					tabs.setBounds( available.x, available.y, tabSize.getWidth(), required );
+					tabs.setBounds( available.x, available.y, available.width - space + tabSize.getWidth(), required );
 					if( menuSize != null ){
 						menu.setBounds( available.x + tabSize.getWidth(), available.y, menuSize.getWidth(), required );
 					}

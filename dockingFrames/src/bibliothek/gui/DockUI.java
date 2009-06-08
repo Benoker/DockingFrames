@@ -65,6 +65,9 @@ public class DockUI {
     /** An instance of DockUI */
 	private static DockUI ui;
 	
+	/** Key for an {@link Icon} stored in the {@link IconManager} for an overflow-menu */
+	public static final String OVERFLOW_MENU_ICON = "overflow.menu";
+	
 	/** The resource bundle for some text shown in this framework */
 	private ResourceBundle bundle;
 	
@@ -124,7 +127,7 @@ public class DockUI {
         icons = DockUtilities.loadIcons( "data/icons.ini", null, DockUI.class.getClassLoader() );
         
         // special icons
-        icons.put( "ButtonPanel.overflow.menu", new Icon(){
+        icons.put( OVERFLOW_MENU_ICON, new Icon(){
 			public int getIconHeight(){
 				return 7;
 			}
@@ -145,7 +148,7 @@ public class DockUI {
 			}
         });
         
-        setBundle( Locale.getDefault() );
+        setLocale( Locale.getDefault() );
         
         registerThemes();
         

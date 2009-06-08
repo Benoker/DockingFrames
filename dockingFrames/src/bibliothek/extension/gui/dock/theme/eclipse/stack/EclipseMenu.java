@@ -27,8 +27,13 @@ package bibliothek.extension.gui.dock.theme.eclipse.stack;
 
 import java.awt.Component;
 
+import javax.swing.Icon;
+
 import bibliothek.extension.gui.dock.theme.eclipse.RoundRectButton;
+import bibliothek.gui.DockController;
+import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.station.stack.menu.AbstractCombinedMenu;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
 
@@ -38,6 +43,13 @@ import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
  */
 public class EclipseMenu extends AbstractCombinedMenu{
 	private EclipseTabPane pane;
+	private RoundRectButton button;
+	
+	private IconManagerListener iconListener = new IconManagerListener(){
+		public void iconChanged( String key, Icon icon ){
+			
+		}
+	};
 	
 	/**
 	 * Creates a new menu.
@@ -49,14 +61,40 @@ public class EclipseMenu extends AbstractCombinedMenu{
 	}
 	
 	@Override
+	public void setController( DockController controller ){
+		DockController old = getController();
+		if( old != null ){
+			old.getIcons().remove( DockUI.OVERFLOW_MENU_ICON, iconListener );
+		}
+		
+		super.setController( controller );
+		
+		if( controller != null ){
+			controller.getIcons().add( DockUI.OVERFLOW_MENU_ICON, iconListener );
+			if( button != null ){
+				button.getModel().setIcon( controller.getIcons().getIcon( DockUI.OVERFLOW_MENU_ICON ) );
+			}
+		}
+		else{
+			if( button != null ){
+				button.getModel().setIcon( null );
+			}
+		}
+	}
+	
+	@Override
 	protected Component createComponent(){
 		BasicTrigger trigger = new BasicTrigger(){
         	public void triggered(){
         		open();
         	}
         };
-        RoundRectButton button = new RoundRectButton( trigger );
-        //button.getModel().setIcon( icon );
+        button = new RoundRectButton( trigger );
+        
+        DockController controller = getController();
+        if( controller != null ){
+        	button.getModel().setIcon( controller.getIcons().getIcon( DockUI.OVERFLOW_MENU_ICON ));
+        }
         
         return button;
 	}

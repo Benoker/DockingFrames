@@ -27,6 +27,7 @@ package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -136,13 +137,23 @@ public class ShapedGradientPainter extends BaseTabComponent {
 	}
 
 	@Override
+	public Dimension getMinimumSize(){
+		Dimension preferred = getPreferredSize();
+		return preferred;
+	}
+	
+	@Override
 	public Dimension getPreferredSize() {
+		Font font = getFont();
+		if( font == null )
+			return new Dimension( 0, 0 );
+		
 		Dockable dockable = getDockable();
 		boolean isSelected = isSelected();
 		ButtonPanel buttons = getButtons();
 
 		FontRenderContext frc = new FontRenderContext(null, false, false);
-		Rectangle2D bounds = getFont().getStringBounds(dockable.getTitleText(), frc);
+		Rectangle2D bounds = font.getStringBounds(dockable.getTitleText(), frc);
 		int width = 5 + (int) bounds.getWidth() + 5;
 		int height = 6 + (int) bounds.getHeight();
 		if ((doPaintIconWhenInactive() || isSelected) && dockable.getTitleIcon() != null)

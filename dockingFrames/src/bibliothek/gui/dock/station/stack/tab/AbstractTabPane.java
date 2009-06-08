@@ -456,7 +456,10 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 		if( currentMenu == menu )
 			return;
 		
-		removeFromMenu( currentMenu, dockable );
+		if( currentMenu != null ){
+			removeFromMenu( currentMenu, dockable );
+		}
+		
 		addToMenu( (M)menu, dockable );
 		menuPosition.put( dockable, (M)menu );
 		

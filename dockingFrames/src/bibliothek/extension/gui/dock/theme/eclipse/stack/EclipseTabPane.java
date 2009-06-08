@@ -102,6 +102,9 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 		for( EclipseTab tab : getTabsList() ){
 			tab.setController( controller );
 		}
+		for( EclipseMenu menu : getMenuList() ){
+			menu.setController( controller );
+		}
 		
 		updateTabPainter();
 	}
@@ -186,12 +189,13 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 	@Override
 	public EclipseMenu newMenu(){
 		EclipseMenu menu = new EclipseMenu( this );
+		menu.setController( getController() );
 		return menu;
 	}
 	
 	@Override
 	protected void menuRemoved( EclipseMenu menu ){
-		// nothing to do
+		menu.setController( null );
 	}
 	
 	/**
