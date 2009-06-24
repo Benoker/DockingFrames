@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2009 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,16 +23,42 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
+package bibliothek.extension.gui.dock.theme.eclipse.stack;
 
-import bibliothek.gui.Dockable;
+import java.awt.Graphics;
+
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPanePainter;
+import bibliothek.gui.dock.station.stack.CombinedStackDockContentPane;
 
 /**
- * @author Janni Kovacs
+ * The panel painting the background of a {@link EclipseTabPane}.
+ * @author Benjamin Sigg
  */
-public interface TabListener {
-
-	public void tabRemoved(Dockable dockable);
-
-	public void tabChanged(Dockable dockable);
+public class EclipseTabPaneContent extends CombinedStackDockContentPane{
+	private EclipseTabPane pane;
+	
+	public EclipseTabPaneContent( EclipseTabPane pane ){
+		super( pane );
+		this.pane = pane;
+	}
+	
+	/**
+	 * Gets the parent of this panel.
+	 * @return the parent
+	 */
+	public EclipseTabPane getPane(){
+		return pane;
+	}
+	
+	@Override
+	public void paint( Graphics g ){
+		super.paint( g );
+	
+		TabPanePainter painter = pane.getPainter();
+		if( painter != null ){
+			painter.paint( g );
+		}
+		
+		paintBorder( g );
+	}
 }

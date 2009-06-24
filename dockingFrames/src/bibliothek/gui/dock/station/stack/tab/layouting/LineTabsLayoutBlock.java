@@ -25,13 +25,17 @@ package bibliothek.gui.dock.station.stack.tab.layouting;
  * CH - Switzerland
  */
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.stack.tab.AxisConversion;
 import bibliothek.gui.dock.station.stack.tab.DefaultAxisConversion;
 import bibliothek.gui.dock.station.stack.tab.Tab;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
+import bibliothek.gui.dock.station.stack.tab.TabPaneComponent;
 
 /**
  * This {@link TabsLayoutBlock} orders its tabs in a line.
@@ -107,29 +111,23 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 
 	public LineSize[] getSizes(){
 		Tab[] tabs = getTabsOrderedByImportance();
-		
-		Dimension minimum = new Dimension( 0, 0 );
-		Dimension preferred = new Dimension( 0, 0 );
+		SizeCollector collector = new SizeCollector( getPane().getDockables() );
 		
 		LineSize[] result = new LineSize[ tabs.length+1 ];
 		for( int i = 0; i < tabs.length; i++ ){
-			Dimension check = tabs[i].getMinimumSize();
-			minimum.width += check.width;
-			minimum.height = Math.max( minimum.height, check.height );
+			collector.insert( tabs[i] );
 			
-			check = tabs[i].getPreferredSize();
-			preferred.width += check.width;
-			preferred.height = Math.max( preferred.height, check.height );
-			
+			Dimension size = collector.getMinimumSize();
 			Tab[] selection = new Tab[ i+1 ];
 			System.arraycopy( tabs, 0, selection, 0, i+1 );
-			result[i] = new LineSize( Size.Type.MINIMUM, minimum, selection, i == tabs.length );
+			
+			result[i] = new LineSize( Size.Type.MINIMUM, size, selection, i+1 == tabs.length );
 		}
 		
-		result[tabs.length] = new LineSize( Size.Type.PREFERRED, preferred, tabs, true );
+		result[tabs.length] = new LineSize( Size.Type.PREFERRED, collector.getPreferredSize(), tabs, true );
 		return result;
 	}
-	
+		
 	@Override
 	public void doLayout(){
 		Tab[] tabs = getTabs();
@@ -144,26 +142,74 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 		int sumPreferred = 0;
 		int sumMinimum = 0;
 		
+		int[] overlapPrevious = getOverlapToPrevious( tabs );
+		int[] overlapNext = getOverlapToNext( tabs );
+		
 		for( int i = 0; i < tabs.length; i++ ){
 			preferreds[i] = conversion.viewToModel( tabs[i].getPreferredSize() );
 			minimums[i] = conversion.viewToModel( tabs[i].getMinimumSize() );
 			
 			sumPreferred += preferreds[i].width;
 			sumMinimum += minimums[i].width;
+			
+			if( i > 0 ){
+				int delta = Math.max( overlapPrevious[i], overlapNext[i-1] );
+				sumPreferred -= delta;
+				sumMinimum -= delta;
+			}
 		}
 		
+		ZOrder zorder = new ZOrder( tabs );
 		if( sumPreferred <= bounds.width ){
-			doLayoutPreferred( conversion, bounds.width, bounds.height, preferreds, tabs );
+			doLayoutPreferred( conversion, bounds.width, bounds.height, preferreds, tabs, zorder, overlapPrevious, overlapNext );
 		}
 		else if( sumMinimum <= bounds.width ){
-			doLayoutMinimum( conversion, bounds.width, bounds.height, minimums, preferreds, tabs );
+			doLayoutMinimum( conversion, bounds.width, bounds.height, minimums, preferreds, tabs, zorder, overlapPrevious, overlapNext );
 		}
 		else{
-			doLayoutShrinked( conversion, bounds.width, bounds.height, minimums, tabs );
+			doLayoutShrinked( conversion, bounds.width, bounds.height, minimums, tabs, zorder, overlapPrevious, overlapNext );
+		}
+		
+		int z = 0;
+		Tab[] zOrdered = zorder.getOrderedByZ();
+		for( Tab tab : zOrdered ){
+			if( tab != null ){
+				tab.setZOrder( z++ );
+			}
 		}
 	}
 
-	private void doLayoutPreferred( AxisConversion conversion, int width, int height, Dimension[] preferreds, Tab[] tabs ){
+	/**
+	 * Creates an array telling for each tab how much it may be overlapped by 
+	 * its previous tab.
+	 * @param tabs the set of tabs
+	 * @return the overlap
+	 */
+	private int[] getOverlapToPrevious( Tab[] tabs ){
+		int[] result = new int[ tabs.length ];
+		for( int i = 1; i < tabs.length; i++ ){
+			Insets overlap = tabs[i].getOverlap( tabs[i-1] );
+			result[i] = overlap.left;
+		}
+		return result;
+	}
+	
+	/**
+	 * Creates an array telling for each tab how much it may be overlapped by 
+	 * its next tab.
+	 * @param tabs the set of tabs
+	 * @return the overlap
+	 */
+	private int[] getOverlapToNext( Tab[] tabs ){
+		int[] result = new int[ tabs.length ];
+		for( int i = tabs.length-2; i >= 0; i-- ){
+			Insets overlap = tabs[i].getOverlap( tabs[i+1] );
+			result[i] = overlap.right;
+		}
+		return result;
+	}
+	
+	private void doLayoutPreferred( AxisConversion conversion, int width, int height, Dimension[] preferreds, Tab[] tabs, ZOrder order, int[] overlapPrevious, int[] overlapNext ){
 		int x = 0;
 		
 		for( int i = 0; i < tabs.length; i++ ){
@@ -171,15 +217,26 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 			
 			tabs[i].setBounds( conversion.modelToView( new Rectangle( x, 0, size.width, sameSize ? height : Math.min( height, size.height ) ) ) );
 			x += size.width;
+			
+			if( i+1 < tabs.length ){
+				if( overlapNext[i] > overlapPrevious[i+1] ){
+					x -= overlapNext[i];
+					order.putOrder( tabs[i+1], tabs[i] );
+				}
+				else{
+					x -= overlapPrevious[i+1];
+					order.putOrder( tabs[i], tabs[i+1] );
+				}
+			}
 		}
 	}
 	
-	private void doLayoutMinimum( AxisConversion conversion, int width, int height, Dimension[] minimums, Dimension[] preferreds, Tab[] tabs ){
+	private void doLayoutMinimum( AxisConversion conversion, int width, int height, Dimension[] minimums, Dimension[] preferreds, Tab[] tabs, ZOrder order, int[] overlapPrevious, int[] overlapNext ){
 		int x = 0;
 		
 		int sumMinimum = 0;
 		int sumPreferred = 0;
-		
+				
 		for( Dimension minimum : minimums )
 			sumMinimum += minimum.width;
 		for( Dimension preferred : preferreds )
@@ -193,6 +250,14 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 			tabs[i].setBounds( conversion.modelToView( new Rectangle( x, 0, tabWidth, sameSize ? height : Math.min( height, preferreds[i].height )) ));
 			
 			x += tabWidth;
+			if( overlapNext[i] > overlapPrevious[i+1] ){
+				x -= overlapNext[i];
+				order.putOrder( tabs[i+1], tabs[i] );
+			}
+			else{
+				x -= overlapPrevious[i+1];
+				order.putOrder( tabs[i], tabs[i+1] );
+			}
 		}
 		
 		if( tabs.length > 0 ){
@@ -203,10 +268,10 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 		}
 	}
 	
-	private void doLayoutShrinked( AxisConversion conversion, int width, int height, Dimension[] minimums, Tab[] tabs ){
+	private void doLayoutShrinked( AxisConversion conversion, int width, int height, Dimension[] minimums, Tab[] tabs, ZOrder order, int[] overlapPrevious, int[] overlapNext ){
 		int x = 0;
 		
-		int sum = 0;
+		int sum = 0;		
 		for( Dimension minimum : minimums ){
 			sum += minimum.width;
 		}
@@ -217,6 +282,15 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 			int tabWidth = (int)(factor * minimums[i].width);
 			tabs[i].setBounds( conversion.modelToView( new Rectangle( x, 0, tabWidth, sameSize ? height : Math.min( height, minimums[i].height ) ) ) );
 			x += tabWidth;
+			
+			if( overlapNext[i] > overlapPrevious[i+1] ){
+				x -= overlapNext[i];
+				order.putOrder( tabs[i+1], tabs[i] );
+			}
+			else{
+				x -= overlapPrevious[i+1];
+				order.putOrder( tabs[i], tabs[i+1] );
+			}
 		}
 		
 		int last = tabs.length-1;
@@ -250,6 +324,220 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 		 */
 		public boolean isAllTabs(){
 			return allTabs;
+		}
+	}
+	
+	/**
+	 * Calculates the {@link TabPaneComponent#setZOrder(int) z-order} of various
+	 * components requiring only a subset of all comparisons 
+	 */
+	protected class ZOrder{
+		private Tab[] tabs;
+		
+		private List<Integer>[] onTop;
+		private List<Integer>[] onBottom;
+		
+		/**
+		 * Creates a new {@link ZOrder}
+		 * @param tabs the tabs whose z-order needs to be calculated.
+		 */
+		@SuppressWarnings("unchecked")
+		public ZOrder( Tab[] tabs ){
+			this.tabs = tabs;
+			
+			onTop = new List[ tabs.length ];
+			onBottom = new List[ tabs.length ];
+			
+			for( int i = 0; i < tabs.length; i++ ){
+				onTop[i] = new ArrayList<Integer>( 5 );
+				onBottom[i] = new ArrayList<Integer>( 5 );
+			}
+		}
+		
+		/**
+		 * Sets <code>front</code> in front of <code>back</code>. The behavior
+		 * is undefined if previous calls already established that
+		 * <code>back</code> must be in front of <code>front</code>.
+		 * @param front the front tab
+		 * @param back the back tab
+		 */
+		public void putOrder( Tab front, Tab back ){
+			for( int f = 0; f < tabs.length; f++ ){
+				if( tabs[f] == front ){
+					for( int b = 0; b < tabs.length; b++ ){
+						if( tabs[b] == back ){
+							onTop[b].add( f );
+							onBottom[f].add( b );
+							return;
+						}
+					}
+				}
+			}
+		}
+		
+		/**
+		 * Calculates the z-orders for the tabs known to this {@link ZOrder}.
+		 * @return the z order.
+		 */
+		public int[] getZOrders(){
+			int[] results = new int[ tabs.length ];
+			boolean[] handled = new boolean[ results.length ];
+			
+			for( int i = 0; i < results.length; i++ ){
+				for( int j = 0; j < results.length; j++ ){
+					if( !handled[j] ){
+						if( onTop[j].isEmpty() ){
+							results[j] = results.length-i;
+							handled[j] = true;
+							Integer index = i;
+							
+							for( int bottom : onBottom[j] ){
+								onTop[bottom].remove( index );
+							}
+						}
+					}
+				}
+			}
+			return results;
+		}
+		
+		/**
+		 * Returns the tabs ordered by their z-order. The first tab should
+		 * be the one in front of all other tabs.
+		 * @return the tabs ordered by z
+		 */
+		public Tab[] getOrderedByZ(){
+			Tab[] results = new Tab[ tabs.length ];
+			boolean[] handled = new boolean[ results.length ];
+			
+			base:for( int i = 0; i < results.length; i++ ){
+				for( int j = 0; j < results.length; j++ ){
+					if( !handled[j] ){
+						if( onTop[j].isEmpty() ){
+							results[i] = tabs[j];
+							handled[j] = true;
+							Integer index = i;
+							
+							for( int bottom : onBottom[j] ){
+								onTop[bottom].remove( index );
+							}
+							continue base;
+						}
+					}
+				}
+			}
+			return results;
+		}
+	}
+	
+	/**
+	 * Used to calculate the minimum and preferred size of a set of 
+	 * {@link Tab}s.
+	 * @author Benjamin Sigg
+	 */
+	protected class SizeCollector{
+		private Dockable[] dockables;
+		private Tab[] tabs;
+		
+		private Dimension[] minimum;
+		private Dimension[] preferred;
+		private int[] overlapPrevious;
+		private int[] overlapNext;
+		
+		private AxisConversion conversion = new DefaultAxisConversion( getBounds(), side );
+		
+		/**
+		 * Creates a new collector
+		 * @param dockables underlying set of {@link Dockable}s.
+		 */
+		public SizeCollector( Dockable[] dockables ){
+			this.dockables = dockables;
+			int size = dockables.length;
+			
+			tabs = new Tab[ size ];
+			minimum = new Dimension[ size ];
+			preferred = new Dimension[ size ];
+			overlapPrevious = new int[ size ];
+			overlapNext = new int[ size ];
+		}
+		
+		/**
+		 * Adds a new tab to this collector, all sizes of this collector
+		 * change because of this action.
+		 * @param tab the new tab
+		 */
+		public void insert( Tab tab ){
+			Dockable dockable = tab.getDockable();
+			for( int i = 0; i < dockables.length; i++ ){
+				if( dockables[i] == dockable ){
+					insert( tab, i );
+				}
+			}
+		}
+		
+		private void insert( Tab tab, int index ){
+			tabs[ index ] = tab;
+			minimum[ index ] = conversion.viewToModel( tab.getMinimumSize() );
+			preferred[ index ] = conversion.viewToModel( tab.getPreferredSize() );
+			
+			// search previous
+			for( int i = index-1; i >= 0; i-- ){
+				if( tabs[i] != null ){
+					overlapNext[i] = tabs[i].getOverlap( tab ).right;
+					overlapPrevious[ index ] = tab.getOverlap( tabs[i] ).left;
+					break;
+				}
+			}
+			
+			// search next
+			for( int i = index+1; i < tabs.length; i++ ){
+				if( tabs[i] != null ){
+					overlapNext[ index ] = tab.getOverlap( tabs[i] ).right;
+					overlapPrevious[i] = tabs[i].getOverlap( tab ).left;
+					break;
+				}
+			}
+		}
+		
+		/**
+		 * Gets the current minimum size.
+		 * @return minimum size
+		 */
+		public Dimension getMinimumSize(){
+			return getSize( minimum );
+		}
+		
+		/**
+		 * Gets the current preferred size.
+		 * @return preferred size
+		 */
+		public Dimension getPreferredSize(){
+			return getSize( preferred );
+		}
+		
+		private Dimension getSize( Dimension[] required ){
+			int width = 0;
+			int height = 0;
+			
+			int previous = -1;
+			
+			for( int i = 0; i < tabs.length; i++ ){
+				if( tabs[i] != null ){
+					Dimension size = required[i];
+					
+					height = Math.max( height, size.height );
+					
+					width += size.width;
+					
+					if( previous != -1 ){
+						width -= Math.max( overlapNext[ previous ], overlapPrevious[ i ] );
+					}
+					
+					previous = i;
+				}
+			}
+			
+			return new Dimension( width, height );			
 		}
 	}
 }

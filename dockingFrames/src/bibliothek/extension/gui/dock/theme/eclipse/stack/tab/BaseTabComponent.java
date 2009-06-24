@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
+package bibliothek.extension.gui.dock.theme.eclipse.stack.tab;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -40,6 +40,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseDockActionSource;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTab;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -105,15 +106,14 @@ public abstract class BaseTabComponent extends DComponent implements TabComponen
     private boolean isSelected;
     private EclipseTabPane pane;
 
-    private int tabIndex;
+    private boolean bound;
     
     /**
      * Creates a new {@link TabComponent}
      * @param pane the owner of this tab, not <code>null</code>
      * @param dockable the element which is represented by this component, not <code>null</code>
-     * @param index the location of this tab relative to other tabs
      */
-    public BaseTabComponent( EclipseTabPane pane, Dockable dockable, int index ){
+    public BaseTabComponent( EclipseTabPane pane, Dockable dockable ){
     	if( pane == null )
     		throw new IllegalArgumentException( "pane must not be null" );
     	if( dockable == null )
@@ -121,7 +121,6 @@ public abstract class BaseTabComponent extends DComponent implements TabComponen
     	
         this.pane = pane;
         this.dockable = dockable;
-        this.tabIndex = index;
         
         DockStation station = pane.getStation();
         
@@ -222,9 +221,11 @@ public abstract class BaseTabComponent extends DComponent implements TabComponen
         
         setToolTipText( dockable.getTitleToolTip() );
         revalidate();
+        bound = true;
     }
     
     public void unbind() {
+    	bound = false;
         if( buttons != null )
             buttons.set( null );
         dockable.removeDockableListener( dockableListener );
@@ -235,6 +236,14 @@ public abstract class BaseTabComponent extends DComponent implements TabComponen
             font.connect( null );
         
         setToolTipText( null );
+    }
+    
+    /**
+     * Tells whether the {@link #bind()} method has been called.
+     * @return <code>true</code> if this tab is bound to its owner
+     */
+    public boolean isBound(){
+    	return bound;
     }
 
     public Dockable getDockable() {
@@ -312,13 +321,62 @@ public abstract class BaseTabComponent extends DComponent implements TabComponen
         return isSelected;
     }
     
-    public void setIndex( int index ){
-        tabIndex = index;
-        repaint();
+	/**
+	 * Tells whether the tab before this one is selected. This method only
+	 * checks visible tabs.
+	 * @return <code>true</code> if the tab before is selected
+	 */
+	protected boolean isPreviousTabSelected(){
+		EclipseTabPane pane = getPane();
+		pane.getSelectedIndex();
+		
+		int self = getTabIndex();
+		if( self <= 0 )
+			return false;
+		
+		EclipseTab previous = pane.getVisibleTab( self-1 );
+		
+		return previous.getDockable() == pane.getSelectedDockable();
+	}
+	
+	/**
+	 * Tells whether the tab after this one is selected. This method only
+	 * checks visible tabs.
+	 * @return <code>true</code> if the tab before is selected
+	 */
+	protected boolean isNextTabSelected(){
+		EclipseTabPane pane = getPane();
+		
+		int self = getTabIndex();
+		if( self >= pane.getVisibleTabCount() )
+			return false;
+		
+		EclipseTab next = pane.getVisibleTab( self+1 );
+		if( next == null )
+			return false;
+		
+		return next.getDockable() == pane.getSelectedDockable();
+	}
+    
+    /**
+     * Tells which index the {@link #getDockable() dockable} of this tab
+     * has on the owner.
+     * @return the index of the dockable on the owner, -1 if the owner is
+     * unknown or the dockable is no longer child of the owner
+     */
+    public int getDockableIndex(){
+    	EclipseTabPane pane = getPane();
+    	if( pane == null || !isBound() )
+    		return -1;
+    	return pane.indexOf( getDockable() );
     }
     
-    public int getIndex(){
-        return tabIndex;
+    public int getTabIndex(){
+    	EclipseTabPane pane = getPane();
+    	if( pane == null || !isBound() )
+    		return -1;
+    	
+    	return pane.indexOfVisible( this );
     }
     
     public boolean doPaintIconWhenInactive() {

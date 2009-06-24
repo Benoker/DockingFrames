@@ -247,8 +247,20 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 	 */
 	public void remove( int index ){
 		Dockable dockable = dockables.remove( index );
+		
+		if( selection == dockable ){
+			setSelectedDockable( null );
+		}
+		
 		cleanOut( dockable );
 		fireRemoved( dockable );
+		
+		// select other tab
+		if( index >= getDockableCount() )
+			index = getDockableCount()-1;
+		if( index >= 0 )
+			setSelectedDockable( getDockable( index ) );
+		
 		revalidate();
 	}
 	
@@ -275,7 +287,7 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 		
 		revalidate();
 	}
-	
+
 	public Dockable getSelectedDockable(){
 		return selection; 
 	}
@@ -283,7 +295,7 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 	/**
 	 * Selects the child <code>dockable</code> of this pane as the one visible
 	 * element.
-	 * @param dockable the newly selected element
+	 * @param dockable the newly selected element, can be <code>null</code>
 	 */
 	public void setSelectedDockable( Dockable dockable ){
 		if( this.selection != dockable ){
@@ -332,6 +344,65 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 		}
 		
 		return list.toArray( new Tab[ list.size() ] );
+	}
+	
+	/**
+	 * Returns the index of <code>tab</code> following the indices of
+	 * {@link #indexOf(Dockable) Dockables} but ignoring invisible tabs.
+	 * @param tab the tab to search
+	 * @return its index or -1 if not found or invisible
+	 */
+	public int indexOfVisible( Tab tab ){
+		int index = 0;
+		for( int i = 0, n = getDockableCount(); i<n; i++ ){
+			Tab check = tabs.get( dockables.get( i ) );
+			if( check != null && check.isPaneVisible() ){
+				if( tab == check )
+					return index;
+				
+				index++;
+			}
+		}
+		
+		return -1;
+	}
+	
+	/**
+	 * Gets the index'th visible tab. 
+	 * @param index the index of some visible tab
+	 * @return the visible tab or <code>null</code> if <code>index</code>
+	 * is too big.
+	 * @see #indexOfVisible(Tab)
+	 * @throws IllegalArgumentException if <code>index</code> is smaller than <code>0</code>.
+	 */
+	public T getVisibleTab( int index ){
+		if( index < 0 )
+			throw new IllegalArgumentException( "index to small" );
+		
+		for( int i = 0, n = getDockableCount(); i<n; i++ ){
+			T check = tabs.get( dockables.get( i ) );
+			if( check != null && check.isPaneVisible() ){
+				if( index == 0 )
+					return check;
+				index--;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the number of tabs that are currently visible.
+	 * @return the number of visible tabs
+	 * @see #getVisibleTab(int)
+	 */
+	public int getVisibleTabCount(){
+		int count = 0;
+		for( T check : tabs.values() ){
+			if( check.isPaneVisible() ){
+				count++;
+			}
+		}
+		return count;
 	}
 	
 	/**

@@ -36,12 +36,14 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabComponent;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabComponent;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPanePainter;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
+import bibliothek.gui.dock.station.stack.CombinedStackDockContentPane;
 import bibliothek.gui.dock.station.stack.tab.LonelyTabPaneComponent;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.stack.tab.TabPaneListener;
@@ -62,6 +64,7 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 
 	private DockStation station;
 	private EclipseTheme theme;
+	private TabPanePainter painter;
 	
 	/**
 	 * Creates a new pane.
@@ -95,9 +98,17 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 	}
 	
 	@Override
+	protected CombinedStackDockContentPane createContentPane( CombinedStackDockComponent<EclipseTab, EclipseMenu, EclipseTabInfo> self ){
+		return new EclipseTabPaneContent( (EclipseTabPane)self );
+	}
+	
+	@Override
 	public void setController( DockController controller ){
 		super.setController( controller );
 		tabPainter.setProperties( controller );
+		
+		if( painter != null )
+			painter.setController( controller );
 		
 		for( EclipseTab tab : getTabsList() ){
 			tab.setController( controller );
@@ -154,6 +165,37 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 	 */
 	protected void updateTabPainter(){
 		updateFullBorder();
+		
+		TabPainter painter = getTabPainter();
+		setPainter( painter == null ? null : painter.createDecorationPainter( this ) );
+	}
+	
+	/**
+	 * Sets the {@link TabPanePainter} which will paint decorations for
+	 * this panel.
+	 * @param painter the new painter, can be <code>null</code>
+	 */
+	public void setPainter( TabPanePainter painter ){
+		if( this.painter != null ){
+			this.painter.setController( null );
+		}
+		
+		this.painter = painter;
+		
+		if( this.painter != null ){
+			this.painter.setController( getController() );
+		}
+		
+		repaint();
+	}
+	
+	/**
+	 * Gets the {@link TabPanePainter} which paints decorations for
+	 * this panel.
+	 * @return the painter, may be <code>null</code>
+	 */
+	public TabPanePainter getPainter(){
+		return painter;
 	}
 	
 	/**
@@ -174,7 +216,7 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 	
 	@Override
 	protected EclipseTab newTab( Dockable dockable ){
-		TabComponent component = getTabPainter().createTabComponent( this, dockable, indexOf( dockable ) );
+		TabComponent component = getTabPainter().createTabComponent( this, dockable );
 		EclipseTab tab = new EclipseTab( this, dockable, component );
 		tab.setController( getController() );
 		tab.bind();
@@ -184,6 +226,21 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 	@Override
 	protected void tabRemoved( EclipseTab tab ){
 		tab.unbind();
+	}
+	
+	/**
+	 * Gets the index of <code>tab</code> in respect to the {@link Dockable}s 
+	 * of this pane, ignores any invisible tab.
+	 * @param tab the tab to search
+	 * @return its index or -1 if not found or invisible
+	 */
+	public int indexOfVisible( TabComponent tab ){
+		for( EclipseTab eclipse : getTabsList() ){
+			if( eclipse.getTabComponent() == tab ){
+				return indexOfVisible( eclipse );
+			}
+		}
+		return -1;
 	}
 	
 	@Override

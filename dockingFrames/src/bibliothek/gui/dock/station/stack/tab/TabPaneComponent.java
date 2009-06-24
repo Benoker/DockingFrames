@@ -55,10 +55,14 @@ public interface TabPaneComponent {
 	
 	/**
 	 * Sets the z order of this component. The z order tells which component to
-	 * paint first, as higher the order as earlier a component is to be painted.
-	 * If two components overlap, then the one with the lower z order appears
-	 * in front of the one with the higher z order. If two components have the same
-	 * z order, then it is unspecified which component is painted first. 
+	 * paint first, as lower the order as earlier a component is to be painted.
+	 * If two components overlap, then the one with the higher z order appears
+	 * in front of the one with the lower z order. If two components have the same
+	 * z order, then it is unspecified which component is painted first.<br>
+	 * A z-order is at least 0 and must not exceed the number of {@link TabPaneComponent}s
+	 * on the parent {@link TabPane}. The implementation may increase or
+	 * decrease z-orders to prevent collisions between components with the same
+	 * order.
 	 * @param order the order, can be any integer.
 	 */
 	public void setZOrder( int order );

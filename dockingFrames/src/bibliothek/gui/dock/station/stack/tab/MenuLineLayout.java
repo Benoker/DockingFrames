@@ -218,7 +218,7 @@ public class MenuLineLayout extends AbstractTabLayoutManager<MenuLineLayout.Layo
 						}
 					}
 					else{
-						if( (best == null || !best.isPreferred()) && bestSize < size.width ){
+						if( (best == null || (!best.isPreferred()) && bestSize < size.width )){
 							bestSize = size.width;
 							best = layout;
 						}

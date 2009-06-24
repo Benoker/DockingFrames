@@ -42,7 +42,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.station.stack.CombinedMenu;
-import bibliothek.gui.dock.station.stack.CombinedVisibility;
+import bibliothek.gui.dock.station.stack.CombinedHandler;
 import bibliothek.gui.dock.station.stack.menu.AbstractCombinedMenu;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.themes.color.MenuColor;
@@ -84,7 +84,7 @@ public class BubbleTabMenu extends AbstractCombinedMenu{
 	 * @param parent the pane on which the menu is shown
 	 * @param visibility handles the visibility of this menu
 	 */
-	public BubbleTabMenu( StackDockStation station, TabPane parent, CombinedVisibility<CombinedMenu> visibility ){
+	public BubbleTabMenu( StackDockStation station, TabPane parent, CombinedHandler<CombinedMenu> visibility ){
 		super( parent, visibility );
 		this.station = station;
 		

@@ -34,7 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.LayoutFocusTraversalPolicy;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPainter;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;

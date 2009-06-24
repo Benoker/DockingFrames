@@ -36,6 +36,10 @@ import javax.swing.*;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.*;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.ArchGradientPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabComponent;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPanePainter;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -59,7 +63,7 @@ public class RexTabbedComponent extends JComponent {
 	private int selectedTab = -1;
 	private int focusedTab = -1;
 	private TabPainter tabPainter;
-	private TabStripPainter tabStripPainter;
+	private TabPanePainter tabStripPainter;
 	private List<TabListener> listeners = new LinkedList<TabListener>();
 	private List<TabEntry> tabs = new ArrayList<TabEntry>();
 	
@@ -96,7 +100,7 @@ public class RexTabbedComponent extends JComponent {
 		setLayout(new BorderLayout());
 		
 		add(contentArea, BorderLayout.CENTER);
-		setTabPainter( ShapedGradientPainter.FACTORY );
+		setTabPainter( ArchGradientPainter.FACTORY );
 	}
 
 	protected void bind( TabEntry tab ){
@@ -172,7 +176,7 @@ public class RexTabbedComponent extends JComponent {
 	        }
 	        
 	        if( painter != null ){
-	            tabStripPainter = painter.createTabStripPainter( this );
+	            tabStripPainter = painter.createDecorationPainter( this );
 	            if( tabStripPainter != null )
 	                tabStripPainter.setController( controller );
 	        }
@@ -215,7 +219,7 @@ public class RexTabbedComponent extends JComponent {
 		return tabPainter;
 	}
 	
-	public TabStripPainter getTabStripPainter() {
+	public TabPanePainter getTabStripPainter() {
         return tabStripPainter;
     }
 	

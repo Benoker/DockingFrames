@@ -1,4 +1,4 @@
-package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
+package bibliothek.extension.gui.dock.theme.eclipse.stack.tab;
 
 import java.awt.Component;
 import java.awt.Insets;
@@ -14,7 +14,6 @@ import javax.swing.border.Border;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -42,7 +41,7 @@ public class DockTitleTab implements TabComponent{
      * and create a new {@link DockTitle} which is then wrapped by a
      * {@link DockTitleTab}.
      */
-    public static final TabPainter FACTORY = createFactory( ShapedGradientPainter.FACTORY );
+    public static final TabPainter FACTORY = createFactory( ArchGradientPainter.FACTORY );
     
     /**
      * Creates a new factory which uses <code>fallback</code> to create
@@ -52,22 +51,21 @@ public class DockTitleTab implements TabComponent{
      */
     public static final TabPainter createFactory( final TabPainter fallback ){
         return new TabPainter(){
-        	
-        	public TabComponent createTabComponent( EclipseTabPane pane, Dockable dockable, int index ){
+        	public TabComponent createTabComponent( EclipseTabPane pane, Dockable dockable ){
         		DockStation station = pane.getStation();
         		DockController controller = station.getController();
         		
         		DockTitleVersion version = controller == null ? null : controller.getDockTitleManager().getVersion( EclipseTheme.TAB_DOCK_TITLE );
                 DockTitle title = version == null ? null : dockable.getDockTitle( version );
                 if( title == null )
-                    return fallback.createTabComponent( pane, dockable, index );
+                    return fallback.createTabComponent( pane, dockable );
                     
                 title.setOrientation( Orientation.NORTH_SIDED );
-                return new DockTitleTab( station, dockable, title, index );
+                return new DockTitleTab( station, dockable, title );
         	}
         	
-            public TabStripPainter createTabStripPainter( RexTabbedComponent component ) {
-                return fallback.createTabStripPainter( component );
+        	public TabPanePainter createDecorationPainter( EclipseTabPane pane ){
+        	    return fallback.createDecorationPainter( pane );
             }
             
             public Border getFullBorder( DockController controller, Dockable dockable ) {
@@ -92,8 +90,6 @@ public class DockTitleTab implements TabComponent{
     private boolean focused;
     /** whether this tab is currently selected */
     private boolean selected;
-    /** the location of this tab */
-    private int index;
     /** whether icons should be painted when this tab is inactive */
     private boolean paintIconWhenInactive;
     
@@ -102,13 +98,11 @@ public class DockTitleTab implements TabComponent{
      * @param station the station which uses the tabbed pane, might be <code>null</code>
      * @param dockable the element for which this tab is shown
      * @param title the title which represents the tab
-     * @param index the location of this tab
      */
-    public DockTitleTab( DockStation station, Dockable dockable, DockTitle title, int index ){
+    public DockTitleTab( DockStation station, Dockable dockable, DockTitle title ){
         this.station = station;
         this.dockable = dockable;
         this.title = title;
-        this.index = index;
         
         title.addMouseInputListener( new MouseInputListener(){
             public void mouseClicked( MouseEvent e ) {
@@ -210,11 +204,6 @@ public class DockTitleTab implements TabComponent{
         fire();
     }
 
-    public void setIndex( int index ) {
-        this.index = index;
-        fire();
-    }
-
     public void setPaintIconWhenInactive( boolean paint ) {
         this.paintIconWhenInactive = paint;
         fire();
@@ -234,7 +223,7 @@ public class DockTitleTab implements TabComponent{
      */
     protected void fire(){
         EclipseDockTitleEvent event = new EclipseDockTitleEvent( 
-                station, dockable, selected, focused, paintIconWhenInactive, index );
+                station, dockable, selected, focused, paintIconWhenInactive );
         title.changed( event );
     }
 }

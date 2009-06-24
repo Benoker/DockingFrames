@@ -38,7 +38,6 @@ import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -62,12 +61,12 @@ import bibliothek.gui.dock.station.stack.tab.TabPaneListener;
  */
 public abstract class CombinedStackDockComponent<T extends CombinedTab, M extends CombinedMenu, I extends LonelyTabPaneComponent> extends AbstractTabPane<T, M, I> implements StackDockComponent{
     /** The panel which shows the children */
-    private JPanel panel;
+    private CombinedStackDockContentPane panel;
     
     /** A list of all {@link Component Components} which are shown on this {@link #componentPanel}  */
     private Map<Dockable, Meta> components = new HashMap<Dockable, Meta>();
     
-    /** The panel which displays one of the children of this FlatTab */
+    /** The panel which displays one of the children of this pane */
     private JPanel componentPanel = new JPanel( null ){
     	@Override
     	public void doLayout(){
@@ -106,7 +105,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
     private List<ChangeListener> listeners = new ArrayList<ChangeListener>();
 
     /** Handles visibility of tabs */
-    private CombinedVisibility<CombinedTab> tabVisibilityHandler = new CombinedVisibility<CombinedTab>(){
+    private CombinedHandler<CombinedTab> tabHandler = new CombinedHandler<CombinedTab>(){
     	public void setVisible( CombinedTab tab, boolean visible ){
         	DockController controller = getController();
         	
@@ -127,10 +126,18 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
     	public boolean isVisible( CombinedTab item ){
 	    	return item.getComponent() != null && item.getComponent().getParent() == panel;
     	}
+    	
+    	public void setZOrder( CombinedTab item, int order ){
+	    	CombinedStackDockComponent.this.setZOrder( item.getComponent(), order );	
+    	}
+    	
+    	public int getZOrder( CombinedTab item ){
+	    	return CombinedStackDockComponent.this.getZOrder( item.getComponent() );
+    	}
     };
     
     /** Handles visibility of menus. */
-    private CombinedVisibility<CombinedMenu> menuVisibilityHandler = new CombinedVisibility<CombinedMenu>(){
+    private CombinedHandler<CombinedMenu> menuHandler = new CombinedHandler<CombinedMenu>(){
     	public void setVisible( CombinedMenu menu, boolean visible ){
     		if( visible ){
         		panel.add( menu.getComponent() );
@@ -143,10 +150,18 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
     	public boolean isVisible( CombinedMenu item ){
 	    	return item.getComponent() != null && item.getComponent().getParent() == panel;
     	}
+    	
+    	public void setZOrder( CombinedMenu item, int order ){
+	    	CombinedStackDockComponent.this.setZOrder( item.getComponent(), order );	
+    	}
+    	
+    	public int getZOrder( CombinedMenu item ){
+	    	return CombinedStackDockComponent.this.getZOrder( item.getComponent() );
+    	}
     };
     
     /** Handles visibility of info components */
-    private CombinedVisibility<AbstractTabPaneComponent> infoVisibilityHandler = new CombinedVisibility<AbstractTabPaneComponent>(){
+    private CombinedHandler<AbstractTabPaneComponent> infoHandler = new CombinedHandler<AbstractTabPaneComponent>(){
     	public void setVisible( AbstractTabPaneComponent item, boolean visible ){
     		if( visible ){
         		panel.add( item.getComponent() );
@@ -159,28 +174,21 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
     	public boolean isVisible( AbstractTabPaneComponent item ){
     		return item.getComponent() != null && item.getComponent().getParent() == panel;
     	}
+    	
+    	public void setZOrder( AbstractTabPaneComponent item, int order ){
+	    	CombinedStackDockComponent.this.setZOrder( item.getComponent(), order );	
+    	}
+    	
+    	public int getZOrder( AbstractTabPaneComponent item ){
+	    	return CombinedStackDockComponent.this.getZOrder( item.getComponent() );
+    	}
     };
     
     /**
      * Constructs a new component.
      */
     public CombinedStackDockComponent(){
-        panel = new JPanel( null ){
-            @Override
-            public void doLayout() {
-                CombinedStackDockComponent.this.doLayout();
-            }
-            
-            @Override
-            public Dimension getPreferredSize(){
-            	return CombinedStackDockComponent.this.getPreferredSize();
-            }
-            
-            @Override
-            public Dimension getMinimumSize() {
-            	return CombinedStackDockComponent.this.getMinimumSize();
-            }
-        };
+        panel = createContentPane( this );
         panel.add( componentPanel );
         
         addTabPaneListener( new TabPaneListener(){
@@ -202,9 +210,26 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
         });
     }
     
+    /**
+     * Creates the content pane for <code>this</code> component. This method
+     * may be called by the constructor.
+     * @param self <code>this</code>
+     * @return a new panel, not <code>null</code>
+     */
+    protected CombinedStackDockContentPane createContentPane( CombinedStackDockComponent<T, M, I> self ){
+    	return new CombinedStackDockContentPane( self );
+    }
+    
     @Override
     public void revalidate(){
     	panel.revalidate();
+    }
+    
+    /**
+     * Repaints the contents of this component.
+     */
+    public void repaint(){
+    	panel.repaint();
     }
     
     public void addChangeListener( ChangeListener listener ){
@@ -238,33 +263,33 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
     }
     
     /**
-     * Gets a visibility handler for tabs. This visibility handler adds or 
+     * Gets a handler for tabs. This handler adds or 
      * removes {@link CombinedTab}s from this component in order to change
      * their visibility.
      * @return the handler
      */
-    public CombinedVisibility<CombinedTab> getTabVisibilityHandler(){
-		return tabVisibilityHandler;
+    public CombinedHandler<CombinedTab> getTabHandler(){
+		return tabHandler;
 	}
     
     /**
-     * Gets a visibility handler for menus. This visibility handler adds or 
+     * Gets a handler for menus. This handler adds or 
      * removes {@link CombinedMenu}s from this component in order to change
      * their visibility.
      * @return the handler
      */
-    public CombinedVisibility<CombinedMenu> getMenuVisibilityHandler(){
-		return menuVisibilityHandler;
+    public CombinedHandler<CombinedMenu> getMenuHandler(){
+		return menuHandler;
 	}
     
     /**
-     * Gets a visibility handler for info components. This visibility handler adds or 
+     * Gets a handler for info components. This handler adds or 
      * removes {@link AbstractTabPaneComponent}s from this component in order to change
      * their visibility.
      * @return the handler
      */
-    public CombinedVisibility<AbstractTabPaneComponent> getInfoVisibilityHandler(){
-		return infoVisibilityHandler;
+    public CombinedHandler<AbstractTabPaneComponent> getInfoHandler(){
+		return infoHandler;
 	}
     
     public Rectangle getAvailableArea(){
@@ -276,6 +301,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
     		insets = new Insets( insets.top, insets.left, insets.bottom, insets.right );
     	}
     	
+    	/*
     	Border border = panel.getBorder();
     	if( border != null ){
     		Insets borderInsets = border.getBorderInsets( panel );
@@ -284,6 +310,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
     		insets.right += borderInsets.right;
     		insets.bottom += borderInsets.bottom;
     	}
+    	*/
     	
     	return new Rectangle( 
     			insets.left,
@@ -440,7 +467,26 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
     public JComponent getComponent() {
         return panel;
     }
-
+    
+    /**
+     * Sets the z order of <code>component</code>, as higher the z order
+     * as later the component is painted, as more components it can overlap.
+     * @param component some child of this pane
+     * @param order the order
+     */
+    protected void setZOrder( Component component, int order ){
+    	panel.setComponentZOrder( component, order );
+    }
+    
+    /**
+     * Gets the z order of <code>component</code>.
+     * @param component some child of this pane
+     * @return the order
+     */
+    protected int getZOrder( Component component ){
+    	return panel.getComponentZOrder( component );
+    }
+	
     /**
      * Meta information about a {@link Dockable} that is shown on this 
      * {@link CombinedStackDockComponent}.

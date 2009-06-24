@@ -38,9 +38,6 @@ public abstract class AbstractTabPaneComponent implements TabPaneComponent{
 	/** the owner of this component */
 	private TabPane parent;
 	
-	/** when to paint this component */
-	private int zOrder = 0;
-	
 	/**
 	 * Creates a new object.
 	 * @param parent the owner of this object, not <code>null</code>
@@ -81,14 +78,6 @@ public abstract class AbstractTabPaneComponent implements TabPaneComponent{
 
 	public void setBounds( Rectangle bounds ){
 		getComponent().setBounds( bounds );
-	}
-	
-	public void setZOrder( int order ){
-		this.zOrder = order;	
-	}
-	
-	public int getZOrder(){
-		return zOrder;
 	}
 	
 	public Insets getOverlap( TabPaneComponent other ){

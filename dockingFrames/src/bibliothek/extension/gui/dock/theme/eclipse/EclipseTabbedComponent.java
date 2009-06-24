@@ -36,10 +36,10 @@ import javax.swing.JPanel;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.ShapedGradientPainter;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabPainter;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabStripLayoutManager;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabStripPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.ArchGradientPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPanePainter;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -70,7 +70,7 @@ public class EclipseTabbedComponent extends RexTabbedComponent {
 		itemPanel.setOpaque( false );
 		
 		setTabStrip( new EclipseTabStrip() );
-		setTabPainter( ShapedGradientPainter.FACTORY );
+		setTabPainter( ArchGradientPainter.FACTORY );
 		updateFullBorder();
 		
 		setFocusable( false );
@@ -185,7 +185,7 @@ public class EclipseTabbedComponent extends RexTabbedComponent {
 		@Override
 		protected void paintComponent( Graphics g ){
 			super.paintComponent( g );
-			TabStripPainter painter = getTabStripPainter();
+			TabPanePainter painter = getTabStripPainter();
 			if( painter != null ){
 			    painter.paintTabStrip( this, g );
 			}

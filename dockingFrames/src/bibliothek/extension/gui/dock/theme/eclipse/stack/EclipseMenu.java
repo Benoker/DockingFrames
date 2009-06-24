@@ -56,7 +56,7 @@ public class EclipseMenu extends AbstractCombinedMenu{
 	 * @param pane the owner of this menu
 	 */
 	public EclipseMenu( EclipseTabPane pane ){
-		super( pane, pane.getMenuVisibilityHandler() );
+		super( pane, pane.getMenuHandler() );
 		this.pane = pane;
 	}
 	

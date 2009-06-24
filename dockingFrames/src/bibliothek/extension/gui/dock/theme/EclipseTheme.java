@@ -39,12 +39,12 @@ import bibliothek.extension.gui.dock.theme.eclipse.EclipseStationPaint;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector;
 import bibliothek.extension.gui.dock.theme.eclipse.RoundRectButton;
 import bibliothek.extension.gui.dock.theme.eclipse.RoundRectDropDownButton;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.BasicTabDockTitle;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.DockTitleTab;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.RectGradientPainter;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.ShapedGradientPainter;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabPainter;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.BasicTabDockTitle;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.DockTitleTab;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.RectGradientPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.ArchGradientPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPainter;
 import bibliothek.extension.gui.dock.theme.flat.FlatButtonTitle;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -107,12 +107,12 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 
     /**
      *  Tells in which way the tabs should be painted.
-     *  @see ShapedGradientPainter
+     *  @see ArchGradientPainter
      *  @see RectGradientPainter 
      */
     public static final PropertyKey<TabPainter> TAB_PAINTER =
         new PropertyKey<TabPainter>( "EclipseTheme tab painter", 
-        		new ConstantPropertyFactory<TabPainter>( ShapedGradientPainter.FACTORY ), true );
+        		new ConstantPropertyFactory<TabPainter>( ArchGradientPainter.FACTORY ), true );
 
     /**
      * Provides additional dockable-wise information used to layout components

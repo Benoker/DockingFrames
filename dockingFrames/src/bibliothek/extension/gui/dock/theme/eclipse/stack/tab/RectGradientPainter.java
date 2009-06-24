@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
+package bibliothek.extension.gui.dock.theme.eclipse.stack.tab;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -43,7 +43,6 @@ import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 
 import bibliothek.extension.gui.dock.theme.eclipse.RectEclipseBorder;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
@@ -60,12 +59,12 @@ import bibliothek.gui.dock.util.color.ColorCodes;
     "stack.border "})
 public class RectGradientPainter extends BaseTabComponent {
 	public static final TabPainter FACTORY = new TabPainter(){
-		public TabComponent createTabComponent( EclipseTabPane pane, Dockable dockable, int index ){
-			return new RectGradientPainter( pane, dockable, index );
+		public TabComponent createTabComponent( EclipseTabPane pane, Dockable dockable ){
+			return new RectGradientPainter( pane, dockable );
 		}
 		
-		public TabStripPainter createTabStripPainter( RexTabbedComponent component ) {
-		    return new LineStripPainter( component );
+		public TabPanePainter createDecorationPainter( EclipseTabPane pane ){
+		    return new LinePainter( pane );
 		}
 		
         public Border getFullBorder( DockController controller, Dockable dockable ) {
@@ -76,8 +75,8 @@ public class RectGradientPainter extends BaseTabComponent {
 	private MatteBorder contentBorder = new MatteBorder(2, 2, 2, 2, Color.BLACK);
 
 	
-	public RectGradientPainter( EclipseTabPane pane, Dockable dockable, int index ){
-	    super( pane, dockable, index );
+	public RectGradientPainter( EclipseTabPane pane, Dockable dockable ){
+	    super( pane, dockable );
 	    
 		setLayout( null );
 		setOpaque( false );
@@ -215,9 +214,7 @@ public class RectGradientPainter extends BaseTabComponent {
 		GradientPaint gradient = color1.equals( color2 ) ? null : new GradientPaint(0, 0, color1, 0, height, color2);
 		boolean isSelected = isSelected();
 		Dockable dockable = getDockable();
-		int tabIndex = getIndex();
-		
-		
+		int tabIndex = getTabIndex();
 		
 		Paint old = g2d.getPaint();
         if( gradient != null )
@@ -256,8 +253,7 @@ public class RectGradientPainter extends BaseTabComponent {
 		}
 
 		// draw separator lines
-		EclipseTabPane pane = getPane();
-		if (!isSelected && tabIndex != pane.getSelectedIndex()-1 ) {
+		if (!isSelected && isNextTabSelected() ) {
 			g.setColor(lineColor);
 			g.drawLine(width - 1, 0, width - 1, height);
 		}

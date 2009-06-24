@@ -30,7 +30,7 @@ import java.awt.Graphics;
 import javax.swing.JComponent;
 
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabStripLayoutManager;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabStripPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPanePainter;
 
 public class RexTabStrip extends JComponent{
 	private RexTabbedComponent tabbedComponent;
@@ -48,7 +48,7 @@ public class RexTabStrip extends JComponent{
 	@Override
 	protected void paintComponent( Graphics g ){
 		super.paintComponent( g );
-		TabStripPainter painter = tabbedComponent.getTabStripPainter();
+		TabPanePainter painter = tabbedComponent.getTabStripPainter();
 		if( painter != null ){
 		    g.setClip(0, 0, getWidth(), getHeight());
 		    painter.paintTabStrip( this, g );

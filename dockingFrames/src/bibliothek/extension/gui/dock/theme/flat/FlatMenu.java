@@ -66,7 +66,7 @@ public class FlatMenu extends AbstractCombinedMenu{
 	 * @param parent the panel for which this menu is used
 	 */
 	public FlatMenu( FlatTabPane parent ){
-		super( parent, parent.getMenuVisibilityHandler() );
+		super( parent, parent.getMenuHandler() );
 		this.pane = parent;
 	}
 	

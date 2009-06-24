@@ -272,11 +272,11 @@ public class BubbleTab extends JPanel implements CombinedTab, ChangeListener, Ru
 	}
 	
 	public void setPaneVisible( boolean visible ){
-		parent.getTabVisibilityHandler().setVisible( this, visible );	
+		parent.getTabHandler().setVisible( this, visible );	
 	}
 	
 	public boolean isPaneVisible(){
-		return parent.getTabVisibilityHandler().isVisible( this );
+		return parent.getTabHandler().isVisible( this );
 	}
 	
 	public int getState() {

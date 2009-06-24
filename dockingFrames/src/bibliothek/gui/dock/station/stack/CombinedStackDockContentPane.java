@@ -25,30 +25,41 @@
  */
 package bibliothek.gui.dock.station.stack;
 
+import java.awt.Dimension;
+
+import javax.swing.JPanel;
+
 /**
- * A handler to change and read the visibility state of some item. This handler
- * is attached to some other component, the visibility state depends not only
- * of the item put also internal states of the other component.
+ * This panel paints the contents of a {@link CombinedStackDockComponent}.
  * @author Benjamin Sigg
- *
- * @param <T> the kind of item whose visibility is changed
  */
-public interface CombinedVisibility<T> {
-	/**
-	 * Sets the visibility of <code>item</code>.
-	 * @param item some item
-	 * @param visible its new visibility state
-	 * @throws IllegalArgumentException if <code>item</code> does not belong
-	 * to the component this handler is attached to
-	 */
-	public void setVisible( T item, boolean visible );
+public class CombinedStackDockContentPane extends JPanel{
+	private CombinedStackDockComponent<?, ?, ?> parent;
 	
 	/**
-	 * Tells whether <code>item</code> is visible or not.
-	 * @param item some item
-	 * @return <code>true</code> if visible, <code>false</code> otherwise
-	 * @throws IllegalArgumentException if <code>item</code> does not belong
-	 * to the component this handler is attached to
+	 * Creates a new content pane
+	 * @param parent the owner of this pane, not <code>null</code>
 	 */
-	public boolean isVisible( T item );
+	public CombinedStackDockContentPane( CombinedStackDockComponent<?, ?, ?> parent ){
+		super( null );
+		if( parent == null )
+			throw new IllegalArgumentException( "parent must not be null" );
+		this.parent = parent;
+		setOpaque( false );
+	}
+	
+    @Override
+    public void doLayout() {
+        parent.doLayout();
+    }
+    
+    @Override
+    public Dimension getPreferredSize(){
+    	return parent.getPreferredSize();
+    }
+    
+    @Override
+    public Dimension getMinimumSize() {
+    	return parent.getMinimumSize();
+    }
 }

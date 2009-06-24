@@ -23,11 +23,10 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
+package bibliothek.extension.gui.dock.theme.eclipse.stack.tab;
 
 import javax.swing.border.Border;
 
-import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -42,10 +41,10 @@ import bibliothek.gui.Dockable;
 public interface TabPainter {
     /**
 	 * Creates a new painter for the component which contains the tabs.
-	 * @param component the component for which the painter is created
+	 * @param pane the panel for which this painter will be used
 	 * @return the new painter, can be <code>null</code>
 	 */
-	public TabStripPainter createTabStripPainter( RexTabbedComponent component );
+	public TabPanePainter createDecorationPainter( EclipseTabPane pane );
 	
 	/**
 	 * Creates a new tab for an {@link EclipseTabPane}. At the time this method
@@ -55,10 +54,9 @@ public interface TabPainter {
 	 * which will neither change as long as the tab is in use.
 	 * @param pane the panel for which this tab is required
 	 * @param dockable the element for which the tab is shown
-	 * @param index the initial location of the tab
 	 * @return the new tab, never <code>null</code>
 	 */
-	public TabComponent createTabComponent( EclipseTabPane pane, Dockable dockable, int index );
+	public TabComponent createTabComponent( EclipseTabPane pane, Dockable dockable );
 	
 	/**
 	 * Gets the border which will be around <code>pane</code> when <code>dockable</code>

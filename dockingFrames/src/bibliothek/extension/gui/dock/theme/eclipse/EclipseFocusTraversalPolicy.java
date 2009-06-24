@@ -28,7 +28,7 @@ package bibliothek.extension.gui.dock.theme.eclipse;
 import java.awt.Component;
 import java.awt.Container;
 
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabComponent;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabComponent;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.focus.SimplifiedFocusTraversalPolicy;
 

@@ -26,10 +26,10 @@
 package bibliothek.extension.gui.dock.preference.preferences.choice;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.DockTitleTab;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.RectGradientPainter;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.ShapedGradientPainter;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.DockTitleTab;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.RectGradientPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.ArchGradientPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPainter;
 import bibliothek.gui.DockUI;
 
 /**
@@ -44,7 +44,7 @@ public class EclipseTabChoice extends DefaultChoice<TabPainter>{
 		DockUI ui = DockUI.getDefaultDockUI();
 		add( "title", ui.getString( "preference.theme.eclipse.tab.choice.title" ), DockTitleTab.FACTORY );
 		add( "rect", ui.getString( "preference.theme.eclipse.tab.choice.rect" ), RectGradientPainter.FACTORY );
-		add( "round", ui.getString( "preference.theme.eclipse.tab.choice.round" ), ShapedGradientPainter.FACTORY );
+		add( "round", ui.getString( "preference.theme.eclipse.tab.choice.round" ), ArchGradientPainter.FACTORY );
 		
 		setDefaultChoice( "round" );
 	}

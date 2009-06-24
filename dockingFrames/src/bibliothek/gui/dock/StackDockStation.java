@@ -834,8 +834,7 @@ public class StackDockStation extends AbstractDockableStation {
         }
         
         dockable.removeDockableListener( listener );
-        panel.validate();
-        panel.repaint();
+        panel.revalidate();
         
         dockable.setDockParent( null );
         if( fire )
@@ -1014,17 +1013,22 @@ public class StackDockStation extends AbstractDockableStation {
             
             if( draw ){
                 Rectangle bounds = new Rectangle( 0, 0, getWidth(), getHeight() );
-                Rectangle insert;
+                Rectangle insert = null;
                 if( getDockableCount() < 2 )
                     insert = bounds;
                 else{
-                    Component front = dockables.get( stackComponent.getSelectedIndex() ).getComponent();
-                    Point location = new Point( 0, 0 );
-                    location = SwingUtilities.convertPoint( front, location, this );
-                    insert = new Rectangle( location.x, location.y, front.getWidth(), front.getHeight() );
+                	int index = stackComponent.getSelectedIndex();
+                	if( index >= 0 ){
+	                    Component front = dockables.get( index ).getComponent();
+	                    Point location = new Point( 0, 0 );
+	                    location = SwingUtilities.convertPoint( front, location, this );
+	                    insert = new Rectangle( location.x, location.y, front.getWidth(), front.getHeight() );
+                	}
                 }
                 
-                paint.drawInsertion( g, StackDockStation.this, bounds, insert );
+                if( insert != null ){
+                	paint.drawInsertion( g, StackDockStation.this, bounds, insert );
+                }
             }
         }
     }

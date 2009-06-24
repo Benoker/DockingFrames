@@ -34,7 +34,7 @@ import javax.swing.Icon;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.stack.CombinedMenu;
-import bibliothek.gui.dock.station.stack.CombinedVisibility;
+import bibliothek.gui.dock.station.stack.CombinedHandler;
 import bibliothek.gui.dock.station.stack.tab.AbstractTabPaneComponent;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.util.PropertyValue;
@@ -65,16 +65,16 @@ public abstract class AbstractCombinedMenu extends AbstractTabPaneComponent impl
 	private DockController controller;
 	
 	/** handler for making this menu visible or invisible */
-	private CombinedVisibility<? super AbstractCombinedMenu> visibility;
+	private CombinedHandler<? super AbstractCombinedMenu> handler;
 	
 	/**
 	 * Creates a new menu.
 	 * @param parent the owner of this menu, must not be <code>null</code>
-	 * @param visibility handler for making this menu visible or invisible
+	 * @param handler handler for making this menu visible or invisible and change the z order
 	 */
-	public AbstractCombinedMenu( TabPane parent, CombinedVisibility<? super AbstractCombinedMenu> visibility ){
+	public AbstractCombinedMenu( TabPane parent, CombinedHandler<? super AbstractCombinedMenu> handler ){
 		super( parent );
-		this.visibility = visibility;
+		this.handler = handler;
 	}
 	
 	/**
@@ -126,11 +126,19 @@ public abstract class AbstractCombinedMenu extends AbstractTabPaneComponent impl
 	}
 	
 	public void setPaneVisible( boolean visible ){
-		visibility.setVisible( this, visible );
+		handler.setVisible( this, visible );
 	}
 	
 	public boolean isPaneVisible(){
-		return visibility.isVisible( this );
+		return handler.isVisible( this );
+	}
+	
+	public void setZOrder( int order ){
+		handler.setZOrder( this, order );	
+	}
+	
+	public int getZOrder(){
+		return handler.getZOrder( this );
 	}
 	
 	/**

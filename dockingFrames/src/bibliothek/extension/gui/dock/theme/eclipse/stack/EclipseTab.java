@@ -32,7 +32,7 @@ import java.awt.Point;
 import javax.swing.Icon;
 import javax.swing.event.MouseInputListener;
 
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabComponent;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabComponent;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
@@ -68,12 +68,28 @@ public class EclipseTab extends AbstractTab implements CombinedTab{
 		return component.getComponent();
 	}
 
+	/**
+	 * Gets the {@link TabComponent} which is shown on this tab.
+	 * @return the component
+	 */
+	public TabComponent getTabComponent(){
+		return component;
+	}
+	
 	public void setPaneVisible( boolean visible ){
-		parent.getTabVisibilityHandler().setVisible( this, visible );
+		parent.getTabHandler().setVisible( this, visible );
 	}
 	
 	public boolean isPaneVisible(){
-		return parent.getTabVisibilityHandler().isVisible( this );
+		return parent.getTabHandler().isVisible( this );
+	}
+	
+	public void setZOrder( int order ){
+		parent.getTabHandler().setZOrder( this, order );	
+	}
+	
+	public int getZOrder(){
+		return parent.getTabHandler().getZOrder( this );
 	}
 	
 	public void setIcon( Icon icon ){

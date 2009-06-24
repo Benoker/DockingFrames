@@ -94,11 +94,19 @@ public class EclipseTabInfo extends AbstractTabPaneComponent implements LonelyTa
 	}
 
 	public boolean isPaneVisible(){
-		return pane.getInfoVisibilityHandler().isVisible( this );
+		return pane.getInfoHandler().isVisible( this );
 	}
 
 	public void setPaneVisible( boolean visible ){
-		pane.getInfoVisibilityHandler().setVisible( this, visible );
+		pane.getInfoHandler().setVisible( this, visible );
+	}
+	
+	public int getZOrder(){
+		return pane.getInfoHandler().getZOrder( this );
+	}
+	
+	public void setZOrder( int order ){
+		pane.getInfoHandler().setZOrder( this, order );	
 	}
 	
 	public LayoutBlock toLayoutBlock(){

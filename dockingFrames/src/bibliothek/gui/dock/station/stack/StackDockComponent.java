@@ -66,7 +66,7 @@ public interface StackDockComponent {
     public void removeChangeListener(ChangeListener listener);
 
     /**
-     * Gets the index of the currently selected component
+     * Gets the index of the currently selected dockable
      * @return the index
      */
     public int getSelectedIndex();

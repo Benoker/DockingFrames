@@ -35,9 +35,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.ShapedGradientPainter;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabListener;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.TabPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.ArchGradientPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPainter;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -55,6 +56,7 @@ import bibliothek.gui.dock.util.PropertyValue;
  *
  * @author Janni Kovacs
  * @author Benjamin Sigg
+ * @deprecated replaced by {@link EclipseTabPane}
  */
 public class EclipseStackDockComponent extends JPanel implements StackDockComponent, TabListener {
 	/**
@@ -89,7 +91,7 @@ public class EclipseStackDockComponent extends JPanel implements StackDockCompon
 		@Override
 		protected void valueChanged(TabPainter oldValue, TabPainter newValue){
 			if( newValue == null )
-				newValue = ShapedGradientPainter.FACTORY;
+				newValue = ArchGradientPainter.FACTORY;
 			
 			if( tabs.getTabPainter() != newValue ){
 				tabs.setTabPainter( newValue );

@@ -1,4 +1,4 @@
-package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
+package bibliothek.extension.gui.dock.theme.eclipse.stack.tab;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -15,8 +15,6 @@ import bibliothek.gui.dock.title.DockTitle;
 public class EclipseDockTitleEvent extends DockTitleEvent {
     /** whether the tab is focused */
     private boolean focused;
-    /** the location of the tab */
-    private int index;
     /** whether icons should be painted even when a tab is not selected */
     private boolean paintIconWhenInactive;
     
@@ -28,15 +26,13 @@ public class EclipseDockTitleEvent extends DockTitleEvent {
      * @param focused whether the tab is focused
      * @param paintIconWhenInactive whether to paint icons when the tab is
      * not selected
-     * @param index the location of the tab
      */
     public EclipseDockTitleEvent( DockStation station, Dockable dockable,
-            boolean selected, boolean focused, boolean paintIconWhenInactive, int index ){
+            boolean selected, boolean focused, boolean paintIconWhenInactive ){
         
         super( station, dockable, focused );
         this.focused = focused;
         setPreferred( selected && !focused );
-        this.index = index;
         this.paintIconWhenInactive = paintIconWhenInactive;
     }
     
@@ -62,13 +58,5 @@ public class EclipseDockTitleEvent extends DockTitleEvent {
      */
     public boolean isPaintIconWhenInactive() {
         return paintIconWhenInactive;
-    }
-    
-    /**
-     * Gets the location of the tab which fired this event.
-     * @return the location in a row of tabs
-     */
-    public int getIndex() {
-        return index;
     }
 }

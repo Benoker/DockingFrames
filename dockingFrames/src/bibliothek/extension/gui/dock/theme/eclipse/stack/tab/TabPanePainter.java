@@ -23,20 +23,18 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
+package bibliothek.extension.gui.dock.theme.eclipse.stack.tab;
 
-import java.awt.Component;
 import java.awt.Graphics;
 
-import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
 import bibliothek.gui.DockController;
 
 /**
- * A {@link TabStripPainter} paints the background of a {@link Component}
- * which shows the tabs of a {@link RexTabbedComponent}.
+ * A {@link TabPanePainter} paints decorations on a {@link EclipseTabPane}.
  * @author Benjamin Sigg
  */
-public interface TabStripPainter {
+public interface TabPanePainter {
     /**
      * Sets the controller for which this painter is used.
      * @param controller the controller, can be <code>null</code>
@@ -44,9 +42,11 @@ public interface TabStripPainter {
     public void setController( DockController controller );
     
     /**
-     * Paints the background of <code>tabStrip</code>.
-     * @param tabStrip the tabs of <code>tabbedComponent</code>
+     * Paints the decorations of the {@link EclipseTabPane} with which
+     * this painter is associated. The graphics object is such that
+     * its point 0/0 falls together with the point 0/0 of
+     * {@link EclipseTabPane#getAvailableArea()}. 
      * @param g the graphics used to paint on <code>tabStrip</code> 
      */
-    public void paintTabStrip( Component tabStrip, Graphics g);
+    public void paint( Graphics g);
 }

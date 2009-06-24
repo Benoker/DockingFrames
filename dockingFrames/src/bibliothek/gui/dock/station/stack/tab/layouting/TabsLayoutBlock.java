@@ -26,7 +26,6 @@
 package bibliothek.gui.dock.station.stack.tab.layouting;
 
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +38,10 @@ import bibliothek.gui.dock.station.stack.tab.TabPane;
 
 /**
  * A block managing a group of {@link Tab}s. This {@link LayoutBlock} is always 
- * visible.
+ * visible.<br>
+ * <b>Note:</b> This {@link LayoutBlock} does not keep track of new or removed
+ * {@link Dockable}s on the owning {@link TabPane}. This block may show tabs
+ * which are no longer valid.
  * @author Benjamin Sigg
  */
 public abstract class TabsLayoutBlock implements LayoutBlock{
@@ -50,9 +52,6 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 	
 	/** the producer of new tabs */
 	private TabPane pane;
-	
-	/** used to call {@link #doLayout()} asynchronously */
-	private Revalidate revalidate = new Revalidate();
 	
 	/**
 	 * Sets the producer of new tabs.
@@ -113,7 +112,9 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 	}
 	
 	/**
-	 * Gets an array containing all the tabs of this block.
+	 * Gets an array containing all the tabs of this block. Notice that this
+	 * array may include Tabs whose {@link Dockable} is no longer part of the
+	 * owning {@link TabPane}.
 	 * @return the tabs
 	 */
 	public Tab[] getTabs(){
@@ -147,6 +148,8 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 		TabPane pane = getPane();
 		
 		Dockable[] dockables = pane.getDockables();
+		
+		// location on TabPane
 		int index = -1;
 		for( int i = 0; i < dockables.length; i++ ){
 			if( dockables[i] == tab.getDockable() ){
@@ -158,8 +161,11 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 		if( index == -1 )
 			throw new IllegalArgumentException( tab.getDockable() + " is not a child of the TabPane" );
 		
+		// number of indices to the right that are smaller
 		int wrongSmaller = 0;
+		// number of indices to the left that are bigger
 		int wrongBigger = 0;
+		
 		for( int i = 0; i < locations.length; i++ ){
 			if( locations[i] < index ){
 				wrongSmaller++;
@@ -181,7 +187,7 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 			int count = wrongSmaller + wrongBigger;
 			if( count < bestCount ){
 				bestCount = count;
-				bestLocation = i;
+				bestLocation = i+1;
 			}
 		}
 		
@@ -203,7 +209,8 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 	 * tabs are ordered by importance, the most important tabs come first. In
 	 * the default implementation the fist tab is always {@link #getSelectedTab()},
 	 * then all the currently displayed tabs follow, only after them the invisible
-	 * tabs follow.
+	 * tabs follow. Tabs whose {@link Dockable} is no longer registered at the
+	 * owning {@link TabPane} are ignored.
 	 * @return all tabs, ordered by importance
 	 * @throws IllegalStateException if {@link #getPane()} returns <code>null</code>
 	 */
@@ -241,21 +248,37 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 		}
 		
 		// search visible tabs
-		if( selected == null ){
+		int selectedIndex = selected == null ? -1 : indexOfTab( selected );
+		
+		if( selectedIndex == -1 ){
 			for( int i = 0; i < visibleToInvisible.length; i++ ){
-				result[ resultIndex++ ] = allTabs[ visibleToInvisible[ i ]];
-				allTabs[ visibleToInvisible[i] ] = null;
+				if( visibleToInvisible[i] != -1 ){
+					Tab tab = allTabs[ visibleToInvisible[ i ]];
+					if( tab != null ){
+						result[ resultIndex++ ] = tab; 
+						allTabs[ visibleToInvisible[i] ] = null;
+					}
+				}
 			}
 		}
 		else{
-			int selectedIndex = indexOfTab( selected );
 			for( int i = selectedIndex-1; i >= 0; i-- ){
-				result[ resultIndex++ ] = allTabs[ visibleToInvisible[ i ]];
-				allTabs[ visibleToInvisible[i] ] = null;
+				if( visibleToInvisible[i] != -1 ){
+					Tab tab = allTabs[ visibleToInvisible[ i ]];
+					if( tab != null ){
+						result[ resultIndex++ ] = tab; 
+						allTabs[ visibleToInvisible[i] ] = null;
+					}
+				}
 			}
 			for( int i = selectedIndex+1; i < visibleToInvisible.length; i++ ){
-				result[ resultIndex++ ] = allTabs[ visibleToInvisible[ i ]];
-				allTabs[ visibleToInvisible[i] ] = null;
+				if( visibleToInvisible[i] != -1 ){
+					Tab tab = allTabs[ visibleToInvisible[ i ]];
+					if( tab != null ){
+						result[ resultIndex++ ] = tab;
+						allTabs[ visibleToInvisible[i] ] = null;
+					}
+				}
 			}
 		}
 		
@@ -307,7 +330,9 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 	/**
 	 * This method maps each {@link Tab} of this {@link LayoutBlock} to the
 	 * location its {@link Dockable} has in the owning {@link TabPane}.
-	 * @return the location of the original elements
+	 * @return the location of the original elements, may contain values of
+	 * -1 to indicate that a tab is still present on this block but should
+	 * have been removed. 
 	 * @throws IllegalStateException if there is no {@link TabPane} present
 	 */
 	public int[] getOriginalTabLocations(){
@@ -323,6 +348,8 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 		int index = 0;
 		for( int i = 0; i < tabs.length; i++ ){
 			Dockable check = tabs[i].getDockable();
+			locations[i] = -1;
+			
 			for( int j = 0; j < dockables.length; j++ ){
 				if( dockables[index] == check ){
 					locations[i] = index;
@@ -414,10 +441,6 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 	 */
 	public abstract void doLayout();
 	
-	public void revalidate(){
-		revalidate.revalidate();
-	}
-	
 	public void setLayout( Size size ){
 		if( size instanceof TabsSize ){
 			Tab[] tabs = ((TabsSize)size).getTabs();
@@ -452,7 +475,7 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 	
 	public void setBounds( int x, int y, int width, int height ){
 		bounds.setBounds( x, y, width, height );
-		revalidate();
+		doLayout();
 	}
 	
 	/**
@@ -501,29 +524,6 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 		@Override
 		public String toString(){
 			return "[width=" + getWidth() + ", height=" + getHeight() + ", tabs=" + Arrays.toString( tabs ) + "]";
-		}
-	}
-	
-	/**
-	 * Calls {@link TabsLayoutBlock#doLayout()} from the event queue.
-	 * @author Benjamin Sigg
-	 */
-	private class Revalidate implements Runnable{
-		private boolean started = false;
-		
-		/**
-		 * Schedules the revalidate event.
-		 */
-		public void revalidate(){
-			if( !started ){
-				started = true;
-				EventQueue.invokeLater( this );
-			}
-		}
-		
-		public void run(){
-			started = false;
-			doLayout();
 		}
 	}
 }

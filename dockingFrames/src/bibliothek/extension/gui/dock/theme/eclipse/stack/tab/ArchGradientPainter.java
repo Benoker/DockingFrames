@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
+package bibliothek.extension.gui.dock.theme.eclipse.stack.tab;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -46,12 +46,12 @@ import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseBorder;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.RexTabbedComponent;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 import bibliothek.gui.dock.util.color.ColorCodes;
+import bibliothek.util.Colors;
 
 
 /**
@@ -62,15 +62,19 @@ import bibliothek.gui.dock.util.color.ColorCodes;
 	"stack.tab.bottom", "stack.tab.bottom.selected", "stack.tab.bottom.selected.focused", "stack.tab.bottom.selected.focuslost",
 	"stack.tab.text", "stack.tab.text.selected", "stack.tab.text.selected.focused", "stack.tab.text.selected.focuslost",
 "stack.border" })
-public class ShapedGradientPainter extends BaseTabComponent {
+public class ArchGradientPainter extends BaseTabComponent {
+	private final int[] TOP_LEFT_CORNER_X = { 0, 1, 1, 2, 3, 4, 5, 6 };
+	private final int[] TOP_LEFT_CORNER_Y = { 6, 5, 4, 3, 2, 1, 1, 0 };
+	
+	private Arch arch;
+	
 	public static final TabPainter FACTORY = new TabPainter(){
-		public TabComponent createTabComponent( EclipseTabPane pane, Dockable dockable, int index ) {
-
-			return new ShapedGradientPainter( pane, dockable, index );
+		public TabComponent createTabComponent( EclipseTabPane pane, Dockable dockable ) {
+			return new ArchGradientPainter( pane, dockable );
 		}
-
-		public TabStripPainter createTabStripPainter( RexTabbedComponent component ) {
-			return new LineStripPainter( component );
+		
+		public TabPanePainter createDecorationPainter( EclipseTabPane pane ){
+			return new LinePainter( pane );
 		}
 
 		public Border getFullBorder( DockController controller, Dockable dockable ){
@@ -81,8 +85,8 @@ public class ShapedGradientPainter extends BaseTabComponent {
 	/** number of pixels at the left side that are empty and under the selected predecessor of this tab */
 	private final int TAB_OVERLAP = 24;
 
-	public ShapedGradientPainter( EclipseTabPane pane, Dockable dockable, int index ){
-		super( pane, dockable, index );
+	public ArchGradientPainter( EclipseTabPane pane, Dockable dockable ){
+		super( pane, dockable );
 
 		setLayout( null );
 		setOpaque( false );
@@ -93,7 +97,9 @@ public class ShapedGradientPainter extends BaseTabComponent {
 	@Override
 	protected void updateBorder(){
 		EclipseTabPane pane = getPane();
-		if( pane != null ){
+		int index = getDockableIndex();
+		
+		if( isBound() && pane != null && index >= 0 ){
 			Color color2;
 
 			Window window = SwingUtilities.getWindowAncestor( getComponent() );
@@ -117,23 +123,19 @@ public class ShapedGradientPainter extends BaseTabComponent {
 				color2 = colorStackTabBorder.value();
 
 			// set border around tab content
-			pane.setContentBorderAt( getIndex(), new MatteBorder( 2, 2, 2, 2, color2 ) );
+			pane.setContentBorderAt( index, new MatteBorder( 2, 2, 2, 2, color2 ) );
 		}
 	}
 
 	public Insets getOverlap( TabComponent other ) {
-		if( other instanceof ShapedGradientPainter ){
-			ShapedGradientPainter painter = (ShapedGradientPainter)other;
+		if( other instanceof ArchGradientPainter ){
+			ArchGradientPainter painter = (ArchGradientPainter)other;
 			if( painter.isSelected() ){
 				return new Insets( 0, 10 + TAB_OVERLAP, 0, 0 );
 			}
 		}
 		
 		return new Insets( 0, 0, 0, 0 );
-	}
-
-	private boolean isTabBeforeSelected(){
-		return getPane().getSelectedIndex() == (getIndex()-1);
 	}
 
 	@Override
@@ -145,6 +147,9 @@ public class ShapedGradientPainter extends BaseTabComponent {
 	@Override
 	public Dimension getPreferredSize() {
 		Font font = getFont();
+		if( font == null )
+			font = getPane().getComponent().getFont();
+			
 		if( font == null )
 			return new Dimension( 0, 0 );
 		
@@ -160,7 +165,7 @@ public class ShapedGradientPainter extends BaseTabComponent {
 			width += dockable.getTitleIcon().getIconWidth() + 5;
 		if (isSelected)
 			width += 35;
-		if( isTabBeforeSelected() )
+		if( isPreviousTabSelected() )
 			width += TAB_OVERLAP;
 
 		if( buttons != null ){
@@ -171,7 +176,7 @@ public class ShapedGradientPainter extends BaseTabComponent {
 
 		return new Dimension(width, height);
 	}
-
+	
 	@Override
 	public void doLayout(){
 		ButtonPanel buttons = getButtons();
@@ -189,7 +194,7 @@ public class ShapedGradientPainter extends BaseTabComponent {
 			if( isSelected )
 				x += 5;
 
-			if( isTabBeforeSelected() )
+			if( isPreviousTabSelected() )
 				x += TAB_OVERLAP;
 
 			Dimension preferred = buttons.getPreferredSize();
@@ -204,14 +209,21 @@ public class ShapedGradientPainter extends BaseTabComponent {
 		revalidate();
 		repaint();
 	}
+	
+	private Arch arch( int width, int height ){
+		if( arch == null || arch.getWidth() != width || arch.getHeight() != height )
+			arch = new Arch( width, height );
+		return arch;
+	}
 
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
-		Rectangle bounds = new Rectangle(0, 0, getWidth(), getHeight());//getBounds();
-		int x = 0, y = 0;
-		int w = bounds.width, h = bounds.height;
+		int x = 0;
+		int y = 0;
+		int w = getWidth();
+		int h = getHeight();
 		Graphics2D g2d = (Graphics2D) g;
 		Color lineColor = colorStackBorder.value();
 
@@ -248,55 +260,26 @@ public class ShapedGradientPainter extends BaseTabComponent {
 			colorText = colorStackTabText.value();
 		}
 
-		GradientPaint gradient = color1.equals( color2 ) ? null : new GradientPaint(x, y, color1, x, y + h, color2);
-
 		// draw tab if selected
-
-		Paint old = g2d.getPaint();
-
 		if (isSelected()) {
-			// draw line at the bottom
-			g.setColor(lineColor);
-			//	Polygon outer = extendPolygon(xpoints, ypoints, 5);
-			//		Polygon inner = new Polygon(xpoints, ypoints, xpoints.length);
-
-			Polygon inner = innerPolygon( x, y, w, h );
-			Polygon outer = copyPolygon(inner);
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			// draw outline from 0/0 or -1/0 resp.
-			if (getIndex() == 0)
-				outer.translate(-1, 0);
-			g.fillPolygon(outer);
-			// draw outline from 2/0
-			outer.translate(2, 0);
-			g.fillPolygon(outer);
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-
-			if( gradient != null )
-				g2d.setPaint(gradient);
-			else
-				g2d.setPaint( color1 );
-
-			// draw inner gradient from 1/0 or 0/0 resp.
-			if (getIndex() != 0)
-				inner.translate(1, 0);
-			g.fillPolygon(inner);
+			paintSelected( g2d, color1, color2 );
 		}
 		else{
+			GradientPaint gradient = color1.equals( color2 ) ? null : new GradientPaint( x, y, color1, x, y + h, color2 );
+			Paint old = g2d.getPaint();
 			if( gradient != null )
 				g2d.setPaint(gradient);
 			else
 				g2d.setPaint( color1 );
 
 			g2d.fillRect( x, y, w, h-1 );
+			g2d.setPaint(old);
 		}
-
-		g2d.setPaint(old);
 
 		// draw icon
 		int iconOffset = 0;
 
-		if( isTabBeforeSelected() )
+		if( isPreviousTabSelected() )
 			iconOffset += TAB_OVERLAP;
 
 		if (isSelected() || doPaintIconWhenInactive()) {
@@ -312,7 +295,7 @@ public class ShapedGradientPainter extends BaseTabComponent {
 		}
 
 		// draw separator lines
-		if (!isSelected() && getIndex() != getPane().getSelectedIndex()-1 ){
+		if (!isSelected() && !isNextTabSelected() ){
 			g.setColor(lineColor);
 			g.drawLine(w - 1, 0, w - 1, h);
 		}
@@ -328,74 +311,145 @@ public class ShapedGradientPainter extends BaseTabComponent {
 			return false;
 
 		if( isSelected() ){
-			Polygon inner = innerPolygon( 0, 0, getWidth(), getHeight() );
-			return inner.contains( x, y );
+			int w = getWidth();
+			int h = getHeight();
+			
+			Polygon left = leftSide( 0, 0, w, h );
+			if( left.contains( x, y ))
+				return true;
+			
+			Polygon right = rightSide( 0, 0, w, h );
+			if( right.contains( x, y ))
+				return true;
+			
+			Rectangle leftBox = left.getBounds();
+			Rectangle rightBox = right.getBounds();
+			
+			if( leftBox.x + leftBox.width > x )
+				return false;
+			
+			if( rightBox.x < x )
+				return false;
+			
+			return true;
 		}
 		else
 			return true;
 	}
-
-	private Polygon innerPolygon( int x, int y, int w, int h ){
-		final int[] TOP_LEFT_CORNER = new int[]{0, 6, 1, 5, 1, 4, 4, 1, 5, 1, 6, 0};
-		int tabHeight = 24;
-		int d = tabHeight - 12;
-		int[] curve = new int[]{0, 0, 0, 1, 2, 1, 3, 2, 5, 2, 6, 3, 7, 3, 9, 5, 10, 5,
-				11, 6, 11 + d, 6 + d,
-				12 + d, 7 + d, 13 + d, 7 + d, 15 + d, 9 + d, 16 + d, 9 + d, 17 + d, 10 + d, 19 + d, 10 + d,
-				20 + d,
-				11 + d, 22 + d, 11 + d, 23 + d, 12 + d};
-		int rightEdge = x + w - 20;
-		int curveWidth = 26 + d;
-		int curveIndent = curveWidth / 3;
-		int[] left = TOP_LEFT_CORNER;
-		int[] right = curve;
-		int[] shape = new int[left.length + right.length + 8];
-		int index = 0;
-		int height = 23;
-		shape[index++] = x; // first point repeated here because below we reuse shape to draw outline
-		shape[index++] = y + height + 1;
-		shape[index++] = x;
-		shape[index++] = y + height + 1;
-		for (int i = 0; i < left.length / 2; i++) {
-			shape[index++] = x + left[2 * i];
-			shape[index++] = y + left[2 * i + 1];
+	
+	/**
+	 * Paints the background of a selected tab.
+	 * @param g the graphics context to use
+	 * @param top the color at the top
+	 * @param bottom the color at the bottom
+	 */
+	private void paintSelected( Graphics g, Color top, Color bottom ){
+		int x = 0;
+		int y = 0;
+		int w = getWidth();
+		int h = getHeight();
+		Graphics2D g2d = (Graphics2D) g;
+		Color lineColor = colorStackBorder.value();
+		
+		boolean firstTab = getTabIndex() == 0;
+		
+		Polygon left = leftSide( x-1, y-1, w, h+1 );
+		Polygon right = rightSide( x, y, w, h-1 );
+		
+		g2d.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF );
+		
+		// draw shadow
+		if ( firstTab )
+			left.translate( -1, 0 );
+		
+		g.setColor( Colors.between( lineColor, getBackground(), 0.75 ) );
+		
+		g.drawPolyline( left.xpoints, left.ypoints, left.npoints-1 );
+		g.drawPolyline( right.xpoints, right.ypoints, right.npoints-1 );
+		
+		// fill inner areas
+		GradientPaint gradient = top.equals( bottom ) ? null : new GradientPaint( x, y, top, x, y + h, bottom );
+		
+		Paint old = g2d.getPaint();
+		if( gradient != null )
+			g2d.setPaint(gradient);
+		else
+			g2d.setPaint( top );
+		
+		left.translate( 1, 0 );
+		right.translate( -1, 0 );
+		
+		g.fillPolygon( left );
+	// g.fillPolygon( right );
+		right.translate( 1, 1 );
+		g.fillPolygon( right );
+		right.translate( -1, -1 );
+		
+		g.drawLine( 0, h-1, w-1, h-1 );
+		
+		Rectangle leftBox = left.getBounds();
+		Rectangle rightBox = right.getBounds();
+		if( leftBox.x+leftBox.width < rightBox.x ){
+			g.fillRect(
+					leftBox.x+leftBox.width, 0,
+					rightBox.x-leftBox.x-leftBox.width+1, h );
 		}
-		for (int i = 0; i < right.length / 2; i++) {
-			shape[index++] = rightEdge - curveIndent + right[2 * i];
-			shape[index++] = y + right[2 * i + 1];
-		}
-		shape[index++] = rightEdge + curveWidth - curveIndent;
-		shape[index++] = y + height + 1;
-		shape[index++] = rightEdge + curveWidth - curveIndent;
-		shape[index++] = y + height + 1;
-		stretch( 0, 4, shape, h / 23f );
-		stretch( 4 + left.length, right.length+4, shape, h / 23f );
-		return makePolygon(shape);
+		
+		g2d.setPaint( old );
+		
+		// draw border
+		g.setColor( lineColor );
+		//left.translate( -1, 0 );
+		// right.translate( 1, 0 );
+		g.drawPolyline( left.xpoints, left.ypoints, left.npoints-1 );
+		g.drawPolyline( right.xpoints, right.ypoints, right.npoints-1 );
+		
+		
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_DEFAULT);
 	}
-
-	private void stretch( final int offset, final int length, int[] shape, float ratio ){
-		for( int i = offset+1; i < offset+length; i+=2 ){
-			shape[i] = Math.round( shape[i] * ratio );
+	
+	private Polygon leftSide( int x, int y, int w, int h ){
+		int[] xPoints = new int[ TOP_LEFT_CORNER_X.length+2 ];
+		int[] yPoints = new int[ TOP_LEFT_CORNER_Y.length+2 ];
+		
+		System.arraycopy( TOP_LEFT_CORNER_X, 0, xPoints, 1, TOP_LEFT_CORNER_X.length );
+		System.arraycopy( TOP_LEFT_CORNER_Y, 0, yPoints, 1, TOP_LEFT_CORNER_Y.length );
+		
+		int max = 0;
+		
+		for( int i = 1, n = xPoints.length-1; i<n; i++ ){
+			max = Math.max( max, xPoints[i] );
+			xPoints[i] += x;
+			yPoints[i] += y;
 		}
+		
+		xPoints[0] = x;
+		yPoints[0] = y+h-1;
+		
+		int index = xPoints.length-1;
+		
+		xPoints[index] = x+max;
+		yPoints[index] = y+h-1;
+		
+		return new Polygon( xPoints, yPoints, xPoints.length );
 	}
-
-	private Polygon copyPolygon(Polygon p) {
-		int[] xpoints = new int[p.npoints];
-		int[] ypoints = new int[p.npoints];
-		System.arraycopy(p.xpoints, 0, xpoints, 0, xpoints.length);
-		System.arraycopy(p.ypoints, 0, ypoints, 0, ypoints.length);
-		return new Polygon(xpoints, ypoints, xpoints.length);
-	}
-
-	private Polygon makePolygon(int[] shape) {
-		int[] xpoints = new int[shape.length / 2];
-		int[] ypoints = new int[shape.length / 2];
-		for (int i = 0, j = 0; i < shape.length - 1; i += 2, j++) {
-			int x = shape[i];
-			int y = shape[i + 1];
-			xpoints[j] = x;
-			ypoints[j] = y;
+	
+	private Polygon rightSide( int x, int y, int w, int h ){
+		Arch arch = arch( h*34/22, h );
+		
+		int[] xPoints = new int[ arch.getWidth()+1 ];
+		int[] yPoints = new int[ arch.getWidth()+1 ];
+		
+		for( int i = 0, n = arch.getWidth(); i<n; i++ ){
+			xPoints[i] = x+w-n+i;
+			yPoints[i] = arch.getValue( i ) + y;
 		}
-		return new Polygon(xpoints, ypoints, xpoints.length);
+		
+		int index = xPoints.length-1;
+		
+		xPoints[ index ] = xPoints[0];
+		yPoints[ index ] = yPoints[ index-1 ];
+		
+		return new Polygon( xPoints, yPoints, xPoints.length );
 	}
 }

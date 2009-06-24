@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
+package bibliothek.extension.gui.dock.theme.eclipse.stack.tab;
 
 import java.awt.Component;
 import java.awt.Insets;
@@ -38,8 +38,6 @@ public interface TabComponent extends DockElementRepresentative{
 	public void setSelected( boolean selected );
 	
 	public void setFocused( boolean focused );
-	
-	public void setIndex( int index );
 	
 	public void setPaintIconWhenInactive( boolean paint );
 	

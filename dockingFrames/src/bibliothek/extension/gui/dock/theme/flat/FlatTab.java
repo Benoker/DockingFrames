@@ -347,11 +347,11 @@ public class FlatTab extends DLabel implements CombinedTab, DockableFocusListene
     }
     
     public void setPaneVisible( boolean visible ){
-    	pane.getTabVisibilityHandler().setVisible( this, visible );
+    	pane.getTabHandler().setVisible( this, visible );
     }
     
     public boolean isPaneVisible(){
-    	return pane.getTabVisibilityHandler().isVisible( this );
+    	return pane.getTabHandler().isVisible( this );
     }
     
     /**
