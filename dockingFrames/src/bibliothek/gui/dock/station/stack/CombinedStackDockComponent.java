@@ -59,7 +59,7 @@ import bibliothek.gui.dock.station.stack.tab.TabPaneListener;
  * @param <T> the type of the tabs
  * @param <M> the type of the menus
  */
-public abstract class CombinedStackDockComponent<T extends CombinedTab, M extends CombinedMenu, I extends LonelyTabPaneComponent> extends AbstractTabPane<T, M, I> implements StackDockComponent{
+public abstract class CombinedStackDockComponent<T extends CombinedTab, M extends CombinedMenu, I extends CombinedInfoComponent> extends AbstractTabPane<T, M, I> implements StackDockComponent{
     /** The panel which shows the children */
     private CombinedStackDockContentPane panel;
     
@@ -442,7 +442,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
      * @return the layer between tab and dockable
      * @see #createComponentAt(Dockable)
      */
-    protected Component getLayerAt( int index ){
+    public Component getLayerAt( int index ){
     	return components.get( getDockable( index ) ).component;
     }
     

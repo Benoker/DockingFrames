@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2009 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,16 +23,21 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.eclipse.rex.tab;
+package bibliothek.gui.dock.station.stack;
 
-import bibliothek.gui.Dockable;
+import java.awt.Component;
+
+import bibliothek.gui.dock.station.stack.tab.LonelyTabPaneComponent;
 
 /**
- * @author Janni Kovacs
+ * The info component used by the {@link CombinedStackDockComponent} is 
+ * supposed to be represented by a {@link Component}.
+ * @author Benjamin Sigg
  */
-public interface TabListener {
-
-	public void tabRemoved(Dockable dockable);
-
-	public void tabChanged(Dockable dockable);
+public interface CombinedInfoComponent extends LonelyTabPaneComponent {
+	/**
+	 * Gets the representation of this info component.
+	 * @return the representation
+	 */
+	public Component getComponent();
 }

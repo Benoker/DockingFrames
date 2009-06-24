@@ -168,6 +168,8 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 		
 		TabPainter painter = getTabPainter();
 		setPainter( painter == null ? null : painter.createDecorationPainter( this ) );
+		
+		discardComponentsAndRebuild();
 	}
 	
 	/**
@@ -275,7 +277,7 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 	}
 	
 	@Override
-	protected JComponent getLayerAt( int index ){
+	public JComponent getLayerAt( int index ){
 		return (JComponent)super.getLayerAt( index );
 	}
 	

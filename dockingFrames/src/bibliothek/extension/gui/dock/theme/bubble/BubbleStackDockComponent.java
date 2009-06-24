@@ -30,15 +30,15 @@ import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.station.stack.CombinedInfoComponent;
 import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
-import bibliothek.gui.dock.station.stack.tab.LonelyTabPaneComponent;
 
 /**
  * A {@link bibliothek.gui.dock.station.stack.StackDockComponent StackDockComponent} 
  * used by a {@link BubbleTheme}. This component can animate its tabs.
  * @author Benjamin Sigg
  */
-public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleTab, BubbleTabMenu, LonelyTabPaneComponent> {
+public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleTab, BubbleTabMenu, CombinedInfoComponent> {
 
 	/** the station for which this component is used */
 	private StackDockStation station;

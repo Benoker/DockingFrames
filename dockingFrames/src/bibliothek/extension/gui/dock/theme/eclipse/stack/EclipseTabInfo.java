@@ -34,8 +34,8 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.station.stack.CombinedInfoComponent;
 import bibliothek.gui.dock.station.stack.tab.AbstractTabPaneComponent;
-import bibliothek.gui.dock.station.stack.tab.LonelyTabPaneComponent;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.stack.tab.layouting.LayoutBlock;
 import bibliothek.gui.dock.station.stack.tab.layouting.Size;
@@ -48,7 +48,7 @@ import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
  * is used to determine which actions to show, only non-tab actions are shown.
  * @author Benjamin Sigg
  */
-public class EclipseTabInfo extends AbstractTabPaneComponent implements LonelyTabPaneComponent, LayoutBlock{
+public class EclipseTabInfo extends AbstractTabPaneComponent implements CombinedInfoComponent, LayoutBlock{
 	private EclipseTabPane pane;
 	private ButtonPanel buttons;
 	

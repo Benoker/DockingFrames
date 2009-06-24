@@ -29,8 +29,11 @@ import java.awt.Dimension;
 
 import javax.swing.JPanel;
 
+import bibliothek.gui.dock.focus.DockFocusTraversalPolicy;
+
 /**
  * This panel paints the contents of a {@link CombinedStackDockComponent}.
+ * This panel is also a {@link #setFocusTraversalPolicyProvider(boolean) focus traversal policy provider}.
  * @author Benjamin Sigg
  */
 public class CombinedStackDockContentPane extends JPanel{
@@ -46,6 +49,24 @@ public class CombinedStackDockContentPane extends JPanel{
 			throw new IllegalArgumentException( "parent must not be null" );
 		this.parent = parent;
 		setOpaque( false );
+		setFocusTraversalPolicyProvider( true );
+		setFocusTraversalPolicy( new DockFocusTraversalPolicy( new CombinedStackDockFocusTraversalPolicy( this ), true ) );
+	}
+	
+	/**
+	 * Gets the owner of this pane.
+	 * @return the owner, not <code>null</code>
+	 */
+	public CombinedStackDockComponent<?, ?, ?> getParentPane(){
+		return parent;
+	}
+	
+	@Override
+	public void updateUI(){
+		super.updateUI();
+		if( parent != null ){
+			parent.discardComponentsAndRebuild();
+		}
 	}
 	
     @Override

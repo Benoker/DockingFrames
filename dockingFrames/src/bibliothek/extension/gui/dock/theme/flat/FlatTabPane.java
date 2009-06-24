@@ -33,8 +33,8 @@ import javax.swing.JTabbedPane;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.station.stack.CombinedInfoComponent;
 import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
-import bibliothek.gui.dock.station.stack.tab.LonelyTabPaneComponent;
 
 /**
  * A panel that works like a {@link JTabbedPane}, but the buttons to
@@ -42,7 +42,7 @@ import bibliothek.gui.dock.station.stack.tab.LonelyTabPaneComponent;
  * buttons of the <code>JTabbedPane</code>.
  * @author Benjamin Sigg
  */
-public class FlatTabPane extends CombinedStackDockComponent<FlatTab, FlatMenu, LonelyTabPaneComponent>{
+public class FlatTabPane extends CombinedStackDockComponent<FlatTab, FlatMenu, CombinedInfoComponent>{
     /** the station which uses this component */
     private StackDockStation station;
     

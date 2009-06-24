@@ -287,7 +287,26 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 		
 		revalidate();
 	}
-
+	
+	/**
+	 * Deletes all {@link Tab}s and {@link TabMenu}s of this {@link TabPane}
+	 * and rebuilds them.
+	 */
+	public void discardComponentsAndRebuild(){
+		for( T tab : tabs.values() ){
+			tab.setPaneVisible( false );
+			tabRemoved( tab );
+		}
+		tabs.clear();
+		
+		for( Map.Entry<Dockable, M> item : menuPosition.entrySet() ){
+			removeFromMenu( item.getValue(), item.getKey() );
+		}
+		menuPosition.clear();
+		
+		doLayout();
+	}
+	
 	public Dockable getSelectedDockable(){
 		return selection; 
 	}
