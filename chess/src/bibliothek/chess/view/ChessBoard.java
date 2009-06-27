@@ -572,6 +572,10 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 		}
 	}
 	
+	public boolean isAutoRemoveable(){
+		return false;
+	}
+	
 	/**
 	 * A panel that paints a 8x8 grid and shows the children of a {@link ChessBoard}. 
 	 * @author Benjamin Sigg

@@ -14,7 +14,7 @@ import bibliothek.extension.gui.dock.DockingFramesPreference;
 import bibliothek.extension.gui.dock.preference.PreferenceStorage;
 import bibliothek.extension.gui.dock.preference.PreferenceTreeModel;
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
-import bibliothek.extension.gui.dock.theme.eclipse.rex.tab.RectGradientPainter;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.RectGradientPainter;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.DockStation;

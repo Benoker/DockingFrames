@@ -239,3 +239,6 @@
 
 [v1.0.8]
 - Bugfix: EclipseStackDockComponent contained an unnecessary and not correctly updated list of dockables causing an IndexOutOfBoundsException on JREs of version <= 1.5.0_12
+! API: DockableDisplayers can be observed by a DockableDisplayerListener, all DockStations can replace DockableDisplayers any time.
+! API: EclipseThemeConnector can be observed by a EclipseThemeConnectorListener
+- Layout: New CommonEclipseThemeConnector ensures that CDockable with no title do not have a tab if not necessary in the EclipseTheme
