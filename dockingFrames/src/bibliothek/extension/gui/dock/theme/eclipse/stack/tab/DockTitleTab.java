@@ -64,6 +64,10 @@ public class DockTitleTab implements TabComponent{
                 return new DockTitleTab( station, dockable, title );
         	}
         	
+        	public InvisibleTab createInvisibleTab( InvisibleTabPane pane, Dockable dockable ){
+        		return fallback.createInvisibleTab( pane, dockable );
+        	}
+        	
         	public TabPanePainter createDecorationPainter( EclipseTabPane pane ){
         	    return fallback.createDecorationPainter( pane );
             }

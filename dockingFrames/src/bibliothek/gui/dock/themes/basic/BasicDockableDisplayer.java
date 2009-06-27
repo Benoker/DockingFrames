@@ -26,6 +26,8 @@
 package bibliothek.gui.dock.themes.basic;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -42,6 +44,7 @@ import bibliothek.gui.dock.focus.DockFocusTraversalPolicy;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.title.DockTitle;
 
 
@@ -78,6 +81,9 @@ public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
     private boolean respectBorderHint = false;
     /** the default value for the border hint */
     private boolean defaultBorderHint = true;
+    
+    /** all listeners known to this displayer */
+    private List<DockableDisplayerListener> listeners = new ArrayList<DockableDisplayerListener>();
     
     /**
      * Creates a new displayer
@@ -149,6 +155,22 @@ public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
     
     public DockController getController() {
         return controller;
+    }
+    
+    public void addDockableDisplayerListener( DockableDisplayerListener listener ){
+	    listeners.add( listener );	
+    }
+    
+    public void removeDockableDisplayerListener( DockableDisplayerListener listener ){
+    	listeners.remove( listener );
+    }
+    
+    /**
+     * Gets a list of all listeners currently registered at this displayer.
+     * @return the list of listeners
+     */
+    protected DockableDisplayerListener[] listeners(){
+    	return listeners.toArray( new DockableDisplayerListener[ listeners.size() ] );
     }
     
     public void setStation( DockStation station ) {

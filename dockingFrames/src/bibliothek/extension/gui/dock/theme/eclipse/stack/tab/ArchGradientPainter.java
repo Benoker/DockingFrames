@@ -76,6 +76,10 @@ public class ArchGradientPainter extends BaseTabComponent {
 		public TabPanePainter createDecorationPainter( EclipseTabPane pane ){
 			return new LinePainter( pane );
 		}
+		
+		public InvisibleTab createInvisibleTab( InvisibleTabPane pane, Dockable dockable ){
+			return new DefaultInvisibleTab( pane, dockable );
+		}
 
 		public Border getFullBorder( DockController controller, Dockable dockable ){
 			return new EclipseBorder( controller, true );

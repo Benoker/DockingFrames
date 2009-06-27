@@ -43,6 +43,7 @@ import bibliothek.gui.dock.station.Combiner;
 public class BasicCombiner implements Combiner {
 	public Dockable combine( Dockable old, Dockable drop, DockStation parent ) {
         StackDockStation stack = new StackDockStation( parent.getTheme() );
+        stack.setController( parent.getController() );
         
         stack.drop( old );
         stack.drop( drop );

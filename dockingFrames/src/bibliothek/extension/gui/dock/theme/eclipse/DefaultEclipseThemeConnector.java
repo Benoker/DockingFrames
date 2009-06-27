@@ -25,12 +25,41 @@
  */
 package bibliothek.extension.gui.dock.theme.eclipse;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.action.DockAction;
 
 public class DefaultEclipseThemeConnector implements EclipseThemeConnector {
-    public TitleBar getTitleBarKind( Dockable dockable ) {
+	private List<EclipseThemeConnectorListener> listeners = new ArrayList<EclipseThemeConnectorListener>();
+	
+	public void addEclipseThemeConnectorListener( EclipseThemeConnectorListener listener ){
+		listeners.add( listener );
+	}
+	
+	public void removeEclipseThemeConnectorListener( EclipseThemeConnectorListener listener ){
+		listeners.remove( listener );
+	}
+	
+	/**
+	 * Gets all listeners that are currently registered at this connector.
+	 * @return all listeners
+	 */
+	protected EclipseThemeConnectorListener[] listeners(){
+		return listeners.toArray( new EclipseThemeConnectorListener[ listeners.size() ] );
+	}
+	
+	/**
+	 * Tells whether <code>this</code> has any registered listeners.
+	 * @return <code>true</code> if there is at least one listener registered.
+	 */
+	protected boolean hasListeners(){
+		return !listeners.isEmpty();
+	}
+	
+	public TitleBar getTitleBarKind( Dockable dockable ) {
     	if( dockable.getDockParent() instanceof StackDockStation )
     		return TitleBar.NONE;
     	

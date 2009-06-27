@@ -68,6 +68,10 @@ public class RectGradientPainter extends BaseTabComponent {
 		    return new LinePainter( pane );
 		}
 		
+		public InvisibleTab createInvisibleTab( InvisibleTabPane pane, Dockable dockable ){
+			return new DefaultInvisibleTab( pane, dockable );
+		}
+		
         public Border getFullBorder( DockController controller, Dockable dockable ) {
             return new RectEclipseBorder( controller, true );
         }

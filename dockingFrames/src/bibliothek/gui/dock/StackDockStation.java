@@ -165,6 +165,11 @@ public class StackDockStation extends AbstractDockableStation {
         visibility = new DockableVisibilityManager( listeners );
         
         displayers = new DisplayerCollection( this, displayerFactory );
+        displayers.addDockableDisplayerListener( new DockableDisplayerListener(){
+        	public void discard( DockableDisplayer displayer ){
+	        	StackDockStation.this.discard( displayer );	
+        	}
+        });
         
         background = createBackground();
         panel = background.getContentPane();
@@ -779,6 +784,33 @@ public class StackDockStation extends AbstractDockableStation {
         if( fire ){
         	listeners.fireDockableAdded( dockable );
         }
+    }
+    
+    /**
+     * Replaces <code>displayer</code> with a new instance.
+     * @param displayer the displayer to replace
+     */
+    protected void discard( DockableDisplayer displayer ){
+    	int index = dockables.indexOf( displayer );
+    	if( index < 0 )
+    		throw new IllegalArgumentException( "displayer is not a child of this station: " + displayer );
+    	
+    	Dockable dockable = displayer.getDockable();
+    	DockTitle title = displayer.getTitle();
+    	
+    	DisplayerCollection displayers = getDisplayers();
+    	displayers.release( displayer );
+    	
+    	displayer = displayers.fetch( dockable, title );
+    	
+    	dockables.set( index, displayer );
+    	if( dockables.size() == 1 ){
+    		panel.removeAll();
+    		panel.add( displayer.getComponent() );
+    	}
+    	else{
+    		stackComponent.setComponentAt( index, displayer.getComponent() );
+    	}
     }
     
     /**

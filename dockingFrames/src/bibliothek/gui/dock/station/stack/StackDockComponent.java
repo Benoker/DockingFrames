@@ -143,6 +143,13 @@ public interface StackDockComponent {
      * should be displayed
      */
     public void setIconAt(int index, Icon newIcon);
+    
+    /**
+     * Sets the component which should be shown at tab <code>index</code>.
+     * @param index the index where to show <code>component</code>
+     * @param component the new content, not <code>null</code>
+     */
+    public void setComponentAt( int index, Component component );
 
     /**
      * Gets a {@link Component} on which the children of this

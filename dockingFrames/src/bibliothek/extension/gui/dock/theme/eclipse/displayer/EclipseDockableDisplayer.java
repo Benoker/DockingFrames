@@ -23,18 +23,23 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.eclipse;
+package bibliothek.extension.gui.dock.theme.eclipse.displayer;
 
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector.TitleBar;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
@@ -47,8 +52,21 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 	private DockTitle title;
 	private Location location;
 	
+	private List<DockableDisplayerListener> listeners = new ArrayList<DockableDisplayerListener>();
+	private TitleBarObserver observer;
+	
 	public EclipseDockableDisplayer(EclipseTheme theme, DockStation station, Dockable dockable) {
 		super(theme, station);
+		
+		observer = new TitleBarObserver( dockable, TitleBar.ECLIPSE ){
+			@Override
+			protected void invalidated(){
+				for( DockableDisplayerListener listener : displayerListeners() ){
+					listener.discard( EclipseDockableDisplayer.this );
+				}
+			}
+		};
+		
 		this.station = station;
 		setDockable(dockable);
 		
@@ -71,6 +89,22 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 			return dockable.getComponent().getMinimumSize();
 	}
 	
+	public void addDockableDisplayerListener( DockableDisplayerListener listener ){
+		listeners.add( listener );	
+	}
+	
+	public void removeDockableDisplayerListener( DockableDisplayerListener listener ){
+		listeners.remove( listener );
+	}
+	
+	/**
+	 * Gets all {@link DockableDisplayerListener} known to this displayer.
+	 * @return the list of listeners
+	 */
+	protected DockableDisplayerListener[] displayerListeners(){
+		return listeners.toArray( new DockableDisplayerListener[ listeners.size() ] );
+	}
+	
 	public void setDockable( Dockable dockable ){
 		if (getDockable() != null) {
 			removeAll();
@@ -79,7 +113,18 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 		if( dockable != null ){
 			addTab( dockable.getTitleText(), dockable.getTitleIcon(), dockable.getComponent(), dockable );
 		}
+		if( observer != null ){
+			observer.setDockable( dockable );
+		}
 		revalidate();
+	}
+	
+	@Override
+	public void setController( DockController controller ){
+		super.setController( controller );
+		if( observer != null ){
+			observer.setController( controller );
+		}
 	}
 
 	public boolean titleContains( int x, int y ){

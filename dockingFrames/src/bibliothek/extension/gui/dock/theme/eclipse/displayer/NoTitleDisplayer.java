@@ -23,23 +23,31 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.eclipse;
+package bibliothek.extension.gui.dock.theme.eclipse.displayer;
 
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.LayoutFocusTraversalPolicy;
+import javax.swing.border.Border;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector.TitleBar;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.InvisibleTab;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.InvisibleTabPane;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPainter;
+import bibliothek.extension.gui.dock.util.ReverseCompoundBorder;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyValue;
@@ -51,7 +59,7 @@ import bibliothek.gui.dock.util.PropertyValue;
  * and the key {@link EclipseTheme#TAB_PAINTER}.
  * @author Janni Kovacs
  */
-public class NoTitleDisplayer extends JPanel implements DockableDisplayer {
+public class NoTitleDisplayer extends JPanel implements DockableDisplayer, InvisibleTabPane {
 	private Dockable dockable;
 	private DockController controller;
 	private DockStation station;
@@ -64,9 +72,33 @@ public class NoTitleDisplayer extends JPanel implements DockableDisplayer {
 	private Boolean borderHint;
 	private DockableDisplayerHints hints;
 	
-	public NoTitleDisplayer( DockStation station, Dockable dockable, boolean bordered, boolean respectHints ){
+	private boolean bordered;
+	private boolean respectHints;
+	
+	private TitleBarObserver observer;
+	
+	private List<DockableDisplayerListener> listeners = new ArrayList<DockableDisplayerListener>();
+	
+	private InvisibleTab invisibleTab;
+	
+	private Border innerBorder;
+	private Border outerBorder;
+	
+	public NoTitleDisplayer( DockStation station, Dockable dockable, TitleBar bar ){
 		setLayout( new GridLayout( 1, 1, 0, 0 ) );
 		setOpaque( false );
+		
+		bordered = bar == TitleBar.NONE_BORDERED || bar == TitleBar.NONE_HINTED_BORDERED;
+		respectHints = bar == TitleBar.NONE_HINTED || bar == TitleBar.NONE_HINTED_BORDERED;
+		
+		observer = new TitleBarObserver( dockable, bar ){
+			@Override
+			protected void invalidated(){
+				for( DockableDisplayerListener listener : listeners() ){
+					listener.discard( NoTitleDisplayer.this );
+				}
+			}
+		};
 		
 		if( respectHints ){
 		    hints = new DockableDisplayerHints(){
@@ -83,15 +115,16 @@ public class NoTitleDisplayer extends JPanel implements DockableDisplayer {
         
         defaultBorderHint = bordered;
         
-		if( bordered || respectHints ){
-    		painter = new PropertyValue<TabPainter>( EclipseTheme.TAB_PAINTER ){
-    	        @Override
-    	        protected void valueChanged( TabPainter oldValue, TabPainter newValue ) {
-    	            updateFullBorder();
-    	        }
-    	    };
-    	    updateFullBorder();
-		}
+		painter = new PropertyValue<TabPainter>( EclipseTheme.TAB_PAINTER ){
+			@Override
+			protected void valueChanged( TabPainter oldValue, TabPainter newValue ) {
+				updateFullBorder();
+				updateInvisibleTab();
+			}
+		};
+		
+		updateFullBorder();
+		updateInvisibleTab();
 		
 		setFocusCycleRoot( true );
 		setFocusTraversalPolicy( new LayoutFocusTraversalPolicy() );
@@ -113,23 +146,62 @@ public class NoTitleDisplayer extends JPanel implements DockableDisplayer {
 	 * {@link EclipseTheme#TAB_PAINTER} to determine the new border.
 	 */
 	protected void updateFullBorder(){
-	    if( painter != null ){
+	    if( (bordered || respectHints) && painter != null ){
     	    TabPainter painter = this.painter.getValue();
     	    
             if( controller == null || painter == null || dockable == null ){
-                setBorder( null );
+                outerBorder = null;
             }
             else{
                 if( hints == null || getBorderHint() ){
-                    setBorder( painter.getFullBorder( controller, dockable ) );
+                    outerBorder = painter.getFullBorder( controller, dockable );
                 }
                 else{
-                    setBorder( null );
+                    outerBorder = null;
                 }
             }
+            updateBorder();
 	    }
 	}
+	
+	public void setBorder( Dockable dockable, Border border ){
+		if( dockable != this.dockable )
+			throw new IllegalArgumentException( "unknown dockable: " + dockable );
+		
+		if( bordered || respectHints ){
+			if( hints == null || getBorderHint() ){
+				innerBorder = border;
+				updateBorder();		
+			}
+		}
+	}
+	
+	private void updateBorder(){
+		if( innerBorder == null && outerBorder == null )
+			setBorder( null );
+		else if( innerBorder == null )
+			setBorder( outerBorder );
+		else if( outerBorder == null )
+			setBorder( innerBorder );
+		else
+			setBorder( new ReverseCompoundBorder( outerBorder, innerBorder ) );
+	}
 
+	protected void updateInvisibleTab(){
+		if( invisibleTab != null ){
+			invisibleTab.setController( null );
+			invisibleTab = null;
+		}
+		
+		if( dockable != null && painter != null ){
+			TabPainter painter = this.painter.getValue();
+			if( painter != null ){
+				invisibleTab = painter.createInvisibleTab( this, dockable );
+				invisibleTab.setController( getController() );
+			}
+		}
+	}
+	
 	public Insets getDockableInsets() {
 	    Insets insets = getInsets();
 	    if( insets == null )
@@ -166,11 +238,37 @@ public class NoTitleDisplayer extends JPanel implements DockableDisplayer {
 	public Location getTitleLocation(){
 		return location;
 	}
+	
+	public void addDockableDisplayerListener( DockableDisplayerListener listener ){
+		listeners.add( listener );
+	}
+	
+	public void removeDockableDisplayerListener( DockableDisplayerListener listener ){
+		listeners.remove( listener );	
+	}
+	
+	/**
+	 * Gets all listeners currently known to this displayer.
+	 * @return the list of listeners
+	 */
+	protected DockableDisplayerListener[] listeners(){
+		return listeners.toArray( new DockableDisplayerListener[ listeners.size() ] );
+	}
+	
+	public Dockable getSelectedDockable(){
+		return dockable;
+	}
 
 	public void setController( DockController controller ){
 		this.controller = controller;
 		if( painter != null )
 		    painter.setProperties( controller == null ? null : controller.getProperties() );
+		
+		if( observer != null )
+			observer.setController( controller );
+		
+		if( invisibleTab != null )
+			invisibleTab.setController( controller );
 		
 		updateFullBorder();
 	}
@@ -179,14 +277,25 @@ public class NoTitleDisplayer extends JPanel implements DockableDisplayer {
 	    if( this.dockable != null )
 	        this.dockable.configureDisplayerHints( null );
 	    
+	    if( invisibleTab != null ){
+	    	invisibleTab.setController( null );
+	    	invisibleTab = null;
+	    }
+	    
 		this.dockable = dockable;
+				
+		if( observer != null ){
+			observer.setDockable( dockable );
+		}
 		
 		removeAll();
 		if( dockable != null ){
 			add( dockable.getComponent() );
 			dockable.configureDisplayerHints( hints );
 		}
+		
 		updateFullBorder();
+		updateInvisibleTab();
 	}
 
 	public void setStation( DockStation station ){

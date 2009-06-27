@@ -59,6 +59,14 @@ public interface TabPainter {
 	public TabComponent createTabComponent( EclipseTabPane pane, Dockable dockable );
 	
 	/**
+	 * Creates a new invisible tab for <code>pane</code> representing <code>dockable</code>.
+	 * @param pane the owner of the new tab
+	 * @param dockable what the new tab represents
+	 * @return the new tab, never <code>null</code>
+	 */
+	public InvisibleTab createInvisibleTab( InvisibleTabPane pane, Dockable dockable );
+	
+	/**
 	 * Gets the border which will be around <code>pane</code> when <code>dockable</code>
 	 * is selected.
 	 * @param controller the current controller, never <code>null</code>

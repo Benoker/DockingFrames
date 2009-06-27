@@ -57,6 +57,9 @@ public class DisplayerCollection implements Iterable<DockableDisplayer>{
     /** the set of displayers that are fetched but not released */
     private List<DockableDisplayer> displayers = new ArrayList<DockableDisplayer>();
     
+    /** list of listeners added to each {@link DockableDisplayer} known to this collection */
+    private List<DockableDisplayerListener> listeners = new ArrayList<DockableDisplayerListener>();
+    
     /**
      * Creates a new collection
      * @param station the station for which {@link DockableDisplayer} will be created
@@ -71,6 +74,32 @@ public class DisplayerCollection implements Iterable<DockableDisplayer>{
         
         this.station = station;
         this.factory = factory;
+    }
+    
+    /**
+     * Adds <code>listener</code> to all {@link DockableDisplayer}s that are
+     * in this collection.
+     * @param listener a new listener, not <code>null</code>
+     */
+    public void addDockableDisplayerListener( DockableDisplayerListener listener ){
+    	listeners.add( listener );
+    	
+    	for( DockableDisplayer displayer : this ){
+    		displayer.addDockableDisplayerListener( listener );
+    	}
+    }
+    
+    /**
+     * Removes <code>listener</code> from all {@link DockableDisplayer}s
+     * that are in this collection.
+     * @param listener the listener to remove
+     */
+    public void removeDockableDisplayerListener( DockableDisplayerListener listener ){
+    	listeners.remove( listener );
+    	
+    	for( DockableDisplayer displayer : this ){
+    		displayer.removeDockableDisplayerListener( listener );
+    	}
     }
     
     public Iterator<DockableDisplayer> iterator() {
@@ -94,6 +123,10 @@ public class DisplayerCollection implements Iterable<DockableDisplayer>{
         displayer.setStation( station );
         displayer.setController( controller );
         displayers.add( displayer );
+        
+        for( DockableDisplayerListener listener : listeners )
+        	displayer.addDockableDisplayerListener( listener );
+        
         return displayer;
     }
     
@@ -102,6 +135,9 @@ public class DisplayerCollection implements Iterable<DockableDisplayer>{
      * @param displayer the displayer to release
      */
     public void release( DockableDisplayer displayer ){
+    	for( DockableDisplayerListener listener : listeners )
+    		displayer.removeDockableDisplayerListener( listener );
+    	
         displayers.remove( displayer );
         displayer.setTitle( null );
         displayer.setDockable( null );

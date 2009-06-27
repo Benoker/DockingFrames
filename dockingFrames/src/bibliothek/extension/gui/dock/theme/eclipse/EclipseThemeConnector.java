@@ -78,6 +78,18 @@ public interface EclipseThemeConnector {
     }
     
     /**
+     * Adds <code>listener</code> to this connector.
+     * @param listener the listener, not <code>null</code>
+     */
+    public void addEclipseThemeConnectorListener( EclipseThemeConnectorListener listener );
+    
+    /**
+     * Removes <code>listener</code> from this connector.
+     * @param listener the listener to remove
+     */
+    public void removeEclipseThemeConnectorListener( EclipseThemeConnectorListener listener );
+    
+    /**
      * Tells which kind of title and {@link DockableDisplayer} should be 
      * shown for <code>dockable</code> assuming everything can be chosen
      * freely.

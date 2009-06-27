@@ -26,6 +26,7 @@
 
 package bibliothek.gui.dock.station;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 
@@ -38,7 +39,8 @@ import bibliothek.gui.Dockable;
 public interface Combiner {
     /**
      * Merges the Dockable <code>old</code> and <code>drop</code> into 
-     * a new Dockable.
+     * a new Dockable. This method may set the {@link DockController} of
+     * the create element in order to initialize it more efficiently
      * @param old a Dockable which was sitting on the DockStation <code>parent</code>.
      * The parent of <code>old</code> is currently set to <code>null</code>.
      * @param drop a Dockable that has currently no parent, and that was

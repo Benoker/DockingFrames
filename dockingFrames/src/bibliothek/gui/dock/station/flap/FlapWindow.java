@@ -41,7 +41,9 @@ import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
 import bibliothek.gui.dock.event.DockableAdapter;
 import bibliothek.gui.dock.event.DockableListener;
+import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
@@ -54,6 +56,13 @@ import bibliothek.gui.dock.util.DockUtilities;
 public class FlapWindow extends JDialog implements MouseListener, MouseMotionListener{
     /** The displayer which is the direct parent of the {@link Dockable} and its title */
     private DockableDisplayer displayer;
+    
+    /** a listener for the current {@link #displayer} */
+    private DockableDisplayerListener displayerListener = new DockableDisplayerListener(){
+    	public void discard( DockableDisplayer displayer ){
+	    	discardDisplayer();	
+    	}
+    };
     
     /** <code>true</code> if the mouse is currently pressed */
     private boolean pressed;
@@ -269,6 +278,7 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
             Dockable old = displayer.getDockable();
             DockTitle oldTitle = displayer.getTitle();
         
+            displayer.removeDockableDisplayerListener( displayerListener );
             station.getDisplayers().release( displayer );
             
             content.remove( displayer.getComponent() );
@@ -292,10 +302,33 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
             }
             
             displayer = station.getDisplayers().fetch( dockable, title );
+            displayer.addDockableDisplayerListener( displayerListener );
             content.add( displayer.getComponent() );
             
             dockable.addDockableListener( dockableListener );
         }
+    }
+    
+    /**
+     * Replaces the current {@link DockableDisplayer} with a new instance.
+     */
+    protected void discardDisplayer(){
+    	Dockable dockable = displayer.getDockable();
+    	DockTitle title = displayer.getTitle();
+    	
+    	Container content = getDisplayerParent();
+    	
+    	DisplayerCollection displayers = station.getDisplayers();
+    	
+    	displayer.removeDockableDisplayerListener( displayerListener );
+    	content.remove( displayer.getComponent() );
+    	displayers.release( displayer );
+    	
+    	displayer = displayers.fetch( dockable, title );
+    	displayer.addDockableDisplayerListener( displayerListener );
+    	content.add( displayer.getComponent() );
+    	
+    	updateBounds();
     }
     
     /**

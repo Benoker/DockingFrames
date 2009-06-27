@@ -57,6 +57,7 @@ public interface DockableDisplayer {
         /** the bottom side */
         BOTTOM };
     
+        
     /**
      * Sets the controller for which this displayer is used. That property
      * must be set by the client. Note that there is no guarantee, that a
@@ -71,6 +72,18 @@ public interface DockableDisplayer {
      * @return the controller or <code>null</code>
      */
     public DockController getController();
+    
+    /**
+     * Adds <code>listener</code> to this displayer.
+     * @param listener the new listener, not <code>null</code>
+     */
+    public void addDockableDisplayerListener( DockableDisplayerListener listener );
+    
+    /**
+     * Removes <code>listener</code> from this displayer.
+     * @param listener the listener to remove
+     */
+    public void removeDockableDisplayerListener( DockableDisplayerListener listener );
     
     /**
      * Sets the station on which this displayer is shown. That property

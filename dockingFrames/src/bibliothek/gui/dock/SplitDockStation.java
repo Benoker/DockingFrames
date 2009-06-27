@@ -73,6 +73,7 @@ import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.split.DefaultSplitLayoutManager;
@@ -340,7 +341,12 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         setBasePane( new Content() );
 
         displayers = new DisplayerCollection( this, displayerFactory );
-
+        displayers.addDockableDisplayerListener( new DockableDisplayerListener(){
+        	public void discard( DockableDisplayer displayer ){
+	        	SplitDockStation.this.discard( displayer );	
+        	}
+        });
+        
         dividerListener = new DividerListener();
         fullScreenAction = createFullScreenAction();
         visibility = new DockableVisibilityManager( dockStationListeners );
@@ -1880,6 +1886,35 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         return displayer;
     }
 
+    /**
+     * Removes <code>displayer</code> and creates a replacement.
+     * @param displayer the displayer to replaces
+     */
+    protected void discard( DockableDisplayer displayer ){
+    	int index = dockables.indexOf( displayer );
+    	if( index < 0 )
+    		throw new IllegalArgumentException( "displayer unknown to this station: " + displayer );
+    	
+    	Dockable dockable = displayer.getDockable();
+    	DockTitle title = displayer.getTitle();
+    	boolean visible = displayer.getComponent().isVisible();
+    	
+    	Leaf leaf = root().getLeaf( dockable );
+    	getContentPane().remove( displayer.getComponent() );
+    	
+    	DisplayerCollection displayers = getDisplayers();
+    	displayers.release( displayer );
+    	displayer = displayers.fetch( dockable, title );
+    	
+    	leaf.setDisplayer( displayer );
+    	dockables.set( index, displayer );
+    	
+    	getContentPane().add( displayer.getComponent() );
+    	displayer.getComponent().setVisible( visible );
+    	
+    	revalidate();
+    }
+    
     /**
      * Gets the index of a child of this station.
      * @param dockable the child which is searched

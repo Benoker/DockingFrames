@@ -65,6 +65,14 @@ public class Leaf extends SplitNode{
         super(access);
     }
     
+    /**
+     * Sets the displayer of this leaf.
+     * @param displayer the new displayer
+     */
+    public void setDisplayer( DockableDisplayer displayer ){
+		this.displayer = displayer;
+	}
+    
     @Override
     public Dimension getMinimumSize() {
     	if( displayer == null )

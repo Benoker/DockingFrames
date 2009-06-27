@@ -36,7 +36,9 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.event.DockableAdapter;
 import bibliothek.gui.dock.event.DockableListener;
+import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.DockUtilities;
 
@@ -50,6 +52,13 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
     
     /** the dockable shown on this station */
     private DockableDisplayer displayer;
+    
+    /** a listener to the current {@link #displayer} */
+    private DockableDisplayerListener displayerListener = new DockableDisplayerListener(){
+    	public void discard( DockableDisplayer displayer ){
+	    	discardDisplayer();	
+    	}
+    };
     
     /** the controller in whose realm this window works */
     private DockController controller;
@@ -146,6 +155,7 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
                 displayer.setTitle( null );
             }
             displayer.setDockable( null );
+            displayer.removeDockableDisplayerListener( displayerListener );
             station.getDisplayers().release( displayer );
             
             displayer = null;
@@ -162,9 +172,26 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
             }
             displayer = station.getDisplayers().fetch( dockable, title );
             dockable.addDockableListener( listener );
+            displayer.addDockableDisplayerListener( displayerListener );
         }
         
         showDisplayer( displayer );
+    }
+    
+    /**
+     * Replaces the current {@link DockableDisplayer} with a new instance.
+     */
+    protected void discardDisplayer(){
+    	Dockable dockable = displayer.getDockable();
+    	DockTitle title = displayer.getTitle();
+    	displayer.removeDockableDisplayerListener( displayerListener );
+    	
+    	DisplayerCollection displayers = station.getDisplayers();
+    	displayers.release( displayer );
+    	displayer = displayers.fetch( dockable, title );
+    	displayer.addDockableDisplayerListener( displayerListener );
+    	
+    	showDisplayer( displayer );
     }
 
     public void setController( DockController controller ) {
