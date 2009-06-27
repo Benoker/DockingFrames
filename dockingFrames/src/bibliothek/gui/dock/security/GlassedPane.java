@@ -30,11 +30,17 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.event.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+
+import bibliothek.util.JavaVersionWorkaround;
 
 /**
  * A panel containing two children: a "content pane" and a "glass pane". The
@@ -159,6 +165,8 @@ public class GlassedPane extends JPanel{
             setOpaque( false );
             
             setFocusable( false );
+            
+            JavaVersionWorkaround.markAsGlassPane( this );
         }
 
         public void mouseClicked( MouseEvent e ) {

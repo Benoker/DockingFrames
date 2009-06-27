@@ -34,6 +34,8 @@ import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
+import bibliothek.util.JavaVersionWorkaround;
+
 /**
  * A panel which contains two children, the "base pane" and the "overlay pane".<br>
  * The "overlay pane" is painted above the "base pane" and all its children. It
@@ -148,6 +150,7 @@ public class OverpaintablePanel extends JLayeredPane {
     private class Overlay extends JPanel{
         public Overlay(){
             setOpaque( false );
+            JavaVersionWorkaround.markAsGlassPane( this );
         }
         
         @Override

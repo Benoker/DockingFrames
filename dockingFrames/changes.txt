@@ -242,3 +242,6 @@
 ! API: DockableDisplayers can be observed by a DockableDisplayerListener, all DockStations can replace DockableDisplayers any time.
 ! API: EclipseThemeConnector can be observed by a EclipseThemeConnectorListener
 - Layout: New CommonEclipseThemeConnector ensures that CDockable with no title do not have a tab if not necessary in the EclipseTheme
+- Bugfix: workaround for bug http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6797587 , AWT components not painted properly if behind a glass-pane
+! API: FocusObserver calls additional method "handleVeto" if a veto was spoken, the method currently consumes the event making it invisible for the application
+- Bugfix: DockStations check whether dropping some Dockable would create an invalid Component-tree, and forbid such drag and drop operations

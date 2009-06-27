@@ -29,6 +29,7 @@ package bibliothek.gui.dock.control;
 import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.EventQueue;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -156,13 +157,13 @@ public abstract class MouseFocusObserver implements DockRelocatorListener {
             if( event.getID() == MouseEvent.MOUSE_PRESSED ){
                 if( component.isFocusable() ){
                     component.requestFocusInWindow();
-                    check( component, false );
+                    check( component, false, event );
                 }
                 else
-                    check( component, true );
+                    check( component, true, event );
             }
             else
-                check( component );
+                check( component, event );
         }
     }
     
@@ -179,14 +180,27 @@ public abstract class MouseFocusObserver implements DockRelocatorListener {
     }
     
     /**
+     * Handles the veto that was given when trying to forward
+     * <code>event</code>. The default implementation calls
+     * {@link InputEvent#consume()} to get rid of the event.
+     * @param event the event to handle
+     */
+    protected void handleVeto( AWTEvent event ){
+    	if( event instanceof InputEvent ){
+    		((InputEvent)event).consume();
+    	}
+    }
+    
+    /**
      * Tries to find the Dockable which owns <code>component</code>
      * and sets this Dockable to the focusedDockable. The method
      * only succeeds if no veto-listener reacts.
      * @param component the component whose dockable parent is to set
      * focused
+     * @param event the event that causes this check
      */
-    protected void check( Component component ){
-        check( component, true );
+    protected void check( Component component, AWTEvent event ){
+        check( component, true, event );
     }
     
     /**
@@ -197,9 +211,10 @@ public abstract class MouseFocusObserver implements DockRelocatorListener {
      * focused
      * @param ensureFocus whether the DockController should ensure
      * that the focus is set correctly or not.
+     * @param event the event that causes this check
      */
-    protected void check( Component component, boolean ensureFocus ){
-        Dockable dock = getDockable( component );
+    protected void check( Component component, boolean ensureFocus, AWTEvent event ){
+        Dockable dock = getDockable( component, event );
         if( dock != null ){
             Dockable focused = controller.getFocusedDockable();
             boolean change = true;
@@ -235,10 +250,11 @@ public abstract class MouseFocusObserver implements DockRelocatorListener {
      * Gets the top-dockable which has <code>component</code> or 
      * parent of <code>component</code> as base Component.
      * @param component a Component
+     * @param event the event that causes this check
      * @return a Dockable or <code>null</code> if nothing was found or
      * a {@link FocusVetoListener} doesn't want to inform the controller
      */
-    protected Dockable getDockable( Component component ){
+    protected Dockable getDockable( Component component, AWTEvent event ){
         DockElementRepresentative element = controller.searchElement( component );
         if( element == null )
             return null;
@@ -248,12 +264,16 @@ public abstract class MouseFocusObserver implements DockRelocatorListener {
             return null;
         
         if( element instanceof DockTitle ){
-            if( fireVetoTitle( (DockTitle)element ))
+            if( fireVetoTitle( (DockTitle)element )){
+            	handleVeto( event );
                 return null;
+            }
         }
         else{
-            if( fireVetoDockable( dockable ))
+            if( fireVetoDockable( dockable )){
+            	handleVeto( event );
                 return null;
+            }
         }
         
         return dockable;
