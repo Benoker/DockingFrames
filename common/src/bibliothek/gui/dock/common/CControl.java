@@ -50,6 +50,7 @@ import javax.swing.KeyStroke;
 
 import bibliothek.extension.gui.dock.preference.PreferenceModel;
 import bibliothek.extension.gui.dock.preference.PreferenceStorage;
+import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.DockStation;
@@ -93,6 +94,7 @@ import bibliothek.gui.dock.common.intern.action.CActionOffer;
 import bibliothek.gui.dock.common.intern.station.CFlapLayoutManager;
 import bibliothek.gui.dock.common.intern.station.CLockedResizeLayoutManager;
 import bibliothek.gui.dock.common.intern.station.ScreenResizeRequestHandler;
+import bibliothek.gui.dock.common.intern.theme.eclipse.CommonEclipseThemeConnector;
 import bibliothek.gui.dock.common.layout.FullLockConflictResolver;
 import bibliothek.gui.dock.common.layout.RequestDimension;
 import bibliothek.gui.dock.common.layout.ThemeMap;
@@ -646,7 +648,8 @@ public class CControl {
         putProperty( KEY_GOTO_NORMALIZED, KeyStroke.getKeyStroke( KeyEvent.VK_N, InputEvent.CTRL_MASK ) );
         putProperty( KEY_CLOSE, KeyStroke.getKeyStroke( KeyEvent.VK_F4, InputEvent.CTRL_MASK ) );
         putProperty( SplitDockStation.LAYOUT_MANAGER, new CLockedResizeLayoutManager( this ) );
-        putProperty( FlapDockStation.LAYOUT_MANAGER, new CFlapLayoutManager() );	    
+        putProperty( FlapDockStation.LAYOUT_MANAGER, new CFlapLayoutManager() );
+        putProperty( EclipseTheme.THEME_CONNECTOR, new CommonEclipseThemeConnector( this ) );
     }
 
     /**
