@@ -23,27 +23,27 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.bubble;
+package bibliothek.gui.dock.station.stack;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.DisplayerFactory;
-import bibliothek.gui.dock.station.DockableDisplayer;
-import bibliothek.gui.dock.station.DockableDisplayer.Location;
-import bibliothek.gui.dock.title.DockTitle;
 
 /**
- * A factory creating {@link BubbleDisplayer}.
+ * Interface for an owner of a {@link StackDockComponent}.
  * @author Benjamin Sigg
  */
-public class BubbleDisplayerFactory implements DisplayerFactory {
-	public DockableDisplayer create( DockStation station, Dockable dockable, DockTitle title ) {
-        BubbleDisplayer displayer = new BubbleDisplayer( station, dockable, title );
-        
-        if( dockable.asDockStation() != null )
-            displayer.setTitleLocation( Location.RIGHT );
-        
-        return displayer;
-    }
-    
+public interface StackDockComponentParent {
+	/**
+	 * Gets the station this parent represents.
+	 * @return the station
+	 */
+	public DockStation getStation();
+	
+	/**
+	 * Gets the index of <code>dockable</code> in the list of dockables
+	 * that are present on this parent.
+	 * @param dockable some dockable
+	 * @return its index or -1
+	 */
+	public int indexOf( Dockable dockable );
 }

@@ -66,6 +66,7 @@ import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.dockable.MovingImage;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
+import bibliothek.gui.dock.station.stack.StackDockComponentParent;
 import bibliothek.gui.dock.station.stack.tab.MenuLineLayout;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.themes.BasicTheme;
@@ -154,8 +155,8 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
     public EclipseTheme() {
         setColorSchemeKey( ECLIPSE_COLOR_SCHEME );
         setStackDockComponentFactory( new StackDockComponentFactory(){
-            public StackDockComponent create( StackDockStation station ){
-            	return new EclipseTabPane( EclipseTheme.this, station );
+            public StackDockComponent create( StackDockComponentParent station ){
+            	return new EclipseTabPane( EclipseTheme.this, station.getStation() );
             }
         });
         setDisplayerFactory( new EclipseDisplayerFactory( this ) );

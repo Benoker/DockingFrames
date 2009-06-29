@@ -69,6 +69,7 @@ import bibliothek.gui.dock.common.event.CDockableStateListener;
 import bibliothek.gui.dock.common.event.CDoubleClickListener;
 import bibliothek.gui.dock.common.event.CFocusListener;
 import bibliothek.gui.dock.common.event.CKeyboardListener;
+import bibliothek.gui.dock.common.event.CVetoFocusListener;
 import bibliothek.gui.dock.common.event.ResizeRequestListener;
 import bibliothek.gui.dock.common.intern.AbstractCStation;
 import bibliothek.gui.dock.common.intern.CControlAccess;
@@ -83,6 +84,7 @@ import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.intern.CommonDockableLayout;
 import bibliothek.gui.dock.common.intern.CommonMultipleDockableFactory;
 import bibliothek.gui.dock.common.intern.CommonSingleDockableFactory;
+import bibliothek.gui.dock.common.intern.ControlVetoFocusListener;
 import bibliothek.gui.dock.common.intern.EfficientControlFactory;
 import bibliothek.gui.dock.common.intern.ExtendedModeAcceptance;
 import bibliothek.gui.dock.common.intern.MutableCControlRegister;
@@ -95,11 +97,13 @@ import bibliothek.gui.dock.common.intern.station.CFlapLayoutManager;
 import bibliothek.gui.dock.common.intern.station.CLockedResizeLayoutManager;
 import bibliothek.gui.dock.common.intern.station.ScreenResizeRequestHandler;
 import bibliothek.gui.dock.common.intern.theme.eclipse.CommonEclipseThemeConnector;
+import bibliothek.gui.dock.common.intern.ui.CommonSingleTabDecider;
 import bibliothek.gui.dock.common.layout.FullLockConflictResolver;
 import bibliothek.gui.dock.common.layout.RequestDimension;
 import bibliothek.gui.dock.common.layout.ThemeMap;
 import bibliothek.gui.dock.common.location.CExternalizedLocation;
 import bibliothek.gui.dock.control.DockRegister;
+import bibliothek.gui.dock.displayer.SingleTabDecider;
 import bibliothek.gui.dock.event.DockAdapter;
 import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
@@ -423,6 +427,9 @@ public class CControl {
                 }
             }
         });
+        
+        frontend.getController().getFocusObserver().addVetoListener( 
+        		new ControlVetoFocusListener( this, listenerCollection.getVetoFocusListener() ) );
 
         frontend.getController().addAcceptance( new StackableAcceptance() );
         frontend.getController().addAcceptance( new WorkingAreaAcceptance( access ) );
@@ -650,6 +657,7 @@ public class CControl {
         putProperty( SplitDockStation.LAYOUT_MANAGER, new CLockedResizeLayoutManager( this ) );
         putProperty( FlapDockStation.LAYOUT_MANAGER, new CFlapLayoutManager() );
         putProperty( EclipseTheme.THEME_CONNECTOR, new CommonEclipseThemeConnector( this ) );
+        putProperty( SingleTabDecider.SINGLE_TAB_DECIDER, new CommonSingleTabDecider( this ) );
     }
 
     /**
@@ -705,6 +713,23 @@ public class CControl {
      */
     public void removeFocusListener( CFocusListener listener ){
         listenerCollection.removeFocusListener( listener );
+    }
+    
+    /**
+     * Adds a new veto focus listener to this control. The listener gets
+     * informed about pending changes in the focus.
+     * @param listener the new listener
+     */
+    public void addVetoFocusListener( CVetoFocusListener listener ){
+    	listenerCollection.addVetoFocusListener( listener );
+    }
+    
+    /**
+     * Removes a listener from this control.
+     * @param listener the listener to remove
+     */
+    public void removeVetoFocusListener( CVetoFocusListener listener ){
+    	listenerCollection.removeVetoFocusListener( listener );
     }
 
     /**

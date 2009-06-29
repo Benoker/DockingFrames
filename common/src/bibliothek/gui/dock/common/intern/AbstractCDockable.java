@@ -85,6 +85,9 @@ public abstract class AbstractCDockable implements CDockable {
     /** whether the {@link DockTitle} should not be created */
     private boolean titleShown = true;
     
+    /** whether a single tab is shown */
+    private boolean singleTabShown = false;
+    
     /** the listeners that were added to this dockable */
     protected CListenerCollection listenerCollection = new CListenerCollection();
     
@@ -432,6 +435,23 @@ public abstract class AbstractCDockable implements CDockable {
     
     public boolean isTitleShown() {
         return titleShown;
+    }
+    
+    /**
+     * Tells this {@link CDockable} whether to show a single tab or not.
+     * @param singleTabShown <code>true</code> if a single tab should be shown,
+     * <code>false</code> otherwise
+     * @see #isSingleTabShown()
+     */
+    public void setSingleTabShown( boolean singleTabShown ){
+    	if( this.singleTabShown != singleTabShown ){
+    		this.singleTabShown = singleTabShown;
+    		listenerCollection.getCDockablePropertyListener().singleTabShownChanged( this );
+    	}
+	}
+    
+    public boolean isSingleTabShown(){
+	    return singleTabShown;
     }
     
     /**

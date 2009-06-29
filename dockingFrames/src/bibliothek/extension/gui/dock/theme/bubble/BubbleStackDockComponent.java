@@ -28,10 +28,11 @@ package bibliothek.extension.gui.dock.theme.bubble;
 
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.station.stack.CombinedInfoComponent;
 import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
+import bibliothek.gui.dock.station.stack.StackDockComponentParent;
 
 /**
  * A {@link bibliothek.gui.dock.station.stack.StackDockComponent StackDockComponent} 
@@ -41,22 +42,22 @@ import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
 public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleTab, BubbleTabMenu, CombinedInfoComponent> {
 
 	/** the station for which this component is used */
-	private StackDockStation station;
+	private StackDockComponentParent station;
 	
 	/**
 	 * Creates a new component.
-	 * @param station the station on which this component is used
+	 * @param parent the station on which this component is used
 	 */
-	public BubbleStackDockComponent( StackDockStation station ){
-		this.station = station;
+	public BubbleStackDockComponent( StackDockComponentParent parent ){
+		this.station = parent;
 	}
 	
 	/**
 	 * Gets the station on which this component is used.
 	 * @return the parent of this component
 	 */
-	public StackDockStation getStation(){
-		return station;
+	public DockStation getStation(){
+		return station.getStation();
 	}
 	
 	@Override

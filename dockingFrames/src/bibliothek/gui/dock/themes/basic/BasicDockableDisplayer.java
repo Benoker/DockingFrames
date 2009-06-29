@@ -40,12 +40,15 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.displayer.DisplayerFocusTraversalPolicy;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
+import bibliothek.gui.dock.displayer.SingleTabDecider;
+import bibliothek.gui.dock.event.SingleTabDeciderListener;
 import bibliothek.gui.dock.focus.DockFocusTraversalPolicy;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.util.PropertyValue;
 
 
 /**
@@ -82,62 +85,111 @@ public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
     /** the default value for the border hint */
     private boolean defaultBorderHint = true;
     
+    /** whether to show the inner border if a single tab is in use */
+    private boolean singleTabShowInnerBorder = true;
+    
+    /** whether to show the outer border if a single tab is in use */
+    private boolean singleTabShowOuterBorder = true;
+    
     /** all listeners known to this displayer */
     private List<DockableDisplayerListener> listeners = new ArrayList<DockableDisplayerListener>();
     
+    /** this listener gets added to the current {@link SingleTabDecider} */
+    private SingleTabDeciderListener singleTabListener = new SingleTabDeciderListener(){
+    	public void showSingleTabChanged( SingleTabDecider source, Dockable dockable ){
+    		if( dockable == BasicDockableDisplayer.this.dockable ){
+    			updateDecorator();
+    		}
+    	}
+    };
+    
+    /** the current {@link SingleTabDecider} */
+    private PropertyValue<SingleTabDecider> decider = new PropertyValue<SingleTabDecider>( SingleTabDecider.SINGLE_TAB_DECIDER ){
+    	@Override
+    	protected void valueChanged( SingleTabDecider oldValue, SingleTabDecider newValue ){
+    		if( oldValue != null )
+    			oldValue.removeSingleTabDeciderListener( singleTabListener );
+    		
+    		if( newValue != null )
+    			newValue.addSingleTabDeciderListener( singleTabListener );
+    		
+    		updateDecorator();
+    	}
+    };
+    
+    /** decorates this displayer */
+    private BasicDockableDisplayerDecorator decorator;
+    /** the result {@link SingleTabDecider#showSingleTab(DockStation, Dockable)} returned */
+    private boolean singleTabShowing;
+    
+    /** the panel that shows the content of this displayer */
+    private JPanel content = new JPanel( null ){
+    	@Override
+    	public void doLayout(){
+	    	BasicDockableDisplayer.this.doLayout( content );
+    	}
+    };
+    
     /**
      * Creates a new displayer
+     * @param station the station for which this displayer is needed
      */
-    public BasicDockableDisplayer(){
-        this( null, null );
+    public BasicDockableDisplayer( DockStation station ){
+        this( station, null, null );
     }
     
     /**
      * Creates a new displayer, sets the title and the content.
+     * @param station the station for which this displayer is needed
      * @param dockable the content, may be <code>null</code>
      * @param title the title, may be <code>null</code>
      */
-    public BasicDockableDisplayer( Dockable dockable, DockTitle title ){
-        this( dockable, title, Location.TOP );
+    public BasicDockableDisplayer( DockStation station, Dockable dockable, DockTitle title ){
+        this( station, dockable, title, Location.TOP );
     }
     
     /**
      * Creates a new displayer, sets the title, its location and the
      * content.
+     * @param station the station for which this displayer is needed
      * @param dockable the content, may be <code>null</code>
      * @param title the title of <code>dockable</code>, can be <code>null</code>
      * @param location the location of the title, can be <code>null</code>
      */
-    public BasicDockableDisplayer( Dockable dockable, DockTitle title, Location location ){
-        super( null );
-        init( dockable, title, location );
+    public BasicDockableDisplayer( DockStation station, Dockable dockable, DockTitle title, Location location ){
+        super( new GridLayout( 1, 1 ) );
+        init( station, dockable, title, location );
     }
    
     /**
      * Creates a new displayer but does not set the properties of the
      * displayer. Subclasses may call {@link #init(Dockable, DockTitle, bibliothek.gui.dock.station.DockableDisplayer.Location) init}
      * to initialize all variables of the new displayer.
+     * @param station the station for which this displayer is needed
      * @param initialize <code>true</code> if all properties should be set
      * to default, <code>false</code> if nothing should happen, and 
      * {@link #init(Dockable, DockTitle, bibliothek.gui.dock.station.DockableDisplayer.Location) init}
      * will be called.
      */
-    protected BasicDockableDisplayer( boolean initialize ){
-    	super( null );
+    protected BasicDockableDisplayer( DockStation station, boolean initialize ){
+    	super( new GridLayout( 1, 1 ) );
     	if( initialize ){
-    		init( null, null, Location.TOP );
+    		init( station, null, null, Location.TOP );
     	}
     }
     
     /**
      * Initialises all properties of this DockableDisplayer. This method should
      * only be called once, by a constructor of a subclass which invoked
-     * <code>{@link #BasicDockableDisplayer(boolean) DockableDisplayer( false )}</code>. 
+     * <code>{@link #BasicDockableDisplayer(boolean) DockableDisplayer( false )}</code>.
+     * @param station the station for which this displayer is needed 
      * @param dockable the content, may be <code>null</code>
      * @param title the title of <code>dockable</code>, can be <code>null</code>
      * @param location the location of the title, can be <code>null</code>
      */
-    protected void init( Dockable dockable, DockTitle title, Location location ){
+    protected void init( DockStation station, Dockable dockable, DockTitle title, Location location ){
+    	setDecorator( new MinimalDecorator() );
+    	
         setTitleLocation( location );
         setDockable( dockable );
         setTitle( title );
@@ -149,14 +201,78 @@ public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
                         new DisplayerFocusTraversalPolicy( this ), true ));
     }
     
+    /**
+     * Exchanges the decorator of this displayer.
+     * @param decorator the new decorator
+     */
+    protected void setDecorator( BasicDockableDisplayerDecorator decorator ){
+    	if( decorator == null )
+    		throw new IllegalArgumentException( "decorator must not be null" );
+    	
+    	if( this.decorator != null ){
+    		Component oldComponent = this.decorator.getComponent();
+    		remove( oldComponent );
+    		this.decorator.setDockable( null, null );
+    		this.decorator.setController( null );
+    	}
+    	this.decorator = decorator;
+    	
+    	decorator.setController( controller );
+    	decorator.setDockable( content, dockable );
+    	Component newComponent = decorator.getComponent();
+    	if( newComponent != null ){
+    		add( newComponent );
+    	}
+    	
+    	revalidate();
+    	repaint();
+    }
+    
+    protected void updateDecorator(){
+    	if( dockable != null && station != null ){
+    		boolean decision = decider.getValue().showSingleTab( station, dockable );
+    		if( decision != singleTabShowing ){
+    			singleTabShowing = decision;
+    			if( singleTabShowing )
+    				setDecorator( new TabDecorator( station ) );
+    			else
+    				setDecorator( new MinimalDecorator() );
+    		}
+    		
+    		updateBorder();
+    	}
+    }
+    
     public void setController( DockController controller ) {
-        this.controller = controller;
+    	Component oldComponent = decorator.getComponent();
+    	this.controller = controller;
+    	decider.setProperties( controller );
+    	decorator.setController( controller );
+    	Component newComponent = decorator.getComponent();
+    	
+    	if( oldComponent != newComponent ){
+    		if( oldComponent != null )
+    			remove( oldComponent );
+    		
+    		if( newComponent != null )
+    			add( newComponent );
+    		
+    		revalidate();
+    	}
     }
     
     public DockController getController() {
         return controller;
     }
-    
+    /*
+    @Override
+    public void setBorder( Border border ){
+    	if( content == null )
+    		super.setBorder( border );
+    	else
+    		content.setBorder( border );
+    }
+    */
     public void addDockableDisplayerListener( DockableDisplayerListener listener ){
 	    listeners.add( listener );	
     }
@@ -186,17 +302,30 @@ public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
     }
 
     public void setDockable( Dockable dockable ) {
-        if( this.dockable != null ){
+    	Component oldComponent = decorator.getComponent();
+    	
+    	if( this.dockable != null ){
+    		removeDockable( this.dockable, this.dockable.getComponent() );
             this.dockable.configureDisplayerHints( null );
-            removeDockable( this.dockable.getComponent() );
         }
         
+    	updateDecorator();
+    	
+        decorator.setDockable( content, dockable );
         hints.setShowBorderHint( null );
         this.dockable = dockable;
         
         if( dockable != null ){
-            addDockable( dockable.getComponent() );
             this.dockable.configureDisplayerHints( hints );
+            addDockable( dockable, dockable.getComponent() );
+        }
+        
+        Component newComponent = decorator.getComponent();
+        if( oldComponent != newComponent ){
+        	if( oldComponent != null )
+        		remove( oldComponent );
+        	if( newComponent != null )
+        		add( newComponent );
         }
         
         revalidate();
@@ -258,18 +387,24 @@ public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
      * {@link #removeDockable(Component)} is called before. Note that
      * the name "add" is inspired by the method {@link Container#add(Component) add}
      * of <code>Container</code>.
-     * @param component the new Component
+     * @param dockable the dockable to add, may be <code>null</code>
+     * @param component the new Component, may be <code>null</code>
      */
-    protected void addDockable( Component component ){
-        add( component );
+    protected void addDockable( Dockable dockable, Component component ){
+    	if( component != null ){
+    		content.add( component );
+    	}
     }
     
     /**
      * Removes the Component which represents the current {@link #getDockable() dockable}.
-     * @param component the component
+     * @param dockable the element to remove, may be <code>null</code>
+     * @param component the component, may be <code>null</code>
      */
-    protected void removeDockable( Component component ){
-        remove( component );
+    protected void removeDockable( Dockable dockable, Component component ){
+    	if( component != null ){
+    		content.remove( component );
+    	}
     }
     
     /**
@@ -283,6 +418,15 @@ public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
     }
     
     /**
+     * Gets the content pane of this displayer, the content pane is the
+     * parent component of the {@link Dockable} and the {@link DockTitle}.
+     * @return the content pane
+     */
+    public JPanel getContent(){
+		return content;
+	}
+    
+    /**
      * Inserts a component representing the current {@link #getTitle() title}
      * into the layout. This method is never called twice unless 
      * {@link #removeTitle(Component)} is called before. Note that
@@ -291,7 +435,7 @@ public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
      * @param component the new Component
      */
     protected void addTitle( Component component ){
-        add( component );
+        content.add( component );
     }
     
     /**
@@ -299,7 +443,7 @@ public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
      * @param component the component
      */
     protected void removeTitle( Component component ){
-        remove( component );
+        content.remove( component );
     }
     
     /**
@@ -360,16 +504,15 @@ public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
     	return base;
     }
     
-    @Override
-    public void doLayout(){
-        Insets insets = getInsets();
+    protected void doLayout( JPanel content ){
+        Insets insets = content.getInsets();
         if( insets == null )
             insets = new Insets(0,0,0,0);
         
         int x = insets.left;
         int y = insets.top;
-        int width = getWidth() - insets.left - insets.right;
-        int height = getHeight() - insets.top - insets.bottom;
+        int width = content.getWidth() - insets.left - insets.right;
+        int height = content.getHeight() - insets.top - insets.bottom;
         
         if( title == null && dockable == null )
             return;
@@ -499,19 +642,74 @@ public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
     }
     
     /**
+     * Sets whether an inner border should be shown if a single tab is in use.
+     * @param singleTabShowInnerBorder whether the inner border should be visible
+     */
+    public void setSingleTabShowInnerBorder( boolean singleTabShowInnerBorder ){
+		this.singleTabShowInnerBorder = singleTabShowInnerBorder;
+		updateBorder();
+	}
+    
+    /**
+     * Tells whether an inner border is shown if a single tab is in use.
+     * @return whether the border is shown
+     */
+    public boolean isSingleTabShowInnerBorder(){
+		return singleTabShowInnerBorder;
+	}
+    
+    /**
+     * Sets whether an outer border should be shown if a single tab is in use.
+     * @param singleTabShowOuterBorder whether the outer border should be visible
+     */
+    public void setSingleTabShowOuterBorder( boolean singleTabShowOuterBorder ){
+		this.singleTabShowOuterBorder = singleTabShowOuterBorder;
+		updateBorder();
+	}
+    
+    /**
+     * Tells whether an outer border is shown if a single tab is in use.
+     * @return whether the border is shown
+     */
+    public boolean isSingleTabShowOuterBorder(){
+		return singleTabShowOuterBorder;
+	}
+    
+    /**
      * Called when the hint, whether a border should be shown or not, has changed. 
      */
     protected void updateBorder(){
-        if( respectBorderHint ){
-            boolean show = hints.getShowBorderHint();
-            
-            if( show ){
-                setBorder( getDefaultBorder() );
+    	if( singleTabShowing ){
+    		if( singleTabShowInnerBorder )
+    			content.setBorder( getDefaultBorder() );
+    		else
+    			content.setBorder( null );
+    		
+    		if( singleTabShowOuterBorder )
+    			setBorder( getDefaultBorder() );
+    		else
+    			setBorder( null );
+    	}
+    	else{
+    		content.setBorder( null );
+    		
+    		if( respectBorderHint ){
+                boolean show = hints.getShowBorderHint();
+                
+                if( show ){
+                    setBorder( getDefaultBorder() );
+                }
+                else{
+                    setBorder( null );
+                }
             }
-            else{
-                setBorder( null );
-            }
-        }
+    		else{
+    			if( defaultBorderHint )
+    				setBorder( getDefaultBorder() );
+    			else
+    				setBorder( null );
+    		}
+    	}
     }
     
     /**

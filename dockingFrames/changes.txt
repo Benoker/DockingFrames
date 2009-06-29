@@ -245,3 +245,6 @@
 - Bugfix: workaround for bug http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6797587 , AWT components not painted properly if behind a glass-pane
 ! API: FocusObserver calls additional method "handleVeto" if a veto was spoken, the method currently consumes the event making it invisible for the application
 - Bugfix: DockStations check whether dropping some Dockable would create an invalid Component-tree, and forbid such drag and drop operations
+- API: new CVetoFocusListenr in Common, can speak a veto for some focus changes
+- API: new SingleTabDecider and support for single tabs: the SingleTabDecider decides which Dockables are displayed with a single tab, the property can be changed during runtime.
+- API: CDockable has a new property "singleTabShown" which is forwarded to a SingleTabDecider

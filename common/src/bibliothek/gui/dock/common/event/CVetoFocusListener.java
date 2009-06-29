@@ -23,27 +23,29 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.bubble;
+package bibliothek.gui.dock.common.event;
 
-import bibliothek.gui.DockStation;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.DisplayerFactory;
-import bibliothek.gui.dock.station.DockableDisplayer;
-import bibliothek.gui.dock.station.DockableDisplayer.Location;
-import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.common.intern.CDockable;
 
 /**
- * A factory creating {@link BubbleDisplayer}.
+ * This listener is used to prevent a {@link CDockable} from loosing or gaining
+ * the focus.
  * @author Benjamin Sigg
  */
-public class BubbleDisplayerFactory implements DisplayerFactory {
-	public DockableDisplayer create( DockStation station, Dockable dockable, DockTitle title ) {
-        BubbleDisplayer displayer = new BubbleDisplayer( station, dockable, title );
-        
-        if( dockable.asDockStation() != null )
-            displayer.setTitleLocation( Location.RIGHT );
-        
-        return displayer;
-    }
-    
+public interface CVetoFocusListener {
+	/**
+	 * Called before focus is transfered to <code>dockable</code>.
+	 * @param dockable the dockable that gets the focus
+	 * @return <code>true</code> if this listener approves the action,
+	 * <code>false</code> to speak out a veto
+	 */
+	public boolean willGainFocus( CDockable dockable );
+	
+	/**
+	 * Called before focus is transfered from <code>dockable</code>.
+	 * @param dockable the dockable that looses the focus
+	 * @return <code>true</code> if this listener approves the action,
+	 * <code>false</code> to speak out a veto
+	 */
+	public boolean willLoseFocus( CDockable dockable );
 }

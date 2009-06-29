@@ -49,7 +49,16 @@ public class CommonEclipseThemeConnector extends DefaultEclipseThemeConnector {
 	
 	private CDockablePropertyListener propertyListener = new CDockableAdapter(){
 		@Override
-		public void titleShownChanged( CDockable cdockable ){
+		public void singleTabShownChanged( CDockable dockable ){
+			fire( dockable );
+		}
+		
+		@Override
+		public void titleShownChanged( CDockable dockable ){
+			fire( dockable );
+		}
+		
+		private void fire( CDockable cdockable ){
 			Dockable dockable = cdockable.intern();
 			TitleBar bar = getTitleBarKind( dockable );
 			for( EclipseThemeConnectorListener listener : listeners() ){
@@ -99,7 +108,9 @@ public class CommonEclipseThemeConnector extends DefaultEclipseThemeConnector {
 		if( dockable instanceof CommonDockable ){
 			boolean titleShown = ((CommonDockable)dockable).getDockable().isTitleShown();
 			if( !titleShown ){
-				return TitleBar.NONE_HINTED_BORDERED;
+				boolean singleTab = ((CommonDockable)dockable).getDockable().isSingleTabShown();
+				if( !singleTab )
+					return TitleBar.NONE_HINTED_BORDERED;
 			}
 		}
 		

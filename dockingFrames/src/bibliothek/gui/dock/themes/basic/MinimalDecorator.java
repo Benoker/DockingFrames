@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2009 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,27 +23,30 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.bubble;
+package bibliothek.gui.dock.themes.basic;
 
-import bibliothek.gui.DockStation;
+import java.awt.Component;
+
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.DisplayerFactory;
-import bibliothek.gui.dock.station.DockableDisplayer;
-import bibliothek.gui.dock.station.DockableDisplayer.Location;
-import bibliothek.gui.dock.title.DockTitle;
 
 /**
- * A factory creating {@link BubbleDisplayer}.
+ * Minimalistic implementation of a {@link BasicDockableDisplayerDecorator}.
  * @author Benjamin Sigg
+ *
  */
-public class BubbleDisplayerFactory implements DisplayerFactory {
-	public DockableDisplayer create( DockStation station, Dockable dockable, DockTitle title ) {
-        BubbleDisplayer displayer = new BubbleDisplayer( station, dockable, title );
-        
-        if( dockable.asDockStation() != null )
-            displayer.setTitleLocation( Location.RIGHT );
-        
-        return displayer;
-    }
-    
+public class MinimalDecorator implements BasicDockableDisplayerDecorator{
+	private Component content;
+	
+	public Component getComponent(){
+		return content;
+	}
+
+	public void setController( DockController controller ){
+		// ignore
+	}
+
+	public void setDockable( Component content, Dockable dockable ){
+		this.content = content;
+	}
 }

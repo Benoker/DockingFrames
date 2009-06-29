@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2009 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,27 +23,37 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.bubble;
+package bibliothek.gui.dock.themes.basic;
 
-import bibliothek.gui.DockStation;
+import java.awt.Component;
+
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.DisplayerFactory;
-import bibliothek.gui.dock.station.DockableDisplayer;
-import bibliothek.gui.dock.station.DockableDisplayer.Location;
-import bibliothek.gui.dock.title.DockTitle;
 
 /**
- * A factory creating {@link BubbleDisplayer}.
+ * A decorator may add a {@link Component} between a {@link BasicDockableDisplayer}
+ * and a {@link Dockable}.
  * @author Benjamin Sigg
  */
-public class BubbleDisplayerFactory implements DisplayerFactory {
-	public DockableDisplayer create( DockStation station, Dockable dockable, DockTitle title ) {
-        BubbleDisplayer displayer = new BubbleDisplayer( station, dockable, title );
-        
-        if( dockable.asDockStation() != null )
-            displayer.setTitleLocation( Location.RIGHT );
-        
-        return displayer;
-    }
-    
+public interface BasicDockableDisplayerDecorator {
+	/**
+	 * Sets the element to show on this decorator, can be <code>null</code>
+	 * @param component the component which represents <code>dockable</code>
+	 * @param dockable the element to show
+	 */
+	public void setDockable( Component component, Dockable dockable );
+	
+	/**
+	 * Sets the controller in whose realm this decorator works
+	 * @param controller the controller
+	 */
+	public void setController( DockController controller );
+	
+	/**
+	 * Gets the {@link Component} which represents this decorator,
+	 * the result of this method may change whenever {@link #setController(DockController)}
+	 * or {@link #setDockable(Dockable)} is called.
+	 * @return the component or <code>null</code> to show nothing
+	 */
+	public Component getComponent();
 }

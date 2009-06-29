@@ -336,6 +336,14 @@ public interface CDockable {
      */
     public boolean isTitleShown();
     
+    /**
+     * Tells whether a single tab should be shown for this dockable. Some
+     * {@link DockTheme}s might ignore this setting.
+     * @return <code>true</code> if a single tab should be shown,
+     * <code>false</code> if not
+     */
+    public boolean isSingleTabShown();
+    
 	/**
 	 * Gets the intern representation of this dockable.
 	 * @return the intern representation.

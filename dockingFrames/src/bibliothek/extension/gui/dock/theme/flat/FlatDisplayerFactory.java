@@ -61,9 +61,14 @@ public class FlatDisplayerFactory implements DisplayerFactory{
             location = DockableDisplayer.Location.TOP;
 
         if( border ){
-            return new FlatDockableDisplayer( dockable, title, location );
+            return new FlatDockableDisplayer( station, dockable, title, location );
         }
         
-        return new BasicDockableDisplayer( dockable, title, location );
+        BasicDockableDisplayer displayer = new BasicDockableDisplayer( station, dockable, title, location );
+        displayer.setRespectBorderHint( false );
+        displayer.setDefaultBorderHint( false );
+        displayer.setSingleTabShowInnerBorder( false );
+        displayer.setSingleTabShowOuterBorder( false );
+        return displayer;
     }
 }

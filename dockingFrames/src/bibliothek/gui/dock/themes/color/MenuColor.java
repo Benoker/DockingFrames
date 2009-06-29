@@ -28,7 +28,7 @@ package bibliothek.gui.dock.themes.color;
 import java.awt.Color;
 
 import bibliothek.extension.gui.dock.util.Path;
-import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.dock.station.stack.CombinedMenu;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
 import bibliothek.gui.dock.util.color.DockColor;
@@ -41,7 +41,7 @@ public abstract class MenuColor extends AbstractDockColor{
     /** the kind of color {@link TabColor} is */
     public static final Path KIND_MENU_COLOR = KIND_DOCK_COLOR.append( "MenuColor" );
     
-    private StackDockStation station;
+    private DockStation station;
     private CombinedMenu menu;
     
     /**
@@ -52,7 +52,7 @@ public abstract class MenuColor extends AbstractDockColor{
      * @param dockable the menu for which this color will be used
      * @param backup a backup color in case that no color can be found
      */
-    public MenuColor( String id, Path kind, StackDockStation station, CombinedMenu menu, Color backup ){
+    public MenuColor( String id, Path kind, DockStation station, CombinedMenu menu, Color backup ){
         super( id, kind, backup );
         this.station = station;
         this.menu = menu;
@@ -65,7 +65,7 @@ public abstract class MenuColor extends AbstractDockColor{
      * @param dockable the menu for which this color will be used
      * @param backup a backup color in case that no color can be found
      */
-    public MenuColor( String id, StackDockStation station, CombinedMenu menu, Color backup ){
+    public MenuColor( String id, DockStation station, CombinedMenu menu, Color backup ){
         this( id, KIND_MENU_COLOR, station, menu, backup );
     }
     
@@ -73,7 +73,7 @@ public abstract class MenuColor extends AbstractDockColor{
      * Gets the station on which the tab is shown.
      * @return the station, might be <code>null</code>
      */
-    public StackDockStation getStation() {
+    public DockStation getStation() {
         return station;
     }
     

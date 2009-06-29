@@ -28,6 +28,7 @@ package bibliothek.extension.gui.dock.theme.eclipse.displayer;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector.TitleBar;
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
@@ -41,8 +42,8 @@ import bibliothek.gui.dock.title.DockTitle;
 public class EclipseBasicDockableDisplayer extends BasicDockableDisplayer{
 	private TitleBarObserver observer;
 	
-	public EclipseBasicDockableDisplayer( Dockable dockable, DockTitle title, Location location, TitleBar bar ){
-		super( dockable, title, location );
+	public EclipseBasicDockableDisplayer( DockStation station, Dockable dockable, DockTitle title, Location location, TitleBar bar ){
+		super( station, dockable, title, location );
 		
 		observer = new TitleBarObserver( dockable, bar ){
 			@Override

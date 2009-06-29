@@ -89,6 +89,12 @@ public interface CDockablePropertyListener {
     public void titleShownChanged( CDockable dockable );
     
     /**
+     * Called when the property {@link CDockable#isSingleTabShown()} has changed.
+     * @param dockable the source of the event
+     */
+    public void singleTabShownChanged( CDockable dockable );
+    
+    /**
      * Called when an action that is returned by {@link CDockable#getAction(String)}
      * has been exchanged.
      * @param dockable the source of the event

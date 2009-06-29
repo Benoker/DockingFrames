@@ -28,6 +28,7 @@ package bibliothek.extension.gui.dock.theme.flat;
 import javax.swing.border.Border;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
@@ -40,12 +41,14 @@ import bibliothek.gui.dock.title.DockTitle;
 public class FlatDockableDisplayer extends BasicDockableDisplayer {
     private FlatBorder border;
     
-    public FlatDockableDisplayer( Dockable dockable, DockTitle title, Location location ){
-        super( dockable, title, location );
+    public FlatDockableDisplayer( DockStation station, Dockable dockable, DockTitle title, Location location ){
+        super( station, dockable, title, location );
         border = new FlatBorder( this );
         
         setDefaultBorderHint( true );
         setRespectBorderHint( true );
+        setSingleTabShowInnerBorder( false );
+        setSingleTabShowOuterBorder( true );
     }
     
     @Override

@@ -78,6 +78,10 @@ public class CDockableAdapter implements CDockableStateListener, CDockableProper
     public void titleShownChanged( CDockable dockable ) {
         // empty
     }
+    
+    public void singleTabShownChanged( CDockable dockable ){
+	    // empty	
+    }
 
     public void actionChanged( CDockable dockable, String key, CAction oldAction, CAction newAction ) {
         // empty

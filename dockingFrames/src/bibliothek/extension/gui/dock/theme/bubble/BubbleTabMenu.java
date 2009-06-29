@@ -40,9 +40,9 @@ import javax.swing.JPanel;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.StackDockStation;
-import bibliothek.gui.dock.station.stack.CombinedMenu;
 import bibliothek.gui.dock.station.stack.CombinedHandler;
+import bibliothek.gui.dock.station.stack.CombinedMenu;
+import bibliothek.gui.dock.station.stack.StackDockComponentParent;
 import bibliothek.gui.dock.station.stack.menu.AbstractCombinedMenu;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.themes.color.MenuColor;
@@ -62,7 +62,7 @@ import bibliothek.gui.dock.util.color.ColorCodes;
     "stack.menu.border",
 })
 public class BubbleTabMenu extends AbstractCombinedMenu{
-	private StackDockStation station;
+	private StackDockComponentParent station;
 	
 	private BubbleMenuColor colorTopMouse;
 	private BubbleMenuColor colorBottomMouse;
@@ -84,7 +84,7 @@ public class BubbleTabMenu extends AbstractCombinedMenu{
 	 * @param parent the pane on which the menu is shown
 	 * @param visibility handles the visibility of this menu
 	 */
-	public BubbleTabMenu( StackDockStation station, TabPane parent, CombinedHandler<CombinedMenu> visibility ){
+	public BubbleTabMenu( StackDockComponentParent station, TabPane parent, CombinedHandler<CombinedMenu> visibility ){
 		super( parent, visibility );
 		this.station = station;
 		
@@ -241,7 +241,7 @@ public class BubbleTabMenu extends AbstractCombinedMenu{
 		 * @param backup the backup color used when the target is not found
 		 */
 		public BubbleMenuColor( String id, Color backup ){
-			super( id, station, BubbleTabMenu.this, backup );
+			super( id, station.getStation(), BubbleTabMenu.this, backup );
 		}
 		
 		@Override

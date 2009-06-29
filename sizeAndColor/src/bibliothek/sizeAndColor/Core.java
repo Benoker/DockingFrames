@@ -42,6 +42,9 @@ import bibliothek.demonstration.Demonstration;
 import bibliothek.demonstration.Monitor;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CGrid;
+import bibliothek.gui.dock.common.event.CFocusListener;
+import bibliothek.gui.dock.common.event.CVetoFocusListener;
+import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.layout.FullLockConflictResolver;
 import bibliothek.gui.dock.common.menu.CLookAndFeelMenuPiece;
 import bibliothek.gui.dock.common.menu.CThemeMenuPiece;
@@ -113,6 +116,20 @@ public class Core implements Demonstration{
 
             control.addMultipleDockableFactory( "frame", Frame.FACTORY );
             frame.add( control.getContentArea() );
+            
+            control.addVetoFocusListener( new CVetoFocusListener(){
+            	public boolean willLoseFocus( CDockable dockable ){
+            		if( dockable instanceof Frame ){
+            			if( !((Frame)dockable).isFocusLostAllowed() )
+            				return false; 
+            		}
+            		
+            		return true;
+            	}
+            	public boolean willGainFocus( CDockable dockable ){
+	            	return true;
+            	}
+            });
             
             CGrid grid = new CGrid();
             for( int i = 0; i < 3; i++ ){

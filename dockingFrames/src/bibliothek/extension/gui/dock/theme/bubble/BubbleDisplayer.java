@@ -33,6 +33,7 @@ import javax.swing.border.Border;
 import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
@@ -84,11 +85,12 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
     
     /**
      * Creates a new displayer
+     * @param station the station for which this displayer will be used
      * @param dockable the {@link Dockable} which will be shown on this displayer, might be <code>null</code>
      * @param title the title to show on this displayer, might be <code>null</code>
      */
-    public BubbleDisplayer( Dockable dockable, DockTitle title ){
-        super( dockable, title );
+    public BubbleDisplayer( DockStation station, Dockable dockable, DockTitle title ){
+        super( station, dockable, title );
         
         animation = new BubbleColorAnimation();
         animation.addTask( new Runnable(){
@@ -101,6 +103,8 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
         
         setRespectBorderHint( true );
         setDefaultBorderHint( true );
+        setSingleTabShowInnerBorder( true );
+        setSingleTabShowOuterBorder( false );
     }
     
     /**
@@ -165,15 +169,19 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
     }
     
     @Override
-    protected void addDockable( Component component ) {
-        ensureDockable();
-        dockable.add( component );
+    protected void addDockable( Dockable dockable, Component component ) {
+        if( component != null ){
+        	ensureDockable();
+        	this.dockable.add( component );
+        }
     }
     
     @Override
-    protected void removeDockable( Component component ) {
-        ensureDockable();
-        dockable.remove( component );
+    protected void removeDockable( Dockable dockable, Component component ) {
+    	if( component != null ){
+    		ensureDockable();
+    		this.dockable.remove( component );
+    	}
     }
     
     @Override
@@ -210,7 +218,7 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
     private void ensureDockable(){
         if( dockable == null ){
             dockable = new JPanel( new GridLayout( 1, 1 ));
-            add( dockable );
+            getContent().add( dockable );
         }
         
         ensureBorder();

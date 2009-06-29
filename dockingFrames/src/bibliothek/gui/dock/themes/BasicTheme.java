@@ -47,6 +47,7 @@ import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
+import bibliothek.gui.dock.station.stack.StackDockComponentParent;
 import bibliothek.gui.dock.themes.basic.BasicColorScheme;
 import bibliothek.gui.dock.themes.basic.BasicCombiner;
 import bibliothek.gui.dock.themes.basic.BasicDisplayerFactory;
@@ -168,7 +169,7 @@ public class BasicTheme implements DockTheme{
         setTitleFactory( new BasicDockTitleFactory() );
         setMovingImageFactory( new BasicMovingImageFactory() );
         setStackDockComponentFactory( new StackDockComponentFactory(){
-            public StackDockComponent create( StackDockStation station ) {
+            public StackDockComponent create( StackDockComponentParent station ) {
                 return new BasicStackDockComponent( station );
             }
         });

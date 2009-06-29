@@ -31,7 +31,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bibliothek.gui.dock.common.action.CAction;
-import bibliothek.gui.dock.common.event.*;
+import bibliothek.gui.dock.common.event.CDockablePropertyListener;
+import bibliothek.gui.dock.common.event.CDockableStateListener;
+import bibliothek.gui.dock.common.event.CDoubleClickListener;
+import bibliothek.gui.dock.common.event.CFocusListener;
+import bibliothek.gui.dock.common.event.CKeyboardListener;
+import bibliothek.gui.dock.common.event.CVetoFocusListener;
 
 /**
  * A collection of the listeners which are normally added to a {@link CDockable}.
@@ -118,6 +123,11 @@ public class CListenerCollection {
             for( CDockablePropertyListener listener : getCDockablePropertyListeners() )
                 listener.titleShownChanged( dockable );
         }
+        
+        public void singleTabShownChanged( CDockable dockable ){
+	        for( CDockablePropertyListener listener : getCDockablePropertyListeners() )
+	        	listener.singleTabShownChanged( dockable );
+        }
     };
     
     /** the list of focus listeners */
@@ -133,6 +143,28 @@ public class CListenerCollection {
             for( CFocusListener listener : getFocusListeners() )
                 listener.focusLost( dockable );
         }
+    };
+    
+    private List<CVetoFocusListener> vetoFocusListeners = new ArrayList<CVetoFocusListener>();
+    
+    private CVetoFocusListener vetoFocusListener = new CVetoFocusListener(){
+    	public boolean willGainFocus( CDockable dockable ){
+	    	for( CVetoFocusListener listener : getVetoFocusListeners() ){
+	    		if( !listener.willGainFocus( dockable )){
+	    			return false;
+	    		}
+	    	}
+	    	return true;
+    	}
+    	
+    	public boolean willLoseFocus( CDockable dockable ){
+    		for( CVetoFocusListener listener : getVetoFocusListeners() ){
+	    		if( !listener.willLoseFocus( dockable )){
+	    			return false;
+	    		}
+	    	}
+	    	return true;
+    	}
     };
     
     private List<CKeyboardListener> keyboardListeners = new ArrayList<CKeyboardListener>();
@@ -282,6 +314,43 @@ public class CListenerCollection {
     public CFocusListener getFocusListener(){
         return focusListener;
     }
+    
+    /**
+     * Adds a listener to this collection.
+     * @param listener the additional listener
+     */
+    public void addVetoFocusListener( CVetoFocusListener listener ){
+    	if( listener == null )
+    		throw new IllegalArgumentException( "listener must not be null" );
+    	
+    	vetoFocusListeners.add( listener );
+    }
+    
+    /**
+     * Removes a listener from this collection
+     * @param listener the listener to remove
+     */
+    public void removeVetoFocusListener( CVetoFocusListener listener ){
+    	vetoFocusListeners.remove( listener );
+    }
+    
+    /**
+     * Gets all the {@link CVetoFocusListener} that are collected in
+     * this collection.
+     * @return an independent array of listeners
+     */
+    public CVetoFocusListener[] getVetoFocusListeners(){
+    	return vetoFocusListeners.toArray( new CVetoFocusListener[ vetoFocusListeners.size() ] );
+    }
+    
+    /**
+     * Gets a {@link CVetoFocusListener} which forwards all calls to
+     * its methods to the listeners registered in this collection.
+     * @return a forwarding listener
+     */
+    public CVetoFocusListener getVetoFocusListener(){
+		return vetoFocusListener;
+	}
     
     /**
      * Stores an additional {@link CKeyboardListener} in this collection.

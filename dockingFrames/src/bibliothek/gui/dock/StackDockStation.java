@@ -66,7 +66,7 @@ import bibliothek.gui.dock.util.PropertyValue;
  * {@link DockController} with the key {@link #TITLE_ID}.
  * @author Benjamin Sigg
  */
-public class StackDockStation extends AbstractDockableStation {
+public class StackDockStation extends AbstractDockableStation implements StackDockComponentParent{
     /** The id of the titlefactory which is used by this station */
     public static final String TITLE_ID = "stack";
     
@@ -204,6 +204,10 @@ public class StackDockStation extends AbstractDockableStation {
      */
     protected StackDockComponent createStackDockComponent(){
         return new DefaultStackDockComponent();
+    }
+    
+    public DockStation getStation(){
+	    return this;
     }
     
     /**

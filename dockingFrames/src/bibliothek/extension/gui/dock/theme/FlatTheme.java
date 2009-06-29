@@ -43,7 +43,6 @@ import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.SplitDockStation;
-import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.action.ActionType;
 import bibliothek.gui.dock.action.ButtonDockAction;
 import bibliothek.gui.dock.action.DropDownAction;
@@ -56,6 +55,7 @@ import bibliothek.gui.dock.dockable.ScreencaptureMovingImageFactory;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
+import bibliothek.gui.dock.station.stack.StackDockComponentParent;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.themes.ThemeProperties;
@@ -110,7 +110,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
         setTitleFactory( new FlatTitleFactory() );
         setDisplayerFactory( new FlatDisplayerFactory( false ));
         setStackDockComponentFactory( new StackDockComponentFactory(){
-            public StackDockComponent create( StackDockStation station ) {
+            public StackDockComponent create( StackDockComponentParent station ) {
                 return new FlatTabPane( station );
             }
         });

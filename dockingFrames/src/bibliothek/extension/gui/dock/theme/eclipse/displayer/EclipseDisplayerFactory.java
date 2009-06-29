@@ -28,28 +28,27 @@ package bibliothek.extension.gui.dock.theme.eclipse.displayer;
 import javax.swing.JComponent;
 import javax.swing.border.LineBorder;
 
-import bibliothek.gui.DockStation;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.DockableDisplayer;
-import bibliothek.gui.dock.station.DockableDisplayer.Location;
-import bibliothek.gui.dock.themes.basic.BasicDisplayerFactory;
-import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
-import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector.TitleBar;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexSystemColor;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.station.DisplayerFactory;
+import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.DockableDisplayer.Location;
+import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
+import bibliothek.gui.dock.title.DockTitle;
 
 /**
  * @author Janni Kovacs
  */
-public class EclipseDisplayerFactory extends BasicDisplayerFactory {
+public class EclipseDisplayerFactory implements DisplayerFactory {
 	private EclipseTheme theme;
 
 	public EclipseDisplayerFactory( EclipseTheme theme ) {
 		this.theme = theme;
 	}
 
-	@Override
 	public DockableDisplayer create(DockStation station, Dockable dockable, DockTitle title) {
 		TitleBar bar = theme.getThemeConnector( station.getController() ).getTitleBarKind( dockable );
 		DockableDisplayer displayer;
@@ -63,20 +62,20 @@ public class EclipseDisplayerFactory extends BasicDisplayerFactory {
 		    case ECLIPSE:
 		        return new EclipseDockableDisplayer(theme, station, dockable);
 		    case BASIC_BORDERED:
-		        displayer = create( dockable, title, true, bar );
+		        displayer = create( station, dockable, title, true, bar );
                 if( displayer.getComponent() instanceof JComponent )
                     ((JComponent)displayer.getComponent()).setBorder( new LineBorder( RexSystemColor.getBorderColor() ) );
                 return displayer;
 		    case BASIC:
 		    default:
-		        displayer = create( dockable, title, false, bar );
+		        displayer = create( station, dockable, title, false, bar );
 		        if( displayer.getComponent() instanceof JComponent )
                     ((JComponent)displayer.getComponent()).setBorder(null);
 		        return displayer;
 		}
 	}
 	
-	protected BasicDockableDisplayer create( Dockable dockable, DockTitle title, boolean border, TitleBar bar ) {
+	protected BasicDockableDisplayer create( DockStation station, Dockable dockable, DockTitle title, boolean border, TitleBar bar ) {
 		Location location = Location.TOP;
 		if( dockable.asDockStation() != null ){
 			location = Location.LEFT;
@@ -84,7 +83,7 @@ public class EclipseDisplayerFactory extends BasicDisplayerFactory {
 		
 	    EclipseBasicDockableDisplayer displayer;
 		if( border ){
-		    displayer = new EclipseBasicDockableDisplayer( dockable, title, location, bar ){
+		    displayer = new EclipseBasicDockableDisplayer( station, dockable, title, location, bar ){
 		        @Override
 		        public void updateUI() {
 		            super.updateUI();
@@ -93,7 +92,7 @@ public class EclipseDisplayerFactory extends BasicDisplayerFactory {
 		    };
 		}
 		else{
-			displayer = new EclipseBasicDockableDisplayer( dockable, title, location, bar );
+			displayer = new EclipseBasicDockableDisplayer( station, dockable, title, location, bar );
 		}
 		
 		return displayer;

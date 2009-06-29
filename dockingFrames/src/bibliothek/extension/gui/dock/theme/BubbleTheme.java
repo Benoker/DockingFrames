@@ -49,7 +49,6 @@ import bibliothek.extension.gui.dock.theme.bubble.RoundDropDownButton;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
-import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.action.ActionType;
 import bibliothek.gui.dock.action.ButtonDockAction;
 import bibliothek.gui.dock.action.DropDownAction;
@@ -61,6 +60,7 @@ import bibliothek.gui.dock.action.view.ViewGenerator;
 import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
+import bibliothek.gui.dock.station.stack.StackDockComponentParent;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.themes.ThemeProperties;
@@ -112,7 +112,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
         setPaint( new BubbleStationPaint() );
         setMovingImageFactory( new BubbleMovingImageFactory() );
         setStackDockComponentFactory( new StackDockComponentFactory(){
-            public StackDockComponent create( StackDockStation station ) {
+            public StackDockComponent create( StackDockComponentParent station ) {
                 return new BubbleStackDockComponent( station );
             }
         });

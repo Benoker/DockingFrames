@@ -25,13 +25,25 @@
  */
 package bibliothek.sizeAndColor;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 
 import bibliothek.gui.dock.common.ColorMap;
 import bibliothek.gui.dock.common.DefaultMultipleCDockable;
@@ -54,6 +66,10 @@ public class Frame extends DefaultMultipleCDockable {
     private JCheckBox lockedHeight = new JCheckBox( "Height locked during resize" );
     /** whether titles are shown or not */
     private JCheckBox showTitle;
+    /** whether single tabs should be shown */
+    private JCheckBox showSingleTab;
+    /** whether other dockables are allowed to get the focus */
+    private JCheckBox preventFocusLost = new JCheckBox( "Prevent focus lost", false );
     
     /** a factory that can create new frames */
     public static final EmptyMultipleCDockableFactory<Frame> FACTORY = new EmptyMultipleCDockableFactory<Frame>(){
@@ -70,10 +86,13 @@ public class Frame extends DefaultMultipleCDockable {
         super( FACTORY );
         setTitleText( "Frame" );
         
-        JPanel title = new JPanel( new GridLayout() );
-        title.setBorder( BorderFactory.createTitledBorder( "Title" ) );
+        JPanel various = new JPanel( new GridLayout( 3, 1 ) );
+        various.setBorder( BorderFactory.createTitledBorder( "Various" ) );
         showTitle = new JCheckBox( "Show title", isTitleShown() );
-        title.add( showTitle );
+        showSingleTab = new JCheckBox( "Show single tab", isSingleTabShown() );
+        various.add( showTitle );
+        various.add( showSingleTab );
+        various.add( preventFocusLost );
         
         JPanel sizes = new JPanel( new GridBagLayout() );
         sizes.setBorder( BorderFactory.createTitledBorder( "Size" ) );
@@ -134,7 +153,7 @@ public class Frame extends DefaultMultipleCDockable {
         properties.add( new FontButton( fonts, FontMap.FONT_KEY_TAB_FOCUSED ));
         
         JPanel all = new JPanel( new GridBagLayout() );
-        all.add( title, new GridBagConstraints( 0, 0, 1, 1, 1.0, 1.0, 
+        all.add( various, new GridBagConstraints( 0, 0, 1, 1, 1.0, 1.0, 
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets( 0, 0, 0, 0 ), 0, 0 ));
         all.add( sizes, new GridBagConstraints( 0, 1, 1, 1, 1.0, 1.0, 
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets( 0, 0, 0, 0 ), 0, 0 ));
@@ -152,6 +171,11 @@ public class Frame extends DefaultMultipleCDockable {
             public void actionPerformed( ActionEvent e ) {
                 setTitleShown( showTitle.isSelected() );
             }
+        });
+        showSingleTab.addActionListener( new ActionListener(){
+        	public void actionPerformed( ActionEvent e ){
+	        	setSingleTabShown( showSingleTab.isSelected() );	
+        	}
         });
         lockedWidth.addActionListener( new ActionListener(){
             public void actionPerformed( ActionEvent e ) {
@@ -173,5 +197,9 @@ public class Frame extends DefaultMultipleCDockable {
                 setResizeRequest( new Dimension( ((Number)width.getValue()).intValue(), ((Number)height.getValue()).intValue() ), true );
             }
         });
+    }
+    
+    public boolean isFocusLostAllowed(){
+    	return !preventFocusLost.isSelected();
     }
 }

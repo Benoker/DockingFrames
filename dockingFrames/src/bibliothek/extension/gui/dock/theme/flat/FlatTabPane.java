@@ -31,10 +31,11 @@ import java.awt.Rectangle;
 import javax.swing.JTabbedPane;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.station.stack.CombinedInfoComponent;
 import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
+import bibliothek.gui.dock.station.stack.StackDockComponentParent;
 
 /**
  * A panel that works like a {@link JTabbedPane}, but the buttons to
@@ -44,14 +45,14 @@ import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
  */
 public class FlatTabPane extends CombinedStackDockComponent<FlatTab, FlatMenu, CombinedInfoComponent>{
     /** the station which uses this component */
-    private StackDockStation station;
+    private StackDockComponentParent station;
     
     /**
      * Creates a new {@link FlatTabPane}
-     * @param station the station which uses this component
+     * @param parent the station which uses this component
      */
-    public FlatTabPane( StackDockStation station ){
-        this.station = station;
+    public FlatTabPane( StackDockComponentParent parent ){
+        this.station = parent;
     }
     
     @Override
@@ -100,7 +101,7 @@ public class FlatTabPane extends CombinedStackDockComponent<FlatTab, FlatMenu, C
 	    return false;
 	}
 	
-	public StackDockStation getStation(){
-		return station;
+	public DockStation getStation(){
+		return station.getStation();
 	}
 }

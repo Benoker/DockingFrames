@@ -31,11 +31,11 @@ import javax.swing.JTabbedPane;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
+import bibliothek.gui.dock.station.stack.StackDockComponentParent;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.util.color.ColorCodes;
 
@@ -54,9 +54,9 @@ import bibliothek.gui.dock.util.color.ColorCodes;
     "stack.tab.background.selected",
     "stack.tab.background.focused" } )
 public class BasicStackDockComponent extends DefaultStackDockComponent {
-    private StackDockStation station;
+    private StackDockComponentParent station;
     
-    public BasicStackDockComponent( StackDockStation station ) {
+    public BasicStackDockComponent( StackDockComponentParent station ) {
         this.station = station;
     }
 
@@ -158,7 +158,7 @@ public class BasicStackDockComponent extends DefaultStackDockComponent {
              * @param id the name of this color
              */
             public BasicTabColor( String id ){
-                super( id, station, dockable, null );
+                super( id, station.getStation(), dockable, null );
             }
             
             @Override

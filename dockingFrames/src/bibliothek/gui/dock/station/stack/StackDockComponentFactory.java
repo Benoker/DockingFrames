@@ -40,8 +40,8 @@ import bibliothek.gui.dock.util.DockProperties;
 public interface StackDockComponentFactory {
     /**
      * Creates a new component for <code>station</code>.
-     * @param station the station for which the component should be generated.
+     * @param parent the station for which the component should be generated.
      * @return the new component
      */
-    public StackDockComponent create( StackDockStation station );
+    public StackDockComponent create( StackDockComponentParent parent );
 }

@@ -49,25 +49,28 @@ public class BasicDisplayerFactory implements DisplayerFactory {
 
     	BasicDockableDisplayer displayer;
         if( dockable instanceof DockStation )
-            displayer = create( dockable, title, stationLocation );
+            displayer = create( station, dockable, title, stationLocation );
         else
-            displayer = create( dockable, title, dockableLocation );
+            displayer = create( station, dockable, title, dockableLocation );
         
         displayer.setDefaultBorderHint( true );
         displayer.setRespectBorderHint( true );
+        displayer.setSingleTabShowInnerBorder( true );
+        displayer.setSingleTabShowOuterBorder( true );
         
         return displayer;
     }
     
     /**
      * Creates a new displayer.
+     * @param station the station for which this displayer is needed
      * @param dockable the element that is shown on the displayer
      * @param title the title of the displayer
      * @param location the location of <code>title</code>
      * @return the new displayer
      */
-    protected BasicDockableDisplayer create( Dockable dockable, DockTitle title, Location location ){
-        return new BasicDockableDisplayer( dockable, title, location );
+    protected BasicDockableDisplayer create( DockStation station, Dockable dockable, DockTitle title, Location location ){
+        return new BasicDockableDisplayer( station, dockable, title, location );
     }
     
     /**

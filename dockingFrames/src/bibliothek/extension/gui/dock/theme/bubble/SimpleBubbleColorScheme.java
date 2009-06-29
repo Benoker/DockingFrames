@@ -153,15 +153,15 @@ public class SimpleBubbleColorScheme extends DefaultColorScheme {
         setColor( "stack.tab.border",                             diffMirror( inactive, factorWeak ));
         setColor( "stack.tab.foreground",                         diffMirror( inactive, 1.0 ));
         
-        setColor( "stack.tab.background.top.selected.mouse",      brighter( active, factor ));
-        setColor( "stack.tab.background.bottom.selected.mouse",   darker( active, factor ) );
-        setColor( "stack.tab.border.selected.mouse",              diffMirror( active, factor ));
-        setColor( "stack.tab.foreground.selected.mouse",          diffMirror( active, 1.0 ));
+        setColor( "stack.tab.background.top.selected.mouse",      brighter( inactive, factor ));
+        setColor( "stack.tab.background.bottom.selected.mouse",   darker( inactive, factor ) );
+        setColor( "stack.tab.border.selected.mouse",              diffMirror( inactive, factor ));
+        setColor( "stack.tab.foreground.selected.mouse",          diffMirror( inactive, 1.0 ));
         
-        setColor( "stack.tab.background.top.selected",            brighter( active, factorWeak ));
-        setColor( "stack.tab.background.bottom.selected",         darker( active, factorWeak ) );
-        setColor( "stack.tab.border.selected",                    diffMirror( active, factorWeak ));
-        setColor( "stack.tab.foreground.selected",                diffMirror( active, 1.0 ));
+        setColor( "stack.tab.background.top.selected",            brighter( inactive, factorWeak ));
+        setColor( "stack.tab.background.bottom.selected",         darker( inactive, factorWeak ) );
+        setColor( "stack.tab.border.selected",                    diffMirror( inactive, factorWeak ));
+        setColor( "stack.tab.foreground.selected",                diffMirror( inactive, 1.0 ));
         
         setColor( "stack.tab.background.top.focused.mouse",       fuller( brighter( active, factor ), factor ));
         setColor( "stack.tab.background.bottom.focused.mouse",    fuller( darker( active, factor ), factor ) );
