@@ -25,3 +25,4 @@
 - Maximize externalized dockable: may become maximized on the screen
 - Allow to move a dockable to the edge of a SplitDockStation, even if the station is within a maximized frame
 - MouseFocusObserver: when canceling an event but the user clicked on a tab, then the event is still processed.
+- Bug: title of FlapDockStation no longer receives mouse pressed events.
