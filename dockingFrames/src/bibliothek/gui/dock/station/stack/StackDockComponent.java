@@ -35,6 +35,7 @@ import javax.swing.event.ChangeListener;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 
 /**
  * A StackDockComponent is a Component that can show other {@link Component Components}.
@@ -43,9 +44,11 @@ import bibliothek.gui.dock.StackDockStation;
  * The component has one child which is "selected" (assuming there is at 
  * least one child). This one child should be visible, the other children
  * should be hidden. The user must have an interface to change the
- * selection at any time.
- * 
+ * selection at any time.<br>
+ * A {@link StackDockComponent} should respect the {@link StackDockStation#TAB_PLACEMENT side}
+ * at which the tabs are to be placed.
  * @author Janni Kovacs
+ * @author Benjamin Sigg
  * @see bibliothek.gui.dock.StackDockStation
  * @see DefaultStackDockComponent
  * @see javax.swing.JTabbedPane
@@ -151,6 +154,12 @@ public interface StackDockComponent {
      */
     public void setComponentAt( int index, Component component );
 
+    /**
+     * Sets at which side tabs should be displayed.
+     * @param tabSide the side, not <code>null</code>
+     */
+    public void setTabPlacement( TabPlacement tabSide );
+    
     /**
      * Gets a {@link Component} on which the children of this
      * <code>StackDockComponent</code> will be displayed.

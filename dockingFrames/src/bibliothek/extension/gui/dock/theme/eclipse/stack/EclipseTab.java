@@ -164,6 +164,10 @@ public class EclipseTab extends AbstractTab implements CombinedTab{
 		return super.getOverlap( other );
 	}
 
+	/**
+	 * Tells this tab to paint icons when not selected.
+	 * @param paint whether to paint the icons
+	 */
 	public void setPaintIconWhenInactive( boolean paint ){
 		component.setPaintIconWhenInactive( paint );
 	}

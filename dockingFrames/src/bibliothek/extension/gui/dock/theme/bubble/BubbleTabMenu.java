@@ -59,7 +59,7 @@ import bibliothek.gui.dock.util.color.ColorCodes;
     
     "stack.menu.background.top",
     "stack.menu.background.bottom",
-    "stack.menu.border",
+    "stack.menu.border"
 })
 public class BubbleTabMenu extends AbstractCombinedMenu{
 	private StackDockComponentParent station;

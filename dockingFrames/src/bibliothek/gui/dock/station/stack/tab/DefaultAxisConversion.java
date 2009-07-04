@@ -28,7 +28,7 @@ package bibliothek.gui.dock.station.stack.tab;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 
-import bibliothek.gui.dock.station.stack.tab.layouting.Side;
+import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 
 /**
  * The default {@link AxisConversion} assumes:
@@ -41,7 +41,7 @@ import bibliothek.gui.dock.station.stack.tab.layouting.Side;
 public class DefaultAxisConversion implements AxisConversion{
 	
 	/** side of the view */
-	private Side side;
+	private TabPlacement side;
 	
 	/** available space for the view */
 	private Rectangle space;
@@ -52,7 +52,7 @@ public class DefaultAxisConversion implements AxisConversion{
 	 * @param side the side of the available <code>space</code> at which the 
 	 * view hangs, not <code>null</code>.
 	 */
-	public DefaultAxisConversion( Rectangle space, Side side ){
+	public DefaultAxisConversion( Rectangle space, TabPlacement side ){
 		if( space == null )
 			throw new IllegalArgumentException( "space must not be null" );
 		
@@ -65,11 +65,11 @@ public class DefaultAxisConversion implements AxisConversion{
 
 	public Dimension modelToView( Dimension size ){
 		switch( side ){
-			case TOP:
-			case BOTTOM:
+			case TOP_OF_DOCKABLE:
+			case BOTTOM_OF_DOCKABLE:
 				return new Dimension( size );
-			case LEFT:
-			case RIGHT:
+			case LEFT_OF_DOCKABLE:
+			case RIGHT_OF_DOCKABLE:
 				return new Dimension( size.height, size.width );
 			default:
 				throw new IllegalStateException( "unknown side: " + side );
@@ -78,13 +78,13 @@ public class DefaultAxisConversion implements AxisConversion{
 
 	public Rectangle modelToView( Rectangle bounds ){
 		switch( side ){
-			case TOP:
+			case TOP_OF_DOCKABLE:
 				return new Rectangle( space.x+bounds.x, space.y+bounds.y, bounds.width, bounds.height );
-			case BOTTOM:
+			case BOTTOM_OF_DOCKABLE:
 				return new Rectangle( space.x+bounds.x, space.y+space.height-bounds.height-bounds.y, bounds.width, bounds.height );
-			case LEFT:
+			case LEFT_OF_DOCKABLE:
 				return new Rectangle( space.x+bounds.y, space.y+bounds.x, bounds.height, bounds.width );
-			case RIGHT:
+			case RIGHT_OF_DOCKABLE:
 				return new Rectangle( space.x+space.width-bounds.height-bounds.y, space.y+bounds.x, bounds.height, bounds.width );
 			default:
 				throw new IllegalStateException( "unknown side: " + side );	
@@ -93,11 +93,11 @@ public class DefaultAxisConversion implements AxisConversion{
 
 	public Dimension viewToModel( Dimension size ){
 		switch( side ){
-			case TOP:
-			case BOTTOM:
+			case TOP_OF_DOCKABLE:
+			case BOTTOM_OF_DOCKABLE:
 				return new Dimension( size );
-			case LEFT:
-			case RIGHT:
+			case LEFT_OF_DOCKABLE:
+			case RIGHT_OF_DOCKABLE:
 				return new Dimension( size.height, size.width );
 			default:
 				throw new IllegalStateException( "unknown side: " + side );
@@ -106,13 +106,13 @@ public class DefaultAxisConversion implements AxisConversion{
 
 	public Rectangle viewToModel( Rectangle bounds ){
 		switch( side ){
-			case TOP:
+			case TOP_OF_DOCKABLE:
 				return new Rectangle( bounds.x-space.x, bounds.y-space.y, bounds.width, bounds.height );
-			case BOTTOM:
+			case BOTTOM_OF_DOCKABLE:
 				return new Rectangle( bounds.x-space.x, bounds.y+bounds.height-space.y-space.height, bounds.width, bounds.height );
-			case LEFT:
+			case LEFT_OF_DOCKABLE:
 				return new Rectangle( space.x-bounds.y, bounds.x-space.y, bounds.height, bounds.width );
-			case RIGHT:
+			case RIGHT_OF_DOCKABLE:
 				return new Rectangle( bounds.y-space.x-space.width+bounds.height, bounds.x-space.y, bounds.height, bounds.width );
 			default:
 				throw new IllegalStateException( "unknown side: " + side );

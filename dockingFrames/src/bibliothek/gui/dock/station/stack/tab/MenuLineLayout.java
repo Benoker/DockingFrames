@@ -122,7 +122,7 @@ public class MenuLineLayout extends AbstractTabLayoutManager<MenuLineLayout.Layo
 	 * Layout information for a {@link TabPane}.
 	 * @author Benjamin Sigg
 	 */
-	protected class Layout extends PaneInfo{
+	protected class Layout extends AbstractTabLayoutManager.PaneInfo{
 		private MenuLayoutBlock menu;
 		private LayoutBlock info;
 		private LineTabsLayoutBlock tabs;

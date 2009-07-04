@@ -61,6 +61,7 @@ import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.station.stack.StackDockComponentParent;
+import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.themes.ThemeProperties;
@@ -116,6 +117,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
                 return new BubbleStackDockComponent( station );
             }
         });
+        setTabSide( TabPlacement.LEFT_OF_DOCKABLE );
     }
 
     /**

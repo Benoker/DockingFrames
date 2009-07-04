@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -33,24 +33,34 @@ import java.util.Map;
 
 /**
  * A set of properties that are used at different places all over the framework.
- * No component should expect that there are any entries in this map.
+ * The map uses a {@link Priority} based system, allowing clients to override
+ * behavior of themes or set default values in case a theme does not set one.
  * @author Benjamin Sigg
- *
  */
 public class DockProperties {
 	/** the map of values */
 	private Map<PropertyKey<?>, Entry<?>> map = new HashMap<PropertyKey<?>, Entry<?>>();
+
+	/**
+	 * Sets a value. This is equivalent to calling <code>set( key, value, Priority.CLIENT )</code>.
+	 * @param <A> the type of the value
+	 * @param key the key to access the value
+	 * @param value the value, can be <code>null</code>
+	 */
+	public <A> void set( PropertyKey<A> key, A value ){
+		set( key, value, Priority.CLIENT );
+	}
 	
 	/**
 	 * Sets a value.
 	 * @param <A> the type of the value
 	 * @param key the key to access the value
 	 * @param value the value, can be <code>null</code>
+	 * @param priority the priority of the new value
 	 */
-	public <A> void set( PropertyKey<A> key, A value ){
+	public <A> void set( PropertyKey<A> key, A value, Priority priority ){
 		Entry<A> entry = getEntry( key, true );
-		entry.setValue( value );
-		entry.setHasBeenSet( true );
+		entry.setValue( value, priority );
 		check( entry );
 	}
 	
@@ -61,23 +71,33 @@ public class DockProperties {
 	 * @param key the key to access the value
 	 * @param value the new value, if <code>null</code> then the default
 	 * value will be set
+	 * @param priority the priority of the value to remove
 	 */
-	public <A> void setOrRemove( PropertyKey<A> key, A value ){
+	public <A> void setOrRemove( PropertyKey<A> key, A value, Priority priority ){
 		if( value == null )
-			toDefault( key );
+			unset( key, priority );
 		else
-			set( key, value );
+			set( key, value, priority );
+	}
+	
+	/**
+	 * Tells the entry <code>key</code> that the user has never set its value.
+	 * This is equivalent to calling <code>unset( key, Priority.CLIENT )</code>.
+	 * @param key the key to access the entry
+	 */
+	public void unset( PropertyKey<?> key ){
+		unset( key, Priority.CLIENT );
 	}
 	
 	/**
 	 * Tells the entry <code>key</code> that the user has never set its value.
 	 * Also removes the old value of the entry.
 	 * @param key the key to access the entry
+	 * @param priority the priority for which to remove the value
 	 */
-	public void toDefault( PropertyKey<?> key ){
+	public void unset( PropertyKey<?> key, Priority priority ){
 	    Entry<?> entry = getEntry( key, true );
-        entry.setHasBeenSet( false );
-        entry.setValue( null );
+	    entry.setValue( null, priority );
         check( entry );
 	}
 	
@@ -95,24 +115,35 @@ public class DockProperties {
 	}
 	
 	/**
-	 * Tells whether there is a value set for <code>key</code>.
-	 * @param <A> the type of the value
-	 * @param key some key
-	 * @return <code>true</code> if a value is set for <code>key</code>
+	 * Tells whether there is value set for <code>key</code> with <code>priority</code>. 
+	 * @param <A> the kind of value
+	 * @param key the key to check
+	 * @param priority the priority for which something might be set
+	 * @return <code>true</code> if there is a value set
+	 */
+	public <A> boolean isSet( PropertyKey<A> key, Priority priority ){
+	    Entry<A> entry = getEntry( key, false );
+	    if( entry == null )
+	        return false;
+
+	    return entry.value.isSet( priority );
+	}
+	
+	/**
+	 * Tells whether there is value set for <code>key</code>.
+	 * @param <A> the kind of value
+	 * @param key the key to check
+	 * @return <code>true</code> if there is a value set
 	 */
 	public <A> boolean isSet( PropertyKey<A> key ){
 	    Entry<A> entry = getEntry( key, false );
 	    if( entry == null )
 	        return false;
 
-	    if( !entry.hasBeenSet() )
-	        return false;
-	    
-	    if( entry.value != null )
-	        return true;
-	    
-	    return !key.isNullValueReplacedByDefault();
+	    return entry.value.isSomethingSet();
 	}
+	
+	
 	
 	/**
 	 * Adds a listener that will be informed whenever the value accessed
@@ -182,9 +213,7 @@ public class DockProperties {
 		/** listeners to this entry */
 		private List<DockPropertyListener<A>> listeners = new ArrayList<DockPropertyListener<A>>();
 		/** the value stored in this entry */
-		private A value;
-		/** whether the value of this entry has been set by the user */
-		private boolean hasBeenSet = false;
+		private NullPriorityValue<A> value = new NullPriorityValue<A>();
 		
 		/** default value of this entry */
 		private A defaultValue;
@@ -202,11 +231,12 @@ public class DockProperties {
 		/**
 		 * Sets the new value of this entry.
 		 * @param value the new value
+		 * @param priority the priority of the new value
 		 */
 		@SuppressWarnings( "unchecked" )
-		public void setValue( A value ){
+		public void setValue( A value, Priority priority ){
 			A oldValue = getValue();
-			this.value = value;
+			this.value.set( priority, value );
 			A newValue = getValue();
 			
 			if( (oldValue == null && newValue != null) ||
@@ -223,11 +253,10 @@ public class DockProperties {
 		 * @return the value
 		 */
 		public A getValue(){
-			if( value == null ){
-			    if( hasBeenSet && !key.isNullValueReplacedByDefault() )
-			        return null;
-			    else
-			        return getDefault();
+			A value = this.value.get();
+			
+			if( value == null && key.isNullValueReplacedByDefault() ){
+				return getDefault();
 			}
 			return value;
 		}
@@ -243,33 +272,6 @@ public class DockProperties {
 			}
 			return defaultValue;
 		}
-		
-		/**
-		 * Tells this entry whether the user has set the value.
-		 * @param hasBeenSet <code>true</code> if the user changed the value
-		 */
-		@SuppressWarnings("unchecked")
-        public void setHasBeenSet( boolean hasBeenSet ) {
-		    A oldValue = getValue();
-		    this.hasBeenSet = hasBeenSet;
-		    A newValue = getValue();
-
-		    if( (oldValue == null && newValue != null) ||
-		            (oldValue != null && newValue == null) ||
-		            (oldValue != null && !oldValue.equals( newValue ))){
-
-		        for( DockPropertyListener<A> listener : (DockPropertyListener<A>[])listeners.toArray( new DockPropertyListener<?>[ listeners.size() ] ))
-		            listener.propertyChanged( DockProperties.this, key, oldValue, newValue );
-		    }
-        }
-		
-		/**
-		 * Whether the value of this entry has been set by the user.
-		 * @return <code>true</code> if the user changed the value
-		 */
-		public boolean hasBeenSet() {
-            return hasBeenSet;
-        }
 		
 		/**
 		 * Gets the name of this entry.
@@ -303,10 +305,7 @@ public class DockProperties {
 			if( !listeners.isEmpty() )
 				return false;
 			
-			if( value != null )
-				return false;
-			
-			if( defaultValueSet || hasBeenSet )
+			if( defaultValueSet || value.isSomethingSet() )
 				return false;
 			
 			return true;

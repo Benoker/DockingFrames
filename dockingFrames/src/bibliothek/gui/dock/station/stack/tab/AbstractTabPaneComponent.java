@@ -30,6 +30,8 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Rectangle;
 
+import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
+
 /**
  * A {@link TabPaneComponent} that really represents a {@link Component}.
  * @author Benjamin Sigg
@@ -37,6 +39,9 @@ import java.awt.Rectangle;
 public abstract class AbstractTabPaneComponent implements TabPaneComponent{
 	/** the owner of this component */
 	private TabPane parent;
+	
+	/** how to paint this component */
+	private TabPlacement orientation = TabPlacement.TOP_OF_DOCKABLE;
 	
 	/**
 	 * Creates a new object.
@@ -82,5 +87,21 @@ public abstract class AbstractTabPaneComponent implements TabPaneComponent{
 	
 	public Insets getOverlap( TabPaneComponent other ){
 		return new Insets( 0, 0, 0, 0 );
+	}
+	
+	public void setOrientation( TabPlacement orientation ){
+		if( orientation == null )
+			throw new IllegalArgumentException( "orientation must not be null" );
+		
+		this.orientation = orientation;
+	}
+	
+	/**
+	 * Gets the orientation of this component.
+	 * @return the orientation, never <code>null</code>
+	 * @see #setOrientation(TabPlacement)
+	 */
+	public TabPlacement getOrientation(){
+		return orientation;
 	}
 }

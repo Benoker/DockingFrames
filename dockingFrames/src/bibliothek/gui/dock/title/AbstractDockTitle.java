@@ -26,7 +26,15 @@
 
 package bibliothek.gui.dock.title;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.ContainerOrderFocusTraversalPolicy;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +63,7 @@ import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.font.AbstractDockFont;
 import bibliothek.gui.dock.util.font.FontManager;
 import bibliothek.gui.dock.util.font.FontModifier;
-import bibliothek.gui.dock.util.swing.DLabel;
+import bibliothek.gui.dock.util.swing.OrientedLabel;
 import bibliothek.util.Condition;
 
 /**
@@ -87,7 +95,12 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     private Dockable dockable;
     
     /** A label for the title-text */
-    private OrientedLabel label = new OrientedLabel();
+    private OrientedLabel label = new OrientedLabel(){
+    	@Override
+    	protected void updateFonts(){
+	    	AbstractDockTitle.this.updateFonts();
+    	}
+    };
     /** A panel that displays the action-buttons of this title */
     private ButtonPanel itemPanel;
     
@@ -362,6 +375,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         this.orientation = orientation;
         if( showMiniButtons )
         	itemPanel.setOrientation( orientation );
+        label.setHorizontal( orientation.isHorizontal() );
         revalidate();
     }
     
@@ -802,150 +816,6 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         @Override
         protected void changed( FontModifier oldValue, FontModifier newValue ) {
             updateFonts();
-        }
-    }
-    
-    /**
-     * A label which draws some text, and can change the layout of the text 
-     * between horizontal and vertical.
-     * @author Benjamin Sigg
-     */
-    private class OrientedLabel extends JPanel{
-        /** The label which really paints the text */
-        private DLabel label = new DLabel();
-        
-        /** the original font of {@link #label} */
-        private Font originalFont;
-        
-        /** whether the {@link #originalFont} has been set */
-        private boolean originalFontSet = false;
-        
-        /** The text on the label */
-        private String text;
-        
-        /**
-         * Creates a new label with no text
-         */
-        public OrientedLabel(){
-            setOpaque( false );
-            label.setOpaque( false );
-        }
-        
-        /**
-         * Sets the text of this label
-         * @param text the text, <code>null</code> is allowed
-         */
-        public void setText( String text ){
-            this.text = text;
-            label.setText( text == null ? null : "  " + text );
-            revalidate();
-            repaint();
-        }
-        
-        /**
-         * Gets the text of this label
-         * @return the text, may be <code>null</code>
-         */
-        public String getText(){
-            return text;
-        }
-        
-        @Override
-        public void setForeground( Color fg ) {
-            super.setForeground(fg);
-            if( label != null )
-                label.setForeground( fg );
-        }
-        
-        @Override
-        public void setBackground( Color bg ) {
-            super.setBackground(bg);
-            if( label != null )
-                label.setBackground( bg );
-        }
-        
-        @Override
-        public void updateUI() {
-            super.updateUI();
-            if( label != null ){
-                originalFontSet = false;
-                originalFont = null;
-                label.setFont( null );
-                
-                label.updateUI();
-                
-                updateFonts();
-            }
-        }
-        
-        @Override
-        public void setFont( Font font ) {
-            super.setFont( font );
-            if( label != null ){
-                if( !originalFontSet ){
-                    originalFontSet = true;
-                    originalFont = label.getFont();
-                }
-                
-                if( font != null ){
-                    label.setFont( font );
-                }
-                else{
-                    label.setFont( originalFont );
-                    originalFont = null;
-                    originalFontSet = false;
-                }
-                
-                revalidate();
-                repaint();
-            }
-        }
-        
-        public void setFontModifier( FontModifier modifier ) {
-            label.setFontModifier( modifier );
-            revalidate();
-            repaint();
-        }
-        
-        @Override
-        public Dimension getMinimumSize() {
-            return getPreferredSize();
-        }
-        
-        @Override
-        public Dimension getPreferredSize() {
-            Dimension size = label.getPreferredSize();
-            if( orientation.isHorizontal() )
-                return new Dimension( size.width+5, size.height );
-            else
-                return new Dimension( size.height, size.width+5 );
-        }
-        
-        @Override
-        public void paint( Graphics g ) {
-            if( orientation.isHorizontal() )
-                label.paint( g );
-            else{
-                Graphics2D g2 = (Graphics2D)g.create();
-                g2.rotate( Math.PI/2, 0, 0 );
-                g2.translate( 0, -getWidth() );
-                label.paint( g2 );
-            }
-        }
-        
-        @Override
-        public void update( Graphics g ) {
-            // do nothing
-        }
-        
-        @Override
-        public void setBounds( int x, int y, int w, int h ) {
-            super.setBounds(x, y, w, h);
-            
-            if( orientation.isHorizontal() )
-                label.setBounds( 0, 0, w, h );
-            else
-                label.setBounds( 0, 0, h, w );
         }
     }
     

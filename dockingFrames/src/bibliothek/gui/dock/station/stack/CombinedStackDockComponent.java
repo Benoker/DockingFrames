@@ -440,7 +440,6 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
      * is not a {@link Dockable} but a layer between dockable and this panel.
      * @param index the index of a tab.
      * @return the layer between tab and dockable
-     * @see #createComponentAt(Dockable)
      */
     public Component getLayerAt( int index ){
     	return components.get( getDockable( index ) ).component;

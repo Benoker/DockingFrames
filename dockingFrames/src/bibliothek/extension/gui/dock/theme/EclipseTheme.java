@@ -86,6 +86,7 @@ import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
@@ -201,7 +202,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 
         controller.addAcceptance( acceptance );
         
-        controller.getProperties().set( TabPane.LAYOUT_MANAGER, new MenuLineLayout() );
+        controller.getProperties().set( TabPane.LAYOUT_MANAGER, new MenuLineLayout(), Priority.THEME );
 
         titleManager.registerTheme( FlapDockStation.BUTTON_TITLE_ID, new DockTitleFactory(){
             public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
@@ -309,7 +310,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
         controller.getIcons().clearThemeIcons();
         controller.getDockTitleManager().clearThemeFactories();
         controller.removeAcceptance( acceptance );
-        controller.getProperties().setOrRemove( TabPane.LAYOUT_MANAGER, null );
+        controller.getProperties().unset( TabPane.LAYOUT_MANAGER, Priority.THEME );
         controller.getActionViewConverter().putTheme( ActionType.BUTTON, ViewTarget.TITLE, null );
         controller.getActionViewConverter().putTheme( ActionType.CHECK, ViewTarget.TITLE, null );
         controller.getActionViewConverter().putTheme( ActionType.MENU, ViewTarget.TITLE, null );

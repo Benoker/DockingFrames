@@ -26,7 +26,11 @@
 
 package bibliothek.gui.dock;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,13 +43,29 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputListener;
 
-import bibliothek.gui.*;
+import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.DockTheme;
+import bibliothek.gui.DockUI;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.layout.DockableProperty;
-import bibliothek.gui.dock.station.*;
-import bibliothek.gui.dock.station.stack.*;
+import bibliothek.gui.dock.station.AbstractDockableStation;
+import bibliothek.gui.dock.station.DisplayerCollection;
+import bibliothek.gui.dock.station.DisplayerFactory;
+import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.DockableDisplayerListener;
+import bibliothek.gui.dock.station.OverpaintablePanel;
+import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;
+import bibliothek.gui.dock.station.stack.StackDockComponent;
+import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
+import bibliothek.gui.dock.station.stack.StackDockComponentParent;
+import bibliothek.gui.dock.station.stack.StackDockProperty;
+import bibliothek.gui.dock.station.stack.StackDockStationFactory;
+import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
 import bibliothek.gui.dock.station.support.StationPaintWrapper;
@@ -56,6 +76,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 
 /**
  * On this station, only one of many children is visible. The other children
@@ -73,6 +94,11 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     /** Key used to read the current {@link StackDockComponentFactory} */
     public static final PropertyKey<StackDockComponentFactory> COMPONENT_FACTORY =
         new PropertyKey<StackDockComponentFactory>( "stack dock component factory" );
+    
+    /** Key for setting the side at which the tabs appear in relation to the selected dockable */
+    public static final PropertyKey<TabPlacement> TAB_PLACEMENT = 
+    	new PropertyKey<TabPlacement>( "stack dock station tab side",
+    			new ConstantPropertyFactory<TabPlacement>( TabPlacement.TOP_OF_DOCKABLE ), true );
     
     /** A list of all children */
     private List<DockableDisplayer> dockables = new ArrayList<DockableDisplayer>();
@@ -115,6 +141,9 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     
     /** The current component factory */
     private PropertyValue<StackDockComponentFactory> stackComponentFactory;
+    
+    /** Where to put tabs */
+    private PropertyValue<TabPlacement> tabPlacement;
     
     /** The version of titles which should be used for this station */
     private DockTitleVersion title;
@@ -184,6 +213,15 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             }
         };
         
+        tabPlacement = new PropertyValue<TabPlacement>( TAB_PLACEMENT ){
+        	@Override
+        	protected void valueChanged( TabPlacement oldValue, TabPlacement newValue ){
+        		if( stackComponent != null ){
+        			stackComponent.setTabPlacement( newValue );
+        		}
+        	}
+        };
+        
         stackComponent = createStackDockComponent();
         stackComponent.addChangeListener( visibleListener );
     }
@@ -208,6 +246,22 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     
     public DockStation getStation(){
 	    return this;
+    }
+    
+    /**
+     * Tells this station where to put the tabs.
+     * @param placement the side or <code>null</code> to use the default value
+     */
+    public void setTabPlacement( TabPlacement placement ){
+    	tabPlacement.setValue( placement );
+    }
+    
+    /**
+     * Gets the location where tabs are currently placed.
+     * @return the side at which tabs are
+     */
+    public TabPlacement getTabPlacement(){
+    	return tabPlacement.getValue();
     }
     
     /**
@@ -242,6 +296,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             }
             
             this.stackComponent = stackComponent;
+            stackComponent.setTabPlacement( tabPlacement.getValue() );
             
             if( getDockableCount() < 2 ){
                 stackComponent.addChangeListener( visibleListener );
@@ -341,6 +396,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             stackComponentFactory.setProperties( controller );
             super.setController(controller);
             stackComponent.setController( controller );
+            tabPlacement.setProperties( controller );
             
             if( controller != null ){
                 title = controller.getDockTitleManager().getVersion( TITLE_ID, ControllerTitleFactory.INSTANCE );
@@ -663,7 +719,10 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         for( int i = 0, n = dockables.size(); i<n; i++ ){
             Rectangle bounds = stackComponent.getBoundsAt( i );
             if( bounds != null && bounds.contains( point )){
-                return new Insert( i, bounds.x + bounds.width/2 < point.x );
+            	if( tabPlacement.getValue().isHorizontal() )
+            		return new Insert( i, bounds.x + bounds.width/2 < point.x );
+            	else
+            		return new Insert( i, bounds.y + bounds.height/2 < point.y );
             }
         }
                
@@ -1029,18 +1088,12 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
                 if( bounds != null ){
                     Point a = new Point();
                     Point b = new Point();
-                    
+
                     if( insert.right ){
-                        insertionLine( 
-                                bounds, 
-                                insert.tab+1 < stackComponent.getTabCount() ? stackComponent.getBoundsAt( insert.tab+1 ) : null,
-                                a, b, true );
+                   		insertionLine( bounds, insert.tab+1 < stackComponent.getTabCount() ? stackComponent.getBoundsAt( insert.tab+1 ) : null, a, b, true );
                     }
                     else{
-                        insertionLine(  
-                                insert.tab > 0 ? stackComponent.getBoundsAt( insert.tab-1 ) : null,
-                                bounds,
-                                a, b, false );
+                   		insertionLine( insert.tab > 0 ? stackComponent.getBoundsAt( insert.tab-1 ) : null, bounds, a, b, false );
                     }
                     
                     paint.drawInsertionLine( g, StackDockStation.this, a.x, a.y, b.x, b.y );
@@ -1082,38 +1135,74 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
      * if the mouse is over the right tab.
      */
     protected void insertionLine( Rectangle left, Rectangle right, Point a, Point b, boolean leftImportant ){
-        if( left != null && right != null ){
-            int top = Math.max( left.y, right.y );
-            int bottom = Math.min( left.y + left.height, right.y + right.height );
-            
-            if( bottom > top ){
-                int dif = bottom - top;
-                if( dif >= 0.8*left.height && dif >= 0.8*right.height ){
-                    a.x = (left.x+left.width+right.x) / 2;
-                    a.y = top;
-                    
-                    b.x = a.x;
-                    b.y = bottom;
-                    
-                    return;
-                }
-            }
-        }
-        
-        if( leftImportant ){
-            a.x = left.x + left.width;
-            a.y = left.y;
-            
-            b.x = a.x;
-            b.y = a.y + left.height;
-        }
-        else{
-            a.x = right.x;
-            a.y = right.y;
-            
-            b.x = a.x;
-            b.y = a.y + right.height;
-        }
+    	if( tabPlacement.getValue().isHorizontal() ){
+    		if( left != null && right != null ){
+    			int top = Math.max( left.y, right.y );
+    			int bottom = Math.min( left.y + left.height, right.y + right.height );
+
+    			if( bottom > top ){
+    				int dif = bottom - top;
+    				if( dif >= 0.8*left.height && dif >= 0.8*right.height ){
+    					a.x = (left.x+left.width+right.x) / 2;
+    					a.y = top;
+
+    					b.x = a.x;
+    					b.y = bottom;
+
+    					return;
+    				}
+    			}
+    		}
+
+    		if( leftImportant ){
+    			a.x = left.x + left.width;
+    			a.y = left.y;
+
+    			b.x = a.x;
+    			b.y = a.y + left.height;
+    		}
+    		else{
+    			a.x = right.x;
+    			a.y = right.y;
+
+    			b.x = a.x;
+    			b.y = a.y + right.height;
+    		}
+    	}
+    	else{
+    		if( left != null && right != null ){
+    			int top = Math.max( left.x, right.x );
+    			int bottom = Math.min( left.x + left.width, right.x + right.width );
+
+    			if( bottom > top ){
+    				int dif = bottom - top;
+    				if( dif >= 0.8*left.width && dif >= 0.8*right.width ){
+    					a.y = (left.y+left.height+right.y) / 2;
+    					a.x = top;
+
+    					b.y = a.y;
+    					b.x = bottom;
+
+    					return;
+    				}
+    			}
+    		}
+
+    		if( leftImportant ){
+    			a.y = left.y + left.height;
+    			a.x = left.x;
+
+    			b.y = a.y;
+    			b.x = a.x + left.width;
+    		}
+    		else{
+    			a.y = right.y;
+    			a.x = right.x;
+
+    			b.y = a.y;
+    			b.x = a.x + right.width;
+    		}
+    	}
     }
     
     /**

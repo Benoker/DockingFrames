@@ -29,6 +29,8 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Rectangle;
 
+import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
+
 /**
  * A {@link TabPaneComponent} is a child of a {@link TabPane}. It is painted
  * onto the screen and has some boundaries.
@@ -111,4 +113,11 @@ public interface TabPaneComponent {
 	 * @return <code>true</code> if visible, <code>false</code> otherwise
 	 */
 	public boolean isPaneVisible();
+	
+	/**
+	 * Tells this component how to paint itself.
+	 * @param orientation the orientation, not <code>null</code>
+	 * @throws IllegalArgumentException if <code>orientation</code> is <code>null</code>
+	 */
+	public void setOrientation( TabPlacement orientation );
 }

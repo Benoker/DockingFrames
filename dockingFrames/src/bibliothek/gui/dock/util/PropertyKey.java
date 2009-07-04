@@ -33,7 +33,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.util.property.PropertyFactory;
 
 /**
- * The key for an entry in a map of properties.
+ * The key for an entry in a map of {@link DockProperties properties}.
  * @author Benjamin Sigg
  *
  * @param <A> the type of entry

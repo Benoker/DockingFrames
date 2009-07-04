@@ -29,6 +29,7 @@ import bibliothek.extension.gui.dock.preference.DefaultPreference;
 import bibliothek.extension.gui.dock.preference.preferences.choice.DefaultChoice;
 import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
 
 /**
@@ -60,7 +61,7 @@ public class ChoiceDockPropertyPreference<V> extends DefaultPreference<String>{
 	
 	@Override
 	public void write() {
-		properties.setOrRemove( key, choice.identifierToValue( getValue() ));
+		properties.setOrRemove( key, choice.identifierToValue( getValue() ), Priority.CLIENT );
 	}
 	
 	@Override

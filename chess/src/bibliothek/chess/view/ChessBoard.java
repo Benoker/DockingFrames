@@ -345,7 +345,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 	public <D extends Dockable & DockStation> boolean isInOverrideZone( int x, int y, D invoker, Dockable drop ){
 		return false;
 	}
-
+	
 	public boolean isStationVisible(){
 		return isShowing();
 	}

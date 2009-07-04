@@ -34,6 +34,7 @@ import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.station.stack.StackDockComponentParent;
+import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.util.PropertyValue;
 
 /**
@@ -53,6 +54,7 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 			
 			if( newValue != null ){
 				component = newValue.create( TabDecorator.this );
+				component.setTabPlacement( tabPlacement.getValue() );
 				if( dockable != null ){
 					component.setController( controller );
 					if( dockable != null ){
@@ -60,6 +62,17 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 						component.setSelectedIndex( 0 );
 					}
 				}
+			}
+		}
+	};
+	
+	private PropertyValue<TabPlacement> tabPlacement = 
+		new PropertyValue<TabPlacement>( StackDockStation.TAB_PLACEMENT ){
+		
+		@Override
+		protected void valueChanged( TabPlacement oldValue, TabPlacement newValue ){
+			if( component != null ){
+				component.setTabPlacement( newValue );
 			}
 		}
 	};
@@ -104,6 +117,7 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 	public void setController( DockController controller ){
 		this.controller = controller;
 		factory.setProperties( controller );
+		tabPlacement.setProperties( controller );
 		if( component != null ){
 			component.setController( controller );
 		}

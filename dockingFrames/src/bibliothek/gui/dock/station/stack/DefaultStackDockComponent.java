@@ -42,6 +42,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.RemoteRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
+import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 
 
 /**
@@ -74,6 +75,23 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
         addMouseMotionListener( listener );
     }
 
+    public void setTabPlacement( TabPlacement tabSide ){
+	    switch( tabSide ){
+	    	case BOTTOM_OF_DOCKABLE:
+	    		setTabPlacement( BOTTOM );
+	    		break;
+	    	case LEFT_OF_DOCKABLE:
+	    		setTabPlacement( LEFT );
+	    		break;
+	    	case TOP_OF_DOCKABLE:
+	    		setTabPlacement( TOP );
+	    		break;
+	    	case RIGHT_OF_DOCKABLE:
+	    		setTabPlacement( RIGHT );
+	    		break;
+	    }
+    }
+    
     public void insertTab(String title, Icon icon, Component comp, Dockable dockable, int index) {
         insertTab(title, icon, comp, (String)null, index);
         Tab tab = createTab( dockable );

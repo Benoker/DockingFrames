@@ -120,6 +120,7 @@ import bibliothek.gui.dock.support.util.ApplicationResourceManager;
 import bibliothek.gui.dock.themes.ThemeFactory;
 import bibliothek.gui.dock.util.DirectWindowProvider;
 import bibliothek.gui.dock.util.NullWindowProvider;
+import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.WindowProvider;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
@@ -1180,7 +1181,19 @@ public class CControl {
      * @param value the new value, can be <code>null</code>
      */
     public <A> void putProperty( PropertyKey<A> key, A value ){
-        frontend.getController().getProperties().set( key, value );
+    	putProperty( key, value, Priority.CLIENT );
+    }
+    
+    /**
+     * Changes the value of a property.
+     * @param <A> the type of the value
+     * @param key the name of the property
+     * @param priority the priority of the new value
+     * @param value the new value, can be <code>null</code>
+     * @see #putProperty(PropertyKey, Object)
+     */
+    protected <A> void putProperty( PropertyKey<A> key, A value, Priority priority ){
+        frontend.getController().getProperties().set( key, value, priority );
     }
 
     /**

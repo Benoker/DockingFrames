@@ -248,3 +248,5 @@
 - API: new CVetoFocusListenr in Common, can speak a veto for some focus changes
 - API: new SingleTabDecider and support for single tabs: the SingleTabDecider decides which Dockables are displayed with a single tab, the property can be changed during runtime.
 - API: CDockable has a new property "singleTabShown" which is forwarded to a SingleTabDecider
+! API: DockProperties now supports different priorities for values, "default", "theme" and "client".
+- API: new property StackDockStation.TAB_PLACEMENT globally sets where to put tabs

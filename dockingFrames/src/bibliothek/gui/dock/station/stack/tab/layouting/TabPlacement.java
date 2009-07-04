@@ -29,29 +29,29 @@ package bibliothek.gui.dock.station.stack.tab.layouting;
  * Some side of a rectangle.
  * @author Benjamin Sigg
  */
-public enum Side{
+public enum TabPlacement{
 	/** top side, horizontal */
-	TOP,
+	TOP_OF_DOCKABLE,
 	/** bottom side, horizontal */
-	BOTTOM,
+	BOTTOM_OF_DOCKABLE,
 	/** to the left, vertical */
-	LEFT, 
+	LEFT_OF_DOCKABLE, 
 	/** to the right, vertical */
-	RIGHT;
+	RIGHT_OF_DOCKABLE;
 	
 	/**
 	 * Tells whether this side is a horizontal side.
-	 * @return <code>true</code> if {@link #TOP} or {@link #BOTTOM}
+	 * @return <code>true</code> if {@link #TOP_OF_DOCKABLE} or {@link #BOTTOM_OF_DOCKABLE}
 	 */
 	public boolean isHorizontal(){
-		return this == TOP || this == BOTTOM;
+		return this == TOP_OF_DOCKABLE || this == BOTTOM_OF_DOCKABLE;
 	}
 	
 	/**
 	 * Tells whether this side is a vertical side.
-	 * @return <code>true</code> if {@link #LEFT} or {@link #RIGHT}
+	 * @return <code>true</code> if {@link #LEFT_OF_DOCKABLE} or {@link #RIGHT_OF_DOCKABLE}
 	 */
 	public boolean isVertical(){
-		return this == LEFT || this == RIGHT;
+		return this == LEFT_OF_DOCKABLE || this == RIGHT_OF_DOCKABLE;
 	}
 }

@@ -130,8 +130,9 @@ public class ThemeMenuPiece extends BaseMenuPiece {
     }
     
     /**
-     * Instructs this piece whether it should transfer the 
-     * @param transferTheme
+     * Instructs this piece whether it should transfer the {@link DockTheme}
+     * from its {@link #getThemes() map} to the {@link #getController() controller}. 
+     * @param transferTheme <code>true</code> if this piece should transfer the theme
      */
     public void setTransferTheme( boolean transferTheme ) {
         this.transferTheme = transferTheme;

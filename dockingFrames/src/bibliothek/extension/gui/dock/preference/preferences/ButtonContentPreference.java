@@ -31,6 +31,7 @@ import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.gui.dock.util.Priority;
 
 /**
  * A preference for {@link FlapDockStation#BUTTON_CONTENT}.
@@ -64,6 +65,6 @@ public class ButtonContentPreference extends DefaultPreference<String>{
 	
 	@Override
 	public void write() {
-		properties.setOrRemove( FlapDockStation.BUTTON_CONTENT, choice.identifierToValue( getValue() ));
+		properties.setOrRemove( FlapDockStation.BUTTON_CONTENT, choice.identifierToValue( getValue() ), Priority.CLIENT );
 	}
 }

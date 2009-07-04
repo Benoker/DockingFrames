@@ -39,8 +39,7 @@ public interface LayoutBlock {
 	 * layout. If for example this block consists of 12 buttons, then different
 	 * sizes might lead to a row of 12 blocks, to 2 rows of 6 blocks, to
 	 * 3 rows of 4 blocks, etc...  
-	 * @return the map of sizes, may be empty or <code>null</code> if
-	 * {@link #isVisible()} return <code>false</code>.
+	 * @return the map of sizes, may be empty or <code>null</code>
 	 */
 	public Size[] getSizes();
 	

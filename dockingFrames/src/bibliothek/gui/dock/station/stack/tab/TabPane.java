@@ -30,6 +30,7 @@ import java.awt.Rectangle;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
+import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
@@ -45,11 +46,12 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
  * @author Benjamin Sigg
  */
 public interface TabPane {
+	
 	public static final PropertyKey<TabLayoutManager> LAYOUT_MANAGER = 
 		new PropertyKey<TabLayoutManager>( "dock.tabpane.layout_manager", 
 				new DynamicPropertyFactory<TabLayoutManager>(){
 			public TabLayoutManager getDefault( PropertyKey<TabLayoutManager> key, DockProperties properties ){
-				return new BottomFlowLayout();
+				return new RowLayout();
 			}
 		}, true );
 	
@@ -86,6 +88,13 @@ public interface TabPane {
 	 * children at all
 	 */
 	public Dockable getSelectedDockable();
+	
+	/**
+	 * Tells at which side tabs are to be displayed. This property is
+	 * intended for a {@link TabLayoutManager}, but may be ignored. 
+	 * @return the side, not <code>null</code>
+	 */
+	public TabPlacement getTabPlacement();
 	
 	/**
 	 * Gets all the tabs that are currently visible on this pane.

@@ -52,7 +52,7 @@ public interface BasicDockableDisplayerDecorator {
 	/**
 	 * Gets the {@link Component} which represents this decorator,
 	 * the result of this method may change whenever {@link #setController(DockController)}
-	 * or {@link #setDockable(Dockable)} is called.
+	 * or {@link #setDockable(Component, Dockable)} is called.
 	 * @return the component or <code>null</code> to show nothing
 	 */
 	public Component getComponent();

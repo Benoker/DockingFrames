@@ -62,6 +62,13 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 		}
 	};
 
+	private PropertyValue<Boolean> paintIcons = new PropertyValue<Boolean>( EclipseTheme.PAINT_ICONS_WHEN_DESELECTED ){
+		@Override
+		protected void valueChanged( Boolean oldValue, Boolean newValue ){
+			updatePaintIcons();	
+		}
+	};
+	
 	private DockStation station;
 	private EclipseTheme theme;
 	private TabPanePainter painter;
@@ -106,6 +113,7 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 	public void setController( DockController controller ){
 		super.setController( controller );
 		tabPainter.setProperties( controller );
+		paintIcons.setProperties( controller );
 		
 		if( painter != null )
 			painter.setController( controller );
@@ -216,15 +224,27 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 		getComponent().setBorder( border );
 	}
 	
+	private void updatePaintIcons(){
+		boolean paintIconsWhenInactive = paintIcons.getValue();
+		
+		for( EclipseTab tab : getTabsList() ){
+			tab.setPaintIconWhenInactive( paintIconsWhenInactive );
+		}
+		
+		revalidate();
+		repaint();
+	}
+	
 	@Override
 	protected EclipseTab newTab( Dockable dockable ){
 		TabComponent component = getTabPainter().createTabComponent( this, dockable );
 		EclipseTab tab = new EclipseTab( this, dockable, component );
+		tab.setPaintIconWhenInactive( paintIcons.getValue() );
 		tab.setController( getController() );
 		tab.bind();
 		return tab;
 	}
-
+	
 	@Override
 	protected void tabRemoved( EclipseTab tab ){
 		tab.unbind();

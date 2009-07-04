@@ -48,6 +48,7 @@ import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.station.stack.StackDockComponentParent;
+import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.themes.basic.BasicColorScheme;
 import bibliothek.gui.dock.themes.basic.BasicCombiner;
 import bibliothek.gui.dock.themes.basic.BasicDisplayerFactory;
@@ -105,6 +106,9 @@ public class BasicTheme implements DockTheme{
 
     /** the factory used to create components for {@link StackDockStation} */
     private StackDockComponentFactory stackDockComponentFactory;
+    
+    /** the side at which tabs are normally shown */
+    private TabPlacement tabSide;
 
     /** the key to set the {@link ColorScheme} of this theme */
     public static final PropertyKey<ColorScheme> BASIC_COLOR_SCHEME = 
@@ -186,8 +190,9 @@ public class BasicTheme implements DockTheme{
         DockUI.getDefaultDockUI().addLookAndFeelColorsListener( colorListener );
         updateUI();
 
-        controller.getProperties().set( StackDockStation.COMPONENT_FACTORY, stackDockComponentFactory );
-
+        controller.getProperties().set( StackDockStation.COMPONENT_FACTORY, stackDockComponentFactory, Priority.THEME );
+        controller.getProperties().set( StackDockStation.TAB_PLACEMENT, tabSide, Priority.THEME );
+        
         colorScheme.setProperties( controller );
 
         updateColors();
@@ -197,7 +202,8 @@ public class BasicTheme implements DockTheme{
         if( this.controller != controller )
             throw new IllegalArgumentException( "Trying to uninstall a controller which is not installed" );
 
-        controller.getProperties().toDefault( StackDockStation.COMPONENT_FACTORY );
+        controller.getProperties().unset( StackDockStation.COMPONENT_FACTORY, Priority.THEME );
+        controller.getProperties().unset( StackDockStation.TAB_PLACEMENT, Priority.THEME );
         controller.getColors().clear( Priority.THEME );
         controller.removeUIListener( uiListener );
 
@@ -431,6 +437,25 @@ public class BasicTheme implements DockTheme{
 
         this.selection = selection;
     }
+    
+    /**
+     * Sets the side at which tabs are to be displayed. This method has to
+     * be called before a {@link DockController} is installed, otherwise the
+     * settings has no effect.
+     * @param tabSide the side at which to show tabs, may be <code>null</code> to
+     * use the default value
+     */
+    public void setTabSide( TabPlacement tabSide ){
+		this.tabSide = tabSide;
+	}
+    
+    /**
+     * Gets the side at which tabs are displayed.
+     * @return the side with the tabs, may be <code>null</code>
+     */
+    public TabPlacement getTabSide(){
+		return tabSide;
+	}
 
     public DockableMovingImageFactory getMovingImageFactory( DockController controller ) {
         return movingImage;

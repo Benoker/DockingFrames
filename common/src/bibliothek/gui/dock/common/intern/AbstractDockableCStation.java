@@ -54,7 +54,7 @@ public abstract class AbstractDockableCStation extends AbstractCDockable impleme
     
     /**
      * Creates a new station but does not yet initialize its fields. Subclasses
-     * should call {@link #init(DockStation, String, CLocation)}.
+     * should call {@link #init(DockStation, String, CLocation, CommonDockable)}.
      */
     protected AbstractDockableCStation(){
     	super( null );

@@ -55,7 +55,7 @@ public class LinePainter implements TabPanePainter {
     
     /**
      * Creates a new painter.
-     * @param tabbedComponent the component for which this painter will work
+     * @param pane the component for which this painter will work
      */
     public LinePainter( EclipseTabPane pane ){
         this.pane = pane;

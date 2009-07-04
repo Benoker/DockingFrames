@@ -33,6 +33,7 @@ import java.util.Map;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.util.PropertyValue;
 
 /**
@@ -44,6 +45,7 @@ import bibliothek.gui.dock.util.PropertyValue;
  * @author Benjamin Sigg
  * @param <T> the kind of tabs this pane supports
  * @param <M> the kind of menus this pane supports
+ * @param <I> the kind of info panel this pane supports
  */
 public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extends LonelyTabPaneComponent> implements TabPane{
 	/** the layout manager that is responsible of updating this pane */
@@ -84,6 +86,9 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
     /** additional information shown somewhere on this component */
     private I info;
     
+    /** where to place tabs */
+    private TabPlacement tabPlacement = TabPlacement.TOP_OF_DOCKABLE;
+    
 	/**
 	 * Connects this pane with <code>controller</code>.
 	 * @param controller the realm in which this pane works, may be <code>null</code>
@@ -97,6 +102,21 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 		return controller;
 	}
     
+	/**
+	 * Tells this pane where to paint the tabs.
+	 * @param tabPlacement a side, not <code>null</code>
+	 */
+	public void setTabPlacement( TabPlacement tabPlacement ){
+		if( tabPlacement == null )
+			throw new IllegalArgumentException( "tab placement must not be null" );
+		this.tabPlacement = tabPlacement;
+		revalidate();
+	}
+	
+	public TabPlacement getTabPlacement(){
+		return tabPlacement;
+	}
+	
 	/**
 	 * Updates the layout of this pane, assuming a {@link TabLayoutManager}
 	 * is installed.
@@ -626,10 +646,7 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 	protected abstract T newTab( Dockable dockable );
 	
 	/**
-	 * Creates a new {@link TabMenu} that has <code>this</code> as parent
-	 * and represents <code>dockables</code>. The new menu should not be
-	 * stored in any collection.
-	 * @param dockables the elements which will be represented by the new menu
+	 * Creates a new {@link TabMenu} that has <code>this</code> as parent.
 	 * @return the new menu
 	 */
 	public abstract M newMenu();

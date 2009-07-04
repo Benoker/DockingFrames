@@ -58,8 +58,8 @@ import bibliothek.gui.dock.util.PropertyValue;
  * the Dockable is shown.<br>
  * Clients using a displayer should try to set the {@link #setController(DockController) controller}
  * and the {@link #setStation(DockStation) station} property.<br>
- * Subclasses may override {@link #getComponent(Dockable)}, {@link #addDockable(Component)},
- * {@link #removeDockable(Component)}, {@link #getComponent(DockTitle)}, {@link #addTitle(Component)}
+ * Subclasses may override {@link #getComponent(Dockable)}, {@link #addDockable(Dockable, Component)},
+ * {@link #removeDockable(Dockable, Component)}, {@link #getComponent(DockTitle)}, {@link #addTitle(Component)}
  * and/or {@link #removeTitle(Component)} if they want to introduce a completely
  * new layout needing more {@link Container Containers}.
  * @see DisplayerCollection
@@ -163,12 +163,12 @@ public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
    
     /**
      * Creates a new displayer but does not set the properties of the
-     * displayer. Subclasses may call {@link #init(Dockable, DockTitle, bibliothek.gui.dock.station.DockableDisplayer.Location) init}
+     * displayer. Subclasses may call {@link #init(DockStation, Dockable, DockTitle, bibliothek.gui.dock.station.DockableDisplayer.Location) init}
      * to initialize all variables of the new displayer.
      * @param station the station for which this displayer is needed
      * @param initialize <code>true</code> if all properties should be set
      * to default, <code>false</code> if nothing should happen, and 
-     * {@link #init(Dockable, DockTitle, bibliothek.gui.dock.station.DockableDisplayer.Location) init}
+     * {@link #init(DockStation, Dockable, DockTitle, bibliothek.gui.dock.station.DockableDisplayer.Location) init}
      * will be called.
      */
     protected BasicDockableDisplayer( DockStation station, boolean initialize ){
@@ -181,13 +181,15 @@ public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
     /**
      * Initialises all properties of this DockableDisplayer. This method should
      * only be called once, by a constructor of a subclass which invoked
-     * <code>{@link #BasicDockableDisplayer(boolean) DockableDisplayer( false )}</code>.
+     * <code>{@link #BasicDockableDisplayer(DockStation, boolean) DockableDisplayer( false )}</code>.
      * @param station the station for which this displayer is needed 
      * @param dockable the content, may be <code>null</code>
      * @param title the title of <code>dockable</code>, can be <code>null</code>
      * @param location the location of the title, can be <code>null</code>
      */
     protected void init( DockStation station, Dockable dockable, DockTitle title, Location location ){
+    	content.setOpaque( false );
+    	
     	setDecorator( new MinimalDecorator() );
     	
         setTitleLocation( location );
@@ -384,7 +386,7 @@ public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
     /**
      * Inserts a component representing the current {@link #getDockable() dockable}
      * into the layout. This method is never called twice unless 
-     * {@link #removeDockable(Component)} is called before. Note that
+     * {@link #removeDockable(Dockable, Component)} is called before. Note that
      * the name "add" is inspired by the method {@link Container#add(Component) add}
      * of <code>Container</code>.
      * @param dockable the dockable to add, may be <code>null</code>

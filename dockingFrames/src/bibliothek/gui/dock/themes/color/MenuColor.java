@@ -49,7 +49,7 @@ public abstract class MenuColor extends AbstractDockColor{
      * @param id the identifier of the color that is searched
      * @param kind the kind of {@link DockColor} this is.
      * @param station the station on which the color will be used
-     * @param dockable the menu for which this color will be used
+     * @param menu the menu for which this color will be used
      * @param backup a backup color in case that no color can be found
      */
     public MenuColor( String id, Path kind, DockStation station, CombinedMenu menu, Color backup ){
@@ -62,7 +62,7 @@ public abstract class MenuColor extends AbstractDockColor{
      * Creates a new TabColor.
      * @param id the identifier of the color that is searched
      * @param station the station on which the color will be used
-     * @param dockable the menu for which this color will be used
+     * @param menu the menu for which this color will be used
      * @param backup a backup color in case that no color can be found
      */
     public MenuColor( String id, DockStation station, CombinedMenu menu, Color backup ){

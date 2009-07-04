@@ -32,6 +32,7 @@ import bibliothek.extension.gui.dock.preference.DefaultPreference;
 import bibliothek.extension.gui.dock.preference.Preference;
 import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
 
 /**
@@ -125,6 +126,6 @@ public class DockPropertyPreference<V> extends DefaultPreference<V> {
     
     @Override
     public void write(){
-        properties.setOrRemove( key, getValue() );
+        properties.setOrRemove( key, getValue(), Priority.CLIENT );
     }
 }

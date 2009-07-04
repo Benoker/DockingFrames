@@ -30,7 +30,7 @@ public abstract class Behavior {
      * Visits all cells which are attackable by <code>figure</code>.
      * @param board the board on which <code>figure</code> stands
      * @param figure the figure which might attack other figures
-     * @param visitor
+     * @param visitor the visitor to call
      */
     public abstract void attackable( Board board, Figure figure, Board.CellVisitor visitor );
     

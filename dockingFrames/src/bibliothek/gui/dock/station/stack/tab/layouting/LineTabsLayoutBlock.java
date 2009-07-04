@@ -49,7 +49,7 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 	private boolean sameSize = true;
 	
 	/** At which side to put the tabs if there is enough space */
-	private Side side = Side.TOP;
+	private TabPlacement side = TabPlacement.TOP_OF_DOCKABLE;
 	
 	/**
 	 * If set, then all tabs have the same height (width) if laid out
@@ -73,7 +73,7 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 	 * Gets the alignment of the tabs.
 	 * @return the alignment
 	 */
-	public Side getSide(){
+	public TabPlacement getSide(){
 		return side;
 	}
 	
@@ -81,7 +81,7 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 	 * Sets the alignment of the tabs
 	 * @param side the alignment, not <code>null</code>
 	 */
-	public void setSide( Side side ){
+	public void setSide( TabPlacement side ){
 		if( side == null )
 			throw new IllegalArgumentException( "side must not be null" );
 		this.side = side;

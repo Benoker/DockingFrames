@@ -1,5 +1,6 @@
 package bibliothek.extension.gui.dock.theme.flat;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -12,7 +13,9 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.event.MouseInputListener;
 
@@ -24,12 +27,13 @@ import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.station.stack.CombinedTab;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.stack.tab.TabPaneComponent;
+import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.font.TabFont;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.font.DockFont;
 import bibliothek.gui.dock.util.font.FontModifier;
-import bibliothek.gui.dock.util.swing.DLabel;
+import bibliothek.gui.dock.util.swing.OrientedLabel;
 
 
 /**
@@ -56,7 +60,7 @@ import bibliothek.gui.dock.util.swing.DLabel;
     "stack.tab.foreground.selected",
     "stack.tab.foreground.focused",
     "stack.tab.foreground" })
-public class FlatTab extends DLabel implements CombinedTab, DockableFocusListener{
+public class FlatTab extends JPanel implements CombinedTab, DockableFocusListener{
 	/** the dockable for which this button is shown */
     private Dockable dockable;
     
@@ -65,6 +69,14 @@ public class FlatTab extends DLabel implements CombinedTab, DockableFocusListene
     
     /** the parent of this tab */
     private FlatTabPane pane;
+    
+    /** the label which paints the content of this tab */
+    private OrientedLabel label = new OrientedLabel(){
+    	@Override
+    	protected void updateFonts(){
+	    	FlatTab.this.updateFonts();
+    	}
+    };
     
     /** whether {@link #dockable} is currently focused */
     private boolean focused = false;
@@ -93,6 +105,8 @@ public class FlatTab extends DLabel implements CombinedTab, DockableFocusListene
     
     private int zOrder;
     
+    private TabPlacement orientation = TabPlacement.BOTTOM_OF_DOCKABLE;
+    
     /**
      * Constructs a new button
      * @param pane the owner of this tab
@@ -102,6 +116,9 @@ public class FlatTab extends DLabel implements CombinedTab, DockableFocusListene
     	this.pane = pane;
     	this.dockable = dockable;
     	            
+    	setLayout( new BorderLayout() );
+    	add( label, BorderLayout.CENTER );
+    	
         borderSelectedOut    = new FlatTabColor( "stack.tab.border.out.selected", dockable );
         borderSelectedCenter = new FlatTabColor( "stack.tab.border.center.selected", dockable );
         borderFocusedOut    = new FlatTabColor( "stack.tab.border.out.focused", dockable );
@@ -201,13 +218,24 @@ public class FlatTab extends DLabel implements CombinedTab, DockableFocusListene
                     }
                 }
                 
-                g2.setPaint( new GradientPaint( x, y, out, x, y+h/2, center ));
-                g.drawLine( x, y, x, y+h/2 );
-                g.drawLine( x+w-1, y, x+w-1, y+h/2 );
-                
-                g2.setPaint( new GradientPaint( x, y+h, out, x, y+h/2, center ));
-                g.drawLine( x, y+h, x, y+h/2 );
-                g.drawLine( x+w-1, y+h, x+w-1, y+h/2 );
+                if( orientation.isHorizontal() ){
+	                g2.setPaint( new GradientPaint( x, y, out, x, y+h/2, center ));
+	                g.drawLine( x, y, x, y+h/2 );
+	                g.drawLine( x+w-1, y, x+w-1, y+h/2 );
+	                
+	                g2.setPaint( new GradientPaint( x, y+h, out, x, y+h/2, center ));
+	                g.drawLine( x, y+h, x, y+h/2 );
+	                g.drawLine( x+w-1, y+h, x+w-1, y+h/2 );
+                }
+                else{
+                	g2.setPaint( new GradientPaint( x, y, out, x+w/2, y, center ));
+	                g.drawLine( x, y, x+w/2, y );
+	                g.drawLine( x, y+h-1, x+w/2, y+h-1 );
+	                
+	                g2.setPaint( new GradientPaint( x+w, y, out, x+w/2, y, center ));
+	                g.drawLine( x+w, y, x+w/2, y );
+	                g.drawLine( x+w, y+h-1, x+w/2, y+h-1 );
+                }
                 
                 g2.setPaint( oldPaint );
             }
@@ -244,6 +272,52 @@ public class FlatTab extends DLabel implements CombinedTab, DockableFocusListene
         }
     }
     
+    /**
+     * Sets the modifier which modifies the font of this tab, this modifier
+     * may be replaced any time.
+     * @param modifier the modifer
+     */
+    public void setFontModifier( FontModifier modifier ){
+    	label.setFontModifier( modifier );
+    }
+    
+    /**
+     * Gets the font modifier of this tab.
+     * @return the modifier
+     */
+    public FontModifier getFontModifier(){
+    	return label.getFontModifier();
+    }
+    
+    public void setIcon( Icon icon ){
+	    label.setIcon( icon );	
+    }
+    
+    /**
+     * Gets the icon shown on this tab.
+     * @return the icon
+     */
+    public Icon getIcon(){
+    	return label.getIcon();
+    }
+    
+    public void setText( String text ){
+	    label.setText( text );	
+    }
+    
+    /**
+     * Gets the text shwon on this tab.
+     * @return the text
+     */
+    public String getText(){
+    	return label.getText();
+    }
+    
+    /**
+     * Connets this tab with <code>controller</code>.
+     * @param controller the controller in whose realm this tab is used,
+     * can be <code>null</code>
+     */
     public void setController( DockController controller ){
     	if( this.controller != null )
             this.controller.removeDockableFocusListener( this );
@@ -374,6 +448,21 @@ public class FlatTab extends DLabel implements CombinedTab, DockableFocusListene
     	return new Insets( 0, 0, 0, 0 );
     }
     
+    public void setOrientation( TabPlacement orientation ){
+    	if( orientation == null )
+    		throw new IllegalArgumentException( "orientation is null" );
+    	this.orientation = orientation;
+    	label.setHorizontal( orientation.isHorizontal() );
+    }
+    
+    /**
+     * Gets the orientation of this tab.
+     * @return the orientation, not <code>null</code>
+     */
+    public TabPlacement getOrientation(){
+		return orientation;
+	}
+    
     @Override
     public void paintComponent( Graphics g ){
         Graphics2D g2 = (Graphics2D)g;
@@ -421,9 +510,10 @@ public class FlatTab extends DLabel implements CombinedTab, DockableFocusListene
         if( top.equals( bottom ))
             g.setColor( top );
         else{
-            GradientPaint gradient = new GradientPaint( 0, 0, top,
-                    0, h, bottom );
-            g2.setPaint( gradient );
+        	if( orientation.isHorizontal() )
+        		g2.setPaint( new GradientPaint( 0, 0, top, 0, h, bottom ) );
+        	else
+        		g2.setPaint( new GradientPaint( 0, 0, top, w, 0, bottom ) );
         }
         
         g.fillRect( 0, 0, w, h );
