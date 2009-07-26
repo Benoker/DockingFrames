@@ -36,6 +36,7 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.BorderedComponent;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabComponent;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPainter;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPanePainter;
@@ -54,7 +55,7 @@ import bibliothek.gui.dock.util.PropertyValue;
  * tabs and to change its border.
  * @author Benjamin Sigg
  */
-public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, EclipseMenu, EclipseTabInfo>{
+public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, EclipseMenu, EclipseTabInfo> implements BorderedComponent{
 	private PropertyValue<TabPainter> tabPainter = new PropertyValue<TabPainter>( EclipseTheme.TAB_PAINTER ){
 		@Override
 		protected void valueChanged( TabPainter oldValue, TabPainter newValue ){
@@ -211,17 +212,18 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 	/**
 	 * Updates the border that is around this whole pane.
 	 */
-	protected void updateFullBorder(){
+	public void updateFullBorder(){
 		TabPainter painter = getTabPainter();
 		DockController controller = getController();
 		Dockable selection = getSelectedDockable();
 		
 		Border border = null;
 		if( painter != null && controller != null && selection != null ){
-			border = painter.getFullBorder( controller, selection );
+			border = painter.getFullBorder( this, controller, selection );
 		}
 		
 		getComponent().setBorder( border );
+		repaint();
 	}
 	
 	private void updatePaintIcons(){

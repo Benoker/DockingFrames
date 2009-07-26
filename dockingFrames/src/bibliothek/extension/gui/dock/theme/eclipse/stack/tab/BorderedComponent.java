@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2009 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,38 +23,27 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.station.stack.tab;
+package bibliothek.extension.gui.dock.theme.eclipse.stack.tab;
 
-import java.awt.Dimension;
+import javax.swing.border.Border;
 
-import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 
 /**
- * A {@link Tab} represents a single {@link Dockable} that lies on a {@link TabPane}.
+ * This component shows a {@link Border} that was created by a {@link TabPainter}.
  * @author Benjamin Sigg
  */
-public interface Tab extends TabPaneComponent{
+public interface BorderedComponent {
 	/**
-	 * Gets the element that is associated with this tab.
-	 * @return the element
+	 * Requests this component to call {@link TabPainter#getFullBorder(BorderedComponent, bibliothek.gui.DockController, bibliothek.gui.Dockable)}
+	 * again.
 	 */
-	public Dockable getDockable();
+	public void updateFullBorder();
 	
 	/**
-	 * Gets the minimum size of this tab under the assumption that 
-	 * this tab is displayed together with <code>tabs</code>.
-	 * @param tabs the displayed tabs, exactly one entry is <code>this</code>
-	 * and no entry is <code>null</code>
-	 * @return the minimum size of this tab
+	 * Tells at which side tabs are shown.
+	 * @return the side at which tabs are displayed or <code>null</code> if
+	 * this component does not show tabs
 	 */
-	public Dimension getMinimumSize( Tab[] tabs );
-	
-	/**
-	 * Gets the preferred size of this tab under the assumption that 
-	 * this tab is displayed together with <code>tabs</code>.
-	 * @param tabs the displayed tabs, exactly one entry is <code>this</code>
-	 * and no entry is <code>null</code>
-	 * @return the preferred size of this tab
-	 */	
-	public Dimension getPreferredSize( Tab[] tabs );
+	public TabPlacement getTabPlacement();
 }

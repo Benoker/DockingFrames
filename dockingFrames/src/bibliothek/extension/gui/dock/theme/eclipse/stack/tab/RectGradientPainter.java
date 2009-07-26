@@ -27,27 +27,22 @@ package bibliothek.extension.gui.dock.theme.eclipse.stack.tab;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
-import java.awt.KeyboardFocusManager;
 import java.awt.Paint;
 import java.awt.Window;
-import java.awt.font.FontRenderContext;
-import java.awt.geom.Rectangle2D;
 
-import javax.swing.Icon;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 
-import bibliothek.extension.gui.dock.theme.eclipse.RectEclipseBorder;
+import bibliothek.extension.gui.dock.theme.eclipse.OwnedRectEclipseBorder;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
+import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.util.color.ColorCodes;
 
 /**
@@ -72,8 +67,8 @@ public class RectGradientPainter extends BaseTabComponent {
 			return new DefaultInvisibleTab( pane, dockable );
 		}
 		
-        public Border getFullBorder( DockController controller, Dockable dockable ) {
-            return new RectEclipseBorder( controller, true );
+		public Border getFullBorder( BorderedComponent owner, DockController controller, Dockable dockable ){
+            return new OwnedRectEclipseBorder( owner, controller, true );
         }
 	};
 	
@@ -86,83 +81,107 @@ public class RectGradientPainter extends BaseTabComponent {
 		setLayout( null );
 		setOpaque( false );
 		
-        add( getButtons() );
+        update();
+        updateBorder();
+        updateText();
 	}
 		
 	public Insets getOverlap( TabComponent other ){
 		return new Insets( 0, 0, 0, 0 );
 	}
-	
-	public void update(){
-		updateBorder();
-		revalidate();
-	}
 
+	@Override
+	protected void updateIcon(){
+		update();
+	}
+	
+	@Override
+	protected void updateText(){
+		setText( getDockable().getTitleText() );
+	}
+	
+	@Override
+	protected void updateFocus(){
+		update();
+		updateBorder();
+		updateFont();
+	}
+	
+	@Override
+	protected void updateOrientation(){
+		update();
+	}
+	
+	@Override
+	protected void updatePaintIcon(){
+		update();	
+	}
+	
+	@Override
+	protected void updateSelected(){
+		update();
+		updateBorder();
+		updateFont();
+	}
+	
 	@Override
 	public Dimension getMinimumSize(){
 		return getPreferredSize();
 	}
 	
-	@Override
-	public Dimension getPreferredSize() {
-		Font font = getFont();
-		if( font == null )
-			font = getPane().getComponent().getFont();
-			
-		if( font == null )
-			return new Dimension( 0, 0 );
+	/**
+	 * Updates the insets, colors and icon of this tab depending on orientation,
+	 * selection and focus.
+	 */
+	public void update(){
+		Insets labelInsets = null;
+		Insets buttonInsets = null;
+		
+		switch( getOrientation() ){
+			case TOP_OF_DOCKABLE:
+			case BOTTOM_OF_DOCKABLE:
+				labelInsets = new Insets( 3, 5, 3, 2 );
+				buttonInsets = new Insets( 1, 2, 1, 5 );
+				break;
+			case LEFT_OF_DOCKABLE:
+			case RIGHT_OF_DOCKABLE:
+				labelInsets = new Insets( 5, 3, 2, 3 );
+				buttonInsets = new Insets( 2, 1, 5, 1 );
+				break;
+		}
 		
 		Dockable dockable = getDockable();
-	    boolean isSelected = isSelected();
-	    ButtonPanel buttons = getButtons();
-	    
-		FontRenderContext frc = new FontRenderContext(null, false, false);
 		
-		Rectangle2D bounds = font.getStringBounds(dockable.getTitleText(), frc);
-		int width = 5 + (int) bounds.getWidth() + 5;
-		int height = 6 + (int) bounds.getHeight();
-		if (( doPaintIconWhenInactive() || isSelected) && dockable.getTitleIcon() != null)
-			width += dockable.getTitleIcon().getIconWidth() + 5;
-		
-		if( isSelected )
-		    width += 5;
-		
-		if( buttons != null ){
-			Dimension preferred = buttons.getPreferredSize();
-			width += preferred.width+1;
-			height = Math.max( height, preferred.height+1 );
+		if( (doPaintIconWhenInactive() || isSelected()) ){
+			setIcon( dockable.getTitleIcon() );
+		}
+		else{
+			setIcon( null );
 		}
 		
-		return new Dimension(width, height);
+		getLabel().setForeground( getTextColor() );
+		setLabelInsets( labelInsets );
+		setButtonInsets( buttonInsets );
+		
+		revalidate();
+		repaint();
 	}
 	
-	@Override
-	public void doLayout(){
-	    ButtonPanel buttons = getButtons();
-	    
-		if( buttons != null ){
-		    Dockable dockable = getDockable();
-		    boolean isSelected = isSelected();
-		    
-			FontRenderContext frc = new FontRenderContext(null, false, false);
-			Rectangle2D bounds = getFont().getStringBounds(dockable.getTitleText(), frc);
-			int x = 5 + (int) bounds.getWidth() + 5;
-			if (( doPaintIconWhenInactive() || isSelected) && dockable.getTitleIcon() != null)
-				x += dockable.getTitleIcon().getIconWidth() + 5;
-			
-			if( isSelected )
-				x += 5;
-			
-			Dimension preferred = buttons.getPreferredSize();
-			int width = Math.min( preferred.width, getWidth()-x );
-			int height = Math.min( getHeight()-1, preferred.height );
-            
-            buttons.setBounds( x, getHeight()-1-height, width-1, height );
-		}
-	}
-
-	public Border getContentBorder() {
-		return contentBorder;
+	private Color getTextColor(){
+		boolean focusTemporarilyLost = isFocusTemporarilyLost();
+		
+        if( isFocused() && !focusTemporarilyLost ){
+            return colorStackTabTextSelectedFocused.value();
+        }
+        else if (isFocused() && focusTemporarilyLost) {
+        	return colorStackTabTextSelectedFocusLost.value();
+        }
+        else if( isSelected() ){
+        	return colorStackTabTextSelected.value();
+        }
+        else{
+        	return colorStackTabText.value();
+        }
 	}
 	
 	@Override
@@ -193,9 +212,14 @@ public class RectGradientPainter extends BaseTabComponent {
 		if (!color2.equals(contentBorder.getMatteColor())) {
 			contentBorder = new MatteBorder(2, 2, 2, 2, color2);
 		}
-		/*
-        if( getPane() != null )
-            getPane(). .updateContentBorder();*/
+		
+	    EclipseTabPane pane = getPane();
+	    if( pane != null ){
+	    	int index = getDockableIndex();
+	    	if( index >= 0 ){
+	    		pane.setContentBorderAt( index, contentBorder );
+	    	}
+	    }
 	}
 
 	@Override
@@ -204,36 +228,49 @@ public class RectGradientPainter extends BaseTabComponent {
 		int height = getHeight(), width = getWidth();
 		Graphics2D g2d = (Graphics2D) g;
 		Color lineColor = colorStackBorder.value();
-		Color color1, color2, colorText;
-		boolean focusTemporarilyLost = KeyboardFocusManager.getCurrentKeyboardFocusManager()
-				.getActiveWindow() != SwingUtilities.getWindowAncestor( getComponent() );
+		Color color1, color2;
+		boolean focusTemporarilyLost = isFocusTemporarilyLost();
+		
+		TabPlacement orientation = getOrientation();
 		
         if( isFocused() && !focusTemporarilyLost ){
             color1 = colorStackTabTopSelectedFocused.value();
             color2 = colorStackTabBottomSelectedFocused.value();
-            colorText = colorStackTabTextSelectedFocused.value();
         }
         else if (isFocused() && focusTemporarilyLost) {
             color1 = colorStackTabTopSelectedFocusLost.value();
             color2 = colorStackTabBottomSelectedFocusLost.value();
-            colorText = colorStackTabTextSelectedFocusLost.value();
         }
         else if( isSelected() ){
             color1 = colorStackTabTopSelected.value();
             color2 = colorStackTabBottomSelected.value();
-            colorText = colorStackTabTextSelected.value();
         }
         else{
             color1 = colorStackTabTop.value();
             color2 = colorStackTabBottom.value();
-            colorText = colorStackTabText.value();
+        }
+        
+        if( orientation == TabPlacement.BOTTOM_OF_DOCKABLE || orientation == TabPlacement.RIGHT_OF_DOCKABLE ){
+        	Color temp = color1;
+        	color1 = color2;
+        	color2 = temp;
         }
 		
-		GradientPaint gradient = color1.equals( color2 ) ? null : new GradientPaint(0, 0, color1, 0, height, color2);
+        GradientPaint gradient = null;
+        if( !color1.equals( color2 )){
+        	if( orientation.isHorizontal() ){
+        		gradient = new GradientPaint( 0, 0, color1, 0, height, color2 );		
+        	}
+        	else{
+        		gradient = new GradientPaint( 0, 0, color1, width, 0, color2 );
+        	}
+        }
+        
+		
 		boolean isSelected = isSelected();
-		Dockable dockable = getDockable();
 		int tabIndex = getTabIndex();
 		
+		g2d.setColor( lineColor );
 		Paint old = g2d.getPaint();
         if( gradient != null )
             g2d.setPaint(gradient);
@@ -241,44 +278,102 @@ public class RectGradientPainter extends BaseTabComponent {
             g2d.setPaint( color1 );
 		
 		if (isSelected) {
-			g.fillRect(1, 0, width - 2, height);
-			g.drawLine( 0, 1, 0, height );
-			g2d.setPaint(old);
-			// left
-			if (tabIndex != 0) {
-				g.drawLine(1, 0, 1, 0);
-				g.drawLine(0, 1, 0, height);
-			}
-			// right
-			g.drawLine(width - 2, 0, width - 2, 0);
-			g.drawLine(width - 1, 1, width - 1, height);
-			// overwrite gradient pixels
+			paintSelected( g2d, tabIndex, old );
 		}
 		else{
-		    g.fillRect( 0, 0, getWidth(), getHeight()-1 );
+			switch( orientation ){
+				case TOP_OF_DOCKABLE:
+					g.fillRect( 0, 0, getWidth(), getHeight()-1 );
+					break;
+				case BOTTOM_OF_DOCKABLE:
+					g.fillRect( 0, 1, getWidth(), getHeight()-1 );
+					break;
+				case LEFT_OF_DOCKABLE:
+					g.fillRect( 0, 0, getWidth()-1, getHeight() );
+					break;
+				case RIGHT_OF_DOCKABLE:
+					g.fillRect( 1, 0, getWidth()-1, getHeight() );
+					break;
+			}
+		    
 		    
 		    g2d.setPaint(old);
 		}
 
-		// draw icon
-		int iconOffset = 0;
-		if (isSelected || doPaintIconWhenInactive()) {
-			Icon i = dockable.getTitleIcon();
-			if (i != null) {
-				i.paintIcon( getComponent(), g, 5, 4);
-				iconOffset = i.getIconWidth() + 5;
+		// draw separator lines
+		if (!isSelected && !isNextTabSelected() ) {
+			g.setColor(lineColor);
+			switch( orientation ){
+				case TOP_OF_DOCKABLE:
+				case BOTTOM_OF_DOCKABLE:
+					g.drawLine(width - 1, 0, width - 1, height);
+					break;
+				case LEFT_OF_DOCKABLE:
+				case RIGHT_OF_DOCKABLE:
+					
+					break;
 			}
 		}
-
-		// draw separator lines
-		if (!isSelected && isNextTabSelected() ) {
-			g.setColor(lineColor);
-			g.drawLine(width - 1, 0, width - 1, height);
+	}
+	
+	private void paintSelected( Graphics2D g2d, int tabIndex, Paint normalBackground ){
+		TabPlacement orientation = getOrientation();
+		int width = getWidth();
+		int height = getHeight();
+		
+		switch( orientation ){
+			case TOP_OF_DOCKABLE:
+				g2d.fillRect( 1, 0, width - 2, height );
+				g2d.drawLine( 0, 1, 0, height );
+				g2d.setPaint( normalBackground );
+				// left
+				if (tabIndex != 0) {
+					g2d.drawLine(1, 0, 1, 0);
+					g2d.drawLine(0, 1, 0, height);
+				}
+				// right
+				g2d.drawLine( width - 2, 0, width - 2, 0 );
+				g2d.drawLine( width - 1, 1, width - 1, height );
+				break;
+			case BOTTOM_OF_DOCKABLE:
+				g2d.fillRect( 1, 0, width - 2, height );
+				g2d.drawLine( 0, height-2, 0, 0 );
+				g2d.setPaint( normalBackground );
+				// left
+				if (tabIndex != 0) {
+					g2d.drawLine(1, height-1, 1, height-1 );
+					g2d.drawLine(0, height-2, 0, 0 );
+				}
+				// right
+				g2d.drawLine( width - 2, height-1, width - 2, height-1 );
+				g2d.drawLine( width - 1, height-2, width - 1, 0 );
+				break;
+			case LEFT_OF_DOCKABLE:
+				g2d.fillRect( 0, 1, width, height-2 );
+				g2d.drawLine( 1, 0, width, 0 );
+				g2d.setPaint( normalBackground );
+				// left
+				if (tabIndex != 0) {
+					g2d.drawLine( 0, 1, 0, 1 );
+					g2d.drawLine( 1, 0, width, 0 );
+				}
+				// right
+				g2d.drawLine( 0, height-2, 0, height-2 );
+				g2d.drawLine( 1, height-1, width, height-1 );
+				break;
+			case RIGHT_OF_DOCKABLE:
+				g2d.fillRect( 0, 1, width, height-2 );
+				g2d.drawLine( 1, 0, width, 0 );
+				g2d.setPaint( normalBackground );
+				// left
+				if (tabIndex != 0) {
+					g2d.drawLine( 0, 1, 0, 1 );
+					g2d.drawLine( 1, 0, width, 0 );
+				}
+				// right
+				g2d.drawLine( 0, height-2, 0, height-2 );
+				g2d.drawLine( 1, height-1, width, height-1 );
+				break;
 		}
-
-		// draw text
-		g.setColor(colorText);
-		g.setFont( getFont() );
-		g.drawString( dockable.getTitleText(), 5 + iconOffset, height / 2 + g.getFontMetrics().getHeight() / 2 - 2);
 	}
 }

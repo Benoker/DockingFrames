@@ -85,7 +85,7 @@ public class DefaultAxisConversion implements AxisConversion{
 			case LEFT_OF_DOCKABLE:
 				return new Rectangle( space.x+bounds.y, space.y+bounds.x, bounds.height, bounds.width );
 			case RIGHT_OF_DOCKABLE:
-				return new Rectangle( space.x+space.width-bounds.height-bounds.y, space.y+bounds.x, bounds.height, bounds.width );
+				return new Rectangle( space.x + space.width - bounds.y - bounds.height, space.y + bounds.x, bounds.height, bounds.width );
 			default:
 				throw new IllegalStateException( "unknown side: " + side );	
 		}
@@ -113,7 +113,7 @@ public class DefaultAxisConversion implements AxisConversion{
 			case LEFT_OF_DOCKABLE:
 				return new Rectangle( space.x-bounds.y, bounds.x-space.y, bounds.height, bounds.width );
 			case RIGHT_OF_DOCKABLE:
-				return new Rectangle( bounds.y-space.x-space.width+bounds.height, bounds.x-space.y, bounds.height, bounds.width );
+				return new Rectangle( space.y - bounds.y, space.x + space.width - bounds.width - bounds.x, bounds.height, bounds.width );
 			default:
 				throw new IllegalStateException( "unknown side: " + side );
 		}

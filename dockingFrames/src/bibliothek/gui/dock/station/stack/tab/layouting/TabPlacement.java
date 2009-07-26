@@ -25,6 +25,8 @@
  */
 package bibliothek.gui.dock.station.stack.tab.layouting;
 
+import bibliothek.gui.dock.title.DockTitle.Orientation;
+
 /**
  * Some side of a rectangle.
  * @author Benjamin Sigg
@@ -53,5 +55,19 @@ public enum TabPlacement{
 	 */
 	public boolean isVertical(){
 		return this == LEFT_OF_DOCKABLE || this == RIGHT_OF_DOCKABLE;
+	}
+	
+	/**
+	 * Transforms <code>this</code> into an {@link Orientation}.
+	 * @return transformed <code>this</code>
+	 */
+	public Orientation toOrientation(){
+		switch( this ){
+			case TOP_OF_DOCKABLE: return Orientation.NORTH_SIDED;
+			case BOTTOM_OF_DOCKABLE: return Orientation.SOUTH_SIDED;
+			case LEFT_OF_DOCKABLE: return Orientation.WEST_SIDED;
+			case RIGHT_OF_DOCKABLE: return Orientation.EAST_SIDED;
+			default: throw new IllegalStateException( "unknown tab placement: " + this );
+		}
 	}
 }

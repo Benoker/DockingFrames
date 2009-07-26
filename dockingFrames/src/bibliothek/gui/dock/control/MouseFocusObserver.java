@@ -41,6 +41,7 @@ import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.event.ControllerSetupListener;
 import bibliothek.gui.dock.event.DockRelocatorListener;
 import bibliothek.gui.dock.event.FocusVetoListener;
+import bibliothek.gui.dock.event.FocusVetoListener.FocusVeto;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.DockUtilities;
 
@@ -112,15 +113,16 @@ public abstract class MouseFocusObserver implements DockRelocatorListener {
      * {@link FocusVetoListener#vetoFocus(MouseFocusObserver, DockTitle)}
      * whether they want cancel a call to the {@link DockController}.
      * @param title the title which was hit by the mouse
-     * @return <code>true</code> if at least one veto was made,
-     * <code>false</code> otherwise
+     * @return the first veto
      */
-    protected boolean fireVetoTitle( DockTitle title ){
-        for( FocusVetoListener listener : vetos.toArray( new FocusVetoListener[ vetos.size() ] ))
-            if( listener.vetoFocus( this, title ))
-                return true;
+    protected FocusVeto fireVetoTitle( DockTitle title ){
+        for( FocusVetoListener listener : vetos.toArray( new FocusVetoListener[ vetos.size() ] )){
+        	FocusVeto veto = listener.vetoFocus( this, title );
+        	if( veto != FocusVeto.NONE )
+        		return veto;
+        }
         
-        return false;
+        return FocusVeto.NONE;
     }
     
     /**
@@ -128,15 +130,16 @@ public abstract class MouseFocusObserver implements DockRelocatorListener {
      * {@link FocusVetoListener#vetoFocus(MouseFocusObserver, Dockable)}
      * whether they want cancel a call to the {@link DockController}.
      * @param dockable the Dockable which was hit by the mouse
-     * @return <code>true</code> if at least one veto was made,
-     * <code>false</code> otherwise
+     * @return the first veto
      */    
-    protected boolean fireVetoDockable( Dockable dockable ){
-        for( FocusVetoListener listener : vetos.toArray( new FocusVetoListener[ vetos.size() ] ))
-            if( listener.vetoFocus( this, dockable ))
-                return true;
+    protected FocusVeto fireVetoDockable( Dockable dockable ){
+    	for( FocusVetoListener listener : vetos.toArray( new FocusVetoListener[ vetos.size() ] )){
+        	FocusVeto veto = listener.vetoFocus( this, dockable );
+        	if( veto != FocusVeto.NONE )
+        		return veto;
+        }
         
-        return false;
+        return FocusVeto.NONE;
     }
     
     /**
@@ -184,10 +187,13 @@ public abstract class MouseFocusObserver implements DockRelocatorListener {
      * <code>event</code>. The default implementation calls
      * {@link InputEvent#consume()} to get rid of the event.
      * @param event the event to handle
+     * @param veto which veto was called by a {@link FocusVetoListener}
      */
-    protected void handleVeto( AWTEvent event ){
-    	if( event instanceof InputEvent ){
-    		((InputEvent)event).consume();
+    protected void handleVeto( AWTEvent event, FocusVeto veto ){
+    	if( veto == FocusVeto.VETO ){
+	    	if( event instanceof InputEvent ){
+	    		((InputEvent)event).consume();
+	    	}
     	}
     }
     
@@ -263,17 +269,18 @@ public abstract class MouseFocusObserver implements DockRelocatorListener {
         if( dockable == null )
             return null;
         
+        FocusVeto veto;
+        
         if( element instanceof DockTitle ){
-            if( fireVetoTitle( (DockTitle)element )){
-            	handleVeto( event );
-                return null;
-            }
+            veto = fireVetoTitle( (DockTitle)element );
         }
         else{
-            if( fireVetoDockable( dockable )){
-            	handleVeto( event );
-                return null;
-            }
+            veto = fireVetoDockable( dockable );
+        }
+        
+        if( veto != FocusVeto.NONE ){
+        	handleVeto( event, veto );
+        	return null;
         }
         
         return dockable;

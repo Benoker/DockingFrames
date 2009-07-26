@@ -97,7 +97,7 @@ public class DockProperties {
 	 */
 	public void unset( PropertyKey<?> key, Priority priority ){
 	    Entry<?> entry = getEntry( key, true );
-	    entry.setValue( null, priority );
+	    entry.unsetValue( priority );
         check( entry );
 	}
 	
@@ -112,6 +112,21 @@ public class DockProperties {
 	public <A> A get( PropertyKey<A> key ){
 		Entry<A> entry = getEntry( key, true );
 		return entry.getValue();
+	}
+	
+	/**
+	 * Gets the value of <code>key</code> for the given <code>priority</code>.
+	 * @param <A> the kind of value
+	 * @param key some key, not <code>null</code>
+	 * @param priority the priority, not <code>null</code>
+	 * @return the value, might be <code>null</code> even if {@link #get(PropertyKey)}
+	 * returns a non-<code>null</code> value
+	 */
+	public <A> A get( PropertyKey<A> key, Priority priority ){
+		Entry<A> entry = getEntry( key, false );
+		if( entry == null )
+			return null;
+		return entry.getValue( priority );
 	}
 	
 	/**
@@ -249,6 +264,25 @@ public class DockProperties {
 		}
 		
 		/**
+		 * Removes a value from this entry
+		 * @param priority the priority of the value to unset
+		 */
+		@SuppressWarnings("unchecked")
+		public void unsetValue( Priority priority ){
+			A oldValue = getValue();
+			this.value.unset( priority );
+			A newValue = getValue();
+			
+			if( (oldValue == null && newValue != null) ||
+				(oldValue != null && newValue == null) ||
+				(oldValue != null && !oldValue.equals( newValue ))){
+			
+				for( DockPropertyListener<A> listener : (DockPropertyListener<A>[])listeners.toArray( new DockPropertyListener<?>[ listeners.size() ] ))
+					listener.propertyChanged( DockProperties.this, key, oldValue, newValue );
+			}
+		}
+		
+		/**
 		 * Gets the value of this entry.
 		 * @return the value
 		 */
@@ -259,6 +293,15 @@ public class DockProperties {
 				return getDefault();
 			}
 			return value;
+		}
+		
+		/**
+		 * Gets the value stored for <code>priority</code>.
+		 * @param priority the priority, not <code>null</code>
+		 * @return the value, might be <code>null</code>
+		 */
+		public A getValue( Priority priority ){
+			return value.get( priority );
 		}
 		
 		/**

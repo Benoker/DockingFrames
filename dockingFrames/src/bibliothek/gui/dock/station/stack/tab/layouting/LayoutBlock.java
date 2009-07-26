@@ -63,4 +63,11 @@ public interface LayoutBlock {
 	 * @param height the height in pixel
 	 */
 	public void setBounds( int x, int y, int width, int height );
+	
+	/**
+	 * Tells this {@link LayoutBlock} at which side of the tabs it is shown.
+	 * @param placement the placement, not <code>null</code>
+	 * @throws IllegalArgumentException if <code>placement</code> is <code>null</code>
+	 */
+	public void setOrientation( TabPlacement placement );
 }

@@ -26,6 +26,7 @@
 package bibliothek.extension.gui.dock.theme.eclipse.stack;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
 
@@ -38,7 +39,9 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.station.stack.CombinedTab;
 import bibliothek.gui.dock.station.stack.tab.AbstractTab;
+import bibliothek.gui.dock.station.stack.tab.Tab;
 import bibliothek.gui.dock.station.stack.tab.TabPaneComponent;
+import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 
 /**
  * A wrapper around a {@link TabComponent} allowing to use the {@link TabComponent}
@@ -103,21 +106,37 @@ public class EclipseTab extends AbstractTab implements CombinedTab{
 	public void setTooltip( String tooltip ){
 		// ignore
 	}
+	
+	@Override
+	public void setOrientation( TabPlacement orientation ){
+		super.setOrientation( orientation );
+		component.setOrientation( orientation );
+	}
 
 	public void addMouseInputListener( MouseInputListener listener ){
 		component.addMouseInputListener( listener );
 	}
 
+	public Dimension getMinimumSize( Tab[] tabs ){
+		return component.getMinimumSize( extract( tabs ) );
+	}
+	
+	public Dimension getPreferredSize( Tab[] tabs ){
+		return component.getPreferredSize( extract( tabs ) );
+	}
+	
+	private TabComponent[] extract( Tab[] tabs ){
+		TabComponent[] components = new TabComponent[ tabs.length ];
+		for( int i = 0; i < tabs.length; i++ ){
+			if( tabs[i] instanceof EclipseTab ){
+				components[i] = ((EclipseTab)tabs[i]).getTabComponent();
+			}
+		}
+		return components;
+	}
+	
 	public DockElement getElement(){
 		return getDockable();
-	}
-
-	/**
-	 * Gets the component which actually paints stuff.
-	 * @return the actual component
-	 */
-	public TabComponent getTab(){
-		return component;
 	}
 	
 	public Point getPopupLocation( Point click, boolean popupTrigger ){
@@ -158,7 +177,7 @@ public class EclipseTab extends AbstractTab implements CombinedTab{
 	public Insets getOverlap( TabPaneComponent other ){
 		if( other instanceof EclipseTab ){
 			EclipseTab tab = (EclipseTab)other;
-			return getTab().getOverlap( tab.getTab() );
+			return getTabComponent().getOverlap( tab.getTabComponent() );
 		}
 		
 		return super.getOverlap( other );

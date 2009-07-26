@@ -36,23 +36,45 @@ import bibliothek.gui.dock.title.DockTitle;
  * @author Benjamin Sigg
  */
 public interface FocusVetoListener {
+	/**
+	 * Tells how to react on a potential change of the focus.
+	 * @author Benjamin Sigg
+	 */
+	public static enum FocusVeto{
+		/** No veto, allows the focus to be transfered to a new element */
+		NONE,
+		
+		/** 
+		 * Focus transfer is canceled, and the event leading to the transfer
+		 * is consumed (meaning: the event is marked as invalid and components
+		 * will not process it).
+		 */
+		VETO,
+		
+		/**
+		 * Focus transfer is canceled, but the event leading to the transfer is 
+		 * allowed to be processed. This behavior can lead to components wrongly
+		 * process the event and make hide a {@link Dockable} that should
+		 * have the focus. Client code should in general use {@link #VETO}.
+		 */
+		VETO_NO_CONSUME
+	}
+	
     /**
      * Invoked when the focus should change because the user did something
      * with <code>title</code>.
      * @param controller the controller who will change the focus
      * @param title the title from which the focus-change was initialized
-     * @return <code>true</code> if the change should be canceled, <code>false</code>
-     * if the focus can be changed
+     * @return whether to cancel the focus transfer, not <code>null</code>
      */
-    public boolean vetoFocus( MouseFocusObserver controller, DockTitle title );
+    public FocusVeto vetoFocus( MouseFocusObserver controller, DockTitle title );
     
     /**
      * Invoked when the focus should change because the user did something
      * with <code>dockable</code>.
      * @param controller the controller who will change the focus
      * @param dockable the {@link Dockable} from which the focus-change was initialized
-     * @return <code>true</code> if the change should be canceled, <code>false</code>
-     * if the focus can be changed
+     * @return whether to cancel the focus transfer, not <code>null</code> 
      */
-    public boolean vetoFocus( MouseFocusObserver controller, Dockable dockable );
+    public FocusVeto vetoFocus( MouseFocusObserver controller, Dockable dockable );
 }

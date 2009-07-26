@@ -39,6 +39,7 @@ import bibliothek.gui.dock.station.stack.tab.AbstractTabPaneComponent;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.stack.tab.layouting.LayoutBlock;
 import bibliothek.gui.dock.station.stack.tab.layouting.Size;
+import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.station.stack.tab.layouting.Size.Type;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 
@@ -111,6 +112,12 @@ public class EclipseTabInfo extends AbstractTabPaneComponent implements Combined
 	
 	public LayoutBlock toLayoutBlock(){
 		return this;
+	}
+	
+	@Override
+	public void setOrientation( TabPlacement orientation ){
+		super.setOrientation( orientation );
+		buttons.setOrientation( orientation.toOrientation() );
 	}
 	
 	public Size[] getSizes(){

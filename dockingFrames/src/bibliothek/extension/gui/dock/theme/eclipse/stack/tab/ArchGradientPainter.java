@@ -27,7 +27,6 @@ package bibliothek.extension.gui.dock.theme.eclipse.stack.tab;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -37,19 +36,16 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Window;
-import java.awt.font.FontRenderContext;
-import java.awt.geom.Rectangle2D;
 
-import javax.swing.Icon;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 
-import bibliothek.extension.gui.dock.theme.eclipse.EclipseBorder;
+import bibliothek.extension.gui.dock.theme.eclipse.OwnedEclipseBorder;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
+import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.util.Colors;
 
@@ -67,7 +63,11 @@ public class ArchGradientPainter extends BaseTabComponent {
 	private final int[] TOP_LEFT_CORNER_Y = { 6, 5, 4, 3, 2, 1, 1, 0 };
 	
 	private Arch arch;
+	private boolean wasPreviousSelected = false;
 	
+	/**
+	 * This factory creates instances of {@link ArchGradientPainter}.
+	 */
 	public static final TabPainter FACTORY = new TabPainter(){
 		public TabComponent createTabComponent( EclipseTabPane pane, Dockable dockable ) {
 			return new ArchGradientPainter( pane, dockable );
@@ -81,21 +81,29 @@ public class ArchGradientPainter extends BaseTabComponent {
 			return new DefaultInvisibleTab( pane, dockable );
 		}
 
-		public Border getFullBorder( DockController controller, Dockable dockable ){
-			return new EclipseBorder( controller, true );
+		public Border getFullBorder( BorderedComponent owner, DockController controller, Dockable dockable ){
+			return new OwnedEclipseBorder( owner, controller, true );
 		}
 	};
 
 	/** number of pixels at the left side that are empty and under the selected predecessor of this tab */
 	private final int TAB_OVERLAP = 24;
 
+	/**
+	 * Creates a new painter.
+	 * @param pane the owner of this painter
+	 * @param dockable the dockable which this painter represents
+	 */
 	public ArchGradientPainter( EclipseTabPane pane, Dockable dockable ){
 		super( pane, dockable );
 
 		setLayout( null );
 		setOpaque( false );
 
-		add( getButtons() );
+		updateText();
+		update();
+		updateFont();
+		updateBorder();
 	}
 
 	@Override
@@ -135,81 +143,109 @@ public class ArchGradientPainter extends BaseTabComponent {
 		if( other instanceof ArchGradientPainter ){
 			ArchGradientPainter painter = (ArchGradientPainter)other;
 			if( painter.isSelected() ){
-				return new Insets( 0, 10 + TAB_OVERLAP, 0, 0 );
+				if( getOrientation().isHorizontal() )
+					return new Insets( 0, 10 + TAB_OVERLAP, 0, 0 );
+				else
+					return new Insets( 10 + TAB_OVERLAP, 0, 0, 0 );
 			}
 		}
 		
 		return new Insets( 0, 0, 0, 0 );
 	}
-
+	
 	@Override
-	public Dimension getMinimumSize(){
-		Dimension preferred = getPreferredSize();
-		return preferred;
+	public Dimension getPreferredSize(){
+		boolean previousSelected = isPreviousTabSelected();
+		if( wasPreviousSelected != previousSelected ){
+			wasPreviousSelected = previousSelected;
+			update();
+		}
+		
+		return super.getPreferredSize();
 	}
 	
 	@Override
-	public Dimension getPreferredSize() {
-		Font font = getFont();
-		if( font == null )
-			font = getPane().getComponent().getFont();
-			
-		if( font == null )
-			return new Dimension( 0, 0 );
+	protected void updateIcon(){
+		update();
+	}
+	
+	@Override
+	protected void updateText(){
+		setText( getDockable().getTitleText() );
+	}
+	
+	@Override
+	protected void updateFocus(){
+		update();
+		updateBorder();
+		updateFont();
+	}
+	
+	@Override
+	protected void updateOrientation(){
+		update();
+	}
+	
+	@Override
+	protected void updatePaintIcon(){
+		update();	
+	}
+	
+	@Override
+	protected void updateSelected(){
+		update();
+		updateBorder();
+		updateFont();
+	}
+	
+	/**
+	 * Updates the layout information of this painter.
+	 */
+	protected void update(){
+		Insets labelInsets = null;
+		Insets buttonInsets = null;
+		
+		switch( getOrientation() ){
+			case TOP_OF_DOCKABLE:
+			case BOTTOM_OF_DOCKABLE:
+				labelInsets = new Insets( 3, 5, 3, 2 );
+				buttonInsets = new Insets( 1, 0, 1, 5 );
+				break;
+			case LEFT_OF_DOCKABLE:
+			case RIGHT_OF_DOCKABLE:
+				labelInsets = new Insets( 5, 3, 2, 3 );
+				buttonInsets = new Insets( 0, 1, 5, 1 );
+				break;
+		}
 		
 		Dockable dockable = getDockable();
-		boolean isSelected = isSelected();
-		ButtonPanel buttons = getButtons();
-
-		FontRenderContext frc = new FontRenderContext(null, false, false);
-		Rectangle2D bounds = font.getStringBounds(dockable.getTitleText(), frc);
-		int width = 5 + (int) bounds.getWidth() + 5;
-		int height = 6 + (int) bounds.getHeight();
-		if ((doPaintIconWhenInactive() || isSelected) && dockable.getTitleIcon() != null)
-			width += dockable.getTitleIcon().getIconWidth() + 5;
-		if (isSelected)
-			width += 35;
-		if( isPreviousTabSelected() )
-			width += TAB_OVERLAP;
-
-		if( buttons != null ){
-			Dimension tabPreferred = buttons.getPreferredSize();
-			width += tabPreferred.width+1;
-			height = Math.max( height, tabPreferred.height+1 );
+		boolean horizontal = getOrientation().isHorizontal();
+		
+		if( (doPaintIconWhenInactive() || isSelected()) ){
+			setIcon( dockable.getTitleIcon() );
 		}
-
-		return new Dimension(width, height);
-	}
-	
-	@Override
-	public void doLayout(){
-		ButtonPanel buttons = getButtons();
-
-		if( buttons != null ){
-			Dockable dockable = getDockable();
-			boolean isSelected = isSelected();
-
-			FontRenderContext frc = new FontRenderContext(null, false, false);
-			Rectangle2D bounds = getFont().getStringBounds(dockable.getTitleText(), frc);
-			int x = 5 + (int) bounds.getWidth() + 5;
-			if ((doPaintIconWhenInactive() || isSelected) && dockable.getTitleIcon() != null)
-				x += dockable.getTitleIcon().getIconWidth() + 5;
-
-			if( isSelected )
-				x += 5;
-
-			if( isPreviousTabSelected() )
-				x += TAB_OVERLAP;
-
-			Dimension preferred = buttons.getPreferredSize();
-			int width = Math.min( preferred.width, getWidth()-x );
-			int height = Math.min( getHeight()-1, preferred.height );
-
-			buttons.setBounds( x, getHeight()-1-height, width-1, height );
+		else{
+			setIcon( null );
 		}
-	}
-
-	public void update(){
+		
+		if( isSelected() ){
+			if( horizontal )
+				buttonInsets.right += 35;
+			else
+				buttonInsets.bottom += 35;
+		}
+		
+		if( isPreviousTabSelected() ){
+			if( horizontal )
+				labelInsets.left += TAB_OVERLAP;
+			else
+				labelInsets.top += TAB_OVERLAP;
+		}
+		
+		getLabel().setForeground( getTextColor() );
+		setLabelInsets( labelInsets );
+		setButtonInsets( buttonInsets );
+		
 		revalidate();
 		repaint();
 	}
@@ -220,6 +256,23 @@ public class ArchGradientPainter extends BaseTabComponent {
 		return arch;
 	}
 
+	private Color getTextColor(){
+		boolean focusTemporarilyLost = isFocusTemporarilyLost();
+		
+		if( isFocused() && !focusTemporarilyLost ){
+			return colorStackTabTextSelectedFocused.value();
+		}
+		else if (isFocused() && focusTemporarilyLost) {
+			return colorStackTabTextSelectedFocusLost.value();
+		}
+		else if( isSelected() ){
+			return colorStackTabTextSelected.value();
+		}
+		else{
+			return colorStackTabText.value();
+		}
+	}
+	
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -233,40 +286,38 @@ public class ArchGradientPainter extends BaseTabComponent {
 
 		Color color1;
 		Color color2;
-		Color colorText;
 
-		Window window = SwingUtilities.getWindowAncestor( getComponent() );
-		boolean focusTemporarilyLost = false;
-
-		if( window != null ){
-			focusTemporarilyLost = !window.isActive();
-		}
-
+		boolean focusTemporarilyLost = isFocusTemporarilyLost();
 
 		if( isFocused() && !focusTemporarilyLost ){
 			color1 = colorStackTabTopSelectedFocused.value();
 			color2 = colorStackTabBottomSelectedFocused.value();
-			colorText = colorStackTabTextSelectedFocused.value();
 		}
 		else if (isFocused() && focusTemporarilyLost) {
 			color1 = colorStackTabTopSelectedFocusLost.value();
 			color2 = colorStackTabBottomSelectedFocusLost.value();
-			colorText = colorStackTabTextSelectedFocusLost.value();
 		}
 		else if( isSelected() ){
 			color1 = colorStackTabTopSelected.value();
 			color2 = colorStackTabBottomSelected.value();
-			colorText = colorStackTabTextSelected.value();
 		}
 		else{
 			color1 = colorStackTabTop.value();
 			color2 = colorStackTabBottom.value();
-			colorText = colorStackTabText.value();
 		}
 
 		// draw tab if selected
 		if (isSelected()) {
-			paintSelected( g2d, color1, color2 );
+			switch( getOrientation() ){
+				case TOP_OF_DOCKABLE:
+				case LEFT_OF_DOCKABLE:
+					paintSelected( g2d, color1, color2 );
+					break;
+				case BOTTOM_OF_DOCKABLE:
+				case RIGHT_OF_DOCKABLE:
+					paintSelected( g2d, color2, color1 );
+					break;
+			}
 		}
 		else{
 			GradientPaint gradient = color1.equals( color2 ) ? null : new GradientPaint( x, y, color1, x, y + h, color2 );
@@ -280,33 +331,14 @@ public class ArchGradientPainter extends BaseTabComponent {
 			g2d.setPaint(old);
 		}
 
-		// draw icon
-		int iconOffset = 0;
-
-		if( isPreviousTabSelected() )
-			iconOffset += TAB_OVERLAP;
-
-		if (isSelected() || doPaintIconWhenInactive()) {
-			Icon i = getDockable().getTitleIcon();
-			if (i != null) {
-				iconOffset += 5;
-
-				int iconY = (h - i.getIconHeight())/2;
-
-				i.paintIcon( getComponent(), g, iconOffset, iconY);
-				iconOffset += i.getIconWidth();
-			}
-		}
-
 		// draw separator lines
 		if (!isSelected() && !isNextTabSelected() ){
 			g.setColor(lineColor);
-			g.drawLine(w - 1, 0, w - 1, h);
+			if( getOrientation().isHorizontal() )
+				g.drawLine( w-1, 0, w-1, h );
+			else
+				g.drawLine( 0, h-1, w, h-1 );
 		}
-
-		// draw text
-		g.setColor( colorText );
-		g.drawString( getDockable().getTitleText(), x + 5 + iconOffset, h / 2 + g.getFontMetrics().getHeight() / 2 - 2);
 	}
 
 	@Override
@@ -329,11 +361,20 @@ public class ArchGradientPainter extends BaseTabComponent {
 			Rectangle leftBox = left.getBounds();
 			Rectangle rightBox = right.getBounds();
 			
-			if( leftBox.x + leftBox.width > x )
-				return false;
+			if( getOrientation().isHorizontal() ){
+				if( leftBox.x + leftBox.width > x )
+					return false;
 			
-			if( rightBox.x < x )
-				return false;
+				if( rightBox.x < x )
+					return false;
+			}
+			else{
+				if( leftBox.y + leftBox.height > y )
+					return false;
+				
+				if( rightBox.y < y )
+					return false;
+			}
 			
 			return true;
 		}
@@ -357,22 +398,43 @@ public class ArchGradientPainter extends BaseTabComponent {
 		
 		boolean firstTab = getTabIndex() == 0;
 		
-		Polygon left = leftSide( x-1, y-1, w, h+1 );
-		Polygon right = rightSide( x, y, w, h-1 );
+		TabPlacement orientation = getOrientation();
+		
+		Polygon left, right;
+		if( orientation.isHorizontal() ){
+			left = leftSide( x-1, y-1, w, h+1 );
+		}
+		else{
+			left = leftSide( x-1, y-1, w+1, h );
+		}
+		
+		right = rightSide( x, y, w, h );
 		
 		g2d.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF );
 		
 		// draw shadow
-		if ( firstTab )
-			left.translate( -1, 0 );
+		if ( firstTab ){
+			if( orientation.isHorizontal() )
+				left.translate( -1, 0 );
+			else
+				left.translate( 0, -1 );
+		}
 		
 		g.setColor( Colors.between( lineColor, getBackground(), 0.75 ) );
 		
 		g.drawPolyline( left.xpoints, left.ypoints, left.npoints-1 );
 		g.drawPolyline( right.xpoints, right.ypoints, right.npoints-1 );
 		
-		// fill inner areas
-		GradientPaint gradient = top.equals( bottom ) ? null : new GradientPaint( x, y, top, x, y + h, bottom );
+		GradientPaint gradient = null;
+		if( !top.equals( bottom )){
+			// fill inner areas
+			if( getOrientation().isHorizontal() ){
+				gradient = new GradientPaint( x, y, top, x, y + h, bottom );
+			}
+			else{
+				gradient = new GradientPaint( x, y, top, x+w, y, bottom );
+			}
+		}
 		
 		Paint old = g2d.getPaint();
 		if( gradient != null )
@@ -380,31 +442,58 @@ public class ArchGradientPainter extends BaseTabComponent {
 		else
 			g2d.setPaint( top );
 		
-		left.translate( 1, 0 );
-		right.translate( -1, 0 );
+		if( orientation.isHorizontal() ){
+			left.translate( 1, 0 );
+			right.translate( -1, 0 );
+		}
+		else{
+			left.translate( 0, 1 );
+			right.translate( 0, -1 );
+		}
 		
 		g.fillPolygon( left );
-	// g.fillPolygon( right );
 		right.translate( 1, 1 );
 		g.fillPolygon( right );
 		right.translate( -1, -1 );
 		
-		g.drawLine( 0, h-1, w-1, h-1 );
+		switch( getOrientation() ){
+			case TOP_OF_DOCKABLE:
+				g.drawLine( 0, h-1, w-1, h-1 );
+				break;
+			case BOTTOM_OF_DOCKABLE:
+				g.drawLine( 0, 0, w-1, 0 );
+				break;
+			case LEFT_OF_DOCKABLE:
+				g.drawLine( w-1, 0, w-1, h-1 );
+				break;
+			case RIGHT_OF_DOCKABLE:
+				g.drawLine( 0, 0, 0, h-1 );
+				break;
+		}
+		
 		
 		Rectangle leftBox = left.getBounds();
 		Rectangle rightBox = right.getBounds();
-		if( leftBox.x+leftBox.width < rightBox.x ){
-			g.fillRect(
-					leftBox.x+leftBox.width, 0,
-					rightBox.x-leftBox.x-leftBox.width+1, h );
+		
+		if( orientation.isHorizontal() ){
+			if( leftBox.x+leftBox.width < rightBox.x ){
+				g.fillRect(
+						leftBox.x+leftBox.width, 0,
+						rightBox.x-leftBox.x-leftBox.width+1, h );
+			}
+		}
+		else{
+			if( leftBox.y+leftBox.height < rightBox.y ){
+				g.fillRect(
+						0, leftBox.y+leftBox.height,
+						w, rightBox.y-leftBox.y-leftBox.height+1 );
+			}
 		}
 		
 		g2d.setPaint( old );
 		
 		// draw border
 		g.setColor( lineColor );
-		//left.translate( -1, 0 );
-		// right.translate( 1, 0 );
 		g.drawPolyline( left.xpoints, left.ypoints, left.npoints-1 );
 		g.drawPolyline( right.xpoints, right.ypoints, right.npoints-1 );
 		
@@ -412,7 +501,65 @@ public class ArchGradientPainter extends BaseTabComponent {
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_DEFAULT);
 	}
 	
+	/**
+	 * Mirrors <code>coordinates</code>, an element that has the value
+	 * <code>min + x</code> afterwards has the value <code>max - x</code>.
+	 * @param coordinates the array to mirror
+	 */
+	private void mirror( int[] coordinates ){
+		int min = Integer.MAX_VALUE;
+		int max = Integer.MIN_VALUE;
+		
+		for( int c : coordinates ){
+			min = Math.min( min, c );
+			max = Math.max( max, c );
+		}
+		
+		for( int i = 0, n = coordinates.length; i<n; i++ ){
+			coordinates[i] = max - (coordinates[i] - min);
+		}
+	}
+	
+	private void transformFromTopToOrientation( Polygon polygon ){
+		switch( getOrientation() ){
+			case BOTTOM_OF_DOCKABLE:
+				mirror( polygon.ypoints );
+				break;
+			case RIGHT_OF_DOCKABLE:
+				mirror( polygon.ypoints );
+				// fall through
+			case LEFT_OF_DOCKABLE:
+				int[] temp = polygon.xpoints;
+				polygon.xpoints = polygon.ypoints;
+				polygon.ypoints = temp;
+		}
+	}
+	
+	/**
+	 * Creates a polygon to paint the left or top side of a tab.
+	 * @param x the x coordinate of the area in which to paint
+	 * @param y the y coordinate of the area in which to paint
+	 * @param w the with of the paintable area
+	 * @param h the height of the paintable area
+	 * @return the new polygon
+	 */
 	private Polygon leftSide( int x, int y, int w, int h ){
+		if( getOrientation().isVertical() ){
+			int t = x;
+			x = y;
+			y = t;
+			
+			t = w;
+			w = h;
+			h = t;
+		}
+		
+		Polygon polygon = leftSideTop( x, y, w, h );
+		transformFromTopToOrientation( polygon );
+		return polygon;
+	}
+	
+	private Polygon leftSideTop( int x, int y, int w, int h ){
 		int[] xPoints = new int[ TOP_LEFT_CORNER_X.length+2 ];
 		int[] yPoints = new int[ TOP_LEFT_CORNER_Y.length+2 ];
 		
@@ -438,7 +585,32 @@ public class ArchGradientPainter extends BaseTabComponent {
 		return new Polygon( xPoints, yPoints, xPoints.length );
 	}
 	
+	
+	/**
+	 * Creates a polygon to paint the right or bottom side of a tab.
+	 * @param x the x coordinate of the area in which to paint
+	 * @param y the y coordinate of the area in which to paint
+	 * @param w the with of the paintable area
+	 * @param h the height of the paintable area
+	 * @return the new polygon
+	 */
 	private Polygon rightSide( int x, int y, int w, int h ){
+		if( getOrientation().isVertical() ){
+			int t = x;
+			x = y;
+			y = t;
+			
+			t = w;
+			w = h;
+			h = t;
+		}
+		
+		Polygon polygon = rightSideTop( x, y, w, h );
+		transformFromTopToOrientation( polygon );
+		return polygon;
+	}
+	
+	private Polygon rightSideTop( int x, int y, int w, int h ){
 		Arch arch = arch( h*34/22, h );
 		
 		int[] xPoints = new int[ arch.getWidth()+1 ];
@@ -456,4 +628,5 @@ public class ArchGradientPainter extends BaseTabComponent {
 		
 		return new Polygon( xPoints, yPoints, xPoints.length );
 	}
+	
 }

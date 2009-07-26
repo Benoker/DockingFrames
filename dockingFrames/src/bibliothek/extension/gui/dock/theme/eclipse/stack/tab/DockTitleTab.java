@@ -1,6 +1,7 @@
 package bibliothek.extension.gui.dock.theme.eclipse.stack.tab;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -19,6 +20,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.title.DockTitleVersion;
@@ -72,7 +74,7 @@ public class DockTitleTab implements TabComponent{
         	    return fallback.createDecorationPainter( pane );
             }
             
-            public Border getFullBorder( DockController controller, Dockable dockable ) {
+        	public Border getFullBorder( BorderedComponent owner, DockController controller, Dockable dockable ){
                 return BorderFactory.createLineBorder( controller.getColors().get( "stack.border" ) );
             }
         };
@@ -146,6 +148,23 @@ public class DockTitleTab implements TabComponent{
         });
     }
     
+    public void setOrientation( TabPlacement orientation ){
+	    switch( orientation ){
+	    	case TOP_OF_DOCKABLE:
+	    		title.setOrientation( Orientation.NORTH_SIDED );
+	    		break;
+	    	case BOTTOM_OF_DOCKABLE:
+	    		title.setOrientation( Orientation.SOUTH_SIDED );
+	    		break;
+	    	case LEFT_OF_DOCKABLE:
+	    		title.setOrientation( Orientation.WEST_SIDED );
+	    		break;
+	    	case RIGHT_OF_DOCKABLE:
+	    		title.setOrientation( Orientation.EAST_SIDED );
+	    		break;
+	    }
+    }
+    
     public void bind() {
         dockable.bind( title );
         fire();
@@ -165,6 +184,14 @@ public class DockTitleTab implements TabComponent{
 
     public Component getComponent() {
         return title.getComponent();
+    }
+    
+    public Dimension getMinimumSize( TabComponent[] tabs ){
+    	return getComponent().getMinimumSize();
+    }
+    
+    public Dimension getPreferredSize( TabComponent[] tabs ){
+    	return getComponent().getPreferredSize();
     }
     
     public DockElement getElement() {

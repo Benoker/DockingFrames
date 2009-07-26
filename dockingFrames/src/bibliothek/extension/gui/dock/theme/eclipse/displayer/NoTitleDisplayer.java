@@ -38,6 +38,7 @@ import javax.swing.border.Border;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector.TitleBar;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.BorderedComponent;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.InvisibleTab;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.InvisibleTabPane;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPainter;
@@ -45,9 +46,11 @@ import bibliothek.extension.gui.dock.util.ReverseCompoundBorder;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
+import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyValue;
@@ -59,7 +62,7 @@ import bibliothek.gui.dock.util.PropertyValue;
  * and the key {@link EclipseTheme#TAB_PAINTER}.
  * @author Janni Kovacs
  */
-public class NoTitleDisplayer extends JPanel implements DockableDisplayer, InvisibleTabPane {
+public class NoTitleDisplayer extends JPanel implements DockableDisplayer, InvisibleTabPane, BorderedComponent {
 	private Dockable dockable;
 	private DockController controller;
 	private DockStation station;
@@ -145,7 +148,7 @@ public class NoTitleDisplayer extends JPanel implements DockableDisplayer, Invis
 	 * Exchanges the border of this component, using the current
 	 * {@link EclipseTheme#TAB_PAINTER} to determine the new border.
 	 */
-	protected void updateFullBorder(){
+	public void updateFullBorder(){
 	    if( (bordered || respectHints) && painter != null ){
     	    TabPainter painter = this.painter.getValue();
     	    
@@ -154,7 +157,7 @@ public class NoTitleDisplayer extends JPanel implements DockableDisplayer, Invis
             }
             else{
                 if( hints == null || getBorderHint() ){
-                    outerBorder = painter.getFullBorder( controller, dockable );
+                    outerBorder = painter.getFullBorder( this, controller, dockable );
                 }
                 else{
                     outerBorder = null;
@@ -200,6 +203,12 @@ public class NoTitleDisplayer extends JPanel implements DockableDisplayer, Invis
 				invisibleTab.setController( getController() );
 			}
 		}
+	}
+	
+	public TabPlacement getTabPlacement(){
+		if( controller == null )
+			return null;
+		return controller.getProperties().get( StackDockStation.TAB_PLACEMENT );
 	}
 	
 	public Insets getDockableInsets() {

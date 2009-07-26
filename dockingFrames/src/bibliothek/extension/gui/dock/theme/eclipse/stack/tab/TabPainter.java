@@ -69,9 +69,10 @@ public interface TabPainter {
 	/**
 	 * Gets the border which will be around <code>pane</code> when <code>dockable</code>
 	 * is selected.
+	 * @param owner the component on which the border will be shown
 	 * @param controller the current controller, never <code>null</code>
 	 * @param dockable the element which might influence the border, never <code>null</code>
 	 * @return the border of <code>dockable</code> or <code>null</code>
 	 */
-	public Border getFullBorder( DockController controller, Dockable dockable );
+	public Border getFullBorder( BorderedComponent owner, DockController controller, Dockable dockable );
 }

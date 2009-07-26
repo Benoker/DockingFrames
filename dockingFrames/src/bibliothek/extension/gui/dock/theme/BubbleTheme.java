@@ -117,7 +117,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
                 return new BubbleStackDockComponent( station );
             }
         });
-        setTabSide( TabPlacement.LEFT_OF_DOCKABLE );
+        setTabPlacement( TabPlacement.BOTTOM_OF_DOCKABLE );
     }
 
     /**

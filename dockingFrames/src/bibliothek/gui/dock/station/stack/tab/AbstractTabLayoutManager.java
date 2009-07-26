@@ -35,6 +35,7 @@ import bibliothek.gui.Dockable;
  * This layout manager creates a common interface to store information for each
  * {@link TabPane} individually.
  * @author Benjamin Sigg
+ * @param <I> how information about {@link TabPane}s gets represented
  */
 public abstract class AbstractTabLayoutManager<I extends AbstractTabLayoutManager.PaneInfo> implements TabLayoutManager{
 	/** informations about {@link TabPane}s */

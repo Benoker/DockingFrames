@@ -56,7 +56,6 @@ public abstract class UITransmitter<V, U extends UIValue<V>> implements UIBridge
             this.keys.add( key );
     }
     
-    @SuppressWarnings( "unchecked" )
     public void add( String id, U value ) {
         if( keys.contains( id )){
             boolean empty = values.isEmpty();
@@ -121,7 +120,6 @@ public abstract class UITransmitter<V, U extends UIValue<V>> implements UIBridge
         }
     }
     
-    @SuppressWarnings("unchecked")
     public void set( String id, V value, U observer ) {
         if( keys.contains( id )){
             value = get( value, id, observer );

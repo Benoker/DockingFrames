@@ -37,6 +37,7 @@ import bibliothek.gui.dock.station.stack.tab.layouting.LayoutBlock;
 import bibliothek.gui.dock.station.stack.tab.layouting.LineTabsLayoutBlock;
 import bibliothek.gui.dock.station.stack.tab.layouting.MenuLayoutBlock;
 import bibliothek.gui.dock.station.stack.tab.layouting.Size;
+import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.station.stack.tab.layouting.LineTabsLayoutBlock.LineSize;
 
 
@@ -119,6 +120,17 @@ public class MenuLineLayout extends AbstractTabLayoutManager<MenuLineLayout.Layo
 	}
 	
 	/**
+	 * Creates a new {@link AxisConversion} to convert a layout that
+	 * is at the top of dockables to a layout at the {@link TabPlacement}
+	 * given by <code>pane</code>.
+	 * @param pane the panel for which the conversion is used
+	 * @return the new conversion
+	 */
+	protected AxisConversion getConversion( TabPane pane ){
+		return new DefaultAxisConversion( pane.getAvailableArea(), pane.getTabPlacement() );
+	}
+	
+	/**
 	 * Layout information for a {@link TabPane}.
 	 * @author Benjamin Sigg
 	 */
@@ -152,11 +164,23 @@ public class MenuLineLayout extends AbstractTabLayoutManager<MenuLineLayout.Layo
 			List<PaneLayout> layouts = listLayouts();
 			Dimension bestSize = new Dimension( 0, 0 );
 			
-			for( PaneLayout layout : layouts ){
-				if( layout.isPreferred() ){
-					Dimension size = layout.getSize();
-					if( size.width > bestSize.width ){
-						bestSize = size;
+			if( getPane().getTabPlacement().isHorizontal() ){
+				for( PaneLayout layout : layouts ){
+					if( layout.isPreferred() ){
+						Dimension size = layout.getSize();
+						if( size.width > bestSize.width ){
+							bestSize = size;
+						}
+					}
+				}
+			}
+			else{
+				for( PaneLayout layout : layouts ){
+					if( layout.isPreferred() ){
+						Dimension size = layout.getSize();
+						if( size.height > bestSize.height ){
+							bestSize = size;
+						}
 					}
 				}
 			}
@@ -172,10 +196,20 @@ public class MenuLineLayout extends AbstractTabLayoutManager<MenuLineLayout.Layo
 			List<PaneLayout> layouts = listLayouts();
 			Dimension bestSize = null;
 			
-			for( PaneLayout layout : layouts ){
-				Dimension size = layout.getSize();
-				if( bestSize == null || size.width < bestSize.width ){
-					bestSize = size;
+			if( getPane().getTabPlacement().isHorizontal() ){
+				for( PaneLayout layout : layouts ){
+					Dimension size = layout.getSize();
+					if( bestSize == null || size.width < bestSize.width ){
+						bestSize = size;
+					}
+				}
+			}
+			else{
+				for( PaneLayout layout : layouts ){
+					Dimension size = layout.getSize();
+					if( bestSize == null || size.height < bestSize.height ){
+						bestSize = size;
+					}
 				}
 			}
 			
@@ -195,10 +229,12 @@ public class MenuLineLayout extends AbstractTabLayoutManager<MenuLineLayout.Layo
 		 * and info.
 		 */
 		public void layout(){
+			AxisConversion conversion = getConversion( getPane() );
+			
 			List<PaneLayout> layouts = listLayouts();
 			
 			// search the layout that fits into the available space
-			Rectangle available = getPane().getAvailableArea();
+			Rectangle available = conversion.viewToModel( getPane().getAvailableArea() );
 			
 			int space = available.width;
 			
@@ -209,7 +245,7 @@ public class MenuLineLayout extends AbstractTabLayoutManager<MenuLineLayout.Layo
 			int smallestSize = -1;
 			
 			for( PaneLayout layout : layouts ){
-				Dimension size = layout.getSize();
+				Dimension size = conversion.viewToModel( layout.getSize() );
 				if( size.width <= space ){
 					if( layout.isPreferred() ){
 						if( (best == null || !best.isPreferred()) || bestSize < size.width ){
@@ -245,11 +281,16 @@ public class MenuLineLayout extends AbstractTabLayoutManager<MenuLineLayout.Layo
 		 */
 		private List<PaneLayout> listLayouts(){
 			List<PaneLayout> results = new ArrayList<PaneLayout>();
+			TabPlacement orientation = getPane().getTabPlacement();
 			
+			tabs.setOrientation( orientation );
 			LineSize[] sizesTabs = tabs.getSizes();
+			
+			menu.setOrientation( orientation );
 			Size[] sizesMenu = menu.getSizes();
 			
 			if( info != null ){
+				info.setOrientation( orientation );
 				Size[] sizesInfo = info.getSizes();
 				for( Size size : sizesInfo ){
 					listLayouts( results, size, sizesMenu, sizesTabs );
@@ -355,13 +396,25 @@ public class MenuLineLayout extends AbstractTabLayoutManager<MenuLineLayout.Layo
 				int width = tabSize.getWidth();
 				int height = tabSize.getHeight();
 				
-				if( menuSize != null ){
-					width += menuSize.getWidth();
-					height = Math.max( height, menuSize.getHeight() );
+				if( getPane().getTabPlacement().isHorizontal() ){
+					if( menuSize != null ){
+						width += menuSize.getWidth();
+						height = Math.max( height, menuSize.getHeight() );
+					}
+					if( infoSize != null ){
+						width += infoSize.getWidth();
+						height = Math.max( height, infoSize.getHeight() );
+					}
 				}
-				if( infoSize != null ){
-					width += infoSize.getWidth();
-					height = Math.max( height, infoSize.getHeight() );
+				else{
+					if( menuSize != null ){
+						width = Math.max( width, menuSize.getWidth() );
+						height += menuSize.getHeight();
+					}
+					if( infoSize != null ){
+						width = Math.max( width, infoSize.getWidth() );
+						height += infoSize.getHeight();
+					}
 				}
 				
 				return new Dimension( width, height );
@@ -372,6 +425,8 @@ public class MenuLineLayout extends AbstractTabLayoutManager<MenuLineLayout.Layo
 			 */
 			public void apply(){
 				TabPane pane = getPane();
+				AxisConversion conversion = getConversion( pane );
+				TabPlacement orientation = pane.getTabPlacement();
 				
 				// update visibility and layout
 				tabs.setLayout( tabSize );
@@ -401,34 +456,75 @@ public class MenuLineLayout extends AbstractTabLayoutManager<MenuLineLayout.Layo
 				}
 				
 				// update boundaries
-				Rectangle available = pane.getAvailableArea();
+				Rectangle available = conversion.viewToModel( pane.getAvailableArea() );
 				
 				// ... determine how much space is needed for menus etc
-				int required = tabSize.getHeight();
-				if( infoSize != null )
-					required = Math.max( required, infoSize.getHeight() );
-				if( menuSize != null )
-					required = Math.max( required, menuSize.getHeight() );
-				
+				int required;
+				if( orientation.isHorizontal() ){
+					required = tabSize.getHeight();
+					if( infoSize != null )
+						required = Math.max( required, infoSize.getHeight() );
+					if( menuSize != null )
+						required = Math.max( required, menuSize.getHeight() );
+				}
+				else{
+					required = tabSize.getWidth();
+					if( infoSize != null )
+						required = Math.max( required, infoSize.getWidth() );
+					if( menuSize != null )
+						required = Math.max( required, menuSize.getWidth() );
+				}
+
 				required = Math.max( 0, Math.min( required, available.height/2 ) );
 				
-				pane.setSelectedBounds( new Rectangle( available.x, available.y + required, available.width, available.height - required ) );
+				pane.setSelectedBounds( conversion.modelToView( new Rectangle( available.x, available.y + required, available.width, available.height - required ) ) );
 				
 				// ... check whether there is enough space for all items
-				int space = tabSize.getWidth();
-				if( infoSize != null )
-					space += infoSize.getWidth();
-				if( menuSize != null )
-					space += menuSize.getWidth();
+				int space, tabSpace, menuSpace = 0, infoSpace = 0;
+				if( orientation.isHorizontal() ){
+					tabSpace = tabSize.getWidth();
+					space = tabSpace;
+
+					if( infoSize != null ){
+						infoSpace = infoSize.getWidth();
+						space += infoSpace;
+					}
+					if( menuSize != null ){
+						menuSpace = menuSize.getWidth();
+						space += menuSpace;
+					}
+				}
+				else{
+					tabSpace = tabSize.getHeight();
+					space = tabSpace;
+					
+					if( infoSize != null ){
+						infoSpace = infoSize.getHeight();
+						space += infoSpace;
+					}
+					if( menuSize != null ){
+						menuSpace = menuSize.getHeight();
+						space += menuSpace;
+					}
+				}
+				
+				
 				
 				if( available.width >= space ){
 					// enough space for all elements
-					tabs.setBounds( available.x, available.y, available.width - space + tabSize.getWidth(), required );
+					Rectangle tabBounds = new Rectangle( available.x, available.y, available.width - space + tabSpace, required );
+					tabBounds = conversion.modelToView( tabBounds );
+					tabs.setBounds( tabBounds.x, tabBounds.y, tabBounds.width, tabBounds.height );
+					
 					if( menuSize != null ){
-						menu.setBounds( available.x + tabSize.getWidth(), available.y, menuSize.getWidth(), required );
+						Rectangle menuBounds = new Rectangle( available.x + tabSpace, available.y, menuSpace, required );
+						menuBounds = conversion.modelToView( menuBounds );
+						menu.setBounds( menuBounds.x, menuBounds.y, menuBounds.width, menuBounds.height );
 					}
 					if( infoSize != null && info != null ){
-						info.setBounds( available.x + available.width - infoSize.getWidth(), available.y, infoSize.getWidth(), required );
+						Rectangle infoBounds = new Rectangle( available.x + available.width - infoSpace, available.y, infoSpace, required );
+						infoBounds = conversion.modelToView( infoBounds );
+						info.setBounds( infoBounds.x, infoBounds.y, infoBounds.width, infoBounds.height );
 					}
 				}
 				else{
@@ -436,18 +532,25 @@ public class MenuLineLayout extends AbstractTabLayoutManager<MenuLineLayout.Layo
 					double shrinkFactor = space / (double)available.width;
 					
 					int x = available.x;
-					int width = (int)(shrinkFactor * tabSize.getWidth());
-					tabs.setBounds( x, available.y, width, required );
+					int width = (int)(shrinkFactor * tabSpace);
+					
+					Rectangle tabBounds = new Rectangle( x, available.y, width, required );
+					tabBounds = conversion.modelToView( tabBounds );
+					tabs.setBounds( tabBounds.x, tabBounds.y, tabBounds.width, tabBounds.height );
 					
 					x += width;
 					if( menuSize != null ){
-						width = (int)(shrinkFactor * menuSize.getWidth());
-						menu.setBounds( x, available.y, width, required );
+						width = (int)(shrinkFactor * menuSpace);
+						Rectangle menuBounds = new Rectangle( x, available.y, width, required );
+						menuBounds = conversion.modelToView( menuBounds );
+						menu.setBounds( menuBounds.x, menuBounds.y, menuBounds.width, menuBounds.height );
 						x += width;
 					}
 					if( infoSize != null ){
 						width = available.x + available.width - x;
-						menu.setBounds( x, available.y, width, required );
+						Rectangle infoBounds = new Rectangle( x, available.y, width, required );
+						infoBounds = conversion.modelToView( infoBounds );
+						info.setBounds( infoBounds.x, infoBounds.y, infoBounds.width, infoBounds.height );
 					}
 				}
 			}

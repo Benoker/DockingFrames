@@ -63,7 +63,7 @@ public interface DockAction {
      * Informs this DockAction that icons, text, and other stuff like that,
      * will be requested from this DockAction. This method should be called
      * from the object that will display the view of this action.
-     * @param dockable The {@link Dockable} that may be used in the future
+     * @param dockable the {@link Dockable} that may be used in the future
      * @see #unbind(Dockable)
      */
     public void bind( Dockable dockable );

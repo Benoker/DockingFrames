@@ -72,4 +72,8 @@ public class ComponentLayoutBlock<C extends TabPaneComponent> implements LayoutB
 	public void setLayout( Size size ){
 		// nothing to do	
 	}
+	
+	public void setOrientation( TabPlacement placement ){
+		// ignore	
+	}
 }

@@ -116,7 +116,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
             }
         });
         setMovingImageFactory( new ScreencaptureMovingImageFactory( new Dimension( 300, 200 ) ) );
-        setTabSide( TabPlacement.TOP_OF_DOCKABLE );
+        setTabPlacement( TabPlacement.BOTTOM_OF_DOCKABLE );
     }
 
     @Override

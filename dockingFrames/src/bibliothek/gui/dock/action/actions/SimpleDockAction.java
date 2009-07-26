@@ -34,6 +34,7 @@ import javax.swing.Icon;
 import javax.swing.KeyStroke;
 
 import bibliothek.extension.gui.dock.preference.editor.KeyStrokeEditor;
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.DockAction;
@@ -259,6 +260,9 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
     	/** the element which is observed by this listener */
     	private Dockable dockable;
 
+    	/** the controller which is currently observed by this forwarder, can be <code>null</code> */
+    	private DockController controller;
+    	
     	/**
     	 * Creates a new forwarder.
     	 * @param dockable the element for which the calls will be forwarded
@@ -266,8 +270,7 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
     	public DockableKeyForwarder( Dockable dockable ){
     		this.dockable = dockable;
     		dockable.addDockHierarchyListener( this );
-    		if( dockable.getController() != null )
-    			dockable.getController().getKeyboardController().addListener( this );
+    		setController( dockable.getController() );
     	}
     	
     	public void hierarchyChanged( DockHierarchyEvent event ){
@@ -275,19 +278,24 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
     	}
     	
     	public void controllerChanged( DockHierarchyEvent event ){
-    		if( event.getController() != null )
-    			event.getController().getKeyboardController().removeListener( this );
+    		setController( dockable.getController() );
+    	}
+    	
+    	private void setController( DockController controller ){
+    		if( this.controller != null )
+    			this.controller.getKeyboardController().removeListener( this );
     		
-    		if( dockable.getController() != null )
-    			dockable.getController().getKeyboardController().addListener( this );
+    		this.controller = controller;
+    		
+    		if( controller != null )
+    			controller.getKeyboardController().addListener( this );
     	}
     	
     	/**
     	 * Removes all listeners added by this forwarder.
     	 */
     	public void destroy(){
-    		if( dockable.getController() != null )
-    			dockable.getController().getKeyboardController().removeListener( this );
+    		setController( null );
     		dockable.removeDockHierarchyListener( this );
     	}
     	

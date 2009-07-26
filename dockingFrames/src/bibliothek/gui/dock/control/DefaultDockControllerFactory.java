@@ -39,7 +39,7 @@ import bibliothek.gui.dock.event.DockRegisterListener;
  */
 public class DefaultDockControllerFactory implements DockControllerFactory {
     public DockRegisterListener createActionBinder( DockController controller, ControllerSetupCollection setup ) {
-        return new ActionBinder();
+        return new ActionBinder( controller );
     }
 
     public ActionViewConverter createActionViewConverter(

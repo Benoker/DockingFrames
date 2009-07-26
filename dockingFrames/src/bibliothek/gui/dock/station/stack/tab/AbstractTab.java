@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.station.stack.tab;
 
 import java.awt.Component;
+import java.awt.Dimension;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
@@ -92,6 +93,11 @@ public abstract class AbstractTab extends AbstractTabPaneComponent implements Ta
 		}
 	};
 	
+	/**
+	 * Creates a new abstract tab.
+	 * @param parent the owner of this tab
+	 * @param dockable the element to show, not <code>null</code>
+	 */
 	public AbstractTab( TabPane parent, Dockable dockable ){
 		super( parent );
 		
@@ -103,6 +109,14 @@ public abstract class AbstractTab extends AbstractTabPaneComponent implements Ta
 	
 	public Dockable getDockable(){
 		return dockable;
+	}
+	
+	public Dimension getMinimumSize( Tab[] tabs ){
+		return getMinimumSize();
+	}
+	
+	public Dimension getPreferredSize( Tab[] tabs ){
+		return getPreferredSize();
 	}
 	
 	/**

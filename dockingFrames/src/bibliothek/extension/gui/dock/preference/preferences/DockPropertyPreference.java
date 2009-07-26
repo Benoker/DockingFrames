@@ -121,7 +121,7 @@ public class DockPropertyPreference<V> extends DefaultPreference<V> {
     
     @Override
     public void read(){
-        setValue( properties.get( key ) );
+        setValue( properties.get( key, Priority.CLIENT ) );
     }
     
     @Override

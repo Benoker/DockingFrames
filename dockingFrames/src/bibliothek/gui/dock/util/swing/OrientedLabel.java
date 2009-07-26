@@ -47,6 +47,7 @@ public class OrientedLabel extends JPanel{
     public OrientedLabel(){
         setOpaque( false );
         label.setOpaque( false );
+        label.setAlignmentX( 0 );
     }
     
     /**

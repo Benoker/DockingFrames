@@ -52,6 +52,10 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 	
 	/** the producer of new tabs */
 	private TabPane pane;
+
+	/** At which side to put the tabs if there is enough space */
+	private TabPlacement orientation = TabPlacement.TOP_OF_DOCKABLE;
+	
 	
 	/**
 	 * Sets the producer of new tabs.
@@ -67,6 +71,25 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 	 */
 	public TabPane getPane(){
 		return pane;
+	}
+	
+	/**
+	 * Gets the alignment of the tabs.
+	 * @return the alignment
+	 */
+	public TabPlacement getOrientation(){
+		return orientation;
+	}
+	
+	public void setOrientation( TabPlacement side ){
+		if( side == null )
+			throw new IllegalArgumentException( "side must not be null" );
+		if( this.orientation != side ){
+			this.orientation = side;
+			for( Tab tab : tabs ){
+				tab.setOrientation( side );
+			}
+		}
 	}
 	
 	/**
@@ -129,6 +152,10 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 		return tabs.size();
 	}
 	
+	/**
+	 * Adds a tab to this block at its end.
+	 * @param tab the new tab, not <code>null</code>
+	 */
 	public void addTab( Tab tab ){
 		insertTab( tab, tabs.size() );
 	}
@@ -406,6 +433,7 @@ public abstract class TabsLayoutBlock implements LayoutBlock{
 		if( tab == null )
 			throw new IllegalArgumentException( "tab must not be null" );
 		tabs.add( index, tab );
+		tab.setOrientation( getOrientation() );
 	}
 	
 	/**

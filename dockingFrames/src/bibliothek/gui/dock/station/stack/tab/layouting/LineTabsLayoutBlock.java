@@ -48,9 +48,6 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 	 */
 	private boolean sameSize = true;
 	
-	/** At which side to put the tabs if there is enough space */
-	private TabPlacement side = TabPlacement.TOP_OF_DOCKABLE;
-	
 	/**
 	 * If set, then all tabs have the same height (width) if laid out
 	 * horizontal (vertical).
@@ -68,25 +65,6 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 	public void setSameSize( boolean sameSize ){
 		this.sameSize = sameSize;
 	}
-	
-	/**
-	 * Gets the alignment of the tabs.
-	 * @return the alignment
-	 */
-	public TabPlacement getSide(){
-		return side;
-	}
-	
-	/**
-	 * Sets the alignment of the tabs
-	 * @param side the alignment, not <code>null</code>
-	 */
-	public void setSide( TabPlacement side ){
-		if( side == null )
-			throw new IllegalArgumentException( "side must not be null" );
-		this.side = side;
-	}
-	
 	
 	/**
 	 * Creates the tab that should be selected and adds it at an appropriate
@@ -133,7 +111,7 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 		Tab[] tabs = getTabs();
 		Rectangle bounds = getBounds();
 		
-		AxisConversion conversion = new DefaultAxisConversion( bounds, side );
+		AxisConversion conversion = new DefaultAxisConversion( bounds, getOrientation() );
 		bounds = conversion.viewToModel( bounds );
 		
 		Dimension[] preferreds = new Dimension[ tabs.length ];
@@ -186,10 +164,15 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 	 * @return the overlap
 	 */
 	private int[] getOverlapToPrevious( Tab[] tabs ){
+		boolean horizontal = getOrientation().isHorizontal();
+		
 		int[] result = new int[ tabs.length ];
 		for( int i = 1; i < tabs.length; i++ ){
 			Insets overlap = tabs[i].getOverlap( tabs[i-1] );
-			result[i] = overlap.left;
+			if( horizontal )
+				result[i] = overlap.left;
+			else
+				result[i] = overlap.top;
 		}
 		return result;
 	}
@@ -201,10 +184,14 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 	 * @return the overlap
 	 */
 	private int[] getOverlapToNext( Tab[] tabs ){
+		boolean horizontal = getOrientation().isHorizontal();
 		int[] result = new int[ tabs.length ];
 		for( int i = tabs.length-2; i >= 0; i-- ){
 			Insets overlap = tabs[i].getOverlap( tabs[i+1] );
-			result[i] = overlap.right;
+			if( horizontal )
+				result[i] = overlap.right;
+			else
+				result[i] = overlap.bottom;
 		}
 		return result;
 	}
@@ -213,7 +200,7 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 		int x = 0;
 		
 		for( int i = 0; i < tabs.length; i++ ){
-			Dimension size = conversion.viewToModel( preferreds[i] );
+			Dimension size = preferreds[i];
 			
 			tabs[i].setBounds( conversion.modelToView( new Rectangle( x, 0, size.width, sameSize ? height : Math.min( height, size.height ) ) ) );
 			x += size.width;
@@ -444,8 +431,6 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 		private int[] overlapPrevious;
 		private int[] overlapNext;
 		
-		private AxisConversion conversion = new DefaultAxisConversion( getBounds(), side );
-		
 		/**
 		 * Creates a new collector
 		 * @param dockables underlying set of {@link Dockable}s.
@@ -471,20 +456,51 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 			for( int i = 0; i < dockables.length; i++ ){
 				if( dockables[i] == dockable ){
 					insert( tab, i );
+					return;
 				}
 			}
 		}
 		
+		/**
+		 * Gets all the tabs that are currently not <code>null</code>
+		 * @return the visible tabs
+		 */
+		private Tab[] getVisibleTabs(){
+			int count = 0;
+			for( Tab tab : tabs ){
+				if( tab != null ){
+					count++;
+				}
+			}
+			Tab[] visible = new Tab[count];
+			int index = 0;
+			for( Tab tab : tabs ){
+				if( tab != null ){
+					visible[ index++ ] = tab;
+				}
+			}
+			return visible;
+		}
+		
 		private void insert( Tab tab, int index ){
 			tabs[ index ] = tab;
-			minimum[ index ] = conversion.viewToModel( tab.getMinimumSize() );
-			preferred[ index ] = conversion.viewToModel( tab.getPreferredSize() );
+			Tab[] visibleTabs = getVisibleTabs();
+			minimum[ index ] = tab.getMinimumSize( visibleTabs );
+			preferred[ index ] = tab.getPreferredSize( visibleTabs );
+			
+			boolean horizontal = getOrientation().isHorizontal();
 			
 			// search previous
 			for( int i = index-1; i >= 0; i-- ){
 				if( tabs[i] != null ){
-					overlapNext[i] = tabs[i].getOverlap( tab ).right;
-					overlapPrevious[ index ] = tab.getOverlap( tabs[i] ).left;
+					if( horizontal ){
+						overlapNext[i] = tabs[i].getOverlap( tab ).right;
+						overlapPrevious[ index ] = tab.getOverlap( tabs[i] ).left;
+					}
+					else{
+						overlapNext[i] = tabs[i].getOverlap( tab ).bottom;
+						overlapPrevious[ index ] = tab.getOverlap( tabs[i] ).top;
+					}
 					break;
 				}
 			}
@@ -492,8 +508,14 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 			// search next
 			for( int i = index+1; i < tabs.length; i++ ){
 				if( tabs[i] != null ){
-					overlapNext[ index ] = tab.getOverlap( tabs[i] ).right;
-					overlapPrevious[i] = tabs[i].getOverlap( tab ).left;
+					if( horizontal ){
+						overlapNext[ index ] = tab.getOverlap( tabs[i] ).right;
+						overlapPrevious[i] = tabs[i].getOverlap( tab ).left;
+					}
+					else{
+						overlapNext[ index ] = tab.getOverlap( tabs[i] ).bottom;
+						overlapPrevious[i] = tabs[i].getOverlap( tab ).top;
+					}
 					break;
 				}
 			}
@@ -521,22 +543,41 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 			
 			int previous = -1;
 			
-			for( int i = 0; i < tabs.length; i++ ){
-				if( tabs[i] != null ){
-					Dimension size = required[i];
-					
-					height = Math.max( height, size.height );
-					
-					width += size.width;
-					
-					if( previous != -1 ){
-						width -= Math.max( overlapNext[ previous ], overlapPrevious[ i ] );
+			if( getOrientation().isHorizontal() ){
+				for( int i = 0; i < tabs.length; i++ ){
+					if( tabs[i] != null ){
+						Dimension size = required[i];
+						
+						height = Math.max( height, size.height );
+						
+						width += size.width;
+						
+						if( previous != -1 ){
+							width -= Math.max( overlapNext[ previous ], overlapPrevious[ i ] );
+						}
+						
+						previous = i;
 					}
-					
-					previous = i;
 				}
 			}
-			
+			else{
+				for( int i = 0; i < tabs.length; i++ ){
+					if( tabs[i] != null ){
+						Dimension size = required[i];
+						
+						width = Math.max( width, size.width );
+						
+						height += size.height;
+						
+						if( previous != -1 ){
+							height -= Math.max( overlapNext[ previous ], overlapPrevious[ i ] );
+						}
+						
+						previous = i;
+					}
+				}
+			}
+				
 			return new Dimension( width, height );			
 		}
 	}

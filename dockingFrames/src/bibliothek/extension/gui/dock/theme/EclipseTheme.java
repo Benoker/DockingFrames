@@ -69,6 +69,7 @@ import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.station.stack.StackDockComponentParent;
 import bibliothek.gui.dock.station.stack.tab.MenuLineLayout;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
+import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.themes.ThemeProperties;
@@ -180,6 +181,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
             }
         });
         setDockableSelection( new EclipseDockableSelection() );
+        setTabPlacement( TabPlacement.TOP_OF_DOCKABLE );
     }
 
     @Override

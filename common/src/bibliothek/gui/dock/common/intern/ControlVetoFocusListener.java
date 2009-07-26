@@ -27,28 +27,28 @@ public class ControlVetoFocusListener implements FocusVetoListener{
 		this.callback = callback;
 	}
 
-	private boolean veto( Dockable dockable ){
+	private FocusVeto veto( Dockable dockable ){
 		Dockable current = control.intern().getController().getFocusedDockable();
 		
 		if( current != dockable ){
 			if( current instanceof CommonDockable ){
 				if( !callback.willLoseFocus( ((CommonDockable)current).getDockable() ))
-					return true;
+					return FocusVeto.VETO;
 			}
 
 			if( dockable instanceof CommonDockable ){
 				if( !callback.willGainFocus( ((CommonDockable)dockable).getDockable() ))
-					return true;
+					return FocusVeto.VETO;
 			}
 		}
-		return false;
+		return FocusVeto.NONE;
 	}
 	
-	public boolean vetoFocus( MouseFocusObserver controller, DockTitle title ){
+	public FocusVeto vetoFocus( MouseFocusObserver controller, DockTitle title ){
 		return veto( title.getDockable() );
 	}
 
-	public boolean vetoFocus( MouseFocusObserver controller, Dockable dockable ){
+	public FocusVeto vetoFocus( MouseFocusObserver controller, Dockable dockable ){
 		return veto( dockable );
 	}
 }

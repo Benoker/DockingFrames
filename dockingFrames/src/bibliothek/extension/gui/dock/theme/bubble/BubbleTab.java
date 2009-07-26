@@ -349,6 +349,10 @@ public class BubbleTab extends JPanel implements CombinedTab, ChangeListener, Ru
 		repaint();
 	}
 
+	public Dimension getPreferredSize( Tab[] tabs ){
+		return getPreferredSize();
+	}
+	
 	@Override
 	public Dimension getPreferredSize(){
 		Dimension size = label.getPreferredSize();
@@ -364,6 +368,10 @@ public class BubbleTab extends JPanel implements CombinedTab, ChangeListener, Ru
 		}
 	}
 
+	public Dimension getMinimumSize( Tab[] tabs ){
+		return getMinimumSize();
+	}
+	
 	@Override
 	public Dimension getMinimumSize(){
 		return getPreferredSize();

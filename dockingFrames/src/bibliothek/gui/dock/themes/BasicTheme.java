@@ -108,7 +108,7 @@ public class BasicTheme implements DockTheme{
     private StackDockComponentFactory stackDockComponentFactory;
     
     /** the side at which tabs are normally shown */
-    private TabPlacement tabSide;
+    private TabPlacement tabPlacement;
 
     /** the key to set the {@link ColorScheme} of this theme */
     public static final PropertyKey<ColorScheme> BASIC_COLOR_SCHEME = 
@@ -178,6 +178,7 @@ public class BasicTheme implements DockTheme{
             }
         });
         setDockableSelection( new BasicDockableSelection() );
+        setTabPlacement( TabPlacement.BOTTOM_OF_DOCKABLE );
     }
 
     public void install( DockController controller ) {
@@ -191,7 +192,7 @@ public class BasicTheme implements DockTheme{
         updateUI();
 
         controller.getProperties().set( StackDockStation.COMPONENT_FACTORY, stackDockComponentFactory, Priority.THEME );
-        controller.getProperties().set( StackDockStation.TAB_PLACEMENT, tabSide, Priority.THEME );
+        controller.getProperties().set( StackDockStation.TAB_PLACEMENT, tabPlacement, Priority.THEME );
         
         colorScheme.setProperties( controller );
 
@@ -308,7 +309,7 @@ public class BasicTheme implements DockTheme{
      * Transmits the {@link ColorBridge} for <code>kind</code> to the {@link ColorManager}
      * @param kind the kind of provider that should be published
      */
-    protected <P extends DockColor> void updateColorBridge( Path kind ){
+    protected void updateColorBridge( Path kind ){
         ColorBridgeFactory factory = colorScheme.getValue().getBridgeFactory( kind );
 
         if( factory != null ){
@@ -442,19 +443,19 @@ public class BasicTheme implements DockTheme{
      * Sets the side at which tabs are to be displayed. This method has to
      * be called before a {@link DockController} is installed, otherwise the
      * settings has no effect.
-     * @param tabSide the side at which to show tabs, may be <code>null</code> to
+     * @param tabPlacement the side at which to show tabs, may be <code>null</code> to
      * use the default value
      */
-    public void setTabSide( TabPlacement tabSide ){
-		this.tabSide = tabSide;
+    public void setTabPlacement( TabPlacement tabPlacement ){
+		this.tabPlacement = tabPlacement;
 	}
     
     /**
      * Gets the side at which tabs are displayed.
      * @return the side with the tabs, may be <code>null</code>
      */
-    public TabPlacement getTabSide(){
-		return tabSide;
+    public TabPlacement getTabPlacement(){
+		return tabPlacement;
 	}
 
     public DockableMovingImageFactory getMovingImageFactory( DockController controller ) {

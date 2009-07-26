@@ -48,6 +48,19 @@ public class RectEclipseBorder implements Border {
     /** the source for colors */
     private DockController controller;
     
+	
+	/** constant indicating the top left edge has to be painted round */
+	public static final int TOP_LEFT = 1;
+	/** constant indicating the top right edge has to be painted round */
+	public static final int TOP_RIGHT = 2;
+	/** constant indicating the bottom left edge has to be painted round */
+	public static final int BOTTOM_LEFT = 4;
+	/** constant indicating the bottom right edge has to be painted round */
+	public static final int BOTTOM_RIGHT = 8;
+	
+	/** which edges to paint round */
+	private int roundEdges;
+
     /**
      * Creates a new border.
      * @param controller the controller for which this border will be used
@@ -55,20 +68,54 @@ public class RectEclipseBorder implements Border {
      * background color or let empty.
      */
     public RectEclipseBorder( DockController controller, boolean fillEdges ){
+    	this( controller, fillEdges, TOP_LEFT | TOP_RIGHT );
+    }
+    
+    /**
+     * Creates a new border.
+     * @param controller the controller for which this border will be used
+     * @param fillEdges whether the top edges should be filled with the
+     * background color or let empty.
+     * @param roundEdges which edges to paint round
+     */
+    public RectEclipseBorder( DockController controller, boolean fillEdges, int roundEdges ){
         this.controller = controller;
         this.fillEdges = fillEdges;
     }
+    
+    /**
+     * Sets the edges which have to be painted round, see {@link #TOP_LEFT},
+     * {@link #TOP_RIGHT}, {@link #BOTTOM_LEFT} and {@link #BOTTOM_RIGHT}.
+     * @param roundEdges the round edges
+     */
+    public void setRoundEdges( int roundEdges ){
+		this.roundEdges = roundEdges;
+	}
     
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
         if( fillEdges ){
             g.setColor( c.getBackground() );
     
             // top left corner
-            g.drawLine( 0, 0, 1, 0 );
-            g.drawLine( 0, 1, 0, 1 );
+            if( (roundEdges & TOP_LEFT) != 0 ){
+            	g.drawLine( 0, 0, 1, 0 );
+            	g.drawLine( 0, 1, 0, 1 );
+            }
             
-            g.drawLine( width-2, 0, width-1, 0 );
-            g.drawLine( width-1, 1, width-1, 1 );
+            if( (roundEdges & TOP_RIGHT) != 0 ){
+            	g.drawLine( width-2, 0, width-1, 0 );
+            	g.drawLine( width-1, 1, width-1, 1 );
+            }
+            
+            if( (roundEdges & BOTTOM_LEFT) != 0 ){
+            	g.drawLine( 0, height-1, 1, height-1 );
+            	g.drawLine( 0, height-2, 0, height-2 );
+            }
+            
+            if( (roundEdges & BOTTOM_RIGHT) != 0 ){
+            	g.drawLine( width-2, height-1, width-1, height-1 );
+            	g.drawLine( width-1, height-2, width-1, height-2 );
+            }
         }
         
         Color color = controller.getColors().get( "stack.border" );
@@ -78,19 +125,47 @@ public class RectEclipseBorder implements Border {
         g.setColor( color );
         
         // top left corner
-        g.drawLine( 1, 1, 1, 1 );
-        // top right corner
-        g.drawLine( width-2, 1, width-2, 1 );
+        if( (roundEdges & TOP_LEFT) != 0 ){
+        	g.drawLine( 1, 1, 1, 1 );
+        }
+        else{
+        	g.drawLine( 0, 0, 1, 0 );
+        	g.drawLine( 0, 1, 0, 1 );
+        }
+        
+        if( (roundEdges & TOP_RIGHT) != 0 ){
+        	g.drawLine( width-2, 1, width-2, 1 );
+        }
+        else{
+        	g.drawLine( width-2, 0, width-1, 0 );
+        	g.drawLine( width-1, 1, width-1, 1 );
+        }
+        
+        if( (roundEdges & BOTTOM_LEFT) != 0 ){
+        	g.drawLine( 1, height-2, 1, height-2 );
+        }
+        else{
+        	g.drawLine( 0, height-2, 0, height-1 );
+        	g.drawLine( 1, height-1, 1, height-1 );
+        }
+        
+        if( (roundEdges & BOTTOM_RIGHT ) != 0 ){
+        	g.drawLine( width-2, height-2, width-2, height-2 );
+        }
+        else{
+        	g.drawLine( width-1, height-2, width-1, height-1 );
+        	g.drawLine( width-2, height-1, width-2, height-1 );
+        }
         
         // rest
         // top
         g.drawLine( 2, 0, width-3, 0 );
         // left
-        g.drawLine( 0, 2, 0, height - 1);
+        g.drawLine( 0, 2, 0, height - 3);
         // right
-        g.drawLine( width-1, 2, width-1, height - 1);
+        g.drawLine( width-1, 2, width-1, height - 3);
         // bottom
-        g.drawLine( 0, height-1, width-1, height-1 );
+        g.drawLine( 2, height-1, width-3, height-1 );
     }
 
     public Insets getBorderInsets(Component c) {

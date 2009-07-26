@@ -47,6 +47,25 @@ public class ActionBinder extends DockAdapter{
     /** the observers of each Dockable that is known to this manager */
     private Map<Dockable, SourceObserver> observers = new HashMap<Dockable, SourceObserver>();
     
+    /** the controller for which this binder works */
+    private DockController controller;
+    
+    /**
+     * Creates a new binder.
+     * @param controller the owner, not <code>null</code>
+     */
+    public ActionBinder( DockController controller ){
+    	this.controller = controller;
+    }
+    
+    /**
+     * Gets the owner of this binder.
+     * @return the owner, not <code>null</code>
+     */
+    public DockController getController(){
+		return controller;
+	}
+    
     @Override
     public void dockableRegistered( DockController controller, Dockable dockable ) {
         observers.put( dockable, new SourceObserver( dockable ) );
@@ -63,7 +82,7 @@ public class ActionBinder extends DockAdapter{
      * @author Benjamin Sigg
      *
      */
-    private static class SourceObserver implements DockActionSourceListener{
+    private class SourceObserver implements DockActionSourceListener{
         /** the set of bound actions */
         private List<DockAction> actions = new LinkedList<DockAction>();
         

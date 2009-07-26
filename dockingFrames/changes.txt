@@ -244,9 +244,12 @@
 - Layout: New CommonEclipseThemeConnector ensures that CDockable with no title do not have a tab if not necessary in the EclipseTheme
 - Bugfix: workaround for bug http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6797587 , AWT components not painted properly if behind a glass-pane
 ! API: FocusObserver calls additional method "handleVeto" if a veto was spoken, the method currently consumes the event making it invisible for the application
+! API: FocusVetoListener returns a more details description how to handle a veto.
 - Bugfix: DockStations check whether dropping some Dockable would create an invalid Component-tree, and forbid such drag and drop operations
 - API: new CVetoFocusListenr in Common, can speak a veto for some focus changes
 - API: new SingleTabDecider and support for single tabs: the SingleTabDecider decides which Dockables are displayed with a single tab, the property can be changed during runtime.
 - API: CDockable has a new property "singleTabShown" which is forwarded to a SingleTabDecider
 ! API: DockProperties now supports different priorities for values, "default", "theme" and "client".
 - API: new property StackDockStation.TAB_PLACEMENT globally sets where to put tabs
+- API: new TabLayoutManager to handle the positioning of tabs on a StackDockStation
+- Bugfix: SimpleDockAction did not unbind itself correctly due of events fired in an unfortunate order. Repaired thanks to an anonymous user.

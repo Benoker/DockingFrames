@@ -26,26 +26,56 @@
 package bibliothek.extension.gui.dock.theme.eclipse.stack.tab;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import bibliothek.gui.dock.DockElementRepresentative;
+import javax.swing.Icon;
 
+import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTab;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElementRepresentative;
+import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
+
+/**
+ * A {@link TabComponent} paints the content of an {@link EclipseTab}. This
+ * component is informed about the change of properties that are often needed
+ * to paint properly.
+ */
 public interface TabComponent extends DockElementRepresentative{
+	/**
+	 * Gets the internal representation of this {@link TabComponent}, this
+	 * method must always return the same value.
+	 * @return the internal representation, not <code>null</code>
+	 */
 	public Component getComponent();
 	
+	/**
+	 * Tells this component whether it has to be painted selected or not.
+	 * @param selected the selection state of this tab
+	 */
 	public void setSelected( boolean selected );
 	
+	/**
+	 * Tells this component that its {@link Dockable} gained or lost focus.
+	 * @param focused the state of its dockable.
+	 */
 	public void setFocused( boolean focused );
 	
+	/**
+	 * Tells this component whether to paint an {@link Icon} if not selected.
+	 * @param paint <code>true</code> if an icon is always to be painted,
+	 * <code>false</code> if icons should only appear on selected tabs.
+	 */
 	public void setPaintIconWhenInactive( boolean paint );
 	
 	/**
-	 * Called when a property of the tab has been changed and this 
-	 * component has to reevaluate its content.
+	 * Sets the placement of the tabs and as a result the orientation of this 
+	 * component.
+	 * @param orientation the orientation, not <code>null</code>
 	 */
-	public void update();
+	public void setOrientation( TabPlacement orientation );
 	
 	/**
 	 * Gets the number of pixels which should be covered at the sides
@@ -61,6 +91,24 @@ public interface TabComponent extends DockElementRepresentative{
 	/** Informs this tab that it is invisible and must not have any connections to other resources */
 	public void unbind();
 
+	/**
+	 * Gets the minimum size of this tab under the assumption that 
+	 * this tab is displayed together with <code>tabs</code>.
+	 * @param tabs the displayed tabs, exactly one entry is <code>this</code>
+	 * and may contain <code>null</code> entries.
+	 * @return the minimum size of this tab
+	 */
+	public Dimension getMinimumSize( TabComponent[] tabs );
+	
+	/**
+	 * Gets the preferred size of this tab under the assumption that 
+	 * this tab is displayed together with <code>tabs</code>.
+	 * @param tabs the displayed tabs, exactly one entry is <code>this</code>
+	 * and may contain <code>null</code> entries.
+	 * @return the preferred size of this tab
+	 */
+	public Dimension getPreferredSize( TabComponent[] tabs );
+	
 	public void addMouseListener( MouseListener listener );
 	
 	public void addMouseMotionListener( MouseMotionListener listener );

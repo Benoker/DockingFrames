@@ -60,7 +60,7 @@ public class ButtonContentPreference extends DefaultPreference<String>{
 	
 	@Override
 	public void read() {
-		setValue( choice.valueToIdentifier(properties.get( FlapDockStation.BUTTON_CONTENT )));
+		setValue( choice.valueToIdentifier(properties.get( FlapDockStation.BUTTON_CONTENT, Priority.CLIENT )));
 	}
 	
 	@Override

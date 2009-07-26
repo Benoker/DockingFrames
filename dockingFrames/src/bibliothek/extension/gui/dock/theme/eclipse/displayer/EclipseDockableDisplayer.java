@@ -38,9 +38,12 @@ import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
+import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.util.PropertyValue;
 
 /**
  * @author Janni Kovacs
@@ -54,7 +57,19 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 	
 	private List<DockableDisplayerListener> listeners = new ArrayList<DockableDisplayerListener>();
 	private TitleBarObserver observer;
+	private PropertyValue<TabPlacement> tabPlacement = new PropertyValue<TabPlacement>( StackDockStation.TAB_PLACEMENT ){
+		@Override
+		protected void valueChanged( TabPlacement oldValue, TabPlacement newValue ){
+			setTabPlacement( newValue );
+		}
+	};
 	
+	/**
+	 * Creates a new {@link DockableDisplayer}.
+	 * @param theme the theme which creates this displayer, not <code>null</code>
+	 * @param station the parent of this displayer, not <code>null</code>
+	 * @param dockable the element shown on this displayer, may be <code>null</code>
+	 */
 	public EclipseDockableDisplayer(EclipseTheme theme, DockStation station, Dockable dockable) {
 		super(theme, station);
 		
@@ -125,6 +140,7 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 		if( observer != null ){
 			observer.setController( controller );
 		}
+		tabPlacement.setProperties( controller );
 	}
 
 	public boolean titleContains( int x, int y ){

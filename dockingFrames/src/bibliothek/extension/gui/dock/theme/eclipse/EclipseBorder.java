@@ -25,7 +25,11 @@
  */
 package bibliothek.extension.gui.dock.theme.eclipse;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Insets;
+
 import javax.swing.border.Border;
 
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexSystemColor;
@@ -35,33 +39,98 @@ import bibliothek.gui.dock.util.color.ColorCodes;
 /**
  * A border that has round edges.
  * @author Janni Kovacs
+ * @author Benjamin Sigg
  */
 @ColorCodes( "stack.border" )
 public class EclipseBorder implements Border {
+	/** constant indicating the top left edge has to be painted round */
+	public static final int TOP_LEFT = 1;
+	/** constant indicating the top right edge has to be painted round */
+	public static final int TOP_RIGHT = 2;
+	/** constant indicating the bottom left edge has to be painted round */
+	public static final int BOTTOM_LEFT = 4;
+	/** constant indicating the bottom right edge has to be painted round */
+	public static final int BOTTOM_RIGHT = 8;
+	
+	/** which edges to paint round */
+	private int roundEdges;
+	
 	private boolean fillEdges;
 	private DockController controller;
 	
+	/**
+	 * Creates a new border
+	 * @param controller the owner of this border
+	 * @param fillEdges whether to paint over the edges
+	 */
 	public EclipseBorder( DockController controller, boolean fillEdges ){
+		this( controller, fillEdges, TOP_LEFT | TOP_RIGHT );
+	}
+	
+	/**
+	 * Creates a new border
+	 * @param controller the owner of this border
+	 * @param fillEdges whether to paint over the edges
+	 * @param edges the edges that are painted round, or-ed from {@link #TOP_LEFT},
+	 * {@link #TOP_RIGHT}, {@link #BOTTOM_LEFT} and {@link #BOTTOM_RIGHT}
+	 */
+	public EclipseBorder( DockController controller, boolean fillEdges, int edges ){
 	    this.fillEdges = fillEdges;
 	    this.controller = controller;
+	    roundEdges = edges;
+	}
+	
+	/**
+	 * Sets which edges are painted round.
+	 * @param roundEdges the edges to paint round
+	 */
+	public void setRoundEdges( int roundEdges ){
+		this.roundEdges = roundEdges;
+	}
+	
+	/**
+	 * Tells which edges are painted round.
+	 * @return the round edges
+	 */
+	public int getRoundEdges(){
+		return roundEdges;
 	}
 	
 	public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
 		if( fillEdges ){
     	    g.setColor( c.getBackground() );
     
-    		// top left corner
-    		g.fillRect( 0, 0, 6, 1 );
-    		g.fillRect( 0, 1, 4, 1 );
-    		g.fillRect( 0, 2, 3, 1 );
-    		g.fillRect( 0, 3, 2, 1 );
-    		g.fillRect( 0, 4, 1, 2 );
-    		
-    	    g.fillRect( width-6, 0, 6, 1 );
-            g.fillRect( width-4, 1, 4, 1 );
-            g.fillRect( width-3, 2, 3, 1 );
-            g.fillRect( width-2, 3, 2, 1 );
-            g.fillRect( width-1, 4, 1, 2 );
+    	    if( (roundEdges & TOP_LEFT) != 0 ){
+    	    	g.fillRect( 0, 0, 6, 1 );
+    	    	g.fillRect( 0, 1, 4, 1 );
+    	    	g.fillRect( 0, 2, 3, 1 );
+    	    	g.fillRect( 0, 3, 2, 1 );
+    	    	g.fillRect( 0, 4, 1, 2 );
+    	    }
+    
+    	    if( (roundEdges & TOP_RIGHT ) != 0 ){
+	    	    g.fillRect( width-6, 0, 6, 1 );
+	            g.fillRect( width-4, 1, 4, 1 );
+	            g.fillRect( width-3, 2, 3, 1 );
+	            g.fillRect( width-2, 3, 2, 1 );
+	            g.fillRect( width-1, 4, 1, 2 );
+    	    }
+    	    
+    	    if( (roundEdges & BOTTOM_LEFT) != 0 ){
+    	    	g.fillRect( 0, height-1, 6, 1 );
+    	    	g.fillRect( 0, height-1-1, 4, 1 );
+    	    	g.fillRect( 0, height-1-2, 3, 1 );
+    	    	g.fillRect( 0, height-1-3, 2, 1 );
+    	    	g.fillRect( 0, height-2-4, 1, 2 );
+    	    }
+    	    
+    	    if( (roundEdges & BOTTOM_RIGHT) != 0 ){
+    	    	g.fillRect( width-6, height-1, 6, 1 );
+    	    	g.fillRect( width-4, height-1-1, 4, 1 );
+    	    	g.fillRect( width-3, height-1-2, 3, 1 );
+    	    	g.fillRect( width-2, height-1-3, 2, 1 );
+    	    	g.fillRect( width-1, height-2-4, 1, 2 );
+    	    }
 		}
 		
 		Color color = controller.getColors().get( "stack.border" );
@@ -69,21 +138,51 @@ public class EclipseBorder implements Border {
 		    color = RexSystemColor.getBorderColor();
 		
 		g.setColor( color );
-		// top left corner
-		g.drawLine(4, 1, 5, 1);
-		g.drawLine(3, 2, 3, 2);
-		g.drawLine(2, 3, 2, 3);
-		g.drawLine(1, 4, 1, 5);
-		// top right corner
-		g.drawLine(width - 5, 1, width - 6, 1);
-		g.drawLine(width - 4, 2, width - 4, 2);
-		g.drawLine(width - 3, 3, width - 3, 3);
-		g.drawLine(width - 2, 4, width - 2, 5);
-		// rest
-		g.drawLine(0, 6, 0, height - 1);
-		g.drawLine(0, height - 1, width - 1, height - 1);
-		g.drawLine(width - 1, 6, width - 1, height - 1);
-		g.drawLine(6, 0, width - 7, 0);
+		if( (roundEdges & TOP_LEFT) != 0 ){
+			g.drawLine(4, 1, 5, 1);
+			g.drawLine(3, 2, 3, 2);
+			g.drawLine(2, 3, 2, 3);
+			g.drawLine(1, 4, 1, 5);
+		}
+		else{
+			g.drawLine( 0, 0, 6, 0 );
+			g.drawLine( 0, 1, 0, 6 );
+		}
+		if( (roundEdges & TOP_RIGHT) != 0 ){
+			g.drawLine(width - 5, 1, width - 6, 1);
+			g.drawLine(width - 4, 2, width - 4, 2);
+			g.drawLine(width - 3, 3, width - 3, 3);
+			g.drawLine(width - 2, 4, width - 2, 5);
+		}
+		else{
+			g.drawLine( width-6, 0, width-1, 0 );
+			g.drawLine( width-1, 1, width-1, 6 );
+		}
+		if( (roundEdges & BOTTOM_LEFT ) != 0 ){
+			g.drawLine(4, height-2, 5, height-2);
+			g.drawLine(3, height-3, 3, height-3);
+			g.drawLine(2, height-4, 2, height-4);
+			g.drawLine(1, height-5, 1, height-6);
+		}
+		else{
+			g.drawLine( 0, height-1, 0, height-6 );
+			g.drawLine( 1, height-1, 6, height-1 );
+		}
+		if( (roundEdges & BOTTOM_RIGHT) != 0 ){
+			g.drawLine(width-5, height-2, width-6, height-2);
+			g.drawLine(width-4, height-3, width-4, height-3);
+			g.drawLine(width-3, height-4, width-3, height-4);
+			g.drawLine(width-2, height-5, width-2, height-6);
+		}
+		else{
+			g.drawLine( width-1, height-1, width-6, height-1 );
+			g.drawLine( width-1, height-2, width-1, height-6 );
+		}
+		// between edges
+		g.drawLine(0, 6, 0, height-7);
+		g.drawLine(6, height-1, width-7, height-1);
+		g.drawLine(width-1, 7, width-1, height-7);
+		g.drawLine(6, 0, width-7, 0);
 	}
 
 	public Insets getBorderInsets(Component c) {

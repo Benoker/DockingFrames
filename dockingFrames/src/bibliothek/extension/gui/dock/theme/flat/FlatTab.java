@@ -25,6 +25,7 @@ import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.station.stack.CombinedTab;
+import bibliothek.gui.dock.station.stack.tab.Tab;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.stack.tab.TabPaneComponent;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
@@ -394,6 +395,10 @@ public class FlatTab extends JPanel implements CombinedTab, DockableFocusListene
         removeMouseMotionListener( listener );
     }
     
+    public Dimension getPreferredSize( Tab[] tabs ){
+	    return getPreferredSize();
+    }
+    
     @Override
     public Dimension getPreferredSize() {
         Dimension preferred = super.getPreferredSize();
@@ -403,6 +408,10 @@ public class FlatTab extends JPanel implements CombinedTab, DockableFocusListene
             preferred.height = Math.max( preferred.height, 10 );
         }
         return preferred;
+    }
+    
+    public Dimension getMinimumSize( Tab[] tabs ){
+	    return getMinimumSize();
     }
     
     @Override

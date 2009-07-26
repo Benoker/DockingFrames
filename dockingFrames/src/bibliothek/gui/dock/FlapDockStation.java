@@ -1585,13 +1585,17 @@ public class FlapDockStation extends AbstractDockableStation {
     }
     
     private class ControllerListener implements FocusVetoListener, DockableFocusListener{
-        public boolean vetoFocus( MouseFocusObserver controller, Dockable dockable ) {
-            return false;
+        public FocusVeto vetoFocus( MouseFocusObserver controller, Dockable dockable ) {
+            return FocusVeto.NONE;
         }
         
-        public boolean vetoFocus( MouseFocusObserver controller, DockTitle title ) {
-            return buttonTitles.containsValue( title );
+        public FocusVeto vetoFocus( MouseFocusObserver controller, DockTitle title ) {
+            if( buttonTitles.containsValue( title ) )
+            	return FocusVeto.VETO_NO_CONSUME;
+            else
+            	return FocusVeto.NONE;
         }
+        
         public void dockableFocused( DockableFocusEvent event ) {
             Dockable front = getFrontDockable();
             

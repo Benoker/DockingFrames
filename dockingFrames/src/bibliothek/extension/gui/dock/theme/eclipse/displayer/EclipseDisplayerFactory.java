@@ -45,6 +45,10 @@ import bibliothek.gui.dock.title.DockTitle;
 public class EclipseDisplayerFactory implements DisplayerFactory {
 	private EclipseTheme theme;
 
+	/**
+	 * Creates a new displayer factory.
+	 * @param theme the owner of this factory, not <code>null</code>
+	 */
 	public EclipseDisplayerFactory( EclipseTheme theme ) {
 		this.theme = theme;
 	}
@@ -75,6 +79,15 @@ public class EclipseDisplayerFactory implements DisplayerFactory {
 		}
 	}
 	
+	/**
+	 * Creates a new displayer.
+	 * @param station the parent of the displayer
+	 * @param dockable the content, may be <code>null</code>
+	 * @param title the title to show, may be <code>null</code>
+	 * @param border whether to show a border
+	 * @param bar what kind of titlebar the displayer should use 
+	 * @return the new displayer
+	 */
 	protected BasicDockableDisplayer create( DockStation station, Dockable dockable, DockTitle title, boolean border, TitleBar bar ) {
 		Location location = Location.TOP;
 		if( dockable.asDockStation() != null ){
