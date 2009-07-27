@@ -263,6 +263,9 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
     	/** the controller which is currently observed by this forwarder, can be <code>null</code> */
     	private DockController controller;
     	
+    	/** whether this forwarder has been destroyed */
+    	private boolean destroyed = false;
+    	
     	/**
     	 * Creates a new forwarder.
     	 * @param dockable the element for which the calls will be forwarded
@@ -285,7 +288,12 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
     		if( this.controller != null )
     			this.controller.getKeyboardController().removeListener( this );
     		
-    		this.controller = controller;
+    		if( destroyed ){
+    			this.controller = null;
+    		}
+    		else{
+    			this.controller = controller;
+    		}
     		
     		if( controller != null )
     			controller.getKeyboardController().addListener( this );
@@ -295,6 +303,7 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
     	 * Removes all listeners added by this forwarder.
     	 */
     	public void destroy(){
+    		destroyed = true;
     		setController( null );
     		dockable.removeDockHierarchyListener( this );
     	}
