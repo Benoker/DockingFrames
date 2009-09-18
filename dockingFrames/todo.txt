@@ -27,3 +27,4 @@
 - MouseFocusObserver: when canceling an event but the user clicked on a tab, then the event is still processed.
 - Bug: title of FlapDockStation no longer receives mouse pressed events.
 - Allow to hide the actions in non-selected tab in the EclipseTheme.
+- Update listeners: always inform before closing a Dockable
