@@ -363,16 +363,16 @@ public class RectGradientPainter extends BaseTabComponent {
 				break;
 			case RIGHT_OF_DOCKABLE:
 				g2d.fillRect( 0, 1, width, height-2 );
-				g2d.drawLine( 1, 0, width, 0 );
+				g2d.drawLine( 0, 0, width-1, 0 );
 				g2d.setPaint( normalBackground );
 				// left
 				if (tabIndex != 0) {
-					g2d.drawLine( 0, 1, 0, 1 );
-					g2d.drawLine( 1, 0, width, 0 );
+					g2d.drawLine( width-1, 1, width-1, 1 );
+					g2d.drawLine( 0, 0, width-2, 0 );
 				}
 				// right
-				g2d.drawLine( 0, height-2, 0, height-2 );
-				g2d.drawLine( 1, height-1, width, height-1 );
+				g2d.drawLine( width-1, height-2, width-1, height-2 );
+				g2d.drawLine( 0, height-1, width-2, height-1 );
 				break;
 		}
 	}

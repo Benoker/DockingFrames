@@ -31,9 +31,15 @@ import javax.swing.Icon;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.gui.DockController;
+import bibliothek.gui.dock.action.view.ActionViewConverter;
+import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.ColorMap;
+import bibliothek.gui.dock.common.action.CPanelPopup;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.action.panel.EclipsePanelPopupGenerator;
+import bibliothek.gui.dock.common.intern.action.panel.PanelDropDownGenerator;
+import bibliothek.gui.dock.common.intern.action.panel.PanelMenuGenerator;
 import bibliothek.gui.dock.common.intern.color.BasicButtonTitleTransmitter;
 import bibliothek.gui.dock.common.intern.color.EclipseTabTransmitter;
 import bibliothek.gui.dock.common.intern.font.FontBridgeFactory;
@@ -125,11 +131,19 @@ public class CEclipseTheme extends CDockTheme<EclipseTheme>{
         for( Map.Entry<String, Icon> entry : icons.entrySet() ){
             manager.setIconTheme( entry.getKey(), entry.getValue() );
         }
+        ActionViewConverter converter = controller.getActionViewConverter();
+    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.TITLE, new EclipsePanelPopupGenerator());
+    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.MENU, new PanelMenuGenerator() );
+    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.DROP_DOWN, new PanelDropDownGenerator() );
     }
     
     @Override
     public void uninstall( DockController controller ) {
         super.uninstall( controller );
         controller.getIcons().clearThemeIcons();
+        ActionViewConverter converter = controller.getActionViewConverter();
+    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.TITLE, null );
+    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.MENU, null );
+    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.DROP_DOWN, null );
     }
 }

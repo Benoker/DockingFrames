@@ -267,8 +267,10 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 	 */
 	public void remove( int index ){
 		Dockable dockable = dockables.remove( index );
+		boolean selected = false;
 		
 		if( selection == dockable ){
+			selected = true;
 			setSelectedDockable( null );
 		}
 		
@@ -276,10 +278,12 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 		fireRemoved( dockable );
 		
 		// select other tab
-		if( index >= getDockableCount() )
-			index = getDockableCount()-1;
-		if( index >= 0 )
-			setSelectedDockable( getDockable( index ) );
+		if( selected ){
+			if( index >= getDockableCount() )
+				index = getDockableCount()-1;
+			if( index >= 0 )
+				setSelectedDockable( getDockable( index ) );
+		}
 		
 		revalidate();
 	}

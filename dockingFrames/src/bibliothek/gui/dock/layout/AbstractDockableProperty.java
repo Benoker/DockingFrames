@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -26,8 +26,6 @@
 
 package bibliothek.gui.dock.layout;
 
-
-
 /**
  * A simple implementation of {@link DockableProperty} which provides
  * only the basic features.
@@ -53,4 +51,46 @@ public abstract class AbstractDockableProperty implements DockableProperty {
         if( successor != null )
             copy.successor = successor;
     }
+
+    public boolean equalsNoSuccessor( DockableProperty property ){
+    	DockableProperty successor = this.successor;
+    	DockableProperty successorProperty = property.getSuccessor();
+    	
+    	try{
+    		this.successor = null;
+    		property.setSuccessor( null );
+    		
+    		return equals( property );
+    	}
+    	finally{
+    		this.successor = successor;
+    		property.setSuccessor( successorProperty );
+    	}
+    }
+    
+	@Override
+	public int hashCode(){
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((successor == null) ? 0 : successor.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals( Object obj ){
+		if( this == obj )
+			return true;
+		if( obj == null )
+			return false;
+		if( !(obj instanceof AbstractDockableProperty) )
+			return false;
+		AbstractDockableProperty other = (AbstractDockableProperty)obj;
+		if( successor == null ){
+			if( other.successor != null )
+				return false;
+		}else if( !successor.equals( other.successor ) )
+			return false;
+		return true;
+	}   
 }

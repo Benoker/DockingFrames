@@ -115,4 +115,26 @@ public class StackDockProperty extends AbstractDockableProperty {
     public void load( XElement element ) {
         index = element.getInt();
     }
+
+	@Override
+	public int hashCode(){
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + index;
+		return result;
+	}
+
+	@Override
+	public boolean equals( Object obj ){
+		if( this == obj )
+			return true;
+		if( !super.equals( obj ) )
+			return false;
+		if( !(obj instanceof StackDockProperty) )
+			return false;
+		StackDockProperty other = (StackDockProperty)obj;
+		if( index != other.index )
+			return false;
+		return true;
+	}
 }

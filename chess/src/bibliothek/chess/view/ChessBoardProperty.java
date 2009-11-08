@@ -99,4 +99,9 @@ public class ChessBoardProperty implements DockableProperty {
 	public void setSuccessor( DockableProperty properties ){
 		successor = properties;
 	}
+
+	public boolean equalsNoSuccessor( DockableProperty property ){
+		// never used in this application, ignore
+		return false;
+	}
 }

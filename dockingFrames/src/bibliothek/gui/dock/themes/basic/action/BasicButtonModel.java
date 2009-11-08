@@ -82,6 +82,9 @@ public class BasicButtonModel {
     /** a callback used when the user clicked on the view */
     private BasicTrigger trigger;
     
+    /** listeners that were added to this model */
+    private List<BasicButtonModelListener> listeners = new ArrayList<BasicButtonModelListener>();
+    
     /**
      * Creates a new model.
      * @param owner the view of this model
@@ -166,6 +169,32 @@ public class BasicButtonModel {
     }
     
     /**
+     * Adds a listener to this model.
+     * @param listener the new listener
+     */
+    public void addListener( BasicButtonModelListener listener ){
+    	if( listener == null )
+    		throw new NullPointerException( "listener must not be null" );
+    	listeners.add( listener );
+    }
+    
+    /**
+     * Removes a listener from this model.
+     * @param listener the listener to remove
+     */
+    public void removeListener( BasicButtonModelListener listener ){
+    	listeners.remove( listener );
+    }
+    
+    /**
+     * Gets all the listeners that are known to this model.
+     * @return the listeners
+     */
+    protected BasicButtonModelListener[] listeners(){
+    	return listeners.toArray( new BasicButtonModelListener[ listeners.size() ] );
+    }
+    
+    /**
      * Gets the view which paints the properties of this model.
      * @return the view
      */
@@ -178,8 +207,12 @@ public class BasicButtonModel {
      * @param icon the new icon, can be <code>null</code>
      */
     public void setIcon( Icon icon ){
+    	Icon oldIcon = this.icon;
         this.icon = icon;
         autoIconDisabled = null;
+        for( BasicButtonModelListener listener : listeners() ){
+        	listener.iconChanged( this, oldIcon, icon );
+        }
         changed();
     }
     
@@ -189,8 +222,12 @@ public class BasicButtonModel {
      * @param icon the icon, can be <code>null</code>
      */
     public void setSelectedIcon( Icon icon ) {
+    	Icon oldIcon = this.iconSelected;
         this.iconSelected = icon;
         autoIconSelectedDisabled = null;
+        for( BasicButtonModelListener listener : listeners() ){
+        	listener.selectedIconChanged( this, oldIcon, icon );
+        }
         changed();
     }
     
@@ -200,8 +237,12 @@ public class BasicButtonModel {
      * @param icon the icon, can be <code>null</code>
      */
     public void setDisabledIcon( Icon icon ) {
+    	Icon oldIcon = this.iconDisabled;
         this.iconDisabled = icon;
         autoIconDisabled = null;
+        for( BasicButtonModelListener listener : listeners() ){
+        	listener.disabledIconChanged( this, oldIcon, icon );
+        }
         changed();
     }
     
@@ -211,8 +252,12 @@ public class BasicButtonModel {
      * @param icon the icon, can be <code>null</code>
      */
     public void setSelectedDisabledIcon( Icon icon ) {
+    	Icon oldIcon = this.iconSelectedDisabled;
         this.iconSelectedDisabled = icon;
         autoIconSelectedDisabled = null;
+        for( BasicButtonModelListener listener : listeners() ){
+        	listener.selectedDisabledIconChanged( this, oldIcon, icon );
+        }
         changed();
     }
     
@@ -222,8 +267,13 @@ public class BasicButtonModel {
      * @param selected the new value
      */
     public void setSelected( boolean selected ) {
-        this.selected = selected;
-        changed();
+    	if( this.selected != selected ){
+	        this.selected = selected;
+	        for( BasicButtonModelListener listener : listeners() ){
+	        	listener.selectedStateChanged( this, selected );
+	        }
+	        changed();
+    	}
     }
     
     /**
@@ -244,9 +294,12 @@ public class BasicButtonModel {
         if( !enabled ){
             setMousePressed( false );
         }
-        else{
-            changed();
+        
+        for( BasicButtonModelListener listener : listeners() ){
+        	listener.enabledStateChanged( this, enabled );
         }
+        
+        changed();
     }
     
     /**
@@ -264,6 +317,12 @@ public class BasicButtonModel {
      * @param tooltip the text, can be <code>null</code>
      */
     public void setToolTipText( String tooltip ){
+        String old = owner.getToolTipText();
+        
+        for( BasicButtonModelListener listener : listeners() ){
+        	listener.tooltipChanged( this, old, tooltip );
+        }
+        
         owner.setToolTipText( tooltip );
     }
     
@@ -276,7 +335,14 @@ public class BasicButtonModel {
         if( orientation == null  )
             throw new IllegalArgumentException( "Orientation must not be null" );
         
+        Orientation old = this.orientation;
         this.orientation = orientation;
+        
+        
+        for( BasicButtonModelListener listener : listeners() ){
+        	listener.orientationChanged( this, old, orientation );
+        }
+        
         changed();
     }
     
@@ -385,8 +451,15 @@ public class BasicButtonModel {
      * @param mouseInside whether the mouse is inside
      */
     protected void setMouseInside( boolean mouseInside ) {
-        this.mouseInside = mouseInside;
-        changed();
+        if( this.mouseInside != mouseInside ){
+	    	this.mouseInside = mouseInside;
+	        
+	        for( BasicButtonModelListener listener : listeners() ){
+	        	listener.mouseInside( this, mouseInside );
+	        }
+	        
+	        changed();
+        }
     }
     
     /**
@@ -405,8 +478,15 @@ public class BasicButtonModel {
      * @param mousePressed whether button 1 is pressed
      */
     protected void setMousePressed( boolean mousePressed ) {
-        this.mousePressed = mousePressed;
-        changed();
+        if( this.mousePressed != mousePressed ){
+	    	this.mousePressed = mousePressed;
+	        
+	        for( BasicButtonModelListener listener : listeners() ){
+	        	listener.mousePressed( this, mousePressed );
+	        }
+	        
+	        changed();
+        }
     }
     
     /**
@@ -422,7 +502,13 @@ public class BasicButtonModel {
      * the {@link #getOwner() owner} and when this model is {@link #isEnabled() enabled}.
      */
     protected void trigger(){
-        trigger.triggered();
+    	if( trigger != null ){
+    		trigger.triggered();
+    	}
+        
+        for( BasicButtonModelListener listener : listeners() ){
+        	listener.triggered();
+        }
     }
     
     /**

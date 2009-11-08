@@ -66,7 +66,11 @@ public final class Path {
     /** the segments of this path */
     private String[] segments;
     
-    /** tells whether <code>path</code> is a valid path or not */
+    /**
+     * Tells whether <code>path</code> is a valid path or not
+     * @param path the path to test
+     * @return <code>true</code> if the segment is valid 
+     */
     public static boolean isValidPath( String path ){
         try{
             new Path( path );

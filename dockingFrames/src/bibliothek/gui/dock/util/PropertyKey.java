@@ -150,4 +150,9 @@ public class PropertyKey<A> {
 	public final boolean equals( Object obj ){
 		return this == obj;
 	}
+	
+	@Override
+	public String toString(){
+		return id;
+	}
 }

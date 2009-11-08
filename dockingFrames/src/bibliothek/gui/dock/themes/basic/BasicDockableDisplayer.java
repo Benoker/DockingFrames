@@ -128,6 +128,10 @@ public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
     	public void doLayout(){
 	    	BasicDockableDisplayer.this.doLayout( content );
     	}
+    	@Override
+    	public Dimension getMinimumSize(){
+    		return getContentMinimumSize();
+    	}
     };
     
     /**
@@ -475,8 +479,7 @@ public class BasicDockableDisplayer extends JPanel implements DockableDisplayer{
     	return this;
     }
     
-    @Override
-    public Dimension getMinimumSize() {
+    public Dimension getContentMinimumSize() {
     	Dimension base;
     	
     	if( title == null && dockable != null )

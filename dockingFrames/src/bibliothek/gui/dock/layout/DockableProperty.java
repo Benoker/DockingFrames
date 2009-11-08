@@ -82,6 +82,14 @@ public interface DockableProperty {
     public String getFactoryID();
     
     /**
+     * Tells whether <code>this</code> describes the same position
+     * as <code>property</code>, not checking the {@link #getSuccessor() successor}.
+     * @param property the property to check
+     * @return <code>true</code> if <code>this</code> is the same as <code>property</code>
+     */
+    public boolean equalsNoSuccessor( DockableProperty property );
+    
+    /**
      * Stores the contents of this DockableProperty in a stream. The
      * {@link #getSuccessor() successor} (if there is one) must
      * not be saved.

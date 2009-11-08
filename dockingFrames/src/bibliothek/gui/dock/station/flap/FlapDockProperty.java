@@ -212,4 +212,32 @@ public class FlapDockProperty extends AbstractDockableProperty {
     			size = xsize.getInt();
     	}
     }
+
+	@Override
+	public int hashCode(){
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + (holding ? 1231 : 1237);
+		result = prime * result + index;
+		result = prime * result + size;
+		return result;
+	}
+
+	@Override
+	public boolean equals( Object obj ){
+		if( this == obj )
+			return true;
+		if( !super.equals( obj ) )
+			return false;
+		if( !(obj instanceof FlapDockProperty) )
+			return false;
+		FlapDockProperty other = (FlapDockProperty)obj;
+		if( holding != other.holding )
+			return false;
+		if( index != other.index )
+			return false;
+		if( size != other.size )
+			return false;
+		return true;
+	}
 }

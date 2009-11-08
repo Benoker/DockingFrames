@@ -231,4 +231,9 @@ public abstract class PropertyValue<A> {
 	 * @param newValue the old value
 	 */
 	protected abstract void valueChanged( A oldValue, A newValue );
+	
+	@Override
+	public String toString(){
+		return getClass().getName() + "[" + key.toString() + " -> " + getValue() + "]";
+	}
 }

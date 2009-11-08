@@ -337,7 +337,6 @@ public class ActionViewConverter {
 	 * @param target the target platform
 	 * @return the converter or <code>null</code> if no converter is found
 	 */
-	@SuppressWarnings( "unchecked" )
 	protected <A, D extends DockAction> ViewGenerator<D,A> getConverter( ActionType<D> action, ViewTarget<? super A> target ){
 		Entry<D, A> entry = getEntry( action, target );
 		if( entry.clientGenerator != null )

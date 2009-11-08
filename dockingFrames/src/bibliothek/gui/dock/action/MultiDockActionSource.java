@@ -200,6 +200,57 @@ public class MultiDockActionSource extends AbstractDockActionSource {
     }
     
     /**
+     * Removes <code>source</code> from this {@link MultiDockActionSource}.
+     * @param source the child to remove
+     */
+    public void remove( DockActionSource source ){
+    	int index = sources.indexOf( source );
+    	if( index < 0 )
+    		return;
+    	
+    	SeparatorSource separator = (SeparatorSource)sources.get( index+1 );
+    	
+    	int actionIndex = getDockActionCountUntil( index, false );
+    	int length = source.getDockActionCount();
+    	
+    	sources.remove( index+1 );
+    	sources.remove( index );
+    	separators.remove( separator );
+    	
+    	if( !listeners.isEmpty() ){
+    		source.removeDockActionSourceListener( listener );
+    		separator.removeDockActionSourceListener( listener );
+    	}
+    	
+    	if( length > 0 ){
+    		fireRemoved( actionIndex, index+length-1 );
+    	}
+    	
+    	updateSeparators();
+    }
+    
+    /**
+     * Removes all children of this source.
+     */
+    public void removeAll(){
+    	int length = getDockActionCount();
+    	if( !listeners.isEmpty() ){
+    		for( SeparatorSource source : separators ){
+    			source.removeDockActionSourceListener( listener );
+    		}
+    		for( DockActionSource source : sources ){
+    			source.removeDockActionSourceListener( listener );
+    		}
+    	}
+    	separators.clear();
+    	sources.clear();
+    	
+    	if( length > 0 ){
+    		fireRemoved( 0, length-1 );
+    	}
+    }
+    
+    /**
      * Adds several actions to this source.
      * @param actions the new actions
      */

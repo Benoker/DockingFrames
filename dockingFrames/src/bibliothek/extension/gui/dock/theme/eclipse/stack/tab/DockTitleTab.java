@@ -63,6 +63,7 @@ public class DockTitleTab implements TabComponent{
                     return fallback.createTabComponent( pane, dockable );
                     
                 title.setOrientation( Orientation.NORTH_SIDED );
+                pane.setContentBorderAt( pane.indexOf( dockable ), null );
                 return new DockTitleTab( station, dockable, title );
         	}
         	
@@ -213,10 +214,6 @@ public class DockTitleTab implements TabComponent{
     public void removeMouseInputListener( MouseInputListener listener ) {
         title.removeMouseInputListener( listener );
     }
-
-    public Border getContentBorder() {
-        return null;
-    }
     
     public Insets getOverlap( TabComponent other ){
         return new Insets( 0, 0, 0, 0 );
@@ -245,6 +242,9 @@ public class DockTitleTab implements TabComponent{
         fire();
     }
 
+    /**
+     * Updates the selection and focus state of the title of this tab. 
+     */
     public void update() {
         fire();
     }    

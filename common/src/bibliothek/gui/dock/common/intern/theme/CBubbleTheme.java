@@ -31,7 +31,13 @@ import javax.swing.Icon;
 
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.DockController;
+import bibliothek.gui.dock.action.view.ActionViewConverter;
+import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.action.CPanelPopup;
+import bibliothek.gui.dock.common.intern.action.panel.BubblePanelPopupGenerator;
+import bibliothek.gui.dock.common.intern.action.panel.PanelDropDownGenerator;
+import bibliothek.gui.dock.common.intern.action.panel.PanelMenuGenerator;
 import bibliothek.gui.dock.common.intern.color.BubbleButtonTitleTransmitter;
 import bibliothek.gui.dock.common.intern.color.BubbleDisplayerTransmitter;
 import bibliothek.gui.dock.common.intern.color.BubbleTabTransmitter;
@@ -127,11 +133,19 @@ public class CBubbleTheme extends CDockTheme<BubbleTheme>{
         for( Map.Entry<String, Icon> entry : icons.entrySet() ){
             manager.setIconTheme( entry.getKey(), entry.getValue() );
         }
+        ActionViewConverter converter = controller.getActionViewConverter();
+    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.TITLE, new BubblePanelPopupGenerator());
+    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.MENU, new PanelMenuGenerator() );
+    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.DROP_DOWN, new PanelDropDownGenerator() );
     }
     
     @Override
     public void uninstall( DockController controller ) {
         super.uninstall( controller );
         controller.getIcons().clearThemeIcons();
+        ActionViewConverter converter = controller.getActionViewConverter();
+    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.TITLE, null );
+    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.MENU, null );
+    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.DROP_DOWN, null );
     }
 }

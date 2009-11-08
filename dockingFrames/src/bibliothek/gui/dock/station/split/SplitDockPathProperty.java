@@ -232,7 +232,35 @@ public class SplitDockPathProperty extends AbstractDockableProperty implements I
         return getClass().getName() + "[nodes="+ nodes +"]";
     }
     
-    /**
+    @Override
+	public int hashCode(){
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((nodes == null) ? 0 : nodes.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals( Object obj ){
+		if( this == obj )
+			return true;
+		if( !super.equals( obj ) )
+			return false;
+		if( !(obj instanceof SplitDockPathProperty) )
+			return false;
+		SplitDockPathProperty other = (SplitDockPathProperty)obj;
+		if( nodes == null ){
+			if( other.nodes != null )
+				return false;
+		}else if( !nodes.equals( other.nodes ) )
+			return false;
+		return true;
+	}
+
+
+
+	/**
      * Describes one turn of the path.
      * @author Benjamin Sigg
      */
@@ -273,5 +301,37 @@ public class SplitDockPathProperty extends AbstractDockableProperty implements I
         public String toString() {
             return getClass().getName() + "[size=" + size + ",location=" + location + "]";
         }
+
+		@Override
+		public int hashCode(){
+			final int prime = 31;
+			int result = 1;
+			result = prime * result
+					+ ((location == null) ? 0 : location.hashCode());
+			long temp;
+			temp = Double.doubleToLongBits( size );
+			result = prime * result + (int)(temp ^ (temp >>> 32));
+			return result;
+		}
+
+		@Override
+		public boolean equals( Object obj ){
+			if( this == obj )
+				return true;
+			if( obj == null )
+				return false;
+			if( !(obj instanceof Node) )
+				return false;
+			Node other = (Node)obj;
+			if( location == null ){
+				if( other.location != null )
+					return false;
+			}else if( !location.equals( other.location ) )
+				return false;
+			if( Double.doubleToLongBits( size ) != Double
+					.doubleToLongBits( other.size ) )
+				return false;
+			return true;
+		}
     }
 }

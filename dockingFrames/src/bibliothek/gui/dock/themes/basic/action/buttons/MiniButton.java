@@ -40,6 +40,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
+import bibliothek.gui.dock.themes.basic.action.BasicButtonModelAdapter;
 
 /**
  * A small {@link Component} used as view of a {@link BasicButtonModel}.
@@ -64,6 +65,26 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
     
     /** the model storing the properties for this button */
     private M model;
+    
+    /** a listener to {@link #model} */
+    private BasicButtonModelAdapter listener = new BasicButtonModelAdapter(){
+    	@Override
+    	public void mouseInside( BasicButtonModel model, boolean mouseInside ){
+    		updateBorder();
+    	}
+    	@Override
+    	public void mousePressed( BasicButtonModel model, boolean mousePressed ){
+    		updateBorder();
+    	}
+    	@Override
+    	public void enabledStateChanged( BasicButtonModel model, boolean enabled ){
+    		updateBorder();
+    	}
+    	@Override
+    	public void selectedStateChanged( BasicButtonModel model, boolean selected ){
+    		updateBorder();
+    	}
+    };
     
     /**
      * Creates a new button
@@ -97,7 +118,15 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
      * @param model the model
      */
     protected void setModel( M model ) {
+    	if( this.model != null )
+    		this.model.removeListener( listener );
+    	
         this.model = model;
+        
+        if( this.model != null )
+        	this.model.addListener( listener );
+        
+        updateBorder();
     }
     
     /**

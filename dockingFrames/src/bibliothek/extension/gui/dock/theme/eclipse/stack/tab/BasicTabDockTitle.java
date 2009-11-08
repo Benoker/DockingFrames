@@ -26,7 +26,7 @@
 package bibliothek.extension.gui.dock.theme.eclipse.stack.tab;
 
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Dimension;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -159,17 +159,13 @@ public class BasicTabDockTitle extends BasicDockTitle {
     }
     
     @Override
-    public void paintComponent( Graphics g ) {
-        super.paintComponent( g );
-        if( !selected ){
-            g.setColor( borderColor.value() );
-            g.drawLine( 0, getHeight()-1, getWidth(), getHeight()-1 );
-        }
+    protected DockActionSource getActionSourceFor( Dockable dockable ) {
+        return new EclipseDockActionSource( theme, super.getActionSourceFor( dockable ), dockable, true );
     }
     
     @Override
-    protected DockActionSource getActionSourceFor( Dockable dockable ) {
-        return new EclipseDockActionSource( theme, super.getActionSourceFor( dockable ), dockable, true );
+    public Dimension getMinimumSize(){
+	    return getPreferredSize();
     }
     
     @Override

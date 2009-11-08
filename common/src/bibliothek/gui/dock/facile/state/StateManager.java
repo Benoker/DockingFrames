@@ -1235,7 +1235,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      * @param name the name of the station
      * @return the station or <code>null</code>
      */
-    protected DockStation getStation( String name ){
+    public DockStation getStation( String name ){
         return stations.get( name );
     }
 

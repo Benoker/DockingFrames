@@ -148,6 +148,10 @@ public abstract class BasicHandler<D extends StandardDockAction> implements Basi
         action.removeDockActionListener( listener );
     }
     
+    /**
+     * Creates a listener which forwards changes in the action to the model.
+     * @return the new listener
+     */
     protected Listener createListener(){
         return new Listener();
     }

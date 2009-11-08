@@ -253,3 +253,5 @@
 - API: new property StackDockStation.TAB_PLACEMENT globally sets where to put tabs
 - API: new TabLayoutManager to handle the positioning of tabs on a StackDockStation
 - Bugfix: SimpleDockAction did not unbind itself correctly due of events fired in an unfortunate order. Repaired thanks to an anonymous user.
+- Bugfix: when making an selected Dockable on a StackDockStation invisible, a new Dockable should be properly selected.
+- API: New action "CPanelPopup" in common provides an easy way to create a popup-action with an arbitrary component as content.

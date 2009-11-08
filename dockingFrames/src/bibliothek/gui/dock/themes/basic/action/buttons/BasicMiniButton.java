@@ -15,13 +15,7 @@ public class BasicMiniButton extends MiniButton<BasicButtonModel> {
     public BasicMiniButton( BasicTrigger trigger ) {
         super( null );
         
-        BasicButtonModel model = new BasicButtonModel( this, trigger ){
-            @Override
-            public void changed() {
-                super.changed();
-                updateBorder();
-            }
-        };
+        BasicButtonModel model = new BasicButtonModel( this, trigger );
         
         setModel( model );
     }

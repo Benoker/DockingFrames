@@ -919,13 +919,13 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         }
         else if( dockables.size() == 2 ){
             panel.remove( stackComponent.getComponent() );
-            stackComponent.removeAll();
             dockables.remove( index );
+            stackComponent.removeAll();
             panel.add( dockables.get( 0 ).getComponent() );
         }
         else{
-            stackComponent.remove( index );
-            dockables.remove( index );
+        	dockables.remove( index );
+        	stackComponent.remove( index );
         }
         
         dockable.removeDockableListener( listener );
@@ -936,8 +936,9 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         	listeners.fireDockableRemoved( dockable );
         
         Dockable newSelected = getFrontDockable();
-        if( oldSelected != newSelected )
+        if( oldSelected != newSelected ){
             listeners.fireDockableSelected( oldSelected, newSelected );
+        }
     }
 
     public Component getComponent() {
