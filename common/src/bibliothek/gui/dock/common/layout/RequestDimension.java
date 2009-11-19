@@ -93,7 +93,7 @@ public class RequestDimension implements Cloneable{
         if( valueIsWidth )
             setWidth( value );
         else
-            setHeight( height );
+            setHeight( value );
     }
     
     /**
