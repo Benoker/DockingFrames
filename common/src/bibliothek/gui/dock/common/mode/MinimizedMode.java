@@ -25,6 +25,34 @@
  */
 package bibliothek.gui.dock.common.mode;
 
-public class MinimizedMode {
+import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.action.predefined.CMinimizeAction;
 
+/**
+ * Only the title of a minimized {@link Dockable} is visible.
+ * @author Benjamin Sigg
+ */
+public class MinimizedMode extends DefaultLocationMode<MinimizedModeArea>{
+	/** the unique identifier of this mode */
+	public static final Path IDENTIFIER = new Path( "dock.mode.minimized" );
+	
+	/**
+	 * Creates a new mode.
+	 * @param control the control in whose realm this mode is used
+	 * @param manager the manager which manages this mode
+	 */
+	public MinimizedMode( CControl control, ExtendedModeManager manager ){
+		super( manager );
+		setSelectModeAction( new CMinimizeAction( control ) );
+	}
+	
+	public Path getUniqueIdentifier(){
+		return IDENTIFIER;
+	}
+	
+	public boolean isDefaultMode( Dockable dockable ){
+		return false;
+	}
 }

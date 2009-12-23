@@ -25,30 +25,6 @@
  */
 package bibliothek.gui.dock.common.mode;
 
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.support.mode.NeutralMode;
-import bibliothek.gui.dock.support.mode.NeutralModeCallback;
+public interface MinimizedModeArea extends StationModeArea{
 
-/**
- * This {@link NeutralMode} is used by the {@link MaximizedMode} to
- * de-maximize a {@link Dockable} and later re-maximize it if the maximize-spot
- * is still available.
- * @author Benjamin Sigg
- */
-public class UnmaximizedNeutralState implements NeutralMode<Boolean>{
-	public NeutralMode<?> getNext( Dockable dockable, Boolean data ){
-		return null;
-	}
-
-	public Boolean toNeutral( Dockable dockable, NeutralModeCallback callback ){
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void toSpecific( Dockable dockable, Boolean data,
-			NeutralModeCallback callback ){
-		// TODO Auto-generated method stub
-		
-	}
-	
 }

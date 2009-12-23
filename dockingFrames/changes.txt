@@ -256,3 +256,5 @@
 - Bugfix: when making an selected Dockable on a StackDockStation invisible, a new Dockable should be properly selected.
 - API: New action "CPanelPopup" in common provides an easy way to create a popup-action with an arbitrary component as content.
 - Bugfix: RequestDimension( int, boolean ) did not set the height property.
+- API: CDockable has new method "getAction" and "getActionCount" to access CActions that were added.
+- Bugfix: Wrong index in MultiDockActionSource.add( DockActionSource ) could lead to IndexOutOfBoundsException

@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2009 Benjamin Sigg
+ * Copyright (C) 2008 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,34 +23,28 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.mode;
+
+package bibliothek.gui.dock.common.intern.action.panel;
+
+import javax.swing.JComponent;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.view.ActionViewConverter;
+import bibliothek.gui.dock.action.view.ViewGenerator;
+import bibliothek.gui.dock.common.action.CPanelPopup;
+import bibliothek.gui.dock.common.action.CPanelPopup.PanelPopup;
+import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
+import bibliothek.gui.dock.themes.basic.action.buttons.BasicMiniButton;
 
 /**
- * The parent of a dockable that is maximized.
+ * Basic handler for creating a button for a {@link CPanelPopup}.
  * @author Benjamin Sigg
  */
-public interface MaximizedModeArea extends ModeArea{
-	/**
-	 * Informs this area that it is now managed by <code>mode</code>.
-	 * @param mode the new mode, can be <code>null</code> to inform this
-	 * area that it is no longer managed
-	 * @throws IllegalStateException if already connected
-	 */
-	public void connect( MaximizedMode mode );
-	
-	/**
-	 * Tells this parent to show <code>dockable</code> maximized,
-	 * only one dockable may be maximized at any time.
-	 * @param dockable the maximized element, <code>null</code> to indicate
-	 * that no element should be maximized.
-	 */
-	public void setMaximized( Dockable dockable );
-	
-	/**
-	 * Gets the currently maximized element.
-	 * @return the currently maximized dockable, can be <code>null</code>
-	 */
-	public Dockable getMaximized();
+public class FlatPanelPopupGenerator implements ViewGenerator<PanelPopup, BasicTitleViewItem<JComponent>>{
+	public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, PanelPopup action, Dockable dockable ){
+		BasicPanelPopupHandler handler = new BasicPanelPopupHandler( action, dockable );
+		BasicMiniButton button = new BasicMiniButton( handler );
+		handler.setModel( button.getModel() );
+		return handler;
+	}
 }

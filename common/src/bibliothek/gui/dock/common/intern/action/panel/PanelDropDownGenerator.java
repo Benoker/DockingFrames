@@ -28,11 +28,9 @@ package bibliothek.gui.dock.common.intern.action.panel;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.action.view.ViewGenerator;
-import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.common.action.CPanelPopup;
 import bibliothek.gui.dock.common.action.CPanelPopup.PanelPopup;
 import bibliothek.gui.dock.themes.basic.action.dropdown.DropDownViewItem;
-import bibliothek.gui.dock.themes.basic.action.dropdown.SubDropDownHandler;
 
 /**
  * A generator for handling {@link CPanelPopup} as child of a drowdown-action.
@@ -40,6 +38,6 @@ import bibliothek.gui.dock.themes.basic.action.dropdown.SubDropDownHandler;
  */
 public class PanelDropDownGenerator implements ViewGenerator<PanelPopup, DropDownViewItem>{
 	public DropDownViewItem create( ActionViewConverter converter, PanelPopup action, Dockable dockable ){
-		return new SubDropDownHandler( action.createView( ViewTarget.MENU, converter, dockable ) );
+		return null;
 	}
 }

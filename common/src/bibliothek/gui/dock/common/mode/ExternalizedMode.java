@@ -25,6 +25,34 @@
  */
 package bibliothek.gui.dock.common.mode;
 
-public class ExternalizedMode {
+import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.action.predefined.CExternalizeAction;
 
+/**
+ * Represents a mode in which dockables are freely floating on the screen.
+ * @author Benjamin Sigg
+ */
+public class ExternalizedMode extends DefaultLocationMode<ExternalizedModeArea>{
+	/** the unique identifier of this mode */
+	public static final Path IDENTIFIER = new Path( "dock.mode.externalized" );
+	
+	/**
+	 * Creates a new mode.
+	 * @param control the control in whose realm this mode works
+	 * @param manager the owner of this mode
+	 */
+	public ExternalizedMode( CControl control, ExtendedModeManager manager ){
+		super( manager );
+		setSelectModeAction( new CExternalizeAction( control ) );
+	}
+	
+	public Path getUniqueIdentifier(){
+		return IDENTIFIER;
+	}
+
+	public boolean isDefaultMode( Dockable dockable ){
+		return false;
+	}
 }

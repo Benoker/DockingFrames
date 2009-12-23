@@ -25,32 +25,10 @@
  */
 package bibliothek.gui.dock.common.mode;
 
-import bibliothek.gui.Dockable;
-
 /**
- * The parent of a dockable that is maximized.
+ * Represents a station which shows its children in free floating dialogs.
  * @author Benjamin Sigg
  */
-public interface MaximizedModeArea extends ModeArea{
-	/**
-	 * Informs this area that it is now managed by <code>mode</code>.
-	 * @param mode the new mode, can be <code>null</code> to inform this
-	 * area that it is no longer managed
-	 * @throws IllegalStateException if already connected
-	 */
-	public void connect( MaximizedMode mode );
-	
-	/**
-	 * Tells this parent to show <code>dockable</code> maximized,
-	 * only one dockable may be maximized at any time.
-	 * @param dockable the maximized element, <code>null</code> to indicate
-	 * that no element should be maximized.
-	 */
-	public void setMaximized( Dockable dockable );
-	
-	/**
-	 * Gets the currently maximized element.
-	 * @return the currently maximized dockable, can be <code>null</code>
-	 */
-	public Dockable getMaximized();
+public interface ExternalizedModeArea extends StationModeArea{
+
 }

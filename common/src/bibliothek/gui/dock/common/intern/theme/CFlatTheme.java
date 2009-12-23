@@ -31,7 +31,7 @@ import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.action.CPanelPopup;
-import bibliothek.gui.dock.common.intern.action.panel.BasicPanelPopupGenerator;
+import bibliothek.gui.dock.common.intern.action.panel.FlatPanelPopupGenerator;
 import bibliothek.gui.dock.common.intern.action.panel.PanelDropDownGenerator;
 import bibliothek.gui.dock.common.intern.action.panel.PanelMenuGenerator;
 import bibliothek.gui.dock.common.intern.color.BasicButtonTitleTransmitter;
@@ -111,17 +111,17 @@ public class CFlatTheme extends CDockTheme<FlatTheme> {
     public void install( DockController controller ){
     	super.install( controller );
     	ActionViewConverter converter = controller.getActionViewConverter();
-    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.TITLE, new BasicPanelPopupGenerator());
-    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.MENU, new PanelMenuGenerator() );
-    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.DROP_DOWN, new PanelDropDownGenerator() );
+    	converter.putTheme( CPanelPopup.PANEL_POPUP, ViewTarget.TITLE, new FlatPanelPopupGenerator());
+    	converter.putTheme( CPanelPopup.PANEL_POPUP, ViewTarget.MENU, new PanelMenuGenerator() );
+    	converter.putTheme( CPanelPopup.PANEL_POPUP, ViewTarget.DROP_DOWN, new PanelDropDownGenerator() );
     }
     
     @Override
     public void uninstall( DockController controller ){
     	ActionViewConverter converter = controller.getActionViewConverter();
-    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.TITLE, null );
-    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.MENU, null );
-    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.DROP_DOWN, null );
+    	converter.putTheme( CPanelPopup.PANEL_POPUP, ViewTarget.TITLE, null );
+    	converter.putTheme( CPanelPopup.PANEL_POPUP, ViewTarget.MENU, null );
+    	converter.putTheme( CPanelPopup.PANEL_POPUP, ViewTarget.DROP_DOWN, null );
     	super.uninstall( controller );
     }
 }

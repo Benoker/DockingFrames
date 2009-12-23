@@ -596,6 +596,9 @@ The behavior of \src{CDropDownButton} can be influenced through its items. This 
 \end{itemize}
 If a \src{CDropDownButton} cannot trigger its selected item, then it just opens its menu.
 
+\subsection{CPanelPopup}
+Basically a button that opens a popup with an arbitrary component as content. The popup appears at the same location the menu of a \src{CMenu} would appear. In a menu a \src{CPanelPopup} appears as menu-item and opens the popup in the middle of the \src{CDockable} to which it is attached. The class provides methods for clients to modify its behavior, e.g. to replace the popup by another implementation.
+
 \subsection{CBlank}
 This action is not visible and does nothing. It can be used as placeholder where a \src{null} reference would cause problems, e.g. because \src{null} is sometimes replaced by some default value.
 

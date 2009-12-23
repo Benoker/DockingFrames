@@ -29,9 +29,10 @@
 \contentsline {subsection}{\numberline {6.3}CRadioButton}{20}
 \contentsline {subsection}{\numberline {6.4}CMenu}{20}
 \contentsline {subsection}{\numberline {6.5}CDropDownButton}{20}
-\contentsline {subsection}{\numberline {6.6}CBlank}{21}
-\contentsline {subsection}{\numberline {6.7}System Actions}{21}
-\contentsline {subsection}{\numberline {6.8}Custom Actions}{22}
+\contentsline {subsection}{\numberline {6.6}CPanelPopup}{21}
+\contentsline {subsection}{\numberline {6.7}CBlank}{21}
+\contentsline {subsection}{\numberline {6.8}System Actions}{21}
+\contentsline {subsection}{\numberline {6.9}Custom Actions}{22}
 \contentsline {section}{\numberline {7}Other Effects}{23}
 \contentsline {subsection}{\numberline {7.1}Color}{23}
 \contentsline {subsection}{\numberline {7.2}Font}{23}

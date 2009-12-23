@@ -25,47 +25,30 @@
  */
 package bibliothek.gui.dock.common.mode;
 
-import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.action.predefined.CNormalizeAction;
-import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.support.mode.Mode;
 
 /**
- * {@link CDockable}s are in {@link NormalMode} if they are a child
- * of a {@link NormalModeArea}.
+ * A representation of a {@link DockStation} which can be accessed 
+ * through {@link Mode}s.
  * @author Benjamin Sigg
- *
  */
-public class NormalMode extends DefaultLocationMode<NormalModeArea>{
-	/** The unique identifier of this mode */
-	public static final Path IDENTIFIER = new Path( "dock.mode.normal" );
+public interface StationModeArea extends ModeArea{	
+	/**
+	 * Gets the location of <code>dockable</code> which is a child
+	 * of this station.
+	 * @param child the child
+	 * @return the location, may be <code>null</code>
+	 */
+	public DockableProperty getLocation( Dockable child );
 	
 	/**
-	 * Creates a new normal mode.
-	 * @param control the owner of this mode
-	 * @param manager responsible for this mode
+	 * Sets the location of <code>dockable</code> to <code>location</code>
+	 * and ensures that <code>dockable</code> is a child of this station.
+	 * @param dockable the new or old child
+	 * @param location the new location, may be <code>null</code>
 	 */
-	public NormalMode( CControl control, ExtendedModeManager manager ){
-		super( manager );
-		setSelectModeAction( new CNormalizeAction( control ) );
-	}
-	
-	public Path getUniqueIdentifier(){
-		return IDENTIFIER;
-	}
-
-	public boolean isCurrentMode( Dockable dockable ){
-		for( NormalModeArea area : this ){
-			if( area.isNormalModeChild( dockable )){
-				return true;
-			}
-		}
-		
-		return false;
-	}
-
-	public boolean isDefaultMode( Dockable dockable ){
-		return true;
-	}
+	public void setLocation( Dockable dockable, DockableProperty location );
 }

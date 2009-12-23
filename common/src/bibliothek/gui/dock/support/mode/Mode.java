@@ -33,8 +33,9 @@ import bibliothek.gui.dock.action.DockActionSource;
  * A mode describes a state in which a {@link Dockable} can be. A Dockable
  * can be in exactly one {@link Mode} at a time.
  * @author Benjamin Sigg
+ * @param H class storing history information
  */
-public interface Mode {
+public interface Mode<H> {
 	/**
 	 * Gets a {@link DockActionSource} which should be shown on <code>dockable</code>
 	 * which is currently in <code>mode</code>. This method will be called
@@ -43,7 +44,7 @@ public interface Mode {
 	 * @param mode the mode of <code>dockable</code>, not <code>null</code>
 	 * @return the actions for <code>dockable</code>, can be <code>null</code>
 	 */
-	public DockActionSource getActionsFor( Dockable dockable, Mode mode );
+	public DockActionSource getActionsFor( Dockable dockable, Mode<H> mode );
 	
 	/**
 	 * Gets a unique identifier, only this {@link Mode} must have this
@@ -54,22 +55,34 @@ public interface Mode {
 	 */
 	public Path getUniqueIdentifier();
 	
+//	/**
+//	 * Gets the neutral mode for <code>dockable</code>. The neutral mode
+//	 * is applied before changing the mode of any {@link Dockable}.
+//	 * @param dockable the element whose neutral mode is asked
+//	 * @return the neutral mode or <code>null</code>
+//	 * @see NeutralMode
+//	 */
+//	public NeutralMode<?> getNeutralMode( Dockable dockable );
+	
+		
 	/**
-	 * Gets the neutral mode for <code>dockable</code>. The neutral mode
-	 * is applied before changing the mode of any {@link Dockable}.
-	 * @param dockable the element whose neutral mode is asked
-	 * @return the neutral mode or <code>null</code>
-	 * @see NeutralMode
+	 * Applies this mode to <code>dockable</code>.
+	 * @param dockable the element whose mode becomes <code>this</code>
+	 * @param history history information that was returned by this mode
+	 * on its last call to {@link #leave(Dockable, Mode)}. May be <code>null</code>
+	 * if this mode was never applied or returns <code>null</code> on {@link #leave(Dockable, Mode)}.
 	 */
-	public NeutralMode<?> getNeutralMode( Dockable dockable );
+	public void apply( Dockable dockable, H history );
 	
 	/**
-	 * Applies this mode to <code>dockable</code> which is currently
-	 * in the neutral state of <code>mode</code>.
-	 * @param dockable the element whose mode becomes <code>this</code>
-	 * @param mode its old mode
+	 * The opposite of {@link #apply(Dockable, Mode)}, this method is
+	 * called before <code>dockable</code> leaves this mode and enters
+	 * <code>mode</code>. Note that the new mode may be equal
+	 * to <code>this</code>.
+	 * @param dockable the element that leaves this mode
+	 * @return history information that is needed when calling {@link #apply(Dockable, Mode, Object)}
 	 */
-	public void apply( Dockable dockable, Mode mode );
+	public H leave( Dockable dockable );
 	
 	/**
 	 * Checks whether this mode is a default mode of <code>dockable</code>. A 
@@ -82,7 +95,7 @@ public interface Mode {
 	
 	/**
 	 * Tells whether <code>dockable</code> fulfills the requirements of
-	 * this mode, meaning whether <code>docakble</code> has this mode. There
+	 * this mode, meaning whether <code>dockable</code> has this mode. There
 	 * should be only at most one mode which returns <code>true</code> for this
 	 * question. Please note, the mode selected in the {@link ModeManager} may
 	 * be out of date, and should not be considered when checking the

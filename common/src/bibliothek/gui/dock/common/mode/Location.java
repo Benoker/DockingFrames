@@ -23,24 +23,47 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.support.mode;
+package bibliothek.gui.dock.common.mode;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.layout.DockableProperty;
 
 /**
- * A callback given to {@link NeutralMode}s when they are applied. The modes
- * may use this callback to interact with the running transition.
+ * Describes the location of a {@link Dockable} on some station.
  * @author Benjamin Sigg
  */
-public interface NeutralModeCallback {
+public class Location {
+	/** the unique identifier of the root station */
+	private String root;
+	/** the location of the element */
+	private DockableProperty location;
+	
 	/**
-	 * The caller to this method gets blocked until other
-	 * {@link NeutralMode}s have been applied (to another {@link Dockable}).
-	 * Normally the caller gets blocked until all other {@link NeutralMode}s are
-	 * applied, but if another mode calls this method first, then the other mode may
-	 * or may not be executed first.<br>
-	 * Note: this method does not detect deadlocks, it is the callers
-	 * responsibility to prevent deadlocks.
+	 * Creates a new location.
+	 * @param root the identifier of the parent station, must not be <code>null</code>
+	 * @param location the location on the station, may be <code>null</code>
 	 */
-	public void yield();
+	public Location( String root, DockableProperty location ){
+		if( root == null )
+			throw new IllegalArgumentException( "root must not be null" );
+		
+		this.root = root;
+		this.location = location;
+	}
+
+	/**
+	 * Gets the unique identifier of the parent station.  
+	 * @return the identifier, not <code>null</code>
+	 */
+	public String getRoot(){
+		return root;
+	}
+
+	/**
+	 * Gets the location on the parent station.
+	 * @return the location, may be <code>null</code>
+	 */
+	public DockableProperty getLocation(){
+		return location;
+	}
 }

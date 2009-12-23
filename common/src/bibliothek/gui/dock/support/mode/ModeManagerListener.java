@@ -34,7 +34,7 @@ import bibliothek.gui.Dockable;
  * @param <A> the kind of properties used by a {@link ModeManager}
  * @param <M> the kind of {@link Mode}s used by a {@link ModeManager}
  */
-public interface ModeManagerListener<A, M extends Mode> {
+public interface ModeManagerListener<A, M extends Mode<A>> {
 	/**
 	 * Called when a {@link Dockable} is added or replaced in <code>manager</code>.
 	 * If it was replaced, then {@link #dockableRemoved(ModeManager, Dockable)} is

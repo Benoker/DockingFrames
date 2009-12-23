@@ -191,7 +191,7 @@ public class MultiDockActionSource extends AbstractDockActionSource {
         	separator.addDockActionSourceListener( listener );
         }
         
-        int index = getDockActionCountUntil( sources.size()-1, false );
+        int index = getDockActionCountUntil( sources.size()-2, false );
         int length = source.getDockActionCount();
         if( length > 0 )
             fireAdded( index, index+length-1 );

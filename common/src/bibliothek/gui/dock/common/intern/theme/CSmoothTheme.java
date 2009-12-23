@@ -110,17 +110,17 @@ public class CSmoothTheme extends CDockTheme<SmoothTheme> {
     public void install( DockController controller ){
     	super.install( controller );
     	ActionViewConverter converter = controller.getActionViewConverter();
-    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.TITLE, new BasicPanelPopupGenerator());
-    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.MENU, new PanelMenuGenerator() );
-    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.DROP_DOWN, new PanelDropDownGenerator() );
+    	converter.putTheme( CPanelPopup.PANEL_POPUP, ViewTarget.TITLE, new BasicPanelPopupGenerator());
+    	converter.putTheme( CPanelPopup.PANEL_POPUP, ViewTarget.MENU, new PanelMenuGenerator() );
+    	converter.putTheme( CPanelPopup.PANEL_POPUP, ViewTarget.DROP_DOWN, new PanelDropDownGenerator() );
     }
     
     @Override
     public void uninstall( DockController controller ){
     	ActionViewConverter converter = controller.getActionViewConverter();
-    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.TITLE, null );
-    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.MENU, null );
-    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.DROP_DOWN, null );
+    	converter.putTheme( CPanelPopup.PANEL_POPUP, ViewTarget.TITLE, null );
+    	converter.putTheme( CPanelPopup.PANEL_POPUP, ViewTarget.MENU, null );
+    	converter.putTheme( CPanelPopup.PANEL_POPUP, ViewTarget.DROP_DOWN, null );
     	super.uninstall( controller );
     }
 }

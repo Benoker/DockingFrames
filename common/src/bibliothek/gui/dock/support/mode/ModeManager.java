@@ -27,43 +27,66 @@ package bibliothek.gui.dock.support.mode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.action.MultiDockActionSource;
+import bibliothek.gui.dock.common.CControl;
 
 /**
  * Associates {@link Dockable}s with one {@link Mode} out of a set
  * of modes. This manager remembers in which order the modes were applied
  * to a {@link Dockable}.
- * @param <A> the kind of properties that are to be stored in this manager
- * @param <M> the kinf of {@link Mode}s used by this manager
+ * @param <H> the kind of properties that are to be stored in this manager
+ * @param <M> the kind of {@link Mode}s used by this manager
  * @author Benjamin Sigg
  */
-public class ModeManager<A, M extends Mode> {
+public class ModeManager<H, M extends Mode<H>> {
 	/** the ordered list of available modes */
-	private List<ModeAccess> modes = new ArrayList<ModeAccess>();
+	private List<ModeHandle> modes = new ArrayList<ModeHandle>();
 	
-	/** lists for all known {@link Dockable}s their {@link Entry} */
-	private Map<Dockable, Entry> dockables = new HashMap<Dockable, Entry>();
+	/** lists for all known {@link Dockable}s their {@link DockableHandle} */
+	private Map<Dockable, DockableHandle> dockables = new HashMap<Dockable, DockableHandle>();
 	
-	/** list all {@link Entry}s ever created and not dismissed by this manager */
-	private Map<String, Entry> entries = new HashMap<String, Entry>();
+	/** list all {@link DockableHandle}s ever created and not dismissed by this manager */
+	private Map<String, DockableHandle> entries = new HashMap<String, DockableHandle>();
 		
 	/** all the listeners that are registered at this manager */
-	private List<ModeManagerListener<? super A, ? super M>> listeners =
-		new ArrayList<ModeManagerListener<? super A,? super M>>();
+	private List<ModeManagerListener<? super H, ? super M>> listeners =
+		new ArrayList<ModeManagerListener<? super H,? super M>>();
+	
+	/**
+	 * Creates a new manager.
+	 * @param control the control in whose realm this manager will work
+	 */
+	public ModeManager( CControl control ){
+		control.intern().getController().addActionGuard( new ActionGuard() {
+			public boolean react( Dockable dockable ){
+				return getHandle( dockable ) != null;
+			}
+			
+			public DockActionSource getSource( Dockable dockable ){
+				DockableHandle handle = getHandle( dockable );
+				if( handle == null )
+					return null;
+				return handle.source;
+			}
+		});
+	}
 	
 	/**
 	 * Adds a listener to this manager, the listener will be informed about
 	 * changes in this manager.
 	 * @param listener the new listener, not <code>null</code>
 	 */
-	public void addModeManagerListener( ModeManagerListener<? super A, ? super M> listener ){
+	public void addModeManagerListener( ModeManagerListener<? super H, ? super M> listener ){
 		if( listener == null )
 			throw new IllegalArgumentException( "listener must not be null" );
 		listeners.add( listener );
@@ -73,8 +96,25 @@ public class ModeManager<A, M extends Mode> {
 	 * Removes <code>listener</code> from this manager.
 	 * @param listener the listener to remove
 	 */
-	public void removeModeManagerListener( ModeManagerListener<? super A, ? super M> listener ){
+	public void removeModeManagerListener( ModeManagerListener<? super H, ? super M> listener ){
 		listeners.remove( listener );
+	}
+	
+	/**
+	 * Puts a new mode in this manager. If there is already a mode with the
+	 * same id registered, then the old mode gets replaced by the new one.
+	 * @param mode the new mode
+	 */
+	public void putMode( M mode ){
+		if( mode == null )
+			throw new IllegalArgumentException( "mode must not be null" );
+		for( ModeHandle handle : modes ){
+			if( handle.mode.getUniqueIdentifier().equals( mode.getUniqueIdentifier() )){
+				handle.mode = mode;
+				return;
+			}
+		}
+		modes.add( new ModeHandle( mode ) );
 	}
 	
 	/**
@@ -82,7 +122,7 @@ public class ModeManager<A, M extends Mode> {
 	 * @return the list of registered listeners
 	 */
 	@SuppressWarnings("unchecked")
-	protected ModeManagerListener<? super A, ? super M>[] listeners(){
+	protected ModeManagerListener<? super H, ? super M>[] listeners(){
 		return listeners.toArray( new ModeManagerListener[ listeners.size() ] );
 	}
 	
@@ -92,7 +132,7 @@ public class ModeManager<A, M extends Mode> {
 	 * @param dockable the new element
 	 */
 	protected void fireAdded( Dockable dockable ){
-		for( ModeManagerListener<? super A, ? super M> listener : listeners() ){
+		for( ModeManagerListener<? super H, ? super M> listener : listeners() ){
 			listener.dockableAdded( this, dockable );
 		}
 	}
@@ -103,7 +143,7 @@ public class ModeManager<A, M extends Mode> {
 	 * @param dockable the removed element
 	 */
 	protected void fireRemoved( Dockable dockable ){
-		for( ModeManagerListener<? super A, ? super M> listener : listeners() ){
+		for( ModeManagerListener<? super H, ? super M> listener : listeners() ){
 			listener.dockableRemoved( this, dockable );
 		}
 	}
@@ -116,7 +156,7 @@ public class ModeManager<A, M extends Mode> {
 	 * @param newMode its new mode
 	 */
 	protected void fireModeChanged( Dockable dockable, M oldMode, M newMode ){
-		for( ModeManagerListener<? super A, ? super M> listener : listeners() ){
+		for( ModeManagerListener<? super H, ? super M> listener : listeners() ){
 			listener.modeChanged( this, dockable, oldMode, newMode );
 		}
 	}
@@ -139,12 +179,12 @@ public class ModeManager<A, M extends Mode> {
         if( dockable == null )
             throw new NullPointerException( "dockable must not be null" );
         
-        Entry entry = entries.get( key );
+        DockableHandle entry = entries.get( key );
         if( entry != null && entry.dockable != null )
             throw new IllegalArgumentException( "There is already a dockable registered with the key: " + key );
         
         if( entry == null ){
-            entry = new Entry( dockable, key );
+            entry = new DockableHandle( dockable, key );
             entries.put( entry.id, entry );
         }
         else{
@@ -177,7 +217,7 @@ public class ModeManager<A, M extends Mode> {
         if( dockable == null )
             throw new NullPointerException( "dockable must not be null" );
         
-        Entry entry = entries.get( key );
+        DockableHandle entry = entries.get( key );
         if( entry != null ){
             if( entry.dockable != null ){
                 dockables.remove( entry.dockable );
@@ -188,7 +228,7 @@ public class ModeManager<A, M extends Mode> {
         }
         else{
             // was not inserted
-            entry = new Entry( dockable, key );
+            entry = new DockableHandle( dockable, key );
             dockables.put( dockable, entry );
             entries.put( entry.id, entry );
             entry.putMode( access( getCurrentMode( dockable ) ) );
@@ -202,53 +242,40 @@ public class ModeManager<A, M extends Mode> {
     /**
      * Alters the mode of <code>dockable</code> to <code>mode</code>. This
      * method does nothing if the current mode of <code>dockable</code>
-     * already is <code>mode</code>. Notice that other dockables might
-     * change their mode because of this method call.
+     * already is <code>mode</code>. This method does not alter the modes
+     * of other dockables, notice however that the methods
+     * {@link Mode#apply(Dockable, Object)} and {@link Mode#leave(Dockable)} may
+     * trigger additional mode-changes.
      * @param dockable the element whose mode is going to be changed
      * @param mode the new mode
      * @throws IllegalArgumentException if <code>dockable</code> is <code>null</code>,
      * <code>mode</code> is <code>null</code> or <code>dockable</code> is not
      * registered. 
      */
-    public void alter( Dockable dockable, Mode mode ){
+    public void alter( Dockable dockable, M mode ){
     	if( dockable == null )
     		throw new IllegalArgumentException( "dockable is null" );
     	
     	if( mode == null )
     		throw new IllegalArgumentException( "mode is null" );
     	
-    	Entry entry = dockables.get( dockable );
+    	DockableHandle entry = dockables.get( dockable );
     	if( entry == null )
     		throw new IllegalArgumentException( "dockable not registered" );
     	
-    	Mode dockableMode = getCurrentMode( dockable );
-    	if( dockableMode == null )
-    		dockableMode = getDefaultMode( dockable );
+    	M dockableMode = getCurrentMode( dockable );
+    	if( dockableMode == mode )
+    		return;
     	
-    	// apply new mode
-    	NeutralHistories histories = new NeutralHistories();
-    	for( Dockable old : dockables.keySet() ){
-    		Mode oldMode = getCurrentMode( old );
-    		if( oldMode == null )
-    			oldMode = getDefaultMode( old );
-    		if( oldMode != null ){
-    			histories.add( old, oldMode );
-    		}
+    	H history = null;
+    	if( dockableMode != null ){
+    		history = dockableMode.leave( dockable );
+    		entry.properties.put( dockableMode.getUniqueIdentifier(), history );
     	}
-    	
-    	histories.advance();
-    	histories.remove( dockable );
-    	mode.apply( dockable, dockableMode );
-    	histories.add( dockable, mode );
-    	histories.restore();
-    	
-    	for( Entry other : dockables.values() ){
-    		Mode otherMode = getCurrentMode( other.dockable );
-    		if( otherMode == null )
-    			otherMode = getDefaultMode( other.dockable );
-    		
-    		entry.putMode( access( otherMode ) );
-    	}
+
+   		history = entry.properties.get( mode.getUniqueIdentifier() );
+   		mode.apply( dockable, history );
+   		entry.putMode( access( mode ) );
     }
 
     /**
@@ -256,7 +283,7 @@ public class ModeManager<A, M extends Mode> {
      * @param dockable the element to remove
      */
     public void remove( Dockable dockable ){
-        Entry entry = dockables.remove( dockable );
+        DockableHandle entry = dockables.remove( dockable );
         if( entry != null ){
             entries.remove( entry.id );
             fireRemoved( dockable );
@@ -269,7 +296,7 @@ public class ModeManager<A, M extends Mode> {
      * @param dockable the element to reduce
      */
     public void reduceToEmpty( Dockable dockable ){
-        Entry entry = dockables.get( dockable );
+        DockableHandle entry = dockables.get( dockable );
         if( entry != null ){
             entry.dockable = null;
             fireRemoved( dockable );
@@ -290,10 +317,10 @@ public class ModeManager<A, M extends Mode> {
         if( key == null )
             throw new NullPointerException( "name must not be null" );
         
-        Entry entry = entries.get( key );
+        DockableHandle entry = entries.get( key );
         
         if( entry == null ){
-            entry = new Entry( null, key );
+            entry = new DockableHandle( null, key );
             entries.put( key, entry );
         }
     }
@@ -308,7 +335,7 @@ public class ModeManager<A, M extends Mode> {
         if( name == null )
             throw new NullPointerException( "name must not be null" );
         
-        Entry entry = entries.get( name );
+        DockableHandle entry = entries.get( name );
         if( entry.dockable == null )
             entries.remove( name );
     }
@@ -328,7 +355,7 @@ public class ModeManager<A, M extends Mode> {
 		if( modes.isEmpty() )
 			throw new IllegalStateException( "no modes available" );
 		
-		for( ModeAccess mode : modes ){
+		for( ModeHandle mode : modes ){
 			if( mode.mode.isDefaultMode( dockable )){
 				return mode.mode;
 			}
@@ -345,7 +372,7 @@ public class ModeManager<A, M extends Mode> {
 	 * @return the current mode or <code>null</code> if not found
 	 */
 	protected M getCurrentMode( Dockable dockable ){
-		for( ModeAccess mode : modes ){
+		for( ModeHandle mode : modes ){
 			if( mode.mode.isCurrentMode( dockable )){
 				return mode.mode;
 			}
@@ -359,8 +386,12 @@ public class ModeManager<A, M extends Mode> {
 	 * inside this wrapper can be replaced any time.
 	 * @author Benjamin Sigg
 	 */
-	private class ModeAccess{
+	private class ModeHandle{
 		private M mode;
+		
+		public ModeHandle( M mode ){
+			this.mode = mode;
+		}
 	}
 
 	/**
@@ -369,11 +400,11 @@ public class ModeManager<A, M extends Mode> {
 	 * @return its access or <code>null</code>
 	 * @throws IllegalArgumentException if <code>mode</code> is unknown
 	 */
-	private ModeAccess access( Mode mode ){
+	private ModeHandle access( M mode ){
 		if( mode == null )
 			return null;
 		
-		for( ModeAccess access : modes ){
+		for( ModeHandle access : modes ){
 			if( access.mode == mode ){
 				return access;
 			}
@@ -381,23 +412,50 @@ public class ModeManager<A, M extends Mode> {
 		
 		throw new IllegalArgumentException( "unknown mode: " + mode );
 	}
+
+	/**
+	 * Returns an iteration of all modes that are stored in this manager.
+	 * @return the iteration
+	 */
+	public Iterable<M> modes(){
+		return new Iterable<M>(){
+			public Iterator<M> iterator(){
+				final Iterator<ModeHandle> handles = modes.iterator();
+				return new Iterator<M>(){
+					public boolean hasNext(){
+						return handles.hasNext();
+					}
+					public M next(){
+						return handles.next().mode;
+					}
+					public void remove(){
+						throw new UnsupportedOperationException( "cannot remove modes this way" );
+					}
+				};
+			}
+		};
+	}
 	
 	/**
 	 * Rebuilds the action sources of <code>dockable</code>.
 	 * @param dockable the element whose actions are to be updated
 	 */
 	protected void rebuild( Dockable dockable ){
-		Entry entry = dockables.get( dockable );
+		DockableHandle entry = dockables.get( dockable );
 		if( entry != null ){
 			entry.updateActionSource();
 		}
+	}
+	
+	private DockableHandle getHandle( Dockable dockable ){
+		return dockables.get( dockable );
 	}
 	
     /**
      * Describes all properties a {@link Dockable} has.
      * @author Benjamin Sigg
      */
-    private class Entry{
+    private class DockableHandle{
         /** the {@link Dockable} for which the properties are stored */
         public Dockable dockable;
         /** a unique id associated with {@link #dockable} */
@@ -406,22 +464,22 @@ public class ModeManager<A, M extends Mode> {
         /** the set of actions available for {@link #dockable} */
         public MultiDockActionSource source;
         /** a map that stores some properties mapped to the different modes */
-        public Map<String, A> properties;
+        public Map<Path, H> properties;
 
         /** The modes this entry already visited. No mode is more than once in this list. */
-        private List<ModeAccess> history;
+        private List<ModeHandle> history;
         
         /**
          * Creates a new entry
          * @param dockable the element whose properties are stores in this entry
          * @param id the unique if of this entry
          */
-        public Entry( Dockable dockable, String id ){
+        public DockableHandle( Dockable dockable, String id ){
             this.dockable = dockable;
             this.id = id;
             source = new MultiDockActionSource( new LocationHint( LocationHint.ACTION_GUARD, LocationHint.RIGHT ) );
-            properties = new HashMap<String, A>();
-            history = new LinkedList<ModeAccess>();
+            properties = new HashMap<Path, H>();
+            history = new LinkedList<ModeHandle>();
         }
         
         /**
@@ -429,11 +487,11 @@ public class ModeManager<A, M extends Mode> {
          */
         public void updateActionSource(){
         	source.removeAll();
-        	Mode mode = getCurrentMode( dockable );
+        	M mode = getCurrentMode( dockable );
         	if( mode == null )
         		mode = getDefaultMode( dockable );
         	
-        	for( ModeAccess access : modes ){
+        	for( ModeHandle access : modes ){
         		DockActionSource next = access.mode.getActionsFor( dockable, mode );
         		if( next != null ){
         			source.add( next );
@@ -447,13 +505,13 @@ public class ModeManager<A, M extends Mode> {
          * in the stack, than it is moved to the top of the stack. 
          * @param mode the mode to store
          */
-        public void putMode( ModeAccess mode ){
-            ModeAccess oldMode = peekMode();
+        public void putMode( ModeHandle mode ){
+            ModeHandle oldMode = peekMode();
             if( oldMode != mode ){
 	            history.remove( mode );
 	            history.add( mode );
 	            rebuild( dockable );
-	            fireModeChanged( dockable, oldMode.mode, mode.mode );
+	            fireModeChanged( dockable, oldMode == null ? null : oldMode.mode, mode == null ? null : mode.mode );
             }
         }
         
@@ -464,7 +522,7 @@ public class ModeManager<A, M extends Mode> {
          * @return the mode in which this entry was before the current mode
          * was put onto the history
          */
-        public ModeAccess previousMode(){
+        public ModeHandle previousMode(){
             if( history.size() < 2 )
                 return access( getDefaultMode( dockable ) );
             else
@@ -475,7 +533,7 @@ public class ModeManager<A, M extends Mode> {
          * Gets the current mode of this entry.
          * @return the mode or <code>null</code>
          */
-        public ModeAccess peekMode(){
+        public ModeHandle peekMode(){
             if( history.isEmpty() )
                 return null;
             else

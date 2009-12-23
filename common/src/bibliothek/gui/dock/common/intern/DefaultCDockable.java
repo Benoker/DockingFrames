@@ -401,7 +401,7 @@ public class DefaultCDockable extends AbstractCDockable{
      * @param action the new action
      */
     public void addAction( CAction action ){
-        dockable.getActions().add( action.intern() );
+        dockable.getActions().add( action );
     }
     
     /**
@@ -411,7 +411,7 @@ public class DefaultCDockable extends AbstractCDockable{
      * @see #addAction(CAction)
      */
     public void insertAction( int index, CAction action ){
-        dockable.getActions().add( index, action.intern() );
+        dockable.getActions().insert( index, action );
     }
     
     /**
@@ -442,7 +442,25 @@ public class DefaultCDockable extends AbstractCDockable{
      * @param action the action to remove
      */
     public void removeAction( CAction action ){
-        dockable.getActions().remove( action.intern() );
+        dockable.getActions().remove( action );
+    }
+    
+    /**
+     * Gets the number of {@link CAction}s that were added to this dockable.
+     * @return the number of actions
+     */
+    public int getActionCount(){
+    	return dockable.getActions().getDockActionCount();
+    }
+    
+    /**
+     * Gets the <code>index</code>'th action of this dockable. Be aware that
+     * the result might be {@link CSeparator#SEPARATOR}.
+     * @param index the location of an action
+     * @return the action
+     */
+    public CAction getAction( int index ){
+    	return dockable.getActions().getAction( index );
     }
     
     @Override

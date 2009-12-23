@@ -25,47 +25,26 @@
  */
 package bibliothek.gui.dock.common.mode;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.action.predefined.CNormalizeAction;
-import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.CStation;
 
 /**
- * {@link CDockable}s are in {@link NormalMode} if they are a child
- * of a {@link NormalModeArea}.
+ * A representation of some area that can show {@link Dockable}s.
  * @author Benjamin Sigg
- *
  */
-public class NormalMode extends DefaultLocationMode<NormalModeArea>{
-	/** The unique identifier of this mode */
-	public static final Path IDENTIFIER = new Path( "dock.mode.normal" );
+public interface ModeArea {
+	/**
+	 * Gets a unique identifier for this area.
+	 * @return the unique identifier
+	 * @see CStation#getUniqueId()
+	 */
+	public String getUniqueId();
 	
 	/**
-	 * Creates a new normal mode.
-	 * @param control the owner of this mode
-	 * @param manager responsible for this mode
+	 * Tells whether <code>dockable</code> is a direct child of this station.
+	 * @param dockable some element
+	 * @return <code>true</code> if and only if the parent of <code>dockable</code>
+	 * is identical to this station
 	 */
-	public NormalMode( CControl control, ExtendedModeManager manager ){
-		super( manager );
-		setSelectModeAction( new CNormalizeAction( control ) );
-	}
-	
-	public Path getUniqueIdentifier(){
-		return IDENTIFIER;
-	}
-
-	public boolean isCurrentMode( Dockable dockable ){
-		for( NormalModeArea area : this ){
-			if( area.isNormalModeChild( dockable )){
-				return true;
-			}
-		}
-		
-		return false;
-	}
-
-	public boolean isDefaultMode( Dockable dockable ){
-		return true;
-	}
+	public boolean isChild( Dockable dockable );
 }

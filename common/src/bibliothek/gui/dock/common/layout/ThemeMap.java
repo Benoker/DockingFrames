@@ -327,7 +327,7 @@ public class ThemeMap {
         if( index >= 0 )
             entry = factories.get( index );
         
-        if( entry != selected ){
+        if( entry != selected || force ){
             String oldKey = selected == null ? null : selected.key;
             String newKey = entry == null ? null : entry.key;
             

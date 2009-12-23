@@ -25,32 +25,20 @@
  */
 package bibliothek.gui.dock.common.mode;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.support.mode.Mode;
 
 /**
- * The parent of a dockable that is maximized.
- * @author Benjamin Sigg
+ * A {@link Mode} that is used by the {@link ExtendedModeManager}. Since {@link DockStation}s
+ * may be nested, most algorithms working with them have to be recursive. Some of the
+ * methods of {@link LocationMode} have a slightly different semantic than their original.  
  */
-public interface MaximizedModeArea extends ModeArea{
+public interface LocationMode extends Mode<Location>{
 	/**
-	 * Informs this area that it is now managed by <code>mode</code>.
-	 * @param mode the new mode, can be <code>null</code> to inform this
-	 * area that it is no longer managed
-	 * @throws IllegalStateException if already connected
+	 * If this method is not able to clearly find out whether <code>dockable</code>
+	 * has this mode, it returns <code>false</code>. The {@link ExtendedModeManager}
+	 * will ask again with the parent station of <code>dockable</code>.
 	 */
-	public void connect( MaximizedMode mode );
-	
-	/**
-	 * Tells this parent to show <code>dockable</code> maximized,
-	 * only one dockable may be maximized at any time.
-	 * @param dockable the maximized element, <code>null</code> to indicate
-	 * that no element should be maximized.
-	 */
-	public void setMaximized( Dockable dockable );
-	
-	/**
-	 * Gets the currently maximized element.
-	 * @return the currently maximized dockable, can be <code>null</code>
-	 */
-	public Dockable getMaximized();
+	public boolean isCurrentMode( Dockable dockable );
 }

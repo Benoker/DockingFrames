@@ -134,9 +134,9 @@ public class CBubbleTheme extends CDockTheme<BubbleTheme>{
             manager.setIconTheme( entry.getKey(), entry.getValue() );
         }
         ActionViewConverter converter = controller.getActionViewConverter();
-    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.TITLE, new BubblePanelPopupGenerator());
-    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.MENU, new PanelMenuGenerator() );
-    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.DROP_DOWN, new PanelDropDownGenerator() );
+    	converter.putTheme( CPanelPopup.PANEL_POPUP, ViewTarget.TITLE, new BubblePanelPopupGenerator());
+    	converter.putTheme( CPanelPopup.PANEL_POPUP, ViewTarget.MENU, new PanelMenuGenerator() );
+    	converter.putTheme( CPanelPopup.PANEL_POPUP, ViewTarget.DROP_DOWN, new PanelDropDownGenerator() );
     }
     
     @Override
@@ -144,8 +144,8 @@ public class CBubbleTheme extends CDockTheme<BubbleTheme>{
         super.uninstall( controller );
         controller.getIcons().clearThemeIcons();
         ActionViewConverter converter = controller.getActionViewConverter();
-    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.TITLE, null );
-    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.MENU, null );
-    	converter.putTheme( CPanelPopup.CUSTOM, ViewTarget.DROP_DOWN, null );
+    	converter.putTheme( CPanelPopup.PANEL_POPUP, ViewTarget.TITLE, null );
+    	converter.putTheme( CPanelPopup.PANEL_POPUP, ViewTarget.MENU, null );
+    	converter.putTheme( CPanelPopup.PANEL_POPUP, ViewTarget.DROP_DOWN, null );
     }
 }
