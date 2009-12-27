@@ -23,17 +23,21 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.mode;
+package bibliothek.gui.dock.facile.mode;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.action.CAction;
+import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.Mode;
 
 /**
@@ -49,22 +53,18 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 	private A defaultArea;
 	
 	/** the action to be triggered for activating this mode */
-	private CAction selectModeAction;
+	private DockAction selectModeAction;
 	
 	/** action source containing only {@link #selectModeAction} */
 	private DefaultDockActionSource selectModeSource = new DefaultDockActionSource();
 	
 	/** the manager responsible for this mode */
-	private ExtendedModeManager manager;
+	private LocationModeManager manager;
 
+	/** the list of known listeners */
+	private List<LocationModeListener> listeners = new ArrayList<LocationModeListener>();
 	
-	/**
-	 * Creates a new mode.
-	 * @param manager the owner of this mode
-	 */
-	public AbstractLocationMode( ExtendedModeManager manager ){
-		if( manager == null )
-			throw new IllegalArgumentException( "manager must not be null" );
+	public void setManager( LocationModeManager manager ){
 		this.manager = manager;
 	}
 	
@@ -72,8 +72,26 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 	 * Gets the owner of this mode.
 	 * @return the owner, not <code>null</code>
 	 */
-	public ExtendedModeManager getManager(){
+	public LocationModeManager getManager(){
 		return manager;
+	}
+	
+	public void addLocationModeListener( LocationModeListener listener ){
+		if( listener == null )
+			throw new IllegalArgumentException( "listener must not be null" );
+		listeners.add( listener );
+	}
+	
+	public void removeLocationModeListener( LocationModeListener listener ){
+		listeners.remove( listener );
+	}
+	
+	/**
+	 * Gets all the listeners that are currently registered at this mode.
+	 * @return all the listeners
+	 */
+	protected LocationModeListener[] listeners(){
+		return listeners.toArray( new LocationModeListener[ listeners.size() ] );
 	}
 	
 	/**
@@ -161,19 +179,28 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 	}
 	
 	/**
+	 * Calls {@link #setSelectModeAction(DockAction)}.
+	 * @param action the new action or <code>null</code>
+	 * @see #setSelectModeAction(DockAction)
+	 */
+	public void setSelectModeAction( CAction action ){
+		setSelectModeAction( action == null ? null : action.intern() );
+	}
+	
+	/**
 	 * Sets the action which must be triggered in order to activate this mode. This
 	 * action will be returned by {@link #getActionsFor(Dockable, Mode)} if the mode
 	 * is not <code>this</code>. Changes to this property are applied to all visible
 	 * {@link Dockable}.
 	 * @param selectModeAction the action or <code>null</code>
 	 */
-	public void setSelectModeAction( CAction selectModeAction ){
+	public void setSelectModeAction( DockAction selectModeAction ){
 		if( this.selectModeAction != selectModeAction ){
 			if( this.selectModeAction != null )
-				selectModeSource.remove( this.selectModeAction.intern() );
+				selectModeSource.remove( this.selectModeAction );
 			this.selectModeAction = selectModeAction;
 			if( this.selectModeAction != null )
-				selectModeSource.add( this.selectModeAction.intern() );
+				selectModeSource.add( this.selectModeAction );
 		}
 	}
 	
@@ -181,7 +208,7 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 	 * Gets the action which must be triggered in order to activate this mode.
 	 * @return the action or <code>null</code>
 	 */
-	public CAction getSelectModeAction(){
+	public DockAction getSelectModeAction(){
 		return selectModeAction;
 	}
 	
@@ -190,4 +217,30 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 			return null;
 		return selectModeSource;
 	}
+	
+	public void apply( Dockable dockable, Location history, AffectedSet set ){
+		LocationModeEvent event = new LocationModeEvent( this, history, dockable, set );
+		for( LocationModeListener listener : listeners() ){
+			listener.applyStarting( event );
+		}
+		if( !event.isDone() ){
+			runApply( dockable, history, set );
+			event.done();
+		}
+		for( LocationModeListener listener : listeners() ){
+			listener.applyDone( event );
+		}
+	}
+	
+	/**
+	 * Called by {@link #apply(Dockable, Location, AffectedSet)} after the {@link LocationModeListener}s
+	 * are informed. Applies this mode to <code>dockable</code>.
+	 * @param dockable the element whose mode becomes <code>this</code>
+	 * @param history history information that was returned by this mode
+	 * on its last call to {@link #leave(Dockable, Mode)}. May be <code>null</code>
+	 * if this mode was never applied or returns <code>null</code> on {@link #leave(Dockable, Mode)}.
+	 * @param set this method has to store all {@link Dockable}s which might have changed their
+	 * mode in the set.
+	 */
+	protected abstract void runApply( Dockable dockable, Location history, AffectedSet set );
 }

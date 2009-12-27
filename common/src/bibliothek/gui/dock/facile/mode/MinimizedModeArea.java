@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.mode;
+package bibliothek.gui.dock.facile.mode;
 
 public interface MinimizedModeArea extends StationModeArea{
 

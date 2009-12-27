@@ -23,12 +23,34 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.mode;
+package bibliothek.gui.dock.facile.mode.action;
+
+import java.util.ResourceBundle;
+
+import bibliothek.gui.DockController;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.facile.mode.NormalMode;
+import bibliothek.gui.dock.support.mode.Mode;
+import bibliothek.gui.dock.support.util.Resources;
 
 /**
- * Represents a station which shows its children in free floating dialogs.
+ * An action used to change the {@link Mode} of a {@link Dockable} to
+ * the {@link NormalMode}.
  * @author Benjamin Sigg
  */
-public interface ExternalizedModeArea extends StationModeArea{
-
+public class NormalModeAction extends LocationModeAction{
+	/**
+	 * Creates a new action.
+	 * @param controller the controller in whose realm this action is used
+	 * @param mode the mode which is applied
+	 */
+	public NormalModeAction( DockController controller, NormalMode mode ){
+		super( controller, mode, "normalize", NormalMode.ICON_IDENTIFIER, CControl.KEY_GOTO_NORMALIZED );
+		
+        ResourceBundle bundle = Resources.getBundle();
+        
+        setText( bundle.getString( "normalize.in" ) );
+        setTooltip( bundle.getString( "normalize.in.tooltip" ) );
+	}
 }

@@ -23,24 +23,20 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.mode;
+package bibliothek.gui.dock.support.mode;
 
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 
 /**
- * Represents a {@link DockStation} that shows {@link Dockable}s in
- * {@link NormalMode}.
+ * A set given to various methods which are changing the {@link Mode}
+ * of {@link Dockable}s. These methods have to add their modified 
+ * {@link Dockable}s to the set.
  * @author Benjamin Sigg
  */
-public interface NormalModeArea extends StationModeArea{
-
+public interface AffectedSet{
 	/**
-	 * Tells whether <code>dockable</code> is a child of this
-	 * station and in a form satisfying the normal-mode criteria.
-	 * @param dockable some potential child
-	 * @return <code>true</code> if <code>dockable</code> is a child
-	 * in normal mode.
+	 * Stores <code>dockable</code> and all its children in the set.
+	 * @param dockable the new element, <code>null</code> will be ignored
 	 */
-	public boolean isNormalModeChild( Dockable dockable );
+	public void add( Dockable dockable );
 }

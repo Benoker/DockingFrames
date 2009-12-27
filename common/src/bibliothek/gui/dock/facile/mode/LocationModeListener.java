@@ -23,22 +23,28 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.mode;
-
-import bibliothek.gui.DockStation;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.support.mode.Mode;
+package bibliothek.gui.dock.facile.mode;
 
 /**
- * A {@link Mode} that is used by the {@link ExtendedModeManager}. Since {@link DockStation}s
- * may be nested, most algorithms working with them have to be recursive. Some of the
- * methods of {@link LocationMode} have a slightly different semantic than their original.  
+ * A listener added to a {@link LocationMode}. The listener gets informed
+ * if the {@link LocationMode#apply(bibliothek.gui.Dockable, Location, bibliothek.gui.dock.support.mode.AffectedSet) apply}
+ * method is called.
+ * @author Benjamin Sigg
  */
-public interface LocationMode extends Mode<Location>{
+public interface LocationModeListener {
 	/**
-	 * If this method is not able to clearly find out whether <code>dockable</code>
-	 * has this mode, it returns <code>false</code>. The {@link ExtendedModeManager}
-	 * will ask again with the parent station of <code>dockable</code>.
+	 * Called by a {@link LocationMode} right before the 
+	 * {@link LocationMode#apply(bibliothek.gui.Dockable, Location, bibliothek.gui.dock.support.mode.AffectedSet) apply}
+	 * method starts.
+	 * @param event detailed information about the event
 	 */
-	public boolean isCurrentMode( Dockable dockable );
+	public void applyStarting( LocationModeEvent event );
+
+	/**
+	 * Called by a {@link LocationMode} after the 
+	 * {@link LocationMode#apply(bibliothek.gui.Dockable, Location, bibliothek.gui.dock.support.mode.AffectedSet) apply}
+	 * method has done its work.
+	 * @param event detailed information about the event
+	 */
+	public void applyDone( LocationModeEvent event );
 }

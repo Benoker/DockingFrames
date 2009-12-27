@@ -39,79 +39,79 @@ import bibliothek.gui.dock.station.split.SplitDockTree;
  * @author Benjamin Sigg
  */
 public class MaximizeSplitDockStation implements MaximizeArea{
-    /** unique identifier */
-    private String uniqueId;
-    /** delegate to show the elements */
-    private SplitDockStation station;
+	/** unique identifier */
+	private String uniqueId;
+	/** delegate to show the elements */
+	private SplitDockStation station;
 
-    /** observers of this station */
-    private List<MaximizeAreaListener> listeners = new ArrayList<MaximizeAreaListener>();
-    
-    /** listener to {@link #station} */
-    private SplitDockListener stationListener = new SplitDockListener(){
-	public void fullScreenDockableChanged( SplitDockStation station, Dockable oldFullScreen, Dockable newFullScreen ) {
-	    MaximizeAreaListener[] array = listeners.toArray( new MaximizeAreaListener[ listeners.size() ] );
-	    for( MaximizeAreaListener listener : array ){
-		listener.maximizedChanged( MaximizeSplitDockStation.this, oldFullScreen, newFullScreen );
-	    }
+	/** observers of this station */
+	private List<MaximizeAreaListener> listeners = new ArrayList<MaximizeAreaListener>();
+
+	/** listener to {@link #station} */
+	private SplitDockListener stationListener = new SplitDockListener(){
+		public void fullScreenDockableChanged( SplitDockStation station, Dockable oldFullScreen, Dockable newFullScreen ) {
+			MaximizeAreaListener[] array = listeners.toArray( new MaximizeAreaListener[ listeners.size() ] );
+			for( MaximizeAreaListener listener : array ){
+				listener.maximizedChanged( MaximizeSplitDockStation.this, oldFullScreen, newFullScreen );
+			}
+		}
+	};
+
+	/**
+	 * Creates a new area.
+	 * @param uniqueId the result of {@link #getUniqueId()}
+	 * @param station the result of {@link #getStation()}
+	 */
+	public MaximizeSplitDockStation( String uniqueId, SplitDockStation station ){
+		if( uniqueId == null )
+			throw new IllegalArgumentException( "uniqueId must not be null" );
+		if( station == null )
+			throw new IllegalArgumentException( "station must not be null" );
+
+		this.uniqueId = uniqueId;
+		this.station = station;
 	}
-    };
-    
-    /**
-     * Creates a new area.
-     * @param uniqueId the result of {@link #getUniqueId()}
-     * @param station the result of {@link #getStation()}
-     */
-    public MaximizeSplitDockStation( String uniqueId, SplitDockStation station ){
-	if( uniqueId == null )
-	    throw new IllegalArgumentException( "uniqueId must not be null" );
-	if( station == null )
-	    throw new IllegalArgumentException( "station must not be null" );
 
-	this.uniqueId = uniqueId;
-	this.station = station;
-    }
+	public void addMaximizeAreaListener( MaximizeAreaListener listener ) {
+		if( listener == null )
+			throw new IllegalArgumentException( "listener must not be null" );
 
-    public void addMaximizeAreaListener( MaximizeAreaListener listener ) {
-	if( listener == null )
-	    throw new IllegalArgumentException( "listener must not be null" );
-	
-	if( listeners.isEmpty() ){
-	    station.addSplitDockStationListener( stationListener );
+		if( listeners.isEmpty() ){
+			station.addSplitDockStationListener( stationListener );
+		}
+		listeners.add( listener );
 	}
-	listeners.add( listener );
-    }
-    
-    public void removeMaximizeAreaListener( MaximizeAreaListener listener ) {
-        listeners.remove( listener );
-        if( listeners.isEmpty() ){
-            station.removeSplitDockStationListener( stationListener );
-        }
-    }
-    
-    public void dropAside( Dockable dockable ) {
-	SplitDockTree tree = station.createTree();
-	if( tree.getRoot() == null )
-	    tree.root( dockable );
-	else{
-	    tree.root( tree.horizontal( tree.put( dockable ), tree.unroot() ) );
+
+	public void removeMaximizeAreaListener( MaximizeAreaListener listener ) {
+		listeners.remove( listener );
+		if( listeners.isEmpty() ){
+			station.removeSplitDockStationListener( stationListener );
+		}
 	}
-	station.dropTree( tree, false );
-    }
 
-    public Dockable getMaximizedDockable() {
-	return station.getFullScreen();
-    }
+	public void dropAside( Dockable dockable ) {
+		SplitDockTree tree = station.createTree();
+		if( tree.getRoot() == null )
+			tree.root( dockable );
+		else{
+			tree.root( tree.horizontal( tree.put( dockable ), tree.unroot() ) );
+		}
+		station.dropTree( tree, false );
+	}
 
-    public DockStation getStation() {
-	return station;
-    }
+	public Dockable getMaximizedDockable() {
+		return station.getFullScreen();
+	}
 
-    public String getUniqueId() {
-	return uniqueId;
-    }
+	public DockStation getStation() {
+		return station;
+	}
 
-    public void setMaximizedDockable( Dockable dockable ) {
-	station.setFullScreen( dockable );
-    }
+	public String getUniqueId() {
+		return uniqueId;
+	}
+
+	public void setMaximizedDockable( Dockable dockable ) {
+		station.setFullScreen( dockable );
+	}
 }

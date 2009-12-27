@@ -64,4 +64,18 @@ public interface ModeManagerListener<A, M extends Mode<A>> {
 	 * @param newMode the new mode, may be <code>null</code>
 	 */
 	public void modeChanged( ModeManager<? extends A, ? extends M> manager, Dockable dockable, M oldMode, M newMode );
+	
+	/**
+	 * Called when a new mode has been added to <code>manager</code>.
+	 * @param manager the source of the event
+	 * @param mode the new mode
+	 */
+	public void modeAdded( ModeManager<? extends A, ? extends M> manager, M mode );
+	
+	/**
+	 * Called when a mode has been removed from <code>manager</code>.
+	 * @param manager the source of the event
+	 * @param mode the removed mode
+	 */
+	public void modeRemoved( ModeManager<? extends A, ? extends M> manager, M mode );
 }

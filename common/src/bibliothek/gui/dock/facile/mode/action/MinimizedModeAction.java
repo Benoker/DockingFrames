@@ -23,28 +23,34 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.mode;
+package bibliothek.gui.dock.facile.mode.action;
 
+import java.util.ResourceBundle;
+
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.facile.mode.MinimizedMode;
+import bibliothek.gui.dock.support.mode.Mode;
+import bibliothek.gui.dock.support.util.Resources;
 
 /**
- * A representation of some area that can show {@link Dockable}s.
+ * An action used to change the {@link Mode} of a {@link Dockable} to
+ * the {@link MinimizedMode}.
  * @author Benjamin Sigg
  */
-public interface ModeArea {
+public class MinimizedModeAction extends LocationModeAction{
 	/**
-	 * Gets a unique identifier for this area.
-	 * @return the unique identifier
-	 * @see CStation#getUniqueId()
+	 * Creates a new action.
+	 * @param controller the controller in whose realm this action is used
+	 * @param mode the mode which is applied
 	 */
-	public String getUniqueId();
-	
-	/**
-	 * Tells whether <code>dockable</code> is a direct child of this station.
-	 * @param dockable some element
-	 * @return <code>true</code> if and only if the parent of <code>dockable</code>
-	 * is identical to this station
-	 */
-	public boolean isChild( Dockable dockable );
+	public MinimizedModeAction( DockController controller, MinimizedMode mode ){
+		super( controller, mode, "minimize", MinimizedMode.ICON_IDENTIFIER, CControl.KEY_GOTO_MINIMIZED );
+		
+        ResourceBundle bundle = Resources.getBundle();
+        
+        setText( bundle.getString( "minimize.in" ) );
+        setTooltip( bundle.getString( "minimize.in.tooltip" ) );
+	}
 }

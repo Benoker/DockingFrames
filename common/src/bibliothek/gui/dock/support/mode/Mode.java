@@ -31,7 +31,9 @@ import bibliothek.gui.dock.action.DockActionSource;
 
 /**
  * A mode describes a state in which a {@link Dockable} can be. A Dockable
- * can be in exactly one {@link Mode} at a time.
+ * can be in exactly one {@link Mode} at a time. Notice that the mode may
+ * change through events that are not registered or influenced by this
+ * mode.
  * @author Benjamin Sigg
  * @param H class storing history information
  */
@@ -54,35 +56,25 @@ public interface Mode<H> {
 	 * one segment.
 	 */
 	public Path getUniqueIdentifier();
-	
-//	/**
-//	 * Gets the neutral mode for <code>dockable</code>. The neutral mode
-//	 * is applied before changing the mode of any {@link Dockable}.
-//	 * @param dockable the element whose neutral mode is asked
-//	 * @return the neutral mode or <code>null</code>
-//	 * @see NeutralMode
-//	 */
-//	public NeutralMode<?> getNeutralMode( Dockable dockable );
-	
-		
+
 	/**
 	 * Applies this mode to <code>dockable</code>.
 	 * @param dockable the element whose mode becomes <code>this</code>
 	 * @param history history information that was returned by this mode
 	 * on its last call to {@link #leave(Dockable, Mode)}. May be <code>null</code>
 	 * if this mode was never applied or returns <code>null</code> on {@link #leave(Dockable, Mode)}.
+	 * @param set this method has to store all {@link Dockable}s which might have changed their
+	 * mode in the set.
 	 */
-	public void apply( Dockable dockable, H history );
+	public void apply( Dockable dockable, H history, AffectedSet set );
 	
 	/**
-	 * The opposite of {@link #apply(Dockable, Mode)}, this method is
-	 * called before <code>dockable</code> leaves this mode and enters
-	 * <code>mode</code>. Note that the new mode may be equal
-	 * to <code>this</code>.
-	 * @param dockable the element that leaves this mode
+	 * Provides history information about the current state of <code>dockable</code>
+	 * in respect to this mode.
+	 * @param dockable the element
 	 * @return history information that is needed when calling {@link #apply(Dockable, Mode, Object)}
 	 */
-	public H leave( Dockable dockable );
+	public H current( Dockable dockable );
 	
 	/**
 	 * Checks whether this mode is a default mode of <code>dockable</code>. A 

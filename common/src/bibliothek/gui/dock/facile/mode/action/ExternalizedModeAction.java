@@ -23,32 +23,34 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.mode;
+package bibliothek.gui.dock.facile.mode.action;
 
-import bibliothek.gui.DockStation;
+import java.util.ResourceBundle;
+
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.facile.mode.ExternalizedMode;
 import bibliothek.gui.dock.support.mode.Mode;
+import bibliothek.gui.dock.support.util.Resources;
 
 /**
- * A representation of a {@link DockStation} which can be accessed 
- * through {@link Mode}s.
+ * An action used to change the {@link Mode} of a {@link Dockable} to
+ * the {@link ExternalizedMode}.
  * @author Benjamin Sigg
  */
-public interface StationModeArea extends ModeArea{	
+public class ExternalizedModeAction extends LocationModeAction{
 	/**
-	 * Gets the location of <code>dockable</code> which is a child
-	 * of this station.
-	 * @param child the child
-	 * @return the location, may be <code>null</code>
+	 * Creates a new action.
+	 * @param controller the controller in whose realm this action is used
+	 * @param mode the mode which is applied
 	 */
-	public DockableProperty getLocation( Dockable child );
-	
-	/**
-	 * Sets the location of <code>dockable</code> to <code>location</code>
-	 * and ensures that <code>dockable</code> is a child of this station.
-	 * @param dockable the new or old child
-	 * @param location the new location, may be <code>null</code>
-	 */
-	public void setLocation( Dockable dockable, DockableProperty location );
+	public ExternalizedModeAction( DockController controller, ExternalizedMode mode ){
+		super( controller, mode, "externalize", ExternalizedMode.ICON_IDENTIFIER, CControl.KEY_GOTO_EXTERNALIZED );
+		
+        ResourceBundle bundle = Resources.getBundle();
+        
+        setText( bundle.getString( "externalize.in" ) );
+        setTooltip( bundle.getString( "externalize.in.tooltip" ) );
+	}
 }

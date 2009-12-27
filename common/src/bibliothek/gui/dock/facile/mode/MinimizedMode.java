@@ -23,61 +23,53 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.mode;
+package bibliothek.gui.dock.facile.mode;
 
 import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.action.predefined.CMaximizeAction;
+import bibliothek.gui.dock.common.action.predefined.CMinimizeAction;
+import bibliothek.gui.dock.facile.mode.action.MinimizedModeAction;
+import bibliothek.gui.dock.support.util.Resources;
+import bibliothek.gui.dock.util.IconManager;
 
 /**
- * {@link Dockable}s are maximized if they take up the whole space a frame
- * or a screen offers.
+ * Only the title of a minimized {@link Dockable} is visible.
  * @author Benjamin Sigg
  */
-public class MaximizedMode extends AbstractLocationMode<MaximizedModeArea>{
-	/** unique identifier for this mode */
-	public static final Path IDENTIFIER = new Path( "dock.mode.maximized" );
+public class MinimizedMode extends DefaultLocationMode<MinimizedModeArea>{
+	/** the unique identifier of this mode */
+	public static final Path IDENTIFIER = new Path( "dock.mode.minimized" );
+	
+    /** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "minimize"-action */
+    public static final String ICON_IDENTIFIER = "location.minimize";
+
+    
+	/**
+	 * Creates a new mode.
+	 * @param control the control in whose realm this mode is used
+	 */
+	public MinimizedMode( CControl control ){
+		setSelectModeAction( new CMinimizeAction( control ) );
+	}
 	
 	/**
-	 * Creates a new mode
-	 * @param control the control in whose realm this mode will work
-	 * @param manager the manager which manages this mode
+	 * Creates a new mode.
+	 * @param controller the owner of this mode
 	 */
-	public MaximizedMode( CControl control, ExtendedModeManager manager ){
-		super( manager );
-		setSelectModeAction( new CMaximizeAction( control ) );
+	public MinimizedMode( DockController controller ){
+		IconManager icons = controller.getIcons();
+        icons.setIconDefault( "minimize", Resources.getIcon( "minimize" ) );
+        
+		setSelectModeAction( new MinimizedModeAction( controller, this ) );
 	}
 	
 	public Path getUniqueIdentifier(){
 		return IDENTIFIER;
 	}
-
-	public void apply( Dockable dockable, Location history ){
-		MaximizedModeArea area = null;
-		if( history != null )
-			area = get( history.getRoot() );
-		if( area == null )
-			area = getDefaultArea();
-		
-		area.setMaximized( dockable );
-	}
-
-	public Location leave( Dockable dockable ){
-		MaximizedModeArea area = get( dockable );
-		if( area == null )
-			return null;
 	
-		area.setMaximized( null );
-		return new Location( area.getUniqueId(), null );
-	}
-
-	public boolean isCurrentMode( Dockable dockable ){
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	public boolean isDefaultMode( Dockable dockable ){
 		return false;
-	}	
+	}
 }

@@ -23,12 +23,13 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.mode.station;
+package bibliothek.gui.dock.facile.mode.station;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
-import bibliothek.gui.dock.common.mode.MinimizedModeArea;
+import bibliothek.gui.dock.facile.mode.MinimizedModeArea;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.util.DockUtilities;
 
 /**
@@ -78,7 +79,9 @@ public class FlapDockStationHandle implements MinimizedModeArea{
 		return dockable.getDockParent() == station;
 	}
 
-	public void setLocation( Dockable dockable, DockableProperty location ){
+	public void setLocation( Dockable dockable, DockableProperty location, AffectedSet set ){
+		set.add( dockable );
+		
 		if( isChild( dockable )){
 			if( location != null ){
 				station.move( dockable, location );

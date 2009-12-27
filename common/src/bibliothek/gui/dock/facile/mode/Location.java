@@ -23,49 +23,47 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.mode;
+package bibliothek.gui.dock.facile.mode;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.action.predefined.CNormalizeAction;
-import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.layout.DockableProperty;
 
 /**
- * {@link CDockable}s are in {@link NormalMode} if they are a child
- * of a {@link NormalModeArea}.
+ * Describes the location of a {@link Dockable} on some station.
  * @author Benjamin Sigg
- *
  */
-public class NormalMode extends DefaultLocationMode<NormalModeArea>{
-	/** The unique identifier of this mode */
-	public static final Path IDENTIFIER = new Path( "dock.mode.normal" );
+public class Location {
+	/** the unique identifier of the root station */
+	private String root;
+	/** the location of the element */
+	private DockableProperty location;
 	
 	/**
-	 * Creates a new normal mode.
-	 * @param control the owner of this mode
-	 * @param manager responsible for this mode
+	 * Creates a new location.
+	 * @param root the identifier of the parent station, must not be <code>null</code>
+	 * @param location the location on the station, may be <code>null</code>
 	 */
-	public NormalMode( CControl control, ExtendedModeManager manager ){
-		super( manager );
-		setSelectModeAction( new CNormalizeAction( control ) );
-	}
-	
-	public Path getUniqueIdentifier(){
-		return IDENTIFIER;
-	}
-
-	public boolean isCurrentMode( Dockable dockable ){
-		for( NormalModeArea area : this ){
-			if( area.isNormalModeChild( dockable )){
-				return true;
-			}
-		}
+	public Location( String root, DockableProperty location ){
+		if( root == null )
+			throw new IllegalArgumentException( "root must not be null" );
 		
-		return false;
+		this.root = root;
+		this.location = location;
 	}
 
-	public boolean isDefaultMode( Dockable dockable ){
-		return true;
+	/**
+	 * Gets the unique identifier of the parent station.  
+	 * @return the identifier, not <code>null</code>
+	 */
+	public String getRoot(){
+		return root;
+	}
+
+	/**
+	 * Gets the location on the parent station.
+	 * @return the location, may be <code>null</code>
+	 */
+	public DockableProperty getLocation(){
+		return location;
 	}
 }

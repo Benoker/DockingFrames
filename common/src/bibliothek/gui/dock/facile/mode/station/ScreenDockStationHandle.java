@@ -23,12 +23,13 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.mode.station;
+package bibliothek.gui.dock.facile.mode.station;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
-import bibliothek.gui.dock.common.mode.ExternalizedModeArea;
+import bibliothek.gui.dock.facile.mode.ExternalizedModeArea;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.util.DockUtilities;
 
 /**
@@ -71,7 +72,9 @@ public class ScreenDockStationHandle implements ExternalizedModeArea{
 		return DockUtilities.getPropertyChain( station, child );
 	}
 
-	public void setLocation( Dockable dockable, DockableProperty location ){
+	public void setLocation( Dockable dockable, DockableProperty location, AffectedSet set ){
+		set.add( dockable );
+		
 		if( isChild( dockable )){
 			if( location != null ){
 				station.move( dockable, location );

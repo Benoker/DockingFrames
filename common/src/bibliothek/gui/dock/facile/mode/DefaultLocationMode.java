@@ -23,11 +23,12 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.mode;
+package bibliothek.gui.dock.facile.mode;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.Mode;
 
 
@@ -39,18 +40,10 @@ import bibliothek.gui.dock.support.mode.Mode;
  */
 public abstract class DefaultLocationMode<A extends StationModeArea> extends AbstractLocationMode<A>{
 	/**
-	 * Creates a new mode.
-	 * @param manager the manager that is using this mode
-	 */
-	public DefaultLocationMode( ExtendedModeManager manager ){
-		super( manager );
-	}
-	
-	/**
 	 * This default implementation just returns the location of
 	 * <code>dockable</code> but does change any properties.
 	 */
-	public Location leave( Dockable dockable ){
+	public Location current( Dockable dockable ){
 		A area = get( dockable );
 		if( area == null )
 			return null;
@@ -59,11 +52,19 @@ public abstract class DefaultLocationMode<A extends StationModeArea> extends Abs
 	}
 	
 	/**
+	 * This default implementation does nothing
+	 */
+	public Runnable leaving( Dockable dockable, AffectedSet set ){
+		// nothing
+		return null;
+	}
+	
+	/**
 	 * This default implementation uses the {@link DockStation#move(Dockable, DockableProperty)}
 	 * and {@link DockStation#drop(Dockable, DockableProperty)} methods to put
 	 * <code>dockable</code> at its location.
 	 */
-	public void apply( Dockable dockable, Location history ){
+	public void runApply( Dockable dockable, Location history, AffectedSet set ){
 		A area = null;
 		if( history != null ) 
 			area = get( history.getRoot() );
@@ -74,7 +75,7 @@ public abstract class DefaultLocationMode<A extends StationModeArea> extends Abs
 			throw new IllegalStateException( "unable to find valid target" );
 		
 		DockableProperty location = history == null ? null : history.getLocation();
-		area.setLocation( dockable, location );
+		area.setLocation( dockable, location, set );
 	}
 
 	public boolean isCurrentMode( Dockable dockable ){

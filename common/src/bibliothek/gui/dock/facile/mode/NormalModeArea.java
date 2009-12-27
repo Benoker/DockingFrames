@@ -23,47 +23,24 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.mode;
+package bibliothek.gui.dock.facile.mode;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.layout.DockableProperty;
 
 /**
- * Describes the location of a {@link Dockable} on some station.
+ * Represents a {@link DockStation} that shows {@link Dockable}s in
+ * {@link NormalMode}.
  * @author Benjamin Sigg
  */
-public class Location {
-	/** the unique identifier of the root station */
-	private String root;
-	/** the location of the element */
-	private DockableProperty location;
-	
-	/**
-	 * Creates a new location.
-	 * @param root the identifier of the parent station, must not be <code>null</code>
-	 * @param location the location on the station, may be <code>null</code>
-	 */
-	public Location( String root, DockableProperty location ){
-		if( root == null )
-			throw new IllegalArgumentException( "root must not be null" );
-		
-		this.root = root;
-		this.location = location;
-	}
+public interface NormalModeArea extends StationModeArea{
 
 	/**
-	 * Gets the unique identifier of the parent station.  
-	 * @return the identifier, not <code>null</code>
+	 * Tells whether <code>dockable</code> is a child of this
+	 * station and in a form satisfying the normal-mode criteria.
+	 * @param dockable some potential child
+	 * @return <code>true</code> if <code>dockable</code> is a child
+	 * in normal mode.
 	 */
-	public String getRoot(){
-		return root;
-	}
-
-	/**
-	 * Gets the location on the parent station.
-	 * @return the location, may be <code>null</code>
-	 */
-	public DockableProperty getLocation(){
-		return location;
-	}
+	public boolean isNormalModeChild( Dockable dockable );
 }

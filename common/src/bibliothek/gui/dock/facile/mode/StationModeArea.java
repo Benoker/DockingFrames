@@ -23,36 +23,35 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.mode;
+package bibliothek.gui.dock.facile.mode;
 
-import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.action.predefined.CMinimizeAction;
+import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.support.mode.AffectedSet;
+import bibliothek.gui.dock.support.mode.Mode;
 
 /**
- * Only the title of a minimized {@link Dockable} is visible.
+ * A representation of a {@link DockStation} which can be accessed 
+ * through {@link Mode}s.
  * @author Benjamin Sigg
  */
-public class MinimizedMode extends DefaultLocationMode<MinimizedModeArea>{
-	/** the unique identifier of this mode */
-	public static final Path IDENTIFIER = new Path( "dock.mode.minimized" );
+public interface StationModeArea extends ModeArea{	
+	/**
+	 * Gets the location of <code>dockable</code> which is a child
+	 * of this station.
+	 * @param child the child
+	 * @return the location, may be <code>null</code>
+	 */
+	public DockableProperty getLocation( Dockable child );
 	
 	/**
-	 * Creates a new mode.
-	 * @param control the control in whose realm this mode is used
-	 * @param manager the manager which manages this mode
+	 * Sets the location of <code>dockable</code> to <code>location</code>
+	 * and ensures that <code>dockable</code> is a child of this station.
+	 * @param dockable the new or old child
+	 * @param location the new location, may be <code>null</code>
+	 * @param set this method has to store all {@link Dockable}s which might have changed their
+	 * mode in the set.
 	 */
-	public MinimizedMode( CControl control, ExtendedModeManager manager ){
-		super( manager );
-		setSelectModeAction( new CMinimizeAction( control ) );
-	}
-	
-	public Path getUniqueIdentifier(){
-		return IDENTIFIER;
-	}
-	
-	public boolean isDefaultMode( Dockable dockable ){
-		return false;
-	}
+	public void setLocation( Dockable dockable, DockableProperty location, AffectedSet set );
 }

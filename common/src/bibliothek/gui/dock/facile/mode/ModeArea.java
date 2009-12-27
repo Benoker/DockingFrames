@@ -23,36 +23,28 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.mode;
+package bibliothek.gui.dock.facile.mode;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.action.predefined.CExternalizeAction;
+import bibliothek.gui.dock.common.CStation;
 
 /**
- * Represents a mode in which dockables are freely floating on the screen.
+ * A representation of some area that can show {@link Dockable}s.
  * @author Benjamin Sigg
  */
-public class ExternalizedMode extends DefaultLocationMode<ExternalizedModeArea>{
-	/** the unique identifier of this mode */
-	public static final Path IDENTIFIER = new Path( "dock.mode.externalized" );
+public interface ModeArea {
+	/**
+	 * Gets a unique identifier for this area.
+	 * @return the unique identifier
+	 * @see CStation#getUniqueId()
+	 */
+	public String getUniqueId();
 	
 	/**
-	 * Creates a new mode.
-	 * @param control the control in whose realm this mode works
-	 * @param manager the owner of this mode
+	 * Tells whether <code>dockable</code> is a direct child of this station.
+	 * @param dockable some element
+	 * @return <code>true</code> if and only if the parent of <code>dockable</code>
+	 * is identical to this station
 	 */
-	public ExternalizedMode( CControl control, ExtendedModeManager manager ){
-		super( manager );
-		setSelectModeAction( new CExternalizeAction( control ) );
-	}
-	
-	public Path getUniqueIdentifier(){
-		return IDENTIFIER;
-	}
-
-	public boolean isDefaultMode( Dockable dockable ){
-		return false;
-	}
+	public boolean isChild( Dockable dockable );
 }
