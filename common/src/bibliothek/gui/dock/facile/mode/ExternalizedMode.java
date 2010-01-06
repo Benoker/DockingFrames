@@ -35,10 +35,14 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.action.predefined.CExternalizeAction;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.facile.mode.action.ExternalizedModeAction;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 import bibliothek.gui.dock.support.mode.AffectedSet;
+import bibliothek.gui.dock.support.mode.ModeSetting;
+import bibliothek.gui.dock.support.mode.ModeSettingFactory;
+import bibliothek.gui.dock.support.mode.NullModeSettingsFactory;
 import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.IconManager;
 
@@ -46,7 +50,7 @@ import bibliothek.gui.dock.util.IconManager;
  * Represents a mode in which dockables are freely floating on the screen.
  * @author Benjamin Sigg
  */
-public class ExternalizedMode extends DefaultLocationMode<ExternalizedModeArea>{
+public class ExternalizedMode<M extends ExternalizedModeArea> extends DefaultLocationMode<M>{
 	/** the unique identifier of this mode */
 	public static final Path IDENTIFIER = new Path( "dock.mode.externalized" );
 
@@ -76,6 +80,10 @@ public class ExternalizedMode extends DefaultLocationMode<ExternalizedModeArea>{
 		return IDENTIFIER;
 	}
 
+	public ExtendedMode getExtendedMode(){
+		return ExtendedMode.EXTERNALIZED;
+	}
+	
 	public boolean isDefaultMode( Dockable dockable ){
 		return false;
 	}
@@ -127,5 +135,17 @@ public class ExternalizedMode extends DefaultLocationMode<ExternalizedModeArea>{
         }
         
         area.setLocation( dockable, property, affected );
+    }
+    
+    public ModeSettingFactory<Location> getSettingFactory(){
+    	return new NullModeSettingsFactory<Location>( getUniqueIdentifier() );
+    }
+    
+    public void writeSetting( ModeSetting<Location> setting ){
+	    // ignore	
+    }
+    
+    public void readSetting( ModeSetting<Location> setting ){
+    	// ignore
     }
 }

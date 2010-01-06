@@ -84,7 +84,7 @@ public class DefaultCommonDockable extends DefaultDockable implements CommonDock
         return dockable;
     }
     
-    public CStation getStation(){
+    public CStation<?> getStation(){
     	return null;
     }
     

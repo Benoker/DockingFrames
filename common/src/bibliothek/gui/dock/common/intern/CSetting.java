@@ -36,11 +36,14 @@ import java.util.Map;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.MultipleCDockableFactory;
+import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.state.StateManager;
 import bibliothek.gui.dock.frontend.Setting;
 import bibliothek.gui.dock.layout.DockSituation;
 import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.support.action.ModeTransitionSetting;
+import bibliothek.gui.dock.support.mode.ModeSetting;
+import bibliothek.gui.dock.support.mode.ModeSettings;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
@@ -50,7 +53,7 @@ import bibliothek.util.xml.XElement;
  */
 public class CSetting extends Setting{
     /** a set of modes */
-    private ModeTransitionSetting<StateManager.Location, ?> modes;
+    private ModeSettings<Location, ?> modes;
     
     /** tells for some {@link MultipleCDockableFactory}s which {@link MultipleCDockable} existed */
     private Map<String, List<String>> multiFactoryDockables = new HashMap<String, List<String>>();
@@ -59,7 +62,7 @@ public class CSetting extends Setting{
      * Sets the set of modes.
      * @param modes the modes
      */
-    public void setModes( ModeTransitionSetting<StateManager.Location, ?> modes ) {
+    public void setModes( ModeSettings<Location, ?> modes ) {
         this.modes = modes;
     }
     
@@ -67,7 +70,7 @@ public class CSetting extends Setting{
      * Gets the set of modes.
      * @return the modes
      */
-    public ModeTransitionSetting<StateManager.Location, ?> getModes() {
+    public ModeSettings<Location, ?> getModes() {
         return modes;
     }
     
@@ -99,7 +102,7 @@ public class CSetting extends Setting{
             PropertyTransformer transformer, boolean entry, DataOutputStream out )
             throws IOException {
         
-        Version.write( out, Version.VERSION_1_0_7 );
+        Version.write( out, Version.VERSION_1_0_8 );
         
         super.write( situation, transformer, entry, out );
         modes.write( out );
@@ -142,9 +145,16 @@ public class CSetting extends Setting{
         version.checkCurrent();
         
         boolean version7 = version.compareTo( Version.VERSION_1_0_7 ) >= 0;
+        boolean version8 = version.compareTo( Version.VERSION_1_0_8 ) >= 0;
         
         super.read( situation, transformer, entry, in );
-        modes.read( in );
+        if( version8 ){
+        	modes.read( in );
+        }
+        else{
+        	// old settings need to be converted
+        	sdf
+        }
         
         if( version7 ){
             for( int i = 0, n = in.readInt(); i<n; i++ ){

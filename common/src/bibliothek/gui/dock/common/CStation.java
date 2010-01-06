@@ -29,7 +29,6 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.dock.common.event.ResizeRequestListener;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
-import bibliothek.gui.dock.common.intern.CStateManager;
 
 /**
  * A {@link CStation} is an element onto which {@link CDockable}s can be dropped.
@@ -39,12 +38,12 @@ import bibliothek.gui.dock.common.intern.CStateManager;
  * {@link CDockable}. It is possible to misuse a {@link CDockable} as root-station.
  * @author Benjamin Sigg
  */
-public interface CStation {
+public interface CStation<S extends DockStation> {
     /**
      * Gets the internal representation of this {@link CStation}.
-     * @return the interal representation
+     * @return the internal representation
      */
-    public DockStation getStation();
+    public S getStation();
     
     /**
      * If this station is a {@link CDockable} as well, then this method returns

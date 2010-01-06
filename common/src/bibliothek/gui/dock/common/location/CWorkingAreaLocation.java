@@ -27,7 +27,7 @@ package bibliothek.gui.dock.common.location;
 
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CWorkingArea;
-import bibliothek.gui.dock.common.intern.CDockable.ExtendedMode;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.split.SplitDockProperty;
 

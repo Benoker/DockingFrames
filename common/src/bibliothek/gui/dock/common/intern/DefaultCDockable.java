@@ -315,8 +315,7 @@ public class DefaultCDockable extends AbstractCDockable{
             
             CControlAccess control = control();
             if( control != null ){
-                control.getStateManager().rebuild( dockable );
-                control.getStateManager().ensureValidLocation( this );
+                control.getLocationManager().ensureValidLocation( this );
             }
         }
     }
@@ -337,8 +336,7 @@ public class DefaultCDockable extends AbstractCDockable{
             
             CControlAccess control = control();
             if( control != null ){
-                control.getStateManager().rebuild( dockable );
-                control.getStateManager().ensureValidLocation( this );
+                control.getLocationManager().ensureValidLocation( this );
             }
         }
     }
@@ -359,8 +357,7 @@ public class DefaultCDockable extends AbstractCDockable{
             
             CControlAccess control = control();
             if( control != null ){
-                control.getStateManager().rebuild( dockable );
-                control.getStateManager().ensureValidLocation( this );
+                control.getLocationManager().ensureValidLocation( this );
             }
         }
     }

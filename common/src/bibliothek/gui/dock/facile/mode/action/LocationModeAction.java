@@ -80,9 +80,7 @@ public class LocationModeAction extends SimpleButtonAction{
      * @param gotoStroke the key for an accelerator which triggers this action
      */
 	public LocationModeAction( DockController controller, LocationMode mode, String defaultIconKey, String iconKey, PropertyKey<KeyStroke> gotoStroke ){
-		this.mode = mode;
-		
-        if( mode == null )
+		if( mode == null )
             throw new NullPointerException( "mode is null" );
         if( defaultIconKey == null )
             throw new NullPointerException( "defaultIconKey is null" );
@@ -108,8 +106,8 @@ public class LocationModeAction extends SimpleButtonAction{
 	@Override
 	public void action( Dockable dockable ){
 		super.action( dockable );
-		LocationModeManager manager = mode.getManager();
-		manager.alter( dockable, mode );
+		LocationModeManager<?> manager = mode.getManager();
+		manager.apply( dockable, mode.getUniqueIdentifier() );
 	}
 	
 

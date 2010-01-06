@@ -28,7 +28,7 @@ package bibliothek.gui.dock.common.location;
 import bibliothek.gui.dock.common.CContentArea;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
-import bibliothek.gui.dock.common.intern.CDockable.ExtendedMode;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
 
 /**
@@ -36,6 +36,25 @@ import bibliothek.gui.dock.layout.DockableProperty;
  * @author Benjamin Sigg
  */
 public class CMaximizedLocation extends CLocation {
+	private String root;
+	
+	/**
+	 * Creates a new location
+	 */
+	public CMaximizedLocation(){
+		root = CContentArea.getCenterIdentifier( CControl.CONTENT_AREA_STATIONS_ID );
+	}
+	
+	/**
+	 * Creates a new location
+	 * @param root the name of the root station
+	 */
+	public CMaximizedLocation( String root ){
+		if( root == null )
+			throw new IllegalArgumentException( "root must not be null" );
+		this.root = root;
+	}
+	
 	@Override
 	public ExtendedMode findMode(){
 		return ExtendedMode.MAXIMIZED;
@@ -43,7 +62,7 @@ public class CMaximizedLocation extends CLocation {
 
 	@Override
 	public DockableProperty findProperty( DockableProperty successor ){
-		return null;
+		return null; hier muss noch das root gespeichert werden
 	}
 	
 	@Override
@@ -53,7 +72,7 @@ public class CMaximizedLocation extends CLocation {
 
 	@Override
 	public String findRoot(){
-		return CContentArea.getCenterIdentifier( CControl.CONTENT_AREA_STATIONS_ID );
+		return root;
 	}
 	
 	@Override

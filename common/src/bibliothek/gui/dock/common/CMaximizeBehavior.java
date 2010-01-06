@@ -29,7 +29,6 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.common.intern.CDockable;
-import bibliothek.gui.dock.common.intern.CStateManager;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.util.DockUtilities;
 

@@ -26,7 +26,14 @@
 package bibliothek.gui.dock.common;
 
 import bibliothek.gui.dock.common.intern.CDockable;
-import bibliothek.gui.dock.common.location.*;
+import bibliothek.gui.dock.common.location.CBaseLocation;
+import bibliothek.gui.dock.common.location.CExternalizedLocation;
+import bibliothek.gui.dock.common.location.CFlapIndexLocation;
+import bibliothek.gui.dock.common.location.CGridAreaLocation;
+import bibliothek.gui.dock.common.location.CMaximizedLocation;
+import bibliothek.gui.dock.common.location.CMinimizeAreaLocation;
+import bibliothek.gui.dock.common.location.CWorkingAreaLocation;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
 
 /**
@@ -127,7 +134,8 @@ public abstract class CLocation {
 	}
 	
 	/**
-	 * Gets the name of the station this location belongs to.
+	 * Gets the name of the station this location belongs to. This can be the id
+	 * of any {@link CStation}.
 	 * @return the name of the station or <code>null</code> if this location
 	 * does not have enough information to find the root
 	 */
@@ -137,7 +145,7 @@ public abstract class CLocation {
 	 * Gets the mode this location represents.
 	 * @return the mode or <code>null</code>
 	 */
-	public abstract CDockable.ExtendedMode findMode();
+	public abstract ExtendedMode findMode();
 	
 	/**
 	 * Gets a path describing this location in terms of the 

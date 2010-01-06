@@ -35,10 +35,10 @@ import bibliothek.gui.dock.common.CStation;
  * @author Benjamin Sigg
  *
  */
-public abstract class AbstractDockableCStation extends AbstractCDockable implements CStation{
+public abstract class AbstractDockableCStation<S extends DockStation> extends AbstractCDockable implements CStation<S>{
     private CLocation location;
     private String id;
-    private DockStation station;
+    private S station;
     
     /**
      * Creates a new station.
@@ -47,7 +47,7 @@ public abstract class AbstractDockableCStation extends AbstractCDockable impleme
      * @param location a location that points directly to this station
      * @param dockable how this station appears as dockable
      */
-    public AbstractDockableCStation( DockStation station, String id, CLocation location, CommonDockable dockable ){
+    public AbstractDockableCStation( S station, String id, CLocation location, CommonDockable dockable ){
     	super( null );
     	init( station, id, location, dockable );
     }
@@ -67,7 +67,7 @@ public abstract class AbstractDockableCStation extends AbstractCDockable impleme
      * @param location a location that points directly to this station
      * @param dockable how this station appears as dockable
      */
-    protected void init( DockStation station, String id, CLocation location, CommonDockable dockable ){
+    protected void init( S station, String id, CLocation location, CommonDockable dockable ){
     	if( station == null )
     		throw new IllegalArgumentException( "station must not be null" );
     	
@@ -92,7 +92,7 @@ public abstract class AbstractDockableCStation extends AbstractCDockable impleme
         return id;
     }
 
-    public DockStation getStation() {
+    public S getStation() {
         return station;
     }
 

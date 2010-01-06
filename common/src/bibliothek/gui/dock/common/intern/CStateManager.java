@@ -42,12 +42,16 @@ import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
-import bibliothek.gui.dock.common.*;
+import bibliothek.gui.dock.common.CContentArea;
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.CLocation;
+import bibliothek.gui.dock.common.CMaximizeBehavior;
+import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.event.CDockableAdapter;
 import bibliothek.gui.dock.common.event.CDockablePropertyListener;
-import bibliothek.gui.dock.common.intern.CDockable.ExtendedMode;
 import bibliothek.gui.dock.common.location.CMaximizedLocation;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.event.KeyboardListener;
@@ -60,8 +64,9 @@ import bibliothek.util.container.Single;
 /**
  * A manager that can change the extended-state of {@link CDockable}s
  * @author Benjamin Sigg
- *
+ * @deprecated will be removed
  */
+@Deprecated
 public class CStateManager extends StateManager {
     /** access to the {@link CControl} that uses this manager */
     private CControlAccess control;

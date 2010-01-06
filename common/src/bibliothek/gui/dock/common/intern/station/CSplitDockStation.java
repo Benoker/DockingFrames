@@ -59,7 +59,7 @@ public class CSplitDockStation extends SplitDockStation implements CommonStation
 		return delegate.getDockable();
 	}
 
-	public CStation getStation(){
+	public CStation<?> getStation(){
 		return delegate.getStation();
 	}
 	

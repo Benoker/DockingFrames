@@ -30,6 +30,7 @@ import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.MissingCDockableStrategy;
 import bibliothek.gui.dock.common.MultipleCDockableFactory;
+import bibliothek.gui.dock.common.mode.CLocationModeManager;
 
 /**
  * Gives access to the internal methods of a {@link bibliothek.gui.dock.common.CControl}
@@ -69,11 +70,11 @@ public interface CControlAccess {
 	public String getFactoryId( MultipleCDockableFactory<?,?> factory );
 	
 	/**
-	 * Gets the manager that is responsible to change the states of the
+	 * Gets the manager that is responsible to change the extended mode of the
 	 * {@link Dockable}s.
 	 * @return the manager
 	 */
-	public CStateManager getStateManager();
+	public CLocationModeManager getLocationManager();
 	
 	/**
 	 * Gets an action that closes <code>dockable</code> when clicked.

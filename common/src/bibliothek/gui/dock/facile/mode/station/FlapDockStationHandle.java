@@ -25,6 +25,8 @@
  */
 package bibliothek.gui.dock.facile.mode.station;
 
+import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.facile.mode.MinimizedModeArea;
@@ -59,6 +61,10 @@ public class FlapDockStationHandle implements MinimizedModeArea{
 		this.station = station;
 	}
 	
+	public void setController( DockController controller ){
+		// ignore	
+	}
+	
 	/**
 	 * Gets the station which is managed by this handle.
 	 * @return the station
@@ -77,6 +83,14 @@ public class FlapDockStationHandle implements MinimizedModeArea{
 
 	public boolean isChild( Dockable dockable ){
 		return dockable.getDockParent() == station;
+	}
+	
+	public boolean isRepresentant( DockStation station ){
+		return this.station == station;
+	}
+	
+	public boolean respectWorkingAreas(){
+		return false;
 	}
 
 	public void setLocation( Dockable dockable, DockableProperty location, AffectedSet set ){

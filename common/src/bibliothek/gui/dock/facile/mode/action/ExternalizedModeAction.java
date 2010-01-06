@@ -45,7 +45,7 @@ public class ExternalizedModeAction extends LocationModeAction{
 	 * @param controller the controller in whose realm this action is used
 	 * @param mode the mode which is applied
 	 */
-	public ExternalizedModeAction( DockController controller, ExternalizedMode mode ){
+	public ExternalizedModeAction( DockController controller, ExternalizedMode<?> mode ){
 		super( controller, mode, "externalize", ExternalizedMode.ICON_IDENTIFIER, CControl.KEY_GOTO_EXTERNALIZED );
 		
         ResourceBundle bundle = Resources.getBundle();

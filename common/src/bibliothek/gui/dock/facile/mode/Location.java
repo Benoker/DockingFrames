@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.facile.mode;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.layout.DockableProperty;
 
@@ -33,6 +34,8 @@ import bibliothek.gui.dock.layout.DockableProperty;
  * @author Benjamin Sigg
  */
 public class Location {
+	/** the mode which is responsible for handling this location */
+	private Path mode;
 	/** the unique identifier of the root station */
 	private String root;
 	/** the location of the element */
@@ -40,17 +43,30 @@ public class Location {
 	
 	/**
 	 * Creates a new location.
+	 * @param mode the mode which is responsible for handling this location
 	 * @param root the identifier of the parent station, must not be <code>null</code>
 	 * @param location the location on the station, may be <code>null</code>
 	 */
-	public Location( String root, DockableProperty location ){
+	public Location( Path mode, String root, DockableProperty location ){
+		if( mode == null )
+			throw new IllegalArgumentException( "mode must not be null" );
+		
 		if( root == null )
 			throw new IllegalArgumentException( "root must not be null" );
 		
+		this.mode = mode;
 		this.root = root;
 		this.location = location;
 	}
 
+	/**
+	 * Gets the mode which is responsible for this location.
+	 * @return the mode
+	 */
+	public Path getMode(){
+		return mode;
+	}
+	
 	/**
 	 * Gets the unique identifier of the parent station.  
 	 * @return the identifier, not <code>null</code>

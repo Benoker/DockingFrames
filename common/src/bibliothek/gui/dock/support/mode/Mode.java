@@ -96,4 +96,25 @@ public interface Mode<H> {
 	 * @return whether <code>dockable</code> is in <code>this</code> mode
 	 */
 	public boolean isCurrentMode( Dockable dockable );
+
+	/**
+	 * Gets the current properties of this mode in an independent way.
+	 * @param setting a {@link ModeSetting} with the same id as this {@link Mode}. This setting
+	 * was created by a {@link ModeSettingFactory} with the same id as this {@link Mode}.
+	 */
+	public void writeSetting( ModeSetting<H> setting );
+	
+	/**
+	 * Sets the properties of this mode. This method will only be called
+	 * with a {@link ModeSetting} that has been created by {@link #getSetting()}
+	 * or {@link #createSetting()}.
+	 * @param setting the new set of properties, not <code>null</code>
+	 */
+	public void readSetting( ModeSetting<H> setting );
+	
+	/**
+	 * Gets a factory for creating new {@link ModeSetting}s.
+	 * @return the factory, can be <code>null</code>
+	 */
+	public ModeSettingFactory<H> getSettingFactory();
 }

@@ -47,7 +47,7 @@ public interface CommonDockable extends Dockable{
 	 * Gets the model of this dockable as station.
 	 * @return the model, may be <code>null</code>
 	 */
-	public CStation getStation();
+	public CStation<?> getStation();
 	
 	/**
 	 * Gets a set of {@link DockActionSource}s which are to be displayed

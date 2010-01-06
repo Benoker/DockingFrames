@@ -46,7 +46,7 @@ public interface CommonStationDelegate {
 	 * Gets a result for {@link CommonStation#getStation()}.
 	 * @return the station as it is seen by Common
 	 */
-	public CStation getStation();
+	public CStation<?> getStation();
 	
 	/**
 	 * Gets a result for {@link CommonStation#getSources()}.

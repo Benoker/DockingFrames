@@ -28,8 +28,11 @@ package bibliothek.gui.dock.common.intern;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.facile.state.StateManager;
+import bibliothek.gui.dock.common.mode.CLocationModeManager;
+import bibliothek.gui.dock.facile.mode.Location;
+import bibliothek.gui.dock.facile.mode.LocationSettingConverter;
 import bibliothek.gui.dock.frontend.Setting;
+import bibliothek.gui.dock.support.mode.ModeSettings;
 
 /**
  * A {@link DockFrontend} that uses {@link CSetting} instead of {@link Setting}.
@@ -52,29 +55,36 @@ public class CDockFrontend extends DockFrontend{
     @Override
     protected Setting createSetting() {
         CSetting setting = new CSetting();
-        setting.setModes(
-                new StateManager.StateManagerSetting<StateManager.Location>( 
-                        new StateManager.LocationConverter() ) );
+//        setting.setModes(
+//                new StateManager.StateManagerSetting<StateManager.Location>( 
+//                        new StateManager.LocationConverter() ) );
+        CLocationModeManager manager = control.getLocationManager();
+        ModeSettings<Location, ?> modeSettings = manager.createSettings( new LocationSettingConverter() );
+        setting.setModes( modeSettings );
         return setting;
     }
 
     @Override
     public Setting getSetting( boolean entry ) {
-        CStateManager stateManager = control.getStateManager();
         CSetting setting = (CSetting)super.getSetting( entry );
-        setting.setModes( stateManager.getSetting( new StateManager.LocationConverter() ) );
+        
+        CLocationModeManager manager = control.getLocationManager();
+        ModeSettings<Location, ?> modeSettings = manager.createSettings( new LocationSettingConverter() );
+        setting.setModes( modeSettings );
+        manager.writeSettings( modeSettings );
+        
         control.fillMultiFactories( setting );
         return setting;
     }
 
     @Override
     public void setSetting( Setting setting, boolean entry ) {
-        CStateManager stateManager = control.getStateManager();
+        CLocationModeManager manager = control.getLocationManager();
         if( entry ){
-            stateManager.normalizeAllWorkingAreaChildren();
+            manager.normalizeAllWorkingAreaChildren();
         }
 
         super.setSetting( setting, entry );
-        stateManager.setSetting( ((CSetting)setting).getModes() );
+        manager.readSettings( ((CSetting)setting).getModes() );
     }
 }

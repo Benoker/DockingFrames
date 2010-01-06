@@ -54,12 +54,13 @@ import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockRegisterListener;
 import bibliothek.gui.dock.event.DockRelocatorListener;
 import bibliothek.gui.dock.event.IconManagerListener;
+import bibliothek.gui.dock.facile.mode.LocationModeManager;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
-import bibliothek.gui.dock.support.action.ModeTransitionConverter;
 import bibliothek.gui.dock.support.action.ModeTransitionManager;
 import bibliothek.gui.dock.support.action.ModeTransitionSetting;
+import bibliothek.gui.dock.support.mode.ModeSettingsConverter;
 import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
@@ -77,7 +78,9 @@ import bibliothek.util.xml.XElement;
  *  <li>normalized: everything else</li>
  * </ul>
  * @author Benjamin Sigg
+ * @deprecated replaced by {@link LocationModeManager}, will be removed in future releases
  */
+@Deprecated
 public class StateManager extends ModeTransitionManager<StateManager.Location> {
     /** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "minimize"-action */
     public static final String ICON_MANAGER_KEY_MINIMIZE = "statemanager.minimize";
@@ -224,7 +227,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
     }
 
     @Override
-    public <B> ModeTransitionSetting<Location, B> getSetting( ModeTransitionConverter<Location, B> converter ) {
+    public <B> ModeTransitionSetting<Location, B> getSetting( ModeSettingsConverter<Location, B> converter ) {
         StateManagerSetting<B> setting = (StateManagerSetting<B>)super.getSetting( converter );
         setting.setLastMaximizedLocation( lastMaximizedLocation );
         setting.setLastMaximizedMode( lastMaximizedMode );
@@ -248,7 +251,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
 
     @Override
     protected <B> StateManagerSetting<B> createSetting(
-            ModeTransitionConverter<Location, B> converter ) {
+            ModeSettingsConverter<Location, B> converter ) {
         return new StateManagerSetting<B>( converter );
     }
 
@@ -1281,7 +1284,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
      * @author Benjamin Sigg
      *
      */
-    public static class LocationConverter implements ModeTransitionConverter<Location, Location>{
+    public static class LocationConverter implements ModeSettingsConverter<Location, Location>{
         /** transformer to read or write single {@link DockableProperty}s */
         private PropertyTransformer transformer = new PropertyTransformer();
 
@@ -1331,7 +1334,7 @@ public class StateManager extends ModeTransitionManager<StateManager.Location> {
          * Creates a new setting.
          * @param converter converts internal and external properties
          */
-        public StateManagerSetting( ModeTransitionConverter<Location, B> converter ) {
+        public StateManagerSetting( ModeSettingsConverter<Location, B> converter ) {
             super( converter );
         }
 

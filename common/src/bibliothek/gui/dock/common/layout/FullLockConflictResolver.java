@@ -91,7 +91,7 @@ public class FullLockConflictResolver extends DefaultConflictResolver<RequestDim
      * priority for this node, <code>false</code> otherwise
      */
     protected boolean checkHorizontalFullLock( ResizeElement<RequestDimension> element ){
-        if( element instanceof ResizeNode ){
+        if( element instanceof ResizeNode<?> ){
             ResizeNode<RequestDimension> node = (ResizeNode<RequestDimension>)element;
 
             ResizeRequest leftRequest = node.getLeft().getRequest();
@@ -109,7 +109,7 @@ public class FullLockConflictResolver extends DefaultConflictResolver<RequestDim
             if( !checkHorizontalFullLock( node.getRight()))
                 return false;
         }
-        else if( element instanceof ResizeLeaf ){
+        else if( element instanceof ResizeLeaf<?> ){
             ResizeLeaf<RequestDimension> leaf = (ResizeLeaf<RequestDimension>)element;
             ResizeRequest request = leaf.getRequest();
             if( request == null || request.getFractionWidth() == -1 )
@@ -135,7 +135,7 @@ public class FullLockConflictResolver extends DefaultConflictResolver<RequestDim
      * priority for this node, <code>false</code> otherwise
      */
     protected boolean checkVerticalFullLock( ResizeElement<RequestDimension> element ){
-        if( element instanceof ResizeNode ){
+        if( element instanceof ResizeNode<?> ){
             ResizeNode<RequestDimension> node = (ResizeNode<RequestDimension>)element;
 
             ResizeRequest leftRequest = node.getLeft().getRequest();
@@ -153,7 +153,7 @@ public class FullLockConflictResolver extends DefaultConflictResolver<RequestDim
             if( !checkVerticalFullLock( node.getRight()))
                 return false;
         }
-        else if( element instanceof ResizeLeaf ){
+        else if( element instanceof ResizeLeaf<?> ){
             ResizeLeaf<RequestDimension> leaf = (ResizeLeaf<RequestDimension>)element;
             ResizeRequest request = leaf.getRequest();
             if( request == null || request.getFractionHeight() == -1 )

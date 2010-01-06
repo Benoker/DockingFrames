@@ -29,6 +29,8 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.mode.CLocationModeManager;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 
 /**
  * A {@link DockAcceptance} ensuring that the {@link CDockable#getExtendedMode() extended mode} property
@@ -36,44 +38,36 @@ import bibliothek.gui.dock.common.CControl;
  * @author Benjamin Sigg
  */
 public class ExtendedModeAcceptance implements DockAcceptance {
-    /** access to the {@link CControl} */
-    private CControlAccess control;
-    
-    /**
-     * Creates a new acceptance.
-     * @param control access to the {@link CControl}
-     */
-    public ExtendedModeAcceptance( CControlAccess control ){
-        this.control = control;
-    }
-    
-    public boolean accept( DockStation parent, Dockable child ) {
-        if( control.getStateManager().isOnTransition() )
-            return true;
-        
-        if( child instanceof CommonDockable ){
-            CDockable fdockable = ((CommonDockable)child).getDockable();
-            CDockable.ExtendedMode mode = control.getStateManager().childsExtendedMode( parent );
-            
-            if( mode == null ){
-                // the parent is not yet known to anyone, so just hope
-                // that the developer has made the correct settings, because
-                // we cannot check them here.
-                return true;
-            }
-            
-            switch( mode ){
-                case MINIMIZED:
-                    return fdockable.isMinimizable();
-                case EXTERNALIZED:
-                    return fdockable.isExternalizable();
-            }
-        }
-        
-        return true;
-    }
+	/** access to the {@link CControl} */
+	private CControlAccess control;
 
-    public boolean accept( DockStation parent, Dockable child, Dockable next ) {
-        return accept( parent, next );
-    }
+	/**
+	 * Creates a new acceptance.
+	 * @param control access to the {@link CControl}
+	 */
+	public ExtendedModeAcceptance( CControlAccess control ){
+		this.control = control;
+	}
+
+	public boolean accept( DockStation parent, Dockable child ) {
+		if( control.getLocationManager().isOnTransition() )
+			return true;
+
+		CLocationModeManager locationManager = control.getLocationManager();
+
+		ExtendedMode mode = locationManager.childsExtendedMode( parent );
+
+		if( mode == null ){
+			// the parent is not yet known to anyone, so just hope
+			// that the developer has made the correct settings, because
+			// we cannot check them here.
+			return true;
+		}
+
+		return locationManager.isModeAvailable( child, mode );
+	}
+
+	public boolean accept( DockStation parent, Dockable child, Dockable next ) {
+		return accept( parent, next );
+	}
 }

@@ -31,7 +31,11 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.action.predefined.CNormalizeAction;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.facile.mode.action.NormalModeAction;
+import bibliothek.gui.dock.support.mode.ModeSetting;
+import bibliothek.gui.dock.support.mode.ModeSettingFactory;
+import bibliothek.gui.dock.support.mode.NullModeSettingsFactory;
 import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.IconManager;
 
@@ -41,7 +45,7 @@ import bibliothek.gui.dock.util.IconManager;
  * @author Benjamin Sigg
  *
  */
-public class NormalMode extends DefaultLocationMode<NormalModeArea>{
+public class NormalMode<M extends NormalModeArea> extends DefaultLocationMode<M>{
 	/** The unique identifier of this mode */
 	public static final Path IDENTIFIER = new Path( "dock.mode.normal" );
 	
@@ -71,6 +75,10 @@ public class NormalMode extends DefaultLocationMode<NormalModeArea>{
 		return IDENTIFIER;
 	}
 
+	public ExtendedMode getExtendedMode(){
+		return ExtendedMode.NORMALIZED;
+	}
+	
 	public boolean isCurrentMode( Dockable dockable ){
 		for( NormalModeArea area : this ){
 			if( area.isNormalModeChild( dockable )){
@@ -84,4 +92,16 @@ public class NormalMode extends DefaultLocationMode<NormalModeArea>{
 	public boolean isDefaultMode( Dockable dockable ){
 		return true;
 	}
+	
+    public ModeSettingFactory<Location> getSettingFactory(){
+    	return new NullModeSettingsFactory<Location>( getUniqueIdentifier() );
+    }
+    
+    public void writeSetting( ModeSetting<Location> setting ){
+	    // ignore	
+    }
+    
+    public void readSetting( ModeSetting<Location> setting ){
+    	// ignore
+    }
 }

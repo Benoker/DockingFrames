@@ -41,6 +41,7 @@ import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.station.CSplitDockStation;
 import bibliothek.gui.dock.common.intern.station.CommonStation;
 import bibliothek.gui.dock.common.intern.station.CommonStationDelegate;
+import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.util.WindowProvider;
 
 /**
@@ -54,7 +55,7 @@ public class EfficientControlFactory implements CControlFactory {
 			@Override
 			public void setFocusedDockable( Dockable focusedDockable, boolean force, boolean ensureFocusSet ) {
 				if( focusedDockable != null ){
-					CStateManager states = owner.getStateManager();
+					CLocationModeManager states = owner.getLocationManager();
 					if( states != null ){
 						states.ensureNotHidden( focusedDockable );
 					}

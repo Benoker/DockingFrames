@@ -79,7 +79,6 @@ import bibliothek.gui.dock.common.intern.CDockableAccess;
 import bibliothek.gui.dock.common.intern.CListenerCollection;
 import bibliothek.gui.dock.common.intern.CSetting;
 import bibliothek.gui.dock.common.intern.CSingleParentRemover;
-import bibliothek.gui.dock.common.intern.CStateManager;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.intern.CommonDockableLayout;
 import bibliothek.gui.dock.common.intern.CommonMultipleDockableFactory;
@@ -91,7 +90,6 @@ import bibliothek.gui.dock.common.intern.MutableCControlRegister;
 import bibliothek.gui.dock.common.intern.SecureControlFactory;
 import bibliothek.gui.dock.common.intern.StackableAcceptance;
 import bibliothek.gui.dock.common.intern.WorkingAreaAcceptance;
-import bibliothek.gui.dock.common.intern.CDockable.ExtendedMode;
 import bibliothek.gui.dock.common.intern.action.CActionOffer;
 import bibliothek.gui.dock.common.intern.station.CFlapLayoutManager;
 import bibliothek.gui.dock.common.intern.station.CLockedResizeLayoutManager;
@@ -102,6 +100,10 @@ import bibliothek.gui.dock.common.layout.FullLockConflictResolver;
 import bibliothek.gui.dock.common.layout.RequestDimension;
 import bibliothek.gui.dock.common.layout.ThemeMap;
 import bibliothek.gui.dock.common.location.CExternalizedLocation;
+import bibliothek.gui.dock.common.mode.CLocationModeManager;
+import bibliothek.gui.dock.common.mode.CMaximizedMode;
+import bibliothek.gui.dock.common.mode.CMaximizedModeArea;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.displayer.SingleTabDecider;
 import bibliothek.gui.dock.event.DockAdapter;
@@ -109,6 +111,9 @@ import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.event.KeyboardListener;
+import bibliothek.gui.dock.facile.mode.ExternalizedMode;
+import bibliothek.gui.dock.facile.mode.ExternalizedModeArea;
+import bibliothek.gui.dock.facile.mode.station.ScreenDockStationHandle;
 import bibliothek.gui.dock.facile.station.screen.WindowProviderVisibility;
 import bibliothek.gui.dock.facile.station.split.ConflictResolver;
 import bibliothek.gui.dock.facile.station.split.DefaultConflictResolver;
@@ -210,7 +215,7 @@ public class CControl {
     private Map<CDockable, CDockableAccess> accesses = new HashMap<CDockable, CDockableAccess>();
 
     /** a manager allowing the user to change the extended-state of some {@link CDockable}s */
-    private CStateManager stateManager;
+    private CLocationModeManager locationManager;
 
     /** the default location of newly opened {@link CDockable}s */
     private CLocation defaultLocation;
@@ -370,7 +375,7 @@ public class CControl {
 
         frontend.setIgnoreForEntry( new DockSituationIgnore(){
             public boolean ignoreChildren( DockStation station ) {
-                CStation cstation = getStation( station );
+                CStation<?> cstation = getStation( station );
                 if( cstation != null )
                     return cstation.isWorkingArea();
 
@@ -617,27 +622,37 @@ public class CControl {
     }
 
     /**
-     * Sets up the {@link #stateManager}.
+     * Sets up the {@link #locationManager}.
      */
     private void initExtendedModes(){
-        stateManager = new CStateManager( access );
+    	locationManager = new CLocationModeManager( access );
 
         WindowProvider window = frontend.getController().getRootWindowProvider();
         final ScreenDockStation screen = factory.createScreenDockStation( window );
 
-        // frontend.addRoot( screen, EXTERNALIZED_STATION_ID );
         CStation screenStation = new AbstractCStation( screen, EXTERNALIZED_STATION_ID, CExternalizedLocation.STATION ){
             private ScreenResizeRequestHandler handler = new ScreenResizeRequestHandler( screen );
-
+            private ExternalizedModeArea area;
+            
             @Override
             protected void install( CControlAccess access ) {
                 access.getOwner().addResizeRequestListener( handler );
-                access.getStateManager().add( EXTERNALIZED_STATION_ID, screen );
+                
+                if( area == null ){
+                	area = new ScreenDockStationHandle( EXTERNALIZED_STATION_ID, screen );
+                }
+                
+                ExternalizedMode mode = access.getLocationManager().getExternalizedMode();
+                mode.add( area );
+                if( mode.getDefaultArea() == null ){
+                	mode.setDefaultArea( area );
+                }
             }
             @Override
             protected void uninstall( CControlAccess access ) {
                 access.getOwner().removeResizeRequestListener( handler );
-                access.getStateManager().remove( EXTERNALIZED_STATION_ID );
+                ExternalizedMode mode = access.getLocationManager().getExternalizedMode();
+                mode.remove( area.getUniqueId() );
             }
         };
 
@@ -850,7 +865,7 @@ public class CControl {
         Map<String,String> map = new HashMap<String, String>();
 
         for( SingleCDockable dockable : register.getSingleDockables() ){
-            CStation area = dockable.getWorkingArea();
+            CStation<?> area = dockable.getWorkingArea();
             if( area != null ){
                 map.put( dockable.getUniqueId(), area.getUniqueId() );
             }
@@ -869,7 +884,7 @@ public class CControl {
      */
     private void writeWorkingAreasXML( XElement element ){
         for( SingleCDockable dockable : register.getSingleDockables() ){
-            CStation area = dockable.getWorkingArea();
+            CStation<?> area = dockable.getWorkingArea();
             if( area != null ){
                 XElement xarea = element.addElement( "area" );
                 xarea.addString( "id", area.getUniqueId() );
@@ -886,9 +901,9 @@ public class CControl {
      */
     private void readWorkingAreas( DataInputStream in ) throws IOException{
         Map<String, SingleCDockable> dockables = new HashMap<String, SingleCDockable>();
-        Map<String, CStation> areas = new HashMap<String, CStation>();
+        Map<String, CStation<?>> areas = new HashMap<String, CStation<?>>();
 
-        for( CStation station : register.getStations() ){
+        for( CStation<?> station : register.getStations() ){
             if( station.isWorkingArea() ){
                 areas.put( station.getUniqueId(), station );
             }
@@ -904,7 +919,7 @@ public class CControl {
 
             CDockable dockable = dockables.get( key );
             if( dockable != null ){
-                CStation area = areas.get( value );
+                CStation<?> area = areas.get( value );
                 dockable.setWorkingArea( area );
             }
         }
@@ -917,9 +932,9 @@ public class CControl {
      */
     private void readWorkingAreasXML( XElement element ){
         Map<String, SingleCDockable> dockables = new HashMap<String, SingleCDockable>();
-        Map<String, CStation> areas = new HashMap<String, CStation>();
+        Map<String, CStation<?>> areas = new HashMap<String, CStation<?>>();
 
-        for( CStation station : register.getStations() ){
+        for( CStation<?> station : register.getStations() ){
             if( station.isWorkingArea() ){
                 areas.put( station.getUniqueId(), station );
             }
@@ -935,7 +950,7 @@ public class CControl {
 
             CDockable dockable = dockables.get( key );
             if( dockable != null ){
-                CStation area = areas.get( value );
+                CStation<?> area = areas.get( value );
                 dockable.setWorkingArea( area );
             }
         }
@@ -1010,7 +1025,7 @@ public class CControl {
         if( CContentArea.getNorthIdentifier( CONTENT_AREA_STATIONS_ID ).equals( uniqueId ) )
             throw new IllegalArgumentException( "The id " + uniqueId + " is reserved for special purposes" );
 
-        for( CStation station : register.getStations() ){
+        for( CStation<?> station : register.getStations() ){
             if( station.getUniqueId().equals( uniqueId )){
                 throw new IllegalArgumentException( "There exists already a station with id: " + uniqueId );    
             }
@@ -1070,7 +1085,7 @@ public class CControl {
 
         boolean check = !(defaultArea == null || content != defaultArea);
 
-        for( CStation station : content.getStations() ){
+        for( CStation<?> station : content.getStations() ){
             add( station, true, check );
         }
     }
@@ -1090,7 +1105,7 @@ public class CControl {
             throw new IllegalArgumentException( "The default-contentarea can't be removed" );
 
         if( register.removeContentArea( content ) ){
-            for( CStation station : content.getStations() ){
+            for( CStation<?> station : content.getStations() ){
                 remove( station );
             }
         }
@@ -1126,13 +1141,13 @@ public class CControl {
     /**
      * Gets the manager that is responsible to handle all changes of the
      * modes (maximized, normalized, ... ) of {@link Dockable}s.<br>
-     * Note: clients should be careful when working with the state manager. 
-     * Changing the properties of the state manager might introduce failures that
+     * Note: clients should be careful when working with the location manager. 
+     * Changing the properties of the location manager might introduce failures that
      * are not visible directly.
      * @return the manager
      */
-    public CStateManager getStateManager() {
-        return stateManager;
+    public CLocationModeManager getLocationManager() {
+        return locationManager;
     }
 
     /**
@@ -1222,13 +1237,14 @@ public class CControl {
     }
 
     /**
-     * Adds an additional station to this control.
+     * Adds an additional station to this control. Most {@link CStation}s should
+     * be root-stations, even if they are nested. 
      * @param station the new station
      * @param root <code>true</code> if the station should become a root station.
      * A root station often does not have a parent, the location of a {@link CDockable}
      * is always relative to its youngest parent that is a root station.
      */
-    public void add( CStation station, boolean root ){
+    public void add( CStation<?> station, boolean root ){
         add( station, root, true );
     }
 
@@ -1242,7 +1258,7 @@ public class CControl {
      * otherwise the station is just put into, perhaps wrongly replacing
      * other stations.
      */    
-    private void add( CStation station, boolean root, boolean check ){
+    private void add( CStation<?> station, boolean root, boolean check ){
         String id = station.getUniqueId();
         if( check ){
             checkStationIdentifierUniqueness( id );
@@ -1261,7 +1277,7 @@ public class CControl {
      * happens with the children on <code>station</code>
      * @param station the station to remove
      */
-    public void remove( CStation station ){
+    public void remove( CStation<?> station ){
         if( register.removeStation( station ) ){
             frontend.removeRoot( station.getStation() );
             station.setControl( null );
@@ -1273,7 +1289,7 @@ public class CControl {
      * registered at this control.
      * @return the list of stations
      */
-    public List<CStation> getStations(){
+    public List<CStation<?>> getStations(){
         return register.getStations();
     }
 
@@ -1283,12 +1299,26 @@ public class CControl {
      * @param intern the internal representation
      * @return the station or <code>null</code>
      */
-    public CStation getStation( DockStation intern ){
-        for( CStation station : register.getStations() ){
+    public CStation<?> getStation( DockStation intern ){
+        for( CStation<?> station : register.getStations() ){
             if( station.getStation() == intern )
                 return station;
         }
         return null;
+    }
+    
+    /**
+     * Searches the {@link CStation} with unique identifier <code>id</code>.
+     * @param id the identifier
+     * @return the station or <code>null</code>
+     */
+    public CStation<?> getStation( String id ){
+    	for( CStation<?> station : register.getStations() ){
+    		if( station.getUniqueId().equals( id )){
+    			return station;
+    		}
+    	}
+    	return null;
     }
 
     /**
@@ -1369,10 +1399,10 @@ public class CControl {
             dockable.setControl( null );
 
             if( !missingStrategy.shouldStoreSingle( dockable.getUniqueId() ) && register.getBackupFactory().getFactory( dockable.getUniqueId() ) == null ){
-                stateManager.remove( dockable.intern() );
+                locationManager.remove( dockable.intern() );
             }
             else{
-                stateManager.reduceToEmpty( dockable.intern() );
+                locationManager.reduceToEmpty( dockable.intern() );
             }
 
             for( CControlListener listener : listeners() )
@@ -1398,7 +1428,7 @@ public class CControl {
         register.getBackupFactory().add( id, backupFactory );
 
         String singleId = register.toSingleId( id );
-        stateManager.addEmpty( singleId );
+        locationManager.addEmpty( singleId );
         frontend.addEmpty( singleId );
 
         // if there is already layout information for id, then load this information now
@@ -1438,7 +1468,7 @@ public class CControl {
         if( !missingStrategy.shouldStoreSingle( id )){
             id = register.toSingleId( id );
 
-            stateManager.removeEmpty( id );
+            locationManager.removeEmpty( id );
             frontend.removeEmpty( id );
         }
     }
@@ -1710,7 +1740,11 @@ public class CControl {
      * @see CContentArea#getCenterIdentifier()
      */
     public void setMaximizeArea( String id ){
-        stateManager.setMaximizingStation( id );
+    	CMaximizedMode mode = locationManager.getMaximizedMode();
+    	CMaximizedModeArea area = mode.get( id );
+    	if( area == null )
+    		throw new IllegalArgumentException( "No area registered with key '" + id + "'" );
+    	mode.setDefaultArea( area );
     }
 
     /**
@@ -1719,7 +1753,7 @@ public class CControl {
      * @param behavior the new behavior, not <code>null</code>
      */
     public void setMaximizeBehavior( CMaximizeBehavior behavior ){
-        stateManager.setMaximizeBehavior( behavior );
+        locationManager.getMaximizedMode().setMaximizeBehavior( behavior );
     }
 
     /**
@@ -1728,7 +1762,7 @@ public class CControl {
      * @see #setMaximizeBehavior(CMaximizeBehavior)
      */
     public CMaximizeBehavior getMaximizeBehavior(){
-        return stateManager.getMaximizeBehavior();
+        return locationManager.getMaximizedMode().getMaximizeBehavior();
     }
 
     /**
@@ -2033,10 +2067,6 @@ public class CControl {
             return CControl.this;
         }
 
-        public <F extends MultipleCDockable> F add( F dockable, String uniqueId ) {
-            return CControl.this.add( dockable, uniqueId );
-        }
-
         public void link( CDockable dockable, CDockableAccess access ) {
             if( access == null ){
                 accesses.remove( dockable );
@@ -2060,7 +2090,7 @@ public class CControl {
             register.setStalled( true );
             try{
                 List<CDockable> maximized = CControl.this.register.listDockablesInMode( ExtendedMode.MAXIMIZED );
-                boolean changes = stateManager.ensureNothingMaximized();
+                boolean changes = locationManager.ensureNothingMaximized();
 
                 frontend.hide( dockable.intern() );
 
@@ -2082,7 +2112,7 @@ public class CControl {
             DockRegister register = frontend.getController().getRegister();
             register.setStalled( true );
             try{
-                CStation area = dockable.getWorkingArea();
+                CStation<?> area = dockable.getWorkingArea();
                 if( area != null && area.asDockable() != null ){
                     if( !area.asDockable().isVisible() ){
                         throw new IllegalStateException( "A dockable that wants to be on a CWorkingArea can't be made visible unless the CWorkingArea is visible." );
@@ -2103,15 +2133,15 @@ public class CControl {
                     }
                 }
 
-                boolean maximized = stateManager.ensureNothingMaximized();
+                boolean maximized = locationManager.ensureNothingMaximized();
 
                 if( location == null ){
                     frontend.show( dockable.intern(), false );
                 }
                 else{
-                    stateManager.setLocation( dockable.intern(), location );
+                    locationManager.setLocation( dockable.intern(), location );
                 }
-                stateManager.ensureValidLocation( dockable );
+                locationManager.ensureValidLocation( dockable );
                 if( location == null && maximized && dockable.isMaximizable() )
                     dockable.setExtendedMode( ExtendedMode.MAXIMIZED );
             }
@@ -2134,8 +2164,8 @@ public class CControl {
             return null;
         }
 
-        public CStateManager getStateManager() {
-            return stateManager;
+        public CLocationModeManager getLocationManager() {
+            return locationManager;
         }
 
         public DockAction createCloseAction( final CDockable fdockable ) {

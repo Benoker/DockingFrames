@@ -29,11 +29,21 @@ import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Map;
 
-import bibliothek.gui.dock.common.*;
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.CLocation;
+import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.ColorMap;
+import bibliothek.gui.dock.common.FontMap;
 import bibliothek.gui.dock.common.action.CAction;
-import bibliothek.gui.dock.common.event.*;
+import bibliothek.gui.dock.common.event.CDockablePropertyListener;
+import bibliothek.gui.dock.common.event.CDockableStateListener;
+import bibliothek.gui.dock.common.event.CDoubleClickListener;
+import bibliothek.gui.dock.common.event.CFocusListener;
+import bibliothek.gui.dock.common.event.CKeyboardListener;
 import bibliothek.gui.dock.common.intern.action.CloseActionSource;
 import bibliothek.gui.dock.common.layout.RequestDimension;
+import bibliothek.gui.dock.common.mode.CLocationModeManager;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.title.DockTitle;
 
 
@@ -50,7 +60,7 @@ public abstract class AbstractCDockable implements CDockable {
     private CommonDockable dockable;
 
     /** the preferred parent of this dockable */
-    private CStation workingArea;
+    private CStation<?> workingArea;
     
     /** the control managing this dockable */
     private CControlAccess control;
@@ -233,7 +243,7 @@ public abstract class AbstractCDockable implements CDockable {
         
         if( location != null ){
             if( control != null && isVisible() ){
-                control.getStateManager().setLocation( dockable, location );
+                control.getLocationManager().setLocation( dockable, location );
                 this.location = null;
             }
         }
@@ -241,7 +251,7 @@ public abstract class AbstractCDockable implements CDockable {
     
     public CLocation getBaseLocation(){
         if( control != null && isVisible() ){
-            return control.getStateManager().getLocation( dockable );
+            return control.getLocationManager().getLocation( dockable );
         }
         
         return location;
@@ -251,24 +261,22 @@ public abstract class AbstractCDockable implements CDockable {
         if( extendedMode == null )
             throw new NullPointerException( "extendedMode must not be null" );
     
-        switch( extendedMode ){
-            case EXTERNALIZED:
-                if( !isExternalizable() )
-                    return;
-                break;
-            case MAXIMIZED:
-                if( !isMaximizable() )
-                    return;
-                break;
-            case MINIMIZED:
-                if( !isMinimizable() )
-                    return;
-                break;
+        if( extendedMode == ExtendedMode.EXTERNALIZED ){
+        	if( !isExternalizable() )
+        		return;
+        }
+        if( extendedMode == ExtendedMode.MINIMIZED ){
+        	if( !isMinimizable() )
+        		return;
+        }
+        if( extendedMode == ExtendedMode.MAXIMIZED ){
+        	if( !isMaximizable() )
+        		return;
         }
         
         CControlAccess control = control();
         if( control != null )
-            control.getStateManager().setMode( dockable, extendedMode );
+            control.getLocationManager().setMode( dockable, extendedMode );
     }
     
     public ExtendedMode getExtendedMode(){
@@ -276,14 +284,14 @@ public abstract class AbstractCDockable implements CDockable {
         if( control == null )
             return null;
         
-        return control.getStateManager().getMode( dockable );
+        return control.getLocationManager().getMode( dockable );
     }
     
-    public void setWorkingArea( CStation area ) {
+    public void setWorkingArea( CStation<?> area ) {
         this.workingArea = area;
     }
     
-    public CStation getWorkingArea() {
+    public CStation<?> getWorkingArea() {
         return workingArea;
     }
     
@@ -467,8 +475,7 @@ public abstract class AbstractCDockable implements CDockable {
      * that this location does not override any existing setting. This method can
      * be called either before or after making this dockable visible. It is
      * the client's responsibility to ensure that <code>location</code> is valid
-     * together with <code>mode</code>. It makes no sense to specify the default
-     * location for {@link CDockable.ExtendedMode#MAXIMIZED}.
+     * together with <code>mode</code>.
      * @param mode the mode for which to store the default location
      * @param location the default location or <code>null</code>
      */
@@ -479,7 +486,7 @@ public abstract class AbstractCDockable implements CDockable {
             defaultLocations.put( mode, location );
         
             if( control != null ){
-                CStateManager state = control.getStateManager();
+                CLocationModeManager state = control.getLocationManager();
                 if( state.getLocation( dockable, mode ) == null )
                     state.setLocation( dockable, mode, location );
             }
@@ -501,7 +508,7 @@ public abstract class AbstractCDockable implements CDockable {
      */
     public void setControl( CControlAccess control ){
         if( this.control != null ){
-            this.control.getStateManager().remove( dockable );
+            this.control.getLocationManager().remove( dockable );
             this.control.link( this, null );
         }
         
@@ -514,19 +521,17 @@ public abstract class AbstractCDockable implements CDockable {
                 }
                 public void informMode( ExtendedMode mode ) {
                     CDockableStateListener forward = listenerCollection.getCDockableStateListener();
-                    switch( mode ){
-                        case EXTERNALIZED:
-                            forward.externalized( AbstractCDockable.this );
-                            break;
-                        case MINIMIZED:
-                            forward.minimized( AbstractCDockable.this );
-                            break;
-                        case MAXIMIZED:
-                            forward.maximized( AbstractCDockable.this );
-                            break;
-                        case NORMALIZED:
-                            forward.normalized( AbstractCDockable.this );
-                            break;
+                    if( mode == ExtendedMode.EXTERNALIZED ){
+                    	forward.externalized( AbstractCDockable.this );
+                    }
+                    else if( mode == ExtendedMode.MINIMIZED ){
+                    	forward.minimized( AbstractCDockable.this );
+                    }
+                    else if( mode == ExtendedMode.MAXIMIZED ){
+                    	forward.maximized( AbstractCDockable.this );
+                    }
+                    else if( mode == ExtendedMode.NORMALIZED ){
+                    	forward.normalized( AbstractCDockable.this );
                     }
                 }
                 public CFocusListener getFocusListener() {
@@ -541,7 +546,7 @@ public abstract class AbstractCDockable implements CDockable {
                 public void setUniqueId( String id ) {
                     uniqueId = id;
                     if( AbstractCDockable.this.control != null && id != null ){
-                        CStateManager state = AbstractCDockable.this.control.getStateManager();
+                        CLocationModeManager state = AbstractCDockable.this.control.getLocationManager();
                         state.put( uniqueId, dockable );
                         
                         for( Map.Entry<ExtendedMode, CLocation> location : defaultLocations.entrySet() ){

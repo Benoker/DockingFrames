@@ -41,8 +41,8 @@ import bibliothek.gui.dock.common.intern.station.CommonStation;
 import bibliothek.gui.dock.common.intern.station.CommonStationDelegate;
 import bibliothek.gui.dock.common.intern.station.SplitResizeRequestHandler;
 import bibliothek.gui.dock.common.location.CGridAreaLocation;
-import bibliothek.gui.dock.facile.state.MaximizeArea;
-import bibliothek.gui.dock.facile.state.MaximizeSplitDockStation;
+import bibliothek.gui.dock.common.mode.CMaximizedMode;
+import bibliothek.gui.dock.common.mode.station.CSplitDockStationHandle;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
@@ -52,7 +52,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  * represents this area.
  * @author Benjamin Sigg
  */
-public class CGridArea extends AbstractDockableCStation implements SingleCDockable {
+public class CGridArea extends AbstractDockableCStation<SplitDockStation> implements SingleCDockable {
 	/** the unique identifier of this area */
 	private String uniqueId;
 	/** the station representing this area */
@@ -61,7 +61,9 @@ public class CGridArea extends AbstractDockableCStation implements SingleCDockab
 	private SplitResizeRequestHandler resizeRequestHandler;
 
 	/** this split area as parent of maximized dockables, can be <code>null</code> if not used */
-	private MaximizeArea maximizingArea;
+	private CSplitDockStationHandle modeManagerHandle;
+	/** whether children of this gridarea can be maximized to the grid or not */
+	private boolean maximizing = false;
 
 	/**
 	 * Creates a new area.
@@ -100,6 +102,8 @@ public class CGridArea extends AbstractDockableCStation implements SingleCDockab
 		this.station.setExpandOnDoubleclick( false );
 		resizeRequestHandler = new SplitResizeRequestHandler( this.station );
 		setMaximizingArea( true );
+		
+		modeManagerHandle = new CSplitDockStationHandle( this, control.getLocationManager() );
 	}
 
 	/**
@@ -172,22 +176,17 @@ public class CGridArea extends AbstractDockableCStation implements SingleCDockab
 	 * area, <code>false</code> if not.
 	 */
 	public void setMaximizingArea( boolean maximize ){
-		if( maximize ){
-			if( maximizingArea == null ){
-				maximizingArea = new MaximizeSplitDockStation( getUniqueId(), station );
-				CControlAccess access = getControl();
-				if( access != null ){
-					access.getStateManager().addMaximizingArea( maximizingArea );
+		if( maximize != maximizing ){
+			this.maximizing = maximize;
+			CControlAccess access = getControl();
+			if( access != null ){
+				CMaximizedMode mode = access.getLocationManager().getMaximizedMode();
+				if( maximizing ){
+					mode.add( modeManagerHandle.asMaximziedModeArea() );
 				}
-			}
-		}
-		else{
-			if( maximizingArea != null ){
-				CControlAccess access = getControl();
-				if( access != null ){
-					access.getStateManager().removeMaximizingArea( maximizingArea );
+				else{
+					mode.remove( modeManagerHandle.asMaximziedModeArea().getUniqueId() );
 				}
-				maximizingArea = null;
 			}
 		}
 	}
@@ -198,24 +197,26 @@ public class CGridArea extends AbstractDockableCStation implements SingleCDockab
 	 * @see #setMaximizingArea(boolean)
 	 */
 	public boolean isMaximizingArea(){
-		return maximizingArea != null;
+		return maximizing;
 	}
 
 	@Override
 	protected void install( CControlAccess access ){
-		access.getStateManager().add( uniqueId, station, false );
+		access.getLocationManager().getNormalMode().add( modeManagerHandle.asNormalModeArea() );
 		access.getOwner().addResizeRequestListener( resizeRequestHandler );
-		if( maximizingArea != null ){
-			access.getStateManager().addMaximizingArea( maximizingArea );
+		if( isMaximizingArea() ){
+			CMaximizedMode mode = access.getLocationManager().getMaximizedMode();
+			mode.add( modeManagerHandle.asMaximziedModeArea() );
 		}	
 	}
 	
 	@Override
 	protected void uninstall( CControlAccess access ){
-		access.getStateManager().remove( uniqueId );
+		access.getLocationManager().getNormalMode().remove( modeManagerHandle.asNormalModeArea().getUniqueId() );
 		access.getOwner().removeResizeRequestListener( resizeRequestHandler );
-		if( maximizingArea != null ){
-			access.getStateManager().removeMaximizingArea( maximizingArea );
+		if( isMaximizingArea() ){
+			CMaximizedMode mode = access.getLocationManager().getMaximizedMode();
+			mode.remove( modeManagerHandle.asMaximziedModeArea().getUniqueId() );
 		}
 	}
 
@@ -281,7 +282,7 @@ public class CGridArea extends AbstractDockableCStation implements SingleCDockab
 			return new DockActionSource[]{ getClose() };
 		}
 
-		public CStation getStation(){
+		public CStation<SplitDockStation> getStation(){
 			return CGridArea.this;
 		}
 

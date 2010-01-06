@@ -34,6 +34,8 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.*;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
+import bibliothek.gui.dock.support.mode.ModeManager;
+import bibliothek.gui.dock.support.mode.ModeSettingsConverter;
 
 /**
  * A set of modes. Adds some {@link ButtonDockAction}s to {@link Dockable}s,
@@ -45,7 +47,9 @@ import bibliothek.gui.dock.action.actions.SimpleButtonAction;
  * @param <A> the type of properties that has to be stored for every 
  * dockable-mode relation
  * @author Benjamin Sigg
+ * @deprecated replaced by {@link ModeManager}, will be removed in future releases
  */
+@Deprecated
 public abstract class ModeTransitionManager<A> implements ActionGuard{
     /** the set of all modes */
     private Map<String, Mode> modes = new HashMap<String, Mode>();
@@ -540,7 +544,7 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
      * @param converter converts the properties into the internal representation
      * @return the set of properties
      */
-    public <B> ModeTransitionSetting<A, B> getSetting( ModeTransitionConverter<A, B> converter ){
+    public <B> ModeTransitionSetting<A, B> getSetting( ModeSettingsConverter<A, B> converter ){
         ModeTransitionSetting<A, B> setting = createSetting( converter );
         
         for( Map.Entry<String, Entry> element : entries.entrySet() ){
@@ -616,7 +620,7 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
      * @param converter used to convert properties of this manager to the properties of the setting
      * @return the new setting
      */
-    protected <B> ModeTransitionSetting<A, B> createSetting( ModeTransitionConverter<A, B> converter ){
+    protected <B> ModeTransitionSetting<A, B> createSetting( ModeSettingsConverter<A, B> converter ){
         return new ModeTransitionSetting<A, B>( converter );
     }
     
@@ -626,7 +630,7 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
      * @param out the stream to write into
      * @throws IOException if an I/O-error occurs
      */
-    public <B> void write( ModeTransitionConverter<A,B> converter, DataOutputStream out ) throws IOException{
+    public <B> void write( ModeSettingsConverter<A,B> converter, DataOutputStream out ) throws IOException{
         getSetting( converter ).write( out );
     }
     
@@ -639,7 +643,7 @@ public abstract class ModeTransitionManager<A> implements ActionGuard{
      * @param in the stream to read from
      * @throws IOException if the stream can't be read
      */
-    public <B> void read( ModeTransitionConverter<A, B> converter, DataInputStream in ) throws IOException{
+    public <B> void read( ModeSettingsConverter<A, B> converter, DataInputStream in ) throws IOException{
         ModeTransitionSetting<A, B> setting = createSetting( converter );
         setting.read( in );
         setSetting( setting );

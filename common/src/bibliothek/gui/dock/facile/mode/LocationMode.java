@@ -25,8 +25,11 @@
  */
 package bibliothek.gui.dock.facile.mode;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.common.CWorkingArea;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.Mode;
 
@@ -42,13 +45,21 @@ public interface LocationMode extends Mode<Location>{
 	 * @throws IllegalStateException if <code>manager</code> is not <code>null</code>
 	 * and another manager is already set 
 	 */
-	public void setManager( LocationModeManager manager );
+	public void setManager( LocationModeManager<?> manager );
+	
+	/**
+	 * Connects this mode with a controller. It is up to the mode
+	 * to add or remove listeners if necessary. This mode should
+	 * also forward the controller to its {@link ModeArea}s.
+	 * @param controller the new controller or <code>null</code>
+	 */
+	public void setController( DockController controller );
 	
 	/**
 	 * Gets the manager which currently works with this mode.
 	 * @return the owner or <code>null</code>
 	 */
-	public LocationModeManager getManager();
+	public LocationModeManager<?> getManager();
 	
 	/**
 	 * If this method is not able to clearly find out whether <code>dockable</code>
@@ -56,6 +67,17 @@ public interface LocationMode extends Mode<Location>{
 	 * will ask again with the parent station of <code>dockable</code>.
 	 */
 	public boolean isCurrentMode( Dockable dockable );
+	
+	/**
+	 * Tells whether this mode knows <code>station</code> and represents the mode
+	 * children of <code>station</code> are in. 
+	 * @param station the station which is to be tested
+	 * @param exceptions some stations might be used by more than one mode. If 
+	 * this parameter is <code>true</code>, then a mode may return <code>false</code>
+	 * even if this mode is represented by <code>station</code>.
+	 * @return whether this mode is represented by <code>station</code>
+	 */
+	public boolean isRepresenting( DockStation station, boolean exceptions );
 	
 	/**
 	 * Adds a listener to this mode. The listener is to be called
@@ -69,4 +91,19 @@ public interface LocationMode extends Mode<Location>{
 	 * @param listener the listener to remove
 	 */
 	public void removeLocationModeListener( LocationModeListener listener );
+	
+	/**
+	 * Gets the unique identifier of this mode.
+	 * @return the unique identifier
+	 */
+	public ExtendedMode getExtendedMode();
+	
+	/**
+	 * Tells whether {@link Dockable}s which have this mode applied should
+	 * respect the settings for {@link CWorkingArea}s.
+	 * @param station the station which is the parent of the {@link Dockable}s
+	 * @return <code>true</code> if the settings should be respected, <code>false</code>
+	 * otherwise
+	 */
+	public boolean respectWorkingAreas( DockStation station );
 }

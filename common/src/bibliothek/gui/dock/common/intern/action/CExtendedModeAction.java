@@ -36,7 +36,7 @@ import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
-import bibliothek.gui.dock.common.intern.CDockable.ExtendedMode;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.IconManager;

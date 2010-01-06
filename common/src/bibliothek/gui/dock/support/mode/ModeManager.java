@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.support.mode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -42,7 +43,7 @@ import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.action.MultiDockActionSource;
-import bibliothek.gui.dock.facile.state.StateManager;
+import bibliothek.gui.dock.support.action.ModeTransitionSetting;
 import bibliothek.gui.dock.util.DockUtilities;
 
 /**
@@ -53,9 +54,12 @@ import bibliothek.gui.dock.util.DockUtilities;
  * @param <M> the kind of {@link Mode}s used by this manager
  * @author Benjamin Sigg
  */
-public class ModeManager<H, M extends Mode<H>> {
+public abstract class ModeManager<H, M extends Mode<H>> {
 	/** the ordered list of available modes */
 	private List<ModeHandle> modes = new ArrayList<ModeHandle>();
+	
+	/** factories for creating {@link ModeSetting}s */
+	private Map<Path, ModeSettingFactory<H>> factories = new HashMap<Path, ModeSettingFactory<H>>();
 	
 	/** lists for all known {@link Dockable}s their {@link DockableHandle} */
 	private Map<Dockable, DockableHandle> dockables = new HashMap<Dockable, DockableHandle>();
@@ -67,23 +71,51 @@ public class ModeManager<H, M extends Mode<H>> {
 	private List<ModeManagerListener<? super H, ? super M>> listeners =
 		new ArrayList<ModeManagerListener<? super H,? super M>>();
 	
+	/** whether a mode is currently applying itself */
+	private boolean onTransition = false;
+	
+	/** the controller in whose realm this manager works */
+	private DockController controller;
+	
+	private ActionGuard guard = new ActionGuard() {
+		public boolean react( Dockable dockable ){
+			return getHandle( dockable ) != null;
+		}
+		
+		public DockActionSource getSource( Dockable dockable ){
+			DockableHandle handle = getHandle( dockable );
+			if( handle == null )
+				return null;
+			return handle.source;
+		}
+	};
+	
 	/**
 	 * Creates a new manager.
 	 * @param controller the controller in whose realm this manager will work
 	 */
 	public ModeManager( DockController controller ){
-		controller.addActionGuard( new ActionGuard() {
-			public boolean react( Dockable dockable ){
-				return getHandle( dockable ) != null;
-			}
-			
-			public DockActionSource getSource( Dockable dockable ){
-				DockableHandle handle = getHandle( dockable );
-				if( handle == null )
-					return null;
-				return handle.source;
-			}
-		});
+		controller.addActionGuard( guard );
+		this.controller = controller;
+	}
+	
+	/**
+	 * Unregisters listeners which this manager added to the {@link DockController} and
+	 * other components.
+	 */
+	public void destroy(){
+		if( controller != null ){
+			controller.removeActionGuard( guard );
+			controller = null;
+		}
+	}
+	
+	/**
+	 * Gets the controller in whose realm this manager works.
+	 * @return the controller
+	 */
+	public DockController getController(){
+		return controller;
 	}
 	
 	/**
@@ -123,6 +155,18 @@ public class ModeManager<H, M extends Mode<H>> {
 		}
 		modes.add( new ModeHandle( mode ) );
 		fireAdded( mode );
+	}
+	
+	/**
+	 * Adds a factory to this {@link ModeManager}. The factory will be used by the
+	 * {@link ModeSettings} to read and write data of the mode with the same identifier
+	 * as <code>factory</code> persistently.<br>
+	 * <b>Note:</b> A {@link Mode} might also provide a {@link ModeSettingFactory}, if
+	 * there is a collision of unique identifiers the factory of the mode is used. 
+	 * @param factory the new factory
+	 */
+	public void putFactory( ModeSettingFactory<H> factory ){
+		factories.put( factory.getModeId(), factory );
 	}
 	
 	/**
@@ -319,6 +363,28 @@ public class ModeManager<H, M extends Mode<H>> {
     }
     
     /**
+     * Returns a set containing all {@link Dockable}s that are currently
+     * registered at this manager.
+     * @return the set of dockables
+     */
+    public Set<Dockable> listDockables(){
+    	return Collections.unmodifiableSet( dockables.keySet() );
+    }
+    
+    /**
+     * Runs an algorithm which affects the mode of some {@link Dockable}s.
+     * @param runnable the algorithm, <code>null</code> will be ignored
+     */
+    public void run( AffectingRunnable runnable ){
+    	if( runnable == null )
+    		return;
+    	
+    	ChangeSet set = new ChangeSet();
+    	runnable.run( set );
+    	set.finish();
+    }
+
+    /**
      * Alters the mode of <code>dockable</code> to <code>mode</code>. This
      * method does nothing if the current mode of <code>dockable</code>
      * already is <code>mode</code>. This method does not alter the modes
@@ -328,12 +394,55 @@ public class ModeManager<H, M extends Mode<H>> {
      * @param mode the new mode
      * @throws IllegalArgumentException if <code>dockable</code> is <code>null</code>,
      * <code>mode</code> is <code>null</code> or <code>dockable</code> is not
+     * registered.
+     * @return <code>true</code> if <code>mode</code> was found, <code>false</code>
+     * otherwise 
+     */
+    public boolean apply( Dockable dockable, Path mode ){
+    	M resolved = getMode( mode );
+    	if( resolved != null ){
+    		apply( dockable, resolved );
+    		return true;
+    	}
+    	return false;
+    }
+    
+    /**
+     * Alters the mode of <code>dockable</code> to <code>mode</code>. 
+     * This method does not alter the modes of other dockables, notice however that the methods
+     * {@link Mode#apply(Dockable, Object)} may trigger additional mode-changes.
+     * @param dockable the element whose mode is going to be changed
+     * @param mode the new mode
+     * @throws IllegalArgumentException if <code>dockable</code> is <code>null</code>,
+     * <code>mode</code> is <code>null</code> or <code>dockable</code> is not
      * registered. 
      */
-    public void alter( Dockable dockable, M mode ){
+    public void apply( Dockable dockable, M mode ){
     	ChangeSet set = new ChangeSet();
-    	alter( dockable, mode, set );
+    	apply( dockable, mode, set );
     	set.finish();
+    }
+    
+    /**
+     * Alters the mode of <code>dockable</code> to <code>mode</code>. 
+     * This method does not alter the modes of other dockables, notice however that the methods
+     * {@link Mode#apply(Dockable, Object)} may trigger additional mode-changes.
+     * @param dockable the element whose mode is going to be changed
+     * @param mode the new mode
+     * @param set to store all dockables whose mode might have been changed
+     * @throws IllegalArgumentException if <code>dockable</code> is <code>null</code>,
+     * <code>mode</code> is <code>null</code>, <code>set</code> is <code>null</code>,
+     * or <code>dockable</code> is not registered.
+     * @returns <code>true</code> if <code>mode</code> was found, 
+     * <code>false</code> otherwise
+     */
+    public boolean apply( Dockable dockable, Path mode, AffectedSet set ){
+    	M resolved = getMode( mode );
+    	if( resolved != null ){
+    		apply( dockable, resolved, set );
+    		return true;
+    	}
+    	return false;
     }
     
     /**
@@ -349,7 +458,7 @@ public class ModeManager<H, M extends Mode<H>> {
      * <code>mode</code> is <code>null</code>, <code>set</code> is <code>null</code>,
      * or <code>dockable</code> is not registered. 
      */
-    public void alter( Dockable dockable, M mode, AffectedSet set ){
+    public void apply( Dockable dockable, M mode, AffectedSet set ){
     	if( dockable == null )
     		throw new IllegalArgumentException( "dockable is null" );
     	
@@ -368,7 +477,31 @@ public class ModeManager<H, M extends Mode<H>> {
     		return;
     	
     	H history = entry.properties.get( mode.getUniqueIdentifier() );
-    	alter( dockable, mode, history, set );
+    	apply( dockable, mode, history, set );
+    }
+    
+    /**
+     * Alters the mode of <code>dockable</code> to be <code>mode</code>. 
+     * This method does not alter the modes of other dockables, notice however
+     * that the methods {@link Mode#apply(Dockable, Object)} may
+     * trigger additional mode-changes.
+     * @param dockable the element whose mode is changed
+     * @param mode the new mode of <code>dockable</code>
+     * @param history history information for {@link Mode#apply(Dockable, Object, AffectedSet)},
+     * can be <code>null</code>
+     * @param set to store elements that have changed
+     * @throws IllegalArgumentException if either <code>dockable</code>, <code>mode</code>
+     * or <code>set</code> is <code>null</code>
+     * @returns <code>true</code> if <code>mode</code> was found, <code>false</code>
+     * otherwise
+     */
+    public boolean apply( Dockable dockable, Path mode, H history, AffectedSet set ){
+    	M resolved = getMode( mode );
+    	if( resolved != null ){
+    		apply( dockable, resolved, history, set );
+    		return true;
+    	}
+    	return false;
     }
     
     /**
@@ -384,7 +517,7 @@ public class ModeManager<H, M extends Mode<H>> {
      * @throws IllegalArgumentException if either <code>dockable</code>, <code>mode</code>
      * or <code>set</code> is <code>null</code>
      */
-    public void alter( Dockable dockable, M mode, H history, AffectedSet set ){
+    public void apply( Dockable dockable, M mode, H history, AffectedSet set ){
     	if( dockable == null )
     		throw new IllegalArgumentException( "dockable is null" );
     	
@@ -401,8 +534,54 @@ public class ModeManager<H, M extends Mode<H>> {
     	}
     	
     	set.add( dockable );
-   		mode.apply( dockable, history, set );
+    	try{
+    		onTransition = true;
+    		mode.apply( dockable, history, set );
+    	}
+    	finally{
+    		onTransition = false;
+    	}
     }
+
+    /**
+     * Stores a property for <code>dockable</code> if in mode <code>mode</code>. This
+     * method does not trigger any version of {@link #apply(Dockable, Mode) apply}.
+     * @param mode the mode which is affected
+     * @param dockable the dockables whose property is changed
+     * @param property the new property, can be <code>null</code>
+     */
+    protected void setProperties( M mode, Dockable dockable, H property ){
+    	DockableHandle entry = dockables.get( property );
+    	if( entry != null ){
+    		if( property == null )
+    			entry.properties.remove( mode.getUniqueIdentifier() );
+    		else
+    			entry.properties.put( mode.getUniqueIdentifier(), property );
+    	}
+    }
+    
+    /**
+     * Gets the properties which correspond to <code>dockable</code>
+     * and <code>mode</code>.
+     * @param mode the first part of the key
+     * @param dockable the second part of the key
+     * @return the properties or <code>null</code>
+     */
+    protected H getProperties( M mode, Dockable dockable ){
+        DockableHandle entry = dockables.get( dockable );
+        if( entry == null )
+            return null;
+        
+        return entry.properties.get( mode.getUniqueIdentifier() );
+    }
+    
+    /**
+     * Tells whether a {@link Mode} is currently applying to a dockable.
+     * @return <code>true</code> if a mode is currently working
+     */
+    public boolean isOnTransition(){
+		return onTransition;
+	}
 
     /**
      * Removes the properties that belong to <code>dockable</code>.
@@ -428,6 +607,29 @@ public class ModeManager<H, M extends Mode<H>> {
             fireRemoved( dockable );
         }
     }
+    
+	
+    /**
+     * Called while reading modes in {@link #setSetting(ModeTransitionSetting)}.
+     * Subclasses might change the mode according to <code>newMode</code>.
+     * @param id the identifier of <code>dockable</code>
+     * @param oldMode the mode <code>dockable</code> is currently in
+     * @param newMode the mode <code>dockable</code> is going to be
+     * @param dockable the element that changes its mode, might be <code>null</code>
+     */
+	protected abstract void applyDuringRead( String key, Path old, Path current, Dockable dockable );
+
+    /**
+     * Tells whether an entry for a missing {@link Dockable} should be created.
+     * This will result in a call to {@link #addEmpty(String)} during
+     * {@link #setSetting(ModeTransitionSetting)}.
+     * The default implementation returns always <code>false</code>.
+     * @param key the key for which to create a new entry
+     * @return <code>true</code> if an entry should be created
+     */
+	protected boolean createEntryDuringRead( String key ){
+		return false;
+	}
     
     /**
      * Adds an empty entry to this manager. The empty entry can be used to store
@@ -552,19 +754,6 @@ public class ModeManager<H, M extends Mode<H>> {
     		handle.properties.put( mode.getUniqueIdentifier(), mode.current( dockable ) );
     	}
     }
-    
-	/**
-	 * A wrapper around a mode, giving access to its properties. The mode
-	 * inside this wrapper can be replaced any time.
-	 * @author Benjamin Sigg
-	 */
-	private class ModeHandle{
-		private M mode;
-		
-		public ModeHandle( M mode ){
-			this.mode = mode;
-		}
-	}
 
 	/**
 	 * Gets the <code>ModeAccess</code> which represents <code>mode</code>.
@@ -609,6 +798,15 @@ public class ModeManager<H, M extends Mode<H>> {
 	}
 	
 	/**
+	 * Rebuilds the actions sources for all {@link Dockable}s.
+	 */
+	protected void rebuildAll(){
+		for( DockableHandle handle : dockables.values() ){
+			handle.updateActionSource();
+		}
+	}
+	
+	/**
 	 * Rebuilds the action sources of <code>dockable</code>.
 	 * @param dockable the element whose actions are to be updated
 	 */
@@ -621,6 +819,112 @@ public class ModeManager<H, M extends Mode<H>> {
 	
 	private DockableHandle getHandle( Dockable dockable ){
 		return dockables.get( dockable );
+	}
+	
+	/**
+	 * Creates a new {@link ModeSetting} which is configured to transfer data from
+	 * this {@link ModeManager} to persistent storage or the other way. The new setting
+	 * contains all the {@link ModeSettingFactory}s which are currently known to this manager.
+	 * @param <B> the intermediate format
+	 * @param converter conversion tool from this managers meta-data format to the intermediate
+	 * format.
+	 * @return the new empty settings
+	 */
+	public <B> ModeSettings<H, B> createSettings( ModeSettingsConverter<H, B> converter ){
+		ModeSettings<H, B> settings = new ModeSettings<H, B>( converter );
+		for( ModeSettingFactory<H> factory : factories.values() ){
+			settings.addFactory( factory );
+		}
+		for( ModeHandle mode : modes ){
+			if( mode.mode != null ){
+				ModeSettingFactory<H> factory = mode.mode.getSettingFactory();
+				if( factory != null ){
+					settings.addFactory( factory );
+				}
+			}
+		}
+		return settings;
+	}
+	
+	/**
+	 * Writes all the information stored in this {@link ModeManager} to
+	 * <code>setting</code>.
+	 * @param setting the settings to fill
+	 */
+	public void writeSettings( ModeSettings<H,?> setting ){
+		// dockables
+		for( DockableHandle handle : entries.values() ){
+			setting.add( handle.id, handle.getCurrent(), handle.properties, handle.history );
+		}
+		
+		// modes
+		for( ModeHandle handle : modes ){
+			if( handle.mode != null ){
+				setting.add( handle.mode );
+			}
+		}
+	}
+	
+	public void readSettings( ModeSettings<H, ?> settings ){
+		// dockables
+        for( int i = 0, n = settings.size(); i < n; i++ ){
+            String key = settings.getId( i );
+            DockableHandle entry = entries.get( key );
+            
+            if( entry == null ){
+                if( createEntryDuringRead( key )){
+                    addEmpty( key );
+                    entry = entries.get( key );
+                }
+            }
+            
+            if( entry != null ){
+                Path current = settings.getCurrent( i );
+                Path old = null;
+                if( entry.dockable != null ){
+                	M oldMode = getCurrentMode( entry.dockable );
+                	if( oldMode != null ){
+                		old = oldMode.getUniqueIdentifier();
+                	}
+                }
+                
+                if( current == null )
+                    current = old;
+                
+                entry.history.clear();
+                for( Path next : settings.getHistory( i ))
+                    entry.history.add( next );
+                
+                entry.properties = settings.getProperties( i );
+                
+                if( (old == null && current != null) || (old != null && !old.equals( current ))){
+                    applyDuringRead( key, old, current, entry.dockable );
+                }
+            }
+        }
+		
+		// modes
+		for( ModeHandle handle : modes ){
+			if( handle.mode != null ){
+				ModeSetting<H> setting = settings.getSettings( handle.mode.getUniqueIdentifier() );
+				if( setting != null ){
+					handle.mode.readSetting( setting );
+				}
+			}
+		}
+	}
+
+	/**
+	 * A wrapper around a mode, giving access to its properties. The mode
+	 * inside this wrapper can be replaced any time.
+	 * @author Benjamin Sigg
+	 */
+	private class ModeHandle{
+		private M mode;
+		
+		public ModeHandle( M mode ){
+			this.mode = mode;
+		}
 	}
 	
     /**
@@ -658,16 +962,18 @@ public class ModeManager<H, M extends Mode<H>> {
          * Updates the action source of this manager.
          */
         public void updateActionSource(){
-        	source.removeAll();
-        	M mode = getCurrentMode( dockable );
-        	if( mode == null )
-        		mode = getDefaultMode( dockable );
-        	
-        	for( ModeHandle access : modes ){
-        		DockActionSource next = access.mode.getActionsFor( dockable, mode );
-        		if( next != null ){
-        			source.add( next );
-        		}
+        	if( dockable != null ){
+	        	source.removeAll();
+	        	M mode = getCurrentMode( dockable );
+	        	if( mode == null )
+	        		mode = getDefaultMode( dockable );
+	        	
+	        	for( ModeHandle access : modes ){
+	        		DockActionSource next = access.mode.getActionsFor( dockable, mode );
+	        		if( next != null ){
+	        			source.add( next );
+	        		}
+	        	}
         	}
         }
         
@@ -710,6 +1016,21 @@ public class ModeManager<H, M extends Mode<H>> {
                 return null;
             else
                 return getAccess( history.get( history.size()-1 ) );
+        }
+        
+        /**
+         * Gets the id of the current mode (if any).
+         * @return the id or <code>null</code>
+         */
+        public Path getCurrent(){
+        	if( dockable == null )
+        		return null;
+        	
+        	M mode = getCurrentMode( dockable );
+        	if( mode == null )
+        		return null;
+        	
+        	return mode.getUniqueIdentifier();
         }
     }
     

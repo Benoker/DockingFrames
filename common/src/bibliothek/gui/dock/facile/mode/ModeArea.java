@@ -25,8 +25,11 @@
  */
 package bibliothek.gui.dock.facile.mode;
 
+import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.CWorkingArea;
 
 /**
  * A representation of some area that can show {@link Dockable}s.
@@ -47,4 +50,25 @@ public interface ModeArea {
 	 * is identical to this station
 	 */
 	public boolean isChild( Dockable dockable );
+	
+	/**
+	 * Tells whether this area contains information about <code>station</code>.
+	 * @param station some station which might be represented by this area
+	 * @return <code>true</code> if <code>this</code> is responsible for <code>station</code> 
+	 */
+	public boolean isRepresentant( DockStation station );
+	
+	/**
+	 * Tells whether children of this area have to respect the settings for
+	 * {@link CWorkingArea}s.
+	 * @return whether the settings are to be respected
+	 */
+	public boolean respectWorkingAreas();
+	
+	/**
+	 * Connects this area with a controller. It's up to the area to
+	 * add or remove listeners if necessary.
+	 * @param controller the controller or <code>null</code>
+	 */
+	public void setController( DockController controller );
 }

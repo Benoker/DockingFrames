@@ -27,7 +27,11 @@ package bibliothek.gui.dock.common.intern;
 
 import java.util.List;
 
-import bibliothek.gui.dock.common.*;
+import bibliothek.gui.dock.common.CContentArea;
+import bibliothek.gui.dock.common.CControlRegister;
+import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.MultipleCDockable;
+import bibliothek.gui.dock.common.SingleCDockable;
 
 /**
  * A {@link CControlRegister} whose contents can be changed.
@@ -76,7 +80,7 @@ public interface MutableCControlRegister extends CControlRegister {
      * Adds <code>station</code> to this register.
      * @param station the new station
      */
-    public void addStation( CStation station );
+    public void addStation( CStation<?> station );
     
     /**
      * Removes <code>station</code> from this register.
@@ -84,7 +88,7 @@ public interface MutableCControlRegister extends CControlRegister {
      * @return <code>true</code> if <code>station</code> was removed, <code>false</code>
      * otherwise
      */
-    public boolean removeStation( CStation station );
+    public boolean removeStation( CStation<?> station );
 
     /**
      * Gets the backup factory for missing {@link SingleCDockable}s.

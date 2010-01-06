@@ -58,7 +58,7 @@ public class SecureCSplitDockStation extends SecureSplitDockStation implements C
 		return delegate.getDockable();
 	}
 
-	public CStation getStation(){
+	public CStation<?> getStation(){
 		return delegate.getStation();
 	}
 	

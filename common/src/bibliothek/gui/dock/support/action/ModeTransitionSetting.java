@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.util.*;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.support.mode.ModeSettingsConverter;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XAttribute;
 import bibliothek.util.xml.XElement;
@@ -46,13 +47,13 @@ public class ModeTransitionSetting<A, B> {
     private List<Entry> entries = new ArrayList<Entry>();
     
     /** a converter that converts properties from outside to inside */
-    private ModeTransitionConverter<A, B> converter;
+    private ModeSettingsConverter<A, B> converter;
     
     /**
      * Creates a new setting
      * @param converter the converter to read and write properties
      */
-    public ModeTransitionSetting( ModeTransitionConverter<A, B> converter ){
+    public ModeTransitionSetting( ModeSettingsConverter<A, B> converter ){
         if( converter == null )
             throw new IllegalArgumentException( "converter must not be null" );
         
@@ -64,7 +65,7 @@ public class ModeTransitionSetting<A, B> {
      * properties.
      * @return the converter, never <code>null</code>
      */
-    public ModeTransitionConverter<A, B> getConverter(){
+    public ModeSettingsConverter<A, B> getConverter(){
         return converter;
     }
     

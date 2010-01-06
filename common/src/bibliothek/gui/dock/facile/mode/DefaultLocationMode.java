@@ -48,15 +48,7 @@ public abstract class DefaultLocationMode<A extends StationModeArea> extends Abs
 		if( area == null )
 			return null;
 		DockableProperty location = area.getLocation( dockable );
-		return new Location( area.getUniqueId(), location );
-	}
-	
-	/**
-	 * This default implementation does nothing
-	 */
-	public Runnable leaving( Dockable dockable, AffectedSet set ){
-		// nothing
-		return null;
+		return new Location( getUniqueIdentifier(), area.getUniqueId(), location );
 	}
 	
 	/**

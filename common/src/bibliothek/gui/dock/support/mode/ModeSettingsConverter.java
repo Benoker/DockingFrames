@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.support.action;
+package bibliothek.gui.dock.support.mode;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -37,7 +37,7 @@ import bibliothek.util.xml.XElement;
  * @param <A> the type of properties outside
  * @param <B> the type of properties that represent the outside properties
  */
-public interface ModeTransitionConverter<A,B> {
+public interface ModeSettingsConverter<A,B> {
     /**
      * Converts a property from the outside world into the world of
      * this setting.

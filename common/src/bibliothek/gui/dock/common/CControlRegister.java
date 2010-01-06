@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Set;
 
 import bibliothek.gui.dock.common.intern.CDockable;
-import bibliothek.gui.dock.common.intern.CDockable.ExtendedMode;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 
 /**
  * Grants access to the {@link CDockable}s and other information that is
@@ -87,7 +87,7 @@ public interface CControlRegister {
      * of this register changes.
      * @return an unmodifiable list of elements
      */
-    public List<CStation> getStations();
+    public List<CStation<?>> getStations();
 
     /**
      * Gets an unmodifiable map of all {@link MultipleCDockableFactory}s that

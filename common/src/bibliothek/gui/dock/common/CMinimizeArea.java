@@ -35,6 +35,8 @@ import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.station.FlapResizeRequestHandler;
 import bibliothek.gui.dock.common.location.CMinimizeAreaLocation;
+import bibliothek.gui.dock.common.mode.CMinimizedModeArea;
+import bibliothek.gui.dock.common.mode.station.CFlapDockStationHandle;
 
 /**
  * An area where {@link CDockable}s can be stored in their minimized state.
@@ -42,11 +44,12 @@ import bibliothek.gui.dock.common.location.CMinimizeAreaLocation;
  * frame or dialog.
  * @author Benjamin Sigg
  */
-public class CMinimizeArea extends JPanel implements CStation{
+public class CMinimizeArea extends JPanel implements CStation<FlapDockStation>{
     private FlapDockStation station;
     private ResizeRequestListener request;
     private CControlAccess access;
     private String uniqueId;
+    private CMinimizedModeArea area;
     
     /**
      * Creates a new minimize area.
@@ -64,19 +67,21 @@ public class CMinimizeArea extends JPanel implements CStation{
         add( station.getComponent(), BorderLayout.CENTER );
         
         setDirection( null );
+        
+        area = new CFlapDockStationHandle( this );
     }
     
     public void setControl( CControlAccess access ) {
         if( this.access != null ){
             this.access.getOwner().removeResizeRequestListener( request );
-            this.access.getStateManager().remove( uniqueId );
+            this.access.getLocationManager().getMinimizedMode().remove( area.getUniqueId() );
         }
         
         this.access = access;
         
         if( this.access != null ){
             this.access.getOwner().addResizeRequestListener( request );
-            this.access.getStateManager().add( uniqueId, station );
+            this.access.getLocationManager().getMinimizedMode().add( area );
         }
     }
 

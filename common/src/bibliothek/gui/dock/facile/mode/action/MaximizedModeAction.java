@@ -45,7 +45,7 @@ public class MaximizedModeAction extends LocationModeAction{
 	 * @param controller the controller in whose realm this action is used
 	 * @param mode the mode which is applied
 	 */
-	public MaximizedModeAction( DockController controller, MaximizedMode mode ){
+	public MaximizedModeAction( DockController controller, MaximizedMode<?> mode ){
 		super( controller, mode, "maximize", MaximizedMode.ICON_IDENTIFIER, CControl.KEY_GOTO_MAXIMIZED );
 		
         ResourceBundle bundle = Resources.getBundle();

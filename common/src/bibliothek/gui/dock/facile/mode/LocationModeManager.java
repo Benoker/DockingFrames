@@ -35,11 +35,22 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.intern.action.CExtendedModeAction;
-import bibliothek.gui.dock.facile.mode.action.LocationModeAction;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
+import bibliothek.gui.dock.control.DockRegister;
+import bibliothek.gui.dock.event.DockHierarchyEvent;
+import bibliothek.gui.dock.event.DockHierarchyListener;
+import bibliothek.gui.dock.event.DockRegisterAdapter;
+import bibliothek.gui.dock.event.DockRelocatorAdapter;
+import bibliothek.gui.dock.facile.mode.status.DefaultExtendedModeEnablement;
+import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablement;
+import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablementFactory;
 import bibliothek.gui.dock.support.mode.ModeManager;
 import bibliothek.gui.dock.support.mode.ModeManagerListener;
+import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.IconManager;
+import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 
 /**
  * {@link ModeManager} for the location of a {@link Dockable}. This manager is able to
@@ -49,52 +60,126 @@ import bibliothek.gui.dock.util.IconManager;
  * each mode (e.g. {@link NormalMode#ICON_IDENTIFIER}).
  * @author Benjamin Sigg
  */
-public class LocationModeManager extends ModeManager<Location, LocationMode>{
-	private NormalMode normalMode;
-	private MaximizedMode maximizedMode;
-	private MinimizedMode minimizedMode;
-	private ExternalizedMode externalizedMode;
+public class LocationModeManager<M extends LocationMode> extends ModeManager<Location, M>{
+	/**
+	 * {@link PropertyKey} for the {@link ExtendedModeEnablement} that should be used
+	 * by a {@link LocationModeManager} to activate and deactivate the modes.
+	 */
+	public static final PropertyKey<ExtendedModeEnablementFactory> MODE_ENABLEMENT = 
+		new PropertyKey<ExtendedModeEnablementFactory>( "locationmodemanager.mode_enablement", 
+				new ConstantPropertyFactory<ExtendedModeEnablementFactory>( DefaultExtendedModeEnablement.FACTORY ), true  );
 	
 	/** a set of listeners that will be automatically added or removed from a {@link LocationMode} */
 	private Map<Path, List<LocationModeListener>> listeners = new HashMap<Path, List<LocationModeListener>>();
 	
-	/**
-	 * Creates a new manager. This manager will create modes using {@link CExtendedModeAction}s.
-	 * @param control the control in whose realm this manager will work, not <code>null</code>
-	 */
-	public LocationModeManager( CControl control ){
-		super( control.intern().getController() );
-		
-		normalMode = new NormalMode( control );
-		maximizedMode = new MaximizedMode( control );
-		minimizedMode = new MinimizedMode( control );
-		externalizedMode = new ExternalizedMode( control );
-		
-		init( control );
-	}
+	/** registers new dockables */
+	private RegisterListener registerListener = new RegisterListener();
 	
+	/** registers when dockables change their position */
+	private HierarchyListener hierarchyListener = new HierarchyListener();
+	
+	/** registers dragged and dropped dockables */
+	private RelocatorListener relocatorListener = new RelocatorListener();
+	
+	/** the current {@link ExtendedModeEnablementFactory} */
+	private PropertyValue<ExtendedModeEnablementFactory> extendedModeFactory = new PropertyValue<ExtendedModeEnablementFactory>( MODE_ENABLEMENT ) {
+		@Override
+		protected void valueChanged( ExtendedModeEnablementFactory oldValue, ExtendedModeEnablementFactory newValue ){
+			updateEnablement();
+		}
+	};
+	
+	/** tells which modes are available for which element */
+	private ExtendedModeEnablement enablement;
+
 	/**
-	 * Creates a new manager. This manager will create modes using {@link LocationModeAction}s.
+	 * Creates a new manager.
 	 * @param controller the controller in whose realm this manager will work
 	 */
 	public LocationModeManager( DockController controller ){
 		super( controller );
+		registerListener.connect( controller );
+		controller.getRelocator().addDockRelocatorListener( relocatorListener );
 		
-		normalMode = new NormalMode( controller );
-		maximizedMode = new MaximizedMode( controller );
-		minimizedMode = new MinimizedMode( controller );
-		externalizedMode = new ExternalizedMode( controller );
+		updateEnablement();
+		extendedModeFactory.setProperties( controller );
 		
-		init( null );
+		addModeManagerListener( new LocationModeListenerAdapter() );
 	}
 	
-	private void init( CControl control ){
-		addModeManagerListener( new LocationModeListenerAdapter() );
+	public void destroy(){
+		registerListener.connect( null );
+		getController().getRelocator().removeDockRelocatorListener( relocatorListener );
+		
+		for( LocationMode mode : this.modes() ){
+			mode.setController( null );
+		}
+		
+		super.destroy();
+		extendedModeFactory.setProperties( (DockProperties)null );
+	}
+	
+	/**
+	 * Updates the current {@link ExtendedModeEnablement} using the factory
+	 * provided by {@link #MODE_ENABLEMENT}.
+	 */
+	protected void updateEnablement(){
+		if( enablement != null ){
+			enablement.destroy();
+			enablement = null;
+		}
+		if( getController() != null ){
+			enablement = extendedModeFactory.getValue().create( this );
+		}
+		rebuildAll();
+	}
+	
+	/**
+	 * Sets the current mode of <code>dockable</code>.
+	 * @param dockable the dockable whose mode is to be set
+	 * @param extendedMode the mode
+	 * @throws IllegalArgumentException if <code>extendedMode</code> is unknown
+	 */
+	public void setMode( Dockable dockable, ExtendedMode extendedMode ){
+		M mode = getMode( extendedMode.getModeIdentifier() );
+		if( mode == null )
+			throw new IllegalArgumentException( "No mode '" + extendedMode.getModeIdentifier() + "' available" );
 
-		putMode( minimizedMode );
-		putMode( normalMode );
-		putMode( maximizedMode );
-		putMode( externalizedMode );
+		apply( dockable, mode );
+	}
+
+	/**
+	 * Gets the current mode of <code>dockable</code>.
+	 * @param dockable the element whose mode is searched
+	 * @return the mode or <code>null</code> if not found
+	 */
+	public ExtendedMode getMode( Dockable dockable ){
+		LocationMode mode = getCurrentMode( dockable );
+		if( mode == null )
+			return null;
+		return mode.getExtendedMode();
+	}
+	
+	/**
+	 * Ignores the call, the position of {@link Dockable}s is set elsewhere.
+	 */
+	@Override
+	protected void applyDuringRead( String key, Path old, Path current, Dockable dockable ){
+		// ignore
+	}
+	
+	/**
+	 * Using the current {@link ExtendedModeEnablement} this method tells whether
+	 * mode <code>mode</code> can be applied to <code>dockable</code>.
+	 * @param dockable some element, not <code>null</code>
+	 * @param mode some mode, not <code>null</code>
+	 * @return the result of {@link ExtendedModeEnablement#isAvailable(Dockable, ExtendedMode)}
+	 */
+	public boolean isModeAvailable( Dockable dockable, ExtendedMode mode ){
+		if( enablement == null )
+			return false;
+		
+		return enablement.isAvailable( dockable, mode );
 	}
 	
 	/**
@@ -141,42 +226,10 @@ public class LocationModeManager extends ModeManager<Location, LocationMode>{
 		}
 	}
 	
-	/**
-	 * Direct access to the mode handling "normal" {@link Dockable}s.
-	 * @return the mode
-	 */
-	public NormalMode getNormalMode(){
-		return normalMode;
-	}
-
-	/**
-	 * Direct access to the mode handling "maximized" {@link Dockable}s.
-	 * @return the mode
-	 */
-	public MaximizedMode getMaximizedMode(){
-		return maximizedMode;
-	}
-	
-	/**
-	 * Direct access to the mode handling "minimized" {@link Dockable}s.
-	 * @return the mode
-	 */
-	public MinimizedMode getMinimizedMode(){
-		return minimizedMode;
-	}
-	
-	/**
-	 * Direct access to the mode handling "externalized" {@link Dockable}s.
-	 * @return the mode
-	 */
-	public ExternalizedMode getExternalizedMode(){
-		return externalizedMode;
-	}
-	
 	@Override
-	public LocationMode getCurrentMode( Dockable dockable ){
+	public M getCurrentMode( Dockable dockable ){
 		while( dockable != null ){
-			for( LocationMode mode : modes() ){
+			for( M mode : modes() ){
 				if( mode.isCurrentMode( dockable ))
 					return mode;
 			}
@@ -195,6 +248,7 @@ public class LocationModeManager extends ModeManager<Location, LocationMode>{
 	private class LocationModeListenerAdapter implements ModeManagerListener<Location, LocationMode>{
 		public void modeAdded(	ModeManager<? extends Location, ? extends LocationMode> manager, LocationMode mode ){
 			mode.setManager( LocationModeManager.this );
+			mode.setController( getController() );
 			
 			List<LocationModeListener> list = listeners.get( mode.getUniqueIdentifier() );
 			if( list != null ){
@@ -206,6 +260,7 @@ public class LocationModeManager extends ModeManager<Location, LocationMode>{
 		
 		public void modeRemoved( ModeManager<? extends Location, ? extends LocationMode> manager, LocationMode mode ){
 			mode.setManager( null );
+			mode.setController( null );
 			
 			List<LocationModeListener> list = listeners.get( mode.getUniqueIdentifier() );
 			if( list != null ){
@@ -226,5 +281,72 @@ public class LocationModeManager extends ModeManager<Location, LocationMode>{
 		public void modeChanged( ModeManager<? extends Location, ? extends LocationMode> manager, Dockable dockable, LocationMode oldMode, LocationMode newMode ){
 			// ignore	
 		}		
+	}
+
+	/**
+	 * This listener registers when {@link Dockable}s enter and leave and adds or
+	 * removes a {@link DockHierarchyListener}. 
+	 * @author Benjamin Sigg
+	 */
+	private class RegisterListener extends DockRegisterAdapter{
+		private DockController controller;
+		
+		public void connect( DockController controller ){
+			if( this.controller != null ){
+				DockRegister register = this.controller.getRegister();
+				register.removeDockRegisterListener( this );
+				for( Dockable dockable : register.listDockables() ){
+					dockable.removeDockHierarchyListener( hierarchyListener );
+					rebuild( dockable );
+				}
+			}
+			this.controller = controller;
+			if( controller != null ){
+				DockRegister register = controller.getRegister();
+				register.addDockRegisterListener( this );
+				for( Dockable dockable : register.listDockables() ){
+					dockable.addDockHierarchyListener( hierarchyListener );
+				}
+			}
+		}
+		
+		@Override
+		public void dockableRegistered( DockController controller, Dockable dockable ){
+			dockable.addDockHierarchyListener( hierarchyListener );
+			rebuild( dockable );
+		}
+		
+		@Override
+		public void dockableUnregistered( DockController controller, Dockable dockable ){
+			dockable.removeDockHierarchyListener( hierarchyListener );
+		}
+	}
+	
+	/**
+	 * Reacts on dockables that are changing their position by calling
+	 * {@link LocationModeManager#rebuild(Dockable)}.
+	 * @author Benjamin Sigg
+	 */
+	private class HierarchyListener implements DockHierarchyListener{
+		public void controllerChanged( DockHierarchyEvent event ){
+			// ignore
+		}
+
+		public void hierarchyChanged( DockHierarchyEvent event ){
+            if( !isOnTransition() ){
+                rebuild( event.getDockable() );
+            }	
+		}		
+	}
+	
+	/**
+	 * Detects the drag-operation and calls {@link LocationModeManager#store(Dockable)}.
+	 * @author Benjamin Sigg
+	 */
+	private class RelocatorListener extends DockRelocatorAdapter{
+		@Override
+        public void drag( DockController controller, Dockable dockable, DockStation station ) {
+			store( dockable );
+        }
 	}
 }

@@ -45,7 +45,7 @@ public class NormalModeAction extends LocationModeAction{
 	 * @param controller the controller in whose realm this action is used
 	 * @param mode the mode which is applied
 	 */
-	public NormalModeAction( DockController controller, NormalMode mode ){
+	public NormalModeAction( DockController controller, NormalMode<?> mode ){
 		super( controller, mode, "normalize", NormalMode.ICON_IDENTIFIER, CControl.KEY_GOTO_NORMALIZED );
 		
         ResourceBundle bundle = Resources.getBundle();

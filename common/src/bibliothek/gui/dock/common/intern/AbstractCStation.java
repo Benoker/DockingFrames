@@ -38,10 +38,10 @@ import bibliothek.gui.dock.common.CStation;
  * @author Benjamin Sigg
  *
  */
-public abstract class AbstractCStation implements CStation{
+public abstract class AbstractCStation<S extends DockStation> implements CStation<S>{
     private CLocation location;
     private String id;
-    private DockStation station;
+    private S station;
     private CControlAccess control;
     
     /**
@@ -50,7 +50,7 @@ public abstract class AbstractCStation implements CStation{
      * @param id the unique id of this station
      * @param location a location that points directly to this station
      */
-    public AbstractCStation( DockStation station, String id, CLocation location ){
+    public AbstractCStation( S station, String id, CLocation location ){
     	init( station, id, location );
     }
     
@@ -68,7 +68,7 @@ public abstract class AbstractCStation implements CStation{
      * @param id the unique id of this station
      * @param location a location that points directly to this station
      */
-    protected void init( DockStation station, String id, CLocation location ){
+    protected void init( S station, String id, CLocation location ){
     	if( station == null )
     		throw new IllegalArgumentException( "station must not be null" );
     	
@@ -91,7 +91,7 @@ public abstract class AbstractCStation implements CStation{
         return id;
     }
 
-    public DockStation getStation() {
+    public S getStation() {
         return station;
     }
 

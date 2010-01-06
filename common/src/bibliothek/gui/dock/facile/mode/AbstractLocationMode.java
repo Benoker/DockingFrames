@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
@@ -59,12 +60,15 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 	private DefaultDockActionSource selectModeSource = new DefaultDockActionSource();
 	
 	/** the manager responsible for this mode */
-	private LocationModeManager manager;
+	private LocationModeManager<?> manager;
 
 	/** the list of known listeners */
 	private List<LocationModeListener> listeners = new ArrayList<LocationModeListener>();
 	
-	public void setManager( LocationModeManager manager ){
+	/** the controller in whose realm this mode works */
+	private DockController controller;
+	
+	public void setManager( LocationModeManager<?> manager ){
 		this.manager = manager;
 	}
 	
@@ -72,8 +76,23 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 	 * Gets the owner of this mode.
 	 * @return the owner, not <code>null</code>
 	 */
-	public LocationModeManager getManager(){
+	public LocationModeManager<?> getManager(){
 		return manager;
+	}
+	
+	public void setController( DockController controller ){
+		this.controller = controller;
+		for( A area : areas.values() ){	
+			area.setController( controller );
+		}
+	}
+	
+	/**
+	 * Gets the controller in whose realm this mode works.
+	 * @return the controller or <code>null</code>
+	 */
+	public DockController getController(){
+		return controller;
 	}
 	
 	public void addLocationModeListener( LocationModeListener listener ){
@@ -105,6 +124,8 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 		String key = area.getUniqueId();
 		if( areas.containsKey( key ))
 			throw new IllegalArgumentException( "key '" + key + "' already in use" );
+		
+		area.setController( getController() );
 		areas.put( key, area );
 	}
 	
@@ -118,6 +139,9 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 		A area = areas.remove( key );
 		if( defaultArea == area ){
 			defaultArea = null;
+		}
+		if( area != null ){
+			area.setController( null );
 		}
 		return area;
 	}
@@ -213,9 +237,40 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 	}
 	
 	public DockActionSource getActionsFor( Dockable dockable, Mode<Location> mode ){
-		if( mode == this )
+		if( mode == this ){
 			return null;
+		}
+		if( !isModeAvailable( dockable )){
+			return null;
+		}
 		return selectModeSource;
+	}
+	
+	/**
+	 * Tells whether this mode is available for <code>dockable</code>.
+	 * @param dockable some element to check
+	 * @return <code>true</code> if this mode is available
+	 */
+	protected boolean isModeAvailable( Dockable dockable ){
+		LocationModeManager<?> manager = getManager();
+		if( manager == null )
+			return false;
+		return manager.isModeAvailable( dockable, getExtendedMode() );
+	}
+	
+	public boolean respectWorkingAreas( DockStation station ){
+		// search area
+		while( station != null ){
+			for( A area : areas.values() ){
+				if( area.isRepresentant( station )){
+					return area.respectWorkingAreas();
+				}
+			}
+			Dockable dockable = station.asDockable();
+			station = dockable == null ? null : dockable.getDockParent();
+		}
+		
+		return true;
 	}
 	
 	public void apply( Dockable dockable, Location history, AffectedSet set ){

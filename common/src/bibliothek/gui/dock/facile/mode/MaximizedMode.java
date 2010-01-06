@@ -35,11 +35,14 @@ import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CMaximizeBehavior;
 import bibliothek.gui.dock.common.action.predefined.CMaximizeAction;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.facile.mode.action.MaximizedModeAction;
 import bibliothek.gui.dock.facile.state.MaximizeArea;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.ModeManager;
 import bibliothek.gui.dock.support.mode.ModeManagerListener;
+import bibliothek.gui.dock.support.mode.ModeSetting;
+import bibliothek.gui.dock.support.mode.ModeSettingFactory;
 import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.IconManager;
 
@@ -48,7 +51,7 @@ import bibliothek.gui.dock.util.IconManager;
  * or a screen offers.
  * @author Benjamin Sigg
  */
-public class MaximizedMode extends AbstractLocationMode<MaximizedModeArea>{
+public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocationMode<M>{
 	/** unique identifier for this mode */
 	public static final Path IDENTIFIER = new Path( "dock.mode.maximized" );
 	
@@ -87,21 +90,21 @@ public class MaximizedMode extends AbstractLocationMode<MaximizedModeArea>{
 	}
 	
 	@Override
-	public void setManager( LocationModeManager manager ){
-		LocationModeManager old = getManager();
+	public void setManager( LocationModeManager<?> manager ){
+		LocationModeManager<?> old = getManager();
 		listener.replaceManager( old, manager );
 		super.setManager( manager );
 	}
 	
 	@Override
-	public void add( MaximizedModeArea area ){
+	public void add( M area ){
 		super.add( area );
 		area.connect( this );
 	}
 	
 	@Override
-	public MaximizedModeArea remove( String key ){
-		MaximizedModeArea area = super.remove( key );
+	public M remove( String key ){
+		M area = super.remove( key );
 		if( area != null ){
 			area.connect( null );
 		}
@@ -134,6 +137,10 @@ public class MaximizedMode extends AbstractLocationMode<MaximizedModeArea>{
 		return IDENTIFIER;
 	}
 
+	public ExtendedMode getExtendedMode(){
+		return ExtendedMode.MAXIMIZED;
+	}
+	
 	public void runApply( Dockable dockable, Location history, AffectedSet set ){
 		MaximizedModeArea area = null;
 		if( history != null )
@@ -150,7 +157,7 @@ public class MaximizedMode extends AbstractLocationMode<MaximizedModeArea>{
 		if( area == null )
 			return null;
 
-		return new Location( area.getUniqueId(), null );
+		return new Location( getUniqueIdentifier(), area.getUniqueId(), null );
 	}
 	
 	public boolean isCurrentMode( Dockable dockable ){
@@ -215,18 +222,15 @@ public class MaximizedMode extends AbstractLocationMode<MaximizedModeArea>{
 
             String key = area.getUniqueId();
             boolean done = false;
-            LocationModeManager manager = getManager();
+            LocationModeManager<?> manager = getManager();
             
             if( lastMaximizedLocation.get( key ) != null ){
-            	LocationMode mode = manager.getMode( lastMaximizedMode.remove( key ) );
-            	if( mode != null ){
-            		done = true;
-            		getManager().alter( 
-            			dockable,
-            			mode,
-            			lastMaximizedLocation.remove( key ),
-            			set );
-            	}
+            	done = true;
+            	done = getManager().apply( 
+            		dockable,
+            		lastMaximizedMode.remove( key ),
+            		lastMaximizedLocation.remove( key ),
+            		set );
             }
             
             if( !done ){
@@ -234,7 +238,7 @@ public class MaximizedMode extends AbstractLocationMode<MaximizedModeArea>{
             	if( mode == null || mode == this )
             		mode = manager.getMode( NormalMode.IDENTIFIER );
                 
-                manager.alter( dockable, mode, set );
+                manager.apply( dockable, mode.getUniqueIdentifier(), set );
             }
         }
     }
@@ -386,6 +390,18 @@ public class MaximizedMode extends AbstractLocationMode<MaximizedModeArea>{
     	}
     }
     
+    public ModeSettingFactory<Location> getSettingFactory(){
+    	return MaximizedModeSetting.FACTORY;
+    }
+    
+    public void writeSetting( ModeSetting<Location> setting ){
+	    // ignore	
+    }
+    
+    public void readSetting( ModeSetting<Location> setting ){
+    	// ignore
+    }
+    
     /**
      * A listener that adds itself to all {@link LocationMode}s a {@link LocationModeManager} has.
      * Calls to the {@link LocationMode#apply(Dockable, Location, AffectedSet) apply} method is forwarded
@@ -398,7 +414,7 @@ public class MaximizedMode extends AbstractLocationMode<MaximizedModeArea>{
     	 * @param oldManager the old manager, can be <code>null</code>
     	 * @param newManager the new manager, can be <code>null</code>
     	 */
-    	public void replaceManager( LocationModeManager oldManager, LocationModeManager newManager ){
+    	public void replaceManager( LocationModeManager<?> oldManager, LocationModeManager<?> newManager ){
     		if( oldManager != null ){
     			oldManager.removeModeManagerListener( this );
     			

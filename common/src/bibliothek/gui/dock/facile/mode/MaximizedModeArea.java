@@ -42,7 +42,7 @@ public interface MaximizedModeArea extends ModeArea{
 	 * area that it is no longer managed
 	 * @throws IllegalStateException if already connected
 	 */
-	public void connect( MaximizedMode mode );
+	public void connect( MaximizedMode<? extends MaximizedModeArea> mode );
 	
 	/**
 	 * This method is called before the method {@link LocationMode#apply(Dockable, Location, AffectedSet) apply}

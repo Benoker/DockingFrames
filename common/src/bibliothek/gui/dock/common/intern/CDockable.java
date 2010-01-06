@@ -28,11 +28,20 @@ package bibliothek.gui.dock.common.intern;
 import java.awt.Dimension;
 
 import bibliothek.gui.DockTheme;
-import bibliothek.gui.dock.common.*;
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.CLocation;
+import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.ColorMap;
+import bibliothek.gui.dock.common.FontMap;
 import bibliothek.gui.dock.common.action.CAction;
-import bibliothek.gui.dock.common.event.*;
+import bibliothek.gui.dock.common.event.CDockablePropertyListener;
+import bibliothek.gui.dock.common.event.CDockableStateListener;
+import bibliothek.gui.dock.common.event.CDoubleClickListener;
+import bibliothek.gui.dock.common.event.CFocusListener;
+import bibliothek.gui.dock.common.event.CKeyboardListener;
 import bibliothek.gui.dock.common.intern.action.CloseActionSource;
 import bibliothek.gui.dock.common.layout.RequestDimension;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 
 /**
  * A basic element representing some {@link java.awt.Component}. This interface
@@ -41,21 +50,6 @@ import bibliothek.gui.dock.common.layout.RequestDimension;
  * @author Benjamin Sigg
  */
 public interface CDockable {
-	/**
-	 * The mode tells how big a {@link CDockable} is.
-	 * @author Benjamin Sigg
-	 */
-	public static enum ExtendedMode{
-		/** the dockable is as small as possible */
-		MINIMIZED,
-		/** the dockable is as big as possible */
-		MAXIMIZED,
-		/** the dockable has the normal size */
-		NORMALIZED,
-		/** the dockable is floating in a dialog */
-		EXTERNALIZED
-	}
-	
 	/**
 	 * Key for an action of {@link #getAction(String)}. The action behind this
 	 * key should call {@link #setExtendedMode(bibliothek.gui.dock.common.intern.CDockable.ExtendedMode)}
@@ -254,7 +248,7 @@ public interface CDockable {
 	 * stored in a cache and read as soon as this dockable is made visible.<br>
 	 * Note that the location can only be seen as a hint, the framework tries
 	 * to fit the location as good as possible, but there are no guarantees.<br>
-	 * Subclasses should call {@link CControlAccess#getStateManager()} and 
+	 * Subclasses should call {@link CControlAccess#getLocationManager()} and 
 	 * {@link CStateManager#setLocation(CommonDockable, CLocation)}.
 	 * @param location the new location, <code>null</code> is possible, but
 	 * will not move the dockable immediately
@@ -289,14 +283,14 @@ public interface CDockable {
      * or indirectly through {@link #setLocation(CLocation)}.
      * @param area the new parent or <code>null</code>
      */
-    public void setWorkingArea( CStation area );
+    public void setWorkingArea( CStation<?> area );
     
     /**
      * Gets the parent of this dockable, this should be the same as
      * set by the last call of {@link #setWorkingArea(CStation)}.
      * @return the parent or <code>null</code>
      */
-    public CStation getWorkingArea();
+    public CStation<?> getWorkingArea();
     
     /**
      * Sets the size of this dockable when this dockable is minimized and

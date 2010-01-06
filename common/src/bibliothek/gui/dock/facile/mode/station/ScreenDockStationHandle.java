@@ -25,6 +25,8 @@
  */
 package bibliothek.gui.dock.facile.mode.station;
 
+import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.facile.mode.ExternalizedModeArea;
@@ -60,12 +62,24 @@ public class ScreenDockStationHandle implements ExternalizedModeArea{
 		this.station = station;
 	}
 	
+	public void setController( DockController controller ){
+		// ignore	
+	}
+	
 	/**
 	 * Gets the station which is managed by this handle.
 	 * @return the station
 	 */
 	public ScreenDockStation getStation(){
 		return station;
+	}
+
+	public boolean isRepresentant( DockStation station ){
+		return this.station == station;
+	}
+	
+	public boolean respectWorkingAreas(){
+		return false;
 	}
 	
 	public DockableProperty getLocation( Dockable child ){

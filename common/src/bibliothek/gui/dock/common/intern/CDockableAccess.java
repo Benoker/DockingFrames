@@ -29,6 +29,7 @@ import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.event.CDoubleClickListener;
 import bibliothek.gui.dock.common.event.CFocusListener;
 import bibliothek.gui.dock.common.event.CKeyboardListener;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 
 /**
  * An interface giving access to the internal methods of an {@link CDockable}. Only
@@ -47,7 +48,7 @@ public interface CDockableAccess {
      * Called after the mode of the {@link CDockable} has changed.
      * @param mode the new mode
      */
-    public void informMode( CDockable.ExtendedMode mode );
+    public void informMode( ExtendedMode mode );
     
     /**
      * Tells which unique id the owning {@link CDockable} has.

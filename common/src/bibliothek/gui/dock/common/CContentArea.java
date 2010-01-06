@@ -43,8 +43,9 @@ import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.station.FlapResizeRequestHandler;
 import bibliothek.gui.dock.common.intern.station.SplitResizeRequestHandler;
 import bibliothek.gui.dock.common.location.CBaseLocation;
-import bibliothek.gui.dock.facile.state.MaximizeArea;
-import bibliothek.gui.dock.facile.state.MaximizeSplitDockStation;
+import bibliothek.gui.dock.common.mode.CLocationModeManager;
+import bibliothek.gui.dock.common.mode.station.CFlapDockStationHandle;
+import bibliothek.gui.dock.common.mode.station.CSplitDockStationHandle;
 
 /**
  * A component that is normally set into the center of the
@@ -105,7 +106,7 @@ public class CContentArea extends JPanel{
 	private CControl control;
 
 	/** the set of stations on this content area */
-	private CStation[] stations;
+	private CStation<?>[] stations;
 
 	/**
 	 * Creates a new content area.
@@ -183,8 +184,8 @@ public class CContentArea extends JPanel{
 	 * {@link CContentArea}.
 	 * @return the list of stations
 	 */
-	public CStation[] getStations(){
-		CStation[] copy = new CStation[ stations.length ];
+	public CStation<?>[] getStations(){
+		CStation<?>[] copy = new CStation[ stations.length ];
 		System.arraycopy( stations, 0, copy, 0, stations.length );
 		return copy;
 	}
@@ -454,25 +455,25 @@ public class CContentArea extends JPanel{
 	 * areas.
 	 * @author Benjamin Sigg
 	 */
-	private class MinimizeStation extends AbstractCStation{
-		private FlapDockStation station;
+	private class MinimizeStation extends AbstractCStation<FlapDockStation>{
 		private ResizeRequestListener handler;
-
+		private CFlapDockStationHandle modeManagerHandle;
+		
 		public MinimizeStation( FlapDockStation station, String id, CLocation location ){
 			super( station, id, location );
-			this.station = station;
 			handler = new FlapResizeRequestHandler( station );
+			modeManagerHandle = new CFlapDockStationHandle( this );
 		}
 
 		@Override
 		protected void install( CControlAccess access ) {
 			access.getOwner().addResizeRequestListener( handler );
-			access.getStateManager().add( getUniqueId(), station );
+			access.getLocationManager().getMinimizedMode().add( modeManagerHandle );
 		}
 		@Override
 		protected void uninstall( CControlAccess access ) {
 			access.getOwner().removeResizeRequestListener( handler );
-			access.getStateManager().remove( getUniqueId() );
+			access.getLocationManager().getMinimizedMode().remove( modeManagerHandle.getUniqueId() );
 		}
 	}
 
@@ -481,29 +482,29 @@ public class CContentArea extends JPanel{
 	 * of the area.
 	 * @author Benjamin Sigg
 	 */
-	private class CenterStation extends AbstractCStation{
-		private SplitDockStation station;
+	private class CenterStation extends AbstractCStation<SplitDockStation>{
 		private ResizeRequestListener handler;
-		private MaximizeArea area;
+		private CSplitDockStationHandle modeManagerHandle;
 
 		public CenterStation( SplitDockStation station, String id, CLocation location ){
 			super( station, id, location );
-			this.station = station;
 			handler = new SplitResizeRequestHandler( station );
-			area = new MaximizeSplitDockStation( id, station );
+			modeManagerHandle = new CSplitDockStationHandle( this, control.getLocationManager() );
 		}
 
 		@Override
 		protected void install( CControlAccess access ) {
 			access.getOwner().addResizeRequestListener( handler );
-			access.getStateManager().add( getUniqueId(), station );
-			access.getStateManager().addMaximizingArea( area );
+			CLocationModeManager manager = access.getLocationManager();
+			manager.getNormalMode().add( modeManagerHandle.asNormalModeArea() );
+			manager.getMaximizedMode().add( modeManagerHandle.asMaximziedModeArea() );
 		}
 		@Override
 		protected void uninstall( CControlAccess access ) {
 			access.getOwner().removeResizeRequestListener( handler );
-			access.getStateManager().removeMaximizingArea( area );
-			access.getStateManager().remove( getUniqueId() );
+			CLocationModeManager manager = access.getLocationManager();
+			manager.getNormalMode().remove( modeManagerHandle.asNormalModeArea().getUniqueId() );
+			manager.getMaximizedMode().remove( modeManagerHandle.asMaximziedModeArea().getUniqueId() );
 		}
 	}
 }

@@ -25,10 +25,23 @@
  */
 package bibliothek.gui.dock.common.intern;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import bibliothek.gui.dock.common.*;
-import bibliothek.gui.dock.common.intern.CDockable.ExtendedMode;
+import bibliothek.gui.dock.common.CContentArea;
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.CControlRegister;
+import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.MultipleCDockable;
+import bibliothek.gui.dock.common.MultipleCDockableFactory;
+import bibliothek.gui.dock.common.SingleCDockable;
+import bibliothek.gui.dock.common.SingleCDockableBackupFactory;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.frontend.FrontendEntry;
 
 /**
@@ -65,7 +78,7 @@ public class DefaultCControlRegister implements MutableCControlRegister {
         new ArrayList<MultipleCDockable>();
     
     /** the stations known  */
-    private List<CStation> stations = new ArrayList<CStation>();
+    private List<CStation<?>> stations = new ArrayList<CStation<?>>();
     
     /**
      * Creates a new register
@@ -92,7 +105,7 @@ public class DefaultCControlRegister implements MutableCControlRegister {
         return Collections.unmodifiableList( singleDockables );
     }
     
-    public List<CStation> getStations() {
+    public List<CStation<?>> getStations() {
         return Collections.unmodifiableList( stations );
     }
     
@@ -208,7 +221,7 @@ public class DefaultCControlRegister implements MutableCControlRegister {
         singleDockables.add( dockable );
     }
 
-    public void addStation( CStation station ) {
+    public void addStation( CStation<?> station ) {
         stations.add( station );
     }
 
@@ -252,7 +265,7 @@ public class DefaultCControlRegister implements MutableCControlRegister {
         return false;
     }
 
-    public boolean removeStation( CStation station ) {
+    public boolean removeStation( CStation<?> station ) {
         return stations.remove( station );
     }
 
