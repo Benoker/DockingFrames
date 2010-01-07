@@ -25,26 +25,39 @@
  */
 package bibliothek.gui.dock.facile.mode;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.swing.KeyStroke;
 
 import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CMaximizeBehavior;
 import bibliothek.gui.dock.common.action.predefined.CMaximizeAction;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
+import bibliothek.gui.dock.event.DockRegisterAdapter;
+import bibliothek.gui.dock.event.DoubleClickListener;
+import bibliothek.gui.dock.event.KeyboardListener;
 import bibliothek.gui.dock.facile.mode.action.MaximizedModeAction;
 import bibliothek.gui.dock.facile.state.MaximizeArea;
 import bibliothek.gui.dock.support.mode.AffectedSet;
+import bibliothek.gui.dock.support.mode.AffectingRunnable;
 import bibliothek.gui.dock.support.mode.ModeManager;
 import bibliothek.gui.dock.support.mode.ModeManagerListener;
 import bibliothek.gui.dock.support.mode.ModeSetting;
 import bibliothek.gui.dock.support.mode.ModeSettingFactory;
 import bibliothek.gui.dock.support.util.Resources;
+import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.IconManager;
+import bibliothek.gui.dock.util.PropertyValue;
 
 /**
  * {@link Dockable}s are maximized if they take up the whole space a frame
@@ -70,6 +83,19 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	/** the listener responsible for detecting apply-events on other modes */
 	private Listener listener = new Listener();
 	
+	/** all the {@link KeyHook}s that are currently used */
+	private List<KeyHook> hooks = new LinkedList<KeyHook>();
+	
+    /**
+     * {@link KeyStroke} used to go into, or go out from the maximized state.
+     */
+    private PropertyValue<KeyStroke> keyStrokeMaximizeChange = new PropertyValue<KeyStroke>( CControl.KEY_MAXIMIZE_CHANGE ){
+        @Override
+        protected void valueChanged( KeyStroke oldValue, KeyStroke newValue ) {
+            // ignore
+        }
+    };
+	
 	/**
 	 * Creates a new mode
 	 * @param control the control in whose realm this mode will work
@@ -91,8 +117,19 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	
 	@Override
 	public void setManager( LocationModeManager<?> manager ){
+		for( KeyHook hook : hooks ){
+			hook.destroy( false );
+		}
+		hooks.clear();
+		
 		LocationModeManager<?> old = getManager();
 		listener.replaceManager( old, manager );
+		
+		if( manager == null )
+			keyStrokeMaximizeChange.setProperties( (DockProperties)null );
+		else
+			keyStrokeMaximizeChange.setProperties( manager.getController() );
+		
 		super.setManager( manager );
 	}
 	
@@ -280,7 +317,32 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
     		return;
     	}
     }
-	
+
+    public void ensureNotHidden( final Dockable dockable ){
+    	getManager().run( new AffectingRunnable() {
+			public void run( AffectedSet set ){
+				Dockable mutableDockable = dockable;
+				
+				DockStation parent = mutableDockable.getDockParent();
+		    	Dockable element = getMaximizingElement( mutableDockable );
+		    	
+				while( parent != null ){
+		    		MaximizedModeArea area = getMaximizeArea( parent );
+		    		if( area != null ){
+		    			Dockable maximized = area.getMaximized();
+		    			
+		    			if( maximized != null && maximized != mutableDockable && maximized != element ){
+		    				unmaximize( area.getMaximized(), set );
+		    			}
+		    		}
+
+		    		mutableDockable = parent.asDockable();
+		    		parent = mutableDockable == null ? null : mutableDockable.getDockParent();
+		    	}	
+			}
+		});
+    }
+
     /**
      * Searches the first {@link MaximizedModeArea} which is a parent
      * of <code>dockable</code>. This method will never return
@@ -402,13 +464,124 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
     	// ignore
     }
     
+
+    /**
+     * Invoked whenever a key is pressed, released or typed.
+     * @param dockable the element to which the event belongs
+     * @param event the event
+     * @return <code>true</code> if the event has been processed, <code>false</code>
+     * if the event was not used up.
+     */
+    protected boolean process( Dockable dockable, KeyEvent event ){
+    	KeyStroke stroke = KeyStroke.getKeyStrokeForEvent( event );
+    	if( stroke.equals( keyStrokeMaximizeChange.getValue() )){
+    		return switchMode( dockable );
+    	}
+    	
+    	return false;
+    }
+    
+    /**
+     * Tries to switch the current mode of <code>dockable</code> to or from
+     * the maximized mode.
+     * @param dockable the element whose mode is to be changed
+     * @return whether the operation was successful
+     */
+    public boolean switchMode( Dockable dockable ){
+    	LocationModeManager<?> manager = getManager();
+		LocationMode current = manager.getCurrentMode( dockable );
+		if( current == this ){
+			LocationMode mode = manager.getPreviousMode( dockable );
+			if( mode != null ){
+				if( manager.isModeAvailable( dockable, mode.getExtendedMode() )){
+					manager.apply( dockable, mode.getUniqueIdentifier() );
+					manager.ensureValidLocation( dockable );
+					return true;
+				}
+			}
+		}
+		else{
+			if( manager.isModeAvailable( dockable, getExtendedMode() )){
+				manager.apply( dockable, getUniqueIdentifier() );
+				manager.ensureValidLocation( dockable );
+				return true;
+			}
+		}
+		return false;
+    }
+    
+    /**
+     * A hook recording key-events for a specific {@link Dockable}. The hook will remove
+     * itself from the {@link Dockable} automatically once the element is removed from
+     * the controller.
+     * @author Benjamin Sigg
+     */
+    private class KeyHook extends DockRegisterAdapter implements KeyboardListener{
+        /** the Dockable which is observed by this hook */
+        private Dockable dockable;
+        
+        /** the controller on which this hook has registered its listeners */
+        private DockController controller;
+        
+        /**
+         * Creates a new hook
+         * @param dockable the element which will be observed until it is removed
+         * from the {@link DockController}.
+         */
+        public KeyHook( Dockable dockable ){
+            this.dockable = dockable;
+            controller = getController();
+            controller.getKeyboardController().addListener( this );
+            controller.getRegister().addDockRegisterListener( this );
+            hooks.add( this );
+        }
+        
+        @Override
+        public void dockableUnregistered( DockController controller, Dockable dockable ) {
+            if( this.dockable == dockable ){
+            	destroy( true );
+            }
+        }
+        
+        /**
+         * Removes this hook from the controller
+         * @param complete whether to remove <code>this</code> from {@link MaximizedMode#hooks}
+         */
+        public void destroy( boolean complete ){
+            controller.getKeyboardController().removeListener( this );
+            controller.getRegister().removeDockRegisterListener( this );
+            if( complete ){
+            	hooks.remove( this );
+            }
+        }
+        
+        public DockElement getTreeLocation() {
+            return dockable;
+        }
+        
+        public boolean keyPressed( DockElement element, KeyEvent event ) {
+            return process( dockable, event );
+        }
+        
+        public boolean keyReleased( DockElement element, KeyEvent event ) {
+            return process( dockable, event );
+        }
+        
+        public boolean keyTyped( DockElement element, KeyEvent event ) {
+            return process( dockable, event );
+        }
+    }
+    
     /**
      * A listener that adds itself to all {@link LocationMode}s a {@link LocationModeManager} has.
      * Calls to the {@link LocationMode#apply(Dockable, Location, AffectedSet) apply} method is forwarded
      * to the enclosing {@link MaximizedMode}.
      * @author Benjamin Sigg
      */
-    private class Listener implements ModeManagerListener<Location, LocationMode>, LocationModeListener{
+    private class Listener implements ModeManagerListener<Location, LocationMode>, LocationModeListener, DoubleClickListener{
+    	/** controller to which this listener is attached */
+    	private DockController controller;
+    	
     	/**
     	 * Removes this listener from <code>oldManager</code> and adds this to <code>newManager</code>.
     	 * @param oldManager the old manager, can be <code>null</code>
@@ -423,17 +596,31 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
     			}
     		}
     		
+    		if( controller != null ){
+    			controller.getDoubleClickController().removeListener( this );
+    			controller = null;
+    		}
+    		
     		if( newManager != null ){
+    			controller = newManager.getController();
     			newManager.addModeManagerListener( this );
     			
     			for( LocationMode mode : newManager.modes() ){
     				modeAdded( newManager, mode );
     			}
+    			
+    			for( Dockable dockable : newManager.listDockables() ){
+    				new KeyHook( dockable );
+    			}
+    		}
+    		
+    		if( controller != null ){
+    			controller.getDoubleClickController().addListener( this );
     		}
     	}
     	
     	public void dockableAdded( ModeManager<? extends Location, ? extends LocationMode> manager, Dockable dockable ){
-			// ignore
+    		new KeyHook( dockable );
 		}
 
 		public void dockableRemoved( ModeManager<? extends Location, ? extends LocationMode> manager, Dockable dockable ){
@@ -462,5 +649,19 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 			MaximizedMode.this.applyStarting( event );
 		}
     	
+        public DockElement getTreeLocation() {
+            return null;
+        }
+        public boolean process( Dockable dockable, MouseEvent event ) {
+            if( event.isConsumed() )
+                return false;
+            
+            if( switchMode( dockable ) ){
+            	event.consume();
+            	return true;
+            }
+            
+            return false;
+        }
     }
 }

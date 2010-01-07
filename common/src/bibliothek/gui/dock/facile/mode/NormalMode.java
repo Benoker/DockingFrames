@@ -97,6 +97,10 @@ public class NormalMode<M extends NormalModeArea> extends DefaultLocationMode<M>
     	return new NullModeSettingsFactory<Location>( getUniqueIdentifier() );
     }
     
+    public void ensureNotHidden( Dockable dockable ){
+	    // ignore	
+    }
+    
     public void writeSetting( ModeSetting<Location> setting ){
 	    // ignore	
     }

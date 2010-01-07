@@ -258,6 +258,16 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 		return manager.isModeAvailable( dockable, getExtendedMode() );
 	}
 	
+	public boolean isRepresenting( DockStation station ){
+		for( A area : areas.values() ){
+			if( area.isRepresentant( station )){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	public boolean respectWorkingAreas( DockStation station ){
 		// search area
 		while( station != null ){

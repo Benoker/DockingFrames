@@ -726,6 +726,51 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 		return mode.mode;
 	}
 	
+	/**
+	 * Gets the history which modes <code>dockable</code>
+	 * used in the past. The older entries are at the beginning
+	 * of the list. The current mode may or may not be included 
+	 * in the list.
+	 * @param dockable the element whose history is asked
+	 * @return the history or an empty list if no history is available
+	 */
+	public List<M> getModeHistory( Dockable dockable ){
+		DockableHandle handle = getHandle( dockable );
+		if( handle == null )
+			return Collections.emptyList();
+		
+		List<M> result = new ArrayList<M>();
+		for( Path path : handle.history ){
+			M mode = getMode( path );
+			if( mode != null ){
+				result.add( mode );
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * Gets the history which properties <code>dockable</code>
+	 * used in the past. Entries of value <code>null</code> are ignored.
+	 * The older entries are at the beginning of the list.
+	 * @param dockable the element whose history is asked
+	 * @return the history or an empty list if no history is available
+	 */
+	public List<H> getPropertyHistory( Dockable dockable ){
+		DockableHandle handle = getHandle( dockable );
+		if( handle == null )
+			return Collections.emptyList();
+		
+		List<H> result = new ArrayList<H>();
+		for( Path path : handle.history ){
+			H history = handle.properties.get( path );
+			if( history != null ){
+				result.add( history );
+			}
+		}
+		return result;
+	}
+	
     /**
      * Store the history information for <code>dockable</code> and all its children in respect
      * to their current {@link Mode}. Dockables that are not registered at this manager
@@ -913,7 +958,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 			}
 		}
 	}
-
+	
 	/**
 	 * A wrapper around a mode, giving access to its properties. The mode
 	 * inside this wrapper can be replaced any time.
@@ -1035,13 +1080,21 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     }
     
     /**
-     * Default implementation of {@link AffectedSet}.
+     * Default implementation of {@link AffectedSet}. Linked to the enclosing
+     * {@link ModeManager}.
      * @author Benjamin Sigg
      */
     private class ChangeSet implements AffectedSet{
         /** the changed elements */
         private Set<Dockable> set = new HashSet<Dockable>();
 
+        /**
+         * Creates a new set
+         */
+        public ChangeSet(){
+        	// nothing
+        }
+        
         public void add( Dockable dockable ){
         	if( dockable != null ){
 	            set.add( dockable );
@@ -1053,11 +1106,10 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 	            }
         	}
         }
-
+        
         /**
          * Performs the clean up operations that are required after some
          * <code>Dockable</code>s have changed their mode.<br>
-         * This includes calling {@link StateManager#putMode(Dockable, String)}
          * for each element known to this set.
          */
         public void finish(){

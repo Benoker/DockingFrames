@@ -72,12 +72,9 @@ public interface LocationMode extends Mode<Location>{
 	 * Tells whether this mode knows <code>station</code> and represents the mode
 	 * children of <code>station</code> are in. 
 	 * @param station the station which is to be tested
-	 * @param exceptions some stations might be used by more than one mode. If 
-	 * this parameter is <code>true</code>, then a mode may return <code>false</code>
-	 * even if this mode is represented by <code>station</code>.
 	 * @return whether this mode is represented by <code>station</code>
 	 */
-	public boolean isRepresenting( DockStation station, boolean exceptions );
+	public boolean isRepresenting( DockStation station );
 	
 	/**
 	 * Adds a listener to this mode. The listener is to be called
@@ -106,4 +103,11 @@ public interface LocationMode extends Mode<Location>{
 	 * otherwise
 	 */
 	public boolean respectWorkingAreas( DockStation station );
+	
+	/**
+	 * Ensures that no {@link Dockable} that has this mode hides <code>dockable</code>.
+	 * Note that <code>dockable</code> may or may not be in this mode.
+	 * @param dockable the element which must not be hidden
+	 */
+	public void ensureNotHidden( Dockable dockable );
 }

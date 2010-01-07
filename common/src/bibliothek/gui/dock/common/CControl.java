@@ -100,10 +100,13 @@ import bibliothek.gui.dock.common.layout.FullLockConflictResolver;
 import bibliothek.gui.dock.common.layout.RequestDimension;
 import bibliothek.gui.dock.common.layout.ThemeMap;
 import bibliothek.gui.dock.common.location.CExternalizedLocation;
+import bibliothek.gui.dock.common.mode.CExternalizedMode;
+import bibliothek.gui.dock.common.mode.CExternalizedModeArea;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.CMaximizedMode;
 import bibliothek.gui.dock.common.mode.CMaximizedModeArea;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
+import bibliothek.gui.dock.common.mode.station.CScreenDockStationHandle;
 import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.displayer.SingleTabDecider;
 import bibliothek.gui.dock.event.DockAdapter;
@@ -111,9 +114,6 @@ import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.event.KeyboardListener;
-import bibliothek.gui.dock.facile.mode.ExternalizedMode;
-import bibliothek.gui.dock.facile.mode.ExternalizedModeArea;
-import bibliothek.gui.dock.facile.mode.station.ScreenDockStationHandle;
 import bibliothek.gui.dock.facile.station.screen.WindowProviderVisibility;
 import bibliothek.gui.dock.facile.station.split.ConflictResolver;
 import bibliothek.gui.dock.facile.station.split.DefaultConflictResolver;
@@ -630,19 +630,19 @@ public class CControl {
         WindowProvider window = frontend.getController().getRootWindowProvider();
         final ScreenDockStation screen = factory.createScreenDockStation( window );
 
-        CStation screenStation = new AbstractCStation( screen, EXTERNALIZED_STATION_ID, CExternalizedLocation.STATION ){
+        CStation<ScreenDockStation> screenStation = new AbstractCStation<ScreenDockStation>( screen, EXTERNALIZED_STATION_ID, CExternalizedLocation.STATION ){
             private ScreenResizeRequestHandler handler = new ScreenResizeRequestHandler( screen );
-            private ExternalizedModeArea area;
+            private CExternalizedModeArea area;
             
             @Override
             protected void install( CControlAccess access ) {
                 access.getOwner().addResizeRequestListener( handler );
                 
                 if( area == null ){
-                	area = new ScreenDockStationHandle( EXTERNALIZED_STATION_ID, screen );
+                	area = new CScreenDockStationHandle( this );
                 }
                 
-                ExternalizedMode mode = access.getLocationManager().getExternalizedMode();
+                CExternalizedMode mode = access.getLocationManager().getExternalizedMode();
                 mode.add( area );
                 if( mode.getDefaultArea() == null ){
                 	mode.setDefaultArea( area );
@@ -651,7 +651,7 @@ public class CControl {
             @Override
             protected void uninstall( CControlAccess access ) {
                 access.getOwner().removeResizeRequestListener( handler );
-                ExternalizedMode mode = access.getLocationManager().getExternalizedMode();
+                CExternalizedMode mode = access.getLocationManager().getExternalizedMode();
                 mode.remove( area.getUniqueId() );
             }
         };
@@ -2090,7 +2090,7 @@ public class CControl {
             register.setStalled( true );
             try{
                 List<CDockable> maximized = CControl.this.register.listDockablesInMode( ExtendedMode.MAXIMIZED );
-                boolean changes = locationManager.ensureNothingMaximized();
+                boolean changes = locationManager.ensureBasicModes();
 
                 frontend.hide( dockable.intern() );
 
@@ -2133,7 +2133,7 @@ public class CControl {
                     }
                 }
 
-                boolean maximized = locationManager.ensureNothingMaximized();
+                boolean maximized = locationManager.ensureBasicModes();
 
                 if( location == null ){
                     frontend.show( dockable.intern(), false );

@@ -60,6 +60,10 @@ public class CNormalMode extends NormalMode<CNormalModeArea> implements CLocatio
 		return area.getCLocation( dockable, location );
 	}
 	
+	public boolean isBasicMode(){
+		return true;
+	}
+	
 	/**
 	 * Gets a location on station that is not a working-area. 
 	 * @return the location, <code>null</code> if not available

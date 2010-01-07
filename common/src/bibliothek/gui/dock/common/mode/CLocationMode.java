@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.common.mode;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.facile.mode.Location;
@@ -51,4 +52,13 @@ public interface CLocationMode extends LocationMode{
 	 * @return the location or <code>null</code> if it cannot be determined
 	 */
 	public CLocation getCLocation( Dockable dockable, Location location );
+	
+	/**
+	 * Tells whether this mode is a basic mode or not. There are basic
+	 * and advanced modes. A basic and an advanced mode may share the same
+	 * representation (the same {@link DockStation}s), but if in doubt the
+	 * basic mode has more weight.
+	 * @return <code>true</code> if this is a basic mode
+	 */
+	public boolean isBasicMode();
 }

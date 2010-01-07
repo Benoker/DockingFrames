@@ -85,6 +85,10 @@ public class MinimizedMode<M extends MinimizedModeArea> extends DefaultLocationM
     	return new NullModeSettingsFactory<Location>( getUniqueIdentifier() );
     }
     
+    public void ensureNotHidden( Dockable dockable ){
+	    // ignore	
+    }
+    
     public void writeSetting( ModeSetting<Location> setting ){
 	    // ignore	
     }

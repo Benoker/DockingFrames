@@ -81,7 +81,7 @@ public class CDockFrontend extends DockFrontend{
     public void setSetting( Setting setting, boolean entry ) {
         CLocationModeManager manager = control.getLocationManager();
         if( entry ){
-            manager.normalizeAllWorkingAreaChildren();
+            manager.resetWorkingAreaChildren();
         }
 
         super.setSetting( setting, entry );

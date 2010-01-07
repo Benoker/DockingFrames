@@ -26,8 +26,10 @@
 package bibliothek.gui.dock.common.mode;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CLocation;
@@ -38,9 +40,10 @@ import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.LocationMode;
 import bibliothek.gui.dock.facile.mode.LocationModeManager;
-import bibliothek.gui.dock.facile.state.MaximizeArea;
-import bibliothek.gui.dock.facile.state.StateManager.AffectedSet;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.support.mode.AffectedSet;
+import bibliothek.gui.dock.support.mode.AffectingRunnable;
+import bibliothek.util.container.Single;
 
 /**
  * {@link LocationModeManager} providing additional methods specific for
@@ -193,7 +196,7 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
      * the same mode) or <code>dockable</code> is removed permanently.<br> 
      * This method has no effect if <code>dockable</code> is already in
      * <code>mode</code>. There is also no effect if <code>dockable</code>
-     * has not been registered at the {@link CStateManager}.<br>
+     * has not been registered at the {@link CLocationModeManager}.<br>
      * Note: it is the clients responsibility to ensure that <code>location</code>
      * and <code>mode</code> belong to each other.
      * @param dockable the element whose location will be set
@@ -270,6 +273,13 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
         return cmode.getCLocation( dockable, location );
     }
     
+    @Override
+    public void ensureValidLocation( Dockable dockable ){
+	    if( dockable instanceof CommonDockable ){
+	    	ensureValidLocation( ((CommonDockable)dockable).getDockable() );
+	    }
+    }
+    
     /**
      * This method compares the current mode of <code>dockable</code> with its
      * availability set. If the current mode is not available, then <code>dockable</code>
@@ -306,43 +316,99 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
 	}
 
     /**
-     * Ensures that <code>dockable</code> is not hidden behind another 
-     * {@link Dockable}. That does not mean that <code>dockable</code> becomes
-     * visible, just that it is easier reachable without the need to change
-     * modes of any <code>Dockable</code>s.  
-     * @param dockable the element which should not be hidden
+     * Ensures that all dockables are in a basic mode.
+     * @return <code>true</code> if at least one element was affected by changes,
+     * <code>false</code> if nothing happened.
      */
-    public void ensureNotHidden( Dockable dockable ){
-        AffectedSet set = new AffectedSet();
-
-        DockStation parent = dockable.getDockParent();
-        while( parent != null ){
-        	
-        	
-        	
-            MaximizeArea area = getMaximizeArea( parent );
-            if( area != null ){
-                if( area.getMaximizedDockable() != null && area.getMaximizedDockable() != dockable ){
-                    unmaximize( area.getMaximizedDockable(), set );
-                }
-            }
-
-            dockable = parent.asDockable();
-            parent = dockable == null ? null : dockable.getDockParent();
-        }
-
-        set.finish();
-    }
-    
-	public boolean ensureNothingMaximized(){
-		// TODO Auto-generated method stub
-		8
-		return false;
+	public boolean ensureBasicModes(){
+		final Single<Boolean> result = new Single<Boolean>( false );
+		
+		run( new AffectingRunnable() {
+			public void run( AffectedSet set ){
+				for( Dockable dockable : listDockables() ){
+					CLocationMode current = getCurrentMode( dockable );
+					if( !current.isBasicMode() ){
+						List<CLocationMode> modes = getModeHistory( dockable );
+						CLocationMode next = null;
+						for( int i = modes.size()-1; i >= 0 && next == null; i++ ){
+							CLocationMode mode = modes.get( i );
+							if( mode.isBasicMode() && isModeAvailable( dockable, mode.getExtendedMode() )){
+								next = mode;
+							}
+						}
+						if( next == null ){
+							next = getNormalMode();
+						}
+						
+						result.setA( true );
+						apply( dockable, next, set );
+					}
+				}		
+			}
+		});
+		return result.getA();
 	}
 
-	public void normalizeAllWorkingAreaChildren(){
-		// TODO Auto-generated method stub
-		5
+	/**
+	 * Updates the location of all dockables that should be on a working-area
+	 * and that are currently in a mode that does not support working-areas. The history
+	 * of the elements is searched for the first mode which supports working-areas. If no
+	 * such mode is found, then the normal-mode is applied.
+	 */
+	public void resetWorkingAreaChildren(){
+		run( new AffectingRunnable() {
+			public void run( AffectedSet set ){
+				for( Dockable dockable : listDockables() ){
+					if( dockable instanceof CommonDockable ){
+						CDockable cdockable = ((CommonDockable)dockable).getDockable();
+						resetWorkingArea( cdockable, set );
+					}
+				}
+			}
+		});
+	}
+	
+	private void resetWorkingArea( CDockable dockable, AffectedSet set ){
+		if( dockable.getWorkingArea() == null )
+			return;
+		
+		DockStation parent = dockable.intern().getDockParent();
+		if( parent == null )
+			return;
+		
+		CLocationMode current = getCurrentMode( dockable.intern() );
+		if( current == null )
+			return;
+		
+		if( current.respectWorkingAreas( parent ))
+			return;
+		
+		// need to reset
+		List<Location> history = getPropertyHistory( dockable.intern() );
+		CLocationMode next = null;
+		for( int i = history.size()-1; i >= 0 && next == null; i++ ){
+			Location check = history.get( i );
+			Path path = check.getMode();
+			String root = check.getRoot();
+			if( path != null && root != null ){
+				CLocationMode mode = getMode( path );
+				if( mode != null ){
+					CStation<?> station = control.getOwner().getStation( root );
+					if( station != null ){
+						if( mode.respectWorkingAreas( station.getStation() ) && mode.isRepresenting( station.getStation() )){
+							if( isModeAvailable( dockable.intern(), mode.getExtendedMode() )){
+								next = mode;
+							}
+						}
+					}
+				}
+			}
+		}
+		if( next == null ){
+			next = getNormalMode();
+		}
+
+		apply( dockable.intern(), next, set );
 	}
 	
 	/**
@@ -430,17 +496,17 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
      */
     private CLocationMode getRepresentingMode( DockStation station ){
     	Iterable<CLocationMode> modes = modes();
+    	CLocationMode first = null;
     	
-    	for( int i = 0; i < 2; i++ ){
-    		boolean exceptions = i == 0;
-        	
-	    	for( CLocationMode mode : modes ){
-	    		if( mode.isRepresenting( station, exceptions )){
+	    for( CLocationMode mode : modes ){
+	    	if( mode.isRepresenting( station )){
+	    		if( mode.isBasicMode() )
 	    			return mode;
-	    		}
+	    		if( first == null )
+	    			first = mode;
 	    	}
-    	}
-    	
-    	return null;
+	    }
+	    
+	    return first;
     }
 }

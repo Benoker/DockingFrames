@@ -56,4 +56,8 @@ public class CMaximizedMode extends MaximizedMode<CMaximizedModeArea> implements
 			
 		return area.getCLocation( dockable, location );
 	}
+	
+	public boolean isBasicMode(){
+		return false;
+	}
 }

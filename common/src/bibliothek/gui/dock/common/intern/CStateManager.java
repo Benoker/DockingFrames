@@ -143,6 +143,8 @@ public class CStateManager extends StateManager {
         this.control = control;
         DockController controller = control.getOwner().intern().getController();
         
+// --> copied to CLocationModeManager
+        
         // add hook to get key-events for all Dockables
         controller.getRegister().addDockRegisterListener( new DockRegisterAdapter(){
             @Override
@@ -150,6 +152,8 @@ public class CStateManager extends StateManager {
                 new KeyHook( dockable );
             }
         });
+        
+// <--
         
         // using keystrokes
         keyStrokeMaximizeChange.setProperties( controller );
@@ -182,6 +186,8 @@ public class CStateManager extends StateManager {
                 getIngoingAction( NORMALIZED ).setAccelerator( newValue );
             }
         };
+        
+// --> should be handled by ExtendedModeAcceptance
         
         // ensure that non externalizable elements can't be dragged out
         controller.addAcceptance( new DockAcceptance(){
@@ -217,7 +223,8 @@ public class CStateManager extends StateManager {
                 return result.getA();
             }
         });
-        
+// <--
+// --> copied to MaximizedMode
         // react on double click
         control.getOwner().intern().getController().getDoubleClickController().addListener( new DoubleClickListener(){
             public DockElement getTreeLocation() {
@@ -247,7 +254,7 @@ public class CStateManager extends StateManager {
                 return false;
             }
         });
-        
+// <--
     }
     
     @Override

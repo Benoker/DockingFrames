@@ -240,6 +240,28 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 		return null;
 	}
 	
+    /**
+     * Ensures that <code>dockable</code> is not hidden behind another 
+     * {@link Dockable}. That does not mean that <code>dockable</code> becomes
+     * visible, just that it is easier reachable without the need to change
+     * modes of any <code>Dockable</code>s.  
+     * @param dockable the element which should not be hidden
+     */
+    public void ensureNotHidden( Dockable dockable ){
+    	for( LocationMode mode : modes() ){
+    		mode.ensureNotHidden( dockable );
+    	}
+    }
+    
+    /**
+     * Empty method evaluating the correct location of a {@link Dockable}. To be
+     * overridden by subclasses to handle elements which have additional restrictions.
+     * @param dockable the element to check
+     */
+    public void ensureValidLocation( Dockable dockable ){
+    	// nothing
+    }
+	
 	/**
 	 * Adds and removes listeners from {@link LocationMode}s according to the map
 	 * {@link LocationModeManager#listeners}.

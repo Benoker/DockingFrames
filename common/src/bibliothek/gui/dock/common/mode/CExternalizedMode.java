@@ -59,4 +59,8 @@ public class CExternalizedMode extends ExternalizedMode<CExternalizedModeArea> i
 			
 		return area.getCLocation( dockable, location );
 	}
+	
+	public boolean isBasicMode(){
+		return true;
+	}
 }

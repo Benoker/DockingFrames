@@ -59,4 +59,8 @@ public class CMinimizedMode extends MinimizedMode<CMinimizedModeArea> implements
 			
 		return area.getCLocation( dockable, location );
 	}
+	
+	public boolean isBasicMode(){
+		return true;
+	}
 }
