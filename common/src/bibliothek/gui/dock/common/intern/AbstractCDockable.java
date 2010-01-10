@@ -507,6 +507,9 @@ public abstract class AbstractCDockable implements CDockable {
      * @param control the new control
      */
     public void setControl( CControlAccess control ){
+    	if( this.control == control )
+    		return;
+    	
         if( this.control != null ){
             this.control.getLocationManager().remove( dockable );
             this.control.link( this, null );
@@ -515,6 +518,10 @@ public abstract class AbstractCDockable implements CDockable {
         this.control = control;
         
         if( control != null ){
+        	if( uniqueId != null ){
+        		control.getLocationManager().add( uniqueId, dockable );
+        	}
+        	
             control.link( this, new CDockableAccess(){
                 public void informVisibility( boolean visible ) {
                     listenerCollection.getCDockableStateListener().visibilityChanged( AbstractCDockable.this );
@@ -544,14 +551,19 @@ public abstract class AbstractCDockable implements CDockable {
                     return listenerCollection.getDoubleClickListener();
                 }
                 public void setUniqueId( String id ) {
+                	if( AbstractCDockable.this.control != null && uniqueId != null ){
+                		CLocationModeManager manager = AbstractCDockable.this.control.getLocationManager();
+                		manager.remove( dockable );
+                	}
+                	
                     uniqueId = id;
                     if( AbstractCDockable.this.control != null && id != null ){
-                        CLocationModeManager state = AbstractCDockable.this.control.getLocationManager();
-                        state.put( uniqueId, dockable );
+                        CLocationModeManager manager = AbstractCDockable.this.control.getLocationManager();
+                        manager.put( uniqueId, dockable );
                         
                         for( Map.Entry<ExtendedMode, CLocation> location : defaultLocations.entrySet() ){
-                            if( state.getLocation( dockable, location.getKey() ) == null )
-                                state.setLocation( dockable, location.getKey(), location.getValue() );
+                            if( manager.getLocation( dockable, location.getKey() ) == null )
+                                manager.setLocation( dockable, location.getKey(), location.getValue() );
                         }
                     }
                 }

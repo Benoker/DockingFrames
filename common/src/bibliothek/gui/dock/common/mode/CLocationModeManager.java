@@ -154,7 +154,7 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
     	
     	// easy solution: set the location, then change the mode
 	    setProperties( newMode, dockable, new Location( mode.getModeIdentifier(), root, location.findProperty() ) );
-	    apply( dockable, newMode );
+	    apply( dockable, newMode, true );
     	
 //    	if( root != null && mode != null ){
 //    		String root = location.findRoot();
@@ -327,10 +327,10 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
 			public void run( AffectedSet set ){
 				for( Dockable dockable : listDockables() ){
 					CLocationMode current = getCurrentMode( dockable );
-					if( !current.isBasicMode() ){
+					if( current != null && !current.isBasicMode() ){
 						List<CLocationMode> modes = getModeHistory( dockable );
 						CLocationMode next = null;
-						for( int i = modes.size()-1; i >= 0 && next == null; i++ ){
+						for( int i = modes.size()-1; i >= 0 && next == null; i-- ){
 							CLocationMode mode = modes.get( i );
 							if( mode.isBasicMode() && isModeAvailable( dockable, mode.getExtendedMode() )){
 								next = mode;
@@ -341,14 +341,14 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
 						}
 						
 						result.setA( true );
-						apply( dockable, next, set );
+						apply( dockable, next, set, false );
 					}
 				}		
 			}
 		});
 		return result.getA();
 	}
-
+	
 	/**
 	 * Updates the location of all dockables that should be on a working-area
 	 * and that are currently in a mode that does not support working-areas. The history
@@ -408,7 +408,7 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
 			next = getNormalMode();
 		}
 
-		apply( dockable.intern(), next, set );
+		apply( dockable.intern(), next, set, false );
 	}
 	
 	/**

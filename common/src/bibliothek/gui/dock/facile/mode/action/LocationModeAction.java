@@ -107,7 +107,7 @@ public class LocationModeAction extends SimpleButtonAction{
 	public void action( Dockable dockable ){
 		super.action( dockable );
 		LocationModeManager<?> manager = mode.getManager();
-		manager.apply( dockable, mode.getUniqueIdentifier() );
+		manager.apply( dockable, mode.getUniqueIdentifier(), false );
 	}
 	
 

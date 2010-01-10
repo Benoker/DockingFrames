@@ -179,9 +179,8 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	}
 	
 	public void runApply( Dockable dockable, Location history, AffectedSet set ){
-		MaximizedModeArea area = null;
-		if( history != null )
-			area = get( history.getRoot() );
+		MaximizedModeArea area = getMaximizeArea( dockable );
+		
 		if( area == null )
 			area = getDefaultArea();
 		
@@ -275,8 +274,9 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
             	if( mode == null || mode == this )
             		mode = manager.getMode( NormalMode.IDENTIFIER );
                 
-                manager.apply( dockable, mode.getUniqueIdentifier(), set );
+                manager.apply( dockable, mode.getUniqueIdentifier(), set, false );
             }
+            manager.store( dockable );
         }
     }
     
@@ -494,7 +494,7 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 			LocationMode mode = manager.getPreviousMode( dockable );
 			if( mode != null ){
 				if( manager.isModeAvailable( dockable, mode.getExtendedMode() )){
-					manager.apply( dockable, mode.getUniqueIdentifier() );
+					manager.apply( dockable, mode.getUniqueIdentifier(), false );
 					manager.ensureValidLocation( dockable );
 					return true;
 				}
@@ -502,7 +502,7 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 		}
 		else{
 			if( manager.isModeAvailable( dockable, getExtendedMode() )){
-				manager.apply( dockable, getUniqueIdentifier() );
+				manager.apply( dockable, getUniqueIdentifier(), false );
 				manager.ensureValidLocation( dockable );
 				return true;
 			}

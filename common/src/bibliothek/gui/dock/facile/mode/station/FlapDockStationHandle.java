@@ -30,6 +30,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.facile.mode.MinimizedModeArea;
+import bibliothek.gui.dock.facile.mode.ModeAreaListener;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.util.DockUtilities;
@@ -59,6 +60,14 @@ public class FlapDockStationHandle implements MinimizedModeArea{
 		
 		this.id = id;
 		this.station = station;
+	}
+	
+	public void addModeAreaListener( ModeAreaListener listener ){
+		// ignore
+	}
+	
+	public void removeModeAreaListener( ModeAreaListener listener ){
+		// ignore	
 	}
 	
 	public void setController( DockController controller ){

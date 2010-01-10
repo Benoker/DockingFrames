@@ -54,44 +54,30 @@ public class WorkingAreaAcceptance implements DockAcceptance {
     public WorkingAreaAcceptance( CControlAccess control ){
         this.control = control;
     }
-    
-    public boolean accept( DockStation parent, Dockable child ) {
-    	CStation<?> area = searchArea( parent );
-    	
-    	if( area != null ){
-            return match( area, child );
-        }
-        return true;
-    }
 
     public boolean accept( DockStation parent, Dockable child, Dockable next ) {
-    	CStation<?> area = searchArea( parent );
-    	
-    	if( area != null ){
-            return match( area, next );
-        }
-        return true;
+    	return accept( parent, next );
     }
     
-    private CStation<?> searchArea( DockStation parent ){
+    public boolean accept( DockStation parent, Dockable child ) {
     	CLocationModeManager manager = control.getLocationManager();
-    	
     	if( manager.isOnTransition() )
-            return null;
-        
+            return true;
+    	
     	ExtendedMode extendedMode = manager.childsExtendedMode( parent );
     	if( extendedMode == null )
-    		return null;
+    		return true;
     	
     	LocationMode mode = manager.getMode( extendedMode.getModeIdentifier() );
     	if( mode == null )
-    		return null;
+    		return true;
     	
-    	if( mode.respectWorkingAreas( parent ) ){
-    		return searchArea( (DockElement)parent );
+    	if( !mode.respectWorkingAreas( parent ) ){
+    		return true;
     	}
     	
-        return null;
+    	CStation<?> area = searchArea( parent );
+    	return match( area, child );
     }
     
     /**

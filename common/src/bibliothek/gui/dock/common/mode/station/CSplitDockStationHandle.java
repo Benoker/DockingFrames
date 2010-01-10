@@ -1,5 +1,10 @@
 package bibliothek.gui.dock.common.mode.station;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -13,11 +18,14 @@ import bibliothek.gui.dock.common.mode.CMaximizedModeArea;
 import bibliothek.gui.dock.common.mode.CNormalModeArea;
 import bibliothek.gui.dock.event.DockRelocatorAdapter;
 import bibliothek.gui.dock.event.DockRelocatorListener;
+import bibliothek.gui.dock.event.SplitDockListener;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.LocationModeEvent;
 import bibliothek.gui.dock.facile.mode.LocationModeManager;
 import bibliothek.gui.dock.facile.mode.MaximizedMode;
 import bibliothek.gui.dock.facile.mode.MaximizedModeArea;
+import bibliothek.gui.dock.facile.mode.ModeArea;
+import bibliothek.gui.dock.facile.mode.ModeAreaListener;
 import bibliothek.gui.dock.facile.mode.NormalMode;
 import bibliothek.gui.dock.facile.mode.NormalModeArea;
 import bibliothek.gui.dock.layout.DockableProperty;
@@ -45,6 +53,24 @@ public class CSplitDockStationHandle{
 	/** the manager in whose realm this handle is used */
 	private CLocationModeManager manager;
 	
+	/** the listeners added to this {@link ModeArea} */
+	private List<ModeAreaListenerWrapper> listeners = new ArrayList<ModeAreaListenerWrapper>();
+	
+	private SplitDockListener fullScreenListener = new SplitDockListener() {
+		public void fullScreenDockableChanged( SplitDockStation station, Dockable oldFullScreen, Dockable newFullScreen ){
+			Set<Dockable> affected = new HashSet<Dockable>();
+			if( oldFullScreen != null )
+				affected.add( oldFullScreen );
+			if( newFullScreen != null )
+				affected.add( newFullScreen );
+			
+			ModeAreaListenerWrapper[] array = listeners.toArray( new ModeAreaListenerWrapper[ listeners.size() ] );
+			for( ModeAreaListenerWrapper listener : array ){
+				listener.fire( affected );
+			}
+		}
+	};
+	
 	/**
 	 * Creates a new handle.
 	 * @param station the station to handle
@@ -53,6 +79,22 @@ public class CSplitDockStationHandle{
 	public CSplitDockStationHandle( CStation<SplitDockStation> station, CLocationModeManager manager ){
 		this.station = station;
 		this.manager = manager;
+	}
+	
+	private void add( ModeAreaListenerWrapper listener ){
+		if( listener == null )
+			throw new IllegalArgumentException( "listener must not be empty" );
+		if( listeners.isEmpty() ){
+			station.getStation().addSplitDockStationListener( fullScreenListener );
+		}
+		listeners.add( listener );
+	}
+	
+	private void remove( ModeAreaListenerWrapper listener ){
+		listeners.remove( listener );
+		if( listeners.isEmpty() ){
+			station.getStation().removeSplitDockStationListener( fullScreenListener );
+		}
 	}
 	
 	/**
@@ -99,7 +141,56 @@ public class CSplitDockStationHandle{
 		getStation().dropTree( tree, false );
 	}
 	
+	/**
+	 * A wrapper for a {@link ModeAreaListener}.
+	 * @author Benjamin Sigg
+	 */
+	private class ModeAreaListenerWrapper{
+		/** the listener */
+		private ModeAreaListener listener;
+		/** the area */
+		private ModeArea area;
+		
+		public ModeAreaListenerWrapper( ModeArea area, ModeAreaListener listener ){
+			this.area = area;
+			this.listener = listener;
+		}
+		
+		/**
+		 * Calls {@link ModeAreaListener#internalLocationChange(ModeArea, Set)} with
+		 * <code>dockables</code> as set and {@link #area} as area.
+		 * @param dockables the set of changed elements
+		 */
+		public void fire( Set<Dockable> dockables ){
+			listener.internalLocationChange( area, dockables );
+		}
+		
+		@Override
+		public boolean equals( Object obj ){
+			if( obj == this )
+				return true;
+			if( obj instanceof ModeAreaListenerWrapper ){
+				ModeAreaListenerWrapper other = (ModeAreaListenerWrapper)obj;
+				return other.area.equals( area ) && other.listener.equals( listener );
+			}
+			return false;
+		}
+		
+		@Override
+		public int hashCode(){
+			return area.hashCode() ^ listener.hashCode();
+		}
+	}
+	
 	protected class Normal implements CNormalModeArea{
+		public void addModeAreaListener( ModeAreaListener listener ){
+			add( new ModeAreaListenerWrapper( this, listener ) );
+		}
+		
+		public void removeModeAreaListener( ModeAreaListener listener ){
+			remove(  new ModeAreaListenerWrapper( this, listener ) );	
+		}
+		
 		public void setController( DockController controller ){
 			// ignore	
 		}
@@ -195,6 +286,14 @@ public class CSplitDockStationHandle{
 			}
 		};
 		
+		public void addModeAreaListener( ModeAreaListener listener ){
+			add(  new ModeAreaListenerWrapper( this, listener ) );
+		}
+		
+		public void removeModeAreaListener( ModeAreaListener listener ){
+			remove(  new ModeAreaListenerWrapper( this, listener ) );	
+		}
+		
 		public void connect( MaximizedMode<?> mode ){
 			if( maximizedMode != null )
 				throw new IllegalStateException( "handle already in use" );
@@ -214,7 +313,7 @@ public class CSplitDockStationHandle{
 		public void prepareApply( Dockable dockable, AffectedSet affected ){
 			CLocationMode normal = manager.getMode( NormalMode.IDENTIFIER );
 			if( normal != null ){
-				manager.apply( dockable, normal );
+				manager.apply( dockable, normal, affected, false );
 			}
 		}
 		
@@ -276,7 +375,7 @@ public class CSplitDockStationHandle{
 		}
 		
 		public String getUniqueId(){
-			return getUniqueId();
+			return station.getUniqueId();
 		}
 		
 		public boolean isChild( Dockable dockable ){
@@ -299,7 +398,7 @@ public class CSplitDockStationHandle{
 			if( dockable == null ){
 				getStation().setFullScreen( null );
 			}
-			else if( dockable.getDockParent() == station ){
+			else if( dockable.getDockParent() == station.getStation() ){
 				getStation().setFullScreen( dockable );
 	        }
 	        else{
@@ -314,11 +413,11 @@ public class CSplitDockStationHandle{
 		}
 		
 		public boolean isRepresenting( DockStation station ){
-			return station == CSplitDockStationHandle.this.station;
+			return station == CSplitDockStationHandle.this.station.getStation();
 		}
 		
 		public CLocation getCLocation( Dockable dockable ){
-			return new CMaximizedLocation( station.getUniqueId() );
+			return new CMaximizedLocation();
 		}
 		
 		public CLocation getCLocation( Dockable dockable, Location location ){

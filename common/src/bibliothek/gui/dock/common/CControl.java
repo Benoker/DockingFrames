@@ -102,6 +102,7 @@ import bibliothek.gui.dock.common.layout.ThemeMap;
 import bibliothek.gui.dock.common.location.CExternalizedLocation;
 import bibliothek.gui.dock.common.mode.CExternalizedMode;
 import bibliothek.gui.dock.common.mode.CExternalizedModeArea;
+import bibliothek.gui.dock.common.mode.CLocationMode;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.CMaximizedMode;
 import bibliothek.gui.dock.common.mode.CMaximizedModeArea;
@@ -2089,18 +2090,27 @@ public class CControl {
             DockRegister register = frontend.getController().getRegister();
             register.setStalled( true );
             try{
-                List<CDockable> maximized = CControl.this.register.listDockablesInMode( ExtendedMode.MAXIMIZED );
+            	Map<Dockable, ExtendedMode> nonBasic = new HashMap<Dockable, ExtendedMode>();
+            	
+            	for( Dockable check : locationManager.listDockables() ){
+            		if( check != dockable.intern() ){
+	            		CLocationMode mode = locationManager.getCurrentMode( check );
+	            		if( mode != null && !mode.isBasicMode() ){
+	            			nonBasic.put( check, mode.getExtendedMode() );
+	            		}
+            		}
+            	}
+            	
                 boolean changes = locationManager.ensureBasicModes();
 
                 frontend.hide( dockable.intern() );
 
                 if( changes ){
-                    for( CDockable check : maximized ){
-                        if( check != dockable && check.isMaximizable() && check.isVisible() ){
-                            check.setExtendedMode( ExtendedMode.MAXIMIZED );
-                            break;
-                        }
-                    }
+                	for( Map.Entry<Dockable, ExtendedMode> entry : nonBasic.entrySet() ){
+                		if( frontend.isShown( entry.getKey() ) && locationManager.isModeAvailable( entry.getKey(), entry.getValue() )){
+                			locationManager.setMode( entry.getKey(), entry.getValue() );
+                		}
+                	}
                 }
             }
             finally{

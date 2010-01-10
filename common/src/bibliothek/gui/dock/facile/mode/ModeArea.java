@@ -71,4 +71,16 @@ public interface ModeArea {
 	 * @param controller the controller or <code>null</code>
 	 */
 	public void setController( DockController controller );
+	
+	/**
+	 * Adds a listener to this area.
+	 * @param listener the new listener
+	 */
+	public void addModeAreaListener( ModeAreaListener listener );
+	
+	/**
+	 * Removes a listener from this area.
+	 * @param listener the listener to remove
+	 */
+	public void removeModeAreaListener( ModeAreaListener listener );
 }

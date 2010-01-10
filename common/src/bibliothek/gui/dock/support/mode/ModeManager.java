@@ -72,7 +72,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 		new ArrayList<ModeManagerListener<? super H,? super M>>();
 	
 	/** whether a mode is currently applying itself */
-	private boolean onTransition = false;
+	private int onTransition = 0;
 	
 	/** the controller in whose realm this manager works */
 	private DockController controller;
@@ -310,7 +310,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 	}
 	
 	/**
-	 * Registers a new {@link Dockable} at this maanger. This method works
+	 * Registers a new {@link Dockable} at this manager. This method works
 	 * like {@link #add(String, Dockable)} but does not throw an exception
 	 * if another {@link Dockable} is already registered with <code>key</code>.
 	 * Instead the other <code>Dockable</code> is unregistered and <code>docakble</code>
@@ -392,16 +392,18 @@ public abstract class ModeManager<H, M extends Mode<H>> {
      * {@link Mode#apply(Dockable, Object)} may trigger additional mode-changes.
      * @param dockable the element whose mode is going to be changed
      * @param mode the new mode
+     * @param force if <code>true</code> <code>dockable</code> is relocated even if the
+     * current mode already is <code>mode</code>
      * @throws IllegalArgumentException if <code>dockable</code> is <code>null</code>,
      * <code>mode</code> is <code>null</code> or <code>dockable</code> is not
      * registered.
      * @return <code>true</code> if <code>mode</code> was found, <code>false</code>
      * otherwise 
      */
-    public boolean apply( Dockable dockable, Path mode ){
+    public boolean apply( Dockable dockable, Path mode, boolean force ){
     	M resolved = getMode( mode );
     	if( resolved != null ){
-    		apply( dockable, resolved );
+    		apply( dockable, resolved, force );
     		return true;
     	}
     	return false;
@@ -413,13 +415,15 @@ public abstract class ModeManager<H, M extends Mode<H>> {
      * {@link Mode#apply(Dockable, Object)} may trigger additional mode-changes.
      * @param dockable the element whose mode is going to be changed
      * @param mode the new mode
+     * @param force if <code>true</code> <code>dockable</code> is relocated even if the
+     * current mode already is <code>mode</code>
      * @throws IllegalArgumentException if <code>dockable</code> is <code>null</code>,
      * <code>mode</code> is <code>null</code> or <code>dockable</code> is not
      * registered. 
      */
-    public void apply( Dockable dockable, M mode ){
+    public void apply( Dockable dockable, M mode, boolean force ){
     	ChangeSet set = new ChangeSet();
-    	apply( dockable, mode, set );
+    	apply( dockable, mode, set, force );
     	set.finish();
     }
     
@@ -430,16 +434,18 @@ public abstract class ModeManager<H, M extends Mode<H>> {
      * @param dockable the element whose mode is going to be changed
      * @param mode the new mode
      * @param set to store all dockables whose mode might have been changed
+     * @param force if <code>true</code> <code>dockable</code> is relocated even if the
+     * current mode already is <code>mode</code>
      * @throws IllegalArgumentException if <code>dockable</code> is <code>null</code>,
      * <code>mode</code> is <code>null</code>, <code>set</code> is <code>null</code>,
      * or <code>dockable</code> is not registered.
      * @returns <code>true</code> if <code>mode</code> was found, 
      * <code>false</code> otherwise
      */
-    public boolean apply( Dockable dockable, Path mode, AffectedSet set ){
+    public boolean apply( Dockable dockable, Path mode, AffectedSet set, boolean force ){
     	M resolved = getMode( mode );
     	if( resolved != null ){
-    		apply( dockable, resolved, set );
+    		apply( dockable, resolved, set, force );
     		return true;
     	}
     	return false;
@@ -454,11 +460,13 @@ public abstract class ModeManager<H, M extends Mode<H>> {
      * @param dockable the element whose mode is going to be changed
      * @param mode the new mode
      * @param set to store all dockables whose mode might have been changed
+     * @param force if <code>true</code> <code>dockable</code> is relocated even if the
+     * current mode already is <code>mode</code>
      * @throws IllegalArgumentException if <code>dockable</code> is <code>null</code>,
      * <code>mode</code> is <code>null</code>, <code>set</code> is <code>null</code>,
-     * or <code>dockable</code> is not registered. 
+     * or <code>dockable</code> is not registered.
      */
-    public void apply( Dockable dockable, M mode, AffectedSet set ){
+    public void apply( Dockable dockable, M mode, AffectedSet set, boolean force ){
     	if( dockable == null )
     		throw new IllegalArgumentException( "dockable is null" );
     	
@@ -473,7 +481,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     		throw new IllegalArgumentException( "dockable not registered" );
     	
     	M dockableMode = getCurrentMode( dockable );
-    	if( dockableMode == mode )
+    	if( !force && dockableMode == mode )
     		return;
     	
     	H history = entry.properties.get( mode.getUniqueIdentifier() );
@@ -535,11 +543,13 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     	
     	set.add( dockable );
     	try{
-    		onTransition = true;
+    		controller.getRegister().setStalled( true );
+    		onTransition++;
     		mode.apply( dockable, history, set );
     	}
     	finally{
-    		onTransition = false;
+    		controller.getRegister().setStalled( false );
+    		onTransition--;
     	}
     }
 
@@ -551,7 +561,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
      * @param property the new property, can be <code>null</code>
      */
     protected void setProperties( M mode, Dockable dockable, H property ){
-    	DockableHandle entry = dockables.get( property );
+    	DockableHandle entry = dockables.get( dockable );
     	if( entry != null ){
     		if( property == null )
     			entry.properties.remove( mode.getUniqueIdentifier() );
@@ -580,9 +590,33 @@ public abstract class ModeManager<H, M extends Mode<H>> {
      * @return <code>true</code> if a mode is currently working
      */
     public boolean isOnTransition(){
-		return onTransition;
+		return onTransition > 0;
 	}
 
+    /**
+     * Updates the mode of <code>dockable</code> and updates the actions
+     * associated with <code>docakble</code>. This method is intended to be
+     * called by any code that changes the mode in a way that is not automatically
+     * registered by this {@link ModeManager}.
+     * @param dockable the element whose mode might have changed
+     * @param recursive if set, then the children of <code>dockable</code>
+     * are refreshed as well.
+     */
+    public void refresh( Dockable dockable, boolean recursive ){
+    	DockableHandle handle = getHandle( dockable );
+    	if( handle != null ){
+    		handle.putMode( access( getCurrentMode( dockable ) ) );
+    	}
+    	if( recursive ){
+	    	DockStation station = dockable.asDockStation();
+	    	if( station != null ){
+	    		for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
+	    			refresh( station.getDockable( i ), recursive );
+	    		}
+	    	}
+    	}
+    }
+    
     /**
      * Removes the properties that belong to <code>dockable</code>.
      * @param dockable the element to remove
@@ -959,6 +993,29 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 		}
 	}
 	
+	@Override
+	public String toString(){
+		StringBuilder builder = new StringBuilder();
+		builder.append( getClass().getName()  );
+		builder.append( "[" );
+		
+		for( DockableHandle handle : entries.values() ){
+			builder.append( "\n\t" );
+			builder.append( handle.id );
+			
+			for( Map.Entry<Path, H> entry : handle.properties.entrySet() ){
+				builder.append( "\n\t\t" );
+				builder.append( entry.getKey() );
+				builder.append( " -> " );
+				builder.append( entry.getValue() );
+			}
+		}
+		
+		builder.append( "\n]" );
+		
+		return builder.toString();
+	}
+	
 	/**
 	 * A wrapper around a mode, giving access to its properties. The mode
 	 * inside this wrapper can be replaced any time.
@@ -1026,16 +1083,19 @@ public abstract class ModeManager<H, M extends Mode<H>> {
          * Stores <code>mode</code> in a stack that describes the history
          * through which this entry moved. If <code>mode</code> is already
          * in the stack, than it is moved to the top of the stack. 
-         * @param mode the mode to store
+         * @param mode the mode to store, <code>null</code> will be ignored
          */
         public void putMode( ModeHandle mode ){
-            ModeHandle oldMode = peekMode();
-            if( oldMode != mode ){
-	            history.remove( mode );
-	            history.add( mode.mode.getUniqueIdentifier() );
-	            rebuild( dockable );
-	            fireModeChanged( dockable, oldMode == null ? null : oldMode.mode, mode == null ? null : mode.mode );
-            }
+        	if( mode != null ){
+	        	ModeHandle oldMode = peekMode();
+	            if( oldMode != mode ){
+	            	Path id = mode.mode.getUniqueIdentifier();
+		            history.remove( id );
+		            history.add( id );
+		            rebuild( dockable );
+		            fireModeChanged( dockable, oldMode == null ? null : oldMode.mode, mode == null ? null : mode.mode );
+	            }
+        	}
         }
         
         /**
@@ -1114,10 +1174,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
          */
         public void finish(){
             for( Dockable dockable : set ){
-            	DockableHandle handle = getHandle( dockable );
-            	if( handle != null ){
-            		handle.putMode( access( getCurrentMode( dockable ) ) );
-            	}
+            	refresh( dockable, false );
             }
         }
     }

@@ -28,8 +28,10 @@ package bibliothek.gui.dock.facile.mode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -50,6 +52,9 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 	/** The areas managed by this mode */
 	private Map<String, A> areas = new HashMap<String, A>();
 	
+	/** The order in which the areas were added */
+	private List<A> areaOrder = new LinkedList<A>();
+	
 	/** default location to use when a key is not found in {@link #areas} */
 	private A defaultArea;
 	
@@ -68,8 +73,23 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 	/** the controller in whose realm this mode works */
 	private DockController controller;
 	
+	/** added to all {@link ModeArea}s of this mode */
+	private Listener listener = new Listener();
+	
 	public void setManager( LocationModeManager<?> manager ){
+		if( this.manager != null ){
+			for( A area : areas.values() ){
+				area.removeModeAreaListener( listener );
+			}
+		}
+		
 		this.manager = manager;
+		
+		if( this.manager != null ){
+			for( A area : areas.values() ){
+				area.addModeAreaListener( listener );
+			}
+		}
 	}
 	
 	/**
@@ -127,6 +147,11 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 		
 		area.setController( getController() );
 		areas.put( key, area );
+		areaOrder.add( area );
+		
+		if( getManager() != null ){
+			area.addModeAreaListener( listener );
+		}
 	}
 	
 	/**
@@ -142,6 +167,8 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 		}
 		if( area != null ){
 			area.setController( null );
+			area.removeModeAreaListener( listener );
+			areaOrder.remove( area );
 		}
 		return area;
 	}
@@ -165,10 +192,16 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 	}
 	
 	/**
-	 * Gets the default area of this mode, can be <code>null</code>
+	 * Gets the default area of this mode, can be <code>null</code>. The default area
+	 * is the oldest area that was added to this mode or the one area set
+	 * through {@link #setDefaultArea(ModeArea)}.
 	 * @return the default area
 	 */
 	public A getDefaultArea(){
+		if( defaultArea == null && !areaOrder.isEmpty() ){
+			return areaOrder.get( 0 );
+		}
+		
 		return defaultArea;
 	}
 	
@@ -308,4 +341,19 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 	 * mode in the set.
 	 */
 	protected abstract void runApply( Dockable dockable, Location history, AffectedSet set );
+	
+	/**
+	 * A listener added to all {@link ModeArea}s.
+	 * @author Benjamin Sigg
+	 */
+	private class Listener implements ModeAreaListener{
+		public void internalLocationChange( ModeArea source, Set<Dockable> dockables ){
+			LocationModeManager<?> manager = getManager();
+			if( manager != null && !manager.isOnTransition() ){
+				for( Dockable dockable : dockables ){
+					manager.refresh( dockable, true );
+				}
+			}
+		}
+	}
 }

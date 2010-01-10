@@ -30,6 +30,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.facile.mode.ExternalizedModeArea;
+import bibliothek.gui.dock.facile.mode.ModeAreaListener;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.util.DockUtilities;
@@ -60,6 +61,14 @@ public class ScreenDockStationHandle implements ExternalizedModeArea{
 		
 		this.id = id;
 		this.station = station;
+	}
+	
+	public void addModeAreaListener( ModeAreaListener listener ){
+		// ignore	
+	}
+	
+	public void removeModeAreaListener( ModeAreaListener listener ){
+		// ignore	
 	}
 	
 	public void setController( DockController controller ){

@@ -145,7 +145,7 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 		if( mode == null )
 			throw new IllegalArgumentException( "No mode '" + extendedMode.getModeIdentifier() + "' available" );
 
-		apply( dockable, mode );
+		apply( dockable, mode, false );
 	}
 
 	/**
@@ -356,7 +356,7 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 
 		public void hierarchyChanged( DockHierarchyEvent event ){
             if( !isOnTransition() ){
-                rebuild( event.getDockable() );
+                refresh( event.getDockable(), true );
             }	
 		}		
 	}

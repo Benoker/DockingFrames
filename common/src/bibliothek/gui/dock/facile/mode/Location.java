@@ -82,4 +82,9 @@ public class Location {
 	public DockableProperty getLocation(){
 		return location;
 	}
+	
+	@Override
+	public String toString(){
+		return getClass().getName() + "[mode=" + String.valueOf( mode ) + ", root=" + root + ", location=" + location + "]";
+	}
 }

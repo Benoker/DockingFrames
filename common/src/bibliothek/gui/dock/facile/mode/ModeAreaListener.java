@@ -25,27 +25,26 @@
  */
 package bibliothek.gui.dock.facile.mode;
 
+import java.util.Set;
+
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.support.mode.Mode;
 
 /**
- * A listener added to a {@link LocationMode}. The listener gets informed
- * if the {@link LocationMode#apply(bibliothek.gui.Dockable, Location, bibliothek.gui.dock.support.mode.AffectedSet) apply}
- * method is called.
+ * A listener that can be added to a {@link ModeArea}. The {@link ModeArea} must
+ * inform this listener if one of its children changed the location.
  * @author Benjamin Sigg
  */
-public interface LocationModeListener {
+public interface ModeAreaListener {
 	/**
-	 * Called by a {@link LocationMode} right before the 
-	 * {@link LocationMode#apply(bibliothek.gui.Dockable, Location, bibliothek.gui.dock.support.mode.AffectedSet) apply}
-	 * method starts.
-	 * @param event detailed information about the event
+	 * To be called if a set of {@link Dockable}s, which are children of the
+	 * {@link ModeArea} <code>source</code>, changed their location such that
+	 * their {@link Mode} might change.</br>
+	 * <b>Note:</b> this method gets only called if {@link Dockable#getDockParent()}
+	 * did not change. Only {@link ModeArea}s which represent more than one
+	 * {@link Mode} are required to call this listener.
+	 * @param source the source of the event
+	 * @param dockables all the element which might have changed their mode
 	 */
-	public void applyStarting( LocationModeEvent event );
-
-	/**
-	 * Called by a {@link LocationMode} after the 
-	 * {@link LocationMode#apply(bibliothek.gui.Dockable, Location, bibliothek.gui.dock.support.mode.AffectedSet) apply}
-	 * method has done its work.
-	 * @param event detailed information about the event
-	 */
-	public void applyDone( LocationModeEvent event );
+	public void internalLocationChange( ModeArea source, Set<Dockable> dockables );
 }
