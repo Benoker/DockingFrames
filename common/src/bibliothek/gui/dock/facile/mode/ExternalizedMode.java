@@ -57,12 +57,21 @@ public class ExternalizedMode<M extends ExternalizedModeArea> extends DefaultLoc
     /** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "externalize"-action */
     public static final String ICON_IDENTIFIER = "location.externalize";
 	
+    /**
+     * Empty default constructor. Subclasses should call 
+     * {@link #setActionProvider(LocationModeActionProvider)} to complete
+     * initialization of this mode.
+     */
+    protected ExternalizedMode(){
+    	// nothing
+    }
+    
 	/**
 	 * Creates a new mode.
 	 * @param control the control in whose realm this mode works
 	 */
 	public ExternalizedMode( CControl control ){
-		setSelectModeAction( new CExternalizeAction( control ) );
+		setActionProvider( new DefaultLocationModeActionProvider( new CExternalizeAction( control ) ) );
 	}
 	
 	/**
@@ -73,7 +82,7 @@ public class ExternalizedMode<M extends ExternalizedModeArea> extends DefaultLoc
 		IconManager icons = controller.getIcons();
         icons.setIconDefault( "externalize", Resources.getIcon( "externalize" ) );
         
-		setSelectModeAction( new ExternalizedModeAction( controller, this ) );
+        setActionProvider( new DefaultLocationModeActionProvider( new ExternalizedModeAction( controller, this ) ) );
 	}
 	
 	public Path getUniqueIdentifier(){

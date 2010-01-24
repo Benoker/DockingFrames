@@ -77,7 +77,6 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
 		putMode( maximizedMode );
 		putMode( externalizedMode );
 	}
-
 	
 	/**
 	 * Direct access to the mode handling "normal" {@link Dockable}s.
@@ -323,7 +322,7 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
 	public boolean ensureBasicModes(){
 		final Single<Boolean> result = new Single<Boolean>( false );
 		
-		run( new AffectingRunnable() {
+		runTransaction( new AffectingRunnable() {
 			public void run( AffectedSet set ){
 				for( Dockable dockable : listDockables() ){
 					CLocationMode current = getCurrentMode( dockable );
@@ -356,7 +355,7 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
 	 * such mode is found, then the normal-mode is applied.
 	 */
 	public void resetWorkingAreaChildren(){
-		run( new AffectingRunnable() {
+		runTransaction( new AffectingRunnable() {
 			public void run( AffectedSet set ){
 				for( Dockable dockable : listDockables() ){
 					if( dockable instanceof CommonDockable ){

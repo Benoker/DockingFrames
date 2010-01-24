@@ -52,12 +52,21 @@ public class NormalMode<M extends NormalModeArea> extends DefaultLocationMode<M>
     /** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "normalize"-action */
     public static final String ICON_IDENTIFIER = "location.normalize";
     
+    /**
+     * Empty default constructor. Subclasses should call 
+     * {@link #setActionProvider(LocationModeActionProvider)} to complete
+     * initialization of this mode.
+     */
+    protected NormalMode(){
+    	// nothing
+    }
+    
 	/**
 	 * Creates a new normal mode.
 	 * @param control the owner of this mode
 	 */
 	public NormalMode( CControl control ){
-		setSelectModeAction( new CNormalizeAction( control ) );
+		setActionProvider( new DefaultLocationModeActionProvider( new CNormalizeAction( control )) );
 	}
 	
 	/**
@@ -68,7 +77,7 @@ public class NormalMode<M extends NormalModeArea> extends DefaultLocationMode<M>
 		IconManager icons = controller.getIcons();
         icons.setIconDefault( "normalize", Resources.getIcon( "normalize" ) );
         
-		setSelectModeAction( new NormalModeAction( controller, this ) );
+        setActionProvider( new DefaultLocationModeActionProvider( new NormalModeAction( controller, this ) ) );
 	}
 	
 	public Path getUniqueIdentifier(){

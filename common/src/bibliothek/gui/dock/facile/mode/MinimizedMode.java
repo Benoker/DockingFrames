@@ -49,13 +49,21 @@ public class MinimizedMode<M extends MinimizedModeArea> extends DefaultLocationM
     /** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "minimize"-action */
     public static final String ICON_IDENTIFIER = "location.minimize";
 
+    /**
+     * Empty default constructor. Subclasses should call 
+     * {@link #setActionProvider(LocationModeActionProvider)} to complete
+     * initialization of this mode.
+     */
+    protected MinimizedMode(){
+    	// nothing
+    }
     
 	/**
 	 * Creates a new mode.
 	 * @param control the control in whose realm this mode is used
 	 */
 	public MinimizedMode( CControl control ){
-		setSelectModeAction( new CMinimizeAction( control ) );
+		setActionProvider( new DefaultLocationModeActionProvider( new CMinimizeAction( control ) ) );
 	}
 	
 	/**
@@ -66,7 +74,7 @@ public class MinimizedMode<M extends MinimizedModeArea> extends DefaultLocationM
 		IconManager icons = controller.getIcons();
         icons.setIconDefault( "minimize", Resources.getIcon( "minimize" ) );
         
-		setSelectModeAction( new MinimizedModeAction( controller, this ) );
+        setActionProvider( new DefaultLocationModeActionProvider( new MinimizedModeAction( controller, this ) ) );
 	}
 	
 	public Path getUniqueIdentifier(){

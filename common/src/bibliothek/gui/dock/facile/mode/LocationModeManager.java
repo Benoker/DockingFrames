@@ -46,6 +46,7 @@ import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablement;
 import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablementFactory;
 import bibliothek.gui.dock.support.mode.ModeManager;
 import bibliothek.gui.dock.support.mode.ModeManagerListener;
+import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.PropertyKey;
@@ -61,6 +62,15 @@ import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
  * @author Benjamin Sigg
  */
 public class LocationModeManager<M extends LocationMode> extends ModeManager<Location, M>{
+    /** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "minimize"-action */
+    public static final String ICON_MANAGER_KEY_MINIMIZE = "locationmanager.minimize";
+    /** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "maximize"-action */
+    public static final String ICON_MANAGER_KEY_MAXIMIZE = "locationmanager.maximize";
+    /** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "normalize"-action */
+    public static final String ICON_MANAGER_KEY_NORMALIZE = "locationmanager.normalize";
+    /** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "externalize"-action */
+    public static final String ICON_MANAGER_KEY_EXTERNALIZE = "locationmanager.externalize";
+    
 	/**
 	 * {@link PropertyKey} for the {@link ExtendedModeEnablement} that should be used
 	 * by a {@link LocationModeManager} to activate and deactivate the modes.
@@ -105,6 +115,12 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 		extendedModeFactory.setProperties( controller );
 		
 		addModeManagerListener( new LocationModeListenerAdapter() );
+		
+        IconManager icons = controller.getIcons();
+        icons.setIconDefault( ICON_MANAGER_KEY_MAXIMIZE, Resources.getIcon( "maximize" ) );
+        icons.setIconDefault( ICON_MANAGER_KEY_MINIMIZE, Resources.getIcon( "minimize" ) );
+        icons.setIconDefault( ICON_MANAGER_KEY_NORMALIZE, Resources.getIcon( "normalize" ) );
+        icons.setIconDefault( ICON_MANAGER_KEY_EXTERNALIZE, Resources.getIcon( "externalize" ) );
 	}
 	
 	public void destroy(){
@@ -247,10 +263,14 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
      * modes of any <code>Dockable</code>s.  
      * @param dockable the element which should not be hidden
      */
-    public void ensureNotHidden( Dockable dockable ){
-    	for( LocationMode mode : modes() ){
-    		mode.ensureNotHidden( dockable );
-    	}
+    public void ensureNotHidden( final Dockable dockable ){
+    	runTransaction( new Runnable() {
+			public void run(){
+		    	for( LocationMode mode : modes() ){
+		    		mode.ensureNotHidden( dockable );
+		    	}	
+			}
+		});
     }
     
     /**
@@ -355,7 +375,7 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 		}
 
 		public void hierarchyChanged( DockHierarchyEvent event ){
-            if( !isOnTransition() ){
+            if( !isOnTransaction() ){
                 refresh( event.getDockable(), true );
             }	
 		}		

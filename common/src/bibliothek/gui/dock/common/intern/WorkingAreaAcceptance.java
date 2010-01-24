@@ -61,7 +61,7 @@ public class WorkingAreaAcceptance implements DockAcceptance {
     
     public boolean accept( DockStation parent, Dockable child ) {
     	CLocationModeManager manager = control.getLocationManager();
-    	if( manager.isOnTransition() )
+    	if( manager.isOnTransaction() )
             return true;
     	
     	ExtendedMode extendedMode = manager.childsExtendedMode( parent );

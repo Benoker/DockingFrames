@@ -28,6 +28,8 @@ package bibliothek.gui.dock.common.mode;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
+import bibliothek.gui.dock.common.action.predefined.CExternalizeAction;
+import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.facile.mode.ExternalizedMode;
 import bibliothek.gui.dock.facile.mode.Location;
 
@@ -41,7 +43,9 @@ public class CExternalizedMode extends ExternalizedMode<CExternalizedModeArea> i
 	 * @param control the owner of this mode
 	 */
 	public CExternalizedMode( CControl control ){
-		super( control );
+		setActionProvider( new KeyedLocationModeActionProvider(
+				CDockable.ACTION_KEY_EXTERNALIZE,
+				new CExternalizeAction( control )) );
 	}
 
 	public CLocation getCLocation( Dockable dockable ){

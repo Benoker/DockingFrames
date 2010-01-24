@@ -276,7 +276,7 @@ public class CSplitDockStationHandle{
 			public void drop( DockController controller, final Dockable dockable, final DockStation station ){
 				if( station == getStation() ){
 					LocationModeManager<?> manager = maximizedMode.getManager();
-					manager.run( new AffectingRunnable() {
+					manager.runTransaction( new AffectingRunnable() {
 						public void run( AffectedSet set ){
 							maximizedMode.unmaximize( station, set );
 							set.add( dockable );		

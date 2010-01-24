@@ -31,7 +31,7 @@ import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.action.CExtendedModeAction;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
-import bibliothek.gui.dock.facile.state.StateManager;
+import bibliothek.gui.dock.facile.mode.LocationModeManager;
 import bibliothek.gui.dock.support.util.Resources;
 
 /**
@@ -44,7 +44,7 @@ public class CMinimizeAction extends CExtendedModeAction{
      * @param control the control for which this action will be used
      */
     public CMinimizeAction( CControl control ){
-        super( control, ExtendedMode.MINIMIZED, "minimize", StateManager.ICON_MANAGER_KEY_MINIMIZE, CControl.KEY_GOTO_MINIMIZED );
+        super( control, ExtendedMode.MINIMIZED, "minimize", LocationModeManager.ICON_MANAGER_KEY_MINIMIZE, CControl.KEY_GOTO_MINIMIZED );
         
         ResourceBundle bundle = Resources.getBundle();
         

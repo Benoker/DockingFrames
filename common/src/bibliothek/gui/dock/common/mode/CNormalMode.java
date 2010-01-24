@@ -28,6 +28,8 @@ package bibliothek.gui.dock.common.mode;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
+import bibliothek.gui.dock.common.action.predefined.CNormalizeAction;
+import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.NormalMode;
 
@@ -41,7 +43,9 @@ public class CNormalMode extends NormalMode<CNormalModeArea> implements CLocatio
 	 * @param control the owner of this mode
 	 */
 	public CNormalMode( CControl control ){
-		super( control );
+		setActionProvider( new KeyedLocationModeActionProvider(
+				CDockable.ACTION_KEY_NORMALIZE,
+				new CNormalizeAction( control )) );
 	}
 	
 	public CLocation getCLocation( Dockable dockable ){
@@ -82,5 +86,19 @@ public class CNormalMode extends NormalMode<CNormalModeArea> implements CLocatio
 			return null;
 		
 		return area.getBaseLocation();
+	}
+	
+	@Override
+	protected DockableHandle createHandle( Dockable dockable ){
+		// TODO Auto-generated method stub
+		return super.createHandle( dockable );
+	}
+	
+	protected class CDockableHandle extends DockableHandle{
+
+		public CDockableHandle( Dockable dockable ){
+			super( dockable );
+		}
+		
 	}
 }

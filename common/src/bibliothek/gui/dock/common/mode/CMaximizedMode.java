@@ -28,6 +28,8 @@ package bibliothek.gui.dock.common.mode;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
+import bibliothek.gui.dock.common.action.predefined.CMaximizeAction;
+import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.MaximizedMode;
 
@@ -36,10 +38,15 @@ import bibliothek.gui.dock.facile.mode.MaximizedMode;
  * @author Benjamin Sigg
  */
 public class CMaximizedMode extends MaximizedMode<CMaximizedModeArea> implements CLocationMode {
+	/**
+	 * Creates a new mode.
+	 * @param control the control in whose realm this mode works.
+	 */
 	public CMaximizedMode( CControl control ){
-		super( control );
+		setActionProvider( new KeyedLocationModeActionProvider(
+				CDockable.ACTION_KEY_MAXIMIZE,
+				new CMaximizeAction( control )) );
 	}
-	
 	
 	public CLocation getCLocation( Dockable dockable ){
 		CMaximizedModeArea area = get( dockable );

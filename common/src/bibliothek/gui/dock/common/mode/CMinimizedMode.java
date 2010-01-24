@@ -28,6 +28,8 @@ package bibliothek.gui.dock.common.mode;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
+import bibliothek.gui.dock.common.action.predefined.CMinimizeAction;
+import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.MinimizedMode;
 
@@ -41,7 +43,9 @@ public class CMinimizedMode extends MinimizedMode<CMinimizedModeArea> implements
 	 * @param control the owner of this mode
 	 */
 	public CMinimizedMode( CControl control ){
-		super( control );
+		setActionProvider( new KeyedLocationModeActionProvider(
+				CDockable.ACTION_KEY_MINIMIZE,
+				new CMinimizeAction( control )) );
 	}
 	
 	public CLocation getCLocation( Dockable dockable ){

@@ -27,6 +27,7 @@ package bibliothek.gui.dock.common;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -200,28 +201,6 @@ public class CContentArea extends JPanel{
 	}
 
 	/**
-	 * Informs this area whether it is in use or not. This method should
-	 * not be called by clients.
-	 * @param used whether this area should listen to the changes of its
-	 * owning {@link CControl}
-	 *//*
-    public void setUsed( boolean used ){
-        if( this.used != used ){
-            if( this.used ){
-                for( ResizeRequestListener listener : resizeRequestListeners )
-                    control.getOwner().removeResizeRequestListener( listener );
-            }
-
-            this.used = used;
-
-            if( used ){
-                for( ResizeRequestListener listener : resizeRequestListeners )
-                    control.getOwner().addResizeRequestListener( listener );
-            }
-        }
-    }*/
-
-	/**
 	 * Puts <code>component</code> in one corner of this area.
 	 * @param component the component, can be <code>null</code>
 	 * @param corner the corner into which to put <code>component</code>
@@ -322,6 +301,23 @@ public class CContentArea extends JPanel{
 		return cornerComponents[ index ];
 	}
 
+	/**
+	 * Sets the minimum size of the four areas in which minimized {@link Dockable}s
+	 * are shown. Clients could also call <code>get'Side'().setMinimumSize( size )</code>.<br>
+	 * There is no method <code>getMinimumAreaSize</code> because the result might
+	 * not be the same for all stations.
+	 * @param size the new minimum size or <code>null</code> to revert to the default
+	 * value.
+	 * @see FlapDockStation#setMinimumSize(Dimension)
+	 * @see FlapDockStation#MINIMUM_SIZE
+	 */
+	public void setMinimumAreaSize( Dimension size ){
+		north.setMinimumSize( size );
+		south.setMinimumSize( size );
+		west.setMinimumSize( size );
+		east.setMinimumSize( size );
+	}
+	
 	/**
 	 * Gets the station in the center of this {@link CContentArea}.
 	 * @return the central station

@@ -50,7 +50,7 @@ public class ExtendedModeAcceptance implements DockAcceptance {
 	}
 
 	public boolean accept( DockStation parent, Dockable child ) {
-		if( control.getLocationManager().isOnTransition() )
+		if( control.getLocationManager().isOnTransaction() )
 			return true;
 
 		CLocationModeManager locationManager = control.getLocationManager();

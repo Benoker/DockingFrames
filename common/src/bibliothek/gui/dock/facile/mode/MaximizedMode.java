@@ -96,12 +96,21 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
         }
     };
 	
+    /**
+     * Empty default constructor. Subclasses should call 
+     * {@link #setActionProvider(LocationModeActionProvider)} to complete
+     * initialization of this mode.
+     */
+    protected MaximizedMode(){
+    	// nothing
+    }
+    
 	/**
 	 * Creates a new mode
 	 * @param control the control in whose realm this mode will work
 	 */
 	public MaximizedMode( CControl control ){
-		setSelectModeAction( new CMaximizeAction( control ) );
+		setActionProvider( new DefaultLocationModeActionProvider( new CMaximizeAction( control ) ) );
 	}
 	
 	/**
@@ -112,7 +121,7 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 		IconManager icons = controller.getIcons();
         icons.setIconDefault( "maximize", Resources.getIcon( "maximize" ) );
         
-		setSelectModeAction( new MaximizedModeAction( controller, this ) );
+        setActionProvider( new DefaultLocationModeActionProvider( new MaximizedModeAction( controller, this ) ) );
 	}
 	
 	@Override
@@ -274,7 +283,7 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
             	if( mode == null || mode == this )
             		mode = manager.getMode( NormalMode.IDENTIFIER );
                 
-                manager.apply( dockable, mode.getUniqueIdentifier(), set, false );
+                manager.apply( dockable, mode.getUniqueIdentifier(), set, true );
             }
             manager.store( dockable );
         }
@@ -319,7 +328,7 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
     }
 
     public void ensureNotHidden( final Dockable dockable ){
-    	getManager().run( new AffectingRunnable() {
+    	getManager().runTransaction( new AffectingRunnable() {
 			public void run( AffectedSet set ){
 				Dockable mutableDockable = dockable;
 				

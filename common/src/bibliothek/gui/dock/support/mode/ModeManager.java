@@ -43,6 +43,7 @@ import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.action.MultiDockActionSource;
+import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.support.action.ModeTransitionSetting;
 import bibliothek.gui.dock.util.DockUtilities;
 
@@ -72,7 +73,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 		new ArrayList<ModeManagerListener<? super H,? super M>>();
 	
 	/** whether a mode is currently applying itself */
-	private int onTransition = 0;
+	private int onTransaction = 0;
 	
 	/** the controller in whose realm this manager works */
 	private DockController controller;
@@ -375,13 +376,35 @@ public abstract class ModeManager<H, M extends Mode<H>> {
      * Runs an algorithm which affects the mode of some {@link Dockable}s.
      * @param runnable the algorithm, <code>null</code> will be ignored
      */
-    public void run( AffectingRunnable runnable ){
+    public void runTransaction( final AffectingRunnable runnable ){
     	if( runnable == null )
     		return;
     	
-    	ChangeSet set = new ChangeSet();
-    	runnable.run( set );
+    	final ChangeSet set = new ChangeSet();
+    	runTransaction( new Runnable() {
+			public void run(){
+				runnable.run( set );	
+			}
+		});
     	set.finish();
+    }
+    
+    /**
+     * Runs <code>run</code> as transaction, the {@link DockRegister} is stalled
+     * and {@link #isOnTransaction()} returns <code>true</code> while 
+     * <code>run</code> runs. 
+     * @param run the runnable to execute
+     */
+    public void runTransaction( Runnable run ){
+    	try{
+    		controller.getRegister().setStalled( true );
+    		onTransaction++;
+    		run.run();
+    	}
+    	finally{
+    		controller.getRegister().setStalled( false );
+    		onTransaction--;
+    	}
     }
 
     /**
@@ -525,7 +548,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
      * @throws IllegalArgumentException if either <code>dockable</code>, <code>mode</code>
      * or <code>set</code> is <code>null</code>
      */
-    public void apply( Dockable dockable, M mode, H history, AffectedSet set ){
+    public void apply( final Dockable dockable, final M mode, final H history, final AffectedSet set ){
     	if( dockable == null )
     		throw new IllegalArgumentException( "dockable is null" );
     	
@@ -542,17 +565,14 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     	}
     	
     	set.add( dockable );
-    	try{
-    		controller.getRegister().setStalled( true );
-    		onTransition++;
-    		mode.apply( dockable, history, set );
-    	}
-    	finally{
-    		controller.getRegister().setStalled( false );
-    		onTransition--;
-    	}
+    	
+    	runTransaction( new Runnable(){
+			public void run(){
+				mode.apply( dockable, history, set );
+			}
+		});
     }
-
+    
     /**
      * Stores a property for <code>dockable</code> if in mode <code>mode</code>. This
      * method does not trigger any version of {@link #apply(Dockable, Mode) apply}.
@@ -586,11 +606,11 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     }
     
     /**
-     * Tells whether a {@link Mode} is currently applying to a dockable.
+     * Tells whether this manager is currently changing the {@link Mode} of a {@link Dockable}.
      * @return <code>true</code> if a mode is currently working
      */
-    public boolean isOnTransition(){
-		return onTransition > 0;
+    public boolean isOnTransaction(){
+		return onTransaction > 0;
 	}
 
     /**

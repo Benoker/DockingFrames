@@ -36,12 +36,12 @@ import java.util.Set;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.Mode;
+import bibliothek.gui.dock.support.mode.ModeManager;
+import bibliothek.gui.dock.support.mode.ModeManagerListener;
 
 /**
  * {@link Mode} that manages a set of key-value pairs.
@@ -58,12 +58,6 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 	/** default location to use when a key is not found in {@link #areas} */
 	private A defaultArea;
 	
-	/** the action to be triggered for activating this mode */
-	private DockAction selectModeAction;
-	
-	/** action source containing only {@link #selectModeAction} */
-	private DefaultDockActionSource selectModeSource = new DefaultDockActionSource();
-	
 	/** the manager responsible for this mode */
 	private LocationModeManager<?> manager;
 
@@ -74,12 +68,38 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 	private DockController controller;
 	
 	/** added to all {@link ModeArea}s of this mode */
-	private Listener listener = new Listener();
+	private AreaListener modeAreaListener = new AreaListener();
+	
+	/** listener to register new dockables and remove old ones */
+	private ModeManagerListener<Location, LocationMode> managerListener = new ManagerListener();
+	
+	/** temporary information associated with the currently registered Dockables */
+	private Map<Dockable, DockableHandle> handles = new HashMap<Dockable, DockableHandle>();
+	
+	/** provides actions for the {@link Dockable}s known to this mode */
+	private LocationModeActionProvider actionProvider = new DefaultLocationModeActionProvider();
+	
+	/**
+	 * Sets the {@link LocationModeActionProvider} for this mode.
+	 * @param actionProvider the provider, not <code>null</code>
+	 * @throws IllegalArgumentException if <code>actionProvider</code> is <code>null</code>
+	 * @throws IllegalStateException if there are already {@link Dockable}s which show actions
+	 * that are provided by the current {@link LocationModeActionProvider}
+	 */
+	public void setActionProvider( LocationModeActionProvider actionProvider ){
+		if( actionProvider == null )
+			throw new IllegalArgumentException( "actionProvider must not be null" );
+		
+		if( !handles.isEmpty() )
+			throw new IllegalStateException( "can only set actionProvider if no Dockables are currently showing actions of the old provider" );
+		
+		this.actionProvider = actionProvider;
+	}
 	
 	public void setManager( LocationModeManager<?> manager ){
 		if( this.manager != null ){
 			for( A area : areas.values() ){
-				area.removeModeAreaListener( listener );
+				area.removeModeAreaListener( modeAreaListener );
 			}
 		}
 		
@@ -87,8 +107,9 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 		
 		if( this.manager != null ){
 			for( A area : areas.values() ){
-				area.addModeAreaListener( listener );
+				area.addModeAreaListener( modeAreaListener );
 			}
+			this.manager.addModeManagerListener( managerListener );
 		}
 	}
 	
@@ -150,7 +171,7 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 		areaOrder.add( area );
 		
 		if( getManager() != null ){
-			area.addModeAreaListener( listener );
+			area.addModeAreaListener( modeAreaListener );
 		}
 	}
 	
@@ -167,7 +188,7 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 		}
 		if( area != null ){
 			area.setController( null );
-			area.removeModeAreaListener( listener );
+			area.removeModeAreaListener( modeAreaListener );
 			areaOrder.remove( area );
 		}
 		return area;
@@ -234,41 +255,7 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 		}
 		return null;
 	}
-	
-	/**
-	 * Calls {@link #setSelectModeAction(DockAction)}.
-	 * @param action the new action or <code>null</code>
-	 * @see #setSelectModeAction(DockAction)
-	 */
-	public void setSelectModeAction( CAction action ){
-		setSelectModeAction( action == null ? null : action.intern() );
-	}
-	
-	/**
-	 * Sets the action which must be triggered in order to activate this mode. This
-	 * action will be returned by {@link #getActionsFor(Dockable, Mode)} if the mode
-	 * is not <code>this</code>. Changes to this property are applied to all visible
-	 * {@link Dockable}.
-	 * @param selectModeAction the action or <code>null</code>
-	 */
-	public void setSelectModeAction( DockAction selectModeAction ){
-		if( this.selectModeAction != selectModeAction ){
-			if( this.selectModeAction != null )
-				selectModeSource.remove( this.selectModeAction );
-			this.selectModeAction = selectModeAction;
-			if( this.selectModeAction != null )
-				selectModeSource.add( this.selectModeAction );
-		}
-	}
-	
-	/**
-	 * Gets the action which must be triggered in order to activate this mode.
-	 * @return the action or <code>null</code>
-	 */
-	public DockAction getSelectModeAction(){
-		return selectModeAction;
-	}
-	
+
 	public DockActionSource getActionsFor( Dockable dockable, Mode<Location> mode ){
 		if( mode == this ){
 			return null;
@@ -276,7 +263,11 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 		if( !isModeAvailable( dockable )){
 			return null;
 		}
-		return selectModeSource;
+		DockableHandle handle = handles.get( dockable );
+		if( handle == null )
+			return null;
+		else
+			return handle.getActions( mode );
 	}
 	
 	/**
@@ -343,17 +334,107 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 	protected abstract void runApply( Dockable dockable, Location history, AffectedSet set );
 	
 	/**
+	 * Creates a new handle for <code>dockable</code>.
+	 * @param dockable the newly registered element
+	 * @return the new handle
+	 */
+	protected DockableHandle createHandle( Dockable dockable ){
+		return new DockableHandle( dockable );
+	}
+	
+	/**
 	 * A listener added to all {@link ModeArea}s.
 	 * @author Benjamin Sigg
 	 */
-	private class Listener implements ModeAreaListener{
+	private class AreaListener implements ModeAreaListener{
 		public void internalLocationChange( ModeArea source, Set<Dockable> dockables ){
 			LocationModeManager<?> manager = getManager();
-			if( manager != null && !manager.isOnTransition() ){
+			if( manager != null && !manager.isOnTransaction() ){
 				for( Dockable dockable : dockables ){
 					manager.refresh( dockable, true );
 				}
 			}
+		}
+	}
+	
+	/**
+	 * Listener added to register new and removed {@link Dockable}s.
+	 * @author Benjamin Sigg
+	 */
+	private class ManagerListener implements ModeManagerListener<Location, LocationMode>{
+		public void dockableAdded( ModeManager<? extends Location, ? extends LocationMode> manager, Dockable dockable ){
+			if( !handles.containsKey( dockable )){
+				DockableHandle handle = createHandle( dockable );
+				handles.put( dockable, handle );
+			}
+		}
+		
+		public void dockableRemoved( ModeManager<? extends Location, ? extends LocationMode> manager, Dockable dockable ){
+			DockableHandle handle = handles.remove( dockable );
+			if( handle != null ){
+				handle.destroy();
+			}
+		}
+		
+		public void modeAdded( ModeManager<? extends Location, ? extends LocationMode> manager, LocationMode mode ){
+			// ignore	
+		}
+		
+		public void modeChanged( ModeManager<? extends Location, ? extends LocationMode> manager, Dockable dockable, LocationMode oldMode, LocationMode newMode ){
+			// ignore
+		}
+		
+		public void modeRemoved( ModeManager<? extends Location, ? extends LocationMode> manager, LocationMode mode ){
+			// ignore	
+		}
+	}
+	
+	/**
+	 * Meta information about a currently registered Dockable.
+	 * @author Benjamin Sigg
+	 */
+	protected class DockableHandle{
+		/** the dockable which is handled by this handle */
+		private Dockable dockable;
+		
+		/** the current actions added by this mode to {@link #dockable} */
+		private DockActionSource source;
+		
+		/**
+		 * Creates a new handle.
+		 * @param dockable the new element, not <code>null</code>
+		 */
+		public DockableHandle( Dockable dockable ){
+			this.dockable = dockable;
+		}
+		
+		/**
+		 * Gets the element of this handle.
+		 * @return the element, not <code>null</code>
+		 */
+		public Dockable getDockable(){
+			return dockable;
+		}
+		
+		/**
+		 * Called when this handle is no longer of any use
+		 */
+		public void destroy(){
+			actionProvider.destroy( dockable, source );
+			dockable = null;
+			source = null;
+		}
+		
+		/**
+		 * Called by {@link AbstractLocationMode#getActionsFor(Dockable, Mode)}
+		 * to the actions related to this dockable. The default implementation
+		 * is to return a source containing the current {@link AbstractLocationMode#setSelectModeAction(DockAction)}.
+		 * @param mode the current mode of this element
+		 * @return the actions or <code>null</code>
+		 */
+		public DockActionSource getActions( Mode<Location> mode ){
+			source = actionProvider.getActions( dockable, mode, source );
+			return source;
 		}
 	}
 }
