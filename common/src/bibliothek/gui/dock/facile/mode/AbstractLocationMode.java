@@ -38,7 +38,6 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.common.mode.LocationModeManager;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.Mode;
 import bibliothek.gui.dock.support.mode.ModeManager;
@@ -333,9 +332,8 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 	 * Called by {@link #apply(Dockable, Location, AffectedSet)} after the {@link LocationModeListener}s
 	 * are informed. Applies this mode to <code>dockable</code>.
 	 * @param dockable the element whose mode becomes <code>this</code>
-	 * @param history history information that was returned by this mode
-	 * on its last call to {@link #leave(Dockable, Mode)}. May be <code>null</code>
-	 * if this mode was never applied or returns <code>null</code> on {@link #leave(Dockable, Mode)}.
+	 * @param history history information that was returned by this mode when calling
+	 * {@link #current(Dockable)} the last time.
 	 * @param set this method has to store all {@link Dockable}s which might have changed their
 	 * mode in the set.
 	 */
@@ -436,7 +434,7 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 		/**
 		 * Called by {@link AbstractLocationMode#getActionsFor(Dockable, Mode)}
 		 * to the actions related to this dockable. The default implementation
-		 * is to return a source containing the current {@link AbstractLocationMode#setSelectModeAction(DockAction)}.
+		 * is to return a source returned by the current {@link LocationModeActionProvider}.
 		 * @param mode the current mode of this element
 		 * @return the actions or <code>null</code>
 		 */

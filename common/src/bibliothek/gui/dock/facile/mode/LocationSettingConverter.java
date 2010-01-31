@@ -30,7 +30,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import bibliothek.extension.gui.dock.util.Path;
-import bibliothek.gui.dock.common.mode.LocationModeManager;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.layout.DockablePropertyFactory;
 import bibliothek.gui.dock.layout.PropertyTransformer;

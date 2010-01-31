@@ -29,6 +29,8 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.dock.common.event.ResizeRequestListener;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.mode.CLocationModeManager;
+import bibliothek.gui.dock.facile.mode.ModeArea;
 
 /**
  * A {@link CStation} is an element onto which {@link CDockable}s can be dropped.
@@ -77,7 +79,7 @@ public interface CStation<S extends DockStation> {
      * Called by {@link CControl} when this {@link CStation} is added or removed.
      * There are two actions which most stations might want to do:<br>
      * <ul>
-     * <li>Call one of the <code>add</code> methods for {@link DockStation}s of {@link CStateManager}.
+     * <li>Call one of the <code>add</code> methods for {@link ModeArea}s accessible through the {@link CLocationModeManager}.
      * That will ensure that the station can be used as minimize/normalize/... area.</li>
      * <li>Add a {@link ResizeRequestListener} to {@link CControl} in order to be
      * informed when resize requests are to be handled.</li>

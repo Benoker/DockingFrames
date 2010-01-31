@@ -40,6 +40,7 @@ import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.LocationMode;
 import bibliothek.gui.dock.facile.mode.CLocationModeSettings;
+import bibliothek.gui.dock.facile.mode.LocationModeManager;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.AffectingRunnable;
@@ -79,8 +80,10 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
 	 */
 	public CLocationModeManager( CControlAccess control ){
 		super( control.getOwner().intern().getController() );
-		this.control = control;		
+		this.control = control;
 
+		setDoubleClickStrategy( new PreviousModeDoubleClickStrategy( this ) );
+		
 		minimizedMode = new CMinimizedMode( control.getOwner() );
 		maximizedMode = new CMaximizedMode( control.getOwner() );
 		normalMode = new CNormalMode( control.getOwner() );
@@ -188,38 +191,6 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
     	// easy solution: set the location, then change the mode
 	    setProperties( newMode, dockable, new Location( mode.getModeIdentifier(), root, location.findProperty() ) );
 	    apply( dockable, newMode, true );
-    	
-//    	if( root != null && mode != null ){
-//    		String root = location.findRoot();
-//        	DockableProperty property = location.findProperty();
-//        	
-//    		
-//    	    newMode = getMode( mode.getModeIdentifier() );
-//	        
-//	        // ensure the correct working area is set.
-//            boolean set = false;
-//            if( root != null ){
-//            	CStation station = control.getOwner().getStation( root );
-//            	if( station != null && station.isWorkingArea() ){
-//            		dockable.getDockable().setWorkingArea( station );
-//            		set = true;
-//            		ExtendedMode stationMode = station.getStationLocation().findMode();
-//            		if( stationMode != null ){
-//            			newMode = getMode( stationMode.getModeIdentifier() );
-//            		}
-//            	}
-//            }
-//            if( !set && NORMALIZED.equals( newMode ) ){
-//                dockable.getDockable().setWorkingArea( null );
-//            }
-//	    	
-//	        if( mode == ExtendedMode.MAXIMIZED || property != null ){
-//	            String current = currentMode( dockable );
-//    		    store( current, dockable );
-//    		    setProperties( newMode, dockable, new Location( root, property ) );
-//    		    transition( null, newMode, dockable );
-//	        }
-//    	}
     }
     
     /**
@@ -530,8 +501,9 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
     /**
      * Searches the {@link CLocationMode mode} which represents the mode of
      * the children of <code>station</code>. This method calls 
-     * {@link LocationMode#isRepresenting(DockStation, boolean)} with <code>station</code>,
-     * but does not check the parents of <code>station</code>.
+     * {@link LocationMode#isRepresenting(DockStation)} with <code>station</code>,
+     * but does not check the parents of <code>station</code>. Basic modes are preferred
+     * over non-basic modes by this method.
      * @param station some station
      * @return the mode or <code>null</code> if nothing found
      */

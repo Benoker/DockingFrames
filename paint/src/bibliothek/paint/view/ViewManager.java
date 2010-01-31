@@ -80,7 +80,7 @@ public class ViewManager {
         this.pictures = pictures;
         
         pageFactory = new PictureFactory();
-        control.add( "page", pageFactory );
+        control.addMultipleDockableFactory( "page", pageFactory );
         
         workingArea = control.createWorkingArea( "picture area" );
         workingArea.setLocation( CLocation.base().normalRectangle( 0, 0, 1, 1 ) );

@@ -27,6 +27,8 @@
 package bibliothek.gui.dock.dockable;
 
 import java.awt.Point;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,6 +47,7 @@ import bibliothek.gui.dock.action.HierarchyDockActionSource;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockableListener;
+import bibliothek.gui.dock.event.KeyboardListener;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.DockProperties;
@@ -72,6 +75,11 @@ public abstract class AbstractDockable implements Dockable {
     private List<DockableListener> dockableListeners = new ArrayList<DockableListener>();
     /** a listener to the hierarchy of the parent */
     private DockHierarchyObserver hierarchyObserver;
+    
+    /** the list of {@link KeyListener}s of this dockable */
+    private List<KeyListener> keyListeners = new ArrayList<KeyListener>();
+    /** the listener dispatching events to {@link #keyListeners} */
+    private KeyboardListener keyboardListener;
     
     /** the title of this dockable */
     private PropertyValue<String> titleText;
@@ -149,10 +157,21 @@ public abstract class AbstractDockable implements Dockable {
     }
 
     public void setController( DockController controller ) {
+    	if( this.controller != null ){
+    		if( keyboardListener != null ){
+    			this.controller.getKeyboardController().removeListener( keyboardListener );
+    			keyboardListener = null;
+    		}
+    	}
+    	
         this.controller = controller;
         titleIcon.setProperties( controller );
         titleText.setProperties( controller );
         hierarchyObserver.controllerChanged( controller );
+        
+        if( !keyListeners.isEmpty() ){
+        	registerKeyboardListener();
+        }
     }
 
     public DockController getController() {
@@ -183,6 +202,81 @@ public abstract class AbstractDockable implements Dockable {
     public void removeMouseInputListener( MouseInputListener listener ) {
         getComponent().removeMouseListener( listener );
         getComponent().removeMouseMotionListener( listener );
+    }
+    
+    /**
+     * Adds a {@link KeyListener} to this {@link Dockable}. The listener
+     * will be informed about any un-consumed {@link KeyEvent} that is
+     * related to this {@link Dockable}, e.g. an event that is dispatched
+     * on a {@link DockTitle}. 
+     * @param listener the new listener
+     */
+    public void addKeyListener( KeyListener listener ){
+    	keyListeners.add( listener );
+    	registerKeyboardListener();
+    }
+    
+    /**
+     * Removes <code>listener</code> from this element.
+     * @param listener the listener to remove
+     */
+    public void removeKeyListener( KeyListener listener ){
+    	keyListeners.remove( listener );
+    	if( keyboardListener != null && controller != null ){
+    		controller.getKeyboardController().removeListener( keyboardListener );
+    		keyboardListener = null;
+    	}
+    }
+    
+    private KeyListener[] getKeyListeners(){
+    	return keyListeners.toArray( new KeyListener[ keyListeners.size() ] );
+    }
+    
+    private void registerKeyboardListener(){
+    	if( keyboardListener == null && controller != null ){
+    		keyboardListener = new KeyboardListener() {
+				public DockElement getTreeLocation(){
+					return AbstractDockable.this;
+				}
+				
+				public boolean keyTyped( DockElement element, KeyEvent event ){
+					if( element == AbstractDockable.this ){
+						for( KeyListener listener : getKeyListeners() ){
+							listener.keyTyped( event );
+						}
+						return event.isConsumed();
+					}
+					else{
+						return false;
+					}
+				}
+				
+				public boolean keyReleased( DockElement element, KeyEvent event ){
+					if( element == AbstractDockable.this ){
+						for( KeyListener listener : getKeyListeners() ){
+							listener.keyReleased( event );
+						}
+						return event.isConsumed();
+					}
+					else{
+						return false;
+					}
+				}
+				
+				public boolean keyPressed( DockElement element, KeyEvent event ){
+					if( element == AbstractDockable.this ){
+						for( KeyListener listener : getKeyListeners() ){
+							listener.keyPressed( event );
+						}
+						return event.isConsumed();
+					}
+					else{
+						return false;
+					}
+				}
+			};
+			controller.getKeyboardController().addListener( keyboardListener );
+    	}
     }
     
     public DockElement getElement() {

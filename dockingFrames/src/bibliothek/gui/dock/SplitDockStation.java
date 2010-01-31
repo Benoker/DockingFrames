@@ -2179,6 +2179,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
                     repaint( bounds.x, bounds.y, bounds.width, bounds.height );
                     updateBounds();
                 }
+                SplitDockStation.this.setCursor( null );
                 mouseMoved( e );
             }
         }

@@ -23,8 +23,9 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.mode;
+package bibliothek.gui.dock.facile.mode;
 
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,16 +35,15 @@ import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.event.DockRelocatorAdapter;
-import bibliothek.gui.dock.facile.mode.Location;
-import bibliothek.gui.dock.facile.mode.LocationMode;
-import bibliothek.gui.dock.facile.mode.LocationModeListener;
-import bibliothek.gui.dock.facile.mode.NormalMode;
+import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.facile.mode.status.DefaultExtendedModeEnablement;
 import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablement;
 import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablementFactory;
@@ -62,6 +62,7 @@ import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
  * modes manually, they can use the {@link IconManager} and the keys provided in
  * each mode (e.g. {@link NormalMode#ICON_IDENTIFIER}).
  * @author Benjamin Sigg
+ * @param <M> the kind of mode this manager handles
  */
 public class LocationModeManager<M extends LocationMode> extends ModeManager<Location, M>{
     /**
@@ -71,6 +72,14 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 	public static final PropertyKey<ExtendedModeEnablementFactory> MODE_ENABLEMENT = 
 		new PropertyKey<ExtendedModeEnablementFactory>( "locationmodemanager.mode_enablement", 
 				new ConstantPropertyFactory<ExtendedModeEnablementFactory>( DefaultExtendedModeEnablement.FACTORY ), true  );
+	
+	/**
+	 * {@link PropertyKey} for the {@link DoubleClickLocationStrategy} that should be used
+	 * to change the {@link ExtendedMode} of an element which has been double-clicked.
+	 */
+	public static final PropertyKey<DoubleClickLocationStrategy> DOUBLE_CLICK_STRATEGY =
+		new PropertyKey<DoubleClickLocationStrategy>( "locationmodemanager.double_clock_strategy",
+				new ConstantPropertyFactory<DoubleClickLocationStrategy>( DoubleClickLocationStrategy.DEFAULT ), true );
 	
 	/** a set of listeners that will be automatically added or removed from a {@link LocationMode} */
 	private Map<Path, List<LocationModeListener>> listeners = new HashMap<Path, List<LocationModeListener>>();
@@ -89,6 +98,35 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 		@Override
 		protected void valueChanged( ExtendedModeEnablementFactory oldValue, ExtendedModeEnablementFactory newValue ){
 			updateEnablement();
+		}
+	};
+	
+	/** the current {@link DoubleClickLocationStrategy} */
+	private PropertyValue<DoubleClickLocationStrategy> doubleClickStrategy = new PropertyValue<DoubleClickLocationStrategy>( DOUBLE_CLICK_STRATEGY ) {
+		@Override
+		protected void valueChanged( DoubleClickLocationStrategy oldValue, DoubleClickLocationStrategy newValue ){
+			// ignore
+		}
+	};
+	
+	/** detects double-click events and changes the mode of the clicked element */
+	private DoubleClickListener doubleClickListener = new DoubleClickListener() {
+		public DockElement getTreeLocation(){
+			return null;
+		}
+		
+		public boolean process( Dockable dockable, MouseEvent event ){
+			if( event.isConsumed() )
+				return false;
+			
+			M current = getCurrentMode( dockable );
+			ExtendedMode next = getDoubleClickStrategy().handleDoubleClick( dockable, current == null ? null : current.getExtendedMode(), enablement );
+			if( next != null && enablement.isAvailable( dockable, next )){
+				setMode( dockable, next );
+				ensureValidLocation( dockable );
+				return true;
+			}
+			return false;
 		}
 	};
 	
@@ -114,11 +152,15 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 		extendedModeFactory.setProperties( controller );
 		
 		addModeManagerListener( new LocationModeListenerAdapter() );
+		
+		controller.getDoubleClickController().addListener( doubleClickListener );
 	}
 	
 	public void destroy(){
 		registerListener.connect( null );
-		getController().getRelocator().removeDockRelocatorListener( relocatorListener );
+		DockController controller = getController();
+		controller.getRelocator().removeDockRelocatorListener( relocatorListener );
+		controller.getDoubleClickController().removeListener( doubleClickListener );
 		
 		for( LocationMode mode : this.modes() ){
 			mode.setController( null );
@@ -267,6 +309,25 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * Gets the current strategy for handing double-clicks.
+	 * @return the strategy, never <code>null</code>
+	 * @see #setDoubleClickStrategy(DoubleClickLocationStrategy)
+	 */
+	public DoubleClickLocationStrategy getDoubleClickStrategy(){
+		return doubleClickStrategy.getValue();
+	}
+	
+	/**
+	 * Sets the current strategy for handling double-clicks on {@link Dockable}s. This
+	 * strategy will be asked what mode to assign to an element that has been double-clicked.
+	 * Results that are not allowed by the current {@link ExtendedModeEnablement} are ignored.
+	 * @param strategy the new strategy, can be <code>null</code> to set the default strategy
+	 */
+	public void setDoubleClickStrategy( DoubleClickLocationStrategy strategy ){
+		doubleClickStrategy.setValue( strategy );
 	}
 	
 	/**

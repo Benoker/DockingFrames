@@ -25,7 +25,7 @@
  */
 package bibliothek.gui.dock.facile.mode.status;
 
-import bibliothek.gui.dock.common.mode.LocationModeManager;
+import bibliothek.gui.dock.facile.mode.LocationModeManager;
 
 /**
  * This factory creates new {@link ExtendedModeEnablement}s.

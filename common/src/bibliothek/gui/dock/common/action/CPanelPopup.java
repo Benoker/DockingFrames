@@ -51,9 +51,9 @@ import bibliothek.gui.dock.title.DockTitle.Orientation;
  * with any content the client likes. This action is intended to be shown
  * as button in a title, but can also be used as menu item in a menu.<br>
  * Clients may override the various <code>onXYZ</code>-methods and create
- * and show the custom popup. In such a case they should call {@link #openPopup(PanelPopupWindow)}
+ * and show their custom popup. In such a case they should call {@link #openPopup(PanelPopupWindow)}
  * to ensure that only one window is open at a time.<br>
- * As long as the user work on the popup-window it does not close automatically,
+ * As long as the user works on the popup-window it does not close automatically,
  * clients can call {@link #closePopup()} to explicitly close it. The 
  * window closes automatically if it loses the focus, clients can call
  * {@link #setCloseOnFocusLost(boolean)} to change that behavior.

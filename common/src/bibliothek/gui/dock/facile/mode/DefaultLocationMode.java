@@ -34,9 +34,10 @@ import bibliothek.gui.dock.support.mode.Mode;
 
 /**
  * Abstract implementation of a {@link Mode} that works with {@link Location}s. This 
- * implementation offers the {@link #apply(Dockable, Location)} and {@link #leave(Dockable)} methode.
+ * implementation offers an {@link #runApply(Dockable, Location, AffectedSet)} and 
+ * {@link LocationMode#apply(Dockable, Location, AffectedSet)} method.
  * @author Benjamin Sigg
- * @param <M> the areas that are managed by this mode
+ * @param <A> the areas that are managed by this mode
  */
 public abstract class DefaultLocationMode<A extends StationModeArea> extends AbstractLocationMode<A>{
 	/**

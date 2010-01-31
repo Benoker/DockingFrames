@@ -245,7 +245,6 @@ public class ModeSettings<A,B> {
      * Called if some setting with version &lt; 1.0.7 is found. Subclasses
      * may override this method to read and interpret the old settings. The
      * default implementation does nothing.
-     * @param caller the 
      * @param in the stream to read from
      * @param version the version that was found
      * @throws IOException in case of an error

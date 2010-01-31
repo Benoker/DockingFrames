@@ -30,9 +30,9 @@ import java.util.List;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
-import bibliothek.gui.dock.common.mode.LocationModeManager;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.LocationMode;
+import bibliothek.gui.dock.facile.mode.LocationModeManager;
 import bibliothek.gui.dock.support.mode.ModeManager;
 import bibliothek.gui.dock.support.mode.ModeManagerListener;
 

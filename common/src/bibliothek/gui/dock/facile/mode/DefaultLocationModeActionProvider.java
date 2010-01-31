@@ -83,7 +83,7 @@ public class DefaultLocationModeActionProvider implements LocationModeActionProv
 	
 	/**
 	 * Sets the action which must be triggered in order to activate this mode. This
-	 * action will be returned by {@link #getActionsFor(Dockable, Mode)} if the mode
+	 * action will be returned by {@link #getActions(Dockable, Mode, DockActionSource)} if the mode
 	 * is not <code>this</code>. Changes to this property are applied to all visible
 	 * {@link Dockable}.
 	 * @param selectModeAction the action or <code>null</code>

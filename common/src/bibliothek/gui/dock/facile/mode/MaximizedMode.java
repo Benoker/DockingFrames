@@ -26,7 +26,6 @@
 package bibliothek.gui.dock.facile.mode;
 
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -44,9 +43,7 @@ import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CMaximizeBehavior;
 import bibliothek.gui.dock.common.action.predefined.CMaximizeAction;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
-import bibliothek.gui.dock.common.mode.LocationModeManager;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
-import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.event.KeyboardListener;
 import bibliothek.gui.dock.facile.mode.action.MaximizedModeAction;
 import bibliothek.gui.dock.support.mode.AffectedSet;
@@ -330,7 +327,7 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	}
 	
 	/**
-	 * Ensures that either the {@link MaximizeArea} <code>station</code> or its
+	 * Ensures that either the {@link MaximizedModeArea} <code>station</code> or its
 	 * nearest parent does not show a maximized element.
 	 * @param station an area or a child of an area
 	 * @param affected elements whose mode changes will be added to this set
@@ -409,7 +406,7 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	}
 
 	/**
-	 * Searches the one {@link MaximizeArea} whose station is
+	 * Searches the one {@link MaximizedModeArea} whose station is
 	 * <code>station</code>.
 	 * @param station the station whose area is searched
 	 * @return the area or <code>null</code> if not found
@@ -643,7 +640,7 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	 * to the enclosing {@link MaximizedMode}.
 	 * @author Benjamin Sigg
 	 */
-	private class Listener implements ModeManagerListener<Location, LocationMode>, LocationModeListener, DoubleClickListener{
+	private class Listener implements ModeManagerListener<Location, LocationMode>, LocationModeListener {
 		/** controller to which this listener is attached */
 		private DockController controller;
 
@@ -661,11 +658,6 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 				}
 			}
 
-			if( controller != null ){
-				controller.getDoubleClickController().removeListener( this );
-				controller = null;
-			}
-
 			if( newManager != null ){
 				controller = newManager.getController();
 				newManager.addModeManagerListener( this );
@@ -677,10 +669,6 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 				for( Dockable dockable : newManager.listDockables() ){
 					new KeyHook( dockable );
 				}
-			}
-
-			if( controller != null ){
-				controller.getDoubleClickController().addListener( this );
 			}
 		}
 
@@ -712,21 +700,6 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 
 		public void applyStarting( LocationModeEvent event ){
 			MaximizedMode.this.applyStarting( event );
-		}
-
-		public DockElement getTreeLocation() {
-			return null;
-		}
-		public boolean process( Dockable dockable, MouseEvent event ) {
-			if( event.isConsumed() )
-				return false;
-
-			if( switchMode( dockable ) ){
-				event.consume();
-				return true;
-			}
-
-			return false;
 		}
 	}
 }

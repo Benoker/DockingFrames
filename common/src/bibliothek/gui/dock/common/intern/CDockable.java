@@ -41,6 +41,7 @@ import bibliothek.gui.dock.common.event.CFocusListener;
 import bibliothek.gui.dock.common.event.CKeyboardListener;
 import bibliothek.gui.dock.common.intern.action.CloseActionSource;
 import bibliothek.gui.dock.common.layout.RequestDimension;
+import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 
 /**
@@ -52,28 +53,28 @@ import bibliothek.gui.dock.common.mode.ExtendedMode;
 public interface CDockable {
 	/**
 	 * Key for an action of {@link #getAction(String)}. The action behind this
-	 * key should call {@link #setExtendedMode(bibliothek.gui.dock.common.intern.CDockable.ExtendedMode)}
+	 * key should call {@link #setExtendedMode(ExtendedMode)}
 	 * with an argument of {@link ExtendedMode#MINIMIZED}.
 	 */
 	public static final String ACTION_KEY_MINIMIZE = "cdockable.minimize";
 
 	/**
 	 * Key for an action of {@link #getAction(String)}. The action behind this
-	 * key should call {@link #setExtendedMode(bibliothek.gui.dock.common.intern.CDockable.ExtendedMode)}
+	 * key should call {@link #setExtendedMode(ExtendedMode)}
 	 * with an argument of {@link ExtendedMode#MAXIMIZED}.
 	 */
 	public static final String ACTION_KEY_MAXIMIZE = "cdockable.maximize";
 
 	/**
 	 * Key for an action of {@link #getAction(String)}. The action behind this
-	 * key should call {@link #setExtendedMode(bibliothek.gui.dock.common.intern.CDockable.ExtendedMode)}
+	 * key should call {@link #setExtendedMode(ExtendedMode)}
 	 * with an argument of {@link ExtendedMode#NORMALIZED}.
 	 */
 	public static final String ACTION_KEY_NORMALIZE = "cdockable.normalize";
 
 	/**
 	 * Key for an action of {@link #getAction(String)}. The action behind this
-     * key should call {@link #setExtendedMode(bibliothek.gui.dock.common.intern.CDockable.ExtendedMode)}
+     * key should call {@link #setExtendedMode(ExtendedMode)}
      * with an argument of {@link ExtendedMode#EXTERNALIZED}.
      */
 	public static final String ACTION_KEY_EXTERNALIZE = "cdockable.externalize";
@@ -249,7 +250,7 @@ public interface CDockable {
 	 * Note that the location can only be seen as a hint, the framework tries
 	 * to fit the location as good as possible, but there are no guarantees.<br>
 	 * Subclasses should call {@link CControlAccess#getLocationManager()} and 
-	 * {@link CStateManager#setLocation(CommonDockable, CLocation)}.
+	 * {@link CLocationModeManager#setLocation(bibliothek.gui.Dockable, CLocation)}.
 	 * @param location the new location, <code>null</code> is possible, but
 	 * will not move the dockable immediately
 	 */

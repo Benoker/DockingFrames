@@ -33,9 +33,9 @@ import javax.swing.KeyStroke;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
-import bibliothek.gui.dock.common.mode.LocationModeManager;
 import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.facile.mode.LocationMode;
+import bibliothek.gui.dock.facile.mode.LocationModeManager;
 import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.PropertyKey;
@@ -67,7 +67,7 @@ public class LocationModeAction extends SimpleButtonAction{
     /** the key stroke that triggers this action */
     private PropertyValue<KeyStroke> stroke;
     
-    /** the controller of {@link #control} or <code>null</code> */
+    /** the controller in whose realm this mode action is used or <code>null</code> */
     private DockController controller;
     
     /**

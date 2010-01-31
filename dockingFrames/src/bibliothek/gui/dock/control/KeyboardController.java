@@ -55,6 +55,9 @@ public abstract class KeyboardController {
 	/** the controller in whose realm this {@link KeyboardController} works */
 	private DockController controller;
 	
+	/** whether this controller currently is redispatching an event */
+	private boolean redispatching = false;
+	
 	/**
 	 * Creates a new {@link KeyboardController}.
 	 * @param controller the controller in whose realm this <code>KeyBoardController</code>
@@ -198,4 +201,34 @@ public abstract class KeyboardController {
 		    listener.keyTyped( event );
 		}
 	}
+	
+
+	
+//		Does not make much sense, events could first travel up then down in the tree...	
+//    /**
+//     * Redispatches the given event <code>event</code> to the dockable components so they can also
+//     * do something with it.
+//     * 
+//     * @param element the source of the event
+//     * @param event the event that was detected
+//     */
+//    private void redispatchEvent( DockElement element, KeyEvent event ) {
+//    	if( !redispatching ){
+//    		try{
+//    			redispatching = true;
+//    			Dockable dockable = element.asDockable();
+//    			if( dockable != null ){
+//	    			Component component = dockable.getComponent();
+//	    			if( component instanceof Container ){
+//	    				for( Component childCompnent : ((Container)component).getComponents() ){
+//	    					childCompnent.dispatchEvent( event );
+//	    				}
+//	    			}
+//    			}
+//    		}
+//    		finally{
+//    			redispatching = false;
+//    		}
+//    	}
+//    }
 }

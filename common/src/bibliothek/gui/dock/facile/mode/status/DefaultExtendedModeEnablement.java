@@ -31,7 +31,7 @@ import bibliothek.gui.dock.common.event.CDockablePropertyListener;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
-import bibliothek.gui.dock.common.mode.LocationModeManager;
+import bibliothek.gui.dock.facile.mode.LocationModeManager;
 
 /**
  * This default implementation observes {@link CDockable#isExternalizable()},

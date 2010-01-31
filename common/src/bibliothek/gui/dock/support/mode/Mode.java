@@ -35,7 +35,7 @@ import bibliothek.gui.dock.action.DockActionSource;
  * change through events that are not registered or influenced by this
  * mode.
  * @author Benjamin Sigg
- * @param H class storing history information
+ * @param <H> class storing history information
  */
 public interface Mode<H> {
 	/**
@@ -61,8 +61,8 @@ public interface Mode<H> {
 	 * Applies this mode to <code>dockable</code>.
 	 * @param dockable the element whose mode becomes <code>this</code>
 	 * @param history history information that was returned by this mode
-	 * on its last call to {@link #leave(Dockable, Mode)}. May be <code>null</code>
-	 * if this mode was never applied or returns <code>null</code> on {@link #leave(Dockable, Mode)}.
+	 * on its last call to {@link #current(Dockable)}. May be <code>null</code>
+	 * if this mode was never applied or returns <code>null</code> on {@link #current(Dockable)}.
 	 * @param set this method has to store all {@link Dockable}s which might have changed their
 	 * mode in the set.
 	 */
@@ -72,7 +72,7 @@ public interface Mode<H> {
 	 * Provides history information about the current state of <code>dockable</code>
 	 * in respect to this mode.
 	 * @param dockable the element
-	 * @return history information that is needed when calling {@link #apply(Dockable, Mode, Object)}
+	 * @return history information that is needed when calling {@link #apply(Dockable, Object, AffectedSet)}
 	 */
 	public H current( Dockable dockable );
 	
@@ -106,8 +106,8 @@ public interface Mode<H> {
 	
 	/**
 	 * Sets the properties of this mode. This method will only be called
-	 * with a {@link ModeSetting} that has been created by {@link #getSetting()}
-	 * or {@link #createSetting()}.
+	 * with a {@link ModeSetting} that has been created by the current
+	 * {@link #getSettingFactory() ModeSettingFactory}
 	 * @param setting the new set of properties, not <code>null</code>
 	 */
 	public void readSetting( ModeSetting<H> setting );

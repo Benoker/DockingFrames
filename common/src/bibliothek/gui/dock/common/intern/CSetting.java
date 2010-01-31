@@ -36,6 +36,7 @@ import java.util.Map;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.MultipleCDockableFactory;
+import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.frontend.Setting;
 import bibliothek.gui.dock.layout.DockSituation;
@@ -45,7 +46,7 @@ import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
 /**
- * A {@link Setting} that stores also the contents of a {@link CStateManager}.
+ * A {@link Setting} that stores also the contents of a {@link CLocationModeManager}.
  * @author Benjamin Sigg
  */
 public class CSetting extends Setting{

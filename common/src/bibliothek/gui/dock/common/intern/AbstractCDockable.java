@@ -104,7 +104,7 @@ public abstract class AbstractCDockable implements CDockable {
     /** Source that contains the action that closes this dockable */
     private CloseActionSource close = new CloseActionSource( this );
     
-    /** The default locations for the available {@link CDockable.ExtendedMode}s. */
+    /** The default locations for the available {@link ExtendedMode}s. */
     private Map<ExtendedMode, CLocation> defaultLocations = new HashMap<ExtendedMode, CLocation>( 4 );
     
     /**
@@ -494,7 +494,7 @@ public abstract class AbstractCDockable implements CDockable {
     }
     
     /**
-     * Gets an earlier set value of {@link #setDefaultLocation(bibliothek.gui.dock.common.intern.CDockable.ExtendedMode, CLocation)}.
+     * Gets an earlier set value of {@link #setDefaultLocation(ExtendedMode, CLocation)}.
      * @param mode the mode for which to search the default location
      * @return the location or <code>null</code>
      */

@@ -455,11 +455,8 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     }
 
     /**
-     * Alters the mode of <code>dockable</code> to <code>mode</code>. This
-     * method does nothing if the current mode of <code>dockable</code>
-     * already is <code>mode</code>. This method does not alter the modes
-     * of other dockables, notice however that the methods
-     * {@link Mode#apply(Dockable, Object)} may trigger additional mode-changes.
+     * Alters the mode of <code>dockable</code> to <code>mode</code>. 
+     * This method just calls {@link #apply(Dockable, Mode, boolean)}.
      * @param dockable the element whose mode is going to be changed
      * @param mode the new mode
      * @param force if <code>true</code> <code>dockable</code> is relocated even if the
@@ -481,8 +478,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     
     /**
      * Alters the mode of <code>dockable</code> to <code>mode</code>. 
-     * This method does not alter the modes of other dockables, notice however that the methods
-     * {@link Mode#apply(Dockable, Object)} may trigger additional mode-changes.
+     * This method just calls {@link #apply(Dockable, Mode, AffectedSet, boolean)}.
      * @param dockable the element whose mode is going to be changed
      * @param mode the new mode
      * @param force if <code>true</code> <code>dockable</code> is relocated even if the
@@ -499,18 +495,17 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     
     /**
      * Alters the mode of <code>dockable</code> to <code>mode</code>. 
-     * This method does not alter the modes of other dockables, notice however that the methods
-     * {@link Mode#apply(Dockable, Object)} may trigger additional mode-changes.
+     * This method just calls {@link #apply(Dockable, Mode, AffectedSet, boolean)}.
      * @param dockable the element whose mode is going to be changed
      * @param mode the new mode
      * @param set to store all dockables whose mode might have been changed
      * @param force if <code>true</code> <code>dockable</code> is relocated even if the
      * current mode already is <code>mode</code>
+     * @return <code>true</code> if <code>mode</code> was found, 
+     * <code>false</code> otherwise
      * @throws IllegalArgumentException if <code>dockable</code> is <code>null</code>,
      * <code>mode</code> is <code>null</code>, <code>set</code> is <code>null</code>,
      * or <code>dockable</code> is not registered.
-     * @returns <code>true</code> if <code>mode</code> was found, 
-     * <code>false</code> otherwise
      */
     public boolean apply( Dockable dockable, Path mode, AffectedSet set, boolean force ){
     	M resolved = getMode( mode );
@@ -524,9 +519,9 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     /**
      * Alters the mode of <code>dockable</code> to <code>mode</code>. This
      * method does nothing if the current mode of <code>dockable</code>
-     * already is <code>mode</code>. This method does not alter the modes
-     * of other dockables, notice however that the methods
-     * {@link Mode#apply(Dockable, Object)} may trigger additional mode-changes.
+     * already is <code>mode</code>.<br>
+     * After initial checks and reading the history, this method calls
+     * {@link #apply(Dockable, Mode, Object, AffectedSet)}.
      * @param dockable the element whose mode is going to be changed
      * @param mode the new mode
      * @param set to store all dockables whose mode might have been changed
@@ -560,9 +555,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     
     /**
      * Alters the mode of <code>dockable</code> to be <code>mode</code>. 
-     * This method does not alter the modes of other dockables, notice however
-     * that the methods {@link Mode#apply(Dockable, Object)} may
-     * trigger additional mode-changes.
+     * This method just calls {@link #apply(Dockable, Mode, Object, AffectedSet)}.
      * @param dockable the element whose mode is changed
      * @param mode the new mode of <code>dockable</code>
      * @param history history information for {@link Mode#apply(Dockable, Object, AffectedSet)},
@@ -570,7 +563,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
      * @param set to store elements that have changed
      * @throws IllegalArgumentException if either <code>dockable</code>, <code>mode</code>
      * or <code>set</code> is <code>null</code>
-     * @returns <code>true</code> if <code>mode</code> was found, <code>false</code>
+     * @return <code>true</code> if <code>mode</code> was found, <code>false</code>
      * otherwise
      */
     public boolean apply( Dockable dockable, Path mode, H history, AffectedSet set ){
@@ -585,7 +578,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     /**
      * Alters the mode of <code>dockable</code> to be <code>mode</code>. 
      * This method does not alter the modes of other dockables, notice however
-     * that the methods {@link Mode#apply(Dockable, Object)} may
+     * that the methods {@link Mode#apply(Dockable, Object, AffectedSet)} may
      * trigger additional mode-changes.
      * @param dockable the element whose mode is changed
      * @param mode the new mode of <code>dockable</code>
@@ -622,7 +615,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     
     /**
      * Stores a property for <code>dockable</code> if in mode <code>mode</code>. This
-     * method does not trigger any version of {@link #apply(Dockable, Mode) apply}.
+     * method does not trigger any version of the <code>apply</code> methods.
      * @param mode the mode which is affected
      * @param dockable the dockables whose property is changed
      * @param property the new property, can be <code>null</code>
@@ -722,11 +715,11 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     
 	
     /**
-     * Called while reading modes in {@link #setSetting(ModeTransitionSetting)}.
+     * Called while reading modes in {@link #readSettings(ModeSettings)}.
      * Subclasses might change the mode according to <code>newMode</code>.
-     * @param id the identifier of <code>dockable</code>
-     * @param oldMode the mode <code>dockable</code> is currently in
-     * @param newMode the mode <code>dockable</code> is going to be
+     * @param key the identifier of <code>dockable</code>
+     * @param old the mode <code>dockable</code> is currently in
+     * @param current the mode <code>dockable</code> is going to be
      * @param dockable the element that changes its mode, might be <code>null</code>
      */
 	protected abstract void applyDuringRead( String key, Path old, Path current, Dockable dockable );
@@ -734,7 +727,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     /**
      * Tells whether an entry for a missing {@link Dockable} should be created.
      * This will result in a call to {@link #addEmpty(String)} during
-     * {@link #setSetting(ModeTransitionSetting)}.
+     * {@link #readSettings(ModeSettings)}.
      * The default implementation returns always <code>false</code>.
      * @param key the key for which to create a new entry
      * @return <code>true</code> if an entry should be created

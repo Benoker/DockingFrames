@@ -236,8 +236,7 @@ public interface DockStation extends DockElement{
      * <ul>
      * <li>The result should be <code>false</code> if this station is dockable,
      * <code>checkOverrideZone</code> is <code>true</code> and the mouse is in
-     * the {@link #isInOverrideZone(int, int, Dockable, Dockable) override-zone}
-     * of the parent. However, that condition is just "good manners" and may
+     * the override-zone. of the parent. However, that condition is just "good manners" and may
      * be broken.</li>
      * <li>This method should use {@link #accept(Dockable)} and {@link Dockable#accept(DockStation)}
      * or {@link Dockable#accept(DockStation, Dockable)} to ensure that the desired
