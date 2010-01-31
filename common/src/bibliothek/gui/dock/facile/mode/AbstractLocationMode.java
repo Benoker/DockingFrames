@@ -38,6 +38,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.common.mode.LocationModeManager;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.Mode;
 import bibliothek.gui.dock.support.mode.ModeManager;
@@ -235,6 +236,13 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 		return areas.get( key );
 	}
 	
+	public DockStation getRepresentation( String uniqueId ){
+		A area = get( uniqueId );
+		if( area == null )
+			return null;
+		return area.getStation();
+	}
+	
 	/**
 	 * Recursively searches through all stations of <code>dockable</code>
 	 * until a station is found that is registered at this mode.
@@ -284,7 +292,7 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 	
 	public boolean isRepresenting( DockStation station ){
 		for( A area : areas.values() ){
-			if( area.isRepresentant( station )){
+			if( area.getStation() == station ){
 				return true;
 			}
 		}
@@ -296,7 +304,7 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 		// search area
 		while( station != null ){
 			for( A area : areas.values() ){
-				if( area.isRepresentant( station )){
+				if( area.getStation() == station ){
 					return area.respectWorkingAreas();
 				}
 			}

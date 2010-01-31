@@ -56,7 +56,7 @@ public class EfficientControlFactory implements CControlFactory {
 			public void setFocusedDockable( Dockable focusedDockable, boolean force, boolean ensureFocusSet ) {
 				if( focusedDockable != null ){
 					CLocationModeManager states = owner.getLocationManager();
-					if( states != null ){
+					if( states != null && !states.isOnTransaction() ){
 						states.ensureNotHidden( focusedDockable );
 					}
 				}

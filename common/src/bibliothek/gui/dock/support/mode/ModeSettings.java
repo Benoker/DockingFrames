@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2010 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,6 +41,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XAttribute;
 import bibliothek.util.xml.XElement;
+import bibliothek.util.xml.XException;
 
 /**
  * A set of properties extracted from a {@link ModeManager} and its {@link Mode}s. The properties
@@ -241,6 +242,29 @@ public class ModeSettings<A,B> {
     }
     
     /**
+     * Called if some setting with version &lt; 1.0.7 is found. Subclasses
+     * may override this method to read and interpret the old settings. The
+     * default implementation does nothing.
+     * @param caller the 
+     * @param in the stream to read from
+     * @param version the version that was found
+     * @throws IOException in case of an error
+     */
+    protected void rescueSettings( DataInputStream in, Version version ) throws IOException{
+    	// nothing
+    }
+    
+    /**
+     * Called if some setting does not have the "modes" entry, the assumption is that
+     * only old settings are missing this entry.
+     * @param element the entry that has to be rescued
+     * @throws XException in case of an error related to a wrongly read attribute
+     */
+    protected void rescueSettings( XElement element ){
+    	// nothing
+    }
+    
+    /**
      * Clears all properties of this setting and then reads new properties
      * from <code>in</code>.
      * @param in the stream to read from
@@ -270,32 +294,39 @@ public class ModeSettings<A,B> {
             }
         }
         
+        // new since 1.0.8
         modes.clear();
-        for( int i = 0, n = in.readInt(); i<n; i++ ){
-        	Path id = new Path( in.readUTF() );
-        	
-        	int count = in.readInt();
-        	byte[] content = new byte[ count ];
-        	
-        	int offset = 0;
-        	int length = count;
-        	int read;
-        	while( (length > 0) && ((read = in.read( content, offset, length )) > 0) ){
-        		offset += read;
-        		length -= read;
-        	}
-        	
-        	ByteArrayInputStream bin = new ByteArrayInputStream( content );
-        	DataInputStream din = new DataInputStream( bin );
-        	
-        	ModeSettingFactory<A> factory = factories.get( id );
-        	if( factory != null ){
-        		ModeSetting<A> setting = factory.create();
-        		setting.read( din, converter );
-        		din.close();
-        		
-        		modes.put( setting.getModeId(), setting );
-        	}
+        
+        if( version.compareTo( Version.VERSION_1_0_8 ) < 0 ){
+            rescueSettings( in, version );
+        }
+        else{
+	        for( int i = 0, n = in.readInt(); i<n; i++ ){
+	        	Path id = new Path( in.readUTF() );
+	        	
+	        	int count = in.readInt();
+	        	byte[] content = new byte[ count ];
+	        	
+	        	int offset = 0;
+	        	int length = count;
+	        	int read;
+	        	while( (length > 0) && ((read = in.read( content, offset, length )) > 0) ){
+	        		offset += read;
+	        		length -= read;
+	        	}
+	        	
+	        	ByteArrayInputStream bin = new ByteArrayInputStream( content );
+	        	DataInputStream din = new DataInputStream( bin );
+	        	
+	        	ModeSettingFactory<A> factory = factories.get( id );
+	        	if( factory != null ){
+	        		ModeSetting<A> setting = factory.create();
+	        		setting.read( din, converter );
+	        		din.close();
+	        		
+	        		modes.put( setting.getModeId(), setting );
+	        	}
+	        }
         }
     }
     
@@ -384,6 +415,9 @@ public class ModeSettings<A,B> {
         			modes.put( setting.getModeId(), setting );
         		}
         	}
+        }
+        else{
+        	rescueSettings( element );
         }
     }
     

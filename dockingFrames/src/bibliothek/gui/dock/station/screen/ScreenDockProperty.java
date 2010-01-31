@@ -175,6 +175,11 @@ public class ScreenDockProperty extends AbstractDockableProperty {
         this.y = y;
     }
 
+    @Override
+    public String toString(){
+	    return getClass().getName() + "[x=" + x + ", y=" + y + ", width=" + width + ", height=" + height + "]";
+    }
+    
 	@Override
 	public int hashCode(){
 		final int prime = 31;

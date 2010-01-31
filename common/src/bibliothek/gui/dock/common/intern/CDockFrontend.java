@@ -55,9 +55,6 @@ public class CDockFrontend extends DockFrontend{
     @Override
     protected Setting createSetting() {
         CSetting setting = new CSetting();
-//        setting.setModes(
-//                new StateManager.StateManagerSetting<StateManager.Location>( 
-//                        new StateManager.LocationConverter() ) );
         CLocationModeManager manager = control.getLocationManager();
         ModeSettings<Location, ?> modeSettings = manager.createSettings( new LocationSettingConverter() );
         setting.setModes( modeSettings );
@@ -78,13 +75,20 @@ public class CDockFrontend extends DockFrontend{
     }
 
     @Override
-    public void setSetting( Setting setting, boolean entry ) {
+    public void setSetting( final Setting setting, final boolean entry ) {
         CLocationModeManager manager = control.getLocationManager();
         if( entry ){
             manager.resetWorkingAreaChildren();
         }
 
-        super.setSetting( setting, entry );
+        // location manager reads first to be able to change modes of dockables
         manager.readSettings( ((CSetting)setting).getModes() );
+
+        // set new layout as transaction, preventing the manager to react on events
+        manager.runLayoutTransaction( new Runnable() {
+			public void run(){
+				CDockFrontend.super.setSetting( setting, entry );		
+			}
+        });
     }
 }

@@ -231,6 +231,12 @@ public class FlapDockStation extends AbstractDockableStation {
             "flap dock station button content", new ConstantPropertyFactory<ButtonContent>( ButtonContent.THEME_DEPENDENT ), true );
     
     /**
+     * Key for the minimum size of all {@link FlapDockStation}s.
+     */
+    public static final PropertyKey<Dimension> MINIMUM_SIZE = new PropertyKey<Dimension>( "flap dock station empty size",
+    		new ConstantPropertyFactory<Dimension>( new Dimension( 10, 10 ) ), true );
+    
+    /**
      * The layoutManager which is responsible to layout this station
      */
     private PropertyValue<FlapLayoutManager> layoutManager = new PropertyValue<FlapLayoutManager>( LAYOUT_MANAGER ){
@@ -255,6 +261,13 @@ public class FlapDockStation extends AbstractDockableStation {
     		}
     	}
     };
+    
+    /** the minimum size this station has */
+    private PropertyValue<Dimension> minimumSize = new PropertyValue<Dimension>( MINIMUM_SIZE ) {
+    	protected void valueChanged( Dimension oldValue, Dimension newValue ){
+    		buttonPane.revalidate();
+    	}
+	};
     
     /** The direction in which the popup-window is, in respect to this station */
     private Direction direction = Direction.SOUTH;
@@ -473,6 +486,7 @@ public class FlapDockStation extends AbstractDockableStation {
             }
             
             buttonContent.setProperties( controller );
+            minimumSize.setProperties( controller );
             
             if( holdAction != null )
                 holdAction.setController( controller );
@@ -571,6 +585,23 @@ public class FlapDockStation extends AbstractDockableStation {
     protected void updateWindowBounds(){
         if( window != null )
             window.updateBounds();
+    }
+    
+    /**
+     * Gets the minimum size this station should have.
+     * @return the minimum size, never <code>null</code>
+     */
+    public Dimension getMinimumSize(){
+    	return minimumSize.getValue();
+    }
+    
+    /**
+     * Sets the minimum size this station should have. A value of <code>null</code> 
+     * is valid and will let this station use the property {@link #MINIMUM_SIZE}.
+     * @param size the new minimum size or <code>null</code>
+     */
+    public void setMinimumSize( Dimension size ){
+    	minimumSize.setValue( size );
     }
     
     /**

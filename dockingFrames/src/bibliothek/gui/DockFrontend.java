@@ -785,6 +785,16 @@ public class DockFrontend {
     }
     
     /**
+     * Tells whether <code>name</code> denotes an entry that can be empty.
+     * @param name some unique identifier
+     * @return <code>true</code> if information about a Dockable <code>name</code>
+     * is stored even if the element is <code>null</code>
+     */
+    public boolean isEmpty( String name ){
+    	return empty.contains( name );
+    }
+    
+    /**
      * Gets a list of all keys that are marked as <code>empty</code>.
      * @param all if <code>true</code> then just all keys are returned, if 
      * <code>false</code> then only those keys are returned for which no

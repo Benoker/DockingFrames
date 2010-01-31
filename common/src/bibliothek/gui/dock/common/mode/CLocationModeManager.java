@@ -39,10 +39,14 @@ import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.LocationMode;
-import bibliothek.gui.dock.facile.mode.LocationModeManager;
+import bibliothek.gui.dock.facile.mode.CLocationModeSettings;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.AffectingRunnable;
+import bibliothek.gui.dock.support.mode.ModeSettings;
+import bibliothek.gui.dock.support.mode.ModeSettingsConverter;
+import bibliothek.gui.dock.support.util.Resources;
+import bibliothek.gui.dock.util.IconManager;
 import bibliothek.util.container.Single;
 
 /**
@@ -52,6 +56,16 @@ import bibliothek.util.container.Single;
  *
  */
 public class CLocationModeManager extends LocationModeManager<CLocationMode>{
+	/** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "minimize"-action */
+    public static final String ICON_MANAGER_KEY_MINIMIZE = "locationmanager.minimize";
+    /** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "maximize"-action */
+    public static final String ICON_MANAGER_KEY_MAXIMIZE = "locationmanager.maximize";
+    /** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "normalize"-action */
+    public static final String ICON_MANAGER_KEY_NORMALIZE = "locationmanager.normalize";
+    /** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "externalize"-action */
+    public static final String ICON_MANAGER_KEY_EXTERNALIZE = "locationmanager.externalize";
+    
+    
 	private CControlAccess control;
 	
 	private CNormalMode normalMode;
@@ -76,6 +90,12 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
 		putMode( normalMode );
 		putMode( maximizedMode );
 		putMode( externalizedMode );
+		
+        IconManager icons = control.getOwner().intern().getController().getIcons();
+        icons.setIconDefault( ICON_MANAGER_KEY_MAXIMIZE, Resources.getIcon( "maximize" ) );
+        icons.setIconDefault( ICON_MANAGER_KEY_MINIMIZE, Resources.getIcon( "minimize" ) );
+        icons.setIconDefault( ICON_MANAGER_KEY_NORMALIZE, Resources.getIcon( "normalize" ) );
+        icons.setIconDefault( ICON_MANAGER_KEY_EXTERNALIZE, Resources.getIcon( "externalize" ) );
 	}
 	
 	/**
@@ -116,6 +136,20 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
 		return control.shouldStore( key );
 	}
 	
+
+    @Override
+    protected <B> ModeSettings<Location, B> createModeSettings( ModeSettingsConverter<Location, B> converter ){
+    	return new CLocationModeSettings<B>( converter );
+    }
+    
+    @Override
+    public void readSettings( ModeSettings<Location, ?> settings ){
+    	super.readSettings( settings );
+    	if( settings instanceof CLocationModeSettings<?> ){
+    		CLocationModeSettings<?> locationSettings = (CLocationModeSettings<?>)settings;
+    		locationSettings.rescue( getMaximizedMode() );
+    	}
+    }
     
     /**
      * Tries to set the location of <code>dockable</code>. Does nothing if
@@ -284,10 +318,14 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
      * availability set. If the current mode is not available, then <code>dockable</code>
      * is put into another mode (usually the {@link #getNormalMode() normal mode}).<br>
      * This method also checks the working area, provided that the current mode respects
-     * the working-area settings.
+     * the working-area settings.<br>
+     * This method returns immediatelly if in {@link #isLayouting() layouting mode}
      * @param dockable the element whose mode is to be checked
      */
 	public void ensureValidLocation( CDockable dockable ){
+		if( isLayouting() )
+			return;
+		
         ExtendedMode mode = getMode( dockable.intern() );
         if( mode == ExtendedMode.NORMALIZED ){
             CStation<?> preferredArea = dockable.getWorkingArea();
@@ -315,11 +353,15 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
 	}
 
     /**
-     * Ensures that all dockables are in a basic mode.
+     * Ensures that all dockables are in a basic mode.<br>
+     * This method returns immediatelly if in {@link #isLayouting() layouting mode}
      * @return <code>true</code> if at least one element was affected by changes,
      * <code>false</code> if nothing happened.
      */
 	public boolean ensureBasicModes(){
+		if( isLayouting() )
+			return false;
+		
 		final Single<Boolean> result = new Single<Boolean>( false );
 		
 		runTransaction( new AffectingRunnable() {

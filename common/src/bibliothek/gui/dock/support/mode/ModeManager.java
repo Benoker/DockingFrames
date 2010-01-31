@@ -44,7 +44,6 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.action.MultiDockActionSource;
 import bibliothek.gui.dock.control.DockRegister;
-import bibliothek.gui.dock.support.action.ModeTransitionSetting;
 import bibliothek.gui.dock.util.DockUtilities;
 
 /**
@@ -74,6 +73,9 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 	
 	/** whether a mode is currently applying itself */
 	private int onTransaction = 0;
+	
+	/** continous mode without storing the position of elements */
+	private int onContinuous = 0;
 	
 	/** the controller in whose realm this manager works */
 	private DockController controller;
@@ -364,6 +366,16 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     }
     
     /**
+     * Tells whether this {@link ModeManager} knows <code>dockable</code>
+     * and can handle a call to any of the <code>apply</code> methods.
+     * @param dockable the element to check
+     * @return <code>true</code> if the element is known, <code>false</code> otherwise
+     */
+    public boolean isRegistered( Dockable dockable ){
+    	return getKey( dockable ) != null;
+    }
+    
+    /**
      * Returns a set containing all {@link Dockable}s that are currently
      * registered at this manager.
      * @return the set of dockables
@@ -377,18 +389,32 @@ public abstract class ModeManager<H, M extends Mode<H>> {
      * @param runnable the algorithm, <code>null</code> will be ignored
      */
     public void runTransaction( final AffectingRunnable runnable ){
-    	if( runnable == null )
+    	runTransaction( runnable, false );
+    }
+    
+    /**
+     * Runs an algorithm which affects the mode of some {@link Dockable}s.
+     * @param run the algorithm, <code>null</code> will be ignored
+     * @param continuous if set to <code>true</code> the transaction runs without changing
+     * the internal cache storing the position of all {@link Dockable}s. This can be important
+     * if an operation runs an <code>apply</code> method and additional needs to change
+     * the position of some element on a station. Clients should call {@link #store(Dockable)}
+     * afterwards. 
+     */
+    public void runTransaction( final AffectingRunnable run, boolean continuous ){
+    	if( run == null )
     		return;
     	
     	final ChangeSet set = new ChangeSet();
     	runTransaction( new Runnable() {
 			public void run(){
-				runnable.run( set );	
+				run.run( set );	
 			}
-		});
+		}, continuous );
     	set.finish();
     }
     
+
     /**
      * Runs <code>run</code> as transaction, the {@link DockRegister} is stalled
      * and {@link #isOnTransaction()} returns <code>true</code> while 
@@ -396,14 +422,35 @@ public abstract class ModeManager<H, M extends Mode<H>> {
      * @param run the runnable to execute
      */
     public void runTransaction( Runnable run ){
+    	runTransaction( run, false );
+    }
+    
+    /**
+     * Runs <code>run</code> as transaction, the {@link DockRegister} is stalled
+     * and {@link #isOnTransaction()} returns <code>true</code> while 
+     * <code>run</code> runs. 
+     * @param run the runnable to execute
+     * @param continuous if set to <code>true</code> the transaction runs without changing
+     * the internal cache storing the position of all {@link Dockable}s. This can be important
+     * if an operation runs an <code>apply</code> method and additional needs to change
+     * the position of some element on a station. Clients should call {@link #store(Dockable)}
+     * afterwards.
+     */
+    public void runTransaction( Runnable run, boolean continuous ){
     	try{
     		controller.getRegister().setStalled( true );
     		onTransaction++;
+    		if( continuous ){
+    			onContinuous++;
+    		}
     		run.run();
     	}
     	finally{
     		controller.getRegister().setStalled( false );
     		onTransaction--;
+    		if( continuous ){
+    			onContinuous--;
+    		}
     	}
     }
 
@@ -612,10 +659,19 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     public boolean isOnTransaction(){
 		return onTransaction > 0;
 	}
+    
+    /**
+     * Tells whether this manager currently runs a continuous transaction. As long as a continuous
+     * transaction is running the internal states of this manager do not change. 
+     * @return whether a continuous transaction is running
+     */
+    public boolean isOnContinuous(){
+    	return onContinuous > 0;
+    }
 
     /**
      * Updates the mode of <code>dockable</code> and updates the actions
-     * associated with <code>docakble</code>. This method is intended to be
+     * associated with <code>dockable</code>. This method is intended to be
      * called by any code that changes the mode in a way that is not automatically
      * registered by this {@link ModeManager}.
      * @param dockable the element whose mode might have changed
@@ -644,7 +700,9 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     public void remove( Dockable dockable ){
         DockableHandle entry = dockables.remove( dockable );
         if( entry != null ){
-            entries.remove( entry.id );
+        	if( !entry.empty ){
+        		entries.remove( entry.id );
+        	}
             fireRemoved( dockable );
         }
     }
@@ -690,8 +748,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
      * information for a {@link Dockable} that has not yet been created. It is
      * helpful if the client intends to load first its properties and create
      * only those {@link Dockable}s which are visible.<br>
-     * If there is already an entry for <code>name</code>, then this method
-     * does do nothing.
+     * Also an empty entry gets never deleted unless {@link #removeEmpty(String)} is called.
      * @param key the name of the empty entry
      * @throws NullPointerException if <code>key</code> is <code>null</code>
      */
@@ -705,6 +762,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
             entry = new DockableHandle( null, key );
             entries.put( key, entry );
         }
+        entry.empty = true;
     }
     
     /**
@@ -718,11 +776,25 @@ public abstract class ModeManager<H, M extends Mode<H>> {
             throw new NullPointerException( "name must not be null" );
         
         DockableHandle entry = entries.get( name );
-        if( entry.dockable == null )
-            entries.remove( name );
+        if( entry != null ){
+        	entry.empty = false;
+	        if( entry.dockable == null ){
+	            entries.remove( name );
+	        }
+        }
     }
 	
-    
+    /**
+     * Tells whether information about dockable <code>key</code> gets
+     * stored indefinitely or not.
+     * @param key the key to check
+     * @return <code>true</code> if the key is never removed automatically
+     * <code>false</code> otherwise
+     */
+    public boolean isEmpty( String key ){
+    	DockableHandle entry = entries.get( key );
+    	return entry != null && entry.empty;
+    }
     
 	/**
 	 * Gets the default mode of <code>dockable</code>, the mode
@@ -826,12 +898,16 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 	}
 	
     /**
-     * Store the history information for <code>dockable</code> and all its children in respect
+     * Stores the current location of <code>dockable</code> and all its children in respect
      * to their current {@link Mode}. Dockables that are not registered at this manager
-     * are ignored.
+     * are ignored.<br>
+     * This method does nothing if {@link #isOnContinuous()} returns <code>true</code>
      * @param dockable a root of a tree
      */
     public void store( Dockable dockable ){
+    	if( isOnContinuous() )
+    		return;
+    	
         DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
             @Override
             public void handleDockable( Dockable check ) {
@@ -843,11 +919,15 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     }
 
     /**
-     * Stores the location of <code>dockable</code> under the key <code>mode</code>.
+     * Stores the location of <code>dockable</code> under the key <code>mode</code>.<br>
+     * This method does nothing if {@link #isOnContinuous()} returns <code>true</code>
      * @param mode the mode <code>dockable</code> is currently in
      * @param dockable the element whose location will be stored
      */
     protected void store( M mode, Dockable dockable ){
+    	if( isOnContinuous() )
+    		return;
+    	
     	DockableHandle handle = getHandle( dockable );
     	if( handle != null ){
     		handle.properties.put( mode.getUniqueIdentifier(), mode.current( dockable ) );
@@ -930,7 +1010,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 	 * @return the new empty settings
 	 */
 	public <B> ModeSettings<H, B> createSettings( ModeSettingsConverter<H, B> converter ){
-		ModeSettings<H, B> settings = new ModeSettings<H, B>( converter );
+		ModeSettings<H, B> settings = createModeSettings( converter );
 		for( ModeSettingFactory<H> factory : factories.values() ){
 			settings.addFactory( factory );
 		}
@@ -943,6 +1023,19 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 			}
 		}
 		return settings;
+	}
+	
+	/**
+	 * Creates the empty set of settings for this {@link ModeManager}. Subclasses
+	 * may override this method to use another set of settings. This method does
+	 * not need to call {@link ModeSettings#addFactory(ModeSettingFactory)}.
+	 * @param <B> the intermediate format
+	 * @param converter converstion tool from this managers meta-data format to the
+	 * intermediate format.
+	 * @return the new empty settings
+	 */
+	protected <B> ModeSettings<H, B> createModeSettings( ModeSettingsConverter<H, B> converter ){
+		return new ModeSettings<H, B>( converter );
 	}
 	
 	/**
@@ -1067,6 +1160,9 @@ public abstract class ModeManager<H, M extends Mode<H>> {
         /** The modes this entry already visited. No mode is more than once in this list. */
         private List<Path> history;
         
+        /** if <code>true</code>, then this entry is not deleted automatically */
+        private boolean empty = false;
+        
         /**
          * Creates a new entry
          * @param dockable the element whose properties are stores in this entry
@@ -1112,6 +1208,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 	            	Path id = mode.mode.getUniqueIdentifier();
 		            history.remove( id );
 		            history.add( id );
+		            properties.put( id, mode.mode.current( dockable ) );
 		            rebuild( dockable );
 		            fireModeChanged( dockable, oldMode == null ? null : oldMode.mode, mode == null ? null : mode.mode );
 	            }

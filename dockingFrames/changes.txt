@@ -258,3 +258,8 @@
 - Bugfix: RequestDimension( int, boolean ) did not set the height property.
 - API: CDockable has new method "getAction" and "getActionCount" to access CActions that were added.
 - Bugfix: Wrong index in MultiDockActionSource.add( DockActionSource ) could lead to IndexOutOfBoundsException
+! API: CStateManager got replaced by LocationModeManage. CControl.getStateManager is renamed to CControl.getLocationManager.
+	-: CControl.setMaximizeArea(String) throws now an exception if called with an unknown id
+	-: CStation has now one generic argument
+- API: CContentArea.setMinimumAreaSize and FlapDockStation.setMinimumSize allow to set the minimum size of a FlapDockStation
+- API: the new key FlapDockStation.MINIMUM_SIZE sets the default minimum size of FlapDockStations

@@ -30,6 +30,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CWorkingArea;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
+import bibliothek.gui.dock.common.mode.LocationModeManager;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.Mode;
 
@@ -75,6 +76,15 @@ public interface LocationMode extends Mode<Location>{
 	 * @return whether this mode is represented by <code>station</code>
 	 */
 	public boolean isRepresenting( DockStation station );
+	
+	/**
+	 * Gets the one {@link DockStation} that is known with the root-id <code>uniqueId</code>.
+	 * The <code>uniqueId</code> is the same id as used returned by {@link Location#getRoot()}
+	 * of {@link Location}s issued by this mode.
+	 * @param uniqueId the id of some station
+	 * @return the station or <code>null</code>
+	 */
+	public DockStation getRepresentation( String uniqueId );
 	
 	/**
 	 * Adds a listener to this mode. The listener is to be called

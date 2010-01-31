@@ -299,7 +299,7 @@ public class SplitDockPathProperty extends AbstractDockableProperty implements I
 
         @Override
         public String toString() {
-            return getClass().getName() + "[size=" + size + ",location=" + location + "]";
+            return getClass().getName() + "[size=" + size + ", location=" + location + "]";
         }
 
 		@Override

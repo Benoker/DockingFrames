@@ -27,7 +27,7 @@ package bibliothek.gui.dock.facile.mode.status;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
-import bibliothek.gui.dock.facile.mode.LocationModeManager;
+import bibliothek.gui.dock.common.mode.LocationModeManager;
 
 /**
  * Generic algorithm telling for {@link Dockable}s whether some {@link ExtendedMode} is

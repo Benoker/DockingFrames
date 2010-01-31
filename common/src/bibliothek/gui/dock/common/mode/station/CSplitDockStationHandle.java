@@ -3,6 +3,7 @@ package bibliothek.gui.dock.common.mode.station;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import bibliothek.gui.DockController;
@@ -16,12 +17,12 @@ import bibliothek.gui.dock.common.mode.CLocationMode;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.CMaximizedModeArea;
 import bibliothek.gui.dock.common.mode.CNormalModeArea;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.event.DockRelocatorAdapter;
 import bibliothek.gui.dock.event.DockRelocatorListener;
 import bibliothek.gui.dock.event.SplitDockListener;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.LocationModeEvent;
-import bibliothek.gui.dock.facile.mode.LocationModeManager;
 import bibliothek.gui.dock.facile.mode.MaximizedMode;
 import bibliothek.gui.dock.facile.mode.MaximizedModeArea;
 import bibliothek.gui.dock.facile.mode.ModeArea;
@@ -67,6 +68,24 @@ public class CSplitDockStationHandle{
 			ModeAreaListenerWrapper[] array = listeners.toArray( new ModeAreaListenerWrapper[ listeners.size() ] );
 			for( ModeAreaListenerWrapper listener : array ){
 				listener.fire( affected );
+			}
+		}
+	};
+	
+	/**
+	 * This listener calls {@link MaximizedMode#unmaximize(Dockable, AffectedSet)} if some element is dropped
+	 * onto this station.
+	 */
+	private DockRelocatorListener relocatorListener = new DockRelocatorAdapter() {
+		public void drop( DockController controller, Dockable dockable, DockStation station ){
+			MaximizedModeArea next = maximizedMode.getNextMaximizeArea( station );
+			
+			if( next == maximal ){
+				manager.runTransaction( new AffectingRunnable() {
+					public void run( AffectedSet set ){
+						maximizedMode.unmaximize( (DockStation)getStation(), set );		
+					}
+				});
 			}
 		}
 	};
@@ -211,8 +230,8 @@ public class CSplitDockStationHandle{
 			return dockable.getDockParent() == getStation() && !maximal.isChild( dockable );
 		}
 
-		public boolean isRepresentant( DockStation station ){
-			return getStation() == station;
+		public SplitDockStation getStation(){
+			return station.getStation();
 		}
 		
 		public boolean respectWorkingAreas(){
@@ -269,23 +288,6 @@ public class CSplitDockStationHandle{
 		/** the controller in whose realm this area works */
 		private DockController controller;
 		
-		/**
-		 * Unmaximizes this station if a {@link Dockable} is dropped onto it.
-		 */
-		private DockRelocatorListener relocatorListener = new DockRelocatorAdapter(){
-			public void drop( DockController controller, final Dockable dockable, final DockStation station ){
-				if( station == getStation() ){
-					LocationModeManager<?> manager = maximizedMode.getManager();
-					manager.runTransaction( new AffectingRunnable() {
-						public void run( AffectedSet set ){
-							maximizedMode.unmaximize( station, set );
-							set.add( dockable );		
-						}
-					});
-				}
-			}
-		};
-		
 		public void addModeAreaListener( ModeAreaListener listener ){
 			add(  new ModeAreaListenerWrapper( this, listener ) );
 		}
@@ -317,16 +319,18 @@ public class CSplitDockStationHandle{
 			}
 		}
 		
-		public Runnable onApply( final LocationModeEvent event, final Dockable replacement ){
+		public Runnable onApply( LocationModeEvent event ){
+			if( event.isDone() )
+				return null;
+			
+			Location location = event.getLocation();
+        	Dockable dockable = event.getDockable();
+			DockableProperty property = location == null ? null : location.getLocation();
+			
 			if( event.getMode().getUniqueIdentifier().equals( NormalMode.IDENTIFIER )){
-				Location location = event.getLocation();
-				DockableProperty property = location == null ? null : location.getLocation();
-				
 				// try to set the mode prematurely
 		        if( property != null ){
-		        	Dockable dockable = event.getDockable();
-		        	
-		            if( property.getSuccessor() == null ){
+		        	if( property.getSuccessor() == null ){
 		            	CLocationMode last = manager.getCurrentMode( dockable );
 		            	CLocationMode secondLast = manager.getPreviousMode( dockable );
 		            	
@@ -346,22 +350,32 @@ public class CSplitDockStationHandle{
 		            }
 		        }
 		        
-		        // unmaximize elements
-		        // wherever it is, ensure that it does not leave a station in
-		        // a dubious state
-		        maximizedMode.unmaximize( event.getDockable(), event.getAffected() );
-
-		        // ensure it does land on a parent without maximized children
-		        if( location != null ){
-		        	MaximizedModeArea area = maximizedMode.get( location.getRoot() );
-		            if( area != null ){
-		                maximizedMode.unmaximize( area, event.getAffected() );
-		            }
-		        }
-		        
-		        return null;
+//		        
+//				if( maximizedMode.getMaximizeArea( dockable ) == this ){
+//					maximizedMode.unmaximize( dockable, event.getAffected() );
+//				}
 			}
-			else{
+			
+	        // if the element is about to become a child of this station, ensure
+	        // this station does not show a maximized element
+	        if( location != null && getMaximized() != null ){
+	        	Map<ExtendedMode, DockStation> roots = manager.getRepresentations( location.getRoot() );
+	        	for( DockStation station : roots.values() ){
+	        		if( DockUtilities.isAncestor( getStation(), station )){
+	        			maximizedMode.unmaximize( this, event.getAffected() );	
+	        			break;
+	        		}
+	        	}
+	        }
+	        
+	        return null;
+		}
+		
+		public Runnable onApply( final LocationModeEvent event, final Dockable replacement ){
+			if( event.isDone() )
+				return null;
+			
+			if( !event.getMode().getUniqueIdentifier().equals( NormalMode.IDENTIFIER )){
 				maximizedMode.unmaximize( getMaximized(), event.getAffected() );
 
 		        return new Runnable() {
@@ -372,6 +386,8 @@ public class CSplitDockStationHandle{
 					}
 				};
 			}
+			
+			return null;
 		}
 		
 		public String getUniqueId(){
@@ -382,8 +398,8 @@ public class CSplitDockStationHandle{
 			return getMaximized() == dockable;
 		}
 		
-		public boolean isRepresentant( DockStation station ){
-			return getStation() == station;
+		public SplitDockStation getStation(){
+			return station.getStation();
 		}
 		
 		public boolean respectWorkingAreas(){

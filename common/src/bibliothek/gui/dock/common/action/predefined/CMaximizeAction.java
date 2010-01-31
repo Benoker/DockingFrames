@@ -34,8 +34,8 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.action.CExtendedModeAction;
+import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
-import bibliothek.gui.dock.facile.mode.LocationModeManager;
 import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.PropertyValue;
 
@@ -75,7 +75,7 @@ public class CMaximizeAction extends CExtendedModeAction{
      * @param control the control for which this action will be used
      */
     public CMaximizeAction( CControl control ){
-        super( control, ExtendedMode.MAXIMIZED, "maximize", LocationModeManager.ICON_MANAGER_KEY_MAXIMIZE, CControl.KEY_GOTO_MAXIMIZED );
+        super( control, ExtendedMode.MAXIMIZED, "maximize", CLocationModeManager.ICON_MANAGER_KEY_MAXIMIZE, CControl.KEY_GOTO_MAXIMIZED );
         
         ResourceBundle bundle = Resources.getBundle();
         

@@ -274,7 +274,8 @@ public class ButtonPane extends OverpaintablePanel{
             }
         }
         
-        return new Dimension( Math.max( 10, width ), Math.max( 10, height ));
+        Dimension empty = station.getMinimumSize();
+        return new Dimension( Math.max( empty.width, width ), Math.max( empty.height, height ));
     }
     
     /**

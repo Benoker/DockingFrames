@@ -37,12 +37,9 @@ import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.MultipleCDockableFactory;
 import bibliothek.gui.dock.facile.mode.Location;
-import bibliothek.gui.dock.facile.state.StateManager;
 import bibliothek.gui.dock.frontend.Setting;
 import bibliothek.gui.dock.layout.DockSituation;
 import bibliothek.gui.dock.layout.PropertyTransformer;
-import bibliothek.gui.dock.support.action.ModeTransitionSetting;
-import bibliothek.gui.dock.support.mode.ModeSetting;
 import bibliothek.gui.dock.support.mode.ModeSettings;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
@@ -145,16 +142,11 @@ public class CSetting extends Setting{
         version.checkCurrent();
         
         boolean version7 = version.compareTo( Version.VERSION_1_0_7 ) >= 0;
-        boolean version8 = version.compareTo( Version.VERSION_1_0_8 ) >= 0;
         
         super.read( situation, transformer, entry, in );
-        if( version8 ){
-        	modes.read( in );
-        }
-        else{
-        	// old settings need to be converted
-        	sdf
-        }
+        
+        // old settings will be converted automatically
+        modes.read( in );
         
         if( version7 ){
             for( int i = 0, n = in.readInt(); i<n; i++ ){

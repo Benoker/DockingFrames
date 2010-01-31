@@ -1551,6 +1551,49 @@ public class CControl {
 
         return dockable;
     }
+    
+    /**
+     * Replaces <code>oldDockable</code> with <code>newDockable</code>. The new dockable
+     * inherits settings and location of the old one.
+     * @param oldDockable the old dockable, not <code>null</code>
+     * @param newDockable the new dockable, not <code>null</code>
+     */
+    public void replace( MultipleCDockable oldDockable, MultipleCDockable newDockable ){
+    	if( oldDockable == null )
+    		throw new IllegalArgumentException( "old dockable must not be null" );
+    	if( newDockable == null )
+    		throw new IllegalArgumentException( "new dockable must not be null" );
+    	
+    	if( oldDockable.getControl() != access )
+    		throw new IllegalArgumentException( "old dockable not registered at this CControl" );
+    	
+    	if( newDockable.getControl() != null )
+    		throw new IllegalArgumentException( "new dockable alread registered at some CControl" );
+    	
+    	String id = accesses.get( oldDockable ).getUniqueId();
+    	
+    	boolean frontendEmpty = frontend.isEmpty( id );
+    	if( !frontendEmpty ){
+    		frontend.addEmpty( id );
+    	}
+    	
+    	boolean locationEmpty = locationManager.isEmpty( id );
+    	if( !locationEmpty ){
+    		locationManager.addEmpty( id );
+    	}
+    	
+    	id = register.multiToNormalId( id );
+    	
+    	remove( oldDockable );
+    	add( newDockable, id );
+    	
+    	if( !frontendEmpty ){
+    		frontend.removeEmpty( id );
+    	}
+    	if( !locationEmpty ){
+    		locationManager.removeEmpty( id );
+    	}
+    }
 
     /**
      * Searches and returns the one {@link MultipleCDockable} which uses
@@ -2087,6 +2130,9 @@ public class CControl {
         }
 
         public void hide( CDockable dockable ){
+        	if( !dockable.isVisible() )
+        		return;
+        	
             DockRegister register = frontend.getController().getRegister();
             register.setStalled( true );
             try{
@@ -2119,6 +2165,9 @@ public class CControl {
         }
 
         public void show( CDockable dockable ){
+        	if( dockable.isVisible() )
+        		return;
+        	
             DockRegister register = frontend.getController().getRegister();
             register.setStalled( true );
             try{
@@ -2143,8 +2192,6 @@ public class CControl {
                     }
                 }
 
-                boolean maximized = locationManager.ensureBasicModes();
-
                 if( location == null ){
                     frontend.show( dockable.intern(), false );
                 }
@@ -2152,8 +2199,6 @@ public class CControl {
                     locationManager.setLocation( dockable.intern(), location );
                 }
                 locationManager.ensureValidLocation( dockable );
-                if( location == null && maximized && dockable.isMaximizable() )
-                    dockable.setExtendedMode( ExtendedMode.MAXIMIZED );
             }
             finally{
                 register.setStalled( false );

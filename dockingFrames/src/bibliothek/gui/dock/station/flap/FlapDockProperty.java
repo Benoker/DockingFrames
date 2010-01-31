@@ -212,6 +212,11 @@ public class FlapDockProperty extends AbstractDockableProperty {
     			size = xsize.getInt();
     	}
     }
+    
+    @Override
+    public String toString(){
+	    return getClass().getName() + "[index=" + index + ", holding=" + holding + ", size=" + size + "]";
+    }
 
 	@Override
 	public int hashCode(){

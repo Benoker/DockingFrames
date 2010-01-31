@@ -30,8 +30,8 @@ import java.util.ResourceBundle;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.action.CExtendedModeAction;
+import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
-import bibliothek.gui.dock.facile.mode.LocationModeManager;
 import bibliothek.gui.dock.support.util.Resources;
 
 /**
@@ -44,7 +44,7 @@ public class CNormalizeAction extends CExtendedModeAction{
      * @param control the control for which this action will be used
      */
     public CNormalizeAction( CControl control ){
-        super( control, ExtendedMode.NORMALIZED, "normalize", LocationModeManager.ICON_MANAGER_KEY_NORMALIZE, CControl.KEY_GOTO_NORMALIZED );
+        super( control, ExtendedMode.NORMALIZED, "normalize", CLocationModeManager.ICON_MANAGER_KEY_NORMALIZE, CControl.KEY_GOTO_NORMALIZED );
         
         ResourceBundle bundle = Resources.getBundle();
         

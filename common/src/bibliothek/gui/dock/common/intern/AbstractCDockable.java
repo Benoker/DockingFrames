@@ -551,21 +551,23 @@ public abstract class AbstractCDockable implements CDockable {
                     return listenerCollection.getDoubleClickListener();
                 }
                 public void setUniqueId( String id ) {
-                	if( AbstractCDockable.this.control != null && uniqueId != null ){
-                		CLocationModeManager manager = AbstractCDockable.this.control.getLocationManager();
-                		manager.remove( dockable );
+                	if( (id != null && !id.equals( uniqueId )) || (id == null && uniqueId != null) ){
+	                	if( AbstractCDockable.this.control != null && uniqueId != null ){
+	                		CLocationModeManager manager = AbstractCDockable.this.control.getLocationManager();
+	                		manager.remove( dockable );
+	                	}
+	                	
+	                    uniqueId = id;
+	                    if( AbstractCDockable.this.control != null && id != null ){
+	                        CLocationModeManager manager = AbstractCDockable.this.control.getLocationManager();
+	                        manager.put( uniqueId, dockable );
+	                        
+	                        for( Map.Entry<ExtendedMode, CLocation> location : defaultLocations.entrySet() ){
+	                            if( manager.getLocation( dockable, location.getKey() ) == null )
+	                                manager.setLocation( dockable, location.getKey(), location.getValue() );
+	                        }
+	                    }
                 	}
-                	
-                    uniqueId = id;
-                    if( AbstractCDockable.this.control != null && id != null ){
-                        CLocationModeManager manager = AbstractCDockable.this.control.getLocationManager();
-                        manager.put( uniqueId, dockable );
-                        
-                        for( Map.Entry<ExtendedMode, CLocation> location : defaultLocations.entrySet() ){
-                            if( manager.getLocation( dockable, location.getKey() ) == null )
-                                manager.setLocation( dockable, location.getKey(), location.getValue() );
-                        }
-                    }
                 }
                 
                 public String getUniqueId() {

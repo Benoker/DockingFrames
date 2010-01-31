@@ -112,11 +112,13 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         String id = layout.getId();
         
         MultipleCDockable oldDockable = access.getOwner().getMultipleDockable( id );
-        if( oldDockable != null ){
-            access.getOwner().remove( oldDockable );
-        }
         
-        access.getOwner().add( dockable, id );
+        if( oldDockable != null ){
+        	access.getOwner().replace( oldDockable, dockable );
+        }
+        else{
+        	access.getOwner().add( dockable, id );
+        }
         
         // working area
         String areaId = layout.getArea();

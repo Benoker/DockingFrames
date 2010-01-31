@@ -32,7 +32,8 @@ import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.CWorkingArea;
 
 /**
- * A representation of some area that can show {@link Dockable}s.
+ * A representation of some area that can show {@link Dockable}s,
+ * it is a wrapper for a {@link DockStation}.
  * @author Benjamin Sigg
  */
 public interface ModeArea {
@@ -52,11 +53,10 @@ public interface ModeArea {
 	public boolean isChild( Dockable dockable );
 	
 	/**
-	 * Tells whether this area contains information about <code>station</code>.
-	 * @param station some station which might be represented by this area
-	 * @return <code>true</code> if <code>this</code> is responsible for <code>station</code> 
+	 * Gets the station which is represented by this area.
+	 * @return the station, not <code>null</code>
 	 */
-	public boolean isRepresentant( DockStation station );
+	public DockStation getStation();
 	
 	/**
 	 * Tells whether children of this area have to respect the settings for

@@ -30,8 +30,8 @@ import java.util.ResourceBundle;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.action.CExtendedModeAction;
+import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
-import bibliothek.gui.dock.facile.mode.LocationModeManager;
 import bibliothek.gui.dock.support.util.Resources;
 
 /**
@@ -44,7 +44,7 @@ public class CExternalizeAction extends CExtendedModeAction{
      * @param control the control for which this action will be used
      */
     public CExternalizeAction( CControl control ){
-        super( control, ExtendedMode.EXTERNALIZED, "externalize", LocationModeManager.ICON_MANAGER_KEY_EXTERNALIZE, CControl.KEY_GOTO_EXTERNALIZED );
+        super( control, ExtendedMode.EXTERNALIZED, "externalize", CLocationModeManager.ICON_MANAGER_KEY_EXTERNALIZE, CControl.KEY_GOTO_EXTERNALIZED );
         
         ResourceBundle bundle = Resources.getBundle();
         

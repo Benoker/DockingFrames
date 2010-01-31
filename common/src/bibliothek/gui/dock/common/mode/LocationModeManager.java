@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.facile.mode;
+package bibliothek.gui.dock.common.mode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,18 +35,20 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.event.DockRelocatorAdapter;
+import bibliothek.gui.dock.facile.mode.Location;
+import bibliothek.gui.dock.facile.mode.LocationMode;
+import bibliothek.gui.dock.facile.mode.LocationModeListener;
+import bibliothek.gui.dock.facile.mode.NormalMode;
 import bibliothek.gui.dock.facile.mode.status.DefaultExtendedModeEnablement;
 import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablement;
 import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablementFactory;
 import bibliothek.gui.dock.support.mode.ModeManager;
 import bibliothek.gui.dock.support.mode.ModeManagerListener;
-import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.PropertyKey;
@@ -62,16 +64,7 @@ import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
  * @author Benjamin Sigg
  */
 public class LocationModeManager<M extends LocationMode> extends ModeManager<Location, M>{
-    /** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "minimize"-action */
-    public static final String ICON_MANAGER_KEY_MINIMIZE = "locationmanager.minimize";
-    /** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "maximize"-action */
-    public static final String ICON_MANAGER_KEY_MAXIMIZE = "locationmanager.maximize";
-    /** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "normalize"-action */
-    public static final String ICON_MANAGER_KEY_NORMALIZE = "locationmanager.normalize";
-    /** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "externalize"-action */
-    public static final String ICON_MANAGER_KEY_EXTERNALIZE = "locationmanager.externalize";
-    
-	/**
+    /**
 	 * {@link PropertyKey} for the {@link ExtendedModeEnablement} that should be used
 	 * by a {@link LocationModeManager} to activate and deactivate the modes.
 	 */
@@ -102,6 +95,12 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 	/** tells which modes are available for which element */
 	private ExtendedModeEnablement enablement;
 
+	/** 
+	 * if > 0 then the layout-mode is active. In this mode this manager does not react on some
+	 * events to not intervene layouting
+	 */
+	private int layoutMode = 0;
+	
 	/**
 	 * Creates a new manager.
 	 * @param controller the controller in whose realm this manager will work
@@ -115,12 +114,6 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 		extendedModeFactory.setProperties( controller );
 		
 		addModeManagerListener( new LocationModeListenerAdapter() );
-		
-        IconManager icons = controller.getIcons();
-        icons.setIconDefault( ICON_MANAGER_KEY_MAXIMIZE, Resources.getIcon( "maximize" ) );
-        icons.setIconDefault( ICON_MANAGER_KEY_MINIMIZE, Resources.getIcon( "minimize" ) );
-        icons.setIconDefault( ICON_MANAGER_KEY_NORMALIZE, Resources.getIcon( "normalize" ) );
-        icons.setIconDefault( ICON_MANAGER_KEY_EXTERNALIZE, Resources.getIcon( "externalize" ) );
 	}
 	
 	public void destroy(){
@@ -174,6 +167,26 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 		if( mode == null )
 			return null;
 		return mode.getExtendedMode();
+	}
+	
+	/**
+	 * Checks all {@link LocationMode}s of this manager and returns all
+	 * {@link DockStation}s that were registered with the given id. The same
+	 * station or the same id might be used for different modes.
+	 * @param id the id of some station
+	 * @return each mode-area pair where the area is not <code>null</code>, can be empty
+	 */
+	public Map<ExtendedMode, DockStation> getRepresentations( String id ){
+		if( id == null )
+			throw new IllegalArgumentException( "id must not be null" );
+		Map<ExtendedMode, DockStation> result = new HashMap<ExtendedMode, DockStation>();
+		for( LocationMode mode : modes() ){
+			DockStation station = mode.getRepresentation( id );
+			if( station != null ){
+				result.put( mode.getExtendedMode(), station );
+			}
+		}
+		return result;
 	}
 	
 	/**
@@ -256,14 +269,42 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 		return null;
 	}
 	
+	/**
+	 * Tells whether this mode is currently in layouting mode. Some
+	 * methods of this manager do not react while in layouting mode.
+	 * @return <code>true</code> if layouting mode is active
+	 */
+	public boolean isLayouting(){
+		return layoutMode > 0; 
+	}
+	
+	/**
+	 * Activates the {@link #isLayouting() layout mode} while <code>run</code>
+	 * is running.
+	 * @param run some code to execute
+	 */
+	public void runLayoutTransaction( Runnable run ){
+		try{
+			layoutMode++;
+			runTransaction( run );
+		}
+		finally{
+			layoutMode--;
+		}
+	}
+	
     /**
      * Ensures that <code>dockable</code> is not hidden behind another 
      * {@link Dockable}. That does not mean that <code>dockable</code> becomes
      * visible, just that it is easier reachable without the need to change
-     * modes of any <code>Dockable</code>s.  
+     * modes of any <code>Dockable</code>s.<br>
+     * This method returns immediatelly if in {@link #isLayouting() layouting mode}
      * @param dockable the element which should not be hidden
      */
     public void ensureNotHidden( final Dockable dockable ){
+    	if( isLayouting() )
+    		return;
+    	
     	runTransaction( new Runnable() {
 			public void run(){
 		    	for( LocationMode mode : modes() ){
@@ -281,6 +322,8 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
     public void ensureValidLocation( Dockable dockable ){
     	// nothing
     }
+    
+    
 	
 	/**
 	 * Adds and removes listeners from {@link LocationMode}s according to the map
