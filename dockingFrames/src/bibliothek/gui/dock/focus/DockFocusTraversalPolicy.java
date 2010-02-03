@@ -149,14 +149,16 @@ public class DockFocusTraversalPolicy extends FocusTraversalPolicy {
         else{ // is policy provider
             if( providerPolicy == this ){
                 if( result == null || policy.getFirst( provider ) == result ){
-                    return after( provider );
+                    result = after( provider );
                 }
             }
             else{
                 if( result == null || providerPolicy.getFirstComponent( provider ) == result ){
-                    return after( provider );
+                    result = after( provider );
                 }
             }
+            if( result == component )
+            	return null;
             return result;
         }
     }
@@ -225,14 +227,16 @@ public class DockFocusTraversalPolicy extends FocusTraversalPolicy {
         else{ // is policy provider
             if( providerPolicy == this ){
                 if( result == null || policy.getLast( provider ) == result ){
-                    return before( provider );
+                    result = before( provider );
                 }
             }
             else{
                 if( result == null || providerPolicy.getLastComponent( provider ) == result ){
-                    return before( provider );
+                    result = before( provider );
                 }
             }
+            if( result == component )
+            	return null;
             return result;
         }
     }
