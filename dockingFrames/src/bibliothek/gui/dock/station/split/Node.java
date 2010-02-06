@@ -66,12 +66,38 @@ public class Node extends SplitNode{
     
     /**
      * Constructs a new node.
+     * @param access the access to the owner-station of this node.
+     * @param left the left child
+     * @param right the right child
+     * @param orientation how the children are aligned
+     * @param id the unique id of this node, can be -1
+     */
+    public Node( SplitDockAccess access, SplitNode left, SplitNode right, Orientation orientation, long id ){
+    	this( access, left, right, id );
+    	this.orientation = orientation;
+    }
+    
+    /**
+     * Constructs a new node.
      * @param access the access to the owner-station of this node
      * @param left the left child
      * @param right the right child
      */
     public Node( SplitDockAccess access, SplitNode left, SplitNode right ){
-        super( access );
+        super( access, -1 );
+        setRight( right );
+        setLeft( left );
+    }
+    
+    /**
+     * Constructs a new node.
+     * @param access the access to the owner-station of this node
+     * @param left the left child
+     * @param right the right child
+     * @param id the unique id of this node
+     */
+    public Node( SplitDockAccess access, SplitNode left, SplitNode right, long id ){
+        super( access, id );
         setRight( right );
         setLeft( left );
     }
@@ -81,7 +107,16 @@ public class Node extends SplitNode{
      * @param access the access to the owner-station of this node
      */
     public Node( SplitDockAccess access ){
-        super( access );
+        super( access, -1 );
+    }
+    
+    /**
+     * Constructs a new node.
+     * @param access the access to the owner-station of this node
+     * @param id the unique id of this node
+     */
+    public Node( SplitDockAccess access, long id ){
+        super( access, id );
     }
     
     /**
@@ -399,7 +434,7 @@ public class Node extends SplitNode{
         if( depth >= property.size() ){
             // there is no description where to put the element
             // try using the theoretical boundaries of the element
-            return getAccess().drop( dockable, property.toLocation(), this );
+            return getAccess().drop( dockable, property.toLocation( this ), this );
         }
         else{
             SplitDockPathProperty.Node node = property.getNode( depth );
@@ -414,9 +449,26 @@ public class Node extends SplitNode{
                     (node.getLocation() == SplitDockPathProperty.Location.LEFT ||
                      node.getLocation() == SplitDockPathProperty.Location.RIGHT ));
             
+            if( node.getId() != -1 && node.getId() != getId() ){
+            	expand = true;
+            }
+            
             if( expand ){
                 // split up this node
-                Leaf leaf = create( dockable, true );
+            	long leafId = property.getLeafId();
+            	SplitDockPathProperty.Node lastNode = null;
+            	if( leafId == -1 ){
+            		lastNode = property.getLastNode();
+            		if( lastNode != null ){
+            			leafId = lastNode.getId();
+            		}
+            	}
+            	
+            	long splitId = -1;
+            	if( lastNode != node ){
+            		splitId = node.getId();
+            	}
+                Leaf leaf = create( dockable, true, leafId );
                 if( leaf == null )
                     return false;
             
@@ -432,11 +484,11 @@ public class Node extends SplitNode{
                 int location = parent.getChildLocation( this );
                 if( node.getLocation() == SplitDockPathProperty.Location.LEFT ||
                         node.getLocation() == SplitDockPathProperty.Location.TOP ){
-                    split = new Node( getAccess(), leaf, this, orientation );
+                    split = new Node( getAccess(), leaf, this, orientation, splitId );
                     split.setDivider( node.getSize() );
                 }
                 else{
-                    split = new Node( getAccess(), this, leaf, orientation );
+                    split = new Node( getAccess(), this, leaf, orientation, splitId );
                     split.setDivider( 1-node.getSize() );
                 }
                 parent.setChild( split, location );
@@ -458,9 +510,9 @@ public class Node extends SplitNode{
     @Override
     public <N> N submit( SplitTreeFactory<N> factory ) {
         if( orientation == SplitDockStation.Orientation.HORIZONTAL )
-            return factory.horizontal( left.submit( factory ), right.submit( factory ), divider );
+            return factory.horizontal( left.submit( factory ), right.submit( factory ), divider, getId() );
         else
-            return factory.vertical( left.submit( factory ), right.submit( factory ), divider );
+            return factory.vertical( left.submit( factory ), right.submit( factory ), divider, getId() );
     }
     
     @Override
@@ -507,7 +559,9 @@ public class Node extends SplitNode{
     public void toString( int tabs, StringBuilder out ) {
         out.append( "Node[ ");
         out.append( orientation );
-        out.append( " ]" );
+        out.append( " , id=" );
+        out.append( getId() );
+    	out.append( "]" );
         
         out.append( '\n' );
         for( int i = 0; i < tabs+1; i++ )

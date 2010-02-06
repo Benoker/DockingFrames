@@ -172,7 +172,9 @@ public class CLocationModeSettings<B> extends ModeSettings<Location,B>{
 
                     XElement xlocation = xitem.getElement( "location" );
                     if( xlocation != null ){
-                        lastMaximizedLocation.put( key, getConverter().readPropertyXML( xlocation ) );
+                    	XElement xcopy = xlocation.copy();
+                    	xcopy.addElement( "mode" ).setString( MaximizedMode.IDENTIFIER.toString() );
+                    	lastMaximizedLocation.put( key, getConverter().readPropertyXML( xcopy ) );
                     }
                 }
             }

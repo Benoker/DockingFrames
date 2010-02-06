@@ -59,40 +59,38 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
         
         Entry root =
             station.visit( new SplitTreeFactory<Entry>(){
-                public Entry leaf( Dockable dockable ) {
-                    Integer id = children.get( dockable );
-                    if( id != null ){
-                        return new SplitDockStationLayout.Leaf( id );
+                public Entry leaf( Dockable dockable, long id ) {
+                    Integer childId = children.get( dockable );
+                    if( childId != null ){
+                        return new SplitDockStationLayout.Leaf( childId, id );
                     }
                     else{
                         return null;
                     }
                 }
 
-                public Entry root( Entry root ) {
+                public Entry root( Entry root, long id ) {
                     return root;
                 }
 
-                public Entry horizontal( Entry left, Entry right, double divider ) {
+                public Entry horizontal( Entry left, Entry right, double divider, long id ) {
                     if( left == null )
                         return right;
                     
                     if( right == null )
                         return left;
                     
-                    return new SplitDockStationLayout.Node( Orientation.HORIZONTAL,
-                            divider, left, right );
+                    return new SplitDockStationLayout.Node( Orientation.HORIZONTAL, divider, left, right, id );
                 }
 
-                public Entry vertical( Entry top, Entry bottom, double divider ) {
+                public Entry vertical( Entry top, Entry bottom, double divider, long id ) {
                     if( top == null )
                         return bottom;
                     
                     if( bottom == null )
                         return top;
                     
-                    return new SplitDockStationLayout.Node( Orientation.VERTICAL,
-                            divider, top, bottom );
+                    return new SplitDockStationLayout.Node( Orientation.VERTICAL, divider, top, bottom, id );
                 }
             });
         
@@ -150,7 +148,7 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     private SplitDockTree.Key handleLeaf( SplitDockStationLayout.Leaf leaf, SplitDockTree tree, Map<Integer, Dockable> children ){
     	Dockable dockable = children.get( leaf.getId() );
         if( dockable != null ){
-        	return tree.put( dockable );
+        	return tree.put( dockable, leaf.getNodeId() );
         }
         return null;
     }
@@ -175,9 +173,9 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
         
         switch( node.getOrientation() ){
             case HORIZONTAL:
-                return tree.horizontal( a, b, node.getDivider() );
+                return tree.horizontal( a, b, node.getDivider(), node.getNodeId() );
             case VERTICAL:
-                return tree.vertical( a, b, node.getDivider() );
+                return tree.vertical( a, b, node.getDivider(), node.getNodeId() );
         }
         
         return null;
@@ -236,7 +234,7 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     public void write( SplitDockStationLayout layout, DataOutputStream out )
             throws IOException {
 
-        Version.write( out, Version.VERSION_1_0_4 );
+        Version.write( out, Version.VERSION_1_0_8 );
         
         SplitDockStationLayout.Entry root = layout.getRoot();
         if( root == null ){
@@ -257,6 +255,7 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
      * @throws IOException if an I/O-error occurs
      */
     private void writeEntry( SplitDockStationLayout.Entry entry, DataOutputStream out ) throws IOException{
+    	out.writeLong( entry.getNodeId() );
         if( entry.asLeaf() != null ){
             out.writeByte( 0 );
             out.writeInt( entry.asLeaf().getId() );            
@@ -275,9 +274,11 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
         Version version = Version.read( in );
         version.checkCurrent();
         
+        boolean version8 = Version.VERSION_1_0_8.compareTo( version ) <= 0;
+        
         SplitDockStationLayout.Entry root = null;
         if( in.readBoolean() ){
-            root = readEntry( in );
+            root = readEntry( in, version8 );
         }
         int fullscreen = in.readInt();
         return new SplitDockStationLayout( root, fullscreen );
@@ -286,20 +287,22 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     /**
      * Reads an entry from the stream.
      * @param in the stream to read
+     * @param version8 version of file is at least 8
      * @return the new entry
      * @throws IOException if an I/O-error occurs
      */
-    private SplitDockStationLayout.Entry readEntry( DataInputStream in ) throws IOException{
+    private SplitDockStationLayout.Entry readEntry( DataInputStream in, boolean version8 ) throws IOException{
+    	long id = in.readLong();
         byte kind = in.readByte();
         if( kind == 0 ){
-            return new SplitDockStationLayout.Leaf( in.readInt() );
+            return new SplitDockStationLayout.Leaf( in.readInt(), id );
         }
         if( kind == 1 ){
             Orientation orientation = Orientation.values()[ in.readInt() ];
             double divider = in.readDouble();
-            SplitDockStationLayout.Entry childA = readEntry( in );
-            SplitDockStationLayout.Entry childB = readEntry( in );
-            return new SplitDockStationLayout.Node( orientation, divider, childA, childB );
+            SplitDockStationLayout.Entry childA = readEntry( in, version8 );
+            SplitDockStationLayout.Entry childB = readEntry( in, version8 );
+            return new SplitDockStationLayout.Node( orientation, divider, childA, childB, id );
         }
         throw new IOException( "unknown kind: " + kind );
     }
@@ -321,10 +324,11 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
      */
     private void writeEntry( SplitDockStationLayout.Entry entry, XElement parent ){
         if( entry.asLeaf() != null ){
-            parent.addElement( "leaf" ).addInt( "id", entry.asLeaf().getId() );
+            parent.addElement( "leaf" ).addInt( "id", entry.asLeaf().getId() ).addLong( "nodeId", entry.getNodeId() );
         }
         else{
             XElement xnode = parent.addElement( "node" );
+            xnode.addLong( "nodeId", entry.getNodeId() );
             xnode.addString( "orientation", entry.asNode().getOrientation().name() );
             xnode.addDouble( "divider", entry.asNode().getDivider() );
             writeEntry( entry.asNode().getChildA(), xnode );
@@ -355,8 +359,13 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
      * @return the new entry
      */
     private SplitDockStationLayout.Entry readEntry( XElement element ){
+    	long nodeId = -1;
+    	if( element.attributeExists( "nodeId" ) ){
+    		nodeId = element.getLong( "nodeId" );
+    	}
+    	
         if( "leaf".equals( element.getName() )){
-            return new SplitDockStationLayout.Leaf( element.getInt( "id" ));
+            return new SplitDockStationLayout.Leaf( element.getInt( "id" ), nodeId );
         }
         if( "node".equals( element.getName() )){
             if( element.getElementCount() != 2 )
@@ -366,7 +375,8 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
                     Orientation.valueOf( element.getString( "orientation" ) ),
                     element.getDouble( "divider" ),
                     readEntry( element.getElement( 0 ) ),
-                    readEntry( element.getElement( 1 ) ));
+                    readEntry( element.getElement( 1 ) ),
+                    nodeId );
         }
         throw new XException( "element neither leaf nor node: " + element );
     }

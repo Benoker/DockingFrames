@@ -398,7 +398,7 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
 		// need to reset
 		List<Location> history = getPropertyHistory( dockable.intern() );
 		CLocationMode next = null;
-		for( int i = history.size()-1; i >= 0 && next == null; i++ ){
+		for( int i = history.size()-1; i >= 0 && next == null; i-- ){
 			Location check = history.get( i );
 			Path path = check.getMode();
 			String root = check.getRoot();

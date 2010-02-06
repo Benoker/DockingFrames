@@ -300,6 +300,14 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         public PutInfo validatePutInfo( PutInfo putInfo ){
             return layoutManager.getValue().validatePutInfo( SplitDockStation.this, putInfo );
         }
+        
+        public long uniqueID(){
+	        long id = System.currentTimeMillis();
+	        while( getNode( id ) != null ){
+	        	id = System.currentTimeMillis();
+	        }
+	        return id;
+        }
     };
 
     /** The root of the tree which determines the structure of this station */
@@ -948,35 +956,37 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     public DockableProperty getDockablePathProperty( final Dockable dockable ) {
         final SplitDockPathProperty path = new SplitDockPathProperty();
         root().submit( new SplitTreeFactory<Object>(){
-            public Object leaf( Dockable check ) {
-                if( dockable == check )
+            public Object leaf( Dockable check, long id ) {
+                if( dockable == check ){
+                	path.setLeafId( id );
                     return this;
+                }
                 return null;
             }
 
-            public Object root( Object root ) {
+            public Object root( Object root, long id ) {
                 return root;
             }
 
-            public Object horizontal( Object left, Object right, double divider ) {
+            public Object horizontal( Object left, Object right, double divider, long id ) {
                 if( left != null ){
-                    path.insert( SplitDockPathProperty.Location.LEFT, divider, 0 );
+                    path.insert( SplitDockPathProperty.Location.LEFT, divider, 0, id );
                     return left;
                 }
                 if( right != null ){
-                    path.insert( SplitDockPathProperty.Location.RIGHT, 1-divider, 0 );
+                    path.insert( SplitDockPathProperty.Location.RIGHT, 1-divider, 0, id );
                     return right;
                 }
                 return null;
             }
 
-            public Object vertical( Object top, Object bottom, double divider ) {
+            public Object vertical( Object top, Object bottom, double divider, long id ) {
                 if( top != null ){
-                    path.insert( SplitDockPathProperty.Location.TOP, divider, 0 );
+                    path.insert( SplitDockPathProperty.Location.TOP, divider, 0, id );
                     return top;
                 }
                 if( bottom != null ){
-                    path.insert( SplitDockPathProperty.Location.BOTTOM, 1-divider, 0 );
+                    path.insert( SplitDockPathProperty.Location.BOTTOM, 1-divider, 0, id );
                     return bottom;
                 }
                 return null;
@@ -1290,7 +1300,37 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     public boolean drop( Dockable dockable, SplitDockPathProperty property ){
         DockUtilities.ensureTreeValidity( this, dockable );
         validate();
-        boolean done = root().insert( property, 0, dockable );
+        
+        // use the ids of the topmost nodes in the path to find a node of this station
+        int index = 0;
+        SplitNode start = null;
+        
+        long leafId = property.getLeafId();
+        if( leafId != -1 ){
+        	start = getNode( leafId );
+        	if( start != null ){
+        		index = property.size();
+        	}
+        }
+        if( start == null ){
+	        for( index = property.size()-1; index >= 0 && start == null; index-- ){
+	        	SplitDockPathProperty.Node node = property.getNode( index );
+	        	long id = node.getId();
+	        	if( id != -1 ){
+	        		start = getNode( id );
+	        		if( start != null ){
+	        			break;
+	        		}
+	        	}
+	        }
+        }
+        
+        if( start == null ){
+        	start = root();
+        	index = 0;
+        }
+        
+        boolean done = start.insert( property, index, dockable );
         if( done )
             revalidate();
         return done;
@@ -2040,6 +2080,40 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         return root();
     }
 
+    /**
+     * Searches the node whose {@link SplitNode#getId() id} equals <code>id</code>.
+     * @param id the id to search
+     * @return the node with the id <code>id</code>
+     */
+    public SplitNode getNode( final long id ){
+    	class Visitor implements SplitNodeVisitor{
+    		private SplitNode result;
+    		
+    		public void handleRoot( Root root ){
+	    		if( root.getId() == id ){	
+	    			result = root;
+	    		}
+    		}
+    		public void handleLeaf( Leaf leaf ){
+    			if( leaf.getId() == id ){
+    				result = leaf;
+    			}
+    		}
+    		public void handleNode( Node node ){
+    			if( node.getId() == id ){
+    				result = node;
+    			}
+    		}
+    	};
+    	
+    	if( root == null )
+    		return null;
+    	
+    	Visitor visitor = new Visitor();
+    	getRoot().visit( visitor );
+    	return visitor.result;
+    }
+    
     public String getFactoryID() {
         return SplitDockStationFactory.ID;
     }

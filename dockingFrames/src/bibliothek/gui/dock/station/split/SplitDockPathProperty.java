@@ -60,6 +60,9 @@ public class SplitDockPathProperty extends AbstractDockableProperty implements I
     /** the path, where the first entry is the node nearest to the root */
     private List<Node> nodes = new LinkedList<Node>();
     
+    /** the identifier of the leaf that has been stored in this path */
+    private long leafId = -1;
+    
     /**
      * Creates a new, empty path
      */
@@ -71,8 +74,9 @@ public class SplitDockPathProperty extends AbstractDockableProperty implements I
     public DockableProperty copy() {
         SplitDockPathProperty copy = new SplitDockPathProperty();
         for( Node node : nodes ){
-            copy.add( node.getLocation(), node.getSize() );
+            copy.add( node.getLocation(), node.getSize(), node.getId() );
         }
+        copy.setLeafId( getLeafId() );
         copy( copy );
         return copy;
     }
@@ -97,6 +101,32 @@ public class SplitDockPathProperty extends AbstractDockableProperty implements I
      */
     public SplitDockPathProperty.Node getNode( int index ){
         return nodes.get( index );
+    }
+    
+    /**
+     * Sets the unique identifier of the leaf that was stored in this path.
+     * @param leafId the id or -1
+     */
+    public void setLeafId( long leafId ){
+		this.leafId = leafId;
+	}
+    
+    /**
+     * Gets the unique identifier of the leaf that was stored in this path.
+     * @return the id or -1
+     */
+    public long getLeafId(){
+		return leafId;
+	}
+    
+    /**
+     * Gets the last node of this path.
+     * @return the last node or <code>null</code> if this path is empty
+     */
+    public SplitDockPathProperty.Node getLastNode(){
+    	if( nodes.isEmpty() )
+    		return null;
+    	return nodes.get( nodes.size()-1 );
     }
     
     /**
@@ -131,14 +161,67 @@ public class SplitDockPathProperty extends AbstractDockableProperty implements I
     }
     
     /**
+     * Calculates which bounds the element accessed through this path would have. This
+     * method assumes that <code>onPath</code> is a node that is on this path and
+     * first searches for an item with the same unique identifier like <code>onPath</code>. If
+     * such an item is found, then the current boundaries of <code>onPath</code> are taken
+     * as start parameters.
+     * @param onPath some node which might be on this path
+     * @return the boundaries
+     */
+    public SplitDockProperty toLocation( SplitNode onPath ){
+    	if( onPath == null || onPath.getId() == -1 )
+    		return toLocation();
+    	
+    	SplitDockProperty result;
+    	
+    	long id = onPath.getId();
+    	if( getLeafId() == id ){
+    		result = new SplitDockProperty( onPath.getX(), onPath.getY(), onPath.getWidth(), onPath.getHeight() );
+    	}
+    	else{
+    		double x = 0, y = 0, w = 1, h = 1;
+            for( Node node : nodes ){
+            	if( node.getId() == id ){
+            		x = onPath.getX();
+            		y = onPath.getY();
+            		w = onPath.getWidth();
+            		h = onPath.getHeight();
+            	}
+                switch( node.getLocation() ){
+                    case LEFT:
+                        w = w * node.getSize();
+                        break;
+                    case RIGHT:
+                        x = x + w - w * node.getSize();
+                        w = w * node.getSize();
+                        break;
+                    case TOP:
+                        h = h * node.getSize();
+                        break;
+                    case BOTTOM:
+                        y = y + h - h * node.getSize();
+                        h = h * node.getSize();
+                        break;
+                }
+            }
+            result = new SplitDockProperty( x, y, w, h );
+    	}
+    	
+        result.setSuccessor( getSuccessor() );
+        return result;
+    }
+    
+    /**
      * Adds a new element to the end of the path. Every element describes which turn the
      * path takes in a node.
      * @param location the direction into which the path goes
      * @param size the relative size of the path, a value in the range 0.0
      * to 1.0
+     * @param id the unique identifier of the node or -1
      */
-    public void add( Location location, double size ){
-        insert( location, size, nodes.size() );
+    public void add( Location location, double size, long id ){
+        insert( location, size, nodes.size(), id );
     }
     
     /**
@@ -148,15 +231,16 @@ public class SplitDockPathProperty extends AbstractDockableProperty implements I
      * @param size the relative size of the path, a value in the range 0.0
      * to 1.0
      * @param index where to add the new element
+     * @param id the unique identifier of the new node or -1
      */
-    public void insert( Location location, double size, int index ){
+    public void insert( Location location, double size, int index, long id ){
         if( location == null )
             throw new NullPointerException( "location must not be null" );
         
         if( size < 0 || size > 1.0 )
             throw new IllegalArgumentException( "size must be in the range 0.0 to 1.0");
         
-        nodes.add( index, new Node( location, size ) );
+        nodes.add( index, new Node( location, size, id ) );
     }
     
     public String getFactoryID() {
@@ -164,7 +248,7 @@ public class SplitDockPathProperty extends AbstractDockableProperty implements I
     }
 
     public void store( DataOutputStream out ) throws IOException {
-        Version.write( out, Version.VERSION_1_0_4 );
+        Version.write( out, Version.VERSION_1_0_8 );
         out.writeInt( nodes.size() );
         for( Node node : nodes ){
             switch( node.getLocation() ){
@@ -182,7 +266,9 @@ public class SplitDockPathProperty extends AbstractDockableProperty implements I
                     break;
             }
             out.writeDouble( node.getSize() );
+            out.writeLong( node.getId() );
         }
+        out.writeLong( leafId );
     }
     
     public void store( XElement element ) {
@@ -190,12 +276,19 @@ public class SplitDockPathProperty extends AbstractDockableProperty implements I
             XElement xnode = element.addElement( "node" );
             xnode.addString( "location", node.getLocation().name() );
             xnode.addDouble( "size", node.getSize() );
+            if( node.getId() >= 0 ){
+            	xnode.addLong( "id", node.getId() );
+            }
         }
+        element.addElement( "leaf" ).addLong( "id", leafId );
     }
     
     public void load( DataInputStream in ) throws IOException {
         Version version = Version.read( in );
         version.checkCurrent();
+        
+        boolean version8 = Version.VERSION_1_0_8.compareTo( version ) <= 0;
+        
         nodes.clear();
         int count = in.readInt();
         while( count > 0 ){
@@ -216,20 +309,44 @@ public class SplitDockPathProperty extends AbstractDockableProperty implements I
                     break;
             }
             double size = in.readDouble();
-            nodes.add( new Node( location, size ) );
+            long id = -1;
+            if( version8 ){
+            	id = in.readLong();
+            }
+            nodes.add( new Node( location, size, id ) );
+        }
+        if( version8 ){
+        	leafId = in.readLong();
+        }
+        else{
+        	leafId = -1;
         }
     }
     
     public void load( XElement element ) {
         nodes.clear();
         for( XElement xnode : element.getElements( "node" )){
-            nodes.add( new Node( Location.valueOf( xnode.getString( "location" )), xnode.getDouble( "size" ) ) );
+        	Location location = Location.valueOf( xnode.getString( "location" ));
+        	double size = xnode.getDouble( "size" );
+        	long id = -1;
+        	if( xnode.attributeExists( "id" )){
+        		id = xnode.getLong( "id" );
+        	}
+        	
+            nodes.add( new Node( location, size, id ) );
+        }
+        XElement xleaf = element.getElement( "leaf" );
+        if( xleaf != null ){
+        	leafId = xleaf.getLong( "id" );
+        }
+        else{
+        	leafId = -1;
         }
     }
     
     @Override
     public String toString() {
-        return getClass().getName() + "[nodes="+ nodes +"]";
+        return getClass().getName() + "[nodes="+ nodes +", leaf=" + leafId + "]";
     }
     
     @Override
@@ -269,15 +386,19 @@ public class SplitDockPathProperty extends AbstractDockableProperty implements I
         private double size;
         /** the direction into which the path goes */
         private Location location;
+        /** the unique id of this node */
+        private long id;
         
         /**
          * Creates a new turn.
          * @param location the direction into which the path goes
          * @param size the amount of space the path gets in this turn
+         * @param id the unique id of this node or -1
          */
-        public Node( Location location, double size ){
+        public Node( Location location, double size, long id ){
             this.location = location;
             this.size = size;
+            this.id = id;
         }
         
         /**
@@ -296,10 +417,18 @@ public class SplitDockPathProperty extends AbstractDockableProperty implements I
             return location;
         }
         
+        /**
+         * Gets the unique id of the {@link SplitNode} that is represented
+         * by this node.
+         * @return the unique id, might be -1
+         */
+        public long getId(){
+			return id;
+		}
 
         @Override
         public String toString() {
-            return getClass().getName() + "[size=" + size + ", location=" + location + "]";
+            return "[size=" + size + ", location=" + location + ", id=" + id + "]";
         }
 
 		@Override

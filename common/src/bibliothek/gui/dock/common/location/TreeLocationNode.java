@@ -40,10 +40,11 @@ public class TreeLocationNode extends AbstractTreeLocation {
 	 * @param parent the turn above this location
 	 * @param size the relative size of this location
 	 * @param side the side which is occupied by this location
-	 * @see AbstractTreeLocation#AbstractTreeLocation(double, Side)
+	 * @param nodeId the unique identifier of the node represented by this location, can be -1
+	 * @see AbstractTreeLocation#AbstractTreeLocation(double, Side, long)
 	 */
-	public TreeLocationNode( AbstractTreeLocation parent, double size, Side side ){
-		super( size, side );
+	public TreeLocationNode( AbstractTreeLocation parent, double size, Side side, long nodeId ){
+		super( size, side, nodeId );
 		if( parent == null )
 			throw new NullPointerException( "parent must not be null" );
 		this.parent = parent;

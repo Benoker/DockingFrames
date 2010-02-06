@@ -100,4 +100,10 @@ public interface SplitDockAccess {
      * @return <code>info</code> if it is valid, <code>null</code> otherwise
      */
     public PutInfo validatePutInfo( PutInfo info );
+    
+    /**
+     * Creates a unique id for a {@link SplitNode}.
+     * @return the new unique id
+     */
+    public long uniqueID();
 }

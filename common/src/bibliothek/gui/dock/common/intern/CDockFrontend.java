@@ -63,9 +63,10 @@ public class CDockFrontend extends DockFrontend{
 
     @Override
     public Setting getSetting( boolean entry ) {
-        CSetting setting = (CSetting)super.getSetting( entry );
+    	CLocationModeManager manager = control.getLocationManager();
+    	
+    	CSetting setting = (CSetting)super.getSetting( entry );
         
-        CLocationModeManager manager = control.getLocationManager();
         ModeSettings<Location, ?> modeSettings = manager.createSettings( new LocationSettingConverter() );
         setting.setModes( modeSettings );
         manager.writeSettings( modeSettings );
@@ -90,5 +91,7 @@ public class CDockFrontend extends DockFrontend{
 				CDockFrontend.super.setSetting( setting, entry );		
 			}
         });
+        
+        manager.ensureBasicModes();
     }
 }

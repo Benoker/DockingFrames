@@ -36,7 +36,6 @@ import java.util.Set;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.Mode;
@@ -355,9 +354,14 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 	private class AreaListener implements ModeAreaListener{
 		public void internalLocationChange( ModeArea source, Set<Dockable> dockables ){
 			LocationModeManager<?> manager = getManager();
-			if( manager != null && !manager.isOnTransaction() ){
-				for( Dockable dockable : dockables ){
-					manager.refresh( dockable, true );
+			if( manager != null ){
+				if( manager.isOnTransaction() ){
+					manager.addAffected( dockables );
+				}
+				else{
+					for( Dockable dockable : dockables ){
+						manager.refresh( dockable, true );
+					}
 				}
 			}
 		}

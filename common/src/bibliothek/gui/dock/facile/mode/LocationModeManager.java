@@ -347,7 +347,7 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 	public void runLayoutTransaction( Runnable run ){
 		try{
 			layoutMode++;
-			runTransaction( run );
+			runTransaction( run, true );
 		}
 		finally{
 			layoutMode--;

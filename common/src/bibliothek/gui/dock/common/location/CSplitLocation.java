@@ -82,8 +82,19 @@ public abstract class CSplitLocation extends CLocation{
      * @param size the size of the space, between 0 and 1
      * @return the new location
      */
-    public TreeLocationRoot north( double size ){ 
-        return new TreeLocationRoot( this, size, Side.NORTH );
+    public TreeLocationRoot north( double size ){
+    	return north( size, -1 );
+    }
+    
+    /**
+     * Creates a location that describes a space in the upper part of
+     * the {@link SplitDockStation}.
+     * @param size the size of the space, between 0 and 1
+     * @param nodeId the unique identifier of the new node, can be -1
+     * @return the new location
+     */
+    public TreeLocationRoot north( double size, long nodeId ){ 
+        return new TreeLocationRoot( this, size, Side.NORTH, nodeId );
     }
     
     /**
@@ -92,8 +103,19 @@ public abstract class CSplitLocation extends CLocation{
      * @param size the size of the space, between 0 and 1
      * @return the new location
      */
-    public TreeLocationRoot south( double size ){ 
-        return new TreeLocationRoot( this, size, Side.SOUTH );
+    public TreeLocationRoot south( double size ){
+    	return south( size, -1 );
+    }
+    
+    /**
+     * Creates a location that describes a space in the lower part of
+     * the {@link SplitDockStation}.
+     * @param size the size of the space, between 0 and 1
+     * @param nodeId the unique identifier of the new node, can be -1
+     * @return the new location
+     */
+    public TreeLocationRoot south( double size, long nodeId ){
+        return new TreeLocationRoot( this, size, Side.SOUTH, nodeId );
     }
     
     /**
@@ -103,7 +125,18 @@ public abstract class CSplitLocation extends CLocation{
      * @return the new location
      */
     public TreeLocationRoot east( double size ){ 
-        return new TreeLocationRoot( this, size, Side.EAST );
+    	return east( size, -1 );
+    }
+    
+    /**
+     * Creates a location that describes a space in the right part of
+     * the {@link SplitDockStation}.
+     * @param size the size of the space, between 0 and 1
+     * @param nodeId the unique identifier of the new node, can be -1
+     * @return the new location
+     */
+    public TreeLocationRoot east( double size, long nodeId ){ 
+        return new TreeLocationRoot( this, size, Side.EAST, nodeId );
     }
     
     /**
@@ -112,8 +145,19 @@ public abstract class CSplitLocation extends CLocation{
      * @param size the size of the space, between 0 and 1
      * @return the new location
      */
-    public TreeLocationRoot west( double size ){ 
-        return new TreeLocationRoot( this, size, Side.WEST );
+    public TreeLocationRoot west( double size ){
+    	return west( size, -1 );
+    }
+    
+    /**
+     * Creates a location that describes a space in the left part of
+     * the {@link SplitDockStation}.
+     * @param size the size of the space, between 0 and 1
+     * @param nodeId the unique identifier of the new node, can be -1
+     * @return the new location
+     */
+    public TreeLocationRoot west( double size, long nodeId ){ 
+        return new TreeLocationRoot( this, size, Side.WEST, nodeId );
     }
     
     @Override
@@ -131,16 +175,16 @@ public abstract class CSplitLocation extends CLocation{
                 SplitDockPathProperty.Node node = path.getNode( 0 );
                 switch( node.getLocation() ){
                     case BOTTOM: 
-                        tree = south( node.getSize() ); 
+                        tree = south( node.getSize(), node.getId() ); 
                         break;
                     case LEFT:
-                        tree = west( node.getSize() );
+                        tree = west( node.getSize(), node.getId() );
                         break;
                     case RIGHT:
-                        tree = east( node.getSize() );
+                        tree = east( node.getSize(), node.getId() );
                         break;
                     case TOP:
-                        tree = north( node.getSize() );
+                        tree = north( node.getSize(), node.getId() );
                         break;
                 }
                 
@@ -148,20 +192,20 @@ public abstract class CSplitLocation extends CLocation{
                     node = path.getNode( i );
                     switch( node.getLocation() ){
                         case BOTTOM:
-                            tree = tree.south( node.getSize() );
+                            tree = tree.south( node.getSize(), node.getId() );
                             break;
                         case LEFT:
-                            tree = tree.west( node.getSize() );
+                            tree = tree.west( node.getSize(), node.getId() );
                             break;
                         case RIGHT:
-                            tree = tree.east( node.getSize() );
+                            tree = tree.east( node.getSize(), node.getId() );
                             break;
                         case TOP:
-                            tree = tree.north( node.getSize() );
+                            tree = tree.north( node.getSize(), node.getId() );
                             break;
                     }
                 }
-                location = tree;
+                location = tree.leaf( path.getLeafId() );
             }
             else{
                 location = rectangle( 0, 0, 1, 1 );

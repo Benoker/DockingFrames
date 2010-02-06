@@ -42,6 +42,8 @@ public abstract class AbstractTreeLocation extends AbstractStackholdingLocation{
 	private double size;
 	/** in which rectangle the children of this location lie */
 	private Side side;
+	/** the unique identifier of the node that is represented by this location */
+	private long nodeId = -1;
 	
 	/**
 	 * Creates a new location.
@@ -50,8 +52,9 @@ public abstract class AbstractTreeLocation extends AbstractStackholdingLocation{
 	 * <code>size</code> gives the area of the rectangle yield by this location.
 	 * @param side given the rectangle yield by the parent-location, this 
 	 * parameters tells which part the rectangle yield by this location occupies.
+	 * @param nodeId a unique identifier for the node represented by this location, can be -1
 	 */
-	public AbstractTreeLocation( double size, Side side ){
+	public AbstractTreeLocation( double size, Side side, long nodeId ){
 		if( size < 0 )
 			throw new IllegalArgumentException( "Size must be at least 0" );
 		if( size > 1 )
@@ -64,6 +67,7 @@ public abstract class AbstractTreeLocation extends AbstractStackholdingLocation{
 		
 		this.size = size;
 		this.side = side;
+		this.nodeId = nodeId;
 	}
 	
 	/**
@@ -92,7 +96,18 @@ public abstract class AbstractTreeLocation extends AbstractStackholdingLocation{
 	 * @return the new location
 	 */
 	public TreeLocationNode north( double size ){
-		return new TreeLocationNode( this, size, Side.NORTH );
+		return north( size, -1 );
+	}
+	
+	/**
+	 * Creates a new location which is based at the north side of this 
+	 * location.
+	 * @param size the relative size, a number between 0 and 1
+	 * @param nodeId the unique identifier of the new node, can be -1
+	 * @return the new location
+	 */
+	public TreeLocationNode north( double size, long nodeId ){
+		return new TreeLocationNode( this, size, Side.NORTH, nodeId );
 	}
 
 	/**
@@ -102,7 +117,18 @@ public abstract class AbstractTreeLocation extends AbstractStackholdingLocation{
 	 * @return the new location
 	 */
 	public TreeLocationNode south( double size ){
-		return new TreeLocationNode( this, size, Side.SOUTH );
+		return south( size, -1 );
+	}
+	
+	/**
+	 * Creates a new location which is based at the south side of this 
+	 * location.
+	 * @param size the relative size, a number between 0 and 1
+	 * @param nodeId the unique identifier of the new node, can be -1
+	 * @return the new location
+	 */
+	public TreeLocationNode south( double size, long nodeId ){
+		return new TreeLocationNode( this, size, Side.SOUTH, nodeId );
 	}
 	
 	/**
@@ -112,7 +138,18 @@ public abstract class AbstractTreeLocation extends AbstractStackholdingLocation{
 	 * @return the new location
 	 */
 	public TreeLocationNode east( double size ){
-		return new TreeLocationNode( this, size, Side.EAST );
+		return east( size, -1 );
+	}
+	
+	/**
+	 * Creates a new location which is based at the east side of this 
+	 * location.
+	 * @param size the relative size, a number between 0 and 1
+	 * @param nodeId the unique identifier of the new node, can be -1
+	 * @return the new location
+	 */
+	public TreeLocationNode east( double size, long nodeId ){
+		return new TreeLocationNode( this, size, Side.EAST, nodeId );
 	}
 	
 	/**
@@ -122,7 +159,27 @@ public abstract class AbstractTreeLocation extends AbstractStackholdingLocation{
 	 * @return the new location
 	 */
 	public TreeLocationNode west( double size ){
-		return new TreeLocationNode( this, size, Side.WEST );
+		return west( size, -1 );
+	}
+	
+	/**
+	 * Creates a new location which is based at the west side of this 
+	 * location.
+	 * @param size the relative size, a number between 0 and 1
+	 * @param nodeId the unique identifier of the new node, can be -1
+	 * @return the new location
+	 */
+	public TreeLocationNode west( double size, long nodeId ){
+		return new TreeLocationNode( this, size, Side.WEST, nodeId );
+	}
+	
+	/**
+	 * Creates a new leaf of this path.
+	 * @param leafId the unique identifier of the leaf, can be -1
+	 * @return the new leaf
+	 */
+	public TreeLocationLeaf leaf( long leafId ){
+		return new TreeLocationLeaf( this, leafId );
 	}
 	
 	@Override
@@ -144,16 +201,16 @@ public abstract class AbstractTreeLocation extends AbstractStackholdingLocation{
 		
 		switch( side ){
 			case NORTH:
-				property.add( SplitDockPathProperty.Location.TOP, size );
+				property.add( SplitDockPathProperty.Location.TOP, size, nodeId );
 				break;
 			case SOUTH:
-				property.add( SplitDockPathProperty.Location.BOTTOM, size );
+				property.add( SplitDockPathProperty.Location.BOTTOM, size, nodeId );
 				break;
 			case EAST:
-				property.add( SplitDockPathProperty.Location.RIGHT, size );
+				property.add( SplitDockPathProperty.Location.RIGHT, size, nodeId );
 				break;
 			case WEST:
-				property.add( SplitDockPathProperty.Location.LEFT, size );
+				property.add( SplitDockPathProperty.Location.LEFT, size, nodeId );
 				break;
 		}
 		

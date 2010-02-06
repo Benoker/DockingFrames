@@ -74,6 +74,16 @@ public class SplitDockStationLayout {
     public static abstract class Entry{
     	/** the parent element of this entry */
     	private Node parent;
+    	/** the unique id of this node */
+    	private long id;
+    	
+    	/**
+    	 * Create a new entry
+    	 * @param id the unique id of this node or -1
+    	 */
+    	public Entry( long id ){
+    		this.id = id;
+    	}
     	
     	/**
     	 * Sets the parent of this entry.
@@ -90,6 +100,14 @@ public class SplitDockStationLayout {
     	 */
     	public Node getParent() {
 			return parent;
+		}
+    	
+    	/**
+    	 * Gets the unique id of this node.
+    	 * @return the unique id or -1
+    	 */
+    	public long getNodeId(){
+			return id;
 		}
     	
         /**
@@ -136,8 +154,10 @@ public class SplitDockStationLayout {
         /**
          * Creates a new leaf
          * @param id the id of a {@link Dockable}
+         * @param nodeId the unique identifier of this node
          */
-        public Leaf( int id ){
+        public Leaf( int id, long nodeId ){
+        	super( nodeId );
             this.id = id;
         }
         
@@ -175,8 +195,10 @@ public class SplitDockStationLayout {
          * @param divider the location of the divider
          * @param childA the left or top child
          * @param childB the right or bottom child
+         * @param id the unique identifier of this node or -1
          */
-        public Node( Orientation orientation, double divider, Entry childA, Entry childB ){
+        public Node( Orientation orientation, double divider, Entry childA, Entry childB, long id ){
+        	super( id );
             this.orientation = orientation;
             this.divider = divider;
             this.childA = childA;
@@ -203,18 +225,18 @@ public class SplitDockStationLayout {
         	SplitDockPathProperty property = createPathProperty();
         	if( child == childA ){
         		if( orientation == Orientation.HORIZONTAL ){
-        			property.add( Location.LEFT, divider );
+        			property.add( Location.LEFT, divider, child.getNodeId() );
         		}
         		else{
-        			property.add( Location.TOP, divider );
+        			property.add( Location.TOP, divider, child.getNodeId() );
         		}
         	}
         	else if( child == childB ){
         		if( orientation == Orientation.HORIZONTAL ){
-        			property.add( Location.RIGHT, 1-divider );
+        			property.add( Location.RIGHT, 1-divider, child.getNodeId() );
         		}
         		else{
-        			property.add( Location.BOTTOM, 1-divider );
+        			property.add( Location.BOTTOM, 1-divider, child.getNodeId() );
         		}
         	}
         	return property;

@@ -39,32 +39,36 @@ public interface SplitTreeFactory<N> {
     /**
      * Informs about a leaf of the tree.
      * @param dockable the element in the leaf
+     * @param id the unique identifier of this node or -1
      * @return the representation of the leaf, or <code>null</code>
      */
-    public N leaf( Dockable dockable );
+    public N leaf( Dockable dockable, long id );
     
     /**
      * Informs about a node that is divided vertically.
      * @param left the left child of the node, might be <code>null</code>
      * @param right the right child of the node, might be <code>null</code>
      * @param divider the size of the left node, a value between 0 and 1.
+     * @param id the unique identifier of this node or -1
      * @return the representation of this node, might be <code>null</code>
      */
-    public N horizontal( N left, N right, double divider );
+    public N horizontal( N left, N right, double divider, long id );
     
     /**
      * Informs about a node that is divided vertically.
      * @param top the top child of the node, might be <code>null</code>
      * @param bottom the bottom child of the node, might be <code>null</code>
      * @param divider the size of the top node, a value between 0 and 1.
+     * @param id the unique identifier of this node or -1
      * @return the representation of this node, might be <code>null</code>
      */
-    public N vertical( N top, N bottom, double divider );
+    public N vertical( N top, N bottom, double divider, long id );
     
     /**
      * Informs about the node that is the root.
      * @param root the root of the tree, might be <code>null</code>
+     * @param id the unique identifier of this node or -1
      * @return the tree itself, or <code>null</code>
      */
-    public N root( N root );
+    public N root( N root, long id );
 }

@@ -43,10 +43,11 @@ public class TreeLocationRoot extends AbstractTreeLocation{
 	 * location belongs
 	 * @param size the relative size of this location
 	 * @param side the side which is occupied by this location
-	 * @see AbstractTreeLocation#AbstractTreeLocation(double, Side)
+	 * @param nodeId the unique identifier of the new node, can be -1
+	 * @see AbstractTreeLocation#AbstractTreeLocation(double, Side, long)
 	 */
-	public TreeLocationRoot( CSplitLocation root, double size, Side side ){
-		super( size, side );
+	public TreeLocationRoot( CSplitLocation root, double size, Side side, long nodeId ){
+		super( size, side, nodeId );
 		if( root == null )
 			throw new NullPointerException( "Parent must not be null" );
 		

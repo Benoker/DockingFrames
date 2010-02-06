@@ -74,11 +74,17 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 	/** whether a mode is currently applying itself */
 	private int onTransaction = 0;
 	
-	/** continous mode without storing the position of elements */
+	/** continuous mode without storing the position of elements */
 	private int onContinuous = 0;
 	
 	/** the controller in whose realm this manager works */
 	private DockController controller;
+	
+	/** the set of affected dockables of the current transaction */
+	private ChangeSet affected;
+	
+	/** how often the {@link #affected} set was opened */
+	private int affectedCount = 0;
 	
 	private ActionGuard guard = new ActionGuard() {
 		public boolean react( Dockable dockable ){
@@ -405,13 +411,18 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     	if( run == null )
     		return;
     	
-    	final ChangeSet set = new ChangeSet();
-    	runTransaction( new Runnable() {
-			public void run(){
-				run.run( set );	
-			}
-		}, continuous );
-    	set.finish();
+    	try{
+	    	openAffected();
+	    	
+	    	runTransaction( new Runnable() {
+				public void run(){
+					run.run( affected );	
+				}
+			}, continuous );
+    	}
+    	finally{
+    		closeAffected();
+    	}
     }
     
 
@@ -488,9 +499,13 @@ public abstract class ModeManager<H, M extends Mode<H>> {
      * registered. 
      */
     public void apply( Dockable dockable, M mode, boolean force ){
-    	ChangeSet set = new ChangeSet();
-    	apply( dockable, mode, set, force );
-    	set.finish();
+    	try{
+	    	openAffected();
+	    	apply( dockable, mode, affected, force );
+    	}
+    	finally{
+    		closeAffected();
+    	}
     }
     
     /**
@@ -1098,6 +1113,35 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 			}
 		}
 	}
+	
+	/**
+	 * Adds all elements of <code>dockables</code> to the current
+	 * {@link AffectedSet}.
+	 * @param dockables the elements to add
+	 */
+	public void addAffected( Iterable<Dockable> dockables ){
+		openAffected();
+		for( Dockable element : dockables ){
+			affected.add( element );
+		}
+		closeAffected();
+	}
+	
+    private void openAffected(){
+    	if( affectedCount == 0 ){
+    		affected = new ChangeSet();
+    	}
+    	affectedCount++;
+    }
+    
+    private void closeAffected(){
+    	affectedCount--;
+    	if( affectedCount == 0 ){
+    		ChangeSet old = affected;
+    		affected = null;
+    		old.finish();
+    	}
+    }
 	
 	@Override
 	public String toString(){

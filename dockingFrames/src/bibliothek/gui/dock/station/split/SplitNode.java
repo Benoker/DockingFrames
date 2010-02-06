@@ -55,14 +55,22 @@ public abstract class SplitNode{
     /** the current bounds of this root */
     private Rectangle currentBounds = new Rectangle();
     
+    /** a (hopefully) unique of for this node */
+    private long id;
+    
     /**
      * Creates a new SplitNode.
      * @param access the access to the owner of this node. Must not be <code>null</code>
+     * @param id the unique id of this node, -1 indicates that the id must be created
      */
-    protected SplitNode( SplitDockAccess access ){
+    protected SplitNode( SplitDockAccess access, long id ){
         if( access == null )
             throw new IllegalArgumentException( "Access must not be null" );
         this.access = access;
+        if( id < 0 )
+        	this.id = access.uniqueID();
+        else
+        	this.id = id;
     }
     
     /**
@@ -106,18 +114,20 @@ public abstract class SplitNode{
     
     /**
      * Creates a new {@link Leaf}
+     * @param id the unique identifier of the new leaf, can be -1
      * @return the new leaf
      */
-    public Leaf createLeaf(){
-        return new Leaf( access );
+    public Leaf createLeaf( long id ){
+        return new Leaf( access, id );
     }
     
     /**
      * Creates a new {@link Node}.
+     * @param id the unique identifier of the new node, can be -1
      * @return the new node
      */
-    public Node createNode(){
-        return new Node( access );
+    public Node createNode( long id ){
+        return new Node( access, id );
     }
     
     /**
@@ -169,6 +179,14 @@ public abstract class SplitNode{
     public SplitNode getParent(){
         return parent;
     }
+    
+    /**
+     * Gets the (hopefully) unique id of this node.
+     * @return the unique id
+     */
+    public long getId(){
+		return id;
+	}
     
     /**
      * Gets access to the owner-station
@@ -417,9 +435,10 @@ public abstract class SplitNode{
      * @param dockable the element to put into a leaf
      * @param fire whether to inform any {@link DockStationListener}s about
      * the new element
+     * @param id the unique identifier of the new leaf, can be -1
      * @return the new leaf or <code>null</code> if the leaf would not be valid
      */
-    protected Leaf create( Dockable dockable, boolean fire ){
+    protected Leaf create( Dockable dockable, boolean fire, long id ){
         SplitDockStation split = access.getOwner();
         DockController controller = split.getController();
         DockAcceptance acceptance = controller == null ? null : controller.getAcceptance();
@@ -432,7 +451,7 @@ public abstract class SplitNode{
                 return null;
         }
         
-        Leaf leaf = createLeaf();
+        Leaf leaf = createLeaf( id );
         leaf.setDockable( dockable, fire );
         return leaf;
     }
@@ -463,7 +482,7 @@ public abstract class SplitNode{
                     }
                 }
                 
-                leaf = createLeaf();
+                leaf = createLeaf( key.getNodeId() );
                 leaf.setDockable( dockables[0], true );
             }
             else{
@@ -482,7 +501,7 @@ public abstract class SplitNode{
                 
                 Dockable combination = access.getOwner().getCombiner().combine( dockables[0], dockables[1], access.getOwner() );
                 if( dockables.length == 2 ){
-                    leaf = createLeaf();
+                    leaf = createLeaf( key.getNodeId() );
                     leaf.setDockable( combination, true );
                     
                     DockStation station = combination.asDockStation();
@@ -497,7 +516,7 @@ public abstract class SplitNode{
                     if( station == null )
                         throw new SplitDropTreeException( access.getOwner(), "Combination of two Dockables does not create a new station" );
 
-                    leaf = createLeaf();
+                    leaf = createLeaf( key.getNodeId() );
                     leaf.setDockable( combination, true );
                     
                     for( int i = 2; i < dockables.length; i++ ){
@@ -526,7 +545,7 @@ public abstract class SplitNode{
     		return leaf;
     	}
     	else{
-    		Node node = new Node( getAccess() );
+    		Node node = new Node( getAccess(), key.getNodeId() );
         	node.evolve( key, checkValidity );
         	return node;
     	}

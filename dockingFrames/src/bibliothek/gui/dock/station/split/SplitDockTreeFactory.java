@@ -48,22 +48,22 @@ public class SplitDockTreeFactory implements SplitTreeFactory<SplitDockTree.Key>
         this.tree = tree;
     }
 
-    public Key horizontal( Key left, Key right, double divider ) {
-        return tree.horizontal( left, right, divider );
+    public Key horizontal( Key left, Key right, double divider, long id ) {
+        return tree.horizontal( left, right, divider, id );
     }
 
-    public Key leaf( Dockable dockable ) {
-        return tree.put( dockable );
+    public Key leaf( Dockable dockable, long id ) {
+        return tree.put( dockable, id );
     }
 
-    public Key root( Key root ) {
+    public Key root( Key root, long id ) {
         if( root == null )
             return null;
         
         return tree.root( root ).getRoot();
     }
 
-    public Key vertical( Key top, Key bottom, double divider ) {
-        return tree.vertical( top, bottom, divider );
+    public Key vertical( Key top, Key bottom, double divider, long id ) {
+        return tree.vertical( top, bottom, divider, id );
     }
 }

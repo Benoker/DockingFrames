@@ -48,8 +48,19 @@ public class Root extends SplitNode{
      * {@link SplitDockStation}, must not be <code>null</code>
      */
     public Root( SplitDockAccess access ){
-        super( access );
+        super( access, -1 );
     }
+    
+    /**
+     * Creates a new root.
+     * @param access the access to internal methods of the
+     * {@link SplitDockStation}, must not be <code>null</code>
+     * @param id the unique identifier of this root
+     */
+    public Root( SplitDockAccess access, long id ){
+        super( access, id );
+    }
+    
     
     /**
      * Sets the child of this root. Every root has only one child.<br>
@@ -165,7 +176,13 @@ public class Root extends SplitNode{
     @Override
     public boolean insert( SplitDockPathProperty property, int depth, Dockable dockable ) {
         if( child == null ){
-            Leaf leaf = create( dockable, true );
+        	int size = property.size();
+        	long id = -1;
+        	if( size > 0 ){
+        		id = property.getNode( size-1 ).getId();
+        	}
+        	
+            Leaf leaf = create( dockable, true, id );
             if( leaf == null )
                 return false;
             setChild( leaf );
@@ -179,9 +196,9 @@ public class Root extends SplitNode{
     @Override
     public <N> N submit( SplitTreeFactory<N> factory ) {
         if( child == null )
-            return factory.root( null );
+            return factory.root( null, getId() );
         else
-            return factory.root( child.submit( factory ) );
+            return factory.root( child.submit( factory ), getId() );
     }
     
     @Override
@@ -235,8 +252,9 @@ public class Root extends SplitNode{
     
     @Override
     public void toString( int tabs, StringBuilder out ) {
-        out.append( "Root" );
-        out.append( '\n' );
+        out.append( "Root [id=" );
+        out.append( getId() );
+        out.append( "]\n" );
         for( int i = 0; i < tabs+1; i++ )
             out.append( '\t' );
         

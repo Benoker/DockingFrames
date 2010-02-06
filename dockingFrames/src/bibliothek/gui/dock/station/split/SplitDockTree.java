@@ -36,7 +36,10 @@ import bibliothek.gui.dock.SplitDockStation;
  * Represents the internal tree of a {@link SplitDockStation}. Can be used
  * to exchange the tree of a {@link SplitDockStation}. Every node or leaf is
  * represented through a {@link Key}. Client code may use these keys to read
- * data, or create new branches of the tree.
+ * data, or create new branches of the tree.<br>
+ * Each node in a {@link SplitDockStation} has a unique identifier. This {@link SplitDockTree} 
+ * class allows to set this identifier either through {@link Key#setNodeId(long)} or
+ * through the non-complex methods (the methods that create only one new key).
  * @author Benjamin Sigg
  *
  */
@@ -86,6 +89,17 @@ public class SplitDockTree{
 		this.root = key;
 		return this;
 	}
+
+	
+	/**
+	 * Creates a key for the leaf <code>dockable</code>.
+	 * @param dockable the element for which a key is requested
+	 * @param nodeId the unique identifier for this node, can be -1
+	 * @return the new key
+	 */
+	public Key put( Dockable dockable, long nodeId ){
+		return put( new Dockable[]{ dockable }, null, nodeId );
+	}
 	
 	/**
 	 * Creates a key for the set <code>dockables</code>.
@@ -103,6 +117,17 @@ public class SplitDockTree{
 	 * @return the new key
 	 */
 	public Key put( Dockable[] dockables, Dockable selected ){
+		return put( dockables, selected, -1 );
+	}
+	
+	/**
+	 * Creates a key for the set <code>dockables</code>.
+	 * @param dockables the elements for which a key is requested
+	 * @param selected the element that should be selected, can be <code>null</code>
+	 * @param nodeId a unique identifier for this node, may be -1
+	 * @return the new key
+	 */
+	public Key put( Dockable[] dockables, Dockable selected, long nodeId ){
 		if( dockables == null )
 			throw new IllegalArgumentException( "Dockables must not be null" );
         
@@ -118,7 +143,7 @@ public class SplitDockTree{
     		
         }
 		
-		return new Leaf( dockables, selected );
+		return new Leaf( dockables, selected, nodeId );
 	}
 	
 	/**
@@ -162,7 +187,20 @@ public class SplitDockTree{
 	 * @return a key of the combination of the two elements
 	 */
 	public Key horizontal( Key left, Key right, double divider ){
-		return new Node( left, right, divider, true );
+		return horizontal( left, right, divider, -1 );
+	}
+	
+	/**
+	 * Adds two elements horizontally.
+	 * @param left the left element
+	 * @param right the right element
+	 * @param divider how much space the first element gets in respect
+	 * to the second element. Must be between 0 and 1.
+	 * @param nodeId a unique identifier for this node, may be -1
+	 * @return a key of the combination of the two elements
+	 */
+	public Key horizontal( Key left, Key right, double divider, long nodeId ){
+		return new Node( left, right, divider, true, nodeId );
 	}
 	
 	/**
@@ -196,7 +234,7 @@ public class SplitDockTree{
 	public Key vertical( Key top, Key bottom ){
 		return vertical( top, bottom, 0.5 );
 	}
-	
+
 	/**
 	 * Adds two elements vertically.
 	 * @param top the top element
@@ -206,7 +244,20 @@ public class SplitDockTree{
 	 * @return a key of the combination of the two elements
 	 */
 	public Key vertical( Key top, Key bottom, double divider ){
-		return new Node( top, bottom, divider, false );
+		return vertical( top, bottom, divider, -1 );
+	}
+	
+	/**
+	 * Adds two elements vertically.
+	 * @param top the top element
+	 * @param bottom the bottom element
+	 * @param divider how much space the first element gets in respect
+	 * to the second element. Must be between 0 and 1.
+	 * @param nodeId a unique identifier for this node, may be -1
+	 * @return a key of the combination of the two elements
+	 */
+	public Key vertical( Key top, Key bottom, double divider, long nodeId ){
+		return new Node( top, bottom, divider, false, nodeId );
 	}
 	
 	/**
@@ -342,6 +393,17 @@ public class SplitDockTree{
 		/** the parent of this node or leaf */
 		private Key parent;
 		
+		/** the unique id of this node */
+		private long id;
+		
+		/**
+		 * Creates a new key
+		 * @param id the unique id of this node 
+		 */
+		public Key( long id ){
+			this.id = id;
+		}
+		
 		/**
 		 * Gets the tree which is the owner of this node or leaf.
 		 * @return the owner
@@ -364,6 +426,22 @@ public class SplitDockTree{
 		 */
 		private void setParent( Key parent ){
 			this.parent = parent;
+		}
+		
+		/**
+		 * Sets the unique identifier of this node
+		 * @param id the id or -1
+		 */
+		public void setNodeId( long id ){
+			this.id = id;
+		}
+		
+		/**
+		 * Gets the unique id of this node.
+		 * @return the identifier or -1
+		 */
+		public long getNodeId(){
+			return id;
 		}
 		
 		/**
@@ -398,8 +476,10 @@ public class SplitDockTree{
 		 * Creates a new leaf.
 		 * @param dockables the set of dockables which will replace this leaf
 		 * @param selected the selected element
+		 * @param id the unique identifier of this node or -1
 		 */
-		public Leaf( Dockable[] dockables, Dockable selected ){
+		public Leaf( Dockable[] dockables, Dockable selected, long id ){
+			super( id );
             this.dockables = new Dockable[ dockables.length ];
             System.arraycopy( dockables, 0, this.dockables, 0, dockables.length );
             this.selected = selected;
@@ -431,8 +511,10 @@ public class SplitDockTree{
 		 * @param keyB the right or bottom child
 		 * @param divider the location of the divider
 		 * @param horizontal the orientation of this node
+		 * @param id the unique identifier of this node or -1
 		 */
-		public Node( Key keyA, Key keyB, double divider, boolean horizontal ){
+		public Node( Key keyA, Key keyB, double divider, boolean horizontal, long id ){
+			super( id );
 			if( keyA.getTree() != getTree() )
 				throw new IllegalArgumentException( "Key of first argument belongs not to this tree" );
 			

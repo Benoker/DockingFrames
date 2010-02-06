@@ -62,7 +62,16 @@ public class Leaf extends SplitNode{
      * @param access the access to the private functions of the owning {@link SplitDockStation}
      */
     public Leaf( SplitDockAccess access ){
-        super(access);
+        super( access, -1 );
+    }
+    
+    /**
+     * Creates a new leaf.
+     * @param access the access to the private functions of the owning {@link SplitDockStation}
+     * @param id the unique id of this leaf
+     */
+    public Leaf( SplitDockAccess access, long id ){
+        super( access, id );
     }
     
     /**
@@ -264,7 +273,12 @@ public class Leaf extends SplitNode{
             boolean reverse = node.getLocation() == SplitDockPathProperty.Location.RIGHT ||
                 node.getLocation() == SplitDockPathProperty.Location.BOTTOM;
             
-            Leaf leaf = create( dockable, true );
+            SplitDockPathProperty.Node lastNode = property.getLastNode();
+            long id = -1;
+            if( lastNode != null ){
+            	id = lastNode.getId();
+            }
+            Leaf leaf = create( dockable, true, id );
             if( leaf == null )
                 return false;
             
@@ -299,13 +313,13 @@ public class Leaf extends SplitNode{
             }
             
             // try using the theoretical boundaries of the element
-            return getAccess().drop( dockable, property.toLocation(), this );
+            return getAccess().drop( dockable, property.toLocation( this ), this );
         }
     }
 
     @Override
     public <N> N submit( SplitTreeFactory<N> factory ){
-        return factory.leaf( getDockable() );
+        return factory.leaf( getDockable(), getId() );
     }
         
     @Override
@@ -332,8 +346,12 @@ public class Leaf extends SplitNode{
     @Override
     public void toString( int tabs, StringBuilder out ) {
         out.append( "Leaf[ " );
-        if( dockable != null )
+        if( dockable != null ){
             out.append( dockable.getTitleText() );
+            out.append( ", " );
+        }
+        out.append( "id=" );
+        out.append( getId() );
         out.append( " ]" );
     }
     
