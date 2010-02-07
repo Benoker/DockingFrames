@@ -242,7 +242,7 @@ public class ModeSettings<A,B> {
     }
     
     /**
-     * Called if some setting with version &lt; 1.0.7 is found. Subclasses
+     * Called if some setting with version &lt; 1.0.8 is found. Subclasses
      * may override this method to read and interpret the old settings. The
      * default implementation does nothing.
      * @param in the stream to read from
@@ -264,6 +264,16 @@ public class ModeSettings<A,B> {
     }
     
     /**
+     * Called if a single identifier of a mode is found as was used in 
+     * version 1.0.7 and below.
+     * @param identifier the single identifier
+     * @return the identifier of the matching mode, can be <code>null</code>
+     */
+    protected Path resuceMode( String identifier ){
+    	return null;
+    }
+    
+    /**
      * Clears all properties of this setting and then reads new properties
      * from <code>in</code>.
      * @param in the stream to read from
@@ -271,32 +281,64 @@ public class ModeSettings<A,B> {
      */
     public void read( DataInputStream in ) throws IOException{
         Version version = Version.read( in );
+        Version version2 = null;
         version.checkCurrent();
+        
+        boolean version7 = Version.VERSION_1_0_7.compareTo( version ) >= 0;
+        if( version7 ){
+        	version2 = Version.read( in );
+        }
         
         dockables.clear();
         for( int i = 0, n = in.readInt(); i<n; i++ ){
             DockableEntry entry = new DockableEntry();
             dockables.add( entry );
             entry.id = in.readUTF();
-            if( in.readBoolean() )
-                entry.current = new Path( in.readUTF() );
+            if( in.readBoolean() ){
+            	String key = in.readUTF();
+                entry.current = version7 ? resuceMode( key ) : new Path( key );
+            }
             
             entry.history = new Path[ in.readInt() ];
-            for( int j = 0; j < entry.history.length; j++ )
-                entry.history[j] = new Path( in.readUTF() );
+            for( int j = 0; j < entry.history.length; j++ ){
+            	String key = in.readUTF();
+                entry.history[j] = version7 ? resuceMode( key ) : new Path( key );
+            }
+            
+            if( version7 ){
+            	int count = 0;
+            	for( int j = 0; j < entry.history.length; j++ ){
+            		if( entry.history[j] != null ){
+            			count++;
+            		}
+            	}
+            	if( count != entry.history.length ){
+            		Path[] temp = entry.history;
+            		entry.history = new Path[ count ];
+            		int index = 0;
+            		for( int j = 0; j < temp.length; j++ ){
+            			if( temp[j] != null ){
+            				entry.history[ index++ ] = temp[j];
+            			}
+            		}
+            	}
+            }
             
             entry.properties = new HashMap<Path, B>();
             for( int j = 0, m = in.readInt(); j<m; j++ ){
-            	Path key = new Path( in.readUTF() );
-                B property = converter.readProperty( in );
-                entry.properties.put( key, property );
+            	String key = in.readUTF();
+            	Path mode = version7 ? resuceMode( key ) : new Path( key );
+            	B property = converter.readProperty( in );
+            	if( mode != null ){
+            		entry.properties.put( mode, property );
+            	}
             }
         }
         
         // new since 1.0.8
         modes.clear();
         
-        if( version.compareTo( Version.VERSION_1_0_8 ) < 0 ){
+        if( version7 ){
             rescueSettings( in, version );
         }
         else{

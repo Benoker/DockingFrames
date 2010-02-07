@@ -2395,348 +2395,11 @@
 		</picture>
 	</pictures>
 	<resources>
+		<resource name="dock.ui.ThemeMap">
+			<key>basic</key>
+		</resource>
 		<resource name="CLookAndFeelMenuPiece">
 			<index>0</index>
-		</resource>
-		<resource name="ccontrol.frontend">
-			<areas/>
-			<frontend>
-				<current>
-					<base>
-						<roots>
-							<root name="ccontrol center">
-								<layout factory="predefined">
-									<replacement id="rootccontrol center"/>
-									<delegate id="delegate_SplitDockStationFactory">
-										<node orientation="VERTICAL" divider="0.39767441860465114">
-											<leaf id="0"/>
-											<node orientation="HORIZONTAL" divider="0.6818181818181818">
-												<leaf id="1"/>
-												<leaf id="2"/>
-											</node>
-										</node>
-									</delegate>
-								</layout>
-								<children ignore="false">
-									<child>
-										<layout factory="predefined">
-											<replacement id="rootpicture area"/>
-											<delegate id="delegate_SplitDockStationFactory">
-												<leaf id="0"/>
-											</delegate>
-										</layout>
-										<children ignore="false">
-											<child>
-												<layout factory="delegate_StackDockStationFactory">
-													<selected>0</selected>
-													<children>
-														<child id="0"/>
-														<child id="1"/>
-													</children>
-												</layout>
-												<children ignore="false">
-													<child>
-														<layout factory="delegate_page">
-															<id>1 page</id>
-															<area>picture area</area>
-															<multiple>Face</multiple>
-														</layout>
-														<children ignore="false"/>
-													</child>
-													<child>
-														<layout factory="delegate_page">
-															<id>0 page</id>
-															<area>picture area</area>
-															<multiple>Apple</multiple>
-														</layout>
-														<children ignore="false"/>
-													</child>
-												</children>
-											</child>
-										</children>
-									</child>
-									<child>
-										<layout factory="predefined">
-											<replacement id="dockablesingle ColorDockable"/>
-											<delegate id="delegate_ccontrol backup factory id">
-												<id>ColorDockable</id>
-											</delegate>
-										</layout>
-										<children ignore="false"/>
-									</child>
-									<child>
-										<layout factory="predefined">
-											<replacement id="dockablesingle PictureListDockable"/>
-											<delegate id="delegate_ccontrol backup factory id">
-												<id>PictureListDockable</id>
-											</delegate>
-										</layout>
-										<children ignore="false"/>
-									</child>
-								</children>
-							</root>
-							<root name="picture area">
-								<layout factory="predefined">
-									<replacement id="rootpicture area"/>
-									<delegate id="delegate_SplitDockStationFactory">
-										<leaf id="0"/>
-									</delegate>
-								</layout>
-								<children ignore="false">
-									<child>
-										<layout factory="delegate_StackDockStationFactory">
-											<selected>0</selected>
-											<children>
-												<child id="0"/>
-												<child id="1"/>
-											</children>
-										</layout>
-										<children ignore="false">
-											<child>
-												<layout factory="delegate_page">
-													<id>1 page</id>
-													<area>picture area</area>
-													<multiple>Face</multiple>
-												</layout>
-												<children ignore="false"/>
-											</child>
-											<child>
-												<layout factory="delegate_page">
-													<id>0 page</id>
-													<area>picture area</area>
-													<multiple>Apple</multiple>
-												</layout>
-												<children ignore="false"/>
-											</child>
-										</children>
-									</child>
-								</children>
-							</root>
-							<root name="external">
-								<layout factory="predefined">
-									<replacement id="rootexternal"/>
-									<delegate id="delegate_screen dock"/>
-								</layout>
-								<children ignore="false"/>
-							</root>
-							<root name="ccontrol north">
-								<layout factory="predefined">
-									<replacement id="rootccontrol north"/>
-									<delegate id="delegate_flap dock">
-										<window auto="false" direction="SOUTH"/>
-										<children/>
-									</delegate>
-								</layout>
-								<children ignore="false"/>
-							</root>
-							<root name="ccontrol south">
-								<layout factory="predefined">
-									<replacement id="rootccontrol south"/>
-									<delegate id="delegate_flap dock">
-										<window auto="false" direction="NORTH"/>
-										<children/>
-									</delegate>
-								</layout>
-								<children ignore="false"/>
-							</root>
-							<root name="ccontrol east">
-								<layout factory="predefined">
-									<replacement id="rootccontrol east"/>
-									<delegate id="delegate_flap dock">
-										<window auto="false" direction="WEST"/>
-										<children/>
-									</delegate>
-								</layout>
-								<children ignore="false"/>
-							</root>
-							<root name="ccontrol west">
-								<layout factory="predefined">
-									<replacement id="rootccontrol west"/>
-									<delegate id="delegate_flap dock">
-										<window auto="false" direction="EAST"/>
-										<children/>
-									</delegate>
-								</layout>
-								<children ignore="false"/>
-							</root>
-						</roots>
-						<children>
-							<child key="multi 1 page" location="false"/>
-							<child key="multi 0 page" location="false"/>
-						</children>
-					</base>
-					<modes>
-						<dockables>
-							<entry id="single PictureListDockable" current="dock.mode.normal">
-								<history>
-									<mode>dock.mode.maximized</mode>
-									<mode>dock.mode.minimized</mode>
-									<mode>dock.mode.externalized</mode>
-									<mode>dock.mode.normal</mode>
-								</history>
-								<properties>
-									<property id="dock.mode.externalized">
-										<mode>dock.mode.externalized</mode>
-										<root>external</root>
-										<location>
-											<property factory="screen dock">
-												<x>582</x>
-												<y>437</y>
-												<width>569</width>
-												<height>198</height>
-											</property>
-										</location>
-									</property>
-									<property id="dock.mode.normal">
-										<mode>dock.mode.normal</mode>
-										<root>ccontrol center</root>
-										<location>
-											<property factory="SplitDockPathProperty">
-												<node location="BOTTOM" size="0.3906976744186047"/>
-											</property>
-											<property factory="StackDockPropertyFactory">1</property>
-										</location>
-									</property>
-									<property id="dock.mode.maximized">
-										<mode>dock.mode.maximized</mode>
-										<root>ccontrol center</root>
-										<location/>
-									</property>
-									<property id="dock.mode.minimized">
-										<mode>dock.mode.minimized</mode>
-										<root>ccontrol north</root>
-										<location>
-											<property factory="flap dock">
-												<index>0</index>
-												<holding>false</holding>
-												<size>400</size>
-											</property>
-										</location>
-									</property>
-								</properties>
-							</entry>
-							<entry id="multi 1 page" current="dock.mode.normal">
-								<history>
-									<mode>dock.mode.minimized</mode>
-									<mode>dock.mode.maximized</mode>
-									<mode>dock.mode.normal</mode>
-								</history>
-								<properties>
-									<property id="dock.mode.normal">
-										<mode>dock.mode.normal</mode>
-										<root>picture area</root>
-										<location>
-											<property factory="SplitDockPathProperty"/>
-											<property factory="StackDockPropertyFactory">0</property>
-										</location>
-									</property>
-									<property id="dock.mode.maximized">
-										<mode>dock.mode.maximized</mode>
-										<root>ccontrol center</root>
-										<location/>
-									</property>
-									<property id="dock.mode.minimized">
-										<mode>dock.mode.minimized</mode>
-										<root>ccontrol north</root>
-										<location>
-											<property factory="flap dock">
-												<index>0</index>
-												<holding>false</holding>
-												<size>400</size>
-											</property>
-										</location>
-									</property>
-								</properties>
-							</entry>
-							<entry id="single ColorDockable" current="dock.mode.normal">
-								<history>
-									<mode>dock.mode.maximized</mode>
-									<mode>dock.mode.normal</mode>
-								</history>
-								<properties>
-									<property id="dock.mode.normal">
-										<mode>dock.mode.normal</mode>
-										<root>ccontrol center</root>
-										<location>
-											<property factory="SplitDockPathProperty">
-												<node location="BOTTOM" size="0.6023255813953489"/>
-												<node location="LEFT" size="0.6818181818181818"/>
-											</property>
-										</location>
-									</property>
-									<property id="dock.mode.maximized">
-										<mode>dock.mode.maximized</mode>
-										<root>ccontrol center</root>
-										<location/>
-									</property>
-								</properties>
-							</entry>
-							<entry id="single picture area" current="dock.mode.normal">
-								<history>
-									<mode>dock.mode.maximized</mode>
-									<mode>dock.mode.normal</mode>
-								</history>
-								<properties>
-									<property id="dock.mode.normal">
-										<mode>dock.mode.normal</mode>
-										<root>ccontrol center</root>
-										<location>
-											<property factory="SplitDockPropertyFactory">
-												<x>0.0</x>
-												<y>0.0</y>
-												<width>1.0</width>
-												<height>1.0</height>
-											</property>
-										</location>
-									</property>
-								</properties>
-							</entry>
-							<entry id="multi 0 page" current="dock.mode.normal">
-								<history>
-									<mode>dock.mode.minimized</mode>
-									<mode>dock.mode.maximized</mode>
-									<mode>dock.mode.normal</mode>
-								</history>
-								<properties>
-									<property id="dock.mode.normal">
-										<mode>dock.mode.normal</mode>
-										<root>picture area</root>
-										<location>
-											<property factory="SplitDockPathProperty"/>
-											<property factory="StackDockPropertyFactory">1</property>
-										</location>
-									</property>
-									<property id="dock.mode.maximized">
-										<mode>dock.mode.maximized</mode>
-										<root>ccontrol center</root>
-										<location/>
-									</property>
-									<property id="dock.mode.minimized">
-										<mode>dock.mode.minimized</mode>
-										<root>ccontrol north</root>
-										<location>
-											<property factory="flap dock">
-												<index>0</index>
-												<holding>false</holding>
-												<size>400</size>
-											</property>
-										</location>
-									</property>
-								</properties>
-							</entry>
-						</dockables>
-						<modes>
-							<entry id="dock.mode.maximized"/>
-						</modes>
-					</modes>
-					<multi-factories>
-						<factory id="page">
-							<dockable id="1 page"/>
-							<dockable id="0 page"/>
-						</factory>
-					</multi-factories>
-				</current>
-			</frontend>
 		</resource>
 		<resource name="ccontrol.preferences">
 			<child name="dock">
@@ -2789,8 +2452,351 @@
 				</child>
 			</child>
 		</resource>
-		<resource name="dock.ui.ThemeMap">
-			<key>basic</key>
+		<resource name="ccontrol.frontend">
+			<areas/>
+			<frontend>
+				<current>
+					<base>
+						<roots>
+							<root name="ccontrol south">
+								<layout factory="predefined">
+									<replacement id="rootccontrol south"/>
+									<delegate id="delegate_flap dock">
+										<window auto="false" direction="NORTH"/>
+										<children/>
+									</delegate>
+								</layout>
+								<children ignore="false"/>
+							</root>
+							<root name="ccontrol center">
+								<layout factory="predefined">
+									<replacement id="rootccontrol center"/>
+									<delegate id="delegate_SplitDockStationFactory">
+										<node nodeId="1265545542869" orientation="VERTICAL" divider="0.6897894169194472">
+											<node nodeId="1265545557315" orientation="HORIZONTAL" divider="0.263986013986014">
+												<leaf id="0" nodeId="1265545542869"/>
+												<leaf id="1" nodeId="1265545542869"/>
+											</node>
+											<leaf id="2" nodeId="1265545542869"/>
+										</node>
+									</delegate>
+								</layout>
+								<children ignore="false">
+									<child>
+										<layout factory="predefined">
+											<replacement id="dockablesingle PictureListDockable"/>
+											<delegate id="delegate_ccontrol backup factory id">
+												<id>PictureListDockable</id>
+											</delegate>
+										</layout>
+										<children ignore="false"/>
+									</child>
+									<child>
+										<layout factory="predefined">
+											<replacement id="rootpicture area"/>
+											<delegate id="delegate_SplitDockStationFactory">
+												<leaf id="0" nodeId="1265545594881"/>
+											</delegate>
+										</layout>
+										<children ignore="false">
+											<child>
+												<layout factory="delegate_StackDockStationFactory">
+													<selected>0</selected>
+													<children>
+														<child id="0"/>
+														<child id="1"/>
+													</children>
+												</layout>
+												<children ignore="false">
+													<child>
+														<layout factory="delegate_page">
+															<id>1 page</id>
+															<area>picture area</area>
+															<multiple>Face</multiple>
+														</layout>
+														<children ignore="false"/>
+													</child>
+													<child>
+														<layout factory="delegate_page">
+															<id>0 page</id>
+															<area>picture area</area>
+															<multiple>Apple</multiple>
+														</layout>
+														<children ignore="false"/>
+													</child>
+												</children>
+											</child>
+										</children>
+									</child>
+									<child>
+										<layout factory="predefined">
+											<replacement id="dockablesingle ColorDockable"/>
+											<delegate id="delegate_ccontrol backup factory id">
+												<id>ColorDockable</id>
+											</delegate>
+										</layout>
+										<children ignore="false"/>
+									</child>
+								</children>
+							</root>
+							<root name="ccontrol north">
+								<layout factory="predefined">
+									<replacement id="rootccontrol north"/>
+									<delegate id="delegate_flap dock">
+										<window auto="false" direction="SOUTH"/>
+										<children/>
+									</delegate>
+								</layout>
+								<children ignore="false"/>
+							</root>
+							<root name="ccontrol east">
+								<layout factory="predefined">
+									<replacement id="rootccontrol east"/>
+									<delegate id="delegate_flap dock">
+										<window auto="false" direction="WEST"/>
+										<children/>
+									</delegate>
+								</layout>
+								<children ignore="false"/>
+							</root>
+							<root name="picture area">
+								<layout factory="predefined">
+									<replacement id="rootpicture area"/>
+									<delegate id="delegate_SplitDockStationFactory">
+										<leaf id="0" nodeId="1265545594881"/>
+									</delegate>
+								</layout>
+								<children ignore="false">
+									<child>
+										<layout factory="delegate_StackDockStationFactory">
+											<selected>0</selected>
+											<children>
+												<child id="0"/>
+												<child id="1"/>
+											</children>
+										</layout>
+										<children ignore="false">
+											<child>
+												<layout factory="delegate_page">
+													<id>1 page</id>
+													<area>picture area</area>
+													<multiple>Face</multiple>
+												</layout>
+												<children ignore="false"/>
+											</child>
+											<child>
+												<layout factory="delegate_page">
+													<id>0 page</id>
+													<area>picture area</area>
+													<multiple>Apple</multiple>
+												</layout>
+												<children ignore="false"/>
+											</child>
+										</children>
+									</child>
+								</children>
+							</root>
+							<root name="external">
+								<layout factory="predefined">
+									<replacement id="rootexternal"/>
+									<delegate id="delegate_screen dock"/>
+								</layout>
+								<children ignore="false"/>
+							</root>
+							<root name="ccontrol west">
+								<layout factory="predefined">
+									<replacement id="rootccontrol west"/>
+									<delegate id="delegate_flap dock">
+										<window auto="false" direction="EAST"/>
+										<children/>
+									</delegate>
+								</layout>
+								<children ignore="false"/>
+							</root>
+						</roots>
+						<children>
+							<child key="multi 1 page" location="false"/>
+							<child key="multi 0 page" location="false"/>
+						</children>
+					</base>
+					<modes>
+						<dockables>
+							<entry id="single picture area" current="dock.mode.normal">
+								<history>
+									<mode>dock.mode.maximized</mode>
+									<mode>dock.mode.normal</mode>
+								</history>
+								<properties>
+									<property id="dock.mode.normal">
+										<mode>dock.mode.normal</mode>
+										<root>ccontrol center</root>
+										<location>
+											<property factory="SplitDockPropertyFactory">
+												<x>0.0</x>
+												<y>0.0</y>
+												<width>1.0</width>
+												<height>1.0</height>
+											</property>
+										</location>
+									</property>
+								</properties>
+							</entry>
+							<entry id="single ColorDockable" current="dock.mode.normal">
+								<history>
+									<mode>dock.mode.maximized</mode>
+									<mode>dock.mode.normal</mode>
+								</history>
+								<properties>
+									<property id="dock.mode.normal">
+										<mode>dock.mode.normal</mode>
+										<root>ccontrol center</root>
+										<location>
+											<property factory="SplitDockPathProperty">
+												<node location="BOTTOM" size="0.6023255813953489"/>
+												<node location="LEFT" size="0.6818181818181818"/>
+												<leaf id="-1"/>
+											</property>
+										</location>
+									</property>
+									<property id="dock.mode.maximized">
+										<mode>dock.mode.maximized</mode>
+										<root>ccontrol center</root>
+										<location/>
+									</property>
+								</properties>
+							</entry>
+							<entry id="multi 1 page" current="dock.mode.normal">
+								<history>
+									<mode>dock.mode.maximized</mode>
+									<mode>dock.mode.minimized</mode>
+									<mode>dock.mode.normal</mode>
+								</history>
+								<properties>
+									<property id="dock.mode.normal">
+										<mode>dock.mode.normal</mode>
+										<root>picture area</root>
+										<location>
+											<property factory="SplitDockPathProperty">
+												<leaf id="1265545594881"/>
+											</property>
+											<property factory="StackDockPropertyFactory">0</property>
+										</location>
+									</property>
+									<property id="dock.mode.maximized">
+										<mode>dock.mode.maximized</mode>
+										<root>ccontrol center</root>
+										<location/>
+									</property>
+									<property id="dock.mode.minimized">
+										<mode>dock.mode.minimized</mode>
+										<root>ccontrol north</root>
+										<location>
+											<property factory="flap dock">
+												<index>0</index>
+												<holding>false</holding>
+												<size>400</size>
+											</property>
+										</location>
+									</property>
+								</properties>
+							</entry>
+							<entry id="multi 0 page" current="dock.mode.normal">
+								<history>
+									<mode>dock.mode.minimized</mode>
+									<mode>dock.mode.maximized</mode>
+									<mode>dock.mode.normal</mode>
+								</history>
+								<properties>
+									<property id="dock.mode.normal">
+										<mode>dock.mode.normal</mode>
+										<root>picture area</root>
+										<location>
+											<property factory="SplitDockPathProperty">
+												<leaf id="1265545594881"/>
+											</property>
+											<property factory="StackDockPropertyFactory">1</property>
+										</location>
+									</property>
+									<property id="dock.mode.maximized">
+										<mode>dock.mode.maximized</mode>
+										<root>ccontrol center</root>
+										<location/>
+									</property>
+									<property id="dock.mode.minimized">
+										<mode>dock.mode.minimized</mode>
+										<root>ccontrol north</root>
+										<location>
+											<property factory="flap dock">
+												<index>0</index>
+												<holding>false</holding>
+												<size>400</size>
+											</property>
+										</location>
+									</property>
+								</properties>
+							</entry>
+							<entry id="single PictureListDockable" current="dock.mode.normal">
+								<history>
+									<mode>dock.mode.maximized</mode>
+									<mode>dock.mode.minimized</mode>
+									<mode>dock.mode.externalized</mode>
+									<mode>dock.mode.normal</mode>
+								</history>
+								<properties>
+									<property id="dock.mode.externalized">
+										<mode>dock.mode.externalized</mode>
+										<root>external</root>
+										<location>
+											<property factory="screen dock">
+												<x>582</x>
+												<y>437</y>
+												<width>569</width>
+												<height>198</height>
+											</property>
+										</location>
+									</property>
+									<property id="dock.mode.normal">
+										<mode>dock.mode.normal</mode>
+										<root>ccontrol center</root>
+										<location>
+											<property factory="SplitDockPathProperty">
+												<node location="BOTTOM" size="0.6023255813953489" id="1265545542869"/>
+												<node location="RIGHT" size="0.31818181818181823" id="1265545542869"/>
+												<leaf id="1265545542869"/>
+											</property>
+										</location>
+									</property>
+									<property id="dock.mode.maximized">
+										<mode>dock.mode.maximized</mode>
+										<root>ccontrol center</root>
+										<location/>
+									</property>
+									<property id="dock.mode.minimized">
+										<mode>dock.mode.minimized</mode>
+										<root>ccontrol north</root>
+										<location>
+											<property factory="flap dock">
+												<index>0</index>
+												<holding>false</holding>
+												<size>400</size>
+											</property>
+										</location>
+									</property>
+								</properties>
+							</entry>
+						</dockables>
+						<modes>
+							<entry id="dock.mode.maximized"/>
+						</modes>
+					</modes>
+					<multi-factories>
+						<factory id="page">
+							<dockable id="1 page"/>
+							<dockable id="0 page"/>
+						</factory>
+					</multi-factories>
+				</current>
+			</frontend>
 		</resource>
 	</resources>
 </config>

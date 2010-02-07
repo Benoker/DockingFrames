@@ -81,19 +81,8 @@ public class CLocationModeSettings<B> extends ModeSettings<Location,B>{
 			Map<String, Path> translatedLastMaximizedMode = new HashMap<String, Path>();
 			for( Map.Entry<String, String> pair : lastMaximizedMode.entrySet() ){
 				String mode = pair.getValue();
-				Path result = null;
-				if( MINIMIZED.equals( mode )){
-					result = MinimizedMode.IDENTIFIER;
-				}
-				else if( NORMALIZED.equals( mode )){
-					result = NormalMode.IDENTIFIER;
-				}
-				else if( EXTERNALIZED.equals( mode )){
-					result = ExternalizedMode.IDENTIFIER;
-				}
-				else if( MAXIMIZED.equals( mode )){
-					result = MaximizedMode.IDENTIFIER;
-				}
+				Path result = resuceMode( mode );
+				
 				if( result != null ){
 					translatedLastMaximizedMode.put( pair.getKey(), result );
 				}
@@ -117,6 +106,23 @@ public class CLocationModeSettings<B> extends ModeSettings<Location,B>{
 		}
 	}
 
+	@Override
+	protected Path resuceMode( String mode ){
+		if( MINIMIZED.equals( mode )){
+			return MinimizedMode.IDENTIFIER;
+		}
+		else if( NORMALIZED.equals( mode )){
+			return NormalMode.IDENTIFIER;
+		}
+		else if( EXTERNALIZED.equals( mode )){
+			return ExternalizedMode.IDENTIFIER;
+		}
+		else if( MAXIMIZED.equals( mode )){
+			return MaximizedMode.IDENTIFIER;
+		}
+		return null;
+	}
+	
 	@Override
 	protected void rescueSettings( DataInputStream in, Version version ) throws IOException{
         if( version.compareTo( Version.VERSION_1_0_7 ) < 0 ){

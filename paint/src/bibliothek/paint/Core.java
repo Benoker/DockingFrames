@@ -57,6 +57,9 @@ public class Core {
     /** the manager managing all the elements of the view */
     private ViewManager view;
     
+    /** whether to use a xml or a binary file to store persistent data */
+    private boolean formatXML = true;
+    
     /**
      * Creates a new core.
      * @param secure whether the application runs in a secure environment or not
@@ -107,12 +110,15 @@ public class Core {
             InputStream in = Core.class.getResourceAsStream( "/data/bibliothek/paint/config.xml" );
             if( in != null ){
                 try{
-                    readXML( XIO.readUTF( in ) );
-                    in.close();
-                    /*
-                    DataInputStream dataIn = new DataInputStream( in );
-                    read( dataIn );
-                    dataIn.close();*/
+                	if( formatXML ){
+	                    readXML( XIO.readUTF( in ) );
+	                    in.close();
+                	}
+                	else{
+	                    DataInputStream dataIn = new DataInputStream( in );
+	                    read( dataIn );
+	                    dataIn.close();
+                	}
                 }
                 catch( IOException ex ){
                     ex.printStackTrace();
@@ -121,13 +127,16 @@ public class Core {
         }
         else{
             try{
-                InputStream in = new BufferedInputStream( new FileInputStream( "config.xml" ));
-                readXML( XIO.readUTF( in ) );
-                in.close();
-                
-                /*DataInputStream in = new DataInputStream( new FileInputStream( "paint.config" ));
-                read( in );
-                in.close();*/
+            	if( formatXML ){
+	                InputStream in = new BufferedInputStream( new FileInputStream( "config.xml" ));
+	                readXML( XIO.readUTF( in ) );
+	                in.close();
+            	}
+            	else{
+            		DataInputStream in = new DataInputStream( new FileInputStream( "paint.config" ));
+            		read( in );
+            		in.close();
+            	}
             }
             catch( IOException ex ){
                 ex.printStackTrace();
@@ -144,14 +153,17 @@ public class Core {
                     
                     if( !secure ){
                         try{
-                            XElement element = new XElement( "config" );
-                            writeXML( element );
-                            OutputStream out = new BufferedOutputStream( new FileOutputStream( "config.xml" ));
-                            XIO.writeUTF( element, out );
-                            
-                            /*DataOutputStream out = new DataOutputStream( new FileOutputStream( "paint.config" ));
-                            write( out );
-                            out.close();*/
+                        	if( formatXML ){
+	                            XElement element = new XElement( "config" );
+	                            writeXML( element );
+	                            OutputStream out = new BufferedOutputStream( new FileOutputStream( "config.xml" ));
+	                            XIO.writeUTF( element, out );
+                        	}
+                        	else{
+	                            DataOutputStream out = new DataOutputStream( new FileOutputStream( "paint.config" ));
+	                            write( out );
+	                            out.close();
+                        	}
                         }
                         catch( IOException ex ){
                             ex.printStackTrace();

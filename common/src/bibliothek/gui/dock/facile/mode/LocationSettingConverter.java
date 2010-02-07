@@ -33,6 +33,8 @@ import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.layout.DockablePropertyFactory;
 import bibliothek.gui.dock.layout.PropertyTransformer;
+import bibliothek.gui.dock.station.flap.FlapDockProperty;
+import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 import bibliothek.gui.dock.support.mode.ModeSettingsConverter;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
@@ -71,10 +73,29 @@ public class LocationSettingConverter implements ModeSettingsConverter<Location,
     public Location readProperty( DataInputStream in ) throws IOException {
         Version version = Version.read( in );
         version.checkCurrent();
-        Path mode = new Path( in.readUTF() );
+        boolean version8 = Version.VERSION_1_0_8.compareTo( version ) <= 0;
+        Path mode = null;
+        if( version8 ){
+        	mode = new Path( in.readUTF() );
+        }
         String root = in.readUTF();
         DockableProperty location = transformer.read( in );
+        if( !version8 ){
+        	mode = guessMode( location );
+        }
         return new Location( mode, root, location );
+    }
+    
+    private Path guessMode( DockableProperty location ){
+    	if( location instanceof FlapDockProperty ){
+    		return MinimizedMode.IDENTIFIER;
+    	}
+    	else if( location instanceof ScreenDockProperty ){
+    		return ExternalizedMode.IDENTIFIER; 
+    	}
+    	else{
+    		return NormalMode.IDENTIFIER;
+    	}
     }
 
     public void writePropertyXML( Location b, XElement element ) {
@@ -84,9 +105,16 @@ public class LocationSettingConverter implements ModeSettingsConverter<Location,
     }
 
     public Location readPropertyXML( XElement element ) {
-        return new Location(
-        		new Path( element.getElement( "mode" ).getString() ),
-                element.getElement( "root" ).getString(),
-                transformer.readXML( element.getElement( "location" ) ));
+    	XElement xmode = element.getElement( "mode" );
+    	Path mode = null;
+    	if( xmode != null ){
+    		mode = new Path( xmode.getString() );
+    	}
+    	String root = element.getElement( "root" ).getString();
+    	DockableProperty location = transformer.readXML( element.getElement( "location" ) );
+    	if( mode == null ){
+    		mode = guessMode( location );
+    	}
+        return new Location( mode, root, location );
     }
 }

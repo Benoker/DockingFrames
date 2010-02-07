@@ -292,7 +292,10 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
      * @throws IOException if an I/O-error occurs
      */
     private SplitDockStationLayout.Entry readEntry( DataInputStream in, boolean version8 ) throws IOException{
-    	long id = in.readLong();
+    	long id = -1;
+    	if( version8 ){
+    		id = in.readLong();
+    	}
         byte kind = in.readByte();
         if( kind == 0 ){
             return new SplitDockStationLayout.Leaf( in.readInt(), id );
