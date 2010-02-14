@@ -2,11 +2,9 @@ package bibliothek.extension.gui.dock.theme.eclipse;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector.TitleBar;
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
-import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.title.DockTitleRequest;
 
 /**
  * A {@link DockTitleFactory} that calls another factory but only
@@ -39,19 +37,21 @@ public class EclipseDockTitleFactory implements DockTitleFactory{
         this.factory = factory;
     }
     
-    public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
-        TitleBar bar = theme.getThemeConnector( version.getController() ).getTitleBarKind( dockable );
-        if( bar == TitleBar.BASIC || bar == TitleBar.BASIC_BORDERED )
-            return factory.createDockableTitle( dockable, version );
-        
-        return null;
+    public void install( DockTitleRequest request ){
+	    factory.install( request );	
     }
     
-    public <D extends Dockable & DockStation> DockTitle createStationTitle( D dockable, DockTitleVersion version ) {
-        TitleBar bar = theme.getThemeConnector( version.getController() ).getTitleBarKind( dockable );
-        if( bar == TitleBar.BASIC || bar == TitleBar.BASIC_BORDERED )
-            return factory.createStationTitle( dockable, version );
-        
-        return null;        
+    public void uninstall( DockTitleRequest request ){
+	    factory.uninstall( request );	
+    }
+    
+    public void request( DockTitleRequest request ){
+        TitleBar bar = theme.getThemeConnector( request.getVersion().getController() ).getTitleBarKind( request.getTarget() );
+        if( bar == TitleBar.BASIC || bar == TitleBar.BASIC_BORDERED ){
+        	factory.request( request );
+        }
+        else{
+        	request.setAnswer( null );
+        }
     }
 }

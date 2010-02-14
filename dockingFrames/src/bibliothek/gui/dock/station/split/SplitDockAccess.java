@@ -30,6 +30,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
@@ -54,7 +55,7 @@ public interface SplitDockAccess {
      * Gets the {@link DockableDisplayer} which is currently in fullscreen-mode.
      * @return the displayer, may be <code>null</code>
      */
-    public DockableDisplayer getFullScreenDockable();
+    public StationChildHandle getFullScreenDockable();
     
     /**
      * Tests whether the given value of the divider is a legal value or not.
@@ -65,23 +66,22 @@ public interface SplitDockAccess {
     public double validateDivider( double divider, Node node );
     
     /**
-     * Creates a {@link DockableDisplayer} for <code>dockable</code> and adds
+     * Creates a {@link StationChildHandle} for <code>dockable</code> and adds
      * the displayer to the station. Binds <code>dockable</code>.
      * @param dockable the new {@link Dockable}
      * @param fire whether to inform {@link DockStationListener}s about
      * the new element
-     * @return the created displayer
+     * @return the created handle
      */
-    public DockableDisplayer addDisplayer( Dockable dockable, boolean fire );
+    public StationChildHandle addHandle( Dockable dockable, boolean fire );
     
     /**
-     * Removes a {@link DockableDisplayer} from the station. The {@link Dockable}
-     * of <code>displayer</code> will be unbound.
-     * @param displayer the element to remove
+     * Removes an element from the station.
+     * @param handle the element to remove
      * @param fire whether to inform {@link DockStationListener}s about
      * the change
      */
-    public void removeDisplayer( DockableDisplayer displayer, boolean fire );
+    public void removeHandle( StationChildHandle handle, boolean fire );
     
     /**
      * Tries to add <code>Dockable</code> such that the boundaries given

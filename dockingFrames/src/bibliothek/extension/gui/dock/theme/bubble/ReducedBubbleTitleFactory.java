@@ -27,10 +27,10 @@ package bibliothek.extension.gui.dock.theme.bubble;
 
 import java.awt.Point;
 
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
+import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
@@ -40,14 +40,27 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  *
  */
 public class ReducedBubbleTitleFactory implements DockTitleFactory {
-    public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
-        return new Title( dockable, version );
-    }
-
-    public <D extends Dockable & DockStation> DockTitle createStationTitle( D dockable, DockTitleVersion version ) {
-        return new Title( dockable, version );
-    }
-
+	public void install( DockTitleRequest request ){
+		// ignore
+	}
+	
+	public void uninstall( DockTitleRequest request ){
+		// ignore	
+	}
+	
+	public void request( DockTitleRequest request ){
+		request.setAnswer( new Title( request.getTarget(), request.getVersion() ) );	
+	}
+	
+	/**
+	 * Creates a new title without origin.
+	 * @param dockable the owner of the title
+	 * @return the new title
+	 */
+	public DockTitle createTitle( Dockable dockable ){
+		return new Title( dockable, null );
+	}
+	
     /**
      * A {@link BubbleDockTitle} whose edges are always round.
      * @author Benjamin Sigg

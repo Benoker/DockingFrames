@@ -33,7 +33,11 @@ import java.io.IOException;
 
 import javax.swing.SwingUtilities;
 
-import bibliothek.gui.*;
+import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.DockTheme;
+import bibliothek.gui.DockUI;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.dockable.AbstractDockable;
@@ -41,7 +45,7 @@ import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.station.support.DockStationListenerManager;
 import bibliothek.gui.dock.title.DockTitle;
-import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.util.PropertyKey;
 
 /**
@@ -109,14 +113,9 @@ public abstract class AbstractDockableStation extends AbstractDockable implement
      */
     protected abstract void callDockUiUpdateTheme() throws IOException;
     
-    /**
-     * Overridden, returns now a {@link DockTitleVersion} created by
-     * {@link DockTitleVersion#createStation}.
-     * @return the {@link DockTitleVersion} for this dockable
-     */
     @Override
-    public DockTitle getDockTitle( DockTitleVersion version ) {
-        return version.createStation( this );
+    public void requestDockTitle( DockTitleRequest request ){
+	    // ignore
     }
     
     public DockActionSource getDirectActionOffers( Dockable dockable ) {

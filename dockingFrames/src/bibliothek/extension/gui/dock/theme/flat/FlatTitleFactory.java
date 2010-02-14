@@ -29,13 +29,11 @@ package bibliothek.extension.gui.dock.theme.flat;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.themes.basic.BasicDockTitle;
 import bibliothek.gui.dock.title.AbstractDockTitle;
-import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
-import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.title.DockTitleRequest;
 
 /**
  * A factory that creates instances of {@link BasicDockTitle}, but
@@ -45,15 +43,23 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  * @author Benjamin Sigg
  */
 public class FlatTitleFactory implements DockTitleFactory{
-    public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
-        return new BasicDockTitle( dockable, version );
-    }
-    
-    public <D extends Dockable & DockStation> DockTitle createStationTitle( 
-            D dockable, DockTitleVersion version ){
-        
-        AbstractDockTitle title = new AbstractDockTitle( dockable, version );
-        title.setBorder( BorderFactory.createLineBorder( title.getBackground().darker() ));
-        return title;
-    }
+	public void install( DockTitleRequest request ){
+		// ignore	
+	}
+	
+	public void uninstall( DockTitleRequest request ){
+		// ignore	
+	}
+	
+	public void request( DockTitleRequest request ){
+		Dockable dockable = request.getTarget();
+		if( dockable.asDockStation() == null ){
+			request.setAnswer( new BasicDockTitle( dockable, request.getVersion() ) );
+		}
+		else{
+			AbstractDockTitle title = new AbstractDockTitle( dockable, request.getVersion() );
+	        title.setBorder( BorderFactory.createLineBorder( title.getBackground().darker() ));
+	        request.setAnswer( title );
+		}
+	}
 }

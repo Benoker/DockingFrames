@@ -1,46 +1,89 @@
 package bibliothek.chess.view;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.dockable.MovingImage;
 import bibliothek.gui.dock.themes.BasicTheme;
+import bibliothek.gui.dock.themes.basic.BasicMovingImageFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
-import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.title.DockTitleRequest;
+import bibliothek.gui.dock.title.TitleMovingImage;
  
 /**
- * A theme that hides all {@link DockTitle} when used together with a 
+ * A theme that can hide all {@link DockTitle}s when used together with a 
  * {@link ChessBoard}.
  * @author Benjamin Sigg
  */
 public class HidingTheme extends BasicTheme {
+	private  boolean showTitles;
+	
 	/**
 	 * Creates a new theme
 	 */
     public HidingTheme(){
-        setMovingImageFactory( new DockableMovingImageFactory(){
-            public MovingImage create( DockController controller, Dockable dockable ) {
-                return null;
-            }
-            public MovingImage create( DockController controller, DockTitle snatched ) {
-                return null;
-            }
-        });
+    	setShowTitles( false );
     }
 
+    public void setShowTitles( boolean show ){
+    	this.showTitles = show;
+    	
+    	if( show ){
+            setMovingImageFactory( new BasicMovingImageFactory(){
+                @Override
+                public MovingImage create( DockController controller, Dockable dockable ) {
+                    if( dockable instanceof ChessFigure ){
+                        return new TitleMovingImage( dockable, new ChessDockTitle( dockable, null ) );
+                    }
+                    else{
+                        return super.create( controller, dockable );
+                    }
+                }
+            });
+    	}
+    	else{
+            setMovingImageFactory( new DockableMovingImageFactory(){
+                public MovingImage create( DockController controller, Dockable dockable ) {
+                    return null;
+                }
+                public MovingImage create( DockController controller, DockTitle snatched ) {
+                    return null;
+                }
+            });
+    	}
+    	
+    	updateTitleFactory();
+    }
+    
+    private void updateTitleFactory(){
+    	DockController controller = getController();
+    	if( controller != null ){
+	    	if( showTitles ){
+	    		controller.getDockTitleManager().registerTheme( "chess-board", null );
+	    	}
+	    	else{
+	            controller.getDockTitleManager().registerTheme( "chess-board", new DockTitleFactory(){
+	            	public void install( DockTitleRequest request ){
+	    	        	// ignore	
+	            	}
+	            	
+	            	public void request( DockTitleRequest request ){
+	            		request.setAnswer( null );
+	            	}
+	            	
+	            	public void uninstall( DockTitleRequest request ){
+	    	        	// ignore	
+	            	}
+	            });
+	    	}
+    	}
+    }
+    
     @Override
     public void install( DockController controller ) {
         super.install( controller );
-        controller.getDockTitleManager().registerTheme( "chess-board", new DockTitleFactory(){
-            public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
-                return null;
-            }
-            public <D extends Dockable & DockStation> DockTitle createStationTitle( D dockable, DockTitleVersion version ) {
-                return null;
-            }
-        });
+        updateTitleFactory();
     }
     
     @Override

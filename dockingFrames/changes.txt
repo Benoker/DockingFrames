@@ -266,4 +266,6 @@
 - API: AbstractDockable has a new method "add/removeKeyListener" to register any KeyEvent that is related to a Dockable (children are ignored)
 - Bugfix: Cursor on the SplitDockStation sometimes does not change from arrow to default cursor. Should happen less often now, patch by Eduardo Born.
 ! API: Each node in a SplitDockStation is now associated with a unique identifier. This unique identifier is stored persistently and might help to put a Dockable to its old location when using the drop-method.
-  - Effect: If two dockables were on the same stack, then they will be merged again independent of the location. 
+  - Effect: If two dockables were on the same stack, then they will be merged again independent of the location.
+! API: DockTitleFactory has been changed. Now a DockTitleRequest is installed on the factory, the factory may trigger this request anytimes (also more than once). The new class StationChildHandle manages the interaction between Dockable, DockableDisplayer, DockTitle and DockTitleRequest.
+- Bugfix: FlatTab did not react on mouse-dragged events in a "secure environment". 

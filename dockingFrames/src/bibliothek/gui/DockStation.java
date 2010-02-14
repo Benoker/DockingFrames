@@ -40,6 +40,7 @@ import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleManager;
+import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
@@ -58,7 +59,8 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  * {@link DockController#getDockTitleManager() DockTitleManager} and 
  * {@link DockTitleManager#registerDefault(String, DockTitleFactory) install} a
  * {@link DockTitleFactory} with default-priority). This titleversion
- * can be used as argument of {@link Dockable#getDockTitle(DockTitleVersion)}.
+ * can be used to create a {@link DockTitleRequest}. This request has to be 
+ * {@link DockTitleFactory#install(DockTitleRequest)} on a {@link DockTitleFactory}.
  * Note that the result of this method can be <code>null</code>.<br>
  * A station can have a focused child. This child should be marked somehow 
  * (normally the title of this child just has another color). If a station wants

@@ -40,6 +40,8 @@ import bibliothek.gui.dock.event.DockActionSourceListener;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.title.DockTitleFactory;
+import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
@@ -198,29 +200,20 @@ public interface Dockable extends DockElement, DockElementRepresentative{
     public Icon getTitleIcon();
     
     /**
-     * Invoked to get a graphical representation of a title for this Dockable.<br>
-     * There are several requirements to the title and the caller:
-     * <ul>
-     *  <li>The {@link DockTitle#getDockable() owner} of the title must be this Dockable.</li>
-     *  <li>The {@link DockTitle#getOrigin() origin} of the title must be <code>version</code>.</li>
-     *  <li>The title must <b>not</b> be bound</li>
-     *  <li>The result should be independent of the current state of this Dockable.</li>
-     *  <li>The method should not change any attribute of this Dockable</li>
-     *  <li>The client must call the {@link #bind(DockTitle)}-method of this Dockable
-     *  before using the title. Note that a client <b>must not</b> call the
-     *  bind-method of DockTitle</li>
-     *  <li>The client must call the {@link #unbind(DockTitle)}-method when he no
-     *  longer needs the title. Note that the client <b>must not</b> call the
-     *  unbind-method of the DockTitle</li>
-     * </ul>
-     * @param version which title is required. If this Dockable does not have
-     * a special rule for the given version, it can return the result of
-     * {@link DockTitleVersion#createDockable(Dockable)}.
-     * @return The title, can be <code>null</code> if no title should be shown.
-     * Note that not all clients can handle a <code>null</code>-title, if in
-     * doubt, return a title.
+     * Invoked to get a graphical representation of a title for this Dockable. This method is
+     * called either when a title first is required, or when this {@link Dockable}
+     * invoked the {@link DockableListener#titleExchanged(Dockable, DockTitle)} method of its
+     * current observers. <br>
+     * This {@link Dockable} might decide to answer the request by calling
+     * {@link DockTitleRequest#setAnswer(DockTitle)}, any title, including <code>null</code> are
+     * valid answers. If this {@link Dockable} does not answer the request the associated
+     * {@link DockTitleFactory} (as described by {@link DockTitleVersion#getFactory()}) is
+     * asked to answer the request.<br>
+     * The requests {@link DockTitleRequest#getTarget() target} must be this {@link Dockable}.
+     * @param request which title is required. If this Dockable does not have
+     * a special rule for the given request it just ignores the call
      */
-    public DockTitle getDockTitle( DockTitleVersion version );
+    public void requestDockTitle( DockTitleRequest request );
     
     /**
      * Called by clients which want to show a title of this Dockable. The

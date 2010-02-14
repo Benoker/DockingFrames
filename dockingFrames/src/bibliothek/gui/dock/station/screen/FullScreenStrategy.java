@@ -23,25 +23,15 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.bubble;
+package bibliothek.gui.dock.station.screen;
 
-import bibliothek.gui.dock.title.DockTitleFactory;
-import bibliothek.gui.dock.title.DockTitleRequest;
+import bibliothek.gui.dock.ScreenDockStation;
 
 /**
- * A factory creating ordinary instances of {@link BubbleDockTitle}.
+ * Strategy to handle fullscreen dialogs by the {@link ScreenDockStation}. This
+ * strategy 
  * @author Benjamin Sigg
  */
-public class BubbleDockTitleFactory implements DockTitleFactory {
-	public void install( DockTitleRequest request ){
-		// ignore
-	}
-	
-	public void uninstall( DockTitleRequest request ){
-		// ignore	
-	}
-	
-	public void request( DockTitleRequest request ){
-		request.setAnswer( new BubbleDockTitle( request.getTarget(), request.getVersion() ) );
-	}
+public interface FullScreenStrategy {
+
 }

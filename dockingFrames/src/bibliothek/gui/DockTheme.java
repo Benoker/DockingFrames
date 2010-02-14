@@ -35,6 +35,7 @@ import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleManager;
+import bibliothek.gui.dock.util.Priority;
 
 /**
  * A theme describes how a {@link DockStation} looks like, which
@@ -81,10 +82,10 @@ public interface DockTheme {
     public DisplayerFactory getDisplayFactory( DockStation station );
     
     /**
-     * Gets the default {@link DockTitleFactory} which is used if no
-     * other factory is set.<br>
-     * To replace all factories, the method {@link DockTitleManager#registerTheme(String, DockTitleFactory)}
-     * should be used.
+     * Gets the default {@link DockTitleFactory} which is used if no other factory is set.<br>
+     * The result of this method is installed in the {@link DockTitleManager} using
+     * the key {@link DockTitleManager#THEME_FACTORY_ID} and priority {@link Priority#THEME}. A
+     * theme may use the manager to change the factory at any time.
      * @param controller the controller using this theme
      * @return the factory
      */

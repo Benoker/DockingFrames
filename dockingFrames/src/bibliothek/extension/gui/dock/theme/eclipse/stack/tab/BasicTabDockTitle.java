@@ -34,7 +34,6 @@ import javax.swing.Icon;
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseDockActionSource;
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.event.DockTitleEvent;
@@ -43,6 +42,7 @@ import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
+import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.color.ColorManager;
@@ -67,17 +67,17 @@ public class BasicTabDockTitle extends BasicDockTitle {
      */
     public static DockTitleFactory createFactory( final EclipseTheme theme ){
         return new DockTitleFactory(){
-            public DockTitle createDockableTitle( Dockable dockable,
-                    DockTitleVersion version ) {
-                
-                return new BasicTabDockTitle( theme, dockable, version );
-            }
-            
-            public <D extends Dockable & DockStation> DockTitle createStationTitle(
-                    D dockable, DockTitleVersion version ) {
-            
-                return new BasicTabDockTitle( theme, dockable, version );
-            }
+        	public void install( DockTitleRequest request ){
+	        	// ignore	
+        	}
+        	
+        	public void uninstall( DockTitleRequest request ){
+	        	// ignore	
+        	}
+        	
+        	public void request( DockTitleRequest request ){
+        		request.setAnswer( new BasicTabDockTitle( theme, request.getTarget(), request.getVersion() ) );
+        	}
         };
     }
     

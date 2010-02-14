@@ -29,4 +29,5 @@
 - Allow to hide the actions in non-selected tab in the EclipseTheme.
 - Allow to transfer focus using "requestFocus" or a similar method.
 - Update listeners: always inform before closing a Dockable
-- CDocakble.getAction
+- [done] CDocakble.getAction
+- BasicMovingImageFactory: backup plan for null-DockTitles 

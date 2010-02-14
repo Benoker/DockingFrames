@@ -49,7 +49,7 @@ import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.event.KeyboardListener;
 import bibliothek.gui.dock.title.DockTitle;
-import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
@@ -345,10 +345,13 @@ public abstract class AbstractDockable implements Dockable {
         this.titleIcon.setValue( titleIcon );
     }
     
-    public DockTitle getDockTitle( DockTitleVersion version ) {
-        return version.createDockable( this );
+    /**
+     * The default behavior of this method is todo nothing.
+     */
+    public void requestDockTitle( DockTitleRequest request ){
+	    // ignore	
     }
-
+    
     public void bind( DockTitle title ) {
     	if( titles.contains( title ))
     		throw new IllegalArgumentException( "Title is already bound" );

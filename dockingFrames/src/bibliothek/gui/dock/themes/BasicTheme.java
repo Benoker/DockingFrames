@@ -65,6 +65,7 @@ import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
+import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
@@ -426,6 +427,10 @@ public class BasicTheme implements DockTheme{
             throw new IllegalArgumentException( "argument must not be null" );
 
         this.titleFactory = titleFactory;
+        
+        if( controller != null ){
+        	controller.getDockTitleManager().registerTheme( DockTitleManager.THEME_FACTORY_ID, titleFactory );
+        }
     }
 
     /**

@@ -678,6 +678,16 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     }
 
     /**
+     * Updates the modes of all {@link Dockable}s that
+     * are registered at this {@link ModeManager}.
+     */
+    public void refresh(){
+    	for( Dockable dockable : dockables.keySet() ){
+    		refresh( dockable, false );
+    	}
+    }
+    
+    /**
      * Updates the mode of <code>dockable</code> and updates the actions
      * associated with <code>dockable</code>. This method is intended to be
      * called by any code that changes the mode in a way that is not automatically

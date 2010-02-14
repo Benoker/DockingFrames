@@ -388,11 +388,17 @@ public class FlatTab extends JPanel implements CombinedTab, DockableFocusListene
     public void addMouseInputListener( MouseInputListener listener ) {
         addMouseListener( listener );
         addMouseMotionListener( listener );
+        
+        label.addMouseListener( listener );
+        label.addMouseMotionListener( listener );
     }
     
     public void removeMouseInputListener( MouseInputListener listener ) {
         removeMouseListener( listener );
         removeMouseMotionListener( listener );
+        
+        label.removeMouseListener( listener );
+        label.removeMouseMotionListener( listener );
     }
     
     public Dimension getPreferredSize( Tab[] tabs ){

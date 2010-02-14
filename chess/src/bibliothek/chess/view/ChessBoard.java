@@ -31,6 +31,7 @@ import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.OverpaintablePanel;
+import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
@@ -207,7 +208,6 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 
 	public void draw(){
 		if( drop != null ){
-			drop.drawing = true;
 			repaint();
 		}
 	}
@@ -492,8 +492,6 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 	 * @author Benjamin Sigg
 	 */
 	private class DropInfo{
-		/** Whether the board should highlight the possible destinations */
-		public boolean drawing = false;
 		/** the figure which is grabbed */
 		public ChessFigure figure = null;
 		/** the target row */
@@ -598,7 +596,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 		@Override
 		public void doLayout(){
 			for( Field field : usedFieldList ){
-				Component component = field.getDisplayer().getComponent();
+				Component component = field.getHandle().getDisplayer().getComponent();
 				int r = field.getRow();
 				int c = field.getColumn();
 				component.setBounds( x(c), y(r), w(c), h(r) );
@@ -613,7 +611,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 	 */
 	private class Field{
 		/** the displayer is used to show <code>figure</code> */
-		private DockableDisplayer displayer;
+		private StationChildHandle handle;
 		/** the figure on this field, might be <code>null</code> */
 		private ChessFigure figure;
 		/** the row in which this field lies */
@@ -646,14 +644,13 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 		public int getColumn(){
 			return column;
 		}
-		
+	
 		/**
-		 * Gets the {@link DockableDisplayer} which shows the {@link Dockable}
-		 * of this field.
-		 * @return the displayer, might be <code>null</code>
+		 * Gets the element and its visualization.
+		 * @return the figure or <code>null</code>
 		 */
-		public DockableDisplayer getDisplayer(){
-			return displayer;
+		public StationChildHandle getHandle(){
+			return handle;
 		}
 		
 		/**
@@ -671,10 +668,10 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 		public void transfer( Field other ){
 			set( null );
 			if( other.figure != null ){
-				this.displayer = other.displayer;
+				this.handle = other.handle;
 				this.figure = other.figure;
 			
-				other.displayer = null;
+				other.handle = null;
 				other.figure = null;
 				
 				usedFieldList.remove( other );
@@ -692,18 +689,22 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 			ChessFigure old = this.figure;
 			
 			if( this.figure != null ){
-				getContentPane().remove( displayer.getComponent() );
-				displayerCollection.release( displayer );
+				getContentPane().remove( handle.getDisplayer().getComponent() );
 				
+				handle.destroy();
 				this.figure = null;
-				this.displayer = null;
+				this.handle = null;
 			}
 			
 			this.figure = figure;
 			
 			if( this.figure != null ){
-				displayer = displayerCollection.fetch( figure, null );
-				getContentPane().add( displayer.getComponent() );
+				DockTitleVersion version = null;
+				if( controller != null )
+					version = controller.getDockTitleManager().getVersion( "chess-board" );
+				handle = new StationChildHandle( ChessBoard.this, displayerCollection, figure, version );
+				handle.updateDisplayer();
+				getContentPane().add( handle.getDisplayer().getComponent() );
 			}
 			
 			if( old == null && figure != null )
@@ -711,7 +712,6 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 			else if( old != null && figure == null )
 				usedFieldList.remove( this );
 			
-			updateTitle();
 			getContentPane().revalidate();
 		}
 	
@@ -720,24 +720,15 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 		 * {@link #set(ChessFigure) figure} is shown.
 		 */
 		public void updateTitle(){
-            if( displayer != null ){
-                DockTitle title = displayer.getTitle();
-                if( title != null ){
-                    figure.unbind( title );
-                    title = null;
-                }
-                
-                if( controller != null ){
-                    DockTitleVersion version = 
-                        controller.getDockTitleManager().getVersion( "chess-board" );
-                    if( version != null ){
-                        title = figure.getDockTitle( version );
-                        if( title != null )
-                            figure.bind( title );
-                    }
-                }
-                displayer.setTitle( title );
-            }
+			if( handle != null ){
+				if( controller == null ){
+					handle.setTitleRequest( null );
+				}
+				else{
+					DockTitleVersion version = controller.getDockTitleManager().getVersion( "chess-board" );
+					handle.setTitleRequest( version );
+				}
+			}
         }
 	}
 }

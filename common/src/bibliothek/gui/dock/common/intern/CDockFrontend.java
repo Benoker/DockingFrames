@@ -93,5 +93,6 @@ public class CDockFrontend extends DockFrontend{
         });
         
         manager.ensureBasicModes();
+        manager.refresh();
     }
 }

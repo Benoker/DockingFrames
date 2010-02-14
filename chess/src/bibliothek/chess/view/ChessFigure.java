@@ -21,7 +21,7 @@ import bibliothek.gui.dock.dockable.DockHierarchyObserver;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.title.DockTitle;
-import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.title.DockTitleRequest;
 
 /**
  * A label showing an icon to represent a figure of chess. This label implements
@@ -145,10 +145,10 @@ public class ChessFigure extends JLabel implements Dockable {
 		return parent;
 	}
 
-	public DockTitle getDockTitle( DockTitleVersion version ){
-		return version.createDockable( this );
+	public void requestDockTitle( DockTitleRequest request ){
+		// ignore	
 	}
-
+	
 	public Icon getTitleIcon(){
 		return figure.getSmallIcon();
 	}

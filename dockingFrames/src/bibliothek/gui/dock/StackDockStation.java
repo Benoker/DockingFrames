@@ -58,6 +58,7 @@ import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.OverpaintablePanel;
+import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
@@ -101,7 +102,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     			new ConstantPropertyFactory<TabPlacement>( TabPlacement.TOP_OF_DOCKABLE ), true );
     
     /** A list of all children */
-    private List<DockableDisplayer> dockables = new ArrayList<DockableDisplayer>();
+    private List<StationChildHandle> dockables = new ArrayList<StationChildHandle>();
     
     /**
      * A list of {@link MouseInputListener MouseInputListeners} which are
@@ -304,7 +305,8 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             else{
                 panel.removeAll();
                 
-                for( DockableDisplayer displayer : dockables ){
+                for( StationChildHandle handle : dockables ){
+                	DockableDisplayer displayer = handle.getDisplayer();
                     int index = stackComponent.getTabCount();
                     Dockable dockable = displayer.getDockable();
                     stackComponent.insertTab( 
@@ -385,12 +387,8 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     @Override
     public void setController( DockController controller ) {
         if( this.getController() != controller ){
-            for( DockableDisplayer displayer : dockables ){
-                DockTitle title = displayer.getTitle();
-                if( title != null ){
-                    displayer.getDockable().unbind( title );
-                    displayer.setTitle( null );
-                }
+            for( StationChildHandle handle : dockables ){
+            	handle.setTitleRequest( null );
             }
             
             stackComponentFactory.setProperties( controller );
@@ -401,18 +399,14 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             if( controller != null ){
                 title = controller.getDockTitleManager().getVersion( TITLE_ID, ControllerTitleFactory.INSTANCE );
             }
-            else
+            else{
                 title = null;
+            }
             
             displayers.setController( controller );
             
-            for( DockableDisplayer displayer : dockables ){
-                if( this.title != null ){
-                    DockTitle title = displayer.getDockable().getDockTitle( this.title );
-                    displayer.setTitle( title );
-                    if( title != null )
-                        displayer.getDockable().bind( title );
-                }
+            for( StationChildHandle handle : dockables ){
+            	handle.setTitleRequest( title, true );
             }
         }
     }
@@ -525,7 +519,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
                         return true;
                 }
                 else if( dockables.size() == 1 ){
-                    DockTitle title = dockables.get( 0 ).getTitle();
+                    DockTitle title = dockables.get( 0 ).getDisplayer().getTitle();
                     if( title != null ){
                         Component component = title.getComponent();
                         Point p = new Point( x, y );
@@ -811,30 +805,24 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         	listeners.fireDockableAdding( dockable );
         dockable.setDockParent( this );
         
-        DockTitle title = null;
-        
-        if( this.title != null ){
-            title = dockable.getDockTitle( this.title );
-            if( title != null )
-                dockable.bind( title );
-        }
-        
-        DockableDisplayer displayer = getDisplayers().fetch( dockable, title );
+        StationChildHandle handle = new StationChildHandle( this, getDisplayers(), dockable, title );
+        handle.updateDisplayer();
+        DockableDisplayer displayer = handle.getDisplayer();
         
         if( dockables.size() == 0 ){
-            dockables.add( displayer );
+            dockables.add( handle );
             panel.add( displayer.getComponent() );
         }
         else{
             if( dockables.size() == 1 ){
                 panel.removeAll();
-                DockableDisplayer child = dockables.get( 0 );
+                DockableDisplayer child = dockables.get( 0 ).getDisplayer();
                 stackComponent.addTab( child.getDockable().getTitleText(), child.getDockable().getTitleIcon(), child.getComponent(), child.getDockable() );
                 stackComponent.setTooltipAt( 0, child.getDockable().getTitleToolTip() );
                 panel.add( stackComponent.getComponent() );
             }
             
-            dockables.add( index, displayer );
+            dockables.add( index, handle );
             stackComponent.insertTab( dockable.getTitleText(), dockable.getTitleIcon(), displayer.getComponent(), dockable, index );
             stackComponent.setTooltipAt( index, dockable.getTitleToolTip() );
             stackComponent.setSelectedIndex( index );
@@ -854,19 +842,16 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
      * @param displayer the displayer to replace
      */
     protected void discard( DockableDisplayer displayer ){
-    	int index = dockables.indexOf( displayer );
+    	Dockable dockable = displayer.getDockable();
+    	
+    	int index = indexOf( dockable );
     	if( index < 0 )
     		throw new IllegalArgumentException( "displayer is not a child of this station: " + displayer );
     	
-    	Dockable dockable = displayer.getDockable();
-    	DockTitle title = displayer.getTitle();
+    	StationChildHandle handle = dockables.get( index );
+    	handle.updateDisplayer();
+    	displayer = handle.getDisplayer();
     	
-    	DisplayerCollection displayers = getDisplayers();
-    	displayers.release( displayer );
-    	
-    	displayer = displayers.fetch( dockable, title );
-    	
-    	dockables.set( index, displayer );
     	if( dockables.size() == 1 ){
     		panel.removeAll();
     		panel.add( displayer.getComponent() );
@@ -899,34 +884,28 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         
         Dockable oldSelected = getFrontDockable();
         
-        DockableDisplayer displayer = dockables.get( index );
-        Dockable dockable = displayer.getDockable();
-        DockTitle title = displayer.getTitle();
+        StationChildHandle handle = dockables.get( index );
+        Dockable dockable = handle.getDockable();
         
         if( fire )
         	listeners.fireDockableRemoving( dockable );
         
-        getDisplayers().release( displayer );
-        
-        if( title != null ){
-            dockable.unbind( title );
-            displayer.setTitle( null );
-        }
-        
         if( dockables.size() == 1 ){
-            panel.remove( dockables.get( 0 ).getComponent() );
+            panel.remove( dockables.get( 0 ).getDisplayer().getComponent() );
             dockables.clear();
         }
         else if( dockables.size() == 2 ){
             panel.remove( stackComponent.getComponent() );
             dockables.remove( index );
             stackComponent.removeAll();
-            panel.add( dockables.get( 0 ).getComponent() );
+            panel.add( dockables.get( 0 ).getDisplayer().getComponent() );
         }
         else{
         	dockables.remove( index );
         	stackComponent.remove( index );
         }
+
+        handle.destroy();
         
         dockable.removeDockableListener( listener );
         panel.revalidate();
@@ -1053,13 +1032,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         }
         
         public void titleExchanged( Dockable dockable, DockTitle title ) {
-            int index = indexOf( dockable );
-            if( index >= 0 ){
-                DockableDisplayer displayer = dockables.get( index );
-                if( displayer.getTitle() == title ){
-                    DockUtilities.exchangeTitle( displayer, StackDockStation.this.title );
-                }
-            }
+            // ignore
         }
     }
     
@@ -1109,7 +1082,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
                 else{
                 	int index = stackComponent.getSelectedIndex();
                 	if( index >= 0 ){
-	                    Component front = dockables.get( index ).getComponent();
+	                    Component front = dockables.get( index ).getDisplayer().getComponent();
 	                    Point location = new Point( 0, 0 );
 	                    location = SwingUtilities.convertPoint( front, location, this );
 	                    insert = new Rectangle( location.x, location.y, front.getWidth(), front.getHeight() );

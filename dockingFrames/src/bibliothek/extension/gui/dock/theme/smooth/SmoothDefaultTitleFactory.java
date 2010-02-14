@@ -26,11 +26,9 @@
 
 package bibliothek.extension.gui.dock.theme.smooth;
 
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
-import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.title.DockTitleRequest;
 
 /**
  * A {@link DockTitleFactory} which creates instances of {@link SmoothDefaultTitle}
@@ -42,12 +40,21 @@ public class SmoothDefaultTitleFactory implements DockTitleFactory {
     /** An instance of this factory which can be used at any place */
     public static final SmoothDefaultTitleFactory FACTORY = new SmoothDefaultTitleFactory();
     
-    public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
-        return new SmoothDefaultTitle( dockable, version );
+    public void install( DockTitleRequest request ){
+	    // ignore	
     }
-
-    public <D extends Dockable & DockStation> DockTitle createStationTitle( 
-            D dockable, DockTitleVersion version ){
-        return new SmoothDefaultStationTitle( dockable, version );
+    
+    public void uninstall( DockTitleRequest request ){
+	    // ignore	
+    }
+    
+    public void request( DockTitleRequest request ){
+	    Dockable dockable = request.getTarget();
+	    if( dockable.asDockStation() == null ){
+	    	request.setAnswer( new SmoothDefaultTitle( dockable, request.getVersion() ) );
+	    }
+	    else{
+	    	request.setAnswer( new SmoothDefaultStationTitle( dockable, request.getVersion() ) );
+	    }
     }
 }

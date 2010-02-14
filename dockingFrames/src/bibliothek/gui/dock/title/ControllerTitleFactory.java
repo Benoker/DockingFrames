@@ -27,28 +27,36 @@
 package bibliothek.gui.dock.title;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
-import bibliothek.gui.Dockable;
 
 /**
  * This {@link DockTitleFactory factory} delegates every call to
- * its methods to the factory provided by the {@link DockTheme theme} of
+ * the methods to the factory provided by the {@link DockTheme theme} of
  * the involved {@link DockController controller}
  * @author Benjamin Sigg
  */
 public class ControllerTitleFactory implements DockTitleFactory{
 	/**
-	 * An instance of this factory
+	 * An instance of this factory.<br>
+	 * Note: it is safe to use {@link #install(DockTitleRequest)} and
+	 * {@link #uninstall(DockTitleRequest)} on this singleton, the call will be forwarded
+	 * to the {@link DockController} of the calling {@link DockTitleRequest}.
 	 */
     public static final ControllerTitleFactory INSTANCE = new ControllerTitleFactory();
     
-    public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
-        return version.getController().getTheme().getTitleFactory( version.getController() ).createDockableTitle( dockable, version );
+    private DockTitleVersion getControllerVersion( DockTitleRequest request ){
+    	return request.getVersion().getController().getDockTitleManager().getVersion( DockTitleManager.THEME_FACTORY_ID );
     }
-
-    public <D extends Dockable & DockStation> DockTitle createStationTitle( D dockable, DockTitleVersion version ) {
-        return version.getController().getTheme().getTitleFactory( version.getController() ).createStationTitle( dockable, version );
+    
+    public void install( DockTitleRequest request ){
+	    getControllerVersion( request ).install( request );	
     }
-
+    
+    public void request( DockTitleRequest request ){
+    	getControllerVersion( request ).request( request );
+    }
+    
+    public void uninstall( DockTitleRequest request ){
+	    getControllerVersion( request ).uninstall( request );	
+    }
 }

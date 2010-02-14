@@ -34,13 +34,10 @@ import javax.swing.SwingUtilities;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
-import bibliothek.gui.dock.event.DockableAdapter;
-import bibliothek.gui.dock.event.DockableListener;
-import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
+import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.title.DockTitle;
-import bibliothek.gui.dock.util.DockUtilities;
 
 /**
  * A window that uses a {@link DockableDisplayer} to show the {@link Dockable}.
@@ -51,9 +48,9 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
     private ScreenDockStation station;
     
     /** the dockable shown on this station */
-    private DockableDisplayer displayer;
+    private StationChildHandle handle;
     
-    /** a listener to the current {@link #displayer} */
+    /** a listener to the current {@link DockableDisplayer} */
     private DockableDisplayerListener displayerListener = new DockableDisplayerListener(){
     	public void discard( DockableDisplayer displayer ){
 	    	discardDisplayer();	
@@ -65,14 +62,6 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
     
     /** whether the {@link DockTitle} should be shown */
     private boolean showTitle = true;
-    
-    /** a listener for the current {@link Dockable}, changes the title when requested */
-    private DockableListener listener = new DockableAdapter(){
-        @Override
-        public void titleExchanged( Dockable dockable, DockTitle title ) {
-            DockUtilities.exchangeTitle( displayer, station.getTitleVersion() );
-        }
-    };
     
     /**
      * Creates a new window
@@ -109,22 +98,13 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
         if( this.showTitle != showTitle ){
             this.showTitle = showTitle;
             
-            if( displayer != null ){
-                if( showTitle ){
-                    Dockable dockable = displayer.getDockable();
-                    DockTitle title = station.createDockTitle( dockable );
-                    if( title != null ){
-                        dockable.bind( title );
-                        displayer.setTitle( title );
-                    }
-                }
-                else{
-                    DockTitle title = displayer.getTitle();
-                    if( title != null ){
-                        displayer.setTitle( null );
-                        displayer.getDockable().unbind( title );
-                    }
-                }
+            if( handle != null ){
+            	if( showTitle ){
+            		handle.setTitleRequest( station.getTitleVersion() );
+            	}
+            	else{
+            		handle.setTitleRequest( null );
+            	}
             }
         }
     }
@@ -138,40 +118,27 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
     }
     
     public Dockable getDockable() {
-        if( displayer == null )
-            return null;
-        
-        return displayer.getDockable();
+    	if( handle == null )
+    		return null;
+    	return handle.getDockable();
     }
 
     public void setDockable( Dockable dockable ) {
-        // remove old displayer
-        if( displayer != null ){
-            displayer.getDockable().removeDockableListener( listener );
-            
-            DockTitle title = displayer.getTitle();
-            if( title != null ){
-                displayer.getDockable().unbind( title );
-                displayer.setTitle( null );
-            }
-            displayer.setDockable( null );
-            displayer.removeDockableDisplayerListener( displayerListener );
-            station.getDisplayers().release( displayer );
-            
-            displayer = null;
+    	// remove old displayer
+        if( handle != null ){
+        	DockableDisplayer displayer = handle.getDisplayer();
+        	displayer.removeDockableDisplayerListener( displayerListener );
+            handle.destroy();
+            handle = null;
         }
         
         // add new displayer
+        DockableDisplayer displayer = null;
+        
         if( dockable != null ){
-            DockTitle title = null;
-            if( isShowTitle() ){
-                title = station.createDockTitle( dockable );
-                if( title != null ){
-                    dockable.bind( title );
-                }
-            }
-            displayer = station.getDisplayers().fetch( dockable, title );
-            dockable.addDockableListener( listener );
+        	handle = new StationChildHandle( station, station.getDisplayers(), dockable, showTitle ? station.getTitleVersion() : null );
+        	handle.updateDisplayer();
+            displayer = handle.getDisplayer();
             displayer.addDockableDisplayerListener( displayerListener );
         }
         
@@ -182,46 +149,39 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
      * Replaces the current {@link DockableDisplayer} with a new instance.
      */
     protected void discardDisplayer(){
-    	Dockable dockable = displayer.getDockable();
-    	DockTitle title = displayer.getTitle();
+    	DockableDisplayer displayer = handle.getDisplayer();
     	displayer.removeDockableDisplayerListener( displayerListener );
-    	
-    	DisplayerCollection displayers = station.getDisplayers();
-    	displayers.release( displayer );
-    	displayer = displayers.fetch( dockable, title );
+    	handle.updateDisplayer();
+    	displayer = handle.getDisplayer();
     	displayer.addDockableDisplayerListener( displayerListener );
-    	
     	showDisplayer( displayer );
     }
 
     public void setController( DockController controller ) {
         // remove old DockTitle
-        if( displayer != null ){
-            if( this.controller != null ){
-                DockTitle title = displayer.getTitle();
-                if( title != null ){
-                    displayer.getDockable().unbind( title );
-                    displayer.setTitle( null );
-                }
-            }
-        }
-        
+    	if( handle != null ){
+    		if( this.controller != null ){
+    			handle.setTitleRequest( null );
+    		}
+    	}
+    	
         this.controller = controller;
         
         // create new DockTitle
-        if( displayer != null ){
+        if( handle != null ){
             if( this.controller != null && isShowTitle() ){
-                DockTitle title = station.createDockTitle( displayer.getDockable() );
-                if( title != null ){
-                    displayer.getDockable().bind( title );
-                    displayer.setTitle( title );
-                }
+            	handle.setTitleRequest( station.getTitleVersion() );
             }
         }
     }
     
     public Point getOffsetDrop() {
-        if( displayer == null )
+    	if( handle == null )
+    		return null;
+    	
+    	DockableDisplayer displayer = handle.getDisplayer();
+    	
+    	if( displayer == null )
             return null;
         
         Insets insets = getDockableInsets();
@@ -230,6 +190,11 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
     }
     
     public Point getOffsetMove() {
+    	if( handle == null )
+    		return null;
+    	
+    	DockableDisplayer displayer = handle.getDisplayer();
+    	
         if( displayer == null )
             return null;
         
@@ -247,6 +212,11 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
     }
     
     public boolean inCombineArea( int x, int y ) {
+    	if( handle == null )
+    		return false;
+    	
+    	DockableDisplayer displayer = handle.getDisplayer();
+    	
         if( displayer == null )
             return false;
         

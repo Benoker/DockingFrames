@@ -34,7 +34,7 @@ import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.event.CDockableAdapter;
 import bibliothek.gui.dock.common.intern.action.CActionSource;
-import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
@@ -93,19 +93,25 @@ public class DefaultCommonDockable extends DefaultDockable implements CommonDock
     }
     
     @Override
-    public DockTitle getDockTitle( DockTitleVersion version ) {
-        if( dockable.isTitleShown() )
-            return super.getDockTitle( version );
-        
-        boolean hide = 
-            version.getID().equals( SplitDockStation.TITLE_ID ) ||
-            version.getID().equals( StackDockStation.TITLE_ID ) ||
-            version.getID().equals( ScreenDockStation.TITLE_ID ) ||
-            version.getID().equals( FlapDockStation.WINDOW_TITLE_ID );
-        
-        if( hide )
-            return null;
-        else
-            return super.getDockTitle( version );
+    public void requestDockTitle( DockTitleRequest request ){
+        if( dockable.isTitleShown() ){
+        	super.requestDockTitle( request );
+        }
+        else{
+        	DockTitleVersion version = request.getVersion();
+        	
+	        boolean hide = 
+	            version.getID().equals( SplitDockStation.TITLE_ID ) ||
+	            version.getID().equals( StackDockStation.TITLE_ID ) ||
+	            version.getID().equals( ScreenDockStation.TITLE_ID ) ||
+	            version.getID().equals( FlapDockStation.WINDOW_TITLE_ID );
+	        
+	        if( hide ){
+	            request.setAnswer( null );
+	        }
+	        else{
+	         	super.requestDockTitle( request );
+	        }
+        }
     }
 }

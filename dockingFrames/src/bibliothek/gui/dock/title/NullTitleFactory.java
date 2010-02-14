@@ -25,8 +25,6 @@
  */
 package bibliothek.gui.dock.title;
 
-import bibliothek.gui.DockStation;
-import bibliothek.gui.Dockable;
 
 /**
  * A {@link DockTitleFactory} that does not create any titles.
@@ -36,11 +34,15 @@ public class NullTitleFactory implements DockTitleFactory {
 	/** a public instance of {@link NullTitleFactory} */
 	public static final NullTitleFactory INSTANCE = new NullTitleFactory();
 	
-	public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ){
-		return null;
+	public void install( DockTitleRequest request ){
+		// ignore
 	}
-
-	public <D extends Dockable & DockStation> DockTitle createStationTitle( D dockable, DockTitleVersion version ){
-		return null;
+	
+	public void uninstall( DockTitleRequest request ){
+		// ignore	
+	}
+	
+	public void request( DockTitleRequest request ){
+		request.setAnswer( null );	
 	}
 }

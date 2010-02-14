@@ -26,38 +26,49 @@
 
 package bibliothek.gui.dock.station.flap;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.LayoutManager;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JRootPane;
+import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
-import bibliothek.gui.dock.event.DockableAdapter;
-import bibliothek.gui.dock.event.DockableListener;
-import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.OverpaintablePanel;
+import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
-import bibliothek.gui.dock.util.DockUtilities;
 
 /**
  * This window pops up if the user presses one of the buttons of a 
  * {@link FlapDockStation}. The window shows one {@link Dockable}
  */
 public class FlapWindow extends JDialog implements MouseListener, MouseMotionListener{
-    /** The displayer which is the direct parent of the {@link Dockable} and its title */
-    private DockableDisplayer displayer;
-    
-    /** a listener for the current {@link #displayer} */
+	/** the element that is shown on this window */
+    private StationChildHandle dockable;
+	
+    /** a listener for the current {@link DockableDisplayer} */
     private DockableDisplayerListener displayerListener = new DockableDisplayerListener(){
     	public void discard( DockableDisplayer displayer ){
 	    	discardDisplayer();	
@@ -74,17 +85,9 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
     /** Information where the user will drop or move a {@link Dockable} */
     private FlapDropInfo dropInfo;
     
-    /** the panel onto which {@link #displayer} is put */
+    /** the panel onto which {@link #dockable} is put */
     private JComponent contentPane;
-    
-    /** ensures that the title is correct */
-    private DockableListener dockableListener = new DockableAdapter(){
-        @Override
-        public void titleExchanged( Dockable dockable, DockTitle title ) {
-            DockUtilities.exchangeTitle( displayer, station.getTitleVersion() );
-        }
-    };
-    
+
     /**
      * Constructs a new window.
      * @param station the station which manages this window
@@ -139,6 +142,8 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
             }
 
             public Dimension preferredLayoutSize( Container parent ) {
+            	DockableDisplayer displayer = getDisplayer();
+            	
                 if( displayer == null )
                     return new Dimension( 100, 100 );
                 
@@ -146,6 +151,8 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
             }
 
             public Dimension minimumLayoutSize( Container parent ) {
+            	DockableDisplayer displayer = getDisplayer();
+            	
                 if( displayer == null )
                     return new Dimension( 100, 100 );
                 
@@ -153,6 +160,8 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
             }
 
             public void layoutContainer( Container parent ) {
+            	DockableDisplayer displayer = getDisplayer();
+            	
                 if( displayer != null ){
                     Insets insets = parent.getInsets();
                     insets = new Insets( insets.top, insets.left, insets.bottom, insets.right );
@@ -233,19 +242,20 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
      * Sets the title which should be displayed.
      * @param title the title or <code>null</code>
      */
-    public void setDockTitle( DockTitle title ){
-        displayer.setTitle( title );
+    public void setDockTitle( DockTitleVersion title ){
+    	if( dockable != null ){
+    		dockable.setTitleRequest( title );
+    	}
     }
     
     /**
-     * Gets the currently displayed title.
+     * Gets the title which is currently displayed
      * @return the title or <code>null</code>
      */
     public DockTitle getDockTitle(){
-        if( displayer == null )
-            return null;
-        else
-            return displayer.getTitle();
+    	if( dockable == null )
+    		return null;
+    	return dockable.getTitle();
     }
     
     /**
@@ -253,10 +263,9 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
      * @return The {@link Dockable} or <code>null</code>
      */
     public Dockable getDockable(){
-        if( displayer == null )
-            return null;
-        else
-            return displayer.getDockable();
+    	if( dockable == null )
+    		return null;
+    	return dockable.getDockable();
     }
     
     /**
@@ -264,7 +273,9 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
      * @return the displayer, might be <code>null</code>
      */
     public DockableDisplayer getDisplayer() {
-        return displayer;
+        if( dockable == null )
+        	return null;
+        return dockable.getDisplayer();
     }
     
     /**
@@ -274,38 +285,21 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
     public void setDockable( Dockable dockable ){
         Container content = getDisplayerParent();
         
-        if( displayer != null ){
-            Dockable old = displayer.getDockable();
-            DockTitle oldTitle = displayer.getTitle();
-        
-            displayer.removeDockableDisplayerListener( displayerListener );
-            station.getDisplayers().release( displayer );
-            
-            content.remove( displayer.getComponent() );
-            
-            displayer = null;
-            
-            if( oldTitle != null && old != null )
-                old.unbind( oldTitle );
-            
-            if( old != null )
-                old.removeDockableListener( dockableListener );
+        if( this.dockable != null ){
+        	DockableDisplayer displayer = getDisplayer();
+        	displayer.removeDockableDisplayerListener( displayerListener );
+        	content.remove( displayer.getComponent() );
+        	this.dockable.destroy();
+        	this.dockable = null;
         }
         
         if( dockable != null ){
-            DockTitle title = null;
-            DockTitleVersion titleVersion = station.getTitleVersion();
-            if( titleVersion != null ){
-                title = dockable.getDockTitle( titleVersion );
-                if( title != null )
-                    dockable.bind( title );
-            }
-            
-            displayer = station.getDisplayers().fetch( dockable, title );
+        	this.dockable = new StationChildHandle( station, station.getDisplayers(), dockable, station.getTitleVersion() );
+        	this.dockable.updateDisplayer();
+        	
+            DockableDisplayer displayer = getDisplayer();
             displayer.addDockableDisplayerListener( displayerListener );
             content.add( displayer.getComponent() );
-            
-            dockable.addDockableListener( dockableListener );
         }
     }
     
@@ -313,22 +307,19 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
      * Replaces the current {@link DockableDisplayer} with a new instance.
      */
     protected void discardDisplayer(){
-    	Dockable dockable = displayer.getDockable();
-    	DockTitle title = displayer.getTitle();
-    	
-    	Container content = getDisplayerParent();
-    	
-    	DisplayerCollection displayers = station.getDisplayers();
-    	
-    	displayer.removeDockableDisplayerListener( displayerListener );
-    	content.remove( displayer.getComponent() );
-    	displayers.release( displayer );
-    	
-    	displayer = displayers.fetch( dockable, title );
-    	displayer.addDockableDisplayerListener( displayerListener );
-    	content.add( displayer.getComponent() );
-    	
-    	updateBounds();
+    	if( dockable != null ){
+    		DockableDisplayer displayer = dockable.getDisplayer();
+    		displayer.removeDockableDisplayerListener( displayerListener );
+    		contentPane.remove( displayer.getComponent() );
+    		
+    		dockable.updateDisplayer();
+    		
+    		displayer = dockable.getDisplayer();
+    		displayer.addDockableDisplayerListener( displayerListener );
+    		contentPane.add( displayer.getComponent() );
+
+        	updateBounds();
+    	}
     }
     
     /**
@@ -345,6 +336,8 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
      * @return a guess of the insets
      */
     public Insets getDockableInsets(){
+    	DockableDisplayer displayer = dockable.getDisplayer();
+    	
         Insets insets = displayer.getDockableInsets();
         displayer.getComponent().getBounds();
         
@@ -368,6 +361,7 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
      * Recalculates the size and the location of this window.
      */
     public void updateBounds(){
+    	DockableDisplayer displayer = getDisplayer();
     	Dockable dockable = displayer == null ? null : displayer.getDockable();
         if( dockable != null ){
         	validate();
@@ -432,6 +426,7 @@ public class FlapWindow extends JDialog implements MouseListener, MouseMotionLis
     
     public void mouseDragged( MouseEvent e ) {
         if( pressed ){
+        	DockableDisplayer displayer = getDisplayer();
             Dockable dockable = displayer == null ? null : displayer.getDockable();
             if( dockable != null ){
                 Point mouse = new Point( e.getX(), e.getY() );

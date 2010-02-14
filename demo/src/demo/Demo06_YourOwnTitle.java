@@ -8,7 +8,10 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.WindowConstants;
 
-import bibliothek.gui.*;
+import bibliothek.gui.DockController;
+import bibliothek.gui.DockFrontend;
+import bibliothek.gui.DockUI;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
@@ -17,9 +20,9 @@ import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.ThemeFactory;
 import bibliothek.gui.dock.themes.basic.BasicDockTitle;
-import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleManager;
+import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.Priority;
 
@@ -122,39 +125,50 @@ public class Demo06_YourOwnTitle {
     }
     
     private static class DemoFactory implements DockTitleFactory{
-        public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
-            // ok, getting the background color could be done in a nicer way...
-            Color background = ((DefaultDockable)dockable).getContentPane().getComponent( 0 ).getBackground();
-            
-            Color dark = change( background, -35 );
-            Color bright = change( background, 35 );
-            
-            BasicDockTitle title = new BasicDockTitle( dockable, version );
-            title.setActiveLeftColor( dark );
-            title.setActiveRightColor( bright );
-            title.setActiveTextColor( Color.BLACK );
-            
-            title.setInactiveLeftColor( bright );
-            title.setInactiveRightColor( bright );
-            title.setInactiveTextColor( dark );
-            
-            return title;
-        }
-        
+    	public void install( DockTitleRequest request ){
+	    	// ignore	
+    	}
+    	
+    	public void uninstall( DockTitleRequest request ){
+    		// ignore
+    	}
+    	
+    	public void request( DockTitleRequest request ){
+	    	Dockable dockable = request.getTarget();
+	    	DockTitleVersion version = request.getVersion();
+	    	
+	    	if( dockable.asDockStation() == null ){
+	    		   // ok, getting the background color could be done in a nicer way...
+	            Color background = ((DefaultDockable)dockable).getContentPane().getComponent( 0 ).getBackground();
+	            
+	            Color dark = change( background, -35 );
+	            Color bright = change( background, 35 );
+	            
+	            BasicDockTitle title = new BasicDockTitle( dockable, version );
+	            title.setActiveLeftColor( dark );
+	            title.setActiveRightColor( bright );
+	            title.setActiveTextColor( Color.BLACK );
+	            
+	            title.setInactiveLeftColor( bright );
+	            title.setInactiveRightColor( bright );
+	            title.setInactiveTextColor( dark );
+	            
+	            request.setAnswer( title );
+	    	}
+	    	else{
+	    		DockTitleFactory factory = version.getFactory( Priority.THEME );
+	            if( factory == null )
+	                factory = version.getFactory( Priority.DEFAULT );
+	            
+	            factory.request( request );
+	    	}
+    	}
+    	
         private Color change( Color base, int delta ){
             return new Color(
                     Math.max( 0, Math.min( 0xFF, base.getRed() + delta )),
                     Math.max( 0, Math.min( 0xFF, base.getGreen() + delta )),
                     Math.max( 0, Math.min( 0xFF, base.getBlue() + delta )));
-        }
-
-        public <D extends Dockable & DockStation> DockTitle createStationTitle( D dockable, DockTitleVersion version ) {
-            // let's use the default factory
-            DockTitleFactory factory = version.getFactory( Priority.THEME );
-            if( factory == null )
-                factory = version.getFactory( Priority.DEFAULT );
-            
-            return factory.createStationTitle( dockable, version );
         }
     }
 }

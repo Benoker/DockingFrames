@@ -25,23 +25,23 @@
  */
 package bibliothek.extension.gui.dock.theme.smooth;
 
-import bibliothek.gui.DockStation;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
-import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.title.DockTitleRequest;
 
 /**
  * A factory creating new {@link SmoothDefaultButtonTitle}s.
  * @author Benjamin Sigg
  */
 public class SmoothDefaultButtonTitleFactory implements DockTitleFactory{
-	public DockTitle createDockableTitle(Dockable dockable, DockTitleVersion version) {
-		return new SmoothDefaultButtonTitle( dockable, version );
+	public void install( DockTitleRequest request ){
+		// ignore	
 	}
-
-	public <D extends Dockable & DockStation> DockTitle createStationTitle( D dockable, DockTitleVersion version) {
-		return new SmoothDefaultButtonTitle( dockable, version );
+	
+	public void uninstall( DockTitleRequest request ){
+		// ignore	
 	}
-
+	
+	public void request( DockTitleRequest request ){
+		request.setAnswer( new SmoothDefaultButtonTitle( request.getTarget(), request.getVersion() ) );	
+	}
 }

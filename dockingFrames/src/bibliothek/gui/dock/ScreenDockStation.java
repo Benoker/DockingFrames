@@ -283,8 +283,6 @@ public class ScreenDockStation extends AbstractDockStation {
         
         ScreenDockWindow oldCombine = dropInfo.combine;
         
-        dropInfo.x = x;
-        dropInfo.y = y;
         dropInfo.titleX = titleX;
         dropInfo.titleY = titleY;
         dropInfo.dockable = dockable;
@@ -449,14 +447,12 @@ public class ScreenDockStation extends AbstractDockStation {
         if( dropInfo == null )
             dropInfo = new DropInfo();
         
-        dropInfo.draw = true;
         if( dropInfo.combine != null )
             dropInfo.combine.setPaintCombining( true );
     }
 
     public void forget() {
         if( dropInfo != null ){
-            dropInfo.draw = false;
             if( dropInfo.combine != null )
                 dropInfo.combine.setPaintCombining( false );
             dropInfo = null;
@@ -866,18 +862,6 @@ public class ScreenDockStation extends AbstractDockStation {
     }
     
     /**
-     * Creates a {@link DockTitle} that will be used for <code>dockable</code>.
-     * @param dockable the element for which a title is required
-     * @return the new title or <code>null</code>
-     */
-    public DockTitle createDockTitle( Dockable dockable ){
-        if( version == null )
-            return null;
-        
-        return dockable.getDockTitle( version );
-    }
-    
-    /**
      * Gets the currently used {@link BoundaryRestriction}.
      * @return the restriction
      */
@@ -912,11 +896,9 @@ public class ScreenDockStation extends AbstractDockStation {
         /** The Dockable which is dragged */
         public Dockable dockable;
         /** Location of the mouse */
-        public int x, y, titleX, titleY;
+        public int titleX, titleY;
         /** Possible new parent */
         public ScreenDockWindow combine;
-        /** <code>true</code> if some sort of selection should be painted */
-        public boolean draw;
     }
     
 }

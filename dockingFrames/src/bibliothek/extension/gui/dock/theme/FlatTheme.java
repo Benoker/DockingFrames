@@ -70,9 +70,8 @@ import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
 import bibliothek.gui.dock.themes.basic.action.buttons.BasicMiniButton;
 import bibliothek.gui.dock.themes.basic.action.buttons.DropDownMiniButton;
 import bibliothek.gui.dock.themes.basic.action.buttons.MiniButton;
-import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
-import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
@@ -123,13 +122,17 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
     public void install( DockController controller ) {
         super.install(controller);
         controller.getDockTitleManager().registerTheme( FlapDockStation.BUTTON_TITLE_ID, new DockTitleFactory(){
-            public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
-                return new FlatButtonTitle( dockable, version );
-            }
-
-            public <D extends Dockable & DockStation> DockTitle createStationTitle( D dockable, DockTitleVersion version ) {
-                return new FlatButtonTitle( dockable, version );
-            }
+        	public void install( DockTitleRequest request ){
+	        	// ignore	
+        	}
+        	
+        	public void uninstall( DockTitleRequest request ){
+	        	// ignore	
+        	}
+        	
+        	public void request( DockTitleRequest request ){
+        		request.setAnswer( new FlatButtonTitle( request.getTarget(), request.getVersion() ) );
+        	}
         });
 
         controller.getActionViewConverter().putTheme( ActionType.BUTTON, ViewTarget.TITLE, 

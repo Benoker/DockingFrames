@@ -28,9 +28,9 @@ package bibliothek.gui.dock.station.flap;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Insets;
-import java.util.Map;
 
 import javax.swing.JPanel;
 
@@ -50,21 +50,16 @@ public class ButtonPane extends OverpaintablePanel{
     /** Information where currently a {@link Dockable} is dropped */
     private FlapDropInfo dropInfo;
     
-    /** A mapping which {@link Dockable} has which {@link DockTitle} */
-    private Map<Dockable, DockTitle> buttonTitles;
+    /** whether {@link #resetTitles()} has been called but not yet executed */
+    private boolean resetStarted = false;
     
     /**
      * Constructs a new panel.
      * @param station The owner
-     * @param titles The titles (this map is modified by the station)
      */
-    public ButtonPane( FlapDockStation station, Map<Dockable, DockTitle> titles ){
-        super();
-        
+    public ButtonPane( FlapDockStation station ){
         setBasePane( new Content() );
-        
         this.station = station;
-        this.buttonTitles = titles;
     }
     
     /**
@@ -101,18 +96,25 @@ public class ButtonPane extends OverpaintablePanel{
     
     /**
      * Ensures that all titles of the title-map, which was given to the
-     * constructor, are shown on this panel.
+     * constructor, are shown on this panel. This method works asynchronous.
      */
     public void resetTitles(){
-        getContentPane().removeAll();
-        for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
-            Dockable dockable = station.getDockable( i );
-            DockTitle title = buttonTitles.get( dockable );
-            if( title != null ){
-                getContentPane().add( title.getComponent() );
-            }
-        }
-        revalidate();
+    	if( !resetStarted ){
+    		resetStarted = true;
+    		EventQueue.invokeLater( new Runnable() {
+				public void run(){
+					resetStarted = false;
+			        getContentPane().removeAll();
+			        for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
+			            DockTitle title = station.getButton( i );
+			            if( title != null ){
+			                getContentPane().add( title.getComponent() );
+			            }
+			        }
+			        revalidate();	
+				}
+			});
+    	}
     }
     
     @Override
@@ -121,11 +123,8 @@ public class ButtonPane extends OverpaintablePanel{
             int left = dropInfo.getIndex()-1;
             int right = left+1;
             
-            Dockable leftDockable = left < 0 ? null : station.getDockable( left );
-            Dockable rightDockable = right >= station.getDockableCount() ? null : station.getDockable( right );
-            
-            DockTitle leftTitle = leftDockable == null ? null : buttonTitles.get( leftDockable );
-            DockTitle rightTitle = rightDockable == null ? null : buttonTitles.get( rightDockable );
+            DockTitle leftTitle = left < 0 ? null : station.getButton( left );
+            DockTitle rightTitle = right >= station.getDockableCount() ? null : station.getButton( right );
             
             boolean horizontal = station.getDirection() == Direction.SOUTH || station.getDirection() == Direction.NORTH;
             
@@ -201,7 +200,7 @@ public class ButtonPane extends OverpaintablePanel{
     public int indexAt( int x, int y ){
         if( station.getDirection() == Direction.SOUTH || station.getDirection() == Direction.NORTH ){
             for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
-                DockTitle title = buttonTitles.get( station.getDockable( i ) );
+                DockTitle title = station.getButton( i );
                 if( title != null ){
                     int tx = title.getComponent().getX();
                     int tw = title.getComponent().getWidth();
@@ -220,7 +219,7 @@ public class ButtonPane extends OverpaintablePanel{
         }
         else{
             for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
-                DockTitle title = buttonTitles.get( station.getDockable( i ) );
+                DockTitle title = station.getButton( i );
                 if( title != null ){
                     int ty = title.getComponent().getY();
                     int th = title.getComponent().getHeight();
@@ -253,8 +252,7 @@ public class ButtonPane extends OverpaintablePanel{
         
         if( station.getDirection() == Direction.NORTH || station.getDirection() == Direction.SOUTH ){
             for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
-                Dockable dockable = station.getDockable( i );
-                DockTitle title = buttonTitles.get( dockable );
+                DockTitle title = station.getButton( i );
                 if( title != null ){
                     Dimension size = title.getComponent().getPreferredSize();
                     width += size.width;
@@ -264,8 +262,7 @@ public class ButtonPane extends OverpaintablePanel{
         }
         else{
             for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
-                Dockable dockable = station.getDockable( i );
-                DockTitle title = buttonTitles.get( dockable );
+                DockTitle title = station.getButton( i );
                 if( title != null ){
                     Dimension size = title.getComponent().getPreferredSize();
                     height += size.height;

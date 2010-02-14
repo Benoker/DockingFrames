@@ -325,7 +325,7 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
 
     /**
      * Ensures that all dockables are in a basic mode.<br>
-     * This method returns immediatelly if in {@link #isLayouting() layouting mode}
+     * This method returns immediately if in {@link #isLayouting() layouting mode}
      * @return <code>true</code> if at least one element was affected by changes,
      * <code>false</code> if nothing happened.
      */

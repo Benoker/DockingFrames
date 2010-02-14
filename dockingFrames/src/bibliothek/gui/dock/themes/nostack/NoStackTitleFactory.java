@@ -26,15 +26,13 @@
 
 package bibliothek.gui.dock.themes.nostack;
 
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.StackDockStation;
-import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
-import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.title.DockTitleRequest;
 
 /**
  * A {@link DockTitleFactory} which does not create titles for 
@@ -57,21 +55,29 @@ public class NoStackTitleFactory implements DockTitleFactory{
         this.base = base;
     }
     
-    public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
-        return base.createDockableTitle( dockable, version );
+    public void install( DockTitleRequest request ){
+	    base.install( request );	
     }
     
-    public <D extends Dockable & DockStation> DockTitle createStationTitle( D dockable, DockTitleVersion version ) {
-        if( dockable instanceof StackDockStation ){
-            String id = version.getID();
+    public void uninstall( DockTitleRequest request ){
+    	base.uninstall( request );
+    }
+    
+    public void request( DockTitleRequest request ){
+    	Dockable dockable = request.getTarget();
+    	
+    	if( dockable instanceof StackDockStation ){
+            String id = request.getVersion().getID();
             if( id.equals( StackDockStation.TITLE_ID ) ||
                 id.equals( FlapDockStation.WINDOW_TITLE_ID ) ||
                 id.equals( ScreenDockStation.TITLE_ID ) ||
-                id.equals( SplitDockStation.TITLE_ID ))
-                
-                return null;
+                id.equals( SplitDockStation.TITLE_ID )){
+            	
+            	request.setAnswer( null );
+            	return;
+            }
         }
         
-        return base.createStationTitle( dockable, version );
+    	base.request( request );
     }
 }

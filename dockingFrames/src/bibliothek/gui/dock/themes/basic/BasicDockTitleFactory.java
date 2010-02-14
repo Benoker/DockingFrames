@@ -26,9 +26,8 @@
 
 package bibliothek.gui.dock.themes.basic;
 
-import bibliothek.gui.DockStation;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.title.*;
+import bibliothek.gui.dock.title.DockTitleFactory;
+import bibliothek.gui.dock.title.DockTitleRequest;
 
 /**
  * A {@link DockTitleFactory} which created instances of {@link BasicDockTitle}
@@ -39,13 +38,20 @@ public class BasicDockTitleFactory implements DockTitleFactory {
     /** An instance of this factory which can be used an any place */
     public static final DockTitleFactory FACTORY = new BasicDockTitleFactory();
     
-    public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
-        return new BasicDockTitle( dockable, version );
+    public void install( DockTitleRequest request ){
+	    // ignore	
     }
-
-    public <D extends Dockable & DockStation> DockTitle createStationTitle( 
-            D dockable, DockTitleVersion version ) {
-        return new BasicStationTitle( dockable, version );
+    
+    public void uninstall( DockTitleRequest request ){
+	    // ignore	
     }
-
+    
+    public void request( DockTitleRequest request ){
+    	if( request.getTarget().asDockStation() == null ){
+    		request.setAnswer( new BasicDockTitle( request.getTarget(), request.getVersion() ) );
+    	}
+    	else{
+    		request.setAnswer( new BasicStationTitle( request.getTarget(), request.getVersion() ) );
+    	}
+    }
 }

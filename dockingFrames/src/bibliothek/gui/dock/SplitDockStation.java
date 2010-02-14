@@ -75,6 +75,7 @@ import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.OverpaintablePanel;
+import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.split.DefaultSplitLayoutManager;
 import bibliothek.gui.dock.station.split.Leaf;
@@ -102,6 +103,7 @@ import bibliothek.gui.dock.station.support.StationPaintWrapper;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
+import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
@@ -234,13 +236,13 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     private FullScreenListener fullScreenListener = new FullScreenListener();
 
     /** The list of {@link Dockable Dockables} which are shown on this station */
-    private List<DockableDisplayer> dockables = new ArrayList<DockableDisplayer>();
+    private List<StationChildHandle> dockables = new ArrayList<StationChildHandle>();
 
     /** The {@link Dockable} which has the focus */
     private Dockable frontDockable;
 
     /** The {@link Dockable} which is currently in fullscreen-mode. This value might be <code>null</code> */
-    private DockableDisplayer fullScreenDockable;
+    private StationChildHandle fullScreenDockable;
 
     /** An action that is added to all children. The action changes the fullscreen-mode of the child. Can be <code>null</code> */
     private ListeningDockAction fullScreenAction;
@@ -270,7 +272,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 
     /** Access to the private and protected methods for some friends of this station */
     private SplitDockAccess access = new SplitDockAccess(){
-        public DockableDisplayer getFullScreenDockable() {
+        public StationChildHandle getFullScreenDockable() {
             return fullScreenDockable;
         }
 
@@ -286,13 +288,14 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             return layoutManager.getValue().validateDivider( SplitDockStation.this, divider, node );
         }            
 
-        public DockableDisplayer addDisplayer( Dockable dockable, boolean fire ) {
-            return SplitDockStation.this.addDisplayer( dockable, fire );
+        public StationChildHandle addHandle( Dockable dockable, boolean fire ) {
+            return SplitDockStation.this.addHandle( dockable, fire );
         }
-        public void removeDisplayer( DockableDisplayer displayer, boolean fire ) {
-            SplitDockStation.this.removeDisplayer( displayer, fire );
+        
+        public void removeHandle( StationChildHandle handle, boolean fire ){
+        	SplitDockStation.this.removeHandle( handle, fire );
         }
-
+        
         public boolean drop( Dockable dockable, SplitDockProperty property, SplitNode root ) {
             return SplitDockStation.this.drop( dockable, property, root );
         }
@@ -528,14 +531,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             if( this.controller != null )
                 this.controller.getDoubleClickController().removeListener( fullScreenListener );
 
-            for( DockableDisplayer displayer : dockables ){
-                DockTitle title = displayer.getTitle();
-                if( title != null ){
-                    displayer.getDockable().unbind( title );
-                    displayer.setTitle( null );
-                }
+            for( StationChildHandle handle : dockables ){
+            	handle.setTitleRequest( null );
             }
-
+            
             this.controller = controller;
             getDisplayers().setController( controller );
 
@@ -553,19 +552,8 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             else
                 title = null;
 
-            for( DockableDisplayer displayer : dockables ){
-                DockTitle title = displayer.getTitle();
-                if( title != null ){
-                    displayer.getDockable().unbind( title );
-                    displayer.setTitle( null );
-                }
-
-                if( this.title != null ){
-                    title = displayer.getDockable().getDockTitle( this.title );
-                    displayer.setTitle( title );
-                    if( title != null )
-                        displayer.getDockable().bind( title );
-                }
+            for( StationChildHandle handle : dockables ){
+            	handle.setTitleRequest( title );
             }
             hierarchyObserver.controllerChanged( controller );
         }
@@ -797,8 +785,8 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         return allowSideSnap;
     }
 
-    public DockTitle getDockTitle( DockTitleVersion version ) {
-        return version.createStation( this );
+    public void requestDockTitle( DockTitleRequest request ){
+	    // ignore	
     }
 
     public void changed( Dockable dockable, DockTitle title, boolean active ) {
@@ -1066,16 +1054,16 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
                 if( leaf == null )
                     throw new IllegalArgumentException( "Dockable not child of this station" );
 
-                fullScreenDockable = leaf.getDisplayer();
+                fullScreenDockable = leaf.getDockableHandle();
 
-                for( DockableDisplayer displayer : dockables ){
-                    displayer.getComponent().setVisible( displayer == fullScreenDockable );
+                for( StationChildHandle handle : dockables ){
+                    handle.getDisplayer().getComponent().setVisible( handle == fullScreenDockable );
                 }
             }
             else{
                 fullScreenDockable = null;
-                for( DockableDisplayer displayer : dockables ){
-                    displayer.getComponent().setVisible( true );
+                for( StationChildHandle handle : dockables ){
+                    handle.getDisplayer().getComponent().setVisible( true );
                 }
             }
 
@@ -1895,35 +1883,32 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     }
 
     /**
-     * Creates and adds a new {@link DockableDisplayer} for <code>dockable</code>.
+     * Creates a new {@link StationChildHandle} for <code>dockable</code>. This
+     * method also adds the {@link DockableDisplayer} of the new handle to this station. 
      * @param dockable the element to add
      * @param fire whether to fire events when adding <code>dockable</code> or not
-     * @return the new displayer
+     * @return the new handle
      */
-    private DockableDisplayer addDisplayer( Dockable dockable, boolean fire ){
+    private StationChildHandle addHandle( Dockable dockable, boolean fire ){
         DockUtilities.ensureTreeValidity( this, dockable );
 
         if( fire )
             dockStationListeners.fireDockableAdding( dockable );
 
-        DockTitle title = null;
+        StationChildHandle handle = new StationChildHandle( this, getDisplayers(), dockable, title );
         dockable.setDockParent( this );
 
-        if( this.title != null ){
-            title = dockable.getDockTitle( this.title );
-            if( title != null )
-                dockable.bind( title );
-        }
-
-        DockableDisplayer displayer = getDisplayers().fetch( dockable, title );
+        handle.updateDisplayer();
+        
+        DockableDisplayer displayer = handle.getDisplayer();
         getContentPane().add( displayer.getComponent() );
         displayer.getComponent().setVisible( !isFullScreen() );
-        dockables.add( displayer );
+        dockables.add( handle );
 
         if( fire )
             dockStationListeners.fireDockableAdded( dockable );
 
-        return displayer;
+        return handle;
     }
 
     /**
@@ -1931,23 +1916,19 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      * @param displayer the displayer to replaces
      */
     protected void discard( DockableDisplayer displayer ){
-    	int index = dockables.indexOf( displayer );
+    	int index = indexOfDockable( displayer.getDockable() );
     	if( index < 0 )
     		throw new IllegalArgumentException( "displayer unknown to this station: " + displayer );
     	
     	Dockable dockable = displayer.getDockable();
-    	DockTitle title = displayer.getTitle();
     	boolean visible = displayer.getComponent().isVisible();
     	
     	Leaf leaf = root().getLeaf( dockable );
     	getContentPane().remove( displayer.getComponent() );
     	
-    	DisplayerCollection displayers = getDisplayers();
-    	displayers.release( displayer );
-    	displayer = displayers.fetch( dockable, title );
-    	
-    	leaf.setDisplayer( displayer );
-    	dockables.set( index, displayer );
+    	StationChildHandle handle = leaf.getDockableHandle();
+    	handle.updateDisplayer();
+    	displayer = handle.getDisplayer();
     	
     	getContentPane().add( displayer.getComponent() );
     	displayer.getComponent().setVisible( visible );
@@ -2008,49 +1989,46 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     }
 
     /**
-     * Removes <code>displayer</code> from this station. Unbinds its
+     * Removes <code>handle</code> from this station. Unbinds its
      * {@link Dockable}.
-     * @param displayer the displayer to remove
+     * @param handle the handle to remove
      * @param fire whether to inform {@link DockStationListener}s
      * about the change or not
      */
-    private void removeDisplayer( DockableDisplayer displayer, boolean fire ){
-        int index = dockables.indexOf( displayer );
+    private void removeHandle( StationChildHandle handle, boolean fire ){
+        int index = dockables.indexOf( handle );
         if( index >= 0 ){
             removeDisplayer( index, fire );
         }
     }
 
     /**
-     * Removes the index'th displayer from this station
-     * @param index the index of the displayer to remove
+     * Removes the index'th handle from this station
+     * @param index the index of the handle to remove
      * @param fire whether to fire events or not
      */
     private void removeDisplayer( int index, boolean fire ){
-        DockableDisplayer display = dockables.get( index );
+        StationChildHandle handle = dockables.get( index );
 
-        if( display == fullScreenDockable ){
+        if( handle == fullScreenDockable ){
             setNextFullScreen();
 
-            if( display == fullScreenDockable )
+            if( handle == fullScreenDockable )
                 setFullScreen( null );
         }
 
-        Dockable dockable = display.getDockable();
+        Dockable dockable = handle.getDockable();
         if( fire )
             dockStationListeners.fireDockableRemoving( dockable );
 
         dockables.remove( index );
 
-        DockTitle title = display.getTitle();
-
-        display.getComponent().setVisible( true );
-        getContentPane().remove( display.getComponent() );
-        getDisplayers().release( display );
-
-        if( title != null ){
-            dockable.unbind( title );
-        }
+        DockableDisplayer displayer = handle.getDisplayer();
+        
+        displayer.getComponent().setVisible( true );
+        getContentPane().remove( displayer.getComponent() );
+        
+        handle.destroy();
 
         if( dockable == frontDockable ){
             setFrontDockable( null );
@@ -2149,7 +2127,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             Insets insets = getInsets();
 
             if( fullScreenDockable != null ){
-                fullScreenDockable.getComponent().setBounds( insets.left, insets.top, 
+                fullScreenDockable.getDisplayer().getComponent().setBounds( insets.left, insets.top, 
                         getWidth() - insets.left - insets.right,
                         getHeight() - insets.bottom - insets.top );
             }

@@ -41,6 +41,9 @@ import bibliothek.gui.dock.util.Priority;
  * @author Benjamin Sigg
  */
 public class DockTitleManager {
+	/** unique identifier of the {@link DockTitleVersion} which represents the current {@link DockTheme}s default factory */
+	public static final String THEME_FACTORY_ID = "theme";
+	
     /** A map of all versions registered at this manager */
 	private Map<String, DockTitleVersion> titleVersions = new Hashtable<String, DockTitleVersion>();
     /** The controller for which the factories are stored */
@@ -54,6 +57,7 @@ public class DockTitleManager {
     	if( controller == null )
     		throw new IllegalArgumentException( "Controller must not be null" );
     	this.controller = controller;
+    	getVersion( THEME_FACTORY_ID, NullTitleFactory.INSTANCE );
     }
     
     /**
@@ -89,10 +93,11 @@ public class DockTitleManager {
             version = new DockTitleVersion( controller, id );
             titleVersions.put( id, version );
         }
-        
+       
         if( version.getFactory( Priority.DEFAULT ) == null ){
-            version.setFactory( factory, Priority.DEFAULT );
+        	version.setFactory( factory, Priority.DEFAULT );
         }
+
         return version;
     }
     

@@ -26,17 +26,20 @@
 
 package bibliothek.gui.dock.themes.basic;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import javax.swing.JComponent;
 
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.title.AbstractDockTitle;
-import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
+import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.font.DockFont;
@@ -55,14 +58,17 @@ public class BasicDockTitle extends AbstractDockTitle {
      * A factory for the {@link BasicDockTitle}.
      */
     public static final DockTitleFactory FACTORY = new DockTitleFactory(){
-        public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
-            return new BasicDockTitle( dockable, version );
-        }
-
-        public <D extends Dockable & DockStation> DockTitle createStationTitle( 
-                D dockable, DockTitleVersion version ) {
-            return new BasicDockTitle( dockable, version );
-        }
+    	public void install( DockTitleRequest request ){
+    		// ignore
+    	}
+    	
+    	public void uninstall( DockTitleRequest request ){
+    		// ignore
+    	}
+    	
+    	public void request( DockTitleRequest request ){
+    		request.setAnswer( new BasicDockTitle( request.getTarget(), request.getVersion() ) );
+    	}
     };
     
     /** The left color of the gradient if the title is active */

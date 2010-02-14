@@ -35,23 +35,20 @@ import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.dockable.MovingImage;
 import bibliothek.gui.dock.dockable.TrueMovingImage;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.title.DockTitleVersion;
-import bibliothek.gui.dock.title.TitleMovingImage;
+import bibliothek.gui.dock.title.UpdatingTitleMovingImage;
+import bibliothek.gui.dock.title.DockTitle.Orientation;
 
 /**
  * A factory whose {@link MovingImage}s display a {@link DockTitle}.
  * @author Benjamin Sigg
- *
  */
 public class BasicMovingImageFactory implements DockableMovingImageFactory {
     public MovingImage create( DockController controller, DockTitle snatched ) {
         if( snatched.getOrigin() != null ){
             DockTitleVersion origin = snatched.getOrigin();
-            DockTitle replacement = snatched.getDockable().getDockTitle( origin );
-            if( replacement != null ){
-                replacement.setOrientation( snatched.getOrientation() );
-                return new TitleMovingImage( snatched.getDockable(), replacement );
-            }
+            return new UpdatingTitleMovingImage( snatched.getDockable(), origin, snatched.getOrientation() );
         }
 
         /* TODO find a way to use the preferred size */
@@ -70,9 +67,7 @@ public class BasicMovingImageFactory implements DockableMovingImageFactory {
     }
 
     public MovingImage create( DockController controller, Dockable dockable ) {
-        DockTitle title = controller.getTheme().getTitleFactory( controller ).createDockableTitle( dockable, null );
-        if( title == null )
-            return null;
-        return new TitleMovingImage( dockable, title );
+    	DockTitleVersion version = controller.getDockTitleManager().getVersion( DockTitleManager.THEME_FACTORY_ID );
+    	return new UpdatingTitleMovingImage( dockable, version, Orientation.FREE_HORIZONTAL );
     }
 }

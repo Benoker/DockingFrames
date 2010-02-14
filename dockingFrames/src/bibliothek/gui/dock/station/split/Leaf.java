@@ -35,13 +35,10 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.event.DockStationListener;
-import bibliothek.gui.dock.event.DockableAdapter;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.split.SplitDockTree.Key;
-import bibliothek.gui.dock.title.DockTitle;
-import bibliothek.gui.dock.title.DockTitleVersion;
-import bibliothek.gui.dock.util.DockUtilities;
 
 /**
  * Represents a leaf in the tree that is the structure of a {@link SplitDockStation}.
@@ -50,12 +47,8 @@ import bibliothek.gui.dock.util.DockUtilities;
  * @author Benjamin Sigg
  */
 public class Leaf extends SplitNode{
-	/** The displayer whose size and location is calculated by this leaf */
-    private DockableDisplayer displayer;
-    /** The Dockable on the displayer*/
-    private Dockable dockable;
-    /** a listener for {@link #dockable} */
-    private Listener listener = new Listener();
+	/** Information about the element that is shown by this leaf */
+    private StationChildHandle handle;
     
     /**
      * Creates a new leaf.
@@ -75,15 +68,19 @@ public class Leaf extends SplitNode{
     }
     
     /**
-     * Sets the displayer of this leaf.
-     * @param displayer the new displayer
+     * Sets the element of this leaf.
+     * @param handle the element
      */
-    public void setDisplayer( DockableDisplayer displayer ){
-		this.displayer = displayer;
+    public void setHandle( StationChildHandle handle ){
+		this.handle = handle;
 	}
     
     @Override
     public Dimension getMinimumSize() {
+    	if( handle == null )
+    		return new Dimension( 0, 0 );
+    	
+    	DockableDisplayer displayer = handle.getDisplayer();
     	if( displayer == null )
     		return new Dimension( 0, 0 );
     	return displayer.getComponent().getMinimumSize();
@@ -108,22 +105,14 @@ public class Leaf extends SplitNode{
      * change or not. Clients should set fire = <code>true</code>.
      */
     public void setDockable( Dockable dockable, boolean fire ){
-        if( displayer != null ){
-            getAccess().removeDisplayer( displayer, fire );
-            displayer = null;
-        }
-        
+    	if( handle != null ){
+    		getAccess().removeHandle( handle, fire );
+    		handle = null;
+    	}
+    	
         if( dockable != null ){
-            displayer = getAccess().addDisplayer( dockable, fire );
+            handle = getAccess().addHandle( dockable, fire );
         }
-        
-        if( this.dockable != null )
-            this.dockable.removeDockableListener( listener );
-        
-        this.dockable = dockable;
-        
-        if( dockable != null )
-            dockable.addDockableListener( listener );
     }
     
     /**
@@ -132,7 +121,7 @@ public class Leaf extends SplitNode{
      * @return the Dockable
      */
     public Dockable getDockable() {
-        return dockable;
+        return handle == null ? null : handle.getDockable();
     }
     
     
@@ -141,19 +130,29 @@ public class Leaf extends SplitNode{
      * @return the displayer
      */
     public DockableDisplayer getDisplayer(){
-        return displayer;
+        return handle == null ? null : handle.getDisplayer();
     }
+    
+    /**
+     * Gets the handle which is responsible for the current {@link Dockable}.
+     * @return the handle, might be <code>null</code>
+     */
+    public StationChildHandle getDockableHandle(){
+		return handle;
+	}
     
     @Override
     public void updateBounds( double x, double y, double width, double height, double factorW, double factorH, boolean components ) {
         super.updateBounds( x, y, width, height, factorW, factorH, components );
+        DockableDisplayer displayer = getDisplayer();
         
         if( components && displayer != null && displayer != getAccess().getFullScreenDockable() )
             displayer.getComponent().setBounds( getBounds() );
     }
         
     @Override
-    public PutInfo getPut( int x, int y, double factorW, double factorH, Dockable drop ) {            
+    public PutInfo getPut( int x, int y, double factorW, double factorH, Dockable drop ) {
+    	DockableDisplayer displayer = getDisplayer();
         if( displayer == null )
             return null;
         
@@ -324,13 +323,14 @@ public class Leaf extends SplitNode{
         
     @Override
     public Leaf getLeaf( Dockable dockable ) {
-        if( displayer == null )
-            return null;
-        
-        if( dockable == displayer.getDockable() )
-            return this;
-        else
-            return null;
+    	Dockable mine = getDockable();
+    	
+    	if( mine != null && dockable == getDockable() ){
+    		return this;
+    	}
+    	else{
+    		return null;
+    	}
     }
     
     @Override
@@ -345,6 +345,7 @@ public class Leaf extends SplitNode{
     
     @Override
     public void toString( int tabs, StringBuilder out ) {
+    	Dockable dockable = getDockable();
         out.append( "Leaf[ " );
         if( dockable != null ){
             out.append( dockable.getTitleText() );
@@ -353,21 +354,5 @@ public class Leaf extends SplitNode{
         out.append( "id=" );
         out.append( getId() );
         out.append( " ]" );
-    }
-    
-    /**
-     * Listens to the property changes of the {@link Dockable} of the 
-     * enclosing {@link Leaf}
-     * @author Benjamin Sigg
-     */
-    private class Listener extends DockableAdapter{
-        @Override
-        public void titleExchanged( Dockable dockable, DockTitle title ) {
-            SplitDockAccess access = getAccess();
-            if( access != null ){
-                DockTitleVersion version = access.getTitleVersion();
-                DockUtilities.exchangeTitle( displayer, version );
-            }
-        }
     }
 }

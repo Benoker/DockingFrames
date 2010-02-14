@@ -47,7 +47,6 @@ import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.RectGradientPainter
 import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPainter;
 import bibliothek.extension.gui.dock.theme.flat.FlatButtonTitle;
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
@@ -73,6 +72,7 @@ import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.themes.ThemeProperties;
+import bibliothek.gui.dock.themes.basic.BasicDockTitle;
 import bibliothek.gui.dock.themes.basic.BasicDockTitleFactory;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonHandler;
 import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonHandler;
@@ -84,6 +84,7 @@ import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleManager;
+import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
@@ -173,12 +174,10 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
             }
         });
         setTitleFactory( new BasicDockTitleFactory(){
-            @Override
-            public <D extends Dockable & DockStation> DockTitle createStationTitle(
-                    D dockable, DockTitleVersion version ) {
-
-                return createDockableTitle( dockable, version );
-            }
+        	@Override
+        	public void request( DockTitleRequest request ){
+        		request.setAnswer( new BasicDockTitle( request.getTarget(), request.getVersion() ) );
+        	}
         });
         setDockableSelection( new EclipseDockableSelection() );
         setTabPlacement( TabPlacement.TOP_OF_DOCKABLE );
@@ -207,13 +206,17 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
         controller.getProperties().set( TabPane.LAYOUT_MANAGER, new MenuLineLayout(), Priority.THEME );
 
         titleManager.registerTheme( FlapDockStation.BUTTON_TITLE_ID, new DockTitleFactory(){
-            public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
-                return new FlatButtonTitle( dockable, version );
-            }
-
-            public <D extends Dockable & DockStation> DockTitle createStationTitle( D dockable, DockTitleVersion version ) {
-                return new FlatButtonTitle( dockable, version );
-            }
+        	public void install( DockTitleRequest request ){
+	        	// ignore	
+        	}
+        	
+        	public void uninstall( DockTitleRequest request ){
+	        	// ignore	
+        	}
+        	
+        	public void request( DockTitleRequest request ){
+	        	request.setAnswer( new FlatButtonTitle( request.getTarget(), request.getVersion() ) );	
+        	}
         });
 
         controller.getActionViewConverter().putTheme( ActionType.BUTTON, ViewTarget.TITLE, 

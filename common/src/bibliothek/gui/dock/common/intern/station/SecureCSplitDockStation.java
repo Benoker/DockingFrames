@@ -33,8 +33,7 @@ import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.event.CDockableAdapter;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.security.SecureSplitDockStation;
-import bibliothek.gui.dock.title.DockTitle;
-import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.title.DockTitleRequest;
 
 /**
  * The secure version of {@link CSplitDockStation}.
@@ -84,10 +83,12 @@ public class SecureCSplitDockStation extends SecureSplitDockStation implements C
 	}
 
 	@Override
-	public DockTitle getDockTitle( DockTitleVersion version ) {
-		if( delegate.isTitleDisplayed( version ))
-			return super.getDockTitle( version );
-		
-		return null;
+	public void requestDockTitle( DockTitleRequest request ){
+		if( delegate.isTitleDisplayed( request.getVersion() )){
+			super.requestDockTitle( request );
+		}
+		else{
+			request.setAnswer( null );
+		}
 	}
 }

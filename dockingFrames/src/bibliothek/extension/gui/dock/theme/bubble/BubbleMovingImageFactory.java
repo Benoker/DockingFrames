@@ -44,10 +44,10 @@ public class BubbleMovingImageFactory implements DockableMovingImageFactory {
     }
     
     public MovingImage create( DockController controller, DockTitle snatched ) {
-        return new TitleMovingImage( snatched.getDockable(), reduced.createDockableTitle( snatched.getDockable(), null ));
+        return new TitleMovingImage( snatched.getDockable(), reduced.createTitle( snatched.getDockable() ));
     }
 
     public MovingImage create( DockController controller, Dockable dockable ) {
-        return new TitleMovingImage( dockable, reduced.createDockableTitle( dockable, null ));
+        return new TitleMovingImage( dockable, reduced.createTitle( dockable ));
     }
 }

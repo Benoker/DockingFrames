@@ -29,7 +29,6 @@ import java.awt.Color;
 import java.awt.Point;
 
 import bibliothek.extension.gui.dock.util.Path;
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.FlapDockStation.ButtonContent;
@@ -38,6 +37,7 @@ import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
+import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.font.DockFont;
@@ -73,12 +73,17 @@ public class BubbleButtonDockTitle extends AbstractBubbleDockTitle{
      * A factory which creates new {@link BubbleButtonDockTitle}s.
      */
     public static final DockTitleFactory FACTORY = new DockTitleFactory(){
-        public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
-            return new BubbleButtonDockTitle( dockable, version );
-        }
-        public <D extends Dockable & DockStation> DockTitle createStationTitle( D dockable, DockTitleVersion version ) {
-            return new BubbleButtonDockTitle( dockable, version );
-        }
+    	public void install( DockTitleRequest request ){
+    		// ignore
+    	}
+    	
+    	public void uninstall( DockTitleRequest request ){
+    		// ignore
+    	}
+    	
+    	public void request( DockTitleRequest request ){
+	    	request.setAnswer( new BubbleButtonDockTitle( request.getTarget(), request.getVersion() ) );	
+    	}
     };
     
     private ButtonContent behavior;

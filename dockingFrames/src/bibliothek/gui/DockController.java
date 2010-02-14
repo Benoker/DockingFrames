@@ -625,6 +625,7 @@ public class DockController {
 	    		
 	    		this.theme = theme;
 	    		theme.install( this );
+	    		dockTitles.registerTheme( DockTitleManager.THEME_FACTORY_ID, theme.getTitleFactory( this ) );
 	    		
 	    		// update only those station which are registered to this controller
 	    		for( DockStation station : register.listDockStations() ){

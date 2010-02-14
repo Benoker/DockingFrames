@@ -26,9 +26,13 @@
 
 package bibliothek.gui.dock.title;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockStation;
+import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.event.UIListener;
 import bibliothek.gui.dock.util.Priority;
 
 /**
@@ -38,16 +42,23 @@ import bibliothek.gui.dock.util.Priority;
  * DockTitleVersions are created and registered by a {@link DockTitleManager}.<br>
  * Every version consists of three slots for factories, each with different
  * priority. If a new title is required, the factory with the highest priority
- * will be used.
+ * will be used.<br>
+ * DockTitleVersion implements {@link DockTitleFactory} for convenience.
  * @author Benjamin Sigg
  */
-public class DockTitleVersion{
+public class DockTitleVersion implements DockTitleFactory{
     /** the three slots for the factories */
     private DockTitleFactory[] factories = new DockTitleFactory[3];
     /** the name of this version */
     private String id;
     /** the controller for which the titles are created */
     private DockController controller;
+    
+    /** the current requests on this version */
+    private List<DockTitleRequest> requests = new ArrayList<DockTitleRequest>();
+    
+    /** whether the theme is currently changing, a version does automatically call {@link DockTitleRequest#request()} while the theme changes */
+    private boolean onThemeChange = false;
     
     /**
      * Creates a new version.
@@ -63,6 +74,70 @@ public class DockTitleVersion{
         
         this.controller = controller;
         this.id = id;
+        controller.addUIListener( new UIListener() {
+			public void updateUI( DockController controller ){
+				// ignore	
+			}
+			
+			public void themeWillChange( DockController controller, DockTheme oldTheme, DockTheme newTheme ){
+				onThemeChange = true;
+			}
+			
+			public void themeChanged( DockController controller, DockTheme oldTheme, DockTheme newTheme ){
+				onThemeChange = false;
+			}
+		});
+    }
+    
+    /**
+     * Adds <code>request</code> to this version. The <code>request</code> will
+     * be installed on the current {@link DockTitleFactory} of this version.
+     * This method should not be called by clients, clients should call {@link DockTitleRequest#install()}.
+     * @param request the new request, not <code>null</code>
+     */
+    public void install( DockTitleRequest request ){
+    	if( request == null )
+    		throw new IllegalArgumentException( "request must not be null" );
+    	requests.add( request );
+    	DockTitleFactory factory = getFactory();
+    	if( factory != null ){
+    		factory.install( request );
+    	}
+    }
+    
+    /**
+     * Removes <code>request</code> from this version. This method should not be
+     * called by clients, clients should call {@link DockTitleRequest#uninstall()}.
+     * @param request the request to remove
+     */
+    public void uninstall( DockTitleRequest request ){
+    	requests.remove( request );
+    	DockTitleFactory factory = getFactory();
+    	if( factory != null ){
+    		factory.uninstall( request );
+    	}
+    }
+    
+    /**
+     * Calls {@link DockTitleFactory#request(DockTitleRequest)} for the current
+     * factory.
+     * @param request the request to answer
+     */
+    public void request( DockTitleRequest request ){
+    	DockTitleFactory factory = getFactory();
+    	if( factory != null ){
+    		factory.request( request );
+    	}
+    }
+    
+    /**
+     * Calls {@link DockTitleRequest#request()} for all {@link DockTitleRequest}s
+     * that are currently installed on this version.
+     */
+    public void request(){
+    	for( DockTitleRequest request : requests ){
+    		request.request();
+    	}
     }
     
     /**
@@ -90,7 +165,7 @@ public class DockTitleVersion{
     			return factories[i];
     	}
     	
-    	return controller.getTheme().getTitleFactory( controller );
+    	return null;
     }
     
     /**
@@ -99,7 +174,25 @@ public class DockTitleVersion{
      * @param priority the importance of the factory
      */
     public void setFactory( DockTitleFactory factory, Priority priority ){
+    	DockTitleFactory oldFactory = getFactory();
     	factories[ map( priority ) ] = factory;
+    	DockTitleFactory newFactory = getFactory();
+    	
+    	if( oldFactory != newFactory ){
+    		if( oldFactory != null ){
+    			for( DockTitleRequest request : requests ){
+    				oldFactory.uninstall( request );
+    			}
+    		}
+    		if( newFactory != null ){
+    			for( DockTitleRequest request : requests ){
+    				newFactory.install( request );
+    				if( !onThemeChange ){
+    					request.request();
+    				}
+    			}
+    		}
+    	}
     }
     
     /**
@@ -139,33 +232,6 @@ public class DockTitleVersion{
      */
     public String getID(){
         return id;
-    }
-    
-    /**
-     * Creates a title for <code>dockable</code>. The factory
-     * with the highest priority is used for this job.
-     * @param dockable the Dockable which needs a title
-     * @return the title, might be <code>null</code>
-     */
-    public DockTitle createDockable( Dockable dockable ){
-        DockTitleFactory factory = getFactory();
-        if( factory == null )
-            return null;
-        return factory.createDockableTitle( dockable, this );
-    }
-    
-    /**
-     * Creates a title for <code>dock</code>. The factory
-     * with the highest priority is used for this job.
-     * @param <D> a class which is Dockable and DockStation
-     * @param dock the dockable station
-     * @return the title, might be <code>null</code>
-     */
-    public <D extends Dockable & DockStation> DockTitle createStation( D dock ){
-        DockTitleFactory factory = getFactory();
-        if( factory == null )
-            return null;
-        return factory.createStationTitle( dock, this );
     }
     
     /**

@@ -23,16 +23,14 @@ import javax.swing.WindowConstants;
 
 import bibliothek.chess.model.Board;
 import bibliothek.chess.util.Utils;
-import bibliothek.chess.view.*;
+import bibliothek.chess.view.ChessBoard;
+import bibliothek.chess.view.ChessDockController;
+import bibliothek.chess.view.HidingTheme;
+import bibliothek.chess.view.PawnReplaceDialog;
+import bibliothek.chess.view.StateLabel;
 import bibliothek.demonstration.Monitor;
-import bibliothek.gui.DockController;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.dockable.MovingImage;
 import bibliothek.gui.dock.security.GlassedPane;
 import bibliothek.gui.dock.support.lookandfeel.ComponentCollector;
-import bibliothek.gui.dock.themes.BasicTheme;
-import bibliothek.gui.dock.themes.basic.BasicMovingImageFactory;
-import bibliothek.gui.dock.title.TitleMovingImage;
 
 /**
  * The center of the application. Responsible for creating the graphical
@@ -52,6 +50,8 @@ public class Core implements ComponentCollector{
     
     /** a controller used to manage the DockingFrames */
     private ChessDockController controller;
+    /** the theme used by {@link #controller} to display the chess figures */
+    private HidingTheme theme = new HidingTheme();
     
     /** used to distribute information about the state of this application */
     private Monitor monitor;
@@ -88,7 +88,8 @@ public class Core implements ComponentCollector{
         
         controller = new ChessDockController();
         controller.setRootWindow( frame );
-        changeTheme( false );
+        theme.setShowTitles( false );
+        controller.setTheme( theme );
         GlassedPane content = new GlassedPane();
         controller.getFocusObserver().addGlassPane( content );
         frame.setContentPane( content );
@@ -100,8 +101,6 @@ public class Core implements ComponentCollector{
         Board board = new Board();
         chessBoard.setBoard( board );
         stateLabel.setBoard( board );
-        
-
 
         JMenu menu = new JMenu( "Options" );
         menu.add( createNewGameItem() );
@@ -201,26 +200,7 @@ public class Core implements ComponentCollector{
      * should be shown or not.
      */
     private void changeTheme( boolean show ){
-        if( show ){
-            BasicTheme theme = new BasicTheme();
-            theme.setMovingImageFactory( new BasicMovingImageFactory(){
-                @Override
-                public MovingImage create( DockController controller,
-                        Dockable dockable ) {
-                    
-                    if( dockable instanceof ChessFigure ){
-                        return new TitleMovingImage( dockable, new ChessDockTitle( dockable, null ) );
-                    }
-                    else{
-                        return super.create( controller, dockable );
-                    }
-                }
-            });
-            controller.setTheme( theme );
-        }
-        else{
-            controller.setTheme( new HidingTheme() );
-        }
+    	theme.setShowTitles( show );
     }
     
     /**

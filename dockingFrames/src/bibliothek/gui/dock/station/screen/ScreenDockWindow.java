@@ -32,20 +32,15 @@ import java.awt.Rectangle;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
-import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
  * A {@link ScreenDockWindow} is used by a {@link ScreenDockStation} to show
  * a {@link Dockable} on the screen. Subclasses are free to show the {@link Dockable}
- * in any way they like, there are however a few things that should be handled
- * the same way in all implementations:
- * <ul>
- *  <li>Use the {@link DisplayerCollection} accessible through {@link ScreenDockStation#getDisplayers()} to
- *  create and destroy {@link DockableDisplayer}s.</li>
- *  <li>Use {@link ScreenDockStation#createDockTitle(Dockable)} to create new {@link DockTitle}s for {@link Dockable}s</li>
- * </ul>
+ * in any way they like, however subclasses are encouraged to use a 
+ * {@link StationChildHandle} to manage displayers and title.
  * @author Benjamin Sigg
  */
 public interface ScreenDockWindow {

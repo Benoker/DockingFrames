@@ -29,16 +29,13 @@ package bibliothek.gui.dock.security;
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.Window;
-import java.util.Map;
 
 import javax.swing.JComponent;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.station.flap.ButtonPane;
 import bibliothek.gui.dock.station.flap.FlapWindow;
-import bibliothek.gui.dock.title.DockTitle;
 
 /**
  * A {@link FlapDockStation} that uses {@link SecureFlapWindow} instead
@@ -72,9 +69,9 @@ public class SecureFlapDockStation extends FlapDockStation {
 	}
 	
 	@Override
-	protected ButtonPane createButtonPane( Map<Dockable, DockTitle> buttonTitles ){
+	protected ButtonPane createButtonPane(){
 		glassedPane = new GlassedPane();
-		ButtonPane pane = new ButtonPane( this, buttonTitles );
+		ButtonPane pane = new ButtonPane( this );
 		JComponent content = pane.getContentPane();
 		pane.setBasePane( glassedPane );
 		glassedPane.setContentPane( content );

@@ -42,9 +42,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
@@ -89,6 +87,7 @@ import bibliothek.gui.dock.station.support.StationPaintWrapper;
 import bibliothek.gui.dock.themes.basic.BasicButtonTitleFactory;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
@@ -295,14 +294,9 @@ public class FlapDockStation extends AbstractDockableStation {
     private Dockable oldFrontDockable;
     
     /** A list of all {@link Dockable Dockables} registered on this station */
-    private List<Dockable> dockables = new ArrayList<Dockable>();
+    private List<DockableHandle> dockables = new ArrayList<DockableHandle>();
     /** a listener for all {@link Dockable}s of this station */
     private Listener dockableListener = new Listener();
-    
-    /** A map that tells for every {@link Dockable} which {@link DockTitle} is used for it */
-    private Map<Dockable, DockTitle> buttonTitles = new HashMap<Dockable, DockTitle>();
-    /** A map that tells for every {@link DockTitle} which listeners are used for it */
-    private Map<DockTitle, ButtonListener> buttonListeners = new HashMap<DockTitle, ButtonListener>();
     
     /** The component on which all "buttons" are shown (the titles created with the id {@link #BUTTON_TITLE_ID}) */
     private ButtonPane buttonPane;
@@ -374,7 +368,7 @@ public class FlapDockStation extends AbstractDockableStation {
      */
     protected void init(){
         visibility = new DockableVisibilityManager( listeners );
-        buttonPane = createButtonPane( buttonTitles );
+        buttonPane = createButtonPane();
         setDirection( Direction.SOUTH );
         
         displayers = new DisplayerCollection( this, displayerFactory );
@@ -409,12 +403,10 @@ public class FlapDockStation extends AbstractDockableStation {
     
     /**
      * Creates the panel which will show buttons for the children of this station.
-     * @param buttonTitles a map which will be modified by the station, containing
-     * all children and their buttons.
      * @return the new panel
      */
-    protected ButtonPane createButtonPane( Map<Dockable, DockTitle> buttonTitles ){
-    	return new ButtonPane( this, buttonTitles );
+    protected ButtonPane createButtonPane(){
+    	return new ButtonPane( this );
     }
     
     /**
@@ -454,14 +446,13 @@ public class FlapDockStation extends AbstractDockableStation {
                 oldFrontDockable = getFrontDockable();
                 setFrontDockable( null );
                 
-                // remove titles
-                for( Dockable dockable : dockables ){
-                    DockTitle title = buttonTitles.get( dockable );
-                    if( title != null ){
-                        unbind( dockable, title );
-                    }
+                for( DockableHandle handle : dockables ){
+                	handle.setTitle( null );
                 }
                 
+                if( window != null ){
+                	window.setDockTitle( null );
+                }
                 titleVersion = null;
                 buttonVersion = null;
             }
@@ -495,20 +486,12 @@ public class FlapDockStation extends AbstractDockableStation {
                 titleVersion = controller.getDockTitleManager().getVersion( WINDOW_TITLE_ID, ControllerTitleFactory.INSTANCE );
                 buttonVersion = controller.getDockTitleManager().getVersion( BUTTON_TITLE_ID, BasicButtonTitleFactory.FACTORY );
                 
-                for( Dockable dockable : dockables ){
-                    DockTitle title = dockable.getDockTitle( buttonVersion );
-                    if( title != null )
-                        bind( dockable, title );
+                for( DockableHandle handle : dockables ){
+                	handle.setTitle( buttonVersion );
                 }
                 
                 if( window != null ){
-                    Dockable dockable = window.getDockable();
-                    if( dockable != null ){
-                        DockTitle title = dockable.getDockTitle( titleVersion );
-                        if( title != null )
-                            dockable.bind( title );
-                        window.setDockTitle( title );
-                    }
+                	window.setDockTitle( titleVersion );
                 }
                 
                 controller.addDockableFocusListener( controllerListener );
@@ -548,9 +531,12 @@ public class FlapDockStation extends AbstractDockableStation {
         this.direction = direction;
         DockTitle.Orientation orientation = orientation( direction );
         
-        
-        for( DockTitle title : buttonTitles.values() )
-            title.setOrientation( orientation );
+        for( DockableHandle handle : dockables ){
+        	DockTitle title = handle.getTitle();
+        	if( title != null ){
+        		title.setOrientation( orientation );
+        	}
+        }
         
         buttonPane.resetTitles();
         updateWindowBounds();
@@ -819,12 +805,12 @@ public class FlapDockStation extends AbstractDockableStation {
     
     /**
      * Updates the hold property of <code>dockable</code>.
-     * The new valie is provided by the {@link FlapLayoutManager layout manager}.
+     * The new value is provided by the {@link FlapLayoutManager layout manager}.
+     * @param dockable the element whose property is updated
      */
     public void updateHold( Dockable dockable ){
     	FlapLayoutManager manager = layoutManager.getValue();
     	if( manager != null ){
-
     		boolean hold = manager.isHold( this, dockable );
     		fireHoldChanged( dockable, hold );
 
@@ -1248,10 +1234,10 @@ public class FlapDockStation extends AbstractDockableStation {
         }
     	else{
 	    	int index = indexOf( dropInfo.getDockable() );
-	        dockables.remove( index );
+	        DockableHandle handle = dockables.remove( index );
 	        if( index < dropInfo.getIndex() )
 	            dropInfo.setIndex( dropInfo.getIndex()-1 );
-	        dockables.add( dropInfo.getIndex(), dropInfo.getDockable() );
+	        dockables.add( dropInfo.getIndex(), handle );
 	        buttonPane.resetTitles();
     	}
     }
@@ -1266,8 +1252,8 @@ public class FlapDockStation extends AbstractDockableStation {
             destination = Math.min( destination, dockables.size() );
             
             if( destination != index ){
-                dockables.remove( index );
-                dockables.add( destination, dockable );
+                DockableHandle handle = dockables.remove( index );
+                dockables.add( destination, handle );
                 buttonPane.resetTitles();
             }
         }
@@ -1325,7 +1311,17 @@ public class FlapDockStation extends AbstractDockableStation {
     }
 
     public Dockable getDockable( int index ) {
-        return dockables.get( index );
+        return dockables.get( index ).getDockable();
+    }
+    
+    /**
+     * Gets the title which is used as button for the <code>index</code>'th dockable.
+     * Clients should not modify the result of this method.
+     * @param index the index of a {@link Dockable}
+     * @return the title or <code>null</code>
+     */
+    public DockTitle getButton( int index ){
+    	return dockables.get( index ).getTitle();
     }
     
     @Override
@@ -1337,26 +1333,9 @@ public class FlapDockStation extends AbstractDockableStation {
      * Deletes all titles of the button pane and then recreates them.
      */
     protected void recreateTitles(){
-    	// delete
-    	Map<Dockable, DockTitle> buttonTitles = new HashMap<Dockable, DockTitle>( this.buttonTitles );
-    	
-    	for( Map.Entry<Dockable, DockTitle> title : buttonTitles.entrySet() ){
-    		if( title.getValue() != null ){
-    			unbind( title.getKey(), title.getValue() );
-    		}
+    	for( DockableHandle handle : dockables ){
+    		handle.setTitle( buttonVersion );
     	}
-    	
-    	// create
-        if( buttonVersion != null ){
-        	for( Dockable dockable : dockables ){
-
-        		DockTitle title = dockable.getDockTitle( buttonVersion );
-        		if( title != null )
-        			bind( dockable, title );
-        	}
-        }
-
-        buttonPane.resetTitles();
     }
     
     /**
@@ -1389,14 +1368,9 @@ public class FlapDockStation extends AbstractDockableStation {
         
         listeners.fireDockableRemoving( dockable );
         dockable.setDockParent( null );
-        dockables.remove( index );
-        
-        DockTitle title = buttonTitles.get( dockable );
-        if( title != null )
-            unbind( dockable, title );
-        
+        DockableHandle handle = dockables.remove( index );
+        handle.setTitle( null );
         dockable.removeDockableListener( dockableListener );
-        buttonPane.resetTitles();
         listeners.fireDockableRemoved( dockable );
     }
     
@@ -1419,14 +1393,10 @@ public class FlapDockStation extends AbstractDockableStation {
         DockUtilities.ensureTreeValidity( this, dockable );
         
         listeners.fireDockableAdding( dockable );
-        dockables.add( index, dockable );
+        DockableHandle handle = new DockableHandle( dockable );
+        dockables.add( index, handle );
         dockable.setDockParent( this );
-        if( buttonVersion != null ){
-            DockTitle title = dockable.getDockTitle( buttonVersion );
-            if( title != null )
-                bind( dockable, title );
-            buttonPane.resetTitles();
-        }
+        handle.setTitle( buttonVersion );
         dockable.addDockableListener( dockableListener );
         listeners.fireDockableAdded( dockable );
     }
@@ -1512,40 +1482,12 @@ public class FlapDockStation extends AbstractDockableStation {
      * @return the location or -1 if the child was not found
      */
     public int indexOf( Dockable dockable ){
-        return dockables.indexOf( dockable );
-    }
-    
-    /**
-     * Binds the <code>title</code> to <code>dockable</code>. This method
-     * is invoked only if the two arguments are not yet bound.
-     * @param dockable the {@link Dockable}
-     * @param title the {@link DockTitle}
-     * @see Dockable#bind(DockTitle)
-     */
-    protected void bind( Dockable dockable, DockTitle title ){
-        buttonTitles.put( dockable, title );
-        
-        ButtonListener listener = new ButtonListener( dockable );
-        title.addMouseInputListener( listener );
-        buttonListeners.put( title, listener );
-        
-        title.setOrientation( orientation( direction ) );
-        dockable.bind( title );
-    }
-    
-    /**
-     * Unbinds the <code>title</code> from <code>dockable</code>. This
-     * method is only called if the two arguments are bound.
-     * @param dockable the {@link Dockable}
-     * @param title the {@link DockTitle}
-     * @see Dockable#unbind(DockTitle)
-     */
-    protected void unbind( Dockable dockable, DockTitle title ){
-        ButtonListener listener = buttonListeners.remove( title );
-        title.removeMouseInputListener( listener );
-        
-        buttonTitles.remove( dockable );
-        dockable.unbind( title );
+    	for( int i = 0, n = dockables.size(); i<n; i++ ){
+    		if( dockables.get( i ).getDockable() == dockable ){
+    			return i;
+    		}
+    	}
+    	return -1;
     }
     
     /**
@@ -1590,29 +1532,76 @@ public class FlapDockStation extends AbstractDockableStation {
     private class Listener extends DockableAdapter{
         @Override
         public void titleExchanged( Dockable dockable, DockTitle title ) {
-            if( buttonTitles.get( dockable ) == title ){
-                boolean changed = true;
-                
-                if( title != null ){
-                    unbind( dockable, title );
-                    title = null;
-                    changed = true;
-                }
-                
-                if( buttonVersion != null ){
-                    title = dockable.getDockTitle( buttonVersion );
-                    if( title != null ){
-                        bind( dockable, title );
-                        changed = true;
-                    }
-                }
-                
-                if( changed ){
-                    buttonTitles.put( dockable, title );
-                    buttonPane.resetTitles();
-                }
+        	int index = indexOf( dockable );
+        	if( index < 0 )
+        		return;
+        	
+        	DockableHandle handle = dockables.get( index );
+        	if( handle.getTitle() == title ){
+        		handle.setTitle( buttonVersion );
             }
         }
+    }
+    
+    /**
+     * Handles title and listeners that are associated with a {@link Dockable}.
+     * @author Benjamin Sigg
+     */
+    private class DockableHandle{
+    	/** the element that is handled by this handler */
+    	private Dockable dockable;
+    	/** the title used */
+    	private DockTitleRequest title;
+    	/** the listener that gets added to the title of this handle */
+    	private ButtonListener buttonListener;
+    	
+    	public DockableHandle( Dockable dockable ){
+    		this.dockable = dockable;
+    		buttonListener = new ButtonListener( dockable );
+    	}
+    	
+    	public Dockable getDockable(){
+			return dockable;
+		}
+    	
+    	public DockTitle getTitle(){
+    		if( title == null )
+    			return null;
+    		return title.getAnswer();
+    	}
+    	
+    	public void setTitle( DockTitleVersion version ){
+    		if( title != null ){
+    			DockTitle answer = title.getAnswer();
+    			if( answer != null ){
+    				answer.removeMouseInputListener( buttonListener );
+    				dockable.unbind( answer );
+    				buttonPane.resetTitles();
+    			}
+    			title.uninstall();
+    			title = null;
+    		}
+    		
+    		if( version != null ){
+    			title = new DockTitleRequest( FlapDockStation.this, dockable, version ) {
+					@Override
+					protected void answer( DockTitle previous, DockTitle title ){
+						if( previous != null ){
+							previous.removeMouseInputListener( buttonListener );
+							dockable.unbind( previous );
+						}
+						if( title != null ){
+							title.addMouseInputListener( buttonListener );
+							title.setOrientation( orientation( direction ) );
+							dockable.bind( title );
+						}
+						buttonPane.resetTitles();
+					}
+				};
+				title.install();
+				title.request();
+    		}
+    	}
     }
     
     private class ControllerListener implements FocusVetoListener, DockableFocusListener{
@@ -1621,10 +1610,13 @@ public class FlapDockStation extends AbstractDockableStation {
         }
         
         public FocusVeto vetoFocus( MouseFocusObserver controller, DockTitle title ) {
-            if( buttonTitles.containsValue( title ) )
-            	return FocusVeto.VETO_NO_CONSUME;
-            else
-            	return FocusVeto.NONE;
+        	for( DockableHandle handle : dockables ){
+        		if( handle.getTitle() == title ){
+        			return FocusVeto.VETO_NO_CONSUME;
+        		}
+        	}
+        	
+            return FocusVeto.NONE;
         }
         
         public void dockableFocused( DockableFocusEvent event ) {
@@ -1672,7 +1664,12 @@ public class FlapDockStation extends AbstractDockableStation {
         		final int MASK = InputEvent.BUTTON1_DOWN_MASK | InputEvent.BUTTON2_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK;
         		
         		if( e.getButton() == MouseEvent.BUTTON1 && (e.getModifiersEx() & MASK ) == 0 ){
-        			DockTitle title = buttonTitles.get( dockable );
+        			int index = indexOf( dockable );
+        			if( index < 0 )
+        				return;
+        			
+        			DockableHandle handle = dockables.get( index );
+        			DockTitle title = handle.getTitle();
 	        		
 		            if( getFrontDockable() == dockable && title.isActive() ){
 		                getController().setFocusedDockable( FlapDockStation.this, true );

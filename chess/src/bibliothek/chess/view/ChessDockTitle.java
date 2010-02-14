@@ -3,12 +3,12 @@ package bibliothek.chess.view;
 import java.awt.Color;
 
 import bibliothek.chess.model.Player;
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.themes.basic.BasicDockTitle;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
+import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
@@ -22,16 +22,29 @@ public class ChessDockTitle extends BasicDockTitle {
 	 * A factory creating instances of {@link ChessDockTitle}
 	 */
     public static final DockTitleFactory FACTORY = new DockTitleFactory(){
-        public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version ) {
-            if( dockable instanceof ChessFigure )
-                return new ChessDockTitle( dockable, version );
-            else
-                return ControllerTitleFactory.INSTANCE.createDockableTitle( dockable, version );
-        }
-
-        public <D extends Dockable & DockStation> DockTitle createStationTitle( D dockable, DockTitleVersion version ) {
-            return ControllerTitleFactory.INSTANCE.createStationTitle( dockable, version );
-        }
+    	public void install( DockTitleRequest request ){
+    		Dockable dockable = request.getTarget();
+    		if( !(dockable instanceof ChessFigure )){
+    			ControllerTitleFactory.INSTANCE.install( request );
+    		}
+    	}
+    	
+    	public void uninstall( DockTitleRequest request ){
+    		Dockable dockable = request.getTarget();
+    		if( !(dockable instanceof ChessFigure )){
+    			ControllerTitleFactory.INSTANCE.uninstall( request );
+    		}
+    	}
+    	
+    	public void request( DockTitleRequest request ){ 
+    		Dockable dockable = request.getTarget();
+    		if( dockable instanceof ChessFigure ){
+                request.setAnswer( new ChessDockTitle( dockable, request.getVersion() ) );
+    		}
+            else{
+                ControllerTitleFactory.INSTANCE.request( request );
+            }
+    	}
     };
    
     /**

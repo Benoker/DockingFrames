@@ -26,33 +26,37 @@
 
 package bibliothek.gui.dock.title;
 
-import bibliothek.gui.DockStation;
-import bibliothek.gui.Dockable;
-
 /**
- * A factory for instances of {@link DockTitle}. The factory distinguishes
- * between titles for pure {@link Dockable Dockables} and titles for
- * Dockables which are also {@link DockStation DockStations}.
+ * A factory for creating instances of {@link DockTitle}. Clients might install
+ * {@link DockTitleRequest}s on this factory such that this factory can always
+ * change the title that is currently shown. A factory should call 
+ * {@link DockTitleRequest#setAnswer(DockTitle)} only when requested so, meaning
+ * only if the method {@link #request(DockTitleRequest)} is called. If a factory
+ * wishes to exchange a title it should call {@link DockTitleRequest#request()} which
+ * in return might then call {@link #request(DockTitleRequest)}. 
  * @author Benjamin Sigg
  */
 public interface DockTitleFactory {
-    /**
-     * Creates a {@link DockTitle} for the pure <code>dockable</code>. 
-     * @param dockable the owner of the title
-     * @param version the version which uses this factory, might be <code>null</code>
-     * @return the new title, can be <code>null</code> if no title should
-     * be shown for <code>dockable</code>. 
-     */
-    public DockTitle createDockableTitle( Dockable dockable, DockTitleVersion version );
     
-    /**
-     * Creates a {@link DockTitle} for <code>dockable</code> which is
-     * also a {@link DockStation}.
-     * @param dockable the owner of the title.
-     * @param version the version which uses this factory, might be <code>null</code>
-     * @param <D> the type of <code>dockable</code>.
-     * @return the new title, can be <code>null</code> if no title
-     * should be shown for <code>dockable</code>.
-     */
-    public <D extends Dockable & DockStation> DockTitle createStationTitle( D dockable, DockTitleVersion version );
+	/**
+	 * Informs this factory that it might need to create a {@link DockTitle} for
+	 * <code>request</code>. 
+	 * @param request the new request
+	 */
+	public void install( DockTitleRequest request );
+	
+	/**
+	 * Asks this factory to provide a {@link DockTitle} for <code>request</code>,
+	 * this method should call {@link DockTitleRequest#setAnswer(DockTitle)}. Note
+	 * that this method may be called for requests that are not installed!
+	 * @param request the request to answer
+	 */
+	public void request( DockTitleRequest request );
+	
+	/**
+	 * Informs this factory that it no longer requires to provide any titles
+	 * for <code>request</code>.
+	 * @param request the request that is no longer managed by this factory
+	 */
+	public void uninstall( DockTitleRequest request );
 }
