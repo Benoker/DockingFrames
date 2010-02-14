@@ -35,9 +35,9 @@
 \contentsline {section}{\numberline {6}Titles}{25}
 \contentsline {subsection}{\numberline {6.1}Lifecycle}{25}
 \contentsline {subsection}{\numberline {6.2}Custom titles}{26}
-\contentsline {subsubsection}{\numberline {6.2.1}Write the title}{26}
+\contentsline {subsubsection}{\numberline {6.2.1}Implementing a new title}{26}
 \contentsline {subsubsection}{\numberline {6.2.2}Apply the title}{27}
-\contentsline {section}{\numberline {7}Themes}{27}
+\contentsline {section}{\numberline {7}Themes}{28}
 \contentsline {subsection}{\numberline {7.1}Existing Themes}{28}
 \contentsline {subsubsection}{\numberline {7.1.1}NoStackTheme}{28}
 \contentsline {subsubsection}{\numberline {7.1.2}BasicTheme}{28}
