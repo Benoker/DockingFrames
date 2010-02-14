@@ -209,6 +209,16 @@ public interface DockStation extends DockElement{
     public void changed( Dockable dockable, DockTitle title, boolean active );
     
     /**
+     * Provides a {@link DockTitle} for a child of this station. This method
+     * must call {@link DockTitleRequest#answer(DockTitle)} to set the result.<br>
+     * Most {@link DockStation}s won't have the need to implement this method,
+     * leaving it empty will advice the framework to use another source for
+     * new {@link DockTitle}s.
+     * @param request the request to answer, not <code>null</code>
+     */
+	public void requestChildDockTitle( DockTitleRequest request );
+    
+    /**
      * Tells whether this station accepts <code>child</code> as a new child,
      * or refuses <code>child</code>. The user will not be able to drop
      * a {@link Dockable} onto this station if this method returns

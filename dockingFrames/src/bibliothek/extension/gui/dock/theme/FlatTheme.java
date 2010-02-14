@@ -131,7 +131,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
         	}
         	
         	public void request( DockTitleRequest request ){
-        		request.setAnswer( new FlatButtonTitle( request.getTarget(), request.getVersion() ) );
+        		request.answer( new FlatButtonTitle( request.getTarget(), request.getVersion() ) );
         	}
         });
 

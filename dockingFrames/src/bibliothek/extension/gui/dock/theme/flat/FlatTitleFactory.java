@@ -54,12 +54,12 @@ public class FlatTitleFactory implements DockTitleFactory{
 	public void request( DockTitleRequest request ){
 		Dockable dockable = request.getTarget();
 		if( dockable.asDockStation() == null ){
-			request.setAnswer( new BasicDockTitle( dockable, request.getVersion() ) );
+			request.answer( new BasicDockTitle( dockable, request.getVersion() ) );
 		}
 		else{
 			AbstractDockTitle title = new AbstractDockTitle( dockable, request.getVersion() );
 	        title.setBorder( BorderFactory.createLineBorder( title.getBackground().darker() ));
-	        request.setAnswer( title );
+	        request.answer( title );
 		}
 	}
 }

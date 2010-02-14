@@ -82,7 +82,7 @@ public class BubbleButtonDockTitle extends AbstractBubbleDockTitle{
     	}
     	
     	public void request( DockTitleRequest request ){
-	    	request.setAnswer( new BubbleButtonDockTitle( request.getTarget(), request.getVersion() ) );	
+	    	request.answer( new BubbleButtonDockTitle( request.getTarget(), request.getVersion() ) );	
     	}
     };
     

@@ -89,7 +89,7 @@ public class CSplitDockStation extends SplitDockStation implements CommonStation
 			super.requestDockTitle( request );
 		}
 		else{
-			request.setAnswer( null );
+			request.answer( null );
 		}
 	}
 }

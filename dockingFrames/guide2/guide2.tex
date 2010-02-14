@@ -721,11 +721,13 @@ A \src{DockTitle} is a \src{Component} that may show an icon, a text, some \src{
 \subsection{Lifecycle}
 This chapter explains the mechanism of creating and managing \src{DockTitle}s. 
 
-Any module that wants to show a \src{DockTitle} needs to specify what kind of title it shows. The module needs an instance of \src{DockTitleVersion} to do so. A \src{DockTitleVersion} can be created by the \src{DockTitleManager}. When a module asks for a \src{DockTitleVersion} it has to hand over a \src{DockTitleFactory} to the manager. This factory becomes the default factory and will be used to create titles (unless someone replaces the default factory).
+Any client that wants to show a \src{DockTitle} needs to specify what \textit{kind} of title it shows and needs to \textit{request} a title.
 
-If the module receives a \src{Dockable} it can call \src{getDockTitle}. This method requires the unique identifier \src{DockTitleVersion} which was created earlier. Most \src{Dockable}s would then access the default factory to create the title, but some \src{Dockable}s might create their customized titles.
+The \textit{kind} of a title is specified by a \src{DockTitleVersion}. New \src{DockTitleVersions} are obtained through the \src{DockTitleManager} (there is one per \src{DockController}). Creating a new \src{DockTitleVersion} requires the calling client to provide a default \src{DockTitleFactory}.
 
-Assuming \src{getDockTitle} does not return \src{null}, the module calls the method \src{bind( DockTitle )} of \src{Dockable}, this tells the \src{Dockable} that is has a new title. If the module no longer needs the title it calls \src{unbind( DockTitle )}.
+The \textit{request} for a title is handled by a \src{DockTitleRequest}. Once a \src{DockTitleRequest} is created its method \src{request} can be called to execute the request. Clients should call \src{install} before using the request, and \src{uninstall} once the title is no longer in use. This way the \src{DockTitleRequest} will automatically be executed again if the underlying \src{DockTitleFactory} is exchanged.
+
+Once a \src{DockTitle} is acquired it must be connected with its \src{Dockable}. Clients must call the method \src{bind( DockTitle )} of \src{Dockable}, this tells the \src{Dockable} that is has a new title. If the client no longer shows the title it calls \src{unbind( DockTitle )}.
 
 \warningbox{Do not call the method \src{bind} or \src{unbind} of \src{DockTitle}, these methods are called automatically by the \src{DockController}.}
 
@@ -734,6 +736,11 @@ Assuming \src{getDockTitle} does not return \src{null}, the module calls the met
 	\item The method \src{listBoundTitles} returns an list of all \src{DockTitle}s which are currently in use for the \src{Dockable}.
 	\item A \src{DockableListener} has several methods that will be invoked if titles get added, removed, updated or exchanged.
 \end{itemize}}
+
+
+
+
+
 
 \subsection{Custom titles}
 \subsubsection{Write the title}

@@ -39,7 +39,7 @@ public class ChessDockTitle extends BasicDockTitle {
     	public void request( DockTitleRequest request ){ 
     		Dockable dockable = request.getTarget();
     		if( dockable instanceof ChessFigure ){
-                request.setAnswer( new ChessDockTitle( dockable, request.getVersion() ) );
+                request.answer( new ChessDockTitle( dockable, request.getVersion() ) );
     		}
             else{
                 ControllerTitleFactory.INSTANCE.request( request );

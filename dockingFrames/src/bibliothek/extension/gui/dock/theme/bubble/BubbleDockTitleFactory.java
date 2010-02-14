@@ -42,6 +42,6 @@ public class BubbleDockTitleFactory implements DockTitleFactory {
 	}
 	
 	public void request( DockTitleRequest request ){
-		request.setAnswer( new BubbleDockTitle( request.getTarget(), request.getVersion() ) );
+		request.answer( new BubbleDockTitle( request.getTarget(), request.getVersion() ) );
 	}
 }

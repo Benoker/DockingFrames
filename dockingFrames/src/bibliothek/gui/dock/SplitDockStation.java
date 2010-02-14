@@ -793,6 +793,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         title.changed( new DockTitleEvent( this, dockable, active ));
     }
 
+    public void requestChildDockTitle( DockTitleRequest request ){
+	    // ignore	
+    }
+    
     public void bind( DockTitle title ) {
         if( titles.contains( title ))
             throw new IllegalArgumentException( "Title is already bound" );

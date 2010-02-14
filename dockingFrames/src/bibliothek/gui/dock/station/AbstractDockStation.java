@@ -34,6 +34,7 @@ import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.station.support.DockStationListenerManager;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.title.DockTitleRequest;
 
 /**
  * An abstract implementation of {@link DockStation}. This station
@@ -130,5 +131,9 @@ public abstract class AbstractDockStation implements DockStation {
     
     public void changed( Dockable dockable, DockTitle title, boolean active ) {
         title.changed( new DockTitleEvent( this, dockable, active ));
+    }
+    
+    public void requestChildDockTitle( DockTitleRequest request ){
+	    // ignore	
     }
 }

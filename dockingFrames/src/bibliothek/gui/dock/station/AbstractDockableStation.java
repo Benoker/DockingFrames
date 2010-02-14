@@ -167,6 +167,10 @@ public abstract class AbstractDockableStation extends AbstractDockable implement
         title.changed( new DockTitleEvent( this, dockable, active ));
     }
     
+    public void requestChildDockTitle( DockTitleRequest request ){
+	    // ignore	
+    }
+    
     public Rectangle getStationBounds() {
         Component component = getComponent();
         Point location = new Point( 0, 0 );

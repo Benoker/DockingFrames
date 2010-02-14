@@ -69,7 +69,7 @@ public class HidingTheme extends BasicTheme {
 	            	}
 	            	
 	            	public void request( DockTitleRequest request ){
-	            		request.setAnswer( null );
+	            		request.answer( null );
 	            	}
 	            	
 	            	public void uninstall( DockTitleRequest request ){

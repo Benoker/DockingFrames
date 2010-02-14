@@ -33,6 +33,7 @@ import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
@@ -196,6 +197,10 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 
 	}
 
+	public void requestChildDockTitle( DockTitleRequest request ){
+		// ignore	
+	}
+	
 	public int compare( DockStation station ){
 		return 0;
 	}

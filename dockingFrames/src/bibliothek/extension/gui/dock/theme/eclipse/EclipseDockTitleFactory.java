@@ -51,7 +51,7 @@ public class EclipseDockTitleFactory implements DockTitleFactory{
         	factory.request( request );
         }
         else{
-        	request.setAnswer( null );
+        	request.answer( null );
         }
     }
 }

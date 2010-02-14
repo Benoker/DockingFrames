@@ -107,7 +107,7 @@ public class DefaultCommonDockable extends DefaultDockable implements CommonDock
 	            version.getID().equals( FlapDockStation.WINDOW_TITLE_ID );
 	        
 	        if( hide ){
-	            request.setAnswer( null );
+	            request.answer( null );
 	        }
 	        else{
 	         	super.requestDockTitle( request );

@@ -176,7 +176,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
         setTitleFactory( new BasicDockTitleFactory(){
         	@Override
         	public void request( DockTitleRequest request ){
-        		request.setAnswer( new BasicDockTitle( request.getTarget(), request.getVersion() ) );
+        		request.answer( new BasicDockTitle( request.getTarget(), request.getVersion() ) );
         	}
         });
         setDockableSelection( new EclipseDockableSelection() );
@@ -215,7 +215,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
         	}
         	
         	public void request( DockTitleRequest request ){
-	        	request.setAnswer( new FlatButtonTitle( request.getTarget(), request.getVersion() ) );	
+	        	request.answer( new FlatButtonTitle( request.getTarget(), request.getVersion() ) );	
         	}
         });
 

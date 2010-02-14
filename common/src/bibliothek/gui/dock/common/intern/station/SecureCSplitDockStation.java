@@ -88,7 +88,7 @@ public class SecureCSplitDockStation extends SecureSplitDockStation implements C
 			super.requestDockTitle( request );
 		}
 		else{
-			request.setAnswer( null );
+			request.answer( null );
 		}
 	}
 }

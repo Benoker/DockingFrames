@@ -49,7 +49,7 @@ public class ReducedBubbleTitleFactory implements DockTitleFactory {
 	}
 	
 	public void request( DockTitleRequest request ){
-		request.setAnswer( new Title( request.getTarget(), request.getVersion() ) );	
+		request.answer( new Title( request.getTarget(), request.getVersion() ) );	
 	}
 	
 	/**

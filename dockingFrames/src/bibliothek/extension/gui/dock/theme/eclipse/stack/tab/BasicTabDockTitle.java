@@ -76,7 +76,7 @@ public class BasicTabDockTitle extends BasicDockTitle {
         	}
         	
         	public void request( DockTitleRequest request ){
-        		request.setAnswer( new BasicTabDockTitle( theme, request.getTarget(), request.getVersion() ) );
+        		request.answer( new BasicTabDockTitle( theme, request.getTarget(), request.getVersion() ) );
         	}
         };
     }

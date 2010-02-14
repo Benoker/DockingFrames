@@ -51,10 +51,10 @@ public class SmoothDefaultTitleFactory implements DockTitleFactory {
     public void request( DockTitleRequest request ){
 	    Dockable dockable = request.getTarget();
 	    if( dockable.asDockStation() == null ){
-	    	request.setAnswer( new SmoothDefaultTitle( dockable, request.getVersion() ) );
+	    	request.answer( new SmoothDefaultTitle( dockable, request.getVersion() ) );
 	    }
 	    else{
-	    	request.setAnswer( new SmoothDefaultStationTitle( dockable, request.getVersion() ) );
+	    	request.answer( new SmoothDefaultStationTitle( dockable, request.getVersion() ) );
 	    }
     }
 }

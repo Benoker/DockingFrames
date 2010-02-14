@@ -67,7 +67,7 @@ public class BasicDockTitle extends AbstractDockTitle {
     	}
     	
     	public void request( DockTitleRequest request ){
-    		request.setAnswer( new BasicDockTitle( request.getTarget(), request.getVersion() ) );
+    		request.answer( new BasicDockTitle( request.getTarget(), request.getVersion() ) );
     	}
     };
     

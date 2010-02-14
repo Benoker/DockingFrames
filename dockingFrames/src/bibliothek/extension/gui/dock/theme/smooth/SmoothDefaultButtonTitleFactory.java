@@ -42,6 +42,6 @@ public class SmoothDefaultButtonTitleFactory implements DockTitleFactory{
 	}
 	
 	public void request( DockTitleRequest request ){
-		request.setAnswer( new SmoothDefaultButtonTitle( request.getTarget(), request.getVersion() ) );	
+		request.answer( new SmoothDefaultButtonTitle( request.getTarget(), request.getVersion() ) );	
 	}
 }

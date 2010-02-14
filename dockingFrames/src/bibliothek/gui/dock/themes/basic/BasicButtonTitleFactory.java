@@ -42,7 +42,7 @@ public class BasicButtonTitleFactory implements DockTitleFactory {
     }
     
     public void request( DockTitleRequest request ){
-    	request.setAnswer( new BasicButtonDockTitle( request.getTarget(), request.getVersion() ) );
+    	request.answer( new BasicButtonDockTitle( request.getTarget(), request.getVersion() ) );
     }
     
     public void uninstall( DockTitleRequest request ){

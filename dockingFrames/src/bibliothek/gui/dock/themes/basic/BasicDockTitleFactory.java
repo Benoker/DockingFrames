@@ -48,10 +48,10 @@ public class BasicDockTitleFactory implements DockTitleFactory {
     
     public void request( DockTitleRequest request ){
     	if( request.getTarget().asDockStation() == null ){
-    		request.setAnswer( new BasicDockTitle( request.getTarget(), request.getVersion() ) );
+    		request.answer( new BasicDockTitle( request.getTarget(), request.getVersion() ) );
     	}
     	else{
-    		request.setAnswer( new BasicStationTitle( request.getTarget(), request.getVersion() ) );
+    		request.answer( new BasicStationTitle( request.getTarget(), request.getVersion() ) );
     	}
     }
 }

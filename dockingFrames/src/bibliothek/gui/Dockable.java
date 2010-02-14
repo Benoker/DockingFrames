@@ -205,7 +205,7 @@ public interface Dockable extends DockElement, DockElementRepresentative{
      * invoked the {@link DockableListener#titleExchanged(Dockable, DockTitle)} method of its
      * current observers. <br>
      * This {@link Dockable} might decide to answer the request by calling
-     * {@link DockTitleRequest#setAnswer(DockTitle)}, any title, including <code>null</code> are
+     * {@link DockTitleRequest#answer(DockTitle)}, any title, including <code>null</code> are
      * valid answers. If this {@link Dockable} does not answer the request the associated
      * {@link DockTitleFactory} (as described by {@link DockTitleVersion#getFactory()}) is
      * asked to answer the request.<br>

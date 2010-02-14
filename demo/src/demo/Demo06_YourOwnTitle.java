@@ -153,7 +153,7 @@ public class Demo06_YourOwnTitle {
 	            title.setInactiveRightColor( bright );
 	            title.setInactiveTextColor( dark );
 	            
-	            request.setAnswer( title );
+	            request.answer( title );
 	    	}
 	    	else{
 	    		DockTitleFactory factory = version.getFactory( Priority.THEME );

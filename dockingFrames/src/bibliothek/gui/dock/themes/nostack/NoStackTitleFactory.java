@@ -73,7 +73,7 @@ public class NoStackTitleFactory implements DockTitleFactory{
                 id.equals( ScreenDockStation.TITLE_ID ) ||
                 id.equals( SplitDockStation.TITLE_ID )){
             	
-            	request.setAnswer( null );
+            	request.answer( null );
             	return;
             }
         }

@@ -144,10 +144,6 @@ public abstract class DockTitleRequest {
 		try{
 			requesting = true;
 			
-			target.requestDockTitle( this );
-			if( !answered ){
-				version.request( this );
-			}
 		}
 		finally{
 			requesting = false;
@@ -156,6 +152,47 @@ public abstract class DockTitleRequest {
 		if( old != title ){
 			answer( old, title );
 		}
+	}
+	
+	/**
+	 * Tells whether {@link #answer(DockTitle)} was called since the last {@link #request()}.
+	 * @return <code>true</code> if there is an answer
+	 */
+	protected boolean isAnswered(){
+		return answered;
+	}
+	
+	/**
+	 * Asks all sources for a {@link DockTitle}, stops as soon
+	 * as one source called {@link #answer(DockTitle)}.  
+	 */
+	protected void executeRequestList(){
+		requestDockTitle( this );
+		if( answered )
+			return;
+		
+		target.requestDockTitle( this );
+		if( answered )
+			return;
+		
+		if( parent != null ){
+			parent.requestChildDockTitle( this );
+			if( answered )
+				return;
+		}
+		
+		version.request( this );
+	}
+	
+	/**
+	 * May answer a request for a title. Normally <code>request</code>
+	 * will be <code>this</code>, but subclasses may forward the request
+	 * to other {@link DockTitleRequest}. The default behavior of this
+	 * method is to do nothing.
+	 * @param request the request to answer
+	 */
+	public void requestDockTitle( DockTitleRequest request ){
+		// ignore
 	}
 	
 	/**
@@ -190,7 +227,7 @@ public abstract class DockTitleRequest {
 	 * @throws IllegalArgumentException if the title does not met the specifications described above
 	 * @throws IllegalStateException if {@link #request()} is not currently executing
 	 */
-	public void setAnswer( DockTitle title ){
+	public void answer( DockTitle title ){
 		if( !requesting ){
 			throw new IllegalStateException( "not requesting a title" );
 		}

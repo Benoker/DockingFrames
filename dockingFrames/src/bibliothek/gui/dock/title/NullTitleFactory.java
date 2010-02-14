@@ -43,6 +43,6 @@ public class NullTitleFactory implements DockTitleFactory {
 	}
 	
 	public void request( DockTitleRequest request ){
-		request.setAnswer( null );	
+		request.answer( null );	
 	}
 }
