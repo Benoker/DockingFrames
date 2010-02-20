@@ -46,7 +46,8 @@ import bibliothek.util.xml.XElement;
  */
 public interface DockConverter <D extends DockElement, L>{
     /**
-     * Gets the unique name of this converter.
+     * Gets the unique name of this converter. Please note that unique identifiers
+     * starting with "dock." should not be used by clients.
      * @return the id
      */
     public String getID();

@@ -119,6 +119,7 @@ public class DisplayerCollection implements Iterable<DockableDisplayer>{
      */
     public DockableDisplayer fetch( Dockable dockable, DockTitle title ){
         DockableDisplayer displayer = factory.create( station, dockable, title );
+        displayer.setDockable( dockable );
         displayer.setTitle( title );
         displayer.setStation( station );
         displayer.setController( controller );

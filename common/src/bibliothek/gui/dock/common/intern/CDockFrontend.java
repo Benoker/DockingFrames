@@ -28,6 +28,7 @@ package bibliothek.gui.dock.common.intern;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.intern.layout.CLayoutChangeStrategy;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.LocationSettingConverter;
@@ -49,7 +50,8 @@ public class CDockFrontend extends DockFrontend{
      */
     public CDockFrontend( CControlAccess control, DockController controller ){
         super( controller );
-        this.control = control; 
+        this.control = control;
+        setLayoutChangeStrategy( new CLayoutChangeStrategy( control.getOwner() ) );
     }
     
     @Override

@@ -30,7 +30,15 @@ import java.awt.Window;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.KeyStroke;
@@ -47,9 +55,26 @@ import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.dockable.DefaultDockableFactory;
-import bibliothek.gui.dock.event.*;
-import bibliothek.gui.dock.frontend.*;
-import bibliothek.gui.dock.layout.*;
+import bibliothek.gui.dock.event.DockAdapter;
+import bibliothek.gui.dock.event.DockFrontendListener;
+import bibliothek.gui.dock.event.IconManagerListener;
+import bibliothek.gui.dock.event.VetoableDockFrontendListener;
+import bibliothek.gui.dock.frontend.DefaultLayoutChangeStrategy;
+import bibliothek.gui.dock.frontend.DockFrontendInternals;
+import bibliothek.gui.dock.frontend.FrontendEntry;
+import bibliothek.gui.dock.frontend.LayoutChangeStrategy;
+import bibliothek.gui.dock.frontend.MissingDockableStrategy;
+import bibliothek.gui.dock.frontend.Setting;
+import bibliothek.gui.dock.frontend.VetoManager;
+import bibliothek.gui.dock.layout.AdjacentDockFactory;
+import bibliothek.gui.dock.layout.DockLayoutComposition;
+import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.layout.DockSituation;
+import bibliothek.gui.dock.layout.DockSituationIgnore;
+import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.DockablePropertyFactory;
+import bibliothek.gui.dock.layout.PredefinedDockSituation;
+import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.security.SecureFlapDockStationFactory;
 import bibliothek.gui.dock.security.SecureScreenDockStationFactory;
 import bibliothek.gui.dock.security.SecureSplitDockStationFactory;
@@ -62,7 +87,13 @@ import bibliothek.gui.dock.station.split.SplitDockPropertyFactory;
 import bibliothek.gui.dock.station.split.SplitDockStationFactory;
 import bibliothek.gui.dock.station.stack.StackDockPropertyFactory;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
-import bibliothek.gui.dock.util.*;
+import bibliothek.gui.dock.util.DirectWindowProvider;
+import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.NullWindowProvider;
+import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.WindowProvider;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XAttribute;
 import bibliothek.util.xml.XElement;
@@ -103,10 +134,10 @@ public class DockFrontend {
         new PropertyKey<KeyStroke>( "frontend hide accelerator" );
     
     /** prefix used for {@link Dockable}s when creating a new {@link PredefinedDockSituation} */
-    protected static final String DOCKABLE_KEY_PREFIX = "dockable";
+    public static final String DOCKABLE_KEY_PREFIX = "dockable";
     
     /** prefix used for {@link DockStation root}s when creating a new {@link PredefinedDockSituation} */
-    protected static final String ROOT_KEY_PREFIX = "root";
+    public static final String ROOT_KEY_PREFIX = "root";
     
 	/** The controller where roots are added */
     private DockController controller;
@@ -159,6 +190,9 @@ public class DockFrontend {
     
     /** tells what to do with the location information of missing {@link Dockable}s */
     private MissingDockableStrategy missingDockable = MissingDockableStrategy.DISCARD_ALL;
+    
+    /** algorithm for changing the layout of this frontend */
+    private LayoutChangeStrategy layoutChangeStrategy = new DefaultLayoutChangeStrategy();
     
     /**
      * Tells whether to show the hide-action on hideable dockables or not
@@ -353,7 +387,10 @@ public class DockFrontend {
     
     /**
      * Adds <code>listener</code> to this frontend. The listener will be notified
-     * when a {@link Dockable} will be or is closed.
+     * when a {@link Dockable} will be or is closed.<br>
+     * Note: the listener is only guaranteed to receive events for {@link Dockable}s that are 
+     * {@link #addDockable(String, Dockable) known} to this {@link DockFrontend}. 
+     * It may or may not receive events for other {@link Dockable}s.
      * @param listener the new listener
      */
     public void addVetoableListener( VetoableDockFrontendListener listener ){
@@ -520,7 +557,7 @@ public class DockFrontend {
         DockLayoutComposition layout = info.getLayout();
         if( layout != null ){
             try{
-                DockSituation situation = createSituation( false );
+                DockSituation situation = layoutChangeStrategy.createSituation( new Internals(), false );
                 layout = situation.fillMissing( layout );
                 situation.convert( layout );
                 info.setLayout( null );
@@ -559,6 +596,27 @@ public class DockFrontend {
     public MissingDockableStrategy getMissingDockable() {
         return missingDockable;
     }
+    
+    /**
+     * Sets the strategy this {@link DockFrontend} should use to read {@link Setting}s.<br>
+     * <b>WARNING: </b> strategies may leave a trail of data, some even stored persistently. This
+     * method should only be called once: directly after this {@link DockFrontend} has been created. Clients
+     * should always set the same kind of strategy.
+     * @param strategy the new strategy, not <code>null</code>
+     */
+    public void setLayoutChangeStrategy( LayoutChangeStrategy strategy ){
+    	if( strategy == null )
+    		throw new IllegalArgumentException( "strategy must not be null" );
+		this.layoutChangeStrategy = strategy;
+	}
+    
+    /**
+     * Gets the current strategy that is used to read {@link Setting}s by this {@link DockFrontend}.
+     * @return the strategy, not <code>null</code>
+     */
+    public LayoutChangeStrategy getLayoutChangeStrategy(){
+		return layoutChangeStrategy;
+	}
     
     /**
      * Gets an independent map containing all Dockables registered to this
@@ -1297,7 +1355,7 @@ public class DockFrontend {
     public Setting getSetting( boolean entry ){
         Setting setting = createSetting();
         
-        DockSituation situation = createSituation( entry );
+        DockSituation situation = layoutChangeStrategy.createSituation( new Internals(), entry );
         
         for( RootInfo info : roots.values() ){
             DockLayoutComposition layout = situation.convert( info.getStation() );
@@ -1337,47 +1395,19 @@ public class DockFrontend {
      * be the same as was used when {@link #getSetting(boolean)} was called.
      */
     public void setSetting( Setting setting, boolean entry ){
-        Set<Dockable> approvedRemove = null;
-        
         try{
             onAutoFire++;
             controller.getRegister().setStalled( true );
             
-            DockSituation situation = createSituation( entry );
-            
-            DockSituationIgnore ignore = situation.getIgnore();
-            if( ignore == null ){
-                ignore = new DockSituationIgnore(){
-                    public boolean ignoreChildren( DockStation station ) {
-                        return false;
-                    }
-                    public boolean ignoreElement( DockElement element ) {
-                        return false;
-                    }
-                };
+            if( layoutChangeStrategy.setLayout( new Internals(), setting, entry ) ){
+                if( entry ){
+                    lastAppliedEntrySetting = setting;
+                }
+                else{
+                    lastAppliedEntrySetting = null;
+                    lastAppliedFullSetting = setting;
+                }
             }
-            
-            // maybe cancel the operation
-            approvedRemove = approveClosing( situation, setting );
-            if( approvedRemove == null ){
-                return;
-            }
-            
-            // the new setting will now be applied, store it
-            if( entry ){
-                lastAppliedEntrySetting = setting;
-            }
-            else{
-                lastAppliedEntrySetting = null;
-                lastAppliedFullSetting = setting;
-            }
-            
-            // split up all child parent relations
-            clean( ignore );
-            
-            // apply the new layout
-            applyLayout( situation, setting, entry );
-            applyInvisibleLayout( situation, setting );
         }
         catch( IOException e ){
             throw new IllegalArgumentException( "Cannot set Setting", e );
@@ -1398,137 +1428,6 @@ public class DockFrontend {
     }
     
     /**
-     * Checks whether the setting <code>setting</code> can be applied or not.
-     * @param situation the situation that will convert the layout
-     * @param setting the new layout
-     * @return the set of elements for which closing was explicitly approved
-     * or <code>null</code> if the operation should be canceled
-     */
-    private Set<Dockable> approveClosing( DockSituation situation, Setting setting ){
-        // check whether some elements really should be closed
-        Set<Dockable> closing = new HashSet<Dockable>();
-        for( RootInfo info : roots.values() ){
-            DockLayoutComposition layout = setting.getRoot( info.getName() );
-            if( layout != null ){
-                Set<Dockable> next = estimateClosing( situation, layout );
-                if( next != null ){
-                    closing.addAll( next );
-                }
-            }
-        }
-        for( DockInfo info : dockables.values() ){
-            if( info.getDockable() != null && !info.isHideable() ){
-                closing.remove( info.getDockable() );
-            }
-        }
-        if( !closing.isEmpty() ){
-            if( !veto.expectToHide( closing, true ) ){
-                // cancel the operation
-                return null;
-            }
-        }
-        return closing;
-    }
-    
-    /**
-     * Applies the layout described in <code>setting</code> to the visible
-     * elements.
-     * @param situation used to convert the layout
-     * @param setting the new layout
-     * @param entry whether <code>setting</code> describes only a small layout
-     * or the final layout
-     * @throws IOException if the layout cannot be converted
-     * @throws XException if the layout cannot be converted 
-     */
-    private void applyLayout( DockSituation situation, Setting setting, boolean entry ) throws IOException, XException{
-        for( RootInfo info : roots.values() ){
-            DockLayoutComposition layout = setting.getRoot( info.getName() );
-            if( layout != null ){
-                layout = situation.fillMissing( layout );
-                
-                Map<String, DockableProperty> missingLocations = 
-                    listEstimateLocations( situation, layout );
-                if( missingLocations != null ){
-                    for( Map.Entry<String, DockableProperty> missing : missingLocations.entrySet() ){
-                        String key = missing.getKey();
-                        DockInfo dockInfo = getInfo( key );
-                        
-                        if( dockInfo == null && missingDockable.shouldStoreShown( key )){
-                            addEmpty( key );
-                            dockInfo = getInfo( key );
-                        }
-                        
-                        if( dockInfo != null ){
-                            dockInfo.setLocation( info.getName(), missing.getValue() );
-                            dockInfo.setShown( true );
-                        }
-                    }
-                }
-                
-                Map<String, DockLayoutComposition> missingLayouts = listLayouts( situation, layout );
-                
-                if( missingLayouts != null ){
-                    for( Map.Entry<String, DockLayoutComposition> missing : missingLayouts.entrySet() ){
-                        String key = missing.getKey();
-                        DockInfo dockInfo = getInfo( key );
-                        
-                        if( dockInfo == null && missingDockable.shouldStoreShown( key )){
-                            addEmpty( key );
-                            dockInfo = getInfo( key );
-                        }
-                        
-                        if( dockInfo != null ){
-                            dockInfo.setShown( true );
-                            if( !entry || dockInfo.isEntryLayout() ){
-                                dockInfo.setLayout( missing.getValue() );
-                            }
-                        }
-                    }
-                    
-                }
-                
-                situation.convert( layout );
-            }
-        }
-    }
-    
-    /**
-     * Applies <code>setting</code> to the invisible elements.
-     * @param situation to convert the layout
-     * @param setting the new layout
-     * @throws IOException if the layout cannot be converted
-     * @throws XException if the layout cannot be converted
-     */
-    private void applyInvisibleLayout( DockSituation situation, Setting setting ) throws IOException, XException{
-        for( int i = 0, n = setting.getInvisibleCount(); i<n; i++ ){
-            String key = setting.getInvisibleKey( i );
-            DockInfo info = getInfo( key );
-            
-            if( info == null && missingDockable.shouldStoreHidden( key )){
-                addEmpty( key );
-                info = getInfo( key );
-            }
-            
-            if( info != null ){
-                info.setShown( false );
-                info.setLocation( 
-                        setting.getInvisibleRoot( i ), 
-                        setting.getInvisibleLocation( i ) );
-                
-                DockLayoutComposition layout = setting.getInvisibleLayout( i );
-                if( layout != null ){
-                    layout = situation.fillMissing( layout );
-                    if( info.getDockable() != null ){
-                        situation.convert( layout );
-                        layout = null;
-                    }
-                    info.setLayout( layout );
-                }
-            }
-        }
-    }
-    
-    /**
      * Tries to fill gaps in the layout information.
      * <ul>
      *  <li>Tries to read empty {@link DockInfo}s which have a layout and a position.</li>
@@ -1536,7 +1435,7 @@ public class DockFrontend {
      * </ul>
      */
     private void fillMissing(){
-        DockSituation situation = createSituation( false );
+        DockSituation situation = layoutChangeStrategy.createSituation( new Internals(), false );
         
         // fill gaps
         for( Setting setting : settings.values() ){
@@ -1587,13 +1486,14 @@ public class DockFrontend {
             return;
         }
         
-        DockSituation situation = createSituation( entry );
+        Internals internals = new Internals();
+        DockSituation situation = layoutChangeStrategy.createSituation( internals, entry );
         String factoryId = situation.convertFactoryId( factory );
         
         for( String root : roots.keySet() ){
             DockLayoutComposition composition = last.getRoot( root );
             if( composition != null ){
-                estimateLocations( situation, composition );
+                layoutChangeStrategy.estimateLocations( internals, situation, composition );
                 fillMissing( root, composition, factory, factoryId );
             }
         }
@@ -1639,96 +1539,6 @@ public class DockFrontend {
         }
     }
     
-    /**
-     * Tries to estimate the location of missing {@link Dockable}s. The
-     * default implementation works with any {@link PredefinedDockSituation}.
-     * @param situation the situation to use for transforming information
-     * @param layout the layout to analyze
-     * @return a map with <code>Dockable</code>-names as key or <code>null</code>
-     */
-    protected Map<String, DockableProperty> listEstimateLocations( DockSituation situation, DockLayoutComposition layout ){
-        if( situation instanceof PredefinedDockSituation ){
-            Map<String, DockableProperty> map = ((PredefinedDockSituation)situation).listEstimatedLocations( layout, true );
-            Map<String, DockableProperty> result = new HashMap<String, DockableProperty>();
-            
-            for( Map.Entry<String, DockableProperty> entry : map.entrySet() ){
-                String key = entry.getKey();
-                if( key.startsWith( DOCKABLE_KEY_PREFIX ))
-                    result.put( key.substring( DOCKABLE_KEY_PREFIX.length() ), entry.getValue() );
-                else if( key.startsWith( ROOT_KEY_PREFIX ))
-                    result.put( key.substring( ROOT_KEY_PREFIX.length() ), entry.getValue() );
-                else
-                    result.put( key, entry.getValue() );
-            }
-            
-            return result;
-        }
-        return null;
-    }
-    
-    /**
-     * Tries to fill the property {@link DockLayoutInfo#getLocation() location}
-     * for each element in <code>layout</code>. The default implementation only
-     * works if <code>situation</code> is an instance of {@link PredefinedDockSituation}.
-     * @param situation the situation to use for transforming information
-     * @param layout the layout to estimate
-     */
-    protected void estimateLocations( DockSituation situation, DockLayoutComposition layout ){
-        if( situation instanceof PredefinedDockSituation ){
-            ((PredefinedDockSituation)situation).estimateLocations( layout );
-        }
-    }
-    
-    /**
-     * Tries to estimate which of the currently visible {@link Dockable}s will
-     * be closed if <code>layout</code> is applied to this frontend. The
-     * default implementation assumes that <code>situation</code> is a {@link PredefinedDockSituation}.
-     * @param situation algoritm used to convert <code>layout</code>
-     * @param layout the layout that will be applied
-     * @return an estimation of the elements that will be made invisible or <code>null</code>
-     */
-    protected Set<Dockable> estimateClosing( DockSituation situation, DockLayoutComposition layout ){
-        if( situation instanceof PredefinedDockSituation ){
-            Set<Dockable> allDockables = new HashSet<Dockable>();
-            for( Dockable dockable : controller.getRegister().listDockables() ){
-                allDockables.add( dockable );
-            }
-            
-            PredefinedDockSituation predefined = (PredefinedDockSituation)situation;
-            Set<Dockable> visible = predefined.listVisible( allDockables, layout );
-            allDockables.removeAll( visible );
-            return allDockables;
-        }
-        
-        return null;
-    }
-    
-    /**
-     * Tries to estimate the layouts of missing {@link Dockable}s. The
-     * default implementation works with any {@link PredefinedDockSituation}.
-     * @param situation the situation to use for transforming information
-     * @param layout the layout to analyze
-     * @return a map with <code>Dockable</code>-names as key or <code>null</code>
-     */
-    protected Map<String, DockLayoutComposition> listLayouts( DockSituation situation, DockLayoutComposition layout ){
-        if( situation instanceof PredefinedDockSituation ){
-            Map<String, DockLayoutComposition> map = ((PredefinedDockSituation)situation).listLayouts( layout, true );
-            Map<String, DockLayoutComposition> result = new HashMap<String, DockLayoutComposition>();
-            
-            for( Map.Entry<String, DockLayoutComposition> entry : map.entrySet() ){
-                String key = entry.getKey();
-                if( key.startsWith( DOCKABLE_KEY_PREFIX ))
-                    result.put( key.substring( DOCKABLE_KEY_PREFIX.length() ), entry.getValue() );
-                else if( key.startsWith( ROOT_KEY_PREFIX ))
-                    result.put( key.substring( ROOT_KEY_PREFIX.length() ), entry.getValue() );
-                else
-                    result.put( key, entry.getValue() );
-            }
-            
-            return result;
-        }
-        return null;
-    }
     
     /**
      * Gets a set of all {@link Dockable} which are known to this frontend
@@ -1877,8 +1687,9 @@ public class DockFrontend {
      * @throws IOException if an I/O-error occurs
      */
     protected void write( Setting setting, boolean entry, DataOutputStream out ) throws IOException{
-        DockSituation situation = createSituation( entry );
-        PropertyTransformer properties = createTransformer();
+    	Internals internals = new Internals();
+        DockSituation situation = layoutChangeStrategy.createSituation( internals, entry );
+        PropertyTransformer properties = layoutChangeStrategy.createTransformer( internals );
         setting.write( situation, properties, entry, out );
     }
     
@@ -1920,8 +1731,9 @@ public class DockFrontend {
      */
     protected Setting read( boolean entry, DataInputStream in ) throws IOException{
         Setting setting = createSetting();
-        DockSituation situation = createSituation( entry );
-        PropertyTransformer properties = createTransformer();
+        Internals internals = new Internals();
+        DockSituation situation = layoutChangeStrategy.createSituation( internals, entry );
+        PropertyTransformer properties = layoutChangeStrategy.createTransformer( internals );
         setting.read( situation, properties, entry, in );
         return setting;
     }
@@ -1957,8 +1769,9 @@ public class DockFrontend {
      * change the attributes of the entry
      */
     protected void writeXML( Setting setting, boolean entry, XElement element ){
-        DockSituation situation = createSituation( entry );
-        PropertyTransformer properties = createTransformer();
+    	Internals internals = new Internals();
+        DockSituation situation = layoutChangeStrategy.createSituation( internals, entry );
+        PropertyTransformer properties = layoutChangeStrategy.createTransformer( internals );
         setting.writeXML( situation, properties, entry, element );
     }
     
@@ -1998,100 +1811,11 @@ public class DockFrontend {
      */
     protected Setting readXML( boolean entry, XElement element ){
         Setting setting = createSetting();
-        DockSituation situation = createSituation( entry );
-        PropertyTransformer properties = createTransformer();
+        Internals internals = new Internals();
+        DockSituation situation = layoutChangeStrategy.createSituation( internals, entry );
+        PropertyTransformer properties = layoutChangeStrategy.createTransformer( internals );
         setting.readXML( situation, properties, entry, element );
         return setting;
-    }
-    
-    /**
-     * Invoked every time before the current setting is written into a stream.<br>
-     * Note: the frontend and the file formats heavily depend on the internal
-     * implementation of this method. Overriding this method is possible, but
-     * extreme care should be applied when doing so. A good solution would be
-     * to call {@link #createInternalSituation(boolean)}, then change and return
-     * the result of that method.<br>
-     * This method just calls <code>return createInternalSituation( entry );</code>.<br>
-     * Subclasses overridding this method may also need to override 
-     * {@link #listEstimateLocations(DockSituation, DockLayoutComposition)}
-     * and {@link #listLayouts(DockSituation, DockLayoutComposition)}
-     * @param entry <code>true</code> if the situation is used for a regular setting,
-     * <code>false</code> if the situation is used as the final setting which will
-     * be loaded the next time the application starts.
-     * @return the situation
-     */
-    protected DockSituation createSituation( boolean entry ){
-        return createInternalSituation( entry );
-    }
-    
-    /**
-     * Creates a {@link DockSituation} which represents all the knowledge this
-     * frontend currently has. This method is declared final, clients should
-     * override {@link #createSituation(boolean)} if they need to introduce their
-     * own implementation of {@link DockSituation}.
-     * @param entry <code>true</code> if the situation is used for a regular setting,
-     * <code>false</code> if the situation is used as the final setting which will
-     * be loaded the next time the application starts.
-     * @return the situation
-     */
-    @SuppressWarnings("unchecked")
-    protected final PredefinedDockSituation createInternalSituation( final boolean entry ){
-        PredefinedDockSituation situation = new PredefinedDockSituation(){
-            @Override
-            protected boolean shouldLayout( DockElement element ) {
-                if( entry ){
-                    Dockable dockable = element.asDockable();
-                    if( dockable != null ){
-                        DockInfo info = getInfo( dockable );
-                        if( info != null ){
-                            info.isEntryLayout();
-                        }
-                    }
-                }
-                
-                return true;
-            }
-        };
-        
-        for( DockInfo info : dockables.values() ){
-            if( info.getDockable() != null ){
-                situation.put( DOCKABLE_KEY_PREFIX + info.getKey(), info.getDockable() );
-            }
-        }
-        
-        for( RootInfo info : roots.values() ){
-            situation.put( ROOT_KEY_PREFIX + info.getName(), info.getStation() );
-        }
-        
-        for( DockFactory<?,?> factory : dockFactories ){
-            situation.add( factory );
-        }
-        
-        for( DockFactory backup : backupDockFactories ){
-            situation.addBackup( new RegisteringDockFactory( this, backup ) );
-        }
-        
-        for( AdjacentDockFactory<?> factory : adjacentDockFactories ){
-            situation.addAdjacent( factory );
-        }
-        
-        if( entry )
-        	situation.setIgnore( getIgnoreForEntry() );
-        else
-        	situation.setIgnore( getIgnoreForFinal() );
-        
-        return situation;
-    }
-    
-    /**
-     * Invoked every time before properties are written or read.
-     * @return a transformer to read or write properties.
-     */
-    protected PropertyTransformer createTransformer(){
-        PropertyTransformer transformer = new PropertyTransformer();
-        for( DockablePropertyFactory factory : propertyFactories )
-            transformer.addFactory( factory );
-        return transformer;
     }
     
     /**
@@ -2333,12 +2057,65 @@ public class DockFrontend {
             listener.deleted( this, name );
     }
 
+    /**
+     * Internal information about this frontend.
+     * @author Benjamin Sigg
+     */
+    private class Internals implements DockFrontendInternals{
+		public void clean( DockSituationIgnore ignore ){
+			DockFrontend.this.clean( ignore );
+		}
+
+		public AdjacentDockFactory<?>[] getAdjacentDockFactories(){
+			return adjacentDockFactories.toArray( new AdjacentDockFactory[ adjacentDockFactories.size() ] );
+		}
+
+		public DockFactory<?, ?>[] getBackupDockFactories(){
+			return backupDockFactories.toArray( new DockFactory[ backupDockFactories.size() ] );
+		}
+
+		public DockFactory<?, ?>[] getDockFactories(){
+			return dockFactories.toArray( new DockFactory[ dockFactories.size() ] );
+		}
+
+		public DockInfo[] getDockables(){
+			return dockables.values().toArray( new DockInfo[ dockables.size() ] );
+		}
+
+		public DockFrontend getFrontend(){
+			return DockFrontend.this;
+		}
+
+		public DockInfo getInfo( String key ){
+			return DockFrontend.this.getInfo( key );
+		}
+
+		public DockInfo getInfo( Dockable dockable ){
+			return DockFrontend.this.getInfo( dockable );
+		}
+
+		public MissingDockableStrategy getMissingDockableStrategy(){
+			return DockFrontend.this.getMissingDockable();
+		}
+
+		public DockablePropertyFactory[] getPropertyFactories(){
+			return propertyFactories.toArray( new DockablePropertyFactory[ propertyFactories.size() ] );
+		}
+
+		public RootInfo[] getRoots(){
+			return roots.values().toArray( new RootInfo[ roots.size() ] );
+		}
+
+		public VetoManager getVetos(){
+			return veto;
+		}
+    }
     
     /**
      * Information about a {@link Dockable}.
      * @author Benjamin Sigg
      */
-    private class DockInfo implements FrontendEntry{
+    public class DockInfo implements FrontendEntry{
     	/** The element for which information is stored */
         private Dockable dockable;
         /** The name of the element */
@@ -2497,7 +2274,7 @@ public class DockFrontend {
      * Stores information about a root-station.
      * @author Benjamin Sigg
      */
-    private static class RootInfo{
+    public static class RootInfo{
     	/** the root */
         private DockStation station;
         /** the name of the root */

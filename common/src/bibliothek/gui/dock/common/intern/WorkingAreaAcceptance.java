@@ -64,9 +64,13 @@ public class WorkingAreaAcceptance implements DockAcceptance {
     	if( manager.isOnTransaction() )
             return true;
     	
-    	ExtendedMode extendedMode = manager.childsExtendedMode( parent );
-    	if( extendedMode == null )
-    		return true;
+    	ExtendedMode extendedMode = manager.getMode( child );
+    	if( extendedMode == null ){
+    		extendedMode = manager.childsExtendedMode( parent );
+    		if( extendedMode == null ){
+    			return true;
+    		}
+    	}
     	
     	LocationMode mode = manager.getMode( extendedMode.getModeIdentifier() );
     	if( mode == null )

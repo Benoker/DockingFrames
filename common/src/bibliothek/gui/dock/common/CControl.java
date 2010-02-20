@@ -69,6 +69,7 @@ import bibliothek.gui.dock.common.event.CDockableStateListener;
 import bibliothek.gui.dock.common.event.CDoubleClickListener;
 import bibliothek.gui.dock.common.event.CFocusListener;
 import bibliothek.gui.dock.common.event.CKeyboardListener;
+import bibliothek.gui.dock.common.event.CVetoClosingListener;
 import bibliothek.gui.dock.common.event.CVetoFocusListener;
 import bibliothek.gui.dock.common.event.ResizeRequestListener;
 import bibliothek.gui.dock.common.intern.AbstractCStation;
@@ -83,6 +84,7 @@ import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.intern.CommonDockableLayout;
 import bibliothek.gui.dock.common.intern.CommonMultipleDockableFactory;
 import bibliothek.gui.dock.common.intern.CommonSingleDockableFactory;
+import bibliothek.gui.dock.common.intern.ControlVetoClosingListener;
 import bibliothek.gui.dock.common.intern.ControlVetoFocusListener;
 import bibliothek.gui.dock.common.intern.EfficientControlFactory;
 import bibliothek.gui.dock.common.intern.ExtendedModeAcceptance;
@@ -437,6 +439,8 @@ public class CControl {
         
         frontend.getController().getFocusObserver().addVetoListener( 
         		new ControlVetoFocusListener( this, listenerCollection.getVetoFocusListener() ) );
+        
+        frontend.addVetoableListener( new ControlVetoClosingListener( this, listenerCollection.getVetoClosingListener() ) );
 
         frontend.getController().addAcceptance( new StackableAcceptance() );
         frontend.getController().addAcceptance( new WorkingAreaAcceptance( access ) );
@@ -848,6 +852,25 @@ public class CControl {
         listenerCollection.removeDoubleClickListener( listener );
     }
 
+    /**
+     * Adds <code>listener</code> to this control, the listener will be informed whenever a set of
+     * {@link CDockable}s is about to be closed.<br>
+     * {@link CVetoClosingListener}s added to the {@link CControl} are invoked before listeners that
+	 * are added to a {@link CDockable}.
+     * @param listener the new listener, not <code>null</code>
+     */
+    public void addVetoClosingListener( CVetoClosingListener listener ){
+    	listenerCollection.addVetoClosingListener( listener );
+    }
+    
+    /**
+     * Removes a listener from this control.
+     * @param listener the listener to remove
+     */
+    public void removeVetoClosingListener( CVetoClosingListener listener ){
+    	listenerCollection.removeVetoClosingListener( listener );
+    }
+    
     /**
      * Gets a list of currently registered listeners.
      * @return the listeners
@@ -1476,11 +1499,11 @@ public class CControl {
 
     /**
      * Adds a dockable to this control. The dockable can be made visible afterwards.
-     * @param <F> the type of the new element
+     * @param <M> the type of the new element
      * @param dockable the new element to show
      * @return <code>dockable</code>
      */
-    public <F extends MultipleCDockable> F add( F dockable ){
+    public <M extends MultipleCDockable> M add( M dockable ){
         Set<String> ids = new HashSet<String>();
 
         String factory = access.getFactoryId( dockable.getFactory() );

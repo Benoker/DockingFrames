@@ -36,6 +36,8 @@ import bibliothek.gui.dock.common.event.CDockableStateListener;
 import bibliothek.gui.dock.common.event.CDoubleClickListener;
 import bibliothek.gui.dock.common.event.CFocusListener;
 import bibliothek.gui.dock.common.event.CKeyboardListener;
+import bibliothek.gui.dock.common.event.CVetoClosingEvent;
+import bibliothek.gui.dock.common.event.CVetoClosingListener;
 import bibliothek.gui.dock.common.event.CVetoFocusListener;
 
 /**
@@ -206,6 +208,22 @@ public class CListenerCollection {
             return false;
         }
     };
+    
+    private List<CVetoClosingListener> vetoClosingListeners = new ArrayList<CVetoClosingListener>();
+    
+    private CVetoClosingListener vetoClosingListener = new CVetoClosingListener() {
+		public void closing( CVetoClosingEvent event ){
+			for( CVetoClosingListener listener : getVetoClosingListeners() ){
+				listener.closing( event );
+			}
+		}
+		
+		public void closed( CVetoClosingEvent event ){
+			for( CVetoClosingListener listener : getVetoClosingListeners() ){
+				listener.closed( event );
+			}
+		}
+	};
     
     /**
      * Stores an additional {@link CDockableStateListener} in this collection.
@@ -407,7 +425,7 @@ public class CListenerCollection {
     }
     
     /**
-     * Gets all currenlty registered {@link CDoubleClickListener}s collected
+     * Gets all currently registered {@link CDoubleClickListener}s collected
      * in an array. Modifications of the array will not modify this collection.
      * @return the independent array of listeners
      */
@@ -422,5 +440,50 @@ public class CListenerCollection {
      */
     public CDoubleClickListener getDoubleClickListener(){
         return doubleClickListener;
+    }
+    
+    /**
+     * Gets a {@link CVetoClosingListener} that forwards all events to the other
+     * registered listeners.
+     * @return the forwarding listener
+     */
+    public CVetoClosingListener getVetoClosingListener(){
+		return vetoClosingListener;
+	}
+    
+    /**
+     * Stores an additional {@link CVetoClosingListener} in this collection.
+     * @param listener the new listener
+     */
+    public void addVetoClosingListener( CVetoClosingListener listener ){
+    	if( listener == null )
+    		throw new IllegalArgumentException( "listener must not be null" );
+    	vetoClosingListeners.add( listener );
+    }
+    
+    /**
+     * Removes <code>listener</code> from this collection.
+     * @param listener the listener to remove
+     */
+    public void removeVetoClosingListener( CVetoClosingListener listener ){
+    	vetoClosingListeners.remove( listener );
+    }
+    
+    /**
+     * Tells whether there is at least one {@link CVetoClosingListener} registered in
+     * this collection.
+     * @return whether there is at least one listener
+     */
+    public boolean hasVetoClosingListeners(){
+    	return !vetoClosingListeners.isEmpty();
+    }
+    
+    /**
+     * Gets all currently registered {@link CVetoClosingListener}s collected
+     * in an array. Modifications of the array will not modify this collection.
+     * @return the independent array of listeners
+     */
+    public CVetoClosingListener[] getVetoClosingListeners(){
+    	return vetoClosingListeners.toArray( new CVetoClosingListener[ vetoClosingListeners.size() ] );
     }
 }

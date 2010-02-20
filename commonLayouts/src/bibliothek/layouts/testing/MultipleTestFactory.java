@@ -18,4 +18,8 @@ public class MultipleTestFactory implements MultipleCDockableFactory<MultipleTes
         layout.setContent( dockable.getContent() );
         return layout;
     }
+    
+    public boolean match( MultipleTestDockable dockable, MultipleTestLayout layout ){
+    	return false;
+    }
 }

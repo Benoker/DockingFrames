@@ -124,6 +124,7 @@ public class DockLayoutInfo {
 	 * @throws IllegalArgumentException if <code>data</code> has not one
 	 * of the specified types
 	 */
+	@SuppressWarnings("unchecked")
 	public void setData( Object data ){
 		if( data == null ){
 			this.data = null;

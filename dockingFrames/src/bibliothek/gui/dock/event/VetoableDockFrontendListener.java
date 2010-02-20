@@ -37,7 +37,10 @@ import bibliothek.gui.Dockable;
  * given to one method may be split up into many arrays the next time or when
  * given to another method. It is however guaranteed that there are no false
  * alarms (i.e. an already invisible <code>Dockable</code> will never
- * be given to {@link #hiding(VetoableDockFrontendEvent)}).
+ * be given to {@link #hiding(VetoableDockFrontendEvent)}).<br>
+ * Note: the scope of this listener is limited, please read the comments
+ * of {@link DockFrontend#addVetoableListener(VetoableDockFrontendListener)} for further
+ * information.
  * @author Benjamin Sigg
  */
 public interface VetoableDockFrontendListener {

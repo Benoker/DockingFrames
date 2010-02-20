@@ -409,7 +409,7 @@ public class PredefinedDockSituation extends DockSituation {
     }
 
     @Override
-    protected String getID( DockElement dockable ){
+    public String getID( DockElement dockable ){
         String key = elementToString.get( dockable );
         if( key == null )
             return UNKNOWN + super.getID( dockable );
@@ -431,6 +431,16 @@ public class PredefinedDockSituation extends DockSituation {
             return factory.getID();
         else
             return id.substring( UNKNOWN.length() );
+    }
+    
+    /**
+     * Given the unique identifier of a factory tells what identifier will be used
+     * internally. This method may be useful if creating a {@link DockLayout} manually.
+     * @param id the id of some factory
+     * @return the id that will be used internally
+     */
+    public static String convertFactoryID( String id ){
+    	return UNKNOWN + id;
     }
 
     @Override

@@ -143,7 +143,7 @@ public abstract class DockTitleRequest {
 				
 		try{
 			requesting = true;
-			
+			executeRequestList();
 		}
 		finally{
 			requesting = false;

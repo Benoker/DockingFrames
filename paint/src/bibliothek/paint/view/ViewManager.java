@@ -225,6 +225,11 @@ public class ViewManager {
             layout.setName( dockable.getPicture().getName() );
             return layout;
         }
+        
+        public boolean match( PictureDockable dockable, PictureLayout layout ){
+        	String name = dockable.getPicture().getName();
+        	return name.equals( layout.getName() );
+        }
     }
     
     /**

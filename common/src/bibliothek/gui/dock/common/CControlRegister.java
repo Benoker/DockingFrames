@@ -76,7 +76,7 @@ public interface CControlRegister {
     /**
      * Gets an unmodifiable list of all {@link MultipleCDockable}s which are known to
      * this register. The list might or might not be updated when the contents
-     * of this register changes.
+     * of this register change.
      * @return an unmodifiable list of elements
      */    
     public List<MultipleCDockable> getMultipleDockables();

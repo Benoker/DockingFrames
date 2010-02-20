@@ -157,7 +157,7 @@ public class VetoableDockFrontendEvent implements Iterable<Dockable>{
      * or if the client calls {@link DockFrontend#hide(Dockable, boolean)} or
      * {@link DockFrontend#show(Dockable, boolean)}.<br>
      * If <code>false</code> then this is an unexpected event that can have
-     * any cause, i.e. loading a new layout. 
+     * any cause, e.g. loading a new layout. 
      * @return whether the event is expected or unexpected 
      */
     public boolean isExpected() {

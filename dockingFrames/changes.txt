@@ -268,4 +268,7 @@
 ! API: Each node in a SplitDockStation is now associated with a unique identifier. This unique identifier is stored persistently and might help to put a Dockable to its old location when using the drop-method.
   - Effect: If two dockables were on the same stack, then they will be merged again independent of the location.
 ! API: DockTitleFactory has been changed. Now a DockTitleRequest is installed on the factory, the factory may trigger this request anytimes (also more than once). The new class StationChildHandle manages the interaction between Dockable, DockableDisplayer, DockTitle and DockTitleRequest.
-- Bugfix: FlatTab did not react on mouse-dragged events in a "secure environment". 
+- Bugfix: FlatTab did not react on mouse-dragged events in a "secure environment".
+- Bugfix: StackDockStation was not always removed if it had only one child and this one child was a CDockable associated with a CWorkingArea
+- API: CVetoClosingListener can be added to CControl or CDockable and gets informed before a CDockable (or a set of CDockables) is closed. It may also stop the operation. 
+! API: some methods of DockFrontend have been moved to DefaultLayoutChangeStrategy, new CLayoutChangeStrategy to handle special needs of Common (i.e. MultipleCDockables that are not registered at the DockFrontend)

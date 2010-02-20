@@ -39,6 +39,8 @@ import bibliothek.gui.dock.common.event.CDockableStateListener;
 import bibliothek.gui.dock.common.event.CDoubleClickListener;
 import bibliothek.gui.dock.common.event.CFocusListener;
 import bibliothek.gui.dock.common.event.CKeyboardListener;
+import bibliothek.gui.dock.common.event.CVetoClosingEvent;
+import bibliothek.gui.dock.common.event.CVetoClosingListener;
 import bibliothek.gui.dock.common.intern.action.CloseActionSource;
 import bibliothek.gui.dock.common.layout.RequestDimension;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
@@ -150,6 +152,24 @@ public interface CDockable {
 	 * @param listener the listener to remove
 	 */
 	public void removeDoubleClickListener( CDoubleClickListener listener );
+	
+	/**
+	 * Adds a veto-listener to this dockable, the listener will be informed before this
+	 * dockable gets closed and can issue a veto. The listener will receive a
+	 * {@link CVetoClosingEvent} which contains only this {@link CDockable} (even if
+	 * other dockables are closed at the same time).<br>
+	 * {@link CVetoClosingListener}s added to the {@link CControl} are invoked before listeners that
+	 * are added to a {@link CDockable}.
+	 * @param listener the new listener
+	 * @see CControl#addVetoClosingListener(CVetoClosingListener)
+	 */
+	public void addVetoClosingListener( CVetoClosingListener listener );
+	
+	/**
+	 * 
+	 * @param listener
+	 */
+	public void removeVetoClosingListener( CVetoClosingListener listener );
 	
 	/**
 	 * Tells whether this dockable can be minimized by the user.

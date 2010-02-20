@@ -46,7 +46,9 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
  * @author Benjamin Sigg
  */
 public interface TabPane {
-	
+	/**
+	 * The layout manager used by any {@link TabPane} to set the boundaries of its children.
+	 */
 	public static final PropertyKey<TabLayoutManager> LAYOUT_MANAGER = 
 		new PropertyKey<TabLayoutManager>( "dock.tabpane.layout_manager", 
 				new DynamicPropertyFactory<TabLayoutManager>(){

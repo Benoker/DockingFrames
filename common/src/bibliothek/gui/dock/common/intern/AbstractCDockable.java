@@ -29,6 +29,7 @@ import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Map;
 
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CStation;
@@ -40,10 +41,13 @@ import bibliothek.gui.dock.common.event.CDockableStateListener;
 import bibliothek.gui.dock.common.event.CDoubleClickListener;
 import bibliothek.gui.dock.common.event.CFocusListener;
 import bibliothek.gui.dock.common.event.CKeyboardListener;
+import bibliothek.gui.dock.common.event.CVetoClosingEvent;
+import bibliothek.gui.dock.common.event.CVetoClosingListener;
 import bibliothek.gui.dock.common.intern.action.CloseActionSource;
 import bibliothek.gui.dock.common.layout.RequestDimension;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
+import bibliothek.gui.dock.event.VetoableDockFrontendEvent;
 import bibliothek.gui.dock.title.DockTitle;
 
 
@@ -100,6 +104,9 @@ public abstract class AbstractCDockable implements CDockable {
     
     /** the listeners that were added to this dockable */
     protected CListenerCollection listenerCollection = new CListenerCollection();
+    
+    /** support class to fire {@link CVetoClosingEvent}s */
+    private ControlVetoClosingListener vetoClosingListenerConverter;
     
     /** Source that contains the action that closes this dockable */
     private CloseActionSource close = new CloseActionSource( this );
@@ -186,6 +193,41 @@ public abstract class AbstractCDockable implements CDockable {
     public void removeDoubleClickListener( CDoubleClickListener listener ){
         listenerCollection.removeDoubleClickListener( listener );
     }
+    
+    public void addVetoClosingListener( CVetoClosingListener listener ){
+    	boolean empty = !listenerCollection.hasVetoClosingListeners();
+	    listenerCollection.addVetoClosingListener( listener );
+	    if( empty && control != null ){
+	    	control.getOwner().intern().addVetoableListener( getVetoClosingListenerConverter() );
+	    }
+    }
+    
+    public void removeVetoClosingListener( CVetoClosingListener listener ){
+	    listenerCollection.removeVetoClosingListener( listener );
+	    if( !listenerCollection.hasVetoClosingListeners() ){
+	    	if( control != null && vetoClosingListenerConverter != null ){
+	    		control.getOwner().intern().removeVetoableListener( vetoClosingListenerConverter );
+	    		vetoClosingListenerConverter = null;
+	    	}
+	    }
+    }
+    
+    private ControlVetoClosingListener getVetoClosingListenerConverter(){
+    	if( vetoClosingListenerConverter == null ){
+    		vetoClosingListenerConverter = new ControlVetoClosingListener( control.getOwner(), listenerCollection.getVetoClosingListener() ){
+    			@Override
+    			protected CDockable[] getCDockables( VetoableDockFrontendEvent event ){
+    				for( Dockable dockable : event ){
+    					if( dockable == AbstractCDockable.this.dockable ){
+    						return new CDockable[]{ AbstractCDockable.this };
+    					}
+    				}
+    				return null;
+    			}
+    		};
+    	}
+		return vetoClosingListenerConverter;
+	}
     
     /**
      * Gets the list of state listeners.
@@ -513,6 +555,10 @@ public abstract class AbstractCDockable implements CDockable {
         if( this.control != null ){
             this.control.getLocationManager().remove( dockable );
             this.control.link( this, null );
+            if( vetoClosingListenerConverter != null ){
+            	this.control.getOwner().intern().removeVetoableListener( vetoClosingListenerConverter );
+            	vetoClosingListenerConverter = null;
+            }
         }
         
         this.control = control;
@@ -520,6 +566,10 @@ public abstract class AbstractCDockable implements CDockable {
         if( control != null ){
         	if( uniqueId != null ){
         		control.getLocationManager().add( uniqueId, dockable );
+        	}
+        	
+        	if( listenerCollection.hasVetoClosingListeners() ){
+        		control.getOwner().intern().addVetoableListener( getVetoClosingListenerConverter() );
         	}
         	
             control.link( this, new CDockableAccess(){

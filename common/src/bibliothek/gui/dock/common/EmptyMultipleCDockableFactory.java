@@ -56,6 +56,9 @@ public abstract class EmptyMultipleCDockableFactory<F extends MultipleCDockable>
         return new EmptyLayout();
     }
     
+    public boolean match( F dockable, MultipleCDockableLayout layout ){
+    	return false;
+    }
     
     /**
      * A layout that does not contain any value
