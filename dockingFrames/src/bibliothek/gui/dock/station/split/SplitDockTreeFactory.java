@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.station.split;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.split.SplitDockTree.Key;
 
@@ -47,23 +48,28 @@ public class SplitDockTreeFactory implements SplitTreeFactory<SplitDockTree.Key>
             throw new NullPointerException( "tree must not be null" );
         this.tree = tree;
     }
-
-    public Key horizontal( Key left, Key right, double divider, long id ) {
-        return tree.horizontal( left, right, divider, id );
+    
+    public Key horizontal( Key left, Key right, double divider, long id, Path[] placeholders, boolean visible ){
+        return tree.horizontal( left, right, divider, placeholders, id );
+    }
+    
+    public Key vertical( Key top, Key bottom, double divider, long id, Path[] placeholders, boolean visible ){
+        return tree.vertical( top, bottom, divider, placeholders, id );
+    }
+    
+    public Key leaf( Dockable dockable, long id, Path[] placeholders ){
+        return tree.put( new Dockable[]{ dockable }, null, placeholders, id );
     }
 
-    public Key leaf( Dockable dockable, long id ) {
-        return tree.put( dockable, id );
+    public Key placeholder( long id, Path[] placeholders ){
+	    return tree.put( placeholders );
     }
 
-    public Key root( Key root, long id ) {
+    public Key root( Key root, long id ){
         if( root == null )
             return null;
         
         return tree.root( root ).getRoot();
     }
 
-    public Key vertical( Key top, Key bottom, double divider, long id ) {
-        return tree.vertical( top, bottom, divider, id );
-    }
 }

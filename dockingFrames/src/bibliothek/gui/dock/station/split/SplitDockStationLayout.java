@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.station.split;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.SplitDockStation.Orientation;
@@ -76,12 +77,16 @@ public class SplitDockStationLayout {
     	private Node parent;
     	/** the unique id of this node */
     	private long id;
+    	/** placeholders that are associated with this entry */
+    	private Path[] placeholders;
     	
     	/**
     	 * Create a new entry
+    	 * @param placeholders the placeholders associated with this node or leaf
     	 * @param id the unique id of this node or -1
     	 */
-    	public Entry( long id ){
+    	public Entry( Path[] placeholders, long id ){
+    		this.placeholders = placeholders;
     		this.id = id;
     	}
     	
@@ -127,6 +132,12 @@ public class SplitDockStationLayout {
         }
         
         /**
+         * Whether this node or leaf is visible to the user.
+         * @return <code>true</code> if this represents some graphical element or has a visible child
+         */
+        public abstract boolean isVisible();
+        
+        /**
          * Creates a new path property which describes the location of
          * this element.
          * @return the new path property
@@ -141,6 +152,14 @@ public class SplitDockStationLayout {
         	}
         	return path;
         }
+        
+        /**
+         * Gets all the placeholders that are associated with this entry.
+         * @return the placeholders
+         */
+        public Path[] getPlaceholders(){
+			return placeholders;
+		}
     }
     
     /**
@@ -153,11 +172,12 @@ public class SplitDockStationLayout {
         
         /**
          * Creates a new leaf
-         * @param id the id of a {@link Dockable}
+         * @param id the id of a {@link Dockable} or -1
+         * @param placeholders placeholders associated with this leaf
          * @param nodeId the unique identifier of this node
          */
-        public Leaf( int id, long nodeId ){
-        	super( nodeId );
+        public Leaf( int id, Path[] placeholders, long nodeId ){
+        	super( placeholders, nodeId );
             this.id = id;
         }
         
@@ -172,6 +192,11 @@ public class SplitDockStationLayout {
         @Override
         public Leaf asLeaf() {
             return this;
+        }
+        
+        @Override
+        public boolean isVisible(){
+        	return id != -1;
         }
     }
     
@@ -195,10 +220,11 @@ public class SplitDockStationLayout {
          * @param divider the location of the divider
          * @param childA the left or top child
          * @param childB the right or bottom child
+         * @param placeholders placeholders associated with this node
          * @param id the unique identifier of this node or -1
          */
-        public Node( Orientation orientation, double divider, Entry childA, Entry childB, long id ){
-        	super( id );
+        public Node( Orientation orientation, double divider, Entry childA, Entry childB, Path[] placeholders, long id ){
+        	super( placeholders, id );
             this.orientation = orientation;
             this.divider = divider;
             this.childA = childA;
@@ -215,6 +241,11 @@ public class SplitDockStationLayout {
             return this;
         }
         
+        @Override
+        public boolean isVisible(){
+	        return childA.isVisible() && childB.isVisible();
+        }
+        
         /**
          * Creates a new path pointing to <code>child</code> which must be
          * a child of this node.
@@ -222,24 +253,37 @@ public class SplitDockStationLayout {
          * @return a new path for <code>child</code>
          */
         public SplitDockPathProperty createPathProperty( Entry child ){
-        	SplitDockPathProperty property = createPathProperty();
-        	if( child == childA ){
-        		if( orientation == Orientation.HORIZONTAL ){
-        			property.add( Location.LEFT, divider, child.getNodeId() );
-        		}
-        		else{
-        			property.add( Location.TOP, divider, child.getNodeId() );
-        		}
+        	boolean childAvisible = childA.isVisible();
+        	boolean childBvisible = childB.isVisible();
+        	
+        	if( childAvisible && childBvisible ){
+	        	SplitDockPathProperty property = createPathProperty();
+	        	if( child == childA ){
+	        		if( orientation == Orientation.HORIZONTAL ){
+	        			property.add( Location.LEFT, divider, child.getNodeId() );
+	        		}
+	        		else{
+	        			property.add( Location.TOP, divider, child.getNodeId() );
+	        		}
+	        	}
+	        	else if( child == childB ){
+	        		if( orientation == Orientation.HORIZONTAL ){
+	        			property.add( Location.RIGHT, 1-divider, child.getNodeId() );
+	        		}
+	        		else{
+	        			property.add( Location.BOTTOM, 1-divider, child.getNodeId() );
+	        		}
+	        	}
+	        	return property;
         	}
-        	else if( child == childB ){
-        		if( orientation == Orientation.HORIZONTAL ){
-        			property.add( Location.RIGHT, 1-divider, child.getNodeId() );
-        		}
-        		else{
-        			property.add( Location.BOTTOM, 1-divider, child.getNodeId() );
-        		}
+
+        	Node parent = getParent();
+        	if( parent != null ){
+        		return parent.createPathProperty( this );
         	}
-        	return property;
+        	else{
+        		return new SplitDockPathProperty();
+        	}
         }
         
         /**

@@ -48,4 +48,10 @@ public interface SplitNodeVisitor {
      * @param leaf the tree
      */
     public void handleLeaf( Leaf leaf );
+    
+    /**
+     * Invoked when visiting a leaf that is a placeholder.
+     * @param placeholder the placeholder
+     */
+    public void handlePlaceholder( Placeholder placeholder );
 }

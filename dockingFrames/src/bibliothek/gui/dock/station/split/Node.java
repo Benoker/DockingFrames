@@ -29,6 +29,7 @@ package bibliothek.gui.dock.station.split;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.SplitDockStation.Orientation;
@@ -40,7 +41,7 @@ import bibliothek.gui.dock.station.split.SplitDockTree.Key;
  * a "divider", whose position can be changed.
  * @author Benjamin Sigg
  */
-public class Node extends SplitNode{
+public class Node extends VisibleSplitNode{
     /** The area of the left child is either at the left or at the top of the area of this node. */
     private SplitNode left;
     /** The area of the right child is either at the right or at the bottom of the area of this node. */
@@ -51,6 +52,12 @@ public class Node extends SplitNode{
     private Orientation orientation = Orientation.VERTICAL;
     /** The area of the divider between the two children */
     private Rectangle dividerBounds = new Rectangle();
+    
+    /** whether this node is visible or not */
+    private boolean visible;
+    
+    /** whether {@link #visible} has any meaning */
+    private boolean visibleCached = false;
     
     /**
      * Constructs a new node.
@@ -128,9 +135,10 @@ public class Node extends SplitNode{
      * @param left the left child or <code>null</code>
      */
     public void setLeft( SplitNode left ){
-        if( this.left != null )
+    	if( this.left != null )
             this.left.setParent( null );
         this.left = left;
+        clearVisibility();
         if( left != null ){
             left.delete( false );
             left.setParent( this );
@@ -159,9 +167,10 @@ public class Node extends SplitNode{
      * @param right the right child
      */
     public void setRight( SplitNode right ){
-        if( this.right != null )
+    	if( this.right != null )
             this.right.setParent( null );
         this.right = right;
+        clearVisibility();
         if( right != null ){
             right.delete( false );
             right.setParent( this );
@@ -223,17 +232,30 @@ public class Node extends SplitNode{
     
     @Override
     public Dimension getMinimumSize() {
-    	Dimension minLeft = left == null ? new Dimension() : left.getMinimumSize();
-    	Dimension minRight = right == null ? new Dimension() : right.getMinimumSize();
-    	int divider = getAccess().getOwner().getDividerSize();
-    	
-    	if( orientation == Orientation.HORIZONTAL ){
-    		return new Dimension( minLeft.width + divider + minRight.width,
-    				Math.max( minLeft.height, minRight.height ));
+    	boolean leftVisible = left == null || left.isVisible();
+    	boolean rightVisible = right == null || right.isVisible();
+    	if( leftVisible && rightVisible ){
+	    	Dimension minLeft = left == null ? new Dimension() : left.getMinimumSize();
+	    	Dimension minRight = right == null ? new Dimension() : right.getMinimumSize();
+	    	int divider = getAccess().getOwner().getDividerSize();
+	    	
+	    	if( orientation == Orientation.HORIZONTAL ){
+	    		return new Dimension( minLeft.width + divider + minRight.width,
+	    				Math.max( minLeft.height, minRight.height ));
+	    	}
+	    	else{
+	    		return new Dimension( Math.max( minLeft.width, minRight.width),
+	    				minLeft.height + divider + minRight.height );
+	    	}
+    	}
+    	else if( leftVisible ){
+    		return left.getMinimumSize();
+    	}
+    	else if( rightVisible ){
+    		return right.getMinimumSize();
     	}
     	else{
-    		return new Dimension( Math.max( minLeft.width, minRight.width),
-    				minLeft.height + divider + minRight.height );
+    		return new Dimension();
     	}
     }
     
@@ -258,46 +280,97 @@ public class Node extends SplitNode{
     }
     
     @Override
+    public boolean isVisible(){
+    	if( !visibleCached ){
+    		visible = left == null || right == null || (left.isVisible() || right.isVisible());
+    		visibleCached = true;
+    	}
+    	return visible; 
+    }
+    
+    private void clearVisibility(){
+    	visibleCached = false;
+    	SplitNode parent = getParent();
+    	if( parent instanceof Node ){
+    		((Node)parent).clearVisibility();
+    	}
+    }
+    
+    @Override
+    public SplitNode getVisible(){
+	    if( left != null && right != null ){
+	    	boolean leftVisible = left.isVisible();
+	    	boolean rightVisible = right.isVisible();
+	    	if( leftVisible && rightVisible ){
+	    		return this;
+	    	}
+	    	if( leftVisible ){
+	    		return left;
+	    	}
+	    	if( rightVisible ){
+	    		return right;
+	    	}
+	    }
+	    return null;
+    }
+    
+    @Override
+    public boolean isOfUse(){
+	    return true;
+    }
+    
+    @Override
     public void updateBounds( double x, double y, double width, double height, double factorW, double factorH, boolean components ) {
         super.updateBounds( x, y, width, height, factorW, factorH, components );
         
-        divider = getAccess().validateDivider( divider, this );
-        int dividerSize = getAccess().getOwner().getDividerSize();
+        boolean leftVisible = left == null || left.isVisible();
+        boolean rightVisible = right == null || right.isVisible();
         
-        if( orientation == Orientation.HORIZONTAL ){
-            // Components are left and right
-            double dividerWidth = factorW > 0 ? Math.max( 0, dividerSize / factorW) : 0.0;
-            double dividerLocation = width * divider;
-            
-            if( left != null )
-                left.updateBounds( x, y, dividerLocation - dividerWidth/2, height, factorW, factorH, components );
-            
-            if( right != null )
-                right.updateBounds( x + dividerLocation + dividerWidth/2, y, 
-                    width - dividerLocation - dividerWidth/2, height, factorW, factorH, components );
-            
-            dividerBounds.setBounds(
-                    (int)(( x+dividerLocation-dividerWidth/2 )*factorW + 0.5 ),
-                    (int)( y*factorH + 0.5 ),
-                    dividerSize,
-                    (int)( height*factorH + 0.5 ));
+        if( leftVisible && !rightVisible ){
+        	left.updateBounds( x, y, width, height, factorW, factorH, components );
+        }
+        else if( !leftVisible && rightVisible ){
+        	right.updateBounds( x, y, width, height, factorW, factorH, components );
         }
         else{
-            double dividerHeight = factorH > 0 ? Math.max( 0, dividerSize / factorH ) : 0.0;
-            double dividerLocation = height * divider;
-            
-            if( left != null)
-                left.updateBounds( x, y, width, dividerLocation - dividerHeight / 2, factorW, factorH, components );
-            
-            if( right != null)
-                right.updateBounds( x, y + dividerLocation + dividerHeight / 2,
-                    width, height - dividerLocation - dividerHeight/2, factorW, factorH, components );
-            
-            dividerBounds.setBounds(
-                    (int)(x*factorW + 0.5),
-                    (int)((y+dividerLocation-dividerHeight/2)*factorH + 0.5),
-                    (int)(width*factorW + 0.5),
-                    dividerSize );
+        	divider = getAccess().validateDivider( divider, this );
+        	int dividerSize = getAccess().getOwner().getDividerSize();
+
+        	if( orientation == Orientation.HORIZONTAL ){
+        		// Components are left and right
+        		double dividerWidth = factorW > 0 ? Math.max( 0, dividerSize / factorW) : 0.0;
+        		double dividerLocation = width * divider;
+
+        		if( left != null )
+        			left.updateBounds( x, y, dividerLocation - dividerWidth/2, height, factorW, factorH, components );
+
+        		if( right != null )
+        			right.updateBounds( x + dividerLocation + dividerWidth/2, y, 
+        					width - dividerLocation - dividerWidth/2, height, factorW, factorH, components );
+
+        		dividerBounds.setBounds(
+        				(int)(( x+dividerLocation-dividerWidth/2 )*factorW + 0.5 ),
+        				(int)( y*factorH + 0.5 ),
+        				dividerSize,
+        				(int)( height*factorH + 0.5 ));
+        	}
+        	else{
+        		double dividerHeight = factorH > 0 ? Math.max( 0, dividerSize / factorH ) : 0.0;
+        		double dividerLocation = height * divider;
+
+        		if( left != null)
+        			left.updateBounds( x, y, width, dividerLocation - dividerHeight / 2, factorW, factorH, components );
+
+        		if( right != null)
+        			right.updateBounds( x, y + dividerLocation + dividerHeight / 2,
+        					width, height - dividerLocation - dividerHeight/2, factorW, factorH, components );
+
+        		dividerBounds.setBounds(
+        				(int)(x*factorW + 0.5),
+        				(int)((y+dividerLocation-dividerHeight/2)*factorH + 0.5),
+        				(int)(width*factorW + 0.5),
+        				dividerSize );
+        	}
         }
     }
     
@@ -365,55 +438,84 @@ public class Node extends SplitNode{
     
     @Override
     public PutInfo getPut( int x, int y, double factorW, double factorH, Dockable drop ){
-        if( orientation == Orientation.HORIZONTAL ){
-            if( x < (this.x + divider*width)*factorW ){
-                // left
-                return left == null ? null : left.getPut( x, y, factorW, factorH, drop );
-            }
-            else{
-                // right
-                return right == null ? null : right.getPut( x, y, factorW, factorH, drop );
-            }
-        }
-        else{
-            if( y < (this.y + divider*height)*factorH ){
-                // top
-                return left == null ? null : left.getPut( x, y, factorW, factorH, drop );
-            }
-            else{
-                // bottom
-                return right == null ? null : right.getPut( x, y, factorW, factorH, drop );
-            }
-        }
+    	boolean leftVisible = left == null || left.isVisible();
+    	boolean rightVisible = right == null || right.isVisible();
+    	
+    	if( leftVisible && rightVisible ){
+	        if( orientation == Orientation.HORIZONTAL ){
+	            if( x < (this.x + divider*width)*factorW ){
+	                // left
+	                return left == null ? null : left.getPut( x, y, factorW, factorH, drop );
+	            }
+	            else{
+	                // right
+	                return right == null ? null : right.getPut( x, y, factorW, factorH, drop );
+	            }
+	        }
+	        else{
+	            if( y < (this.y + divider*height)*factorH ){
+	                // top
+	                return left == null ? null : left.getPut( x, y, factorW, factorH, drop );
+	            }
+	            else{
+	                // bottom
+	                return right == null ? null : right.getPut( x, y, factorW, factorH, drop );
+	            }
+	        }
+    	}
+    	else if( leftVisible ){
+    		return left.getPut( x, y, factorW, factorH, drop );
+    	}
+    	else if( rightVisible ){
+    		return right.getPut( x, y, factorW, factorH, drop );
+    	}
+    	else{
+    		return null;
+    	}
     }
     
     @Override
     public boolean isInOverrideZone( int x, int y, double factorW, double factorH ) {
-        if( orientation == Orientation.HORIZONTAL ){
-            if( x < (this.x + divider*width)*factorW ){
-                // left
-                return left.isInOverrideZone( x, y, factorW, factorH );
-            }
-            else{
-                // right
-                return right.isInOverrideZone( x, y, factorW, factorH );
-            }
-        }
-        else{
-            if( y < (this.y + divider*height)*factorH ){
-                // top
-                return left.isInOverrideZone( x, y, factorW, factorH );
-            }
-            else{
-                // bottom
-                return right.isInOverrideZone( x, y, factorW, factorH );
-            }
-        }
+    	boolean leftVisible = left == null || left.isVisible();
+    	boolean rightVisible = right == null || right.isVisible();
+    	
+    	if( leftVisible && rightVisible ){
+	        if( orientation == Orientation.HORIZONTAL ){
+	            if( x < (this.x + divider*width)*factorW ){
+	                // left
+	                return left.isInOverrideZone( x, y, factorW, factorH );
+	            }
+	            else{
+	                // right
+	                return right.isInOverrideZone( x, y, factorW, factorH );
+	            }
+	        }
+	        else{
+	            if( y < (this.y + divider*height)*factorH ){
+	                // top
+	                return left.isInOverrideZone( x, y, factorW, factorH );
+	            }
+	            else{
+	                // bottom
+	                return right.isInOverrideZone( x, y, factorW, factorH );
+	            }
+	        }
+    	}
+    	else if( leftVisible ){
+    		return left.isInOverrideZone( x, y, factorW, factorH );
+    	}
+    	else if( rightVisible ){
+    		return right.isInOverrideZone( x, y, factorW, factorH );
+    	}
+    	else{
+    		return false;
+    	}
     }
     
     @Override
     public void evolve( Key key, boolean checkValidity ){
     	SplitDockTree tree = key.getTree();
+    	setPlaceholders( tree.getPlaceholders( key ) );
     	
     	if( tree.isHorizontal( key )){
     		orientation = SplitDockStation.Orientation.HORIZONTAL;
@@ -430,100 +532,153 @@ public class Node extends SplitNode{
     }
     
     @Override
+    public boolean insert( SplitDockPlaceholderProperty property, Dockable dockable ){
+    	Path placeholder = property.getPlaceholder();
+    	if( hasPlaceholder( placeholder )){
+    		// that is ... unexpected, must have been a client. Split this node and assign
+    		// all remaining placeholders to a new leaf.
+    		Leaf leaf = create( dockable, true, -1 );
+    		if( leaf == null ){
+    			return false;
+    		}
+    		removePlaceholder( placeholder );
+    		leaf.setPlaceholders( getPlaceholders() );
+    		Node node = createNode( -1 );
+    		node.setDivider( 0.5 );
+    		if( width > height ){
+    			node.setOrientation( Orientation.HORIZONTAL );
+    		}
+    		else{
+    			node.setOrientation( Orientation.VERTICAL );
+    		}
+    		
+    		SplitNode parent = getParent();
+    		int location = parent.getChildLocation( this );
+    		
+    		node.setLeft( leaf );
+    		node.setRight( this );
+    		
+    		parent.setChild( node, location );
+    		return true;
+    	}
+    	if( left != null && left.insert( property, dockable )){
+    		return true;
+    	}
+    	if( right != null && right.insert( property, dockable )){
+    		return true;
+    	}
+    	return false;
+    }
+    
+    @Override
     public boolean insert( SplitDockPathProperty property, int depth, Dockable dockable ) {
-        if( depth >= property.size() ){
-            // there is no description where to put the element
-            // try using the theoretical boundaries of the element
-            return getAccess().drop( dockable, property.toLocation( this ), this );
-        }
-        else{
-            SplitDockPathProperty.Node node = property.getNode( depth );
+    	boolean leftVisible = left == null || left.isVisible();
+    	boolean rightVisible = right == null || right.isVisible();
+    	
+    	if( leftVisible && rightVisible ){
+    		if( depth >= property.size() ){
+    			// there is no description where to put the element
+    			// try using the theoretical boundaries of the element
+    			return getAccess().drop( dockable, property.toLocation( this ), this );
+    		}
+    		else{
+    			SplitDockPathProperty.Node node = property.getNode( depth );
 
-            boolean expand = 
-            // if this node is horizontal, but the path is vertical
-                ( orientation == SplitDockStation.Orientation.HORIZONTAL &&
-                    (node.getLocation() == SplitDockPathProperty.Location.TOP ||
-                     node.getLocation() == SplitDockPathProperty.Location.BOTTOM )) ||
-            // ... or if this node is vertical, but the path is horizontal
-                ( orientation == SplitDockStation.Orientation.VERTICAL &&
-                    (node.getLocation() == SplitDockPathProperty.Location.LEFT ||
-                     node.getLocation() == SplitDockPathProperty.Location.RIGHT ));
-            
-            if( node.getId() != -1 && node.getId() != getId() ){
-            	expand = true;
-            }
-            
-            if( expand ){
-                // split up this node
-            	long leafId = property.getLeafId();
-            	SplitDockPathProperty.Node lastNode = null;
-            	if( leafId == -1 ){
-            		lastNode = property.getLastNode();
-            		if( lastNode != null ){
-            			leafId = lastNode.getId();
-            		}
-            	}
-            	
-            	long splitId = -1;
-            	if( lastNode != node ){
-            		splitId = node.getId();
-            	}
-                Leaf leaf = create( dockable, true, leafId );
-                if( leaf == null )
-                    return false;
-            
-                SplitDockStation.Orientation orientation;
-                if( node.getLocation() == SplitDockPathProperty.Location.TOP ||
-                        node.getLocation() == SplitDockPathProperty.Location.BOTTOM )
-                    orientation = SplitDockStation.Orientation.VERTICAL;
-                else
-                    orientation = SplitDockStation.Orientation.HORIZONTAL;
-                
-                Node split;
-                SplitNode parent = getParent();
-                int location = parent.getChildLocation( this );
-                if( node.getLocation() == SplitDockPathProperty.Location.LEFT ||
-                        node.getLocation() == SplitDockPathProperty.Location.TOP ){
-                    split = new Node( getAccess(), leaf, this, orientation, splitId );
-                    split.setDivider( node.getSize() );
-                }
-                else{
-                    split = new Node( getAccess(), this, leaf, orientation, splitId );
-                    split.setDivider( 1-node.getSize() );
-                }
-                parent.setChild( split, location );
-                return true;
-            }
-            else{
-                // forward the call to a child
-                if( node.getLocation() == SplitDockPathProperty.Location.LEFT ||
-                        node.getLocation() == SplitDockPathProperty.Location.TOP ){
-                    return left.insert( property, depth+1, dockable );
-                }
-                else{
-                    return right.insert( property, depth+1, dockable );
-                }
-            }
-        }
+    			boolean expand = 
+    				// if this node is horizontal, but the path is vertical
+    				( orientation == SplitDockStation.Orientation.HORIZONTAL &&
+    						(node.getLocation() == SplitDockPathProperty.Location.TOP ||
+    								node.getLocation() == SplitDockPathProperty.Location.BOTTOM )) ||
+    								// ... or if this node is vertical, but the path is horizontal
+    								( orientation == SplitDockStation.Orientation.VERTICAL &&
+    										(node.getLocation() == SplitDockPathProperty.Location.LEFT ||
+    												node.getLocation() == SplitDockPathProperty.Location.RIGHT ));
+
+    			if( node.getId() != -1 && node.getId() != getId() ){
+    				expand = true;
+    			}
+
+    			if( expand ){
+    				// split up this node
+    				long leafId = property.getLeafId();
+    				SplitDockPathProperty.Node lastNode = null;
+    				if( leafId == -1 ){
+    					lastNode = property.getLastNode();
+    					if( lastNode != null ){
+    						leafId = lastNode.getId();
+    					}
+    				}
+
+    				long splitId = -1;
+    				if( lastNode != node ){
+    					splitId = node.getId();
+    				}
+    				Leaf leaf = create( dockable, true, leafId );
+    				if( leaf == null )
+    					return false;
+
+    				SplitDockStation.Orientation orientation;
+    				if( node.getLocation() == SplitDockPathProperty.Location.TOP ||
+    						node.getLocation() == SplitDockPathProperty.Location.BOTTOM )
+    					orientation = SplitDockStation.Orientation.VERTICAL;
+    				else
+    					orientation = SplitDockStation.Orientation.HORIZONTAL;
+
+    				Node split;
+    				SplitNode parent = getParent();
+    				int location = parent.getChildLocation( this );
+    				if( node.getLocation() == SplitDockPathProperty.Location.LEFT ||
+    						node.getLocation() == SplitDockPathProperty.Location.TOP ){
+    					split = new Node( getAccess(), leaf, this, orientation, splitId );
+    					split.setDivider( node.getSize() );
+    				}
+    				else{
+    					split = new Node( getAccess(), this, leaf, orientation, splitId );
+    					split.setDivider( 1-node.getSize() );
+    				}
+    				parent.setChild( split, location );
+    				return true;
+    			}
+    			else{
+    				// forward the call to a child
+    				if( node.getLocation() == SplitDockPathProperty.Location.LEFT ||
+    						node.getLocation() == SplitDockPathProperty.Location.TOP ){
+    					return left.insert( property, depth+1, dockable );
+    				}
+    				else{
+    					return right.insert( property, depth+1, dockable );
+    				}
+    			}
+    		}
+    	}
+    	else if( leftVisible ){
+    		return left.insert( property, depth, dockable );
+    	}
+    	else if( rightVisible ){
+    		return right.insert( property, depth, dockable );
+    	}
+    	else{
+    		return false;
+    	}
     }
     
     @Override
     public <N> N submit( SplitTreeFactory<N> factory ) {
         if( orientation == SplitDockStation.Orientation.HORIZONTAL )
-            return factory.horizontal( left.submit( factory ), right.submit( factory ), divider, getId() );
+            return factory.horizontal( left.submit( factory ), right.submit( factory ), divider, getId(), getPlaceholders(), isVisible() );
         else
-            return factory.vertical( left.submit( factory ), right.submit( factory ), divider, getId() );
+            return factory.vertical( left.submit( factory ), right.submit( factory ), divider, getId(), getPlaceholders(), isVisible() );
     }
     
     @Override
     public Leaf getLeaf( Dockable dockable ) {
-        if( left != null ){
+        if( left != null && left.isVisible() ){
             Leaf leaf = left.getLeaf( dockable );
             if( leaf != null )
                 return leaf;
         }
         
-        if( right != null )
+        if( right != null && right.isVisible() )
             return right.getLeaf( dockable );
         else
             return null;
@@ -531,16 +686,19 @@ public class Node extends SplitNode{
     
     @Override
     public Node getDividerNode( int x, int y ){
-        if( dividerBounds.contains( x, y ))
+    	boolean leftVisible = left == null || left.isVisible();
+    	boolean rightVisible = right == null || right.isVisible();
+    	
+        if( leftVisible && rightVisible && dividerBounds.contains( x, y ))
             return this;
         
-        if( left != null ){
+        if( left != null && leftVisible ){
             Node node = left.getDividerNode( x, y );
             if( node != null )
                 return node;
         }
         
-        if( right != null ){
+        if( right != null && rightVisible ){
             return right.getDividerNode( x, y );
         }
         else{
@@ -561,7 +719,17 @@ public class Node extends SplitNode{
         out.append( orientation );
         out.append( " , id=" );
         out.append( getId() );
-    	out.append( "]" );
+    	out.append( ", placeholders={" );
+    	Path[] placeholders = getPlaceholders();
+    	if( placeholders != null ){
+    		for( int i = 0; i < placeholders.length; i++ ){
+    			if( i > 0 ){
+    				out.append( ", " );
+    			}
+    			out.append( placeholders[i] );
+    		}
+    	}
+    	out.append( "}]" );
         
         out.append( '\n' );
         for( int i = 0; i < tabs+1; i++ )

@@ -63,6 +63,68 @@ public final class Path {
     /** standard path for a label, a label is not shown in an enabled editor */
     public static final Path TYPE_LABEL = new Path( "dock.label" );
     
+    /**
+     * Puts an escape character before any illegal character of <code>segment</code>, thus
+     * creating a valid segment.
+     * @param segment the segment to encode
+     * @return the valid segment
+     */
+    public static String encodeSegment( String segment ){
+    	StringBuilder builder = new StringBuilder( segment.length() );
+    	
+    	for( int i = 0, n = segment.length(); i<n; i++ ){
+    		char c = segment.charAt( i );
+    		boolean escape = false;
+	        if( c == '.' ){
+	            escape = true;
+	        }
+	        else if( c == '\\' ){
+	        	escape = true;
+	        }
+	        else if( i == 0 ){
+	            if( !Character.isJavaIdentifierStart( c )){
+	            	escape = true;
+	            }
+	        }
+	        else{
+	            if( !Character.isJavaIdentifierPart( c )){
+	            	escape = true;
+	            }
+	        }
+	        if( escape ){
+	        	builder.append( '\\' );
+	        }
+	        builder.append( c );
+    	}
+    	
+    	return builder.toString();
+    }
+    
+    /**
+     * The opposite of {@link #encodeSegment(String)}.
+     * @param segment some segment with escape characters
+     * @return the original form of the segment
+     */
+    public static String decodeSegment( String segment ){
+    	StringBuilder builder = new StringBuilder( segment.length() );
+    	boolean escape = false;
+    	
+    	for( int i = 0, n = segment.length(); i<n; i++ ){
+    		char c = segment.charAt( i );
+    		if( escape ){
+    			escape = false;
+    		}
+    		else if( c == '\\'){
+    			escape = true;
+    		}
+    		else{
+    			builder.append( c );
+    		}
+    	}
+    	
+    	return builder.toString();
+    }
+    
     /** the segments of this path */
     private String[] segments;
     
@@ -81,12 +143,30 @@ public final class Path {
         }
     }
     
+
     /**
      * Creates a new path with the given segments.
      * @param segments the path
      */
-    private Path( String[] segments ){
-        this.segments = segments;
+    public Path( String... segments ){
+    	this( segments, true );
+    }
+    
+    /**
+     * Creates a new path with the given segments.
+     * @param segments the path
+     * @param encode whether to apply {@link #encodeSegment(String)} on each element
+     */
+    private Path( String[] segments, boolean encode ){
+    	if( encode ){
+	        this.segments = new String[segments.length];
+	        for( int i = 0; i < segments.length; i++ ){
+	        	this.segments[i] = encodeSegment( segments[i] );
+	        }
+    	}
+    	else{
+    		this.segments = segments;
+    	}
     }
     
     /**
@@ -100,7 +180,8 @@ public final class Path {
      * Creates a new path. 
      * @param path the dot-separated segments of this path, each segment
      * must be a valid Java-identifier. Note that no segment should start with
-     * "_"
+     * "_". Clients may use {@link #encodeSegment(String)} to use any character
+     * within a single segment.
      */
     public Path( String path ){
         if( path == null )
@@ -108,29 +189,40 @@ public final class Path {
         
         List<String> list = new ArrayList<String>();
         int lastDot = -1;
+        boolean escape = false;
         
         for( int i = 0, n = path.length(); i <= n; i++ ){
-           
             char c;
-            if( i == n )
+            if( i == n ){
+            	escape = false;
                 c = '.';
-            else
-                c = path.charAt( i );
-            
-            if( c == '.' ){
-                if( lastDot+1 == i )
-                    throw new IllegalArgumentException( "not a path: empty segment" );
-                
-                list.add( path.substring( lastDot+1, i ) );
-                lastDot = i;
-            }
-            else if( lastDot+1 == i ){
-                if( !Character.isJavaIdentifierStart( c ))
-                    throw new IllegalArgumentException( "not a valid start of a segment: '" + c + "'" );                
             }
             else{
-                if( !Character.isJavaIdentifierPart( c ))
-                    throw new IllegalArgumentException( "not a valid character of a segment: '" + c + "'" );
+                c = path.charAt( i );
+            }
+            
+            if( escape ){
+            	escape = false;
+            }
+            else{
+	            if( c == '.' ){
+	                if( lastDot+1 == i )
+	                    throw new IllegalArgumentException( "not a path: empty segment" );
+	                
+	                list.add( decodeSegment( path.substring( lastDot+1, i ) ) );
+	                lastDot = i;
+	            }
+	            else if( c == '\\' ){
+	            	escape = true;
+	            }
+	            else if( lastDot+1 == i ){
+	                if( !Character.isJavaIdentifierStart( c ))
+	                    throw new IllegalArgumentException( "not a valid start of a segment: '" + c + "'" );                
+	            }
+	            else{
+	                if( !Character.isJavaIdentifierPart( c ))
+	                    throw new IllegalArgumentException( "not a valid character of a segment: '" + c + "'" );
+	            }
             }
         }
         
@@ -151,7 +243,7 @@ public final class Path {
      * @return the segment
      */
     public String getSegment( int index ){
-        return segments[index];
+        return  segments[index];
     }
     
     /**
@@ -178,7 +270,7 @@ public final class Path {
         
         String[] result = new String[ length ];
         System.arraycopy( segments, offset, result, 0, length );
-        return new Path( result );
+        return new Path( result, false );
     }
     
     /**
@@ -190,7 +282,7 @@ public final class Path {
         String[] segments = new String[ this.segments.length + path.segments.length ];
         System.arraycopy( this.segments, 0, segments, 0, this.segments.length );
         System.arraycopy( path.segments, 0, segments, this.segments.length, path.segments.length );
-        return new Path( segments );
+        return new Path( segments, false );
     }
     
     /**
@@ -210,7 +302,7 @@ public final class Path {
         System.arraycopy( this.segments, 0, segments, 1, this.segments.length );
         segments[ this.segments.length+1 ] = "_s" + path.segments.length;
         System.arraycopy( path.segments, 0, segments, this.segments.length+2, path.segments.length );
-        return new Path( segments );
+        return new Path( segments, false );
     }
     
     /**
@@ -232,7 +324,7 @@ public final class Path {
         
         String[] result = new String[ segments.length-1 ];
         System.arraycopy( segments, 0, result, 0, result.length );
-        return new Path( result );
+        return new Path( result, false );
     }
     
     @Override
@@ -261,7 +353,7 @@ public final class Path {
             if( i > 0 )
                 builder.append( "." );
             
-            builder.append( segments[i] );
+            builder.append( encodeSegment( segments[i] ) );
         }
         
         return builder.toString();

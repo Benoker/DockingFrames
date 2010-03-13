@@ -39,6 +39,7 @@ import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.event.DockActionSourceListener;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockableListener;
+import bibliothek.gui.dock.station.support.PlaceholderListItem;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleRequest;
@@ -61,7 +62,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  * 
  * @author Benjamin Sigg
  */
-public interface Dockable extends DockElement, DockElementRepresentative{
+public interface Dockable extends DockElement, DockElementRepresentative, PlaceholderListItem{
     /**
      * Sets the parent property. This Dockable is shown as direct child of
      * <code>station</code>.<br>

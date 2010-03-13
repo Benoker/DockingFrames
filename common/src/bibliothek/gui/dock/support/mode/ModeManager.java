@@ -1259,6 +1259,9 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 		            rebuild( dockable );
 		            fireModeChanged( dockable, oldMode == null ? null : oldMode.mode, mode == null ? null : mode.mode );
 	            }
+	            else{
+	            	rebuild( dockable );
+	            }
         	}
         }
         

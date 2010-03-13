@@ -38,7 +38,7 @@ import bibliothek.gui.dock.station.split.SplitDockTree.Key;
  * {@link SplitDockStation}.
  * @author Benjamin Sigg
  */
-public class Root extends SplitNode{
+public class Root extends VisibleSplitNode{
 	/** the single child of this root */
     private SplitNode child;
     
@@ -113,6 +113,11 @@ public class Root extends SplitNode{
     }
     
     @Override
+    public boolean isOfUse(){
+    	return true;
+    }
+    
+    @Override
     public Dimension getMinimumSize() {
     	if( child == null )
     		return new Dimension( 0, 0 );
@@ -174,6 +179,15 @@ public class Root extends SplitNode{
     }
     
     @Override
+    public boolean insert( SplitDockPlaceholderProperty property, Dockable dockable ){
+    	boolean done = child != null && child.insert( property, dockable );
+    	if( !done ){
+    		return getAccess().drop( dockable, property.toSplitLocation( this ), this );
+    	}
+    	return true;
+    }
+    
+    @Override
     public boolean insert( SplitDockPathProperty property, int depth, Dockable dockable ) {
         if( child == null ){
         	int size = property.size();
@@ -199,6 +213,16 @@ public class Root extends SplitNode{
             return factory.root( null, getId() );
         else
             return factory.root( child.submit( factory ), getId() );
+    }
+    
+    @Override
+    public boolean isVisible(){
+	    return true;
+    }
+    
+    @Override
+    public SplitNode getVisible(){
+	    return this;
     }
     
     @Override

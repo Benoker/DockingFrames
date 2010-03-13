@@ -142,12 +142,27 @@ public abstract class LockedResizeLayoutManager<T> extends DelegatingSplitLayout
      * @return some root, node, leaf or <code>null</code>
      */
     public ResizeElement<T> toElement( ResizeElement<T> parent, SplitNode node ){
-        if( node instanceof Root )
+    	if( node instanceof Root ){
             return new ResizeRoot<T>( this, (Root)node );
-        if( node instanceof Node )
-            return new ResizeNode<T>( this, parent, (Node)node );
-        if( node instanceof Leaf )
+    	}
+        if( node instanceof Node ){
+        	Node real = (Node)node;
+        	boolean leftVisible = real.getLeft().isVisible();
+        	boolean rightVisible = real.getRight().isVisible();
+        	if( leftVisible && rightVisible ){
+        		return new ResizeNode<T>( this, parent, (Node)node );
+        	}
+        	if( leftVisible ){
+        		return toElement( parent, real.getLeft().getVisible() );
+        	}
+        	if( rightVisible ){
+        		return toElement( parent, real.getRight().getVisible() );
+        	}
+        	return null;
+        }
+        if( node instanceof Leaf ){
             return new ResizeLeaf<T>( this, parent, (Leaf)node );
+        }
         
         return null;
     }

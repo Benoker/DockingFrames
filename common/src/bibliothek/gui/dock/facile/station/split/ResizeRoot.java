@@ -30,6 +30,7 @@ import bibliothek.gui.dock.station.split.Root;
 /**
  * Represents a {@link Root}.
  * @author Benjamin Sigg
+ * @param <T> the kind of meta-data clients use
  */
 public class ResizeRoot<T> extends ResizeElement<T>{
     /** the root which is represented by this root-element */

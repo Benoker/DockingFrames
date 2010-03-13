@@ -95,8 +95,9 @@ public abstract class ResizeElement<T>{
     public void prepareResize(){
         ResizeElement<T>[] children = getChildren();
         if( children != null ){
-            for( ResizeElement<T> child : children )
+            for( ResizeElement<T> child : children ){
                 child.prepareResize();
+            }
         }
     }
     
@@ -107,8 +108,9 @@ public abstract class ResizeElement<T>{
     public void prepareRequests(){
         ResizeElement<T>[] children = getChildren();
         if( children != null ){
-            for( ResizeElement<T> child : children )
+            for( ResizeElement<T> child : children ){
                 child.prepareRequests();
+            }
         }
         request = createRequest();
     }

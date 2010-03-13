@@ -29,6 +29,7 @@ package bibliothek.gui.dock.station.split;
 import java.util.HashSet;
 import java.util.Set;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 
@@ -128,11 +129,45 @@ public class SplitDockTree{
 	 * @return the new key
 	 */
 	public Key put( Dockable[] dockables, Dockable selected, long nodeId ){
-		if( dockables == null )
-			throw new IllegalArgumentException( "Dockables must not be null" );
-        
-        if( dockables.length == 0 )
-            throw new IllegalArgumentException( "At least one Dockable is required" );
+		return put( dockables, selected, null, nodeId );
+	}
+	
+	/**
+	 * Creates a key for a placeholder leaf.
+	 * @param placeholders the placeholders to store
+	 * @return the new key
+	 */
+	public Key put( Path[] placeholders ){
+		return put( placeholders, -1 );
+	}
+	
+	/**
+	 * Creates a key for a placeholder leaf.
+	 * @param placeholders the placeholders to store
+	 * @param nodeId the unique identifier of the new node, can be -1
+	 * @return the new key
+	 */
+	public Key put( Path[] placeholders, long nodeId ){
+		return put( null, null, placeholders, nodeId );
+	}
+	
+	/**
+	 * Creates a key for the set of <code>dockables</code> or the set of
+	 * <code>placeholders</code>.
+	 * @param dockables the elements for which a key is requested
+	 * @param selected the element that should be selected, can be <code>null</code>
+	 * @param placeholders the placeholders for which a key is requested
+	 * @param nodeId a unique identifier for this node, may be -1
+	 * @return the new key
+	 */
+	public Key put( Dockable[] dockables, Dockable selected, Path[] placeholders, long nodeId ){
+		if( placeholders == null || placeholders.length == 0 ){
+			if( dockables == null )
+				throw new IllegalArgumentException( "Dockables must not be null" );
+	        
+	        if( dockables.length == 0 )
+	            throw new IllegalArgumentException( "At least one Dockable is required" );
+		}
 		
         for( Dockable dockable : dockables ){
             if( dockable == null )
@@ -143,7 +178,7 @@ public class SplitDockTree{
     		
         }
 		
-		return new Leaf( dockables, selected, nodeId );
+		return new Leaf( dockables, selected, placeholders, nodeId );
 	}
 	
 	/**
@@ -200,7 +235,21 @@ public class SplitDockTree{
 	 * @return a key of the combination of the two elements
 	 */
 	public Key horizontal( Key left, Key right, double divider, long nodeId ){
-		return new Node( left, right, divider, true, nodeId );
+		return horizontal( left, right, divider, null, nodeId );
+	}
+
+	/**
+	 * Adds two elements horizontally.
+	 * @param left the left element
+	 * @param right the right element
+	 * @param divider how much space the first element gets in respect
+	 * to the second element. Must be between 0 and 1.
+	 * @param placeholders placeholders that are associated with this nodes
+	 * @param nodeId a unique identifier for this node, may be -1
+	 * @return a key of the combination of the two elements
+	 */
+	public Key horizontal( Key left, Key right, double divider, Path[] placeholders, long nodeId ){
+		return new Node( left, right, divider, true, placeholders, nodeId );
 	}
 	
 	/**
@@ -257,7 +306,21 @@ public class SplitDockTree{
 	 * @return a key of the combination of the two elements
 	 */
 	public Key vertical( Key top, Key bottom, double divider, long nodeId ){
-		return new Node( top, bottom, divider, false, nodeId );
+		return vertical( top, bottom, divider, null, nodeId );
+	}
+	
+	/**
+	 * Adds two elements vertically.
+	 * @param top the top element
+	 * @param bottom the bottom element
+	 * @param divider how much space the first element gets in respect
+	 * to the second element. Must be between 0 and 1.
+	 * @param placeholders placeholders that are associated with this node
+	 * @param nodeId a unique identifier for this node, may be -1
+	 * @return a key of the combination of the two elements
+	 */
+	public Key vertical( Key top, Key bottom, double divider, Path[] placeholders, long nodeId ){
+		return new Node( top, bottom, divider, false, placeholders, nodeId );
 	}
 	
 	/**
@@ -285,6 +348,24 @@ public class SplitDockTree{
 	public boolean isNode( Key key ){
 		return key.asNode() != null;
 	}
+
+	/**
+	 * Tells whether <code>key</code> contains placeholders
+	 * @param key some node or leaf
+	 * @return <code>true</code> if there are placeholders
+	 */
+	public boolean isPlaceholder( Key key ){
+		return key.placeholders != null;
+	}
+	
+	/**
+	 * Gets the placeholders which are associated with <code>key</code>
+	 * @param key some node or leaf
+	 * @return the placeholders, can be <code>null</code>
+	 */
+	public Path[] getPlaceholders( Key key ){
+		return key.placeholders;
+	}
 	
 	/**
 	 * Gets a list of all {@link Dockable}s that are known to this tree.
@@ -297,7 +378,7 @@ public class SplitDockTree{
 	/**
 	 * Gets the elements that are represented by the leaf <code>key</code>.
 	 * @param key the leaf
-	 * @return the elements
+	 * @return the elements, can be <code>null</code>
 	 */
 	public Dockable[] getDockables( Key key ){
 		if( !isDockable( key ))
@@ -396,12 +477,19 @@ public class SplitDockTree{
 		/** the unique id of this node */
 		private long id;
 		
+		/** the placeholders associated with this node */
+		private Path[] placeholders;
+		
 		/**
 		 * Creates a new key
+		 * @param placeholders the placeholders that are associated with this node
 		 * @param id the unique id of this node 
 		 */
-		public Key( long id ){
+		public Key( Path[] placeholders, long id ){
 			this.id = id;
+			if( placeholders != null ){
+				this.placeholders = placeholders.clone();
+			}
 		}
 		
 		/**
@@ -476,12 +564,14 @@ public class SplitDockTree{
 		 * Creates a new leaf.
 		 * @param dockables the set of dockables which will replace this leaf
 		 * @param selected the selected element
+		 * @param placeholders the placeholders that are associated with this node
 		 * @param id the unique identifier of this node or -1
 		 */
-		public Leaf( Dockable[] dockables, Dockable selected, long id ){
-			super( id );
-            this.dockables = new Dockable[ dockables.length ];
-            System.arraycopy( dockables, 0, this.dockables, 0, dockables.length );
+		public Leaf( Dockable[] dockables, Dockable selected, Path[] placeholders, long id ){
+			super( placeholders, id );
+			if( dockables != null ){
+				this.dockables = dockables.clone();
+			}
             this.selected = selected;
 		}
 		
@@ -511,10 +601,11 @@ public class SplitDockTree{
 		 * @param keyB the right or bottom child
 		 * @param divider the location of the divider
 		 * @param horizontal the orientation of this node
+		 * @param placeholders placeholders that are associated with this node
 		 * @param id the unique identifier of this node or -1
 		 */
-		public Node( Key keyA, Key keyB, double divider, boolean horizontal, long id ){
-			super( id );
+		public Node( Key keyA, Key keyB, double divider, boolean horizontal, Path[] placeholders, long id ){
+			super( placeholders, id );
 			if( keyA.getTree() != getTree() )
 				throw new IllegalArgumentException( "Key of first argument belongs not to this tree" );
 			

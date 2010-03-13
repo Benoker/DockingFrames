@@ -29,6 +29,7 @@ package bibliothek.gui.dock.station.split;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -39,6 +40,7 @@ import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.split.SplitDockTree.Key;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 
 /**
  * Represents a leaf in the tree that is the structure of a {@link SplitDockStation}.
@@ -46,7 +48,7 @@ import bibliothek.gui.dock.station.split.SplitDockTree.Key;
  * on the owner-station.
  * @author Benjamin Sigg
  */
-public class Leaf extends SplitNode{
+public class Leaf extends VisibleSplitNode{
 	/** Information about the element that is shown by this leaf */
     private StationChildHandle handle;
     
@@ -140,6 +142,47 @@ public class Leaf extends SplitNode{
     public StationChildHandle getDockableHandle(){
 		return handle;
 	}
+    
+    @Override
+    public boolean isVisible(){
+	    return true;
+    }
+    
+    @Override
+    public SplitNode getVisible(){
+	    return this;
+    }
+    
+    @Override
+    public boolean isOfUse(){
+    	return handle != null || hasPlaceholders();
+    }
+    
+    /**
+     * Disconnects this leaf from its {@link Dockable}. This leaf either deletes
+     * itself or replaces itself with a {@link Placeholder}.
+     */
+    public void placehold(){
+    	Dockable dockable = getDockable();
+    	if( dockable != null ){
+	    	SplitDockAccess access = getAccess();
+	    	PlaceholderStrategy strategy = access.getOwner().getPlaceholderStrategy();
+	    	Path placeholder = strategy.getPlaceholderFor( dockable );
+	    	if( placeholder != null ){
+	    		if( !hasPlaceholder( placeholder )){
+	    			addPlaceholder( placeholder );
+	    		}
+	    	}
+    	}
+    	if( hasPlaceholders() ){
+    		Placeholder placeholder = createPlaceholder( getId() );
+    		placeholder.setPlaceholders( getPlaceholders() );
+    		replace( placeholder );
+    	}
+    	else{
+    		delete( true );
+    	}
+    }
     
     @Override
     public void updateBounds( double x, double y, double width, double height, double factorW, double factorH, boolean components ) {
@@ -252,7 +295,38 @@ public class Leaf extends SplitNode{
     
     @Override
     public void evolve( Key key, boolean checkValidity ){
-    	// nothing to do
+    	setPlaceholders( key.getTree().getPlaceholders( key ) );
+    }
+    
+    @Override
+    public boolean insert( SplitDockPlaceholderProperty property, Dockable dockable ){
+    	Path placeholder = property.getPlaceholder();
+    	if( hasPlaceholder( placeholder )){
+            // try to melt with child
+            DockStation station = getDockable().asDockStation();
+            DockableProperty stationLocation = property.getSuccessor();
+            if( station != null && stationLocation != null ){
+                if( dockable.accept( station ) && station.accept( dockable )){
+                    DockController controller = getAccess().getOwner().getController();
+                    DockAcceptance acceptance = controller == null ? null : controller.getAcceptance();
+                    if( acceptance == null || acceptance.accept( station, dockable )){
+                        boolean done = station.drop( dockable, stationLocation );
+                        if( done ){
+                        	removePlaceholder( placeholder );
+                            return true;
+                        }
+                    }
+                }
+            }
+            
+            // try using the theoretical boundaries of the element
+            boolean done = getAccess().drop( dockable, property.toSplitLocation( this ), this );
+            if( done ){
+            	removePlaceholder( placeholder );
+            }
+            return done;
+    	}
+    	return false;
     }
     
     @Override
@@ -318,7 +392,7 @@ public class Leaf extends SplitNode{
 
     @Override
     public <N> N submit( SplitTreeFactory<N> factory ){
-        return factory.leaf( getDockable(), getId() );
+        return factory.leaf( getDockable(), getId(), getPlaceholders() );
     }
         
     @Override

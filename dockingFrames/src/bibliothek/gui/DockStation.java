@@ -37,6 +37,7 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleManager;
@@ -195,6 +196,23 @@ public interface DockStation extends DockElement{
      * @see #getFrontDockable()
      */
     public void setFrontDockable( Dockable dockable );
+    
+    /**
+     * Gets a snapshot of all placeholders that are currently stored in this {@link DockStation}. 
+     * A {@link DockStation} is free in the format is chooses to fill the map. The map is to be 
+     * created with the assumptions that {@link #getDockableCount()} is <code>0</code>.
+     * @return the map of placeholders or <code>null</code> if this station does not support
+     * placeholders
+     */
+    public PlaceholderMap getPlaceholders();
+    
+    /**
+     * Sets an earlier snapshot of the placeholders of this station. This station can assume that
+     * it currently does not have any children (that {@link #getDockableCount()} is <code>0</code>).<br>
+     * This method does nothing if it cannot handle the format or the version of <code>placeholders</code>.
+     * @param placeholders some set of placeholders
+     */
+    public void setPlaceholders( PlaceholderMap placeholders );
 
     /**
      * Called by the {@link DockController} of this station to indicate that

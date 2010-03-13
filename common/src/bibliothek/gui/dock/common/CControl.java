@@ -78,6 +78,7 @@ import bibliothek.gui.dock.common.intern.CControlFactory;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CDockableAccess;
 import bibliothek.gui.dock.common.intern.CListenerCollection;
+import bibliothek.gui.dock.common.intern.CPlaceholderStrategy;
 import bibliothek.gui.dock.common.intern.CSetting;
 import bibliothek.gui.dock.common.intern.CSingleParentRemover;
 import bibliothek.gui.dock.common.intern.CommonDockable;
@@ -679,6 +680,7 @@ public class CControl {
         putProperty( FlapDockStation.LAYOUT_MANAGER, new CFlapLayoutManager() );
         putProperty( EclipseTheme.THEME_CONNECTOR, new CommonEclipseThemeConnector( this ) );
         putProperty( SingleTabDecider.SINGLE_TAB_DECIDER, new CommonSingleTabDecider( this ) );
+        putProperty( SplitDockStation.PLACEHOLDER_STRATEGY, new CPlaceholderStrategy( this ) );
     }
 
     /**

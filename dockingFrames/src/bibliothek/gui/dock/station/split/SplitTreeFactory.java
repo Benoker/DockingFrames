@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.station.split;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 
@@ -40,9 +41,18 @@ public interface SplitTreeFactory<N> {
      * Informs about a leaf of the tree.
      * @param dockable the element in the leaf
      * @param id the unique identifier of this node or -1
-     * @return the representation of the leaf, or <code>null</code>
+     * @param placeholders the placeholders associated with this node, can be empty
+     * @return the representation of the leaf or <code>null</code>
      */
-    public N leaf( Dockable dockable, long id );
+    public N leaf( Dockable dockable, long id, Path[] placeholders );
+    
+    /**
+     * Informs about a set of placeholder in the tree.
+     * @param id the unique id of this placeholder
+     * @param placeholders the placeholders 
+     * @return the representation of the placeholder or <code>null</code>
+     */
+    public N placeholder( long id, Path[] placeholders );
     
     /**
      * Informs about a node that is divided vertically.
@@ -50,9 +60,12 @@ public interface SplitTreeFactory<N> {
      * @param right the right child of the node, might be <code>null</code>
      * @param divider the size of the left node, a value between 0 and 1.
      * @param id the unique identifier of this node or -1
+     * @param placeholders the placeholders associated with this node, can be empty
+     * @param visible whether this node is visible to the user or not. A node is only visible to the user
+     * if both its children are visible
      * @return the representation of this node, might be <code>null</code>
      */
-    public N horizontal( N left, N right, double divider, long id );
+    public N horizontal( N left, N right, double divider, long id, Path[] placeholders, boolean visible );
     
     /**
      * Informs about a node that is divided vertically.
@@ -60,9 +73,12 @@ public interface SplitTreeFactory<N> {
      * @param bottom the bottom child of the node, might be <code>null</code>
      * @param divider the size of the top node, a value between 0 and 1.
      * @param id the unique identifier of this node or -1
+     * @param placeholders the placeholders associated with this node, can be empty
+     * @param visible whether this node is visible to the user or not. A node is only visible to the user
+     * if both its children are visible
      * @return the representation of this node, might be <code>null</code>
      */
-    public N vertical( N top, N bottom, double divider, long id );
+    public N vertical( N top, N bottom, double divider, long id, Path[] placeholders, boolean visible );
     
     /**
      * Informs about the node that is the root.

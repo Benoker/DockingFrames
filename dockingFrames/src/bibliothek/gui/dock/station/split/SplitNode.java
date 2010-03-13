@@ -30,9 +30,13 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import javax.swing.JComponent;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -45,16 +49,16 @@ import bibliothek.gui.dock.event.DockStationListener;
  * @author Benjamin Sigg
  */
 public abstract class SplitNode{
-	/** Internal access to the owner-station */
-    private SplitDockAccess access;
-    /** Parent node of this node */
+	/** Parent node of this node */
     private SplitNode parent;
     /** Bounds of this node on the station */
     protected double x, y, width, height;
+    /** Internal access to the owner-station */
+    private SplitDockAccess access;
 
-    /** the current bounds of this root */
-    private Rectangle currentBounds = new Rectangle();
-    
+    /** keys for {@link Dockable}s that are not visible but linked with this node */
+    private List<Path> placeholders = new ArrayList<Path>();
+	
     /** a (hopefully) unique of for this node */
     private long id;
     
@@ -81,6 +85,105 @@ public abstract class SplitNode{
         return access.getOwner();
     }
     
+	/**
+	 * Gets all the keys that are stored in this placeholder
+	 * @return all the keys
+	 */
+	public Path[] getPlaceholders(){
+		if( placeholders == null )
+			return new Path[]{};
+		return placeholders.toArray( new Path[ placeholders.size() ] );
+	}
+	
+	/**
+	 * Stores an additional placeholder in this node.
+	 * @param placeholder the additional placeholder
+	 */
+	public void addPlaceholder( Path placeholder ){
+		if( placeholders == null ){
+			placeholders = new ArrayList<Path>();
+		}
+		placeholders.add( placeholder );
+	}
+	
+	/**
+	 * Tells whether this node is associated with at least one placeholder.
+	 * @return whether there is at least one placeholder
+	 */
+	public boolean hasPlaceholders(){
+		return placeholders != null && !placeholders.isEmpty();
+	}
+	
+	/**
+	 * Tells whether this node contains <code>placeholder</code>.
+	 * @param placeholder the placeholder to search
+	 * @return <code>true</code> if <code>placeholder</code> was found
+	 */
+	public boolean hasPlaceholder( Path placeholder ){
+		if( placeholder == null )
+			return false;
+		return placeholders.contains( placeholder );
+	}
+	
+	/**
+	 * Sets all the placeholders of this node
+	 * @param placeholders all the placeholders, can be <code>null</code> or empty
+	 */
+	public void setPlaceholders( Path[] placeholders ){
+		if( this.placeholders != null ){
+			this.placeholders.clear();
+		}
+		if( placeholders != null ){
+			for( Path placeholder : placeholders ){
+				addPlaceholder( placeholder );
+			}
+		}
+	}
+	
+	/**
+	 * Removes a placeholder from this node.
+	 * @param placeholder the placeholder to remove
+	 * @return <code>true</code> if the placeholder was removed
+	 */
+	public boolean removePlaceholder( Path placeholder ){
+		if( placeholders != null ){
+			return placeholders.remove( placeholder );
+		}
+		return false;
+	}
+	
+	/**
+	 * Removes all placeholders in <code>placeholders</code> from this node
+	 * @param placeholders the placeholders to remove
+	 */
+	public void removePlaceholders( Set<Path> placeholders ){
+		if( this.placeholders != null ){
+			this.placeholders.removeAll( placeholders );
+		}
+	}
+    
+	/**
+	 * Tells whether this node still has any use or can safely be removed from the tree
+	 * @return <code>true</code> if this node has to remain in the tree, <code>false</code>
+	 * otherwise
+	 */
+	public abstract boolean isOfUse();
+	
+	/**
+	 * Replaces this node with <code>node</code>. Does nothing if this node has no parent.
+	 * @param node the replacement, not <code>null</code>
+	 */
+	public void replace( SplitNode node ){
+		if( node == null )
+			throw new IllegalArgumentException( "node must not be null" );
+		
+		SplitNode parent = getParent();
+		if( parent != null ){
+			int location = parent.getChildLocation( this );
+			parent.setChild( node, location );
+		}
+	}
+	
     /**
      * Removes this node from its parent, if there is a parent. The subtree
      * remains intact and no {@link Dockable}s are removed from the station.
@@ -95,13 +198,15 @@ public abstract class SplitNode{
                     ((Root)parent).setChild( null );
                 }
                 else{
-                    Node node = (Node)parent;
-                    SplitNode other = node.getLeft() == this ? node.getRight() : node.getLeft();
-                    
-                    parent = node.getParent();
-                    if( parent != null ){
-                        int location = parent.getChildLocation( node );
-                        parent.setChild( other, location );
+                	if( !parent.hasPlaceholders() ){
+                		Node node = (Node)parent;
+	                    SplitNode other = node.getLeft() == this ? node.getRight() : node.getLeft();
+	                    
+	                    parent = node.getParent();
+	                    if( parent != null ){
+	                        int location = parent.getChildLocation( node );
+	                        parent.setChild( other, location );
+	                    }
                     }
                 }
             }
@@ -130,6 +235,15 @@ public abstract class SplitNode{
         return new Node( access, id );
     }
     
+    /**
+     * Creates a new {@link Placeholder}.
+     * @param id the unique identifier of the new leaf, can be -1
+     * @return the new leaf
+     */
+    public Placeholder createPlaceholder( long id ){
+    	return new Placeholder( access, id );
+    }
+
     /**
      * Gets the relative x-coordinate of this node on the owner-station. The coordinates
      * are measured as fraction of the size of the owner-station.
@@ -197,6 +311,22 @@ public abstract class SplitNode{
     }
     
     /**
+     * Tells whether this node (or one of this children) contains element that
+     * are visible to the user.
+     * @return <code>true</code> if this node or one of its children contains
+     * a graphical element
+     */
+    public abstract boolean isVisible();
+    
+    /**
+     * Gets the root of a subtree such that the root is visible and such that the
+     * is the uppermost visible node.
+     * @return the visible root, can be <code>null</code>, <code>this</code> or any
+     * child of this node
+     */
+    public abstract SplitNode getVisible();
+    
+    /**
      * Gets the minimal size of this node.
      * @return the minimal size in pixel
      */
@@ -219,81 +349,11 @@ public abstract class SplitNode{
      * if more than one round of updates is necessary. If in doubt, set this parameter
      * to <code>true</code>.
      */
-    public void updateBounds( double x, double y, double width, 
-            double height, double factorW, double factorH, boolean updateComponentBounds ){
-        
+    public void updateBounds( double x, double y, double width,  double height, double factorW, double factorH, boolean updateComponentBounds ){
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        access.getOwner().revalidate();
-        currentBounds = getBounds();
-    }
-    
-    /**
-     * Gets the size and location of this node in pixel where the point
-     * 0/0 is equal to the point 0/0 on the owner-station. This method calculates
-     * these values anew, clients interested in the current bounds should
-     * use {@link #getCurrentBounds()}.
-     * @return the size and location
-     */
-    public Rectangle getBounds(){
-        Root root = getRoot();
-        double fw = root.getWidthFactor();
-        double fh = root.getHeightFactor();
-        Rectangle rec = new Rectangle( 
-                (int)(x * fw + 0.5),
-                (int)(y * fh + 0.5),
-                (int)(width * fw + 0.5),
-                (int)(height * fh + 0.5 ));
-        
-        JComponent base = getAccess().getOwner().getBasePane();
-        
-        Insets insets = base.getInsets();
-        
-        int x = 0;
-        int y = 0;
-        int width = base.getWidth();
-        int height = base.getHeight();
-        if( insets != null ){
-            x = insets.left;
-            y = insets.top;
-            width -= insets.left + insets.right;
-            height -= insets.top + insets.bottom;
-        }
-        
-        rec.x = Math.min( width, Math.max( x, rec.x ));
-        rec.y = Math.min( height, Math.max( y, rec.y ));
-        
-        rec.width  = Math.min( width - rec.x + x, Math.max( 0, rec.width ));
-        rec.height = Math.min( height - rec.y + y, Math.max( 0, rec.height ));
-        
-        return rec;
-    }
-    
-    /**
-     * Gets the current bounds of this root. The difference between the current
-     * bounds and the value {@link #getBounds()} is, that the current bounds are
-     * cached. The current bounds are calculated every time when 
-     * {@link #updateBounds(double, double, double, double, double, double, boolean) updateBounds} 
-     * is called, and then remain until the bounds are updated again.
-     * @return the current bounds
-     */
-    public Rectangle getCurrentBounds() {
-        return currentBounds;
-    }
-    
-    /**
-     * Gets the size of this node in pixel.
-     * @return the size of the node
-     */
-    public Dimension getSize(){
-        Root root = getRoot();
-        double fw = root.getWidthFactor();
-        double fh = root.getHeightFactor();
-        return new Dimension( 
-                (int)(width * fw + 0.5),
-                (int)(height * fh + 0.5 ));
     }
     
     /**
@@ -406,6 +466,17 @@ public abstract class SplitNode{
     public abstract boolean insert( SplitDockPathProperty property, int depth, Dockable dockable );
     
     /**
+     * Recursively searches for a node or leaf that uses the placeholder specified by
+     * <code>property</code> and inserts the <code>dockable</code> there. Also removes
+     * the placeholder from this node.
+     * @param property the placeholder to search
+     * @param dockable the new element
+     * @return <code>true</code> if the element was inserted, <code>false</code>
+     * otherwise
+     */
+    public abstract boolean insert( SplitDockPlaceholderProperty property, Dockable dockable );
+    
+    /**
      * Writes the contents of this node into a new tree create by <code>factory</code>.
      * @param <N> the type of element the <code>factory</code> will create
      * @param factory the factory transforming the elements of the tree into a
@@ -428,6 +499,60 @@ public abstract class SplitNode{
      * @param out the container to write into
      */
     public abstract void toString( int tabs, StringBuilder out );
+    
+
+    /**
+     * Gets the size of this node in pixel.
+     * @return the size of the node
+     */
+    public Dimension getSize(){
+        Root root = getRoot();
+        double fw = root.getWidthFactor();
+        double fh = root.getHeightFactor();
+        return new Dimension( 
+                (int)(width * fw + 0.5),
+                (int)(height * fh + 0.5 ));
+    }
+    /**
+     * Gets the size and location of this node in pixel where the point
+     * 0/0 is equal to the point 0/0 on the owner-station. This method calculates
+     * these values anew, clients interested in the current bounds should
+     * use {@link VisibleSplitNode#getCurrentBounds()}.
+     * @return the size and location
+     */
+    public Rectangle getBounds(){
+        Root root = getRoot();
+        double fw = root.getWidthFactor();
+        double fh = root.getHeightFactor();
+        Rectangle rec = new Rectangle( 
+                (int)(x * fw + 0.5),
+                (int)(y * fh + 0.5),
+                (int)(width * fw + 0.5),
+                (int)(height * fh + 0.5 ));
+        
+        JComponent base = getAccess().getOwner().getBasePane();
+        
+        Insets insets = base.getInsets();
+        
+        int x = 0;
+        int y = 0;
+        int width = base.getWidth();
+        int height = base.getHeight();
+        if( insets != null ){
+            x = insets.left;
+            y = insets.top;
+            width -= insets.left + insets.right;
+            height -= insets.top + insets.bottom;
+        }
+        
+        rec.x = Math.min( width, Math.max( x, rec.x ));
+        rec.y = Math.min( height, Math.max( y, rec.y ));
+        
+        rec.width  = Math.min( width - rec.x + x, Math.max( 0, rec.width ));
+        rec.height = Math.min( height - rec.y + y, Math.max( 0, rec.height ));
+        
+        return rec;
+    }
     
     /**
      * Creates a leaf for <code>dockable</code>. Does not inform any
@@ -464,89 +589,99 @@ public abstract class SplitNode{
      * @return the new node
      */
     protected SplitNode create( SplitDockTree.Key key, boolean checkValidity ){
-    	if( key.getTree().isDockable( key )){
-            SplitDockStation split = access.getOwner();
-            DockController controller = split.getController();
-            DockAcceptance acceptance = controller == null ? null : controller.getAcceptance();
-            Dockable[] dockables = key.getTree().getDockables( key );
-            Leaf leaf;
-            if( dockables.length == 1 ){
-                if( checkValidity ){
-                    if( !dockables[0].accept( split ) || 
-                            !split.accept( dockables[0] ))
-                        throw new SplitDropTreeException( split, "No acceptance for " + dockables[0] );
-                    
-                    if( acceptance != null ){
-                        if( !acceptance.accept( split, dockables[0] ))
-                            throw new SplitDropTreeException( split, "DockAcceptance does not allow child " + dockables[0] );
-                    }
-                }
-                
-                leaf = createLeaf( key.getNodeId() );
-                leaf.setDockable( dockables[0], true );
-            }
-            else{
-                if( checkValidity ){
-                    if( !dockables[0].accept( split, dockables[1] ) ||
-                            !dockables[1].accept( split, dockables[1] ))
-                            throw new SplitDropTreeException( split, 
-                                    "No acceptance for combination of " + dockables[0] + " and " + dockables[1] );
-                    
-                    if( acceptance != null ){
-                        if( !acceptance.accept( split, dockables[0], dockables[1] ))
-                            throw new SplitDropTreeException( split,
-                                    "DockAcceptance does not allow to combine " + dockables[0] + " and " + dockables[1] );
-                    }
-                }
-                
-                Dockable combination = access.getOwner().getCombiner().combine( dockables[0], dockables[1], access.getOwner() );
-                if( dockables.length == 2 ){
-                    leaf = createLeaf( key.getNodeId() );
-                    leaf.setDockable( combination, true );
-                    
-                    DockStation station = combination.asDockStation();
-                    if( station != null ){
-                    	Dockable selected = key.getTree().getSelected( key );
-                    	if( selected != null )
-                    		station.setFrontDockable( selected );
-                    }
-                }
-                else{
-                    DockStation station = combination.asDockStation();
-                    if( station == null )
-                        throw new SplitDropTreeException( access.getOwner(), "Combination of two Dockables does not create a new station" );
+    	SplitDockTree tree = key.getTree();
+    	
+    	if( tree.isDockable( key )){
+    		Dockable[] dockables = tree.getDockables( key );
+    		if( dockables == null || dockables.length == 0 ){
+    			Path[] placeholders = tree.getPlaceholders( key );
+    			Placeholder leaf = createPlaceholder( key.getNodeId() );
+    			leaf.setPlaceholders( placeholders );
+    			return leaf;
+    		}
+    		else{
+    			SplitDockStation split = access.getOwner();
+    			DockController controller = split.getController();
+    			DockAcceptance acceptance = controller == null ? null : controller.getAcceptance();
+    			Leaf leaf;
+    			if( dockables.length == 1 ){
+    				if( checkValidity ){
+    					if( !dockables[0].accept( split ) || 
+    							!split.accept( dockables[0] ))
+    						throw new SplitDropTreeException( split, "No acceptance for " + dockables[0] );
 
-                    leaf = createLeaf( key.getNodeId() );
-                    leaf.setDockable( combination, true );
-                    
-                    for( int i = 2; i < dockables.length; i++ ){
-                        Dockable dockable = dockables[ i ];
-                        if( checkValidity ){
-                            if( !dockable.accept( station ) || !station.accept( dockable ))
-                                throw new SplitDropTreeException( access.getOwner(), "No acceptance of " + dockable + " and " + station );
-                            
-                            if( acceptance != null ){
-                                if( !acceptance.accept( station, dockable ))
-                                    throw new SplitDropTreeException( split,
-                                            "DockAcceptance does not allow " + dockable + " as child of " + station );
-                            }
-                        }
-                        
-                        station.drop( dockable );
-                    }
-                    
-                    Dockable selected = key.getTree().getSelected( key );
-                    if( selected != null )
-                    	station.setFrontDockable( selected );
-                }
-            }
-            
-    		leaf.evolve( key, checkValidity );
-    		return leaf;
+    					if( acceptance != null ){
+    						if( !acceptance.accept( split, dockables[0] ))
+    							throw new SplitDropTreeException( split, "DockAcceptance does not allow child " + dockables[0] );
+    					}
+    				}
+
+    				leaf = createLeaf( key.getNodeId() );
+    				leaf.setDockable( dockables[0], true );
+    			}
+    			else{
+    				if( checkValidity ){
+    					if( !dockables[0].accept( split, dockables[1] ) ||
+    							!dockables[1].accept( split, dockables[1] ))
+    						throw new SplitDropTreeException( split, 
+    								"No acceptance for combination of " + dockables[0] + " and " + dockables[1] );
+
+    					if( acceptance != null ){
+    						if( !acceptance.accept( split, dockables[0], dockables[1] ))
+    							throw new SplitDropTreeException( split,
+    									"DockAcceptance does not allow to combine " + dockables[0] + " and " + dockables[1] );
+    					}
+    				}
+
+    				Dockable combination = access.getOwner().getCombiner().combine( dockables[0], dockables[1], access.getOwner() );
+    				if( dockables.length == 2 ){
+    					leaf = createLeaf( key.getNodeId() );
+    					leaf.setDockable( combination, true );
+
+    					DockStation station = combination.asDockStation();
+    					if( station != null ){
+    						Dockable selected = key.getTree().getSelected( key );
+    						if( selected != null )
+    							station.setFrontDockable( selected );
+    					}
+    				}
+    				else{
+    					DockStation station = combination.asDockStation();
+    					if( station == null )
+    						throw new SplitDropTreeException( access.getOwner(), "Combination of two Dockables does not create a new station" );
+
+    					leaf = createLeaf( key.getNodeId() );
+    					leaf.setDockable( combination, true );
+
+    					for( int i = 2; i < dockables.length; i++ ){
+    						Dockable dockable = dockables[ i ];
+    						if( checkValidity ){
+    							if( !dockable.accept( station ) || !station.accept( dockable ))
+    								throw new SplitDropTreeException( access.getOwner(), "No acceptance of " + dockable + " and " + station );
+
+    							if( acceptance != null ){
+    								if( !acceptance.accept( station, dockable ))
+    									throw new SplitDropTreeException( split,
+    											"DockAcceptance does not allow " + dockable + " as child of " + station );
+    							}
+    						}
+
+    						station.drop( dockable );
+    					}
+
+    					Dockable selected = key.getTree().getSelected( key );
+    					if( selected != null )
+    						station.setFrontDockable( selected );
+    				}
+    			}
+    			
+    			leaf.evolve( key, checkValidity );
+    			return leaf;
+    		}
     	}
     	else{
-    		Node node = new Node( getAccess(), key.getNodeId() );
-        	node.evolve( key, checkValidity );
+    		Node node = createNode( key.getNodeId() );
+    		node.evolve( key, checkValidity );
         	return node;
     	}
     }

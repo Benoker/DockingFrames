@@ -26,7 +26,12 @@
 
 package bibliothek.gui.dock.layout;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +40,7 @@ import bibliothek.gui.dock.station.flap.FlapDockPropertyFactory;
 import bibliothek.gui.dock.station.screen.ScreenDockPropertyFactory;
 import bibliothek.gui.dock.station.split.SplitDockPathProperty;
 import bibliothek.gui.dock.station.split.SplitDockPathPropertyFactory;
+import bibliothek.gui.dock.station.split.SplitDockPlaceholderPropertyFactory;
 import bibliothek.gui.dock.station.split.SplitDockProperty;
 import bibliothek.gui.dock.station.split.SplitDockPropertyFactory;
 import bibliothek.gui.dock.station.stack.StackDockProperty;
@@ -43,175 +49,194 @@ import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
 /**
- * A PropertTransformer can read and write instances of {@link DockableProperty},
- * assuming that a factory is installed for the property.
+ * A PropertTransformer can read and write instances of {@link DockableProperty}
+ * , assuming that a factory is installed for the property.
+ * 
  * @author Benjamin Sigg
- *
+ * 
  */
 public class PropertyTransformer {
-    private Map<String, DockablePropertyFactory> factories = 
-        new HashMap<String, DockablePropertyFactory>();
-    
-    /**
-     * Creates a new transformer, the factories for {@link SplitDockProperty},
-     * {@link SplitDockPathProperty},
-     * {@link StackDockProperty}, 
-     * {@link bibliothek.gui.dock.station.screen.ScreenDockProperty}
-     * and {@link FlapDockProperty} are installed.
-     */
-    public PropertyTransformer(){
-        this(
-                SplitDockPropertyFactory.FACTORY,
-                SplitDockPathPropertyFactory.FACTORY,
-                StackDockPropertyFactory.FACTORY,
-                FlapDockPropertyFactory.FACTORY,
-                ScreenDockPropertyFactory.FACTORY );
-    }
-    
-    /**
-     * Creates a new transformer and installs <code>factories</code>.
-     * @param factories a list of factories to install
-     */
-    public PropertyTransformer( DockablePropertyFactory...factories ){
-        for( DockablePropertyFactory factory : factories )
-            this.factories.put( factory.getID(), factory );
-    }
-    
-    /**
-     * Installs a factory
-     * @param factory the new factory
-     */
-    public void addFactory( DockablePropertyFactory factory ){
-        factories.put( factory.getID(), factory );
-    }
-    
-    
-    /**
-     * Writes <code>property</code> and all its successors into <code>out</code>.
-     * @param property the property to write
-     * @param out a stream to write into
-     * @throws IOException if the stream throws an exception
-     */
-    public void write( DockableProperty property, DataOutputStream out ) throws IOException{
-        Version.write( out, Version.VERSION_1_0_4 );
-        
-        int count = 0;
-        DockableProperty successor = property;
-        while( successor != null ){
-            count++;
-            successor = successor.getSuccessor();
-        }
-        
-        out.writeInt( count );
-        while( property != null ){
-            out.writeUTF( property.getFactoryID() );
-            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            DataOutputStream datas = new DataOutputStream( bytes );
-            property.store( datas );
-            datas.close();
-            byte[] written = bytes.toByteArray();
-            out.writeInt( written.length );
-            out.write( written );
-            
-            property = property.getSuccessor();
-        }
-    }
-    
-    /**
-     * Reads a property which was earlier stored. If the property had
-     * any successors, then they are read as well.
-     * @param in a stream to read from
-     * @return the properties
-     * @throws IOException if the property can't be read
-     */
-    public DockableProperty read( DataInputStream in ) throws IOException{
-        Version version = Version.read( in );
-        version.checkCurrent();
-        
-        int count = in.readInt();
-        
-        DockableProperty property = null;
-        DockableProperty base = null;
-        
-        for( int i = 0; i < count; i++ ){
-            String id = in.readUTF();
-            DockablePropertyFactory factory = factories.get( id );
-            if( factory == null )
-                throw new IOException( "Unknown factory-id: " + id );
-            
-            DockableProperty temp = factory.createProperty();
-            
-            int length = in.readInt();
-            byte[] data = new byte[ length ];
-            int index = 0;
-            
-            while( index < length ){
-                int read = in.read( data, index, length-index );
-                if( read < 0 )
-                    throw new EOFException();
-                index += read;
-            }
-            
-            DataInputStream datas = new DataInputStream( new ByteArrayInputStream( data ));
-            temp.load( datas );
-            datas.close();
-            
-            if( base == null ){
-                base = temp;
-                property = temp;
-            }
-            else{
-                property.setSuccessor( temp );
-                property = temp;
-            }
-        }
-        
-        return base;
-    }
-    
-    /**
-     * Writes <code>property</code> and all its successors into <code>element</code>.
-     * @param property the property to write
-     * @param element an xml element to which this method will add some children
-     */
-    public void writeXML( DockableProperty property, XElement element ){
-        while( property != null ){
-            XElement xnode = element.addElement( "property" );
-            xnode.addString( "factory", property.getFactoryID() );
-            property.store( xnode );
-            property = property.getSuccessor();
-        }
-    }
-    
-    /**
-     * Reads a {@link DockableProperty} and its successors from an xml element.
-     * @param element the element to read from
-     * @return the property or <code>null</code> if <code>element</code> is empty
-     * @throws IllegalArgumentException if a {@link DockablePropertyFactory} 
-     * is missing.
-     */
-    public DockableProperty readXML( XElement element ){
-        DockableProperty base = null;
-        DockableProperty property = null;
-        
-        for( XElement xnode : element.getElements( "property" )){
-            DockablePropertyFactory factory = factories.get( xnode.getString( "factory" ) );
-            if( factory == null )
-                throw new IllegalArgumentException( "Missing factory: " + xnode.getString( "factory" ));
-            
-            DockableProperty next = factory.createProperty();
-            next.load( xnode );
-            
-            if( property == null ){
-                property = next;
-                base = next;
-            }
-            else{
-                property.setSuccessor( next );
-                property = next;
-            }
-        }
-        
-        return base;
-    }
+	private Map<String, DockablePropertyFactory> factories = new HashMap<String, DockablePropertyFactory>();
+
+	/**
+	 * Creates a new transformer, the factories for {@link SplitDockProperty},
+	 * {@link SplitDockPathProperty}, {@link StackDockProperty},
+	 * {@link bibliothek.gui.dock.station.screen.ScreenDockProperty} and
+	 * {@link FlapDockProperty} are installed.
+	 */
+	public PropertyTransformer(){
+		this( SplitDockPropertyFactory.FACTORY,
+				SplitDockPathPropertyFactory.FACTORY,
+				SplitDockPlaceholderPropertyFactory.FACTORY,
+				StackDockPropertyFactory.FACTORY,
+				FlapDockPropertyFactory.FACTORY,
+				ScreenDockPropertyFactory.FACTORY );
+	}
+
+	/**
+	 * Creates a new transformer and installs <code>factories</code>.
+	 * 
+	 * @param factories
+	 *            a list of factories to install
+	 */
+	public PropertyTransformer( DockablePropertyFactory... factories ){
+		for (DockablePropertyFactory factory : factories)
+			this.factories.put( factory.getID(), factory );
+	}
+
+	/**
+	 * Installs a factory
+	 * 
+	 * @param factory
+	 *            the new factory
+	 */
+	public void addFactory( DockablePropertyFactory factory ){
+		factories.put( factory.getID(), factory );
+	}
+
+	/**
+	 * Writes <code>property</code> and all its successors into <code>out</code>
+	 * .
+	 * 
+	 * @param property
+	 *            the property to write
+	 * @param out
+	 *            a stream to write into
+	 * @throws IOException
+	 *             if the stream throws an exception
+	 */
+	public void write( DockableProperty property, DataOutputStream out )
+			throws IOException{
+		Version.write( out, Version.VERSION_1_0_4 );
+
+		int count = 0;
+		DockableProperty successor = property;
+		while( successor != null ) {
+			count++;
+			successor = successor.getSuccessor();
+		}
+
+		out.writeInt( count );
+		while( property != null ) {
+			out.writeUTF( property.getFactoryID() );
+			ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+			DataOutputStream datas = new DataOutputStream( bytes );
+			property.store( datas );
+			datas.close();
+			byte[] written = bytes.toByteArray();
+			out.writeInt( written.length );
+			out.write( written );
+
+			property = property.getSuccessor();
+		}
+	}
+
+	/**
+	 * Reads a property which was earlier stored. If the property had any
+	 * successors, then they are read as well.
+	 * 
+	 * @param in
+	 *            a stream to read from
+	 * @return the properties
+	 * @throws IOException
+	 *             if the property can't be read
+	 */
+	public DockableProperty read( DataInputStream in ) throws IOException{
+		Version version = Version.read( in );
+		version.checkCurrent();
+
+		int count = in.readInt();
+
+		DockableProperty property = null;
+		DockableProperty base = null;
+
+		for (int i = 0; i < count; i++) {
+			String id = in.readUTF();
+			DockablePropertyFactory factory = factories.get( id );
+			if (factory == null)
+				throw new IOException( "Unknown factory-id: " + id );
+
+			DockableProperty temp = factory.createProperty();
+
+			int length = in.readInt();
+			byte[] data = new byte[length];
+			int index = 0;
+
+			while( index < length ) {
+				int read = in.read( data, index, length - index );
+				if (read < 0)
+					throw new EOFException();
+				index += read;
+			}
+
+			DataInputStream datas = new DataInputStream(
+					new ByteArrayInputStream( data ) );
+			temp.load( datas );
+			datas.close();
+
+			if (base == null) {
+				base = temp;
+				property = temp;
+			} else {
+				property.setSuccessor( temp );
+				property = temp;
+			}
+		}
+
+		return base;
+	}
+
+	/**
+	 * Writes <code>property</code> and all its successors into
+	 * <code>element</code>.
+	 * 
+	 * @param property
+	 *            the property to write
+	 * @param element
+	 *            an xml element to which this method will add some children
+	 */
+	public void writeXML( DockableProperty property, XElement element ){
+		while( property != null ) {
+			XElement xnode = element.addElement( "property" );
+			xnode.addString( "factory", property.getFactoryID() );
+			property.store( xnode );
+			property = property.getSuccessor();
+		}
+	}
+
+	/**
+	 * Reads a {@link DockableProperty} and its successors from an xml element.
+	 * 
+	 * @param element
+	 *            the element to read from
+	 * @return the property or <code>null</code> if <code>element</code> is
+	 *         empty
+	 * @throws IllegalArgumentException
+	 *             if a {@link DockablePropertyFactory} is missing.
+	 */
+	public DockableProperty readXML( XElement element ){
+		DockableProperty base = null;
+		DockableProperty property = null;
+
+		for (XElement xnode : element.getElements( "property" )) {
+			DockablePropertyFactory factory = factories.get( xnode
+					.getString( "factory" ) );
+			if (factory == null)
+				throw new IllegalArgumentException( "Missing factory: "
+						+ xnode.getString( "factory" ) );
+
+			DockableProperty next = factory.createProperty();
+			next.load( xnode );
+
+			if (property == null) {
+				property = next;
+				base = next;
+			} else {
+				property.setSuccessor( next );
+				property = next;
+			}
+		}
+
+		return base;
+	}
 }

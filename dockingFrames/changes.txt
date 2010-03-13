@@ -272,3 +272,5 @@
 - Bugfix: StackDockStation was not always removed if it had only one child and this one child was a CDockable associated with a CWorkingArea
 - API: CVetoClosingListener can be added to CControl or CDockable and gets informed before a CDockable (or a set of CDockables) is closed. It may also stop the operation. 
 ! API: some methods of DockFrontend have been moved to DefaultLayoutChangeStrategy, new CLayoutChangeStrategy to handle special needs of Common (i.e. MultipleCDockables that are not registered at the DockFrontend)
+- Bugfix: moving a Dockable on a FlapDockStation did throw an exception if the destination index was too big
+! API: SplitDockStation support placeholders, various interfaces changed. New PlaceholderStrategy.

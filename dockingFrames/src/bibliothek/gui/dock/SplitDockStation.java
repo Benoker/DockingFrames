@@ -37,8 +37,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.JPanel;
@@ -47,6 +49,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.MouseInputListener;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
@@ -80,10 +83,12 @@ import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.split.DefaultSplitLayoutManager;
 import bibliothek.gui.dock.station.split.Leaf;
 import bibliothek.gui.dock.station.split.Node;
+import bibliothek.gui.dock.station.split.Placeholder;
 import bibliothek.gui.dock.station.split.PutInfo;
 import bibliothek.gui.dock.station.split.Root;
 import bibliothek.gui.dock.station.split.SplitDockAccess;
 import bibliothek.gui.dock.station.split.SplitDockPathProperty;
+import bibliothek.gui.dock.station.split.SplitDockPlaceholderProperty;
 import bibliothek.gui.dock.station.split.SplitDockProperty;
 import bibliothek.gui.dock.station.split.SplitDockStationFactory;
 import bibliothek.gui.dock.station.split.SplitDockTree;
@@ -99,6 +104,9 @@ import bibliothek.gui.dock.station.support.CombinerWrapper;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
 import bibliothek.gui.dock.station.support.DockStationListenerManager;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
+import bibliothek.gui.dock.station.support.PlaceholderStrategyListener;
+import bibliothek.gui.dock.station.support.RootPlaceholderStrategy;
 import bibliothek.gui.dock.station.support.StationPaintWrapper;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
@@ -142,6 +150,13 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         new PropertyKey<SplitLayoutManager>( "SplitDockStation layout manager",
         	new ConstantPropertyFactory<SplitLayoutManager>( new DefaultSplitLayoutManager() ), true );
 
+    /**
+     * Defines for which {@link Dockable}s which {@link Path} is used as placeholder, or which
+     * placeholders are no longer valid and to be removed.
+     */
+    public static final PropertyKey<PlaceholderStrategy> PLACEHOLDER_STRATEGY =
+    	new PropertyKey<PlaceholderStrategy>( "SplitDockStation placeholder strategy" );
+    
     /** The parent of this station */
     private DockStation parent;
 
@@ -226,8 +241,17 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             if( newValue != null )
                 newValue.install( SplitDockStation.this );
         }
-
     };
+    
+    private PropertyValue<PlaceholderStrategy> placeholderStrategyProperty = new PropertyValue<PlaceholderStrategy>(PLACEHOLDER_STRATEGY) {
+		@Override
+		protected void valueChanged( PlaceholderStrategy oldValue, PlaceholderStrategy newValue ){
+			placeholderStrategy.setStrategy( newValue );
+		}
+	}; 
+    
+	/** strategy for managing placeholders */
+    private RootPlaceholderStrategy placeholderStrategy = new RootPlaceholderStrategy( this );
 
     /** Whether the user can double click on a child to expand it. Default is <code>true</code>. */
     private boolean expandOnDoubleclick = true;
@@ -380,6 +404,12 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
                 updateConfigurableDisplayerHints();
             }
         });
+        
+        placeholderStrategy.addListener( new PlaceholderStrategyListener() {
+			public void placeholderInvalidated( Set<Path> placeholders ){
+				removePlaceholders( placeholders );
+			}
+		});
     }
 
     /**
@@ -544,7 +574,8 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             titleIcon.setProperties( controller );
             titleText.setProperties( controller );
             layoutManager.setProperties( controller );
-
+            placeholderStrategyProperty.setProperties( controller );
+            
             if( controller != null ){
                 title = controller.getDockTitleManager().getVersion( TITLE_ID, ControllerTitleFactory.INSTANCE );
                 controller.getDoubleClickController().addListener( fullScreenListener );
@@ -672,6 +703,23 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      */
     public SplitLayoutManager getSplitLayoutManager(){
         return layoutManager.getOwnValue();
+    }
+    
+    /**
+     * Gets the strategy for creating and storing placeholders.
+     * @return the strategy
+     */
+    public PlaceholderStrategy getPlaceholderStrategy(){
+    	return placeholderStrategy;
+    }
+    
+    /**
+     * Sets the strategy for selecting placeholders when removing {@link Dockable}s from this 
+     * station.
+     * @param strategy the new strategy or <code>null</code> to install the default strategy
+     */
+    public void setPlaceholderStrategy( PlaceholderStrategy strategy ){
+    	placeholderStrategyProperty.setValue( strategy );
     }
 
     /**
@@ -936,7 +984,11 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     }
 
     public DockableProperty getDockableProperty( Dockable dockable ) {
-        return getDockablePathProperty( dockable );
+    	DockableProperty result = getDockablePlaceholderProperty( dockable );
+    	if( result == null ){
+    		result = getDockablePathProperty( dockable );
+    	}
+    	return result;
     }
 
     /**
@@ -945,10 +997,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      * @param dockable the element whose location is searched
      * @return the location
      */
-    public DockableProperty getDockablePathProperty( final Dockable dockable ) {
+    public SplitDockPathProperty getDockablePathProperty( final Dockable dockable ) {
         final SplitDockPathProperty path = new SplitDockPathProperty();
         root().submit( new SplitTreeFactory<Object>(){
-            public Object leaf( Dockable check, long id ) {
+        	public Object leaf( Dockable check, long id, Path[] placeholders ){
                 if( dockable == check ){
                 	path.setLeafId( id );
                     return this;
@@ -956,29 +1008,41 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
                 return null;
             }
 
+        	public Object placeholder( long id, Path[] placeholders ){
+        		return null;
+        	}
+        	
             public Object root( Object root, long id ) {
                 return root;
             }
 
-            public Object horizontal( Object left, Object right, double divider, long id ) {
+            public Object horizontal( Object left, Object right, double divider, long id, Path[] placeholders, boolean visible ){
                 if( left != null ){
-                    path.insert( SplitDockPathProperty.Location.LEFT, divider, 0, id );
+                	if( visible ){
+                		path.insert( SplitDockPathProperty.Location.LEFT, divider, 0, id );
+                	}
                     return left;
                 }
                 if( right != null ){
-                    path.insert( SplitDockPathProperty.Location.RIGHT, 1-divider, 0, id );
+                	if( visible ){
+                		path.insert( SplitDockPathProperty.Location.RIGHT, 1-divider, 0, id );
+                	}
                     return right;
                 }
                 return null;
             }
 
-            public Object vertical( Object top, Object bottom, double divider, long id ) {
+            public Object vertical( Object top, Object bottom, double divider, long id, Path[] placeholders, boolean visible ){
                 if( top != null ){
-                    path.insert( SplitDockPathProperty.Location.TOP, divider, 0, id );
+                	if( visible ){
+                		path.insert( SplitDockPathProperty.Location.TOP, divider, 0, id );
+                	}
                     return top;
                 }
                 if( bottom != null ){
-                    path.insert( SplitDockPathProperty.Location.BOTTOM, 1-divider, 0, id );
+                	if( visible ){
+                		path.insert( SplitDockPathProperty.Location.BOTTOM, 1-divider, 0, id );
+                	}
                     return bottom;
                 }
                 return null;
@@ -994,12 +1058,29 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      * @param dockable the element whose location is searched
      * @return the location
      */
-    public DockableProperty getDockableLocationProperty( Dockable dockable ) {
+    public SplitDockProperty getDockableLocationProperty( Dockable dockable ) {
         Leaf leaf = getRoot().getLeaf( dockable );
         return new SplitDockProperty( leaf.getX(), leaf.getY(),
                 leaf.getWidth(), leaf.getHeight() );
     }
 
+    /**
+     * Creates a {@link SplitDockPlaceholderProperty} for <code>dockable</code>, may
+     * insert an additional placeholder in the tree.
+     * @param dockable the element whose location is searched
+     * @return the placeholder or <code>null</code> if the {@link #getPlaceholderStrategy() strategy}
+     * did not assign a placeholder to <code>dockable</code>
+     */
+    public SplitDockPlaceholderProperty getDockablePlaceholderProperty( Dockable dockable ){
+    	Leaf leaf = getRoot().getLeaf( dockable );
+    	Path placeholder = getPlaceholderStrategy().getPlaceholderFor( dockable );
+    	if( placeholder == null ){
+    		return null;
+    	}
+    	ensurePlaceholder( leaf, placeholder );
+    	return new SplitDockPlaceholderProperty( placeholder, getDockablePathProperty( dockable ));
+    }
+    
     public Dockable getFrontDockable() {
         if( isFullScreen() )
             return getFullScreen();
@@ -1112,12 +1193,18 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     }
 
     public boolean drop( Dockable dockable, DockableProperty property ) {
-        if( property instanceof SplitDockProperty )
+        if( property instanceof SplitDockProperty ){
             return drop( dockable, (SplitDockProperty)property );
-        else if( property instanceof SplitDockPathProperty )
+        }
+        else if( property instanceof SplitDockPathProperty ){
             return drop( dockable, (SplitDockPathProperty)property );
-        else
+        }
+        else if( property instanceof SplitDockPlaceholderProperty ){
+        	return drop( dockable, (SplitDockPlaceholderProperty)property );
+        }
+        else{
             return false;
+        }
     }
 
     /**
@@ -1173,11 +1260,17 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             }
 
             public void handleNode( Node node ) {
-                handleNeighbour( node );
+            	if( node.isVisible() ){
+            		handleNeighbour( node );
+            	}
             }
 
             public void handleRoot( Root root ) {
                 // do nothing
+            }
+            
+            public void handlePlaceholder( Placeholder placeholder ){
+	            // ignore	
             }
 
             private void handleNeighbour( SplitNode node ){
@@ -1327,7 +1420,20 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             revalidate();
         return done;
     }
-
+    
+    /**
+     * Drops <code>dockable</code> at the placeholder that is referenced by <code>property</code>. This
+     * action removes the placeholder from the tree.
+     * @param dockable the element to add
+     * @param property the location of <code>dockable</code>
+     * @return <code>true</code> if the the operation was a success, <code>false</code> if not
+     */
+    public boolean drop( Dockable dockable, SplitDockPlaceholderProperty property ){
+    	DockUtilities.ensureTreeValidity( this, dockable );
+    	validate();
+    	return root().insert( property, dockable );
+    }
+    
     public void drop(){
         drop( true );
     }
@@ -1987,9 +2093,106 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     public void removeDockable( Dockable dockable ){
         Leaf leaf = root().getLeaf( dockable );
         if( leaf != null ){
-            leaf.delete( true );
+            leaf.placehold();
             leaf.setDockable( null, true );
         }
+    }
+    
+    /**
+     * Searches the entire tree for any occurence of <code>placeholder</code> and
+     * removes <code>placeholder</code>. Also shrinks the tree if some nodes or leafs
+     * are no longer required due to the removed placeholder
+     * @param placeholder the placeholder to remove
+     */
+    public void removePlaceholder( Path placeholder ){
+    	Set<Path> placeholders = new HashSet<Path>();
+    	placeholders.add( placeholder );
+    	removePlaceholder( placeholder );
+    }
+    
+    /**
+     * Searches the entire tree for all occurences of all placeholders in <code>placeholders</code>.
+     * All placeholders are removed and the tree shrinks where possible.
+     * @param placeholders the placeholders to remove
+     */
+    public void removePlaceholders( final Set<Path> placeholders ){
+    	if( placeholders.isEmpty() )
+    		return;
+    	
+    	final List<SplitNode> nodesToDelete = new ArrayList<SplitNode>();
+    	root().visit( new SplitNodeVisitor() {
+			public void handleRoot( Root root ){
+				handle( root );
+			}
+			
+			public void handlePlaceholder( Placeholder placeholder ){
+				handle( root );
+			}
+			
+			public void handleNode( Node node ){
+				handle( root );
+			}
+			
+			public void handleLeaf( Leaf leaf ){
+				handle( root );
+			}
+			
+			private void handle( SplitNode node ){
+				node.removePlaceholders( placeholders );
+				if( !node.isOfUse() ){
+					nodesToDelete.add( node );
+				}
+			}
+		});
+    	
+    	for( SplitNode node : nodesToDelete ){
+    		node.delete( true );
+    	}
+    }
+    
+    /**
+     * Ensures that <code>node</code> is associated with <code>placeholder</code> 
+     * but no other node has <code>placeholder</code>.
+     * @param node the node which must have <code>placeholder</code>
+     * @param placeholder the placeholder to set or to move
+     */
+    public void ensurePlaceholder( final SplitNode node, final Path placeholder ){
+    	final List<SplitNode> nodesToDelete = new ArrayList<SplitNode>();
+    	
+    	root().visit( new SplitNodeVisitor() {
+			public void handleRoot( Root root ){
+				handle( root );
+			}
+			
+			public void handlePlaceholder( Placeholder placeholder ){
+				handle( placeholder );
+			}
+			
+			public void handleNode( Node node ){
+				handle( node );
+			}
+			
+			public void handleLeaf( Leaf leaf ){
+				handle( leaf );
+			}
+			
+			private void handle( SplitNode check ){
+				if( check != node ){
+					check.removePlaceholder( placeholder );
+					if( !check.isOfUse() ){
+						nodesToDelete.add( check );
+					}
+				}
+			}
+		});
+    	
+    	if( !node.hasPlaceholder( placeholder )){
+    		node.addPlaceholder( placeholder );
+    	}
+    	
+    	for( SplitNode delete : nodesToDelete ){
+    		delete.delete( true );
+    	}
     }
 
     /**
@@ -2081,6 +2284,13 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     				result = leaf;
     			}
     		}
+    		
+    		public void handlePlaceholder( Placeholder placeholder ){
+	    		if( placeholder.getId() == id ){	
+	    			result = placeholder;
+	    		}
+    		}
+    		
     		public void handleNode( Node node ){
     			if( node.getId() == id ){
     				result = node;

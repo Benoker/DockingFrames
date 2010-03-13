@@ -29,8 +29,11 @@ package bibliothek.gui.dock.station.split;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.SplitDockStation;
@@ -38,6 +41,7 @@ import bibliothek.gui.dock.SplitDockStation.Orientation;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.split.SplitDockStationLayout.Entry;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
@@ -50,47 +54,76 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
 	/** The id which is normally used for this type of factory*/
     public static final String ID = "SplitDockStationFactory";
     
+    /** optional strategy used as filter for finding out which placeholders should be stored */
+    private PlaceholderStrategy placeholders = null;
+    
+    /**
+     * Creates a new factory
+     */
+    public SplitDockStationFactory(){
+    	// nothing
+    }
+    
+    /**
+     * Creates a new factory
+     * @param placeholders filter for finding out which placeholders to store and which not
+     */
+    public SplitDockStationFactory( PlaceholderStrategy placeholders ){
+    	this.placeholders = placeholders;
+    }
+    
     public String getID() {
         return ID;
     }
     
-    public SplitDockStationLayout getLayout( SplitDockStation station,
-            final Map<Dockable, Integer> children ) {
+    public SplitDockStationLayout getLayout( SplitDockStation station, final Map<Dockable, Integer> children ) {
         
         Entry root =
             station.visit( new SplitTreeFactory<Entry>(){
-                public Entry leaf( Dockable dockable, long id ) {
+            	public Entry leaf( Dockable dockable, long id, Path[] placeholders ){
                     Integer childId = children.get( dockable );
                     if( childId != null ){
-                        return new SplitDockStationLayout.Leaf( childId, id );
+                        return new SplitDockStationLayout.Leaf( childId, placeholders, id );
+                    }
+                    else if( placeholders != null && placeholders.length > 0 ){
+                    	   return new SplitDockStationLayout.Leaf( -1, placeholders, id );
                     }
                     else{
                         return null;
                     }
                 }
+            	
+            	public Entry placeholder( long id, Path[] placeholders ){
+	            	if( placeholders != null && placeholders.length > 0 ){
+	            		return new SplitDockStationLayout.Leaf( -1, placeholders, id );
+	            	}
+	            	else{
+	            		return null;
+	            	}
+            	}
 
                 public Entry root( Entry root, long id ) {
                     return root;
                 }
-
-                public Entry horizontal( Entry left, Entry right, double divider, long id ) {
+                
+                public Entry horizontal( Entry left, Entry right, double divider, long id, Path[] placeholders, boolean visible ){
                     if( left == null )
                         return right;
                     
                     if( right == null )
                         return left;
                     
-                    return new SplitDockStationLayout.Node( Orientation.HORIZONTAL, divider, left, right, id );
+                    return new SplitDockStationLayout.Node( Orientation.HORIZONTAL, divider, left, right, placeholders, id );
                 }
 
-                public Entry vertical( Entry top, Entry bottom, double divider, long id ) {
+                public Entry vertical( Entry top, Entry bottom, double divider, long id, Path[] placeholders, boolean visible ){
                     if( top == null )
                         return bottom;
                     
                     if( bottom == null )
                         return top;
                     
-                    return new SplitDockStationLayout.Node( Orientation.VERTICAL, divider, top, bottom, id );
+                    return new SplitDockStationLayout.Node( Orientation.VERTICAL, divider, top, bottom, placeholders, id );
                 }
             });
         
@@ -105,9 +138,7 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
             return new SplitDockStationLayout( root, fullscreen );
     }
     
-    public void setLayout( SplitDockStation station,
-            SplitDockStationLayout layout, Map<Integer, Dockable> children ) {
-        
+    public void setLayout( SplitDockStation station, SplitDockStationLayout layout, Map<Integer, Dockable> children ) {
         SplitDockTree tree = new SplitDockTree();
         SplitDockTree.Key root = null;
         if( layout.getRoot() != null ){
@@ -257,16 +288,41 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     private void writeEntry( SplitDockStationLayout.Entry entry, DataOutputStream out ) throws IOException{
     	out.writeLong( entry.getNodeId() );
         if( entry.asLeaf() != null ){
-            out.writeByte( 0 );
-            out.writeInt( entry.asLeaf().getId() );            
+        	Path[] placeholders = entry.getPlaceholders();
+        	if( placeholders == null || placeholders.length == 0 ){
+        		out.writeByte( 0 );
+        		out.writeInt( entry.asLeaf().getId() );
+        	}
+        	else{
+        		out.writeByte( 2 );
+        		out.writeInt( entry.asLeaf().getId() );
+        		out.writeInt( placeholders.length );
+        		for( Path placeholder : placeholders ){
+        			out.writeUTF( placeholder.toString() );
+        		}
+        	}
         }
         else{
             SplitDockStationLayout.Node node = entry.asNode();
-            out.writeByte( 1 );
-            out.writeInt( node.getOrientation().ordinal() );
-            out.writeDouble( node.getDivider() );
-            writeEntry( node.getChildA(), out );
-            writeEntry( node.getChildB(), out );
+            Path[] placeholders = entry.getPlaceholders();
+        	if( placeholders == null || placeholders.length == 0 ){
+        		out.writeByte( 1 );
+        		out.writeInt( node.getOrientation().ordinal() );
+        		out.writeDouble( node.getDivider() );
+        		writeEntry( node.getChildA(), out );
+        		writeEntry( node.getChildB(), out );
+        	}
+        	else{
+        		out.writeByte( 3 );
+        		out.writeInt( node.getOrientation().ordinal() );
+        		out.writeDouble( node.getDivider() );
+        		out.writeInt( placeholders.length );
+        		for( Path placehoder : placeholders ){
+        			out.writeUTF( placehoder.toString() );
+        		}
+        		writeEntry( node.getChildA(), out );
+        		writeEntry( node.getChildB(), out );
+        	}
         }
     }
     
@@ -298,16 +354,41 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     	}
         byte kind = in.readByte();
         if( kind == 0 ){
-            return new SplitDockStationLayout.Leaf( in.readInt(), id );
+            return new SplitDockStationLayout.Leaf( in.readInt(), null, id );
         }
         if( kind == 1 ){
             Orientation orientation = Orientation.values()[ in.readInt() ];
             double divider = in.readDouble();
             SplitDockStationLayout.Entry childA = readEntry( in, version8 );
             SplitDockStationLayout.Entry childB = readEntry( in, version8 );
-            return new SplitDockStationLayout.Node( orientation, divider, childA, childB, id );
+            return new SplitDockStationLayout.Node( orientation, divider, childA, childB, null, id );
+        }
+        if( kind == 2 ){
+        	int childId = in.readInt();
+        	Path[] placeholders = readPlaceholders( in );
+        	return new SplitDockStationLayout.Leaf( childId, placeholders, id );
+        }
+        if( kind == 3 ){
+        	Orientation orientation = Orientation.values()[ in.readInt() ];
+            double divider = in.readDouble();
+            Path[] placeholders = readPlaceholders( in );
+            SplitDockStationLayout.Entry childA = readEntry( in, version8 );
+            SplitDockStationLayout.Entry childB = readEntry( in, version8 );
+            return new SplitDockStationLayout.Node( orientation, divider, childA, childB, placeholders, id );
         }
         throw new IOException( "unknown kind: " + kind );
+    }
+    
+    private Path[] readPlaceholders( DataInputStream in ) throws IOException{
+    	int length = in.readInt();
+    	List<Path> result = new ArrayList<Path>( length );
+    	for( int i = 0; i < length; i++ ){
+    		Path placeholder = new Path( in.readUTF() );
+    		if( placeholders == null || placeholders.isValidPlaceholder( placeholder )){
+    			result.add( placeholder );
+    		}
+    	}
+    	return result.toArray( new Path[ result.size() ] );
     }
     
     public void write( SplitDockStationLayout layout, XElement element ) {
@@ -326,16 +407,27 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
      * @param parent the parent node of the entry
      */
     private void writeEntry( SplitDockStationLayout.Entry entry, XElement parent ){
+    	XElement xchild;
+    	
         if( entry.asLeaf() != null ){
-            parent.addElement( "leaf" ).addInt( "id", entry.asLeaf().getId() ).addLong( "nodeId", entry.getNodeId() );
+        	xchild = parent.addElement( "leaf" );
+            xchild.addInt( "id", entry.asLeaf().getId() ).addLong( "nodeId", entry.getNodeId() );
         }
         else{
-            XElement xnode = parent.addElement( "node" );
-            xnode.addLong( "nodeId", entry.getNodeId() );
-            xnode.addString( "orientation", entry.asNode().getOrientation().name() );
-            xnode.addDouble( "divider", entry.asNode().getDivider() );
-            writeEntry( entry.asNode().getChildA(), xnode );
-            writeEntry( entry.asNode().getChildB(), xnode );
+            xchild = parent.addElement( "node" );
+            xchild.addLong( "nodeId", entry.getNodeId() );
+            xchild.addString( "orientation", entry.asNode().getOrientation().name() );
+            xchild.addDouble( "divider", entry.asNode().getDivider() );
+            writeEntry( entry.asNode().getChildA(), xchild );
+            writeEntry( entry.asNode().getChildB(), xchild );
+        }
+        
+        Path[] placeholders = entry.getPlaceholders();
+        if( placeholders != null && placeholders.length > 0 ){
+        	XElement xplaceholders = xchild.addElement( "placeholders" );
+        	for( Path placeholder : placeholders ){
+        		xplaceholders.addElement( "placeholder" ).setString( placeholder.toString() );
+        	}
         }
     }
     
@@ -367,18 +459,39 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     		nodeId = element.getLong( "nodeId" );
     	}
     	
+    	Path[] placeholders = null;
+    	XElement xplaceholders = element.getElement( "placeholders" );
+    	if( xplaceholders != null ){
+    		XElement[] xchildren = xplaceholders.getElements( "placeholder" );
+    		if( xchildren.length > 0 ){
+    			List<Path> collection = new ArrayList<Path>( xchildren.length );
+    			for( int i = 0; i < xchildren.length; i++ ){
+    				Path placeholder = new Path( xchildren[i].getString() );
+    				if( this.placeholders == null || this.placeholders.isValidPlaceholder( placeholder )){
+    					collection.add( placeholder );
+    				}
+    			}
+    			placeholders = collection.toArray( new Path[ collection.size() ]);
+    		}
+    	}
+    	
         if( "leaf".equals( element.getName() )){
-            return new SplitDockStationLayout.Leaf( element.getInt( "id" ), nodeId );
+            return new SplitDockStationLayout.Leaf( element.getInt( "id" ), placeholders, nodeId );
         }
         if( "node".equals( element.getName() )){
-            if( element.getElementCount() != 2 )
-                throw new XException( "node element must have exactly two children: " + element );
+        	XElement[] xchildren = element.getElements( "leaf", "node" );
+        	
+        	if( xchildren.length != 2 )
+                throw new XException( "node element must have exactly least two children: " + element );
+           
+            
             
             return new SplitDockStationLayout.Node( 
                     Orientation.valueOf( element.getString( "orientation" ) ),
                     element.getDouble( "divider" ),
-                    readEntry( element.getElement( 0 ) ),
-                    readEntry( element.getElement( 1 ) ),
+                    readEntry( xchildren[0] ),
+                    readEntry( xchildren[1] ),
+                    placeholders,
                     nodeId );
         }
         throw new XException( "element neither leaf nor node: " + element );

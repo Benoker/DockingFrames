@@ -497,6 +497,24 @@ public class XElement extends XContainer implements Iterable<XElement>{
         return elements.toArray( new XElement[ elements.size() ] );
     }
     
+    /**
+     * Searches all children which have one of the name <code>names</code>.
+     * @param names the names to search
+     * @return the array of children, ordered by their occurence within this element, might be empty
+     */
+    public XElement[] getElements( String... names ){
+    	List<XElement> elements = new LinkedList<XElement>();
+        for( XElement element : children ){
+        	for( String name : names ){
+        		if( element.getName().equals( name )){
+        			elements.add( element );
+        			break;
+        		}
+        	}
+        }
+        return elements.toArray( new XElement[ elements.size() ] );
+    }
+    
     @Override
     public void setString( String s ) {
         if( s.length() == 0 )
