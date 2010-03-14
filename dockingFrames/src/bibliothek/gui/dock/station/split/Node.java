@@ -516,6 +516,7 @@ public class Node extends VisibleSplitNode{
     public void evolve( Key key, boolean checkValidity ){
     	SplitDockTree tree = key.getTree();
     	setPlaceholders( tree.getPlaceholders( key ) );
+    	setPlaceholderMap( tree.getPlaceholderMap( key ) );
     	
     	if( tree.isHorizontal( key )){
     		orientation = SplitDockStation.Orientation.HORIZONTAL;
@@ -665,9 +666,9 @@ public class Node extends VisibleSplitNode{
     @Override
     public <N> N submit( SplitTreeFactory<N> factory ) {
         if( orientation == SplitDockStation.Orientation.HORIZONTAL )
-            return factory.horizontal( left.submit( factory ), right.submit( factory ), divider, getId(), getPlaceholders(), isVisible() );
+            return factory.horizontal( left.submit( factory ), right.submit( factory ), divider, getId(), getPlaceholders(), getPlaceholderMap(), isVisible() );
         else
-            return factory.vertical( left.submit( factory ), right.submit( factory ), divider, getId(), getPlaceholders(), isVisible() );
+            return factory.vertical( left.submit( factory ), right.submit( factory ), divider, getId(), getPlaceholders(), getPlaceholderMap(), isVisible() );
     }
     
     @Override

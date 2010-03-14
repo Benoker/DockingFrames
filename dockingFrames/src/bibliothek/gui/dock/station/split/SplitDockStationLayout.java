@@ -26,10 +26,12 @@
 package bibliothek.gui.dock.station.split;
 
 import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.SplitDockStation.Orientation;
 import bibliothek.gui.dock.station.split.SplitDockPathProperty.Location;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
 
 /**
  * A layout storing the contents of a {@link SplitDockStation}.
@@ -79,14 +81,18 @@ public class SplitDockStationLayout {
     	private long id;
     	/** placeholders that are associated with this entry */
     	private Path[] placeholders;
+    	/** placeholder information of a child {@link DockStation} */
+    	private PlaceholderMap placeholderMap;
     	
     	/**
     	 * Create a new entry
     	 * @param placeholders the placeholders associated with this node or leaf
+    	 * @param placeholderMap placeholder information of a child {@link DockStation}
     	 * @param id the unique id of this node or -1
     	 */
-    	public Entry( Path[] placeholders, long id ){
+    	public Entry( Path[] placeholders, PlaceholderMap placeholderMap, long id ){
     		this.placeholders = placeholders;
+    		this.placeholderMap = placeholderMap;
     		this.id = id;
     	}
     	
@@ -160,6 +166,14 @@ public class SplitDockStationLayout {
         public Path[] getPlaceholders(){
 			return placeholders;
 		}
+        
+        /**
+         * Gets the placeholder information of a potential child {@link DockStation}.
+         * @return the placeholder map, can be <code>null</code>
+         */
+        public PlaceholderMap getPlaceholderMap(){
+			return placeholderMap;
+		}
     }
     
     /**
@@ -174,10 +188,11 @@ public class SplitDockStationLayout {
          * Creates a new leaf
          * @param id the id of a {@link Dockable} or -1
          * @param placeholders placeholders associated with this leaf
+         * @param placeholderMap placeholder information of a child {@link DockStation}
          * @param nodeId the unique identifier of this node
          */
-        public Leaf( int id, Path[] placeholders, long nodeId ){
-        	super( placeholders, nodeId );
+        public Leaf( int id, Path[] placeholders, PlaceholderMap placeholderMap, long nodeId ){
+        	super( placeholders, placeholderMap, nodeId );
             this.id = id;
         }
         
@@ -221,10 +236,11 @@ public class SplitDockStationLayout {
          * @param childA the left or top child
          * @param childB the right or bottom child
          * @param placeholders placeholders associated with this node
+         * @param placeholderMap placeholder information of a child {@link DockStation}
          * @param id the unique identifier of this node or -1
          */
-        public Node( Orientation orientation, double divider, Entry childA, Entry childB, Path[] placeholders, long id ){
-        	super( placeholders, id );
+        public Node( Orientation orientation, double divider, Entry childA, Entry childB, Path[] placeholders, PlaceholderMap placeholderMap, long id ){
+        	super( placeholders, placeholderMap, id );
             this.orientation = orientation;
             this.divider = divider;
             this.childA = childA;

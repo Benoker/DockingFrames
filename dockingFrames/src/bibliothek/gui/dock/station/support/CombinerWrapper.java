@@ -61,7 +61,7 @@ public class CombinerWrapper implements Combiner {
         this.delegate = delegate;
     }
     
-    public Dockable combine( Dockable old, Dockable drop, DockStation parent ) {
-        return DockUI.getCombiner( delegate, parent ).combine( old, drop, parent );
+    public Dockable combine( Dockable old, Dockable drop, DockStation parent, PlaceholderMap placeholders ) {
+        return DockUI.getCombiner( delegate, parent ).combine( old, drop, parent, placeholders );
     }
 }

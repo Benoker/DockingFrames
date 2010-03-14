@@ -30,20 +30,24 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.station.Combiner;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
 
 /**
  * A simple implementation of {@link Combiner}, which merges two {@link Dockable Dockables}
  * by creating a {@link StackDockStation}, and putting the children onto this
  * station.<br>
- * If the argument <code>parent</code> in {@link #combine(Dockable, Dockable, DockStation) combiner}
+ * If the argument <code>parent</code> in {@link #combine(Dockable, Dockable, DockStation, PlaceholderMap) combiner}
  * is a {@link Dockable}, then it's title and icon are copied onto the new
  * station.
  * @author Benjamin Sigg
  */
 public class BasicCombiner implements Combiner {
-	public Dockable combine( Dockable old, Dockable drop, DockStation parent ) {
+	public Dockable combine( Dockable old, Dockable drop, DockStation parent, PlaceholderMap placeholders ) {
         StackDockStation stack = new StackDockStation( parent.getTheme() );
         stack.setController( parent.getController() );
+        if( placeholders != null ){
+        	stack.setPlaceholders( placeholders );
+        }
         
         stack.drop( old );
         stack.drop( drop );

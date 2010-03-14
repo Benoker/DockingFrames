@@ -29,6 +29,7 @@ package bibliothek.gui.dock.station;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
 
 /**
  * A <code>Combiner</code> merges two {@link Dockable Dockables} into
@@ -47,7 +48,9 @@ public interface Combiner {
      * dragged over <code>old</code>
      * @param parent a DockStation which will become the parent of the
      * result of this method
+     * @param placeholders a set of placeholders that were created earlier, not necessarily by a 
+     * {@link DockStation} that was created by this combiner. Might be <code>null</code>.
      * @return The combination of <code>old</code> and <code>drop</code>
      */
-    public Dockable combine( Dockable old, Dockable drop, DockStation parent );
+    public Dockable combine( Dockable old, Dockable drop, DockStation parent, PlaceholderMap placeholders );
 }

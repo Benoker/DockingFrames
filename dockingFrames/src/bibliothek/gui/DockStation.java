@@ -211,6 +211,7 @@ public interface DockStation extends DockElement{
      * it currently does not have any children (that {@link #getDockableCount()} is <code>0</code>).<br>
      * This method does nothing if it cannot handle the format or the version of <code>placeholders</code>.
      * @param placeholders some set of placeholders
+     * @throws IllegalStateException if {@link #getDockableCount()} is not equal to <code>0</code>
      */
     public void setPlaceholders( PlaceholderMap placeholders );
 
@@ -444,11 +445,25 @@ public interface DockStation extends DockElement{
      * called if {@link #canReplace(Dockable, Dockable) canReplace} returned
      * <code>false</code>.
      * @param old a child
-     * @param next the replacement of <code>next</code>
+     * @param next the replacement of <code>old</code>
      * @throws IllegalArgumentException if <code>next</code> is a child of
-     * this station.
+     * this station or if <code>old</code> is not a child
      */
     public void replace( Dockable old, Dockable next );
+    
+    /**
+     * Replaces the child <code>old</code> by <code>next</code> which is
+     * not yet a child of this station. This method should not be 
+     * called if {@link #canReplace(Dockable, Dockable) canReplace} returned
+     * <code>false</code>. This method can assume that <code>next</code> was
+     * a child of <code>old</code> but no longer is.
+     * @param old a dockable station that is a child of this station
+     * @param next the replacement of <code>old</code>
+     * @throws IllegalArgumentException if <code>next</code> is a child of
+     * this station, if <code>old</code> is not a child or if <code>old</code>
+     * is not a {@link Dockable}
+     */
+    public void replace( DockStation old, Dockable next );
     
     /**
      * Gets a rectangle in which all points of the station are. The user is

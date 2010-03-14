@@ -65,7 +65,7 @@ public class PropertyKey<A> {
 	 * The tooltip used for a {@link DockStation} that has no tooltip set
 	 */
 	public static final PropertyKey<String> DOCK_STATION_TOOLTIP = new PropertyKey<String>( "java.lang.String_dock_station_tooltip" );
-	
+    
 	/** a unique identifier */
 	private String id;
 	

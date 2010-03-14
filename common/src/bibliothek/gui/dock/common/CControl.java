@@ -124,6 +124,7 @@ import bibliothek.gui.dock.facile.station.split.DefaultConflictResolver;
 import bibliothek.gui.dock.frontend.FrontendEntry;
 import bibliothek.gui.dock.frontend.MissingDockableStrategy;
 import bibliothek.gui.dock.layout.DockSituationIgnore;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.support.util.ApplicationResource;
 import bibliothek.gui.dock.support.util.ApplicationResourceManager;
 import bibliothek.gui.dock.themes.ThemeFactory;
@@ -680,7 +681,7 @@ public class CControl {
         putProperty( FlapDockStation.LAYOUT_MANAGER, new CFlapLayoutManager() );
         putProperty( EclipseTheme.THEME_CONNECTOR, new CommonEclipseThemeConnector( this ) );
         putProperty( SingleTabDecider.SINGLE_TAB_DECIDER, new CommonSingleTabDecider( this ) );
-        putProperty( SplitDockStation.PLACEHOLDER_STRATEGY, new CPlaceholderStrategy( this ) );
+        putProperty( PlaceholderStrategy.PLACEHOLDER_STRATEGY, new CPlaceholderStrategy( this ) );
     }
 
     /**

@@ -89,7 +89,7 @@ public class Placeholder extends SplitNode {
 
 	@Override
 	public <N> N submit( SplitTreeFactory<N> factory ){
-		return factory.placeholder( getId(), getPlaceholders() );
+		return factory.placeholder( getId(), getPlaceholders(), getPlaceholderMap() );
 	}
 	
 	@Override

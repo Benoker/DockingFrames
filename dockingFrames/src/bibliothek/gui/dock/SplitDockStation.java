@@ -104,6 +104,7 @@ import bibliothek.gui.dock.station.support.CombinerWrapper;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
 import bibliothek.gui.dock.station.support.DockStationListenerManager;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.support.PlaceholderStrategyListener;
 import bibliothek.gui.dock.station.support.RootPlaceholderStrategy;
@@ -149,13 +150,6 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     public static final PropertyKey<SplitLayoutManager> LAYOUT_MANAGER =
         new PropertyKey<SplitLayoutManager>( "SplitDockStation layout manager",
         	new ConstantPropertyFactory<SplitLayoutManager>( new DefaultSplitLayoutManager() ), true );
-
-    /**
-     * Defines for which {@link Dockable}s which {@link Path} is used as placeholder, or which
-     * placeholders are no longer valid and to be removed.
-     */
-    public static final PropertyKey<PlaceholderStrategy> PLACEHOLDER_STRATEGY =
-    	new PropertyKey<PlaceholderStrategy>( "SplitDockStation placeholder strategy" );
     
     /** The parent of this station */
     private DockStation parent;
@@ -243,7 +237,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         }
     };
     
-    private PropertyValue<PlaceholderStrategy> placeholderStrategyProperty = new PropertyValue<PlaceholderStrategy>(PLACEHOLDER_STRATEGY) {
+    private PropertyValue<PlaceholderStrategy> placeholderStrategyProperty = new PropertyValue<PlaceholderStrategy>(PlaceholderStrategy.PLACEHOLDER_STRATEGY) {
 		@Override
 		protected void valueChanged( PlaceholderStrategy oldValue, PlaceholderStrategy newValue ){
 			placeholderStrategy.setStrategy( newValue );
@@ -1000,7 +994,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     public SplitDockPathProperty getDockablePathProperty( final Dockable dockable ) {
         final SplitDockPathProperty path = new SplitDockPathProperty();
         root().submit( new SplitTreeFactory<Object>(){
-        	public Object leaf( Dockable check, long id, Path[] placeholders ){
+        	public Object leaf( Dockable check, long id, Path[] placeholders, PlaceholderMap placeholderMap ){
                 if( dockable == check ){
                 	path.setLeafId( id );
                     return this;
@@ -1008,7 +1002,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
                 return null;
             }
 
-        	public Object placeholder( long id, Path[] placeholders ){
+        	public Object placeholder( long id, Path[] placeholders, PlaceholderMap placeholderMap ){
         		return null;
         	}
         	
@@ -1016,7 +1010,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
                 return root;
             }
 
-            public Object horizontal( Object left, Object right, double divider, long id, Path[] placeholders, boolean visible ){
+            public Object horizontal( Object left, Object right, double divider, long id, Path[] placeholders, PlaceholderMap placeholderMap, boolean visible ){
                 if( left != null ){
                 	if( visible ){
                 		path.insert( SplitDockPathProperty.Location.LEFT, divider, 0, id );
@@ -1032,7 +1026,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
                 return null;
             }
 
-            public Object vertical( Object top, Object bottom, double divider, long id, Path[] placeholders, boolean visible ){
+            public Object vertical( Object top, Object bottom, double divider, long id, Path[] placeholders, PlaceholderMap placeholderMap, boolean visible ){
                 if( top != null ){
                 	if( visible ){
                 		path.insert( SplitDockPathProperty.Location.TOP, divider, 0, id );
@@ -1180,6 +1174,15 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         return true;
     }
 
+    public PlaceholderMap getPlaceholders(){
+    	// ignore for now TODO
+    	return null;
+    }
+    
+    public void setPlaceholders( PlaceholderMap placeholders ){
+	    // ignore for now TODO	
+    }
+    
     public boolean prepareDrop( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
     	if( SwingUtilities.isDescendingFrom( getComponent(), dockable.getComponent() ))
     		putInfo = null;
@@ -1527,7 +1530,9 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         Dockable old = leaf.getDockable();
         leaf.setDockable( null, true );
 
-        Dockable combination = DockUI.getCombiner( combiner, this ).combine( old, dockable, this );
+        Dockable combination = DockUI.getCombiner( combiner, this ).combine( old, dockable, this, leaf.getPlaceholderMap() );
+        leaf.setPlaceholderMap( null );
+        
         if( property != null ){
             DockStation combinedStation = combination.asDockStation();
             if( combinedStation != null && dockable.getDockParent() == combinedStation ){
@@ -1967,7 +1972,15 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         return true;
     }
 
+    public void replace( DockStation old, Dockable next ){
+    	replace( old.asDockable(), next, true );	
+    }
+    
     public void replace( Dockable previous, Dockable next ){
+    	replace( previous, next, false );
+    }
+    
+    private void replace( Dockable previous, Dockable next, boolean station ){
         if( previous == null )
             throw new NullPointerException( "previous must not be null" );
         if( next == null )
@@ -1982,7 +1995,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 
             boolean wasFullScreen = isFullScreen() && getFullScreen() == previous;
 
-            leaf.setDockable( next, true );
+            leaf.setDockable( next, true, true, station );
 
             if( wasFullScreen )
                 setFullScreen( next );

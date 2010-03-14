@@ -43,6 +43,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.event.DockStationListener;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
 
 /**
  * The internal representation of a {@link SplitDockStation} is a tree. The subclasses of SplitNode build this tree.
@@ -58,7 +59,9 @@ public abstract class SplitNode{
 
     /** keys for {@link Dockable}s that are not visible but linked with this node */
     private List<Path> placeholders = new ArrayList<Path>();
-	
+    /** advanced placeholder information about a {@link DockStation} that was child of this node */
+    private PlaceholderMap placeholderMap;
+    
     /** a (hopefully) unique of for this node */
     private long id;
     
@@ -160,6 +163,23 @@ public abstract class SplitNode{
 		if( this.placeholders != null ){
 			this.placeholders.removeAll( placeholders );
 		}
+	}
+	
+	/**
+	 * Sets information about the placeholders of a {@link DockStation} that was 
+	 * child of this node.
+	 * @param placeholderMap the placeholder information, can be <code>null</code>
+	 */
+	public void setPlaceholderMap( PlaceholderMap placeholderMap ){
+		this.placeholderMap = placeholderMap;
+	}
+	
+	/**
+	 * Gets placeholder information of a child {@link DockStation}.
+	 * @return the placeholder information, can be <code>null</code>
+	 */
+	public PlaceholderMap getPlaceholderMap(){
+		return placeholderMap;
 	}
     
 	/**
@@ -604,6 +624,8 @@ public abstract class SplitNode{
     			DockController controller = split.getController();
     			DockAcceptance acceptance = controller == null ? null : controller.getAcceptance();
     			Leaf leaf;
+    			boolean removePlaceholderMap = false;
+    			
     			if( dockables.length == 1 ){
     				if( checkValidity ){
     					if( !dockables[0].accept( split ) || 
@@ -633,7 +655,8 @@ public abstract class SplitNode{
     					}
     				}
 
-    				Dockable combination = access.getOwner().getCombiner().combine( dockables[0], dockables[1], access.getOwner() );
+    				Dockable combination = access.getOwner().getCombiner().combine( dockables[0], dockables[1], access.getOwner(), key.getTree().getPlaceholderMap( key ) );
+    				removePlaceholderMap = true;
     				if( dockables.length == 2 ){
     					leaf = createLeaf( key.getNodeId() );
     					leaf.setDockable( combination, true );
@@ -676,6 +699,9 @@ public abstract class SplitNode{
     			}
     			
     			leaf.evolve( key, checkValidity );
+    			if( removePlaceholderMap ){
+    				leaf.setPlaceholderMap( null );
+    			}
     			return leaf;
     		}
     	}

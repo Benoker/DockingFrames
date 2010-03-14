@@ -28,6 +28,7 @@ package bibliothek.gui.dock.station.split;
 import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.split.SplitDockTree.Key;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
 
 /**
  * A {@link SplitTreeFactory} that writes into a {@link SplitDockTree} and
@@ -49,20 +50,20 @@ public class SplitDockTreeFactory implements SplitTreeFactory<SplitDockTree.Key>
         this.tree = tree;
     }
     
-    public Key horizontal( Key left, Key right, double divider, long id, Path[] placeholders, boolean visible ){
-        return tree.horizontal( left, right, divider, placeholders, id );
+    public Key horizontal( Key left, Key right, double divider, long id, Path[] placeholders, PlaceholderMap placeholderMap, boolean visible ){
+        return tree.horizontal( left, right, divider, placeholders, placeholderMap, id );
     }
     
-    public Key vertical( Key top, Key bottom, double divider, long id, Path[] placeholders, boolean visible ){
-        return tree.vertical( top, bottom, divider, placeholders, id );
+    public Key vertical( Key top, Key bottom, double divider, long id, Path[] placeholders, PlaceholderMap placeholderMap, boolean visible ){
+        return tree.vertical( top, bottom, divider, placeholders, placeholderMap, id );
     }
     
-    public Key leaf( Dockable dockable, long id, Path[] placeholders ){
-        return tree.put( new Dockable[]{ dockable }, null, placeholders, id );
+    public Key leaf( Dockable dockable, long id, Path[] placeholders, PlaceholderMap placeholderMap ){
+        return tree.put( new Dockable[]{ dockable }, null, placeholders, placeholderMap, id );
     }
 
-    public Key placeholder( long id, Path[] placeholders ){
-	    return tree.put( placeholders );
+    public Key placeholder( long id, Path[] placeholders, PlaceholderMap placeholderMap ){
+	    return tree.put( placeholders, placeholderMap );
     }
 
     public Key root( Key root, long id ){

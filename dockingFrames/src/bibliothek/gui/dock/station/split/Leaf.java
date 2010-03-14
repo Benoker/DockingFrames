@@ -40,6 +40,7 @@ import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.split.SplitDockTree.Key;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 
 /**
@@ -107,12 +108,53 @@ public class Leaf extends VisibleSplitNode{
      * change or not. Clients should set fire = <code>true</code>.
      */
     public void setDockable( Dockable dockable, boolean fire ){
+    	setDockable( dockable, fire, false, false );
+    }
+    
+    /**
+     * Sets the element of this leaf. This method ensures that <code>dockable</code>
+     * is registered in the {@link DockStation}
+     * @param dockable the new element or <code>null</code> to remove the
+     * old {@link Dockable}
+     * @param fire whether to inform {@link DockStationListener}s about the
+     * change or not. Clients should set fire = <code>true</code>.
+     * @param updatePlaceholders if <code>true</code>, the placeholder list of this leaf is
+     * automatically updated
+     * @param storePlaceholderMap if <code>true</code>, the current {@link PlaceholderMap} is
+     * replaced by the map provided by the current {@link Dockable} which is a {@link DockStation}
+     */
+    public void setDockable( Dockable dockable, boolean fire, boolean updatePlaceholders, boolean storePlaceholderMap ){
+    	PlaceholderStrategy strategy = null;
+    	if( updatePlaceholders ){
+			 strategy = getAccess().getOwner().getPlaceholderStrategy();
+		}
+		
     	if( handle != null ){
+    		if( strategy != null ){
+    			Path placeholder = strategy.getPlaceholderFor( handle.getDockable() );
+    			if( placeholder != null ){
+    				addPlaceholder( placeholder );
+    			}
+    		}
+    		if( storePlaceholderMap ){
+    			DockStation station = handle.getDockable().asDockStation();
+    			if( station == null ){
+    				throw new IllegalStateException( "no station as child but storePlaceholderMap is set" );
+    			}
+    			setPlaceholderMap( station.getPlaceholders() );
+    		}
+    		
     		getAccess().removeHandle( handle, fire );
     		handle = null;
     	}
     	
         if( dockable != null ){
+        	if( strategy != null ){
+        		Path placeholder = strategy.getPlaceholderFor( dockable );
+        		if( placeholder != null ){
+        			removePlaceholder( placeholder );
+        		}
+        	}
             handle = getAccess().addHandle( dockable, fire );
         }
     }
@@ -296,6 +338,7 @@ public class Leaf extends VisibleSplitNode{
     @Override
     public void evolve( Key key, boolean checkValidity ){
     	setPlaceholders( key.getTree().getPlaceholders( key ) );
+    	setPlaceholderMap( key.getTree().getPlaceholderMap( key ) );
     }
     
     @Override
@@ -392,7 +435,7 @@ public class Leaf extends VisibleSplitNode{
 
     @Override
     public <N> N submit( SplitTreeFactory<N> factory ){
-        return factory.leaf( getDockable(), getId(), getPlaceholders() );
+        return factory.leaf( getDockable(), getId(), getPlaceholders(), getPlaceholderMap() );
     }
         
     @Override

@@ -69,6 +69,7 @@ import bibliothek.gui.dock.station.stack.StackDockStationFactory;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.StationPaintWrapper;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
@@ -501,6 +502,15 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         
         return -1;
     }
+    
+    public PlaceholderMap getPlaceholders(){
+    	// ignore for now TODO
+    	return null;
+    }
+    
+    public void setPlaceholders( PlaceholderMap placeholders ){
+	    // ignore for now TODO	
+    }
 
     public boolean prepareDrop( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
     	if( SwingUtilities.isDescendingFrom( getComponent(), dockable.getComponent() )){
@@ -764,6 +774,10 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     
     public boolean canReplace( Dockable old, Dockable next ) {
         return true;
+    }
+    
+    public void replace( DockStation old, Dockable next ){
+	    replace( old.asDockable(), next );	
     }
     
     public void replace( Dockable old, Dockable next ) {

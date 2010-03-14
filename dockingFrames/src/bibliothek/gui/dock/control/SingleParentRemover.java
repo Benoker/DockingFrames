@@ -166,7 +166,7 @@ public class SingleParentRemover{
                 }
                 
                 station.drag( dockable );
-                parent.replace( transform, dockable );
+                parent.replace( transform.asDockStation(), dockable );
                 return true;
             }
         }

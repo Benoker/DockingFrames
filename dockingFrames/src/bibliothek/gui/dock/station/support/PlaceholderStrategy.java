@@ -28,6 +28,7 @@ package bibliothek.gui.dock.station.support;
 import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.util.PropertyKey;
 
 /**
  * This strategy tells which {@link Dockable}s can leave a placeholder
@@ -35,6 +36,12 @@ import bibliothek.gui.Dockable;
  * @author Benjamin Sigg
  */
 public interface PlaceholderStrategy {
+    /**
+     * Defines for which {@link Dockable}s which {@link Path} is used as placeholder, or which
+     * placeholders are no longer valid and to be removed.
+     */
+    public static final PropertyKey<PlaceholderStrategy> PLACEHOLDER_STRATEGY = new PropertyKey<PlaceholderStrategy>( "dock.placeholder_strategy" );
+    
 	/**
 	 * Informs this strategy that it will from no one be used by <code>station</code>.
 	 * @param station the station which uses this strategy

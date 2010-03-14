@@ -439,6 +439,10 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 	public void removeDockStationListener( DockStationListener listener ){
 		listeners.remove( listener );
 	}
+	
+	public void replace( DockStation old, Dockable next ){
+		replace( old.asDockable(), next );
+	}
 
 	public void replace( Dockable old, Dockable next ){
 		Field field = getFieldOf( old );

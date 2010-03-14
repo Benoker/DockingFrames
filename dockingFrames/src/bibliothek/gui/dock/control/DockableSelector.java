@@ -25,7 +25,11 @@
  */
 package bibliothek.gui.dock.control;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
@@ -37,7 +41,6 @@ import javax.swing.KeyStroke;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.focus.DockableSelection;
 import bibliothek.gui.dock.focus.DockableSelectionListener;
 import bibliothek.gui.dock.util.DockProperties;
@@ -217,10 +220,6 @@ public class DockableSelector {
         public void windowLostFocus( WindowEvent e ) {
             if( selection != null )
                 cancel();
-        }
-
-        public DockElement getTreeLocation() {
-            return null;
         }
 
         public void canceled() {

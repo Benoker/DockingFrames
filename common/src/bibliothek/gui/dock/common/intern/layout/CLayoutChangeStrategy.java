@@ -37,7 +37,6 @@ import java.util.Set;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.DockFrontend.DockInfo;
-import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.MultipleCDockableFactory;
@@ -55,6 +54,7 @@ import bibliothek.gui.dock.layout.DockLayoutInfo;
 import bibliothek.gui.dock.layout.DockSituation;
 import bibliothek.gui.dock.layout.PredefinedDockSituation;
 import bibliothek.gui.dock.station.split.SplitDockStationFactory;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 
 /**
  * Strategy that pays attention to {@link MultipleCDockableFactory#match(bibliothek.gui.dock.common.MultipleCDockable, bibliothek.gui.dock.common.MultipleCDockableLayout)}
@@ -83,7 +83,7 @@ public class CLayoutChangeStrategy extends DefaultLayoutChangeStrategy {
 		if( onSetLayout ){
 			situation.add( new ReplacementDockFactory() );
 		}
-		situation.add( new SplitDockStationFactory( control.getProperty( SplitDockStation.PLACEHOLDER_STRATEGY ) ) );
+		situation.add( new SplitDockStationFactory( control.getProperty( PlaceholderStrategy.PLACEHOLDER_STRATEGY ) ) );
 		return situation;
 	}
 	

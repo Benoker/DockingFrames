@@ -45,6 +45,7 @@ import bibliothek.gui.dock.station.screen.*;
 import bibliothek.gui.dock.station.support.CombinerWrapper;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.StationPaintWrapper;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
@@ -251,6 +252,20 @@ public class ScreenDockStation extends AbstractDockStation {
         }
         
         return -1;
+    }
+    
+    /**
+     * Since a {@link ScreenDockStation} is not a {@link Dockable} its placeholders 
+     * are never combined with any parent-station. Hence this method always returns
+     * <code>null</code>.
+     */
+    public PlaceholderMap getPlaceholders(){
+    	// ignore
+    	return null;
+    }
+    
+    public void setPlaceholders( PlaceholderMap placeholders ){
+	    // ignore	
     }
 
     public Dockable getFrontDockable() {
@@ -657,7 +672,7 @@ public class ScreenDockStation extends AbstractDockStation {
         lower.setDockParent( null );
         listeners.fireDockableRemoved( lower );
         
-        Dockable valid = combiner.combine( lower, upper, this );
+        Dockable valid = combiner.combine( lower, upper, this, null );
         
         listeners.fireDockableAdding( valid );
         valid.setDockParent( this );
@@ -669,6 +684,10 @@ public class ScreenDockStation extends AbstractDockStation {
         return true;
     }
 
+    public void replace( DockStation old, Dockable next ){
+	    replace( old.asDockable(), next );	
+    }
+    
     public void replace( Dockable current, Dockable other ){
         ScreenDockWindow window = getWindow( current );
         

@@ -26,8 +26,10 @@
 package bibliothek.gui.dock.station.split;
 
 import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
 
 /**
  * A factory used to create trees that somehow represent the layout
@@ -42,17 +44,19 @@ public interface SplitTreeFactory<N> {
      * @param dockable the element in the leaf
      * @param id the unique identifier of this node or -1
      * @param placeholders the placeholders associated with this node, can be empty
+     * @param placeholderMap placeholder information of a child {@link DockStation}
      * @return the representation of the leaf or <code>null</code>
      */
-    public N leaf( Dockable dockable, long id, Path[] placeholders );
+    public N leaf( Dockable dockable, long id, Path[] placeholders, PlaceholderMap placeholderMap );
     
     /**
      * Informs about a set of placeholder in the tree.
      * @param id the unique id of this placeholder
      * @param placeholders the placeholders 
+     * @param placeholderMap placeholder information of a child {@link DockStation}
      * @return the representation of the placeholder or <code>null</code>
      */
-    public N placeholder( long id, Path[] placeholders );
+    public N placeholder( long id, Path[] placeholders, PlaceholderMap placeholderMap );
     
     /**
      * Informs about a node that is divided vertically.
@@ -61,11 +65,12 @@ public interface SplitTreeFactory<N> {
      * @param divider the size of the left node, a value between 0 and 1.
      * @param id the unique identifier of this node or -1
      * @param placeholders the placeholders associated with this node, can be empty
+     * @param placeholderMap placeholder information of a child {@link DockStation}
      * @param visible whether this node is visible to the user or not. A node is only visible to the user
      * if both its children are visible
      * @return the representation of this node, might be <code>null</code>
      */
-    public N horizontal( N left, N right, double divider, long id, Path[] placeholders, boolean visible );
+    public N horizontal( N left, N right, double divider, long id, Path[] placeholders, PlaceholderMap placeholderMap, boolean visible );
     
     /**
      * Informs about a node that is divided vertically.
@@ -74,11 +79,12 @@ public interface SplitTreeFactory<N> {
      * @param divider the size of the top node, a value between 0 and 1.
      * @param id the unique identifier of this node or -1
      * @param placeholders the placeholders associated with this node, can be empty
+     * @param placeholderMap placeholder information of a child {@link DockStation}
      * @param visible whether this node is visible to the user or not. A node is only visible to the user
      * if both its children are visible
      * @return the representation of this node, might be <code>null</code>
      */
-    public N vertical( N top, N bottom, double divider, long id, Path[] placeholders, boolean visible );
+    public N vertical( N top, N bottom, double divider, long id, Path[] placeholders, PlaceholderMap placeholderMap, boolean visible );
     
     /**
      * Informs about the node that is the root.

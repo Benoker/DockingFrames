@@ -28,6 +28,7 @@ package bibliothek.gui.dock.station.support;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -39,7 +40,15 @@ import bibliothek.util.xml.XException;
 
 /**
  * A data structure designed to store and retrieve placeholder information
- * persistently.
+ * persistently. This data structure basically is a map with a restricted set of types
+ * that are allowed to be stored. This map uses arrays of {@link Path}s as {@link Key}s, there are
+ * two modes how to use the keys:
+ * <ul>
+ * 	<li>If using shared keys, this map will use the <code>equals</code> method to compare keys</li>
+ *  <li>If using non-shared keys, this map will use the <code>==</code> operator to compare keys</li>
+ * </ul>
+ * This data structure can work together with a {@link PlaceholderStrategy} to automatically delete
+ * entries that are no longer valid. 
  * @author Benjamin Sigg
  */
 public class PlaceholderMap {
@@ -49,7 +58,7 @@ public class PlaceholderMap {
 	private Path format;
 	
 	/** all the data that is stored in this map */
-	private Map<Path, Map<String, Object>> data = new LinkedHashMap<Path, Map<String,Object>>();
+	private Map<Key, Map<String, Object>> data = new LinkedHashMap<Key, Map<String,Object>>();
 	
 	/**
 	 * Creates a new map.
@@ -69,9 +78,10 @@ public class PlaceholderMap {
 	/**
 	 * Creates a new map reading the content of the map directly from <code>in</code>.
 	 * @param in the content
+	 * @param strategy guard to identify the placeholders which are allowed to be stored, can be <code>null</code>
 	 * @throws IOException in case of an I/O error
 	 */
-	public PlaceholderMap( DataInputStream in ) throws IOException{
+	public PlaceholderMap( DataInputStream in, PlaceholderStrategy strategy ) throws IOException{
 		Version version = Version.read( in );
 		if( version.compareTo( Version.VERSION_1_0_8 ) != 0 ){
 			throw new IOException( "unknown version: " + version );
@@ -83,14 +93,25 @@ public class PlaceholderMap {
 		int size = in.readInt();
 		
 		for( int i = 0; i < size; i++ ){
-			Path placeholder = new Path( in.readUTF() );
-			add(placeholder);
-			Map<String, Object> map = data.get( placeholder );
-			int length = in.readInt();
-			for( int j = 0; j < length; j++ ){
-				String key = in.readUTF();
-				Object value = read( in );
-				map.put( key, value );
+			PlaceholderKey key = new PlaceholderKey( in );
+			key = key.shrink( strategy );
+			
+			if( key != null ){
+				add(key);
+				Map<String, Object> map = data.get( key );
+				int length = in.readInt();
+				for( int j = 0; j < length; j++ ){
+					String subkey = in.readUTF();
+					Object value = read( in, strategy );
+					map.put( subkey, value );
+				}
+			}
+			else{
+				int length = in.readInt();
+				for( int j = 0; j < length; j++ ){
+					in.readUTF();
+					read( in, strategy );
+				}
 			}
 		}
 	}
@@ -98,8 +119,9 @@ public class PlaceholderMap {
 	/**
 	 * Creates a new map reading the content of the map directly from <code>in</code>.
 	 * @param in the content to read
+	 * @param strategy guard to identify the placeholders which are allowed to be stored, can be <code>null</code> 
 	 */
-	public PlaceholderMap( XElement in ){
+	public PlaceholderMap( XElement in, PlaceholderStrategy strategy ){
 		XElement xversion = in.getElement( "version" );
 		if( xversion == null ){
 			throw new XException( "missing element 'version'" );
@@ -115,15 +137,19 @@ public class PlaceholderMap {
 		for( int i = 0, n = in.getElementCount(); i<n; i++ ){
 			XElement xentry = in.getElement( i );
 			if( xentry.getName().equals( "entry" )){
-				Path placeholder = new Path( xentry.getString( "placeholder" ));
-				add( placeholder );
-				Map<String,Object> map = data.get( placeholder );
-				for( int j = 0, m = xentry.getElementCount(); j<m; j++ ){
-					XElement xitem = xentry.getElement( j );
-					if( xitem.getName().equals( "item" )){
-						String key = xitem.getString( "key" );
-						Object value = read( xitem );
-						map.put( key, value );
+				PlaceholderKey placeholder = new PlaceholderKey( xentry.getElement( "key" ) );
+				placeholder = placeholder.shrink( strategy );
+				
+				if( placeholder != null ){
+					add( placeholder );
+					Map<String,Object> map = data.get( placeholder );
+					for( int j = 0, m = xentry.getElementCount(); j<m; j++ ){
+						XElement xitem = xentry.getElement( j );
+						if( xitem.getName().equals( "item" )){
+							String key = xitem.getString( "key" );
+							Object value = read( xitem, strategy );
+							map.put( key, value );
+						}
 					}
 				}
 			}
@@ -141,8 +167,8 @@ public class PlaceholderMap {
 		out.writeUTF( format.toString() );
 		
 		out.writeInt( data.size() );
-		for( Map.Entry<Path, Map<String, Object>> entry : data.entrySet() ){
-			out.writeUTF( entry.getKey().toString() );
+		for( Map.Entry<Key, Map<String, Object>> entry : data.entrySet() ){
+			((PlaceholderKey)entry.getKey()).write( out );
 			Map<String, Object> map = entry.getValue();
 			out.writeInt( map.size() );
 			for( Map.Entry<String, Object> mapEntry : map.entrySet() ){
@@ -190,7 +216,7 @@ public class PlaceholderMap {
 		}
 	}
 
-	private Object read( DataInputStream in ) throws IOException{
+	private Object read( DataInputStream in, PlaceholderStrategy strategy ) throws IOException{
 		byte kind = in.readByte();
 		switch( kind ){
 			case 0: return in.readUTF();
@@ -198,12 +224,12 @@ public class PlaceholderMap {
 			case 2: return in.readLong();
 			case 3: return in.readDouble();
 			case 4: return in.readBoolean();
-			case 5: return new PlaceholderMap( in );
+			case 5: return new PlaceholderMap( in, strategy );
 			case 6:
 				int length = in.readInt();
 				Object[] result = new Object[length];
 				for( int i = 0; i < length; i++ ){
-					result[i] = read(in);
+					result[i] = read( in, strategy );
 				}
 				return result;
 		}
@@ -218,9 +244,9 @@ public class PlaceholderMap {
 		out.addElement( "version" ).setInt( version );
 		out.addElement( "format" ).setString( format.toString() );
 		
-		for( Map.Entry<Path, Map<String, Object>> entry : data.entrySet() ){
+		for( Map.Entry<Key, Map<String, Object>> entry : data.entrySet() ){
 			XElement xplaceholder = out.addElement( "entry" );
-			xplaceholder.addString( "placeholder", entry.getKey().toString() );
+			((PlaceholderKey)entry.getKey()).write( out.addElement( "key" ) );
 			Map<String, Object> map = entry.getValue();
 			for( Map.Entry<String, Object> mapEntry : map.entrySet() ){
 				XElement xitem = xplaceholder.addElement( "item" );
@@ -267,7 +293,7 @@ public class PlaceholderMap {
 		}
 	}
 
-	private Object read( XElement in ){
+	private Object read( XElement in, PlaceholderStrategy strategy ){
 		String type = in.getString( "type" );
 		if( "s".equals( type )){
 			return in.getString();
@@ -285,19 +311,101 @@ public class PlaceholderMap {
 			return in.getBoolean();
 		}
 		if( "p".equals( type )){
-			return new PlaceholderMap( in );
+			return new PlaceholderMap( in, strategy );
 		}
 		if( "a".equals( type )){
 			XElement[] xitems = in.getElements( "item" );
 			Object[] result = new Object[xitems.length];
 			for( int i = 0; i < xitems.length; i++ ){
-				result[i] = read( xitems[i] );
+				result[i] = read( xitems[i], strategy );
 			}
 			return result;
 		}
 		else{
 			throw new XException( "unknown type: " + type );
 		}
+	}
+	
+	/**
+	 * Creates a deep copy of this map.
+	 * @return the copy, not <code>null</code>
+	 */
+	public PlaceholderMap copy(){
+		PlaceholderMap result = new PlaceholderMap( format, version );
+		
+		for( Map.Entry<Key, Map<String, Object>> entry : data.entrySet() ){
+			Key newKey = result.copyKey( entry.getKey() );
+			result.add( newKey );
+			Map<String, Object> map = result.data.get( entry.getKey() );
+			for( Map.Entry<String, Object> valueEntry : entry.getValue().entrySet() ){
+				map.put( valueEntry.getKey(), copy( valueEntry.getValue() ) );
+			}
+		}
+		
+		return result;
+	}
+	
+	
+	
+	private Object copy( Object value ){
+		if( value instanceof String ){
+			return value;
+		}
+		else if( value instanceof Integer ){
+			return value;
+		}
+		else if( value instanceof Long ){
+			return value;
+		}
+		else if( value instanceof Double ){
+			return value;
+		}
+		else if( value instanceof Boolean ){
+			return value;
+		}
+		else if( value instanceof PlaceholderMap ){
+			return ((PlaceholderMap)value).copy();
+		}
+		else if( value instanceof Object[] ){
+			Object[] array = (Object[])value;
+			Object[] copy = new Object[ array.length ];
+			for( int i = 0; i < copy.length; i++ ){
+				copy[i] = copy( array[i] );
+			}
+			return copy;
+		}
+		else{
+			throw new IllegalArgumentException( "unknown type: " + value.getClass() );
+		}
+	}
+	
+	/**
+	 * Creates a new shared key for any set of placeholders. The new key will be 
+	 * equal to any key that is generated by this method using the same arguments.
+	 * @param placeholders the placeholders of the key
+	 * @return the new key
+	 */
+	public Key newKey( Path... placeholders ){
+		return new PlaceholderKey( placeholders, true );
+	}
+	
+	/**
+	 * Creates a new non-shared key for any set of placeholders. The new key will
+	 * not be equal to any other key but itself.
+	 * @param placeholders the placeholders of the key
+	 * @return the new key
+	 */
+	public Key newUniqueKey( Path... placeholders ){
+		return new PlaceholderKey( placeholders, false );
+	}
+	
+	/**
+	 * Creates a copy of <code>key</code>.
+	 * @param key the key to copy
+	 * @return the new key
+	 */
+	public Key copyKey( Key key ){
+		return new PlaceholderKey( key.getPlaceholders(), key.isShared() );
 	}
 		
 	/**
@@ -321,7 +429,7 @@ public class PlaceholderMap {
 	 * if <code>placeholder</code> is already in this map.
 	 * @param placeholder the new placeholder, not <code>null</code>
 	 */
-	public void add( Path placeholder ){
+	public void add( Key placeholder ){
 		if( placeholder == null ){
 			throw new IllegalArgumentException( "placeholder must not be null" );
 		}
@@ -337,18 +445,18 @@ public class PlaceholderMap {
 	 * <code>placeholder</code> from this map.
 	 * @param placeholder the placeholder to clear
 	 */
-	public void remove( Path placeholder ){                                                
+	public void remove( Key placeholder ){                                                
 		data.remove( placeholder );
 	}
 	
 	/**
 	 * Gets all placeholders that are known to this map in the order
-	 * they were {@link #add(Path) added} to this map.
+	 * they were {@link #add(Key) added} to this map.
 	 * @return all placeholders
 	 */
-	public Path[] getPlaceholders(){
-		Set<Path> set = data.keySet();
-		return set.toArray( new Path[ set.size() ] );
+	public Key[] getPlaceholders(){
+		Set<Key> set = data.keySet();
+		return set.toArray( new Key[ set.size() ] );
 	}
 	
 	/**
@@ -358,7 +466,7 @@ public class PlaceholderMap {
 	 * @return the associated keys, <code>null</code> if <code>placeholder</code> is not
 	 * known to this map
 	 */
-	public String[] getKeys( Path placeholder ){
+	public String[] getKeys( Key placeholder ){
 		Map<String,Object> map = data.get( placeholder );
 		if( map == null ){
 			return null;
@@ -368,79 +476,79 @@ public class PlaceholderMap {
 	}
 	
 	/**
-	 * Stores the value <code>value</code> in this map, {@link #add(Path) adds}
+	 * Stores the value <code>value</code> in this map, {@link #add(Key) adds}
 	 * <code>placeholder</code> if necessary, overrides the value stored at
 	 * <code>key</code> if existent.
 	 * @param placeholder the placeholder for which <code>value</code> is stored
 	 * @param key the unique identifier of the value
 	 * @param value the new value, not <code>null</code>
 	 */
-	public void putString( Path placeholder, String key, String value ){
+	public void putString( Key placeholder, String key, String value ){
 		put( placeholder, key, value );
 	}
 	
 	/**
-	 * Stores the value <code>value</code> in this map, {@link #add(Path) adds}
+	 * Stores the value <code>value</code> in this map, {@link #add(Key) adds}
 	 * <code>placeholder</code> if necessary, overrides the value stored at
 	 * <code>key</code> if existent.
 	 * @param placeholder the placeholder for which <code>value</code> is stored
 	 * @param key the unique identifier of the value
 	 * @param value the new value
 	 */
-	public void putInt( Path placeholder, String key, int value ){
+	public void putInt( Key placeholder, String key, int value ){
 		put( placeholder, key, Integer.valueOf( value ) );
 	}
 	
 	/**
-	 * Stores the value <code>value</code> in this map, {@link #add(Path) adds}
+	 * Stores the value <code>value</code> in this map, {@link #add(Key) adds}
 	 * <code>placeholder</code> if necessary, overrides the value stored at
 	 * <code>key</code> if existent.
 	 * @param placeholder the placeholder for which <code>value</code> is stored
 	 * @param key the unique identifier of the value
 	 * @param value the new value
 	 */
-	public void putLong( Path placeholder, String key, long value ){
+	public void putLong( Key placeholder, String key, long value ){
 		put( placeholder, key, Long.valueOf( value ) );
 	}
 	
 	/**
-	 * Stores the value <code>value</code> in this map, {@link #add(Path) adds}
+	 * Stores the value <code>value</code> in this map, {@link #add(Key) adds}
 	 * <code>placeholder</code> if necessary, overrides the value stored at
 	 * <code>key</code> if existent.
 	 * @param placeholder the placeholder for which <code>value</code> is stored
 	 * @param key the unique identifier of the value
 	 * @param value the new value
 	 */
-	public void putBoolean( Path placeholder, String key, boolean value ){
+	public void putBoolean( Key placeholder, String key, boolean value ){
 		put( placeholder, key, Boolean.valueOf( value ) );
 	}
 	
 	/**
-	 * Stores the value <code>value</code> in this map, {@link #add(Path) adds}
+	 * Stores the value <code>value</code> in this map, {@link #add(Key) adds}
 	 * <code>placeholder</code> if necessary, overrides the value stored at
 	 * <code>key</code> if existent.
 	 * @param placeholder the placeholder for which <code>value</code> is stored
 	 * @param key the unique identifier of the value
 	 * @param value the new value
 	 */
-	public void putDouble( Path placeholder, String key, double value ){
+	public void putDouble( Key placeholder, String key, double value ){
 		put( placeholder, key, Double.valueOf( value ) );
 	}
 	
 	/**
-	 * Stores the value <code>value</code> in this map, {@link #add(Path) adds}
+	 * Stores the value <code>value</code> in this map, {@link #add(Key) adds}
 	 * <code>placeholder</code> if necessary, overrides the value stored at
 	 * <code>key</code> if existent.
 	 * @param placeholder the placeholder for which <code>value</code> is stored
 	 * @param key the unique identifier of the value
 	 * @param value the new value, not <code>null</code>
 	 */
-	public void putMap( Path placeholder, String key, PlaceholderMap value ){
+	public void putMap( Key placeholder, String key, PlaceholderMap value ){
 		put( placeholder, key, value );
 	}
 	
 	/**
-	 * Stores the value <code>value</code> in this map, {@link #add(Path) adds}
+	 * Stores the value <code>value</code> in this map, {@link #add(Key) adds}
 	 * <code>placeholder</code> if necessary, overrides the value stored at
 	 * <code>key</code> if existent.
 	 * @param placeholder the placeholder for which <code>value</code> is stored
@@ -448,12 +556,12 @@ public class PlaceholderMap {
 	 * @param value the new value, not <code>null</code>. May contain any data type
 	 * for which this map offers a put-method.
 	 */
-	public void putArray( Path placeholder, String key, Object[] value ){
+	public void putArray( Key placeholder, String key, Object[] value ){
 		put( placeholder, key, value );
 	}
 	
 	/**
-	 * Stores the value <code>value</code> in this map, {@link #add(Path) adds}
+	 * Stores the value <code>value</code> in this map, {@link #add(Key) adds}
 	 * <code>placeholder</code> if necessary, overrides the value stored at
 	 * <code>key</code> if existent.<br>
 	 * It is the clients responsibility not to introduce cycles of object references.
@@ -464,7 +572,7 @@ public class PlaceholderMap {
 	 * {@link String}, {@link Integer}, {@link Long}, {@link Double}, {@link Boolean}
 	 * {@link PlaceholderMap} nor an array of {@link Object}s containing the mentioned data types
 	 */	
-	public void put( Path placeholder, String key, Object value ){
+	public void put( Key placeholder, String key, Object value ){
 		Object invalid = invalidType( value );
 		
 		if( invalid == null ){
@@ -507,7 +615,7 @@ public class PlaceholderMap {
 	 * @param key the unique identifier of the removed data
 	 * @return the data that was removed, may be <code>null</code>
 	 */
-	public Object remove( Path placeholder, String key ){
+	public Object remove( Key placeholder, String key ){
 		Map<String, Object> map = data.get( placeholder );
 		if( map == null ){
 			return null;
@@ -521,7 +629,7 @@ public class PlaceholderMap {
 	 * @param key the key to search
 	 * @return <code>true</code> if there is some data stored
 	 */
-	public boolean contains( Path placeholder, String key ){
+	public boolean contains( Key placeholder, String key ){
 		return get( placeholder, key ) != null;
 	}
 	
@@ -532,7 +640,7 @@ public class PlaceholderMap {
 	 * @return the data, not <code>null</code>
 	 * @throws IllegalArgumentException if either the value is of the wrong type or missing
 	 */
-	public String getString( Path placeholder, String key ){
+	public String getString( Key placeholder, String key ){
 		Object data = get( placeholder, key );
 		if( data instanceof String ){
 			return (String)data;
@@ -549,7 +657,7 @@ public class PlaceholderMap {
 	 * @return the data, not <code>null</code>
 	 * @throws IllegalArgumentException if either the value is of the wrong type or missing
 	 */
-	public int getInt( Path placeholder, String key ){
+	public int getInt( Key placeholder, String key ){
 		Object data = get( placeholder, key );
 		if( data instanceof Integer ){
 			return (Integer)data;
@@ -566,7 +674,7 @@ public class PlaceholderMap {
 	 * @return the data, not <code>null</code>
 	 * @throws IllegalArgumentException if either the value is of the wrong type or missing
 	 */
-	public long getLong( Path placeholder, String key ){
+	public long getLong( Key placeholder, String key ){
 		Object data = get( placeholder, key );
 		if( data instanceof Long ){
 			return (Long)data;
@@ -583,7 +691,7 @@ public class PlaceholderMap {
 	 * @return the data, not <code>null</code>
 	 * @throws IllegalArgumentException if either the value is of the wrong type or missing
 	 */
-	public boolean getBoolean( Path placeholder, String key ){
+	public boolean getBoolean( Key placeholder, String key ){
 		Object data = get( placeholder, key );
 		if( data instanceof Boolean ){
 			return (Boolean)data;
@@ -600,7 +708,7 @@ public class PlaceholderMap {
 	 * @return the data, not <code>null</code>
 	 * @throws IllegalArgumentException if either the value is of the wrong type or missing
 	 */
-	public double getDouble( Path placeholder, String key ){
+	public double getDouble( Key placeholder, String key ){
 		Object data = get( placeholder, key );
 		if( data instanceof Double ){
 			return (Double)data;
@@ -617,7 +725,7 @@ public class PlaceholderMap {
 	 * @return the data, not <code>null</code>
 	 * @throws IllegalArgumentException if either the value is of the wrong type or missing
 	 */
-	public PlaceholderMap getMap( Path placeholder, String key ){
+	public PlaceholderMap getMap( Key placeholder, String key ){
 		Object data = get( placeholder, key );
 		if( data instanceof PlaceholderMap ){
 			return (PlaceholderMap)data;
@@ -634,7 +742,7 @@ public class PlaceholderMap {
 	 * @return the data, not <code>null</code>
 	 * @throws IllegalArgumentException if either the value is of the wrong type or missing
 	 */
-	public Object[] getArray( Path placeholder, String key ){
+	public Object[] getArray( Key placeholder, String key ){
 		Object data = get( placeholder, key );
 		if( data instanceof Object[] ){
 			return (Object[])data;
@@ -650,11 +758,167 @@ public class PlaceholderMap {
 	 * @param key the key of the data
 	 * @return the data, may be <code>null</code>
 	 */
-	public Object get( Path placeholder, String key ){
+	public Object get( Key placeholder, String key ){
 		Map<String, Object> map = data.get( placeholder );
 		if( map == null ){
 			return null;
 		}
 		return map.get( key );
+	}
+	
+	/**
+	 * A key is a set of {@link Path}s, it is used to identify
+	 * entries in a {@link PlaceholderMap}.
+	 * @author Benjamin Sigg
+	 */
+	public static interface Key{
+		/**
+		 * Gets the placeholders which make up this key.
+		 * @return the placeholders, this array may be empty but not <code>null</code>
+		 */
+		public Path[] getPlaceholders();
+		
+		/**
+		 * Tells whether this key is shared. Two shared keys are equal if they
+		 * have the same array of {@link #getPlaceholders() placeholders}, two non-shared
+		 * keys are equal only if they are the same object, a shared and a non-shared key
+		 * are never equal.
+		 * @return whether this is a shared key
+		 */
+		public boolean isShared();
+	}
+	
+	/**
+	 * Standard implementation of {@link PlaceholderMap.Key}.
+	 * @author Benjamin Sigg
+	 *
+	 */
+	private class PlaceholderKey implements Key{
+		private Path[] placeholders;
+		private boolean shared;
+		
+		/**
+		 * Creates a new key.
+		 * @param placeholders the placeholders which make up this key
+		 * @param shared how the <code>equals</code> method behaves
+		 */
+		public PlaceholderKey( Path[] placeholders, boolean shared ){
+			if( placeholders == null ){
+				throw new IllegalArgumentException( "placeholders must not be null" );
+			}
+			
+			this.placeholders = placeholders;
+			this.shared = shared;
+		}
+		
+		public PlaceholderKey( DataInputStream in ) throws IOException{
+			shared = in.readBoolean();
+			placeholders = new Path[ in.readInt() ];
+			for( int i = 0; i < placeholders.length; i++ ){
+				placeholders[i] = new Path( in.readUTF() );
+			}
+		}
+		
+		public PlaceholderKey( XElement in ){
+			shared = in.getBoolean( "shared" );
+			XElement[] xplaceholders = in.getElements( "placeholder" );
+			placeholders = new Path[ xplaceholders.length ];
+			for( int i = 0; i < xplaceholders.length; i++ ){
+				placeholders[i] = new Path( xplaceholders[i].toString() );
+			}
+		}
+		
+		public void write( DataOutputStream out ) throws IOException{
+			out.writeBoolean( shared );
+			out.writeInt( placeholders.length );
+			for( Path path : placeholders ){
+				out.writeUTF( path.toString() );
+			}
+		}
+		
+		public void write( XElement out ){
+			out.addBoolean( "shared", shared );
+			for( Path placeholder : placeholders ){
+				out.addElement( "placeholder" ).setString( placeholder.toString() );
+			}
+		}
+		
+		/**
+		 * Creates a new key by removing any invalid placeholder.
+		 * @param strategy the strategy to apply, can be <code>null</code>
+		 * @return the new key or <code>null</code> if there is nothing left from this key
+		 */
+		public PlaceholderKey shrink( PlaceholderStrategy strategy ){
+			if( strategy == null ){
+				return this;
+			}
+			
+			boolean[] remain = new boolean[placeholders.length];
+			int count = 0;
+			for( int i = 0; i < remain.length; i++ ){
+				remain[i] = strategy.isValidPlaceholder( placeholders[i] );
+				if( remain[i] ){
+					count++;
+				}
+			}
+			
+			if( count == placeholders.length ){
+				return this;
+			}
+			if( count == 0 ){
+				return null;
+			}
+			
+			Path[] copy = new Path[ remain.length ];
+			int index = 0;
+			for( int i = 0; i < copy.length; i++ ){
+				if( remain[i] ){
+					copy[ index++ ] = placeholders[i];
+				}
+			}
+			
+			return new PlaceholderKey( copy, shared );
+		}
+		
+		public Path[] getPlaceholders(){
+			return placeholders;
+		}
+		
+		public boolean isShared(){
+			return shared;
+		}
+		
+		@Override
+		public int hashCode(){
+			int result = Arrays.hashCode( placeholders );
+			if( shared ){
+				return result;
+			}
+			else{
+				return -result;
+			}
+		}
+		
+		@Override
+		public boolean equals( Object obj ){
+			if( obj == this ){
+				return true;
+			}
+			
+			if( !isShared() ){
+				return false;
+			}
+			
+			if( obj.getClass() != this.getClass() ){
+				return false;
+			}
+			
+			PlaceholderKey that = (PlaceholderKey)obj;
+			if( !that.isShared() ){
+				return false;
+			}
+			
+			return Arrays.equals( placeholders, that.placeholders );
+		}
 	}
 }

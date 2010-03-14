@@ -154,6 +154,28 @@ public abstract class AbstractDockableStation extends AbstractDockable implement
     public boolean accept( Dockable child ) {
         return true;
     }
+    
+    /**
+     * Tells whether this station accepts <code>child</code> as new child.
+     * @param child the child to add
+     * @return <code>true</code> if acceptable
+     */
+    protected boolean acceptable( Dockable child ){
+    	if( !accept( child )){
+    		return false;
+    	}
+    	if( !child.accept( this )){
+    		return false;
+    	}
+    	
+    	DockController controller = getController();
+    	if( controller != null ){
+    		if( !controller.getAcceptance().accept( this, child )){
+    			return false;
+    		}
+    	}
+    	return true;
+    }
 
     public boolean canCompare( DockStation station ) {
         return false;

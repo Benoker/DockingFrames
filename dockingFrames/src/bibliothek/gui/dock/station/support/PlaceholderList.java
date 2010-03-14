@@ -34,6 +34,7 @@ import java.util.Set;
 import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.station.support.PlaceholderMap.Key;
 
 /**
  * A list consisting of {@link Dockable}s and sets of {@link Path}s as placeholder. 
@@ -52,12 +53,19 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	/** all the items of this list */
 	private Entry head = null;
 	
+	/** head of the placeholders sublist */
 	private Entry headPlaceholder = null;
 	
+	/** head of the dockables sublist */
 	private Entry headDockable = null;
 	
+	/** identifiers for the various sublists this list consists of */
+	public static enum Level{
+		BASE, DOCKABLE, PLACEHOLDER;
+	}
+	
 	/** view on all items */
-	private SubList<Item<D>> allItems = new SubList<Item<D>>( 0 ) {
+	private SubList<Item<D>> allItems = new SubList<Item<D>>( Level.BASE ) {
 		@Override
 		protected Item<D> wrap( Item<D> item ){
 			return item;
@@ -75,7 +83,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	};
 	
 	/** view on all items as placeholder items */
-	private SubList<Set<Path>> allPlaceholders = new SubList<Set<Path>>( 0 ) {
+	private SubList<Set<Path>> allPlaceholders = new SubList<Set<Path>>( Level.BASE ) {
 		@Override
 		protected Item<D> wrap( Set<Path> object ){
 			return new Item<D>( object );
@@ -97,7 +105,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	};
 	
 	/** view on all pure placeholders */
-	private SubList<Set<Path>> purePlaceholders = new SubList<Set<Path>>( 1 ) {
+	private SubList<Set<Path>> purePlaceholders = new SubList<Set<Path>>( Level.PLACEHOLDER ) {
 		@Override
 		protected Item<D> wrap( Set<Path> object ){
 			return new Item<D>( object );
@@ -115,7 +123,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	};
 	
 	/** view on all dockables */
-	private SubList<D> dockables = new SubList<D>( 2 ) {
+	private SubList<D> dockables = new SubList<D>( Level.DOCKABLE ) {
 		@Override
 		protected Item<D> wrap( D object ){
 			return new Item<D>( object );
@@ -158,6 +166,15 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	 * @throws IllegalArgumentException if <code>map</code> was not written by a {@link PlaceholderList}
 	 */
 	public PlaceholderList( PlaceholderMap map ){
+		read( map );
+	}
+	
+	/**
+	 * Reads the contents of <code>map</code> and adds them at the end of this list.
+	 * @param map the map to read
+	 * @throws IllegalArgumentException if the map is in the wrong format
+	 */
+	public void read( PlaceholderMap map ){
 		if( !map.getFormat().equals( new Path( "dock.PlaceholderList") )){
 			throw new IllegalArgumentException( "unknown format: " + map.getFormat() );
 		}
@@ -165,25 +182,24 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 			throw new IllegalArgumentException( "version unknown: " + map.getVersion() );
 		}
 		
-		Path[] placeholders = map.getPlaceholders();
+		Key[] placeholders = map.getPlaceholders();
 		for( int i = placeholders.length-1; i>=0; i-- ){
-			Path placeholder = placeholders[i];
-			Object[] list = map.getArray( placeholder, "list" );
+			Path[] list = placeholders[i].getPlaceholders();
 			Set<Path> paths = null;
 			if( list.length > 0 ){
 				paths = new HashSet<Path>();
-				for( Object path : list ){
-					paths.add( (Path)path );
+				for( Path path : list ){
+					paths.add( path );
 				}
 			}
 			Item<D> item = new Item<D>( paths );
 			
-			if( map.contains( placeholder, "map" )){
-				item.setPlaceholderMap( map.getMap( placeholder, "map" ) );
+			if( map.contains( placeholders[i], "map" )){
+				item.setPlaceholderMap( map.getMap( placeholders[i], "map" ) );
 			}
 			
 			list().add( 0, item );
-		}
+		}		
 	}
 	
 	/**
@@ -195,7 +211,6 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	public PlaceholderMap toMap(){
 		PlaceholderMap map = new PlaceholderMap( new Path( "dock.PlaceholderList" ), 0 );
 		
-		int index = 0;
 		for( Item<D> entry : list() ){
 			Set<Path> placeholderSet = entry.getPlaceholderSet();
 			PlaceholderMap placeholderMap = entry.getPlaceholderMap();
@@ -212,15 +227,15 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 				}
 			}
 			
-			Object[] placeholders = new Object[placeholderSet.size() + (additional == null ? 0 : 1)];
+			Path[] placeholders = new Path[placeholderSet.size() + (additional == null ? 0 : 1)];
 			placeholderSet.toArray( placeholders );
 			if( additional != null ){
 				placeholders[placeholders.length-1] = additional;
 			}
 			
 			if( placeholders.length > 0 ){
-				Path key = new Path( "i" + index );
-				map.put( key, "list", placeholders );
+				Key key =  map.newUniqueKey( placeholders );
+				
 				if( placeholderMap != null ){
 					map.put( key, "map", placeholderMap );
 				}
@@ -372,6 +387,20 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	}
 	
 	/**
+	 * Removes the <code>index</code>'th {@link Dockable} from this list were
+	 * <code>index</code> is an index used in {@link #dockables()}.
+	 * @param index the index of the element to remove
+	 * @return the placeholder that replaces the element or <code>null</code>
+	 */
+	public Path remove( int index ){
+		Entry entry = search( index, Level.DOCKABLE );
+		if( entry == null ){
+			throw new IllegalArgumentException( "no such dockable: " + index );
+		}
+		return removeDockable( entry );
+	}
+	
+	/**
 	 * Searches for <code>dockable</code> and replaces it by a placeholder. If <code>dockable</code>
 	 * is a {@link DockStation}, then its {@link PlaceholderMap} is stored. 
 	 * @param dockable the element to remove
@@ -383,7 +412,11 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		if( entry == null ){
 			return null;
 		}
+		return removeDockable( entry );
+	}
 		
+	private Path removeDockable( Entry entry ){
+		D dockable = entry.item.getDockable();
 		Path placeholder = strategy == null ? null : strategy.getPlaceholderFor( dockable.asDockable() );
 		if( placeholder == null ){
 			if( entry.item.hasPlaceholders() ){
@@ -433,8 +466,33 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 			station.setPlaceholders( map );
 		}
 		removeAll( placeholder );
-		return entry.index( 2 );
+		return entry.index( Level.DOCKABLE );
 	}
+	
+	/**
+	 * Emulates the insertion of a {@link Dockable} at location <code>placeholder</code> and
+	 * returns the index that the inserted dockable would have in the dockable-list.
+	 * @param placeholder the placeholder of the element to insert
+	 * @return the location or -1 if <code>placeholder</code> was not found
+	 */
+	public int getDockableIndex( Path placeholder ){
+		Entry entry = search( placeholder );
+		if( entry == null ){
+			return -1;
+		}
+		
+		while( entry != null && entry.item.isPlaceholder() ){
+			entry = entry.previous( Level.BASE );
+		}
+		
+		if( entry == null ){
+			return 0;
+		}
+		else{
+			return entry.index( Level.DOCKABLE ) + 1;
+		}
+	}
+	
 	
 	/**
 	 * Searches for the entry containing <code>dockable</code> and adds <code>placeholder</code> to the
@@ -475,27 +533,70 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 			if( set != null && set.contains( placeholder )){
 				return entry;
 			}
-			entry = entry.next( 0 );
+			entry = entry.next( Level.BASE );
 		}
 		return null;
 	}
 	
 	private Entry search( D dockable ){
-		Entry entry = this.head;
+		Entry entry = head( Level.DOCKABLE );
 		while( entry != null ){
 			if( entry.item.getDockable() == dockable ){
 				return entry;
 			}
-			entry = entry.next( 0 );
+			entry = entry.next( Level.DOCKABLE );
 		}
 		return null;
 	}
 	
-	private Entry head( int level ){
+	private Entry search( int index, Level level ){
+		Entry entry = head( level );
+		
+		while( entry != null && index > 0 ){
+			entry = entry.next( level );
+			index--;
+		}
+		return entry;
+	}
+
+	/**
+	 * Searches the base entry at <code>index</code> and returns
+	 * its location in sublist <code>level</code>.
+	 * @param index the index of some entry
+	 * @param level the sublist
+	 * @return the index in the sublist or -1 if the entry is not part of <code>level</code>
+	 * @throws IndexOutOfBoundsException if <code>index</code> is illegal
+	 */
+	public int baseToLevel( int index, Level level ){
+		Entry entry = search( index, Level.BASE );
+		if( entry == null ){
+			throw new IndexOutOfBoundsException();
+		}
+		return entry.index( level );
+	}
+	
+
+	/**
+	 * Searches the base entry at <code>index</code> in the sublist <code>level</code> and returns
+	 * its location in the base list.
+	 * @param index the index of some entry
+	 * @param level the sublist
+	 * @return the index in the base list
+	 * @throws IndexOutOfBoundsException if <code>index</code> is illegal
+	 */
+	public int levelToBase( int index, Level level ){
+		Entry entry = search( index, level );
+		if( entry == null ){
+			throw new IndexOutOfBoundsException();
+		}
+		return entry.index( Level.BASE );
+	}
+	
+	private Entry head( Level level ){
 		switch( level ){
-			case 0: return head;
-			case 1: return headPlaceholder;
-			case 2: return headDockable;
+			case BASE: return head;
+			case PLACEHOLDER: return headPlaceholder;
+			case DOCKABLE: return headDockable;
 		}
 		throw new IllegalArgumentException();
 	}
@@ -507,6 +608,11 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		allItems.invalidate();
 	}
 	
+	@Override
+	public String toString(){
+		return list().toString();
+	}
+	
 	private class Entry{
 		private Item<D> item;
 		private boolean itemWasPlaceholder;
@@ -515,21 +621,24 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		private Entry nextLevel, previousLevel;
 		
 		public Entry( Entry predecessor, Item<D> item ){
-			invalidate();
-			
 			this.item = item;
+			insertAfter( predecessor );
+		}
+		
+		public void insertAfter( Entry predecessor ){
+			invalidate();
+		
 			item.owner = this;
 			itemWasPlaceholder = item.isPlaceholder();
 			
 			Entry predecessorLevel = null;
-			Entry search = predecessor;
-			while( search != null && predecessorLevel == null ){
-				if( search.item.isPlaceholder() == item.isPlaceholder() ){
-					predecessorLevel = search;
-				}
-			}
 			
 			if( predecessor == null ){
+				next = head;
+				if( head != null ){
+					head.previous = this;
+				}
+				
 				head = this;
 				predecessorLevel = null;
 			}
@@ -541,24 +650,25 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 				
 				predecessor.next = this;
 				this.previous = predecessor;
+				
+				Entry search = predecessor;
+				while( search != null && predecessorLevel == null ){
+					if( search.item.isPlaceholder() == item.isPlaceholder() ){
+						predecessorLevel = search;
+					}
+					search = search.previous( Level.BASE );
+				}
 			}
 	
+			Entry successorLevel = null;
 			if( predecessorLevel == null ){
 				if( item.isPlaceholder() ){
-					if( headPlaceholder == null ){
-						headPlaceholder = this;
-					}
-					else{
-						predecessorLevel = headPlaceholder;
-					}
+					successorLevel = headPlaceholder;
+					headPlaceholder = this;
 				}
 				else{
-					if( headDockable == null ){
-						headDockable = this;
-					}
-					else{
-						predecessorLevel = headDockable;
-					}
+					successorLevel = headDockable;
+					headDockable = this;
 				}
 			}
 			
@@ -571,27 +681,57 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 				}
 				previousLevel.nextLevel = this;
 			}
+			else if( successorLevel != null ){
+				nextLevel = successorLevel;
+				successorLevel.previousLevel = this;
+			}
 		}
 		
-		public Entry next( int level ){
+		public void move( int delta, Level level ){
+			if( delta == 0 ){
+				return;
+			}
+			Entry newPredecessor = this;
+			if( delta > 0 ){
+				for( int i = 0; i < delta; i++ ){
+					newPredecessor = newPredecessor.next( level );
+					if( newPredecessor == null ){
+						throw new IllegalArgumentException( "delta too big" );
+					}
+				}
+			}
+			else{
+				for( int i = -delta; i >= 0; i-- ){
+					if( newPredecessor == null ){
+						throw new IllegalArgumentException( "delta too big" );
+					}
+					newPredecessor = newPredecessor.previous( level );
+				}
+			}
+			
+			remove();
+			insertAfter( newPredecessor );
+		}
+		
+		public Entry next( Level level ){
 			switch( level ){
-				case 0: return next;
-				case 1: return item.isPlaceholder() ? nextLevel : null;
-				case 2: return item.isPlaceholder() ? null : nextLevel;
+				case BASE: return next;
+				case PLACEHOLDER: return item.isPlaceholder() ? nextLevel : null;
+				case DOCKABLE: return item.isPlaceholder() ? null : nextLevel;
 			}
 			throw new IllegalArgumentException();
 		}
 		
-		public Entry previous( int level ){
+		public Entry previous( Level level ){
 			switch( level ){
-				case 0: return previous;
-				case 1: return item.isPlaceholder() ? previousLevel : null;
-				case 2: return item.isPlaceholder() ? null : previousLevel;
+				case BASE: return previous;
+				case PLACEHOLDER: return item.isPlaceholder() ? previousLevel : null;
+				case DOCKABLE: return item.isPlaceholder() ? null : previousLevel;
 			}
 			throw new IllegalArgumentException();
 		}
 		
-		public int index( int level ){
+		public int index( Level level ){
 			Entry entry = head( level );
 			int index = 0;
 			while( entry != this && entry != null ){
@@ -682,6 +822,9 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 				head = next;
 			}
 			
+			next = null;
+			previous = null;
+			
 			this.item.owner = null;
 			
 			removeLevel();
@@ -703,6 +846,14 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 			if( this == headPlaceholder ){
 				headPlaceholder = nextLevel;
 			}
+			
+			nextLevel = null;
+			previousLevel = null;
+		}
+		
+		@Override
+		public String toString(){
+			return item.toString();
 		}
 	}
 	
@@ -773,6 +924,14 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		 */
 		public Set<Path> getPlaceholderSet(){
 			return placeholderSet;
+		}
+		
+		/**
+		 * Sets the set of placeholders that are associated with this entry.
+		 * @param placeholderSet the placeholders, can be <code>null</code>
+		 */
+		public void setPlaceholderSet( Set<Path> placeholderSet ){
+			this.placeholderSet = placeholderSet;
 		}
 		
 		/**
@@ -875,7 +1034,26 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		
 		@Override
 		public String toString(){
-			return value.toString();
+			StringBuilder builder = new StringBuilder();
+			builder.append( "(dockable=" );
+			if( value != null ){
+				builder.append( value.asDockable().getTitleText() );
+			}
+			builder.append( ", placeholders={" );
+			if( placeholderSet != null ){
+				boolean first = true;
+				for( Path path : placeholderSet ){
+					if( first ){
+						first = false;
+					}
+					else{
+						builder.append( ", " );
+					}
+					builder.append( path.toString() );
+				}
+			}
+			builder.append( "})" );
+			return builder.toString();
 		}
 	}
 	
@@ -946,17 +1124,24 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		 * @return the location or -1 if the object was not found
 		 */
 		public int indexOf( M object );
+		
+		/**
+		 * Moves the item at location <code>source</code> to location <code>destination</code>.
+		 * @param source the current location of some item
+		 * @param destination the new location
+		 */
+		public void move( int source, int destination );
 	}
 	
 	private abstract class SubList<A> implements Filter<A>{
-		private int level;
+		private Level level;
 		private int size = -1;
 		
 		protected abstract A unwrap( Item<D> item );
 		protected abstract Item<D> wrap( A item );
 		protected abstract boolean visible( Item<D> value );
 		
-		public SubList( int level ){
+		public SubList( Level level ){
 			this.level = level;
 		}
 		
@@ -996,7 +1181,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 			}
 			else{
 				Entry entry = getEntry( index );
-				new Entry( entry, wrap( object ));
+				new Entry( entry.previous( level ), wrap( object ));
 			}
 		}
 		
@@ -1055,6 +1240,16 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 			}
 			return size;
 		}
+		
+		public void move( int source, int destination ){
+			Entry entry = search( source, level );
+			if( entry == null ){
+				throw new IllegalArgumentException( "no entry for index: " + source );
+			}
+			int delta = destination - source;
+			entry.move( delta, level );
+		}
+		
 		public Iterator<A> iterator(){
 			return new Iterator<A>() {
 				private Entry current = null;
@@ -1081,6 +1276,22 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 					current = null;
 				}
 			};
+		}
+		
+		@Override
+		public String toString(){
+			StringBuilder builder = new StringBuilder();
+			boolean first = true;
+			for( A value : this ){
+				if( first ){
+					first = false;
+				}
+				else{
+					builder.append( ", " );
+				}
+				builder.append( value );
+			}
+			return builder.toString();
 		}
 	}
 }

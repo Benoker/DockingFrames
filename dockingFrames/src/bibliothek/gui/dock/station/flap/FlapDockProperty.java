@@ -30,6 +30,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.layout.AbstractDockableProperty;
@@ -63,6 +64,9 @@ public class FlapDockProperty extends AbstractDockableProperty {
     /** the size of the window, -1 if unknown */
     private int size = -1;
     
+    /** placeholder name of this location */
+    private Path placeholder;
+    
     /**
      * Constructs a FlapDockProperty
      */
@@ -90,13 +94,29 @@ public class FlapDockProperty extends AbstractDockableProperty {
      * @see #setSize(int)
      */
     public FlapDockProperty( int index, boolean holding, int size ){
-        setIndex( index );
+        this( index, holding, size, null );
+    }
+    
+    /**
+     * Constructs a FlapDockProperty
+     * @param index the location of the {@link Dockable}
+     * @param holding whether the <code>Dockable</code> is pinned down or not
+     * @param size the size of the window, -1 if unknown
+     * @param placeholder the name of this location
+     * @see #setIndex(int)
+     * @see #setHolding(boolean)
+     * @see #setSize(int)
+     * @see #setPlaceholder(Path)
+     */
+    public FlapDockProperty( int index, boolean holding, int size, Path placeholder ){
+    	setIndex( index );
         setHolding( holding );
         setSize( size );
+        setPlaceholder( placeholder );
     }
 
     public DockableProperty copy() {
-        FlapDockProperty copy = new FlapDockProperty( index, holding, size );
+        FlapDockProperty copy = new FlapDockProperty( index, holding, size, placeholder );
         copy( copy );
         return copy;
     }
@@ -156,15 +176,38 @@ public class FlapDockProperty extends AbstractDockableProperty {
 		return size;
 	}
     
+    /**
+     * Sets the name of this location.
+     * @param placeholder the placeholder, can be <code>null</code>
+     */
+    public void setPlaceholder( Path placeholder ){
+		this.placeholder = placeholder;
+	}
+    
+    /**
+     * Gets the name of this location.
+     * @return the name, can be <code>null</code>
+     */
+    public Path getPlaceholder(){
+		return placeholder;
+	}
+    
     public String getFactoryID() {
         return FlapDockPropertyFactory.ID;
     }
 
     public void store( DataOutputStream out ) throws IOException {
-        Version.write( out, Version.VERSION_1_0_7 );
+        Version.write( out, Version.VERSION_1_0_8 );
         out.writeInt( index );
         out.writeBoolean( holding );
         out.writeInt( size );
+        if( placeholder == null ){
+        	out.writeBoolean( false );
+        }
+        else{
+        	out.writeBoolean( true );
+            out.writeUTF( placeholder.toString() );
+        }
     }
     
     public void store( XElement element ) {
@@ -174,6 +217,9 @@ public class FlapDockProperty extends AbstractDockableProperty {
     	if( size >= 0 ){
     		element.addElement( "size" ).setInt( size );
     	}
+    	if( placeholder != null ){
+    		element.addElement( "placeholder" ).setString( placeholder.toString() );
+    	}
     }
 
     public void load( DataInputStream in ) throws IOException {
@@ -181,7 +227,14 @@ public class FlapDockProperty extends AbstractDockableProperty {
         version.checkCurrent();
         
         setIndex( in.readInt() );
-        if( version.compareTo( Version.VERSION_1_0_7 ) >= 0 ){
+        if( version.compareTo( Version.VERSION_1_0_8 ) >= 0 ){
+        	holding = in.readBoolean();
+        	size = in.readInt();
+        	if( in.readBoolean() ){
+        		placeholder = new Path( in.readUTF() );
+        	}
+        }
+        else if( version.compareTo( Version.VERSION_1_0_7 ) >= 0 ){
         	holding = in.readBoolean();
         	size = in.readInt();
         }
@@ -195,6 +248,7 @@ public class FlapDockProperty extends AbstractDockableProperty {
     	XElement xindex = element.getElement( "index" );
     	XElement xholding = element.getElement( "holding" );
     	XElement xsize = element.getElement( "size" );
+    	XElement xplaceholder = element.getElement( "placeholder" );
     	
     	if( xindex == null && xholding == null ){
     		index = element.getInt();
@@ -211,11 +265,15 @@ public class FlapDockProperty extends AbstractDockableProperty {
     		else
     			size = xsize.getInt();
     	}
+    	
+    	if( xplaceholder != null ){
+    		placeholder = new Path( xplaceholder.getString() );
+    	}
     }
     
     @Override
     public String toString(){
-	    return getClass().getName() + "[index=" + index + ", holding=" + holding + ", size=" + size + "]";
+	    return getClass().getName() + "[index=" + index + ", holding=" + holding + ", size=" + size + ", placeholder=" + placeholder + "]";
     }
 
 	@Override
@@ -224,24 +282,31 @@ public class FlapDockProperty extends AbstractDockableProperty {
 		int result = super.hashCode();
 		result = prime * result + (holding ? 1231 : 1237);
 		result = prime * result + index;
+		result = prime * result
+				+ ((placeholder == null) ? 0 : placeholder.hashCode());
 		result = prime * result + size;
 		return result;
 	}
 
 	@Override
 	public boolean equals( Object obj ){
-		if( this == obj )
+		if (this == obj)
 			return true;
-		if( !super.equals( obj ) )
+		if (!super.equals( obj ))
 			return false;
-		if( !(obj instanceof FlapDockProperty) )
+		if (getClass() != obj.getClass())
 			return false;
-		FlapDockProperty other = (FlapDockProperty)obj;
-		if( holding != other.holding )
+		FlapDockProperty other = (FlapDockProperty) obj;
+		if (holding != other.holding)
 			return false;
-		if( index != other.index )
+		if (index != other.index)
 			return false;
-		if( size != other.size )
+		if (placeholder == null) {
+			if (other.placeholder != null)
+				return false;
+		} else if (!placeholder.equals( other.placeholder ))
+			return false;
+		if (size != other.size)
 			return false;
 		return true;
 	}
