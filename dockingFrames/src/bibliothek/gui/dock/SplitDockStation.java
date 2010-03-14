@@ -305,9 +305,13 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         public double validateDivider( double divider, Node node ) {
             return layoutManager.getValue().validateDivider( SplitDockStation.this, divider, node );
         }            
+        
+        public StationChildHandle newHandle( Dockable dockable ){
+        	return new StationChildHandle( SplitDockStation.this, getDisplayers(), dockable, title );
+        }
 
-        public StationChildHandle addHandle( Dockable dockable, boolean fire ) {
-            return SplitDockStation.this.addHandle( dockable, fire );
+        public void addHandle( StationChildHandle dockable, boolean fire ) {
+            SplitDockStation.this.addHandle( dockable, fire );
         }
         
         public void removeHandle( StationChildHandle handle, boolean fire ){
@@ -977,10 +981,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         return dockables.get( index ).getDockable();
     }
 
-    public DockableProperty getDockableProperty( Dockable dockable ) {
-    	DockableProperty result = getDockablePlaceholderProperty( dockable );
+    public DockableProperty getDockableProperty( Dockable child, Dockable target ){
+    	DockableProperty result = getDockablePlaceholderProperty( child, target );
     	if( result == null ){
-    		result = getDockablePathProperty( dockable );
+    		result = getDockablePathProperty( child );
     	}
     	return result;
     }
@@ -1062,12 +1066,13 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      * Creates a {@link SplitDockPlaceholderProperty} for <code>dockable</code>, may
      * insert an additional placeholder in the tree.
      * @param dockable the element whose location is searched
+     * @param target hint required to find the placeholder
      * @return the placeholder or <code>null</code> if the {@link #getPlaceholderStrategy() strategy}
      * did not assign a placeholder to <code>dockable</code>
      */
-    public SplitDockPlaceholderProperty getDockablePlaceholderProperty( Dockable dockable ){
+    public SplitDockPlaceholderProperty getDockablePlaceholderProperty( Dockable dockable, Dockable target ){
     	Leaf leaf = getRoot().getLeaf( dockable );
-    	Path placeholder = getPlaceholderStrategy().getPlaceholderFor( dockable );
+    	Path placeholder = getPlaceholderStrategy().getPlaceholderFor( target == null ? dockable : target );
     	if( placeholder == null ){
     		return null;
     	}
@@ -1541,20 +1546,20 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         }
 
         dockStationListeners.fireDockableAdding( combination );
-        Leaf next = new Leaf( access );
-        next.setDockable( combination, false );
-
-        SplitNode parent = leaf.getParent();
-        Root root = root();
-        if( parent == root )
-            root.setChild( next );
-        else{
-            Node parentNode = (Node)parent;
-            if( parentNode.getLeft() == leaf )
-                parentNode.setLeft( next );
-            else
-                parentNode.setRight( next );
-        }
+//        Leaf next = new Leaf( access );
+//        SplitNode parent = leaf.getParent();
+//        Root root = root();
+//        if( parent == root )
+//            root.setChild( next );
+//        else{
+//            Node parentNode = (Node)parent;
+//            if( parentNode.getLeft() == leaf )
+//                parentNode.setLeft( next );
+//            else
+//                parentNode.setRight( next );
+//        }
+//        next.setDockable( combination, false );
+        leaf.setDockable( combination, false );
 
         dockStationListeners.fireDockableAdded( combination );
         revalidate();
@@ -2006,19 +2011,18 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     }
 
     /**
-     * Creates a new {@link StationChildHandle} for <code>dockable</code>. This
-     * method also adds the {@link DockableDisplayer} of the new handle to this station. 
-     * @param dockable the element to add
+     * Adds <code>handle</code> to the list of dockables,also adds the {@link DockableDisplayer} of the new handle to this station. 
+     * @param handle the element to add
      * @param fire whether to fire events when adding <code>dockable</code> or not
-     * @return the new handle
      */
-    private StationChildHandle addHandle( Dockable dockable, boolean fire ){
+    private void addHandle( StationChildHandle handle, boolean fire ){
+    	Dockable dockable = handle.getDockable();
         DockUtilities.ensureTreeValidity( this, dockable );
 
         if( fire )
             dockStationListeners.fireDockableAdding( dockable );
 
-        StationChildHandle handle = new StationChildHandle( this, getDisplayers(), dockable, title );
+        dockables.add( handle );
         dockable.setDockParent( this );
 
         handle.updateDisplayer();
@@ -2026,12 +2030,9 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         DockableDisplayer displayer = handle.getDisplayer();
         getContentPane().add( displayer.getComponent() );
         displayer.getComponent().setVisible( !isFullScreen() );
-        dockables.add( handle );
 
         if( fire )
             dockStationListeners.fireDockableAdded( dockable );
-
-        return handle;
     }
 
     /**

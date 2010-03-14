@@ -1300,7 +1300,7 @@ public class FlapDockStation extends AbstractDockableStation {
         return result;
     }
 
-    public DockableProperty getDockableProperty( Dockable dockable ) {
+    public DockableProperty getDockableProperty( Dockable dockable, Dockable target ) {
     	int index = indexOf( dockable );
     	boolean holding = isHold( dockable );
     	int size = getWindowSize( dockable );
@@ -1308,7 +1308,10 @@ public class FlapDockStation extends AbstractDockableStation {
     	PlaceholderStrategy strategy = getPlaceholderStrategy();
     	Path placeholder = null;
     	if( strategy != null ){
-    		placeholder = strategy.getPlaceholderFor( dockable );
+    		placeholder = strategy.getPlaceholderFor( target == null ? dockable : target );
+    		if( placeholder != null ){
+    			handles.dockables().addPlaceholder( index, placeholder );
+    		}
     	}
     	
         return new FlapDockProperty( index, holding, size, placeholder );

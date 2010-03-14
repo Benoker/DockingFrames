@@ -332,7 +332,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 		return usedFieldList.size();
 	}
 
-	public DockableProperty getDockableProperty( Dockable dockable ){
+	public DockableProperty getDockableProperty( Dockable dockable, Dockable ignored ){
 		Field field = getFieldOf( dockable );
 		return new ChessBoardProperty( field.getRow(), field.getColumn() );
 	}

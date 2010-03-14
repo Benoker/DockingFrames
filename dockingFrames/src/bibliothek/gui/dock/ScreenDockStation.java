@@ -397,7 +397,7 @@ public class ScreenDockStation extends AbstractDockStation {
         addDockable( dockable, rect );
     }
 
-    public DockableProperty getDockableProperty( Dockable dockable ) {
+    public DockableProperty getDockableProperty( Dockable dockable, Dockable ignored ) {
         ScreenDockWindow window = getWindow( dockable );
         Rectangle bounds = window.getWindowBounds();
         return new ScreenDockProperty( bounds.x, bounds.y, bounds.width, bounds.height );

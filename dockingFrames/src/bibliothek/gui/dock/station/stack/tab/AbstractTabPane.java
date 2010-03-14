@@ -262,6 +262,21 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 	}
 	
 	/**
+	 * Moves the element at location <code>source</code> to <code>destination</code>.
+	 * @param source where to find the element to move
+	 * @param destination the target location
+	 */
+	public void move( int source, int destination ){
+		if( destination < 0 || destination >= getDockableCount() ){
+			throw new ArrayIndexOutOfBoundsException();
+		}
+		
+		Dockable dockable = dockables.remove( source );
+		dockables.add( destination, dockable );
+		revalidate();
+	}
+	
+	/**
 	 * Removes the <code>index</code>'th element of this pane.
 	 * @param index the index of the element to remove
 	 */

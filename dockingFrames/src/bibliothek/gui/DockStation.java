@@ -251,11 +251,14 @@ public interface DockStation extends DockElement{
      * Gets precise information about the location of a child of this station.
      * The result of this method could later be used to invoke
      * {@link #drop(Dockable, DockableProperty)}.
-     * @param dockable the child whose location is demanded
+     * @param child a child of this station, this childs location is asked
+     * @param target an optional hint telling for which dockable the location information
+     * will be used, can be <code>null</code>. This hint can be used to find a placeholder
+     * that should be part of the result.
      * @return the location
      * @see bibliothek.gui.dock.util.DockUtilities#getPropertyChain(DockStation, Dockable)
      */
-    public DockableProperty getDockableProperty( Dockable dockable );
+    public DockableProperty getDockableProperty( Dockable child, Dockable target );
     
     /**
      * Prepares this station to get the new child <code>dockable</code>. The
@@ -355,7 +358,7 @@ public interface DockStation extends DockElement{
     
     /**
      * Tries to move the child <code>dockable</code> in such a way, that
-     * {@link DockStation#getDockableProperty(Dockable)} would return a
+     * {@link DockStation#getDockableProperty(Dockable, Dockable)} would return a
      * {@link DockableProperty} that equals <code>property</code>.<br>
      * There is no need to give a guarantee that the move successes, and clients
      * should always be prepared for the possibility that this {@link DockStation}

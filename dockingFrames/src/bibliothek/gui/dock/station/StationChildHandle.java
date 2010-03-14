@@ -29,6 +29,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.event.DockableAdapter;
 import bibliothek.gui.dock.event.DockableListener;
+import bibliothek.gui.dock.station.support.PlaceholderListItem;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
@@ -40,7 +41,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  * @author Benjamin Sigg
  *
  */
-public class StationChildHandle {
+public class StationChildHandle implements PlaceholderListItem{
 	/** the station using this handler */
 	private DockStation station;
 	
@@ -149,6 +150,10 @@ public class StationChildHandle {
 	 */
 	public Dockable getDockable(){
 		return dockable;
+	}
+	
+	public Dockable asDockable(){
+		return getDockable();
 	}
 	
 	/**

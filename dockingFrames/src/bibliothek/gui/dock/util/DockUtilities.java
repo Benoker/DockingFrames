@@ -270,21 +270,22 @@ public class DockUtilities {
             throw new IllegalArgumentException( "ground and dockable are the same" );
         
         DockStation parent = dockable.getDockParent();
-        DockableProperty property = parent.getDockableProperty( dockable );
+        DockableProperty property = parent.getDockableProperty( dockable, dockable );
+        Dockable child = dockable;
         
         while( true ){
             if( parent == ground )
                 return property;
             
-            dockable = parent.asDockable();
-            if( dockable == null )
+            child = parent.asDockable();
+            if( child == null )
                 throw new IllegalArgumentException( "The chain is not complete" );
             
-            parent = dockable.getDockParent();
+            parent = child.getDockParent();
             if( parent == null )
                 throw new IllegalArgumentException( "The chain is not complete" );
             
-            DockableProperty temp = parent.getDockableProperty( dockable );
+            DockableProperty temp = parent.getDockableProperty( child, dockable );
             temp.setSuccessor( property );
             property = temp;
         }

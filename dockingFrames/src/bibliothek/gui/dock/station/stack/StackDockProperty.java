@@ -30,6 +30,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.layout.AbstractDockableProperty;
@@ -54,12 +55,25 @@ public class StackDockProperty extends AbstractDockableProperty {
     
     private int index;
     
+    private Path placeholder;
+
     /**
      * Constructs a property.
      * @param index The location
      */
     public StackDockProperty( int index ){
         setIndex( index );
+    }
+    
+
+    /**
+     * Constructs a property.
+     * @param index The location
+     * @param placeholder a name for this location
+     */
+    public StackDockProperty( int index, Path placeholder ){
+        setIndex( index );
+        setPlaceholder( placeholder );
     }
     
     /**
@@ -93,27 +107,82 @@ public class StackDockProperty extends AbstractDockableProperty {
         return index;
     }
     
+    /**
+     * Sets the placeholder name this location.
+     * @param placeholder the placeholder, can be <code>null</code>
+     */
+    public void setPlaceholder( Path placeholder ){
+		this.placeholder = placeholder;
+	}
+    
+    /**
+     * Gets the placeholder naming this location.
+     * @return the placeholder, can be <code>null</code>
+     */
+    public Path getPlaceholder(){
+		return placeholder;
+	}
+    
     public String getFactoryID() {
         return StackDockPropertyFactory.ID;
     }
 
     public void store( DataOutputStream out ) throws IOException {
-        Version.write( out, Version.VERSION_1_0_4 );
+        Version.write( out, Version.VERSION_1_0_8 );
         out.writeInt( index );
+        if( placeholder == null ){
+        	out.writeBoolean( false );
+        }
+        else{
+        	out.writeBoolean( true );
+        	out.writeUTF( placeholder.toString() );
+        }
     }
     
     public void store( XElement element ) {
-        element.setInt( index );
+    	if( index >= 0 ){
+    		element.addElement( "index" ).setInt( index );
+    	}
+    	
+        if( placeholder != null ){
+        	element.addElement( "placeholder" ).setString( placeholder.toString() );
+        }
     }
 
-    public void load( DataInputStream in ) throws IOException {
+    public void load( DataInputStream in ) throws IOException {    	
         Version version = Version.read( in );
         version.checkCurrent();
+        boolean version8 = Version.VERSION_1_0_8.compareTo( version ) <= 0;
         index = in.readInt();
+        placeholder = null;
+        
+        if( version8 ){
+        	if( in.readBoolean() ){
+        		placeholder = new Path( in.readUTF() );
+        	}
+        }
     }
     
     public void load( XElement element ) {
-        index = element.getInt();
+    	index = -1;
+    	placeholder = null;
+    	
+    	XElement xindex = element.getElement( "index" );
+    	XElement xplaceholder = element.getElement( "placeholder" );
+    	
+    	if( xindex == null && xplaceholder == null ){
+    		if( element.getValue() != null && element.getValue().length() > 0 ){
+    			index = element.getInt();
+    		}
+    	}
+    	else{
+    		if( xindex != null ){
+    			index = xindex.getInt();
+    		}
+    		if( xplaceholder != null ){
+    			placeholder = new Path( xplaceholder.toString() );
+    		}
+    	}
     }
 
 	@Override

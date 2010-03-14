@@ -58,6 +58,7 @@ import bibliothek.gui.dock.station.stack.tab.TabPaneListener;
  *
  * @param <T> the type of the tabs
  * @param <M> the type of the menus
+ * @param <I> the type of the additinal info panel
  */
 public abstract class CombinedStackDockComponent<T extends CombinedTab, M extends CombinedMenu, I extends CombinedInfoComponent> extends AbstractTabPane<T, M, I> implements StackDockComponent{
     /** The panel which shows the children */
@@ -376,6 +377,26 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
         meta.forward();
         
         meta.component.setVisible( getSelectedDockable() == dockable );
+    }
+    
+    public void moveTab( int source, int destination ){
+    	if( source == destination ){
+			return;
+		}
+		if( destination < 0 || destination >= getTabCount() ){
+			throw new ArrayIndexOutOfBoundsException();
+		}
+		int selected = getSelectedIndex();
+		
+		move( source, destination );
+		
+		if( selected == source ){
+			selected = destination;
+		}
+		else if( selected > source && selected <= destination ){
+			selected++;
+		}
+		setSelectedIndex( selected );
     }
     
     @Override

@@ -138,6 +138,17 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		protected D unwrap( Item<D> item ){
 			return item.getDockable();
 		}
+		
+		public void add( int index, D object ){
+			super.add( index, object );
+			
+			if( strategy != null ){
+				Path placeholder = strategy.getPlaceholderFor( object.asDockable() );
+				if( placeholder != null ){
+					removeAll( placeholder );
+				}
+			}
+		}
 	};
 	
 	/** a listener to {@link #strategy} */
@@ -234,7 +245,8 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 			}
 			
 			if( placeholders.length > 0 ){
-				Key key =  map.newUniqueKey( placeholders );
+				Key key = map.newUniqueKey( placeholders );
+				map.add( key );
 				
 				if( placeholderMap != null ){
 					map.put( key, "map", placeholderMap );
@@ -443,7 +455,8 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	 * location, then the other dockable is replaced silently. If <code>dockable</code> is a 
 	 * {@link DockStation} and a {@link PlaceholderMap} is set, then this map is transfered to 
 	 * <code>dockable</code> and removed from this list.<br>
-	 * This method also removes all occurrences of <code>placeholder</code> from this list.
+	 * This method also removes all occurrences of <code>placeholder</code> and the placeholder that is assigned
+	 * by the current {@link PlaceholderStrategy} from this list.
 	 * @param placeholder
 	 * @param dockable
 	 * @return the index in {@link #dockables()} where <code>dockable</code> was inserted or -1 if
@@ -466,6 +479,12 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 			station.setPlaceholders( map );
 		}
 		removeAll( placeholder );
+		if( strategy != null ){
+			Path other = strategy.getPlaceholderFor( dockable.asDockable() );
+			if( other != null && !other.equals( placeholder )){
+				removeAll( other );
+			}
+		}
 		return entry.index( Level.DOCKABLE );
 	}
 	
@@ -491,6 +510,15 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		else{
 			return entry.index( Level.DOCKABLE ) + 1;
 		}
+	}
+	
+	/**
+	 * Tells whether this list contains a reference to <code>placeholder</code>.
+	 * @param placeholder the placeholder to search
+	 * @return whether the placeholder was found
+	 */
+	public boolean hasPlaceholder( Path placeholder ){
+		return search( placeholder ) != null;
 	}
 	
 	
@@ -1096,6 +1124,14 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		public void add( int index, M object );
 		
 		/**
+		 * Adds a placeholder at location <code>index</code>, ensures that this
+		 * placeholder is only present at <code>index</code>.
+		 * @param index some location
+		 * @param placeholder the placeholder to insert
+		 */
+		public void addPlaceholder( int index, Path placeholder );
+		
+		/**
 		 * Replaces the object at location <code>index</code> by <code>object</code>.
 		 * @param index the location
 		 * @param object the new element, not <code>null</code>
@@ -1183,6 +1219,15 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 				Entry entry = getEntry( index );
 				new Entry( entry.previous( level ), wrap( object ));
 			}
+		}
+		
+		public void addPlaceholder( int index, Path placeholder ){
+			Entry entry = search( index, level );
+			if( entry == null ){
+				throw new IndexOutOfBoundsException();
+			}
+			removeAll( placeholder );
+			entry.item.add( placeholder );
 		}
 		
 		public A get( int index ){

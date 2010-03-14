@@ -155,7 +155,8 @@ public class Leaf extends VisibleSplitNode{
         			removePlaceholder( placeholder );
         		}
         	}
-            handle = getAccess().addHandle( dockable, fire );
+        	handle = getAccess().newHandle( dockable );
+            getAccess().addHandle( handle, fire );
         }
     }
     

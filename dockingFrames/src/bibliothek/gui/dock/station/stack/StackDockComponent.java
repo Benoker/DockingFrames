@@ -99,6 +99,13 @@ public interface StackDockComponent {
     public void addTab(String title, Icon icon, Component comp, Dockable dockable );
 
     /**
+     * Moves the tab at <code>source</code> to location <code>destination</code>.
+     * @param source the item to move
+     * @param destination the target destination
+     */
+    public void moveTab( int source, int destination );
+    
+    /**
      * Adds a new child at the location <code>index</code>.
      * @param title the title of the child
      * @param icon an icon to display for the child or <code>null</code> 

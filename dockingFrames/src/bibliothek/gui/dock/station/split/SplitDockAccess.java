@@ -66,14 +66,20 @@ public interface SplitDockAccess {
     public double validateDivider( double divider, Node node );
     
     /**
-     * Creates a {@link StationChildHandle} for <code>dockable</code> and adds
-     * the displayer to the station. Binds <code>dockable</code>.
-     * @param dockable the new {@link Dockable}
+     * Creates a new handle but does not take any other action.
+     * @param dockable the target for the new handle
+     * @return the new handle
+     */
+    public StationChildHandle newHandle( Dockable dockable );
+    
+    /**
+     * Adds the new <code>handle</code> to the station and adds
+     * the displayer to the station. Binds the <code>dockable</code>.
+     * @param handle the new handle
      * @param fire whether to inform {@link DockStationListener}s about
      * the new element
-     * @return the created handle
      */
-    public StationChildHandle addHandle( Dockable dockable, boolean fire );
+    public void addHandle( StationChildHandle handle, boolean fire );
     
     /**
      * Removes an element from the station.

@@ -114,6 +114,34 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
         dockables.add( tab );
         tab.setController( controller );
 	}
+	
+	public void moveTab( int source, int destination ){
+		if( source == destination ){
+			return;
+		}
+		if( destination < 0 || destination >= getTabCount() ){
+			throw new ArrayIndexOutOfBoundsException();
+		}
+		int selected = getSelectedIndex();
+		
+		String title = getTitleAt( source );
+		String tooltip = getToolTipTextAt( source );
+		Icon icon = getIconAt( source );
+		Component comp = getComponentAt( source );
+		Dockable dockable = dockables.get( source ).getDockable();
+		
+		remove( source );
+		insertTab( title, icon, comp, dockable, destination );
+		setTooltipAt( destination, tooltip );
+		
+		if( selected == source ){
+			selected = destination;
+		}
+		else if( selected > source && selected <= destination ){
+			selected++;
+		}
+		setSelectedIndex( selected );
+	}
     
     @Override
     public void removeAll(){
