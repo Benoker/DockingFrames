@@ -119,9 +119,10 @@ public class Root extends VisibleSplitNode{
     
     @Override
     public Dimension getMinimumSize() {
-    	if( child == null )
+    	Dimension result = child == null ? null : child.getMinimumSize();
+    	if( result == null )
     		return new Dimension( 0, 0 );
-    	return child.getMinimumSize();
+    	return result;
     }
         
     /**

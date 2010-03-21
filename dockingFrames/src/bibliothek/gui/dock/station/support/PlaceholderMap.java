@@ -60,6 +60,16 @@ public class PlaceholderMap {
 	/** all the data that is stored in this map */
 	private Map<Key, Map<String, Object>> data = new LinkedHashMap<Key, Map<String,Object>>();
 	
+	/** strategy observed for automatically removeal of invalid placeholders */
+	private PlaceholderStrategy strategy;
+	
+	/** listener to {@link #strategy} */
+	private PlaceholderStrategyListener listener = new PlaceholderStrategyListener() {
+		public void placeholderInvalidated( Set<Path> placeholders ){
+			removeAll( placeholders, false );	
+		}
+	};
+	
 	/**
 	 * Creates a new map.
 	 * @param format the kind of data stored in this map, the exact meaning depends on the client
@@ -82,6 +92,8 @@ public class PlaceholderMap {
 	 * @throws IOException in case of an I/O error
 	 */
 	public PlaceholderMap( DataInputStream in, PlaceholderStrategy strategy ) throws IOException{
+		setPlaceholderStrategy( strategy );
+		
 		Version version = Version.read( in );
 		if( version.compareTo( Version.VERSION_1_0_8 ) != 0 ){
 			throw new IOException( "unknown version: " + version );
@@ -122,6 +134,8 @@ public class PlaceholderMap {
 	 * @param strategy guard to identify the placeholders which are allowed to be stored, can be <code>null</code> 
 	 */
 	public PlaceholderMap( XElement in, PlaceholderStrategy strategy ){
+		setPlaceholderStrategy( strategy );
+		
 		XElement xversion = in.getElement( "version" );
 		if( xversion == null ){
 			throw new XException( "missing element 'version'" );
@@ -246,7 +260,7 @@ public class PlaceholderMap {
 		
 		for( Map.Entry<Key, Map<String, Object>> entry : data.entrySet() ){
 			XElement xplaceholder = out.addElement( "entry" );
-			((PlaceholderKey)entry.getKey()).write( out.addElement( "key" ) );
+			((PlaceholderKey)entry.getKey()).write( xplaceholder.addElement( "key" ) );
 			Map<String, Object> map = entry.getValue();
 			for( Map.Entry<String, Object> mapEntry : map.entrySet() ){
 				XElement xitem = xplaceholder.addElement( "item" );
@@ -398,7 +412,7 @@ public class PlaceholderMap {
 	public Key newUniqueKey( Path... placeholders ){
 		return new PlaceholderKey( placeholders, false );
 	}
-	
+
 	/**
 	 * Creates a copy of <code>key</code>.
 	 * @param key the key to copy
@@ -408,6 +422,132 @@ public class PlaceholderMap {
 		return new PlaceholderKey( key.getPlaceholders(), key.isShared() );
 	}
 		
+	/**
+	 * Sets the strategy that is used to automatically remove invalid placeholders. This
+	 * strategy is recursivelly applied to all other {@link PlaceholderMap}s that are
+	 * stored within this map.
+	 * @param strategy the new strategy, can be <code>null</code>
+	 */
+	public void setPlaceholderStrategy( PlaceholderStrategy strategy ){
+		if( this.strategy != null ){
+			this.strategy.removeListener( listener );
+		}
+		this.strategy = strategy;
+		for( Map<?, Object> map : data.values() ){
+			for( Object value : map.values() ){
+				setPlaceholderStrategy( value, strategy );
+			}
+		}
+		if( this.strategy != null ){
+			validate( this.strategy, false );
+			this.strategy.addListener( listener );
+		}
+	}
+	
+	private void setPlaceholderStrategy( Object value, PlaceholderStrategy strategy ){
+		if( value instanceof PlaceholderMap ){
+			((PlaceholderMap)value).setPlaceholderStrategy( strategy );
+		}
+		else if( value instanceof Object[] ){
+			for( Object child : (Object[])value ){
+				setPlaceholderStrategy( child, strategy );
+			}
+		}
+	}
+	
+	/**
+	 * Gets the strategy that is observed for removing invalid placeholders.
+	 * @return the strategy, can be <code>null</code>
+	 */
+	public PlaceholderStrategy getPlaceholderStrategy(){
+		return strategy;
+	}
+	
+	/**
+	 * Using <code>strategy</code> removes all placeholders that are invalid.
+	 * @param strategy the strategy for checking the placeholders, a value or <code>null</code>
+	 * means that all placeholders are valid
+	 * @param recursive if <code>true</code> then {@link #validate(PlaceholderStrategy,boolean)} is also
+	 * called on all sub-maps of this map
+	 */
+	public void validate( PlaceholderStrategy strategy, boolean recursive ){
+		if( strategy == null ){
+			return;
+		}
+		
+		if( recursive ){
+			for( Map<?, Object> map : data.values() ){
+				for( Object value : map.values() ){
+					validate( value, strategy );
+				}
+			}
+		}
+		
+		Key[] keys = data.keySet().toArray( new Key[ data.size() ] );
+		for( Key key : keys ){
+			Key replacement = ((PlaceholderKey)key).shrink( strategy );
+			if( replacement != key ){
+				Map<String, Object> map = data.remove( key );
+				if( replacement != null ){
+					data.put( replacement, map );
+				}
+			}
+		}
+	}
+	
+	private void validate( Object value, PlaceholderStrategy strategy ){
+		if( value instanceof PlaceholderMap ){
+			((PlaceholderMap)value).validate( strategy, true );
+		}
+		else if( value instanceof Object[] ){
+			for( Object child : (Object[])value ){
+				validate( child, strategy );
+			}
+		}
+	}
+	
+	/**
+	 * Removes all occurrences of all elements of <code>placeholders</code>.
+	 * @param placeholders the placeholders to remove
+	 * @param recursive if <code>true</code>, this method is called recusively on
+	 * every sub-map in this map
+	 */
+	public void removeAll( Set<Path> placeholders, boolean recursive ){
+		if( placeholders.isEmpty() ){
+			return;
+		}
+		
+		if( recursive ){
+			for( Map<?, Object> map : data.values() ){
+				for( Object value : map.values() ){
+					removeAll( value, placeholders );
+				}
+			}
+		}
+		
+		Key[] keys = data.keySet().toArray( new Key[ data.size() ] );
+		for( Key key : keys ){
+			Key replacement = ((PlaceholderKey)key).shrink( placeholders );
+			if( replacement != key ){
+				Map<String, Object> map = data.remove( key );
+				if( replacement != null ){
+					data.put( replacement, map );
+				}
+			}
+		}
+	}
+	
+	private void removeAll( Object value, Set<Path> invalidated ){
+		if( value instanceof PlaceholderMap ){
+			((PlaceholderMap)value).removeAll( invalidated, true );
+		}
+		else if( value instanceof Object[] ){
+			for( Object child : (Object[])value ){
+				removeAll( child, invalidated );
+			}
+		}
+	}
+	
 	/**
 	 * Gets the version of the format used in this map.
 	 * @return the version, its meaning depends on {@link #getFormat() the format}
@@ -824,7 +964,7 @@ public class PlaceholderMap {
 			XElement[] xplaceholders = in.getElements( "placeholder" );
 			placeholders = new Path[ xplaceholders.length ];
 			for( int i = 0; i < xplaceholders.length; i++ ){
-				placeholders[i] = new Path( xplaceholders[i].toString() );
+				placeholders[i] = new Path( xplaceholders[i].getString() );
 			}
 		}
 		
@@ -857,6 +997,41 @@ public class PlaceholderMap {
 			int count = 0;
 			for( int i = 0; i < remain.length; i++ ){
 				remain[i] = strategy.isValidPlaceholder( placeholders[i] );
+				if( remain[i] ){
+					count++;
+				}
+			}
+			
+			if( count == placeholders.length ){
+				return this;
+			}
+			if( count == 0 ){
+				return null;
+			}
+			
+			Path[] copy = new Path[ remain.length ];
+			int index = 0;
+			for( int i = 0; i < copy.length; i++ ){
+				if( remain[i] ){
+					copy[ index++ ] = placeholders[i];
+				}
+			}
+			
+			return new PlaceholderKey( copy, shared );
+		}
+		
+		/**
+		 * Creates a new key removing all placeholders in <code>invalidated</code>
+		 * from this key.
+		 * @param invalidated the placeholders that are no longer valid
+		 * @return the new key, may be <code>this</code> or <code>null</code> to indicate
+		 * that this key is no longer valid
+		 */
+		public PlaceholderKey shrink( Set<Path> invalidated ){
+			boolean[] remain = new boolean[placeholders.length];
+			int count = 0;
+			for( int i = 0; i < remain.length; i++ ){
+				remain[i] = !invalidated.contains( placeholders[i] );
 				if( remain[i] ){
 					count++;
 				}

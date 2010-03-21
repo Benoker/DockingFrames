@@ -34,6 +34,7 @@ import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -68,9 +69,12 @@ import bibliothek.gui.dock.station.stack.StackDockComponentParent;
 import bibliothek.gui.dock.station.stack.StackDockProperty;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
+import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
 import bibliothek.gui.dock.station.support.PlaceholderList;
+import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
+import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.support.StationPaintWrapper;
@@ -404,6 +408,8 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             	handle.setTitleRequest( null );
             }
             
+            boolean wasNull = getController() == null;
+            
             stackComponentFactory.setProperties( controller );
             super.setController(controller);
             stackComponent.setController( controller );
@@ -418,6 +424,16 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             }
             
             displayers.setController( controller );
+            
+            boolean isNull = controller == null;
+            if( wasNull != isNull ){
+            	if( wasNull ){
+            		dockables.bind();
+            	}
+            	else{
+            		dockables.unbind();
+            	}
+            }
             
             for( StationChildHandle handle : dockables.dockables() ){
             	handle.setTitleRequest( title, true );
@@ -540,13 +556,113 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     		throw new IllegalStateException( "there are children on this station" );
     	}
     	try{
-    		dockables = new PlaceholderList<StationChildHandle>( placeholders );
+    		PlaceholderList<StationChildHandle> next = new PlaceholderList<StationChildHandle>( placeholders );
+    		if( getController() != null ){
+    			dockables.setStrategy( null );
+    			dockables.unbind();
+    			dockables = next;
+    			dockables.bind();
+    			dockables.setStrategy( getPlaceholderStrategy() );
+    		}
+    		else{
+    			dockables = next;
+    		}
     	}
     	catch( IllegalArgumentException ex ){
     		// ignore
     	}
     }
     
+    /**
+     * Gets the placeholders of this station using a {@link PlaceholderListItemConverter} to
+     * encode the children of this station. To be exact, the converter puts the following
+     * parameters for each {@link Dockable} into the map:
+     * <ul>
+     * 	<li>id: the integer from <code>children</code></li>
+     * 	<li>index: the location of the element in the dockables-list</li>
+     *  <li>placeholder: the placeholder of the element, might not be written</li>
+     * </ul> 
+     * @param children a unique identifier for each child of this station
+     * @return the map 
+     */
+    public PlaceholderMap getPlaceholders( final Map<Dockable, Integer> children ){
+    	dockables.insertAllPlaceholders();
+    	
+    	final PlaceholderStrategy strategy = getPlaceholderStrategy();
+    	
+    	return dockables.toMap( new PlaceholderListItemAdapter<StationChildHandle>() {
+    		@Override
+    		public ConvertedPlaceholderListItem convert( int index, StationChildHandle dockable ){
+    			ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
+    			item.putInteger( "id", children.get( dockable.getDockable() ) );
+    			item.putInteger( "index", index );
+    			if( strategy != null ){
+    				Path placeholder = strategy.getPlaceholderFor( dockable.getDockable() );
+    				if( placeholder != null ){
+    					item.putString( "placeholder", placeholder.toString() );
+    					item.setPlaceholder( placeholder );
+    				}
+    			}
+    			return item;
+    		}
+    		
+    		public StationChildHandle convert( ConvertedPlaceholderListItem item ){
+    			// ignore
+    			return null;
+    		}
+		});
+    }
+    
+    /**
+     * Sets all placeholders and children of this station.
+     * @param placeholders the new children and placeholders
+     * @param children map to convert items to {@link Dockable}s
+     * @throws IllegalStateException if there are still children on this station
+     */
+    public void setPlaceholders( PlaceholderMap placeholders, final Map<Integer, Dockable> children ){
+    	if( getDockableCount() > 0 ){
+    		throw new IllegalStateException( "there are children on this station" );
+    	}
+    	
+    	dockables.setStrategy( null );
+		dockables.unbind();
+		PlaceholderList<StationChildHandle> next = new PlaceholderList<StationChildHandle>();
+    	
+    	dockables = next;
+    	next.read( placeholders, new PlaceholderListItemAdapter<StationChildHandle>() {
+    		private int size = 0;
+    		
+    		@Override
+    		public StationChildHandle convert( ConvertedPlaceholderListItem item ){
+    			int id = item.getInt( "id" );
+    			Dockable dockable = children.get( id );
+    			if( dockable == null ){
+    				return null;
+    			}
+    			
+    			listeners.fireDockableAdding( dockable );
+    			dockable.addDockableListener( listener );
+    			StationChildHandle handle = new StationChildHandle( StackDockStation.this, getDisplayers(), dockable, title );
+    			handle.updateDisplayer();
+    			addToPanel( handle, size, size );
+    			size++;
+    			
+    			return handle;
+    		}
+    		
+    		@Override
+    		public void added( StationChildHandle handle ){
+    			Dockable dockable = handle.getDockable();
+    			dockable.setDockParent( StackDockStation.this );
+    			listeners.fireDockableAdded( dockable );
+    		}
+		});
+    	
+		if( getController() != null ){
+			dockables.bind();
+			dockables.setStrategy( getPlaceholderStrategy() );
+		}
+    }
 
     /**
      * Gets the {@link PlaceholderStrategy} that is currently in use.
@@ -877,10 +993,10 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     		int index = indexOf( old );
     		
     		int listIndex = dockables.levelToBase( index, Level.DOCKABLE );
-    		PlaceholderList.Item<StationChildHandle> oldItem = dockables.list().get( listIndex );
+    		PlaceholderList<StationChildHandle>.Item oldItem = dockables.list().get( listIndex );
     		remove( index );
     		add( next, index );
-    		PlaceholderList.Item<StationChildHandle> newItem = dockables.list().get( listIndex );
+    		PlaceholderList<StationChildHandle>.Item newItem = dockables.list().get( listIndex );
     		if( station ){
     			newItem.setPlaceholderMap( next.asDockStation().getPlaceholders() );
     		}
@@ -923,17 +1039,38 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         
         StationChildHandle handle = new StationChildHandle( this, getDisplayers(), dockable, title );
         handle.updateDisplayer();
-        DockableDisplayer displayer = handle.getDisplayer();
         
+        int inserted = placeholder == null ? -1 : dockables.put( placeholder, handle );
+        if( inserted == -1 ){
+        	dockables.dockables().add( index, handle );
+        }
+        else{
+        	index = inserted;
+        }
         
-        if( dockables.dockables().size() == 0 ){
-            if( placeholder == null || dockables.put( placeholder, handle ) == -1 ){
-            	dockables.dockables().add( handle );	
-            }
+        addToPanel( handle, index, dockables.dockables().size() );
+        
+        dockable.addDockableListener( listener );
+        
+        if( fire ){
+        	listeners.fireDockableAdded( dockable );
+        }
+    }
+    
+    /**
+     * Adds the contents of <code>handle</code> to the {@link #stackComponent} of this station.
+     * @param handle the handle to add
+     * @param index the index where to add the handle
+     * @param size the current amount of children of the panel 
+     */
+    protected void addToPanel( StationChildHandle handle, int index, int size ){
+    	DockableDisplayer displayer = handle.getDisplayer();
+    	
+    	if( size == 0 ){
             panel.add( displayer.getComponent() );
         }
         else{
-            if( dockables.dockables().size() == 1 ){
+            if( size == 1 ){
                 panel.removeAll();
                 DockableDisplayer child = dockables.dockables().get( 0 ).getDisplayer();
                 stackComponent.addTab( child.getDockable().getTitleText(), child.getDockable().getTitleIcon(), child.getComponent(), child.getDockable() );
@@ -941,25 +1078,13 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
                 panel.add( stackComponent.getComponent() );
             }
             
-            int inserted = placeholder == null ? -1 : dockables.put( placeholder, handle );
-            if( inserted == -1 ){
-            	dockables.dockables().add( index, handle );
-            }
-            else{
-            	index = inserted;
-            }
+            Dockable dockable = handle.getDockable();
             stackComponent.insertTab( dockable.getTitleText(), dockable.getTitleIcon(), displayer.getComponent(), dockable, index );
             stackComponent.setTooltipAt( index, dockable.getTitleToolTip() );
             stackComponent.setSelectedIndex( index );
         }
-        
-        dockable.addDockableListener( listener );
         panel.validate();
         panel.repaint();
-        
-        if( fire ){
-        	listeners.fireDockableAdded( dockable );
-        }
     }
     
     /**

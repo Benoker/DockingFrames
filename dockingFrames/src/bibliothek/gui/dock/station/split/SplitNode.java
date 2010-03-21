@@ -171,7 +171,14 @@ public abstract class SplitNode{
 	 * @param placeholderMap the placeholder information, can be <code>null</code>
 	 */
 	public void setPlaceholderMap( PlaceholderMap placeholderMap ){
+		if( this.placeholderMap != null ){
+			this.placeholderMap.setPlaceholderStrategy( null );
+		}
+		
 		this.placeholderMap = placeholderMap;
+		if( this.placeholderMap != null ){
+			this.placeholderMap.setPlaceholderStrategy( getAccess().getOwner().getPlaceholderStrategy() );
+		}
 	}
 	
 	/**
@@ -211,6 +218,11 @@ public abstract class SplitNode{
      * that no holes are left after this node was deleted
      */
     public void delete( boolean shrink ){
+    	PlaceholderMap map = getPlaceholderMap();
+    	if( map != null ){
+    		map.setPlaceholderStrategy( null );
+    	}
+    	
         SplitNode parent = getParent();
         if( parent != null ){
             if( shrink ){

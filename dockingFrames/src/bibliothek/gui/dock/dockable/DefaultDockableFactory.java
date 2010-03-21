@@ -35,6 +35,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
@@ -96,13 +97,13 @@ public class DefaultDockableFactory implements DockFactory<DefaultDockable, Obje
         return new DefaultDockable();
     }
 
-    public Object read( DataInputStream in ) throws IOException {
+    public Object read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException {
         Version version = Version.read( in );
         version.checkCurrent();
         return new Object();
     }
 
-    public Object read( XElement element ) {
+    public Object read( XElement element, PlaceholderStrategy placeholders ) {
         return new Object();
     }
 

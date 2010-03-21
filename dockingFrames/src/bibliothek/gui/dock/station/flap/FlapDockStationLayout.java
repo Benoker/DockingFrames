@@ -25,71 +25,36 @@
  */
 package bibliothek.gui.dock.station.flap;
 
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
 
 /**
  * A layout describing the content of a {@link FlapDockStation}.
  * @author Benjamin Sigg
  */
 public class FlapDockStationLayout {
-    /** the order of the children */
-    private int[] children;
-    
-    /** which children are holding */
-    private boolean[] holds;
-    
-    /** the size of the window */
-    private int[] sizes;
-    
     /** whether the direction of the window is chosen automatically or not */
     private boolean autoDirection;
     
     /** the direction of the window */
     private Direction direction;
+    
+    /** placeholders for all the items, contains also the encoded {@link Dockable}s. */
+    private PlaceholderMap placeholders;
 
     /**
      * Creates a new layout
-     * @param children the ids of the children of the station
-     * @param holds the holding state of the children
-     * @param sizes the sizes of the window
      * @param autoDirection whether the direction of the window is chosen
      * automatically
      * @param direction the direction into which the window opens
+     * @param placeholders placeholders for all the items, contains also the encoded {@link Dockable}s.
      */
-    public FlapDockStationLayout(
-            int[] children, boolean[] holds, int[] sizes,
-            boolean autoDirection, Direction direction ) {
-        
-        this.children = children;
-        this.holds = holds;
-        this.sizes = sizes;
+    public FlapDockStationLayout( boolean autoDirection, Direction direction, PlaceholderMap placeholders ) {
         this.autoDirection = autoDirection;
         this.direction = direction;
-    }
-
-    /**
-     * Gets the order of the children.
-     * @return the children
-     */
-    public int[] getChildren() {
-        return children;
-    }
-    
-    /**
-     * Tells the holding state of the children.
-     * @return the states
-     */
-    public boolean[] getHolds() {
-        return holds;
-    }
-    
-    /**
-     * Gets the sizes of the window
-     * @return the size in pixel
-     */
-    public int[] getSizes() {
-        return sizes;
+        this.placeholders = placeholders;
     }
     
     /**
@@ -107,4 +72,12 @@ public class FlapDockStationLayout {
     public boolean isAutoDirection() {
         return autoDirection;
     }
+    
+    /**
+     * Gets all the items.
+     * @return the location of all items and all placeholders
+     */
+    public PlaceholderMap getPlaceholders(){
+		return placeholders;
+	}
 }

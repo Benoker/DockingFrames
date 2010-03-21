@@ -37,6 +37,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.util.DirectWindowProvider;
 import bibliothek.gui.dock.util.WindowProvider;
 import bibliothek.util.Version;
@@ -180,9 +181,7 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
         }
     }
     
-    public ScreenDockStationLayout read( DataInputStream in )
-            throws IOException {
-        
+    public ScreenDockStationLayout read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException{
         Version version = Version.read( in );
         version.checkCurrent();
         
@@ -210,7 +209,7 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
         }
     }
     
-    public ScreenDockStationLayout read( XElement element ) {
+    public ScreenDockStationLayout read( XElement element, PlaceholderStrategy placeholders ){
         ScreenDockStationLayout layout = new ScreenDockStationLayout();
         for( XElement child : element.getElements( "child" )){
             layout.add( 

@@ -26,8 +26,8 @@
 package bibliothek.gui.dock.station.stack;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
 
 /**
  * A layout of a {@link StackDockStation}, stores the order of all {@link Dockable}s
@@ -35,31 +35,22 @@ import bibliothek.gui.dock.StackDockStation;
  * @author Benjamin Sigg
  */
 public class StackDockStationLayout {
-    /** the order of the chilren */
-    private int[] children;
-    
     /** the name of the selected child */
     private int selected;
+    
+    /** all the items of this layout */
+    private PlaceholderMap placeholders;
     
     /**
      * Creates a new layout.
      * @param selected the name of the selected child
-     * @param children the order of the children. The entries of the array
-     * are the identifiers that a {@link DockFactory} gets in its method
-     * {@link DockFactory#getLayout(bibliothek.gui.dock.DockElement, java.util.Map)}
+     * @param placeholders all the items of this layout
      */
-    public StackDockStationLayout( int selected, int[] children ){
+    public StackDockStationLayout( int selected, PlaceholderMap placeholders ){
         this.selected = selected;
-        this.children = children;
+        this.placeholders = placeholders;
     }
 
-    /**
-     * Gets the order of the children.
-     * @return the order
-     */
-    public int[] getChildren() {
-        return children;
-    }
     
     /**
      * Gets the name of the selected child.
@@ -68,4 +59,12 @@ public class StackDockStationLayout {
     public int getSelected() {
         return selected;
     }
+    
+    /**
+     * Gets all the items of this layout, including the encoded {@link Dockable}s.
+     * @return the placeholders
+     */
+    public PlaceholderMap getPlaceholders(){
+		return placeholders;
+	}
 }

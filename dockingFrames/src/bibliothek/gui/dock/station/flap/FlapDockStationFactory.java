@@ -29,16 +29,21 @@ package bibliothek.gui.dock.station.flap;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
+import bibliothek.gui.dock.station.support.PlaceholderList;
+import bibliothek.gui.dock.station.support.PlaceholderListItem;
+import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XAttribute;
 import bibliothek.util.xml.XElement;
@@ -55,36 +60,9 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
         return ID;
     }
     
-    public FlapDockStationLayout getLayout( FlapDockStation station,
-            Map<Dockable, Integer> children ) {
-        
-        List<Integer> ids = new ArrayList<Integer>();
-        
-        List<Boolean> holding = new ArrayList<Boolean>();
-        List<Integer> sizes = new ArrayList<Integer>();
-        
-        for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
-            Dockable dockable = station.getDockable( i );
-            Integer id = children.get( dockable );
-            if( id != null ){
-                ids.add( id );
-                holding.add( station.isHold( dockable ));
-                sizes.add( station.getWindowSize( dockable ));
-            }
-        }
-        
-        int[] idArray = new int[ ids.size() ];
-        boolean[] holdingArray = new boolean[ ids.size() ];
-        int[] sizeArray = new int[ ids.size() ];
-        for( int i = 0, n = ids.size(); i<n; i++ ){
-            idArray[i] = ids.get( i );
-            holdingArray[i] = holding.get( i );
-            sizeArray[i] = sizes.get( i );
-        }
-        
-        return new FlapDockStationLayout( idArray, holdingArray, 
-                sizeArray, station.isAutoDirection(),
-                station.getDirection() );
+    public FlapDockStationLayout getLayout( FlapDockStation station, Map<Dockable, Integer> children ) {
+        PlaceholderMap map = station.getPlaceholders( children );
+        return new FlapDockStationLayout( station.isAutoDirection(), station.getDirection(), map );
     }
     
     public void setLayout( FlapDockStation station, FlapDockStationLayout layout ) {
@@ -106,19 +84,27 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
 	        station.setDirection( layout.getDirection() );
 	        station.setAutoDirection( layout.isAutoDirection() );
 	        
-	        int[] ids = layout.getChildren();
-	        boolean[] holding = layout.getHolds();
-	        int[] sizes = layout.getSizes();
-	        
-	        for( int i = 0, n = ids.length; i<n; i++ ){
-	        	Dockable dockable = children.get( ids[i] );
-	            
-	        	if( dockable != null ){
-	        		station.add( dockable );
-	        		station.setHold( dockable, holding[i] );
-	        		station.setWindowSize( dockable, sizes[i] );
-	        	}
+	        if( layout instanceof RetroFlapDockStationLayout ){
+	        	RetroFlapDockStationLayout retroLayout = (RetroFlapDockStationLayout)layout;
+	        	
+	        	int[] ids = retroLayout.getChildren();
+		        boolean[] holding = retroLayout.getHolds();
+		        int[] sizes = retroLayout.getSizes();
+		        
+		        for( int i = 0, n = ids.length; i<n; i++ ){
+		        	Dockable dockable = children.get( ids[i] );
+		            
+		        	if( dockable != null ){
+		        		station.add( dockable );
+		        		station.setHold( dockable, holding[i] );
+		        		station.setWindowSize( dockable, sizes[i] );
+		        	}
+		        }	
 	        }
+	        else{
+	        	station.setPlaceholders( layout.getPlaceholders(), children );
+	        }
+	        
     	}
     	finally{
     		if( controller != null )
@@ -126,17 +112,37 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
     	}
     }
     
-    public void estimateLocations( FlapDockStationLayout layout, Map<Integer, DockLayoutInfo> children ){
-    	int[] ids = layout.getChildren();
-    	boolean[] holding = layout.getHolds();
-    	int[] sizes = layout.getSizes();
-    	
-    	for( int i = 0, n = ids.length; i<n; i++ ){
-    		DockLayoutInfo info = children.get( ids[i] );
-    		if( info != null ){
-    			FlapDockProperty property = new FlapDockProperty( i, holding[i], sizes[i] );
-    			info.setLocation( property );
-    		}
+    public void estimateLocations( final FlapDockStationLayout layout, final Map<Integer, DockLayoutInfo> children ){
+    	if( layout instanceof RetroFlapDockStationLayout ){
+    		RetroFlapDockStationLayout retroLayout = (RetroFlapDockStationLayout)layout;
+	    	int[] ids = retroLayout.getChildren();
+	    	boolean[] holding = retroLayout.getHolds();
+	    	int[] sizes = retroLayout.getSizes();
+	    	
+	    	for( int i = 0, n = ids.length; i<n; i++ ){
+	    		DockLayoutInfo info = children.get( ids[i] );
+	    		if( info != null ){
+	    			FlapDockProperty property = new FlapDockProperty( i, holding[i], sizes[i] );
+	    			info.setLocation( property );
+	    		}
+	    	}
+    	}
+    	else{
+    		PlaceholderList.simulatedRead( layout.getPlaceholders(), new PlaceholderListItemAdapter<PlaceholderListItem>() {
+    			@Override
+    			public PlaceholderListItem convert( ConvertedPlaceholderListItem item ){
+    				int index = item.getInt( "index" );
+    				boolean hold = item.getBoolean( "hold" );
+    				int size = item.getInt( "size" );
+    				Path placeholder = null;
+    				if( item.contains( "placeholder" )){
+    					placeholder = new Path( item.getString( "placeholder" ) );
+    				}
+    				FlapDockProperty property = new FlapDockProperty( index, hold, size, placeholder );
+    				children.get( index ).setLocation( property );
+    				return null;
+    			}
+			});
     	}
     }
     
@@ -153,88 +159,133 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
         setLayout( station, layout );
         return station;
     }
-    
-    public void write( FlapDockStationLayout layout, DataOutputStream out )
-            throws IOException {
-     
-        Version.write( out, Version.VERSION_1_0_4 );
-        
-        out.writeBoolean( layout.isAutoDirection() );
-        out.writeInt( layout.getDirection().ordinal() );
-        
-        int count = layout.getChildren().length;
-        out.writeInt( count );
-        for( int i = 0; i < count; i++ ){
-            out.writeInt( layout.getChildren()[i] );
-            out.writeBoolean( layout.getHolds()[i] );
-            out.writeInt( layout.getSizes()[i] );
-        }
-    }
 
-    public FlapDockStationLayout read( DataInputStream in ) throws IOException {
+    public void write( FlapDockStationLayout layout, DataOutputStream out )
+    throws IOException {
+
+    	if( layout instanceof RetroFlapDockStationLayout ){
+    		RetroFlapDockStationLayout retroLayout = (RetroFlapDockStationLayout)layout;
+    		Version.write( out, Version.VERSION_1_0_4 );
+
+    		out.writeBoolean( layout.isAutoDirection() );
+    		out.writeInt( layout.getDirection().ordinal() );
+
+    		int count = retroLayout.getChildren().length;
+    		out.writeInt( count );
+    		for( int i = 0; i < count; i++ ){
+    			out.writeInt( retroLayout.getChildren()[i] );
+    			out.writeBoolean( retroLayout.getHolds()[i] );
+    			out.writeInt( retroLayout.getSizes()[i] );
+
+    		}
+    	}
+    	else{
+    		Version.write( out, Version.VERSION_1_0_8 );
+
+    		out.writeBoolean( layout.isAutoDirection() );
+    		out.writeInt( layout.getDirection().ordinal() );
+
+    		layout.getPlaceholders().write( out );
+    	}
+    }
+    
+    public FlapDockStationLayout read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException{
         Version version = Version.read( in );
         version.checkCurrent();
         
+        boolean version8 = Version.VERSION_1_0_8.compareTo( version ) <= 0;
+        
         boolean auto = in.readBoolean();
         Direction direction = Direction.values()[ in.readInt() ];
-        int count = in.readInt();
         
-        int[] ids = new int[ count ];
-        boolean[] holds = new boolean[ count ];
-        int[] sizes = new int[ count ];
-        
-        for( int i = 0; i < count; i++ ){
-            ids[i] = in.readInt();
-            holds[i] = in.readBoolean();
-            sizes[i] = in.readInt();
+        if( version8 ){
+        	PlaceholderMap map = new PlaceholderMap( in, placeholders );
+        	map.setPlaceholderStrategy( null );
+        	
+        	return new FlapDockStationLayout( auto, direction, map );
         }
-        
-        return new FlapDockStationLayout( ids, holds, sizes, auto, direction );
+        else{
+	        int count = in.readInt();
+	        
+	        int[] ids = new int[ count ];
+	        boolean[] holds = new boolean[ count ];
+	        int[] sizes = new int[ count ];
+	        
+	        for( int i = 0; i < count; i++ ){
+	            ids[i] = in.readInt();
+	            holds[i] = in.readBoolean();
+	            sizes[i] = in.readInt();
+	        }
+	        
+	        return new RetroFlapDockStationLayout( ids, holds, sizes, auto, direction );
+        }
     }
 
     public void write( FlapDockStationLayout layout, XElement element ) {
-        XElement window = element.addElement( "window" );
-        window.addBoolean( "auto", layout.isAutoDirection() );
-        window.addString( "direction", layout.getDirection().name() );
-        
-        XElement children = element.addElement( "children" );
-        for( int i = 0, n = layout.getChildren().length; i<n; i++ ){
-            XElement child = children.addElement( "child" );
-            child.addInt( "id", layout.getChildren()[i] );
-            child.addBoolean( "hold", layout.getHolds()[i] );
-            child.addInt( "size", layout.getSizes()[i] );
-        }
+    	if( layout instanceof RetroFlapDockStationLayout ){
+    		RetroFlapDockStationLayout retroLayout = (RetroFlapDockStationLayout)layout;
+    		XElement window = element.addElement( "window" );
+    		window.addBoolean( "auto", layout.isAutoDirection() );
+    		window.addString( "direction", layout.getDirection().name() );
+
+    		XElement children = element.addElement( "children" );
+    		for( int i = 0, n = retroLayout.getChildren().length; i<n; i++ ){
+    			XElement child = children.addElement( "child" );
+    			child.addInt( "id", retroLayout.getChildren()[i] );
+    			child.addBoolean( "hold", retroLayout.getHolds()[i] );
+    			child.addInt( "size", retroLayout.getSizes()[i] );
+    		}
+    	}
+    	else{
+    		XElement window = element.addElement( "window" );
+    		window.addBoolean( "auto", layout.isAutoDirection() );
+    		window.addString( "direction", layout.getDirection().name() );
+
+    		XElement children = element.addElement( "placeholders" );
+    		layout.getPlaceholders().write( children );
+    	}
     }
     
-    public FlapDockStationLayout read( XElement element ) {
+    public FlapDockStationLayout read( XElement element, PlaceholderStrategy placeholders ){
         XElement window = element.getElement( "window" );
-        XElement children = element.getElement( "children" );
-        XElement[] child = children.getElements( "child" );
-        
-        int[] ids = new int[ child.length ];
-        boolean[] holds = new boolean[ child.length ];
-        int[] sizes = new int[ child.length ];
-        
-        XAttribute sizeAttribute = window.getAttribute( "size" );
-        if( sizeAttribute != null ){
-            int size = sizeAttribute.getInt();
-            for( int i = 0; i < sizes.length; i++ )
-                sizes[i] = size;
+        XElement xplaceholders = element.getElement( "placeholders" );
+        if( xplaceholders != null ){
+        	PlaceholderMap map = new PlaceholderMap( xplaceholders, placeholders );
+        	map.setPlaceholderStrategy( null );
+	        return new FlapDockStationLayout(  
+	                window.getBoolean( "auto" ),
+	                Direction.valueOf( window.getString( "direction" ) ),
+	                map );
         }
         else{
-            for( int i = 0, n = child.length; i<n; i++ ){
-                sizes[i] = child[i].getInt( "size" );
-            }
+	        XElement children = element.getElement( "children" );
+	        XElement[] child = children.getElements( "child" );
+	        
+	        int[] ids = new int[ child.length ];
+	        boolean[] holds = new boolean[ child.length ];
+	        int[] sizes = new int[ child.length ];
+	        
+	        XAttribute sizeAttribute = window.getAttribute( "size" );
+	        if( sizeAttribute != null ){
+	            int size = sizeAttribute.getInt();
+	            for( int i = 0; i < sizes.length; i++ )
+	                sizes[i] = size;
+	        }
+	        else{
+	            for( int i = 0, n = child.length; i<n; i++ ){
+	                sizes[i] = child[i].getInt( "size" );
+	            }
+	        }
+	        
+	        for( int i = 0, n = child.length; i<n; i++ ){
+	            ids[i] = child[i].getInt( "id" );
+	            holds[i] = child[i].getBoolean( "hold" );
+	        }
+	        
+	        return new RetroFlapDockStationLayout( ids, holds, 
+	                sizes, window.getBoolean( "auto" ),
+	                Direction.valueOf( window.getString( "direction" ) ));
         }
-        
-        for( int i = 0, n = child.length; i<n; i++ ){
-            ids[i] = child[i].getInt( "id" );
-            holds[i] = child[i].getBoolean( "hold" );
-        }
-        
-        return new FlapDockStationLayout( ids, holds, 
-                sizes, window.getBoolean( "auto" ),
-                Direction.valueOf( window.getString( "direction" ) ));
     }
     
     /**

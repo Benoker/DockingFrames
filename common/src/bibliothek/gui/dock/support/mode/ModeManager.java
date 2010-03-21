@@ -814,6 +814,27 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     	return entry != null && entry.empty;
     }
     
+    /**
+     * Given some dockable on which an event was registered, searches a
+     * registered docakble that is a child of <code>target</code> or
+     * <code>target</code> itself.
+     * @param target the target whose registered child is searched
+     * @return <code>target</code>, a child of <code>target</code>, or <code>null</code>
+     */
+    public Dockable getDoubleClickTarget( Dockable target ){
+    	if( target == null ){
+    		return null;
+    	}
+    	if( dockables.get( target ) != null ){
+    		return target;
+    	}
+    	DockStation station = target.asDockStation();
+    	if( station == null ){
+    		return null;
+    	}
+    	return getDoubleClickTarget( station.getFrontDockable() );
+    }
+    
 	/**
 	 * Gets the default mode of <code>dockable</code>, the mode
 	 * dockable is in if nothing else is specified. This method checks

@@ -35,6 +35,7 @@ import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -66,11 +67,11 @@ public class ReplacementDockFactory implements DockFactory<CommonDockable, Multi
 		return (MultipleCDockable)element.getDockable();
 	}
 
-	public MultipleCDockable read( DataInputStream in ) throws IOException{
+	public MultipleCDockable read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException{
 		return null;
 	}
 
-	public MultipleCDockable read( XElement element ){
+	public MultipleCDockable read( XElement element, PlaceholderStrategy placeholders ){
 		return null;
 	}
 

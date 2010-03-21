@@ -52,6 +52,7 @@ import bibliothek.gui.dock.security.SecureStackDockStationFactory;
 import bibliothek.gui.dock.station.flap.FlapDockStationFactory;
 import bibliothek.gui.dock.station.split.SplitDockStationFactory;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
@@ -80,6 +81,9 @@ public class DockSituation {
 
     /** a filter for elements which should be ignored */
     private DockSituationIgnore ignore;
+    
+    /** strategy used to filter placeholders */
+    private PlaceholderStrategy placeholders;
 
     /**
      * Constructs a new DockSituation and sets some factories which are
@@ -123,6 +127,22 @@ public class DockSituation {
     public DockSituationIgnore getIgnore() {
         return ignore;
     }
+    
+    /**
+     * Sets a strategy for deleting invalid placeholders.
+     * @param placeholders the strategy, <code>null</code> for keeping all placeholders
+     */
+    public void setPlaceholderStrategy( PlaceholderStrategy placeholders ){
+		this.placeholders = placeholders;
+	}
+    
+    /**
+     * Gets the current strategy for removing invalid placeholders.
+     * @return the strategy, may be <code>null</code>
+     */
+    public PlaceholderStrategy getPlaceholderStrategy(){
+		return placeholders;
+	}
 
     /**
      * Adds a factory
@@ -459,7 +479,7 @@ public class DockSituation {
                     }
                     else{
                         DataInputStream din = readBuffer( in, adjacentCount );
-                        Object data = adjacentFactory.read( din );
+                        Object data = adjacentFactory.read( din, placeholders );
                         if( data != null ){
                             adjacentLayouts.add( new DockLayout<Object>( adjacentFactoryId, data ) );
                         }
@@ -522,7 +542,7 @@ public class DockSituation {
             }
         }
         else{
-            Object data = factory.read( entryIn );
+            Object data = factory.read( entryIn, placeholders );
             if( data == null )
                 info = null;
             else
@@ -735,7 +755,7 @@ public class DockSituation {
                 String factoryId = xlayout.getString( "factory" );
                 AdjacentDockFactory<Object> adjacentFactory = (AdjacentDockFactory<Object>)getAdjacentFactory( factoryId );
                 if( adjacentFactory != null ){
-                    Object data = adjacentFactory.read( xlayout );
+                    Object data = adjacentFactory.read( xlayout, placeholders );
                     if( data != null ){
                         adjacentLayouts.add( new DockLayout<Object>( factoryId, data ));
                     }
@@ -776,7 +796,7 @@ public class DockSituation {
             String factoryId = element.getString( "factory" );
             DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
             if( factory != null ){
-                Object data = factory.read( element );
+                Object data = factory.read( element, placeholders );
                 if( data != null ){
                     layout = new DockLayoutInfo( new DockLayout<Object>( factoryId, data ) );
                 }

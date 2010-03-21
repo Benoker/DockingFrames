@@ -129,7 +129,7 @@ public class CPlaceholderStrategy implements PlaceholderStrategy {
 	}
 	
 	public boolean isValidPlaceholder( Path placeholder ){
-		if( placeholder.getSegmentCount() != 4 ){
+		if( placeholder.getSegmentCount() != 3 ){
 			return false;
 		}
 		if( !placeholder.getSegment( 0 ).equals( "dock" ) || !placeholder.getSegment( 1 ).equals( "single" )){

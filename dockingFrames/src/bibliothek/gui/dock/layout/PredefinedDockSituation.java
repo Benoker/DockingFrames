@@ -43,6 +43,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
@@ -353,14 +354,14 @@ public class PredefinedDockSituation extends DockSituation {
             if( factory == null ){
                 DockFactory<?, BackupFactoryData<?>> backup = getBackup( factoryId );
                 if( backup != null ){
-                    BackupFactoryData<Object> data = (BackupFactoryData<Object>)backup.read( in );
+                    BackupFactoryData<Object> data = (BackupFactoryData<Object>)backup.read( in, getPlaceholderStrategy() );
                     if( data != null && data.getData() != null ){
                         info = new DockLayoutInfo( new DockLayout<Object>( factoryId, data.getData() ));
                     }
                 }
             }
             else{
-                Object delegate = factory.read( in );
+                Object delegate = factory.read( in, getPlaceholderStrategy() );
                 if( delegate != null ){
                     info = new DockLayoutInfo( new DockLayout<Object>( factoryId, delegate ));
                 }
@@ -392,13 +393,13 @@ public class PredefinedDockSituation extends DockSituation {
         if( factory == null ){
             DockFactory<?, BackupFactoryData<?>> backup = getBackup( factoryId );
             if( backup != null ){
-                BackupFactoryData<Object> data = (BackupFactoryData<Object>)backup.read( xdelegate );
+                BackupFactoryData<Object> data = (BackupFactoryData<Object>)backup.read( xdelegate, getPlaceholderStrategy() );
                 if( data != null )
                     delegate = data.getData();
             }
         }
         else{
-            delegate = factory.read( xdelegate );
+            delegate = factory.read( xdelegate, getPlaceholderStrategy() );
         }
 
         if( delegate == null ){
@@ -673,7 +674,7 @@ public class PredefinedDockSituation extends DockSituation {
         }
 
         @SuppressWarnings("unchecked")
-        public PreloadedLayout read( DataInputStream in ) throws IOException {
+        public PreloadedLayout read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException {
             Version version = Version.read( in );
             version.checkCurrent();
 
@@ -697,7 +698,7 @@ public class PredefinedDockSituation extends DockSituation {
                 if( factory == null ){
                     DockFactory backup = getBackup( factoryId );
                     if( backup != null ){
-                        BackupFactoryData<Object> data = (BackupFactoryData<Object>)backup.read( in );
+                        BackupFactoryData<Object> data = (BackupFactoryData<Object>)backup.read( in, placeholders );
                         if( data != null && data.getData() != null ){
                             info = new DockLayoutInfo( new DockLayout<Object>( factoryId, data.getData() ));
                         }
@@ -718,7 +719,7 @@ public class PredefinedDockSituation extends DockSituation {
                     }
                 }
                 else{
-                    Object delegate = factory.read( in );
+                    Object delegate = factory.read( in, placeholders );
                     if( delegate != null ){
                         info = new DockLayoutInfo( new DockLayout<Object>( factoryId, delegate ));
                     }
@@ -759,7 +760,7 @@ public class PredefinedDockSituation extends DockSituation {
         }
 
         @SuppressWarnings("unchecked")
-        public PreloadedLayout read( XElement element ) {
+        public PreloadedLayout read( XElement element, PlaceholderStrategy placeholders ) {
             String preload = element.getElement( "replacement" ).getString( "id" );
 
             XElement xdelegate = element.getElement( "delegate" );
@@ -775,13 +776,13 @@ public class PredefinedDockSituation extends DockSituation {
             if( factory == null ){
                 DockFactory backup = getBackup( factoryId );
                 if( backup != null ){
-                    BackupFactoryData<Object> data = (BackupFactoryData<Object>)backup.read( xdelegate );
+                    BackupFactoryData<Object> data = (BackupFactoryData<Object>)backup.read( xdelegate, placeholders );
                     if( data != null )
                         delegate = data.getData();
                 }
             }
             else{
-                delegate = factory.read( xdelegate );
+                delegate = factory.read( xdelegate, placeholders );
             }
 
             if( delegate == null ){

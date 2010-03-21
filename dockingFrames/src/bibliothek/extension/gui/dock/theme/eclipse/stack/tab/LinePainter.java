@@ -65,8 +65,12 @@ public class LinePainter implements TabPanePainter {
 		ColorManager colors = controller == null ? null : controller.getColors();
 		color.setManager( colors );
 	}
+	
+	public void paintBackground( Graphics g ){
+		// ignore	
+	}
 
-	public void paint( Graphics g ){
+	public void paintForeground( Graphics g ){
 		Dockable selection = pane.getSelectedDockable();
 		if( selection == null )
 			return;

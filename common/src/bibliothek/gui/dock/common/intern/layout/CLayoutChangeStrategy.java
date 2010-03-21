@@ -53,7 +53,6 @@ import bibliothek.gui.dock.layout.DockLayoutComposition;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
 import bibliothek.gui.dock.layout.DockSituation;
 import bibliothek.gui.dock.layout.PredefinedDockSituation;
-import bibliothek.gui.dock.station.split.SplitDockStationFactory;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 
 /**
@@ -83,7 +82,7 @@ public class CLayoutChangeStrategy extends DefaultLayoutChangeStrategy {
 		if( onSetLayout ){
 			situation.add( new ReplacementDockFactory() );
 		}
-		situation.add( new SplitDockStationFactory( control.getProperty( PlaceholderStrategy.PLACEHOLDER_STRATEGY ) ) );
+		situation.setPlaceholderStrategy( control.getProperty( PlaceholderStrategy.PLACEHOLDER_STRATEGY ) );
 		return situation;
 	}
 	

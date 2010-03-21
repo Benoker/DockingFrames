@@ -29,173 +29,222 @@ package bibliothek.gui.dock.station.stack;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
+import bibliothek.gui.dock.station.support.PlaceholderList;
+import bibliothek.gui.dock.station.support.PlaceholderListItem;
+import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
 /**
- * A {@link DockFactory} that can read and write instances of {@link StackDockStation}.
- * This factory will create new instances of {@link StackDockStation} through
- * the method {@link #createStation()}.
+ * A {@link DockFactory} that can read and write instances of
+ * {@link StackDockStation}. This factory will create new instances of
+ * {@link StackDockStation} through the method {@link #createStation()}.
+ * 
  * @author Benjamin Sigg
  */
-public class StackDockStationFactory implements DockFactory<StackDockStation, StackDockStationLayout> {
-    /** The ID which is returned by {@link #getID()}*/
-    public static final String ID = "StackDockStationFactory";
-    
-    public String getID() {
-        return ID;
-    }
+public class StackDockStationFactory implements
+		DockFactory<StackDockStation, StackDockStationLayout> {
+	/** The ID which is returned by {@link #getID()} */
+	public static final String ID = "StackDockStationFactory";
 
-    public StackDockStationLayout getLayout( StackDockStation station,
-            Map<Dockable, Integer> children ) {
-        
-        List<Integer> list = new ArrayList<Integer>();
-        Dockable selectedDockable = station.getFrontDockable();
-        int selected = -1;
-        
-        for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
-            Dockable dockable = station.getDockable( i );
-            Integer id = children.get( dockable );
-            if( id != null ){
-                list.add( id );
-                if( selectedDockable == dockable ){
-                    selected = id;
-                }
-            }
-        }
-        
-        int[] ids = new int[ list.size() ];
-        for( int i = 0, n = list.size(); i<n; i++ )
-            ids[i] = list.get( i ).intValue();
-        
-        return new StackDockStationLayout( selected, ids );
-    }
-    
-    public void estimateLocations( StackDockStationLayout layout, Map<Integer, DockLayoutInfo> children ) {
-    	for( int id : layout.getChildren() ){
-    		DockLayoutInfo info = children.get( id );
-    		if( info != null ){
-    			StackDockProperty property = new StackDockProperty( id );
-    			info.setLocation( property );
-    		}
-    	}
-    }
-    
-    public void setLayout( StackDockStation station,
-            StackDockStationLayout layout, Map<Integer, Dockable> children ) {
-        
-    	DockController controller = station.getController();
-    	try{
-    		if( controller != null )
-    			controller.freezeLayout();
-    		
-	        for( int i = station.getDockableCount()-1; i >= 0; i-- )
-	            station.remove( i );
-	        
-	        for( int id : layout.getChildren() ){
-	        	Dockable dockable = children.get( id );
-	        	if( dockable != null ){
-	        		station.drop( dockable );
-	        	}
-	        }
-	        
-	        Dockable selected = children.get( layout.getSelected() );
-	        if( selected != null ){
-	    		station.setFrontDockable( selected );
-	        }
-    	}
-    	finally{
-    		if( controller != null )
-    			controller.meltLayout();
-    	}
-    }
-    
-    public void setLayout( StackDockStation element, StackDockStationLayout layout ) {
-        // nothing to do
-    }
-    
-    public StackDockStation layout( StackDockStationLayout layout,
-            Map<Integer, Dockable> children ) {
-        
-        StackDockStation station = createStation();
-        setLayout( station, layout, children );
-        return station;
-    }
-    
-    public StackDockStation layout( StackDockStationLayout layout ) {
-        StackDockStation station = createStation();
-        setLayout( station, layout );
-        return station;
-    }
+	public String getID(){
+		return ID;
+	}
 
-    public void write( StackDockStationLayout layout, DataOutputStream out )
-            throws IOException {
-        
-        Version.write( out, Version.VERSION_1_0_4 );
-        out.writeInt( layout.getSelected() );
-        out.writeInt( layout.getChildren().length );
-        for( int c : layout.getChildren() )
-            out.writeInt( c );
-    }
-    
-    public StackDockStationLayout read( DataInputStream in ) throws IOException {
-        Version version = Version.read( in );
-        version.checkCurrent();
-        
-        int selected = in.readInt();
-        int count = in.readInt();
-        int[] ids = new int[ count ];
-        for( int i = 0; i < count; i++ )
-            ids[i] = in.readInt();
-        return new StackDockStationLayout( selected, ids );
-    }
-    
-    public void write( StackDockStationLayout layout, XElement element ) {
-        if( layout.getSelected() >= 0 )
-            element.addElement( "selected" ).setInt( layout.getSelected() );
-        
-        XElement xchildren = element.addElement( "children" );
-        for( int i : layout.getChildren() ){
-            xchildren.addElement( "child" ).addInt( "id", i );
-        }
-    }
-    
-    public StackDockStationLayout read( XElement element ) {
-        XElement xselected = element.getElement( "selected" );
-        int selected = -1;
-        if( xselected != null )
-            selected = xselected.getInt();
-        
-        XElement xchildren = element.getElement( "children" );
-        int[] ids;
-        
-        if( xchildren != null ){
-            XElement[] children = xchildren.getElements( "child" );
-            ids = new int[ children.length ];
-            for( int i = 0, n = children.length; i<n; i++ )
-                ids[i] = children[i].getInt( "id" );
-        }
-        else{
-            ids = new int[]{};
-        }
-        
-        return new StackDockStationLayout( selected, ids );
-    }
-    
-    /**
-     * Called when a new {@link StackDockStation} is required.
-     * @return a new station
-     */
-    protected StackDockStation createStation(){
-        return new StackDockStation();
-    }
+	public StackDockStationLayout getLayout( StackDockStation station,
+			Map<Dockable, Integer> children ){
+		Dockable selectedDockable = station.getFrontDockable();
+		int selected = -1;
+
+		if (selectedDockable != null) {
+			selected = station.indexOf( selectedDockable );
+		}
+
+		PlaceholderMap map = station.getPlaceholders( children );
+
+		return new StackDockStationLayout( selected, map );
+	}
+
+	public void estimateLocations( StackDockStationLayout layout, final Map<Integer, DockLayoutInfo> children ){
+		if( layout instanceof RetroStackDockStationLayout ){
+			RetroStackDockStationLayout retroLayout = (RetroStackDockStationLayout)layout;
+			for (int id : retroLayout.getChildren()) {
+				DockLayoutInfo info = children.get( id );
+				if (info != null) {
+					StackDockProperty property = new StackDockProperty( id );
+					info.setLocation( property );
+				}
+			}
+		}
+		else{
+			PlaceholderList.simulatedRead( layout.getPlaceholders(), new PlaceholderListItemAdapter<PlaceholderListItem>() {
+    			@Override
+    			public PlaceholderListItem convert( ConvertedPlaceholderListItem item ){
+    				int index = item.getInt( "index" );
+    				Path placeholder = null;
+    				if( item.contains( "placeholder" )){
+    					placeholder = new Path( item.getString( "placeholder" ) );
+    				}
+    				StackDockProperty property = new StackDockProperty( index, placeholder );
+    				children.get( index ).setLocation( property );
+    				return null;
+    			}
+			});
+		}
+	}
+
+	public void setLayout( StackDockStation station, StackDockStationLayout layout, Map<Integer, Dockable> children ){
+
+		DockController controller = station.getController();
+		try {
+			if (controller != null)
+				controller.freezeLayout();
+
+			for (int i = station.getDockableCount() - 1; i >= 0; i--)
+				station.remove( i );
+
+			if( layout instanceof RetroStackDockStationLayout ){
+				RetroStackDockStationLayout retroLayout = (RetroStackDockStationLayout)layout;
+				for (int id : retroLayout.getChildren()) {
+					Dockable dockable = children.get( id );
+					if (dockable != null) {
+						station.drop( dockable );
+					}
+				}
+			}
+			else{
+				station.setPlaceholders( layout.getPlaceholders(), children );
+			}
+
+			Dockable selected = children.get( layout.getSelected() );
+			if (selected != null) {
+				station.setFrontDockable( selected );
+			}
+		} finally {
+			if (controller != null)
+				controller.meltLayout();
+		}
+	}
+
+	public void setLayout( StackDockStation element,
+			StackDockStationLayout layout ){
+		// nothing to do
+	}
+
+	public StackDockStation layout( StackDockStationLayout layout,
+			Map<Integer, Dockable> children ){
+
+		StackDockStation station = createStation();
+		setLayout( station, layout, children );
+		return station;
+	}
+
+	public StackDockStation layout( StackDockStationLayout layout ){
+		StackDockStation station = createStation();
+		setLayout( station, layout );
+		return station;
+	}
+
+	public void write( StackDockStationLayout layout, DataOutputStream out ) throws IOException{
+		if( layout instanceof RetroStackDockStationLayout ){
+			RetroStackDockStationLayout retroLayout = (RetroStackDockStationLayout)layout;
+			Version.write( out, Version.VERSION_1_0_4 );
+			out.writeInt( layout.getSelected() );
+
+			out.writeInt( retroLayout.getChildren().length );
+			for (int c : retroLayout.getChildren()){
+				out.writeInt( c );
+			}
+		}
+		else{
+			Version.write( out, Version.VERSION_1_0_8 );
+			out.writeInt( layout.getSelected() );
+			layout.getPlaceholders().write( out );
+		}
+	}
+
+	public StackDockStationLayout read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException{
+		Version version = Version.read( in );
+		version.checkCurrent();
+
+		boolean version8 = Version.VERSION_1_0_8.compareTo( version ) <= 0;
+		if( version8 ){
+			int selected = in.readInt();
+			PlaceholderMap map = new PlaceholderMap( in, placeholders );
+			map.setPlaceholderStrategy( null );
+			return new StackDockStationLayout( selected, map );
+		}
+		else{
+			int selected = in.readInt();
+			int count = in.readInt();
+			int[] ids = new int[count];
+			for (int i = 0; i < count; i++)
+				ids[i] = in.readInt();
+			return new RetroStackDockStationLayout( selected, ids );
+		}
+	}
+
+	public void write( StackDockStationLayout layout, XElement element ){
+		if (layout.getSelected() >= 0)
+			element.addElement( "selected" ).setInt( layout.getSelected() );
+
+		if( layout instanceof RetroStackDockStationLayout ){
+			RetroStackDockStationLayout retroLayout = (RetroStackDockStationLayout)layout;
+			XElement xchildren = element.addElement( "children" );
+			for (int i : retroLayout.getChildren()) {
+				xchildren.addElement( "child" ).addInt( "id", i );
+			}
+		}
+		else{
+			layout.getPlaceholders().write( element.addElement( "placeholders" ) );
+		}
+	}
+
+	public StackDockStationLayout read( XElement element, PlaceholderStrategy placeholders ){
+		XElement xselected = element.getElement( "selected" );
+		int selected = -1;
+		if (xselected != null)
+			selected = xselected.getInt();
+
+		XElement xplaceholders = element.getElement( "placeholders" );
+		if( xplaceholders == null ){
+			XElement xchildren = element.getElement( "children" );
+			int[] ids;
+	
+			if (xchildren != null) {
+				XElement[] children = xchildren.getElements( "child" );
+				ids = new int[children.length];
+				for (int i = 0, n = children.length; i < n; i++)
+					ids[i] = children[i].getInt( "id" );
+			} else {
+				ids = new int[] {};
+			}
+	
+			return new RetroStackDockStationLayout( selected, ids );
+		}
+		else{
+			PlaceholderMap map = new PlaceholderMap( xplaceholders, placeholders );
+			return new StackDockStationLayout( selected, map );
+		}
+	}
+
+	/**
+	 * Called when a new {@link StackDockStation} is required.
+	 * 
+	 * @return a new station
+	 */
+	protected StackDockStation createStation(){
+		return new StackDockStation();
+	}
 }

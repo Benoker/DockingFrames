@@ -34,6 +34,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.common.*;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
@@ -147,7 +148,7 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         // not supported
     }
     
-    public CommonDockableLayout read( DataInputStream in ) throws IOException {
+    public CommonDockableLayout read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException {
         Version version = Version.read( in );
         version.checkCurrent();
         
@@ -160,7 +161,7 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         return layout;
     }
 
-    public CommonDockableLayout read( XElement element ) {
+    public CommonDockableLayout read( XElement element, PlaceholderStrategy placeholders ) {
         CommonDockableLayout layout = new CommonDockableLayout();
         layout.setLayout( delegate.create() );
         layout.getLayout().readXML( element.getElement( "multiple" ) );

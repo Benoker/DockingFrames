@@ -99,6 +99,7 @@ import bibliothek.gui.dock.station.split.SplitLayoutManager;
 import bibliothek.gui.dock.station.split.SplitNode;
 import bibliothek.gui.dock.station.split.SplitNodeVisitor;
 import bibliothek.gui.dock.station.split.SplitTreeFactory;
+import bibliothek.gui.dock.station.split.PutInfo.Put;
 import bibliothek.gui.dock.station.split.SplitDockTree.Key;
 import bibliothek.gui.dock.station.support.CombinerWrapper;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
@@ -432,6 +433,16 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         }
         return root;
     }
+    
+    @Override
+    public String toString(){
+	    if( root == null ){
+	    	return super.toString();
+	    }
+	    else{
+	    	return root.toString();
+	    }
+    }
 
     @Override
     public Dimension getMinimumSize() {
@@ -584,6 +595,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             for( StationChildHandle handle : dockables ){
             	handle.setTitleRequest( title );
             }
+            
             hierarchyObserver.controllerChanged( controller );
         }
     }
@@ -1647,7 +1659,12 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         }
 
         putInfo.setLeaf( leaf );
-        leaf.delete( true );
+        if( putInfo.getPut() == Put.CENTER ){
+        	leaf.placehold( false );
+        }
+        else{
+        	leaf.delete( true );
+        }
         drop( false );
     }
 
@@ -2107,7 +2124,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     public void removeDockable( Dockable dockable ){
         Leaf leaf = root().getLeaf( dockable );
         if( leaf != null ){
-            leaf.placehold();
+            leaf.placehold( true );
             leaf.setDockable( null, true );
         }
     }

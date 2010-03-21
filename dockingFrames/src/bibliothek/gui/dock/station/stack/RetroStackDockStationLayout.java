@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2009 Benjamin Sigg
+ * Copyright (C) 2010 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,46 +23,36 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.eclipse.stack;
+package bibliothek.gui.dock.station.stack;
 
-import java.awt.Graphics;
-
-import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPanePainter;
-import bibliothek.gui.dock.station.stack.CombinedStackDockContentPane;
+import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.dock.StackDockStation;
 
 /**
- * The panel painting the background of a {@link EclipseTabPane}.
+ * Information about the layout of a {@link StackDockStation} read from an old format.
  * @author Benjamin Sigg
  */
-public class EclipseTabPaneContent extends CombinedStackDockContentPane{
-	private EclipseTabPane pane;
-	
-	public EclipseTabPaneContent( EclipseTabPane pane ){
-		super( pane );
-		this.pane = pane;
-	}
-	
-	/**
-	 * Gets the parent of this panel.
-	 * @return the parent
-	 */
-	public EclipseTabPane getPane(){
-		return pane;
-	}
-	
-	@Override
-	public void paint( Graphics g ){
-		TabPanePainter painter = pane.getPainter();
-		if( painter != null ){
-			painter.paintBackground( g );
-		}
-		
-		super.paint( g );
-	
-		if( painter != null ){
-			painter.paintForeground( g );
-		}
-		
-		paintBorder( g );
-	}
+public class RetroStackDockStationLayout extends StackDockStationLayout {
+    /** the order of the chilren */
+    private int[] children;
+    
+    /**
+     * Creates a new layout
+     * @param selected the name of the item that is selected
+     * @param children the order of the children. The entries of the array
+     * are the identifiers that a {@link DockFactory} gets in its method
+     * {@link DockFactory#getLayout(bibliothek.gui.dock.DockElement, java.util.Map)}
+     */
+    public RetroStackDockStationLayout( int selected, int[] children ){
+    	super( selected, null );
+    	this.children = children;
+    }
+    
+    /**
+     * Gets the order of the children.
+     * @return the order
+     */
+    public int[] getChildren() {
+        return children;
+    }
 }

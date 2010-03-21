@@ -65,19 +65,19 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	}
 	
 	/** view on all items */
-	private SubList<Item<D>> allItems = new SubList<Item<D>>( Level.BASE ) {
+	private SubList<Item> allItems = new SubList<Item>( Level.BASE ) {
 		@Override
-		protected Item<D> wrap( Item<D> item ){
+		protected Item wrap( Item item ){
 			return item;
 		}
 		
 		@Override
-		protected boolean visible( Item<D> item ){
+		protected boolean visible( Item item ){
 			return true;
 		}
 		
 		@Override
-		protected Item<D> unwrap( Item<D> item ){
+		protected Item unwrap( Item item ){
 			return item;
 		}
 	};
@@ -85,17 +85,17 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	/** view on all items as placeholder items */
 	private SubList<Set<Path>> allPlaceholders = new SubList<Set<Path>>( Level.BASE ) {
 		@Override
-		protected Item<D> wrap( Set<Path> object ){
-			return new Item<D>( object );
+		protected Item wrap( Set<Path> object ){
+			return new Item( object );
 		}
 		
 		@Override
-		protected boolean visible( Item<D> item ){
+		protected boolean visible( Item item ){
 			return item.isPlaceholder();
 		}
 		
 		@Override
-		protected Set<Path> unwrap( Item<D> item ){
+		protected Set<Path> unwrap( Item item ){
 			Set<Path> result = item.getPlaceholderSet();
 			if( result == null ){
 				return Collections.emptySet();
@@ -107,17 +107,17 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	/** view on all pure placeholders */
 	private SubList<Set<Path>> purePlaceholders = new SubList<Set<Path>>( Level.PLACEHOLDER ) {
 		@Override
-		protected Item<D> wrap( Set<Path> object ){
-			return new Item<D>( object );
+		protected Item wrap( Set<Path> object ){
+			return new Item( object );
 		}
 		
 		@Override
-		protected boolean visible( Item<D> item ){
+		protected boolean visible( Item item ){
 			return item.isPlaceholder();
 		}
 		
 		@Override
-		protected Set<Path> unwrap( Item<D> item ){
+		protected Set<Path> unwrap( Item item ){
 			return item.getPlaceholderSet();
 		}
 	};
@@ -125,17 +125,17 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	/** view on all dockables */
 	private SubList<D> dockables = new SubList<D>( Level.DOCKABLE ) {
 		@Override
-		protected Item<D> wrap( D object ){
-			return new Item<D>( object );
+		protected Item wrap( D object ){
+			return new Item( object );
 		}
 		
 		@Override
-		protected boolean visible( Item<D> item ){
+		protected boolean visible( Item item ){
 			return !item.isPlaceholder();
 		}
 		
 		@Override
-		protected D unwrap( Item<D> item ){
+		protected D unwrap( Item item ){
 			return item.getDockable();
 		}
 		
@@ -177,15 +177,48 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	 * @throws IllegalArgumentException if <code>map</code> was not written by a {@link PlaceholderList}
 	 */
 	public PlaceholderList( PlaceholderMap map ){
-		read( map );
+		read( map, new StrategyPlaceholderListItemConverter<D>( null ) );
+	}
+	
+	/**
+	 * Creates a new list reading all the data that is stored in <code>map</code>. This
+	 * constructor stores all placeholders that are described in <code>map</code>, obsolete
+	 * placeholders may be deleted as soon as a {@link PlaceholderStrategy} is set.
+	 * @param map the map to read, not <code>null</code>
+	 * @param converter used to convert items back to dockables, not <code>null</code>
+	 * @throws IllegalArgumentException if <code>map</code> was not written by a {@link PlaceholderList}
+	 */
+	public PlaceholderList( PlaceholderMap map, PlaceholderListItemConverter<D> converter ){
+		read( map, converter );
+	}
+	
+	/**
+	 * Simulates a call to {@link #read(PlaceholderMap, PlaceholderListItemConverter)} and makes all calls to <code>converter</code>
+	 * that would be made in a real read as well. 
+	 * @param map the map to read
+	 * @param converter used to convert items back to dockables, not <code>null</code>
+	 * @param <D> the kind of data <code>converter</code> handles
+	 */
+	public static <D extends PlaceholderListItem> void simulatedRead( PlaceholderMap map, PlaceholderListItemConverter<D> converter ){
+		PlaceholderList<D> list = new PlaceholderList<D>();
+		list.read( map, converter, true );
 	}
 	
 	/**
 	 * Reads the contents of <code>map</code> and adds them at the end of this list.
 	 * @param map the map to read
+	 * @param converter used to convert items back to dockables, not <code>null</code>
 	 * @throws IllegalArgumentException if the map is in the wrong format
 	 */
-	public void read( PlaceholderMap map ){
+	public void read( PlaceholderMap map, PlaceholderListItemConverter<D> converter ){
+		read( map, converter, false );
+	}
+	
+	private void read( PlaceholderMap map, PlaceholderListItemConverter<D> converter, boolean simulate ){
+		if( converter == null ){
+			throw new IllegalArgumentException( "converter must not be null" );
+		}
+		
 		if( !map.getFormat().equals( new Path( "dock.PlaceholderList") )){
 			throw new IllegalArgumentException( "unknown format: " + map.getFormat() );
 		}
@@ -194,22 +227,52 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		}
 		
 		Key[] placeholders = map.getPlaceholders();
-		for( int i = placeholders.length-1; i>=0; i-- ){
-			Path[] list = placeholders[i].getPlaceholders();
+		for( int i = 0, n = placeholders.length; i<n; i++ ){
 			Set<Path> paths = null;
-			if( list.length > 0 ){
-				paths = new HashSet<Path>();
-				for( Path path : list ){
-					paths.add( path );
+			if( !simulate ){
+				Path[] list = placeholders[i].getPlaceholders();
+			
+				if( list.length > 0 ){
+					paths = new HashSet<Path>();
+					for( Path path : list ){
+						paths.add( path );
+					}
 				}
 			}
-			Item<D> item = new Item<D>( paths );
 			
-			if( map.contains( placeholders[i], "map" )){
-				item.setPlaceholderMap( map.getMap( placeholders[i], "map" ) );
+			D dockable = null;
+			
+			if( map.contains( placeholders[i], "convert" )){
+				ConvertedPlaceholderListItem converted = new ConvertedPlaceholderListItem();
+				
+				Object[] keys = map.getArray( placeholders[i], "convert-keys" );
+				
+				for( Object convertKey : keys ){
+					String metaKey = (String)convertKey;
+					converted.put( metaKey, map.get( placeholders[i], "dock." + metaKey ) );
+				}
+				
+				dockable = converter.convert( converted );
 			}
 			
-			list().add( 0, item );
+			if( !simulate ){
+				Item item;
+				if( dockable == null ){
+					item = new Item( paths );
+				}
+				else{
+					item = new Item( dockable, paths, null );
+				}
+	
+				if( map.contains( placeholders[i], "map" )){
+					item.setPlaceholderMap( map.getMap( placeholders[i], "map" ) );
+				}
+				
+				list().add( item );
+			}
+			if( dockable != null ){
+				converter.added( dockable );
+			}
 		}		
 	}
 	
@@ -220,36 +283,72 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	 * @return the new map, not <code>null</code>
 	 */
 	public PlaceholderMap toMap(){
-		PlaceholderMap map = new PlaceholderMap( new Path( "dock.PlaceholderList" ), 0 );
+		return toMap( new StrategyPlaceholderListItemConverter<D>( strategy ) );
+	}
+	
+	/**
+	 * Converts this list into a {@link PlaceholderMap}, any remaining {@link Dockable} or
+	 * {@link DockStation} will be converted using <code>converter</code>.
+	 * @param converter converter to translate dockables into persistent data, not <code>null</code>
+	 * @return the new map, not <code>null</code>
+	 */
+	public PlaceholderMap toMap( PlaceholderListItemConverter<? super D> converter ){
+		if( converter == null ){
+			throw new IllegalArgumentException( "converter must not be null" );
+		}
 		
-		for( Item<D> entry : list() ){
+		PlaceholderMap map = new PlaceholderMap( new Path( "dock.PlaceholderList" ), 0 );
+		int dockableIndex = 0;
+		
+		for( Item entry : list() ){
 			Set<Path> placeholderSet = entry.getPlaceholderSet();
 			PlaceholderMap placeholderMap = entry.getPlaceholderMap();
 			
 			Path additional = null;
 			D dockable = entry.getDockable();
-			if( strategy != null && dockable != null ){
-				additional = strategy.getPlaceholderFor( dockable.asDockable() );
-				if( placeholderMap == null ){
-					DockStation station = dockable.asDockable().asDockStation();
-					if( station != null ){
-						placeholderMap = station.getPlaceholders();
+			ConvertedPlaceholderListItem converted = null;
+			
+			if( dockable != null ){
+				converted = converter.convert( dockableIndex, dockable );
+				if( converted != null ){
+					additional = converted.getPlaceholder();
+					if( placeholderMap == null ){
+						placeholderMap = converted.getPlaceholderMap();
 					}
 				}
 			}
 			
+			if( !entry.isPlaceholder() ){
+				dockableIndex++;
+			}
+			if( additional != null ){
+				if( placeholderSet.contains( additional )){
+					additional = null;
+				}
+			}
+						
 			Path[] placeholders = new Path[placeholderSet.size() + (additional == null ? 0 : 1)];
 			placeholderSet.toArray( placeholders );
 			if( additional != null ){
 				placeholders[placeholders.length-1] = additional;
 			}
 			
-			if( placeholders.length > 0 ){
+			if( placeholders.length > 0 || converted != null ){
 				Key key = map.newUniqueKey( placeholders );
 				map.add( key );
 				
 				if( placeholderMap != null ){
 					map.put( key, "map", placeholderMap );
+				}
+				
+				if( converted != null ){
+					map.put( key, "convert", true );
+					String[] keys = converted.keys();
+					map.put( key, "convert-keys", keys );
+					
+					for( String metaKey : keys ){
+						map.put( key, "dock." + metaKey, converted.get( metaKey ) );
+					}
 				}
 			}
 		}
@@ -265,6 +364,9 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 			bound = true;
 			if( strategy != null ){
 				strategy.addListener( listener );
+				for( Item item : list() ){
+					item.setStrategy( strategy );
+				}
 				checkAllPlaceholders();
 			}
 		}
@@ -278,6 +380,9 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 			bound = false;
 			if( strategy != null ){
 				strategy.removeListener( listener );
+				for( Item item : list() ){
+					item.setStrategy( null );
+				}
 			}
 		}
 	}
@@ -305,6 +410,9 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 			if( this.strategy != null ){
 				this.strategy.addListener( listener );
 			}
+			for( Item item : list() ){
+				item.setStrategy( strategy );
+			}
 			checkAllPlaceholders();
 		}
 		else{
@@ -313,19 +421,39 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	}
 	
 	private void checkAllPlaceholders(){
-		Iterator<Item<D>> iter = list().iterator();
-		while( iter.hasNext() ){
-			Item<D> item = iter.next();
-			Set<Path> placeholders = item.getPlaceholderSet();
-			
-			Iterator<Path> paths = placeholders.iterator();
-			while( paths.hasNext() ){
-				if( !strategy.isValidPlaceholder( paths.next() )){
-					paths.remove();
+		if( strategy != null ){
+			Iterator<Item> iter = list().iterator();
+			while( iter.hasNext() ){
+				Item item = iter.next();
+				Set<Path> placeholders = item.getPlaceholderSet();
+				if( placeholders != null ){
+					Iterator<Path> paths = placeholders.iterator();
+					while( paths.hasNext() ){
+						if( !strategy.isValidPlaceholder( paths.next() )){
+							paths.remove();
+						}
+					}
+				}
+				if( (placeholders == null || placeholders.isEmpty()) && item.isPlaceholder() ){
+					iter.remove();
 				}
 			}
-			if( placeholders.isEmpty() && item.isPlaceholder() ){
-				iter.remove();
+		}
+	}
+	
+	/**
+	 * Inserts a placeholder for all {@link Dockable}s that are stored in this list.
+	 */
+	public void insertAllPlaceholders(){
+		if( strategy != null ){
+			for( Item item : list() ){
+				D dockable = item.getDockable();
+				if( dockable != null ){
+					Path placeholder = strategy.getPlaceholderFor( dockable.asDockable() );
+					if( placeholder != null ){
+						item.add( placeholder );
+					}
+				}
 			}
 		}
 	}
@@ -352,7 +480,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	 * Gets a mutable view of all elements of this list.
 	 * @return the elements
 	 */
-	public Filter<Item<D>> list(){
+	public Filter<Item> list(){
 		return allItems;
 	}
 	
@@ -371,9 +499,9 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	 * @param placeholders the placeholders to remove
 	 */
 	public void removeAll( Set<Path> placeholders ){
-		Iterator<Item<D>> iter = list().iterator();
+		Iterator<Item> iter = list().iterator();
 		while( iter.hasNext() ){
-			Item<D> item = iter.next();
+			Item item = iter.next();
 			item.removeAll( placeholders );
 			if( item.getPlaceholderSet() == null && item.isPlaceholder() ){
 				iter.remove();
@@ -388,9 +516,9 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	 * @param placeholder the placeholder to remove
 	 */
 	public void removeAll( Path placeholder ){
-		Iterator<Item<D>> iter = list().iterator();
+		Iterator<Item> iter = list().iterator();
 		while( iter.hasNext() ){
-			Item<D> item = iter.next();
+			Item item = iter.next();
 			item.remove( placeholder );
 			if( item.getPlaceholderSet() == null && item.isPlaceholder() ){
 				iter.remove();
@@ -471,7 +599,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		if( entry == null ){
 			return -1;
 		}
-		entry.set( new Item<D>( dockable, entry.item.getPlaceholderSet(), entry.item.getPlaceholderMap() ));
+		entry.set( new Item( dockable, entry.item.getPlaceholderSet(), entry.item.getPlaceholderMap() ));
 		DockStation station = dockable.asDockable().asDockStation();
 		PlaceholderMap map = entry.item.getPlaceholderMap();
 		if( station != null && map != null ){
@@ -642,13 +770,13 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	}
 	
 	private class Entry{
-		private Item<D> item;
+		private Item item;
 		private boolean itemWasPlaceholder;
 		
 		private Entry next, previous;
 		private Entry nextLevel, previousLevel;
 		
-		public Entry( Entry predecessor, Item<D> item ){
+		public Entry( Entry predecessor, Item item ){
 			this.item = item;
 			insertAfter( predecessor );
 		}
@@ -656,7 +784,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		public void insertAfter( Entry predecessor ){
 			invalidate();
 		
-			item.owner = this;
+			item.setOwner( this );
 			itemWasPlaceholder = item.isPlaceholder();
 			
 			Entry predecessorLevel = null;
@@ -776,9 +904,9 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 			set( item );
 		}
 		
-		public void set( Item<D> item ){
-			this.item.owner = null;
-			item.owner = this;
+		public void set( Item item ){
+			this.item.setOwner( null );
+			item.setOwner( this );
 			
 			if( itemWasPlaceholder != item.isPlaceholder() ){
 				itemWasPlaceholder = item.isPlaceholder();
@@ -853,7 +981,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 			next = null;
 			previous = null;
 			
-			this.item.owner = null;
+			this.item.setOwner( null );
 			
 			removeLevel();
 		}
@@ -888,9 +1016,8 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	/**
 	 * A single item in a {@link PlaceholderList}
 	 * @author Benjamin Sigg
-	 * @param <D> the type that represents a {@link Dockable}
 	 */
-	public static class Item<D extends PlaceholderListItem>{
+	public class Item{
 		/** the value of this item, not <code>null</code> */
 		private D value;
 		/** all the placeholders that are associated with this item */
@@ -933,6 +1060,35 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 			if( placeholders == null || placeholders.isEmpty() )
 				throw new IllegalArgumentException( "placeholder must not be null nor empty" );
 			placeholderSet = placeholders;
+		}
+		
+		/**
+		 * Forwards <code>strategy</code> to the current {@link PlaceholderMap}.
+		 * @param strategy the new strategy, can be <code>null</code>
+		 */
+		public void setStrategy( PlaceholderStrategy strategy ){
+			if( placeholderMap != null ){
+				placeholderMap.setPlaceholderStrategy( strategy );
+			}
+		}
+		
+		/**
+		 * Sets the owner of this list.
+		 * @param owner the new owner, can be <code>null</code>
+		 */
+		protected void setOwner( PlaceholderList<D>.Entry owner ){
+			if( bound && strategy != null ){
+				if( placeholderMap != null ){
+					if( owner == null ){
+						placeholderMap.setPlaceholderStrategy( null );
+					}
+					else{
+						placeholderMap.setPlaceholderStrategy( strategy );
+					}
+				}
+			}
+			
+			this.owner = owner;
 		}
 		
 		/**
@@ -1032,7 +1188,18 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		 * @param placeholders the placeholders, may be <code>null</code>
 		 */
 		public void setPlaceholderMap( PlaceholderMap placeholders ){
-			this.placeholderMap = placeholders;
+			if( bound && strategy != null ){
+				if( this.placeholderMap != null ){
+					this.placeholderMap.setPlaceholderStrategy( null );
+				}
+				this.placeholderMap = placeholders;
+				if( this.placeholderMap != null ){
+					this.placeholderMap.setPlaceholderStrategy( strategy );
+				}
+			}
+			else{
+				this.placeholderMap = placeholders;
+			}
 		}
 		
 		/**
@@ -1054,7 +1221,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 				return true;
 			
 			if( obj.getClass() == getClass() ){
-				return value.equals( ((Item<?>)obj).value );
+				return value.equals( ((Item)obj).value );
 			}
 			
 			return false;
@@ -1173,9 +1340,9 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		private Level level;
 		private int size = -1;
 		
-		protected abstract A unwrap( Item<D> item );
-		protected abstract Item<D> wrap( A item );
-		protected abstract boolean visible( Item<D> value );
+		protected abstract A unwrap( Item item );
+		protected abstract Item wrap( A item );
+		protected abstract boolean visible( Item value );
 		
 		public SubList( Level level ){
 			this.level = level;

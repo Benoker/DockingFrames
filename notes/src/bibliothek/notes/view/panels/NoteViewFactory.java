@@ -33,6 +33,7 @@ import java.util.Map;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.notes.model.Note;
 import bibliothek.notes.model.NoteModel;
 import bibliothek.notes.view.NoteViewManager;
@@ -103,11 +104,11 @@ public class NoteViewFactory implements DockFactory<NoteView, String> {
 	    element.addElement( "note" ).setString( layout );
 	}
 	
-	public String read( DataInputStream in ) throws IOException {
+	public String read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException {
 	    return in.readUTF();
 	}
 	
-	public String read( XElement element ) {
+	public String read( XElement element, PlaceholderStrategy placeholders ) {
 	    return element.getElement( "note" ).getString();
 	}
 }

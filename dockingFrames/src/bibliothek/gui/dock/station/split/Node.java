@@ -332,7 +332,7 @@ public class Node extends VisibleSplitNode{
         else if( !leftVisible && rightVisible ){
         	right.updateBounds( x, y, width, height, factorW, factorH, components );
         }
-        else{
+        else if( leftVisible && rightVisible ){
         	divider = getAccess().validateDivider( divider, this );
         	int dividerSize = getAccess().getOwner().getDividerSize();
 

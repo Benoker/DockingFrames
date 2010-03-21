@@ -47,6 +47,7 @@ import bibliothek.gui.dock.layout.AdjacentDockFactory;
 import bibliothek.gui.dock.station.split.Node;
 import bibliothek.gui.dock.station.split.Root;
 import bibliothek.gui.dock.station.split.SplitNode;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -107,11 +108,11 @@ public class DockFrontendSizeManager implements SizeManager{
             return sizes.get( element );
         }
 
-        public Double read( DataInputStream in ) throws IOException {
+        public Double read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException {
             return in.readDouble();
         }
 
-        public Double read( XElement element ) {
+        public Double read( XElement element, PlaceholderStrategy placeholders ) {
             return element.getDouble();
         }
 

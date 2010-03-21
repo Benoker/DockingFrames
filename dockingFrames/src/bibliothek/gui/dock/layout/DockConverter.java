@@ -30,8 +30,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Map;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -105,18 +107,22 @@ public interface DockConverter <D extends DockElement, L>{
     /**
      * Reads a layout from a stream.
      * @param in the stream to read from
+     * @param placeholders a strategy to detect invalid placeholders, can be <code>null</code>.
+     * Factories loading only {@link Dockable}s but no {@link DockStation}s can safely ignore this argument. 
      * @return the new layout, can be <code>null</code> if the layout
      * should be discarded
      * @throws IOException if an I/O-error occurs
      */
-    public L read( DataInputStream in ) throws IOException;
+    public L read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException;
     
     /**
      * Reads a layout from an xml-element.
      * @param element the element to read, should not be changed by this 
      * method.
+     * @param placeholders a strategy to detect invalid placeholders, can be <code>null</code>.
+     * Factories loading only {@link Dockable}s but no {@link DockStation}s can safely ignore this argument.
      * @return the new layout, can be <code>null</code> if the layout
      * should be discarded
      */
-    public L read( XElement element );
+    public L read( XElement element, PlaceholderStrategy placeholders );
 }

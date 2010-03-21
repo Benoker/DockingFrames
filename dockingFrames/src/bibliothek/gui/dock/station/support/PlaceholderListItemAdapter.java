@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2009 Benjamin Sigg
+ * Copyright (C) 2010 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,46 +23,26 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.eclipse.stack;
-
-import java.awt.Graphics;
-
-import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPanePainter;
-import bibliothek.gui.dock.station.stack.CombinedStackDockContentPane;
+package bibliothek.gui.dock.station.support;
 
 /**
- * The panel painting the background of a {@link EclipseTabPane}.
+ * An adapter for {@link PlaceholderListItemConverter}, all methods implemented by this adapter do nothing.
  * @author Benjamin Sigg
+ *
+ * @param <D> the kind of data a subclass handles
  */
-public class EclipseTabPaneContent extends CombinedStackDockContentPane{
-	private EclipseTabPane pane;
-	
-	public EclipseTabPaneContent( EclipseTabPane pane ){
-		super( pane );
-		this.pane = pane;
+public abstract class PlaceholderListItemAdapter<D extends PlaceholderListItem> implements PlaceholderListItemConverter<D> {
+	public D convert( ConvertedPlaceholderListItem item ){
+		// ignore
+		return null;
 	}
 	
-	/**
-	 * Gets the parent of this panel.
-	 * @return the parent
-	 */
-	public EclipseTabPane getPane(){
-		return pane;
+	public ConvertedPlaceholderListItem convert(int index, D dockable){
+		// ignore
+		return null;
 	}
 	
-	@Override
-	public void paint( Graphics g ){
-		TabPanePainter painter = pane.getPainter();
-		if( painter != null ){
-			painter.paintBackground( g );
-		}
-		
-		super.paint( g );
-	
-		if( painter != null ){
-			painter.paintForeground( g );
-		}
-		
-		paintBorder( g );
+	public void added(D dockable){
+		// ignore
 	}
 }

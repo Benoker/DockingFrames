@@ -180,7 +180,7 @@ public class StackDockProperty extends AbstractDockableProperty {
     			index = xindex.getInt();
     		}
     		if( xplaceholder != null ){
-    			placeholder = new Path( xplaceholder.toString() );
+    			placeholder = new Path( xplaceholder.getString() );
     		}
     	}
     }

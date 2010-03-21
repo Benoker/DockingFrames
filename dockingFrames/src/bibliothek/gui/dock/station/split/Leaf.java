@@ -204,15 +204,21 @@ public class Leaf extends VisibleSplitNode{
     /**
      * Disconnects this leaf from its {@link Dockable}. This leaf either deletes
      * itself or replaces itself with a {@link Placeholder}.
+     * @param keepCurrent if <code>true</code>, the placeholder of the current
+     * {@link Dockable} is added to the set of the placeholders, otherwise the placeholder
+     * is removed. 
      */
-    public void placehold(){
+    public void placehold( boolean keepCurrent ){
     	Dockable dockable = getDockable();
     	if( dockable != null ){
 	    	SplitDockAccess access = getAccess();
 	    	PlaceholderStrategy strategy = access.getOwner().getPlaceholderStrategy();
 	    	Path placeholder = strategy.getPlaceholderFor( dockable );
 	    	if( placeholder != null ){
-	    		if( !hasPlaceholder( placeholder )){
+	    		if( !keepCurrent ){
+	    			removePlaceholder( placeholder );
+	    		}
+	    		else if( !hasPlaceholder( placeholder )){
 	    			addPlaceholder( placeholder );
 	    		}
 	    	}
@@ -220,6 +226,7 @@ public class Leaf extends VisibleSplitNode{
     	if( hasPlaceholders() ){
     		Placeholder placeholder = createPlaceholder( getId() );
     		placeholder.setPlaceholders( getPlaceholders() );
+    		placeholder.setPlaceholderMap( getPlaceholderMap() );
     		replace( placeholder );
     	}
     	else{
@@ -469,6 +476,17 @@ public class Leaf extends VisibleSplitNode{
             out.append( dockable.getTitleText() );
             out.append( ", " );
         }
+        out.append( "placeholders={" );
+        Path[] placeholders = getPlaceholders();
+        if( placeholders != null ){
+        	for( int i = 0; i < placeholders.length; i++ ){
+        		if( i > 0 ){
+        			out.append( ", " );
+        		}
+        		out.append( placeholders[i].toString() );
+        	}
+        }
+        out.append( "}, " );
         out.append( "id=" );
         out.append( getId() );
         out.append( " ]" );

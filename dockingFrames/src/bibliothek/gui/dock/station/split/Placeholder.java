@@ -65,6 +65,7 @@ public class Placeholder extends SplitNode {
 				return false;
 			removePlaceholder( placeholder );
 			leaf.setPlaceholders( getPlaceholders() );
+			leaf.setPlaceholderMap( getPlaceholderMap() );
 			replace( leaf );
 			return true;	
 		}

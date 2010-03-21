@@ -54,23 +54,12 @@ import bibliothek.util.xml.XException;
 public class SplitDockStationFactory implements DockFactory<SplitDockStation, SplitDockStationLayout> {
 	/** The id which is normally used for this type of factory*/
     public static final String ID = "SplitDockStationFactory";
-    
-    /** optional strategy used as filter for finding out which placeholders should be stored */
-    private PlaceholderStrategy placeholders = null;
-    
+
     /**
      * Creates a new factory
      */
     public SplitDockStationFactory(){
     	// nothing
-    }
-    
-    /**
-     * Creates a new factory
-     * @param placeholders filter for finding out which placeholders to store and which not
-     */
-    public SplitDockStationFactory( PlaceholderStrategy placeholders ){
-    	this.placeholders = placeholders;
     }
     
     public String getID() {
@@ -327,7 +316,7 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
         }
     }
     
-    public SplitDockStationLayout read( DataInputStream in ) throws IOException {
+    public SplitDockStationLayout read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException {
         Version version = Version.read( in );
         version.checkCurrent();
         
@@ -336,7 +325,7 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
         
         SplitDockStationLayout.Entry root = null;
         if( in.readBoolean() ){
-            root = readEntry( in, version8, version8a );
+            root = readEntry( in, version8, version8a, placeholders );
         }
         int fullscreen = in.readInt();
         return new SplitDockStationLayout( root, fullscreen );
@@ -347,10 +336,11 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
      * @param in the stream to read
      * @param version8 version of file is at least 8
      * @param version8a version of file is at least 8a
+     * @param strategy tells which placeholders are invalid
      * @return the new entry
      * @throws IOException if an I/O-error occurs
      */
-    private SplitDockStationLayout.Entry readEntry( DataInputStream in, boolean version8, boolean version8a ) throws IOException{
+    private SplitDockStationLayout.Entry readEntry( DataInputStream in, boolean version8, boolean version8a, PlaceholderStrategy strategy ) throws IOException{
     	long id = -1;
     	if( version8 ){
     		id = in.readLong();
@@ -371,14 +361,15 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     		
     		PlaceholderMap placeholderMap = null;
     		if( hasMap ){
-    			placeholderMap = new PlaceholderMap( in, this.placeholders );
+    			placeholderMap = new PlaceholderMap( in, strategy );
+    			placeholderMap.setPlaceholderStrategy( null );
     		}
     		
     		if( node ){
     			Orientation orientation = Orientation.values()[ in.readInt() ];
 	            double divider = in.readDouble();
-	            SplitDockStationLayout.Entry childA = readEntry( in, version8, version8a );
-	            SplitDockStationLayout.Entry childB = readEntry( in, version8, version8a );
+	            SplitDockStationLayout.Entry childA = readEntry( in, version8, version8a, strategy );
+	            SplitDockStationLayout.Entry childB = readEntry( in, version8, version8a, strategy );
 	            return new SplitDockStationLayout.Node( orientation, divider, childA, childB, placeholders, placeholderMap, id );
     		}
     		else{
@@ -393,28 +384,28 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
 	        if( kind == 1 ){
 	            Orientation orientation = Orientation.values()[ in.readInt() ];
 	            double divider = in.readDouble();
-	            SplitDockStationLayout.Entry childA = readEntry( in, version8, version8a );
-	            SplitDockStationLayout.Entry childB = readEntry( in, version8, version8a );
+	            SplitDockStationLayout.Entry childA = readEntry( in, version8, version8a, strategy );
+	            SplitDockStationLayout.Entry childB = readEntry( in, version8, version8a, strategy );
 	            return new SplitDockStationLayout.Node( orientation, divider, childA, childB, null, null, id );
 	        }
 	        if( kind == 2 ){
 	        	int childId = in.readInt();
-	        	Path[] placeholders = readPlaceholders( in );
+	        	Path[] placeholders = readPlaceholders( in, strategy );
 	        	return new SplitDockStationLayout.Leaf( childId, placeholders, null, id );
 	        }
 	        if( kind == 3 ){
 	        	Orientation orientation = Orientation.values()[ in.readInt() ];
 	            double divider = in.readDouble();
-	            Path[] placeholders = readPlaceholders( in );
-	            SplitDockStationLayout.Entry childA = readEntry( in, version8, version8a );
-	            SplitDockStationLayout.Entry childB = readEntry( in, version8, version8a );
+	            Path[] placeholders = readPlaceholders( in, strategy );
+	            SplitDockStationLayout.Entry childA = readEntry( in, version8, version8a, strategy );
+	            SplitDockStationLayout.Entry childB = readEntry( in, version8, version8a, strategy );
 	            return new SplitDockStationLayout.Node( orientation, divider, childA, childB, placeholders, null, id );
 	        }
 	        throw new IOException( "unknown kind: " + kind );
     	}
     }
     
-    private Path[] readPlaceholders( DataInputStream in ) throws IOException{
+    private Path[] readPlaceholders( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException{
     	int length = in.readInt();
     	List<Path> result = new ArrayList<Path>( length );
     	for( int i = 0; i < length; i++ ){
@@ -472,13 +463,13 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
         }
     }
     
-    public SplitDockStationLayout read( XElement element ) {
+    public SplitDockStationLayout read( XElement element, PlaceholderStrategy placeholders ) {
         SplitDockStationLayout.Entry root = null;
         XElement xroot = element.getElement( "node" );
         if( xroot == null )
             xroot = element.getElement( "leaf" );
         if( xroot != null )
-            root = readEntry( xroot );
+            root = readEntry( xroot, placeholders );
         
         int fullscreen = -1;
         XElement xfullscreen = element.getElement( "fullscreen" );
@@ -492,9 +483,10 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
      * Transforms an xml-element into an entry.
      * @param element the element that should be converted, of type "node" or
      * "leaf".
+     * @param strategy strategy used for removing invalid placeholders
      * @return the new entry
      */
-    private SplitDockStationLayout.Entry readEntry( XElement element ){
+    private SplitDockStationLayout.Entry readEntry( XElement element, PlaceholderStrategy strategy ){
     	long nodeId = -1;
     	if( element.attributeExists( "nodeId" ) ){
     		nodeId = element.getLong( "nodeId" );
@@ -508,7 +500,7 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     			List<Path> collection = new ArrayList<Path>( xchildren.length );
     			for( int i = 0; i < xchildren.length; i++ ){
     				Path placeholder = new Path( xchildren[i].getString() );
-    				if( this.placeholders == null || this.placeholders.isValidPlaceholder( placeholder )){
+    				if( strategy == null || strategy.isValidPlaceholder( placeholder )){
     					collection.add( placeholder );
     				}
     			}
@@ -519,7 +511,8 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     	PlaceholderMap map = null;
     	XElement xmap = element.getElement( "placeholder-map" );
     	if( xmap != null ){
-    		map = new PlaceholderMap( xmap, this.placeholders );
+    		map = new PlaceholderMap( xmap, strategy );
+    		map.setPlaceholderStrategy( null );
     	}
     	
         if( "leaf".equals( element.getName() )){
@@ -536,8 +529,8 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
             return new SplitDockStationLayout.Node( 
                     Orientation.valueOf( element.getString( "orientation" ) ),
                     element.getDouble( "divider" ),
-                    readEntry( xchildren[0] ),
-                    readEntry( xchildren[1] ),
+                    readEntry( xchildren[0], strategy ),
+                    readEntry( xchildren[1], strategy ),
                     placeholders,
                     map,
                     nodeId );

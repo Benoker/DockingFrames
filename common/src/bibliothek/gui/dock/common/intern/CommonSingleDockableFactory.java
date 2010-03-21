@@ -39,6 +39,7 @@ import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.SingleCDockable;
 import bibliothek.gui.dock.common.SingleCDockableBackupFactory;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
@@ -142,7 +143,7 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
         return dockable.intern();
     }
 
-    public String read( DataInputStream in ) throws IOException {
+    public String read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException {
         Version version = Version.read( in );
         if( !version.equals( Version.VERSION_1_0_4 ))
             throw new IOException( "Data from the future - unknown version: " + version );
@@ -150,7 +151,7 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
         return in.readUTF();
     }
 
-    public String read( XElement element ) {
+    public String read( XElement element, PlaceholderStrategy placeholders ) {
         return element.getElement( "id" ).getString();
     }
 

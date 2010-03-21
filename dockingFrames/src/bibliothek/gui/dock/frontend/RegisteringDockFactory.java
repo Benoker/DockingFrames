@@ -35,6 +35,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.layout.BackupFactoryData;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -101,12 +102,12 @@ public class RegisteringDockFactory<D extends Dockable, L> implements DockFactor
         return element;
     }
 
-    public BackupFactoryData<L> read( DataInputStream in ) throws IOException {
-        return new BackupFactoryData<L>( null, factory.read( in ));
+    public BackupFactoryData<L> read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException {
+        return new BackupFactoryData<L>( null, factory.read( in, placeholders ));
     }
 
-    public BackupFactoryData<L> read( XElement element ) {
-        return new BackupFactoryData<L>( null, factory.read( element ));
+    public BackupFactoryData<L> read( XElement element, PlaceholderStrategy placeholders ) {
+        return new BackupFactoryData<L>( null, factory.read( element, placeholders ));
     }
 
     public void setLayout( D element, BackupFactoryData<L> layout, Map<Integer, Dockable> children ) {
