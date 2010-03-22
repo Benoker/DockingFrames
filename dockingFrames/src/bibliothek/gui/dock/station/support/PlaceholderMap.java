@@ -1064,6 +1064,18 @@ public class PlaceholderMap {
 		}
 		
 		@Override
+		public String toString(){
+			StringBuilder builder = new StringBuilder();
+			for( Path placeholder : placeholders ){
+				builder.append( placeholder );
+				builder.append( ", " );
+			}
+			builder.append( "shared=" );
+			builder.append( shared );
+			return builder.toString();
+		}
+		
+		@Override
 		public int hashCode(){
 			int result = Arrays.hashCode( placeholders );
 			if( shared ){

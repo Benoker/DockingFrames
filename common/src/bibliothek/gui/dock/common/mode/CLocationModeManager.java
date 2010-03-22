@@ -37,9 +37,9 @@ import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
+import bibliothek.gui.dock.facile.mode.CLocationModeSettings;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.LocationMode;
-import bibliothek.gui.dock.facile.mode.CLocationModeSettings;
 import bibliothek.gui.dock.facile.mode.LocationModeManager;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.support.mode.AffectedSet;
@@ -139,6 +139,17 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
 		return control.shouldStore( key );
 	}
 	
+	@Override
+	public void remove( Dockable dockable ){
+		if( dockable instanceof CommonDockable ){
+			CDockable cdockable = ((CommonDockable)dockable).getDockable();
+			String key = control.shouldStore( cdockable );
+			if( key != null ){
+				addEmpty( key );
+			}
+		}
+		super.remove( dockable );
+	}
 
     @Override
     protected <B> ModeSettings<Location, B> createModeSettings( ModeSettingsConverter<Location, B> converter ){

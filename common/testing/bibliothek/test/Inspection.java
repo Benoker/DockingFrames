@@ -6,7 +6,7 @@ import javax.swing.JFrame;
 
 import bibliothek.gui.dock.common.CControl;
 
-public class Inspection {
+public class Inspection {	
 	public static void open( CControl control ){
 		open( control, new PlaceholderInspection() );
 	}
@@ -14,7 +14,7 @@ public class Inspection {
 	private static void open( Object root, InspectionGraph graph ){
 		JFrame frame = new JFrame( "Inspection" );
 		frame.add( new InspectionPanel( root, graph ), BorderLayout.CENTER );
-		frame.setBounds( 200, 200, 400, 300 );
+		frame.setBounds( 400, 400, 400, 600 );
 		frame.setVisible( true );
 	}
 }

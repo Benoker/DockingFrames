@@ -1644,6 +1644,38 @@ public class CControl {
         else
             return missingStrategy.shouldStoreMulti( register.multiToNormalId( id ) );
     }    
+    
+    private String shouldStore( CDockable dockable ){
+    	String key = null;
+    	
+    	if( dockable instanceof SingleCDockable ){
+    		key = ((SingleCDockable)dockable).getUniqueId();
+    		key = register.toSingleId( key );
+    	}
+    	else if( dockable instanceof MultipleCDockable ){
+    		MultipleCDockableFactory<?, ?> factory = ((MultipleCDockable)dockable).getFactory();
+    		
+    		for( Map.Entry<String, MultipleCDockableFactory<?, ?>> entry : register.getFactories().entrySet() ){
+    			if( entry.getValue() == factory ){
+    				key = entry.getKey();
+    				break;
+    			}
+    		}
+    		
+    		if( key == null ){
+    			return null;
+    		}
+    		
+    		key = register.toMultiId( key );
+    	}
+    	
+    	if( shouldStore( key )){
+			return key;
+		}
+		else{
+			return null;
+		}
+    }
 
     private boolean shouldCreate( MultipleCDockableFactory<?, ?> factory ){
         String id = access.getFactoryId( factory );
@@ -2262,6 +2294,10 @@ public class CControl {
 
         public boolean shouldStore( String key ) {
             return CControl.this.shouldStore( key );
+        }
+        
+        public String shouldStore( CDockable dockable ) {
+            return CControl.this.shouldStore( dockable );
         }
 
         public void fillMultiFactories( CSetting setting ) {

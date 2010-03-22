@@ -27,6 +27,7 @@ package bibliothek.gui.dock.common.intern;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.layout.CLayoutChangeStrategy;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
@@ -52,6 +53,18 @@ public class CDockFrontend extends DockFrontend{
         super( controller );
         this.control = control;
         setLayoutChangeStrategy( new CLayoutChangeStrategy( control.getOwner() ) );
+    }
+    
+    @Override
+    public void remove( Dockable dockable ){
+    	if( dockable instanceof CommonDockable ){
+    		CDockable cdockable = ((CommonDockable)dockable).getDockable();
+    		String key = control.shouldStore( cdockable );
+    		if( key != null ){
+    			addEmpty( key );
+    		}
+    	}
+    	super.remove( dockable );
     }
     
     @Override

@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import bibliothek.test.inspect.NullInspectable;
 import bibliothek.test.inspect.ObjectInspectable;
 
 /**
@@ -129,7 +130,7 @@ public class InspectionGraph {
 	@SuppressWarnings("unchecked")
 	public Inspectable getInspectable( Object object ){
 		if( object == null ){
-			return null;
+			return NullInspectable.INSTANCE;
 		}
 		
 		Inspectable result = inspectables.get( object );

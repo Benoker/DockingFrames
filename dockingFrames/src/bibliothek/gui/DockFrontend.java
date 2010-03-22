@@ -795,6 +795,7 @@ public class DockFrontend {
             info.setHideable( false );
             
             if( empty.contains( info.getKey() )){
+            	info.updateLocation();
                 fireRemoved( dockable );
                 info.setDockable( null );
                 info.setHideable( hideable );

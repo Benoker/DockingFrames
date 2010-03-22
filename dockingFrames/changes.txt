@@ -274,3 +274,4 @@
 ! API: some methods of DockFrontend have been moved to DefaultLayoutChangeStrategy, new CLayoutChangeStrategy to handle special needs of Common (i.e. MultipleCDockables that are not registered at the DockFrontend)
 - Bugfix: moving a Dockable on a FlapDockStation did throw an exception if the destination index was too big
 ! API: SplitDockStation support placeholders, various interfaces changed. New PlaceholderStrategy.
+- Bugfix: if a CDockable is removed and the CMissingDockableStrategy tells to store information about that dockable, then its location remains stored.

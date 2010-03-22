@@ -13,6 +13,11 @@ public class NamedInspectable implements Inspectable{
 		this.delegate = graph.getInspectable( value );
 	}
 	
+	@Override
+	public String toString(){
+		return name + ": " + delegate;
+	}
+	
 	public Inspect inspect( final InspectionGraph graph ){
 		return new Inspect() {
 			private Inspect value = delegate.inspect( graph );

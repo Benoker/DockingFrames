@@ -11,6 +11,11 @@ public class ObjectInspectable implements Inspectable{
 		this.object = object;
 	}
 	
+	@Override
+	public String toString(){
+		return String.valueOf( object );
+	}
+	
 	public Inspect inspect( InspectionGraph graph ){
 		DefaultInspect inspect = new DefaultInspect( graph );
 		inspect.setName( object.getClass().getName() );

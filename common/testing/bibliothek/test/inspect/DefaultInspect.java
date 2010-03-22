@@ -15,7 +15,7 @@ public class DefaultInspect implements Inspect{
 	
 	private List<String> order = new ArrayList<String>();
 	private Map<String, Object> children = new HashMap<String, Object>();
-	private Map<Object, Object> named = new IdentityHashMap<Object, Object>();
+	private Map<String, Object> named = new IdentityHashMap<String, Object>();
 	
 	protected final InspectionGraph graph;
 	
@@ -46,7 +46,7 @@ public class DefaultInspect implements Inspect{
 	public Object[] getChildren(){
 		Object[] result = new Object[ order.size() ];
 		for( int i = 0; i < result.length; i++ ){
-			result[i] = named.get( children.get( order.get( i ) ) );
+			result[i] = named.get( order.get( i ) );
 		}
 		return result;
 	}
@@ -70,17 +70,18 @@ public class DefaultInspect implements Inspect{
 	}
 	
 	public void put( String name, String rename, Object value ){
-		if( !children.containsKey( name )){
+		boolean oldMissing = !children.containsKey( name );
+		if( oldMissing ){
 			order.add( name );
 		}
 		Object old = children.put( name, value );
-		if( old != value ){
-			named.remove( old );
+		if( oldMissing || old != value ){
+			named.remove( name );
 			if( rename != null ){
-				named.put( value, new NamedInspectable( rename, value, graph ));
+				named.put( name, new NamedInspectable( rename, value, graph ));
 			}
 			else{
-				named.put( value, value );
+				named.put( name, value );
 			}
 		}
 	}

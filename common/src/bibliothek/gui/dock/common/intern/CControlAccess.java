@@ -98,13 +98,22 @@ public interface CControlAccess {
 	public CDockableAccess access( CDockable dockable );
 	
 	/**
-	 * Calls {@link MissingCDockableStrategy#shouldStoreSingle(String)} if 
+	 * Calls one of the <code>shouldStore</code> methods of {@link MissingCDockableStrategy} if 
 	 * <code>key</code> has the correct format
 	 * @param key the key for which a dockable might be stored
 	 * @return <code>true</code> if layout information for <code>key</code> should
 	 * be stored, <code>false</code> otherwise
 	 */
 	public boolean shouldStore( String key );
+	
+	/**
+	 * Tells whether information about <code>dockable</code> should remain stored even if
+	 * the element is removed from the {@link CControl}.
+	 * @param dockable the element to check
+	 * @return <code>null</code> if nothing should be stored, the unique encoded identifier of <code>dockable</code>
+	 * if data should remain stored
+	 */
+	public String shouldStore( CDockable dockable );
 	
 	/**
 	 * Gets the mutable register of the {@link CControl}. Note that clients should

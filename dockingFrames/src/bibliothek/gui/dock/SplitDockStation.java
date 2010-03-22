@@ -1084,6 +1084,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      */
     public SplitDockPlaceholderProperty getDockablePlaceholderProperty( Dockable dockable, Dockable target ){
     	Leaf leaf = getRoot().getLeaf( dockable );
+    	if( leaf == null ){
+    		throw new IllegalArgumentException( "dockable not known to this station" );
+    	}
+    	
     	Path placeholder = getPlaceholderStrategy().getPlaceholderFor( target == null ? dockable : target );
     	if( placeholder == null ){
     		return null;
@@ -1971,7 +1975,6 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             dockStationListeners.fireDockableAdding( dockable );
         }
         Leaf leaf = new Leaf( access );
-        leaf.setDockable( dockable, false );
 
         Root root = root();
         if( root.getChild() == null ){
@@ -1983,6 +1986,8 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             Node node = new Node( access, leaf, child );
             root.setChild( node );
         }
+
+        leaf.setDockable( dockable, false );
 
         if( fire ){
             dockStationListeners.fireDockableAdded( dockable );
