@@ -998,7 +998,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     		add( next, index );
     		PlaceholderList<StationChildHandle>.Item newItem = dockables.list().get( listIndex );
     		if( station ){
-    			newItem.setPlaceholderMap( next.asDockStation().getPlaceholders() );
+    			newItem.setPlaceholderMap( old.asDockStation().getPlaceholders() );
     		}
     		else{
     			newItem.setPlaceholderMap( oldItem.getPlaceholderMap() );

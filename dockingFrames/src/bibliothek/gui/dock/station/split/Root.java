@@ -28,6 +28,7 @@ package bibliothek.gui.dock.station.split;
 
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.util.Map;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
@@ -175,8 +176,8 @@ public class Root extends VisibleSplitNode{
     }
     
     @Override
-    public void evolve( Key key, boolean checkValidity ){
-    	setChild( create( key, checkValidity ) );
+    public void evolve( Key key, boolean checkValidity, Map<Leaf, Dockable> linksToSet ){
+    	setChild( create( key, checkValidity, linksToSet ) );
     }
     
     @Override

@@ -1,6 +1,7 @@
 package bibliothek.gui.dock.station.split;
 
 import java.awt.Dimension;
+import java.util.Map;
 
 import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
@@ -24,9 +25,9 @@ public class Placeholder extends SplitNode {
 	public Placeholder( SplitDockAccess access, long id ){
 		super( access, id );
 	}
-
+	
 	@Override
-	public void evolve( Key key, boolean checkValidity ){
+	public void evolve( Key key, boolean checkValidity, Map<Leaf, Dockable> linksToSet ){
 		setPlaceholders( key.getTree().getPlaceholders( key ) );
 	}
 

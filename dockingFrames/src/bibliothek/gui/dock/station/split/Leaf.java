@@ -28,6 +28,7 @@ package bibliothek.gui.dock.station.split;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.util.Map;
 
 import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
@@ -344,7 +345,7 @@ public class Leaf extends VisibleSplitNode{
     }
     
     @Override
-    public void evolve( Key key, boolean checkValidity ){
+    public void evolve( Key key, boolean checkValidity, Map<Leaf, Dockable> linksToSet ){
     	setPlaceholders( key.getTree().getPlaceholders( key ) );
     	setPlaceholderMap( key.getTree().getPlaceholderMap( key ) );
     }

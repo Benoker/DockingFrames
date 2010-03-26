@@ -32,6 +32,7 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JComponent;
@@ -490,10 +491,11 @@ public abstract class SplitNode{
      * <code>key</code>. Note that this method does not remove and {@link Dockable}s
      * from the station. They must be removed explicitly using {@link Leaf#setDockable(Dockable, boolean)}
      * @param key the key to read
+     * @param linksToSet a map that is to be filled with all new {@link Leaf}s and their {@link Dockable}s which are not yet set.
      * @param checkValidity whether to ensure that all new {@link Dockable}s are
      * acceptable or not.
      */
-    public abstract void evolve( SplitDockTree.Key key, boolean checkValidity );
+    public abstract void evolve( SplitDockTree.Key key, boolean checkValidity, Map<Leaf, Dockable> linksToSet );
     
     /**
      * If there are elements left in <code>property</code>, then the next node
@@ -634,9 +636,10 @@ public abstract class SplitNode{
      * @param key the key to read
      * @param checkValidity whether to ensure that all new {@link Dockable}s
      * are acceptable or not.
+     * @param linksToSet a map that will be filled up with new {@link Leaf}s whose {@link Dockable}s have not yet been set
      * @return the new node
      */
-    protected SplitNode create( SplitDockTree.Key key, boolean checkValidity ){
+    protected SplitNode create( SplitDockTree.Key key, boolean checkValidity, Map<Leaf, Dockable> linksToSet ){
     	SplitDockTree tree = key.getTree();
     	
     	if( tree.isDockable( key )){
@@ -667,7 +670,7 @@ public abstract class SplitNode{
     				}
 
     				leaf = createLeaf( key.getNodeId() );
-    				leaf.setDockable( dockables[0], true );
+    				linksToSet.put( leaf, dockables[0] );
     			}
     			else{
     				if( checkValidity ){
@@ -687,7 +690,7 @@ public abstract class SplitNode{
     				removePlaceholderMap = true;
     				if( dockables.length == 2 ){
     					leaf = createLeaf( key.getNodeId() );
-    					leaf.setDockable( combination, true );
+    					linksToSet.put( leaf, combination );
 
     					DockStation station = combination.asDockStation();
     					if( station != null ){
@@ -702,7 +705,7 @@ public abstract class SplitNode{
     						throw new SplitDropTreeException( access.getOwner(), "Combination of two Dockables does not create a new station" );
 
     					leaf = createLeaf( key.getNodeId() );
-    					leaf.setDockable( combination, true );
+    					linksToSet.put( leaf, combination );
 
     					for( int i = 2; i < dockables.length; i++ ){
     						Dockable dockable = dockables[ i ];
@@ -726,7 +729,7 @@ public abstract class SplitNode{
     				}
     			}
     			
-    			leaf.evolve( key, checkValidity );
+    			leaf.evolve( key, checkValidity, linksToSet );
     			if( removePlaceholderMap ){
     				leaf.setPlaceholderMap( null );
     			}
@@ -735,7 +738,7 @@ public abstract class SplitNode{
     	}
     	else{
     		Node node = createNode( key.getNodeId() );
-    		node.evolve( key, checkValidity );
+    		node.evolve( key, checkValidity, linksToSet );
         	return node;
     	}
     }

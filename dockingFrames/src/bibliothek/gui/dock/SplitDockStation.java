@@ -37,9 +37,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.Icon;
@@ -291,6 +293,8 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 
     /** Access to the private and protected methods for some friends of this station */
     private SplitDockAccess access = new SplitDockAccess(){
+    	private long lastUniqueId = -1;
+    	
         public StationChildHandle getFullScreenDockable() {
             return fullScreenDockable;
         }
@@ -329,9 +333,13 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         
         public long uniqueID(){
 	        long id = System.currentTimeMillis();
-	        while( getNode( id ) != null ){
-	        	id = System.currentTimeMillis();
+	        if( id <= lastUniqueId ){
+	        	id = lastUniqueId+1;
 	        }
+	        while( getNode( id ) != null ){
+	        	id++;
+	        }
+	        lastUniqueId = id;
 	        return id;
         }
     };
@@ -1715,7 +1723,11 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	
 	        Key rootKey = tree.getRoot();
 	        if( rootKey != null ){
-	            root().evolve( rootKey, checkValidity );
+	        	Map<Leaf, Dockable> linksToSet = new HashMap<Leaf, Dockable>();
+	            root().evolve( rootKey, checkValidity, linksToSet );
+	            for( Map.Entry<Leaf, Dockable> entry : linksToSet.entrySet() ){
+	            	entry.getKey().setDockable( entry.getValue(), true );
+	            }
 	            updateBounds();
 	        }
         }

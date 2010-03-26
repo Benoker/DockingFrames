@@ -246,7 +246,7 @@ public class CSplitDockStationHandle{
 			maximal.setMaximized( null, set );
 			set.add( dockable );
 			
-			if( dockable.getDockParent() == station ){
+			if( dockable.getDockParent() == station.getStation() ){
 				if( location != null ){
 					getStation().move( dockable, location );
 				}

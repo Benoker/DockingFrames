@@ -28,6 +28,7 @@ package bibliothek.gui.dock.station.split;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.util.Map;
 
 import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
@@ -511,21 +512,21 @@ public class Node extends VisibleSplitNode{
     }
     
     @Override
-    public void evolve( Key key, boolean checkValidity ){
+    public void evolve( Key key, boolean checkValidity, Map<Leaf, Dockable> linksToSet ){
     	SplitDockTree tree = key.getTree();
     	setPlaceholders( tree.getPlaceholders( key ) );
     	setPlaceholderMap( tree.getPlaceholderMap( key ) );
     	
     	if( tree.isHorizontal( key )){
     		orientation = SplitDockStation.Orientation.HORIZONTAL;
-    		setLeft( create( tree.getLeft( key ), checkValidity ));
-    		setRight( create( tree.getRight( key ), checkValidity ));
+    		setLeft( create( tree.getLeft( key ), checkValidity, linksToSet ));
+    		setRight( create( tree.getRight( key ), checkValidity, linksToSet ));
     		setDivider( tree.getDivider( key ));
     	}
     	else{
     		orientation = SplitDockStation.Orientation.VERTICAL;
-    		setLeft( create( tree.getTop( key ), checkValidity ));
-    		setRight( create( tree.getBottom( key ), checkValidity ));
+    		setLeft( create( tree.getTop( key ), checkValidity, linksToSet ));
+    		setRight( create( tree.getBottom( key ), checkValidity, linksToSet ));
     		setDivider( tree.getDivider( key ));
     	}
     }
