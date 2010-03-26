@@ -40,9 +40,11 @@ import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.SplitDockStation.Orientation;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.LocationEstimationMap;
 import bibliothek.gui.dock.station.split.SplitDockStationLayout.Entry;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
+import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
@@ -66,17 +68,20 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
         return ID;
     }
     
-    public SplitDockStationLayout getLayout( SplitDockStation station, final Map<Dockable, Integer> children ) {
+    public SplitDockStationLayout getLayout( final SplitDockStation station, final Map<Dockable, Integer> children ) {
         
         Entry root =
             station.visit( new SplitTreeFactory<Entry>(){
+            	private PlaceholderStrategy strategy = station.getPlaceholderStrategy();
+            	
             	public Entry leaf( Dockable dockable, long id, Path[] placeholders, PlaceholderMap placeholderMap ){
-                    Integer childId = children.get( dockable );
+            		Integer childId = children.get( dockable );
+            		placeholders = DockUtilities.mergePlaceholders( placeholders, dockable, strategy );
                     if( childId != null ){
                         return new SplitDockStationLayout.Leaf( childId, placeholders, placeholderMap, id );
                     }
                     else if( placeholders != null && placeholders.length > 0 ){
-                    	   return new SplitDockStationLayout.Leaf( -1, placeholders, placeholderMap, id );
+                    	return new SplitDockStationLayout.Leaf( -1, placeholders, placeholderMap, id );
                     }
                     else{
                         return null;
@@ -168,9 +173,17 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
      */
     private SplitDockTree.Key handleLeaf( SplitDockStationLayout.Leaf leaf, SplitDockTree tree, Map<Integer, Dockable> children ){
     	Dockable dockable = children.get( leaf.getId() );
+    	
+    	Path[] placeholders = leaf.getPlaceholders();
+    	PlaceholderMap placeholderMap = leaf.getPlaceholderMap();
+    	
         if( dockable != null ){
-        	return tree.put( dockable, leaf.getNodeId() );
+        	return tree.put( new Dockable[]{ dockable }, null, placeholders, placeholderMap, leaf.getNodeId() );
         }
+        else if( placeholders != null && placeholders.length > 0 ){
+        	return tree.put( new Dockable[]{}, null, placeholders, placeholderMap, leaf.getNodeId() );
+        }
+        
         return null;
     }
     
@@ -194,15 +207,15 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
         
         switch( node.getOrientation() ){
             case HORIZONTAL:
-                return tree.horizontal( a, b, node.getDivider(), node.getNodeId() );
+                return tree.horizontal( a, b, node.getDivider(), node.getPlaceholders(), node.getPlaceholderMap(), node.getNodeId() );
             case VERTICAL:
-                return tree.vertical( a, b, node.getDivider(), node.getNodeId() );
+                return tree.vertical( a, b, node.getDivider(), node.getPlaceholders(), node.getPlaceholderMap(), node.getNodeId() );
         }
         
         return null;
     }
     
-    public void estimateLocations( SplitDockStationLayout layout, Map<Integer, DockLayoutInfo> children ) {
+    public void estimateLocations( SplitDockStationLayout layout, LocationEstimationMap children ) {
     	estimateLocations( layout.getRoot(), children );
     }
     
@@ -212,16 +225,31 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
      * @param entry the root of the subtree to check
      * @param children the children of the station
      */
-    private void estimateLocations( SplitDockStationLayout.Entry entry, Map<Integer, DockLayoutInfo> children ){
+    private void estimateLocations( SplitDockStationLayout.Entry entry, LocationEstimationMap children ){
     	if( entry == null )
     		return;
     	
     	SplitDockStationLayout.Leaf leaf = entry.asLeaf();
     	if( leaf != null ){
-    		DockLayoutInfo info = children.get( leaf.getId() );
+    		DockLayoutInfo info = children.getChild( leaf.getId() );
     		if( info != null ){
+    			// should put the placeholder here
     		 	SplitDockPathProperty property = leaf.createPathProperty();
-    		 	info.setLocation( property );
+    		 	Path placeholder = info.getPlaceholder();
+    		 	if( placeholder != null ){
+    		 		info.setLocation( new SplitDockPlaceholderProperty( placeholder, property ) );
+    		 	}
+    		 	else{
+    		 		info.setLocation( property );
+    		 	}
+    		 	
+    		 	for( int i = 0, n = children.getSubChildCount( leaf.getId() ); i<n; i++ ){
+    		 		DockLayoutInfo subInfo = children.getSubChild( leaf.getId(), i );
+    		 		placeholder = subInfo.getPlaceholder();
+    		 		if( placeholder != null ){
+    		 			subInfo.setLocation( new SplitDockPlaceholderProperty( placeholder, property ) );
+    		 		}
+    		 	}
     		}
     	}
     	

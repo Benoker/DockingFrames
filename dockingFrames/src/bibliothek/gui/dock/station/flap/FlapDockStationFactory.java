@@ -38,6 +38,7 @@ import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.layout.LocationEstimationMap;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.PlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderListItem;
@@ -112,7 +113,7 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
     	}
     }
     
-    public void estimateLocations( final FlapDockStationLayout layout, final Map<Integer, DockLayoutInfo> children ){
+    public void estimateLocations( FlapDockStationLayout layout, final LocationEstimationMap children ){
     	if( layout instanceof RetroFlapDockStationLayout ){
     		RetroFlapDockStationLayout retroLayout = (RetroFlapDockStationLayout)layout;
 	    	int[] ids = retroLayout.getChildren();
@@ -120,9 +121,9 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
 	    	int[] sizes = retroLayout.getSizes();
 	    	
 	    	for( int i = 0, n = ids.length; i<n; i++ ){
-	    		DockLayoutInfo info = children.get( ids[i] );
+	    		DockLayoutInfo info = children.getChild( ids[i] );
 	    		if( info != null ){
-	    			FlapDockProperty property = new FlapDockProperty( i, holding[i], sizes[i] );
+	    			FlapDockProperty property = new FlapDockProperty( i, holding[i], sizes[i], info.getPlaceholder() );
 	    			info.setLocation( property );
 	    		}
 	    	}
@@ -139,7 +140,13 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
     					placeholder = new Path( item.getString( "placeholder" ) );
     				}
     				FlapDockProperty property = new FlapDockProperty( index, hold, size, placeholder );
-    				children.get( index ).setLocation( property );
+    				children.getChild( index ).setLocation( property );
+    				
+    				for( int i = 0, n = children.getSubChildCount( index ); i<n; i++ ){
+    					DockLayoutInfo info = children.getSubChild( index, i );
+    					info.setLocation( new FlapDockProperty( index, hold, size, info.getPlaceholder() ) );
+    				}
+    				
     				return null;
     			}
 			});

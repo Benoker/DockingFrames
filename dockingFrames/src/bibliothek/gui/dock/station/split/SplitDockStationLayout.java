@@ -156,6 +156,7 @@ public class SplitDockStationLayout {
         	else{
         		path = new SplitDockPathProperty();
         	}
+        	path.setLeafId( getNodeId() );
         	return path;
         }
         

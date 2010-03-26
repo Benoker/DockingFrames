@@ -37,6 +37,7 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.intern.AbstractDockableCStation;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.intern.station.CommonStation;
 import bibliothek.gui.dock.common.intern.station.CommonStationDelegate;
 import bibliothek.gui.dock.common.intern.station.SplitResizeRequestHandler;
@@ -104,6 +105,11 @@ public class CGridArea extends AbstractDockableCStation<SplitDockStation> implem
 		setMaximizingArea( true );
 		
 		modeManagerHandle = new CSplitDockStationHandle( this, control.getLocationManager() );
+	}
+	
+	@Override
+	protected CommonDockable createCommonDockable(){
+		throw new IllegalStateException( "the common-dockable gets already initialized by the constructor" );
 	}
 
 	/**

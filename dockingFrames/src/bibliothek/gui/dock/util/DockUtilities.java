@@ -44,12 +44,14 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.UIManager;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
@@ -437,5 +439,36 @@ public class DockUtilities {
             ex.printStackTrace();
             return new HashMap<String, Icon>();
         }
+    }
+ 
+    /**
+     * Merges the array <code>base</code> with the placeholder that is associated with <code>dockable</code>, but
+     * only if that placeholder is not yet in <code>base</code>.
+     * @param base some basic array, can be <code>null</code>
+     * @param dockable the dockable whose placeholder is to be stored, can be <code>null</code>
+     * @param strategy a strategy to find the placeholder of <code>dockable</code>, can be <code>null</code>
+     * @return either a new and larger array than <code>base</code>, <code>base</code> itself, or <code>null</code> if 
+     * <code>base</code> was <code>null</code> and no additional placeholder was found
+     */
+    public static Path[] mergePlaceholders( Path[] base, Dockable dockable, PlaceholderStrategy strategy ){
+    	if( dockable == null || strategy == null ){
+    		return base;
+    	}
+    	Path placeholder = strategy.getPlaceholderFor( dockable );
+    	if( placeholder == null ){
+    		return base;
+    	}
+    	if( base == null ){
+    		return new Path[]{ placeholder };
+    	}
+    	for( Path check : base ){
+    		if( placeholder.equals( check )){
+    			return base;
+    		}
+    	}
+    	Path[] result = new Path[ base.length+1 ];
+    	System.arraycopy( base, 0, result, 0, base.length );
+    	result[ base.length ] = placeholder;
+    	return result;
     }
 }

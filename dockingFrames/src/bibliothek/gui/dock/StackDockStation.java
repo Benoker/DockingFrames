@@ -643,9 +643,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     			listeners.fireDockableAdding( dockable );
     			dockable.addDockableListener( listener );
     			StationChildHandle handle = new StationChildHandle( StackDockStation.this, getDisplayers(), dockable, title );
-    			handle.updateDisplayer();
-    			addToPanel( handle, size, size );
-    			size++;
     			
     			return handle;
     		}
@@ -654,6 +651,9 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     		public void added( StationChildHandle handle ){
     			Dockable dockable = handle.getDockable();
     			dockable.setDockParent( StackDockStation.this );
+    			handle.updateDisplayer();
+    			addToPanel( handle, size, size );
+    			size++;
     			listeners.fireDockableAdded( dockable );
     		}
 		});
@@ -1048,7 +1048,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         	index = inserted;
         }
         
-        addToPanel( handle, index, dockables.dockables().size() );
+        addToPanel( handle, index, dockables.dockables().size()-1 );
         
         dockable.addDockableListener( listener );
         

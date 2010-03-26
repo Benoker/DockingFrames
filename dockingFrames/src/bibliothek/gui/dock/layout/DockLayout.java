@@ -35,6 +35,7 @@ import bibliothek.gui.dock.DockFactory;
  * by {@link DockFactory}s.<br> 
  * A <code>DockLayout</code> should not have any references to <code>DockElement</code>s. 
  * @author Benjamin Sigg
+ * @param <L> the kind of data stored for in this layout
  */
 public class DockLayout<L>{
     private String factory;

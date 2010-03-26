@@ -135,7 +135,8 @@ public abstract class DockTitleRequest {
 	protected abstract void answer( DockTitle previous, DockTitle title );
 	
 	/**
-	 * Asks for a new title.
+	 * Asks for a new title and may trigger {@link #answer(DockTitle, DockTitle)}.
+	 * This method may be called from anyone, not just the owner of this request.
 	 */
 	public void request(){
 		answered = false;

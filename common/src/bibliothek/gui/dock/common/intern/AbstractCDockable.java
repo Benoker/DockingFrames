@@ -116,13 +116,17 @@ public abstract class AbstractCDockable implements CDockable {
     
     /**
      * Creates a new dockable
-     * @param dockable the internal representation of this {@link CDockable},
-     * can be <code>null</code> but then {@link #init(CommonDockable)} should
-     * be called.
      */
-    protected AbstractCDockable( CommonDockable dockable ){
-        this.dockable = dockable;
+    protected AbstractCDockable(){
+        // nothing
     }
+    
+    /**
+     * Creates the {@link CommonDockable} that is associated with this dockable, called the first
+     * time the {@link CommonDockable} is required for an operation.
+     * @return the new dockable
+     */
+    protected abstract CommonDockable createCommonDockable();
     
     /**
      * Initializes this CDockable.
@@ -218,7 +222,7 @@ public abstract class AbstractCDockable implements CDockable {
     			@Override
     			protected CDockable[] getCDockables( VetoableDockFrontendEvent event ){
     				for( Dockable dockable : event ){
-    					if( dockable == AbstractCDockable.this.dockable ){
+    					if( dockable == intern() ){
     						return new CDockable[]{ AbstractCDockable.this };
     					}
     				}
@@ -285,7 +289,7 @@ public abstract class AbstractCDockable implements CDockable {
         
         if( location != null ){
             if( control != null && isVisible() ){
-                control.getLocationManager().setLocation( dockable, location );
+                control.getLocationManager().setLocation( intern(), location );
                 this.location = null;
             }
         }
@@ -293,7 +297,7 @@ public abstract class AbstractCDockable implements CDockable {
     
     public CLocation getBaseLocation(){
         if( control != null && isVisible() ){
-            return control.getLocationManager().getLocation( dockable );
+            return control.getLocationManager().getLocation( intern() );
         }
         
         return location;
@@ -318,7 +322,7 @@ public abstract class AbstractCDockable implements CDockable {
         
         CControlAccess control = control();
         if( control != null )
-            control.getLocationManager().setMode( dockable, extendedMode );
+            control.getLocationManager().setMode( intern(), extendedMode );
     }
     
     public ExtendedMode getExtendedMode(){
@@ -326,7 +330,7 @@ public abstract class AbstractCDockable implements CDockable {
         if( control == null )
             return null;
         
-        return control.getLocationManager().getMode( dockable );
+        return control.getLocationManager().getMode( intern() );
     }
     
     public void setWorkingArea( CStation<?> area ) {
@@ -509,6 +513,9 @@ public abstract class AbstractCDockable implements CDockable {
      * @return the intern representation.
      */
     public CommonDockable intern(){
+    	if( dockable == null ){
+    		init( createCommonDockable() );
+    	}
         return dockable;
     }
     
@@ -529,8 +536,8 @@ public abstract class AbstractCDockable implements CDockable {
         
             if( control != null ){
                 CLocationModeManager state = control.getLocationManager();
-                if( state.getLocation( dockable, mode ) == null )
-                    state.setLocation( dockable, mode, location );
+                if( state.getLocation( intern(), mode ) == null )
+                    state.setLocation( intern(), mode, location );
             }
         }
     }
@@ -553,7 +560,7 @@ public abstract class AbstractCDockable implements CDockable {
     		return;
     	
         if( this.control != null ){
-            this.control.getLocationManager().remove( dockable );
+            this.control.getLocationManager().remove( intern() );
             this.control.link( this, null );
             if( vetoClosingListenerConverter != null ){
             	this.control.getOwner().intern().removeVetoableListener( vetoClosingListenerConverter );
@@ -565,7 +572,7 @@ public abstract class AbstractCDockable implements CDockable {
         
         if( control != null ){
         	if( uniqueId != null ){
-        		control.getLocationManager().add( uniqueId, dockable );
+        		control.getLocationManager().add( uniqueId, intern() );
         	}
         	
         	if( listenerCollection.hasVetoClosingListeners() ){
@@ -604,17 +611,17 @@ public abstract class AbstractCDockable implements CDockable {
                 	if( (id != null && !id.equals( uniqueId )) || (id == null && uniqueId != null) ){
 	                	if( AbstractCDockable.this.control != null && uniqueId != null ){
 	                		CLocationModeManager manager = AbstractCDockable.this.control.getLocationManager();
-	                		manager.remove( dockable );
+	                		manager.remove( intern() );
 	                	}
 	                	
 	                    uniqueId = id;
 	                    if( AbstractCDockable.this.control != null && id != null ){
 	                        CLocationModeManager manager = AbstractCDockable.this.control.getLocationManager();
-	                        manager.put( uniqueId, dockable );
+	                        manager.put( uniqueId, intern() );
 	                        
 	                        for( Map.Entry<ExtendedMode, CLocation> location : defaultLocations.entrySet() ){
-	                            if( manager.getLocation( dockable, location.getKey() ) == null )
-	                                manager.setLocation( dockable, location.getKey(), location.getValue() );
+	                            if( manager.getLocation( intern(), location.getKey() ) == null )
+	                                manager.setLocation( intern(), location.getKey(), location.getValue() );
 	                        }
 	                    }
                 	}

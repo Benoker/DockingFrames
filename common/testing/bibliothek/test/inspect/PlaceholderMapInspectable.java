@@ -22,6 +22,8 @@ public class PlaceholderMapInspectable implements Inspectable{
 				setName( "PlaceholderMap" );
 				setValue( map );
 				
+				put( "strategy", map.getPlaceholderStrategy() );
+				
 				int count = 0;
 				
 				for( Key key : map.getPlaceholders() ){

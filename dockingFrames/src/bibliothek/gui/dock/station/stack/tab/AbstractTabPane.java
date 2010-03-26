@@ -272,6 +272,7 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 		}
 		
 		Dockable dockable = dockables.remove( source );
+		cleanOut( dockable );
 		dockables.add( destination, dockable );
 		revalidate();
 	}

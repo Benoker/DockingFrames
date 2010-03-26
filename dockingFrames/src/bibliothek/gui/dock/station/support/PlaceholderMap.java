@@ -350,7 +350,7 @@ public class PlaceholderMap {
 		for( Map.Entry<Key, Map<String, Object>> entry : data.entrySet() ){
 			Key newKey = result.copyKey( entry.getKey() );
 			result.add( newKey );
-			Map<String, Object> map = result.data.get( entry.getKey() );
+			Map<String, Object> map = result.data.get( newKey );
 			for( Map.Entry<String, Object> valueEntry : entry.getValue().entrySet() ){
 				map.put( valueEntry.getKey(), copy( valueEntry.getValue() ) );
 			}

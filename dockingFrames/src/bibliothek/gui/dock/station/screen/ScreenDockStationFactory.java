@@ -37,6 +37,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.layout.LocationEstimationMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.util.DirectWindowProvider;
 import bibliothek.gui.dock.util.WindowProvider;
@@ -97,9 +98,9 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
         return ID;
     }
     
-    public void estimateLocations( ScreenDockStationLayout layout, Map<Integer, DockLayoutInfo> children ) {
+    public void estimateLocations( ScreenDockStationLayout layout, LocationEstimationMap children ){
     	for( int i = 0, n = layout.size(); i<n; i++ ){
-    		DockLayoutInfo info = children.get( layout.id( i ));
+    		DockLayoutInfo info = children.getChild( layout.id( i ));
     		if( info != null ){
     			ScreenDockProperty property = new ScreenDockProperty( layout.x( i ), layout.y( i ), layout.width( i ), layout.height( i ));
     			info.setLocation( property );

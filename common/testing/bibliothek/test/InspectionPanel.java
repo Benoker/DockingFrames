@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextPane;
 import javax.swing.JTree;
@@ -28,8 +29,8 @@ public class InspectionPanel extends JPanel {
 		tree = new JTree( model );
 		console = new JTextPane();
 		
-		split.setTopComponent( tree );
-		split.setBottomComponent( console );
+		split.setTopComponent( new JScrollPane( tree ));
+		split.setBottomComponent( new JScrollPane( console ));
 		
 		tree.setEditable( false );
 		console.setEditable( false );

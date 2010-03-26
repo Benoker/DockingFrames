@@ -32,8 +32,13 @@ import java.util.Map;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
-import bibliothek.gui.dock.common.*;
-import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.CWorkingArea;
+import bibliothek.gui.dock.common.MultipleCDockable;
+import bibliothek.gui.dock.common.MultipleCDockableFactory;
+import bibliothek.gui.dock.common.MultipleCDockableLayout;
+import bibliothek.gui.dock.common.SingleCDockable;
+import bibliothek.gui.dock.layout.LocationEstimationMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
@@ -78,7 +83,7 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         return delegate;
     }
     
-    public void estimateLocations(CommonDockableLayout layout, Map<Integer, DockLayoutInfo> children) {
+    public void estimateLocations( CommonDockableLayout layout, LocationEstimationMap children ){
     	// currently not supported
     }
 

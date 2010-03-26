@@ -36,7 +36,11 @@ import bibliothek.gui.dock.common.intern.action.CSeparator;
 
 /**
  * An {@link CDockable} that uses a {@link DefaultCommonDockable} to show
- * its content.
+ * its content.<br>
+ * Subclasses may override {@link #createCommonDockable()} to provide a custom subclass
+ * of {@link DefaultCommonDockable}, note that {@link #createCommonDockable()} is called
+ * as soon as the internal representation is required, e.g. for setting a property like
+ * the title or the icon.
  * @author Benjamin Sigg
  */
 public class DefaultCDockable extends AbstractCDockable{
@@ -183,9 +187,6 @@ public class DefaultCDockable extends AbstractCDockable{
     /** whether this dockable can be combined with other dockables */
     private boolean stackable;
     
-    /** the graphical representation of this dockable */
-    private DefaultCommonDockable dockable;
-    
     /**
      * Creates a new dockable
      */
@@ -198,10 +199,6 @@ public class DefaultCDockable extends AbstractCDockable{
      * @param permission the permissions of this dockable
      */
     public DefaultCDockable( Permissions permission ){
-        super( null );
-        dockable = new DefaultCommonDockable( this, getClose() );
-        init( dockable );
-        
         setMinimizable( permission.isMinimizable() );
         setMaximizable( permission.isMaximizable() );
         setExternalizable( permission.isExternalizable() );
@@ -209,13 +206,17 @@ public class DefaultCDockable extends AbstractCDockable{
         setCloseable( permission.isCloseable() );
     }
     
+    @Override
+    protected DefaultCommonDockable createCommonDockable(){
+	    return new DefaultCommonDockable( this, getClose() );
+    }
     
     /**
      * Gets the container on which the client can pack its components.
      * @return the panel showing the content
      */
     public Container getContentPane(){
-        return dockable.getContentPane();
+        return intern().getContentPane();
     }
     
     /**
@@ -256,7 +257,7 @@ public class DefaultCDockable extends AbstractCDockable{
      * @param text the title
      */
     public void setTitleText( String text ){
-        dockable.setTitleText( text );
+        intern().setTitleText( text );
     }
     
     /**
@@ -264,7 +265,7 @@ public class DefaultCDockable extends AbstractCDockable{
      * @return the title
      */
     public String getTitleText(){
-        return dockable.getTitleText();
+        return intern().getTitleText();
     }
     
     /**
@@ -272,7 +273,7 @@ public class DefaultCDockable extends AbstractCDockable{
      * @param text the new tooltip, can be <code>null</code>
      */
     public void setTitleToolTip( String text ){
-        dockable.setTitleToolTip( text );
+        intern().setTitleToolTip( text );
     }
     
     /**
@@ -280,7 +281,7 @@ public class DefaultCDockable extends AbstractCDockable{
      * @return the tooltip or <code>null</code>
      */
     public String getTitleToolTip(){
-        return dockable.getTitleToolTip();
+        return intern().getTitleToolTip();
     }
     
     /**
@@ -288,7 +289,7 @@ public class DefaultCDockable extends AbstractCDockable{
      * @param icon the title-icon
      */
     public void setTitleIcon( Icon icon ){
-        dockable.setTitleIcon( icon );
+        intern().setTitleIcon( icon );
     }
     
     /**
@@ -296,7 +297,7 @@ public class DefaultCDockable extends AbstractCDockable{
      * @return the title-icon, might be <code>null</code>
      */
     public Icon getTitleIcon(){
-        return dockable.getTitleIcon();
+        return intern().getTitleIcon();
     }
     
     public boolean isMinimizable(){
@@ -398,7 +399,7 @@ public class DefaultCDockable extends AbstractCDockable{
      * @param action the new action
      */
     public void addAction( CAction action ){
-        dockable.getActions().add( action );
+        intern().getActions().add( action );
     }
     
     /**
@@ -408,7 +409,7 @@ public class DefaultCDockable extends AbstractCDockable{
      * @see #addAction(CAction)
      */
     public void insertAction( int index, CAction action ){
-        dockable.getActions().insert( index, action );
+        intern().getActions().insert( index, action );
     }
     
     /**
@@ -431,7 +432,7 @@ public class DefaultCDockable extends AbstractCDockable{
      * @param index the location of the action
      */
     public void removeAction( int index ){
-        dockable.getActions().remove( index );
+        intern().getActions().remove( index );
     }
     
     /**
@@ -439,7 +440,7 @@ public class DefaultCDockable extends AbstractCDockable{
      * @param action the action to remove
      */
     public void removeAction( CAction action ){
-        dockable.getActions().remove( action );
+        intern().getActions().remove( action );
     }
     
     /**
@@ -447,7 +448,7 @@ public class DefaultCDockable extends AbstractCDockable{
      * @return the number of actions
      */
     public int getActionCount(){
-    	return dockable.getActions().getDockActionCount();
+    	return intern().getActions().getDockActionCount();
     }
     
     /**
@@ -457,11 +458,11 @@ public class DefaultCDockable extends AbstractCDockable{
      * @return the action
      */
     public CAction getAction( int index ){
-    	return dockable.getActions().getAction( index );
+    	return intern().getActions().getAction( index );
     }
     
     @Override
     public DefaultCommonDockable intern() {
-        return dockable;
+    	return (DefaultCommonDockable)super.intern();
     }
 }

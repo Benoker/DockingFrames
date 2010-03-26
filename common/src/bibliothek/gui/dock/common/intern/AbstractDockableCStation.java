@@ -48,7 +48,6 @@ public abstract class AbstractDockableCStation<S extends DockStation> extends Ab
      * @param dockable how this station appears as dockable
      */
     public AbstractDockableCStation( S station, String id, CLocation location, CommonDockable dockable ){
-    	super( null );
     	init( station, id, location, dockable );
     }
     
@@ -57,7 +56,7 @@ public abstract class AbstractDockableCStation<S extends DockStation> extends Ab
      * should call {@link #init(DockStation, String, CLocation, CommonDockable)}.
      */
     protected AbstractDockableCStation(){
-    	super( null );
+    	// nothing
     }
     
     /**
@@ -82,6 +81,11 @@ public abstract class AbstractDockableCStation<S extends DockStation> extends Ab
         this.station = station;
         this.id = id;
         this.location = location;	
+    }
+    
+    @Override
+    protected CommonDockable createCommonDockable(){
+	    throw new IllegalStateException( "common-dockable should have been set by the constructor" );
     }
     
     public CLocation getStationLocation() {

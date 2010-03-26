@@ -174,14 +174,15 @@ public class SplitDockTree{
 	            throw new IllegalArgumentException( "At least one Dockable is required" );
 		}
 		
-        for( Dockable dockable : dockables ){
-            if( dockable == null )
-                throw new IllegalArgumentException( "Entries of array must not be null" );
-            
-    		if( !this.dockables.add( dockable ))
-    			throw new IllegalArgumentException( "Dockable already known" );
-    		
-        }
+		if( dockables != null ){
+	        for( Dockable dockable : dockables ){
+	            if( dockable == null )
+	                throw new IllegalArgumentException( "Entries of array must not be null" );
+	            
+	    		if( !this.dockables.add( dockable ))
+	    			throw new IllegalArgumentException( "Dockable already known" );
+	        }	
+		}
 		
 		return new Leaf( dockables, selected, placeholders, placeholderMap, nodeId );
 	}

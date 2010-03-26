@@ -32,6 +32,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.layout.DockConverter;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.LocationEstimationMap;
 
 /**
  * A {@link DockConverter} which can not only store and load the contents of an
@@ -48,14 +49,18 @@ public interface DockFactory<D extends DockElement, L> extends DockConverter<D, 
 	/**
 	 * Tries to estimate the {@link DockableProperty}s of the children of the
 	 * station which is represented by <code>layout</code>.<br>
+	 * 
+	 * The children of this station accessible through <code>children.getChild( ... )</code>, this
+	 * factory may also access the leafs in the tree of {@link Dockable}s through
+	 * <code>children.getSubChild(...)</code>.<br>
 	 * Note: this method must not set the successor of any {@link DockableProperty},
 	 * it is the callers responsibility to handle chains of stations.
 	 * @param layout this station
 	 * @param children the children of the station, this method should call
-	 * {@link DockLayoutInfo#setLocation(DockableProperty)} for as many
-	 * children as possible
+	 * {@link DockLayoutInfo#setLocation(DockableProperty)} or {@link LocationEstimationMap#setLocation(int, DockableProperty)} and
+	 * {@link LocationEstimationMap#setLocation(int, int, DockableProperty)} for as many children as possible
 	 */
-	public void estimateLocations( L layout, Map<Integer, DockLayoutInfo> children );
+	public void estimateLocations( L layout, LocationEstimationMap children );
 	
     /**
      * Creates a new {@link DockElement} and changes the layout of the new 

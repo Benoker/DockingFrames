@@ -396,6 +396,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 		else if( selected > source && selected <= destination ){
 			selected++;
 		}
+		
 		setSelectedIndex( selected );
     }
     

@@ -140,7 +140,6 @@ public class Node extends VisibleSplitNode{
         this.left = left;
         clearVisibility();
         if( left != null ){
-            left.delete( false );
             left.setParent( this );
         }
         
@@ -172,7 +171,6 @@ public class Node extends VisibleSplitNode{
         this.right = right;
         clearVisibility();
         if( right != null ){
-            right.delete( false );
             right.setParent( this );
         }
         

@@ -34,7 +34,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
-import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.layout.LocationEstimationMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.xml.XElement;
 
@@ -47,7 +47,7 @@ import bibliothek.util.xml.XElement;
 public class ReplacementDockFactory implements DockFactory<CommonDockable, MultipleCDockable> {
 	public static final String REPLACEMENT_FACTORY_ID = "dock.common.replacement_factory";
 	
-	public void estimateLocations( MultipleCDockable layout, Map<Integer, DockLayoutInfo> children ){
+	public void estimateLocations( MultipleCDockable layout, LocationEstimationMap children ){
 		// ignore
 	}
 

@@ -226,7 +226,7 @@ public class Leaf extends VisibleSplitNode{
     	if( hasPlaceholders() ){
     		Placeholder placeholder = createPlaceholder( getId() );
     		placeholder.setPlaceholders( getPlaceholders() );
-    		placeholder.setPlaceholderMap( getPlaceholderMap() );
+    		movePlaceholderMap( placeholder );
     		replace( placeholder );
     	}
     	else{
@@ -443,7 +443,18 @@ public class Leaf extends VisibleSplitNode{
 
     @Override
     public <N> N submit( SplitTreeFactory<N> factory ){
-        return factory.leaf( getDockable(), getId(), getPlaceholders(), getPlaceholderMap() );
+    	PlaceholderMap map = getPlaceholderMap();
+    	if( map == null ){
+    		Dockable dockable = getDockable();
+    		if( dockable != null ){
+    			DockStation station = dockable.asDockStation();
+    			if( station != null ){
+    				map = station.getPlaceholders();
+    			}
+    		}
+    	}
+    	
+        return factory.leaf( getDockable(), getId(), getPlaceholders(), map );
     }
         
     @Override

@@ -14,7 +14,7 @@ public class Inspection {
 	private static void open( Object root, InspectionGraph graph ){
 		JFrame frame = new JFrame( "Inspection" );
 		frame.add( new InspectionPanel( root, graph ), BorderLayout.CENTER );
-		frame.setBounds( 400, 400, 400, 600 );
+		frame.setBounds( 400, 400, 600, 400 );
 		frame.setVisible( true );
 	}
 }

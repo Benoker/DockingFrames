@@ -511,8 +511,7 @@ public class PredefinedDockSituation extends DockSituation {
         }
 
         @SuppressWarnings("unchecked")
-        public void estimateLocations( PreloadedLayout layout, Map<Integer, DockLayoutInfo> children ) {
-
+        public void estimateLocations( PreloadedLayout layout, LocationEstimationMap children ){
             DockLayoutInfo delegate = layout.getDelegate();
             if( delegate.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT ){
                 String factoryId = delegate.getDataLayout().getFactoryID();

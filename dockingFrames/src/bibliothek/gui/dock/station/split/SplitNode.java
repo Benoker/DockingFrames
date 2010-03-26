@@ -182,6 +182,17 @@ public abstract class SplitNode{
 	}
 	
 	/**
+	 * Moves the current {@link PlaceholderMap} to <code>destination</code>, overriding
+	 * its old value. The map of this node is set to <code>null</code>
+	 * @param destination the destination of the map
+	 */
+	public void movePlaceholderMap( SplitNode destination ){
+		destination.setPlaceholderMap( null );
+		destination.placeholderMap = placeholderMap;
+		this.placeholderMap = null;
+	}
+	
+	/**
 	 * Gets placeholder information of a child {@link DockStation}.
 	 * @return the placeholder information, can be <code>null</code>
 	 */
@@ -315,6 +326,11 @@ public abstract class SplitNode{
      * @param parent the new parent, can be <code>null</code>
      */
     public void setParent( SplitNode parent ){
+    	if( this.parent != null ){
+    		SplitNode node = this.parent;
+    		this.parent = null;
+    		node.setChild( null, node.getChildLocation( this ) );
+    	}
         this.parent = parent;
     }
     

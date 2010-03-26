@@ -37,6 +37,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.layout.LocationEstimationMap;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.PlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderListItem;
@@ -76,13 +77,13 @@ public class StackDockStationFactory implements
 		return new StackDockStationLayout( selected, map );
 	}
 
-	public void estimateLocations( StackDockStationLayout layout, final Map<Integer, DockLayoutInfo> children ){
+	public void estimateLocations( StackDockStationLayout layout, final LocationEstimationMap children ){
 		if( layout instanceof RetroStackDockStationLayout ){
 			RetroStackDockStationLayout retroLayout = (RetroStackDockStationLayout)layout;
 			for (int id : retroLayout.getChildren()) {
-				DockLayoutInfo info = children.get( id );
+				DockLayoutInfo info = children.getChild( id );
 				if (info != null) {
-					StackDockProperty property = new StackDockProperty( id );
+					StackDockProperty property = new StackDockProperty( id, info.getPlaceholder() );
 					info.setLocation( property );
 				}
 			}
@@ -97,7 +98,12 @@ public class StackDockStationFactory implements
     					placeholder = new Path( item.getString( "placeholder" ) );
     				}
     				StackDockProperty property = new StackDockProperty( index, placeholder );
-    				children.get( index ).setLocation( property );
+    				children.getChild( index ).setLocation( property );
+    				
+    				for( int i = 0, n = children.getSubChildCount( index ); i<n; i++ ){
+    					DockLayoutInfo info = children.getSubChild( index, i );
+    					info.setLocation( new StackDockProperty( index, info.getPlaceholder() ) );
+    				}
     				return null;
     			}
 			});

@@ -302,6 +302,9 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		
 		for( Item entry : list() ){
 			Set<Path> placeholderSet = entry.getPlaceholderSet();
+			if( placeholderSet == null ){
+				placeholderSet = Collections.emptySet();
+			}
 			PlaceholderMap placeholderMap = entry.getPlaceholderMap();
 			
 			Path additional = null;

@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.layout;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.util.xml.XElement;
 
@@ -59,6 +60,9 @@ public class DockLayoutInfo {
 	
 	/** the location which the dockable has on its parent station */
 	private DockableProperty location;
+	
+	/** the name of this element */
+	private Path placeholder;
 	
 	/**
 	 * Creates a new info.
@@ -114,6 +118,22 @@ public class DockLayoutInfo {
 	 */
 	public DockableProperty getLocation() {
 		return location;
+	}
+
+    /**
+     * Sets a placeholder which represents this element.
+     * @param placeholder the placeholder, can be <code>null</code>
+     */
+    public void setPlaceholder( Path placeholder ){
+		this.placeholder = placeholder;
+	}
+    
+    /**
+     * Gets the representation of this element as placeholder.
+     * @return the placeholder, can be <code>null</code>
+     */
+    public Path getPlaceholder(){
+		return placeholder;
 	}
 	
 	/**

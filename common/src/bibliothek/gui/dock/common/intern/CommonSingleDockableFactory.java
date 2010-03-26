@@ -38,7 +38,7 @@ import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.SingleCDockable;
 import bibliothek.gui.dock.common.SingleCDockableBackupFactory;
-import bibliothek.gui.dock.layout.DockLayoutInfo;
+import bibliothek.gui.dock.layout.LocationEstimationMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
@@ -112,7 +112,7 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
         return Collections.unmodifiableSet( backups.keySet() );
     }
     
-    public void estimateLocations(String layout, Map<Integer, DockLayoutInfo> children) {
+    public void estimateLocations( String layout, LocationEstimationMap children ){
     	// currently not supported
     }
 
