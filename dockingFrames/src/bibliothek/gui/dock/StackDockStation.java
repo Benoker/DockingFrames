@@ -78,6 +78,7 @@ import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.support.StationPaintWrapper;
+import bibliothek.gui.dock.station.support.PlaceholderList.Filter;
 import bibliothek.gui.dock.station.support.PlaceholderList.Level;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
@@ -1047,7 +1048,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         else{
         	index = inserted;
         }
-        
+
         addToPanel( handle, index, dockables.dockables().size()-1 );
         
         dockable.addDockableListener( listener );
@@ -1058,30 +1059,45 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     }
     
     /**
-     * Adds the contents of <code>handle</code> to the {@link #stackComponent} of this station.
+     * Adds the contents of <code>handle</code> to the {@link #stackComponent} of this station. The new
+     * <code>handle</code> may or may not already be stored in {@link #dockables}. 
      * @param handle the handle to add
      * @param index the index where to add the handle
-     * @param size the current amount of children of the panel 
+     * @param size the current amount of children of the panel, must be either the size of {@link #dockables} if
+     * <code>handle</code> is not yet stored or the size of {@link #dockables}-1 is <code>handle</code> already is
+     * stored.
      */
     protected void addToPanel( StationChildHandle handle, int index, int size ){
-    	DockableDisplayer displayer = handle.getDisplayer();
-    	
     	if( size == 0 ){
+    		DockableDisplayer displayer = handle.getDisplayer();
             panel.add( displayer.getComponent() );
         }
         else{
+        	int selectionIndex = index;
+        	
             if( size == 1 ){
                 panel.removeAll();
-                DockableDisplayer child = dockables.dockables().get( 0 ).getDisplayer();
+                
+                Filter<StationChildHandle> list = dockables.dockables();
+                if( list.get( 0 ) == handle ){
+                	if( list.size() != 2 ){
+                		throw new IllegalStateException( "handle is stored, size is 1, but number of known dockables is not 2" );
+                	}
+                	handle = list.get( 1 );
+                	index = 1;
+                }
+                
+                DockableDisplayer child = list.get( 0 ).getDisplayer();
                 stackComponent.addTab( child.getDockable().getTitleText(), child.getDockable().getTitleIcon(), child.getComponent(), child.getDockable() );
                 stackComponent.setTooltipAt( 0, child.getDockable().getTitleToolTip() );
                 panel.add( stackComponent.getComponent() );
             }
             
             Dockable dockable = handle.getDockable();
+            DockableDisplayer displayer = handle.getDisplayer();
             stackComponent.insertTab( dockable.getTitleText(), dockable.getTitleIcon(), displayer.getComponent(), dockable, index );
             stackComponent.setTooltipAt( index, dockable.getTitleToolTip() );
-            stackComponent.setSelectedIndex( index );
+            stackComponent.setSelectedIndex( selectionIndex );
         }
         panel.validate();
         panel.repaint();

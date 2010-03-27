@@ -275,7 +275,6 @@
 - Bugfix: moving a Dockable on a FlapDockStation did throw an exception if the destination index was too big
 - Bugfix: if a CDockable is removed and the CMissingDockableStrategy tells to store information about that dockable, then its location remains stored.
 - API: AbstractCDockable has a new method "createCommonDockable". Clients can use this method to use a customized Dockable as intern representation of a CDocakble.
-
 ! API: Placeholder support: a placeholder is a Path (a string) that remains in data structures when a Dockable is removed.
     -: New interface PlaceholderStrategy to create and manage placeholders. The CPlaceholderStrategy is a strategy utilized by Common to issue a placeholder for each SingleCDockable
     -: The tree of a SplitDockStation contains a new element "Placeholder" which is a leaf. All nodes can store placeholders.
@@ -283,6 +282,6 @@
     -: DockSituation stores for each element a placeholder. Even if the element cannot be loaded again, the placeholder remains available.
     -: PlaceholderMap allows to describe placeholders in DockStations that no longer exist.
     -: All layouts stored either in XML or in binary format will automatically be updated on load, older versions cannot read layout information written by this version
-    
-    
+- Bugfix: If TabPlacement was "left" or "right", then new tabs in a StackDockStation could be too big. Reason for this bug was that new tabs were not properly initialized and assumed that TabPlacement was "top".     
+- Bugfix: StackDockStation did not add its children correctly to the StackDockComponent, leading to some missing tabs.    
      

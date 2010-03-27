@@ -62,6 +62,7 @@ import bibliothek.gui.dock.util.PropertyValue;
  * {@link Dockable}s are maximized if they take up the whole space a frame
  * or a screen offers.
  * @author Benjamin Sigg
+ * @param <M> the kind of areas this mode handles
  */
 public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocationMode<M>{
 	/** unique identifier for this mode */
@@ -641,9 +642,6 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	 * @author Benjamin Sigg
 	 */
 	private class Listener implements ModeManagerListener<Location, LocationMode>, LocationModeListener {
-		/** controller to which this listener is attached */
-		private DockController controller;
-
 		/**
 		 * Removes this listener from <code>oldManager</code> and adds this to <code>newManager</code>.
 		 * @param oldManager the old manager, can be <code>null</code>
@@ -659,7 +657,6 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 			}
 
 			if( newManager != null ){
-				controller = newManager.getController();
 				newManager.addModeManagerListener( this );
 
 				for( LocationMode mode : newManager.modes() ){

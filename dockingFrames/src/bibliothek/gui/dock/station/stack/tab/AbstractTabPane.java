@@ -490,6 +490,7 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 		T tab = tabs.get( dockable );
 		if( tab == null ){
 			tab = newTab( dockable );
+			tab.setOrientation( getTabPlacement() );
 			tabs.put( dockable, tab );
 		}
 		tab.setPaneVisible( true );
@@ -511,6 +512,7 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 		T tab = tabs.get( dockable );
 		if( tab == null ){
 			tab = newTab( dockable );
+			tab.setOrientation( getTabPlacement() );
 			tabs.put( dockable, tab );
 		}
 		return tab;
