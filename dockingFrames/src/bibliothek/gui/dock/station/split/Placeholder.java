@@ -61,13 +61,14 @@ public class Placeholder extends SplitNode {
 		Path placeholder = property.getPlaceholder();
 		if( hasPlaceholder( placeholder )){
 			// replace this placeholder with a leaf
-			Leaf leaf = create( dockable, true, getId() );
+			Leaf leaf = create( dockable, getId() );
 			if( leaf == null )
 				return false;
 			removePlaceholder( placeholder );
 			leaf.setPlaceholders( getPlaceholders() );
 			leaf.setPlaceholderMap( getPlaceholderMap() );
 			replace( leaf );
+			leaf.setDockable( dockable, true );
 			return true;	
 		}
 		return false;

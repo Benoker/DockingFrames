@@ -860,6 +860,15 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         
         return this.insert != null;
     }
+    
+    /**
+     * Gets the location where {@link #drop()} or {@link #move()} will insert the next
+     * {@link Dockable}.
+     * @return the insertion location, can be <code>null</code>
+     */
+    public Insert getInsert(){
+		return insert;
+	}
 
     public void move() {
         int index = indexOf( dropping );
@@ -1446,14 +1455,14 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     }
     
     /**
-     * The location of a gap between to tabs.
+     * Describes the gap between two tabs.
      * @author Benjamin Sigg
      */
-    private static class Insert{
+    public static class Insert{
         /** The location of a base-tab */
-        public int tab;
+        private final int tab;
         /** Whether the gap is left or right of {@link #tab}*/
-        public boolean right;
+        private final boolean right;
         
         /**
          * Constructs a new Gap-location
@@ -1464,5 +1473,22 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             this.tab = tab;
             this.right = right;
         }
+        
+        /**
+         * A reference for this gap, the gap is either at the left
+         * or at the right side of this tab.
+         * @return the reference
+         */
+        public int getTab(){
+			return tab;
+		}
+        
+        /**
+         * Whether the tab is at the left or the right of {@link #getTab()}. 
+         * @return <code>true</code> if the gab is at the right side
+         */
+        public boolean isRight(){
+			return right;
+		}
     }
 }

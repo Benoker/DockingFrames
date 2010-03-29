@@ -35,6 +35,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
+import bibliothek.gui.dock.control.relocator.Merger;
 import bibliothek.gui.dock.event.DockRelocatorListener;
 
 /**
@@ -62,6 +63,9 @@ public abstract class DockRelocator {
     private List<DockRelocatorMode> modes = new ArrayList<DockRelocatorMode>();
     /** the set of the modes that are currently active */
     private Set<DockRelocatorMode> activeModes = new HashSet<DockRelocatorMode>();
+    
+    /** Algorithm to merge two {@link DockStation}s */
+    private Merger merger = null;
     
 	/**
 	 * Creates a new manager.
@@ -183,6 +187,22 @@ public abstract class DockRelocator {
      */
     public void setDragDistance( int dragDistance ){
 		this.dragDistance = dragDistance;
+	}
+    
+    /**
+     * Gets an algorithm useful for merging two {@link DockStation}s.
+     * @return the algorithm, can be <code>null</code>
+     */
+    public Merger getMerger(){
+		return merger;
+	}
+    
+    /**
+     * Sets an algorithm for merging two {@link DockStation}s.
+     * @param merger the new algorithm, can be <code>null</code>
+     */
+    public void setMerger( Merger merger ){
+		this.merger = merger;
 	}
     
     /**

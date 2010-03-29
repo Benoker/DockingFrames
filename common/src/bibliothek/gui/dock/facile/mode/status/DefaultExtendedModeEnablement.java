@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.facile.mode.status;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.event.CDockableAdapter;
 import bibliothek.gui.dock.common.event.CDockablePropertyListener;
@@ -105,6 +106,17 @@ public class DefaultExtendedModeEnablement extends AbstractExtendedModeEnablemen
 				return cdockable.isMinimizable();
 		}
 		
-		return false;
+		DockStation station = dockable.asDockStation();
+		if( station != null ){
+			for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
+				boolean result = isAvailable( station.getDockable( i ), mode );
+				if( !result ){
+					return false;
+				}
+			}
+			return true;
+		}
+		
+		return true;
 	}
 }

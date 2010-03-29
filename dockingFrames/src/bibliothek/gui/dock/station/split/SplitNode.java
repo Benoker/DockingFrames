@@ -43,7 +43,6 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
-import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 
 /**
@@ -605,15 +604,13 @@ public abstract class SplitNode{
     }
     
     /**
-     * Creates a leaf for <code>dockable</code>. Does not inform any
-     * {@link DockStationListener} about the change.
+     * Creates a leaf for <code>dockable</code>. This method only
+     * creates the leaf, but does not connect leaf and <code>dockable</code>.
      * @param dockable the element to put into a leaf
-     * @param fire whether to inform any {@link DockStationListener}s about
-     * the new element
      * @param id the unique identifier of the new leaf, can be -1
      * @return the new leaf or <code>null</code> if the leaf would not be valid
      */
-    protected Leaf create( Dockable dockable, boolean fire, long id ){
+    protected Leaf create( Dockable dockable, long id ){
         SplitDockStation split = access.getOwner();
         DockController controller = split.getController();
         DockAcceptance acceptance = controller == null ? null : controller.getAcceptance();
@@ -627,7 +624,6 @@ public abstract class SplitNode{
         }
         
         Leaf leaf = createLeaf( id );
-        leaf.setDockable( dockable, fire );
         return leaf;
     }
     

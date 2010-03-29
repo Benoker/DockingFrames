@@ -26,11 +26,13 @@
 
 package bibliothek.gui.dock.themes.nostack;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.accept.AbstractAcceptance;
 import bibliothek.gui.dock.accept.DockAcceptance;
+import bibliothek.gui.dock.control.relocator.Merger;
 
 /**
  * A {@link DockAcceptance} which permits the user to set a  
@@ -38,24 +40,38 @@ import bibliothek.gui.dock.accept.DockAcceptance;
  * @author Benjamin Sigg
  */
 public class NoStackAcceptance extends AbstractAcceptance{
-    @Override
+	@Override
     public boolean accept( DockStation parent, Dockable child ) {
-        if( parent instanceof StackDockStation )
-            return !(child.asDockStation() instanceof StackDockStation);
+        if( parent instanceof StackDockStation ){
+            if( child.asDockStation() instanceof StackDockStation ){
+            	DockController controller = parent.getController();
+            	if( controller != null ){
+            		Merger merger = controller.getRelocator().getMerger();
+            		if( merger != null ){
+            			return merger.canMerge( parent, child.asDockStation() );
+            		}
+            	}
+
+            	return false;
+            }
+        }
         
         return true;
     }
 
     @Override
     public boolean accept( DockStation parent, Dockable child, Dockable next ) {
-        if( parent instanceof StackDockStation )
+        if( parent instanceof StackDockStation ){
             return false;
+        }
         
-        if( child instanceof StackDockStation )
+        if( child instanceof StackDockStation ){
             return false;
+        }
         
-        if( next instanceof StackDockStation )
+        if( next instanceof StackDockStation ){
             return false;
+        }
         
         return true;
     }

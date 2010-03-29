@@ -25,7 +25,13 @@
  */
 package bibliothek.gui.dock.control;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.EventQueue;
+import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.InputEvent;
@@ -43,11 +49,20 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
+import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
+import bibliothek.gui.dock.control.relocator.DropOperation;
+import bibliothek.gui.dock.control.relocator.MergeOperation;
+import bibliothek.gui.dock.control.relocator.Merger;
+import bibliothek.gui.dock.control.relocator.MoveOperation;
+import bibliothek.gui.dock.control.relocator.MultiMerger;
+import bibliothek.gui.dock.control.relocator.RelocateOperation;
+import bibliothek.gui.dock.control.relocator.StackMerger;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.dockable.MovingImage;
 import bibliothek.gui.dock.event.ControllerSetupListener;
 import bibliothek.gui.dock.event.DockControllerRepresentativeListener;
+import bibliothek.gui.dock.event.DockRelocatorListener;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.DockUtilities;
 
@@ -63,7 +78,8 @@ public class DefaultDockRelocator extends DockRelocator{
     private boolean onPut = false;
     
 	/** the current destination of a dragged dockable */
-    private DockStation dragStation;
+    private RelocateOperation operation;
+    
     /** a window painting a title onto the screen */
     private ImageWindow movingImageWindow;
     /** the point where the mouse was pressed on the currently dragged title */
@@ -86,6 +102,10 @@ public class DefaultDockRelocator extends DockRelocator{
 		        controller.addRepresentativeListener( new Listener() );
 		    }
 		});
+		
+		MultiMerger merger = new MultiMerger();
+		merger.add( new StackMerger() );
+		setMerger( merger );
 	}
 	
 	@Override
@@ -113,38 +133,38 @@ public class DefaultDockRelocator extends DockRelocator{
     }
     
     /**
-     * Executes a drag and drop event. <code>dockable</code> is removed
-     * from its parent (if the parent is not <code>station</code>) and
-     * dropped to <code>station</code>. The new location of
-     * <code>dockable</code> has to be precomputed by <code>station</code>.
+     * Executes the drag and drop event <code>operation</code>.
      * @param dockable a {@link Dockable} which is moved
-     * @param station the new parent of <code>dockable</code>
+     * @param operation the operation to execute
      */
-    protected void executePut( Dockable dockable, DockStation station ){
+    protected void executeOperation( Dockable dockable, RelocateOperation operation ){
         onPut = true;
         DockController controller = getController();
         controller.getRegister().setStalled( true );
         disableAllModes();
         
         try{
-            if( station == null )
-                throw new IllegalStateException( "There is no station to put the dockable." );
-            
-            DockStation parent = dockable.getDockParent();
-            if( parent != station || parent == null ){
-                fireDrag( dockable, station );
-                if( parent != null )
-                    parent.drag( dockable );
-                station.drop();
-                fireDrop( dockable, station );
-            }
-            else{
-                fireDrag( dockable, parent );
-                parent.move();
-                fireDrop( dockable, parent );
-            }
+        	operation.execute( dockable, new DockRelocatorListener() {
+				public void init( DockController controller, Dockable dockable ){
+					fireInit( dockable );
+				}
+				
+				public void drop( DockController controller, Dockable dockable, DockStation station ){
+					fireDrop( dockable, station );
+				}
+				
+				public void drag( DockController controller, Dockable dockable, DockStation station ){
+					fireDrag( dockable, station );
+				}
+				
+				public void cancel( DockController controller, Dockable dockable ){
+					fireCancel( dockable );
+				}
+			});
         }
         finally{
+        	operation.getStation().forget();
+        	operation = null;
             onPut = false;
             controller.getRegister().setStalled( false );
         }
@@ -160,29 +180,79 @@ public class DefaultDockRelocator extends DockRelocator{
      * @param dockable a Dockable which is dragged
      * @return the new parent of <code>dockable</code> or <code>null</code>
      */
-    protected DockStation preparePut( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ){
+    protected RelocateOperation preparePut( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ){
         List<DockStation> list = listStationsOrdered( mouseX, mouseY, dockable );
         
         for( int i = 0; i < 2; i++ ){
             boolean checkOverrideZone = i == 0;
             
-            for( DockStation station : list ){   
+            for( DockStation station : list ){
                 if( dockable.getDockParent() == station ){
                     // just a move
                     if( station.prepareMove( mouseX, mouseY, titleX, titleY, checkOverrideZone, dockable ) ){
-                        return station;
+                        return new MoveOperation( getController(), station );
                     }
                 }
                 else{
                     // perhaps a drop
+                	boolean merge = canMerge( station, dockable );
+                	
                     if( station.prepareDrop( mouseX, mouseY, titleX, titleY, checkOverrideZone, dockable )){
-                        return station;
+                    	if( merge ){
+                    		return new MergeOperation( getController(), getMerger(), station );
+                    	}
+                        return new DropOperation( getController(), station );
                     }
                 }
             }
         }
         
         return null;
+    }
+    
+    /**
+     * Checks whether the current {@link #getMerger() Merger} can merge <code>parent</code>
+     * with <code>child</code>.
+     * @param parent the new parent for the children of <code>child</code>
+     * @param selection the element whose children are to be removed
+     * @return <code>true</code> if a merge is possible
+     */
+    protected boolean canMerge( DockStation parent, Dockable selection ){
+    	Merger merger = getMerger();
+    	if( merger == null ){
+    		return false;
+    	}
+    	
+    	DockStation child = selection.asDockStation();
+    	if( child == null ){
+    		return false;
+    	}
+    	if( DockUtilities.isAncestor( child, parent )){
+    		return false;
+    	}
+    	
+    	if( selection.getDockParent() != null ){
+    		if( !selection.getDockParent().canDrag( selection )){
+    			return false;
+    		}
+    	}
+    	
+    	DockAcceptance acceptance = getController().getAcceptance();
+    	
+    	for( int i = 0, n = child.getDockableCount(); i<n; i++ ){
+    		Dockable dockable = child.getDockable( i );
+    		if( !child.canDrag( dockable )){
+    			return false;
+    		}
+    		if( !parent.accept( dockable ) || !dockable.accept( parent )){
+    			return false;
+    		}
+    		if( !acceptance.accept( parent, dockable )){
+    			return false;
+    		}
+    	}
+    	
+    	return merger.canMerge( parent, child );
     }
     
     /**
@@ -412,21 +482,22 @@ public class DefaultDockRelocator extends DockRelocator{
             if( movingImageWindow != null )
                 updateTitleWindowPosition( mouse );
             
-            DockStation next = preparePut( 
+            RelocateOperation next = preparePut( 
                     mouse.x, mouse.y,
                     mouse.x - pressPointLocal.x, mouse.y - pressPointLocal.y,
                     dockable );
             
             if( next != null ){
-                next.draw();
+                next.getStation().draw();
             }
             
-            if( next != dragStation ){
-                if( dragStation != null ){
-                    dragStation.forget();
-                }
-                dragStation = next;
+            if( operation != null ){
+	            if( next == null || next.getStation() != operation.getStation() ){
+	                operation.getStation().forget();
+	            }
             }
+            
+            this.operation = next;
         }
         
         return Reaction.CONTINUE_CONSUMED;
@@ -515,27 +586,26 @@ public class DefaultDockRelocator extends DockRelocator{
             if( pressPointScreen != null ){
                 // local copy, some objects using the remote are invoking cancel
                 // after the put has finished
-                DockStation dragStation = this.dragStation;
+                RelocateOperation operation = this.operation;
 
                 if( x != lastPoint.x || y != lastPoint.y ){
-                    DockStation next = preparePut( 
+                    RelocateOperation next = preparePut( 
                             x, y,
                             x - pressPointLocal.x, y - pressPointLocal.y,
                             dockable );
 
-                    if( next != dragStation ){
-                        if( dragStation != null ){
-                            dragStation.forget();
-                        }
-                        dragStation = next;
+                    if( operation != null && (next == null || operation.getStation() != next.getStation() )){
+                        operation.getStation().forget();
                     }
+                    
+                    operation = next;
                 }
 
-                if( dragStation != null ){
+                if( operation != null ){
                     consume = true;
-                    executePut( dockable, dragStation );
-                    dragStation.forget();
-                    this.dragStation = null;
+                    executeOperation( dockable, operation );
+                    operation.getStation().forget();
+                    this.operation = null;
                 }
             }
 
@@ -561,9 +631,9 @@ public class DefaultDockRelocator extends DockRelocator{
     private void titleDragCancel(){
     	if( !isOnPut() ){
     		// if it is on put, than it is too late to stop
-	        if( dragStation != null ){
-	            dragStation.forget();
-	            dragStation = null;
+	        if( operation != null ){
+	            operation.getStation().forget();
+	            operation = null;
 	        }
 	        
 	        if( movingImageWindow != null )

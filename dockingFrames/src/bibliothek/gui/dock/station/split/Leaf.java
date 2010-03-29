@@ -212,16 +212,15 @@ public class Leaf extends VisibleSplitNode{
     public void placehold( boolean keepCurrent ){
     	Dockable dockable = getDockable();
     	if( dockable != null ){
-	    	SplitDockAccess access = getAccess();
-	    	PlaceholderStrategy strategy = access.getOwner().getPlaceholderStrategy();
-	    	Path placeholder = strategy.getPlaceholderFor( dockable );
-	    	if( placeholder != null ){
-	    		if( !keepCurrent ){
-	    			removePlaceholder( placeholder );
-	    		}
-	    		else if( !hasPlaceholder( placeholder )){
-	    			addPlaceholder( placeholder );
-	    		}
+    		SplitDockAccess access = getAccess();
+        	PlaceholderStrategy strategy = access.getOwner().getPlaceholderStrategy();
+        	if( strategy != null ){
+        		updatePlaceholders( dockable, keepCurrent, strategy );
+        	}
+	    	
+	    	DockStation station = dockable.asDockStation();
+	    	if( station != null && keepCurrent ){
+	    		setPlaceholderMap( station.getPlaceholders() );
 	    	}
     	}
     	if( hasPlaceholders() ){
@@ -232,6 +231,25 @@ public class Leaf extends VisibleSplitNode{
     	}
     	else{
     		delete( true );
+    	}
+    }
+    
+    private void updatePlaceholders( Dockable dockable, boolean keep, PlaceholderStrategy strategy ){
+    	Path placeholder = strategy.getPlaceholderFor( dockable );
+    	if( placeholder != null ){
+    		if( !keep ){
+    			removePlaceholder( placeholder );
+    		}
+    		else if( !hasPlaceholder( placeholder )){
+    			addPlaceholder( placeholder );
+    		}
+    	}
+    	
+    	DockStation station = dockable.asDockStation();
+    	if( station != null ){
+    		for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
+    			updatePlaceholders( station.getDockable( i ), keep, strategy );
+    		}
     	}
     }
     
@@ -403,7 +421,7 @@ public class Leaf extends VisibleSplitNode{
             if( lastNode != null ){
             	id = lastNode.getId();
             }
-            Leaf leaf = create( dockable, true, id );
+            Leaf leaf = create( dockable, id );
             if( leaf == null )
                 return false;
             
@@ -419,6 +437,7 @@ public class Leaf extends VisibleSplitNode{
             }
             
             parent.setChild( split, location );
+            leaf.setDockable( dockable, true );
             return true;
         }
         else{

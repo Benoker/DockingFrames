@@ -198,10 +198,11 @@ public class Root extends VisibleSplitNode{
         		id = property.getNode( size-1 ).getId();
         	}
         	
-            Leaf leaf = create( dockable, true, id );
+            Leaf leaf = create( dockable, id );
             if( leaf == null )
                 return false;
             setChild( leaf );
+            leaf.setDockable( dockable, true );
             return true;
         }
         else

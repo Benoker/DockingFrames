@@ -284,4 +284,8 @@
     -: All layouts stored either in XML or in binary format will automatically be updated on load, older versions cannot read layout information written by this version
 - Bugfix: If TabPlacement was "left" or "right", then new tabs in a StackDockStation could be too big. Reason for this bug was that new tabs were not properly initialized and assumed that TabPlacement was "top".     
 - Bugfix: StackDockStation did not add its children correctly to the StackDockComponent, leading to some missing tabs.    
-     
+- Bugfix: Normalizing a externalized CDockable could throw an Exception
+- Bugfix: StackDockStation could not be moved around in Common even if children would allow it
+- Bugfix: Dragging a station away from another station did not store placeholders
+- Bugfix: During drag&drop, dragging the mouse over a tab of a StackDockStation could exchange the selected Dockable
+- Feature: The new Merger interface allows two DockStations to be merged automatically. It is used by the DockableRelocator class. The implementation StackMerger merges two StackDockStations into one, it is installed per default.

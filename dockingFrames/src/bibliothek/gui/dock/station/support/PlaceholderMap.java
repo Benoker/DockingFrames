@@ -29,6 +29,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -505,6 +506,18 @@ public class PlaceholderMap {
 			}
 		}
 	}
+
+	/**
+	 * Removes all occurrences of <code>placeholders</code>.
+	 * @param placeholder the placeholder to remove
+	 * @param recursive if <code>true</code>, this method is called recusively on
+	 * every sub-map in this map
+	 */
+	public void removeAll( Path placeholder, boolean recursive ){
+		Set<Path> placeholders = new HashSet<Path>();
+		placeholders.add( placeholder );
+		removeAll( placeholders, recursive );
+	}
 	
 	/**
 	 * Removes all occurrences of all elements of <code>placeholders</code>.
@@ -613,6 +626,14 @@ public class PlaceholderMap {
 		}
 		Set<String> set = map.keySet();
 		return set.toArray( new String[ set.size() ] );
+	}
+	
+	/**
+	 * Tells whether this map is completely empty.
+	 * @return <code>true</code> if there are no data stored in this map
+	 */
+	public boolean isEmpty(){
+		return data.isEmpty();
 	}
 	
 	/**

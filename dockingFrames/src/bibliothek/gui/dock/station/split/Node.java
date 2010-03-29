@@ -537,7 +537,7 @@ public class Node extends VisibleSplitNode{
     	if( hasPlaceholder( placeholder )){
     		// that is ... unexpected, must have been a client. Split this node and assign
     		// all remaining placeholders to a new leaf.
-    		Leaf leaf = create( dockable, true, -1 );
+    		Leaf leaf = create( dockable, -1 );
     		if( leaf == null ){
     			return false;
     		}
@@ -559,6 +559,7 @@ public class Node extends VisibleSplitNode{
     		node.setRight( this );
     		
     		parent.setChild( node, location );
+    		leaf.setDockable( dockable, true );
     		return true;
     	}
     	if( left != null && left.insert( property, dockable )){
@@ -613,7 +614,7 @@ public class Node extends VisibleSplitNode{
     				if( lastNode != node ){
     					splitId = node.getId();
     				}
-    				Leaf leaf = create( dockable, true, leafId );
+    				Leaf leaf = create( dockable, leafId );
     				if( leaf == null )
     					return false;
 
@@ -637,6 +638,7 @@ public class Node extends VisibleSplitNode{
     					split.setDivider( 1-node.getSize() );
     				}
     				parent.setChild( split, location );
+    				leaf.setDockable( dockable, true );
     				return true;
     			}
     			else{

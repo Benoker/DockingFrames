@@ -1612,9 +1612,11 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             dockStationListeners.fireDockableAdding( dockable );
         }
 
+        boolean leafSet = false;
+        
         if( leaf == null ){
             leaf = new Leaf( access );
-            leaf.setDockable( dockable, false );    
+            leafSet = true;    
         }
 
         SplitNode parent = neighbor.getParent();
@@ -1639,6 +1641,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 
         node.setDivider( divider );
         parent.setChild( node, location );
+        
+        if( leafSet ){
+            leaf.setDockable( dockable, false );
+        }
 
         if( fire ){
             dockStationListeners.fireDockableAdded( dockable );
@@ -2227,6 +2233,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 			private void handle( SplitNode check ){
 				if( check != node ){
 					check.removePlaceholder( placeholder );
+					PlaceholderMap map = check.getPlaceholderMap();
+					if( map != null ){
+						map.removeAll( placeholder, true );
+					}
 					if( !check.isOfUse() ){
 						nodesToDelete.add( check );
 					}

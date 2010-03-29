@@ -561,6 +561,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	private Path removeDockable( Entry entry ){
 		D dockable = entry.item.getDockable();
 		Path placeholder = strategy == null ? null : strategy.getPlaceholderFor( dockable.asDockable() );
+		
 		if( placeholder == null ){
 			if( entry.item.hasPlaceholders() ){
 				entry.item.setDockable( null );
@@ -1132,6 +1133,12 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 					placeholderSet = null;
 				}
 			}
+			if( placeholderMap != null ){
+				placeholderMap.removeAll( placeholders, true );
+				if( placeholderMap.isEmpty() ){
+					setPlaceholderMap( null );
+				}
+			}
 		}
 		
 		/**
@@ -1143,6 +1150,12 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 				placeholderSet.remove( placeholder );
 				if( placeholderSet.isEmpty() ){
 					placeholderSet = null;
+				}
+			}
+			if( placeholderMap != null ){
+				placeholderMap.removeAll( placeholder, true );
+				if( placeholderMap.isEmpty()){
+					setPlaceholderMap( null );
 				}
 			}
 		}

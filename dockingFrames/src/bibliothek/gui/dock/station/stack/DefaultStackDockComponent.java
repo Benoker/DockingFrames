@@ -236,8 +236,10 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 		 * Updates the value of {@link DefaultStackDockComponent#relocator relocator}
 		 * @param x the x-coordinate of the mouse
 		 * @param y the y-coordinate of the mouse
+		 * @param searchDockable if <code>true</code>, then a new current relocator can be
+		 * selected, otherwise the relocator may only be canceled by not exchanged
 		 */
-		private void updateRelocator( int x, int y ){
+		private void updateRelocator( int x, int y, boolean searchDockable ){
 		    boolean allowed = controller == null || !controller.getRelocator().isDragOnlyTitel();
 		    
 			if( relocator != null ){
@@ -253,10 +255,12 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 			    return;
 			}
 			
-			for( int i = 0, n = getTabCount(); i<n; i++ ){
-				Rectangle bounds = getBoundsAt( i );
-				if( bounds != null && bounds.contains( x, y )){
-					relocator = dockables.get( i ).relocator;
+			if( searchDockable ){
+				for( int i = 0, n = getTabCount(); i<n; i++ ){
+					Rectangle bounds = getBoundsAt( i );
+					if( bounds != null && bounds.contains( x, y )){
+						relocator = dockables.get( i ).relocator;
+					}
 				}
 			}
 		}
@@ -266,7 +270,7 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 			if( e.isConsumed() )
 				return;
 			
-			updateRelocator( e.getX(), e.getY() );
+			updateRelocator( e.getX(), e.getY(), true );
 			if( relocator != null ){
 				Point mouse = e.getPoint();
 				SwingUtilities.convertPointToScreen( mouse, e.getComponent() );
@@ -289,7 +293,7 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 			if( e.isConsumed() )
 				return;
 			
-			updateRelocator( e.getX(), e.getY() );
+			updateRelocator( e.getX(), e.getY(), false );
 			if( relocator != null ){
 				Point mouse = e.getPoint();
 				SwingUtilities.convertPointToScreen( mouse, e.getComponent() );
@@ -312,7 +316,7 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 			if( e.isConsumed() )
 				return;
 			
-			updateRelocator( e.getX(), e.getY() );
+			updateRelocator( e.getX(), e.getY(), false );
 			if( relocator != null ){
 				Point mouse = e.getPoint();
 				SwingUtilities.convertPointToScreen( mouse, e.getComponent() );
