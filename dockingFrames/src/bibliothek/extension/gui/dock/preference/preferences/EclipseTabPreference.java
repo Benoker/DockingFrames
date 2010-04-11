@@ -42,7 +42,7 @@ public class EclipseTabPreference extends ChoiceDockPropertyPreference<TabPainte
 	 * @param properties the properties to read from or to write to
 	 */
 	public EclipseTabPreference( DockProperties properties ){
-		super( properties, EclipseTheme.TAB_PAINTER, new Path( "dock.theme.eclipse.tab" ), new EclipseTabChoice() );
+		super( properties, EclipseTheme.TAB_PAINTER, new Path( "dock.theme.eclipse.tab" ), new EclipseTabChoice( properties ) );
 		
 		setLabel( DockUI.getDefaultDockUI().getString( "preference.theme.eclipse.tab.label" ));
 		setDescription( DockUI.getDefaultDockUI().getString( "preference.theme.eclipse.tab.description" ));

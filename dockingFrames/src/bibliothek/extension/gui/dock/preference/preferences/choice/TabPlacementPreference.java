@@ -44,7 +44,7 @@ public class TabPlacementPreference extends ChoiceDockPropertyPreference<TabPlac
 	 * @param path the unique identifier of this preference
 	 */
 	public TabPlacementPreference( DockProperties properties, Path path ){
-		super( properties, StackDockStation.TAB_PLACEMENT, path, new TabPlacementChoice() );
+		super( properties, StackDockStation.TAB_PLACEMENT, path, new TabPlacementChoice( properties ) );
 		
 		DockUI ui = DockUI.getDefaultDockUI();
 		

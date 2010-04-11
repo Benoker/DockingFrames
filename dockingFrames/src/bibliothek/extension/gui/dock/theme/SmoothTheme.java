@@ -32,6 +32,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.ThemeProperties;
+import bibliothek.gui.dock.util.Priority;
 
 /**
  * This theme uses the {@link SmoothDefaultTitleFactory} to create some
@@ -49,7 +50,7 @@ public class SmoothTheme extends BasicTheme {
      * Constructor, sets the special title-factory of this theme
      */
     public SmoothTheme(){
-        setTitleFactory( new SmoothDefaultTitleFactory() );
+        setTitleFactory( new SmoothDefaultTitleFactory(), Priority.DEFAULT );
     }
     
     @Override

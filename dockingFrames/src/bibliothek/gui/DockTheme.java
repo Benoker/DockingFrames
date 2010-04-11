@@ -32,6 +32,7 @@ import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.themes.DockThemeExtension;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleManager;
@@ -44,13 +45,13 @@ import bibliothek.gui.dock.util.Priority;
  * @author Benjamin Sigg
  */
 public interface DockTheme {
-    
     /**
      * Install this theme at <code>controller</code>. The theme
      * may change any properties it likes.
      * @param controller the controller
+     * @param extensions a set of extensions specifically for this theme
      */
-    public void install( DockController controller );
+    public void install( DockController controller, DockThemeExtension[] extensions );
     
     /**
      * Uninstalls this theme from <code>controller</code>. The theme

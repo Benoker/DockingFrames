@@ -10,6 +10,7 @@ import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.TitleMovingImage;
+import bibliothek.gui.dock.util.Priority;
  
 /**
  * A theme that can hide all {@link DockTitle}s when used together with a 
@@ -40,7 +41,7 @@ public class HidingTheme extends BasicTheme {
                         return super.create( controller, dockable );
                     }
                 }
-            });
+            }, Priority.DEFAULT );
     	}
     	else{
             setMovingImageFactory( new DockableMovingImageFactory(){
@@ -50,7 +51,7 @@ public class HidingTheme extends BasicTheme {
                 public MovingImage create( DockController controller, DockTitle snatched ) {
                     return null;
                 }
-            });
+            }, Priority.DEFAULT );
     	}
     	
     	updateTitleFactory();

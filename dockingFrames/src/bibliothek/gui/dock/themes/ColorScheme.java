@@ -33,6 +33,7 @@ import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.DockColor;
+import bibliothek.gui.dock.util.extension.ExtensionName;
 import bibliothek.gui.dock.util.laf.LookAndFeelColors;
 
 /**
@@ -41,6 +42,16 @@ import bibliothek.gui.dock.util.laf.LookAndFeelColors;
  * @author Benjamin Sigg
  */
 public interface ColorScheme {
+	/**
+	 * The name used in a {@link ExtensionName} to ask for an additional {@link ColorScheme}
+	 */
+	public static final Path EXTENSION_NAME = new Path( "dock.colorscheme" );
+	
+	/**
+	 * A parameter linking to the {@link ColorScheme} that requests this extension.
+	 */
+	public static final String COLOR_SCHEME_PARAMETER = "scheme";
+	
     /**
      * Searches for a color that can be used for the identifier <code>id</code>.
      * @param id an identifier of some color

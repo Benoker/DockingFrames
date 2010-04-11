@@ -27,6 +27,7 @@ package bibliothek.extension.gui.dock.preference.preferences.choice;
 
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.FlapDockStation.ButtonContent;
+import bibliothek.gui.dock.util.DockProperties;
 
 /**
  * A choice for a {@link ButtonContent}.
@@ -37,8 +38,11 @@ public class ButtonContentChoice extends DefaultChoice<ButtonContent>{
 	
 	/**
 	 * Creates a new choice
+	 * @param properties default settings
 	 */
-	public ButtonContentChoice(){
+	public ButtonContentChoice( DockProperties properties ){
+		super( properties.getController() );
+		
 		DockUI ui = DockUI.getDefaultDockUI();
 		
 		add( "td", ui.getString( "preference.layout.choice.ButtonContent.theme_dependent" ), ButtonContent.THEME_DEPENDENT );

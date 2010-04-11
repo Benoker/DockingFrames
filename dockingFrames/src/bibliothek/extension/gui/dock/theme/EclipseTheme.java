@@ -161,9 +161,9 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
             public StackDockComponent create( StackDockComponentParent station ){
             	return new EclipseTabPane( EclipseTheme.this, station.getStation() );
             }
-        });
-        setDisplayerFactory( new EclipseDisplayerFactory( this ) );
-        setPaint( new EclipseStationPaint() );
+        }, Priority.DEFAULT );
+        setDisplayerFactory( new EclipseDisplayerFactory( this ), Priority.DEFAULT );
+        setPaint( new EclipseStationPaint(), Priority.DEFAULT );
         setMovingImageFactory( new DockableMovingImageFactory(){
             public MovingImage create( DockController controller, Dockable dockable ) {
                 return null;
@@ -172,15 +172,15 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
             public MovingImage create( DockController controller, DockTitle snatched ) {
                 return null;
             }
-        });
+        }, Priority.DEFAULT );
         setTitleFactory( new BasicDockTitleFactory(){
         	@Override
         	public void request( DockTitleRequest request ){
         		request.answer( new BasicDockTitle( request.getTarget(), request.getVersion() ) );
         	}
-        });
-        setDockableSelection( new EclipseDockableSelection() );
-        setTabPlacement( TabPlacement.TOP_OF_DOCKABLE );
+        }, Priority.DEFAULT );
+        setDockableSelection( new EclipseDockableSelection(), Priority.DEFAULT );
+        setTabPlacement( TabPlacement.TOP_OF_DOCKABLE, Priority.DEFAULT );
     }
 
     @Override

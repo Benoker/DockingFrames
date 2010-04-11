@@ -45,6 +45,6 @@ public class CLayoutPreferenceModel extends DefaultPreferenceModel{
         add( new ButtonContentPreference( control.intern().getDockProperties(), new Path( "dock.layout.ButtonContent" )));
         add( new TabPlacementPreference( control.intern().getDockProperties(), new Path( "dock.layout.tabplacement" )));
         add( new TabContentFilterPreference( control.intern().getDockProperties(), new Path( "dock.layout.tabcontentfilter" )));
-        add( new ThemePreference( control.getThemes() ));
+        add( new ThemePreference( control.intern().getDockProperties(), control.getThemes() ));
     }
 }

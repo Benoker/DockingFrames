@@ -154,8 +154,8 @@ public class NoStackTheme implements DockTheme {
         return base.getDockableSelection( controller );
     }
     
-    public void install( DockController controller ) {
-        base.install( controller );
+    public void install( DockController controller, DockThemeExtension[] extensions ){    	
+        base.install( controller, extensions );
         controller.addAcceptance( acceptance );
     }
     

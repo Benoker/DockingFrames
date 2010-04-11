@@ -28,6 +28,7 @@ package bibliothek.gui.dock.util;
 import java.util.*;
 
 import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.gui.DockController;
 
 /**
  * A map containing which contains some string-values pairs and so called
@@ -49,6 +50,25 @@ public class UIProperties<V, U extends UIValue<V>, B extends UIBridge<V, U>> {
     
     /** whether to stall updates or not */
     private int updateLock = 0;
+    
+    /** the owner of this properties map */
+    private DockController controller;
+    
+    /**
+     * Creates a new map.
+     * @param controller the owner of this map
+     */
+    public UIProperties( DockController controller ){
+    	this.controller = controller;
+    }
+    
+    /**
+     * Gets the controller in whose realm this map is used.
+     * @return the controller, not <code>null</code>
+     */
+    public DockController getController(){
+		return controller;
+	}
     
     /**
      * Tells this manager to stall all updates. No {@link UIValue} will

@@ -29,6 +29,7 @@ import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.station.stack.tab.DefaultTabContentFilter;
 import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
 import bibliothek.gui.dock.station.stack.tab.DefaultTabContentFilter.Behavior;
+import bibliothek.gui.dock.util.DockProperties;
 
 /**
  * A set of choices of {@link TabContentFilter}s.
@@ -37,8 +38,11 @@ import bibliothek.gui.dock.station.stack.tab.DefaultTabContentFilter.Behavior;
 public class TabContentFilterChoice extends DefaultChoice<TabContentFilter> {
 	/**
 	 * Creates a new choice
+	 * @param properties default settings
 	 */
-	public TabContentFilterChoice(){
+	public TabContentFilterChoice( DockProperties properties ){
+		super( properties.getController() );
+		
 		DockUI ui = DockUI.getDefaultDockUI();
 		add( "all", ui.getString( "preference.layout.tabcontentfilter.all" ), null );
 		add( "icon", ui.getString( "preference.layout.tabcontentfilter.icon" ), new DefaultTabContentFilter( Behavior.ICON_ONLY ) );
@@ -46,6 +50,8 @@ public class TabContentFilterChoice extends DefaultChoice<TabContentFilter> {
 		add( "iconOrTitle", ui.getString( "preference.layout.tabcontentfilter.iconOrTitle" ), new DefaultTabContentFilter( Behavior.ALL, Behavior.TEXT_ONLY ) );
 		add( "titleOrIcon", ui.getString( "preference.layout.tabcontentfilter.titleOrIcon" ), new DefaultTabContentFilter( Behavior.ALL, Behavior.ICON_ONLY ) );
 		
-		setDefaultChoice( "all" );
+		if( getDefaultChoice() == null ){
+			setDefaultChoice( "all" );
+		}
 	}
 }

@@ -72,6 +72,7 @@ import bibliothek.gui.dock.themes.basic.action.BasicSelectableHandler;
 import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 
@@ -108,16 +109,16 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
      */
     public BubbleTheme(){
         setColorSchemeKey( BUBBLE_COLOR_SCHEME );
-        setDisplayerFactory( new BubbleDisplayerFactory());
-        setTitleFactory( new BubbleDockTitleFactory());
-        setPaint( new BubbleStationPaint() );
-        setMovingImageFactory( new BubbleMovingImageFactory() );
+        setDisplayerFactory( new BubbleDisplayerFactory(), Priority.DEFAULT );
+        setTitleFactory( new BubbleDockTitleFactory(), Priority.DEFAULT );
+        setPaint( new BubbleStationPaint(), Priority.DEFAULT );
+        setMovingImageFactory( new BubbleMovingImageFactory(), Priority.DEFAULT );
         setStackDockComponentFactory( new StackDockComponentFactory(){
             public StackDockComponent create( StackDockComponentParent station ) {
                 return new BubbleStackDockComponent( station );
             }
-        });
-        setTabPlacement( TabPlacement.BOTTOM_OF_DOCKABLE );
+        }, Priority.DEFAULT );
+        setTabPlacement( TabPlacement.BOTTOM_OF_DOCKABLE, Priority.DEFAULT );
     }
 
     /**

@@ -32,6 +32,7 @@ import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleManager;
+import bibliothek.gui.dock.util.Priority;
 
 /**
  * @author Janni Kovacs
@@ -52,7 +53,7 @@ public interface EclipseThemeConnector {
          * <ul>
          *  <li>replacing the factories directly through the <code>DockTitleManager</code>, clients
          *  should then encapsulate their new factories in a {@link EclipseDockTitleFactory}</li>
-         *  <li>using {@link EclipseTheme#setTitleFactory(bibliothek.gui.dock.title.DockTitleFactory)}</li>
+         *  <li>using {@link EclipseTheme#setTitleFactory(bibliothek.gui.dock.title.DockTitleFactory, Priority)}</li>
          * </ul>
          */
         BASIC_BORDERED,

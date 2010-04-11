@@ -151,6 +151,12 @@ import bibliothek.util.xml.XIO;
  *
  */
 public class CControl {
+	/**
+	 * A key for this {@link CControl}. Will be set with the highest priority. To be used
+	 * wherever a {@link DockController} but not a {@link CControl} is accessible.
+	 */
+	public static final PropertyKey<CControl> CCONTROL = new PropertyKey<CControl>( "ccontrol" );
+	
     /**
      * {@link KeyStroke} used to change a {@link CDockable} into maximized-state,
      * or to go out of maximized-state when needed.
@@ -347,6 +353,8 @@ public class CControl {
 
         register = factory.createRegister( this );
         DockController controller = factory.createController( this );
+        controller.getProperties().set( CCONTROL, this, Priority.CLIENT );
+        controller.getProperties().finalize( CCONTROL );
         controller.setSingleParentRemover( new CSingleParentRemover( this ) );
 
         initFocusListeners( controller );

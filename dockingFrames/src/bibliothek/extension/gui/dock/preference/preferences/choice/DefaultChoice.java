@@ -26,18 +26,51 @@
 package bibliothek.extension.gui.dock.preference.preferences.choice;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import bibliothek.gui.DockController;
+import bibliothek.gui.dock.util.extension.ExtensionName;
 
 
 /**
  * A default implementation of {@link Choice}, provides text, id and objects
  * for every possible choice.
  * @author Benjamin Sigg
+ * @param <V> the kind of values this choice manages
  */
 public class DefaultChoice<V> implements Choice {
 	private List<Entry> list = new ArrayList<Entry>();
 	private boolean nullEntryAllowed = false;
 	private String defaultChoice;
+	
+	/**
+	 * Creates a new choice, adding additional entries if there are any 
+	 * extensions.
+	 * @param controller the realm in which this choice is used, can be <code>null</code>
+	 */
+	@SuppressWarnings("unchecked")
+	public DefaultChoice( DockController controller ){
+		if( controller != null ){
+			ExtensionName<ChoiceExtension> name = new ExtensionName<ChoiceExtension>( 
+					ChoiceExtension.CHOICE_EXTENSION, ChoiceExtension.class, ChoiceExtension.CHOICE_PARAMETER, this );
+			Collection<ChoiceExtension> choices = controller.getExtensions().load( name );
+			for( ChoiceExtension item : choices ){
+				ChoiceExtension<V> choice = (ChoiceExtension<V>)item;
+				
+				for( int i = 0, n = choice.size(); i<n; i++ ){
+					String text = choice.getText( i );
+					String id = choice.getId( i );
+					V value = choice.getChoice( i );
+					add( id, text, value );
+				}
+				
+				if( defaultChoice == null ){
+					defaultChoice = choice.getDefaultChoice();
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Removes the index'th entry of this choice.

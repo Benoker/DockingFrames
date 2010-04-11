@@ -27,6 +27,7 @@ package bibliothek.gui.dock.util.color;
 
 import java.awt.Color;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.UIProperties;
 
@@ -39,5 +40,11 @@ import bibliothek.gui.dock.util.UIProperties;
  * @author Benjamin Sigg
  */
 public class ColorManager extends UIProperties<Color, DockColor, ColorBridge>{
-    // no new methods
+	/**
+	 * Creates a new manager.
+	 * @param controller the controller in whose realm this map is used
+	 */
+	public ColorManager( DockController controller ){
+		super( controller );
+	}
 }

@@ -51,7 +51,7 @@ public class ButtonContentPreference extends DefaultPreference<String>{
 		if( properties == null )
 			throw new IllegalArgumentException( "properties must not be null" );
 		
-		choice = new ButtonContentChoice();
+		choice = new ButtonContentChoice( properties );
 		setValueInfo( choice );
 		setLabel( DockUI.getDefaultDockUI().getString( "preference.layout.ButtonContentPreference.text" ) );
 		setDescription( DockUI.getDefaultDockUI().getString( "preference.layout.ButtonContentPreference.description" ) );

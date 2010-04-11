@@ -39,12 +39,16 @@ import bibliothek.gui.dock.common.intern.font.ButtonFontTransmitter;
 import bibliothek.gui.dock.common.intern.font.FontBridgeFactory;
 import bibliothek.gui.dock.common.intern.font.TabFontTransmitter;
 import bibliothek.gui.dock.common.intern.font.TitleFontTransmitter;
+import bibliothek.gui.dock.common.intern.theme.color.CColorBridge;
+import bibliothek.gui.dock.common.intern.theme.color.CColorBridgeExtension;
+import bibliothek.gui.dock.common.intern.theme.color.ExtendedColorBridge;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.focus.DockableSelection;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.themes.ColorBridgeFactory;
+import bibliothek.gui.dock.themes.DockThemeExtension;
 import bibliothek.gui.dock.themes.font.TabFont;
 import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.title.DockTitleFactory;
@@ -52,6 +56,7 @@ import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.color.ColorBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.DockColor;
+import bibliothek.gui.dock.util.extension.ExtensionName;
 import bibliothek.gui.dock.util.font.DockFont;
 import bibliothek.gui.dock.util.font.FontBridge;
 import bibliothek.gui.dock.util.font.FontManager;
@@ -60,6 +65,7 @@ import bibliothek.gui.dock.util.font.FontManager;
  * A {@link DockTheme} that wraps another theme and works within
  * the special environment the common-project provides.
  * @author Benjamin Sigg
+ * @param <D> the kind of theme that is wrapped by this {@link CDockTheme}
  */
 public class CDockTheme<D extends DockTheme> implements DockTheme {
     /** the original theme */
@@ -77,6 +83,9 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
     
     /** the settings of all {@link DockController}s */
     private List<Controller> controllers = new ArrayList<Controller>();
+    
+    /** extensions associated with this theme */
+    private DockThemeExtension[] extensions;
     
     /**
      * Creates a new theme 
@@ -218,17 +227,62 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
         }
     }
 
-    public void install( DockController controller ) {
-        delegate.install( controller );
+    public void install( DockController controller, DockThemeExtension[] extensions ){
+    	if( this.extensions != null ){
+    		throw new IllegalStateException( "theme is already in use" );
+    	}
+    	
+    	this.extensions = extensions;
+    	
+    	for( DockThemeExtension extension : extensions ){
+    		extension.install( controller, this );
+    	}
+    	
+        delegate.install( controller, extensions );
+        install( controller );
         
+        for( DockThemeExtension extension : extensions ){
+    		extension.installed( controller, this );
+    	}
+    }
+    
+    /**
+     * Installs this theme at <code>controller</code>.
+     * @param controller the new owner of this theme
+     */
+    protected void install( DockController controller ){    
         Controller settings = new Controller();
         settings.controller = controller;
         
         ColorManager colors = controller.getColors();
+        CControl control = controller.getProperties().get( CControl.CCONTROL );
+        
         try{
             colors.lockUpdate();
+            
+            ExtensionName<CColorBridgeExtension> name = new ExtensionName<CColorBridgeExtension>( 
+            		CColorBridgeExtension.EXTENSION_NAME, CColorBridgeExtension.class, CColorBridgeExtension.PARAMETER_NAME, this );
+            List<CColorBridgeExtension> extensions = controller.getExtensions().load( name );
+            
             for( Map.Entry<Path, ColorBridgeFactory> entry : colorBridgeFactories.entrySet() ){
                 ColorBridge bridge = entry.getValue().create( colors );
+                Path key = entry.getKey();
+                
+                List<CColorBridgeExtension> filtered = new ArrayList<CColorBridgeExtension>();
+                for( CColorBridgeExtension extension : extensions ){
+                	if( key.equals( extension.getKey() )){
+                		filtered.add( extension );
+                	}
+                }
+
+                if( !filtered.isEmpty() ){
+                	CColorBridge[] extending = new CColorBridge[ filtered.size() ];
+                	for( int i = 0; i < extending.length; i++ ){
+                		extending[i] = filtered.get( i ).create( control, colors );
+                	}
+                	bridge = new ExtendedColorBridge( bridge, extending );
+                }
+                
                 colors.publish( 
                         Priority.DEFAULT, 
                         entry.getKey(), 
@@ -262,7 +316,8 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
         for( int i = 0, n = controllers.size(); i<n; i++ ){
             Controller settings = controllers.get( i );
             if( settings.controller == controller ){
-                controllers.remove( i );
+                controllers.remove( i-- );
+                n--;
                 
                 ColorManager colors = controller.getColors();
                 for( ColorBridge bridge : settings.colors.values() ){
@@ -275,6 +330,12 @@ public class CDockTheme<D extends DockTheme> implements DockTheme {
                 }
             }
         }
+        
+        for( DockThemeExtension extension : extensions ){
+        	extension.uninstall( controller, this );
+        }
+        
+        this.extensions = null;
     }
     
     /**

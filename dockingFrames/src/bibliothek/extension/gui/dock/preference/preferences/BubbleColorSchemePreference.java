@@ -42,7 +42,7 @@ public class BubbleColorSchemePreference extends ChoiceDockPropertyPreference<Co
 	 * @param properties the properties which is read by this preference
 	 */
 	public BubbleColorSchemePreference( DockProperties properties ){
-		super( properties, BubbleTheme.BUBBLE_COLOR_SCHEME, new Path( "dock.theme.bubble.colorscheme" ), new BubbleColorSchemeChoice() );
+		super( properties, BubbleTheme.BUBBLE_COLOR_SCHEME, new Path( "dock.theme.bubble.colorscheme" ), new BubbleColorSchemeChoice( properties ) );
 		
 		setLabel( DockUI.getDefaultDockUI().getString( "preference.theme.bubble.color.label" ));
 		setDefaultValue( DockUI.getDefaultDockUI().getString( "preference.theme.bubble.color.description" ));

@@ -32,6 +32,7 @@ import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.event.ControllerSetupListener;
 import bibliothek.gui.dock.event.DockRegisterListener;
+import bibliothek.gui.dock.util.extension.ExtensionManager;
 
 /**
  * Contains various factory methods which are used during initialization
@@ -152,4 +153,13 @@ public interface DockControllerFactory {
      * @return The remover
      */
     public SingleParentRemover createSingleParentRemover( DockController controller, ControllerSetupCollection setup );
+
+    /**
+     * Creates a new {@link ExtensionManager}.
+     * @param controller the controller which will use the manager
+     * @param setup an observable where new objects can add {@link ControllerSetupListener}
+     * to be informed when the setup of <code>controller</code> is finished. 
+     * @return the new manager, not <code>null</code>
+     */
+	public ExtensionManager createExtensionManager( DockController controller, ControllerSetupCollection setup );
 }

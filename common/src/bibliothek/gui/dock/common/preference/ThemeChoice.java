@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.common.preference;
 
 import bibliothek.extension.gui.dock.preference.preferences.choice.DefaultChoice;
+import bibliothek.gui.DockController;
 import bibliothek.gui.dock.common.layout.ThemeMap;
 import bibliothek.gui.dock.themes.ThemeFactory;
 
@@ -37,8 +38,11 @@ public class ThemeChoice extends DefaultChoice<ThemeFactory>{
     /**
      * Creates a new set of choices.
      * @param themes the map to read
+     * @param controller the controller in whose realm this choice is required, can be <code>null</code>
      */
-    public ThemeChoice( ThemeMap themes ){
+    public ThemeChoice( ThemeMap themes, DockController controller ){
+    	super( controller );
+    	
         setNullEntryAllowed( false );
         
         for( int i = 0, n = themes.size(); i<n; i++ ){

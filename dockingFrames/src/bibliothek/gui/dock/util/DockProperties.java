@@ -31,6 +31,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import bibliothek.gui.DockController;
+
 /**
  * A set of properties that are used at different places all over the framework.
  * The map uses a {@link Priority} based system, allowing clients to override
@@ -41,6 +43,28 @@ public class DockProperties {
 	/** the map of values */
 	private Map<PropertyKey<?>, Entry<?>> map = new HashMap<PropertyKey<?>, Entry<?>>();
 
+	/** the owner of this map */
+	private DockController controller;
+	
+	/**
+	 * Creates a new map.
+	 * @param controller the owner of this map
+	 */
+	public DockProperties( DockController controller ){
+		if( controller == null ){
+			throw new IllegalArgumentException( "controller must not be null" );
+		}
+		this.controller = controller;
+	}
+	
+	/**
+	 * Gets the owner of this {@link DockProperties}.
+	 * @return the owner, not <code>null</code>
+	 */
+	public DockController getController(){
+		return controller;
+	}
+	
 	/**
 	 * Sets a value. This is equivalent to calling <code>set( key, value, Priority.CLIENT )</code>.
 	 * @param <A> the type of the value
@@ -62,6 +86,17 @@ public class DockProperties {
 		Entry<A> entry = getEntry( key, true );
 		entry.setValue( value, priority );
 		check( entry );
+	}
+	
+	/**
+	 * Ensures that the value behind <code>key</code> will never be
+	 * changed.
+	 * @param <A> the type of the value
+	 * @param key the key to protect
+	 */
+	public <A> void finalize( PropertyKey<A> key ){
+		Entry<A> entry = getEntry( key, true );
+		entry.lock();
 	}
 	
 	/**
@@ -235,6 +270,9 @@ public class DockProperties {
 		/** whether the default value was ever needed and has been set */
 		private boolean defaultValueSet = false;
 
+		/** whether changes of this entry are allowed */
+		private boolean locked = false;
+		
 		/**
 		 * Creates a new entry.
 		 * @param key the name of this entry
@@ -244,12 +282,23 @@ public class DockProperties {
 		}
 		
 		/**
+		 * If called makes this entry immutable.
+		 */
+		public void lock(){
+			locked = true;
+		}
+		
+		/**
 		 * Sets the new value of this entry.
 		 * @param value the new value
 		 * @param priority the priority of the new value
 		 */
 		@SuppressWarnings( "unchecked" )
 		public void setValue( A value, Priority priority ){
+			if( locked ){
+				throw new IllegalStateException( "this entry is immutable" );
+			}
+			
 			A oldValue = getValue();
 			this.value.set( priority, value );
 			A newValue = getValue();
@@ -269,6 +318,10 @@ public class DockProperties {
 		 */
 		@SuppressWarnings("unchecked")
 		public void unsetValue( Priority priority ){
+			if( locked ){
+				throw new IllegalStateException( "this entry is immutable" );
+			}
+			
 			A oldValue = getValue();
 			this.value.unset( priority );
 			A newValue = getValue();
@@ -345,6 +398,9 @@ public class DockProperties {
 		 * @return <code>true</code> if this entry can be deleted safely.
 		 */
 		public boolean removeable(){
+			if( locked )
+				return false;
+			
 			if( !listeners.isEmpty() )
 				return false;
 			

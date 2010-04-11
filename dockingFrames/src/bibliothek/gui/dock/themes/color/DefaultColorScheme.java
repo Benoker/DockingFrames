@@ -105,7 +105,6 @@ public class DefaultColorScheme implements ColorScheme{
         return null;
     }
     
-    @SuppressWarnings("unchecked")
     public void transmitAll( Priority priority, ColorManager manager ) {
         try{
             manager.lockUpdate();
@@ -118,7 +117,6 @@ public class DefaultColorScheme implements ColorScheme{
                         priority, 
                         entry.getKey(), 
                         entry.getValue().create( manager ) );
-        
         }
         finally{
             manager.unlockUpdate();

@@ -31,6 +31,7 @@ import bibliothek.gui.dock.action.DefaultActionOffer;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.event.ControllerSetupListener;
 import bibliothek.gui.dock.event.DockRegisterListener;
+import bibliothek.gui.dock.util.extension.ExtensionManager;
 
 /**
  * A very simple implementation of {@link DockControllerFactory}, creating
@@ -98,9 +99,11 @@ public class DefaultDockControllerFactory implements DockControllerFactory {
         return new DefaultDockRelocator( controller, setup );
     }
 
-    public SingleParentRemover createSingleParentRemover(
-            DockController controller, ControllerSetupCollection setup ) {
-        
+    public SingleParentRemover createSingleParentRemover( DockController controller, ControllerSetupCollection setup ) {
         return new SingleParentRemover();
+    }
+    
+    public ExtensionManager createExtensionManager( DockController controller, ControllerSetupCollection setup ){
+    	return new ExtensionManager( controller );
     }
 }

@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.util.font;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.dock.util.UIProperties;
 
 /**
@@ -34,5 +35,11 @@ import bibliothek.gui.dock.util.UIProperties;
  * @author Benjamin Sigg
  */
 public class FontManager extends UIProperties<FontModifier, DockFont, FontBridge>{
-    // nothing
+	/**
+	 * Creates a new map.
+	 * @param controller the controller in whose realm this manager is used
+	 */
+	public FontManager( DockController controller ){
+		super( controller );
+	}
 }

@@ -73,6 +73,7 @@ import bibliothek.gui.dock.themes.basic.action.buttons.MiniButton;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 
@@ -106,16 +107,16 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
      */
     public FlatTheme() {
         setColorSchemeKey( FLAT_COLOR_SCHEME );
-        setPaint( new FlatStationPaint() );
-        setTitleFactory( new FlatTitleFactory() );
-        setDisplayerFactory( new FlatDisplayerFactory( false ));
+        setPaint( new FlatStationPaint(), Priority.DEFAULT );
+        setTitleFactory( new FlatTitleFactory(), Priority.DEFAULT );
+        setDisplayerFactory( new FlatDisplayerFactory( false ), Priority.DEFAULT );
         setStackDockComponentFactory( new StackDockComponentFactory(){
             public StackDockComponent create( StackDockComponentParent station ) {
                 return new FlatTabPane( station );
             }
-        });
-        setMovingImageFactory( new ScreencaptureMovingImageFactory( new Dimension( 300, 200 ) ) );
-        setTabPlacement( TabPlacement.BOTTOM_OF_DOCKABLE );
+        }, Priority.DEFAULT );
+        setMovingImageFactory( new ScreencaptureMovingImageFactory( new Dimension( 300, 200 ) ), Priority.DEFAULT );
+        setTabPlacement( TabPlacement.BOTTOM_OF_DOCKABLE, Priority.DEFAULT );
     }
 
     @Override

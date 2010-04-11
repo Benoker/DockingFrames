@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2010 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,20 +23,19 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.util;
+package bibliothek.gui.dock.common.intern.theme.color;
 
-import bibliothek.gui.DockTheme;
+import bibliothek.gui.dock.util.color.ColorBridge;
 
 /**
- * Often resources are divided into three groups with different
- * priorities. <code>Priority</code> gives a name to these
- * groups.
+ * A {@link ColorBridge} which filters the interesting colors.
+ * @author Benjamin Sigg
  */
-public enum Priority{
-    /** highest priority */
-    CLIENT, 
-    /** for resources set by a {@link DockTheme} that overrides a {@link #DEFAULT} setting */
-    THEME,
-    /** lowest priority, the default-values set by the core items. May also be used by a {@link DockTheme}. */
-    DEFAULT 
+public interface CColorBridge extends ColorBridge {
+	/**
+	 * Tells whether this bridge should handle colors with id <code>id</code>.
+	 * @param id the id of some color
+	 * @return <code>true</code> if this bridge is interested in this color
+	 */
+	public boolean matches( String id );
 }

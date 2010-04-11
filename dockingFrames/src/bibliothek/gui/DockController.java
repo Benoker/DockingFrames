@@ -92,6 +92,7 @@ import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.event.DockableSelectionEvent;
 import bibliothek.gui.dock.event.DockableSelectionListener;
 import bibliothek.gui.dock.event.UIListener;
+import bibliothek.gui.dock.themes.DockThemeExtension;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.util.DirectWindowProvider;
@@ -102,6 +103,8 @@ import bibliothek.gui.dock.util.WindowProvider;
 import bibliothek.gui.dock.util.WindowProviderListener;
 import bibliothek.gui.dock.util.WindowProviderWrapper;
 import bibliothek.gui.dock.util.color.ColorManager;
+import bibliothek.gui.dock.util.extension.ExtensionManager;
+import bibliothek.gui.dock.util.extension.ExtensionName;
 import bibliothek.gui.dock.util.font.FontManager;
 
 /**
@@ -174,9 +177,11 @@ public class DockController {
     /** the set of icons used with this controller */
     private IconManager icons = new IconManager();
     /** map of colors that are used through the realm of this controller */
-    private ColorManager colors = new ColorManager();
+    private ColorManager colors;
     /** map of fonts that are used through the realm of this controller */
-    private FontManager fonts = new FontManager();
+    private FontManager fonts;
+    /** extensions to this controller */
+    private ExtensionManager extensions;
     
     /** A list of sources for a {@link DockActionSource} */
     private List<ActionOffer> actionOffers = new ArrayList<ActionOffer>();
@@ -198,7 +203,7 @@ public class DockController {
     /** a theme describing the look of the stations */
     private DockTheme theme;
     /** a set of properties */
-    private DockProperties properties = new DockProperties();
+    private DockProperties properties;
     
     /** the factory that creates new parts of this controller */
     private DockControllerFactory factory;
@@ -265,7 +270,11 @@ public class DockController {
         if( factory == null )
             throw new IllegalArgumentException( "Factory must not be null" );
         
-        rootWindowProvider = new WindowProviderWrapper();
+        properties = new DockProperties( this );
+        colors = new ColorManager( this );
+        fonts = new FontManager( this );
+        
+    	rootWindowProvider = new WindowProviderWrapper();
         rootWindowProvider.addWindowProviderListener( new WindowProviderListener(){
             public void windowChanged( WindowProvider provider, Window window ) {
                 Window oldWindow = rootWindow;
@@ -315,6 +324,9 @@ public class DockController {
         keyboardController = factory.createKeyboardController( this, setup );
         dockableSelector = factory.createDockableSelector( this, setup );
         
+        extensions = factory.createExtensionManager( this, setup );
+        extensions.init();
+        
         DockUI.getDefaultDockUI().fillIcons( icons );
         
         setTheme( DockUI.getDefaultDockUI().getDefaultTheme().create() );
@@ -353,7 +365,7 @@ public class DockController {
 	    keyboardController.kill();
 	    theme.uninstall( this );
 	    UIManager.removePropertyChangeListener( lookAndFeelObserver );
-	    
+	    extensions.kill();
 	    setRootWindowProvider( null );
     }
     
@@ -624,7 +636,12 @@ public class DockController {
 	    			this.theme.uninstall( this );
 	    		
 	    		this.theme = theme;
-	    		theme.install( this );
+	    		
+	    		ExtensionName<DockThemeExtension> name = new ExtensionName<DockThemeExtension>( 
+	    				DockThemeExtension.DOCK_THEME_EXTENSION, DockThemeExtension.class, DockThemeExtension.THEME_PARAMETER, theme );
+	    		List<DockThemeExtension> extensions = getExtensions().load( name );
+	    		
+	    		theme.install( this, extensions.toArray( new DockThemeExtension[ extensions.size() ] ) );
 	    		dockTitles.registerTheme( DockTitleManager.THEME_FACTORY_ID, theme.getTitleFactory( this ) );
 	    		
 	    		// update only those station which are registered to this controller
@@ -1054,6 +1071,14 @@ public class DockController {
     public FontManager getFonts() {
         return fonts;
     }
+    
+    /**
+     * Gets all extensions that are used by this controller.
+     * @return all available extensions
+     */
+    public ExtensionManager getExtensions(){
+		return extensions;
+	}
     
     /**
      * Sets the window that is used when dialogs have to be shown.

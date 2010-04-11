@@ -31,6 +31,7 @@ import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.RectGradientPainter
 import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.ArchGradientPainter;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPainter;
 import bibliothek.gui.DockUI;
+import bibliothek.gui.dock.util.DockProperties;
 
 /**
  * The way tabs are painted in the {@link EclipseTheme}
@@ -39,13 +40,18 @@ import bibliothek.gui.DockUI;
 public class EclipseTabChoice extends DefaultChoice<TabPainter>{
 	/**
 	 * Creates a new choice.
+	 * @param properties default settings
 	 */
-	public EclipseTabChoice(){
+	public EclipseTabChoice( DockProperties properties ){
+		super( properties.getController() );
+		
 		DockUI ui = DockUI.getDefaultDockUI();
 		add( "title", ui.getString( "preference.theme.eclipse.tab.choice.title" ), DockTitleTab.FACTORY );
 		add( "rect", ui.getString( "preference.theme.eclipse.tab.choice.rect" ), RectGradientPainter.FACTORY );
 		add( "round", ui.getString( "preference.theme.eclipse.tab.choice.round" ), ArchGradientPainter.FACTORY );
 		
-		setDefaultChoice( "round" );
+		if( getDefaultChoice() == null ){
+			setDefaultChoice( "round" );
+		}
 	}
 }

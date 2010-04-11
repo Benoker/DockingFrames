@@ -32,6 +32,7 @@ import bibliothek.extension.gui.dock.theme.bubble.SimpleBubbleColorScheme;
 import bibliothek.extension.gui.dock.theme.bubble.BubbleColorScheme.Distribution;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.themes.ColorScheme;
+import bibliothek.gui.dock.util.DockProperties;
 
 /**
  * A list of {@link ColorScheme}s for {@link BubbleTheme}.
@@ -40,8 +41,11 @@ import bibliothek.gui.dock.themes.ColorScheme;
 public class BubbleColorSchemeChoice extends DefaultChoice<ColorScheme>{
 	/**
 	 * Creates a new choice
+	 * @param properties default settings
 	 */
-	public BubbleColorSchemeChoice(){
+	public BubbleColorSchemeChoice( DockProperties properties ){
+		super( properties.getController() );
+		
 		DockUI ui = DockUI.getDefaultDockUI();
 		
 		add( "rgb", ui.getString( "preference.theme.bubble.color.rgb" ), new IdentifiedColorScheme( "rgb", new BubbleColorScheme( Distribution.RGB ) ));
@@ -57,6 +61,8 @@ public class BubbleColorSchemeChoice extends DefaultChoice<ColorScheme>{
 		add( "bright", ui.getString( "preference.theme.bubble.color.bright" ), new IdentifiedColorScheme( "bright", SimpleBubbleColorScheme.BRIGHT ));
 		add( "looAndFeel", ui.getString( "preference.theme.bubble.color.system" ), new IdentifiedColorScheme( "system", SimpleBubbleColorScheme.LOOK_AND_FEEL ));
 		
-		setDefaultChoice( "rgb" );
+		if( properties != null ){
+			setDefaultChoice( "rgb" );
+		}
 	}
 }

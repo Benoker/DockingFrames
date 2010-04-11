@@ -27,9 +27,11 @@ package bibliothek.gui.dock.common.preference;
 
 import bibliothek.extension.gui.dock.preference.DefaultPreference;
 import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.common.layout.ThemeMap;
 import bibliothek.gui.dock.support.util.Resources;
+import bibliothek.gui.dock.util.DockProperties;
 
 /**
  * A preference allowing the user to select one {@link DockTheme}. This preference
@@ -38,16 +40,19 @@ import bibliothek.gui.dock.support.util.Resources;
  */
 public class ThemePreference extends DefaultPreference<String>{
     private ThemeMap themes;
+    private DockController controller;
     
     /**
      * Creates a new preference.
+     * @param properties the default settings
      * @param themes a list of themes to show
      */
-    public ThemePreference( ThemeMap themes ){
+    public ThemePreference( DockProperties properties, ThemeMap themes ){
         super( Path.TYPE_STRING_CHOICE_PATH, new Path( "dock.theme" ));
         this.themes = themes;
+        this.controller = properties.getController();
         
-        setValueInfo( new ThemeChoice( themes ) );
+        setValueInfo( new ThemeChoice( themes, controller ) );
         
         setLabel( Resources.getString( "preference.layout.theme.label" ) );
         setDescription( Resources.getString( "preference.layout.theme.description" ) );
@@ -57,7 +62,7 @@ public class ThemePreference extends DefaultPreference<String>{
     
     @Override
     public void read() {
-        setValueInfo( new ThemeChoice( themes ) );
+        setValueInfo( new ThemeChoice( themes, controller ) );
         setValue( themes.getSelectedKey() );
     }
     

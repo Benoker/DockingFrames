@@ -43,6 +43,7 @@ public  abstract class CDockThemeFactory<D extends DockTheme> implements ThemeFa
     
     /**
      * Creates a new theme.
+     * @param control the control in whose realm the theme will be used
      * @return the new theme
      */
     public abstract DockTheme create( CControl control );

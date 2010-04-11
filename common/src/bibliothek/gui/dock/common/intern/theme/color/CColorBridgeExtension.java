@@ -23,31 +23,40 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.preference.preferences.choice;
+package bibliothek.gui.dock.common.intern.theme.color;
 
-import bibliothek.extension.gui.dock.preference.preferences.ChoiceDockPropertyPreference;
 import bibliothek.extension.gui.dock.util.Path;
-import bibliothek.gui.DockUI;
-import bibliothek.gui.dock.StackDockStation;
-import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
-import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.intern.theme.CDockTheme;
+import bibliothek.gui.dock.util.color.ColorBridge;
+import bibliothek.gui.dock.util.color.ColorManager;
 
 /**
- * Lets the user choose the value of {@link StackDockStation#TAB_CONTENT_FILTER}.
+ * This extension is used by a {@link CDockTheme} to add additional {@link ColorBridge}s.
  * @author Benjamin Sigg
  */
-public class TabContentFilterPreference extends ChoiceDockPropertyPreference<TabContentFilter>{
+public interface CColorBridgeExtension {
 	/**
-	 * Creates a new choice.
-	 * @param properties the properties to read and write
-	 * @param path the unique identifier of this preference
+	 * The name of this extension. 
 	 */
-	public TabContentFilterPreference( DockProperties properties, Path path ){
-		super( properties, StackDockStation.TAB_CONTENT_FILTER, path, new TabContentFilterChoice( properties ) );
-		
-		DockUI ui = DockUI.getDefaultDockUI();
-		
-		setLabel( ui.getString( "preference.layout.tabcontentfilter.label" ) );
-		setDescription( ui.getString( "preference.layout.tabcontentfilter.description" ) );
-	}
+	public static final Path EXTENSION_NAME = new Path( "dock.ccolorbridgefactory" );
+	
+	/**
+	 * The name of the parameter that links to the {@link CDockTheme} that uses this factory
+	 */
+	public static final String PARAMETER_NAME = "theme";
+	
+	/**
+	 * Gets the name of the bridge
+	 * @return the name, not <code>null</code>
+	 */
+	public Path getKey();
+	
+    /**
+     * Creates a new bridge for <code>manager</code>.
+     * @param control the control in whose realm the bridge will be used
+     * @param manager the manager which will use the bridge
+     * @return the new bridge
+     */
+    public CColorBridge create( CControl control, ColorManager manager );
 }

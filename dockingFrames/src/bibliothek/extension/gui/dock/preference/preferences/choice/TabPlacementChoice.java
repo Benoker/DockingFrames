@@ -27,6 +27,7 @@ package bibliothek.extension.gui.dock.preference.preferences.choice;
 
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
+import bibliothek.gui.dock.util.DockProperties;
 
 /**
  * Lets the user choose a {@link TabPlacement}.
@@ -36,8 +37,10 @@ import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 public class TabPlacementChoice extends DefaultChoice<TabPlacement> {
 	/**
 	 * Creates a new choice
+	 * @param properties default settings
 	 */
-	public TabPlacementChoice(){
+	public TabPlacementChoice( DockProperties properties ){
+		super( properties.getController() );
 		
 		DockUI ui = DockUI.getDefaultDockUI();
 		add( "theme", ui.getString( "preference.layout.tabplacement.theme" ), null );
@@ -46,6 +49,8 @@ public class TabPlacementChoice extends DefaultChoice<TabPlacement> {
 		add( "left", ui.getString( "preference.layout.tabplacement.left" ), TabPlacement.LEFT_OF_DOCKABLE );
 		add( "right", ui.getString( "preference.layout.tabplacement.right" ), TabPlacement.RIGHT_OF_DOCKABLE );
 		
-		setDefaultChoice( "theme" );
+		if( getDefaultChoice() == null ){
+			setDefaultChoice( "theme" );
+		}
 	}
 }

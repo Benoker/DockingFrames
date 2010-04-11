@@ -134,6 +134,16 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
      * @param dockable the element which is represented by this component, not <code>null</code>
      */
     public BaseTabComponent( EclipseTabPane pane, Dockable dockable ){
+    	this( pane, dockable, null );
+    }
+    
+    /**
+     * Creates a new {@link TabComponent}
+     * @param pane the owner of this tab, not <code>null</code>
+     * @param dockable the element which is represented by this component, not <code>null</code>
+     * @param colorPostfix a string that will be added to any key for a color, can be <code>null</code>
+     */    
+    public BaseTabComponent( EclipseTabPane pane, Dockable dockable, String colorPostfix ){
     	super( null );
     	
     	if( pane == null )
@@ -148,27 +158,31 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
         
         DockStation station = pane.getStation();
         
-        colorStackTabBorder = new BorderTabColor( "stack.tab.border", station, Color.WHITE );
-        colorStackTabBorderSelected = new BorderTabColor( "stack.tab.border.selected", station, Color.WHITE );
-        colorStackTabBorderSelectedFocused = new BorderTabColor( "stack.tab.border.selected.focused", station, Color.WHITE );
-        colorStackTabBorderSelectedFocusLost = new BorderTabColor( "stack.tab.border.selected.focuslost", station, Color.WHITE );
+        if( colorPostfix == null ){
+        	colorPostfix = "";
+        }
         
-        colorStackTabTop = new BaseTabColor( "stack.tab.top", station, Color.LIGHT_GRAY );
-        colorStackTabTopSelected = new BaseTabColor( "stack.tab.top.selected", station, Color.LIGHT_GRAY );
-        colorStackTabTopSelectedFocused = new BaseTabColor( "stack.tab.top.selected.focused", station, Color.LIGHT_GRAY );
-        colorStackTabTopSelectedFocusLost = new BaseTabColor( "stack.tab.top.selected.focuslost", station, Color.LIGHT_GRAY );
+        colorStackTabBorder = new BorderTabColor( "stack.tab.border" + colorPostfix, station, Color.WHITE );
+        colorStackTabBorderSelected = new BorderTabColor( "stack.tab.border.selected" + colorPostfix, station, Color.WHITE );
+        colorStackTabBorderSelectedFocused = new BorderTabColor( "stack.tab.border.selected.focused" + colorPostfix, station, Color.WHITE );
+        colorStackTabBorderSelectedFocusLost = new BorderTabColor( "stack.tab.border.selected.focuslost" + colorPostfix, station, Color.WHITE );
         
-        colorStackTabBottom = new BaseTabColor( "stack.tab.bottom", station, Color.WHITE );
-        colorStackTabBottomSelected = new BaseTabColor( "stack.tab.bottom.selected", station, Color.WHITE );
-        colorStackTabBottomSelectedFocused = new BaseTabColor( "stack.tab.bottom.selected.focused", station, Color.WHITE );
-        colorStackTabBottomSelectedFocusLost = new BaseTabColor( "stack.tab.bottom.selected.focuslost", station, Color.WHITE );
+        colorStackTabTop = new BaseTabColor( "stack.tab.top" + colorPostfix, station, Color.LIGHT_GRAY );
+        colorStackTabTopSelected = new BaseTabColor( "stack.tab.top.selected" + colorPostfix, station, Color.LIGHT_GRAY );
+        colorStackTabTopSelectedFocused = new BaseTabColor( "stack.tab.top.selected.focused" + colorPostfix, station, Color.LIGHT_GRAY );
+        colorStackTabTopSelectedFocusLost = new BaseTabColor( "stack.tab.top.selected.focuslost" + colorPostfix, station, Color.LIGHT_GRAY );
         
-        colorStackTabText = new BaseTabColor( "stack.tab.text", station, Color.BLACK );
-        colorStackTabTextSelected = new BaseTabColor( "stack.tab.text.selected", station, Color.BLACK );
-        colorStackTabTextSelectedFocused = new BaseTabColor( "stack.tab.text.selected.focused", station, Color.BLACK );
-        colorStackTabTextSelectedFocusLost = new BaseTabColor( "stack.tab.text.selected.focuslost", station, Color.BLACK );
+        colorStackTabBottom = new BaseTabColor( "stack.tab.bottom" + colorPostfix, station, Color.WHITE );
+        colorStackTabBottomSelected = new BaseTabColor( "stack.tab.bottom.selected" + colorPostfix, station, Color.WHITE );
+        colorStackTabBottomSelectedFocused = new BaseTabColor( "stack.tab.bottom.selected.focused" + colorPostfix, station, Color.WHITE );
+        colorStackTabBottomSelectedFocusLost = new BaseTabColor( "stack.tab.bottom.selected.focuslost" + colorPostfix, station, Color.WHITE );
         
-        colorStackBorder = new BaseTabColor( "stack.border", station, Color.BLACK );
+        colorStackTabText = new BaseTabColor( "stack.tab.text" + colorPostfix, station, Color.BLACK );
+        colorStackTabTextSelected = new BaseTabColor( "stack.tab.text.selected" + colorPostfix, station, Color.BLACK );
+        colorStackTabTextSelectedFocused = new BaseTabColor( "stack.tab.text.selected.focused" + colorPostfix, station, Color.BLACK );
+        colorStackTabTextSelectedFocusLost = new BaseTabColor( "stack.tab.text.selected.focuslost" + colorPostfix, station, Color.BLACK );
+        
+        colorStackBorder = new BaseTabColor( "stack.border" + colorPostfix, station, Color.BLACK );
         
         fontFocused = new BaseTabFont( DockFont.ID_TAB_FOCUSED, station );
         fontSelected = new BaseTabFont( DockFont.ID_TAB_SELECTED, station );
@@ -206,6 +220,18 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
         setFocusTraversalPolicy( new ContainerOrderFocusTraversalPolicy() );
         buttons = new ButtonPanel( false );
 		add( buttons );
+    }
+    
+    /**
+     * Adds an additional set of colors to this tab. This method should be called before this
+     * tab is {@link #bind() bound}.
+     * @param colors the additional set of colors
+     */
+    protected void addAdditionalColors( TabColor... colors ){
+    	TabColor[] newColors = new TabColor[ this.colors.length + colors.length ];
+    	System.arraycopy( this.colors, 0, newColors, 0, this.colors.length );
+    	System.arraycopy( colors, 0, newColors, this.colors.length, colors.length );
+    	this.colors = newColors;
     }
     
     /**

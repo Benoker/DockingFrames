@@ -60,6 +60,7 @@ import bibliothek.gui.dock.themes.basic.BasicStationPaint;
 import bibliothek.gui.dock.themes.color.ActionColor;
 import bibliothek.gui.dock.themes.color.DisplayerColor;
 import bibliothek.gui.dock.themes.color.DockableSelectionColor;
+import bibliothek.gui.dock.themes.color.ExtendingColorScheme;
 import bibliothek.gui.dock.themes.color.StationPaintColor;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.color.TitleColor;
@@ -67,6 +68,7 @@ import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.gui.dock.util.NullPriorityValue;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
@@ -91,26 +93,29 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
         webpages={})
 public class BasicTheme implements DockTheme{
     /** combines several Dockables */
-    private Combiner combiner;
+    private NullPriorityValue<Combiner> combiner = new NullPriorityValue<Combiner>();
 
     /** paints on stations */
-    private StationPaint paint;
+    private NullPriorityValue<StationPaint> paint = new NullPriorityValue<StationPaint>();
 
     /** creates panels for Dockables */
-    private DisplayerFactory displayerFactory;
+    private NullPriorityValue<DisplayerFactory> displayerFactory = new NullPriorityValue<DisplayerFactory>();
 
     /** creates titles Dockables */
-    private DockTitleFactory titleFactory;
+    private NullPriorityValue<DockTitleFactory> titleFactory = new NullPriorityValue<DockTitleFactory>();
 
     /** selects the image which should be displayed when moving a dockable*/
-    private DockableMovingImageFactory movingImage;
+    private NullPriorityValue<DockableMovingImageFactory> movingImage = new NullPriorityValue<DockableMovingImageFactory>();
 
     /** the factory used to create components for {@link StackDockStation} */
-    private StackDockComponentFactory stackDockComponentFactory;
+    private NullPriorityValue<StackDockComponentFactory> stackDockComponentFactory = new NullPriorityValue<StackDockComponentFactory>();
     
     /** the side at which tabs are normally shown */
-    private TabPlacement tabPlacement;
+    private NullPriorityValue<TabPlacement> tabPlacement = new NullPriorityValue<TabPlacement>();
 
+    /** extensions used by this theme */
+    private DockThemeExtension[] extensions;
+    
     /** the key to set the {@link ColorScheme} of this theme */
     public static final PropertyKey<ColorScheme> BASIC_COLOR_SCHEME = 
         new PropertyKey<ColorScheme>( "dock.ui.BasicTheme.ColorScheme",
@@ -133,11 +138,11 @@ public class BasicTheme implements DockTheme{
     };
 
     /** how to select a new focused dockable */
-    private DockableSelection selection;
+    private NullPriorityValue< DockableSelection> selection = new NullPriorityValue<DockableSelection>();
 
     /** the controller which is installed */
     private DockController controller;
-
+    
     /** a listener waiting for changed {@link LookAndFeel}s */
     private UIListener uiListener = new UIListener(){
         public void updateUI( DockController controller ){
@@ -168,21 +173,36 @@ public class BasicTheme implements DockTheme{
      * Creates a new <code>BasicTheme</code>.
      */
     public BasicTheme() {
-        setCombiner( new BasicCombiner() );
-        setPaint( new BasicStationPaint() );
-        setDisplayerFactory( new BasicDisplayerFactory() );
-        setTitleFactory( new BasicDockTitleFactory() );
-        setMovingImageFactory( new BasicMovingImageFactory() );
+        setCombiner( new BasicCombiner(), Priority.DEFAULT );
+        setPaint( new BasicStationPaint(), Priority.DEFAULT );
+        setDisplayerFactory( new BasicDisplayerFactory(), Priority.DEFAULT );
+        setTitleFactory( new BasicDockTitleFactory(), Priority.DEFAULT );
+        setMovingImageFactory( new BasicMovingImageFactory(), Priority.DEFAULT );
         setStackDockComponentFactory( new StackDockComponentFactory(){
             public StackDockComponent create( StackDockComponentParent station ) {
                 return new BasicStackDockComponent( station );
             }
-        });
-        setDockableSelection( new BasicDockableSelection() );
-        setTabPlacement( TabPlacement.BOTTOM_OF_DOCKABLE );
+        }, Priority.DEFAULT );
+        setDockableSelection( new BasicDockableSelection(), Priority.DEFAULT );
+        setTabPlacement( TabPlacement.BOTTOM_OF_DOCKABLE, Priority.DEFAULT );
     }
 
-    public void install( DockController controller ) {
+    public void install( DockController controller, DockThemeExtension[] extensions ){
+    	this.extensions = extensions;
+    	for( DockThemeExtension extension : extensions ){
+    		extension.install( controller, this );
+    	}
+    	install( controller );
+    	for( DockThemeExtension extension : extensions ){
+    		extension.installed( controller, this );
+    	}
+    }
+    
+    /**
+     * Installs the basic items of this theme, ignoring any {@link DockThemeExtension}.
+     * @param controller the new owner of this theme
+     */
+    protected void install( DockController controller ){
         if( this.controller != null )
             throw new IllegalStateException( "Theme is already in use" );
 
@@ -192,8 +212,8 @@ public class BasicTheme implements DockTheme{
         DockUI.getDefaultDockUI().addLookAndFeelColorsListener( colorListener );
         updateUI();
 
-        controller.getProperties().set( StackDockStation.COMPONENT_FACTORY, stackDockComponentFactory, Priority.THEME );
-        controller.getProperties().set( StackDockStation.TAB_PLACEMENT, tabPlacement, Priority.THEME );
+        controller.getProperties().set( StackDockStation.COMPONENT_FACTORY, stackDockComponentFactory.get(), Priority.THEME );
+        controller.getProperties().set( StackDockStation.TAB_PLACEMENT, tabPlacement.get(), Priority.THEME );
         
         colorScheme.setProperties( controller );
 
@@ -212,6 +232,11 @@ public class BasicTheme implements DockTheme{
         DockUI.getDefaultDockUI().removeLookAndFeelColorsListener( colorListener );
 
         colorScheme.setProperties( (DockProperties)null );
+        
+        for( DockThemeExtension extension : extensions ){
+    		extension.uninstall( controller, this );
+    	}
+        
         this.controller = null;
     }
 
@@ -225,7 +250,7 @@ public class BasicTheme implements DockTheme{
             updateColors();
         }
         if( selection != null ){
-            SwingUtilities.updateComponentTreeUI( selection.getComponent() );
+            SwingUtilities.updateComponentTreeUI( selection.get().getComponent() );
         }
     }
 
@@ -243,6 +268,8 @@ public class BasicTheme implements DockTheme{
     	ColorScheme scheme = colorScheme.getValue();
     	
         if( controller != null && scheme != null ){
+        	scheme = new ExtendingColorScheme( scheme, controller );
+        	
             controller.getColors().lockUpdate();
             controller.getColors().clear( Priority.THEME );
 
@@ -364,84 +391,135 @@ public class BasicTheme implements DockTheme{
      * before the theme is installed. Otherwise it will take no effect.
      * @param stackDockComponentFactory the factory or <code>null</code>
      */
-    public void setStackDockComponentFactory(
-            StackDockComponentFactory stackDockComponentFactory ) {
-        this.stackDockComponentFactory = stackDockComponentFactory;
+    public void setStackDockComponentFactory( StackDockComponentFactory stackDockComponentFactory ) {
+    	setStackDockComponentFactory( stackDockComponentFactory, Priority.CLIENT );
+    }
+    
+    /**
+     * Sets the factory which will be used to create components for 
+     * {@link StackDockStation}. Note that this property has to be set
+     * before the theme is installed. Otherwise it will take no effect.
+     * @param stackDockComponentFactory the factory or <code>null</code>
+     * @param priority the importance of the new setting (whether it should override existing settings or not).
+     */
+    public void setStackDockComponentFactory( StackDockComponentFactory stackDockComponentFactory, Priority priority ) {
+        this.stackDockComponentFactory.set( priority, stackDockComponentFactory );
     }
 
     /**
      * Sets the movingImage-property. The movignImage is needed to show an
      * image when the user grabs a {@link Dockable}
-     * @param movingImage the new factory, not <code>null</code>
+     * @param movingImage the new factory
      */
     public void setMovingImageFactory( DockableMovingImageFactory movingImage ) {
-        if( movingImage == null )
-            throw new IllegalArgumentException( "argument must not be null" );
-
-        this.movingImage = movingImage;
+    	setMovingImageFactory( movingImage, Priority.CLIENT );
     }
-
+    
+    /**
+     * Sets the movingImage-property. The movignImage is needed to show an
+     * image when the user grabs a {@link Dockable}
+     * @param movingImage the new factory
+     * @param priority the importance of the new setting (whether it should override existing settings or not).
+     */
+    public void setMovingImageFactory( DockableMovingImageFactory movingImage, Priority priority ) {
+        this.movingImage.set( priority, movingImage );
+    }
+    
     /**
      * Sets the {@link Combiner} of this theme. The combiner is used to
      * merge two Dockables.
-     * @param combiner the combiner, not <code>null</code>
+     * @param combiner the combiner
      */
     public void setCombiner( Combiner combiner ) {
-        if( combiner == null )
-            throw new IllegalArgumentException( "argument must not be null" );
-
-        this.combiner = combiner;
+    	setCombiner( combiner, Priority.CLIENT );
     }
-
+    
+    /**
+     * Sets the {@link Combiner} of this theme. The combiner is used to
+     * merge two Dockables.
+     * @param combiner the combiner
+     * @param priority the importance of the new setting (whether it should override existing settings or not).
+     */
+    public void setCombiner( Combiner combiner, Priority priority ) {
+        this.combiner.set( priority, combiner );
+    }
+    
     /**
      * Sets the {@link StationPaint} of this theme. The paint is used to
      * draw markings on stations.
-     * @param paint the paint, not <code>null</code>
+     * @param paint the paint
      */
     public void setPaint( StationPaint paint ) {
-        if( paint == null )
-            throw new IllegalArgumentException( "argument must not be null" );
-
-        this.paint = paint;
+    	setPaint( paint, Priority.CLIENT );
     }
-
+    
+    /**
+     * Sets the {@link StationPaint} of this theme. The paint is used to
+     * draw markings on stations.
+     * @param paint the paint
+     * @param priority the importance of the new setting (whether it should override existing settings or not).
+     */
+    public void setPaint( StationPaint paint, Priority priority ) {
+        this.paint.set( priority, paint );
+    }
+    
     /**
      * Sets the {@link DisplayerFactory} of this theme. The factory is needed
      * to create {@link DockableDisplayer}.
-     * @param factory the factory, not <code>null</code>
+     * @param factory the factory
      */
     public void setDisplayerFactory( DisplayerFactory factory ) {
-        if( factory == null )
-            throw new IllegalArgumentException( "argument must not be null" );
-
-        displayerFactory = factory;
+    	setDisplayerFactory( factory, Priority.CLIENT );
+    }
+    
+    /**
+     * Sets the {@link DisplayerFactory} of this theme. The factory is needed
+     * to create {@link DockableDisplayer}.
+     * @param factory the factory
+     * @param priority the importance of the new setting (whether it should override existing settings or not).
+     */
+    public void setDisplayerFactory( DisplayerFactory factory, Priority priority ) {
+        displayerFactory.set( priority, factory );
     }
 
     /**
      * Sets the {@link DockTitleFactory} of this station. The factory is
      * used to create {@link DockTitle DockTitles} for some Dockables.
-     * @param titleFactory the factory, not <code>null</code>
+     * @param titleFactory the factory
      */
     public void setTitleFactory( DockTitleFactory titleFactory ) {
-        if( titleFactory == null )
-            throw new IllegalArgumentException( "argument must not be null" );
-
-        this.titleFactory = titleFactory;
+    	setTitleFactory( titleFactory, Priority.CLIENT );
+    }
+    
+    /**
+     * Sets the {@link DockTitleFactory} of this station. The factory is
+     * used to create {@link DockTitle DockTitles} for some Dockables.
+     * @param titleFactory the factory
+     * @param priority the importance of the new setting (whether it should override existing settings or not).
+     */
+    public void setTitleFactory( DockTitleFactory titleFactory, Priority priority ) {
+        this.titleFactory.set( priority, titleFactory );
         
         if( controller != null ){
-        	controller.getDockTitleManager().registerTheme( DockTitleManager.THEME_FACTORY_ID, titleFactory );
+        	controller.getDockTitleManager().registerTheme( DockTitleManager.THEME_FACTORY_ID, this.titleFactory.get() );
         }
     }
 
     /**
      * Sets how the user can select the focused {@link Dockable}.
-     * @param selection the new selector, not <code>null</code>
+     * @param selection the new selector
      */
     public void setDockableSelection( DockableSelection selection ){
-        if( selection == null )
-            throw new IllegalArgumentException( "selection must not be null" );
-
-        this.selection = selection;
+    	setDockableSelection( selection, Priority.CLIENT );
+    }
+    
+    /**
+     * Sets how the user can select the focused {@link Dockable}.
+     * @param selection the new selector
+     * @param priority the importance of the new setting (whether it should override existing settings or not).
+     */
+    public void setDockableSelection( DockableSelection selection, Priority priority ){
+        this.selection.set( priority, selection );
     }
     
     /**
@@ -452,7 +530,19 @@ public class BasicTheme implements DockTheme{
      * use the default value
      */
     public void setTabPlacement( TabPlacement tabPlacement ){
-		this.tabPlacement = tabPlacement;
+    	setTabPlacement( tabPlacement, Priority.CLIENT );
+    }
+    
+    /**
+     * Sets the side at which tabs are to be displayed. This method has to
+     * be called before a {@link DockController} is installed, otherwise the
+     * settings has no effect.
+     * @param tabPlacement the side at which to show tabs, may be <code>null</code> to
+     * use the default value
+     * @param priority the importance of the new setting (whether it should override existing settings or not).
+     */
+    public void setTabPlacement( TabPlacement tabPlacement, Priority priority ){
+		this.tabPlacement.set( priority, tabPlacement );
 	}
     
     /**
@@ -460,30 +550,30 @@ public class BasicTheme implements DockTheme{
      * @return the side with the tabs, may be <code>null</code>
      */
     public TabPlacement getTabPlacement(){
-		return tabPlacement;
+		return tabPlacement.get();
 	}
 
     public DockableMovingImageFactory getMovingImageFactory( DockController controller ) {
-        return movingImage;
+        return movingImage.get();
     }
 
     public Combiner getCombiner( DockStation station ) {
-        return combiner;
+        return combiner.get();
     }
 
     public StationPaint getPaint( DockStation station ) {
-        return paint;
+        return paint.get();
     }
 
     public DisplayerFactory getDisplayFactory( DockStation station ) {
-        return displayerFactory;
+        return displayerFactory.get();
     }
 
     public DockTitleFactory getTitleFactory( DockController controller ) {
-        return titleFactory;
+        return titleFactory.get();
     }
 
     public DockableSelection getDockableSelection( DockController controller ) {
-        return selection;
+        return selection.get();
     }
 }
