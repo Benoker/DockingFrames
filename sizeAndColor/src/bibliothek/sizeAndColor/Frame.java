@@ -45,6 +45,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.common.ColorMap;
 import bibliothek.gui.dock.common.DefaultMultipleCDockable;
 import bibliothek.gui.dock.common.EmptyMultipleCDockableFactory;
@@ -70,6 +71,9 @@ public class Frame extends DefaultMultipleCDockable {
     private JCheckBox showSingleTab;
     /** whether other dockables are allowed to get the focus */
     private JCheckBox preventFocusLost = new JCheckBox( "Prevent focus lost", false );
+    
+    /** placeholder for this frame */
+    private Path placeholder;
     
     /** a factory that can create new frames */
     public static final EmptyMultipleCDockableFactory<Frame> FACTORY = new EmptyMultipleCDockableFactory<Frame>(){
@@ -202,4 +206,12 @@ public class Frame extends DefaultMultipleCDockable {
     public boolean isFocusLostAllowed(){
     	return !preventFocusLost.isSelected();
     }
+    
+    public void setPlaceholder( Path placeholder ){
+		this.placeholder = placeholder;
+	}
+    
+    public Path getPlaceholder(){
+		return placeholder;
+	}
 }

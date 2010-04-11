@@ -100,7 +100,6 @@ public class ArchGradientPainter extends BaseTabComponent {
 		setLayout( null );
 		setOpaque( false );
 
-		updateText();
 		update();
 		updateFont();
 		updateBorder();
@@ -165,16 +164,6 @@ public class ArchGradientPainter extends BaseTabComponent {
 	}
 	
 	@Override
-	protected void updateIcon(){
-		update();
-	}
-	
-	@Override
-	protected void updateText(){
-		setText( getDockable().getTitleText() );
-	}
-	
-	@Override
 	protected void updateFocus(){
 		update();
 		updateBorder();
@@ -184,11 +173,6 @@ public class ArchGradientPainter extends BaseTabComponent {
 	@Override
 	protected void updateOrientation(){
 		update();
-	}
-	
-	@Override
-	protected void updatePaintIcon(){
-		update();	
 	}
 	
 	@Override
@@ -218,15 +202,7 @@ public class ArchGradientPainter extends BaseTabComponent {
 				break;
 		}
 		
-		Dockable dockable = getDockable();
 		boolean horizontal = getOrientation().isHorizontal();
-		
-		if( (doPaintIconWhenInactive() || isSelected()) ){
-			setIcon( dockable.getTitleIcon() );
-		}
-		else{
-			setIcon( null );
-		}
 		
 		if( isSelected() ){
 			if( horizontal )

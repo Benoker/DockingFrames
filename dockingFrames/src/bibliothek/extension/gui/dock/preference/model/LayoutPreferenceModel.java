@@ -27,6 +27,7 @@ package bibliothek.extension.gui.dock.preference.model;
 
 import bibliothek.extension.gui.dock.preference.DefaultPreferenceModel;
 import bibliothek.extension.gui.dock.preference.preferences.ButtonContentPreference;
+import bibliothek.extension.gui.dock.preference.preferences.choice.TabContentFilterPreference;
 import bibliothek.extension.gui.dock.preference.preferences.choice.TabPlacementPreference;
 import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.util.DockProperties;
@@ -40,5 +41,6 @@ public class LayoutPreferenceModel extends DefaultPreferenceModel{
 	public LayoutPreferenceModel( DockProperties properties ){
 		add( new ButtonContentPreference( properties, new Path( "dock.layout.ButtonContent" )));
 		add( new TabPlacementPreference( properties, new Path( "dock.layout.tabplacement" )));
+		add( new TabContentFilterPreference( properties, new Path( "dock.layout.tabcontentfilter" )));
 	}
 }

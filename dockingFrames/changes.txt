@@ -289,3 +289,7 @@
 - Bugfix: Dragging a station away from another station did not store placeholders
 - Bugfix: During drag&drop, dragging the mouse over a tab of a StackDockStation could exchange the selected Dockable
 - Feature: The new Merger interface allows two DockStations to be merged automatically. It is used by the DockableRelocator class. The implementation StackMerger merges two StackDockStations into one, it is installed per default.
+- Bugfix: dragging a Dockable over a child of a ScreenDockStation could throw an exception (in the Common framework).
+- Bugfix: StackDockStation did not fire dockable-selected event properly when using the DefaultStackDockComponent
+! API: BaseTabComponent is no longer responsible for keeping icon and text up to date, this must be handled by the StackDockComponent. This means that the EclipseTheme now respects the text and icon set by the StackDockStation.
+- Bugfix: Tabs with unequal height were positioned strangely 

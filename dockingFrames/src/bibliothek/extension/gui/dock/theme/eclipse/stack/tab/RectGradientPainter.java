@@ -83,21 +83,10 @@ public class RectGradientPainter extends BaseTabComponent {
 		
         update();
         updateBorder();
-        updateText();
 	}
 		
 	public Insets getOverlap( TabComponent other ){
 		return new Insets( 0, 0, 0, 0 );
-	}
-
-	@Override
-	protected void updateIcon(){
-		update();
-	}
-	
-	@Override
-	protected void updateText(){
-		setText( getDockable().getTitleText() );
 	}
 	
 	@Override
@@ -110,11 +99,6 @@ public class RectGradientPainter extends BaseTabComponent {
 	@Override
 	protected void updateOrientation(){
 		update();
-	}
-	
-	@Override
-	protected void updatePaintIcon(){
-		update();	
 	}
 	
 	@Override
@@ -148,15 +132,6 @@ public class RectGradientPainter extends BaseTabComponent {
 				labelInsets = new Insets( 5, 3, 2, 3 );
 				buttonInsets = new Insets( 2, 1, 5, 1 );
 				break;
-		}
-		
-		Dockable dockable = getDockable();
-		
-		if( (doPaintIconWhenInactive() || isSelected()) ){
-			setIcon( dockable.getTitleIcon() );
-		}
-		else{
-			setIcon( null );
 		}
 		
 		getLabel().setForeground( getTextColor() );

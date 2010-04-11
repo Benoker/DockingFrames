@@ -469,7 +469,12 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
     
     public void setTitleAt( int index, String newTitle ) {
     	Meta meta = components.get( getDockable( index ) );
-    	meta.text = newTitle;
+    	if( newTitle == null ){
+    		meta.text = "";
+    	}
+    	else{
+    		meta.text = newTitle;
+    	}
     	meta.forward();
     }
     

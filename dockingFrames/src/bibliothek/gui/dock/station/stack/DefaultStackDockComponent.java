@@ -162,6 +162,11 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
         return this;
     }
     
+    @Override
+    public void setTitleAt( int index, String title ){
+    	super.setTitleAt( index, title == null ? "" : title );
+    }
+    
     public void setTooltipAt( int index, String newTooltip ) {
         setToolTipTextAt( index, newTooltip );
     }

@@ -64,12 +64,6 @@ public class RowLayout implements TabLayoutManager{
 		
         int maxwidth = available.width;
         
-        int x = 0;
-        int y = 0;
-        
-        int maxRowHeight = 0;
-        int rowCount = 0;
-        
         Dockable[] dockables = pane.getDockables();
         Tab[] tabs = new Tab[ dockables.length ];
         for( int i = 0; i < tabs.length; i++ ){
@@ -91,20 +85,44 @@ public class RowLayout implements TabLayoutManager{
         // put the tabs at the top
         int dx = 0;
         int dy = 0;
+
+        int x = 0;
+        int y = 0;
         
-        for( Tab tab : tabs ){
-            Dimension size = conversion.viewToModel( tab.getPreferredSize() );
+        int maxRowHeight = -1;
+        int rowCount = 0;
+        
+        for( int i = 0; i < tabs.length; i++ ){
+        	Dimension size = conversion.viewToModel( tabs[i].getPreferredSize() );
             
             if( x + size.width > maxwidth && rowCount > 0 ){
                 rowCount = 0;
                 y += maxRowHeight;
                 x = 0;
-                maxRowHeight = 0;
-            }
+                maxRowHeight = -1;
+            }            
             
-            tab.setBounds( conversion.modelToView( new Rectangle( x+dx, y+dy, size.width, size.height )) );
+        	// find row height
+        	if( maxRowHeight == -1 ){
+        		maxRowHeight = 0;
+	        	int tx = x;
+	        	
+	        	for( int j = i; j < tabs.length; j++ ){
+	        		Dimension tsize = conversion.viewToModel( tabs[j].getPreferredSize() );
+	            
+	        		if( tx + tsize.width > maxwidth && rowCount > 0 ){
+	        			rowCount = 0;
+	        			break;
+	        		}
+	            
+	        		tx += tsize.width;
+	        		maxRowHeight = Math.max( maxRowHeight, tsize.height );
+	        		rowCount++;
+	        	}
+        	}
+            
+            tabs[i].setBounds( conversion.modelToView( new Rectangle( x+dx, y+dy-size.height+maxRowHeight, size.width, size.height )) );
             x += size.width;
-            maxRowHeight = Math.max( maxRowHeight, size.height );
             rowCount++;
         }
 	}

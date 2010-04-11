@@ -28,8 +28,6 @@ package bibliothek.extension.gui.dock.theme.eclipse.stack.tab;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 
 import javax.swing.Icon;
 
@@ -109,11 +107,21 @@ public interface TabComponent extends DockElementRepresentative{
 	 */
 	public Dimension getPreferredSize( TabComponent[] tabs );
 	
-	public void addMouseListener( MouseListener listener );
+	/**
+	 * Sets the text that should be displayed on this tab.
+	 * @param text the new text
+	 */
+	public void setText( String text );
 	
-	public void addMouseMotionListener( MouseMotionListener listener );
+	/**
+	 * Sets the tooltip that should be displayed on this tab.
+	 * @param tooltip the new tooltip, can be <code>null</code>
+	 */
+	public void setTooltip( String tooltip );
 	
-	public void removeMouseListener( MouseListener listener );
-	
-	public void removeMouseMotionListener( MouseMotionListener listener );
+	/**
+	 * Sets the icon that should be painted on this tab.
+	 * @param icon the icon, can be <code>null</code>
+	 */
+	public void setIcon( Icon icon );
 }

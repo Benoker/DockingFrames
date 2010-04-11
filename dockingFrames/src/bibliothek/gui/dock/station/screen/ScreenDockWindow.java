@@ -75,6 +75,18 @@ public interface ScreenDockWindow {
      */
     public void toFront();
     
+//    /**
+//     * Changes the mode of this window to fullscreen or to normal.
+//     * @param fullscreen the new state
+//     */
+//    public void setFullscreen( boolean fullscreen );
+//    
+//    /**
+//     * Tells whether this window is in fullscreen mode or not.
+//     * @return <code>true</code> if fullscreen mode is active
+//     */
+//    public boolean isFullscreen();
+    
     /**
      * Changes the visibility state of this window.
      * @param visible the new state

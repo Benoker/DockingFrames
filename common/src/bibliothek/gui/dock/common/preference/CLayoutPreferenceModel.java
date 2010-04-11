@@ -27,6 +27,7 @@ package bibliothek.gui.dock.common.preference;
 
 import bibliothek.extension.gui.dock.preference.DefaultPreferenceModel;
 import bibliothek.extension.gui.dock.preference.preferences.ButtonContentPreference;
+import bibliothek.extension.gui.dock.preference.preferences.choice.TabContentFilterPreference;
 import bibliothek.extension.gui.dock.preference.preferences.choice.TabPlacementPreference;
 import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.common.CControl;
@@ -43,6 +44,7 @@ public class CLayoutPreferenceModel extends DefaultPreferenceModel{
     public CLayoutPreferenceModel( CControl control ){
         add( new ButtonContentPreference( control.intern().getDockProperties(), new Path( "dock.layout.ButtonContent" )));
         add( new TabPlacementPreference( control.intern().getDockProperties(), new Path( "dock.layout.tabplacement" )));
+        add( new TabContentFilterPreference( control.intern().getDockProperties(), new Path( "dock.layout.tabcontentfilter" )));
         add( new ThemePreference( control.getThemes() ));
     }
 }

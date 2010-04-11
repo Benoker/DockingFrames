@@ -96,15 +96,15 @@ public class EclipseTab extends AbstractTab implements CombinedTab{
 	}
 	
 	public void setIcon( Icon icon ){
-		// ignore	
+		component.setIcon( icon );
 	}
 
 	public void setText( String text ){
-		// ignore
+		component.setText( text );
 	}
 
 	public void setTooltip( String tooltip ){
-		// ignore
+		component.setTooltip( tooltip );
 	}
 	
 	@Override

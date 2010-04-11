@@ -675,8 +675,8 @@ public class ScreenDockStation extends AbstractDockStation {
         Dockable valid = combiner.combine( lower, upper, this, null );
         
         listeners.fireDockableAdding( valid );
-        valid.setDockParent( this );
         window.setDockable( valid );
+        valid.setDockParent( this );
         listeners.fireDockableAdded( valid );
     }
     

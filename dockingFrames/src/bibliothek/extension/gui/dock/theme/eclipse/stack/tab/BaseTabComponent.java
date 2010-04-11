@@ -52,12 +52,10 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.DockAction;
-import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.font.TabFont;
-import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.font.DockFont;
@@ -108,10 +106,10 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
     private Dockable dockable;
     
     private boolean paintIconWhenInactive = false;
+    private Icon icon;
     
     private Insets buttonInsets = new Insets( 0, 0, 0, 0 );
     private ButtonPanel buttons;
-    private Listener dockableListener = new Listener();
     
     private boolean hasFocus;
     private boolean isSelected;
@@ -244,21 +242,18 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
     protected abstract void updateSelected();
     
     /**
-     * Called when the title-text of the {@link Dockable} changed.
-     */
-    protected abstract void updateText();
-    
-    /**
      * Called when the {@link #doPaintIconWhenInactive() paint icon property} of
      * this component changed.
      */
-    protected abstract void updatePaintIcon();
+    protected void updatePaintIcon(){
+    	if( isSelected() || doPaintIconWhenInactive() ){
+    		label.setIcon( icon );
+    	}
+    	else{
+    		label.setIcon( null );
+    	}
+    }
     
-    /**
-     * Called when the title-icon of the {@link Dockable} changed.
-     */
-    protected abstract void updateIcon();
-
     /**
      * Called when the tab placement of this tab changed.
      */
@@ -268,7 +263,6 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
         if( buttons != null )
             buttons.set( dockable, new EclipseDockActionSource(
             		pane.getTheme(), dockable.getGlobalActionOffers(), dockable, true ) );
-        dockable.addDockableListener( dockableListener );
         
         DockController controller = pane.getController();
         
@@ -277,7 +271,6 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
         for( TabFont font : fonts )
             font.connect( controller );
         
-        setToolTipText( dockable.getTitleToolTip() );
         revalidate();
         bound = true;
     }
@@ -286,14 +279,11 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
     	bound = false;
         if( buttons != null )
             buttons.set( null );
-        dockable.removeDockableListener( dockableListener );
         
         for( TabColor color : colors )
             color.connect( null );
         for( TabFont font : fonts )
             font.connect( null );
-        
-        setToolTipText( null );
     }
     
     /**
@@ -411,6 +401,12 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
     public void setSelected( boolean selected ){
     	if( isSelected != selected ){
     		isSelected = selected;
+    		if( isSelected() || doPaintIconWhenInactive() ){
+    			label.setIcon( icon );
+    		}
+    		else{
+    			label.setIcon( null );
+    		}
     		updateSelected();
     	}
     }
@@ -538,12 +534,16 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
     }
     
     /**
-     * Sets the icon that is painted on this component. Please note that
-     * {@link #setPaintIconWhenInactive(boolean)} is ignored by this method.
+     * Sets the icon that is painted on this component. Please note that the icon
+     * is not painted if this tab is not selected and {@link #setPaintIconWhenInactive(boolean)}
+     * is <code>false</code>.
      * @param icon the icon to paint, can be <code>null</code>
      */
     public void setIcon( Icon icon ){
-    	label.setIcon( icon );
+    	this.icon = icon;
+    	if( isSelected() || doPaintIconWhenInactive() ){
+    		label.setIcon( icon );
+    	}
     }
     
     /**
@@ -560,6 +560,10 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
      */
     public void setText( String text ){
     	label.setText( text );
+    }
+    
+    public void setTooltip( String tooltip ){
+	    setToolTipText( tooltip );	
     }
     
     /**
@@ -831,37 +835,6 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
         public void windowDeactivated( WindowEvent e ){
             updateBorder();
             repaint();
-        }
-    }
-    
-    /**
-     * A listener to the {@link Dockable} of this {@link TabComponent}, is informed
-     * when the title or icon changes.
-     * @author Benjamin Sigg
-     */
-    private class Listener implements DockableListener {
-        public void titleBound( Dockable dockable, DockTitle title ) {
-            // ignore
-        }
-
-        public void titleIconChanged( Dockable dockable, Icon oldIcon, Icon newIcon ) {
-            updateIcon();
-        }
-
-        public void titleTextChanged( Dockable dockable, String oldTitle, String newTitle ) {
-            updateText();
-        }
-        
-        public void titleToolTipChanged( Dockable dockable, String oldToolTip, String newToolTip ) {
-            setToolTipText( newToolTip );
-        }
-
-        public void titleUnbound( Dockable dockable, DockTitle title ) {
-            // ignore
-        }
-        
-        public void titleExchanged( Dockable dockable, DockTitle title ) {
-            // ignore
         }
     }
 }

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.event.MouseInputListener;
@@ -284,6 +285,18 @@ public class DockTitleTab implements TabComponent{
         fire();
     }
 
+    public void setIcon( Icon icon ){
+	    // ignore	
+    }
+    
+    public void setText( String text ){
+	    // ignore	
+    }
+    
+    public void setTooltip( String tooltip ){
+	    // ignore	
+    }
+    
     /**
      * Updates the selection and focus state of the title of this tab. 
      */
