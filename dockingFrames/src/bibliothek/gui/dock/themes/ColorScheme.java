@@ -43,7 +43,11 @@ import bibliothek.gui.dock.util.laf.LookAndFeelColors;
  */
 public interface ColorScheme {
 	/**
-	 * The name used in a {@link ExtensionName} to ask for an additional {@link ColorScheme}
+	 * The name used in a {@link ExtensionName} to ask for an additional {@link ColorScheme}. The
+	 * additional {@link ColorScheme}s will be applied after the standard scheme was applied. This
+	 * means that any setting of the base {@link ColorScheme} is overridden, including those settings
+	 * made by the user. Extensions should provide a mechanism such that the user can change
+	 * the extension-colors.
 	 */
 	public static final Path EXTENSION_NAME = new Path( "dock.colorscheme" );
 	

@@ -40,6 +40,8 @@ import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ActionPopup;
+import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.control.RemoteRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
@@ -61,8 +63,8 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 	/** The controller for which this component is shown */
 	private DockController controller;
 	
-	/** the currently used remote */
-	private RemoteRelocator relocator;
+	/** the tab to which mouse-events are currently redirected */
+	private Tab mouseTarget;
 	
 	/**
 	 * Constructs the component, sets the location of the tabs to bottom.
@@ -173,9 +175,9 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 
 	public void setController( DockController controller ){
 		if( this.controller != controller ){
-			if( relocator != null ){
-				relocator.cancel();
-				relocator = null;
+			if( mouseTarget != null ){
+				mouseTarget.relocator.cancel();
+				mouseTarget = null;
 			}
 			
 			this.controller = controller;
@@ -195,7 +197,7 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 	 * @author Benjamin Sigg
 	 *
 	 */
-	protected class Tab{
+	protected class Tab extends ActionPopup{
 	    /** the element on the tab */
 	    protected Dockable dockable;
 	    /** used to drag and drop the tab */
@@ -206,13 +208,10 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 	     * @param dockable the element on the tab
 	     */
 	    public Tab( Dockable dockable ){
+	    	super( true );
 	        this.dockable = dockable;
 	    }
-	    
-	    /**
-	     * Gets the {@link Dockable} which is represented by this tab.
-	     * @return the element represented by this tab
-	     */
+
 	    public Dockable getDockable() {
             return dockable;
         }
@@ -229,6 +228,20 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 	        else
 	            relocator = controller.getRelocator().createRemote( dockable );
 	    }
+
+	    public void popup( MouseEvent event ){
+	    	if( !event.isConsumed() && event.isPopupTrigger() ){
+	    		super.popup( event );
+	    	}
+	    }
+	    
+		protected DockActionSource getSource(){
+			return dockable.getGlobalActionOffers();
+		}
+
+		protected boolean isEnabled(){
+			return true;
+		}
 	}
 	
 	/**
@@ -238,25 +251,29 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 	 */
 	private class Listener extends MouseInputAdapter{
 		/**
-		 * Updates the value of {@link DefaultStackDockComponent#relocator relocator}
+		 * Updates the value of {@link DefaultStackDockComponent#mouseTarget relocator}
 		 * @param x the x-coordinate of the mouse
 		 * @param y the y-coordinate of the mouse
 		 * @param searchDockable if <code>true</code>, then a new current relocator can be
 		 * selected, otherwise the relocator may only be canceled by not exchanged
+		 * @param forceSearch if <code>true</code> then a search is always made, even if the user is
+		 * not allowed to move a tab anyways
 		 */
-		private void updateRelocator( int x, int y, boolean searchDockable ){
+		private void updateRelocator( int x, int y, boolean searchDockable, boolean forceSearch ){
 		    boolean allowed = controller == null || !controller.getRelocator().isDragOnlyTitel();
 		    
-			if( relocator != null ){
+			if( mouseTarget != null ){
 			    if( !allowed ){
-			        relocator.cancel();
-			        relocator = null;
+			        mouseTarget.relocator.cancel();
+			        if( !forceSearch ){
+			        	mouseTarget = null;
+			        }
 			    }
 			    
 				return;
 			}
 			
-			if( !allowed ){
+			if( !allowed && !forceSearch ){
 			    return;
 			}
 			
@@ -264,7 +281,7 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 				for( int i = 0, n = getTabCount(); i<n; i++ ){
 					Rectangle bounds = getBoundsAt( i );
 					if( bounds != null && bounds.contains( x, y )){
-						relocator = dockables.get( i ).relocator;
+						mouseTarget = dockables.get( i );
 					}
 				}
 			}
@@ -275,20 +292,32 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 			if( e.isConsumed() )
 				return;
 			
-			updateRelocator( e.getX(), e.getY(), true );
-			if( relocator != null ){
+			updateRelocator( e.getX(), e.getY(), true, false );
+			if( mouseTarget != null && mouseTarget.relocator != null ){
+				mouseTarget.popup( e );
+				if( e.isConsumed() ){
+					return;
+				}
+				
 				Point mouse = e.getPoint();
 				SwingUtilities.convertPointToScreen( mouse, e.getComponent() );
-				Reaction reaction = relocator.init( mouse.x, mouse.y, 0, 0, e.getModifiersEx() );
+				Reaction reaction = mouseTarget.relocator.init( mouse.x, mouse.y, 0, 0, e.getModifiersEx() );
 				switch( reaction ){
 					case BREAK_CONSUMED:
 						e.consume();
 					case BREAK:
-						relocator = null;
+						mouseTarget = null;
 						break;
 					case CONTINUE_CONSUMED:
 						e.consume();
 						break;
+				}
+			}
+			else{
+				updateRelocator( e.getX(), e.getY(), true, true );
+				if( mouseTarget != null ){
+					mouseTarget.popup( e );
+					mouseTarget = null;
 				}
 			}
 		}
@@ -298,20 +327,30 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 			if( e.isConsumed() )
 				return;
 			
-			updateRelocator( e.getX(), e.getY(), false );
-			if( relocator != null ){
+			updateRelocator( e.getX(), e.getY(), false, false );
+			if( mouseTarget != null && mouseTarget.relocator != null ){
 				Point mouse = e.getPoint();
 				SwingUtilities.convertPointToScreen( mouse, e.getComponent() );
-				Reaction reaction = relocator.drop( mouse.x, mouse.y, e.getModifiersEx() );
+				Reaction reaction = mouseTarget.relocator.drop( mouse.x, mouse.y, e.getModifiersEx() );
 				switch( reaction ){
 					case BREAK_CONSUMED:
 						e.consume();
+						mouseTarget = null;
+						break;
 					case BREAK:
-						relocator = null;
+						mouseTarget.popup( e );
+						mouseTarget = null;
 						break;
 					case CONTINUE_CONSUMED:
 						e.consume();
 						break;
+				}
+			}
+			else{
+				updateRelocator( e.getX(), e.getY(), true, true );
+				if( mouseTarget != null ){
+					mouseTarget.popup( e );
+					mouseTarget = null;
 				}
 			}
 		}
@@ -321,16 +360,16 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 			if( e.isConsumed() )
 				return;
 			
-			updateRelocator( e.getX(), e.getY(), false );
-			if( relocator != null ){
+			updateRelocator( e.getX(), e.getY(), false, false );
+			if( mouseTarget != null && mouseTarget.relocator != null ){
 				Point mouse = e.getPoint();
 				SwingUtilities.convertPointToScreen( mouse, e.getComponent() );
-				Reaction reaction = relocator.drag( mouse.x, mouse.y, e.getModifiersEx() );
+				Reaction reaction = mouseTarget.relocator.drag( mouse.x, mouse.y, e.getModifiersEx() );
 				switch( reaction ){
 					case BREAK_CONSUMED:
 						e.consume();
 					case BREAK:
-						relocator = null;
+						mouseTarget = null;
 						break;
 					case CONTINUE_CONSUMED:
 						e.consume();
