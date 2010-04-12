@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JMenuItem;
+import javax.swing.JRadioButtonMenuItem;
 
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.dock.event.DockFrontendAdapter;
@@ -49,7 +50,7 @@ public abstract class FrontendSettingsList extends BaseMenuPiece {
 	private Listener listener = new Listener();
 	
 	/** the list of visible items */
-	private Map<String, JMenuItem> items = new HashMap<String, JMenuItem>();
+	private Map<String, JRadioButtonMenuItem> items = new HashMap<String, JRadioButtonMenuItem>();
 	
 	/**
 	 * Creates a new list.
@@ -105,14 +106,16 @@ public abstract class FrontendSettingsList extends BaseMenuPiece {
 	 * @param name the name of the new setting
 	 */
 	private void add( final String name ){
-		JMenuItem item = new JMenuItem( name );
+		JRadioButtonMenuItem item = new JRadioButtonMenuItem( name );
 		item.addActionListener( new ActionListener(){
 			public void actionPerformed( ActionEvent e ){
 				action( name );
+				updateSelection();
 			}
 		});
 		add( item );
 		items.put( name, item );
+		updateSelection();
 	}
 	
 	/**
@@ -123,6 +126,19 @@ public abstract class FrontendSettingsList extends BaseMenuPiece {
 		JMenuItem item = items.remove( name );
 		if( item != null ){
 			remove( item );
+			updateSelection();
+		}
+	}
+	
+	/**
+	 * Updates the selection state of the {@link JRadioButtonMenuItem}s that are used
+	 * on this menu. Only the one item representing the current layout of the {@link DockFrontend}
+	 * is selected.
+	 */
+	public void updateSelection(){
+		String name = frontend.getCurrentSetting();
+		for( Map.Entry<String, JRadioButtonMenuItem> entry : items.entrySet() ){
+			entry.getValue().setSelected( entry.getKey().equals( name ) );
 		}
 	}
 	
@@ -137,13 +153,26 @@ public abstract class FrontendSettingsList extends BaseMenuPiece {
 		}
 		@Override
 		public void saved( DockFrontend frontend, String name ){
-			if( !items.containsKey( name ))
+			if( !items.containsKey( name )){
 				add( name );
+			}
+			else{
+				updateSelection();
+			}
 		}
 		@Override
 		public void read( DockFrontend frontend, String name ){
-			if( !items.containsKey( name ))
+			if( !items.containsKey( name )){
 				add( name );
+			}
+			else{
+				updateSelection();
+			}
+		}
+		
+		@Override
+		public void loaded( DockFrontend frontend, String name ){
+			updateSelection();
 		}
 	}
 }

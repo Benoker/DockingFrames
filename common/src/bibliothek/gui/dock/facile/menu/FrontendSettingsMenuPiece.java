@@ -151,16 +151,3 @@ public class FrontendSettingsMenuPiece extends NodeMenuPiece {
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
