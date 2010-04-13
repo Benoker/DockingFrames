@@ -363,6 +363,20 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     }
     
     /**
+     * Tells whether this station should show its {@link StackDockComponent} even if it
+     * has only one child. This property may only be changed if the {@link StackDockComponent}
+     * is exchanged as well.
+     * @return <code>true</code> if the {@link StackDockComponent} is to be always shown
+     */
+    protected boolean singleTabStackDockComponent(){
+    	StackDockComponent component = getStackComponent();
+    	if( component == null ){
+    		return false;
+    	}
+    	return component.isSingleTabComponent();
+    }
+    
+    /**
      * Sets the {@link StackDockComponent} which should be used by this 
      * station. The component is shown when this station has more then 
      * one child. Note that the <code>stackComponent</code> depends also
@@ -396,7 +410,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             this.stackComponent = stackComponent;
             stackComponent.setTabPlacement( tabPlacement.getValue() );
             
-            if( getDockableCount() < 2 ){
+            if( getDockableCount() < 2 && !singleTabStackDockComponent() ){
                 stackComponent.addChangeListener( visibleListener );
             }
             else{
@@ -1160,14 +1174,14 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
      * stored.
      */
     protected void addToPanel( StationChildHandle handle, int index, int size ){
-    	if( size == 0 ){
+    	if( size == 0 && !singleTabStackDockComponent() ){
     		DockableDisplayer displayer = handle.getDisplayer();
             panel.add( displayer.getComponent() );
         }
         else{
         	int selectionIndex = index;
         	
-            if( size == 1 ){
+            if( size == 1 && !singleTabStackDockComponent() ){
                 panel.removeAll();
                 
                 Filter<StationChildHandle> list = dockables.dockables();
@@ -1188,7 +1202,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             insertTab( displayer, index );
             stackComponent.setSelectedIndex( selectionIndex );
         }
-        panel.validate();
+        panel.revalidate();
         panel.repaint();
     }
     
@@ -1233,7 +1247,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     	handle.updateDisplayer();
     	displayer = handle.getDisplayer();
     	
-    	if( dockables.dockables().size() == 1 ){
+    	if( dockables.dockables().size() == 1 && singleTabStackDockComponent() ){
     		panel.removeAll();
     		panel.add( displayer.getComponent() );
     	}
@@ -1270,10 +1284,16 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         	listeners.fireDockableRemoving( dockable );
         
         if( dockables.dockables().size() == 1 ){
-            panel.remove( dockables.dockables().get( 0 ).getDisplayer().getComponent() );
+        	if( singleTabStackDockComponent() ){
+        		stackComponent.remove( 0 );
+        	}
+        	else{
+        		panel.remove( dockables.dockables().get( 0 ).getDisplayer().getComponent() );
+        	}
             dockables.remove( 0 );
+            panel.repaint();
         }
-        else if( dockables.dockables().size() == 2 ){
+        else if( dockables.dockables().size() == 2 && !singleTabStackDockComponent() ){
             panel.remove( stackComponent.getComponent() );
             dockables.remove( index );
             stackComponent.removeAll();

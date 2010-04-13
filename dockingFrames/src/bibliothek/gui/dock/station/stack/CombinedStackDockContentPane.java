@@ -71,6 +71,7 @@ public class CombinedStackDockContentPane extends JPanel{
 	
     @Override
     public void doLayout() {
+    	super.doLayout();
         parent.doLayout();
     }
     

@@ -192,6 +192,10 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 	    return true;
 	}
 	
+	public boolean isSingleTabComponent(){
+		return false;
+	}
+	
 	/**
 	 * Representation of a single tab of this {@link StackDockComponent}.
 	 * @author Benjamin Sigg

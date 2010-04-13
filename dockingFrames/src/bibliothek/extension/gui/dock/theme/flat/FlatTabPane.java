@@ -101,6 +101,10 @@ public class FlatTabPane extends CombinedStackDockComponent<FlatTab, FlatMenu, C
 	    return false;
 	}
 	
+	public boolean isSingleTabComponent(){
+		return false;
+	}
+	
 	public DockStation getStation(){
 		return station.getStation();
 	}

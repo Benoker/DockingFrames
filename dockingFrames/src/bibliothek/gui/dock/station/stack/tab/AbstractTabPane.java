@@ -165,8 +165,7 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 	public void revalidate(){
 		doLayout();
 	}
-
-
+	
 	public void addTabPaneListener( TabPaneListener listener ){
 		listeners.add( listener );
 	}

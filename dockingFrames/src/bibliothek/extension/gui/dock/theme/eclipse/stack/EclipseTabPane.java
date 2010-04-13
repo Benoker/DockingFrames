@@ -338,4 +338,8 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 	public boolean hasBorder(){
 		return true;
 	}
+	
+	public boolean isSingleTabComponent(){
+		return true;
+	}
 }

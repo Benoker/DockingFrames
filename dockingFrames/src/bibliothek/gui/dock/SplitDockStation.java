@@ -1360,7 +1360,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             DockableProperty successor = property.getSuccessor();
             if( station != null && successor != null ){
                 if( station.drop( dockable, successor )){
-                    validate();
+                	doLayout();
                     return true;
                 }
             }
@@ -1368,12 +1368,12 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             if( info.bestLeafIntersection > 0.75 ){
                 if( station != null && station.accept( dockable ) && dockable.accept( station )){
                     station.drop( dockable );
-                    validate();
+                    doLayout();
                     return true;
                 }
                 else{
                     boolean result = dropOver( info.bestLeaf, dockable, property.getSuccessor() );
-                    validate();
+                    doLayout();
                     return result;
                 }
             }
@@ -1399,7 +1399,6 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 
             divider = Math.max( 0, Math.min( 1, divider ));
             dropAside( info.bestNode, info.bestNodePut, dockable, null, divider, true );
-            validate();
             return true;
         }
 
@@ -1416,7 +1415,6 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      */
     public boolean drop( Dockable dockable, SplitDockPathProperty property ){
         DockUtilities.ensureTreeValidity( this, dockable );
-        validate();
         
         // use the ids of the topmost nodes in the path to find a node of this station
         int index = 0;
@@ -1462,7 +1460,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      */
     public boolean drop( Dockable dockable, SplitDockPlaceholderProperty property ){
     	DockUtilities.ensureTreeValidity( this, dockable );
-    	validate();
+    	doLayout();
     	return root().insert( property, dockable );
     }
     
@@ -1524,7 +1522,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             }
         }
 
-        validate();
+        revalidate();
     }
 
     /**
@@ -1570,19 +1568,6 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         }
 
         dockStationListeners.fireDockableAdding( combination );
-//        Leaf next = new Leaf( access );
-//        SplitNode parent = leaf.getParent();
-//        Root root = root();
-//        if( parent == root )
-//            root.setChild( next );
-//        else{
-//            Node parentNode = (Node)parent;
-//            if( parentNode.getLeft() == leaf )
-//                parentNode.setLeft( next );
-//            else
-//                parentNode.setRight( next );
-//        }
-//        next.setDockable( combination, false );
         leaf.setDockable( combination, false );
 
         dockStationListeners.fireDockableAdded( combination );

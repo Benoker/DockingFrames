@@ -294,4 +294,4 @@
 ! API: BaseTabComponent is no longer responsible for keeping icon and text up to date, this must be handled by the StackDockComponent. This means that the EclipseTheme now respects the text and icon set by the StackDockStation.
 - Bugfix: Tabs with unequal height were positioned strangely
 - Bugfix: Popup menus are now enabled for tabs on a DefaultStackDockComponent
- 
+- API: A StackDockStation with only one child can still show a tab depending on the type of StackDockComponent

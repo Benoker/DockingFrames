@@ -103,5 +103,7 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleT
 	    return true;
 	}
 	
-	
+	public boolean isSingleTabComponent(){
+		return false;
+	}
 }

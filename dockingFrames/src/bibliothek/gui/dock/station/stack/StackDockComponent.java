@@ -186,4 +186,11 @@ public interface StackDockComponent {
      * if the parent should paint one.
      */
     public boolean hasBorder();
+
+    /**
+     * Tells whether this {@link StackDockComponent} should be shown even if 
+     * the {@link StackDockStation} has only one child.
+     * @return <code>true</code> if this component should always be shown
+     */
+	public boolean isSingleTabComponent();
 }

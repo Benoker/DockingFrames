@@ -59,7 +59,7 @@ import bibliothek.gui.dock.title.DockTitle;
  * related to the {@link DockTheme} can be found in {@link DockUI}.
  * @author Benjamin Sigg
  */
-public class DockUtilities {
+public class DockUtilities {	
     /**
      * A visitor used to visit the nodes of a dock-tree.
      * @author Benjamin Sigg

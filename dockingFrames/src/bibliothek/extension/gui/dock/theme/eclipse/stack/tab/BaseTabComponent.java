@@ -278,6 +278,7 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
     	else{
     		label.setIcon( null );
     	}
+    	repaint();
     }
     
     /**
@@ -433,6 +434,7 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
     		else{
     			label.setIcon( null );
     		}
+    		revalidate();
     		updateSelected();
     	}
     }
@@ -569,6 +571,7 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
     	this.icon = icon;
     	if( isSelected() || doPaintIconWhenInactive() ){
     		label.setIcon( icon );
+    		revalidate();
     	}
     }
     
@@ -586,6 +589,7 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
      */
     public void setText( String text ){
     	label.setText( text );
+    	revalidate();
     }
     
     public void setTooltip( String tooltip ){
@@ -693,7 +697,6 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
 		return orientation;
 	}
     
-
 	public Dimension getMinimumSize( TabComponent[] tabs ){
 		setSelection( tabs );
 		Dimension result = getMinimumSize();
