@@ -39,9 +39,14 @@ import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
+import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.action.ListeningDockAction;
+import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.*;
 import bibliothek.gui.dock.station.screen.*;
+import bibliothek.gui.dock.station.split.SplitFullScreenAction;
 import bibliothek.gui.dock.station.support.CombinerWrapper;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
@@ -107,6 +112,9 @@ public class ScreenDockStation extends AbstractDockStation {
     
     /** A manager for the visibility of the children */
     private DockableVisibilityManager visibility;
+    
+    /** An action to enable or disable fullscreen mode of some window */
+    private ListeningDockAction fullscreenAction;
 
     /** the restrictions of the boundaries of this window*/
     private PropertyValue<BoundaryRestriction> restriction =
@@ -155,6 +163,67 @@ public class ScreenDockStation extends AbstractDockStation {
         this.owner = owner;
         
         displayers = new DisplayerCollection( this, displayerFactory );
+        fullscreenAction = createFullscreenAction();
+    }
+    
+    /**
+     * Creates an {@link DockAction action} which is added to all children
+     * of this station. The action allows the user to expand a child to
+     * fullscreen. The action is also added to subchildren, but the effect
+     * does only affect direct children of this station.
+     * @return the action or <code>null</code> if this feature should be
+     * disabled, or the action is {@link #setFullscreenAction(ListeningDockAction) set later}
+     */
+    protected ListeningDockAction createFullscreenAction(){
+    	return null;
+    }
+    
+    /**
+     * Sets an {@link DockAction action} which allows to expand children. This
+     * method can only be invoked if there is not already set an action. It is
+     * a condition that {@link #createFullscreenAction()} returns <code>null</code>
+     * @param fullScreenAction the new action
+     * @throws IllegalStateException if there is already an action present
+     */
+    public void setFullscreenAction( ListeningDockAction fullScreenAction ) {
+        if( this.fullscreenAction != null )
+            throw new IllegalStateException( "The fullScreenAction can only be set once" );
+        this.fullscreenAction = fullScreenAction;
+    }
+
+    public DefaultDockActionSource getDirectActionOffers( Dockable dockable ) {
+        if( fullscreenAction == null )
+            return null;
+        else{
+            DefaultDockActionSource source = new DefaultDockActionSource(new LocationHint( LocationHint.DIRECT_ACTION, LocationHint.VERY_RIGHT ));
+            source.add( fullscreenAction );
+
+            return source;
+        }
+    }
+
+    public DockActionSource getIndirectActionOffers( Dockable dockable ) {
+        if( fullscreenAction == null )
+            return null;
+
+        DockStation parent = dockable.getDockParent();
+        if( parent == null )
+            return null;
+
+        if( parent instanceof ScreenDockStation )
+            return null;
+
+        dockable = parent.asDockable();
+        if( dockable == null )
+            return null;
+
+        parent = dockable.getDockParent();
+        if( parent != this )
+            return null;
+
+        DefaultDockActionSource source = new DefaultDockActionSource( fullscreenAction );
+        source.setHint( new LocationHint( LocationHint.INDIRECT_ACTION, LocationHint.VERY_RIGHT ));
+        return source;
     }
     
     /**
@@ -218,14 +287,6 @@ public class ScreenDockStation extends AbstractDockStation {
         for( ScreenDockWindow window : dockables ){
             window.setController( controller );
         }
-    }
-    
-    public DefaultDockActionSource getDirectActionOffers( Dockable dockable ) {
-        return null;
-    }
-
-    public DefaultDockActionSource getIndirectActionOffers( Dockable dockable ) {
-        return null;
     }
 
     public int getDockableCount() {

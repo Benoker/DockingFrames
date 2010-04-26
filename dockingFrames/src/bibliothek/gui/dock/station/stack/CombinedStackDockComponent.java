@@ -493,9 +493,9 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
     public void setComponentAt( int index, Component component ){
     	Meta meta = components.get( getDockable( index ) );
     	
-    	panel.remove( meta.component );
+    	componentPanel.remove( meta.component );
     	meta.component = createLayerAt( component, meta.dockable );
-    	panel.add( meta.component );
+    	componentPanel.add( meta.component );
     	
     	meta.component.setVisible( getSelectedDockable() == meta.dockable );
     	revalidate();

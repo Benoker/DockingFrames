@@ -32,6 +32,8 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.Icon;
+
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector.TitleBar;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
@@ -39,6 +41,8 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.event.DockableAdapter;
+import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
@@ -61,6 +65,21 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 		@Override
 		protected void valueChanged( TabPlacement oldValue, TabPlacement newValue ){
 			setTabPlacement( newValue );
+		}
+	};
+	
+	private DockableListener dockableListener = new DockableAdapter() {
+		public void titleTextChanged( Dockable dockable, String oldTitle, String newTitle ){
+			setTitleAt( 0, newTitle );
+			
+		}
+		
+		public void titleIconChanged( Dockable dockable, Icon oldIcon, Icon newIcon ){
+			setIconAt( 0, newIcon );
+		}
+		
+		public void titleToolTipChanged( Dockable dockable, String oldTooltip, String newTooltip ){
+			setTooltipAt( 0, newTooltip );
 		}
 	};
 	
@@ -121,12 +140,14 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 	}
 	
 	public void setDockable( Dockable dockable ){
-		if (getDockable() != null) {
+		if( this.dockable != null ){
 			removeAll();
+			this.dockable.removeDockableListener( dockableListener );
 		}
 		this.dockable = dockable;
 		if( dockable != null ){
 			addTab( dockable.getTitleText(), dockable.getTitleIcon(), dockable.getComponent(), dockable );
+			dockable.addDockableListener( dockableListener );
 		}
 		if( observer != null ){
 			observer.setDockable( dockable );

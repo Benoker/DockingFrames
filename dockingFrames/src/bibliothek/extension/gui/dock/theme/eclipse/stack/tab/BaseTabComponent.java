@@ -278,6 +278,7 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
     	else{
     		label.setIcon( null );
     	}
+    	revalidate();
     	repaint();
     }
     

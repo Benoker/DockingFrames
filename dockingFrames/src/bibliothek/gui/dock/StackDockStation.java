@@ -1366,7 +1366,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     }
     
     private void updateContent( int index ){
-    	if( index >= 0 && getDockableCount() > 1 ){
+    	if( index >= 0 && (getDockableCount() > 1 || singleTabStackDockComponent()) ){
     		Dockable dockable = getDockable( index );
     		TabContentFilter filter = getTabContentFilter();
     		

@@ -1360,7 +1360,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             DockableProperty successor = property.getSuccessor();
             if( station != null && successor != null ){
                 if( station.drop( dockable, successor )){
-                	doLayout();
+                	validate();
                     return true;
                 }
             }
@@ -1368,12 +1368,12 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
             if( info.bestLeafIntersection > 0.75 ){
                 if( station != null && station.accept( dockable ) && dockable.accept( station )){
                     station.drop( dockable );
-                    doLayout();
+                    validate();
                     return true;
                 }
                 else{
                     boolean result = dropOver( info.bestLeaf, dockable, property.getSuccessor() );
-                    doLayout();
+                    validate();
                     return result;
                 }
             }
@@ -1460,7 +1460,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      */
     public boolean drop( Dockable dockable, SplitDockPlaceholderProperty property ){
     	DockUtilities.ensureTreeValidity( this, dockable );
-    	doLayout();
+    	validate();
     	return root().insert( property, dockable );
     }
     
