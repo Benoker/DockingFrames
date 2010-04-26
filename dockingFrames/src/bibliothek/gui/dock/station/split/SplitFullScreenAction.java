@@ -23,7 +23,6 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-
 package bibliothek.gui.dock.station.split;
 
 import javax.swing.Icon;

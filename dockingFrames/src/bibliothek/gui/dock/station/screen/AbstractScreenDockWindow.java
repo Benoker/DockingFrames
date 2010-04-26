@@ -25,12 +25,26 @@
  */
 package bibliothek.gui.dock.station.screen;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.LayoutManager;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
 import bibliothek.gui.Dockable;
@@ -79,6 +93,28 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
             updateTitleText();
         }
     };
+    
+    /** a listener added to this window, will inform other listeners about a changed fullscreen mode when this window is resized */ 
+    private ScreenDockWindowListener windowListener = new ScreenDockWindowListener() {
+    	/** the last remembered state */
+    	private boolean remembered = false;
+    	
+    	public void visibilityChanged( ScreenDockWindow window ) {
+			if( isFullscreen() != remembered ){
+				fireFullscreenChanged();
+			}
+		}
+		
+		public void shapeChanged( ScreenDockWindow window ) {
+			if( isFullscreen() != remembered ){
+				fireFullscreenChanged();
+			}
+		}
+		
+		public void fullscreenStateChanged( ScreenDockWindow window ) {
+			remembered = isFullscreen();
+		}
+	};
 
     /**
      * Creates a new window. Subclasses must call {@link #init(Component, Container, boolean)}
@@ -145,6 +181,20 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
             parent.addMouseListener( listener );
             parent.addMouseMotionListener( listener );
         }
+        
+        window.addComponentListener( new ComponentAdapter() {
+        	@Override
+        	public void componentResized( ComponentEvent e ) {
+	        	fireShapeChanged();
+        	}
+        	
+        	@Override
+        	public void componentMoved( ComponentEvent e ) {
+        		fireShapeChanged();
+        	}
+		});
+        
+        addScreenDockWindowListener( windowListener );
     }
 
     @Override
@@ -262,7 +312,14 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
     }
 
     public void setVisible( boolean visible ) {
-        window.setVisible( visible );
+    	if( visible != isVisible() ){
+	        window.setVisible( visible );
+	        fireVisibilityChanged();
+    	}
+    }
+    
+    public boolean isVisible() {
+	    return window.isVisible();
     }
 
     public void setWindowBounds( Rectangle bounds ) {

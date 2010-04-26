@@ -28,6 +28,9 @@ package bibliothek.gui.dock.station.screen;
 import java.awt.Component;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.SwingUtilities;
 
@@ -50,6 +53,9 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
     /** the dockable shown on this station */
     private StationChildHandle handle;
     
+    /** all listeners known to this window */
+    private List<ScreenDockWindowListener> listeners = new ArrayList<ScreenDockWindowListener>();
+    
     /** a listener to the current {@link DockableDisplayer} */
     private DockableDisplayerListener displayerListener = new DockableDisplayerListener(){
     	public void discard( DockableDisplayer displayer ){
@@ -63,6 +69,12 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
     /** whether the {@link DockTitle} should be shown */
     private boolean showTitle = true;
     
+    /** strategy for handling fullscreen mode */
+    private ScreenDockFullscreenStrategy strategy;
+    
+    /** boundaries used in normal mode */
+    private Rectangle normalBounds;
+    
     /**
      * Creates a new window
      * @param station the owner of this window, not <code>null</code>
@@ -71,6 +83,49 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
         if( station == null )
             throw new IllegalArgumentException( "station must not be null" );
         this.station = station;
+    }
+    
+    public void addScreenDockWindowListener( ScreenDockWindowListener listener ){
+    	listeners.add( listener );
+    }
+    
+    public void removeScreenDockWindowListener( ScreenDockWindowListener listener ){
+    	listeners.remove( listener );
+    }
+    
+    /**
+     * Gets a list of all listeners that are currently registered.
+     * @return all listeners
+     */
+    protected ScreenDockWindowListener[] listeners(){
+    	return listeners.toArray( new ScreenDockWindowListener[ listeners.size() ] );
+    }
+    
+    /**
+     * Informs all listeners that the fullscreen state changed
+     */
+    protected void fireFullscreenChanged(){
+    	for( ScreenDockWindowListener listener : listeners() ){
+    		listener.fullscreenStateChanged( this );
+    	}
+    }
+    
+    /**
+     * Informs all listeners that the visibility state changed
+     */
+    protected void fireVisibilityChanged(){
+    	for( ScreenDockWindowListener listener : listeners() ){
+    		listener.visibilityChanged( this );
+    	}
+    }
+    
+    /**
+     * Informs all listeners that the current size or position changed
+     */
+    protected void fireShapeChanged(){
+    	for( ScreenDockWindowListener listener : listeners() ){
+    		listener.shapeChanged( this );
+    	}
     }
     
     /**
@@ -156,6 +211,36 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
     	displayer.addDockableDisplayerListener( displayerListener );
     	showDisplayer( displayer );
     }
+    
+    public void setFullscreenStrategy( ScreenDockFullscreenStrategy strategy ) {
+	    this.strategy = strategy;	
+    }
+    
+    public boolean isFullscreen() {
+    	if( strategy == null ){
+    		throw new IllegalStateException( "no strategy available" );
+    	}
+    	return strategy.isFullscreen( this );
+    }
+    
+    public void setFullscreen( boolean fullscreen ) {
+    	if( strategy == null ){
+    		throw new IllegalStateException( "no strategy available" );
+    	}
+    	boolean state = isFullscreen();
+    	if( state != fullscreen ){
+    		strategy.setFullscreen( this, fullscreen );
+    		fireFullscreenChanged();
+    	}
+    }
+    
+    public void setNormalBounds( Rectangle bounds ) {
+	    this.normalBounds = bounds;	
+    }
+    
+    public Rectangle getNormalBounds() {
+	    return normalBounds;
+    }
 
     public void setController( DockController controller ) {
         // remove old DockTitle
@@ -233,10 +318,6 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
         return controller;
     }
     
-    /**
-     * Gets the station for which this window is used.
-     * @return the owner, never <code>null</code>
-     */
     public ScreenDockStation getStation(){
         return station;
     }

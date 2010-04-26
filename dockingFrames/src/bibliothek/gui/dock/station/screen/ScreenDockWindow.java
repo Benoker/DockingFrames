@@ -40,10 +40,24 @@ import bibliothek.gui.dock.title.DockTitle;
  * A {@link ScreenDockWindow} is used by a {@link ScreenDockStation} to show
  * a {@link Dockable} on the screen. Subclasses are free to show the {@link Dockable}
  * in any way they like, however subclasses are encouraged to use a 
- * {@link StationChildHandle} to manage displayers and title.
+ * {@link StationChildHandle} to manage displayers and title.<br>
+ * New implementations of {@link ScreenDockWindow} may require the implementation of a {@link ScreenDockFullscreenStrategy}
+ * as well.
  * @author Benjamin Sigg
  */
 public interface ScreenDockWindow {
+	/**
+	 * Adds a listener to this window, the listener has to be informed about changes of this window.
+	 * @param listener the new listener
+	 */
+	public void addScreenDockWindowListener( ScreenDockWindowListener listener );
+	
+	/**
+	 * Removes a listener from this window.
+	 * @param listener the listener to remove
+	 */
+	public void removeScreenDockWindowListener( ScreenDockWindowListener listener );
+	
     /**
      * Sets the controller in whose realm this window will be used. This
      * method will be called after the controller of the owning {@link ScreenDockStation}
@@ -54,6 +68,12 @@ public interface ScreenDockWindow {
      * @param controller the new controller, can be <code>null</code>
      */
     public void setController( DockController controller );
+    
+    /**
+     * Gets the station which owns this window.
+     * @return the owner, not <code>null</code>
+     */
+    public ScreenDockStation getStation();
     
     /**
      * Sets the {@link Dockable} which should be shown on this window.
@@ -75,23 +95,39 @@ public interface ScreenDockWindow {
      */
     public void toFront();
     
-//    /**
-//     * Changes the mode of this window to fullscreen or to normal.
-//     * @param fullscreen the new state
-//     */
-//    public void setFullscreen( boolean fullscreen );
-//    
-//    /**
-//     * Tells whether this window is in fullscreen mode or not.
-//     * @return <code>true</code> if fullscreen mode is active
-//     */
-//    public boolean isFullscreen();
+    /**
+     * Tells this window what strategy to use for handling fullscreen mode.
+     * @param strategy the strategy
+     */
+    public void setFullscreenStrategy( ScreenDockFullscreenStrategy strategy );
+    
+    /**
+     * Changes the mode of this window to fullscreen or to normal. This method
+     * should call {@link ScreenDockFullscreenStrategy#setFullscreen(ScreenDockWindow, boolean)}, 
+     * subclasses may execute additional code.
+     * @param fullscreen the new state
+     */
+    public void setFullscreen( boolean fullscreen );
+    
+    /**
+     * Tells whether this window is in fullscreen mode or not.  This method should
+     * call {@link ScreenDockFullscreenStrategy#isFullscreen(ScreenDockWindow)}, subclasses
+     * may execute additional checks.
+     * @return <code>true</code> if fullscreen mode is active
+     */
+    public boolean isFullscreen();
     
     /**
      * Changes the visibility state of this window.
      * @param visible the new state
      */
     public void setVisible( boolean visible );
+    
+    /**
+     * Tells whether this window is visible or not.
+     * @return the visibility state
+     */
+    public boolean isVisible();
     
     /**
      * Informs this window that it is no longer used by the station
@@ -122,6 +158,21 @@ public interface ScreenDockWindow {
      * @param bounds the new location and size
      */
     public void setWindowBounds( Rectangle bounds );
+    
+    /**
+     * Sets the boundaries this window should use if not in fullscreen mode. This boundaries
+     * need to be stored but must not be applied. This property is intended to be used by
+     * a {@link ScreenDockFullscreenStrategy} and is usually set to <code>null</code> if this
+     * window is not in fullscreen mode.
+     * @param bounds the normal bounds, can be <code>null</code>
+     */
+    public void setNormalBounds( Rectangle bounds );
+    
+    /**
+     * Gets the boundaries this window should use if not in fullscreen mode.
+     * @return the boundaries, can be <code>null</code>
+     */
+    public Rectangle getNormalBounds();
     
     /**
      * Ensures the correctness of the boundaries of this window. This method

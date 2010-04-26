@@ -26,7 +26,12 @@
 
 package bibliothek.gui.dock;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Window;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,9 +49,23 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.layout.DockableProperty;
-import bibliothek.gui.dock.station.*;
-import bibliothek.gui.dock.station.screen.*;
-import bibliothek.gui.dock.station.split.SplitFullScreenAction;
+import bibliothek.gui.dock.station.AbstractDockStation;
+import bibliothek.gui.dock.station.Combiner;
+import bibliothek.gui.dock.station.DisplayerCollection;
+import bibliothek.gui.dock.station.DisplayerFactory;
+import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.screen.BoundaryRestriction;
+import bibliothek.gui.dock.station.screen.DefaultScreenDockFullscreenStrategy;
+import bibliothek.gui.dock.station.screen.DefaultScreenDockWindowFactory;
+import bibliothek.gui.dock.station.screen.ScreenDockFullscreenStrategy;
+import bibliothek.gui.dock.station.screen.ScreenDockProperty;
+import bibliothek.gui.dock.station.screen.ScreenDockStationFactory;
+import bibliothek.gui.dock.station.screen.ScreenDockStationListener;
+import bibliothek.gui.dock.station.screen.ScreenDockWindow;
+import bibliothek.gui.dock.station.screen.ScreenDockWindowFactory;
+import bibliothek.gui.dock.station.screen.ScreenDockWindowListener;
+import bibliothek.gui.dock.station.screen.ScreenFullscreenAction;
 import bibliothek.gui.dock.station.support.CombinerWrapper;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
@@ -55,8 +74,14 @@ import bibliothek.gui.dock.station.support.StationPaintWrapper;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
-import bibliothek.gui.dock.util.*;
+import bibliothek.gui.dock.util.DirectWindowProvider;
+import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.WindowProvider;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
+import bibliothek.gui.dock.util.property.PropertyFactory;
 
 /**
  * A {@link DockStation} which is the whole screen. Every child of this
@@ -80,11 +105,26 @@ public class ScreenDockStation extends AbstractDockStation {
         new PropertyKey<ScreenDockWindowFactory>( "ScreenDockStation.window_factory", 
         		new ConstantPropertyFactory<ScreenDockWindowFactory>( new DefaultScreenDockWindowFactory() ), true );
     
+    /** a key for a property telling how to handle fullscreen mode */
+    public static final PropertyKey<ScreenDockFullscreenStrategy> FULL_SCREEN_STRATEGY =
+    	new PropertyKey<ScreenDockFullscreenStrategy>( "ScreenDockStation.full_screen_strategy",
+    			new PropertyFactory<ScreenDockFullscreenStrategy>() {
+					public ScreenDockFullscreenStrategy getDefault( PropertyKey<ScreenDockFullscreenStrategy> key, DockProperties properties ) {
+						return new DefaultScreenDockFullscreenStrategy();
+					}
+					public ScreenDockFullscreenStrategy getDefault( PropertyKey<ScreenDockFullscreenStrategy> key ){
+						return new DefaultScreenDockFullscreenStrategy();
+					}
+    			}, true );
+    
     /** The visibility state of the windows */
     private boolean showing = false;
     
     /** A list of all windows that are used by this station */
     private List<ScreenDockWindow> dockables = new ArrayList<ScreenDockWindow>();
+    
+    /** All listeners that were added to this station */
+    private List<ScreenDockStationListener> screenDockStationListeners = new ArrayList<ScreenDockStationListener>();
     
     /** The version of titles that are used */
     private DockTitleVersion version;
@@ -134,6 +174,36 @@ public class ScreenDockStation extends AbstractDockStation {
         }
     };
     
+    /** the current fullscreen strategy */
+    private PropertyValue<ScreenDockFullscreenStrategy> fullscreenStrategy = 
+    	new PropertyValue<ScreenDockFullscreenStrategy>( ScreenDockStation.FULL_SCREEN_STRATEGY ) {
+			@Override
+			protected void valueChanged( ScreenDockFullscreenStrategy oldValue, ScreenDockFullscreenStrategy newValue ) {
+				List<ScreenDockWindow> fullscreenWindows = new ArrayList<ScreenDockWindow>();
+				for( ScreenDockWindow window : dockables ){
+					if( window.isFullscreen() ){
+						fullscreenWindows.add( window );
+						window.setFullscreen( false );
+					}
+				}
+				
+				if( oldValue != null ){
+					oldValue.uninstall( ScreenDockStation.this );
+				}
+				if( newValue != null ){
+					newValue.install( ScreenDockStation.this );
+				}
+				
+				for( ScreenDockWindow window : dockables ){
+					window.setFullscreenStrategy( newValue );
+				}
+				
+				for( ScreenDockWindow window : fullscreenWindows ){
+					window.setFullscreen( true );
+				}
+			}
+		};
+    
     /**
      * Constructs a new <code>ScreenDockStation</code>.
      * @param owner the window which will be used as parent for the 
@@ -164,6 +234,8 @@ public class ScreenDockStation extends AbstractDockStation {
         
         displayers = new DisplayerCollection( this, displayerFactory );
         fullscreenAction = createFullscreenAction();
+        
+        addScreenDockStationListener( new FullscreenListener() );
     }
     
     /**
@@ -175,7 +247,31 @@ public class ScreenDockStation extends AbstractDockStation {
      * disabled, or the action is {@link #setFullscreenAction(ListeningDockAction) set later}
      */
     protected ListeningDockAction createFullscreenAction(){
-    	return null;
+    	return new ScreenFullscreenAction( this );
+    }
+    
+    /**
+     * Adds <code>listener</code> to this station.
+     * @param listener the new listener
+     */
+    public void addScreenDockStationListener( ScreenDockStationListener listener ){
+    	screenDockStationListeners.add( listener );
+    }
+    
+    /**
+     * Removes <code>listener</code> from this station.
+     * @param listener the listener to remove
+     */
+    public void removeScreenDockStationListener( ScreenDockStationListener listener ){
+    	screenDockStationListeners.remove( listener );
+    }
+    
+    /**
+     * Gets all the {@link ScreenDockStationListener}s that were added to this station.
+     * @return all the listeners
+     */
+    protected ScreenDockStationListener[] screenDockStationListeners(){
+    	return screenDockStationListeners.toArray( new ScreenDockStationListener[ screenDockStationListeners.size() ] );
     }
     
     /**
@@ -283,12 +379,17 @@ public class ScreenDockStation extends AbstractDockStation {
         
         restriction.setProperties( controller );
         windowFactory.setProperties( controller );
+        fullscreenStrategy.setProperties( controller );
+        
+        if( fullscreenAction != null ){
+        	fullscreenAction.setController( controller );
+        }
         
         for( ScreenDockWindow window : dockables ){
             window.setController( controller );
         }
     }
-
+    
     public int getDockableCount() {
         return dockables.size();
     }
@@ -487,6 +588,34 @@ public class ScreenDockStation extends AbstractDockStation {
         return dockables.get( index );
     }
 
+    /**
+     * Tells whether <code>dockable</code> is currently shown in fullscreen mode.
+     * @param dockable the element to check
+     * @return the mode
+     * @throws IllegalArgumentException if <code>dockable</code> is not known
+     */
+    public boolean isFullscreen( Dockable dockable ){
+    	ScreenDockWindow window = getWindow( dockable );
+    	if( window == null ){
+    		throw new IllegalArgumentException( "dockable is not known to this station" );
+    	}
+    	return window.isFullscreen();
+    }
+    
+    /**
+     * Changes the fullscreen mode of <code>dockable</code>.
+     * @param dockable the element whose mode is to be changed
+     * @param fullscreen the new mode
+     * @throws IllegalArgumentException if <code>dockable</code> is not known to this station
+     */
+    public void setFullscreen( Dockable dockable, boolean fullscreen ){
+    	ScreenDockWindow window = getWindow( dockable );
+    	if( window == null ){
+    		throw new IllegalArgumentException( "dockable is not known to this station" );
+    	}
+    	window.setFullscreen( fullscreen );
+    }
+    
     public boolean prepareMove( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
         return prepare( x, y, titleX, titleY, dockable, false );
     }
@@ -582,7 +711,7 @@ public class ScreenDockStation extends AbstractDockStation {
         listeners.fireDockableAdding( dockable );
         
         ScreenDockWindow window = createWindow();
-        register( window );
+        register( dockable, window );
         window.setDockable( dockable );
         
         bounds = new Rectangle( bounds );
@@ -794,7 +923,7 @@ public class ScreenDockStation extends AbstractDockStation {
         
         window.setVisible( false );
         window.setDockable( null );
-        deregister( window );
+        deregister( dockable, window );
         
         dockable.setDockParent( null );
         listeners.fireDockableRemoved( dockable );
@@ -805,11 +934,17 @@ public class ScreenDockStation extends AbstractDockStation {
      * method adds some listeners to the window. If the method is overridden,
      * it should be called from the subclass to ensure the correct function
      * of this station.
+     * @param dockable the element for which <code>window</code> will be used
      * @param window the window which was newly created
      */
-    protected void register( ScreenDockWindow window ){
+    protected void register( Dockable dockable, ScreenDockWindow window ){
         dockables.add( window );
         window.setController( getController() );
+        window.setFullscreenStrategy( getFullscreenStrategy() );
+        
+        for( ScreenDockStationListener listener : screenDockStationListeners() ){
+        	listener.windowRegistering( this, dockable, window );
+        }
     }
     
     /**
@@ -817,13 +952,20 @@ public class ScreenDockStation extends AbstractDockStation {
      * method removes some listeners from the window. If overridden
      * by a subclass, the subclass should ensure that this implementation
      * is invoked too.
+     * @param dockable the element for which <code>window</code> was used
      * @param window the old window
      */
-    protected void deregister( ScreenDockWindow window ){
+    protected void deregister( Dockable dockable, ScreenDockWindow window ){
         if( frontWindow == window )
             frontWindow = null;
         dockables.remove( window );
         window.setController( null );
+        window.setFullscreenStrategy( null );
+        
+        for( ScreenDockStationListener listener : screenDockStationListeners() ){
+        	listener.windowDeregistering( this, dockable, window );
+        }
+        
         window.destroy();
     }
     
@@ -879,6 +1021,22 @@ public class ScreenDockStation extends AbstractDockStation {
      */
     public void setWindowFactory( ScreenDockWindowFactory factory ){
         windowFactory.setValue( factory );
+    }
+    
+    /**
+     * Gets the current fullscreen strategy.
+     * @return the strategy, not <code>null</code>
+     */
+    public ScreenDockFullscreenStrategy getFullscreenStrategy(){
+    	return fullscreenStrategy.getValue();
+    }
+    
+    /**
+     * Sets the strategy used to handle fullscreen mode.
+     * @param strategy the new strategy, <code>null</code> will reapply the default strategy
+     */
+    public void setFullscreenStrategy( ScreenDockFullscreenStrategy strategy ){
+    	fullscreenStrategy.setValue( strategy );
     }
     
     /**
@@ -981,4 +1139,39 @@ public class ScreenDockStation extends AbstractDockStation {
         public ScreenDockWindow combine;
     }
     
+    /**
+     * A listener that adds itself to {@link ScreenDockWindow}s for monitoring their fullscreen state.
+     * @author Benjamin Sigg
+     */
+    private class FullscreenListener implements ScreenDockStationListener, ScreenDockWindowListener{
+		public void fullscreenChanged( ScreenDockStation station, Dockable dockable ) {
+			// ignore
+		}
+
+		public void windowDeregistering( ScreenDockStation station, Dockable dockable, ScreenDockWindow window ) {
+			window.removeScreenDockWindowListener( this );
+		}
+
+		public void windowRegistering( ScreenDockStation station, Dockable dockable, ScreenDockWindow window ) {
+			window.addScreenDockWindowListener( this );
+		}
+
+		public void fullscreenStateChanged( ScreenDockWindow window ) {
+			Dockable dockable = window.getDockable();
+			
+			if( dockable != null ){
+				for( ScreenDockStationListener listener : screenDockStationListeners() ){
+					listener.fullscreenChanged( ScreenDockStation.this, dockable );
+				}
+			}
+		}
+
+		public void shapeChanged( ScreenDockWindow window ) {
+			// ignore
+		}
+
+		public void visibilityChanged( ScreenDockWindow window ) {
+			// ignore
+		}
+    }
 }

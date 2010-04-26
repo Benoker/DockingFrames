@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2010 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,13 +25,26 @@
  */
 package bibliothek.gui.dock.station.screen;
 
-import bibliothek.gui.dock.ScreenDockStation;
-
 /**
- * Strategy to handle fullscreen dialogs by the {@link ScreenDockStation}. This
- * strategy 
- * @author Benjamin Sigg
+ * A listener that can be added to a {@link ScreenDockWindow}.
+ * @author Benjamin
  */
-public interface FullScreenStrategy {
-
+public interface ScreenDockWindowListener {
+	/**
+	 * This method is called after the {@link ScreenDockWindow#isVisible() visibility state} changed.
+	 * @param window the caller
+	 */
+	public void visibilityChanged( ScreenDockWindow window );
+	
+	/**
+	 * This method is called after the windows fullscreen-state changed.
+	 * @param window the caller
+	 */
+	public void fullscreenStateChanged( ScreenDockWindow window );
+	
+	/**
+	 * This method is called after the size and position of <code>window</code> changed.
+	 * @param window the caller
+	 */
+	public void shapeChanged( ScreenDockWindow window );
 }

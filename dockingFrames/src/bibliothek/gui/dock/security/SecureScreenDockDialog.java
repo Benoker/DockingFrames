@@ -36,6 +36,7 @@ import javax.swing.JRootPane;
 
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.station.screen.ScreenDockDialog;
+import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 
 /**
  * The secure reimplementation of {@link ScreenDockDialog}.
@@ -102,6 +103,15 @@ public class SecureScreenDockDialog extends SecureAbstractScreenDockWindow {
     protected void updateTitleText() {
         dialog.setTitle( getTitleText() );
     }
+    
+    /**
+     * Gets the dialog which is used by this {@link ScreenDockWindow} to display
+     * its content.
+     * @return the dialog
+     */
+    public JDialog getDialog() {
+		return dialog;
+	}
     
     /**
      * A listener to the enclosing {@link SecureScreenDockDialog}. If the dialog
