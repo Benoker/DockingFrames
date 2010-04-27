@@ -619,8 +619,19 @@ public class ScreenDockStation extends AbstractDockStation {
 
     public DockableProperty getDockableProperty( Dockable dockable, Dockable ignored ) {
         ScreenDockWindow window = getWindow( dockable );
-        Rectangle bounds = window.getWindowBounds();
-        return new ScreenDockProperty( bounds.x, bounds.y, bounds.width, bounds.height );
+        Rectangle bounds;
+        boolean fullscreen = window.isFullscreen();
+        
+        if( fullscreen ){
+        	bounds = window.getNormalBounds();
+        	if( bounds == null ){
+        		bounds = window.getWindowBounds();
+        	}
+        }
+        else{
+        	bounds = window.getWindowBounds();
+        }
+        return new ScreenDockProperty( bounds.x, bounds.y, bounds.width, bounds.height, fullscreen );
     }
     
     /**
@@ -646,6 +657,20 @@ public class ScreenDockStation extends AbstractDockStation {
         return dockables.get( index );
     }
 
+    /**
+     * Gets a list of all children of this station that are currently in fullscreen mode.
+     * @return a list of children, not <code>null</code>
+     */
+	public Dockable[] getFullscreenChildren() {
+		List<Dockable> result = new ArrayList<Dockable>();
+		for( ScreenDockWindow window : dockables ){
+			if( window.isFullscreen() ){
+				result.add( window.getDockable() );
+			}
+		}
+		return result.toArray( new Dockable[ result.size() ] );
+	}
+    
     /**
      * Tells whether <code>dockable</code> is currently shown in fullscreen mode.
      * @param dockable the element to check
@@ -919,6 +944,18 @@ public class ScreenDockStation extends AbstractDockStation {
                 addDockable( dockable, new Rectangle( x, y, width, height ), boundsIncludeWindow );
                 done = true;
             }
+        }
+        
+        if( done && property.isFullscreen() ){
+        	DockStation parent = dockable.getDockParent();
+        	while( parent != null && parent != this ){
+        		dockable = parent.asDockable();
+        		parent = dockable == null ? null : dockable.getDockParent();
+        	}
+        	
+        	if( dockable != null ){
+        		setFullscreen( dockable, true );
+        	}
         }
         
         return done;

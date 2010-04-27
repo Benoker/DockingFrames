@@ -43,6 +43,7 @@ import bibliothek.util.xml.XElement;
  */
 public class ScreenDockProperty extends AbstractDockableProperty {
     private int x, y, width, height;
+    private boolean fullscreen;
     
     public String getFactoryID() {
         return ScreenDockPropertyFactory.ID;
@@ -54,7 +55,7 @@ public class ScreenDockProperty extends AbstractDockableProperty {
     public ScreenDockProperty(){
     	// do nothing
     }
-    
+
     /**
      * Constructs a new property
      * @param x the x-coordinate of the dialog
@@ -63,25 +64,39 @@ public class ScreenDockProperty extends AbstractDockableProperty {
      * @param height the height of the dialog
      */
     public ScreenDockProperty( int x, int y, int width, int height ){
+    	this( x, y, width, height, false );
+    }
+    
+    /**
+     * Constructs a new property
+     * @param x the x-coordinate of the dialog
+     * @param y the y-coordinate of the dialog
+     * @param width the width of the dialog
+     * @param height the height of the dialog
+     * @param fullscreen if set, then the window should actually be in fullscreen mode
+     */
+    public ScreenDockProperty( int x, int y, int width, int height, boolean fullscreen ){
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
+        this.fullscreen = fullscreen;
     }
     
 
     public DockableProperty copy() {
-        ScreenDockProperty copy = new ScreenDockProperty( x, y, width, height );
+        ScreenDockProperty copy = new ScreenDockProperty( x, y, width, height, fullscreen );
         copy( copy );
         return copy;
     }
 
     public void store( DataOutputStream out ) throws IOException {
-        Version.write( out, Version.VERSION_1_0_4 );
+        Version.write( out, Version.VERSION_1_0_8 );
         out.writeInt( x );
         out.writeInt( y );
         out.writeInt( width );
         out.writeInt( height );
+        out.writeBoolean( fullscreen );
     }
     
     public void store( XElement element ) {
@@ -89,6 +104,7 @@ public class ScreenDockProperty extends AbstractDockableProperty {
         element.addElement( "y" ).setInt( y );
         element.addElement( "width" ).setInt( width );
         element.addElement( "height" ).setInt( height );
+        element.addElement( "fullscreen" ).setBoolean( fullscreen );
     }
 
     public void load( DataInputStream in ) throws IOException {
@@ -98,6 +114,10 @@ public class ScreenDockProperty extends AbstractDockableProperty {
         y = in.readInt();
         width = in.readInt();
         height = in.readInt();
+        
+        if( version.compareTo( Version.VERSION_1_0_8 ) >= 0 ){
+        	fullscreen = in.readBoolean();
+        }
     }
 
     public void load( XElement element ) {
@@ -105,6 +125,11 @@ public class ScreenDockProperty extends AbstractDockableProperty {
         y = element.getElement( "y" ).getInt();
         width = element.getElement( "width" ).getInt();
         height = element.getElement( "height" ).getInt();
+        
+        XElement xfullscreen = element.getElement( "fullscreen" );
+        if( xfullscreen != null ){
+        	fullscreen = xfullscreen.getBoolean();
+        }
     }
     
     /**
@@ -174,6 +199,22 @@ public class ScreenDockProperty extends AbstractDockableProperty {
     public void setY( int y ) {
         this.y = y;
     }
+    
+    /**
+     * Tells whether this location describes an element that is in fullscreen mode.
+     * @return the state
+     */
+    public boolean isFullscreen() {
+		return fullscreen;
+	}
+    
+    /**
+     * Sets the fullscreen mode
+     * @param fullscreen the new state
+     */
+    public void setFullscreen( boolean fullscreen ) {
+		this.fullscreen = fullscreen;
+	}
 
     @Override
     public String toString(){

@@ -102,7 +102,7 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
     	for( int i = 0, n = layout.size(); i<n; i++ ){
     		DockLayoutInfo info = children.getChild( layout.id( i ));
     		if( info != null ){
-    			ScreenDockProperty property = new ScreenDockProperty( layout.x( i ), layout.y( i ), layout.width( i ), layout.height( i ));
+    			ScreenDockProperty property = new ScreenDockProperty( layout.x( i ), layout.y( i ), layout.width( i ), layout.height( i ), layout.fullscreen( i ));
     			info.setLocation( property );
     		}
     	}
@@ -117,14 +117,25 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
             Integer id = children.get( dockable );
             if( id != null ){
                 ScreenDockWindow window = station.getWindow( i );
-                Rectangle bounds = window.getWindowBounds();
+                boolean fullscreen = window.isFullscreen();
+                Rectangle bounds;
+                if( fullscreen ){
+                	bounds = window.getNormalBounds();
+                	if( bounds == null ){
+                		bounds = window.getWindowBounds();
+                	}
+                }
+                else{
+                	bounds = window.getWindowBounds();
+                }
                 
                 layout.add( 
                         id,
                         bounds.x,
                         bounds.y, 
                         bounds.width,
-                        bounds.height );
+                        bounds.height,
+                        fullscreen );
             }
         }
         
@@ -170,7 +181,7 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
     public void write( ScreenDockStationLayout layout, DataOutputStream out )
             throws IOException {
      
-        Version.write( out, Version.VERSION_1_0_4 );
+        Version.write( out, Version.VERSION_1_0_8 );
         
         out.writeInt( layout.size() );
         for( int i = 0, n = layout.size(); i<n; i++ ){
@@ -179,12 +190,14 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
             out.writeInt( layout.y( i ) );
             out.writeInt( layout.width( i ) );
             out.writeInt( layout.height( i ) );
+            out.writeBoolean( layout.fullscreen( i ) );
         }
     }
     
     public ScreenDockStationLayout read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException{
         Version version = Version.read( in );
         version.checkCurrent();
+        boolean version8 = version.compareTo( Version.VERSION_1_0_8 ) >= 0;
         
         ScreenDockStationLayout layout = new ScreenDockStationLayout();
         int count = in.readInt();
@@ -194,7 +207,11 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
             int y = in.readInt();
             int width = in.readInt();
             int height = in.readInt();
-            layout.add( id, x, y, width, height );
+            boolean fullscreen = false;
+            if( version8 ){
+            	fullscreen = in.readBoolean();
+            }
+            layout.add( id, x, y, width, height, fullscreen );
         }
         return layout;
     }
@@ -207,6 +224,7 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
             child.addInt( "y", layout.y( i ) );
             child.addInt( "width", layout.width( i ) );
             child.addInt( "height", layout.height( i ) );
+            child.addBoolean( "fullscreen", layout.fullscreen( i ) );
         }
     }
     
@@ -218,7 +236,8 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
                     child.getInt( "x" ),
                     child.getInt( "y" ),
                     child.getInt( "width" ),
-                    child.getInt( "height" ));
+                    child.getInt( "height" ),
+                    child.attributeExists( "fullscreen" ) ? child.getBoolean( "fullscreen" ) : false );
         }
         return layout;
     }

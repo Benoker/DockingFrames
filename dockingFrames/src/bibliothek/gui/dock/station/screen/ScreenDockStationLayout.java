@@ -44,14 +44,16 @@ public class ScreenDockStationLayout {
      * @param y the y coordinate
      * @param width the width
      * @param height the height
+     * @param fullscreen whether the element is currently in fullscreen mode
      */
-    public void add( int id, int x, int y, int width, int height ){
+    public void add( int id, int x, int y, int width, int height, boolean fullscreen ){
         Entry entry = new Entry();
         entry.id = id;
         entry.x = x;
         entry.y = y;
         entry.width = width;
         entry.height = height;
+        entry.fullscreen = fullscreen;
         entries.add( entry );
     }
     
@@ -108,6 +110,15 @@ public class ScreenDockStationLayout {
         return entries.get( index ).height;
     }
     
+    /**
+     * Tells whether the element is in fullscreen mode.
+     * @param index the index of the entry
+     * @return the state
+     */
+    public boolean fullscreen( int index ){
+    	return entries.get( index ).fullscreen;
+    	
+    }
     
     /**
      * An entry of this layout
@@ -125,5 +136,7 @@ public class ScreenDockStationLayout {
         public int width;
         /** height in pixels */
         public int height;
+        /** whether the element is in fullscreen mode */
+        public boolean fullscreen;
     }
 }
