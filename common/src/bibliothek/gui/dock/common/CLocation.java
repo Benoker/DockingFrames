@@ -30,6 +30,7 @@ import bibliothek.gui.dock.common.location.CBaseLocation;
 import bibliothek.gui.dock.common.location.CExternalizedLocation;
 import bibliothek.gui.dock.common.location.CFlapIndexLocation;
 import bibliothek.gui.dock.common.location.CGridAreaLocation;
+import bibliothek.gui.dock.common.location.CMaximalExternalizedLocation;
 import bibliothek.gui.dock.common.location.CMaximizedLocation;
 import bibliothek.gui.dock.common.location.CMinimizeAreaLocation;
 import bibliothek.gui.dock.common.location.CWorkingAreaLocation;
@@ -131,6 +132,18 @@ public abstract class CLocation {
 	 */
 	public static CMaximizedLocation maximized(){
 		return new CMaximizedLocation();
+	}
+	
+	/**
+	 * Creates a location representing an element that is externalized and maximized.
+	 * @param x the x-coordinate in pixels
+	 * @param y the y-coordinate in pixels
+	 * @param width the width in pixels
+	 * @param height the height in pixels
+	 * @return the new location
+	 */
+	public static CMaximalExternalizedLocation maximized( int x, int y, int width, int height ){
+		return new CMaximalExternalizedLocation( x, y, width, height );
 	}
 	
 	/**

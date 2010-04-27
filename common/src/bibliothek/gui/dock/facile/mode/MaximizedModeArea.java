@@ -30,7 +30,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 
 /**
- * The parent of a dockable that is maximized. The {@link MaximizedMode}, which
+ * The parent of a set of dockables that are maximized. The {@link MaximizedMode}, which
  * is feed with this areas, assumes that a {@link MaximizedModeArea} is also
  * some other kind of area (e.g. a {@link NormalModeArea}).
  * @author Benjamin Sigg
@@ -79,20 +79,21 @@ public interface MaximizedModeArea extends ModeArea{
 	public void prepareApply( Dockable dockable, AffectedSet affected );
 	
 	/**
-	 * Tells this parent to show <code>dockable</code> maximized,
-	 * only one dockable may be maximized at any time.
+	 * Tells this parent to change the maximization state of <code>dockable</code>. This 
+	 * area may unmaximize other {@link Dockable}s if necessary. 
 	 * @param dockable the maximized element, <code>null</code> to indicate
 	 * that no element should be maximized.
+	 * @param maximized the new state of <code>dockable</code>
 	 * @param set this method has to store all {@link Dockable}s which might have changed their
 	 * mode in the set.
 	 */
-	public void setMaximized( Dockable dockable, AffectedSet set );
+	public void setMaximized( Dockable dockable, boolean maximized, AffectedSet set );
 	
 	/**
-	 * Gets the currently maximized element.
-	 * @return the currently maximized dockable, can be <code>null</code>
+	 * Gets the currently maximized elements.
+	 * @return the currently maximized dockables, can be <code>null</code> or empty
 	 */
-	public Dockable getMaximized();
+	public Dockable[] getMaximized();
 	
 	/**
 	 * Tells whether this area is representing <code>station</code>. It is

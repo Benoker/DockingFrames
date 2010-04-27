@@ -243,7 +243,10 @@ public class CSplitDockStationHandle{
 				maximizedMode.unmaximize( dockable, set );
 			}
 			
-			maximal.setMaximized( null, set );
+			Dockable fullscreen = getStation().getFullScreen();
+			if( fullscreen != null ){
+				maximal.setMaximized( fullscreen, false, set );
+			}
 			set.add( dockable );
 			
 			if( dockable.getDockParent() == station.getStation() ){
@@ -341,7 +344,7 @@ public class CSplitDockStationHandle{
 		                		MaximizedModeArea area = maximizedMode.get( location.getRoot() );
 		                		
 		                        if( area == this ){
-		                            area.setMaximized( null, event.getAffected() );
+		                            area.setMaximized( dockable, false, event.getAffected() );
 		                            event.done();
 		                            return null;
 		                        }
@@ -376,7 +379,7 @@ public class CSplitDockStationHandle{
 				return null;
 			
 			if( !event.getMode().getUniqueIdentifier().equals( NormalMode.IDENTIFIER )){
-				maximizedMode.unmaximize( getMaximized(), event.getAffected() );
+				maximizedMode.unmaximize( getStation().getFullScreen(), event.getAffected() );
 
 		        return new Runnable() {
 					public void run(){
@@ -395,7 +398,7 @@ public class CSplitDockStationHandle{
 		}
 		
 		public boolean isChild( Dockable dockable ){
-			return getMaximized() == dockable;
+			return getStation().getFullScreen() == dockable;
 		}
 		
 		public SplitDockStation getStation(){
@@ -406,23 +409,31 @@ public class CSplitDockStationHandle{
 			return false;
 		}
 		
-		public Dockable getMaximized(){
-			return getStation().getFullScreen();
+		public Dockable[] getMaximized(){
+			Dockable dockable = getStation().getFullScreen();
+			if( dockable == null ){
+				return null;
+			}
+			return new Dockable[]{ dockable };
 		}
 
-		public void setMaximized( Dockable dockable, AffectedSet set ){
-			if( dockable == null ){
-				getStation().setFullScreen( null );
+		public void setMaximized( Dockable dockable, boolean maximized, AffectedSet set ){
+			SplitDockStation station = getStation();
+			
+			if( !maximized ){
+				if( station.getFullScreen() != null && DockUtilities.isAncestor( station.getFullScreen(), dockable )){
+					station.setFullScreen( null );
+				}
 			}
-			else if( dockable.getDockParent() == station.getStation() ){
-				getStation().setFullScreen( dockable );
+			else if( dockable.getDockParent() == station ){
+				station.setFullScreen( dockable );
 	        }
 	        else{
 	            if( dockable.getDockParent() != null )
 	                dockable.getDockParent().drag( dockable );
 
 	            dropAside( dockable );
-	            getStation().setFullScreen( dockable );
+	            station.setFullScreen( dockable );
 	        }
 			
 			set.add( dockable );

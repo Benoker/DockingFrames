@@ -104,7 +104,6 @@ import bibliothek.gui.dock.common.layout.RequestDimension;
 import bibliothek.gui.dock.common.layout.ThemeMap;
 import bibliothek.gui.dock.common.location.CExternalizedLocation;
 import bibliothek.gui.dock.common.mode.CExternalizedMode;
-import bibliothek.gui.dock.common.mode.CExternalizedModeArea;
 import bibliothek.gui.dock.common.mode.CLocationMode;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.CMaximizedMode;
@@ -647,27 +646,32 @@ public class CControl {
 
         CStation<ScreenDockStation> screenStation = new AbstractCStation<ScreenDockStation>( screen, EXTERNALIZED_STATION_ID, CExternalizedLocation.STATION ){
             private ScreenResizeRequestHandler handler = new ScreenResizeRequestHandler( screen );
-            private CExternalizedModeArea area;
+            private CScreenDockStationHandle handle;
             
             @Override
             protected void install( CControlAccess access ) {
                 access.getOwner().addResizeRequestListener( handler );
                 
-                if( area == null ){
-                	area = new CScreenDockStationHandle( this );
+                if( handle == null ){
+                	handle = new CScreenDockStationHandle( this );
                 }
                 
-                CExternalizedMode mode = access.getLocationManager().getExternalizedMode();
-                mode.add( area );
-                if( mode.getDefaultArea() == null ){
-                	mode.setDefaultArea( area );
+                CExternalizedMode externalizedMode = access.getLocationManager().getExternalizedMode();
+                CMaximizedMode maximizedMode = access.getLocationManager().getMaximizedMode();
+                
+                externalizedMode.add( handle.getExternalizedModeArea() );
+                if( externalizedMode.getDefaultArea() == null ){
+                	externalizedMode.setDefaultArea( handle.getExternalizedModeArea() );
                 }
+                
+                maximizedMode.add( handle.getMaximizedModeArea() );
             }
             @Override
             protected void uninstall( CControlAccess access ) {
                 access.getOwner().removeResizeRequestListener( handler );
-                CExternalizedMode mode = access.getLocationManager().getExternalizedMode();
-                mode.remove( area.getUniqueId() );
+                
+                access.getLocationManager().getExternalizedMode().remove( handle.getExternalizedModeArea().getUniqueId() );
+                access.getLocationManager().getMaximizedMode().remove( handle.getMaximizedModeArea().getUniqueId() );
             }
         };
 

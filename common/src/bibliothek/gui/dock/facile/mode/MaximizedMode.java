@@ -248,7 +248,7 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 			getManager().store( dockable );
 		}
 
-		area.setMaximized( maximizing, set );
+		area.setMaximized( maximizing, true, set );
 		set.add( maximizing );
 	}
 
@@ -263,43 +263,49 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	public void unmaximize( Dockable dockable, AffectedSet set ){
 		final MaximizedModeArea area = getMaximizeArea( dockable );
 		if( area != null && area.getMaximized() != null ){
-			if( DockUtilities.isAncestor( area.getMaximized(), dockable )){
-				set.add( dockable );
-				dockable = area.getMaximized();
-				final Dockable element = dockable;
-				
-				final LocationModeManager<?> manager = getManager();
-				manager.runTransaction( new AffectingRunnable() {
-					public void run( AffectedSet set ){
-						boolean known = manager.isRegistered( element );
-
-						area.setMaximized( null, set );
-
-						String key = area.getUniqueId();
-						boolean done = false;
-
-						// try to apply the last mode
-						if( lastMaximizedLocation.get( key ) != null ){
-							done = true;
-							done = getManager().apply( 
-									element,
-									lastMaximizedMode.remove( key ),
-									lastMaximizedLocation.remove( key ),
-									set );
-						}
-
-						if( known ){
-							if( !done ){
-								LocationMode mode = manager.getPreviousMode( element );
-								if( mode == null || mode == MaximizedMode.this )
-									mode = manager.getMode( NormalMode.IDENTIFIER );
-								manager.apply( element, mode.getUniqueIdentifier(), set, true );
-							}			
-						}		
+			Dockable[] maximized = area.getMaximized();
+			if( maximized != null ){
+				for( Dockable check : maximized ){
+					if( DockUtilities.isAncestor( check, dockable )){
+						set.add( dockable );
+						dockable = check;
+						final Dockable element = dockable;
+	
+						final LocationModeManager<?> manager = getManager();
+						manager.runTransaction( new AffectingRunnable() {
+							public void run( AffectedSet set ){
+								boolean known = manager.isRegistered( element );
+	
+								area.setMaximized( element, false, set );
+	
+								String key = area.getUniqueId();
+								boolean done = false;
+	
+								// try to apply the last mode
+								if( lastMaximizedLocation.get( key ) != null ){
+									done = true;
+									done = getManager().apply( 
+											element,
+											lastMaximizedMode.remove( key ),
+											lastMaximizedLocation.remove( key ),
+											set );
+								}
+	
+								if( known ){
+									if( !done ){
+										LocationMode mode = manager.getPreviousMode( element );
+										if( mode == null || mode == MaximizedMode.this )
+											mode = manager.getMode( NormalMode.IDENTIFIER );
+										manager.apply( element, mode.getUniqueIdentifier(), set, true );
+									}			
+								}		
+							}
+						}, true );
+	
+						manager.store( dockable );
+						return;
 					}
-				}, true );
-				
-				manager.store( dockable );
+				}
 			}
 		}
 	}
@@ -336,9 +342,11 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	public void unmaximize( DockStation station, AffectedSet affected ){
 		MaximizedModeArea area = getNextMaximizeArea( station );
 		if( area != null ){
-			Dockable dockable = area.getMaximized();
-			if( dockable != null ){
-				unmaximize( dockable, affected );
+			Dockable[] dockables = area.getMaximized();
+			if( dockables != null ){
+				for( Dockable dockable : dockables ){
+					unmaximize( dockable, affected );
+				}
 			}
 		}
 	}
@@ -349,10 +357,11 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	 * @param affected the element whose mode might change
 	 */
 	public void unmaximize( MaximizedModeArea area, AffectedSet affected ){
-		Dockable dockable = area.getMaximized();
-		if( dockable != null ){
-			unmaximize( dockable, affected );
-			return;
+		Dockable[] dockables = area.getMaximized();
+		if( dockables != null ){
+			for( Dockable dockable : dockables ){
+				unmaximize( dockable, affected );
+			}
 		}
 	}
 
@@ -367,10 +376,13 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 				while( parent != null ){
 					MaximizedModeArea area = getMaximizeArea( parent );
 					if( area != null ){
-						Dockable maximized = area.getMaximized();
-
-						if( maximized != null && maximized != mutableDockable && maximized != element ){
-							unmaximize( area.getMaximized(), set );
+						Dockable[] maximized = area.getMaximized();
+						if( maximized != null ){
+							for( Dockable check : maximized ){
+								if( maximized != null && check != mutableDockable && check != element ){
+									unmaximize( check, set );
+								}	
+							}
 						}
 					}
 
@@ -482,12 +494,19 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 		if( maxiarea == null )
 			return;
 
-		Dockable maximizedNow = maxiarea.getMaximized();
+		Dockable[] maximizedNow = maxiarea.getMaximized();
 		if( maximizedNow == null )
 			return;
 
-		Dockable maximized = maximizedNow == null ? null : getMaximizingElement( maximizedNow, dockable );
-
+		Dockable maximized = null;
+		
+		for( int i = 0; i < maximizedNow.length; i++ ){
+			if( DockUtilities.isAncestor( maximizedNow[i], dockable  )){
+				maximized = getMaximizingElement( maximizedNow[i], dockable );
+				break;
+			}
+		}
+		
 		Runnable run = maxiarea.onApply( event, maximized );
 		if( run != null ){
 			runs.add( run );

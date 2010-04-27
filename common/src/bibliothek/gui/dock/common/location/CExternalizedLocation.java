@@ -50,7 +50,13 @@ public class CExternalizedLocation extends AbstractStackholdingLocation{
         public CLocation expandProperty( DockableProperty property ) {
             if( property instanceof ScreenDockProperty ){
                 ScreenDockProperty screen = (ScreenDockProperty)property;
-                CLocation location = new CExternalizedLocation( screen.getX(), screen.getY(), screen.getWidth(), screen.getHeight() );
+                CLocation location;
+                if( screen.isFullscreen() ){
+                	location = new CMaximalExternalizedLocation( screen.getX(), screen.getY(), screen.getWidth(), screen.getHeight() );
+                }
+                else {
+                	location = new CExternalizedLocation( screen.getX(), screen.getY(), screen.getWidth(), screen.getHeight() );
+                }
                 DockableProperty successor = property.getSuccessor();
                 if( successor != null )
                     location = location.expandProperty( successor );
@@ -110,9 +116,17 @@ public class CExternalizedLocation extends AbstractStackholdingLocation{
 	
 	@Override
 	public DockableProperty findProperty( DockableProperty successor ){
-		ScreenDockProperty screen = new ScreenDockProperty( x, y, width, height );
+		ScreenDockProperty screen = new ScreenDockProperty( x, y, width, height, false );
 		screen.setSuccessor( successor );
 		return screen;
+	}
+	
+	/**
+	 * Returns a location describing an element with the coordinates of this
+	 * location but that was maximized.
+	 */
+	public CMaximalExternalizedLocation maximize(){
+		return new CMaximalExternalizedLocation( x, y, width, height );
 	}
 	
 	@Override
@@ -123,5 +137,37 @@ public class CExternalizedLocation extends AbstractStackholdingLocation{
 	@Override
 	public String toString() {
 	    return "[externalized " + x + " " + y + " " + width + " " + height + "]";
+	}
+	
+	/**
+	 * Gets the left end of the element.
+	 * @return the x coordinate
+	 */
+	public int getX() {
+		return x;
+	}
+	
+	/**
+	 * Gets the top end of the element.
+	 * @return the y coordinate
+	 */
+	public int getY() {
+		return y;
+	}
+	
+	/**
+	 * Gets the width of the element.
+	 * @return the width
+	 */
+	public int getWidth() {
+		return width;
+	}
+	
+	/**
+	 * Gets the height of the element.
+	 * @return the height
+	 */
+	public int getHeight() {
+		return height;
 	}
 }
