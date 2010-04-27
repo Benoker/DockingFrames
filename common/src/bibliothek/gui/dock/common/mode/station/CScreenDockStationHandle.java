@@ -30,6 +30,7 @@ import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.mode.CExternalizedModeArea;
+import bibliothek.gui.dock.common.mode.CMaximizedModeArea;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.station.ScreenDockStationHandle;
 import bibliothek.gui.dock.layout.DockableProperty;

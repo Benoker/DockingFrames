@@ -295,3 +295,4 @@
 - Bugfix: Tabs with unequal height were positioned strangely
 - Bugfix: Popup menus are now enabled for tabs on a DefaultStackDockComponent
 - API: A StackDockStation with only one child can still show a tab depending on the type of StackDockComponent
+- API: ScreenDockStation now supports fullscreen mode for its children. What "fullscreen" means can be influenced by a ScreenDockFullscreenStrategy.

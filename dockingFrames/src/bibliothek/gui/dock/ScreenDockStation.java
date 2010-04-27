@@ -32,6 +32,7 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +49,7 @@ import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.LocationHint;
+import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.AbstractDockStation;
 import bibliothek.gui.dock.station.Combiner;
@@ -116,6 +118,10 @@ public class ScreenDockStation extends AbstractDockStation {
 						return new DefaultScreenDockFullscreenStrategy();
 					}
     			}, true );
+    
+    /** global setting to change the effect happening on a double click */
+    public static final PropertyKey<Boolean> EXPAND_ON_DOUBLE_CLICK =
+    	new PropertyKey<Boolean>( "ScreenDockStation.double_click_fullscreen", new ConstantPropertyFactory<Boolean>( true ), true );
     
     /** The visibility state of the windows */
     private boolean showing = false;
@@ -203,6 +209,48 @@ public class ScreenDockStation extends AbstractDockStation {
 				}
 			}
 		};
+		
+	/** whether the children of this station expand on double click to fullscreen */
+	private PropertyValue<Boolean> expandOnDoubleClick =
+		new PropertyValue<Boolean>( EXPAND_ON_DOUBLE_CLICK ){
+			@Override
+			protected void valueChanged( Boolean oldValue, Boolean newValue ){
+				if( oldValue.booleanValue() != newValue.booleanValue() ){	
+					DockController controller = getController();
+					if( controller != null ){
+						if( newValue ){
+							controller.getDoubleClickController().addListener( doubleClickListener );
+						}
+						else{
+							controller.getDoubleClickController().removeListener( doubleClickListener );
+						}
+					}
+				}
+			}
+		};
+		
+	/** monitors the children of this station and reacts on double clicks by changing their fullscreen state */
+	private DoubleClickListener doubleClickListener = new DoubleClickListener() {
+		public DockElement getTreeLocation(){
+			return ScreenDockStation.this;
+		}
+		
+		public boolean process( Dockable dockable, MouseEvent event ){
+			if( dockable != ScreenDockStation.this ){
+				DockStation parent = dockable.getDockParent();
+				while( parent != null && parent != ScreenDockStation.this ){
+					dockable = parent.asDockable();
+					parent = dockable == null ? null : dockable.getDockParent();
+				}
+				if( parent == ScreenDockStation.this ){
+					boolean state = isFullscreen( dockable );
+					setFullscreen( dockable, !state );
+					return true;
+				}
+			}
+			return false;
+		}
+	};
     
     /**
      * Constructs a new <code>ScreenDockStation</code>.
@@ -369,12 +417,22 @@ public class ScreenDockStation extends AbstractDockStation {
     
     @Override
     public void setController( DockController controller ) {
+    	DockController old = getController();
+    	if( old != null ){
+    		if( expandOnDoubleClick.getValue() ){
+    			old.getDoubleClickController().removeListener( doubleClickListener );
+    		}
+    	}
+    	
         version = null;
         super.setController( controller );
         displayers.setController( controller );
         
         if( controller != null ){
             version = controller.getDockTitleManager().getVersion( TITLE_ID, ControllerTitleFactory.INSTANCE );
+            if( expandOnDoubleClick.getValue() ){
+            	controller.getDoubleClickController().addListener( doubleClickListener );
+            }
         }
         
         restriction.setProperties( controller );
@@ -614,6 +672,32 @@ public class ScreenDockStation extends AbstractDockStation {
     		throw new IllegalArgumentException( "dockable is not known to this station" );
     	}
     	window.setFullscreen( fullscreen );
+    }
+    
+    /**
+     * Tells this station what to do on a double click on a child. If set
+     * to <code>true</code>, then the childs fullscreen mode gets changed.
+     * @param expand whether to react on double clicks
+     */
+    public void setExpandOnDoubleClick( boolean expand ){
+    	expandOnDoubleClick.setValue( expand );
+    }
+    
+    /**
+     * Resets the expand-on-double-click property to its default value.
+     * @see #setExpandOnDoubleClick(boolean)
+     */
+    public void clearExpandOnDoubleClick(){
+    	expandOnDoubleClick.setValue( null );
+    }
+    
+    /**
+     * Tells whether children change their fullscreen mode if
+     * the user double clicks on them.
+     * @return the state
+     */
+    public boolean isExpandOnDoubleClick(){
+    	return expandOnDoubleClick.getValue();
     }
     
     public boolean prepareMove( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {

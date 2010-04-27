@@ -115,5 +115,4 @@ public class ScreenDockStationHandle implements ExternalizedModeArea{
 	public boolean isChild( Dockable dockable ){
 		return dockable.getDockParent() == station;
 	}
-
 }
