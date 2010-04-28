@@ -863,13 +863,13 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
         @Override
         public void windowActivated( WindowEvent e ){
             updateBorder();
-            repaint();
+            updateFocus();
         }
         
         @Override
         public void windowDeactivated( WindowEvent e ){
             updateBorder();
-            repaint();
+            updateFocus();
         }
     }
 }
