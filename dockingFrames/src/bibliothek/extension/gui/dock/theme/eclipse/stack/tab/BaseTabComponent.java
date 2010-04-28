@@ -268,6 +268,11 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
     protected abstract void updateSelected();
     
     /**
+     * Called when the colors of this tab changed.
+     */
+    protected abstract void updateColors();
+    
+    /**
      * Called when the {@link #doPaintIconWhenInactive() paint icon property} of
      * this component changed.
      */
@@ -814,7 +819,7 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
         }
         @Override
         protected void changed( Color oldColor, Color newColor ) {
-            repaint();
+            updateColors();
         }
     }
 

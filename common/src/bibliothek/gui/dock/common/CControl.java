@@ -1437,13 +1437,6 @@ public class CControl {
             register.removeSingleDockable( dockable );
             dockable.setControl( null );
 
-            if( !missingStrategy.shouldStoreSingle( dockable.getUniqueId() ) && register.getBackupFactory().getFactory( dockable.getUniqueId() ) == null ){
-                locationManager.remove( dockable.intern() );
-            }
-            else{
-                locationManager.reduceToEmpty( dockable.intern() );
-            }
-
             for( CControlListener listener : listeners() )
                 listener.removed( CControl.this, dockable );
 
@@ -1651,10 +1644,15 @@ public class CControl {
     }
 
     private boolean shouldStore( String id ){
-        if( register.isSingleId( id ))
+        if( register.isSingleId( id )){
+        	if( register.getBackupFactory().getFactory( register.singleToNormalId( id ) ) != null ){
+        		return true;
+        	}
             return missingStrategy.shouldStoreSingle( register.singleToNormalId( id ) );
-        else
+        }
+        else{
             return missingStrategy.shouldStoreMulti( register.multiToNormalId( id ) );
+        }
     }    
     
     private String shouldStore( CDockable dockable ){

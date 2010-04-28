@@ -182,6 +182,11 @@ public class ArchGradientPainter extends BaseTabComponent {
 		updateFont();
 	}
 	
+	@Override
+	protected void updateColors(){
+		update();	
+	}
+	
 	/**
 	 * Updates the layout information of this painter.
 	 */

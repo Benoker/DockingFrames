@@ -109,6 +109,11 @@ public class RectGradientPainter extends BaseTabComponent {
 	}
 	
 	@Override
+	protected void updateColors(){
+		update();
+	}
+	
+	@Override
 	public Dimension getMinimumSize(){
 		return getPreferredSize();
 	}

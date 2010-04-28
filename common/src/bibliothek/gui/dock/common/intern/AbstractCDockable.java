@@ -560,6 +560,13 @@ public abstract class AbstractCDockable implements CDockable {
     		return;
     	
         if( this.control != null ){
+        	if( this.control.shouldStore( this ) == null ){
+        		this.control.getLocationManager().remove( intern() );
+        	}
+        	else{
+        		this.control.getLocationManager().reduceToEmpty( intern() );
+        	}
+        	
             this.control.getLocationManager().remove( intern() );
             this.control.link( this, null );
             if( vetoClosingListenerConverter != null ){
@@ -615,6 +622,7 @@ public abstract class AbstractCDockable implements CDockable {
 	                	}
 	                	
 	                    uniqueId = id;
+	                    
 	                    if( AbstractCDockable.this.control != null && id != null ){
 	                        CLocationModeManager manager = AbstractCDockable.this.control.getLocationManager();
 	                        manager.put( uniqueId, intern() );

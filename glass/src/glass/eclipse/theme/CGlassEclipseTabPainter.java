@@ -218,6 +218,11 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
       updateBorder();
       updateFont();
    }
+   
+   @Override
+   protected void updateColors(){
+	   update();
+   }
 
    /**
     * Updates the layout information of this painter.
