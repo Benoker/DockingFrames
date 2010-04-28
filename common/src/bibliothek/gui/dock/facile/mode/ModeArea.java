@@ -73,6 +73,12 @@ public interface ModeArea {
 	public void setController( DockController controller );
 	
 	/**
+	 * Informs this area about the mode that uses it.
+	 * @param mode the owner of this area, can be <code>null</code>
+	 */
+	public void setMode( LocationMode mode );
+	
+	/**
 	 * Adds a listener to this area.
 	 * @param listener the new listener
 	 */

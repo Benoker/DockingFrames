@@ -36,13 +36,6 @@ import bibliothek.gui.dock.support.mode.AffectedSet;
  * @author Benjamin Sigg
  */
 public interface MaximizedModeArea extends ModeArea{
-	/**
-	 * Informs this area that it is now managed by <code>mode</code>.
-	 * @param mode the new mode, can be <code>null</code> to inform this
-	 * area that it is no longer managed
-	 * @throws IllegalStateException if already connected
-	 */
-	public void connect( MaximizedMode<? extends MaximizedModeArea> mode );
 	
 	/**
 	 * This method is called before the method {@link LocationMode#apply(Dockable, Location, AffectedSet) apply}
@@ -102,4 +95,10 @@ public interface MaximizedModeArea extends ModeArea{
 	 * @return <code>true</code> if this represents <code>station</code>
 	 */
 	public boolean isRepresenting( DockStation station );
+	
+	/**
+	 * Tells which mode would be the preferred mode for unmaximization.
+	 * @return the preferred unmaximized mode, can be <code>null</code>
+	 */
+	public LocationMode getUnmaximizedMode();
 }

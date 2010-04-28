@@ -166,6 +166,7 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 			throw new IllegalArgumentException( "key '" + key + "' already in use" );
 		
 		area.setController( getController() );
+		area.setMode( this );
 		areas.put( key, area );
 		areaOrder.add( area );
 		
@@ -187,6 +188,7 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 		}
 		if( area != null ){
 			area.setController( null );
+			area.setMode( null );
 			area.removeModeAreaListener( modeAreaListener );
 			areaOrder.remove( area );
 		}

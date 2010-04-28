@@ -92,8 +92,12 @@ public class KeyedLocationModeActionProvider extends DefaultLocationModeActionPr
 	}
 	
 	public DockActionSource getActions( Dockable dockable, Mode<Location> currentMode, DockActionSource currentSource ){
-		if( currentSource instanceof KeyedActionSource )
-			return currentSource;
+		if( currentSource instanceof KeyedActionSource ){
+			if( ((KeyedActionSource)currentSource).getKey().equals( key )){
+				return currentSource;
+			}
+		}
+			
 		
 		if( dockable instanceof CommonDockable ){
 			CDockable cdockable = ((CommonDockable)dockable).getDockable();
@@ -109,9 +113,8 @@ public class KeyedLocationModeActionProvider extends DefaultLocationModeActionPr
 	}
 	
 	public void destroy( Dockable dockable, DockActionSource source ){
-		if( source instanceof KeyedActionSource ){
+		if( sources.remove( source )){
 			((KeyedActionSource)source).destroy();
-			sources.remove( source );
 		}
 	}
 }

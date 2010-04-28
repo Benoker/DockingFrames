@@ -85,12 +85,14 @@ public class EfficientControlFactory implements CControlFactory {
 	}
 
 	public ScreenDockStation createScreenDockStation( WindowProvider owner ) {
-		return new ScreenDockStation( owner ){
+		ScreenDockStation result = new ScreenDockStation( owner ){
 			@Override
 			protected ListeningDockAction createFullscreenAction(){
 				return null;
 			}
 		};
+		result.setExpandOnDoubleClick( false );
+		return result;
 	}
 
 	public SplitDockStation createSplitDockStation(){

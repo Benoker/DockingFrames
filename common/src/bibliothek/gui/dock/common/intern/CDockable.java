@@ -80,6 +80,20 @@ public interface CDockable {
      * with an argument of {@link ExtendedMode#EXTERNALIZED}.
      */
 	public static final String ACTION_KEY_EXTERNALIZE = "cdockable.externalize";
+	
+	/**
+	 * Key for an action of {@link #getAction(String)}. The action behind this
+	 * key should call {@link #setExtendedMode(ExtendedMode)} with
+	 * an argument of {@link ExtendedMode#NORMALIZED}.
+	 */
+	public static final String ACTION_KEY_UNEXTERNALIZE = "cdockable.unexternalize";
+	
+	/**
+	 * Key for an action of {@link #getAction(String)}. The action behind this
+	 * key should call {@link #setExtendedMode(ExtendedMode)} with
+	 * an argument of {@link ExtendedMode#EXTERNALIZED}.
+	 */
+	public static final String ACTION_KEY_UNMAXIMIZE_EXTERNALIZED = "cdockable.unmaximize_externalized";
 
 	/**
 	 * Key for an action of {@link #getAction(String)}. The action behind this

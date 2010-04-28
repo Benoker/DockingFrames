@@ -98,6 +98,14 @@ public class KeyedActionSource extends AbstractDockActionSource {
 		this.key = key;
 	}
 	
+	/**
+	 * Gets the key which is used for calling {@link CDockable#getAction(String)}
+	 * @return the key, not <code>null</code>
+	 */
+	public String getKey(){
+		return key;
+	}
+	
 	@Override
 	public void addDockActionSourceListener( DockActionSourceListener listener ){
 		super.addDockActionSourceListener( listener );

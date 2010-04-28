@@ -85,12 +85,14 @@ public class SecureControlFactory extends EfficientControlFactory implements CCo
 
 	@Override
 	public ScreenDockStation createScreenDockStation( WindowProvider owner ) {
-		return new SecureScreenDockStation( owner ){
+		ScreenDockStation station = new SecureScreenDockStation( owner ){
 			@Override
 			protected ListeningDockAction createFullscreenAction(){
 				return null;
 			}
 		};
+		station.setExpandOnDoubleClick( false );
+		return station;
 	}
 
 	@Override

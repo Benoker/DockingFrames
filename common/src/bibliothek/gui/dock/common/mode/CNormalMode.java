@@ -26,26 +26,49 @@
 package bibliothek.gui.dock.common.mode;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.action.predefined.CNormalizeAction;
+import bibliothek.gui.dock.common.action.predefined.CUnexternalizeAction;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.facile.mode.Location;
+import bibliothek.gui.dock.facile.mode.LocationModeActionProvider;
+import bibliothek.gui.dock.facile.mode.MappingLocationModeActionProvider;
 import bibliothek.gui.dock.facile.mode.NormalMode;
+import bibliothek.gui.dock.support.mode.Mode;
 
 /**
  * A mode managing {@link CNormalModeArea}s.
  * @author Benjamin Sigg
  */
 public class CNormalMode extends NormalMode<CNormalModeArea> implements CLocationMode{
+	/** the default action for normalizing an element */
+	private LocationModeActionProvider normalize;
+	/** the action for normalizing an externalized element */
+	private LocationModeActionProvider unexternalize;
+	
 	/**
 	 * Creates a new mode.
 	 * @param control the owner of this mode
 	 */
 	public CNormalMode( CControl control ){
-		setActionProvider( new KeyedLocationModeActionProvider(
-				CDockable.ACTION_KEY_NORMALIZE,
-				new CNormalizeAction( control )) );
+		normalize = new KeyedLocationModeActionProvider( CDockable.ACTION_KEY_NORMALIZE, new CNormalizeAction( control ));
+		unexternalize = new KeyedLocationModeActionProvider( CDockable.ACTION_KEY_UNEXTERNALIZE, new CUnexternalizeAction( control ));
+		
+		setActionProvider( new MappingLocationModeActionProvider() {
+			protected LocationModeActionProvider getProvider( Dockable dockable, Mode<Location> currentMode, DockActionSource currentSource ){
+				if( currentMode instanceof CMaximizedMode ){
+					currentMode = ((CMaximizedMode)currentMode).getUnmaximizedMode( dockable );
+				}
+				
+				if( currentMode instanceof CExternalizedMode ){
+					return unexternalize;
+				}
+				
+				return normalize;
+			}
+		});
 	}
 	
 	public CLocation getCLocation( Dockable dockable ){
@@ -86,19 +109,5 @@ public class CNormalMode extends NormalMode<CNormalModeArea> implements CLocatio
 			return null;
 		
 		return area.getBaseLocation();
-	}
-	
-	@Override
-	protected DockableHandle createHandle( Dockable dockable ){
-		// TODO Auto-generated method stub
-		return super.createHandle( dockable );
-	}
-	
-	protected class CDockableHandle extends DockableHandle{
-
-		public CDockableHandle( Dockable dockable ){
-			super( dockable );
-		}
-		
 	}
 }

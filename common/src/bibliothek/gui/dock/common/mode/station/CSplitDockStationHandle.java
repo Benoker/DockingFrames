@@ -22,6 +22,7 @@ import bibliothek.gui.dock.event.DockRelocatorAdapter;
 import bibliothek.gui.dock.event.DockRelocatorListener;
 import bibliothek.gui.dock.event.SplitDockListener;
 import bibliothek.gui.dock.facile.mode.Location;
+import bibliothek.gui.dock.facile.mode.LocationMode;
 import bibliothek.gui.dock.facile.mode.LocationModeEvent;
 import bibliothek.gui.dock.facile.mode.MaximizedMode;
 import bibliothek.gui.dock.facile.mode.MaximizedModeArea;
@@ -48,6 +49,10 @@ public class CSplitDockStationHandle{
 	private Normal normal = new Normal();
 	/** maximized-mode */
 	private Maximal maximal = new Maximal();
+	
+	/** the mode which is accessing this handler */
+	private LocationMode normalMode;
+	
 	/** the mode which is accessing this handler */
 	private MaximizedMode<?> maximizedMode;
 	
@@ -202,6 +207,10 @@ public class CSplitDockStationHandle{
 	}
 	
 	protected class Normal implements CNormalModeArea{
+		public void setMode( LocationMode mode ){
+			normalMode = mode;	
+		}
+		
 		public void addModeAreaListener( ModeAreaListener listener ){
 			add( new ModeAreaListenerWrapper( this, listener ) );
 		}
@@ -299,10 +308,10 @@ public class CSplitDockStationHandle{
 			remove(  new ModeAreaListenerWrapper( this, listener ) );	
 		}
 		
-		public void connect( MaximizedMode<?> mode ){
+		public void setMode( LocationMode mode ){
 			if( maximizedMode != null )
 				throw new IllegalStateException( "handle already in use" );
-			maximizedMode = mode;
+			maximizedMode = (MaximizedMode<?>)mode;
 		}
 		
 		public void setController( DockController controller ){
@@ -313,6 +322,10 @@ public class CSplitDockStationHandle{
 			if( controller != null ){
 				controller.getRelocator().addDockRelocatorListener( relocatorListener );
 			}
+		}
+		
+		public LocationMode getUnmaximizedMode(){
+			return normalMode;
 		}
 		
 		public void prepareApply( Dockable dockable, AffectedSet affected ){

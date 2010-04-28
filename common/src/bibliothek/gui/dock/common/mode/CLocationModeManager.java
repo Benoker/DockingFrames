@@ -65,7 +65,10 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
     public static final String ICON_MANAGER_KEY_NORMALIZE = "locationmanager.normalize";
     /** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "externalize"-action */
     public static final String ICON_MANAGER_KEY_EXTERNALIZE = "locationmanager.externalize";
-    
+    /** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "unexternalize"-action */
+    public static final String ICON_MANAGER_KEY_UNEXTERNALIZE = "locationmanager.unexternalize";
+    /** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "unmaximize externalized"-action */
+    public static final String ICON_MANAGER_KEY_UNMAXIMIZE_EXTERNALIZED = "locationmanager.unmaximize_externalized";
     
 	private CControlAccess control;
 	
@@ -99,6 +102,8 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
         icons.setIconDefault( ICON_MANAGER_KEY_MINIMIZE, Resources.getIcon( "minimize" ) );
         icons.setIconDefault( ICON_MANAGER_KEY_NORMALIZE, Resources.getIcon( "normalize" ) );
         icons.setIconDefault( ICON_MANAGER_KEY_EXTERNALIZE, Resources.getIcon( "externalize" ) );
+        icons.setIconDefault( ICON_MANAGER_KEY_UNEXTERNALIZE, Resources.getIcon( "unexternalize" ) );
+        icons.setIconDefault( ICON_MANAGER_KEY_UNMAXIMIZE_EXTERNALIZED, Resources.getIcon( "unmaximize_externalized" ) );
 	}
 	
 	/**

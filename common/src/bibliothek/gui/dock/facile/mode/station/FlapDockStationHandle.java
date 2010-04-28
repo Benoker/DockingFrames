@@ -28,6 +28,7 @@ package bibliothek.gui.dock.facile.mode.station;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.facile.mode.LocationMode;
 import bibliothek.gui.dock.facile.mode.MinimizedModeArea;
 import bibliothek.gui.dock.facile.mode.ModeAreaListener;
 import bibliothek.gui.dock.layout.DockableProperty;
@@ -70,6 +71,10 @@ public class FlapDockStationHandle implements MinimizedModeArea{
 	}
 	
 	public void setController( DockController controller ){
+		// ignore	
+	}
+	
+	public void setMode( LocationMode mode ){
 		// ignore	
 	}
 	

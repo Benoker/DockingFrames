@@ -142,21 +142,6 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 		super.setManager( manager );
 	}
 
-	@Override
-	public void add( M area ){
-		super.add( area );
-		area.connect( this );
-	}
-
-	@Override
-	public M remove( String key ){
-		M area = super.remove( key );
-		if( area != null ){
-			area.connect( null );
-		}
-		return area;
-	}
-
 	/**
 	 * Sets the maximize behavior which determines what {@link Dockable} to 
 	 * maximize when hitting the maximize-button.<br>
@@ -215,6 +200,21 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 
 	public boolean isDefaultMode( Dockable dockable ){
 		return false;
+	}
+	
+	/**
+	 * Assuming <code>dockable</code> is a maximized element, tells which
+	 * mode would be the preferred mode for unmaximization.
+	 * @param dockable some child
+	 * @return the preferred unmaximized mode, can be <code>null</code>
+	 */
+	public LocationMode getUnmaximizedMode( Dockable dockable ){
+		for( MaximizedModeArea area : this ){
+			if( area.isChild( dockable ) ){
+				return area.getUnmaximizedMode();
+			}
+		}
+		return null;
 	}
 
 	/**

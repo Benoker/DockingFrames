@@ -26,26 +26,47 @@
 package bibliothek.gui.dock.common.mode;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.action.predefined.CExternalizeAction;
+import bibliothek.gui.dock.common.action.predefined.CUnmaximizeExternalizedAction;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.facile.mode.ExternalizedMode;
 import bibliothek.gui.dock.facile.mode.Location;
+import bibliothek.gui.dock.facile.mode.LocationModeActionProvider;
+import bibliothek.gui.dock.facile.mode.MappingLocationModeActionProvider;
+import bibliothek.gui.dock.support.mode.Mode;
 
 /**
  * Manages areas on which externalized dockables are shown.
  * @author Benjamin Sigg
  */
 public class CExternalizedMode extends ExternalizedMode<CExternalizedModeArea> implements CLocationMode {
+	/** actions to externalize an element */
+	private LocationModeActionProvider externalize;
+	
+	/** actions to unmaximize an element */
+	private LocationModeActionProvider unmaximize;
+	
 	/**
 	 * Creates a new mode.
 	 * @param control the owner of this mode
 	 */
 	public CExternalizedMode( CControl control ){
-		setActionProvider( new KeyedLocationModeActionProvider(
-				CDockable.ACTION_KEY_EXTERNALIZE,
-				new CExternalizeAction( control )) );
+		externalize = new KeyedLocationModeActionProvider( CDockable.ACTION_KEY_EXTERNALIZE, new CExternalizeAction( control ));
+		unmaximize = new KeyedLocationModeActionProvider( CDockable.ACTION_KEY_UNMAXIMIZE_EXTERNALIZED, new CUnmaximizeExternalizedAction( control ));
+		
+		setActionProvider( new MappingLocationModeActionProvider() {
+			protected LocationModeActionProvider getProvider( Dockable dockable, Mode<Location> currentMode, DockActionSource currentSource ){
+				if( currentMode instanceof CMaximizedMode ){
+					if( ((CMaximizedMode)currentMode).getUnmaximizedMode( dockable ) instanceof CExternalizedMode ){
+						return unmaximize;
+					}
+				}
+				return externalize;
+			}
+		});
 	}
 
 	public CLocation getCLocation( Dockable dockable ){

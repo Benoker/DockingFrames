@@ -39,9 +39,8 @@ import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.mode.CExternalizedModeArea;
 import bibliothek.gui.dock.common.mode.CMaximizedModeArea;
 import bibliothek.gui.dock.facile.mode.Location;
+import bibliothek.gui.dock.facile.mode.LocationMode;
 import bibliothek.gui.dock.facile.mode.LocationModeEvent;
-import bibliothek.gui.dock.facile.mode.MaximizedMode;
-import bibliothek.gui.dock.facile.mode.MaximizedModeArea;
 import bibliothek.gui.dock.facile.mode.ModeArea;
 import bibliothek.gui.dock.facile.mode.ModeAreaListener;
 import bibliothek.gui.dock.layout.DockableProperty;
@@ -66,6 +65,9 @@ public class CScreenDockStationHandle {
 	
 	/** Representation of this as {@link CMaximizedModeArea} */
 	private Maximal maximal = new Maximal();
+	
+	/** the mode owning {@link #external} */
+	private LocationMode externalMode;
 	
 	/**
 	 * Creates a new handle
@@ -209,6 +211,10 @@ public class CScreenDockStationHandle {
 		public void setController( DockController controller ) {
 			// ignore
 		}
+		
+		public void setMode( LocationMode mode ){
+			externalMode = mode;	
+		}
 
 		public CLocation getCLocation( Dockable dockable ) {
 			return CScreenDockStationHandle.this.getCLocation( dockable );
@@ -225,10 +231,6 @@ public class CScreenDockStationHandle {
 	 */
 	protected class Maximal implements CMaximizedModeArea{
 		private List<ModeAreaListener> listeners = new ArrayList<ModeAreaListener>();
-		
-		public void connect( MaximizedMode<? extends MaximizedModeArea> mode ) {
-			// ignore
-		}
 
 		public Dockable[] getMaximized() {
 			return station.getStation().getFullscreenChildren();
@@ -248,6 +250,10 @@ public class CScreenDockStationHandle {
 
 		public void prepareApply( Dockable dockable, AffectedSet affected ) {
 			// ignore
+		}
+		
+		public LocationMode getUnmaximizedMode(){
+			return externalMode;
 		}
 
 		public void setMaximized( Dockable dockable, boolean maximized, AffectedSet set ) {
@@ -300,6 +306,10 @@ public class CScreenDockStationHandle {
 
 		public void setController( DockController controller ) {
 			// ignore
+		}
+		
+		public void setMode( LocationMode mode ){
+			// ignore	
 		}
 
 		public CLocation getCLocation( Dockable dockable ) {

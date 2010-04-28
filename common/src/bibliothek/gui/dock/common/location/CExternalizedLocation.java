@@ -124,6 +124,7 @@ public class CExternalizedLocation extends AbstractStackholdingLocation{
 	/**
 	 * Returns a location describing an element with the coordinates of this
 	 * location but that was maximized.
+	 * @return the maximized version of this location
 	 */
 	public CMaximalExternalizedLocation maximize(){
 		return new CMaximalExternalizedLocation( x, y, width, height );
