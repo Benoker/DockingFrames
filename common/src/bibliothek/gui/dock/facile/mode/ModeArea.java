@@ -45,6 +45,13 @@ public interface ModeArea {
 	public String getUniqueId();
 	
 	/**
+	 * Tells whether this {@link ModeArea} can automatically become
+	 * the default area of some mode.
+	 * @return <code>true</code> if this can be a default area, <code>false</code> if not
+	 */
+	public boolean autoDefaultArea();
+	
+	/**
 	 * Tells whether <code>dockable</code> is a direct child of this station.
 	 * @param dockable some element
 	 * @return <code>true</code> if and only if the parent of <code>dockable</code>

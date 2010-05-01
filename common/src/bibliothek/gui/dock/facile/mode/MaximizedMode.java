@@ -443,17 +443,8 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	 * @return the element that must be maximized, might be <code>dockable</code>
 	 * itself, not <code>null</code>
 	 */
-	protected Dockable getMaximizingElement( Dockable dockable ){
+	public Dockable getMaximizingElement( Dockable dockable ){
 		return maximizeBehavior.getMaximizingElement( dockable );
-		
-//		DockStation station = dockable.getDockParent();
-//		if( station == null )
-//			return dockable;
-//
-//		if( !(station instanceof StackDockStation ))
-//			return dockable;
-//
-//		return station.asDockable();
 	}
 
 	/**
@@ -464,25 +455,8 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	 * @return the element which would be maximized if <code>dockable</code> is
 	 * no longer maximized, can be <code>null</code>
 	 */
-	protected Dockable getMaximizingElement( Dockable old, Dockable dockable ){
+	public Dockable getMaximizingElement( Dockable old, Dockable dockable ){
 		return maximizeBehavior.getMaximizingElement( old, dockable );
-		
-//		if( old == dockable )
-//			return null;
-//
-//		if( old instanceof DockStation ){
-//			DockStation station = (DockStation)old;
-//			if( station.getDockableCount() == 2 ){
-//				if( station.getDockable( 0 ) == dockable )
-//					return station.getDockable( 1 );
-//				if( station.getDockable( 1 ) == dockable )
-//					return station.getDockable( 0 );
-//			}
-//			if( station.getDockableCount() < 2  )
-//				return null;
-//		}
-//
-//		return old;
 	}
 
 	protected void applyStarting( LocationModeEvent event ){

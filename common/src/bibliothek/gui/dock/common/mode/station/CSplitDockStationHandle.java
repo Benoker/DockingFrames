@@ -208,7 +208,7 @@ public class CSplitDockStationHandle{
 	
 	protected class Normal implements CNormalModeArea{
 		public void setMode( LocationMode mode ){
-			normalMode = mode;	
+			normalMode = mode;
 		}
 		
 		public void addModeAreaListener( ModeAreaListener listener ){
@@ -217,6 +217,10 @@ public class CSplitDockStationHandle{
 		
 		public void removeModeAreaListener( ModeAreaListener listener ){
 			remove(  new ModeAreaListenerWrapper( this, listener ) );	
+		}
+		
+		public boolean autoDefaultArea() {
+			return true;
 		}
 		
 		public void setController( DockController controller ){
@@ -248,10 +252,6 @@ public class CSplitDockStationHandle{
 		}
 		
 		public void setLocation( Dockable dockable, DockableProperty location, AffectedSet set ){
-			if( maximizedMode != null ){
-				maximizedMode.unmaximize( dockable, set );
-			}
-			
 			Dockable fullscreen = getStation().getFullScreen();
 			if( fullscreen != null ){
 				maximal.setMaximized( fullscreen, false, set );
@@ -324,6 +324,10 @@ public class CSplitDockStationHandle{
 			}
 		}
 		
+		public boolean autoDefaultArea() {
+			return true;
+		}
+		
 		public LocationMode getUnmaximizedMode(){
 			return normalMode;
 		}
@@ -383,6 +387,14 @@ public class CSplitDockStationHandle{
 	        		}
 	        	}
 	        }
+	        
+	        // if this station currently shows dockable as maximized element, ensure it is no longer maximized
+			if( maximizedMode != null && event.getMode().getUniqueIdentifier().equals( NormalMode.IDENTIFIER )){
+				MaximizedModeArea area = maximizedMode.getMaximizeArea( dockable );
+				if( area == this ){
+					maximizedMode.unmaximize( dockable, event.getAffected() );
+				}
+			}
 	        
 	        return null;
 		}

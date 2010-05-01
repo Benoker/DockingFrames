@@ -37,12 +37,16 @@ import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.mode.CExternalizedModeArea;
+import bibliothek.gui.dock.common.mode.CLocationMode;
+import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.CMaximizedMode;
 import bibliothek.gui.dock.common.mode.CMaximizedModeArea;
-import bibliothek.gui.dock.common.mode.ExtendedMode;
+import bibliothek.gui.dock.facile.mode.ExternalizedMode;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.LocationMode;
 import bibliothek.gui.dock.facile.mode.LocationModeEvent;
+import bibliothek.gui.dock.facile.mode.MaximizedMode;
+import bibliothek.gui.dock.facile.mode.MaximizedModeArea;
 import bibliothek.gui.dock.facile.mode.ModeArea;
 import bibliothek.gui.dock.facile.mode.ModeAreaListener;
 import bibliothek.gui.dock.layout.DockableProperty;
@@ -75,12 +79,18 @@ public class CScreenDockStationHandle {
 	/** the mode owning {@link #maximal} */
 	private CMaximizedMode maximizedMode;
 	
+	/** the manager handling all modes */
+	private CLocationModeManager manager;
+	
 	/**
 	 * Creates a new handle
-	 * @param station the station which is handled by this handle
+	 * @param station the station which is handled by this handle, not <code>null</code>
+	 * @param manager the manager handling all modes, not <code>null</code>
 	 */
-	public CScreenDockStationHandle( CStation<ScreenDockStation> station ){
+	public CScreenDockStationHandle( CStation<ScreenDockStation> station, CLocationModeManager manager ){
 		this.station = station;
+		this.manager = manager;
+		
 		station.getStation().addScreenDockStationListener( new ScreenDockStationListener() {
 			public void windowRegistering( ScreenDockStation station, Dockable dockable, ScreenDockWindow window ) {
 				// ignore
@@ -162,6 +172,10 @@ public class CScreenDockStationHandle {
 		
 		public DockableProperty getLocation( Dockable child ) {
 			return DockUtilities.getPropertyChain( getStation(), child );
+		}
+		
+		public boolean autoDefaultArea() {
+			return true;
 		}
 
 		public void setLocation( Dockable dockable, DockableProperty location, AffectedSet set ) {
@@ -245,14 +259,39 @@ public class CScreenDockStationHandle {
 		public boolean isRepresenting( DockStation station ) {
 			return CScreenDockStationHandle.this.station.getStation() == station;
 		}
+		
+		public boolean autoDefaultArea() {
+			return false;
+		}
 
 		public Runnable onApply( LocationModeEvent event ) {
-			if( event.getMode() == externalMode ){
-				
-//				maximal
-//				
-//				event.done();
+			if( event.isDone() )
+				return null;
+			
+			Location location = event.getLocation();
+        	Dockable dockable = event.getDockable();
+			
+			if( event.getMode().getUniqueIdentifier().equals( ExternalizedMode.IDENTIFIER )){
+				CLocationMode last = manager.getCurrentMode( dockable );
+				CLocationMode secondLast = manager.getPreviousMode( dockable );
+
+				if( last != null && secondLast != null ){
+					if( ExternalizedMode.IDENTIFIER.equals( secondLast.getUniqueIdentifier() ) &&
+							MaximizedMode.IDENTIFIER.equals( last.getUniqueIdentifier() )){
+
+						MaximizedModeArea area = maximizedMode.get( location.getRoot() );
+
+						if( area == this ){
+							dockable = maximizedMode.getMaximizingElement( dockable );
+							
+							area.setMaximized( dockable, false, event.getAffected() );
+							event.done();
+							return null;
+		                }
+		            }
+		        }
 			}
+			
 			return null;
 		}
 

@@ -215,13 +215,18 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 	
 	/**
 	 * Gets the default area of this mode, can be <code>null</code>. The default area
-	 * is the oldest area that was added to this mode or the one area set
+	 * is the oldest area that was added to this mode and whose property
+	 * {@link ModeArea#autoDefaultArea()} is <code>true</code>,  or the one area set
 	 * through {@link #setDefaultArea(ModeArea)}.
 	 * @return the default area
 	 */
 	public A getDefaultArea(){
-		if( defaultArea == null && !areaOrder.isEmpty() ){
-			return areaOrder.get( 0 );
+		if( defaultArea == null ){
+			for( A area : areaOrder ){
+				if( area.autoDefaultArea() ){
+					return area;
+				}
+			}
 		}
 		
 		return defaultArea;

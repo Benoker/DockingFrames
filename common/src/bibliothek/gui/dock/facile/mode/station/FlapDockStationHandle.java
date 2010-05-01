@@ -62,6 +62,10 @@ public class FlapDockStationHandle implements MinimizedModeArea{
 		this.station = station;
 	}
 	
+	public boolean autoDefaultArea() {
+		return true;
+	}
+	
 	public void addModeAreaListener( ModeAreaListener listener ){
 		// ignore
 	}

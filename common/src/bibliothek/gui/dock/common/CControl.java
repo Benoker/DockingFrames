@@ -653,7 +653,7 @@ public class CControl {
                 access.getOwner().addResizeRequestListener( handler );
                 
                 if( handle == null ){
-                	handle = new CScreenDockStationHandle( this );
+                	handle = new CScreenDockStationHandle( this, access.getLocationManager() );
                 }
                 
                 CExternalizedMode externalizedMode = access.getLocationManager().getExternalizedMode();
