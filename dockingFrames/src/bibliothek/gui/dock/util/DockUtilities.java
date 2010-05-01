@@ -215,6 +215,25 @@ public class DockUtilities {
     }
     
     /**
+     * Searches the one {@link Dockable} that is either <code>subchild</code> or a parent
+     * of <code>subchild</code> and whose parent is <code>parent</code>.
+     * @param parent the parent of the result
+     * @param subchild a direct or indirect child of <code>parent</code>
+     * @return the child or <code>null</code> if subchild is no child of <code>parent</code>
+     */
+    public static Dockable getDirectChild( DockStation parent, Dockable subchild ){
+    	DockStation subparent = subchild.getDockParent();
+    	while( subparent != null ){
+    		if( subparent == parent ){
+    			return subchild;
+    		}
+    		subchild = subparent.asDockable();
+    		subparent = subchild == null ? null : subchild.getDockParent();
+    	}
+    	return null;
+    }
+    
+    /**
      * Creates a copy of <code>root</code> and sets <code>property</code>
      * as the successor of the very last element in the property chain beginning
      * at <code>root</code>.

@@ -618,7 +618,20 @@ public class ScreenDockStation extends AbstractDockStation {
     }
 
     public DockableProperty getDockableProperty( Dockable dockable, Dockable ignored ) {
+    	return getLocation( dockable );
+    }
+    
+    /**
+     * Gets the location of <code>dockable</code> and its current state.
+     * @param dockable some child of this station
+     * @return the location, not <code>null</code>
+     */
+    public ScreenDockProperty getLocation( Dockable dockable ){
         ScreenDockWindow window = getWindow( dockable );
+        if( window == null ){
+        	throw new IllegalArgumentException( "dockable not child of this station" );
+        }
+        
         Rectangle bounds;
         boolean fullscreen = window.isFullscreen();
         
@@ -902,20 +915,22 @@ public class ScreenDockStation extends AbstractDockStation {
         double propertySize = width * height;
         
         for( ScreenDockWindow window : dockables ){
-            Rectangle bounds = window.getWindowBounds();
-            double windowSize = bounds.width * bounds.height;
-            bounds = SwingUtilities.computeIntersection( x, y, width, height, bounds );
-            
-            if( !(bounds.width == 0 || bounds.height == 0) ){
-                double size = bounds.width * bounds.height;
-                double max = Math.max( propertySize, windowSize );
-                double ratio = size / max;
-                
-                if( ratio > bestRatio ){
-                    bestRatio = max;
-                    best = window;
-                }
-            }
+        	if( !window.isFullscreen() ){
+	            Rectangle bounds = window.getWindowBounds();
+	            double windowSize = bounds.width * bounds.height;
+	            bounds = SwingUtilities.computeIntersection( x, y, width, height, bounds );
+	            
+	            if( !(bounds.width == 0 || bounds.height == 0) ){
+	                double size = bounds.width * bounds.height;
+	                double max = Math.max( propertySize, windowSize );
+	                double ratio = size / max;
+	                
+	                if( ratio > bestRatio ){
+	                    bestRatio = max;
+	                    best = window;
+	                }
+	            }
+        	}
         }
         
         boolean done = false;
@@ -959,6 +974,36 @@ public class ScreenDockStation extends AbstractDockStation {
         }
         
         return done;
+    }
+    
+    /**
+     * Drops <code>dockable</code> at the same coordinates as <code>location</code>, a
+     * direct child of this station.
+     * @param dockable a new dockable
+     * @param location a known dockable
+     * @return whether the operation completed
+     */
+    public boolean drop( Dockable dockable, Dockable location ){
+        boolean accept = accept( dockable ) && dockable.accept( this );
+        if( !accept ){
+        	return false;
+        }
+        
+        ScreenDockWindow window = getWindow( location );
+        if( window == null ){
+        	throw new IllegalArgumentException( "location is now known to this station" );
+        }
+        
+        Rectangle bounds = null;
+        if( window.isFullscreen() ){
+        	bounds = window.getNormalBounds();
+        }
+        if( bounds == null ){
+        	bounds = window.getWindowBounds();
+        }
+        	
+        addDockable( dockable, bounds, true );
+        return true;
     }
     
     /**
@@ -1008,8 +1053,8 @@ public class ScreenDockStation extends AbstractDockStation {
         listeners.fireDockableRemoved( current );
         
         listeners.fireDockableAdding( other );
-        other.setDockParent( this );
         window.setDockable( other );
+        other.setDockParent( this );
         listeners.fireDockableAdded( other );
     }
     

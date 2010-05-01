@@ -449,12 +449,17 @@ public class DefaultDockRelocator extends DockRelocator{
         if( dockable == null )
             dockable = title.getDockable();
         
+        if( dockable == null ){
+        	return Reaction.BREAK;
+        }
+        
         Point mouse = new Point( x, y );
         lastPoint = new Point( x, y );
         
         if( !onMove ){
             // not yet free
-            if( !dockable.getDockParent().canDrag( dockable )){
+        	DockStation parent = dockable.getDockParent();
+            if( parent != null && !parent.canDrag( dockable )){
                 titleDragCancel();
                 disableAllModes();
                 return Reaction.BREAK_CONSUMED;

@@ -38,7 +38,6 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
-import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CMaximizeBehavior;
 import bibliothek.gui.dock.common.action.predefined.CMaximizeAction;
@@ -209,10 +208,14 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	 * @return the preferred unmaximized mode, can be <code>null</code>
 	 */
 	public LocationMode getUnmaximizedMode( Dockable dockable ){
-		for( MaximizedModeArea area : this ){
-			if( area.isChild( dockable ) ){
-				return area.getUnmaximizedMode();
+		while( dockable != null ){
+			for( MaximizedModeArea area : this ){
+				if( area.isChild( dockable ) ){
+					return area.getUnmaximizedMode();
+				}
 			}
+			DockStation parent = dockable.getDockParent();
+			dockable = parent == null ? null : parent.asDockable();
 		}
 		return null;
 	}
@@ -441,14 +444,16 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	 * itself, not <code>null</code>
 	 */
 	protected Dockable getMaximizingElement( Dockable dockable ){
-		DockStation station = dockable.getDockParent();
-		if( station == null )
-			return dockable;
-
-		if( !(station instanceof StackDockStation ))
-			return dockable;
-
-		return station.asDockable();
+		return maximizeBehavior.getMaximizingElement( dockable );
+		
+//		DockStation station = dockable.getDockParent();
+//		if( station == null )
+//			return dockable;
+//
+//		if( !(station instanceof StackDockStation ))
+//			return dockable;
+//
+//		return station.asDockable();
 	}
 
 	/**
@@ -460,22 +465,24 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	 * no longer maximized, can be <code>null</code>
 	 */
 	protected Dockable getMaximizingElement( Dockable old, Dockable dockable ){
-		if( old == dockable )
-			return null;
-
-		if( old instanceof DockStation ){
-			DockStation station = (DockStation)old;
-			if( station.getDockableCount() == 2 ){
-				if( station.getDockable( 0 ) == dockable )
-					return station.getDockable( 1 );
-				if( station.getDockable( 1 ) == dockable )
-					return station.getDockable( 0 );
-			}
-			if( station.getDockableCount() < 2  )
-				return null;
-		}
-
-		return old;
+		return maximizeBehavior.getMaximizingElement( old, dockable );
+		
+//		if( old == dockable )
+//			return null;
+//
+//		if( old instanceof DockStation ){
+//			DockStation station = (DockStation)old;
+//			if( station.getDockableCount() == 2 ){
+//				if( station.getDockable( 0 ) == dockable )
+//					return station.getDockable( 1 );
+//				if( station.getDockable( 1 ) == dockable )
+//					return station.getDockable( 0 );
+//			}
+//			if( station.getDockableCount() < 2  )
+//				return null;
+//		}
+//
+//		return old;
 	}
 
 	protected void applyStarting( LocationModeEvent event ){

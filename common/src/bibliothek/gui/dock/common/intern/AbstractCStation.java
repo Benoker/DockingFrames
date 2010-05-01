@@ -36,7 +36,7 @@ import bibliothek.gui.dock.common.CStation;
  * subclasses do not have to track or store the {@link CControlAccess} that
  * is given in {@link #setControl(CControlAccess)}.
  * @author Benjamin Sigg
- *
+ * @param <S> the kind of station this {@link CStation} is built upon
  */
 public abstract class AbstractCStation<S extends DockStation> implements CStation<S>{
     private CLocation location;

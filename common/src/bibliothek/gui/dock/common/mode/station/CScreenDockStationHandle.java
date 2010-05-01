@@ -37,13 +37,16 @@ import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.mode.CExternalizedModeArea;
+import bibliothek.gui.dock.common.mode.CMaximizedMode;
 import bibliothek.gui.dock.common.mode.CMaximizedModeArea;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.LocationMode;
 import bibliothek.gui.dock.facile.mode.LocationModeEvent;
 import bibliothek.gui.dock.facile.mode.ModeArea;
 import bibliothek.gui.dock.facile.mode.ModeAreaListener;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 import bibliothek.gui.dock.station.screen.ScreenDockStationListener;
 import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 import bibliothek.gui.dock.support.mode.AffectedSet;
@@ -68,6 +71,9 @@ public class CScreenDockStationHandle {
 	
 	/** the mode owning {@link #external} */
 	private LocationMode externalMode;
+	
+	/** the mode owning {@link #maximal} */
+	private CMaximizedMode maximizedMode;
 	
 	/**
 	 * Creates a new handle
@@ -241,6 +247,12 @@ public class CScreenDockStationHandle {
 		}
 
 		public Runnable onApply( LocationModeEvent event ) {
+			if( event.getMode() == externalMode ){
+				
+//				maximal
+//				
+//				event.done();
+			}
 			return null;
 		}
 
@@ -259,16 +271,43 @@ public class CScreenDockStationHandle {
 		public void setMaximized( Dockable dockable, boolean maximized, AffectedSet set ) {
 			ScreenDockStation station = getStation();
 			DockStation parent = dockable.getDockParent();
-			while( parent != station && parent != null ){
-				dockable = parent.asDockable();
-				parent = dockable == null ? null : dockable.getDockParent();
-			}
-			if( parent == null ){
-				throw new IllegalArgumentException( "dockable was not a child of this station" );
-			}
 			
-			set.add( dockable );
-			getStation().setFullscreen( dockable, maximized );
+			if( maximized ){
+				if( parent == station ){
+					station.setFullscreen( dockable, true );
+				}
+				else{
+					Dockable child = DockUtilities.getDirectChild( station, dockable );
+					if( child == null ){
+						throw new IllegalArgumentException( "dockable not a child of this station" );
+					}
+					if( !parent.canDrag( dockable )){
+						throw new IllegalArgumentException( "cannot drag dockable from its parent" );
+					}
+					parent.drag( dockable );
+					if( !station.drop( dockable, child ) ){
+						throw new IllegalStateException( "cannot drop dockable on this station" );
+					}
+					station.setFullscreen( dockable, true );
+				}
+			}
+			else{
+				if( parent == station ){
+					station.setFullscreen( dockable, false );
+				}
+				else{
+					Dockable child = DockUtilities.getDirectChild( station, dockable );
+					ScreenDockProperty location = station.getLocation( child );
+					
+					if( !parent.canDrag( dockable )){
+						throw new IllegalArgumentException( "cannot drag dockable from its current parent" );
+					}
+					location.setFullscreen( false );
+					if( !station.drop( dockable, location, true )){
+						throw new IllegalStateException( "could not drop dockable on this station" );
+					}
+				}
+			}
 		}
 
 		public void addModeAreaListener( ModeAreaListener listener ) {
@@ -309,7 +348,7 @@ public class CScreenDockStationHandle {
 		}
 		
 		public void setMode( LocationMode mode ){
-			// ignore	
+			maximizedMode = (CMaximizedMode)mode;
 		}
 
 		public CLocation getCLocation( Dockable dockable ) {

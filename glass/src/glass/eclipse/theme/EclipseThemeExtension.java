@@ -1,5 +1,6 @@
 package glass.eclipse.theme;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
@@ -28,10 +29,16 @@ public class EclipseThemeExtension implements DockThemeExtension{
 		if( this.trigger == theme ){
 			IconManager im = controller.getIcons();
 	
+			Icon normalizeIcon = createIcon("images/normalize.png");
+			
 			im.setIconTheme("locationmanager.maximize", createIcon("images/maximize.png"));
-			im.setIconTheme("locationmanager.normalize", createIcon("images/normalize.png"));
+			im.setIconTheme("locationmanager.normalize", normalizeIcon);
 			im.setIconTheme("locationmanager.externalize", createIcon("images/externalize.png"));
 			im.setIconTheme("locationmanager.minimize", createIcon("images/minimize.png"));
+			
+			im.setIconTheme("locationmanager.unexternalize", createIcon("images/unexternalize.png"));
+			im.setIconTheme("locationmanager.unmaximize_externalized", normalizeIcon);
+			
 			im.setIconTheme("close", createIcon("images/close_active.png"));
 			im.setIconTheme("flap.hold", createIcon("images/pin_active.png"));
 			im.setIconTheme("flap.free", createIcon("images/unpin_active.png"));
