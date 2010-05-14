@@ -25,118 +25,40 @@
  */
 package bibliothek.gui.dock.station.screen;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
 
 /**
  * A layout that holds the contents of a {@link ScreenDockStation}.
  * @author Benjamin Sigg
  */
 public class ScreenDockStationLayout {
-    private List<Entry> entries = new ArrayList<Entry>();
-
+	/** all the items of this layout */
+	private PlaceholderMap placeholders;
+	
+	/**
+	 * Default constructor not setting the {@link #placeholders} of
+	 * this layout. Kept for backwards compatibility, should not be used
+	 * by clients.
+	 */
+	protected ScreenDockStationLayout(){
+		// nothing
+	}
+	
+	/**
+	 * Creates a new layout.
+	 * @param placeholders all the items of this layout
+	 */
+	public ScreenDockStationLayout( PlaceholderMap placeholders ){
+		this.placeholders = placeholders;
+	}
+	
     /**
-     * Adds a new entry to this layout.
-     * @param id the id of the entry
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @param width the width
-     * @param height the height
-     * @param fullscreen whether the element is currently in fullscreen mode
+     * Gets all the items of this layout, including the encoded {@link Dockable}s.
+     * @return the placeholders
      */
-    public void add( int id, int x, int y, int width, int height, boolean fullscreen ){
-        Entry entry = new Entry();
-        entry.id = id;
-        entry.x = x;
-        entry.y = y;
-        entry.width = width;
-        entry.height = height;
-        entry.fullscreen = fullscreen;
-        entries.add( entry );
-    }
-    
-    /**
-     * Gets the number of entries in this layout.
-     * @return the number of entries
-     */
-    public int size(){
-        return entries.size();
-    }
-    
-    /**
-     * Gets the id of the index'th entry.
-     * @param index the index of the entry
-     * @return the id
-     */
-    public int id( int index ){
-        return entries.get( index ).id;
-    }
-
-    /**
-     * Gets the x coordinate of the index'th entry.
-     * @param index the index of the entry
-     * @return the coordinate
-     */
-    public int x( int index ){
-        return entries.get( index ).x;
-    }
-    
-    /**
-     * Gets the y coordinate of the index'th entry.
-     * @param index the index of the entry
-     * @return the coordinate
-     */
-    public int y( int index ){
-        return entries.get( index ).y;
-    }
-    
-    /**
-     * Gets the width of the index'th entry.
-     * @param index the index of the entry
-     * @return the width
-     */
-    public int width( int index ){
-        return entries.get( index ).width;
-    }
-    
-    /**
-     * Gets the height of the index'th entry.
-     * @param index the index of the entry
-     * @return the height
-     */
-    public int height( int index ){
-        return entries.get( index ).height;
-    }
-    
-    /**
-     * Tells whether the element is in fullscreen mode.
-     * @param index the index of the entry
-     * @return the state
-     */
-    public boolean fullscreen( int index ){
-    	return entries.get( index ).fullscreen;
-    	
-    }
-    
-    /**
-     * An entry of this layout
-     * @author Benjamin Sigg
-     */
-    private class Entry{
-        /** the id of the entry */
-        public int id;
-        
-        /** x-coordinate */
-        public int x;
-        /** y-coordinate */
-        public int y;
-        /** width in pixels */
-        public int width;
-        /** height in pixels */
-        public int height;
-        /** whether the element is in fullscreen mode */
-        public boolean fullscreen;
-    }
+	public PlaceholderMap getPlaceholders() {
+		return placeholders;
+	}
 }

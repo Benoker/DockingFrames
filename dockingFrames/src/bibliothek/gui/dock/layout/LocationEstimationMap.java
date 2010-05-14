@@ -25,11 +25,15 @@
  */
 package bibliothek.gui.dock.layout;
 
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.DockFactory;
 
 /**
- * A map used for {@link DockFactory}, telling what children a {@link DockElement} has.
+ * A map used for {@link DockFactory}, telling what children a {@link DockElement} has.<br>
+ * This map is also a list of {@link DockLayoutInfo}s. The element at <code>index</code>
+ * in this list matches the {@link Dockable} that was stored with key
+ * <code>index</code> in the map of {@link DockConverter#getLayout(DockElement, java.util.Map)}.
  * @author Benjamin Sigg
  */
 public interface LocationEstimationMap{

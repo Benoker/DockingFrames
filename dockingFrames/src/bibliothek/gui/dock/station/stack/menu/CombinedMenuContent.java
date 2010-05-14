@@ -37,11 +37,10 @@ import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 
 /**
- * A popup menu often used by an {@link CombinedMenu}s to show their content.
- * The items of a {@link CombinedMenuContent} its items are not 
- * supposed to change while the menu is visible and all state is forgotten once
- * the menu is closed. A {@link CombinedMenuContent} might be used at the same
- * time by more than one client.
+ * A popup menu often used by {@link CombinedMenu}s to show their content.
+ * The items of a {@link CombinedMenuContent} are not  supposed to change while
+ * the menu is visible and all state is forgotten once the menu is closed. 
+ * A {@link CombinedMenuContent} might be used at the same time by more than one client.
  * @author Benjamin Sigg
  */
 public interface CombinedMenuContent {

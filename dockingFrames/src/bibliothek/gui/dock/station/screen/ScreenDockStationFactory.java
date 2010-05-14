@@ -33,11 +33,17 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Map;
 
+import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
+import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
+import bibliothek.gui.dock.station.support.PlaceholderList;
+import bibliothek.gui.dock.station.support.PlaceholderListItem;
+import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.util.DirectWindowProvider;
 import bibliothek.gui.dock.util.WindowProvider;
@@ -98,70 +104,76 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
         return ID;
     }
     
-    public void estimateLocations( ScreenDockStationLayout layout, LocationEstimationMap children ){
-    	for( int i = 0, n = layout.size(); i<n; i++ ){
-    		DockLayoutInfo info = children.getChild( layout.id( i ));
-    		if( info != null ){
-    			ScreenDockProperty property = new ScreenDockProperty( layout.x( i ), layout.y( i ), layout.width( i ), layout.height( i ), layout.fullscreen( i ));
-    			info.setLocation( property );
-    		}
+    public void estimateLocations( ScreenDockStationLayout layout, final LocationEstimationMap children ){
+    	if( layout instanceof RetroScreenDockStationLayout ){
+    		RetroScreenDockStationLayout retro = (RetroScreenDockStationLayout)layout;
+    		
+	    	for( int i = 0, n = retro.size(); i<n; i++ ){
+	    		DockLayoutInfo info = children.getChild( retro.id( i ));
+	    		if( info != null ){
+	    			ScreenDockProperty property = new ScreenDockProperty( retro.x( i ), retro.y( i ), retro.width( i ), retro.height( i ), null );
+	    			info.setLocation( property );
+	    		}
+	    	}
+    	}
+    	else{
+    		PlaceholderList.simulatedRead( layout.getPlaceholders(), new PlaceholderListItemAdapter<PlaceholderListItem>() {
+    			@Override
+    			public PlaceholderListItem convert( ConvertedPlaceholderListItem item ) {
+    				int id = item.getInt( "id" );
+    				
+    				int x = item.getInt( "x" );
+    				int y = item.getInt( "y" );
+    				int width = item.getInt( "width" );
+    				int height = item.getInt( "height" );
+    				boolean fullscreen = item.getBoolean( "fullscreen" );
+    				Path placeholder = null;
+    				if( item.contains( "placeholder" )){
+    					placeholder = new Path( item.getString( "placeholder" ) );
+    				}
+    				
+    				ScreenDockProperty property = new ScreenDockProperty( x, y, width, height, placeholder, fullscreen );
+    				children.getChild( id ).setLocation( property );
+    				
+    				for( int i = 0, n = children.getSubChildCount( id ); i<n; i++ ){
+    					DockLayoutInfo info = children.getSubChild( id, i );
+    					info.setLocation( new ScreenDockProperty( x, y, width, height, info.getPlaceholder(), fullscreen ) );
+    				}
+
+    				return null;
+    			}
+			});
     	}
     }
     
-    public ScreenDockStationLayout getLayout( ScreenDockStation station,
-            Map<Dockable, Integer> children ) {
-        
-        ScreenDockStationLayout layout = new ScreenDockStationLayout();
-        for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
-            Dockable dockable = station.getDockable( i );
-            Integer id = children.get( dockable );
-            if( id != null ){
-                ScreenDockWindow window = station.getWindow( i );
-                boolean fullscreen = window.isFullscreen();
-                Rectangle bounds;
-                if( fullscreen ){
-                	bounds = window.getNormalBounds();
-                	if( bounds == null ){
-                		bounds = window.getWindowBounds();
-                	}
-                }
-                else{
-                	bounds = window.getWindowBounds();
-                }
-                
-                layout.add( 
-                        id,
-                        bounds.x,
-                        bounds.y, 
-                        bounds.width,
-                        bounds.height,
-                        fullscreen );
-            }
-        }
-        
-        return layout;
+    public ScreenDockStationLayout getLayout( ScreenDockStation station, Map<Dockable, Integer> children ) {
+        return new ScreenDockStationLayout( station.getPlaceholders( children ) );
     }
     
-    public void setLayout( ScreenDockStation element,
-            ScreenDockStationLayout layout ) {
+    public void setLayout( ScreenDockStation element, ScreenDockStationLayout layout ) {
         // nothing to do
     }
     
-    public void setLayout( ScreenDockStation station,
-            ScreenDockStationLayout layout, Map<Integer, Dockable> children ) {
-        
+    public void setLayout( ScreenDockStation station, ScreenDockStationLayout layout, Map<Integer, Dockable> children ) {
         for( int i = station.getDockableCount()-1; i >= 0; i-- )
             station.removeDockable( i );
         
-        for( int i = 0, n = layout.size(); i<n; i++ ){
-            Dockable dockable = children.get( layout.id( i ) );
-        	if( dockable != null ){
-             	Rectangle location = new Rectangle( layout.x( i ), layout.y( i ), layout.width( i ), layout.height( i ));
-        		station.addDockable(
-        				dockable,
-        				location, 
-        				true );
-        	}
+        if( layout instanceof RetroScreenDockStationLayout ){
+        	RetroScreenDockStationLayout retro = (RetroScreenDockStationLayout) layout;
+        	
+	        for( int i = 0, n = retro.size(); i<n; i++ ){
+	            Dockable dockable = children.get( retro.id( i ) );
+	        	if( dockable != null ){
+	             	Rectangle location = new Rectangle( retro.x( i ), retro.y( i ), retro.width( i ), retro.height( i ));
+	        		station.addDockable(
+	        				dockable,
+	        				location, 
+	        				true );
+	        	}
+	        }
+        }
+        else{
+        	station.setPlaceholders( layout.getPlaceholders(), children );
         }
     }
 
@@ -181,17 +193,25 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
     public void write( ScreenDockStationLayout layout, DataOutputStream out )
             throws IOException {
      
-        Version.write( out, Version.VERSION_1_0_8 );
-        
-        out.writeInt( layout.size() );
-        for( int i = 0, n = layout.size(); i<n; i++ ){
-            out.writeInt( layout.id( i ) );
-            out.writeInt( layout.x( i ) );
-            out.writeInt( layout.y( i ) );
-            out.writeInt( layout.width( i ) );
-            out.writeInt( layout.height( i ) );
-            out.writeBoolean( layout.fullscreen( i ) );
-        }
+    	if( layout instanceof RetroScreenDockStationLayout ){
+    		RetroScreenDockStationLayout retro = (RetroScreenDockStationLayout)layout;
+    	
+	        Version.write( out, Version.VERSION_1_0_4 );
+	        
+	        out.writeInt( retro.size() );
+	        for( int i = 0, n = retro.size(); i<n; i++ ){
+	            out.writeInt( retro.id( i ) );
+	            out.writeInt( retro.x( i ) );
+	            out.writeInt( retro.y( i ) );
+	            out.writeInt( retro.width( i ) );
+	            out.writeInt( retro.height( i ) );
+	        }
+    	}
+    	else{
+    		PlaceholderMap map = layout.getPlaceholders();
+    		Version.write( out, Version.VERSION_1_0_8 );
+    		map.write( out );
+    	}
     }
     
     public ScreenDockStationLayout read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException{
@@ -199,47 +219,60 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
         version.checkCurrent();
         boolean version8 = version.compareTo( Version.VERSION_1_0_8 ) >= 0;
         
-        ScreenDockStationLayout layout = new ScreenDockStationLayout();
-        int count = in.readInt();
-        for( int i = 0; i < count; i++ ){
-            int id = in.readInt();
-            int x = in.readInt();
-            int y = in.readInt();
-            int width = in.readInt();
-            int height = in.readInt();
-            boolean fullscreen = false;
-            if( version8 ){
-            	fullscreen = in.readBoolean();
-            }
-            layout.add( id, x, y, width, height, fullscreen );
+        if( version8 ){
+        	PlaceholderMap map = new PlaceholderMap( in, placeholders );
+        	return new ScreenDockStationLayout( map );
         }
-        return layout;
+        else{
+	        RetroScreenDockStationLayout layout = new RetroScreenDockStationLayout();
+	        int count = in.readInt();
+	        for( int i = 0; i < count; i++ ){
+	            int id = in.readInt();
+	            int x = in.readInt();
+	            int y = in.readInt();
+	            int width = in.readInt();
+	            int height = in.readInt();
+	            layout.add( id, x, y, width, height );
+	        }
+	        return layout;
+        }
     }
 
     public void write( ScreenDockStationLayout layout, XElement element ) {
-        for( int i = 0, n = layout.size(); i<n; i++ ){
-            XElement child = element.addElement( "child" );
-            child.addInt( "id", layout.id( i ) );
-            child.addInt( "x", layout.x( i ) );
-            child.addInt( "y", layout.y( i ) );
-            child.addInt( "width", layout.width( i ) );
-            child.addInt( "height", layout.height( i ) );
-            child.addBoolean( "fullscreen", layout.fullscreen( i ) );
-        }
+    	if( layout instanceof RetroScreenDockStationLayout ){
+    		RetroScreenDockStationLayout retro = (RetroScreenDockStationLayout)layout;
+    	
+	        for( int i = 0, n = retro.size(); i<n; i++ ){
+	            XElement child = element.addElement( "child" );
+	            child.addInt( "id", retro.id( i ) );
+	            child.addInt( "x", retro.x( i ) );
+	            child.addInt( "y", retro.y( i ) );
+	            child.addInt( "width", retro.width( i ) );
+	            child.addInt( "height", retro.height( i ) );
+	        }
+    	}
+    	else{
+    		layout.getPlaceholders().write( element.addElement( "placeholders" ) );
+    	}
     }
     
     public ScreenDockStationLayout read( XElement element, PlaceholderStrategy placeholders ){
-        ScreenDockStationLayout layout = new ScreenDockStationLayout();
-        for( XElement child : element.getElements( "child" )){
-            layout.add( 
-                    child.getInt( "id" ),
-                    child.getInt( "x" ),
-                    child.getInt( "y" ),
-                    child.getInt( "width" ),
-                    child.getInt( "height" ),
-                    child.attributeExists( "fullscreen" ) ? child.getBoolean( "fullscreen" ) : false );
-        }
-        return layout;
+    	XElement xplaceholders = element.getElement( "placeholders" );
+    	if( xplaceholders != null ){
+    		return new ScreenDockStationLayout( new PlaceholderMap( xplaceholders, placeholders ) );
+    	}
+    	else{
+	        RetroScreenDockStationLayout layout = new RetroScreenDockStationLayout();
+	        for( XElement child : element.getElements( "child" )){
+	            layout.add( 
+	                    child.getInt( "id" ),
+	                    child.getInt( "x" ),
+	                    child.getInt( "y" ),
+	                    child.getInt( "width" ),
+	                    child.getInt( "height" ) );
+	        }
+	        return layout;
+    	}
     }
     
     /**

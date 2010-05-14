@@ -33,6 +33,7 @@ import java.util.Map;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.xml.XElement;
 
@@ -63,7 +64,10 @@ public interface DockConverter <D extends DockElement, L>{
      * @param element the element for which a new layout should be created
      * @param children a map containing unique identifiers for the children
      * of the element. Children which are not in this map should not be
-     * stored in the layout.
+     * stored in the layout.<br>
+     * The identifiers are in the range 0 (incl.) to <code>children.size()</code> (excl.). The
+     * same identifiers will be used as indices by a {@link LocationEstimationMap}. See 
+     * also {@link DockFactory#estimateLocations(Object, LocationEstimationMap)}.
      * @return the newly created, independent layout object.
      */
     public L getLayout( D element, Map<Dockable, Integer> children );

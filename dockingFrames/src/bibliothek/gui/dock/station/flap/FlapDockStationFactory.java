@@ -132,6 +132,7 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
     		PlaceholderList.simulatedRead( layout.getPlaceholders(), new PlaceholderListItemAdapter<PlaceholderListItem>() {
     			@Override
     			public PlaceholderListItem convert( ConvertedPlaceholderListItem item ){
+    				int id = item.getInt( "id" );
     				int index = item.getInt( "index" );
     				boolean hold = item.getBoolean( "hold" );
     				int size = item.getInt( "size" );
@@ -140,11 +141,11 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
     					placeholder = new Path( item.getString( "placeholder" ) );
     				}
     				FlapDockProperty property = new FlapDockProperty( index, hold, size, placeholder );
-    				children.getChild( index ).setLocation( property );
+    				children.getChild( id ).setLocation( property );
     				
-    				for( int i = 0, n = children.getSubChildCount( index ); i<n; i++ ){
-    					DockLayoutInfo info = children.getSubChild( index, i );
-    					info.setLocation( new FlapDockProperty( index, hold, size, info.getPlaceholder() ) );
+    				for( int i = 0, n = children.getSubChildCount( id ); i<n; i++ ){
+    					DockLayoutInfo info = children.getSubChild( id, i );
+    					info.setLocation( new FlapDockProperty( id, hold, size, info.getPlaceholder() ) );
     				}
     				
     				return null;

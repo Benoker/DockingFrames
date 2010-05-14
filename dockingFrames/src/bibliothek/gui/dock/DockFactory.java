@@ -42,7 +42,7 @@ import bibliothek.gui.dock.layout.LocationEstimationMap;
  * @param <L> the type of object that stores the contents of a <code>D</code>. If
  * clients cannot guarantee that always the same factory will be mapped
  * to the same identifier, then <code>L</code> should be set to {@link Object}
- * and the methods which receive an <code>L</code> should use 
+ * and the methods which receive a <code>L</code> should use 
  * <code>instanceof</code> before casting the argument.
  */
 public interface DockFactory<D extends DockElement, L> extends DockConverter<D, L>{

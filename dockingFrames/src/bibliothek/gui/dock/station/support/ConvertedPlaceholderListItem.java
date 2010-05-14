@@ -25,9 +25,6 @@
  */
 package bibliothek.gui.dock.station.support;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 
@@ -35,13 +32,12 @@ import bibliothek.gui.Dockable;
  * Data about a {@link Dockable} that was stored in a {@link PlaceholderList}.
  * @author Benjamin Sigg
  */
-public class ConvertedPlaceholderListItem {
+public class ConvertedPlaceholderListItem extends PlaceholderMetaMap{
 	/** a placeholder to use for this item */
 	private Path placeholder;
 	/** additional information about this item */
 	private PlaceholderMap map;
-	/** additional information about this item */
-	private Map<String, Object> data;
+	
 	
 	/**
 	 * Associates a placeholder with this item. A {@link PlaceholderList} will insert
@@ -80,184 +76,5 @@ public class ConvertedPlaceholderListItem {
 	 */
 	public PlaceholderMap getPlaceholderMap(){
 		return map;
-	}
-
-	/**
-	 * Stores an additional key-value pair.
-	 * @param key the key
-	 * @param value the value
-	 */
-	public void putInteger( String key, int value ){
-		put( key, value );
-	}
-	
-	/**
-	 * Stores an additional key-value pair.
-	 * @param key the key
-	 * @param value the value
-	 */	
-	public void putLong( String key, long value ){
-		put( key, value );
-	}
-	
-	/**
-	 * Stores an additional key-value pair.
-	 * @param key the key
-	 * @param value the value
-	 */
-	public void putValue( String key, double value ){
-		put( key, value );
-	}
-	
-	/**
-	 * Stores an additional key-value pair.
-	 * @param key the key
-	 * @param value the value
-	 */
-	public void putBoolean( String key, boolean value ){
-		put( key, value );
-	}
-	
-	/**
-	 * Stores an additional key-value pair.
-	 * @param key the key
-	 * @param value the value
-	 */
-	public void putString( String key, String value ){
-		put( key, value );
-	}
-
-	/**
-	 * Stores an additional key-value pair.
-	 * @param key the key
-	 * @param value the value
-	 */
-	public void put( String key, Object value ){
-		if( data == null ){
-			data = new HashMap<String, Object>();
-		}
-		if( value == null ){
-			throw new IllegalArgumentException( "value must not be null" );
-		}
-		
-		if( value instanceof Integer ||
-				value instanceof Long ||
-				value instanceof Double ||
-				value instanceof Boolean ||
-				value instanceof String ){
-		
-			data.put( key, value );
-		}
-		else{
-			throw new IllegalArgumentException( "not a valid type to put: " + value.getClass() );
-		}
-	}
-
-	/**
-	 * Gets the keys of all the data that is stored.
-	 * @return the keys, not <code>null</code>
-	 */
-	public String[] keys(){
-		if( data == null ){
-			return new String[]{};
-		}
-		
-		return data.keySet().toArray( new String[data.size()] );
-	}
-
-	/**
-	 * Gets the data that is stored for key <code>key</code>.
-	 * @param key the key of some entry
-	 * @return the data
-	 * @throws IllegalArgumentException if there is nothing stored for <code>key</code> or if the
-	 * stored object has the wrong type
-	 */
-	public String getString( String key ){
-		Object data = get( key );
-		if( !(data instanceof String)){
-			throw new IllegalArgumentException( "not a string: " + key );
-		}
-		return (String)data;
-	}
-	
-	/**
-	 * Gets the data that is stored for key <code>key</code>.
-	 * @param key the key of some entry
-	 * @return the data
-	 * @throws IllegalArgumentException if there is nothing stored for <code>key</code> or if the
-	 * stored object has the wrong type
-	 */
-	public int getInt( String key ){
-		Object data = get( key );
-		if( !(data instanceof Integer)){
-			throw new IllegalArgumentException( "not an integer: " + key );
-		}
-		return (Integer)data;
-	}
-	
-	/**
-	 * Gets the data that is stored for key <code>key</code>.
-	 * @param key the key of some entry
-	 * @return the data
-	 * @throws IllegalArgumentException if there is nothing stored for <code>key</code> or if the
-	 * stored object has the wrong type
-	 */
-	public long getLong( String key ){
-		Object data = get( key );
-		if( !(data instanceof Long)){
-			throw new IllegalArgumentException( "not a long: " + key );
-		}
-		return (Long)data;
-	}
-	
-	/**
-	 * Gets the data that is stored for key <code>key</code>.
-	 * @param key the key of some entry
-	 * @return the data
-	 * @throws IllegalArgumentException if there is nothing stored for <code>key</code> or if the
-	 * stored object has the wrong type
-	 */
-	public double getDouble( String key ){
-		Object data = get( key );
-		if( !(data instanceof Double)){
-			throw new IllegalArgumentException( "not a double: " + key );
-		}
-		return (Double)data;
-	}
-	
-	/**
-	 * Gets the data that is stored for key <code>key</code>.
-	 * @param key the key of some entry
-	 * @return the data
-	 * @throws IllegalArgumentException if there is nothing stored for <code>key</code> or if the
-	 * stored object has the wrong type
-	 */
-	public boolean getBoolean( String key ){
-		Object data = get( key );
-		if( !(data instanceof Boolean)){
-			throw new IllegalArgumentException( "not a boolean: " + key );
-		}
-		return (Boolean)data;
-	}
-	
-	/**
-	 * Gets the data that is stored for key <code>key</code>.
-	 * @param key the key of some entry
-	 * @return the data, can be <code>null</code>
-	 */
-	public Object get( String key ){
-		if( data == null ){
-			return null;
-		}
-		return data.get( key );
-	}
-	
-	/**
-	 * Tells whether some data is stored for <code>key</code>.
-	 * @param key the key to search
-	 * @return <code>true</code> if data exists, <code>false</code> otherwise
-	 */
-	public boolean contains( String key ){
-		return get( key ) != null;
 	}
 }

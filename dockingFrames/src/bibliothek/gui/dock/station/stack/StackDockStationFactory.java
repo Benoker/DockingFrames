@@ -63,8 +63,7 @@ public class StackDockStationFactory implements
 		return ID;
 	}
 
-	public StackDockStationLayout getLayout( StackDockStation station,
-			Map<Dockable, Integer> children ){
+	public StackDockStationLayout getLayout( StackDockStation station, Map<Dockable, Integer> children ){
 		Dockable selectedDockable = station.getFrontDockable();
 		int selected = -1;
 
@@ -92,17 +91,18 @@ public class StackDockStationFactory implements
 			PlaceholderList.simulatedRead( layout.getPlaceholders(), new PlaceholderListItemAdapter<PlaceholderListItem>() {
     			@Override
     			public PlaceholderListItem convert( ConvertedPlaceholderListItem item ){
+    				int id = item.getInt( "id" );
     				int index = item.getInt( "index" );
     				Path placeholder = null;
     				if( item.contains( "placeholder" )){
     					placeholder = new Path( item.getString( "placeholder" ) );
     				}
     				StackDockProperty property = new StackDockProperty( index, placeholder );
-    				children.getChild( index ).setLocation( property );
+    				children.getChild( id ).setLocation( property );
     				
-    				for( int i = 0, n = children.getSubChildCount( index ); i<n; i++ ){
-    					DockLayoutInfo info = children.getSubChild( index, i );
-    					info.setLocation( new StackDockProperty( index, info.getPlaceholder() ) );
+    				for( int i = 0, n = children.getSubChildCount( id ); i<n; i++ ){
+    					DockLayoutInfo info = children.getSubChild( id, i );
+    					info.setLocation( new StackDockProperty( id, info.getPlaceholder() ) );
     				}
     				return null;
     			}

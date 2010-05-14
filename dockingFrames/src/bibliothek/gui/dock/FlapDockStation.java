@@ -1172,10 +1172,10 @@ public class FlapDockStation extends AbstractDockableStation {
     		@Override
     		public ConvertedPlaceholderListItem convert( int index, DockableHandle dockable ){
 	    		ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
-	    		item.putInteger( "id", children.get( dockable.getDockable() ) );
-	    		item.putInteger( "index", index );
+	    		item.putInt( "id", children.get( dockable.getDockable() ) );
+	    		item.putInt( "index", index );
 	    		item.putBoolean( "hold", isHold( dockable.getDockable() ));
-	    		item.putInteger( "size", getWindowSize( dockable.getDockable() ) );
+	    		item.putInt( "size", getWindowSize( dockable.getDockable() ) );
 	    		
 	    		if( strategy != null ){
 	    			Path placeholder = strategy.getPlaceholderFor( dockable.getDockable() );

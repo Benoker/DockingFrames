@@ -268,6 +268,15 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 					item.setPlaceholderMap( map.getMap( placeholders[i], "map" ) );
 				}
 				
+				if( map.contains( placeholders[i], "item" )){
+					Object[] keys = map.getArray( placeholders[i], "item-keys" );
+					
+					for( Object itemKey : keys ){
+						String key = (String)itemKey;
+						item.put( key, map.get( placeholders[i], "item." + key ) );
+					}
+				}
+				
 				list().add( item );
 			}
 			if( dockable != null ){
@@ -351,6 +360,16 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 					
 					for( String metaKey : keys ){
 						map.put( key, "dock." + metaKey, converted.get( metaKey ) );
+					}
+				}
+				
+				String[] itemKeys = entry.keys();
+				if( itemKeys.length > 0 ){
+					map.put( key, "item", true );
+					map.put( key, "item-keys", itemKeys );
+					
+					for( String itemKey : itemKeys ){
+						map.put( key, "item." + itemKey, entry.get( itemKey ) );
 					}
 				}
 			}
@@ -686,6 +705,19 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		return entry.item.getDockable();
 	}
 	
+	/**
+	 * Gets the meta-map that is associated with the set of placeholders that include <code>placeholder</code>.
+	 * @param placeholder some placeholder to search
+	 * @return the meta map of the group containing <code>placeholder</code>, can be <code>null</code>
+	 */
+	public PlaceholderMetaMap getMetaMap( Path placeholder ){
+		Entry entry = search( placeholder );
+		if( entry == null ){
+			return null;
+		}
+		return entry.item;
+	}
+
 	private Entry search( Path placeholder ){
 		Entry entry = this.head;
 		while( entry != null ){
@@ -1021,8 +1053,8 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	 * A single item in a {@link PlaceholderList}
 	 * @author Benjamin Sigg
 	 */
-	public class Item{
-		/** the value of this item, not <code>null</code> */
+	public class Item extends PlaceholderMetaMap{
+		/** the value of this item, can be <code>null</code> */
 		private D value;
 		/** all the placeholders that are associated with this item */
 		private Set<Path> placeholderSet = null;
@@ -1180,6 +1212,15 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		}
 		
 		/**
+		 * Tells whether <code>placeholder</code> is known to this item or not.
+		 * @param placeholder some placeholder to search
+		 * @return <code>true</code> if this item stores <code>placeholder</code>
+		 */
+		public boolean hasPlaceholder( Path placeholder ){
+			return placeholderSet != null && placeholderSet.contains( placeholder );
+		}
+		
+		/**
 		 * Returns the value of this dockable item.
 		 * @return the dockable or <code>null</code> if <code>this</code> 
 		 * is a placeholder
@@ -1228,7 +1269,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		
 		@Override
 		public int hashCode(){
-			return value.hashCode();
+			return value == null ? 0 : value.hashCode();
 		}
 		
 		@Override
@@ -1237,7 +1278,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 				return true;
 			
 			if( obj.getClass() == getClass() ){
-				return value.equals( ((Item)obj).value );
+				return value == null ? ((Item)obj).value == null : value.equals( ((Item)obj).value );
 			}
 			
 			return false;
@@ -1290,6 +1331,14 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		 * @return the element, not <code>null</code>
 		 */
 		public M get( int index );
+		
+		/**
+		 * Gets a mutable map which is associated with the <code>index</code>'th entry,
+		 * the content of this map is stored persistently.
+		 * @param index the location of some element
+		 * @return the map associated with that element
+		 */
+		public PlaceholderMetaMap getMetaMap( int index );
 		
 		/**
 		 * Adds <code>object</code> to this list, the object
@@ -1409,8 +1458,14 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 			if( entry == null ){
 				throw new IndexOutOfBoundsException();
 			}
-			removeAll( placeholder );
-			entry.item.add( placeholder );
+			if( !entry.item.hasPlaceholder( placeholder )){
+				removeAll( placeholder );
+				entry.item.add( placeholder );
+			}
+		}
+		
+		public PlaceholderMetaMap getMetaMap( int index ) {
+			return getEntry( index ).item;
 		}
 		
 		public A get( int index ){
