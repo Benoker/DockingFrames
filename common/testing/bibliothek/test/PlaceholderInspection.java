@@ -1,6 +1,7 @@
 package bibliothek.test;
 
 import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.common.CControl;
@@ -14,6 +15,7 @@ import bibliothek.test.inspect.CControlInspectable;
 import bibliothek.test.inspect.FlapDockStationInspectable;
 import bibliothek.test.inspect.KeyInspectable;
 import bibliothek.test.inspect.PlaceholderMapInspectable;
+import bibliothek.test.inspect.ScreenDockStationInspectable;
 import bibliothek.test.inspect.SingleCDockableInspectable;
 import bibliothek.test.inspect.SplitDockStationInspectable;
 import bibliothek.test.inspect.SplitLeafInspectable;
@@ -27,6 +29,7 @@ public class PlaceholderInspection extends InspectionGraph{
 		putInspectableAdapter( SingleCDockable.class, SingleCDockableInspectable.class );
 		putInspectableAdapter( FlapDockStation.class, FlapDockStationInspectable.class );
 		putInspectableAdapter( SplitDockStation.class, SplitDockStationInspectable.class );
+		putInspectableAdapter( ScreenDockStation.class, ScreenDockStationInspectable.class );
 		putInspectableAdapter( Leaf.class, SplitLeafInspectable.class );
 		putInspectableAdapter( Node.class, SplitNodeInspectable.class );
 		putInspectableAdapter( Placeholder.class, SplitPlaceholderInspectable.class );

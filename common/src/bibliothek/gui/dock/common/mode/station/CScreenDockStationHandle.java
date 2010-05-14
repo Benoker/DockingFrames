@@ -336,7 +336,7 @@ public class CScreenDockStationHandle {
 				}
 				else{
 					Dockable child = DockUtilities.getDirectChild( station, dockable );
-					ScreenDockProperty location = station.getLocation( child );
+					ScreenDockProperty location = station.getLocation( child, dockable );
 					
 					if( !parent.canDrag( dockable )){
 						throw new IllegalArgumentException( "cannot drag dockable from its current parent" );

@@ -52,7 +52,7 @@ public class CMaximalExternalizedLocation extends CExternalizedLocation{
 	
 	@Override
 	public DockableProperty findProperty( DockableProperty successor ){
-		ScreenDockProperty screen = new ScreenDockProperty( getX(), getY(), getWidth(), getHeight(), true );
+		ScreenDockProperty screen = new ScreenDockProperty( getX(), getY(), getWidth(), getHeight(), null, true );
 		screen.setSuccessor( successor );
 		return screen;
 	}

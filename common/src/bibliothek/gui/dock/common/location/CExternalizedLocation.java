@@ -116,7 +116,7 @@ public class CExternalizedLocation extends AbstractStackholdingLocation{
 	
 	@Override
 	public DockableProperty findProperty( DockableProperty successor ){
-		ScreenDockProperty screen = new ScreenDockProperty( x, y, width, height, false );
+		ScreenDockProperty screen = new ScreenDockProperty( x, y, width, height );
 		screen.setSuccessor( successor );
 		return screen;
 	}

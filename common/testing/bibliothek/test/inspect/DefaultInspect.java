@@ -2,7 +2,6 @@ package bibliothek.test.inspect;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +14,7 @@ public class DefaultInspect implements Inspect{
 	
 	private List<String> order = new ArrayList<String>();
 	private Map<String, Object> children = new HashMap<String, Object>();
-	private Map<String, Object> named = new IdentityHashMap<String, Object>();
+	private Map<String, Object> named = new HashMap<String, Object>();
 	
 	protected final InspectionGraph graph;
 	

@@ -140,7 +140,7 @@ public class ExternalizedMode<M extends ExternalizedModeArea> extends DefaultLoc
             Point corner = new Point();
             SwingUtilities.convertPointToScreen( corner, dockable.getComponent() );
 
-            property = new ScreenDockProperty( corner.x, corner.y, component.getWidth(), component.getHeight(), false );
+            property = new ScreenDockProperty( corner.x, corner.y, component.getWidth(), component.getHeight(), null, false );
         }
         
         area.setLocation( dockable, property, affected );
