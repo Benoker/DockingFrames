@@ -70,42 +70,6 @@ public class DockRegister {
     		throw new IllegalArgumentException( "controller must not be null" );
     	
     	this.controller = controller;
-    	
-    	addDockRegisterListener( new DockRegisterListener() {
-			public void dockableUnregistered( DockController controller, Dockable dockable ) {
-				if( dockable.getTitleText().contains( "Apple" )){
-					System.out.println( "- " + dockable.getTitleText() + " " + dockable );
-				}
-			}
-			
-			public void dockableRegistering( DockController controller, Dockable dockable ) {
-				
-			}
-			
-			public void dockableRegistered( DockController controller, Dockable dockable ) {
-				if( dockable.getTitleText().contains( "Apple" )){
-					System.out.println( "+ " + dockable.getTitleText() + " " + dockable );
-				}
-			}
-			
-			public void dockableCycledRegister( DockController controller, Dockable dockable ) {
-				if( dockable.getTitleText().contains( "Apple" )){
-					System.out.println( "! " + dockable.getTitleText() + " " + dockable );
-				}
-			}
-			
-			public void dockStationUnregistered( DockController controller, DockStation station ) {
-				
-			}
-			
-			public void dockStationRegistering( DockController controller, DockStation station ) {
-			}
-			
-			public void dockStationRegistered( DockController controller, DockStation station ) {
-				
-			}
-		});
-    	
     }
     
     /**
