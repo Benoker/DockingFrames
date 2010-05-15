@@ -296,3 +296,4 @@
 - Bugfix: Popup menus are now enabled for tabs on a DefaultStackDockComponent
 - API: A StackDockStation with only one child can still show a tab depending on the type of StackDockComponent
 - API: ScreenDockStation now supports fullscreen mode for its children. What "fullscreen" means can be influenced by a ScreenDockFullscreenStrategy.
+- Bugfix: If DockRegister was stalled and a DockStation was added/removed to the register and later Dockables added/removed from that station, then the DockRegister could miss these modifications and store too many/few Dockables.  

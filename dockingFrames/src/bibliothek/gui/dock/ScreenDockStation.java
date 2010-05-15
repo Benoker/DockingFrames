@@ -611,6 +611,7 @@ public class ScreenDockStation extends AbstractDockStation {
 			        window.setFullscreenStrategy( getFullscreenStrategy() );
 			        window.setDockable( dockable );
 			        window.setWindowBounds( new Rectangle( x, y, width, height ) );
+			        window.setVisible( isShowing() );
 			        window.validate();
 			        window.setFullscreen( fullscreen );
 			        
@@ -1263,7 +1264,7 @@ public class ScreenDockStation extends AbstractDockStation {
         listeners.fireDockableRemoved( lower );
         
         int listIndex = dockables.levelToBase( index, Level.DOCKABLE );
-        PlaceholderList<?>.Item item = dockables.list().get( listIndex );
+        PlaceholderList<ScreenDockWindowHandle>.Item item = dockables.list().get( listIndex );
         PlaceholderMap map = item.getPlaceholderMap();
         item.setPlaceholderMap( null );
         

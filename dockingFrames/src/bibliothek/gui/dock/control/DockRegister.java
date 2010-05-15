@@ -32,6 +32,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.event.DockRegisterListener;
 import bibliothek.gui.dock.event.DockStationAdapter;
+import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.util.DockUtilities;
 
 /**
@@ -69,6 +70,42 @@ public class DockRegister {
     		throw new IllegalArgumentException( "controller must not be null" );
     	
     	this.controller = controller;
+    	
+    	addDockRegisterListener( new DockRegisterListener() {
+			public void dockableUnregistered( DockController controller, Dockable dockable ) {
+				if( dockable.getTitleText().contains( "Apple" )){
+					System.out.println( "- " + dockable.getTitleText() + " " + dockable );
+				}
+			}
+			
+			public void dockableRegistering( DockController controller, Dockable dockable ) {
+				
+			}
+			
+			public void dockableRegistered( DockController controller, Dockable dockable ) {
+				if( dockable.getTitleText().contains( "Apple" )){
+					System.out.println( "+ " + dockable.getTitleText() + " " + dockable );
+				}
+			}
+			
+			public void dockableCycledRegister( DockController controller, Dockable dockable ) {
+				if( dockable.getTitleText().contains( "Apple" )){
+					System.out.println( "! " + dockable.getTitleText() + " " + dockable );
+				}
+			}
+			
+			public void dockStationUnregistered( DockController controller, DockStation station ) {
+				
+			}
+			
+			public void dockStationRegistering( DockController controller, DockStation station ) {
+			}
+			
+			public void dockStationRegistered( DockController controller, DockStation station ) {
+				
+			}
+		});
+    	
     }
     
     /**
@@ -116,6 +153,19 @@ public class DockRegister {
      * @param station the new station
      */
     public void add( DockStation station ){
+    	add( station, true );
+    }
+    
+    /**
+     * Adds a station to this register. The associated controller allows the user to
+     * drag and drop children from and to <code>station</code>. If
+     * the children of <code>station</code> are stations itself, then
+     * they will be added automatically
+     * @param station the new station
+     * @param requiresListeners if <code>true</code>, then {@link #stationListener} is added to any {@link DockStation}
+     * encountered in the tree beginning with <code>station</code>
+     */
+    private void add( DockStation station, final boolean requiresListeners ){
     	if( station == null )
             throw new NullPointerException( "Station must not be null" );
     	
@@ -132,7 +182,7 @@ public class DockRegister {
                 }
                 @Override
                 public void handleDockStation( DockStation station ) {
-                    register( station );
+                    register( station, requiresListeners );
                 }
             });
         }
@@ -267,15 +317,22 @@ public class DockRegister {
      * drag and drop for <code>station</code>.<br>
      * Clients and subclasses should not call this method.
      * @param station the station to add
+     * @param requiresListener if <code>true</code>, then the {@link DockStationListener} of this 
+     * {@link DockRegister} will be added to <code>station</code>, if <code>false</code> the
+     * listener will not be added
      */
-    protected void register( DockStation station ){
+    protected void register( DockStation station, boolean requiresListener ){
         if( !stations.contains( station )){
         	fireDockStationRegistering( station );
             
             stations.add( station );
-            station.addDockStationListener( stationListener );
+            
             station.setController( controller );
             station.updateTheme();
+            
+            if( requiresListener ){
+            	station.addDockStationListener( stationListener );
+            }
             
             fireDockStationRegistered( station );
         }
@@ -404,6 +461,11 @@ public class DockRegister {
     public boolean isStalled(){
     	return stalled > 0;
     }
+
+    /** tells what state a changing {@link Dockable} currently is in, used by the {@link StationListener} only */
+    private enum Status{
+    	ADDED, REMOVED, ADDED_AND_REMOVED, REMOVED_AND_ADDED
+    }
     
     /**
      * A listener to the controller of the enclosing register. Ensures that 
@@ -411,21 +473,11 @@ public class DockRegister {
      * @author Benjamin Sigg
      */
     private class StationListener extends DockStationAdapter{
-        /** a set of Dockables which were removed during a drag and drop operation */
-        private Set<Dockable> removedStalledSet = new HashSet<Dockable>();
-        /** a list of Dockables which were removed during a drag and drop operation */
-        private LinkedList<Dockable> removedStalledQueue = new LinkedList<Dockable>();
-        
-        /** a set of Dockables which were added during a drag and drop operation */
-        private Set<Dockable> addedStalledSet = new HashSet<Dockable>();
-        /** a list of Dockables which were added during a drag and drop operation */
-        private LinkedList<Dockable> addedStalledQueue = new LinkedList<Dockable>();
-        
-        /** a set of Dockables whose position might have changed */
-        private Set<Dockable> changedSet = new HashSet<Dockable>();
-        /** a list of Dockables whose position might have changed */
-        private LinkedList<Dockable> changedQueue = new LinkedList<Dockable>();
-        
+    	/** the current state of changing elements */
+    	private Map<Dockable, Status> changeMap = new HashMap<Dockable, Status>();
+    	/** the order in which the elements of {@link #changeMap} first appeared */
+    	private LinkedList<Dockable> changeQueue = new LinkedList<Dockable>();
+    	
         /** whether this listener is currently firing the stalled events */
         private boolean firing = false;
         
@@ -434,24 +486,22 @@ public class DockRegister {
                 try{
                     firing = true;
                     
-                    while( !changedQueue.isEmpty() || !addedStalledQueue.isEmpty() || !removedStalledQueue.isEmpty() ){
-                        while( !removedStalledQueue.isEmpty() ){
-                            Dockable head = removedStalledQueue.removeFirst();
-                            removedStalledSet.remove( head );
-                            removeDockable( head );
-                        }
-                        
-                        while( !addedStalledQueue.isEmpty() ){
-                            Dockable head = addedStalledQueue.removeFirst();
-                            addedStalledSet.remove( head );
-                            addDockable( head );
-                        }
-                        
-                        while( !changedQueue.isEmpty() ){
-                            Dockable head = changedQueue.removeFirst();
-                            changedSet.remove( head );
-                            fireStalledChange( head );
-                        }
+                    while( !changeQueue.isEmpty() ){
+                    	Dockable next = changeQueue.removeFirst();
+                    	Status status = changeMap.remove( next );
+                    	switch( status ){
+                    		case ADDED:
+                    			addDockable( next, false );
+                    			break;
+                    		case REMOVED:
+                    			removeDockable( next );
+                    			break;
+                    		
+                    		case ADDED_AND_REMOVED:
+                    		case REMOVED_AND_ADDED:
+                    			fireStalledChange( next );
+                    			break;
+                    	}
                     }
                 }
                 finally{
@@ -466,21 +516,31 @@ public class DockRegister {
                 DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
                     @Override
                     public void handleDockable( Dockable dockable ) {
-                        if( removedStalledSet.remove( dockable ) ){
-                            removedStalledQueue.remove( dockable );
-                            if( changedSet.add( dockable ))
-                                changedQueue.add( dockable );
-                        }
-                        else if( addedStalledSet.add( dockable ) ){
-                            addedStalledQueue.addLast( dockable );
-                            if( changedSet.remove( dockable ))
-                                changedQueue.remove( dockable );
-                        }
+                    	Status current = changeMap.get( dockable );
+                    	if( current == null ){
+                    		changeMap.put( dockable, Status.ADDED );
+                    		changeQueue.add( dockable );
+                    	}
+                    	else{
+                    		switch( current ){
+                    			case REMOVED:
+                    				changeMap.put( dockable, Status.REMOVED_AND_ADDED );
+                    				break;
+                    			case ADDED_AND_REMOVED:
+                    				changeMap.put( dockable, Status.ADDED );
+                    				break;
+                    		}
+                    	}
+                    }
+                    
+                    @Override
+                    public void handleDockStation( DockStation station ) {
+                    	station.addDockStationListener( StationListener.this );
                     }
                 });
             }
             else{
-                addDockable( dockable );
+                addDockable( dockable, true );
             }
         }
         
@@ -488,14 +548,18 @@ public class DockRegister {
          * Adds a Dockable either as station or as pure Dockable to this
          * controller.
          * @param dockable the Dockable to register
+         * @param requiresListener whether the listener of this {@link DockRegister} has
+         * to be added to the {@link DockStation} <code>dockable</code> or not
          */
-        private void addDockable( Dockable dockable ){
+        private void addDockable( Dockable dockable, boolean requiresListener ){
             DockStation asStation = dockable.asDockStation();
             
-            if( asStation != null )
-                add( asStation );
-            else
+            if( asStation != null ){
+                add( asStation, requiresListener );
+            }
+            else{
                 register( dockable );
+            }
         }
 
         @Override
@@ -504,16 +568,21 @@ public class DockRegister {
                 DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
                     @Override
                     public void handleDockable( Dockable dockable ) {
-                        if( addedStalledSet.remove( dockable ) ){
-                            addedStalledQueue.remove( dockable );
-                            if( changedSet.add( dockable ))
-                                changedQueue.add( dockable );
-                        }
-                        else if( removedStalledSet.add( dockable ) ){
-                            removedStalledQueue.addLast( dockable );
-                            if( changedSet.remove( dockable ))
-                                changedQueue.remove( dockable );
-                        }
+                    	Status current = changeMap.get( dockable );
+                    	if( current == null ){
+                    		changeMap.put( dockable, Status.REMOVED );
+                    		changeQueue.add( dockable );
+                    	}
+                    	else{
+                    		switch( current ){
+                    			case ADDED:
+                    				changeMap.put( dockable, Status.ADDED_AND_REMOVED );
+                    				break;
+                    			case REMOVED_AND_ADDED:
+                    				changeMap.put( dockable, Status.REMOVED );
+                    				break;
+                    		}
+                    	}
                     }
                 });
             }
@@ -522,6 +591,11 @@ public class DockRegister {
         @Override
         public void dockableRemoved( DockStation station, Dockable dockable ) {
             dockable.setDockParent( null );
+            
+            DockStation asStation = dockable.asDockStation();
+            if( asStation != null ){
+            	asStation.removeDockStationListener( StationListener.this );
+            }
             
             if( stalled == 0 ){
                 removeDockable( dockable );
@@ -536,10 +610,12 @@ public class DockRegister {
         private void removeDockable( Dockable dockable ){
             DockStation asStation = dockable.asDockStation();
             
-            if( asStation != null )
+            if( asStation != null ){
                 remove( asStation );
-            else
+            }
+            else{
                 unregister( dockable );
+            }
         }
     }
 }

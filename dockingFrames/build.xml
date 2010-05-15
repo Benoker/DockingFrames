@@ -50,14 +50,14 @@
 		<copy todir="${release.base}/dock/src/${name.common}">
 			<fileset dir="${source}/${name.common}"/>
 		</copy>
-		<mkdir dir="${release.base}/dock/src/${name.dockingFrames}"/>
-		<copy todir="${release.base}/dock/src/${name.dockingFrames}">
-			<fileset dir="${source}/${name.dockingFrames}"/>
+		<mkdir dir="${release.base}/dock/src/${name.core}"/>
+		<copy todir="${release.base}/dock/src/${name.core}">
+			<fileset dir="${source}/${name.core}"/>
 		</copy>		
 				
 		<mkdir dir="${release.base}/dock/bin"/>
 		<copy todir="${release.base}/dock/bin" file="${bin}/${name.common}.jar"/>
-		<copy todir="${release.base}/dock/bin" file="${bin}/${name.dockingFrames}.jar"/>
+		<copy todir="${release.base}/dock/bin" file="${bin}/${name.core}.jar"/>
 		
 		<copy todir="${release.base}/dock">
 			<fileset dir="${base}">
@@ -113,7 +113,7 @@
 		<property name="name.demo" value="tutorial"/>
 		<property name="name.demonstration" value="demonstration"/>
 		<property name="name.demonstrationInterface" value="interfaces"/>
-		<property name="name.dockingFrames" value="dockingFramesCore"/>
+		<property name="name.core" value="dockingFramesCore"/>
 		<property name="name.help" value="help"/>
 		<property name="name.notes" value="notes"/>
 		<property name="name.paint" value="paint"/>
@@ -125,7 +125,7 @@
 		<property name="location.demo" value="[JavaForge]Demo"/>
 		<property name="location.demonstration" value="[JavaForge]Demonstration"/>
 		<property name="location.demonstrationInterface" value="[JavaForge]DemonstrationInterface"/>
-		<property name="location.dockingFrames" value="[JavaForge]DockingFrames"/>
+		<property name="location.core" value="[JavaForge]DockingFrames"/>
 		<property name="location.help" value="[JavaForge]Help"/>
 		<property name="location.notes" value="[JavaForge]Notes"/>
 		<property name="location.paint" value="[JavaForge]Paint"/>
@@ -133,9 +133,9 @@
 	</target>
 	
 	<target name="doc" depends="source, paths">
-		<mkdir dir="${doc}/${name.dockingFrames}"/>
-		<javadoc destdir="${doc}/${name.dockingFrames}" use="true" splitindex="true" useexternalfile="true">
-			<fileset dir="${source}/${name.dockingFrames}">
+		<mkdir dir="${doc}/${name.core}"/>
+		<javadoc destdir="${doc}/${name.core}" use="true" splitindex="true" useexternalfile="true">
+			<fileset dir="${source}/${name.core}">
 				<include name="**/*.java"/>
 			</fileset>
 			<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
@@ -143,7 +143,7 @@
 	
 		<mkdir dir="${doc}/${name.common}"/>
 		<javadoc destdir="${doc}/${name.common}" use="true" splitindex="true" useexternalfile="true">
-			<fileset dir="${source}/${name.dockingFrames}">
+			<fileset dir="${source}/${name.core}">
 				<include name="**/*.java"/>
 			</fileset>
 			<fileset dir="${source}/${name.common}">
@@ -156,13 +156,13 @@
 	<target name="text" depends="source, paths">
 		<copy tofile="${base}/common_(old).pdf" file="${location.common}/guide/Guide.pdf"/>
 		<copy tofile="${base}/common.pdf" file="${location.common}/guide2/guide2.pdf"/>
-		<copy tofile="${base}/core_(old).pdf" file="${location.dockingFrames}/guide/guide.pdf"/>
-		<copy tofile="${base}/core.pdf" file="${location.dockingFrames}/guide2/guide2.pdf"/>
-		<copy tofile="${base}/faq.pdf" file="${location.dockingFrames}/guide/faq.pdf"/>
+		<copy tofile="${base}/core_(old).pdf" file="${location.core}/guide/guide.pdf"/>
+		<copy tofile="${base}/core.pdf" file="${location.core}/guide2/guide2.pdf"/>
+		<copy tofile="${base}/faq.pdf" file="${location.core}/guide/faq.pdf"/>
 		<copy tofile="${base}/transition.pdf" file="${location.common}/guide/Transition.pdf"/>
-		<copy todir="${base}" file="${location.dockingFrames}/license.txt"/>
-		<copy todir="${base}" file="${location.dockingFrames}/changes.txt"/>
-		<copy tofile="${base}/readme.txt" file="${location.dockingFrames}/readme_full.txt"/>
+		<copy todir="${base}" file="${location.core}/license.txt"/>
+		<copy todir="${base}" file="${location.core}/changes.txt"/>
+		<copy tofile="${base}/readme.txt" file="${location.core}/readme_full.txt"/>
 	</target>
 
 	<target name="webstart" depends="bin, paths">
@@ -179,14 +179,14 @@
 			<fileset dir="${temp}/${name.demonstration}"/>
 			<manifest>
 				<attribute name="Main-Class" value="bibliothek.demonstration.Main"/>
-				<attribute name="Class-Path" value="lib/${name.common}.jar lib/${name.demonstrationInterface}.jar lib/${name.dockingFrames}.jar lib/${name.chess}.jar lib/${name.help}.jar lib/${name.notes}.jar lib/${name.paint}.jar lib/${name.sizeAndColor}.jar lib/${name.layouts}.jar"/>
+				<attribute name="Class-Path" value="lib/${name.common}.jar lib/${name.demonstrationInterface}.jar lib/${name.core}.jar lib/${name.chess}.jar lib/${name.help}.jar lib/${name.notes}.jar lib/${name.paint}.jar lib/${name.sizeAndColor}.jar lib/${name.layouts}.jar"/>
 			</manifest>
 		</jar>
 		<jar destfile="${web}/lib/${name.demonstrationInterface}.jar">
 			<fileset dir="${temp}/${name.demonstrationInterface}"/>
 		</jar>
-		<jar destfile="${web}/lib/${name.dockingFrames}.jar">
-			<fileset dir="${temp}/${name.dockingFrames}"/>
+		<jar destfile="${web}/lib/${name.core}.jar">
+			<fileset dir="${temp}/${name.core}"/>
 		</jar>
 		<jar destfile="${web}/lib/${name.help}.jar">
 			<fileset dir="${temp}/${name.help}"/>
@@ -205,25 +205,25 @@
 		</jar>
 	</target>
 	
-	<target name="bin" depends="source, bin dir, bin.chess, bin.common, bin.layouts, bin.demo, bin.demonstration, bin.demonstrationInterface, bin.dockingFrames, bin.help, bin.notes, bin.paint">
+	<target name="bin" depends="source, bin.dir, bin.chess, bin.common, bin.layouts, bin.demo, bin.demonstration, bin.demonstrationInterface, bin.core, bin.help, bin.notes, bin.paint">
 		<jar destfile="${bin}/${name.chess}.jar">
 			<fileset dir="${temp}/${name.chess}"/>
 			<manifest>
 				<attribute name="Main-Class" value="bibliothek.chess.Main"/>
-				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.dockingFrames}.jar"/>
+				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.core}.jar"/>
 			</manifest>
 		</jar>
 		<jar destfile="${bin}/${name.layouts}.jar">
 			<fileset dir="${temp}/${name.layouts}"/>
 			<manifest>
 				<attribute name="Main-Class" value="bibliothek.commonLayouts.Application"/>
-				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.dockingFrames}.jar"/> 
+				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.core}.jar"/> 
 			</manifest>
 		</jar>
 		<jar destfile="${bin}/${name.common}.jar">
 			<fileset dir="${temp}/${name.common}"/>
 			<manifest>
-				<attribute name="Class-Path" value="${name.dockingFrames}.jar"/>
+				<attribute name="Class-Path" value="${name.core}.jar"/>
 			</manifest>
 		</jar>
 		<jar destfile="${bin}/${name.demo}.jar">
@@ -233,7 +233,7 @@
 			<fileset dir="${temp}/${name.demonstration}"/>
 			<manifest>
 				<attribute name="Main-Class" value="bibliothek.demonstration.Main"/>
-				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.dockingFrames}.jar ${name.chess}.jar ${name.help}.jar ${name.notes}.jar ${name.paint}.jar ${name.sizeAndColor}.jar ${name.layouts}.jar"/>
+				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.core}.jar ${name.chess}.jar ${name.help}.jar ${name.notes}.jar ${name.paint}.jar ${name.sizeAndColor}.jar ${name.layouts}.jar"/>
 			</manifest>
 		</jar>
 		<jar destfile="${bin}/${name.demonstrationInterface}.jar">
@@ -242,45 +242,45 @@
 				<attribute name="Class-Path" value="${name.common}.jar"/>
 			</manifest>
 		</jar>
-		<jar destfile="${bin}/${name.dockingFrames}.jar">
-			<fileset dir="${temp}/${name.dockingFrames}"/>
+		<jar destfile="${bin}/${name.core}.jar">
+			<fileset dir="${temp}/${name.core}"/>
 		</jar>
 		<jar destfile="${bin}/${name.help}.jar">
 			<fileset dir="${temp}/${name.help}"/>
 			<manifest>
 				<attribute name="Main-Class" value="bibliothek.help.Application"/>
-				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.dockingFrames}.jar"/>
+				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.core}.jar"/>
 			</manifest>
 		</jar>
 		<jar destfile="${bin}/${name.notes}.jar">
 			<fileset dir="${temp}/${name.notes}"/>
 			<manifest>
 				<attribute name="Main-Class" value="bibliothek.notes.Application"/>
-				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.dockingFrames}.jar"/>
+				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.core}.jar"/>
 			</manifest>
 		</jar>
 		<jar destfile="${bin}/${name.paint}.jar">
 			<fileset dir="${temp}/${name.paint}"/>
 			<manifest>
 				<attribute name="Main-Class" value="bibliothek.paint.Application"/>
-				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.dockingFrames}.jar"/>
+				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.core}.jar"/>
 			</manifest>
 		</jar>
 		<jar destfile="${bin}/${name.sizeAndColor}.jar">
 			<fileset dir="${temp}/${name.sizeAndColor}"/>
 			<manifest>
 				<attribute name="Main-Class" value="bibliothek.sizeAndColor.Core"/>
-				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.dockingFrames}.jar"/>
+				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.core}.jar"/>
 			</manifest>
 		</jar>
 	</target>
 
 	<!-- Compiling -->
-	<target name="bin.chess" depends="source, bin dir, bin.common, bin.demonstrationInterface, bin.dockingFrames">
+	<target name="bin.chess" depends="source, bin.dir, bin.common, bin.demonstrationInterface, bin.core">
 		<javac srcdir="${source}/${name.chess}" destdir="${temp}/${name.chess}">
 			<classpath path="${temp}/${name.common}"/>
 			<classpath path="${temp}/${name.demonstrationInterface}"/>
-			<classpath path="${temp}/${name.dockingFrames}"/>
+			<classpath path="${temp}/${name.core}"/>
 		</javac>
 		<copy todir="${temp}/${name.chess}">
 			<fileset dir="${source}/${name.chess}">
@@ -289,11 +289,11 @@
 		</copy>
 	</target>
 	
-	<target name="bin.layouts" depends="source, bin dir, bin.common, bin.demonstrationInterface, bin.dockingFrames">
+	<target name="bin.layouts" depends="source, bin.dir, bin.common, bin.demonstrationInterface, bin.core">
 		<javac srcdir="${source}/${name.layouts}" destdir="${temp}/${name.layouts}">
 			<classpath path="${temp}/${name.common}"/>
 			<classpath path="${temp}/${name.demonstrationInterface}"/>
-			<classpath path="${temp}/${name.dockingFrames}"/>
+			<classpath path="${temp}/${name.core}"/>
 		</javac>
 		<copy todir="${temp}/${name.layouts}">
 			<fileset dir="${source}/${name.layouts}">
@@ -302,9 +302,9 @@
 		</copy>
 	</target>
 
-	<target name="bin.common" depends="source, bin dir, bin.dockingFrames">
+	<target name="bin.common" depends="source, bin.dir, bin.core">
 		<javac srcdir="${source}/${name.common}" destdir="${temp}/${name.common}">
-			<classpath path="${temp}/${name.dockingFrames}"/>
+			<classpath path="${temp}/${name.core}"/>
 		</javac>
 		<copy todir="${temp}/${name.common}">
 			<fileset dir="${source}/${name.common}">
@@ -314,9 +314,9 @@
 	</target>
 
 
-	<target name="bin.demo" depends="source, bin dir, bin.dockingFrames, bin.common">
+	<target name="bin.demo" depends="source, bin.dir, bin.core, bin.common">
 		<javac srcdir="${source}/${name.demo}" destdir="${temp}/${name.demo}">
-			<classpath path="${temp}/${name.dockingFrames}"/>
+			<classpath path="${temp}/${name.core}"/>
 			<classpath path="${temp}/${name.common}"/>
 		</javac>
 		<copy todir="${temp}/${name.demo}">
@@ -326,13 +326,13 @@
 		</copy>
 	</target>
 
-	<target name="bin.demonstration" depends="source, bin dir, bin.layouts, bin.chess, bin.common, bin.demonstrationInterface, bin.dockingFrames, bin.help, bin.notes, bin.paint, bin.sizeAndColor">
+	<target name="bin.demonstration" depends="source, bin.dir, bin.layouts, bin.chess, bin.common, bin.demonstrationInterface, bin.core, bin.help, bin.notes, bin.paint, bin.sizeAndColor">
 		<javac srcdir="${source}/${name.demonstration}" destdir="${temp}/${name.demonstration}">
 			<classpath path="${temp}/${name.chess}"/>
 			<classpath path="${temp}/${name.layouts}"/>
 			<classpath path="${temp}/${name.common}"/>
 			<classpath path="${temp}/${name.demonstrationInterface}"/>
-			<classpath path="${temp}/${name.dockingFrames}"/>
+			<classpath path="${temp}/${name.core}"/>
 			<classpath path="${temp}/${name.help}"/>
 			<classpath path="${temp}/${name.notes}"/>
 			<classpath path="${temp}/${name.paint}"/>
@@ -345,7 +345,7 @@
 		</copy>
 	</target>
 
-	<target name="bin.demonstrationInterface" depends="source, bin dir, bin.common">
+	<target name="bin.demonstrationInterface" depends="source, bin.dir, bin.common">
 		<javac srcdir="${source}/${name.demonstrationInterface}" destdir="${temp}/${name.demonstrationInterface}">
 			<classpath path="${temp}/${name.common}"/>
 		</javac>
@@ -356,21 +356,20 @@
 		</copy>
 	</target>
 	
-	<target name="bin.dockingFrames" depends="source, bin dir">
-		<javac srcdir="${source}/${name.dockingFrames}"
-         destdir="${temp}/${name.dockingFrames}"/>
-		<copy todir="${temp}/${name.dockingFrames}">
-			<fileset dir="${source}/${name.dockingFrames}">
+	<target name="bin.core" depends="source, bin.dir">
+		<javac srcdir="${source}/${name.core}" destdir="${temp}/${name.core}"/>
+		<copy todir="${temp}/${name.core}">
+			<fileset dir="${source}/${name.core}">
 				<exclude name="**/*.java"/>
 			</fileset>
 		</copy>
 	</target>
 	
-	<target name="bin.help" depends="source, bin dir, bin.common, bin.demonstrationInterface, bin.dockingFrames">
+	<target name="bin.help" depends="source, bin.dir, bin.common, bin.demonstrationInterface, bin.core">
 		<javac srcdir="${source}/${name.help}" destdir="${temp}/${name.help}">
 			<classpath path="${temp}/${name.common}"/>
 			<classpath path="${temp}/${name.demonstrationInterface}"/>
-			<classpath path="${temp}/${name.dockingFrames}"/>
+			<classpath path="${temp}/${name.core}"/>
 			<classpath path="${java.home}/lib/tools.jar"/>
 		</javac>
 		<copy todir="${temp}/${name.help}">
@@ -380,11 +379,11 @@
 		</copy>
 	</target>
 
-	<target name="bin.notes" depends="source, bin dir, bin.common, bin.demonstrationInterface, bin.dockingFrames">
+	<target name="bin.notes" depends="source, bin.dir, bin.common, bin.demonstrationInterface, bin.core">
 		<javac srcdir="${source}/${name.notes}" destdir="${temp}/${name.notes}">
 			<classpath path="${temp}/${name.common}"/>
 			<classpath path="${temp}/${name.demonstrationInterface}"/>
-			<classpath path="${temp}/${name.dockingFrames}"/>
+			<classpath path="${temp}/${name.core}"/>
 		</javac>
 		<copy todir="${temp}/${name.notes}">
 			<fileset dir="${source}/${name.notes}">
@@ -393,11 +392,11 @@
 		</copy>
 	</target>
 
-	<target name="bin.paint" depends="source, bin dir, bin.common, bin.demonstrationInterface, bin.dockingFrames">
+	<target name="bin.paint" depends="source, bin.dir, bin.common, bin.demonstrationInterface, bin.core">
 		<javac srcdir="${source}/${name.paint}" destdir="${temp}/${name.paint}">
 			<classpath path="${temp}/${name.common}"/>
 			<classpath path="${temp}/${name.demonstrationInterface}"/>
-			<classpath path="${temp}/${name.dockingFrames}"/>
+			<classpath path="${temp}/${name.core}"/>
 		</javac>
 		<copy todir="${temp}/${name.paint}">
 			<fileset dir="${source}/${name.paint}">
@@ -406,11 +405,11 @@
 		</copy>
 	</target>
 	
-	<target name="bin.sizeAndColor" depends="source, bin dir, bin.common, bin.demonstrationInterface, bin.dockingFrames">
+	<target name="bin.sizeAndColor" depends="source, bin.dir, bin.common, bin.demonstrationInterface, bin.core">
 		<javac srcdir="${source}/${name.sizeAndColor}" destdir="${temp}/${name.sizeAndColor}">
 			<classpath path="${temp}/${name.common}"/>
 			<classpath path="${temp}/${name.demonstrationInterface}"/>
-			<classpath path="${temp}/${name.dockingFrames}"/>
+			<classpath path="${temp}/${name.core}"/>
 		</javac>
 		<copy todir="${temp}/${name.sizeAndColor}">
 			<fileset dir="${source}/${name.sizeAndColor}">
@@ -420,7 +419,7 @@
 	</target>
 
 	<!-- Paths -->
-	<target name="bin dir" depends="clean, paths">
+	<target name="bin.dir" depends="clean, paths">
 		<mkdir dir="${base}"/>
 		<mkdir dir="${bin}"/>
 		<mkdir dir="${temp}"/>
@@ -430,7 +429,7 @@
 		<mkdir dir="${temp}/${name.demo}"/>
 		<mkdir dir="${temp}/${name.demonstration}"/>
 		<mkdir dir="${temp}/${name.demonstrationInterface}"/>
-		<mkdir dir="${temp}/${name.dockingFrames}"/>
+		<mkdir dir="${temp}/${name.core}"/>
 		<mkdir dir="${temp}/${name.help}"/>
 		<mkdir dir="${temp}/${name.notes}"/>
 		<mkdir dir="${temp}/${name.paint}"/>
@@ -469,8 +468,8 @@
 				<exclude name="*.svn/*"/>
 			</fileset>
 		</copy>
-		<copy todir="${source}/${name.dockingFrames}">
-			<fileset dir="${location.dockingFrames}/src">
+		<copy todir="${source}/${name.core}">
+			<fileset dir="${location.core}/src">
 				<exclude name="*.svn/*"/>
 			</fileset>
 		</copy>
@@ -506,7 +505,7 @@
 		<mkdir dir="${source}/${name.demo}"/>
 		<mkdir dir="${source}/${name.demonstration}"/>
 		<mkdir dir="${source}/${name.demonstrationInterface}"/>
-		<mkdir dir="${source}/${name.dockingFrames}"/>
+		<mkdir dir="${source}/${name.core}"/>
 		<mkdir dir="${source}/${name.help}"/>
 		<mkdir dir="${source}/${name.notes}"/>
 		<mkdir dir="${source}/${name.paint}"/>

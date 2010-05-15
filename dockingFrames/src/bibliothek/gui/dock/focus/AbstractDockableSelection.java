@@ -273,7 +273,7 @@ public abstract class AbstractDockableSelection extends JPanel implements Dockab
      * on this selection
      */
     protected boolean selectable( Dockable dockable ){
-        return dockable.asDockStation() == null;
+        return dockable.asDockStation() == null && dockable.getDockParent() != null;
     }
     
     /**
