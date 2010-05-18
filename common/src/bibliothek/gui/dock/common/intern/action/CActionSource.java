@@ -87,7 +87,13 @@ public class CActionSource extends AbstractDockActionSource{
 		if( action == null )
 			throw new IllegalArgumentException( "action must not be null" );
 		
-		return actions.set( index, action );
+		if( index == actions.size() ){
+			add( action );
+			return null;
+		}
+		CAction result = remove( index );
+		insert( index, action );
+		return result;
 	}
 	
 	/**
@@ -96,7 +102,9 @@ public class CActionSource extends AbstractDockActionSource{
 	 * @return the removed action
 	 */
 	public CAction remove( int index ){
-		return actions.remove( index );
+		CAction action = actions.remove( index );
+		fireRemoved( index, index );
+		return action;
 	}
 	
 	/**
@@ -105,7 +113,12 @@ public class CActionSource extends AbstractDockActionSource{
 	 * @return <code>true</code> if the action was removed
 	 */
 	public boolean remove( CAction action ){
-		return actions.remove( action );
+		int index = actions.indexOf( action );
+		if( index == -1 ){
+			return false;
+		}
+		remove( index );
+		return true;
 	}
 	
 	/**
