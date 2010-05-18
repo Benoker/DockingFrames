@@ -211,6 +211,7 @@ public class Leaf extends VisibleSplitNode{
      */
     public void placehold( boolean keepCurrent ){
     	Dockable dockable = getDockable();
+
     	if( dockable != null ){
     		SplitDockAccess access = getAccess();
         	PlaceholderStrategy strategy = access.getOwner().getPlaceholderStrategy();

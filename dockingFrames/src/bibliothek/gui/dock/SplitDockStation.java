@@ -2132,8 +2132,8 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     public void removeDockable( Dockable dockable ){
         Leaf leaf = root().getLeaf( dockable );
         if( leaf != null ){
+            leaf.setDockable( null, true, true, dockable.asDockStation() != null );
             leaf.placehold( true );
-            leaf.setDockable( null, true );
         }
     }
     
