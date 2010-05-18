@@ -518,7 +518,7 @@ public abstract class AbstractCDockable implements CDockable {
     	}
         return dockable;
     }
-    
+
     /**
      * Sets the default location for mode <code>mode</code> for this dockable. Note
      * that this location does not override any existing setting. This method can
@@ -529,9 +529,22 @@ public abstract class AbstractCDockable implements CDockable {
      * @param location the default location or <code>null</code>
      */
     public void setDefaultLocation( ExtendedMode mode, CLocation location ){
-        if( location == null )
+    	if( mode == null ){
+    		throw new IllegalArgumentException( "mode must not be null" );
+    	}
+    	
+        if( location == null ){
             defaultLocations.remove( mode );
+        }
         else{
+        	ExtendedMode locationMode = location.findMode();
+        	if( locationMode == null ){
+        		throw new IllegalArgumentException( "location does not carry enough information to find its mode" );
+        	}
+        	if( !mode.getModeIdentifier().equals( locationMode.getModeIdentifier() )){
+        		throw new IllegalArgumentException( "mode of location and \'mode\' do not have the same identifier" );
+        	}
+        	
             defaultLocations.put( mode, location );
         
             if( control != null ){
