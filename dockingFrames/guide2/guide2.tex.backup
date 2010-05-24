@@ -80,25 +80,9 @@
 \tableofcontents
 \newpage
 
-\section{Introduction}
-\src{DockingFrames} is an open source Java Swing framework. This framework allows to write applications with floating panels. A floating panel is a \src{Component} that can be moved around by the user.
+\include{introduction/chapter}
 
-\src{DockingFrames} consists of two libraries, \src{Core} and \src{Common}. \src{Core} provides the basic functionality of the framework. It introduces a lot of features, but does not connect them. \src{Core} can be used without \src{Common}, but it gets a lot easier if both libraries are used together.
-
-This document covers only \src{Core}, \src{Common} has its own guide. Not all the details of \src{Core} are described, but this document gives a nice oversight of the more important aspects.
-
-\section{Notation}
-This document uses various notations.
-
-Any element that can be source code (e.g. a class name) and project names are written mono-spaced like this: \src{java.lang.String}. The package of classes and interfaces is rarely given since almost no name is used twice. The packages can be easily found with the help of the generated API documentation (\src{JavaDoc}).
-
-\infobox{Tips and tricks are listed in boxes.}
-
-\warningbox{Important notes and warnings are listed in boxes like this one.}
-
-\classbox{Implementation details, especially lists of class names, are written in boxes like this.}
-
-\designbox{These boxes explain \textit{why} some thing was designed the way it is. This might either contain some bit of history or an explanation why some awkward design is not as bad as it first looks.}
+\include{design/chapter}
 
 \section{Basics}
 The basic idea of \src{Core} is to have one object that controls the framework, one object for each floating panel and one object for each area where a floating panel can be docked.
@@ -721,9 +705,9 @@ A \src{DockTitle} is a \src{Component} that may show an icon, a text, some \src{
 \subsection{Lifecycle}
 Any client that wants to show a \src{DockTitle} needs to specify what \textit{kind} of title it shows and needs to \textit{request} a title.
 
-The \textit{kind} of a title is specified by a \src{DockTitleVersion}. New \src{DockTitleVersions} are obtained through the \src{DockTitleManager} (there is one per \src{DockController}). Creating a new \src{DockTitleVersion} requires the calling client to provide a default \src{DockTitleFactory}.
+The \textit{kind} of a title is specified by a \src{DockTitleVersion}. New \linebreak \src{DockTitleVersion}s are obtained through the \src{DockTitleManager} (there is one per \src{DockController}). Creating a new \src{DockTitleVersion} requires the calling client to provide a default \src{DockTitleFactory}.
 
-The \textit{request} for a title is handled by a \src{DockTitleRequest}. Once a \src{DockTitleRequest} is created its method \src{request} can be called to execute the request. Clients should call \src{install} before using the request and \src{uninstall} once the request is no longer in use. This way the \src{DockTitleRequest} will automatically be executed again if the underlying \src{DockTitleFactory} is exchanged.
+The \textit{request} for a title is handled by a \src{DockTitleRequest}. Once a \linebreak \src{DockTitleRequest} is created its method \src{request} can be called to execute the request. Clients should call \src{install} before using the request and \src{uninstall} once the request is no longer in use. This way the \src{DockTitleRequest} will automatically be executed again if the underlying \src{DockTitleFactory} is exchanged.
 
 Once a \src{DockTitle} is acquired it must be connected with its \src{Dockable}. Clients must call the method \src{bind( DockTitle )} of \src{Dockable}, this tells the \src{Dockable} that is has a new title. If the client no longer shows the title it must call \src{unbind( DockTitle )}.
 
@@ -735,16 +719,13 @@ Once a \src{DockTitle} is acquired it must be connected with its \src{Dockable}.
 	\item A \src{DockableListener} has several methods that will be invoked if titles get added, removed, updated or exchanged.
 \end{itemize}}
 
-
-
-
 \subsection{Custom titles}
 \subsubsection{Implementing a new title}
 It is possible to replace all the titles in the framework. While the interface \src{DockTitle} is rather open, a title is responsible to collect all the information it wants to show by itself.
 
 Most titles will have a constructor that has a \src{Dockable} as argument. They will add a \src{DockableListener} to their \src{Dockable} once \src{bind} is called and remove the listener once \src{unbind} is called.
 
-There is only one connection between a module that shows a title and the title itself: the method \src{changed}. Modules use this method to send \src{DockTitleEvent}s to the title.
+There is only one connection between a module that shows a title and the title itself: the method \src{changed}. Modules use this method to send \linebreak \src{DockTitleEvent}s to the title.
 
 \designbox{A module does not need to know what title it shows. It just delivers the \src{DockTitleEvent} to the title. The module can use a subclass of \src{DockTitleEvent} to transfer more information than \src{DockTitleEvent} alone could carry. This design allows to use any implementation of \src{DockTitle} at any place while some titles still can use additional information from their environment. An example is the \src{EclipseDockTitleEvent} which is used by tabs. This event also tells the titles at which location they are and whether their tab is focused or not.}
 
@@ -758,9 +739,11 @@ There are some classes that can help implementing a custom title:
 \classbox{In order to use the popup menu of \src{ButtonPanel} some special code has to be written. First: the argument \src{menu} of the constructor of \src{ButtonPanel} has to be set to \src{true}. Second: the method \src{getPreferredSize} of \src{ButtonPanel} cannot be used, any standard \src{LayoutManager} will fail. Instead the method \src{doLayout} of the \src{Container} which shows the panel can be overriden. In this \src{doLayout} method the container should call \src{getPreferredSizes} to obtain a list of possible sizes of the panel. The $n$'th dimension in this array tells how big the \src{ButtonPanel} would be if it would show $n$ actions. The container should choose the biggest possible $n$ and call \src{setVisibleActions}.}
 
 \subsubsection{Apply the title}
-There are three ways to introduce a custom title into the framework.
+There are several ways to introduce a custom title into the framework.
 
-To override or implement \src{getDockTitle} of \src{Dockable} is the simplest way. The method just creates a new instance of the custom title when called.
+To override or implement \src{requestDockTitle} of \src{Dockable} is the simplest way. The method just creates a new instance of the custom title when called.
+
+Overriding or implementing \src{requestChildDockTitle} of \src{DockStation} allows to exchange the title of all children.
 
 The \src{DockTheme} can be used as well. Either override the method \linebreak \src{getTitleFactory} or call \src{setTitleFactory} when using a \src{BasicTheme}. With a few exceptions all the modules use the factory of the theme, hence replacing this factory will have a big effect.
 

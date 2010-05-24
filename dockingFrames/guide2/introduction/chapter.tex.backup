@@ -1,0 +1,40 @@
+\section{Introduction}
+\src{DockingFrames} is an open source Java Swing framework published under the LGPL (lesser GNU public license). This means you are allowed to use \src{DockingFrames} in any way you like. However if you modify the framework you are required to distribute the modified source code together with your new library.
+
+\src{DockingFrames} consists of two projects, \src{Core} and \src{Common} (the libraries \src{dockingFramesCore.jar} and \src{dockingFramesCommon.jar}). \src{Core} provides the basic functionality of the framework while \src{Common} adds features to make the life of developers and users easier. It is possible to use \src{Core} alone, but in most cases you are better of using both projects together.
+
+This document introduces you to the basic concepts of \src{Core}. Naturally it cannot cover all the details, have a look into the API documentation \src{http://dock.javaforge.com/doc.html} or contact the developers on \src{http://forum.byte-welt.net/}.
+
+\subsection{Use cases}
+What does the framework do? \src{DockingFrames} manages the layout of your graphical user interface. It allows the user to rearrange your user interface in the way he or she likes it. All you need to do is to group your controles in small panels (called \src{Dockables}).
+
+For which application can it be used? In general one can say that bigger applications profit more than small ones. Also power-users will like the flexibility to set up ``their'' user interface, the common user however might be overhelmed by all the buttons and options. A typical use-case would be an application which can present so many data to the user that one screen is not enough. With a modifiable user interface the user can easily filter the data and blend out the graphs, panels and buttons he does not need.
+
+\subsection{Other frameworks}
+There are at least 10 other docking frameworks for Java. As with any complex software it is impossible to say which of them is the best one. But there are some features which make sure \src{DockingFrames} is one of the better ones:
+
+\begin{itemize}
+ \item The licence, you can use the framework without paying a fee nor are you required to open source your entire project.
+ \item It is pure \src{Swing}, it does not have any dependencies to other libraries. It does not force you to use some special design pattern or set up some cryptic configuration files.
+ \item It does support unsigned applets (does anyone use them anymore?) and webstart.
+ \item Multiple instances can run independent from each other. Sounds trivial, but there are many libraries which do not. Try to render a preview in your preference-dialog if you cannot change any properties because the whole application would be affected. And don't mention the mess you get if forced to use multiple classloaders.
+ \item Much control for the client. You can change almost anything to your likings. Unfortunatelly this is not always easy as some properties are hidden deep in the framework. On the bright side you are now reading the document which tells you how to modify some of the modules.
+\end{itemize}
+
+
+\subsection{Notation}
+This document uses the following style-guide:
+
+\begin{itemize}
+ \item ``Technical things'' like class names and project names are written mono-spaced like this: \src{java.lang.String}.
+ \item Packages are not written. Almost all classes and interfaces have a unique name and with the help of the API documentation you should be able to find them easily.
+ \item Additional information is given in boxes like the ones below.
+\end{itemize}
+
+\infobox{Tips and tricks are listed in boxes.}
+
+\warningbox{Important notes and warnings are listed in boxes like this one.}
+
+\classbox{Implementation details, especially lists of class names, are written in boxes like this.}
+
+\designbox{These boxes explain \textit{why} some thing was designed the way it is. This might either contain some bit of history or an explanation why some awkward design is not as bad as it first looks.}
