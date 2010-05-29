@@ -242,7 +242,11 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
 	        if( property == null )
 	            throw new IllegalArgumentException( "the location does not carry enough information to find the location of dockable" );
 	        
-	        if( !mode.getModeIdentifier().equals( location.findMode() ))
+	        ExtendedMode locationMode = location.findMode();
+	        if( locationMode == null ){
+	        	throw new IllegalArgumentException("location not associated with a mode");
+	        }
+	        if( !mode.getModeIdentifier().equals( locationMode.getModeIdentifier() ))
 	        	throw new IllegalArgumentException( "location and mode do not belong together, they do not have the same identifier" );
 	        
 	        setProperties( getMode( mode.getModeIdentifier() ), dockable, new Location( mode.getModeIdentifier(), root, property ) );

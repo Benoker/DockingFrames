@@ -176,7 +176,9 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 	public void setController( DockController controller ){
 		if( this.controller != controller ){
 			if( mouseTarget != null ){
-				mouseTarget.relocator.cancel();
+				if( mouseTarget.relocator != null ){
+					mouseTarget.relocator.cancel();
+				}
 				mouseTarget = null;
 			}
 			
