@@ -77,7 +77,7 @@ public class SecureControlFactory extends EfficientControlFactory implements CCo
 			@Override
 			public Rectangle getExpansionBounds() {
 				Point point = new Point( 0, 0 );
-				SwingUtilities.convertPoint( this.getComponent(), point, expansion );
+				point = SwingUtilities.convertPoint( this.getComponent(), point, expansion );
 				return new Rectangle( -point.x, -point.y, expansion.getWidth(), expansion.getHeight() );
 			}
 		};
