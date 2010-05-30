@@ -27,6 +27,7 @@
 \newcommand{\src}[1]{\texttt{#1}}
 
 \newcommand{\property}[4]{\item[#1] \mbox{ } \begin{description} \item[Type] \src{#2} \item[Default] #3 \item[Usage] #4  \end{description}}
+\newcommand{\extension}[3]{\item[#1] \mbox{ } \begin{description} \item[Name] #2 \item[Usage] #3  \end{description}}
 
 % thanks to http://www.alfredklomp.com/programming/tex/macros/
 \long\def\greybox#1#2#3{%
@@ -95,6 +96,8 @@
 \include{dragNdrop/chapter}
 
 \include{preferences/chapter}
+
+\include{extensions/chapter}
 
 \include{properties/chapter}
 

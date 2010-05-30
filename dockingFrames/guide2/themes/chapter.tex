@@ -164,6 +164,26 @@ The views for \src{DockAction}s are changed through the \src{ActionViewConverter
 \subsubsection{Titles}
 \src{DockTitle}s are managed by the \src{DockTitleManager}. Please read chapter \ref{sec:titles} for more information.
 
+\subsubsection{Displayers}
+A \src{DockableDisplayer} is a wrapper around a \src{Dockable} painting some decorations like a title or some border. All \src{DockStation}s make use of \src{DockableDisplayer}s to paint their children. \src{DockableDisplayer}s are created by \src{DisplayerFactory}s which are provided by the current \src{DockTheme}.
+
+Once a \src{DockableDisplayer} is created it cannot be replaced until either the theme is exchanged or the displayer marks itself as invalid. In the later case the displayer needs to call the \src{discard} method of any \src{DockableDisplayerListener} that was added to it.
+
+Clients are free to implement new displayers or extend existing displayers. Any new displayer should be a focus-cycle-root, assuming the displayer uses \src{Swing}-components the code below can be used to setup the correct focus management:
+\begin{lstlisting}
+// the new displayer
+DockableDisplayer displayer = ...
+
+JComponent root = (JComponent)displayer.getComponent();
+
+root.setFocusable( true );
+root.setFocusCycleRoot( true );
+root.setFocusTraversalPolicy( 
+	new DockFocusTraversalPolicy( 
+		new DisplayerFocusTraversalPolicy( displayer ), true ));
+\end{lstlisting}
+
+
 \subsection{Custom Theme}
 With the exception of the classes that are directly related to a \src{DockTheme} no code in the framework depends on a special undocummented behavior of a theme. Clients can reimplement the interface \src{DockTheme} without fear to break things.
 
