@@ -113,6 +113,7 @@ public final class Path {
     		char c = segment.charAt( i );
     		if( escape ){
     			escape = false;
+    			builder.append( c );
     		}
     		else if( c == '\\'){
     			escape = true;
@@ -353,7 +354,7 @@ public final class Path {
             if( i > 0 )
                 builder.append( "." );
             
-            builder.append( encodeSegment( segments[i] ) );
+            builder.append( segments[i] );
         }
         
         return builder.toString();
