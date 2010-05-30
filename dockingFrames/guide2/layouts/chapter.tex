@@ -183,9 +183,46 @@ In lines \src{1-3} some \src{DockStation}s and \src{Dockable}s are defined. Thes
 \infobox{Any \src{String} can be used as unique identifier. Small identifiers with no special characters are however much less likely to attract any kind of trouble.}
 
 \subsubsection{Exctract local information}
-It is possible to exctract \src{DockableProperty}s from a global layout with the help of a \src{DockSituation}. 
+It is possible to exctract \src{DockableProperty}s from a global layout with the help of a \src{DockSituation}. First the layout data is required in its intermediate format. This data can only be accessed if the client uses its own format to store layout data. As an example, storing the layout of one \src{DockStation} using XML:
+
+\begin{lstlisting}
+public void write( StackDockStation station, DockSituation situation, XElement out ){
+	DockLayoutComposition intermediate = situation.convert(station);
+	situation.writeCompositionXML(intermediate, out.addElement("layout"));
+}
+\end{lstlisting}
+
+Once the client has acquired the data in its intermediate format it can use \src{estimateLocations} to assign locations to each node in the tree of compositions. An example using XML:
+
+\begin{lstlisting}
+ public void read( DockSituation situation, XElement in ){
+	// acquire intermediate data
+	DockLayoutComposition intermediate = situation.readCompositionXML(in.getElement("layout"));
+
+	// guess locations
+	situation.estimateLocations(intermediate);
+
+	// get the location of the root (which will be null, because the root has no parent)
+	DockableProperty location = intermediate.getLayout().getLocation();
+}
+\end{lstlisting}
+
+It is up to the client to find out which \src{DockLayoutComposition} represents which \src{Dockable}. A custom \src{DockFactory} can help by storing some keys in the layout which can later be identified by the client.
+
+\infobox{A \src{DockFrontend} will estimate locations of those missing \src{Dockable}s for which \src{addEmpty} was called.}
+
+\classbox{If using a \src{PredefinedDockSituation}, the method \src{listEstimatedLocations} is of interest as it returns a map of identifier-location pairs. The identifiers are the identifiers of the \src{Dockable}s which were added by the client to the situation.}
 
 \subsection{Placeholders}
+Each \src{DockStation} uses a data structure like a list or a tree to store its children. When a child is removed from that data structure its ``placeholder'' can remain. If the same child is later added again, it can take up its old place because the placeholder tells where the child was. This is allows to remove and add \src{Dockable}s in any order without changes in the layout.
+
+In \src{Core} this mechanism is normally disabled. Clients must implement a new \src{PlaceholderStrategy} and install the strategy using the property key \src{PlaceholderStrategy.PLACEHOLDER\_STRATEGY}. The strategy should be set up before reading a layout, otherwise all placeholders will be marked as invalid and be deleted.
+
+Clients are not yet able to set placeholders directly, this will be changed in version 1.1.0.
+
+\designbox{Placeholders were introduced in version 1.0.8. On of the reasons they were not used earlier is that they make data structures complex. Also detecting and removing invalid and outdated placeholders requires some work.}
+
+\classbox{Most \src{StackDockStation}s use the \src{PlaceholderList} and the \src{PlacehoderMap} to manage their \src{Dockable}s and placeholders.}
 
 \subsection{DockFrontend}
 \src{DockFrontend} offers storage for local and for global layout information. Clients need to register their \src{Dockable}s through \src{addDockable} if they want access to the full range of storage-features.

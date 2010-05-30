@@ -4,7 +4,7 @@ The layout of an application means the position, size and relationships of all t
 \src{DockingFrames} distinguishes between local and global layout information. Local information only describes the relationship between one \src{Dockable} and its parent(s), global information describes whole trees of elements. There are no algorithms which recreate a global layout only from local information. There are some interfaces for algorithms to read a global layout and extract local information, but there are no guarantees that these algorithms are implemented. Clients should treat local and global information as if they were completely separated.
 
 \subsection{Local: DockableProperty}
-Every \src{DockStation} can create \src{DockableProperty}-objects for its children. Each of these \src{DockableProperty}s contain the position and size of one child. 
+Every \src{DockStation} can create \src{DockableProperty}-objects for its children. Each of these \src{DockableProperty}s contains the position and size of one child. 
 
 Some \src{DockStation}s are also \src{Dockable}s. Those stations are not only able to create \src{DockableProperties} for their children but their parents can create a property for them. These two properties can be strung together to form a chain describing the position of a grand-child on its grand-parent.
 
@@ -18,13 +18,14 @@ DockableProperty location = DockUtilities.getPropertyChain( root, dockable );
 \end{lstlisting}
 In line \src{1} we get some unknown \src{Dockable}. In line \src{3} the \src{DockStation} which is at the top of the tree of stations and \src{Dockable}s is searched. Then in line \src{4} the location of \src{dockable} in respect to \src{root} is determined.
 
-\classbox{There are five \src{DockableProperties} present in the framework.
+\classbox{There are six \src{DockableProperties} present in the framework.
 \begin{description}
  \item[StackDockProperty] for \src{StackDockStation}, contains just the index of the \src{Dockable} in the stack.
  \item[FlapDockProperty] for \src{FlapDockStation}, contains index, size and whether the \src{Dockable} should hold its position when not focused.
  \item[ScreenDockProperty] for \src{ScreenDockStation}, contains the boundaries of a \src{Dockable} on the screen.
  \item[SplitDockProperty] for \src{SplitDockStation}. This deprecated property contains the boundaries of a \src{Dockable} on the station.
  \item[SplitDockPathProperty] also for \src{SplitDockStation}. This new property contains the exact path leading to a \src{Dockable} in the tree that is used internally by the \src{SplitDockStation}.
+ \item[SplitDockPlaceholderProperty] also for \src{SplitDockStation}. This property stores a placeholder, an identifier whose position is already known to the \src{SplitDockStation}. If the placeholder is not found, then a backup property can be applied.
 \end{description}
 }
 
@@ -182,9 +183,40 @@ In lines \src{1-3} some \src{DockStation}s and \src{Dockable}s are defined. Thes
 \infobox{Any \src{String} can be used as unique identifier. Small identifiers with no special characters are however much less likely to attract any kind of trouble.}
 
 \subsubsection{Exctract local information}
+It is possible to exctract \src{DockableProperty}s from a global layout with the help of a \src{DockSituation}. First the layout data is required in its intermediate format. This data can only be accessed if the client uses its own format to store layout data. As an example, storing the layout of one \src{DockStation} using XML:
 
+\begin{lstlisting}
+public void write( StackDockStation station, DockSituation situation, XElement out ){
+	DockLayoutComposition intermediate = situation.convert(station);
+	situation.writeCompositionXML(intermediate, out.addElement("layout"));
+}
+\end{lstlisting}
+
+Once the client has acquired the data in its intermediate format it can use \src{estimateLocations} to assign locations to each node in the tree of compositions. An example using XML:
+
+\begin{lstlisting}
+ public void read( DockSituation situation, XElement in ){
+	// acquire intermediate data
+	DockLayoutComposition intermediate = situation.readCompositionXML(in.getElement("layout"));
+
+	// guess locations
+	situation.estimateLocations(intermediate);
+
+	// get the location of the root (which will be null, because the root has no parent)
+	DockableProperty location = intermediate.getLayout().getLocation();
+}
+\end{lstlisting}
+
+It is up to the client to find out which \src{DockLayoutComposition} represents which \src{Dockable}. A custom \src{DockFactory} can help by storing some keys in the layout which can later be identified by the client.
+
+\infobox{A \src{DockFrontend} will estimate locations of those missing \src{Dockable}s for which \src{addEmpty} was called.}
+
+\classbox{If using a \src{PredefinedDockSituation}, the method \src{listEstimatedLocations} is of interest as it returns a map of identifier-location pairs. The identifiers are the identifiers of the \src{Dockable}s which were added by the client to the situation.}
 
 \subsection{Placeholders}
+
+
+
 
 \subsection{DockFrontend}
 \src{DockFrontend} offers storage for local and for global layout information. Clients need to register their \src{Dockable}s through \src{addDockable} if they want access to the full range of storage-features.

@@ -1,0 +1,113 @@
+\section{Drag and Drop}
+To drag a \src{Dockable} to a new location and drop it there is the most important feature of any docking framework. Surprisingly the implementation of this part is very small.
+
+\subsection{Relocator}
+The sourcecode that detects drag gestures, searches for the target station and makes sure that the user has some visual feedback is located in the \linebreak \src{DefaultDockRelocator}. \src{DefaultDockRelocator} itself extends from \linebreak \src{DockRelocator} which just allows to register some listeners and set some useful properties. Clients seldomly need to implement a new \src{DockRelocator}. If they do, then they have to implement a new \src{DockControllerFactory}. The code will look like this:
+
+\begin{lstlisting}
+public class MyDockControllerFactory extends DefaultDockControllerFactory{
+  @Override
+  public DockRelocator createRelocator( DockController controller ) {
+    return new MyDockReloactor();
+  }
+}
+\end{lstlisting}
+This factory has then to be given to the constructor of a \src{DockController}. For the remainder of this chapter it is assumed, that the default relocator is in use.
+
+The \src{DockRelocator} that is in use can be accessed through the method \src{getRelocator} of \src{DockController}.
+
+\subsection{Sources}
+The relocator needs to know where and when the user presses and moves the mouse. There is more than one solution for this problem.
+
+\subsubsection{DockElementRepresentative}
+A \src{DockElementRepresentative} is a \src{Component} which represents a \src{Dockable}. Anyone can add \src{MouseInputListener}s to a representative and hence be informed about anything the mouse does on top of such a \src{Component}.
+
+\src{DockTitle} and \src{Dockable} are two implementations of \linebreak \src{DockElementRepresentative}. Their registration is handled automatically. If clients implement a new representative then they should call the methods \linebreak \src{addRepresentative} and \src{removeRepresentative} of \src{DockController} to install or uninstall the representative.
+
+\infobox{\src{DockElementRepresentative} was added late to the framework. It carries some legacy code: the method \src{isUsedAsTitle}. This method introduces a distinction between those representations for which all features are activated (e.g. popup menus) and those for which only a selected subset is available. Normally clients implement representatives that are used as title and can return \src{true} here.}
+
+\warningbox{The behavior for representations of \src{Dockable}s that are not registered is unspecified. Clients should not add a \src{DockElementRepresentative} if its \src{Dockable} is unknown to the \src{DockController}.}
+
+\subsubsection{Remote control}
+Sometimes it is not possible to implement a \src{DockElementRepresentative}. Remote control of a relocator is an alternative for these cases. Remote control is realized by the classes \src{RemoteRelocator} and \src{DirectRemoteRelocator}.
+
+A \src{RemoteRelocator} can be optained by calling \src{createRemote} of \linebreak \src{DockRelocator}. \src{RemoteRelocator} should be used in combination with a \linebreak \src{MouseListener} and a \src{MouseMotionListener}:
+\begin{itemize}
+ \item \src{MouseListener.mousePressed} \textrightarrow \src{RemoteRelocator.init}
+ \item \src{MouseMotionListener.mouseDragged} \textrightarrow \src{RemoteRelocator.drag}
+ \item \src{MouseListener.mouseReleased} \textrightarrow \src{RemoteRelocator.drop}
+\end{itemize}
+The methods \src{init}, \src{drag} and \src{drop} return a \src{Reaction}. The reaction tells the caller what to do next:
+\begin{itemize}
+ \item \src{CONTINUE}: the operation continues, the event was ignored.
+ \item \src{CONTINUE\_CONSUMED}: the operation continues, the event was consumed. The caller should invoke \src{MouseEvent.consume}.
+ \item \src{BREAK}: the operation was canceled, the event was ignored.
+ \item \src{BREAK\_CONSUMED}: the operation was canceled, the event was consumed. The caller should invoke \src{MouseEvent.consume}.
+\end{itemize}
+
+A \src{DirectRemoteRelocator} can be optained by calling \src{createDirectRemote} of \src{DockRelocator}. A \src{DirectRemoteRelocator} is basically the same as a \src{RemoteRelocator} but always assumes that the user pressed the correct button on the mouse. Its methods do not return a \src{Reaction} because it would always be the same.
+
+\infobox{Clients can use several remote controls at the same time, they will cancel out each other if necessary. A \src{RemoteRelocator} can be used several times.}
+
+\subsection{Destinations}
+A relocator needs to find the one \src{DockStation} on which the \src{Dockable} is dropped. 
+
+\subsubsection{Search}
+The \src{DefaultDockRelocator} searches the destination anew whenever the mouse is moved. The search includes these steps:
+\begin{enumerate}
+ \item An ordered list of all potential destinations is built. A \src{DockStation} is a potential destination if it is visible (\src{isStationVisible} of \src{DockStation}), not the dragged \src{Dockable} nor one of its children, and its boundaries contain the location of the mouse (\src{getStationBounds} of \src{DockStation}). The order depends on parent-child relations between the stations, between the \src{Window}s on which the stations are, and on custom conditions that every station can offer (\src{canCompare} and \src{compare} of \src{DockStation}).
+ \item Then the method \src{prepareMove} or \src{prepareDrop} of \src{DockStation} is called. These methods check whether the station really is a good destination. They return \src{true} if so, \src{false} if not. The first station that returns \src{true} is the destination.
+ \item The method \src{draw} of the new destination is called, the method \src{forget} on the old destination. The new destination will paint some markings to give a visual feedback to the user, the old destination will delete all the information about any drag and drop operation.
+\end{enumerate}
+
+\classbox{There is more information about the exact semantics in the API-documentation for \src{DockStation}.}
+
+\designbox{Due of the varieties of stations a general interface for drag and drop would be very hard to come up with. Hence most of the work has to be done by the stations itself. This might lead to code that is written twice, but also allows much freedom in writing stations. There are some helper classes that can help with the most common tasks:
+\begin{itemize}
+ \item \src{DockController.getAcceptance} to access all the global acceptance tests at once.
+ \item \src{StationPaint}, accessible through \src{DockUI.getPaint}.
+\end{itemize}
+
+}
+
+\subsubsection{Drop}
+The moment a user releases the mouse and drops a \src{Dockable} the method \src{move} or \src{drop} of \src{DockStation} is called. These methods can either put the \src{Dockable} somewhere onto the station or merge the \src{Dockable} with an existing child of the station (sometimes referred as ``put'' and ``merge'' action). The results of the first reaction depend on the kind of station. The results of the second reaction are independent of the kind of station.
+
+Merging normally results in creating a new \src{StackDockStation}. The existing child and the dropped \src{Dockable} are put onto that new station. Then the \src{StackDockStation} is put at the place where the existing child was. Creation of ``merged \src{Dockable}s'' is handled by a \src{Combiner}, per default by the \src{BasicCombiner}. Many \src{DockStation}s have a method that allows clients to set their own implementation of a \src{Combiner}. Clients can exchange the \src{Combiner} globally by creating a new \src{DockTheme}, overriding the method \src{getCombiner} and then registering a new instance at the \src{DockController} through \src{setTheme}. Note that all descendants of \src{BasicDockTheme} have a method called \src{setCombiner} that exchanges the \src{Combiner} directly without the need to override \src{getCombiner}.
+
+\warningbox{Exchanging a \src{Combiner} does not affect any existing \src{Dockable} or \src{DockStation}, it will only affect the creation of new elements.}
+
+\subsection{Influences}
+There are a number of factors that can influence the search for a new destination. Some of them are customizable.
+
+\subsubsection{Modes}
+A \src{DockRelocator} can have "modes". A mode is some kind of behavior that is activated when the user presses a certain combination of keys. Modes are modeled by the class \src{DockRelocatorMode}. It is not specified what effect a mode really has, but normally a mode would add some restrictions where to put a \src{Dockable} during drag and drop. \src{DockRelocatorMode}s can be added or removed to a \src{DockRelocator} by the methods \src{addMode} and \src{removeMode}.
+
+Currently two modes are installed:
+\begin{description}
+\item[DockRelocatorMode.SCREEN\_ONLY] (press key \textit{shift}) ensures that a \linebreak \src{Dockable} can only be put on a \src{ScreenDockStation}. That means that a \src{Dockable} can be directly above a \src{DockStation} like a \src{SplitDockStation}, but can't be dropped there.
+\item[DockRelocatorMode.NO\_COMBINATION] (press key \textit{alt}) ensures that a \src{Dockable} can't be put over another \src{Dockable}. That means, every operation that would result in a merge is forbidden. Also dropping a \src{Dockable} on already merged \src{Dockable}s will not be allowed.
+\end{description}
+
+\classbox{The keys that have to be pressed to activate \src{SCREEN\_ONLY} or \src{NO\_COMBINATION} are the properties \src{SCREEN\_MASK} and \src{NO\_COMBINATION\_MASK}. The can be changed by accessing the \src{DockProperties}.}
+
+\subsubsection{Restrictions}
+The set of possible destinations for a \src{Dockable} can be restricted. There are several reasons why a client or the framework itself would do that:
+\begin{itemize}
+ \item Some \src{Dockable} must always be visible.
+ \item Some \src{DockStation}s represent a special area that can only be used by a subset of \src{Dockable}s.
+ \item Some \src{Dockable}s can only be presented on a certain kind of \src{DockStation}.
+\end{itemize}
+
+These restrictions are implemented through acceptance tests. An acceptance test either checks one ``put'' or one ``merge'' action. Tests can be stored at various locations:
+\begin{itemize}
+ \item Every \src{Dockable} has two methods called \src{accept}.
+ \item Each \src{DockStation} has a method \src{accept}. This method tells whether some \src{Dockable} can become a child of the \src{DockStation}. This method checks ``put'' and ``merge'' actions at the same time.
+ \item And then there are \src{DockAcceptance}s. A \src{DockAcceptance} has \src{accept}-methods too. These methods get a \src{DockStation} and some \src{Dockable}s, and then have to decide whether the elements can be put together. Each \src{DockAcceptance} works on a global scale, and thus they are registered at the \src{DockController} through \src{addAcceptance}.
+\end{itemize}
+
+\warningbox{Acceptance tests are very powerful. They have to be implemented carefully or the drag and drop mechanism might become crippled.}
+
+\designbox{Acceptance tests are performed by the potential destination \src{DockStation}. The \src{DockStation} is the first module that knows where a \src{Dockable} will land. Handling acceptance tests allows the station to cut down the amount of work it does, and to try alternative actions (e.g. a ``put'' instead of a ``merge'' action) if some future configuration does not pass the tests.
+
+The drawback is, that a \src{DockStation} can break the mechanism by just not performing the tests.}
