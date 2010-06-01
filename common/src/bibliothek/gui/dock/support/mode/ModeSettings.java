@@ -281,12 +281,11 @@ public class ModeSettings<A,B> {
      */
     public void read( DataInputStream in ) throws IOException{
         Version version = Version.read( in );
-        Version version2 = null;
         version.checkCurrent();
         
         boolean version7 = Version.VERSION_1_0_7.compareTo( version ) >= 0;
         if( version7 ){
-        	version2 = Version.read( in );
+        	Version.read( in );
         }
         
         dockables.clear();

@@ -55,9 +55,6 @@ public abstract class KeyboardController {
 	/** the controller in whose realm this {@link KeyboardController} works */
 	private DockController controller;
 	
-	/** whether this controller currently is redispatching an event */
-	private boolean redispatching = false;
-	
 	/**
 	 * Creates a new {@link KeyboardController}.
 	 * @param controller the controller in whose realm this <code>KeyBoardController</code>
