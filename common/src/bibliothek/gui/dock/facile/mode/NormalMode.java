@@ -25,7 +25,6 @@
  */
 package bibliothek.gui.dock.facile.mode;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
@@ -38,6 +37,7 @@ import bibliothek.gui.dock.support.mode.ModeSettingFactory;
 import bibliothek.gui.dock.support.mode.NullModeSettingsFactory;
 import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.IconManager;
+import bibliothek.util.Path;
 
 /**
  * {@link CDockable}s are in {@link NormalMode} if they are a child

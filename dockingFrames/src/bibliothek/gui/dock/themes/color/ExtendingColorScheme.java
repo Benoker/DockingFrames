@@ -28,13 +28,13 @@ package bibliothek.gui.dock.themes.color;
 import java.awt.Color;
 import java.util.List;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.themes.ColorBridgeFactory;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.extension.ExtensionName;
+import bibliothek.util.Path;
 
 /**
  * A {@link ColorScheme} that can be extended by additional {@link ColorScheme}.

@@ -30,11 +30,11 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.util.Map;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.SplitDockStation.Orientation;
 import bibliothek.gui.dock.station.split.SplitDockTree.Key;
+import bibliothek.util.Path;
 
 /**
  * A Node represents an element in the tree of a {@link SplitDockStation}.

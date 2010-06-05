@@ -26,11 +26,11 @@
 package bibliothek.extension.gui.dock.preference.preferences.choice;
 
 import bibliothek.extension.gui.dock.preference.preferences.ChoiceDockPropertyPreference;
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
 import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.util.Path;
 
 /**
  * Lets the user choose the value of {@link StackDockStation#TAB_CONTENT_FILTER}.

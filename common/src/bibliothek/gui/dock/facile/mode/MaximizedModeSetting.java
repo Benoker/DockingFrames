@@ -34,11 +34,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.support.mode.ModeSetting;
 import bibliothek.gui.dock.support.mode.ModeSettingFactory;
 import bibliothek.gui.dock.support.mode.ModeSettingsConverter;
+import bibliothek.util.Path;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 

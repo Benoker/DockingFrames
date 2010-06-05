@@ -43,7 +43,6 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
@@ -65,6 +64,7 @@ import bibliothek.gui.dock.util.font.FontManager;
 import bibliothek.gui.dock.util.font.FontModifier;
 import bibliothek.gui.dock.util.swing.OrientedLabel;
 import bibliothek.util.Condition;
+import bibliothek.util.Path;
 
 /**
  * An abstract implementation of {@link DockTitle}. This title can have

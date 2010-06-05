@@ -27,8 +27,8 @@ package bibliothek.gui.dock.util.color;
 
 import java.awt.Color;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.util.UIValue;
+import bibliothek.util.Path;
 
 /**
  * A wrapper around a {@link Color} object.

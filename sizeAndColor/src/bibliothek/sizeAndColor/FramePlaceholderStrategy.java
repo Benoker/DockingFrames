@@ -25,11 +25,11 @@
  */
 package bibliothek.sizeAndColor;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.support.PlaceholderStrategyListener;
+import bibliothek.util.Path;
 
 /**
  * Special {@link PlaceholderStrategy} working with {@link Frame}s.

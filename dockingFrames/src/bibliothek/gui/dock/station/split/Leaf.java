@@ -30,7 +30,6 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.util.Map;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -43,6 +42,7 @@ import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.split.SplitDockTree.Key;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
+import bibliothek.util.Path;
 
 /**
  * Represents a leaf in the tree that is the structure of a {@link SplitDockStation}.

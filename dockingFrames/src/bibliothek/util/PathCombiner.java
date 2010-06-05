@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.util;
+package bibliothek.util;
 
 /**
  * Generic algorithm to combine two {@link Path}s into one <code>Path</code>.

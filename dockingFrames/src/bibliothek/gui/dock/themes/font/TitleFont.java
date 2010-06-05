@@ -25,11 +25,11 @@
  */
 package bibliothek.gui.dock.themes.font;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.font.AbstractDockFont;
 import bibliothek.gui.dock.util.font.FontModifier;
+import bibliothek.util.Path;
 
 /**
  * Represents a font used by a {@link DockTitle}.

@@ -37,13 +37,13 @@ import java.util.Set;
 
 import javax.swing.JComponent;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
+import bibliothek.util.Path;
 
 /**
  * The internal representation of a {@link SplitDockStation} is a tree. The subclasses of SplitNode build this tree.

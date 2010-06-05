@@ -25,13 +25,13 @@
  */
 package bibliothek.extension.gui.dock.preference.preferences;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.control.DockRelocatorMode;
 import bibliothek.gui.dock.control.ModifierMask;
 import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.util.Path;
 
 /**
  * Preference for the mask that forces a {@link Dockable} onto the {@link ScreenDockStation}

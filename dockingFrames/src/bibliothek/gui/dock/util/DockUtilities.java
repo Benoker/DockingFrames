@@ -44,7 +44,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.UIManager;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
@@ -53,6 +52,7 @@ import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.util.Path;
 
 /**
  * A list of methods which can be used for different purposes. Methods

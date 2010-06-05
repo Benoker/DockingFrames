@@ -31,7 +31,6 @@ import java.awt.Color;
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
@@ -79,6 +78,7 @@ import bibliothek.gui.dock.util.color.DockColor;
 import bibliothek.gui.dock.util.laf.LookAndFeelColors;
 import bibliothek.gui.dock.util.laf.LookAndFeelColorsListener;
 import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
+import bibliothek.util.Path;
 
 /**
  * A {@link DockTheme theme} that does not install anything and uses the

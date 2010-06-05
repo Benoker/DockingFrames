@@ -25,8 +25,8 @@
  */
 package bibliothek.gui.dock.station.support;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
+import bibliothek.util.Path;
 
 /**
  * Data about a {@link Dockable} that was stored in a {@link PlaceholderList}.

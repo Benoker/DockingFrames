@@ -32,9 +32,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.util.Path;
 
 /**
  * A {@link PlaceholderStrategy} that wraps around another strategy or around no

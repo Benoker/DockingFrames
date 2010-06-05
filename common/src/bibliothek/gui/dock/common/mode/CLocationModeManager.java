@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CLocation;
@@ -48,6 +47,7 @@ import bibliothek.gui.dock.support.mode.ModeSettings;
 import bibliothek.gui.dock.support.mode.ModeSettingsConverter;
 import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.IconManager;
+import bibliothek.util.Path;
 import bibliothek.util.container.Single;
 
 /**

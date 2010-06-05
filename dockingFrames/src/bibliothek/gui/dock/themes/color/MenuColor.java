@@ -27,11 +27,11 @@ package bibliothek.gui.dock.themes.color;
 
 import java.awt.Color;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.dock.station.stack.CombinedMenu;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
 import bibliothek.gui.dock.util.color.DockColor;
+import bibliothek.util.Path;
 
 /**
  * A color representing a {@link CombinedMenu}.

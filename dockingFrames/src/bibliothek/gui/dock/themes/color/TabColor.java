@@ -27,12 +27,12 @@ package bibliothek.gui.dock.themes.color;
 
 import java.awt.Color;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
 import bibliothek.gui.dock.util.color.DockColor;
+import bibliothek.util.Path;
 
 /**
  * Color related to a single {@link Dockable} that is in a tab for example

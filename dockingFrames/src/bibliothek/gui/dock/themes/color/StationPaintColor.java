@@ -27,10 +27,10 @@ package bibliothek.gui.dock.themes.color;
 
 import java.awt.Color;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
 import bibliothek.gui.dock.util.color.DockColor;
+import bibliothek.util.Path;
 
 /**
  * A color used by a {@link StationPaint}.

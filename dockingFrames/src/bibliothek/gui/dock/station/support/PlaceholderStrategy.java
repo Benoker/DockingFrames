@@ -25,10 +25,10 @@
  */
 package bibliothek.gui.dock.station.support;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.util.Path;
 
 /**
  * This strategy tells which {@link Dockable}s can leave a placeholder

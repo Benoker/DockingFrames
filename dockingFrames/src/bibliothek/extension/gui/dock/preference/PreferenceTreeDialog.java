@@ -32,7 +32,7 @@ import javax.swing.tree.TreeCellRenderer;
 
 import bibliothek.extension.gui.dock.PreferenceTable;
 import bibliothek.extension.gui.dock.PreferenceTreePanel;
-import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.util.Path;
 
 /**
  * A simple panel showing a {@link PreferenceTreeModel} and allowing the user

@@ -25,7 +25,7 @@
  */
 package bibliothek.extension.gui.dock.preference;
 
-import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.util.Path;
 
 /**
  * A representation of a single entry in a {@link DefaultPreferenceModel}.

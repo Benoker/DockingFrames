@@ -27,11 +27,11 @@
 
 import bibliothek.extension.gui.dock.preference.DefaultPreference;
 import bibliothek.extension.gui.dock.preference.preferences.choice.ButtonContentChoice;
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.Priority;
+import bibliothek.util.Path;
 
 /**
  * A preference for {@link FlapDockStation#BUTTON_CONTENT}.

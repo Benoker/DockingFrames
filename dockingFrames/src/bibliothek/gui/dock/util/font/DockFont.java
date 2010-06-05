@@ -25,9 +25,9 @@
  */
 package bibliothek.gui.dock.util.font;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.util.UIValue;
+import bibliothek.util.Path;
 
 /**
  * A wrapper around a {@link FontModifier} object.

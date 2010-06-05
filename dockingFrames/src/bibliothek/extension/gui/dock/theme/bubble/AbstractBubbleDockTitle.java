@@ -32,11 +32,11 @@ import java.util.List;
 import javax.swing.JComponent;
 
 import bibliothek.extension.gui.dock.util.MouseOverListener;
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.title.AbstractDockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.util.Path;
 
 /**
  * A title that has the ability to paint a round rect as background. It also can

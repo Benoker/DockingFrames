@@ -10,7 +10,6 @@ import javax.swing.JScrollPane;
 
 import bibliothek.extension.gui.dock.PreferenceTable;
 import bibliothek.extension.gui.dock.preference.*;
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CControlRegister;
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
@@ -21,6 +20,7 @@ import bibliothek.layouts.Core;
 import bibliothek.layouts.Icons;
 import bibliothek.layouts.testing.MultipleTestDockable;
 import bibliothek.layouts.testing.MultipleTestFactory;
+import bibliothek.util.Path;
 
 public class ModifyMultiDockable extends DefaultSingleCDockable{
     private Map<String, MultipleTestFactory> allFactories = new HashMap<String, MultipleTestFactory>();

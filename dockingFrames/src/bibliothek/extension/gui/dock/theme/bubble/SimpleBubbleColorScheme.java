@@ -36,7 +36,6 @@ import java.awt.Color;
 
 import javax.swing.LookAndFeel;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.themes.ColorBridgeFactory;
 import bibliothek.gui.dock.themes.ColorScheme;
@@ -44,6 +43,7 @@ import bibliothek.gui.dock.themes.color.DefaultColorScheme;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.laf.LookAndFeelColors;
+import bibliothek.util.Path;
 
 /**
  * A color scheme that generates most of its colors from a small starting set of

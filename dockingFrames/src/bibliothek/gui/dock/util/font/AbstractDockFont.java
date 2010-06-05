@@ -27,9 +27,9 @@ package bibliothek.gui.dock.util.font;
 
 import java.awt.Font;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.util.AbstractUIValue;
+import bibliothek.util.Path;
 
 /**
  * An abstract implementation of {@link DockFont} that can connect itself to

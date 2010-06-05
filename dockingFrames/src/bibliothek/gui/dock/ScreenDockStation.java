@@ -40,7 +40,6 @@ import java.util.Map;
 
 import javax.swing.SwingUtilities;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockUI;
@@ -95,6 +94,7 @@ import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.WindowProvider;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.gui.dock.util.property.PropertyFactory;
+import bibliothek.util.Path;
 
 /**
  * A {@link DockStation} which is the whole screen. Every child of this

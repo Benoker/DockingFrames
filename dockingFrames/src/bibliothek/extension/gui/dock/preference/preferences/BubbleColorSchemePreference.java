@@ -27,10 +27,10 @@ package bibliothek.extension.gui.dock.preference.preferences;
 
 import bibliothek.extension.gui.dock.preference.preferences.choice.BubbleColorSchemeChoice;
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.util.Path;
 
 /**
  * Allows to set the {@link ColorScheme} of the {@link BubbleTheme}.

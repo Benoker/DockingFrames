@@ -2,11 +2,11 @@ package bibliothek.gui.dock.themes.color;
 
 import java.awt.Color;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
 import bibliothek.gui.dock.util.color.DockColor;
+import bibliothek.util.Path;
 
 /**
  * A color used for a {@link DockAction}.

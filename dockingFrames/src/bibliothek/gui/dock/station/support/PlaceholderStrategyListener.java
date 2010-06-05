@@ -27,7 +27,7 @@ package bibliothek.gui.dock.station.support;
 
 import java.util.Set;
 
-import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.util.Path;
 
 /**
  * A listener that gets added to a {@link PlaceholderStrategy}.

@@ -18,7 +18,7 @@ import bibliothek.extension.gui.dock.preference.PreferenceEditorFactory;
 import bibliothek.extension.gui.dock.preference.PreferenceModel;
 import bibliothek.extension.gui.dock.preference.PreferenceOperation;
 import bibliothek.extension.gui.dock.preference.PreferenceTreeModel;
-import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.util.Path;
 
 /**
  * A panel that shows a {@link JTree} and a {@link PreferenceTable}. The tree

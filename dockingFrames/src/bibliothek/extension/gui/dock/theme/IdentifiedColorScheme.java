@@ -27,11 +27,11 @@ package bibliothek.extension.gui.dock.theme;
 
 import java.awt.Color;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.themes.ColorBridgeFactory;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.color.ColorManager;
+import bibliothek.util.Path;
 
 /**
  * A {@link ColorScheme} that is wrapped around another scheme. This scheme

@@ -31,7 +31,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
@@ -39,6 +38,7 @@ import bibliothek.gui.dock.common.SingleCDockable;
 import bibliothek.gui.dock.common.event.CControlListener;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.support.PlaceholderStrategyListener;
+import bibliothek.util.Path;
 
 /**
  * This strategy assigns a unique identifier to all {@link CDockable}s that

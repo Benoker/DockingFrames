@@ -26,12 +26,12 @@
 package bibliothek.gui.dock.common.preference;
 
 import bibliothek.extension.gui.dock.preference.DefaultPreference;
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.common.layout.ThemeMap;
 import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.util.Path;
 
 /**
  * A preference allowing the user to select one {@link DockTheme}. This preference

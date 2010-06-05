@@ -25,7 +25,7 @@
  */
 package bibliothek.extension.gui.dock.preference.preferences.choice;
 
-import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.util.Path;
 
 /**
  * An extension to a {@link Choice}, adding more options to the choice.

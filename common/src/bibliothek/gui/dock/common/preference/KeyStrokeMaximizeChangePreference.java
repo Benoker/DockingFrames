@@ -30,11 +30,11 @@ import java.awt.event.KeyEvent;
 import javax.swing.KeyStroke;
 
 import bibliothek.extension.gui.dock.preference.preferences.DockPropertyPreference;
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.util.Path;
 
 /**
  * Preference setting the keystroke for maximizing/unmaximizing a {@link Dockable}.

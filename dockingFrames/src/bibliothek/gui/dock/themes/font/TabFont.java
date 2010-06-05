@@ -1,12 +1,12 @@
 package bibliothek.gui.dock.themes.font;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.util.font.AbstractDockFont;
 import bibliothek.gui.dock.util.font.FontManager;
 import bibliothek.gui.dock.util.font.FontModifier;
+import bibliothek.util.Path;
 
 /**
  * A font used for a tab for example on a {@link StackDockStation}.

@@ -26,9 +26,9 @@
 package bibliothek.extension.gui.dock.preference.preferences;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.util.Path;
 
 /**
  * Allows to set whether icons are shown on deselected tabs in the {@link EclipseTheme}.

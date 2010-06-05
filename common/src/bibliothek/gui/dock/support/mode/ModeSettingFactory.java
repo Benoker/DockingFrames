@@ -25,8 +25,8 @@
  */
 package bibliothek.gui.dock.support.mode;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.facile.mode.LocationModeManager;
+import bibliothek.util.Path;
 
 /**
  * A factory creating new {@link ModeSetting}s.

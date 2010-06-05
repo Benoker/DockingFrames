@@ -25,11 +25,11 @@
  */
 package bibliothek.gui.dock.common.intern.theme.color;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.theme.CDockTheme;
 import bibliothek.gui.dock.util.color.ColorBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
+import bibliothek.util.Path;
 
 /**
  * This extension is used by a {@link CDockTheme} to add additional {@link ColorBridge}s.

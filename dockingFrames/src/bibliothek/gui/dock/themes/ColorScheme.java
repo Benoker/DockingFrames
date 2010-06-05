@@ -29,12 +29,12 @@ import java.awt.Color;
 
 import javax.swing.LookAndFeel;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.DockColor;
 import bibliothek.gui.dock.util.extension.ExtensionName;
 import bibliothek.gui.dock.util.laf.LookAndFeelColors;
+import bibliothek.util.Path;
 
 /**
  * A <code>ColorScheme</code> is a collection of colors and bridges.

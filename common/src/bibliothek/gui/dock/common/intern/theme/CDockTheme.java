@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
@@ -60,6 +59,7 @@ import bibliothek.gui.dock.util.extension.ExtensionName;
 import bibliothek.gui.dock.util.font.DockFont;
 import bibliothek.gui.dock.util.font.FontBridge;
 import bibliothek.gui.dock.util.font.FontManager;
+import bibliothek.util.Path;
 
 /**
  * A {@link DockTheme} that wraps another theme and works within

@@ -33,7 +33,6 @@ import java.util.List;
 
 import javax.swing.KeyStroke;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -56,6 +55,7 @@ import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.util.Path;
 
 /**
  * {@link Dockable}s are maximized if they take up the whole space a frame

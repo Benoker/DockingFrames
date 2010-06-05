@@ -28,7 +28,7 @@ package bibliothek.gui.dock.util.extension;
 import java.util.HashMap;
 import java.util.Map;
 
-import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.util.Path;
 
 /**
  * The name of some extension that can be loaded through {@link Extension}.

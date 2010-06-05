@@ -25,8 +25,8 @@
  */
 package bibliothek.gui.dock.layout;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
+import bibliothek.util.Path;
 import bibliothek.util.xml.XElement;
 
 /**

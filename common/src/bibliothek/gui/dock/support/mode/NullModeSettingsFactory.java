@@ -25,7 +25,7 @@
  */
 package bibliothek.gui.dock.support.mode;
 
-import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.util.Path;
 
 /**
  * The {@link #create()} method of this factory always returns <code>null</code>.

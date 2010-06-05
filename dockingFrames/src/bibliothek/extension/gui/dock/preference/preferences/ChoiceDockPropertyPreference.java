@@ -27,10 +27,10 @@ package bibliothek.extension.gui.dock.preference.preferences;
 
 import bibliothek.extension.gui.dock.preference.DefaultPreference;
 import bibliothek.extension.gui.dock.preference.preferences.choice.DefaultChoice;
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.util.Path;
 
 /**
  * A preference that offers a choice and write the value into a {@link DockProperties}.

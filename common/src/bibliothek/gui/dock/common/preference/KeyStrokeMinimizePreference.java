@@ -28,11 +28,11 @@ package bibliothek.gui.dock.common.preference;
 import javax.swing.KeyStroke;
 
 import bibliothek.extension.gui.dock.preference.preferences.DockPropertyPreference;
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.util.Path;
 
 /**
  * {@link KeyStroke} that will minimize a {@link CDockable}.

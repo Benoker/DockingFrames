@@ -28,9 +28,9 @@ package bibliothek.extension.gui.dock.preference.preferences;
 import bibliothek.extension.gui.dock.preference.preferences.choice.EclipseTabChoice;
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPainter;
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.util.Path;
 
 /**
  * Determines the way tabs are painted in the {@link EclipseTheme}.

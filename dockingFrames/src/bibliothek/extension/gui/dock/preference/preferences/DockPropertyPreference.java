@@ -30,10 +30,10 @@ import java.util.ResourceBundle;
 
 import bibliothek.extension.gui.dock.preference.DefaultPreference;
 import bibliothek.extension.gui.dock.preference.Preference;
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.util.Path;
 
 /**
  * A {@link Preference} that can read and write its value from a

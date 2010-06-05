@@ -45,11 +45,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.common.ColorMap;
 import bibliothek.gui.dock.common.DefaultMultipleCDockable;
 import bibliothek.gui.dock.common.EmptyMultipleCDockableFactory;
 import bibliothek.gui.dock.common.FontMap;
+import bibliothek.util.Path;
 
 /**
  * A frame contains some buttons that change some properties in order to 

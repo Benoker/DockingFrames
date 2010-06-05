@@ -135,7 +135,7 @@ public class CGrid {
     }
 
     /**
-     * Informs this grid about a horizontal divider that should be inserted
+     * Informs this grid about a vertical divider that should be inserted
      * into the layout. There are no guarantees that the divider really is inserted.
      * @param x the x coordinate of the divider
      * @param y1 the first y coordinate of the divider

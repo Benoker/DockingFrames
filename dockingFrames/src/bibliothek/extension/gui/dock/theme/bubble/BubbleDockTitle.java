@@ -27,7 +27,6 @@ package bibliothek.extension.gui.dock.theme.bubble;
 
 import java.awt.Color;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.themes.font.TitleFont;
@@ -35,6 +34,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.font.DockFont;
 import bibliothek.util.Condition;
+import bibliothek.util.Path;
 
 /**
  * A <code>BubbleDockTitle</code> is a title which has two or four round edges.

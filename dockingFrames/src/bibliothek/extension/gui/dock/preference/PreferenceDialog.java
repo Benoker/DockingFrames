@@ -5,7 +5,7 @@ import java.awt.Component;
 import javax.swing.JComponent;
 
 import bibliothek.extension.gui.dock.PreferenceTable;
-import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.util.Path;
 
 /**
  * A simple dialog showing the contents of one {@link PreferenceModel}.

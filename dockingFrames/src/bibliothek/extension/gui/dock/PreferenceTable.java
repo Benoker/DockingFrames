@@ -41,9 +41,9 @@ import javax.swing.border.EtchedBorder;
 
 import bibliothek.extension.gui.dock.preference.*;
 import bibliothek.extension.gui.dock.preference.editor.*;
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
 import bibliothek.gui.dock.themes.basic.action.buttons.BasicMiniButton;
+import bibliothek.util.Path;
 
 /**
  * A component that shows the entries of a {@link PreferenceModel}, the user

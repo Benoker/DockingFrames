@@ -31,10 +31,10 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.support.PlaceholderMap.Key;
+import bibliothek.util.Path;
 
 /**
  * A list consisting of {@link Dockable}s and sets of {@link Path}s as placeholder. 

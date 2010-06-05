@@ -29,12 +29,12 @@ import bibliothek.extension.gui.dock.preference.PreferenceModel;
 import bibliothek.extension.gui.dock.preference.PreferenceTreeModel;
 import bibliothek.extension.gui.dock.preference.model.BubbleThemePreferenceModel;
 import bibliothek.extension.gui.dock.preference.model.EclipseThemePreferenceModel;
-import bibliothek.extension.gui.dock.util.Path;
-import bibliothek.extension.gui.dock.util.PathCombiner;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.common.preference.CKeyStrokePreferenceModel;
 import bibliothek.gui.dock.common.preference.CLayoutPreferenceModel;
+import bibliothek.util.Path;
+import bibliothek.util.PathCombiner;
 
 /**
  * A {@link PreferenceModel} that shows the settings of a {@link CControl}.

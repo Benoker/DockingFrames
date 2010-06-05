@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.util;
+package bibliothek.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;

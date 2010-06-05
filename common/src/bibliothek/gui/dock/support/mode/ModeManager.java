@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -45,6 +44,7 @@ import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.action.MultiDockActionSource;
 import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.util.Path;
 
 /**
  * Associates {@link Dockable}s with one {@link Mode} out of a set

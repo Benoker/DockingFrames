@@ -29,7 +29,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.util.Path;
 import bibliothek.util.xml.XElement;
 
 /**

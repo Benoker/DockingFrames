@@ -29,8 +29,8 @@ import bibliothek.extension.gui.dock.preference.DefaultPreferenceModel;
 import bibliothek.extension.gui.dock.preference.preferences.ButtonContentPreference;
 import bibliothek.extension.gui.dock.preference.preferences.choice.TabContentFilterPreference;
 import bibliothek.extension.gui.dock.preference.preferences.choice.TabPlacementPreference;
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.util.Path;
 
 /**
  * A model containing preferences that are related to the layout of

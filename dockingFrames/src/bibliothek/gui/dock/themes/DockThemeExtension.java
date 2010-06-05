@@ -25,10 +25,10 @@
  */
 package bibliothek.gui.dock.themes;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.util.extension.ExtensionName;
+import bibliothek.util.Path;
 
 /**
  * An extension to a {@link DockTheme}, may be used by the {@link DockTheme} to

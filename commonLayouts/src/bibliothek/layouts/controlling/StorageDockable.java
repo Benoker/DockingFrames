@@ -9,11 +9,11 @@ import bibliothek.extension.gui.dock.PreferenceTable;
 import bibliothek.extension.gui.dock.preference.AbstractPreference;
 import bibliothek.extension.gui.dock.preference.DefaultPreferenceModel;
 import bibliothek.extension.gui.dock.preference.PreferenceOperation;
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
 import bibliothek.gui.dock.support.util.ApplicationResourceManager;
 import bibliothek.layouts.Core;
 import bibliothek.layouts.Icons;
+import bibliothek.util.Path;
 import bibliothek.util.xml.XElement;
 
 /**

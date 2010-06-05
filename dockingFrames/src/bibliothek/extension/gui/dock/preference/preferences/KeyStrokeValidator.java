@@ -28,7 +28,7 @@ package bibliothek.extension.gui.dock.preference.preferences;
 import javax.swing.KeyStroke;
 
 import bibliothek.extension.gui.dock.preference.editor.KeyStrokeEditor;
-import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.util.Path;
 
 /**
  * Information for {@link Path#TYPE_KEYSTROKE_PATH} about how a keystroke

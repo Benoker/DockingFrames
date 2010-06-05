@@ -28,7 +28,6 @@ package bibliothek.extension.gui.dock.theme.bubble;
 import java.awt.Color;
 import java.awt.Point;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.FlapDockStation.ButtonContent;
@@ -42,6 +41,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.font.DockFont;
 import bibliothek.util.Condition;
+import bibliothek.util.Path;
 
 /**
  * A {@link DockTitle} used for the buttons on a {@link FlapDockStation}.

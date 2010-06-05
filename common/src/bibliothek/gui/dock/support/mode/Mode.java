@@ -25,9 +25,9 @@
  */
 package bibliothek.gui.dock.support.mode;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.util.Path;
 
 /**
  * A mode describes a state in which a {@link Dockable} can be. A Dockable

@@ -29,12 +29,12 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.themes.ColorBridgeFactory;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.DockColor;
+import bibliothek.util.Path;
 
 /**
  * An implementation of {@link ColorScheme} that can guess colors

@@ -29,10 +29,10 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.KeyStroke;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.util.Path;
 
 /**
  * Preference for the shortcut used by the {@link SplitDockStation} to

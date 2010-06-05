@@ -28,7 +28,7 @@ package bibliothek.extension.gui.dock.preference;
 import java.util.ArrayList;
 import java.util.List;
 
-import bibliothek.extension.gui.dock.util.Path;
+import bibliothek.util.Path;
 
 /**
  * An implementation of {@link PreferenceModel} using {@link Preference}s to

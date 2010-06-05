@@ -25,9 +25,9 @@
  */
 package bibliothek.gui.dock.facile.mode;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.util.Path;
 
 /**
  * Describes the location of a {@link Dockable} on some station.

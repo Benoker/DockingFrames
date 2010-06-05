@@ -29,11 +29,11 @@ package bibliothek.gui.dock.station.split;
 import java.util.HashSet;
 import java.util.Set;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
+import bibliothek.util.Path;
 
 /**
  * Represents the internal tree of a {@link SplitDockStation}. Can be used

@@ -30,10 +30,10 @@ import bibliothek.extension.gui.dock.preference.model.BubbleThemePreferenceModel
 import bibliothek.extension.gui.dock.preference.model.EclipseThemePreferenceModel;
 import bibliothek.extension.gui.dock.preference.model.KeyStrokePreferenceModel;
 import bibliothek.extension.gui.dock.preference.model.LayoutPreferenceModel;
-import bibliothek.extension.gui.dock.util.Path;
-import bibliothek.extension.gui.dock.util.PathCombiner;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockUI;
+import bibliothek.util.Path;
+import bibliothek.util.PathCombiner;
 
 /**
  * A {@link PreferenceTreeModel} that contains all the preferences that are

@@ -3,10 +3,10 @@ package bibliothek.gui.dock.station.split;
 import java.awt.Dimension;
 import java.util.Map;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockTree.Key;
+import bibliothek.util.Path;
 
 /**
  * A placeholder is a set of {@link Path}-keys, each key stands for a 

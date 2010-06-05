@@ -27,9 +27,9 @@ package bibliothek.gui.dock.themes.color;
 
 import java.awt.Color;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
+import bibliothek.util.Path;
 
 /**
  * A color used on a {@link DockableDisplayer}.

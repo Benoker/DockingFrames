@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -54,6 +53,7 @@ import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
+import bibliothek.util.Path;
 
 /**
  * {@link ModeManager} for the location of a {@link Dockable}. This manager is able to

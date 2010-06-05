@@ -48,7 +48,6 @@ import java.util.Map;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
@@ -105,6 +104,7 @@ import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
+import bibliothek.util.Path;
 
 /**
  * This {@link DockStation} shows only a title for each of it's children.<br>

@@ -33,8 +33,8 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
-import bibliothek.extension.gui.dock.util.Path;
-import bibliothek.extension.gui.dock.util.PathCombiner;
+import bibliothek.util.Path;
+import bibliothek.util.PathCombiner;
 
 /**
  * A {@link PreferenceModel} that is also a {@link TreeModel}. It contains

@@ -25,10 +25,10 @@
  */
 package bibliothek.gui.dock.station.split;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.split.SplitDockTree.Key;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
+import bibliothek.util.Path;
 
 /**
  * A {@link SplitTreeFactory} that writes into a {@link SplitDockTree} and

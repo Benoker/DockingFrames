@@ -25,12 +25,12 @@
  */
 package bibliothek.gui.dock.common.mode;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.facile.mode.ExternalizedMode;
 import bibliothek.gui.dock.facile.mode.LocationMode;
 import bibliothek.gui.dock.facile.mode.MaximizedMode;
 import bibliothek.gui.dock.facile.mode.MinimizedMode;
 import bibliothek.gui.dock.facile.mode.NormalMode;
+import bibliothek.util.Path;
 
 /**
  * A extendible set of unique singleton identifiers for the various instances of {@link LocationMode mode}.

@@ -30,10 +30,10 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.layout.AbstractDockableProperty;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.util.Path;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 

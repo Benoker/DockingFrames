@@ -12,13 +12,13 @@ import bibliothek.extension.gui.dock.preference.AbstractPreference;
 import bibliothek.extension.gui.dock.preference.DefaultPreferenceModel;
 import bibliothek.extension.gui.dock.preference.Preference;
 import bibliothek.extension.gui.dock.preference.PreferenceOperation;
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
 import bibliothek.layouts.Core;
 import bibliothek.layouts.Icons;
 import bibliothek.layouts.testing.SingleTestDockable;
 import bibliothek.layouts.testing.SingleTestFactory;
+import bibliothek.util.Path;
 
 public class ModifySingleDockable extends DefaultSingleCDockable{
     private static final PreferenceOperation ADD_SINGLE_BACKUP_FACTORY = new PreferenceOperation( "add backup factory", Icons.get( "add factory" ), "CControl.addSingleBackupFactory" );

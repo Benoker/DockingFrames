@@ -28,8 +28,8 @@ package bibliothek.extension.gui.dock.preference;
 import java.util.ArrayList;
 import java.util.List;
 
-import bibliothek.extension.gui.dock.util.Path;
-import bibliothek.extension.gui.dock.util.PathCombiner;
+import bibliothek.util.Path;
+import bibliothek.util.PathCombiner;
 
 /**
  * A preference model that envelops other models and uses their preferences.

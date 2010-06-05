@@ -25,8 +25,8 @@
  */
 package bibliothek.gui.dock.util;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
+import bibliothek.util.Path;
 
 /**
  * An abstract implementation of {@link UIValue}. This class contains more than

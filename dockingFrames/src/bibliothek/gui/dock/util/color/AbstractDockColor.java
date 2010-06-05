@@ -27,10 +27,10 @@ package bibliothek.gui.dock.util.color;
 
 import java.awt.Color;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.util.AbstractUIValue;
 import bibliothek.gui.dock.util.UIProperties;
+import bibliothek.util.Path;
 
 /**
  * A {@link DockColor} that contains more than one {@link Color}:

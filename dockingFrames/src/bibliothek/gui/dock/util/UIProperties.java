@@ -27,8 +27,8 @@ package bibliothek.gui.dock.util;
 
 import java.util.*;
 
-import bibliothek.extension.gui.dock.util.Path;
 import bibliothek.gui.DockController;
+import bibliothek.util.Path;
 
 /**
  * A map containing which contains some string-values pairs and so called
