@@ -159,6 +159,14 @@ public class ModifySingleDockable extends DefaultSingleCDockable{
         public void setValue( String value ) {
             // ignore
         }
+        
+        public void read(){
+        	// ignore
+        }
+        
+        public void write(){
+	        // ignore	
+        }
     }
     
     private class NewEntry extends AbstractPreference<String>{
@@ -231,6 +239,14 @@ public class ModifySingleDockable extends DefaultSingleCDockable{
                 dockable.setVisible( true );
             }
             updateTable();
+        }
+        
+        public void read(){
+        	// ignore
+        }
+        
+        public void write(){
+	        // ignore	
         }
     }
 }

@@ -203,6 +203,14 @@ public class ModifyMultiDockable extends DefaultSingleCDockable{
         public void setValue( String value ) {
             // ignore
         }
+        
+        public void read(){
+        	// ignore
+        }
+        
+        public void write(){
+	        // ignore	
+        }
     }
     
     private class NewEntry extends AbstractPreference<String>{
@@ -269,6 +277,14 @@ public class ModifyMultiDockable extends DefaultSingleCDockable{
                 core.getEnvironment().getEnvironmentControl().addMultipleDockableFactory( value, factory );
                 updateTable();
             }
+        }
+        
+        public void read(){
+        	// ignore
+        }
+        
+        public void write(){
+	        // ignore	
         }
     }
 }

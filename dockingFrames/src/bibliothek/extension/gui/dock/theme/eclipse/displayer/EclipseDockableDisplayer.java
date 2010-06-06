@@ -45,11 +45,17 @@ import bibliothek.gui.dock.event.DockableAdapter;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
+import bibliothek.gui.dock.station.stack.StackDockComponent;
+import bibliothek.gui.dock.station.stack.TabContent;
+import bibliothek.gui.dock.station.stack.TabContentFilterListener;
+import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.PropertyValue;
 
 /**
+ * This displayer paints a tab instead of a {@link DockTitle} (if the framework sets a title, then this
+ * title is ignored). 
  * @author Janni Kovacs
  */
 public class EclipseDockableDisplayer extends EclipseTabPane implements DockableDisplayer {
@@ -68,18 +74,55 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 		}
 	};
 	
-	private DockableListener dockableListener = new DockableAdapter() {
-		public void titleTextChanged( Dockable dockable, String oldTitle, String newTitle ){
-			setTitleAt( 0, newTitle );
+	private PropertyValue<TabContentFilter> filter = new PropertyValue<TabContentFilter>( StackDockStation.TAB_CONTENT_FILTER ){
+		@Override
+		protected void valueChanged( TabContentFilter oldValue, TabContentFilter newValue ){
+			if( oldValue != null ){
+				oldValue.uninstall( EclipseDockableDisplayer.this );
+				oldValue.removeListener( filterListener );
+			}
+			if( newValue != null ){
+				newValue.install( EclipseDockableDisplayer.this );
+				newValue.addListener( filterListener );
+			}
 			
+			updateTabContent();
+		}
+	};
+	
+	private DockableListener dockableListener = new DockableAdapter() {
+		public void titleTextChanged( Dockable dockable, String oldTitle, String newTitle ){			
+			updateTabContent();
 		}
 		
 		public void titleIconChanged( Dockable dockable, Icon oldIcon, Icon newIcon ){
-			setIconAt( 0, newIcon );
+			updateTabContent();
 		}
 		
 		public void titleToolTipChanged( Dockable dockable, String oldTooltip, String newTooltip ){
-			setTooltipAt( 0, newTooltip );
+			updateTabContent();
+		}
+	};
+	
+	private TabContentFilterListener filterListener = new TabContentFilterListener() {
+		public void contentChanged(){
+			updateTabContent();
+		}
+		
+		public void contentChanged( StackDockComponent component ){
+			if( component == EclipseDockableDisplayer.this ){
+				updateTabContent();
+			}
+		}
+		
+		public void contentChanged( StackDockStation station ){
+			// ignore
+		}
+		
+		public void contentChanged( Dockable dockable ){
+			if( dockable == EclipseDockableDisplayer.this.dockable ){
+				updateTabContent();
+			}
 		}
 	};
 	
@@ -146,13 +189,46 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 		}
 		this.dockable = dockable;
 		if( dockable != null ){
-			addTab( dockable.getTitleText(), dockable.getTitleIcon(), dockable.getComponent(), dockable );
+			TabContent content = new TabContent( dockable.getTitleIcon(), dockable.getTitleText(), dockable.getTitleToolTip() );
+			TabContentFilter contentFilter = filter.getValue();
+			if( contentFilter != null ){
+				content = contentFilter.filter( content, this, dockable );
+			}
+			
+			if( content == null ){
+				addTab( null, null, dockable.getComponent(), dockable );
+				setTooltipAt( 0, null );
+			}
+			else{
+				addTab( content.getTitle(), content.getIcon(), dockable.getComponent(), dockable );
+				setTooltipAt( 0, content.getTooltip() );
+			}
 			dockable.addDockableListener( dockableListener );
 		}
 		if( observer != null ){
 			observer.setDockable( dockable );
 		}
 		revalidate();
+	}
+	
+	private void updateTabContent(){
+		if( dockable != null && getTabCount() == 1 ){
+			TabContent content = new TabContent( dockable.getTitleIcon(), dockable.getTitleText(), dockable.getTitleToolTip() );
+			TabContentFilter contentFilter = filter.getValue();
+			if( contentFilter != null ){
+				content = contentFilter.filter( content, this, dockable );
+			}
+			if( content == null ){
+				setTitleAt( 0, null );
+				setIconAt( 0, null );
+				setTooltipAt( 0, null );
+			}
+			else{
+				setTitleAt( 0, content.getTitle() );
+				setIconAt( 0, content.getIcon() );
+				setTooltipAt( 0, content.getTooltip() );
+			}
+		}
 	}
 	
 	@Override
@@ -162,6 +238,7 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 			observer.setController( controller );
 		}
 		tabPlacement.setProperties( controller );
+		filter.setProperties( controller );
 	}
 
 	public boolean titleContains( int x, int y ){

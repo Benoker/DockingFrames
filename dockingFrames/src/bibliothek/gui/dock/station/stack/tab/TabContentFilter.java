@@ -27,12 +27,15 @@ package bibliothek.gui.dock.station.stack.tab;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
-import bibliothek.gui.dock.station.stack.StackDockStationFilterListener;
+import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.TabContent;
+import bibliothek.gui.dock.station.stack.TabContentFilterListener;
 
 /**
- * This interface tells a {@link StackDockStation} how to fill the tabs
- * for its children.
+ * This interface tells a {@link StackDockStation} or a {@link StackDockComponent} how to fill the tabs
+ * for its children. Note that if a {@link StackDockStation} is using a {@link StackDockComponent}, this
+ * filter gets not informed about the existence of the {@link StackDockComponent}. However some other
+ * modules using a {@link StackDockComponent} may decide to register them directly.
  * @author Benjamin Sigg
  */
 public interface TabContentFilter {
@@ -43,24 +46,36 @@ public interface TabContentFilter {
 	public void install( StackDockStation station );
 	
 	/**
+	 * Informs this filter that it will be used by <code>component</code>. Note that this
+	 * method may not be called if the <code>component</code> itself is used by a {@link StackDockStation}. 
+	 * @param component a new client
+	 */
+	public void install( StackDockComponent component );
+	
+	/**
 	 * Informs this filter that it is no longer used by <code>station</code>.
 	 * @param station an old client
 	 */
 	public void uninstall( StackDockStation station );
 	
+	/**
+	 * Informs this filter that it is no longer used by <code>component</code>.
+	 * @param component the old component
+	 */
+	public void uninstall( StackDockComponent component );
 	
 	/**
 	 * Adds a listener to this filter. The listener can be called if this filter
 	 * changes its behavior.
 	 * @param listener the new listener, not <code>null</code>
 	 */
-	public void addListener( StackDockStationFilterListener listener );
+	public void addListener( TabContentFilterListener listener );
 	
 	/**
 	 * Removes a listener from this filter.
 	 * @param listener the listener to remove
 	 */
-	public void removeListener( StackDockStationFilterListener listener );
+	public void removeListener( TabContentFilterListener listener );
 	
 	/**
 	 * Filters the contents of a tab.
@@ -70,4 +85,13 @@ public interface TabContentFilter {
 	 * @return the content to show, may be <code>null</code>
 	 */
 	public TabContent filter( TabContent content, StackDockStation station, Dockable dockable );
+	
+	/**
+	 * Filters the contents of a tab.
+	 * @param content the default content to use, not <code>null</code>
+	 * @param component the component which calls this method
+	 * @param dockable the element which is displayed
+	 * @return the content to show, may be <code>null</code>
+	 */
+	public TabContent filter( TabContent content, StackDockComponent component, Dockable dockable );
 }

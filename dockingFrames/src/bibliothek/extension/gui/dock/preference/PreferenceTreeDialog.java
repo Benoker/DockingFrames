@@ -35,8 +35,7 @@ import bibliothek.extension.gui.dock.PreferenceTreePanel;
 import bibliothek.util.Path;
 
 /**
- * A simple panel showing a {@link PreferenceTreeModel} and allowing the user
- * to apply or to cancel its changes.
+ * A simple dialog showing a {@link PreferenceTreeModel} on a {@link PreferenceTreePanel}.
  * @author Benjamin Sigg
  */
 public class PreferenceTreeDialog extends AbstractPreferenceDialog<PreferenceTreeModel>{

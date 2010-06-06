@@ -28,10 +28,17 @@ package bibliothek.extension.gui.dock.theme.eclipse;
 import java.util.ArrayList;
 import java.util.List;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.action.DockAction;
 
+/**
+ * This default implementation of {@link EclipseThemeConnector} draws the typical eclipse-header over {@link Dockable}s
+ * and neither border nor title over {@link DockStation}s. It checks each {@link DockAction} for
+ * the annotation {@link EclipseTabDockAction} and the actions with the annotation are painted 
+ * on tabs.
+ */
 public class DefaultEclipseThemeConnector implements EclipseThemeConnector {
 	private List<EclipseThemeConnectorListener> listeners = new ArrayList<EclipseThemeConnectorListener>();
 	

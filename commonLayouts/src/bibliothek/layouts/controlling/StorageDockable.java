@@ -149,5 +149,13 @@ public class StorageDockable extends DefaultSingleCDockable{
         public void setValue( Object value ) {
             // ignore
         }
+        
+        public void read(){
+	        // ignore	
+        }
+        
+        public void write(){
+	        // ignore	
+        }
     }
 }

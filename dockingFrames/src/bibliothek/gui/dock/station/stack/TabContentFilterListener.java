@@ -33,7 +33,7 @@ import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
  * A listener to a {@link TabContentFilter}.
  * @author Benjamin Sigg
  */
-public interface StackDockStationFilterListener {
+public interface TabContentFilterListener {
 	/**
 	 * Informs this listener that icon, title and/or tooltip of <code>dockable</code> changed.
 	 * @param dockable the affected element
@@ -46,6 +46,13 @@ public interface StackDockStationFilterListener {
 	 * @param station the affected station
 	 */
 	public void contentChanged( StackDockStation station );
+	
+	/**
+	 * Informs this listener that all icons, titles and tooltips of all children
+	 * of <code>component</code> have changed.
+	 * @param component the affected station
+	 */
+	public void contentChanged( StackDockComponent component );
 	
 	/**
 	 * Informs this listener that all icons, titles and tooltips have changed.

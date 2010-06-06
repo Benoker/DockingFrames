@@ -41,6 +41,7 @@ import bibliothek.util.Path;
 /**
  * A title that has the ability to paint a round rect as background. It also can
  * apply animations when changing the state.
+ * @see BubbleColorAnimation
  * @author Benjamin Sigg
  */
 public abstract class AbstractBubbleDockTitle extends AbstractDockTitle{

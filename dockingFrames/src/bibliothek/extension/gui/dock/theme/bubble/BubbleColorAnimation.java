@@ -36,17 +36,13 @@ import java.util.Map;
 
 import javax.swing.Timer;
 
-import bibliothek.extension.gui.dock.theme.BubbleTheme;
-
 /**
- * A BubbleColorAnimation has the ability to convert one color smoothly into another.
- * The animation does not store colors directly, it uses a <code>String</code>
- * as a key to read the color from a {@link BubbleTheme} using {@link BubbleTheme#getColor(String)}.
- * The transformation takes {@link #setDuration(int) duration} milliseconds, 
- * a {@link #addTask(Runnable) task} can be executed whenever the colors have
- * changed.<br>
- * The animation can handle multiple color-pairs asynchronously.
- * 
+ * A <code>BubbleColorAnimation</code> has the ability to convert one or many color-pairs smoothly from source
+ * to destination color. It basically is a map storing {@link String}-{@link Color} pairs. 
+ * Clients have to call {@link #putColor(String, Color)} to start an animation. They
+ * can call {@link #getColor(String)} any time to get the current intermediate color. Adding a {@link #addTask(Runnable) task}
+ * will allow a client to be informed whenever the colors change.<br>
+ * The animation itself takes {@link #setDuration(int) duration} milliseconds.  
  * @author Benjamin Sigg
  */
 public class BubbleColorAnimation {
@@ -77,9 +73,8 @@ public class BubbleColorAnimation {
     
     /**
      * Sets a color-pair. The color <code>destination</code> is shown
-     * after maximal {@link #getDuration() duration} milliseconds. This
-     * method does not start a new animation, but modifies currently running
-     * animations.
+     * after maximal {@link #getDuration() duration} milliseconds. This method
+     * does not start an animation, it just modifies an existing transition.
      * @param key the key of the pair
      * @param source where the animation starts
      * @param destination the destination of the animation
@@ -94,8 +89,10 @@ public class BubbleColorAnimation {
     }
     
     /**
-     * Starts a new animation which will transform the color of the pair
-     * <code>key</code> to <code>color</code>.
+     * If there is already a color stored under <code>key</code>, then a new animation
+     * is started that smoothly changes the color <code>key</code> from its current value
+     * to <code>color</code>. If no color is stored, then <code>color</code> is just set
+     * without starting an animation.
      * @param key the key of the pair
      * @param color the destination of the animation
      */

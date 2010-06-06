@@ -68,7 +68,7 @@ import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.station.stack.StackDockComponentParent;
 import bibliothek.gui.dock.station.stack.StackDockProperty;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
-import bibliothek.gui.dock.station.stack.StackDockStationFilterListener;
+import bibliothek.gui.dock.station.stack.TabContentFilterListener;
 import bibliothek.gui.dock.station.stack.TabContent;
 import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
@@ -197,12 +197,16 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
 	};
     
 	/** a listener to {@link #tabContentFilter} */
-	private StackDockStationFilterListener tabContentFilterListener = new StackDockStationFilterListener() {
+	private TabContentFilterListener tabContentFilterListener = new TabContentFilterListener() {
 		public void contentChanged(){
 			int count = getDockableCount();
 			for( int i = 0; i < count; i++ ){
 				updateContent( i );
 			}
+		}
+		
+		public void contentChanged( StackDockComponent component ){
+			// ignore	
 		}
 		
 		public void contentChanged( StackDockStation station ){

@@ -38,7 +38,7 @@ import bibliothek.extension.gui.dock.preference.PreferenceOperation;
 import bibliothek.util.Path;
 
 /**
- * An editor intended to be used for {@link Path#TYPE_BOOLEAN_PATH}.
+ * An editor intended to be used for {@link Path#TYPE_BOOLEAN_PATH}. This editor just shows a {@link JCheckBox}.
  * @author Benjamin Sigg
  */
 public class BooleanEditor extends JCheckBox implements PreferenceEditor<Boolean>{

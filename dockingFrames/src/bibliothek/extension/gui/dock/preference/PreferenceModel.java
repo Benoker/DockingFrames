@@ -28,9 +28,31 @@ package bibliothek.extension.gui.dock.preference;
 import bibliothek.util.Path;
 
 /**
- * A preference model is a list of objects which represent some preferences
- * of another resource. A preference model has enough information to be displayed
- * in a graphical user interface and be modified by a user.
+ * A preference model is a layer between the framework and its properties, and the
+ * dialog, table or tree with which the user can modify these properties. A model
+ * consists of "preferences", each preference is a wrapper around a single property. A preference
+ * also serves as buffer: modifying a preference does not immediately change the property. 
+ * Clients have to call {@link #read()} to fill the preference-buffers, and have to call {@link #write()}
+ * to write changes back.<br> 
+ * The framework stores and loads some properties automatically, the preferences for these
+ * properties are called "natural". If on the other hand the framework assumes that a
+ * property is managed by the client, its preference is called "artificial". Clients have
+ * to use a {@link PreferenceStorage} to persistently store and load the artificial preferences.<br>
+ * A preference model also offers information of how to present its preferences to the
+ * user.<br>
+ * The typical lifecycle of a {@link PreferenceModel} looks as follows:<br>
+ * <ol>
+ *  <li>A {@link PreferenceStorage} is created and its content loaded using one of its <code>read</code>-methods.</li>	
+ *  <li>The new, empty model is created.</li>
+ *  <li>With a call to {@link PreferenceStorage#load(PreferenceModel, boolean)} the artificial and natural preferences are loaded.</li>
+ *  <li>With a call to {@link #write()} all preferences are made available to the entire framework.</li>
+ *  <li>At any time a call to {@link #read()} will update the contents of the model.</li>
+ *  <li>At any time a call to {@link #write()} will make modified preferences available to the entire framework.</li> 
+ *  <li>With a call to {@link PreferenceStorage#store(PreferenceModel)} the preferences are stored.</li>
+ *  <li>Using one of the <code>write</code>-methods of the {@link PreferenceStorage} the client can store the preferences persistently</li>
+ * </ol>
+ * Note that many {@link PreferenceModel}s can share the same {@link PreferenceStorage}. In such a case its best to re-create and refill the
+ * models before using them.
  * @author Benjamin Sigg
  */
 public interface PreferenceModel {
@@ -155,9 +177,10 @@ public interface PreferenceModel {
     public boolean isNatural( int index );
     
     /**
-     * Asks this model to set the <code>index</code>'th preference on its
-     * natural way.
-     * @param index the index of the preference to set
+     * Like {@link #setValue(int, Object)} this method changes the value of the <code>index</code>'th
+     * preference. But this time the natural preference has to extract the value from
+     * its underlying property.
+     * @param index the index of the preference to update
      */
     public void setValueNatural( int index );
     
@@ -171,11 +194,10 @@ public interface PreferenceModel {
     public Path getTypePath( int index );
     
     /**
-     * Gets the unique location of the <code>index</code>'th preference of
+     * Gets the unique identifier of the <code>index</code>'th preference of
      * this model.
      * @param index the index of the preference
-     * @return the unique path, compared to the other paths of this model, 
-     * to the preference
+     * @return the unique path, compared to the other paths of this model
      */
     public Path getPath( int index );
 }

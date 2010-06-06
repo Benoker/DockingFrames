@@ -60,13 +60,11 @@ public class ThemePreference extends DefaultPreference<String>{
         setNatural( true );
     }
     
-    @Override
     public void read() {
         setValueInfo( new ThemeChoice( themes, controller ) );
         setValue( themes.getSelectedKey() );
     }
     
-    @Override
     public void write() {
         themes.select( getValue() );
     }

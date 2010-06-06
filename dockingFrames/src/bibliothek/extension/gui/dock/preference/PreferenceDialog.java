@@ -8,7 +8,9 @@ import bibliothek.extension.gui.dock.PreferenceTable;
 import bibliothek.util.Path;
 
 /**
- * A simple dialog showing the contents of one {@link PreferenceModel}.
+ * A simple dialog showing the contents of one {@link PreferenceModel}. This dialog uses
+ * a {@link PreferenceTable} to show the model. Clients can use the static method
+ * {@link #openDialog(PreferenceModel, Component)} to quickly create and show a dialog.
  * @author Benjamin Sigg
  * @see PreferenceTreeDialog
  */

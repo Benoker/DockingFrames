@@ -29,6 +29,7 @@ import javax.swing.JComponent;
 import javax.swing.border.LineBorder;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector.TitleBar;
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexSystemColor;
 import bibliothek.gui.DockStation;
@@ -40,6 +41,9 @@ import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
+ * This factory makes use of a {@link EclipseThemeConnector} to decide which
+ * kind of {@link DockableDisplayer} to create. To be more exact: the displayer
+ * depends on the {@link TitleBar}-value returned by {@link EclipseThemeConnector#getTitleBarKind(Dockable)}.
  * @author Janni Kovacs
  */
 public class EclipseDisplayerFactory implements DisplayerFactory {

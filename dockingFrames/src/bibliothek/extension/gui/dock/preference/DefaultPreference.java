@@ -28,12 +28,17 @@ package bibliothek.extension.gui.dock.preference;
 import bibliothek.util.Path;
 
 /**
- * A generic {@link Preference} that can hold any value.
+ * A generic {@link Preference} that can hold any value. This preference does not implement 
+ * the {@link #read()} or {@link #write()} method. If a {@link #setDefaultValue(Object) default-value}
+ * is set, then this preference activates the operation {@link PreferenceOperation#DEFAULT}, otherwise
+ * it shows no operations.<br>
+ * This preference is set to be an {@link #isNatural() artificial} preference, subclasses may call
+ * {@link #setNatural(boolean)} to change the behavior.
  * @author Benjamin Sigg
  *
  * @param <V> the kind of value this preference holds
  */
-public class DefaultPreference<V> extends AbstractPreference<V>{
+public abstract class DefaultPreference<V> extends AbstractPreference<V>{
     private V value;
     private Object valueInfo;
     private Path type;

@@ -8,7 +8,8 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 
 /**
- * A {@link RectEclipseBorder} painting round edges depending on the 
+ * A {@link RectEclipseBorder} painting round edges at the side at which tabs are 
+ * painted. 
  * @author Benjamin Sigg
  */
 public class OwnedRectEclipseBorder extends RectEclipseBorder{

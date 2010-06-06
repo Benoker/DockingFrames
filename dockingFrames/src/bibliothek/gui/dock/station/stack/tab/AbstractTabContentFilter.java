@@ -28,12 +28,16 @@ package bibliothek.gui.dock.station.stack.tab;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockStationListener;
-import bibliothek.gui.dock.station.stack.StackDockStationFilterListener;
+import bibliothek.gui.dock.station.stack.StackDockComponent;
+import bibliothek.gui.dock.station.stack.TabContentFilterListener;
 import bibliothek.gui.dock.station.stack.TabContent;
 
 /**
@@ -41,15 +45,19 @@ import bibliothek.gui.dock.station.stack.TabContent;
  * and which {@link Dockable}s are currently filtered.<br>
  * Subclasses may override {@link #added(StackDockStation, Dockable) added}, {@link #removed(StackDockStation, Dockable) removed},
  * {@link #deselected(StackDockStation, Dockable) deselected} and {@link #selected(StackDockStation, Dockable) selected} to be informed
- * if the contents of a {@link StackDockStation} changed.
+ * if the contents of a {@link StackDockStation} changed.<br>
+ * Note that this filter does not observe whether elements are added or removed from a {@link StackDockComponent}s.
  * @author Benjamin Sigg
  */
 public abstract class AbstractTabContentFilter implements TabContentFilter{
 	/** all listeners known to this filter */
-	private List<StackDockStationFilterListener> listeners = new ArrayList<StackDockStationFilterListener>();
+	private List<TabContentFilterListener> listeners = new ArrayList<TabContentFilterListener>();
 	
 	/** all stations that are currently installed */
 	protected List<StackDockStation> stations = new ArrayList<StackDockStation>();
+	
+	/** all the components that are currently installed */
+	protected List<StackDockComponent> components = new ArrayList<StackDockComponent>();
 	
 	/** a listener added to all {@link StackDockStation}s */
 	private DockStationListener stationListener = new DockStationAdapter() {
@@ -73,14 +81,20 @@ public abstract class AbstractTabContentFilter implements TabContentFilter{
 		}
 	};
 	
-	public void addListener( StackDockStationFilterListener listener ){
+	private ChangeListener componentListener = new ChangeListener() {
+		public void stateChanged( ChangeEvent e ){
+				
+		}
+	};
+	
+	public void addListener( TabContentFilterListener listener ){
 		if( listener == null ){
 			throw new IllegalArgumentException( "listener must not be null" );
 		}
 		listeners.add( listener );
 	}
 
-	public void removeListener( StackDockStationFilterListener listener ){
+	public void removeListener( TabContentFilterListener listener ){
 		listeners.remove( listener );
 	}
 	
@@ -88,39 +102,50 @@ public abstract class AbstractTabContentFilter implements TabContentFilter{
 	 * Gets all listeners that are currently observing this filter.
 	 * @return the new listener
 	 */
-	protected StackDockStationFilterListener[] listeners(){
-		return listeners.toArray( new StackDockStationFilterListener[ listeners.size() ] );
+	protected TabContentFilterListener[] listeners(){
+		return listeners.toArray( new TabContentFilterListener[ listeners.size() ] );
 	}
 	
 	/**
-	 * Calls {@link StackDockStationFilterListener#contentChanged()} on all 
+	 * Calls {@link TabContentFilterListener#contentChanged()} on all 
 	 * listeners that are currently installed.
 	 */
 	protected void fireChanged(){
-		for( StackDockStationFilterListener listener : listeners() ){
+		for( TabContentFilterListener listener : listeners() ){
 			listener.contentChanged();
 		}
 	}
 	
 	/**
-	 * Calls {@link StackDockStationFilterListener#contentChanged(Dockable)} on all 
+	 * Calls {@link TabContentFilterListener#contentChanged(Dockable)} on all 
 	 * listeners that are currently installed.
 	 * @param dockable the element whose content changed
 	 */
 	protected void fireChanged( Dockable dockable ){
-		for( StackDockStationFilterListener listener : listeners() ){
+		for( TabContentFilterListener listener : listeners() ){
 			listener.contentChanged( dockable );
 		}
 	}
 	
 	/**
-	 * Calls {@link StackDockStationFilterListener#contentChanged(StackDockStation)} on all 
+	 * Calls {@link TabContentFilterListener#contentChanged(StackDockStation)} on all 
 	 * listeners that are currently installed.
 	 * @param station the station whose content changed
 	 */
 	protected void fireChanged( StackDockStation station ){
-		for( StackDockStationFilterListener listener : listeners() ){
+		for( TabContentFilterListener listener : listeners() ){
 			listener.contentChanged( station );
+		}
+	}
+	
+	/**
+	 * Calls {@link TabContentFilterListener#contentChanged(StackDockComponent)} on all 
+	 * listeners that are currently installed.
+	 * @param component the component whose content changed
+	 */
+	protected void fireChanged( StackDockComponent component ){
+		for( TabContentFilterListener listener : listeners() ){
+			listener.contentChanged( component );
 		}
 	}
 	
@@ -129,15 +154,32 @@ public abstract class AbstractTabContentFilter implements TabContentFilter{
 		station.addDockStationListener( stationListener );
 	}
 	
+	public void install( StackDockComponent component ){
+		components.add( component );
+		component.addChangeListener( componentListener );
+	}
+	
 	public void uninstall( StackDockStation station ){
 		stations.remove( station );
 		station.removeDockStationListener( stationListener );
+	}
+	
+	public void uninstall( StackDockComponent component ){
+		components.remove( component );
+		component.removeChangeListener( componentListener );
 	}
 	
 	/**
 	 * This implementation just returns <code>content</code>.
 	 */
 	public TabContent filter( TabContent content, StackDockStation station, Dockable dockable ){
+		return content;
+	}
+
+	/**
+	 * This implementation just returns <code>content</code>.
+	 */
+	public TabContent filter( TabContent content, StackDockComponent component, Dockable dockable ){
 		return content;
 	}
 	
@@ -178,4 +220,11 @@ public abstract class AbstractTabContentFilter implements TabContentFilter{
 		// ignore		
 	}
 
+	/**
+	 * Called if the selection of <code>component</code> changed.
+	 * @param component the component whose selection changed
+	 */
+	protected void selectionChanged( StackDockComponent component ){
+		// ignore
+	}
 }

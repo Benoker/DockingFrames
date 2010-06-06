@@ -120,6 +120,13 @@ public interface StackDockComponent {
      * @return the number of children
      */
     public int getTabCount();
+    
+    /**
+     * Gets the {@link Dockable} which was placed at the <code>index</code>'th position.
+     * @param index the position of the element
+     * @return the element
+     */
+    public Dockable getDockableAt( int index );
 
     /**
      * Removes all children from this component

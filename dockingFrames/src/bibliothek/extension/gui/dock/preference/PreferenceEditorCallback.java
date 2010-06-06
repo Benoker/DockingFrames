@@ -26,8 +26,10 @@
 package bibliothek.extension.gui.dock.preference;
 
 /**
- * A callback is an object that has access to some value and can either read
- * or store it.
+ * A callback creates a link between a {@link PreferenceEditor} and its parent or the model.
+ * Each callback handles one preference and one editor. The editor can ask its callback
+ * to read or write a value from/to the model, or to show some buttons like
+ * "reset value to default". 
  * @author Benjamin Sigg
  *
  * @param <V> the kind of object this callback has access to
@@ -47,8 +49,9 @@ public interface PreferenceEditorCallback<V> {
     public void set( V value );
     
     /**
-     * Tells this callback that the editor using it can perform some action. This
-     * method can be called more than once if <code>enabled</code> changes it value.
+     * Tells this callback that the editor knows how to perform <code>operation</code>. 
+     * This method can be called anytime to inform this callback whether the editor
+     * is currently ready to execute <code>operation</code>.
      * @param operation the key of the action
      * @param enabled whether the operation is available right now 
      */

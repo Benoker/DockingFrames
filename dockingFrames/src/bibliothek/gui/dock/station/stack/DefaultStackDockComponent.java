@@ -117,6 +117,10 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
         tab.setController( controller );
 	}
 	
+	public Dockable getDockableAt( int index ){
+		return dockables.get( index ).getDockable();
+	}
+	
 	public void moveTab( int source, int destination ){
 		if( source == destination ){
 			return;

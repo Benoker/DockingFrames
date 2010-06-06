@@ -28,7 +28,14 @@ package bibliothek.extension.gui.dock.preference;
 import java.awt.Component;
 
 /**
- * An editor for some value.
+ * An editor configures a {@link Component} which is used to edit some value. How
+ * exactly this component is configured depends on the {@link #setValueInfo(Object) meta-information}
+ * extracted from the {@link PreferenceModel#getValueInfo(int) preference} which is edited.<br>
+ * An editor communicates with its surroundings through a {@link #setCallback(PreferenceEditorCallback) callback}. The
+ * editor can ask its parent to show some buttons which represent operations this editor can execute. For
+ * example an editor could ask its parent to show a "reset value to default"-button. The editor manages these buttons
+ * by calling {@link PreferenceEditorCallback#setOperation(PreferenceOperation, boolean)} and by implementing
+ * {@link #doOperation(PreferenceOperation)}.  
  * @author Benjamin Sigg
  * @param <V> the kind of value this editor edits
  */
@@ -57,7 +64,7 @@ public interface PreferenceEditor<V> {
     public void setValueInfo( Object information );
     
     /**
-     * Sets the current value of this editor
+     * Sets the current value of this editor.
      * @param value the value, might be <code>null</code> 
      */
     public void setValue( V value );
@@ -65,8 +72,8 @@ public interface PreferenceEditor<V> {
     /**
      * Gets the value of this editor.<br>
      * Note: editors should call {@link PreferenceEditorCallback#set(Object)}
-     * when they show a new valid value. They should not await a call to this
-     * method (which may never come).
+     * when their value got edited by the user. An editor should not expect
+     * a call to this method.
      * @return the value, might be <code>null</code>
      */
     public V getValue();

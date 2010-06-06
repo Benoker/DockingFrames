@@ -56,7 +56,7 @@ public class SimpleBubbleColorScheme extends DefaultColorScheme {
         new SimpleBubbleColorScheme( Color.BLACK, Color.WHITE, new Color( 100, 255, 100 ), new Color( 255, 100, 100 ), Color.DARK_GRAY, 0.3, 0.6, 0.9 );
     
 
-    /** A scheme that uses black, white, green and red */
+    /** A scheme that uses different shades of grey */
     public static final SimpleBubbleColorScheme BRIGHT =
         new SimpleBubbleColorScheme( Color.LIGHT_GRAY, Color.WHITE, new Color( 200, 200, 200 ), new Color( 200, 200, 255 ), new Color( 100, 100, 100 ), 0.3, 0.6, 0.9 );
     

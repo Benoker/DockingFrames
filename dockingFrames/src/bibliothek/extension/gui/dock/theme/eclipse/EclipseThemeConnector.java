@@ -35,6 +35,8 @@ import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.util.Priority;
 
 /**
+ * The {@link EclipseThemeConnector} tells the {@link EclipseTheme} where to paint tabs and borders. It
+ * also tells which {@link DockAction}s to show on tabs and which actions to hide.
  * @author Janni Kovacs
  */
 public interface EclipseThemeConnector {

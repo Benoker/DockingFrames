@@ -119,12 +119,10 @@ public class DockPropertyPreference<V> extends DefaultPreference<V> {
         }
     }
     
-    @Override
     public void read(){
         setValue( properties.get( key, Priority.CLIENT ) );
     }
     
-    @Override
     public void write(){
         properties.setOrRemove( key, getValue(), Priority.CLIENT );
     }

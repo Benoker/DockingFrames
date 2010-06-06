@@ -300,4 +300,8 @@
 - Bugfix: CActionSource did not fire events when removing or replacing actions
 - Bugfix: CLocationModeManager#setLocation(Dockable,ExtendedMode,CLocation) did not compare the correct objects and has always thrown an exception
 - Bugfix: Minimized CDockables did not appear at the correct location if corner components were used
-- Bugfix: Dragging a maximized CDockable could throw an exception  
+- Bugfix: Dragging a maximized CDockable could throw an exception
+- Bugfix: Dragging a tab from a BasicStackDockComponent could throw an exception
+- Bugfix: Path did not encode non-java identifiers right.
+- API: EclipseDockableDisplayer now also respects TabContentFilter
+! API: TabContentFilter has additional methods dealing with StackDockComponents. StackDockStationFilterListener renamed to TabContentFilter.

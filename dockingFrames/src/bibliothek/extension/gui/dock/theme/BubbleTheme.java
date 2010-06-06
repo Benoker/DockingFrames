@@ -26,9 +26,7 @@
 
 package bibliothek.extension.gui.dock.theme;
 
-import java.awt.Color;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -97,10 +95,6 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 	        	}
         	}, true );
 
-
-    /** The colors used by this theme */
-    private Map<String, Color> colors = new HashMap<String, Color>();
-
     /** the {@link DockController}s which currently use this theme */
     private List<DockController> controllers = new ArrayList<DockController>();
 
@@ -119,25 +113,6 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
             }
         }, Priority.DEFAULT );
         setTabPlacement( TabPlacement.BOTTOM_OF_DOCKABLE, Priority.DEFAULT );
-    }
-
-    /**
-     * Gets a color for a specified key.
-     * @param key the key of the color
-     * @return the color or <code>null</code>
-     */
-    public Color getColor( String key ){
-        return colors.get( key );
-    }
-
-    /**
-     * Stores a color which will be used in the theme. Note that this method
-     * takes effect the next time when this theme is installed.
-     * @param key the key of the color
-     * @param color the color to store
-     */
-    public void setColor( String key, Color color ){
-        colors.put( key, color );
     }
 
     @Override

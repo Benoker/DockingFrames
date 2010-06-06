@@ -67,14 +67,6 @@ public abstract class AbstractPreference<V> implements Preference<V>{
             listener.changed( this );
     }
     
-    public void read() {
-        // do nothing
-    }
-    
-    public void write() {
-        // do nothing   
-    }
-    
     public boolean isEnabled( PreferenceOperation operation ) {
         return false;
     }

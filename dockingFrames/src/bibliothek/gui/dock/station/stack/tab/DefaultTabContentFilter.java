@@ -29,6 +29,7 @@ import javax.swing.Icon;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.TabContent;
 
 /**
@@ -138,6 +139,13 @@ public class DefaultTabContentFilter extends AbstractTabContentFilter {
 	}
 	
 	@Override
+	public TabContent filter( TabContent content, StackDockComponent component, Dockable dockable ){
+		int selection = component.getSelectedIndex();
+		boolean selected = selection >= 0 && component.getDockableAt( selection ) == dockable;
+		return filter( content, selected ? this.selected : this.deselected );
+	}
+	
+	@Override
 	protected void selected( StackDockStation station, Dockable dockable ){
 		if( selected != deselected ){
 			fireChanged( dockable );
@@ -148,6 +156,13 @@ public class DefaultTabContentFilter extends AbstractTabContentFilter {
 	protected void deselected( StackDockStation station, Dockable dockable ){
 		if( selected != deselected ){
 			fireChanged( dockable );
+		}
+	}
+	
+	@Override
+	protected void selectionChanged( StackDockComponent component ){
+		if( selected != deselected ){
+			fireChanged( component );
 		}
 	}
 	

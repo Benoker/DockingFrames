@@ -109,7 +109,7 @@ public class PreferenceTreeModel extends AbstractPreferenceModel implements Tree
     }
     
     /**
-     * Gets all the {@link TreeModel} currently known to this model.
+     * Gets all the listeners currently known to this model.
      * @return the list of listeners
      */
     protected TreeModelListener[] getTreeModelListeners(){

@@ -46,8 +46,9 @@ import bibliothek.gui.dock.themes.basic.action.buttons.BasicMiniButton;
 import bibliothek.util.Path;
 
 /**
- * A component that shows the entries of a {@link PreferenceModel}, the user
- * can edit those entries.
+ * A {@link Component} that shows the entries of a {@link PreferenceModel}, the user
+ * can edit those entries. Each preference is shown in a {@link PreferenceEditor}, this
+ * table uses a map of {@link PreferenceEditorFactory}s to create them. 
  * @author Benjamin Sigg
  */
 public class PreferenceTable extends JPanel{
@@ -198,7 +199,8 @@ public class PreferenceTable extends JPanel{
     }
     
     /**
-     * Sets the kind of factory that should be used to edit some type of object.
+     * Sets the factory that should be used to create an editor for some 
+     * type of object.
      * @param type a path describing the type that will be edited, most
      * times the path is just the name of some class. There is a set of 
      * standard paths defined in {@link Path}

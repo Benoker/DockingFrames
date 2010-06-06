@@ -93,7 +93,7 @@ public class PreferenceTreePanel extends JPanel{
     
     /**
      * Access to the {@link JTree} which shows the {@link PreferenceTreeModel}.
-     * Client should not change the {@link TreeModel} of the tree. But
+     * Clients should not change the {@link TreeModel} of the tree. But
      * they can customize the tree, for example by setting a new
      * {@link TreeCellRenderer}.
      * @return the tree used on this panel

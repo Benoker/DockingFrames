@@ -32,7 +32,9 @@ import bibliothek.util.Path;
 import bibliothek.util.PathCombiner;
 
 /**
- * A preference model that envelops other models and uses their preferences.
+ * A preference model that envelops other models and uses their preferences. This model
+ * makes use of a {@link PathCombiner} to create unique identifiers for all preferences of its
+ * sub-models.
  * @author Benjamin Sigg
  */
 public class MergedPreferenceModel extends AbstractPreferenceModel{

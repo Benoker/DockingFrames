@@ -28,7 +28,7 @@ package bibliothek.extension.gui.dock.theme.bubble;
 import bibliothek.gui.DockController;
 
 /**
- * An element which can use a {@link DockController}.
+ * A button which requires a {@link DockController} to paint its content.
  * @author Benjamin Sigg
  */
 public interface RoundButtonConnectable {

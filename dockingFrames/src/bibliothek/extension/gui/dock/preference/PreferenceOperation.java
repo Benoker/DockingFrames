@@ -30,8 +30,10 @@ import javax.swing.Icon;
 import bibliothek.gui.DockUI;
 
 /**
- * A key for an operation which might be available for a {@link PreferenceEditor}
- * or a {@link PreferenceModel}.
+ * Represents an operation that a {@link PreferenceEditor} or a {@link PreferenceModel} can
+ * execute, e.g. "reset value to default". This class does not contain any code to
+ * perform the operation, it just serves as key for the operation. The actual implementation
+ * is part of the editor or the model.
  * @author Benjamin Sigg
  */
 public class PreferenceOperation {

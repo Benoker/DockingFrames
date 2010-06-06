@@ -36,8 +36,9 @@ import bibliothek.extension.gui.dock.theme.eclipse.rex.RexSystemColor;
 import bibliothek.gui.DockController;
 
 /**
- * This border paints a thin line. At the bottom, two hard edges are painted,
- * at the top the line makes a little curve.
+ * This border paints a thin line. The edges are either painted as little
+ * curve or as hard edge, depending on the arguments used on
+ * {@link #setRoundEdges(int)}.
  * @author Benjamin Sigg
  *
  */

@@ -58,12 +58,10 @@ public class ButtonContentPreference extends DefaultPreference<String>{
 		this.properties = properties;
 	}
 	
-	@Override
 	public void read() {
 		setValue( choice.valueToIdentifier(properties.get( FlapDockStation.BUTTON_CONTENT, Priority.CLIENT )));
 	}
 	
-	@Override
 	public void write() {
 		properties.setOrRemove( FlapDockStation.BUTTON_CONTENT, choice.identifierToValue( getValue() ), Priority.CLIENT );
 	}

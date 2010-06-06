@@ -59,12 +59,10 @@ public class ChoiceDockPropertyPreference<V> extends DefaultPreference<String>{
 		setValueInfo( choice );
 	}
 	
-	@Override
 	public void write() {
 		properties.setOrRemove( key, choice.identifierToValue( getValue() ), Priority.CLIENT );
 	}
 	
-	@Override
 	public void read() {
 		V property = properties.get( key, Priority.CLIENT );
 		if( property == null ){

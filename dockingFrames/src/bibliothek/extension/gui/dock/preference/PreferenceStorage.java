@@ -39,9 +39,13 @@ import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
 
 /**
- * A preference storage can store the contents of one or of many {@link PreferenceModel}s. It
- * uses the unique {@link Path}s that each preference must have. In order to
- * read or write preferences some {@link PreferenceFactory}s are used.
+ * A preference storage is a container storing the values of artificial preferences of one or more {@link PreferenceModel}s.
+ * Clients can use {@link #store(PreferenceModel)} to transfer values from model to storage, or 
+ * {@link #load(PreferenceModel, boolean)} to transfer values from storage to model. Further mode the entire storage
+ * can be persistently written to a file using one of the {@link #writeXML(XElement) write-methods}. It can later be loaded
+ * using one of the {@link #readXML(XElement) read-methods}.<br>
+ * The static {@link #readXML(PreferenceModel, XElement) read-methods} and the static {@link #writeXML(PreferenceModel, XElement) write-methods}
+ * can be used to write and read the contents of a {@link PreferenceModel} directly. 
  * @author Benjamin Sigg
  */
 public class PreferenceStorage {

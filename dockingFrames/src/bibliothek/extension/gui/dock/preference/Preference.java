@@ -28,7 +28,10 @@ package bibliothek.extension.gui.dock.preference;
 import bibliothek.util.Path;
 
 /**
- * A representation of a single entry in a {@link DefaultPreferenceModel}.
+ * A representation of a single entry in a {@link DefaultPreferenceModel}. A
+ * preference is a wrapper around some kind of exchangeable value. The preference
+ * tells how that value can be modified and offers some information for users
+ * about the usage of the value.
  * @author Benjamin Sigg
  *
  * @param <V> the kind of value this preference stores
@@ -62,7 +65,8 @@ public interface Preference<V> {
     public PreferenceOperation[] getOperations();
     
     /**
-     * Executes the enabled operation <code>operation</code>
+     * Executes the enabled operation <code>operation</code>. This method should not
+     * be called if <code>operation</code> is disabled. 
      * @param operation the key of the operation
      */
     public void doOperation( PreferenceOperation operation );
@@ -93,8 +97,8 @@ public interface Preference<V> {
     public String getDescription();
     
     /**
-     * Information about the choices for this preferences value. See
-     * {@link PreferenceModel#getValueInfo(int)}.
+     * Information about how the value of this preference can be
+     * modified. See {@link PreferenceModel#getValueInfo(int)}.
      * @return the information or <code>null</code>
      */
     public Object getValueInfo(); 
