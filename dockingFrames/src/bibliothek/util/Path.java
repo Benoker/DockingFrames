@@ -162,7 +162,7 @@ public final class Path {
     	if( encode ){
 	        this.segments = new String[segments.length];
 	        for( int i = 0; i < segments.length; i++ ){
-	        	this.segments[i] = encodeSegment( segments[i] );
+	        	this.segments[i] = segments[i];
 	        }
     	}
     	else{
