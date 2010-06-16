@@ -20,8 +20,8 @@ import bibliothek.gui.dock.util.color.ColorCodes;
 
 /**
  * Default implementation of an {@link InvisibleTab}, this 
- * implements tells an {@link InvisibleTabPane} to use different borders
- * for their elements depending on whether they are focused and selected.
+ * implementation tells an {@link InvisibleTabPane} to use different borders
+ * for their children depending on whether they are focused and selected.
  * @author Benjamin Sigg
  */
 @ColorCodes({"stack.tab.border", "stack.tab.border.selected", "stack.tab.border.selected.focused", "stack.tab.border.selected.focuslost"})

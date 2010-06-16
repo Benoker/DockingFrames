@@ -31,7 +31,9 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 
 /**
- * An {@link InvisibleTabPane} can "show" some {@link InvisibleTab}s.
+ * An {@link InvisibleTabPane} can "show" some {@link InvisibleTab}s. This
+ * panel is used at places where no tabs should be shown, but the framework
+ * assumes that tabs could be shown. 
  * @author Benjamin Sigg
  */
 public interface InvisibleTabPane {

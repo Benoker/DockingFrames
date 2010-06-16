@@ -31,7 +31,7 @@ import bibliothek.gui.dock.FlapDockStation;
 /**
  * A <code>FlapLayoutManager</code> stores properties of {@link FlapDockStation}s
  * and can influence the behavior of a {@link FlapDockStation}.<br>
- * A layout manager might be interested in these methods:
+ * An implementation might be interested in these methods:
  * <ul>
  * <li>{@link FlapDockStation#updateHold(Dockable)} when the hold property of a <code>Dockable</code> needs to be changed</li>
  * <li>{@link FlapDockStation#updateWindowSize(Dockable)} when the size of a <code>Dockable</code> needs to be updated</li>

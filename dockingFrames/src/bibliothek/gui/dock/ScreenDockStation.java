@@ -1243,7 +1243,7 @@ public class ScreenDockStation extends AbstractDockStation {
      * Combines the <code>lower</code> and the <code>upper</code> {@link Dockable}
      * to one {@link Dockable}, and replaces the <code>lower</code> with
      * this new Dockable. There are no checks whether this station 
-     * {{@link #accept(Dockable) accepts} the new child or the children
+     * {@link #accept(Dockable) accepts} the new child or the children
      * can be combined. The creation of the new {@link Dockable} is done
      * by the {@link #getCombiner() combiner}.
      * @param lower a {@link Dockable} which must be child of this station

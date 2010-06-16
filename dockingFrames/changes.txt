@@ -305,3 +305,5 @@
 - Bugfix: Path did not encode non-java identifiers right.
 - API: EclipseDockableDisplayer now also respects TabContentFilter
 ! API: TabContentFilter has additional methods dealing with StackDockComponents. StackDockStationFilterListener renamed to TabContentFilter.
+- Bugfix: EclipseMenu did not update its icon automatically
+- Bugfix: StackDockStation.move(Dockable,DockableProperty) could throw exception if destination index was too big

@@ -487,7 +487,7 @@ public abstract class SplitNode{
     
     /**
      * Creates or replaces children according to the values found in 
-     * <code>key</code>. Note that this method does not remove and {@link Dockable}s
+     * <code>key</code>. Note that this method does not remove any {@link Dockable}s
      * from the station. They must be removed explicitly using {@link Leaf#setDockable(Dockable, boolean)}
      * @param key the key to read
      * @param linksToSet a map that is to be filled with all new {@link Leaf}s and their {@link Dockable}s which are not yet set.

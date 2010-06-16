@@ -27,8 +27,8 @@
 package bibliothek.gui.dock.event;
 
 /**
- * A listener that is added to a {@link bibliothek.gui.Dockable#addDockHierarchyListener(DockHierarchyListener)}
- * and is informed whenever the path of the {@link bibliothek.gui.Dockable} changes.
+ * A listener that is added to a {@link bibliothek.gui.Dockable#addDockHierarchyListener(DockHierarchyListener) Dockable}
+ * and is informed whenever the path of the element changes.
  * @author Benjamin Sigg
  */
 public interface DockHierarchyListener {

@@ -30,14 +30,12 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 
 /**
- * An ActionOffer is {@link DockController#addActionOffer(ActionOffer) added}
- * to the {@link DockController}. Whenever the {@link DockActionSource actions}
- * of a {@link Dockable} have to be collected, one (and only one) 
- * <code>ActionOffer</code> can create the final {@link #getSource(Dockable, DockActionSource, DockActionSource[], DockActionSource, DockActionSource[]) source}
- * of the actions.<br>
- * ActionOffers are not {@link ActionGuard}s. Only one ActionOffer
- * can collect the actions of a Dockable, but this one ActionOffer will completely
- * determine, how the actions are combined.
+ * An <code>ActionOffer</code> creates a {@link DockActionSource} for a {@link Dockable}. An <code>ActionOffer</code>
+ * is {@link DockController#addActionOffer(ActionOffer) added} to the {@link DockController}. When the {@link Dockable}s method
+ * {@link Dockable#getGlobalActionOffers()} is called, the <code>Dockable</code> most often will call
+ * {@link DockController#listOffers(Dockable)} to create the list of actions. This method in return will call
+ * {@link #getSource(Dockable, DockActionSource, DockActionSource[], DockActionSource, DockActionSource[])} on the first
+ * {@link ActionOffer} which is {@link #interested(Dockable)} in the {@link Dockable}.
  * @author Benjamin Sigg
  * @see DockController#addActionOffer(ActionOffer)
  * @see DockController#removeActionOffer(ActionOffer)

@@ -28,10 +28,13 @@ package bibliothek.extension.gui.dock.theme.eclipse.rex;
 import java.awt.Color;
 import java.awt.SystemColor;
 
+import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.gui.DockUI;
+import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.util.laf.LookAndFeelColors;
 
 /**
+ * A set of colors used to set up the {@link ColorScheme}s of the {@link EclipseTheme}.
  * @author Janni Kovacs
  */
 public class RexSystemColor {

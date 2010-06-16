@@ -59,10 +59,8 @@ public class PropertyTransformer {
 	private Map<String, DockablePropertyFactory> factories = new HashMap<String, DockablePropertyFactory>();
 
 	/**
-	 * Creates a new transformer, the factories for {@link SplitDockProperty},
-	 * {@link SplitDockPathProperty}, {@link StackDockProperty},
-	 * {@link bibliothek.gui.dock.station.screen.ScreenDockProperty} and
-	 * {@link FlapDockProperty} are installed.
+	 * Creates a new transformer, the factories for all {@link DockableProperty}s implemented 
+	 * by this framework are installed.
 	 */
 	public PropertyTransformer(){
 		this( SplitDockPropertyFactory.FACTORY,

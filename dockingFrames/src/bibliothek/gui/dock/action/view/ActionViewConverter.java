@@ -48,29 +48,29 @@ import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.util.container.Tuple;
 
 /**
- * The DockActionManager transforms {@link DockAction DockActions} into 
+ * The <code>ActionViewConverter</code> transforms {@link DockAction DockActions} into 
  * views like buttons or menu-items.<br>
- * Every application has a set DockActions. In order to create a view for an 
- * action, the {@link ActionType} of the DockAction must be known. The 
+ * Every application has a set <code>DockAction</code>s. In order to create a view for an 
+ * action, the {@link ActionType} of the <code>DockAction</code> must be known. The 
  * {@link ActionType} tells how the action normally behaves. Some types are
  * already defined, for example the {@link ActionType#BUTTON} behaves like a
  * button: once the action is triggered, it does something, and later the action
- * can be triggered again. There are several DockActions which act like
+ * can be triggered again. There are several <code>DockAction</code>s which act like
  * a button, but their internal organization differs a lot.<br>
  * On the other hand, every application has a set of platforms which want to
- * display a DockAction. A platform might be a popup-menu, or one of the
- * many {@link DockTitle DockTitles}. Since some platforms need the same 
- * visualization of DockActions (i.e. a popup-menu and a normal menu both need
+ * display a <code>DockAction</code>. A platform might be a popup-menu, or one of the
+ * many {@link DockTitle}s. Since some platforms need the same 
+ * visualization of <code>DockAction</code>s (i.e. a popup-menu and a normal menu both need
  * menu-items), the platforms are grouped. Every group is identified by a 
- * {@link ViewTarget}. There are already some ViewTargets defined, i.e. the 
- * {@link ViewTarget#TITLE} is used for the group of DockTitles.<br>
- * The DockActionManager must known how to create a view for all possible
- * pairs of ActionTypes and ViewTargets. In order to do so, he has a set
- * of {@link ViewGenerator ViewGenerators}. Each ViewGenerator is used to handle
- * one pair of ActionType and ViewTarget.<br>
- * The ActionViewConverter has three slots for each pair. There can be a 
- * ViewGenerator in every slot. The slots have different priority and meaning.
- * Whenever a ViewGenerator for a pair is needed, the slots are searched for the
+ * {@link ViewTarget}. There are already some <code>ViewTarget</code>s defined, i.e. the 
+ * {@link ViewTarget#TITLE} is used for the group of <code>DockTitle</code>s.<br>
+ * The <code>ActionViewConverter</code> must known how to create a view for all possible
+ * pairs of {@link ActionType}s and {@link ViewTarget}s. In order to do so, he has a set
+ * of {@link ViewGenerator ViewGenerators}. Each <code>ViewGenerator</code> is used to handle
+ * one pair of <code>ActionType</code> and <code>ViewTarget</code>.<br>
+ * The <code>ActionViewConverter</code> has three slots for each pair. There can be a 
+ * <code>ViewGenerator</code> in every slot. The slots have different priority and meaning.
+ * Whenever a <code>ViewGenerator</code> for a pair is needed, the slots are searched for the
  * first non-<code>null</code> value with the highest priority. The meaning
  * of the three slots are:
  * <ul>
@@ -81,9 +81,9 @@ import bibliothek.util.container.Tuple;
  * <li>Default: the slot that will be used if the other two slots are empty</li>
  * </ul>
  * <br>
- * <b>Note:</b> if a client creates new ActionTypes or new ViewTargets, he has
- * to provide the ViewGenerators for all new possible pairs. That includes pairs
- * where one partner is a predefined ActionType or ViewTarget.
+ * <b>Note:</b> if a client creates new <code>ActionType</code>s or new <code>ViewTarget</code>s, he has
+ * to provide the <code>ViewGenerator</code>s for all new possible pairs. That includes pairs
+ * where one partner is a predefined <code>ActionType</code> or <cod>ViewTarget</code>.
  * @author Benjamin Sigg
  */
 public class ActionViewConverter {

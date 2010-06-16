@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -34,7 +34,7 @@ import bibliothek.gui.Dockable;
 
 /**
  * A StationPaint draws some parts of {@link DockStation}. All the default-stations
- * use a StationPaint to draw some markings when a {@link Dockable} is moved
+ * use a <code>StationPaint</code> to draw some markings when a {@link Dockable} is moved
  * or dragged.
  * @author Benjamin Sigg
  */

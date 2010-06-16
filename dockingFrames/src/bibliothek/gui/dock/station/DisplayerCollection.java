@@ -36,9 +36,9 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
- * A set of {@link DockableDisplayer DockableDisplayers}. Clients may
- * {@link #fetch(Dockable, DockTitle) fetch} a new displayer at any time,
- * and the can {@link #release(DockableDisplayer) release} a displayer which
+ * A set of {@link DockableDisplayer}s. Clients may
+ * {@link #fetch(Dockable, DockTitle) fetch} a new displayer at any time. They
+ * shoult {@link #release(DockableDisplayer) release} a displayer which
  * is no longer used. The collection ensures that various properties of the
  * displayers are set in the proper order.
  * @author Benjamin Sigg

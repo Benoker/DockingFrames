@@ -38,9 +38,8 @@ import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 
 /**
- * A StackDockComponent is a Component that can show other {@link Component Components}.
- * StackDockComponents are used by {@link StackDockStation StackDockStations}
- * to display their children.<br>
+ * A <code>StackDockComponent</code> is a {@link Component} that can show other {@link Component Components}.
+ * <code>StackDockComponent</code>s are used by {@link StackDockStation}s to display their children.<br>
  * The component has one child which is "selected" (assuming there is at 
  * least one child). This one child should be visible, the other children
  * should be hidden. The user must have an interface to change the

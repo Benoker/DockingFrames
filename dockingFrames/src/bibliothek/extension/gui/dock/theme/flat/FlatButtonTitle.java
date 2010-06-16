@@ -40,9 +40,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
  * This title is used by the {@link FlatTheme} to replace the
- * default-DockTitle of the {@link FlapDockStation}. This title
- * does not show any {@link DockAction actions}, and if there is
- * an icon, the text of the title isn't shown either.
+ * default-DockTitle of the {@link FlapDockStation}.
  * @author Benjamin Sigg
  */
 public class FlatButtonTitle extends BasicButtonDockTitle {

@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -33,8 +33,10 @@ import javax.swing.Timer;
 
 /**
  * A class which counts milliseconds from 0 to {@link #setDuration(int) duration}
- * or in the other direction. There is no new thread, objects are inserted
- * in the EventDispatcher-Thread.
+ * or in the other direction. This class contains an array of states: one state is
+ * counted upwards (the {@link #destination()}), all the other states are counted
+ * downwards. Clients can use this class to smoothly switch between different states.<br>
+ * This class works on the EDT, no new threads are created.
  * @author Benjamin Sigg
  *
  */

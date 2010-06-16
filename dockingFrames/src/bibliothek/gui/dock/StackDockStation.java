@@ -987,7 +987,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
                 throw new IllegalArgumentException( "dockable not child of this station" );
             
             int destination = ((StackDockProperty)property).getIndex();
-            destination = Math.min( destination, getDockableCount() );
+            destination = Math.min( destination, getDockableCount()-1 );
             move( index, destination );
         }
     }

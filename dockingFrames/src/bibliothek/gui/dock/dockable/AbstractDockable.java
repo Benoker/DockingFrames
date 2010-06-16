@@ -57,12 +57,12 @@ import bibliothek.gui.dock.util.PropertyValue;
 /**
  * An implementation of {@link Dockable} which deals with the simple things.<br>
  * Some of the capabilities of an AbstractDockable are:
- * <li>
- *  <ul>add or remove a {@link DockableListener}, and fire an event</ul>
- *  <ul>set the parent and the {@link DockController controller}</ul>
- *  <ul>set the title and the icon</ul> 
- *  <ul>store a list of {@link DockAction DockActions}</ul>
- * </li>
+ * <ul>
+ *  <li>add or remove a {@link DockableListener}, and fire an event</li>
+ *  <li>set the parent and the {@link DockController controller}</li>
+ *  <li>set the title and the icon</li> 
+ *  <li>store a list of {@link DockAction DockActions}</li>
+ * </ul>
  * @author Benjamin Sigg
  */
 public abstract class AbstractDockable implements Dockable {

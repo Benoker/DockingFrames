@@ -115,7 +115,7 @@ import bibliothek.util.xml.XException;
  *      {@link Setting#readXML(DockSituation, PropertyTransformer, boolean, XElement)} </li>
  * </ul><br>
  * The frontend has a list of Dockables. It assumes that these Dockables never
- * changes. The frontend can add a "close"-button to these Dockables. The location
+ * change. The frontend can add a "close"-button to these Dockables. The location
  * of these Dockables is stored as well. Dockables which are not {@link #add(Dockable, String) added}
  * to this frontend, are just ignored.<br>
  * <b>Note:</b> Clients must provide a set of root stations 
@@ -126,7 +126,10 @@ import bibliothek.util.xml.XException;
  * on the frontend (on the other hand, clients may use more than one frontend).<br>
  * Clients must also provide some {@link #registerFactory(DockFactory) factories} 
  * to allow the storage of their elements. The default-factories are already
- * installed.
+ * installed.<br>
+ * <b>Note:</b> Clients may use the <code>Common project</code> instead of <code>DockFrontend</code>. 
+ * The <code>Common project</code> offers way more features than <code>DockFrontend</code> and is even
+ * easier to handle.
  * @author Benjamin Sigg
  */
 public class DockFrontend {

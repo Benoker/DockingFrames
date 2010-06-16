@@ -127,7 +127,7 @@ import bibliothek.gui.dock.util.font.FontManager;
  *  the fact that a <code>DockStation</code> with only one child gets removed).</li>
  *  <li>If a <code>DockController</code> is no longer needed then the method
  *  {@link #kill()} should be called. This method will ensure that the
- *  reclaimed can be collected by the garbage collector. </li>
+ *  object can be reclaimed by the garbage collector. </li>
  * </ul>
  * 
  * @author Benjamin Sigg
@@ -425,7 +425,8 @@ public class DockController {
 	}
     
     /**
-     * Gets the current {@link ActionViewConverter}.
+     * Gets the manager that is responsible to convert {@link DockAction}s to 
+     * some kind of {@link Component}.
      * @return the converter
      */
     public ActionViewConverter getActionViewConverter(){
@@ -474,7 +475,7 @@ public class DockController {
      * distributed once {@link #meltLayout()} is called. The effect of this method is
      * equal to the effect when calling {@link DockRegister#setStalled(boolean)}.
      * @return <code>true</code> if the layout was already frozen,
-     * <code>false</code> if it was frozen
+     * <code>false</code> if it was not frozen
      * @see #meltLayout()
      */
     public boolean freezeLayout(){
@@ -530,7 +531,7 @@ public class DockController {
     }
     
     /**
-     * Removes a that decided which station could have which children.
+     * Removes a rule that decided which station could have which children.
      * @param acceptance the rule to remove
      */
     public void removeAcceptance( DockAcceptance acceptance ){
@@ -742,8 +743,8 @@ public class DockController {
     
     /**
      * Searches the element which is parent or equal to <code>representative</code>.
-     * This method also searches all {@link DockTitle}s and all
-     * <code>Components</code> given by {@link #addRepresentative(DockElementRepresentative)}.
+     * This method searches through all elements given by {@link #addRepresentative(DockElementRepresentative)}. 
+     * This also includes all {@link Dockable}s and all {@link DockTitle}s.
      * @param representative some component
      * @return the parent or <code>null</code>
      * @see #addRepresentative(DockElementRepresentative)
@@ -801,7 +802,7 @@ public class DockController {
                 
     /**
      * Tells whether one of the methods which change the focus is currently
-     * running, or not. If the result is <code>true</code>, none should
+     * running, or not. If the result is <code>true</code>, noone should
      * change the focus.
      * @return <code>true</code> if the focus is currently changing
      */
@@ -810,18 +811,18 @@ public class DockController {
     }
     
     /**
-     * Sets the focused {@link Dockable}. If <code>focusedDockable</code>
-     * is a station and one of its children has the focus, then nothing will
-     * happen.
+     * Sets the focused {@link Dockable}. Nothing happens if <code>focusedDockable</code>
+     * is a station and one of its children already has the focus.
      * @param focusedDockable the element which should have the focus
      * @see #isOnFocusing()
      */
     public void setAtLeastFocusedDockable( Dockable focusedDockable ) {
-        if( this.focusedDockable == null )
+        if( this.focusedDockable == null ){
             setFocusedDockable( focusedDockable, false );
-        
-        if( !DockUtilities.isAncestor( focusedDockable, this.focusedDockable ))
+        }
+        else if( !DockUtilities.isAncestor( focusedDockable, this.focusedDockable )){
             setFocusedDockable( focusedDockable, false );
+        }
     }
     
     /**
@@ -934,6 +935,7 @@ public class DockController {
      * unknown to this controller.
      * @param title the title which might be bound
      * @return <code>true</code> if the title is bound
+     * @see Dockable#bind(DockTitle)
      */
     public boolean isBound( DockTitle title ){
     	return dockTitleObserver.isBound( title );
@@ -1130,7 +1132,8 @@ public class DockController {
     }
     
     /**
-     * Uses all {@link DockElement}s known to this controller to search
+     * Searches the root-window of the application. Assuming the window is not yet known:
+     * uses all {@link DockElement}s known to this controller to search
      * the root window. This method first tries to find a {@link Frame},
      * then a {@link Dialog} and finally returns every {@link Window}
      * that it finds.

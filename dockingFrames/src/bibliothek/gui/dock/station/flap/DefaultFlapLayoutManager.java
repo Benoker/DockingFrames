@@ -34,7 +34,8 @@ import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.event.DockStationAdapter;
 
 /**
- * The default implementation of {@link FlapLayoutManager}
+ * The default implementation of {@link FlapLayoutManager}. Uses the same size for all
+ * children of one {@link FlapDockStation}.
  * @author Benjamin Sigg
  */
 public class DefaultFlapLayoutManager implements FlapLayoutManager{

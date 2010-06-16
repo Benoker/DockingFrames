@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -29,7 +29,9 @@ package bibliothek.gui.dock.action.actions;
 import bibliothek.gui.Dockable;
 
 /**
- * This class can create keys for Dockables.
+ * A converter creating keys for {@link Dockable}s. Several {@link Dockable}s can
+ * have the same key. Used by a {@link GroupedDockAction} to build groups of {@link Dockable}s
+ * (in each group all <code>Dockable</code>s have the same key).
  * 
  * @author Benjamin Sigg
  *

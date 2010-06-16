@@ -30,13 +30,16 @@ import java.awt.Component;
 import javax.swing.Icon;
 import javax.swing.event.MouseInputListener;
 
+import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.HierarchyDockActionSource;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
+import bibliothek.gui.dock.dockable.AbstractDockable;
 import bibliothek.gui.dock.event.DockActionSourceListener;
+import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.station.support.PlaceholderListItem;
@@ -46,20 +49,18 @@ import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
- * A Dockable is a window which is put onto a {@link DockStation}. The user
- * can grab a Dockable and drag it to another station.<br>
- * A Dockable has some properties:
+ * A <code>Dockable</code> is a window which can be dragged around by the user. <code>Dockable</code>s
+ * need to have a {@link DockStation} as parent, otherwise they are not visible.<br>
+ * Several properties are associated with a <code>Dockable</code>:
  * <ul>
- *  <li>An icon which is displayed on the title</li>
- *  <li>A title-text which is displayed on the title</li>
- *  <li>A {@link DockStation} which is the parent of the Dockable</li>
- *  <li>A {@link DockController} which is responsible to allow the user to
- *  drag the Dockable.</li>
- *  <li>A {@link Component} which represents the Dockable</li>
- *  <li>A {@link DockActionSource} which provides some {@link DockAction DockActions}. 
- *  Each of the action can be triggered by the user, and can execute any it likes.</li>
+ *  <li>A set of {@link DockTitle}s is managed by the parent of this <code>Dockable</code>. The icon and the title-text
+ *  of this <code>Dockable</code> might be painted on that title.</li>
+ *  <li>A set of {@link DockAction}s is stored in a {@link DockActionSource}. These actions are displayed
+ *  on the title(s) and allow users to execute operations that belong to this <code>Dockable</code></li>
+ *  <li>A {@link Component} which represents the contents of this <code>Dockable</code></li>
  * </ul>
- * 
+ * This interface is not intended to be implemented by clients, although they can if some very special behavior is required. 
+ * Normally clients are better of using the {@link DefaultDockable} or extending {@link AbstractDockable}.  
  * @author Benjamin Sigg
  */
 public interface Dockable extends DockElement, DockElementRepresentative, PlaceholderListItem{
@@ -69,15 +70,13 @@ public interface Dockable extends DockElement, DockElementRepresentative, Placeh
      * Note: this method has to fire a {@link bibliothek.gui.dock.event.DockHierarchyEvent}.<br>
      * Note: when using a {@link bibliothek.gui.dock.dockable.DockHierarchyObserver}, invoke
      * {@link bibliothek.gui.dock.dockable.DockHierarchyObserver#update()} after the
-     * property has changed, and do not fire a {@link bibliothek.gui.dock.event.DockHierarchyEvent} 
-     * here.
-     * @param station the parent, may be <code>null</code> if this 
-     * Dockable is not visible at all.
+     * property has changed, it will automatically fire a {@link DockHierarchyEvent} if necessary.
+     * @param station the parent, may be <code>null</code> if this <code>Dockable</code> is not visible at all.
      */
     public void setDockParent( DockStation station );
     
     /**
-     * Gets the current parent, which is the last argument of {@link #setDockParent(DockStation)}.
+     * Gets the current parent, which is the latest argument of {@link #setDockParent(DockStation)}.
      * @return the parent property, can be <code>null</code>
      */
     public DockStation getDockParent();
@@ -136,8 +135,8 @@ public interface Dockable extends DockElement, DockElementRepresentative, Placeh
     public void removeDockHierarchyListener( DockHierarchyListener listener );
     
     /**
-     * Adds a {@link MouseInputListener} to the component of this Dockable.
-     * A Dockable has to decide by itself which {@link Component Components}
+     * Adds a {@link MouseInputListener} to the {@link #getComponent() component} of this <code>Dockable</code>.
+     * A <code>Dockable</code> has to decide by itself which {@link Component Components}
      * should be observer, but generally all free areas should be covered.
      * It's also possible just to ignore the listener, but that's not the
      * preferred behavior.
@@ -146,14 +145,14 @@ public interface Dockable extends DockElement, DockElementRepresentative, Placeh
     public void addMouseInputListener( MouseInputListener listener );
     
     /**
-     * Removes a listener that was earlier added to this Dockable. 
+     * Removes a listener that was earlier added to this <code>Dockable</code>. 
      * @param listener The listener to remove
      */
     public void removeMouseInputListener( MouseInputListener listener );
     
     /**
      * Tells whether <code>station</code> is an accepted parent for this 
-     * Dockable or not. The user is not able to drag a Dockable to a station
+     * <code>Dockable</code> or not. The user is not able to drag a <code>Dockable</code> to a station
      * which is not accepted.
      * @param station a possible parent
      * @return whether <code>station</code> could be a parent or not
@@ -162,46 +161,45 @@ public interface Dockable extends DockElement, DockElementRepresentative, Placeh
     
     /**
      * Tells whether <code>base</code> could be the parent of a combination
-     * between this Dockable and <code>neighbor</code>. The user is not able
-     * to make a combination between this Dockable and <code>neighbor</code>
+     * between this <code>Dockable</code> and <code>neighbor</code>. The user is not able
+     * to make a combination between this <code>Dockable</code> and <code>neighbor</code>
      * if this method does not accept the operation.
      * @param base the future parent of the combination
-     * @param neighbor a Dockable whose parent will be the same parent as
-     * the parent of this Dockable
+     * @param neighbor a <code>Dockable</code> whose parent will be the same parent as
+     * the parent of this <code>Dockable</code>
      * @return <code>true</code> if the combination is allowed, <code>false</code>
      * otherwise
      */
     public boolean accept( DockStation base, Dockable neighbor );
     
     /**
-     * Gets the {@link Component} which represents this Dockable. Note that
-     * the component should be a 
-     * {@link java.awt.Container#setFocusCycleRoot(boolean) focus cycle root}
+     * Gets the {@link Component} which represents this <code>Dockable</code>. Note that
+     * the component should be a {@link java.awt.Container#setFocusCycleRoot(boolean) focus cycle root}
      * @return the visible representation
      */
     public Component getComponent();
     
     /**
-     * Gest the current title-text of this Dockable.
+     * Gets the current title-text of this <code>Dockable</code>.
      * @return the text
      */
     public String getTitleText();
     
     /**
-     * Gets a tooltip that is associated with this {@link Dockable} and
+     * Gets a tooltip that is associated with this <code>Dockable</code> and
      * that should be shown on any {@link DockTitle}.
      * @return the tooltip, can be <code>null</code>
      */
     public String getTitleToolTip();
     
     /**
-     * Gets the current icon of this Dockable.
+     * Gets the current icon of this <code>Dockable</code>.
      * @return the icon, may be <code>null</code>
      */
     public Icon getTitleIcon();
     
     /**
-     * Invoked to get a graphical representation of a title for this Dockable. This method is
+     * Invoked to get a graphical representation of a title for this <code>Dockable</code>. This method is
      * called either when a title first is required, or when this {@link Dockable}
      * invoked the {@link DockableListener#titleExchanged(Dockable, DockTitle)} method of its
      * current observers. <br>
@@ -210,14 +208,15 @@ public interface Dockable extends DockElement, DockElementRepresentative, Placeh
      * valid answers. If this {@link Dockable} does not answer the request the associated
      * {@link DockTitleFactory} (as described by {@link DockTitleVersion#getFactory()}) is
      * asked to answer the request.<br>
-     * The requests {@link DockTitleRequest#getTarget() target} must be this {@link Dockable}.
+     * The requests {@link DockTitleRequest#getTarget() target} must be this {@link Dockable}.<br>
+     * The normal behavior of this method is to do nothing.
      * @param request which title is required. If this Dockable does not have
      * a special rule for the given request it just ignores the call
      */
     public void requestDockTitle( DockTitleRequest request );
     
     /**
-     * Called by clients which want to show a title of this Dockable. The
+     * Called by clients which want to show a title of this <code>Dockable</code>. The
      * method {@link DockTitle#bind()} will be called automatically by the 
      * controller.<br>
      * This method must at least inform all listeners, that <code>title</code>
@@ -225,7 +224,7 @@ public interface Dockable extends DockElement, DockElementRepresentative, Placeh
      * be invoked by this method.<br>
      * <code>title</code> must be returned by {@link #listBoundTitles()}
      * unless {@link #unbind(DockTitle)} is called.<br>
-     * @param title the title which will be show some things of this Dockable
+     * @param title the title which will be show some things of this <code>Dockable</code>
      * @see #unbind(DockTitle)
      * @throws IllegalArgumentException if the title is already bound
      */
@@ -239,16 +238,15 @@ public interface Dockable extends DockElement, DockElementRepresentative, Placeh
      * is no longer bound. However, this method must not call
      * {@link DockTitle#unbind()}.<br>
      * <code>title</code> must no longer be returned when calling {@link #listBoundTitles()}
-     * @param title the title which will be no longer connected to this
-     * Dockable
+     * @param title the title which will be no longer connected to this <code>Dockable</code>
      * @see #bind(DockTitle)
-     * @throws IllegalArgumentException if the title is not known to this dockable
+     * @throws IllegalArgumentException if the title is not known to this <code>Dockable</code>
      */
     public void unbind( DockTitle title );
     
     /**
      * Gets a list of all {@link DockTitle DockTitles} which are currently
-     * bound to this Dockable. That are titles for which {@link #bind(DockTitle)}
+     * bound to this <code>Dockable</code>. That are titles for which {@link #bind(DockTitle)}
      * was called, but not yet {@link #unbind(DockTitle)}.
      * @return the list of titles
      */
@@ -256,12 +254,11 @@ public interface Dockable extends DockElement, DockElementRepresentative, Placeh
     
     /**
      * Gets a list of {@link DockAction}s which should be triggerable if
-     * this Dockable is visible. The list contains only actions which are
-     * directly bound to this Dockable (the actions which are not changed when
-     * the parent-station of this Dockable is exchanged).
-     * The list can be modified by this Dockable at every time, clients have
-     * to react on these changes by adding
-     * a {@link DockActionSourceListener} to the result.
+     * this <code>Dockable</code> is visible. The list contains only actions which are
+     * directly bound to this <code>Dockable</code> (the actions which are not changed when
+     * the parent-station of this <code>Dockable</code> is exchanged).
+     * The list can be modified by this <code>Dockable</code> at every time, clients have
+     * to react on these changes by adding a {@link DockActionSourceListener} to the result.
      * @return the source of actions, can be <code>null</code> if no actions
      * are available
      */
@@ -269,16 +266,16 @@ public interface Dockable extends DockElement, DockElementRepresentative, Placeh
     
     /**
      * Gets a list of all {@link bibliothek.gui.dock.action.DockAction}s which
-     * might be triggered while this Dockable is visible. The list must contain
-     * all actions which are related in any way to this Dockable. Subclasses
+     * might be triggered while this <code>Dockable</code> is visible. The list must contain
+     * all actions which are related in any way to this <code>Dockable</code>. Subclasses
      * might use a {@link HierarchyDockActionSource} or the method 
-     * {@link DockController#listOffers(Dockable)} to get this functionality
+     * {@link DockController#listOffers(Dockable)} to implement this functionality
      * @return the source containing all actions, never <code>null</code>
      */
     public DockActionSource getGlobalActionOffers();
 
     /**
-     * Orders this {@link Dockable} to configure <code>hints</code> which will
+     * Orders this <code>Dockable</code> to configure <code>hints</code> which will
      * be used by the parent component of this element. This <code>Dockable</code>
      * can store a reference to <code>hints</code> and use it to change the
      * hints whenever it is appropriate. This method will be called with <code>null</code>

@@ -77,7 +77,7 @@ public interface TabComponent extends DockElementRepresentative{
 	
 	/**
 	 * Gets the number of pixels which should be covered at the sides
-	 * of this component.
+	 * of this component by other tabs.
 	 * @param other the component which may overlap this component
 	 * @return the number of overlapped pixels
 	 */

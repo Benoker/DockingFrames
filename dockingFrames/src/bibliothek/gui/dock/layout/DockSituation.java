@@ -61,11 +61,9 @@ import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
 
 /**
- * A DockSituation is a converter: the relationship of 
- * {@link DockStation DockStations} and {@link Dockable Dockables},
- * the position of Dockables and other information are converted into a 
- * stream of bytes. The other direction, read a stream
- * and create Dockables and DockStations, is also possible.
+ * A <code>DockSituation</code> is a converter: the relationship of {@link DockStation}s and {@link Dockable}s,
+ * the position of <code>Dockable</code>s and other information are converted into a 
+ * stream of bytes. The other direction, read a stream and create <code>Dockable</code>s and <code>DockStation</code>s, is also possible.<br>
  * @author Benjamin Sigg
  */
 public class DockSituation {
@@ -185,11 +183,9 @@ public class DockSituation {
      * is later added to this situation, then that object needs to be casted
      * into the object used by the original factory. So when working with
      * a {@link MissingDockFactory} handling different types of layout-data
-     * needs to be done very carefully. Note that this factory cannot be
-     * used to convert {@link DockLayoutComposition}s {@link #convert(DockLayoutComposition) to} 
-     * or {@link #convert(DockElement) from} {@link DockElement}s.
-     * So using a {@link MissingDockFactory} without looking at a {@link DockLayoutComposition}
-     * is pointless.
+     * needs to be done very carefully. Note that this factory is only used to convert
+     * byte-stream or xml data to the intermediate format. It cannot create any {@link Dockable} or
+     * {@link DockElement} nor store any data.
      * @param missingFactory the factory, can be <code>null</code>
      */
     public void setMissingFactory( MissingDockFactory missingFactory ) {
@@ -207,7 +203,7 @@ public class DockSituation {
 
     /**
      * Sets a factory which is used when a {@link AdjacentDockFactory} is missing.
-     * There are the same issures with this factory than with the one used
+     * There are the same issues with this factory than with the one used
      * by {@link #setMissingFactory(MissingDockFactory)}.
      * @param missingAdjacent the new factory, can be <code>null</code>
      * @see #setMissingFactory(MissingDockFactory)

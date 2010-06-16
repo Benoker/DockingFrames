@@ -97,11 +97,15 @@ public class PredefinedDockSituation extends DockSituation {
 
     /**
      * Registers an element at this situation. When a stream is read, this
-     * element will be returned instead a newly created element (assuming
+     * element will be returned instead of a newly created element (assuming
      * that the element was written into the stream). The key for
-     * the element is generated automatically
+     * the element is generated automatically.<br>
+     * <b>Note:</b> the order in which elements are added is important as the
+     * unique key depends on the order.
      * @param element the element
+     * @deprecated use {@link #put(String, DockElement)} instead
      */
+    @Deprecated
     public void put( DockElement element ){
         put( String.valueOf( stringToElement.size() ), element );
     }

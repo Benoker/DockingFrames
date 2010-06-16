@@ -41,7 +41,9 @@ import bibliothek.gui.dock.util.Priority;
 /**
  * A theme describes how a {@link DockStation} looks like, which
  * {@link DockTitle} are selected, and other behavior. A theme needs
- * only to support one {@link DockController} at a time.
+ * only to support one {@link DockController} at a time.<br>
+ * Warning: this interface will get a big update in version 1.1.0, backwards compatibility
+ * will be broken.
  * @author Benjamin Sigg
  */
 public interface DockTheme {

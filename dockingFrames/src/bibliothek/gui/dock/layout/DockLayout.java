@@ -31,9 +31,8 @@ import bibliothek.gui.dock.DockFactory;
 /**
  * A {@link DockLayout} describes the contents of one {@link DockElement}. It is
  * an intermediate format between a {@link DockElement} and the persistent representation
- * for example a xml-file. <code>DockLayout</code>s are created and stored
- * by {@link DockFactory}s.<br> 
- * A <code>DockLayout</code> should not have any references to <code>DockElement</code>s. 
+ * for example a xml-file. <code>DockLayout</code>s wrap around the data that is created and stored
+ * by {@link DockFactory}s. 
  * @author Benjamin Sigg
  * @param <L> the kind of data stored for in this layout
  */

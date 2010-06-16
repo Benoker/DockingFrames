@@ -30,7 +30,7 @@ import bibliothek.gui.dock.DockFactory;
 
 /**
  * An object that works together with a {@link DockFactory}, this object
- * decides of its own whether it wants to store information about a 
+ * decides on its own whether it wants to store information about a 
  * {@link DockElement} or not.
  * @author Benjamin Sigg
  * @param <L> the kind of object this factory uses as intermediate format

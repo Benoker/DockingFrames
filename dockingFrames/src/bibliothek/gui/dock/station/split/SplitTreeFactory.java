@@ -37,6 +37,7 @@ import bibliothek.util.Path;
  * @author Benjamin Sigg
  *
  * @param <N> the type of elements representing leafs and nodes
+ * @see SplitDockStation#visit(SplitTreeFactory)
  */
 public interface SplitTreeFactory<N> {
     /**

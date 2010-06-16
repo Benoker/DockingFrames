@@ -26,14 +26,14 @@
 package bibliothek.gui.dock.layout;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.util.Path;
 import bibliothek.util.xml.XElement;
 
 /**
- * A {@link DockLayoutInfo} describes a {@link Dockable}. Normally
- * that means that this object has a reference to a <code>Dockable</code>,
- * but it can happen that this contains only information useful for a
- * {@link DockConverter} to create the <code>Dockable</code>
+ * A {@link DockLayoutInfo} is a wrapper around a {@link DockLayout}. The <code>DockLayout</code>
+ * can either be stored as real object, as byte-stream or as part of an xml tree. This information 
+ * is normally used by a {@link DockConverter} to create or store {@link DockElement}s. 
  * @author Benjamin Sigg
  */
 public class DockLayoutInfo {

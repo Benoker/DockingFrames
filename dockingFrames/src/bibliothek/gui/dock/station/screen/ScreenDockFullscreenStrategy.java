@@ -28,7 +28,9 @@ package bibliothek.gui.dock.station.screen;
 import bibliothek.gui.dock.ScreenDockStation;
 
 /**
- * This strategy is used to manage the fullscreen mode of {@link ScreenDockWindow}s.
+ * This strategy is used to manage the fullscreen mode of {@link ScreenDockWindow}s. This
+ * strategy defines what "fullscreen" means, and offers methods to switch a window between
+ * normal- and fullscreen-mode.
  * @author Benjamin
  */
 public interface ScreenDockFullscreenStrategy {

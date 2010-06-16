@@ -28,7 +28,7 @@ package bibliothek.gui.dock.station.stack;
 /**
  * A handler to change and read the visibility state and the z order of some item.
  * This handler is attached to some other component, the visibility state and the
- * z order depend not only of the item put also internal states of the other component.
+ * z order depend not only on the item put also on internal states of the other items.
  * @author Benjamin Sigg
  *
  * @param <T> the kind of item whose visibility is changed
@@ -63,6 +63,7 @@ public interface CombinedHandler<T> {
 	/**
 	 * Gets the z order of <code>item</code>.
 	 * @param item the item
+	 * @return the z order
 	 * @throws IllegalArgumentException if <code>item</code> does not
 	 * belong to the component this handler is attached to
 	 */

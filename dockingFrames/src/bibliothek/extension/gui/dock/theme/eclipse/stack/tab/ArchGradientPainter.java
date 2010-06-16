@@ -51,6 +51,7 @@ import bibliothek.util.Colors;
 
 
 /**
+ * This {@link TabComponent} draws uses an {@link Arch} to paint the right end of a tab.
  * @author Janni Kovacs
  */
 @ColorCodes({"stack.tab.border", "stack.tab.border.selected", "stack.tab.border.selected.focused", "stack.tab.border.selected.focuslost",

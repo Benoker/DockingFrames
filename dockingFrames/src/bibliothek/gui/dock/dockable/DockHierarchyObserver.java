@@ -14,7 +14,9 @@ import bibliothek.gui.dock.event.DockHierarchyListener;
  * {@link DockHierarchyListener}s. A {@link Dockable} might have one instance
  * of an observer. Whenever the parent-station of the Dockable changes, it
  * calls {@link #update()} and the observer ensures that all events are
- * send properly. The observer is notified when the any super-parent changes.
+ * send properly. The client should call {@link #controllerChanged(DockController)} whenever
+ * the {@link DockController} changes. This observer will automatically monitor the super-parents
+ * of its owner and fire events when necessary.
  * @author Benjamin Sigg
  */
 public class DockHierarchyObserver implements DockHierarchyListener{

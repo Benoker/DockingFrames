@@ -46,6 +46,7 @@ import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.util.color.ColorCodes;
 
 /**
+ * This {@link TabComponent} draws a compact tab.
  * @author Janni Kovacs
  */
 @ColorCodes({"stack.tab.border", "stack.tab.border.selected", "stack.tab.border.selected.focused", "stack.tab.border.selected.focuslost",

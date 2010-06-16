@@ -30,7 +30,7 @@ import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.layout.DockablePropertyFactory;
 
 /**
- * This {@link DockableProperty} creates instances of {@link ScreenDockProperty}.
+ * This {@link DockablePropertyFactory} creates instances of {@link ScreenDockProperty}.
  * @author Benjamin Sigg
  */
 public class ScreenDockPropertyFactory implements DockablePropertyFactory {

@@ -26,18 +26,23 @@
 
 package bibliothek.gui;
 
+import java.awt.Component;
 import java.awt.Rectangle;
 
 import javax.swing.JFrame;
 
 import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.support.PlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleManager;
@@ -45,28 +50,29 @@ import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
- * A DockStation is an area containing some instances of {@link Dockable}. 
- * The station is free to decide where and how to display its children.<br>
- * Every station is closely linked to a {@link DockController}. The controller
- * allows to create and show {@link DockTitle DockTitles}. The controller is
- * also responsible for a drag and drop mechanism, which communicates through
- * several methods ({@link #canDrag(Dockable)}, {@link #drag(Dockable)}, 
- * {@link #drop()}, {@link #move()}, ...) which this station.<br>
- * Every station has a {@link DockTheme}. This theme provides several factories
- * which can be used to create graphical elements onto this station.<br>
- * Every station should show one or more {@link DockTitle} for its children.
- * In order to create a {@link DockTitle}, a station should first derive a
- * {@link DockTitleVersion} from the controller (use the
- * {@link DockController#getDockTitleManager() DockTitleManager} and 
- * {@link DockTitleManager#registerDefault(String, DockTitleFactory) install} a
- * {@link DockTitleFactory} with default-priority). This titleversion
- * can be used to create a {@link DockTitleRequest}. This request has to be 
- * {@link DockTitleFactory#install(DockTitleRequest)} on a {@link DockTitleFactory}.
- * Note that the result of this method can be <code>null</code>.<br>
- * A station can have a focused child. This child should be marked somehow 
- * (normally the title of this child just has another color). If a station wants
- * to change the focused Dockable, it should call
- * {@link DockController#setAtLeastFocusedDockable(Dockable)}.
+ * A <code>DockStation</code> is some area (e.g. a {@link Component}) showing
+ * a set of {@link Dockable}s called "children". The station is free to decide how and if to
+ * show its children.<br>
+ * Although a station can take any form, there are some (optional) practices to follow:
+ * <ul>
+ * 	<li>Each {@link Dockable} should be child of a {@link DockableDisplayer}. The displayer will
+ *  paint border and title of the item.</li>
+ *  <li>This station should be aware of the current {@link DockTheme} and use its factories and delegates whenever possible.</li>
+ *  <li>Drag and drop is handled by the {@link DockController}. Methods like {@link #canDrag(Dockable)}, {@link #drag(Dockable)}, 
+ * {@link #drop()} or {@link #move()} need to be implemented for this. Also {@link #accept(Dockable)}, {@link Dockable#accept(DockStation)},
+ * {@link Dockable#accept(DockStation, Dockable)} and the {@link DockAcceptance} of the current {@link DockController} should be checked before
+ * allowing a drag and drop operation.</li>
+ *  <li>For each child there should be at least one {@link DockTitle}. This station needs to derive a {@link DockTitleVersion} from
+ *  its controller using the {@link DockController#getDockTitleManager() DockTitleManager} and its 
+ *  {@link DockTitleManager#registerDefault(String, DockTitleFactory) factory method}. With the {@link DockTitleVersion}-object one
+ *  {@link DockTitleRequest} for each required {@link DockTitle} can be created.</li>
+ *  <li>One child can be focused. If this station changes the focus it should use {@link DockController#setAtLeastFocusedDockable(Dockable)}.</li>
+ *  <li>This station should support placeholders. The current {@link PlaceholderStrategy} can be used to convert {@link Dockable}s to placeholders. 
+ *  A {@link PlaceholderList} is a good datastructure to store {@link Dockable}s and placeholders at the same time.</li>
+ *  <li>Additional points where the user can start drag and drop operations can be installed by implementing a {@link DockElementRepresentative}. It
+ *  has to be installed using {@link DockController#addRepresentative(DockElementRepresentative)}. </li>
+ *  <li>And a new {@link DockFactory} will be required to persistently store the layout of this station.</li>
+ * </ul>
  * @author Benjamin Sigg
  */
 public interface DockStation extends DockElement{
@@ -199,8 +205,10 @@ public interface DockStation extends DockElement{
     
     /**
      * Gets a snapshot of all placeholders that are currently stored in this {@link DockStation}. 
-     * A {@link DockStation} is free in the format is chooses to fill the map. The map is to be 
-     * created with the assumptions that {@link #getDockableCount()} is <code>0</code>.
+     * A {@link DockStation} is free in the format it chooses to fill the map. The map is to be 
+     * created with the assumptions that {@link #getDockableCount()} is <code>0</code>, meaning
+     * any existing {@link Dockable} gets replaced by its placeholder. The current 
+     * {@link PlaceholderStrategy} should be used to convert {@link Dockable}s to placeholders.
      * @return the map of placeholders or <code>null</code> if this station does not support
      * placeholders
      */
@@ -264,7 +272,7 @@ public interface DockStation extends DockElement{
      * Prepares this station to get the new child <code>dockable</code>. The
      * station has to store a possible location of the child, and should draw
      * some indicators where the child will be put. The station can refuse
-     * <code>dockable</code>, in this case nothing has to be painted, and
+     * <code>dockable</code>, in this case nothing has to be painted and
      * this method returns <code>false</code>.<br>
      * There are some constraints:
      * <ul>

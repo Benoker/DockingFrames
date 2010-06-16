@@ -47,7 +47,11 @@ public class EclipseMenu extends AbstractCombinedMenu{
 	
 	private IconManagerListener iconListener = new IconManagerListener(){
 		public void iconChanged( String key, Icon icon ){
-			
+			if( DockUI.OVERFLOW_MENU_ICON.equals( key )){
+				if( button != null ){
+					button.getModel().setIcon( icon );
+				}
+			}
 		}
 	};
 	

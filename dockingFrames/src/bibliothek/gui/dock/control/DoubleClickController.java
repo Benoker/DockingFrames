@@ -44,9 +44,9 @@ import bibliothek.gui.dock.event.LocatedListenerList;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
- * Adds a {@link MouseListener} to all {@link Dockable}s and {@link DockTitle}s
- * and informs the registered {@link DoubleClickListener}s whenever the user
- * clicks twice on such an element.
+ * Adds a {@link MouseListener} to all {@link Dockable}s, {@link DockTitle}s
+ * and other {@link DockElementRepresentative}s, informs the registered {@link DoubleClickListener}s
+ * whenever the user clicks twice on such an element.
  * @author Benjamin Sigg
  */
 public class DoubleClickController {

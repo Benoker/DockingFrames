@@ -40,7 +40,7 @@ import bibliothek.gui.dock.event.DockRelocatorListener;
 
 /**
  * A manager adding {@link java.awt.event.MouseListener} and
- * {@link java.awt.event.MouseMotionListener} to every some 
+ * {@link java.awt.event.MouseMotionListener} to every 
  * {@link DockElementRepresentative}s and handling the
  * drag and drop events.<br>
  * The behaviour of a drag and drop operation can be made dependent of the 

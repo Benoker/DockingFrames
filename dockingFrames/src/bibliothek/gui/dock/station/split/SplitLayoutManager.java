@@ -34,6 +34,7 @@ import bibliothek.gui.dock.station.DockableDisplayer;
  * A manager used to implement the behavior of a {@link SplitDockStation}. The
  * {@link SplitLayoutManager} is responsible to define the actions that have
  * to be taken on drop and move-events. It is also responsible to validate
+ * any movement of the dividers.
  * 
  * @author Benjamin Sigg
  */

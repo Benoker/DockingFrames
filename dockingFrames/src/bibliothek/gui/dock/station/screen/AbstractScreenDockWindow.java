@@ -56,8 +56,8 @@ import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationPaint;
 
 /**
- * The default implementation of {@link ScreenDockWindow} uses a {@link DockableDisplayer}
- * to show the {@link Dockable}. It can operate on any window. Clients need to
+ * This abstract implementation of {@link ScreenDockWindow} uses a {@link DockableDisplayer}
+ * to show the {@link Dockable}. It can operate with any window. Clients need to
  * call {@link #init(Component, Container, boolean)} to put this object onto some
  * {@link Container}.
  * @author Benjamin Sigg
