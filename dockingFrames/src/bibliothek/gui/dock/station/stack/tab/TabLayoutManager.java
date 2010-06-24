@@ -27,9 +27,14 @@ package bibliothek.gui.dock.station.stack.tab;
 
 import java.awt.Dimension;
 
+import bibliothek.gui.dock.station.stack.tab.layouting.LayoutBlock;
+
 /**
- * A {@link TabLayoutManager} is responsible managing the location and size
- * of tabs on a {@link TabPane}.
+ * A {@link TabLayoutManager} is responsible for managing the location and size
+ * of {@link TabPane#putOnTab(bibliothek.gui.Dockable) tags}, 
+ * {@link TabPane#createMenu() menus} and {@link TabPane#getInfoComponent() info-component} 
+ * of a {@link TabPane}. The manager can make use of {@link LayoutBlock}s to simplify
+ * its algorithms.
  * @author Benjamin Sigg
  */
 public interface TabLayoutManager {

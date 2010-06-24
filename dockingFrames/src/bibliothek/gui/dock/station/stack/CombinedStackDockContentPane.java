@@ -30,10 +30,12 @@ import java.awt.Dimension;
 import javax.swing.JPanel;
 
 import bibliothek.gui.dock.focus.DockFocusTraversalPolicy;
+import bibliothek.gui.dock.station.stack.tab.TabLayoutManager;
 
 /**
- * This panel paints the contents of a {@link CombinedStackDockComponent}.
- * This panel is also a {@link #setFocusTraversalPolicyProvider(boolean) focus traversal policy provider}.
+ * This panel paints the contents of a {@link CombinedStackDockComponent}. It is just a {@link JPanel}. The layout has to be 
+ * managed by a {@link TabLayoutManager}. This panel is also a {@link #setFocusTraversalPolicyProvider(boolean)
+ * focus traversal policy provider}.
  * @author Benjamin Sigg
  */
 public class CombinedStackDockContentPane extends JPanel{

@@ -46,7 +46,7 @@ import bibliothek.gui.dock.station.stack.TabContent;
  * Subclasses may override {@link #added(StackDockStation, Dockable) added}, {@link #removed(StackDockStation, Dockable) removed},
  * {@link #deselected(StackDockStation, Dockable) deselected} and {@link #selected(StackDockStation, Dockable) selected} to be informed
  * if the contents of a {@link StackDockStation} changed.<br>
- * Note that this filter does not observe whether elements are added or removed from a {@link StackDockComponent}s.
+ * Note that this filter does not observe whether elements are added or removed from a {@link StackDockComponent}.
  * @author Benjamin Sigg
  */
 public abstract class AbstractTabContentFilter implements TabContentFilter{

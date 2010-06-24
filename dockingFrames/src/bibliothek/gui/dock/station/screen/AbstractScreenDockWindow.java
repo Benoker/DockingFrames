@@ -216,7 +216,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
         }
         
         updateTitleIcon();
-        updateTitleIcon();
+        updateTitleText();
     }
     
     @Override

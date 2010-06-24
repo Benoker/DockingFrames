@@ -30,6 +30,7 @@ import bibliothek.gui.dock.StackDockStation;
 
 /**
  * Information about the layout of a {@link StackDockStation} read from an old format.
+ * This class only remains for backwards compatibility and should not be used by clients.
  * @author Benjamin Sigg
  */
 public class RetroStackDockStationLayout extends StackDockStationLayout {
