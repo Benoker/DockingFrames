@@ -54,7 +54,7 @@ public class FreeMenuPiece extends BaseMenuPiece{
     }
     
     @Override
-    protected void addSeparator(){
+    public void addSeparator(){
     	super.addSeparator();
     }
     
@@ -64,7 +64,7 @@ public class FreeMenuPiece extends BaseMenuPiece{
     }
     
     @Override
-    protected void insertSeparator( int index ){
+    public void insertSeparator( int index ){
     	super.insertSeparator( index );
     }
     
