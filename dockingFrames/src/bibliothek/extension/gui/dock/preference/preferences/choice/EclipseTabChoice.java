@@ -45,13 +45,11 @@ public class EclipseTabChoice extends DefaultChoice<TabPainter>{
 	public EclipseTabChoice( DockProperties properties ){
 		super( properties.getController() );
 		
+		setDefaultChoice( "round" );
+		
 		DockUI ui = DockUI.getDefaultDockUI();
 		add( "title", ui.getString( "preference.theme.eclipse.tab.choice.title" ), DockTitleTab.FACTORY );
 		add( "rect", ui.getString( "preference.theme.eclipse.tab.choice.rect" ), RectGradientPainter.FACTORY );
 		add( "round", ui.getString( "preference.theme.eclipse.tab.choice.round" ), ArchGradientPainter.FACTORY );
-		
-		if( getDefaultChoice() == null ){
-			setDefaultChoice( "round" );
-		}
 	}
 }
