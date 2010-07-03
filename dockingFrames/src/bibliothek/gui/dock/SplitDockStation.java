@@ -342,10 +342,17 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	        lastUniqueId = id;
 	        return id;
         }
+        
+        public boolean isTreeAutoCleanupEnabled() {
+	        return treeLock == 0;
+        }
     };
 
     /** The root of the tree which determines the structure of this station */
     private Root root;
+    
+    /** Whether nodes can automatically be removed from the tree or not */
+    private int treeLock = 0;
 
     /** Information about the {@link Dockable} which is currently draged onto this station. */
     private PutInfo putInfo;
@@ -1701,6 +1708,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 
         DockController controller = getController();
         try{
+        	treeLock++;
 	        if( controller != null )
 	        	controller.freezeLayout();
 	        
@@ -1723,6 +1731,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	        }
         }
         finally{
+        	treeLock--;
         	if( controller != null )
         		controller.meltLayout();
         }

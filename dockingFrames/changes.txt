@@ -310,3 +310,4 @@
 - Bugfix: AbstractScreenDockWindow.setDockable did call updateTitleIcon instead of updateTitleText
 - Bugfix: DockTitleTab caused exception when uninstalled
 - Bugfix: Instead of doing nothing, PropertyPreferences now load their default value if they cannot read any other value
+- Bugfix: When deploying a CGrid some Dockables did not appear: the tree of the SplitDockStation was cleaned up too early before all Dockables had been inserted, leading to a corrupted tree 

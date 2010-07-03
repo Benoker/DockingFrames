@@ -107,6 +107,9 @@ public class Placeholder extends SplitNode {
 	
 	@Override
 	public boolean isOfUse(){
+		if( !getAccess().isTreeAutoCleanupEnabled() ){
+			return true;
+		}
 		return hasPlaceholders();
 	}
 

@@ -112,4 +112,10 @@ public interface SplitDockAccess {
      * @return the new unique id
      */
     public long uniqueID();
+
+    /**
+     * Tells whether nodes can currently be automatically removed from the tree.
+     * @return <code>true</code> if auto-removal is enabled
+     */
+	public boolean isTreeAutoCleanupEnabled();
 }

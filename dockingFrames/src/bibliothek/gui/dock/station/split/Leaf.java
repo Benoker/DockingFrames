@@ -199,6 +199,9 @@ public class Leaf extends VisibleSplitNode{
     
     @Override
     public boolean isOfUse(){
+    	if( !getAccess().isTreeAutoCleanupEnabled() ){
+    		return true;
+    	}
     	return handle != null || hasPlaceholders();
     }
     
