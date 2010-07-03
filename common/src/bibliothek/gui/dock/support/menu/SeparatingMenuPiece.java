@@ -100,11 +100,12 @@ public class SeparatingMenuPiece extends MenuPiece{
     
     @Override
     public int getItemCount(){
+    	if( piece == null ){
+    		return getSeparatorCount();
+    	}
     	return piece.getItemCount() + getSeparatorCount();
     }
-    
-
-    
+        
     @Override
     public void fill( List<Component> items ){
     	if( piece == null || piece.getItemCount() == 0 ){
@@ -127,7 +128,7 @@ public class SeparatingMenuPiece extends MenuPiece{
      * @return the number of separators
      */
     protected int getSeparatorCount(){
-    	if( piece.getItemCount() > 0 ){
+    	if( piece != null && piece.getItemCount() > 0 ){
     		if( topSeparator && bottomSeparator )
     			return 2;
     		

@@ -66,10 +66,10 @@ public class ChoiceDockPropertyPreference<V> extends DefaultPreference<String>{
 	public void read() {
 		V property = properties.get( key, Priority.CLIENT );
 		if( property == null ){
-			setValue( null );
+			setValue( choice.getDefaultChoice() );
 		}
 		else{
-			String value = choice.valueToIdentifier( properties.get( key, Priority.CLIENT ));
+			String value = choice.valueToIdentifier( property );
 			if( value != null || choice.isNullEntryAllowed() ){
 				setValue( value );
 			}

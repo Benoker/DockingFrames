@@ -120,7 +120,13 @@ public class DockPropertyPreference<V> extends DefaultPreference<V> {
     }
     
     public void read(){
-        setValue( properties.get( key, Priority.CLIENT ) );
+    	V value = properties.get( key, Priority.CLIENT );
+    	if( value == null ){
+    		setValue( getDefaultValue() );
+    	}
+    	else{
+    		setValue( value );
+    	}
     }
     
     public void write(){
