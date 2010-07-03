@@ -162,8 +162,8 @@ public class DockTitleTab implements TabComponent{
 			protected void answer( DockTitle previous, DockTitle title ){
 				if( previous != null ){
 					content.removeAll();
-					dockable.unbind( title );
-					title.removeMouseInputListener( mouseListener );
+					dockable.unbind( previous );
+					previous.removeMouseInputListener( mouseListener );
 				}
 				
 				if( title != null ){

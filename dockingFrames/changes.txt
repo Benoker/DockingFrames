@@ -308,3 +308,4 @@
 - Bugfix: EclipseMenu did not update its icon automatically
 - Bugfix: StackDockStation.move(Dockable,DockableProperty) could throw exception if destination index was too big
 - Bugfix: AbstractScreenDockWindow.setDockable did call updateTitleIcon instead of updateTitleText
+- Bugfix: DockTitleTab caused exception when uninstalled
