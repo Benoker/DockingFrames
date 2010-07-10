@@ -421,22 +421,22 @@ public class Leaf extends VisibleSplitNode{
                 node.getLocation() == SplitDockPathProperty.Location.BOTTOM;
             
             SplitDockPathProperty.Node lastNode = property.getLastNode();
-            long id = -1;
+            long newNodeId = -1;
             if( lastNode != null ){
-            	id = lastNode.getId();
+            	newNodeId = lastNode.getId();
             }
-            Leaf leaf = create( dockable, id );
+            Leaf leaf = create( dockable, property.getLeafId() );
             if( leaf == null )
                 return false;
             
             SplitNode parent = getParent();
             int location = parent.getChildLocation( this );
             if( reverse ){
-                split = new Node( getAccess(), this, leaf, orientation );
+                split = new Node( getAccess(), this, leaf, orientation, newNodeId );
                 split.setDivider( 1 - node.getSize() );
             }
             else{
-                split = new Node( getAccess(), leaf, this, orientation );
+                split = new Node( getAccess(), leaf, this, orientation, newNodeId );
                 split.setDivider( node.getSize() );
             }
             

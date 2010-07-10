@@ -1452,6 +1452,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         	index = 0;
         }
         
+        updateBounds();
         boolean done = start.insert( property, index, dockable );
         if( done )
             revalidate();
