@@ -608,8 +608,8 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	 * <code>dockable</code> and removed from this list.<br>
 	 * This method also removes all occurrences of <code>placeholder</code> and the placeholder that is assigned
 	 * by the current {@link PlaceholderStrategy} from this list.
-	 * @param placeholder
-	 * @param dockable
+	 * @param placeholder the placeholder to search, not <code>null</code>
+	 * @param dockable the element which will replace <code>placeholder</code>, not <code>null</code>
 	 * @return the index in {@link #dockables()} where <code>dockable</code> was inserted or -1 if
 	 * <code>placeholder</code> was not found
 	 */

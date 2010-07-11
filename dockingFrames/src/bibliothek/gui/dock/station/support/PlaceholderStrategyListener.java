@@ -35,7 +35,7 @@ import bibliothek.util.Path;
  */
 public interface PlaceholderStrategyListener {
 	/**
-	 * Informs this listener that a placeholder is no longer in use.
+	 * Informs this listener that a set of placeholders is no longer in use.
 	 * @param placeholders the placeholders that are no longer valid
 	 */
 	public void placeholderInvalidated( Set<Path> placeholders );

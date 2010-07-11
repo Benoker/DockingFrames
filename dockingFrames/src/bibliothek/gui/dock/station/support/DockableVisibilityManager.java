@@ -34,7 +34,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.event.DockStationAdapter;
 
 /**
- * Knows for every child of a DockStation whether it is visible or not. The 
+ * Knows for every child of a {@link DockStation} whether it is visible or not. The 
  * station can call the {@link #fire()}-method to send events to listeners,
  * if the visibility of some children has changed. The manager fires events
  * automatically if a {@link Dockable} is added or removed from the 

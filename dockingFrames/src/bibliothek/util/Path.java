@@ -150,24 +150,7 @@ public final class Path {
      * @param segments the path
      */
     public Path( String... segments ){
-    	this( segments, true );
-    }
-    
-    /**
-     * Creates a new path with the given segments.
-     * @param segments the path
-     * @param encode whether to apply {@link #encodeSegment(String)} on each element
-     */
-    private Path( String[] segments, boolean encode ){
-    	if( encode ){
-	        this.segments = new String[segments.length];
-	        for( int i = 0; i < segments.length; i++ ){
-	        	this.segments[i] = segments[i];
-	        }
-    	}
-    	else{
-    		this.segments = segments;
-    	}
+    	this.segments = segments;
     }
     
     /**
@@ -271,7 +254,7 @@ public final class Path {
         
         String[] result = new String[ length ];
         System.arraycopy( segments, offset, result, 0, length );
-        return new Path( result, false );
+        return new Path( result );
     }
     
     /**
@@ -283,7 +266,7 @@ public final class Path {
         String[] segments = new String[ this.segments.length + path.segments.length ];
         System.arraycopy( this.segments, 0, segments, 0, this.segments.length );
         System.arraycopy( path.segments, 0, segments, this.segments.length, path.segments.length );
-        return new Path( segments, false );
+        return new Path( segments );
     }
     
     /**
@@ -303,7 +286,7 @@ public final class Path {
         System.arraycopy( this.segments, 0, segments, 1, this.segments.length );
         segments[ this.segments.length+1 ] = "_s" + path.segments.length;
         System.arraycopy( path.segments, 0, segments, this.segments.length+2, path.segments.length );
-        return new Path( segments, false );
+        return new Path( segments );
     }
     
     /**
@@ -325,7 +308,7 @@ public final class Path {
         
         String[] result = new String[ segments.length-1 ];
         System.arraycopy( segments, 0, result, 0, result.length );
-        return new Path( result, false );
+        return new Path( result );
     }
     
     @Override
@@ -354,7 +337,7 @@ public final class Path {
             if( i > 0 )
                 builder.append( "." );
             
-            builder.append( segments[i] );
+            builder.append( encodeSegment( segments[i] ) );
         }
         
         return builder.toString();

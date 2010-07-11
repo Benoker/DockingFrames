@@ -33,7 +33,7 @@ import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 /**
  * The default {@link AxisConversion} assumes:
  * <ul>
- *  <li>the model is a line at the top of some rectangle</li>
+ *  <li>the model is a line at the top of some rectangle, the point 0/0 is the top left point of that rectangle</li>
  *  <li>the view is a line at one side of some rectangle</li>
  * </ul>
  * @author Benjamin Sigg

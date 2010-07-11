@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -35,9 +35,6 @@ import bibliothek.gui.dock.station.support.PlaceholderMap;
 /**
  * A simple implementation of {@link Combiner}, which merges two {@link Dockable Dockables}
  * by creating a {@link StackDockStation}, and putting the children onto this
- * station.<br>
- * If the argument <code>parent</code> in {@link #combine(Dockable, Dockable, DockStation, PlaceholderMap) combiner}
- * is a {@link Dockable}, then it's title and icon are copied onto the new
  * station.
  * @author Benjamin Sigg
  */

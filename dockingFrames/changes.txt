@@ -312,4 +312,5 @@
 - Bugfix: Instead of doing nothing, PropertyPreferences now load their default value if they cannot read any other value
 - Bugfix: When deploying a CGrid some Dockables did not appear: the tree of the SplitDockStation was cleaned up too early before all Dockables had been inserted, leading to a corrupted tree
 - Bugfix: SplitDockStation did assign leaf-id to node when using drop(SplitDockPathProperty). As a result unmaximizing a stack of CDockables could destroy the stack.
-- Bugfix: SplitDockStation does now always update the boundaries of its tree before dropping a dockable. Wrong boundaries did lead to Dockables dropped at the wrong location even if the used DockableProperty was correct. 
+- Bugfix: SplitDockStation does now always update the boundaries of its tree before dropping a dockable. Wrong boundaries did lead to Dockables dropped at the wrong location even if the used DockableProperty was correct.
+- Bugfix: Path now encodes its content when using "toString" and decodes contents on creation. Meaning inside a Path object the items are never encoded.
