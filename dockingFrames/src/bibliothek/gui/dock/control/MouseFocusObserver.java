@@ -159,13 +159,10 @@ public abstract class MouseFocusObserver implements DockRelocatorListener {
             Component component = (Component)source;
             if( event.getID() == MouseEvent.MOUSE_PRESSED ){
                 if( component.isFocusable() && component.isEnabled()){
-                	if( getDockable( component, event ) != null ){
-                		component.requestFocusInWindow();
-                		check( component, false, event );
-                	}
+                	check( component, false, true, event );
                 }
                 else{
-                    check( component, true, event );
+                    check( component, true, false, event );
                 }
             }
             else{
@@ -210,7 +207,7 @@ public abstract class MouseFocusObserver implements DockRelocatorListener {
      * @param event the event that causes this check
      */
     protected void check( Component component, AWTEvent event ){
-        check( component, true, event );
+        check( component, true, false, event );
     }
     
     /**
@@ -221,9 +218,11 @@ public abstract class MouseFocusObserver implements DockRelocatorListener {
      * focused
      * @param ensureFocus whether the DockController should ensure
      * that the focus is set correctly or not.
+     * @param requestFocusInWindow whether {@link Component#requestFocusInWindow()} should be
+     * called or not
      * @param event the event that causes this check
      */
-    protected void check( Component component, boolean ensureFocus, AWTEvent event ){
+    protected void check( Component component, boolean ensureFocus, boolean requestFocusInWindow, AWTEvent event ){
         Dockable dock = getDockable( component, event );
         if( dock != null ){
             Dockable focused = controller.getFocusedDockable();
@@ -231,8 +230,12 @@ public abstract class MouseFocusObserver implements DockRelocatorListener {
             if( focused != null )
                 change = !DockUtilities.isAncestor( dock, focused );
             
-            if( change )
+            if( change ){
+            	if( requestFocusInWindow ){
+            		component.requestFocusInWindow();
+            	}
                 controller.setFocusedDockable( dock, false, ensureFocus );
+            }
         }
     }
     
