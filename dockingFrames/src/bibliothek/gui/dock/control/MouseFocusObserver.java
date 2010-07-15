@@ -158,15 +158,19 @@ public abstract class MouseFocusObserver implements DockRelocatorListener {
         if( source instanceof Component ){
             Component component = (Component)source;
             if( event.getID() == MouseEvent.MOUSE_PRESSED ){
-                if( component.isFocusable() ){
-                    component.requestFocusInWindow();
-                    check( component, false, event );
+                if( component.isFocusable() && component.isEnabled()){
+                	if( getDockable( component, event ) != null ){
+                		component.requestFocusInWindow();
+                		check( component, false, event );
+                	}
                 }
-                else
+                else{
                     check( component, true, event );
+                }
             }
-            else
+            else{
                 check( component, event );
+            }
         }
     }
     
