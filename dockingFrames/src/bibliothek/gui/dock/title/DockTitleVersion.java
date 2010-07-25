@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -36,14 +36,13 @@ import bibliothek.gui.dock.event.UIListener;
 import bibliothek.gui.dock.util.Priority;
 
 /**
- * A DockTitleVersion is a hint which {@link DockTitleFactory} has to
- * be used to create one or more {@link DockTitle DockTitle}
- * for some {@link Dockable Dockables}.<br>
- * DockTitleVersions are created and registered by a {@link DockTitleManager}.<br>
+ * A <code>DockTitleVersion</code> is a hint which {@link DockTitleFactory} has to
+ * be used to create one or more {@link DockTitle DockTitle} for some {@link Dockable}.<br>
+ * <code>DockTitleVersions</code> are created and registered by a {@link DockTitleManager}.<br>
  * Every version consists of three slots for factories, each with different
  * priority. If a new title is required, the factory with the highest priority
  * will be used.<br>
- * DockTitleVersion implements {@link DockTitleFactory} for convenience.
+ * <code>DockTitleVersion</code> implements {@link DockTitleFactory} for convenience.
  * @author Benjamin Sigg
  */
 public class DockTitleVersion implements DockTitleFactory{

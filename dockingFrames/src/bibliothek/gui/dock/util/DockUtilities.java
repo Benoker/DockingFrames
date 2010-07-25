@@ -49,10 +49,14 @@ import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.util.Enhancement;
 import bibliothek.util.Path;
+import bibliothek.util.Enhancement.Compatibility;
+import bibliothek.util.Enhancement.Version;
 
 /**
  * A list of methods which can be used for different purposes. Methods
@@ -314,10 +318,14 @@ public class DockUtilities {
     
     /**
      * Searches a {@link Component} which is {@link Component#isShowing() showing}
-     * and has something to do with <code>dockable</code>.
+     * and has something to do with <code>dockable</code>.<br>
+     * This method only checks {@link Dockable} and {@link DockTitle}s, it does not
+     * check {@link DockElementRepresentative}s.
      * @param dockable a Dockable for which a Component has to be found
      * @return a showing component or <code>null</code>
      */
+    @Enhancement( priority=Enhancement.Priority.MINOR, compatibility=Compatibility.COMPATIBLE, target=Version.VERSION_1_1_0, 
+        	description="Make use of DockElementRepresentative" )
     public static Component getShowingComponent( Dockable dockable ){
         Component component = dockable.getComponent();
         if( !component.isShowing() ){

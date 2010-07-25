@@ -47,8 +47,7 @@ import bibliothek.util.container.Triple;
  * as argument for the constructor of the model. The component can use a subclass
  * of the model to override {@link #changed()}, which is invoked every time when
  * a property of this model changes. The model will add some listeners to
- * the button and update its properties when necessary. The model ensures that
- * different buttons have the same basic experience.
+ * the button and update its properties when necessary.
  * @author Benjamin Sigg
  */
 public class BasicButtonModel {

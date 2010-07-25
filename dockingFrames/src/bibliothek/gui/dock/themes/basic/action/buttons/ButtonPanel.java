@@ -15,6 +15,7 @@ import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.actions.SimpleMenuAction;
+import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.event.DockActionSourceListener;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
@@ -76,7 +77,10 @@ public class ButtonPanel extends JPanel{
 	}
 	
     /**
-     * Creates a new item for <code>action</code> which will be shown on this title.
+     * Creates a new item for <code>action</code> which will be shown on this panel. The default
+     * implementation will use the {@link ActionViewConverter} of <code>dockable</code> to create the
+     * view. The {@link ViewTarget} is set to {@link ViewTarget#TITLE}. Subclasses may overridde this 
+     * method to create custom views or use other settings.
      * @param action The action which will be triggered by the button
      * @param dockable The {@link Dockable} which will be affected by the action
      * @return the new graphical representation of the action 
@@ -87,7 +91,7 @@ public class ButtonPanel extends JPanel{
     }
 	
     /**
-     * Gets the number of items which are shown on this button.
+     * Gets the number of items which are shown on this panel.
      * @return the number of items
      */
     public int getItemCount(){
@@ -300,9 +304,9 @@ public class ButtonPanel extends JPanel{
 	}
 	
 	/**
-	 * Computes the preferred sizes of this panel. For example, if 
-	 * <code>n</code> actions are shown, <code>result[n]</code> would tell
-	 * how big the panel liked to be.
+	 * Computes the preferred sizes of this panel. Dimension <code>result[n]</code> 
+	 * would be the size required if <code>n</code> actions are shown. The number
+	 * <code>n</code> should be used for calling {@link #setVisibleActions(int)}.
 	 * @return An array of the size of the number of available actions +1.
 	 * @see #setVisibleActions(int)
 	 */

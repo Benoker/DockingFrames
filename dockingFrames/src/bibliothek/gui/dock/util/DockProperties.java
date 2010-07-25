@@ -90,7 +90,10 @@ public class DockProperties {
 	
 	/**
 	 * Ensures that the value behind <code>key</code> will never be
-	 * changed.
+	 * changed. Should be used with care: any attempt to set the value afterwards
+	 * will be responded with an {@link IllegalStateException}. Most times it
+	 * is much better to just use {@link Priority#CLIENT} to mark some setting
+	 * as important.
 	 * @param <A> the type of the value
 	 * @param key the key to protect
 	 */

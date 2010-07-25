@@ -37,8 +37,9 @@ import bibliothek.gui.dock.control.ModifierMask;
 
 /**
  * A path is a description of the position of some resource. A path consists
- * of segments, segments are separated by a dot. A segment must be a valid
- * java-identifier.
+ * of segments where a segment can be any kind of string (preferably a segment is a 
+ * valid java-identifier). A path can be converted into a string, the segments will
+ * be {@link #encodeSegment(String) encoded} when doing that.
  * @author Benjamin Sigg
  */
 public final class Path {
@@ -227,7 +228,7 @@ public final class Path {
      * @return the segment
      */
     public String getSegment( int index ){
-        return  segments[index];
+        return segments[index];
     }
     
     /**

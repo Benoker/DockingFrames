@@ -26,7 +26,8 @@
 package bibliothek.gui.dock.themes.basic.action;
 
 /**
- * A type containing a method that is used as callback-method in a {@link BasicButtonModel}.
+ * Used as a callback by a {@link BasicButtonModel} when the user triggers a view
+ * like a button.
  * @author Benjamin Sigg
  */
 public interface BasicTrigger {

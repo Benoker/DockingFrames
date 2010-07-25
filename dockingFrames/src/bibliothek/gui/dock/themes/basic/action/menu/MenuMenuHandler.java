@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -39,6 +39,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.MenuDockAction;
+import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.action.view.ViewItem;
 import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.event.DockActionSourceListener;
@@ -121,11 +122,13 @@ public class MenuMenuHandler extends AbstractMenuHandler<JMenu, MenuDockAction> 
     }
     
     /**
-     * Creates a new {@link AbstractMenuHandler} for <code>action</code>.
+     * Creates a new view for <code>action</code>. The default implementation
+     * uses the {@link ActionViewConverter} and sets the {@link ViewTarget} to
+     * {@link ViewTarget#MENU}.
      * @param action an action
      * @return a handler ready to work with <code>action</code>.
      */
-    private ViewItem<JComponent> handlerFor( DockAction action ){
+    protected ViewItem<JComponent> handlerFor( DockAction action ){
     	Dockable dockable = getDockable();
     	return dockable.getController().getActionViewConverter().createView( action, ViewTarget.MENU, dockable );
     }
@@ -227,7 +230,7 @@ public class MenuMenuHandler extends AbstractMenuHandler<JMenu, MenuDockAction> 
     }
     
     /**
-     * A wrapper JMenu to Menu.
+     * A wrapper from {@link JMenu} to {@link Menu}.
      * @author Benjamin Sigg
      */
     private static class JMenuWrapper implements Menu{
@@ -255,7 +258,7 @@ public class MenuMenuHandler extends AbstractMenuHandler<JMenu, MenuDockAction> 
     }
     
     /**
-     * A Wrapper JPopupMenu to Menu.
+     * A wrapper from {@link JPopupMenu} to {@link Menu}.
      * @author Benjamin Sigg
      *
      */

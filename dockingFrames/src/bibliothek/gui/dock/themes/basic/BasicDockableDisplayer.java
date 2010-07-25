@@ -55,7 +55,7 @@ import bibliothek.gui.dock.util.PropertyValue;
  * A panel which shows one {@link Dockable} and one {@link DockTitle}. The location
  * of the {@link DockTitle} is always at one of the four borders (left,
  * right, top, bottom). The title may be <code>null</code>, in this case only
- * the Dockable is shown.<br>
+ * the <code>Dockable</code> is shown.<br>
  * Clients using a displayer should try to set the {@link #setController(DockController) controller}
  * and the {@link #setStation(DockStation) station} property.<br>
  * Subclasses may override {@link #getComponent(Dockable)}, {@link #addDockable(Dockable, Component)},

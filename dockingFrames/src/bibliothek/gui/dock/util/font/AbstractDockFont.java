@@ -82,7 +82,8 @@ public abstract class AbstractDockFont extends AbstractUIValue<FontModifier, Doc
     
     /**
      * Makes sure that this {@link DockFont} reads its values from the
-     * {@link FontManager} of <code>controller</code>.
+     * {@link FontManager} of <code>controller</code>.<br>
+     * Use {@link #setManager(bibliothek.gui.dock.util.UIProperties) setManager(null)} to disconnect.
      * @param controller the new source for fonts, can be <code>null</code>
      */
     public void connect( DockController controller ){

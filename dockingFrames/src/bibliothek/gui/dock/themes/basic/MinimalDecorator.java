@@ -31,7 +31,8 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 
 /**
- * Minimalistic implementation of a {@link BasicDockableDisplayerDecorator}.
+ * Minimalistic implementation of a {@link BasicDockableDisplayerDecorator}. Just shows the
+ * element which represents the selected {@link Dockable}.
  * @author Benjamin Sigg
  *
  */

@@ -37,9 +37,9 @@ import bibliothek.gui.dock.util.color.DockColor;
 import bibliothek.util.Path;
 
 /**
- * An implementation of {@link ColorScheme} that can guess colors
- * for ids that are not known. This scheme returns the one color whose
- * keys matches a given id best.
+ * The default implementation of {@link ColorScheme} just uses some maps
+ * to store its colors.
+ * <b>Warning:</b> this class will be replaced in version 1.1.0
  * @author Benjamin Sigg
  */
 public class DefaultColorScheme implements ColorScheme{
@@ -64,9 +64,9 @@ public class DefaultColorScheme implements ColorScheme{
     }
     
     /**
-     * Sets the value of some provider.
-     * @param kind the kind of {@link DockColor}s the provider works with
-     * @param bridge the provider or <code>null</code>
+     * Sets how to modify some <code>kind</code> of {@link DockColor}s.
+     * @param kind the kind of {@link DockColor}s the bridge works with
+     * @param bridge the factory for modifications or <code>null</code>
      */
     public void setBridgeFactory( Path kind, ColorBridgeFactory bridge ){
         if( bridge == null )

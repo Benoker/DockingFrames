@@ -34,6 +34,9 @@ import java.util.Map;
 import javax.swing.Icon;
 
 import bibliothek.gui.dock.event.IconManagerListener;
+import bibliothek.util.Enhancement;
+import bibliothek.util.Enhancement.Compatibility;
+import bibliothek.util.Enhancement.Version;
 
 /**
  * A map of icons which are used by various objects. The icon is stored
@@ -45,6 +48,8 @@ import bibliothek.gui.dock.event.IconManagerListener;
  * @author Benjamin Sigg
  * @see IconManagerListener
  */
+@Enhancement( priority=Enhancement.Priority.ENHANCEMENT, compatibility=Compatibility.BREAK_MINOR, target=Version.VERSION_1_1_0,
+		 description="IconManager extends UIManager, just like ColorManager and FontManager" )
 public class IconManager {
     /** all icons known to this manager */
     private Map<String, Entry> icons = new HashMap<String, Entry>();

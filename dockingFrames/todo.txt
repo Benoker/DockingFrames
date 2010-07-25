@@ -22,7 +22,7 @@
 - [Done] Support for tooltips on titles and tabs?
 - [Done] FlatTab and others: tabs at different locations
 - [Done] Eclipse-Theme: curves are not painted smoothly
-- Maximize externalized dockable: may become maximized on the screen
+- [Done] Maximize externalized dockable: may become maximized on the screen
 - Allow to move a dockable to the edge of a SplitDockStation, even if the station is within a maximized frame
 - MouseFocusObserver: when canceling an event but the user clicked on a tab, then the event is still processed.
 - Bug: title of FlapDockStation no longer receives mouse pressed events.
@@ -31,3 +31,4 @@
 - Update listeners: always inform before closing a Dockable
 - [done] CDocakble.getAction
 - BasicMovingImageFactory: backup plan for null-DockTitles 
+- ColorManager: better support ColorSchemes, "ColorScheme.transmitAll" should be removed  

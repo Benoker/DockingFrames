@@ -37,10 +37,10 @@ import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.event.DockTitleEvent;
 
 /**
- * A component which is shown aside a {@link Dockable}. A DockTitle
+ * A {@link Component} which is shown aside a {@link Dockable}. A <code>DockTitle</code>
  * displays some information about its <code>Dockable</code>, for
  * example a title-text.<br>
- * Every DockTitle is owned by exactly one Dockable. The owner can't
+ * Every <code>DockTitle</code> is owned by exactly one <code>Dockable</code>. The owner cannot
  * be changed.<br>
  * Every title is either in the state {@link #bind() bound} or {@link #unbind() unbound}.
  * As long as a title is unbound, it has not to do anything. As soon as it is
@@ -108,15 +108,14 @@ public interface DockTitle extends DockElementRepresentative{
     };
     
     /**
-     * Gets a Component which represents the {@link DockTitle}. 
-     * The Component is displayed aside the owner of this title.
-     * This method must always return the same Component.
-     * @return always the same Component
+     * Gets a {@link Component} which paints this {@link DockTitle}.
+     * This method must always return the same {@link Component}.
+     * @return always the same {@link Component}
      */
     public Component getComponent();
         
     /**
-     * Adds a listener to all {@link Component Components} of this title
+     * Adds a listener to all {@link Component}s of this title
      * which are visible and which may be "grabbed" by the mouse.
      * @param listener the new listener
      */
@@ -149,8 +148,11 @@ public interface DockTitle extends DockElementRepresentative{
     public Orientation getOrientation();
     
     /**
-     * Called if a property (of this title, of the owner or anything else)
-     * has changed. The title might change some of its own properties. 
+     * Called if a property changed that might be important for painting this
+     * title. The property can be anything, it does not necessarily have to be
+     * a property of this title nor of its owner. Modules using this title
+     * might send subclasses of {@link DockTitleEvent} to transmit more information
+     * to this title than {@link DockTitleEvent} would allow. 
      * @param event information about the current state
      */
     public void changed( DockTitleEvent event );
@@ -164,29 +166,30 @@ public interface DockTitle extends DockElementRepresentative{
     public boolean isActive();
     
     /**
-     * Called before the title is displayed. The method should connect the
-     * title with other objects, like its owner. If the title wants to 
-     * show some {@link DockAction DockActions} (see the method
+     * Called before this title is displayed. This method should connect the
+     * title with other objects such as its {@link #getDockable() owner}.
+     * If the title wants to show some {@link DockAction DockActions} (see the method
      * {@link DockController#listOffers(Dockable)}), then this method
      * should {@link DockAction#bind(Dockable) bind} them too.<br>
      * Clients should never call this method directly, they should call
      * {@link Dockable#bind(DockTitle)}. The {@link DockController}
-     * will call the bind-method, as soon as the Dockable knows the controller.
+     * will call the <code>bind</code>-method, as soon as the <code>Dockable</code> knows the controller.
      */
     public void bind();
     
     /**
      * The reverse of {@link #bind()}. The title should remove any connections
      * to other objects and {@link DockAction#unbind(Dockable) unbind} its
-     * DockActions.<br>
+     * {@link DockAction}s.<br>
      * Clients should never call this method directly, they should call
      * {@link Dockable#unbind(DockTitle)}. The {@link DockController}
-     * will call the unbind-method before the Dockable looses the controller.
+     * will call the <code>unbind</code>-method before the {@link Dockable} looses the controller.
      */
     public void unbind();
     
     /**
-     * Gets the version which was used to create this title. If this title
+     * Gets information about how this title was created. This {@link DockTitleVersion} can be used
+     * to create a {@link DockTitleRequest} which should create the same title again. If this title
      * was not created through the regular methods, then this method is allowed
      * to return <code>null</code>. However, some features will only work correctly
      * if this value is not <code>null</code>.

@@ -220,9 +220,9 @@ In \src{Core} this mechanism is normally disabled. Clients must implement a new 
 
 Clients are not yet able to set placeholders directly, this will be changed in version 1.1.0.
 
-\designbox{Placeholders were introduced in version 1.0.8. On of the reasons they were not used earlier is that they make data structures complex. Also detecting and removing invalid and outdated placeholders requires some work.}
+\designbox{Placeholders were introduced in version 1.0.8. One of the reasons they were not used earlier is that they make data structures complex. Also detecting and removing invalid and outdated placeholders requires some work.}
 
-\classbox{Most \src{StackDockStation}s use the \src{PlaceholderList} and the \src{PlacehoderMap} to manage their \src{Dockable}s and placeholders.}
+\classbox{Most \src{DockStation}s use the \src{PlaceholderList} and the \src{PlacehoderMap} to manage their \src{Dockable}s and placeholders.}
 
 \subsection{DockFrontend}
 \src{DockFrontend} offers storage for local and for global layout information. Clients need to register their \src{Dockable}s through \src{addDockable} if they want access to the full range of storage-features.

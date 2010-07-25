@@ -29,10 +29,13 @@ import java.awt.Color;
 
 import javax.swing.LookAndFeel;
 
+import bibliothek.gui.DockUI;
+
 /**
  * {@link LookAndFeelColors} is a wrapper around a {@link LookAndFeel}
  * and allows access to a set of colors used for specific purposes.
  * @author Benjamin Sigg
+ * @see DockUI#registerColors(String, LookAndFeelColors)
  */
 public interface LookAndFeelColors {
     /**

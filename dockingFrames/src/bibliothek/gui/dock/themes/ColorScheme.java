@@ -34,13 +34,19 @@ import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.DockColor;
 import bibliothek.gui.dock.util.extension.ExtensionName;
 import bibliothek.gui.dock.util.laf.LookAndFeelColors;
+import bibliothek.util.Enhancement;
 import bibliothek.util.Path;
+import bibliothek.util.Enhancement.Compatibility;
+import bibliothek.util.Enhancement.Version;
 
 /**
- * A <code>ColorScheme</code> is a collection of colors and bridges.
+ * A <code>ColorScheme</code> is a collection of colors and bridges.<br>
+ * <b>Warning: </b> This interface will be replaced in version 1.1.0. 
  * 
  * @author Benjamin Sigg
  */
+@Enhancement(priority=Enhancement.Priority.MAJOR, compatibility=Compatibility.BREAK_MINOR, target=Version.VERSION_1_1_0,
+		description="The ColorManager should now of ColorSchemes, the method \'transmitAll\' will be removed")
 public interface ColorScheme {
 	/**
 	 * The name used in a {@link ExtensionName} to ask for an additional {@link ColorScheme}. The

@@ -70,13 +70,13 @@ public interface EclipseThemeConnector {
          */
         ECLIPSE,
         
-        /** No title at all, but with the typical eclipse-border */
+        /** No title nor tab at all, but with the typical eclipse-border */
         NONE_BORDERED,
-        /** No title and no border */
+        /** No title nor tab and no border */
         NONE,
-        /** No title, and the border depends on the hints provided by the {@link Dockable} (default is no border) */
+        /** No title nor tab, and the border depends on the hints provided by the {@link Dockable} (default is no border) */
         NONE_HINTED,
-        /** No title, and the border depends on the hints provided by the {@link Dockable} (default is with border) */
+        /** No title nor tab, and the border depends on the hints provided by the {@link Dockable} (default is with border) */
         NONE_HINTED_BORDERED,
     }
     

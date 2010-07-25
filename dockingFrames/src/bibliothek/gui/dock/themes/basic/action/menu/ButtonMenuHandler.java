@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -35,7 +35,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ButtonDockAction;
 
 /**
- * A handler that handles an ordinary {@link JMenuItem}.
+ * A handler building a connection between a {@link JMenuItem} and a {@link ButtonDockAction}.
  * @author Benjamin Sigg
  *
  */

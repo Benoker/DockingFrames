@@ -29,10 +29,10 @@ package bibliothek.gui.dock.util;
 /**
  * An {@link UIBridge} is a bridge between the {@link UIProperties} and
  * several {@link UIValue}s. Each change of an {@link UIValue} by the
- * <code>UIProperties</code> goes through an <code>UIBridge</code>. The provider
+ * <code>UIProperties</code> goes through an <code>UIBridge</code>. The bridge
  * can modify each request of the <code>UIProperties</code> and change
  * the resource that is transmitted to the <code>UIValue</code>. It is up to
- * the provider how, why and when a resource is changed. Each provider handles
+ * the bridge how, why and when a resource is changed. Each bridge handles
  * only one subtype of <code>UIValue</code>.
  * @author Benjamin Sigg
  * @param <V> the type of resources that are transmitted to the {@link UIValue}s.

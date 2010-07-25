@@ -163,11 +163,10 @@ public abstract class AbstractUIValue<V, U extends UIValue<V>> implements UIValu
     }
     
     /**
-     * Sets the manager which owns this {@link UIValue}, automatically
-     * add or removes this <code>UIValue</code> from the manager
+     * Sets the manager which owns this {@link UIValue}, <code>this</code> will
+     * automatically be added or removed from the current <code>manager</code>.
      * @param manager the new manager, can be <code>null</code>
      */
-    @SuppressWarnings("unchecked")
     public void setManager( UIProperties<V, U, ?> manager ){
         if( manager != this.manager ){
             U me = me();

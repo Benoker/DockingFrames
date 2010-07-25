@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -28,19 +28,22 @@ package bibliothek.gui.dock.themes.basic.action.dropdown;
 
 import javax.swing.JComponent;
 
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.dropdown.DropDownView;
 import bibliothek.gui.dock.themes.basic.action.menu.MenuViewItem;
 
 /**
  * An item that is shown in the menu of a drop-down-button and can be
- * selected by the button.
+ * selected by the button. Normally a {@link DropDownViewItem} is a 
+ * wrapper for some {@link DockAction}, although there may exist
+ * exceptions.
  * @author Benjamin Sigg
  */
 public interface DropDownViewItem extends MenuViewItem<JComponent> {	
 	/**
 	 * Invoked if the item is triggered from outside. The item should
-	 * call the method of its action, that causes the action to execute
-	 * its natural code (for example: a checkbox may change their selected-state).
+	 * call the method of its action that causes the action to execute
+	 * its natural code (for example: a checkbox may change its selected-state).
 	 */
 	public void triggered();
 	
@@ -52,8 +55,8 @@ public interface DropDownViewItem extends MenuViewItem<JComponent> {
 	public void setView( DropDownView view );
 	
 	/**
-	 * Tells whether this item can be selected by the button. The selected
-	 * item is shown directly on the button. Special items like a separator
+	 * Tells whether this item can be selected by the button. Only selectable
+	 * items can be shown directly on the button. Some items, like a separator,
 	 * should return <code>false</code>.
 	 * @return whether the item can be selected
 	 */
@@ -62,7 +65,8 @@ public interface DropDownViewItem extends MenuViewItem<JComponent> {
 	/**
 	 * Tells whether the item can be triggered if it is on the button or
 	 * in the menu.
-	 * @param selected whether the item is selected or in the menu
+	 * @param selected if <code>true</code>, then this item is currently shown
+	 * directly on the main button, otherwise it is in the drop-down menu.
 	 * @return <code>true</code> if the item can be triggered
 	 */
 	public boolean isTriggerable( boolean selected );
