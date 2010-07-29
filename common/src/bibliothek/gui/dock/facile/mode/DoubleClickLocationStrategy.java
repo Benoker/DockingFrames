@@ -33,6 +33,7 @@ import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablement;
  * Used by a {@link LocationModeManager} to change the {@link ExtendedMode} when
  * an element gets double-clicked.
  * @author Benjamin Sigg
+ * @see LocationModeManager#setDoubleClickStrategy(DoubleClickLocationStrategy)
  */
 public interface DoubleClickLocationStrategy {
 	/**

@@ -31,20 +31,37 @@ import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
 import bibliothek.gui.dock.station.split.SplitDockTree;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Version;
 
 /**
  * A {@link CGrid} is a mechanism to layout a set of {@link CDockable} on
  * a {@link SplitDockStation} like the one used in the center of the
  * {@link CContentArea} or on the {@link CWorkingArea}. <code>CGrid</code>s
  * also can register new {@link CDockable}s to a {@link CControl}.<br>
- * A <code>CGrid</code> is a rectangle containing several {@link CDockable}s. All
- * these dockables have boundaries, within the rectangle of the grid.<br>
- * A grid can be deployed on {@link CWorkingArea}s or {@link CContentArea}s. 
- * As soon as a grid is deployed, all its dockables get visible.
- * 
+ * <br>
+ * <b>Usage:</b><br>
+ * A <code>CGrid</code> consists of a set of <code>entries</code> where each
+ * <code>entry</code> consists of a set of {@link CDockable}s and a rectangle
+ * (position= <code>x/y</code>, size=<code>width/height</code>). The rectangle
+ * tells where the <code>CDockable</code>s and how big they are compared to the
+ * other <code>entries</code>.<br>
+ * A client first fills a <code>CGrid</code> with such entries. Then the client calls
+ * {@link CGridArea#deploy(CGrid)}, {@link CWorkingArea#deploy(CGrid)} or 
+ * {@link #toTree()}. This triggers the <code>CGrid</code> to convert its entries
+ * into a tree of <code>Dockable</code>s. This tree can then be given to a 
+ * {@link SplitDockStation}. The <code>CGrid</code> can be trashed after it created
+ * the tree - changes to the grid will not be forwarded to the tree.<br>
+ * <br>
+ * If the <code>CGrid</code> was created using the constructor {@link #CGrid(CControl)},
+ * then the method {@link CControl#add(SingleCDockable)} or {@link CControl#add(MultipleCDockable)}
+ * is called for any new {@link CDockable}.
  * @author Benjamin Sigg
  *
  */
+@Todo( priority=Todo.Priority.MAJOR, compatibility=Compatibility.COMPATIBLE, target=Version.VERSION_1_1_0,
+		description="Allow using identifiers instead of CDockables to fill up the grid, create the dockables lazily" )
 public class CGrid {
     /** the internal representation of this grid */
     private SplitDockGrid grid = new SplitDockGrid();
@@ -72,7 +89,7 @@ public class CGrid {
     /**
      * Creates and returns a tree which contains the {@link CommonDockable}s
      * of this {@link CGrid}. The branches of the tree are put in a way, that
-     * this boundaries of the {@link CommonDockable}s are respected as good
+     * the boundaries of the {@link CommonDockable}s are respected as good
      * as possible.
      * @return the contents of this grid as tree
      */
@@ -118,6 +135,7 @@ public class CGrid {
      * @param width the width of the stack
      * @param height the height of the stack
      * @param dockable the element to select, not <code>null</code>
+     * @throws IllegalArgumentException if <code>dockable</code> is not registered at location <code>x/y/width/height</code>
      */
     public void select( double x, double y, double width, double height, CDockable dockable ){
     	grid.setSelected( x, y, width, height, dockable.intern() );

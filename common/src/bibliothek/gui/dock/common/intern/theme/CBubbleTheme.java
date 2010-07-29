@@ -51,13 +51,14 @@ import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.color.ColorBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
+import bibliothek.util.ClientOnly;
 
 /**
  * A theme wrapping {@link BubbleTheme} and adding additional features to
  * properly work within the common-project.
  * @author Benjamin Sigg
- *
  */
+@ClientOnly
 public class CBubbleTheme extends CDockTheme<BubbleTheme>{
     /**
      * Creates a new theme.

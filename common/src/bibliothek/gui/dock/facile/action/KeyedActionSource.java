@@ -36,6 +36,7 @@ import bibliothek.gui.dock.common.event.CDockableAdapter;
 import bibliothek.gui.dock.common.event.CDockablePropertyListener;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.event.DockActionSourceListener;
+import bibliothek.util.FrameworkOnly;
 
 /**
  * An action source using {@link CDockable#getAction(String)} to determine which
@@ -44,6 +45,7 @@ import bibliothek.gui.dock.event.DockActionSourceListener;
  * action.
  * @author Benjamin Sigg
  */
+@FrameworkOnly
 public class KeyedActionSource extends AbstractDockActionSource {
 	/** the observed element */
 	private CDockable dockable;

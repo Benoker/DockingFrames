@@ -29,12 +29,14 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
+import bibliothek.util.FrameworkOnly;
 
 /**
  * A {@link DockAcceptance} ensuring that the {@link CDockable#isStackable()}
  * property is respected.
  * @author Benjamin Sigg
  */
+@FrameworkOnly
 public class StackableAcceptance implements DockAcceptance {
     
     public boolean accept( DockStation parent, Dockable child ) {

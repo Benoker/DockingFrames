@@ -25,12 +25,18 @@
  */
 package bibliothek.gui.dock.common.event;
 
+import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
 
 /**
  * This listener is used to prevent a {@link CDockable} from loosing or gaining
- * the focus.
+ * the focus. Events may happen such that the framework is unable to prevent the 
+ * focus from changing, e.g. if a {@link CDockable} is closed.<br>
+ * Please use this listener with care, the workflow of the user may be seriously
+ * hindered if the focus cannot be changed.<br>
  * @author Benjamin Sigg
+ * @see CControl#addVetoFocusListener(CVetoFocusListener)
+ * @see CControl#removeVetoFocusListener(CVetoFocusListener)
  */
 public interface CVetoFocusListener {
 	/**

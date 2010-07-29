@@ -42,7 +42,7 @@ import bibliothek.gui.dock.common.action.panel.DialogWindow;
 import bibliothek.gui.dock.common.action.panel.MenuWindow;
 import bibliothek.gui.dock.common.action.panel.PanelPopupWindow;
 import bibliothek.gui.dock.common.action.panel.PanelPopupWindowListener;
-import bibliothek.gui.dock.common.intern.CDecorateableAction;
+import bibliothek.gui.dock.common.intern.action.CDecorateableAction;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
 
@@ -146,7 +146,7 @@ public class CPanelPopup extends CDecorateableAction{
 	}
 	
 	/**
-	 * Tells this action how to behave if in a menu. This may not have an effect
+	 * Tells this action how to behave if it is in a menu. This may not have an effect
 	 * if the action already is part of a menu.
 	 * @param menu the behavior, not <code>null</code>
 	 */

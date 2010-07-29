@@ -41,12 +41,14 @@ import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.station.flap.FlapLayoutManager;
+import bibliothek.util.FrameworkOnly;
 
 /**
  * A {@link FlapLayoutManager} that uses the properties of {@link CDockable} to
  * find and store size and hold values.
  * @author Benjamin Sigg
  */
+@FrameworkOnly
 public class CFlapLayoutManager implements FlapLayoutManager {
     /**
      * A listener added to each {@link FlapDockStation}.

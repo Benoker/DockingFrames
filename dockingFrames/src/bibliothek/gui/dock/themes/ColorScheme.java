@@ -34,10 +34,10 @@ import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.DockColor;
 import bibliothek.gui.dock.util.extension.ExtensionName;
 import bibliothek.gui.dock.util.laf.LookAndFeelColors;
-import bibliothek.util.Enhancement;
+import bibliothek.util.Todo;
 import bibliothek.util.Path;
-import bibliothek.util.Enhancement.Compatibility;
-import bibliothek.util.Enhancement.Version;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Version;
 
 /**
  * A <code>ColorScheme</code> is a collection of colors and bridges.<br>
@@ -45,8 +45,8 @@ import bibliothek.util.Enhancement.Version;
  * 
  * @author Benjamin Sigg
  */
-@Enhancement(priority=Enhancement.Priority.MAJOR, compatibility=Compatibility.BREAK_MINOR, target=Version.VERSION_1_1_0,
-		description="The ColorManager should now of ColorSchemes, the method \'transmitAll\' will be removed")
+@Todo(priority=Todo.Priority.MAJOR, compatibility=Compatibility.BREAK_MINOR, target=Version.VERSION_1_1_0,
+		description="The ColorManager should know of ColorSchemes, the method \'transmitAll\' will be removed")
 public interface ColorScheme {
 	/**
 	 * The name used in a {@link ExtensionName} to ask for an additional {@link ColorScheme}. The

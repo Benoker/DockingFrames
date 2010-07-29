@@ -36,12 +36,14 @@ import javax.swing.JOptionPane;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.dock.support.menu.SeparatingMenuPiece;
 import bibliothek.gui.dock.support.util.Resources;
+import bibliothek.util.ClientOnly;
 
 /**
  * A piece of a menu that allows to save, load and delete settings
  * from a {@link DockFrontend}.
  * @author Benjamin Sigg
  */
+@ClientOnly
 public class FrontendSettingsMenuPiece extends NodeMenuPiece {
 	/** menu to delete items */
 	private FrontendSettingsDeleteList delete;

@@ -31,6 +31,7 @@ import javax.swing.KeyStroke;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabDockAction;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.event.CVetoClosingListener;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.intern.action.CDropDownItem;
@@ -39,9 +40,9 @@ import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyValue;
 
 /**
- * An action that can close any {@link CDockable} in the way that "common"
- * requires. Clients can either create on {@link CCloseAction} for each
- * {@link CDockable} or use one action for many {@link CDockable}s at the
+ * An action that can close any {@link CDockable} by calling
+ * {@link CDockable#setVisible(boolean)}. Clients can either create one 
+ * {@link CCloseAction} for each {@link CDockable} or use one action for many {@link CDockable}s at the
  * same time.
  * @author Benjamin Sigg
  */
@@ -74,7 +75,9 @@ public class CCloseAction extends CDropDownItem{
      * Closes <code>dockable</code> now. This method is always called when
      * this action is triggered, so this is the optimal method to be overridden
      * and extended with new features like a {@link JOptionPane} asking whether
-     * <code>dockable</code> should really be closed.
+     * <code>dockable</code> should really be closed.<br>
+     * <b>Note:</b> Consider using the {@link CVetoClosingListener} instead, it can 
+     * handle all kind of closing events. 
      * @param dockable the element to close
      */
     public void close( CDockable dockable ){

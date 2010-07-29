@@ -25,13 +25,17 @@
  */
 package bibliothek.gui.dock.common.event;
 
+import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
 
 /**
  * A {@link CFocusListener} gets informed when a {@link CDockable} gains or
  * looses the focus, or is selected or deselected by its parent.
  * @author Benjamin Sigg
- *
+ * @see CDockable#addFocusListener(CFocusListener)
+ * @see CDockable#removeFocusListener(CFocusListener)
+ * @see CControl#addFocusListener(CFocusListener)
+ * @see CControl#removeFocusListener(CFocusListener)
  */
 public interface CFocusListener {
     /**

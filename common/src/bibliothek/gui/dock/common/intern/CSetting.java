@@ -42,6 +42,7 @@ import bibliothek.gui.dock.frontend.Setting;
 import bibliothek.gui.dock.layout.DockSituation;
 import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.support.mode.ModeSettings;
+import bibliothek.util.FrameworkOnly;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
@@ -49,6 +50,7 @@ import bibliothek.util.xml.XElement;
  * A {@link Setting} that stores also the contents of a {@link CLocationModeManager}.
  * @author Benjamin Sigg
  */
+@FrameworkOnly
 public class CSetting extends Setting{
     /** a set of modes */
     private ModeSettings<Location, ?> modes;

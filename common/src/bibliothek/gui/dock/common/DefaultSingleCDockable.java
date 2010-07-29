@@ -32,6 +32,7 @@ import javax.swing.Icon;
 
 import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.intern.DefaultCDockable;
+import bibliothek.util.ClientOnly;
 
 /**
  * A <code>DefaultSingleCDockable</code> is an element which has a 
@@ -40,6 +41,7 @@ import bibliothek.gui.dock.common.intern.DefaultCDockable;
  * @author Benjamin Sigg
  * @see SingleCDockable
  */
+@ClientOnly
 public class DefaultSingleCDockable extends DefaultCDockable implements SingleCDockable{
     /** a unique id */
     private String id;

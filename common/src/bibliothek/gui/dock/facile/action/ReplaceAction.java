@@ -40,6 +40,7 @@ import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.support.util.Resources;
+import bibliothek.util.ClientOnly;
 
 /**
  * A {@link DockAction} that can replace a {@link DockStation} by it's only
@@ -48,6 +49,7 @@ import bibliothek.gui.dock.support.util.Resources;
  * station that was provided through the constructor.
  * @author Benjamin Sigg
  */
+@ClientOnly
 public class ReplaceAction extends GroupedButtonDockAction<Boolean> implements ListeningDockAction{
 	/** the key uses for the {@link bibliothek.gui.dock.util.IconManager} to get the {@link Icon} of this action */
 	public static final String KEY_ICON = "replace";

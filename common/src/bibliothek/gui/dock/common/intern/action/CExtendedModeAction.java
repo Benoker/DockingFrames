@@ -42,12 +42,14 @@ import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.util.FrameworkOnly;
 
 /**
  * This action is intended to change the {@link ExtendedMode} of a 
  * {@link CDockable} by calling {@link CDockable#setExtendedMode(ExtendedMode)}.
  * @author Benjamin Sigg
  */
+@FrameworkOnly
 public class CExtendedModeAction extends CDropDownItem{
     /** the mode into which this action leads */
     private ExtendedMode mode;

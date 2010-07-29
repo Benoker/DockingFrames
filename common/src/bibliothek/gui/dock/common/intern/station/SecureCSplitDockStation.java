@@ -34,11 +34,19 @@ import bibliothek.gui.dock.common.event.CDockableAdapter;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.security.SecureSplitDockStation;
 import bibliothek.gui.dock.title.DockTitleRequest;
+import bibliothek.util.FrameworkOnly;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * The secure version of {@link CSplitDockStation}.
  * @author Benjamin Sigg
  */
+@FrameworkOnly
+@Todo( priority=Priority.ENHANCEMENT, compatibility=Compatibility.BREAK_MINOR, target=Version.VERSION_1_1_0,
+		description="Remove this class" )
 public class SecureCSplitDockStation extends SecureSplitDockStation implements CommonStation<SplitDockStation>{
 	private CommonStationDelegate delegate;
 

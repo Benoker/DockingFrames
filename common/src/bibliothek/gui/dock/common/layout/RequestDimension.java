@@ -28,11 +28,13 @@ package bibliothek.gui.dock.common.layout;
 import java.awt.Dimension;
 
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.util.ClientOnly;
 
 /**
  * Represents the dimensions a {@link CDockable} would like to have.
  * @author Benjamin Sigg
  */
+@ClientOnly
 public class RequestDimension implements Cloneable{
     /** the preferred width */
     private int width;

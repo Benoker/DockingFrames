@@ -28,10 +28,13 @@ package bibliothek.gui.dock.common.intern;
 import java.awt.Dimension;
 
 import bibliothek.gui.DockTheme;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.ColorMap;
+import bibliothek.gui.dock.common.DefaultMultipleCDockable;
+import bibliothek.gui.dock.common.DefaultSingleCDockable;
 import bibliothek.gui.dock.common.FontMap;
 import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.event.CDockablePropertyListener;
@@ -45,13 +48,21 @@ import bibliothek.gui.dock.common.intern.action.CloseActionSource;
 import bibliothek.gui.dock.common.layout.RequestDimension;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
+import bibliothek.util.FrameworkOnly;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
- * A basic element representing some {@link java.awt.Component}. This interface
- * is not intended to be implemented by clients. Clients should extend the
- * class {@link AbstractCDockable}.
+ * A basic element representing some {@link java.awt.Component} and a wrapper
+ * around a {@link Dockable}.<br>
+ * <b>Note:</b> This interface is not intended to be implemented by clients. 
+ * Clients should either extend the class {@link AbstractCDockable} or use
+ * one of {@link DefaultSingleCDockable} or {@link DefaultMultipleCDockable}.
  * @author Benjamin Sigg
  */
+@FrameworkOnly
 public interface CDockable {
 	/**
 	 * Key for an action of {@link #getAction(String)}. The action behind this
@@ -180,40 +191,40 @@ public interface CDockable {
 	public void addVetoClosingListener( CVetoClosingListener listener );
 	
 	/**
-	 * 
-	 * @param listener
+	 * Removes <code>listener</code> from this <code>CDockable</code>.
+	 * @param listener the listener to remove
 	 */
 	public void removeVetoClosingListener( CVetoClosingListener listener );
 	
 	/**
-	 * Tells whether this dockable can be minimized by the user.
+	 * Tells whether this <code>CDockable</code> can be minimized by the user.
 	 * @return <code>true</code> if this element can be minimized
 	 */
 	public boolean isMinimizable();
 	
 	/**
-	 * Tells whether this dockable can be maximized by the user.
+	 * Tells whether this <code>CDockable</code> can be maximized by the user.
 	 * @return <code>true</code> if this element can be maximized
 	 */
 	public boolean isMaximizable();
 	
 	/**
-	 * Tells whether this dockable can be externalized by the user.
+	 * Tells whether this <code>CDockable</code> can be externalized by the user.
 	 * @return <code>true</code> if this element can be externalized
 	 */
 	public boolean isExternalizable();
 	
 	/**
-	 * Tells whether this dockable can be combined with another
-	 * dockable to create a stack.
+	 * Tells whether this <code>CDockable</code> can be combined with another
+	 * <code>Dockable</code> to create a stack.
 	 * @return <code>true</code> if this element can be combined with
-	 * another dockable, normally <code>true</code> should be the answer.
+	 * another <code>Dockable</code>, normally <code>true</code> should be the answer.
 	 */
 	public boolean isStackable();
 	
 	/**
-	 * Tells whether this dockable can be closed by the user. A close-button
-	 * has to be provided by the dockable itself. The best way to do that is
+	 * Tells whether this <code>CDockable</code> can be closed by the user. A close-button
+	 * has to be provided by the <code>CDockable</code> itself. The best way to do that is
 	 * to instantiate a {@link CloseActionSource} and include this source
 	 * in the array that is returned by {@link CommonDockable#getSources()}.
 	 * @return <code>true</code> if this element can be closed
@@ -221,21 +232,21 @@ public interface CDockable {
 	public boolean isCloseable();
 	
 	/**
-	 * Tells whether the height of this dockable should remain the same when
+	 * Tells whether the height of this <code>CDockable</code> should remain the same when
 	 * its parent changes the size. This has only effect if the parent can
 	 * choose the size of its children. A lock is no guarantee for staying
-	 * with the same size, the user still can resize this dockable.
-	 * @return <code>true</code> if the height of this dockable should remain
+	 * with the same size, the user still can resize this <code>CDockable</code>.
+	 * @return <code>true</code> if the height of this <code>CDockable</code> should remain
 	 * the same during resize events of the parent.
 	 */
 	public boolean isResizeLockedVertically();
 	
 	/**
-     * Tells whether the width of this dockable should remain the same when
+     * Tells whether the width of this <code>CDockable</code> should remain the same when
      * its parent changes the size. This has only effect if the parent can
      * choose the size of its children. A lock is no guarantee for staying
-     * with the same size, the user still can resize this dockable.
-     * @return <code>true</code> if the width of this dockable should remain
+     * with the same size, the user still can resize this <code>CDockable</code>.
+     * @return <code>true</code> if the width of this <code>CDockable</code> should remain
      * the same during resize events of the parent.
      */
 	public boolean isResizeLockedHorizontally();
@@ -253,7 +264,7 @@ public interface CDockable {
 	public RequestDimension getAndClearResizeRequest();
 	
 	/**
-	 * Shows or hides this dockable. If this dockable is not visible and
+	 * Shows or hides this <code>CDockable</code>. If this <code>CDockable</code> is not visible and
 	 * is made visible, then the framework tries to set its location at
 	 * the last known position.<br>
 	 * Subclasses should call {@link CControlAccess#show(CDockable)} or
@@ -265,33 +276,34 @@ public interface CDockable {
 	public void setVisible( boolean visible );
 	
 	/**
-	 * Tells whether this dockable is currently visible or not. Visibility
-	 * means that this dockable is in the tree structure of DockingFrames. Being
+	 * Tells whether this <code>CDockable</code> is currently visible or not. Visibility
+	 * means that this <code>CDockable</code> is in the tree structure of DockingFrames. Being
 	 * in the structure does not imply being visible on the screen. If some
 	 * <code>JFrame</code> is not shown, or some <code>DockStation</code> not
-	 * properly added to a parent component, then a visible dockable can
+	 * properly added to a parent component, then a visible <code>CDockable</code> can
 	 * be invisible for the user.<br>
 	 * Subclasses should return the result of {@link CControlAccess#isVisible(CDockable)}.
-	 * @return <code>true</code> if this dockable can be accessed by the user
+	 * @return <code>true</code> if this <code>CDockable</code> can be accessed by the user
 	 * through a graphical user interface.
 	 */
 	public boolean isVisible();
 	
 	/**
-	 * Sets the location of this dockable. If this dockable is visible, than
+	 * Sets the location of this <code>CDockable</code>. If this <code>CDockable</code> is visible, than
 	 * this method will take immediately effect. Otherwise the location will be
-	 * stored in a cache and read as soon as this dockable is made visible.<br>
+	 * stored in a cache and read as soon as this <code>CDockable</code> is made visible.<br>
 	 * Note that the location can only be seen as a hint, the framework tries
 	 * to fit the location as good as possible, but there are no guarantees.<br>
 	 * Subclasses should call {@link CControlAccess#getLocationManager()} and 
 	 * {@link CLocationModeManager#setLocation(bibliothek.gui.Dockable, CLocation)}.
 	 * @param location the new location, <code>null</code> is possible, but
-	 * will not move the dockable immediately
+	 * will not move the <code>CDockable</code> immediately
+	 * @see #getBaseLocation()
 	 */
 	public void setLocation( CLocation location );
 	
 	/**
-	 * Gets the location of this dockable. If this dockable is visible, then
+	 * Gets the location of this <code>CDockable</code>. If this <code>CDockable</code> is visible, then
 	 * a location will always be returned. Otherwise a location will only
 	 * be returned if it just was set using {@link #setLocation(CLocation)}.
 	 * @return the location or <code>null</code>
@@ -299,43 +311,44 @@ public interface CDockable {
 	public CLocation getBaseLocation();
 	
     /**
-     * Sets how and where this dockable should be shown. Conflicts with
+     * Sets how and where this <code>CDockable</code> should be shown. Conflicts with
      * {@link #isExternalizable()}, {@link #isMaximizable()} and {@link #isMinimizable()}
-     * will just be ignored.
+     * will just be ignored. Implementations should call {@link CLocationModeManager#setMode(Dockable, ExtendedMode)}.
      * @param extendedMode the size and location
      */
     public void setExtendedMode( ExtendedMode extendedMode );
 	
     /**
-     * Gets the size and location of this dockable.
-     * @return the size and location or <code>null</code> if this dockable
+     * Gets the size and location of this <code>CDockable</code>. Implementations should
+     * return {@link CLocationModeManager#getMode(Dockable)}.
+     * @return the size and location or <code>null</code> if this <code>CDockable</code>
      * is not part of an {@link CControl}.
      */
     public ExtendedMode getExtendedMode();
     
     /**
-     * Sets the parent of this dockable. This method can be called by the client
+     * Sets the parent of this <code>CDockable</code>. This method can be called by the client
      * or indirectly through {@link #setLocation(CLocation)}.
      * @param area the new parent or <code>null</code>
      */
     public void setWorkingArea( CStation<?> area );
     
     /**
-     * Gets the parent of this dockable, this should be the same as
+     * Gets the parent of this <code>CDockable</code>, this should be the same as
      * set by the last call of {@link #setWorkingArea(CStation)}.
      * @return the parent or <code>null</code>
      */
     public CStation<?> getWorkingArea();
     
     /**
-     * Sets the size of this dockable when this dockable is minimized and
+     * Sets the size of this <code>CDockable</code> when this <code>CDockable</code> is minimized and
      * on a popup window.
      * @param size the size
      */
     public void setMinimizedSize( Dimension size );
     
     /**
-     * Gets the size which is used when this dockable is minimzed and
+     * Gets the size which is used when this <code>CDockable</code> is minimzed and
      * on a popup window. If a value below 0 is set, then the default size
      * is used.
      * @return the size
@@ -343,14 +356,14 @@ public interface CDockable {
     public Dimension getMinimizedSize();
     
     /**
-     * Sets whether this dockable should remain visible when minimized
+     * Sets whether this <code>CDockable</code> should remain visible when minimized
      * and without focus.
      * @param hold whether to remain visible
      */
     public void setMinimizedHold( boolean hold );
     
     /**
-     * Tells whether this dockable remains visible when minimized and 
+     * Tells whether this <code>CDockable</code> remains visible when minimized and 
      * without focus.
      * @return <code>true</code> if this remains visible, <code>false</code>
      * otherwise 
@@ -358,7 +371,7 @@ public interface CDockable {
     public boolean isMinimizedHold();
     
     /**
-     * Tells whether this dockable shows its title or not. Note that some
+     * Tells whether this <code>CDockable</code> shows its title or not. Note that some
      * {@link DockTheme}s might override this setting.
      * @return <code>true</code> if the title is shown, <code>false</code>
      * otherwise.
@@ -366,7 +379,7 @@ public interface CDockable {
     public boolean isTitleShown();
     
     /**
-     * Tells whether a single tab should be shown for this dockable. Some
+     * Tells whether a single tab should be shown for this <code>CDockable</code>. Some
      * {@link DockTheme}s might ignore this setting.
      * @return <code>true</code> if a single tab should be shown,
      * <code>false</code> if not
@@ -374,19 +387,28 @@ public interface CDockable {
     public boolean isSingleTabShown();
     
 	/**
-	 * Gets the intern representation of this dockable.
+	 * Gets the intern representation of this <code>CDockable</code>.
 	 * @return the intern representation.
 	 */
 	public CommonDockable intern();
 	
 	/**
-	 * Sets the {@link CControl} which is responsible for this dockable. Subclasses
+	 * Sets the {@link CControl} which is responsible for this <code>CDockable</code>. Subclasses
 	 * must call {@link CControlAccess#link(CDockable, CDockableAccess)} to grant
-	 * the <code>CControl</code> access to the internal systems of this
+	 * the <code>CControl</code> access to the internal properties of this
 	 * {@link CDockable}. <code>link</code> can also be used to revoke access.
 	 * @param control the new control or <code>null</code>
 	 */
 	public void setControl( CControlAccess control );
+	
+	/**
+	 * Gets the control which is responsible for this dockable. Clients
+	 * should not use this method unless they know exactly what they are doing.
+	 * @return the control
+	 */
+	@Todo( priority=Priority.MINOR, compatibility=Compatibility.BREAK_MINOR, target=Version.VERSION_1_1_0,
+			description="Return CControl instead of CControlAccess" )
+	public CControlAccess getControl();
 	
 	/**
 	 * Gets an action which is not added to the title by this {@link CDockable}
@@ -409,11 +431,4 @@ public interface CDockable {
 	 * @return the map, this has always to be the same object
 	 */
 	public FontMap getFonts();
-	
-	/**
-	 * Gets the control which is responsible for this dockable. Clients
-	 * should not use this method unless they know exactly what they are doing.
-	 * @return the control
-	 */
-	public CControlAccess getControl();
 }

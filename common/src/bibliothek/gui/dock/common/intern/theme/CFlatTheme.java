@@ -43,12 +43,14 @@ import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.util.color.ColorBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
+import bibliothek.util.ClientOnly;
 
 /**
  * A {@link CDockTheme} that encapsulates a {@link FlatTheme} in order to 
  * allow the theme access to the possibilities of the common-project.
  * @author Benjamin Sigg
  */
+@ClientOnly
 public class CFlatTheme extends CDockTheme<FlatTheme> {
     /**
      * Creates a new theme.

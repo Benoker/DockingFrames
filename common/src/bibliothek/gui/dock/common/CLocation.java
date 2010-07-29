@@ -135,7 +135,8 @@ public abstract class CLocation {
 	}
 	
 	/**
-	 * Creates a location representing an element that is externalized and maximized.
+	 * Creates a location representing an element that is externalized and maximized. The coordinates
+	 * are used once the {@link CDockable} is no longer maximized.
 	 * @param x the x-coordinate in pixels
 	 * @param y the y-coordinate in pixels
 	 * @param width the width in pixels

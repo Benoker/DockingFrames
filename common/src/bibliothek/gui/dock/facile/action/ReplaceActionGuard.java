@@ -27,18 +27,20 @@
 package bibliothek.gui.dock.facile.action;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.LocationHint;
+import bibliothek.util.ClientOnly;
 
 /**
  * An {@link ActionGuard} that adds a {@link ReplaceAction} to all elements
- * that are Dockable and DockStation.
+ * that are {@link Dockable} and {@link DockStation} at the same time.
  * @author Benjamin Sigg
- *
  */
+@ClientOnly
 public class ReplaceActionGuard implements ActionGuard {
 	/** The source that is added to dockables */
 	private DefaultDockActionSource source;

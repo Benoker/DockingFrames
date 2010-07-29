@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -35,15 +35,16 @@ import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.util.ClientOnly;
 
 /**
  * A factory creating {@link RenameAction RenameActions} for a
- * {@link DockController}. Note that actions created by this factory
- * are never deleted unless the factory and its {@link DockController} are
- * deleted.
+ * {@link DockController}. There is one action created for each {@link Class}, 
+ * these actions are not removed before this factory is collected by the 
+ * garbage collector.
  * @author Benjamin Sigg
- *
  */
+@ClientOnly
 public class RenameActionFactory {
     /** The controller for which actions are created */
     private DockController controller;
@@ -112,7 +113,9 @@ public class RenameActionFactory {
     }
     
     /**
-     * Creates a new action for the specified type
+     * Creates a new action for the specified type. Subclasses may override this
+     * method to support more classes. Currently supported are {@link DefaultDockable},
+     * {@link SplitDockStation}, {@link FlapDockStation} and {@link StackDockStation}.
      * @param owner the type for which the action is created
      * @return the new action and the type which can use the action.
      */

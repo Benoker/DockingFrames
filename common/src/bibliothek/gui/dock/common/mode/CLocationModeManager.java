@@ -51,8 +51,9 @@ import bibliothek.util.Path;
 import bibliothek.util.container.Single;
 
 /**
- * {@link LocationModeManager} providing additional methods specific for
- * the Common project.
+ * {@link LocationModeManager} providing additional methods for working with
+ * {@link CLocation}s, {@link CommonDockable}s and other items specific to the
+ * <code>common</code> project. 
  * @author Benjamin Sigg
  *
  */
@@ -202,11 +203,14 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
 	    			}
 	    		}
 	    	}
-    	}	    	
-    	
-    	// easy solution: set the location, then change the mode
-	    setProperties( newMode, dockable, new Location( mode.getModeIdentifier(), root, location.findProperty() ) );
-	    apply( dockable, newMode, true );
+    		
+        	// easy solution: set the location, then change the mode
+    	    setProperties( newMode, dockable, new Location( mode.getModeIdentifier(), root, location.findProperty() ) );
+    	    apply( dockable, newMode, true );
+    	}
+    	else{
+    		apply( dockable, newMode, false );
+    	}
     }
     
     /**

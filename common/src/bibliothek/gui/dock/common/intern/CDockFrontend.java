@@ -35,11 +35,13 @@ import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.LocationSettingConverter;
 import bibliothek.gui.dock.frontend.Setting;
 import bibliothek.gui.dock.support.mode.ModeSettings;
+import bibliothek.util.FrameworkOnly;
 
 /**
  * A {@link DockFrontend} that uses {@link CSetting} instead of {@link Setting}.
  * @author Benjamin Sigg
  */
+@FrameworkOnly
 public class CDockFrontend extends DockFrontend{
     /** access to the internals of a {@link CControl} */
     private CControlAccess control;

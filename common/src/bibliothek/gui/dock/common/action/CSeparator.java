@@ -23,10 +23,9 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.intern.action;
+package bibliothek.gui.dock.common.action;
 
 import bibliothek.gui.dock.action.actions.SeparatorAction;
-import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.intern.CDockable;
 
 /**

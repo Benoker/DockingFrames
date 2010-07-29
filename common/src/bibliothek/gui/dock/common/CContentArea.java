@@ -47,6 +47,10 @@ import bibliothek.gui.dock.common.location.CBaseLocation;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.station.CFlapDockStationHandle;
 import bibliothek.gui.dock.common.mode.station.CSplitDockStationHandle;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A component that is normally set into the center of the
@@ -60,6 +64,8 @@ import bibliothek.gui.dock.common.mode.station.CSplitDockStationHandle;
  * {@link CControl#createContentArea(String)} to create a new content area. 
  * @author Benjamin Sigg
  */
+@Todo( priority=Priority.MINOR, compatibility=Compatibility.COMPATIBLE, target=Version.VERSION_1_1_0, 
+		description="Introduce some interface 'MultiCStation' or similar: a set of CStations, CContentArea would implement this interface" )
 public class CContentArea extends JPanel{
 	/**
 	 * References a corner of a panel.

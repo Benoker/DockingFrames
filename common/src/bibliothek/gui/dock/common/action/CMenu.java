@@ -29,8 +29,7 @@ import javax.swing.Icon;
 
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.actions.SimpleMenuAction;
-import bibliothek.gui.dock.common.intern.CDecorateableAction;
-import bibliothek.gui.dock.common.intern.action.CSeparator;
+import bibliothek.gui.dock.common.intern.action.CDecorateableAction;
 
 /**
  * A collection of {@link CAction}s which are shown in a menu.

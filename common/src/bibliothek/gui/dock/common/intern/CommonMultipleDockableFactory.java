@@ -46,7 +46,7 @@ import bibliothek.util.xml.XElement;
 /**
  * A factory used to create {@link CommonDockable}s. This factory is only
  * used to create {@link MultipleCDockable}s because {@link SingleCDockable}s
- * are never stored. 
+ * are stored by the client. 
  * @author Benjamin Sigg
  */
 public class CommonMultipleDockableFactory implements DockFactory<CommonDockable, CommonDockableLayout> {

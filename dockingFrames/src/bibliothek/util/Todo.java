@@ -36,8 +36,8 @@ import java.lang.annotation.Retention;
  */
 @Retention(RetentionPolicy.SOURCE)
 @Documented
-public @interface Enhancement {
-	/** Tells how important an {@link Enhancement} is */
+public @interface Todo {
+	/** Tells how important an {@link Todo} is */
 	public static enum Priority{
 		/** The highest priority, bugs are to be repaired as soon as possible */
 		BUG,
@@ -49,7 +49,7 @@ public @interface Enhancement {
 		ENHANCEMENT
 	}
 	
-	/** Tells whether an {@link Enhancement} is backwards compatible */
+	/** Tells whether an {@link Todo} is backwards compatible */
 	public static enum Compatibility{
 		/** The modification affects only a method or class, noone will notice the change */
 		COMPATIBLE, 
@@ -59,7 +59,7 @@ public @interface Enhancement {
 		BREAK_MAJOR
 	}
 	
-	/** Tells when an {@link Enhancement} is scheduled to be implemented */
+	/** Tells when an {@link Todo} is scheduled to be implemented */
 	public static enum Version{
 		VERSION_1_1_0;
 	}

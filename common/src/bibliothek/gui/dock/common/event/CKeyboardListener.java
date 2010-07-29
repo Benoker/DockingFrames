@@ -28,6 +28,7 @@ package bibliothek.gui.dock.common.event;
 import java.awt.event.KeyEvent;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
 
 /**
@@ -36,6 +37,10 @@ import bibliothek.gui.dock.common.intern.CDockable;
  * {@link Dockable}s until they are processed. Once they are processed, no
  * other listener is informed about them. 
  * @author Benjamin Sigg
+ * @see CDockable#addKeyboardListener(CKeyboardListener)
+ * @see CDockable#removeKeyboardListener(CKeyboardListener)
+ * @see CControl#addKeyboardListener(CKeyboardListener)
+ * @see CControl#removeKeyboardListener(CKeyboardListener)
  */
 public interface CKeyboardListener {
     /**

@@ -41,13 +41,14 @@ import bibliothek.gui.dock.support.lookandfeel.LookAndFeelList;
 import bibliothek.gui.dock.support.lookandfeel.LookAndFeelListener;
 import bibliothek.gui.dock.support.lookandfeel.LookAndFeelList.Info;
 import bibliothek.gui.dock.support.menu.BaseMenuPiece;
+import bibliothek.util.ClientOnly;
 
 /**
  * A menu that contains an item for each available {@link LookAndFeel}. The
  * set of <code>LookAndFeel</code>s is determined through a {@link LookAndFeelList}.
  * @author Benjamin Sigg
- *
  */
+@ClientOnly
 public class LookAndFeelMenuPiece extends BaseMenuPiece{
     /** the item for the default-<code>LookAndFeel</code> */
     private JRadioButtonMenuItem defaultButton;

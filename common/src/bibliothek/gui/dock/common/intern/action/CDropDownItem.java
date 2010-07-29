@@ -28,12 +28,13 @@ package bibliothek.gui.dock.common.intern.action;
 import bibliothek.gui.dock.action.actions.SimpleDockAction;
 import bibliothek.gui.dock.action.actions.SimpleDropDownItemAction;
 import bibliothek.gui.dock.common.action.CDropDownButton;
-import bibliothek.gui.dock.common.intern.CDecorateableAction;
+import bibliothek.util.FrameworkOnly;
 
 /**
  * An action which can be child of a dropdown-menu.
  * @author Benjamin Sigg
  */
+@FrameworkOnly
 public class CDropDownItem extends CDecorateableAction{
     /** the internal representation */
     private SimpleDropDownItemAction action;

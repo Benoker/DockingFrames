@@ -34,6 +34,7 @@ import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.intern.DefaultCDockable;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.dockable.DefaultDockableFactory;
+import bibliothek.util.ClientOnly;
 
 /**
  * A {@link MultipleCDockable} that contains a {@link #getContentPane() content-pane}
@@ -42,6 +43,7 @@ import bibliothek.gui.dock.dockable.DefaultDockableFactory;
  * @author Benjamin Sigg
  * @see MultipleCDockable
  */
+@ClientOnly
 public class DefaultMultipleCDockable extends DefaultCDockable implements MultipleCDockable{
     /** a factory needed to store or load this dockable */
     private MultipleCDockableFactory<?,?> factory;

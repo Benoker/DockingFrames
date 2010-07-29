@@ -34,11 +34,13 @@ import bibliothek.gui.dock.common.event.ResizeRequestListener;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.layout.RequestDimension;
+import bibliothek.util.FrameworkOnly;
 
 /**
  * A listener to a {@link CControl} that provides useful methods for subclasses.
  * @author Benjamin Sigg
  */
+@FrameworkOnly
 public abstract class AbstractResizeRequestHandler implements ResizeRequestListener{
     
     /**

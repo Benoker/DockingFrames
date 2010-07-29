@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.intern;
+package bibliothek.gui.dock.common.intern.action;
 
 import javax.swing.Icon;
 import javax.swing.KeyStroke;

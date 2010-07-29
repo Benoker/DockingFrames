@@ -26,12 +26,19 @@
 package bibliothek.gui.dock.common.event;
 
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A listener added to a {@link CDockable}, this listener will get informed
  * about state changes of {@link CDockable}.
  * @author Benjamin Sigg
+ * @see CDockablePropertyListener
  */
+@Todo( priority=Priority.MINOR, compatibility=Compatibility.BREAK_MAJOR, target=Version.VERSION_1_1_0, 
+		description="Support all the ExtendedModes that exist. Make an abstract subclass which offers the current methods." )
 public interface CDockableStateListener {
 
     /**

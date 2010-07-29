@@ -360,12 +360,12 @@ public abstract class AbstractCDockable implements CDockable {
     /**
      * Tells this {@link CDockable} which size it should have. The size will
      * be stored until it is read by {@link #getAndClearResizeRequest()}.<br>
-     * This method will call {@link CControl#handleResizeRequests()} in order to
-     * try to apply the requested size. However, there are no guarantees that
-     * the requested size can be matched, or that the request gets handled at all.<br>
-     * If this dockable is not registered at a {@link CControl}, then the request
-     * will remain unprocessed until this dockable is registered, and someone calls
-     * {@link CControl#handleResizeRequests()} on the new owner.
+     * If <code>process</code> is <code>true</code>, then this method will call 
+     * {@link CControl#handleResizeRequests()} in order to try to apply the requested size. 
+     * However, there are no guarantees that the requested size can be matched, or that 
+     * the request gets handled at all.<br> If this <code>CDockable</code> is not registered at a 
+     * {@link CControl}, then the request will remain unprocessed until this <code>CDockable</code>
+     * is registered, and someone calls {@link CControl#handleResizeRequests()} on the new owner.
      * @param size the new preferred size, can be <code>null</code> to cancel an
      * earlier request
      * @param process whether to process all pending requests of all {@link CDockable}
@@ -386,12 +386,12 @@ public abstract class AbstractCDockable implements CDockable {
     /**
      * Tells this {@link CDockable} which size it should have. The size will
      * be stored until it is read by {@link #getAndClearResizeRequest()}.<br>
-     * This method will call {@link CControl#handleResizeRequests()} in order to
-     * try to apply the requested size. However, there are no guarantees that
-     * the requested size can be matched, or that the request gets handled at all.<br>
-     * If this dockable is not registered at a {@link CControl}, then the request
-     * will remain unprocessed until this dockable is registered, and someone calls
-     * {@link CControl#handleResizeRequests()} on the new owner.
+     * If <code>process</code> is <code>true</code>, then this method will call 
+     * {@link CControl#handleResizeRequests()} in order to try to apply the requested size. 
+     * However, there are no guarantees that the requested size can be matched, or that the 
+     * request gets handled at all.<br> If this <code>CDockable</code> is not registered at
+     * a {@link CControl}, then the request will remain unprocessed until this <code>CDockable</code>
+     * is registered, and someone calls {@link CControl#handleResizeRequests()} on the new owner.
      * @param size the new preferred size, can be <code>null</code> to cancel an
      * earlier request
      * @param process whether to process all pending requests of all {@link CDockable}
@@ -664,11 +664,12 @@ public abstract class AbstractCDockable implements CDockable {
     }
     
     /**
-     * Exchanges an action of this dockable. The actions that are associated 
-     * with this dockable through this method are not necessarily shown on the 
+     * Exchanges an action of this {@link CDockable}. The actions that are associated 
+     * with this <code>CDockable</code> through this method are not necessarily shown on the 
      * title. They are used by other modules to create effects that are known
      * only to them.
-     * @param key the key of the action
+     * @param key the key of the action, one of the <code>ACTION_KEY_xzy</code>-constants
+     * defined in {@link CDockable}
      * @param action the new action, can be <code>null</code> which might force
      * back a default action (that depends on the module that uses <code>key</code>)
      */

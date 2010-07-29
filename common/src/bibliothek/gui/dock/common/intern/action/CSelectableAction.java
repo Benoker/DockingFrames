@@ -33,11 +33,13 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.SelectableDockAction;
 import bibliothek.gui.dock.action.actions.SimpleSelectableAction;
 import bibliothek.gui.dock.event.SelectableDockActionListener;
+import bibliothek.util.FrameworkOnly;
 
 /**
  * An action which is either selected or deselected.
  * @author Benjamin Sigg
  */
+@FrameworkOnly
 public abstract class CSelectableAction extends CDropDownItem{
     /** the internal representation of this action */
     private SimpleSelectableAction action;

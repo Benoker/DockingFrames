@@ -34,7 +34,7 @@ import bibliothek.gui.dock.common.action.CAction;
 /**
  * An action which is never visible, can be used as placeholder
  * or in cases where an action would normally be required and <code>null</code>
- * would be repalced by a default action. 
+ * would be replaced by a default action. 
  * @author Benjamin Sigg
  */
 public class CBlank extends CAction {

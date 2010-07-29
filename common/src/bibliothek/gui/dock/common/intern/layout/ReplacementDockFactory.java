@@ -36,14 +36,15 @@ import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
+import bibliothek.util.FrameworkOnly;
 import bibliothek.util.xml.XElement;
 
 /**
  * This factory is only used to extract {@link MultipleCDockable}s that have been inserted into
  * a layout by the {@link CLayoutChangeStrategy}.
  * @author Benjamin Sigg
- *
  */
+@FrameworkOnly
 public class ReplacementDockFactory implements DockFactory<CommonDockable, MultipleCDockable> {
 	public static final String REPLACEMENT_FACTORY_ID = "dock.common.replacement_factory";
 	

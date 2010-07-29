@@ -39,7 +39,7 @@ import bibliothek.gui.dock.event.SelectableDockActionListener;
 /**
  * An action which behaves like a {@link JRadioButton}.<br>
  * Several {@link CRadioButton}s can be added to a {@link CRadioGroup}, only
- * one {@link CRadioButton} ob such a group will be selected.
+ * one {@link CRadioButton} of such a group will be selected.
  * @author Benjamin Sigg
  */
 public abstract class CRadioButton extends CSelectableAction {

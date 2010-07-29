@@ -32,7 +32,8 @@ import java.awt.LayoutManager;
 import javax.swing.Icon;
 
 import bibliothek.gui.dock.common.action.CAction;
-import bibliothek.gui.dock.common.intern.action.CSeparator;
+import bibliothek.gui.dock.common.action.CSeparator;
+import bibliothek.util.FrameworkOnly;
 
 /**
  * An {@link CDockable} that uses a {@link DefaultCommonDockable} to show
@@ -43,6 +44,7 @@ import bibliothek.gui.dock.common.intern.action.CSeparator;
  * the title or the icon.
  * @author Benjamin Sigg
  */
+@FrameworkOnly
 public class DefaultCDockable extends AbstractCDockable{
     /**
      * Describes what the user can do with the enclosing {@link DefaultCDockable}.<br>

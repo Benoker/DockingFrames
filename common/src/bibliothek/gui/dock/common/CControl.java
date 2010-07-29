@@ -133,7 +133,9 @@ import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.WindowProvider;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
+import bibliothek.util.Todo;
 import bibliothek.util.Version;
+import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
 import bibliothek.util.xml.XIO;
@@ -638,6 +640,8 @@ public class CControl {
     /**
      * Sets up the {@link #locationManager}.
      */
+    @Todo( priority=Todo.Priority.MINOR, compatibility=Compatibility.BREAK_MINOR, target=Todo.Version.VERSION_1_1_0, 
+    		description="Do not create the ScreenDockStation here, allow clients to not use a ScreenDockStation at all or to replace it" )
     private void initExtendedModes(){
     	locationManager = new CLocationModeManager( access );
 
@@ -822,7 +826,7 @@ public class CControl {
      * Removes a listener from this control.
      * @param listener the listener to remove
      */
-    public void removeKeybaordListener( CKeyboardListener listener ){
+    public void removeKeyboardListener( CKeyboardListener listener ){
         listenerCollection.removeKeyboardListener( listener );
     }
 
@@ -1111,6 +1115,8 @@ public class CControl {
      * behavior
      */
     @Deprecated
+    @Todo( priority=Todo.Priority.MAJOR, compatibility=Compatibility.BREAK_MAJOR, target=Todo.Version.VERSION_1_1_0,
+    		description="remove this method, replace by something better" )
     public void addContentArea( CContentArea content ){
         if( content == null )
             throw new NullPointerException( "content is null" );

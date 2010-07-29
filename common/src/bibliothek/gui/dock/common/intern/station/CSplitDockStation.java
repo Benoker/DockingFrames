@@ -34,12 +34,14 @@ import bibliothek.gui.dock.common.event.CDockableAdapter;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.title.DockTitleRequest;
+import bibliothek.util.FrameworkOnly;
 
 /**
  * An implementation of {@link SplitDockStation} that also satisfies the
  * {@link CommonDockable} interface.
  * @author Benjamin Sigg
  */
+@FrameworkOnly
 public class CSplitDockStation extends SplitDockStation implements CommonStation<SplitDockStation>{
 	private CommonStationDelegate delegate;
 

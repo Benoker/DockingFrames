@@ -33,7 +33,7 @@ import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.SingleCDockable;
 
 /**
- * Represents a {@link bibliothek.gui.dock.common.intern.CDockable}.
+ * A {@link Dockable} which is a wrapper for a {@link CDockable}.
  * @author Benjamin Sigg
  */
 public interface CommonDockable extends Dockable{
@@ -51,10 +51,10 @@ public interface CommonDockable extends Dockable{
 	
 	/**
 	 * Gets a set of {@link DockActionSource}s which are to be displayed
-	 * on this {@link CommonDockable} as well. Note that every call to this
+	 * on this {@link CommonDockable}. Note that every call to this
 	 * method should return the same array of sources. Callers should not
 	 * modify the result.
-	 * @return the action sources
+	 * @return the action sources, can be an empty array
 	 */
 	public DockActionSource[] getSources();
 	

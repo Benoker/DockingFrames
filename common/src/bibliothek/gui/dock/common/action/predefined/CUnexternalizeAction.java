@@ -36,6 +36,8 @@ import bibliothek.gui.dock.support.util.Resources;
 
 /**
  * An action that un-externalizes (=normalizes) each {@link CDockable} to which it is added.
+ * This action does the same as the {@link CNormalizeAction}, it just has another icon
+ * and title for the user.
  * @author Benjamin Sigg
  */
 public class CUnexternalizeAction extends CExtendedModeAction{

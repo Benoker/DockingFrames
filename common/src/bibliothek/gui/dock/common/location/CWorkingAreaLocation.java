@@ -34,10 +34,9 @@ import bibliothek.gui.dock.station.split.SplitDockProperty;
 /**
  * A location representing a {@link CWorkingArea}.
  * @author Benjamin Sigg
- *
  */
 public class CWorkingAreaLocation extends CSplitLocation{
-    /** the area to which this location relates, can be <code>null</code> */
+    /** the area to which this location relates */
     private CWorkingArea area;
     
     /**

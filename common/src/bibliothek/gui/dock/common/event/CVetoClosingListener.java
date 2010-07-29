@@ -28,6 +28,7 @@ package bibliothek.gui.dock.common.event;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CWorkingArea;
 import bibliothek.gui.dock.common.MultipleCDockable;
+import bibliothek.gui.dock.common.MultipleCDockableFactory;
 import bibliothek.gui.dock.common.intern.CDockable;
 
 /**
@@ -39,10 +40,14 @@ import bibliothek.gui.dock.common.intern.CDockable;
  * 	<li>There is no guarantee that {@link #closing(CVetoClosingEvent)} is called before {@link #closed(CVetoClosingEvent)}</li>
  * 	<li>The event-object passed to {@link #closing(CVetoClosingEvent)} and {@link #closed(CVetoClosingEvent)} may not be equal, even if they describe the same event</li>
  * 	<li>Events may be split: if {@link #closing(CVetoClosingEvent)} was called once and handled three dockables, then {@link #closed(CVetoClosingEvent)} may be called three times to handle one dockable</li>
- * 	<li> {@link MultipleCDockable}s that are not children of a {@link CWorkingArea} are closed and re-opened if the layout changes ({@link CControl#load(String)}) </li>
+ * 	<li> {@link MultipleCDockable}s that are not children of a {@link CWorkingArea} are closed and re-opened if the layout changes ({@link CControl#load(String)}). This may be
+ *  prevented with a correct implementation of {@link MultipleCDockableFactory#match(MultipleCDockable, bibliothek.gui.dock.common.MultipleCDockableLayout) MultipleCDockableFactory.match}. </li>
  * </ul>
  * @author Benjamin Sigg
- *
+ * @see CControl#addVetoClosingListener(CVetoClosingListener)
+ * @see CControl#removeVetoClosingListener(CVetoClosingListener)
+ * @see CDockable#addVetoClosingListener(CVetoClosingListener)
+ * @see CDockable#removeVetoClosingListener(CVetoClosingListener)
  */
 public interface CVetoClosingListener {
 	/**

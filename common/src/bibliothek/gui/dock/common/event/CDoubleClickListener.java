@@ -27,12 +27,15 @@ package bibliothek.gui.dock.common.event;
 
 import java.awt.event.MouseEvent;
 
+import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
 
 /**
  * A listener that gets informed when the user makes a double click onto
  * a dockable.
  * @author Benjamin Sigg
+ * @see CControl#addDoubleClickListener(CDoubleClickListener)
+ * @see CControl#removeDoubleClickListener(CDoubleClickListener)
  */
 public interface CDoubleClickListener {
     /**

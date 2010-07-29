@@ -40,11 +40,13 @@ import bibliothek.gui.dock.common.layout.ThemeMapListener;
 import bibliothek.gui.dock.support.menu.BaseMenuPiece;
 import bibliothek.gui.dock.support.menu.MenuPiece;
 import bibliothek.gui.dock.themes.ThemeFactory;
+import bibliothek.util.ClientOnly;
 
 /**
  * A {@link MenuPiece} that can change the {@link DockTheme}.
  * @author Benjamin Sigg
  */
+@ClientOnly
 public class ThemeMenuPiece extends BaseMenuPiece {
     /** the controller whose theme might be changed */
     private DockController controller;

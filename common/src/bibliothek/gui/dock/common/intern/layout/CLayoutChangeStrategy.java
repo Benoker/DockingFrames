@@ -54,13 +54,14 @@ import bibliothek.gui.dock.layout.DockLayoutInfo;
 import bibliothek.gui.dock.layout.DockSituation;
 import bibliothek.gui.dock.layout.PredefinedDockSituation;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
+import bibliothek.util.FrameworkOnly;
 
 /**
  * Strategy that pays attention to {@link MultipleCDockableFactory#match(bibliothek.gui.dock.common.MultipleCDockable, bibliothek.gui.dock.common.MultipleCDockableLayout)}
  * and that fires {@link CVetoClosingEvent}s for {@link MultipleCDockable}s as well.
  * @author Benjamin Sigg
- *
  */
+@FrameworkOnly
 public class CLayoutChangeStrategy extends DefaultLayoutChangeStrategy {
 	/** the control in whose realm this strategy is used */
 	private CControl control;

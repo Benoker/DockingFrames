@@ -32,6 +32,7 @@ import bibliothek.gui.dock.common.intern.CDockable;
  * A listener added to a {@link CDockable}, this listener will get informed
  * about property changes of {@link CDockable}.
  * @author Benjamin Sigg
+ * @see CDockableStateListener
  */
 public interface CDockablePropertyListener {
     /**

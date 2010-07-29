@@ -30,12 +30,14 @@ import bibliothek.gui.dock.facile.mode.LocationMode;
 import bibliothek.gui.dock.facile.mode.MaximizedMode;
 import bibliothek.gui.dock.facile.mode.MinimizedMode;
 import bibliothek.gui.dock.facile.mode.NormalMode;
+import bibliothek.util.ClientOnly;
 import bibliothek.util.Path;
 
 /**
  * A extendible set of unique singleton identifiers for the various instances of {@link LocationMode mode}.
  * @author Benjamin Sigg
  */
+@ClientOnly
 public class ExtendedMode {
 	/** the dockable is as small as possible, see also {@link MinimizedMode} */
 	public static final ExtendedMode MINIMIZED = new ExtendedMode( MinimizedMode.IDENTIFIER );

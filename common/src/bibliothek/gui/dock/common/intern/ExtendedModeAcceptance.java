@@ -31,12 +31,14 @@ import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
+import bibliothek.util.FrameworkOnly;
 
 /**
  * A {@link DockAcceptance} ensuring that the {@link CDockable#getExtendedMode() extended mode} property
  * of {@link CDockable} is respected on drag and drop operations.
  * @author Benjamin Sigg
  */
+@FrameworkOnly
 public class ExtendedModeAcceptance implements DockAcceptance {
 	/** access to the {@link CControl} */
 	private CControlAccess control;

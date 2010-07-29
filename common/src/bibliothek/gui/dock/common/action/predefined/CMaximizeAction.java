@@ -40,7 +40,7 @@ import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.PropertyValue;
 
 /**
- * An action that maximizes each {@link CDockable} to which it is added.
+ * An action that {@link ExtendedMode#MAXIMIZED maximizes} each {@link CDockable} to which it is added.
  * @author Benjamin Sigg
  */
 public class CMaximizeAction extends CExtendedModeAction{

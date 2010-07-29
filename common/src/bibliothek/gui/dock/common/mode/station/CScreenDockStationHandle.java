@@ -139,7 +139,7 @@ public class CScreenDockStationHandle {
 	}
 	
 	/**
-	 * Gets a {@link CLocation} describing the location of <code>dockable</code> on this handles station.
+	 * Gets a {@link CLocation} describing the location of <code>dockable</code> on the station of this handle.
 	 * @param dockable some child
 	 * @return the location
 	 */

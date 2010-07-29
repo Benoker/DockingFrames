@@ -33,7 +33,9 @@ import bibliothek.gui.dock.common.MultipleCDockableFactory;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 
 /**
- * Gives access to the internal methods of a {@link bibliothek.gui.dock.common.CControl}
+ * Gives access to the internal methods of a {@link bibliothek.gui.dock.common.CControl}.<br>
+ * This class is not intended to be used by clients, using it wrongly can result in weird
+ * behavior of its owning {@link CControl}.
  * @author Benjamin Sigg
  */
 public interface CControlAccess {

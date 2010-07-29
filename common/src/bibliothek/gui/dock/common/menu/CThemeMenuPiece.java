@@ -27,19 +27,21 @@ package bibliothek.gui.dock.common.menu;
 
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.layout.ThemeMap;
 import bibliothek.gui.dock.facile.menu.ThemeMenuPiece;
-import bibliothek.gui.dock.themes.NoStackTheme;
 
 /**
- * A {@link ThemeMenuPiece} that uses the default {@link DockTheme}s of
- * DockingFrames, but only in the {@link NoStackTheme no-stack} version.
+ * A {@link ThemeMenuPiece} that offers the {@link DockTheme}s specified
+ * in the {@link ThemeMap} of the owning {@link CControl}.
  * @author Benjamin Sigg
+ * @see CControl#getThemes()
  */
 public class CThemeMenuPiece extends ThemeMenuPiece{
     
     /**
      * Creates a new piece.
-     * @param control the control whose theme might be changed
+     * @param control the control whose theme might be changed using one of themes
+     * of {@link CControl#getThemes()}
      */
     public CThemeMenuPiece( CControl control ) {
         super( control.intern().getController(), control.getThemes() );

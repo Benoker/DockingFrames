@@ -36,11 +36,13 @@ import bibliothek.extension.gui.dock.preference.PreferenceTreeModel;
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.support.menu.BaseMenuPiece;
 import bibliothek.gui.dock.support.util.Resources;
+import bibliothek.util.ClientOnly;
 
 /**
  * A menu piece that allows the user to change the preferences of the framework.
  * @author Benjamin Sigg
  */
+@ClientOnly
 public class PreferenceMenuPiece extends BaseMenuPiece{
     private DockController controller;
     

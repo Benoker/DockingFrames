@@ -53,10 +53,10 @@ import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.title.DockTitle;
-import bibliothek.util.Enhancement;
+import bibliothek.util.Todo;
 import bibliothek.util.Path;
-import bibliothek.util.Enhancement.Compatibility;
-import bibliothek.util.Enhancement.Version;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Version;
 
 /**
  * A list of methods which can be used for different purposes. Methods
@@ -324,7 +324,7 @@ public class DockUtilities {
      * @param dockable a Dockable for which a Component has to be found
      * @return a showing component or <code>null</code>
      */
-    @Enhancement( priority=Enhancement.Priority.MINOR, compatibility=Compatibility.COMPATIBLE, target=Version.VERSION_1_1_0, 
+    @Todo( priority=Todo.Priority.MINOR, compatibility=Compatibility.COMPATIBLE, target=Version.VERSION_1_1_0, 
         	description="Make use of DockElementRepresentative" )
     public static Component getShowingComponent( Dockable dockable ){
         Component component = dockable.getComponent();

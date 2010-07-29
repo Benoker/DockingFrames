@@ -32,10 +32,10 @@ import bibliothek.gui.dock.common.event.CKeyboardListener;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 
 /**
- * An interface giving access to the internal methods of an {@link CDockable}. Only
- * {@link CDockable}s should create instances of this interface.
+ * An interface giving access to the hidden properties of a {@link CDockable}. This
+ * interface should only be implemented by inner classes of a {@link CDockable}. Instances
+ * should only be used for calling {@link CControlAccess#link(CDockable, CDockableAccess)}.
  * @author Benjamin Sigg
- *
  */
 public interface CDockableAccess {
     /**

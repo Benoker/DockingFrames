@@ -35,7 +35,7 @@ import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.support.util.Resources;
 
 /**
- * An action which externalizes each {@link CDockable} to which is is added.
+ * An action which {@link ExtendedMode#EXTERNALIZED externalizes} each {@link CDockable} to which is is added.
  * @author Benjamin Sigg
  */
 public class CExternalizeAction extends CExtendedModeAction{

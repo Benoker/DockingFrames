@@ -37,8 +37,9 @@ import bibliothek.gui.dock.facile.mode.ModeArea;
  * Each station can, but does not have to be, a {@link CDockable} itself. Stations
  * are added to the {@link CControl} through {@link CControl#add(CStation, boolean)}.
  * A station is either a root-station (meaning that it has no parent) or 
- * {@link CDockable}. It is possible to misuse a {@link CDockable} as root-station.
+ * {@link CDockable}. It is possible to use a {@link CDockable} as root-station.
  * @author Benjamin Sigg
+ * @param <S> what kind of internal implementation this station uses
  */
 public interface CStation<S extends DockStation> {
     /**

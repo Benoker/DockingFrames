@@ -7,12 +7,14 @@ import bibliothek.gui.dock.common.event.CVetoFocusListener;
 import bibliothek.gui.dock.control.MouseFocusObserver;
 import bibliothek.gui.dock.event.FocusVetoListener;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.util.FrameworkOnly;
 
 /**
  * This listener observes a {@link DockController} and forwards
  * all calls to a {@link CVetoFocusListener}.
  * @author Benjamin Sigg
  */
+@FrameworkOnly
 public class ControlVetoFocusListener implements FocusVetoListener{
 	private CControl control;
 	private CVetoFocusListener callback;

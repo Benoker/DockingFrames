@@ -40,7 +40,7 @@ import bibliothek.gui.dock.util.IconManager;
 /**
  * This action shows an icon for "close". When the action is trigged, 
  * the {@link #close(Dockable) close}-method is invoked with the
- * {@link Dockable} to close. This method will then remove the Dockable
+ * {@link Dockable} to close. This method will then remove the <code>Dockable</code>
  * from it's parent.
  * @author Benjamin Sigg
  */

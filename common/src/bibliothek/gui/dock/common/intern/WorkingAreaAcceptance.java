@@ -37,12 +37,14 @@ import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.facile.mode.LocationMode;
+import bibliothek.util.FrameworkOnly;
 
 /**
  * A {@link DockAcceptance} ensuring that the {@link CDockable#getWorkingArea()}
  * property is respected.
  * @author Benjamin Sigg
  */
+@FrameworkOnly
 public class WorkingAreaAcceptance implements DockAcceptance {
     /** access to the inner parts of the {@link CControl} */
     private CControlAccess control;

@@ -31,7 +31,7 @@ import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.ModeArea;
 
 /**
- * Describes an area that can work with {@link CLocation}s.
+ * Describes a {@link ModeArea} that can work with {@link CLocation}s.
  * @author Benjamin Sigg
  *
  */

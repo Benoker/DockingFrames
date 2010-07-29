@@ -26,12 +26,14 @@
 package bibliothek.gui.dock.common.layout;
 
 import bibliothek.gui.DockTheme;
+import bibliothek.util.ClientOnly;
 
 /**
  * A {@link DockThemeModifier} modifies a {@link DockTheme}. This can either
  * mean replacing some values, or using another theme at all.
  * @author Benjamin Sigg
  */
+@ClientOnly
 public interface DockThemeModifier {
     /**
      * Modifies <code>theme</code> and returns either the modified theme or

@@ -46,6 +46,7 @@ import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.util.ClientOnly;
 
 /**
  * This {@link DockAction} can change the {@link Dockable#getTitleText() title-text}
@@ -54,6 +55,7 @@ import bibliothek.gui.dock.util.DockUtilities;
  * RenameActions can be easely created by a {@link RenameActionFactory}
  * @author Benjamin Sigg
  */
+@ClientOnly
 public abstract class RenameAction extends SimpleButtonAction {
 	/** the key uses for the {@link bibliothek.gui.dock.util.IconManager} to get the {@link Icon} of this action */
 	public static final String KEY_ICON = "rename";
@@ -172,6 +174,7 @@ public abstract class RenameAction extends SimpleButtonAction {
      * {@link StackDockStation StackDockStations}.
      * @author Benjamin Sigg
      */
+    @ClientOnly
     public static class RenameStackDockStation extends RenameAction{
         /**
          * Creates a new action
@@ -192,6 +195,7 @@ public abstract class RenameAction extends SimpleButtonAction {
      * {@link SplitDockStation SplitDockStations}.
      * @author Benjamin Sigg
      */
+    @ClientOnly
     public static class RenameSplitDockStation extends RenameAction{
         /**
          * Creates a new action
@@ -212,6 +216,7 @@ public abstract class RenameAction extends SimpleButtonAction {
      * {@link FlapDockStation FlapDockStations}.
      * @author Benjamin Sigg
      */
+    @ClientOnly
     public static class RenameFlapDockStation extends RenameAction{
         /**
          * Creates a new action
@@ -232,7 +237,9 @@ public abstract class RenameAction extends SimpleButtonAction {
      * {@link DefaultDockable DefaultDockables}.
      * @author Benjamin Sigg
      */
-    public static class RenameDefaultDockable extends RenameAction{        /**
+    @ClientOnly
+    public static class RenameDefaultDockable extends RenameAction{   
+    	/**
          * Creates a new action
          * @param controller the controller to which a listener will be added
          */

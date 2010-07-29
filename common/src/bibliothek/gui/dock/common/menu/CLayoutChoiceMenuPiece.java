@@ -37,6 +37,7 @@ import bibliothek.gui.dock.facile.menu.FrontendSettingsMenuPiece;
  * A piece of a menu that allows the user to store and load the layout
  * of a set of {@link Dockable}s and {@link DockStation}s.
  * @author Benjamin Sigg
+ * @see FrontendSettingsMenuPiece
  */
 public class CLayoutChoiceMenuPiece extends FrontendSettingsMenuPiece {
     /**

@@ -28,6 +28,7 @@ package bibliothek.gui.dock.common.mode;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.facile.mode.DoubleClickLocationStrategy;
 import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablement;
+import bibliothek.util.FrameworkOnly;
 
 /**
  * If the current mode is {@link ExtendedMode#MAXIMIZED}, then this strategy asks
@@ -35,6 +36,7 @@ import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablement;
  * selects this mode. Otherwise {@link ExtendedMode#MAXIMIZED} is selected.
  * @author Benjamin Sigg
  */
+@FrameworkOnly
 public class PreviousModeDoubleClickStrategy implements DoubleClickLocationStrategy{
 	/** the manager to ask for the previous mode */
 	private CLocationModeManager manager;

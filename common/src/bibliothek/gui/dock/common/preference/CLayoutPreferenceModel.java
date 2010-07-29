@@ -29,11 +29,18 @@ import bibliothek.extension.gui.dock.preference.DefaultPreferenceModel;
 import bibliothek.extension.gui.dock.preference.preferences.ButtonContentPreference;
 import bibliothek.extension.gui.dock.preference.preferences.choice.TabContentFilterPreference;
 import bibliothek.extension.gui.dock.preference.preferences.choice.TabPlacementPreference;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.util.Path;
 
 /**
  * A model showing various preferences that are used for the layout.
+ * <ul>
+ * 	<li>What content to show on the button for a minimized {@link Dockable} </li>
+ * 	<li>Where to place tabs</li>
+ * 	<li>What to show on tabs</li>
+ * 	<li>Which {@link CControl#setTheme(String) theme} to use</li>
+ * </ul>
  * @author Benjamin Sigg
  */
 public class CLayoutPreferenceModel extends DefaultPreferenceModel{

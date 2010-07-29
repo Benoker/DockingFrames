@@ -35,7 +35,7 @@ import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.support.util.Resources;
 
 /**
- * This action minimizes each {@link CDockable} to which it is added.
+ * This action {@link ExtendedMode#MINIMIZED minimizes} each {@link CDockable} to which it is added.
  * @author Benjamin Sigg
  */
 public class CMinimizeAction extends CExtendedModeAction{

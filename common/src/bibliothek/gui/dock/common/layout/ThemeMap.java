@@ -44,6 +44,7 @@ import bibliothek.gui.dock.support.util.ApplicationResourceManager;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.ThemeFactory;
 import bibliothek.gui.dock.themes.ThemePropertyFactory;
+import bibliothek.util.FrameworkOnly;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
@@ -53,6 +54,7 @@ import bibliothek.util.xml.XElement;
  * from the map.
  * @author Benjamin Sigg
  */
+@FrameworkOnly
 public class ThemeMap {
     /** standard key for the {@link CBasicTheme} */
     public static final String KEY_BASIC_THEME = "basic";

@@ -27,14 +27,17 @@ package bibliothek.gui.dock.common.intern.theme.color;
 
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.theme.CDockTheme;
+import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.util.color.ColorBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
+import bibliothek.util.ClientOnly;
 import bibliothek.util.Path;
 
 /**
  * This extension is used by a {@link CDockTheme} to add additional {@link ColorBridge}s.
  * @author Benjamin Sigg
  */
+@ClientOnly
 public interface CColorBridgeExtension {
 	/**
 	 * The name of this extension. 
@@ -47,7 +50,8 @@ public interface CColorBridgeExtension {
 	public static final String PARAMETER_NAME = "theme";
 	
 	/**
-	 * Gets the name of the bridge
+	 * Gets the name of the bridge, e.g. an extension that modifies the colors
+	 * of a tab would return {@link TabColor#KIND_TAB_COLOR}.
 	 * @return the name, not <code>null</code>
 	 */
 	public Path getKey();

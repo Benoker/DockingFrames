@@ -148,7 +148,7 @@ public class CSplitDockStationHandle{
 	/**
 	 * Ensures that <code>dockable</code> is a child of this
 	 * station.
-	 * @param dockable
+	 * @param dockable the element to drop, must not yet be a child of this station
 	 * @throws IllegalStateException if <code>dockable</code> already
 	 * is a child of this station.
 	 */

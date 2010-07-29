@@ -35,7 +35,7 @@ import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.support.util.Resources;
 
 /**
- * An action that normalizes each {@link CDockable} to which it is added.
+ * An action that {@link ExtendedMode#NORMALIZED normalizes} each {@link CDockable} to which it is added.
  * @author Benjamin Sigg
  */
 public class CNormalizeAction extends CExtendedModeAction{

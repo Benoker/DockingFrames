@@ -34,13 +34,14 @@ import bibliothek.gui.dock.common.event.CVetoClosingEvent;
 import bibliothek.gui.dock.common.event.CVetoClosingListener;
 import bibliothek.gui.dock.event.VetoableDockFrontendEvent;
 import bibliothek.gui.dock.event.VetoableDockFrontendListener;
+import bibliothek.util.FrameworkOnly;
 
 /**
  * A converter listening for {@link VetoableDockFrontendEvent}s and firing
  * new {@link CVetoClosingEvent}s.
  * @author Benjamin Sigg
- *
  */
+@FrameworkOnly
 public class ControlVetoClosingListener implements VetoableDockFrontendListener{
 	/** the realm in which this listener works */
 	private CControl control;

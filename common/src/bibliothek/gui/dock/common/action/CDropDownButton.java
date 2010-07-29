@@ -28,8 +28,7 @@ package bibliothek.gui.dock.common.action;
 import javax.swing.Icon;
 
 import bibliothek.gui.dock.action.actions.SimpleDropDownAction;
-import bibliothek.gui.dock.common.intern.CDecorateableAction;
-import bibliothek.gui.dock.common.intern.action.CSeparator;
+import bibliothek.gui.dock.common.intern.action.CDecorateableAction;
 
 /**
  * A dropdown-button, the last action which was selected by the user will be

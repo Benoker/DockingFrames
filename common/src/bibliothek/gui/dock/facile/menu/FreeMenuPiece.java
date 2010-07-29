@@ -29,13 +29,14 @@ import java.awt.Component;
 
 import bibliothek.gui.dock.support.menu.BaseMenuPiece;
 import bibliothek.gui.dock.support.menu.MenuPiece;
+import bibliothek.util.ClientOnly;
 
 /**
  * A {@link MenuPiece} that does not add any children by itself. All items
  * have to be added or removed directly by the client.
  * @author Benjamin Sigg
- *
  */
+@ClientOnly
 public class FreeMenuPiece extends BaseMenuPiece{
     
     @Override

@@ -35,8 +35,8 @@ import bibliothek.gui.dock.util.UIBridge;
 import bibliothek.gui.dock.util.UIValue;
 
 /**
- * An {@link UITransmitter} listenes to some kind of map of a {@link CDockable}
- * and updates some {@link UIValue}s when the contents of that map changes.
+ * An {@link UITransmitter} listens to some kind of map
+ * and updates some {@link UIValue}s when the contents of that map change.
  * @author Benjamin Sigg
  * @param <V> the kind of value that is described by the {@link UIValue}
  * @param <U> the kind of {@link UIValue} used in this transmitter

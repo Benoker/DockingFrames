@@ -43,12 +43,13 @@ import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.util.color.ColorBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
+import bibliothek.util.ClientOnly;
 
 /**
  * A bridge between a {@link BasicTheme} and the common-project.
  * @author Benjamin Sigg
- *
  */
+@ClientOnly
 public class CBasicTheme extends CDockTheme<BasicTheme> {
     /**
      * Creates a new theme.

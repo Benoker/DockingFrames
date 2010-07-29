@@ -29,7 +29,7 @@ import bibliothek.gui.dock.facile.station.split.*;
 
 /**
  * This {@link ConflictResolver} has a alternative strategy how to handle cases
- * where two requests collides and a satisfying solution is not possible: the
+ * where two requests collide and a satisfying solution is not possible: the
  * two affected trees are checked for their "fully locked state" and if one
  * is fully locked but not the other, then the request of the fully locked one
  * is answered. Fully locked means that each child of some node has a request. 

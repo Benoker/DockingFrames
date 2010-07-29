@@ -30,12 +30,14 @@ import bibliothek.gui.dock.action.ActionOffer;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CommonDockable;
+import bibliothek.util.FrameworkOnly;
 
 /**
  * An {@link ActionOffer} that searches for {@link CommonDockable}s
  * and asks them for their {@link CommonDockable#getSources() sources}.
  * @author Benjamin Sigg
  */
+@FrameworkOnly
 public class CActionOffer implements ActionOffer {
 	/** the owner */
 	private CControl control;

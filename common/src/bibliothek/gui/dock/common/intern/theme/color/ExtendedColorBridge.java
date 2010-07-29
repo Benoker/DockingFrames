@@ -29,11 +29,13 @@ import java.awt.Color;
 
 import bibliothek.gui.dock.util.color.ColorBridge;
 import bibliothek.gui.dock.util.color.DockColor;
+import bibliothek.util.FrameworkOnly;
 
 /**
  * This {@link ColorBridge} uses a delegate and applies a set of {@link CColorBridge}s.
  * @author Benjamin Sigg
  */
+@FrameworkOnly
 public class ExtendedColorBridge implements ColorBridge{
 	private ColorBridge bridge;
 	private CColorBridge[] extensions;

@@ -27,11 +27,11 @@ package bibliothek.gui.dock.common.intern.color;
 
 import java.awt.Color;
 
-import bibliothek.extension.gui.dock.theme.bubble.BubbleStackDockComponent;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.ColorMap;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
+import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.color.DockColor;
@@ -56,7 +56,7 @@ public abstract class TabColorTransmitter extends ColorTransmitter{
     }
     
     /**
-     * Changes a background color such that it can be used on a {@link BubbleStackDockComponent}
+     * Changes a background color such that it can be used on a {@link StackDockComponent}
      * @param source the original color
      * @param key the key for which the color is needed
      * @return the new color
@@ -64,7 +64,7 @@ public abstract class TabColorTransmitter extends ColorTransmitter{
     protected abstract Color convert( Color source, String key );
     
     /**
-     * Changes a background color such that it can be used on a {@link BubbleStackDockComponent} 
+     * Changes a background color such that it can be used on a {@link StackDockComponent} 
      * @param source the original color
      * @param key the key for which the color is needed, can be one of
      * the selected or focused kind
@@ -73,7 +73,7 @@ public abstract class TabColorTransmitter extends ColorTransmitter{
     protected abstract Color convertSelected( Color source, String key );
     
     /**
-     * Changes a background color such that it can be used on a {@link BubbleStackDockComponent} 
+     * Changes a background color such that it can be used on a {@link StackDockComponent} 
      * @param source the original color
      * @param key the key for which the color is needed, can only be one
      * of the focused kind

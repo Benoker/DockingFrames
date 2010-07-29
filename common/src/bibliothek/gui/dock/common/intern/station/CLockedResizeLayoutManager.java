@@ -39,12 +39,14 @@ import bibliothek.gui.dock.facile.station.split.ResizeRequest;
 import bibliothek.gui.dock.station.split.Leaf;
 import bibliothek.gui.dock.station.split.Root;
 import bibliothek.gui.dock.station.split.SplitLayoutManager;
+import bibliothek.util.FrameworkOnly;
 
 /**
  * A {@link LockedResizeLayoutManager} that looks out for 
  * {@link CDockable#isResizeLockedVertically()} and {@link CDockable#isResizeLockedHorizontally()}.
  * @author Benjamin Sigg
  */
+@FrameworkOnly
 public class CLockedResizeLayoutManager extends LockedResizeLayoutManager<RequestDimension> {
     /** the control in whose realm this manager works */
     private CControl control;

@@ -55,12 +55,14 @@ import bibliothek.gui.dock.util.color.ColorBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.font.FontBridge;
 import bibliothek.gui.dock.util.font.FontManager;
+import bibliothek.util.ClientOnly;
 
 /**
  * A wrapper around a {@link EclipseTheme}, allows to use the {@link ColorMap} of
  * {@link CDockable}.
  * @author Benjamin Sigg
  */
+@ClientOnly
 public class CEclipseTheme extends CDockTheme<EclipseTheme>{
     /**
      * Creates a new theme.
