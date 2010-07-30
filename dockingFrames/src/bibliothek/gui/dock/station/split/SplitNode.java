@@ -30,8 +30,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -58,7 +57,7 @@ public abstract class SplitNode{
     private SplitDockAccess access;
 
     /** keys for {@link Dockable}s that are not visible but linked with this node */
-    private List<Path> placeholders = new ArrayList<Path>();
+    private Set<Path> placeholders;
     /** advanced placeholder information about a {@link DockStation} that was child of this node */
     private PlaceholderMap placeholderMap;
     
@@ -99,12 +98,13 @@ public abstract class SplitNode{
 	}
 	
 	/**
-	 * Stores an additional placeholder in this node.
+	 * Stores an additional placeholder in this node. Nothing happens if <code>placeholder</code>
+	 * is already known to this node.
 	 * @param placeholder the additional placeholder
 	 */
 	public void addPlaceholder( Path placeholder ){
 		if( placeholders == null ){
-			placeholders = new ArrayList<Path>();
+			placeholders = new HashSet<Path>();
 		}
 		placeholders.add( placeholder );
 	}
@@ -123,7 +123,7 @@ public abstract class SplitNode{
 	 * @return <code>true</code> if <code>placeholder</code> was found
 	 */
 	public boolean hasPlaceholder( Path placeholder ){
-		if( placeholder == null )
+		if( placeholders == null )
 			return false;
 		return placeholders.contains( placeholder );
 	}

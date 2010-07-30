@@ -134,7 +134,7 @@ public class Leaf extends VisibleSplitNode{
     		if( strategy != null ){
     			Path placeholder = strategy.getPlaceholderFor( handle.getDockable() );
     			if( placeholder != null ){
-    				addPlaceholder( placeholder );
+    				getAccess().getOwner().ensurePlaceholder( this, placeholder );
     			}
     		}
     		if( storePlaceholderMap ){
@@ -244,8 +244,8 @@ public class Leaf extends VisibleSplitNode{
     		if( !keep ){
     			removePlaceholder( placeholder );
     		}
-    		else if( !hasPlaceholder( placeholder )){
-    			addPlaceholder( placeholder );
+    		else {
+    			getAccess().getOwner().ensurePlaceholder( this, placeholder );
     		}
     	}
     	
