@@ -118,4 +118,11 @@ public interface SplitDockAccess {
      * @return <code>true</code> if auto-removal is enabled
      */
 	public boolean isTreeAutoCleanupEnabled();
+	
+	/**
+	 * Gets the set which keeps track of all placeholders and makes sure that
+	 * no placeholder is used twice.
+	 * @return the placeholder set
+	 */
+	public SplitPlaceholderSet getPlaceholderSet();
 }

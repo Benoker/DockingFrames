@@ -109,7 +109,7 @@ public class Leaf extends VisibleSplitNode{
      * change or not. Clients should set fire = <code>true</code>.
      */
     public void setDockable( Dockable dockable, boolean fire ){
-    	setDockable( dockable, fire, false, false );
+    	setDockable( dockable, fire, true, false );
     }
     
     /**
@@ -125,18 +125,11 @@ public class Leaf extends VisibleSplitNode{
      * replaced by the map provided by the current {@link Dockable} which is a {@link DockStation}
      */
     public void setDockable( Dockable dockable, boolean fire, boolean updatePlaceholders, boolean storePlaceholderMap ){
-    	PlaceholderStrategy strategy = null;
-    	if( updatePlaceholders ){
-			 strategy = getAccess().getOwner().getPlaceholderStrategy();
-		}
-		
     	if( handle != null ){
-    		if( strategy != null ){
-    			Path placeholder = strategy.getPlaceholderFor( handle.getDockable() );
-    			if( placeholder != null ){
-    				getAccess().getOwner().ensurePlaceholder( this, placeholder );
-    			}
+    		if( updatePlaceholders ){
+    			getAccess().getPlaceholderSet().set( this, handle.getDockable() );
     		}
+    		
     		if( storePlaceholderMap ){
     			DockStation station = handle.getDockable().asDockStation();
     			if( station == null ){
@@ -150,14 +143,13 @@ public class Leaf extends VisibleSplitNode{
     	}
     	
         if( dockable != null ){
-        	if( strategy != null ){
-        		Path placeholder = strategy.getPlaceholderFor( dockable );
-        		if( placeholder != null ){
-        			removePlaceholder( placeholder );
-        		}
-        	}
         	handle = getAccess().newHandle( dockable );
-            getAccess().addHandle( handle, fire );
+            
+        	if( updatePlaceholders ){
+        		getAccess().getPlaceholderSet().set( null, dockable );
+        	}
+        	
+        	getAccess().addHandle( handle, fire );
         }
     }
     
@@ -242,10 +234,10 @@ public class Leaf extends VisibleSplitNode{
     	Path placeholder = strategy.getPlaceholderFor( dockable );
     	if( placeholder != null ){
     		if( !keep ){
-    			removePlaceholder( placeholder );
+    			getAccess().getPlaceholderSet().set( null, placeholder );
     		}
     		else {
-    			getAccess().getOwner().ensurePlaceholder( this, placeholder );
+    			getAccess().getPlaceholderSet().set( this, placeholder );
     		}
     	}
     	
@@ -386,7 +378,7 @@ public class Leaf extends VisibleSplitNode{
                     if( acceptance == null || acceptance.accept( station, dockable )){
                         boolean done = station.drop( dockable, stationLocation );
                         if( done ){
-                        	removePlaceholder( placeholder );
+                        	getAccess().getPlaceholderSet().set( null, placeholder );
                             return true;
                         }
                     }

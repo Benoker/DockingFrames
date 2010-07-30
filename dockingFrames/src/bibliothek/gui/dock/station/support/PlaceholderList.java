@@ -1241,7 +1241,9 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		
 		/**
 		 * Assuming this item represents a {@link Dockable} that is a {@link DockStation},
-		 * sets the placeholder information of that {@link DockStation}.
+		 * sets the placeholder information of that {@link DockStation}. This method will
+		 * remove any occurence of placeholders that are already in this list but not
+		 * in this {@link Item}.
 		 * @param placeholders the placeholders, may be <code>null</code>
 		 */
 		public void setPlaceholderMap( PlaceholderMap placeholders ){
@@ -1252,10 +1254,40 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 				this.placeholderMap = placeholders;
 				if( this.placeholderMap != null ){
 					this.placeholderMap.setPlaceholderStrategy( strategy );
+					
+					Set<Path> placeholdersToRemove = new HashSet<Path>();
+					for( Item item : list() ){
+						if( item != this ){
+							Set<Path> set = item.getPlaceholderSet();
+							if( set != null ){
+								placeholdersToRemove.addAll( set );
+							}
+							D dockable = item.getDockable();
+							if( dockable != null ){
+								collect( dockable.asDockable(), placeholdersToRemove );
+							}
+						}
+					}
+					placeholderMap.removeAll( placeholdersToRemove, true );
 				}
 			}
 			else{
 				this.placeholderMap = placeholders;
+			}
+		}
+		
+		private void collect( Dockable dockable, Set<Path> placeholdersToRemove ){
+			if( strategy != null && dockable != null ){
+				Path placeholder = strategy.getPlaceholderFor( dockable );
+				if( placeholder != null ){
+					placeholdersToRemove.add( placeholder );
+				}
+				DockStation station = dockable.asDockStation();
+				if( station != null ){
+					for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
+						collect( station.getDockable( i ), placeholdersToRemove );
+					}
+				}
 			}
 		}
 		

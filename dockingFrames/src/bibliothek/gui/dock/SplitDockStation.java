@@ -99,6 +99,7 @@ import bibliothek.gui.dock.station.split.SplitFullScreenAction;
 import bibliothek.gui.dock.station.split.SplitLayoutManager;
 import bibliothek.gui.dock.station.split.SplitNode;
 import bibliothek.gui.dock.station.split.SplitNodeVisitor;
+import bibliothek.gui.dock.station.split.SplitPlaceholderSet;
 import bibliothek.gui.dock.station.split.SplitTreeFactory;
 import bibliothek.gui.dock.station.split.PutInfo.Put;
 import bibliothek.gui.dock.station.split.SplitDockTree.Key;
@@ -346,10 +347,17 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
         public boolean isTreeAutoCleanupEnabled() {
 	        return treeLock == 0;
         }
+        
+        public SplitPlaceholderSet getPlaceholderSet(){
+        	return placeholderSet;
+        }
     };
 
     /** The root of the tree which determines the structure of this station */
     private Root root;
+    
+    /** Ensures that no placeholder is used twice on this station */
+    private SplitPlaceholderSet placeholderSet;
     
     /** Whether nodes can automatically be removed from the tree or not */
     private int treeLock = 0;
@@ -388,6 +396,8 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
      */
     public SplitDockStation(){
         setBasePane( new Content() );
+        
+        placeholderSet = new SplitPlaceholderSet( access );
 
         displayers = new DisplayerCollection( this, displayerFactory );
         displayers.addDockableDisplayerListener( new DockableDisplayerListener(){
@@ -1107,7 +1117,9 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     	if( placeholder == null ){
     		return null;
     	}
-    	ensurePlaceholder( leaf, placeholder );
+    	
+    	placeholderSet.set( leaf, placeholder );
+    
     	return new SplitDockPlaceholderProperty( placeholder, getDockablePathProperty( dockable ));
     }
     
@@ -2199,55 +2211,6 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
     	}
     }
     
-    /**
-     * Ensures that <code>node</code> is associated with <code>placeholder</code> 
-     * but no other node has <code>placeholder</code>.
-     * @param node the node which must have <code>placeholder</code>
-     * @param placeholder the placeholder to set or to move
-     */
-    public void ensurePlaceholder( final SplitNode node, final Path placeholder ){
-    	final List<SplitNode> nodesToDelete = new ArrayList<SplitNode>();
-    	
-    	root().visit( new SplitNodeVisitor() {
-			public void handleRoot( Root root ){
-				handle( root );
-			}
-			
-			public void handlePlaceholder( Placeholder placeholder ){
-				handle( placeholder );
-			}
-			
-			public void handleNode( Node node ){
-				handle( node );
-			}
-			
-			public void handleLeaf( Leaf leaf ){
-				handle( leaf );
-			}
-			
-			private void handle( SplitNode check ){
-				if( check != node ){
-					check.removePlaceholder( placeholder );
-					PlaceholderMap map = check.getPlaceholderMap();
-					if( map != null ){
-						map.removeAll( placeholder, true );
-					}
-					if( !check.isOfUse() ){
-						nodesToDelete.add( check );
-					}
-				}
-			}
-		});
-    	
-    	if( !node.hasPlaceholder( placeholder )){
-    		node.addPlaceholder( placeholder );
-    	}
-    	
-    	for( SplitNode delete : nodesToDelete ){
-    		delete.delete( true );
-    	}
-    }
-
     /**
      * Removes <code>handle</code> from this station. Unbinds its
      * {@link Dockable}.

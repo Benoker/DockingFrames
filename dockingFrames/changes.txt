@@ -315,3 +315,4 @@
 - Bugfix: SplitDockStation does now always update the boundaries of its tree before dropping a dockable. Wrong boundaries did lead to Dockables dropped at the wrong location even if the used DockableProperty was correct.
 - Bugfix: Path now encodes its content when using "toString" and decodes contents on creation. Meaning inside a Path object the items are never encoded.
 - Bugfix: MouseFocusObserver no longer calls "component.requestFocusInWindow" if the component does not belong to a Dockable
+- Bugfix: SplitDockStation is now much more strict when it comes to enforcing the uniqueness of placeholders

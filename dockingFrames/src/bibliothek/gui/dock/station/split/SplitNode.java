@@ -178,6 +178,7 @@ public abstract class SplitNode{
 		this.placeholderMap = placeholderMap;
 		if( this.placeholderMap != null ){
 			this.placeholderMap.setPlaceholderStrategy( getAccess().getOwner().getPlaceholderStrategy() );
+			getAccess().getPlaceholderSet().removeDoublePlaceholders( this, placeholderMap );
 		}
 	}
 	
