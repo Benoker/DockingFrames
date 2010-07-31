@@ -541,7 +541,7 @@ public class Node extends VisibleSplitNode{
     		if( leaf == null ){
     			return false;
     		}
-    		getAccess().getPlaceholderSet().set( null, placeholder );
+    		getAccess().getPlaceholderSet().set( null, placeholder, this );
     		leaf.setPlaceholders( getPlaceholders() );
     		Node node = createNode( -1 );
     		node.setDivider( 0.5 );

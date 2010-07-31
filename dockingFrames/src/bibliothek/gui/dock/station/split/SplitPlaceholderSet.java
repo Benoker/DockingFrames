@@ -62,13 +62,14 @@ public class SplitPlaceholderSet {
 	 * @param node the owner of <code>dockable</code>, can be <code>null</code> to indicate
 	 * that noone must use the placeholder of <code>dockable</code>
 	 * @param dockable the item whose placeholder is updated
+	 * @param protectedNodes nodes that will not be removed even if they are no longer {@link SplitNode#isOfUse() useful}
 	 */
-	public void set( SplitNode node, Dockable dockable ){
+	public void set( SplitNode node, Dockable dockable, SplitNode... protectedNodes ){
 		PlaceholderStrategy strategy = access.getOwner().getPlaceholderStrategy();
 		if( strategy != null ){
 			Path placeholder = strategy.getPlaceholderFor( dockable );
 			if( placeholder != null ){
-				set( node, placeholder );
+				set( node, placeholder, protectedNodes );
 			}
 		}
 	}
@@ -79,8 +80,9 @@ public class SplitPlaceholderSet {
      * @param node the node which must have <code>placeholder</code>, <code>null</code> to
      * indicate that noone must use <code>placeholder</code>
      * @param placeholder the placeholder to set or to move
+     * @param protectedNodes nodes that will not be removed even if they are no longer {@link SplitNode#isOfUse() useful}
      */
-    public void set( final SplitNode node, final Path placeholder ){
+    public void set( final SplitNode node, final Path placeholder, final SplitNode... protectedNodes ){
     	final List<SplitNode> nodesToDelete = new ArrayList<SplitNode>();
     	
     	Root root = access.getOwner().getRoot();
@@ -120,6 +122,10 @@ public class SplitPlaceholderSet {
     	}
     	
     	if( access.isTreeAutoCleanupEnabled() ){
+    		for( SplitNode protectedNode : protectedNodes ){
+    			nodesToDelete.remove( protectedNode );
+    		}
+    		
     		for( SplitNode delete : nodesToDelete ){
     			delete.delete( true );
     		}

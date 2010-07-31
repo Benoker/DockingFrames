@@ -378,7 +378,7 @@ public class Leaf extends VisibleSplitNode{
                     if( acceptance == null || acceptance.accept( station, dockable )){
                         boolean done = station.drop( dockable, stationLocation );
                         if( done ){
-                        	getAccess().getPlaceholderSet().set( null, placeholder );
+                        	getAccess().getPlaceholderSet().set( null, placeholder, this );
                             return true;
                         }
                     }
