@@ -56,7 +56,7 @@ public class EclipseTabTransmitter extends TabColorTransmitter {
         "stack.tab.border.selected.focuslost",
 
         "stack.tab.top",
-        "stack.tab.tob.selected",
+        "stack.tab.top.selected",
         "stack.tab.top.selected.focused",
         "stack.tab.top.selected.focuslost",
 
@@ -101,7 +101,7 @@ public class EclipseTabTransmitter extends TabColorTransmitter {
         if( "stack.tab.border".equals( key ))
             return source;
 
-        if(  "stack.tab.tob".equals( key ))
+        if(  "stack.tab.top".equals( key ))
             return Colors.undiffMirror( source, 0.5 );
 
         if( "stack.tab.bottom".equals( key ))
@@ -121,7 +121,7 @@ public class EclipseTabTransmitter extends TabColorTransmitter {
         if( "stack.tab.border.selected".equals( key ))
             return source;
 
-        if(  "stack.tab.tob.selected".equals( key ))
+        if(  "stack.tab.top.selected".equals( key ))
             return Colors.undiffMirror( source, 0.5 );
 
         if( "stack.tab.bottom.selected".equals( key ))
