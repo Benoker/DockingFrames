@@ -58,7 +58,7 @@ public class GlassEclipseTabTransmitter extends TabColorTransmitter implements C
         "stack.tab.border.selected.focuslost.glass",
 
         "stack.tab.top.glass",
-        "stack.tab.tob.selected.glass",
+        "stack.tab.top.selected.glass",
         "stack.tab.top.selected.focused.glass",
         "stack.tab.top.selected.focuslost.glass",
 
@@ -115,7 +115,7 @@ public class GlassEclipseTabTransmitter extends TabColorTransmitter implements C
         if( "stack.tab.border.glass".equals( key ))
             return source;
 
-        if(  "stack.tab.tob.glass".equals( key ))
+        if(  "stack.tab.top.glass".equals( key ))
             return Colors.undiffMirror( source, 0.5 );
 
         if( "stack.tab.bottom.glass".equals( key ))
@@ -135,7 +135,7 @@ public class GlassEclipseTabTransmitter extends TabColorTransmitter implements C
         if( "stack.tab.border.selected.glass".equals( key ))
             return source;
 
-        if(  "stack.tab.tob.selected.glass".equals( key ))
+        if(  "stack.tab.top.selected.glass".equals( key ))
             return Colors.undiffMirror( source, 0.5 );
 
         if( "stack.tab.bottom.selected.glass".equals( key ))
