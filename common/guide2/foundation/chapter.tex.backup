@@ -4,13 +4,19 @@ This chapter focuses on the foundation of \src{Common}: \src{CControl}, the \src
 \subsection{Dockables}
 A \src{CDockable}s is not much more than a set of properties like a ``title-icon'' and some \src{Component} which is to be shown to the user. A \src{CDockable} does not paint any decorations (like a title), handle any \src{MouseEvent}s or interacts with the user in any other way. Such jobs are handled by various manager-objects, factories and delegates. These objects need to know the \src{CDockable}s they work with and they need to be able to store information about them. To accomplish that each \src{CDockable} must be registered at a \src{CControl} and is associated with a unique identifier. Registering a \src{CDockable} is possible with one of the \src{add}-methods \src{CControl} offers.
 
-The unique identifier of a \src{CDockable} is either chosen by the client, in which case we speak of a \src{single-dockable}, or by the framework itself, in that case we speak of a \src{multi-dockable}. The user won't notice a difference for these two types of \src{dockable}, but internally they are handled quite differently. The framework assumes that the client knows of all the \src{single-dockable}s and that the client registers either factories or \src{dockable}s when the application starts up. On the other hand the framework assumes that the client does not know how many \src{multi-dockable}s exist and what their content is. The client has to provide a factory for different types of \src{multi-dockable}s and the framework will create new \src{dockable}s when necessary.
 
-When a \src{CDockable} is created it is without location and it is invisible. Read chapter \src{sec:location} to learn about locations and call \src{CDockable.setVisible} to show the \src{CDockable}.
+
+
+
+As mentioned in the previous chapter, \src{CDockable}s fall in one of two categories: ``single'' or ``multi''. Only one instance of a \src{single dockable} may exist in the realm of a \src{CControl}, but many (or none) instances of a \src{multi dockable} may exist. In many cases both kind of \src{dockable}s have the same behavior, but there are some exceptions when it comes to the storage of their location.
+
+Every \src{CDockable} needs to be registered at a \src{CControl}, the methods with name \src{add} can be used. They need to be made visible by calling \src{setVisible} of \src{CDockable}.
+
+
 
 \designbox{The interface \src{CDockable} has some awkward methods whose implementation is already described in the documentation. \src{CDockable} is not intended to be implemented by clients, but to be used by them. There is a subclass \src{AbstractCDockable} which provides the correct implementation for these awkward methods. Even in the framework itself no class (except \src{AbstractCDockable}) implements \src{CDockable} directly. The only reason for the existence of \src{CDockable} is to provide an abstraction from the implementation.}
 
-\infobox{A \src{CDockable} is not a \src{Dockable}, but internally references a \src{Dockable}. This \src{Dockable} is always of type \src{CommonDockable}. It can be accessed through the method \src{intern} of \src{CDockable}. Subclasses of \src{DefaultCDockable} can override \src{createCommonDockable} to use their own implementation of \src{Dockable}.}
+\infobox{A \src{CDockable} is not a \src{Dockable}, but internally references a \src{Dockable}. This \src{Dockable} is always of type \src{CommonDockable}. It can be accessed through the method \src{intern} of \src{CDockable}. Clients should avoid modifying this \src{Dockable} directly.}
 
 \subsubsection{SingleCDockable}
 The representation of a single dockable is \src{SingleCDockable}. A single dockable is created once, added to the control and made visible. It remains in memory until explicitly removed from the \src{CControl} or the application terminates.

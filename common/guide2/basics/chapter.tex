@@ -26,7 +26,7 @@ In the understanding of \src{Common} an application consists of one main-window 
 A first example containing only three colored panels will introduce the very basic vocabulary. In depth discussions of the concepts and implementations follow in the chapters afterwards.
 
 \subsubsection{Setup controller}
-The first step should be to create a \src{CControl}. This central controller wires all the objects of the framework together. A \src{CControl} needs to know the root window of the application, it is used as parent for any dialog that may be opened (e.g. during a drag \& drop operation a dialog may be used to paint the dragged element). Most applications will be able to just forward their root window to one the constructors of \src{CControl}.
+The first step should be to create a \src{CControl}. This central controller wires all the objects of the framework together. A \src{CControl} needs to know the root window of the application, it is used as parent for any dialog that may be opened (e.g. during a drag \& drop operation a dialog may be used to paint the dragged element). Most applications will be able to just forward their root window to one of the constructors.
 
 The code to create the controller looks like this:
 \begin{lstlisting}
@@ -41,7 +41,7 @@ public class Example{
 \end{lstlisting}
 
 \subsubsection{Setup stations}
-The second step is to setup the layer between main-frame and dockables. There are different \src{CStation}s available. For example the \src{CMinimizeArea} shows minimized \src{CDockable}s. Instead of creating the stations manually one can also use a \src{CContentArea}. The \src{CContentArea} is a panel that consists of five stations. In the center a grid of dockables is shown, at the border four areas are reserved for minimized dockables.
+The second step is to setup the layer between main-frame and dockables. There are different \src{CStation}s available, for example the \src{CMinimizeArea} shows minimized \src{CDockable}s. But most applications will always use the same layout: some station in the center of the frame shows a grid of \src{CDockable}s and on the four edges minimized \src{CDockable}s are listed. The class \src{CContentArea} is a combination of several \src{CStation}s offers exactly that layout.
 
 There is always a default-\src{CContentArea} available, it can be accessed by calling \src{getContentArea} of \src{CControl}. If required additional \src{CContentArea}s can be created by the method \src{createContentArea} of \src{CControl}.
 
@@ -61,12 +61,16 @@ public class Example{
 		...
 \end{lstlisting}
 
-\infobox{\src{CControl} always creates an additional station for handling externalized dockables.}
+\infobox{\src{CControl} always creates an additional station for handling free floating \src{CDockable}s.}
 
 \subsubsection{Setup dockables}
 The last step is to set up some \src{CDockable}s. \src{CDockable}s are the things that can be dragged and dropped by the user. A \src{CDockable} has a set of properties, e.g. what text to show as title, whether it can be maximized, what font to use when focused, and so on.
-\src{CDockable}s are divided into two categories: ``single'' and ``multi'' dockables. These categories are explained later, for this first example single dockables are the correct choice. Single dockables are represented by the interface \src{SingleCDockable}. The class \src{DefaultSingleCDockable} provides an easy to use implementation.
-In the code below new single dockables are created in lines \src{23-25} and \src{43-48}. They need to be registered at the \src{CControl} in lines \src{27-29}, otherwise they cannot be shown. Optionally the initial position can be set like in line \src{33} and \src{36}. There is no need to set the position of the first dockable \src{red}: since it is the first it gets per default all the space.
+
+\src{CDockable} is just an interface and clients should always use one of the two subclasses \src{DefaultSingleCDockable} or \src{DefaultMultipleCDockable}. Without going into details: \src{single-dockable}s exist exactly once, while \src{multi-dockable}s can be created and destroyed by the framework anytime.
+
+In the code below new single dockables are created in lines \src{23-25} and \src{43-48}. They need to be registered at the \src{CControl} in lines \src{27-29}, otherwise they cannot be shown. Optionally the initial location can be set like in line \src{33} and \src{36}. The initial location is applied in the moment when the \src{dockable} gets visible, it will not have any influence afterwards. So there is no point in setting the location of the first \src{dockable}, since there are no other \src{dockable}s it gets all the space anyway and the initial location does not matter afterwards. With other words: the order in which \src{dockable}s are made visible is important.
+
+\infobox{There is a class \src{CGrid} which allows to build an initial layout more easily, more about locations can be found in chapter \ref{sec:location}}
 
 \begin{lstlisting}
 import java.awt.Color;
