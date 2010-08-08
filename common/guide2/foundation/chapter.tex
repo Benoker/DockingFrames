@@ -1,0 +1,163 @@
+\section{Foundation}
+This chapter focuses on the foundation of \src{Common}: \src{CControl}, the stations and dockables.
+
+\subsection{Dockables}
+As mentioned in the previous chapter \src{CDockable}s fall in one of two categories: ``single'' or ``multiple''. Only one instance of a single dockable may exist in the realm of a \src{CControl}, but many (or none) instances of a multiple dockable may exist. In many cases both kind of dockables have the same behavior, but there are some exceptions when it comes to the storage of their location.
+
+Every \src{CDockable} needs to be registered at a \src{CControl}, the methods with name \src{add} can be used. They need to be made visible by calling \src{setVisible} of \src{CDockable}.
+
+\designbox{The interface \src{CDockable} has some awkward methods whose implementation is already described in the documentation. \src{CDockable} is not intended to be implemented by clients, but to be used by them. There is a subclass \src{AbstractCDockable} which provides the correct implementation for these awkward methods. Even in the framework itself no class (except \src{AbstractCDockable}) implements \src{CDockable} directly. The only reason for the existence of \src{CDockable} is to provide an abstraction from the implementation.}
+
+\infobox{A \src{CDockable} is not a \src{Dockable}, but internally references a \src{Dockable}. This \src{Dockable} is always of type \src{CommonDockable}. It can be accessed through the method \src{intern} of \src{CDockable}. Clients should avoid modifying this \src{Dockable} directly.}
+
+\subsubsection{SingleCDockable}
+The representation of a single dockable is \src{SingleCDockable}. A single dockable is created once, added to the control and made visible. It remains in memory until explicitly removed from the \src{CControl} or the application terminates.
+
+In order to store attributes (like the position) persistently each \linebreak \src{SingleCDockable} requires a unique identifier.
+
+Clients best use a \src{DefaultSingleCDockable}. A \src{DefaultSingleCDockable} can be used like a \src{JFrame}, for example it also has a content-pane, has methods to set the title-text, etc.
+
+Examples for single dockables could be:
+\begin{itemize}
+  \item A browser has one panel ``history'', the panel is shown on a single dockable.
+  \item A view that is most of the time invisible. A single dockable is created lazily the first time when the view is shown.
+\end{itemize}
+
+\subsubsection{MultipleCDockable}
+\src{MultipleCDockable} are used if the number of instances is not known prior to runtime. Each kind of \src{MultipleCDockable} is associated with a \linebreak \src{MultipleCDockableFactory}. The framework can delete or create new instances of this kind of dockable whenever they are needed.
+
+Clients are required to install the \src{MultipleCDockableFactory} before using any \src{MultipleCDockable}. There is a class \src{DefaultMultipleCDockable} which should provide all the features a client needs.
+
+An example:
+\begin{lstlisting}
+CControl control = ...
+
+MultipleCDockableFactory<MyDockable, MyLayoutInformation> = new ...
+control.addMultipleDockableFactory( "unique id", factory );
+
+MyDockable dockable = new ...
+control.add( dockable );
+\end{lstlisting}
+Notice that in line \src{4} a unique identifier needs to be assigned to the factory.
+
+Implementing a \src{MultipleCDockableFactory} is easy. There is a method to read and to write meta-information from or to a \src{MultipleCDockable}. Meta-information itself is a \src{MultipleCDockableLayout} which has methods to write or read its content to a stream (e.g. to file). There are no restrictions to what meta-information really is.
+
+Examples for multiple dockables are:
+\begin{itemize}
+ \item A text-editor can show many documents at the same time. Each document is shown in its own dockable.
+ \item A 3D modeling software allows to see the modeled object from different angles. Each camera is a dockable.
+\end{itemize}
+
+\infobox{In \src{Common} each \src{CDockable} requires to have a unique identifier. The framework will automatically create an identifier for \src{MultipleCDockable}s.}
+
+\designbox{Why the distinction between single and multiple dockables? The algorithms to store and load the layout (place and size of dockables) can either use existing objects or create new dockables. Using existing objects is preferred because the overhead of creation can be - at least for complex views - high. Single and multiple \src{CDockable}s represent this gap.}
+
+\subsubsection{Visibility}
+A dockable is either visible or invisible. The user cannot interact with the dockable unless it is visible. There is more than one path to change visibility.
+
+The direct approach is to call the method \src{setVisible} of \src{CDockable}. This method will show the dockable at its last known location.
+
+A dockable is made visible implicitly if it is added to any station. This can happen if for example using a \src{CGrid} like explained in chapter \ref{sec:location}.
+
+Finally the user can make a dockable invisible by clicking on its close-button. Every subclass of \src{DefaultCDockable} has the method \src{setCloseable} to change whether the user can click away the element.
+
+Visibility can be monitored with a \src{CDockableStateListener}. Either for a single dockable by adding the listener directly to the dockable, or globally by adding the listener to \src{CControl}. An example:
+\begin{lstlisting}
+CDockable dockable = ...
+		
+dockable.addCDockableStateListener( new CDockableAdapter(){
+  @Override
+  public void visibilityChanged( CDockable dockable ){
+    System.out.println( "Visibility changed to '" + 
+                         dockable.isVisible() + "'" );
+  }
+});
+\end{lstlisting}
+
+ The default behavior of the close-action is to call \src{setVisible} with \src{visible} set to \src{false}, so overriding this method is an easy way to introduce some additional code that is executed directly before the dockable closes.
+
+\classbox{The close-action can be replaced by calling \src{putAction} with the key \src{ACTION\_KEY\_CLOSE} of \src{CDockable}. The action can be replaced at any time. Read more about actions in chapter \ref{sec:action}.}
+
+\infobox{If the method \src{setLocation} of \src{AbstractCDockable} is called before the dockable is made visible, then the dockable is made visible at the supplied location. Read more about locations in chapter \ref{sec:location}.}
+
+\subsubsection{Mode}
+If a \src{CDockable} is visible then it always is in an extended-mode. The extended mode tells something about the behaviour of the dockable and where it is placed. There are four extended modes available:
+\begin{description}
+ \item[normalized] The normal state of a dockable. It is placed on the main-frame of the application, but only covers a fraction of the main-frame.
+ \item[maximized] A maximized dockable takes all the space it gets and often covers other dockables.
+ \item[minimized] A minimzed dockable is not directly visible. Only a button at one edge of the main-frame indicates the existance of the dockable. If the button is pressed then the dockable pops up. As soon as it loses focus it disapears again.
+ \item[externalized] The dockable receives its own window. Per default the window is an undecorated \src{JDialog} and child of the main-frame.
+\end{description}
+
+Users can change the extended mode either by dragging the dockable to a new area, or by clicking some buttons that are visible in the title of each dockable.
+
+Clients can access and change the extended mode by calling \linebreak \src{getExtendedMode} and \src{setExtendedMode} of \src{CControl}. A dockable has no extended mode if not visible. Furthermore clients can forbid a dockable to go into some extended modes. Methods like \src{setMaximizable} of \src{DefaultCDockable} allow that. Finally clients can exchange the button that must be pressed by the user by calling \src{putAction} of \src{AbstractCDockable}. Keys for \src{putAction} are declared as \src{String} constants in \src{CDockable} with names like \src{ACTION\_KEY\_MINIMIZE}.
+
+\subsection{Stations}
+Stations are needed to place and show \src{CDockable}s. A station provides the \src{Component}(s) (e.g. a \src{JPanel} or a dialog) that are the parents of the dockables. Stations are represented through the interface \src{CStation}.
+
+\src{CStation}s delegate most of their work to some \src{DockStation} of \src{Core}. Like dockables a \src{CStation} requires a unique identifier. This identifier is used to persistently store and load layout information.
+
+\warningbox{Currently only the existing \src{DockStation}s from \src{Core} are truly supported by \src{Common}. The \src{StateManager} makes a few assumptions what station is associated with what mode, e.g. a \src{FlapDockStation} is associated with mode ``minimized''. Future versions of the framework might be designed more open, allowing developers to add new modes or other associations. Some improvements were already introduced in version 1.0.7.}
+
+\subsubsection{All in one: CContentArea}
+The preferred way to create stations is to use a \src{CContentArea}. A \src{CContentArea} is not a single \src{CStation} but a panel containing many stations. Each content-area has a center area where dockables are layed out in a grid, and four small areas at the border where dockables show up when they are minimized.
+
+There is a default-\src{CContentArea} present and can be accessed through \linebreak \src{getContentArea} of \src{CControl}. A content-area can later be used like any other \src{Component}:
+\begin{lstlisting}
+JFrame frame = ...
+CControl control = ...
+
+CContentArea area = control.getContentArea();
+frame.add( area );
+\end{lstlisting}
+
+If more than one content-area is needed then clients can use \linebreak \src{createContentArea} of \src{CControl} to create additional areas. These additional areas can later be removed through \src{removeContentArea}. The default content-area cannot be removed.
+
+\infobox{The default content-area is created lazily. There is no obligation to use or create it, clients can as well directly call \src{createContentArea} or not use them at all.}
+
+\warningbox{While \src{CContentArea} has a public constructor clients should prefer to use the factory method \src{createContentArea}. In future releases the constructor might be changed.}
+
+To place dockables onto a content-area a \src{CGrid} can be of help. With the method \src{deploy} the content of a whole \src{CGrid} can be put onto the center area. More about \src{CGrid} and other mechanisms to position elements are listed up in chapter \ref{sec:location}.
+
+\subsubsection{Center area: CGridArea}
+A \src{CGridArea} is kind of a lightweight version of \src{CContentArea}. A grid-area contains normalized and maximized dockables. Other than a content-area it cannot show minimized dockables.
+
+\src{CGridArea}s should be created through the factory method \src{createGridArea} of \src{CControl}. If it is no longer required it can be removed through the method \src{removeStation}.
+
+Like \src{CContentArea} a \src{CGridArea} has the method \src{deploy} to add a whole set of dockables quickly to the area.
+
+Usage of a grid-area could look like this:
+
+\begin{lstlisting}
+JFrame frame = ...
+CControl control = ...
+
+CGridArea center = control.createGridArea( "center" );
+frame.add( center.getComponent() );
+\end{lstlisting}
+Notice that in line \src{5} the method \src{getComponent} has to be called. This method returns the \src{Component} on which the station lies.
+
+\classbox{Some more things that might be interesting:
+\begin{itemize}
+\item A grid-area implements \src{SingleCDockable}, hence it can be a child of another area. Remember that the area must be manually added to the \src{CControl} as dockable.
+\item The method \src{setMaximizingArea} influences of what happens when a child of the area gets maximized. If \src{true} was given to the method then the child gets maximized within the boundaries of the grid-area. Otherwise the child might cover the area or even be transfered to another area.
+\end{itemize}}
+
+\subsubsection{Minimized: CMinimizeArea}
+Most things that were said for \src{CGridArea} hold true for \src{CMinimizeArea} as well. A minimize-area should be created through \src{createMinimizeArea} of \src{CControl}.
+
+\subsubsection{Grouping Dockables: CWorkingArea}
+The \src{CWorkingArea} is a subclass of \src{CGridArea}. The difference between them is, that the property \src{working-area} is \src{false} for a grid-area, but \src{true} for a \src{CWorkingArea}. 
+
+Having this property set to \src{true} places some constraints on the station:
+\begin{itemize}
+\item Children of this station cannot be moved to another station if that other station shows dockables in normalized mode. For a user this means that children can only be minimized, maximized or externalized, but not dragged away.
+\item The user cannot drag dockables away from the station unless they are already children of the station.
+\item If the station has no children then it appears as grey, empty space which does not go away.
+\item Children of a working-area are not stored for temporary layout. For the user this means that applying a layout does neither affect the station, nor dockables that can be put onto the station.
+\end{itemize}
+
+\src{CWorkingArea}s can be used to display a set documents. For example in an IDE (like \src{Eclipse} or \src{Netbeans}) each source file would get its own \src{CDockable} which then is put onto the working-area.
+
+\infobox{The children of a \src{CWorkingArea} are often good candidates for being \src{MultipleCDockable}s.} 
