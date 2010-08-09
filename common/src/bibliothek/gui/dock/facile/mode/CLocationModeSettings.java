@@ -33,6 +33,7 @@ import java.util.Map;
 import bibliothek.gui.dock.common.mode.CMaximizedMode;
 import bibliothek.gui.dock.support.mode.ModeSettings;
 import bibliothek.gui.dock.support.mode.ModeSettingsConverter;
+import bibliothek.util.FrameworkOnly;
 import bibliothek.util.Path;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
@@ -42,7 +43,9 @@ import bibliothek.util.xml.XElement;
  * stored with version 1.0.7, no additional settings were added.
  * 
  * @author Benjamin Sigg
+ * @param <B> the intermediate format used for properties by the {@link ModeSettingsConverter}
  */
+@FrameworkOnly
 public class CLocationModeSettings<B> extends ModeSettings<Location,B>{
 	/** rescued setting from old version */
 	private Map<String, B> lastMaximizedLocation;
@@ -71,7 +74,7 @@ public class CLocationModeSettings<B> extends ModeSettings<Location,B>{
 	
 	/**
 	 * If there were settings rescued from an older version, then
-	 * these settings are transfered to <code>mode</code>.
+	 * these settings are transfered to <code>maximizedMode</code>.
 	 * @param maximizedMode the mode to store settings in
 	 */
 	public void rescue( CMaximizedMode maximizedMode ){

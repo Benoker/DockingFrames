@@ -82,11 +82,12 @@ public abstract class LockedResizeLayoutManager<T> extends DelegatingSplitLayout
         Rectangle current = root.getCurrentBounds();
         Rectangle bounds = root.getBounds();
         
-        boolean resize = !current.equals( bounds );
+        boolean resize = !current.equals( bounds ) || root.hasTreeChanged();
+
         if( resize ){
             resize = current.width > 10 && current.height > 10 && bounds.width > 10 && bounds.height > 10;
         }
-        
+                
         if( !resize ){
             super.updateBounds( root, x, y, factorW, factorH );
         }

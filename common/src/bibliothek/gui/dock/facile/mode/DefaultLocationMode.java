@@ -34,7 +34,7 @@ import bibliothek.gui.dock.support.mode.Mode;
 
 /**
  * Abstract implementation of a {@link Mode} that works with {@link Location}s. This 
- * implementation offers an {@link #runApply(Dockable, Location, AffectedSet)} and 
+ * implementation offers a {@link #runApply(Dockable, Location, AffectedSet)} and 
  * {@link LocationMode#apply(Dockable, Location, AffectedSet)} method.
  * @author Benjamin Sigg
  * @param <A> the areas that are managed by this mode

@@ -30,8 +30,8 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 
 /**
- * The parent of a set of dockables that are maximized. The {@link MaximizedMode}, which
- * is feed with this areas, assumes that a {@link MaximizedModeArea} is also
+ * The parent of a set of {@link Dockable}s that are maximized. The {@link MaximizedMode}, which
+ * is feed with these areas, assumes that a {@link MaximizedModeArea} is also
  * some other kind of area (e.g. a {@link NormalModeArea}).
  * @author Benjamin Sigg
  */

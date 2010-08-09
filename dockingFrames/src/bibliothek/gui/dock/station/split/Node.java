@@ -144,6 +144,8 @@ public class Node extends VisibleSplitNode{
             left.setParent( this );
         }
         
+        treeChanged();
+        
         getAccess().getOwner().revalidate();
         getAccess().getOwner().repaint();
     }
@@ -174,6 +176,8 @@ public class Node extends VisibleSplitNode{
         if( right != null ){
             right.setParent( this );
         }
+        
+        treeChanged();
         
         getAccess().getOwner().revalidate();
         getAccess().getOwner().repaint();

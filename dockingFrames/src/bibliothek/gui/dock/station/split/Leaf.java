@@ -151,6 +151,8 @@ public class Leaf extends VisibleSplitNode{
         	
         	getAccess().addHandle( handle, fire );
         }
+        
+        treeChanged();
     }
     
     /**

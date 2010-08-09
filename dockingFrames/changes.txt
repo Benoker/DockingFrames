@@ -316,3 +316,5 @@
 - Bugfix: Path now encodes its content when using "toString" and decodes contents on creation. Meaning inside a Path object the items are never encoded.
 - Bugfix: MouseFocusObserver no longer calls "component.requestFocusInWindow" if the component does not belong to a Dockable
 - Bugfix: SplitDockStation is now much more strict when it comes to enforcing the uniqueness of placeholders
+- Bugfix: CLocations returning null as root but have an ExtendedMode are (again) supported.
+- Bugfix: When moving/dragging a Dockable from a SplitDockStation with size-locked Dockables, the locked Dockables got resized even if it was not necessary.

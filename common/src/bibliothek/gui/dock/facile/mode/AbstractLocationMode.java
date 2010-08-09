@@ -43,7 +43,9 @@ import bibliothek.gui.dock.support.mode.ModeManager;
 import bibliothek.gui.dock.support.mode.ModeManagerListener;
 
 /**
- * {@link Mode} that manages a set of key-value pairs.
+ * This abstract class offers various properties that may be useful for any implementation
+ * of {@link LocationMode}. It also allows to store a set of {@link ModeArea}s. Basic methods
+ * to verify and change the {@link Mode} of a {@link Dockable} are implemented too.
  * @author Benjamin Sigg
  * @param <A> the values managed by this mode
  */

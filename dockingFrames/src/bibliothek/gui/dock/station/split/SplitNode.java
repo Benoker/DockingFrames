@@ -80,6 +80,15 @@ public abstract class SplitNode{
     }
     
     /**
+     * Called if a child of this node changed.
+     */
+    protected void treeChanged(){
+    	if( parent != null ){
+    		parent.treeChanged();
+    	}
+    }
+    
+    /**
      * Gets the station this node belongs to.
      * @return the station
      */

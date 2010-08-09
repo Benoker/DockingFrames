@@ -43,6 +43,9 @@ public class Root extends VisibleSplitNode{
 	/** the single child of this root */
     private SplitNode child;
     
+    /** tells whether the subtree has changed since the last reset */
+    private boolean treeChanged = true;
+    
     /**
      * Creates a new root.
      * @param access the access to internal methods of the
@@ -62,6 +65,20 @@ public class Root extends VisibleSplitNode{
         super( access, id );
     }
     
+    @Override
+    protected void treeChanged(){
+	    treeChanged = true;
+    }
+    
+    /**
+     * Tells whether the tree below this root has changed (children have
+     * been added or removed) since the boundaries of this root were
+     * last updated. 
+     * @return <code>true</code> if the tree changed
+     */
+    public boolean hasTreeChanged(){
+    	return treeChanged;
+    }
     
     /**
      * Sets the child of this root. Every root has only one child.<br>
@@ -78,6 +95,8 @@ public class Root extends VisibleSplitNode{
             child.delete( false );
             child.setParent( this );
         }
+        
+        treeChanged();
         
         getAccess().getOwner().revalidate();
         getAccess().getOwner().repaint();
@@ -233,6 +252,7 @@ public class Root extends VisibleSplitNode{
         super.updateBounds( x, y, width, height, factorW, factorH, components );
         if( child != null )
             child.updateBounds( x, y, width, height, factorW, factorH, components );
+        treeChanged = false;
     }
 
     @Override
