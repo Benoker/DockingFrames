@@ -37,6 +37,9 @@ import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.util.Priority;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Version;
 
 /**
  * A theme describes how a {@link DockStation} looks like, which
@@ -46,6 +49,8 @@ import bibliothek.gui.dock.util.Priority;
  * will be broken.
  * @author Benjamin Sigg
  */
+@Todo(compatibility=Compatibility.COMPATIBLE, target=Version.VERSION_1_1_0, priority=Todo.Priority.MAJOR,
+		description="Each property of DockTheme gets a PropertyKey: the key is associated with a factory/wrapper that just calls the DockTheme's methods. But clients can easily replace the factory/wrapper by their own implementation.")
 public interface DockTheme {
     /**
      * Install this theme at <code>controller</code>. The theme
