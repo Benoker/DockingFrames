@@ -3,6 +3,7 @@
 \usepackage{color}
 \usepackage{graphicx}
 \usepackage{textcomp}
+\usepackage{url}
 
 \lstset{language=Java}
 \lstset{breaklines=true, numbers=left}
@@ -27,6 +28,7 @@
 \newcommand{\src}[1]{\texttt{#1}}
 
 \newcommand{\qa}[2]{\item \textbf{Question:} #1 \\ \textbf{Answer:} #2}
+\newcommand{\qaf}[3]{\item \textbf{Question:} #1 \\ \textbf{Answer 1.0.7:} #2 \\ \textbf{Answer 1.0.8:} #3}
 
 \newcommand{\property}[4]{\item[#1] \mbox{ } \begin{description} \item[Type] \src{#2} \item[Default] #3 \item[Usage] #4  \end{description}}
 
@@ -81,6 +83,8 @@
 
 \tableofcontents
 \newpage
+
+\include{foreword/chapter}
 
 \include{introduction/chapter}
 

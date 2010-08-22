@@ -1,39 +1,32 @@
 \section{Foundation}
-This chapter focuses on the foundation of \src{Common}: \src{CControl}, the \src{station}s and \src{dockable}s.
+This chapter focuses on the foundation of \src{Common}: \src{CControl}, the stations and dockables.
 
 \subsection{Dockables}
-A \src{CDockable}s is not much more than a set of properties like a ``title-icon'' and some \src{Component} which is to be shown to the user. A \src{CDockable} does not paint any decorations (like a title), handle any \src{MouseEvent}s or interacts with the user in any other way. Such jobs are handled by various manager-objects, factories and delegates. These objects need to know the \src{CDockable}s they work with and they need to be able to store information about them. To accomplish that each \src{CDockable} must be registered at a \src{CControl} and is associated with a unique identifier. Registering a \src{CDockable} is possible with one of the \src{add}-methods \src{CControl} offers.
+As mentioned in the previous chapter \src{CDockable}s fall in one of two categories: ``single'' or ``multiple''. Only one instance of a single dockable may exist in the realm of a \src{CControl}, but many (or none) instances of a multiple dockable may exist. In many cases both kind of dockables have the same behavior, but there are some exceptions when it comes to the storage of their location.
 
-The unique identifier of a \src{CDockable} is either chosen by the client, in which case we speak of a \src{single-dockable}, or by the framework itself, in that case we speak of a \src{multi-dockable}. The user won't notice a difference for these two types of \src{dockable}, but internally they are handled quite differently. The framework assumes that the client knows of all the \src{single-dockable}s and that the client registers either factories or \src{dockable}s when the application starts up. On the other hand the framework assumes that the client does not know how many \src{multi-dockable}s exist and what their content is. The client has to provide a factory for different types of \src{multi-dockable}s and the framework will create new \src{dockable}s when necessary.
-
-When a \src{CDockable} is created it is without location and it is invisible. Read chapter \src{sec:location} to learn about locations and call \src{CDockable.setVisible} to show the \src{CDockable}.
+Every \src{CDockable} needs to be registered at a \src{CControl}, the methods with name \src{add} can be used. They need to be made visible by calling \src{setVisible} of \src{CDockable}.
 
 \designbox{The interface \src{CDockable} has some awkward methods whose implementation is already described in the documentation. \src{CDockable} is not intended to be implemented by clients, but to be used by them. There is a subclass \src{AbstractCDockable} which provides the correct implementation for these awkward methods. Even in the framework itself no class (except \src{AbstractCDockable}) implements \src{CDockable} directly. The only reason for the existence of \src{CDockable} is to provide an abstraction from the implementation.}
 
-\infobox{A \src{CDockable} is not a \src{Dockable}, but internally references a \src{Dockable}. This \src{Dockable} is always of type \src{CommonDockable}. It can be accessed through the method \src{intern} of \src{CDockable}. Subclasses of \src{DefaultCDockable} can override \src{createCommonDockable} to use their own implementation of \src{Dockable}.}
+\infobox{A \src{CDockable} is not a \src{Dockable}, but internally references a \src{Dockable}. This \src{Dockable} is always of type \src{CommonDockable}. It can be accessed through the method \src{intern} of \src{CDockable}. \src{DefaultCDockable} offers a method \src{createCommonDockable} which creates a new \src{DefaultCommonDockable}. Clients may override this method and provide their own implementation of \src{DefaultCommonDockable}. }
 
 \subsubsection{SingleCDockable}
-A \src{single-dockable} is created once, added to the controller and made visible. It remains in memory until explicitly removed from the \src{CControl} or the application terminates. Alternatively a \src{SingleCDockableBackupFactory} can be used to lazily create a \src{dockable} once it is required.
+The representation of a single dockable is \src{SingleCDockable}. A single dockable is created once, added to the control and made visible. It remains in memory until explicitly removed from the \src{CControl} or the application terminates.
 
-The interface \src{SingleCDockable} represents a \src{single-dockable}, the class \src{DefaultSingleCDockable} is a convenient implementation of the interface. The class offers methods similar to those known from a \src{JFrame}, e.g. it has a content-pane where clients can add some \src{Component}s.
+In order to store attributes (like the position) persistently each \linebreak \src{SingleCDockable} requires a unique identifier.
+
+Clients best use a \src{DefaultSingleCDockable}. A \src{DefaultSingleCDockable} can be used like a \src{JFrame}, for example it also has a content-pane, has methods to set the title-text, etc.
 
 Examples for single dockables could be:
 \begin{itemize}
   \item A browser has one panel ``history'', the panel is shown on a single dockable.
-  \item A view that is most of the time invisible. A \src{single-dockable} is created lazily the first time when the view is shown.
+  \item A view that is most of the time invisible. A single dockable is created lazily the first time when the view is shown.
 \end{itemize}
 
 \subsubsection{MultipleCDockable}
-A set of \src{multi-dockable}s is used if the exact number of instances is not known prior to runtime. Before a \src{multi-dockable} can be used its factory (of type \src{MultipleCDockableFactory}) must be registered at a \src{CControl}. The factory offers methods to store and load the layout of a \src{dockable}. Of course there can be more than one \src{multi-dockable} per factory. Once the factory is registered, clients can add and remove \src{multi-dockable}s at any time.
+\src{MultipleCDockable}s are used if the number of instances is not known prior to runtime. Each kind of \src{MultipleCDockable} is associated with a \linebreak \src{MultipleCDockableFactory}. The framework can delete or create new instances of this kind of dockable whenever they are needed.
 
-The interface describing all \src{multi-dockable}s is \src{MultipleCDockable}, a convenient implementation is \src{DefaultMultipleCDockable}. This class offers most of the methods and properties a client should ever need.
-Implementing a matching \src{MultipleCDockableFactory} is easy. There is a method to read and to write meta-information from or to a \src{MultipleCDockable}. Meta-information itself is a \src{MultipleCDockableLayout} which has methods to write or read its content to a stream (e.g. to file). There are no restrictions to what meta-information really is.
-
-If a \src{multi-dockable} is made invisible, it should be removed from its \src{CControl}. Otherwise old objects fill up memory until the application crashes with an \src{OutOfMemoryException}. Clients either need to remove the \src{dockable} by themselves or they can call \src{setRemoveOnClose(true)} to let the element be removed automatically once it becomes invisible
-
-\warningbox{Any \src{multi-dockable} which is no longer required must be removed from the \src{CControl}, otherwise an \src{OutOfMemoryException} may happen.}
-
-\infobox{Automatical removal is triggered when the \src{dockable} becomes invisible. This happens if the element does no longer have a root-parent. If a client makes the parent of a \src{multi-dockable} invisible, the \src{dockable} gets marked invisible as well. However, it does not get removed from its parent. Strange effect happen when the parent is made visible again: most of the decoration of the \src{dockable} is gone and some parts of the framework will ignore its existence.}
+Clients are required to install the \src{MultipleCDockableFactory} before using any \src{MultipleCDockable}. There is a class \src{DefaultMultipleCDockable} which should provide all the features a client needs.
 
 An example:
 \begin{lstlisting}
@@ -47,44 +40,53 @@ control.add( dockable );
 \end{lstlisting}
 Notice that in line \src{4} a unique identifier needs to be assigned to the factory.
 
+Implementing a \src{MultipleCDockableFactory} is easy. There is a method to read and to write meta-information from or to a \src{MultipleCDockable}. Meta-information itself is a \src{MultipleCDockableLayout} which has methods to write or read its content to a stream (e.g. to file). There are no restrictions to what meta-information really is.
+
 Examples for multiple dockables are:
 \begin{itemize}
  \item A text-editor can show many documents at the same time. Each document is shown in its own dockable.
  \item A 3D modeling software allows to see the modeled object from different angles. Each camera is a dockable.
 \end{itemize}
 
-\designbox{Why the distinction between \src{single-} and \src{multi-dockable}s? The algorithms to store and load the layout (place and size of \src{dockable}s) can either use existing objects or create new \src{dockable}s. Using existing objects is preferred because the overhead of creation can be - at least for complex views - high. \src{Single-} and \src{multi-dockable}s represent this gap.}
+\infobox{In \src{Common} each \src{CDockable} requires to have a unique identifier. The framework will automatically create an identifier for \src{MultipleCDockable}s.}
+
+\designbox{Why the distinction between single and multiple dockables? The algorithms to store and load the layout (place and size of dockables) can either use existing objects or create new dockables. Using existing objects is preferred because the overhead of creation can be - at least for complex views - high. Single and multiple \src{CDockable}s represent this gap.}
 
 \subsubsection{Visibility}
-A \src{dockable} is either visible or invisible, the user can only interact with the \src{dockable} if it is visible. The easiest way to change the visibility of a \src{dockable} is to call \src{setVisible} of \src{CDockable}. The framework makes sure that a \src{dockable} keeps its location if it is made invisible but stays registered at the \src{CControl}. 
+A dockable is either visible or invisible. The user cannot interact with the dockable unless it is visible. Visibility can change through a set of events:
 
-Visibility may be changed by the user: by clicking the close-button of a \src{dockable}. The default behavior of the close-button is just to call \src{setVisible}. Every \src{DefaultCDockable} offers the method \src{setCloseable} to change whether the user can click away the element. 
-Visibility may also be changed implicitly when the visibility-state of the parent of a \src{dockable} changes. Also using a \src{CGrid} (see chapter \ref{sec:location}) or other methods to influence the layout of an application may change the visibility.
+\begin{itemize}
+ \item Obviosly, calling \src{setVisible} of \src{CDockable} will change the visibility. If possible, the location of a \src{CDockable} will remembered and reused.
+ \item Adding a \src{CDockable} to a station makes the \src{CDockable} visible. This may happen for example if using a \src{CGrid} (see chapter \ref{sec:location}).
+ \item The user may close a dockable by clicking onto a special close-button. Clients may call \src{setCloseable} to allow or deny a user closing the dockable.
+\end{itemize}
 
-A client may need to perform some actions when a \src{dockable} is made invisible or a client may want to prevent the user from clicking away a \src{dockable}. The \src{CDockableStateListener} and the \src{CVetoClosingListener} are meant to do this job. The \src{CDockableStateListener} just gets informed after visibility changed. The \src{CVetoClosingListener} gets informed before and after visibility changes to \src{false}, this listener can cancel the operation if necessary. Both listeners can either be added directly to a \src{dockable} or to the \src{CControl}. In the first case the listener gets informed about events that are related only the one \src{dockable}, otherwise it gets informed about any event.
+There are two listeners to monitor the visibility-state of dockables. Both can either be added to a \src{CDockable} or to a \src{CControl}. In the laster case all known dockables are monitored at the same time.
+
+The first listener is the \src{CDockableStateListener}, it has a method \src{visibilityChanged} which will be called whenever the visibility changes.
+
+The second listener is the \src{CVetoClosingListener}. It receives a \src{CVetoClosingEvent} before and after a set of dockables gets closed. Clients can call the \src{cancel} method to prevent the closing-operation from finishing its work.
+
+\warningbox{Using the close-button or changing the layout with \src{CControl.load} will always result in a cancelabe \src{CVetoClosingEvent}. However, some methods force the closing-operation to finish no matter what happens, the method \src{isCancelable} of \src{CVetoClosingEvent} will return \src{false} in such a case. Using the low-level methods of \src{Core}, one can even close a dockable without triggering a pre-close event. In such a case an unexpected \src{CVetoClosingEvent} is issued (see \src{isExpected()}). Naturally such an event cannot be canceled. }
 
 \classbox{The close-action can be replaced by calling \src{putAction} with the key \src{ACTION\_KEY\_CLOSE} of \src{CDockable}. The action can be replaced at any time. Read more about actions in chapter \ref{sec:action}.}
 
 \infobox{If the method \src{setLocation} of \src{AbstractCDockable} is called before the dockable is made visible, then the dockable is made visible at the supplied location. Read more about locations in chapter \ref{sec:location}.}
 
 \subsubsection{Mode}
-If a \src{CDockable} is visible then it always is in an \src{extended-mode}. The \src{extended-mode} tells something about the behaviour of the \src{dockable} and where it is placed. The framework offers four \src{extended-mode}s, with some effort clients can define additional \src{mode}s.
+If a \src{CDockable} is visible then it always is in an extended-mode. The extended mode tells something about the behaviour of the dockable and where it is placed. The framework offers four default extended modes:
 \begin{description}
- \item[normalized] The normal state of a \src{dockable}. It is placed on the main-frame of the application, but only covers a fraction of the main-frame.
- \item[maximized] A maximized \src{dockable} takes all the space it gets and often covers other \src{dockable}s.
- \item[minimized] A minimzed \src{dockable} is not directly visible. Only a button at one edge of the main-frame indicates the existance of the \src{dockable}. If the button is pressed then the \src{dockable} pops up. As soon as it loses focus it disapears again.
- \item[externalized] The \src{dockable} is on its own window. Per default the window is an undecorated \src{JDialog} and child of the main-frame.
+ \item[normalized] The normal state of a dockable. It is placed on the main-frame of the application, but only covers a fraction of the main-frame.
+ \item[maximized] A maximized dockable takes all the space it gets and often covers other dockables.
+ \item[minimized] A minimzed dockable is not directly visible. Only a button at one edge of the main-frame indicates the existance of the dockable. If the button is pressed then the dockable pops up. As soon as it loses focus it disapears again.
+ \item[externalized] The dockable receives its own window. Per default the window is an undecorated \src{JDialog} and child of the main-frame.
 \end{description}
 
-Users can change the \src{extended-mode} either by dragging the \src{dockable} to a new place or by clicking some buttons that are visible in the title of each \src{dockable}. 
+Users can change the extended mode either by dragging the dockable to a new area, or by clicking some buttons that are visible in the title of each dockable.
 
-Clients can access and change the \src{extended-mode} by calling \linebreak \src{getExtendedMode} and \src{setExtendedMode} of \src{CDockable}. A \src{dockable} has no \src{extended-mode} if not visible. Furthermore clients can forbid a \src{dockable} to go into some \src{extended-mode}s, methods like \src{setMaximizable} of \src{DefaultCDockable} allow that. Finally clients can exchange the button that must be pressed by the user by calling \src{putAction} of \src{AbstractCDockable}. Keys for \src{putAction} are declared as \src{String} constants in \src{CDockable} with names like \src{ACTION\_KEY\_MINIMIZE}.
+Clients can access and change the extended mode by calling \linebreak \src{getExtendedMode} and \src{setExtendedMode} of \src{CControl}. A dockable has no extended mode if not visible. Furthermore clients can forbid a dockable to go into some extended modes. Methods like \src{setMaximizable} of \src{DefaultCDockable} allow that. Finally clients can exchange the button that must be pressed by the user by calling \src{putAction} of \src{AbstractCDockable}. Keys for \src{putAction} are declared as \src{String} constants in \src{CDockable} with names like \src{ACTION\_KEY\_MINIMIZE}.
 
-\classbox{\src{Extended-mode}s are managed by the class \src{CLocationModeManager}. This manager is built of several layers:
-\begin{itemize}
- \item At the top are instances of \src{CLocationMo
-\end{itemize}
-}
+\classbox{Extended-modes are handled by the \src{CLocationModeManager} which can be accessed through \src{CControl.getLocationManager}. The workings of this manager will be explained in chapter \ref{sec:location}.}
 
 \subsection{Stations}
 Stations are needed to place and show \src{CDockable}s. A station provides the \src{Component}(s) (e.g. a \src{JPanel} or a dialog) that are the parents of the dockables. Stations are represented through the interface \src{CStation}.

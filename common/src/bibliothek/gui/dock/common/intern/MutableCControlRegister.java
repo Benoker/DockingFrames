@@ -103,6 +103,13 @@ public interface MutableCControlRegister extends CControlRegister {
     public void addSingleDockable( SingleCDockable dockable );
 
     /**
+     * Searches the one {@link SingleCDockable} whose unique id equals <code>id</code>.
+     * @param id some id to search
+     * @return a dockable with the same id
+     */
+    public SingleCDockable getSingleDockable( String id );
+    
+    /**
      * Adds <code>dockable</code> to this register.
      * @param dockable the new element
      */

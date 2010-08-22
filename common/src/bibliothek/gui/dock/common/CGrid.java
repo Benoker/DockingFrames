@@ -112,12 +112,12 @@ public class CGrid {
             CDockable dockable = dockables[i];
             if( control != null ){
                 if( dockable instanceof SingleCDockable ){
-                    if( dockable.getControl() == null )
-                        control.add( (SingleCDockable)dockable );
+                    control.add( (SingleCDockable)dockable );
                 }
                 else if( dockable instanceof MultipleCDockable ){
-                    if( dockable.getControl() == null )
-                        control.add( (MultipleCDockable)dockable );
+                	if( dockable.getControl() == null ){
+                		control.add( (MultipleCDockable)dockable );
+                	}
                 }
             }
             

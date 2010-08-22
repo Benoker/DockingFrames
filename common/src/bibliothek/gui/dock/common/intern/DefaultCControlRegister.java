@@ -220,6 +220,15 @@ public class DefaultCControlRegister implements MutableCControlRegister {
         dockables.add( dockable );
         singleDockables.add( dockable );
     }
+    
+    public SingleCDockable getSingleDockable( String id ){
+	    for( SingleCDockable dockable : singleDockables ){
+	    	if( dockable.getUniqueId().equals( id )){
+	    		return dockable;
+	    	}
+	    }
+	    return null;
+    }
 
     public void addStation( CStation<?> station ) {
         stations.add( station );

@@ -1367,19 +1367,40 @@ public class CControl {
     }
 
     /**
-     * Adds a dockable to this control. The dockable can be made visible afterwards.
+     * Adds a dockable to this control. The dockable can be made visible afterwards. This method will do nothing
+     * if <code>dockable</code> was already registered at this {@link CControl}.
      * @param <S> the type of the new element
      * @param dockable the new element to show
      * @return <code>dockable</code>
+     * @throws IllegalArgumentException if <code>dockable</code> already is registered at another {@link CControl}
+     * or if the unique id of <code>dockable</code> already is used for another object
      */
     public <S extends SingleCDockable> S add( S dockable ){
         if( dockable == null )
             throw new NullPointerException( "dockable must not be null" );
 
-        if( dockable.getControl() != null )
-            throw new IllegalStateException( "dockable is already part of a control" );
+        boolean alreadyKnown = dockable.getControl() == access;
+        
+        if( dockable.getControl() != null && !alreadyKnown ){
+            throw new IllegalArgumentException( "dockable is already part of a control" );
+        }
 
-        dockable.setControl( access );
+        SingleCDockable preset = register.getSingleDockable( dockable.getUniqueId() );
+
+        if( preset != null ){
+        	if( preset == dockable ){
+        		return dockable;
+        	}
+        	else{
+        		throw new IllegalArgumentException( "unique id \'" + dockable.getUniqueId() + "\' already in use for another SingleCDockable" );
+        	}
+        }
+        
+        
+        if( !alreadyKnown ){
+        	dockable.setControl( access );
+        }
+
         String id = register.toSingleId( dockable.getUniqueId() );
         accesses.get( dockable ).setUniqueId( id );
         frontend.addDockable( id, dockable.intern() );
