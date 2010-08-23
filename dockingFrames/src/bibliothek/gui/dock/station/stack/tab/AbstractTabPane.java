@@ -322,6 +322,8 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 			fireRemoved( dockable );
 		}
 		
+		setSelectedDockable(null);
+		
 		dockables.clear();
 		
 		revalidate();

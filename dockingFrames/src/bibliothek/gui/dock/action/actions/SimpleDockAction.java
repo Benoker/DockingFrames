@@ -295,8 +295,9 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
     			this.controller = controller;
     		}
     		
-    		if( controller != null )
-    			controller.getKeyboardController().addListener( this );
+    		if( this.controller != null ){
+    			this.controller.getKeyboardController().addListener( this );
+    		}
     	}
     	
     	/**
@@ -339,6 +340,11 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
 
 		public DockElement getTreeLocation(){
 			return dockable;
+		}
+		
+		@Override
+		public String toString(){
+			return getClass().getSimpleName() + " -> " + dockable.getTitleText() + " -> " + getText();
 		}
     }
 }

@@ -91,7 +91,7 @@ public abstract class KeyboardController {
 	 * @param listener the new listener
 	 */
 	public void addListener( KeyboardListener listener ){
-	    if( listener == null )
+		if( listener == null )
 	        throw new IllegalArgumentException( "listener must not be null" );
 	    
 		keyListeners.addListener( listener );

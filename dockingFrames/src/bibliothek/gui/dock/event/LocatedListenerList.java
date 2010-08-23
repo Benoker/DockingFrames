@@ -61,6 +61,14 @@ public class LocatedListenerList<L extends LocatedListener> {
 		listeners.remove( listener );
 	}
 	
+	/**
+	 * Gets the number of listeners in this list.
+	 * @return the number of listeners
+	 */
+	public int size(){
+		return listeners.size();
+	}
+	
     /**
      * Creates a list of all {@link LocatedListener}s which are affected
      * by an event which occurs on <code>element</code>. The list is ordered
