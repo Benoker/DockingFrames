@@ -25,17 +25,15 @@
  */
 package glass.eclipse.theme;
 
-import glass.eclipse.theme.utils.*;
-
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
-
-import kux.glass.*;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.*;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.*;
 import bibliothek.gui.*;
 import bibliothek.gui.dock.util.color.*;
+import kux.glass.*;
+import glass.eclipse.theme.utils.*;
 
 
 /**
@@ -44,14 +42,14 @@ import bibliothek.gui.dock.util.color.*;
  */
 @ColorCodes("stack.border.glass")
 public class CGlassStripPainter implements TabPanePainter {
-   private AbstractDockColor color = new AbstractDockColor("stack.border.glass", DockColor.KIND_DOCK_COLOR, Color.BLACK) {
+   private final AbstractDockColor color = new AbstractDockColor("stack.border.glass", DockColor.KIND_DOCK_COLOR, Color.BLACK) {
       @Override
-      protected void changed(Color oldColor, Color newColor) {
+      protected void changed (Color oldColor, Color newColor) {
          pane.repaint();
       }
    };
 
-   private EclipseTabPane pane;
+   private final EclipseTabPane pane;
 
    IGlassFactory glass = CGlassFactoryGenerator.Create();
 
@@ -59,15 +57,15 @@ public class CGlassStripPainter implements TabPanePainter {
     * Creates a new painter.
     * @param tabbedComponent the component for which this painter will work
     */
-   public CGlassStripPainter(EclipseTabPane pane) {
+   public CGlassStripPainter (EclipseTabPane pane) {
       this.pane = pane;
    }
 
-   public void paint(Graphics g) {
+   public void paint (Graphics g) {
       paintBackground(g);
    }
 
-   private void paintHorizontal(Graphics g, Rectangle available, Rectangle bounds, int y) {
+   private void paintHorizontal (Graphics g, Rectangle available, Rectangle bounds, int y) {
       paintBackground(g, available.x, bounds.y, available.width, bounds.height, true);
 
       if (available.x < bounds.x - 1) {
@@ -81,7 +79,7 @@ public class CGlassStripPainter implements TabPanePainter {
       }
    }
 
-   private void paintVertical(Graphics g, Rectangle available, Rectangle bounds, int x) {
+   private void paintVertical (Graphics g, Rectangle available, Rectangle bounds, int x) {
       //      paintBackground(g, bounds.x, available.y, bounds.width, available.height, false);
       paintBackground(g, bounds.x, available.y, available.height, bounds.width, false);
 
@@ -93,34 +91,38 @@ public class CGlassStripPainter implements TabPanePainter {
       }
    }
 
-   protected void paintBackground(Graphics g, int x, int y, int w, int h, boolean horizontal) {
-      Graphics2D g2d = (Graphics2D) g.create();
+   protected void paintBackground (Graphics g, int x, int y, int w, int h, boolean horizontal) {
+      if (w != 0 && h != 0) {
+         Graphics2D g2d = (Graphics2D)g.create();
 
-      BufferedImage img = null;
-      try {
-         img = glass.RenderBufferedImage(CGlassEclipseTabPainter.VALUE_PLAIN, new Dimension(w, h), true);
-      } catch (Exception e) {
-         img = glass.RenderBufferedImage(CGlassFactory.VALUE_STEEL, new Dimension(w, h), true);
+         BufferedImage img = null;
+         try {
+            img = glass.RenderBufferedImage(CGlassEclipseTabPainter.VALUE_PLAIN, new Dimension(w, h), true);
+         }
+         catch (Exception e) {
+            img = glass.RenderBufferedImage(CGlassFactory.VALUE_STEEL, new Dimension(w, h), true);
+         }
+
+         if ( !horizontal) {
+            AffineTransform atTrans = AffineTransform.getTranslateInstance(x /*+ h*/, y + w);
+            atTrans.concatenate(COutlineHelper.tRot90CCW);
+
+            g2d.drawImage(img, atTrans, null);
+         }
+         else {
+            g2d.drawImage(img, x, y, null);
+         }
+
+         g2d.dispose();
       }
-
-      if (!horizontal) {
-         AffineTransform atTrans = AffineTransform.getTranslateInstance(x /*+ h*/, y + w);
-         atTrans.concatenate(COutlineHelper.tRot90CCW);
-
-         g2d.drawImage(img, atTrans, null);
-      } else {
-         g2d.drawImage(img, x, y, null);
-      }
-
-      g2d.dispose();
    }
 
-   public void setController(DockController controller) {
+   public void setController (DockController controller) {
       ColorManager colors = controller == null ? null : controller.getColors();
       color.setManager(colors);
    }
 
-   public void paintBackground(Graphics g) {
+   public void paintBackground (Graphics g) {
       Dockable selection = pane.getSelectedDockable();
       if (selection == null) {
          return;
@@ -152,8 +154,8 @@ public class CGlassStripPainter implements TabPanePainter {
       }
    }
 
-   public void paintForeground(Graphics g) {
-      // TODO Auto-generated method stub
+   public void paintForeground (Graphics g) {
+   // TODO Auto-generated method stub
 
    }
 }
