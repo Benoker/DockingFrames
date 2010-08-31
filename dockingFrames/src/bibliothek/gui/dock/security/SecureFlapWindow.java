@@ -26,16 +26,15 @@
 
 package bibliothek.gui.dock.security;
 
-import java.awt.Dialog;
-import java.awt.Frame;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 import javax.swing.JComponent;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.station.flap.ButtonPane;
+import bibliothek.gui.dock.station.flap.DefaultFlapWindow;
 import bibliothek.gui.dock.station.flap.FlapWindow;
 
 /**
@@ -44,48 +43,43 @@ import bibliothek.gui.dock.station.flap.FlapWindow;
  * are handled automatically.
  * @author Benjamin Sigg
  */
-public class SecureFlapWindow extends FlapWindow {
+public class SecureFlapWindow extends DefaultFlapWindow {
     /** The pane between Dockable and outer world */
     private GlassedPane pane;
+    
+    /** the container painting this window */
+    private Parent window;
     
     /**
      * Creates a new window
      * @param station the station which will use this window
      * @param buttonPane the visible part of the station
-     * @param dialog the owner of this window
+     * @param window the parent of this window
      */
-    public SecureFlapWindow( FlapDockStation station, ButtonPane buttonPane, Dialog dialog ) {
-        super(station, buttonPane, dialog);
-    }
-
-    /**
-     * Creates a new window
-     * @param station the station which will use this window
-     * @param buttonPane the visible part of the station
-     * @param frame the owner of this window
-     */
-    public SecureFlapWindow( FlapDockStation station, ButtonPane buttonPane, Frame frame ) {
-        super(station, buttonPane, frame);
+    public SecureFlapWindow( FlapDockStation station, ButtonPane buttonPane, Parent window ) {
+        super( station, buttonPane, window );
+        this.window = window;
     }
     
     {
         pane = new GlassedPane();
-        JComponent content = (JComponent)getContentPane();
-        setContentPane( pane );
+        JComponent content = (JComponent)window.getContentPane();
+        window.setContentPane( pane );
         pane.setContentPane( content );
-        addWindowListener( new Listener() );
+        
+        content.addComponentListener( new Listener() );
     }
     
     /**
-     * A listener of the enclosing Window. This listener adds or removes
-     * the GlassPane if the enclosing Window is made visible/invisible. 
+     * A listener of the component. This listener adds or removes
+     * the GlassPane if the component is made visible/invisible. 
      * @author Benjamin Sigg
      */
-    private class Listener extends WindowAdapter{
+    private class Listener extends ComponentAdapter{
         private SecureMouseFocusObserver controller;
         
         @Override
-        public void windowOpened( WindowEvent e ) {
+        public void componentShown( ComponentEvent e ){
             if( controller == null ){
                 controller = (SecureMouseFocusObserver)getStation().getController().getFocusObserver();
                 controller.addGlassPane( pane );
@@ -93,7 +87,7 @@ public class SecureFlapWindow extends FlapWindow {
         }
         
         @Override
-        public void windowClosed( WindowEvent e ) {
+        public void componentHidden( ComponentEvent e ){
             if( controller != null ){
                 controller.removeGlassPane( pane );
                 controller = null;

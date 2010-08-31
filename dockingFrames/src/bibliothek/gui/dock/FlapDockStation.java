@@ -27,9 +27,7 @@
 package bibliothek.gui.dock;
 
 import java.awt.Component;
-import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -75,12 +73,14 @@ import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.flap.ButtonPane;
 import bibliothek.gui.dock.station.flap.DefaultFlapLayoutManager;
+import bibliothek.gui.dock.station.flap.DefaultFlapWindowFactory;
 import bibliothek.gui.dock.station.flap.FlapDockHoldToggle;
 import bibliothek.gui.dock.station.flap.FlapDockProperty;
 import bibliothek.gui.dock.station.flap.FlapDockStationFactory;
 import bibliothek.gui.dock.station.flap.FlapDropInfo;
 import bibliothek.gui.dock.station.flap.FlapLayoutManager;
 import bibliothek.gui.dock.station.flap.FlapWindow;
+import bibliothek.gui.dock.station.flap.FlapWindowFactory;
 import bibliothek.gui.dock.station.support.CombinerWrapper;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
@@ -246,6 +246,12 @@ public class FlapDockStation extends AbstractDockableStation {
     		new ConstantPropertyFactory<Dimension>( new Dimension( 10, 10 ) ), true );
     
     /**
+     * Key for a factory that creates the windows of this station.
+     */
+    public static final PropertyKey<FlapWindowFactory> WINDOW_FACTORY = new PropertyKey<FlapWindowFactory>("flap dock station window factory",
+    		new ConstantPropertyFactory<FlapWindowFactory>( new DefaultFlapWindowFactory() ), true );
+    
+    /**
      * The layoutManager which is responsible to layout this station
      */
     private PropertyValue<FlapLayoutManager> layoutManager = new PropertyValue<FlapLayoutManager>( LAYOUT_MANAGER ){
@@ -285,6 +291,21 @@ public class FlapDockStation extends AbstractDockableStation {
     	protected void valueChanged( Dimension oldValue, Dimension newValue ){
     		buttonPane.revalidate();
     	}
+	};
+	
+	/** the factory creating {@link FlapWindow}s for this station */
+	private PropertyValue<FlapWindowFactory> windowFactory = new PropertyValue<FlapWindowFactory>( WINDOW_FACTORY ){
+		protected void valueChanged( FlapWindowFactory oldValue, FlapWindowFactory newValue ){
+			if( oldValue != null ){
+				oldValue.uninstall( FlapDockStation.this );
+			}
+			
+			if( newValue != null ){
+				newValue.install( FlapDockStation.this );
+			}
+
+			updateWindow( getFrontDockable(), true );
+		}
 	};
     
     /** The direction in which the popup-window is, in respect to this station */
@@ -735,31 +756,7 @@ public class FlapDockStation extends AbstractDockableStation {
             return;
         }
         
-        if( dockable == null ){
-            if( window != null ){
-                window.setDockable( null );
-            }
-        }
-        else {
-            Window owner = SwingUtilities.getWindowAncestor( getComponent() );
-            if( window == null || window.getOwner() != owner ){
-                if( window != null ){
-                    window.setDockable( null );
-                }
-                
-                FlapWindow window = createFlapWindow( owner, buttonPane );
-                if( window != null )
-                    setFlapWindow( window );
-            }
-            
-            if( window != null && owner != null ){
-                window.setDockable( dockable );
-                if( owner.isVisible() )
-                    window.setVisible( true );
-            
-                updateWindowBounds();
-            }
-        }
+        updateWindow( dockable, false );
         
         if( oldFrontDockable != null ){
             if( getController() != null ){
@@ -772,7 +769,7 @@ public class FlapDockStation extends AbstractDockableStation {
         
         if( window != null ){
         	if( window.getDockable() == null )
-        		window.setVisible( false );
+        		window.setWindowVisible( false );
         	else
         		window.repaint();
         }
@@ -782,17 +779,53 @@ public class FlapDockStation extends AbstractDockableStation {
     }
     
     /**
+     * Makes sure that <code>dockable</code> is shown on the current {@link FlapWindow}. May replace
+     * the current window if necessary. 
+     * @param dockable the item to show, can be <code>null</code>
+     * @param forceReplace whether the window should be replaced anyway
+     */
+    private void updateWindow( Dockable dockable, boolean forceReplace ){
+    	if( dockable == null ){
+    		if( window != null ){
+    			window.setDockable( null );
+    			if( forceReplace ){
+    				setFlapWindow( null );
+    			}
+    		}
+    	}
+    	else{
+	    	Window owner = SwingUtilities.getWindowAncestor( getComponent() );
+	        if( window == null || forceReplace || !windowFactory.getValue().isValid(window, this) ){
+	            if( window != null ){
+	                window.setDockable( null );
+	            }
+	            
+	            FlapWindow window = createFlapWindow( buttonPane );
+	            if( window != null )
+	                setFlapWindow( window );
+	        }
+	        
+	        if( window != null && owner != null ){
+	            window.setDockable( dockable );
+	            if( owner.isVisible() )
+	                window.setWindowVisible( true );
+	        
+	            updateWindowBounds();
+	        }
+    	}
+    }
+    
+    /**
      * Creates a window for this station.
-     * @param owner the owner of the window
      * @param buttonPane the panel needed to calculate the size of the window
      * @return the window or <code>null</code> if no window could be created
      */
-    protected FlapWindow createFlapWindow( Window owner, ButtonPane buttonPane ){
-        if( owner instanceof Dialog )
-            return new FlapWindow( this, buttonPane, (Dialog)owner );
-        else if( owner instanceof Frame )
-            return new FlapWindow( this, buttonPane, (Frame)owner );
-        return null;
+    protected FlapWindow createFlapWindow( ButtonPane buttonPane ){
+    	FlapWindow window = windowFactory.getValue().create(this, buttonPane);
+    	if( window != null ){
+    		window.setDockTitle( titleVersion );
+    	}
+    	return window;
     }
     
     /**
@@ -1076,8 +1109,10 @@ public class FlapDockStation extends AbstractDockableStation {
         SwingUtilities.convertPointToScreen( point, getComponent() );
         Rectangle result = new Rectangle( point.x, point.y, getComponent().getWidth(), getComponent().getHeight() );
         
-        if( window != null && window.isVisible() ){
-            result = SwingUtilities.computeUnion( window.getX(), window.getY(), window.getWidth(), window.getHeight(), result );
+        if( window != null && window.isWindowVisible() ){
+        	Rectangle bounds = window.getWindowBounds();
+        	
+            result = SwingUtilities.computeUnion( bounds.x, bounds.y, bounds.width, bounds.height, result );
         }
         
         return result;
@@ -1105,7 +1140,7 @@ public class FlapDockStation extends AbstractDockableStation {
      */
     private void setFlapWindow( FlapWindow window ){
     	if( this.window != null )
-    		this.window.dispose();
+    		this.window.destory();
     	
         this.window = window;
         if( window != null )
@@ -1255,7 +1290,7 @@ public class FlapDockStation extends AbstractDockableStation {
         
         DockAcceptance acceptance = getController().getAcceptance();
         
-        if( !strong && window != null && window.isVisible() ){
+        if( !strong && window != null && window.isWindowVisible() ){
             DockTitle title = window.getDockTitle();
             if( title != null ){
                 Component c = title.getComponent();
@@ -1279,11 +1314,10 @@ public class FlapDockStation extends AbstractDockableStation {
             }
         }
         
-        if( window != null && window.isVisible() && !combine ){
+        if( window != null && window.isWindowVisible() && !combine ){
             Point point = new Point( mouseX, mouseY );
-            SwingUtilities.convertPointFromScreen( point, window );
             Dockable child = window.getDockable();
-            combine = window.contains( point ) &&
+            combine = window.containsScreenPoint(point) &&
                 dockable.accept( this, child) &&
                 child.accept( this, dockable ) &&
                 acceptance.accept( this, child, dockable );

@@ -246,7 +246,7 @@
 ! API: FocusObserver calls additional method "handleVeto" if a veto was spoken, the method currently consumes the event making it invisible for the application
 ! API: FocusVetoListener returns a more details description how to handle a veto.
 - Bugfix: DockStations check whether dropping some Dockable would create an invalid Component-tree, and forbid such drag and drop operations
-- API: new CVetoFocusListenr in Common, can speak a veto for some focus changes
+- API: new CVetoFocusListener in Common, can speak a veto for some focus changes
 - API: new SingleTabDecider and support for single tabs: the SingleTabDecider decides which Dockables are displayed with a single tab, the property can be changed during runtime.
 - API: CDockable has a new property "singleTabShown" which is forwarded to a SingleTabDecider
 ! API: DockProperties now supports different priorities for values, "default", "theme" and "client".
@@ -316,5 +316,8 @@
 - Bugfix: Path now encodes its content when using "toString" and decodes contents on creation. Meaning inside a Path object the items are never encoded.
 - Bugfix: MouseFocusObserver no longer calls "component.requestFocusInWindow" if the component does not belong to a Dockable
 - Bugfix: SplitDockStation is now much more strict when it comes to enforcing the uniqueness of placeholders
+- Bugfix: If a CStation was registered at a CControl and later the same object was registered as a SingleCDockable, then CControl did not assign a unique identifier to that Station/Dockable.
+- Bugfix: SimpleDockAction.KeyForwarder caused a memory leak by not removing its listeners properly
 - Bugfix: CLocations returning null as root but have an ExtendedMode are (again) supported.
 - Bugfix: When moving/dragging a Dockable from a SplitDockStation with size-locked Dockables, the locked Dockables got resized even if it was not necessary.
+- API: FlapDockStation supports factory for creating the window

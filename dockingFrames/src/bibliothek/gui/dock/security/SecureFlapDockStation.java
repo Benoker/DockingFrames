@@ -26,10 +26,6 @@
 
 package bibliothek.gui.dock.security;
 
-import java.awt.Dialog;
-import java.awt.Frame;
-import java.awt.Window;
-
 import javax.swing.JComponent;
 
 import bibliothek.gui.DockController;
@@ -79,16 +75,6 @@ public class SecureFlapDockStation extends FlapDockStation {
 		return pane;
 	}
 	
-    @Override
-    protected SecureFlapWindow createFlapWindow( Window owner, ButtonPane buttonPane ) {
-        if( owner instanceof Dialog )
-            return new SecureFlapWindow( this, buttonPane, (Dialog)owner );
-        else if( owner instanceof Frame )
-            return new SecureFlapWindow( this, buttonPane, (Frame)owner );
-        else
-            return null;
-    }
-    
     @Override
     public String getFactoryID() {
         return SecureFlapDockStationFactory.ID;

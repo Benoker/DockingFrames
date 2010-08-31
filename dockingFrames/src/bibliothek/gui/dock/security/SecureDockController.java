@@ -33,6 +33,7 @@ import javax.swing.JComponent;
 
 import sun.security.util.SecurityConstants;
 import bibliothek.gui.DockController;
+import bibliothek.gui.dock.util.Priority;
 
 /**
  * The DockingFrames normally uses some system-resources to handle global events.
@@ -80,6 +81,7 @@ public class SecureDockController extends DockController {
      */
     public SecureDockController() {
         super( new SecureDockControllerFactory() );
+        init();
     }
     
     /**
@@ -89,6 +91,11 @@ public class SecureDockController extends DockController {
      */
     public SecureDockController( SecureDockControllerFactory factory ) {
         super( factory );
+        init();
+    }
+    
+    private void init(){
+    	getProperties().set( SecureFlapDockStation.WINDOW_FACTORY, new SecureFlapWindowFactory(), Priority.DEFAULT );
     }
 
     
