@@ -321,3 +321,5 @@
 - Bugfix: CLocations returning null as root but have an ExtendedMode are (again) supported.
 - Bugfix: When moving/dragging a Dockable from a SplitDockStation with size-locked Dockables, the locked Dockables got resized even if it was not necessary.
 - API: FlapDockStation supports factory for creating the window
+- Bugfix: DockUI now stalls all events rather than setting the SingleParentRemover to null when updating the DockTheme of a station
+- Bugfix: CLayoutChangeStrategy.replaceMultipleDockables could throw a NPE

@@ -26,12 +26,20 @@
 
 package bibliothek.gui;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.swing.Icon;
 import javax.swing.LookAndFeel;
@@ -42,18 +50,25 @@ import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.extension.gui.dock.theme.SmoothTheme;
 import bibliothek.gui.dock.DockFactory;
-import bibliothek.gui.dock.control.SingleParentRemover;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StationPaint;
-import bibliothek.gui.dock.themes.*;
+import bibliothek.gui.dock.themes.BasicTheme;
+import bibliothek.gui.dock.themes.NoStackTheme;
+import bibliothek.gui.dock.themes.ThemeFactory;
+import bibliothek.gui.dock.themes.ThemeProperties;
+import bibliothek.gui.dock.themes.ThemePropertyFactory;
 import bibliothek.gui.dock.themes.basic.BasicCombiner;
 import bibliothek.gui.dock.themes.basic.BasicDisplayerFactory;
 import bibliothek.gui.dock.themes.basic.BasicStationPaint;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.Priority;
-import bibliothek.gui.dock.util.laf.*;
+import bibliothek.gui.dock.util.laf.DefaultLookAndFeelColors;
+import bibliothek.gui.dock.util.laf.LookAndFeelColors;
+import bibliothek.gui.dock.util.laf.LookAndFeelColorsListener;
+import bibliothek.gui.dock.util.laf.Nimbus6u10;
+import bibliothek.gui.dock.util.laf.Windows;
 import bibliothek.gui.dock.util.local.LocaleListener;
 import bibliothek.util.container.Tuple;
 
@@ -507,10 +522,8 @@ public class DockUI {
      * @param factory a factory used to remove and to add the elements
      * @throws IOException if the factory throws an exception
      */
-    public static <D extends DockStation, L> void updateTheme(
-            D station, DockFactory<D,L> factory ) throws IOException{
-        
-    	Map<Integer, Dockable> children = new HashMap<Integer, Dockable>();
+    public static <D extends DockStation, L> void updateTheme( D station, DockFactory<D,L> factory ) throws IOException{
+        Map<Integer, Dockable> children = new HashMap<Integer, Dockable>();
     	Map<Dockable, Integer> ids = new HashMap<Dockable, Integer>();
     	
     	for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
@@ -521,10 +534,8 @@ public class DockUI {
     	
     	L layout = factory.getLayout( station, ids );
     	DockController controller = station.getController();
-    	SingleParentRemover remover = null;
     	if( controller != null ){
-    	    remover = controller.getSingleParentRemover();
-    	    controller.setSingleParentRemover( null );
+    		controller.getRegister().setStalled( true );
     	}
     	try{
     	    for( int i = station.getDockableCount()-1; i >= 0; i-- ){
@@ -534,8 +545,9 @@ public class DockUI {
     	    factory.setLayout( station, layout, children );
     	}
     	finally{
-    	    if( controller != null && remover != null )
-    	        controller.setSingleParentRemover( remover );
+    		if( controller != null ){
+    			controller.getRegister().setStalled( false );
+    		}
     	}
     }
 }

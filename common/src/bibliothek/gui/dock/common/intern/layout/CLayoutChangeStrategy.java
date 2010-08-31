@@ -153,6 +153,10 @@ public class CLayoutChangeStrategy extends DefaultLayoutChangeStrategy {
 	 * @return the replacement composition or <code>null</code>
 	 */
 	protected DockLayoutComposition replaceMultipleDockables( DockFrontendInternals frontend, CSettingAccess setting, DockLayoutComposition composition ){
+		if( composition == null ){
+			return null;
+		}
+		
 		DockLayoutInfo info = composition.getLayout();
 		if( info != null ){
 			DockLayout<?> layout = info.getDataLayout();

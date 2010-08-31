@@ -383,8 +383,6 @@ public class FlapDockStation extends AbstractDockableStation {
     /** Manager for the visibility of the children of this station */
     private DockableVisibilityManager visibility;
     
-    
-    
     /**
      * Defaultconstructor of a {@link FlapDockStation}
      */
@@ -549,6 +547,7 @@ public class FlapDockStation extends AbstractDockableStation {
                     setFrontDockable( oldFrontDockable );
             }
             
+            windowFactory.setProperties( controller );
             buttonPane.resetTitles();
         }
     }

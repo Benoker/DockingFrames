@@ -111,7 +111,7 @@ public class ButtonPane extends OverpaintablePanel{
 			                getContentPane().add( title.getComponent() );
 			            }
 			        }
-			        revalidate();	
+			        revalidate();
 				}
 			});
     	}
