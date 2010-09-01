@@ -230,6 +230,7 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 	/**
 	 * Tells whether this window is still valid, e.g whether the window can be shown 
 	 * in front of its station.
+	 * @return whether this window is still valid
 	 */
 	public boolean isWindowValid(){
 		return window.isParentValid();
@@ -417,7 +418,7 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 			}
 
 			SwingUtilities.convertPointToScreen(location, buttonPane);
-			window.setLocation(location);
+			window.setParentLocation(location);
 			window.setSize(size);
 			window.asComponent().validate();
 		}
@@ -501,16 +502,22 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 		/**
 		 * Tells whether this window is still valid, e.g whether the window can be shown 
 		 * in front of its station.
+		 * @return whether this parent can still be used
 		 */
 		public boolean isParentValid();
 
+		/**
+		 * Returns <code>this</code> or the representation of <code>this</code>
+		 * as {@link Component}.
+		 * @return the component that shows a {@link DefaultFlapWindow}
+		 */
 		public Component asComponent();
 
 		/**
 		 * Sets the location of this container on the screen.
-		 * @param location the new locations
+		 * @param location the new locations in screen coordinates
 		 */
-		public void setLocation( Point location );
+		public void setParentLocation( Point location );
 
 		/**
 		 * Sets the size of this container.
@@ -591,6 +598,10 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 		public boolean isParentValid(){
 			Window owner = SwingUtilities.getWindowAncestor(station.getComponent());
 			return getOwner() == owner;
+		}
+		
+		public void setParentLocation( Point location ){
+			setLocation( location );
 		}
 		
 		public void destroy(){
