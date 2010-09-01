@@ -127,6 +127,15 @@ public class SplitDockPlaceholderProperty extends AbstractDockableProperty {
 		
 		return new SplitDockProperty( target.getX(), target.getY(), target.getWidth(), target.getHeight() );
 	}
+	
+	/**
+	 * Gets the backup location that was set when this {@link SplitDockPlaceholderProperty} 
+	 * was created.
+	 * @return the backup location, might be <code>null</code>
+	 */
+	public DockableProperty getBackup(){
+		return backup;
+	}
 
 	public SplitDockPlaceholderProperty copy(){
 		return new SplitDockPlaceholderProperty( placeholder, backup == null ? null : backup.copy() );

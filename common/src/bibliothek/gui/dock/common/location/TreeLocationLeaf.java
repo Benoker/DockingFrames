@@ -84,7 +84,7 @@ public class TreeLocationLeaf extends AbstractStackholdingLocation{
 
 	@Override
 	public String toString() {
-	    return String.valueOf( parent ) + " " + super.toString();
+	    return String.valueOf( parent ) + " [leaf " + leafId + "]";
 	}
 
 	@Override

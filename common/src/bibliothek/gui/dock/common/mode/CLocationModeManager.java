@@ -194,13 +194,15 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
     	if( root != null ){
     		if( dockable instanceof CommonDockable ){
 	    		CStation<?> station = control.getOwner().getStation( root );
-	    		if( newMode.respectWorkingAreas( station.getStation() )){
-	    			if( station.isWorkingArea() ){
-	    				((CommonDockable)dockable).getDockable().setWorkingArea( station );
-	    			}
-	    			else{
-	    				((CommonDockable)dockable).getDockable().setWorkingArea( null );
-	    			}
+	    		if( station != null ){
+		    		if( newMode.respectWorkingAreas( station.getStation() )){
+		    			if( station.isWorkingArea() ){
+		    				((CommonDockable)dockable).getDockable().setWorkingArea( station );
+		    			}
+		    			else{
+		    				((CommonDockable)dockable).getDockable().setWorkingArea( null );
+		    			}
+		    		}
 	    		}
 	    	}
     		

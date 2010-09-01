@@ -30,6 +30,7 @@ import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.split.SplitDockPathProperty;
+import bibliothek.gui.dock.station.split.SplitDockPlaceholderProperty;
 import bibliothek.gui.dock.station.split.SplitDockProperty;
 
 /**
@@ -163,6 +164,10 @@ public abstract class CSplitLocation extends CLocation{
     @Override
     public CLocation expandProperty( DockableProperty property ) {
         CLocation location = null;
+        
+        if( property instanceof SplitDockPlaceholderProperty ){
+        	property = ((SplitDockPlaceholderProperty)property).getBackup();
+        }
         
         if( property instanceof SplitDockProperty ){
             SplitDockProperty split = (SplitDockProperty)property;

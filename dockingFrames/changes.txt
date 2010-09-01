@@ -323,3 +323,4 @@
 - API: FlapDockStation supports factory for creating the window
 - Bugfix: DockUI now stalls all events rather than setting the SingleParentRemover to null when updating the DockTheme of a station
 - Bugfix: CLayoutChangeStrategy.replaceMultipleDockables could throw a NPE
+- Bugfix: CDockable.getBaseLocation did return null when a location was actually available
