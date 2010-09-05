@@ -65,12 +65,18 @@ import bibliothek.gui.dock.event.DockControllerRepresentativeListener;
 import bibliothek.gui.dock.event.DockRelocatorListener;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * Default implementation of a handler that performs the drag & drop operations
  * for a {@link DockController}.
  * @author Benjamin Sigg
  */
+@Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_0,
+		description="Moving a dockable over itself should cancel the drag operation. This setting should be configurable.")
 public class DefaultDockRelocator extends DockRelocator{
 	/** <code>true</code> as long as the user drags a title or a Dockable */
     private boolean onMove = false;

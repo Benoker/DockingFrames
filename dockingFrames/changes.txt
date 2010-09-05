@@ -326,4 +326,4 @@
 - Bugfix: CDockable.getBaseLocation did return null when a location was actually available
 - Bugfix (by Thomas): Glass Extension no longer throws Exception if width or height of tab is 0
 - Bugfix (by Thomas): Cursor should no longer remain arrow when moved away from a divider of a SplitDockStation
-- API: StackDockComponent now offers a method "createDefaultRepresentation". This allows code to be executed when clicking on, or dragging of, an empty arounds tabs.  
+- API: StackDockComponent now offers a method "createDefaultRepresentation". This allows code to be executed when clicking on, or dragging of, an empty space arounds tabs.  
