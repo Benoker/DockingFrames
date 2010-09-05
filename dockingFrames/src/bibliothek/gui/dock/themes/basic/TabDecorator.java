@@ -34,6 +34,7 @@ import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.station.stack.StackDockComponentParent;
+import bibliothek.gui.dock.station.stack.StackDockComponentRepresentative;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.util.PropertyValue;
 
@@ -63,6 +64,8 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 					}
 				}
 			}
+			
+			representative.setComponent( component );
 		}
 	};
 	
@@ -82,6 +85,7 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 	private DockStation station;
 	private StackDockComponent component;
 	private Component representation;
+	private StackDockComponentRepresentative representative = new StackDockComponentRepresentative();
 	
 	/**
 	 * Creates a new decorator
@@ -112,6 +116,8 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 				component.setSelectedIndex( 0 );
 			}
 		}
+		
+		representative.setTarget( dockable );
 	}
 	
 	public void setController( DockController controller ){
@@ -121,6 +127,7 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 		if( component != null ){
 			component.setController( controller );
 		}
+		representative.setController( controller );
 	}
 	
 	public Component getComponent(){
@@ -129,4 +136,5 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 		
 		return component.getComponent();
 	}
+	
 }

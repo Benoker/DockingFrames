@@ -40,11 +40,14 @@ import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.action.ActionPopup;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.control.RemoteRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
+import bibliothek.gui.dock.util.SimpleDockElementRepresentative;
 
 
 /**
@@ -200,6 +203,10 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 	
 	public boolean isSingleTabComponent(){
 		return false;
+	}
+	
+	public DockElementRepresentative createDefaultRepresentation( DockElement target ){
+		return new SimpleDockElementRepresentative( target, this );
 	}
 	
 	/**

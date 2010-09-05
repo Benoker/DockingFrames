@@ -66,6 +66,7 @@ import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.station.stack.StackDockComponentParent;
+import bibliothek.gui.dock.station.stack.StackDockComponentRepresentative;
 import bibliothek.gui.dock.station.stack.StackDockProperty;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
 import bibliothek.gui.dock.station.stack.TabContentFilterListener;
@@ -157,6 +158,9 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     
     /** A Component which shows two or more children of this station */
     private StackDockComponent stackComponent;
+    
+    /** Responsible for updating a {@link DockElementRepresentative} that covers the empty areas of {@link #stackComponent} */
+    private StackDockComponentRepresentative stackComponentRepresentative;
     
     /** The current component factory */
     private PropertyValue<StackDockComponentFactory> stackComponentFactory;
@@ -304,6 +308,10 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         stackComponent = createStackDockComponent();
         stackComponent.addChangeListener( visibleListener );
         
+        stackComponentRepresentative = new StackDockComponentRepresentative();
+        stackComponentRepresentative.setComponent( stackComponent );
+        stackComponentRepresentative.setTarget( this );
+        
         addDockStationListener( new DockStationAdapter() {
         	@Override
         	public void dockableSelected( DockStation station, Dockable oldSelection, Dockable newSelection ){
@@ -413,6 +421,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             
             this.stackComponent = stackComponent;
             stackComponent.setTabPlacement( tabPlacement.getValue() );
+            stackComponentRepresentative.setComponent( stackComponent );
             
             if( getDockableCount() < 2 && !singleTabStackDockComponent() ){
                 stackComponent.addChangeListener( visibleListener );
@@ -507,6 +516,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             tabPlacement.setProperties( controller );
             placeholderStrategy.setProperties( controller );
             tabContentFilter.setProperties( controller );
+            stackComponentRepresentative.setController( controller );
             
             if( controller != null ){
                 title = controller.getDockTitleManager().getVersion( TITLE_ID, ControllerTitleFactory.INSTANCE );

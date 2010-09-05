@@ -70,4 +70,12 @@ public class SecureSplitDockStation extends SplitDockStation {
 			((SecureDockController)controller).getFocusObserver().addGlassPane( glassedPane );
 		}
 	}
+	
+	/**
+	 * No asynchronous checking, the security manager would now allow it.
+	 */
+	@Override
+	protected void checkMousePositionAsync(){
+		// ignore
+	}
 }

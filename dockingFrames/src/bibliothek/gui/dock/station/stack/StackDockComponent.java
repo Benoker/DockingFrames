@@ -34,6 +34,8 @@ import javax.swing.event.ChangeListener;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 
@@ -199,4 +201,13 @@ public interface StackDockComponent {
      * @return <code>true</code> if this component should always be shown
      */
 	public boolean isSingleTabComponent();
+	
+	/**
+	 * Creates and returns a new {@link DockElementRepresentative} representing <code>target</code>,
+	 * the new representation is to be used to cover all the empty areas on this <code>StackDockComponent</code>.
+	 * @param target the target for the new representative, may or may not be a child of this component, not <code>null</code>
+	 * @return the new representation, can be <code>null</code> if this <code>StackDockComponent</code> does not allow to
+	 * use its free spaces
+	 */
+	public DockElementRepresentative createDefaultRepresentation( DockElement target );
 }

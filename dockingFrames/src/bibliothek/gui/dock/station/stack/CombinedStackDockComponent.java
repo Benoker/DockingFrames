@@ -43,12 +43,15 @@ import javax.swing.event.ChangeListener;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.station.stack.tab.AbstractTabPane;
 import bibliothek.gui.dock.station.stack.tab.AbstractTabPaneComponent;
 import bibliothek.gui.dock.station.stack.tab.LonelyTabPaneComponent;
 import bibliothek.gui.dock.station.stack.tab.TabLayoutManager;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.stack.tab.TabPaneListener;
+import bibliothek.gui.dock.util.SimpleDockElementRepresentative;
 
 /**
  * A {@link StackDockComponent} which is a combination of other components.<br>
@@ -526,6 +529,10 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
      */
     protected int getZOrder( Component component ){
     	return panel.getComponentZOrder( component );
+    }
+    
+    public DockElementRepresentative createDefaultRepresentation( final DockElement target ){
+    	return new SimpleDockElementRepresentative( target, panel );
     }
 	
     /**
