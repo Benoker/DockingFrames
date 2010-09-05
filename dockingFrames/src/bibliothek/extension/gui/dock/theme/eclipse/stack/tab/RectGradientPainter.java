@@ -91,7 +91,7 @@ public class RectGradientPainter extends BaseTabComponent {
 	}
 	
 	@Override
-	protected void updateFocus(){
+	public void updateFocus(){
 		update();
 		updateBorder();
 		updateFont();
@@ -166,7 +166,7 @@ public class RectGradientPainter extends BaseTabComponent {
 	}
 	
 	@Override
-	protected void updateBorder(){
+	public void updateBorder(){
 		Color color2;
 		
 		Window window = SwingUtilities.getWindowAncestor( getComponent() );

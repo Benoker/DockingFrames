@@ -187,16 +187,19 @@ public class DefaultInvisibleTab implements InvisibleTab{
 		}
         
         public void hierarchyChanged( HierarchyEvent e ){
-            if( window != null ){
-                window.removeWindowListener( this );
-                window = null;
-            }
-            
-            window = SwingUtilities.getWindowAncestor( component );
-            
-            if( window != null ){
-                window.addWindowListener( this );
-                updateBorder();
+            Window newWindow = SwingUtilities.getWindowAncestor(component);
+
+            long lFlags = e.getChangeFlags();
+            // update current found window only if parent has changed
+            if (window != newWindow && (lFlags & HierarchyEvent.PARENT_CHANGED) != 0) {
+               if (window != null) {
+                  window.removeWindowListener(this);
+               }
+               if (newWindow != null) {
+                  newWindow.addWindowListener(this);
+                  updateBorder();
+               }
+               window = newWindow;
             }
         }
         

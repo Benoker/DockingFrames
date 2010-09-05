@@ -25,30 +25,18 @@
  */
 package bibliothek.extension.gui.dock.theme.eclipse.stack;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.Rectangle;
+import java.awt.*;
+import java.awt.event.*;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.border.Border;
+import javax.swing.*;
+import javax.swing.border.*;
 
-import bibliothek.extension.gui.dock.theme.EclipseTheme;
-import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.BorderedComponent;
-import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabComponent;
-import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPainter;
-import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPanePainter;
-import bibliothek.gui.DockController;
-import bibliothek.gui.DockStation;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
-import bibliothek.gui.dock.station.stack.CombinedStackDockContentPane;
-import bibliothek.gui.dock.station.stack.tab.LonelyTabPaneComponent;
-import bibliothek.gui.dock.station.stack.tab.TabPane;
-import bibliothek.gui.dock.station.stack.tab.TabPaneListener;
-import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.extension.gui.dock.theme.*;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.*;
+import bibliothek.gui.*;
+import bibliothek.gui.dock.station.stack.*;
+import bibliothek.gui.dock.station.stack.tab.*;
+import bibliothek.gui.dock.util.*;
 
 /**
  * The {@link EclipseTabPane} uses a generic {@link TabPainter} to create its
@@ -56,6 +44,60 @@ import bibliothek.gui.dock.util.PropertyValue;
  * @author Benjamin Sigg
  */
 public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, EclipseMenu, EclipseTabInfo> implements BorderedComponent{
+   /**
+    * Listens to the window ancestor of this {@link TabComponent} and updates
+    * color when the focus is lost.
+    * @author Benjamin Sigg, Thomas Hilbert
+    */
+    private class WindowActiveObserver extends WindowAdapter implements HierarchyListener {
+       private Window window;
+
+       public void hierarchyChanged (HierarchyEvent e) {
+          Window newWindow = SwingUtilities.getWindowAncestor(getComponent());
+
+          long lFlags = e.getChangeFlags();
+          // update current found window only if parent has changed
+          if (window != newWindow && (lFlags & HierarchyEvent.PARENT_CHANGED) != 0) {
+             if (window != null) {
+                window.removeWindowListener(this);
+             }
+             if (newWindow != null) {
+                newWindow.addWindowListener(this);
+                if (getSelectedIndex() != -1) {
+                   EclipseTab tab = getTab(getSelectedDockable());
+                   if (tab != null && tab.getComponent() instanceof BaseTabComponent) {
+                      ((BaseTabComponent)tab.getComponent()).updateBorder();
+                      ((BaseTabComponent)tab.getComponent()).updateFocus();
+                   }
+                }
+             }
+             window = newWindow;
+          }
+       }
+
+       @Override
+       public void windowActivated (WindowEvent e) {
+          if (getSelectedIndex() != -1) {
+             EclipseTab tab = getTab(getSelectedDockable());
+             if (tab != null && tab.getComponent() instanceof BaseTabComponent) {
+                ((BaseTabComponent)tab.getComponent()).updateBorder();
+                ((BaseTabComponent)tab.getComponent()).updateFocus();
+             }
+          }
+       }
+ 
+       @Override
+       public void windowDeactivated (WindowEvent e) {
+          if (getSelectedIndex() != -1) {
+             EclipseTab tab = getTab(getSelectedDockable());
+             if (tab != null && tab.getComponent() instanceof BaseTabComponent) {
+                ((BaseTabComponent)tab.getComponent()).updateBorder();
+                ((BaseTabComponent)tab.getComponent()).updateFocus();
+             }
+          }
+       }
+    }
+
 	private PropertyValue<TabPainter> tabPainter = new PropertyValue<TabPainter>( EclipseTheme.TAB_PAINTER ){
 		@Override
 		protected void valueChanged( TabPainter oldValue, TabPainter newValue ){
@@ -103,6 +145,8 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 				// ignore
 			}
 		});
+		
+		getComponent().addHierarchyListener(new WindowActiveObserver());
 	}
 	
 	@Override

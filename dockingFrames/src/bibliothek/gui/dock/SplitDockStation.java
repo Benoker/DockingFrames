@@ -26,103 +26,32 @@
 
 package bibliothek.gui.dock;
 
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import javax.swing.Icon;
-import javax.swing.JPanel;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.event.MouseInputAdapter;
-import javax.swing.event.MouseInputListener;
+import javax.swing.*;
+import javax.swing.event.*;
 
-import bibliothek.gui.DockController;
-import bibliothek.gui.DockStation;
-import bibliothek.gui.DockTheme;
-import bibliothek.gui.DockUI;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.DefaultDockActionSource;
-import bibliothek.gui.dock.action.DockAction;
-import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.action.HierarchyDockActionSource;
-import bibliothek.gui.dock.action.ListeningDockAction;
-import bibliothek.gui.dock.action.LocationHint;
-import bibliothek.gui.dock.displayer.DockableDisplayerHints;
-import bibliothek.gui.dock.dockable.DockHierarchyObserver;
-import bibliothek.gui.dock.event.DockHierarchyEvent;
-import bibliothek.gui.dock.event.DockHierarchyListener;
-import bibliothek.gui.dock.event.DockStationAdapter;
-import bibliothek.gui.dock.event.DockStationListener;
-import bibliothek.gui.dock.event.DockTitleEvent;
-import bibliothek.gui.dock.event.DockableListener;
-import bibliothek.gui.dock.event.DoubleClickListener;
-import bibliothek.gui.dock.event.SplitDockListener;
-import bibliothek.gui.dock.layout.DockableProperty;
-import bibliothek.gui.dock.station.Combiner;
-import bibliothek.gui.dock.station.DisplayerCollection;
-import bibliothek.gui.dock.station.DisplayerFactory;
-import bibliothek.gui.dock.station.DockableDisplayer;
-import bibliothek.gui.dock.station.DockableDisplayerListener;
-import bibliothek.gui.dock.station.OverpaintablePanel;
-import bibliothek.gui.dock.station.StationChildHandle;
-import bibliothek.gui.dock.station.StationPaint;
-import bibliothek.gui.dock.station.split.DefaultSplitLayoutManager;
+import bibliothek.gui.*;
+import bibliothek.gui.dock.action.*;
+import bibliothek.gui.dock.displayer.*;
+import bibliothek.gui.dock.dockable.*;
+import bibliothek.gui.dock.event.*;
+import bibliothek.gui.dock.layout.*;
+import bibliothek.gui.dock.station.*;
+import bibliothek.gui.dock.station.split.*;
 import bibliothek.gui.dock.station.split.Leaf;
 import bibliothek.gui.dock.station.split.Node;
-import bibliothek.gui.dock.station.split.Placeholder;
-import bibliothek.gui.dock.station.split.PutInfo;
-import bibliothek.gui.dock.station.split.Root;
-import bibliothek.gui.dock.station.split.SplitDockAccess;
-import bibliothek.gui.dock.station.split.SplitDockPathProperty;
-import bibliothek.gui.dock.station.split.SplitDockPlaceholderProperty;
-import bibliothek.gui.dock.station.split.SplitDockProperty;
-import bibliothek.gui.dock.station.split.SplitDockStationFactory;
-import bibliothek.gui.dock.station.split.SplitDockTree;
-import bibliothek.gui.dock.station.split.SplitDockTreeFactory;
-import bibliothek.gui.dock.station.split.SplitDropTreeException;
-import bibliothek.gui.dock.station.split.SplitFullScreenAction;
-import bibliothek.gui.dock.station.split.SplitLayoutManager;
-import bibliothek.gui.dock.station.split.SplitNode;
-import bibliothek.gui.dock.station.split.SplitNodeVisitor;
-import bibliothek.gui.dock.station.split.SplitPlaceholderSet;
-import bibliothek.gui.dock.station.split.SplitTreeFactory;
-import bibliothek.gui.dock.station.split.PutInfo.Put;
-import bibliothek.gui.dock.station.split.SplitDockTree.Key;
-import bibliothek.gui.dock.station.support.CombinerWrapper;
-import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
-import bibliothek.gui.dock.station.support.DockStationListenerManager;
-import bibliothek.gui.dock.station.support.DockableVisibilityManager;
-import bibliothek.gui.dock.station.support.PlaceholderMap;
-import bibliothek.gui.dock.station.support.PlaceholderStrategy;
-import bibliothek.gui.dock.station.support.PlaceholderStrategyListener;
-import bibliothek.gui.dock.station.support.RootPlaceholderStrategy;
-import bibliothek.gui.dock.station.support.StationPaintWrapper;
-import bibliothek.gui.dock.title.ControllerTitleFactory;
-import bibliothek.gui.dock.title.DockTitle;
-import bibliothek.gui.dock.title.DockTitleFactory;
-import bibliothek.gui.dock.title.DockTitleRequest;
-import bibliothek.gui.dock.title.DockTitleVersion;
-import bibliothek.gui.dock.util.DockProperties;
-import bibliothek.gui.dock.util.DockUtilities;
-import bibliothek.gui.dock.util.PropertyKey;
-import bibliothek.gui.dock.util.PropertyValue;
-import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
-import bibliothek.util.Path;
+import bibliothek.gui.dock.station.split.PutInfo.*;
+import bibliothek.gui.dock.station.split.SplitDockTree.*;
+import bibliothek.gui.dock.station.support.*;
+import bibliothek.gui.dock.title.*;
+import bibliothek.gui.dock.util.*;
+import bibliothek.gui.dock.util.property.*;
+import bibliothek.util.*;
 
 
 /**
@@ -2463,6 +2392,22 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
                 }
                 SplitDockStation.this.setCursor( null );
                 mouseMoved( e );
+                
+                // check new mouse position and update cursor accordingly
+                // bugfix for: mouse cursor does't reset, if user moved the mouse too fast
+                final Component c = e.getComponent();
+                SwingUtilities.invokeLater(new Runnable() {
+                   public void run () {
+                      PointerInfo p = MouseInfo.getPointerInfo();
+                      Point e = p.getLocation();
+                      SwingUtilities.convertPointFromScreen(e, c);
+                      current = root().getDividerNode(e.x, e.y);
+   
+                      if (current == null) {
+                         setCursor(null);
+                      }
+                   }
+                });
             }
         }
 

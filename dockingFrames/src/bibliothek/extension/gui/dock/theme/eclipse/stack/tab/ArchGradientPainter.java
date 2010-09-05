@@ -107,7 +107,7 @@ public class ArchGradientPainter extends BaseTabComponent {
 	}
 
 	@Override
-	protected void updateBorder(){
+	public void updateBorder(){
 		EclipseTabPane pane = getPane();
 		int index = getDockableIndex();
 		
@@ -165,7 +165,7 @@ public class ArchGradientPainter extends BaseTabComponent {
 	}
 	
 	@Override
-	protected void updateFocus(){
+	public void updateFocus(){
 		update();
 		updateBorder();
 		updateFont();
