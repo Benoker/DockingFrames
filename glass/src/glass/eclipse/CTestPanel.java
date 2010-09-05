@@ -1,6 +1,7 @@
 package glass.eclipse;
 
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 
 
@@ -31,7 +32,10 @@ public class CTestPanel extends JPanel {
    private void initialize () {
       this.setSize(300, 200);
       setLayout(new BorderLayout());
-      this.add(getJScrollPane(), BorderLayout.CENTER);
+      addMouseListener(new MouseAdapter() {});
+      addMouseMotionListener(new MouseAdapter() {});
+      addMouseWheelListener(new MouseAdapter() {});
+      this.add(getJPanel(), BorderLayout.CENTER);
    }
 
    /**
@@ -108,4 +112,11 @@ public class CTestPanel extends JPanel {
       return jTable;
    }
 
+   @Override
+   protected void paintComponent (Graphics g) {
+      super.paintComponent(g);
+
+      setComponentZOrder(getJPanel(), 2);
+      setComponentZOrder(getJPanel(), 1);
+   }
 }

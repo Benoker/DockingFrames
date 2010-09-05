@@ -76,13 +76,17 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
    /** number of pixels at the left side that are empty and under the selected predecessor of this tab */
    private final int TAB_OVERLAP = 24;
 
+   private boolean bSmallerTabs = false;
+
    /**
     * Creates a new painter.
     * @param pane the owner of this painter
     * @param dockable the dockable which this painter represents
     */
-   public CGlassEclipseTabPainter (EclipseTabPane pane, Dockable dockable) {
+   public CGlassEclipseTabPainter (EclipseTabPane pane, Dockable dockable, boolean bSmallerTabs) {
       super(pane, dockable, ".glass");
+
+      this.bSmallerTabs = bSmallerTabs;
 
       setLayout(null);
       setOpaque(false);
@@ -109,7 +113,7 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
    }
 
    @Override
-   protected void updateBorder () {
+   public void updateBorder () {
       EclipseTabPane pane = getPane();
       int index = getDockableIndex();
 
@@ -173,7 +177,7 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
    }
 
    @Override
-   protected void updateFocus () {
+   public void updateFocus () {
       update();
       updateBorder();
       updateFont();
@@ -208,15 +212,17 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
       Insets labelInsets = null;
       Insets buttonInsets = null;
 
+      int iInsets = bSmallerTabs ? 1 : 3;
+
       switch (getOrientation()) {
          case TOP_OF_DOCKABLE:
          case BOTTOM_OF_DOCKABLE:
-            labelInsets = new Insets(3, 5, 3, 2);
+            labelInsets = new Insets(iInsets, 5, iInsets, 2);
             buttonInsets = new Insets(1, 0, 1, 5);
             break;
          case LEFT_OF_DOCKABLE:
          case RIGHT_OF_DOCKABLE:
-            labelInsets = new Insets(5, 3, 2, 3);
+            labelInsets = new Insets(5, iInsets, 2, iInsets);
             buttonInsets = new Insets(0, 1, 5, 1);
             break;
       }
@@ -316,16 +322,19 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
    @Override
    public boolean contains (int x, int y) {
       if ( !super.contains(x, y)) {
-         return false;
+         return (false);
       }
 
+      boolean bRet = true;
       if (isSelected()) {
          Shape s = createSelectedTabShape(getWidth(), getHeight(), false);
-         return (s.contains(x, y));
+         bRet = (s.contains(x, y));
       }
       else {
-         return (true);
+         bRet = super.contains(x, y);
       }
+
+      return (bRet);
    }
 
    @Override
@@ -668,12 +677,15 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
       }
    }
 
-   /**
-    * This factory creates instances of {@link CGlassEclipseTabPainter}.
-    */
-   public static final TabPainter FACTORY = new TabPainter() {
+   protected static class CTabPainter implements TabPainter {
+      boolean bSmallTabs = false;
+
+      public CTabPainter (boolean smallTabs) {
+         bSmallTabs = smallTabs;
+      }
+
       public TabComponent createTabComponent (EclipseTabPane pane, Dockable dockable) {
-         return new CGlassEclipseTabPainter(pane, dockable);
+         return new CGlassEclipseTabPainter(pane, dockable, bSmallTabs);
       }
 
       public TabPanePainter createDecorationPainter (EclipseTabPane pane) {
@@ -687,5 +699,17 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
       public Border getFullBorder (BorderedComponent owner, DockController controller, Dockable dockable) {
          return new CEclipseBorder(controller, CORNER_RADIUS, owner);
       }
-   };
+   }
+
+   /**
+    * This factory creates instances of {@link CGlassEclipseTabPainter}.
+    * Normal tab size.
+    */
+   public static final CTabPainter FACTORY = new CTabPainter(false);
+
+   /**
+    * This factory creates instances of {@link CGlassEclipseTabPainter}.
+    * Smaller tab size.
+    */
+   public static final CTabPainter FACTORY_SMALL = new CTabPainter(true);
 }

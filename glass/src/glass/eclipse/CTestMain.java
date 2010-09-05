@@ -18,6 +18,10 @@ public class CTestMain {
     * @param args
     */
    public static void main (String[] args) {
+      //      SwingUtilities.invokeLater(new Runnable() {
+      //
+      //         public void run () {
+      // TODO Auto-generated method stub
       JFrame frame = new JFrame();
 
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -30,7 +34,7 @@ public class CTestMain {
       frame.setSize(640, 480);
       frame.setLocationRelativeTo(null);
       frame.setVisible(true);
-
+      //      control.getContentArea().getCenter().setContinousDisplay(true);
       SingleCDockable red = create("Red", Color.RED);
       SingleCDockable green = create("Green", Color.GREEN);
       SingleCDockable blue = create("Blue ", Color.BLUE);
@@ -39,6 +43,7 @@ public class CTestMain {
       control.add(red);
       control.add(green);
       control.add(blue);
+
       updateTheme(control);
 
       CGrid grid = new CGrid(control);
@@ -54,6 +59,9 @@ public class CTestMain {
 
       blue.setLocation(CLocation.base().minimalNorth());
       blue.setVisible(true);
+
+      //         }
+      //      });
    }
 
    public static SingleCDockable create (String title, Color color) {
@@ -63,6 +71,7 @@ public class CTestMain {
       CTestPanel panel = new CTestPanel();
 
       DefaultSingleCDockable d = new DefaultSingleCDockable(title, title, panel);
+      d.setMaximizable(true);
 
       //      d.setTitleIcon(new ImageIcon("D:/test.png"));
       return d;
@@ -90,6 +99,7 @@ public class CTestMain {
 
       cControl.setTheme(ThemeMap.KEY_ECLIPSE_THEME);
       ((CEclipseTheme)cControl.intern().getController().getTheme()).intern().setMovingImageFactory(new CMiniPreviewMovingImageFactory(128), Priority.CLIENT);
+      ((CEclipseTheme)cControl.intern().getController().getTheme()).intern().setPaint(new CGlassStationPaint(), Priority.CLIENT);
    }
 
    public static ImageIcon createIcon (String path) {
