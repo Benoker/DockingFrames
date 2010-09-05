@@ -151,7 +151,7 @@ public class CLockedResizeLayoutManager extends LockedResizeLayoutManager<Reques
             CDockable cdock = ((CommonDockable)dockable).getDockable();
             return cdock.isResizeLockedVertically();
         }
-        if( dockable.asDockStation() instanceof StackDockStation ){
+        if( dockable != null && dockable.asDockStation() instanceof StackDockStation ){
             StackDockStation station = (StackDockStation)dockable.asDockStation();
             for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
                 if( isLockedVertically( station.getDockable( i ) ))
@@ -172,7 +172,7 @@ public class CLockedResizeLayoutManager extends LockedResizeLayoutManager<Reques
             CDockable cdock = ((CommonDockable)dockable).getDockable();
             return cdock.isResizeLockedHorizontally();
         }
-        if( dockable.asDockStation() instanceof StackDockStation ){
+        if( dockable != null && dockable.asDockStation() instanceof StackDockStation ){
             StackDockStation station = (StackDockStation)dockable.asDockStation();
             for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
                 if( isLockedHorizontally( station.getDockable( i ) ))
