@@ -73,7 +73,7 @@ public class CGlassEclipseColorSchemeExtension extends DefaultColorScheme {
 
       //      // Paint
       setColor("glass.paint.divider", Color.BLACK);
-      setColor("glass.paint.insertion", Color.RED);
+      setColor("glass.paint.insertion", Color.GRAY);
       setColor("glass.paint.line", Color.GRAY);
       return true;
    }
