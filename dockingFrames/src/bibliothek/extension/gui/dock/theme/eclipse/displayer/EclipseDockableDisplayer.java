@@ -46,6 +46,7 @@ import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
+import bibliothek.gui.dock.station.stack.StackDockComponentRepresentative;
 import bibliothek.gui.dock.station.stack.TabContent;
 import bibliothek.gui.dock.station.stack.TabContentFilterListener;
 import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
@@ -67,6 +68,8 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 	
 	private List<DockableDisplayerListener> listeners = new ArrayList<DockableDisplayerListener>();
 	private TitleBarObserver observer;
+	private StackDockComponentRepresentative representative;
+	
 	private PropertyValue<TabPlacement> tabPlacement = new PropertyValue<TabPlacement>( StackDockStation.TAB_PLACEMENT ){
 		@Override
 		protected void valueChanged( TabPlacement oldValue, TabPlacement newValue ){
@@ -145,6 +148,8 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 		};
 		
 		this.station = station;
+		representative = new StackDockComponentRepresentative();
+		representative.setComponent( this );
 		setDockable(dockable);
 		
 		getComponent().setFocusCycleRoot( true );
@@ -208,6 +213,7 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 		if( observer != null ){
 			observer.setDockable( dockable );
 		}
+		representative.setTarget( dockable );
 		revalidate();
 	}
 	
@@ -239,6 +245,7 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 		}
 		tabPlacement.setProperties( controller );
 		filter.setProperties( controller );
+		representative.setController( controller );
 	}
 
 	public boolean titleContains( int x, int y ){
