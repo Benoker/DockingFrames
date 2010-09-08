@@ -18,37 +18,27 @@ package tutorial;
 
 
 import java.awt.BorderLayout;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
 
-import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import javax.swing.JList;
 import javax.swing.JScrollPane;
+import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
 
-import tutorial.support.Tutorial;
+import tutorial.support.CodePanel;
 import tutorial.support.TutorialPanel;
+import tutorial.support.sets.RootSet;
+import tutorial.support.sets.TutorialTreeModel;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CGrid;
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
 import bibliothek.gui.dock.common.layout.ThemeMap;
 
 public class C0_Readme extends JFrame{
-	@SuppressWarnings("unchecked")
-	private Class[] tutorials = {
-			C1_CoreBasics_01_HelloWorld.class,
-			C1_CoreBasics_02_TheStations.class,
-			C1_CoreBasics_03_SplitDockStation.class
-	};
-	
-	public static void main( String[] args ){
+	public static void main( String[] args ) throws InstantiationException, IllegalAccessException{
 		C0_Readme readme = new C0_Readme();
 		readme.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		readme.setBounds( 20, 20, 800, 600 );
@@ -56,11 +46,11 @@ public class C0_Readme extends JFrame{
 	}
 	
 	private TutorialPanel currentSelection;
+	private CodePanel currentCode;
 	
-	private Map<String, String> descriptions = new HashMap<String, String>();
-	private Map<String, BufferedImage> images = new HashMap<String, BufferedImage>();
-	
-	public C0_Readme(){
+	public C0_Readme() throws InstantiationException, IllegalAccessException{
+		setTitle( "DockingFrames - Examples" );
+		
 		CControl control = new CControl( this );
 		control.setTheme( ThemeMap.KEY_FLAT_THEME );
 		add( control.getContentArea() );
@@ -72,94 +62,55 @@ public class C0_Readme extends JFrame{
 		currentSelectionDockable.setLayout( new BorderLayout() );
 		currentSelectionDockable.add( currentSelection, BorderLayout.CENTER );
 		currentSelectionDockable.setCloseable( false );
-		currentSelectionDockable.setExternalizable( false );
-		currentSelectionDockable.setMinimizable( false );
 		layout.add( 30, 0, 70, 100, currentSelectionDockable );
 		
-		String[] titles = new String[tutorials.length];
-		for( int i = 0; i < titles.length; i++ ){
-			titles[i] = (i+1) + " - " + getTitle( tutorials[i] );
-		}
-		final JList tutorialsList = new JList(titles);
-		tutorialsList.setSelectionMode( ListSelectionModel.SINGLE_SELECTION );
-		tutorialsList.addListSelectionListener(new ListSelectionListener(){
-			public void valueChanged( ListSelectionEvent e ){
-				select( tutorialsList.getSelectedIndex() );
+		currentCode = new CodePanel();
+		DefaultSingleCDockable currentCodeDockable = new DefaultSingleCDockable( "code", "Code" );
+		currentCodeDockable.setLayout( new BorderLayout() );
+		currentCodeDockable.add( currentCode.toComponent(), BorderLayout.CENTER );
+		currentCodeDockable.setCloseable( false );
+		layout.add( 30, 0, 70, 100, currentCodeDockable );
+		layout.select( 30, 0, 70, 100, currentSelectionDockable ); 
+	
+		final JTree tutorialsTree = new JTree( new TutorialTreeModel( RootSet.class ));
+		tutorialsTree.getSelectionModel().setSelectionMode( ListSelectionModel.SINGLE_SELECTION );
+		tutorialsTree.setShowsRootHandles( true );
+		tutorialsTree.setRootVisible( false );
+		tutorialsTree.addTreeSelectionListener( new TreeSelectionListener(){
+			public void valueChanged( TreeSelectionEvent e ){
+				TreePath path = tutorialsTree.getSelectionPath();
+				if( path == null ){
+					select( null );
+				}
+				else{
+					select( (TutorialTreeModel.Node)path.getLastPathComponent() );
+				}
 			}
 		});
-		tutorialsList.setSelectedIndex( 0 );
-		select( 0 );
+		tutorialsTree.setSelectionRow( 0 );
 		DefaultSingleCDockable listDockable = new DefaultSingleCDockable( "list", "Tutorials" );
 		listDockable.setLayout( new BorderLayout() );
-		listDockable.add( new JScrollPane( tutorialsList ), BorderLayout.CENTER );
+		listDockable.add( new JScrollPane( tutorialsTree ), BorderLayout.CENTER );
 		listDockable.setCloseable( false );
-		listDockable.setExternalizable( false );
-		listDockable.setMinimizable( false );
 		layout.add( 0, 0, 30, 100, listDockable );
 		
 		control.getContentArea().deploy( layout );
 	}
 	
-	@SuppressWarnings("unchecked")
-	private void select( int index ){
-		if( index < 0 ){
+	private void select( TutorialTreeModel.Node node ){
+		if( node == null ){
 			currentSelection.set( null, null, null, null );
 		}
 		else{
-			Tutorial tutorial = (Tutorial)tutorials[index].getAnnotation( Tutorial.class );
-			if( tutorial == null ){
-				currentSelection.set( tutorials[index].getSimpleName(), null, null, tutorials[index] );
+			try{
+			currentSelection.set( node.getTitle(), node.getDescription(), node.getImage(), node.getMainClass() );
+			currentCode.setCode( node.getCode() );
 			}
-			else{
-				currentSelection.set( tutorial.title(), getDescription( tutorial.id() ), getImage( tutorial.id() ), tutorials[index] );
+			catch( IOException e ){
+				e.printStackTrace();
+				currentCode.setCode( "" );
 			}
 		}
 	}
 
-	private String getDescription( String id ){
-		String result = descriptions.get( id );
-		if( result == null ){
-			try{
-				InputStream in = getClass().getResourceAsStream( "/data/tutorial/" + id + ".html");
-				InputStreamReader reader = new InputStreamReader( in, "UTF-8" );
-				StringBuilder builder = new StringBuilder();
-				int next;
-				while( (next = reader.read()) != -1 ){
-					builder.append( (char)next );
-				}
-				reader.close();
-				result = builder.toString();
-			}
-			catch( IOException e ){
-				e.printStackTrace();
-				result = "<html><body>" + e.getMessage() + "</body></html>";
-			}
-			descriptions.put( id, result );
-		}
-		return result;
-	}
-	
-	private BufferedImage getImage( String id ){
-		BufferedImage result = images.get( id );
-		if( result == null ){
-			try{
-				result = ImageIO.read( getClass().getResourceAsStream( "/data/tutorial/" + id + ".png" ));
-				images.put( id, result );
-			}
-			catch( IOException e ){
-				e.printStackTrace();
-			}
-		}
-		return result;
-	}
-	
-	private String getTitle( Class<?> clazz ){
-		Tutorial tutorial = (Tutorial)clazz.getAnnotation( Tutorial.class );
-		if( tutorial == null ){
-			return clazz.getSimpleName();
-		}
-		else{
-			return tutorial.title();
-		}
-	}
 }

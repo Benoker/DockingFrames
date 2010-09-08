@@ -7,6 +7,8 @@ import javax.swing.JPanel;
 import bibliothek.gui.dock.DefaultDockable;
 
 public class ColorDockable extends DefaultDockable{
+	private JPanel panel = new JPanel();
+	
 	public ColorDockable( String title, Color color ){
 		this( title, color, 1.0f );
 	}
@@ -22,10 +24,18 @@ public class ColorDockable extends DefaultDockable{
 			
 			color = Color.getHSBColor( hsb[0], hsb[1], hsb[2] );
 		}
-		
-		JPanel panel = new JPanel();
+
+		setColor( color );
+	}
+	
+	public void setColor( Color color ){
+		panel = new JPanel();
 		panel.setOpaque( true );
 		panel.setBackground( color );
 		add( panel );
+	}
+	
+	public Color getColor(){
+		return panel.getBackground();
 	}
 }

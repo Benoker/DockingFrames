@@ -47,6 +47,9 @@ public class ImagePanel extends JLabel{
 		}
 		else{
 			thumbnail = null;
+			setIcon( null );
+			setText( null );
+			label.setIcon( null );
 		}
 	}
 
@@ -62,7 +65,7 @@ public class ImagePanel extends JLabel{
 		
 		@Override
 		public void mousePressed( MouseEvent e ){
-			if( popup == null ){
+			if( popup == null && image != null ){
 				Point location = new Point( 
 						(getWidth() - image.getWidth())/2, 
 						(getHeight() - image.getHeight())/2 );

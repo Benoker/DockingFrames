@@ -35,6 +35,7 @@ public class C1_CoreBasics_03_SplitDockStation {
 		JTutorialFrame frame = new JTutorialFrame( C1_CoreBasics_03_SplitDockStation.class );
 		DockController controller = new DockController();
 		controller.setRootWindow( frame );
+		frame.destroyOnClose( controller );
 		
 		/* In order to play around we disable the automatic replacement of stations which have
 		 * only one child. You should use this feature with care in real applications. */
@@ -87,7 +88,7 @@ public class C1_CoreBasics_03_SplitDockStation {
 		/* Conclusion:
 		 * 
 		 * ---------------------------------------------------------------------------------
-		 * What          Pros							Cons
+		 * What          Pros                           Cons
 		 * ---------------------------------------------------------------------------------
 		 * Sequential     no need to add all             Very hard to use
 		 *                Dockables at the same time
