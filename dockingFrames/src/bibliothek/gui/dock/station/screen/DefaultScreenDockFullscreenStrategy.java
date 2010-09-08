@@ -77,6 +77,7 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
 		
 		Rectangle fullscreen = configuration.getBounds();
 		Rectangle current = window.getBounds();
+		current = new Rectangle( current.x - 1, current.y - 1, current.width + 2, current.height + 2 );
 		
 		return current.contains( fullscreen ) && wrapper.getNormalBounds() != null;
 	}
