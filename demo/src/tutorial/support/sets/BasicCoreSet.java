@@ -5,6 +5,7 @@ import tutorial.C1_CoreBasics_02_TheStations;
 import tutorial.C1_CoreBasics_03_SplitDockStation;
 import tutorial.C1_CoreBasics_04_Themes;
 import tutorial.C1_CoreBasics_05_PersistentLayout;
+import tutorial.C1_CoreBasics_06_Actions;
 import tutorial.support.Tutorial;
 
 @Tutorial(title="Core", id="BasicsCore")
@@ -14,6 +15,7 @@ public class BasicCoreSet extends TutorialSet{
                 C1_CoreBasics_02_TheStations.class,
                 C1_CoreBasics_03_SplitDockStation.class,
                 C1_CoreBasics_04_Themes.class,
-                C1_CoreBasics_05_PersistentLayout.class );
+                C1_CoreBasics_05_PersistentLayout.class,
+                C1_CoreBasics_06_Actions.class );
 	}
 }
