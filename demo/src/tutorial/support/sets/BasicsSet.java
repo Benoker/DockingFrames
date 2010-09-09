@@ -5,6 +5,7 @@ import tutorial.support.Tutorial;
 @Tutorial( title="Basics", id="Basics")
 public class BasicsSet extends TutorialSet{
 	public BasicsSet(){
-		super( BasicCoreSet.class );
+		super( BasicCoreSet.class,
+		       BasicDockFrontendSet.class );
 	}
 }

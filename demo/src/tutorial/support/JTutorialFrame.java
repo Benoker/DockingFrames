@@ -8,6 +8,7 @@ import java.util.List;
 import javax.swing.JFrame;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockFrontend;
 
 public class JTutorialFrame extends JFrame{
 	private List<Runnable> runOnClose = new ArrayList<Runnable>();
@@ -36,6 +37,14 @@ public class JTutorialFrame extends JFrame{
 		runOnClose( new Runnable(){
 			public void run(){
 				controller.kill();
+			}
+		});
+	}
+	
+	public void destroyOnClose( final DockFrontend frontend ){
+		runOnClose( new Runnable(){
+			public void run(){
+				frontend.kill();	
 			}
 		});
 	}
