@@ -74,6 +74,9 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
     	}
     	@Override
     	public void mousePressed( BasicButtonModel model, boolean mousePressed ){
+    		if( mousePressed ){
+    			requestFocusInWindow();
+    		}
     		updateBorder();
     	}
     	@Override
@@ -99,6 +102,8 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
         normalSelectedBorder = mousePressedBorder;
         mouseOverSelectedBorder = mousePressedBorder;
         mousePressedSelectedBorder = mouseOverBorder;
+        
+        setFocusable( true );
         
         addFocusListener( new FocusAdapter(){
             @Override

@@ -108,6 +108,7 @@ public abstract class AbstractDropDownHandler<S extends StandardDropDownItemActi
 			view.setText( action.getText( dockable ) );
 			view.setTooltip( action.getTooltipText( dockable ) );
 			view.setIcon( action.getIcon( dockable ) );
+			view.setDisabledIcon( action.getDisabledIcon( dockable ) );
 			view.setEnabled( action.isEnabled( dockable ) );
 		}
 	}

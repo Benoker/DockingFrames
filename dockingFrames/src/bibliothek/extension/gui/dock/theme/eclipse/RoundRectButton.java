@@ -35,6 +35,7 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
+import bibliothek.gui.dock.themes.basic.action.BasicButtonModelAdapter;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
 import bibliothek.util.Colors;
 
@@ -53,6 +54,17 @@ public class RoundRectButton extends JComponent{
     public RoundRectButton( BasicTrigger trigger ){
         model = new BasicButtonModel( this, trigger, true );
         setOpaque( false );
+        
+        setFocusable( true );
+        
+        model.addListener( new BasicButtonModelAdapter(){
+        	@Override
+        	public void mousePressed( BasicButtonModel model, boolean mousePressed ){
+        		if( mousePressed ){
+        			requestFocusInWindow();
+        		}
+        	}
+        });
         
         addFocusListener( new FocusListener(){
             public void focusGained( FocusEvent e ) {

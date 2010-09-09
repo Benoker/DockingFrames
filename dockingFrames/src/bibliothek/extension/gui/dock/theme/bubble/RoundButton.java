@@ -36,6 +36,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
+import bibliothek.gui.dock.themes.basic.action.BasicButtonModelAdapter;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
 import bibliothek.gui.dock.themes.color.ActionColor;
 import bibliothek.gui.dock.util.color.ColorCodes;
@@ -79,6 +80,8 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
      * @param action the action for which this button is used
      */
 	public RoundButton( BasicTrigger trigger, Dockable dockable, DockAction action ){
+		setFocusable( true );
+		
 		animation = new BubbleColorAnimation();
 		
 		colors = new RoundActionColor[]{
@@ -108,6 +111,15 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
                 repaint();
             }
         };
+        
+        model.addListener( new BasicButtonModelAdapter(){
+        	@Override
+        	public void mousePressed( BasicButtonModel model, boolean mousePressed ){
+        		if( mousePressed ){
+        			requestFocusInWindow();
+        		}
+        	}
+        });
         
 		updateColors();
 

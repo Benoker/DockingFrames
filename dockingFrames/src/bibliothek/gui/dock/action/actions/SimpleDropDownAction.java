@@ -37,11 +37,17 @@ import bibliothek.gui.dock.action.dropdown.DropDownFilterFactory;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.event.DropDownActionListener;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A dropdown action that has the same properties for all Dockables.
  * @author Benjamin Sigg
  */
+@Todo(priority=Priority.ENHANCEMENT, compatibility=Compatibility.COMPATIBLE, target=Version.VERSION_1_1_0,
+		description="Allow clients to set the DockActionSource directly")
 public class SimpleDropDownAction extends SimpleDockAction implements DropDownAction {
 	/** the currently selected action */
 	private DockAction selection;
@@ -168,7 +174,6 @@ public class SimpleDropDownAction extends SimpleDockAction implements DropDownAc
 	 * Gets an array of all listeners that are registered to this action.
 	 * @return the array of listeners
 	 */
-	@SuppressWarnings( "unchecked" )
 	protected DropDownActionListener[] getListeners(){
 		return listeners.toArray( new DropDownActionListener[ listeners.size() ] );
 	}
