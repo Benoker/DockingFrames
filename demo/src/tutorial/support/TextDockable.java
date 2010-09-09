@@ -23,6 +23,10 @@ public class TextDockable extends DefaultDockable{
 		area.setText( text );
 	}
 	
+	public void appendText( String text ){
+		area.append( text );
+	}
+	
 	public String getText(){
 		return area.getText();
 	}
