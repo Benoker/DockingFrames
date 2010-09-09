@@ -94,9 +94,9 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
 		externalizedMode = new CExternalizedMode( control.getOwner() );
 		
 		putMode( minimizedMode );
+		putMode( externalizedMode );
 		putMode( normalMode );
 		putMode( maximizedMode );
-		putMode( externalizedMode );
 		
         IconManager icons = control.getOwner().intern().getController().getIcons();
         icons.setIconDefault( ICON_MANAGER_KEY_MAXIMIZE, Resources.getIcon( "maximize" ) );

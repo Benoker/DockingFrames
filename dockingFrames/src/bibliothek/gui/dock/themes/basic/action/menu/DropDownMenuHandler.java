@@ -26,6 +26,7 @@
 
 package bibliothek.gui.dock.themes.basic.action.menu;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Set;
 
@@ -37,7 +38,9 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.DropDownAction;
 import bibliothek.gui.dock.action.StandardDockAction;
 import bibliothek.gui.dock.action.actions.SimpleMenuAction;
+import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.event.StandardDockActionListener;
+import bibliothek.gui.dock.themes.basic.action.dropdown.DropDownViewItem;
 
 /**
  * A handler that shows a {@link DropDownAction} in a menu. The action is 
@@ -58,6 +61,22 @@ public class DropDownMenuHandler implements MenuViewItem<JComponent>{
 	/** the {@link Dockable} for which this view was created */
 	private Dockable dockable;
 	
+	/** 
+	 * A listener added to {@link #handler}, gets informed if the user triggers
+	 * one the child actions. 
+	 */
+	private ActionListener menuListener = new ActionListener(){
+		public void actionPerformed( ActionEvent e ){
+			DockAction child = (DockAction)e.getSource();
+			DropDownViewItem item = (DropDownViewItem)handler.getViewFor( child );
+			if( item != null ){
+				if( item.isSelectable() ){
+					action.setSelection( dockable, child );		
+				}
+			}
+		}
+	};
+	
 	/**
 	 * Creates a new handler
 	 * @param action the action to show
@@ -69,29 +88,32 @@ public class DropDownMenuHandler implements MenuViewItem<JComponent>{
 	}
 
 	public void addActionListener( ActionListener listener ){
-		handler.addActionListener( listener );
+		// ignore
 	}
 
 	public void removeActionListener( ActionListener listener ){
-		handler.removeActionListener( listener );
+		// ignore
 	}
 
 	public void bind(){
 		action.bind( dockable );
 		DockActionSource source = action.getSubActions( dockable );
 		menuAction = new SimpleMenuAction( source );
-		handler = new MenuMenuHandler( menuAction, dockable );
+		handler = new MenuMenuHandler( menuAction, dockable, ViewTarget.DROP_DOWN );
 		
 		menuAction.setText( action.getText( dockable ) );
 		menuAction.setTooltip( action.getTooltipText( dockable ) );
 		menuAction.setEnabled( action.isEnabled( dockable ) );
+		menuAction.setDisabledIcon( action.getDisabledIcon( dockable ) );
 		menuAction.setIcon( action.getIcon( dockable ) );
 		
 		handler.bind();
+		handler.addChildrenActionListener( menuListener );
 		action.addDockActionListener( listener );
 	}
 
 	public void unbind(){
+		handler.removeChildrenActionListener( menuListener );
 		handler.unbind();
 		action.removeDockActionListener( listener );
 		action.unbind( dockable );

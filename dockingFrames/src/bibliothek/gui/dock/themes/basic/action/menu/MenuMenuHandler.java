@@ -26,6 +26,7 @@
 
 package bibliothek.gui.dock.themes.basic.action.menu;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,6 @@ import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.MenuDockAction;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
-import bibliothek.gui.dock.action.view.ViewItem;
 import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.event.DockActionSourceListener;
 
@@ -60,7 +60,13 @@ public class MenuMenuHandler extends AbstractMenuHandler<JMenu, MenuDockAction> 
     private List<ActionItem> actions = new ArrayList<ActionItem>();
     
     /** a listener to the source */
-    private Listener listener = new Listener();
+    private Listener sourceListener = new Listener();
+    
+    /** all the listeners that were added to this handler */
+    private List<ActionListener> listeners = new ArrayList<ActionListener>();
+    
+    /** what kind of items to show */
+    private ViewTarget<? extends MenuViewItem<JComponent>> target = ViewTarget.MENU;
     
     /**
      * Creates a new handler
@@ -68,7 +74,21 @@ public class MenuMenuHandler extends AbstractMenuHandler<JMenu, MenuDockAction> 
      * @param dockable the dockable for which items are inserted into the menu
      */
     public MenuMenuHandler( MenuDockAction action, Dockable dockable ){
+    	this( action, dockable, ViewTarget.MENU );
+    }
+    
+    /**
+     * Creates a new handler
+     * @param action the observed action
+     * @param dockable the dockable for which items are inserted into the menu
+     * @param target what kind of view to use on the menu
+     */
+    public MenuMenuHandler( MenuDockAction action, Dockable dockable, ViewTarget<? extends MenuViewItem<JComponent>> target ){
         super( action, dockable, new JMenu());
+        if( target == null ){
+        	throw new IllegalArgumentException( "target must not be null" );
+        }
+        this.target = target;
         setup( action.getMenu( dockable ), new JMenuWrapper( item ) );
     }
     
@@ -101,19 +121,49 @@ public class MenuMenuHandler extends AbstractMenuHandler<JMenu, MenuDockAction> 
     	// ignore
     }
     
+    /**
+     * Adds a listener to this handler, the listener will be invoked if one of the children
+     * of this handler fires an action. The source of the {@link ActionEvent} will be the
+     * {@link DockAction} which fired the event. 
+     * @param listener a new listener
+     */
+    public void addChildrenActionListener( ActionListener listener ){
+    	listeners.add( listener );
+    }
+    
+    /**
+     * Removes <code>listener</code> from this handler.
+     * @param listener the listener to remove
+     * @see #addChildrenActionListener(ActionListener)
+     */
+    public void removeChildrenActionListener( ActionListener listener ){
+    	listeners.remove( listener );
+    }
+    
+    /**
+     * Fires <code>event</code> to all {@link ActionListener}s currently known to this handler.
+     * @param event the event to fire
+     */
+    protected void fireActionEvent( ActionEvent event ){
+    	for( ActionListener listener : listeners.toArray( new ActionListener[ listeners.size() ] )){
+    		listener.actionPerformed( event );
+    	}
+    }
+    
     @Override
     public void bind() {
         super.bind();
-        source.addDockActionSourceListener( listener );
+        source.addDockActionSourceListener( sourceListener );
         
         for( int i = 0, n = source.getDockActionCount(); i<n; i++ ){
             DockAction action = source.getDockAction( i );
             ActionItem item = new ActionItem();
             item.action = action;
             actions.add( item );
-            ViewItem<JComponent> handler = handlerFor( action );
+            MenuViewItem<JComponent> handler = handlerFor( action );
             if( handler != null ){
             	item.handler = handler;
+            	item.bind();
             	item.action.bind( dockable );
 	            handler.bind();
 	            menu.add( handler.getItem() );
@@ -128,18 +178,36 @@ public class MenuMenuHandler extends AbstractMenuHandler<JMenu, MenuDockAction> 
      * @param action an action
      * @return a handler ready to work with <code>action</code>.
      */
-    protected ViewItem<JComponent> handlerFor( DockAction action ){
+    protected MenuViewItem<JComponent> handlerFor( DockAction action ){
     	Dockable dockable = getDockable();
-    	return dockable.getController().getActionViewConverter().createView( action, ViewTarget.MENU, dockable );
+    	MenuViewItem<JComponent> result = dockable.getController().getActionViewConverter().createView( action, target, dockable );
+    	
+    	return result;
+    }
+    
+    /**
+     * Searches for the first view which is used for <code>action</code>.
+     * @param action some child of this handler
+     * @return the view used for <code>action</code>, <code>null</code> if 
+     * <code>action</code> is not found or if this handler is not bound
+     */
+    public MenuViewItem<JComponent> getViewFor( DockAction action ){
+    	for( ActionItem  item : actions ){
+    		if( item.action == action ){
+    			return item.handler;
+    		}
+    	}
+    	return null;
     }
     
     @Override
     public void unbind() {
         super.unbind();
-        source.removeDockActionSourceListener( listener );
+        source.removeDockActionSourceListener( sourceListener );
         menu.removeAll();
         
         for( ActionItem item : actions ){
+        	item.unbind();
         	if( item.handler != null ){
         		item.handler.unbind();
         		item.action.unbind( dockable );
@@ -157,7 +225,7 @@ public class MenuMenuHandler extends AbstractMenuHandler<JMenu, MenuDockAction> 
         /**
          * Removes all items of the menu, and then adds them again. In this
          * way, all items have the correct order, and separators can be inserted
-         * easely between the items.
+         * easily between the items.
          */
         private void reput(){
             menu.removeAll();
@@ -173,11 +241,12 @@ public class MenuMenuHandler extends AbstractMenuHandler<JMenu, MenuDockAction> 
             	ActionItem item = new ActionItem();
             	item.action = action;
             	actions.add( i, item );
-            	ViewItem<JComponent> handler = handlerFor( action );
+            	MenuViewItem<JComponent> handler = handlerFor( action );
             	if( handler != null ){
             		action.bind( dockable );
             		handler.bind();
             		item.handler = handler;
+            		item.bind();
             	}
             }
             
@@ -187,6 +256,7 @@ public class MenuMenuHandler extends AbstractMenuHandler<JMenu, MenuDockAction> 
         public void actionsRemoved( DockActionSource source, int firstIndex, int lastIndex ) {
             for( int i = lastIndex; i >= firstIndex; i-- ){
             	ActionItem item = actions.remove( i );
+            	item.unbind();
             	if( item.handler != null ){
             		item.handler.unbind();
             		item.action.unbind( dockable );
@@ -199,11 +269,34 @@ public class MenuMenuHandler extends AbstractMenuHandler<JMenu, MenuDockAction> 
      * An item of the menu.
      * @author Benjamin Sigg
      */
-    private static class ActionItem{
+    private class ActionItem implements ActionListener{
     	/** the action this item represents */
     	public DockAction action;
     	/** the handler of the visualization, might be <code>null</code> */
-    	public ViewItem<JComponent> handler;
+    	public MenuViewItem<JComponent> handler;
+    	
+    	/**
+    	 * Allows this {@link ActionItem} to add a listener to {@link #handler};
+    	 */
+    	public void bind(){
+    		if( handler != null ){
+    			handler.addActionListener( this );
+    		}
+    	}
+    	
+    	/**
+    	 * Informs this {@link ActionItem} that it no longer is allowed to
+    	 * add listeners to {@link #handler}
+    	 */
+    	public void unbind(){
+    		if( handler != null ){
+    			handler.removeActionListener( this );
+    		}
+    	}
+    	
+    	public void actionPerformed( ActionEvent e ){
+    		fireActionEvent( new ActionEvent( action, e.getID(), e.getActionCommand(), e.getWhen(), e.getModifiers() ));
+    	}
     }
     
     /**

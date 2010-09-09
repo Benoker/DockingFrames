@@ -27,6 +27,7 @@
 package bibliothek.gui.dock.action;
 
 import java.awt.Component;
+import java.awt.EventQueue;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 
@@ -179,9 +180,16 @@ public abstract class ActionPopup extends MouseInputAdapter{
         
         menu.addPopupMenuListener( new PopupMenuListener(){
             public void popupMenuWillBecomeInvisible( PopupMenuEvent e ) {
-            	handler.unbind();
-                if( methodMenu == menu )
-                    menu = null;
+            	EventQueue.invokeLater( new Runnable(){
+            		public void run(){
+            			// Delay destruction of handler to the time after the action is executed. This way
+            			// events depending on the view can still be processed, e.g. change the selection of
+            			// a SimpleDropDownButton
+            			handler.unbind();
+                        if( methodMenu == menu )
+                            menu = null;		
+            		}
+            	});
             }
             public void popupMenuCanceled( PopupMenuEvent e ) {
                 // do nothing
