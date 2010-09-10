@@ -37,9 +37,9 @@ import bibliothek.gui.dock.common.CGrid;
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
 import bibliothek.gui.dock.common.layout.ThemeMap;
 
-public class C0_Readme extends JFrame{
+public class TutorialMain extends JFrame{
 	public static void main( String[] args ) throws InstantiationException, IllegalAccessException{
-		C0_Readme readme = new C0_Readme();
+		TutorialMain readme = new TutorialMain();
 		readme.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		readme.setBounds( 20, 20, 800, 600 );
 		readme.setVisible( true );
@@ -48,7 +48,7 @@ public class C0_Readme extends JFrame{
 	private TutorialPanel currentSelection;
 	private CodePanel currentCode;
 	
-	public C0_Readme() throws InstantiationException, IllegalAccessException{
+	public TutorialMain() throws InstantiationException, IllegalAccessException{
 		setTitle( "DockingFrames - Examples" );
 		
 		CControl control = new CControl( this );
