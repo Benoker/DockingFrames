@@ -19,10 +19,11 @@ public class CodePanel {
 	private JTextPane textPane;
 	private static String[] KEYWORDS = {
 		"private", "protected", "public", "package", "import",
-		"class", "interface", "extends", "implements", "instanceof", "super",
+		"class", "interface", "extends", "implements", "instanceof", "super", "abstract",
 		"if", "else", "while", "do", "for", "switch", "case", "return", "new",
 		"volatile", "transient", "final", "static",
-		"byte", "short", "char", "int", "long", "float", "double", "boolean", "null", "true", "false",
+		"byte", "short", "char", "int", "long", "float", "double", "boolean", "null", "true", "false", "void",
+		"try", "catch", "finally",
 	};
 	
 	public CodePanel(){
