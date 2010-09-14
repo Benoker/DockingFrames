@@ -28,6 +28,7 @@ public class ChessDockController extends SecureDockController {
                 return createChessRelocator( controller, setup );
             }
         }, null );
+        initiate();
     }
     
     /**

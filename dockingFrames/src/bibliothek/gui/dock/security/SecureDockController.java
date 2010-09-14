@@ -81,20 +81,27 @@ public class SecureDockController extends DockController {
      */
     public SecureDockController() {
         super( new SecureDockControllerFactory() );
-        init();
+        initiate();
     }
     
     /**
      * Creates a new controller, but does not initiate the properties
      * if <code>factory</code> is <code>null</code>.
-     * @param factory the factory that will create the elements of this controller   
+     * @param factory the factory that will create the elements of this controller
+     * @see #initiate()   
      */
     public SecureDockController( SecureDockControllerFactory factory ) {
         super( factory );
-        init();
+        if( factory != null ){
+        	initiate();
+        }
     }
     
-    private void init(){
+    /**
+     * To be called by subclasses if they use a <code>null</code> value when
+     * calling the constructor of this class.
+     */
+    protected void initiate(){
     	getProperties().set( SecureFlapDockStation.WINDOW_FACTORY, new SecureFlapWindowFactory(), Priority.DEFAULT );
     }
 
