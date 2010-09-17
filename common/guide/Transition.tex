@@ -1013,320 +1013,319 @@ A list of new API elements and changes that affect the layout.
  \why To make sure a \src{CDockable} does not get too small.
 \end{description}
 
-- API: AbstractDockable has a new method "add/removeKeyListener" to register any KeyEvent that is related to a Dockable (children are ignored)
-\subsubsection{}
+\subsubsection{AbstractDockable: KeyListener}
 \begin{description}
- \short 
- \why 
+ \short \src{AbstractDockable} has new method \src{add/removeKeyListener}.
+ \why Allows to observe any \src{KeyEvent} that is related to a \src{Dockable}. Children of dockable \src{DockStation}s are ignored.
 \end{description}
-- API: CVetoClosingListener can be added to CControl or CDockable and gets informed before a CDockable (or a set of CDockables) is closed. It may also stop the operation. 
-\subsubsection{}
+
+\subsubsection{CVetoClosingListener}
 \begin{description}
- \short 
- \why 
+ \short A \src{CVetoClosingListener} can be added to \src{CControl} or \src{CDockable}.
+ \why The listener is called before a \src{Dockable} or a set of \src{Dockable}s is closed. The listener may cancel the operation.
 \end{description}
-- API: AbstractCDockable has a new method "createCommonDockable". Clients can use this method to use a customized Dockable as intern representation of a CDocakble.
-\subsubsection{}
+
+\subsubsection{AbstractCDockable: createCommonDockable}
 \begin{description}
- \short 
- \why 
+ \short \src{AbstractCDockable} has a new method \src{createCommonDockable}.
+ \why Clients can override the method and thus customize the \src{Dockable} which represents the \src{CDockable}.
 \end{description}
-- Feature: The new Merger interface allows two DockStations to be merged automatically. It is used by the DockableRelocator class. The implementation StackMerger merges two StackDockStations into one, it is installed per default.
-\subsubsection{}
+
+\subsubsection{Merger}
 \begin{description}
- \short 
- \why 
+ \short The interface \src{Merger} allows two \src{DockStation}s to be merged automatically.
+ \why The implementation \src{StackMerger} merges to \src{StackDockStation}s. This allows to drag a stack of \src{Dockable}s at a new location.
 \end{description}
-- API: A StackDockStation with only one child can still show a tab depending on the type of StackDockComponent
-\subsubsection{}
+
+\subsubsection{StackDockStation: single tab}
 \begin{description}
- \short 
- \why 
+ \short A \src{StackDockStation} with only one child can still show a tab depending on the type of \src{StackDockComponent}
+ \why A feature request by a developer.
 \end{description}
+
 - API: ScreenDockStation now supports fullscreen mode for its children. What "fullscreen" means can be influenced by a ScreenDockFullscreenStrategy.
-\subsubsection{}
+
+\subsubsection{ScreenDockStation: fullscreen mode}
 \begin{description}
- \short 
- \why 
+ \short \src{ScreenDockStation} now supports fullscreen mode for its children. The exact meaning of ``fullscreen'' is defined by a \src{ScreenDockFullscreenStrategy}.
+ \why Because it was really missing.
 \end{description}
-- API: EclipseDockableDisplayer now also respects TabContentFilter
-\subsubsection{}
+
+\subsubsection{TabContentFilter}
 \begin{description}
- \short 
- \why 
+ \short The new interface \src{TabContentFilter} tells the framework what to show on a tab.
+ \why Allows some more customization, e.g. show only short titles.
 \end{description}
-- API: FlapDockStation supports factory for creating the window
-\subsubsection{}
+
+\subsubsection{FlapDockStation: factory}
 \begin{description}
- \short 
- \why 
+ \short \src{FlapDockStation} supports factory for creating the window 
+ \why To use \src{FlapDockStation} on a \src{JInternalFrame}.
 \end{description}
-- API: StackDockComponent now offers a method "createDefaultRepresentation". This allows code to be executed when clicking on, or dragging of, an empty space arounds tabs.
-\subsubsection{}
+
+\subsubsection{StackDockComponent: default representation}
 \begin{description}
- \short 
- \why 
+ \short \src{StackDockComponent} now offers a method \src{createDefaultRepresentation}.
+ \why This allows code to be executed when clicking on, or dragging of, an empty space arounds tabs.
 \end{description}
-- API/Bugfix: Clicking on a child action of a DropDownMenu that is shown as submenu now changes the selection of the button as well  
-\subsubsection{}
+
+\subsubsection{DropDownMenu: selection if submenu}
 \begin{description}
- \short 
- \why 
+ \short Clicking on a child action of a \src{DropDownAction} that is shown as submenu now changes the selection of the button as well.
+ \why That is the expected behavior.
 \end{description}
 
 \subsection{Bugfixes}
+\subsubsection{EclipseStackDockComponent: Exception}
+\begin{description}
+ \short \src{EclipseStackDockComponent} contained an unnecessary and not correctly updated list of \src{Dockable}s causing an \src{IndexOutOfBoundsException} on JREs of version \leq 1.5.0_12
+\end{description}
 
-- Bugfix: EclipseStackDockComponent contained an unnecessary and not correctly updated list of dockables causing an IndexOutOfBoundsException on JREs of version <= 1.5.0_12
-\subsubsection{}
+\subsubsection{AWT and Glass-Pane}
 \begin{description}
- \short 
+ \short Workaround for bug http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6797587 , AWT components not painted properly if behind a glass-pane.
 \end{description}
-- Bugfix: workaround for bug http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6797587 , AWT components not painted properly if behind a glass-pane
-\subsubsection{}
+
+\subsubsection{Check before drop}
 \begin{description}
- \short 
+ \short \src{DockStation}s check whether dropping some \src{Dockable} would create an invalid \src{Component}-tree, and forbid such drag and drop operations
+ \end{description}
+
+\subsubsection{SimpleDockACtion: unbinding}
+\begin{description}
+ \short \src{SimpleDockAction} did not unbind itself correctly due of events fired in an unfortunate order. Repaired thanks to an anonymous user.
 \end{description}
-- Bugfix: DockStations check whether dropping some Dockable would create an invalid Component-tree, and forbid such drag and drop operations
-\subsubsection{}
+
+\subsubsection{StackDockStation: reselect}
 \begin{description}
- \short 
+ \short When making a selected \src{Dockable} on a \src{StackDockStation} invisible, a new \src{Dockable} should be properly selected.
 \end{description}
-- Bugfix: SimpleDockAction did not unbind itself correctly due of events fired in an unfortunate order. Repaired thanks to an anonymous user.
-\subsubsection{}
+
+\subsubsection{RequestDimension: constructor}
 \begin{description}
- \short 
+ \short \src{RequestDimension( int, boolean )} did not set the height property.
 \end{description}
-- Bugfix: when making an selected Dockable on a StackDockStation invisible, a new Dockable should be properly selected.
-\subsubsection{}
+
+\subsubsection{MultiDockActionSource: exception}
 \begin{description}
- \short 
+ \short Wrong index in \src{MultiDockActionSource.add( DockActionSource )} could lead to \src{IndexOutOfBoundsException}.
 \end{description}
-- Bugfix: RequestDimension( int, boolean ) did not set the height property.
-\subsubsection{}
+
+\subsubsection{SplitDockStation: cursor}
 \begin{description}
- \short 
+ \short Cursor on the \src{SplitDockStation} sometimes does not change from arrow to default cursor. Should happen less often now, patch by Eduardo Born.
 \end{description}
-- Bugfix: Wrong index in MultiDockActionSource.add( DockActionSource ) could lead to IndexOutOfBoundsException
-\subsubsection{}
+
+\subsubsection{FlatTab: mouse events}
 \begin{description}
- \short 
+ \short \src{FlatTab} did not react on mouse-dragged events if in a "secure environment".
 \end{description}
-- Bugfix: Cursor on the SplitDockStation sometimes does not change from arrow to default cursor. Should happen less often now, patch by Eduardo Born.
-\subsubsection{}
+
+\subsubsection{StackDockStation: not removed}
 \begin{description}
- \short 
+ \short \src{StackDockStation} was not always removed if it had only one child and this one child was a \src{CDockable} associated with a \src{CWorkingArea}.
 \end{description}
-- Bugfix: FlatTab did not react on mouse-dragged events in a "secure environment".
-\subsubsection{}
+
+\subsubsection{FlapDockStation: exception on move}
 \begin{description}
- \short 
+ \short Moving a \src{Dockable} on a \src{FlapDockStation} did throw an exception if the destination index was too big.
 \end{description}
-- Bugfix: StackDockStation was not always removed if it had only one child and this one child was a CDockable associated with a CWorkingArea
-\subsubsection{}
+
+\subsubsection{Location of missing CDockable}
 \begin{description}
- \short 
+ \short If a \src{CDockable} is removed and the \src{CMissingDockableStrategy} tells to store information about that \src{Dockable}, then its location remains now stored.
 \end{description}
-- Bugfix: moving a Dockable on a FlapDockStation did throw an exception if the destination index was too big
-\subsubsection{}
+
+\subsubsection{Tabs: wrong size}
 \begin{description}
- \short 
+ \short If \src{TabPlacement} was ``left'' or ``right'', then new tabs in a \src{StackDockStation} could be too big. Reason for this bug was that new tabs were not properly initialized and assumed that \src{TabPlacement} was ``top''.
 \end{description}
-- Bugfix: if a CDockable is removed and the CMissingDockableStrategy tells to store information about that dockable, then its location remains stored.
-\subsubsection{}
+
+\subsubsection{Tabs: missing tabs}
 \begin{description}
- \short 
+ \short \src{StackDockStation} did not add its children correctly to the \src{StackDockComponent}, leading to some missing tabs
 \end{description}
-- Bugfix: If TabPlacement was "left" or "right", then new tabs in a StackDockStation could be too big. Reason for this bug was that new tabs were not properly initialized and assumed that TabPlacement was "top".     
-\subsubsection{}
+
+\subsubsection{Exception on normalizing}
 \begin{description}
- \short 
-\end{description}
-- Bugfix: StackDockStation did not add its children correctly to the StackDockComponent, leading to some missing tabs.    
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: Normalizing a externalized CDockable could throw an Exception
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: StackDockStation could not be moved around in Common even if children would allow it
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: Dragging a station away from another station did not store placeholders
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: During drag&drop, dragging the mouse over a tab of a StackDockStation could exchange the selected Dockable
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: dragging a Dockable over a child of a ScreenDockStation could throw an exception (in the Common framework).
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: StackDockStation did not fire dockable-selected event properly when using the DefaultStackDockComponent
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: Tabs with unequal height were positioned strangely
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: Popup menus are now enabled for tabs on a DefaultStackDockComponent
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: If DockRegister was stalled and a DockStation was added/removed to the register and later Dockables added/removed from that station, then the DockRegister could miss these modifications and store too many/few Dockables.
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: CActionSource did not fire events when removing or replacing actions
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: CLocationModeManager#setLocation(Dockable,ExtendedMode,CLocation) did not compare the correct objects and has always thrown an exception
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: Minimized CDockables did not appear at the correct location if corner components were used
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: Dragging a maximized CDockable could throw an exception
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: Dragging a tab from a BasicStackDockComponent could throw an exception
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: Path did not encode non-java identifiers right.
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: EclipseMenu did not update its icon automatically
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: StackDockStation.move(Dockable,DockableProperty) could throw exception if destination index was too big
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: AbstractScreenDockWindow.setDockable did call updateTitleIcon instead of updateTitleText
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: DockTitleTab caused exception when uninstalled
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: Instead of doing nothing, PropertyPreferences now load their default value if they cannot read any other value
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: When deploying a CGrid some Dockables did not appear: the tree of the SplitDockStation was cleaned up too early before all Dockables had been inserted, leading to a corrupted tree
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: SplitDockStation did assign leaf-id to node when using drop(SplitDockPathProperty). As a result unmaximizing a stack of CDockables could destroy the stack.
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: SplitDockStation does now always update the boundaries of its tree before dropping a dockable. Wrong boundaries did lead to Dockables dropped at the wrong location even if the used DockableProperty was correct.
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: Path now encodes its content when using "toString" and decodes contents on creation. Meaning inside a Path object the items are never encoded.
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: MouseFocusObserver no longer calls "component.requestFocusInWindow" if the component does not belong to a Dockable
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: SplitDockStation is now much more strict when it comes to enforcing the uniqueness of placeholders
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: If a CStation was registered at a CControl and later the same object was registered as a SingleCDockable, then CControl did not assign a unique identifier to that Station/Dockable.
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: SimpleDockAction.KeyForwarder caused a memory leak by not removing its listeners properly
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: CLocations returning null as root but have an ExtendedMode are (again) supported.
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: When moving/dragging a Dockable from a SplitDockStation with size-locked Dockables, the locked Dockables got resized even if it was not necessary.
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix (by ilvisne, Beni): SimpleDockAction did not unregister itself completely, as a result there was a memory leak
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: DockUI now stalls all events rather than setting the SingleParentRemover to null when updating the DockTheme of a station
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: CLayoutChangeStrategy.replaceMultipleDockables could throw a NPE
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: CDockable.getBaseLocation did return null when a location was actually available
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix (by Thomas): Glass Extension no longer throws Exception if width or height of tab is 0
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix (by Thomas): Cursor should no longer remain arrow when moved away from a divider of a SplitDockStation
-\subsubsection{}
-\begin{description}
- \short 
+ \short Normalizing a externalized \src{CDockable} could throw an Exception
 \end{description}
 
 
+\subsubsection{StackDockStation: move}
+\begin{description}
+ \short \src{StackDockStation} could not be moved around in Common even if children would allow it.
+\end{description}
+
+\subsubsection{Placeholders: missing}
+\begin{description}
+ \short Dragging a station away from another station did not store placeholders
+\end{description}
+
+\subsubsection{StackDockStation: selection changes}
+\begin{description}
+ \short During drag and drop, dragging the mouse over a tab of a \src{StackDockStation} could exchange the selected \src{Dockable}.
+\end{description}
+
+\subsubsection{ScreenDockStation: exception}
+\begin{description}
+ \short Dragging a \src{Dockable} over a child of a \src{ScreenDockStation} could throw an exception (in \src{Common}).
+\end{description}
+
+
+\subsubsection{StackDockStation: no event}
+\begin{description}
+ \short \src{StackDockStation} did not fire dockable-selected event properly when using the \src{DefaultStackDockComponent}.
+\end{description}
+
+\subsubsection{Tabs: strange position}
+\begin{description}
+ \short Tabs with unequal height were positioned strangely.
+\end{description}
+
+\subsubsection{DefaultStackDockComponent: popup menus}
+\begin{description}
+ \short Popup menus are now enabled for tabs on a \src{DefaultStackDockComponent}
+\end{description}
+
+\subsubsection{DockRegister: missing events}
+\begin{description}
+ \short If \src{DockRegister} was stalled and a \src{DockStation} was added/removed to the register and later \src{Dockables} added/removed from that station, then the \src{DockRegister} could miss these modifications and store too many/few \src{Dockables}.
+\end{description}
+
+
+\subsubsection{CActionSource: missing events}
+\begin{description}
+ \short \src{CActionSource} did not fire events when removing or replacing actions
+\end{description}
+ 
+\subsubsection{CLocationModeManager: exception}
+\begin{description}
+ \short \src{CLocationModeManager.setLocation(Dockable,ExtendedMode,CLocation)} did not compare the correct objects and has always thrown an exception.
+\end{description}
+
+\subsubsection{Corner components: wrong location}
+\begin{description}
+ \short Minimized \src{CDockables} did not appear at the correct location if corner components were used
+\end{description}
+
+\subsubsection{Maximized CDockable: exception}
+\begin{description}
+ \short Dragging a maximized \src{CDockable} could throw an exception
+\end{description}
+
+
+\subsubsection{BasicStackDockComponent: exception}
+\begin{description}
+ \short Dragging a tab from a \src{BasicStackDockComponent} could throw an exception
+\end{description}
+
+\subsubsection{Path: wrong encoding}
+\begin{description}
+ \short \src{Path} did not encode non-java identifiers right.
+\end{description}
+
+\subsubsection{EclipseMenu: update icon}
+\begin{description}
+ \short \src{EclipseMenu} did not update its icon automatically
+\end{description}
+
+\subsubsection{StackDockStation: move}
+\begin{description}
+ \short \src{StackDockStation.move(Dockable,DockableProperty)} could throw exception if destination index was too big.
+\end{description}
+
+
+\subsubsection{AbstractScreenDockWindow: wrong update}
+\begin{description}
+ \short \src{AbstractScreenDockWindow.setDockable} did call \src{updateTitleIcon} instead of \src{updateTitleText}.
+\end{description}
+
+\subsubsection{DockTitleTab: exception}
+\begin{description}
+ \short \src{DockTitleTab} caused exception when uninstalled
+\end{description}
+
+
+\subsubsection{PropertyPreference: load default}
+\begin{description}
+ \short Instead of doing nothing, \src{PropertyPreferences} now load their default value if they cannot read any other value.
+\end{description}
+
+\subsubsection{CGrid: missing Dockables}
+\begin{description}
+ \short When deploying a \src{CGrid} some \src{Dockables} did not appear: the tree of the \src{SplitDockStation} was cleaned up too early before all \src{Dockable}s had been inserted, leading to a corrupted tree.
+\end{description}
+
+\subsubsection{SplitDockStation: wrong id}
+\begin{description}
+ \short \src{SplitDockStation} did assign leaf-id to node when using \src{drop(SplitDockPathProperty)}. As a result unmaximizing a stack of \src{CDockables} could destroy the stack.
+\end{description}
+
+\subsubsection{SplitDockStation: update layout}
+\begin{description}
+ \short \src{SplitDockStation} does now always update the boundaries of its tree before dropping a \src{Dockable}. Wrong boundaries did lead to \src{Dockable}s dropped at the wrong location even if the used \src{DockableProperty} was correct.
+\end{description}
+
+\subsubsection{Path: encoding}
+\begin{description}
+ \short \src{Path} now encodes its content when using \src{toString} and decodes contents on creation. Meaning inside a \src{Path} object the items are never encoded.
+\end{description}
+
+\subsubsection{MouseFocusObserver: request focus}
+\begin{description}
+ \short \src{MouseFocusObserver} no longer calls \src{component.requestFocusInWindow} if the component does not belong to a \src{Dockable}
+\end{description}
+
+\subsubsection{SplitDockStation: placeholders}
+\begin{description}
+ \short \src{SplitDockStation} is now much more strict when it comes to enforcing the uniqueness of placeholders
+\end{description}
+
+\subsubsection{Dockable CStation issue}
+\begin{description}
+ \short If a \src{CStation} was registered at a \src{CControl} and later the same object was registered as a \src{SingleCDockable}, then \src{CControl} did not assign a unique identifier to that Station/Dockable. 
+\end{description}
+
+\subsubsection{SimpleDockAction: memory leak}
+\begin{description}
+ \short \src{SimpleDockAction.KeyForwarder} caused a memory leak by not removing its listeners properly.
+\end{description}
+
+\subsubsection{CLocation: null root}
+\begin{description}
+ \short \src{CLocation}s returning \src{null} as root but having an \src{ExtendedMode} are (again) supported.
+\end{description}
+
+\subsubsection{SplitDockStation: locked size}
+\begin{description}
+ \short When moving/dragging a \src{Dockable} from a \src{SplitDockStation} with size-locked \src{Dockable}s, the locked \src{Dockable}s got resized even if it was not necessary.
+\end{description}
+
+\subsubsection{DockUI: stalls events}
+\begin{description}
+ \short \src{DockUI} now stalls all events rather than setting the \src{SingleParentRemover} to \src{null} when updating the \src{DockTheme} of a station.
+\end{description}
+
+
+\subsubsection{CLayoutChangeStrategy: exception}
+\begin{description}
+ \short \src{CLayoutChangeStrategy.replaceMultipleDockables} could throw a \src{NullPointerException}.
+\end{description}
+
+\subsubsection{CDockable: base location}
+\begin{description}
+ \short \src{CDockable.getBaseLocation} did return \src{null} when a location was actually available
+\end{description}
+
+\subsubsection{Glass Extension}
+\begin{description}
+ \short Glass Extension no longer throws Exception if width or height of tab is 0.
+\end{description}
+
+\subsubsection{SplitDockStation: cursor}
+\begin{description}
+ \short Cursor should no longer remain arrow when moved away from a divider of a \src{SplitDockStation}.
+\end{description}
 
 \end{document}
