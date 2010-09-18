@@ -1,145 +1,228 @@
-\contentsline {section}{\numberline {1}Version 1.0.3}{5}
-\contentsline {subsection}{\numberline {1.1}Incompatibilities}{5}
-\contentsline {subsubsection}{\numberline {1.1.1}DefaultKeyboardController}{5}
-\contentsline {subsubsection}{\numberline {1.1.2}DefaultDockable/DefaultCDockable}{5}
-\contentsline {subsubsection}{\numberline {1.1.3}CDockableListener}{5}
-\contentsline {subsubsection}{\numberline {1.1.4}FlapDockStation}{6}
-\contentsline {subsubsection}{\numberline {1.1.5}XML}{6}
-\contentsline {subsubsection}{\numberline {1.1.6}DockTheme}{6}
-\contentsline {subsubsection}{\numberline {1.1.7}DockFactory}{6}
-\contentsline {subsection}{\numberline {1.2}Features}{6}
-\contentsline {subsubsection}{\numberline {1.2.1}SplitDockStation}{6}
-\contentsline {subsubsection}{\numberline {1.2.2}SplitLayoutManager}{7}
-\contentsline {subsubsection}{\numberline {1.2.3}CDockable resize lock}{7}
-\contentsline {subsubsection}{\numberline {1.2.4}FlapLayoutManager}{7}
-\contentsline {subsubsection}{\numberline {1.2.5}ColorManager/ColorScheme}{7}
-\contentsline {subsubsection}{\numberline {1.2.6}ColorMap}{7}
-\contentsline {subsubsection}{\numberline {1.2.7}LookAndFeel}{7}
-\contentsline {subsubsection}{\numberline {1.2.8}CDockable resize request}{7}
-\contentsline {section}{\numberline {2}Version 1.0.4}{8}
-\contentsline {subsection}{\numberline {2.1}Incompatibilities}{8}
-\contentsline {subsubsection}{\numberline {2.1.1}Binary file format}{8}
-\contentsline {subsubsection}{\numberline {2.1.2}DockableListener}{8}
-\contentsline {subsubsection}{\numberline {2.1.3}Title visibility on CDockables}{8}
-\contentsline {subsubsection}{\numberline {2.1.4}BasicDropDownButtonHandler}{8}
-\contentsline {subsubsection}{\numberline {2.1.5}CDockable.getClose}{8}
-\contentsline {subsubsection}{\numberline {2.1.6}CLocation}{9}
-\contentsline {subsubsection}{\numberline {2.1.7}working area}{9}
-\contentsline {subsection}{\numberline {2.2}Features}{9}
-\contentsline {subsubsection}{\numberline {2.2.1}Border around BubbleDisplayer}{9}
-\contentsline {subsubsection}{\numberline {2.2.2}Backup factories (core)}{9}
-\contentsline {subsubsection}{\numberline {2.2.3}Backup factories (common)}{9}
-\contentsline {subsubsection}{\numberline {2.2.4}Unregister factories from DockFrontend}{9}
-\contentsline {subsubsection}{\numberline {2.2.5}Action support keyboard}{10}
-\contentsline {subsubsection}{\numberline {2.2.6}FocusTraversalPolicies}{10}
-\contentsline {subsubsection}{\numberline {2.2.7}override predefined actions}{10}
-\contentsline {subsubsection}{\numberline {2.2.8}CBlank}{10}
-\contentsline {subsubsection}{\numberline {2.2.9}CStation}{10}
-\contentsline {subsection}{\numberline {2.3}Bugfixes}{10}
-\contentsline {subsubsection}{\numberline {2.3.1}BubbleDisplayer.getDockableInsets}{10}
-\contentsline {subsubsection}{\numberline {2.3.2}IndexOutOfBoundsException from ButtonPanel}{10}
-\contentsline {subsubsection}{\numberline {2.3.3}Mode change of CDockable}{11}
-\contentsline {subsubsection}{\numberline {2.3.4}Opening maximized CDockable}{11}
-\contentsline {subsubsection}{\numberline {2.3.5}Unbind of DockAction called to often}{11}
-\contentsline {section}{\numberline {3}Version 1.0.5}{11}
-\contentsline {subsection}{\numberline {3.1}Incompatibilities}{11}
-\contentsline {subsubsection}{\numberline {3.1.1}DockStationListener}{11}
-\contentsline {subsubsection}{\numberline {3.1.2}DockableFocusListener}{12}
-\contentsline {subsubsection}{\numberline {3.1.3}DockTheme.getDockableSelection}{12}
-\contentsline {subsubsection}{\numberline {3.1.4}tap-strip no longer painted by TapPainter}{12}
-\contentsline {subsubsection}{\numberline {3.1.5}KeyboardController does fire less events}{12}
-\contentsline {subsubsection}{\numberline {3.1.6}ComponentHierarchyObserver}{12}
-\contentsline {subsection}{\numberline {3.2}API and Layout}{13}
-\contentsline {subsubsection}{\numberline {3.2.1}KeyStroke for closing Dockable}{13}
-\contentsline {subsubsection}{\numberline {3.2.2}New listeners}{13}
-\contentsline {subsubsection}{\numberline {3.2.3}ComponentHierarchObserver}{13}
-\contentsline {subsubsection}{\numberline {3.2.4}Root window for DockController}{13}
-\contentsline {subsubsection}{\numberline {3.2.5}FocusTraversalPolicies}{13}
-\contentsline {subsubsection}{\numberline {3.2.6}Dialog to select focused Dockable}{13}
-\contentsline {subsubsection}{\numberline {3.2.7}Extracting colors from LookAndFeel}{14}
-\contentsline {subsubsection}{\numberline {3.2.8}EclipseTheme}{14}
-\contentsline {subsubsection}{\numberline {3.2.9}SplitDockStation}{14}
-\contentsline {subsection}{\numberline {3.3}Bugfixes}{14}
-\contentsline {subsubsection}{\numberline {3.3.1}Missing colors for BasicTheme}{14}
-\contentsline {subsubsection}{\numberline {3.3.2}Cutting bounds of children of SplitDockStation}{14}
-\contentsline {subsubsection}{\numberline {3.3.3}NullPointerException when changing focus}{14}
-\contentsline {subsubsection}{\numberline {3.3.4}Undecorated dialogs not undecorated}{14}
-\contentsline {subsubsection}{\numberline {3.3.5}RexTabbedComponent not adding/removing children}{15}
-\contentsline {subsubsection}{\numberline {3.3.6}Focusing a hidden CDockable}{15}
-\contentsline {subsubsection}{\numberline {3.3.7}Missing events when changing state of CDockable}{15}
-\contentsline {section}{\numberline {4}Version 1.0.6}{15}
-\contentsline {subsection}{\numberline {4.1}Incompatibilities}{15}
-\contentsline {subsubsection}{\numberline {4.1.1}Dockable with Tooltip}{15}
-\contentsline {subsubsection}{\numberline {4.1.2}ColorManager generalized}{15}
-\contentsline {subsubsection}{\numberline {4.1.3}Resize Request in Common}{16}
-\contentsline {subsubsection}{\numberline {4.1.4}DockElementRepresentative}{16}
-\contentsline {subsubsection}{\numberline {4.1.5}SimpleModifierMask deleted}{16}
-\contentsline {subsubsection}{\numberline {4.1.6}Map of DockThemes}{16}
-\contentsline {subsubsection}{\numberline {4.1.7}Persistent storage of DockTheme}{17}
-\contentsline {subsection}{\numberline {4.2}API and Layout}{17}
-\contentsline {subsubsection}{\numberline {4.2.1}Dropping onto SplitDockStation}{17}
-\contentsline {subsubsection}{\numberline {4.2.2}UIProperties}{17}
-\contentsline {subsubsection}{\numberline {4.2.3}Opened LockedResizeLayoutManager}{17}
-\contentsline {subsubsection}{\numberline {4.2.4}ConflictResolver for locked resize}{17}
-\contentsline {subsubsection}{\numberline {4.2.5}FullLockConflictResolver}{17}
-\contentsline {subsubsection}{\numberline {4.2.6}DockElementRepresentative}{18}
-\contentsline {subsubsection}{\numberline {4.2.7}Common: close-action and setVisible}{18}
-\contentsline {subsubsection}{\numberline {4.2.8}Preference system}{18}
-\contentsline {subsubsection}{\numberline {4.2.9}ColorScheme as property}{18}
-\contentsline {subsubsection}{\numberline {4.2.10}Default locations in Common}{18}
-\contentsline {subsubsection}{\numberline {4.2.11}Borders on OverpaintablePanel}{18}
-\contentsline {subsubsection}{\numberline {4.2.12}SplitDockStation can disabled resizing}{18}
-\contentsline {subsubsection}{\numberline {4.2.13}Handle AWT components}{19}
-\contentsline {subsection}{\numberline {4.3}Bugfixes}{19}
-\contentsline {subsubsection}{\numberline {4.3.1}DefaultConflictResolver did not respect locked sizes}{19}
-\contentsline {subsubsection}{\numberline {4.3.2}Opening maximized CDockable}{19}
-\contentsline {subsubsection}{\numberline {4.3.3}Dropping Dockable on SplitDockStation}{19}
-\contentsline {subsubsection}{\numberline {4.3.4}CSplitLocation broken}{19}
-\contentsline {subsubsection}{\numberline {4.3.5}CStateManager.getLocation broken}{19}
-\contentsline {subsubsection}{\numberline {4.3.6}Stack-component of EclipseTheme broken}{19}
-\contentsline {subsubsection}{\numberline {4.3.7}Change ColorScheme could throw NPE}{19}
-\contentsline {subsubsection}{\numberline {4.3.8}Items in popup-menu did do nothing}{20}
-\contentsline {section}{\numberline {5}Version 1.0.7}{20}
-\contentsline {subsection}{\numberline {5.1}Incompatibilities}{20}
-\contentsline {subsubsection}{\numberline {5.1.1}DockableDisplayerHints}{20}
-\contentsline {subsubsection}{\numberline {5.1.2}ScreenDockDialog extends new class}{20}
-\contentsline {subsubsection}{\numberline {5.1.3}DockFactory uses a new layer}{20}
-\contentsline {subsubsection}{\numberline {5.1.4}CGridArea implements CDockable}{20}
-\contentsline {subsubsection}{\numberline {5.1.5}CWorkingArea extends CGridArea}{21}
-\contentsline {subsubsection}{\numberline {5.1.6}CControlFactory: no longer creates CWorkingAreas}{21}
-\contentsline {subsubsection}{\numberline {5.1.7}CommonDockable: getClose replaced with getSources}{21}
-\contentsline {subsubsection}{\numberline {5.1.8}PropertyKey: requires factory for default value}{21}
-\contentsline {subsection}{\numberline {5.2}API and Layout}{21}
-\contentsline {subsubsection}{\numberline {5.2.1}Button-title supports colors}{21}
-\contentsline {subsubsection}{\numberline {5.2.2}FlapDockProperty: support state and size}{22}
-\contentsline {subsubsection}{\numberline {5.2.3}AdjacentDockFactory}{22}
-\contentsline {subsubsection}{\numberline {5.2.4}DockSituation: support for missing elements}{22}
-\contentsline {subsubsection}{\numberline {5.2.5}Support for gaps in layout}{22}
-\contentsline {subsubsection}{\numberline {5.2.6}Storing information of invisible dockables}{22}
-\contentsline {subsubsection}{\numberline {5.2.7}Access to information of missing dockable}{22}
-\contentsline {subsubsection}{\numberline {5.2.8}PreferenceTable: order of operations reversed}{22}
-\contentsline {subsubsection}{\numberline {5.2.9}Automatic stack creation in CGrid}{23}
-\contentsline {subsubsection}{\numberline {5.2.10}Central register for CDockables}{23}
-\contentsline {subsubsection}{\numberline {5.2.11}FontManager}{23}
-\contentsline {subsubsection}{\numberline {5.2.12}FontMap}{23}
-\contentsline {subsubsection}{\numberline {5.2.13}More than one maximize-area}{23}
-\contentsline {subsubsection}{\numberline {5.2.14}Veto before changing layout}{23}
-\contentsline {subsubsection}{\numberline {5.2.15}CGrid/SplitDockGrid: preselect element}{23}
-\contentsline {subsubsection}{\numberline {5.2.16}WindowProviders}{24}
-\contentsline {subsubsection}{\numberline {5.2.17}AppletWindowProvider}{24}
-\contentsline {subsubsection}{\numberline {5.2.18}LocaleListener}{24}
-\contentsline {subsubsection}{\numberline {5.2.19}DockController: freeze layout}{24}
-\contentsline {subsection}{\numberline {5.3}Bugfixes}{24}
-\contentsline {subsubsection}{\numberline {5.3.1}SplitDockStation not respecting acceptances}{24}
-\contentsline {subsubsection}{\numberline {5.3.2}Common and CGrid: not supporting big stacks}{24}
-\contentsline {subsubsection}{\numberline {5.3.3}DockFrontend did not read setting correctly}{24}
-\contentsline {subsubsection}{\numberline {5.3.4}Infinite recursion in focus raversal}{24}
-\contentsline {subsubsection}{\numberline {5.3.5}CWorkingArea not settings itself as working-area}{25}
-\contentsline {subsubsection}{\numberline {5.3.6}SplitDockGrid throwing exception}{25}
-\contentsline {subsubsection}{\numberline {5.3.7}FlapWindow not resizing}{25}
-\contentsline {subsubsection}{\numberline {5.3.8}Dropping \lstinline [basicstyle=\relax \fontsize {10}{12}\selectfont \abovedisplayskip 10\p@ plus2\p@ minus5\p@ \abovedisplayshortskip \z@ plus3\p@ \belowdisplayshortskip 6\p@ plus3\p@ minus3\p@ \belowdisplayskip \abovedisplayskip \let \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ \ttfamily ,keywordstyle=\relax \fontsize {10}{12}\selectfont \abovedisplayskip 10\p@ plus2\p@ minus5\p@ \abovedisplayshortskip \z@ plus3\p@ \belowdisplayshortskip 6\p@ plus3\p@ minus3\p@ \belowdisplayskip \abovedisplayskip \let \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ \ttfamily ,identifierstyle=\relax \fontsize {10}{12}\selectfont \abovedisplayskip 10\p@ plus2\p@ minus5\p@ \abovedisplayshortskip \z@ plus3\p@ \belowdisplayshortskip 6\p@ plus3\p@ minus3\p@ \belowdisplayskip \abovedisplayskip \let \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ \ttfamily ]|CWorkingArea|}{25}
-\contentsline {subsubsection}{\numberline {5.3.9}Drop CDockable with no location but working-area}{25}
-\contentsline {subsubsection}{\numberline {5.3.10}AbstractCDockable ignores settings}{25}
-\contentsline {subsubsection}{\numberline {5.3.11}SecureScreenDockStation not secure}{25}
-\contentsline {subsubsection}{\numberline {5.3.12}Exception in updateLocation}{25}
-\contentsline {subsubsection}{\numberline {5.3.13}Buttons on CDockable}{25}
+\contentsline {section}{\numberline {1}Version 1.0.3}{6}
+\contentsline {subsection}{\numberline {1.1}Incompatibilities}{6}
+\contentsline {subsubsection}{\numberline {1.1.1}DefaultKeyboardController}{6}
+\contentsline {subsubsection}{\numberline {1.1.2}DefaultDockable/DefaultCDockable}{6}
+\contentsline {subsubsection}{\numberline {1.1.3}CDockableListener}{6}
+\contentsline {subsubsection}{\numberline {1.1.4}FlapDockStation}{7}
+\contentsline {subsubsection}{\numberline {1.1.5}XML}{7}
+\contentsline {subsubsection}{\numberline {1.1.6}DockTheme}{7}
+\contentsline {subsubsection}{\numberline {1.1.7}DockFactory}{7}
+\contentsline {subsection}{\numberline {1.2}Features}{7}
+\contentsline {subsubsection}{\numberline {1.2.1}SplitDockStation}{7}
+\contentsline {subsubsection}{\numberline {1.2.2}SplitLayoutManager}{8}
+\contentsline {subsubsection}{\numberline {1.2.3}CDockable resize lock}{8}
+\contentsline {subsubsection}{\numberline {1.2.4}FlapLayoutManager}{8}
+\contentsline {subsubsection}{\numberline {1.2.5}ColorManager/ColorScheme}{8}
+\contentsline {subsubsection}{\numberline {1.2.6}ColorMap}{8}
+\contentsline {subsubsection}{\numberline {1.2.7}LookAndFeel}{8}
+\contentsline {subsubsection}{\numberline {1.2.8}CDockable resize request}{8}
+\contentsline {section}{\numberline {2}Version 1.0.4}{9}
+\contentsline {subsection}{\numberline {2.1}Incompatibilities}{9}
+\contentsline {subsubsection}{\numberline {2.1.1}Binary file format}{9}
+\contentsline {subsubsection}{\numberline {2.1.2}DockableListener}{9}
+\contentsline {subsubsection}{\numberline {2.1.3}Title visibility on CDockables}{9}
+\contentsline {subsubsection}{\numberline {2.1.4}BasicDropDownButtonHandler}{9}
+\contentsline {subsubsection}{\numberline {2.1.5}CDockable.getClose}{9}
+\contentsline {subsubsection}{\numberline {2.1.6}CLocation}{10}
+\contentsline {subsubsection}{\numberline {2.1.7}working area}{10}
+\contentsline {subsection}{\numberline {2.2}Features}{10}
+\contentsline {subsubsection}{\numberline {2.2.1}Border around BubbleDisplayer}{10}
+\contentsline {subsubsection}{\numberline {2.2.2}Backup factories (core)}{10}
+\contentsline {subsubsection}{\numberline {2.2.3}Backup factories (common)}{10}
+\contentsline {subsubsection}{\numberline {2.2.4}Unregister factories from DockFrontend}{10}
+\contentsline {subsubsection}{\numberline {2.2.5}Action support keyboard}{11}
+\contentsline {subsubsection}{\numberline {2.2.6}FocusTraversalPolicies}{11}
+\contentsline {subsubsection}{\numberline {2.2.7}override predefined actions}{11}
+\contentsline {subsubsection}{\numberline {2.2.8}CBlank}{11}
+\contentsline {subsubsection}{\numberline {2.2.9}CStation}{11}
+\contentsline {subsection}{\numberline {2.3}Bugfixes}{11}
+\contentsline {subsubsection}{\numberline {2.3.1}BubbleDisplayer.getDockableInsets}{11}
+\contentsline {subsubsection}{\numberline {2.3.2}IndexOutOfBoundsException from ButtonPanel}{11}
+\contentsline {subsubsection}{\numberline {2.3.3}Mode change of CDockable}{12}
+\contentsline {subsubsection}{\numberline {2.3.4}Opening maximized CDockable}{12}
+\contentsline {subsubsection}{\numberline {2.3.5}Unbind of DockAction called to often}{12}
+\contentsline {section}{\numberline {3}Version 1.0.5}{12}
+\contentsline {subsection}{\numberline {3.1}Incompatibilities}{12}
+\contentsline {subsubsection}{\numberline {3.1.1}DockStationListener}{12}
+\contentsline {subsubsection}{\numberline {3.1.2}DockableFocusListener}{13}
+\contentsline {subsubsection}{\numberline {3.1.3}DockTheme.getDockableSelection}{13}
+\contentsline {subsubsection}{\numberline {3.1.4}tap-strip no longer painted by TapPainter}{13}
+\contentsline {subsubsection}{\numberline {3.1.5}KeyboardController does fire less events}{13}
+\contentsline {subsubsection}{\numberline {3.1.6}ComponentHierarchyObserver}{13}
+\contentsline {subsection}{\numberline {3.2}API and Layout}{14}
+\contentsline {subsubsection}{\numberline {3.2.1}KeyStroke for closing Dockable}{14}
+\contentsline {subsubsection}{\numberline {3.2.2}New listeners}{14}
+\contentsline {subsubsection}{\numberline {3.2.3}ComponentHierarchObserver}{14}
+\contentsline {subsubsection}{\numberline {3.2.4}Root window for DockController}{14}
+\contentsline {subsubsection}{\numberline {3.2.5}FocusTraversalPolicies}{14}
+\contentsline {subsubsection}{\numberline {3.2.6}Dialog to select focused Dockable}{14}
+\contentsline {subsubsection}{\numberline {3.2.7}Extracting colors from LookAndFeel}{15}
+\contentsline {subsubsection}{\numberline {3.2.8}EclipseTheme}{15}
+\contentsline {subsubsection}{\numberline {3.2.9}SplitDockStation}{15}
+\contentsline {subsection}{\numberline {3.3}Bugfixes}{15}
+\contentsline {subsubsection}{\numberline {3.3.1}Missing colors for BasicTheme}{15}
+\contentsline {subsubsection}{\numberline {3.3.2}Cutting bounds of children of SplitDockStation}{15}
+\contentsline {subsubsection}{\numberline {3.3.3}NullPointerException when changing focus}{15}
+\contentsline {subsubsection}{\numberline {3.3.4}Undecorated dialogs not undecorated}{15}
+\contentsline {subsubsection}{\numberline {3.3.5}RexTabbedComponent not adding/removing children}{16}
+\contentsline {subsubsection}{\numberline {3.3.6}Focusing a hidden CDockable}{16}
+\contentsline {subsubsection}{\numberline {3.3.7}Missing events when changing state of CDockable}{16}
+\contentsline {section}{\numberline {4}Version 1.0.6}{16}
+\contentsline {subsection}{\numberline {4.1}Incompatibilities}{16}
+\contentsline {subsubsection}{\numberline {4.1.1}Dockable with Tooltip}{16}
+\contentsline {subsubsection}{\numberline {4.1.2}ColorManager generalized}{16}
+\contentsline {subsubsection}{\numberline {4.1.3}Resize Request in Common}{17}
+\contentsline {subsubsection}{\numberline {4.1.4}DockElementRepresentative}{17}
+\contentsline {subsubsection}{\numberline {4.1.5}SimpleModifierMask deleted}{17}
+\contentsline {subsubsection}{\numberline {4.1.6}Map of DockThemes}{17}
+\contentsline {subsubsection}{\numberline {4.1.7}Persistent storage of DockTheme}{18}
+\contentsline {subsection}{\numberline {4.2}API and Layout}{18}
+\contentsline {subsubsection}{\numberline {4.2.1}Dropping onto SplitDockStation}{18}
+\contentsline {subsubsection}{\numberline {4.2.2}UIProperties}{18}
+\contentsline {subsubsection}{\numberline {4.2.3}Opened LockedResizeLayoutManager}{18}
+\contentsline {subsubsection}{\numberline {4.2.4}ConflictResolver for locked resize}{18}
+\contentsline {subsubsection}{\numberline {4.2.5}FullLockConflictResolver}{18}
+\contentsline {subsubsection}{\numberline {4.2.6}DockElementRepresentative}{19}
+\contentsline {subsubsection}{\numberline {4.2.7}Common: close-action and setVisible}{19}
+\contentsline {subsubsection}{\numberline {4.2.8}Preference system}{19}
+\contentsline {subsubsection}{\numberline {4.2.9}ColorScheme as property}{19}
+\contentsline {subsubsection}{\numberline {4.2.10}Default locations in Common}{19}
+\contentsline {subsubsection}{\numberline {4.2.11}Borders on OverpaintablePanel}{19}
+\contentsline {subsubsection}{\numberline {4.2.12}SplitDockStation can disabled resizing}{19}
+\contentsline {subsubsection}{\numberline {4.2.13}Handle AWT components}{20}
+\contentsline {subsection}{\numberline {4.3}Bugfixes}{20}
+\contentsline {subsubsection}{\numberline {4.3.1}DefaultConflictResolver did not respect locked sizes}{20}
+\contentsline {subsubsection}{\numberline {4.3.2}Opening maximized CDockable}{20}
+\contentsline {subsubsection}{\numberline {4.3.3}Dropping Dockable on SplitDockStation}{20}
+\contentsline {subsubsection}{\numberline {4.3.4}CSplitLocation broken}{20}
+\contentsline {subsubsection}{\numberline {4.3.5}CStateManager.getLocation broken}{20}
+\contentsline {subsubsection}{\numberline {4.3.6}Stack-component of EclipseTheme broken}{20}
+\contentsline {subsubsection}{\numberline {4.3.7}Change ColorScheme could throw NPE}{20}
+\contentsline {subsubsection}{\numberline {4.3.8}Items in popup-menu did do nothing}{21}
+\contentsline {section}{\numberline {5}Version 1.0.7}{21}
+\contentsline {subsection}{\numberline {5.1}Incompatibilities}{21}
+\contentsline {subsubsection}{\numberline {5.1.1}DockableDisplayerHints}{21}
+\contentsline {subsubsection}{\numberline {5.1.2}ScreenDockDialog extends new class}{21}
+\contentsline {subsubsection}{\numberline {5.1.3}DockFactory uses a new layer}{21}
+\contentsline {subsubsection}{\numberline {5.1.4}CGridArea implements CDockable}{21}
+\contentsline {subsubsection}{\numberline {5.1.5}CWorkingArea extends CGridArea}{22}
+\contentsline {subsubsection}{\numberline {5.1.6}CControlFactory: no longer creates CWorkingAreas}{22}
+\contentsline {subsubsection}{\numberline {5.1.7}CommonDockable: getClose replaced with getSources}{22}
+\contentsline {subsubsection}{\numberline {5.1.8}PropertyKey: requires factory for default value}{22}
+\contentsline {subsection}{\numberline {5.2}API and Layout}{22}
+\contentsline {subsubsection}{\numberline {5.2.1}Button-title supports colors}{22}
+\contentsline {subsubsection}{\numberline {5.2.2}FlapDockProperty: support state and size}{23}
+\contentsline {subsubsection}{\numberline {5.2.3}AdjacentDockFactory}{23}
+\contentsline {subsubsection}{\numberline {5.2.4}DockSituation: support for missing elements}{23}
+\contentsline {subsubsection}{\numberline {5.2.5}Support for gaps in layout}{23}
+\contentsline {subsubsection}{\numberline {5.2.6}Storing information of invisible dockables}{23}
+\contentsline {subsubsection}{\numberline {5.2.7}Access to information of missing dockable}{23}
+\contentsline {subsubsection}{\numberline {5.2.8}PreferenceTable: order of operations reversed}{23}
+\contentsline {subsubsection}{\numberline {5.2.9}Automatic stack creation in CGrid}{24}
+\contentsline {subsubsection}{\numberline {5.2.10}Central register for CDockables}{24}
+\contentsline {subsubsection}{\numberline {5.2.11}FontManager}{24}
+\contentsline {subsubsection}{\numberline {5.2.12}FontMap}{24}
+\contentsline {subsubsection}{\numberline {5.2.13}More than one maximize-area}{24}
+\contentsline {subsubsection}{\numberline {5.2.14}Veto before changing layout}{24}
+\contentsline {subsubsection}{\numberline {5.2.15}CGrid/SplitDockGrid: preselect element}{24}
+\contentsline {subsubsection}{\numberline {5.2.16}WindowProviders}{25}
+\contentsline {subsubsection}{\numberline {5.2.17}AppletWindowProvider}{25}
+\contentsline {subsubsection}{\numberline {5.2.18}LocaleListener}{25}
+\contentsline {subsubsection}{\numberline {5.2.19}DockController: freeze layout}{25}
+\contentsline {subsection}{\numberline {5.3}Bugfixes}{25}
+\contentsline {subsubsection}{\numberline {5.3.1}SplitDockStation not respecting acceptances}{25}
+\contentsline {subsubsection}{\numberline {5.3.2}Common and CGrid: not supporting big stacks}{25}
+\contentsline {subsubsection}{\numberline {5.3.3}DockFrontend did not read setting correctly}{25}
+\contentsline {subsubsection}{\numberline {5.3.4}Infinite recursion in focus raversal}{25}
+\contentsline {subsubsection}{\numberline {5.3.5}CWorkingArea not settings itself as working-area}{26}
+\contentsline {subsubsection}{\numberline {5.3.6}SplitDockGrid throwing exception}{26}
+\contentsline {subsubsection}{\numberline {5.3.7}FlapWindow not resizing}{26}
+\contentsline {subsubsection}{\numberline {5.3.8}Dropping \lstinline [basicstyle=\relax \fontsize {10}{12}\selectfont \abovedisplayskip 10\p@ plus2\p@ minus5\p@ \abovedisplayshortskip \z@ plus3\p@ \belowdisplayshortskip 6\p@ plus3\p@ minus3\p@ \belowdisplayskip \abovedisplayskip \let \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ \ttfamily ,keywordstyle=\relax \fontsize {10}{12}\selectfont \abovedisplayskip 10\p@ plus2\p@ minus5\p@ \abovedisplayshortskip \z@ plus3\p@ \belowdisplayshortskip 6\p@ plus3\p@ minus3\p@ \belowdisplayskip \abovedisplayskip \let \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ \ttfamily ,identifierstyle=\relax \fontsize {10}{12}\selectfont \abovedisplayskip 10\p@ plus2\p@ minus5\p@ \abovedisplayshortskip \z@ plus3\p@ \belowdisplayshortskip 6\p@ plus3\p@ minus3\p@ \belowdisplayskip \abovedisplayskip \let \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ \ttfamily ]|CWorkingArea|}{26}
+\contentsline {subsubsection}{\numberline {5.3.9}Drop CDockable with no location but working-area}{26}
+\contentsline {subsubsection}{\numberline {5.3.10}AbstractCDockable ignores settings}{26}
+\contentsline {subsubsection}{\numberline {5.3.11}SecureScreenDockStation not secure}{26}
+\contentsline {subsubsection}{\numberline {5.3.12}Exception in updateLocation}{26}
+\contentsline {subsubsection}{\numberline {5.3.13}Buttons on CDockable}{26}
+\contentsline {section}{\numberline {6}Version 1.0.8}{26}
+\contentsline {subsection}{\numberline {6.1}Incompatibilities}{27}
+\contentsline {subsubsection}{\numberline {6.1.1}DockableDisplayerListener}{27}
+\contentsline {subsubsection}{\numberline {6.1.2}EclipseThemeConnectorListener}{27}
+\contentsline {subsubsection}{\numberline {6.1.3}FocusObserver: veto}{27}
+\contentsline {subsubsection}{\numberline {6.1.4}DockProperties: priority}{27}
+\contentsline {subsubsection}{\numberline {6.1.5}CLocationModeManager}{27}
+\contentsline {subsubsection}{\numberline {6.1.6}SplitDockStation: leaf id}{28}
+\contentsline {subsubsection}{\numberline {6.1.7}DockTitleRequest}{28}
+\contentsline {subsubsection}{\numberline {6.1.8}DockFrontend: methods moved}{28}
+\contentsline {subsubsection}{\numberline {6.1.9}Placeholders}{28}
+\contentsline {subsubsection}{\numberline {6.1.10}EclipseTheme respects settings of StackDockStation}{28}
+\contentsline {subsection}{\numberline {6.2}API and Layout}{29}
+\contentsline {subsubsection}{\numberline {6.2.1}EclipseTheme, no-title and tabs}{29}
+\contentsline {subsubsection}{\numberline {6.2.2}CVetoFocusListener}{29}
+\contentsline {subsubsection}{\numberline {6.2.3}SingleTabDecider}{29}
+\contentsline {subsubsection}{\numberline {6.2.4}CDockable single-tab}{29}
+\contentsline {subsubsection}{\numberline {6.2.5}Tab placement}{29}
+\contentsline {subsubsection}{\numberline {6.2.6}TabLayoutManager}{29}
+\contentsline {subsubsection}{\numberline {6.2.7}CPanelPopup}{30}
+\contentsline {subsubsection}{\numberline {6.2.8}Access to actions of CDockable}{30}
+\contentsline {subsubsection}{\numberline {6.2.9}Minimum size on FlapDockStation}{30}
+\contentsline {subsubsection}{\numberline {6.2.10}CContentArea.setMinimumAreaSize}{30}
+\contentsline {subsubsection}{\numberline {6.2.11}AbstractDockable: KeyListener}{30}
+\contentsline {subsubsection}{\numberline {6.2.12}CVetoClosingListener}{30}
+\contentsline {subsubsection}{\numberline {6.2.13}AbstractCDockable: createCommonDockable}{30}
+\contentsline {subsubsection}{\numberline {6.2.14}Merger}{31}
+\contentsline {subsubsection}{\numberline {6.2.15}StackDockStation: single tab}{31}
+\contentsline {subsubsection}{\numberline {6.2.16}ScreenDockStation: fullscreen mode}{31}
+\contentsline {subsubsection}{\numberline {6.2.17}TabContentFilter}{31}
+\contentsline {subsubsection}{\numberline {6.2.18}FlapDockStation: factory}{31}
+\contentsline {subsubsection}{\numberline {6.2.19}StackDockComponent: default representation}{31}
+\contentsline {subsubsection}{\numberline {6.2.20}DropDownMenu: selection if submenu}{31}
+\contentsline {subsection}{\numberline {6.3}Bugfixes}{32}
+\contentsline {subsubsection}{\numberline {6.3.1}EclipseStackDockComponent: Exception}{32}
+\contentsline {subsubsection}{\numberline {6.3.2}AWT and Glass-Pane}{32}
+\contentsline {subsubsection}{\numberline {6.3.3}Check before drop}{32}
+\contentsline {subsubsection}{\numberline {6.3.4}SimpleDockACtion: unbinding}{32}
+\contentsline {subsubsection}{\numberline {6.3.5}StackDockStation: reselect}{32}
+\contentsline {subsubsection}{\numberline {6.3.6}RequestDimension: constructor}{32}
+\contentsline {subsubsection}{\numberline {6.3.7}MultiDockActionSource: exception}{32}
+\contentsline {subsubsection}{\numberline {6.3.8}SplitDockStation: cursor}{32}
+\contentsline {subsubsection}{\numberline {6.3.9}FlatTab: mouse events}{32}
+\contentsline {subsubsection}{\numberline {6.3.10}StackDockStation: not removed}{32}
+\contentsline {subsubsection}{\numberline {6.3.11}FlapDockStation: exception on move}{33}
+\contentsline {subsubsection}{\numberline {6.3.12}Location of missing CDockable}{33}
+\contentsline {subsubsection}{\numberline {6.3.13}Tabs: wrong size}{33}
+\contentsline {subsubsection}{\numberline {6.3.14}Tabs: missing tabs}{33}
+\contentsline {subsubsection}{\numberline {6.3.15}Exception on normalizing}{33}
+\contentsline {subsubsection}{\numberline {6.3.16}StackDockStation: move}{33}
+\contentsline {subsubsection}{\numberline {6.3.17}Placeholders: missing}{33}
+\contentsline {subsubsection}{\numberline {6.3.18}StackDockStation: selection changes}{33}
+\contentsline {subsubsection}{\numberline {6.3.19}ScreenDockStation: exception}{33}
+\contentsline {subsubsection}{\numberline {6.3.20}StackDockStation: no event}{33}
+\contentsline {subsubsection}{\numberline {6.3.21}Tabs: strange position}{34}
+\contentsline {subsubsection}{\numberline {6.3.22}DefaultStackDockComponent: popup menus}{34}
+\contentsline {subsubsection}{\numberline {6.3.23}DockRegister: missing events}{34}
+\contentsline {subsubsection}{\numberline {6.3.24}CActionSource: missing events}{34}
+\contentsline {subsubsection}{\numberline {6.3.25}CLocationModeManager: exception}{34}
+\contentsline {subsubsection}{\numberline {6.3.26}Corner components: wrong location}{34}
+\contentsline {subsubsection}{\numberline {6.3.27}Maximized CDockable: exception}{34}
+\contentsline {subsubsection}{\numberline {6.3.28}BasicStackDockComponent: exception}{34}
+\contentsline {subsubsection}{\numberline {6.3.29}Path: wrong encoding}{34}
+\contentsline {subsubsection}{\numberline {6.3.30}EclipseMenu: update icon}{34}
+\contentsline {subsubsection}{\numberline {6.3.31}StackDockStation: move}{34}
+\contentsline {subsubsection}{\numberline {6.3.32}AbstractScreenDockWindow: wrong update}{35}
+\contentsline {subsubsection}{\numberline {6.3.33}DockTitleTab: exception}{35}
+\contentsline {subsubsection}{\numberline {6.3.34}PropertyPreference: load default}{35}
+\contentsline {subsubsection}{\numberline {6.3.35}CGrid: missing Dockables}{35}
+\contentsline {subsubsection}{\numberline {6.3.36}SplitDockStation: wrong id}{35}
+\contentsline {subsubsection}{\numberline {6.3.37}SplitDockStation: update layout}{35}
+\contentsline {subsubsection}{\numberline {6.3.38}Path: encoding}{35}
+\contentsline {subsubsection}{\numberline {6.3.39}MouseFocusObserver: request focus}{35}
+\contentsline {subsubsection}{\numberline {6.3.40}SplitDockStation: placeholders}{35}
+\contentsline {subsubsection}{\numberline {6.3.41}Dockable CStation issue}{35}
+\contentsline {subsubsection}{\numberline {6.3.42}SimpleDockAction: memory leak}{36}
+\contentsline {subsubsection}{\numberline {6.3.43}CLocation: null root}{36}
+\contentsline {subsubsection}{\numberline {6.3.44}SplitDockStation: locked size}{36}
+\contentsline {subsubsection}{\numberline {6.3.45}DockUI: stalls events}{36}
+\contentsline {subsubsection}{\numberline {6.3.46}CLayoutChangeStrategy: exception}{36}
+\contentsline {subsubsection}{\numberline {6.3.47}CDockable: base location}{36}
+\contentsline {subsubsection}{\numberline {6.3.48}Glass Extension}{36}
+\contentsline {subsubsection}{\numberline {6.3.49}SplitDockStation: cursor}{36}

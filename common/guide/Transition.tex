@@ -1,6 +1,7 @@
 \documentclass[a4paper,10pt]{article}
 \usepackage{listings}
 \usepackage{color}
+\usepackage{url}
 
 \lstset{language=Java}
 \lstset{breaklines=true, numbers=left}
@@ -876,21 +877,19 @@ The changes that need special care.
 
 \subsubsection{DockableDisplayerListener}
 \begin{description}
- \short \src{DockableDisplayer}s can now be observed by \src{DockableDisplayerListener}s.
- \why This allows a \src{DockableDisplayer} to mark itself as obsolete, \src{DockStation}s then can create new displayers.
+ \short \src{DockableDisplayer}s can now be observed by \linebreak \src{DockableDisplayerListeners}.
+ \why This allows a \src{DockableDisplayer} to mark itself as obsolete, \linebreak \src{DockStations} then can create new displayers.
  \clients Any class that uses \src{DockableDislayer}s should add the listener and react on its events.
 \end{description}
 
 \subsubsection{EclipseThemeConnectorListener}
 \begin{description}
- \short \src{EclipseThemeConnector} can be observed by a \src{EclipseThemeConnectorListener}.
+ \short \src{EclipseThemeConnector} can be observed by a \linebreak \src{EclipseThemeConnectorListener}.
  \why This allows to change properties even after asking the connector for them
  \clients Clients implementing a \src{EclipseThemeConnector} have to call the listener
 \end{description}
 
 \subsubsection{FocusObserver: veto}
-! API: FocusObserver calls additional method "handleVeto" if a veto was spoken, the method currently consumes the event making it invisible for the application
-! API: FocusVetoListener returns a more details description how to handle a veto.
 \begin{description}
  \short Focus transfer when clicking the mouse can now be canceled. The \src{MouseFocusObserver} calls a methode \src{handleVeto} which cancels an event.
  \why A feature request by a user, should be used with care.
@@ -908,8 +907,8 @@ The changes that need special care.
 \subsubsection{CLocationModeManager}
 \begin{description}
  \short \src{CStateManager} got replaced by \src{CLocationModeManager}.
- \why The \src{CLocationModeManager} is built much more generic than \src{CStateManager} allowing new \src{DockStation}s and new extended-modes.
- \clients The method \src{CControl.getStateManager} was renamed to \src{getLocationManager}.
+ \why The \src{CLocationModeManager} is built much more generic than \linebreak \src{CStateManager} allowing new \src{DockStation}s and new extended-modes.
+ \clients The method \src{CControl.getStateManager} was renamed to \linebreak \src{getLocationManager}.
 \end{description}
 
 \subsubsection{SplitDockStation: leaf id}
@@ -922,14 +921,14 @@ The changes that need special care.
 \subsubsection{DockTitleRequest}
 \begin{description}
  \short \src{DockTitleFactory} has been changed. Now a \src{DockTitleRequest} is installed on the factory, the factory may trigger this request anytimes (also more than once). The new class \src{StationChildHandle} manages the interaction between \src{Dockable}, \src{DockableDisplayer}, \src{DockTitle} and \src{DockTitleRequest}.
- \why The API is now much more consistent. Also anyone knowing a \src{DockTitleRequest} can update/replace the title at any time.
+ \why The API is now much more consistent. Also anyone knowing a \linebreak \src{DockTitleRequest} can update/replace the title at any time.
  \clients Please read chapter 5 ``Titles'' of the guide for Core.
 \end{description}
 
 \subsubsection{DockFrontend: methods moved}
 \begin{description}
- \short Some methods of \src{DockFrontend} have been moved to \src{DefaultLayoutChangeStrategy}.
- \why Allows \src{Common} to handle its special needs, e.g. to reuse \src{MultipleCDockable}s when the layout changes.
+ \short Some methods of \src{DockFrontend} have been moved to \linebreak \src{DefaultLayoutChangeStrategy}.
+ \why Allows \src{Common} to handle its special needs, e.g. to reuse \linebreak \src{MultipleCDockable}s when the layout changes.
  \clients This API was used internally, clients should not be affected.
 \end{description}
 
@@ -1034,7 +1033,7 @@ A list of new API elements and changes that affect the layout.
 \subsubsection{Merger}
 \begin{description}
  \short The interface \src{Merger} allows two \src{DockStation}s to be merged automatically.
- \why The implementation \src{StackMerger} merges to \src{StackDockStation}s. This allows to drag a stack of \src{Dockable}s at a new location.
+ \why The implementation \src{StackMerger} merges to \src{StackDockStation}s. \linebreak This allows to drag a stack of \src{Dockable}s at a new location.
 \end{description}
 
 \subsubsection{StackDockStation: single tab}
@@ -1047,7 +1046,7 @@ A list of new API elements and changes that affect the layout.
 
 \subsubsection{ScreenDockStation: fullscreen mode}
 \begin{description}
- \short \src{ScreenDockStation} now supports fullscreen mode for its children. The exact meaning of ``fullscreen'' is defined by a \src{ScreenDockFullscreenStrategy}.
+ \short \src{ScreenDockStation} now supports fullscreen mode for its children. The exact meaning of ``fullscreen'' is defined by a \linebreak \src{ScreenDockFullscreenStrategy}.
  \why Because it was really missing.
 \end{description}
 
@@ -1065,7 +1064,7 @@ A list of new API elements and changes that affect the layout.
 
 \subsubsection{StackDockComponent: default representation}
 \begin{description}
- \short \src{StackDockComponent} now offers a method \src{createDefaultRepresentation}.
+ \short \src{StackDockComponent} now offers a method \linebreak \src{createDefaultRepresentation}.
  \why This allows code to be executed when clicking on, or dragging of, an empty space arounds tabs.
 \end{description}
 
@@ -1078,12 +1077,12 @@ A list of new API elements and changes that affect the layout.
 \subsection{Bugfixes}
 \subsubsection{EclipseStackDockComponent: Exception}
 \begin{description}
- \short \src{EclipseStackDockComponent} contained an unnecessary and not correctly updated list of \src{Dockable}s causing an \src{IndexOutOfBoundsException} on JREs of version \leq 1.5.0_12
+ \short \src{EclipseStackDockComponent} contained an unnecessary and not correctly updated list of \src{Dockable}s causing an \src{IndexOutOfBoundsException} on JREs of version 1.5.0\_12 or higher.
 \end{description}
 
 \subsubsection{AWT and Glass-Pane}
 \begin{description}
- \short Workaround for bug http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6797587 , AWT components not painted properly if behind a glass-pane.
+ \short Workaround for bug \url{http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6797587} , AWT components not painted properly if behind a glass-pane.
 \end{description}
 
 \subsubsection{Check before drop}
@@ -1123,7 +1122,7 @@ A list of new API elements and changes that affect the layout.
 
 \subsubsection{StackDockStation: not removed}
 \begin{description}
- \short \src{StackDockStation} was not always removed if it had only one child and this one child was a \src{CDockable} associated with a \src{CWorkingArea}.
+ \short \src{StackDockStation} was not always removed if it had only one child \linebreak and this one child was a \src{CDockable} associated with a \src{CWorkingArea}.
 \end{description}
 
 \subsubsection{FlapDockStation: exception on move}
@@ -1138,12 +1137,12 @@ A list of new API elements and changes that affect the layout.
 
 \subsubsection{Tabs: wrong size}
 \begin{description}
- \short If \src{TabPlacement} was ``left'' or ``right'', then new tabs in a \src{StackDockStation} could be too big. Reason for this bug was that new tabs were not properly initialized and assumed that \src{TabPlacement} was ``top''.
+ \short If \src{TabPlacement} was ``left'' or ``right'', then new tabs in a \linebreak \src{StackDockStation} could be too big. Reason for this bug was that new tabs were not properly initialized and assumed that \src{TabPlacement} was ``top''.
 \end{description}
 
 \subsubsection{Tabs: missing tabs}
 \begin{description}
- \short \src{StackDockStation} did not add its children correctly to the \src{StackDockComponent}, leading to some missing tabs
+ \short \src{StackDockStation} did not add its children correctly to the \linebreak \src{StackDockComponent}, leading to some missing tabs
 \end{description}
 
 \subsubsection{Exception on normalizing}
@@ -1164,7 +1163,7 @@ A list of new API elements and changes that affect the layout.
 
 \subsubsection{StackDockStation: selection changes}
 \begin{description}
- \short During drag and drop, dragging the mouse over a tab of a \src{StackDockStation} could exchange the selected \src{Dockable}.
+ \short During drag and drop, dragging the mouse over a tab of a \linebreak \src{StackDockStation} could exchange the selected \src{Dockable}.
 \end{description}
 
 \subsubsection{ScreenDockStation: exception}
@@ -1185,7 +1184,7 @@ A list of new API elements and changes that affect the layout.
 
 \subsubsection{DefaultStackDockComponent: popup menus}
 \begin{description}
- \short Popup menus are now enabled for tabs on a \src{DefaultStackDockComponent}
+ \short Popup menus are now enabled for tabs on a \linebreak \src{DefaultStackDockComponent}
 \end{description}
 
 \subsubsection{DockRegister: missing events}
@@ -1201,7 +1200,7 @@ A list of new API elements and changes that affect the layout.
  
 \subsubsection{CLocationModeManager: exception}
 \begin{description}
- \short \src{CLocationModeManager.setLocation(Dockable,ExtendedMode,CLocation)} did not compare the correct objects and has always thrown an exception.
+ \short \src{CLocationModeManager.setLocation} did not compare the correct objects and has always thrown an exception.
 \end{description}
 
 \subsubsection{Corner components: wrong location}
@@ -1232,7 +1231,7 @@ A list of new API elements and changes that affect the layout.
 
 \subsubsection{StackDockStation: move}
 \begin{description}
- \short \src{StackDockStation.move(Dockable,DockableProperty)} could throw exception if destination index was too big.
+ \short \src{StackDockStation.move(Dockable,DockableProperty)} could throw \linebreak exception if destination index was too big.
 \end{description}
 
 
@@ -1259,7 +1258,7 @@ A list of new API elements and changes that affect the layout.
 
 \subsubsection{SplitDockStation: wrong id}
 \begin{description}
- \short \src{SplitDockStation} did assign leaf-id to node when using \src{drop(SplitDockPathProperty)}. As a result unmaximizing a stack of \src{CDockables} could destroy the stack.
+ \short \src{SplitDockStation} did assign leaf-id to node when using \linebreak \src{drop(SplitDockPathProperty)}. As a result unmaximizing a stack of \src{CDockables} could destroy the stack.
 \end{description}
 
 \subsubsection{SplitDockStation: update layout}
@@ -1274,7 +1273,7 @@ A list of new API elements and changes that affect the layout.
 
 \subsubsection{MouseFocusObserver: request focus}
 \begin{description}
- \short \src{MouseFocusObserver} no longer calls \src{component.requestFocusInWindow} if the component does not belong to a \src{Dockable}
+ \short \src{MouseFocusObserver} no longer calls \src{requestFocusInWindow} if a \linebreak \src{Component} does not belong to a \src{Dockable}
 \end{description}
 
 \subsubsection{SplitDockStation: placeholders}
@@ -1304,13 +1303,13 @@ A list of new API elements and changes that affect the layout.
 
 \subsubsection{DockUI: stalls events}
 \begin{description}
- \short \src{DockUI} now stalls all events rather than setting the \src{SingleParentRemover} to \src{null} when updating the \src{DockTheme} of a station.
+ \short \src{DockUI} now stalls all events rather than setting the \linebreak \src{SingleParentRemover} to \src{null} when updating the \src{DockTheme} of a station.
 \end{description}
 
 
 \subsubsection{CLayoutChangeStrategy: exception}
 \begin{description}
- \short \src{CLayoutChangeStrategy.replaceMultipleDockables} could throw a \src{NullPointerException}.
+ \short \src{CLayoutChangeStrategy.replaceMultipleDockables} could throw a \linebreak \src{NullPointerException}.
 \end{description}
 
 \subsubsection{CDockable: base location}
@@ -1320,7 +1319,7 @@ A list of new API elements and changes that affect the layout.
 
 \subsubsection{Glass Extension}
 \begin{description}
- \short Glass Extension no longer throws Exception if width or height of tab is 0.
+ \short Glass Extension no longer throws Exception if width or height of tab is equal to 0.
 \end{description}
 
 \subsubsection{SplitDockStation: cursor}
