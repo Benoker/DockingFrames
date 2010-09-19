@@ -1,9 +1,9 @@
 \section{Actions} \label{sec:action}
-Actions are small graphical components associated with a dockable. They can show up at different locations, e.g. as buttons in the title.
+Actions are small graphical components associated with a \src{dockable}. They can show up at different locations, e.g. as buttons in the title.
 \begin{figure}[ht]
 \centering
 \includegraphics[scale=0.75]{actions/actions}
-\caption{A set of actions on a dockable. The actions are the icons within the red oval.}
+\caption{A set of actions on a \src{dockable}. The actions are the icons within the red oval.}
 \label{fig:actions}
 \end{figure}
 An action is an instance of \src{CAction}. \src{Common} provides several subclasses of \src{CAction}. \src{CAction}s can be added to any \src{DefaultCDockable} through the method \src{addAction}. An example:
@@ -103,7 +103,7 @@ dockable.putAction( CDockable.ACTION_KEY_MAXIMIZE, replacement );
 \end{lstlisting}
 In this example whenever the maximize-action of \src{dockable} should be visible, \src{replacement} is shown. This feature should of course be treated with respect, changing the behavior of an action can confuse the user a lot.
 
-\classbox{The class \src{CCloseAction} is an action that closes any dockable on which it is shown. The subclasses of \src{CExtendedModeAction} change the extended-mode of their dockables.}
+\classbox{The class \src{CCloseAction} is an action that closes any \src{dockable} on which it is shown. The subclasses of \src{CExtendedModeAction} change the extended-mode of their \src{dockable}s.}
 
 \subsection{Custom Actions}
 Clients are free to write their custom actions. They need to implement a new \src{DockAction} and a subclass of \src{CAction}. The subclass can give its super-class an instance of the custom \src{DockAction} or call \src{init} to set the action. Please refere to the guide for \src{Core} to find out how to implement a \src{DockAction}.

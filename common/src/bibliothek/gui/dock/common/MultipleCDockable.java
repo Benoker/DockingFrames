@@ -26,6 +26,10 @@
 package bibliothek.gui.dock.common;
 
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A <code>MultipleCDockable</code> is a {@link CDockable} which can have
@@ -44,6 +48,8 @@ public interface MultipleCDockable extends CDockable{
 	 * Gets the factory that created this dockable.
 	 * @return the factory, not <code>null</code>
 	 */
+	@Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.MINOR, target=Version.VERSION_1_1_0,
+			description="Allow null or a constant 'NULL' as factory: that would be the 'do not store this dockable'-factory")
 	public MultipleCDockableFactory<?,?> getFactory();
 	
 	/**

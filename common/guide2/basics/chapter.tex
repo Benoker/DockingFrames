@@ -18,7 +18,7 @@ In the understanding of \src{Common} an application consists of one main-window 
 \begin{figure}[ht]
 \centering
 \includegraphics[scale=1]{basics/app_with}
-\caption{An application with \src{Common}. The panels are wrapped into dockables. The dockables are put onto stations which lay on the main-frame. Dockables can be moved to different stations.}
+\caption{An application with \src{Common}. The panels are wrapped into \src{dockable}s. The \src{dockable}s are put onto stations which lay on the main-frame. \src{Dockable}s can be moved to different stations.}
 \label{fig:app_with}
 \end{figure}
 
@@ -41,7 +41,7 @@ public class Example{
 \end{lstlisting}
 
 \subsubsection{Setup stations}
-The second step is to setup the layer between main-frame and dockables. There are different \src{CStation}s available, for example the \src{CMinimizeArea} shows minimized \src{CDockable}s. But most applications will always use the same layout: some station in the center of the frame shows a grid of \src{CDockable}s and on the four edges minimized \src{CDockable}s are listed. The class \src{CContentArea} is a combination of several \src{CStation}s offers exactly that layout.
+The second step is to setup the layer between main-frame and \src{dockable}s. There are different \src{CStation}s available, for example the \src{CMinimizeArea} shows minimized \src{CDockable}s. But most applications will always use the same layout: some station in the center of the frame shows a grid of \src{CDockable}s and on the four edges minimized \src{CDockable}s are listed. The class \src{CContentArea} is a combination of several \src{CStation}s offers exactly that layout.
 
 There is always a default-\src{CContentArea} available, it can be accessed by calling \src{getContentArea} of \src{CControl}. If required additional \src{CContentArea}s can be created by the method \src{createContentArea} of \src{CControl}.
 
@@ -66,9 +66,9 @@ public class Example{
 \subsubsection{Setup dockables}
 The last step is to set up some \src{CDockable}s. \src{CDockable}s are the things that can be dragged and dropped by the user. A \src{CDockable} has a set of properties, e.g. what text to show as title, whether it can be maximized, what font to use when focused, and so on.
 
-\src{CDockable} is just an interface and clients should always use one of the two subclasses \src{DefaultSingleCDockable} or \src{DefaultMultipleCDockable}. Without going into details: \src{single-dockable}s exist exactly once, while \src{multi-dockable}s can be created and destroyed by the framework anytime.
+\src{CDockable} is just an interface and clients should always use one of the two subclasses \src{DefaultSingleCDockable} or \src{DefaultMultipleCDockable}.Without going into details: \src{single-dockable}s exist exactly once, while \linebreak \src{multi-dockable}s can be created and destroyed by the framework anytime.
 
-In the code below new single dockables are created in lines \src{23-25} and \src{43-48}. They need to be registered at the \src{CControl} in lines \src{27-29}, otherwise they cannot be shown. Optionally the initial location can be set like in line \src{33} and \src{36}. The initial location is applied in the moment when the \src{dockable} gets visible, it will not have any influence afterwards. So there is no point in setting the location of the first \src{dockable}, since there are no other \src{dockable}s it gets all the space anyway and the initial location does not matter afterwards. With other words: the order in which \src{dockable}s are made visible is important.
+In the code below new single \src{dockable}s are created in lines \src{23-25} and \src{43-48}. They need to be registered at the \src{CControl} in lines \src{27-29}, otherwise they cannot be shown. Optionally the initial location can be set like in line \src{33} and \src{36}. The initial location is applied in the moment when the \src{dockable} gets visible, it will not have any influence afterwards. So there is no point in setting the location of the first \src{dockable}, since there are no other \src{dockable}s it gets all the space anyway and the initial location does not matter afterwards. With other words: the order in which \src{dockable}s are made visible is important.
 
 \infobox{There is a class \src{CGrid} which allows to build an initial layout more easily, more about locations can be found in chapter \ref{sec:location}}
 

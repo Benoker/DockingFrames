@@ -54,7 +54,7 @@ public interface MultipleCDockableFactory<F extends MultipleCDockable, L extends
     public F read( L layout );
     
     /**
-     * Tells whether the meta-data <code>layout</code> belonsg to <code>dockable</code>, meaning
+     * Tells whether the meta-data <code>layout</code> belongs to <code>dockable</code>, meaning
      * <code>write( dockable )</code> would produce <code>layout</code> and <code>read( layout )</code>
      * would produce <code>dockable</code>.<br>
      * This method is used to create a pairing of dockables and meta-data. Dockables without partner are

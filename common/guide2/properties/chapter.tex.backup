@@ -1,0 +1,27 @@
+\section{Properties}
+\src{Core} allows clients to set a number of properties, \src{Common} adds a few more. All properties can be set or read by \src{putProperty} and \src{getProperty} of \src{CControl}. An example:
+\begin{lstlisting}
+CControl control = ...
+
+PropertyKey<KeyStroke> key = control.KEY_CLOSE;
+KeyStroke value = KeyStroke.getKeyStroke( "shift X" );
+
+control.putProperty( key, value );
+\end{lstlisting}
+
+The keys for all properties of \src{Common} are stored as constants in \src{CControl}. The complete list:
+\begin{description}
+\property{CControl.KEY\_MAXIMIZE\_CHANGE}{KeyStroke}{\src{ctrl + m}}{If pressed then the focused dockables changes between maximized and normal state.}
+\property{KEY\_GOTO\_MAXIMIZED}{KeyStroke}{\src{null}}{If pressed then the focused dockable becomes maximized.}
+\property{KEY\_GOTO\_NORMALIZED}{KeyStroke}{ctrl + n}{If pressed then the focused dockable becomes normalized.}
+\property{KEY\_GOTO\_MINIMIZED}{KeyStroke}{\src{null}}{If pressed then the focused dockable becomes minimized.}
+\property{KEY\_GOTO\_EXTERNALIZED}{KeyStroke}{\src{ctrl + e}}{If pressed then the focused dockable becomes externalized.}
+\property{KEY\_CLOSE}{KeyStroke}{\src{ctrl + F4}}{If pressed then the focused dockable is made invisible.}
+\newpage
+\property{RESIZE\_LOCK\_CONFLICT\_RESOLVER}{ConflictResolver<RequestDimension>}{an instance of \src{DefaultConflictResolver}}{Tells how to distribute space when two or more dockables have conflicting size requests. See also chapter \ref{sec:size}.}
+
+
+\property(DOUBLE\_CLICK\_STRATEGY}{}{}
+
+\end{description}
+ 

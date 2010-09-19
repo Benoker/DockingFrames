@@ -1,4 +1,4 @@
-\section{Suggestions, Questions and Remarks}
+\section{Suggestions, Questions and Remarks} \label{sec:suggestions}
 Users and developers made a lot of good suggestions, this chapter is an incomplete list of them.
 
 Some word of warning: this is an open source project, as such its developer(s) are not so much interested in selling the framework to as many people as possible, but on having fun writing something cool. Hence some things that people would like to have will never be implemented because the developers don't have fun doing this stuff. 
@@ -8,15 +8,15 @@ Some word of warning: this is an open source project, as such its developer(s) a
 \subsubsection{Of people using the library}
 
 \begin{itemize}
- \qaf{When showing tabs, would it be possible to show a drop-down menu when there is not enough space for all the tabs?}{This will be implemented and has high priority.}{The \src{TabLayoutManager} is responsible for deciding which actions to place in the overflow-menu and which not. Clients may use \src{TabPane.LAYOUT_MANAGER} to set their own implementation.}
+ \qaf{When showing tabs, would it be possible to show a drop-down menu when there is not enough space for all the tabs?}{This will be implemented and has high priority.}{The \src{TabLayoutManager} is responsible for deciding which actions to place in the overflow-menu and which not. Clients may use \src{TabPane.LAYOUT\_MANAGER} to set their own implementation.}
  
- \qaf{Tabs: would it be possible to show them on the left, right, bottom, top rotate etc...?}{Whilst it would be easy to just put them at another place, there needs more to be done. This feature requires to upgrade most of the painting code. In theory the \src{StackDockComponent} would already provide developers with the ability to use their very own tabs (at their own place), but not to reuse the existing tabs. More settings would be a nice improvement of the framework and will most certainly be implemented.}{Use \src{StackDockStation.TAB_PLACEMENT} to set the side on which to show tabs.}
+ \qaf{Tabs: would it be possible to show them on the left, right, bottom, top rotate etc...?}{Whilst it would be easy to just put them at another place, there needs more to be done. This feature requires to upgrade most of the painting code. In theory the \src{StackDockComponent} would already provide developers with the ability to use their very own tabs (at their own place), but not to reuse the existing tabs. More settings would be a nice improvement of the framework and will most certainly be implemented.}{Use \src{StackDockStation.TAB\_PLACEMENT} to set the side on which to show tabs.}
  
  \qa{AWT, it needs better support (e.g. things should be painted over AWT panels as well).}{AWT and Swing don't work together. This framework is based on Swing, any attempt to support AWT will result in a lot of ugly hacks. Also given the fact that AWT isn't hardly used anymore (except for applications playing video or rendering 3D scenes) this feature has little to none chances of getting implemented.}
  
- \qa{Could the framework be made available for [insert your favorite tool here]? E.g. in a Maven repository or for the Netbeans GUI Builder.}{Making the framework available in/for any special tool immediately yields two new problems. First, as soon as one tool is supported people will ask for another tool, this will never end... Second, a library does no get better because it does support many other tools, it does get better because it has lesser bugs, more settings or features.}{This has been asked again, the answer remains the same.}
+ \qaf{Could the framework be made available for [insert your favorite tool here]? E.g. in a Maven repository or for the Netbeans GUI Builder.}{Making the framework available in/for any special tool immediately yields two new problems. First, as soon as one tool is supported people will ask for another tool, this will never end... Second, a library does no get better because it does support many other tools, it does get better because it has lesser bugs, more settings or features.}{This has been asked again, the answer remains the same.}
  
- \qaf{Assume an externalized \src{CDockable}, if it gets maximized, could it be maximized like a \src{JFrame}? It would will the entire screen instead of falling back to the nearest \src{CContentArea}.}{This is a good idea. It is not yet clear how to implement this, but it is among those things that will be done.}{That is now the default behavior. With \src{ScreenDockStation.FULL_SCREEN_STRATEGY} clients can influence what exactly ``full screen'' means.}
+ \qaf{Assume an externalized \src{CDockable}, if it gets maximized, could it be maximized like a \src{JFrame}? It would will the entire screen instead of falling back to the nearest \src{CContentArea}.}{This is a good idea. It is not yet clear how to implement this, but it is among those things that will be done.}{That is now the default behavior. With \src{ScreenDockStation.FULL\_SCREEN\_STRATEGY} clients can influence what exactly ``full screen'' means.}
  
 \end{itemize}
 
@@ -42,8 +42,25 @@ Putting the pieces together the areas that will make the framework better are mo
 \end{itemize}
  
 \subsection{Version 1.0.8}
-
 \subsubsection{Of people using the library}
+\begin{itemize}
+  \qa{todo}{TODO}
+\end{itemize}
+
 
 \subsubsection{Of the developers}
-Some of the issues of 1.0.7 have been addressed. Most  The \src{StateManager} got replaced by the \src{CLocationModeManager}. 
+Some of the issues of 1.0.7 have been addressed. Most  The \src{StateManager} got replaced by the \src{CLocationModeManager}. Customization still is an issue.
+
+\begin{itemize}
+ \item There is an annotation \src{Todo}, Interfaces, classes or methods that need to be changed are marked with this annotation.
+ \item People often would like to set a new border or to slighly modify the current \src{DockTheme}. Currently such a task requires people to write several new classes. This is far from intuitive and not easy to accomplish, especially if someone does not know where to start. In order to solve the issue several changes will happen:
+ \begin{enumerate}
+  \item There will be class \src{ThemeManager} (or a similar name), this manager will provide a set of \src{PropertyKey}s. Using these keys clients will have the ability to override the settings of a theme without the need to subclass or even access the theme.
+  \item The \src{ThemeManager} will  make use of \src{UIProperties} to distribute its content. This way clients can override settings for individual \src{Dockable}s.
+ \end{enumerate}
+ \item It is hard to start with the framework. And it is nearly impossible to use some of the advanced stuff. In order to help people finding their way, the next version will include a set of examples. There may be between 20 to 30 examples, each example will be an executable application showing and explaining how to accomplish some task.
+ \item The framework would support unsigned applets and webstart applications. But clients need to use special ``secure'' classes. This is an obstacle: it forces the use of factories at locations where factories do not improve the framework. Also subclassing is broken because there are two classes esentially doing the same, but not being the same. For these reasons the ``secure'' package will be removed in the next version. Instead classes will get the ability to switch between ``secure'' and ``normal'' behavior even after they were created.
+\end{itemize}
+
+
+ 

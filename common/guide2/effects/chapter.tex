@@ -2,7 +2,7 @@
 \src{Common} allows to customize some behavior and components. Understanding these features is not necessary to work with \src{Common}, but impressive effects can be built with them. This chapter will, without any specific order, introduce some of these features.
 
 \subsection{Color}
-Every dockable has a \src{ColorMap}. This map contains colors that are used in the graphical user interface. Normally the map is empty and some default colors are used. If a client puts some colors into the \src{ColorMap}, then the user interface is immediatelly updated using the new colors. \src{ColorMap} itself contains a set of keys that can be used, as an example:
+Every \src{dockable} has a \src{ColorMap}. This map contains colors that are used in the graphical user interface. Normally the map is empty and some default colors are used. If a client puts some colors into the \src{ColorMap}, then the user interface is immediatelly updated using the new colors. \src{ColorMap} itself contains a set of keys that can be used, as an example:
 \begin{lstlisting}
 CDockable dockable = ...
 ColorMap map = dockable.getColors();
@@ -16,7 +16,7 @@ map.setColor( ColorMap.COLOR_KEY_TAB_BACKGROUND, Color.RED );
 Also note that some \src{Components}, like the \src{JTabbedPane}, and some \src{LookAndFeel}s do not support custom colors. }
 
 \subsection{Font}
-Exactly like the color, fonts of dockables can be exchanged. Each dockable has a \src{FontMap} which contains \src{FontModifiers}. \src{FontModifiers} can change some property of a font, an example:
+Exactly like the color, fonts of \src{dockable}s can be exchanged. Each \src{dockable} has a \src{FontMap} which contains \src{FontModifiers}. \src{FontModifiers} can change some property of a font, an example:
 \begin{lstlisting}
 CDockable dockable;
 FontMap fonts = dockable.getFonts();
@@ -30,12 +30,12 @@ The \src{FontModifier} \src{italic} will change the italic flag of the original 
 \warningbox{Some \src{Components}, like the \src{JTabbedPane}, and some \src{LookAndFeel}s do not support custom fonts. In this case the settings are just ignored. }
 
 \subsection{Size} \label{sec:size}
-Every dockable has a width and a height. Some dockables are flexibel in their size, others would be better of with a constant size. There is a feature to lock the size and a feature to set a specific size.
+Every \src{dockable} has a width and a height. Some \src{dockable}s are flexibel in their size, others would be better of with a constant size. There is a feature to lock the size and a feature to set a specific size.
 
 \subsubsection{Lock the size}
-Every \src{AbstractCDockable} has the method \src{setResizeLocked}. If the size is locked through this method than any station will try not to change the size of the dockable. There are also methods to lock only width or height \linebreak (\src{setResizeLockedHorizontally} and \src{setResizeLockedVertically}).
+Every \src{AbstractCDockable} has the method \src{setResizeLocked}. If the size is locked through this method than any station will try not to change the size of the \src{dockable}. There are also methods to lock only width or height \linebreak (\src{setResizeLockedHorizontally} and \src{setResizeLockedVertically}).
 
-\warningbox{Locking the size does not prevent the user from manually resizing the dockable. And sometimes a station needs to violate the locking as well, e.g.: when a grid-area has only one child the size cannot be choosen freely. }
+\warningbox{Locking the size does not prevent the user from manually resizing the \src{dockable}. And sometimes a station needs to violate the locking as well, e.g.: when a grid-area has only one child the size cannot be choosen freely. }
 
 \subsubsection{Request a size}
 It is also possible for client code to request a specific size for one or many \src{CDockable}s. Clients need to call \src{setResizeRequest} and maybe \linebreak \src{handleResizeRequest} like in the example below:
@@ -53,12 +53,12 @@ control.handleResizeRequests();
 \end{lstlisting}
 In this example two resize requests are handled at the same time. In line \src{6} the resize request of \src{a} is set to $200, 300$, the argument \src{false} tells \src{a} not yet to process the request. In line \src{7} the resize request of \src{b} is set, \src{b} should have the width $500$ but should not care about its height. Finally in line \src{9} all the requests are processed together. If the second parameter in line \src{7} would be \src{true} instead of \src{false}, then line \src{9} would not be necessary.
 
-\designbox{Not processing a request directly, but collect them, allows requests to interact with each other. Assume three dockables in a line and the task to resize the two elements at the begin and end of the line. If one resize request is handled before the other, than the second request might destroy the work of the first one.}
+\designbox{Not processing a request directly, but collect them, allows requests to interact with each other. Assume three \src{dockable}s in a line and the task to resize the two elements at the begin and end of the line. If one resize request is handled before the other, than the second request might destroy the work of the first one.}
 
 \classbox{Every object can add a \src{ResizeRequestListener} to \src{CControl}, this listener will be called when resize requests need to be processed. Most of the \src{CStation}s add such a listener. The only station on which requests can have complex interactions is the \src{CGridArea} (and the \src{CContentArea}). With the \src{PropertyKey} \src{RESIZE\_LOCK\_CONFLICT\_RESOLVER}, defined in \src{CControl}, clients can set the algorithm that is used to solve contradictions in a \src{CGridArea}.}
 
 \subsection{Maximizing}
-When maximizing a \src{CDockable} first the global \src{CMaximizeBehavior} is asked for the real element to maximize. If for example a dockable is part of a whole stack of dockables, then the maximize-behavior might decide to maximize the whole stack instead of the single dockable. In a second step the tree of stations and dockables is traversed upwards until a \src{MaximizeArea} is found, the element is then shown on this area. If no \src{MaximizeArea} can be found in the ancestors, then a default area is taken.
+When maximizing a \src{CDockable} first the global \src{CMaximizeBehavior} is asked for the real element to maximize. If for example a \src{dockable} is part of a whole stack of \src{dockable}s, then the maximize-behavior might decide to maximize the whole stack instead of the single \src{dockable}. In a second step the tree of stations and \src{dockable}s is traversed upwards until a \src{MaximizeArea} is found, the element is then shown on this area. If no \src{MaximizeArea} can be found in the ancestors, then a default area is taken.
 
 Clients are not (yet) able to influence the second step, but they can change the \src{CMaximizeBehavior}:
 \begin{lstlisting}
@@ -72,7 +72,7 @@ In line \src{2} a custom behavior is declared, in line \src{4} the behavior is s
 \classbox{Most the things that need to be done for changing the extended mode (like the ``maximized mode'') are handled by the \src{CStateManager}.}
 
 \subsection{Preferences} \label{sec:preferences}
-Common allows users to set some properties like the keys that need to be pressed in order to maximize a dockable (\src{ctrl+m}). Normally this mechanism is deactivated and clients first need to activate it:
+Common allows users to set some properties like the keys that need to be pressed in order to maximize a \src{dockable} (\src{ctrl+m}). Normally this mechanism is deactivated and clients first need to activate it:
 \begin{lstlisting}
 CControl control = ...
 PreferenceModel preferences = new CPreferenceModel( control );
@@ -125,7 +125,7 @@ themes.add( "custom", new CustomFactory() );
 \end{lstlisting}
 In line \src{2} the map is accessed. In line \src{4} one of the preinstalled themes is selected, this theme is applied to \src{control}. In line \src{6} a factory for a custom theme is installed.
 
-\designbox{A theme has much freedom in how to present the dockables. But \src{Common} allows clients to set color and font of various elements associated with a \src{CDockable}. The standard themes of \src{Core} would not respect these settings, hence \src{Common} needs some modified themes.
+\designbox{A theme has much freedom in how to present the \src{dockable}s. But \src{Common} allows clients to set color and font of various elements associated with a \src{CDockable}. The standard themes of \src{Core} would not respect these settings, hence \src{Common} needs some modified themes.
 
 The \src{ThemeMap} is an attempt to hide this ugly fact from developers and to make sure they don't use the wrong theme.}
 
@@ -148,7 +148,7 @@ list.addComponentCollector( collector );
 XElement xsettings = ...
 list.readXML( xsettings );
 \end{lstlisting}
-In line \src{1} a \src{LookAndFeelList} is accessed, calling \src{getDefaultList} will create it. In order to automatically update \src{JComponent}s they need to be connected to the list. This is done with the help of \src{ComponentCollector}s. If for example a \src{CControl} like \src{control} (line \src{3}) is given, then the class \src{DockableCollector} (lines \src{5-7}) is able to collect \textit{all} components related to it. This includes all dockables but also the root-window of the application. The \src{LookAndFeelList} can store its state persistantly and later read the state, for example in line \src{9} some earlier setting is accessed and in line \src{10} the settings are applied.
+In line \src{1} a \src{LookAndFeelList} is accessed, calling \src{getDefaultList} will create it. In order to automatically update \src{JComponent}s they need to be connected to the list. This is done with the help of \src{ComponentCollector}s. If for example a \src{CControl} like \src{control} (line \src{3}) is given, then the class \src{DockableCollector} (lines \src{5-7}) is able to collect \textit{all} components related to it. This includes all \src{dockable}s but also the root-window of the application. The \src{LookAndFeelList} can store its state persistantly and later read the state, for example in line \src{9} some earlier setting is accessed and in line \src{10} the settings are applied.
 
 \infobox{If using a \src{CLookAndFeelMenuPiece} then everything in the example snippets gets done automatically. Read chapter \ref{sec:menu:lookandfeel} to learn more about this menu.}
 
@@ -198,7 +198,7 @@ Clients can use a \src{CThemeMenuPiece} to quickly create a menu that changes th
 \infobox{Each \src{CLookAndFeelMenuPiece} will store the selection persistant, assuming that clients call \src{write} of \src{CControl} or of \src{ApplicationResourceManager}. If this behavior is not whished, then the \src{LookAndFeelMenuPiece} provides similar behavior but without the persistant storage.}
 
 \subsubsection{Layout}
-The layout is the location of all dockables as described in chapter \ref{sec:layout}. The \src{CLayoutChoiceMenuPiece} offers users several actions to work with layouts:
+The layout is the location of all \src{dockable}s as described in chapter \ref{sec:layout}. The \src{CLayoutChoiceMenuPiece} offers users several actions to work with layouts:
 \begin{description}
  \item [Save]: Saves the current layout. If the current layout has not yet a name then a dialog pops up so the user can enter a name.
  \item [Save As]: Saves the current layout but always asks the user to enter a new name for the layout.
@@ -207,7 +207,7 @@ The layout is the location of all dockables as described in chapter \ref{sec:lay
 \end{description}
 
 \subsubsection{List of Dockables}
-All closeable \src{SincleCDockable}s known to a \src{CControl} can be listed in a \linebreak \src{SingleCDockableListMenuPiece}. With this menu the user can make the dockables visible or invisible. The menu will update its content automatically as dockables are added or removed from the \src{CControl}.
+All closeable \src{SingleCDockable}s known to a \src{CControl} can be listed in a \linebreak \src{SingleCDockableListMenuPiece}. With this menu the user can make the \linebreak \src{dockable}s visible or invisible. The menu will update its content automatically as \src{dockable}s are added or removed from the \src{CControl}.
 
 \subsubsection{Preferences}
 \src{Common} supports preferences as described in chapter \ref{sec:preferences}. The class \linebreak \src{CPreferenceMenuPiece} adds a single item that opens a dialog with the preferences of a \src{CControl}.

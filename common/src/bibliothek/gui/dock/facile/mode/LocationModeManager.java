@@ -78,7 +78,7 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 	 * to change the {@link ExtendedMode} of an element which has been double-clicked.
 	 */
 	public static final PropertyKey<DoubleClickLocationStrategy> DOUBLE_CLICK_STRATEGY =
-		new PropertyKey<DoubleClickLocationStrategy>( "locationmodemanager.double_clock_strategy",
+		new PropertyKey<DoubleClickLocationStrategy>( "locationmodemanager.double_click_strategy",
 				new ConstantPropertyFactory<DoubleClickLocationStrategy>( DoubleClickLocationStrategy.DEFAULT ), true );
 	
 	/** a set of listeners that will be automatically added or removed from a {@link LocationMode} */
