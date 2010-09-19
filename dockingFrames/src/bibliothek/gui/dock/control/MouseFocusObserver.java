@@ -222,7 +222,7 @@ public abstract class MouseFocusObserver implements DockRelocatorListener {
      * called or not
      * @param event the event that causes this check
      */
-    protected void check( Component component, boolean ensureFocus, boolean requestFocusInWindow, AWTEvent event ){
+    protected void check( final Component component, final boolean ensureFocus, boolean requestFocusInWindow, final AWTEvent event ){
         Dockable dock = getDockable( component, event );
         if( dock != null ){
             Dockable focused = controller.getFocusedDockable();
@@ -231,10 +231,26 @@ public abstract class MouseFocusObserver implements DockRelocatorListener {
                 change = !DockUtilities.isAncestor( dock, focused );
             
             if( change ){
-            	if( requestFocusInWindow ){
-            		component.requestFocusInWindow();
+            	if( component instanceof FocusAwareComponent ){
+            		FocusAwareComponent aware = (FocusAwareComponent)component;
+            		if( requestFocusInWindow ){
+            			aware.maybeRequestFocus();
+            		}
+            		aware.invokeOnFocusRequest(new Runnable(){
+						public void run(){
+							Dockable dock = getDockable( component, event );
+					        if( dock != null ){					
+					        	controller.setFocusedDockable( dock, false, ensureFocus );
+					        }
+						}
+					});
+        		}
+            	else{
+	            	if( requestFocusInWindow ){
+	               		component.requestFocusInWindow();
+	               	}
+	                controller.setFocusedDockable( dock, false, ensureFocus );
             	}
-                controller.setFocusedDockable( dock, false, ensureFocus );
             }
         }
     }

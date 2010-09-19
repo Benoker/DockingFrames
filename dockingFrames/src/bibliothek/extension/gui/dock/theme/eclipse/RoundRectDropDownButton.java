@@ -28,6 +28,7 @@ package bibliothek.extension.gui.dock.theme.eclipse;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -36,6 +37,9 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import bibliothek.gui.dock.action.DropDownAction;
+import bibliothek.gui.dock.control.FocusAwareComponent;
+import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
+import bibliothek.gui.dock.themes.basic.action.BasicButtonModelAdapter;
 import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonHandler;
 import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonModel;
 import bibliothek.gui.dock.util.DockUtilities;
@@ -45,7 +49,7 @@ import bibliothek.util.Colors;
  * A button with a shape of a roundrect, displaying a {@link DropDownAction}.
  * @author Benjamin Sigg
  */
-public class RoundRectDropDownButton extends JComponent {
+public class RoundRectDropDownButton extends JComponent implements FocusAwareComponent {
     /** a model containing all information needed to paint this button */
     private BasicDropDownButtonModel model;
     
@@ -56,6 +60,9 @@ public class RoundRectDropDownButton extends JComponent {
     private Icon dropIcon;
     /** a disabled version of {@link #dropIcon} */
     private Icon disabledDropIcon;
+    
+    /** a piece of code that will be executed after this component requests focus */
+    private Runnable afterFocusRequest;
     
     /**
      * Creates a new button
@@ -79,6 +86,16 @@ public class RoundRectDropDownButton extends JComponent {
         
         dropIcon = createDropIcon();
         
+        model.addListener( new BasicButtonModelAdapter(){
+        	@Override
+        	public void mousePressed( BasicButtonModel model, boolean mousePressed ){
+        		if( !mousePressed ){
+        			requestFocusInWindow();
+        			invokeAfterFocusRequest();
+        		}
+        	}
+        });
+        
         addFocusListener( new FocusListener(){
             public void focusGained( FocusEvent e ) {
                 repaint();
@@ -87,6 +104,33 @@ public class RoundRectDropDownButton extends JComponent {
                 repaint();
             }
         });
+    }
+    
+    public void maybeRequestFocus(){
+    	afterFocusRequest = null;
+    	EventQueue.invokeLater(new Runnable(){
+    		public void run(){
+    			if( !model.isMousePressed() ){
+    				requestFocusInWindow();
+    				invokeAfterFocusRequest();
+    			}
+    		}
+    	});
+    }
+    
+    public void invokeOnFocusRequest( Runnable run ){
+    	afterFocusRequest = run;
+    }
+    
+    private void invokeAfterFocusRequest(){
+    	EventQueue.invokeLater(new Runnable(){
+			public void run(){
+				if( afterFocusRequest != null ){
+					afterFocusRequest.run();
+					afterFocusRequest = null;
+				}
+			}
+		});
     }
     
     /**

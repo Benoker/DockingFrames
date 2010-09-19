@@ -27,6 +27,7 @@ package bibliothek.extension.gui.dock.theme.eclipse;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -34,6 +35,7 @@ import java.awt.event.FocusListener;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
+import bibliothek.gui.dock.control.FocusAwareComponent;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModelAdapter;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
@@ -43,8 +45,9 @@ import bibliothek.util.Colors;
  * A button that has a round rect shape.
  * @author Benjamin Sigg
  */
-public class RoundRectButton extends JComponent{
+public class RoundRectButton extends JComponent implements FocusAwareComponent{
     private BasicButtonModel model;
+    private Runnable afterFocusRequest;
     
     /**
      * Creates a new roundrect button.
@@ -60,8 +63,9 @@ public class RoundRectButton extends JComponent{
         model.addListener( new BasicButtonModelAdapter(){
         	@Override
         	public void mousePressed( BasicButtonModel model, boolean mousePressed ){
-        		if( mousePressed ){
+        		if( !mousePressed ){
         			requestFocusInWindow();
+        			invokeAfterFocusRequest();
         		}
         	}
         });
@@ -74,6 +78,33 @@ public class RoundRectButton extends JComponent{
                 repaint();
             }
         });
+    }
+    
+    public void maybeRequestFocus(){
+    	afterFocusRequest = null;
+    	EventQueue.invokeLater(new Runnable(){
+    		public void run(){
+    			if( !model.isMousePressed() ){
+    				requestFocusInWindow();
+    				invokeAfterFocusRequest();
+    			}
+    		}
+    	});
+    }
+    
+    public void invokeOnFocusRequest( Runnable run ){
+    	afterFocusRequest = run;
+    }
+    
+    private void invokeAfterFocusRequest(){
+    	EventQueue.invokeLater(new Runnable(){
+			public void run(){
+				if( afterFocusRequest != null ){
+					afterFocusRequest.run();
+					afterFocusRequest = null;
+				}
+			}
+		});
     }
     
     /**

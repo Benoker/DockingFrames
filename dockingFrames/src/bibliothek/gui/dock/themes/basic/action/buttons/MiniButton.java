@@ -41,6 +41,10 @@ import javax.swing.border.Border;
 
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModelAdapter;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A small {@link Component} used as view of a {@link BasicButtonModel}.
@@ -320,6 +324,8 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
     }
     
     @Override
+    @Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_0,
+    		description="dont hardcode the minimum size")
     public Dimension getPreferredSize() {
     	if( isPreferredSizeSet() )
     		return super.getPreferredSize();

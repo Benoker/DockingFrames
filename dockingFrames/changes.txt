@@ -328,4 +328,5 @@
 - Bugfix (by Thomas): Glass Extension no longer throws Exception if width or height of tab is 0
 - Bugfix (by Thomas): Cursor should no longer remain arrow when moved away from a divider of a SplitDockStation
 - API: StackDockComponent now offers a method "createDefaultRepresentation". This allows code to be executed when clicking on, or dragging of, an empty space arounds tabs.
-- API/Bugfix: Clicking on a child action of a DropDownMenu that is shown as submenu now changes the selection of the button as well  
+- API/Bugfix: Clicking on a child action of a DropDownMenu that is shown as submenu now changes the selection of the button as well
+- Bugfix: solved an issue where buttons on a Eclipse-Tab could not be pressed it the tab was not selected.  
