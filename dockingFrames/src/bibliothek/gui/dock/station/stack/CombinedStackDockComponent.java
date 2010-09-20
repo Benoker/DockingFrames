@@ -413,6 +413,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
     	super.remove( index );
     	Meta meta = components.remove( dockable );
     	componentPanel.remove( meta.component );
+    	meta.component.setVisible( true );
     }
     
     @Override
@@ -420,6 +421,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
     	super.removeAll();
     	for( Meta meta : components.values() ){
     		componentPanel.remove( meta.component );
+    		meta.component.setVisible( true );
     	}
     	components.clear();
     }
