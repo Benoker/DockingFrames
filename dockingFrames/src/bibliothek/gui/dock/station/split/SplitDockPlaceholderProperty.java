@@ -125,7 +125,17 @@ public class SplitDockPlaceholderProperty extends AbstractDockableProperty {
 		if( backup instanceof SplitDockPathProperty )
 			return ((SplitDockPathProperty)backup).toLocation( target );
 		
-		return new SplitDockProperty( target.getX(), target.getY(), target.getWidth(), target.getHeight() );
+		SplitDockProperty result = new SplitDockProperty( target.getX(), target.getY(), target.getWidth(), target.getHeight() );
+		result.setSuccessor( getSuccessor() );
+		return result;
+	}
+	
+	@Override
+	public void setSuccessor( DockableProperty successor ){
+		super.setSuccessor( successor );
+		if( backup != null ){
+			backup.setSuccessor( successor );
+		}
 	}
 	
 	/**
