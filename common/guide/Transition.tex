@@ -1074,6 +1074,24 @@ A list of new API elements and changes that affect the layout.
  \why That is the expected behavior.
 \end{description}
 
+\subsubsection{SplitDockFullScreenProperty}
+\begin{description}
+ \short New property \src{SplitDockFullScreenProperty}.
+ \why This property points to a fullscreen \src{Dockable} on a \src{SplitDockStation} and can be used to merge that element with another \src{Dockable}.
+\end{description}
+
+\subsubsection{CMaximizedLocation}
+\begin{description}
+ \short Extends now \src{AbstractStackholdingLocation}.
+ \why Allows to combine a maximized \src{Dockable} with another \src{Dockable}
+\end{description}
+
+\subsubsection{OrientationToRotationStrategy}
+\begin{description}
+ \short New interface \src{OrientationToRotationStrategy}.
+ \why The strategy allows clients to specify how to rotate text on a \src{DockTitle}
+\end{description}
+
 \subsection{Bugfixes}
 \subsubsection{EclipseStackDockComponent: Exception}
 \begin{description}

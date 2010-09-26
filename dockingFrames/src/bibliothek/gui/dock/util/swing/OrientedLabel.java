@@ -38,8 +38,8 @@ public class OrientedLabel extends JPanel{
     /** The text on the label */
     private String text;
     
-    /** the current orientation */
-    private boolean horizontal = true;
+    /** the current angle of this label */
+    private Rotation rotation = Rotation.DEGREE_0;
     
     /**
      * Creates a new label with no text
@@ -105,21 +105,47 @@ public class OrientedLabel extends JPanel{
 	}
     
     /**
-     * Sets the orientation.
+     * Sets the orientation of this label.
+     * @param rotation the orientation, not <code>null</code>
+     */
+    public void setRotation( Rotation rotation ){
+    	if( rotation == null ){
+    		throw new IllegalArgumentException( "rotation must not be null" ); 
+    	}
+    	
+    	this.rotation = rotation;
+    	revalidate();
+    }
+    
+    /**
+     * Sets the orientation. If <code>horizontal</code>, then the rotation is set
+     * to 0 degrees, otherwise the rotation is set to 90 degrees.
      * @param horizontal whether the label is painted horizontal
      */
     public void setHorizontal( boolean horizontal ){
-		this.horizontal = horizontal;
-		revalidate();
+		if( horizontal ){
+			setRotation( Rotation.DEGREE_0 );
+		}
+		else{
+			setRotation( Rotation.DEGREE_90 );
+		}
 	}
     
     /**
-     * Gets the orientation.
-     * @return whether the label is painted horizontal
+     * Tells whether the content of this label is painted horizontally.
+     * @return whether the label is horizontal
      */
     public boolean isHorizontal(){
-		return horizontal;
+    	return rotation == Rotation.DEGREE_0 || rotation == Rotation.DEGREE_180;
 	}
+    
+    /**
+     * Tells whether the content of this label is painted vertically.
+     * @return whether the label is vertical
+     */
+    public boolean isVertical(){
+    	return !isHorizontal();
+    }
     
     /**
      * Sets the text of this label
@@ -218,6 +244,15 @@ public class OrientedLabel extends JPanel{
     	return label.getFontModifier();
     }
     
+    /**
+     * Gets direct access to the label that is used by this {@link OrientedLabel} to paint its content. This method
+     * should be treated with care, modifications to the result may have unexpected side effects.
+     * @return the label that paints the content
+     */
+    protected DLabel getLabel(){
+		return label;
+	}
+    
     @Override
     public Dimension getMinimumSize() {
         return getPreferredSize();
@@ -242,7 +277,7 @@ public class OrientedLabel extends JPanel{
     
     @Override
     public void paint( Graphics g ) {
-        if( isHorizontal() ){
+        if( rotation == Rotation.DEGREE_0 ){
         	if( icon == null ){
         		label.paint( g );
         	}
@@ -263,15 +298,16 @@ public class OrientedLabel extends JPanel{
         		}
         	}
         }
-        else{
+        else if( rotation == Rotation.DEGREE_90 ){
+        	double angle = Math.PI/2.0;
         	if( icon == null ){
 	            Graphics2D g2 = (Graphics2D)g.create();
-	            g2.rotate( Math.PI/2, 0, 0 );
+	            g2.rotate( angle, 0, 0 );
 	            g2.translate( 0, -getWidth() );
 	            label.paint( g2 );
 	            g2.dispose();
         	}
-        	else{
+        	else {
         		int width = getWidth();
         		int height = getHeight();
         		
@@ -283,13 +319,69 @@ public class OrientedLabel extends JPanel{
         		int usedUp = iconHeight + iconOffset + iconTextDistance;
         		if( usedUp < height ){
 		            Graphics2D g2 = (Graphics2D)g.create( 0, usedUp, width, height-usedUp );
-		            g2.rotate( Math.PI/2, 0, 0 );
+		            g2.rotate( angle, 0, 0 );
 		            g2.translate( 0, -getWidth() );
 		            label.paint( g2 );
 		            g2.dispose();
         		}
         	}
         }
+        else if( rotation == Rotation.DEGREE_180 ){
+        	double angle = Math.PI;
+        	if( icon == null ){
+	            Graphics2D g2 = (Graphics2D)g.create();
+	            g2.rotate( angle, 0, 0 );
+	            g2.translate( -getWidth(), -getHeight() );
+	            label.paint( g2 );
+	            g2.dispose();
+        	}
+        	else{
+        		int width = getWidth();
+        		int height = getHeight();
+        		
+        		int iconWidth = icon.getIconWidth();
+        		int iconHeight = icon.getIconHeight();
+        		
+        		icon.paintIcon( this, g, iconOffset, (height-iconHeight)/2 );
+        		int usedUp = iconWidth + iconOffset + iconTextDistance;
+        		if( usedUp < width ){
+		            Graphics2D g2 = (Graphics2D)g.create( usedUp, 0, width-usedUp, height );
+		            g2.rotate( angle, 0, 0 );
+		            g2.translate( -width+usedUp, height );
+		            label.paint( g2 );
+		            g2.dispose();
+        		}
+        	}
+        }
+    	else{
+        	double angle = Math.PI+Math.PI/2.0;
+        	if( icon == null ){
+	            Graphics2D g2 = (Graphics2D)g.create();
+	            g2.rotate( angle, 0, 0 );
+	            g2.translate( -getHeight(), 0 );
+	            label.paint( g2 );
+	            g2.dispose();
+        	}
+        	else {
+        		int width = getWidth();
+        		int height = getHeight();
+        		
+        		int iconWidth = icon.getIconWidth();
+        		int iconHeight = icon.getIconHeight();
+        		
+        		icon.paintIcon( this, g, (width-iconWidth)/2, iconOffset );
+        		
+        		int usedUp = iconHeight + iconOffset + iconTextDistance;
+        		if( usedUp < height ){
+		            Graphics2D g2 = (Graphics2D)g.create( 0, usedUp, width, height-usedUp );
+		            g2.rotate( angle, 0, 0 );
+		            g2.translate( -height, 0 );
+		            label.paint( g2 );
+		            g2.dispose();
+        		}
+        	}
+    	}
+    	
     }
     
     @Override

@@ -16,7 +16,8 @@ There are a number of keys and the remainder of this chapter will list all of th
  \property{EclipseTheme.PAINT\_ICONS\_WHEN\_DESELECTED}{Boolean}{\src{false}}{Whether to paint icons in tabs of \src{Dockable}s that are not selected. This setting might be ignored if a custom \src{TabPainter} is applied.}
  \property{EclipseTheme.TAB\_PAINTER}{TabPainter}{\src{ShapedGradientPainter.FACTORY}}{How to paint tabs in \src{EclipseTheme} for \src{Dockable}s.}
  \property{EclipseTheme.THEME\_CONNECTOR}{EclipseThemeConnector}{An instance of \src{DefaultEclipseThemeConnector}}{Tells how a lonly \src{Dockable} gets presented in \src{EclipseTheme}. \linebreak Whether it has a border and a title. Also tells which \src{DockAction}s are to be shown on tabs. Changing this entry will not affect decisions that were made by the previous connector.}
- \property{SingleTabDecider.SINGLE\_TAB\_DECIDER}{SingleTabDecider}{\src{SingleTabDecider.NONE}}{Tells whether a single tab should be painted for some \src{Dockable}s. This makes the \src{Dockable}s look as if they were a child of a \src{StackDockStation} even if there is no such station around.}
+ \property{SingleTabDecider.SINGLE\_TAB\_DECIDER}{SingleTabDecider}{\src{SingleTabDecider.NONE}}{Tells whether a single tab should be painted for some \src{Dockable}s. This makes the \src{Dockable}s look as if they were a child of a \linebreak \src{StackDockStation} even if there is no such station around.}
+ \property{DockTitle.ORIENTATION\_STRATEGY}{OrientationToRotationConverter}{\src{OrientationToRotationConverter.DEFAULT}}{Tells how to rotate text on a \src{DockTitle}.}
 \end{description}
 
 \subsection{Stations}

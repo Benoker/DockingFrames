@@ -284,7 +284,7 @@ public class CScreenDockStationHandle {
 						if( area == this ){
 							dockable = maximizedMode.getMaximizingElement( dockable );
 							
-							area.setMaximized( dockable, false, event.getAffected() );
+							area.setMaximized( dockable, false, null, event.getAffected() );
 							event.done();
 							return null;
 		                }
@@ -298,8 +298,8 @@ public class CScreenDockStationHandle {
 		public Runnable onApply( LocationModeEvent event, Dockable replacement ) {
 			return null;
 		}
-
-		public void prepareApply( Dockable dockable, AffectedSet affected ) {
+		
+		public void prepareApply( Dockable dockable, Location history, AffectedSet set ){
 			// ignore
 		}
 		
@@ -307,7 +307,7 @@ public class CScreenDockStationHandle {
 			return externalMode;
 		}
 
-		public void setMaximized( Dockable dockable, boolean maximized, AffectedSet set ) {
+		public void setMaximized( Dockable dockable, boolean maximized, Location history, AffectedSet set ){
 			ScreenDockStation station = getStation();
 			DockStation parent = dockable.getDockParent();
 			

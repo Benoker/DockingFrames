@@ -35,15 +35,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import bibliothek.gui.dock.station.flap.FlapDockProperty;
 import bibliothek.gui.dock.station.flap.FlapDockPropertyFactory;
 import bibliothek.gui.dock.station.screen.ScreenDockPropertyFactory;
-import bibliothek.gui.dock.station.split.SplitDockPathProperty;
+import bibliothek.gui.dock.station.split.SplitDockFullScreenPropertyFactory;
 import bibliothek.gui.dock.station.split.SplitDockPathPropertyFactory;
 import bibliothek.gui.dock.station.split.SplitDockPlaceholderPropertyFactory;
-import bibliothek.gui.dock.station.split.SplitDockProperty;
 import bibliothek.gui.dock.station.split.SplitDockPropertyFactory;
-import bibliothek.gui.dock.station.stack.StackDockProperty;
 import bibliothek.gui.dock.station.stack.StackDockPropertyFactory;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
@@ -66,6 +63,7 @@ public class PropertyTransformer {
 		this( SplitDockPropertyFactory.FACTORY,
 				SplitDockPathPropertyFactory.FACTORY,
 				SplitDockPlaceholderPropertyFactory.FACTORY,
+				SplitDockFullScreenPropertyFactory.FACTORY,
 				StackDockPropertyFactory.FACTORY,
 				FlapDockPropertyFactory.FACTORY,
 				ScreenDockPropertyFactory.FACTORY );

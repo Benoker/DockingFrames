@@ -176,6 +176,9 @@
 \contentsline {subsubsection}{\numberline {6.2.18}FlapDockStation: factory}{31}
 \contentsline {subsubsection}{\numberline {6.2.19}StackDockComponent: default representation}{31}
 \contentsline {subsubsection}{\numberline {6.2.20}DropDownMenu: selection if submenu}{31}
+\contentsline {subsubsection}{\numberline {6.2.21}SplitDockFullScreenProperty}{32}
+\contentsline {subsubsection}{\numberline {6.2.22}CMaximizedLocation}{32}
+\contentsline {subsubsection}{\numberline {6.2.23}OrientationToRotationStrategy}{32}
 \contentsline {subsection}{\numberline {6.3}Bugfixes}{32}
 \contentsline {subsubsection}{\numberline {6.3.1}EclipseStackDockComponent: Exception}{32}
 \contentsline {subsubsection}{\numberline {6.3.2}AWT and Glass-Pane}{32}
@@ -183,20 +186,20 @@
 \contentsline {subsubsection}{\numberline {6.3.4}SimpleDockACtion: unbinding}{32}
 \contentsline {subsubsection}{\numberline {6.3.5}StackDockStation: reselect}{32}
 \contentsline {subsubsection}{\numberline {6.3.6}RequestDimension: constructor}{32}
-\contentsline {subsubsection}{\numberline {6.3.7}MultiDockActionSource: exception}{32}
-\contentsline {subsubsection}{\numberline {6.3.8}SplitDockStation: cursor}{32}
-\contentsline {subsubsection}{\numberline {6.3.9}FlatTab: mouse events}{32}
-\contentsline {subsubsection}{\numberline {6.3.10}StackDockStation: not removed}{32}
+\contentsline {subsubsection}{\numberline {6.3.7}MultiDockActionSource: exception}{33}
+\contentsline {subsubsection}{\numberline {6.3.8}SplitDockStation: cursor}{33}
+\contentsline {subsubsection}{\numberline {6.3.9}FlatTab: mouse events}{33}
+\contentsline {subsubsection}{\numberline {6.3.10}StackDockStation: not removed}{33}
 \contentsline {subsubsection}{\numberline {6.3.11}FlapDockStation: exception on move}{33}
 \contentsline {subsubsection}{\numberline {6.3.12}Location of missing CDockable}{33}
 \contentsline {subsubsection}{\numberline {6.3.13}Tabs: wrong size}{33}
 \contentsline {subsubsection}{\numberline {6.3.14}Tabs: missing tabs}{33}
 \contentsline {subsubsection}{\numberline {6.3.15}Exception on normalizing}{33}
 \contentsline {subsubsection}{\numberline {6.3.16}StackDockStation: move}{33}
-\contentsline {subsubsection}{\numberline {6.3.17}Placeholders: missing}{33}
-\contentsline {subsubsection}{\numberline {6.3.18}StackDockStation: selection changes}{33}
-\contentsline {subsubsection}{\numberline {6.3.19}ScreenDockStation: exception}{33}
-\contentsline {subsubsection}{\numberline {6.3.20}StackDockStation: no event}{33}
+\contentsline {subsubsection}{\numberline {6.3.17}Placeholders: missing}{34}
+\contentsline {subsubsection}{\numberline {6.3.18}StackDockStation: selection changes}{34}
+\contentsline {subsubsection}{\numberline {6.3.19}ScreenDockStation: exception}{34}
+\contentsline {subsubsection}{\numberline {6.3.20}StackDockStation: no event}{34}
 \contentsline {subsubsection}{\numberline {6.3.21}Tabs: strange position}{34}
 \contentsline {subsubsection}{\numberline {6.3.22}DefaultStackDockComponent: popup menus}{34}
 \contentsline {subsubsection}{\numberline {6.3.23}DockRegister: missing events}{34}
@@ -204,25 +207,25 @@
 \contentsline {subsubsection}{\numberline {6.3.25}CLocationModeManager: exception}{34}
 \contentsline {subsubsection}{\numberline {6.3.26}Corner components: wrong location}{34}
 \contentsline {subsubsection}{\numberline {6.3.27}Maximized CDockable: exception}{34}
-\contentsline {subsubsection}{\numberline {6.3.28}BasicStackDockComponent: exception}{34}
-\contentsline {subsubsection}{\numberline {6.3.29}Path: wrong encoding}{34}
-\contentsline {subsubsection}{\numberline {6.3.30}EclipseMenu: update icon}{34}
-\contentsline {subsubsection}{\numberline {6.3.31}StackDockStation: move}{34}
+\contentsline {subsubsection}{\numberline {6.3.28}BasicStackDockComponent: exception}{35}
+\contentsline {subsubsection}{\numberline {6.3.29}Path: wrong encoding}{35}
+\contentsline {subsubsection}{\numberline {6.3.30}EclipseMenu: update icon}{35}
+\contentsline {subsubsection}{\numberline {6.3.31}StackDockStation: move}{35}
 \contentsline {subsubsection}{\numberline {6.3.32}AbstractScreenDockWindow: wrong update}{35}
 \contentsline {subsubsection}{\numberline {6.3.33}DockTitleTab: exception}{35}
 \contentsline {subsubsection}{\numberline {6.3.34}PropertyPreference: load default}{35}
 \contentsline {subsubsection}{\numberline {6.3.35}CGrid: missing Dockables}{35}
 \contentsline {subsubsection}{\numberline {6.3.36}SplitDockStation: wrong id}{35}
 \contentsline {subsubsection}{\numberline {6.3.37}SplitDockStation: update layout}{35}
-\contentsline {subsubsection}{\numberline {6.3.38}Path: encoding}{35}
-\contentsline {subsubsection}{\numberline {6.3.39}MouseFocusObserver: request focus}{35}
-\contentsline {subsubsection}{\numberline {6.3.40}SplitDockStation: placeholders}{35}
-\contentsline {subsubsection}{\numberline {6.3.41}Dockable CStation issue}{35}
+\contentsline {subsubsection}{\numberline {6.3.38}Path: encoding}{36}
+\contentsline {subsubsection}{\numberline {6.3.39}MouseFocusObserver: request focus}{36}
+\contentsline {subsubsection}{\numberline {6.3.40}SplitDockStation: placeholders}{36}
+\contentsline {subsubsection}{\numberline {6.3.41}Dockable CStation issue}{36}
 \contentsline {subsubsection}{\numberline {6.3.42}SimpleDockAction: memory leak}{36}
 \contentsline {subsubsection}{\numberline {6.3.43}CLocation: null root}{36}
 \contentsline {subsubsection}{\numberline {6.3.44}SplitDockStation: locked size}{36}
 \contentsline {subsubsection}{\numberline {6.3.45}DockUI: stalls events}{36}
 \contentsline {subsubsection}{\numberline {6.3.46}CLayoutChangeStrategy: exception}{36}
 \contentsline {subsubsection}{\numberline {6.3.47}CDockable: base location}{36}
-\contentsline {subsubsection}{\numberline {6.3.48}Glass Extension}{36}
-\contentsline {subsubsection}{\numberline {6.3.49}SplitDockStation: cursor}{36}
+\contentsline {subsubsection}{\numberline {6.3.48}Glass Extension}{37}
+\contentsline {subsubsection}{\numberline {6.3.49}SplitDockStation: cursor}{37}

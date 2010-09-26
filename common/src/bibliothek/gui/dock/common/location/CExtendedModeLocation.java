@@ -26,61 +26,46 @@
 package bibliothek.gui.dock.common.location;
 
 import bibliothek.gui.dock.common.CLocation;
+import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
-import bibliothek.gui.dock.station.split.SplitDockFullScreenProperty;
 
 /**
- * A location representing the maximized state. If no root-station is set,
- * then, the location of a maximized element depends on its location before
- * maximization.
+ * This location represents an {@link ExtendedMode}. Using this location on a 
+ * {@link CDockable} is equivalent of calling {@link CDockable#setExtendedMode(bibliothek.gui.dock.common.mode.ExtendedMode)}.
  * @author Benjamin Sigg
  */
-public class CMaximizedLocation extends AbstractStackholdingLocation {
-	private String root;
+public class CExtendedModeLocation extends CLocation{
+	private ExtendedMode mode;
 	
 	/**
-	 * Creates a new location
+	 * Creates a new location. 
+	 * @param mode the mode this location represents, not <code>null</code>
 	 */
-	public CMaximizedLocation(){
-		// ignore
-	}
-	
-	/**
-	 * Creates a new location.
-	 * @param root the station which represents the maximize area, can be <code>null</code>
-	 */
-	public CMaximizedLocation( String root ){
-		this.root = root;
-	}
-	
-	@Override
-	public ExtendedMode findMode(){
-		return ExtendedMode.MAXIMIZED;
-	}
-
-	@Override
-	public DockableProperty findProperty( DockableProperty successor ){
-		if( successor == null ){
-			return null;
+	public CExtendedModeLocation( ExtendedMode mode ){
+		if( mode == null ){
+			throw new IllegalArgumentException( "mode must not be null" );
 		}
-		SplitDockFullScreenProperty property = new SplitDockFullScreenProperty();
-		property.setSuccessor( successor );
-		return property;
+		this.mode = mode;
 	}
 	
-	@Override
-	public String findRoot(){
-		return root;
-	}
-	
-	@Override
-    public String toString() {
-        return "[maximized]";
-    }
-
-	@Override
 	public CLocation aside(){
-		return stack( 1 );
+		return this;
+	}
+
+	public CLocation expandProperty( DockableProperty property ){
+		return null;
+	}
+
+	public ExtendedMode findMode(){
+		return mode;
+	}
+
+	public DockableProperty findProperty( DockableProperty successor ){
+		return null;
+	}
+
+	public String findRoot(){
+		return null;
 	}
 }

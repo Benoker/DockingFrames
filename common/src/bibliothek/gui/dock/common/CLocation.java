@@ -135,6 +135,26 @@ public abstract class CLocation {
 	}
 	
 	/**
+	 * Creates a location representing the maximized mode on <code>area</code>. It is the clients
+	 * responsibility to ensure that <code>area</code> actually allows maximization.
+	 * @param area the area on which an element will be maximized
+	 * @return the new maximization location
+	 */
+	public static CMaximizedLocation maximized( CGridArea area ){
+		return new CMaximizedLocation( area.getUniqueId() );
+	}
+
+	/**
+	 * Creates a location representing the maximized mode on <code>area</code>. It is the clients
+	 * responsibility to ensure that <code>area</code> actually allows maximization.
+	 * @param area the area on which an element will be maximized
+	 * @return the new maximization location
+	 */
+	public static CMaximizedLocation maximized( CContentArea area ){
+		return new CMaximizedLocation( area.getCenterIdentifier() );
+	}
+	
+	/**
 	 * Creates a location representing an element that is externalized and maximized. The coordinates
 	 * are used once the {@link CDockable} is no longer maximized.
 	 * @param x the x-coordinate in pixels

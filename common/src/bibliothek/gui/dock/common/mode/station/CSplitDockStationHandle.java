@@ -31,6 +31,7 @@ import bibliothek.gui.dock.facile.mode.ModeAreaListener;
 import bibliothek.gui.dock.facile.mode.NormalMode;
 import bibliothek.gui.dock.facile.mode.NormalModeArea;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.station.split.SplitDockFullScreenProperty;
 import bibliothek.gui.dock.station.split.SplitDockTree;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.AffectingRunnable;
@@ -254,7 +255,7 @@ public class CSplitDockStationHandle{
 		public void setLocation( Dockable dockable, DockableProperty location, AffectedSet set ){
 			Dockable fullscreen = getStation().getFullScreen();
 			if( fullscreen != null ){
-				maximal.setMaximized( fullscreen, false, set );
+				maximal.setMaximized( fullscreen, false, null, set );
 			}
 			set.add( dockable );
 			
@@ -268,8 +269,11 @@ public class CSplitDockStationHandle{
 					if( !getStation().drop( dockable, location ))
 						location = null;
 				}
-				if( location == null )
-					getStation().drop( dockable );
+				if( location == null ){
+					if( !DockUtilities.isAncestor( station.getStation(), dockable )){
+						getStation().drop( dockable );
+					}
+				}
 			}
 		}
 		
@@ -339,6 +343,17 @@ public class CSplitDockStationHandle{
 			}
 		}
 		
+		public void prepareApply( Dockable dockable, Location history, AffectedSet set ){
+			boolean remaximize = history != null && history.getLocation() instanceof SplitDockFullScreenProperty; 
+			
+			if( !remaximize ){
+				CLocationMode normal = manager.getMode( NormalMode.IDENTIFIER );
+				if( normal != null ){
+					manager.apply( dockable, normal, set, false );
+				}
+			}
+		}
+		
 		public Runnable onApply( LocationModeEvent event ){
 			if( event.isDone() )
 				return null;
@@ -361,7 +376,7 @@ public class CSplitDockStationHandle{
 		                		MaximizedModeArea area = maximizedMode.get( location.getRoot() );
 		                		
 		                        if( area == this ){
-		                            area.setMaximized( dockable, false, event.getAffected() );
+		                            area.setMaximized( dockable, false, null, event.getAffected() );
 		                            event.done();
 		                            return null;
 		                        }
@@ -369,12 +384,7 @@ public class CSplitDockStationHandle{
 		                }
 		            }
 		        }
-		        
-//		        
-//				if( maximizedMode.getMaximizeArea( dockable ) == this ){
-//					maximizedMode.unmaximize( dockable, event.getAffected() );
-//				}
-			}
+		    }
 			
 	        // if the element is about to become a child of this station, ensure
 	        // this station does not show a maximized element
@@ -442,7 +452,7 @@ public class CSplitDockStationHandle{
 			return new Dockable[]{ dockable };
 		}
 
-		public void setMaximized( Dockable dockable, boolean maximized, AffectedSet set ){
+		public void setMaximized( Dockable dockable, boolean maximized, Location location, AffectedSet set ){
 			SplitDockStation station = getStation();
 			
 			if( !maximized ){
@@ -450,16 +460,28 @@ public class CSplitDockStationHandle{
 					station.setFullScreen( null );
 				}
 			}
-			else if( dockable.getDockParent() == station ){
-				station.setFullScreen( dockable );
-	        }
-	        else{
-	            if( dockable.getDockParent() != null )
-	                dockable.getDockParent().drag( dockable );
-
-	            dropAside( dockable );
-	            station.setFullScreen( dockable );
-	        }
+			else{
+				DockableProperty property = location == null ? null : location.getLocation();
+				
+				if( property instanceof SplitDockFullScreenProperty ){
+					if( getMaximized() != null ){
+						if( getStation().drop( dockable, property ) ){
+			        		return;
+			        	}
+					}
+				}
+				
+				if( dockable.getDockParent() == station ){
+					station.setFullScreen( dockable );
+		        }
+		        else{
+		            if( dockable.getDockParent() != null )
+		                dockable.getDockParent().drag( dockable );
+	
+		            dropAside( dockable );
+		            station.setFullScreen( dockable );
+		        }
+			}
 			
 			set.add( dockable );
 		}
@@ -469,7 +491,19 @@ public class CSplitDockStationHandle{
 		}
 		
 		public CLocation getCLocation( Dockable dockable ){
-			return new CMaximizedLocation();
+			CLocation stationLocation = station.getStationLocation();
+			DockableProperty property = DockUtilities.getPropertyChain( getStation(), dockable );
+			if( property != null ){
+				property = property.getSuccessor();
+			}
+			
+			CMaximizedLocation result = new CMaximizedLocation( stationLocation.findRoot() );
+			if( property != null ){
+				return result.expandProperty( property );
+			}
+			else{
+				return result;
+			}
 		}
 		
 		public CLocation getCLocation( Dockable dockable, Location location ){

@@ -188,7 +188,7 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
     	CLocationMode newMode = getMode( mode.getModeIdentifier() );
     	if( newMode == null )
     		return;
-    	
+    		
     	String root = location.findRoot();
     	
     	if( root != null ){

@@ -57,6 +57,8 @@ import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 import bibliothek.gui.dock.themes.font.TitleFont;
+import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.font.AbstractDockFont;
@@ -130,6 +132,33 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     private List<AbstractDockFont> fonts = new ArrayList<AbstractDockFont>();
     /** the fonts which are used automatically */
     private List<ConditionalFont> conditionalFonts;
+    
+    /** tells how to paint the text on this title */
+    private PropertyValue<OrientationToRotationStrategy> orientationConverter = new PropertyValue<OrientationToRotationStrategy>( DockTitle.ORIENTATION_STRATEGY ){
+		protected void valueChanged( OrientationToRotationStrategy oldValue, OrientationToRotationStrategy newValue ){
+			if( oldValue != null ){
+				oldValue.removeListener( orientationListener );
+				oldValue.uninstall( AbstractDockTitle.this );
+			}
+			if( newValue != null ){
+				newValue.install( AbstractDockTitle.this );
+				newValue.addListener( orientationListener );
+			}
+			
+			updateLabelRotation();
+		}
+	};
+	
+	/** a listener added to the current {@link OrientationToRotationStrategy} represented by {@link #orientationConverter} */
+	private OrientationToRotationStrategyListener orientationListener = new OrientationToRotationStrategyListener(){
+		public void rotationChanged( Dockable dockable, DockTitle title ){
+			if( title == AbstractDockTitle.this || title == null ){
+				if( dockable == AbstractDockTitle.this.dockable || dockable == null ){
+					updateLabelRotation();
+				}
+			}
+		}
+	};
     
     /**
      * Constructs a new title
@@ -375,8 +404,12 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         this.orientation = orientation;
         if( showMiniButtons )
         	itemPanel.setOrientation( orientation );
-        label.setHorizontal( orientation.isHorizontal() );
+        updateLabelRotation();
         revalidate();
+    }
+    
+    private void updateLabelRotation(){
+    	label.setRotation( orientationConverter.getValue().convert( getOrientation(), this ));
     }
     
     /**
@@ -706,6 +739,8 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
             
             for( AbstractDockFont font : fonts )
                 font.connect( controller );
+            
+            orientationConverter.setProperties( controller );
         }
         
         updateText();
@@ -730,6 +765,8 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         
         for( AbstractDockFont font : fonts )
             font.connect( null );
+        
+        orientationConverter.setProperties( (DockProperties)null );
         
         setText( "" );
         setIcon( null );

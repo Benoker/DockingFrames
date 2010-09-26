@@ -177,8 +177,8 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 		if( area == null )
 			area = getDefaultArea();
 
-		area.prepareApply( dockable, set );
-		maximize( area, dockable, set );
+		area.prepareApply( dockable, history, set );
+		maximize( area, dockable, history, set );
 	}
 
 	public Location current( Dockable dockable ){
@@ -226,8 +226,21 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	 * @param dockable the element that should be made maximized
 	 * @param set a set of <code>Dockable</code>s which will be filled by the
 	 * elements that change their mode because of this method
-	 */    
+	 */
 	public void maximize( MaximizedModeArea area, Dockable dockable, AffectedSet set ){
+		maximize( area, dockable, null, set );
+	}
+
+	/**
+	 * Ensures that <code>dockable</code> is maximized.
+	 * @param area the future parent of <code>dockable</code>, can be <code>null</code>
+	 * @param dockable the element that should be made maximized
+	 * @param history the expected location of <code>dockable</code> after this method has finished, can be <code>null</code>.
+	 * No guarantees are given that the final location matches <code>history</code>.
+	 * @param set a set of <code>Dockable</code>s which will be filled by the
+	 * elements that change their mode because of this method
+	 */
+	public void maximize( MaximizedModeArea area, Dockable dockable, Location history, AffectedSet set ){
 		Dockable maximizing = getMaximizingElement( dockable );
 		if( maximizing != dockable )
 			getManager().store( maximizing );
@@ -251,7 +264,7 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 			getManager().store( dockable );
 		}
 
-		area.setMaximized( maximizing, true, set );
+		area.setMaximized( maximizing, true, history, set );
 		set.add( maximizing );
 	}
 
@@ -279,7 +292,7 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 							public void run( AffectedSet set ){
 								boolean known = manager.isRegistered( element );
 	
-								area.setMaximized( element, false, set );
+								area.setMaximized( element, false, null, set );
 	
 								String key = area.getUniqueId();
 								boolean done = false;

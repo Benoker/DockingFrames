@@ -66,10 +66,12 @@ public interface MaximizedModeArea extends ModeArea{
 	/**
 	 * This method is called by {@link MaximizedMode} just before the mode is applied 
 	 * to <code>dockable</code>.
-	 * @param dockable the element which gets maximized
-	 * @param affected collects dockables which might change their mode
+	 * @param dockable the new child of this area
+	 * @param the future location of <code>dockable</code>
+	 * @param set this method has to store all {@link Dockable}s which might have changed their
+	 * mode in the set.  
 	 */
-	public void prepareApply( Dockable dockable, AffectedSet affected );
+	public void prepareApply( Dockable dockable, Location history, AffectedSet set );
 	
 	/**
 	 * Tells this parent to change the maximization state of <code>dockable</code>. This 
@@ -77,10 +79,11 @@ public interface MaximizedModeArea extends ModeArea{
 	 * @param dockable the maximized element, <code>null</code> to indicate
 	 * that no element should be maximized.
 	 * @param maximized the new state of <code>dockable</code>
+	 * @param location the expected location of <code>dockable</code> after this method completed, may be <code>null</code>
 	 * @param set this method has to store all {@link Dockable}s which might have changed their
 	 * mode in the set.
 	 */
-	public void setMaximized( Dockable dockable, boolean maximized, AffectedSet set );
+	public void setMaximized( Dockable dockable, boolean maximized, Location location, AffectedSet set );
 	
 	/**
 	 * Gets the currently maximized elements.

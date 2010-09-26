@@ -330,4 +330,7 @@
 - API: StackDockComponent now offers a method "createDefaultRepresentation". This allows code to be executed when clicking on, or dragging of, an empty space arounds tabs.
 - API/Bugfix: Clicking on a child action of a DropDownMenu that is shown as submenu now changes the selection of the button as well
 - Bugfix: solved an issue where buttons on a Eclipse-Tab could not be pressed it the tab was not selected.  
-- Bugfix: Removing all items of a CombinedStackDockComponent left them invisible   
+- Bugfix: Removing all items of a CombinedStackDockComponent left them invisible
+- API: New SplitDockFullScreenProperty allows clients to point locations to the fullscreen dockable of a SplitDockStation
+- API: CMaximizedLocation now extends AbstractStackholdingLocation
+- API: New OrientationToRotationStrategy, allows clients to specify how to rotate text on a DockTitle
