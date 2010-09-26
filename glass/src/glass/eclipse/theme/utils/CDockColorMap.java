@@ -1,4 +1,4 @@
-﻿package glass.eclipse.theme.utils;
+package glass.eclipse.theme.utils;
 
 import java.awt.*;
 
