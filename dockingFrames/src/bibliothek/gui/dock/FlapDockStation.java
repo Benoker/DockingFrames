@@ -1610,6 +1610,8 @@ public class FlapDockStation extends AbstractDockableStation {
         handles.remove( index );
         handle.setTitle( null );
         dockable.removeDockableListener( dockableListener );
+        // race condition, only required if not called from the EDT
+        buttonPane.resetTitles();
         listeners.fireDockableRemoved( dockable );
     }
     
@@ -1635,6 +1637,7 @@ public class FlapDockStation extends AbstractDockableStation {
         DockableHandle handle = link( dockable );
         handles.dockables().add( index, handle );
         dockable.setDockParent( this );
+        buttonPane.resetTitles(); // race condition, only required if not called from the EDT
         listeners.fireDockableAdded( dockable );
     }
     

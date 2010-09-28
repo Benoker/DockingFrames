@@ -34,7 +34,6 @@ import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.extension.gui.dock.util.MouseOverListener;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
-import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.themes.basic.BasicButtonDockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
@@ -65,7 +64,7 @@ public class FlatButtonTitle extends BasicButtonDockTitle {
     	    }
     	};
     	
-        setBorder( null );
+        changeBorder();
     }
     
     /**

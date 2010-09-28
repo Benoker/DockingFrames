@@ -100,8 +100,7 @@ public class ButtonPane extends OverpaintablePanel{
      */
     public void resetTitles(){
     	if( !resetStarted ){
-    		resetStarted = true;
-    		EventQueue.invokeLater( new Runnable() {
+    		Runnable code = new Runnable() {
 				public void run(){
 					resetStarted = false;
 			        getContentPane().removeAll();
@@ -113,7 +112,15 @@ public class ButtonPane extends OverpaintablePanel{
 			        }
 			        revalidate();
 				}
-			});
+			};
+    		
+    		resetStarted = true;
+    		if( EventQueue.isDispatchThread() ){
+    			EventQueue.invokeLater( code );	
+    		}
+    		else{
+    			code.run();
+    		}
     	}
     }
     
