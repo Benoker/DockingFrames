@@ -246,10 +246,10 @@ public class OrientedLabel extends JPanel{
     
     /**
      * Gets direct access to the label that is used by this {@link OrientedLabel} to paint its content. This method
-     * should be treated with care, modifications to the result may have unexpected side effects.
+     * should be treated with care, modifications to the underlying label may have unexpected side effects.
      * @return the label that paints the content
      */
-    protected DLabel getLabel(){
+    public DLabel getLabel(){
 		return label;
 	}
     
