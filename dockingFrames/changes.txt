@@ -335,3 +335,4 @@
 - API: CMaximizedLocation now extends AbstractStackholdingLocation
 - API: New OrientationToRotationStrategy, allows clients to specify how to rotate text on a DockTitle
 - Bugfix: repaired an issue where buttons on a FlapDockStation where not shown due to a race condition. Also repaired an issue where the button had a false size due to a missing border.
+- Bugfix: resolved an issue where the CDockableStateListener was not called when the mode changed.

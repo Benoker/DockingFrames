@@ -45,7 +45,7 @@ public interface CDockableAccess {
     public void informVisibility( boolean visible );
     
     /**
-     * Called after the mode of the {@link CDockable} has changed.
+     * Called after the mode of the {@link CDockable} may have changed.
      * @param mode the new mode
      */
     public void informMode( ExtendedMode mode );

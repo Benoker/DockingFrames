@@ -600,23 +600,28 @@ public abstract class AbstractCDockable implements CDockable {
         	}
         	
             control.link( this, new CDockableAccess(){
+            	private ExtendedMode currentMode;
+            	
                 public void informVisibility( boolean visible ) {
                     listenerCollection.getCDockableStateListener().visibilityChanged( AbstractCDockable.this );
                 }
                 public void informMode( ExtendedMode mode ) {
-                    CDockableStateListener forward = listenerCollection.getCDockableStateListener();
-                    if( mode == ExtendedMode.EXTERNALIZED ){
-                    	forward.externalized( AbstractCDockable.this );
-                    }
-                    else if( mode == ExtendedMode.MINIMIZED ){
-                    	forward.minimized( AbstractCDockable.this );
-                    }
-                    else if( mode == ExtendedMode.MAXIMIZED ){
-                    	forward.maximized( AbstractCDockable.this );
-                    }
-                    else if( mode == ExtendedMode.NORMALIZED ){
-                    	forward.normalized( AbstractCDockable.this );
-                    }
+                	if( currentMode != mode ){
+                		currentMode = mode;
+	                	CDockableStateListener forward = listenerCollection.getCDockableStateListener();
+	                    if( mode == ExtendedMode.EXTERNALIZED ){
+	                    	forward.externalized( AbstractCDockable.this );
+	                    }
+	                    else if( mode == ExtendedMode.MINIMIZED ){
+	                    	forward.minimized( AbstractCDockable.this );
+	                    }
+	                    else if( mode == ExtendedMode.MAXIMIZED ){
+	                    	forward.maximized( AbstractCDockable.this );
+	                    }
+	                    else if( mode == ExtendedMode.NORMALIZED ){
+	                    	forward.normalized( AbstractCDockable.this );
+	                    }
+                	}
                 }
                 public CFocusListener getFocusListener() {
                     return listenerCollection.getFocusListener();

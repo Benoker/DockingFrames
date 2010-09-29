@@ -35,7 +35,10 @@ import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.CDockableAccess;
 import bibliothek.gui.dock.common.intern.CommonDockable;
+import bibliothek.gui.dock.event.DockHierarchyEvent;
+import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.facile.mode.CLocationModeSettings;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.LocationMode;
@@ -43,6 +46,8 @@ import bibliothek.gui.dock.facile.mode.LocationModeManager;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.AffectingRunnable;
+import bibliothek.gui.dock.support.mode.ModeManager;
+import bibliothek.gui.dock.support.mode.ModeManagerListener;
 import bibliothek.gui.dock.support.mode.ModeSettings;
 import bibliothek.gui.dock.support.mode.ModeSettingsConverter;
 import bibliothek.gui.dock.support.util.Resources;
@@ -77,7 +82,7 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
 	private CMaximizedMode maximizedMode;
 	private CMinimizedMode minimizedMode;
 	private CExternalizedMode externalizedMode;
-
+	
 	/**
 	 * Creates a new manager.
 	 * @param control the control in whose realm this manager works
@@ -105,6 +110,32 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
         icons.setIconDefault( ICON_MANAGER_KEY_EXTERNALIZE, Resources.getIcon( "externalize" ) );
         icons.setIconDefault( ICON_MANAGER_KEY_UNEXTERNALIZE, Resources.getIcon( "unexternalize" ) );
         icons.setIconDefault( ICON_MANAGER_KEY_UNMAXIMIZE_EXTERNALIZED, Resources.getIcon( "unmaximize_externalized" ) );
+        
+        addModeManagerListener(new ModeManagerListener<Location, LocationMode>(){
+			public void dockableAdded( ModeManager<? extends Location, ? extends LocationMode> manager, Dockable dockable ){
+				// ignore
+			}
+
+			public void dockableRemoved( ModeManager<? extends Location, ? extends LocationMode> manager, Dockable dockable ){
+				// ignore
+			}
+
+			public void modeAdded( ModeManager<? extends Location, ? extends LocationMode> manager, LocationMode mode ){
+				// ignore
+			}
+
+			public void modeChanged( ModeManager<? extends Location, ? extends LocationMode> manager, Dockable dockable, LocationMode oldMode, LocationMode newMode ){
+				CDockableAccess access = CLocationModeManager.this.control.access( ((CommonDockable)dockable).getDockable() );
+				if( access != null ){
+					ExtendedMode mode = getMode(dockable);
+					access.informMode( mode );
+				}
+			}
+
+			public void modeRemoved( ModeManager<? extends Location, ? extends LocationMode> manager, LocationMode mode ){
+				// ignore
+			}
+		});
 	}
 	
 	/**
