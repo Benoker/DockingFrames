@@ -13,20 +13,37 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.ButtonGroup;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.WindowConstants;
 
 import bibliothek.demonstration.Monitor;
 import bibliothek.demonstration.util.LookAndFeelMenu;
-import bibliothek.gui.*;
+import bibliothek.gui.DockFrontend;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.DockTheme;
+import bibliothek.gui.DockUI;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.security.*;
+import bibliothek.gui.dock.security.SecureDockController;
+import bibliothek.gui.dock.security.SecureFlapDockStation;
+import bibliothek.gui.dock.security.SecureFlapDockStationFactory;
+import bibliothek.gui.dock.security.SecureScreenDockStation;
+import bibliothek.gui.dock.security.SecureScreenDockStationFactory;
+import bibliothek.gui.dock.security.SecureSplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
 import bibliothek.gui.dock.station.split.SplitDockProperty;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
+import bibliothek.gui.dock.station.support.PlaceholderStrategyListener;
 import bibliothek.gui.dock.support.lookandfeel.ComponentCollector;
 import bibliothek.gui.dock.support.lookandfeel.LookAndFeelList;
 import bibliothek.gui.dock.themes.ThemeFactory;
@@ -43,6 +60,7 @@ import bibliothek.help.view.SelectingView;
 import bibliothek.help.view.TypeHierarchyView;
 import bibliothek.help.view.dock.DockableButton;
 import bibliothek.help.view.dock.Minimizer;
+import bibliothek.util.Path;
 
 /**
  * This is the central point of the application. The core is responsible to
@@ -110,6 +128,35 @@ public class Core implements ComponentCollector{
 	        });
 	        frontend.getController().getProperties().set( PropertyKey.DOCK_STATION_ICON, ResourceSet.ICONS.get( "application" ) );
 	        frontend.getController().getProperties().set( PropertyKey.DOCK_STATION_TITLE, "Help" );
+	        
+	        frontend.getController().getProperties().set( PlaceholderStrategy.PLACEHOLDER_STRATEGY, new PlaceholderStrategy(){
+				public void uninstall( DockStation station ){
+					// ignore	
+				}
+				
+				public void removeListener( PlaceholderStrategyListener listener ){
+					// ignore
+				}
+				
+				public boolean isValidPlaceholder( Path placeholder ){
+					return true;
+				}
+				
+				public void install( DockStation station ){
+					// ignore	
+				}
+				
+				public Path getPlaceholderFor( Dockable dockable ){
+					if( dockable instanceof SelectingView ){
+						return new Path( "selecting", dockable.getTitleText() );
+					}
+					return null;
+				}
+				
+				public void addListener( PlaceholderStrategyListener listener ){
+					// ignore
+				}
+			});
 	        
 	        SelectingView viewPackage = new SelectingView( links, "Packages", ResourceSet.ICONS.get( "package" ), "package-list" );
 	        SelectingView viewClasses = new SelectingView( links, "Classes", ResourceSet.ICONS.get( "class" ), "class-list" );

@@ -32,7 +32,7 @@ public class JavaDoc {
         
         List<String> docargs = new ArrayList<String>();
         
-        docargs.add( "-private");
+        docargs.add( "-protected");
         
         docargs.add( "-doclet"); 
         docargs.add( "bibliothek.help.javadoc.JavaDoc");
