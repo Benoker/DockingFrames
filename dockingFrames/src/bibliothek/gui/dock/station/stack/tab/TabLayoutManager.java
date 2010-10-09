@@ -28,6 +28,10 @@ package bibliothek.gui.dock.station.stack.tab;
 import java.awt.Dimension;
 
 import bibliothek.gui.dock.station.stack.tab.layouting.LayoutBlock;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A {@link TabLayoutManager} is responsible for managing the location and size
@@ -37,6 +41,8 @@ import bibliothek.gui.dock.station.stack.tab.layouting.LayoutBlock;
  * its algorithms.
  * @author Benjamin Sigg
  */
+@Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_0,
+		description="Make some more LayoutManagers to put tabs in the {left, middle, right} or {top, middle, bottom}")
 public interface TabLayoutManager {
 	/**
 	 * Lays out the tabs on <code>pane</code>, this manager is free to

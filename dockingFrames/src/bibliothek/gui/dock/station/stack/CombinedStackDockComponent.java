@@ -227,6 +227,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
     @Override
     public void revalidate(){
     	panel.revalidate();
+    	repaint();
     }
     
     /**

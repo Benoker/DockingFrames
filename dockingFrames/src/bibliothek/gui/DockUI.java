@@ -70,12 +70,17 @@ import bibliothek.gui.dock.util.laf.LookAndFeelColorsListener;
 import bibliothek.gui.dock.util.laf.Nimbus6u10;
 import bibliothek.gui.dock.util.laf.Windows;
 import bibliothek.gui.dock.util.local.LocaleListener;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Version;
 import bibliothek.util.container.Tuple;
 
 /**
  * A list of icons, text and methods used by the framework. 
  * @author Benjamin Sigg
  */
+@Todo(compatibility=Compatibility.BREAK_MAJOR, target=Version.VERSION_1_1_0, priority=Todo.Priority.MAJOR,
+		description="Use an UIManager instead of bundles to handle text, also applies to the Common library")
 public class DockUI {
     /** An instance of DockUI */
 	private static DockUI ui;
