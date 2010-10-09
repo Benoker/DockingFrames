@@ -25,12 +25,21 @@
  */
 package bibliothek.gui.dock.common;
 
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
+
 /**
  * A backup factory is used by a {@link CControl} to create {@link SingleCDockable}s
  * if a dockable is missing in the cache, but needed because some layout is loaded
  * from a file.
  * @author Benjamin Sigg
  */
+@Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.MINOR, target=Version.VERSION_1_1_0,
+		description="Replace by SingleCDockableFactory, declare this factory as deprecated")
+//@Todo(compatibility=Compatibility.BREAK_MAJOR, priority=Priority.MINOR, target=Version.VERSION_1_1_1,
+//		description="Remote this interface")
 public interface SingleCDockableBackupFactory {
     /**
      * Creates a backup of a {@link SingleCDockable}.

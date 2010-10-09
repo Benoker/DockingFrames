@@ -187,7 +187,7 @@ public class CLayoutChangeStrategy extends DefaultLayoutChangeStrategy {
 	}
 	
 	/**
-	 * A {@link DefaultLayoutChangeStrategy.SettingAccess} that modifies the roots by calling
+	 * A {@link bibliothek.gui.dock.frontend.DefaultLayoutChangeStrategy.SettingAccess} that modifies the roots by calling
 	 * {@link CLayoutChangeStrategy#replaceMultipleDockables(DockFrontendInternals, CSettingAccess, DockLayoutComposition)}.
 	 * @author Benjamin Sigg
 	 */

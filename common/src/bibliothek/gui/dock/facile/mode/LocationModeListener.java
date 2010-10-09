@@ -25,17 +25,19 @@
  */
 package bibliothek.gui.dock.facile.mode;
 
+import bibliothek.gui.dock.support.mode.Mode;
+
 
 /**
  * A listener added to a {@link LocationMode}. The listener gets informed
- * if the {@link LocationMode#apply(bibliothek.gui.Dockable, Location, bibliothek.gui.dock.support.mode.AffectedSet) apply}
+ * if the {@link Mode#apply(bibliothek.gui.Dockable, Object, bibliothek.gui.dock.support.mode.AffectedSet) apply}
  * method is called.
  * @author Benjamin Sigg
  */
 public interface LocationModeListener {
 	/**
 	 * Called by a {@link LocationMode} right before the 
-	 * {@link LocationMode#apply(bibliothek.gui.Dockable, Location, bibliothek.gui.dock.support.mode.AffectedSet) apply}
+	 * {@link Mode#apply(bibliothek.gui.Dockable, Object, bibliothek.gui.dock.support.mode.AffectedSet) apply}
 	 * method starts.
 	 * @param event detailed information about the event
 	 */
@@ -43,7 +45,7 @@ public interface LocationModeListener {
 
 	/**
 	 * Called by a {@link LocationMode} after the 
-	 * {@link LocationMode#apply(bibliothek.gui.Dockable, Location, bibliothek.gui.dock.support.mode.AffectedSet) apply}
+	 * {@link Mode#apply(bibliothek.gui.Dockable, Object, bibliothek.gui.dock.support.mode.AffectedSet) apply}
 	 * method has done its work.
 	 * @param event detailed information about the event
 	 */

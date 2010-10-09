@@ -35,7 +35,7 @@ import tutorial.support.sets.TutorialTreeModel;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CGrid;
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
-import bibliothek.gui.dock.common.layout.ThemeMap;
+import bibliothek.gui.dock.common.theme.ThemeMap;
 
 public class TutorialMain extends JFrame{
 	public static void main( String[] args ) throws InstantiationException, IllegalAccessException{

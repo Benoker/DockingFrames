@@ -29,7 +29,7 @@ import java.awt.Color;
 
 import bibliothek.gui.dock.common.intern.color.EclipseTabTransmitter;
 import bibliothek.gui.dock.common.intern.color.TabColorTransmitter;
-import bibliothek.gui.dock.common.intern.theme.color.CColorBridge;
+import bibliothek.gui.dock.common.theme.color.CColorBridge;
 import bibliothek.gui.dock.themes.ColorBridgeFactory;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.util.Colors;

@@ -7,6 +7,8 @@ import bibliothek.gui.dock.*;
 import bibliothek.gui.dock.common.*;
 import bibliothek.gui.dock.common.intern.theme.*;
 import bibliothek.gui.dock.common.layout.*;
+import bibliothek.gui.dock.common.theme.CEclipseTheme;
+import bibliothek.gui.dock.common.theme.ThemeMap;
 import bibliothek.gui.dock.station.stack.tab.layouting.*;
 import bibliothek.gui.dock.util.*;
 import glass.eclipse.theme.*;

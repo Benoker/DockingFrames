@@ -30,6 +30,7 @@ import java.util.Map;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.support.mode.AffectedSet;
+import bibliothek.gui.dock.support.mode.Mode;
 
 /**
  * Information given to a {@link LocationModeListener}.
@@ -66,7 +67,7 @@ public class LocationModeEvent {
 	
 	/**
 	 * Marks the mode transition as over. This method is normally called after 
-	 * {@link LocationMode#apply(Dockable, Location, AffectedSet) apply} has finished its job. 
+	 * {@link Mode#apply(Dockable, Object, AffectedSet) apply} has finished its job. 
 	 * {@link LocationModeListener}s might however prematurely call this method. In this case
 	 * <code>apply</code> is not executed, but all remaining events are sent anyway.  
 	 */

@@ -27,7 +27,7 @@ package bibliothek.gui.dock.common.preference;
 
 import bibliothek.extension.gui.dock.preference.preferences.choice.DefaultChoice;
 import bibliothek.gui.DockController;
-import bibliothek.gui.dock.common.layout.ThemeMap;
+import bibliothek.gui.dock.common.theme.ThemeMap;
 import bibliothek.gui.dock.themes.ThemeFactory;
 
 /**

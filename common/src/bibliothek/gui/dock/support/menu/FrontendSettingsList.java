@@ -37,8 +37,8 @@ import bibliothek.gui.DockFrontend;
 import bibliothek.gui.dock.event.DockFrontendAdapter;
 
 /**
- * A list of settings that are available for a {@link bibliothek.gui.DockFrontend}.
- * The list contains the elements of {@link bibliothek.gui.DockFrontend#getSettings()}.<br>
+ * A list of settings (=layouts or perspectives) that are available for a {@link bibliothek.gui.DockFrontend}.
+ * The list contains the elements of {@link bibliothek.gui.DockFrontend#getSettings()}.
  * @author Benjamin Sigg
  *
  */

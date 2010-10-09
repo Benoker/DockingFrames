@@ -46,6 +46,7 @@ import bibliothek.gui.dock.event.KeyboardListener;
 import bibliothek.gui.dock.facile.mode.action.MaximizedModeAction;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.AffectingRunnable;
+import bibliothek.gui.dock.support.mode.Mode;
 import bibliothek.gui.dock.support.mode.ModeManager;
 import bibliothek.gui.dock.support.mode.ModeManagerListener;
 import bibliothek.gui.dock.support.mode.ModeSetting;
@@ -650,7 +651,7 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 
 	/**
 	 * A listener that adds itself to all {@link LocationMode}s a {@link LocationModeManager} has.
-	 * Calls to the {@link LocationMode#apply(Dockable, Location, AffectedSet) apply} method is forwarded
+	 * Calls to the {@link Mode#apply(Dockable, Object, AffectedSet) apply} method is forwarded
 	 * to the enclosing {@link MaximizedMode}.
 	 * @author Benjamin Sigg
 	 */

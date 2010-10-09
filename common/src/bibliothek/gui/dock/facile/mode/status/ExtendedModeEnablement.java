@@ -37,7 +37,7 @@ import bibliothek.gui.dock.facile.mode.LocationModeManager;
 public interface ExtendedModeEnablement {
 	/**
 	 * Tells whether <code>mode</code> is available for <code>dockable</code>.<br>
-	 * <b>Note:</b> for {@link ExtendedMode#NORMALIZED} the result must always be <code>true</code>.
+	 * <b>Note:</b> for {@link ExtendedMode#NORMALIZED} the result should always be <code>true</code>.
 	 * @param dockable some element, not <code>null</code>
 	 * @param mode some mode, not <code>null</code>
 	 * @return whether the mode is available, <code>true</code> if <code>mode</code> equals {@link ExtendedMode#NORMALIZED}

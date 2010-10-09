@@ -128,7 +128,7 @@ public class C2_DockFrontendBasics_02_PersistentLayout {
 		}
 	}
 	
-	/* This action opens a dialog on which the user can choose on of the available
+	/* This action opens a dialog on which the user can choose one of the available
 	 * layouts. The subclass decides what todo with the layout. */
 	public static abstract class FrontendLayoutListAction extends FrontendAction{
 		public FrontendLayoutListAction( String text, DockFrontend frontend ){
@@ -236,6 +236,7 @@ public class C2_DockFrontendBasics_02_PersistentLayout {
 			super( "Write", frontend );
 			this.target = target;
 			this.opposite = opposite;
+			opposite.setEnabled( false );
 		}
 		
 		public void actionPerformed( ActionEvent e ){
@@ -276,11 +277,3 @@ public class C2_DockFrontendBasics_02_PersistentLayout {
 		}
 	}
 }
-
-
-
-
-
-
-
-

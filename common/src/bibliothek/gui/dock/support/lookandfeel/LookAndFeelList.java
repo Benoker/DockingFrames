@@ -51,7 +51,7 @@ import bibliothek.util.xml.XElement;
 
 /**
  * A list of {@link LookAndFeel}s, can setup a <code>LookAndFeel</code> when
- * asked. It's possible to add a {@link ChangeListener} to this list and
+ * asked. It's possible to add a {@link LookAndFeelListener} to this list and
  * receive events whenever the <code>LookAndFeel</code> changes.<br>
  * Clients should use {@link #getDefaultList()} to get a list of {@link LookAndFeel}s
  * @author Benjamin Sigg

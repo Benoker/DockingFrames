@@ -32,7 +32,9 @@ import java.io.IOException;
 import bibliothek.util.xml.XElement;
 
 /**
- * A converter converts properties from the outside to the inner world.
+ * A converter converts properties from the outside to the inner world. It is used by the {@link ModeSettings}
+ * to store data in memory, a converter should ensure that the data does not reference any object from the
+ * application (such that garbage collection works).
  * @author Benjamin Sigg
  * @param <A> the type of properties outside
  * @param <B> the type of properties that represent the outside properties

@@ -89,7 +89,7 @@ public interface LocationMode extends Mode<Location>{
 	
 	/**
 	 * Adds a listener to this mode. The listener is to be called
-	 * if {@link #apply(Dockable, Location, AffectedSet) apply} starts or finishes.
+	 * if {@link Mode#apply(Dockable, Object, AffectedSet) apply} starts or finishes.
 	 * @param listener the new listener
 	 */
 	public void addLocationModeListener( LocationModeListener listener );

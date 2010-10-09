@@ -31,7 +31,7 @@ import bibliothek.gui.dock.support.lookandfeel.LookAndFeelList.Info;
 
 /**
  * A listener which observes a {@link LookAndFeelList} and gets informed whenever
- * the contents of the list changes.
+ * the contents of the list change.
  * @author Benjamin Sigg
  *
  */

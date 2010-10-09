@@ -34,7 +34,9 @@ import bibliothek.util.xml.XElement;
 
 /**
  * A set of properties that belong to some {@link Mode} but are stored independent 
- * from that mode.
+ * from that mode. Each of the read/write methods gets access to the {@link ModeSettingsConverter} that is
+ * used by the {@link ModeSettings} to store data in memory. The methods are not required to use the converter,
+ * but the implementation may be easier when using the converters read/write methods as well.
  * @author Benjamin Sigg
  * @param <A> format of data used by the {@link ModeManager} this {@link ModeSetting}
  * is associated with

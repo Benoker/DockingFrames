@@ -61,7 +61,9 @@ public @interface Todo {
 	
 	/** Tells when an {@link Todo} is scheduled to be implemented */
 	public static enum Version{
-		VERSION_1_1_0;
+		VERSION_1_1_0,
+		VERSION_1_1_1,
+		VERSION_1_1_2;
 	}
 	
 	public Priority priority();

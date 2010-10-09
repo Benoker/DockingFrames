@@ -27,7 +27,7 @@ package bibliothek.gui.dock.common.menu;
 
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.layout.ThemeMap;
+import bibliothek.gui.dock.common.theme.ThemeMap;
 import bibliothek.gui.dock.facile.menu.ThemeMenuPiece;
 
 /**

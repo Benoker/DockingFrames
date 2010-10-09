@@ -28,6 +28,7 @@ package bibliothek.gui.dock.facile.mode;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.support.mode.AffectedSet;
+import bibliothek.gui.dock.support.mode.Mode;
 
 /**
  * The parent of a set of {@link Dockable}s that are maximized. The {@link MaximizedMode}, which
@@ -38,7 +39,7 @@ import bibliothek.gui.dock.support.mode.AffectedSet;
 public interface MaximizedModeArea extends ModeArea{
 	
 	/**
-	 * This method is called before the method {@link LocationMode#apply(Dockable, Location, AffectedSet) apply}
+	 * This method is called before the method {@link Mode#apply(Dockable, Object, AffectedSet) apply}
 	 * is executed of a {@link LocationMode} that is not the owner of this area. The element 
 	 * <code>event.getDockable()</code> may or may not be a child of this station. This method is called
 	 * before {@link #onApply(LocationModeEvent, Dockable)} is called.
@@ -48,7 +49,7 @@ public interface MaximizedModeArea extends ModeArea{
 	public Runnable onApply( LocationModeEvent event );
 	
 	/**
-	 * This method is called before the method {@link LocationMode#apply(Dockable, Location, AffectedSet) apply}
+	 * This method is called before the method {@link Mode#apply(Dockable, Object, AffectedSet) apply}
 	 * is executed of a {@link LocationMode} that is not the owner of this area. The element
 	 * <code>event.getDockable()</code> is a direct or indirect child of this area and maximized. The 
 	 * {@link MaximizedMode} suggests to use <code>replacement</code> as direct child

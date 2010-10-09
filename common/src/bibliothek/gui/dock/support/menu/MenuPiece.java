@@ -30,12 +30,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 /**
  * Describes a part of a {@link JMenu}, can add or remove {@link JMenuItem}s
- * at any time to the menu.
+ * or other {@link JComponent}s at any time to the menu.
  * @author Benjamin Sigg
  */
 public abstract class MenuPiece {
@@ -46,8 +47,8 @@ public abstract class MenuPiece {
     private List<MenuPieceListener> listeners = new ArrayList<MenuPieceListener>();
     
     /**
-     * Adds a listener to this piece, the listener will get informed when this
-     * piece want's to add or remove items.
+     * Adds a listener to this piece, the listener will get informed when the 
+     * children of this piece change.
      * @param listener the new listener
      */
     public void addListener( MenuPieceListener listener ){
@@ -55,7 +56,7 @@ public abstract class MenuPiece {
     }
     
     /**
-     * Removes a listener to this piece.
+     * Removes <code>listener</code> from this piece.
      * @param listener the listener to remove
      */
     public void removeListener( MenuPieceListener listener ){
@@ -112,7 +113,7 @@ public abstract class MenuPiece {
 	}
     
     /**
-     * Gets the number of items this {@link MenuPiece} added to its {@link #getMenu() menu}
+     * Gets the number of items this {@link MenuPiece} added to its {@link #getMenu() menu}.
      * @return the number of items
      */
     public abstract int getItemCount();

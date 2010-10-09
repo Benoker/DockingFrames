@@ -7,10 +7,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 
 /**
- * A set of methods that are used through the demonstration-framework.
+ * A set of methods that used to update the {@link LookAndFeel} of {@link Component}s.
  * @author Benjamin Sigg
  */
 public class LookAndFeelUtilities {

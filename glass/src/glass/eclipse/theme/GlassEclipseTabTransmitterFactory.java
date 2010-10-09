@@ -26,8 +26,8 @@
 package glass.eclipse.theme;
 
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.intern.theme.color.CColorBridge;
-import bibliothek.gui.dock.common.intern.theme.color.CColorBridgeExtension;
+import bibliothek.gui.dock.common.theme.color.CColorBridge;
+import bibliothek.gui.dock.common.theme.color.CColorBridgeExtension;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.util.Path;

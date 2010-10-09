@@ -401,10 +401,10 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     /**
      * Runs an algorithm which affects the mode of some {@link Dockable}s.
      * @param run the algorithm, <code>null</code> will be ignored
-     * @param continuous if set to <code>true</code> the transaction runs without changing
+     * @param continuous if set to <code>true</code> the transaction should run without changing
      * the internal cache storing the position of all {@link Dockable}s. This can be important
-     * if an operation runs an <code>apply</code> method and additional needs to change
-     * the position of some element on a station. Clients should call {@link #store(Dockable)}
+     * if an operation runs an <code>apply</code> method and additional work will change
+     * the position of some elements again. Clients should call {@link #store(Dockable)}
      * afterwards. 
      */
     public void runTransaction( final AffectingRunnable run, boolean continuous ){
@@ -441,11 +441,11 @@ public abstract class ModeManager<H, M extends Mode<H>> {
      * and {@link #isOnTransaction()} returns <code>true</code> while 
      * <code>run</code> runs. 
      * @param run the runnable to execute
-     * @param continuous if set to <code>true</code> the transaction runs without changing
+     * @param continuous if set to <code>true</code> the transaction should run without changing
      * the internal cache storing the position of all {@link Dockable}s. This can be important
-     * if an operation runs an <code>apply</code> method and additional needs to change
-     * the position of some element on a station. Clients should call {@link #store(Dockable)}
-     * afterwards.
+     * if an operation runs an <code>apply</code> method and additional work will change
+     * the position of some elements again. Clients should call {@link #store(Dockable)}
+     * afterwards. 
      */
     public void runTransaction( Runnable run, boolean continuous ){
     	try{
@@ -815,8 +815,8 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     }
     
     /**
-     * Given some dockable on which an event was registered, searches a
-     * registered docakble that is a child of <code>target</code> or
+     * Given some {@link Dockable} on which an event was registered, searches a
+     * registered dockable that is a child of <code>target</code> or
      * <code>target</code> itself.
      * @param target the target whose registered child is searched
      * @return <code>target</code>, a child of <code>target</code>, or <code>null</code>
@@ -837,7 +837,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     
 	/**
 	 * Gets the default mode of <code>dockable</code>, the mode
-	 * dockable is in if nothing else is specified. This method checks
+	 * <code>dockable</code> is in if nothing else is specified. This method checks
 	 * {@link Mode#isDefaultMode(Dockable)} and returns the first
 	 * {@link Mode} where the answer was <code>true</code>.
 	 * @param dockable some dockable, not <code>null</code>
