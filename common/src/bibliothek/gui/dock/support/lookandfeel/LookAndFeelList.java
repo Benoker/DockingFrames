@@ -43,7 +43,10 @@ import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.MetalTheme;
 
+import bibliothek.util.Todo;
 import bibliothek.util.Version;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -53,6 +56,8 @@ import bibliothek.util.xml.XElement;
  * Clients should use {@link #getDefaultList()} to get a list of {@link LookAndFeel}s
  * @author Benjamin Sigg
  */
+@Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.MAJOR, target=Todo.Version.VERSION_1_1_0,
+		description="persistent storage: use string identifier instead of integer")
 public class LookAndFeelList{
 	/** global list of look and feels */
 	private static LookAndFeelList list;

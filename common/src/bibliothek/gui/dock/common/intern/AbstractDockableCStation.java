@@ -33,7 +33,7 @@ import bibliothek.gui.dock.common.CStation;
 /**
  * An abstract implementation of {@link CStation} that can be docked like a {@link CDockable}.
  * @author Benjamin Sigg
- *
+ * @param <S> the kind of station represented by this wrapper
  */
 public abstract class AbstractDockableCStation<S extends DockStation> extends AbstractCDockable implements CStation<S>{
     private CLocation location;

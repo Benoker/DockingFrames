@@ -29,7 +29,6 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CStation;
-import bibliothek.gui.dock.common.CWorkingArea;
 
 /**
  * A representation of some area that can show {@link Dockable}s,
@@ -64,13 +63,6 @@ public interface ModeArea {
 	 * @return the station, not <code>null</code>
 	 */
 	public DockStation getStation();
-	
-	/**
-	 * Tells whether children of this area have to respect the settings for
-	 * {@link CWorkingArea}s.
-	 * @return whether the settings are to be respected
-	 */
-	public boolean respectWorkingAreas();
 	
 	/**
 	 * Connects this area with a controller. It's up to the area to

@@ -37,8 +37,6 @@ import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CDockableAccess;
 import bibliothek.gui.dock.common.intern.CommonDockable;
-import bibliothek.gui.dock.event.DockHierarchyEvent;
-import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.facile.mode.CLocationModeSettings;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.LocationMode;
@@ -206,7 +204,7 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
      * Tries to set the location of <code>dockable</code>. Does nothing if
      * <code>location</code> is invalid or requires information that is
      * not available. If <code>dockable</code> is a {@link CommonDockable} and
-     * the {@link CLocationMode mode} respects {@link LocationMode#respectWorkingAreas(DockStation) working-areas},
+     * the {@link CLocationMode mode} respects {@link CLocationMode#respectWorkingAreas(DockStation) working-areas},
      * then the working-area is set or removed depending on the value of {@link CStation#isWorkingArea()}.
      * @param dockable the element to move
      * @param location the new location of <code>dockable</code>

@@ -27,6 +27,7 @@ package bibliothek.gui.dock.common.mode;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CLocation;
+import bibliothek.gui.dock.common.CWorkingArea;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.ModeArea;
 
@@ -54,4 +55,11 @@ public interface CModeArea extends ModeArea{
 	 * @return the location, <code>null</code> if not found
 	 */
 	public CLocation getCLocation( Dockable dockable, Location location );
+	
+	/**
+	 * Tells whether children of this area have to respect the settings for
+	 * {@link CWorkingArea}s.
+	 * @return whether the settings are to be respected
+	 */
+	public boolean respectWorkingAreas();
 }

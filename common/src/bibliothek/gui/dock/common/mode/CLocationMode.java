@@ -28,6 +28,7 @@ package bibliothek.gui.dock.common.mode;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CLocation;
+import bibliothek.gui.dock.common.CWorkingArea;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.LocationMode;
 
@@ -61,4 +62,13 @@ public interface CLocationMode extends LocationMode{
 	 * @return <code>true</code> if this is a basic mode
 	 */
 	public boolean isBasicMode();
+		
+	/**
+	 * Tells whether {@link Dockable}s which have this mode applied should
+	 * respect the settings for {@link CWorkingArea}s.
+	 * @param station the station which is the parent of the {@link Dockable}s
+	 * @return <code>true</code> if the settings should be respected, <code>false</code>
+	 * otherwise
+	 */
+	public boolean respectWorkingAreas( DockStation station );
 }

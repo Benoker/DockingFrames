@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.common.mode;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
@@ -66,5 +67,14 @@ public class CMaximizedMode extends MaximizedMode<CMaximizedModeArea> implements
 	
 	public boolean isBasicMode(){
 		return false;
+	}
+	
+	
+	public boolean respectWorkingAreas( DockStation station ){
+		CModeArea area = get( station );
+		if( area == null ){
+			return true;
+		}
+		return area.respectWorkingAreas();
 	}
 }

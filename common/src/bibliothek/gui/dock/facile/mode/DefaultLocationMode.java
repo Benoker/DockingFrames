@@ -42,7 +42,7 @@ import bibliothek.gui.dock.support.mode.Mode;
 public abstract class DefaultLocationMode<A extends StationModeArea> extends AbstractLocationMode<A>{
 	/**
 	 * This default implementation just returns the location of
-	 * <code>dockable</code> but does change any properties.
+	 * <code>dockable</code> but does not change any properties.
 	 */
 	public Location current( Dockable dockable ){
 		A area = get( dockable );
@@ -71,6 +71,10 @@ public abstract class DefaultLocationMode<A extends StationModeArea> extends Abs
 		area.setLocation( dockable, location, set );
 	}
 
+	/**
+	 * This default implementation calls {@link StationModeArea#isChild(Dockable)} on each
+	 * area of this mode and returns <code>true</code> if at least one area returns <code>true</code>.
+	 */
 	public boolean isCurrentMode( Dockable dockable ){
 		for( A area : this ){
 			if( area.isChild( dockable )){

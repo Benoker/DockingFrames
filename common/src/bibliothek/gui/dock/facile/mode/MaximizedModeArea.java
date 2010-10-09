@@ -67,7 +67,7 @@ public interface MaximizedModeArea extends ModeArea{
 	 * This method is called by {@link MaximizedMode} just before the mode is applied 
 	 * to <code>dockable</code>.
 	 * @param dockable the new child of this area
-	 * @param the future location of <code>dockable</code>
+	 * @param history future location of <code>dockable</code>
 	 * @param set this method has to store all {@link Dockable}s which might have changed their
 	 * mode in the set.  
 	 */

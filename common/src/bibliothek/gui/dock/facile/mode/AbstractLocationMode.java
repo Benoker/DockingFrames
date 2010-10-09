@@ -37,6 +37,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.common.mode.CModeArea;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.Mode;
 import bibliothek.gui.dock.support.mode.ModeManager;
@@ -270,6 +271,28 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 		}
 		return null;
 	}
+	
+	/**
+	 * Recursively searches through all areas known to this mode until the
+	 * mode is found that represents <code>station</code>. If <code>station</code>
+	 * is a {@link Dockable} that its parent station is searched too.
+	 * @param station the station whose area is to be found
+	 * @return an area for which {@link ModeArea#getStation()} equals <code>station</code>,
+	 * may be <code>null</code>
+	 */
+	public A get( DockStation station ){
+		// search area
+		while( station != null ){
+			for( A area : this ){
+				if( area.getStation() == station ){
+					return area;
+				}
+			}
+			Dockable dockable = station.asDockable();
+			station = dockable == null ? null : dockable.getDockParent();
+		}
+		return null;
+	}
 
 	public DockActionSource getActionsFor( Dockable dockable, Mode<Location> mode ){
 		if( mode == this ){
@@ -305,21 +328,6 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 		}
 		
 		return false;
-	}
-	
-	public boolean respectWorkingAreas( DockStation station ){
-		// search area
-		while( station != null ){
-			for( A area : areas.values() ){
-				if( area.getStation() == station ){
-					return area.respectWorkingAreas();
-				}
-			}
-			Dockable dockable = station.asDockable();
-			station = dockable == null ? null : dockable.getDockParent();
-		}
-		
-		return true;
 	}
 	
 	public void apply( Dockable dockable, Location history, AffectedSet set ){

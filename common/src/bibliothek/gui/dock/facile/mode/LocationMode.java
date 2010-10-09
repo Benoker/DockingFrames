@@ -28,15 +28,17 @@ package bibliothek.gui.dock.facile.mode;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.common.CWorkingArea;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.Mode;
 
 /**
- * A {@link Mode} that is used by the {@link LocationModeManager}. Since {@link DockStation}s
+ * A {@link Mode} that is used by the {@link LocationModeManager}. A {@link LocationMode}
+ * represents a state {@link Dockable}s are in depending on their current location in the tree
+ * of {@link DockStation}s and {@link Dockable}s. Since {@link DockStation}s
  * may be nested, most algorithms working with them have to be recursive. Some of the
- * methods of {@link LocationMode} have a slightly different semantic than their original.  
+ * methods of {@link LocationMode} have a slightly different semantic than specified in the
+ * {@link Mode} interface.  
  */
 public interface LocationMode extends Mode<Location>{
 	/**
@@ -103,15 +105,6 @@ public interface LocationMode extends Mode<Location>{
 	 * @return the unique identifier
 	 */
 	public ExtendedMode getExtendedMode();
-	
-	/**
-	 * Tells whether {@link Dockable}s which have this mode applied should
-	 * respect the settings for {@link CWorkingArea}s.
-	 * @param station the station which is the parent of the {@link Dockable}s
-	 * @return <code>true</code> if the settings should be respected, <code>false</code>
-	 * otherwise
-	 */
-	public boolean respectWorkingAreas( DockStation station );
 	
 	/**
 	 * Ensures that no {@link Dockable} that has this mode hides <code>dockable</code>.

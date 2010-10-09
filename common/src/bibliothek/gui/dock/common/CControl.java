@@ -1300,7 +1300,7 @@ public class CControl {
      * A root station often does not have a parent, the location of a {@link CDockable}
      * is always relative to its youngest parent that is a root station.
      * @param check if <code>true</code> a check of the unique id is performed,
-     * otherwise the station is just put into, perhaps wrongly replacing
+     * otherwise the station is just put in, perhaps wrongly replacing
      * other stations.
      */    
     private void add( CStation<?> station, boolean root, boolean check ){

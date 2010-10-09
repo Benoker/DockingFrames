@@ -34,9 +34,9 @@ import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.mode.CLocationMode;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
-import bibliothek.gui.dock.facile.mode.LocationMode;
 import bibliothek.util.FrameworkOnly;
 
 /**
@@ -74,7 +74,7 @@ public class WorkingAreaAcceptance implements DockAcceptance {
     		}
     	}
     	
-    	LocationMode mode = manager.getMode( extendedMode.getModeIdentifier() );
+    	CLocationMode mode = manager.getMode( extendedMode.getModeIdentifier() );
     	if( mode == null )
     		return true;
     	
