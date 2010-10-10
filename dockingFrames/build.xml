@@ -10,28 +10,28 @@
 	<target name="release" depends="release.dock, release.base, release.web, release.doc">
 		<!-- nothing to do -->
 	</target>
-	
+
 	<target name="release.properties" depends="default">
 		<property name="release" value="${base}/release"/>
 		<property name="release.dock" value="${release}/dock"/>
 		<property name="release.base" value="${release}/base"/>
 		<property name="release.web" value="${release}/web"/>
 	</target>
-	
+
 	<target name="release.dock" depends="release.properties, default">
 		<mkdir dir="${release.dock}/dock/src"/>
 		<copy todir="${release.dock}/dock/src">
-			<fileset dir="${source}"/>	
+			<fileset dir="${source}"/>
 		</copy>
 		<mkdir dir="${release.dock}/dock/bin"/>
 		<copy todir="${release.dock}/dock/bin">
-			<fileset dir="${bin}"/>	
+			<fileset dir="${bin}"/>
 		</copy>
 		<mkdir dir="${release.dock}/dock/doc"/>
 		<copy todir="${release.dock}/dock/doc">
-			<fileset dir="${doc}"/>	
+			<fileset dir="${doc}"/>
 		</copy>
-		
+
 		<copy todir="${release.dock}/dock">
 			<fileset dir="${base}">
 				<include name="*.pdf"/>
@@ -39,12 +39,12 @@
 				<exclude name="faq*"/>
 			</fileset>
 		</copy>
-		
+
 		<zip destfile="${base}/dock.zip">
 			<fileset dir="${release.dock}"/>
 		</zip>
 	</target>
-	
+
 	<target name="release.base" depends="release.properties, default">
 		<mkdir dir="${release.base}/dock/src/${name.common}"/>
 		<copy todir="${release.base}/dock/src/${name.common}">
@@ -53,12 +53,12 @@
 		<mkdir dir="${release.base}/dock/src/${name.core}"/>
 		<copy todir="${release.base}/dock/src/${name.core}">
 			<fileset dir="${source}/${name.core}"/>
-		</copy>		
-				
+		</copy>
+
 		<mkdir dir="${release.base}/dock/bin"/>
 		<copy todir="${release.base}/dock/bin" file="${bin}/${name.common}.jar"/>
 		<copy todir="${release.base}/dock/bin" file="${bin}/${name.core}.jar"/>
-		
+
 		<copy todir="${release.base}/dock">
 			<fileset dir="${base}">
 				<include name="*.pdf"/>
@@ -66,39 +66,39 @@
 				<exclude name="faq*"/>
 			</fileset>
 		</copy>
-		
+
 		<zip destfile="${base}/base.zip">
 			<fileset dir="${release.base}"/>
 		</zip>
 	</target>
-	
+
 	<target name="release.web" depends="release.properties, default">
 		<mkdir dir="${release.web}"/>
 		<copy todir="${release.web}">
 			<fileset dir="${web}"/>
 		</copy>
-		
+
 		<zip destfile="${release.web}/demo.zip">
 			<fileset dir="${release.web}"/>
 		</zip>
-		
+
 		<move todir="${release.web}">
 			<fileset dir="${release.web}/lib"/>
 		</move>
-		
+
 		<delete dir="${release.web}/lib"/>
-		
+
 		<zip destfile="${base}/web.zip">
 			<fileset dir="${release.web}"/>
 		</zip>
 	</target>
-	
+
 	<target name="release.doc" depends="release.properties, default">
 		<zip destfile="${base}/doc.zip">
 			<fileset dir="${doc}/${name.common}"/>
 		</zip>
 	</target>
-	
+
 	<target name="paths">
 		<property name="base" value="dock"/>
 		<property name="source" value="${base}/src"/>
@@ -110,7 +110,7 @@
 		<property name="name.chess" value="chess"/>
 		<property name="name.common" value="dockingFramesCommon"/>
 		<property name="name.layouts" value="commonLayouts"/>
-		<property name="name.demo" value="tutorial"/>
+		<property name="name.tutorial" value="tutorial"/>
 		<property name="name.demonstration" value="demonstration"/>
 		<property name="name.demonstrationInterface" value="interfaces"/>
 		<property name="name.core" value="dockingFramesCore"/>
@@ -122,7 +122,7 @@
 		<property name="location.chess" value="[JavaForge]Chess"/>
 		<property name="location.common" value="[JavaForge]Common"/>
 		<property name="location.layouts" value="[JavaForge]CommonLayouts"/>
-		<property name="location.demo" value="[JavaForge]Demo"/>
+		<property name="location.tutorial" value="[JavaForge]Tutorial"/>
 		<property name="location.demonstration" value="[JavaForge]Demonstration"/>
 		<property name="location.demonstrationInterface" value="[JavaForge]DemonstrationInterface"/>
 		<property name="location.core" value="[JavaForge]DockingFrames"/>
@@ -131,7 +131,7 @@
 		<property name="location.paint" value="[JavaForge]Paint"/>
 		<property name="location.sizeAndColor" value="[JavaForge]SizeAndColor"/>
 	</target>
-	
+
 	<target name="doc" depends="source, paths">
 		<mkdir dir="${doc}/${name.core}"/>
 		<javadoc destdir="${doc}/${name.core}" use="true" splitindex="true" useexternalfile="true">
@@ -140,7 +140,7 @@
 			</fileset>
 			<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
 		</javadoc>
-	
+
 		<mkdir dir="${doc}/${name.common}"/>
 		<javadoc destdir="${doc}/${name.common}" use="true" splitindex="true" useexternalfile="true">
 			<fileset dir="${source}/${name.core}">
@@ -152,13 +152,13 @@
 			<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
 		</javadoc>
 	</target>
-	
+
 	<target name="text" depends="source, paths">
-		<copy tofile="${base}/common_(old).pdf" file="${location.common}/guide/Guide.pdf"/>
+		<!-- <copy tofile="${base}/common_(old).pdf" file="${location.common}/guide/Guide.pdf"/> -->
 		<copy tofile="${base}/common.pdf" file="${location.common}/guide2/guide2.pdf"/>
-		<copy tofile="${base}/core_(old).pdf" file="${location.core}/guide/guide.pdf"/>
+		<!-- <copy tofile="${base}/core_(old).pdf" file="${location.core}/guide/guide.pdf"/> -->
 		<copy tofile="${base}/core.pdf" file="${location.core}/guide2/guide2.pdf"/>
-		<copy tofile="${base}/faq.pdf" file="${location.core}/guide/faq.pdf"/>
+		<!-- <copy tofile="${base}/faq.pdf" file="${location.core}/guide/faq.pdf"/> -->
 		<copy tofile="${base}/transition.pdf" file="${location.common}/guide/Transition.pdf"/>
 		<copy todir="${base}" file="${location.core}/license.txt"/>
 		<copy todir="${base}" file="${location.core}/changes.txt"/>
@@ -168,7 +168,7 @@
 	<target name="webstart" depends="bin, paths">
 		<mkdir dir="${web}"/>
 		<mkdir dir="${web}/lib"/>
-		
+
 		<jar destfile="${web}/lib/${name.chess}.jar">
 			<fileset dir="${temp}/${name.chess}"/>
 		</jar>
@@ -204,8 +204,8 @@
 			<fileset dir="${temp}/${name.layouts}"/>
 		</jar>
 	</target>
-	
-	<target name="bin" depends="source, bin.dir, bin.chess, bin.common, bin.layouts, bin.demo, bin.demonstration, bin.demonstrationInterface, bin.core, bin.help, bin.notes, bin.paint">
+
+	<target name="bin" depends="source, bin.dir, bin.chess, bin.common, bin.layouts, bin.tutorial, bin.demonstration, bin.demonstrationInterface, bin.core, bin.help, bin.notes, bin.paint">
 		<jar destfile="${bin}/${name.chess}.jar">
 			<fileset dir="${temp}/${name.chess}"/>
 			<manifest>
@@ -217,7 +217,7 @@
 			<fileset dir="${temp}/${name.layouts}"/>
 			<manifest>
 				<attribute name="Main-Class" value="bibliothek.commonLayouts.Application"/>
-				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.core}.jar"/> 
+				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.core}.jar"/>
 			</manifest>
 		</jar>
 		<jar destfile="${bin}/${name.common}.jar">
@@ -226,8 +226,13 @@
 				<attribute name="Class-Path" value="${name.core}.jar"/>
 			</manifest>
 		</jar>
-		<jar destfile="${bin}/${name.demo}.jar">
-			<fileset dir="${temp}/${name.demo}"/>
+		<jar destfile="${bin}/${name.tutorial}.jar" duplicate="preserve">
+			<fileset dir="${temp}/${name.tutorial}"/>
+			<fileset dir="${source}/${name.tutorial}"/>
+			<manifest>
+				<attribute name="Main-Class" value="tutorial.TutorialMain"/>
+				<attribute name="Class-Path" value="${name.common}.jar ${name.core}.jar"/>
+			</manifest>
 		</jar>
 		<jar destfile="${bin}/${name.demonstration}.jar">
 			<fileset dir="${temp}/${name.demonstration}"/>
@@ -288,7 +293,7 @@
 			</fileset>
 		</copy>
 	</target>
-	
+
 	<target name="bin.layouts" depends="source, bin.dir, bin.common, bin.demonstrationInterface, bin.core">
 		<javac srcdir="${source}/${name.layouts}" destdir="${temp}/${name.layouts}">
 			<classpath path="${temp}/${name.common}"/>
@@ -314,13 +319,13 @@
 	</target>
 
 
-	<target name="bin.demo" depends="source, bin.dir, bin.core, bin.common">
-		<javac srcdir="${source}/${name.demo}" destdir="${temp}/${name.demo}">
+	<target name="bin.tutorial" depends="source, bin.dir, bin.core, bin.common">
+		<javac srcdir="${source}/${name.tutorial}" destdir="${temp}/${name.tutorial}">
 			<classpath path="${temp}/${name.core}"/>
 			<classpath path="${temp}/${name.common}"/>
 		</javac>
-		<copy todir="${temp}/${name.demo}">
-			<fileset dir="${source}/${name.demo}">
+		<copy todir="${temp}/${name.tutorial}">
+			<fileset dir="${source}/${name.tutorial}">
 				<exclude name="**/*.java" />
 			</fileset>
 		</copy>
@@ -355,7 +360,7 @@
 			</fileset>
 		</copy>
 	</target>
-	
+
 	<target name="bin.core" depends="source, bin.dir">
 		<javac srcdir="${source}/${name.core}" destdir="${temp}/${name.core}"/>
 		<copy todir="${temp}/${name.core}">
@@ -364,7 +369,7 @@
 			</fileset>
 		</copy>
 	</target>
-	
+
 	<target name="bin.help" depends="source, bin.dir, bin.common, bin.demonstrationInterface, bin.core">
 		<javac srcdir="${source}/${name.help}" destdir="${temp}/${name.help}">
 			<classpath path="${temp}/${name.common}"/>
@@ -404,7 +409,7 @@
 			</fileset>
 		</copy>
 	</target>
-	
+
 	<target name="bin.sizeAndColor" depends="source, bin.dir, bin.common, bin.demonstrationInterface, bin.core">
 		<javac srcdir="${source}/${name.sizeAndColor}" destdir="${temp}/${name.sizeAndColor}">
 			<classpath path="${temp}/${name.common}"/>
@@ -426,7 +431,7 @@
 		<mkdir dir="${temp}/${name.chess}"/>
 		<mkdir dir="${temp}/${name.layouts}"/>
 		<mkdir dir="${temp}/${name.common}"/>
-		<mkdir dir="${temp}/${name.demo}"/>
+		<mkdir dir="${temp}/${name.tutorial}"/>
 		<mkdir dir="${temp}/${name.demonstration}"/>
 		<mkdir dir="${temp}/${name.demonstrationInterface}"/>
 		<mkdir dir="${temp}/${name.core}"/>
@@ -453,8 +458,8 @@
 				<exclude name="*.svn/*"/>
 			</fileset>
 		</copy>
-		<copy todir="${source}/${name.demo}">
-			<fileset dir="${location.demo}/src">
+		<copy todir="${source}/${name.tutorial}">
+			<fileset dir="${location.tutorial}/src">
 				<exclude name="*.svn/*"/>
 			</fileset>
 		</copy>
@@ -502,7 +507,7 @@
 		<mkdir dir="${source}/${name.chess}"/>
 		<mkdir dir="${source}/${name.common}"/>
 		<mkdir dir="${source}/${name.layouts}"/>
-		<mkdir dir="${source}/${name.demo}"/>
+		<mkdir dir="${source}/${name.tutorial}"/>
 		<mkdir dir="${source}/${name.demonstration}"/>
 		<mkdir dir="${source}/${name.demonstrationInterface}"/>
 		<mkdir dir="${source}/${name.core}"/>

@@ -2,6 +2,11 @@ package tutorial.support;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
@@ -17,6 +22,7 @@ import javax.swing.text.ViewFactory;
 
 public class CodePanel {
 	private JTextPane textPane;
+	private String code;
 	private static String[] KEYWORDS = {
 		"private", "protected", "public", "package", "import",
 		"class", "interface", "extends", "implements", "instanceof", "super", "abstract",
@@ -68,7 +74,18 @@ public class CodePanel {
 		return new JScrollPane( textPane );
 	}
 	
+	public void copy(){
+		Clipboard board = Toolkit.getDefaultToolkit().getSystemClipboard();
+		StringSelection selection = new StringSelection( code );
+		board.setContents( selection, new ClipboardOwner(){
+			public void lostOwnership( Clipboard clipboard, Transferable contents ){
+				// ignore	
+			}
+		});
+	}
+	
 	public void setCode( String code ){
+		this.code = code;
 		try{
 			DefaultStyledDocument document = new DefaultStyledDocument();
 			

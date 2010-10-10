@@ -29,6 +29,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
 import tutorial.support.CodePanel;
+import tutorial.support.CopyCodeAction;
 import tutorial.support.TutorialPanel;
 import tutorial.support.sets.RootSet;
 import tutorial.support.sets.TutorialTreeModel;
@@ -69,6 +70,7 @@ public class TutorialMain extends JFrame{
 		currentCodeDockable.setLayout( new BorderLayout() );
 		currentCodeDockable.add( currentCode.toComponent(), BorderLayout.CENTER );
 		currentCodeDockable.setCloseable( false );
+		currentCodeDockable.addAction( new CopyCodeAction( currentCode ));
 		layout.add( 30, 0, 70, 100, currentCodeDockable );
 		layout.select( 30, 0, 70, 100, currentSelectionDockable ); 
 	
@@ -103,8 +105,8 @@ public class TutorialMain extends JFrame{
 		}
 		else{
 			try{
-			currentSelection.set( node.getTitle(), node.getDescription(), node.getImage(), node.getMainClass() );
-			currentCode.setCode( node.getCode() );
+				currentSelection.set( node.getTitle(), node.getDescription(), node.getImage(), node.getMainClass() );
+				currentCode.setCode( node.getCode() );
 			}
 			catch( IOException e ){
 				e.printStackTrace();

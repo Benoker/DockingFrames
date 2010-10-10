@@ -1,6 +1,6 @@
 *********************************
 * DockingFrames                 *
-* Version: 1.0.7                *
+* Version: 1.0.8                *
 *********************************
 
 ********************************
@@ -56,13 +56,12 @@ DockingFrames Core - The core library of DockingFrames.
 DockingFrames Common - Layer above the core, adds new features
 	Path: "dockingFramesCommon.jar"
 	Executable: no
-	Dependencies: dockingFramesCore.jar
+	Dependencies: 
+		dockingFramesCore
 
 Tutorial - A set of very small classes containing some basic code
 	Path: "tutorial.jar"
-	Executable: yes, use 
- "java -cp tutorial.jar:dockingFramesCore.jar:dockingFramesCommon.jar demo.CN"
-		where CN is a class-name that can be found in the source
+	Executable: yes
 	Dependencies: 
 		dockingFramesCore
 		dockingFramesCommon

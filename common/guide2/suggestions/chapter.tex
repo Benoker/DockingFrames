@@ -14,7 +14,7 @@ Some word of warning: this is an open source project, as such its developer(s) a
  
  \qa{AWT, it needs better support (e.g. things should be painted over AWT panels as well).}{AWT and Swing don't work together. This framework is based on Swing, any attempt to support AWT will result in a lot of ugly hacks. Also given the fact that AWT isn't hardly used anymore (except for applications playing video or rendering 3D scenes) this feature has little to none chances of getting implemented.}
  
- \qaf{Could the framework be made available for [insert your favorite tool here]? E.g. in a Maven repository or for the Netbeans GUI Builder.}{Making the framework available in/for any special tool immediately yields two new problems. First, as soon as one tool is supported people will ask for another tool, this will never end... Second, a library does no get better because it does support many other tools, it does get better because it has lesser bugs, more settings or features.}{This has been asked again, the answer remains the same.}
+ \qaf{Could the framework be made available for [insert your favorite tool here]? E.g. in a Maven repository or for the Netbeans GUI Builder.}{Making the framework available in/for any special tool immediately yields two new problems. First, as soon as one tool is supported people will ask for another tool, this will never end... Second, a library does no get better because it does support many other tools, it does get better because it has lesser bugs, more settings or features.}{Andrei Pozolotin set up a Maven repository, for other tools the answer remains the same.}
  
  \qaf{Assume an externalized \src{CDockable}, if it gets maximized, could it be maximized like a \src{JFrame}? It would will the entire screen instead of falling back to the nearest \src{CContentArea}.}{This is a good idea. It is not yet clear how to implement this, but it is among those things that will be done.}{That is now the default behavior. With \linebreak \src{ScreenDockStation.FULL\_SCREEN\_STRATEGY} clients can influence what exactly ``full screen'' means.}
  
@@ -46,6 +46,7 @@ Putting the pieces together the areas that will make the framework better are mo
 \begin{itemize}
   \qa{Will there be support for Maven?}{Andrei Pozolotin created a maven repository. You can find information about it on \url{http://code.google.com/p/docking-frames/}}.
   \qa{The guides and documentation are not helpful: they are incomplete, do not start with the basics and do not build upon each other.}{It is completely understandable that starting with this framework is not that easy. The guides are intended to provide background information about tasks that often need to be done. There clearly is a gap between background information and practice. To close the gap a set of example applications will be included in the next version (some of them are already packed together with this version). These examples will be executable. }
+  \qa{The code snippets in the guides are too small.}{In future releases there will be an example in the example-project for most snippets.}
   \qa{How do I create a layout (a ``perspective'').}{If the placeholder mechanism would contain some public API, then this could be easily solved. Unfortunatelly such an API does not yet exist, but is on the todo-list.}
 \end{itemize}
 
