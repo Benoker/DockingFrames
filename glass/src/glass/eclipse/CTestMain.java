@@ -1,17 +1,29 @@
 package glass.eclipse;
 
-import java.awt.*;
-import javax.swing.*;
-import bibliothek.extension.gui.dock.theme.*;
-import bibliothek.gui.dock.*;
-import bibliothek.gui.dock.common.*;
-import bibliothek.gui.dock.common.intern.theme.*;
-import bibliothek.gui.dock.common.layout.*;
+import glass.eclipse.theme.CGlassEclipseColorSchemeExtension;
+import glass.eclipse.theme.CGlassEclipseTabPainter;
+import glass.eclipse.theme.CGlassStationPaint;
+import glass.eclipse.theme.CMiniPreviewMovingImageFactory;
+
+import java.awt.Color;
+import java.awt.GridLayout;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import bibliothek.extension.gui.dock.theme.EclipseTheme;
+import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.CGrid;
+import bibliothek.gui.dock.common.CLocation;
+import bibliothek.gui.dock.common.DefaultSingleCDockable;
+import bibliothek.gui.dock.common.SingleCDockable;
 import bibliothek.gui.dock.common.theme.CEclipseTheme;
 import bibliothek.gui.dock.common.theme.ThemeMap;
-import bibliothek.gui.dock.station.stack.tab.layouting.*;
-import bibliothek.gui.dock.util.*;
-import glass.eclipse.theme.*;
+import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
+import bibliothek.gui.dock.util.IconManager;
+import bibliothek.gui.dock.util.Priority;
 
 
 public class CTestMain {
