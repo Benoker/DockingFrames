@@ -35,7 +35,7 @@ public class MenuLayoutBlock extends ComponentLayoutBlock<TabMenu>{
 	/**
 	 * Sets the menu for this block.
 	 * @param menu the menu, may be <code>null</code>
-	 * @see ComponentLayoutBlock#setComponent(TabMenu)
+	 * @see ComponentLayoutBlock#setComponent(bibliothek.gui.dock.station.stack.tab.TabPaneComponent)
 	 */
 	public void setMenu( TabMenu menu ){
 		setComponent( menu );
