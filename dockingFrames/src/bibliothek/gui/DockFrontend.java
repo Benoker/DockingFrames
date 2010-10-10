@@ -94,7 +94,10 @@ import bibliothek.gui.dock.util.NullWindowProvider;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.WindowProvider;
+import bibliothek.util.Todo;
 import bibliothek.util.Version;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
 import bibliothek.util.xml.XAttribute;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
@@ -536,6 +539,8 @@ public class DockFrontend {
      * be removed in future releases.
      */
     @Deprecated
+    @Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.MINOR, target=Todo.Version.VERSION_1_1_1,
+    		description="Replace this method with addDockable")
     public void add( Dockable dockable, String name ){
         if( dockable == null )
             throw new IllegalArgumentException( "Dockable must not be null" );
