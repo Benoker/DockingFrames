@@ -1,4 +1,4 @@
-package tutorial;
+package tutorial.core.basics;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -15,9 +15,9 @@ import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 import bibliothek.gui.dock.station.split.SplitDockProperty;
 
 @Tutorial(title="The Stations", id="TheStations")
-public class C1_CoreBasics_02_TheStations {
+public class StationsExample {
 	public static void main( String[] args ){
-		JTutorialFrame frame = new JTutorialFrame( C1_CoreBasics_02_TheStations.class );
+		JTutorialFrame frame = new JTutorialFrame( StationsExample.class );
 		
 		DockController controller = new DockController();
 		controller.setRootWindow( frame );

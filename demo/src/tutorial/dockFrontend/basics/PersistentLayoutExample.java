@@ -1,4 +1,4 @@
-package tutorial;
+package tutorial.dockFrontend.basics;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -26,7 +26,7 @@ import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XIO;
 
 @Tutorial( title="Persistent Layout", id="DFPersistentLayout" )
-public class C2_DockFrontendBasics_02_PersistentLayout {
+public class PersistentLayoutExample {
 	public static void main( String[] args ){
 		/* You already have seen how a layout can be persistently stored using 
 		 * the class DockSituation or PredefinedDockSituation. But maybe the
@@ -49,7 +49,7 @@ public class C2_DockFrontendBasics_02_PersistentLayout {
 		 * shows what data is stored when you use the write/read methods. */
 		
 		/* Setting up a frame, a frontend, a DockStation and some Dockables */
-		JTutorialFrame frame = new JTutorialFrame( C2_DockFrontendBasics_02_PersistentLayout.class );
+		JTutorialFrame frame = new JTutorialFrame( PersistentLayoutExample.class );
 		DockFrontend frontend = new DockFrontend( frame );
 		frame.destroyOnClose( frontend );
 		frontend.getController().setTheme( new NoStackTheme( new SmoothTheme() ) );

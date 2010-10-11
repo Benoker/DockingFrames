@@ -1,4 +1,4 @@
-package tutorial;
+package tutorial.core.basics;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -28,13 +28,13 @@ import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.themes.NoStackTheme;
 
 @Tutorial(title="Themes", id="Themes")
-public class C1_CoreBasics_04_Themes {
+public class ThemesExample {
 	/* By now you probably like the basic design of this framework, but the user interface
 	 * looks ugly to you. Well, you are not alone, and that is the reason why there are themes.
 	 * A theme tells the framework how to paint and behave, it can be changed at any time. */
 	
 	public static void main( String[] args ){
-		JTutorialFrame frame = new JTutorialFrame( C1_CoreBasics_04_Themes.class );
+		JTutorialFrame frame = new JTutorialFrame( ThemesExample.class );
 		
 		/* In this example we create four different themes and show them at the
 		 * same time in one frame. You already know how the BasicTheme looks like,

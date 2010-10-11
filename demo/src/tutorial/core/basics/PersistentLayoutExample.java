@@ -1,4 +1,4 @@
-package tutorial;
+package tutorial.core.basics;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -32,7 +32,7 @@ import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XIO;
 
 @Tutorial(title="Persistent Layout", id="PersistentLayout")
-public class C1_CoreBasics_05_PersistentLayout {
+public class PersistentLayoutExample {
 	/* Assume you have written a big application with many Dockables. But the user complains because the 
 	 * layout is reset every time he restarts the application. Of course there is an answer: store
 	 * the layout persistently in a file.
@@ -46,7 +46,7 @@ public class C1_CoreBasics_05_PersistentLayout {
 	
 	public static void main( String[] args ){
 		/* Setting up a frame, a controller, a station and some Dockables, as usual */
-		JTutorialFrame frame = new JTutorialFrame( C1_CoreBasics_05_PersistentLayout.class );
+		JTutorialFrame frame = new JTutorialFrame( PersistentLayoutExample.class );
 		DockController controller = new DockController();
 		controller.setRootWindow( frame );
 		frame.destroyOnClose( controller );

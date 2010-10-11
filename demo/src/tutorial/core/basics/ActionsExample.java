@@ -1,4 +1,4 @@
-package tutorial;
+package tutorial.core.basics;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -29,7 +29,7 @@ import bibliothek.gui.dock.event.SelectableDockActionListener;
 import bibliothek.gui.dock.themes.NoStackTheme;
 
 @Tutorial(title="Actions", id="Actions")
-public class C1_CoreBasics_06_Actions {
+public class ActionsExample {
 	public static void main( String[] args ){
 		/* You know what a toolbar is: a set of buttons located at the top of your application. In 
 		 * some applications the contents of the toolbar change depending on what the user
@@ -43,7 +43,7 @@ public class C1_CoreBasics_06_Actions {
 		 * will be explained in another example. */
 		
 		/* Setting up frame, station, controller, ... as usual */
-		JTutorialFrame frame = new JTutorialFrame( C1_CoreBasics_06_Actions.class );
+		JTutorialFrame frame = new JTutorialFrame( ActionsExample.class );
 		DockController controller = new DockController();
 		controller.setRootWindow( frame );
 		controller.setTheme( new NoStackTheme( new SmoothTheme() ));

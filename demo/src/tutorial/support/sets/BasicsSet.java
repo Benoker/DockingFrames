@@ -1,5 +1,7 @@
 package tutorial.support.sets;
 
+import tutorial.core.basics.BasicCoreSet;
+import tutorial.dockFrontend.basics.BasicDockFrontendSet;
 import tutorial.support.Tutorial;
 
 @Tutorial( title="Basics", id="Basics")

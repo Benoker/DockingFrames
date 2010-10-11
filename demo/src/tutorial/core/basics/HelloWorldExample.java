@@ -1,4 +1,4 @@
-package tutorial;
+package tutorial.core.basics;
 
 import java.awt.Color;
 
@@ -22,12 +22,12 @@ import bibliothek.gui.dock.station.split.SplitDockProperty;
  * Hello World - with the core library
  */
 @Tutorial(title="Hello World", id="HelloWorld")
-public class C1_CoreBasics_01_HelloWorld {
+public class HelloWorldExample {
 	public static void main( String[] args ){
 		/* One always needs some frame, dialog or applet to show things.
 		 * JTutorialFrame is a normal JFrame which sets up title, size and
 		 * closing-listeners */
-		JTutorialFrame frame = new JTutorialFrame( C1_CoreBasics_01_HelloWorld.class );
+		JTutorialFrame frame = new JTutorialFrame( HelloWorldExample.class );
 		
 		/* The DockController is the heart of DF. Through this object any
 		 * module can communicate with any other module. Most applications

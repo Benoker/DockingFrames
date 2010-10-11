@@ -1,4 +1,4 @@
-package tutorial;
+package tutorial.core.basics;
 
 import java.awt.Color;
 
@@ -17,7 +17,7 @@ import bibliothek.gui.dock.station.split.SplitDockTree;
 import bibliothek.gui.dock.station.stack.StackDockProperty;
 
 @Tutorial(title="SplitDockStation", id="SplitDockStation")
-public class C1_CoreBasics_03_SplitDockStation {
+public class SplitDockStationExample {
 	public static void main( String[] args ){
 		/* Understanding how to use the Stack, Flap and ScreenDockStation is easy. The first
 		 * two are nothing else than lists, on the third the children do not influence each
@@ -32,7 +32,7 @@ public class C1_CoreBasics_03_SplitDockStation {
 		 * on a StackDockStation.
 		 * */
 		
-		JTutorialFrame frame = new JTutorialFrame( C1_CoreBasics_03_SplitDockStation.class );
+		JTutorialFrame frame = new JTutorialFrame( SplitDockStationExample.class );
 		DockController controller = new DockController();
 		controller.setRootWindow( frame );
 		frame.destroyOnClose( controller );

@@ -1,4 +1,4 @@
-package tutorial;
+package tutorial.dockFrontend.basics;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -25,7 +25,7 @@ import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.util.Path;
 
 @Tutorial(title="Close-Button", id="DFCloseButton")
-public class C2_DockFrontendBasics_01_DockFrontend {
+public class DockFrontendExample {
 	public static void main( String[] args ){
 		/* You can do a lot of things using the DockController. But some features are really
 		 * missing, for example there is no button to just close a Dockable.
@@ -37,7 +37,7 @@ public class C2_DockFrontendBasics_01_DockFrontend {
 		 * close-Dockable feature. */
 		
 		/* We start by creating a frame to display content */
-		JTutorialFrame frame = new JTutorialFrame( C2_DockFrontendBasics_01_DockFrontend.class );
+		JTutorialFrame frame = new JTutorialFrame( DockFrontendExample.class );
 		
 		/* The framework needs to know what parent window to use for its dialogs and windows. 
 		 * We can set this window directly during construction of DockFrontend */
