@@ -47,9 +47,6 @@ public class SecureFlapWindow extends DefaultFlapWindow {
     /** The pane between Dockable and outer world */
     private GlassedPane pane;
     
-    /** the container painting this window */
-    private Parent window;
-    
     /**
      * Creates a new window
      * @param station the station which will use this window
@@ -58,10 +55,7 @@ public class SecureFlapWindow extends DefaultFlapWindow {
      */
     public SecureFlapWindow( FlapDockStation station, ButtonPane buttonPane, Parent window ) {
         super( station, buttonPane, window );
-        this.window = window;
-    }
     
-    {
         pane = new GlassedPane();
         JComponent content = (JComponent)window.getContentPane();
         window.setContentPane( pane );
