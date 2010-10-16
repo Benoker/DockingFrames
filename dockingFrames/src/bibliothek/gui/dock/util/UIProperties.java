@@ -25,10 +25,18 @@
  */
 package bibliothek.gui.dock.util;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 
 import bibliothek.gui.DockController;
 import bibliothek.util.Path;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Version;
 
 /**
  * A map containing which contains some string-values pairs and so called
@@ -38,6 +46,8 @@ import bibliothek.util.Path;
  * @param <U> The kind of observers used to read values from this map
  * @param <B> The kind of bridges used to transfer values <code>V</code> to observers <code>U</code>
  */
+@Todo(compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.MAJOR, target=Version.VERSION_1_1_0, 
+		description="Use typesafe keys instead of Path")
 public class UIProperties<V, U extends UIValue<V>, B extends UIBridge<V, U>> {
     /** the map of providers known to this manager */
     private Map<Path, PriorityValue<B>> bridges = new HashMap<Path, PriorityValue<B>>();

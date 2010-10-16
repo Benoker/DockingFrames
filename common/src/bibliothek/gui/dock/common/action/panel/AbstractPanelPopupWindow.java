@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * Abstract implementation of {@link PanelPopupWindow}, handles
  * the {@link PanelPopupWindowListener}s.<br>
- * Subclasses should call {@link #validateBounds(Rectangle)} before they get visible
+ * Subclasses should call {@link #validateBounds(Rectangle, GraphicsConfiguration)} before they get visible
  * @author Benjamin Sigg
  */
 public abstract class AbstractPanelPopupWindow implements PanelPopupWindow{

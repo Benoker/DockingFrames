@@ -86,6 +86,8 @@ public class DockUI {
 	private static DockUI ui;
 	
 	/** Key for an {@link Icon} stored in the {@link IconManager} for an overflow-menu */
+	@Todo(compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.MINOR, target=Todo.Version.VERSION_1_1_0,
+			description="Instead of just a simple icon allow clients more influence of what an overflow-menu can do. This key may remain, but its value may not be used all the time.")
 	public static final String OVERFLOW_MENU_ICON = "overflow.menu";
 	
 	/** The resource bundle for some text shown in this framework */

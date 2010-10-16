@@ -32,11 +32,17 @@ import javax.swing.Icon;
 
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.common.intern.action.CDropDownItem;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A simple button, the user clicks onto the button and {@link #action()} is called.
  * @author Benjamin Sigg
  */
+@Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_0,
+		description="Allow some listener (ActionListener?) instead of action method. Remove 'abstract'.")
 public abstract class CButton extends CDropDownItem {
     /**
      * Creates the new button
