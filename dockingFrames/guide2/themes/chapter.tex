@@ -165,7 +165,7 @@ The views for \src{DockAction}s are changed through the \src{ActionViewConverter
 \src{DockTitle}s are managed by the \src{DockTitleManager}. Please read chapter \ref{sec:titles} for more information.
 
 \subsubsection{Displayers}
-A \src{DockableDisplayer} is a wrapper around a \src{Dockable} painting some decorations like a title or some border. All \src{DockStation}s make use of \src{DockableDisplayer}s to paint their children. \src{DockableDisplayer}s are created by \src{DisplayerFactory}s which are provided by the current \src{DockTheme}.
+A \src{DockableDisplayer} is a wrapper around a \src{Dockable} painting some decorations like a title or some border. All \src{DockStation}s make use of \linebreak \src{DockableDisplayer}s to paint their children. \src{DockableDisplayer}s are created by \src{DisplayerFactory}s which are provided by the current \src{DockTheme}.
 
 Once a \src{DockableDisplayer} is created it cannot be replaced until either the theme is exchanged or the displayer marks itself as invalid. In the later case the displayer needs to call the \src{discard} method of any \src{DockableDisplayerListener} that was added to it.
 
