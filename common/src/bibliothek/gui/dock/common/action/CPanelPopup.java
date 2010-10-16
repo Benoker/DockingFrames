@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.common.action;
 
+import java.awt.Component;
 import java.awt.Point;
 
 import javax.swing.JComponent;
@@ -287,7 +288,7 @@ public class CPanelPopup extends CDecorateableAction{
 		
 		SwingUtilities.convertPointToScreen( location, item );
 		
-		DialogWindow window = new DialogWindow( item, this );
+		DialogWindow window = createDialogWindow( item );
 		window.setUndecorated( true );
 		window.setContent( getContent() );
 		window.open( location.x, location.y );
@@ -306,12 +307,21 @@ public class CPanelPopup extends CDecorateableAction{
 		
 		closePopup();
 		
-		DialogWindow window = new DialogWindow( dockable.getComponent(), this );
+		DialogWindow window = createDialogWindow( dockable.getComponent() );
 		window.setUndecorated( getMenuBehavior() == MenuBehavior.UNDECORATED_DIALOG );
 		window.setContent( getContent() );
-		window.open(  dockable.getComponent() );
+		window.open( dockable.getComponent() );
 		
 		openPopup( window );
+	}
+	
+	/**
+	 * Creates a new window which will be used as popup for this {@link CPanelPopup}.
+	 * @param owner the owner of the window
+	 * @return the new window, not <code>null</code>
+	 */
+	protected DialogWindow createDialogWindow( Component owner ){
+		return new DialogWindow( owner, this );
 	}
 	
 	/**
@@ -324,8 +334,17 @@ public class CPanelPopup extends CDecorateableAction{
 			return;
 		
 		menu.add( content );
-		MenuWindow window = new MenuWindow( menu );
+		MenuWindow window = createMenuWindow( menu );
 		openPopup( window );
+	}
+	
+	/**
+	 * Creates a new window which will be used as popup for this {@link CPanelPopup}.
+	 * @param menu the owner of the window
+	 * @return the new window, not <code>null</code>
+	 */
+	protected MenuWindow createMenuWindow( JPopupMenu menu ){
+		return new MenuWindow( menu );
 	}
 	
 	/**

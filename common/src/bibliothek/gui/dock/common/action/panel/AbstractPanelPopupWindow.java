@@ -25,12 +25,15 @@
  */
 package bibliothek.gui.dock.common.action.panel;
 
+import java.awt.GraphicsConfiguration;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Abstract implementation of {@link PanelPopupWindow}, handles
- * the {@link PanelPopupWindowListener}s.
+ * the {@link PanelPopupWindowListener}s.<br>
+ * Subclasses should call {@link #validateBounds(Rectangle)} before they get visible
  * @author Benjamin Sigg
  */
 public abstract class AbstractPanelPopupWindow implements PanelPopupWindow{
@@ -62,4 +65,28 @@ public abstract class AbstractPanelPopupWindow implements PanelPopupWindow{
 			listener.closed( this );
 		}
 	}
+	
+
+	/**
+	 * Should be called before this window is made visible, ensure that the boundaries are valid.
+	 * @param bounds the proposed boundaries
+	 * @param configuration the screen on which this window is going to be visible, might be <code>null</code>
+	 * @return the actual boundaries, can be <code>null</code> to indicate that <code>bounds</code> is valid
+	 */
+	protected Rectangle validateBounds( Rectangle bounds, GraphicsConfiguration configuration ){
+		if( configuration == null ){
+			return null;
+		}
+		
+		Rectangle screen = configuration.getBounds();
+		bounds = new Rectangle( bounds );
+		
+		bounds.width = Math.min( bounds.width, screen.width );
+		bounds.height = Math.min( bounds.height, screen.height );
+		bounds.x = Math.min( Math.max( bounds.x, screen.x ), screen.x + screen.width - bounds.width );
+		bounds.y = Math.min( Math.max( bounds.y, screen.y ), screen.y + screen.height - bounds.height );
+		
+		return bounds;
+	}
+	
 }

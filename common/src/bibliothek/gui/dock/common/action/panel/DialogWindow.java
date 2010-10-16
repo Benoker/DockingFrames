@@ -28,6 +28,11 @@ package bibliothek.gui.dock.common.action.panel;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Frame;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -109,6 +114,7 @@ public class DialogWindow extends AbstractPanelPopupWindow{
 	public void open( int x, int y ){
 		dialog.pack();
 		dialog.setLocation( x, y );
+		validateBounds();
 		dialog.setVisible( true );
 	}
 	
@@ -119,7 +125,57 @@ public class DialogWindow extends AbstractPanelPopupWindow{
 	public void open( Component relativeTo ){
 		dialog.pack();
 		dialog.setLocationRelativeTo( relativeTo );
+		validateBounds();
 		dialog.setVisible( true );
+	}
+	
+	private void validateBounds(){
+		Rectangle bounds = dialog.getBounds();
+		
+		Point location = dialog.getLocation();
+		
+		GraphicsConfiguration bestConfiguration = null;
+		int bestDistance = 0;
+		
+		GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		for( GraphicsDevice device : environment.getScreenDevices() ){
+			GraphicsConfiguration configuration = device.getDefaultConfiguration();
+			Rectangle screenBounds = configuration.getBounds();
+			
+			if( screenBounds.contains( location )){
+				bestConfiguration = configuration;
+				bestDistance = 0;
+			}
+			else{
+				int dx;
+				int dy;
+				
+				if( screenBounds.x <= location.x && screenBounds.x + screenBounds.width >= location.x ){
+					dx = 0;
+				}
+				else{
+					dx = Math.min(Math.abs(screenBounds.x - location.x), Math.abs(screenBounds.x + screenBounds.width - location.x));
+				}
+				
+				if( screenBounds.y <= location.y && screenBounds.y + screenBounds.height >= location.y ){
+					dy = 0;
+				}
+				else{
+					dy = Math.min(Math.abs(screenBounds.y - location.y), Math.abs(screenBounds.y + screenBounds.height - location.y));
+				}
+				
+				int delta = dx + dy;
+				if( delta < bestDistance || bestConfiguration == null ){
+					bestDistance = delta;
+					bestConfiguration = configuration;
+				}
+			}
+		}
+		
+		bounds = validateBounds( bounds, bestConfiguration );
+		if( bounds != null ){
+			dialog.setBounds( bounds );
+		}
 	}
 	
 	public boolean isOpen(){
