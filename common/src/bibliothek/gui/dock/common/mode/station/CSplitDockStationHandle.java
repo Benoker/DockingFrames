@@ -313,7 +313,7 @@ public class CSplitDockStationHandle{
 		}
 		
 		public void setMode( LocationMode mode ){
-			if( maximizedMode != null )
+			if( maximizedMode != null && mode != null )
 				throw new IllegalStateException( "handle already in use" );
 			maximizedMode = (MaximizedMode<?>)mode;
 		}
@@ -360,6 +360,7 @@ public class CSplitDockStationHandle{
 			
 			Location location = event.getLocation();
         	Dockable dockable = event.getDockable();
+        	
 			DockableProperty property = location == null ? null : location.getLocation();
 			
 			if( event.getMode().getUniqueIdentifier().equals( NormalMode.IDENTIFIER )){
