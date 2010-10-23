@@ -279,12 +279,12 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
         if( base == null )
             return null;
         
-        Component titleCompnent = title.getComponent();
+        Component titleComponent = title.getComponent();
         
         Point result = new Point( 0, 0 );
-        result = SwingUtilities.convertPoint( titleCompnent, result, base );
-        result.x += titleCompnent.getWidth() / 2;
-        result.y += titleCompnent.getHeight() / 2;
+        result = SwingUtilities.convertPoint( titleComponent, result, base );
+        result.x += titleComponent.getWidth() / 2;
+        result.y += titleComponent.getHeight() / 2;
         return result;
     }
     
@@ -324,7 +324,7 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
         return zero;
     }
     
-    public boolean inCombineArea( int x, int y ) {
+    public boolean inTitleArea( int x, int y ){
     	if( handle == null )
     		return false;
     	
@@ -336,6 +336,17 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
         Point point = new Point( x, y );
         SwingUtilities.convertPointFromScreen( point, displayer.getComponent() );
         return displayer.titleContains( point.x, point.y );
+    }
+    
+    public boolean inCombineArea( int x, int y ) {
+    	return inTitleArea( x, y );
+    }
+    
+    public boolean contains( int x, int y ){
+	    Component component = getWindowComponent();
+	    Point point = new Point( x, y );
+	    SwingUtilities.convertPointFromScreen( point, component );
+	    return component.contains( point );
     }
     
     /**

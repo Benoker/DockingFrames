@@ -28,6 +28,9 @@ package bibliothek.gui.dock.station.split;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.station.Combiner;
+import bibliothek.gui.dock.station.support.CombinerSource;
+import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
@@ -69,6 +72,12 @@ public class PutInfo{
     
     /** the leaf that was moved */
     private Leaf leaf;
+    
+    /** information needed for a {@link Combiner} */
+    private CombinerSource combinerSource;
+    
+    /** information created by a {@link Combiner} */
+    private CombinerTarget combinerTarget;
     
     /**
      * Creates a new PutInfo.
@@ -199,4 +208,30 @@ public class PutInfo{
     public Leaf getLeaf() {
         return leaf;
     }
+    
+    /**
+     * Sets combination information that can be used for {@link Combiner#combine(CombinerSource, CombinerTarget)}.
+     * @param source information about the two {@link Dockable}s to merge
+     * @param target information about how to merge the {@link Dockable}s
+     */
+    public void setCombination( CombinerSource source, CombinerTarget target ){
+    	this.combinerSource = source;
+    	this.combinerTarget = target;
+    }
+    
+    /**
+     * Gets information about the two {@link Dockable}s that are going to be merged.
+     * @return the merge information, can be <code>null</code>
+     */
+    public CombinerSource getCombinerSource(){
+		return combinerSource;
+	}
+    
+    /**
+     * Gets information about how to merge the two {@link Dockable}s.
+     * @return the merge information, can be <code>null</code>
+     */
+    public CombinerTarget getCombinerTarget(){
+		return combinerTarget;
+	}
 }

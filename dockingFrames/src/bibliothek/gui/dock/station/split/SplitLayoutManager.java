@@ -29,6 +29,8 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.support.CombinerSource;
+import bibliothek.gui.dock.station.support.CombinerTarget;
 
 /**
  * A manager used to implement the behavior of a {@link SplitDockStation}. The
@@ -65,7 +67,12 @@ public interface SplitLayoutManager {
 
     /**
      * Call forwarded from {@link DockStation#prepareDrop(int, int, int, int, boolean, Dockable) DockStation.prepareDrop}.
-     * This method calculates where to drop a new {@link Dockable}.
+     * This method calculates where to drop a new {@link Dockable}.<br>
+     * This {@link SplitLayoutManager} may or may not set the {@link CombinerTarget} and {@link CombinerSource} of
+     * the created {@link PutInfo}. If there is no combiner information but the mouse is over the center or the title
+     * of a selected {@link Leaf}, then the {@link SplitDockStation} will create the missing information automatically.
+     * If there is already information set, then the station will silently assume that this manager did set the information
+     * and that the information is correct.
      * @param station the calling station
      * @param x the x-coordinate of the mouse on the screen
      * @param y the y-coordinate of the mouse on the screen
@@ -88,6 +95,7 @@ public interface SplitLayoutManager {
      * @param checkOverrideZone whether to respect the override zone of the parent
      * @param dockable the element that might be dropped
      * @return where to drop <code>dockable</code> or <code>null</code> if the element should not be dropped
+     * @see #prepareDrop(SplitDockStation, int, int, int, int, boolean, Dockable)
      */
     public PutInfo prepareMove( SplitDockStation station, int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable );
     

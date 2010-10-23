@@ -26,10 +26,16 @@
 
 package bibliothek.gui.dock.themes.basic;
 
+import java.awt.Graphics;
+import java.awt.Rectangle;
+
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.station.Combiner;
+import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.support.CombinerSource;
+import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 
 /**
@@ -39,15 +45,30 @@ import bibliothek.gui.dock.station.support.PlaceholderMap;
  * @author Benjamin Sigg
  */
 public class BasicCombiner implements Combiner {
-	public Dockable combine( Dockable old, Dockable drop, DockStation parent, PlaceholderMap placeholders ) {
-        StackDockStation stack = new StackDockStation( parent.getTheme() );
+	public CombinerTarget prepare( final CombinerSource source, boolean force ){
+		if( !force ){
+			return null;
+		}
+		
+		return new CombinerTarget(){
+			public void paint( Graphics g, StationPaint paint, Rectangle stationBounds, Rectangle dockableBounds ){
+				paint.drawInsertion( g, source.getParent(), stationBounds, dockableBounds );	
+			}
+		};
+	}
+	
+	public Dockable combine( CombinerSource source, CombinerTarget target ){
+		DockStation parent = source.getParent();
+		PlaceholderMap placeholders = source.getPlaceholders();
+		
+	    StackDockStation stack = new StackDockStation( parent.getTheme() );
         stack.setController( parent.getController() );
         if( placeholders != null ){
         	stack.setPlaceholders( placeholders );
         }
         
-        stack.drop( old );
-        stack.drop( drop );
+        stack.drop( source.getOld() );
+        stack.drop( source.getNew() );
         
         return stack;
     }

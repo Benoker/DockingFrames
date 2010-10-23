@@ -110,9 +110,9 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 		OverpaintablePanel content = new OverpaintablePanel(){
 			@Override
 			protected void paintOverlay( Graphics g ){
-				if( dropInfo != null && dropInfo.getCombine() != null && dropInfo.isDraw() ) {
+				if( dropInfo != null && dropInfo.getCombineTarget() != null && dropInfo.isDraw() ) {
 					Rectangle bounds = new Rectangle(0, 0, getWidth(), getHeight());
-					DefaultFlapWindow.this.station.getPaint().drawInsertion(g, DefaultFlapWindow.this.station, bounds, bounds);
+					dropInfo.getCombineTarget().paint( g, DefaultFlapWindow.this.station.getPaint(), bounds, bounds );
 				}
 			}
 		};

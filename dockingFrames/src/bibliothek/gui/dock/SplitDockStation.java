@@ -90,6 +90,7 @@ import bibliothek.gui.dock.station.split.Placeholder;
 import bibliothek.gui.dock.station.split.PutInfo;
 import bibliothek.gui.dock.station.split.Root;
 import bibliothek.gui.dock.station.split.SplitDockAccess;
+import bibliothek.gui.dock.station.split.SplitDockCombinerSource;
 import bibliothek.gui.dock.station.split.SplitDockFullScreenProperty;
 import bibliothek.gui.dock.station.split.SplitDockPathProperty;
 import bibliothek.gui.dock.station.split.SplitDockPlaceholderProperty;
@@ -106,6 +107,8 @@ import bibliothek.gui.dock.station.split.SplitPlaceholderSet;
 import bibliothek.gui.dock.station.split.SplitTreeFactory;
 import bibliothek.gui.dock.station.split.PutInfo.Put;
 import bibliothek.gui.dock.station.split.SplitDockTree.Key;
+import bibliothek.gui.dock.station.support.CombinerSource;
+import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.CombinerWrapper;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
 import bibliothek.gui.dock.station.support.DockStationListenerManager;
@@ -126,6 +129,10 @@ import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.util.Path;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * This station shows all its children at once. The children are separated
@@ -1220,21 +1227,47 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 		return true;
 	}
 
+	@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_0,
+			description="implement this method")
 	public PlaceholderMap getPlaceholders(){
 		// ignore for now TODO
 		return null;
 	}
 
+	@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_0,
+			description="implement this method")
 	public void setPlaceholders( PlaceholderMap placeholders ){
 		// ignore for now TODO	
 	}
 
 	public boolean prepareDrop( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
-		if( SwingUtilities.isDescendingFrom(getComponent(), dockable.getComponent()) )
+		if( SwingUtilities.isDescendingFrom(getComponent(), dockable.getComponent()) ){
 			putInfo = null;
-		else
+		}
+		else{
 			putInfo = layoutManager.getValue().prepareDrop(this, x, y, titleX, titleY, checkOverrideZone, dockable);
+		}
+		
+		if( putInfo != null ){
+			prepareCombine( putInfo, x, y );
+		}
+		
 		return putInfo != null;
+	}
+	
+	private void prepareCombine( PutInfo putInfo, int x, int y ){
+		if( putInfo.getPut() == PutInfo.Put.CENTER || putInfo.getPut() == PutInfo.Put.TITLE ){
+			if( putInfo.getCombinerSource() != null && putInfo.getCombinerTarget() != null ){
+				if( putInfo.getNode() instanceof Leaf ){
+					Point mouseOnStation = new Point( x, y );
+					SwingUtilities.convertPointFromScreen( mouseOnStation, getComponent() );
+					SplitDockCombinerSource source = new SplitDockCombinerSource( putInfo, this, mouseOnStation );
+						
+					CombinerTarget target = getCombiner().prepare( source, true );
+					putInfo.setCombination( source, target );
+				}
+			}
+		}
 	}
 
 	public void drop( Dockable dockable ){
@@ -1392,7 +1425,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 					return true;
 				}
 				else {
-					boolean result = dropOver(info.bestLeaf, dockable, property.getSuccessor());
+					boolean result = dropOver(info.bestLeaf, dockable, property.getSuccessor(), null, null);
 					validate();
 					return result;
 				}
@@ -1518,7 +1551,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 		else{
 			Leaf leaf = getRoot().getLeaf(currentFullScreen);
 			setFullScreen(null);
-			if( !dropOver(leaf, dockable, successor) ){
+			if( !dropOver(leaf, dockable, successor, null, null) ){
 				return false;
 			}
 			
@@ -1578,7 +1611,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 						putInfo.setLeaf(null);
 					}
 
-					if( dropOver((Leaf) putInfo.getNode(), putInfo.getDockable()) ) {
+					if( dropOver((Leaf) putInfo.getNode(), putInfo.getDockable(), putInfo.getCombinerSource(), putInfo.getCombinerTarget() ) ) {
 						finish = true;
 					}
 				}
@@ -1604,11 +1637,13 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	 * are performed.
 	 * @param leaf the leaf which will be combined with <code>dockable</code>
 	 * @param dockable a {@link Dockable} which is dropped over <code>leaf</code>
+	 * @param source information about the combination, may be <code>null</code>
+	 * @param target information about the combination, may be <code>null</code>
 	 * @return <code>true</code> if the operation was successful, <code>false</code>
 	 * otherwise
 	 */
-	protected boolean dropOver( Leaf leaf, Dockable dockable ){
-		return dropOver(leaf, dockable, null);
+	protected boolean dropOver( Leaf leaf, Dockable dockable, CombinerSource source, CombinerTarget target ){
+		return dropOver(leaf, dockable, null, source, target );
 	}
 
 	/**
@@ -1620,16 +1655,23 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	 * @param dockable a {@link Dockable} which is dropped over <code>leaf</code>
 	 * @param property a hint at which position <code>dockable</code> should be
 	 * in the combination.
+	 * @param source information about the combination, may be <code>null</code>
+	 * @param target information about the combination, may be <code>null</code>
 	 * @return <code>true</code> if the operation was successful, <code>false</code>
 	 * otherwise
 	 */
-	protected boolean dropOver( Leaf leaf, Dockable dockable, DockableProperty property ){
+	protected boolean dropOver( Leaf leaf, Dockable dockable, DockableProperty property, CombinerSource source, CombinerTarget target ){
 		DockUtilities.ensureTreeValidity(this, dockable);
 
-		Dockable old = leaf.getDockable();
+		if( source == null || target == null ){
+			PutInfo info = new PutInfo( leaf, Put.TITLE, dockable );
+			source = new SplitDockCombinerSource( info, this, null );
+			target = combiner.prepare( source, true );
+		}
+		
 		leaf.setDockable(null, true);
-
-		Dockable combination = DockUI.getCombiner(combiner, this).combine(old, dockable, this, leaf.getPlaceholderMap());
+		
+		Dockable combination = combiner.combine( source, target );
 		leaf.setPlaceholderMap(null);
 
 		if( property != null ) {
@@ -1712,6 +1754,9 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 
 	public boolean prepareMove( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
 		putInfo = layoutManager.getValue().prepareMove(this, x, y, titleX, titleY, checkOverrideZone, dockable);
+		if( putInfo != null ){
+			prepareCombine( putInfo, x, y );
+		}
 		return putInfo != null;
 	}
 
@@ -2001,26 +2046,33 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 				paint.drawInsertion(g, this, bounds, bounds);
 			}
 			else {
-				Rectangle bounds = putInfo.getNode().getBounds();
-
-				if( putInfo.getPut() == PutInfo.Put.LEFT ) {
-					bounds.width = (int) (bounds.width * putInfo.getDivider() + 0.5);
+				CombinerTarget target = putInfo.getCombinerTarget();
+				if( target == null ){
+					Rectangle bounds = putInfo.getNode().getBounds();
+	
+					if( putInfo.getPut() == PutInfo.Put.LEFT ) {
+						bounds.width = (int) (bounds.width * putInfo.getDivider() + 0.5);
+					}
+					else if( putInfo.getPut() == PutInfo.Put.RIGHT ) {
+						int width = bounds.width;
+						bounds.width = (int) (bounds.width * (1 - putInfo.getDivider()) + 0.5);
+						bounds.x += width - bounds.width;
+					}
+					else if( putInfo.getPut() == PutInfo.Put.TOP ) {
+						bounds.height = (int) (bounds.height * putInfo.getDivider() + 0.5);
+					}
+					else if( putInfo.getPut() == PutInfo.Put.BOTTOM ) {
+						int height = bounds.height;
+						bounds.height = (int) (bounds.height * (1 - putInfo.getDivider()) + 0.5);
+						bounds.y += height - bounds.height;
+					}
+	
+					paint.drawInsertion(g, this, putInfo.getNode().getBounds(), bounds);
 				}
-				else if( putInfo.getPut() == PutInfo.Put.RIGHT ) {
-					int width = bounds.width;
-					bounds.width = (int) (bounds.width * (1 - putInfo.getDivider()) + 0.5);
-					bounds.x += width - bounds.width;
+				else{
+					Rectangle bounds = putInfo.getNode().getBounds();
+					target.paint( g, paint, bounds, bounds );
 				}
-				else if( putInfo.getPut() == PutInfo.Put.TOP ) {
-					bounds.height = (int) (bounds.height * putInfo.getDivider() + 0.5);
-				}
-				else if( putInfo.getPut() == PutInfo.Put.BOTTOM ) {
-					int height = bounds.height;
-					bounds.height = (int) (bounds.height * (1 - putInfo.getDivider()) + 0.5);
-					bounds.y += height - bounds.height;
-				}
-
-				paint.drawInsertion(g, this, putInfo.getNode().getBounds(), bounds);
 			}
 		}
 

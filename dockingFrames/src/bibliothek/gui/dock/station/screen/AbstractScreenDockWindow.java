@@ -54,6 +54,7 @@ import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.support.CombinerTarget;
 
 /**
  * This abstract implementation of {@link ScreenDockWindow} uses a {@link DockableDisplayer}
@@ -72,8 +73,8 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
     /** the parent of {@link #displayer}, used to paint */
     private OverpaintablePanel content;
 
-    /** whether to paint combination marks or not */
-    private boolean painting = false;
+    /** how to paint a combination */
+    private CombinerTarget combination;
 
     /** the explicit set icon */
     private Icon titleIcon = null;
@@ -306,8 +307,8 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
         return window.getBounds();
     }
 
-    public void setPaintCombining( boolean paint ) {
-        painting = paint;
+    public void setPaintCombining( CombinerTarget target ){
+        this.combination = target; 
         window.repaint();
     }
 
@@ -413,7 +414,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
         OverpaintablePanel panel = new OverpaintablePanel(){
             @Override
             protected void paintOverlay( Graphics g ) {
-                if( painting ){
+            	if( combination != null ){
                     ScreenDockStation station = getStation();
                     StationPaint paint = station.getPaint();
                     Insets insets = getInsets();
@@ -423,8 +424,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
                             getWidth() - 2*(insets.left+insets.right),
                             getHeight() - 2*(insets.top+insets.bottom ));
 
-
-                    paint.drawInsertion( g, station, bounds, insert );
+                    combination.paint( g, paint, bounds, insert );
                 }
             }
         };

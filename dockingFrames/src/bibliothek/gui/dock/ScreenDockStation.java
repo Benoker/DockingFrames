@@ -70,6 +70,9 @@ import bibliothek.gui.dock.station.screen.ScreenDockWindowFactory;
 import bibliothek.gui.dock.station.screen.ScreenDockWindowHandle;
 import bibliothek.gui.dock.station.screen.ScreenDockWindowListener;
 import bibliothek.gui.dock.station.screen.ScreenFullscreenAction;
+import bibliothek.gui.dock.station.support.CombinerSource;
+import bibliothek.gui.dock.station.support.CombinerSourceWrapper;
+import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.CombinerWrapper;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
@@ -678,21 +681,37 @@ public class ScreenDockStation extends AbstractDockStation {
         
         ScreenDockWindow oldCombine = dropInfo.combine;
         
+        dropInfo.x = x;
+        dropInfo.y = y;
         dropInfo.titleX = titleX;
         dropInfo.titleY = titleY;
         dropInfo.dockable = dockable;
-        dropInfo.combine = searchCombineDockable( x, y, dockable );
+        
+        boolean force = true;
+        dropInfo.combine = searchCombineDockable( x, y, dockable, true );
+        if( dropInfo.combine == null ){
+        	force = false;
+        	dropInfo.combine = searchCombineDockable( x, y, dockable, false );
+        }
         
         if( dropInfo.combine != null && dropInfo.combine.getDockable() == dockable )
             dropInfo.combine = null;
         
-        if( dropInfo.combine != oldCombine ){
-            if( oldCombine != null )
-                oldCombine.setPaintCombining( false );
-            
-            if( dropInfo.combine != null )
-                dropInfo.combine.setPaintCombining( true );
+        if( dropInfo.combine != null ){
+        	dropInfo.combiner = combiner.prepare( dropInfo, force );
+        	if( dropInfo.combiner == null ){
+        		dropInfo.combine = null;
+        	}
         }
+        
+        if( oldCombine != null ){
+        	oldCombine.setPaintCombining( null );
+        }
+
+        if( dropInfo.combine != null ){
+        	dropInfo.combine.setPaintCombining( dropInfo.combiner );
+        }
+
         
         checkDropInfo();
         return dropInfo != null;
@@ -724,21 +743,33 @@ public class ScreenDockStation extends AbstractDockStation {
     }
 
     
+    
     /**
      * Searches a window on the coordinates x/y which can be used to create
      * a combination with <code>drop</code>.
      * @param x the x-coordinate on the screen
      * @param y die y-coordinate on the screen
      * @param drop the {@link Dockable} which might be combined with a window
+     * @param combineArea whether the point <code>x/y</code> must be over the
+     * {@link ScreenDockWindow#inCombineArea(int, int) combine area} or just
+     * over the window.
      * @return the window which might become the parent of <code>drop</code>.
      */
-    protected ScreenDockWindow searchCombineDockable( int x, int y, Dockable drop ){
+    protected ScreenDockWindow searchCombineDockable( int x, int y, Dockable drop, boolean combineArea ){
         DockAcceptance acceptance = getController() == null ? null : getController().getAcceptance();
         
         for( ScreenDockWindowHandle handle : dockables.dockables() ){
         	ScreenDockWindow window = handle.getWindow();
         	
-            if( window.inCombineArea( x, y )){
+        	boolean candidate;
+        	if( combineArea ){
+        		candidate = window.inCombineArea( x, y );
+        	}
+        	else{
+        		candidate = window.contains( x, y );
+        	}
+        	
+            if( candidate ){
                 Dockable child = window.getDockable();
                 
                 if( acceptance == null || acceptance.accept( this, child, drop )){
@@ -754,7 +785,7 @@ public class ScreenDockStation extends AbstractDockStation {
     
     public void drop() {
         if( dropInfo.combine != null ){
-            combine( dropInfo.combine.getDockable(), dropInfo.dockable );
+            combine( dropInfo, dropInfo.combiner );
         }
         else{
             Component component = dropInfo.dockable.getComponent();
@@ -925,7 +956,7 @@ public class ScreenDockStation extends AbstractDockStation {
 
     public void move() {
         if( dropInfo.combine != null ){
-            combine( dropInfo.combine.getDockable(), dropInfo.dockable );
+            combine( dropInfo, dropInfo.combiner );
         }
         else{
             ScreenDockWindow window = getWindow( dropInfo.dockable );
@@ -956,13 +987,13 @@ public class ScreenDockStation extends AbstractDockStation {
             dropInfo = new DropInfo();
         
         if( dropInfo.combine != null )
-            dropInfo.combine.setPaintCombining( true );
+            dropInfo.combine.setPaintCombining( dropInfo.combiner );
     }
 
     public void forget() {
         if( dropInfo != null ){
             if( dropInfo.combine != null )
-                dropInfo.combine.setPaintCombining( false );
+                dropInfo.combine.setPaintCombining( null );
             dropInfo = null;
         }
     }
@@ -970,7 +1001,7 @@ public class ScreenDockStation extends AbstractDockStation {
     public <D extends Dockable & DockStation> boolean isInOverrideZone( int x,
             int y, D invoker, Dockable drop ) {
         
-        return searchCombineDockable( x, y, drop ) != null;
+        return searchCombineDockable( x, y, drop, true ) != null;
     }
 
     public boolean canDrag( Dockable dockable ) {
@@ -1250,31 +1281,76 @@ public class ScreenDockStation extends AbstractDockStation {
      * @param upper a {@link Dockable} which may be child of this station
      */
     public void combine( Dockable lower, Dockable upper ){
+    	DropInfo info = new DropInfo();
+    	
+    	info.dockable = upper;
+    	info.combine = getWindow( lower );
+    	if( info.combine == null ){
+    		throw new IllegalArgumentException( "lower is not a child of this station" );
+    	}
+    	
+    	Component component = lower.getComponent();
+    	Point middle = new Point( component.getWidth() / 2, component.getHeight() / 2 );
+    	SwingUtilities.convertPointToScreen( middle, component );
+    	
+    	info.x = middle.x;
+    	info.y = middle.y;
+    	info.titleX = info.x;
+    	info.titleY = info.y;
+    	
+    	info.combiner = combiner.prepare( info, true );
+    	
+    	combine( info, info.combiner );
+    }
+
+    /**
+     * Uses the current {@link Combiner} to combine the {@link Dockable}s described
+     * in <code>source</code>.
+     * @param source the source {@link Dockable}s to combine
+     * @param target the target created by the {@link Combiner}
+     */
+    private void combine( CombinerSource source, CombinerTarget target ){
+    	Dockable lower = source.getOld();
+    	Dockable upper = source.getNew();
+    	
     	int index = indexOf( lower );
     	if( index < 0 ){
-    		throw new IllegalArgumentException( "lower is not child of this station" );
+    		throw new IllegalArgumentException( "old is not child of this station" );
     	}
     	
         ScreenDockWindowHandle window = getWindowHandle( index );
         removeDockable( upper );
         
+        index = indexOf( lower );
+        
         listeners.fireDockableRemoving( lower );
+        final Dockable old = window.getWindow().getDockable();
+        
+        int listIndex = dockables.levelToBase( index, Level.DOCKABLE );
+        PlaceholderList<ScreenDockWindowHandle>.Item item = dockables.list().get( listIndex );
+        final PlaceholderMap map = item.getPlaceholderMap();
+        item.setPlaceholderMap( null );
+        
         window.setDockable( null );
         lower.setDockParent( null );
         listeners.fireDockableRemoved( lower );
         
-        int listIndex = dockables.levelToBase( index, Level.DOCKABLE );
-        PlaceholderList<ScreenDockWindowHandle>.Item item = dockables.list().get( listIndex );
-        PlaceholderMap map = item.getPlaceholderMap();
-        item.setPlaceholderMap( null );
-        
-        Dockable valid = combiner.combine( lower, upper, this, map );
+        Dockable valid = combiner.combine( new CombinerSourceWrapper( source ){
+        	@Override
+        	public PlaceholderMap getPlaceholders(){
+	        	return map;
+        	}
+        	@Override
+        	public Dockable getOld(){
+	        	return old;
+        	}
+        }, target );
         
         listeners.fireDockableAdding( valid );
         window.setDockable( valid );
         valid.setDockParent( this );
-        listeners.fireDockableAdded( valid );
-    }
+        listeners.fireDockableAdded( valid );	
+    }    
     
     public boolean canReplace( Dockable old, Dockable next ) {
         return true;
@@ -1586,13 +1662,54 @@ public class ScreenDockStation extends AbstractDockStation {
      * is used only while a Dockable is dragged and this station has answered
      * as possible parent.
      */
-    private static class DropInfo{
+    private class DropInfo implements CombinerSource{
         /** The Dockable which is dragged */
         public Dockable dockable;
         /** Location of the mouse */
+        public int x, y;
+        /** Location of the title */
         public int titleX, titleY;
         /** Possible new parent */
         public ScreenDockWindow combine;
+        
+        /** Information about how to combine {@link #combine} with {@link #dockable} */
+        public CombinerTarget combiner;
+
+		public Point getMousePosition(){
+			Point point = new Point( x, y );
+			SwingUtilities.convertPointFromScreen( point, combine.getDockable().getComponent() );
+			return point;
+		}
+
+		public Dimension getSize(){
+			return combine.getDockable().getComponent().getSize();
+		}
+
+		public boolean isMouseOverTitle(){
+			return combine.inTitleArea( x, y );
+		}
+		
+		public Dockable getNew(){
+			return dockable;
+		}
+
+		public Dockable getOld(){
+			return combine.getDockable();
+		}
+
+		public DockStation getParent(){
+			return ScreenDockStation.this;
+		}
+
+		public PlaceholderMap getPlaceholders(){
+			for( PlaceholderList<ScreenDockWindowHandle>.Item item : dockables.list() ){
+				ScreenDockWindowHandle handle = item.getDockable();
+				if( handle != null && handle.getWindow() == combine ){
+					return item.getPlaceholderMap();
+				}
+			}
+			return null;
+		}
     }
     
     /**

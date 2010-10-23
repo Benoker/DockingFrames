@@ -344,4 +344,5 @@
 - API: DefaultFlapWindowFactory now detects JDesktopPanes and automatically uses a JInternalDialog instead of a JDialog as window for the FlapDockStation.
 - Bugfix: When dropping a Dockable, DockStations in Windows under the mouse are preferred.
 - API: Added support for JDesktopPane and JInternalFrames. The FlapDockStation will automatically detect them, for the ScreenDockStation special factories and strategies have to be set (the Internal... classes).  
-- Bugfix: CSplitDockStationHandle did throw an exception on removal, because it could not handle a "null" mode.  
+- Bugfix: CSplitDockStationHandle did throw an exception on removal, because it could not handle a "null" mode.
+! API: Changed the interface "Combiner". The interface has now much more control of how two Dockables are going to be merged, it can now also paint on the station to help the user understand of what is going to happen once the mouse is released  

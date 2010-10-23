@@ -29,6 +29,7 @@ package bibliothek.gui.dock.station.split;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.HashSet;
 import java.util.Map;
@@ -41,6 +42,9 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
+import bibliothek.gui.dock.station.Combiner;
+import bibliothek.gui.dock.station.support.CombinerSource;
+import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.util.Path;
 
@@ -692,7 +696,11 @@ public abstract class SplitNode{
     					}
     				}
 
-    				Dockable combination = access.getOwner().getCombiner().combine( dockables[0], dockables[1], access.getOwner(), key.getTree().getPlaceholderMap( key ) );
+    				Combiner combiner = access.getOwner().getCombiner();
+    				CombinerSource source = new NodeCombinerSource( dockables[0], dockables[1], key.getTree().getPlaceholderMap( key ) );
+    				CombinerTarget target = combiner.prepare( source, true );
+    				
+    				Dockable combination = combiner.combine( source, target );
     				removePlaceholderMap = true;
     				if( dockables.length == 2 ){
     					leaf = createLeaf( key.getNodeId() );
@@ -819,5 +827,55 @@ public abstract class SplitNode{
         double sy = (c - a*x) / b;
         
         return y < sy;
+    }
+    
+    /**
+     * Simple {@link CombinerSource} used for creating new {@link DockStation}s during creation of a {@link SplitNode}.
+     * @author Benjamin Sigg
+     */
+    private class NodeCombinerSource implements CombinerSource{
+    	private Dockable child;
+    	private Dockable dropping;
+    	private PlaceholderMap placeholders;
+    	
+    	/**
+    	 * Creates a new source.
+    	 * @param child the old dockable
+    	 * @param dropping the new dockable
+    	 * @param placeholders placeholders associated with this location
+    	 */
+		public NodeCombinerSource( Dockable child, Dockable dropping, PlaceholderMap placeholders ){
+			this.child = child;
+			this.dropping = dropping;
+			this.placeholders = placeholders;
+		}
+
+		public Point getMousePosition(){
+			return null;
+		}
+
+		public Dockable getNew(){
+			return dropping;
+		}
+
+		public Dockable getOld(){
+			return child;
+		}
+
+		public DockStation getParent(){
+			return access.getOwner();
+		}
+
+		public PlaceholderMap getPlaceholders(){
+			return placeholders;
+		}
+
+		public Dimension getSize(){
+			return null;
+		}
+
+		public boolean isMouseOverTitle(){
+			return true;
+		}
     }
 }

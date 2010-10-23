@@ -26,7 +26,6 @@
 
 package bibliothek.gui.dock.station.support;
 
-import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
@@ -61,7 +60,11 @@ public class CombinerWrapper implements Combiner {
         this.delegate = delegate;
     }
     
-    public Dockable combine( Dockable old, Dockable drop, DockStation parent, PlaceholderMap placeholders ) {
-        return DockUI.getCombiner( delegate, parent ).combine( old, drop, parent, placeholders );
+    public CombinerTarget prepare( CombinerSource source, boolean force ){
+    	return DockUI.getCombiner( delegate, source.getParent() ).prepare( source, force );
+    }
+    
+    public Dockable combine( CombinerSource source, CombinerTarget target ){
+        return DockUI.getCombiner( delegate, source.getParent() ).combine( source, target );
     }
 }

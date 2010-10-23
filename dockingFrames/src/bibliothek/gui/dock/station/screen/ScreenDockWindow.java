@@ -34,6 +34,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationChildHandle;
+import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
@@ -147,10 +148,11 @@ public interface ScreenDockWindow {
      * indicate that a {@link Dockable} is about to be dropped onto it.<br>
      * Subclasses should use {@link ScreenDockStation#getPaint()} to get
      * an algorithm that paints.
-     * @param paint <code>true</code> if something should be painted,
-     * <code>false</code> otherwise
+     * @param target if <code>null</code> then nothing should be painted, otherwise
+     * the method {@link CombinerTarget#paint(java.awt.Graphics, bibliothek.gui.dock.station.StationPaint, Rectangle)}
+     * should be called
      */
-    public void setPaintCombining( boolean paint );
+    public void setPaintCombining( CombinerTarget target );
     
     /**
      * Gets the boundaries of the window.
@@ -232,4 +234,22 @@ public interface ScreenDockWindow {
      * and the element in this window, <code>false</code> otherwise
      */
     public boolean inCombineArea( int x, int y );
+    
+    /**
+     * Checks whether at <code>x/y</code> there is a title.
+     * @param x an x coordinate in the screen
+     * @param y an y coordinate in the screen
+     * @return <code>true</code> if there is a title, <code>false</code>
+     * otherwise
+     */
+    public boolean inTitleArea( int x, int y );
+    
+    /**
+     * Tells whether the point <code>x/y</code> is over this window or not.
+     * @param x an x coordinate in the screen
+     * @param y an y coordinate in the screen
+     * @return <code>true</code> if <code>this</code> window is under
+     * <code>x/y</code>, <code>false</code> otherwise
+     */
+    public boolean contains( int x, int y );
 }

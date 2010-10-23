@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -26,53 +26,59 @@
 
 package bibliothek.gui.dock.station.flap;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.station.support.CombinerSource;
+import bibliothek.gui.dock.station.support.CombinerTarget;
 
 /**
  * Information where to insert a {@link Dockable} into a {@link FlapDockStation}.
  * @author Benjamin Sigg
  */
-public class FlapDropInfo {
+public abstract class FlapDropInfo implements CombinerSource {
     /** location between buttons */
     private int index;
-    
-    /** the {@link Dockable} with which <code>dockable</code> should be cominbed */
-    private Dockable combine = null;
-    
-    /** <code>true</code> if information should be painted */
-    private boolean draw = false;
     
     /** The {@link Dockable} which is inserted */
     private Dockable dockable;
     
+    /** the owner of this info */
+    private FlapDockStation station;
+    
+    /** <code>true</code> if information should be painted */
+    private boolean draw = false;
+    
+    /** Tells how to combine {@link #dockable} with {@link #combine} */
+    private CombinerTarget combineTarget = null;
+    
+    
     /**
      * Constructs a new info.
+     * @param station the owner of this info
      * @param dockable the {@link Dockable} which will be inserted
      */
-    public FlapDropInfo( Dockable dockable ){
+    public FlapDropInfo( FlapDockStation station, Dockable dockable ){
+    	this.station = station;
         this.dockable = dockable;
     }
-
+    
     /**
-     * Returns the <code>combine</code>  property.
-     * @return the property
-     * @see #setCombine(Dockable)
+     * Tells how to combine {@link #getDockable()} with {@link #getCombine()}.
+     * @return the combination, can be <code>null</code>
      */
-    public Dockable getCombine(){
-		return combine;
+    public CombinerTarget getCombineTarget(){
+		return combineTarget;
 	}
-
+    
     /**
-     * Sets the <code>combine</code> property. If this property is not <code>null</code>,
-     * then the station will combine the new {@link Dockable} with the 
-     * <code>combine</code>.
-     * @param combine the Dockable with which the dragged Dockable should be combined
+     * Sets how to combine {@link #getDockable()} with {@link #getCombine()}.
+     * @param combineTarget the combination, can be <code>null</code>
      */
-    public void setCombine( Dockable combine ){
-		this.combine = combine;
+    public void setCombineTarget( CombinerTarget combineTarget ){
+		this.combineTarget = combineTarget;
 	}
-
+    
     /**
      * Gets the {@link Dockable} which will be dropped or moved on the station.
      * @return the source
@@ -118,6 +124,12 @@ public class FlapDropInfo {
     public void setIndex( int index ) {
         this.index = index;
     }
-    
-    
+
+	public Dockable getNew(){
+		return getDockable();
+	}
+
+	public DockStation getParent(){
+		return station;
+	}
 }

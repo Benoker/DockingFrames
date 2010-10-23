@@ -81,6 +81,9 @@ import bibliothek.gui.dock.station.flap.FlapDropInfo;
 import bibliothek.gui.dock.station.flap.FlapLayoutManager;
 import bibliothek.gui.dock.station.flap.FlapWindow;
 import bibliothek.gui.dock.station.flap.FlapWindowFactory;
+import bibliothek.gui.dock.station.support.CombinerSource;
+import bibliothek.gui.dock.station.support.CombinerSourceWrapper;
+import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.CombinerWrapper;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
@@ -1289,29 +1292,34 @@ public class FlapDockStation extends AbstractDockableStation {
         
         Point mouse = new Point( mouseX, mouseY );
         SwingUtilities.convertPointFromScreen( mouse, buttonPane );
+        FlapDropInfo dropInfo = null;
         
         boolean strong = buttonPane.titleContains( mouse.x, mouse.y );
-        boolean combine = false;
         
         DockAcceptance acceptance = getController().getAcceptance();
         
+        // if mouse over window title: force combination
         if( !strong && window != null && window.isWindowVisible() ){
             DockTitle title = window.getDockTitle();
+            
             if( title != null ){
                 Component c = title.getComponent();
                 Point point = new Point( mouseX, mouseY );
                 SwingUtilities.convertPointFromScreen( point, c );
-                // test if combination is allowed
                 Dockable child = window.getDockable();
+                boolean combine = c.contains( point ) &&
+                	dockable.accept( this, child ) &&
+                	child.accept( this, dockable ) &&
+				   	acceptance.accept( this, child, dockable );
                 
-                combine = c.contains( point ) &&
-                    dockable.accept( this, child ) &&
-                    child.accept( this, dockable ) &&
-                    acceptance.accept( this, child, dockable );
+                if( combine ){
+                	dropInfo = prepareCombine( dockable, window, new Point( mouseX, mouseY ), combine, true );
+                }
             }
         }
         
-        if( !strong && !combine ){
+        // maybe a parent station wants to catch the event
+        if( !strong && dropInfo == null ){
             DockStation parent = getDockParent();
             if( parent != null ){
                 if( checkOverrideZone && parent.isInOverrideZone( mouseX, mouseY, this, dockable ))
@@ -1319,29 +1327,49 @@ public class FlapDockStation extends AbstractDockableStation {
             }
         }
         
-        if( window != null && window.isWindowVisible() && !combine ){
+        // if mouse over window: force combination
+        if( window != null && window.isWindowVisible() && dropInfo == null ){
             Point point = new Point( mouseX, mouseY );
             Dockable child = window.getDockable();
-            combine = window.containsScreenPoint(point) &&
+            boolean combine = window.containsScreenPoint(point) &&
                 dockable.accept( this, child) &&
                 child.accept( this, dockable ) &&
                 acceptance.accept( this, child, dockable );
+            
+            if( combine ){
+            	dropInfo = prepareCombine( dockable, window, point, false, true );
+            }
         }
         
-        if( combine && dockable == getFrontDockable() )
+        if( dropInfo != null && dockable == getFrontDockable() )
             return false;
         
-        FlapDropInfo dropInfo = null;
-        if( combine ){
-            dropInfo = new FlapDropInfo( dockable );
-        	dropInfo.setCombine( getFrontDockable() );
-        }
-        else{
+        if( dropInfo == null ){
             if( dockable.accept( this ) &&
                 accept( dockable ) &&
                 acceptance.accept( this, dockable )){
                 
-                dropInfo = new FlapDropInfo( dockable );
+                dropInfo = new FlapDropInfo( this, dockable ){
+					public Point getMousePosition(){
+						return null;
+					}
+
+					public Dockable getOld(){
+						return null;
+					}
+
+					public PlaceholderMap getPlaceholders(){
+						return null;
+					}
+
+					public Dimension getSize(){
+						return null;
+					}
+
+					public boolean isMouseOverTitle(){
+						return false;
+					}                	
+                };
                 dropInfo.setIndex( buttonPane.indexAt( mouse.x, mouse.y ) );
             }
         }
@@ -1350,10 +1378,59 @@ public class FlapDockStation extends AbstractDockableStation {
         return dropInfo != null;
         
     }
+    
+    /**
+     * Prepares a combination of <code>dockable</code> and <code>window</code>.
+     * @param dockable the element that is going to be dropped
+     * @param window the visible window under the mouse
+     * @param mouseOnScreen the location of the mouse on the screen
+     * @param mouseOverTitle whether the mouse is currently over a title
+     * @param force whether a combination must happen or not
+     * @return the combination, <code>null</code> if a combination is not desired for the given arguments
+     */
+    private FlapDropInfo prepareCombine( Dockable dockable, FlapWindow window, final Point mouseOnScreen, final boolean mouseOverTitle, boolean force ){
+    	final Dockable child = window.getDockable();
+    	FlapDropInfo info = new FlapDropInfo( this, dockable ){
+			public boolean isMouseOverTitle(){
+				return mouseOverTitle;
+			}
+			
+			public Dimension getSize(){
+				return child.getComponent().getSize();
+			}
+			
+			public PlaceholderMap getPlaceholders(){
+				for( PlaceholderList<DockableHandle>.Item item : handles.list() ){
+					DockableHandle handle = item.getDockable();
+					if( handle != null && handle.getDockable() == child ){
+						return item.getPlaceholderMap();
+					}
+				}
+				return null;
+			}
+			
+			public Point getMousePosition(){
+				Point mouse = new Point( mouseOnScreen );
+				SwingUtilities.convertPointFromScreen( mouse, getOld().getComponent() );
+				return mouse;
+			}
+			
+			public Dockable getOld(){
+				return child;
+			}
+		};
+		
+		CombinerTarget target = combiner.prepare( info, force );
+		if( target == null ){
+			return null;
+		}
+		info.setCombineTarget( target );
+		return info;
+    }
 
     public void drop(){
-        if( dropInfo.getCombine() != null ){
-        	combine( dropInfo.getCombine(), dropInfo.getDockable());
+    	if( dropInfo.getCombineTarget() != null ){
+            combine( dropInfo, dropInfo.getCombineTarget() );
         }
         else{
             add( dropInfo.getDockable(), dropInfo.getIndex() );
@@ -1472,9 +1549,9 @@ public class FlapDockStation extends AbstractDockableStation {
     }
 
     public void move() {
-    	if( dropInfo.getCombine() != null ){
+    	if( dropInfo.getCombineTarget() != null ){
             remove( dropInfo.getDockable() );
-            combine( dropInfo.getCombine(), dropInfo.getDockable());
+            combine( dropInfo, dropInfo.getCombineTarget() );
         }
     	else{
 	    	int index = indexOf( dropInfo.getDockable() );
@@ -1664,15 +1741,53 @@ public class FlapDockStation extends AbstractDockableStation {
      * <code>false</code> otherwise (the <code>child</code> will remain
      * on this station)
      */
-    public boolean combine( Dockable child, Dockable append ){
+    public boolean combine( final Dockable child, Dockable append ){
+    	int index = indexOf( child );
+        if( index < 0 )
+            throw new IllegalArgumentException( "Child must be a child of this station" );
+        
+        int listIndex = handles.levelToBase( index, Level.DOCKABLE );
+        PlaceholderList<DockableHandle>.Item oldItem = handles.list().get( listIndex );
+        final PlaceholderMap placeholders = oldItem.getPlaceholderMap();
+        
+    	FlapDropInfo info = new FlapDropInfo( this, append ){
+			public boolean isMouseOverTitle(){
+				return true;
+			}
+			
+			public Dimension getSize(){
+				return null;
+			}
+			
+			public PlaceholderMap getPlaceholders(){
+				return placeholders;
+			}
+			
+			public Dockable getOld(){
+				return child;
+			}
+			
+			public Point getMousePosition(){
+				return null;
+			}
+		};
+		
+		CombinerTarget target = combiner.prepare( info, true );
+		return combine( info, target );
+    }
+    
+    private boolean combine( CombinerSource source, CombinerTarget target ){
     	DockController controller = getController();
+    	Dockable child = source.getOld();
+    	Dockable append = source.getNew();
+    	
     	try{
     		if( controller != null )
     			controller.freezeLayout();
     	
 	        int index = indexOf( child );
 	        if( index < 0 )
-	            throw new IllegalArgumentException( "Child must be a child of this station" );
+	            throw new IllegalArgumentException( "old dockable must be a child of this station" );
 	        
 	        if( append.getDockParent() != null )
 	            append.getDockParent().drag( append );
@@ -1681,6 +1796,8 @@ public class FlapDockStation extends AbstractDockableStation {
 	        
 	        int listIndex = handles.levelToBase( index, Level.DOCKABLE );
 	        PlaceholderList<DockableHandle>.Item oldItem = handles.list().get( listIndex );
+	        final PlaceholderMap placeholders = oldItem.getPlaceholderMap();
+	        oldItem.setPlaceholderMap( null );
 	        
 	        remove( index );
 	        int other = indexOf( append );
@@ -1691,7 +1808,14 @@ public class FlapDockStation extends AbstractDockableStation {
 	        }
 	        
 	        index = Math.min( index, getDockableCount());
-	        Dockable combination = combiner.combine( child, append, this, oldItem.getPlaceholderMap() );
+	        
+	        Dockable combination = combiner.combine( new CombinerSourceWrapper( source ){
+	        	@Override
+	        	public PlaceholderMap getPlaceholders(){
+		        	return placeholders;
+	        	}
+	        }, target );
+	        
 	        add( combination, index );
 	        
 	        PlaceholderList<DockableHandle>.Item newItem = handles.list().get( listIndex );

@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -126,7 +126,7 @@ public class ButtonPane extends OverpaintablePanel{
     
     @Override
     protected void paintOverlay( Graphics g ) {
-       if( dropInfo != null && dropInfo.isDraw() && dropInfo.getCombine() == null ){
+       if( dropInfo != null && dropInfo.isDraw() && dropInfo.getCombineTarget() == null ){
             int left = dropInfo.getIndex()-1;
             int right = left+1;
             

@@ -29,7 +29,8 @@ package bibliothek.gui.dock.station;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.support.PlaceholderMap;
+import bibliothek.gui.dock.station.support.CombinerSource;
+import bibliothek.gui.dock.station.support.CombinerTarget;
 
 /**
  * A <code>Combiner</code> merges two {@link Dockable Dockables} into
@@ -39,18 +40,27 @@ import bibliothek.gui.dock.station.support.PlaceholderMap;
  */
 public interface Combiner {
     /**
-     * Merges the Dockable <code>old</code> and <code>drop</code> into 
-     * a new Dockable. This method may set the {@link DockController} of
-     * the create element in order to initialize it more efficiently
-     * @param old a Dockable which was sitting on the DockStation <code>parent</code>.
-     * The parent of <code>old</code> is currently set to <code>null</code>.
-     * @param drop a Dockable that has currently no parent, and that was
-     * dragged over <code>old</code>
-     * @param parent a DockStation which will become the parent of the
-     * result of this method
-     * @param placeholders a set of placeholders that were created earlier, not necessarily by a 
-     * {@link DockStation} that was created by this combiner. Might be <code>null</code>.
-     * @return The combination of <code>old</code> and <code>drop</code>
+     * Prepares information telling how two {@link Dockable}s may be combined.
+     * @param source the {@link Dockable} which may be combined, their parent station and
+     * other helpful information.
+     * @param force if <code>true</code> then a combination must happen, otherwise the
+     * result may be <code>null</code> indicating that a combination is not desired by 
+     * this {@link Combiner}.
+     * @return How to combine the {@link Dockable}s, may be <code>null</code> to indicate that
+     * a combination is not desired
      */
-    public Dockable combine( Dockable old, Dockable drop, DockStation parent, PlaceholderMap placeholders );
+    public CombinerTarget prepare( CombinerSource source, boolean force );
+	
+	/**
+     * Merges two {@link Dockable}s into a new Dockable. This method may
+     * set the {@link DockController} of the created element in order to initialize 
+     * it more efficiently.
+     * @param source information about the two {@link Dockable}s that are going to be merged, not <code>null</code>. This 
+     * object may or may not have been created by this {@link Combiner}, some sanity checks are advised before using it
+     * @param target information that was created by {@link #prepare(CombinerSource)} using <code>source</code>, not <code>null</code>
+     * @return the combined {@link Dockable}, not <code>null</code>
+     */
+    public Dockable combine( CombinerSource source, CombinerTarget target );
+    
+
 }
