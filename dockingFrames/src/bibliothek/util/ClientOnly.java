@@ -32,7 +32,7 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * This attribute marks classes, interfaces or other elements that are specially useful
  * for clients. These classes or interfaces have been designed to be used by clients, the
- * framework does not really need them (altough it may use them as well).
+ * framework does not really need them (although it may use them as well).
  * @author Benjamin Sigg
  * @see FrameworkOnly
  */
