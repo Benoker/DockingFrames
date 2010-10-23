@@ -42,13 +42,13 @@ import bibliothek.gui.dock.perspective.PerspectiveElement;
  * element, but also create a new {@link DockElement} with the content.
  * @author Benjamin Sigg
  * @param <D> the type of element which can be written and read by this factory
- * @param <P> the type of {@link PerspectiveElement} which can be written and read by this factory
  * @param <L> the type of object that stores the contents of a <code>D</code>. If
  * clients cannot guarantee that always the same factory will be mapped
  * to the same identifier, then <code>L</code> should be set to {@link Object}
  * and the methods which receive a <code>L</code> should use 
  * <code>instanceof</code> before casting the argument.
  */
+//* @param <P> the type of {@link PerspectiveElement} which can be written and read by this factory
 //public interface DockFactory<D extends DockElement, P extends PerspectiveElement<L>, L> extends DockConverter<D, L>{
 public interface DockFactory<D extends DockElement, L> extends DockConverter<D, L>{
 	/**

@@ -174,7 +174,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	/** The theme of this station */
 	private DockTheme theme;
 
-	/** Combiner to {@link #dropOver(Leaf, Dockable) combine} some Dockables */
+	/** Combiner to {@link #dropOver(Leaf, Dockable, CombinerSource, CombinerTarget) combine} some Dockables */
 	private CombinerWrapper combiner = new CombinerWrapper();
 
 	/** The type of titles which are used for this station */

@@ -100,7 +100,6 @@ public interface MissingDockableStrategy {
      * @param data the information <code>factory</code> would convert
      * @return <code>true</code> if <code>factory</code> is allowed to convert
      * <code>data</code>
-     * @see #shouldCreate(DockFactory)
      */
     public <L> boolean shouldCreate( DockFactory<?, L> factory, L data );
 }

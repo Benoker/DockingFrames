@@ -138,7 +138,7 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
     protected abstract void showDisplayer( DockableDisplayer displayer );
     
     /**
-     * Gets the component on which {@link ScreenDockWindow#setWindowBounds(java.awt.Rectangle)}
+     * Gets the component on which {@link ScreenDockWindow#setWindowBounds(java.awt.Rectangle, boolean)}
      * is applied.
      * @return the base component
      */

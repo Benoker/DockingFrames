@@ -149,7 +149,7 @@ public interface ScreenDockWindow {
      * Subclasses should use {@link ScreenDockStation#getPaint()} to get
      * an algorithm that paints.
      * @param target if <code>null</code> then nothing should be painted, otherwise
-     * the method {@link CombinerTarget#paint(java.awt.Graphics, bibliothek.gui.dock.station.StationPaint, Rectangle)}
+     * the method {@link CombinerTarget#paint(java.awt.Graphics, bibliothek.gui.dock.station.StationPaint, Rectangle, Rectangle)}
      * should be called
      */
     public void setPaintCombining( CombinerTarget target );

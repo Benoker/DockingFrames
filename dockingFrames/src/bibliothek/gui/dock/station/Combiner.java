@@ -57,7 +57,7 @@ public interface Combiner {
      * it more efficiently.
      * @param source information about the two {@link Dockable}s that are going to be merged, not <code>null</code>. This 
      * object may or may not have been created by this {@link Combiner}, some sanity checks are advised before using it
-     * @param target information that was created by {@link #prepare(CombinerSource)} using <code>source</code>, not <code>null</code>
+     * @param target information that was created by {@link #prepare(CombinerSource, boolean)} using <code>source</code>, not <code>null</code>
      * @return the combined {@link Dockable}, not <code>null</code>
      */
     public Dockable combine( CombinerSource source, CombinerTarget target );

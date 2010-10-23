@@ -142,7 +142,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
     /**
      * Initializes this window.
      * @param window the component which represents the window. This component
-     * will be used when calling methods like {@link #setWindowBounds(Rectangle)}. It
+     * will be used when calling methods like {@link #setWindowBounds(Rectangle, boolean)}. It
      * is the root of this whole window.
      * @param contentParent the container which will be used as parent for the
      * contents of this window. This method will change the {@link LayoutManager}

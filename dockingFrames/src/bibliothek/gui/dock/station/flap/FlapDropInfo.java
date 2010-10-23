@@ -49,7 +49,7 @@ public abstract class FlapDropInfo implements CombinerSource {
     /** <code>true</code> if information should be painted */
     private boolean draw = false;
     
-    /** Tells how to combine {@link #dockable} with {@link #combine} */
+    /** Tells how to combine {@link #dockable} with an existing Dockable */
     private CombinerTarget combineTarget = null;
     
     
@@ -64,7 +64,7 @@ public abstract class FlapDropInfo implements CombinerSource {
     }
     
     /**
-     * Tells how to combine {@link #getDockable()} with {@link #getCombine()}.
+     * Tells how to combine {@link #getDockable()} with the existing {@link Dockable}.
      * @return the combination, can be <code>null</code>
      */
     public CombinerTarget getCombineTarget(){
@@ -72,7 +72,7 @@ public abstract class FlapDropInfo implements CombinerSource {
 	}
     
     /**
-     * Sets how to combine {@link #getDockable()} with {@link #getCombine()}.
+     * Sets how to combine {@link #getDockable()} with the existing {@link Dockable}.
      * @param combineTarget the combination, can be <code>null</code>
      */
     public void setCombineTarget( CombinerTarget combineTarget ){
@@ -117,8 +117,7 @@ public abstract class FlapDropInfo implements CombinerSource {
 
     /**
      * Sets the location where the {@link #getDockable() Dockable} will be
-     * inserted in respect to the list of buttons. This property will
-     * be ignored if {@link #getCombine()} is <code>null</code>.
+     * inserted in respect to the list of buttons.
      * @param index the location
      */
     public void setIndex( int index ) {

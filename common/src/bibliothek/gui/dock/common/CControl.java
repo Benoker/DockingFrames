@@ -1563,7 +1563,7 @@ public class CControl {
      * with a specific identifier. The factories are stored in a list and a search starts at the front of that
      * list, so a factory added early has higher priority than a factory that was added lately.
      * @param ids a filter telling which dockables can be handled by <code>factory</code>
-     * @param backupFactory the new factory
+     * @param factory the new factory
      */
     public void addSingleDockableFactory( Filter<String> ids, SingleCDockableFactory factory ){
     	register.getBackupFactory().add( ids, factory );
@@ -1735,7 +1735,7 @@ public class CControl {
      * Adds a dockable to this control. The dockable can be made visible afterwards.
      * This method will throw an exception when the unique identifier is already
      * in use. Clients better use {@link #add(MultipleCDockable)}.
-     * @deprecated will be removed in a future release, please use {@link #addDockable(MultipleCDockable, String)} instead
+     * @deprecated will be removed in a future release, please use {@link #addDockable(String, MultipleCDockable)} instead
      * @param <M> the type of the new element
      * @param dockable the new element to show
      * @param uniqueId id the unique id of the new element
