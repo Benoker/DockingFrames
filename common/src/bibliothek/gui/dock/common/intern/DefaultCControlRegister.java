@@ -40,7 +40,7 @@ import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.MultipleCDockableFactory;
 import bibliothek.gui.dock.common.SingleCDockable;
-import bibliothek.gui.dock.common.SingleCDockableBackupFactory;
+import bibliothek.gui.dock.common.SingleCDockableFactory;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.frontend.FrontendEntry;
 
@@ -122,7 +122,7 @@ public class DefaultCControlRegister implements MutableCControlRegister {
     }
     
     /**
-     * Gets a list of keys for all {@link SingleCDockableBackupFactory}s which
+     * Gets a list of keys for all {@link SingleCDockableFactory}s which
      * are currently registered at this control.
      * @return the list of keys
      */

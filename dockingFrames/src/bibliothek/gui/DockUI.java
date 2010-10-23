@@ -28,8 +28,11 @@ package bibliothek.gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -42,7 +45,9 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.Icon;
+import javax.swing.JDesktopPane;
 import javax.swing.LookAndFeel;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
@@ -556,5 +561,79 @@ public class DockUI {
     			controller.getRegister().setStalled( false );
     		}
     	}
+    }
+    
+    /**
+     * Searches the first {@link JDesktopPane} which either is <code>component</code>
+     * or a parent of <code>component</code>.
+     * @param component the component whose parent is searched
+     * @return the parent {@link JDesktopPane} or <code>null</code> if not found
+     */
+    public static JDesktopPane getDesktopPane( Component component ){
+		while( component != null ){
+			if( component instanceof JDesktopPane ){
+				return ((JDesktopPane)component);
+			}
+			component = component.getParent();
+		}
+		return null;
+    }
+    
+    /**
+     * Tells whether <code>above</code> overlaps <code>under</code>. This method
+     * assumes that both components have a mutual parent. The method checks the location
+     * and the z-order of both components.
+     * @param above the component that is supposed to be above <code>under</code>
+     * @param under the component that is supposed to be under <code>above</code>
+     * @return <code>true</code> is <code>above</code> is overlapping <code>under</code>
+     */
+    public static boolean isOverlapping( Component above, Component under ){
+    	if( SwingUtilities.isDescendingFrom( under, above )){
+    		return false;
+    	}
+    	if( SwingUtilities.isDescendingFrom( above, under )){
+    		return true;
+    	}
+    	if( above == under ){
+    		return true;
+    	}
+    	
+    	Container parent = above.getParent();
+    	while( parent != null ){
+    		if( SwingUtilities.isDescendingFrom( under, parent )){
+    			// found mutual parent
+    			
+    			Point locationA = new Point( 0, 0 );
+    			Point locationU = new Point( 0, 0 );
+    			
+    			locationA = SwingUtilities.convertPoint( above, locationA, parent );
+    			locationU = SwingUtilities.convertPoint( under, locationU, parent );
+    			
+    			Rectangle boundsA = new Rectangle( locationA, above.getSize() );
+    			Rectangle boundsU = new Rectangle( locationU, under.getSize() );
+    			
+    			if( !boundsA.intersects( boundsU )){
+    				return false;
+    			}
+    			
+    			Component pathA = firstOnPath( parent, above );
+    			Component pathU = firstOnPath( parent, under );
+    			
+    			int zA = parent.getComponentZOrder( pathA );
+    			int zU = parent.getComponentZOrder( pathU );
+    			
+    			return zA < zU;
+    		}
+    		parent = parent.getParent();
+    	}
+    	return false;
+    }
+    
+    private static Component firstOnPath( Container parent, Component child ){
+    	Component result = child;
+    	while( result.getParent() != parent ){
+    		result = result.getParent();
+    	}
+    	return result;
     }
 }

@@ -337,5 +337,11 @@
 - Bugfix: repaired an issue where buttons on a FlapDockStation where not shown due to a race condition. Also repaired an issue where the button had a false size due to a missing border.
 - Bugfix: resolved an issue where the CDockableStateListener was not called when the mode changed.
 
-[v1.1.0p1]
+[v1.1.0 p1]
+! API: SingleCDockableBackupFactory replaced by SingleCDockableFactory
+- API: CControl now supports filters for SingleCDockableFactories. With a filter one factory can create many Dockables. There is no longer a need to know all of the identifiers that were used when storing a layout. 
+       MultipleCDockableFactory will not receive such support: clients with content that changes can already use the factories layout-object to implement their own filtering/backup mechanism.
+- API: DefaultFlapWindowFactory now detects JDesktopPanes and automatically uses a JInternalDialog instead of a JDialog as window for the FlapDockStation.
+- Bugfix: When dropping a Dockable, DockStations in Windows under the mouse are preferred.
+- API: Added support for JDesktopPane and JInternalFrames. The FlapDockStation will automatically detect them, for the ScreenDockStation special factories and strategies have to be set (the Internal... classes).  
 - Bugfix: CSplitDockStationHandle did throw an exception on removal, because it could not handle a "null" mode.  

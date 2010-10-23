@@ -46,6 +46,8 @@ import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.dockable.DefaultDockableFactory;
+import bibliothek.gui.dock.perspective.Perspective;
+import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.security.SecureFlapDockStationFactory;
 import bibliothek.gui.dock.security.SecureSplitDockStationFactory;
 import bibliothek.gui.dock.security.SecureStackDockStationFactory;
@@ -111,6 +113,20 @@ public class DockSituation {
                 new SecureFlapDockStationFactory());
     }
 
+    public Perspective createPerspective(){
+    	return new Perspective(){
+			@Override
+			protected String getID( PerspectiveElement<?> element ){
+				return DockSituation.this.getID( element );
+			}
+			
+			@Override
+			protected DockFactory<?, ?> getFactory( String id ){
+				return DockSituation.this.getFactory( id );
+			}
+		};
+    }
+    
     /**
      * Sets a filter which decides, which elements (stations and dockables)
      * are stored.
@@ -672,15 +688,29 @@ public class DockSituation {
      * @throws IOException if the stream throws an exception
      */
     public void write( Map<String, DockStation> stations, DataOutputStream out ) throws IOException{
+    	Map<String, DockLayoutComposition> map = new HashMap<String, DockLayoutComposition>();
+    	for( Map.Entry<String, DockStation> entry : stations.entrySet() ){
+    		DockLayoutComposition composition = convert( entry.getValue() );
+    		if( composition != null ){
+    			map.put( entry.getKey(), composition );
+    		}
+    	}
+    	writeCompositions( map, out );
+    }
+
+    /**
+     * Writes all information stored in <code>stations</code> to <code>out</code>.
+     * @param stations Representations of the root-stations.
+     * @param out the stream to write in
+     * @throws IOException if the stream throws an exception
+     */
+    public void writeCompositions( Map<String, DockLayoutComposition> stations, DataOutputStream out ) throws IOException{
         Version.write( out, Version.VERSION_1_0_4 );
 
         out.writeInt( stations.size() );
-        for( Map.Entry<String, DockStation> entry : stations.entrySet() ){
-            DockLayoutComposition composition = convert( entry.getValue() );
-            if( composition != null ){
-                out.writeUTF( entry.getKey() );
-                writeComposition( composition, out );
-            }
+        for( Map.Entry<String, DockLayoutComposition> entry : stations.entrySet() ){
+            out.writeUTF( entry.getKey() );
+            writeComposition( entry.getValue(), out );
         }
     }
 
@@ -723,6 +753,29 @@ public class DockSituation {
         return result;
     }
 
+    /**
+     * Reads <code>in</code> and returns the map of {@link DockLayoutComposition}s that was
+     * stored.
+     * @param in the stream to read from
+     * @return the roots of the layout
+     * @throws IOException if an I/O-error occurs
+     */
+    public Map<String, DockLayoutComposition> readCompositions( DataInputStream in ) throws IOException{
+    	Version version = Version.read( in );
+        version.checkCurrent();
+
+        int count = in.readInt();
+        Map<String, DockLayoutComposition> result = new HashMap<String, DockLayoutComposition>();
+        for( int i = 0; i < count; i++ ){
+            String key = in.readUTF();
+            DockLayoutComposition composition = readComposition( in );
+            if( composition != null ){
+            	result.put( key, composition );
+            }
+        }
+        return result;
+    }
+    
     /**
      * Writes the contents of <code>composition</code> into <code>element</code> without
      * changing the attributes of <code>element</code>.
@@ -878,19 +931,32 @@ public class DockSituation {
      * @param stations The stations to store, only the roots are needed.
      * @param element the element to write into, attributes of <code>element</code> will
      * not be changed
-     * @throws IOException if an I/O-error occurs
      */
-    public void writeXML( Map<String, DockStation> stations, XElement element ) throws IOException{
-        for( Map.Entry<String, DockStation> entry : stations.entrySet() ){
-            DockLayoutComposition composition = convert( entry.getValue() );
-            if( composition != null ){
-                XElement xchild = element.addElement( "element" );
-                xchild.addString( "name", entry.getKey() );
-                writeCompositionXML( composition, xchild );
-            }
-        }
+    public void writeXML( Map<String, DockStation> stations, XElement element ) {
+    	Map<String, DockLayoutComposition> map = new HashMap<String, DockLayoutComposition>();
+    	for( Map.Entry<String, DockStation> entry : stations.entrySet() ){
+    		DockLayoutComposition composition = convert( entry.getValue() );
+    		if( composition != null ){
+    			map.put( entry.getKey(), composition );
+    		}
+    	}
+    	writeCompositionsXML( map, element );
     }
 
+    /**
+     * Writes the contents of <code>station</code> into <code>element</code>.
+     * @param stations the items to write
+     * @param element the element to write into, the attributes of <code>element</code>
+     * will not be changed
+     */
+    public void writeCompositionsXML( Map<String, DockLayoutComposition> stations, XElement element ) {
+    	for( Map.Entry<String, DockLayoutComposition> entry : stations.entrySet() ){
+            XElement xchild = element.addElement( "element" );
+            xchild.addString( "name", entry.getKey() );
+            writeCompositionXML( entry.getValue(), xchild );
+        }
+    }
+    
     /**
      * Reads a set of {@link DockStation}s that were stored earlier.
      * @param root the xml element from which to read
@@ -909,6 +975,23 @@ public class DockSituation {
         return result;
     }
 
+    /**
+     * Reads a set of {@link DockLayoutComposition}s that were stored earlier.
+     * @param root the xml element from which to read
+     * @return the set of compositions
+     */
+    public Map<String, DockLayoutComposition> readCompositionsXML( XElement root ){
+    	Map<String, DockLayoutComposition> result = new HashMap<String, DockLayoutComposition>();
+        for( XElement xelement : root.getElements( "element" )){
+            String name = xelement.getString( "name" );
+            DockLayoutComposition composition = readCompositionXML( xelement );
+            if( composition != null ){
+            	result.put( name, composition );
+            }
+        }
+        return result;
+    }
+    
     /**
      * Using the factories currently known to this {@link DockSituation}, this
      * method tries to fill gaps in <code>composition</code>. It checks
@@ -1103,14 +1186,26 @@ public class DockSituation {
 
     /**
      * Gets the id of the factory which is needed to write (and later
-     * read) the element <code>dockable</code>.
-     * @param dockable the dockable to write
+     * read) <code>element</code>
+     * @param element the element to read
      * @return the id of the factory
      * @see #getID(DockFactory)
      * @see #getFactory(String)
      */
-    protected String getID( DockElement dockable ){
-        return dockable.getFactoryID();
+    protected String getID( PerspectiveElement<?> element ){
+    	return element.getFactoryID();
+    }
+    
+    /**
+     * Gets the id of the factory which is needed to write (and later
+     * read) <code>element</code>
+     * @param element the element to read
+     * @return the id of the factory
+     * @see #getID(DockFactory)
+     * @see #getFactory(String)
+     */
+    protected String getID( DockElement element ){
+        return element.getFactoryID();
     }
 
     /**

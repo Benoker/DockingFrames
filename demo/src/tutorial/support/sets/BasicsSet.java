@@ -1,5 +1,6 @@
 package tutorial.support.sets;
 
+import tutorial.common.basics.BasicCommonSet;
 import tutorial.core.basics.BasicCoreSet;
 import tutorial.dockFrontend.basics.BasicDockFrontendSet;
 import tutorial.support.Tutorial;
@@ -8,6 +9,7 @@ import tutorial.support.Tutorial;
 public class BasicsSet extends TutorialSet{
 	public BasicsSet(){
 		super( BasicCoreSet.class,
-		       BasicDockFrontendSet.class );
+		       BasicDockFrontendSet.class,
+		       BasicCommonSet.class );
 	}
 }

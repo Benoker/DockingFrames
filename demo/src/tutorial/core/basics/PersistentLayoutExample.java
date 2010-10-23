@@ -105,18 +105,13 @@ public class PersistentLayoutExample {
 		
 		saveButton.addActionListener( new ActionListener(){
 			public void actionPerformed( ActionEvent e ){
-				try{
-					/* To store a layout we need a map containing all the root-DockStations */
-					Map<String, DockStation> stations = new HashMap<String, DockStation>();
-					stations.put( "grid-station", station );
-					XElement xroot = new XElement( "root" );
-					situation.writeXML( stations, xroot );
-					textDockable.setText( xroot.toString() );
-					loadButton.setEnabled( true );
-				}
-				catch( IOException ex ){
-					ex.printStackTrace();
-				}
+				/* To store a layout we need a map containing all the root-DockStations */
+				Map<String, DockStation> stations = new HashMap<String, DockStation>();
+				stations.put( "grid-station", station );
+				XElement xroot = new XElement( "root" );
+				situation.writeXML( stations, xroot );
+				textDockable.setText( xroot.toString() );
+				loadButton.setEnabled( true );
 			}
 		});
 		

@@ -28,8 +28,11 @@ package bibliothek.gui.dock.common.intern;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,22 +40,29 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.SingleCDockable;
-import bibliothek.gui.dock.common.SingleCDockableBackupFactory;
+import bibliothek.gui.dock.common.SingleCDockableFactory;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
+import bibliothek.util.Filter;
 import bibliothek.util.Version;
+import bibliothek.util.filter.PresetFilter;
 import bibliothek.util.xml.XElement;
 
 /**
  * This factory is used to create new {@link SingleCDockable}s using various
- * {@link SingleCDockableBackupFactory}s. This factory is accessed when a single
+ * {@link SingleCDockableFactory}s. This factory is accessed when a single
  * dockable is missing in the cache of its owning {@link CControl}.
  * @author Benjamin Sigg
  */
 public class CommonSingleDockableFactory implements DockFactory<CommonDockable, String>{
     public static final String BACKUP_FACTORY_ID = "ccontrol backup factory id";
     
-    private Map<String, SingleCDockableBackupFactory> backups = new HashMap<String, SingleCDockableBackupFactory>();
+    /** all the factories that are used */
+    private List<Entry> factories = new ArrayList<Entry>();
+    
+    /** factories using one id only */
+    private Map<String, Entry> singleIdFactories = new HashMap<String, Entry>();
+    
     private CControl control;
     
     /**
@@ -70,8 +80,25 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
      * @param id the unique id of the dockables which <code>factory</code> will create
      * @param factory the new factory
      */
-    public void add( String id, SingleCDockableBackupFactory factory ){
-        backups.put( id, factory );
+    public void add( String id, SingleCDockableFactory factory ){
+    	Entry old = singleIdFactories.remove( id );
+    	if( old != null ){
+    		factories.remove( old );
+    	}
+    	
+    	Entry entry = new Entry( new PresetFilter<String>( id ), factory );
+    	factories.add( entry );
+    	singleIdFactories.put( id, entry );
+    }
+    
+    /**
+     * Registers a new factory that will load {@link SingleCDockable} with
+     * unique identifiers that are included by <code>ids</code>.
+     * @param ids the identifiers that are included
+     * @param factory the new factory
+     */
+    public void add( Filter<String> ids, SingleCDockableFactory factory ){
+    	factories.add( new Entry( ids, factory ));
     }
     
     /**
@@ -79,16 +106,52 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
      * @param id the name of the factory to remove
      */
     public void remove( String id ){
-        backups.remove( id );
+        Entry entry = singleIdFactories.remove( id );
+        if( entry != null ){
+        	factories.remove( entry );
+        }
     }
     
     /**
-     * Searches the factory which was registered for <code>id</code>.
+     * Removes any occurrence of <code>factory</code>.
+     * @param factory the factory to remove
+     */
+    public void remove( SingleCDockableFactory factory ){
+    	Iterator<Entry> entries = factories.iterator();
+    	while( entries.hasNext() ){
+    		Entry next = entries.next();
+    		if( next.factory == factory ){
+    			entries.remove();
+    		}
+    	}
+    	
+    	entries = singleIdFactories.values().iterator();
+    	while( entries.hasNext() ){
+    		Entry next = entries.next();
+    		if( next.factory == factory ){
+    			entries.remove();
+    		}
+    	}
+    }
+    
+    /**
+     * Searches the factory which handles <code>id</code>.
      * @param id the name of a factory
      * @return the factory or <code>null</code>
      */
-    public SingleCDockableBackupFactory getFactory( String id ){
-        return backups.get( id );
+    public SingleCDockableFactory getFactory( String id ){
+    	Entry entry = singleIdFactories.get( id );
+    	if( entry != null ){
+    		return entry.factory;
+    	}
+    	
+    	for( Entry factory : factories ){
+    		if( factory.filter.includes( id )){
+    			return factory.factory;
+    		}
+    	}
+    	
+    	return null;
     }
     
     public String getID() {
@@ -100,7 +163,7 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
      * @return the list of keys
      */
     public String[] listFactories(){
-        Set<String> keys = backups.keySet();
+        Set<String> keys = singleIdFactories.keySet();
         return keys.toArray( new String[ keys.size() ] );
     }
     
@@ -109,7 +172,7 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
      * @return the set of keys
      */
     public Set<String> getFactoryIds(){
-        return Collections.unmodifiableSet( backups.keySet() );
+        return Collections.unmodifiableSet( singleIdFactories.keySet() );
     }
     
     public void estimateLocations( String layout, LocationEstimationMap children ){
@@ -131,7 +194,7 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
     }
 
     public CommonDockable layout( String layout ) {
-        SingleCDockableBackupFactory backup = backups.get( layout );
+        SingleCDockableFactory backup = getFactory( layout );
         if( backup == null )
             return null;
         
@@ -139,7 +202,7 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
         if( dockable == null )
             return null;
         
-        control.add( dockable );
+        control.addDockable( dockable );
         return dockable.intern();
     }
 
@@ -170,5 +233,32 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
 
     public void write( String layout, XElement element ) {
         element.addElement( "id" ).setString( layout );
+    }
+    
+    /**
+     * One backup factory of a {@link CommonSingleDockableFactory}
+     */
+    private class Entry{
+    	/** the filter to apply before {@link #factory} can be used */
+    	public final Filter<String> filter;
+    	/** the factory represented by this entry */
+    	public final SingleCDockableFactory factory;
+    	
+    	/**
+    	 * Creates a new entry.
+    	 * @param filter the filter to use
+    	 * @param factory the new factory
+    	 */
+    	public Entry( Filter<String> filter, SingleCDockableFactory factory ){
+    		if( filter == null ){
+    			throw new IllegalArgumentException( "filter must not be null" );
+    		}
+    		if( factory == null ){
+    			throw new IllegalArgumentException( "factory must not be null" );
+    		}
+    		
+    		this.filter = filter;
+    		this.factory = factory;
+    	}
     }
 }

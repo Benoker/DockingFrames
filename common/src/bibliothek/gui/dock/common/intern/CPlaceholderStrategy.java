@@ -144,7 +144,7 @@ public class CPlaceholderStrategy implements PlaceholderStrategy {
 		}
 		
 		// if there is a backup factory, then the client expects this element to exist
-		if( control.getSingleBackupFactory( id ) != null ){
+		if( control.getSingleDockableFactory( id ) != null ){
 			return true;
 		}
 		

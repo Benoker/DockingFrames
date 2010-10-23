@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2010 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,22 +23,18 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common;
-
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
+package bibliothek.util;
 
 /**
- * Backwards compatibility layer for {@link SingleCDockableFactory}, should not be used by clients.
- * @deprecated This interface is no longer used anywhere and gets replaced by {@link SingleCDockableFactory}. This
- * interface will be removed in a future release.
+ * A filter is used to split up a set of items to a set of included and a set of excluded items.
  * @author Benjamin Sigg
+ * @param <T> the kind of items this filter handles
  */
-@Deprecated
-@Todo(compatibility=Compatibility.BREAK_MAJOR, priority=Priority.MINOR, target=Version.VERSION_1_1_1,
-		description="Remove this interface")
-public interface SingleCDockableBackupFactory extends SingleCDockableFactory{
-    // nothing
+public interface Filter<T> {
+	/**
+	 * Tells whether the item <code>item</code> should be included or not.
+	 * @param item the item to include, depending on the user of this filter the item may or may not be <code>null</code>
+	 * @return <code>true</code> if <code>item</code> is included, <code>false</code> if <code>item</code> is excluded
+	 */
+	public boolean includes( T item );
 }

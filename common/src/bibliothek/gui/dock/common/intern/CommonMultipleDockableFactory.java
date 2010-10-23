@@ -123,7 +123,7 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         	access.getOwner().replace( oldDockable, dockable );
         }
         else{
-        	access.getOwner().add( dockable, id );
+        	access.getOwner().addDockable( id, dockable );
         }
         
         // working area

@@ -65,7 +65,7 @@ public interface DockConverter <D extends DockElement, L>{
      * @param children a map containing unique identifiers for the children
      * of the element. Children which are not in this map should not be
      * stored in the layout.<br>
-     * The identifiers are in the range 0 (incl.) to <code>children.size()</code> (excl.). The
+     * The identifiers are in the range from 0 (incl.) to <code>children.size()</code> (excl.). The
      * same identifiers will be used as indices by a {@link LocationEstimationMap}. See 
      * also {@link DockFactory#estimateLocations(Object, LocationEstimationMap)}.
      * @return the newly created, independent layout object.

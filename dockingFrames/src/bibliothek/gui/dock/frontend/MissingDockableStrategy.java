@@ -46,9 +46,6 @@ public interface MissingDockableStrategy {
         public boolean shouldStoreShown( String key ) {
             return false;
         }
-        public boolean shouldCreate( DockFactory<?, ?> factory ) {
-            return false;
-        }
         public <L> boolean shouldCreate( DockFactory<?, L> factory, L data ) {
             return false;
         }
@@ -62,9 +59,6 @@ public interface MissingDockableStrategy {
             return true;
         }
         public boolean shouldStoreShown( String key ) {
-            return true;
-        }
-        public boolean shouldCreate( DockFactory<?, ?> factory ) {
             return true;
         }
         public <L> boolean shouldCreate( DockFactory<?, L> factory, L data ) {
@@ -95,20 +89,7 @@ public interface MissingDockableStrategy {
      * should be discarded
      */
     public boolean shouldStoreShown( String key );
-    
-    /**
-     * Tells whether <code>factory</code> should be used to create {@link Dockable}s
-     * which do not have an identifier (meaning: that are not 
-     * {@link DockFrontend#addDockable(String, Dockable) registered}). Factories
-     * which do not pass this test will only be allowed to create elements during
-     * {@link DockFrontend#setSetting(Setting, boolean) set up of a new layout}.
-     * @param factory the factory which might be used to create unnamed elements
-     * @return <code>true</code> if <code>factory</code> should be allowed
-     * to create {@link Dockable}s even when not setting up a layout 
-     * @see #shouldCreate(DockFactory, Object)
-     */
-    public boolean shouldCreate( DockFactory<?,?> factory );
-    
+        
     /**
      * Tells whether <code>factory</code> should be used to create a new
      * {@link Dockable} using <code>data</code>. This method is only called

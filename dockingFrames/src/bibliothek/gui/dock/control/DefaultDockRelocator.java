@@ -47,6 +47,7 @@ import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
+import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.accept.DockAcceptance;
@@ -65,6 +66,7 @@ import bibliothek.gui.dock.event.DockControllerRepresentativeListener;
 import bibliothek.gui.dock.event.DockRelocatorListener;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.util.ClientOnly;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Priority;
@@ -277,7 +279,7 @@ public class DefaultDockRelocator extends DockRelocator{
                 
         for( DockStation station : controller.getRegister().listDockStations() ){   
             if( movedStation == null || (!DockUtilities.isAncestor( movedStation, station ) && movedStation != station )){
-                if( station.isStationVisible() ){
+                if( station.isStationVisible() && isStationValid( station ) ){
                     Rectangle bounds = station.getStationBounds();
                     if( bounds == null || bounds.contains( x, y )){
                         int index = 0;
@@ -300,6 +302,17 @@ public class DefaultDockRelocator extends DockRelocator{
     }    
     
     /**
+     * Only stations passing this test are considered during drag and drop operation as new parent. Subclasses 
+     * may override this method.
+     * @param station the station to check
+     * @return <code>true</code> if <code>station</code> should be considered as new parent
+     */
+    @ClientOnly
+    protected boolean isStationValid( DockStation station ){
+    	return true;
+    }
+    
+    /**
      * Tries to decide which station is over the other stations.
      * @param a the first station
      * @param b the second station
@@ -307,17 +320,28 @@ public class DefaultDockRelocator extends DockRelocator{
      * a is less/equal/more visible than b. 
      */
     protected int compare( DockStation a, DockStation b ){
+    	if( a == b )
+    		return 0;
+    	
         if( DockUtilities.isAncestor( a, b ))
             return -1;
         
         if( DockUtilities.isAncestor( b, a ))
             return 1;
         
-        if( a.canCompare( b ))
-            return a.compare( b );
+        if( a.canCompare( b )){
+            int result = a.compare( b );
+            if( result != 0 ){
+            	return result;
+            }
+        }
         
-        if( b.canCompare( a ))
-            return -b.compare( a );
+        if( b.canCompare( a )){
+            int result = -b.compare( a );
+            if( result != 0 ){
+            	return result;
+            }
+        }
         
         Dockable dockA = a.asDockable();
         Dockable dockB = b.asDockable();
@@ -328,13 +352,33 @@ public class DefaultDockRelocator extends DockRelocator{
             
             Window windowA = SwingUtilities.getWindowAncestor( compA );
             Window windowB = SwingUtilities.getWindowAncestor( compB );
-            
+
             if( windowA != null && windowB != null ){
-                if( isParent( windowA, windowB ))
-                    return -1;
-                
-                if( isParent( windowB, windowA ))
-                    return 1;
+                if( windowA == windowB ){
+                	if( DockUI.isOverlapping( compA, compB )){
+                		return 1;
+                	}
+                	if( DockUI.isOverlapping( compB, compA )){
+                		return -1;
+                	}
+                }
+                else{
+                	if( isParent( windowA, windowB ))
+                        return -1;
+                    
+                    if( isParent( windowB, windowA ))
+                        return 1;
+                    
+	                boolean mouseOverA = windowA.getMousePosition() != null;
+	                boolean mouseOverB = windowB.getMousePosition() != null;
+	                
+	                if( mouseOverA && !mouseOverB ){
+	                	return 1;
+	                }
+	                if( !mouseOverA && mouseOverB ){
+	                	return -1;
+	                }
+                }
             }
         }
         return 0;

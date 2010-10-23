@@ -48,6 +48,10 @@ import bibliothek.gui.dock.station.split.Node;
 import bibliothek.gui.dock.station.split.Root;
 import bibliothek.gui.dock.station.split.SplitNode;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -61,7 +65,14 @@ import bibliothek.util.xml.XElement;
  * @author Parag Shah
  * @author Benjamin Sigg
  * 
+ * @deprecated Due to the new placeholder mechanism this class/interface has become obsolete, it is no longer used
+ * anywhere. Clients should now use a {@link PlaceholderStrategy} to assign identifiers to the {@link Dockable}s, with
+ * these identifiers the location and size of a {@link Dockable} is stored in a much more consistent way than using the
+ * {@link LbSplitLayoutManager}. This class/interface will be removed in a future release.
  */
+@Deprecated
+@Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
+		description="remove this class")
 public class DockFrontendSizeManager implements SizeManager{
     /** the known sizes of several {@link Dockable}s */
     private Map<Dockable, Double> sizes = new HashMap<Dockable, Double>();

@@ -321,8 +321,8 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
     public boolean isVisible() {
 	    return window.isVisible();
     }
-
-    public void setWindowBounds( Rectangle bounds ) {
+    
+    public void setWindowBounds( Rectangle bounds, boolean screenCoordinates ){
         Rectangle valid = getStation().getBoundaryRestriction().check( this, bounds );
 
         if( valid != null )
@@ -360,6 +360,16 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
      */
     protected void setCursor( Cursor cursor ){
         window.setCursor( cursor );
+    }
+    
+    /**
+     * Converts <code>point</code> which is relative to <code>component</code> to a point on the screen.
+     * @param point the point to modify
+     * @param component specifies the coordinate system
+     * @see SwingUtilities#convertPointToScreen(Point, Component)
+     */
+    protected void convertPointToScreen( Point point, Component component ){
+    	SwingUtilities.convertPointToScreen( point, component );
     }
 
     /**
@@ -458,7 +468,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
                 if( e.getButton() == MouseEvent.BUTTON1 ){
                     pressed = true;
                     start = e.getPoint();
-                    SwingUtilities.convertPointToScreen( start, e.getComponent() );
+                    convertPointToScreen( start, e.getComponent() );
                     bounds = getWindowBounds();
                 }
             }
@@ -491,7 +501,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
         public void mouseDragged( MouseEvent e ) {
             if( pressed ){
                 Point point = e.getPoint();
-                SwingUtilities.convertPointToScreen( point, e.getComponent() );
+                convertPointToScreen( point, e.getComponent() );
 
                 int dx = point.x - start.x;
                 int dy = point.y - start.y;
@@ -533,7 +543,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
                     bounds.y += dy;
                 }
 
-                setWindowBounds( bounds );
+                setWindowBounds( bounds, false );
                 invalidate();
                 validate();
             }

@@ -25,20 +25,19 @@
  */
 package bibliothek.gui.dock.common;
 
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
 
 /**
- * Backwards compatibility layer for {@link SingleCDockableFactory}, should not be used by clients.
- * @deprecated This interface is no longer used anywhere and gets replaced by {@link SingleCDockableFactory}. This
- * interface will be removed in a future release.
+ * A backup factory is used by a {@link CControl} to create {@link SingleCDockable}s
+ * if a dockable is missing in the cache, but needed because some layout is loaded
+ * from a file.
  * @author Benjamin Sigg
  */
-@Deprecated
-@Todo(compatibility=Compatibility.BREAK_MAJOR, priority=Priority.MINOR, target=Version.VERSION_1_1_1,
-		description="Remove this interface")
-public interface SingleCDockableBackupFactory extends SingleCDockableFactory{
-    // nothing
+public interface SingleCDockableFactory {
+    /**
+     * Creates a backup of a {@link SingleCDockable}.
+     * @param id the unique id that the result must have
+     * @return the backup dockable or <code>null</code> if no dockable can
+     * be created
+     */
+    public SingleCDockable createBackup( String id );
 }

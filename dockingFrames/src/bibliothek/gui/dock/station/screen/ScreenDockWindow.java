@@ -90,6 +90,13 @@ public interface ScreenDockWindow {
     public Dockable getDockable();
     
     /**
+     * Gets the center of the title of this window. In general the center of
+     * the title should remain visible all the time.
+     * @return the center, can be <code>null</code>
+     */
+    public Point getTitleCenter();
+    
+    /**
      * Called when this window should become the focus owner and be shown
      * at the most prominent location.
      */
@@ -156,8 +163,10 @@ public interface ScreenDockWindow {
      * use {@link ScreenDockStation#getBoundaryRestriction()} to check the validity
      * of the new bounds.
      * @param bounds the new location and size
+     * @param screenCoordinates whether the location is relative to the real screen (<code>true</code>)
+     * or relative to the coordinate of this window (<code>false</code>).
      */
-    public void setWindowBounds( Rectangle bounds );
+    public void setWindowBounds( Rectangle bounds, boolean screenCoordinates );
     
     /**
      * Sets the boundaries this window should use if not in fullscreen mode. This boundaries

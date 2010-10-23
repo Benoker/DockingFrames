@@ -11,6 +11,7 @@ public class BasicCoreSet extends TutorialSet{
                 SplitDockStationExample.class,
                 ThemesExample.class,
                 PersistentLayoutExample.class,
-                ActionsExample.class );
+                ActionsExample.class,
+                InternalExample.class );
 	}
 }

@@ -1,9 +1,9 @@
 package bibliothek.layouts.testing;
 
 import bibliothek.gui.dock.common.SingleCDockable;
-import bibliothek.gui.dock.common.SingleCDockableBackupFactory;
+import bibliothek.gui.dock.common.SingleCDockableFactory;
 
-public class SingleTestFactory implements SingleCDockableBackupFactory{
+public class SingleTestFactory implements SingleCDockableFactory{
     public SingleCDockable createBackup( String id ) {
         return new SingleTestDockable( id, true );
     }

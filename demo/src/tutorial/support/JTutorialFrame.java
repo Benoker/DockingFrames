@@ -9,6 +9,8 @@ import javax.swing.JFrame;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
+import bibliothek.gui.dock.common.CContentArea;
+import bibliothek.gui.dock.common.CControl;
 
 public class JTutorialFrame extends JFrame{
 	private List<Runnable> runOnClose = new ArrayList<Runnable>();
@@ -31,6 +33,14 @@ public class JTutorialFrame extends JFrame{
 	
 	public void runOnClose( Runnable run ){
 		runOnClose.add( run );
+	}
+	
+	public void destroyOnClose( final CControl control ){
+		runOnClose( new Runnable(){
+			public void run(){
+				control.destroy();
+			}
+		});
 	}
 	
 	public void destroyOnClose( final DockController controller ){

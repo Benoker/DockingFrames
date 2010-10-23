@@ -133,6 +133,7 @@ import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.WindowProvider;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
+import bibliothek.util.Filter;
 import bibliothek.util.Todo;
 import bibliothek.util.Version;
 import bibliothek.util.Todo.Compatibility;
@@ -370,12 +371,6 @@ public class CControl {
             }
             public boolean shouldStoreShown( String key ) {
                 return shouldStore( key );
-            }
-            public boolean shouldCreate( DockFactory<?, ?> factory ) {
-                if( factory instanceof CommonMultipleDockableFactory ){
-                    return CControl.this.shouldCreate( ((CommonMultipleDockableFactory)factory).getFactory() );
-                }
-                return false;
             }
             public <L> boolean shouldCreate( DockFactory<?, L> factory, L data ) {
                 if( factory instanceof CommonMultipleDockableFactory && data instanceof CommonDockableLayout ){
@@ -1131,7 +1126,7 @@ public class CControl {
         boolean check = !(defaultArea == null || content != defaultArea);
 
         for( CStation<?> station : content.getStations() ){
-            add( station, true, check );
+            addStation( station, true, check );
         }
     }
 
@@ -1289,8 +1284,23 @@ public class CControl {
      * A root station often does not have a parent, the location of a {@link CDockable}
      * is always relative to its youngest parent that is a root station.
      */
+    public void addStation( CStation<?> station, boolean root ){
+        add( station, root );
+    }
+    
+    /**
+     * Adds an additional station to this control.
+     * @deprecated will be removed in a future release, please use
+     * {@link #addStation(CStation, boolean)} instead. 
+     * @param station the new station
+     * @param root whether the new station should be a root station
+     * @see #addStation(CStation, boolean)
+     */
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Todo.Priority.MINOR, target=Todo.Version.VERSION_1_1_1,
+    		description="remove this method" )
     public void add( CStation<?> station, boolean root ){
-        add( station, root, true );
+    	addStation( station, root, true );
     }
 
     /**
@@ -1303,7 +1313,7 @@ public class CControl {
      * otherwise the station is just put in, perhaps wrongly replacing
      * other stations.
      */    
-    private void add( CStation<?> station, boolean root, boolean check ){
+    private void addStation( CStation<?> station, boolean root, boolean check ){
         String id = station.getUniqueId();
         if( check ){
             checkStationIdentifierUniqueness( id );
@@ -1375,6 +1385,20 @@ public class CControl {
      * @throws IllegalArgumentException if <code>dockable</code> already is registered at another {@link CControl}
      * or if the unique id of <code>dockable</code> already is used for another object
      */
+    public <S extends SingleCDockable> S addDockable( S dockable ){
+    	return add( dockable );
+    }
+    
+    /**
+     * Adds a dockable to this control.
+     * @param <S> the type of the new element
+     * @param dockable the new element to show
+     * @return <code>dockable</code>
+     * @deprecated will be removed in a future release, please use {@link #addDockable(SingleCDockable)} instead.
+     */
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Todo.Priority.MINOR, target=Todo.Version.VERSION_1_1_1,
+    		description="remove this method" )
     public <S extends SingleCDockable> S add( S dockable ){
         if( dockable == null )
             throw new NullPointerException( "dockable must not be null" );
@@ -1448,7 +1472,7 @@ public class CControl {
     /**
      * Removes <code>dockable</code> from this control. The location information
      * for <code>dockable</code> remains stored if either there is a 
-     * {@link #addSingleBackupFactory(String, SingleCDockableBackupFactory) SingleCDockableBackupFactory}
+     * {@link #addSingleBackupFactory(String, SingleCDockableFactory) SingleCDockableBackupFactory}
      * registered or the {@link #setMissingStrategy(MissingCDockableStrategy) MissingCDockableStrategy}
      * tells to store the values.
      * @param dockable the element to remove
@@ -1472,6 +1496,22 @@ public class CControl {
 
         return false;
     }
+    
+    /**
+     * Adds a factory to this control. The factory will be used
+     * to create and add a {@link SingleCDockable} when one is requested that
+     * is not yet in the cache.<br>
+     * If there is already information for <code>id</code> available and
+     * <code>id</code> should be visible, then the factory will be used
+     * instantaneously.<br>
+     * Factories added with a specific identifier always have higher priority than factories
+     * added with a filter, see {@link #addSingleDockableFactory(Filter, SingleCDockableFactory)}.
+     * @param id the id of the dockable that might be requested
+     * @param backupFactory the new factory
+     */
+    public void addSingleDockableFactory( String id, SingleCDockableFactory backupFactory ){
+    	addSingleBackupFactory( id, backupFactory );
+    }
 
     /**
      * Adds a backup factory to this control. The backup factory will be used
@@ -1480,47 +1520,145 @@ public class CControl {
      * If there is already information for <code>id</code> available and
      * <code>id</code> should be visible, then the factory will be used
      * Instantaneously.
+     * @deprecated will be removed in a future release, please use {@link #addSingleDockableFactory(String, SingleCDockableFactory)}
+     * instead
      * @param id the id of the dockable that might be requested
      * @param backupFactory the new factory
      */
-    public void addSingleBackupFactory( String id, SingleCDockableBackupFactory backupFactory ){
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Todo.Priority.MINOR, target=Todo.Version.VERSION_1_1_1,
+    		description="remove this method" )
+    public void addSingleBackupFactory( String id, SingleCDockableFactory backupFactory ){
         register.getBackupFactory().add( id, backupFactory );
 
         String singleId = register.toSingleId( id );
-        locationManager.addEmpty( singleId );
-        frontend.addEmpty( singleId );
+        
+       // This would happen automatically when loading a layout. However code reading 
+       // the entries of DockFrontend is now informed about the possible existence of
+       // such an identifier
+       locationManager.addEmpty( singleId );
+       frontend.addEmpty( singleId );
 
         // if there is already layout information for id, then load this information now
         FrontendEntry entry = frontend.getFrontendEntry( singleId );
         if( entry != null && entry.getDockable() == null && entry.isShown() ){
             SingleCDockable dockable = backupFactory.createBackup( id );
             if( dockable != null ){
-                add( dockable );
+                addDockable( dockable );
                 if( entry.isShown() || !dockable.isCloseable() ){
                     dockable.setVisible( true );
                 }
             }
         }
     }
+    
+    /**
+     * Adds a factory to this control. The factory will be used
+     * to create and add a {@link SingleCDockable} when one is requested that
+     * is not yet in the cache.<br>
+     * If there is already information for identifiers that are included by <code>ids</code> available and
+     * if they should be visible, then the <code>factory</code> will be used instantaneously to create these elements. 
+     * During this action <code>factory</code> has a higher priority than any other factory.<br>
+     * Factories added with a general filter always have lower priority than factories that were added
+     * with a specific identifier. The factories are stored in a list and a search starts at the front of that
+     * list, so a factory added early has higher priority than a factory that was added lately.
+     * @param ids a filter telling which dockables can be handled by <code>factory</code>
+     * @param backupFactory the new factory
+     */
+    public void addSingleDockableFactory( Filter<String> ids, SingleCDockableFactory factory ){
+    	register.getBackupFactory().add( ids, factory );
+    	
+    	for( FrontendEntry entry : frontend.listFrontendEntries() ){
+    		if( entry.getDockable() == null && entry.isShown() ){
+    			if( register.isSingleId( entry.getKey() )){
+	    			String id = register.singleToNormalId( entry.getKey() );
+	    			if( ids.includes( id )){
+	    				SingleCDockable dockable = factory.createBackup( id );
+	    	            if( dockable != null ){
+	    	                addDockable( dockable );
+	    	                if( entry.isShown() || !dockable.isCloseable() ){
+	    	                    dockable.setVisible( true );
+	    	                }
+	    	            }	
+	    			}
+    			}
+    		}
+    	}
+    }
 
     /**
-     * Searches for the {@link SingleCDockableBackupFactory} which was registered
-     * with the key <code>id</code>.
+     * Searches the {@link SingleCDockableFactory} which is responsible for creating the
+     * {@link SingleCDockable} with identifier <code>id</code>. This method first searches
+     * for a factory which was added with a specific identifier ({@link #addSingleDockableFactory(String, SingleCDockableFactory)}),
+     * if nothing is found then the factories with a filter are searched ({@link #addSingleDockableFactory(Filter, SingleCDockableFactory)}).
      * @param id the identifier of some factory
      * @return the factory or <code>null</code>
      */
-    public SingleCDockableBackupFactory getSingleBackupFactory( String id ){
+    public SingleCDockableFactory getSingleDockableFactory( String id ){
+    	return register.getBackupFactory().getFactory( id );
+    }
+    
+    /**
+     * Searches for the {@link SingleCDockableFactory} which was registered
+     * with the key <code>id</code>. Also searches the general factories that were added
+     * with a filter. 
+     * @deprecated will be removed in a future release, please use {@link #getSingleDockableFactory(String)} instead
+     * @param id the identifier of some factory
+     * @return the factory or <code>null</code>
+     */
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Todo.Priority.MINOR, target=Todo.Version.VERSION_1_1_1,
+    		description="remove this method" )
+    public SingleCDockableFactory getSingleBackupFactory( String id ){
         return register.getBackupFactory().getFactory( id );
     }
 
     /**
-     * Removes a backup factory from this control. Location information for
+     * Removes a factory from this control. Location information for
      * <code>id</code> will be deleted if neither a {@link #add(SingleCDockable) SingleCDockable}
      * is added nor the {@link #setMissingStrategy(MissingCDockableStrategy) MissingCDockableStrategy}
      * tells to store the information.
      * @param id the name of the factory
-     * @see #addSingleBackupFactory(String, SingleCDockableBackupFactory)
+     * @see #addSingleBackupFactory(String, SingleCDockableFactory)
      */
+    public void removeSingleDockableFactory( String id ){
+    	removeSingleBackupFactory( id );
+    }
+    
+    /**
+     * Removes all occurrences of <code>factory</code>. Any location information that was held
+     * because of the existence of <code>factory</code> will be removed as well.
+     * @param factory the factory to remove
+     */
+    public void removeSingleDockableFactory( SingleCDockableFactory factory ){
+    	register.getBackupFactory().remove( factory );
+
+    	for( FrontendEntry entry : frontend.listFrontendEntries() ){
+    		if( entry.getDockable() == null && entry.isShown() ){
+    			if( register.isSingleId( entry.getKey() )){
+	    			String id = register.singleToNormalId( entry.getKey() );
+	    			
+	    	        if( !missingStrategy.shouldStoreSingle( id )){
+	    	            locationManager.removeEmpty( entry.getKey());
+	    	            frontend.removeEmpty( entry.getKey() );
+	    	        }
+    			}
+    		}
+    	}
+    }
+    
+    /**
+     * Removes a factory from this control. Location information for
+     * <code>id</code> will be deleted if neither a {@link #add(SingleCDockable) SingleCDockable}
+     * is added nor the {@link #setMissingStrategy(MissingCDockableStrategy) MissingCDockableStrategy}
+     * tells to store the information.
+     * @deprecated will be removed in a future release, please use {@link #removeSingleDockableFactory(String)} instead
+     * @param id the name of the factory
+     * @see #addSingleBackupFactory(String, SingleCDockableFactory)
+     */
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Todo.Priority.MINOR, target=Todo.Version.VERSION_1_1_1,
+    		description="remove this method" )
     public void removeSingleBackupFactory( String id ){
         register.getBackupFactory().remove( id );
 
@@ -1538,6 +1676,20 @@ public class CControl {
      * @param dockable the new element to show
      * @return <code>dockable</code>
      */
+    public <M extends MultipleCDockable> M addDockable( M dockable) {
+    	return add( dockable );
+    }
+    
+    /**
+     * Adds a dockable to this control. The dockable can be made visible afterwards.
+     * @deprecated will be removed in a future release, please use {@link #addDockable(MultipleCDockable)} instead.
+     * @param <M> the type of the new element
+     * @param dockable the new element to show
+     * @return <code>dockable</code>
+     */
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Todo.Priority.MINOR, target=Todo.Version.VERSION_1_1_1,
+    		description="remove this method" )
     public <M extends MultipleCDockable> M add( M dockable ){
         Set<String> ids = new HashSet<String>();
 
@@ -1565,7 +1717,25 @@ public class CControl {
     /**
      * Adds a dockable to this control. The dockable can be made visible afterwards.
      * This method will throw an exception when the unique identifier is already
+     * in use. Clients should use {@link #addDockable(MultipleCDockable)}.
+     * @param <M> the type of the new element
+     * @param uniqueId id the unique id of the new element
+     * @param dockable the new element to show
+     * @return <code>dockable</code>
+     * @throws IllegalArgumentException if the unique identifier is already in
+     * use, if <code>dockable</code> is already used elsewhere, if there is
+     * no factory for <code>dockable</code>
+     * @throws NullPointerException if any argument is <code>null</code>
+     */
+    public <M extends MultipleCDockable> M addDockable( String uniqueId, M dockable ){
+    	return add( dockable, uniqueId );
+    }
+    
+    /**
+     * Adds a dockable to this control. The dockable can be made visible afterwards.
+     * This method will throw an exception when the unique identifier is already
      * in use. Clients better use {@link #add(MultipleCDockable)}.
+     * @deprecated will be removed in a future release, please use {@link #addDockable(MultipleCDockable, String)} instead
      * @param <M> the type of the new element
      * @param dockable the new element to show
      * @param uniqueId id the unique id of the new element
@@ -1575,6 +1745,9 @@ public class CControl {
      * no factory for <code>dockable</code>
      * @throws NullPointerException if any argument is <code>null</code>
      */
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Todo.Priority.MINOR, target=Todo.Version.VERSION_1_1_1, 
+    		description="remove this method" )
     public <M extends MultipleCDockable> M add( M dockable, String uniqueId ){
         if( dockable == null )
             throw new NullPointerException( "dockable must not be null" );
@@ -1712,11 +1885,6 @@ public class CControl {
 		else{
 			return null;
 		}
-    }
-
-    private boolean shouldCreate( MultipleCDockableFactory<?, ?> factory ){
-        String id = access.getFactoryId( factory );
-        return missingStrategy.shouldCreate( id, factory );
     }
 
     @SuppressWarnings("unchecked")

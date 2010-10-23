@@ -610,7 +610,7 @@ public class ScreenDockStation extends AbstractDockStation {
 			        window.setController( getController() );
 			        window.setFullscreenStrategy( getFullscreenStrategy() );
 			        window.setDockable( dockable );
-			        window.setWindowBounds( new Rectangle( x, y, width, height ) );
+			        window.setWindowBounds( new Rectangle( x, y, width, height ), false );
 			        window.setVisible( isShowing() );
 			        window.validate();
 			        window.setFullscreen( fullscreen );
@@ -935,7 +935,7 @@ public class ScreenDockStation extends AbstractDockStation {
             
             Rectangle bounds = window.getWindowBounds();
             bounds = new Rectangle( dropInfo.titleX - zero.x, dropInfo.titleY - zero.y, bounds.width, bounds.height );
-            window.setWindowBounds( bounds );
+            window.setWindowBounds( bounds, true );
         }
     }
     
@@ -947,7 +947,7 @@ public class ScreenDockStation extends AbstractDockStation {
             
             ScreenDockProperty bounds = (ScreenDockProperty)property;
             
-            window.setWindowBounds( new Rectangle( bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight() ) );
+            window.setWindowBounds( new Rectangle( bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight() ), false );
         }
     }
 
@@ -1046,7 +1046,7 @@ public class ScreenDockStation extends AbstractDockStation {
             }
         }
         
-        window.setWindowBounds( bounds );
+        window.setWindowBounds( bounds, false );
         window.validate();
         
         if( !boundsIncludeWindow ){
@@ -1055,7 +1055,7 @@ public class ScreenDockStation extends AbstractDockStation {
             if( offset != null ){
                 Rectangle windowBounds = window.getWindowBounds();
                 windowBounds = new Rectangle( windowBounds.x + offset.x, windowBounds.y + offset.y, windowBounds.width, windowBounds.height );
-                window.setWindowBounds( windowBounds );
+                window.setWindowBounds( windowBounds, false );
             }
         }
         

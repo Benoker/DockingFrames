@@ -34,7 +34,7 @@ import bibliothek.gui.dock.common.intern.CDockable;
  * {@link CControl}.<br>
  * <ul>
  * <li>If a {@link SingleCDockable} is missing when the {@link CControl} loads a layout, then a new <code>Dockable</code> can be created using
- * a {@link SingleCDockableBackupFactory}. If no such factory is present, no <code>Dockable</code> is shown</li>
+ * a {@link SingleCDockableFactory}. If no such factory is present, no <code>Dockable</code> is shown</li>
  * <li>No two {@link SingleCDockable} can have the same id if they are added to the same {@link CControl}</li>
  * <li>When saving a layout, only the unique id of a {@link SingleCDockable} is written out. Everything else has
  * to be saved by the client itself.</li>

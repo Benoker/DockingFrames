@@ -31,6 +31,11 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.SplitDockStation.Orientation;
 import bibliothek.gui.dock.station.split.*;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * This {@link SplitLayoutManager} uses a {@link SizeManager} to find the size
@@ -38,7 +43,15 @@ import bibliothek.gui.dock.station.split.*;
  * 
  * @author Parag Shah
  * @author Benjamin Sigg
+ * 
+ * @deprecated Due to the new placeholder mechanism this class/interface has become obsolete, it is no longer used
+ * anywhere. Clients should now use a {@link PlaceholderStrategy} to assign identifiers to the {@link Dockable}s, with
+ * these identifiers the location and size of a {@link Dockable} is stored in a much more consistent way than using the
+ * {@link LbSplitLayoutManager}. This class/interface will be removed in a future release.
  */
+@Deprecated
+@Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
+		description="remove this class")
 public class LbSplitLayoutManager extends DefaultSplitLayoutManager{
     private static final double MINIMUM_ORIGINAL_SIZE = 0.25;
     private static final Dimension DEFAULT_MINIMUM_SIZE = new Dimension(10, 10);

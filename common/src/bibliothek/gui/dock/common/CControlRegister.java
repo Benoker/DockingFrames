@@ -105,7 +105,7 @@ public interface CControlRegister {
     public MultipleCDockableFactory<?, ?> getFactory( String id );
     
     /**
-     * Gets a list of keys for all {@link SingleCDockableBackupFactory}s which
+     * Gets a list of keys for all {@link SingleCDockableFactory}s which
      * are currently registered.
      * @return the list of keys
      */

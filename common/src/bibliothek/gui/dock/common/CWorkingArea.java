@@ -31,6 +31,10 @@ import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.location.CWorkingAreaLocation;
 import bibliothek.gui.dock.station.split.SplitDockTree;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A working area is an element which is always visible and contains some
@@ -95,7 +99,7 @@ public class CWorkingArea extends CGridArea{
         dockable.setWorkingArea( this );
         CControlAccess access = control();
         if( access != null ){
-            access.getOwner().add( dockable );
+            access.getOwner().addDockable( dockable );
         }
         return dockable;
     }
@@ -113,7 +117,7 @@ public class CWorkingArea extends CGridArea{
         dockable.setWorkingArea( this );
         CControlAccess access = control();
         if( access != null ){
-            access.getOwner().add( dockable );
+            access.getOwner().addDockable( dockable );
         }
         return dockable;
     }
@@ -126,6 +130,8 @@ public class CWorkingArea extends CGridArea{
 	 * @deprecated use {@link #setTitleShown(boolean)} instead
 	 */
 	@Deprecated
+	@Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.MINOR, target=Version.VERSION_1_1_1,
+			description="remove this method" )
 	public void setSuppressTitle( boolean suppressTitle ) {
 		setTitleShown( !suppressTitle );
 	}
@@ -136,6 +142,8 @@ public class CWorkingArea extends CGridArea{
 	 * @deprecated use {@link #isTitleShown()} instead
 	 */
 	@Deprecated
+	@Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.MINOR, target=Version.VERSION_1_1_1,
+			description="remove this method" )
 	public boolean isSuppressTitle() {
 		return !isTitleShown();
 	}

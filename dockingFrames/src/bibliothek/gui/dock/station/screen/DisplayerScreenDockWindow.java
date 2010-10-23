@@ -260,6 +260,34 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
         }
     }
     
+    public Point getTitleCenter(){
+    	if( handle == null ){
+    		return null;
+    	}
+    	
+    	DockableDisplayer displayer = handle.getDisplayer();
+    	if( displayer == null ){
+    		return null;
+    	}
+    	
+    	DockTitle title = displayer.getTitle();
+    	if( title == null ){
+    		return null;
+    	}
+    	
+    	Component base = getWindowComponent();
+        if( base == null )
+            return null;
+        
+        Component titleCompnent = title.getComponent();
+        
+        Point result = new Point( 0, 0 );
+        result = SwingUtilities.convertPoint( titleCompnent, result, base );
+        result.x += titleCompnent.getWidth() / 2;
+        result.y += titleCompnent.getHeight() / 2;
+        return result;
+    }
+    
     public Point getOffsetDrop() {
     	if( handle == null )
     		return null;
