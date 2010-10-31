@@ -57,7 +57,10 @@ import bibliothek.gui.dock.station.stack.StackDockStationFactory;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.util.Path;
+import bibliothek.util.Todo;
 import bibliothek.util.Version;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
 import bibliothek.util.xml.XAttribute;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
@@ -306,6 +309,8 @@ public class DockSituation {
      * if the factory for <code>composition</code> was not found
      */
     @SuppressWarnings("unchecked")
+    @Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.MAJOR, target=Todo.Version.VERSION_1_1_0,
+    		description="setting Dockable.parent to null should also be done in the stations whose layout changes")
     public DockElement convert( DockLayoutComposition composition ){
         DockLayoutInfo info = composition.getLayout();
         if( info == null )
@@ -339,6 +344,9 @@ public class DockSituation {
                     Dockable dockable = child.asDockable();
                     if( dockable != null ){
                         children.put( index, dockable );
+                        if( dockable.getDockParent() != null ){
+                        	dockable.getDockParent().drag( dockable );
+                        }
                     }
                 }
 
