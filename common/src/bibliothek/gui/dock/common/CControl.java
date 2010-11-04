@@ -1385,6 +1385,8 @@ public class CControl {
      * @throws IllegalArgumentException if <code>dockable</code> already is registered at another {@link CControl}
      * or if the unique id of <code>dockable</code> already is used for another object
      */
+    @Todo( compatibility=Compatibility.COMPATIBLE, priority=Todo.Priority.BUG, target=Todo.Version.VERSION_1_1_0,
+    		description="check unique identifier of dockable to make sure it is a valid identifier, maybe not at this location..." )
     public <S extends SingleCDockable> S addDockable( S dockable ){
     	return add( dockable );
     }
