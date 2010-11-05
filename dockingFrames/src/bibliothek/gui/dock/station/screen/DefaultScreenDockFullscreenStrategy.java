@@ -31,14 +31,20 @@ import java.awt.Window;
 
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.security.SecureScreenDockDialog;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * This default implementation of a {@link ScreenDockFullscreenStrategy} just works with
  * the boundaries of a {@link ScreenDockWindow}. It assumes that either {@link ScreenDockDialog}
  * or {@link ScreenDockFrame} is used. Subclasses may extend this list, the algorithms of this
  * strategy should work with most implementations that are based on a {@link Window}.
- * @author Benjamin
+ * @author Benjamin Sigg
  */
+@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.BUG, target=Version.VERSION_1_1_0,
+	description="handle taskbar, check multi-screen (does not work properly)" )
 public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreenStrategy {
 	public void install( ScreenDockStation station ) {
 		// ignore
