@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.perspective;
 
 import bibliothek.gui.DockStation;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
 
 /**
  * An abstract representation of a {@link DockStation} in a {@link Perspective}.
@@ -44,4 +45,16 @@ public interface PerspectiveStation extends PerspectiveElement{
 	 * @return the child, not <code>null</code>
 	 */
 	public PerspectiveDockable getDockable( int index );
+	
+	/**
+	 * Converts the contents of this station into a map of placeholders.
+	 * @return a map of placeholders describing the contents of this station
+	 */
+	public PlaceholderMap getPlaceholders();
+	
+	/**
+	 * Informs this station of the content that it should show
+	 * @param placeholders a map that was earlier created by {@link #getPlaceholders()}
+	 */
+	public void setPlaceholders( PlaceholderMap placeholders );
 }

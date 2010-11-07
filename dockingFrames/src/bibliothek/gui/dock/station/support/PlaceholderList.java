@@ -507,7 +507,7 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 	 * @return the placeholders
 	 */
 	public Filter<Set<Path>> purePlaceholders(){
-		return purePlaceholders();
+		return purePlaceholders;
 	}
 	
 	/**

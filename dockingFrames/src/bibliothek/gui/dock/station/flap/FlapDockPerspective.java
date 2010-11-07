@@ -26,8 +26,6 @@
  */
 package bibliothek.gui.dock.station.flap;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import bibliothek.gui.Dockable;
@@ -44,13 +42,23 @@ import bibliothek.util.Path;
 import bibliothek.util.Todo;
 
 /**
- * A representation of a {@link FlapDockStation} in a {@link Perspective}.
+ * A representation of a {@link FlapDockStation} in a {@link Perspective}.<br>
+ * <b>Note:</b> while this perspective allows to set the <code>hold</code> and <code>size</code>
+ * property of a dockable, the final decision of how these properties look like are made
+ * by the  {@link FlapLayoutManager} that is installed on the {@link FlapDockStation} which shows
+ * the real {@link Dockable}s.
  * @author Benjamin Sigg
  */
 public class FlapDockPerspective implements PerspectiveDockable, PerspectiveStation{
+	/** the owner of this dockable */
 	private PerspectiveStation parent;
-	private List<PerspectiveDockable> dockables = new ArrayList<PerspectiveDockable>();
+	
+	/** all the children of this station */
+	private PerspectivePlaceholderList<Item> dockables = new PerspectivePlaceholderList<Item>();
 
+	private boolean defaultHold = false;
+	private int defaultSize = 150;
+	
 	/**
 	 * Updates the content of this perspective by reading the contents of <code>map</code>.
 	 * @param map the placeholders
@@ -58,47 +66,136 @@ public class FlapDockPerspective implements PerspectiveDockable, PerspectiveStat
 	 */
 	@Todo
 	public void read( PlaceholderMap map, final Map<Integer, PerspectiveDockable> children ){
-		PerspectivePlaceholderList.simulatedRead( map, new PlaceholderListItemAdapter<PerspectiveDockable, PlaceholderListItem<PerspectiveDockable>>(){
+		dockables.read( map, new PlaceholderListItemAdapter<PerspectiveDockable, Item>(){
 			@Override
-			public PlaceholderListItem<PerspectiveDockable> convert( ConvertedPlaceholderListItem item ){
+			public Item convert( ConvertedPlaceholderListItem item ){
 				int id = item.getInt( "id" );
 				PerspectiveDockable dockable = children.get( id );
 				if( dockable != null ){
-//					boolean hold = item.getBoolean( "hold" );
-//					int size = item.getInt( "size" );
+					boolean hold = item.getBoolean( "hold" );
+					int size = item.getInt( "size" );
 					
-					dockables.add( dockable );
+					Item element = new Item();
+					element.dockable = dockable;
+					element.hold = hold;
+					element.size = size;
 					dockable.setParent( FlapDockPerspective.this );
-			        
-//			        setHold( dockable, hold );
-//			        setWindowSize( dockable, size );
+					return element;
 				}
 				return null;
 			}
 		});
 	}
 	
-	@Todo
-	public PlaceholderMap toMap( final Map<PerspectiveDockable, Integer> children ){
-		PerspectivePlaceholderList<PerspectiveDockable> list = new PerspectivePlaceholderList<PerspectiveDockable>();
-		for( PerspectiveDockable dockable : dockables ){
-			list.dockables().add( dockable );
+	public void setPlaceholders( PlaceholderMap placeholders ){
+		if( getDockableCount() > 0 ){
+			throw new IllegalStateException( "there are already children present on this station" );
 		}
 		
-		return list.toMap( new PlaceholderListItemAdapter<PerspectiveDockable, PerspectiveDockable>(){
+		dockables = new PerspectivePlaceholderList<Item>( placeholders );	
+	}
+
+	public PlaceholderMap getPlaceholders(){
+		return dockables.toMap();
+	}
+	
+	public PlaceholderMap toMap( final Map<PerspectiveDockable, Integer> children ){
+		return dockables.toMap( new PlaceholderListItemAdapter<PerspectiveDockable, Item>(){
 			@Override
-			public ConvertedPlaceholderListItem convert( int index, PerspectiveDockable dockable ){
+			public ConvertedPlaceholderListItem convert( int index, Item dockable ){
 				ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
 				item.putInt( "id", children.get( dockable.asDockable() ) );
 				item.putInt( "index", index );
-				item.putBoolean( "hold", false ); // TODO
-				item.putInt( "size", 50 ); // TODO
+				item.putBoolean( "hold", dockable.hold );
+				item.putInt( "size", dockable.size );
 				
-//				item.putString( "placeholder", value );
-//				item.setPlaceholder( placeholder );
+				Path placeholder = item.getPlaceholder();
+				if( placeholder != null ){
+					item.putString( "placeholder", placeholder.toString() );
+					item.setPlaceholder( placeholder );
+				}
 				return item;
 			}
 		});
+	}
+	
+	/**
+	 * Gets the default size of the window of newly added {@link Dockable}s.
+	 * @return the default size
+	 */
+	public int getDefaultSize(){
+		return defaultSize;
+	}
+	
+	/**
+	 * Sets the default size of the window of newly added {@link Dockable}s. Changing
+	 * this property has no effect on {@link Dockable}s that were already added to this
+	 * station.
+	 * @param defaultSize the default size, at least 0
+	 */
+	public void setDefaultSize( int defaultSize ){
+		if( defaultSize < 0 ){
+			throw new IllegalArgumentException( "defaultSize must be at least 0: " + defaultSize );
+		}
+		this.defaultSize = defaultSize;
+	}
+	
+	/**
+	 * Tells whether newly added {@link Dockable}s normally remain open even if they loose the
+	 * focus.
+	 * @return <code>true</code> if the elements remain open
+	 */
+	public boolean isDefaultHold(){
+		return defaultHold;
+	}
+	
+	/**
+	 * Sets whether newly added {@link Dockable}s remain open even if they lost the focus.
+	 * @param defaultHold <code>true</code> if the elements should remain open
+	 */
+	public void setDefaultHold( boolean defaultHold ){
+		this.defaultHold = defaultHold;
+	}
+	
+	/**
+	 * Adds a placeholder for <code>dockable</code> and all its children at
+	 * location <code>index</code> to the list of dockables.
+	 * @param index the location of <code>dockable</code>
+	 * @param dockable the element which is stored as placeholder
+	 */
+	public void insertPlaceholder( int index, PerspectiveDockable dockable ){
+		Item item = new Item();
+		item.dockable = dockable;
+		
+		dockables.dockables().add( index, item );
+		dockables.dockables().remove( index );
+	}
+	
+	/**
+	 * Adds a placeholder for <code>dockable</code> and all its children to the end
+	 * of the list of dockables.
+	 * @param dockable the element which is stored as placeholder
+	 */
+	public void addPlaceholder( PerspectiveDockable dockable ){
+		insertPlaceholder( getDockableCount(), dockable );
+	}
+	
+	/**
+	 * Adds <code>dockable</code> at the end of the list of children.
+	 * @param dockable the new element
+	 */
+	public void add( PerspectiveDockable dockable ){
+		add( dockable, defaultHold, defaultSize );
+	}
+	
+	/**
+	 * Adds <code>dockable</code> at the end of the list of children.
+	 * @param dockable the new element
+	 * @param hold whether <code>dockable</code> should remain open even if the focus is lost
+	 * @param size the preferred size of <code>dockable</code>
+	 */
+	public void add( PerspectiveDockable dockable, boolean hold, int size ){
+		insert( getDockableCount(), dockable, hold, size );
 	}
 	
 	/**
@@ -107,11 +204,130 @@ public class FlapDockPerspective implements PerspectiveDockable, PerspectiveStat
 	 * @param dockable the new child, not <code>null</code>, must not have a parent
 	 */
 	public void insert( int index, PerspectiveDockable dockable ){
+		insert( index, dockable, defaultHold, defaultSize );
+	}
+	
+	/**
+	 * Adds <code>dockable</code> to this station.
+	 * @param index the location of <code>dockable</code>
+	 * @param dockable the new element
+	 * @param hold whether <code>dockable</code> should remain open even if the focus is lost
+	 * @param size the preferred size of <code>dockable</code>
+	 */
+	public void insert( int index, PerspectiveDockable dockable, boolean hold, int size ){
+	}
+	
+	public void insert( int index, PerspectiveDockable dockable, boolean hold, int size, boolean temporary ){
 		if( dockable.getParent() != null ){
 			throw new IllegalArgumentException( "dockable already has a parent" );
 		}
-		dockables.add( index, dockable );
+		if( size < 0 ){
+			throw new IllegalArgumentException( "size must be >= 0" );
+		}
+		
+		Item item = new Item();
+		item.dockable = dockable;
+		item.hold = hold;
+		item.size = size;
+		
+		dockables.dockables().add( index, item );
 		dockable.setParent( this );
+	}
+	
+	/**
+	 * Removes the <code>index</code>'th element of this perspective.
+	 * @param index the location of the element to remove
+	 * @return the element that was removed
+	 */
+	public PerspectiveDockable remove( int index ){
+		Item item = dockables.dockables().remove( index );
+		item.dockable.setParent( null );
+		return item.dockable;
+	}
+	
+	/**
+	 * Removes the element <code>dockable</code> from this perspective.
+	 * @param dockable the element to remove
+	 * @return <code>true</code> if <code>dockable</code> was removed, <code>false</code>
+	 * otherwise
+	 */
+	public boolean remove( PerspectiveDockable dockable ){
+		int index = indexOf( dockable );
+		if( index >= 0 ){
+			remove( index );
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Gets the current index of <code>dockable</code>.
+	 * @param dockable some dockable to search
+	 * @return the index or -1 if not found
+	 */
+	public int indexOf( PerspectiveDockable dockable ){
+		int count = 0;
+		for( Item item : dockables.dockables() ){
+			if( item.asDockable() == dockable ){
+				return count;
+			}
+			count++;
+		}
+		return -1;
+	}
+	
+	/**
+	 * Sets whether <code>dockable</code> should stay open even if it lost focus.
+	 * @param dockable the element whose state changes
+	 * @param hold whether to keep <code>dockable</code> open
+	 * @throws IllegalArgumentException if <code>dockable</code> is not known to this
+	 * station
+	 */
+	public void setHold( PerspectiveDockable dockable, boolean hold ){
+		item( dockable ).hold = hold;
+	}
+	
+	/**
+	 * Tells whether <code>dockable</code> should stay open even if it lost focus.
+	 * @param dockable the element whose state is requested
+	 * @return <code>true</code> if <code>dockable</code> should remain open
+	 * @throws IllegalArgumentException if <code>dockable</code> is not known to this
+	 * station
+	 */
+	public boolean isHold( PerspectiveDockable dockable ){
+		return item( dockable ).hold;
+	}
+	
+	/**
+	 * Sets the preferred size of the window that shows <code>dockable</code>.
+	 * @param dockable some child of this station
+	 * @param size the preferred size, at least 0
+	 * @throws IllegalArgumentException if either <code>dockable</code> is not a child
+	 * of this station or if <code>size</code> is less than 0
+	 */
+	public void setSize( PerspectiveDockable dockable, int size ){
+		if( size < 0 ){
+			throw new IllegalArgumentException( "size must be >= 0: " + size );
+		}
+		item( dockable ).size = size;
+	}
+	
+	/**
+	 * Gets the preferred size of the window that shows <code>dockable</code>.
+	 * @param dockable some child of this station
+	 * @return the preferred size
+	 * @throws IllegalArgumentException if <code>dockable</code> is not known to this station
+	 */
+	public int getSize( PerspectiveDockable dockable ){
+		return item( dockable ).size;
+	}
+	
+	private Item item( PerspectiveDockable dockable ){
+		int index = indexOf( dockable );
+		if( index < 0 ){
+			throw new IllegalArgumentException( "not a child of this station: " + dockable );
+		}
+		return dockables.dockables().get( index );
 	}
 	
 	public void setParent( PerspectiveStation parent ){
@@ -139,10 +355,27 @@ public class FlapDockPerspective implements PerspectiveDockable, PerspectiveStat
 	}
 
 	public PerspectiveDockable getDockable( int index ){
-		return dockables.get( index );
+		return dockables.dockables().get( index ).dockable;
 	}
 
 	public int getDockableCount(){
-		return dockables.size();
+		return dockables.dockables().size();
+	}
+	
+	/**
+	 * Represents a single child of this perspective
+	 * @author Benjamin Sigg
+	 */
+	private static class Item implements PlaceholderListItem<PerspectiveDockable>{
+		/** the child */
+		public PerspectiveDockable dockable;
+		/** whether the child is pinned down */
+		public boolean hold;
+		/** the preferred size of the window of the child */
+		public int size;
+		
+		public PerspectiveDockable asDockable(){
+			return dockable;
+		}
 	}
 }

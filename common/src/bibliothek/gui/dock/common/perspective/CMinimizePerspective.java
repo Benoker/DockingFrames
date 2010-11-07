@@ -29,6 +29,7 @@ import bibliothek.gui.dock.common.CMinimizeArea;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.station.flap.FlapDockPerspective;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
 
 /**
  * This {@link PerspectiveStation} represents a {@link CMinimizeArea}.
@@ -79,5 +80,13 @@ public class CMinimizePerspective implements CStationPerspective{
 	
 	public FlapDockPerspective intern(){
 		return delegate;
+	}
+
+	public PlaceholderMap getPlaceholders(){
+		return delegate.getPlaceholders();
+	}
+	
+	public void setPlaceholders( PlaceholderMap placeholders ){
+		delegate.setPlaceholders( placeholders );	
 	}
 }

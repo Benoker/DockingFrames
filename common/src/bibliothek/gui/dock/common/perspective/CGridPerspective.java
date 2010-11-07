@@ -29,6 +29,7 @@ import bibliothek.gui.dock.common.CGridArea;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.station.split.SplitDockPerspective;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
 
 /**
  * A representation of a {@link CGridArea}.
@@ -69,5 +70,13 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 
 	public String getFactoryID(){
 		return delegate.getFactoryID();
+	}
+	
+	public PlaceholderMap getPlaceholders(){
+		return delegate.getPlaceholders();
+	}
+	
+	public void setPlaceholders( PlaceholderMap placeholders ){
+		delegate.setPlaceholders( placeholders );	
 	}
 }

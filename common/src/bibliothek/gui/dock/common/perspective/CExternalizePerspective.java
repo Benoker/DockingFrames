@@ -29,6 +29,7 @@ import bibliothek.gui.dock.common.CExternalizeArea;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.station.screen.ScreenDockPerspective;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.util.Path;
 
 /**
@@ -83,5 +84,13 @@ public class CExternalizePerspective implements CStationPerspective{
 
 	public String getFactoryID(){
 		return delegate.getFactoryID();
+	}
+	
+	public PlaceholderMap getPlaceholders(){
+		return delegate.getPlaceholders();
+	}
+	
+	public void setPlaceholders( PlaceholderMap placeholders ){
+		delegate.setPlaceholders( placeholders );	
 	}
 }

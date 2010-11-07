@@ -102,6 +102,18 @@ public class StackDockPerspective implements PerspectiveDockable, PerspectiveSta
 		selection = children.get( selection );
 	}
 	
+	public void setPlaceholders( PlaceholderMap placeholders ){
+		if( getDockableCount() > 0 ){
+			throw new IllegalStateException( "there are already children on this station" );
+		}
+		
+		dockables = new PerspectivePlaceholderList<PerspectiveDockable>( placeholders );
+	}
+	
+	public PlaceholderMap getPlaceholders(){
+		return dockables.toMap();
+	}
+	
 	/**
 	 * Converts this perspective into a {@link PlaceholderMap}.
 	 * @param children identifiers for the children of this station

@@ -1,12 +1,16 @@
 package bibliothek.gui.dock.station.support;
 
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.util.Path;
 
 /**
- * A {@link PlaceholderList} that works only with {@link PerspectiveElement}s.
+ * A {@link PlaceholderList} that works only with {@link PerspectiveElement}s.<br>
+ * The {@link PlaceholderStrategy} of this list is automatically set during construction
+ * and there is no need for clients to call {@link #bind()} or {@link #unbind()}. 
  * @author Benjamin Sigg
  *
  * @param <P> The kind of object that represents a {@link PerspectiveDockable}
@@ -17,7 +21,15 @@ public class PerspectivePlaceholderList<P extends PlaceholderListItem<Perspectiv
 	 * Creates a new and empty list.
 	 */
 	public PerspectivePlaceholderList(){
-		// nothing
+		init();
+	}
+	
+	/**
+	 * Creates a new list using <code>map</code> to fill in the initial content.
+	 * @param map the map to read
+	 */
+	public PerspectivePlaceholderList( PlaceholderMap map ){
+		this( map, new PerspectivePlaceholderListItemConverter<P>() );
 	}
 	
 	/**
@@ -30,6 +42,37 @@ public class PerspectivePlaceholderList<P extends PlaceholderListItem<Perspectiv
 	 */
 	public PerspectivePlaceholderList( PlaceholderMap map, PlaceholderListItemConverter<PerspectiveDockable,P> converter ){
 		super( map, converter );
+		init();
+	}
+	
+	private void init(){
+		setStrategy( new PlaceholderStrategy() {
+			public void uninstall( DockStation station ){
+				// ignore	
+			}
+			
+			public void removeListener( PlaceholderStrategyListener listener ){
+				// ignore
+			}
+			
+			public boolean isValidPlaceholder( Path placeholder ){
+				return true;
+			}
+			
+			public void install( DockStation station ){
+				// ignore	
+			}
+			
+			public Path getPlaceholderFor( Dockable dockable ){
+				// ignore, never called
+				return null;
+			}
+			
+			public void addListener( PlaceholderStrategyListener listener ){
+				// ignore
+			}
+		});
+		bind();
 	}
 
 	/**
@@ -44,19 +87,29 @@ public class PerspectivePlaceholderList<P extends PlaceholderListItem<Perspectiv
 		list.read( map, converter, true );
 	}
 	
+	/**
+	 * Converts this list into a {@link PlaceholderMap}, any remaining {@link Dockable} or
+	 * {@link DockStation} will be converted into its placeholder using the currently installed
+	 * {@link PlaceholderStrategy}. 
+	 * @return the new map, not <code>null</code>
+	 */
+	public PlaceholderMap toMap(){
+		return toMap( new PerspectivePlaceholderListItemConverter<PlaceholderListItem<PerspectiveDockable>>() );
+	}
+	
 	@Override
 	protected Path getPlaceholder( PerspectiveDockable dockable ){
-		return null;
+		return dockable.getPlaceholder();
 	}
 
 	@Override
 	protected PlaceholderMap getPlaceholders( PerspectiveStation station ){
-		return null;
+		return station.getPlaceholders();
 	}
 
 	@Override
 	protected void setPlaceholders( PerspectiveStation station, PlaceholderMap map ){
-		
+		station.setPlaceholders( map );
 	}
 
 	@Override
