@@ -21,7 +21,7 @@ import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.action.ActionPopupSuppressor;
 import bibliothek.gui.dock.security.SecureDockController;
 import bibliothek.gui.dock.security.SecureSplitDockStation;
-import bibliothek.gui.dock.station.split.SplitDockTree;
+import bibliothek.gui.dock.station.split.DockableSplitDockTree;
 
 /**
  * A panel that can show a list of {@link Demonstration}s. The panel is
@@ -75,7 +75,7 @@ public class MainPanel extends SecureSplitDockStation {
 			index++;
 		}
 		
-		SplitDockTree tree = new SplitDockTree();
+		DockableSplitDockTree tree = new DockableSplitDockTree();
 		tree.root( tree.horizontal( 
 				new DefaultDockable( new JScrollPane( list ), "Demonstrations" ),
 				new DefaultDockable( panel, "Selection" ),

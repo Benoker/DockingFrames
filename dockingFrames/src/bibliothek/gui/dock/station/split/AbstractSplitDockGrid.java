@@ -44,7 +44,6 @@ import bibliothek.gui.dock.SplitDockStation;
  * There is also a possibility to tell the tree, where dividers should be made. 
  * @author Benjamin Sigg
  * @param <D> the kind of object that represents a {@link Dockable}
- * @see #toTree()
  * @see SplitDockStation#dropTree(SplitDockTree)
  */
 public abstract class AbstractSplitDockGrid<D> {
@@ -512,6 +511,7 @@ public abstract class AbstractSplitDockGrid<D> {
 	
 	/**
 	 * Represents a node in the tree which will be built.
+	 * @param <D> the kind of element that represents a {@link Dockable}
 	 * @author Benjamin Sigg
 	 */
 	protected static class Node<D>{

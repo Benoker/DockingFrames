@@ -253,10 +253,10 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
         
         /**
          * Creates a new leaf
-         * @param id the id of a {@link Dockable} or -1
+         * @param dockable the element that is represented by this leaf
          * @param placeholders placeholders associated with this leaf
          * @param placeholderMap placeholder information of a child {@link DockStation}
-         * @param nodeId the unique identifier of this node
+         * @param nodeId the unique identifier of this node, can be -1
          */
         public Leaf( PerspectiveDockable dockable, Path[] placeholders, PlaceholderMap placeholderMap, long nodeId ){
         	super( placeholders, placeholderMap, nodeId );

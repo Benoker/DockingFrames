@@ -117,7 +117,7 @@ public class CPerspective {
 				}
 			}
 			
-			stack.push( new ElementFrame( items.toArray( new PerspectiveElement[ items.size() ] ) ) );
+			stack.addFirst( new ElementFrame( items.toArray( new PerspectiveElement[ items.size() ] ) ) );
 		}
 		
 		public boolean hasNext(){
@@ -141,7 +141,7 @@ public class CPerspective {
 						for( int i = 0; i < children.length; i++ ){
 							children[ i ] = station.getDockable( i );
 						}
-						stack.push( new ElementFrame( children ) );
+						stack.addFirst( new ElementFrame( children ) );
 					}
 					
 					return result;

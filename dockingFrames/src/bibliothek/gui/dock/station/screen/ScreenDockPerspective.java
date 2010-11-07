@@ -98,9 +98,10 @@ public class ScreenDockPerspective implements PerspectiveStation{
 	}
 	
 	/**
-	 * 
-	 * @param children
-	 * @return
+	 * Converts the content of this perspective to a {@link PlaceholderMap} that can be
+	 * stored persistently. 
+	 * @param children unique identifiers for the children of this perspective
+	 * @return the map, not <code>null</code>
 	 */
 	@Todo
 	public PlaceholderMap toMap( final Map<PerspectiveDockable, Integer> children ){
