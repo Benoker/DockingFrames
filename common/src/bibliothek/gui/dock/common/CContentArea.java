@@ -47,6 +47,9 @@ import bibliothek.gui.dock.common.location.CBaseLocation;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.station.CFlapDockStationHandle;
 import bibliothek.gui.dock.common.mode.station.CSplitDockStationHandle;
+import bibliothek.gui.dock.common.perspective.CGridPerspective;
+import bibliothek.gui.dock.common.perspective.CMinimizePerspective;
+import bibliothek.gui.dock.common.perspective.CStationPerspective;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Priority;
@@ -477,6 +480,10 @@ public class CContentArea extends JPanel{
 			access.getOwner().removeResizeRequestListener( handler );
 			access.getLocationManager().getMinimizedMode().remove( modeManagerHandle.getUniqueId() );
 		}
+		
+		public CStationPerspective createPerspective(){
+			return new CMinimizePerspective( getUniqueId() );
+		}
 	}
 
 	/**
@@ -507,6 +514,10 @@ public class CContentArea extends JPanel{
 			CLocationModeManager manager = access.getLocationManager();
 			manager.getNormalMode().remove( modeManagerHandle.asNormalModeArea().getUniqueId() );
 			manager.getMaximizedMode().remove( modeManagerHandle.asMaximziedModeArea().getUniqueId() );
+		}
+		
+		public CStationPerspective createPerspective(){
+			return new CGridPerspective( getUniqueId() );
 		}
 	}
 }

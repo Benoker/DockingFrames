@@ -31,6 +31,7 @@ import java.awt.LayoutManager;
 
 import javax.swing.Icon;
 
+import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.action.CSeparator;
 import bibliothek.util.FrameworkOnly;
@@ -466,5 +467,9 @@ public class DefaultCDockable extends AbstractCDockable{
     @Override
     public DefaultCommonDockable intern() {
     	return (DefaultCommonDockable)super.intern();
+    }
+    
+    public CStation<?> asStation(){
+    	return null;
     }
 }

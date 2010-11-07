@@ -31,13 +31,13 @@ public class ScreenDockStationInspectable implements Inspectable {
 			@Override
 			public boolean update(){
 				try{
-					PlaceholderList<?> list = (PlaceholderList<?>)dockables.get( station );
+					PlaceholderList<?,?,?> list = (PlaceholderList<?,?,?>)dockables.get( station );
 					
 					setName( "ScreenDockStation" );
 					setValue( station );
 					
 					int count = 0;
-					for( PlaceholderList<?>.Item item : list.list() ){
+					for( PlaceholderList<?,?,?>.Item item : list.list() ){
 						put( String.valueOf( count++ ), item );
 					}
 					

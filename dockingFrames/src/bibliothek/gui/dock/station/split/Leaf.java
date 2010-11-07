@@ -39,7 +39,6 @@ import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationChildHandle;
-import bibliothek.gui.dock.station.split.SplitDockTree.Key;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.Path;
@@ -361,7 +360,7 @@ public class Leaf extends VisibleSplitNode{
     }
     
     @Override
-    public void evolve( Key key, boolean checkValidity, Map<Leaf, Dockable> linksToSet ){
+    public void evolve( SplitDockTree<Dockable>.Key key, boolean checkValidity, Map<Leaf, Dockable> linksToSet ){
     	setPlaceholders( key.getTree().getPlaceholders( key ) );
     	setPlaceholderMap( key.getTree().getPlaceholderMap( key ) );
     }

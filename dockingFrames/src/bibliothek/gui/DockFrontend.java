@@ -62,6 +62,7 @@ import bibliothek.gui.dock.event.VetoableDockFrontendListener;
 import bibliothek.gui.dock.frontend.DefaultLayoutChangeStrategy;
 import bibliothek.gui.dock.frontend.DockFrontendInternals;
 import bibliothek.gui.dock.frontend.FrontendEntry;
+import bibliothek.gui.dock.frontend.FrontendPerspectiveFactory;
 import bibliothek.gui.dock.frontend.LayoutChangeStrategy;
 import bibliothek.gui.dock.frontend.MissingDockableStrategy;
 import bibliothek.gui.dock.frontend.Setting;
@@ -75,6 +76,8 @@ import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.layout.DockablePropertyFactory;
 import bibliothek.gui.dock.layout.PredefinedDockSituation;
 import bibliothek.gui.dock.layout.PropertyTransformer;
+import bibliothek.gui.dock.perspective.Perspective;
+import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.security.SecureFlapDockStationFactory;
 import bibliothek.gui.dock.security.SecureScreenDockStationFactory;
 import bibliothek.gui.dock.security.SecureSplitDockStationFactory;
@@ -161,12 +164,12 @@ public class DockFrontend {
     private Map<String, RootInfo> roots = new HashMap<String, RootInfo>();
     
     /** A set of factories needed to store Dockables */
-    private Set<DockFactory<? extends DockElement, ?>> dockFactories =
-        new HashSet<DockFactory<? extends DockElement,?>>();
+    private Set<DockFactory<?,?,?>> dockFactories =
+        new HashSet<DockFactory<?,?,?>>();
     
     /** A set of factories needed to read Dockables that are missing in the cache */
-    private Set<DockFactory<? extends Dockable, ?>> backupDockFactories =
-        new HashSet<DockFactory<? extends Dockable,?>>();
+    private Set<DockFactory<? extends Dockable,?,?>> backupDockFactories =
+        new HashSet<DockFactory<? extends Dockable,?,?>>();
     
     /** A set of factories needed to store additional information about Dockables */
     private Set<AdjacentDockFactory<?>> adjacentDockFactories =
@@ -416,7 +419,7 @@ public class DockFrontend {
      * {@link DockStation DockStations}.
      * @param factory the new factory
      */
-    public void registerFactory( DockFactory<? extends DockElement, ?> factory ){
+    public void registerFactory( DockFactory<?,?,?> factory ){
     	if( factory == null )
     		throw new IllegalArgumentException( "factory must not be null" );
     	
@@ -430,7 +433,7 @@ public class DockFrontend {
      * @param backup if <code>true</code>, then <code>factory</code> is registered
      * as {@link #registerBackupFactory(DockFactory) backup factory} as well.
      */
-    public void registerFactory( DockFactory<? extends Dockable, ?> factory, boolean backup ){
+    public void registerFactory( DockFactory<? extends Dockable,?,?> factory, boolean backup ){
         if( factory == null )
             throw new IllegalArgumentException( "factory must not be null" );
         
@@ -446,7 +449,7 @@ public class DockFrontend {
      * is automatically added to this frontend.
      * @param factory a new factory
      */
-    public void registerBackupFactory( DockFactory<? extends Dockable, ?> factory ){
+    public void registerBackupFactory( DockFactory<? extends Dockable,?,?> factory ){
         if( factory == null )
             throw new IllegalArgumentException( "factory must not be null" );
         
@@ -472,7 +475,7 @@ public class DockFrontend {
      * @param factory the factory to remove
      * @see #unregisterBackupFactory(DockFactory)
      */
-    public void unregisterFactory( DockFactory<? extends DockElement, ?> factory ){
+    public void unregisterFactory( DockFactory<?,?,?> factory ){
         dockFactories.remove( factory );
     }
     
@@ -480,7 +483,7 @@ public class DockFrontend {
      * Removes a backup factory from this frontend.
      * @param factory the factory to remove
      */
-    public void unregisterBackupFactory( DockFactory<? extends DockElement, ?> factory ){
+    public void unregisterBackupFactory( DockFactory<?,?,?> factory ){
         backupDockFactories.remove( factory );
     }
     
@@ -993,6 +996,15 @@ public class DockFrontend {
     }
     
     /**
+     * Gets the {@link Setting} which stores locations and other information under the key <code>name</code>.
+     * @param name a key that was used for calling {@link #save(String)}
+     * @return the setting or <code>null</code> if not found
+     */
+    public Setting getSetting( String name ){
+    	return settings.get( name );
+    }
+    
+    /**
      * Gets the name of the setting which was loaded or saved the last time.
      * @return the name, might be <code>null</code> if no setting was saved yet
      */
@@ -1016,6 +1028,18 @@ public class DockFrontend {
     		save( setting );
     }
 
+    /**
+     * Stores the setting <code>setting</code> with the given name.
+     * @param name the name of the setting
+     * @param setting the new setting, not <code>null</code>
+     */
+    public void setSetting( String name, Setting setting ){
+    	if( setting == null ){
+    		throw new IllegalArgumentException( "setting is null" );
+    	}
+    	settings.put( name, setting );
+    }
+    
     /**
      * Tells whether <code>dockable</code> is hidden or not.
      * @param dockable the element whose state is asked
@@ -1326,7 +1350,7 @@ public class DockFrontend {
     		throw new IllegalArgumentException( "name must not be null" );
     	
     	Setting setting = getSetting( true );
-    	settings.put( name, setting );
+    	setSetting( name, setting );
         currentSetting = name;
         fireSaved( name );
     }
@@ -1367,8 +1391,11 @@ public class DockFrontend {
         DockSituation situation = layoutChangeStrategy.createSituation( new Internals(), entry );
         
         for( RootInfo info : roots.values() ){
-            DockLayoutComposition layout = situation.convert( info.getStation() );
-            setting.putRoot( info.getName(), layout );
+        	DockStation station = info.getStation();
+        	if( station.asDockable() == null || station.asDockable().getDockParent() == null ){
+	            DockLayoutComposition layout = situation.convert( station );
+	            setting.putRoot( info.getName(), layout );
+        	}
         }
         
         for( DockInfo info : dockables.values() ){
@@ -1437,6 +1464,20 @@ public class DockFrontend {
     }
     
     /**
+     * Creates and returns a new {@link Perspective} which can be used to read, write and convert
+     * {@link PerspectiveElement}s. The new perspective will be set up with the factories known to this
+     * frontend and with the entries from <code>elements</code>.<br>
+     * Please note that the new perspective does not contain any information about the current layout of
+     * this {@link DockFrontend}.
+     * @param entry Whether the perspective should act as if loading or storing an "normal setting".
+     * @param factory a factory that will be used to translate {@link DockElement}s to {@link PerspectiveElement}s
+     * @return the new perspective, not <code>null</code>
+     */
+    public Perspective getPerspective( boolean entry, FrontendPerspectiveFactory factory ){
+    	return layoutChangeStrategy.createPerspective( new Internals(), entry, factory );
+    }
+    
+    /**
      * Tries to fill gaps in the layout information.
      * <ul>
      *  <li>Tries to read empty {@link DockInfo}s which have a layout and a position.</li>
@@ -1480,7 +1521,7 @@ public class DockFrontend {
      * use the newly added factory <code>factory</code>.
      * @param factory the new factory
      */
-    private void fillMissing( DockFactory<?,?> factory ){
+    private void fillMissing( DockFactory<?,?,?> factory ){
         fillMissing();
         
         Setting last = getLastAppliedEntrySetting();
@@ -1517,13 +1558,13 @@ public class DockFrontend {
      * @param factoryId the identifier of the factory, translated for the {@link DockLayoutComposition}
      */
     @SuppressWarnings("unchecked")
-    private void fillMissing( String root, DockLayoutComposition composition, DockFactory<?, ?> factory, String factoryId ){
+    private void fillMissing( String root, DockLayoutComposition composition, DockFactory<?,?,?> factory, String factoryId ){
         DockLayoutInfo info = composition.getLayout();
         if( info.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT ){
             if( info.getDataLayout().getFactoryID().equals( factoryId )){
                 DockableProperty location = info.getLocation();
                 if( location != null ){
-                    DockFactory<DockElement, Object> normalizedFactory = (DockFactory<DockElement, Object>)factory;
+                    DockFactory<DockElement,?,Object> normalizedFactory = (DockFactory<DockElement,?,Object>)factory;
                     if( missingDockable.shouldCreate( normalizedFactory, info.getDataLayout().getData() ) ){
                         DockElement element = normalizedFactory.layout( info.getDataLayout().getData() );
                         if( element != null ){
@@ -2079,11 +2120,11 @@ public class DockFrontend {
 			return adjacentDockFactories.toArray( new AdjacentDockFactory[ adjacentDockFactories.size() ] );
 		}
 
-		public DockFactory<?, ?>[] getBackupDockFactories(){
+		public DockFactory<?,?,?>[] getBackupDockFactories(){
 			return backupDockFactories.toArray( new DockFactory[ backupDockFactories.size() ] );
 		}
 
-		public DockFactory<?, ?>[] getDockFactories(){
+		public DockFactory<?,?,?>[] getDockFactories(){
 			return dockFactories.toArray( new DockFactory[ dockFactories.size() ] );
 		}
 

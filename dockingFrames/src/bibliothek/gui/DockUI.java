@@ -534,7 +534,7 @@ public class DockUI {
      * @param factory a factory used to remove and to add the elements
      * @throws IOException if the factory throws an exception
      */
-    public static <D extends DockStation, L> void updateTheme( D station, DockFactory<D,L> factory ) throws IOException{
+    public static <D extends DockStation, L> void updateTheme( D station, DockFactory<D,?,L> factory ) throws IOException{
         Map<Integer, Dockable> children = new HashMap<Integer, Dockable>();
     	Map<Dockable, Integer> ids = new HashMap<Dockable, Integer>();
     	

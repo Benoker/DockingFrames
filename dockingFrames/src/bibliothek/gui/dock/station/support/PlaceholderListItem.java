@@ -30,11 +30,12 @@ import bibliothek.gui.Dockable;
 /**
  * An item in a {@link PlaceholderList}.
  * @author Benjamin Sigg
+ * @param <D> the representation of a {@link Dockable}, may or may not be a subinterface of {@link Dockable}
  */
-public interface PlaceholderListItem {
+public interface PlaceholderListItem<D> {
 	/**
 	 * Gets the {@link Dockable} that is associated with this item.
 	 * @return the dockable, not <code>null</code>
 	 */
-	public Dockable asDockable();
+	public D asDockable();
 }

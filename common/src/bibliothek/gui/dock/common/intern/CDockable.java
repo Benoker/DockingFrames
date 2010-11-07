@@ -393,6 +393,13 @@ public interface CDockable {
 	public CommonDockable intern();
 	
 	/**
+	 * Gets <code>this</code> or an object representing <code>this</code> as
+	 * {@link CStation}.  
+	 * @return this as station or <code>null</code>
+	 */
+	public CStation<?> asStation();
+	
+	/**
 	 * Sets the {@link CControl} which is responsible for this <code>CDockable</code>. Subclasses
 	 * must call {@link CControlAccess#link(CDockable, CDockableAccess)} to grant
 	 * the <code>CControl</code> access to the internal properties of this

@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2008 Benjamin Sigg
+ * Copyright (C) 2010 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,10 +31,8 @@ import bibliothek.gui.dock.DockFactory;
 /**
  * Representation of a {@link DockElement}
  * @author Benjamin Sigg
- * @param <L> the kind of object that is used by the {@link DockFactory} with unique
- * identifier {@link #getFactoryID()} to store the layout
  */
-public interface PerspectiveElement<L> {
+public interface PerspectiveElement {
 	/**
 	 * Gets the identifier of the {@link DockFactory} that will be able to
 	 * understand the layout information this element generates. 
@@ -46,11 +44,11 @@ public interface PerspectiveElement<L> {
 	 * Returns the representation of <code>this</code> as {@link PerspectiveStation}
 	 * @return either <code>this</code>, a representation of <code>this</code> or <code>null</code>
 	 */
-	public PerspectiveStation<L> asStation();
+	public PerspectiveStation asStation();
 	
 	/**
 	 * Returns the representation of <code>this</code> as {@link PerspectiveDockable}.
 	 * @return either <code>this</code>, a representation of <code>this</code> or <code>null</code>
 	 */
-	public PerspectiveDockable<L> asDockable();
+	public PerspectiveDockable asDockable();
 }

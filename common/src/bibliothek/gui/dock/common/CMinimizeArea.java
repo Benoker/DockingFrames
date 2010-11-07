@@ -37,6 +37,8 @@ import bibliothek.gui.dock.common.intern.station.FlapResizeRequestHandler;
 import bibliothek.gui.dock.common.location.CMinimizeAreaLocation;
 import bibliothek.gui.dock.common.mode.CMinimizedModeArea;
 import bibliothek.gui.dock.common.mode.station.CFlapDockStationHandle;
+import bibliothek.gui.dock.common.perspective.CMinimizePerspective;
+import bibliothek.gui.dock.common.perspective.CStationPerspective;
 
 /**
  * An area where {@link CDockable}s can be stored in their minimized state.
@@ -95,6 +97,10 @@ public class CMinimizeArea extends JPanel implements CStation<FlapDockStation>{
     
     public FlapDockStation getStation(){
         return station;
+    }
+    
+    public CStationPerspective createPerspective(){
+    	return new CMinimizePerspective( getUniqueId() );
     }
     
     public CLocation getStationLocation() {

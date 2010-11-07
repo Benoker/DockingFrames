@@ -31,13 +31,13 @@ public class StackDockStationInspectable implements Inspectable {
 			@Override
 			public boolean update(){
 				try{
-					PlaceholderList<?> list = (PlaceholderList<?>)handles.get( station );
+					PlaceholderList<?,?,?> list = (PlaceholderList<?,?,?>)handles.get( station );
 					
 					setName( "StackDockStation" );
 					setValue( station );
 					
 					int count = 0;
-					for( PlaceholderList<?>.Item item : list.list() ){
+					for( PlaceholderList<?,?,?>.Item item : list.list() ){
 						put( String.valueOf( count++ ), item );
 					}
 					

@@ -84,13 +84,13 @@ public interface DockFrontendInternals {
      * Gets a list of all {@link DockFactory}s that were added using {@link DockFrontend#registerFactory(DockFactory)}.
      * @return all the factories
      */
-    public DockFactory<?,?>[] getDockFactories();
+    public DockFactory<?,?,?>[] getDockFactories();
     
     /**
      * Gets a list of all {@link DockFactory}s that were added using {@link DockFrontend#registerBackupFactory(DockFactory)}.
      * @return all the factories
      */
-    public DockFactory<?,?>[] getBackupDockFactories();
+    public DockFactory<?,?,?>[] getBackupDockFactories();
     
     /**
      * Gets a list of all {@link AdjacentDockFactory}s that were added using {@link DockFrontend#registerAdjacentFactory(AdjacentDockFactory)}.

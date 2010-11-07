@@ -38,13 +38,15 @@ import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
+import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
-import bibliothek.gui.dock.station.support.PlaceholderList;
+import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderListItem;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.Path;
+import bibliothek.util.Todo;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XAttribute;
 import bibliothek.util.xml.XElement;
@@ -53,7 +55,7 @@ import bibliothek.util.xml.XElement;
  * A {@link DockFactory} which can handle {@link FlapDockStation}s.
  * @author Benjamin Sigg
  */
-public class FlapDockStationFactory implements DockFactory<FlapDockStation, FlapDockStationLayout> {
+public class FlapDockStationFactory implements DockFactory<FlapDockStation, FlapDockPerspective, FlapDockStationLayout> {
 	/** The default-id of this factory */
     public static final String ID = "flap dock";
     
@@ -71,9 +73,7 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
         station.setAutoDirection( layout.isAutoDirection() );
     }
     
-    public void setLayout( FlapDockStation station,
-            FlapDockStationLayout layout, Map<Integer, Dockable> children ) {
-     
+    public void setLayout( FlapDockStation station, FlapDockStationLayout layout, Map<Integer, Dockable> children ) {
     	DockController controller = station.getController();
     	try{
     		if( controller != null )
@@ -113,6 +113,25 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
     	}
     }
     
+    public FlapDockPerspective layoutPerspective( FlapDockStationLayout layout, Map<Integer, PerspectiveDockable> children ){
+    	FlapDockPerspective perspective = new FlapDockPerspective();
+    	layoutPerspective( perspective, layout, children );
+    	return perspective;
+    }
+    
+    public void layoutPerspective( FlapDockPerspective perspective, FlapDockStationLayout layout, Map<Integer, PerspectiveDockable> children ){
+	    perspective.read( layout.getPlaceholders(), children );	
+    }
+    
+    @Todo
+    public FlapDockStationLayout getPerspectiveLayout( FlapDockPerspective element, Map<PerspectiveDockable, Integer> children ){
+    	boolean autoDirection = true;
+    	Direction direction = Direction.SOUTH;
+    	PlaceholderMap placeholders = element.toMap( children );
+    	
+	    return new FlapDockStationLayout( autoDirection, direction, placeholders );
+    }
+    
     public void estimateLocations( FlapDockStationLayout layout, final LocationEstimationMap children ){
     	if( layout instanceof RetroFlapDockStationLayout ){
     		RetroFlapDockStationLayout retroLayout = (RetroFlapDockStationLayout)layout;
@@ -129,9 +148,9 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
 	    	}
     	}
     	else{
-    		PlaceholderList.simulatedRead( layout.getPlaceholders(), new PlaceholderListItemAdapter<PlaceholderListItem>() {
+    		DockablePlaceholderList.simulatedRead( layout.getPlaceholders(), new PlaceholderListItemAdapter<Dockable, PlaceholderListItem<Dockable>>() {
     			@Override
-    			public PlaceholderListItem convert( ConvertedPlaceholderListItem item ){
+    			public PlaceholderListItem<Dockable> convert( ConvertedPlaceholderListItem item ){
     				int id = item.getInt( "id" );
     				int index = item.getInt( "index" );
     				boolean hold = item.getBoolean( "hold" );
@@ -168,9 +187,7 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
         return station;
     }
 
-    public void write( FlapDockStationLayout layout, DataOutputStream out )
-    throws IOException {
-
+    public void write( FlapDockStationLayout layout, DataOutputStream out ) throws IOException {
     	if( layout instanceof RetroFlapDockStationLayout ){
     		RetroFlapDockStationLayout retroLayout = (RetroFlapDockStationLayout)layout;
     		Version.write( out, Version.VERSION_1_0_4 );

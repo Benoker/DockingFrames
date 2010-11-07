@@ -25,10 +25,14 @@
  */
 package bibliothek.gui.dock.common;
 
+import javax.swing.KeyStroke;
+
 import bibliothek.extension.gui.dock.preference.PreferenceModel;
 import bibliothek.extension.gui.dock.preference.PreferenceTreeModel;
 import bibliothek.extension.gui.dock.preference.model.BubbleThemePreferenceModel;
 import bibliothek.extension.gui.dock.preference.model.EclipseThemePreferenceModel;
+import bibliothek.extension.gui.dock.theme.BubbleTheme;
+import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.common.preference.CKeyStrokePreferenceModel;
@@ -77,5 +81,65 @@ public class CPreferenceModel extends PreferenceTreeModel{
         put( new Path( "layout.EclipseTheme" ),
                 DockUI.getDefaultDockUI().getString( "theme.eclipse" ),
                 new EclipseThemePreferenceModel( controller.getProperties() ));
+    }
+    
+    /**
+     * Grants access to the preferences concerning the global {@link KeyStroke}s.
+     * @return the model, not <code>null</code>
+     * @throws IllegalStateException if the model was removed or replaced by the client
+     */
+    public CKeyStrokePreferenceModel getKeyStrokePreferences(){
+    	PreferenceModel model = getModel( new Path( "shortcuts" ) );
+    	if( model instanceof CKeyStrokePreferenceModel ){
+    		return (CKeyStrokePreferenceModel)model;
+    	}
+    	else{
+    		throw new IllegalStateException( "this model has been removed" );
+    	}
+    }
+    
+    /**
+     * Grants access to the preferences concerning layout options like "where are the tabs placed?".
+     * @return the model, not <code>null</code>
+     * @throws IllegalStateException if the model was removed or replaced by the client
+     */
+    public CLayoutPreferenceModel getLayoutPreferences(){
+    	PreferenceModel model = getModel( new Path( "layout" ) );
+    	if( model instanceof CLayoutPreferenceModel ){
+    		return (CLayoutPreferenceModel)model;
+    	}
+    	else{
+    		throw new IllegalStateException( "this model has been removed" );
+    	}
+    }
+    
+    /**
+     * Grants access to the preferences concerning the {@link BubbleTheme}.
+     * @return the model, not <code>null</code>
+     * @throws IllegalStateException if the model was removed or replaced by the client
+     */
+    public BubbleThemePreferenceModel getBubbleThemePreferences(){
+    	PreferenceModel model = getModel( new Path( "layout.BubbleTheme" ) );
+    	if( model instanceof BubbleThemePreferenceModel ){
+    		return (BubbleThemePreferenceModel)model;
+    	}
+    	else{
+    		throw new IllegalStateException( "this model has been removed" );
+    	}
+    }
+    
+    /**
+     * Grants access to the preferences concerning the {@link EclipseTheme}.
+     * @return the model, not <code>null</code>
+     * @throws IllegalStateException if the model was removed or replaced by the client
+     */
+    public EclipseThemePreferenceModel getEclipseThemePreferences(){
+    	PreferenceModel model = getModel( new Path( "layout.EclipseTheme" ) );
+    	if( model instanceof EclipseThemePreferenceModel ){
+    		return (EclipseThemePreferenceModel)model;
+    	}
+    	else{
+    		throw new IllegalStateException( "this model has been removed" );
+    	}
     }
 }

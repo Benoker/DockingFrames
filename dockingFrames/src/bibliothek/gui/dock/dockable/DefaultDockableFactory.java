@@ -35,6 +35,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
+import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
@@ -46,7 +47,7 @@ import bibliothek.util.xml.XElement;
  * DefaultDockable.
  * @author Benjamin Sigg
  */
-public class DefaultDockableFactory implements DockFactory<DefaultDockable, Object> {
+public class DefaultDockableFactory implements DockFactory<DefaultDockable, DefaultDockablePerspective, Object> {
     /** The unique id of this factory */
     public static final String ID = "DefaultDockableFactory";
     
@@ -96,6 +97,18 @@ public class DefaultDockableFactory implements DockFactory<DefaultDockable, Obje
     public DefaultDockable layout( Object layout ) {
         return new DefaultDockable();
     }
+    
+    public DefaultDockablePerspective layoutPerspective( Object layout, Map<Integer, PerspectiveDockable> children ){
+    	return new DefaultDockablePerspective();
+    }
+    
+    public void layoutPerspective( DefaultDockablePerspective perspective, Object layout, Map<Integer, PerspectiveDockable> children ){
+	    // nothing to do	
+    }
+    
+    public Object getPerspectiveLayout( DefaultDockablePerspective element, Map<PerspectiveDockable, Integer> children ){
+    	return new DefaultDockable();
+    }
 
     public Object read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException {
         Version version = Version.read( in );
@@ -108,10 +121,8 @@ public class DefaultDockableFactory implements DockFactory<DefaultDockable, Obje
     }
 
 
-    public void write( Object layout, DataOutputStream out )
-            throws IOException {
+    public void write( Object layout, DataOutputStream out ) throws IOException {
         Version.write( out, Version.VERSION_1_0_4 );
-        
         // nothing to do
     }
 

@@ -25,12 +25,17 @@
  */
 package bibliothek.extension.gui.dock.preference.model;
 
+import javax.swing.KeyStroke;
+
 import bibliothek.extension.gui.dock.preference.DefaultPreferenceModel;
 import bibliothek.extension.gui.dock.preference.preferences.KeyStrokeHidePreference;
 import bibliothek.extension.gui.dock.preference.preferences.KeyStrokeInitSelectorPreference;
 import bibliothek.extension.gui.dock.preference.preferences.KeyStrokeMaximizePreference;
 import bibliothek.extension.gui.dock.preference.preferences.ModifierMaskNoCombinationPreference;
 import bibliothek.extension.gui.dock.preference.preferences.ModifierMaskScreenOnlyPreference;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.control.ModifierMask;
 import bibliothek.gui.dock.util.DockProperties;
 
 /**
@@ -38,6 +43,12 @@ import bibliothek.gui.dock.util.DockProperties;
  * @author Benjamin Sigg
  */
 public class KeyStrokePreferenceModel extends DefaultPreferenceModel{
+	private KeyStrokeInitSelectorPreference initSelector;
+	private KeyStrokeMaximizePreference maximize;
+	private KeyStrokeHidePreference hide;
+	private ModifierMaskNoCombinationPreference maskNoCombination;
+	private ModifierMaskScreenOnlyPreference maskScreenOnly;
+	
     /**
      * Creates a new model.
      * @param properties the properties to read and write from
@@ -46,10 +57,56 @@ public class KeyStrokePreferenceModel extends DefaultPreferenceModel{
         if( properties == null )
             throw new IllegalArgumentException( "properties must not be null" );
         
-        add( new KeyStrokeInitSelectorPreference( properties ));
-        add( new KeyStrokeMaximizePreference( properties ));
-        add( new KeyStrokeHidePreference( properties ));
-        add( new ModifierMaskNoCombinationPreference( properties ));
-        add( new ModifierMaskScreenOnlyPreference( properties ));
+        add( initSelector = new KeyStrokeInitSelectorPreference( properties ));
+        add( maximize = new KeyStrokeMaximizePreference( properties ));
+        add( hide = new KeyStrokeHidePreference( properties ));
+        add( maskNoCombination = new ModifierMaskNoCombinationPreference( properties ));
+        add( maskScreenOnly = new ModifierMaskScreenOnlyPreference( properties ));
     }
+    
+
+    /**
+     * Gets access to the preference that represents the {@link KeyStroke} which opens the 
+     * selection popup.
+     * @return the preference, not <code>null</code>
+     */
+    public KeyStrokeInitSelectorPreference getInitSelector(){
+		return initSelector;
+	}
+    
+    /**
+     * Gets access to the preference that represents the {@link ModifierMask} that ensures
+     * that {@link Dockable}s are not merged during drag and drop. 
+     * @return the preference, not <code>null</code>
+     */
+    public ModifierMaskNoCombinationPreference getMaskNoCombination(){
+		return maskNoCombination;
+	}
+    
+    /**
+     * Gets access to the preference that represents the {@link ModifierMask} which ensures
+     * that {@link Dockable}s are dropped onto a {@link ScreenDockStation} during drag and drop.
+     * @return the preference, not <code>null</code>
+     */
+    public ModifierMaskScreenOnlyPreference getMaskScreenOnly(){
+		return maskScreenOnly;
+	}
+    
+    /**
+     * Gets access to the preference that represents the {@link KeyStroke} which lets 
+     * maximize a {@link Dockable}.
+     * @return the preference, not <code>null</code>
+     */
+    public KeyStrokeMaximizePreference getMaximize(){
+		return maximize;
+	}
+    
+    /**
+     * Gets access to the preference that represents the {@link KeyStroke} which closes
+     * a {@link Dockable}. 
+     * @return the preference, not <code>null</code>
+     */
+    public KeyStrokeHidePreference getHide(){
+		return hide;
+	}
 }

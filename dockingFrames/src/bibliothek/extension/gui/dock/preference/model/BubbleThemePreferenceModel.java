@@ -28,6 +28,7 @@ package bibliothek.extension.gui.dock.preference.model;
 import bibliothek.extension.gui.dock.preference.DefaultPreferenceModel;
 import bibliothek.extension.gui.dock.preference.preferences.BubbleColorSchemePreference;
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
+import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.util.DockProperties;
 
 /**
@@ -35,11 +36,22 @@ import bibliothek.gui.dock.util.DockProperties;
  * @author Benjamin Sigg
  */
 public class BubbleThemePreferenceModel extends DefaultPreferenceModel{
+	private BubbleColorSchemePreference colorScheme;
+	
 	/**
 	 * Creates a new model
 	 * @param properties the properties to read to or write from
 	 */
 	public BubbleThemePreferenceModel( DockProperties properties ){
-		add( new BubbleColorSchemePreference( properties ) );
+		add( colorScheme = new BubbleColorSchemePreference( properties ) );
+	}
+	
+	/**
+     * Gets access to the preference that represents the {@link ColorScheme} that is
+     * used by a {@link BubbleTheme}.
+     * @return the preference, not <code>null</code>
+     */
+	public BubbleColorSchemePreference getColorScheme(){
+		return colorScheme;
 	}
 }

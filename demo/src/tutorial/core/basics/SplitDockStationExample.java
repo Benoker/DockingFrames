@@ -11,9 +11,9 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.control.SingleParentRemover;
+import bibliothek.gui.dock.station.split.DockableSplitDockTree;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
 import bibliothek.gui.dock.station.split.SplitDockProperty;
-import bibliothek.gui.dock.station.split.SplitDockTree;
 import bibliothek.gui.dock.station.stack.StackDockProperty;
 
 @Tutorial(title="SplitDockStation", id="SplitDockStation")
@@ -182,13 +182,13 @@ public class SplitDockStationExample {
 		 *
 		 * With the help of a SplitDockTree we can build up a tree and tell "station"
 		 * to copy its layout from it. */
-		SplitDockTree tree = new SplitDockTree();
+		DockableSplitDockTree tree = new DockableSplitDockTree();
 		
 		/* A SplitDockTree is built from bottom to top. We start by creating the group
 		 * of "red", "green" and "blue". As you see there is a method that does exactly
 		 * what we need to have, it even sets the selected Dockable.
 		 * The method returns a key, this key represents the leaf we just created. */
-		SplitDockTree.Key group = tree.put( new Dockable[]{ red, green, blue }, green );
+		DockableSplitDockTree.Key group = tree.put( new Dockable[]{ red, green, blue }, green );
 		
 		/* We now add "cyan" and "magenta", which are neighbors, at the same time. Calling
 		 * "tree.horizontal( tree.put( cyan ), tree.put( magenta ), 1.0/3.0" would have the
@@ -196,18 +196,18 @@ public class SplitDockStationExample {
 		 * The third parameter "1.0/3.0" tells the tree that "cyan" has the size "1/3 w" and
 		 * "magenta" has the size "2/3 w", where "w" is the width in pixel that will be
 		 * assigned to the node "bottomRight".  */
-		SplitDockTree.Key bottomRight = tree.horizontal( cyan, magenta, 1.0/3.0 );
+		DockableSplitDockTree.Key bottomRight = tree.horizontal( cyan, magenta, 1.0/3.0 );
 		
 		/* We create a leaf for "yellow" */
-		SplitDockTree.Key keyYellow = tree.put( yellow );
+		DockableSplitDockTree.Key keyYellow = tree.put( yellow );
 		
 		/* The "bottomRight" Dockables, cyan and magenta, are a neighbor to "yellow" which is
 		 * at the top right. So we need to combine them vertically. */
-		SplitDockTree.Key right = tree.vertical( keyYellow, bottomRight, 0.3 );
+		DockableSplitDockTree.Key right = tree.vertical( keyYellow, bottomRight, 0.3 );
 		
 		/* At last we have the left and the right side of our layout. We now bring them
 		 * together. */
-		SplitDockTree.Key root = tree.horizontal( group, right, 0.4 );
+		DockableSplitDockTree.Key root = tree.horizontal( group, right, 0.4 );
 		
 		/* We built up the tree and are now telling "tree" which node is the root */
 		tree.root( root );

@@ -41,7 +41,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  * @author Benjamin Sigg
  *
  */
-public class StationChildHandle implements PlaceholderListItem{
+public class StationChildHandle implements PlaceholderListItem<Dockable>{
 	/** the station using this handler */
 	private DockStation station;
 	

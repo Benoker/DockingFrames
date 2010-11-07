@@ -32,7 +32,6 @@ import java.util.Map;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
-import bibliothek.gui.dock.station.split.SplitDockTree.Key;
 
 /**
  * The root of the tree that represents the internal structure of a 
@@ -195,7 +194,7 @@ public class Root extends VisibleSplitNode{
     }
     
     @Override
-    public void evolve( Key key, boolean checkValidity, Map<Leaf, Dockable> linksToSet ){
+    public void evolve( SplitDockTree<Dockable>.Key key, boolean checkValidity, Map<Leaf, Dockable> linksToSet ){
     	setChild( create( key, checkValidity, linksToSet ) );
     }
     

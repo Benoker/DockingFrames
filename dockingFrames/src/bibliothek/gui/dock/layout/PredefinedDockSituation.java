@@ -43,6 +43,9 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.dock.perspective.PerspectiveDockable;
+import bibliothek.gui.dock.perspective.PerspectiveElement;
+import bibliothek.gui.dock.perspective.PredefinedPerspective;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.util.Version;
@@ -67,10 +70,40 @@ public class PredefinedDockSituation extends DockSituation {
     private static final String UNKNOWN = "delegate_";
 
     /** backup factories for elements that should be in the cache, but are missing */
-    private Map<String, DockFactory<? extends DockElement, BackupFactoryData<?>>> backups =
-        new HashMap<String, DockFactory<? extends DockElement, BackupFactoryData<?>>>();
+    private Map<String, DockFactory<? extends DockElement,?,BackupFactoryData<?>>> backups =
+        new HashMap<String, DockFactory<? extends DockElement,?,BackupFactoryData<?>>>();
 
     private final PreloadFactory factory = new PreloadFactory();
+    
+    /**
+     * Creates a new {@link PredefinedPerspective}. This perspective will write the layout in
+     * such a way that a {@link PredefinedDockSituation} can read it again.<br>
+     * Please note that clients need to register {@link DockElement}s using {@link PredefinedPerspective#put(String, PerspectiveElement)}
+     * before the perspective can be used. The {@link DockElement}s registered to <code>this</code> by using {@link #put(String, DockElement)} 
+     * are ignored by the perspective.  
+     */
+    @Override
+    public PredefinedPerspective createPerspective(){
+	    return new PredefinedPerspective(){
+	    	private PreloadFactory preload;
+	    	
+	    	{
+	    		preload = new PreloadFactory(this);
+	    	}
+	    	
+			protected String getID( PerspectiveElement element ){
+				return PredefinedDockSituation.this.getID( element, this );
+			}
+			
+			protected DockFactory<?, ?, ?> getFactory( String id ){
+				DockFactory<?, ?, ?> factory = PredefinedDockSituation.this.getFactory( id );
+				if( factory == PredefinedDockSituation.this.factory ){
+					return preload;
+				}
+				return factory;
+			}
+		};
+    }
     
     /**
      * Adds a backup factory to this situation. A backup factory is used when
@@ -83,7 +116,7 @@ public class PredefinedDockSituation extends DockSituation {
      * as parameter.
      * @param factory a backup factory
      */
-    public void addBackup( DockFactory<? extends DockElement, BackupFactoryData<?>> factory ){
+    public void addBackup( DockFactory<? extends DockElement,?,BackupFactoryData<?>> factory ){
         backups.put( UNKNOWN + factory.getID(), factory );
     }
 
@@ -139,6 +172,30 @@ public class PredefinedDockSituation extends DockSituation {
      */
     protected boolean shouldLayout( DockElement element ){
         return true;
+    }
+
+    /**
+     * Tells whether the layout of <code>element</code> itself should be stored
+     * or loaded, that will not prevent the <code>element</code> from showing
+     * up but from changing its content. The default implementation uses the maps
+     * of <code>perspective</code> and this {@link DockSituation} to convert <code>element</code>
+     * into a preset {@link DockElement} and calls {@link #shouldLayout(DockElement)}. If the
+     * element is not found, <code>true</code> is returned.
+     * @param element the element whose contents might or might not be stored
+     * or loaded
+     * @param perspective the perspective for which the question has to be answered
+     * @return <code>true</code> if the contents should be handled, <code>false</code>
+     * if they should be discarded
+     */
+    protected boolean shouldLayout( PerspectiveElement element, PredefinedPerspective perspective ){
+    	String key = perspective.get( element );
+    	if( key != null ){
+    		DockElement dock = stringToElement.get( key );
+    		if( dock != null ){
+    			return shouldLayout( dock );
+    		}
+    	}
+    	return true;
     }
     
     @Override
@@ -352,11 +409,11 @@ public class PredefinedDockSituation extends DockSituation {
             DataInputStream in = new DataInputStream( new ByteArrayInputStream( bytes ));
             String factoryId = in.readUTF();
 
-            DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
+            DockFactory<DockElement,?,Object> factory = (DockFactory<DockElement,?,Object>)getFactory( factoryId );
             DockLayoutInfo info = null;
             
             if( factory == null ){
-                DockFactory<?, BackupFactoryData<?>> backup = getBackup( factoryId );
+                DockFactory<?,?,BackupFactoryData<?>> backup = getBackup( factoryId );
                 if( backup != null ){
                     BackupFactoryData<Object> data = (BackupFactoryData<Object>)backup.read( in, getPlaceholderStrategy() );
                     if( data != null && data.getData() != null ){
@@ -393,9 +450,9 @@ public class PredefinedDockSituation extends DockSituation {
 
         Object delegate = null;
 
-        DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
+        DockFactory<DockElement,?,Object> factory = (DockFactory<DockElement,?,Object>)getFactory( factoryId );
         if( factory == null ){
-            DockFactory<?, BackupFactoryData<?>> backup = getBackup( factoryId );
+            DockFactory<?,?,BackupFactoryData<?>> backup = getBackup( factoryId );
             if( backup != null ){
                 BackupFactoryData<Object> data = (BackupFactoryData<Object>)backup.read( xdelegate, getPlaceholderStrategy() );
                 if( data != null )
@@ -412,6 +469,20 @@ public class PredefinedDockSituation extends DockSituation {
         
         return new DockLayoutInfo( new DockLayout<Object>( factoryId, delegate ) );
     }
+    
+    /**
+     * Gets the identifier that matches <code>element</code> which is part of <code>perspective</code>.
+     * @param element some element whose identifier is searched
+     * @param perspective the owner of <code>element</code>
+     * @return the identifier
+     */
+    protected String getID( PerspectiveElement element, PredefinedPerspective perspective ){
+    	String key = perspective.get( element );
+        if( key == null )
+            return UNKNOWN + super.getID( element );
+        else
+            return KNOWN;
+    }
 
     @Override
     public String getID( DockElement dockable ){
@@ -423,7 +494,7 @@ public class PredefinedDockSituation extends DockSituation {
     }
 
     @Override
-    protected String getID( DockFactory<?, ?> factory ) {
+    protected String getID( DockFactory<?,?,?> factory ) {
         if( factory == this.factory )
             return KNOWN;
         else
@@ -449,7 +520,7 @@ public class PredefinedDockSituation extends DockSituation {
     }
 
     @Override
-    protected DockFactory<? extends DockElement,?> getFactory( String id ){
+    public DockFactory<? extends DockElement,?,?> getFactory( String id ){
         if( KNOWN.equals( id ))
             return factory;
         else
@@ -461,7 +532,7 @@ public class PredefinedDockSituation extends DockSituation {
      * @param id the name of the factory
      * @return the factory or <code>null</code>
      */
-    protected DockFactory<? extends DockElement, BackupFactoryData<?>> getBackup( String id ){
+    protected DockFactory<? extends DockElement,?,BackupFactoryData<?>> getBackup( String id ){
         return backups.get( id );
     }
 
@@ -509,7 +580,24 @@ public class PredefinedDockSituation extends DockSituation {
      * which was predefined in {@link PredefinedDockSituation}.
      * @author Benjamin Sigg
      */
-    private class PreloadFactory implements DockFactory<DockElement, PreloadedLayout>{
+    private class PreloadFactory implements DockFactory<DockElement,PerspectiveElement,PreloadedLayout>{
+    	private PredefinedPerspective perspective;
+    	
+    	/**
+    	 * Creates a new factory
+    	 */
+    	public PreloadFactory(){
+    		// nothing
+    	}
+    	
+    	/**
+    	 * Creates a new factory
+    	 * @param perspective the perspective whose contents should be used for handling {@link PerspectiveElement}
+    	 */
+    	public PreloadFactory( PredefinedPerspective perspective ){
+    		this.perspective = perspective;
+    	}
+    	
         public String getID() {
             return KNOWN;
         }
@@ -519,7 +607,7 @@ public class PredefinedDockSituation extends DockSituation {
             DockLayoutInfo delegate = layout.getDelegate();
             if( delegate.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT ){
                 String factoryId = delegate.getDataLayout().getFactoryID();
-                DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
+                DockFactory<DockElement,?,Object> factory = (DockFactory<DockElement,?,Object>)getFactory( factoryId );
                 if( factory != null ){
                     factory.estimateLocations( delegate.getDataLayout().getData(), children );
                 }
@@ -530,7 +618,7 @@ public class PredefinedDockSituation extends DockSituation {
         public PreloadedLayout getLayout( DockElement element, Map<Dockable, Integer> children ) {
             if( shouldLayout( element )){
                 String factoryId = UNKNOWN + PredefinedDockSituation.super.getID( element );
-                DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
+                DockFactory<DockElement,?,Object> factory = (DockFactory<DockElement,?,Object>)getFactory( factoryId );
                 if( factory == null )
                     throw new IllegalStateException( "Missing factory: " + factoryId );
 
@@ -544,13 +632,11 @@ public class PredefinedDockSituation extends DockSituation {
         }
 
         @SuppressWarnings("unchecked")
-        public void setLayout( DockElement element, PreloadedLayout layout,
-                Map<Integer, Dockable> children ) {
-
+        public void setLayout( DockElement element, PreloadedLayout layout, Map<Integer, Dockable> children ) {
             DockLayoutInfo delegate = layout.getDelegate();
             if( delegate.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT && shouldLayout( element )){
                 String factoryId = delegate.getDataLayout().getFactoryID();
-                DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
+                DockFactory<DockElement,?,Object> factory = (DockFactory<DockElement,?,Object>)getFactory( factoryId );
                 if( factory != null ){
                 	DockController controller = element.getController();
                 	try{
@@ -572,7 +658,7 @@ public class PredefinedDockSituation extends DockSituation {
             DockLayoutInfo delegate = layout.getDelegate();
             if( delegate.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT && shouldLayout( element )){
             	String factoryId = delegate.getDataLayout().getFactoryID();
-                DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
+                DockFactory<DockElement,?,Object> factory = (DockFactory<DockElement,?,Object>)getFactory( factoryId );
                 if( factory != null ){
                 	DockController controller = element.getController();
                 	try{
@@ -645,6 +731,67 @@ public class PredefinedDockSituation extends DockSituation {
             setLayout( element, layout );
             return element;
         }
+        
+        @SuppressWarnings("unchecked")
+		public PerspectiveElement layoutPerspective( PreloadedLayout layout, Map<Integer, PerspectiveDockable> children ){
+        	if( perspective == null ){
+        		throw new IllegalStateException( "the perspective of this factory is not set, meaning this factory cannot be used handling perspective dependent tasks" );
+        	}
+
+        	DockLayoutInfo delegate = layout.getDelegate();
+            boolean isLayout = delegate.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT;
+            boolean isNull =  delegate.getKind() == DockLayoutInfo.Data.NULL;
+
+            if( !isLayout && !isNull ){
+                return null;
+            }
+            
+            PerspectiveElement element = perspective.get( layout.getPreload() );
+            if( element == null && isLayout ){
+                String factoryId = delegate.getDataLayout().getFactoryID();
+                DockFactory factory = getBackup( factoryId );
+                if( factory != null ){
+                	return factory.layoutPerspective(new BackupFactoryData<Object>( layout.getPreload(), delegate.getDataLayout().getData()), children );
+                }
+                return null;
+            }
+
+            layoutPerspective( element, layout, children );
+            return element;
+        }
+        
+        @SuppressWarnings("unchecked")
+		public void layoutPerspective( PerspectiveElement element, PreloadedLayout layout, Map<Integer, PerspectiveDockable> children ){
+        	 DockLayoutInfo delegate = layout.getDelegate();
+             if( delegate.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT && shouldLayout( element, perspective )){
+             	String factoryId = delegate.getDataLayout().getFactoryID();
+                 DockFactory factory = getFactory( factoryId );
+                 if( factory != null ){
+                 	factory.layoutPerspective( element, delegate.getDataLayout(), children );
+                 }
+             }
+        }
+        
+        @SuppressWarnings("unchecked")
+		public PreloadedLayout getPerspectiveLayout( PerspectiveElement element, Map<PerspectiveDockable, Integer> children ){
+        	if( perspective == null ){
+        		throw new IllegalStateException( "the perspective of this factory is not set, meaning this factory cannot be used handling perspective dependent tasks" );
+        	}
+        	
+        	if( shouldLayout( element, perspective )){
+                String factoryId = UNKNOWN + PredefinedDockSituation.super.getID( element );
+                DockFactory factory = getFactory( factoryId );
+                if( factory == null )
+                    throw new IllegalStateException( "Missing factory: " + factoryId );
+
+                Object data = factory.getPerspectiveLayout( element, children );
+                DockLayout<Object> layout = new DockLayout<Object>( factoryId, data );
+                return new PreloadedLayout( perspective.get( element ), new DockLayoutInfo( layout ));    
+            }
+            else{
+                return new PreloadedLayout( perspective.get( element ), new DockLayoutInfo() );
+            }
+        }
 
         @SuppressWarnings("unchecked")
         public void write( PreloadedLayout layout, DataOutputStream out ) throws IOException {
@@ -661,7 +808,7 @@ public class PredefinedDockSituation extends DockSituation {
                 out.writeBoolean( true );
                 DockLayout delegate = info.getDataLayout();
                 String factoryId = delegate.getFactoryID();
-                DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
+                DockFactory<DockElement,?,Object> factory = (DockFactory<DockElement,?,Object>)getFactory( factoryId );
                 if( factory == null )
                     throw new IOException( "Missing factory: " + factoryId );
 
@@ -697,7 +844,7 @@ public class PredefinedDockSituation extends DockSituation {
             else{
                 String factoryId = in.readUTF();
 
-                DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
+                DockFactory<DockElement,?,Object> factory = (DockFactory<DockElement,?,Object>)getFactory( factoryId );
                 if( factory == null ){
                     DockFactory backup = getBackup( factoryId );
                     if( backup != null ){
@@ -746,7 +893,7 @@ public class PredefinedDockSituation extends DockSituation {
             else if( info.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT ){
                 DockLayout<?> delegate = layout.getDelegate().getDataLayout();
                 String factoryId = delegate.getFactoryID();
-                DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
+                DockFactory<DockElement,?,Object> factory = (DockFactory<DockElement,?,Object>)getFactory( factoryId );
                 if( factory == null )
                     throw new XException( "Missing factory: " + factoryId );
 
@@ -775,7 +922,7 @@ public class PredefinedDockSituation extends DockSituation {
 
             Object delegate = null;
 
-            DockFactory<DockElement, Object> factory = (DockFactory<DockElement, Object>)getFactory( factoryId );
+            DockFactory<DockElement,?,Object> factory = (DockFactory<DockElement,?,Object>)getFactory( factoryId );
             if( factory == null ){
                 DockFactory backup = getBackup( factoryId );
                 if( backup != null ){

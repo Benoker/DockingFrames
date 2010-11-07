@@ -35,7 +35,7 @@ import bibliothek.gui.dock.station.support.PlaceholderListItem;
  * Represents a {@link ScreenDockWindow} in a {@link PlaceholderList}.
  * @author Benjamin Sigg
  */
-public class ScreenDockWindowHandle implements PlaceholderListItem{
+public class ScreenDockWindowHandle implements PlaceholderListItem<Dockable>{
 	/** the window represented by this handle */
 	private ScreenDockWindow window;
 	

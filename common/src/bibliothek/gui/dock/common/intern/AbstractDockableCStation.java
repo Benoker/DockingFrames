@@ -99,6 +99,10 @@ public abstract class AbstractDockableCStation<S extends DockStation> extends Ab
     public S getStation() {
         return station;
     }
+    
+    public CStation<?> asStation(){
+    	return this;
+    }
 
     public void setControl( CControlAccess access ) {
     	CControlAccess control = getControl();

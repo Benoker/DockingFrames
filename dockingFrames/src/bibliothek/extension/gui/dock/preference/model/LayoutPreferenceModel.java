@@ -29,6 +29,7 @@ import bibliothek.extension.gui.dock.preference.DefaultPreferenceModel;
 import bibliothek.extension.gui.dock.preference.preferences.ButtonContentPreference;
 import bibliothek.extension.gui.dock.preference.preferences.choice.TabContentFilterPreference;
 import bibliothek.extension.gui.dock.preference.preferences.choice.TabPlacementPreference;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.util.Path;
 
@@ -38,9 +39,39 @@ import bibliothek.util.Path;
  * @author Benjamin Sigg
  */
 public class LayoutPreferenceModel extends DefaultPreferenceModel{
+	private ButtonContentPreference buttonContent;
+	private TabPlacementPreference tabPlacement;
+	private TabContentFilterPreference tabContentFilter;
+	
 	public LayoutPreferenceModel( DockProperties properties ){
-		add( new ButtonContentPreference( properties, new Path( "dock.layout.ButtonContent" )));
-		add( new TabPlacementPreference( properties, new Path( "dock.layout.tabplacement" )));
-		add( new TabContentFilterPreference( properties, new Path( "dock.layout.tabcontentfilter" )));
+		add( buttonContent = new ButtonContentPreference( properties, new Path( "dock.layout.ButtonContent" )));
+		add( tabPlacement = new TabPlacementPreference( properties, new Path( "dock.layout.tabplacement" )));
+		add( tabContentFilter = new TabContentFilterPreference( properties, new Path( "dock.layout.tabcontentfilter" )));
+	}
+	
+
+    /**
+     * Grants access to the preference that tells what content to show on a button for
+     * minimized {@link Dockable}s.
+     * @return the preference, not <code>null</code>
+     */
+    public ButtonContentPreference getButtonContent(){
+		return buttonContent;
+	}
+    
+    /**
+     * Grants access to the preference that tells what content to show on a tab.
+     * @return the preference, not <code>null</code>
+     */
+    public TabContentFilterPreference getTabContentFilter(){
+		return tabContentFilter;
+	}
+    
+    /**
+     * Grants access to the preference that tells where tabs are placed.
+     * @return the preference, not <code>null</code>
+     */
+    public TabPlacementPreference getTabPlacement(){
+		return tabPlacement;
 	}
 }

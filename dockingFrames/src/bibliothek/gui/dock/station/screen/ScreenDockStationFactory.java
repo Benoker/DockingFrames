@@ -38,8 +38,9 @@ import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
+import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
-import bibliothek.gui.dock.station.support.PlaceholderList;
+import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderListItem;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
@@ -56,7 +57,7 @@ import bibliothek.util.xml.XElement;
  * dialogs are stored.
  * @author Benjamin Sigg
  */
-public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, ScreenDockStationLayout> {
+public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, ScreenDockPerspective, ScreenDockStationLayout> {
     public static final String ID = "screen dock";
 
     private WindowProvider owner;
@@ -117,9 +118,9 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
 	    	}
     	}
     	else{
-    		PlaceholderList.simulatedRead( layout.getPlaceholders(), new PlaceholderListItemAdapter<PlaceholderListItem>() {
+    		DockablePlaceholderList.simulatedRead( layout.getPlaceholders(), new PlaceholderListItemAdapter<Dockable, PlaceholderListItem<Dockable>>() {
     			@Override
-    			public PlaceholderListItem convert( ConvertedPlaceholderListItem item ) {
+    			public PlaceholderListItem<Dockable> convert( ConvertedPlaceholderListItem item ) {
     				int id = item.getInt( "id" );
     				
     				int x = item.getInt( "x" );
@@ -183,11 +184,24 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
         return station;
     }
     
-    public ScreenDockStation layout( ScreenDockStationLayout layout,
-            Map<Integer, Dockable> children ) {
+    public ScreenDockStation layout( ScreenDockStationLayout layout, Map<Integer, Dockable> children ) {
         ScreenDockStation station = createStation();
         setLayout( station, layout, children );
         return station;
+    }
+    
+    public ScreenDockStationLayout getPerspectiveLayout( ScreenDockPerspective element, Map<PerspectiveDockable, Integer> children ){
+    	return new ScreenDockStationLayout( element.toMap( children ) );
+    }
+    
+    public ScreenDockPerspective layoutPerspective( ScreenDockStationLayout layout, Map<Integer, PerspectiveDockable> children ){
+	    ScreenDockPerspective result = new ScreenDockPerspective();
+	    layoutPerspective( result, layout, children );
+	    return result;
+    }
+    
+    public void layoutPerspective( ScreenDockPerspective perspective, ScreenDockStationLayout layout, Map<Integer, PerspectiveDockable> children ){
+    	perspective.read( layout.getPlaceholders(), children );
     }
     
     public void write( ScreenDockStationLayout layout, DataOutputStream out )

@@ -46,7 +46,7 @@ public interface MissingDockableStrategy {
         public boolean shouldStoreShown( String key ) {
             return false;
         }
-        public <L> boolean shouldCreate( DockFactory<?, L> factory, L data ) {
+        public <L> boolean shouldCreate( DockFactory<?,?,L> factory, L data ) {
             return false;
         }
     };
@@ -61,7 +61,7 @@ public interface MissingDockableStrategy {
         public boolean shouldStoreShown( String key ) {
             return true;
         }
-        public <L> boolean shouldCreate( DockFactory<?, L> factory, L data ) {
+        public <L> boolean shouldCreate( DockFactory<?,?,L> factory, L data ) {
             return true;
         }
     };
@@ -101,5 +101,5 @@ public interface MissingDockableStrategy {
      * @return <code>true</code> if <code>factory</code> is allowed to convert
      * <code>data</code>
      */
-    public <L> boolean shouldCreate( DockFactory<?, L> factory, L data );
+    public <L> boolean shouldCreate( DockFactory<?,?,L> factory, L data );
 }

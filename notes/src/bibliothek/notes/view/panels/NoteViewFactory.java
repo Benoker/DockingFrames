@@ -33,6 +33,8 @@ import java.util.Map;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
+import bibliothek.gui.dock.perspective.PerspectiveDockable;
+import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.notes.model.Note;
 import bibliothek.notes.model.NoteModel;
@@ -43,7 +45,7 @@ import bibliothek.util.xml.XElement;
  * A factory creating new {@link NoteView}s.
  * @author Benjamin Sigg
  */
-public class NoteViewFactory implements DockFactory<NoteView, String> {
+public class NoteViewFactory implements DockFactory<NoteView, PerspectiveElement, String> {
     /** the unique id for this factory */
 	public static final String FACTORY_ID = "note";
 	
@@ -94,6 +96,18 @@ public class NoteViewFactory implements DockFactory<NoteView, String> {
 	
 	public void setLayout( NoteView element, String layout, Map<Integer, Dockable> children ) {
 	    element.setNote( model.getNote( layout ) );
+	}
+	
+	public String getPerspectiveLayout( PerspectiveElement element, Map<PerspectiveDockable, Integer> children ){
+		return null;
+	}
+	
+	public PerspectiveElement layoutPerspective( String layout, Map<Integer, PerspectiveDockable> children ){
+		return null;
+	}
+	
+	public void layoutPerspective( PerspectiveElement perspective, String layout, Map<Integer, PerspectiveDockable> children ){
+		// nothing to do	
 	}
 	
 	public void write( String layout, DataOutputStream out ) throws IOException {

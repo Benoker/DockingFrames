@@ -30,7 +30,8 @@ import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.location.CWorkingAreaLocation;
-import bibliothek.gui.dock.station.split.SplitDockTree;
+import bibliothek.gui.dock.common.perspective.CWorkingPerspective;
+import bibliothek.gui.dock.station.split.DockableSplitDockTree;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Priority;
@@ -66,6 +67,11 @@ public class CWorkingArea extends CGridArea{
     	return new CWorkingAreaLocation( this );
     }
     
+    @Override
+    public CWorkingPerspective createPerspective(){
+    	return new CWorkingPerspective( getUniqueId() );
+    }
+    
     /**
      * Exchanges all the {@link CDockable}s on this area with the
      * elements of <code>grid</code>. This method also calls
@@ -74,7 +80,7 @@ public class CWorkingArea extends CGridArea{
      * @param grid a grid containing some new {@link Dockable}s
      */
     public void deploy( CGrid grid ){
-        SplitDockTree tree = grid.toTree();
+        DockableSplitDockTree tree = grid.toTree();
         
         for( Dockable dockable : tree.getDockables() ){
             if( dockable instanceof CommonDockable ){

@@ -87,6 +87,7 @@ import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.CombinerWrapper;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
+import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
 import bibliothek.gui.dock.station.support.PlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderListItem;
@@ -343,7 +344,7 @@ public class FlapDockStation extends AbstractDockableStation {
     private Dockable oldFrontDockable;
     
     /** A list of all {@link Dockable Dockables} registered on this station */
-    private PlaceholderList<DockableHandle> handles = new PlaceholderList<DockableHandle>();
+    private DockablePlaceholderList<DockableHandle> handles = new DockablePlaceholderList<DockableHandle>();
     /** a listener for all {@link Dockable}s of this station */
     private Listener dockableListener = new Listener();
     
@@ -1176,7 +1177,7 @@ public class FlapDockStation extends AbstractDockableStation {
     	}
     	
     	try{
-    		PlaceholderList<DockableHandle> next = new PlaceholderList<DockableHandle>( placeholders );
+    		DockablePlaceholderList<DockableHandle> next = new DockablePlaceholderList<DockableHandle>( placeholders );
     		if( getController() != null ){
     			handles.setStrategy( null );
     			handles.unbind();
@@ -1211,7 +1212,7 @@ public class FlapDockStation extends AbstractDockableStation {
     public PlaceholderMap getPlaceholders( final Map<Dockable, Integer> children ){
     	final PlaceholderStrategy strategy = getPlaceholderStrategy();
     	
-    	return handles.toMap( new PlaceholderListItemAdapter<DockableHandle>() {
+    	return handles.toMap( new PlaceholderListItemAdapter<Dockable, DockableHandle>() {
     		@Override
     		public ConvertedPlaceholderListItem convert( int index, DockableHandle dockable ){
 	    		ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
@@ -1245,7 +1246,7 @@ public class FlapDockStation extends AbstractDockableStation {
     		throw new IllegalStateException( "must not have any children" );
     	}
     	
-		PlaceholderList<DockableHandle> next = new PlaceholderList<DockableHandle>( map, new PlaceholderListItemAdapter<DockableHandle>(){
+		DockablePlaceholderList<DockableHandle> next = new DockablePlaceholderList<DockableHandle>( map, new PlaceholderListItemAdapter<Dockable, DockableHandle>(){
 			@Override
 			public DockableHandle convert( ConvertedPlaceholderListItem item ){
 				int id = item.getInt( "id" );
@@ -1400,7 +1401,7 @@ public class FlapDockStation extends AbstractDockableStation {
 			}
 			
 			public PlaceholderMap getPlaceholders(){
-				for( PlaceholderList<DockableHandle>.Item item : handles.list() ){
+				for( DockablePlaceholderList<DockableHandle>.Item item : handles.list() ){
 					DockableHandle handle = item.getDockable();
 					if( handle != null && handle.getDockable() == child ){
 						return item.getPlaceholderMap();
@@ -1747,7 +1748,7 @@ public class FlapDockStation extends AbstractDockableStation {
             throw new IllegalArgumentException( "Child must be a child of this station" );
         
         int listIndex = handles.levelToBase( index, Level.DOCKABLE );
-        PlaceholderList<DockableHandle>.Item oldItem = handles.list().get( listIndex );
+        DockablePlaceholderList<DockableHandle>.Item oldItem = handles.list().get( listIndex );
         final PlaceholderMap placeholders = oldItem.getPlaceholderMap();
         
     	FlapDropInfo info = new FlapDropInfo( this, append ){
@@ -1795,7 +1796,7 @@ public class FlapDockStation extends AbstractDockableStation {
 	        boolean hold = isHold( child );
 	        
 	        int listIndex = handles.levelToBase( index, Level.DOCKABLE );
-	        PlaceholderList<DockableHandle>.Item oldItem = handles.list().get( listIndex );
+	        DockablePlaceholderList<DockableHandle>.Item oldItem = handles.list().get( listIndex );
 	        final PlaceholderMap placeholders = oldItem.getPlaceholderMap();
 	        oldItem.setPlaceholderMap( null );
 	        
@@ -1818,7 +1819,7 @@ public class FlapDockStation extends AbstractDockableStation {
 	        
 	        add( combination, index );
 	        
-	        PlaceholderList<DockableHandle>.Item newItem = handles.list().get( listIndex );
+	        DockablePlaceholderList<DockableHandle>.Item newItem = handles.list().get( listIndex );
 	        newItem.setPlaceholderSet( newItem.getPlaceholderSet() );
 	        
 	        setHold( combination, hold );
@@ -1856,10 +1857,10 @@ public class FlapDockStation extends AbstractDockableStation {
     		boolean open = getFrontDockable() == child;
     		
     		int listIndex = handles.levelToBase( index, Level.DOCKABLE );
-    		PlaceholderList<DockableHandle>.Item oldItem = handles.list().get( listIndex );
+    		DockablePlaceholderList<DockableHandle>.Item oldItem = handles.list().get( listIndex );
     		remove( index );
     		add( append, index );
-    		PlaceholderList<DockableHandle>.Item newItem = handles.list().get( listIndex );
+    		DockablePlaceholderList<DockableHandle>.Item newItem = handles.list().get( listIndex );
     		if( station ){
     			newItem.setPlaceholderMap( child.asDockStation().getPlaceholders() );
     		}
@@ -1955,7 +1956,7 @@ public class FlapDockStation extends AbstractDockableStation {
      * Handles title and listeners that are associated with a {@link Dockable}.
      * @author Benjamin Sigg
      */
-    private class DockableHandle implements PlaceholderListItem{
+    private class DockableHandle implements PlaceholderListItem<Dockable>{
     	/** the element that is handled by this handler */
     	private Dockable dockable;
     	/** the title used */

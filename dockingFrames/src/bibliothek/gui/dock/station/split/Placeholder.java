@@ -5,7 +5,6 @@ import java.util.Map;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
-import bibliothek.gui.dock.station.split.SplitDockTree.Key;
 import bibliothek.util.Path;
 
 /**
@@ -27,7 +26,7 @@ public class Placeholder extends SplitNode {
 	}
 	
 	@Override
-	public void evolve( Key key, boolean checkValidity, Map<Leaf, Dockable> linksToSet ){
+	public void evolve( SplitDockTree<Dockable>.Key key, boolean checkValidity, Map<Leaf, Dockable> linksToSet ){
 		setPlaceholders( key.getTree().getPlaceholders( key ) );
 	}
 

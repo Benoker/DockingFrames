@@ -26,7 +26,6 @@
 package bibliothek.gui.dock.station.split;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.split.SplitDockTree.Key;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.util.Path;
 
@@ -36,37 +35,37 @@ import bibliothek.util.Path;
  * tree.
  * @author Benjamin Sigg
  */
-public class SplitDockTreeFactory implements SplitTreeFactory<SplitDockTree.Key>{
+public class SplitDockTreeFactory implements SplitTreeFactory<SplitDockTree<Dockable>.Key>{
     /** the tree to write into */
-    private SplitDockTree tree;
+    private SplitDockTree<Dockable> tree;
     
     /**
      * Creates a new factory.
      * @param tree the tree into which this factory will write.
      */
-    public SplitDockTreeFactory( SplitDockTree tree ){
+    public SplitDockTreeFactory( SplitDockTree<Dockable> tree ){
         if( tree == null )
             throw new NullPointerException( "tree must not be null" );
         this.tree = tree;
     }
     
-    public Key horizontal( Key left, Key right, double divider, long id, Path[] placeholders, PlaceholderMap placeholderMap, boolean visible ){
+    public SplitDockTree<Dockable>.Key horizontal( SplitDockTree<Dockable>.Key left, SplitDockTree<Dockable>.Key right, double divider, long id, Path[] placeholders, PlaceholderMap placeholderMap, boolean visible ){
         return tree.horizontal( left, right, divider, placeholders, placeholderMap, id );
     }
     
-    public Key vertical( Key top, Key bottom, double divider, long id, Path[] placeholders, PlaceholderMap placeholderMap, boolean visible ){
+    public SplitDockTree<Dockable>.Key vertical( SplitDockTree<Dockable>.Key top, SplitDockTree<Dockable>.Key bottom, double divider, long id, Path[] placeholders, PlaceholderMap placeholderMap, boolean visible ){
         return tree.vertical( top, bottom, divider, placeholders, placeholderMap, id );
     }
     
-    public Key leaf( Dockable dockable, long id, Path[] placeholders, PlaceholderMap placeholderMap ){
+    public SplitDockTree<Dockable>.Key leaf( Dockable dockable, long id, Path[] placeholders, PlaceholderMap placeholderMap ){
         return tree.put( new Dockable[]{ dockable }, null, placeholders, placeholderMap, id );
     }
 
-    public Key placeholder( long id, Path[] placeholders, PlaceholderMap placeholderMap ){
+    public SplitDockTree<Dockable>.Key placeholder( long id, Path[] placeholders, PlaceholderMap placeholderMap ){
 	    return tree.put( placeholders, placeholderMap );
     }
 
-    public Key root( Key root, long id ){
+    public SplitDockTree<Dockable>.Key root( SplitDockTree<Dockable>.Key root, long id ){
         if( root == null )
             return null;
         

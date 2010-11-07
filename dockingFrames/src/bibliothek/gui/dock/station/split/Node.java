@@ -33,7 +33,6 @@ import java.util.Map;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.SplitDockStation.Orientation;
-import bibliothek.gui.dock.station.split.SplitDockTree.Key;
 import bibliothek.util.Path;
 
 /**
@@ -516,8 +515,8 @@ public class Node extends VisibleSplitNode{
     }
     
     @Override
-    public void evolve( Key key, boolean checkValidity, Map<Leaf, Dockable> linksToSet ){
-    	SplitDockTree tree = key.getTree();
+    public void evolve( SplitDockTree<Dockable>.Key key, boolean checkValidity, Map<Leaf, Dockable> linksToSet ){
+    	SplitDockTree<Dockable> tree = key.getTree();
     	setPlaceholders( tree.getPlaceholders( key ) );
     	setPlaceholderMap( tree.getPlaceholderMap( key ) );
     	

@@ -37,8 +37,9 @@ import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
+import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
-import bibliothek.gui.dock.station.support.PlaceholderList;
+import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderListItem;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
@@ -54,8 +55,7 @@ import bibliothek.util.xml.XElement;
  * 
  * @author Benjamin Sigg
  */
-public class StackDockStationFactory implements
-		DockFactory<StackDockStation, StackDockStationLayout> {
+public class StackDockStationFactory implements DockFactory<StackDockStation, StackDockPerspective, StackDockStationLayout> {
 	/** The ID which is returned by {@link #getID()} */
 	public static final String ID = "StackDockStationFactory";
 
@@ -88,9 +88,9 @@ public class StackDockStationFactory implements
 			}
 		}
 		else{
-			PlaceholderList.simulatedRead( layout.getPlaceholders(), new PlaceholderListItemAdapter<PlaceholderListItem>() {
+			DockablePlaceholderList.simulatedRead( layout.getPlaceholders(), new PlaceholderListItemAdapter<Dockable, PlaceholderListItem<Dockable>>() {
     			@Override
-    			public PlaceholderListItem convert( ConvertedPlaceholderListItem item ){
+    			public PlaceholderListItem<Dockable> convert( ConvertedPlaceholderListItem item ){
     				int id = item.getInt( "id" );
     				int index = item.getInt( "index" );
     				Path placeholder = null;
@@ -111,7 +111,6 @@ public class StackDockStationFactory implements
 	}
 
 	public void setLayout( StackDockStation station, StackDockStationLayout layout, Map<Integer, Dockable> children ){
-
 		DockController controller = station.getController();
 		try {
 			if (controller != null)
@@ -143,14 +142,21 @@ public class StackDockStationFactory implements
 		}
 	}
 
-	public void setLayout( StackDockStation element,
-			StackDockStationLayout layout ){
+	public void setLayout( StackDockStation element, StackDockStationLayout layout ){
 		// nothing to do
 	}
+	
+	public StackDockPerspective layoutPerspective( StackDockStationLayout layout, Map<Integer, PerspectiveDockable> children ){
+		StackDockPerspective perspective = new StackDockPerspective();
+		layoutPerspective( perspective, layout, children );
+		return perspective;
+	}
+	
+	public void layoutPerspective( StackDockPerspective perspective, StackDockStationLayout layout, Map<Integer, PerspectiveDockable> children ){
+		perspective.read( layout.getPlaceholders(), children, layout.getSelected() );
+	}
 
-	public StackDockStation layout( StackDockStationLayout layout,
-			Map<Integer, Dockable> children ){
-
+	public StackDockStation layout( StackDockStationLayout layout, Map<Integer, Dockable> children ){
 		StackDockStation station = createStation();
 		setLayout( station, layout, children );
 		return station;
@@ -160,6 +166,11 @@ public class StackDockStationFactory implements
 		StackDockStation station = createStation();
 		setLayout( station, layout );
 		return station;
+	}
+	
+	public StackDockStationLayout getPerspectiveLayout( StackDockPerspective element, Map<PerspectiveDockable, Integer> children ){
+		Integer selected = children.get( element.getSelection() );
+		return new StackDockStationLayout( selected == null ? -1 : selected.intValue(), element.toMap( children ) );
 	}
 
 	public void write( StackDockStationLayout layout, DataOutputStream out ) throws IOException{

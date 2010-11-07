@@ -228,6 +228,19 @@ public class MergedPreferenceModel extends AbstractPreferenceModel{
         return models.get( index ).model;
     }
     
+    /**
+     * Gets the model which was stored using the key <code>path</code>.
+     * @param path the path of the model
+     * @return the model or <code>null</code> if not found
+     */
+    public PreferenceModel getModel( Path path ){
+    	int index = indexOf( path );
+    	if( index < 0 ){
+    		return null;
+    	}
+    	return getModel( index );
+    }
+    
     @Override
     public void read() {
         for( Model model : models ){

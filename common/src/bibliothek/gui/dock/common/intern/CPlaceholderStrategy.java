@@ -46,6 +46,16 @@ import bibliothek.util.Path;
  * @author Benjamin Sigg
  */
 public class CPlaceholderStrategy implements PlaceholderStrategy {
+	/**
+	 * Gets the placeholder that is used for the {@link SingleCDockable} with
+	 * unique identifier <code>id</code>.
+	 * @param id the unique identifer of a {@link SingleCDockable}
+	 * @return the placeholder for that dockable
+	 */
+	public static Path getSingleDockablePlaceholder( String id ){
+		return new Path( "dock", "single", id );
+	}
+	
 	/** the owner of this strategy */
 	private CControl control;
 	
@@ -56,7 +66,7 @@ public class CPlaceholderStrategy implements PlaceholderStrategy {
 		public void removed( CControl control, CDockable dockable ){
 			if( dockable instanceof SingleCDockable ){
 				String id = ((SingleCDockable)dockable).getUniqueId();
-				Path check = new Path( "dock.single." + id );
+				Path check = getSingleDockablePlaceholder( id );
 				if( !isValidPlaceholder( check )){
 					fireInvalidated( check );
 				}
@@ -123,7 +133,7 @@ public class CPlaceholderStrategy implements PlaceholderStrategy {
 		
 		if( cdockable instanceof SingleCDockable ){
 			String id = ((SingleCDockable)cdockable).getUniqueId();
-			return new Path( "dock", "single", id );
+			return getSingleDockablePlaceholder( id );
 		}
 		return null;
 	}

@@ -29,8 +29,8 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
+import bibliothek.gui.dock.station.split.DockableSplitDockTree;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
-import bibliothek.gui.dock.station.split.SplitDockTree;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Version;
@@ -93,7 +93,7 @@ public class CGrid {
      * as possible.
      * @return the contents of this grid as tree
      */
-    public SplitDockTree toTree(){
+    public DockableSplitDockTree toTree(){
         return grid.toTree();
     }
     
@@ -163,14 +163,5 @@ public class CGrid {
         grid.addVerticalDivider( x, y1, y2 );
     }
 }
-
-
-
-
-
-
-
-
-
 
 

@@ -66,8 +66,8 @@ public @interface Todo {
 		VERSION_1_1_2;
 	}
 	
-	public Priority priority();
-	public Compatibility compatibility();
-	public Version target();
-	public String description();
+	public Priority priority() default Priority.MAJOR;
+	public Compatibility compatibility() default Compatibility.BREAK_MINOR;
+	public Version target() default Version.VERSION_1_1_0;
+	public String description() default "to be implemented";
 }

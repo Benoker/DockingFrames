@@ -42,15 +42,14 @@ import bibliothek.gui.dock.perspective.PerspectiveElement;
  * element, but also create a new {@link DockElement} with the content.
  * @author Benjamin Sigg
  * @param <D> the type of element which can be written and read by this factory
+ * @param <P> the type of {@link PerspectiveElement} which can be written and read by this factory
  * @param <L> the type of object that stores the contents of a <code>D</code>. If
  * clients cannot guarantee that always the same factory will be mapped
  * to the same identifier, then <code>L</code> should be set to {@link Object}
  * and the methods which receive a <code>L</code> should use 
  * <code>instanceof</code> before casting the argument.
  */
-//* @param <P> the type of {@link PerspectiveElement} which can be written and read by this factory
-//public interface DockFactory<D extends DockElement, P extends PerspectiveElement<L>, L> extends DockConverter<D, L>{
-public interface DockFactory<D extends DockElement, L> extends DockConverter<D, L>{
+public interface DockFactory<D extends DockElement, P extends PerspectiveElement, L> extends DockConverter<D, L>{
 	/**
 	 * Tries to estimate the {@link DockableProperty}s of the children of the
 	 * station which is represented by <code>layout</code>.<br>
@@ -86,28 +85,38 @@ public interface DockFactory<D extends DockElement, L> extends DockConverter<D, 
      */
     public D layout( L layout );
     
-//    /**
-//     * Creates an element that can be used by a {@link Perspective} to create a layout
-//     * without creating any {@link DockElement}s. This method may return <code>null</code> only
-//     * if the client is guaranteed not to use a {@link Perspective}. 
-//     * @param layout the new layout
-//     * @param children some children, note that the map may not contain all elements
-//     * which were present when the layout was created. 
-//     * @return the new element, can be <code>null</code>, the return value of {@link PerspectiveElement#getFactoryID()} should
-//     * be equal to {@link #getID()}
-//     */
-//    public P layoutPerspective( L layout, Map<Integer, PerspectiveDockable<?>> children );
-//    
-//	
-//	/**
-//	 * Gets the layout information that is associated with this element.
-//	 * The layout information can be any {@link Object}. The only restriction
-//	 * of the object is, that the associated {@link DockFactory} understands
-//	 * how to read that object.  
-//	 * @param children a map providing identifiers for the children of this element. The
-//	 * identifiers are in the range from 0 (incl.) to <code>children.size()</code> (excl.), 
-//	 * the exact same identifiers would be given to {@link DockConverter#getLayout(bibliothek.gui.dock.DockElement, Map)}.
-//	 * @return the layout information not <code>null</code>
-//	 */
-//	public L getPerspectiveLayout( P element, Map<PerspectiveDockable<?>, Integer> children );
+    /**
+     * Creates an element that can be used by a {@link Perspective} to create a layout
+     * without creating any {@link DockElement}s. This method may return <code>null</code> only
+     * if the client is guaranteed not to use a {@link Perspective}. 
+     * @param layout the new layout
+     * @param children some children, note that the map may not contain all elements
+     * which were present when the layout was created. 
+     * @return the new element, can be <code>null</code>, the return value of {@link PerspectiveElement#getFactoryID()} should
+     * be equal to {@link #getID()}
+     */
+    public P layoutPerspective( L layout, Map<Integer, PerspectiveDockable> children );
+    
+    /**
+     * Updates the contents of <code>perspective</code> such that it reflects the contents of <code>layout</code>.
+     * @param perspective the perspective that is to be updated
+     * @param layout the layout to apply
+     * @param children the new children of <code>perspective</code>
+     */
+    public void layoutPerspective( P perspective, L layout, Map<Integer, PerspectiveDockable> children );
+    
+	
+	/**
+	 * Gets the layout information that is associated with this element.
+	 * The layout information can be any {@link Object}. The only restriction
+	 * of the object is, that the associated {@link DockFactory} understands
+	 * how to read that object.<br>
+	 * This method may return <code>null</code> if and only if {@link #layoutPerspective(Object, Map)} always returns
+	 * <code>null</code>.
+	 * @param children a map providing identifiers for the children of this element. The
+	 * identifiers are in the range from 0 (incl.) to <code>children.size()</code> (excl.), 
+	 * the exact same identifiers would be given to {@link DockConverter#getLayout(bibliothek.gui.dock.DockElement, Map)}.
+	 * @return the layout information
+	 */
+	public L getPerspectiveLayout( P element, Map<PerspectiveDockable, Integer> children );
 }

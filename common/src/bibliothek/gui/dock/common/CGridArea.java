@@ -44,6 +44,8 @@ import bibliothek.gui.dock.common.intern.station.SplitResizeRequestHandler;
 import bibliothek.gui.dock.common.location.CGridAreaLocation;
 import bibliothek.gui.dock.common.mode.CMaximizedMode;
 import bibliothek.gui.dock.common.mode.station.CSplitDockStationHandle;
+import bibliothek.gui.dock.common.perspective.CGridPerspective;
+import bibliothek.gui.dock.common.perspective.CStationPerspective;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
@@ -127,6 +129,10 @@ public class CGridArea extends AbstractDockableCStation<SplitDockStation> implem
 
 	public CDockable asDockable() {
 		return this;
+	}
+	
+	public CStationPerspective createPerspective(){
+		return new CGridPerspective( getUniqueId() );
 	}
 
     /**

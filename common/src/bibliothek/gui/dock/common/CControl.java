@@ -72,7 +72,6 @@ import bibliothek.gui.dock.common.event.CKeyboardListener;
 import bibliothek.gui.dock.common.event.CVetoClosingListener;
 import bibliothek.gui.dock.common.event.CVetoFocusListener;
 import bibliothek.gui.dock.common.event.ResizeRequestListener;
-import bibliothek.gui.dock.common.intern.AbstractCStation;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CControlFactory;
 import bibliothek.gui.dock.common.intern.CDockable;
@@ -92,7 +91,6 @@ import bibliothek.gui.dock.common.intern.SecureControlFactory;
 import bibliothek.gui.dock.common.intern.action.CActionOffer;
 import bibliothek.gui.dock.common.intern.station.CFlapLayoutManager;
 import bibliothek.gui.dock.common.intern.station.CLockedResizeLayoutManager;
-import bibliothek.gui.dock.common.intern.station.ScreenResizeRequestHandler;
 import bibliothek.gui.dock.common.intern.ui.CSingleParentRemover;
 import bibliothek.gui.dock.common.intern.ui.CommonSingleTabDecider;
 import bibliothek.gui.dock.common.intern.ui.ExtendedModeAcceptance;
@@ -100,14 +98,11 @@ import bibliothek.gui.dock.common.intern.ui.StackableAcceptance;
 import bibliothek.gui.dock.common.intern.ui.WorkingAreaAcceptance;
 import bibliothek.gui.dock.common.layout.FullLockConflictResolver;
 import bibliothek.gui.dock.common.layout.RequestDimension;
-import bibliothek.gui.dock.common.location.CExternalizedLocation;
-import bibliothek.gui.dock.common.mode.CExternalizedMode;
 import bibliothek.gui.dock.common.mode.CLocationMode;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.CMaximizedMode;
 import bibliothek.gui.dock.common.mode.CMaximizedModeArea;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
-import bibliothek.gui.dock.common.mode.station.CScreenDockStationHandle;
 import bibliothek.gui.dock.common.theme.ThemeMap;
 import bibliothek.gui.dock.common.theme.eclipse.CommonEclipseThemeConnector;
 import bibliothek.gui.dock.control.DockRegister;
@@ -117,7 +112,6 @@ import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.event.KeyboardListener;
-import bibliothek.gui.dock.facile.station.screen.WindowProviderVisibility;
 import bibliothek.gui.dock.facile.station.split.ConflictResolver;
 import bibliothek.gui.dock.facile.station.split.DefaultConflictResolver;
 import bibliothek.gui.dock.frontend.FrontendEntry;
@@ -347,12 +341,43 @@ public class CControl {
      * control.
      */
     public CControl( WindowProvider window, CControlFactory factory ){
+    	this( window, factory, true );
+    }
+    
+    /**
+     * Creates a new control
+     * @param window a provider for the main window of this application. Needed
+     * to create dialogs for externalized {@link CDockable}s. Must not be <code>null</code>, but
+     * its search method may return <code>null</code>
+     * @param factory a factory which is used to create new elements for this
+     * control.
+     * @param init if <code>true</code> then this constructor calls {@link #init(WindowProvider, CControlFactory)},
+     * otherwise this constructor does nothing and returns immediately. Subclasses should call
+     * {@link #init(WindowProvider, CControlFactory)} in that case.
+     */
+    protected CControl( WindowProvider window, CControlFactory factory, boolean init ){
+    	if( init ){
+    		init( window, factory );
+    	}
+    }
+
+    /**
+     * Initializes the fields of this {@link CControl}. This method is called during construction
+     * of this {@link CControl}. Subclasses may use {@link #CControl(WindowProvider, CControlFactory, boolean)}
+     * to create an uninitialized {@link CControl} and then call this method by themselves. 
+     * @param window a provider for the main window of this application. Needed
+     * to create dialogs for externalized {@link CDockable}s. Must not be <code>null</code>, but
+     * its search method may return <code>null</code>
+     * @param factory a factory which is used to create new elements for this
+     * control.
+     */
+    protected void init( WindowProvider window, CControlFactory factory ){
         if( window == null ){
             throw new IllegalArgumentException( "window must not be null, however its search method may return null" );
         }
 
         this.factory = factory;
-
+        
         register = factory.createRegister( this );
         DockController controller = factory.createController( this );
         controller.getProperties().set( CCONTROL, this, Priority.CLIENT );
@@ -372,7 +397,7 @@ public class CControl {
             public boolean shouldStoreShown( String key ) {
                 return shouldStore( key );
             }
-            public <L> boolean shouldCreate( DockFactory<?, L> factory, L data ) {
+            public <L> boolean shouldCreate( DockFactory<?,?,L> factory, L data ) {
                 if( factory instanceof CommonMultipleDockableFactory && data instanceof CommonDockableLayout ){
                     return CControl.this.shouldCreate( 
                             ((CommonMultipleDockableFactory)factory).getFactory(), 
@@ -382,27 +407,8 @@ public class CControl {
             }
         });
 
-        frontend.setIgnoreForEntry( new DockSituationIgnore(){
-            public boolean ignoreChildren( DockStation station ) {
-                CStation<?> cstation = getStation( station );
-                if( cstation != null )
-                    return cstation.isWorkingArea();
-
-                return false;
-            }
-            public boolean ignoreElement( DockElement element ) {
-                if( element instanceof CommonDockable ){
-                    CDockable cdockable = ((CommonDockable)element).getDockable();
-                    if( cdockable.getWorkingArea() != null )
-                        return true;
-                }
-                return false;
-            }
-        });
+        setIgnoreWorkingForEntry( true );
         frontend.setShowHideAction( false );
-
-        // replaced by setTheme( ThemeMap.SMOOTH_THEME ) at the end of this method
-        //frontend.getController().setTheme( new NoStackTheme( new CSmoothTheme( this, new SmoothTheme())));
 
         frontend.getController().addActionOffer( new CActionOffer( this ) );
         
@@ -452,81 +458,11 @@ public class CControl {
         frontend.getController().addAcceptance( new WorkingAreaAcceptance( access ) );
         frontend.getController().addAcceptance( new ExtendedModeAcceptance( access ) );
 
-        CommonSingleDockableFactory backupFactory = register.getBackupFactory();
-        frontend.registerFactory( backupFactory );
-        frontend.registerBackupFactory( backupFactory );
-
+        initFactories();
+        
         themes = new ThemeMap( this );
 
-        try{
-            resources.put( "ccontrol.frontend", new ApplicationResource(){
-                public void write( DataOutputStream out ) throws IOException {
-                    Version.write( out, Version.VERSION_1_0_4 );
-                    writeWorkingAreas( out );
-                    frontend.write( out );
-                }
-                public void read( DataInputStream in ) throws IOException {
-                    Version version = Version.read( in );
-                    version.checkCurrent();
-                    readWorkingAreas( in );
-                    frontend.read( in );
-                }
-                public void writeXML( XElement element ) {
-                    writeWorkingAreasXML( element.addElement( "areas" ) );
-                    frontend.writeXML( element.addElement( "frontend" ) );
-                }
-                public void readXML( XElement element ) {
-                    readWorkingAreasXML( element.getElement( "areas" ) );
-                    frontend.readXML( element.getElement( "frontend" ) );
-                }
-            });
-
-            resources.put( "ccontrol.preferences", new ApplicationResource(){
-                public void read( DataInputStream in ) throws IOException {
-                    Version version = Version.read( in );
-                    version.checkCurrent();
-                    preferences.read( in );
-
-                    if( preferenceModel != null ){
-                        preferences.load( preferenceModel, false );
-                        preferenceModel.write();
-                    }
-                }
-
-                public void readXML( XElement element ) {
-                    preferences.readXML( element );
-
-                    if( preferenceModel != null ){
-                        preferences.load( preferenceModel, false );
-                        preferenceModel.write();
-                    }
-                }
-
-                public void write( DataOutputStream out ) throws IOException {
-                    if( preferenceModel != null ){
-                        preferenceModel.read();
-                        preferences.store( preferenceModel );
-                    }
-
-                    Version.write( out, Version.VERSION_1_0_6 );
-                    preferences.write( out );
-                }
-
-                public void writeXML( XElement element ) {
-                    if( preferenceModel != null ){
-                        preferenceModel.read();
-                        preferences.store( preferenceModel );
-                    }
-
-                    preferences.writeXML( element );
-                }
-
-            });
-        }
-        catch( IOException ex ){
-            System.err.println( "Non lethal IO-error:" );
-            ex.printStackTrace();
-        }
+        initPersistentStorage();
 
         initExtendedModes();
         initProperties();
@@ -635,55 +571,38 @@ public class CControl {
     /**
      * Sets up the {@link #locationManager}.
      */
-    @Todo( priority=Todo.Priority.MINOR, compatibility=Compatibility.BREAK_MINOR, target=Todo.Version.VERSION_1_1_0, 
-    		description="Do not create the ScreenDockStation here, allow clients to not use a ScreenDockStation at all or to replace it" )
     private void initExtendedModes(){
     	locationManager = new CLocationModeManager( access );
-
-        WindowProvider window = frontend.getController().getRootWindowProvider();
-        final ScreenDockStation screen = factory.createScreenDockStation( window );
-
-        CStation<ScreenDockStation> screenStation = new AbstractCStation<ScreenDockStation>( screen, EXTERNALIZED_STATION_ID, CExternalizedLocation.STATION ){
-            private ScreenResizeRequestHandler handler = new ScreenResizeRequestHandler( screen );
-            private CScreenDockStationHandle handle;
-            
-            @Override
-            protected void install( CControlAccess access ) {
-                access.getOwner().addResizeRequestListener( handler );
-                
-                if( handle == null ){
-                	handle = new CScreenDockStationHandle( this, access.getLocationManager() );
-                }
-                
-                CExternalizedMode externalizedMode = access.getLocationManager().getExternalizedMode();
-                CMaximizedMode maximizedMode = access.getLocationManager().getMaximizedMode();
-                
-                externalizedMode.add( handle.getExternalizedModeArea() );
-                if( externalizedMode.getDefaultArea() == null ){
-                	externalizedMode.setDefaultArea( handle.getExternalizedModeArea() );
-                }
-                
-                maximizedMode.add( handle.getMaximizedModeArea() );
-            }
-            @Override
-            protected void uninstall( CControlAccess access ) {
-                access.getOwner().removeResizeRequestListener( handler );
-                
-                access.getLocationManager().getExternalizedMode().remove( handle.getExternalizedModeArea().getUniqueId() );
-                access.getLocationManager().getMaximizedMode().remove( handle.getMaximizedModeArea().getUniqueId() );
-            }
-        };
-
-        add( screenStation, true );
-
-        WindowProviderVisibility visibility = new WindowProviderVisibility( screen );
-        visibility.setProvider( window );
+    	initExternalizeArea();
+    }
+    
+    /**
+     * Called during construction of this {@link CControl}, this method creates a new 
+     * {@link CExternalizeArea} and registers it as root-station using the unique identifier
+     * {@value #EXTERNALIZED_STATION_ID}.<br>
+     * Subclasses may override this method and not create a {@link CExternalizeArea} or create
+     * a customized {@link CExternalizeArea}.
+     */
+    protected void initExternalizeArea(){
+    	addStation( new CExternalizeArea( this, EXTERNALIZED_STATION_ID ), true );
+    }
+    
+    /**
+     * Called during construction of this {@link CControl}, this method adds {@link DockFactory}s
+     * to the {@link #intern() intern representation} of this {@link CControl}.
+     */
+    protected void initFactories(){
+        CommonSingleDockableFactory backupFactory = register.getBackupFactory();
+        frontend.registerFactory( backupFactory );
+        frontend.registerBackupFactory( backupFactory );
     }
 
     /**
-     * Sets up the default properties.
+     * Sets up the default properties. While subclasses can override this method, they should call
+     * this method first. Some parts of this {@link CControl} will not work correctly if the wrong
+     * properties are set or if no properties are set at all.
      */
-    private void initProperties(){
+    protected void initProperties(){
         putProperty( KEY_MAXIMIZE_CHANGE, KeyStroke.getKeyStroke( KeyEvent.VK_M, InputEvent.CTRL_MASK ) );
         putProperty( KEY_GOTO_EXTERNALIZED, KeyStroke.getKeyStroke( KeyEvent.VK_E, InputEvent.CTRL_MASK ) );
         putProperty( KEY_GOTO_NORMALIZED, KeyStroke.getKeyStroke( KeyEvent.VK_N, InputEvent.CTRL_MASK ) );
@@ -695,6 +614,84 @@ public class CControl {
         putProperty( PlaceholderStrategy.PLACEHOLDER_STRATEGY, new CPlaceholderStrategy( this ) );
     }
 
+    /**
+     * Creates new {@link ApplicationResource}s and registers them at the
+     * {@link #getResources() ApplicationResourceManager} of this {@link CControl}. While subclasses
+     * can override this method, they should be aware that missing {@link ApplicationResource}s will
+     * break persistent storage for the location and size of {@link Dockable}s.
+     */
+    protected void initPersistentStorage(){
+        try{
+            resources.put( "ccontrol.frontend", new ApplicationResource(){
+                public void write( DataOutputStream out ) throws IOException {
+                    Version.write( out, Version.VERSION_1_0_4 );
+                    writeWorkingAreas( out );
+                    frontend.write( out );
+                }
+                public void read( DataInputStream in ) throws IOException {
+                    Version version = Version.read( in );
+                    version.checkCurrent();
+                    readWorkingAreas( in );
+                    frontend.read( in );
+                }
+                public void writeXML( XElement element ) {
+                    writeWorkingAreasXML( element.addElement( "areas" ) );
+                    frontend.writeXML( element.addElement( "frontend" ) );
+                }
+                public void readXML( XElement element ) {
+                    readWorkingAreasXML( element.getElement( "areas" ) );
+                    frontend.readXML( element.getElement( "frontend" ) );
+                }
+            });
+
+            resources.put( "ccontrol.preferences", new ApplicationResource(){
+                public void read( DataInputStream in ) throws IOException {
+                    Version version = Version.read( in );
+                    version.checkCurrent();
+                    preferences.read( in );
+
+                    if( preferenceModel != null ){
+                        preferences.load( preferenceModel, false );
+                        preferenceModel.write();
+                    }
+                }
+
+                public void readXML( XElement element ) {
+                    preferences.readXML( element );
+
+                    if( preferenceModel != null ){
+                        preferences.load( preferenceModel, false );
+                        preferenceModel.write();
+                    }
+                }
+
+                public void write( DataOutputStream out ) throws IOException {
+                    if( preferenceModel != null ){
+                        preferenceModel.read();
+                        preferences.store( preferenceModel );
+                    }
+
+                    Version.write( out, Version.VERSION_1_0_6 );
+                    preferences.write( out );
+                }
+
+                public void writeXML( XElement element ) {
+                    if( preferenceModel != null ){
+                        preferenceModel.read();
+                        preferences.store( preferenceModel );
+                    }
+
+                    preferences.writeXML( element );
+                }
+
+            });
+        }
+        catch( IOException ex ){
+            System.err.println( "Non lethal IO-error:" );
+            ex.printStackTrace();
+        }
+    }
+    
     /**
      * Stores the mapping of {@link MultipleCDockableFactory} and 
      * {@link MultipleCDockable}s in <code>setting</code>.
@@ -894,6 +891,40 @@ public class CControl {
     }
 
     /**
+     * Informs this {@link CControl} whether location of {@link CDockable}s that are associated with a 
+     * {@link CStation#isWorkingArea() working area} should be stored when storing a layout.<br>
+     * This method installs a {@link DockSituationIgnore} on the intern {@link DockFrontend}, the filter is only
+     * used for "normal entries", "final entries" (does stored when the application shuts down) are not affected.<br>
+     * The default value for this property is <code>true</code>. 
+     * @param ignore if <code>true</code> then some {@link CDockable}s are filtered out, otherwise their location
+     * is stored.
+     */
+    public void setIgnoreWorkingForEntry( boolean ignore ){
+    	if( ignore ){
+	    	frontend.setIgnoreForEntry( new DockSituationIgnore(){
+		        public boolean ignoreChildren( DockStation station ) {
+		            CStation<?> cstation = getStation( station );
+		            if( cstation != null )
+		                return cstation.isWorkingArea();
+		
+		            return false;
+		        }
+		        public boolean ignoreElement( DockElement element ) {
+		            if( element instanceof CommonDockable ){
+		                CDockable cdockable = ((CommonDockable)element).getDockable();
+		                if( cdockable.getWorkingArea() != null )
+		                    return true;
+		            }
+		            return false;
+		        }
+		    });
+    	}
+    	else{
+    		frontend.setIgnoreForEntry( null );
+    	}
+    }
+    
+    /**
      * Writes a map using the unique identifiers of each {@link SingleCDockable} to
      * tell to which {@link CWorkingArea} it belongs.
      * @param out the stream to write into
@@ -1003,7 +1034,7 @@ public class CControl {
         for( DestroyHook hook : hooks )
             hook.destroy();
     }
-
+    
     /**
      * Creates and adds a new {@link CWorkingArea} to this control. The area
      * is not made visible by this method.
@@ -1012,8 +1043,8 @@ public class CControl {
      */
     public CWorkingArea createWorkingArea( String uniqueId ){
         CWorkingArea area = new CWorkingArea( this, uniqueId );
-        add( area );
-        add( area, true );
+        addDockable( area );
+        addStation( area, true );
         return area;
     }
 
@@ -1025,7 +1056,7 @@ public class CControl {
      */
     public CMinimizeArea createMinimizeArea( String uniqueId ){
         CMinimizeArea area = new CMinimizeArea( this, uniqueId );
-        add( area, true );
+        addStation( area, true );
         return area;
     }
 
@@ -1037,7 +1068,7 @@ public class CControl {
      */
     public CGridArea createGridArea( String uniqueId ){
         CGridArea area = new CGridArea( this, uniqueId );
-        add( area, true );
+        addStation( area, true );
         if( frontend.getDefaultStation() == null )
             frontend.setDefaultStation( area.getStation() );
         return area;

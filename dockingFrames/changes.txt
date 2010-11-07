@@ -337,7 +337,7 @@
 - Bugfix: repaired an issue where buttons on a FlapDockStation where not shown due to a race condition. Also repaired an issue where the button had a false size due to a missing border.
 - Bugfix: resolved an issue where the CDockableStateListener was not called when the mode changed.
 
-[v1.1.0 p1]
+[v1.1.0p1]
 ! API: SingleCDockableBackupFactory replaced by SingleCDockableFactory
 - API: CControl now supports filters for SingleCDockableFactories. With a filter one factory can create many Dockables. There is no longer a need to know all of the identifiers that were used when storing a layout. 
        MultipleCDockableFactory will not receive such support: clients with content that changes can already use the factories layout-object to implement their own filtering/backup mechanism.
@@ -346,4 +346,12 @@
 - API: Added support for JDesktopPane and JInternalFrames. The FlapDockStation will automatically detect them, for the ScreenDockStation special factories and strategies have to be set (the Internal... classes).  
 - Bugfix: CSplitDockStationHandle did throw an exception on removal, because it could not handle a "null" mode.
 ! API: Changed the interface "Combiner". The interface has now much more control of how two Dockables are going to be merged, it can now also paint on the station to help the user understand of what is going to happen once the mouse is released
-- API: Added "SplitCombiner", a Combiner that creates SplitDockStations instead of StackDockStations.  
+- API: Added "SplitCombiner", a Combiner that creates SplitDockStations instead of StackDockStations.
+
+[v1.1.0p2]
+! API: PlaceholderList is now abstract and has more generic arguments. There are two new subclasses: DockablePlaceholderList and PerspectivePlaceholderList.
+! API: DockFactory has additional methods and generic arguments to deal with PerspectiveElements
+! API: various classes and interfaces needed new generic parameters or needed to be made abstract in order to implement the perspective mechanism. Clients should not be affected (much) by these changes as these classes/interfaces are mostly used in a layer that is not interesting for clients.
+- API: Many PreferenceModels now grant access to the Preference objects such that clients can modify them directly
+- API: CControl.initExternalizeArea can now be overriden by clients to create a custom ScreenDockStation for externalized items
+- Bugfix: DockFrontend no longer stores the same Dockable twice if root-stations are nested  

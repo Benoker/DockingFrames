@@ -30,6 +30,7 @@ import bibliothek.gui.dock.common.event.ResizeRequestListener;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
+import bibliothek.gui.dock.common.perspective.CStationPerspective;
 import bibliothek.gui.dock.facile.mode.ModeArea;
 
 /**
@@ -54,11 +55,21 @@ public interface CStation<S extends DockStation> {
      * @return this as dockable or <code>null</code>
      */
     public CDockable asDockable();
+
+    /**
+     * Returns a new {@link CStationPerspective} that represents <code>this</code> station. This method
+     * does not need to set any content of the new perspective. Basically this method just needs to tell
+     * the framework what type of {@link CStationPerspective} is needed, not what its content is.
+     * @return the new, empty perspective
+     */
+    public CStationPerspective createPerspective();
     
     /**
      * Tells whether this station is a special working area or not. It is not
      * possible drag a child from a working area if it is registered there, or
-     * to drop a child onto a working area if it is not registered there.
+     * to drop a child onto a working area if it is not registered there.<br>
+     * Working areas must either be registered as root-station (see {@link CControl#addStation(CStation, boolean)})
+     * or must be a {@link SingleCDockable}.
      * @return <code>true</code> if this is a working area, <code>false</code>
      * otherwise
      */

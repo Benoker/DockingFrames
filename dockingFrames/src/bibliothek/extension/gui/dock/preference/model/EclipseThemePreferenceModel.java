@@ -36,12 +36,32 @@ import bibliothek.gui.dock.util.DockProperties;
  * @author Benjamin Sigg
  */
 public class EclipseThemePreferenceModel extends DefaultPreferenceModel{
+	private EclipseTabPreference tab;
+	private EclipseIconPreference icon;
+	
 	/**
 	 * Creates a new model
 	 * @param properties the properties to read or write
 	 */
 	public EclipseThemePreferenceModel( DockProperties properties ){
-		add( new EclipseTabPreference( properties ));
-		add( new EclipseIconPreference( properties ));
+		add( tab = new EclipseTabPreference( properties ));
+		add( icon = new EclipseIconPreference( properties ));
+	}
+	
+	/**
+	 * Grants access to the preference that represents the look of tabs.
+	 * @return the preference, not <code>null</code>
+	 */
+	public EclipseTabPreference getTab(){
+		return tab;
+	}
+	
+	/**
+	 * Grants access to the preference that tells whether an icon is painted
+	 * on unselected tabs or not. 
+	 * @return the icon preference, not <code>null</code>
+	 */
+	public EclipseIconPreference getIcon(){
+		return icon;
 	}
 }

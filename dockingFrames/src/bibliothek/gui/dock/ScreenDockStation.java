@@ -76,8 +76,8 @@ import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.CombinerWrapper;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
+import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
-import bibliothek.gui.dock.station.support.PlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
@@ -142,7 +142,7 @@ public class ScreenDockStation extends AbstractDockStation {
     
     /** A list of all windows that are used by this station */
     // private List<ScreenDockWindow> dockables = new ArrayList<ScreenDockWindow>();
-    private PlaceholderList<ScreenDockWindowHandle> dockables = new PlaceholderList<ScreenDockWindowHandle>();
+    private DockablePlaceholderList<ScreenDockWindowHandle> dockables = new DockablePlaceholderList<ScreenDockWindowHandle>();
     
     /** All listeners that were added to this station */
     private List<ScreenDockStationListener> screenDockStationListeners = new ArrayList<ScreenDockStationListener>();
@@ -523,7 +523,7 @@ public class ScreenDockStation extends AbstractDockStation {
     public PlaceholderMap getPlaceholders( final Map<Dockable, Integer> children ){
     	final PlaceholderStrategy strategy = getPlaceholderStrategy();
     	
-    	return dockables.toMap( new PlaceholderListItemAdapter<ScreenDockWindowHandle>() {
+    	return dockables.toMap( new PlaceholderListItemAdapter<Dockable, ScreenDockWindowHandle>() {
     		@Override
     		public ConvertedPlaceholderListItem convert( int index, ScreenDockWindowHandle dockable ) {
     			ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
@@ -552,7 +552,7 @@ public class ScreenDockStation extends AbstractDockStation {
     		throw new IllegalStateException( "there are children on this station" );
     	}
     	try{
-    		PlaceholderList<ScreenDockWindowHandle> next = new PlaceholderList<ScreenDockWindowHandle>( placeholders );
+    		DockablePlaceholderList<ScreenDockWindowHandle> next = new DockablePlaceholderList<ScreenDockWindowHandle>( placeholders );
     		if( getController() != null ){
     			dockables.setStrategy( null );
     			dockables.unbind();
@@ -581,7 +581,7 @@ public class ScreenDockStation extends AbstractDockStation {
     		throw new IllegalStateException( "must not have any children" );
     	}
     	
-    	PlaceholderList<ScreenDockWindowHandle> next = new PlaceholderList<ScreenDockWindowHandle>();
+    	DockablePlaceholderList<ScreenDockWindowHandle> next = new DockablePlaceholderList<ScreenDockWindowHandle>();
     	
 		if( getController() != null ){
 			dockables.setStrategy( null );
@@ -594,7 +594,7 @@ public class ScreenDockStation extends AbstractDockStation {
 			dockables = next;
 		}
     	
-    	next.read( map, new PlaceholderListItemAdapter<ScreenDockWindowHandle>(){
+    	next.read( map, new PlaceholderListItemAdapter<Dockable, ScreenDockWindowHandle>(){
 			@Override
 			public ScreenDockWindowHandle convert( ConvertedPlaceholderListItem item ){
 				int id = item.getInt( "id" );
@@ -1327,7 +1327,7 @@ public class ScreenDockStation extends AbstractDockStation {
         final Dockable old = window.getWindow().getDockable();
         
         int listIndex = dockables.levelToBase( index, Level.DOCKABLE );
-        PlaceholderList<ScreenDockWindowHandle>.Item item = dockables.list().get( listIndex );
+        DockablePlaceholderList<ScreenDockWindowHandle>.Item item = dockables.list().get( listIndex );
         final PlaceholderMap map = item.getPlaceholderMap();
         item.setPlaceholderMap( null );
         
@@ -1374,7 +1374,7 @@ public class ScreenDockStation extends AbstractDockStation {
         
         if( station ){
 	        int listIndex = dockables.levelToBase( index, Level.DOCKABLE );
-	        PlaceholderList<ScreenDockWindowHandle>.Item item = dockables.list().get( listIndex );
+	        DockablePlaceholderList<ScreenDockWindowHandle>.Item item = dockables.list().get( listIndex );
 	        item.setPlaceholderMap( current.asDockStation().getPlaceholders() );
         }
         
@@ -1702,7 +1702,7 @@ public class ScreenDockStation extends AbstractDockStation {
 		}
 
 		public PlaceholderMap getPlaceholders(){
-			for( PlaceholderList<ScreenDockWindowHandle>.Item item : dockables.list() ){
+			for( DockablePlaceholderList<ScreenDockWindowHandle>.Item item : dockables.list() ){
 				ScreenDockWindowHandle handle = item.getDockable();
 				if( handle != null && handle.getWindow() == combine ){
 					return item.getPlaceholderMap();

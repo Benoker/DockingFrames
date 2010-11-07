@@ -40,6 +40,7 @@ import bibliothek.gui.dock.SplitDockStation.Orientation;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
+import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.station.split.SplitDockStationLayout.Entry;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
@@ -53,7 +54,7 @@ import bibliothek.util.xml.XException;
  * A factory that creates {@link SplitDockStation SplitDockStations}.
  * @author Benjamin Sigg
  */
-public class SplitDockStationFactory implements DockFactory<SplitDockStation, SplitDockStationLayout> {
+public class SplitDockStationFactory implements DockFactory<SplitDockStation, SplitDockPerspective, SplitDockStationLayout> {
 	/** The id which is normally used for this type of factory*/
     public static final String ID = "SplitDockStationFactory";
 
@@ -69,7 +70,6 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     }
     
     public SplitDockStationLayout getLayout( final SplitDockStation station, final Map<Dockable, Integer> children ) {
-        
         Entry root =
             station.visit( new SplitTreeFactory<Entry>(){
             	private PlaceholderStrategy strategy = station.getPlaceholderStrategy();
@@ -133,9 +133,37 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
             return new SplitDockStationLayout( root, fullscreen );
     }
     
+    public SplitDockStationLayout getPerspectiveLayout( SplitDockPerspective element, Map<PerspectiveDockable, Integer> children ){
+    	Entry root = convert( element.getRoot(), children );
+         
+        PerspectiveDockable fullscreenDockable = element.getFullScreen();
+        Integer fullscreen = null;
+        if( fullscreenDockable != null )
+             fullscreen = children.get( fullscreenDockable );
+         
+        if( fullscreen == null )
+            return new SplitDockStationLayout( root, -1 );
+        else
+            return new SplitDockStationLayout( root, fullscreen );
+    }
+
+    private Entry convert( SplitDockPerspective.Entry entry, Map<PerspectiveDockable, Integer> children ){
+    	if( entry.asNode() != null ){
+    		SplitDockPerspective.Node node = entry.asNode();
+    		Entry childA = convert( node.getChildA(), children );
+    		Entry childB = convert( node.getChildB(), children );
+    		
+    		return new SplitDockStationLayout.Node( node.getOrientation(), node.getDivider(), childA, childB, node.getPlaceholders(), node.getPlaceholderMap(), node.getNodeId() );
+    	} else {
+    		SplitDockPerspective.Leaf leaf = entry.asLeaf();
+    		Integer id = children.get( leaf.getDockable() );
+    		return new SplitDockStationLayout.Leaf( id == null ? -1 : id.intValue(), leaf.getPlaceholders(), leaf.getPlaceholderMap(), leaf.getNodeId() );
+    	}
+    }
+    
     public void setLayout( SplitDockStation station, SplitDockStationLayout layout, Map<Integer, Dockable> children ) {
-        SplitDockTree tree = new SplitDockTree();
-        SplitDockTree.Key root = null;
+        DockableSplitDockTree tree = new DockableSplitDockTree();
+        DockableSplitDockTree.Key root = null;
         if( layout.getRoot() != null ){
             root = handleEntry( layout.getRoot(), tree, children );
         }
@@ -148,6 +176,24 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
         station.setFullScreen( fullscreen );
     }
     
+    public SplitDockPerspective layoutPerspective( SplitDockStationLayout layout, Map<Integer, PerspectiveDockable> children ){
+    	SplitDockPerspective result = new SplitDockPerspective();
+    	layoutPerspective( result, layout, children );
+    	return result;
+    }
+    
+    public void layoutPerspective( SplitDockPerspective perspective, SplitDockStationLayout layout, Map<Integer,PerspectiveDockable> children ){
+	    PerspectiveSplitDockTree tree = new PerspectiveSplitDockTree();
+	    PerspectiveSplitDockTree.Key root = null;
+	    if( layout.getRoot() != null ){
+	    	root = handleEntry( layout.getRoot(), tree, children );
+	    }
+	    if( root != null ){
+	    	tree.root( root );
+	    }
+	    perspective.read( tree, children.get( layout.getFullscreen() ) );
+    }
+    
     /**
      * Transforms an entry of a {@link SplitDockStationLayout} into a key
      * of a {@link SplitDockTree}.
@@ -156,7 +202,7 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
      * @param children the set of known children
      * @return the key or <code>null</code>
      */
-    private SplitDockTree.Key handleEntry( SplitDockStationLayout.Entry entry, SplitDockTree tree, Map<Integer, Dockable> children ){
+    private <D> SplitDockTree<D>.Key handleEntry( SplitDockStationLayout.Entry entry, SplitDockTree<D> tree, Map<Integer, D> children ){
         if( entry.asLeaf() != null )
             return handleLeaf( entry.asLeaf(), tree, children );
         else
@@ -171,17 +217,17 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
      * @param children the set of known children
      * @return the key or <code>null</code>
      */
-    private SplitDockTree.Key handleLeaf( SplitDockStationLayout.Leaf leaf, SplitDockTree tree, Map<Integer, Dockable> children ){
-    	Dockable dockable = children.get( leaf.getId() );
+    private <D> SplitDockTree<D>.Key handleLeaf( SplitDockStationLayout.Leaf leaf, SplitDockTree<D> tree, Map<Integer, D> children ){
+    	D dockable = children.get( leaf.getId() );
     	
     	Path[] placeholders = leaf.getPlaceholders();
     	PlaceholderMap placeholderMap = leaf.getPlaceholderMap();
     	
         if( dockable != null ){
-        	return tree.put( new Dockable[]{ dockable }, null, placeholders, placeholderMap, leaf.getNodeId() );
+        	return tree.put( tree.array( dockable ), null, placeholders, placeholderMap, leaf.getNodeId() );
         }
         else if( placeholders != null && placeholders.length > 0 ){
-        	return tree.put( new Dockable[]{}, null, placeholders, placeholderMap, leaf.getNodeId() );
+        	return tree.put( tree.array( 0 ), null, placeholders, placeholderMap, leaf.getNodeId() );
         }
         
         return null;
@@ -195,9 +241,9 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
      * @param children the set of known children
      * @return the key or <code>null</code>
      */
-    private SplitDockTree.Key handleNode( SplitDockStationLayout.Node node, SplitDockTree tree,Map<Integer, Dockable> children ){
-        SplitDockTree.Key a = handleEntry( node.getChildA(), tree, children );
-        SplitDockTree.Key b = handleEntry( node.getChildB(), tree, children );
+    private <D> SplitDockTree<D>.Key handleNode( SplitDockStationLayout.Node node, SplitDockTree<D> tree,Map<Integer, D> children ){
+        SplitDockTree<D>.Key a = handleEntry( node.getChildA(), tree, children );
+        SplitDockTree<D>.Key b = handleEntry( node.getChildB(), tree, children );
         
         if( a == null )
             return b;
@@ -272,17 +318,14 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
         return station;
     }
     
-    public SplitDockStation layout( SplitDockStationLayout layout,
-            Map<Integer, Dockable> children ) {
+    public SplitDockStation layout( SplitDockStationLayout layout, Map<Integer, Dockable> children ) {
         
         SplitDockStation station = createStation();
         setLayout( station, layout, children );
         return station;
     }
     
-    public void write( SplitDockStationLayout layout, DataOutputStream out )
-            throws IOException {
-
+    public void write( SplitDockStationLayout layout, DataOutputStream out ) throws IOException {
         Version.write( out, Version.VERSION_1_0_8a );
         
         SplitDockStationLayout.Entry root = layout.getRoot();

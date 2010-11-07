@@ -44,9 +44,11 @@ import bibliothek.util.Path;
  * lifecycle of this list.<br>
  * A {@link PlaceholderList} is not thread-safe.
  * @author Benjamin Sigg
- * @param <D> the type which represents a {@link Dockable}
+ * @param <D> the kind of object that should be treated as {@link Dockable}
+ * @param <S> the kind of object that should be treated as {@link DockStation}
+ * @param <P> the type of item which represents a {@link Dockable}
  */
-public class PlaceholderList<D extends PlaceholderListItem> {
+public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 	/** the current set of valid placeholders */
 	private PlaceholderStrategy strategy;
 	
@@ -123,9 +125,9 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	};
 	
 	/** view on all dockables */
-	private SubList<D> dockables = new SubList<D>( Level.DOCKABLE ) {
+	private SubList<P> dockables = new SubList<P>( Level.DOCKABLE ) {
 		@Override
-		protected Item wrap( D object ){
+		protected Item wrap( P object ){
 			return new Item( object );
 		}
 		
@@ -135,18 +137,16 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		}
 		
 		@Override
-		protected D unwrap( Item item ){
+		protected P unwrap( Item item ){
 			return item.getDockable();
 		}
 		
-		public void add( int index, D object ){
+		public void add( int index, P object ){
 			super.add( index, object );
 			
-			if( strategy != null ){
-				Path placeholder = strategy.getPlaceholderFor( object.asDockable() );
-				if( placeholder != null ){
-					removeAll( placeholder );
-				}
+			Path placeholder = getPlaceholder( object.asDockable() );
+			if( placeholder != null ){
+				removeAll( placeholder );
 			}
 		}
 	};
@@ -174,35 +174,47 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	 * constructor stores all placeholders that are described in <code>map</code>, obsolete
 	 * placeholders may be deleted as soon as a {@link PlaceholderStrategy} is set.
 	 * @param map the map to read, not <code>null</code>
-	 * @throws IllegalArgumentException if <code>map</code> was not written by a {@link PlaceholderList}
-	 */
-	public PlaceholderList( PlaceholderMap map ){
-		read( map, new StrategyPlaceholderListItemConverter<D>( null ) );
-	}
-	
-	/**
-	 * Creates a new list reading all the data that is stored in <code>map</code>. This
-	 * constructor stores all placeholders that are described in <code>map</code>, obsolete
-	 * placeholders may be deleted as soon as a {@link PlaceholderStrategy} is set.
-	 * @param map the map to read, not <code>null</code>
 	 * @param converter used to convert items back to dockables, not <code>null</code>
 	 * @throws IllegalArgumentException if <code>map</code> was not written by a {@link PlaceholderList}
 	 */
-	public PlaceholderList( PlaceholderMap map, PlaceholderListItemConverter<D> converter ){
+	public PlaceholderList( PlaceholderMap map, PlaceholderListItemConverter<D, P> converter ){
 		read( map, converter );
 	}
 	
 	/**
-	 * Simulates a call to {@link #read(PlaceholderMap, PlaceholderListItemConverter)} and makes all calls to <code>converter</code>
-	 * that would be made in a real read as well. 
-	 * @param map the map to read
-	 * @param converter used to convert items back to dockables, not <code>null</code>
-	 * @param <D> the kind of data <code>converter</code> handles
+	 * Gets the placeholder which matches <code>dockable</code>.
+	 * @param dockable some random dockable
+	 * @return the placeholder for <code>dockable</code>, can be <code>null</code>
 	 */
-	public static <D extends PlaceholderListItem> void simulatedRead( PlaceholderMap map, PlaceholderListItemConverter<D> converter ){
-		PlaceholderList<D> list = new PlaceholderList<D>();
-		list.read( map, converter, true );
-	}
+	protected abstract Path getPlaceholder( D dockable );
+	
+	/**
+	 * Gets a representation of <code>dockable</code> as string.
+	 * @param dockable some random dockable, not <code>null</code>
+	 * @return the text
+	 */
+	protected abstract String toString( D dockable );
+
+	/**
+	 * Converts <code>dockable</code> to the representation of a {@link DockStation}.
+	 * @param dockable some random dockable
+	 * @return <code>dockable</code> as station, can be <code>null</code>
+	 */
+	protected abstract S toStation( D dockable );
+	
+	/**
+	 * Gets all the placeholders that are used by <code>station</code>.
+	 * @param station some random representation of a {@link DockStation}
+	 * @return the placeholders, can be <code>null</code>
+	 */
+	protected abstract PlaceholderMap getPlaceholders( S station );
+	
+	/**
+	 * Sets all the placeholders that should be used by <code>station</code>.
+	 * @param station a representation of a {@link DockStation}
+	 * @param map the map of placeholders, not <code>null</code>
+	 */
+	protected abstract void setPlaceholders( S station, PlaceholderMap map );
 	
 	/**
 	 * Reads the contents of <code>map</code> and adds them at the end of this list.
@@ -210,11 +222,21 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	 * @param converter used to convert items back to dockables, not <code>null</code>
 	 * @throws IllegalArgumentException if the map is in the wrong format
 	 */
-	public void read( PlaceholderMap map, PlaceholderListItemConverter<D> converter ){
+	public void read( PlaceholderMap map, PlaceholderListItemConverter<D,P> converter ){
 		read( map, converter, false );
 	}
 	
-	private void read( PlaceholderMap map, PlaceholderListItemConverter<D> converter, boolean simulate ){
+	/**
+	 * Reads the contenst of <code>map</code>. This method can either add the contents at
+	 * the end of this list, or just simulate a read. If a read is simulated, then the methods
+	 * of <code>converter</code> are called just as if this would be an actual read, but
+	 * in reality no data is changed in this list.
+	 * @param map the data to read
+	 * @param converter  used to convert items back to dockables, not <code>null</code> 
+	 * @param simulate whether this list should actually be changed or not
+	 * @throw {@link IllegalArgumentException} if the map is in the wrong format
+	 */
+	protected void read( PlaceholderMap map, PlaceholderListItemConverter<D,P> converter, boolean simulate ){
 		if( converter == null ){
 			throw new IllegalArgumentException( "converter must not be null" );
 		}
@@ -240,7 +262,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 				}
 			}
 			
-			D dockable = null;
+			P dockable = null;
 			
 			if( map.contains( placeholders[i], "convert" )){
 				ConvertedPlaceholderListItem converted = new ConvertedPlaceholderListItem();
@@ -287,21 +309,11 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	
 	/**
 	 * Converts this list into a {@link PlaceholderMap}, any remaining {@link Dockable} or
-	 * {@link DockStation} will be converted into its placeholder using the currently installed
-	 * {@link PlaceholderStrategy}. 
-	 * @return the new map, not <code>null</code>
-	 */
-	public PlaceholderMap toMap(){
-		return toMap( new StrategyPlaceholderListItemConverter<D>( strategy ) );
-	}
-	
-	/**
-	 * Converts this list into a {@link PlaceholderMap}, any remaining {@link Dockable} or
 	 * {@link DockStation} will be converted using <code>converter</code>.
 	 * @param converter converter to translate dockables into persistent data, not <code>null</code>
 	 * @return the new map, not <code>null</code>
 	 */
-	public PlaceholderMap toMap( PlaceholderListItemConverter<? super D> converter ){
+	public PlaceholderMap toMap( PlaceholderListItemConverter<?, ? super P> converter ){
 		if( converter == null ){
 			throw new IllegalArgumentException( "converter must not be null" );
 		}
@@ -317,7 +329,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 			PlaceholderMap placeholderMap = entry.getPlaceholderMap();
 			
 			Path additional = null;
-			D dockable = entry.getDockable();
+			P dockable = entry.getDockable();
 			ConvertedPlaceholderListItem converted = null;
 			
 			if( dockable != null ){
@@ -469,9 +481,9 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	public void insertAllPlaceholders(){
 		if( strategy != null ){
 			for( Item item : list() ){
-				D dockable = item.getDockable();
+				P dockable = item.getDockable();
 				if( dockable != null ){
-					Path placeholder = strategy.getPlaceholderFor( dockable.asDockable() );
+					Path placeholder = getPlaceholder( dockable.asDockable() );
 					if( placeholder != null ){
 						item.add( placeholder );
 					}
@@ -484,7 +496,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	 * Gets a mutable view of all {@link Dockable}s of this list.
 	 * @return the dockables
 	 */
-	public Filter<D> dockables(){
+	public Filter<P> dockables(){
 		return dockables;
 	}
 	
@@ -569,7 +581,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	 * @return the placeholder that was inserted, <code>null</code> if the current strategy does
 	 * not assign a placeholder to <code>dockable</code> or if <code>dockable</code> was not found in this list
 	 */
-	public Path remove( D dockable ){
+	public Path remove( P dockable ){
 		Entry entry = search( dockable );
 		if( entry == null ){
 			return null;
@@ -578,8 +590,8 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	}
 		
 	private Path removeDockable( Entry entry ){
-		D dockable = entry.item.getDockable();
-		Path placeholder = strategy == null ? null : strategy.getPlaceholderFor( dockable.asDockable() );
+		P dockable = entry.item.getDockable();
+		Path placeholder = getPlaceholder( dockable.asDockable() );
 		
 		if( placeholder == null ){
 			if( entry.item.hasPlaceholders() ){
@@ -592,9 +604,9 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		else{
 			entry.item.add( placeholder );
 			entry.item.setDockable( null );
-			DockStation station = dockable.asDockable().asDockStation();
+			S station = toStation( dockable.asDockable() );
 			if( station != null ){
-				entry.item.setPlaceholderMap( station.getPlaceholders() );
+				entry.item.setPlaceholderMap( getPlaceholders( station ) );
 			}
 		}
 		return placeholder;
@@ -613,7 +625,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	 * @return the index in {@link #dockables()} where <code>dockable</code> was inserted or -1 if
 	 * <code>placeholder</code> was not found
 	 */
-	public int put( Path placeholder, D dockable ){
+	public int put( Path placeholder, P dockable ){
 		if( dockable == null ){
 			throw new IllegalArgumentException( "dockable must not be null" );
 		}
@@ -623,15 +635,15 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 			return -1;
 		}
 		entry.set( new Item( dockable, entry.item.getPlaceholderSet(), entry.item.getPlaceholderMap() ));
-		DockStation station = dockable.asDockable().asDockStation();
+		S station = toStation( dockable.asDockable() );
 		PlaceholderMap map = entry.item.getPlaceholderMap();
 		if( station != null && map != null ){
 			entry.item.setPlaceholderMap( null );
-			station.setPlaceholders( map );
+			setPlaceholders( station, map );
 		}
 		removeAll( placeholder );
 		if( strategy != null ){
-			Path other = strategy.getPlaceholderFor( dockable.asDockable() );
+			Path other = getPlaceholder( dockable.asDockable() );
 			if( other != null && !other.equals( placeholder )){
 				removeAll( other );
 			}
@@ -680,7 +692,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	 * @param placeholder the placeholder to insert
 	 * @return <code>true</code> if <code>dockable</code> was found, <code>false</code> otherwise
 	 */
-	public boolean put( D dockable, Path placeholder ){
+	public boolean put( P dockable, Path placeholder ){
 		Entry entry = search( dockable );
 		if( entry == null ){
 			return false;
@@ -697,7 +709,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	 * @return either the dockable or <code>null</code> if there is no dockable stored or
 	 * <code>placeholder</code> is not found
 	 */
-	public D getDockableAt( Path placeholder ){
+	public P getDockableAt( Path placeholder ){
 		Entry entry = search( placeholder );
 		if( entry == null ){
 			return null;
@@ -730,7 +742,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		return null;
 	}
 	
-	private Entry search( D dockable ){
+	private Entry search( P dockable ){
 		Entry entry = head( Level.DOCKABLE );
 		while( entry != null ){
 			if( entry.item.getDockable() == dockable ){
@@ -1055,20 +1067,20 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 	 */
 	public class Item extends PlaceholderMetaMap{
 		/** the value of this item, can be <code>null</code> */
-		private D value;
+		private P value;
 		/** all the placeholders that are associated with this item */
 		private Set<Path> placeholderSet = null;
 		/** Additional information about the placeholders of a child that is a {@link DockStation} */
 		private PlaceholderMap placeholderMap;
 		
 		/** the container of this item */
-		private PlaceholderList<D>.Entry owner;
+		private PlaceholderList<D,S,P>.Entry owner;
 		
 		/**
 		 * Creates a new item.
 		 * @param dockable the value of this item, not <code>null</code>
 		 */
-		public Item( D dockable ){
+		public Item( P dockable ){
 			if( dockable == null )
 				throw new IllegalArgumentException( "dockable must not be null" );
 			this.value = dockable;
@@ -1080,7 +1092,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		 * @param placeholderSet the placeholders of this item
 		 * @param placeholderMap the childrens placeholder info
 		 */
-		public Item( D dockable, Set<Path> placeholderSet, PlaceholderMap placeholderMap ){
+		public Item( P dockable, Set<Path> placeholderSet, PlaceholderMap placeholderMap ){
 			if( dockable == null )
 				throw new IllegalArgumentException( "dockable must not be null" );
 			this.value = dockable;
@@ -1112,7 +1124,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		 * Sets the owner of this list.
 		 * @param owner the new owner, can be <code>null</code>
 		 */
-		protected void setOwner( PlaceholderList<D>.Entry owner ){
+		protected void setOwner( PlaceholderList<D,S,P>.Entry owner ){
 			if( bound && strategy != null ){
 				if( placeholderMap != null ){
 					if( owner == null ){
@@ -1226,7 +1238,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		 * is a placeholder
 		 * @see #isPlaceholder()
 		 */
-		public D getDockable(){
+		public P getDockable(){
 			return value;
 		}
 		
@@ -1234,7 +1246,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 		 * Sets the value of this item.
 		 * @param dockable the new value, can be <code>null</code>
 		 */
-		public void setDockable( D dockable ){
+		public void setDockable( P dockable ){
 			this.value = dockable;
 			owner.refresh();
 		}
@@ -1289,7 +1301,7 @@ public class PlaceholderList<D extends PlaceholderListItem> {
 			StringBuilder builder = new StringBuilder();
 			builder.append( "(dockable=" );
 			if( value != null ){
-				builder.append( value.asDockable().getTitleText() );
+				builder.append( PlaceholderList.this.toString( value.asDockable() ) );
 			}
 			builder.append( ", placeholders={" );
 			if( placeholderSet != null ){

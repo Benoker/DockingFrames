@@ -44,22 +44,40 @@ import bibliothek.util.Path;
  * class allows to set this identifier either through {@link Key#setNodeId(long)} or
  * through the non-complex methods (the methods that create only one new key).
  * @author Benjamin Sigg
- *
+ * @param <D> the kind of object representing a {@link Dockable}
  */
-public class SplitDockTree{
+public abstract class SplitDockTree<D>{
 	/** the root of the tree */
 	private Key root;
 	
 	/** the set of Dockables which already have a key */
-	private Set<Dockable> dockables = new HashSet<Dockable>();
+	private Set<D> dockables = new HashSet<D>();
+	
+	/**
+	 * Creates a new array of size <code>size</code> for objects of type <code>D</code>.
+	 * @param size the size of the array
+	 * @return the new array
+	 */
+	public abstract D[] array( int size );
+	
+	/**
+	 * Creates an array around <code>dockable</code>.
+	 * @param dockable the element that should be put into an array
+	 * @return the array of length 1
+	 */
+	public D[] array( D dockable ){
+		D[] array = array( 1 );
+		array[0] = dockable;
+		return array;
+	}
 	
 	/**
 	 * Sets <code>dockable</code> as root, and returns a key to the root.
 	 * @param dockable the new root
 	 * @return the key to the root
 	 */
-	public Key root( Dockable dockable ){
-		root = put( dockable );
+	public Key root( D dockable ){
+		root = put( array( dockable ));
 		return root;
 	}
 	
@@ -79,7 +97,7 @@ public class SplitDockTree{
 	 * @param key the key which will be the root, <code>null</code> is not allowed.
 	 * @return <code>this</code>
 	 */
-	public SplitDockTree root( Key key ){
+	public SplitDockTree<D> root( Key key ){
 		if( key == null )
 			throw new IllegalArgumentException( "Key must not be null" );
 		
@@ -100,8 +118,10 @@ public class SplitDockTree{
 	 * @param nodeId the unique identifier for this node, can be -1
 	 * @return the new key
 	 */
-	public Key put( Dockable dockable, long nodeId ){
-		return put( new Dockable[]{ dockable }, null, nodeId );
+	public Key put( D dockable, long nodeId ){
+		D[] array = array( 1 );
+		array[0] = dockable;
+		return put( array, null, nodeId );
 	}
 	
 	/**
@@ -109,7 +129,7 @@ public class SplitDockTree{
 	 * @param dockables the elements for which a key is requested
 	 * @return the new key
 	 */
-	public Key put( Dockable... dockables ){
+	public Key put( D... dockables ){
 		return put( dockables, null );
 	}
 
@@ -119,7 +139,7 @@ public class SplitDockTree{
 	 * @param selected the element that should be selected, can be <code>null</code>
 	 * @return the new key
 	 */
-	public Key put( Dockable[] dockables, Dockable selected ){
+	public Key put( D[] dockables, D selected ){
 		return put( dockables, selected, -1 );
 	}
 	
@@ -130,7 +150,7 @@ public class SplitDockTree{
 	 * @param nodeId a unique identifier for this node, may be -1
 	 * @return the new key
 	 */
-	public Key put( Dockable[] dockables, Dockable selected, long nodeId ){
+	public Key put( D[] dockables, D selected, long nodeId ){
 		return put( dockables, selected, null, null, nodeId );
 	}
 	
@@ -165,7 +185,7 @@ public class SplitDockTree{
 	 * @param nodeId a unique identifier for this node, may be -1
 	 * @return the new key
 	 */
-	public Key put( Dockable[] dockables, Dockable selected, Path[] placeholders, PlaceholderMap placeholderMap, long nodeId ){
+	public Key put( D[] dockables, D selected, Path[] placeholders, PlaceholderMap placeholderMap, long nodeId ){
 		if( placeholders == null || placeholders.length == 0 ){
 			if( dockables == null )
 				throw new IllegalArgumentException( "Dockables must not be null" );
@@ -175,7 +195,7 @@ public class SplitDockTree{
 		}
 		
 		if( dockables != null ){
-	        for( Dockable dockable : dockables ){
+	        for( D dockable : dockables ){
 	            if( dockable == null )
 	                throw new IllegalArgumentException( "Entries of array must not be null" );
 	            
@@ -193,8 +213,8 @@ public class SplitDockTree{
 	 * @param right the right element
 	 * @return a key of the combination of the two elements
 	 */
-	public Key horizontal( Dockable left, Dockable right ){
-		return horizontal( put( left ), put( right ) );
+	public Key horizontal( D left, D right ){
+		return horizontal( put( array( left ) ), put( array( right ) ) );
 	}
 
 	/**
@@ -205,8 +225,8 @@ public class SplitDockTree{
 	 * to the second element. Must be between 0 and 1.
 	 * @return a key of the combination of the two elements
 	 */
-	public Key horizontal( Dockable left, Dockable right, double divider ){
-		return horizontal( put( left ), put( right ), divider );	
+	public Key horizontal( D left, D right, double divider ){
+		return horizontal( put( array( left ) ), put( array( right ) ), divider );	
 	}
 
 	/**
@@ -265,8 +285,8 @@ public class SplitDockTree{
 	 * @param bottom the bottom element
 	 * @return a key of the combination of the two elements
 	 */
-	public Key vertical( Dockable top, Dockable bottom ){
-		return vertical( put( top ), put( bottom ));
+	public Key vertical( D top, D bottom ){
+		return vertical( put( array( top ) ), put( array( bottom ) ));
 	}
 	
 	/**
@@ -277,8 +297,8 @@ public class SplitDockTree{
 	 * to the second element. Must be between 0 and 1.
 	 * @return a key of the combination of the two elements
 	 */
-	public Key vertical( Dockable top, Dockable bottom, double divider ){
-		return vertical( put( top ), put( bottom ), divider );
+	public Key vertical( D top, D bottom, double divider ){
+		return vertical( put( array( top ) ), put( array( bottom ) ), divider );
 	}
 	
 	/**
@@ -388,8 +408,8 @@ public class SplitDockTree{
 	 * Gets a list of all {@link Dockable}s that are known to this tree.
 	 * @return the list of elements
 	 */
-	public Dockable[] getDockables(){
-		return dockables.toArray( new Dockable[ dockables.size() ] );
+	public D[] getDockables(){
+		return dockables.toArray( array( dockables.size() ) );
 	}
 	
 	/**
@@ -397,7 +417,7 @@ public class SplitDockTree{
 	 * @param key the leaf
 	 * @return the elements, can be <code>null</code>
 	 */
-	public Dockable[] getDockables( Key key ){
+	public D[] getDockables( Key key ){
 		if( !isDockable( key ))
 			throw new IllegalArgumentException( "Not a Dockable" );
 		return key.asLeaf().dockables;
@@ -408,7 +428,7 @@ public class SplitDockTree{
 	 * @param key the leaf
 	 * @return the selected element, can be <code>null</code>
 	 */
-	public Dockable getSelected( Key key ){
+	public D getSelected( Key key ){
 		if( !isDockable( key ))
 			throw new IllegalArgumentException( "Not a Dockable" );
 		return key.asLeaf().selected;
@@ -520,7 +540,7 @@ public class SplitDockTree{
 		 * Gets the tree which is the owner of this node or leaf.
 		 * @return the owner
 		 */
-		public SplitDockTree getTree(){
+		public SplitDockTree<D> getTree(){
 			return SplitDockTree.this;
 		}
 		
@@ -580,9 +600,9 @@ public class SplitDockTree{
 	 */
 	private class Leaf extends Key{
 		/** the Dockable that will replace this leaf */
-		public Dockable[] dockables;
+		public D[] dockables;
 		/** the element that is selected, can be <code>null</code> */
-		public Dockable selected;
+		public D selected;
 		
 		/**
 		 * Creates a new leaf.
@@ -592,7 +612,7 @@ public class SplitDockTree{
 		 * @param placeholderMap placeholder information for a child {@link DockStation}
 		 * @param id the unique identifier of this node or -1
 		 */
-		public Leaf( Dockable[] dockables, Dockable selected, Path[] placeholders, PlaceholderMap placeholderMap, long id ){
+		public Leaf( D[] dockables, D selected, Path[] placeholders, PlaceholderMap placeholderMap, long id ){
 			super( placeholders, placeholderMap, id );
 			if( dockables != null ){
 				this.dockables = dockables.clone();

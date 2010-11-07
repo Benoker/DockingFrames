@@ -69,14 +69,14 @@ import bibliothek.gui.dock.station.stack.StackDockComponentParent;
 import bibliothek.gui.dock.station.stack.StackDockComponentRepresentative;
 import bibliothek.gui.dock.station.stack.StackDockProperty;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
-import bibliothek.gui.dock.station.stack.TabContentFilterListener;
 import bibliothek.gui.dock.station.stack.TabContent;
+import bibliothek.gui.dock.station.stack.TabContentFilterListener;
 import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
+import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
-import bibliothek.gui.dock.station.support.PlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
@@ -121,7 +121,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     	new PropertyKey<TabContentFilter>( "stack dock tab content filter" );
     
     /** A list of all children */
-    private PlaceholderList<StationChildHandle> dockables = new PlaceholderList<StationChildHandle>();
+    private DockablePlaceholderList<StationChildHandle> dockables = new DockablePlaceholderList<StationChildHandle>();
     
     /**
      * A list of {@link MouseInputListener MouseInputListeners} which are
@@ -666,7 +666,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     		throw new IllegalStateException( "there are children on this station" );
     	}
     	try{
-    		PlaceholderList<StationChildHandle> next = new PlaceholderList<StationChildHandle>( placeholders );
+    		DockablePlaceholderList<StationChildHandle> next = new DockablePlaceholderList<StationChildHandle>( placeholders );
     		if( getController() != null ){
     			dockables.setStrategy( null );
     			dockables.unbind();
@@ -700,7 +700,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     	
     	final PlaceholderStrategy strategy = getPlaceholderStrategy();
     	
-    	return dockables.toMap( new PlaceholderListItemAdapter<StationChildHandle>() {
+    	return dockables.toMap( new PlaceholderListItemAdapter<Dockable, StationChildHandle>() {
     		@Override
     		public ConvertedPlaceholderListItem convert( int index, StationChildHandle dockable ){
     			ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
@@ -736,10 +736,10 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     	
     	dockables.setStrategy( null );
 		dockables.unbind();
-		PlaceholderList<StationChildHandle> next = new PlaceholderList<StationChildHandle>();
+		DockablePlaceholderList<StationChildHandle> next = new DockablePlaceholderList<StationChildHandle>();
     	
     	dockables = next;
-    	next.read( placeholders, new PlaceholderListItemAdapter<StationChildHandle>() {
+    	next.read( placeholders, new PlaceholderListItemAdapter<Dockable, StationChildHandle>() {
     		private int size = 0;
     		
     		@Override
@@ -1112,10 +1112,10 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     		int index = indexOf( old );
     		
     		int listIndex = dockables.levelToBase( index, Level.DOCKABLE );
-    		PlaceholderList<StationChildHandle>.Item oldItem = dockables.list().get( listIndex );
+    		DockablePlaceholderList<StationChildHandle>.Item oldItem = dockables.list().get( listIndex );
     		remove( index );
     		add( next, index );
-    		PlaceholderList<StationChildHandle>.Item newItem = dockables.list().get( listIndex );
+    		DockablePlaceholderList<StationChildHandle>.Item newItem = dockables.list().get( listIndex );
     		if( station ){
     			newItem.setPlaceholderMap( old.asDockStation().getPlaceholders() );
     		}

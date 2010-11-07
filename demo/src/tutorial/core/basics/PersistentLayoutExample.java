@@ -25,6 +25,8 @@ import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
 import bibliothek.gui.dock.layout.PredefinedDockSituation;
+import bibliothek.gui.dock.perspective.PerspectiveDockable;
+import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.themes.NoStackTheme;
@@ -189,7 +191,7 @@ public class PersistentLayoutExample {
 	 * the methods handling children because our CustomColorDockable is no DockStation and hence
 	 * will never have any children.
 	 *  */
-	private static class CustomColorDockableFactory implements DockFactory<CustomColorDockable, CustomColorLayout>{
+	private static class CustomColorDockableFactory implements DockFactory<CustomColorDockable, PerspectiveElement, CustomColorLayout>{
 		public String getID(){
 			return CUSTOM_COLOR_DOCKABLE_FACTORY_ID;
 		}
@@ -220,6 +222,21 @@ public class PersistentLayoutExample {
 		public void setLayout( CustomColorDockable element, CustomColorLayout layout ){
 			element.setTitleText( layout.getTitle() );
 			element.setColor( layout.getColor() );
+		}
+		
+		/* ignore in this example */
+		public CustomColorLayout getPerspectiveLayout( PerspectiveElement element, Map<PerspectiveDockable, Integer> children ){
+			return null;
+		}
+		
+		/* ignored in this example */
+		public void layoutPerspective( PerspectiveElement perspective, CustomColorLayout layout, Map<Integer, PerspectiveDockable> children ){
+			// ignore
+		}
+		
+		/* ignored in this example */
+		public PerspectiveElement layoutPerspective( CustomColorLayout layout, Map<Integer, PerspectiveDockable> children ){
+			return null;
 		}
 		
 		/* CustomColorLayout ----> byte[] */

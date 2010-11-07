@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.station.support;
 
 import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 
 /**
  * This converter uses a {@link PlaceholderStrategy} to create new placeholders, but
@@ -33,7 +34,7 @@ import bibliothek.gui.DockStation;
  * @author Benjamin Sigg
  * @param <D> the kind of item this converter is used for
  */
-public class StrategyPlaceholderListItemConverter<D extends PlaceholderListItem> extends PlaceholderListItemAdapter<D> {
+public class StrategyPlaceholderListItemConverter<D extends PlaceholderListItem<Dockable>> extends PlaceholderListItemAdapter<Dockable, D> {
 	/** the strategy to create placeholders */
 	private PlaceholderStrategy strategy;
 	

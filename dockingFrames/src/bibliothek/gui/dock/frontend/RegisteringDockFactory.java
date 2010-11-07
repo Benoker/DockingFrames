@@ -35,29 +35,31 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.layout.BackupFactoryData;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
+import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.xml.XElement;
 
 /**
- * A {@link DockFactory} that wrapps around another factory and adds all elements
+ * A {@link DockFactory} that wraps around another factory and adds all elements
  * that are read through {@link #layout(BackupFactoryData)} or {@link #layout(BackupFactoryData, Map)}
  * to a {@link DockFrontend}.
  * @author Benjamin Sigg
  * @param <D> the kind of elements read by this factory
+ * @param <P> the kind of perspective read by this factory
  * @param <L> the kind of data the wrapped factory needs
  */
-public class RegisteringDockFactory<D extends Dockable, L> implements DockFactory<D, BackupFactoryData<L>> {
+public class RegisteringDockFactory<D extends Dockable, P extends PerspectiveDockable, L> implements DockFactory<D, P, BackupFactoryData<L>> {
     /** the {@link DockFrontend} to which this factory will add new elements */
     private DockFrontend frontend;
     /** delegate used to read new elements */
-    private DockFactory<D, L> factory;
+    private DockFactory<D, P, L> factory;
     
     /**
      * Creates a new factory
      * @param frontend the frontend to which this factory will add new elements
      * @param factory delegated used to read and create new elements
      */
-    public RegisteringDockFactory( DockFrontend frontend, DockFactory<D, L> factory ){
+    public RegisteringDockFactory( DockFrontend frontend, DockFactory<D, P, L> factory ){
         this.frontend = frontend;
         this.factory = factory;
     }
@@ -125,4 +127,21 @@ public class RegisteringDockFactory<D extends Dockable, L> implements DockFactor
     public void write( BackupFactoryData<L> layout, XElement element ) {
         factory.write( layout.getData(), element );
     }
+
+	public BackupFactoryData<L> getPerspectiveLayout( P element, Map<PerspectiveDockable, Integer> children ){
+		return new BackupFactoryData<L>( null, factory.getPerspectiveLayout( element, children ) );
+	}
+
+	public P layoutPerspective( BackupFactoryData<L> layout, Map<Integer, PerspectiveDockable> children ){
+		if( layout.getData() == null ){
+			return null;
+		}
+		return factory.layoutPerspective( layout.getData(), children );
+	}
+	
+	public void layoutPerspective( P perspective, BackupFactoryData<L> layout, Map<Integer,PerspectiveDockable> children ){
+		if( layout.getData() != null ){
+			factory.layoutPerspective( perspective, layout.getData(), children );
+		}
+	}
 }

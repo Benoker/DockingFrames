@@ -305,6 +305,15 @@ public class PreferenceTreeModel extends AbstractPreferenceModel implements Tree
     }
     
     /**
+     * Gets the model which was stored using <code>path</code> as key.
+     * @param path the key of some model
+     * @return the model or <code>null</code>
+     */
+    public PreferenceModel getModel( Path path ){
+    	return delegate.getModel( path );
+    }
+    
+    /**
      * Deletes the node at <code>path</code> and all its children from the
      * tree. This also removes any {@link PreferenceModel} of the subtree. If
      * there is no node at <code>path</code>, then nothing happens

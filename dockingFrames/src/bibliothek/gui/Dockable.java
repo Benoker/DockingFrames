@@ -63,7 +63,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  * Normally clients are better of using the {@link DefaultDockable} or extending {@link AbstractDockable}.  
  * @author Benjamin Sigg
  */
-public interface Dockable extends DockElement, DockElementRepresentative, PlaceholderListItem{
+public interface Dockable extends DockElement, DockElementRepresentative, PlaceholderListItem<Dockable>{
     /**
      * Sets the parent property. This Dockable is shown as direct child of
      * <code>station</code>.<br>

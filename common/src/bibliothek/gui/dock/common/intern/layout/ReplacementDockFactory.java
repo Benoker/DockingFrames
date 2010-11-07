@@ -35,6 +35,8 @@ import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
+import bibliothek.gui.dock.perspective.PerspectiveDockable;
+import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.FrameworkOnly;
 import bibliothek.util.xml.XElement;
@@ -45,7 +47,7 @@ import bibliothek.util.xml.XElement;
  * @author Benjamin Sigg
  */
 @FrameworkOnly
-public class ReplacementDockFactory implements DockFactory<CommonDockable, MultipleCDockable> {
+public class ReplacementDockFactory implements DockFactory<CommonDockable, PerspectiveElement, MultipleCDockable> {
 	public static final String REPLACEMENT_FACTORY_ID = "dock.common.replacement_factory";
 	
 	public void estimateLocations( MultipleCDockable layout, LocationEstimationMap children ){
@@ -66,6 +68,18 @@ public class ReplacementDockFactory implements DockFactory<CommonDockable, Multi
 
 	public MultipleCDockable getLayout( CommonDockable element, Map<Dockable, Integer> children ){
 		return (MultipleCDockable)element.getDockable();
+	}
+	
+	public MultipleCDockable getPerspectiveLayout( PerspectiveElement element, Map<PerspectiveDockable, Integer> children ){
+		return null;
+	}
+	
+	public PerspectiveElement layoutPerspective( MultipleCDockable layout, Map<Integer, PerspectiveDockable> children ){
+		return null;
+	}
+	
+	public void layoutPerspective( PerspectiveElement perspective, MultipleCDockable layout, Map<Integer, PerspectiveDockable> children ){
+		// ignore	
 	}
 
 	public MultipleCDockable read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException{

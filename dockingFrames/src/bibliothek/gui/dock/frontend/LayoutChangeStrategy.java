@@ -29,12 +29,15 @@ import java.io.IOException;
 
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.layout.DockLayoutComposition;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
 import bibliothek.gui.dock.layout.DockSituation;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.layout.PropertyTransformer;
+import bibliothek.gui.dock.perspective.Perspective;
+import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
 
@@ -73,8 +76,18 @@ public interface LayoutChangeStrategy {
      * be loaded the next time the application starts.
      * @return the situation
      */
-	
 	public DockSituation createSituation( DockFrontendInternals frontend, boolean entry );
+	
+	/**
+	 * Creates a {@link Perspective} that is used to read and write perspectives related to <code>frontend</code>.
+     * @param frontend the frontend for which the situation is required
+     * @param entry <code>true</code> if the situation is used for a regular setting,
+     * <code>false</code> if the situation is used as the final setting which will
+     * be loaded the next time the application starts. 
+     * @param factory a factory that takes {@link DockElement}s and returns the matching {@link PerspectiveElement}
+     * @return the new perspective
+	 */
+	public Perspective createPerspective( DockFrontendInternals frontend, boolean entry, FrontendPerspectiveFactory factory );
 	
 	/**
 	 * Creates a converter for reading and writing {@link DockableProperty}s.

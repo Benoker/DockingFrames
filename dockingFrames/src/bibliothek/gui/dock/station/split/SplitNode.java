@@ -508,7 +508,7 @@ public abstract class SplitNode{
      * @param checkValidity whether to ensure that all new {@link Dockable}s are
      * acceptable or not.
      */
-    public abstract void evolve( SplitDockTree.Key key, boolean checkValidity, Map<Leaf, Dockable> linksToSet );
+    public abstract void evolve( SplitDockTree<Dockable>.Key key, boolean checkValidity, Map<Leaf, Dockable> linksToSet );
     
     /**
      * If there are elements left in <code>property</code>, then the next node
@@ -649,8 +649,8 @@ public abstract class SplitNode{
      * @param linksToSet a map that will be filled up with new {@link Leaf}s whose {@link Dockable}s have not yet been set
      * @return the new node
      */
-    protected SplitNode create( SplitDockTree.Key key, boolean checkValidity, Map<Leaf, Dockable> linksToSet ){
-    	SplitDockTree tree = key.getTree();
+    protected SplitNode create( SplitDockTree<Dockable>.Key key, boolean checkValidity, Map<Leaf, Dockable> linksToSet ){
+    	SplitDockTree<Dockable> tree = key.getTree();
     	
     	if( tree.isDockable( key )){
     		Dockable[] dockables = tree.getDockables( key );

@@ -78,8 +78,8 @@ public class CLayoutChangeStrategy extends DefaultLayoutChangeStrategy {
 	}
 	
 	@Override
-	protected DockSituation createSituation( DockFrontendInternals frontend, boolean entry, boolean onSetLayout ){
-		DockSituation situation = super.createSituation( frontend, entry, onSetLayout );
+	protected PredefinedDockSituation createSituation( DockFrontendInternals frontend, boolean entry, boolean onSetLayout ){
+		PredefinedDockSituation situation = super.createSituation( frontend, entry, onSetLayout );
 		if( onSetLayout ){
 			situation.add( new ReplacementDockFactory() );
 		}

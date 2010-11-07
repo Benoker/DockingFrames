@@ -32,6 +32,9 @@ import bibliothek.extension.gui.dock.preference.Preference;
 import bibliothek.extension.gui.dock.preference.preferences.KeyStrokeInitSelectorPreference;
 import bibliothek.extension.gui.dock.preference.preferences.ModifierMaskNoCombinationPreference;
 import bibliothek.extension.gui.dock.preference.preferences.ModifierMaskScreenOnlyPreference;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.control.ModifierMask;
 import bibliothek.gui.dock.util.DockProperties;
 
 /**
@@ -40,19 +43,101 @@ import bibliothek.gui.dock.util.DockProperties;
  * @author Benjamin Sigg
  */
 public class CKeyStrokePreferenceModel extends DefaultPreferenceModel{
+	private KeyStrokeInitSelectorPreference initSelector;
+	private ModifierMaskNoCombinationPreference maskNoCombination;
+	private ModifierMaskScreenOnlyPreference maskScreenOnly;
+    
+	private KeyStrokeMaximizeChangePreference maximizeChange;
+	private KeyStrokeMaximizePreference maximize;
+	private KeyStrokeNormalizePreference normalize;
+	private KeyStrokeMinimizePreference minimize;
+	private KeyStrokeExternalizePreference externalize;
+	
     /**
      * Creates a new model.
      * @param properties the set of properties to read and write
      */
     public CKeyStrokePreferenceModel( DockProperties properties ){
-        add( new KeyStrokeInitSelectorPreference( properties ));
-        add( new ModifierMaskNoCombinationPreference( properties ));
-        add( new ModifierMaskScreenOnlyPreference( properties ));
+        add( initSelector = new KeyStrokeInitSelectorPreference( properties ));
+        add( maskNoCombination = new ModifierMaskNoCombinationPreference( properties ));
+        add( maskScreenOnly = new ModifierMaskScreenOnlyPreference( properties ));
         
-        add( new KeyStrokeMaximizeChangePreference( properties ) );
-        add( new KeyStrokeMaximizePreference( properties ));
-        add( new KeyStrokeNormalizePreference( properties ));
-        add( new KeyStrokeMinimizePreference( properties ));
-        add( new KeyStrokeExternalizePreference( properties ));
+        add( maximizeChange = new KeyStrokeMaximizeChangePreference( properties ) );
+        add( maximize = new KeyStrokeMaximizePreference( properties ));
+        add( normalize = new KeyStrokeNormalizePreference( properties ));
+        add( minimize = new KeyStrokeMinimizePreference( properties ));
+        add( externalize = new KeyStrokeExternalizePreference( properties ));
     }
+
+    /**
+     * Gets access to the preference that represents the {@link KeyStroke} which opens the 
+     * selection popup.
+     * @return the preference, not <code>null</code>
+     */
+    public KeyStrokeInitSelectorPreference getInitSelector(){
+		return initSelector;
+	}
+    
+    /**
+     * Gets access to the preference that represents the {@link ModifierMask} that ensures
+     * that {@link Dockable}s are not merged during drag and drop. 
+     * @return the preference, not <code>null</code>
+     */
+    public ModifierMaskNoCombinationPreference getMaskNoCombination(){
+		return maskNoCombination;
+	}
+    
+    /**
+     * Gets access to the preference that represents the {@link ModifierMask} which ensures
+     * that {@link Dockable}s are dropped onto a {@link ScreenDockStation} during drag and drop.
+     * @return the preference, not <code>null</code>
+     */
+    public ModifierMaskScreenOnlyPreference getMaskScreenOnly(){
+		return maskScreenOnly;
+	}
+    
+    /**
+     * Gets access to the preference that represents the {@link KeyStroke} which switches between
+     * maximized and normalized {@link Dockable}.
+     * @return the preference, not <code>null</code>
+     */
+    public KeyStrokeMaximizeChangePreference getMaximizeChange(){
+		return maximizeChange;
+	}
+    
+    /**
+     * Gets access to the preference that represents the {@link KeyStroke} which lets 
+     * maximize a {@link Dockable}.
+     * @return the preference, not <code>null</code>
+     */
+    public KeyStrokeMaximizePreference getMaximize(){
+		return maximize;
+	}
+    
+    /**
+     * Gets access to the preference that represents the {@link KeyStroke} which lets 
+     * normalize a {@link Dockable}.
+     * @return the preference, not <code>null</code>
+     */
+    public KeyStrokeNormalizePreference getNormalize(){
+		return normalize;
+	}
+    
+    /**
+     * Gets access to the preference that represents the {@link KeyStroke} which lets 
+     * minimize a {@link Dockable}.
+     * @return the preference, not <code>null</code>
+     */
+    public KeyStrokeMinimizePreference getMinimize(){
+		return minimize;
+	}
+    
+    /**
+     * Gets access to the preference that represents the {@link KeyStroke} which lets 
+     * externalize a {@link Dockable}.
+     * @return the preference, not <code>null</code>
+     */
+    public KeyStrokeExternalizePreference getExternalize(){
+		return externalize;
+	}
 }

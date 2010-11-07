@@ -29,6 +29,7 @@ import bibliothek.extension.gui.dock.preference.DefaultPreferenceModel;
 import bibliothek.extension.gui.dock.preference.preferences.ButtonContentPreference;
 import bibliothek.extension.gui.dock.preference.preferences.choice.TabContentFilterPreference;
 import bibliothek.extension.gui.dock.preference.preferences.choice.TabPlacementPreference;
+import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.util.Path;
@@ -44,14 +45,52 @@ import bibliothek.util.Path;
  * @author Benjamin Sigg
  */
 public class CLayoutPreferenceModel extends DefaultPreferenceModel{
+	private ButtonContentPreference buttonContent;
+	private TabPlacementPreference tabPlacement;
+	private TabContentFilterPreference tabContentFilter;
+	private ThemePreference theme;
+	
     /**
      * Creates a new model.
      * @param control the control whose settings this model represents
      */
     public CLayoutPreferenceModel( CControl control ){
-        add( new ButtonContentPreference( control.intern().getDockProperties(), new Path( "dock.layout.ButtonContent" )));
-        add( new TabPlacementPreference( control.intern().getDockProperties(), new Path( "dock.layout.tabplacement" )));
-        add( new TabContentFilterPreference( control.intern().getDockProperties(), new Path( "dock.layout.tabcontentfilter" )));
-        add( new ThemePreference( control.intern().getDockProperties(), control.getThemes() ));
+        add( buttonContent = new ButtonContentPreference( control.intern().getDockProperties(), new Path( "dock.layout.ButtonContent" )));
+        add( tabPlacement = new TabPlacementPreference( control.intern().getDockProperties(), new Path( "dock.layout.tabplacement" )));
+        add( tabContentFilter = new TabContentFilterPreference( control.intern().getDockProperties(), new Path( "dock.layout.tabcontentfilter" )));
+        add( theme = new ThemePreference( control.intern().getDockProperties(), control.getThemes() ));
     }
+    
+    /**
+     * Grants access to the preference that tells what content to show on a button for
+     * minimized {@link Dockable}s.
+     * @return the preference, not <code>null</code>
+     */
+    public ButtonContentPreference getButtonContent(){
+		return buttonContent;
+	}
+    
+    /**
+     * Grants access to the preference that tells what content to show on a tab.
+     * @return the preference, not <code>null</code>
+     */
+    public TabContentFilterPreference getTabContentFilter(){
+		return tabContentFilter;
+	}
+    
+    /**
+     * Grants access to the preference that tells where tabs are placed.
+     * @return the preference, not <code>null</code>
+     */
+    public TabPlacementPreference getTabPlacement(){
+		return tabPlacement;
+	}
+ 
+    /**
+     * Grants access to the preference that selects the {@link DockTheme}.
+     * @return the preference, not <code>null</code>
+     */
+    public ThemePreference getTheme(){
+		return theme;
+	}
 }

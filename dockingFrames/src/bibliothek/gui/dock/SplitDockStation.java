@@ -84,6 +84,7 @@ import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.split.DefaultSplitLayoutManager;
+import bibliothek.gui.dock.station.split.DockableSplitDockTree;
 import bibliothek.gui.dock.station.split.Leaf;
 import bibliothek.gui.dock.station.split.Node;
 import bibliothek.gui.dock.station.split.Placeholder;
@@ -106,7 +107,6 @@ import bibliothek.gui.dock.station.split.SplitNodeVisitor;
 import bibliothek.gui.dock.station.split.SplitPlaceholderSet;
 import bibliothek.gui.dock.station.split.SplitTreeFactory;
 import bibliothek.gui.dock.station.split.PutInfo.Put;
-import bibliothek.gui.dock.station.split.SplitDockTree.Key;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.CombinerWrapper;
@@ -1799,7 +1799,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	 * @param tree the new set of children
 	 * @throws SplitDropTreeException If the tree is not acceptable.
 	 */
-	public void dropTree( SplitDockTree tree ){
+	public void dropTree( SplitDockTree<Dockable> tree ){
 		dropTree(tree, true);
 	}
 
@@ -1812,7 +1812,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	 * @throws SplitDropTreeException if <code>checkValidity</code> is
 	 * set to <code>true</code> and the tree is not acceptable
 	 */
-	public void dropTree( SplitDockTree tree, boolean checkValidity ){
+	public void dropTree( SplitDockTree<Dockable> tree, boolean checkValidity ){
 		if( tree == null )
 			throw new IllegalArgumentException("Tree must not be null");
 
@@ -1830,7 +1830,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 				DockUtilities.ensureTreeValidity(this, dockable);
 			}
 
-			Key rootKey = tree.getRoot();
+			SplitDockTree<Dockable>.Key rootKey = tree.getRoot();
 			if( rootKey != null ) {
 				Map<Leaf, Dockable> linksToSet = new HashMap<Leaf, Dockable>();
 				root().evolve(rootKey, checkValidity, linksToSet);
@@ -1851,8 +1851,8 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	 * Gets the contents of this station as a {@link SplitDockTree}.
 	 * @return the tree
 	 */
-	public SplitDockTree createTree(){
-		SplitDockTree tree = new SplitDockTree();
+	public DockableSplitDockTree createTree(){
+		DockableSplitDockTree tree = new DockableSplitDockTree();
 		createTree(new SplitDockTreeFactory(tree));
 		return tree;
 	}

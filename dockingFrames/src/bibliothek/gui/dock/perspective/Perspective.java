@@ -53,187 +53,186 @@ import bibliothek.util.xml.XElement;
  * @author Benjamin Sigg
  */
 public abstract class Perspective {
-//	/** Provides  algorithms used to convert the {@link PerspectiveElement}s */
-//	private DockSituation situation;
-//
-//	/**
-//	 * Reads the contents of <code>root</code> and returns them in a map.
-//	 * @param root the data to read
-//	 * @return the content of <code>root</code>
-//	 */
-//	public Map<String, PerspectiveStation<?>> readXML( XElement root ){
-//		Map<String, DockLayoutComposition> map = situation.readCompositionsXML( root );
-//		Map<String, PerspectiveStation<?>> result = new HashMap<String, PerspectiveStation<?>>();
-//		for( Map.Entry<String, DockLayoutComposition> entry : map.entrySet() ){
-//			PerspectiveElement<?> element = convert( entry.getValue() );
-//			PerspectiveStation<?> station = element == null ? null : element.asStation();
-//			if( station != null ){
-//				result.put( entry.getKey(), station );
-//			}
-//		}
-//		return result;
-//	}
-//
-//	/**
-//	 * Converts the content of <code>station</code> to XML.
-//	 * @param stations the items to write
-//	 * @param element the element to write into
-//	 */
-//	public void writeXML( Map<String, PerspectiveStation<?>> stations, XElement element ){
-//		Map<String, DockLayoutComposition> map = new HashMap<String, DockLayoutComposition>();
-//		for( Map.Entry<String, PerspectiveStation<?>> entry : stations.entrySet() ){
-//			DockLayoutComposition composition = convert( entry.getValue() );
-//			if( composition != null ){
-//				map.put( entry.getKey(), composition );
-//			}
-//		}
-//
-//		situation.writeCompositionsXML( map, element );
-//	}
-//
-//	/**
-//	 * Reads the contents of <code>in</code> and returns them in a map.
-//	 * @param in the stream to read from
-//	 * @return the content of <code>in</code>
-//	 * @throws IOException if an I/O-error ocurrs
-//	 */
-//	public Map<String, PerspectiveStation<?>> read( DataInputStream in ) throws IOException {
-//		Map<String, DockLayoutComposition> map = situation.readCompositions( in );
-//		Map<String, PerspectiveStation<?>> result = new HashMap<String, PerspectiveStation<?>>();
-//		for( Map.Entry<String, DockLayoutComposition> entry : map.entrySet() ){
-//			PerspectiveElement<?> element = convert( entry.getValue() );
-//			PerspectiveStation<?> station = element == null ? null : element.asStation();
-//			if( station != null ){
-//				result.put( entry.getKey(), station );
-//			}
-//		}
-//		return result;
-//	}
-//
-//	/**
-//	 * Writes the layout created by <code>stations</code> to <code>out</code>. The data written
-//	 * by this method can be read by {@link DockSituation#read(DataInputStream)}
-//	 * @param stations the root-stations to store
-//	 * @param out the stream to write into
-//	 * @throws IOException if an I/O-error occurred
-//	 */
-//	public void write( Map<String, PerspectiveStation<?>> stations, DataOutputStream out ) throws IOException {
-//		Map<String, DockLayoutComposition> map = new HashMap<String, DockLayoutComposition>();
-//		for( Map.Entry<String, PerspectiveStation<?>> entry : stations.entrySet() ){
-//			DockLayoutComposition composition = convert( entry.getValue() );
-//			if( composition != null ){
-//				map.put( entry.getKey(), composition );
-//			}
-//		}
-//
-//		situation.writeCompositions( map, out );
-//	}
-//
-//	/**
-//	 * Converts <code>element</code> using the {@link DockFactory}s that are registered at this
-//	 * perspective.
-//	 * @param element the element to convert, not <code>null</code>
-//	 * @return the converted element
-//	 * @throws IllegalArgumentException if a factory is missing
-//	 */
-//	@SuppressWarnings("unchecked")
-//	public DockLayoutComposition convert( PerspectiveElement<?> element ){
-//		String id = getID( element );
-//		DockFactory<DockElement, PerspectiveElement<Object>, Object> factory = (DockFactory<DockElement, PerspectiveElement<Object>, Object>)getFactory( id );
-//		if( factory == null ){
-//			throw new IllegalArgumentException( "missing factory: " + element.getFactoryID() );
-//		}
-//
-//		Map<PerspectiveDockable<?>, Integer> ids = new HashMap<PerspectiveDockable<?>, Integer>();
-//		List<DockLayoutComposition> children = new ArrayList<DockLayoutComposition>();
-//
-//		PerspectiveStation<?> station = element.asStation();
-//		if( station != null ){
-//			int index = 0;
-//			for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
-//				PerspectiveDockable<?> dockable = station.getDockable( i );
-//				DockLayoutComposition composition = convert( dockable );
-//				if( composition != null ){
-//					children.add( composition );
-//					ids.put( dockable, index++ );
-//				}
-//			}
-//		}
-//
-//		Object data = factory.getPerspectiveLayout( (PerspectiveElement<Object>)element, ids );
-//		DockLayout<Object> layout = new DockLayout<Object>( id, data );
-//		DockLayoutInfo info = new DockLayoutInfo( layout );
-//		PerspectiveDockable<?> dockable = element.asDockable();
-//		if( dockable != null ){
-//			info.setPlaceholder( dockable.getPlaceholder() );
-//		}
-//		return new DockLayoutComposition( info, null, children, false );
-//	}
-//
-//	/**
-//	 * Converts <code>composition</code> using the {@link DockFactory}s that are registered at
-//	 * this perspective.
-//	 * @param composition the element to convert, not <code>null</code>
-//	 * @return the converted element
-//	 */
-//	@SuppressWarnings("unchecked")
-//	public PerspectiveElement<?> convert( DockLayoutComposition composition ){
-//		DockLayoutInfo info = composition.getLayout();
-//		if( info == null )
-//			return null;
-//
-//		DockLayout<Object> layout = (DockLayout<Object>)info.getDataLayout();
-//		if( layout == null )
-//			return null;
-//
-//		DockFactory<DockElement, PerspectiveElement<Object>, Object> factory = (DockFactory<DockElement, PerspectiveElement<Object>, Object>)getFactory( layout.getFactoryID() );
-//		if( factory == null )
-//			return null;
-//
-//		PerspectiveElement<Object> result = null;
-//		Map<Integer, PerspectiveDockable<?>> children = null;
-//		
-//		if( composition.isIgnoreChildren() ){
-//			for( DockLayoutComposition childComposition : composition.getChildren() ){
-//				convert( childComposition );
-//			}
-//
-//			result = factory.layoutPerspective( layout.getData(), children );
-//		}
-//		else{
-//			children = new HashMap<Integer, PerspectiveDockable<?>>();
-//			int index = 0;
-//
-//			for( DockLayoutComposition childComposition : composition.getChildren() ){
-//				PerspectiveElement<?> child = convert( childComposition );
-//				if( child != null ){
-//					PerspectiveDockable<?> dockable = child.asDockable();
-//					if( dockable != null ){
-//						children.put( index, dockable );
-//					}
-//				}
-//
-//				index++;
-//			}
-//
-//			result = factory.layoutPerspective( layout.getData(), children );
-//		}
-//
-//		return result;
-//	}
+	/** Provides  algorithms used to convert the {@link PerspectiveElement}s */
+	private DockSituation situation;
+
+	/**
+	 * Reads the contents of <code>root</code> and returns them in a map.
+	 * @param root the data to read
+	 * @return the content of <code>root</code>
+	 */
+	public Map<String, PerspectiveStation> readXML( XElement root ){
+		Map<String, DockLayoutComposition> map = situation.readCompositionsXML( root );
+		Map<String, PerspectiveStation> result = new HashMap<String, PerspectiveStation>();
+		for( Map.Entry<String, DockLayoutComposition> entry : map.entrySet() ){
+			PerspectiveElement element = convert( entry.getValue() );
+			PerspectiveStation station = element == null ? null : element.asStation();
+			if( station != null ){
+				result.put( entry.getKey(), station );
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Converts the content of <code>station</code> to XML.
+	 * @param stations the items to write
+	 * @param element the element to write into
+	 */
+	public void writeXML( Map<String, PerspectiveStation> stations, XElement element ){
+		Map<String, DockLayoutComposition> map = new HashMap<String, DockLayoutComposition>();
+		for( Map.Entry<String, PerspectiveStation> entry : stations.entrySet() ){
+			DockLayoutComposition composition = convert( entry.getValue() );
+			if( composition != null ){
+				map.put( entry.getKey(), composition );
+			}
+		}
+
+		situation.writeCompositionsXML( map, element );
+	}
+
+	/**
+	 * Reads the contents of <code>in</code> and returns them in a map.
+	 * @param in the stream to read from
+	 * @return the content of <code>in</code>
+	 * @throws IOException if an I/O-error ocurrs
+	 */
+	public Map<String, PerspectiveStation> read( DataInputStream in ) throws IOException {
+		Map<String, DockLayoutComposition> map = situation.readCompositions( in );
+		Map<String, PerspectiveStation> result = new HashMap<String, PerspectiveStation>();
+		for( Map.Entry<String, DockLayoutComposition> entry : map.entrySet() ){
+			PerspectiveElement element = convert( entry.getValue() );
+			PerspectiveStation station = element == null ? null : element.asStation();
+			if( station != null ){
+				result.put( entry.getKey(), station );
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Writes the layout created by <code>stations</code> to <code>out</code>. The data written
+	 * by this method can be read by {@link DockSituation#read(DataInputStream)}
+	 * @param stations the root-stations to store
+	 * @param out the stream to write into
+	 * @throws IOException if an I/O-error occurred
+	 */
+	public void write( Map<String, PerspectiveStation> stations, DataOutputStream out ) throws IOException {
+		Map<String, DockLayoutComposition> map = new HashMap<String, DockLayoutComposition>();
+		for( Map.Entry<String, PerspectiveStation> entry : stations.entrySet() ){
+			DockLayoutComposition composition = convert( entry.getValue() );
+			if( composition != null ){
+				map.put( entry.getKey(), composition );
+			}
+		}
+
+		situation.writeCompositions( map, out );
+	}
+
+	/**
+	 * Converts <code>element</code> using the {@link DockFactory}s that are registered at this
+	 * perspective.
+	 * @param element the element to convert, not <code>null</code>
+	 * @return the converted element
+	 * @throws IllegalArgumentException if a factory is missing
+	 */
+	@SuppressWarnings("unchecked")
+	public DockLayoutComposition convert( PerspectiveElement element ){
+		String id = getID( element );
+		DockFactory<DockElement, PerspectiveElement, Object> factory = (DockFactory<DockElement, PerspectiveElement, Object>)getFactory( id );
+		if( factory == null ){
+			throw new IllegalArgumentException( "missing factory: " + element.getFactoryID() );
+		}
+
+		Map<PerspectiveDockable, Integer> ids = new HashMap<PerspectiveDockable, Integer>();
+		List<DockLayoutComposition> children = new ArrayList<DockLayoutComposition>();
+
+		PerspectiveStation station = element.asStation();
+		if( station != null ){
+			int index = 0;
+			for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
+				PerspectiveDockable dockable = station.getDockable( i );
+				DockLayoutComposition composition = convert( dockable );
+				if( composition != null ){
+					children.add( composition );
+					ids.put( dockable, index++ );
+				}
+			}
+		}
+
+		Object data = factory.getPerspectiveLayout( element, ids );
+		DockLayout<Object> layout = new DockLayout<Object>( id, data );
+		DockLayoutInfo info = new DockLayoutInfo( layout );
+		PerspectiveDockable dockable = element.asDockable();
+		if( dockable != null ){
+			info.setPlaceholder( dockable.getPlaceholder() );
+		}
+		return new DockLayoutComposition( info, null, children, false );
+	}
+
+	/**
+	 * Converts <code>composition</code> using the {@link DockFactory}s that are registered at
+	 * this perspective.
+	 * @param composition the element to convert, not <code>null</code>
+	 * @return the converted element
+	 */
+	@SuppressWarnings("unchecked")
+	public PerspectiveElement convert( DockLayoutComposition composition ){
+		DockLayoutInfo info = composition.getLayout();
+		if( info == null )
+			return null;
+
+		DockLayout<Object> layout = (DockLayout<Object>)info.getDataLayout();
+		if( layout == null )
+			return null;
+
+		DockFactory<DockElement, PerspectiveElement, Object> factory = (DockFactory<DockElement, PerspectiveElement, Object>)getFactory( layout.getFactoryID() );
+		if( factory == null )
+			return null;
+
+		PerspectiveElement result = null;
+		Map<Integer, PerspectiveDockable> children = null;
+		
+		if( composition.isIgnoreChildren() ){
+			for( DockLayoutComposition childComposition : composition.getChildren() ){
+				convert( childComposition );
+			}
+
+			result = factory.layoutPerspective( layout.getData(), children );
+		}
+		else{
+			children = new HashMap<Integer, PerspectiveDockable>();
+			int index = 0;
+
+			for( DockLayoutComposition childComposition : composition.getChildren() ){
+				PerspectiveElement child = convert( childComposition );
+				if( child != null ){
+					PerspectiveDockable dockable = child.asDockable();
+					if( dockable != null ){
+						children.put( index, dockable );
+					}
+				}
+
+				index++;
+			}
+
+			result = factory.layoutPerspective( layout.getData(), children );
+		}
+
+		return result;
+	}
 
 	/**
 	 * Gets the identifier of the factory that is responsible for <code>element</code>.
 	 * @param element the element to store
 	 * @return the factory that is responsible for <code>element</code>
 	 */
-	protected abstract String getID( PerspectiveElement<?> element );
+	protected abstract String getID( PerspectiveElement element );
 
 	/**
 	 * Gets the factory which is responsible to store an element whose id is <code>id</code>.
 	 * @param id the identifier of the element to store or read
 	 * @return the factory, can be <code>null</code>
 	 */
-//	protected abstract DockFactory<?, ?, ?> getFactory( String id );
-	protected abstract DockFactory<?, ?> getFactory( String id );
+	protected abstract DockFactory<?, ?, ?> getFactory( String id );
 }
