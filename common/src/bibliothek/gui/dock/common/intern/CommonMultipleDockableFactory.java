@@ -39,9 +39,11 @@ import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.MultipleCDockableFactory;
 import bibliothek.gui.dock.common.MultipleCDockableLayout;
 import bibliothek.gui.dock.common.SingleCDockable;
+import bibliothek.gui.dock.common.perspective.CElementPerspective;
 import bibliothek.gui.dock.common.perspective.CPerspective;
-import bibliothek.gui.dock.common.perspective.CPerspectiveAccess;
+import bibliothek.gui.dock.common.perspective.CPerspectiveMultipleIdentifierCollection;
 import bibliothek.gui.dock.common.perspective.CStationPerspective;
+import bibliothek.gui.dock.common.perspective.CommonElementPerspective;
 import bibliothek.gui.dock.common.perspective.MultipleCDockablePerspective;
 import bibliothek.gui.dock.common.perspective.SingleCDockablePerspective;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
@@ -60,7 +62,7 @@ import bibliothek.util.xml.XElement;
  * are stored by the client. 
  * @author Benjamin Sigg
  */
-public class CommonMultipleDockableFactory implements DockFactory<CommonDockable, MultipleCDockablePerspective<?>, CommonDockableLayout> {
+public class CommonMultipleDockableFactory implements DockFactory<CommonDockable, CommonElementPerspective, CommonDockableLayout> {
     /** the unique identifier of this factory */
     private String id;
     /** the factory used to read and write {@link MultipleCDockable}s */
@@ -68,7 +70,7 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
     /** access to private properties of {@link CControl} */
     private CControlAccess controlAccess;
     /** access to private properties of {@link CPerspective} */
-    private CPerspectiveAccess perspectiveAccess;
+    private CPerspectiveMultipleIdentifierCollection perspectiveIdentifiers;
     
     /**
      * Creates a new factory.
@@ -89,13 +91,15 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
      * @param id the identifier of this factory
      * @param delegate the factory that should be used to load the contents of the
      * new {@link CommonDockable}
-     * @param access access to the internal affairs of a {@link CPerspective}
+     * @param access access to the internal affairs of a {@link CControl}
+     * @param perspective the {@link CPerspective} for which this factory is going to read and write elements
      */
     @SuppressWarnings("unchecked")
-    public CommonMultipleDockableFactory( String id, MultipleCDockableFactory<?, ?> delegate, CPerspectiveAccess access ){
+    public CommonMultipleDockableFactory( String id, MultipleCDockableFactory<?, ?> delegate, CControlAccess access, CPerspective perspective ){
     	this.id = id;
     	this.delegate = (MultipleCDockableFactory<MultipleCDockable, MultipleCDockableLayout>)delegate;
-    	this.perspectiveAccess = access;
+    	this.controlAccess = access;
+    	this.perspectiveIdentifiers = new CPerspectiveMultipleIdentifierCollection( perspective );
     }
     
     public String getID() {
@@ -129,16 +133,17 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         return flayout;
     }
 
-    public CommonDockableLayout getPerspectiveLayout( MultipleCDockablePerspective<?> element, Map<PerspectiveDockable, Integer> children ){
-    	MultipleCDockableLayout layout = element.getLayout();
+    public CommonDockableLayout getPerspectiveLayout( CommonElementPerspective element, Map<PerspectiveDockable, Integer> children ){
+    	MultipleCDockablePerspective<?> dockable = (MultipleCDockablePerspective<?>)element.getElement();
+    	
+    	MultipleCDockableLayout layout = dockable.getLayout();
         
         CommonDockableLayout flayout = new CommonDockableLayout();
         flayout.setLayout( layout );
-        String uniqueId = perspectiveAccess.getUniqueId( element );
-        uniqueId = controlAccess.getRegister().multiToNormalId( uniqueId );
+        String uniqueId = perspectiveIdentifiers.getUniqueId( dockable );
         flayout.setId( uniqueId );
-        if( element.getWorkingArea() != null )
-            flayout.setArea( perspectiveAccess.getUniqueId( element.getWorkingArea().intern() ) );
+        if( dockable.getWorkingArea() != null )
+            flayout.setArea( dockable.getWorkingArea().getUniqueId() );
         
         return flayout;
     }
@@ -146,38 +151,42 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
     @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.BUG, target=Todo.Version.VERSION_1_1_0,
     		description="does the working-area really work this way? Or can some working areas be missed?")
     @SuppressWarnings("unchecked")
-	public void layoutPerspective( MultipleCDockablePerspective<?> perspective, CommonDockableLayout layout, Map<Integer, PerspectiveDockable> children ){
-        MultipleCDockablePerspective<MultipleCDockableLayout> multiple = (MultipleCDockablePerspective<MultipleCDockableLayout>) perspective;
+	public void layoutPerspective( CommonElementPerspective perspective, CommonDockableLayout layout, Map<Integer, PerspectiveDockable> children ){
+    	MultipleCDockablePerspective<MultipleCDockableLayout> multiple = (MultipleCDockablePerspective<MultipleCDockableLayout>) perspective.getElement();
     	multiple.setLayout( layout.getLayout() );
-        perspectiveAccess.putDockable( layout.getId(), perspective );
+        perspectiveIdentifiers.putDockable( layout.getId(), multiple );
         
         // working area
         String areaId = layout.getArea();
         if( areaId != null ){
-        	CStationPerspective station = perspectiveAccess.getOwner().getRoot( areaId );
+        	CStationPerspective station = perspectiveIdentifiers.getPerspective().getRoot( areaId );
         	if( station != null ){
         		multiple.setWorkingArea( station );
         	}
         	else{
-	        	Iterator<PerspectiveElement> elements = perspectiveAccess.getOwner().elements();
+	        	Iterator<PerspectiveElement> elements = perspectiveIdentifiers.getPerspective().elements();
 	        	while( elements.hasNext() ){
 	        		PerspectiveElement next = elements.next();
-	        		if( next instanceof SingleCDockablePerspective ){
-	        			SingleCDockablePerspective single = (SingleCDockablePerspective) next;
-	        			if( areaId.equals( single.getUniqueId() ) ){
-	        				multiple.setWorkingArea( single.asStation() );
-	        				break;
-	        			}
-	        		}	        		
+	        		if( next instanceof CommonElementPerspective ){
+	        			CElementPerspective celement = ((CommonElementPerspective)next).getElement();
+	        		
+		        		if( celement instanceof SingleCDockablePerspective ){
+		        			SingleCDockablePerspective single = (SingleCDockablePerspective) celement;
+		        			if( areaId.equals( single.getUniqueId() ) ){
+		        				multiple.setWorkingArea( single.asStation() );
+		        				break;
+		        			}
+		        		}
+	        		}
 	        	}
         	}
         }
     }
     
-    public MultipleCDockablePerspective<?> layoutPerspective( CommonDockableLayout layout, Map<Integer, PerspectiveDockable> children ){
+    public CommonElementPerspective layoutPerspective( CommonDockableLayout layout, Map<Integer, PerspectiveDockable> children ){
     	MultipleCDockablePerspective<?> perspective = new MultipleCDockablePerspective<MultipleCDockableLayout>( getID(), null );
-    	layoutPerspective( perspective, layout, children );
-    	return perspective;
+    	layoutPerspective( perspective.intern(), layout, children );
+    	return perspective.intern();
     }
     
     public CommonDockable layout( CommonDockableLayout layout, Map<Integer, Dockable> children ) {

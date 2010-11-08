@@ -33,11 +33,13 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.MultipleCDockableFactory;
 import bibliothek.gui.dock.common.SingleCDockable;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CSetting;
 import bibliothek.gui.dock.common.intern.CommonDockable;
+import bibliothek.gui.dock.common.intern.CommonMultipleDockableFactory;
 import bibliothek.gui.dock.facile.mode.CLocationModeSettings;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.LocationSettingConverter;
@@ -134,6 +136,10 @@ public class CControlPerspective {
     	setting.setModes( modes );
     	
     	Perspective conversion = control.getOwner().intern().getPerspective( !includeWorkingAreas, new PerspectiveElementFactory( perspective ) );
+    	
+    	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> entry : control.getRegister().getFactories().entrySet() ){
+    		conversion.getSituation().add( new CommonMultipleDockableFactory( entry.getKey(), entry.getValue(), control, perspective ) );
+    	}
     	
     	for( String key : perspective.getRootKeys() ){
     		CStationPerspective station = perspective.getRoot( key );

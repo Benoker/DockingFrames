@@ -203,6 +203,10 @@ public class DefaultLayoutChangeStrategy implements LayoutChangeStrategy{
 			
 			public String get( PerspectiveElement element ){
 				String id = cache.get( element );
+				if( id == null ){
+					return null;
+				}
+				
 				if( element.asStation() != null && cache.isRootStation( element.asStation() )){
 					return DockFrontend.ROOT_KEY_PREFIX + id;
 				}

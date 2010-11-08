@@ -38,11 +38,12 @@ import bibliothek.util.Path;
  * @author Benjamin Sigg
  * @param <L> the kind of layout data this element needs to describe its content
  */
-public class MultipleCDockablePerspective<L extends MultipleCDockableLayout> implements PerspectiveDockable{
+public class MultipleCDockablePerspective<L extends MultipleCDockableLayout> extends AbstractCDockablePerspective{
 	private String factory;
 	private L layout;
-	private PerspectiveStation parent;
 	private CStationPerspective workingArea;
+	private CommonElementPerspective intern;
+	private String uniqueId;
 	
 	/**
 	 * Creates a new representation. The identifier of the factory must match an identifier of a 
@@ -53,6 +54,19 @@ public class MultipleCDockablePerspective<L extends MultipleCDockableLayout> imp
 	 * that is accessed through <code>factoryId</code>
 	 */
 	public MultipleCDockablePerspective( String factoryId, L layout ){
+		this( factoryId, null, layout );
+	}
+	
+	/**
+	 * Creates a new representation. The identifier of the factory must match an identifier of a 
+	 * {@link MultipleCDockableFactory} that is registered at a {@link CControl} through the method
+	 * {@link CControl#addMultipleDockableFactory(String, MultipleCDockableFactory)}.
+	 * @param factoryId the unique identifier of a {@link MultipleCDockableFactory}, not <code>null</code>
+	 * @param uniqueId a unique identifier for this dockable, can be <code>null</code>, see {@link #setUniqueId(String)}
+	 * @param layout description of the content of this dockable, will be given to the {@link MultipleCDockableFactory}
+	 * that is accessed through <code>factoryId</code>
+	 */
+	public MultipleCDockablePerspective( String factoryId, String uniqueId, L layout ){
 		if( factoryId == null ){
 			throw new IllegalArgumentException( "factoryId must not be null" );
 		}
@@ -61,7 +75,43 @@ public class MultipleCDockablePerspective<L extends MultipleCDockableLayout> imp
 		}
 		
 		this.factory = factoryId;
+		this.uniqueId = uniqueId;
 		this.layout = layout;
+	}
+	
+	/**
+	 * Sets the unique identifier of this element. The identifier can be used to replace an 
+	 * existing {@link MultipleCDockable} with the dockable that is represented by this. If
+	 * no identifier is set, then a random identifier will be set when the {@link CPerspective} is
+	 * applied.
+	 * @param uniqueId the unique id or <code>null</code>
+	 */
+	public void setUniqueId( String uniqueId ){
+		this.uniqueId = uniqueId;
+	}
+	
+	/**
+	 * Gets the unique identifier of this element.
+	 * @return the unique identifier, can be <code>null</code>
+	 */
+	public String getUniqueId(){
+		return uniqueId;
+	}
+	
+	/**
+	 * Called the first time {@link #intern()} is called, creates the internal representation of this 
+	 * dockable.
+	 * @return the internal representation, not <code>null</code>
+	 */
+	protected CommonElementPerspective create(){
+		return new Intern();
+	}
+	
+	public CommonElementPerspective intern(){
+		if( intern == null ){
+			intern = create();
+		}
+		return intern;
 	}
 	
 	/**
@@ -101,27 +151,59 @@ public class MultipleCDockablePerspective<L extends MultipleCDockableLayout> imp
 		return layout;
 	}
 	
-	public PerspectiveStation getParent(){
-		return parent;
-	}
-	
 	public Path getPlaceholder(){
 		return null;
 	}
-	
-	public void setParent( PerspectiveStation parent ){
-		this.parent = parent;	
-	}
-	
-	public PerspectiveDockable asDockable(){
+
+	public CDockablePerspective asDockable(){
 		return this;
 	}
 	
-	public PerspectiveStation asStation(){
+	public CStationPerspective asStation(){
 		return null;
 	}
-	
+
+	/**
+	 * Gets the unique identifier of the factory that handles this kind of dockable.
+	 * @return the factory, not <code>null</code>
+	 */
 	public String getFactoryID(){
 		return factory;
+	}
+	
+	/**
+	 * The default representation for a {@link MultipleCDockablePerspective}.
+	 * @author Benjamin Sigg
+	 */
+	protected class Intern implements PerspectiveDockable, CommonElementPerspective{
+		private PerspectiveStation parent;
+		
+		public CElementPerspective getElement(){
+			return MultipleCDockablePerspective.this;
+		}
+		
+		public String getFactoryID(){
+			return factory;
+		}
+		
+		public PerspectiveStation asStation(){
+			return null;
+		}
+		
+		public PerspectiveDockable asDockable(){
+			return this;
+		}
+		
+		public void setParent( PerspectiveStation parent ){
+			this.parent = parent;	
+		}
+		
+		public Path getPlaceholder(){
+			return null;
+		}
+		
+		public PerspectiveStation getParent(){
+			return parent;
+		}
 	}
 }

@@ -125,7 +125,7 @@ public class DockSituation {
      * @return the new perspective
      */
     public Perspective createPerspective(){
-    	return new Perspective(){
+    	return new Perspective( this ){
 			@Override
 			protected String getID( PerspectiveElement element ){
 				return DockSituation.this.getID( element );

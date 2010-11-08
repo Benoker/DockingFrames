@@ -84,7 +84,7 @@ public class PredefinedDockSituation extends DockSituation {
      */
     @Override
     public PredefinedPerspective createPerspective(){
-	    return new PredefinedPerspective(){
+	    return new PredefinedPerspective( this ){
 	    	private PreloadFactory preload;
 	    	
 	    	{

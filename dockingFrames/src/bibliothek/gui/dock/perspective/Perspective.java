@@ -57,6 +57,15 @@ public abstract class Perspective {
 	private DockSituation situation;
 
 	/**
+	 * Creates a new {@link Perspective} using <code>situation</code> to read and write
+	 * items.
+	 * @param situation the set of factories to use
+	 */
+	public Perspective( DockSituation situation ){
+		this.situation = situation;
+	}
+	
+	/**
 	 * Reads the contents of <code>root</code> and returns them in a map.
 	 * @param root the data to read
 	 * @return the content of <code>root</code>
@@ -220,6 +229,15 @@ public abstract class Perspective {
 		}
 
 		return result;
+	}
+	
+	/**
+	 * Gets the {@link DockSituation} which is used to convert {@link PerspectiveElement}s 
+	 * and {@link DockLayoutComposition}s.
+	 * @return the situation, not <code>null</code>
+	 */
+	public DockSituation getSituation(){
+		return situation;
 	}
 
 	/**

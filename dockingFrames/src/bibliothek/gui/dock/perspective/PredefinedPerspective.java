@@ -47,6 +47,14 @@ public abstract class PredefinedPerspective extends Perspective{
 	private List<PredefinedMap> maps = new ArrayList<PredefinedMap>();
 	
 	/**
+	 * Creates a new perspective using <code>situation</code> to read and write elements.
+	 * @param situation the set of factories to use
+	 */
+	public PredefinedPerspective( PredefinedDockSituation situation ){
+		super( situation );
+	}
+	
+	/**
 	 * Adds an additional set of items to this perspective.
 	 * @param map the set of known items, not <code>null</code>
 	 */
