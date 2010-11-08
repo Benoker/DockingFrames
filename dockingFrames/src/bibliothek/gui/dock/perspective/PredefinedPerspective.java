@@ -25,7 +25,9 @@
  */
 package bibliothek.gui.dock.perspective;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import bibliothek.gui.dock.layout.PredefinedDockSituation;
@@ -42,17 +44,31 @@ public abstract class PredefinedPerspective extends Perspective{
 	private Map<String, PerspectiveElement> stringToElement = new HashMap<String, PerspectiveElement>();
 	private Map<PerspectiveElement, String> elementToString = new HashMap<PerspectiveElement, String>();
 	
+	private List<PredefinedMap> maps = new ArrayList<PredefinedMap>();
+	
+	/**
+	 * Adds an additional set of items to this perspective.
+	 * @param map the set of known items, not <code>null</code>
+	 */
+	public void put( PredefinedMap map ){
+		if( map == null ){
+			throw new IllegalArgumentException( "map must no be null" );
+		}
+		maps.add( map );
+	}
+	
 	/**
 	 * Registers <code>element</code> on this {@link PredefinedPerspective}. When writing the layout the
 	 * identifier <code>key</code> will be written instead of <code>element</code>.
 	 * @param key the key of the element
 	 * @param element the new element
-	 * @throws IllegalArgumentException if there is already an element registered using <code>key</code>
 	 */
 	public void put( String key, PerspectiveElement element ){
-		if( stringToElement.containsKey( key )){
-			throw new IllegalArgumentException( "key '" + key + "' does already exist" );
+		PerspectiveElement old = stringToElement.remove( key );
+		if( old != null ){
+			elementToString.remove( old );
 		}
+		
 		stringToElement.put( key, element );
 		elementToString.put( element, key );
 	}
@@ -63,7 +79,16 @@ public abstract class PredefinedPerspective extends Perspective{
 	 * @return the key or <code>null</code>
 	 */
 	public String get( PerspectiveElement element ){
-		return elementToString.get( element );
+		String result = elementToString.get( element );
+		if( result == null ){
+			for( PredefinedMap map : maps ){
+				result = map.get( element );
+				if( result != null ){
+					return result;
+				}
+			}
+		}
+		return result;
 	}
 	
 	/**
@@ -72,6 +97,16 @@ public abstract class PredefinedPerspective extends Perspective{
 	 * @return the element or <code>null</code>
 	 */
 	public PerspectiveElement get( String key ){
-		return stringToElement.get( key );
+		PerspectiveElement result = stringToElement.get( key );
+		
+		if( result == null ){
+			for( PredefinedMap map : maps ){
+				result = map.get( key );
+				if( result != null ){
+					return result;
+				}
+			}
+		}
+		return result;
 	}
 }

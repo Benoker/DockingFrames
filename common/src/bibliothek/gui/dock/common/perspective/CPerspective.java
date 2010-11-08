@@ -35,6 +35,7 @@ import java.util.NoSuchElementException;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.common.CContentArea;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
@@ -81,6 +82,61 @@ public class CPerspective {
 	 */
 	public String[] getRootKeys(){
 		return roots.keySet().toArray( new String[ roots.size() ] );
+	}
+	
+	/**
+	 * Gets a representation of the default {@link CContentArea}. If there are no
+	 * stations for the perspective, then the missing stations are automatically 
+	 * added to this perspective. 
+	 * @return the area
+	 */
+	public CContentPerspective getContentArea(){
+		return getContentArea( CControl.CONTENT_AREA_STATIONS_ID );
+	}
+	
+	/**
+	 * Gets a representation of the {@link CContentArea} with identifier <code>id</code>. If there are no
+	 * stations for the perspective, then the missing stations are automatically 
+	 * added to this perspective.
+	 * @param id the unique identifier of the area 
+	 * @return the area
+	 */
+	public CContentPerspective getContentArea( String id ){
+		String center = CContentArea.getCenterIdentifier( id );
+		String north = CContentArea.getNorthIdentifier( id );
+		String south = CContentArea.getSouthIdentifier( id );
+		String east = CContentArea.getEastIdentifier( id );
+		String west = CContentArea.getWestIdentifier( id );
+		
+		ensureType( center, CGridPerspective.class );
+		ensureType( north, CMinimizePerspective.class );
+		ensureType( south, CMinimizePerspective.class );
+		ensureType( east, CMinimizePerspective.class );
+		ensureType( west, CMinimizePerspective.class );
+		
+		if( getRoot( center ) == null ){
+			addRoot( new CGridPerspective( center ));
+		}
+		if( getRoot( north ) == null ){
+			addRoot( new CMinimizePerspective( north ));
+		}
+		if( getRoot( south ) == null ){
+			addRoot( new CMinimizePerspective( south ));
+		}
+		if( getRoot( east ) == null ){
+			addRoot( new CMinimizePerspective( east ));
+		}
+		if( getRoot( west ) == null ){
+			addRoot( new CMinimizePerspective( west ));
+		}
+		return new CContentPerspective( this, id );
+	}
+	
+	private void ensureType( String id, Class<?> type ){
+		CStationPerspective station = getRoot( id );
+		if( station != null && station.getClass() != type ){
+			throw new IllegalStateException( "present root station '" + id + "' is of type '" + station.getClass() + "' but should be of type '" + type + "'" );
+		}
 	}
 	
 	/**

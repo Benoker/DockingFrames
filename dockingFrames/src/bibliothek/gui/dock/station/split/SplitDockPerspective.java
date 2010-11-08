@@ -132,7 +132,6 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 		return parent;
 	}
 
-	@Todo
 	public Path getPlaceholder(){
 		return null;
 	}

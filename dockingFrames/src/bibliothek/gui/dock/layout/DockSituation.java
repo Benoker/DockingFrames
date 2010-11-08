@@ -1013,7 +1013,7 @@ public class DockSituation {
      * method tries to fill gaps in <code>composition</code>. It checks
      * all the {@link DockLayoutInfo}s, if an info contains a byte array or
      * an {@link XElement}, then this method tries to use a factory to
-     * read the element. It a {@link #setMissingFactory(MissingDockFactory) missing factory}
+     * read the element. If a {@link #setMissingFactory(MissingDockFactory) missing factory}
      * is present, then this factory is used as well.
      * @param composition the composition to read
      * @return either <code>composition</code> or a new composition if this

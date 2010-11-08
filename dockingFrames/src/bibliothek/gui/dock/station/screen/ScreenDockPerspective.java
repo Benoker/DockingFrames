@@ -39,13 +39,11 @@ import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderMetaMap;
 import bibliothek.util.Path;
-import bibliothek.util.Todo;
 
 /**
  * A representation of a {@link ScreenDockStation} in a {@link Perspective}.
  * @author Benjamin Sigg
  */
-@Todo
 public class ScreenDockPerspective implements PerspectiveStation{
 	/** a list of all children and placeholders of this station */
 	private PerspectivePlaceholderList<ScreenPerspectiveWindow> dockables = new PerspectivePlaceholderList<ScreenPerspectiveWindow>(); 
@@ -197,7 +195,7 @@ public class ScreenDockPerspective implements PerspectiveStation{
 	}
 	
 	/**
-	 * Adds a placeholder for <code>docakble</code> and all its children to this
+	 * Adds a placeholder for <code>dockable</code> and all its children to this
 	 * station.
 	 * @param dockable the element whose placeholder should be inserted
 	 * @param bounds the location and size of <code>dockable</code>

@@ -103,6 +103,7 @@ import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.CMaximizedMode;
 import bibliothek.gui.dock.common.mode.CMaximizedModeArea;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
+import bibliothek.gui.dock.common.perspective.CControlPerspective;
 import bibliothek.gui.dock.common.theme.ThemeMap;
 import bibliothek.gui.dock.common.theme.eclipse.CommonEclipseThemeConnector;
 import bibliothek.gui.dock.control.DockRegister;
@@ -2138,6 +2139,18 @@ public class CControl {
      */
     public ThemeMap getThemes(){
         return themes;
+    }
+    
+    /**
+     * Grants access to the perspective API which allows clients to build complex layouts without
+     * the need to create any {@link CDockable dockables} or {@link CStation stations}.
+     * @return access a wrapper around this {@link CControl} allowing to inspect and modify the layouts
+     * that are available
+     * @see #load(String)
+     * @see #save(String)
+     */
+    public CControlPerspective getPerspectives(){
+    	return new CControlPerspective( access );
     }
 
     /**

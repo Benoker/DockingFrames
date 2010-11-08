@@ -148,6 +148,10 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     }
 
     private Entry convert( SplitDockPerspective.Entry entry, Map<PerspectiveDockable, Integer> children ){
+    	if( entry == null ){
+    		return null;
+    	}
+    	
     	if( entry.asNode() != null ){
     		SplitDockPerspective.Node node = entry.asNode();
     		Entry childA = convert( node.getChildA(), children );

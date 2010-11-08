@@ -84,10 +84,11 @@ public interface LayoutChangeStrategy {
      * @param entry <code>true</code> if the situation is used for a regular setting,
      * <code>false</code> if the situation is used as the final setting which will
      * be loaded the next time the application starts. 
-     * @param factory a factory that takes {@link DockElement}s and returns the matching {@link PerspectiveElement}
+     * @param cache a cache that takes {@link DockElement}s and returns the matching {@link PerspectiveElement}. The cache
+     * also offers methods to convert ids and {@link PerspectiveElement}s directly
      * @return the new perspective
 	 */
-	public Perspective createPerspective( DockFrontendInternals frontend, boolean entry, FrontendPerspectiveFactory factory );
+	public Perspective createPerspective( DockFrontendInternals frontend, boolean entry, FrontendPerspectiveCache cache );
 	
 	/**
 	 * Creates a converter for reading and writing {@link DockableProperty}s.

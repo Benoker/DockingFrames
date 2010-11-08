@@ -62,7 +62,7 @@ import bibliothek.gui.dock.event.VetoableDockFrontendListener;
 import bibliothek.gui.dock.frontend.DefaultLayoutChangeStrategy;
 import bibliothek.gui.dock.frontend.DockFrontendInternals;
 import bibliothek.gui.dock.frontend.FrontendEntry;
-import bibliothek.gui.dock.frontend.FrontendPerspectiveFactory;
+import bibliothek.gui.dock.frontend.FrontendPerspectiveCache;
 import bibliothek.gui.dock.frontend.LayoutChangeStrategy;
 import bibliothek.gui.dock.frontend.MissingDockableStrategy;
 import bibliothek.gui.dock.frontend.Setting;
@@ -1473,7 +1473,7 @@ public class DockFrontend {
      * @param factory a factory that will be used to translate {@link DockElement}s to {@link PerspectiveElement}s
      * @return the new perspective, not <code>null</code>
      */
-    public Perspective getPerspective( boolean entry, FrontendPerspectiveFactory factory ){
+    public Perspective getPerspective( boolean entry, FrontendPerspectiveCache factory ){
     	return layoutChangeStrategy.createPerspective( new Internals(), entry, factory );
     }
     

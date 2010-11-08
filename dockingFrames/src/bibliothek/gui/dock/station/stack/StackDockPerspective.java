@@ -36,7 +36,6 @@ import bibliothek.gui.dock.station.support.PerspectivePlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.util.Path;
-import bibliothek.util.Todo;
 
 /**
  * A representation of a {@link StackDockStation} in a {@link Perspective}.
@@ -137,7 +136,102 @@ public class StackDockPerspective implements PerspectiveDockable, PerspectiveSta
     		}
 		});
 	}
+	
+	/**
+	 * Adds a placeholder for <code>dockable</code> at the end of the list of dockables.
+	 * @param dockable the element for which a placeholder should be added
+	 */
+	public void addPlaceholder( PerspectiveDockable dockable ){
+		insertPlaceholder( getDockableCount(), dockable );
+	}
+	
+	/**
+	 * Adds a placeholder for <code>dockable</code> at location <code>index</code>.
+	 * @param index the location where the placeholder goes
+	 * @param dockable the element for which a placeholder should be left
+	 */
+	public void insertPlaceholder( int index, PerspectiveDockable dockable ){
+		dockables.dockables().add( index, dockable );
+		dockables.dockables().remove( index );
+	}
 
+	/**
+	 * Adds <code>dockable</code> at the end of the list of dockables.
+	 * @param dockable the element to add
+	 */
+	public void add( PerspectiveDockable dockable ){
+		insert( getDockableCount(), dockable );
+	}
+	
+	/**
+	 * Inserts <code>dockable</code> at location <code>index</code>.
+	 * @param index the location
+	 * @param dockable the new element
+	 */
+	public void insert( int index, PerspectiveDockable dockable ){
+		if( dockable.getParent() != null ){
+			throw new IllegalArgumentException( "dockable already has a parent" );
+		}
+		
+		if( dockable == null ){
+			throw new IllegalArgumentException( "dockable must not be null" );
+		}
+		dockables.dockables().add( index, dockable );
+	}
+	
+	/**
+	 * Gets the location of <code>dockable</code>.
+	 * @param dockable the dockable whose location is searched
+	 * @return the location or -1 if not found
+	 */
+	public int indexOf( PerspectiveDockable dockable ){
+		return dockables.dockables().indexOf( dockable );
+	}
+	
+	/**
+	 * Removes <code>dockable</code> from this station.
+	 * @param dockable the element to remove
+	 * @return <code>true</code> if <code>dockable</code> was removed, <code>false</code>
+	 * otherwise
+	 */
+	public boolean remove( PerspectiveDockable dockable ){
+		int index = indexOf( dockable );
+		if( index < 0 ){
+			return false;
+		}
+		remove( index );
+		return true;
+	}
+	
+	/**
+	 * Removes the <code>index</code>'th child of this station. If the child is the
+	 * {@link #setSelection(PerspectiveDockable) selected element}, then the selected
+	 * element is set to <code>null</code>.
+	 * @param index the location of the child
+	 * @return the child that was removed
+	 */
+	public PerspectiveDockable remove( int index ){
+		PerspectiveDockable result = dockables.dockables().remove( index );
+		result.setParent( null );
+		
+		if( selection == result ){
+			selection = null;
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Changes the selected element of this station.
+	 * @param dockable the selected element, can be <code>null</code>
+	 */
+	public void setSelection( PerspectiveDockable dockable ){
+		if( dockable != null && indexOf( dockable ) < 0 ){
+			throw new IllegalArgumentException( "dockable is not a child of this station" );
+		}
+		this.selection = dockable;
+	}
+	
 	/**
 	 * Gets the currently selected element.
  	 * @return the selected child or <code>null</code>
@@ -154,7 +248,6 @@ public class StackDockPerspective implements PerspectiveDockable, PerspectiveSta
 		return parent;
 	}
 
-	@Todo
 	public Path getPlaceholder(){
 		return null;
 	}

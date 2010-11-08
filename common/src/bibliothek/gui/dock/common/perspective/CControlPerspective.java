@@ -34,16 +34,18 @@ import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.SingleCDockable;
+import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CSetting;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.facile.mode.CLocationModeSettings;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.LocationSettingConverter;
-import bibliothek.gui.dock.frontend.FrontendPerspectiveFactory;
+import bibliothek.gui.dock.frontend.FrontendPerspectiveCache;
 import bibliothek.gui.dock.frontend.Setting;
 import bibliothek.gui.dock.perspective.Perspective;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
+import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.support.mode.ModeSettings;
 import bibliothek.util.Todo;
 
@@ -53,13 +55,13 @@ import bibliothek.util.Todo;
  * @author Benjamin Sigg
  */
 public class CControlPerspective {
-	private CControl control;
+	private CControlAccess control;
 	
 	/**
 	 * Creates a new wrapper
 	 * @param control the control whose perspectives are modified
 	 */
-	public CControlPerspective( CControl control ){
+	public CControlPerspective( CControlAccess control ){
 		if( control == null ){
 			throw new IllegalArgumentException( "control must not be null" );
 		}
@@ -75,7 +77,7 @@ public class CControlPerspective {
      */
     public CPerspective createEmptyPerspective(){
     	CPerspective perspective = new CPerspective();
-    	for( CStation<?> station : control.getStations() ){
+    	for( CStation<?> station : control.getOwner().getStations() ){
     		perspective.addRoot( station.createPerspective() );
     	}
     	return perspective;
@@ -87,8 +89,8 @@ public class CControlPerspective {
      * included in the layout or not
      * @return the current perspective
      */
-    public CPerspective getCurrentPerspective( boolean includeWorkingAreas ){
-    	Setting setting = control.intern().getSetting( !includeWorkingAreas );
+    public CPerspective getPerspective( boolean includeWorkingAreas ){
+    	Setting setting = control.getOwner().intern().getSetting( !includeWorkingAreas );
     	return convert( setting, includeWorkingAreas );
     }
 
@@ -98,7 +100,7 @@ public class CControlPerspective {
      * @return the perspective or <code>null</code> if <code>name</code> was not found
      */
     public CPerspective getPerspective( String name ){
-    	Setting setting = control.intern().getSetting( name );
+    	Setting setting = control.getOwner().intern().getSetting( name );
     	if( setting == null ){
     		return null;
     	}
@@ -113,7 +115,7 @@ public class CControlPerspective {
      */
     @Todo( description="handle modes" )
     public void setPerspective( CPerspective perspective, boolean includeWorkingAreas ){
-    	control.intern().setSetting( convert( perspective, includeWorkingAreas ), !includeWorkingAreas );
+    	control.getOwner().intern().setSetting( convert( perspective, includeWorkingAreas ), !includeWorkingAreas );
     }
     
     /**
@@ -123,7 +125,7 @@ public class CControlPerspective {
      * @param perspective the new layout, not <code>null</code>
      */
     public void setPerspective( String name, CPerspective perspective ){
-    	control.intern().setSetting( name, convert( perspective, false ) );
+    	control.getOwner().intern().setSetting( name, convert( perspective, false ) );
     }
     
     private Setting convert( CPerspective perspective, boolean includeWorkingAreas ){
@@ -131,7 +133,9 @@ public class CControlPerspective {
     	ModeSettings<Location, ?> modes = new CLocationModeSettings<Location>( new LocationSettingConverter() );
     	setting.setModes( modes );
     	
-    	Perspective conversion = control.intern().getPerspective( !includeWorkingAreas, new PerspectiveElementFactory( perspective ) );
+    	Perspective conversion = control.getOwner().intern().getPerspective( !includeWorkingAreas, new PerspectiveElementFactory( perspective ) );
+    	
+    	
     	
     	for( String key : perspective.getRootKeys() ){
     		CStationPerspective station = perspective.getRoot( key );
@@ -145,7 +149,7 @@ public class CControlPerspective {
     
     private CPerspective convert( Setting setting, boolean includeWorkingAreas ){
     	CPerspective cperspective = createEmptyPerspective();
-    	Perspective perspective = control.intern().getPerspective( !includeWorkingAreas, new PerspectiveElementFactory( cperspective ) );
+    	Perspective perspective = control.getOwner().intern().getPerspective( !includeWorkingAreas, new PerspectiveElementFactory( cperspective ) );
     	
     	for( String key : setting.getRootKeys() ){
     		perspective.convert( setting.getRoot( key ) );
@@ -158,7 +162,7 @@ public class CControlPerspective {
      * Helper class for converting {@link DockElement}s to {@link PerspectiveElement}s.
      * @author Benjamin Sigg
      */
-    private class PerspectiveElementFactory implements FrontendPerspectiveFactory{
+    private class PerspectiveElementFactory implements FrontendPerspectiveCache{
     	private CPerspective perspective;
     	private Map<String, SingleCDockablePerspective> dockables = new HashMap<String, SingleCDockablePerspective>();
     	
@@ -196,6 +200,49 @@ public class CControlPerspective {
 			}
 			
 			throw new IllegalArgumentException( "The intern DockFrontend of the CControl has elements registered that are not SingleCDockables: " + id + "=" + element );
-		}    	
+		}
+		
+		public PerspectiveElement get( String id, boolean rootStation ){
+			if( rootStation ){
+				return perspective.getRoot( id );
+			}
+			else{
+				if( control.getRegister().isSingleId( id )){
+					String key = control.getRegister().singleToNormalId( id );
+					SingleCDockablePerspective result = dockables.get( key );
+					if( result == null ){
+						result = new SingleCDockablePerspective( key );
+						dockables.put( key, result );
+					}
+					return result;
+				}
+				return null;
+			}
+		}
+		
+		public String get( PerspectiveElement element ){
+			for( String key : perspective.getRootKeys() ){
+				CStationPerspective station = perspective.getRoot( key );
+				if( station.intern() == element ){
+					return key;
+				}
+			}
+			
+			if( element instanceof SingleCDockablePerspective ){
+				return control.getRegister().toSingleId( ((SingleCDockablePerspective)element).getUniqueId() );
+			}
+			
+			return null;
+		}
+		
+		public boolean isRootStation( PerspectiveStation element ){
+			for( String key : perspective.getRootKeys() ){
+				CStationPerspective station = perspective.getRoot( key );
+				if( station.intern() == element ){
+					return true;
+				}
+			}
+			return false;
+		}
     }
 }
