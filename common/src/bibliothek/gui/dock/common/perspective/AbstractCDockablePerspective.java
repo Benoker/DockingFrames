@@ -25,16 +25,33 @@
  */
 package bibliothek.gui.dock.common.perspective;
 
-import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.perspective.PerspectiveDockable;
+import bibliothek.gui.dock.perspective.PerspectiveStation;
 
 /**
- * A representation of a {@link CStation}.
+ * An abstract implementation of {@link CDockablePerspective} providing some general methods. 
  * @author Benjamin Sigg
+ * 
  */
-public interface CStationPerspective extends CElementPerspective{
-	/**
-	 * Gets the unique identifier of this station.
-	 * @return the unique identifier
-	 */
-	public String getUniqueId();
+public abstract class AbstractCDockablePerspective implements CDockablePerspective{
+	public CStationPerspective getParent(){
+		PerspectiveDockable dockable = intern().asDockable();
+		
+		while( dockable != null ){
+			PerspectiveStation parent = dockable.getParent();
+			if( parent == null ){
+				return null;
+			}
+			if( parent instanceof CommonElementPerspective ){
+				CElementPerspective cparent = ((CommonElementPerspective)parent).getElement();
+				CStationPerspective station = cparent.asStation();
+				if( station != null ){
+					return station;
+				}
+			}
+			dockable = parent.asDockable();
+		}
+		
+		return null;
+	}
 }

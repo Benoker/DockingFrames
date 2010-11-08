@@ -37,7 +37,7 @@ import bibliothek.gui.dock.station.support.PlaceholderMap;
  */
 public class CMinimizePerspective implements CStationPerspective{
 	/** the intern representation of this perspective */
-	private FlapDockPerspective delegate;
+	private CommonFlapDockPerspective delegate;
 	
 	/** a unique identifier of this station */
 	private String id;
@@ -51,15 +51,15 @@ public class CMinimizePerspective implements CStationPerspective{
 			throw new IllegalArgumentException( "id is null" );
 		}
 		this.id = id;
-		delegate = new FlapDockPerspective();
+		delegate = new CommonFlapDockPerspective();
 	}
 
 	/**
 	 * Adds <code>dockable</code> at the end of the list of children of this area.
 	 * @param dockable the element to add
 	 */
-	public void add( PerspectiveDockable dockable ){
-		delegate.add( dockable );
+	public void add( CDockablePerspective dockable ){
+		delegate.add( dockable.intern().asDockable() );
 	}
 	
 	/**
@@ -67,16 +67,16 @@ public class CMinimizePerspective implements CStationPerspective{
 	 * @param index the location of <code>dockable</code>
 	 * @param dockable the element to insert
 	 */
-	public void insert( int index, PerspectiveDockable dockable ){
-		delegate.insert( index, dockable );
+	public void insert( int index, CDockablePerspective dockable ){
+		delegate.insert( index, dockable.intern().asDockable() );
 	}
 	
 	/**
 	 * Adds a placeholder for <code>dockable</code> at the end of the list of children of this area.
 	 * @param dockable the element for which a placeholder will be registered
 	 */
-	public void addPlaceholder( PerspectiveDockable dockable ){
-		delegate.addPlaceholder( dockable );
+	public void addPlaceholder( CDockablePerspective dockable ){
+		delegate.addPlaceholder( dockable.intern().asDockable() );
 	}
 	
 	/**
@@ -85,8 +85,8 @@ public class CMinimizePerspective implements CStationPerspective{
 	 * @param index the location of the placeholder
 	 * @param dockable the element for which a placeholder will be registered
 	 */
-	public void insertPlaceholder( int index, PerspectiveDockable dockable ){
-		delegate.insertPlaceholder( index, dockable );
+	public void insertPlaceholder( int index, CDockablePerspective dockable ){
+		delegate.insertPlaceholder( index, dockable.intern().asDockable() );
 	}
 	
 	/**
@@ -94,8 +94,8 @@ public class CMinimizePerspective implements CStationPerspective{
 	 * @param dockable some child of this area
 	 * @return the location or -1 if not found
 	 */
-	public int indexOf( PerspectiveDockable dockable ){
-		return delegate.indexOf( dockable );
+	public int indexOf( CDockablePerspective dockable ){
+		return delegate.indexOf( dockable.intern().asDockable() );
 	}
 	
 	/**
@@ -104,35 +104,33 @@ public class CMinimizePerspective implements CStationPerspective{
 	 * @return <code>true</code> if <code>dockable</code> was found and removed, 
 	 * <code>false</code> otherwise
 	 */
-	public boolean remove( PerspectiveDockable dockable ){
-		return delegate.remove( dockable );
+	public boolean remove( CDockablePerspective dockable ){
+		return delegate.remove( dockable.intern().asDockable() );
 	}
 	
 	/**
 	 * Removes the <code>index</code>'th child of this area.
 	 * @param index the index of the child to remove
-	 * @return the child that was removed
+	 * @return the child that was removed, <code>null</code> if the child is not a {@link CDockablePerspective}
 	 */
-	public PerspectiveDockable remove( int index ){
-		return delegate.remove( index );
+	public CDockablePerspective remove( int index ){
+		PerspectiveDockable dockable = delegate.remove( index );
+		if( dockable instanceof CommonElementPerspective ){
+			return ((CommonElementPerspective)dockable).getElement().asDockable();
+		}
+		else{
+			return null;
+		}
 	}
 	
-	public PerspectiveDockable getDockable( int index ){
-		return delegate.getDockable( index );
-	}
-
-	public int getDockableCount(){
-		return delegate.getDockableCount();
-	}
-
-	public PerspectiveDockable asDockable(){
+	public CDockablePerspective asDockable(){
 		return null;
 	}
 
-	public PerspectiveStation asStation(){
+	public CStationPerspective asStation(){
 		return this;
 	}
-
+	
 	public String getFactoryID(){
 		return delegate.getFactoryID();
 	}
@@ -141,7 +139,7 @@ public class CMinimizePerspective implements CStationPerspective{
 		return id;
 	}
 	
-	public FlapDockPerspective intern(){
+	public CommonFlapDockPerspective intern(){
 		return delegate;
 	}
 
@@ -151,5 +149,15 @@ public class CMinimizePerspective implements CStationPerspective{
 	
 	public void setPlaceholders( PlaceholderMap placeholders ){
 		delegate.setPlaceholders( placeholders );	
+	}
+	
+	/**
+	 * The type of object that is used by {@link CMinimizePerspective} as intern representation.
+	 * @author Benjamin Sigg
+	 */
+	public class CommonFlapDockPerspective extends FlapDockPerspective implements CommonElementPerspective{
+		public CElementPerspective getElement(){
+			return CMinimizePerspective.this;
+		}
 	}
 }

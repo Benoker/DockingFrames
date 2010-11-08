@@ -41,6 +41,7 @@ import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.SingleCDockable;
 import bibliothek.gui.dock.common.SingleCDockableFactory;
+import bibliothek.gui.dock.common.perspective.CommonElementPerspective;
 import bibliothek.gui.dock.common.perspective.SingleCDockablePerspective;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
@@ -56,7 +57,7 @@ import bibliothek.util.xml.XElement;
  * dockable is missing in the cache of its owning {@link CControl}.
  * @author Benjamin Sigg
  */
-public class CommonSingleDockableFactory implements DockFactory<CommonDockable, SingleCDockablePerspective, String>{
+public class CommonSingleDockableFactory implements DockFactory<CommonDockable, CommonElementPerspective, String>{
     public static final String BACKUP_FACTORY_ID = "ccontrol backup factory id";
     
     /** all the factories that are used */
@@ -208,16 +209,16 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
         return dockable.intern();
     }
     
-    public SingleCDockablePerspective layoutPerspective( String layout, Map<Integer, PerspectiveDockable> children ){
-    	return new SingleCDockablePerspective( layout );
+    public CommonElementPerspective layoutPerspective( String layout, Map<Integer, PerspectiveDockable> children ){
+    	return new SingleCDockablePerspective( layout ).intern();
     }
     
-    public void layoutPerspective( SingleCDockablePerspective perspective, String layout, Map<Integer, PerspectiveDockable> children ){
+    public void layoutPerspective( CommonElementPerspective perspective, String layout, Map<Integer, PerspectiveDockable> children ){
     	// can't do anything
     }
     
-    public String getPerspectiveLayout( SingleCDockablePerspective element, Map<PerspectiveDockable, Integer> children ){
-	    return element.getUniqueId();
+    public String getPerspectiveLayout( CommonElementPerspective element, Map<PerspectiveDockable, Integer> children ){
+	    return ((SingleCDockablePerspective)element.getElement()).getUniqueId();
     }
 
     public String read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException {

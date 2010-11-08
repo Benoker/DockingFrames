@@ -135,8 +135,6 @@ public class CControlPerspective {
     	
     	Perspective conversion = control.getOwner().intern().getPerspective( !includeWorkingAreas, new PerspectiveElementFactory( perspective ) );
     	
-    	
-    	
     	for( String key : perspective.getRootKeys() ){
     		CStationPerspective station = perspective.getRoot( key );
     		if( station.asDockable() == null || station.asDockable().getParent() == null ){
@@ -195,7 +193,7 @@ public class CControlPerspective {
 						result = new SingleCDockablePerspective( key );
 						dockables.put( key, result );
 					}
-					return result;
+					return result.intern();
 				}
 			}
 			
@@ -204,7 +202,7 @@ public class CControlPerspective {
 		
 		public PerspectiveElement get( String id, boolean rootStation ){
 			if( rootStation ){
-				return perspective.getRoot( id );
+				return perspective.getRoot( id ).intern();
 			}
 			else{
 				if( control.getRegister().isSingleId( id )){
@@ -214,7 +212,7 @@ public class CControlPerspective {
 						result = new SingleCDockablePerspective( key );
 						dockables.put( key, result );
 					}
-					return result;
+					return result.intern();
 				}
 				return null;
 			}
@@ -228,8 +226,11 @@ public class CControlPerspective {
 				}
 			}
 			
-			if( element instanceof SingleCDockablePerspective ){
-				return control.getRegister().toSingleId( ((SingleCDockablePerspective)element).getUniqueId() );
+			if( element instanceof CommonElementPerspective ){
+				CElementPerspective celement = ((CommonElementPerspective)element).getElement();
+				if( celement instanceof SingleCDockablePerspective ){
+					return control.getRegister().toSingleId( ((SingleCDockablePerspective)celement).getUniqueId() );
+				}
 			}
 			
 			return null;

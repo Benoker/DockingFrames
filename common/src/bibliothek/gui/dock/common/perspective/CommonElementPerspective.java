@@ -25,16 +25,17 @@
  */
 package bibliothek.gui.dock.common.perspective;
 
-import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.perspective.PerspectiveElement;
 
 /**
- * A representation of a {@link CStation}.
+ * A {@link PerspectiveElement} that has an additional representation as
+ * a {@link CElementPerspective}.
  * @author Benjamin Sigg
  */
-public interface CStationPerspective extends CElementPerspective{
+public interface CommonElementPerspective extends PerspectiveElement{
 	/**
-	 * Gets the unique identifier of this station.
-	 * @return the unique identifier
+	 * Gets the element that is represented by this {@link PerspectiveElement}.
+	 * @return the represented element, not <code>null</code>
 	 */
-	public String getUniqueId();
+	public CElementPerspective getElement();
 }

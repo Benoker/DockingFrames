@@ -26,15 +26,17 @@
 package bibliothek.gui.dock.common.perspective;
 
 import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.intern.CDockable;
 
 /**
- * A representation of a {@link CStation}.
+ * Represents a {@link CDockable} in a {@link CPerspective}.
  * @author Benjamin Sigg
  */
-public interface CStationPerspective extends CElementPerspective{
+public interface CDockablePerspective extends CElementPerspective{
 	/**
-	 * Gets the unique identifier of this station.
-	 * @return the unique identifier
+	 * Gets the next parent of this perspective that represents a {@link CStation}. This method
+	 * may jump over some parents to get to the next station.
+	 * @return the next station, may be <code>null</code>
 	 */
-	public String getUniqueId();
+	public CStationPerspective getParent();
 }

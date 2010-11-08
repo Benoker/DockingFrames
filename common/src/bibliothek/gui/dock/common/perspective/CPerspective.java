@@ -169,7 +169,7 @@ public class CPerspective {
 			List<PerspectiveElement> items = new ArrayList<PerspectiveElement>();
 			for( CStationPerspective station : roots.values() ){
 				if( station.asDockable() == null || station.asDockable().getParent() == null ){
-					items.add( station );
+					items.add( station.intern() );
 				}
 			}
 			

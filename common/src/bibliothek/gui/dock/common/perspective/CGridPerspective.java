@@ -27,8 +27,8 @@ package bibliothek.gui.dock.common.perspective;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CGridArea;
+import bibliothek.gui.dock.common.intern.CPlaceholderStrategy;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
-import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.station.split.PerspectiveSplitDockGrid;
 import bibliothek.gui.dock.station.split.SplitDockPerspective;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
@@ -42,7 +42,7 @@ import bibliothek.util.Todo;
 @Todo(description="nested dockable/stations will not work due to ClassCastException")
 public class CGridPerspective extends SingleCDockablePerspective implements CStationPerspective{
 	/** the intern representation of this perspective */
-	private SplitDockPerspective delegate;
+	private CommonSplitDockPerspective delegate;
 	
 	/** helper class to build up this perspective */
 	private PerspectiveSplitDockGrid grid;
@@ -59,30 +59,13 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	 */
 	public CGridPerspective( String id ){
 		super( id );
-		delegate = new SplitDockPerspective(){
-			@Override
-			public Path getPlaceholder(){
-				return CGridPerspective.this.getPlaceholder();
-			}
-			@Override
-			public Entry getRoot(){
-				maybeDeploy();
-				return super.getRoot();
-			}
-			
-			@Override
-			public int getDockableCount(){
-				maybeDeploy();
-				return super.getDockableCount();
-			}
-			
-			@Override
-			public PerspectiveDockable getDockable( int index ){
-				maybeDeploy();
-				return super.getDockable( index );
-			}
-		};
+		delegate = new CommonSplitDockPerspective();
 		gridClear();
+	}
+	
+	@Override
+	protected CommonSplitDockPerspective create(){
+		return delegate;
 	}
 	
 	/**
@@ -93,6 +76,14 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 		if( isAutoDeploy() && gridChanges ){
 			gridDeploy();
 		}
+	}
+	
+	private PerspectiveDockable[] convert( CDockablePerspective[] dockables ){
+		PerspectiveDockable[] result = new PerspectiveDockable[ dockables.length ];
+		for( int i = 0; i < result.length; i++ ){
+			result[i] = dockables[i].intern().asDockable();
+		}
+		return result;
 	}
 	
 	/**
@@ -109,9 +100,9 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	 * @see #gridClear()
 	 * @see #gridDeploy()
 	 */
-	public void gridAdd( double x, double y, double width, double height, PerspectiveDockable... dockables ){
+	public void gridAdd( double x, double y, double width, double height, CDockablePerspective... dockables ){
 		gridChanges = true;
-		grid.addDockable( x, y, width, height, dockables );
+		grid.addDockable( x, y, width, height, convert( dockables ));
 	}
 	
 	/**
@@ -125,9 +116,9 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	 * @see #gridClear()
 	 * @see #gridDeploy()
 	 */
-	public void gridSelect( double x, double y, double width, double height, PerspectiveDockable selection ){
+	public void gridSelect( double x, double y, double width, double height, CDockablePerspective selection ){
 		gridChanges = true;
-		grid.setSelected( x, y, width, height, selection );
+		grid.setSelected( x, y, width, height, selection == null ? null : selection.intern().asDockable() );
 	}
 	
 	/**
@@ -226,27 +217,12 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	public SplitDockPerspective.Entry getRoot(){
 		return delegate.getRoot();
 	}
+
+	@Override
+	public CStationPerspective asStation(){
+		return this;
+	}
 	
-	public SplitDockPerspective intern(){
-		return delegate;
-	}
-
-	public PerspectiveDockable getDockable( int index ){
-		return delegate.getDockable( index );
-	}
-
-	public int getDockableCount(){
-		return delegate.getDockableCount();
-	}
-
-	public PerspectiveDockable asDockable(){
-		return this;
-	}
-
-	public PerspectiveStation asStation(){
-		return this;
-	}
-
 	public String getFactoryID(){
 		return delegate.getFactoryID();
 	}
@@ -257,5 +233,37 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	
 	public void setPlaceholders( PlaceholderMap placeholders ){
 		delegate.setPlaceholders( placeholders );	
+	}
+	
+	/**
+	 * The type of object that is used by a {@link CGridPerspective} as intern representation.
+	 * @author Benjamin Sigg
+	 */
+	public class CommonSplitDockPerspective extends SplitDockPerspective implements CommonElementPerspective{
+		public CElementPerspective getElement(){
+			return CGridPerspective.this;
+		}
+		
+		@Override
+		public Path getPlaceholder(){
+			return CPlaceholderStrategy.getSingleDockablePlaceholder( getUniqueId() );
+		}
+		@Override
+		public Entry getRoot(){
+			maybeDeploy();
+			return super.getRoot();
+		}
+		
+		@Override
+		public int getDockableCount(){
+			maybeDeploy();
+			return super.getDockableCount();
+		}
+		
+		@Override
+		public PerspectiveDockable getDockable( int index ){
+			maybeDeploy();
+			return super.getDockable( index );
+		}
 	}
 }

@@ -42,7 +42,7 @@ public class MultipleCDockablePerspective<L extends MultipleCDockableLayout> imp
 	private String factory;
 	private L layout;
 	private PerspectiveStation parent;
-	private PerspectiveStation workingArea;
+	private CStationPerspective workingArea;
 	
 	/**
 	 * Creates a new representation. The identifier of the factory must match an identifier of a 
@@ -69,7 +69,7 @@ public class MultipleCDockablePerspective<L extends MultipleCDockableLayout> imp
 	 * this element away from that working-area.
 	 * @param workingArea the working-area, can be <code>null</code>
 	 */
-	public void setWorkingArea( PerspectiveStation workingArea ){
+	public void setWorkingArea( CStationPerspective workingArea ){
 		this.workingArea = workingArea;
 	}
 	
@@ -78,7 +78,7 @@ public class MultipleCDockablePerspective<L extends MultipleCDockableLayout> imp
 	 * @return the area, can be <code>null</code>
 	 * @see #setWorkingArea(PerspectiveStation)
 	 */
-	public PerspectiveStation getWorkingArea(){
+	public CStationPerspective getWorkingArea(){
 		return workingArea;
 	}
 	

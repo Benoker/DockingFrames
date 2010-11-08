@@ -41,12 +41,12 @@ import bibliothek.gui.dock.common.MultipleCDockableLayout;
 import bibliothek.gui.dock.common.SingleCDockable;
 import bibliothek.gui.dock.common.perspective.CPerspective;
 import bibliothek.gui.dock.common.perspective.CPerspectiveAccess;
+import bibliothek.gui.dock.common.perspective.CStationPerspective;
 import bibliothek.gui.dock.common.perspective.MultipleCDockablePerspective;
 import bibliothek.gui.dock.common.perspective.SingleCDockablePerspective;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
-import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.Todo;
 import bibliothek.util.Version;
@@ -138,7 +138,7 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         uniqueId = controlAccess.getRegister().multiToNormalId( uniqueId );
         flayout.setId( uniqueId );
         if( element.getWorkingArea() != null )
-            flayout.setArea( perspectiveAccess.getUniqueId( element.getWorkingArea() ) );
+            flayout.setArea( perspectiveAccess.getUniqueId( element.getWorkingArea().intern() ) );
         
         return flayout;
     }
@@ -154,7 +154,7 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         // working area
         String areaId = layout.getArea();
         if( areaId != null ){
-        	PerspectiveStation station = perspectiveAccess.getOwner().getRoot( areaId );
+        	CStationPerspective station = perspectiveAccess.getOwner().getRoot( areaId );
         	if( station != null ){
         		multiple.setWorkingArea( station );
         	}

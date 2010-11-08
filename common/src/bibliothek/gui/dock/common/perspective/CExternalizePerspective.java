@@ -29,7 +29,6 @@ import java.awt.Rectangle;
 
 import bibliothek.gui.dock.common.CExternalizeArea;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
-import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.station.screen.ScreenDockPerspective;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 
@@ -39,7 +38,7 @@ import bibliothek.gui.dock.station.support.PlaceholderMap;
  */
 public class CExternalizePerspective implements CStationPerspective{
 	/** the intern representation of this perspective */
-	private ScreenDockPerspective delegate;
+	private CommonScreenDockPerspective delegate;
 	
 	/** the unique identifer of this perspective */
 	private String id;
@@ -53,7 +52,7 @@ public class CExternalizePerspective implements CStationPerspective{
 			throw new IllegalArgumentException( "id is null" );
 		}
 		this.id = id;
-		delegate = new ScreenDockPerspective();
+		delegate = new CommonScreenDockPerspective();
 	}
 	
 	public String getUniqueId(){
@@ -66,8 +65,8 @@ public class CExternalizePerspective implements CStationPerspective{
 	 * @param bounds the boundaries of <code>dockable</code>
 	 * @param fullscreen whether <code>dockable</code> should be extended to fullscreen mode
 	 */
-	public void add( PerspectiveDockable dockable, Rectangle bounds ){
-		delegate.add( dockable, bounds );
+	public void add( CDockablePerspective dockable, Rectangle bounds ){
+		delegate.add( dockable.intern().asDockable(), bounds );
 	}
 	
 	/**
@@ -79,8 +78,8 @@ public class CExternalizePerspective implements CStationPerspective{
 	 * @param width the width of the window
 	 * @param height the height of the window
 	 */
-	public void add( PerspectiveDockable dockable, int x, int y, int width, int height ){
-		delegate.add( dockable, x, y, width, height, false );
+	public void add( CDockablePerspective dockable, int x, int y, int width, int height ){
+		delegate.add( dockable.intern().asDockable(), x, y, width, height, false );
 	}
 	
 	/**
@@ -89,8 +88,8 @@ public class CExternalizePerspective implements CStationPerspective{
 	 * @param bounds the boundaries of <code>dockable</code>
 	 * @param fullscreen whether <code>dockable</code> should be extended to fullscreen mode
 	 */
-	public void add( PerspectiveDockable dockable, Rectangle bounds, boolean fullscreen ){
-		delegate.add( dockable, bounds, fullscreen );
+	public void add( CDockablePerspective dockable, Rectangle bounds, boolean fullscreen ){
+		delegate.add( dockable.intern().asDockable(), bounds, fullscreen );
 	}
 	
 	/**
@@ -103,8 +102,8 @@ public class CExternalizePerspective implements CStationPerspective{
 	 * @param height the height of the window
 	 * @param fullscreen whether <code>dockable</code> should be extended to fullscreen mode
 	 */
-	public void add( PerspectiveDockable dockable, int x, int y, int width, int height, boolean fullscreen ){
-		delegate.add( dockable, x, y, width, height, fullscreen );
+	public void add( CDockablePerspective dockable, int x, int y, int width, int height, boolean fullscreen ){
+		delegate.add( dockable.intern().asDockable(), x, y, width, height, fullscreen );
 	}
 	
 	/**
@@ -113,8 +112,8 @@ public class CExternalizePerspective implements CStationPerspective{
 	 * @param dockable the element whose placeholder should be inserted
 	 * @param bounds the location and size of <code>dockable</code>
 	 */
-	public void addPlaceholder( PerspectiveDockable dockable, Rectangle bounds ){
-		delegate.addPlaceholder( dockable, bounds );
+	public void addPlaceholder( CDockablePerspective dockable, Rectangle bounds ){
+		delegate.addPlaceholder( dockable.intern().asDockable(), bounds );
 	}
 	
 	/**
@@ -126,8 +125,8 @@ public class CExternalizePerspective implements CStationPerspective{
 	 * @param width the width of the window
 	 * @param height the height of the window
 	 */
-	public void addPlaceholder( PerspectiveDockable dockable, int x, int y, int width, int height ){
-		delegate.addPlaceholder( dockable, x, y, width, height );
+	public void addPlaceholder( CDockablePerspective dockable, int x, int y, int width, int height ){
+		delegate.addPlaceholder( dockable.intern().asDockable(), x, y, width, height );
 	}
 	
 	/**
@@ -135,8 +134,8 @@ public class CExternalizePerspective implements CStationPerspective{
 	 * @param dockable the element whose window is searched
 	 * @return the window, <code>null</code> if <code>dockable</code> is not known to this area
 	 */
-	public ScreenDockPerspective.ScreenPerspectiveWindow getWindow( PerspectiveDockable dockable ){
-		return delegate.getWindow( dockable );
+	public ScreenDockPerspective.ScreenPerspectiveWindow getWindow( CDockablePerspective dockable ){
+		return delegate.getWindow( dockable.intern().asDockable() );
 	}
 
 	/**
@@ -145,17 +144,23 @@ public class CExternalizePerspective implements CStationPerspective{
 	 * @return <code>true</code> if <code>dockable</code> was found and removed, <code>false</code>
 	 * otherwise.
 	 */
-	public boolean remove( PerspectiveDockable dockable ){
-		return delegate.remove( dockable );
+	public boolean remove( CDockablePerspective dockable ){
+		return delegate.remove( dockable.intern().asDockable() );
 	}
 	
 	/**
 	 * Removes the <code>index</code>'th dockable of this area.
 	 * @param index the index of a child of this area
-	 * @return the element that was removed
+	 * @return the element that was removed, <code>null</code> if the element is not a {@link CDockablePerspective}
 	 */
-	public PerspectiveDockable remove( int index ){
-		return delegate.remove( index );
+	public CDockablePerspective remove( int index ){
+		PerspectiveDockable dockable = delegate.remove( index );
+		if( dockable instanceof CommonElementPerspective ){
+			return ((CommonElementPerspective)dockable).getElement().asDockable();
+		}
+		else{
+			return null;
+		}
 	}
 	
 	/**
@@ -163,27 +168,19 @@ public class CExternalizePerspective implements CStationPerspective{
 	 * @param dockable some child of this area
 	 * @return the location or -1 if not found
 	 */
-	public int indexOf( PerspectiveDockable dockable ){
-		return delegate.indexOf( dockable );
+	public int indexOf( CDockablePerspective dockable ){
+		return delegate.indexOf( dockable.intern().asDockable() );
 	}
 	
-	public ScreenDockPerspective intern(){
+	public CommonScreenDockPerspective intern(){
 		return delegate;
 	}
 
-	public PerspectiveDockable getDockable( int index ){
-		return delegate.getDockable( index );
-	}
-
-	public int getDockableCount(){
-		return delegate.getDockableCount();
-	}
-
-	public PerspectiveDockable asDockable(){
+	public CDockablePerspective asDockable(){
 		return null;
 	}
-
-	public PerspectiveStation asStation(){
+	
+	public CStationPerspective asStation(){
 		return this;
 	}
 
@@ -197,5 +194,15 @@ public class CExternalizePerspective implements CStationPerspective{
 	
 	public void setPlaceholders( PlaceholderMap placeholders ){
 		delegate.setPlaceholders( placeholders );	
+	}
+	
+	/**
+	 * This type of object is used by the {@link CExternalizePerspective} as intern representation.
+	 * @author Benjamin Sigg
+	 */
+	public class CommonScreenDockPerspective extends ScreenDockPerspective implements CommonElementPerspective{
+		public CElementPerspective getElement(){
+			return CExternalizePerspective.this;
+		}		
 	}
 }
