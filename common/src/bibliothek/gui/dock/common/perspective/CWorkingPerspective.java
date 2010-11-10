@@ -26,9 +26,27 @@
 package bibliothek.gui.dock.common.perspective;
 
 import bibliothek.gui.dock.common.CWorkingArea;
+import bibliothek.gui.dock.common.MultipleCDockable;
+import bibliothek.gui.dock.common.SingleCDockable;
+import bibliothek.gui.dock.perspective.PerspectiveDockable;
+import bibliothek.gui.dock.perspective.PerspectiveStation;
+import bibliothek.gui.dock.station.split.SplitDockPerspective.Entry;
+import bibliothek.gui.dock.station.split.SplitDockPerspective.EntryListener;
 
 /**
- * A representation of a {@link CWorkingArea}.
+ * A representation of a {@link CWorkingArea}. When using this perspective to handle the children of a {@link CWorkingArea} 
+ * the following rules must be followed:
+ * <ul>
+ * 	<li>Adding or removing a {@link CDockablePerspective} to this station may trigger a call to {@link CDockablePerspective#setWorkingArea(CStationPerspective)}, clients
+ * can however first add/remove a dockable and then alter the working-area of the dockable to their likings.</li>
+ * 	<li>Adding: the working-area of a child is only set to <code>this</code> if the working-area had a value of <code>null</code></li>
+ * 	<li>Removing: the working-area of a child is only set to <code>null</code> if the working-area had a value of <code>this</code></li>
+ * 	<li>{@link MultipleCDockablePerspective}: if the working-area is set, then it is automatically set in the {@link MultipleCDockable} as well.</li>
+ * 	<li>{@link SingleCDockablePerspective}: even if the working-area is set, the working-area of the {@link SingleCDockable} will not be set automatically because
+ *  the framework does not store any layout information of a {@link SingleCDockable} other than its unique identifier.</li>
+ * </ul>
+ * <b>Warning:</b> If adding a {@link SingleCDockablePerspective}, then the client has to manually call {@link SingleCDockable#setWorkingArea(bibliothek.gui.dock.common.CStation)}
+ * in order to properly load the perspective.
  * @author Benjamin Sigg
  */
 public class CWorkingPerspective extends CGridPerspective{
@@ -38,5 +56,76 @@ public class CWorkingPerspective extends CGridPerspective{
 	 */
 	public CWorkingPerspective( String id ){
 		super( id );
+	}
+	
+	@Override
+	protected CommonSplitDockPerspective create(){
+		CommonSplitDockPerspective result = super.create();
+		result.addListener( new EntryListener(){
+			public void removed( Entry parent, Entry child ){
+				remove( child );
+			}
+			
+			public void added( Entry parent, Entry child ){
+				add( child );
+			}
+		});
+		return result;
+	}
+	
+	private void remove( Entry child ){
+		if( child != null ){
+			if( child.asNode() != null ){
+				remove( child.asNode().getChildA() );
+				remove( child.asNode().getChildB() );
+			}
+			else{
+				PerspectiveDockable dockable = child.asLeaf().getDockable();
+				remove( dockable );
+			}
+		}
+	}
+	
+	private void remove( PerspectiveDockable dockable ){
+		if( dockable instanceof CommonElementPerspective ){
+			CDockablePerspective cdockable = ((CommonElementPerspective)dockable).getElement().asDockable();
+			if( cdockable.getWorkingArea() == this ){
+				cdockable.setWorkingArea( null );
+			}
+		}
+		PerspectiveStation station = dockable.asStation();
+		if( station != null ){
+			for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
+				remove( station.getDockable( i ));
+			}
+		}
+	}
+	
+	private void add( Entry child ){
+		if( child != null ){
+			if( child.asNode() != null ){
+				add( child.asNode().getChildA() );
+				add( child.asNode().getChildB() );
+			}
+			else{
+				PerspectiveDockable dockable = child.asLeaf().getDockable();
+				add( dockable );
+			}
+		}
+	}
+	
+	private void add( PerspectiveDockable dockable ){
+		if( dockable instanceof CommonElementPerspective ){
+			CDockablePerspective cdockable = ((CommonElementPerspective)dockable).getElement().asDockable();
+			if( cdockable.getWorkingArea() == null ){
+				cdockable.setWorkingArea( this );
+			}
+		}
+		PerspectiveStation station = dockable.asStation();
+		if( station != null ){
+			for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
+				add( station.getDockable( i ));
+			}
+		}
 	}
 }

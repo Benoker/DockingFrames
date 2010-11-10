@@ -41,7 +41,6 @@ import bibliothek.util.Path;
 public class MultipleCDockablePerspective<L extends MultipleCDockableLayout> extends AbstractCDockablePerspective{
 	private String factory;
 	private L layout;
-	private CStationPerspective workingArea;
 	private CommonElementPerspective intern;
 	private String uniqueId;
 	
@@ -113,24 +112,7 @@ public class MultipleCDockablePerspective<L extends MultipleCDockableLayout> ext
 		}
 		return intern;
 	}
-	
-	/**
-	 * Sets the working-area of this element. This user will not be able drag
-	 * this element away from that working-area.
-	 * @param workingArea the working-area, can be <code>null</code>
-	 */
-	public void setWorkingArea( CStationPerspective workingArea ){
-		this.workingArea = workingArea;
-	}
-	
-	/**
-	 * Gets the working-area of this element
-	 * @return the area, can be <code>null</code>
-	 * @see #setWorkingArea(PerspectiveStation)
-	 */
-	public CStationPerspective getWorkingArea(){
-		return workingArea;
-	}
+
 	
 	/**
 	 * Sets the layout which describes this dockable.

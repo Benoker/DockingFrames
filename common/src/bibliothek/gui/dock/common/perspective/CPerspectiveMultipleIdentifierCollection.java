@@ -26,9 +26,11 @@
 package bibliothek.gui.dock.common.perspective;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import bibliothek.gui.dock.common.intern.CommonMultipleDockableFactory;
+import bibliothek.gui.dock.perspective.PerspectiveElement;
 
 /**
  * A helper class for {@link CommonMultipleDockableFactory}, used when interacting with a {@link CPerspective}.
@@ -43,8 +45,22 @@ public class CPerspectiveMultipleIdentifierCollection{
 	 * Creates a new object
 	 * @param perspective the owner of this object, not <code>null</code>
 	 */
-	public CPerspectiveMultipleIdentifierCollection( CPerspective perspective ){
+	public CPerspectiveMultipleIdentifierCollection( String factoryId, CPerspective perspective ){
 		this.perspective = perspective;
+		
+		Iterator<PerspectiveElement> iterator = perspective.elements();
+		while( iterator.hasNext() ){
+			PerspectiveElement element = iterator.next();
+			if( element instanceof CommonElementPerspective ){
+				CElementPerspective celement = ((CommonElementPerspective)element).getElement();
+				if( celement instanceof MultipleCDockablePerspective<?> ){
+					MultipleCDockablePerspective<?> dockable = (MultipleCDockablePerspective<?>)celement;
+					if( dockable.getFactoryID().equals( factoryId ) && dockable.getUniqueId() != null ){
+						ids.put( dockable.getUniqueId(), dockable );
+					}
+				}
+			}
+		}
 	}
 	
 	/**
@@ -72,7 +88,10 @@ public class CPerspectiveMultipleIdentifierCollection{
 	        }
 	        element.setUniqueId( id );
 		}
-		ids.put( id, element );
+		MultipleCDockablePerspective<?> old = ids.put( id, element );
+		if( old != null && old != element ){
+			throw new IllegalStateException( "unique identifier collision, id='" + id + "', old item='" + old + "', new item='" + element + "'");
+		}
 		return id;
 	}
 

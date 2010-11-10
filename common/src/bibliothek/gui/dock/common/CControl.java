@@ -80,7 +80,7 @@ import bibliothek.gui.dock.common.intern.CListenerCollection;
 import bibliothek.gui.dock.common.intern.CPlaceholderStrategy;
 import bibliothek.gui.dock.common.intern.CSetting;
 import bibliothek.gui.dock.common.intern.CommonDockable;
-import bibliothek.gui.dock.common.intern.CommonDockableLayout;
+import bibliothek.gui.dock.common.intern.CommonMultipleDockableLayout;
 import bibliothek.gui.dock.common.intern.CommonMultipleDockableFactory;
 import bibliothek.gui.dock.common.intern.CommonSingleDockableFactory;
 import bibliothek.gui.dock.common.intern.ControlVetoClosingListener;
@@ -399,10 +399,10 @@ public class CControl {
                 return shouldStore( key );
             }
             public <L> boolean shouldCreate( DockFactory<?,?,L> factory, L data ) {
-                if( factory instanceof CommonMultipleDockableFactory && data instanceof CommonDockableLayout ){
+                if( factory instanceof CommonMultipleDockableFactory && data instanceof CommonMultipleDockableLayout ){
                     return CControl.this.shouldCreate( 
                             ((CommonMultipleDockableFactory)factory).getFactory(), 
-                            (CommonDockableLayout)data );
+                            (CommonMultipleDockableLayout)data );
                 }
                 return false;
             }
@@ -1922,7 +1922,7 @@ public class CControl {
     }
 
     @SuppressWarnings("unchecked")
-    private boolean shouldCreate( MultipleCDockableFactory<?, ?> factory, CommonDockableLayout layout ){
+    private boolean shouldCreate( MultipleCDockableFactory<?, ?> factory, CommonMultipleDockableLayout layout ){
         String uniqueId = layout.getId();
 
         String multiId = register.toMultiId( uniqueId );

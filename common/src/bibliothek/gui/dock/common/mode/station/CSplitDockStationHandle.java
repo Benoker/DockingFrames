@@ -31,8 +31,8 @@ import bibliothek.gui.dock.facile.mode.ModeAreaListener;
 import bibliothek.gui.dock.facile.mode.NormalMode;
 import bibliothek.gui.dock.facile.mode.NormalModeArea;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.station.split.DockableSplitDockTree;
 import bibliothek.gui.dock.station.split.SplitDockFullScreenProperty;
-import bibliothek.gui.dock.station.split.SplitDockTree;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.AffectingRunnable;
 import bibliothek.gui.dock.util.DockUtilities;
@@ -157,7 +157,7 @@ public class CSplitDockStationHandle{
 		if( dockable.getDockParent() == station )
 			throw new IllegalStateException( "dockable already a child" );
 		
-		SplitDockTree tree = getStation().createTree();
+		DockableSplitDockTree tree = getStation().createTree();
 		if( tree.getRoot() == null )
 			tree.root( dockable );
 		else{

@@ -62,7 +62,7 @@ import bibliothek.util.xml.XElement;
  * are stored by the client. 
  * @author Benjamin Sigg
  */
-public class CommonMultipleDockableFactory implements DockFactory<CommonDockable, CommonElementPerspective, CommonDockableLayout> {
+public class CommonMultipleDockableFactory implements DockFactory<CommonDockable, CommonElementPerspective, CommonMultipleDockableLayout> {
     /** the unique identifier of this factory */
     private String id;
     /** the factory used to read and write {@link MultipleCDockable}s */
@@ -99,7 +99,7 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
     	this.id = id;
     	this.delegate = (MultipleCDockableFactory<MultipleCDockable, MultipleCDockableLayout>)delegate;
     	this.controlAccess = access;
-    	this.perspectiveIdentifiers = new CPerspectiveMultipleIdentifierCollection( perspective );
+    	this.perspectiveIdentifiers = new CPerspectiveMultipleIdentifierCollection( id, perspective );
     }
     
     public String getID() {
@@ -114,15 +114,15 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         return delegate;
     }
     
-    public void estimateLocations( CommonDockableLayout layout, LocationEstimationMap children ){
+    public void estimateLocations( CommonMultipleDockableLayout layout, LocationEstimationMap children ){
     	// currently not supported
     }
 
-    public CommonDockableLayout getLayout( CommonDockable element, Map<Dockable, Integer> children ) {
+    public CommonMultipleDockableLayout getLayout( CommonDockable element, Map<Dockable, Integer> children ) {
         MultipleCDockable dockable = (MultipleCDockable)element.getDockable();
         MultipleCDockableLayout layout = delegate.write( dockable );
         
-        CommonDockableLayout flayout = new CommonDockableLayout();
+        CommonMultipleDockableLayout flayout = new CommonMultipleDockableLayout();
         flayout.setLayout( layout );
         String uniqueId = controlAccess.access( element.getDockable() ).getUniqueId();
         uniqueId = controlAccess.getRegister().multiToNormalId( uniqueId );
@@ -133,12 +133,12 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         return flayout;
     }
 
-    public CommonDockableLayout getPerspectiveLayout( CommonElementPerspective element, Map<PerspectiveDockable, Integer> children ){
+    public CommonMultipleDockableLayout getPerspectiveLayout( CommonElementPerspective element, Map<PerspectiveDockable, Integer> children ){
     	MultipleCDockablePerspective<?> dockable = (MultipleCDockablePerspective<?>)element.getElement();
     	
     	MultipleCDockableLayout layout = dockable.getLayout();
         
-        CommonDockableLayout flayout = new CommonDockableLayout();
+        CommonMultipleDockableLayout flayout = new CommonMultipleDockableLayout();
         flayout.setLayout( layout );
         String uniqueId = perspectiveIdentifiers.getUniqueId( dockable );
         flayout.setId( uniqueId );
@@ -151,7 +151,7 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
     @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.BUG, target=Todo.Version.VERSION_1_1_0,
     		description="does the working-area really work this way? Or can some working areas be missed?")
     @SuppressWarnings("unchecked")
-	public void layoutPerspective( CommonElementPerspective perspective, CommonDockableLayout layout, Map<Integer, PerspectiveDockable> children ){
+	public void layoutPerspective( CommonElementPerspective perspective, CommonMultipleDockableLayout layout, Map<Integer, PerspectiveDockable> children ){
     	MultipleCDockablePerspective<MultipleCDockableLayout> multiple = (MultipleCDockablePerspective<MultipleCDockableLayout>) perspective.getElement();
     	multiple.setLayout( layout.getLayout() );
         perspectiveIdentifiers.putDockable( layout.getId(), multiple );
@@ -183,17 +183,17 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         }
     }
     
-    public CommonElementPerspective layoutPerspective( CommonDockableLayout layout, Map<Integer, PerspectiveDockable> children ){
+    public CommonElementPerspective layoutPerspective( CommonMultipleDockableLayout layout, Map<Integer, PerspectiveDockable> children ){
     	MultipleCDockablePerspective<?> perspective = new MultipleCDockablePerspective<MultipleCDockableLayout>( getID(), null );
     	layoutPerspective( perspective.intern(), layout, children );
     	return perspective.intern();
     }
     
-    public CommonDockable layout( CommonDockableLayout layout, Map<Integer, Dockable> children ) {
+    public CommonDockable layout( CommonMultipleDockableLayout layout, Map<Integer, Dockable> children ) {
         return layout( layout );
     }
 
-    public CommonDockable layout( CommonDockableLayout layout ) {
+    public CommonDockable layout( CommonMultipleDockableLayout layout ) {
         // base
         MultipleCDockable dockable = delegate.read( layout.getLayout() );
         if( dockable == null )
@@ -239,19 +239,19 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         return dockable.intern();
     }
 
-    public void setLayout( CommonDockable element, CommonDockableLayout layout, Map<Integer, Dockable> children ) {
+    public void setLayout( CommonDockable element, CommonMultipleDockableLayout layout, Map<Integer, Dockable> children ) {
         // not supported
     }
 
-    public void setLayout( CommonDockable element, CommonDockableLayout layout ) {
+    public void setLayout( CommonDockable element, CommonMultipleDockableLayout layout ) {
         // not supported
     }
     
-    public CommonDockableLayout read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException {
+    public CommonMultipleDockableLayout read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException {
         Version version = Version.read( in );
         version.checkCurrent();
         
-        CommonDockableLayout layout = new CommonDockableLayout();
+        CommonMultipleDockableLayout layout = new CommonMultipleDockableLayout();
         layout.setLayout( delegate.create() );
         layout.getLayout().readStream( in );
         layout.setId( in.readUTF() );
@@ -260,8 +260,8 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         return layout;
     }
 
-    public CommonDockableLayout read( XElement element, PlaceholderStrategy placeholders ) {
-        CommonDockableLayout layout = new CommonDockableLayout();
+    public CommonMultipleDockableLayout read( XElement element, PlaceholderStrategy placeholders ) {
+        CommonMultipleDockableLayout layout = new CommonMultipleDockableLayout();
         layout.setLayout( delegate.create() );
         layout.getLayout().readXML( element.getElement( "multiple" ) );
         layout.setId( element.getElement( "id" ).getString() );
@@ -271,7 +271,7 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         return layout;
     }
 
-    public void write( CommonDockableLayout layout, DataOutputStream out ) throws IOException {
+    public void write( CommonMultipleDockableLayout layout, DataOutputStream out ) throws IOException {
         Version.write( out, Version.VERSION_1_0_4 );
         
         layout.getLayout().writeStream( out );
@@ -285,7 +285,7 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         }
     }
 
-    public void write( CommonDockableLayout layout, XElement element ) {
+    public void write( CommonMultipleDockableLayout layout, XElement element ) {
         element.addElement( "id" ).setString( layout.getId() );
         if( layout.getArea() != null )
             element.addElement( "area" ).setString( layout.getArea() );

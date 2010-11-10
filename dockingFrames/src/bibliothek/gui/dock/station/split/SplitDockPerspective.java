@@ -54,10 +54,103 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 	private PerspectiveDockable fullscreen;
 	
 	/** the root of the tree that represents the layout */
-	private Entry root;
+	private final Root root = new Root();
 	
 	/** all the children of this station */
 	private List<PerspectiveDockable> children = new ArrayList<PerspectiveDockable>();
+	
+	/** all the listeners of this perspective */
+	private List<EntryListener> listeners = new ArrayList<EntryListener>();
+	
+	/**
+	 * Creates a new perspective
+	 */
+	public SplitDockPerspective(){
+		addListener( new EntryListener(){
+			public void added( Entry parent, Entry child ){
+				add( child );
+			}
+			
+			public void removed( Entry parent, Entry child ){
+				remove( child );
+			}
+			
+			private void add( Entry child ){
+				if( child != null ){
+					if( child.asLeaf() != null ){
+						children.add( child.asLeaf().getDockable() );
+					}
+					else{
+						add( child.asNode().getChildA() );
+						add( child.asNode().getChildB() );
+					}
+				}
+			}
+			
+			private void remove( Entry child ){
+				if( child != null ){
+					if( child.asLeaf() != null ){
+						children.remove( child.asLeaf().getDockable() );
+					}
+					else{
+						remove( child.asNode().getChildA() );
+						remove( child.asNode().getChildB() );
+					}
+				}
+			}
+		});
+	}
+	
+	/**
+	 * Adds a listener to this perspective.
+	 * @param listener the new listener, not <code>null</code>
+	 */
+	public void addListener( EntryListener listener ){
+		if( listener == null ){
+			throw new IllegalArgumentException( "listener must not be null" );
+		}
+		listeners.add( listener );
+	}
+	
+	/**
+	 * Removes <code>listener</code> from this perspective
+	 * @param listener the listener to remove
+	 */
+	public void removeListener( EntryListener listener ){
+		listeners.remove( listener );
+	}
+	
+	/**
+	 * Gets an array containing all the listeners of this perspective
+	 * @return all the listeners
+	 */
+	protected EntryListener[] listeners(){
+		return listeners.toArray( new EntryListener[ listeners.size() ] );
+	}
+	
+	/**
+	 * Calls {@link EntryListener#removed(Entry, Entry)} on all listeners that are currently
+	 * known to this perspective
+	 * @param parent the parent from which <code>child</code> was removed
+	 * @param child the child which was removed
+	 */
+	protected void fireRemoved( Entry parent, Entry child ){
+		for( EntryListener listener : listeners() ){
+			listener.removed( parent, child );
+		}
+	}
+	
+	/**
+	 * Calls {@link EntryListener#added(Entry, Entry)} on all listeners that are currently 
+	 * known to this perspective
+	 * @param parent the parent of the new element
+	 * @param child the child that was added
+	 */
+	protected void fireAdded( Entry parent, Entry child ){
+		for( EntryListener listener : listeners() ){
+			listener.added( parent, child );
+		}
+	}
 	
 	/**
 	 * Reads the contents of <code>tree</code> and replaces any content of this perspective
@@ -65,7 +158,7 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 	 * @param fullscreen the one child that is currently in fullscreen-mode, can be <code>null</code>
 	 */
 	public void read( PerspectiveSplitDockTree tree, PerspectiveDockable fullscreen ){
-		root = convert( tree.getRoot() );
+		root.setChild( convert( tree.getRoot() ) );
 		if( fullscreen != null && !children.contains( fullscreen )){
 			throw new IllegalArgumentException( "fullscreen is not a child of this station" );
 		}
@@ -73,6 +166,10 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 	}
 	
 	private Entry convert( PerspectiveSplitDockTree.Key key ){
+		if( key == null ){
+			return null;
+		}
+		
 		SplitDockTree<PerspectiveDockable> tree = key.getTree();
 		if( tree.isDockable( key )){
 			PerspectiveDockable[] dockables = tree.getDockables( key );
@@ -89,7 +186,6 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 				throw new IllegalArgumentException( "dockable already has a parent" );
 			}
 			dockable.setParent( this );
-			children.add( dockable );
 			
 			return new Leaf( dockable, tree.getPlaceholders( key ), tree.getPlaceholderMap( key ), key.getNodeId() );
 		}
@@ -124,7 +220,7 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 	 * Gets the root of the tree that is the layout of this station.
 	 * @return the root of the tree, not <code>null</code>
 	 */
-	public Entry getRoot(){
+	public Root getRoot(){
 		return root;
 	}
 	
@@ -172,13 +268,36 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 		return null;
 	}
 
+	/**
+	 * A listener that can be added to a {@link SplitDockPerspective} and that will receive events
+	 * whenever the tree of the perspective changes.
+	 * @author Benjamin Sigg
+	 */
+	public static interface EntryListener{
+		/**
+		 * Called after <code>child</code> was added to <code>parent</code>. This implies that
+		 * the entire subtree below <code>child</code> was added to this perspective.
+		 * @param parent the parent, either a {@link Root} or a {@link Node}
+		 * @param child the child, either a {@link Node} or a {@link Leaf}
+		 */
+		public void added( Entry parent, Entry child );
+		
+		/**
+		 * Called after <code>child</code> was removed from <code>parent</code>. This implies that
+		 * the entire subtree below <code>child</code> was removed from this perspective
+		 * @param parent the parent, either a {@link Root} or a {@link Node}
+		 * @param child the child, either a {@link Node} or a {@link Leaf}
+		 */
+		public void removed( Entry parent, Entry child );
+	}
+	
     /**
      * An entry in a tree, either a node or a leaf.
      * @author Benjamin Sigg
      */
     public static abstract class Entry{
     	/** the parent element of this entry */
-    	private Node parent;
+    	private Entry parent;
     	/** the unique id of this node */
     	private long id;
     	/** placeholders that are associated with this entry */
@@ -199,10 +318,38 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
     	}
     	
     	/**
+    	 * Tells whether <code>anchestor</code> is an anchestor of this entry.
+    	 * @param anchestor the item to search
+    	 * @return <code>true</code> if <code>anchestor</code> is <code>this</code> or a 
+    	 * parent of <code>this</code>
+    	 */
+    	public boolean isAnchestor( Entry anchestor ){
+    		Entry current = this;
+    		while( current != null ){
+    			if( current == anchestor ){
+    				return true;
+    			}
+    			current = current.getParent();
+    		}
+    		return false;
+    	}
+    	
+    	/**
+    	 * Gets the owner of this node or leaf.
+    	 * @return the owner, can be <code>null</code>
+    	 */
+    	public SplitDockPerspective getPerspective(){
+    		if( parent == null ){
+    			return null;
+    		}
+    		return parent.getPerspective();
+    	}
+    	
+    	/**
     	 * Sets the parent of this entry.
     	 * @param parent the parent
     	 */
-    	protected void setParent( Node parent ){
+    	protected void setParent( Entry parent ){
 			this.parent = parent;
 		}
     	
@@ -211,7 +358,7 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
     	 * root entry.
     	 * @return the parent.
     	 */
-    	public Node getParent() {
+    	public Entry getParent() {
 			return parent;
 		}
     	
@@ -257,39 +404,63 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
     }
     
     /**
-     * A leaf in a tree, describes one {@link Dockable}.
+     * A root in a tree.
      * @author Benjamin Sigg
      */
-    public static class Leaf extends Entry{
-        /** the element represented by this leaf */
-        private PerspectiveDockable dockable;
-        
-        /**
-         * Creates a new leaf
-         * @param dockable the element that is represented by this leaf
-         * @param placeholders placeholders associated with this leaf
-         * @param placeholderMap placeholder information of a child {@link DockStation}
-         * @param nodeId the unique identifier of this node, can be -1
-         */
-        public Leaf( PerspectiveDockable dockable, Path[] placeholders, PlaceholderMap placeholderMap, long nodeId ){
-        	super( placeholders, placeholderMap, nodeId );
-            this.dockable = dockable;
-        }
-        
-        @Override
-        public Leaf asLeaf() {
-            return this;
-        }
-        
-        /**
-         * Gets the element which is represented by this leaf.
-         * @return the element
-         */
-        public PerspectiveDockable getDockable(){
-			return dockable;
+    public class Root extends Entry{
+    	/** the one and only child of this root */
+		private Entry child;
+    	
+    	/**
+    	 * Creates the new root.
+    	 */
+    	public Root(){
+			super( new Path[]{}, null, -1 );
+		}
+
+    	@Override
+    	public SplitDockPerspective getPerspective(){
+    		return SplitDockPerspective.this;
+    	}
+    	
+    	@Override
+    	protected void setParent( Entry parent ){
+	    	throw new IllegalStateException( "cannot set the parent of a root" );
+    	}
+    	
+    	/**
+    	 * Gets the child of this root. 
+    	 * @return the child, can be <code>null</code>
+    	 */
+    	public Entry getChild(){
+			return child;
+		}
+    	
+    	/**
+    	 * Sets the child of this root.
+    	 * @param child the child, can be <code>null</code>
+    	 */
+    	public void setChild( Entry child ){
+    		if( child != null ){
+	    		if( child.asLeaf() == null && child.asNode() == null ){
+	    			throw new IllegalArgumentException( "child must either be a leaf or a node" );
+	    		}
+    		}
+    		
+    		if( this.child != null ){
+    			this.child.setParent( null );
+    			fireRemoved( this, this.child );
+    		}
+    		
+			this.child = child;
+			
+			if( this.child != null ){
+				this.child.setParent( this );
+				fireAdded( this, this.child );
+			}
 		}
     }
-    
+
     /**
      * A node in a tree.
      * @author Benjamin Sigg
@@ -318,13 +489,9 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
         	super( placeholders, placeholderMap, id );
             this.orientation = orientation;
             this.divider = divider;
-            this.childA = childA;
-            this.childB = childB;
             
-            if( childA != null )
-            	childA.setParent( this );
-            if( childB != null )
-            	childB.setParent( this );
+            setChildA( childA );
+            setChildB( childB );
         }
         
         @Override
@@ -357,11 +524,112 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
         }
         
         /**
+         * Sets the left or top child of this node.
+         * @param childA the new child, can be <code>null</code>
+         */
+        public void setChildA( Entry childA ){
+        	if( childA != null ){
+	    		if( childA.asLeaf() == null && childA.asNode() == null ){
+	    			throw new IllegalArgumentException( "child must either be a leaf or a node" );
+	    		}
+    		}
+        	
+        	if( childA != null && isAnchestor( childA )){
+        		throw new IllegalArgumentException( "cannot build a cycle" );
+        	}
+        	
+        	SplitDockPerspective perspective = getPerspective();
+        	
+        	if( this.childA != null ){
+        		this.childA.setParent( null );
+        		if( perspective != null ){
+        			perspective.fireRemoved( this, this.childA );
+        		}
+        		
+        	}
+			this.childA = childA;
+			if( this.childA != null ){
+				this.childA.setParent( this );
+				if( perspective != null ){
+					perspective.fireAdded( this, this.childA );
+				}
+			}
+		}
+        
+        /**
          * Gets the right or bottom child.
          * @return the right or bottom child
          */
         public Entry getChildB() {
             return childB;
         }
+        
+
+        /**
+         * Sets the right or bottom child of this node.
+         * @param childB the new child, can be <code>null</code>
+         */
+        public void setChildB( Entry childB ){
+        	if( childB != null ){
+	    		if( childB.asLeaf() == null && childB.asNode() == null ){
+	    			throw new IllegalArgumentException( "child must either be a leaf or a node" );
+	    		}
+    		}
+        	
+        	if( childB != null && isAnchestor( childB )){
+        		throw new IllegalArgumentException( "cannot build a cycle" );
+        	}
+        	
+        	SplitDockPerspective perspective = getPerspective();
+        	
+        	if( this.childB != null ){
+        		this.childB.setParent( null );
+        		if( perspective != null ){
+        			perspective.fireRemoved( this, this.childB );
+        		}
+        		
+        	}
+			this.childB = childB;
+			if( this.childB != null ){
+				this.childB.setParent( this );
+				if( perspective != null ){
+					perspective.fireAdded( this, this.childB );
+				}
+			}
+		}
+    }
+    
+    /**
+     * A leaf in a tree, describes one {@link Dockable}.
+     * @author Benjamin Sigg
+     */
+    public static class Leaf extends Entry{
+        /** the element represented by this leaf */
+        private PerspectiveDockable dockable;
+        
+        /**
+         * Creates a new leaf
+         * @param dockable the element that is represented by this leaf
+         * @param placeholders placeholders associated with this leaf
+         * @param placeholderMap placeholder information of a child {@link DockStation}
+         * @param nodeId the unique identifier of this node, can be -1
+         */
+        public Leaf( PerspectiveDockable dockable, Path[] placeholders, PlaceholderMap placeholderMap, long nodeId ){
+        	super( placeholders, placeholderMap, nodeId );
+            this.dockable = dockable;
+        }
+        
+        @Override
+        public Leaf asLeaf() {
+            return this;
+        }
+        
+        /**
+         * Gets the element which is represented by this leaf.
+         * @return the element
+         */
+        public PerspectiveDockable getDockable(){
+			return dockable;
+		}
     }
 }

@@ -25,7 +25,6 @@
  */
 package bibliothek.gui.dock.common.intern;
 
-import bibliothek.gui.dock.common.CWorkingArea;
 import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.MultipleCDockableLayout;
 
@@ -34,7 +33,7 @@ import bibliothek.gui.dock.common.MultipleCDockableLayout;
  * that is connected with a {@link MultipleCDockable}.
  * @author Benjamin Sigg
  */
-public class CommonDockableLayout {
+public class CommonMultipleDockableLayout {
     /** the layout of the {@link MultipleCDockable}  */
     private MultipleCDockableLayout layout;
     
@@ -79,7 +78,7 @@ public class CommonDockableLayout {
     }
     
     /**
-     * Sets the unique id of the {@link CWorkingArea} the dockable was on.
+     * Sets the unique id of the working-area the dockable was on.
      * @param area the id or <code>null</code>
      */
     public void setArea( String area ) {
@@ -87,7 +86,7 @@ public class CommonDockableLayout {
     }
     
     /**
-     * Gets the unique id of the {@link CWorkingArea} the dockable was on.
+     * Gets the unique id of the working-area the dockable was on.
      * @return the id of an area or <code>null</code>
      */
     public String getArea() {

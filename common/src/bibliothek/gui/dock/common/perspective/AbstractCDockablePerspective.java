@@ -34,6 +34,8 @@ import bibliothek.gui.dock.perspective.PerspectiveStation;
  * 
  */
 public abstract class AbstractCDockablePerspective implements CDockablePerspective{
+	private CStationPerspective workingArea;
+	
 	public CStationPerspective getParent(){
 		PerspectiveDockable dockable = intern().asDockable();
 		
@@ -53,5 +55,13 @@ public abstract class AbstractCDockablePerspective implements CDockablePerspecti
 		}
 		
 		return null;
+	}
+	
+	public void setWorkingArea( CStationPerspective workingArea ){
+		this.workingArea = workingArea;
+	}
+	
+	public CStationPerspective getWorkingArea(){
+		return workingArea;
 	}
 }

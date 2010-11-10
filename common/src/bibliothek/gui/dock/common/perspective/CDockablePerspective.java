@@ -27,6 +27,7 @@ package bibliothek.gui.dock.common.perspective;
 
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.perspective.PerspectiveStation;
 
 /**
  * Represents a {@link CDockable} in a {@link CPerspective}.
@@ -39,4 +40,18 @@ public interface CDockablePerspective extends CElementPerspective{
 	 * @return the next station, may be <code>null</code>
 	 */
 	public CStationPerspective getParent();
+	
+	/**
+	 * Sets the working-area of this element. This user will not be able drag
+	 * this element away from that working-area.
+	 * @param workingArea the working-area, can be <code>null</code>
+	 */
+	public void setWorkingArea( CStationPerspective workingArea );
+	
+	/**
+	 * Gets the working-area of this element
+	 * @return the area, can be <code>null</code>
+	 * @see #setWorkingArea(PerspectiveStation)
+	 */
+	public CStationPerspective getWorkingArea();
 }

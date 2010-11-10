@@ -354,4 +354,5 @@
 ! API: various classes and interfaces needed new generic parameters or needed to be made abstract in order to implement the perspective mechanism. Clients should not be affected (much) by these changes as these classes/interfaces are mostly used in a layer that is not interesting for clients.
 - API: Many PreferenceModels now grant access to the Preference objects such that clients can modify them directly
 - API: CControl.initExternalizeArea can now be overriden by clients to create a custom ScreenDockStation for externalized items
-- Bugfix: DockFrontend no longer stores the same Dockable twice if root-stations are nested  
+- Bugfix: DockFrontend no longer stores the same Dockable twice if root-stations are nested
+! API: Common now stores the identifier of the working-area which owns a SingleCDockable and changes the working-area property when loading a layout. This is necessary for perspectives which would otherwise work very unintuitive.  

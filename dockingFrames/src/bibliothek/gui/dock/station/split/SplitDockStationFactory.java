@@ -41,6 +41,7 @@ import bibliothek.gui.dock.layout.DockLayoutInfo;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
+import bibliothek.gui.dock.station.split.SplitDockPerspective.Root;
 import bibliothek.gui.dock.station.split.SplitDockStationLayout.Entry;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
@@ -157,11 +158,21 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     		Entry childA = convert( node.getChildA(), children );
     		Entry childB = convert( node.getChildB(), children );
     		
+    		if( childA == null ){
+    			return childB;
+    		}
+    		if( childB == null ){
+    			return childA;
+    		}
+    		
     		return new SplitDockStationLayout.Node( node.getOrientation(), node.getDivider(), childA, childB, node.getPlaceholders(), node.getPlaceholderMap(), node.getNodeId() );
-    	} else {
+    	} else if( entry.asLeaf() != null ){
     		SplitDockPerspective.Leaf leaf = entry.asLeaf();
     		Integer id = children.get( leaf.getDockable() );
     		return new SplitDockStationLayout.Leaf( id == null ? -1 : id.intValue(), leaf.getPlaceholders(), leaf.getPlaceholderMap(), leaf.getNodeId() );
+    	}
+    	else{
+    		return convert( ((Root)entry).getChild(), children );
     	}
     }
     

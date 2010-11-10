@@ -41,6 +41,7 @@ import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.SingleCDockable;
 import bibliothek.gui.dock.common.SingleCDockableFactory;
+import bibliothek.gui.dock.common.perspective.CPerspective;
 import bibliothek.gui.dock.common.perspective.CommonElementPerspective;
 import bibliothek.gui.dock.common.perspective.SingleCDockablePerspective;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
@@ -57,7 +58,7 @@ import bibliothek.util.xml.XElement;
  * dockable is missing in the cache of its owning {@link CControl}.
  * @author Benjamin Sigg
  */
-public class CommonSingleDockableFactory implements DockFactory<CommonDockable, CommonElementPerspective, String>{
+public class CommonSingleDockableFactory implements DockFactory<CommonDockable, CommonElementPerspective, CommonSingleDockableLayout>{
     public static final String BACKUP_FACTORY_ID = "ccontrol backup factory id";
     
     /** all the factories that are used */
@@ -68,6 +69,8 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
     
     private CControl control;
     
+    private CPerspective perspective;
+    
     /**
      * Creates a new factory.
      * @param control the owner of the factory, the factory will add {@link SingleCDockable}
@@ -75,6 +78,17 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
      */
     public CommonSingleDockableFactory( CControl control ){
         this.control = control;
+    }
+    
+    /**
+     * Creates a new factory.
+     * @param control the owner of the factory, the factory will add {@link SingleCDockable}
+     * to this control
+     * @param perspective the perspective which is used to load perspective related content
+     */
+    public CommonSingleDockableFactory( CControl control, CPerspective perspective ){
+    	this.control = control;
+    	this.perspective = perspective;
     }
     
     /**
@@ -178,76 +192,123 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
         return Collections.unmodifiableSet( singleIdFactories.keySet() );
     }
     
-    public void estimateLocations( String layout, LocationEstimationMap children ){
+    public void estimateLocations( CommonSingleDockableLayout layout, LocationEstimationMap children ){
     	// currently not supported
     }
 
-    public String getLayout( CommonDockable element, Map<Dockable, Integer> children ) {
+    public CommonSingleDockableLayout getLayout( CommonDockable element, Map<Dockable, Integer> children ) {
         CDockable dockable = element.getDockable();
         if( dockable instanceof SingleCDockable ){
             SingleCDockable single = (SingleCDockable)dockable;
-            return single.getUniqueId();
+            CommonSingleDockableLayout layout = new CommonSingleDockableLayout();
+            layout.setId( single.getUniqueId() );
+            layout.setArea( single.getWorkingArea() == null ? null : single.getWorkingArea().getUniqueId() );
+            return layout;
         }
         else
             throw new IllegalArgumentException( "A CommonSingleDockableFactory works only with Dockables of type SingleCDockable, but this is not a single dockable: " + element );
     }
 
-    public CommonDockable layout( String layout, Map<Integer, Dockable> children ) {
+    public CommonDockable layout( CommonSingleDockableLayout layout, Map<Integer, Dockable> children ) {
         return layout( layout );
     }
 
-    public CommonDockable layout( String layout ) {
-        SingleCDockableFactory backup = getFactory( layout );
+    public CommonDockable layout( CommonSingleDockableLayout layout ) {
+        SingleCDockableFactory backup = getFactory( layout.getId() );
         if( backup == null )
             return null;
         
-        SingleCDockable dockable = backup.createBackup( layout );
+        SingleCDockable dockable = backup.createBackup( layout.getId() );
         if( dockable == null )
             return null;
         
         control.addDockable( dockable );
+        if( layout.isAreaSet()){
+        	if( layout.getArea() != null ){
+        		dockable.setWorkingArea( control.getStation( layout.getArea() ) );
+        	}
+        	else{
+        		dockable.setWorkingArea( null );
+        	}
+        }
         return dockable.intern();
     }
     
-    public CommonElementPerspective layoutPerspective( String layout, Map<Integer, PerspectiveDockable> children ){
-    	return new SingleCDockablePerspective( layout ).intern();
+    public CommonElementPerspective layoutPerspective( CommonSingleDockableLayout layout, Map<Integer, PerspectiveDockable> children ){
+    	SingleCDockablePerspective dockable = new SingleCDockablePerspective( layout.getId() );
+    	if( layout.isAreaSet() && layout.getArea() != null ){
+    		dockable.setWorkingArea( perspective.getRoot( layout.getArea() ));
+    	}
+    	
+    	return dockable.intern();
     }
     
-    public void layoutPerspective( CommonElementPerspective perspective, String layout, Map<Integer, PerspectiveDockable> children ){
+    public void layoutPerspective( CommonElementPerspective perspective, CommonSingleDockableLayout layout, Map<Integer, PerspectiveDockable> children ){
     	// can't do anything
     }
     
-    public String getPerspectiveLayout( CommonElementPerspective element, Map<PerspectiveDockable, Integer> children ){
-	    return ((SingleCDockablePerspective)element.getElement()).getUniqueId();
+    public CommonSingleDockableLayout getPerspectiveLayout( CommonElementPerspective element, Map<PerspectiveDockable, Integer> children ){
+	    SingleCDockablePerspective dockable = (SingleCDockablePerspective)element.getElement();
+	    CommonSingleDockableLayout layout = new CommonSingleDockableLayout();
+	    layout.setId( dockable.getUniqueId() );
+	    layout.setArea( dockable.getWorkingArea() == null ? null : dockable.getWorkingArea().getUniqueId() );
+	    return layout;
     }
 
-    public String read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException {
+    public CommonSingleDockableLayout read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException {
         Version version = Version.read( in );
-        if( !version.equals( Version.VERSION_1_0_4 ))
-            throw new IOException( "Data from the future - unknown version: " + version );
+        CommonSingleDockableLayout layout = new CommonSingleDockableLayout();
         
-        return in.readUTF();
+        if( version.equals( Version.VERSION_1_0_4 )){
+        	layout.setId( in.readUTF() );
+        }
+        else if( version.equals( Version.VERSION_1_1_0 )){
+        	layout.setId( in.readUTF() );
+        	layout.setArea( in.readUTF() );
+        }
+        else{
+            throw new IOException( "Data from the future - unknown version: " + version );
+        }
+        
+        return layout;
     }
 
-    public String read( XElement element, PlaceholderStrategy placeholders ) {
-        return element.getElement( "id" ).getString();
+    public CommonSingleDockableLayout read( XElement element, PlaceholderStrategy placeholders ) {
+        CommonSingleDockableLayout layout = new CommonSingleDockableLayout();
+    	
+    	layout.setId( element.getElement( "id" ).getString() );
+    	
+    	XElement xarea = element.getElement( "area" );
+    	if( xarea != null ){
+    		String area = element.getString();
+    		if( "".equals( area )){
+    			layout.setArea( null );
+    		}
+    		else{
+    			layout.setArea( area );
+    		}
+    	}
+        
+    	return layout;
     }
 
-    public void setLayout( CommonDockable element, String layout, Map<Integer, Dockable> children ) {
+    public void setLayout( CommonDockable element, CommonSingleDockableLayout layout, Map<Integer, Dockable> children ) {
         // can't do anything
     }
 
-    public void setLayout( CommonDockable element, String layout ) {
+    public void setLayout( CommonDockable element, CommonSingleDockableLayout layout ) {
         // can't do anything
     }
 
-    public void write( String layout, DataOutputStream out ) throws IOException {
-        Version.write( out, Version.VERSION_1_0_4 );
-        out.writeUTF( layout );
+    public void write( CommonSingleDockableLayout layout, DataOutputStream out ) throws IOException {
+        Version.write( out, Version.VERSION_1_1_0 );
+        out.writeUTF( layout.getId() );
+        out.writeUTF( layout.getArea() );
     }
 
-    public void write( String layout, XElement element ) {
-        element.addElement( "id" ).setString( layout );
+    public void write( CommonSingleDockableLayout layout, XElement element ) {
+        element.addElement( "id" ).setString( layout.getId() );
+        element.addElement( "area" ).setString( layout.getArea() == null ? "" : layout.getArea() );
     }
     
     /**

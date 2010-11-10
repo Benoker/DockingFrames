@@ -44,7 +44,7 @@ import bibliothek.gui.dock.common.MultipleCDockableLayout;
 import bibliothek.gui.dock.common.event.CVetoClosingEvent;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
-import bibliothek.gui.dock.common.intern.CommonDockableLayout;
+import bibliothek.gui.dock.common.intern.CommonMultipleDockableLayout;
 import bibliothek.gui.dock.frontend.DefaultLayoutChangeStrategy;
 import bibliothek.gui.dock.frontend.DockFrontendInternals;
 import bibliothek.gui.dock.frontend.Setting;
@@ -240,8 +240,8 @@ public class CLayoutChangeStrategy extends DefaultLayoutChangeStrategy {
 			String factoryId = layout.getFactoryID();
 			Object data = layout.getData();
 			
-			if( data instanceof CommonDockableLayout ){
-				MultipleCDockableLayout multipleLayout = ((CommonDockableLayout) data).getLayout();
+			if( data instanceof CommonMultipleDockableLayout ){
+				MultipleCDockableLayout multipleLayout = ((CommonMultipleDockableLayout) data).getLayout();
 				MultipleCDockableFactory<MultipleCDockable, MultipleCDockableLayout> factory = (MultipleCDockableFactory<MultipleCDockable, MultipleCDockableLayout>) factories.get( factoryId );
 				if( factory != null ){
 					List<MultipleCDockable> list = remainingDockables.get( factoryId );

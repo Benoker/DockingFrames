@@ -69,9 +69,10 @@ public class WorkingAreaAcceptance implements DockAcceptance {
     	if( manager.isOnTransaction() )
             return true;
     	
-    	ExtendedMode extendedMode = manager.getMode( child );
+    	
+    	ExtendedMode extendedMode = manager.childsExtendedMode( parent );
     	if( extendedMode == null ){
-    		extendedMode = manager.childsExtendedMode( parent );
+    		extendedMode = manager.getMode( child );	
     		if( extendedMode == null ){
     			return true;
     		}
@@ -90,7 +91,7 @@ public class WorkingAreaAcceptance implements DockAcceptance {
     }
     
     /**
-     * Searches the first {@link CStation} in the path to the root.
+     * Searches the first {@link CStation} with the woking-area property set to <code>true</code> in the path to the root.
      * @param element some element
      * @return the first {@link CStation} that occurs on the path from
      * <code>element</code> to the root and which is a working area

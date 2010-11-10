@@ -68,6 +68,11 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 		return delegate;
 	}
 	
+	@Override
+	public CommonSplitDockPerspective intern(){
+		return (CommonSplitDockPerspective)super.intern();
+	}
+	
 	/**
 	 * Calls {@link #gridDeploy()}, but only if {@link #isAutoDeploy()} returns <code>true</code> and
 	 * if {@link #grid() the grid} was accessed.
@@ -249,7 +254,7 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 			return CPlaceholderStrategy.getSingleDockablePlaceholder( getUniqueId() );
 		}
 		@Override
-		public Entry getRoot(){
+		public Root getRoot(){
 			maybeDeploy();
 			return super.getRoot();
 		}
