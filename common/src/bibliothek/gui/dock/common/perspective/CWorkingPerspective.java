@@ -27,7 +27,6 @@ package bibliothek.gui.dock.common.perspective;
 
 import bibliothek.gui.dock.common.CWorkingArea;
 import bibliothek.gui.dock.common.MultipleCDockable;
-import bibliothek.gui.dock.common.SingleCDockable;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.station.split.SplitDockPerspective.Entry;
@@ -42,11 +41,8 @@ import bibliothek.gui.dock.station.split.SplitDockPerspective.EntryListener;
  * 	<li>Adding: the working-area of a child is only set to <code>this</code> if the working-area had a value of <code>null</code></li>
  * 	<li>Removing: the working-area of a child is only set to <code>null</code> if the working-area had a value of <code>this</code></li>
  * 	<li>{@link MultipleCDockablePerspective}: if the working-area is set, then it is automatically set in the {@link MultipleCDockable} as well.</li>
- * 	<li>{@link SingleCDockablePerspective}: even if the working-area is set, the working-area of the {@link SingleCDockable} will not be set automatically because
- *  the framework does not store any layout information of a {@link SingleCDockable} other than its unique identifier.</li>
+ * 	<li>{@link SingleCDockablePerspective}: if the working-area is set, then it is automatically set in the {@link SingleCDockable} as well.</li>
  * </ul>
- * <b>Warning:</b> If adding a {@link SingleCDockablePerspective}, then the client has to manually call {@link SingleCDockable#setWorkingArea(bibliothek.gui.dock.common.CStation)}
- * in order to properly load the perspective.
  * @author Benjamin Sigg
  */
 public class CWorkingPerspective extends CGridPerspective{
