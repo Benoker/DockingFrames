@@ -51,6 +51,8 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.perspective.PerspectiveDockable;
+import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.util.Todo;
@@ -315,6 +317,43 @@ public class DockUtilities {
             property = temp;
         }
     }
+    
+
+    /**
+     * Creates a {@link DockableProperty} describing the path from
+     * <code>ground</code> to <code>dockable</code>.
+     * @param ground the base of the property
+     * @param dockable an indirect child of <code>ground</code>
+     * @return a property for the path <code>ground</code> to <code>dockable</code>.
+     * @throws IllegalArgumentException if <code>ground</code> is not an
+     * ancestor of <code>dockable</code>
+     */
+    public static DockableProperty getPropertyChain( PerspectiveStation ground, PerspectiveDockable dockable ){
+        if( ground == dockable )
+            throw new IllegalArgumentException( "ground and dockable are the same" );
+        
+        PerspectiveStation parent = dockable.getParent();
+        DockableProperty property = parent.getDockableProperty( dockable, dockable );
+        PerspectiveDockable child = dockable;
+        
+        while( true ){
+            if( parent == ground )
+                return property;
+            
+            child = parent.asDockable();
+            if( child == null )
+                throw new IllegalArgumentException( "The chain is not complete" );
+            
+            parent = child.getParent();
+            if( parent == null )
+                throw new IllegalArgumentException( "The chain is not complete" );
+            
+            DockableProperty temp = parent.getDockableProperty( child, dockable );
+            temp.setSuccessor( property );
+            property = temp;
+        }
+    }
+    
     
     /**
      * Searches a {@link Component} which is {@link Component#isShowing() showing}

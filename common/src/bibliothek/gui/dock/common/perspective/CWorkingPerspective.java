@@ -27,6 +27,7 @@ package bibliothek.gui.dock.common.perspective;
 
 import bibliothek.gui.dock.common.CWorkingArea;
 import bibliothek.gui.dock.common.MultipleCDockable;
+import bibliothek.gui.dock.common.SingleCDockable;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.station.split.SplitDockPerspective.Entry;

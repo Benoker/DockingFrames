@@ -32,9 +32,11 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.SplitDockStation.Orientation;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.perspective.Perspective;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
+import bibliothek.gui.dock.station.split.SplitDockPathProperty.Location;
 import bibliothek.gui.dock.station.stack.StackDockPerspective;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.util.Path;
@@ -212,8 +214,20 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 	 * Gets the element which is in fullscreen-mode
 	 * @return the maximized element, can be <code>null</code>
 	 */
-	public PerspectiveDockable getFullScreen(){
+	public PerspectiveDockable getFullscreen(){
 		return fullscreen;
+	}
+	
+	/**
+	 * Sets the element which is in fullscreen-mode, must be a child of this perspective
+	 * @param fullscreen the element in fullscreen
+	 */
+	public void setFullscreen( PerspectiveDockable fullscreen ){
+		if( fullscreen.getParent() != this ){
+			throw new IllegalArgumentException( "not a child of this station" );
+		}
+		
+		this.fullscreen = fullscreen;
 	}
 	
 	/**
@@ -266,6 +280,105 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 			description="implementation pending")
 	public PlaceholderMap getPlaceholders(){
 		return null;
+	}
+	
+	public DockableProperty getDockableProperty( PerspectiveDockable child, PerspectiveDockable target ){
+		Path placeholder = null;
+		if( target != null ){
+			placeholder = target.getPlaceholder();
+		}
+		else{
+			placeholder = child.getPlaceholder();
+		}
+		SplitDockPathProperty backup = getDockablePathProperty( child );
+		if( placeholder == null ){
+			return backup;
+		}
+		return new SplitDockPlaceholderProperty( placeholder, backup );
+	}
+	
+	/**
+	 * Creates the location information for <code>child</code> that directly describes the path through the
+	 * tree to the element.
+	 * @param child the element whose location is searched
+	 * @return the location or <code>null</code> if <code>child</code> was not found
+	 */
+	public SplitDockPathProperty getDockablePathProperty( PerspectiveDockable child ){
+		Leaf leaf = getLeaf( child );
+		if( leaf == null ){
+			return null;
+		}
+		
+		SplitDockPathProperty path = new SplitDockPathProperty();
+		path.setLeafId( leaf.getNodeId() );
+		
+		Entry nodeChild = leaf;
+		Node parent = leaf.getParent().asNode();
+		while( parent != null ){
+			Location location;
+			double size;
+			
+			if( parent.getChildA() == nodeChild ){
+				size = parent.getDivider();
+				if( parent.getOrientation() == Orientation.HORIZONTAL ){
+					location = Location.LEFT;
+				}
+				else{
+					location = Location.TOP;
+				}
+			}
+			else{
+				size = 1.0 - parent.getDivider();
+				if( parent.getOrientation() == Orientation.HORIZONTAL ){
+					location = Location.RIGHT;
+				}
+				else{
+					location = Location.BOTTOM;
+				}
+			}
+			
+			path.insert( location, size, 0, parent.getNodeId() );
+			
+			nodeChild = parent;
+			parent = parent.getParent().asNode();
+		}
+		
+		return path;
+	}
+	
+	public boolean remove( PerspectiveDockable dockable ){
+		Leaf leaf = getLeaf( dockable );
+		if( leaf != null ){
+			leaf.remove();
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Searches and returns the leaf that shows <code>child</code>.
+	 * @param child some child of this station
+	 * @return the leaf showing <code>child</code> or <code>null</code> if not found
+	 */
+	public Leaf getLeaf( PerspectiveDockable child ){
+		return find( getRoot().getChild(), child );
+	}
+	
+	private Leaf find( Entry start, PerspectiveDockable child ){
+		if( start == null ){
+			return null;
+		}
+		if( start.asLeaf() != null ){
+			if( start.asLeaf().getDockable() == child ){
+				return start.asLeaf();
+			}
+			return null;
+		}
+		Leaf result = find( start.asNode().getChildA(), child );
+		if( result == null ){
+			result = find( start.asNode().getChildB(), child );
+		}
+		return result;
 	}
 
 	/**
@@ -343,6 +456,53 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
     			return null;
     		}
     		return parent.getPerspective();
+    	}
+    	
+    	/**
+    	 * Removes <code>this</code> and all children from this {@link SplitDockPerspective} and
+    	 * collapses the tree.
+    	 */
+    	public void remove(){
+    		Entry parent = getParent();
+    		if( parent == null ){
+    			return;
+    		}
+    		
+    		if( parent instanceof Root ){
+    			((Root)parent).setChild( null );
+    		}
+    		else{
+    			Node parentNode = (Node)parent;
+    			Entry other;
+    			if( parentNode.getChildA() == this ){
+    				other = parentNode.getChildB();
+    				parentNode.setChildA( null );
+    			}
+    			else{
+    				other = parentNode.getChildA();
+    				parentNode.setChildB( null );
+    			}
+    			
+    			parent = parentNode.getParent();
+    			if( parent == null ){
+    				return;
+    			}
+    			parentNode.setChildA( null );
+    			parentNode.setChildB( null );
+    			
+    			if( parent instanceof Root ){
+    				((Root)parent).setChild( other );
+    			}
+    			else{
+    				Node nextParent = (Node)parent;
+    				if( nextParent.getChildA() == parentNode ){
+    					nextParent.setChildA( other );
+    				}
+    				else{
+    					nextParent.setChildB( other );
+    				}
+    			}
+    		}
     	}
     	
     	/**

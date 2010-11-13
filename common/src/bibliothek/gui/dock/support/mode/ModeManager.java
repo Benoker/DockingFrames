@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.support.mode;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -176,6 +177,15 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 	 */
 	public void putFactory( ModeSettingFactory<H> factory ){
 		factories.put( factory.getModeId(), factory );
+	}
+	
+	/**
+	 * Gets a set containing all the {@link ModeSettingFactory}s that were added
+	 * to this manager.
+	 * @return the factories
+	 */
+	public Collection<ModeSettingFactory<H>> getFactories(){
+		return Collections.unmodifiableCollection( factories.values() );
 	}
 	
 	/**

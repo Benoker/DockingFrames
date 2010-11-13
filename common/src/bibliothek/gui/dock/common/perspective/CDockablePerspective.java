@@ -27,7 +27,6 @@ package bibliothek.gui.dock.common.perspective;
 
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.intern.CDockable;
-import bibliothek.gui.dock.perspective.PerspectiveStation;
 
 /**
  * Represents a {@link CDockable} in a {@link CPerspective}.
@@ -51,7 +50,13 @@ public interface CDockablePerspective extends CElementPerspective{
 	/**
 	 * Gets the working-area of this element
 	 * @return the area, can be <code>null</code>
-	 * @see #setWorkingArea(PerspectiveStation)
+	 * @see #setWorkingArea(CStationPerspective)
 	 */
 	public CStationPerspective getWorkingArea();
+	
+	/**
+	 * Gets information about the locations this dockable had in the past.
+	 * @return the locations, not <code>null</code>
+	 */
+	public LocationHistory getLocationHistory();
 }

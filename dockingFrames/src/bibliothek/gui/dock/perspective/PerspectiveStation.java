@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.perspective;
 
 import bibliothek.gui.DockStation;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 
 /**
@@ -46,6 +47,16 @@ public interface PerspectiveStation extends PerspectiveElement{
 	 */
 	public PerspectiveDockable getDockable( int index );
 	
+    /**
+     * Gets precise information about the location of a child of this station.
+     * @param child a child of this station, this childs location is asked
+     * @param target an optional hint telling for which dockable the location information
+     * will be used, can be <code>null</code>. This hint can be used to find a placeholder
+     * that should be part of the result.
+     * @return the location
+     */
+    public DockableProperty getDockableProperty( PerspectiveDockable child, PerspectiveDockable target );
+	
 	/**
 	 * Converts the contents of this station into a map of placeholders.
 	 * @return a map of placeholders describing the contents of this station
@@ -57,4 +68,11 @@ public interface PerspectiveStation extends PerspectiveElement{
 	 * @param placeholders a map that was earlier created by {@link #getPlaceholders()}
 	 */
 	public void setPlaceholders( PlaceholderMap placeholders );
+	
+	/**
+	 * Removes a child of this station, can leave behind a placeholder.
+	 * @param dockable the element to remove
+	 * @return <code>true</code> if <code>dockable</code> was removed, <code>false</code> otherwise
+	 */
+	public boolean remove( PerspectiveDockable dockable );
 }

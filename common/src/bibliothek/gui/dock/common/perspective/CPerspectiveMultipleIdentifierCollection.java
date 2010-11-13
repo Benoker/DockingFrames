@@ -43,6 +43,7 @@ public class CPerspectiveMultipleIdentifierCollection{
 	
 	/**
 	 * Creates a new object
+	 * @param factoryId the unique identifier of the factory that is using this collection
 	 * @param perspective the owner of this object, not <code>null</code>
 	 */
 	public CPerspectiveMultipleIdentifierCollection( String factoryId, CPerspective perspective ){

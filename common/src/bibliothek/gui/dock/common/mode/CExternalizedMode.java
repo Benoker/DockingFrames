@@ -33,6 +33,8 @@ import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.action.predefined.CExternalizeAction;
 import bibliothek.gui.dock.common.action.predefined.CUnmaximizeExternalizedAction;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.perspective.mode.CExternalizedModePerspective;
+import bibliothek.gui.dock.common.perspective.mode.LocationModePerspective;
 import bibliothek.gui.dock.facile.mode.ExternalizedMode;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.LocationModeActionProvider;
@@ -96,5 +98,9 @@ public class CExternalizedMode extends ExternalizedMode<CExternalizedModeArea> i
 			return true;
 		}
 		return area.respectWorkingAreas();
+	}
+	
+	public LocationModePerspective createPerspective(){
+		return new CExternalizedModePerspective();
 	}
 }

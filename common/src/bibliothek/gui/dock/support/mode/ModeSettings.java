@@ -131,9 +131,16 @@ public class ModeSettings<A,B> {
     	ModeSetting<A> setting = factory.create();
     	if( setting != null ){
     		mode.writeSetting( setting );
-    	
     		modes.put( setting.getModeId(), setting );
     	}
+    }
+    
+    /**
+     * Adds the settings <code>mode</code> to this.
+     * @param mode the properties to store
+     */
+    public void add( ModeSetting<A> mode ){
+    	modes.put( mode.getModeId(), mode );
     }
     
     /**
@@ -142,6 +149,22 @@ public class ModeSettings<A,B> {
      */
     public int size(){
         return dockables.size();
+    }
+    
+    /**
+     * Gets the index of the entry with identifier <code>id</code>.
+     * @param id the identifier of a dockable
+     * @return the entry that represents that dockable, can be -1
+     */
+    public int indexOf( String id ){
+    	int index = 0;
+    	for( DockableEntry entry : dockables ){
+    		if( entry.id.equals( id )){
+    			return index;
+    		}
+    		index++;
+    	}
+    	return -1;
     }
     
     /**

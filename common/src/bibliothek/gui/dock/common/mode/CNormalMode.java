@@ -33,6 +33,8 @@ import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.action.predefined.CNormalizeAction;
 import bibliothek.gui.dock.common.action.predefined.CUnexternalizeAction;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.perspective.mode.LocationModePerspective;
+import bibliothek.gui.dock.common.perspective.mode.CNormalModePerspective;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.LocationModeActionProvider;
 import bibliothek.gui.dock.facile.mode.MappingLocationModeActionProvider;
@@ -118,5 +120,9 @@ public class CNormalMode extends NormalMode<CNormalModeArea> implements CLocatio
 			return true;
 		}
 		return area.respectWorkingAreas();
+	}
+	
+	public LocationModePerspective createPerspective(){
+		return new CNormalModePerspective();
 	}
 }

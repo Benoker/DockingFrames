@@ -28,9 +28,16 @@ package bibliothek.gui.dock.common.perspective;
 import java.awt.Rectangle;
 
 import bibliothek.gui.dock.common.CExternalizeArea;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
+import bibliothek.gui.dock.common.perspective.mode.CExternalizedModePerspective;
+import bibliothek.gui.dock.common.perspective.mode.CMaximizedModeAreaPerspective;
+import bibliothek.gui.dock.common.perspective.mode.CMaximizedModePerspective;
+import bibliothek.gui.dock.common.perspective.mode.CModeAreaPerspective;
+import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.station.screen.ScreenDockPerspective;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
+import bibliothek.util.Path;
 
 /**
  * A representation of a {@link CExternalizeArea}.
@@ -42,6 +49,44 @@ public class CExternalizePerspective implements CStationPerspective{
 	
 	/** the unique identifer of this perspective */
 	private String id;
+	
+	/** the owner of this object */
+	private CPerspective perspective;
+	
+	/** identifiers children that are in normal mode */
+	private CModeAreaPerspective extenalMode = new CModeAreaPerspective() {
+		public String getUniqueId(){
+			return CExternalizePerspective.this.getUniqueId();
+		}
+		public boolean isChild( PerspectiveDockable dockable ){
+			if( dockable.getParent() == intern() ){
+				return !delegate.getWindow( dockable ).isFullscreen();
+			}
+			return false;
+		}
+	};
+	
+	/** identifies children that are in maximized mode */
+	private CMaximizedModeAreaPerspective maximalMode = new CMaximizedModeAreaPerspective() {
+		public String getUniqueId(){
+			return CExternalizePerspective.this.getUniqueId();
+		}
+		public boolean isChild( PerspectiveDockable dockable ){
+			if( dockable.getParent() == intern() ){
+				return delegate.getWindow( dockable ).isFullscreen();
+			}
+			return false;
+		}
+		public void setUnmaximize( Path mode, Location location ){
+			// ignore	
+		}
+		public Location getUnmaximizeLocation(){
+			return null;
+		}
+		public Path getUnmaximizeMode(){
+			return null;
+		}
+	};
 	
 	/**
 	 * Creates a new, empty perspective.
@@ -58,12 +103,24 @@ public class CExternalizePerspective implements CStationPerspective{
 	public String getUniqueId(){
 		return id;
 	}
+
+	public void setPerspective( CPerspective perspective ){
+		if( this.perspective != null ){	
+			((CExternalizedModePerspective)this.perspective.getLocationManager().getMode( ExtendedMode.EXTERNALIZED )).remove( extenalMode );
+			((CMaximizedModePerspective)this.perspective.getLocationManager().getMode( ExtendedMode.MAXIMIZED )).remove( maximalMode );
+		}
+		this.perspective = perspective;
+		if( this.perspective != null ){
+			((CExternalizedModePerspective)this.perspective.getLocationManager().getMode( ExtendedMode.EXTERNALIZED )).add( extenalMode );
+			((CMaximizedModePerspective)this.perspective.getLocationManager().getMode( ExtendedMode.MAXIMIZED )).add( maximalMode );
+		}
+	}
+	
 	
 	/**
 	 * Adds <code>dockable</code> width boundaries <code>bounds</code> to this area.
 	 * @param dockable the element to add, not <code>null</code>
 	 * @param bounds the boundaries of <code>dockable</code>
-	 * @param fullscreen whether <code>dockable</code> should be extended to fullscreen mode
 	 */
 	public void add( CDockablePerspective dockable, Rectangle bounds ){
 		delegate.add( dockable.intern().asDockable(), bounds );

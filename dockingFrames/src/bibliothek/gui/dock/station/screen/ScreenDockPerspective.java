@@ -29,6 +29,7 @@ import java.awt.Rectangle;
 import java.util.Map;
 
 import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.perspective.Perspective;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
@@ -285,6 +286,23 @@ public class ScreenDockPerspective implements PerspectiveStation{
 			}
 		}
 		return null;
+	}
+	
+	public DockableProperty getDockableProperty( PerspectiveDockable child, PerspectiveDockable target ){
+		ScreenPerspectiveWindow window = getWindow( child );
+		if( window == null ){
+			throw new IllegalArgumentException( "child is not a child of this station" );
+		}
+		
+		Path placeholder = null;
+		if( target != null ){
+			placeholder = target.getPlaceholder();
+		}
+		else{
+			placeholder = child.getPlaceholder();
+		}
+		
+		return new ScreenDockProperty( window.getX(), window.getY(), window.getWidth(), window.getHeight(), placeholder, window.isFullscreen() );
 	}
 	
 	/**

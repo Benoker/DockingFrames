@@ -137,7 +137,7 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     public SplitDockStationLayout getPerspectiveLayout( SplitDockPerspective element, Map<PerspectiveDockable, Integer> children ){
     	Entry root = convert( element.getRoot(), children );
          
-        PerspectiveDockable fullscreenDockable = element.getFullScreen();
+        PerspectiveDockable fullscreenDockable = element.getFullscreen();
         Integer fullscreen = null;
         if( fullscreenDockable != null )
              fullscreen = children.get( fullscreenDockable );

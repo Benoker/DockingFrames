@@ -26,6 +26,9 @@
 package bibliothek.gui.dock.common.perspective;
 
 import bibliothek.gui.dock.common.CMinimizeArea;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
+import bibliothek.gui.dock.common.perspective.mode.CMinimizedModePerspective;
+import bibliothek.gui.dock.common.perspective.mode.CModeAreaPerspective;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.station.flap.FlapDockPerspective;
@@ -42,6 +45,19 @@ public class CMinimizePerspective implements CStationPerspective{
 	/** a unique identifier of this station */
 	private String id;
 	
+	/** the owner of this object */
+	private CPerspective perspective;
+	
+	/** the mode this station represents */
+	private CModeAreaPerspective mode = new CModeAreaPerspective() {
+		public String getUniqueId(){
+			return CMinimizePerspective.this.getUniqueId();
+		}
+		public boolean isChild( PerspectiveDockable dockable ){
+			return dockable.getParent() == intern();
+		}
+	};
+	
 	/**
 	 * Creates a new, empty perspective.
 	 * @param id the unique identifier of this perspective
@@ -54,6 +70,18 @@ public class CMinimizePerspective implements CStationPerspective{
 		delegate = new CommonFlapDockPerspective();
 	}
 
+	public void setPerspective( CPerspective perspective ){
+		if( this.perspective != null ){
+		    CMinimizedModePerspective mode = (CMinimizedModePerspective) this.perspective.getLocationManager().getMode( ExtendedMode.MINIMIZED );
+		    mode.remove( this.mode );
+		}
+		this.perspective = perspective;
+		if( this.perspective != null ){
+			CMinimizedModePerspective mode = (CMinimizedModePerspective) this.perspective.getLocationManager().getMode( ExtendedMode.MINIMIZED );
+			mode.add( this.mode );
+		}
+	}
+	
 	/**
 	 * Adds <code>dockable</code> at the end of the list of children of this area.
 	 * @param dockable the element to add

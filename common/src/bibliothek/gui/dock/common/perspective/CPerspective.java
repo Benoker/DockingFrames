@@ -38,6 +38,12 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CContentArea;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.intern.CControlAccess;
+import bibliothek.gui.dock.common.mode.CLocationMode;
+import bibliothek.gui.dock.common.mode.CLocationModeManager;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
+import bibliothek.gui.dock.common.perspective.mode.LocationModeManagerPerspective;
+import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
 
@@ -55,6 +61,53 @@ public class CPerspective {
 	/** All the root stations of this perspective */
 	private Map<String, CStationPerspective> roots = new HashMap<String, CStationPerspective>();
 	
+	/** a manager for finding the location of {@link CDockablePerspective}s */
+	private LocationModeManagerPerspective locationModeManager;
+	
+	/**
+	 * Creates a new perspective
+	 * @param control the owner of this perspective
+	 */
+	public CPerspective( CControlAccess control ){
+		initLocations( control );
+	}
+	
+	private void initLocations( CControlAccess control ){
+		locationModeManager = new LocationModeManagerPerspective( this, control );
+		CLocationModeManager manager = control.getLocationManager();
+		
+		for( CLocationMode mode : manager.modes() ){
+			locationModeManager.addMode( mode.createPerspective() );
+		}
+	}
+	
+	/**
+	 * Gets the representation of the {@link CLocationModeManager}, the representation
+	 * is responsible for finding out what {@link ExtendedMode} and location a 
+	 * {@link CDockablePerspective} has.
+	 * @return the location manager, not <code>null</code>
+	 */
+	public LocationModeManagerPerspective getLocationManager(){
+		return locationModeManager;
+	}
+	
+	/**
+	 * Determines the current location of <code>dockable</code> and stores that location
+	 * in a map using the {@link ExtendedMode} of the {@link Location} as key. If the
+	 * user later clicks on one of the buttons like "minimize" or "externalize" this 
+	 * location information is read and applied.
+	 * @param dockable the element whose location should be stored
+	 * @return the location that was stored or <code>null</code> if the location of
+	 * <code>dockable</code> could not be determined
+	 */
+	public Location storeLocation( CDockablePerspective dockable ){
+	    Location location = getLocationManager().getLocation( dockable );
+	    if( location != null ){
+	    	dockable.getLocationHistory().add( getLocationManager().getMode( location.getMode() ), location );
+	    }
+	    return location;
+	}
+	
 	/**
 	 * Adds a new root station to this perspective. If a station with name <code>id</code> is
 	 * already registered, then this station gets replaced.
@@ -65,6 +118,7 @@ public class CPerspective {
 			throw new IllegalArgumentException( "station must not be null" );
 		}
 		roots.put( station.getUniqueId(), station );
+		station.setPerspective( this );
 	}
 	
 	/**

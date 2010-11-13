@@ -30,6 +30,7 @@ import java.util.Map;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.perspective.Perspective;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
@@ -215,9 +216,10 @@ public class FlapDockPerspective implements PerspectiveDockable, PerspectiveStat
 	 * @param size the preferred size of <code>dockable</code>
 	 */
 	public void insert( int index, PerspectiveDockable dockable, boolean hold, int size ){
+		insert( index, dockable, hold, size, false );
 	}
 	
-	public void insert( int index, PerspectiveDockable dockable, boolean hold, int size, boolean temporary ){
+	private void insert( int index, PerspectiveDockable dockable, boolean hold, int size, boolean temporary ){
 		if( dockable.getParent() != null ){
 			throw new IllegalArgumentException( "dockable already has a parent" );
 		}
@@ -320,6 +322,23 @@ public class FlapDockPerspective implements PerspectiveDockable, PerspectiveStat
 	 */
 	public int getSize( PerspectiveDockable dockable ){
 		return item( dockable ).size;
+	}
+	
+	public DockableProperty getDockableProperty( PerspectiveDockable child, PerspectiveDockable target ){
+		int index = indexOf( child );
+		boolean hold = isHold( child );
+		int size = getSize( child );
+		
+		Path placeholder = null;
+		
+		if( target != null ){
+			placeholder = target.getPlaceholder();
+		}
+		else{
+			placeholder = child.getPlaceholder();
+		}
+		
+		return new FlapDockProperty( index, hold, size, placeholder );
 	}
 	
 	private Item item( PerspectiveDockable dockable ){

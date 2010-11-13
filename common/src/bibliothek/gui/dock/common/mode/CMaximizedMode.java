@@ -31,6 +31,8 @@ import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.action.predefined.CMaximizeAction;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.perspective.mode.LocationModePerspective;
+import bibliothek.gui.dock.common.perspective.mode.CMaximizedModePerspective;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.MaximizedMode;
 
@@ -76,5 +78,9 @@ public class CMaximizedMode extends MaximizedMode<CMaximizedModeArea> implements
 			return true;
 		}
 		return area.respectWorkingAreas();
+	}
+	
+	public LocationModePerspective createPerspective(){
+		return new CMaximizedModePerspective();
 	}
 }

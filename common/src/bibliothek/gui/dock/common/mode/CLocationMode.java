@@ -29,6 +29,8 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CWorkingArea;
+import bibliothek.gui.dock.common.perspective.CPerspective;
+import bibliothek.gui.dock.common.perspective.mode.LocationModePerspective;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.LocationMode;
 
@@ -71,4 +73,10 @@ public interface CLocationMode extends LocationMode{
 	 * otherwise
 	 */
 	public boolean respectWorkingAreas( DockStation station );
+	
+	/**
+	 * Gets an object that represents this type of mode in a {@link CPerspective}.
+	 * @return the perspective version of <code>this</code>
+	 */
+	public LocationModePerspective createPerspective();
 }

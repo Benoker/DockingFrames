@@ -28,6 +28,7 @@ package bibliothek.gui.dock.station.stack;
 import java.util.Map;
 
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.perspective.Perspective;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
@@ -238,6 +239,20 @@ public class StackDockPerspective implements PerspectiveDockable, PerspectiveSta
 	 */
 	public PerspectiveDockable getSelection(){
 		return selection;
+	}
+	
+	public DockableProperty getDockableProperty( PerspectiveDockable child, PerspectiveDockable target ){
+		int index = indexOf( child );
+		
+		Path placeholder = null;
+		if( target != null ){
+			placeholder = target.getPlaceholder();
+		}
+		else{
+			placeholder = child.getPlaceholder();
+		}
+		
+		return new StackDockProperty( index, placeholder );
 	}
 	
 	public void setParent( PerspectiveStation parent ){

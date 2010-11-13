@@ -41,15 +41,11 @@ import bibliothek.gui.dock.common.intern.CSetting;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.intern.CommonMultipleDockableFactory;
 import bibliothek.gui.dock.common.intern.CommonSingleDockableFactory;
-import bibliothek.gui.dock.facile.mode.CLocationModeSettings;
-import bibliothek.gui.dock.facile.mode.Location;
-import bibliothek.gui.dock.facile.mode.LocationSettingConverter;
 import bibliothek.gui.dock.frontend.FrontendPerspectiveCache;
 import bibliothek.gui.dock.frontend.Setting;
 import bibliothek.gui.dock.perspective.Perspective;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
-import bibliothek.gui.dock.support.mode.ModeSettings;
 import bibliothek.util.Todo;
 
 /**
@@ -79,7 +75,7 @@ public class CControlPerspective {
      * @return the new perspective
      */
     public CPerspective createEmptyPerspective(){
-    	CPerspective perspective = new CPerspective();
+    	CPerspective perspective = new CPerspective( control );
     	for( CStation<?> station : control.getOwner().getStations() ){
     		perspective.addRoot( station.createPerspective() );
     	}
@@ -94,7 +90,7 @@ public class CControlPerspective {
      */
     public CPerspective getPerspective( boolean includeWorkingAreas ){
     	Setting setting = control.getOwner().intern().getSetting( !includeWorkingAreas );
-    	return convert( setting, includeWorkingAreas );
+    	return convert( (CSetting)setting, includeWorkingAreas );
     }
 
     /**
@@ -107,7 +103,7 @@ public class CControlPerspective {
     	if( setting == null ){
     		return null;
     	}
-    	return convert( setting, false );
+    	return convert( (CSetting)setting, false );
     }
     
     /**
@@ -133,9 +129,8 @@ public class CControlPerspective {
     
     private Setting convert( CPerspective perspective, boolean includeWorkingAreas ){
     	CSetting setting = new CSetting();
-    	ModeSettings<Location, ?> modes = new CLocationModeSettings<Location>( new LocationSettingConverter() );
-    	setting.setModes( modes );
     	
+    	// layout
     	Perspective conversion = control.getOwner().intern().getPerspective( !includeWorkingAreas, new PerspectiveElementFactory( perspective ) );
     	conversion.getSituation().add( new CommonSingleDockableFactory( control.getOwner(), perspective ) );
     	
@@ -150,16 +145,23 @@ public class CControlPerspective {
     		}
     	}
     	
+    	// modes
+    	setting.setModes( perspective.getLocationManager().writeModes( control ) );
+    	
     	return setting;
     }
     
-    private CPerspective convert( Setting setting, boolean includeWorkingAreas ){
+    private CPerspective convert( CSetting setting, boolean includeWorkingAreas ){
     	CPerspective cperspective = createEmptyPerspective();
     	Perspective perspective = control.getOwner().intern().getPerspective( !includeWorkingAreas, new PerspectiveElementFactory( cperspective ) );
     	
+    	// layout
     	for( String key : setting.getRootKeys() ){
     		perspective.convert( setting.getRoot( key ) );
     	}
+    	
+    	// modes
+    	cperspective.getLocationManager().readModes( setting.getModes(), cperspective, control );
     	
     	return cperspective;
     }

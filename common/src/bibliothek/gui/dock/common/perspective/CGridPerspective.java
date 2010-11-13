@@ -26,11 +26,20 @@
 package bibliothek.gui.dock.common.perspective;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.SplitDockStation.Orientation;
 import bibliothek.gui.dock.common.CGridArea;
 import bibliothek.gui.dock.common.intern.CPlaceholderStrategy;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
+import bibliothek.gui.dock.common.perspective.mode.CMaximizedModeAreaPerspective;
+import bibliothek.gui.dock.common.perspective.mode.CMaximizedModePerspective;
+import bibliothek.gui.dock.common.perspective.mode.CModeAreaPerspective;
+import bibliothek.gui.dock.common.perspective.mode.CNormalModePerspective;
+import bibliothek.gui.dock.common.perspective.mode.LocationModeManagerPerspective;
+import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.station.split.PerspectiveSplitDockGrid;
 import bibliothek.gui.dock.station.split.SplitDockPerspective;
+import bibliothek.gui.dock.station.split.SplitDockPerspective.Root;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.util.Path;
 import bibliothek.util.Todo;
@@ -53,6 +62,54 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	/** whether there are changes on {@link #grid} */
 	private boolean gridChanges = false;
 	
+	/** the owner of this object */
+	private CPerspective perspective;
+	
+	/** the mode the currently maximized element had before maximization, can be <code>null</code> */
+	private Path unmaximizeMode;
+	
+	/** the location the currently maximized element had before maximization, can be <code>null</code> */
+	private Location unmaximizeLocation;
+	
+	/** identifiers children that are in normal mode */
+	private CModeAreaPerspective normalMode = new CModeAreaPerspective() {
+		public String getUniqueId(){
+			return CGridPerspective.this.getUniqueId();
+		}
+		public boolean isChild( PerspectiveDockable dockable ){
+			if( dockable.getParent() == intern() ){
+				return delegate.getFullscreen() != dockable;
+			}
+			return false;
+		}
+	};
+	
+	/** identifies children that are in maximized mode */
+	private CMaximizedModeAreaPerspective maximalMode = new CMaximizedModeAreaPerspective() {
+		public String getUniqueId(){
+			return CGridPerspective.this.getUniqueId();
+		}
+		public boolean isChild( PerspectiveDockable dockable ){
+			if( dockable.getParent() == intern() ){
+				return delegate.getFullscreen() == dockable;
+			}
+			return false;
+		}
+		
+		public void setUnmaximize( Path mode, Location location ){
+			unmaximizeLocation = location;
+			unmaximizeMode = mode;
+		}
+		
+		public Location getUnmaximizeLocation(){
+			return unmaximizeLocation;
+		}
+		
+		public Path getUnmaximizeMode(){
+			return unmaximizeMode;
+		}
+	};
+	
 	/**
 	 * Creates a new, empty perspective.
 	 * @param id the unique identifier of this perspective
@@ -71,6 +128,18 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	@Override
 	public CommonSplitDockPerspective intern(){
 		return (CommonSplitDockPerspective)super.intern();
+	}
+	
+	public void setPerspective( CPerspective perspective ){
+		if( this.perspective != null ){	
+			((CNormalModePerspective)this.perspective.getLocationManager().getMode( ExtendedMode.NORMALIZED )).remove( normalMode );
+			((CMaximizedModePerspective)this.perspective.getLocationManager().getMode( ExtendedMode.MAXIMIZED )).remove( maximalMode );
+		}
+		this.perspective = perspective;
+		if( this.perspective != null ){
+			((CNormalModePerspective)this.perspective.getLocationManager().getMode( ExtendedMode.NORMALIZED )).add( normalMode );
+			((CMaximizedModePerspective)this.perspective.getLocationManager().getMode( ExtendedMode.MAXIMIZED )).add( maximalMode );
+		}
 	}
 	
 	/**
@@ -168,8 +237,8 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	 * This method will silently return if the list of pending commands was never accessed directly or indirectly
 	 * by the client.
 	 * @see #isAutoDeploy() 
-	 * @see #gridAdd(double, double, double, double, PerspectiveDockable...)
-	 * @see #gridSelect(double, double, double, double, PerspectiveDockable)
+	 * @see #gridAdd(double, double, double, double, CDockablePerspective...)
+	 * @see #gridSelect(double, double, double, double, CDockablePerspective)
 	 * @see #gridHorizontal(double, double, double)
 	 * @see #gridVertical(double, double, double)
 	 * @see #gridClear()  
@@ -219,10 +288,74 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	 * can be triggered by invoking this method. 
 	 * @return the root of the intern tree of dockables, <code>null</code> if this area does not have any children
 	 */
-	public SplitDockPerspective.Entry getRoot(){
+	public SplitDockPerspective.Root getRoot(){
 		return delegate.getRoot();
 	}
 
+	/**
+	 * Maximized <code>dockable</code> on this station. A call to this method has several 
+	 * side effects that must be cared for:
+	 * <ul>
+	 * 	<li>If necessary and if auto-deploy is set, {@link #gridDeploy()} is called.</li>
+	 *  <li>If the parent of <code>dockable</code> is not this station, then <code>dockable</code> 
+	 *  is removed from the parent and added to this. The location <code>dockable</code> has on its
+	 *  parent is stored and can be used during un-maximization.</li>
+	 *  <li>If <code>dockable</code> has no parent, then it is added to this station. No location
+	 *  information is stored. This is no problem for {@link CDockablePerspective} as they usually have a 
+	 *  history of legal locations associated, but for any other dockable the missing location can lead to
+	 *  strange behavior when un-maximizing.</li>
+	 * </ul>
+	 * @param dockable
+	 */
+	public void maximize( PerspectiveDockable dockable ){
+		maybeDeploy();
+		
+		// find current location
+		LocationModeManagerPerspective manager = perspective.getLocationManager();
+		Location location = manager.getLocation( dockable );
+		Path mode = null;
+		if( location == null ){
+			ExtendedMode eMode = manager.getMode( dockable );
+			if( eMode != null ){
+				mode = eMode.getModeIdentifier();
+			}
+		}
+		else{
+			mode = location.getMode();
+		}
+		
+		// reparent if necessary
+		if( dockable.getParent() != intern() ){
+			if( dockable.getParent() != null ){
+				dockable.getParent().remove( dockable );
+			}
+			
+			Root root = getRoot();
+			SplitDockPerspective.Leaf leaf = new SplitDockPerspective.Leaf( dockable, null, null, -1 );
+			
+			if( root.getChild() == null ){
+				root.setChild( leaf );
+			}
+			else{
+				root.setChild( new SplitDockPerspective.Node( Orientation.HORIZONTAL, 0.5, leaf, root.getChild(), null, null, -1 ));
+			}
+		}
+		
+		// store
+		delegate.setFullscreen( dockable );
+		
+		unmaximizeLocation = location;
+		unmaximizeMode = mode;
+	}
+	
+	/**
+	 * Gets the element that is maximized.
+	 * @return the maximized child or <code>null</code>
+	 */
+	public PerspectiveDockable getMaximized(){
+		return delegate.getFullscreen();
+	}
+	
 	@Override
 	public CStationPerspective asStation(){
 		return this;
