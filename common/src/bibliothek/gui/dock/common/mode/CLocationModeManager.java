@@ -34,8 +34,11 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.intern.CControlAccess;
+import bibliothek.gui.dock.common.intern.CDockFrontend;
+import bibliothek.gui.dock.common.intern.CDockFrontendListener;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CDockableAccess;
+import bibliothek.gui.dock.common.intern.CSetting;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.facile.mode.CLocationModeSettings;
 import bibliothek.gui.dock.facile.mode.Location;
@@ -48,6 +51,7 @@ import bibliothek.gui.dock.support.mode.ModeManager;
 import bibliothek.gui.dock.support.mode.ModeManagerListener;
 import bibliothek.gui.dock.support.mode.ModeSettings;
 import bibliothek.gui.dock.support.mode.ModeSettingsConverter;
+import bibliothek.gui.dock.support.mode.UndoableModeSettings;
 import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.util.Path;
@@ -193,11 +197,33 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
     
     @Override
     public void readSettings( ModeSettings<Location, ?> settings ){
-    	super.readSettings( settings );
+        UndoableModeSettings undoable = new UndoableModeSettings(){
+        	public boolean createTemporaryDuringRead( String key ){
+        		return control.getRegister().isMultiId( key );
+        	}
+        };
+    	
+    	final Runnable temporary = readSettings( settings, undoable );
+    	control.getOwner().intern().addListener( new CDockFrontendListener(){
+			public void loading( CDockFrontend frontend, CSetting setting ){
+				// ignore
+			}
+			
+			public void loaded( CDockFrontend frontend, CSetting setting ){
+				temporary.run();
+				frontend.removeListener( this );
+			}
+		});
+    }
+    
+    @Override
+    public Runnable readSettings( ModeSettings<Location, ?> settings, UndoableModeSettings pending ){
+    	Runnable result = super.readSettings( settings, pending );
     	if( settings instanceof CLocationModeSettings<?> ){
     		CLocationModeSettings<?> locationSettings = (CLocationModeSettings<?>)settings;
     		locationSettings.rescue( getMaximizedMode() );
     	}
+    	return result;
     }
     
     /**

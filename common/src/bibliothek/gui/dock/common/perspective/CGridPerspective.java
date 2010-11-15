@@ -27,6 +27,7 @@ package bibliothek.gui.dock.common.perspective;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation.Orientation;
+import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CGridArea;
 import bibliothek.gui.dock.common.intern.CPlaceholderStrategy;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
@@ -291,10 +292,19 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	public SplitDockPerspective.Root getRoot(){
 		return delegate.getRoot();
 	}
+	
+	/**
+	 * Maximized <code>dockable</code> on this station. Please read about the side effects in {@link #maximize(PerspectiveDockable)}.
+	 * @param dockable the element to maximize, not <code>null</code>
+	 */
+	public void maximize( CDockablePerspective dockable ){
+		maximize( dockable.intern().asDockable() );
+	}
 
 	/**
-	 * Maximized <code>dockable</code> on this station. A call to this method has several 
-	 * side effects that must be cared for:
+	 * Maximized <code>dockable</code> on this station. Note that maximized elements will be de-maximized by a 
+	 * {@link CControl} unless {@link CControl#setRevertToBasicModes(boolean)} was switched to <code>false</code>.
+	 * A call to this method has several side effects that must be cared for:
 	 * <ul>
 	 * 	<li>If necessary and if auto-deploy is set, {@link #gridDeploy()} is called.</li>
 	 *  <li>If the parent of <code>dockable</code> is not this station, then <code>dockable</code> 
@@ -305,7 +315,7 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	 *  history of legal locations associated, but for any other dockable the missing location can lead to
 	 *  strange behavior when un-maximizing.</li>
 	 * </ul>
-	 * @param dockable
+	 * @param dockable the element to maximize
 	 */
 	public void maximize( PerspectiveDockable dockable ){
 		maybeDeploy();

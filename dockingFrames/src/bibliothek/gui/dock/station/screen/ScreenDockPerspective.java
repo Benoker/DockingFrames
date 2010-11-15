@@ -39,6 +39,7 @@ import bibliothek.gui.dock.station.support.PlaceholderListItem;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderMetaMap;
+import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.util.Path;
 
 /**
@@ -182,10 +183,7 @@ public class ScreenDockPerspective implements PerspectiveStation{
 	 * @param fullscreen whether <code>dockable</code> should be extended to fullscreen mode
 	 */
 	public void add( PerspectiveDockable dockable, int x, int y, int width, int height, boolean fullscreen ){
-		if( dockable.getParent() != null ){
-			throw new IllegalArgumentException( "dockable already has a parent station" );
-		}
-		
+		DockUtilities.ensureTreeValidity( this, dockable );
 		ScreenPerspectiveWindow child = new ScreenPerspectiveWindow( dockable );
 		child.setX( x );
 		child.setY( y );
@@ -270,7 +268,7 @@ public class ScreenDockPerspective implements PerspectiveStation{
 		map.putInt( "width", child.getWidth() );
 		map.putInt( "height", child.getHeight() );
 		
-		dockables.dockables().remove( index );
+		dockables.remove( child );
 		return child.dockable;
 	}
 	

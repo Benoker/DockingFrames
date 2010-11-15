@@ -52,6 +52,7 @@ import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
+import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.title.DockTitle;
@@ -191,6 +192,35 @@ public class DockUtilities {
                 return true;
             
             station = dockable.getDockParent();
+            dockable = station == null ? null : station.asDockable();
+        }
+        
+        return station == ancestor;
+    }
+    
+    /**
+     * Tells whether <code>child</code> is identical with <code>ancestor</code>
+     * or a child of <code>ancestor</code>.
+     * @param ancestor an element
+     * @param child another element
+     * @return <code>true</code> if <code>ancestor</code> is a parent of or
+     * identical with <code>child</code>. 
+     */
+    public static boolean isAncestor( PerspectiveElement ancestor, PerspectiveElement child ){
+        if( ancestor == null )
+            throw new NullPointerException( "ancestor must not be null" );
+        
+        if( child == null )
+            throw new NullPointerException( "child must not be null" );
+        
+        PerspectiveDockable dockable = child.asDockable();
+        PerspectiveStation station = null;
+        
+        while( dockable != null ){
+            if( ancestor == dockable )
+                return true;
+            
+            station = dockable.getParent();
             dockable = station == null ? null : station.asDockable();
         }
         
@@ -407,10 +437,7 @@ public class DockUtilities {
         
         // check no cycles
         if( isAncestor( newChild, newParent )){
-            if( newChild.getDockParent() == newParent )
-                newParent.drag( newChild );
-            else
-                throw new IllegalArgumentException( "can't create a cycle" );
+            throw new IllegalArgumentException( "can't create a cycle" );
         }
         
         // remove old parent
@@ -419,6 +446,40 @@ public class DockUtilities {
                 throw new IllegalStateException( "old parent of child does not want do release the child" );
             
             oldParent.drag( newChild );
+        }
+    }
+    
+    /**
+     * Ensures that <code>newChild</code> has no parent, and that there will
+     * be no cycle when <code>newChild</code> is added to <code>newParent</code>
+     * @param newParent the element that becomes parent of <code>newChild</code>
+     * @param newChild the element that becomes child of <code>newParent</code>
+     * @throws NullPointerException if either <code>newParent</code> or <code>newChild</code> is <code>null</code>
+     * @throws IllegalArgumentException if there would be a cycle introduced
+     * @throws IllegalStateException if the old parent of <code>newChild</code> does not
+     * allow to remove its child
+     */
+    public static void ensureTreeValidity( PerspectiveStation newParent, PerspectiveDockable newChild ){
+        if( newParent == null )
+            throw new NullPointerException( "parent must not be null" );
+        
+        if( newChild == null )
+            throw new NullPointerException( "child must not be null" );
+        
+        PerspectiveStation oldParent = newChild.getParent();
+            
+        // check no self reference
+        if( newChild == newParent )
+            throw new IllegalArgumentException( "child and parent are the same" );
+        
+        // check no cycles
+        if( isAncestor( newChild, newParent )){
+            throw new IllegalArgumentException( "can't create a cycle" );
+        }
+        
+        // remove old parent
+        if( oldParent != null ){
+        	oldParent.remove( newChild );
         }
     }
     

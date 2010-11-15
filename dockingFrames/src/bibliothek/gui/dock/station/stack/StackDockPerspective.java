@@ -36,6 +36,7 @@ import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.PerspectivePlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
+import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.util.Path;
 
 /**
@@ -170,10 +171,8 @@ public class StackDockPerspective implements PerspectiveDockable, PerspectiveSta
 	 * @param dockable the new element
 	 */
 	public void insert( int index, PerspectiveDockable dockable ){
-		if( dockable.getParent() != null ){
-			throw new IllegalArgumentException( "dockable already has a parent" );
-		}
-		
+		DockUtilities.ensureTreeValidity( this, dockable );
+				
 		if( dockable == null ){
 			throw new IllegalArgumentException( "dockable must not be null" );
 		}
@@ -212,7 +211,8 @@ public class StackDockPerspective implements PerspectiveDockable, PerspectiveSta
 	 * @return the child that was removed
 	 */
 	public PerspectiveDockable remove( int index ){
-		PerspectiveDockable result = dockables.dockables().remove( index );
+		PerspectiveDockable result = dockables.dockables().get( index );
+		dockables.remove( result );
 		result.setParent( null );
 		
 		if( selection == result ){

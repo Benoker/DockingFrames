@@ -39,6 +39,7 @@ import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.station.split.SplitDockPathProperty.Location;
 import bibliothek.gui.dock.station.stack.StackDockPerspective;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
+import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.util.Path;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
@@ -184,9 +185,8 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 				dockable = new StackDockPerspective( dockables, tree.getSelected( key ) );
 			}
 			
-			if( dockable.getParent() != null ){
-				throw new IllegalArgumentException( "dockable already has a parent" );
-			}
+			DockUtilities.ensureTreeValidity( this, dockable );
+
 			dockable.setParent( this );
 			
 			return new Leaf( dockable, tree.getPlaceholders( key ), tree.getPlaceholderMap( key ), key.getNodeId() );

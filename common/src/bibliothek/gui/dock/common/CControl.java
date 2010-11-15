@@ -74,14 +74,15 @@ import bibliothek.gui.dock.common.event.CVetoFocusListener;
 import bibliothek.gui.dock.common.event.ResizeRequestListener;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CControlFactory;
+import bibliothek.gui.dock.common.intern.CDockFrontend;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CDockableAccess;
 import bibliothek.gui.dock.common.intern.CListenerCollection;
 import bibliothek.gui.dock.common.intern.CPlaceholderStrategy;
 import bibliothek.gui.dock.common.intern.CSetting;
 import bibliothek.gui.dock.common.intern.CommonDockable;
-import bibliothek.gui.dock.common.intern.CommonMultipleDockableLayout;
 import bibliothek.gui.dock.common.intern.CommonMultipleDockableFactory;
+import bibliothek.gui.dock.common.intern.CommonMultipleDockableLayout;
 import bibliothek.gui.dock.common.intern.CommonSingleDockableFactory;
 import bibliothek.gui.dock.common.intern.ControlVetoClosingListener;
 import bibliothek.gui.dock.common.intern.ControlVetoFocusListener;
@@ -214,7 +215,7 @@ public class CControl {
     public static final String CONTENT_AREA_STATIONS_ID = "ccontrol";
 
     /** connection to the real DockingFrames */
-    private DockFrontend frontend;
+    private CDockFrontend frontend;
 
     /** strategy what to do when reading layout information of a missing dockable */
     private MissingCDockableStrategy missingStrategy = MissingCDockableStrategy.PURGE;
@@ -2285,8 +2286,35 @@ public class CControl {
      * Gets the representation of the layer beneath the common-layer.
      * @return the entry point to DockingFrames
      */
-    public DockFrontend intern(){
+    public CDockFrontend intern(){
         return frontend;
+    }
+    
+    /**
+     * Tells this control whether basic modes like "normalized", "minimized" or "externalized" are forced upon
+     * {@link Dockable}s after loading a persistent layout. Basically if this property is set, then all {@link Dockable}s
+     * are un-maximized after a layout change. The default value of this property is <code>true</code>.<br>
+     * The reasons behind forcing basic modes are:
+     * <ul>
+     * 	<li>If the user changes the layout, he/she most likely would like to see the effects. A maximized {@link Dockable} would
+     *  hide the effects.</li>
+     *  <li>For the user re-maximizing an element requires no more than one click with the mouse. It's a cheap operation.</li>
+     *  <li>It is an additional layer of security preventing {@link Dockable}s from being in the wrong position if the client
+     *  was stared with new settings.</li>
+     * </ul>
+     * @param revert whether non-basic modes should be forbidden when loading a persistent layout
+     */
+    public void setRevertToBasicModes( boolean revert ){
+    	intern().setRevertToBasicModes( revert );
+    }
+    
+    /**
+     * Tells whether basic modes are forcibly applied when loading a persistent layout.
+     * @return whether the non-basic modes are forbidden
+     * @see #setRevertToBasicModes(boolean)
+     */
+    public boolean isRevertToBasicModes(){
+    	return intern().isRevertToBasicModes();
     }
 
     /**

@@ -1106,7 +1106,26 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 		}
 	}
 	
+	/**
+	 * Reads the contents of <code>settings</code> and stores it.
+	 * @param settings the settings to read
+	 */
 	public void readSettings( ModeSettings<H, ?> settings ){
+		readSettings( settings, null );
+	}
+	
+	/**
+	 * Reads the contents of <code>settings</code>, creates new entries if either
+	 * {@link #createEntryDuringRead(String)} or if <code>pending</code> allows the setting
+	 * to be undone if not needed. 
+	 * @param settings the settings to read
+	 * @param pending undoable settings, can be <code>null</code>
+	 * @return an algorithm that will remove any entry that was created because <code>pending</code>
+	 * did advise so, <code>null</code> if <code>pending</code> was <code>null</code>
+	 */
+	public Runnable readSettings( ModeSettings<H, ?> settings, UndoableModeSettings pending ){
+		final List<String> temporary = new ArrayList<String>();
+		
 		// dockables
         for( int i = 0, n = settings.size(); i < n; i++ ){
             String key = settings.getId( i );
@@ -1116,6 +1135,11 @@ public abstract class ModeManager<H, M extends Mode<H>> {
                 if( createEntryDuringRead( key )){
                     addEmpty( key );
                     entry = entries.get( key );
+                }
+                else if( pending != null && pending.createTemporaryDuringRead( key )){
+                	addEmpty( key );
+                	entry = entries.get( key );
+                	temporary.add( key );
                 }
             }
             
@@ -1152,6 +1176,19 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 					handle.mode.readSetting( setting );
 				}
 			}
+		}
+		
+		if( pending == null ){
+			return null;
+		}
+		else{
+			return new Runnable(){
+				public void run(){
+					for( String key : temporary ){
+						removeEmpty( key );
+					}
+				}
+			};
 		}
 	}
 	

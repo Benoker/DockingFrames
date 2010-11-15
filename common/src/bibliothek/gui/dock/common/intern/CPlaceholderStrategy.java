@@ -27,13 +27,16 @@ package bibliothek.gui.dock.common.intern;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.SingleCDockable;
 import bibliothek.gui.dock.common.event.CControlListener;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
@@ -56,19 +59,40 @@ public class CPlaceholderStrategy implements PlaceholderStrategy {
 		return new Path( "dock", "single", id );
 	}
 	
+	/**
+	 * Gets the placeholder that is used for the {@link MultipleCDockable} with
+	 * unique identifier <code>id</code>.
+	 * @param id the unique identifer of a {@link MultipleCDockable}
+	 * @return the placeholder for that dockable
+	 */
+	public static Path getMultipleDockablePlaceholder( String id ){
+		return new Path( "dock", "multi", id );
+	}
+	
 	/** the owner of this strategy */
 	private CControl control;
 	
 	/** all the listeners that are registered */
 	private List<PlaceholderStrategyListener> listeners = new ArrayList<PlaceholderStrategyListener>();
 	
-	private CControlListener listener = new CControlListener() {
+	/** a map containing placeholders for various {@link MultipleCDockable}s */
+	private Map<MultipleCDockable, Path> multiplePlaceholders = new HashMap<MultipleCDockable, Path>();
+	
+	private CControlListener controlListener = new CControlListener() {
 		public void removed( CControl control, CDockable dockable ){
 			if( dockable instanceof SingleCDockable ){
 				String id = ((SingleCDockable)dockable).getUniqueId();
 				Path check = getSingleDockablePlaceholder( id );
 				if( !isValidPlaceholder( check )){
 					fireInvalidated( check );
+				}
+			}
+			else if( dockable instanceof MultipleCDockable ){
+				Path check = multiplePlaceholders.remove( dockable );
+				if( check != null ){
+					if( !isValidPlaceholder( check )){
+						fireInvalidated( check );
+					}
 				}
 			}
 		}
@@ -86,6 +110,28 @@ public class CPlaceholderStrategy implements PlaceholderStrategy {
 		}
 	};
 	
+	/** placeholders of {@link MultipleCDockable}s that need to be checked */
+	private Set<Path> pendingChecks = null;
+	
+	private CDockFrontendListener frontendListener = new CDockFrontendListener(){
+		public void loading( CDockFrontend frontend, CSetting setting ){
+			pendingChecks = new HashSet<Path>();
+		}
+		
+		public void loaded( CDockFrontend frontend, CSetting setting ){
+			if( pendingChecks != null ){
+				Set<Path> pendingChecks = CPlaceholderStrategy.this.pendingChecks;
+				CPlaceholderStrategy.this.pendingChecks = null;
+				
+				for( Path check : pendingChecks ){
+					if( !isValidPlaceholder( check )){
+						fireInvalidated( check );
+					}
+				}
+			}
+		}
+	};
+	
 	/**
 	 * Creates a new strategy
 	 * @param control the control in whose realm this strategy operates
@@ -99,7 +145,8 @@ public class CPlaceholderStrategy implements PlaceholderStrategy {
 			throw new IllegalArgumentException( "listener must not be null" );
 		}
 		if( listeners.isEmpty() ){
-			control.addControlListener( this.listener );
+			control.addControlListener( this.controlListener );
+			control.intern().addListener( this.frontendListener );
 		}
 		listeners.add( listener );
 	}
@@ -107,7 +154,9 @@ public class CPlaceholderStrategy implements PlaceholderStrategy {
 	public void removeListener( PlaceholderStrategyListener listener ){
 		listeners.remove( listener );
 		if( listeners.isEmpty() ){
-			control.removeControlListener( this.listener );
+			control.removeControlListener( this.controlListener );
+			control.intern().removeListener( frontendListener );
+			frontendListener.loaded( null, null );
 		}
 	}
 	
@@ -135,6 +184,14 @@ public class CPlaceholderStrategy implements PlaceholderStrategy {
 			String id = ((SingleCDockable)cdockable).getUniqueId();
 			return getSingleDockablePlaceholder( id );
 		}
+		if( cdockable instanceof MultipleCDockable ){
+			CDockableAccess access = controlAccess.access( cdockable );
+			if( access != null ){
+				Path result = getMultipleDockablePlaceholder( controlAccess.getRegister().multiToNormalId( access.getUniqueId() ) );
+				multiplePlaceholders.put( (MultipleCDockable)cdockable, result );
+				return result;
+			}
+		}
 		return null;
 	}
 	
@@ -142,25 +199,47 @@ public class CPlaceholderStrategy implements PlaceholderStrategy {
 		if( placeholder.getSegmentCount() != 3 ){
 			return false;
 		}
-		if( !placeholder.getSegment( 0 ).equals( "dock" ) || !placeholder.getSegment( 1 ).equals( "single" )){
+		
+		if( !placeholder.getSegment( 0 ).equals( "dock" ) ){
 			return false;
 		}
 		
-		String id = placeholder.getSegment( 2 );
-		
-		// if the element is registered, then it is available...
-		if( control.getSingleDockable( id ) != null ){
-			return true;
+		if( placeholder.getSegment( 1 ).equals( "single" )){
+			String id = placeholder.getSegment( 2 );
+			
+			// if the element is registered, then it is available...
+			if( control.getSingleDockable( id ) != null ){
+				return true;
+			}
+			
+			// if there is a backup factory, then the client expects this element to exist
+			if( control.getSingleDockableFactory( id ) != null ){
+				return true;
+			}
+			
+			// maybe the client installed a strategy for handling missing dockables
+			if( control.getMissingStrategy().shouldStoreSingle( id ) ){
+				return true;
+			}
 		}
-		
-		// if there is a backup factory, then the client expects this element to exist
-		if( control.getSingleDockableFactory( id ) != null ){
-			return true;
-		}
-		
-		// maybe the client installed a strategy for handling missing dockables
-		if( control.getMissingStrategy().shouldStoreSingle( id ) ){
-			return true;
+
+		if( placeholder.getSegment( 1 ).equals( "multi" ) ){
+			if( pendingChecks != null ){
+				pendingChecks.add( placeholder );
+				return true;
+			}
+			
+			String id = placeholder.getSegment( 2 );
+			
+			// if the element exists, then the placeholder can remain
+			if( control.getMultipleDockable( id ) != null ){
+				return true;
+			}
+			
+			// if there is a strategy, then the placeholder may remain
+			if( control.getMissingStrategy().shouldStoreMulti( id )){
+				return true;
+			}
 		}
 		
 		// the client does not want to store information about this element

@@ -41,8 +41,11 @@ import bibliothek.gui.dock.station.split.SplitDockPerspective.EntryListener;
  * can however first add/remove a dockable and then alter the working-area of the dockable to their likings.</li>
  * 	<li>Adding: the working-area of a child is only set to <code>this</code> if the working-area had a value of <code>null</code></li>
  * 	<li>Removing: the working-area of a child is only set to <code>null</code> if the working-area had a value of <code>this</code></li>
+ *  <li>This perspective recursively visits all dockables and stations when adding or removing a child.</li>
  * 	<li>{@link MultipleCDockablePerspective}: if the working-area is set, then it is automatically set in the {@link MultipleCDockable} as well.</li>
  * 	<li>{@link SingleCDockablePerspective}: if the working-area is set, then it is automatically set in the {@link SingleCDockable} as well.</li>
+ * 	<li>This perspective does not track changes on children. If some {@link PerspectiveStation} was added and then some children are added
+ * to that station, then this <code>CworkingPerspective</code> will <b>not</b> set the working-area property of the new children.</li>
  * </ul>
  * @author Benjamin Sigg
  */

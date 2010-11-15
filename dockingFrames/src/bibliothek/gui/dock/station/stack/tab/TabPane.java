@@ -77,7 +77,7 @@ public interface TabPane {
 	public DockController getController();
 	
 	/**
-	 * Gets a list of all {@link Dockable}s that onto this pane. The list
+	 * Gets a list of all {@link Dockable}s that are stored on this pane. The list
 	 * should be ordered.
 	 * @return the list of children, not <code>null</code> but maybe empty
 	 */

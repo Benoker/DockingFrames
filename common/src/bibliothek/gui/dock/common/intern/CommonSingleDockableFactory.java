@@ -308,7 +308,10 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
 
     public void write( CommonSingleDockableLayout layout, XElement element ) {
         element.addElement( "id" ).setString( layout.getId() );
-        element.addElement( "area" ).setString( layout.getArea() == null ? "" : layout.getArea() );
+        XElement xarea = element.addElement( "area" );
+        if( layout.getArea() != null ){
+        	xarea.setString( layout.getArea() );
+        }
     }
     
     /**

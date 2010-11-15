@@ -29,6 +29,7 @@ import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.MultipleCDockableFactory;
 import bibliothek.gui.dock.common.MultipleCDockableLayout;
+import bibliothek.gui.dock.common.intern.CPlaceholderStrategy;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.util.Path;
@@ -132,10 +133,6 @@ public class MultipleCDockablePerspective<L extends MultipleCDockableLayout> ext
 	public L getLayout(){
 		return layout;
 	}
-	
-	public Path getPlaceholder(){
-		return null;
-	}
 
 	public CDockablePerspective asDockable(){
 		return this;
@@ -181,7 +178,10 @@ public class MultipleCDockablePerspective<L extends MultipleCDockableLayout> ext
 		}
 		
 		public Path getPlaceholder(){
-			return null;
+			if( uniqueId == null ){
+				return null;
+			}
+			return CPlaceholderStrategy.getMultipleDockablePlaceholder( uniqueId );
 		}
 		
 		public PerspectiveStation getParent(){

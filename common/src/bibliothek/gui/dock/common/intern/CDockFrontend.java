@@ -25,6 +25,9 @@
  */
 package bibliothek.gui.dock.common.intern;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
@@ -46,6 +49,12 @@ public class CDockFrontend extends DockFrontend{
     /** access to the internals of a {@link CControl} */
     private CControlAccess control;
     
+    /** all the listeners of this frontend */
+    private List<CDockFrontendListener> listeners = new ArrayList<CDockFrontendListener>();
+    
+    /** whether basic modes should be applied when loading a layout */
+    private boolean revertToBasicModes = true;
+    
     /**
      * Creates a new frontend.
      * @param control the owner of this object
@@ -56,6 +65,47 @@ public class CDockFrontend extends DockFrontend{
         this.control = control;
         setLayoutChangeStrategy( new CLayoutChangeStrategy( control.getOwner() ) );
     }
+    
+    /**
+     * Adds <code>listener</code> to this frontend, <code>listener</code> will be informed
+     * about changes of this frontend.
+     * @param listener the listener to add, not <code>null</code>
+     */
+    public void addListener( CDockFrontendListener listener ){
+    	listeners.add( listener );
+    }
+    
+    /**
+     * Gets all the listeners that are registered at this frontend.
+     * @return the listeners
+     */
+    protected CDockFrontendListener[] frontendListeners(){
+    	return listeners.toArray( new CDockFrontendListener[ listeners.size() ] );
+    }
+
+    /**
+     * Removes <code>listener</code> from this frontend.
+     * @param listener the listener to remove
+     */
+    public void removeListener( CDockFrontendListener listener ){
+    	listeners.remove( listener );
+    }
+    
+    /**
+     * If set, then loading a layout will trigger a call to {@link CLocationModeManager#ensureBasicModes()}.
+     * @param revertToBasicModes whether to allow only basic modes after loading
+     */
+    public void setRevertToBasicModes( boolean revertToBasicModes ){
+		this.revertToBasicModes = revertToBasicModes;
+	}
+    
+    /**
+     * Tells whether only basic modes are allowed after loading a layout.
+     * @return <code>true</code> if non-basic modes are forbidden
+     */
+    public boolean isRevertToBasicModes(){
+		return revertToBasicModes;
+	}
     
     @Override
     public void remove( Dockable dockable ){
@@ -94,22 +144,34 @@ public class CDockFrontend extends DockFrontend{
 
     @Override
     public void setSetting( final Setting setting, final boolean entry ) {
-        CLocationModeManager manager = control.getLocationManager();
-        if( entry ){
-            manager.resetWorkingAreaChildren();
-        }
+    	for( CDockFrontendListener listener : frontendListeners() ){
+    		listener.loading( this, (CSetting)setting );
+    	}
+    	try{
+	    	CLocationModeManager manager = control.getLocationManager();
+	        if( entry ){
+	            manager.resetWorkingAreaChildren();
+	        }
+	
+	        // location manager reads first to be able to change modes of dockables
+	        manager.readSettings( ((CSetting)setting).getModes() );
+	
+	        // set new layout as transaction, preventing the manager to react on events
+	        manager.runLayoutTransaction( new Runnable() {
+				public void run(){
+					CDockFrontend.super.setSetting( setting, entry );		
+				}
+	        });
 
-        // location manager reads first to be able to change modes of dockables
-        manager.readSettings( ((CSetting)setting).getModes() );
-
-        // set new layout as transaction, preventing the manager to react on events
-        manager.runLayoutTransaction( new Runnable() {
-			public void run(){
-				CDockFrontend.super.setSetting( setting, entry );		
-			}
-        });
-        
-        manager.ensureBasicModes();
-        manager.refresh();
+	        if( revertToBasicModes ){
+	        	manager.ensureBasicModes();
+	        }
+	        manager.refresh();
+    	}
+    	finally{
+    		for( CDockFrontendListener listener : frontendListeners() ){
+        		listener.loaded( this, (CSetting)setting );
+        	}	
+    	}
     }
 }

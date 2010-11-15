@@ -39,6 +39,7 @@ import bibliothek.gui.dock.station.support.PerspectivePlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderListItem;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
+import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.util.Path;
 import bibliothek.util.Todo;
 
@@ -220,12 +221,10 @@ public class FlapDockPerspective implements PerspectiveDockable, PerspectiveStat
 	}
 	
 	private void insert( int index, PerspectiveDockable dockable, boolean hold, int size, boolean temporary ){
-		if( dockable.getParent() != null ){
-			throw new IllegalArgumentException( "dockable already has a parent" );
-		}
 		if( size < 0 ){
 			throw new IllegalArgumentException( "size must be >= 0" );
 		}
+		DockUtilities.ensureTreeValidity( this, dockable );
 		
 		Item item = new Item();
 		item.dockable = dockable;
@@ -242,7 +241,8 @@ public class FlapDockPerspective implements PerspectiveDockable, PerspectiveStat
 	 * @return the element that was removed
 	 */
 	public PerspectiveDockable remove( int index ){
-		Item item = dockables.dockables().remove( index );
+		Item item = dockables.dockables().get( index );
+		dockables.remove( item );
 		item.dockable.setParent( null );
 		return item.dockable;
 	}
