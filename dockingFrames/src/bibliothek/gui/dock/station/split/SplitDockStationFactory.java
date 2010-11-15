@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
@@ -165,15 +166,19 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     			return childA;
     		}
     		
-    		return new SplitDockStationLayout.Node( node.getOrientation(), node.getDivider(), childA, childB, node.getPlaceholders(), node.getPlaceholderMap(), node.getNodeId() );
+    		return new SplitDockStationLayout.Node( node.getOrientation(), node.getDivider(), childA, childB, toArray( node.getPlaceholders() ), node.getPlaceholderMap(), node.getNodeId() );
     	} else if( entry.asLeaf() != null ){
     		SplitDockPerspective.Leaf leaf = entry.asLeaf();
     		Integer id = children.get( leaf.getDockable() );
-    		return new SplitDockStationLayout.Leaf( id == null ? -1 : id.intValue(), leaf.getPlaceholders(), leaf.getPlaceholderMap(), leaf.getNodeId() );
+    		return new SplitDockStationLayout.Leaf( id == null ? -1 : id.intValue(), toArray( leaf.getPlaceholders() ), leaf.getPlaceholderMap(), leaf.getNodeId() );
     	}
     	else{
     		return convert( ((Root)entry).getChild(), children );
     	}
+    }
+    
+    private Path[] toArray( Set<Path> placeholders ){
+    	return placeholders.toArray( new Path[ placeholders.size() ] );
     }
     
     public void setLayout( SplitDockStation station, SplitDockStationLayout layout, Map<Integer, Dockable> children ) {

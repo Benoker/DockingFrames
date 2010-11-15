@@ -75,4 +75,14 @@ public interface PerspectiveStation extends PerspectiveElement{
 	 * @return <code>true</code> if <code>dockable</code> was removed, <code>false</code> otherwise
 	 */
 	public boolean remove( PerspectiveDockable dockable );
+	
+	/**
+	 * Replaces <code>oldDockable</code> by <code>newDockable</code>. This method should behave the same way
+	 * is if <code>oldDockable</code> was removed and <code>newDockable</code> added at the same location.
+	 * @param oldDockable some child of this station
+	 * @param newDockable the replacement for <code>oldDockable</code>
+	 * @throws IllegalArgumentException if <code>oldDockable</code> is not a child of this station or if
+	 * <code>newDockable</code> cannot be added as child to this station
+	 */
+	public void replace( PerspectiveDockable oldDockable, PerspectiveDockable newDockable );
 }

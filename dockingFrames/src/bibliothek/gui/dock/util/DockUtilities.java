@@ -478,7 +478,7 @@ public class DockUtilities {
         }
         
         // remove old parent
-        if( oldParent != null ){
+        if( oldParent != null && oldParent != newParent ){
         	oldParent.remove( newChild );
         }
     }

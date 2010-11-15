@@ -68,6 +68,7 @@ public class StackDockPerspective implements PerspectiveDockable, PerspectiveSta
 			if( child.getParent() != null ){
 				throw new IllegalArgumentException( "child already has a parent" );
 			}
+			DockUtilities.ensureTreeValidity( this, child );
 			child.setParent( this );
 			dockables.dockables().add( child );
 			if( child == selection ){
@@ -220,6 +221,21 @@ public class StackDockPerspective implements PerspectiveDockable, PerspectiveSta
 		}
 		
 		return result;
+	}
+	
+	public void replace( PerspectiveDockable oldDockable, PerspectiveDockable newDockable ){
+		int index = indexOf( oldDockable );
+		if( index < 0 ){
+			throw new IllegalArgumentException( "oldDockable is not a child of this station" );
+		}
+		DockUtilities.ensureTreeValidity( this, newDockable );
+		
+		boolean selected = selection == oldDockable;
+		remove( index );
+		insert( index, newDockable );
+		if( selected ){
+			setSelection( newDockable );
+		}
 	}
 	
 	/**

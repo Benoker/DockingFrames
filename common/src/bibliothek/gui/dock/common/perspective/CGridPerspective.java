@@ -393,6 +393,11 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 		}
 		
 		@Override
+		protected PerspectiveDockable combine( PerspectiveDockable[] dockables, PerspectiveDockable selection ){
+			return new CStackPerspective( dockables, selection );
+		}
+		
+		@Override
 		public Path getPlaceholder(){
 			return CPlaceholderStrategy.getSingleDockablePlaceholder( getUniqueId() );
 		}

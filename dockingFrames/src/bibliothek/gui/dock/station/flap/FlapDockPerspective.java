@@ -247,12 +247,6 @@ public class FlapDockPerspective implements PerspectiveDockable, PerspectiveStat
 		return item.dockable;
 	}
 	
-	/**
-	 * Removes the element <code>dockable</code> from this perspective.
-	 * @param dockable the element to remove
-	 * @return <code>true</code> if <code>dockable</code> was removed, <code>false</code>
-	 * otherwise
-	 */
 	public boolean remove( PerspectiveDockable dockable ){
 		int index = indexOf( dockable );
 		if( index >= 0 ){
@@ -260,6 +254,19 @@ public class FlapDockPerspective implements PerspectiveDockable, PerspectiveStat
 			return true;
 		}
 		return false;
+	}
+	
+	public void replace( PerspectiveDockable oldDockable, PerspectiveDockable newDockable ){
+		int index = indexOf( oldDockable );
+		if( index < 0 ){
+			throw new IllegalArgumentException( "oldDockable is not a child of this station" );
+		}
+		DockUtilities.ensureTreeValidity( this, newDockable );
+		
+		boolean hold = isHold( oldDockable );
+		int size = getSize( oldDockable );
+		remove( index );
+		insert( index, newDockable, hold, size );
 	}
 	
 	/**

@@ -1370,6 +1370,8 @@ public class ScreenDockStation extends AbstractDockStation {
     		throw new IllegalArgumentException( "current not known to this station" );
     	}
     	
+    	DockUtilities.ensureTreeValidity( this, other );
+    	
         ScreenDockWindowHandle window = getWindowHandle( index );
         
         if( station ){

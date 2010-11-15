@@ -105,6 +105,7 @@ import bibliothek.gui.dock.common.mode.CMaximizedMode;
 import bibliothek.gui.dock.common.mode.CMaximizedModeArea;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.common.perspective.CControlPerspective;
+import bibliothek.gui.dock.common.perspective.CStackPerspective;
 import bibliothek.gui.dock.common.theme.ThemeMap;
 import bibliothek.gui.dock.common.theme.eclipse.CommonEclipseThemeConnector;
 import bibliothek.gui.dock.control.DockRegister;
@@ -119,6 +120,10 @@ import bibliothek.gui.dock.facile.station.split.DefaultConflictResolver;
 import bibliothek.gui.dock.frontend.FrontendEntry;
 import bibliothek.gui.dock.frontend.MissingDockableStrategy;
 import bibliothek.gui.dock.layout.DockSituationIgnore;
+import bibliothek.gui.dock.perspective.PerspectiveDockable;
+import bibliothek.gui.dock.station.stack.StackDockPerspective;
+import bibliothek.gui.dock.station.stack.StackDockStationFactory;
+import bibliothek.gui.dock.station.stack.StackDockStationLayout;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.support.util.ApplicationResource;
 import bibliothek.gui.dock.support.util.ApplicationResourceManager;
@@ -597,6 +602,14 @@ public class CControl {
         CommonSingleDockableFactory backupFactory = register.getBackupFactory();
         frontend.registerFactory( backupFactory );
         frontend.registerBackupFactory( backupFactory );
+        frontend.registerFactory( new StackDockStationFactory(){
+        	@Override
+        	public StackDockPerspective layoutPerspective( StackDockStationLayout layout, Map<Integer, PerspectiveDockable> children ){
+        		CStackPerspective stack = new CStackPerspective();
+        		layoutPerspective( stack, layout, children );
+        		return stack;
+        	}
+        });
     }
 
     /**

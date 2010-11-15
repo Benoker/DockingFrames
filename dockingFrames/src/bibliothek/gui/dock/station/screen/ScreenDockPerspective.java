@@ -39,6 +39,7 @@ import bibliothek.gui.dock.station.support.PlaceholderListItem;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderMetaMap;
+import bibliothek.gui.dock.station.support.PlaceholderList.Level;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.util.Path;
 
@@ -270,6 +271,31 @@ public class ScreenDockPerspective implements PerspectiveStation{
 		
 		dockables.remove( child );
 		return child.dockable;
+	}
+	
+	public void replace( PerspectiveDockable oldDockable, PerspectiveDockable newDockable ){
+		int index = indexOf( oldDockable );
+		if( index < 0 ){
+			throw new IllegalArgumentException( "oldDockable is not a child of this station" );
+		}
+		DockUtilities.ensureTreeValidity( this, newDockable );
+		
+		ScreenPerspectiveWindow window = dockables.dockables().get( index );
+		
+		Path placeholder = oldDockable.getPlaceholder();
+		if( placeholder != null ){
+			dockables.put( placeholder, window );
+		}
+		
+		oldDockable.setParent( null );
+		newDockable.setParent( this );
+		window.dockable = newDockable;
+
+		if( oldDockable.asStation() != null ){
+			int listIndex = dockables.levelToBase( index, Level.DOCKABLE );
+			PerspectivePlaceholderList<ScreenPerspectiveWindow>.Item item = dockables.list().get( listIndex );
+			item.setPlaceholderMap( oldDockable.asStation().getPlaceholders() );
+		}
 	}
 	
 	/**

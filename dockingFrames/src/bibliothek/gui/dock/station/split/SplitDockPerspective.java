@@ -26,7 +26,9 @@
 package bibliothek.gui.dock.station.split;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -78,10 +80,25 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 				remove( child );
 			}
 			
+			public void modified( Leaf leaf, PerspectiveDockable oldDockable, PerspectiveDockable newDockable ){
+				if( oldDockable != null ){
+					children.remove( oldDockable );
+					oldDockable.setParent( null );
+				}
+				if( newDockable != null ){
+					DockUtilities.ensureTreeValidity( SplitDockPerspective.this, newDockable );
+					children.add( newDockable );
+					newDockable.setParent( SplitDockPerspective.this );
+				}
+			}
+			
 			private void add( Entry child ){
 				if( child != null ){
 					if( child.asLeaf() != null ){
-						children.add( child.asLeaf().getDockable() );
+						PerspectiveDockable dockable = child.asLeaf().getDockable();
+						DockUtilities.ensureTreeValidity( SplitDockPerspective.this, dockable );
+						dockable.setParent( SplitDockPerspective.this );
+						children.add( dockable );
 					}
 					else{
 						add( child.asNode().getChildA() );
@@ -93,7 +110,9 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 			private void remove( Entry child ){
 				if( child != null ){
 					if( child.asLeaf() != null ){
-						children.remove( child.asLeaf().getDockable() );
+						PerspectiveDockable dockable = child.asLeaf().getDockable();
+						children.remove( dockable );
+						dockable.setParent( null );
 					}
 					else{
 						remove( child.asNode().getChildA() );
@@ -168,6 +187,16 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 		this.fullscreen = fullscreen;
 	}
 	
+	/**
+	 * Combines several <code>dockables</code> to one dockable.
+	 * @param dockables the element to combine
+	 * @param selection the selected element, can be <code>null</code>
+	 * @return the combination
+	 */
+	protected PerspectiveDockable combine( PerspectiveDockable[] dockables, PerspectiveDockable selection ){
+		return new StackDockPerspective( dockables, selection );
+	}
+	
 	private Entry convert( PerspectiveSplitDockTree.Key key ){
 		if( key == null ){
 			return null;
@@ -182,17 +211,17 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 				dockable = dockables[0];
 			}
 			else if( dockables.length > 1 ){
-				dockable = new StackDockPerspective( dockables, tree.getSelected( key ) );
+				dockable = combine( dockables, tree.getSelected( key ) );
 			}
 			
 			DockUtilities.ensureTreeValidity( this, dockable );
 
 			dockable.setParent( this );
 			
-			return new Leaf( dockable, tree.getPlaceholders( key ), tree.getPlaceholderMap( key ), key.getNodeId() );
+			return new Leaf( dockable, toSet( tree.getPlaceholders( key ) ), tree.getPlaceholderMap( key ), key.getNodeId() );
 		}
 		if( tree.isPlaceholder( key )){
-			return new Leaf( null, tree.getPlaceholders( key ), tree.getPlaceholderMap( key ), key.getNodeId() );
+			return new Leaf( null, toSet( tree.getPlaceholders( key ) ), tree.getPlaceholderMap( key ), key.getNodeId() );
 		}
 		if( tree.isNode( key )){
 			Entry childA = convert( tree.getLeft( key ));
@@ -205,9 +234,19 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 				orientation = Orientation.VERTICAL;
 			}
 			
-			return new Node( orientation, tree.getDivider( key ), childA, childB, tree.getPlaceholders( key ), tree.getPlaceholderMap( key ), key.getNodeId() );
+			return new Node( orientation, tree.getDivider( key ), childA, childB, toSet( tree.getPlaceholders( key ) ), tree.getPlaceholderMap( key ), key.getNodeId() );
 		}
 		throw new IllegalStateException( "key does not represent any known kind of element" );
+	}
+	
+	private Set<Path> toSet( Path[] placeholders ){
+		Set<Path> result = new HashSet<Path>();
+		if( placeholders != null ){
+			for( Path placeholder : placeholders ){
+				result.add( placeholder );
+			}
+		}
+		return result;
 	}
 	
 	/**
@@ -355,6 +394,26 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 		return false;
 	}
 	
+	public void replace( PerspectiveDockable oldDockable, PerspectiveDockable newDockable ){
+		Leaf leaf = getLeaf( oldDockable );
+		if( leaf == null ){
+			throw new IllegalArgumentException( "oldDockable not child of this station" );
+		}
+		DockUtilities.ensureTreeValidity( this, newDockable );
+		
+		PlaceholderMap map = leaf.getPlaceholderMap();
+		if( oldDockable.asStation() != null ){
+			map = oldDockable.asStation().getPlaceholders();
+		}
+		
+		Leaf copy = new Leaf( newDockable, leaf.getPlaceholders(), map, leaf.getNodeId() );
+		leaf.replace( copy );
+		Path placeholder = oldDockable.getPlaceholder();
+		if( placeholder != null ){
+			addPlaceholder( copy, placeholder );
+		}
+	}
+	
 	/**
 	 * Searches and returns the leaf that shows <code>child</code>.
 	 * @param child some child of this station
@@ -380,6 +439,43 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 		}
 		return result;
 	}
+	
+	/**
+	 * Adds a placeholder to <code>destination</code> and makes sure at the same time that 
+	 * <code>placeholder</code> is not used by any other node.
+	 * @param destination a child of this perspective
+	 * @param placeholder the placeholder to insert
+	 */
+	public void addPlaceholder( Entry destination, Path placeholder ){
+		if( !destination.isAnchestor( getRoot() ) ){
+			throw new IllegalArgumentException( "destination is not child of this perspective" );
+		}
+		
+		clearPlaceholder( placeholder, destination );
+		destination.getPlaceholders().add( placeholder );
+	}
+	
+	/**
+	 * Makes sure that <code>placeholder</code> is not found anywhere
+	 * @param placeholder the element to remove
+	 * @param exception the entry that should not be modified
+	 */
+	private void clearPlaceholder( Path placeholder, Entry exception ){
+		clearPlaceholder( getRoot().getChild(), placeholder, exception );
+	}
+	
+	private void clearPlaceholder( Entry parent, Path placeholder, Entry exception ){
+		if( parent != null && parent != exception ){
+			if( parent.getPlaceholderMap() != null ){
+				parent.getPlaceholderMap().removeAll( placeholder, true );
+			}
+			parent.getPlaceholders().remove( placeholder );
+		}
+		if( parent.asNode() != null ){
+			clearPlaceholder( parent.asNode().getChildA(), placeholder, exception );
+			clearPlaceholder( parent.asNode().getChildB(), placeholder, exception );
+		}
+	}
 
 	/**
 	 * A listener that can be added to a {@link SplitDockPerspective} and that will receive events
@@ -402,6 +498,14 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 		 * @param child the child, either a {@link Node} or a {@link Leaf}
 		 */
 		public void removed( Entry parent, Entry child );
+		
+		/**
+		 * Called if the content of <code>leaf</code> has been modified.
+		 * @param leaf the leaf whose children changed
+		 * @param oldDockable the old element, can be <code>null</code>
+		 * @param newDockable the new element, can be <code>null</code>
+		 */
+		public void modified( Leaf leaf, PerspectiveDockable oldDockable, PerspectiveDockable newDockable );
 	}
 	
     /**
@@ -414,7 +518,7 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
     	/** the unique id of this node */
     	private long id;
     	/** placeholders that are associated with this entry */
-    	private Path[] placeholders;
+    	private Set<Path> placeholders;
     	/** placeholder information of a child {@link DockStation} */
     	private PlaceholderMap placeholderMap;
     	
@@ -424,7 +528,7 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
     	 * @param placeholderMap placeholder information of a child {@link DockStation}
     	 * @param id the unique id of this node or -1
     	 */
-    	public Entry( Path[] placeholders, PlaceholderMap placeholderMap, long id ){
+    	public Entry( Set<Path> placeholders, PlaceholderMap placeholderMap, long id ){
     		this.placeholders = placeholders;
     		this.placeholderMap = placeholderMap;
     		this.id = id;
@@ -462,7 +566,7 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
     	 * Removes <code>this</code> and all children from this {@link SplitDockPerspective} and
     	 * collapses the tree.
     	 */
-    	public void remove(){
+    	public void delete(){
     		Entry parent = getParent();
     		if( parent == null ){
     			return;
@@ -501,6 +605,29 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
     				else{
     					nextParent.setChildB( other );
     				}
+    			}
+    		}
+    	}
+    	
+    	/**
+    	 * Replaces <code>this</code> with <code>next</code>.
+    	 * @param next the element which replaces this
+    	 */
+    	public void replace( Entry next ){
+    		Entry parent = getParent();
+    		if( parent == null ){
+    			return;
+    		}
+    		if( parent instanceof Root ){
+    			((Root)parent).setChild( next );
+    		}
+    		else{
+    			Node parentNode = (Node)parent;
+    			if( parentNode.getChildA() == this ){
+    				parentNode.setChildA( next );
+    			}
+    			else{
+    				parentNode.setChildB( next );
     			}
     		}
     	}
@@ -550,7 +677,7 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
          * Gets all the placeholders that are associated with this entry.
          * @return the placeholders
          */
-        public Path[] getPlaceholders(){
+        public Set<Path> getPlaceholders(){
 			return placeholders;
 		}
         
@@ -560,6 +687,14 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
          */
         public PlaceholderMap getPlaceholderMap(){
 			return placeholderMap;
+		}
+        
+        /**
+         * Sets all the placeholders that are associated with this entry.
+         * @param placeholderMap all the placeholders, can be <code>null</code>
+         */
+        public void setPlaceholderMap( PlaceholderMap placeholderMap ){
+			this.placeholderMap = placeholderMap;
 		}
     }
     
@@ -575,7 +710,7 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
     	 * Creates the new root.
     	 */
     	public Root(){
-			super( new Path[]{}, null, -1 );
+			super( new HashSet<Path>(), null, -1 );
 		}
 
     	@Override
@@ -645,7 +780,7 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
          * @param placeholderMap placeholder information of a child {@link DockStation}
          * @param id the unique identifier of this node or -1
          */
-        public Node( Orientation orientation, double divider, Entry childA, Entry childB, Path[] placeholders, PlaceholderMap placeholderMap, long id ){
+        public Node( Orientation orientation, double divider, Entry childA, Entry childB, Set<Path> placeholders, PlaceholderMap placeholderMap, long id ){
         	super( placeholders, placeholderMap, id );
             this.orientation = orientation;
             this.divider = divider;
@@ -774,7 +909,7 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
          * @param placeholderMap placeholder information of a child {@link DockStation}
          * @param nodeId the unique identifier of this node, can be -1
          */
-        public Leaf( PerspectiveDockable dockable, Path[] placeholders, PlaceholderMap placeholderMap, long nodeId ){
+        public Leaf( PerspectiveDockable dockable, Set<Path> placeholders, PlaceholderMap placeholderMap, long nodeId ){
         	super( placeholders, placeholderMap, nodeId );
             this.dockable = dockable;
         }
@@ -786,10 +921,58 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
         
         /**
          * Gets the element which is represented by this leaf.
-         * @return the element
+         * @return the element, can be <code>null</code>
          */
         public PerspectiveDockable getDockable(){
 			return dockable;
 		}
+        
+        /**
+         * Exchanges the element that is represented by this perspective. This operation does not change any
+         * placeholders.
+         * @param dockable the new element, can be <code>null</code>
+         */
+        public void setDockable( PerspectiveDockable dockable ){
+        	SplitDockPerspective perspective = getPerspective();
+        	if( perspective == null ){
+        		this.dockable = dockable;
+        	}
+        	else{
+        		PerspectiveDockable oldDockable = this.dockable;
+        		this.dockable = dockable;
+        		
+        		for( EntryListener listener : perspective.listeners() ){
+        			listener.modified( this, oldDockable, dockable );
+        		}
+        	}
+		}
+
+    	/**
+    	 * Sets the dockable of this entry to <code>null</code> and inserts the placeholder of the element. If there
+    	 * are no placeholders, then {@link SplitDockPerspective.Entry#delete()} is called.<br>
+    	 * This method must only be called if this leaf is actually used by a {@link SplitDockPerspective}.
+    	 */
+    	public void remove(){
+    		SplitDockPerspective perspective = getPerspective();
+    		if( perspective == null ){
+    			throw new IllegalStateException( "this method can only be applied to leafs that have a root as anchestor" );
+    		}
+    		
+    		if( dockable != null ){
+    			Path placeholder = dockable.getPlaceholder();
+    			if( placeholder != null ){
+    				perspective.addPlaceholder( this, placeholder );
+    			}
+    			if( dockable.asStation() != null ){
+    				setPlaceholderMap( dockable.asStation().getPlaceholders() );
+    			}
+    			
+    			setDockable( null );
+    		}
+    		
+    		if( getPlaceholderMap() == null && getPlaceholders().isEmpty() ){
+    			delete();
+    		}
+    	}
     }
 }

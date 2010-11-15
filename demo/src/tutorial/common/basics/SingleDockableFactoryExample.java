@@ -24,7 +24,7 @@ public class SingleDockableFactoryExample {
 		
 		/* creating a frame and a control */
 		JTutorialFrame frame = new JTutorialFrame( SingleDockableFactoryExample.class );
-		CControl control = new CControl(frame);
+		CControl control = new CControl( frame );
 		frame.destroyOnClose( control );
 		frame.add(control.getContentArea(), BorderLayout.CENTER);
 

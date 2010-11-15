@@ -32,6 +32,7 @@ import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.station.split.SplitDockPerspective.Entry;
 import bibliothek.gui.dock.station.split.SplitDockPerspective.EntryListener;
+import bibliothek.gui.dock.station.split.SplitDockPerspective.Leaf;
 
 /**
  * A representation of a {@link CWorkingArea}. When using this perspective to handle the children of a {@link CWorkingArea} 
@@ -69,6 +70,15 @@ public class CWorkingPerspective extends CGridPerspective{
 			public void added( Entry parent, Entry child ){
 				add( child );
 			}
+			
+			public void modified( Leaf leaf, PerspectiveDockable oldDockable, PerspectiveDockable newDockable ){
+				if( oldDockable != null ){
+					remove( oldDockable );
+				}
+				if( newDockable != null ){
+					add( newDockable );
+				}
+			}
 		});
 		return result;
 	}
@@ -81,7 +91,9 @@ public class CWorkingPerspective extends CGridPerspective{
 			}
 			else{
 				PerspectiveDockable dockable = child.asLeaf().getDockable();
-				remove( dockable );
+				if( dockable != null ){
+					remove( dockable );
+				}
 			}
 		}
 	}
@@ -109,7 +121,9 @@ public class CWorkingPerspective extends CGridPerspective{
 			}
 			else{
 				PerspectiveDockable dockable = child.asLeaf().getDockable();
-				add( dockable );
+				if( dockable != null ){
+					add( dockable );
+				}
 			}
 		}
 	}
