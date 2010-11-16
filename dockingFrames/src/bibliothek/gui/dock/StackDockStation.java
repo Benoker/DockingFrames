@@ -734,44 +734,59 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     		throw new IllegalStateException( "there are children on this station" );
     	}
     	
-    	dockables.setStrategy( null );
-		dockables.unbind();
-		DockablePlaceholderList<StationChildHandle> next = new DockablePlaceholderList<StationChildHandle>();
+    	DockController controller = getController();
     	
-    	dockables = next;
-    	next.read( placeholders, new PlaceholderListItemAdapter<Dockable, StationChildHandle>() {
-    		private int size = 0;
-    		
-    		@Override
-    		public StationChildHandle convert( ConvertedPlaceholderListItem item ){
-    			int id = item.getInt( "id" );
-    			Dockable dockable = children.get( id );
-    			if( dockable == null ){
-    				return null;
-    			}
-    			
-    			listeners.fireDockableAdding( dockable );
-    			dockable.addDockableListener( listener );
-    			StationChildHandle handle = new StationChildHandle( StackDockStation.this, getDisplayers(), dockable, title );
-    			
-    			return handle;
+    	try{
+    		if( controller != null ){
+    			controller.freezeLayout();
     		}
     		
-    		@Override
-    		public void added( StationChildHandle handle ){
-    			Dockable dockable = handle.getDockable();
-    			dockable.setDockParent( StackDockStation.this );
-    			handle.updateDisplayer();
-    			addToPanel( handle, size, size );
-    			size++;
-    			listeners.fireDockableAdded( dockable );
+	    	dockables.setStrategy( null );
+			dockables.unbind();
+			DockablePlaceholderList<StationChildHandle> next = new DockablePlaceholderList<StationChildHandle>();
+	    	
+	    	dockables = next;
+	    	next.read( placeholders, new PlaceholderListItemAdapter<Dockable, StationChildHandle>() {
+	    		private int size = 0;
+	    		
+	    		@Override
+	    		public StationChildHandle convert( ConvertedPlaceholderListItem item ){
+	    			int id = item.getInt( "id" );
+	    			Dockable dockable = children.get( id );
+	    			if( dockable == null ){
+	    				return null;
+	    			}
+	    			
+	    			DockUtilities.ensureTreeValidity( StackDockStation.this, dockable );
+	    			
+	    			listeners.fireDockableAdding( dockable );
+	    			dockable.addDockableListener( listener );
+	    			StationChildHandle handle = new StationChildHandle( StackDockStation.this, getDisplayers(), dockable, title );
+	    			
+	    			return handle;
+	    		}
+	    		
+	    		@Override
+	    		public void added( StationChildHandle handle ){
+	    			Dockable dockable = handle.getDockable();
+	    			dockable.setDockParent( StackDockStation.this );
+	    			handle.updateDisplayer();
+	    			addToPanel( handle, size, size );
+	    			size++;
+	    			listeners.fireDockableAdded( dockable );
+	    		}
+			});
+	    	
+			if( controller != null ){
+				dockables.bind();
+				dockables.setStrategy( getPlaceholderStrategy() );
+			}
+    	}
+    	finally{
+    		if( controller != null ){
+    			controller.meltLayout();
     		}
-		});
-    	
-		if( getController() != null ){
-			dockables.bind();
-			dockables.setStrategy( getPlaceholderStrategy() );
-		}
+    	}
     }
 
     /**

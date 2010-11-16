@@ -450,7 +450,7 @@ public class DockUtilities {
     }
     
     /**
-     * Ensures that <code>newChild</code> has no parent, and that there will
+     * Ensures that <code>newChild</code> has either no parent or <code>newParent</code> as parent, and that there will
      * be no cycle when <code>newChild</code> is added to <code>newParent</code>
      * @param newParent the element that becomes parent of <code>newChild</code>
      * @param newChild the element that becomes child of <code>newParent</code>

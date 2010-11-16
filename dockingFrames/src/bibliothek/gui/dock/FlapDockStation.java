@@ -1246,42 +1246,56 @@ public class FlapDockStation extends AbstractDockableStation {
     		throw new IllegalStateException( "must not have any children" );
     	}
     	
-		DockablePlaceholderList<DockableHandle> next = new DockablePlaceholderList<DockableHandle>( map, new PlaceholderListItemAdapter<Dockable, DockableHandle>(){
-			@Override
-			public DockableHandle convert( ConvertedPlaceholderListItem item ){
-				int id = item.getInt( "id" );
-				Dockable dockable = children.get( id );
-				if( dockable != null ){
-					boolean hold = item.getBoolean( "hold" );
-					int size = item.getInt( "size" );
-					
-			        listeners.fireDockableAdding( dockable );
-			        DockableHandle handle = link( dockable );;    
-			        
-			        setHold( dockable, hold );
-			        setWindowSize( dockable, size );
-			        
-			        return handle;
+    	DockController controller = getController();
+    	try{
+    		if( controller != null ){
+    			controller.freezeLayout();
+    		}
+    		
+	    	DockablePlaceholderList<DockableHandle> next = new DockablePlaceholderList<DockableHandle>( map, new PlaceholderListItemAdapter<Dockable, DockableHandle>(){
+				@Override
+				public DockableHandle convert( ConvertedPlaceholderListItem item ){
+					int id = item.getInt( "id" );
+					Dockable dockable = children.get( id );
+					if( dockable != null ){
+						DockUtilities.ensureTreeValidity( FlapDockStation.this, dockable );
+						
+						boolean hold = item.getBoolean( "hold" );
+						int size = item.getInt( "size" );
+						
+				        listeners.fireDockableAdding( dockable );
+				        DockableHandle handle = link( dockable );;    
+				        
+				        setHold( dockable, hold );
+				        setWindowSize( dockable, size );
+				        
+				        return handle;
+					}
+					return null;
 				}
-				return null;
+				
+				@Override
+				public void added( DockableHandle dockable ){
+					dockable.getDockable().setDockParent( FlapDockStation.this );
+					listeners.fireDockableAdded( dockable.getDockable() );
+				}
+			});
+			if( getController() != null ){
+				handles.setStrategy( null );
+				handles.unbind();
+				handles = next;
+				handles.bind();
+				handles.setStrategy( getPlaceholderStrategy() );
 			}
-			
-			@Override
-			public void added( DockableHandle dockable ){
-				dockable.getDockable().setDockParent( FlapDockStation.this );
-				listeners.fireDockableAdded( dockable.getDockable() );
+			else{
+				handles = next;
 			}
-		});
-		if( getController() != null ){
-			handles.setStrategy( null );
-			handles.unbind();
-			handles = next;
-			handles.bind();
-			handles.setStrategy( getPlaceholderStrategy() );
-		}
-		else{
-			handles = next;
-		}
+    	}
+    	finally{
+    		if( controller != null ){
+    			controller.meltLayout();
+    		}
+    	}
 		buttonPane.resetTitles();
     }
 

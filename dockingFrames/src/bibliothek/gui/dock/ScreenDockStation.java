@@ -580,58 +580,72 @@ public class ScreenDockStation extends AbstractDockStation {
     	if( getDockableCount() > 0 ){
     		throw new IllegalStateException( "must not have any children" );
     	}
+    	DockController controller = getController();
     	
-    	DockablePlaceholderList<ScreenDockWindowHandle> next = new DockablePlaceholderList<ScreenDockWindowHandle>();
-    	
-		if( getController() != null ){
-			dockables.setStrategy( null );
-			dockables.unbind();
-			dockables = next;
-			dockables.bind();
-			dockables.setStrategy( getPlaceholderStrategy() );
-		}
-		else{
-			dockables = next;
-		}
-    	
-    	next.read( map, new PlaceholderListItemAdapter<Dockable, ScreenDockWindowHandle>(){
-			@Override
-			public ScreenDockWindowHandle convert( ConvertedPlaceholderListItem item ){
-				int id = item.getInt( "id" );
-				Dockable dockable = children.get( id );
-				if( dockable != null ){
-					int x = item.getInt( "x" );
-					int y = item.getInt( "y" );
-					int width = item.getInt( "width" );
-					int height = item.getInt( "height" );
-					boolean fullscreen = item.getBoolean( "fullscreen" );
-					
-			        listeners.fireDockableAdding( dockable );
-			        
-			        ScreenDockWindow window = createWindow();
-			        ScreenDockWindowHandle handle = new ScreenDockWindowHandle( dockable, window );
-			        window.setController( getController() );
-			        window.setFullscreenStrategy( getFullscreenStrategy() );
-			        window.setDockable( dockable );
-			        window.setWindowBounds( new Rectangle( x, y, width, height ), false );
-			        window.setVisible( isShowing() );
-			        window.validate();
-			        window.setFullscreen( fullscreen );
-			        
-			        return handle;
+    	try{
+    		if( controller != null ){
+    			controller.freezeLayout();
+    		}
+    		
+	    	DockablePlaceholderList<ScreenDockWindowHandle> next = new DockablePlaceholderList<ScreenDockWindowHandle>();
+	    	
+			if( controller != null ){
+				dockables.setStrategy( null );
+				dockables.unbind();
+				dockables = next;
+				dockables.bind();
+				dockables.setStrategy( getPlaceholderStrategy() );
+			}
+			else{
+				dockables = next;
+			}
+	    	
+	    	next.read( map, new PlaceholderListItemAdapter<Dockable, ScreenDockWindowHandle>(){
+				@Override
+				public ScreenDockWindowHandle convert( ConvertedPlaceholderListItem item ){
+					int id = item.getInt( "id" );
+					Dockable dockable = children.get( id );
+					if( dockable != null ){
+						DockUtilities.ensureTreeValidity( ScreenDockStation.this, dockable );
+						
+						int x = item.getInt( "x" );
+						int y = item.getInt( "y" );
+						int width = item.getInt( "width" );
+						int height = item.getInt( "height" );
+						boolean fullscreen = item.getBoolean( "fullscreen" );
+						
+				        listeners.fireDockableAdding( dockable );
+				        
+				        ScreenDockWindow window = createWindow();
+				        ScreenDockWindowHandle handle = new ScreenDockWindowHandle( dockable, window );
+				        window.setController( getController() );
+				        window.setFullscreenStrategy( getFullscreenStrategy() );
+				        window.setDockable( dockable );
+				        window.setWindowBounds( new Rectangle( x, y, width, height ), false );
+				        window.setVisible( isShowing() );
+				        window.validate();
+				        window.setFullscreen( fullscreen );
+				        
+				        return handle;
+					}
+					return null;
 				}
-				return null;
-			}
-			
-			@Override
-			public void added( ScreenDockWindowHandle dockable ){
-				dockable.asDockable().setDockParent( ScreenDockStation.this );
-				for( ScreenDockStationListener listener : screenDockStationListeners() ){
-		        	listener.windowRegistering( ScreenDockStation.this, dockable.asDockable(), dockable.getWindow() );
-		        }
-				listeners.fireDockableAdded( dockable.asDockable() );
-			}
-		});		
+				
+				@Override
+				public void added( ScreenDockWindowHandle dockable ){
+					dockable.asDockable().setDockParent( ScreenDockStation.this );
+					for( ScreenDockStationListener listener : screenDockStationListeners() ){
+			        	listener.windowRegistering( ScreenDockStation.this, dockable.asDockable(), dockable.getWindow() );
+			        }
+					listeners.fireDockableAdded( dockable.asDockable() );
+				}
+			});
+    	}
+    	finally{
+    		if( controller != null ){
+    			controller.meltLayout();
+    		}
+    	}
     }
     
     /**

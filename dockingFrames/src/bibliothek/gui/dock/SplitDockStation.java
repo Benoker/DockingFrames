@@ -1819,8 +1819,9 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 		DockController controller = getController();
 		try {
 			treeLock++;
-			if( controller != null )
+			if( controller != null ){
 				controller.freezeLayout();
+			}
 
 			setFullScreen(null);
 			removeAllDockables();
@@ -1842,8 +1843,9 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 		}
 		finally {
 			treeLock--;
-			if( controller != null )
+			if( controller != null ){
 				controller.meltLayout();
+			}
 		}
 	}
 
