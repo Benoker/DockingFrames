@@ -25,10 +25,13 @@
  */
 package bibliothek.gui.dock.station.screen;
 
+import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.Window;
 
 import bibliothek.gui.dock.ScreenDockStation;
@@ -88,7 +91,7 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
 		current = new Rectangle( current.x - 1, current.y - 1, current.width + 2, current.height + 2 );
 		
 		for( GraphicsDevice device : environment.getScreenDevices() ){
-			Rectangle fullscreen = device.getDefaultConfiguration().getBounds();
+			Rectangle fullscreen = getAvailableBounds( device.getDefaultConfiguration() );
 			if( current.contains( fullscreen ) ){
 				return true;
 			}
@@ -148,7 +151,7 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
 		for( GraphicsDevice device : devices ){
 			Rectangle bounds = device.getDefaultConfiguration().getBounds();
 			if( bounds.contains( current )){
-				return bounds;
+				return getAvailableBounds( device.getDefaultConfiguration() );
 			}
 		}
 		
@@ -168,9 +171,24 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
 		}
 		
 		if( best != null ){
-			return best.getDefaultConfiguration().getBounds();
+			return getAvailableBounds( best.getDefaultConfiguration() );
 		}
 		return null;
+	}
+	
+	/**
+	 * Gets the boundaries of a {@link GraphicsDevice} that can actually be used.
+	 * @param configuration some device
+	 * @return the boundaries that can be used
+	 */
+	protected Rectangle getAvailableBounds( GraphicsConfiguration configuration ){
+		Rectangle bounds = configuration.getBounds();
+		Insets insets = Toolkit.getDefaultToolkit().getScreenInsets( configuration );
+		bounds.x += insets.left;
+		bounds.y += insets.top;
+		bounds.width -= insets.left + insets.right;
+		bounds.height -= insets.top + insets.bottom;
+		return bounds;
 	}
 	
 	private int dist( int x, int width, int pos ){

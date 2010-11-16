@@ -25,19 +25,19 @@
  */
 package bibliothek.gui.dock.station.screen;
 
-import java.awt.*;
-
-import javax.swing.SwingUtilities;
-
-import bibliothek.gui.Dockable;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 
 /**
- * A restriction that ensures that each dialog is always visible, even when some
- * screens can't be used because of that.
+ * A restriction that ensures that each dialog is always visible on exactly one
+ * screen.
  * @author Benjamin Sigg
  */
 public class HardBoundaryRestriction implements BoundaryRestriction{
-    public Rectangle check( ScreenDockWindow window ) {
+	public Rectangle check( ScreenDockWindow window ) {
         return check( window, window.getWindowBounds() );
     }
     
@@ -83,13 +83,8 @@ public class HardBoundaryRestriction implements BoundaryRestriction{
         if( width == 0 || height == 0 )
             return 0.0;
         
-        GraphicsConfiguration config = getGraphicsConfiguration( window );
-        if( config == null )
-            return 0.0;
-        
-        Rectangle screen = config.getBounds();
-        Rectangle next = new Rectangle( x+screen.x, y+screen.y, width, height );
-        screen = device.getDefaultConfiguration().getBounds();
+        Rectangle next = new Rectangle( x, y, width, height );
+        Rectangle screen = device.getDefaultConfiguration().getBounds();
         
         Rectangle intersection = screen.intersection( next );
         
@@ -111,46 +106,22 @@ public class HardBoundaryRestriction implements BoundaryRestriction{
      * @return the new bounds, can be <code>null</code>
      */
     protected Rectangle boundsInDevice( ScreenDockWindow window, int x, int y, int width, int height, GraphicsDevice device ){
-        GraphicsConfiguration config = getGraphicsConfiguration( window );
-        if( config != null ){
-            Rectangle size = config.getBounds();
-            x += size.x;
-            y += size.y;
+        Rectangle size = device.getDefaultConfiguration().getBounds();
             
-            size = device.getDefaultConfiguration().getBounds();
-            
-            Insets insets = Toolkit.getDefaultToolkit().getScreenInsets( device.getDefaultConfiguration() );
-            if( insets == null )
-                insets = new Insets( 0,0,0,0 );
-            
-            width = Math.min( size.width-insets.left-insets.right, width );
-            height = Math.min( size.height-insets.top-insets.bottom, height );
-            
-            x = Math.max( x, size.x+insets.left );
-            y = Math.max( y, size.y+insets.right );
-            
-            x = Math.min( x, size.width - insets.left - insets.right - width + size.x );
-            y = Math.min( y, size.height - insets.top - insets.bottom - height + size.y );
-        }
+        Insets insets = Toolkit.getDefaultToolkit().getScreenInsets( device.getDefaultConfiguration() );
+        if( insets == null )
+            insets = new Insets( 0,0,0,0 );
+        
+        width = Math.min( size.width-insets.left-insets.right, width );
+        height = Math.min( size.height-insets.top-insets.bottom, height );
+        
+        x = Math.max( x, size.x+insets.left );
+        y = Math.max( y, size.y+insets.right );
+        
+        x = Math.min( x, size.width - insets.left - insets.right - width + size.x );
+        y = Math.min( y, size.height - insets.top - insets.bottom - height + size.y );
         
         return new Rectangle( x, y, width, height );
     }
     
-    /**
-     * Searches the {@link GraphicsConfiguration} of <code>window</code>.
-     * @param window some window
-     * @return its configuration, might be <code>null</code>
-     */
-    protected GraphicsConfiguration getGraphicsConfiguration( ScreenDockWindow window ){
-        Dockable dockable = window.getDockable();
-        if( dockable == null )
-            return null;
-        
-        Component component = dockable.getComponent();
-        Window parent = SwingUtilities.getWindowAncestor( component );
-        if( parent == null )
-            return null;
-        
-        return parent.getGraphicsConfiguration();
-    }
 }

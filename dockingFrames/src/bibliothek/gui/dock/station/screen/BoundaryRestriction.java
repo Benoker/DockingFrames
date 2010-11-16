@@ -43,10 +43,15 @@ public interface BoundaryRestriction {
         }
     };
     
+    /**
+     * A restriction that will ensure that the title of a dialog cannot be moved
+     * away from the screens.
+     */
+    public BoundaryRestriction MEDIUM = new MediumBoundaryRestriction();
+    
     /** 
-     * A restriction that will ensure that every dialog is always visible, even
-     * if that means that in a multi screen environment some screens can't be 
-     * used. 
+     * A restriction that will ensure that every dialog is always visible on
+     * exactly one screen.
      */
     public BoundaryRestriction HARD = new HardBoundaryRestriction();
     

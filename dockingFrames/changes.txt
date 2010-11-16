@@ -357,4 +357,5 @@
 - Bugfix: DockFrontend no longer stores the same Dockable twice if root-stations are nested
 ! API: Common now stores the identifier of the working-area which owns a SingleCDockable and changes the working-area property when loading a layout. This is necessary for perspectives which would otherwise work very unintuitive.
 - Bugfix: The history of the location of a MultipleCDockable is loaded and applied but only if the MultipleCDockable can be created while loading a persistent layout.
-- API: MultipleCDockables now also use placeholders. However, all placeholders for a MultipleCDockable are removed if the MultipleCDockable is closed (unless the MissingCDockableStrategy tells otherwise)  
+- API: MultipleCDockables now also use placeholders. However, all placeholders for a MultipleCDockable are removed if the MultipleCDockable is closed (unless the MissingCDockableStrategy tells otherwise)
+- Bugfix: ScreenDockStation and its strategies now properly support multi monitor environments. The default BoundaryRestriction is now "MEDIUM" instead of "FREE".  

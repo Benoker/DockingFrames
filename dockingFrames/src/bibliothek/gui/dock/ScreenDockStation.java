@@ -114,7 +114,7 @@ public class ScreenDockStation extends AbstractDockStation {
     /** a key for a property telling which boundaries a {@link ScreenDockWindow} can have */
     public static final PropertyKey<BoundaryRestriction> BOUNDARY_RESTRICTION = 
         new PropertyKey<BoundaryRestriction>( "ScreenDockStation.boundary_restriction",
-        		new ConstantPropertyFactory<BoundaryRestriction>( BoundaryRestriction.FREE ), true );
+        		new ConstantPropertyFactory<BoundaryRestriction>( BoundaryRestriction.MEDIUM ), true );
     
     /** a key for a property telling how to create new windows */
     public static final PropertyKey<ScreenDockWindowFactory> WINDOW_FACTORY =
