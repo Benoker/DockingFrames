@@ -25,40 +25,41 @@
 \contentsline {subsection}{\numberline {5.3}For all dockables: persistent storage}{19}
 \contentsline {subsubsection}{\numberline {5.3.1}Persistant Storage}{20}
 \contentsline {subsubsection}{\numberline {5.3.2}Dealing with lazy creation and missing dockables}{20}
-\contentsline {subsection}{\numberline {5.4}The frameworks viewpoint}{21}
-\contentsline {section}{\numberline {6}Actions}{23}
-\contentsline {subsection}{\numberline {6.1}CButton}{23}
-\contentsline {subsection}{\numberline {6.2}CCheckBox}{23}
-\contentsline {subsection}{\numberline {6.3}CRadioButton}{24}
-\contentsline {subsection}{\numberline {6.4}CMenu}{24}
-\contentsline {subsection}{\numberline {6.5}CDropDownButton}{24}
-\contentsline {subsection}{\numberline {6.6}CPanelPopup}{25}
-\contentsline {subsection}{\numberline {6.7}CBlank}{25}
-\contentsline {subsection}{\numberline {6.8}System Actions}{25}
-\contentsline {subsection}{\numberline {6.9}Custom Actions}{26}
-\contentsline {section}{\numberline {7}Other Effects}{27}
-\contentsline {subsection}{\numberline {7.1}Color}{27}
-\contentsline {subsection}{\numberline {7.2}Font}{27}
-\contentsline {subsection}{\numberline {7.3}Size}{28}
-\contentsline {subsubsection}{\numberline {7.3.1}Lock the size}{28}
-\contentsline {subsubsection}{\numberline {7.3.2}Request a size}{28}
-\contentsline {subsection}{\numberline {7.4}Maximizing}{29}
-\contentsline {subsection}{\numberline {7.5}Preferences}{29}
-\contentsline {subsection}{\numberline {7.6}Themes}{30}
-\contentsline {subsection}{\numberline {7.7}LookAndFeel}{31}
-\contentsline {subsection}{\numberline {7.8}Menus}{31}
-\contentsline {subsubsection}{\numberline {7.8.1}Themes}{33}
-\contentsline {subsubsection}{\numberline {7.8.2}LookAndFeel}{33}
-\contentsline {subsubsection}{\numberline {7.8.3}Layout}{33}
-\contentsline {subsubsection}{\numberline {7.8.4}List of Dockables}{33}
-\contentsline {subsubsection}{\numberline {7.8.5}Preferences}{34}
-\contentsline {section}{\numberline {8}Suggestions, Questions and Remarks}{35}
-\contentsline {subsection}{\numberline {8.1}Version 1.0.7}{35}
-\contentsline {subsubsection}{\numberline {8.1.1}Of people using the library}{35}
-\contentsline {subsubsection}{\numberline {8.1.2}Of the developers}{36}
-\contentsline {subsection}{\numberline {8.2}Version 1.0.8}{37}
-\contentsline {subsubsection}{\numberline {8.2.1}Of people using the library}{37}
-\contentsline {subsubsection}{\numberline {8.2.2}Of the developers}{37}
-\contentsline {section}{\numberline {A}Properties}{39}
-\contentsline {subsection}{\numberline {A.1}Client specific properties}{39}
-\contentsline {subsection}{\numberline {A.2}Advanced properties}{40}
+\contentsline {subsubsection}{\numberline {5.3.3}Perspectives}{21}
+\contentsline {subsection}{\numberline {5.4}The frameworks viewpoint}{22}
+\contentsline {section}{\numberline {6}Actions}{24}
+\contentsline {subsection}{\numberline {6.1}CButton}{24}
+\contentsline {subsection}{\numberline {6.2}CCheckBox}{24}
+\contentsline {subsection}{\numberline {6.3}CRadioButton}{25}
+\contentsline {subsection}{\numberline {6.4}CMenu}{25}
+\contentsline {subsection}{\numberline {6.5}CDropDownButton}{25}
+\contentsline {subsection}{\numberline {6.6}CPanelPopup}{26}
+\contentsline {subsection}{\numberline {6.7}CBlank}{26}
+\contentsline {subsection}{\numberline {6.8}System Actions}{26}
+\contentsline {subsection}{\numberline {6.9}Custom Actions}{27}
+\contentsline {section}{\numberline {7}Other Effects}{28}
+\contentsline {subsection}{\numberline {7.1}Color}{28}
+\contentsline {subsection}{\numberline {7.2}Font}{28}
+\contentsline {subsection}{\numberline {7.3}Size}{29}
+\contentsline {subsubsection}{\numberline {7.3.1}Lock the size}{29}
+\contentsline {subsubsection}{\numberline {7.3.2}Request a size}{29}
+\contentsline {subsection}{\numberline {7.4}Maximizing}{30}
+\contentsline {subsection}{\numberline {7.5}Preferences}{30}
+\contentsline {subsection}{\numberline {7.6}Themes}{31}
+\contentsline {subsection}{\numberline {7.7}LookAndFeel}{32}
+\contentsline {subsection}{\numberline {7.8}Menus}{32}
+\contentsline {subsubsection}{\numberline {7.8.1}Themes}{34}
+\contentsline {subsubsection}{\numberline {7.8.2}LookAndFeel}{34}
+\contentsline {subsubsection}{\numberline {7.8.3}Layout}{34}
+\contentsline {subsubsection}{\numberline {7.8.4}List of Dockables}{34}
+\contentsline {subsubsection}{\numberline {7.8.5}Preferences}{35}
+\contentsline {section}{\numberline {8}Suggestions, Questions and Remarks}{36}
+\contentsline {subsection}{\numberline {8.1}Version 1.0.7}{36}
+\contentsline {subsubsection}{\numberline {8.1.1}Of people using the library}{36}
+\contentsline {subsubsection}{\numberline {8.1.2}Of the developers}{37}
+\contentsline {subsection}{\numberline {8.2}Version 1.0.8}{38}
+\contentsline {subsubsection}{\numberline {8.2.1}Of people using the library}{38}
+\contentsline {subsubsection}{\numberline {8.2.2}Of the developers}{38}
+\contentsline {section}{\numberline {A}Properties}{40}
+\contentsline {subsection}{\numberline {A.1}Client specific properties}{40}
+\contentsline {subsection}{\numberline {A.2}Advanced properties}{41}

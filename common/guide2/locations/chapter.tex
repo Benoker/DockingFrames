@@ -96,14 +96,44 @@ control.read( file );
 \end{lstlisting}
 
 \subsubsection{Dealing with lazy creation and missing dockables}
-While \src{MultipleCDockable}s are created only when they are needed, \src{Common} assumes that \src{SingleCDockable}s are always present. However this assumption would require to create components that might never be shown. In order to solve the problem \src{SingleCDockableBackupFactory} was introduced. If a missing \src{single-dockable} is required the factories method \src{createBackup} is called. Assuming the factory returns not \src{null} then the new \src{dockable} is properly added to \src{CControl} and made visible.
+While \src{MultipleCDockable}s are created only when they are needed, \src{Common} assumes that \src{SingleCDockable}s are always present. However this assumption would require to create components that might never be shown. In order to solve the problem \src{SingleCDockableFactory} was introduced. If a missing \src{single-dockable} is required the factories method \src{createBackup} is called. Assuming the factory returns not \src{null} then the new \src{dockable} is properly added to \src{CControl} and made visible.
 
-\src{SingleCDockableBackupFactory}s need to be registered at the \src{CControl} using the method \src{addSingleBackupFactory}. They can also be removed using the method \src{removeSingleBackupFactory}. 
+\src{SingleCDockableFactory}s need to be registered at the \src{CControl} using the method \src{addSingleDockableFactory}. They can also be removed using the method \src{removeSingleDockableFactory}. 
 
-\infobox{If a \src{dockable} is removed from a \src{CControl} then normally all its associated location information is deleted. If however a backup-factory with the same id as the \src{dockable}s id is registered, then the location information remains. If another \src{dockable} with the same id is later registered, then this new \src{dockable} inherits all settings from the old one.}
+\infobox{If a \src{dockable} is removed from a \src{CControl} then normally all its associated location information is deleted. If however a factory with the same id as the \src{dockable}s id is registered, then the location information remains. If another \src{dockable} with the same id is later registered, then this new \src{dockable} inherits all settings from the old one.}
 
 \classbox{\src{CControl}s behavior for missing \src{dockables} can be fine tuned with a \src{MissingCDockableStrategy}.} 
- 
+
+\subsubsection{Perspectives}
+Layout information is stored in various formats: the \src{Dockable}s and \linebreak \src{DockStation}s is one format, an xml-file could be another format. There is a special intermediate format, every format can be converted into this intermediate format, and the intermediate format can be converted to any other format.
+
+Perspectives are yet another format of the layout. Perspectives are \linebreak leightweight and can be easily modified by clients. They are an ideal tool to set up the layout of an application during startup. In order to access perspectives a \src{CControl} must be around, like in this example:
+\begin{lstlisting}
+CControl control = ...
+
+// accessing a set of perspectives
+CControlPerspectives perspectives = control.getPerspectives();
+
+// creating a new perspective, this method actually copies some 
+// properties from "control"
+CPerspective perspective = perspectives.createPerspective();
+
+... // setting up the layout
+
+// applying the new perspective
+perspectives.setPerspective( perspective, true );
+\end{lstlisting}
+
+A \src{CPerspective} offers methods to access various \src{CStationPerspective}s and add \src{CDockablePerspective}s to them.
+
+\codebox{In the example project, in ``Guide/Common'', there are several examples showing how to use perspectives:
+\begin{description}
+ \item[Perspectives (Introduction)] Is a very simple hello-world style application with several \src{Dockable}s that are placed through the perspective API.
+ \item[Perspectives (Multiple Dockables)] Shows how to access and set up \src{MultipleCDockable}s and \src{CWorkingArea}s.
+ \item[Perspectives (History)] Shows how the location history can be modified with the perspective API.
+\end{description}
+}
+
 \subsection{The frameworks viewpoint} \label{sec:clocationmodemanager}
 Locations are handled by the \src{CLocationModeManager}. Clients may never have any contact with this class, but it is of such importance for the inner workings of \src{DockingFrames} that it deserves a chapter in this document.
 

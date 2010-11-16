@@ -1,8 +1,8 @@
 \section{Locations} \label{sec:location}
-Location means position and size of a dockable. A location can be relative to some parent of a dockable or it can be fix.
+Location means position and size of a \src{dockable}. A location can be relative to some parent of a \src{dockable} or it can be fix.
 
 \subsection{For a single dockable: CLocation}
-The location of a single dockable is represented by a \src{CLocation}. The method \src{getBaseLocation} of \src{CDockable} gets the current location and the method \linebreak \src{setLocation} changes the current location.
+The location of a single \src{dockable} is represented by a \src{CLocation}. The method \src{getBaseLocation} of \src{CDockable} gets the current location and the method \linebreak \src{setLocation} changes the current location.
 
 Most subclasses of \src{CLocation} offer one or more methods to optain new locations. An example: \src{CGridAreaLocation} offers the method \src{north}. While \src{CGridAreaLocation} represents just some \src{CGridArea}, the location optained through \src{north} represents the upper half of the grid-area. Clients can chain together method calls to create locations:
 \begin{lstlisting}
@@ -12,11 +12,11 @@ CDockable dockable = ...
 CLocation location = root.north( 0.5 ).west( 0.5 ).stack( 2 );
 dockable.setLocation( location );
 \end{lstlisting}
-The chain of calls in line \src{4} creates a location pointing to the upper left quarter of some grid-area. Assuming there is a stack of dockables in that quarter, the location points to the third entry of that stack. In line \src{5} the location of \src{dockable} is set, the framework will try to set \src{dockable} at the exact location but cannot make any guarantees (e.g. if there is no stack in the upper left quarter, then framework cannot magically invent one).
+The chain of calls in line \src{4} creates a location pointing to the upper left quarter of some grid-area. Assuming there is a stack of \src{dockable}s in that quarter, the location points to the third entry of that stack. In line \src{5} the location of \src{dockable} is set, the framework will try to set \src{dockable} at the exact location but cannot make any guarantees (e.g. if there is no stack in the upper left quarter, then framework cannot magically invent one).
 
 To create a root-location clients can call one of the static factory methods of \src{CLocation} or directly instantiate the location. Calling the factory methods of \src{CLocation} is preferred.
 
-Setting the location of a dockable \src{a} to the location of another dockable \src{b} will move away \src{b} from its position. As an example:
+Setting the location of a \src{dockable} \src{a} to the location of another \src{dockable} \src{b} will move away \src{b} from its position. As an example:
 \begin{lstlisting}
 CDockable a = ...
 CDockable b = ...
@@ -32,12 +32,12 @@ a.setLocation( location.aside() );
 
 \classbox{\src{CLocation} is an abstraction from \src{DockableProperty}. While each \src{DockableProperty} has its own API and concepts, \src{CLocation}s unify usage by providing the chain-concept. The chain-concept allows some typesafety and should reduce the amount of wrongly put together locations. }
 
-\warningbox{\src{CLocation}s describe only the current location of a dockable, they are not useful for any long-term storage. \src{CControl} already stores the location of each dockable and it uses some very complex constructs to ensure that the locations remain useful even if dockables are missing or moved around. Clients should not store locations themselves.}
+\warningbox{\src{CLocation}s describe only the current location of a \src{dockable}, they are not useful for any long-term storage. \src{CControl} already stores the location of each \src{dockable} and it uses some very complex constructs to ensure that the locations remain useful even if \src{dockable}s are missing or moved around. Clients should not store locations themselves.}
 
 \subsection{For a group of dockables: CGrid}
-Sometimes it is necessary to set the position of several dockables at once. For example when the application starts up a default layout could be created. If dockables are minimized or externalized the position can simply be set with \src{CLocation}s. If dockables are shown normalized on a grid-area, a working-area, or the center of a \src{CContentArea} then things get more complex. Using \src{CLocation} would require a precise order in which to add the dockables, and some awkward coordinates to make sure they are shifted at the right place when more dockables become visible.
+Sometimes it is necessary to set the position of several \src{dockable}s at once. For example when the application starts up a default layout could be created. If \src{dockable}s are minimized or externalized the position can simply be set with \src{CLocation}s. If \src{dockable}s are shown normalized on a grid-area, a working-area, or the center of a \src{CContentArea} then things get more complex. Using \src{CLocation} would require a precise order in which to add the \src{dockable}s, and some awkward coordinates to make sure they are shifted at the right place when more \src{dockable}s become visible.
 
-\src{CGrid} is a class that collects dockables and their boundaries. All this information can then be put onto a grid-like areas in one command. Furthermore a \src{CGrid} can also automatically register dockables at a \src{CControl}. An example:
+\src{CGrid} is a class that collects \src{dockable}s and their boundaries. All this information can then be put onto a grid-like areas in one command. Furthermore a \src{CGrid} can also automatically register \src{dockable}s at a \src{CControl}. An example:
 \begin{lstlisting}
 CControl control = ...
 
@@ -52,20 +52,20 @@ grid.add( 0, 1, 1, 2, multi );
 CContentArea content = control.getContentArea();
 content.deploy( grid );
 \end{lstlisting}
-The \src{CGrid} created in line \src{6} will call the \src{add}-methods of \src{control} (line \src{1}) with any dockable that is given to it. In lines \src{8,9} two dockables are put onto the grid. The numbers are the boundaries of the dockables. In line \src{12} the contents of the grid are put onto \src{content}. The dockables \src{single} and \src{multi} will be arranged such that \src{multi} has twice the size of \src{single}.
+The \src{CGrid} created in line \src{6} will call the \src{add}-methods of \src{control} (line \src{1}) with any \src{dockable} that is given to it. In lines \src{8,9} two \src{dockable}s are put onto the grid. The numbers are the boundaries of the \src{dockable}s. In line \src{12} the contents of the grid are put onto \src{content}. The \src{dockable}s \src{single} and \src{multi} will be arranged such that \src{multi} has twice the size of \src{single}.
 
 Boundaries are relative to each other, there is no minimal or maximal value for a coordinate or size. \src{CGrid} is able to handle gaps and overlaps, but such defections might yield awkward layouts.
 
-\warningbox{Make sure not to add a dockable twice to a \src{CControl}. If using a \src{CGrid} the \src{add} method of \src{CControl} must not be called. 
+\warningbox{Make sure not to add a \src{dockable} twice to a \src{CControl}. If using a \src{CGrid} the \src{add} method of \src{CControl} must not be called. 
 
-Also note that there is a second constructor for \src{CGrid} that does not have any argument. If that second constructor is used, then the \src{CGrid} will not add dockables to any \src{CControl}.}
+Also note that there is a second constructor for \src{CGrid} that does not have any argument. If that second constructor is used, then the \src{CGrid} will not add \src{dockable}s to any \src{CControl}.}
 
-\infobox{Dockables can also be grouped in a stack by \src{CGrid}. Any two dockables with the same boundaries are grouped. The \src{add} method uses a vararg-argument, more than just one dockable can be placed with the same boundaries this way.}
+\infobox{Dockables can also be grouped in a stack by \src{CGrid}. Any two \src{dockable}s with the same boundaries are grouped. The \src{add} method uses a vararg-argument, more than just one \src{dockable} can be placed with the same boundaries this way.}
 
-\classbox{Internally \src{CGrid} uses a \src{SplitDockGrid}. \src{SplitDockGrid} contains an algorithm that creates a \src{SplitDockTree}. This tree has dockables as leafs and relations between dockables are modeled as nodes. A \src{SplitDockTree} can be used by a \src{SplitDockStation} to build up its layout. }
+\classbox{Internally \src{CGrid} uses a \src{SplitDockGrid}. \src{SplitDockGrid} contains an algorithm that creates a \src{SplitDockTree}. This tree has \src{dockable}s as leafs and relations between \src{dockable}s are modeled as nodes. A \src{SplitDockTree} can be used by a \src{SplitDockStation} to build up its layout. }
 
-\subsection{For all dockables: layout} \label{sec:layout}
-The ``layout'' is the set of all locations, even including invisible dockables. \src{CControl} supports the storage and replacement of layouts automatically. \linebreak Clients only need to provide some factories for their custom dockables. A layout does not have direct references to any dockable, it is completely independent of gui-components.
+\subsection{For all dockables: persistent storage} \label{sec:layout}
+The ``layout'' is the set of all locations, even including invisible \src{dockable}s. \src{CControl} supports the storage and replacement of layouts automatically. \linebreak Clients only need to provide some factories for their custom \src{dockable}s. A layout does not have direct references to any \src{dockable}, it is completely independent of gui-components.
 
 There are four important methods in \src{CControl} used to interact with layouts:
 \begin{itemize}
@@ -77,11 +77,11 @@ There are four important methods in \src{CControl} used to interact with layouts
 
 \infobox{The class \src{CLayoutChoiceMenuPiece} can build some \src{JMenuItem}s that allow the user to save, load and delete layouts at any time. More about \src{MenuPiece}s can be found in chapter \ref{sec:menus}.}
 
-\designbox{Layouts are divided into two subsets: ``entry'' and ``full'' layouts. An entry-layout does not store the location of any dockable that is associated with a working-area. A full-layout stores all locations. The method \src{save} always uses entry-layouts and a full-layout is only used when the applications properties are stored persistantly in a file.
+\designbox{Layouts are divided into two subsets: ``entry'' and ``full'' layouts. An entry-layout does not store the location of any \src{dockable} that is associated with a working-area. A full-layout stores all locations. The method \src{save} always uses entry-layouts and a full-layout is only used when the applications properties are stored persistantly in a file.
 
-Working-areas are intended to show some documents that are only temporarely available. Assuming that each dockable on a working-area represents one such document it makes perfectly sense not to replace them just because the user chooses another layout. Changing them would mean to close some documents and load other documents, and that is certainly not the behaviour the user would expect.}
+Working-areas are intended to show some documents that are only temporarely available. Assuming that each \src{dockable} on a working-area represents one such document it makes perfectly sense not to replace them just because the user chooses another layout. Changing them would mean to close some documents and load other documents, and that is certainly not the behaviour the user would expect.}
 
-\warningbox{The client is responsible to store the contents of any single-dockable. }
+\warningbox{The client is responsible to store the contents of any \src{single-dockable}. }
 
 \subsubsection{Persistant Storage}
 \src{Common} uses a class called \src{ApplicationResourceManager} to store its properties. Among other things all layout information is stored in this resource-manager. Normally any information in the resource-manager gets lost once the application shuts down. But clients can tell the resource-manager to write its contents into a file. Either they call \src{getResources} of \src{CControl} and then one of the many methods that start with ``write'' or they use directly \src{CControl}. An example:
@@ -96,29 +96,32 @@ control.read( file );
 \end{lstlisting}
 
 \subsubsection{Dealing with lazy creation and missing dockables}
-While \src{MultipleCDockable}s are created only when they are needed, \src{Common} assumes that \src{SingleCDockable}s are always present. However this assumption would require to create components that might never be shown. In order to solve the problem \src{SingleCDockableBackupFactory} was introduced. If a missing single-dockable is required the factories method \src{createBackup} is called. Assuming the factory returns not \src{null} then the new dockable is properly added to \src{CControl} and made visible.
+While \src{MultipleCDockable}s are created only when they are needed, \src{Common} assumes that \src{SingleCDockable}s are always present. However this assumption would require to create components that might never be shown. In order to solve the problem \src{SingleCDockableFactory} was introduced. If a missing \src{single-dockable} is required the factories method \src{createBackup} is called. Assuming the factory returns not \src{null} then the new \src{dockable} is properly added to \src{CControl} and made visible.
 
-\src{SingleCDockableBackupFactory}s need to be registered at the \src{CControl} using the method \src{addSingleBackupFactory}. They can also be removed using the method \src{removeSingleBackupFactory}. 
+\src{SingleCDockableFactory}s need to be registered at the \src{CControl} using the method \src{addSingleDockableFactory}. They can also be removed using the method \src{removeSingleDockableFactory}. 
 
-\infobox{If a dockable is removed from a \src{CControl} then normally all its associated location information is deleted. If however a backup-factory with the same id as the dockables id is registered, then the location information remains. If another dockable with the same id is later registered, then this new dockable inherits all settings from the old one.}
+\infobox{If a \src{dockable} is removed from a \src{CControl} then normally all its associated location information is deleted. If however a factory with the same id as the \src{dockable}s id is registered, then the location information remains. If another \src{dockable} with the same id is later registered, then this new \src{dockable} inherits all settings from the old one.}
 
-\classbox{\src{CControl}s behavior for missing dockables can be fine tuned with a \src{MissingCDockableStrategy}.} 
- 
-\subsection{The frameworks viewpoint}
+\classbox{\src{CControl}s behavior for missing \src{dockables} can be fine tuned with a \src{MissingCDockableStrategy}.} 
+
+\subsubsection{Perspectives}
+
+
+\subsection{The frameworks viewpoint} \label{sec:clocationmodemanager}
 Locations are handled by the \src{CLocationModeManager}. Clients may never have any contact with this class, but it is of such importance for the inner workings of \src{DockingFrames} that it deserves a chapter in this document.
 
-The \src{CLocationModeManager} contains a list of \src{CLocationMode}s where each \src{CLocationMode} provides the code for handling one extended-mode (like \src{ExtendedMode.MAXIMIZED}). The manager also contains a map which stores the location of each dockable for each mode. When the user clicks on a button like ``minimize'', the location for the affected dockable is read from the map and given to the the \src{apply} method of the appropriate \src{CLocationMode}.
+The \src{CLocationModeManager} contains a list of \src{CLocationMode}s where each \src{CLocationMode} provides the code for handling one extended-mode (like \linebreak \src{ExtendedMode.MAXIMIZED}). The manager also contains a map which stores the location of each \src{dockable} for each mode. When the user clicks on a button like ``minimize'', the location for the affected \src{dockable} is read from the map and given to the the \src{apply} method of the appropriate \src{CLocationMode}.
 
-Each of the existing \src{CLocationMode}s contains a set of \src{StationModeArea}s where each \src{StationModeArea} represents a \src{DockStation}. If \src{apply} is called, the call is forwarded to the best matching \src{StationModeArea}. The area then converts the properties to a format understandable by its \src{DockStation} and drops the dockable.
+Each of the existing \src{CLocationMode}s contains a set of \src{StationModeArea}s where each \src{StationModeArea} represents a \src{DockStation}. If \src{apply} is called, the call is forwarded to the best matching \src{StationModeArea}. The area then converts the properties to a format understandable by its \src{DockStation} and drops the \src{dockable}.
 
-Sounds easy enough, but some some stations can represent more than one extended-mode. For example the \src{SplitDockStation} (or \src{CGridArea}, \src{CWorkingArea}) can show ``normalized'' and ``maximized'' children. And if the user drops a ``normalized'' dockable onto a station which shows a ``maximized'' dockable, then the ``maximized'' dockable needs to be reset first. So a \src{SplitDockStation} needs two \src{StationModeArea}s which are assigned to different \src{CLocationMode}s, and these areas must know of a pending change befor it happens. There is a set of tools to handle these jobs:
+Sounds easy enough, but some some stations can represent more than one extended-mode. For example the \src{SplitDockStation} (or \src{CGridArea}, \linebreak \src{CWorkingArea}) can show ``normalized'' and ``maximized'' children. And if the user drops a ``normalized'' \src{dockable} onto a station which shows a ``maximized'' \src{dockable}, then the ``maximized'' \src{dockable} needs to be reset first. So a \src{SplitDockStation} needs two \src{StationModeArea}s which are assigned to different \src{CLocationMode}s, and these areas must know of a pending change befor it happens. There is a set of tools to handle these jobs:
 \begin{itemize}
  \item Any change of location or mode runs in a transaction. During a transaction most listeners of the framework are not informed about changes. This prevents code from the framwork or the client to interrupt the work. Stalled events are fired once the transaction is over and only if they are still valid. The \src{runTransaction} methods of the manager do all of this.
  \item \src{LocationModeListener}s can be added to any mode. Before an \src{apply} method is executed the listeners are called. Other modes may act before or cancel any action.
- \item And the \src{ChangeSet} can be used to store any dockable whose properties need an update.
+ \item And the \src{ChangeSet} can be used to store any \src{dockable} whose properties need an update.
 \end{itemize}
 
-The \src{CLocationModeManager} and its supportive classes do more: they decide which buttons to show on dockables, e.g. whether a ``minimize'' button is necessary. They decide what to if the user double-clicks on a title. They decide which element to maximize (the whole stack or just a single dockable). And they offer a lot of methods to query and change the current position of dockables.
+The \src{CLocationModeManager} and its supportive classes do more: they decide which buttons to show on \src{dockable}s, e.g. whether a ``minimize'' button is necessary. They decide what to if the user double-clicks on a title. They decide which element to maximize (the whole stack or just a single \src{dockable}). And they offer a lot of methods to query and change the current position of \src{dockable}s.
 
 \designbox{The whole mechanism around \src{CLocationModeManager} consists of roughly 50 classes and interfaces, some of them quite small, others quite large. It was introduced in version 1.0.8 as replacement of the outdated \src{StateManager}. Compared to the old mechanism the new one is much more complex and requires considerable more code. But it is also more flexibel, e.g. adding new implementations of \src{DockStation} or handling additional extended-modes was not possible with the old mechanism. }
 
