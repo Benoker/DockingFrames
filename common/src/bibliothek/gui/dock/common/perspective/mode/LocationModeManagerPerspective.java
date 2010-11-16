@@ -210,8 +210,8 @@ public class LocationModeManagerPerspective {
 	    			if( dockable instanceof SingleCDockablePerspective ){
 	    				id = control.getRegister().toSingleId( ((SingleCDockablePerspective)dockable).getUniqueId() );
 	    			}
-	    			else if( dockable instanceof MultipleCDockablePerspective<?>){
-	    				id = ((MultipleCDockablePerspective<?>)dockable).getUniqueId();
+	    			else if( dockable instanceof MultipleCDockablePerspective){
+	    				id = ((MultipleCDockablePerspective)dockable).getUniqueId();
 	    				if( id != null ){
 	    					// id == null should never happen
 	    					id = control.getRegister().toMultiId( id );
@@ -263,8 +263,8 @@ public class LocationModeManagerPerspective {
     					id = ((SingleCDockablePerspective)dockable).getUniqueId();
     					id = control.getRegister().toSingleId( id );
     				}
-    				else if( dockable instanceof MultipleCDockablePerspective<?> ){
-    					id = ((MultipleCDockablePerspective<?>)dockable).getUniqueId();
+    				else if( dockable instanceof MultipleCDockablePerspective ){
+    					id = ((MultipleCDockablePerspective)dockable).getUniqueId();
     					id = control.getRegister().toMultiId( id );
     				}
     				if( id != null ){

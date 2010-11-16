@@ -134,7 +134,7 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
     }
 
     public CommonMultipleDockableLayout getPerspectiveLayout( CommonElementPerspective element, Map<PerspectiveDockable, Integer> children ){
-    	MultipleCDockablePerspective<?> dockable = (MultipleCDockablePerspective<?>)element.getElement();
+    	MultipleCDockablePerspective dockable = (MultipleCDockablePerspective)element.getElement();
     	
     	MultipleCDockableLayout layout = dockable.getLayout();
         
@@ -150,9 +150,8 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
     
     @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.BUG, target=Todo.Version.VERSION_1_1_0,
     		description="does the working-area really work this way? Or can some working areas be missed?")
-    @SuppressWarnings("unchecked")
 	public void layoutPerspective( CommonElementPerspective perspective, CommonMultipleDockableLayout layout, Map<Integer, PerspectiveDockable> children ){
-    	MultipleCDockablePerspective<MultipleCDockableLayout> multiple = (MultipleCDockablePerspective<MultipleCDockableLayout>) perspective.getElement();
+    	MultipleCDockablePerspective multiple = (MultipleCDockablePerspective) perspective.getElement();
     	multiple.setLayout( layout.getLayout() );
         perspectiveIdentifiers.putDockable( layout.getId(), multiple );
         
@@ -184,7 +183,7 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
     }
     
     public CommonElementPerspective layoutPerspective( CommonMultipleDockableLayout layout, Map<Integer, PerspectiveDockable> children ){
-    	MultipleCDockablePerspective<?> perspective = new MultipleCDockablePerspective<MultipleCDockableLayout>( getID(), null );
+    	MultipleCDockablePerspective perspective = new MultipleCDockablePerspective( getID(), null );
     	layoutPerspective( perspective.intern(), layout, children );
     	return perspective.intern();
     }

@@ -65,9 +65,6 @@ public class StackDockPerspective implements PerspectiveDockable, PerspectiveSta
 		boolean found = false;
 		
 		for( PerspectiveDockable child : children ){
-			if( child.getParent() != null ){
-				throw new IllegalArgumentException( "child already has a parent" );
-			}
 			DockUtilities.ensureTreeValidity( this, child );
 			child.setParent( this );
 			dockables.dockables().add( child );

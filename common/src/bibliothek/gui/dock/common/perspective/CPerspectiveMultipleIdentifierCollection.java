@@ -39,7 +39,7 @@ import bibliothek.gui.dock.perspective.PerspectiveElement;
 public class CPerspectiveMultipleIdentifierCollection{
 	private CPerspective perspective;
 
-	private Map<String, MultipleCDockablePerspective<?>> ids = new HashMap<String, MultipleCDockablePerspective<?>>();
+	private Map<String, MultipleCDockablePerspective> ids = new HashMap<String, MultipleCDockablePerspective>();
 	
 	/**
 	 * Creates a new object
@@ -54,8 +54,8 @@ public class CPerspectiveMultipleIdentifierCollection{
 			PerspectiveElement element = iterator.next();
 			if( element instanceof CommonElementPerspective ){
 				CElementPerspective celement = ((CommonElementPerspective)element).getElement();
-				if( celement instanceof MultipleCDockablePerspective<?> ){
-					MultipleCDockablePerspective<?> dockable = (MultipleCDockablePerspective<?>)celement;
+				if( celement instanceof MultipleCDockablePerspective ){
+					MultipleCDockablePerspective dockable = (MultipleCDockablePerspective)celement;
 					if( dockable.getFactoryID().equals( factoryId ) && dockable.getUniqueId() != null ){
 						ids.put( dockable.getUniqueId(), dockable );
 					}
@@ -77,7 +77,7 @@ public class CPerspectiveMultipleIdentifierCollection{
 	 * @param element the element whose identifier is searched
 	 * @return the identifier, may be <code>null</code>
 	 */
-	public String getUniqueId( MultipleCDockablePerspective<?> element ){
+	public String getUniqueId( MultipleCDockablePerspective element ){
 		String id = element.getUniqueId();
 		if( id == null ){
 			String factory = element.getFactoryID();
@@ -89,7 +89,7 @@ public class CPerspectiveMultipleIdentifierCollection{
 	        }
 	        element.setUniqueId( id );
 		}
-		MultipleCDockablePerspective<?> old = ids.put( id, element );
+		MultipleCDockablePerspective old = ids.put( id, element );
 		if( old != null && old != element ){
 			throw new IllegalStateException( "unique identifier collision, id='" + id + "', old item='" + old + "', new item='" + element + "'");
 		}
@@ -101,7 +101,7 @@ public class CPerspectiveMultipleIdentifierCollection{
 	 * @param id the unique identifier of <code>perspective</code>
 	 * @param perspective the new perspective
 	 */
-	public void putDockable( String id, MultipleCDockablePerspective<?> perspective ){
+	public void putDockable( String id, MultipleCDockablePerspective perspective ){
 		ids.put( id, perspective );
 	}
 }

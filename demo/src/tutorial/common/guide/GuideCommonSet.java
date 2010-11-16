@@ -7,6 +7,7 @@ import tutorial.support.sets.TutorialSet;
 public class GuideCommonSet extends TutorialSet{
 	public GuideCommonSet(){
 		super( PerspectivesIntroduction.class,
-				PerspectivesMulti.class );
+				PerspectivesMulti.class,
+				PerspectivesHistory.class );
 	}
 }

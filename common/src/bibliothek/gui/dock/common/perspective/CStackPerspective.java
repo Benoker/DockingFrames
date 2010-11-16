@@ -33,7 +33,7 @@ import bibliothek.gui.dock.station.stack.StackDockPerspective;
  * This perspective represents a group of dockables.
  * @author Benjamin Sigg
  */
-public class CStackPerspective extends StackDockPerspective{
+public class CStackPerspective extends StackDockPerspective implements ShrinkablePerspectiveStation{
 	/**
 	 * Creates a new station.
 	 */
@@ -66,13 +66,7 @@ public class CStackPerspective extends StackDockPerspective{
 		}
 		return result;
 	}
-	
-	/**
-	 * Checks the number of children this perspective has. If the number of children is 0 or 1, then
-	 * this perspective replaces itself by its child in the of perspectives. 
-	 * @return the replacement of <code>this</code>, which is either <code>this</code>, the only
-	 * child of <code>this</code>, or <code>null</code>
-	 */
+
 	public PerspectiveDockable shrink(){
 		int count = getDockableCount();
 		if( count > 1 ){

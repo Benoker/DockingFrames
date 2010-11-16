@@ -41,7 +41,8 @@ import bibliothek.gui.dock.station.split.SplitDockPerspective.Leaf;
  * 	<li>Adding or removing a {@link CDockablePerspective} to this station may trigger a call to {@link CDockablePerspective#setWorkingArea(CStationPerspective)}, clients
  * can however first add/remove a dockable and then alter the working-area of the dockable to their likings.</li>
  * 	<li>Adding: the working-area of a child is only set to <code>this</code> if the working-area had a value of <code>null</code></li>
- * 	<li>Removing: the working-area of a child is only set to <code>null</code> if the working-area had a value of <code>this</code></li>
+ * 	<li>Removing: the working-area of a child is only set to <code>null</code> if the working-area had a value of <code>this</code> and if
+ * 	{@link #isAutoUnset()} returns <code>true</code>. </li>
  *  <li>This perspective recursively visits all dockables and stations when adding or removing a child.</li>
  * 	<li>{@link MultipleCDockablePerspective}: if the working-area is set, then it is automatically set in the {@link MultipleCDockable} as well.</li>
  * 	<li>{@link SingleCDockablePerspective}: if the working-area is set, then it is automatically set in the {@link SingleCDockable} as well.</li>
@@ -51,6 +52,8 @@ import bibliothek.gui.dock.station.split.SplitDockPerspective.Leaf;
  * @author Benjamin Sigg
  */
 public class CWorkingPerspective extends CGridPerspective{
+	private boolean autoUnset = false;
+	
 	/**
 	 * Creates a new working area.
 	 * @param id the unique identifier of this area
@@ -59,12 +62,33 @@ public class CWorkingPerspective extends CGridPerspective{
 		super( id );
 	}
 	
+	/**
+	 * Tells this station to set the {@link CDockablePerspective#setWorkingArea(CStationPerspective) working-area}
+	 * to <code>null</code> when a child of this station is removed. The default value of this property is
+	 * <code>false</code>.
+	 * @param autoUnset whether the working-area should be automatically set to <code>null</code>
+	 */
+	public void setAutoUnset( boolean autoUnset ){
+		this.autoUnset = autoUnset;
+	}
+	
+	/**
+	 * Tells whether the working-area of children is automatically set to <code>null</code> when the children
+	 * are removed from this station.
+	 * @return whether the working-area is set to <code>null</code>
+	 */
+	public boolean isAutoUnset(){
+		return autoUnset;
+	}
+	
 	@Override
 	protected CommonSplitDockPerspective create(){
 		CommonSplitDockPerspective result = super.create();
 		result.addListener( new EntryListener(){
 			public void removed( Entry parent, Entry child ){
-				remove( child );
+				if( isAutoUnset() ){
+					remove( child );
+				}
 			}
 			
 			public void added( Entry parent, Entry child ){
@@ -73,7 +97,9 @@ public class CWorkingPerspective extends CGridPerspective{
 			
 			public void modified( Leaf leaf, PerspectiveDockable oldDockable, PerspectiveDockable newDockable ){
 				if( oldDockable != null ){
-					remove( oldDockable );
+					if( isAutoUnset() ){
+						remove( oldDockable );
+					}
 				}
 				if( newDockable != null ){
 					add( newDockable );

@@ -37,11 +37,10 @@ import bibliothek.util.Path;
 /**
  * Representation of a {@link MultipleCDockable} in a perspective.
  * @author Benjamin Sigg
- * @param <L> the kind of layout data this element needs to describe its content
  */
-public class MultipleCDockablePerspective<L extends MultipleCDockableLayout> extends AbstractCDockablePerspective{
+public class MultipleCDockablePerspective extends AbstractCDockablePerspective{
 	private String factory;
-	private L layout;
+	private MultipleCDockableLayout layout;
 	private CommonElementPerspective intern;
 	private String uniqueId;
 	
@@ -53,7 +52,7 @@ public class MultipleCDockablePerspective<L extends MultipleCDockableLayout> ext
 	 * @param layout description of the content of this dockable, will be given to the {@link MultipleCDockableFactory}
 	 * that is accessed through <code>factoryId</code>
 	 */
-	public MultipleCDockablePerspective( String factoryId, L layout ){
+	public MultipleCDockablePerspective( String factoryId, MultipleCDockableLayout layout ){
 		this( factoryId, null, layout );
 	}
 	
@@ -66,7 +65,7 @@ public class MultipleCDockablePerspective<L extends MultipleCDockableLayout> ext
 	 * @param layout description of the content of this dockable, will be given to the {@link MultipleCDockableFactory}
 	 * that is accessed through <code>factoryId</code>
 	 */
-	public MultipleCDockablePerspective( String factoryId, String uniqueId, L layout ){
+	public MultipleCDockablePerspective( String factoryId, String uniqueId, MultipleCDockableLayout layout ){
 		if( factoryId == null ){
 			throw new IllegalArgumentException( "factoryId must not be null" );
 		}
@@ -119,7 +118,7 @@ public class MultipleCDockablePerspective<L extends MultipleCDockableLayout> ext
 	 * Sets the layout which describes this dockable.
 	 * @param layout the layout, not <code>null</code>
 	 */
-	public void setLayout( L layout ){
+	public void setLayout( MultipleCDockableLayout layout ){
 		if( layout == null ){
 			throw new IllegalArgumentException( "layout must not be null" );
 		}
@@ -130,7 +129,7 @@ public class MultipleCDockablePerspective<L extends MultipleCDockableLayout> ext
 	 * Gets the layout which describes the content of this dockable.
 	 * @return the layout, not <code>null</code>
 	 */
-	public L getLayout(){
+	public MultipleCDockableLayout getLayout(){
 		return layout;
 	}
 

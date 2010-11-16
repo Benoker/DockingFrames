@@ -92,6 +92,24 @@ public class CPerspective {
 	}
 	
 	/**
+	 * Stores the current location of all {@link CDockablePerspective}s currently known to this 
+	 * {@link CPerspective}. The location is stored in the {@link LocationHistory} of each
+	 * dockable.
+	 */
+	public void storeLocations(){
+		Iterator<PerspectiveElement> elements = elements();
+		while( elements.hasNext() ){
+			PerspectiveElement dockable = elements.next();
+			if( dockable instanceof CommonElementPerspective ){
+				CDockablePerspective cdockable = ((CommonElementPerspective)dockable).getElement().asDockable();
+				if( cdockable != null ){
+					storeLocation( cdockable );
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Determines the current location of <code>dockable</code> and stores that location
 	 * in a map using the {@link ExtendedMode} of the {@link Location} as key. If the
 	 * user later clicks on one of the buttons like "minimize" or "externalize" this 
@@ -190,6 +208,25 @@ public class CPerspective {
 		CStationPerspective station = getRoot( id );
 		if( station != null && station.getClass() != type ){
 			throw new IllegalStateException( "present root station '" + id + "' is of type '" + station.getClass() + "' but should be of type '" + type + "'" );
+		}
+	}
+	
+	/**
+	 * Searches all occurances of a {@link ShrinkablePerspectiveStation} and calls
+	 * {@link ShrinkablePerspectiveStation#shrink() shrink} on them.
+	 */
+	public void shrink(){
+		List<ShrinkablePerspectiveStation> elements = new ArrayList<ShrinkablePerspectiveStation>();
+		Iterator<PerspectiveElement> iter = elements();
+		while( iter.hasNext() ){
+			PerspectiveElement next = iter.next();
+			if( next instanceof ShrinkablePerspectiveStation ){
+				elements.add( (ShrinkablePerspectiveStation)next );
+			}
+		}
+		
+		for( ShrinkablePerspectiveStation station : elements ){
+			station.shrink();
 		}
 	}
 	

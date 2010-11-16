@@ -1719,7 +1719,9 @@ public class CControl {
     }
 
     /**
-     * Adds a dockable to this control. The dockable can be made visible afterwards.
+     * Adds a dockable to this control. The dockable can be made visible afterwards. A random identifier 
+     * is assigned to <code>dockable</code>, clients can also use {@link #addDockable(String, MultipleCDockable)} if
+     * they want to specify the identifier themselves.
      * @param <M> the type of the new element
      * @param dockable the new element to show
      * @return <code>dockable</code>
@@ -1765,7 +1767,8 @@ public class CControl {
     /**
      * Adds a dockable to this control. The dockable can be made visible afterwards.
      * This method will throw an exception when the unique identifier is already
-     * in use. Clients should use {@link #addDockable(MultipleCDockable)}.
+     * in use. Clients can also use {@link #addDockable(MultipleCDockable)} if they want to assign a 
+     * random identifier to <code>dockable</code>.
      * @param <M> the type of the new element
      * @param uniqueId id the unique id of the new element
      * @param dockable the new element to show
