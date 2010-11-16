@@ -25,7 +25,9 @@
  */
 package bibliothek.gui.dock.station.screen;
 
-import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
 
@@ -76,16 +78,23 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
 	 * @return the current mode
 	 */
 	public boolean isFullscreen( ScreenDockWindow wrapper, Window window ){
-		GraphicsConfiguration configuration = window.getGraphicsConfiguration();
-		if( configuration == null ){
+		if( wrapper.getNormalBounds() == null ){
 			return false;
 		}
 		
-		Rectangle fullscreen = configuration.getBounds();
+		GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		
 		Rectangle current = window.getBounds();
 		current = new Rectangle( current.x - 1, current.y - 1, current.width + 2, current.height + 2 );
 		
-		return current.contains( fullscreen ) && wrapper.getNormalBounds() != null;
+		for( GraphicsDevice device : environment.getScreenDevices() ){
+			Rectangle fullscreen = device.getDefaultConfiguration().getBounds();
+			if( current.contains( fullscreen ) ){
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	public void setFullscreen( ScreenDockWindow window, boolean fullscreen ) {
@@ -109,9 +118,8 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
 	public void setFullscreen( ScreenDockWindow wrapper, Window window, boolean fullscreen ){
 		if( isFullscreen( wrapper, window ) != fullscreen ){
 			if( fullscreen ){
-				GraphicsConfiguration configuration = window.getGraphicsConfiguration();
-				if( configuration != null ){
-					Rectangle bounds = configuration.getBounds();
+				Rectangle bounds = findBestFullscreenBounds( window );
+				if( bounds != null ){
 					wrapper.setNormalBounds( wrapper.getWindowBounds() );
 					window.setBounds( bounds.x-1, bounds.y-1, bounds.width+2, bounds.height+2 );
 				}
@@ -124,5 +132,54 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Tries to find the boundaries that match the fullscreen-criterium and that match the current
+	 * location of <code>window</code>.
+	 * @param window some window which is not yet in fullscreen mode
+	 * @return boundaries for fullscreen mode or <code>null</code> if not boundaries could be found
+	 */
+	protected Rectangle findBestFullscreenBounds( Window window ){
+		Rectangle current = window.getBounds();
+		GraphicsDevice[] devices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+		
+		// try easy hit
+		for( GraphicsDevice device : devices ){
+			Rectangle bounds = device.getDefaultConfiguration().getBounds();
+			if( bounds.contains( current )){
+				return bounds;
+			}
+		}
+		
+		// check center of window
+		Point center = new Point( current.x + current.width/2, current.y + current.height/2 );
+		GraphicsDevice best = null;
+		int bestDist = 0;
+		
+		for( GraphicsDevice device : devices ){
+			Rectangle bounds = device.getDefaultConfiguration().getBounds();
+			
+			int dist = dist( bounds.x, bounds.width, center.x ) + dist( bounds.y, bounds.height, center.y );
+			if( best == null || dist < bestDist ){
+				best = device;
+				bestDist = dist;
+			}
+		}
+		
+		if( best != null ){
+			return best.getDefaultConfiguration().getBounds();
+		}
+		return null;
+	}
+	
+	private int dist( int x, int width, int pos ){
+		if( pos < x ){
+			return x - pos;
+		}
+		if( pos > x + width ){
+			return pos - x - width;
+		}
+		return 0;
 	}
 }
