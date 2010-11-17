@@ -270,44 +270,44 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
         });
     }
 
-    @Override
-    protected void updateColors() {
-        DockController controller = getController();
-        if( controller != null && getColorScheme() != null ){
-            controller.getColors().lockUpdate();
-
-            super.updateColors();
-
-            updateColor( "stack.tab.border", null );
-            updateColor( "stack.tab.border.selected", null );
-            updateColor( "stack.tab.border.selected.focused", null );
-            updateColor( "stack.tab.border.selected.focuslost", null );
-
-            updateColor( "stack.tab.top", null );
-            updateColor( "stack.tab.top.selected", null );
-            updateColor( "stack.tab.top.selected.focused", null );
-            updateColor( "stack.tab.top.selected.focuslost", null );
-
-            updateColor( "stack.tab.bottom", null );
-            updateColor( "stack.tab.bottom.selected", null );
-            updateColor( "stack.tab.bottom.selected.focused", null );
-            updateColor( "stack.tab.bottom.selected.focuslost", null );
-
-            updateColor( "stack.tab.text", null );
-            updateColor( "stack.tab.text.selected", null );
-            updateColor( "stack.tab.text.selected.focused", null );
-            updateColor( "stack.tab.text.selected.focuslost", null );
-
-            updateColor( "stack.border", null );
-
-            updateColor( "selection.border", null );
-
-            controller.getColors().unlockUpdate();
-        }
-        else{
-            super.updateColors();
-        }
-    }
+//    @Override
+//    protected void updateColors() {
+//        DockController controller = getController();
+//        if( controller != null && getColorScheme() != null ){
+//            controller.getColors().lockUpdate();
+//
+//            super.updateColors();
+//
+//            updateColor( "stack.tab.border", null );
+//            updateColor( "stack.tab.border.selected", null );
+//            updateColor( "stack.tab.border.selected.focused", null );
+//            updateColor( "stack.tab.border.selected.focuslost", null );
+//
+//            updateColor( "stack.tab.top", null );
+//            updateColor( "stack.tab.top.selected", null );
+//            updateColor( "stack.tab.top.selected.focused", null );
+//            updateColor( "stack.tab.top.selected.focuslost", null );
+//
+//            updateColor( "stack.tab.bottom", null );
+//            updateColor( "stack.tab.bottom.selected", null );
+//            updateColor( "stack.tab.bottom.selected.focused", null );
+//            updateColor( "stack.tab.bottom.selected.focuslost", null );
+//
+//            updateColor( "stack.tab.text", null );
+//            updateColor( "stack.tab.text.selected", null );
+//            updateColor( "stack.tab.text.selected.focused", null );
+//            updateColor( "stack.tab.text.selected.focuslost", null );
+//
+//            updateColor( "stack.border", null );
+//
+//            updateColor( "selection.border", null );
+//
+//            controller.getColors().unlockUpdate();
+//        }
+//        else{
+//            super.updateColors();
+//        }
+//    }
 
     @Override
     public void uninstall( DockController controller ){

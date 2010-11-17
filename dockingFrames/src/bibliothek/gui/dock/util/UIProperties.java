@@ -25,18 +25,18 @@
  */
 package bibliothek.gui.dock.util;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 
 import bibliothek.gui.DockController;
 import bibliothek.util.Path;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Version;
 
 /**
  * A map containing which contains some string-values pairs and so called
@@ -46,14 +46,24 @@ import bibliothek.util.Todo.Version;
  * @param <U> The kind of observers used to read values from this map
  * @param <B> The kind of bridges used to transfer values <code>V</code> to observers <code>U</code>
  */
-@Todo(compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.MAJOR, target=Version.VERSION_1_1_0, 
-		description="Use typesafe keys instead of Path")
 public class UIProperties<V, U extends UIValue<V>, B extends UIBridge<V, U>> {
     /** the map of providers known to this manager */
-    private Map<Path, PriorityValue<B>> bridges = new HashMap<Path, PriorityValue<B>>();
+    private Map<Path, UIPriorityValue<B>> bridges = new HashMap<Path, UIPriorityValue<B>>();
+    
+    /** how often some bridges are observed */
+    private Map<Path, Integer> bridgesAccess = new HashMap<Path, Integer>();
     
     /** the map of resources that have been set */
-    private Map<String, PriorityValue<V>> resources = new HashMap<String, PriorityValue<V>>();
+    private Map<String, UIPriorityValue<V>> resources = new HashMap<String, UIPriorityValue<V>>();
+    
+    /** how often some resources are observed */
+    private Map<String, Integer> resourcesAccess = new HashMap<String, Integer>();
+    
+    /** all the backup schemes for missing values (resources and bridges) */
+    private PriorityValue<UIScheme<V, U, B>> schemes = new PriorityValue<UIScheme<V,U,B>>();
+    
+    /** all the listeners to the {@link #schemes} */
+    private PriorityValue<UISchemeListener<V, U, B>> schemeListeners = new PriorityValue<UISchemeListener<V,U,B>>();
     
     /** a list of all observers */
     private List<Observer> observers = new LinkedList<Observer>();
@@ -101,6 +111,188 @@ public class UIProperties<V, U extends UIValue<V>, B extends UIBridge<V, U>> {
     }
     
     /**
+     * Gets the {@link UIScheme} that is used to fill up missing values in
+     * the level <code>priority</code>.
+     * @param priority some priority
+     * @return the scheme of that level or <code>null</code>
+     * @see #setScheme(Priority, UIScheme)
+     */
+    public UIScheme<V, U, B> getScheme( Priority priority ){
+    	return schemes.get( priority );
+    }
+    
+    /**
+     * Sets or removes an {@link UIScheme} for the level <code>priority</code> of this
+     * {@link UIProperties}. The scheme will be used to fill missing values of this properties. Since
+     * a "missing resource" cannot be removed, any attempt to delete a resource created by a scheme
+     * must fail. 
+     * @param priority the level which will be provided with new values from <code>scheme</code>.
+     * @param scheme the new scheme or <code>null</code>
+     */
+    public void setScheme( final Priority priority, UIScheme<V, U, B> scheme ){
+    	UIScheme<V, U, B> old = schemes.get( priority );
+    	schemes.set( priority, scheme );
+    	
+    	if( old != scheme ){
+    		if( old != null ){
+    			old.removeListener( schemeListeners.get( priority ) );
+    			
+	    		int count = 0;
+	    		for( Priority p : Priority.values() ){
+	    			if( schemes.get( p ) == old ){
+	    				count++;
+	    			}
+	    		}
+	    		if( count == 0 ){
+	    			old.uninstall( this );
+	    		}
+    		}
+    		
+    		if( scheme != null ){
+	    		int count = 0;
+	    		for( Priority p : Priority.values() ){
+	    			if( schemes.get( p ) == scheme ){
+	    				count++;
+	    			}
+	    		}
+	    		if( count == 1 ){
+	    			scheme.install( this );
+	    		}
+	    		
+	    		if( schemeListeners.get( priority ) == null ){	    		
+	    			schemeListeners.set( priority, new UISchemeListener<V, U, B>(){
+	    				public void changed( UISchemeEvent<V, U, B> event ){
+		    				schemeUpdate( priority, event );	
+	    				}
+					});
+	    		}
+	    		
+	    		scheme.addListener( schemeListeners.get( priority ) );
+    		}
+    		
+    		fullSchemeUpdate( priority );
+    	}
+    }
+    
+    private void fullSchemeUpdate( Priority priority ){
+    	schemeUpdate( priority, new UISchemeEvent<V,U,B>(){
+			public Collection<Path> changedBridges( Set<Path> names ){
+				return null;
+			}
+			public Collection<String> changedResources( Set<String> names ){
+				return null;
+			}
+			public UIScheme<V,U,B> getScheme(){
+				return null;
+			}
+		});
+    }
+    
+    private void schemeUpdate( Priority priority, UISchemeEvent<V, U, B> event ){
+    	try{
+    		lockUpdate();
+    		
+    		// collect changes
+    		Set<String> usedResources = getAllUsedResources();
+    		Collection<String> changedResources = event.changedResources( usedResources );
+    		if( changedResources == null ){
+    			changedResources = usedResources;
+    		}
+    		
+    		Set<Path> usedBridges = getAllUsedBridges();
+    		Collection<Path> changedBridges = event.changedBridges( usedBridges );
+    		if( changedBridges == null ){
+    			changedBridges = usedBridges;
+    		}
+    		
+    		UIScheme<V, U, B> scheme = schemes.get( priority );
+    		
+    		// resources
+    		for( String name : usedResources ){
+    			UIPriorityValue<V> value = resources.get( name );
+    			V replacement = null;
+    			if( scheme != null ){
+    				replacement = scheme.getResource( name, this );
+    			}
+    			
+    			if( value == null ){
+    				if( replacement != null ){
+    					value = new UIPriorityValue<V>();
+    					value.set( priority, replacement, scheme );
+    					if( !isRemoveable( name, value )){
+    						resources.put( name, value );
+    					}
+    				}
+    			}
+    			else{
+    				if( value.getScheme( priority ) == null ){
+    					if( value.get( priority ) == null ){
+    						value.set( priority, replacement, scheme );
+    					}
+    				}
+    				else{
+    					value.set( priority, replacement, scheme );
+    				}
+    				if( isRemoveable( name, value )){
+    					resources.remove( name );
+    				}
+    			}
+    		}
+    		
+    		// bridges
+    		for( Path name : usedBridges ){
+    			UIPriorityValue<B> value = bridges.get( name );
+    			B replacement = null;
+    			if( scheme != null ){
+    				replacement = scheme.getBridge( name, this );
+    			}
+    			
+    			if( value == null ){
+    				if( replacement != null ){
+    					value = new UIPriorityValue<B>();
+    					value.set( priority, replacement, scheme );
+    					if( !isRemoveable( name, value )){
+    						bridges.put( name, value );
+    					}
+    				}
+    			}
+    			else{
+    				if( value.getScheme( priority ) == null ){
+    					if( value.get( priority ) == null ){
+    						value.set( priority, replacement, scheme );
+    					}
+    				}
+    				else{
+    					value.set( priority, replacement, scheme );
+    				}
+    				if( isRemoveable( name, value )){
+    					bridges.remove( name );
+    				}
+    			}
+    		}
+    	}
+    	finally{
+    		unlockUpdate();
+    	}
+    }
+    
+    private Set<String> getAllUsedResources(){
+    	Set<String> result = new HashSet<String>();
+    	for( Observer observer : observers ){
+    		result.add( observer.id );
+    	}
+    	return result;
+    }
+    
+    private Set<Path> getAllUsedBridges(){
+    	Set<Path> result = new HashSet<Path>();
+    	for( Observer observer : observers ){
+    		result.add( observer.path );
+    	}
+    	return result;
+    }
+    
+    /**
      * Adds a new bridge between this {@link UIProperties} and a set of
      * {@link UIValue}s that have a certain type.
      * @param priority the importance of the new provider
@@ -115,13 +307,13 @@ public class UIProperties<V, U extends UIValue<V>, B extends UIBridge<V, U>> {
         if( bridge == null )
             throw new IllegalArgumentException( "bridge must not be null" );
         
-        PriorityValue<B> value = bridges.get( path );
+        UIPriorityValue<B> value = bridges.get( path );
         if( value == null ){
-            value = new PriorityValue<B>();
+            value = createBridge( path );
             bridges.put( path, value );
         }
         
-        if( value.set( priority, bridge )){
+        if( value.set( priority, bridge, null )){
             if( updateLock == 0 ){
                 for( Observer check : observers ){
                     check.resetBridge();
@@ -132,16 +324,26 @@ public class UIProperties<V, U extends UIValue<V>, B extends UIBridge<V, U>> {
     
 
     /**
-     * Removes the bridge that handles the {@link UIValue}s of kind <code>path</code>.
+     * Removes the bridge that handles the {@link UIValue}s of kind <code>path</code>. Please note
+     * that bridges created by the current {@link UIScheme} cannot be removed. Also note that the removed bridge
+     * may be replaced by a bridge created by the current {@link UIScheme}.
      * @param priority the importance of the bridge 
      * @param path the path of the bridge
      */
     public void unpublish( Priority priority, Path path ){
-        PriorityValue<B> value = bridges.get( path );
-        if( value != null ){
-            boolean change = value.set( priority, null );
-            if( value.get() == null )
+        UIPriorityValue<B> value = bridges.get( path );
+        if( value != null && value.getScheme( priority ) == null ){
+        	UIScheme<V,U,B> scheme = schemes.get( priority );
+        	B bridge = null;
+        	
+        	if( scheme != null ){
+        		bridge = scheme.getBridge( path, this );
+        	}
+        	
+            boolean change = value.set( priority, bridge, scheme );
+            if( isRemoveable( path, value ) ){
                 bridges.remove( path );
+            }
             
             if( change && updateLock == 0 ){
                 for( Observer check : observers ){
@@ -152,22 +354,35 @@ public class UIProperties<V, U extends UIValue<V>, B extends UIBridge<V, U>> {
     }
     
     /**
-     * Searches for all occurrences of <code>bridge</code> and removes them.
+     * Searches for all occurrences of <code>bridge</code> and removes them. Please note
+     * that bridges created by the current {@link UIScheme} cannot be removed. Also note that the removed bridge
+     * may be replaced by a bridge created by the current {@link UIScheme}.
      * All {@link UIValue}s that used <code>bridge</code> are redistributed.
      * @param priority the importance of the bridge 
      * @param bridge the bridge to remove
      */
     public void unpublish( Priority priority, B bridge ){
-        Iterator<PriorityValue<B>> iterator = bridges.values().iterator();
+        Iterator<Map.Entry<Path, UIPriorityValue<B>>> iterator = bridges.entrySet().iterator();
         boolean change = false;
         
+        UIScheme<V, U, B> scheme = schemes.get( priority );
+        
         while( iterator.hasNext() ){
-            PriorityValue<B> next = iterator.next();
+        	Map.Entry<Path, UIPriorityValue<B>> entry = iterator.next();
+        	UIPriorityValue<B> next = entry.getValue();
+        	
             if( next.get( priority ) == bridge ){
-                change = next.set( priority, null ) || change;
-                if( next.get() == null ){
-                    iterator.remove();
-                }
+            	if( next.getScheme( priority ) == null ){
+            		B replacement = null;
+            		if( scheme != null ){
+            			replacement = scheme.getBridge( entry.getKey(), this );
+            		}
+            		
+	                change = next.set( priority, replacement, scheme ) || change;
+	                if( isRemoveable( entry.getKey(), next ) ){
+	                    iterator.remove();
+	                }
+            	}
             }
         }
         
@@ -179,11 +394,39 @@ public class UIProperties<V, U extends UIValue<V>, B extends UIBridge<V, U>> {
     }
 
     /**
+     * Tells whether the bridge with id <code>path</code> is observed by at least one {@link UIValue}.
+     * @param path the name of some {@link UIBridge}
+     * @return if <code>path</code> is observed
+     */
+    public boolean isObserved( Path path ){
+    	return bridgesAccess.containsKey( path );
+    }
+    
+    private boolean isRemoveable( Path path, UIPriorityValue<B> value ){
+    	if( value.getValue() == null ){
+    		return true;
+    	}
+    	if( !isObserved( path )){
+    		return true;
+    	}
+    	return false;
+    }
+    
+    private void checkRemove( Path path ){
+    	UIPriorityValue<B> value = bridges.get( path );
+    	if( value != null ){
+	    	if( isRemoveable( path, value )){
+	    		bridges.remove( path );
+	    	}
+    	}
+    }
+    
+    /**
      * Installs a new {@link UIValue}. The value will be informed about
      * any change in the resource <code>id</code>.
      * @param id the id of the resource that <code>value</code> will monitor
      * @param path the kind of the value
-     * @param value the new value
+     * @param value the new observer
      */
     public void add( String id, Path path, U value ){
         if( path == null )
@@ -195,6 +438,7 @@ public class UIProperties<V, U extends UIValue<V>, B extends UIBridge<V, U>> {
         
         Observer combination = new Observer( id, path, value );
         observers.add( combination );
+        combination.resetAll();
     }
     
     /**
@@ -207,10 +451,38 @@ public class UIProperties<V, U extends UIValue<V>, B extends UIBridge<V, U>> {
             Observer next = list.next();
             if( next.getValue() == value ){
                 list.remove();
-                next.setBridge( null, false );
+                next.destroy();
                 return;
             }
         }
+    }
+    
+    /**
+     * Tells whether the value with id <code>id</code> is observed by at least one {@link UIValue}.
+     * @param id the name of some value
+     * @return if <code>id</code> is observed
+     */
+    public boolean isObserved( String id ){
+    	return resourcesAccess.containsKey( id );
+    }
+    
+    private boolean isRemoveable( String id, UIPriorityValue<V> value ){
+    	if( value.getValue() == null ){
+    		return true;
+    	}
+    	if( !isObserved( id )){
+    		return true;
+    	}
+    	return false;
+    }
+    
+    private void checkRemove( String id ){
+    	UIPriorityValue<V> value = resources.get( id );
+    	if( value != null ){
+	    	if( isRemoveable( id, value )){
+	    		resources.remove( id );
+	    	}
+    	}
     }
     
     /**
@@ -222,9 +494,16 @@ public class UIProperties<V, U extends UIValue<V>, B extends UIBridge<V, U>> {
      */
     protected B getBridgeFor( Path path ){
         while( path != null ){
-            PriorityValue<B> bridge = bridges.get( path );
+            UIPriorityValue<B> bridge = bridges.get( path );
+            if( bridge == null ){
+            	bridge = createBridge( path );
+            	if( !isRemoveable( path, bridge )){
+            		bridges.put( path, bridge );
+            	}
+            }
+            
             if( bridge != null ){
-                B result = bridge.get();
+                B result = bridge.getValue();
                 if( result != null )
                     return result;
             }
@@ -236,31 +515,41 @@ public class UIProperties<V, U extends UIValue<V>, B extends UIBridge<V, U>> {
     }
     
     /**
-     * Sets a new resource and informs all {@link UIValue} that are observing
-     * <code>id</code> about the change.
+     * Sets a new resource and informs all {@link UIValue} that are observing <code>id</code> about the change.
+     * Please note that values created by an {@link UIScheme} cannot be removed, and that a removed value may
+     * be replaced by a value of an {@link UIScheme}.
      * @param priority the importance of this value
-     * @param id the id of the color
-     * @param resource the new resource
+     * @param id the name of the value
+     * @param resource the new resource, can be <code>null</code>
      */
     public void put( Priority priority, String id, V resource ){
-        PriorityValue<V> value = resources.get( id );
-        if( value == null ){
-            value = new PriorityValue<V>();
+        UIPriorityValue<V> value = resources.get( id );
+        if( value == null && resource != null ){
+            value = createResource( id );
             resources.put( id, value );
         }
         
-        if( value.set( priority, resource ) ){
-            if( updateLock == 0 ){
-                for( Observer observer : observers ){
-                    if( observer.id.equals( id )){
-                        observer.update( resource );
-                    }
-                }
-            }
+        if( value != null ){
+        	UIScheme<V, U, B> scheme = null;
+        	if( resource == null ){
+        		scheme = schemes.get( priority );
+        		resource = scheme.getResource( id, this );
+        	}
+        	
+	        if( value.set( priority, resource, scheme ) ){
+	            if( updateLock == 0 ){
+	                for( Observer observer : observers ){
+	                    if( observer.id.equals( id )){
+	                        observer.update( resource );
+	                    }
+	                }
+	            }
+	        }
+	        
+	        if( isRemoveable( id, value ) ){
+	            resources.remove( id );
+	        }
         }
-        
-        if( value.get() == null )
-            resources.remove( id );
     }
     
     /**
@@ -270,29 +559,57 @@ public class UIProperties<V, U extends UIValue<V>, B extends UIBridge<V, U>> {
      * @see #put(Priority, String, Object)
      */
     public V get( String id ){
-        PriorityValue<V> value = resources.get( id );
-        return value == null ? null : value.get();
+        UIPriorityValue<V> value = resources.get( id );
+        if( value == null ){
+        	value = createResource( id );
+        	if( !isRemoveable( id, value )){
+        		resources.put( id, value );
+        	}
+        }
+        
+        return value == null ? null : value.getValue();
     }
     
     /**
-     * Removes all values that stored under the given priority.
+     * Removes all values that stored under the given priority. Values created by an {@link UIScheme} are
+     * not affected by this call.
      * @param priority the priority whose elements should be removed
      */
     public void clear( Priority priority ){
-        Iterator<PriorityValue<V>> colorIterator = resources.values().iterator();
-        while( colorIterator.hasNext() ){
-            PriorityValue<V> value = colorIterator.next();
-            value.set( priority, null );
-            if( value.get() == null )
-                colorIterator.remove();
-        }
-        
-        Iterator<PriorityValue<B>> providerIterator = bridges.values().iterator();
-        while( providerIterator.hasNext() ){
-            PriorityValue<B> value = providerIterator.next();
-            value.set( priority, null );
-            if( value.get() == null )
-                providerIterator.remove();
+    	UIScheme<V, U, B> scheme = schemes.get( priority );
+    	
+    	Iterator<Map.Entry<String, UIPriorityValue<V>>> resources = this.resources.entrySet().iterator();
+    	while( resources.hasNext() ){
+    		Map.Entry<String, UIPriorityValue<V>> entry = resources.next();
+    		UIPriorityValue<V> value = entry.getValue();
+    		
+    		if( value.getScheme( priority ) == null ){
+    			V replacement = null;
+    			if( scheme != null ){
+    				replacement = scheme.getResource( entry.getKey(), this );
+    			}
+    			value.set( priority, replacement, scheme );
+        		if( isRemoveable( entry.getKey(), value )){
+        			resources.remove();
+        		}
+    		}
+    	}
+    	
+    	Iterator<Map.Entry<Path, UIPriorityValue<B>>> bridges = this.bridges.entrySet().iterator();
+        while( bridges.hasNext() ){
+        	Map.Entry<Path, UIPriorityValue<B>> entry = bridges.next();
+    		UIPriorityValue<B> value = entry.getValue();
+    		
+    		if( value.getScheme( priority ) == null ){
+    			B replacement = null;
+    			if( scheme != null ){
+    				replacement = scheme.getBridge( entry.getKey(), this );
+    			}
+    			value.set( priority, replacement, scheme );
+        		if( isRemoveable( entry.getKey(), value )){
+        			bridges.remove();
+        		}
+    		}
         }
         
         if( updateLock == 0 ){
@@ -301,7 +618,50 @@ public class UIProperties<V, U extends UIValue<V>, B extends UIBridge<V, U>> {
             }
         }
     }
-
+    
+    /**
+     * Sets up a new {@link PriorityValue} for the bridge with name <code>path</code>, the 
+     * {@link PriorityValue} is pre-filled with the values of all the schemes known to this properties.
+     * @param path the path of some bridge
+     * @return the new filled value
+     */
+    private UIPriorityValue<B> createBridge( Path path ){
+    	UIPriorityValue<B> result = new UIPriorityValue<B>();
+    	
+    	for( Priority priority : Priority.values() ){
+    		UIScheme<V, U, B> scheme = schemes.get( priority );
+    		if( scheme != null ){
+    			B value = scheme.getBridge( path, this );
+    			if( value != null ){
+    				result.set( priority, value, scheme );
+    			}
+    		}
+    	}
+    	
+    	return result;
+    }
+    
+    /**
+     * Creates a new {@link PriorityValue} that is set up with the resources of the current {@link UIScheme}s.
+     * @param name the name of the value
+     * @return the new value
+     */
+    private UIPriorityValue<V> createResource( String name ){
+    	UIPriorityValue<V> result = new UIPriorityValue<V>();
+    	
+    	for( Priority priority : Priority.values() ){
+    		UIScheme<V, U, B> scheme = schemes.get( priority );
+    		if( scheme != null ){
+    			V value = scheme.getResource( name, this );
+    			if( value != null ){
+    				result.set( priority, value, scheme );
+    			}
+    		}
+    	}
+    	
+    	return result;
+    }
+    
     /**
      * Represents the combination of a resource, an {@link UIValue} and its 
      * {@link UIBridge}.
@@ -328,7 +688,48 @@ public class UIProperties<V, U extends UIValue<V>, B extends UIBridge<V, U>> {
             this.path = path;
             this.value = value;
             
-            resetAll();
+            Integer count = bridgesAccess.get( path );
+            if( count == null ){
+            	count = 1;
+            }
+            else{
+            	count = count+1;
+            }
+            bridgesAccess.put( path, count );
+            
+            count = resourcesAccess.get( id );
+            if( count == null ){
+            	count = 1;
+            }
+            else{
+            	count = count+1;
+            }
+            resourcesAccess.put( id, count );
+        }
+        
+        /**
+         * Tells this observer to release resources.
+         */
+        public void destroy(){
+        	setBridge( null, false );
+        	
+        	Integer count = bridgesAccess.get( path );
+            if( count == 1 ){
+            	bridgesAccess.remove( path );
+            	checkRemove( path );
+            }
+            else{
+            	bridgesAccess.put( path, count-1 );
+            }
+            
+            count = resourcesAccess.get( id );
+            if( count == 1 ){
+            	resourcesAccess.remove( id );
+            	checkRemove( id );
+            }
+            else{
+            	resourcesAccess.put( id, count-1 );
+            }
         }
         
         /**
@@ -360,9 +761,9 @@ public class UIProperties<V, U extends UIValue<V>, B extends UIBridge<V, U>> {
         /**
          * Sets the {@link UIBridge} of this <code>Observer</code>.
          * @param bridge the new bridge, can be <code>null</code>
-         * @param force if <code>true</code>, than an update of the color will
+         * @param force if <code>true</code>, than an update of the resources will
          * be done anyway. Otherwise an update will only be done if a new
-         * provider is set.
+         * bridge is set.
          */
         public void setBridge( B bridge, boolean force ) {
             if( this.bridge != bridge ){

@@ -27,15 +27,12 @@ package bibliothek.gui.dock.themes;
 
 import java.awt.Color;
 
-import javax.swing.LookAndFeel;
-
-import bibliothek.gui.dock.util.Priority;
-import bibliothek.gui.dock.util.color.ColorManager;
+import bibliothek.gui.dock.util.UIScheme;
+import bibliothek.gui.dock.util.color.ColorBridge;
 import bibliothek.gui.dock.util.color.DockColor;
 import bibliothek.gui.dock.util.extension.ExtensionName;
-import bibliothek.gui.dock.util.laf.LookAndFeelColors;
-import bibliothek.util.Todo;
 import bibliothek.util.Path;
+import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Version;
 
@@ -47,7 +44,7 @@ import bibliothek.util.Todo.Version;
  */
 @Todo(priority=Todo.Priority.MAJOR, compatibility=Compatibility.BREAK_MINOR, target=Version.VERSION_1_1_0,
 		description="The ColorManager should know of ColorSchemes, the method \'transmitAll\' will be removed")
-public interface ColorScheme {
+public interface ColorScheme extends UIScheme<Color, DockColor, ColorBridge> {
 	/**
 	 * The name used in a {@link ExtensionName} to ask for an additional {@link ColorScheme}. The
 	 * additional {@link ColorScheme}s will be applied after the standard scheme was applied. This
@@ -62,35 +59,10 @@ public interface ColorScheme {
 	 */
 	public static final String COLOR_SCHEME_PARAMETER = "scheme";
 	
-    /**
-     * Searches for a color that can be used for the identifier <code>id</code>.
-     * @param id an identifier of some color
-     * @return some color or <code>null</code>
-     */
-    public Color getColor( String id );
-    
-    /**
-     * Searches for a factory for a bridge that can be used for a specific
-     * kind of {@link DockColor}.
-     * @param kind the kind of color the provider should support 
-     * @return some a factory for a bridge or <code>null</code>
-     */
-    public ColorBridgeFactory getBridgeFactory( Path kind );
-    
-    /**
-     * Transmits all values in this scheme to <code>manager</code>.
-     * @param priority the priority to use when registering colors
-     * and providers.
-     * @param manager the manager to fill
-     */
-    public void transmitAll( Priority priority, ColorManager manager );
-    
-    /**
-     * Called when the {@link LookAndFeel} or a color of the
-     * {@link LookAndFeelColors} changed and this scheme
-     * perhaps needs to update its colors.
-     * @return <code>true</code> if anything changed, <code>false</code>
-     * if this scheme was not changed.
-     */
-    public boolean updateUI();
+//    /**
+//     * Called when the {@link LookAndFeel} or a color of the
+//     * {@link LookAndFeelColors} changed and this scheme
+//     * perhaps needs to update its colors.
+//     */
+//    public void updateUI();
 }

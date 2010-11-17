@@ -182,135 +182,135 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
         converter.putTheme( ActionType.SEPARATOR, ViewTarget.TITLE, null );
     }
 
-    @Override
-    protected void updateColors() {
-        DockController controller = getController();
-        if( controller != null && getColorScheme() != null ){
-
-            controller.getColors().lockUpdate();
-
-            super.updateColors();
-
-            updateColor( "tab.border.active", null );
-
-            // stack
-            updateColor( "stack.tab.background.top.mouse", null );
-            updateColor( "stack.tab.background.bottom.mouse", null );
-            updateColor( "stack.tab.border.mouse", null );
-            updateColor( "stack.tab.foreground.mouse", null );
-
-            updateColor( "stack.tab.background.top", null );
-            updateColor( "stack.tab.background.bottom", null );
-            updateColor( "stack.tab.border", null );
-            updateColor( "stack.tab.foreground", null );
-
-            updateColor( "stack.tab.background.top.selected.mouse", null );
-            updateColor( "stack.tab.background.bottom.selected.mouse", null );
-            updateColor( "stack.tab.border.selected.mouse", null );
-            updateColor( "stack.tab.foreground.selected.mouse", null );
-
-            updateColor( "stack.tab.background.top.selected", null );
-            updateColor( "stack.tab.background.bottom.selected", null );
-            updateColor( "stack.tab.border.selected", null );
-            updateColor( "stack.tab.foreground.selected", null );
-
-            updateColor( "stack.tab.background.top.focused.mouse", null );
-            updateColor( "stack.tab.background.bottom.focused.mouse", null );
-            updateColor( "stack.tab.border.focused.mouse", null );
-            updateColor( "stack.tab.foreground.focused.mouse", null );
-
-            updateColor( "stack.tab.background.top.focused", null );
-            updateColor( "stack.tab.background.bottom.focused", null );
-            updateColor( "stack.tab.border.focused", null );
-            updateColor( "stack.tab.foreground.focused", null );
-
-            updateColor( "stack.menu.background.top.mouse", null );
-            updateColor( "stack.menu.background.bottom.mouse", null );
-            updateColor( "stack.menu.border.mouse", null );
-            
-            updateColor( "stack.menu.background.top", null );
-            updateColor( "stack.menu.background.bottom", null );
-            updateColor( "stack.menu.border", null );
-
-            // title
-            updateColor( "title.background.top.active", null );
-            updateColor( "title.background.top.active.mouse", null );
-            updateColor( "title.background.top.inactive", null );
-            updateColor( "title.background.top.inactive.mouse", null );
-            updateColor( "title.background.bottom.active", null );
-            updateColor( "title.background.bottom.active.mouse", null );
-            updateColor( "title.background.bottom.inactive", null );
-            updateColor( "title.background.bottom.inactive.mouse", null );
-            updateColor( "title.foreground.active", null );
-            updateColor( "title.foreground.active.mouse", null );
-            updateColor( "title.foreground.inactive", null );
-            updateColor( "title.foreground.inactive.mouse", null );
-
-            updateColor( "title.background.top.active.flap", null );
-            updateColor( "title.background.top.active.mouse.flap", null );
-            updateColor( "title.background.top.inactive.flap", null );
-            updateColor( "title.background.top.inactive.mouse.flap", null );
-            updateColor( "title.background.top.selected.flap", null );
-            updateColor( "title.background.top.selected.mouse.flap", null );
-            updateColor( "title.background.bottom.active.flap", null );
-            updateColor( "title.background.bottom.active.mouse.flap", null );
-            updateColor( "title.background.bottom.inactive.flap", null );
-            updateColor( "title.background.bottom.inactive.mouse.flap", null );
-            updateColor( "title.background.bottom.selected.flap", null );
-            updateColor( "title.background.bottom.selected.mouse.flap", null );
-            updateColor( "title.foreground.active.flap", null );
-            updateColor( "title.foreground.active.mouse.flap", null );
-            updateColor( "title.foreground.inactive.flap", null );
-            updateColor( "title.foreground.inactive.mouse.flap", null );
-            updateColor( "title.foreground.selected.flap", null );
-            updateColor( "title.foreground.selected.mouse.flap", null );
-            
-            // display border
-            updateColor( "displayer.border.high.active", null );
-            updateColor( "displayer.border.high.inactive", null );
-            updateColor( "displayer.border.low.active", null );
-            updateColor( "displayer.border.low.inactive", null );
-
-            // RoundButton
-            updateColor( "action.button", null );
-            updateColor( "action.button.enabled", null );
-            updateColor( "action.button.selected", null );
-            updateColor( "action.button.selected.enabled", null );
-            updateColor( "action.button.mouse.enabled", null );
-            updateColor( "action.button.mouse.selected.enabled", null );
-            updateColor( "action.button.pressed.enabled", null );
-            updateColor( "action.button.pressed.selected.enabled", null );
-
-            // Round drop down button
-            updateColor( "action.dropdown", null );
-            updateColor( "action.dropdown.enabled", null );
-            updateColor( "action.dropdown.selected", null );
-            updateColor( "action.dropdown.selected.enabled", null );
-            updateColor( "action.dropdown.mouse.enabled", null );
-            updateColor( "action.dropdown.mouse.selected.enabled", null );
-            updateColor( "action.dropdown.pressed.enabled", null );
-            updateColor( "action.dropdown.pressed.selected.enabled", null );
-
-            updateColor( "action.dropdown.line", null );
-            updateColor( "action.dropdown.line.enabled", null );
-            updateColor( "action.dropdown.line.selected", null );
-            updateColor( "action.dropdown.line.selected.enabled", null );
-            updateColor( "action.dropdown.line.mouse.enabled", null );
-            updateColor( "action.dropdown.line.mouse.selected.enabled", null );
-            updateColor( "action.dropdown.line.pressed.enabled", null );
-            updateColor( "action.dropdown.line.pressed.selected.enabled", null );
-
-            // Paint
-            updateColor( "paint.divider", null );
-            updateColor( "paint.insertion", null );
-            updateColor( "paint.line", null );
-
-            controller.getColors().unlockUpdate();
-        }
-        else{
-            super.updateColors();
-        }
-    }
+//    @Override
+//    protected void updateColors() {
+//        DockController controller = getController();
+//        if( controller != null && getColorScheme() != null ){
+//
+//            controller.getColors().lockUpdate();
+//
+//            super.updateColors();
+//
+//            updateColor( "tab.border.active", null );
+//
+//            // stack
+//            updateColor( "stack.tab.background.top.mouse", null );
+//            updateColor( "stack.tab.background.bottom.mouse", null );
+//            updateColor( "stack.tab.border.mouse", null );
+//            updateColor( "stack.tab.foreground.mouse", null );
+//
+//            updateColor( "stack.tab.background.top", null );
+//            updateColor( "stack.tab.background.bottom", null );
+//            updateColor( "stack.tab.border", null );
+//            updateColor( "stack.tab.foreground", null );
+//
+//            updateColor( "stack.tab.background.top.selected.mouse", null );
+//            updateColor( "stack.tab.background.bottom.selected.mouse", null );
+//            updateColor( "stack.tab.border.selected.mouse", null );
+//            updateColor( "stack.tab.foreground.selected.mouse", null );
+//
+//            updateColor( "stack.tab.background.top.selected", null );
+//            updateColor( "stack.tab.background.bottom.selected", null );
+//            updateColor( "stack.tab.border.selected", null );
+//            updateColor( "stack.tab.foreground.selected", null );
+//
+//            updateColor( "stack.tab.background.top.focused.mouse", null );
+//            updateColor( "stack.tab.background.bottom.focused.mouse", null );
+//            updateColor( "stack.tab.border.focused.mouse", null );
+//            updateColor( "stack.tab.foreground.focused.mouse", null );
+//
+//            updateColor( "stack.tab.background.top.focused", null );
+//            updateColor( "stack.tab.background.bottom.focused", null );
+//            updateColor( "stack.tab.border.focused", null );
+//            updateColor( "stack.tab.foreground.focused", null );
+//
+//            updateColor( "stack.menu.background.top.mouse", null );
+//            updateColor( "stack.menu.background.bottom.mouse", null );
+//            updateColor( "stack.menu.border.mouse", null );
+//            
+//            updateColor( "stack.menu.background.top", null );
+//            updateColor( "stack.menu.background.bottom", null );
+//            updateColor( "stack.menu.border", null );
+//
+//            // title
+//            updateColor( "title.background.top.active", null );
+//            updateColor( "title.background.top.active.mouse", null );
+//            updateColor( "title.background.top.inactive", null );
+//            updateColor( "title.background.top.inactive.mouse", null );
+//            updateColor( "title.background.bottom.active", null );
+//            updateColor( "title.background.bottom.active.mouse", null );
+//            updateColor( "title.background.bottom.inactive", null );
+//            updateColor( "title.background.bottom.inactive.mouse", null );
+//            updateColor( "title.foreground.active", null );
+//            updateColor( "title.foreground.active.mouse", null );
+//            updateColor( "title.foreground.inactive", null );
+//            updateColor( "title.foreground.inactive.mouse", null );
+//
+//            updateColor( "title.background.top.active.flap", null );
+//            updateColor( "title.background.top.active.mouse.flap", null );
+//            updateColor( "title.background.top.inactive.flap", null );
+//            updateColor( "title.background.top.inactive.mouse.flap", null );
+//            updateColor( "title.background.top.selected.flap", null );
+//            updateColor( "title.background.top.selected.mouse.flap", null );
+//            updateColor( "title.background.bottom.active.flap", null );
+//            updateColor( "title.background.bottom.active.mouse.flap", null );
+//            updateColor( "title.background.bottom.inactive.flap", null );
+//            updateColor( "title.background.bottom.inactive.mouse.flap", null );
+//            updateColor( "title.background.bottom.selected.flap", null );
+//            updateColor( "title.background.bottom.selected.mouse.flap", null );
+//            updateColor( "title.foreground.active.flap", null );
+//            updateColor( "title.foreground.active.mouse.flap", null );
+//            updateColor( "title.foreground.inactive.flap", null );
+//            updateColor( "title.foreground.inactive.mouse.flap", null );
+//            updateColor( "title.foreground.selected.flap", null );
+//            updateColor( "title.foreground.selected.mouse.flap", null );
+//            
+//            // display border
+//            updateColor( "displayer.border.high.active", null );
+//            updateColor( "displayer.border.high.inactive", null );
+//            updateColor( "displayer.border.low.active", null );
+//            updateColor( "displayer.border.low.inactive", null );
+//
+//            // RoundButton
+//            updateColor( "action.button", null );
+//            updateColor( "action.button.enabled", null );
+//            updateColor( "action.button.selected", null );
+//            updateColor( "action.button.selected.enabled", null );
+//            updateColor( "action.button.mouse.enabled", null );
+//            updateColor( "action.button.mouse.selected.enabled", null );
+//            updateColor( "action.button.pressed.enabled", null );
+//            updateColor( "action.button.pressed.selected.enabled", null );
+//
+//            // Round drop down button
+//            updateColor( "action.dropdown", null );
+//            updateColor( "action.dropdown.enabled", null );
+//            updateColor( "action.dropdown.selected", null );
+//            updateColor( "action.dropdown.selected.enabled", null );
+//            updateColor( "action.dropdown.mouse.enabled", null );
+//            updateColor( "action.dropdown.mouse.selected.enabled", null );
+//            updateColor( "action.dropdown.pressed.enabled", null );
+//            updateColor( "action.dropdown.pressed.selected.enabled", null );
+//
+//            updateColor( "action.dropdown.line", null );
+//            updateColor( "action.dropdown.line.enabled", null );
+//            updateColor( "action.dropdown.line.selected", null );
+//            updateColor( "action.dropdown.line.selected.enabled", null );
+//            updateColor( "action.dropdown.line.mouse.enabled", null );
+//            updateColor( "action.dropdown.line.mouse.selected.enabled", null );
+//            updateColor( "action.dropdown.line.pressed.enabled", null );
+//            updateColor( "action.dropdown.line.pressed.selected.enabled", null );
+//
+//            // Paint
+//            updateColor( "paint.divider", null );
+//            updateColor( "paint.insertion", null );
+//            updateColor( "paint.line", null );
+//
+//            controller.getColors().unlockUpdate();
+//        }
+//        else{
+//            super.updateColors();
+//        }
+//    }
 
     /**
      * Generator to create views for {@link ButtonDockAction button-actions}.

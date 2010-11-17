@@ -42,7 +42,7 @@ public class FlatColorScheme extends DefaultColorScheme {
     }
     
     @Override
-    public boolean updateUI(){
+    protected void updateUI(){
         setColor( "title.active.left", DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_BACKGROUND ));
         setColor( "title.inactive.left", DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ) );
         setColor( "title.active.right", DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND ) );
@@ -69,7 +69,5 @@ public class FlatColorScheme extends DefaultColorScheme {
         setColor( "stack.menu.middle", null );
         setColor( "stack.menu.edge.selected", border.darker() );
         setColor( "stack.menu.middle.selected", border.brighter() );
-        
-        return true;
     }
 }

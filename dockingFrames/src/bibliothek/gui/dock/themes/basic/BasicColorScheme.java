@@ -44,7 +44,7 @@ public class BasicColorScheme extends DefaultColorScheme{
     }
     
     @Override
-    public boolean updateUI(){
+    protected void updateUI(){
         setColor( "title.active.left", DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_BACKGROUND ) );
         setColor( "title.inactive.left", DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ));
         setColor( "title.active.right", DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_BACKGROUND ));
@@ -58,7 +58,5 @@ public class BasicColorScheme extends DefaultColorScheme{
         setColor( "title.station.inactive.text",  DockUI.getColor( LookAndFeelColors.TITLE_FOREGROUND ));
         
         setColor( "paint", DockUI.getColor( LookAndFeelColors.SELECTION ));
-        
-        return true;
     }
 }

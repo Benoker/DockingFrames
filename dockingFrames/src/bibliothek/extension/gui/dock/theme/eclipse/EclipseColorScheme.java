@@ -45,7 +45,7 @@ public class EclipseColorScheme extends BasicColorScheme {
     }
     
     @Override
-    public boolean updateUI(){
+    protected void updateUI(){
         super.updateUI();
         
         setColor( "stack.tab.border",                   DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND ) );
@@ -71,6 +71,5 @@ public class EclipseColorScheme extends BasicColorScheme {
         setColor( "stack.border",                       RexSystemColor.getBorderColor() );
         
         setColor( "selection.border",                   RexSystemColor.getBorderColor() );         
-        return true;
     }
 }

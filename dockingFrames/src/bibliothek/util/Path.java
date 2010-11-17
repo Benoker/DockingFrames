@@ -312,6 +312,25 @@ public final class Path {
         return new Path( result );
     }
     
+    /**
+     * Tells whether the first segments of this {@link Path} matches
+     * the segments of <code>path</code>. 
+     * @param path some other path
+     * @return <code>true</code> if this path is either equal to <code>path</code> or
+     * if this path starts with <code>path</code>
+     */
+    public boolean startsWith( Path path ){
+    	if( path.getSegmentCount() > getSegmentCount() ){
+    		return false;
+    	}
+    	for( int i = 0, n = path.getSegmentCount(); i<n; i++ ){
+    		if( !path.getSegment( i ).equals( getSegment( i ) )){
+    			return false;
+    		}
+    	}
+    	return true;
+    }
+    
     @Override
     public int hashCode() {
         return Arrays.hashCode( segments );

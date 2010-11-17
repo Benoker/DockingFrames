@@ -26,15 +26,12 @@
 
 package bibliothek.gui.dock.themes;
 
-import java.awt.Color;
-
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
-import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
@@ -56,13 +53,7 @@ import bibliothek.gui.dock.themes.basic.BasicDockableSelection;
 import bibliothek.gui.dock.themes.basic.BasicMovingImageFactory;
 import bibliothek.gui.dock.themes.basic.BasicStackDockComponent;
 import bibliothek.gui.dock.themes.basic.BasicStationPaint;
-import bibliothek.gui.dock.themes.color.ActionColor;
-import bibliothek.gui.dock.themes.color.DisplayerColor;
-import bibliothek.gui.dock.themes.color.DockableSelectionColor;
 import bibliothek.gui.dock.themes.color.ExtendingColorScheme;
-import bibliothek.gui.dock.themes.color.StationPaintColor;
-import bibliothek.gui.dock.themes.color.TabColor;
-import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleManager;
@@ -71,14 +62,8 @@ import bibliothek.gui.dock.util.NullPriorityValue;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
-import bibliothek.gui.dock.util.UIBridge;
-import bibliothek.gui.dock.util.color.ColorBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
-import bibliothek.gui.dock.util.color.DockColor;
-import bibliothek.gui.dock.util.laf.LookAndFeelColors;
-import bibliothek.gui.dock.util.laf.LookAndFeelColorsListener;
 import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
-import bibliothek.util.Path;
 
 /**
  * A {@link DockTheme theme} that does not install anything and uses the
@@ -129,10 +114,6 @@ public class BasicTheme implements DockTheme{
     private PropertyValue<ColorScheme> colorScheme = new PropertyValue<ColorScheme>( BASIC_COLOR_SCHEME ){
         @Override
         protected void valueChanged( ColorScheme oldValue, ColorScheme newValue ) {
-            ColorScheme scheme = getValue();
-            if( scheme != null ){
-            	scheme.updateUI();
-            }
             updateColors();
         }
     };
@@ -155,17 +136,6 @@ public class BasicTheme implements DockTheme{
         public void themeWillChange(DockController controller,
                 DockTheme oldTheme, DockTheme newTheme) {
             // ignore
-        }
-    };
-
-    /** a listener waiting for changes in the {@link LookAndFeelColors} */
-    private LookAndFeelColorsListener colorListener = new LookAndFeelColorsListener(){
-        public void colorChanged( String key ) {
-            colorsChanged();
-        }
-        public void colorsChanged() {
-            if( colorScheme.getValue().updateUI() )
-                updateColors();
         }
     };
 
@@ -209,7 +179,6 @@ public class BasicTheme implements DockTheme{
         this.controller = controller;
 
         controller.addUIListener( uiListener );
-        DockUI.getDefaultDockUI().addLookAndFeelColorsListener( colorListener );
         updateUI();
 
         controller.getProperties().set( StackDockStation.COMPONENT_FACTORY, stackDockComponentFactory.get(), Priority.THEME );
@@ -229,8 +198,6 @@ public class BasicTheme implements DockTheme{
         controller.getColors().clear( Priority.THEME );
         controller.removeUIListener( uiListener );
 
-        DockUI.getDefaultDockUI().removeLookAndFeelColorsListener( colorListener );
-
         colorScheme.setProperties( (DockProperties)null );
         
         for( DockThemeExtension extension : extensions ){
@@ -244,106 +211,27 @@ public class BasicTheme implements DockTheme{
      * Called when the {@link LookAndFeel} changed, should update colors, fonts, ...
      */
     public void updateUI(){
-    	ColorScheme scheme = colorScheme.getValue();
-    	
-        if( scheme != null && scheme.updateUI() ){
-            updateColors();
-        }
-        if( selection != null ){
+    	if( selection != null ){
             SwingUtilities.updateComponentTreeUI( selection.get().getComponent() );
         }
     }
 
     /**
-     * Called when the the colors of the {@link ColorManager} have to be updated.
-     * Subclasses should override this method and explicitly call
-     * {@link #updateColor(String, Color) updateColor} and
-     * {@link #updateColorBridge(Path) updateColorProvider}
-     * for all {@link Color}s and {@link UIBridge}s that will be used by
-     * this theme. Since {@link ColorScheme}s can create new colors and providers 
-     * lazily, just reading out all colors will ensure that all colors 
-     * and providers exists and are registered at the {@link ColorManager}s.
+     * Called when the the colors of the {@link ColorManager} have to be updated. This method reads
+     * the current {@link ColorScheme} and installs it using
+     * {@link ColorManager#setScheme(Priority, bibliothek.gui.dock.util.UIScheme)} with a priority
+     * of {@link Priority#CLIENT}.<br>
+     * This method changed its behavior in version 1.1.0p3, subclasses no longer need to override it. All colors
+     * can now be created lazily and automatically in exactly the moment when they are needed.
      */
     protected void updateColors(){
     	ColorScheme scheme = colorScheme.getValue();
     	
         if( controller != null && scheme != null ){
         	scheme = new ExtendingColorScheme( scheme, controller );
-        	
-            controller.getColors().lockUpdate();
-            controller.getColors().clear( Priority.THEME );
-
-            scheme.transmitAll( Priority.THEME, controller.getColors() );
-
-            updateColor( "title.active.left", null );
-            updateColor( "title.inactive.left", null );
-            updateColor( "title.active.right", null );
-            updateColor( "title.inactive.right", null );
-            updateColor( "title.active.text", null );
-            updateColor( "title.inactive.text", null );
-
-            updateColor( "title.station.active", null );
-            updateColor( "title.station.active.text", null );
-            updateColor( "title.station.inactive", null );
-            updateColor( "title.station.inactive.text", null );
-
-            updateColor( "title.flap.active", null );
-            updateColor( "title.flap.active.text", null );
-            updateColor( "title.flap.inactive", null );
-            updateColor( "title.flap.inactive.text", null );
-            updateColor( "title.flap.selected", null );
-            updateColor( "title.flap.selected.text", null );
-
-            updateColor( "stack.tab.foreground", null );
-            updateColor( "stack.tab.foreground.selected", null );
-            updateColor( "stack.tab.foreground.focused", null );
-            updateColor( "stack.tab.background", null );
-            updateColor( "stack.tab.background.selected", null );
-            updateColor( "stack.tab.background.focused", null );
-
-            updateColor( "paint.line", null );
-            updateColor( "paint.divider", null );
-            updateColor( "paint.insertion", null );
-
-            updateColorBridge( DockColor.KIND_DOCK_COLOR );
-            updateColorBridge( TabColor.KIND_TAB_COLOR );
-            updateColorBridge( TitleColor.KIND_TITLE_COLOR );
-            updateColorBridge( ActionColor.KIND_ACTION_COLOR );
-            updateColorBridge( DisplayerColor.KIND_DISPLAYER_COLOR );
-            updateColorBridge( StationPaintColor.KIND_STATION_PAINT_COLOR );
-            updateColorBridge( DockableSelectionColor.KIND_DOCKABLE_SELECTION_COLOR );
-
-            controller.getColors().unlockUpdate();
         }
-    }
-
-    /**
-     * Changes the color of the {@link ColorManager}s to the color obtained
-     * through the {@link ColorScheme} or to <code>backup</code> if the scheme
-     * returns a <code>null</code> value.
-     * @param id the id of the new color
-     * @param backup backup color in case that the scheme does not
-     * know what to use
-     */
-    protected void updateColor( String id, Color backup ){
-    	Color color = colorScheme.getValue().getColor( id );
-        if( color == null )
-            color = backup;
-
-        controller.getColors().put( Priority.THEME, id, color );
-    }
-
-    /**
-     * Transmits the {@link ColorBridge} for <code>kind</code> to the {@link ColorManager}
-     * @param kind the kind of provider that should be published
-     */
-    protected void updateColorBridge( Path kind ){
-        ColorBridgeFactory factory = colorScheme.getValue().getBridgeFactory( kind );
-
-        if( factory != null ){
-            ColorBridge bridge = factory.create( controller.getColors() );
-            controller.getColors().publish( Priority.THEME, kind, bridge );
-        }
+        
+        controller.getColors().setScheme( Priority.THEME, scheme );
     }
 
     /**

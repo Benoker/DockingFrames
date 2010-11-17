@@ -29,7 +29,7 @@ public class CGlassEclipseColorSchemeExtension extends DefaultColorScheme {
    }
 
    @Override
-   public boolean updateUI () {
+   protected void updateUI () {
       super.updateUI();
 
       if (colMap == null) {
@@ -75,6 +75,5 @@ public class CGlassEclipseColorSchemeExtension extends DefaultColorScheme {
       setColor("glass.paint.divider", Color.BLACK);
       setColor("glass.paint.insertion", Color.GRAY);
       setColor("glass.paint.line", Color.GRAY);
-      return true;
    }
 }

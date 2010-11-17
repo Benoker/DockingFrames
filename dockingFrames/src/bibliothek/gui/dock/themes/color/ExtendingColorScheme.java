@@ -26,13 +26,18 @@
 package bibliothek.gui.dock.themes.color;
 
 import java.awt.Color;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.dock.themes.ColorBridgeFactory;
 import bibliothek.gui.dock.themes.ColorScheme;
-import bibliothek.gui.dock.util.Priority;
-import bibliothek.gui.dock.util.color.ColorManager;
+import bibliothek.gui.dock.util.UIProperties;
+import bibliothek.gui.dock.util.UIScheme;
+import bibliothek.gui.dock.util.UISchemeEvent;
+import bibliothek.gui.dock.util.UISchemeListener;
+import bibliothek.gui.dock.util.color.ColorBridge;
+import bibliothek.gui.dock.util.color.DockColor;
 import bibliothek.gui.dock.util.extension.ExtensionName;
 import bibliothek.util.Path;
 
@@ -40,9 +45,29 @@ import bibliothek.util.Path;
  * A {@link ColorScheme} that can be extended by additional {@link ColorScheme}.
  * @author Benjamin Sigg
  */
-public class ExtendingColorScheme implements ColorScheme{
+public class ExtendingColorScheme extends AbstractColorScheme{
 	private ColorScheme scheme;
 	private ColorScheme[] extensions;
+	
+	private UISchemeListener<Color, DockColor, ColorBridge> delegateListener = new UISchemeListener<Color, DockColor, ColorBridge>(){
+		public void changed( final UISchemeEvent<Color, DockColor, ColorBridge> event ){
+			UISchemeEvent<Color, DockColor, ColorBridge> forward = new UISchemeEvent<Color, DockColor, ColorBridge>(){
+				public UIScheme<Color, DockColor, ColorBridge> getScheme(){
+					return ExtendingColorScheme.this;
+				}
+				
+				public Collection<String> changedResources( Set<String> names ){
+					return event.changedResources( names );
+				}
+				
+				public Collection<Path> changedBridges( Set<Path> names ){
+					return event.changedBridges( names );
+				}
+			};
+			
+			fire( forward );
+		}
+	};
 	
 	/**
 	 * Creates a new scheme.
@@ -57,54 +82,71 @@ public class ExtendingColorScheme implements ColorScheme{
 	    
 	    this.scheme = scheme;
 	    this.extensions = extensions.toArray( new ColorScheme[ extensions.size() ] );
-	    
-	    for( ColorScheme extension : extensions ){
-	    	extension.updateUI();
-	    }
 	}
 	
-	public ColorBridgeFactory getBridgeFactory( Path kind ){
-		for( int i = extensions.length-1; i >= 0; i-- ){
-			ColorBridgeFactory result = extensions[i].getBridgeFactory( kind );
-			if( result != null ){
-				return result;
-			}
-		}
-		return scheme.getBridgeFactory( kind );
-	}
-	
-	public Color getColor( String id ){
-		for( int i = extensions.length-1; i >= 0; i-- ){
-			Color result = extensions[i].getColor( id );
-			if( result != null ){
-				return result;
-			}
-		}
-		return scheme.getColor( id );
-	}
-	
-	public void transmitAll( Priority priority, ColorManager manager ){
-		try{
-			manager.lockUpdate();
-			
-			scheme.transmitAll( priority, manager );
+	@Override
+	public void addListener( UISchemeListener<Color, DockColor, ColorBridge> listener ){
+		boolean has = hasListeners();
+		super.addListener( listener );
+		if( !has ){
+			scheme.addListener( delegateListener );
 			for( ColorScheme extension : extensions ){
-				extension.transmitAll( priority, manager );
+				extension.addListener( delegateListener );
 			}
-		}
-		finally{
-			manager.unlockUpdate();
 		}
 	}
 	
-	public boolean updateUI(){
-		boolean result = false;
-		for( ColorScheme extension : extensions ){
-			boolean next = extension.updateUI();
-			result |= next;
+	@Override
+	public void removeListener( UISchemeListener<Color, DockColor, ColorBridge> listener ){
+		super.removeListener( listener );
+		if( !hasListeners() ){
+			scheme.removeListener( delegateListener );
+			for( ColorScheme extension : extensions ){
+				extension.removeListener( delegateListener );
+			}
 		}
-		boolean next = scheme.updateUI();
-		result |= next;
-		return result;
+	}
+	
+	@Override
+	public void install( UIProperties<Color, DockColor, ColorBridge> properties ){
+		super.install( properties );
+		scheme.install( properties );
+		for( ColorScheme extension : extensions ){
+			extension.install( properties );
+		}
+	}
+	
+	@Override
+	public void uninstall( UIProperties<Color, DockColor, ColorBridge> properties ){
+		super.uninstall( properties );
+		scheme.uninstall( properties );
+		for( ColorScheme extension : extensions ){
+			extension.uninstall( properties );
+		}
+	}
+	
+	@Override
+	protected void updateUI(){
+		// ignore
+	}
+	
+	public ColorBridge getBridge( Path name, UIProperties<Color, DockColor, ColorBridge> properties ){
+		for( int i = extensions.length-1; i >= 0; i-- ){
+			ColorBridge result = extensions[i].getBridge( name, properties );
+			if( result != null ){
+				return result;
+			}
+		}
+		return scheme.getBridge( name, properties );
+	}
+	
+	public Color getResource( String name, UIProperties<Color, DockColor, ColorBridge> properties ){
+		for( int i = extensions.length-1; i >= 0; i-- ){
+			Color result = extensions[i].getResource( name, properties );
+			if( result != null ){
+				return result;
+			}
+		}
+		return scheme.getResource( name, properties );
 	}
 }
