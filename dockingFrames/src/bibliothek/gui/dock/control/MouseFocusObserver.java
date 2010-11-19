@@ -44,6 +44,10 @@ import bibliothek.gui.dock.event.FocusVetoListener;
 import bibliothek.gui.dock.event.FocusVetoListener.FocusVeto;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A FocusController listens to all AWT-events. As soon as the mouse is pressed
@@ -51,6 +55,8 @@ import bibliothek.gui.dock.util.DockUtilities;
  * about a new {@link DockController#setFocusedDockable(Dockable, boolean) front-dockable}.
  * @author Benjamin Sigg
  */
+@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.BUG, target=Version.VERSION_1_1_0,
+		description="Dockables moving on ScreenDockStation: should keep focus" )
 public abstract class MouseFocusObserver implements DockRelocatorListener {
     
     /** A list of listeners which can cancel a call to the controller */

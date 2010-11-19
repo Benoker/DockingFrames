@@ -58,6 +58,7 @@ import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationChildHandle;
+import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
@@ -112,7 +113,10 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 			protected void paintOverlay( Graphics g ){
 				if( dropInfo != null && dropInfo.getCombineTarget() != null && dropInfo.isDraw() ) {
 					Rectangle bounds = new Rectangle(0, 0, getWidth(), getHeight());
-					dropInfo.getCombineTarget().paint( g, DefaultFlapWindow.this.station.getPaint(), bounds, bounds );
+					StationPaint paint = DefaultFlapWindow.this.station.getPaint().get();
+					if( paint != null ){
+						dropInfo.getCombineTarget().paint( g, paint, bounds, bounds );
+					}
 				}
 			}
 		};

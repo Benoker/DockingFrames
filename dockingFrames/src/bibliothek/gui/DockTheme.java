@@ -33,10 +33,15 @@ import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.themes.DockThemeExtension;
+import bibliothek.gui.dock.themes.StationThemeItem;
+import bibliothek.gui.dock.themes.StationThemeItemFactory;
+import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleManager;
+import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.Priority;
+import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Version;
@@ -52,7 +57,7 @@ import bibliothek.util.Todo.Version;
 @Todo(compatibility=Compatibility.COMPATIBLE, target=Version.VERSION_1_1_0, priority=Todo.Priority.MAJOR,
 		description="Each property of DockTheme gets a PropertyKey: the key is associated with a factory/wrapper that just calls the DockTheme's methods. But clients can easily replace the factory/wrapper by their own implementation.")
 public interface DockTheme {
-    /**
+	/**
      * Install this theme at <code>controller</code>. The theme
      * may change any properties it likes.
      * @param controller the controller
@@ -73,6 +78,17 @@ public interface DockTheme {
      * @return a combiner for <code>station</code>
      */
     public Combiner getCombiner( DockStation station );
+
+    /**
+     * A unique identifier for the {@link DockProperties} to access
+     * the current {@link StationPaint}.
+     */
+    public static PropertyKey<StationThemeItem<StationPaint>> STATION_PAINT = new PropertyKey<StationThemeItem<StationPaint>>( "paint", 
+    		new StationThemeItemFactory<StationPaint>(){
+    			protected StationPaint get( ThemeManager theme, DockStation station ){
+    				return theme.getTheme().getPaint( station );
+    			}
+			}, true );
     
     /**
      * Gets the paint which is used to draw things onto <code>station</code>.

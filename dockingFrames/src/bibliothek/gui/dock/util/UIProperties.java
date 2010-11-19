@@ -392,7 +392,49 @@ public class UIProperties<V, U extends UIValue<V>, B extends UIBridge<V, U>> {
             }
         }
     }
+    
+    /**
+     * Gets the bridge which is stored on level <code>priority</code> for {@link UIValue}s
+     * of kind <code>path</code>.
+     * @param priority the level in which to search
+     * @param path the kind of the {@link UIValue}s
+     * @return either <code>null</code>, a bridge that has been {@link #publish(Priority, Path, UIBridge) published}
+     * or a bridge that was created by an {@link UIScheme}
+     */
+    public B getBridge( Priority priority, Path path ){
+    	UIPriorityValue<B> bridge = bridges.get( path );
+    	if( bridge == null ){
+    		bridge = createBridge( path );
+    		if( !isRemoveable( path, bridge )){
+    			bridges.put( path, bridge );
+    		}
+    	}
 
+    	if( bridge != null ){
+    		UIPriorityValue.Value<B> value = bridge.get( priority );
+    		if( value != null ){
+    			return value.getValue();
+    		}
+    	}
+    	return null;
+    }
+
+    /**
+     * Tells whether <code>bridge</code> is stored in this map.
+     * @param bridge some object to search
+     * @return <code>true</code> if <code>bridge</code> was found anywhere
+     */
+    public boolean isStored( B bridge ){
+    	for( UIPriorityValue<B> value : bridges.values() ){
+    		for( Priority priority : Priority.values() ){
+    			if( value.getValue( priority ) == bridge ){
+    				return true;
+    			}
+    		}
+    	}
+    	return false;
+    }
+    
     /**
      * Tells whether the bridge with id <code>path</code> is observed by at least one {@link UIValue}.
      * @param path the name of some {@link UIBridge}
@@ -406,7 +448,7 @@ public class UIProperties<V, U extends UIValue<V>, B extends UIBridge<V, U>> {
     	if( value.getValue() == null ){
     		return true;
     	}
-    	if( !isObserved( path )){
+    	if( value.isAllScheme() && !isObserved( path )){
     		return true;
     	}
     	return false;
@@ -470,7 +512,7 @@ public class UIProperties<V, U extends UIValue<V>, B extends UIBridge<V, U>> {
     	if( value.getValue() == null ){
     		return true;
     	}
-    	if( !isObserved( id )){
+    	if( value.isAllScheme() && !isObserved( id )){
     		return true;
     	}
     	return false;

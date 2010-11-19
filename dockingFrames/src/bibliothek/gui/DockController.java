@@ -36,8 +36,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -52,7 +50,6 @@ import javax.swing.KeyStroke;
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import javax.swing.UIManager;
 
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.DockElementRepresentative;
@@ -92,7 +89,7 @@ import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.event.DockableSelectionEvent;
 import bibliothek.gui.dock.event.DockableSelectionListener;
 import bibliothek.gui.dock.event.UIListener;
-import bibliothek.gui.dock.themes.DockThemeExtension;
+import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.util.DirectWindowProvider;
@@ -104,15 +101,18 @@ import bibliothek.gui.dock.util.WindowProviderListener;
 import bibliothek.gui.dock.util.WindowProviderWrapper;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.extension.ExtensionManager;
-import bibliothek.gui.dock.util.extension.ExtensionName;
 import bibliothek.gui.dock.util.font.FontManager;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A controller connects all the {@link DockStation}s, {@link Dockable}s and
  * other objects that play together in this framework. This class also serves
  * as low-level access point for clients. When using this framework in general, 
  * or {@link DockController} in particular, several rules have
- * to be obeied:
+ * to be obeyed:
  * <ul>
  * 	<li>{@link DockStation}s and {@link Dockable}s build trees. The roots
  *  of these trees need to be registered using {@link #add(DockStation)}.</li>
@@ -159,8 +159,6 @@ public class DockController {
     private List<DockableSelectionListener> dockableSelectionListeners = new ArrayList<DockableSelectionListener>();
     /** Listeners observing the bound-state of {@link DockTitle}s */
     private List<DockTitleBindingListener> dockTitleBindingListeners = new ArrayList<DockTitleBindingListener>();
-    /** Listeners observing the ui */
-    private List<UIListener> uiListeners = new ArrayList<UIListener>();
     
     /** <code>true</code> while the controller actively changes the focus */
     private boolean onFocusing = false;
@@ -172,7 +170,7 @@ public class DockController {
     /** mapping tells which titles are currently active */
     private Map<DockTitle, Dockable> activeTitles = new HashMap<DockTitle, Dockable>();
     /** a source for {@link DockTitle} */
-    private DockTitleManager dockTitles = new DockTitleManager( this );
+    private DockTitleManager dockTitles;
     
     /** the set of icons used with this controller */
     private IconManager icons = new IconManager();
@@ -201,7 +199,7 @@ public class DockController {
     private SingleParentRemover remover;
     
     /** a theme describing the look of the stations */
-    private DockTheme theme;
+    private ThemeManager theme;
     /** a set of properties */
     private DockProperties properties;
     
@@ -219,15 +217,6 @@ public class DockController {
     private WindowProviderWrapper rootWindowProvider;
     /** the current root window, can be <code>null</code> */
     private Window rootWindow;
-    
-    /** a listener that is added to the {@link UIManager} and gets notified when the {@link LookAndFeel} changes */
-    private PropertyChangeListener lookAndFeelObserver = new PropertyChangeListener(){
-        public void propertyChange( PropertyChangeEvent evt ) {
-            if( "lookAndFeel".equals( evt.getPropertyName() )){
-                updateUI();
-            }
-        }
-    };
     
     /**
      * Creates a new controller. 
@@ -270,9 +259,13 @@ public class DockController {
         if( factory == null )
             throw new IllegalArgumentException( "Factory must not be null" );
         
+        
         properties = new DockProperties( this );
+        theme = new ThemeManager( this );
         colors = new ColorManager( this );
         fonts = new FontManager( this );
+        dockTitles = new DockTitleManager( this );
+        theme.init();
         
     	rootWindowProvider = new WindowProviderWrapper();
         rootWindowProvider.addWindowProviderListener( new WindowProviderListener(){
@@ -348,8 +341,6 @@ public class DockController {
         
         setSingleParentRemover( factory.createSingleParentRemover( this, setup ) );
         
-        UIManager.addPropertyChangeListener( lookAndFeelObserver );
-        
         for( ControllerSetupListener listener : setupListeners )
             listener.done( this );
     }
@@ -363,8 +354,7 @@ public class DockController {
 	    focusObserver.kill();
 	    register.kill();
 	    keyboardController.kill();
-	    theme.uninstall( this );
-	    UIManager.removePropertyChangeListener( lookAndFeelObserver );
+	    theme.kill();
 	    extensions.kill();
 	    setRootWindowProvider( null );
     }
@@ -620,47 +610,7 @@ public class DockController {
      * @param theme the new theme
      */
     public void setTheme( DockTheme theme ){
-    	if( theme == null )
-    		throw new IllegalArgumentException( "Theme must not be null" );
-    	
-    	if( this.theme != theme ){
-    		for( UIListener listener : uiListeners() )
-    			listener.themeWillChange( this, this.theme, theme );
-    		
-    		DockTheme oldTheme = this.theme;
-    		Dockable focused = null;
-    		try{
-    			register.setStalled( true );
-    			focused = getFocusedDockable();
-    			
-	    		if( this.theme != null )
-	    			this.theme.uninstall( this );
-	    		
-	    		this.theme = theme;
-	    		
-	    		ExtensionName<DockThemeExtension> name = new ExtensionName<DockThemeExtension>( 
-	    				DockThemeExtension.DOCK_THEME_EXTENSION, DockThemeExtension.class, DockThemeExtension.THEME_PARAMETER, theme );
-	    		List<DockThemeExtension> extensions = getExtensions().load( name );
-	    		
-	    		theme.install( this, extensions.toArray( new DockThemeExtension[ extensions.size() ] ) );
-	    		dockTitles.registerTheme( DockTitleManager.THEME_FACTORY_ID, theme.getTitleFactory( this ) );
-	    		
-	    		// update only those station which are registered to this controller
-	    		for( DockStation station : register.listDockStations() ){
-	    			if( station.getController() == this ){
-	    				station.updateTheme();
-	    			}
-	    		}
-    		}
-    		finally{
-    			register.setStalled( false );
-    		}
-	    		
-    		setFocusedDockable( focused, true );
-    		
-    		for( UIListener listener : uiListeners() )
-    			listener.themeChanged( this, oldTheme, theme );
-    	}
+    	this.theme.setTheme( theme );
 	}
     
     /**
@@ -668,8 +618,17 @@ public class DockController {
      * @return the theme
      */
     public DockTheme getTheme() {
-		return theme;
+		return theme.getTheme();
 	}
+    
+    /**
+     * Gets the manager that is responsible for handling the current {@link DockTheme} and 
+     * distributing its properties.
+     * @return the manager
+     */
+    public ThemeManager getThemeManager(){
+    	return theme;
+    }
     
     /**
      * A set of properties that can be used at any place.
@@ -1390,25 +1349,27 @@ public class DockController {
      * notified when the graphical user interface needs an update because
      * the {@link LookAndFeel} changed.
      * @param listener the new listener
+     * @deprecated please use {@link #getThemeManager()} to handle {@link UIListener}s, this method will be 
+     * removed in a future release.
      */
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
+    		description="remove this method")
     public void addUIListener( UIListener listener ){
-        uiListeners.add( listener );
+        theme.addUIListener( listener );
     }
     
     /**
      * Removes a listener from this controller.
      * @param listener the listener to remove
+     * @deprecated please use {@link #getThemeManager()} to handle {@link UIListener}s, this method will be 
+     * removed in a future release.
      */
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
+    		description="remove this method")
     public void removeUIListener( UIListener listener ){
-        uiListeners.remove( listener );
-    }
-    
-    /**
-     * Gets all the available {@link UIListener}s.
-     * @return the list of listeners
-     */
-    protected UIListener[] uiListeners(){
-    	return uiListeners.toArray( new UIListener[ uiListeners.size() ]);
+        theme.removeUIListener( listener );
     }
     
     /**
@@ -1416,10 +1377,14 @@ public class DockController {
      * needs an update because the {@link LookAndFeel} changed.
      * @see #addUIListener(UIListener)
      * @see #removeUIListener(UIListener)
+     * @deprecated please use {@link #getThemeManager()} to call a similar named method, this method will be 
+     * removed in a future release.
      */
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
+    		description="remove this method")
     public void updateUI(){
-        for( UIListener listener : uiListeners() )
-            listener.updateUI( this );
+    	theme.updateUI();
     }
     
     /**

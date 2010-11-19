@@ -1,15 +1,21 @@
 package glass.eclipse.theme;
 
-import java.awt.*;
-import bibliothek.gui.*;
-import bibliothek.gui.dock.*;
-import bibliothek.gui.dock.station.support.*;
-import bibliothek.gui.dock.themes.color.*;
-import bibliothek.gui.dock.util.color.*;
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+
+import bibliothek.gui.DockStation;
+import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.themes.color.StationPaintColor;
+import bibliothek.gui.dock.util.color.ColorCodes;
 
 
 @ColorCodes( {"glass.paint.divider", "glass.paint.insertion", "glass.paint.line"})
-public class CGlassStationPaint extends StationPaintWrapper {
+public class CGlassStationPaint implements StationPaint {
    private final StationPaintColor color = new StationPaintColor("glass.paint", this, Color.GRAY) {
       @Override
       protected void changed (Color oldColor, Color newColor) {
@@ -17,7 +23,6 @@ public class CGlassStationPaint extends StationPaintWrapper {
       }
    };
 
-   @Override
    public void drawDivider (Graphics g, DockStation station, Rectangle bounds) {
       if (station instanceof SplitDockStation && !((SplitDockStation)station).isContinousDisplay()) {
          Graphics2D g2 = (Graphics2D)g.create();
@@ -30,7 +35,6 @@ public class CGlassStationPaint extends StationPaintWrapper {
       }
    }
 
-   @Override
    public void drawInsertion (Graphics g, DockStation station, Rectangle stationBounds, Rectangle dockableBounds) {
       color.setId("glass.paint.insertion");
       color.connect(station.getController());
@@ -54,7 +58,6 @@ public class CGlassStationPaint extends StationPaintWrapper {
       color.connect(null);
    }
 
-   @Override
    public void drawInsertionLine (Graphics g, DockStation station, int x1, int y1, int x2, int y2) {
       color.setId("glass.paint.line");
       color.connect(station.getController());

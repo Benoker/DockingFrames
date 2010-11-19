@@ -178,7 +178,7 @@ public class BasicTheme implements DockTheme{
 
         this.controller = controller;
 
-        controller.addUIListener( uiListener );
+        controller.getThemeManager().addUIListener( uiListener );
         updateUI();
 
         controller.getProperties().set( StackDockStation.COMPONENT_FACTORY, stackDockComponentFactory.get(), Priority.THEME );
@@ -196,7 +196,7 @@ public class BasicTheme implements DockTheme{
         controller.getProperties().unset( StackDockStation.COMPONENT_FACTORY, Priority.THEME );
         controller.getProperties().unset( StackDockStation.TAB_PLACEMENT, Priority.THEME );
         controller.getColors().clear( Priority.THEME );
-        controller.removeUIListener( uiListener );
+        controller.getThemeManager().removeUIListener( uiListener );
 
         colorScheme.setProperties( (DockProperties)null );
         

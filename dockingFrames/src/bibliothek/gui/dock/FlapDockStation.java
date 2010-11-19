@@ -95,8 +95,9 @@ import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
-import bibliothek.gui.dock.station.support.StationPaintWrapper;
+import bibliothek.gui.dock.station.support.StationPaintValue;
 import bibliothek.gui.dock.station.support.PlaceholderList.Level;
+import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.BasicButtonTitleFactory;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
@@ -357,7 +358,7 @@ public class FlapDockStation extends AbstractDockableStation {
     private DockTitleVersion titleVersion;
     
     /** The {@link StationPaint} used to paint on this station */
-    private StationPaintWrapper paint = new StationPaintWrapper();
+    private StationPaintValue paint;
     /** The {@link Combiner} user to combine {@link Dockable Dockables}*/
     private CombinerWrapper combiner = new CombinerWrapper();
     /** The {@link DisplayerFactory} used to create displayers*/
@@ -420,6 +421,7 @@ public class FlapDockStation extends AbstractDockableStation {
         setDirection( Direction.SOUTH );
         
         displayers = new DisplayerCollection( this, displayerFactory );
+        paint = new StationPaintValue( ThemeManager.STATION_PAINT + ".flap", this );
         
         buttonPane.addComponentListener( new ComponentAdapter(){
             @Override
@@ -511,6 +513,7 @@ public class FlapDockStation extends AbstractDockableStation {
             super.setController(controller);
             placeholderStrategy.setProperties( controller );
             displayers.setController( controller );
+            paint.setController( controller );
             FlapLayoutManager oldLayoutManager = layoutManager.getValue();
             layoutManager.setProperties( controller );
             FlapLayoutManager newLayoutManager = layoutManager.getValue();
@@ -675,7 +678,7 @@ public class FlapDockStation extends AbstractDockableStation {
      * Gets the {@link StationPaint} to paint on this station.
      * @return The paint
      */
-    public StationPaintWrapper getPaint() {
+    public StationPaintValue getPaint() {
         return paint;
     }
     

@@ -81,9 +81,10 @@ import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
-import bibliothek.gui.dock.station.support.StationPaintWrapper;
+import bibliothek.gui.dock.station.support.StationPaintValue;
 import bibliothek.gui.dock.station.support.PlaceholderList.Filter;
 import bibliothek.gui.dock.station.support.PlaceholderList.Level;
+import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
@@ -133,7 +134,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     private DockableVisibilityManager visibility;
     
     /** A paint to draw lines */
-    private StationPaintWrapper paint = new StationPaintWrapper();
+    private StationPaintValue paint;
     
     /** A factory to create {@link DockableDisplayer} */
     private DisplayerFactoryWrapper displayerFactory = new DisplayerFactoryWrapper();
@@ -273,6 +274,8 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
      * Initializes the fields of this object, has to be called exactly once.
      */
     protected void init(){
+    	paint = new StationPaintValue( ThemeManager.STATION_PAINT + ".stack", this );
+    	
         visibleListener = new VisibleListener();
         visibility = new DockableVisibilityManager( listeners );
         
@@ -517,6 +520,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             placeholderStrategy.setProperties( controller );
             tabContentFilter.setProperties( controller );
             stackComponentRepresentative.setController( controller );
+            paint.setController( controller );
             
             if( controller != null ){
                 title = controller.getDockTitleManager().getVersion( TITLE_ID, ControllerTitleFactory.INSTANCE );
@@ -545,11 +549,11 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     
     /**
      * Gets a {@link StationPaint} which is used to paint some lines onto
-     * this station. Use a {@link StationPaintWrapper#setDelegate(StationPaint) delegate}
+     * this station. Use a {@link StationPaintValue#setDelegate(StationPaint) delegate}
      * to exchange the paint.
      * @return the paint
      */
-    public StationPaintWrapper getPaint() {
+    public StationPaintValue getPaint() {
         return paint;
     }
    
@@ -1500,7 +1504,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         
         @Override
         protected void paintOverlay( Graphics g ) {
-            StationPaint paint = getPaint();
+            StationPaintValue paint = getPaint();
             
             if( draw && dockables.dockables().size() > 1 && insert != null ){
                 Rectangle bounds = null;
@@ -1519,7 +1523,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
                    		insertionLine( insert.tab > 0 ? stackComponent.getBoundsAt( insert.tab-1 ) : null, bounds, a, b, false );
                     }
                     
-                    paint.drawInsertionLine( g, StackDockStation.this, a.x, a.y, b.x, b.y );
+                    paint.drawInsertionLine( g, a.x, a.y, b.x, b.y );
                 }
             }
             
@@ -1539,7 +1543,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
                 }
                 
                 if( insert != null ){
-                	paint.drawInsertion( g, StackDockStation.this, bounds, insert );
+                	paint.drawInsertion( g, bounds, insert );
                 }
             }
         }

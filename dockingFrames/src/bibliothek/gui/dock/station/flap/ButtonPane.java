@@ -194,7 +194,7 @@ public class ButtonPane extends OverpaintablePanel{
                 }
             }
             
-            station.getPaint().drawInsertionLine( g, station, x1, y1, x2, y2 );
+            station.getPaint().drawInsertionLine( g, x1, y1, x2, y2 );
         }
     }
     

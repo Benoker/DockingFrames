@@ -117,7 +117,8 @@ import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.support.PlaceholderStrategyListener;
 import bibliothek.gui.dock.station.support.RootPlaceholderStrategy;
-import bibliothek.gui.dock.station.support.StationPaintWrapper;
+import bibliothek.gui.dock.station.support.StationPaintValue;
+import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
@@ -373,7 +374,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	private PutInfo putInfo;
 
 	/** A {@link StationPaint} to draw some markings onto this station */
-	private StationPaintWrapper paint = new StationPaintWrapper();
+	private StationPaintValue paint;
 
 	/** A {@link DisplayerFactory} used to create {@link DockableDisplayer} for the children of this station */
 	private DisplayerFactoryWrapper displayerFactory = new DisplayerFactoryWrapper();
@@ -406,6 +407,8 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 
 		placeholderSet = new SplitPlaceholderSet(access);
 
+		paint = new StationPaintValue( ThemeManager.STATION_PAINT + ".split", this );
+		
 		displayers = new DisplayerCollection(this, displayerFactory);
 		displayers.addDockableDisplayerListener(new DockableDisplayerListener(){
 			public void discard( DockableDisplayer displayer ){
@@ -615,6 +618,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 			titleText.setProperties(controller);
 			layoutManager.setProperties(controller);
 			placeholderStrategyProperty.setProperties(controller);
+			paint.setController( controller );
 
 			if( controller != null ) {
 				title = controller.getDockTitleManager().getVersion(TITLE_ID, ControllerTitleFactory.INSTANCE);
@@ -2008,7 +2012,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	 * Gets a {@link StationPaint} to paint markings on this station.
 	 * @return the paint
 	 */
-	public StationPaintWrapper getPaint(){
+	public StationPaintValue getPaint(){
 		return paint;
 	}
 
@@ -2042,10 +2046,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	@Override
 	protected void paintOverlay( Graphics g ){
 		if( putInfo != null && putInfo.isDraw() ) {
-			StationPaint paint = getPaint();
+			StationPaintValue paint = getPaint();
 			if( putInfo.getNode() == null ) {
 				Rectangle bounds = new Rectangle(0, 0, getWidth(), getHeight());
-				paint.drawInsertion(g, this, bounds, bounds);
+				paint.drawInsertion(g, bounds, bounds);
 			}
 			else {
 				CombinerTarget target = putInfo.getCombinerTarget();
@@ -2069,11 +2073,14 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 						bounds.y += height - bounds.height;
 					}
 	
-					paint.drawInsertion(g, this, putInfo.getNode().getBounds(), bounds);
+					paint.drawInsertion(g, putInfo.getNode().getBounds(), bounds);
 				}
 				else{
 					Rectangle bounds = putInfo.getNode().getBounds();
-					target.paint( g, paint, bounds, bounds );
+					StationPaint stationPaint = paint.get();
+					if( stationPaint != null ){
+						target.paint( g, stationPaint, bounds, bounds );
+					}
 				}
 			}
 		}
@@ -2627,7 +2634,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 		public void paint( Graphics g ){
 			if( isResizingEnabled() ) {
 				if( current != null && pressed ) {
-					getPaint().drawDivider(g, SplitDockStation.this, bounds);
+					getPaint().drawDivider(g, bounds);
 				}
 			}
 		}

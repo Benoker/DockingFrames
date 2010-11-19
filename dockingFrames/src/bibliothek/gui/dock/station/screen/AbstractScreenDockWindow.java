@@ -416,15 +416,17 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
             protected void paintOverlay( Graphics g ) {
             	if( combination != null ){
                     ScreenDockStation station = getStation();
-                    StationPaint paint = station.getPaint();
-                    Insets insets = getInsets();
-
-                    Rectangle bounds = new Rectangle( 0, 0, getWidth(), getHeight() );
-                    Rectangle insert = new Rectangle( 2*insets.left, 2*insets.top, 
-                            getWidth() - 2*(insets.left+insets.right),
-                            getHeight() - 2*(insets.top+insets.bottom ));
-
-                    combination.paint( g, paint, bounds, insert );
+                    StationPaint paint = station.getPaint().get();
+                    if( paint != null ){
+	                    Insets insets = getInsets();
+	
+	                    Rectangle bounds = new Rectangle( 0, 0, getWidth(), getHeight() );
+	                    Rectangle insert = new Rectangle( 2*insets.left, 2*insets.top, 
+	                            getWidth() - 2*(insets.left+insets.right),
+	                            getHeight() - 2*(insets.top+insets.bottom ));
+	
+	                    combination.paint( g, paint, bounds, insert );
+                    }
                 }
             }
         };

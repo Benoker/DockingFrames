@@ -73,7 +73,7 @@ public class DockTitleVersion implements DockTitleFactory{
         
         this.controller = controller;
         this.id = id;
-        controller.addUIListener( new UIListener() {
+        controller.getThemeManager().addUIListener( new UIListener() {
 			public void updateUI( DockController controller ){
 				// ignore	
 			}

@@ -49,11 +49,38 @@ public class UIPriorityValue<T> extends PriorityValue<UIPriorityValue.Value<T>> 
 	}
 	
 	/**
+	 * Tells whether all entries of this value are either <code>null</code> or 
+	 * are created by an {@link UIScheme}.
+	 * @return <code>true</code> if all entries of this value are <code>null</code> or created
+	 */
+	public boolean isAllScheme(){
+		for( Priority priority : Priority.values() ){
+			if( getScheme( priority ) == null && get( priority ) != null ){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
 	 * Gets the current value of this {@link UIPriorityValue}.
 	 * @return the current value or <code>null</code>
 	 */
 	public T getValue(){
 		Value<T> value = get();
+		if( value == null ){
+			return null;
+		}
+		return value.getValue();
+	}
+	
+	/**
+	 * Gets the current value of {@link UIPriorityValue} on level <code>priority</code>.
+	 * @param priority the level to search, not <code>null</code>
+	 * @return the value or <code>null</code>
+	 */
+	public T getValue( Priority priority ){
+		Value<T> value = get( priority );
 		if( value == null ){
 			return null;
 		}

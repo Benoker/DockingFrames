@@ -83,9 +83,10 @@ import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderMetaMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
-import bibliothek.gui.dock.station.support.StationPaintWrapper;
+import bibliothek.gui.dock.station.support.StationPaintValue;
 import bibliothek.gui.dock.station.support.PlaceholderList.Filter;
 import bibliothek.gui.dock.station.support.PlaceholderList.Level;
+import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
@@ -160,7 +161,7 @@ public class ScreenDockStation extends AbstractDockStation {
     private WindowProvider owner;
     
     /** The paint used to draw information on this station */
-    private StationPaintWrapper stationPaint = new StationPaintWrapper();
+    private StationPaintValue stationPaint;
     
     /** A factory to create new {@link DockableDisplayer}*/
     private DisplayerFactoryWrapper displayerFactory = new DisplayerFactoryWrapper();
@@ -307,6 +308,8 @@ public class ScreenDockStation extends AbstractDockStation {
         displayers = new DisplayerCollection( this, displayerFactory );
         fullscreenAction = createFullscreenAction();
         
+        stationPaint = new StationPaintValue( ThemeManager.STATION_PAINT + ".screen", this );
+        
         addScreenDockStationListener( new FullscreenListener() );
     }
     
@@ -428,9 +431,9 @@ public class ScreenDockStation extends AbstractDockStation {
      * paint information on this station, when a {@link Dockable} is dragged
      * or moved.
      * @return the paint
-     * @see StationPaintWrapper#setDelegate(StationPaint)
+     * @see StationPaintValue#setDelegate(StationPaint)
      */
-    public StationPaintWrapper getPaint() {
+    public StationPaintValue getPaint() {
         return stationPaint;
     }
     
@@ -461,6 +464,7 @@ public class ScreenDockStation extends AbstractDockStation {
             dockables.bind();
         }
         
+        stationPaint.setController( controller );
         restriction.setProperties( controller );
         windowFactory.setProperties( controller );
         fullscreenStrategy.setProperties( controller );

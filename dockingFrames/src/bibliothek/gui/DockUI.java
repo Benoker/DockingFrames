@@ -58,9 +58,11 @@ import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.support.StationPaintValue;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.gui.dock.themes.ThemeFactory;
+import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.ThemeProperties;
 import bibliothek.gui.dock.themes.ThemePropertyFactory;
 import bibliothek.gui.dock.themes.basic.BasicCombiner;
@@ -69,6 +71,7 @@ import bibliothek.gui.dock.themes.basic.BasicStationPaint;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.Priority;
+import bibliothek.gui.dock.util.UIValue;
 import bibliothek.gui.dock.util.laf.DefaultLookAndFeelColors;
 import bibliothek.gui.dock.util.laf.LookAndFeelColors;
 import bibliothek.gui.dock.util.laf.LookAndFeelColorsListener;
@@ -477,7 +480,12 @@ public class DockUI {
      * @param paint a default value, may be <code>null</code>
      * @param station the station for which a paint is searched
      * @return <code>paint</code> or another StationPaint, not <code>null</code>
+     * @deprecated since the {@link ThemeManager} exists, this method should no longer be used. Instead an
+     * {@link UIValue} should be registered at the {@link ThemeManager}, see {@link StationPaintValue}.
      */
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
+    		description="remove this methode")
     public static StationPaint getPaint( StationPaint paint, DockStation station ){
         if( paint != null )
             return paint;
