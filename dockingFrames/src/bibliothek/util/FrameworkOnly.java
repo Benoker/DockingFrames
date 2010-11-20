@@ -35,6 +35,7 @@ import java.lang.annotation.RetentionPolicy;
  * <ul>
  * 	<li>A class marked with <code>FrameworkOnly</code> should not be instantiated or subclassed by a client</li>
  *  <li>An interface marked with <code>FrameworkOnly</code> should not be implemented by a client</li>
+ *  <li>A method marked with <code>FrameworkOnly</code> should not be invoked by a client</li>
  *  <li>It is perfectly legitimate to use a subclass of a marked class/interface, the <code>FrameworkOnly</code> attribute is not inherited</li>
  *  <li>It is also perfectly legitimate to call methods of a class/interface that is marked as <code>FrameworkOnly</code></li>
  * </ul>

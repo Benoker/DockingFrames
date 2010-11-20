@@ -38,6 +38,8 @@ import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.DockThemeExtension;
 import bibliothek.gui.dock.themes.ThemeCombiner;
 import bibliothek.gui.dock.themes.ThemeDisplayerFactory;
+import bibliothek.gui.dock.themes.ThemeDockableMovingImageFactory;
+import bibliothek.gui.dock.themes.ThemeDockableSelection;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.ThemeStationPaint;
 import bibliothek.gui.dock.title.DockTitle;
@@ -47,6 +49,7 @@ import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.UIValue;
+import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 import bibliothek.util.FrameworkOnly;
 import bibliothek.util.Todo;
@@ -54,11 +57,14 @@ import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Version;
 
 /**
- * A theme describes how a {@link DockStation} looks like, which
- * {@link DockTitle} are selected, and other behavior. A theme needs
- * only to support one {@link DockController} at a time.<br>
- * Warning: this interface will get a big update in version 1.1.0, backwards compatibility
- * will be broken.
+ * A theme describes how a {@link DockStation} looks like, which {@link DockTitle} are selected, and other behavior. 
+ * A theme needs only to support one {@link DockController} at a time.<br>
+ * Most of the methods of this interface should not be called by the client. Instead the {@link ThemeManager} and
+ * the {@link DockProperties} should be used. To request a value from the {@link ThemeManager} the method
+ * {@link ThemeManager#add(String, bibliothek.util.Path, bibliothek.gui.dock.util.TypedUIProperties.Type, UIValue) add} must
+ * be used to install an observer (of type {@link UIValue}). The {@link PropertyKey}s specified in this interface may
+ * be used directly, but clients should bear in mind that the {@link ThemeManager} can override resources that are
+ * stored in the {@link DockProperties}.
  * @author Benjamin Sigg
  */
 @Todo(compatibility=Compatibility.COMPATIBLE, target=Version.VERSION_1_1_0, priority=Todo.Priority.MAJOR,
@@ -83,7 +89,7 @@ public interface DockTheme {
      * A unique identifier for the {@link DockProperties} to access the current {@link Combiner}. The default
      * value will be derived from the current {@link DockTheme}. 
      */
-    public static PropertyKey<Combiner> COMBINER = new PropertyKey<Combiner>( "combiner",
+    public static PropertyKey<Combiner> COMBINER = new PropertyKey<Combiner>( "dock.combiner",
     		new DynamicPropertyFactory<Combiner>(){
     			public Combiner getDefault( PropertyKey<Combiner> key, DockProperties properties ){
     				return new ThemeCombiner( properties.getController() );
@@ -104,7 +110,7 @@ public interface DockTheme {
      * A unique identifier for the {@link DockProperties} to access the current {@link StationPaint}. The default
      * value will be derived from the current {@link DockTheme}.
      */
-    public static PropertyKey<StationPaint> STATION_PAINT = new PropertyKey<StationPaint>( "paint", 
+    public static PropertyKey<StationPaint> STATION_PAINT = new PropertyKey<StationPaint>( "dock.paint", 
     		new DynamicPropertyFactory<StationPaint>(){
     			public StationPaint getDefault( PropertyKey<StationPaint> key, DockProperties properties ){
     				return new ThemeStationPaint( properties.getController() );
@@ -125,7 +131,7 @@ public interface DockTheme {
      * A unique identifier for the {@link DockProperties} to access the current {@link DisplayerFactory}. The default
      * value will be derived from the current {@link DockTheme}.
      */
-    public static PropertyKey<DisplayerFactory> DISPLAYER_FACTORY = new PropertyKey<DisplayerFactory>( "displayerFactory",
+    public static PropertyKey<DisplayerFactory> DISPLAYER_FACTORY = new PropertyKey<DisplayerFactory>( "dock.displayerFactory",
     		new DynamicPropertyFactory<DisplayerFactory>(){
     			public DisplayerFactory getDefault( PropertyKey<DisplayerFactory> key, DockProperties properties ){
     				return new ThemeDisplayerFactory( properties.getController() );
@@ -154,16 +160,39 @@ public interface DockTheme {
     public DockTitleFactory getTitleFactory( DockController controller );
     
     /**
-     * Gets a factory for images which are moved around by the user.
+     * Identifier for the {@link DockableMovingImageFactory} that is used to show an image during 
+     * drag and drop operations.
+     */
+    public static PropertyKey<DockableMovingImageFactory> DOCKABLE_MOVING_IMAGE_FACTORY = new PropertyKey<DockableMovingImageFactory>( "dock.movingImageFactory", 
+    		new ConstantPropertyFactory<DockableMovingImageFactory>( new ThemeDockableMovingImageFactory() ) , true );
+    
+    /**
+     * Gets a factory for images which are moved around by the user.<br>
+     * This method should not be invoked directly, instead the property key {@link #DOCKABLE_MOVING_IMAGE_FACTORY}
+     * should be used.
      * @param controller the controller for which the factory is needed
      * @return a factory
      */
+    @FrameworkOnly
     public DockableMovingImageFactory getMovingImageFactory( DockController controller );
+ 
+    /**
+     * Identifier for the {@link DockableSelection}, a panel that is shown to select a {@link Dockable}
+     * using only the keyboard.
+     */
+    public static PropertyKey<DockableSelection> DOCKABLE_SELECTION = new PropertyKey<DockableSelection>( "dock.dockableSelection",
+    		new DynamicPropertyFactory<DockableSelection>(){
+    			public DockableSelection getDefault( PropertyKey<DockableSelection> key, DockProperties properties ){
+    				return new ThemeDockableSelection( properties.getController() );
+    			}
+			}, true );
     
     /**
-     * Gets a selector for {@link Dockable}s.
+     * Gets a selector for {@link Dockable}s. This method should not be invoked directly, instead
+     * the property key {@link #DOCKABLE_SELECTION} should be used.
      * @param controller the controller for which the selector will be used
      * @return the selector
      */
+    @FrameworkOnly
     public DockableSelection getDockableSelection( DockController controller );
 }

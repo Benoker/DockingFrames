@@ -47,6 +47,7 @@ import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
+import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
@@ -710,7 +711,7 @@ public class DefaultDockRelocator extends DockRelocator{
      */
     private ImageWindow getTitleWindow( Dockable dockable, DockTitle title ){
     	DockController controller = getController();
-        DockableMovingImageFactory factory = controller.getTheme().getMovingImageFactory( controller );
+        DockableMovingImageFactory factory = controller.getProperties().get( DockTheme.DOCKABLE_MOVING_IMAGE_FACTORY );
         MovingImage image;
         
         if( title == null )
