@@ -16,14 +16,12 @@ import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
-import bibliothek.gui.dock.themes.DefaultStationThemeItem;
 import bibliothek.gui.dock.themes.DisplayerFactoryValue;
-import bibliothek.gui.dock.themes.StationThemeItem;
-import bibliothek.gui.dock.themes.StationThemeItemBridge;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.Priority;
+import bibliothek.gui.dock.util.UIBridge;
 import bibliothek.gui.dock.util.UIValue;
 
 @Tutorial(title="DockableDisplayer", id="Displayers")
@@ -63,14 +61,14 @@ public class DisplayerExample {
 		 */
 		
 		/* we make use of the existing class StationThemeItemBridge which already implements some methods */
-		StationThemeItemBridge<DisplayerFactory> bridge = new StationThemeItemBridge<DisplayerFactory>(){
+		UIBridge<DisplayerFactory, UIValue<DisplayerFactory>> bridge = new UIBridge<DisplayerFactory, UIValue<DisplayerFactory>>(){
 			/* we are going to use a red and a blue border */
-			private StationThemeItem<DisplayerFactory> red = new DefaultStationThemeItem<DisplayerFactory>( new CustomDisplayerFactory( Color.RED ));
-			private StationThemeItem<DisplayerFactory> blue = new DefaultStationThemeItem<DisplayerFactory>( new CustomDisplayerFactory( Color.BLUE ));
+			private DisplayerFactory red = new CustomDisplayerFactory( Color.RED );
+			private DisplayerFactory blue = new CustomDisplayerFactory( Color.BLUE );
 			
 			/* this method is called when a property has to be transfered. Normally a bridge calls "uiValue.set( value )", but
 			 * we are free to forward our own objects */
-			public void set( String id, StationThemeItem<DisplayerFactory> value, UIValue<StationThemeItem<DisplayerFactory>> uiValue ){
+			public void set( String id, DisplayerFactory value, UIValue<DisplayerFactory> uiValue ){
 				/* the identifier of any property used by a SplitDockStation ends with ".split" */
 				if( id.endsWith( ".split" )){
 					uiValue.set( red );
@@ -78,6 +76,14 @@ public class DisplayerExample {
 				else{
 					uiValue.set( blue );
 				}
+			}
+			
+			public void add( String id, UIValue<DisplayerFactory> uiValue ){
+				// ignore
+			}
+			
+			public void remove( String id, UIValue<DisplayerFactory> uiValue ){
+				// ignore	
 			}
 		};
 		

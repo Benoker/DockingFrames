@@ -37,12 +37,12 @@ import bibliothek.util.Path;
  * @author Benjamin Sigg
  * @param <V> the kind of value this {@link UIValue} handles
  */
-public class StationThemeItemValue<V> implements UIValue<StationThemeItem<V>>{
+public class StationThemeItemValue<V> implements UIValue<V>{
     /** overriding delegate */
 	private V delegate;
 	
 	/** currently assigned value */
-	private StationThemeItem<V> value;
+	private V value;
 	
 	/** the station that uses this factory */
 	private DockStation station;
@@ -54,7 +54,7 @@ public class StationThemeItemValue<V> implements UIValue<StationThemeItem<V>>{
 	private Path kind;
 	
 	/** what type of value this handles */
-	private Type<StationThemeItem<V>> type;
+	private Type<V> type;
 	
 	/** the current controller */
 	private DockController controller;
@@ -66,7 +66,7 @@ public class StationThemeItemValue<V> implements UIValue<StationThemeItem<V>>{
 	 * @param type what kind of value this {@link UIValue} handles
 	 * @param station the owner of this object, not <code>null</code>
 	 */
-	public StationThemeItemValue( String id, Path kind, Type<StationThemeItem<V>> type, DockStation station ){
+	public StationThemeItemValue( String id, Path kind, Type<V> type, DockStation station ){
 		if( id == null ){
 			throw new IllegalArgumentException( "id must not be null" );
 		}
@@ -130,7 +130,7 @@ public class StationThemeItemValue<V> implements UIValue<StationThemeItem<V>>{
         this.delegate = delegate;
     }
     
-    public void set( StationThemeItem<V> value ){
+    public void set( V value ){
     	this.value = value;
     }
     
@@ -143,10 +143,7 @@ public class StationThemeItemValue<V> implements UIValue<StationThemeItem<V>>{
     		return delegate;
     	}
     	if( value != null ){
-    		V result = value.get( station );
-    		if( result != null ){
-    			return result;
-    		}
+    		return value;
     	}
     	return null;
     }

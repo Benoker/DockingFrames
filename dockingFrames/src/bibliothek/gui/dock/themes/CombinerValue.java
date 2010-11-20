@@ -34,7 +34,7 @@ import bibliothek.util.Path;
  * An {@link UIValue} that is used to retrieve a {@link Combiner} from a {@link ThemeManager}.
  * @author Benjamin Sigg
  */
-public interface CombinerValue extends UIValue<StationThemeItem<Combiner>>{
+public interface CombinerValue extends UIValue<Combiner>{
 	/** the kind of {@link UIValue} this is */
 	public static final Path KIND_COMBINER = new Path( "dock", "combiner", "station" );
 	

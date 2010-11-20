@@ -25,23 +25,43 @@
  */
 package bibliothek.gui.dock.themes;
 
+import java.awt.Graphics;
+import java.awt.Rectangle;
+
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
+import bibliothek.gui.dock.station.StationPaint;
 
 /**
- * An item that is used by {@link DockStation}s to change part of their 
- * look and feel depending on the current {@link DockTheme}.
+ * A {@link StationPaint} which forwards its calls to the current {@link DockTheme}.
  * @author Benjamin Sigg
- * @param <T> the kind of item this factory creates
  */
-public interface StationThemeItem<T> {
+public class ThemeStationPaint implements StationPaint{
+	private DockController controller;
+	
 	/**
-	 * Gets the item in a form that is usable by <code>station</code>.
-	 * @param station some station, not <code>null</code>
-	 * @return the item that is to be used by <code>station</code>, maybe a new
-	 * object or an object that is used many times, or <code>this</code>. 
-	 * Whether <code>null</code> or not is allowed depends on the type of <code>T</code> and
-	 * the use of this item.
+	 * Creates a new paint.
+	 * @param controller the controller whose theme should be accessed
 	 */
-	public T get( DockStation station );
+	public ThemeStationPaint( DockController controller ){
+		this.controller = controller;
+	}
+
+	private StationPaint get( DockStation station ){
+		return controller.getTheme().getPaint( station );
+	}
+	
+	public void drawDivider( Graphics g, DockStation station, Rectangle bounds ){
+		get( station ).drawDivider( g, station, bounds );
+	}
+
+	public void drawInsertion( Graphics g, DockStation station, Rectangle stationBounds, Rectangle dockableBounds ){
+		get( station ).drawInsertion( g, station, stationBounds, dockableBounds );
+	}
+
+	public void drawInsertionLine( Graphics g, DockStation station, int x1, int y1, int x2, int y2 ){
+		get( station ).drawInsertionLine( g, station, x1, y1, x2, y2 );
+	}
+	
 }

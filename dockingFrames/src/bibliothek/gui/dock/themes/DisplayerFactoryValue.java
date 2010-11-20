@@ -34,7 +34,7 @@ import bibliothek.util.Path;
  * An {@link UIValue} that is used to retrieve a {@link DisplayerFactory} from a {@link ThemeManager}.
  * @author Benjamin Sigg
  */
-public interface DisplayerFactoryValue extends UIValue<StationThemeItem<DisplayerFactory>>{
+public interface DisplayerFactoryValue extends UIValue<DisplayerFactory>{
 	/** the kind of {@link UIValue} this is */
 	public static final Path KIND_DISPLAYER_FACTORY = new Path( "dock", "displayerFactory", "station" );
 	

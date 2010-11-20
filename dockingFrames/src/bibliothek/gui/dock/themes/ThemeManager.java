@@ -59,19 +59,19 @@ import bibliothek.util.FrameworkOnly;
  */
 public class ThemeManager extends TypedUIProperties{
 	/** Identifier for a factory that creates {@link StationPaint}s. */
-	public static final Type<StationThemeItem<StationPaint>> STATION_PAINT_TYPE = new Type<StationThemeItem<StationPaint>>( "StationPaint" );
+	public static final Type<StationPaint> STATION_PAINT_TYPE = new Type<StationPaint>( "StationPaint" );
 	
 	/** unique identifier for the basic {@link StationPaint} */
 	public static final String STATION_PAINT = "paint";
 	
 	/** Identifier for the type {@link Combiner} */
-	public static final Type<StationThemeItem<Combiner>> COMBINER_TYPE = new Type<StationThemeItem<Combiner>>( "Combiner" );
+	public static final Type<Combiner> COMBINER_TYPE = new Type<Combiner>( "Combiner" );
 	
 	/** unique identifier for the basic {@link Combiner} */
 	public static final String COMBINER = "combiner";
 	
 	/** Identifier for the type {@link DisplayerFactory} */
-	public static final Type<StationThemeItem<DisplayerFactory>> DISPLAYER_FACTORY_TYPE = new Type<StationThemeItem<DisplayerFactory>>( "DisplayerFactory" );
+	public static final Type<DisplayerFactory> DISPLAYER_FACTORY_TYPE = new Type<DisplayerFactory>( "DisplayerFactory" );
 	
 	/** unique identifier for the basic {@link DisplayerFactory} */
 	public static final String DISPLAYER_FACTORY = "displayer";

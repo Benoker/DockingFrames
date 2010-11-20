@@ -32,16 +32,23 @@ import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.themes.DefaultCombinerValue;
+import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
+import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.DockThemeExtension;
-import bibliothek.gui.dock.themes.StationThemeItem;
-import bibliothek.gui.dock.themes.StationThemeItemFactory;
+import bibliothek.gui.dock.themes.ThemeCombiner;
+import bibliothek.gui.dock.themes.ThemeDisplayerFactory;
 import bibliothek.gui.dock.themes.ThemeManager;
+import bibliothek.gui.dock.themes.ThemeStationPaint;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.UIValue;
+import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
+import bibliothek.util.FrameworkOnly;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Version;
@@ -76,56 +83,64 @@ public interface DockTheme {
      * A unique identifier for the {@link DockProperties} to access the current {@link Combiner}. The default
      * value will be derived from the current {@link DockTheme}. 
      */
-    public static PropertyKey<StationThemeItem<Combiner>> COMBINER = new PropertyKey<StationThemeItem<Combiner>>( "combiner",
-    		new StationThemeItemFactory<Combiner>(){
-    			protected Combiner get( ThemeManager theme, DockStation station ){
-    				return theme.getTheme().getCombiner( station );
+    public static PropertyKey<Combiner> COMBINER = new PropertyKey<Combiner>( "combiner",
+    		new DynamicPropertyFactory<Combiner>(){
+    			public Combiner getDefault( PropertyKey<Combiner> key, DockProperties properties ){
+    				return new ThemeCombiner( properties.getController() );
     			}
 			}, true );
     
     /**
-     * Gets the Combiner for <code>station</code>.
+     * Gets the Combiner for <code>station</code>.<br>
+     * This method should not be used directly, instead an {@link UIValue} of type {@link DefaultCombinerValue} should
+     * be installed at the local {@link ThemeManager} to retrieve the value.
      * @param station the station whose combiner is searched
      * @return a combiner for <code>station</code>
      */
+    @FrameworkOnly
     public Combiner getCombiner( DockStation station );
 
     /**
      * A unique identifier for the {@link DockProperties} to access the current {@link StationPaint}. The default
      * value will be derived from the current {@link DockTheme}.
      */
-    public static PropertyKey<StationThemeItem<StationPaint>> STATION_PAINT = new PropertyKey<StationThemeItem<StationPaint>>( "paint", 
-    		new StationThemeItemFactory<StationPaint>(){
-    			protected StationPaint get( ThemeManager theme, DockStation station ){
-    				return theme.getTheme().getPaint( station );
+    public static PropertyKey<StationPaint> STATION_PAINT = new PropertyKey<StationPaint>( "paint", 
+    		new DynamicPropertyFactory<StationPaint>(){
+    			public StationPaint getDefault( PropertyKey<StationPaint> key, DockProperties properties ){
+    				return new ThemeStationPaint( properties.getController() );
     			}
 			}, true );
     
     /**
-     * Gets the paint which is used to draw things onto <code>station</code>.
+     * Gets the paint which is used to draw things onto <code>station</code>.<br>
+     * This method should not be used directly, instead an {@link UIValue} of type {@link DefaultStationPaintValue} should
+     * be installed at the local {@link ThemeManager} to retrieve the value.
      * @param station the station to paint on
      * @return the paint for <code>station</code>
      */
+    @FrameworkOnly
     public StationPaint getPaint( DockStation station );
     
     /**
      * A unique identifier for the {@link DockProperties} to access the current {@link DisplayerFactory}. The default
      * value will be derived from the current {@link DockTheme}.
      */
-    public static PropertyKey<StationThemeItem<DisplayerFactory>> DISPLAYER_FACTORY = new PropertyKey<StationThemeItem<DisplayerFactory>>( "displayerFactory",
-    		new StationThemeItemFactory<DisplayerFactory>(){
-    			@Override
-    			protected DisplayerFactory get( ThemeManager theme, DockStation station ){
-    				return theme.getTheme().getDisplayFactory( station );
+    public static PropertyKey<DisplayerFactory> DISPLAYER_FACTORY = new PropertyKey<DisplayerFactory>( "displayerFactory",
+    		new DynamicPropertyFactory<DisplayerFactory>(){
+    			public DisplayerFactory getDefault( PropertyKey<DisplayerFactory> key, DockProperties properties ){
+    				return new ThemeDisplayerFactory( properties.getController() );
     			}
 			}, true );
     
     /**
-     * Gets a displayer factory for <code>station</code>.
+     * Gets a displayer factory for <code>station</code>.<br>
+     * This method should not be used directly, instead an {@link UIValue} of type {@link DefaultDisplayerFactoryValue} should
+     * be installed at the local {@link ThemeManager} to retrieve the value.
      * @param station the station on which the created {@link DockableDisplayer}
      * is shown
      * @return the factory to create displayer
      */
+    @FrameworkOnly
     public DisplayerFactory getDisplayFactory( DockStation station );
     
     /**

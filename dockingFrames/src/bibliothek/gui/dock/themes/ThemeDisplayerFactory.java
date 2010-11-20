@@ -25,34 +25,32 @@
  */
 package bibliothek.gui.dock.themes;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
-import bibliothek.gui.dock.util.DockProperties;
-import bibliothek.gui.dock.util.PropertyKey;
-import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
-import bibliothek.util.FrameworkOnly;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.station.DisplayerFactory;
+import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.title.DockTitle;
 
 /**
- * This class is used to set up the {@link PropertyKey}s of a {@link DockTheme}.
+ * A {@link DisplayerFactory} that forwards all calls to the {@link DisplayerFactory}
+ * of the current {@link DockTheme}.
  * @author Benjamin Sigg
- * @param <A> The kind of item this factory generates
  */
-@FrameworkOnly
-public abstract class StationThemeItemFactory<A> extends DynamicPropertyFactory<StationThemeItem<A>>{
-	public StationThemeItem<A> getDefault( PropertyKey<StationThemeItem<A>> key, DockProperties properties ){
-		final ThemeManager theme = properties.getController().getThemeManager();
-		return new StationThemeItem<A>(){
-			public A get( DockStation station ){
-				return StationThemeItemFactory.this.get( theme, station );
-			}
-		};
-	}
+public class ThemeDisplayerFactory implements DisplayerFactory{
+	private DockController controller;
 	
 	/**
-	 * Creates a new item.
-	 * @param theme the manager that stores the current theme
-	 * @param station the station for which the item will be used
-	 * @return the item, may be <code>null</code> (depends on the property)
+	 * Creates a new factory.
+	 * @param controller the owner of this factory
 	 */
-	protected abstract A get( ThemeManager theme, DockStation station );
+	public ThemeDisplayerFactory( DockController controller ){
+		this.controller = controller;
+	}
+	
+	public DockableDisplayer create( DockStation station, Dockable dockable, DockTitle title ){
+		return controller.getTheme().getDisplayFactory( station ).create( station, dockable, title );
+	}
+
 }

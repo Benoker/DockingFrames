@@ -35,7 +35,7 @@ import bibliothek.util.Path;
  * {@link ThemeManager}.
  * @author Benjamin Sigg
  */
-public interface StationPaintValue extends UIValue<StationThemeItem<StationPaint>>{
+public interface StationPaintValue extends UIValue<StationPaint>{
 	/** the kind of {@link UIValue} this is */
 	public static final Path KIND_STATION_PAINT = new Path( "dock", "paint", "station" );
 	
