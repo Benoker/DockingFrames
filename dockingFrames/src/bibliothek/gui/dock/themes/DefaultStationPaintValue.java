@@ -24,102 +24,32 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock.station.support;
+package bibliothek.gui.dock.themes;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.StationPaint;
-import bibliothek.gui.dock.themes.StationThemeItem;
-import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.util.UIValue;
-import bibliothek.util.Path;
 
 /**
  * A wrapper for a {@link StationPaint}. The wrapper can either use a delegate or installs itself as {@link UIValue}
  * on the current {@link ThemeManager}.
  * @author Benjamin Sigg
  */
-public class StationPaintValue implements UIValue<StationThemeItem<StationPaint>> {
-	/** Unique identifier describing this kind of {@link UIValue} */
-	public static final Path KIND_DOCK_STATION_PAINT = new Path( "dock.dockStationPaint" );
-	
-    /** The delegate that is used if not equal to <code>null</code> */
-    private StationPaint delegate;
-    
-    /** The unique identifier used for the {@link ThemeManager} to get the current {@link StationPaint} */
-    private String id;
-    
-    /** the station that is painted by this wrapper */
-    private DockStation station;
-
-    /** the current controller */
-    private DockController controller;
-    
-    /** the current item that paints */
-    private StationThemeItem<StationPaint> item;
-    
+public class DefaultStationPaintValue extends StationThemeItemValue<StationPaint> implements StationPaintValue {
+	    
     /**
      * Creates a new wrapper.
      * @param id a unique identifier used on {@link ThemeManager} to get the current {@link StationPaint}
      * @param station the station that is painted by this wrapper
      */
-    public StationPaintValue( String id, DockStation station ){
-    	this.id = id;
-    	this.station = station;
+    public DefaultStationPaintValue( String id, DockStation station ){
+    	super( id, KIND_STATION_PAINT, ThemeManager.STATION_PAINT_TYPE, station );
     }
     
-    public void setController( DockController controller ){
-    	if( this.controller != null ){
-    		this.controller.getThemeManager().remove( this );
-    	}
-    	this.controller = controller;
-    	if( controller != null ){
-    		controller.getThemeManager().add( id, KIND_DOCK_STATION_PAINT, ThemeManager.STATION_PAINT_TYPE, this );
-    	}
-    }
-    
-    public void set( StationThemeItem<StationPaint> value ){
-    	this.item = value;
-    }
-    
-    /**
-     * Gets the {@link StationPaint} to which calls to this paint are
-     * forwarded.
-     * @return the delegate or <code>null</code>
-     * @see #setDelegate(StationPaint)
-     */
-    public StationPaint getDelegate() {
-        return delegate;
-    }
-    
-    /**
-     * Sets the <code>delegate</code> property. If this property is set,
-     * all calls to the Methods of {@link StationPaint} are forwarded to
-     * it. Otherwise a default paint is used.
-     * @param delegate the delegate or <code>null</code>
-     */
-    public void setDelegate( StationPaint delegate ) {
-        this.delegate = delegate;
-    }
-    
-    /**
-     * Gets the {@link StationPaint} that should currently be used.
-     * @return the current paint or <code>null</code>
-     */
-    public StationPaint get(){
-    	if( delegate != null ){
-    		return delegate;
-    	}
-    	if( item == null ){
-    		return null;
-    	}
-    	return item.get( station );
-    }
-
     /**
      * Calls {@link StationPaint#drawDivider(Graphics, DockStation, Rectangle)}
      * @param g the graphics context
@@ -128,7 +58,7 @@ public class StationPaintValue implements UIValue<StationThemeItem<StationPaint>
     public void drawDivider( Graphics g, Rectangle bounds ) {
     	StationPaint paint = get();
     	if( paint != null ){
-    		paint.drawDivider( g, station, bounds );
+    		paint.drawDivider( g, getStation(), bounds );
     	}
     }
 
@@ -141,7 +71,7 @@ public class StationPaintValue implements UIValue<StationThemeItem<StationPaint>
     public void drawInsertion( Graphics g, Rectangle stationBounds, Rectangle dockableBounds ) {
     	StationPaint paint = get();
     	if( paint != null ){
-    		paint.drawInsertion( g, station, stationBounds, dockableBounds );
+    		paint.drawInsertion( g, getStation(), stationBounds, dockableBounds );
     	}
     }
     
@@ -156,7 +86,7 @@ public class StationPaintValue implements UIValue<StationThemeItem<StationPaint>
     public void drawInsertionLine( Graphics g, int x1, int y1, int x2, int y2 ) {
     	StationPaint paint = get();
     	if( paint != null ){
-    		paint.drawInsertionLine( g, station, x1, y1, x2, y2 );
+    		paint.drawInsertionLine( g, getStation(), x1, y1, x2, y2 );
     	}
     }
 }

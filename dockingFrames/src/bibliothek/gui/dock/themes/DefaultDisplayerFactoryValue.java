@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -24,14 +24,15 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock.station.support;
+package bibliothek.gui.dock.themes;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
-import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.themes.basic.BasicDisplayerFactory;
+import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
@@ -41,30 +42,31 @@ import bibliothek.gui.dock.title.DockTitle;
  * is used.
  * @author Benjamin Sigg
  */
-public class DisplayerFactoryWrapper implements DisplayerFactory {
-    private DisplayerFactory delegate;
+public class DefaultDisplayerFactoryValue extends StationThemeItemValue<DisplayerFactory> implements DisplayerFactoryValue {
     
+	/**
+	 * Creates a new object.
+	 * @param id the identifier used for retrieving a resource of {@link ThemeManager}
+	 * @param station the owner of this object, not <code>null</code>
+	 */
+	public DefaultDisplayerFactoryValue( String id, DockStation station ){
+		super( id, KIND_DISPLAYER_FACTORY, ThemeManager.DISPLAYER_FACTORY_TYPE, station );
+	}
+	
+ 
     /**
-     * Gets the delegate of this wrapper.
-     * @return the delegate, may be <code>null</code>
+     * Uses the current factory to create a new {@link DockableDisplayer}. Falls back to a {@link BasicDockableDisplayer}
+     * if no factory can be found.
+     * @param dockable the element for which a displayer is required
+     * @param title the title of the displayer, can be <code>null</code>
+     * @return the new displayer
      */
-    public DisplayerFactory getDelegate() {
-        return delegate;
-    }
-    
-    /**
-     * Sets the delegate of this wrapper.
-     * @param delegate the delegate or <code>null</code>
-     */
-    public void setDelegate( DisplayerFactory delegate ) {
-        if( delegate == this )
-            throw new IllegalArgumentException( "Infinite recursion is not allowed" );
-        
-        this.delegate = delegate;
-    }
-    
-    public DockableDisplayer create( DockStation station, Dockable dockable,
-            DockTitle title ) {
-        return DockUI.getDisplayerFactory( delegate, station ).create( station, dockable, title );
+    public DockableDisplayer create( Dockable dockable, DockTitle title ) {
+    	DisplayerFactory factory = get();
+    	if( factory == null ){
+    		factory = new BasicDisplayerFactory();
+    	}
+    	
+        return factory.create( getStation(), dockable, title );
     }
 }

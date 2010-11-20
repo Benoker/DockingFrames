@@ -73,9 +73,7 @@ import bibliothek.gui.dock.station.screen.ScreenFullscreenAction;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerSourceWrapper;
 import bibliothek.gui.dock.station.support.CombinerTarget;
-import bibliothek.gui.dock.station.support.CombinerWrapper;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
-import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
@@ -83,9 +81,11 @@ import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderMetaMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
-import bibliothek.gui.dock.station.support.StationPaintValue;
 import bibliothek.gui.dock.station.support.PlaceholderList.Filter;
 import bibliothek.gui.dock.station.support.PlaceholderList.Level;
+import bibliothek.gui.dock.themes.DefaultCombinerValue;
+import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
+import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
@@ -152,7 +152,7 @@ public class ScreenDockStation extends AbstractDockStation {
     private DockTitleVersion version;
     
     /** Combiner to merge some {@link Dockable Dockables} */
-    private CombinerWrapper combiner = new CombinerWrapper();
+    private DefaultCombinerValue combiner;
     
     /** Information about the current movement of a {@link Dockable} */
     private DropInfo dropInfo;
@@ -161,10 +161,10 @@ public class ScreenDockStation extends AbstractDockStation {
     private WindowProvider owner;
     
     /** The paint used to draw information on this station */
-    private StationPaintValue stationPaint;
+    private DefaultStationPaintValue stationPaint;
     
     /** A factory to create new {@link DockableDisplayer}*/
-    private DisplayerFactoryWrapper displayerFactory = new DisplayerFactoryWrapper();
+    private DefaultDisplayerFactoryValue displayerFactory;
     
     /** The set of {@link DockableDisplayer} used on this station */
     private DisplayerCollection displayers;
@@ -305,10 +305,13 @@ public class ScreenDockStation extends AbstractDockStation {
         visibility = new DockableVisibilityManager( listeners );
         this.owner = owner;
         
+        displayerFactory = new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + ".screen", this );
+        combiner = new DefaultCombinerValue( ThemeManager.COMBINER + ".screen", this );
+        
         displayers = new DisplayerCollection( this, displayerFactory );
         fullscreenAction = createFullscreenAction();
         
-        stationPaint = new StationPaintValue( ThemeManager.STATION_PAINT + ".screen", this );
+        stationPaint = new DefaultStationPaintValue( ThemeManager.STATION_PAINT + ".screen", this );
         
         addScreenDockStationListener( new FullscreenListener() );
     }
@@ -401,9 +404,9 @@ public class ScreenDockStation extends AbstractDockStation {
      * Gets the {@link DisplayerFactory} that is used by this station
      * to create an underground for its children.
      * @return the factory
-     * @see DisplayerFactoryWrapper#setDelegate(DisplayerFactory)
+     * @see DefaultDisplayerFactoryValue#setDelegate(DisplayerFactory)
      */
-    public DisplayerFactoryWrapper getDisplayerFactory() {
+    public DefaultDisplayerFactoryValue getDisplayerFactory() {
         return displayerFactory;
     }
     
@@ -420,9 +423,9 @@ public class ScreenDockStation extends AbstractDockStation {
      * Gets the {@link Combiner} that is used to merge two {@link Dockable Dockables}
      * on this station.
      * @return the combiner
-     * @see CombinerWrapper#setDelegate(Combiner)
+     * @see DefaultCombinerValue#setDelegate(Combiner)
      */
-    public CombinerWrapper getCombiner() {
+    public DefaultCombinerValue getCombiner() {
         return combiner;
     }
     
@@ -431,9 +434,9 @@ public class ScreenDockStation extends AbstractDockStation {
      * paint information on this station, when a {@link Dockable} is dragged
      * or moved.
      * @return the paint
-     * @see StationPaintValue#setDelegate(StationPaint)
+     * @see DefaultStationPaintValue#setDelegate(StationPaint)
      */
-    public StationPaintValue getPaint() {
+    public DefaultStationPaintValue getPaint() {
         return stationPaint;
     }
     
@@ -465,6 +468,9 @@ public class ScreenDockStation extends AbstractDockStation {
         }
         
         stationPaint.setController( controller );
+        combiner.setController( controller );
+        displayerFactory.setController( controller );
+        
         restriction.setProperties( controller );
         windowFactory.setProperties( controller );
         fullscreenStrategy.setProperties( controller );

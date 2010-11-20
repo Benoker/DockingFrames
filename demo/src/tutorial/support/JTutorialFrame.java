@@ -9,11 +9,25 @@ import javax.swing.JFrame;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
-import bibliothek.gui.dock.common.CContentArea;
 import bibliothek.gui.dock.common.CControl;
 
 public class JTutorialFrame extends JFrame{
 	private List<Runnable> runOnClose = new ArrayList<Runnable>();
+	
+	public JTutorialFrame( String title ){
+		setBounds( 40, 40, 800, 600 );
+		
+		setTitle( title );
+		setDefaultCloseOperation( JFrame.DO_NOTHING_ON_CLOSE );
+		addWindowListener( new WindowAdapter(){
+			public void windowClosing( WindowEvent e ){
+				dispose();
+				for( Runnable onClose : runOnClose ){
+					onClose.run();
+				}
+			}
+		});
+	}
 	
 	public JTutorialFrame( Class<?> clazz ){
 		setBounds( 40, 40, 800, 600 );

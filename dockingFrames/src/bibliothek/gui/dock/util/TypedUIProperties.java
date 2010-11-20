@@ -85,6 +85,15 @@ public class TypedUIProperties {
 		public String getKey( String id ){
 			return key + "." + id;
 		}
+		
+		/**
+		 * Gets the identifier for the kind of {@link UIValue} that reads an {@link UIValue} of this type.
+		 * @param kind the kind of {@link UIValue}
+		 * @return the identifier to use in a map
+		 */
+		public Path getKind( Path kind ){
+			return new Path( key ).append( kind );
+		}
 	}
 	
 	/** all the properties of this manager */
@@ -156,7 +165,7 @@ public class TypedUIProperties {
 	@SuppressWarnings("unchecked")
 	public <V> void add( String id, Path kind, Type<V> type, UIValue<V> value ){
 		check( type );
-		properties.add( type.getKey( id ), kind, (UIValue<Object>)value );
+		properties.add( type.getKey( id ), type.getKind( kind ), (UIValue<Object>)value );
 	}
 	
 	/**
@@ -181,7 +190,7 @@ public class TypedUIProperties {
 	@SuppressWarnings("unchecked")
 	public <V> void publish( Priority priority, Path kind, Type<V> type, UIBridge<V, UIValue<V>> bridge ){
 		check( type );
-		kind = new Path( type.getKey() ).append( kind );
+		kind = type.getKind( kind );
 		
 		ThemeBridge<?> theme = bridges.get( bridge );
 		if( theme == null ){
@@ -203,7 +212,7 @@ public class TypedUIProperties {
 	@SuppressWarnings("unchecked")
 	public <V> void unpublish( Priority priority, Path kind, Type<V> type ){
 		check( type );
-		kind = new Path( type.getKey() ).append( kind );
+		kind = type.getKind( kind );
 		
 		UIBridge<V, UIValue<V>> bridge = (UIBridge)properties.getBridge( priority, kind );
 		if( bridge != null ){

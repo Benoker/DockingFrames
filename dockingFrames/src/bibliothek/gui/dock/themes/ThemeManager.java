@@ -39,6 +39,8 @@ import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.event.UIListener;
+import bibliothek.gui.dock.station.Combiner;
+import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.util.DockProperties;
@@ -57,10 +59,22 @@ import bibliothek.util.FrameworkOnly;
  */
 public class ThemeManager extends TypedUIProperties{
 	/** Identifier for a factory that creates {@link StationPaint}s. */
-	public static Type<StationThemeItem<StationPaint>> STATION_PAINT_TYPE = new Type<StationThemeItem<StationPaint>>( "paint" );
+	public static final Type<StationThemeItem<StationPaint>> STATION_PAINT_TYPE = new Type<StationThemeItem<StationPaint>>( "StationPaint" );
 	
 	/** unique identifier for the basic {@link StationPaint} */
-	public static String STATION_PAINT = "paint";
+	public static final String STATION_PAINT = "paint";
+	
+	/** Identifier for the type {@link Combiner} */
+	public static final Type<StationThemeItem<Combiner>> COMBINER_TYPE = new Type<StationThemeItem<Combiner>>( "Combiner" );
+	
+	/** unique identifier for the basic {@link Combiner} */
+	public static final String COMBINER = "combiner";
+	
+	/** Identifier for the type {@link DisplayerFactory} */
+	public static final Type<StationThemeItem<DisplayerFactory>> DISPLAYER_FACTORY_TYPE = new Type<StationThemeItem<DisplayerFactory>>( "DisplayerFactory" );
+	
+	/** unique identifier for the basic {@link DisplayerFactory} */
+	public static final String DISPLAYER_FACTORY = "displayer";
 	
 	/** the controller owning the manager */
 	private DockController controller;
@@ -101,6 +115,9 @@ public class ThemeManager extends TypedUIProperties{
     	setScheme( Priority.THEME, transfers );
     }
     
+    /**
+     * Initializes this managere, must be called exactly once.
+     */
     public void init(){
     	registerTypes();
     	link();
@@ -108,11 +125,14 @@ public class ThemeManager extends TypedUIProperties{
     
     private void registerTypes(){
     	registerType( STATION_PAINT_TYPE );
+    	registerType( COMBINER_TYPE );
+    	registerType( DISPLAYER_FACTORY_TYPE );
     }
     
     private void link(){
-    	
     	link( DockTheme.STATION_PAINT, STATION_PAINT_TYPE, STATION_PAINT );
+    	link( DockTheme.COMBINER, COMBINER_TYPE, COMBINER );
+    	link( DockTheme.DISPLAYER_FACTORY, DISPLAYER_FACTORY_TYPE, DISPLAYER_FACTORY );
     }
     
     /**

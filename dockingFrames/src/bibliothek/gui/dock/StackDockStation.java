@@ -74,16 +74,16 @@ import bibliothek.gui.dock.station.stack.TabContentFilterListener;
 import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
-import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
-import bibliothek.gui.dock.station.support.StationPaintValue;
 import bibliothek.gui.dock.station.support.PlaceholderList.Filter;
 import bibliothek.gui.dock.station.support.PlaceholderList.Level;
+import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
+import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
@@ -134,10 +134,10 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     private DockableVisibilityManager visibility;
     
     /** A paint to draw lines */
-    private StationPaintValue paint;
+    private DefaultStationPaintValue paint;
     
     /** A factory to create {@link DockableDisplayer} */
-    private DisplayerFactoryWrapper displayerFactory = new DisplayerFactoryWrapper();
+    private DefaultDisplayerFactoryValue displayerFactory;
     
     /** The set of displayers shown on this station */
     private DisplayerCollection displayers;
@@ -274,7 +274,8 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
      * Initializes the fields of this object, has to be called exactly once.
      */
     protected void init(){
-    	paint = new StationPaintValue( ThemeManager.STATION_PAINT + ".stack", this );
+    	paint = new DefaultStationPaintValue( ThemeManager.STATION_PAINT + ".stack", this );
+    	displayerFactory = new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + ".stack", this );
     	
         visibleListener = new VisibleListener();
         visibility = new DockableVisibilityManager( listeners );
@@ -521,6 +522,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             tabContentFilter.setProperties( controller );
             stackComponentRepresentative.setController( controller );
             paint.setController( controller );
+            displayerFactory.setController( controller );
             
             if( controller != null ){
                 title = controller.getDockTitleManager().getVersion( TITLE_ID, ControllerTitleFactory.INSTANCE );
@@ -549,22 +551,22 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     
     /**
      * Gets a {@link StationPaint} which is used to paint some lines onto
-     * this station. Use a {@link StationPaintValue#setDelegate(StationPaint) delegate}
+     * this station. Use a {@link DefaultStationPaintValue#setDelegate(StationPaint) delegate}
      * to exchange the paint.
      * @return the paint
      */
-    public StationPaintValue getPaint() {
+    public DefaultStationPaintValue getPaint() {
         return paint;
     }
    
     /**
      * Gets a {@link DisplayerFactory} which is used to create new
      * {@link DockableDisplayer} for this station. Use a 
-     * {@link DisplayerFactoryWrapper#setDelegate(DisplayerFactory) delegate}
+     * {@link DefaultDisplayerFactoryValue#setDelegate(DisplayerFactory) delegate}
      * to exchange the factory.
      * @return the factory
      */
-    public DisplayerFactoryWrapper getDisplayerFactory() {
+    public DefaultDisplayerFactoryValue getDisplayerFactory() {
         return displayerFactory;
     }
     
@@ -1504,7 +1506,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         
         @Override
         protected void paintOverlay( Graphics g ) {
-            StationPaintValue paint = getPaint();
+            DefaultStationPaintValue paint = getPaint();
             
             if( draw && dockables.dockables().size() > 1 && insert != null ){
                 Rectangle bounds = null;

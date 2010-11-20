@@ -84,9 +84,7 @@ import bibliothek.gui.dock.station.flap.FlapWindowFactory;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerSourceWrapper;
 import bibliothek.gui.dock.station.support.CombinerTarget;
-import bibliothek.gui.dock.station.support.CombinerWrapper;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
-import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
 import bibliothek.gui.dock.station.support.PlaceholderList;
@@ -95,8 +93,10 @@ import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
-import bibliothek.gui.dock.station.support.StationPaintValue;
 import bibliothek.gui.dock.station.support.PlaceholderList.Level;
+import bibliothek.gui.dock.themes.DefaultCombinerValue;
+import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
+import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.BasicButtonTitleFactory;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
@@ -358,11 +358,11 @@ public class FlapDockStation extends AbstractDockableStation {
     private DockTitleVersion titleVersion;
     
     /** The {@link StationPaint} used to paint on this station */
-    private StationPaintValue paint;
+    private DefaultStationPaintValue paint;
     /** The {@link Combiner} user to combine {@link Dockable Dockables}*/
-    private CombinerWrapper combiner = new CombinerWrapper();
+    private DefaultCombinerValue combiner;
     /** The {@link DisplayerFactory} used to create displayers*/
-    private DisplayerFactoryWrapper displayerFactory = new DisplayerFactoryWrapper();
+    private DefaultDisplayerFactoryValue displayerFactory;
     /** Collection used to handle the {@link DockableDisplayer} */
     private DisplayerCollection displayers;
     
@@ -420,8 +420,10 @@ public class FlapDockStation extends AbstractDockableStation {
         buttonPane = createButtonPane();
         setDirection( Direction.SOUTH );
         
+        displayerFactory = new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + ".flap", this );
         displayers = new DisplayerCollection( this, displayerFactory );
-        paint = new StationPaintValue( ThemeManager.STATION_PAINT + ".flap", this );
+        paint = new DefaultStationPaintValue( ThemeManager.STATION_PAINT + ".flap", this );
+        combiner = new DefaultCombinerValue( ThemeManager.COMBINER + ".flap", this );
         
         buttonPane.addComponentListener( new ComponentAdapter(){
             @Override
@@ -514,6 +516,8 @@ public class FlapDockStation extends AbstractDockableStation {
             placeholderStrategy.setProperties( controller );
             displayers.setController( controller );
             paint.setController( controller );
+            displayerFactory.setController( controller );
+            combiner.setController( controller );
             FlapLayoutManager oldLayoutManager = layoutManager.getValue();
             layoutManager.setProperties( controller );
             FlapLayoutManager newLayoutManager = layoutManager.getValue();
@@ -654,7 +658,7 @@ public class FlapDockStation extends AbstractDockableStation {
      * Gets the factory to create new {@link DockableDisplayer}.
      * @return the factory
      */
-    public DisplayerFactoryWrapper getDisplayerFactory() {
+    public DefaultDisplayerFactoryValue getDisplayerFactory() {
         return displayerFactory;
     }
     
@@ -670,7 +674,7 @@ public class FlapDockStation extends AbstractDockableStation {
      * Gets the {@link Combiner} to merge {@link Dockable Dockables}
      * @return the combiner
      */
-    public CombinerWrapper getCombiner() {
+    public DefaultCombinerValue getCombiner() {
         return combiner;
     }
     
@@ -678,7 +682,7 @@ public class FlapDockStation extends AbstractDockableStation {
      * Gets the {@link StationPaint} to paint on this station.
      * @return The paint
      */
-    public StationPaintValue getPaint() {
+    public DefaultStationPaintValue getPaint() {
         return paint;
     }
     

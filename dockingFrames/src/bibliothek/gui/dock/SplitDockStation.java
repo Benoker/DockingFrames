@@ -109,15 +109,15 @@ import bibliothek.gui.dock.station.split.SplitTreeFactory;
 import bibliothek.gui.dock.station.split.PutInfo.Put;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerTarget;
-import bibliothek.gui.dock.station.support.CombinerWrapper;
-import bibliothek.gui.dock.station.support.DisplayerFactoryWrapper;
 import bibliothek.gui.dock.station.support.DockStationListenerManager;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.support.PlaceholderStrategyListener;
 import bibliothek.gui.dock.station.support.RootPlaceholderStrategy;
-import bibliothek.gui.dock.station.support.StationPaintValue;
+import bibliothek.gui.dock.themes.DefaultCombinerValue;
+import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
+import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
@@ -176,7 +176,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	private DockTheme theme;
 
 	/** Combiner to {@link #dropOver(Leaf, Dockable, CombinerSource, CombinerTarget) combine} some Dockables */
-	private CombinerWrapper combiner = new CombinerWrapper();
+	private DefaultCombinerValue combiner;
 
 	/** The type of titles which are used for this station */
 	private DockTitleVersion title;
@@ -374,10 +374,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	private PutInfo putInfo;
 
 	/** A {@link StationPaint} to draw some markings onto this station */
-	private StationPaintValue paint;
+	private DefaultStationPaintValue paint;
 
 	/** A {@link DisplayerFactory} used to create {@link DockableDisplayer} for the children of this station */
-	private DisplayerFactoryWrapper displayerFactory = new DisplayerFactoryWrapper();
+	private DefaultDisplayerFactoryValue displayerFactory;
 
 	/** The set of displayers currently used by this station */
 	private DisplayerCollection displayers;
@@ -407,7 +407,9 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 
 		placeholderSet = new SplitPlaceholderSet(access);
 
-		paint = new StationPaintValue( ThemeManager.STATION_PAINT + ".split", this );
+		paint = new DefaultStationPaintValue( ThemeManager.STATION_PAINT + ".split", this );
+		combiner = new DefaultCombinerValue( ThemeManager.COMBINER + ".split", this );
+		displayerFactory = new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + ".split", this );
 		
 		displayers = new DisplayerCollection(this, displayerFactory);
 		displayers.addDockableDisplayerListener(new DockableDisplayerListener(){
@@ -619,6 +621,8 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 			layoutManager.setProperties(controller);
 			placeholderStrategyProperty.setProperties(controller);
 			paint.setController( controller );
+			displayerFactory.setController( controller );
+			combiner.setController( controller );
 
 			if( controller != null ) {
 				title = controller.getDockTitleManager().getVersion(TITLE_ID, ControllerTitleFactory.INSTANCE);
@@ -2012,7 +2016,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	 * Gets a {@link StationPaint} to paint markings on this station.
 	 * @return the paint
 	 */
-	public StationPaintValue getPaint(){
+	public DefaultStationPaintValue getPaint(){
 		return paint;
 	}
 
@@ -2021,7 +2025,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	 * for this station.
 	 * @return the factory
 	 */
-	public DisplayerFactoryWrapper getDisplayerFactory(){
+	public DefaultDisplayerFactoryValue getDisplayerFactory(){
 		return displayerFactory;
 	}
 
@@ -2039,14 +2043,14 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	 * this station.
 	 * @return the combiner
 	 */
-	public CombinerWrapper getCombiner(){
+	public DefaultCombinerValue getCombiner(){
 		return combiner;
 	}
 
 	@Override
 	protected void paintOverlay( Graphics g ){
 		if( putInfo != null && putInfo.isDraw() ) {
-			StationPaintValue paint = getPaint();
+			DefaultStationPaintValue paint = getPaint();
 			if( putInfo.getNode() == null ) {
 				Rectangle bounds = new Rectangle(0, 0, getWidth(), getHeight());
 				paint.drawInsertion(g, bounds, bounds);

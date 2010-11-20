@@ -72,6 +72,17 @@ public interface DockTheme {
      */
     public void uninstall( DockController controller );
         
+    /** 
+     * A unique identifier for the {@link DockProperties} to access the current {@link Combiner}. The default
+     * value will be derived from the current {@link DockTheme}. 
+     */
+    public static PropertyKey<StationThemeItem<Combiner>> COMBINER = new PropertyKey<StationThemeItem<Combiner>>( "combiner",
+    		new StationThemeItemFactory<Combiner>(){
+    			protected Combiner get( ThemeManager theme, DockStation station ){
+    				return theme.getTheme().getCombiner( station );
+    			}
+			}, true );
+    
     /**
      * Gets the Combiner for <code>station</code>.
      * @param station the station whose combiner is searched
@@ -80,8 +91,8 @@ public interface DockTheme {
     public Combiner getCombiner( DockStation station );
 
     /**
-     * A unique identifier for the {@link DockProperties} to access
-     * the current {@link StationPaint}.
+     * A unique identifier for the {@link DockProperties} to access the current {@link StationPaint}. The default
+     * value will be derived from the current {@link DockTheme}.
      */
     public static PropertyKey<StationThemeItem<StationPaint>> STATION_PAINT = new PropertyKey<StationThemeItem<StationPaint>>( "paint", 
     		new StationThemeItemFactory<StationPaint>(){
@@ -96,6 +107,18 @@ public interface DockTheme {
      * @return the paint for <code>station</code>
      */
     public StationPaint getPaint( DockStation station );
+    
+    /**
+     * A unique identifier for the {@link DockProperties} to access the current {@link DisplayerFactory}. The default
+     * value will be derived from the current {@link DockTheme}.
+     */
+    public static PropertyKey<StationThemeItem<DisplayerFactory>> DISPLAYER_FACTORY = new PropertyKey<StationThemeItem<DisplayerFactory>>( "displayerFactory",
+    		new StationThemeItemFactory<DisplayerFactory>(){
+    			@Override
+    			protected DisplayerFactory get( ThemeManager theme, DockStation station ){
+    				return theme.getTheme().getDisplayFactory( station );
+    			}
+			}, true );
     
     /**
      * Gets a displayer factory for <code>station</code>.

@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -24,12 +24,16 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock.station.support;
+package bibliothek.gui.dock.themes;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.Combiner;
+import bibliothek.gui.dock.station.support.CombinerSource;
+import bibliothek.gui.dock.station.support.CombinerTarget;
+import bibliothek.gui.dock.themes.basic.BasicCombiner;
 
 /**
  * A <code>CombinerWrapper</code> encloses a {@link Combiner} and uses
@@ -38,33 +42,36 @@ import bibliothek.gui.dock.station.Combiner;
  * @author Benjamin Sigg
  *
  */
-public class CombinerWrapper implements Combiner {
-    /** The delegate that is used if not <code>null</code> */
-    private Combiner delegate;
-    
-    /**
-     * Gets the delegate of this wrapper.
-     * @return the delegate or <code>null</code>
-     */
-    public Combiner getDelegate() {
-        return delegate;
+public class DefaultCombinerValue extends StationThemeItemValue<Combiner> implements CombinerValue, Combiner {
+	/**
+	 * Creates a new value.
+	 * @param id the identifier of this value, used to read a resource from the {@link ThemeManager}
+	 * @param station the owner of this object
+	 */
+    public DefaultCombinerValue( String id, DockStation station ){
+    	super( id, KIND_COMBINER, ThemeManager.COMBINER_TYPE, station );
     }
-    
-    /**
-     * Sets the delegate for this wrapper. The delegate will be used
-     * whenever possible.
-     * @param delegate the delegate or <code>null</code> if the default combiner
-     * should be used
-     */
-    public void setDelegate( Combiner delegate ) {
-        this.delegate = delegate;
-    }
-    
+
     public CombinerTarget prepare( CombinerSource source, boolean force ){
-    	return DockUI.getCombiner( delegate, source.getParent() ).prepare( source, force );
+    	Combiner combiner = get();
+    	if( combiner == null ){
+    		if( force ){
+    			combiner = new BasicCombiner();
+    		}
+    		else{
+    			return null;
+    		}
+    	}
+    	
+    	return combiner.prepare( source, force );
     }
-    
+
     public Dockable combine( CombinerSource source, CombinerTarget target ){
-        return DockUI.getCombiner( delegate, source.getParent() ).combine( source, target );
+    	Combiner combiner = get();
+    	if( combiner == null ){
+   			combiner = new BasicCombiner();
+    	}
+
+        return combiner.combine( source, target );
     }
 }
