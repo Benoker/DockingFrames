@@ -75,7 +75,7 @@ public class PerspectivesIntroduction {
 	    /* By storing the perspective with an identifier we can later access it again. */
 	    perspectives.setPerspective( "example", perspective );
 	    
-	    /* After storing the perspective we can access load it from the CControl */
+	    /* After storing the perspective we can load it from the CControl */
 		control.load( "example" );
 	    
 	    frame.setVisible( true );
