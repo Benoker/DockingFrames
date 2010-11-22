@@ -67,7 +67,7 @@ public class LinePainter implements TabPanePainter {
 	}
 	
 	public void paintBackground( Graphics g ){
-		// ignore	
+		// ignore
 	}
 
 	public void paintForeground( Graphics g ){

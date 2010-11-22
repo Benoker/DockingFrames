@@ -26,11 +26,14 @@
 package bibliothek.gui.dock.station.stack;
 
 import java.awt.Dimension;
+import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
 import bibliothek.gui.dock.focus.DockFocusTraversalPolicy;
 import bibliothek.gui.dock.station.stack.tab.TabLayoutManager;
+import bibliothek.gui.dock.util.BackgroundComponent;
+import bibliothek.gui.dock.util.BackgroundPaint;
 
 /**
  * This panel paints the contents of a {@link CombinedStackDockComponent}. It is just a {@link JPanel}. The layout has to be 
@@ -40,6 +43,12 @@ import bibliothek.gui.dock.station.stack.tab.TabLayoutManager;
  */
 public class CombinedStackDockContentPane extends JPanel{
 	private CombinedStackDockComponent<?, ?, ?> parent;
+	
+	private BackgroundPaint background;
+	
+	private BackgroundComponent backgroundComponent;
+	
+	private boolean paintBackground = true;
 	
 	/**
 	 * Creates a new content pane
@@ -53,6 +62,49 @@ public class CombinedStackDockContentPane extends JPanel{
 		setOpaque( false );
 		setFocusTraversalPolicyProvider( true );
 		setFocusTraversalPolicy( new DockFocusTraversalPolicy( new CombinedStackDockFocusTraversalPolicy( this ), true ) );
+	}
+	
+	/**
+	 * Tells this panel whether the background should be painted or not.
+	 * @param paintBackground whether to paint a background
+	 */
+	public void setPaintBackground( boolean paintBackground ){
+		this.paintBackground = paintBackground;
+	}
+	
+	/**
+	 * Tells whether a background should be painted or not
+	 * @return whether a background should be painted
+	 */
+	public boolean isPaintBackground(){
+		return paintBackground;
+	}
+	
+	/**
+	 * Informs this panel how the empty areas should be painted.
+	 * @param paint the algorithm to use, can be <code>null</code>
+	 * @param component representation of <code>this</code>, <code>null</code> if <code>paint</code> is <code>null</code>
+	 */
+	public void setBackground( BackgroundPaint paint, BackgroundComponent component ){
+		this.background = paint;
+		this.backgroundComponent = component;
+		repaint();
+	}
+	
+	/**
+	 * Gets the current algorithm that paints the background.
+	 * @return the current background, can be <code>null</code>
+	 */
+	public BackgroundPaint getBackgroundPaint(){
+		return background;
+	}
+	
+	/**
+	 * Gets the current {@link BackgroundComponent}.
+	 * @return the current argument for a {@link BackgroundPaint}
+	 */
+	public BackgroundComponent getBackgroundComponent(){
+		return backgroundComponent;
 	}
 	
 	/**
@@ -85,5 +137,12 @@ public class CombinedStackDockContentPane extends JPanel{
     @Override
     public Dimension getMinimumSize() {
     	return parent.getMinimumSize();
+    }
+    
+    @Override
+    protected void paintComponent( Graphics g ){
+    	if( !paintBackground || background == null || !background.paint( backgroundComponent, this, g )){
+    		super.paintComponent( g );
+    	}
     }
 }

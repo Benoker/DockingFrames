@@ -26,6 +26,7 @@
 
 package bibliothek.gui.dock;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.GridLayout;
@@ -38,6 +39,7 @@ import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
@@ -60,9 +62,11 @@ import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.OverpaintablePanel;
+import bibliothek.gui.dock.station.StationBackgroundComponent;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;
+import bibliothek.gui.dock.station.stack.StackDockBackgroundComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.station.stack.StackDockComponentParent;
@@ -89,9 +93,11 @@ import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.BackgroundPaint;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.UIValue;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.util.Path;
 
@@ -157,8 +163,14 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     /** The panel where components are added */
     private JComponent panel;
     
+    /** The background of the {@link #panel} */
+    private PanelBackground panelBackground;
+    
     /** A Component which shows two or more children of this station */
     private StackDockComponent stackComponent;
+    
+    /** The background of the current {@link #stackComponent} */
+    private StackBackground stackBackground;
     
     /** Responsible for updating a {@link DockElementRepresentative} that covers the empty areas of {@link #stackComponent} */
     private StackDockComponentRepresentative stackComponentRepresentative;
@@ -289,6 +301,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         
         background = createBackground();
         panel = background.getContentPane();
+        panelBackground = new PanelBackground( panel );
         
         stackComponentFactory = new PropertyValue<StackDockComponentFactory>( COMPONENT_FACTORY ){
             @Override
@@ -411,6 +424,10 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             int selected = -1;
             
             if( this.stackComponent != null ){
+            	if( stackBackground != null ){
+                	stackBackground.destroy();
+                	stackBackground = null;
+                }
             	this.stackComponent.setController( null );
                 Component component = this.stackComponent.getComponent();
                 for( MouseInputListener listener : mouseInputListeners ){
@@ -424,6 +441,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             }
             
             this.stackComponent = stackComponent;
+            stackBackground = new StackBackground( this.stackComponent );
             stackComponent.setTabPlacement( tabPlacement.getValue() );
             stackComponentRepresentative.setComponent( stackComponent );
             
@@ -514,6 +532,8 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             
             boolean wasNull = getController() == null;
             
+            DockController oldController = getController();
+            
             stackComponentFactory.setProperties( controller );
             super.setController(controller);
             stackComponent.setController( controller );
@@ -523,6 +543,11 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             stackComponentRepresentative.setController( controller );
             paint.setController( controller );
             displayerFactory.setController( controller );
+            
+            panelBackground.changeSource( oldController, controller );
+            if( stackBackground != null ){
+            	stackBackground.changeSource( oldController, controller );
+            }
             
             if( controller != null ){
                 title = controller.getDockTitleManager().getVersion( TITLE_ID, ControllerTitleFactory.INSTANCE );
@@ -1501,7 +1526,20 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     	 * Creates a new panel
     	 */
         public Background(){
+        	setContentPane( new JPanel(){
+        		@Override
+        		protected void paintComponent( Graphics g ){
+        			BackgroundPaint paint = panelBackground.getPaint();
+        			if( paint == null || !paint.paint( panelBackground, this, g )){
+        				super.paintComponent( g );
+        			}
+        		}
+        	});
+        	
             getContentPane().setLayout( new GridLayout( 1, 1 ));
+            getBasePane().removeAll();
+            getBasePane().setLayout( new BorderLayout() );
+            getBasePane().add( getContentPane(), BorderLayout.CENTER );
         }
         
         @Override
@@ -1670,5 +1708,119 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         public boolean isRight(){
 			return right;
 		}
+    }
+    
+    /**
+     * The algorithm that paints the background of this station.
+     * @author Benjamin Sigg
+     */
+    private class PanelBackground implements StationBackgroundComponent{
+    	private Component component;
+     	private BackgroundPaint paint;
+     	
+     	/**
+     	 * Creates a new algorithm.
+     	 * @param component the component that is wrapped by this
+     	 */
+     	public PanelBackground( Component component ){
+     		this.component = component;
+     	}
+     	
+     	/**
+     	 * Informs this {@link UIValue} that the {@link DockController} changed and that its value
+     	 * may need an update as well.
+     	 * @param oldSource the old controller
+     	 * @param newSource the new controller
+     	 */
+     	public void changeSource( DockController oldSource, DockController newSource ){
+     		if( oldSource != null ){
+     			oldSource.getThemeManager().remove( this );
+     		}
+     		if( newSource != null ){
+     			newSource.getThemeManager().add( ThemeManager.BACKGROUND_PAINT + ".station.stack", getKind(), ThemeManager.BACKGROUND_PAINT_TYPE, this );
+     		}
+     	}
+     	
+     	/**
+     	 * Tells what kind of component this is.
+     	 * @return the kind
+     	 */
+     	protected Path getKind(){
+     		return StationBackgroundComponent.KIND;
+     	}
+     	
+     	/**
+     	 * Clears all resources that are used by this object.
+     	 */
+     	public void destroy(){
+     		DockController controller = getController();
+     		if( controller != null ){
+     			changeSource( controller, null );
+     		}
+     		set( null );
+     	}
+     	
+		public void set( BackgroundPaint value ){
+			if( this.paint != null ){
+				this.paint.uninstall( this );
+			}
+			this.paint = value;
+			if( this.paint != null ){
+				this.paint.install( this );
+			}
+		}
+		
+		public BackgroundPaint getPaint(){
+			return paint;
+		}
+		
+		public void repaint(){
+			panel.repaint();	
+		}
+		
+		public Component getComponent(){
+			return component;
+		}
+		
+		public DockStation getStation(){
+			return StackDockStation.this;
+		}
+    }
+
+    /**
+     * A {@link PanelBackground} that is used to paint a {@link StackDockComponent}. 
+     * @author Benjamin Sigg
+     */
+    private class StackBackground extends PanelBackground implements StackDockBackgroundComponent{
+    	private StackDockComponent component;
+    	
+    	/**
+    	 * Creates a new background
+    	 * @param component the component whose background is painted
+    	 */
+    	public StackBackground( StackDockComponent component ){
+    		super( component.getComponent() );
+    		this.component = component;
+    	}
+    	
+    	public StackDockComponent getStackDockComponent(){
+    		return component;
+    	}
+   	
+    	@Override
+    	protected Path getKind(){
+	    	return StackDockBackgroundComponent.KIND;
+    	}
+    	
+    	@Override
+    	public void set( BackgroundPaint value ){
+    		super.set( value );
+    		if( getPaint() == null ){
+    			component.setBackground( null, null );
+    		}
+    		else{
+    			component.setBackground( getPaint(), this );
+    		}
+    	}
     }
 }

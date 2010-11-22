@@ -43,6 +43,7 @@ import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.title.DockTitleManager;
+import bibliothek.gui.dock.util.BackgroundPaint;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
@@ -75,6 +76,12 @@ public class ThemeManager extends TypedUIProperties{
 	
 	/** unique identifier for the basic {@link DisplayerFactory} */
 	public static final String DISPLAYER_FACTORY = "displayer";
+	
+	/** Identifier for the type {@link BackgroundPaint} */
+	public static final Type<BackgroundPaint> BACKGROUND_PAINT_TYPE = new Type<BackgroundPaint>( "BackgroundPaint" );
+	
+	/** unique identifier for the basic {@link BackgroundPaint} */
+	public static final String BACKGROUND_PAINT = "background";
 	
 	/** the controller owning the manager */
 	private DockController controller;
@@ -127,12 +134,14 @@ public class ThemeManager extends TypedUIProperties{
     	registerType( STATION_PAINT_TYPE );
     	registerType( COMBINER_TYPE );
     	registerType( DISPLAYER_FACTORY_TYPE );
+    	registerType( BACKGROUND_PAINT_TYPE );
     }
     
     private void link(){
     	link( DockTheme.STATION_PAINT, STATION_PAINT_TYPE, STATION_PAINT );
     	link( DockTheme.COMBINER, COMBINER_TYPE, COMBINER );
     	link( DockTheme.DISPLAYER_FACTORY, DISPLAYER_FACTORY_TYPE, DISPLAYER_FACTORY );
+    	link( DockTheme.BACKGROUND_PAINT, BACKGROUND_PAINT_TYPE, BACKGROUND_PAINT );
     }
     
     /**

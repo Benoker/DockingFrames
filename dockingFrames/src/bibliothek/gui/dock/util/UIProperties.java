@@ -208,7 +208,7 @@ public class UIProperties<V, U extends UIValue<V>, B extends UIBridge<V, U>> {
     		UIScheme<V, U, B> scheme = schemes.get( priority );
     		
     		// resources
-    		for( String name : usedResources ){
+    		for( String name : changedResources ){
     			UIPriorityValue<V> value = resources.get( name );
     			V replacement = null;
     			if( scheme != null ){
@@ -240,7 +240,7 @@ public class UIProperties<V, U extends UIValue<V>, B extends UIBridge<V, U>> {
     		}
     		
     		// bridges
-    		for( Path name : usedBridges ){
+    		for( Path name : changedBridges ){
     			UIPriorityValue<B> value = bridges.get( name );
     			B replacement = null;
     			if( scheme != null ){

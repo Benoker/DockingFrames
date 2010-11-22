@@ -81,6 +81,7 @@ import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.OverpaintablePanel;
+import bibliothek.gui.dock.station.StationBackgroundComponent;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.split.DefaultSplitLayoutManager;
@@ -124,10 +125,12 @@ import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.BackgroundPaint;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.UIValue;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.util.Path;
 import bibliothek.util.Todo;
@@ -398,12 +401,16 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 
 	/** the configurable hints for the parent of this station */
 	private DockableDisplayerHints hints;
+	
+	/** the parent of all {@link DockableDisplayer}s */
+	private Content content;
 
 	/**
 	 * Constructs a new {@link SplitDockStation}. 
 	 */
 	public SplitDockStation(){
-		setBasePane(new Content());
+		content = new Content();
+		setBasePane( content );
 
 		placeholderSet = new SplitPlaceholderSet(access);
 
@@ -603,8 +610,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 
 	public void setController( DockController controller ){
 		if( this.controller != controller ) {
-			if( this.controller != null )
+			if( this.controller != null ){
 				this.controller.getDoubleClickController().removeListener(fullScreenListener);
+				this.controller.getThemeManager().remove( content );
+			}
 
 			for( StationChildHandle handle : dockables ) {
 				handle.setTitleRequest(null);
@@ -627,6 +636,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 			if( controller != null ) {
 				title = controller.getDockTitleManager().getVersion(TITLE_ID, ControllerTitleFactory.INSTANCE);
 				controller.getDoubleClickController().addListener(fullScreenListener);
+				controller.getThemeManager().add( ThemeManager.BACKGROUND_PAINT + ".station.split", content.getKind(), ThemeManager.BACKGROUND_PAINT_TYPE, content );
 			}
 			else
 				title = null;
@@ -2484,7 +2494,9 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	 * The panel which will be the parent of all {@link DockableDisplayer displayers}
 	 * @author Benjamin Sigg
 	 */
-	private class Content extends JPanel {
+	private class Content extends JPanel implements StationBackgroundComponent{
+		private BackgroundPaint paint;
+		
 		@Override
 		public void doLayout(){
 			updateBounds();
@@ -2496,6 +2508,42 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 						getHeight() - insets.bottom - insets.top);
 			}
 		}
+
+		@Override
+		protected void paintComponent( Graphics g ){
+			if( paint == null || !paint.paint( this, this, g ) ){
+				super.paintComponent( g );
+			}
+		}
+		
+		/**
+		 * Gets the kind of {@link UIValue} this is.
+		 * @return the kind of {@link UIValue}
+		 */
+		public Path getKind(){
+			return StationBackgroundComponent.KIND;
+		}
+		
+		public DockStation getStation(){
+			return SplitDockStation.this;
+		}
+
+		public Component getComponent(){
+			return this;
+		}
+
+		public void set( BackgroundPaint value ){
+			if( this.paint != null ){
+				this.paint.uninstall( this );
+			}
+			this.paint = value;
+			if( this.paint != null ){
+				this.paint.install( this );
+				repaint();
+			}
+		}
+		
+		
 	}
 
 	/**
