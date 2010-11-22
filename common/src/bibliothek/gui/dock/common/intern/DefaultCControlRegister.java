@@ -118,7 +118,7 @@ public class DefaultCControlRegister implements MutableCControlRegister {
             throw new NullPointerException( "area is null" );
         if( contents.contains( area ))
             throw new IllegalArgumentException( "area already registered" );
-        
+        contents.add( area );
     }
     
     /**
