@@ -54,14 +54,10 @@ public interface BackgroundPaint {
 	 * Paints the background <code>component</code> using the graphics context <code>g</code>. The
 	 * exact behavior of this method may depend on the type of <code>component</code>.
 	 * @param background the component to paint, is installed on this paint, not <code>null</code>
-	 * @param component the component that is currently painted, may be either <code>background</code> or a child
-	 * of <code>background</code>. Any other value can lead to an {@link IllegalArgumentException}.
-	 * @param g the graphics context to use, not <code>null</code>
+	 * @param paintable the part of the component that is to be painted, may be a child-{@link Component}
+	 * @param g the graphics context to use
 	 * @throws IllegalArgumentException if <code>component</code> is not equal to <code>background</code> or not
 	 * a child of <code>background</code>
-	 * @return <code>true</code> if this paint painted a background, <code>false</code> if this paint refuses
-	 * to paint <code>component</code> (in which case <code>component</code> falls back to its original 
-	 * algorithm to paint a background)
 	 */
-	public boolean paint( BackgroundComponent background, Component component, Graphics g );
+	public void paint( BackgroundComponent background, PaintableComponent paintable, Graphics g );
 }

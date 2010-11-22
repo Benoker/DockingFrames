@@ -125,6 +125,7 @@ import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.AbstractPaintableComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
@@ -2511,9 +2512,20 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 
 		@Override
 		protected void paintComponent( Graphics g ){
-			if( paint == null || !paint.paint( this, this, g ) ){
-				super.paintComponent( g );
-			}
+	    	AbstractPaintableComponent paint = new AbstractPaintableComponent( this, this, this.paint ) {
+				protected void foreground( Graphics g ){
+					// ignore
+				}
+				
+				protected void background( Graphics g ){
+					doPaintBackground( g );
+				}
+			};
+			paint.paint( g );
+		}
+		
+		private void doPaintBackground( Graphics g ){
+			super.paintComponent( g );
 		}
 		
 		/**

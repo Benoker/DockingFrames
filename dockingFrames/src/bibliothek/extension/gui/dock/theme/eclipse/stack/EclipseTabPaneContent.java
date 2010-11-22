@@ -29,6 +29,7 @@ import java.awt.Graphics;
 
 import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPanePainter;
 import bibliothek.gui.dock.station.stack.CombinedStackDockContentPane;
+import bibliothek.gui.dock.util.AbstractPaintableComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
 
 /**
@@ -55,23 +56,26 @@ public class EclipseTabPaneContent extends CombinedStackDockContentPane{
 	@Override
 	public void paint( Graphics g ){
 		BackgroundPaint background = getBackgroundPaint();
-		TabPanePainter painter = pane.getPainter();
+		final TabPanePainter painter = pane.getPainter();
 		
-		boolean done = false;
+		AbstractPaintableComponent paint = new AbstractPaintableComponent( getBackgroundComponent(), this, background ){
+			@Override
+			protected void background( Graphics g ){
+				if( painter != null ){
+					painter.paintBackground( g );
+				}
+			}
+
+			@Override
+			protected void foreground( Graphics g ){
+				if( painter != null ){
+					painter.paintForeground( g );
+				}
+			}
+		};
 		
-		if( background != null ){
-			done = background.paint( getBackgroundComponent(), this, g );
-		}
-		if( !done && painter != null ){
-			painter.paintBackground( g );
-		}
-		
+		paint.paint( g );
 		super.paint( g );
-	
-		if( painter != null ){
-			painter.paintForeground( g );
-		}
-		
 		paintBorder( g );
 	}
 }

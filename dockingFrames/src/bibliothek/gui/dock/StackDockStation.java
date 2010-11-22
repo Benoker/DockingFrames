@@ -93,6 +93,7 @@ import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.AbstractPaintableComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
@@ -1529,10 +1530,20 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         	setContentPane( new JPanel(){
         		@Override
         		protected void paintComponent( Graphics g ){
-        			BackgroundPaint paint = panelBackground.getPaint();
-        			if( paint == null || !paint.paint( panelBackground, this, g )){
-        				super.paintComponent( g );
-        			}
+        	    	AbstractPaintableComponent paint = new AbstractPaintableComponent( panelBackground, this, panelBackground.getPaint() ) {
+        				protected void foreground( Graphics g ){
+        					// ignore
+        				}
+        				
+        				protected void background( Graphics g ){
+        					doPaintBackground( g );
+        				}
+        			};
+        			paint.paint( g );
+        		}
+        		
+        		private void doPaintBackground( Graphics g ){
+        			super.paintComponent( g );
         		}
         	});
         	

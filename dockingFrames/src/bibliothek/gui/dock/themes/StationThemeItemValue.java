@@ -32,7 +32,7 @@ import bibliothek.gui.dock.util.TypedUIProperties.Type;
 import bibliothek.util.Path;
 
 /**
- * A default implementation of an {@link UIValue} that reads a {@link StationThemeItem} from
+ * A default implementation of an {@link UIValue} that reads a item from
  * a {@link ThemeManager}.
  * @author Benjamin Sigg
  * @param <V> the kind of value this {@link UIValue} handles

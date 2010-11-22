@@ -32,6 +32,7 @@ import javax.swing.JPanel;
 
 import bibliothek.gui.dock.focus.DockFocusTraversalPolicy;
 import bibliothek.gui.dock.station.stack.tab.TabLayoutManager;
+import bibliothek.gui.dock.util.AbstractPaintableComponent;
 import bibliothek.gui.dock.util.BackgroundComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
 
@@ -141,8 +142,19 @@ public class CombinedStackDockContentPane extends JPanel{
     
     @Override
     protected void paintComponent( Graphics g ){
-    	if( !paintBackground || background == null || !background.paint( backgroundComponent, this, g )){
-    		super.paintComponent( g );
-    	}
+    	AbstractPaintableComponent paint = new AbstractPaintableComponent( backgroundComponent, this, background ) {
+			protected void foreground( Graphics g ){
+				// ignore
+			}
+			
+			protected void background( Graphics g ){
+				CombinedStackDockContentPane.this.paintBackground( g );
+			}
+		};
+		paint.paint( g );
+    }
+    
+    private void paintBackground( Graphics g ){
+    	super.paintComponent( g );
     }
 }
