@@ -364,4 +364,5 @@
 [v1.1.0p3]
  ! API: UIProperties now depend on an UIScheme. Basically the UIScheme is a self filling map and UIProperties acts as (mutable) cache. ColorScheme now depends on UIScheme and several methods that were related to ColorScheme got obsolete and were removed.
  - API: DockTheme is now managed by a specialized class ThemeManager and no longer by DockController.
- ! API: While the interface DockTheme was not changed, many of its methods should no longer be invoked directly. Instead the ThemeManager and the DockProperties should be used. 
+ ! API: While the interface DockTheme was not changed, many of its methods should no longer be invoked directly. Instead the ThemeManager and the DockProperties should be used.
+ - Bugfix: DefaultCControlRegister, adding a CContentArea did not have any effect. 
