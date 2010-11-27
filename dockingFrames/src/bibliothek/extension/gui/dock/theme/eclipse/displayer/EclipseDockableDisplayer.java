@@ -25,6 +25,7 @@
  */
 package bibliothek.extension.gui.dock.theme.eclipse.displayer;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
@@ -36,23 +37,31 @@ import javax.swing.Icon;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector.TitleBar;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseMenu;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTab;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabInfo;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.displayer.DisplayerBackgroundComponent;
 import bibliothek.gui.dock.event.DockableAdapter;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
+import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentRepresentative;
 import bibliothek.gui.dock.station.stack.TabContent;
 import bibliothek.gui.dock.station.stack.TabContentFilterListener;
 import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
+import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.UIValue;
 
 /**
  * This displayer paints a tab instead of a {@link DockTitle} (if the framework sets a title, then this
@@ -258,6 +267,11 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 		return false;
 	}
 	
+	@Override
+	protected BackgroundAlgorithm createBackground( CombinedStackDockComponent<EclipseTab, EclipseMenu, EclipseTabInfo> self ){
+		return new Background( (EclipseDockableDisplayer)self );
+	}
+	
 	public Insets getDockableInsets() {
 	    return getContentInsets();
 	}
@@ -288,5 +302,31 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 
 	public void setTitleLocation( Location location ){
 		this.location = location;
+	}
+	
+	/**
+	 * The {@link UIValue} responsible for painting the background of this displayer.
+	 * @author Benjamin Sigg
+	 */
+	private static class Background extends BackgroundAlgorithm implements DisplayerBackgroundComponent{
+		/** the displayer whose background is painted by this {@link UIValue} */
+		private EclipseDockableDisplayer displayer;
+		
+		/**
+		 * Creates a new object
+		 */
+		public Background( EclipseDockableDisplayer displayer ){
+			super( DisplayerBackgroundComponent.KIND, ThemeManager.BACKGROUND_PAINT + ".displayer" );
+			this.displayer = displayer;
+		}
+		
+		public DockableDisplayer getDisplayer(){
+			return displayer;
+		}
+
+		public Component getComponent(){
+			return getDisplayer().getComponent();
+		}
+		
 	}
 }

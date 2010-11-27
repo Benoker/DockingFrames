@@ -56,12 +56,11 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 			if( newValue != null ){
 				component = newValue.create( TabDecorator.this );
 				component.setTabPlacement( tabPlacement.getValue() );
+				
+				component.setController( controller );
 				if( dockable != null ){
-					component.setController( controller );
-					if( dockable != null ){
-						component.addTab( dockable.getTitleText(), dockable.getTitleIcon(), representation, dockable );
-						component.setSelectedIndex( 0 );
-					}
+					component.addTab( dockable.getTitleText(), dockable.getTitleIcon(), representation, dockable );
+					component.setSelectedIndex( 0 );
 				}
 			}
 			
@@ -103,6 +102,14 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 		if( this.dockable == dockable )
 			return 0;
 		return -1;
+	}
+	
+	/**
+	 * Gets the component which is used by this {@link TabDecorator}.
+	 * @return the {@link StackDockComponent}, may be <code>null</code>
+	 */
+	public StackDockComponent getStackComponent(){
+		return component;
 	}
 	
 	public void setDockable( Component panel, Dockable dockable ){

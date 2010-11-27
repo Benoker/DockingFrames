@@ -44,6 +44,7 @@ import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
+import bibliothek.gui.dock.util.BackgroundPaint;
 
 /**
  * A window that uses a {@link DockableDisplayer} to show the {@link Dockable}.
@@ -381,6 +382,17 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
     protected class Background extends BackgroundAlgorithm implements ScreenDockWindowBackgroundComponent{
     	public Background(){
     		super( ScreenDockWindowBackgroundComponent.KIND, ThemeManager.BACKGROUND_PAINT + ".station.screen" );
+    	}
+    	
+    	@Override
+    	public void set( BackgroundPaint value ){
+    		super.set( value );
+    		if( getPaint() == null ){
+    			setBackground( null );
+    		}
+    		else{
+    			setBackground( this );
+    		}
     	}
     	
 		public ScreenDockWindow getWindow(){

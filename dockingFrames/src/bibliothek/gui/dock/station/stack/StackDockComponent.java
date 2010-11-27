@@ -38,7 +38,6 @@ import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
-import bibliothek.gui.dock.util.BackgroundAlgorithm;
 
 /**
  * A <code>StackDockComponent</code> is a {@link Component} that can show other {@link Component Components}.
@@ -211,10 +210,4 @@ public interface StackDockComponent {
 	 * use its free spaces
 	 */
 	public DockElementRepresentative createDefaultRepresentation( DockElement target );
-	
-	/**
-	 * Informs this {@link StackDockComponent} how the empty areas should be painted.
-	 * @param background the algorithm, can be <code>null</code>
-	 */
-	public void setBackground( BackgroundAlgorithm background );
 }

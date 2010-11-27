@@ -47,7 +47,6 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.control.RemoteRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
-import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.SimpleDockElementRepresentative;
 
 
@@ -81,10 +80,6 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
         addMouseMotionListener( listener );
         
         setOpaque( false );
-    }
-    
-    public void setBackground( BackgroundAlgorithm background ){
-	    // ignore	
     }
     
     public void setTabPlacement( TabPlacement tabSide ){

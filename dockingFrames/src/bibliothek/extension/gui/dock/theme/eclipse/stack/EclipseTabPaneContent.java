@@ -59,26 +59,38 @@ public class EclipseTabPaneContent extends CombinedStackDockContentPane{
 		BackgroundAlgorithm background = getBackgroundAlgorithm();
 		final TabPanePainter painter = pane.getPainter();
 		
-		PaintableComponent paint = new PaintableComponent(){
-			public Component getComponent(){
-				return EclipseTabPaneContent.this;
-			}
+		if( background == null ){
+			painter.paintBackground( g );
+			super.paint( g );
+			painter.paintForeground( g );
+			paintBorder( g );
+		}
+		else{
+			PaintableComponent paint = new PaintableComponent(){
+				public Component getComponent(){
+					return EclipseTabPaneContent.this;
+				}
+				
+				public void paintBackground( Graphics g ){
+					if( painter != null ){
+						painter.paintBackground( g );
+					}
+				}
+	
+				public void paintForeground( Graphics g ){
+					doPaint( g );
+					if( painter != null ){
+						painter.paintForeground( g );
+					}
+				}
+			};
 			
-			public void paintBackground( Graphics g ){
-				if( painter != null ){
-					painter.paintBackground( g );
-				}
-			}
-
-			public void paintForeground( Graphics g ){
-				if( painter != null ){
-					painter.paintForeground( g );
-				}
-			}
-		};
-		
-		background.paint( paint, g );
+			background.paint( paint, g );
+			paintBorder( g );
+		}		
+	}
+	
+	private void doPaint( Graphics g ){
 		super.paint( g );
-		paintBorder( g );
 	}
 }

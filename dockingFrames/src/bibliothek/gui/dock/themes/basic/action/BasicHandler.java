@@ -33,10 +33,14 @@ import javax.swing.JComponent;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.action.DockActionBackgroundComponent;
 import bibliothek.gui.dock.action.StandardDockAction;
 import bibliothek.gui.dock.action.view.ViewGenerator;
 import bibliothek.gui.dock.event.StandardDockActionListener;
+import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
+import bibliothek.gui.dock.util.BackgroundAlgorithm;
+import bibliothek.gui.dock.util.BackgroundPaint;
 
 /**
  * A class connecting a {@link DockAction} with a {@link BasicButtonModel}. The
@@ -56,6 +60,8 @@ public abstract class BasicHandler<D extends StandardDockAction> implements Basi
     private BasicButtonModel model;
     /** the dockable for which the action is displayed */
     private Dockable dockable;
+    /** the background algorithm to be used  */
+    private Background background = new Background();
     
     /** a listener to the action */
     private Listener listener;
@@ -140,12 +146,14 @@ public abstract class BasicHandler<D extends StandardDockAction> implements Basi
         model.setIcon( action.getIcon( dockable ) );
         model.setDisabledIcon( action.getDisabledIcon( dockable ) );
         model.setEnabled( action.isEnabled( dockable ) );
+        background.setController( dockable.getController() );
         
         action.addDockActionListener( listener );
     }
     
     public void unbind(){
         action.removeDockActionListener( listener );
+        background.setController( null );
     }
     
     /**
@@ -197,5 +205,33 @@ public abstract class BasicHandler<D extends StandardDockAction> implements Basi
             
             model.setToolTipText( tooltip );
         }
+    }
+    
+    /**
+     * The background algorithm to be used by the {@link BasicHandler#model model}.
+     * @author Benjamin Sigg
+     */
+    private class Background extends BackgroundAlgorithm implements DockActionBackgroundComponent{
+    	public Background(){
+    		super( DockActionBackgroundComponent.KIND, ThemeManager.BACKGROUND_PAINT + ".action" );
+    	}
+    	
+    	@Override
+    	public void set( BackgroundPaint value ){
+    		super.set( value );
+    		model.setBackground( getPaint(), this );
+    	}
+    	
+		public DockAction getAction(){
+			return action;
+		}
+
+		public Dockable getDockable(){
+			return dockable;
+		}
+
+		public Component getComponent(){
+			return model.getOwner();
+		}
     }
 }

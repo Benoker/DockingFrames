@@ -142,7 +142,6 @@ public class ScreenDockStation extends AbstractDockStation {
     private boolean showing = false;
     
     /** A list of all windows that are used by this station */
-    // private List<ScreenDockWindow> dockables = new ArrayList<ScreenDockWindow>();
     private DockablePlaceholderList<ScreenDockWindowHandle> dockables = new DockablePlaceholderList<ScreenDockWindowHandle>();
     
     /** All listeners that were added to this station */

@@ -27,6 +27,7 @@ package bibliothek.gui.dock.util;
 
 import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.LayoutManager;
 
 import javax.swing.JPanel;
 
@@ -37,6 +38,21 @@ import javax.swing.JPanel;
  */
 public class BackgroundPanel extends JPanel implements PaintableComponent{
 	private BackgroundAlgorithm background;
+	
+	/**
+	 * Default constructor
+	 */
+	public BackgroundPanel(){
+		// nothing
+	}
+	
+	/**
+	 * Creates a new panel setting a default {@link LayoutManager}.
+	 * @param layout the layout manager, can be <code>null</code>
+	 */
+	public BackgroundPanel( LayoutManager layout ){
+		super( layout );
+	}
 	
 	/**
 	 * Sets the background algorithm that should be used by this panel.

@@ -91,7 +91,11 @@ public abstract class BackgroundAlgorithm implements BackgroundComponent{
 	}
 	
 	/**
-	 * Paints <code>component</code> using the graphics context <code>g</code>.
+	 * Paints <code>component</code> using the graphics context <code>g</code>. This method
+	 * ensures that {@link PaintableComponent#paintBackground(Graphics)} and 
+	 * {@link PaintableComponent#paintForeground(Graphics)} are not called with a <code>null</code> argument.
+	 * <code>component</code> does not need to track how often its paint-methods are called, that is done
+	 * by this method.
 	 * @param component the component to paint
 	 * @param g the graphics context to use
 	 */
@@ -130,12 +134,16 @@ public abstract class BackgroundAlgorithm implements BackgroundComponent{
 
 		public void paintBackground( Graphics g ){
 			backgroundPainted = true;
-			delegate.paintBackground( g );
+			if( g != null ){
+				delegate.paintBackground( g );
+			}
 		}
 
 		public void paintForeground( Graphics g ){
 			foregroundPainted = true;
-			delegate.paintForeground( g );
+			if( g != null ){
+				delegate.paintForeground( g );
+			}
 		}
 		
 		/**

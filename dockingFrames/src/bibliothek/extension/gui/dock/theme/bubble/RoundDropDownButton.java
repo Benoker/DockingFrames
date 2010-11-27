@@ -39,6 +39,9 @@ import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonHandler;
 import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonModel;
 import bibliothek.gui.dock.themes.color.ActionColor;
+import bibliothek.gui.dock.util.AbstractPaintableComponent;
+import bibliothek.gui.dock.util.BackgroundComponent;
+import bibliothek.gui.dock.util.BackgroundPaint;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.color.ColorCodes;
 
@@ -224,6 +227,47 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
     
     @Override
     protected void paintComponent( Graphics g ) {
+    	BasicDropDownButtonModel model = getModel();
+    	BackgroundPaint paint = model.getBackground();
+    	BackgroundComponent component = model.getBackgroundComponent();
+    	
+    	AbstractPaintableComponent paintable = new AbstractPaintableComponent( component, this, paint ){
+			protected void foreground( Graphics g ){
+				doPaintForeground( g );	
+			}
+			
+			protected void background( Graphics g ){
+				doPaintBackground( g );
+			}
+		};
+		
+		Graphics2D g2 = (Graphics2D)g.create();
+        g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
+        
+		paintable.paint( g2 );
+		
+		g2.dispose();
+    }
+    
+    private void doPaintBackground( Graphics g ){
+        Graphics2D g2 = (Graphics2D)g;
+        
+        int x = 0;
+        int y = 0;
+        int w = getWidth();
+        int h = getHeight();
+        
+        if( model.getOrientation().isHorizontal() ){
+            g2.setColor( animation.getColor( "background" ) );
+            g2.fillRoundRect( x, y, w, h, h, h );
+        }
+        else{
+            g2.setColor( animation.getColor( "background" ) );
+            g2.fillRoundRect( x, y, w, h, w, w );
+        }
+    }
+    
+    private void doPaintForeground( Graphics g ){
         Icon drop = dropIcon;
         if( !isEnabled() ){
             if( disabledDropIcon == null )
@@ -231,8 +275,7 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
             drop = disabledDropIcon;
         }
         
-        Graphics2D g2 = (Graphics2D)g.create();
-        g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
+        Graphics2D g2 = (Graphics2D)g;
         
         int x = 0;
         int y = 0;
@@ -249,9 +292,6 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
         int dropIconHeight = drop == null ? 5 : drop.getIconHeight();
         
         if( model.getOrientation().isHorizontal() ){
-            g2.setColor( animation.getColor( "background" ) );
-            g2.fillRoundRect( x, y, w, h, h, h );
-            
             g2.setColor( animation.getColor( "mouse" ) );
             int mx = x + (int)( 0.5 * 1.25 * iconWidth + 0.5 * (w - 1.25 * dropIconWidth) );
             g2.drawLine( mx, y+1, mx, y+h-2 );
@@ -272,9 +312,6 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
             }
         }
         else{
-            g2.setColor( animation.getColor( "background" ) );
-            g2.fillRoundRect( x, y, w, h, w, w );
-            
             g2.setColor( animation.getColor( "mouse" ) );
             int my = y + (int)( 0.5 * 1.25 * iconHeight + 0.5 * (h - 1.25 * dropIconHeight) );
             g2.drawLine( x+1, my, x+w-2, my );
@@ -294,8 +331,6 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
                 g2.setStroke( stroke );
             }
         }
-        
-        g2.dispose();
     }
     
     /**

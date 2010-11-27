@@ -34,6 +34,9 @@ import javax.swing.border.Border;
 import bibliothek.gui.dock.action.DropDownAction;
 import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonHandler;
 import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonModel;
+import bibliothek.gui.dock.util.AbstractPaintableComponent;
+import bibliothek.gui.dock.util.BackgroundComponent;
+import bibliothek.gui.dock.util.BackgroundPaint;
 import bibliothek.gui.dock.util.DockUtilities;
 
 /**
@@ -160,6 +163,23 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 	
 	@Override
 	public void paint( Graphics g ){
+		BasicDropDownButtonModel model = getModel();
+		BackgroundPaint paint = model.getBackground();
+		BackgroundComponent component = model.getBackgroundComponent();
+		
+		AbstractPaintableComponent paintable = new AbstractPaintableComponent( component, this, paint ){
+			protected void foreground( Graphics g ){
+				doPaintForeground( g );
+			}
+			
+			protected void background( Graphics g ){
+				// ignore
+			}
+		};
+		paintable.paint( g );
+	}
+	
+	private void doPaintForeground( Graphics g ){
 		Border border = getBorder();
 		Icon icon = getModel().getPaintIcon();
 		Insets insets = getMaxBorderInsets();

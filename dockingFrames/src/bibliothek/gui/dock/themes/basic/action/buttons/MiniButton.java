@@ -41,6 +41,9 @@ import javax.swing.border.Border;
 
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModelAdapter;
+import bibliothek.gui.dock.util.AbstractPaintableComponent;
+import bibliothek.gui.dock.util.BackgroundComponent;
+import bibliothek.gui.dock.util.BackgroundPaint;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Priority;
@@ -260,7 +263,23 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
     
     @Override
     public void paint( Graphics g ){
-        // border
+        BackgroundPaint paint = model.getBackground();
+        BackgroundComponent component = model.getBackgroundComponent();
+        	
+        AbstractPaintableComponent paintable = new AbstractPaintableComponent( component, this, paint ){
+			protected void foreground( Graphics g ){
+				doPaintForeground( g );
+			}
+			
+			protected void background( Graphics g ){
+				// ignore
+			}
+		};
+        paintable.paint( g );
+    }
+    
+    private void doPaintForeground( Graphics g ){
+    	// border
         Border border = getBorder();
         if( border != null )
             border.paintBorder( this, g, 0, 0, getWidth(), getHeight() );
@@ -274,7 +293,7 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
         // focus
         if( isFocusOwner() && isFocusable() && isEnabled() ){
             paintFocus( g );
-        }
+        }	
     }
     
     /**

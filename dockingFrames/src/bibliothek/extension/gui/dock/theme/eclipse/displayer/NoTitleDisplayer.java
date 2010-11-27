@@ -32,7 +32,6 @@ import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JPanel;
 import javax.swing.LayoutFocusTraversalPolicy;
 import javax.swing.border.Border;
 
@@ -47,11 +46,15 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.displayer.DisplayerBackgroundComponent;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
+import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.util.BackgroundAlgorithm;
+import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyValue;
 
@@ -62,7 +65,7 @@ import bibliothek.gui.dock.util.PropertyValue;
  * and the key {@link EclipseTheme#TAB_PAINTER}.
  * @author Janni Kovacs
  */
-public class NoTitleDisplayer extends JPanel implements DockableDisplayer, InvisibleTabPane, BorderedComponent {
+public class NoTitleDisplayer extends BackgroundPanel implements DockableDisplayer, InvisibleTabPane, BorderedComponent {
 	private Dockable dockable;
 	private DockController controller;
 	private DockStation station;
@@ -87,9 +90,12 @@ public class NoTitleDisplayer extends JPanel implements DockableDisplayer, Invis
 	private Border innerBorder;
 	private Border outerBorder;
 	
+	private Background background = new Background();
+	
 	public NoTitleDisplayer( DockStation station, Dockable dockable, TitleBar bar ){
 		setLayout( new GridLayout( 1, 1, 0, 0 ) );
 		setOpaque( false );
+		setBackground( background );
 		
 		bordered = bar == TitleBar.NONE_BORDERED || bar == TitleBar.NONE_HINTED_BORDERED;
 		respectHints = bar == TitleBar.NONE_HINTED || bar == TitleBar.NONE_HINTED_BORDERED;
@@ -279,6 +285,8 @@ public class NoTitleDisplayer extends JPanel implements DockableDisplayer, Invis
 		if( invisibleTab != null )
 			invisibleTab.setController( controller );
 		
+		background.setController( controller );
+		
 		updateFullBorder();
 	}
 
@@ -321,5 +329,26 @@ public class NoTitleDisplayer extends JPanel implements DockableDisplayer, Invis
 
 	public boolean titleContains( int x, int y ){
 		return false;
+	}
+	
+	/**
+	 * The background algorithm of this displayer.
+	 * @author Benjamin Sigg
+	 */
+	private class Background extends BackgroundAlgorithm implements DisplayerBackgroundComponent{
+		/**
+		 * Creates a new object.
+		 */
+		public Background(){
+			super( DisplayerBackgroundComponent.KIND, ThemeManager.BACKGROUND_PAINT + ".displayer" );
+		}
+		
+		public Component getComponent(){
+			return getDisplayer().getComponent();
+		}
+		
+		public DockableDisplayer getDisplayer(){
+			return NoTitleDisplayer.this;
+		}
 	}
 }

@@ -39,6 +39,9 @@ import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModelAdapter;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
 import bibliothek.gui.dock.themes.color.ActionColor;
+import bibliothek.gui.dock.util.AbstractPaintableComponent;
+import bibliothek.gui.dock.util.BackgroundComponent;
+import bibliothek.gui.dock.util.BackgroundPaint;
 import bibliothek.gui.dock.util.color.ColorCodes;
 
 /**
@@ -199,8 +202,36 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 		Graphics2D g2 = (Graphics2D)g.create();
 		g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
 
+		BackgroundPaint paint = model.getBackground();
+		BackgroundComponent component = model.getBackgroundComponent();
+		if( paint == null ){
+			doPaintBackground( g2 );
+			doPaintForeground( g2 );
+		}
+		else{
+			AbstractPaintableComponent paintable = new AbstractPaintableComponent( component, this, paint ){
+				protected void foreground( Graphics g ){
+					doPaintForeground( g );
+				}
+				
+				protected void background( Graphics g ){
+					doPaintBackground( g );
+				}
+			};
+			paintable.paint( g2 );
+		}
+		
+		g2.dispose();
+	}
+	
+	private void doPaintBackground( Graphics g ){
+		Graphics2D g2 = (Graphics2D)g;
 		g2.setColor(animation.getColor("button"));
 		g2.fillOval( 0, 0, getWidth(), getHeight() );
+	}
+	
+	private void doPaintForeground( Graphics g ){
+		Graphics2D g2 = (Graphics2D)g;
 		
         Icon icon = model.getPaintIcon();
 		if( icon != null ){
@@ -216,8 +247,6 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 		    g2.drawOval( 1, 1, getWidth()-3, getHeight()-3 );
 		    g2.setStroke( stroke );
 		}
-		
-		g2.dispose();
 	}
 
     private void updateColors() {

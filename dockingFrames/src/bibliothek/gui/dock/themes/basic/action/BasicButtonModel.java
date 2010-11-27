@@ -27,16 +27,29 @@ package bibliothek.gui.dock.themes.basic.action;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ActionMap;
+import javax.swing.Icon;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
+import bibliothek.gui.dock.util.BackgroundComponent;
+import bibliothek.gui.dock.util.BackgroundPaint;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.util.container.Triple;
 
@@ -75,11 +88,18 @@ public class BasicButtonModel {
     
     /** the graphical representation of this model */
     private JComponent owner;
+    
     /** the orientation of the view */
     private Orientation orientation = Orientation.FREE_HORIZONTAL;
     
     /** a callback used when the user clicked on the view */
     private BasicTrigger trigger;
+    
+    /** the algorithm that should be used to paint the background of a component */
+    private BackgroundPaint background;
+    
+    /** the source of {@link #background} */
+    private BackgroundComponent backgroundComponent;
     
     /** listeners that were added to this model */
     private List<BasicButtonModelListener> listeners = new ArrayList<BasicButtonModelListener>();
@@ -200,6 +220,49 @@ public class BasicButtonModel {
     public JComponent getOwner() {
         return owner;
     }
+    
+    /**
+     * Sets the algorithm which should be used to paint the background of the owner.
+     * @param background the background algorithm, can be <code>null</code>
+     * @param backgroundComponent the source of <code>background</code>. Must not be <code>null</code> if 
+     * <code>background</code> is not <code>null</code>, must represents {@link #getOwner()} as {@link Component}.
+     */
+    public void setBackground( BackgroundPaint background, BackgroundComponent backgroundComponent ){
+		if( this.background != background ){
+			if( background != null ){
+				if( backgroundComponent == null ){
+					throw new IllegalArgumentException( "backgroundComponent must not be null" );
+				}
+				if( backgroundComponent.getComponent() != getOwner() ){
+					throw new IllegalArgumentException( "backgroundComponent must exactly represent 'getOwner()'" );
+				}
+			}
+			
+			BackgroundPaint old = this.background;
+			this.background = background;
+			this.backgroundComponent = backgroundComponent;
+			
+			for( BasicButtonModelListener listener : listeners() ){
+				listener.backgroundChanged( this, old, background );
+			}
+		}
+	}
+    
+    /**
+     * Gets the algorithm which should be used to paint the background of components.
+     * @return the background, can be <code>null</code>
+     */
+    public BackgroundPaint getBackground(){
+		return background;
+	}
+    
+    /**
+     * Gets the source of {@link #getBackground()}. 
+     * @return the source, can be <code>null</code> if {@link #getBackground()} returns <code>null</code>
+     */
+    public BackgroundComponent getBackgroundComponent(){
+		return backgroundComponent;
+	}
     
     /**
      * Sets the icon which is normally shown on the view.

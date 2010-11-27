@@ -28,6 +28,7 @@ package bibliothek.gui.dock.themes.basic.action;
 import javax.swing.Icon;
 
 import bibliothek.gui.dock.title.DockTitle.Orientation;
+import bibliothek.gui.dock.util.BackgroundPaint;
 
 /**
  * A listener that can be added to a {@link BasicButtonModel} and will
@@ -111,6 +112,14 @@ public interface BasicButtonModelListener {
 	 * @param mousePressed the state of the mouse
 	 */
 	public void mousePressed( BasicButtonModel model, boolean mousePressed );
+	
+	/**
+	 * Called when the background algorithm has been exchanged. 
+	 * @param model the source of this event
+	 * @param oldBackground the old background algorithm, can be <code>null</code>
+	 * @param newBackground the new background algorithm, can be <code>null</code>
+	 */
+	public void backgroundChanged( BasicButtonModel model, BackgroundPaint oldBackground, BackgroundPaint newBackground );
 
 	/**
 	 * Called if the user triggered the action.
