@@ -26,16 +26,25 @@
 
 package bibliothek.gui.dock;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.LayoutManager;
 
 import javax.swing.Icon;
-import javax.swing.JPanel;
 import javax.swing.LayoutFocusTraversalPolicy;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.dockable.AbstractDockable;
 import bibliothek.gui.dock.dockable.DefaultDockableFactory;
+import bibliothek.gui.dock.dockable.DockableBackgroundComponent;
+import bibliothek.gui.dock.themes.ThemeManager;
+import bibliothek.gui.dock.util.BackgroundAlgorithm;
+import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.PropertyKey;
 
 /**
@@ -46,10 +55,13 @@ import bibliothek.gui.dock.util.PropertyKey;
  */
 public class DefaultDockable extends AbstractDockable {
     /** the content pane */
-    private JPanel pane = new JPanel( new BorderLayout() );
+    private BackgroundPanel pane = new BackgroundPanel( new BorderLayout() );
     
     /** the id used to identify the factory of this dockable */
     private String factoryId = DefaultDockableFactory.ID;
+    
+    /** the background of this dockable */
+    private Background background = new Background();
     
     /**
      * Constructs a new DefaultDockable
@@ -115,6 +127,7 @@ public class DefaultDockable extends AbstractDockable {
     	
     	pane.setFocusTraversalPolicyProvider( true );
     	pane.setFocusTraversalPolicy( new LayoutFocusTraversalPolicy() );
+    	pane.setBackground( background );
     	
         if( component != null ){
             getContentPane().setLayout( new GridLayout( 1, 1 ));
@@ -190,5 +203,30 @@ public class DefaultDockable extends AbstractDockable {
      */
     public void setLayout( LayoutManager layout ){
         getContentPane().setLayout( layout );
+    }
+    
+    @Override
+    public void setController( DockController controller ){
+    	super.setController( controller );
+    	background.setController( controller );
+    }
+    
+    /**
+     * A representation of the background of this {@link Dockable}.
+     * @author Benjamin Sigg
+     *
+     */
+    private class Background extends BackgroundAlgorithm implements DockableBackgroundComponent{
+    	public Background(){
+    		super( DockableBackgroundComponent.KIND, ThemeManager.BACKGROUND_PAINT + ".dockable" );
+    	}
+    	
+    	public Component getComponent(){
+    		return getDockable().getComponent();
+    	}
+    	
+    	public Dockable getDockable(){
+    		return DefaultDockable.this;
+    	}
     }
 }

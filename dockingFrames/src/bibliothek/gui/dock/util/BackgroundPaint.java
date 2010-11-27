@@ -34,7 +34,7 @@ import bibliothek.gui.DockTheme;
  * A {@link BackgroundPaint} is used to paint the background of various {@link Component}s of 
  * this framework.<br>
  * Please note that some items provided by a {@link DockTheme} do not use a {@link BackgroundPaint} 
- * because they already paint their background in a specific way.
+ * because they already paint their background in a specific way. 
  * @author Benjamin Sigg
  */
 public interface BackgroundPaint {

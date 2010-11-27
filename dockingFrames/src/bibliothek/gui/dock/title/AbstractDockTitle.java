@@ -40,7 +40,6 @@ import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.DockController;
@@ -54,9 +53,12 @@ import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.event.DockableListener;
+import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 import bibliothek.gui.dock.themes.font.TitleFont;
+import bibliothek.gui.dock.util.BackgroundAlgorithm;
+import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
@@ -87,7 +89,7 @@ import bibliothek.util.Path;
  * @author Benjamin Sigg
  *
  */
-public class AbstractDockTitle extends JPanel implements DockTitle {
+public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
     /** Insets of the size 1,2,1,2 */
     private static final Insets DEFAULT_INSETS_HORIZONTAL = new Insets( 0, 1, 0, 1 );
     /** Insets of the size 2,1,2,1 */
@@ -132,6 +134,9 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
     private List<AbstractDockFont> fonts = new ArrayList<AbstractDockFont>();
     /** the fonts which are used automatically */
     private List<ConditionalFont> conditionalFonts;
+    
+    /** the background of this title */
+    private Background background = new Background();
     
     /** tells how to paint the text on this title */
     private PropertyValue<OrientationToRotationStrategy> orientationConverter = new PropertyValue<OrientationToRotationStrategy>( DockTitle.ORIENTATION_STRATEGY ){
@@ -200,6 +205,9 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         this.dockable = dockable;
         this.showMiniButtons = showMiniButtons;
         this.origin = origin;
+        
+        label.setBackground( background );
+        setBackground( background );
         
         setLayout( null );
         add( label );
@@ -303,24 +311,6 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         }
     }
     
-    @Override
-    public void paintComponent( Graphics g ) {
-        paintBackground( g, this );
-        
-        if( icon != null ){
-            Insets insets = titleInsets();
-            if( orientation.isVertical() ){
-                int width = getWidth() - insets.left - insets.right;
-                icon.paintIcon( this, g, insets.left + (width - icon.getIconWidth())/2, insets.top );
-            }
-            else{
-                int height = getHeight() - insets.top - insets.bottom;
-                icon.paintIcon( this, g, insets.left,
-                        insets.top + (height - icon.getIconHeight()) / 2 );
-            }
-        }
-    }
-
     /**
      * Gets the location and the size of the icon.
      * @return the bounds or <code>null</code> if no icon is registered
@@ -340,15 +330,45 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         }
     }
     
+    @Override
+    public void paintBackground( Graphics g ){
+    	paintBackground( g, this );
+    }
+    
     /**
      * Paints the whole background of this title. The default implementation
      * just fills the background with the background color of <code>component</code>.
      * @param g the graphics context used to paint
-     * @param component the Component which represents this title
+     * @param component the {@link Component} which represents this title
      */
     protected void paintBackground( Graphics g, JComponent component ){
         g.setColor( component.getBackground() );
         g.fillRect( 0, 0, component.getWidth(), component.getHeight() );
+    }
+    
+    @Override
+    public void paintForeground( Graphics g ){
+    	paintForeground( g, this );
+    }
+    
+    /**
+     * Paints the whole foreground of this title. The default implementation only paints an icon.
+     * @param g the graphics context to use
+     * @param component the {@link Component} which represents this title
+     */
+    protected void paintForeground( Graphics g, JComponent component ){
+        if( icon != null ){
+            Insets insets = titleInsets();
+            if( orientation.isVertical() ){
+                int width = getWidth() - insets.left - insets.right;
+                icon.paintIcon( this, g, insets.left + (width - icon.getIconWidth())/2, insets.top );
+            }
+            else{
+                int height = getHeight() - insets.top - insets.bottom;
+                icon.paintIcon( this, g, insets.left,
+                        insets.top + (height - icon.getIconHeight()) / 2 );
+            }
+        }
     }
     
     /**
@@ -743,6 +763,8 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
             orientationConverter.setProperties( controller );
         }
         
+        background.setController( controller );
+        
         updateText();
         updateIcon();
         updateTooltip();
@@ -771,6 +793,7 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         setText( "" );
         setIcon( null );
         setTooltip( null );
+        background.setController( null );
     }
     
     /**
@@ -895,5 +918,23 @@ public class AbstractDockTitle extends JPanel implements DockTitle {
         public void hierarchyChanged( DockHierarchyEvent event ) {
             // do nothing
         }
+    }
+    
+    /** 
+     * Represents the background of this {@link DockTitle}.
+     * @author Benjamin Sigg
+     */
+    private class Background extends BackgroundAlgorithm implements DockTitleBackgroundComponent{
+    	public Background(){
+    		super( DockTitleBackgroundComponent.KIND, ThemeManager.BACKGROUND_PAINT + ".title" );
+    	}
+    	
+    	public DockTitle getTitle(){
+    		return AbstractDockTitle.this;
+    	}
+    	
+    	public Component getComponent(){
+    		return getTitle().getComponent();
+    	}
     }
 }
