@@ -52,7 +52,14 @@ public interface BackgroundPaint {
 	
 	/**
 	 * Paints the background <code>component</code> using the graphics context <code>g</code>. The
-	 * exact behavior of this method may depend on the type of <code>component</code>.
+	 * exact behavior of this method may depend on the type of <code>component</code>.<br>
+	 * This method should be aware of the methods {@link PaintableComponent#paintBackground(Graphics)} and
+	 * {@link PaintableComponent#paintForeground(Graphics)}:
+	 * <ul>
+	 * 	<li>If these methods are not called, then they will be executed automatically.</li>
+	 * 	<li>If these methods are called with an argument of <code>null</code> then they will neither paint nor be executed automatically.</li>
+	 * 	<li>If these methods are called with an argument not <code>null</code> then they paint but will not be executed automatically.</li>
+	 * </ul>
 	 * @param background the component to paint, is installed on this paint, not <code>null</code>
 	 * @param paintable the part of the component that is to be painted, may be a child-{@link Component}
 	 * @param g the graphics context to use

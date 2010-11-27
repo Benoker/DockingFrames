@@ -47,7 +47,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.Icon;
-import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
@@ -125,13 +124,12 @@ import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
-import bibliothek.gui.dock.util.AbstractPaintableComponent;
-import bibliothek.gui.dock.util.BackgroundPaint;
+import bibliothek.gui.dock.util.BackgroundAlgorithm;
+import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
-import bibliothek.gui.dock.util.UIValue;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.util.Path;
 import bibliothek.util.Todo;
@@ -405,12 +403,16 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	
 	/** the parent of all {@link DockableDisplayer}s */
 	private Content content;
+	
+	/** the background algorithm of this station */
+	private Background background = new Background();
 
 	/**
 	 * Constructs a new {@link SplitDockStation}. 
 	 */
 	public SplitDockStation(){
 		content = new Content();
+		content.setBackground( background );
 		setBasePane( content );
 
 		placeholderSet = new SplitPlaceholderSet(access);
@@ -613,7 +615,6 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 		if( this.controller != controller ) {
 			if( this.controller != null ){
 				this.controller.getDoubleClickController().removeListener(fullScreenListener);
-				this.controller.getThemeManager().remove( content );
 			}
 
 			for( StationChildHandle handle : dockables ) {
@@ -633,11 +634,11 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 			paint.setController( controller );
 			displayerFactory.setController( controller );
 			combiner.setController( controller );
-
+			background.setController( controller );
+			
 			if( controller != null ) {
 				title = controller.getDockTitleManager().getVersion(TITLE_ID, ControllerTitleFactory.INSTANCE);
 				controller.getDoubleClickController().addListener(fullScreenListener);
-				controller.getThemeManager().add( ThemeManager.BACKGROUND_PAINT + ".station.split", content.getKind(), ThemeManager.BACKGROUND_PAINT_TYPE, content );
 			}
 			else
 				title = null;
@@ -2492,12 +2493,28 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	}
 
 	/**
+	 * The background algorithm of this {@link SplitDockStation}.
+	 * @author Benjamin Sigg
+	 */
+	private class Background extends BackgroundAlgorithm implements StationBackgroundComponent{
+		public Background(){
+			super( StationBackgroundComponent.KIND, ThemeManager.BACKGROUND_PAINT + ".station.split" );
+		}
+		
+		public Component getComponent(){
+			return SplitDockStation.this.getComponent();
+		}
+		
+		public DockStation getStation(){
+			return SplitDockStation.this;
+		}
+	}
+	
+	/**
 	 * The panel which will be the parent of all {@link DockableDisplayer displayers}
 	 * @author Benjamin Sigg
 	 */
-	private class Content extends JPanel implements StationBackgroundComponent{
-		private BackgroundPaint paint;
-		
+	private class Content extends BackgroundPanel {
 		@Override
 		public void doLayout(){
 			updateBounds();
@@ -2508,54 +2525,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 				fullScreenDockable.getDisplayer().getComponent().setBounds(insets.left, insets.top, getWidth() - insets.left - insets.right,
 						getHeight() - insets.bottom - insets.top);
 			}
-		}
-
-		@Override
-		protected void paintComponent( Graphics g ){
-	    	AbstractPaintableComponent paint = new AbstractPaintableComponent( this, this, this.paint ) {
-				protected void foreground( Graphics g ){
-					// ignore
-				}
-				
-				protected void background( Graphics g ){
-					doPaintBackground( g );
-				}
-			};
-			paint.paint( g );
-		}
-		
-		private void doPaintBackground( Graphics g ){
-			super.paintComponent( g );
-		}
-		
-		/**
-		 * Gets the kind of {@link UIValue} this is.
-		 * @return the kind of {@link UIValue}
-		 */
-		public Path getKind(){
-			return StationBackgroundComponent.KIND;
-		}
-		
-		public DockStation getStation(){
-			return SplitDockStation.this;
-		}
-
-		public Component getComponent(){
-			return this;
-		}
-
-		public void set( BackgroundPaint value ){
-			if( this.paint != null ){
-				this.paint.uninstall( this );
-			}
-			this.paint = value;
-			if( this.paint != null ){
-				this.paint.install( this );
-				repaint();
-			}
-		}
-		
-		
+		}		
 	}
 
 	/**

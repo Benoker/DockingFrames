@@ -43,8 +43,7 @@ import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.title.DockTitle;
-import bibliothek.gui.dock.util.BackgroundPaint;
-import bibliothek.gui.dock.util.UIValue;
+import bibliothek.gui.dock.util.BackgroundAlgorithm;
 
 /**
  * A window that uses a {@link DockableDisplayer} to show the {@link Dockable}.
@@ -155,7 +154,7 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
      * Sets the algorithm that paints the background of this window.
      * @param background the algorithm, may be <code>null</code>
      */
-    protected abstract void setBackground( Background background );
+    protected abstract void setBackground( BackgroundAlgorithm background );
 
     /**
      * Sets whether the {@link DockTitle} should be shown or not.
@@ -263,7 +262,7 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
     		}
     	}
     	
-    	background.switchController( this.controller, controller );
+    	background.setController( controller );
         this.controller = controller;
         
         // create new DockTitle
@@ -379,8 +378,10 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
      * The algorithm that paints the background of this window.
      * @author Benjamin Sigg
      */
-    protected class Background implements ScreenDockWindowBackgroundComponent{
-    	private BackgroundPaint paint;
+    protected class Background extends BackgroundAlgorithm implements ScreenDockWindowBackgroundComponent{
+    	public Background(){
+    		super( ScreenDockWindowBackgroundComponent.KIND, ThemeManager.BACKGROUND_PAINT + ".station.screen" );
+    	}
     	
 		public ScreenDockWindow getWindow(){
 			return DisplayerScreenDockWindow.this;
@@ -392,43 +393,6 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
 
 		public Component getComponent(){
 			return getWindowComponent();
-		}
-
-		public void repaint(){
-			getComponent().repaint();
-		}
-
-		public void set( BackgroundPaint value ){
-			this.paint = value;
-			repaint();
-		}
-    	
-		/**
-		 * Gets the algorithm to paint the background.
-		 * @return the algorithm, can be <code>null</code>
-		 */
-		public BackgroundPaint getPaint(){
-			return paint;
-		}
-		
-		/**
-		 * Sets the source of the value of this {@link UIValue}.
-		 * @param oldController the old controller, can be <code>null</code>
-		 * @param newController the new controller, can be <code>null</code>
-		 */
-		public void switchController( DockController oldController, DockController newController ){
-			if( oldController != null ){
-				oldController.getThemeManager().remove( this );
-			}
-			if( newController != null ){
-				newController.getThemeManager().add( ThemeManager.BACKGROUND_PAINT + ".screen.window", KIND, ThemeManager.BACKGROUND_PAINT_TYPE, this );
-			}
-			if( paint == null ){
-				setBackground( null );
-			}
-			else{
-				setBackground( this );
-			}
 		}
     }
 }

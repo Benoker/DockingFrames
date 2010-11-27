@@ -40,7 +40,7 @@ public interface BackgroundComponent extends UIValue<BackgroundPaint>{
 	
 	/**
 	 * Gets the {@link Component} which is represented by <code>this</code>
-	 * @return the component, may be <code>null</code>
+	 * @return the component, may not be <code>null</code>
 	 */
 	public Component getComponent();
 	

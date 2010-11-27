@@ -51,8 +51,7 @@ import bibliothek.gui.dock.station.stack.tab.LonelyTabPaneComponent;
 import bibliothek.gui.dock.station.stack.tab.TabLayoutManager;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.stack.tab.TabPaneListener;
-import bibliothek.gui.dock.util.BackgroundComponent;
-import bibliothek.gui.dock.util.BackgroundPaint;
+import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.SimpleDockElementRepresentative;
 
 /**
@@ -216,8 +215,8 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
         });
     }
     
-    public void setBackground( BackgroundPaint paint, BackgroundComponent component ){
-	    panel.setBackground( paint, component );	
+    public void setBackground( BackgroundAlgorithm background ){
+        panel.setBackground( background );	
     }
     
     /**

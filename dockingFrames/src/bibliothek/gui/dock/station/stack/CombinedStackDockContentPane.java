@@ -26,15 +26,12 @@
 package bibliothek.gui.dock.station.stack;
 
 import java.awt.Dimension;
-import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
 import bibliothek.gui.dock.focus.DockFocusTraversalPolicy;
 import bibliothek.gui.dock.station.stack.tab.TabLayoutManager;
-import bibliothek.gui.dock.util.AbstractPaintableComponent;
-import bibliothek.gui.dock.util.BackgroundComponent;
-import bibliothek.gui.dock.util.BackgroundPaint;
+import bibliothek.gui.dock.util.BackgroundPanel;
 
 /**
  * This panel paints the contents of a {@link CombinedStackDockComponent}. It is just a {@link JPanel}. The layout has to be 
@@ -42,12 +39,8 @@ import bibliothek.gui.dock.util.BackgroundPaint;
  * focus traversal policy provider}.
  * @author Benjamin Sigg
  */
-public class CombinedStackDockContentPane extends JPanel{
+public class CombinedStackDockContentPane extends BackgroundPanel{
 	private CombinedStackDockComponent<?, ?, ?> parent;
-	
-	private BackgroundPaint background;
-	
-	private BackgroundComponent backgroundComponent;
 	
 	private boolean paintBackground = true;
 	
@@ -56,7 +49,7 @@ public class CombinedStackDockContentPane extends JPanel{
 	 * @param parent the owner of this pane, not <code>null</code>
 	 */
 	public CombinedStackDockContentPane( CombinedStackDockComponent<?, ?, ?> parent ){
-		super( null );
+		setLayout( null );
 		if( parent == null )
 			throw new IllegalArgumentException( "parent must not be null" );
 		this.parent = parent;
@@ -80,34 +73,7 @@ public class CombinedStackDockContentPane extends JPanel{
 	public boolean isPaintBackground(){
 		return paintBackground;
 	}
-	
-	/**
-	 * Informs this panel how the empty areas should be painted.
-	 * @param paint the algorithm to use, can be <code>null</code>
-	 * @param component representation of <code>this</code>, <code>null</code> if <code>paint</code> is <code>null</code>
-	 */
-	public void setBackground( BackgroundPaint paint, BackgroundComponent component ){
-		this.background = paint;
-		this.backgroundComponent = component;
-		repaint();
-	}
-	
-	/**
-	 * Gets the current algorithm that paints the background.
-	 * @return the current background, can be <code>null</code>
-	 */
-	public BackgroundPaint getBackgroundPaint(){
-		return background;
-	}
-	
-	/**
-	 * Gets the current {@link BackgroundComponent}.
-	 * @return the current argument for a {@link BackgroundPaint}
-	 */
-	public BackgroundComponent getBackgroundComponent(){
-		return backgroundComponent;
-	}
-	
+		
 	/**
 	 * Gets the owner of this pane.
 	 * @return the owner, not <code>null</code>
@@ -138,23 +104,5 @@ public class CombinedStackDockContentPane extends JPanel{
     @Override
     public Dimension getMinimumSize() {
     	return parent.getMinimumSize();
-    }
-    
-    @Override
-    protected void paintComponent( Graphics g ){
-    	AbstractPaintableComponent paint = new AbstractPaintableComponent( backgroundComponent, this, background ) {
-			protected void foreground( Graphics g ){
-				// ignore
-			}
-			
-			protected void background( Graphics g ){
-				CombinedStackDockContentPane.this.paintBackground( g );
-			}
-		};
-		paint.paint( g );
-    }
-    
-    private void paintBackground( Graphics g ){
-    	super.paintComponent( g );
     }
 }

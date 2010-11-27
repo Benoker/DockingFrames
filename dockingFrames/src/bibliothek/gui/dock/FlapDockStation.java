@@ -70,6 +70,7 @@ import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.StationBackgroundComponent;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.flap.ButtonPane;
 import bibliothek.gui.dock.station.flap.DefaultFlapLayoutManager;
@@ -103,6 +104,7 @@ import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
@@ -394,6 +396,9 @@ public class FlapDockStation extends AbstractDockableStation {
     /** Manager for the visibility of the children of this station */
     private DockableVisibilityManager visibility;
     
+    /** the background algorithm of this component */
+    private Background background = new Background();
+    
     /**
      * Defaultconstructor of a {@link FlapDockStation}
      */
@@ -408,8 +413,9 @@ public class FlapDockStation extends AbstractDockableStation {
      * {@link #init()} must be called by a subclass.
      */
     protected FlapDockStation( boolean init ){
-    	if( init )
+    	if( init ){
     		init();
+    	}
     }
     
     /**
@@ -418,6 +424,8 @@ public class FlapDockStation extends AbstractDockableStation {
     protected void init(){
         visibility = new DockableVisibilityManager( listeners );
         buttonPane = createButtonPane();
+        buttonPane.setBackground( background );
+        
         setDirection( Direction.SOUTH );
         
         displayerFactory = new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + ".flap", this );
@@ -511,13 +519,17 @@ public class FlapDockStation extends AbstractDockableStation {
                 titleVersion = null;
                 buttonVersion = null;
             }
-    
+
             super.setController(controller);
             placeholderStrategy.setProperties( controller );
             displayers.setController( controller );
             paint.setController( controller );
             displayerFactory.setController( controller );
             combiner.setController( controller );
+            background.setController( controller );
+            if( window != null ){
+            	window.setController( controller );
+            }
             FlapLayoutManager oldLayoutManager = layoutManager.getValue();
             layoutManager.setProperties( controller );
             FlapLayoutManager newLayoutManager = layoutManager.getValue();
@@ -1155,12 +1167,16 @@ public class FlapDockStation extends AbstractDockableStation {
      * @param window the new window, can be <code>null</code>
      */
     private void setFlapWindow( FlapWindow window ){
-    	if( this.window != null )
+    	if( this.window != null ){
+    		this.window.setController( null );
     		this.window.destory();
+    	}
     	
         this.window = window;
-        if( window != null )
+        if( window != null ){
+        	window.setController( getController() );
             window.setDropInfo( dropInfo );
+        }
     }
     
     /**
@@ -1919,7 +1935,7 @@ public class FlapDockStation extends AbstractDockableStation {
     	
     	return -1;
     }
-    
+
     /**
      * This listener is added to the direct parent of the enclosing
      * {@link FlapDockListener}. The listener fires events if the visibility
@@ -2114,5 +2130,26 @@ public class FlapDockStation extends AbstractDockableStation {
         		}
         	}
         }
+    }
+    
+    /**
+     * The background algorithm of this {@link FlapDockStation}.
+     * @author Benjamin Sigg
+     */
+    private class Background extends BackgroundAlgorithm implements StationBackgroundComponent{
+    	/**
+    	 * Creates a new algorithm
+    	 */
+    	public Background(){
+    		super( StationBackgroundComponent.KIND, ThemeManager.BACKGROUND_PAINT + ".station.flap" );
+    	}
+
+		public DockStation getStation(){
+			return FlapDockStation.this;
+		}
+
+		public Component getComponent(){
+			return FlapDockStation.this.getComponent();
+		}
     }
 }

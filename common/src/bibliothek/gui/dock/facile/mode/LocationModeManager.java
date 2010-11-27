@@ -46,6 +46,7 @@ import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.facile.mode.status.DefaultExtendedModeEnablement;
 import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablement;
 import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablementFactory;
+import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablementListener;
 import bibliothek.gui.dock.support.mode.ModeManager;
 import bibliothek.gui.dock.support.mode.ModeManagerListener;
 import bibliothek.gui.dock.util.DockProperties;
@@ -106,6 +107,13 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 		@Override
 		protected void valueChanged( DoubleClickLocationStrategy oldValue, DoubleClickLocationStrategy newValue ){
 			// ignore
+		}
+	};
+	
+	/** a listener added to the current {@link #enablement} */
+	private ExtendedModeEnablementListener enablementListener = new ExtendedModeEnablementListener() {
+		public void availabilityChanged( Dockable dockable, ExtendedMode mode, boolean available ){
+			refresh( dockable, true );
 		}
 	};
 	
@@ -179,11 +187,13 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 	 */
 	protected void updateEnablement(){
 		if( enablement != null ){
+			enablement.removeListener( enablementListener );
 			enablement.destroy();
 			enablement = null;
 		}
 		if( getController() != null ){
 			enablement = extendedModeFactory.getValue().create( this );
+			enablement.addListener( enablementListener );
 		}
 		rebuildAll();
 	}

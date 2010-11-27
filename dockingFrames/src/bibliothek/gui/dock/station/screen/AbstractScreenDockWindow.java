@@ -45,7 +45,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
@@ -57,7 +56,8 @@ import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.support.CombinerTarget;
-import bibliothek.gui.dock.util.AbstractPaintableComponent;
+import bibliothek.gui.dock.util.BackgroundAlgorithm;
+import bibliothek.gui.dock.util.BackgroundPanel;
 
 /**
  * This abstract implementation of {@link ScreenDockWindow} uses a {@link DockableDisplayer}
@@ -86,7 +86,10 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
     private String titleText = null;
     
     /** the background algorithm for this window */
-    private Background background;
+    private BackgroundAlgorithm background;
+    
+    /** the panel which paints the background */
+    private BackgroundPanel contentBackground;
     
     /** a listener added to the <code>Dockable</code> of this window, updates icon and title text */
     private DockableListener listener = new DockableAdapter(){
@@ -210,8 +213,11 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
     }
     
     @Override
-    protected void setBackground( Background background ){
+    protected void setBackground( BackgroundAlgorithm background ){
 	    this.background = background;
+	    if( contentBackground != null ){
+	    	contentBackground.setBackground( background );
+	    }
 	    window.repaint();
     }
 
@@ -423,33 +429,8 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
      * @return the new content pane
      */
     protected OverpaintablePanel createContent(){
-    	JPanel content = new JPanel(){
-    		@Override
-    		protected void paintComponent( Graphics g ){
-    			if( background == null ){
-    				doPaintBackground( g );
-    			}
-    			else{
-	    			AbstractPaintableComponent paint = new AbstractPaintableComponent( background, this, background.getPaint() ) {
-						@Override
-						protected void foreground( Graphics g ){
-							// ignore
-						}
-						
-						@Override
-						protected void background( Graphics g ){
-							doPaintBackground( g );
-						}
-					};
-					
-					paint.paint( g );
-    			}
-    		}
-    		
-    		private void doPaintBackground( Graphics g ){
-    			super.paintComponent( g );
-    		}
-    	};
+    	contentBackground = new BackgroundPanel();
+    	contentBackground.setBackground( background );
     	
         OverpaintablePanel panel = new OverpaintablePanel(){
             @Override
@@ -471,9 +452,9 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
             }
         };
         
-        panel.setContentPane( content );
+        panel.setContentPane( contentBackground );
         panel.getBasePane().setLayout( new BorderLayout() );
-        panel.getBasePane().add( content, BorderLayout.CENTER );
+        panel.getBasePane().add( contentBackground, BorderLayout.CENTER );
 
         return panel;
     }

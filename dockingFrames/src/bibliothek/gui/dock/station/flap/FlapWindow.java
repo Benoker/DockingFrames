@@ -30,6 +30,7 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.title.DockTitle;
@@ -110,6 +111,12 @@ public interface FlapWindow {
      * @return The {@link Dockable} or <code>null</code>
      */
     public Dockable getDockable();
+    
+    /**
+     * Informs this {@link FlapWindow} about the {@link DockController} in whose realm
+     * @param controller the controller or <code>null</code>
+     */
+    public void setController( DockController controller );
     
     /**
      * Makes a guess how big the insets around the current {@link Dockable}
