@@ -49,6 +49,7 @@ import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
  * is used to determine which actions to show, only non-tab actions are shown.
  * @author Benjamin Sigg
  */
+// Note: no BackgroundComponent, this panel is completely transparent
 public class EclipseTabInfo extends AbstractTabPaneComponent implements CombinedInfoComponent, LayoutBlock{
 	private EclipseTabPane pane;
 	private ButtonPanel buttons;

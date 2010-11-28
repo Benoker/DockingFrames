@@ -338,8 +338,8 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
    }
 
    @Override
-   protected void paintComponent (Graphics g) {
-      super.paintComponent(g);
+   public void paintBackground( Graphics g ){
+	  super.paintComponent(g);
 
       if (getWidth() != 0 && getHeight() != 0) {
          Graphics2D g2d = (Graphics2D)g.create();

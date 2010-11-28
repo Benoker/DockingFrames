@@ -36,6 +36,8 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.station.stack.menu.AbstractCombinedMenu;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
+import bibliothek.gui.dock.util.BackgroundAlgorithm;
+import bibliothek.gui.dock.util.BackgroundPaint;
 
 /**
  * A menu used by the {@link EclipseTabPane} to select {@link Dockable}s.
@@ -87,12 +89,20 @@ public class EclipseMenu extends AbstractCombinedMenu{
 	}
 	
 	@Override
+	protected void backgroundChanged( BackgroundPaint paint ){
+		if( button != null ){
+			button.getModel().setBackground( paint, getBackground() );
+		}
+	}
+	
+	@Override
 	protected Component createComponent(){
 		BasicTrigger trigger = new BasicTrigger(){
         	public void triggered(){
         		open();
         	}
         };
+        
         button = new RoundRectButton( trigger );
         
         DockController controller = getController();
@@ -101,6 +111,16 @@ public class EclipseMenu extends AbstractCombinedMenu{
         }
         
         return button;
+	}
+	
+	@Override
+	protected void ensureComponent(){
+		boolean set = button == null;
+		super.ensureComponent();
+		if( set ){
+			BackgroundAlgorithm background = getBackground();
+	        button.getModel().setBackground( background.getPaint(), background );
+		}
 	}
 
 	@Override

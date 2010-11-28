@@ -32,7 +32,9 @@ import java.awt.Graphics;
  * A wrapper around a {@link Component} whose paint algorithm may be
  * modified by a {@link BackgroundPaint}. This provider of this method may
  * paint background and foreground automatically if {@link #paintBackground(Graphics)}
- * or {@link #paintForeground(Graphics)} is not called.
+ * or {@link #paintForeground(Graphics)} is not called.<br>
+ * Whether the foreground is painted over or under the children of {@link #getComponent()}
+ * depends on the implementation of this interface. Both versions are valid.
  * @author Benjamin Sigg
  */
 public interface PaintableComponent {

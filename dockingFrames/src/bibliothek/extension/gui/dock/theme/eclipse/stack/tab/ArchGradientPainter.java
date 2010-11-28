@@ -256,7 +256,7 @@ public class ArchGradientPainter extends BaseTabComponent {
 	}
 	
 	@Override
-	protected void paintComponent(Graphics g) {
+	public void paintBackground( Graphics g ){
 		super.paintComponent(g);
 
 		int x = 0;
@@ -264,7 +264,6 @@ public class ArchGradientPainter extends BaseTabComponent {
 		int w = getWidth();
 		int h = getHeight();
 		Graphics2D g2d = (Graphics2D) g;
-		Color lineColor = colorStackBorder.value();
 
 		Color color1;
 		Color color2;
@@ -312,9 +311,16 @@ public class ArchGradientPainter extends BaseTabComponent {
 			g2d.fillRect( x, y, w, h-1 );
 			g2d.setPaint(old);
 		}
-
+	}
+	
+	@Override
+	public void paintForeground( Graphics g ){
 		// draw separator lines
 		if (!isSelected() && !isNextTabSelected() ){
+			Color lineColor = colorStackBorder.value();
+			int w = getWidth();
+			int h = getHeight();
+			
 			g.setColor(lineColor);
 			if( getOrientation().isHorizontal() )
 				g.drawLine( w-1, 0, w-1, h );

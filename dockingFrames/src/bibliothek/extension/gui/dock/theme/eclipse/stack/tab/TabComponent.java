@@ -76,6 +76,12 @@ public interface TabComponent extends DockElementRepresentative{
 	public void setOrientation( TabPlacement orientation );
 	
 	/**
+	 * Informs this {@link TabComponent} by which tab is is used.
+	 * @param tab the owner of this {@link TabComponent}
+	 */
+	public void setTab( EclipseTab tab );
+	
+	/**
 	 * Gets the number of pixels which should be covered at the sides
 	 * of this component by other tabs.
 	 * @param other the component which may overlap this component

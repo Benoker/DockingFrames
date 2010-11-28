@@ -71,6 +71,15 @@ public class BackgroundPanel extends JPanel implements PaintableComponent{
 	}
 
 	protected void paintComponent( Graphics g ){
+		doPaint( g );
+	}
+	
+	/**
+	 * This method paints the background and foreground of this panel. Usually it is
+	 * called by the {@link #paintComponent(Graphics)} method.
+	 * @param g the graphcis context to use
+	 */
+	protected void doPaint( Graphics g ){
 		if( background == null ){
 			paintBackground( g );
 			paintForeground( g );

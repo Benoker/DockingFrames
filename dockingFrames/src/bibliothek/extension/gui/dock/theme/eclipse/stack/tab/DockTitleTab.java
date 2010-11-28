@@ -18,6 +18,7 @@ import javax.swing.border.Border;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTab;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -200,6 +201,10 @@ public class DockTitleTab implements TabComponent{
 		    		break;
 		    }
     	}
+    }
+    
+    public void setTab( EclipseTab tab ){
+    	// ignore
     }
     
     public void bind() {

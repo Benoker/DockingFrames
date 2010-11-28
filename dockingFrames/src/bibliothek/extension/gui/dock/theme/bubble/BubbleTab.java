@@ -28,6 +28,7 @@ package bibliothek.extension.gui.dock.theme.bubble;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
@@ -42,7 +43,6 @@ import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputListener;
@@ -56,9 +56,13 @@ import bibliothek.gui.dock.station.stack.CombinedTab;
 import bibliothek.gui.dock.station.stack.tab.Tab;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.stack.tab.TabPaneComponent;
+import bibliothek.gui.dock.station.stack.tab.TabPaneTabBackgroundComponent;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
+import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.font.TabFont;
+import bibliothek.gui.dock.util.BackgroundAlgorithm;
+import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.font.DockFont;
 import bibliothek.gui.dock.util.font.FontModifier;
@@ -99,7 +103,7 @@ import bibliothek.gui.dock.util.swing.OrientedLabel;
 	"stack.tab.border.focused",
 	"stack.tab.foreground.focused"
 })
-public class BubbleTab extends JPanel implements CombinedTab, ChangeListener, Runnable, DockableFocusListener{
+public class BubbleTab extends BackgroundPanel implements CombinedTab, ChangeListener, Runnable, DockableFocusListener{
 	/** a label showing text and icon for this tab */
 	private OrientedLabel label = new OrientedLabel();
 
@@ -165,6 +169,8 @@ public class BubbleTab extends JPanel implements CombinedTab, ChangeListener, Ru
 	private BubbleTabFont fontFocused;
 	private BubbleTabFont fontSelected;
 	private BubbleTabFont fontUnselected;
+	
+	private Background background = new Background();
 
 	private static final int STATE_SELECTED = 1;
 	private static final int STATE_FOCUSED = 2 | STATE_SELECTED;
@@ -181,6 +187,9 @@ public class BubbleTab extends JPanel implements CombinedTab, ChangeListener, Ru
 		this.dockable = dockable;
 		this.parent = parent;
 		label.setHorizontal( orientation.isHorizontal() );
+		
+		label.setBackground( background );
+		setBackground( background );
 
 		animation = new BubbleColorAnimation();
 		animation.addTask( this );
@@ -313,6 +322,8 @@ public class BubbleTab extends JPanel implements CombinedTab, ChangeListener, Ru
 		fontFocused.connect( controller );
 		fontSelected.connect( controller );
 		fontUnselected.connect( controller );
+		
+		background.setController( controller );
 
 		this.controller = controller;
 		if( controller != null ){
@@ -412,7 +423,19 @@ public class BubbleTab extends JPanel implements CombinedTab, ChangeListener, Ru
 	}
 
 	@Override
-	public void paintComponent( Graphics g ){
+	public void paint( Graphics g ){
+		Graphics2D g2 = (Graphics2D)g.create();
+		g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
+
+		doPaint( g2 );
+
+		g2.dispose();
+	}
+	
+	@Override
+	public void paintBackground( Graphics g ){
+		Graphics2D g2 = (Graphics2D)g;
+		
 		Color bottom = animation.getColor( "bottom" );
 		Color top = animation.getColor( "top" );
 		Color border = animation.getColor( "border" );
@@ -421,9 +444,7 @@ public class BubbleTab extends JPanel implements CombinedTab, ChangeListener, Ru
 		int h = getHeight();
 
 		// Rectangle clip = g.getClipBounds();
-		Graphics2D g2 = (Graphics2D)g.create();
-		g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
-
+	
 		// draw border
 		g2.setColor( border );
 		switch( orientation ){
@@ -461,8 +482,15 @@ public class BubbleTab extends JPanel implements CombinedTab, ChangeListener, Ru
 				g2.fillRoundRect( -arc, borderSize, w+arc-borderSize, h-2*borderSize, 2*arc, 2*arc );
 				break;
 		}
-		
+	}
 
+	@Override
+	public void paintForeground( Graphics g ){
+		Graphics2D g2 = (Graphics2D) g;
+		
+		int w = getWidth();
+		int h = getHeight();
+		
 		// draw text and icon
 		Graphics child = g.create( label.getX(), label.getY(), label.getWidth(), label.getHeight() );
 		label.paint( child );
@@ -500,7 +528,6 @@ public class BubbleTab extends JPanel implements CombinedTab, ChangeListener, Ru
 			g2.fillRect( 0, 0, w/2, h );
 		}
 
-		g2.dispose();
 	}
 
 	@Override
@@ -644,4 +671,29 @@ public class BubbleTab extends JPanel implements CombinedTab, ChangeListener, Ru
 		}
 	}
 
+	/**
+	 * A representation of the background of this {@link BubbleTab}.
+	 * @author Benjamin Sigg
+	 */
+	private class Background extends BackgroundAlgorithm implements TabPaneTabBackgroundComponent{
+		public Background(){
+			super( TabPaneTabBackgroundComponent.KIND, ThemeManager.BACKGROUND_PAINT + ".tabPane.child.tab" );
+		}
+
+		public Tab getTab(){
+			return BubbleTab.this;
+		}
+
+		public TabPaneComponent getChild(){
+			return BubbleTab.this;
+		}
+
+		public TabPane getPane(){
+			return getTabParent();
+		}
+
+		public Component getComponent(){
+			return BubbleTab.this;
+		}
+	}
 }

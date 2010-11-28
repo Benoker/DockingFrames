@@ -36,7 +36,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import javax.swing.Icon;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
@@ -48,11 +47,18 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.station.stack.tab.Tab;
+import bibliothek.gui.dock.station.stack.tab.TabPane;
+import bibliothek.gui.dock.station.stack.tab.TabPaneComponent;
+import bibliothek.gui.dock.station.stack.tab.TabPaneTabBackgroundComponent;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
+import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.font.TabFont;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
+import bibliothek.gui.dock.util.BackgroundAlgorithm;
+import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.font.DockFont;
 import bibliothek.gui.dock.util.font.FontModifier;
@@ -69,7 +75,7 @@ import bibliothek.gui.dock.util.swing.OrientedLabel;
     "stack.tab.bottom", "stack.tab.bottom.selected", "stack.tab.bottom.selected.focused", "stack.tab.bottom.selected.focuslost",
     "stack.tab.text", "stack.tab.text.selected", "stack.tab.text.selected.focused", "stack.tab.text.selected.focuslost",
     "stack.border" })
-public abstract class BaseTabComponent extends JPanel implements TabComponent{
+public abstract class BaseTabComponent extends BackgroundPanel implements TabComponent{
     protected final TabColor colorStackTabBorder;
     protected final TabColor colorStackTabBorderSelected;
     protected final TabColor colorStackTabBorderSelectedFocused;
@@ -110,8 +116,11 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
     private boolean hasFocus;
     private boolean isSelected;
     private EclipseTabPane pane;
+    private EclipseTab tab;
 
     private boolean bound;
+    
+    private Background background;
     
     private Insets labelInsets = new Insets( 0, 0, 0, 0 );
     private OrientedLabel label = new OrientedLabel();
@@ -290,12 +299,32 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
      */
     protected abstract void updateOrientation();
     
+    public void setTab( EclipseTab tab ){
+    	if( background != null ){
+    		background.setController( null );
+    		background = null;
+    	}
+    	
+	    this.tab = tab;
+	    
+	    if( bound ){
+	    	background = new Background( tab );
+	    	background.setController( getController() );
+	    }
+	    setBackground( background );
+    }
+    
     public void bind() {
         if( buttons != null )
             buttons.set( dockable, new EclipseDockActionSource(
             		pane.getTheme(), dockable.getGlobalActionOffers(), dockable, true ) );
         
         DockController controller = pane.getController();
+        if( tab != null ){
+        	background = new Background( tab );
+        	background.setController( controller );
+        }
+        setBackground( background );
         
         for( TabColor color : colors )
             color.connect( controller );
@@ -310,6 +339,12 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
     	bound = false;
         if( buttons != null )
             buttons.set( null );
+        
+        if( background != null ){
+        	background.setController( null );
+        	background = null;
+        }
+        setBackground( background );
         
         for( TabColor color : colors )
             color.connect( null );
@@ -835,6 +870,40 @@ public abstract class BaseTabComponent extends JPanel implements TabComponent{
         }
     }
 
+
+	/**
+	 * A representation of the background of this {@link EclipseTab}.
+	 * @author Benjamin Sigg
+	 */
+	private class Background extends BackgroundAlgorithm implements TabPaneTabBackgroundComponent{
+		private EclipseTab tab;
+		
+		/**
+		 * Creates a new background.
+		 * @param tab the tab which is using this component
+		 */
+		public Background( EclipseTab tab ){
+			super( TabPaneTabBackgroundComponent.KIND, ThemeManager.BACKGROUND_PAINT + ".tabPane.child.tab" );
+			this.tab = tab;
+		}
+
+		public Tab getTab(){
+			return tab;
+		}
+
+		public TabPaneComponent getChild(){
+			return tab;
+		}
+
+		public TabPane getPane(){
+			return tab.getTabParent();
+		}
+
+		public Component getComponent(){
+			return BaseTabComponent.this.getComponent();
+		}
+	}
+    
     // Thomas Hilbet: Moved to EclipseTabPane, perhaps this should remain here if there are other themes like eclipse (which don't use EclipseTabPane)
 //    /**
 //     * Listens to the window ancestor of this {@link TabComponent} and updates

@@ -78,7 +78,7 @@ public class EclipseTabPaneContent extends CombinedStackDockContentPane{
 				}
 	
 				public void paintForeground( Graphics g ){
-					doPaint( g );
+					doPaintContent( g );
 					if( painter != null ){
 						painter.paintForeground( g );
 					}
@@ -90,7 +90,7 @@ public class EclipseTabPaneContent extends CombinedStackDockContentPane{
 		}		
 	}
 	
-	private void doPaint( Graphics g ){
+	private void doPaintContent( Graphics g ){
 		super.paint( g );
 	}
 }

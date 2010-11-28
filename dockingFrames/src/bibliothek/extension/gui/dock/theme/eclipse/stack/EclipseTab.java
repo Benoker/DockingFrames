@@ -64,8 +64,10 @@ public class EclipseTab extends AbstractTab implements CombinedTab{
 		super( parent, dockable );
 		this.parent = parent;
 		this.component = delegate;
+		
 		component.setIcon( dockable.getTitleIcon() );
 		component.setText( dockable.getTitleText() );
+		component.setTab( this );
 	}
 	
 	@Override

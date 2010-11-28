@@ -629,7 +629,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 		 * Creates a new object
 		 */
 		public Background(){
-			super( TabPaneBackgroundComponent.KIND, ThemeManager.BACKGROUND_PAINT + ".tab_pane" );
+			super( TabPaneBackgroundComponent.KIND, ThemeManager.BACKGROUND_PAINT + ".tabPane" );
 		}
 		
 		public TabPane getPane(){

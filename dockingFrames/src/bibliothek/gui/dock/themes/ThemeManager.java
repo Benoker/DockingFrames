@@ -49,7 +49,9 @@ import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.TypedPropertyUIScheme;
 import bibliothek.gui.dock.util.TypedUIProperties;
+import bibliothek.gui.dock.util.UIValue;
 import bibliothek.gui.dock.util.extension.ExtensionName;
+import bibliothek.util.ClientOnly;
 import bibliothek.util.FrameworkOnly;
 
 /**
@@ -271,4 +273,29 @@ public class ThemeManager extends TypedUIProperties{
     			listener.themeChanged( controller, oldTheme, theme );
     	}
 	}
+    
+    /**
+     * Sets an algorithm that is used to paint the background of items which register an {@link UIValue} with
+     * an identifier of <code>id</code>. Valid identifier can be, but are not restricted to:
+     * <ul>
+     * 	<li>{@value #BACKGROUND_PAINT}.action</li>
+     *  <li>{@value #BACKGROUND_PAINT}.displayer</li>
+     *  <li>{@value #BACKGROUND_PAINT}.dockable</li>
+     *  <li>{@value #BACKGROUND_PAINT}.station.flap</li>
+     *  <li>{@value #BACKGROUND_PAINT}.station.flap.window</li>
+     *  <li>{@value #BACKGROUND_PAINT}.station.screen</li>
+     *  <li>{@value #BACKGROUND_PAINT}.station.split</li>
+     *  <li>{@value #BACKGROUND_PAINT}.station.stack</li>
+     *  <li>{@value #BACKGROUND_PAINT}.tabPane</li>
+     *  <li>{@value #BACKGROUND_PAINT}.tabPane.child.menu</li>
+     *  <li>{@value #BACKGROUND_PAINT}.tabPane.child.tab</li>
+     *  <li>{@value #BACKGROUND_PAINT}.title</li>
+     * </ul>
+     * @param id the identifier of the items that should use <code>value</code>
+     * @param value the new background algorithm, can be <code>null</code>
+     */
+    @ClientOnly
+    public void setBackgroundPaint( String id, BackgroundPaint value ){
+    	put( Priority.CLIENT, id, BACKGROUND_PAINT_TYPE, value );
+    }
 }

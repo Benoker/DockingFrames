@@ -15,7 +15,6 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.event.MouseInputListener;
 
@@ -28,9 +27,13 @@ import bibliothek.gui.dock.station.stack.CombinedTab;
 import bibliothek.gui.dock.station.stack.tab.Tab;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.stack.tab.TabPaneComponent;
+import bibliothek.gui.dock.station.stack.tab.TabPaneTabBackgroundComponent;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
+import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.font.TabFont;
+import bibliothek.gui.dock.util.BackgroundAlgorithm;
+import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.font.DockFont;
 import bibliothek.gui.dock.util.font.FontModifier;
@@ -61,7 +64,7 @@ import bibliothek.gui.dock.util.swing.OrientedLabel;
     "stack.tab.foreground.selected",
     "stack.tab.foreground.focused",
     "stack.tab.foreground" })
-public class FlatTab extends JPanel implements CombinedTab, DockableFocusListener{
+public class FlatTab extends BackgroundPanel implements CombinedTab, DockableFocusListener{
 	/** the dockable for which this button is shown */
     private Dockable dockable;
     
@@ -78,6 +81,9 @@ public class FlatTab extends JPanel implements CombinedTab, DockableFocusListene
 	    	FlatTab.this.updateFonts();
     	}
     };
+    
+    /** the algorithm painting the background of this tab */
+    private Background backgroundAlgorithm = new Background();
     
     /** whether {@link #dockable} is currently focused */
     private boolean focused = false;
@@ -119,6 +125,9 @@ public class FlatTab extends JPanel implements CombinedTab, DockableFocusListene
     	            
     	setLayout( new BorderLayout() );
     	add( label, BorderLayout.CENTER );
+    	
+    	label.setBackground( backgroundAlgorithm );
+    	setBackground( backgroundAlgorithm );
     	
         borderSelectedOut    = new FlatTabColor( "stack.tab.border.out.selected", dockable );
         borderSelectedCenter = new FlatTabColor( "stack.tab.border.center.selected", dockable );
@@ -349,6 +358,8 @@ public class FlatTab extends JPanel implements CombinedTab, DockableFocusListene
         fontFocused.connect( controller );
         fontSelected.connect( controller );
         fontUnselected.connect( controller );
+        
+        backgroundAlgorithm.setController( controller );
     }
     
     public Point getPopupLocation( Point click, boolean popupTrigger ) {
@@ -479,7 +490,7 @@ public class FlatTab extends JPanel implements CombinedTab, DockableFocusListene
 	}
     
     @Override
-    public void paintComponent( Graphics g ){
+    public void paintBackground( Graphics g ){
         Graphics2D g2 = (Graphics2D)g;
         Paint oldPaint = g2.getPaint();
         
@@ -575,5 +586,31 @@ public class FlatTab extends JPanel implements CombinedTab, DockableFocusListene
         protected void changed( FontModifier oldValue, FontModifier newValue ) {
             updateFonts();
         }
+    }
+    
+    /**
+     * The background algorithm of this tab.
+     * @author Benjamin Sigg
+     */
+    private class Background extends BackgroundAlgorithm implements TabPaneTabBackgroundComponent{
+    	public Background(){
+    		super( TabPaneTabBackgroundComponent.KIND, ThemeManager.BACKGROUND_PAINT + ".tabPane.child.tab" );
+    	}
+
+		public Tab getTab(){
+			return FlatTab.this;
+		}
+
+		public TabPaneComponent getChild(){
+			return FlatTab.this;
+		}
+
+		public TabPane getPane(){
+			return FlatTab.this.getTabParent();
+		}
+
+		public Component getComponent(){
+			return FlatTab.this;
+		}
     }
 }

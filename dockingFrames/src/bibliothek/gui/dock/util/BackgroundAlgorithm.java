@@ -66,6 +66,9 @@ public abstract class BackgroundAlgorithm implements BackgroundComponent{
 		if( this.controller != null ){
 			this.controller.getThemeManager().add( id, kind, ThemeManager.BACKGROUND_PAINT_TYPE, this );
 		}
+		else{
+			set( null );
+		}
 	}
 	
 	public void repaint(){

@@ -92,6 +92,7 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
     public BubbleDisplayer( DockStation station, Dockable dockable, DockTitle title ){
         super( station, dockable, title );
         
+        this.dockable.setOpaque( false );
         animation = new BubbleColorAnimation();
         animation.addTask( new Runnable(){
             public void run() {

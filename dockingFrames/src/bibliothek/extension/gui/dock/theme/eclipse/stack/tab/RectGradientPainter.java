@@ -204,13 +204,14 @@ public class RectGradientPainter extends BaseTabComponent {
 	}
 
 	@Override
-	protected void paintComponent(Graphics g) {
+	public void paintBackground( Graphics g ){
 		super.paintComponent(g);
 		int height = getHeight(), width = getWidth();
 		Graphics2D g2d = (Graphics2D) g;
 		Color lineColor = colorStackBorder.value();
 		Color color1, color2;
 		boolean focusTemporarilyLost = isFocusTemporarilyLost();
+		boolean isSelected = isSelected();
 		
 		TabPlacement orientation = getOrientation();
 		
@@ -222,7 +223,7 @@ public class RectGradientPainter extends BaseTabComponent {
             color1 = colorStackTabTopSelectedFocusLost.value();
             color2 = colorStackTabBottomSelectedFocusLost.value();
         }
-        else if( isSelected() ){
+        else if( isSelected ){
             color1 = colorStackTabTopSelected.value();
             color2 = colorStackTabBottomSelected.value();
         }
@@ -247,8 +248,6 @@ public class RectGradientPainter extends BaseTabComponent {
         	}
         }
         
-		
-		boolean isSelected = isSelected();
 		int tabIndex = getTabIndex();
 		
 		g2d.setColor( lineColor );
@@ -280,9 +279,17 @@ public class RectGradientPainter extends BaseTabComponent {
 		    
 		    g2d.setPaint(old);
 		}
-
+	}
+	
+	@Override
+	public void paintForeground( Graphics g ){
 		// draw separator lines
-		if (!isSelected && !isNextTabSelected() ) {
+		if (!isSelected() && !isNextTabSelected() ) {
+			Color lineColor = colorStackBorder.value();
+			TabPlacement orientation = getOrientation();
+			int width = getWidth();
+			int height = getHeight();
+			
 			g.setColor(lineColor);
 			switch( orientation ){
 				case TOP_OF_DOCKABLE:

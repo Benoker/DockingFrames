@@ -36,8 +36,15 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.stack.CombinedHandler;
 import bibliothek.gui.dock.station.stack.CombinedMenu;
 import bibliothek.gui.dock.station.stack.tab.AbstractTabPaneComponent;
+import bibliothek.gui.dock.station.stack.tab.TabMenu;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
+import bibliothek.gui.dock.station.stack.tab.TabPaneComponent;
+import bibliothek.gui.dock.station.stack.tab.TabPaneMenuBackgroundComponent;
+import bibliothek.gui.dock.themes.ThemeManager;
+import bibliothek.gui.dock.util.BackgroundAlgorithm;
+import bibliothek.gui.dock.util.BackgroundPaint;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.UIValue;
 
 /**
  * An abstract implementation of {@link CombinedMenu}, this menu
@@ -48,6 +55,9 @@ import bibliothek.gui.dock.util.PropertyValue;
 public abstract class AbstractCombinedMenu extends AbstractTabPaneComponent implements CombinedMenu{
 	/** the button of this menu */
 	private Component component;
+	
+	/** the background algorithm of this menu */
+	private Background background = new Background();
 	
 	/** the content of this menu */
 	private PropertyValue<CombinedMenuContent> content = new PropertyValue<CombinedMenuContent>( 
@@ -88,6 +98,22 @@ public abstract class AbstractCombinedMenu extends AbstractTabPaneComponent impl
 	}
 	
 	/**
+	 * Gets an algorithm that can be used to paint the background of this menu.
+	 * @return the algorithm, not <code>null</code>
+	 */
+	protected BackgroundAlgorithm getBackground(){
+		return background;
+	}
+	
+	/**
+	 * Called if the background algorithm has been exchanged.
+	 * @param paint the new background algorithm, can be <code>null</code>
+	 */
+	protected void backgroundChanged( BackgroundPaint paint ){
+		// nothing
+	}
+	
+	/**
 	 * Creates the button which will always be visible. The user needs to
 	 * click onto that button in order to show the content of this menu. This
 	 * method will be called only once and not from a constructor of
@@ -115,6 +141,7 @@ public abstract class AbstractCombinedMenu extends AbstractTabPaneComponent impl
 	public void setController( DockController controller ){
 		this.controller = controller;
 		content.setProperties( controller );
+		background.setController( controller );
 	}
 	
 	/**
@@ -262,6 +289,38 @@ public abstract class AbstractCombinedMenu extends AbstractTabPaneComponent impl
 		 */
 		public CombinedMenuContent.Item toItem(){
 			return new CombinedMenuContent.Item( dockable, text, tooltip, icon );
+		}
+	}
+	
+	/**
+	 * An {@link UIValue} representing the background of this menu.
+	 * @author Benjamin Sigg
+	 */
+	private class Background extends BackgroundAlgorithm implements TabPaneMenuBackgroundComponent{
+		public Background(){
+			super( TabPaneMenuBackgroundComponent.KIND, ThemeManager.BACKGROUND_PAINT + ".tabPane.child.menu" );
+		}
+
+		@Override
+		public void set( BackgroundPaint value ){
+			super.set( value );
+			backgroundChanged( getPaint() );
+		}
+		
+		public TabMenu getMenu(){
+			return AbstractCombinedMenu.this;
+		}
+
+		public TabPaneComponent getChild(){
+			return AbstractCombinedMenu.this;
+		}
+
+		public TabPane getPane(){
+			return getMenu().getTabParent();
+		}
+
+		public Component getComponent(){
+			return component;
 		}
 	}
 }

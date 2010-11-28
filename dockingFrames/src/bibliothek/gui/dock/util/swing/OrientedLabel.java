@@ -276,6 +276,11 @@ public class OrientedLabel extends BackgroundPanel{
     }
     
     @Override
+    public void paint( Graphics g ){
+    	paintComponent( g );
+    }
+    
+    @Override
     public void paintForeground( Graphics g ){
         if( rotation == Rotation.DEGREE_0 ){
         	if( icon == null ){

@@ -36,8 +36,6 @@ import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JPanel;
-
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.stack.CombinedHandler;
@@ -46,6 +44,7 @@ import bibliothek.gui.dock.station.stack.StackDockComponentParent;
 import bibliothek.gui.dock.station.stack.menu.AbstractCombinedMenu;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.themes.color.MenuColor;
+import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.color.ColorCodes;
 
 /**
@@ -163,12 +162,13 @@ public class BubbleTabMenu extends AbstractCombinedMenu{
 	 * A round button, when clicked calls {@link AbstractCombinedMenu#open()}.
 	 * @author Benjamin Sigg
 	 */
-	private class Button extends JPanel implements Runnable{
+	private class Button extends BackgroundPanel implements Runnable{
 		/**
 		 * Creates a new button.
 		 */
 		public Button(){
 			setOpaque( false );
+			setBackground( BubbleTabMenu.this.getBackground() );
 			animation.addTask( this );
 			
 			setPreferredSize( new Dimension( 20, 20 ) );
@@ -198,7 +198,7 @@ public class BubbleTabMenu extends AbstractCombinedMenu{
 		}
 		
 		@Override
-		protected void paintComponent( Graphics g ){
+		public void paintBackground( Graphics g ){
 			Color top = animation.getColor( "top" );
 			Color bottom = animation.getColor( "bottom" );
 			Color border = animation.getColor( "border" );

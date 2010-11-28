@@ -34,12 +34,11 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JPanel;
-
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.stack.menu.AbstractCombinedMenu;
 import bibliothek.gui.dock.themes.color.MenuColor;
+import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.color.ColorCodes;
 
 /**
@@ -96,7 +95,7 @@ public class FlatMenu extends AbstractCombinedMenu{
 	 * The button shown for this menu.
 	 * @author Benjamin Sigg
 	 */
-	private class Button extends JPanel{
+	private class Button extends BackgroundPanel{
 		/** whether the mouse is currently over this button */
 		private boolean mouseInsideButton = false;
 		
@@ -104,6 +103,7 @@ public class FlatMenu extends AbstractCombinedMenu{
 		 * Creates a new button.
 		 */
 		public Button(){
+			setBackground( FlatMenu.this.getBackground() );
 			addMouseListener( new MouseAdapter(){
 				@Override
 				public void mouseEntered( MouseEvent e ){
@@ -125,7 +125,7 @@ public class FlatMenu extends AbstractCombinedMenu{
 		}
 		
 		@Override
-		protected void paintComponent( Graphics g ){
+		public void paintBackground( Graphics g ){
 			super.paintComponent( g );
 			
 			Color edge = null;
